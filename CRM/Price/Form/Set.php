@@ -132,25 +132,32 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         $this->addRule( 'title', ts('Name already exists in Database.'),
                         'objectExists', array( 'CRM_Price_DAO_Set', $this->_sid, 'title' ) );
            
-        $components = array( 'contribution', 'event' );
-        $tables = array();
+        $priceSetUsedTables = $extends = array( );
         if ( $this->_action == CRM_Core_Action::UPDATE && $this->_sid ) {
             $tables = CRM_Price_BAO_Set::getUsedBy( $this->_sid, true );
-        }      
+        }
+        
         require_once 'CRM/Core/Config.php';
         $config =& CRM_Core_Config::singleton( );
-        $enabledComponents = $config->enableComponents;
-      
-        // used for component
-        foreach ( $components AS $i => $component ) {
-            if ( $enabledComponents && in_array( 'Civi' . ucfirst($component),  $enabledComponents ) ) {
-                $extends[$i] = HTML_QuickForm::createElement( 'checkbox', ucfirst($component), null, ucfirst($component) );
-                if( !empty( $tables ) && ( in_array( 'civicrm_' . $component,  $tables ) || 
-                                           in_array( 'civicrm_' . $component . '_page',  $tables ) ) ) {
-                    $extends[$i]->_flagFrozen = true;
-                }            
+        $components = array( 'CiviEvent'      => array( 'civicrm_event', 'civicrm_participant' ), 
+                             'CiviContribute' => array( 'civicrm_contribution', 'civicrm_contribution_page' ) );
+        
+        foreach ( $components as $compName => $compTables ) {
+            // take only enabled components.
+            if ( !in_array( $compName, $config->enableComponents ) ) continue;
+            $option = HTML_QuickForm::createElement( 'checkbox', $compName, null, $compName );
+            
+            //if price set is used than feeze it.
+            if ( !empty( $priceSetUsedTables ) ) {
+                foreach ( $compTables as $table ) {
+                    if ( in_array( $table, $priceSetUsedTables ) ) {
+                        $option->freeze( );
+                        break;
+                    }
+                }
             }
-        }            
+            $extends[] = $option;
+        }
         
         $this->addGroup( $extends, 'extends', ts('Used For'), '&nbsp;', true );
 
