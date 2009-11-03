@@ -168,6 +168,11 @@ class CiviContributeProcessor {
                     continue;
                 }
 
+                // only process receipts, not payments
+                if ( strtolower( $trxnDetails['transactiontype'] ) == 'sendmoney' ) {
+                    continue;
+                }
+
                 $params = CRM_Contribute_BAO_Contribution_Utils::formatAPIParams( $trxnDetails, 
                                                                                   self::$_paypalParamsMapper,
                                                                                   'paypal' );
