@@ -36,7 +36,7 @@
 require_once 'CRM/Core/Page/Basic.php';
 
 /**
- * Page for displaying list of membership types
+ * Page for displaying list of message templates
  */
 class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic 
 {
@@ -140,28 +140,28 @@ class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic
 
     function action(&$object, $action, &$values, &$links, $permission)
     {
-        // do not expose action link for reverting to default if the template did not diverge or we just reverted it now
-        if (!in_array($object->id, array_keys($this->_revertible)) or
-            ($this->_action & CRM_Core_Action::REVERT and $object->id == $this->_revertedId)) {
+        if ( $object->workflow_id ) {
+            // do not expose action link for reverting to default if the template did not diverge or we just reverted it now
+            if ( !in_array($object->id, $this->_revertible ) or
+                ( $this->_action & CRM_Core_Action::REVERT and $object->id == $this->_revertedId ) ) {
+                $action &= ~CRM_Core_Action::REVERT;
+                $action &= ~CRM_Core_Action::VIEW;
+            }
+
+            // default workflow templates shouldn’t be deletable
+            // workflow templates shouldn’t have disable/enable actions (at least for CiviCRM 3.1)
+            if ($object->workflow_id) {
+                $action &= ~CRM_Core_Action::DISABLE;
+                $action &= ~CRM_Core_Action::DELETE;
+            }
+
+            // rebuild the action links HTML, as we need to handle %%orig_id%% for revertible templates
+            $values['action'] = CRM_Core_Action::formLink($links, $action, array('id' => $object->id, 'orig_id' => $this->_revertible[$object->id]));
+        } else {
             $action &= ~CRM_Core_Action::REVERT;
             $action &= ~CRM_Core_Action::VIEW;
+            parent::action($object, $action, $values, $links, $permission);  
         }
-
-        // default workflow templates shouldn’t be deletable
-        if ($object->workflow_id and $object->is_default) {
-            $action &= ~CRM_Core_Action::DELETE;
-        }
-
-        // workflow templates shouldn’t have disable/enable actions (at least for CiviCRM 3.1)
-        if ($object->workflow_id) {
-            $action &= ~CRM_Core_Action::DISABLE;
-        }
-
-        parent::action($object, $action, $values, $links, $permission);
-
-        // rebuild the action links HTML, as we need to handle %%orig_id%% for revertible templates
-        // FIXME: the below somehow hides the Enable/Disable actions even for rows which should have them
-        $values['action'] = CRM_Core_Action::formLink($links, $action, array('id' => $object->id, 'orig_id' => $this->_revertible[$object->id]));
     }
 
     function run($args = null, $pageArgs = null, $sort = null)
@@ -224,7 +224,7 @@ class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic
      * @access public
      */
     function browse( $action = null, $sort ) {
-        $links =& $this->links();
+        $links = $this->links();
         if ($action == null) {
             if ( ! empty( $links ) ) {
                 $action = array_sum(array_keys($links));
@@ -251,7 +251,7 @@ class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic
             $values[$messageTemplate->id] = array( );
             CRM_Core_DAO::storeValues( $messageTemplate, $values[$messageTemplate->id]);
             // populate action links
-            $this->action( $messageTemplate, $action, $values[$messageTemplate->id], self::$_links, CRM_Core_Permission::EDIT );
+            $this->action( $messageTemplate, $action, $values[$messageTemplate->id], $links, CRM_Core_Permission::EDIT );
             
             if ( !$messageTemplate->workflow_id ) {
                 $userTemplates[$messageTemplate->id]     = $values[$messageTemplate->id];
