@@ -541,15 +541,37 @@ class CRM_Profile_Form extends CRM_Core_Form
                     }
                 } else {
                     if ( $form->_context == 'dialog' ) {
-                        $viewUrls = array( );
                         require_once 'CRM/Contact/BAO/Contact/Utils.php';
-                        list( $viewUrls ) = CRM_Contact_BAO_Contact_Utils::formatContactIDSToLinks( $ids );
-                        $viewUrl  = implode( ', ',  $viewUrls );
-                        $errors['_qf_default']  = ts('One matching contact was found.', array('count' => count($viewUrls), 'plural' => '%count matching contacts were found.'));
-                        $errors['_qf_default'] .= '<br />';
-                        $errors['_qf_default'] .= ts('If you need to verify if this is the same contact, click here - %1 - to VIEW the existing contact in a new tab.', array(1 => $viewUrl, 'count' => count($viewUrls), 'plural' => 'If you need to verify whether one of these is the same contact, click here - %1 - to VIEW the existing contact in a new tab.'));
-                        $errors['_qf_default'] .= '<br />';
-                        $errors['_qf_default'] .= ts('If you are sure this is NOT a duplicate, click the Save Matching Contact button to create a new contact record.');
+                 
+		                 $contactLinks = CRM_Contact_BAO_Contact_Utils::formatContactIDSToLinks( $ids, true, true, $contactID );
+		
+		                 $duplicateContactsLinks = '<div class="matching-contacts-found">';
+		                 $duplicateContactsLinks .= ts('One matching contact was found.', array('count' => count($contactLinks), 'plural' => '%count matching contacts were found.<br />'));                 
+		                 $duplicateContactsLinks .= ts('You can View or Edit the existing contact in a new tab or Merge this contact with an existing contact.');
+		                 $duplicateContactsLinks .= '</div>';
+		                 $duplicateContactsLinks .= '<table class="matching-contacts-actions">';
+		
+		                 for ($i=0;$i<sizeof($contactLinks);$i++) {                 
+		            	   $row .='  <tr>	 ';
+		            	   $row .='  	<td class="matching-contacts-name"> ';
+		            	   $row .=  		$contactLinks[$i]['display_name'];
+		            	   $row .='  	</td>';
+		            	   $row .='  	<td class="matching-contacts-email"> ';
+		            	   $row .=  		$contactLinks[$i]['primary_email'];
+		            	   $row .='  	</td>';            	   
+		            	   $row .='  	<td class="action-items"> ';
+		            	   $row .=  		$contactLinks[$i]['view'].' ';
+		            	   $row .=  		$contactLinks[$i]['edit'];
+		            	   $row .='  	</td>';
+		            	   $row .='  </tr>	 ';
+		                 }
+		
+		                 $duplicateContactsLinks .= $row.'</table>';
+		                 $duplicateContactsLinks .= "If you're sure this record is not a duplicate, click the 'Save Matching Contact' button below.";
+		                 
+						 $errors['_qf_default'] = $duplicateContactsLinks;
+                        
+                        
                         // let smarty know that there are duplicates
                         $template =& CRM_Core_Smarty::singleton( );
                         $template->assign( 'isDuplicate', 1 );
