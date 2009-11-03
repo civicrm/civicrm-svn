@@ -90,7 +90,7 @@
 
 --  CRM-5095
     ALTER TABLE `civicrm_price_set`
-        ADD `extends` VARCHAR( 255 ) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Type of object this price set extends (e.g. Events, Contributions etc.).';
+        ADD `extends` VARCHAR( 255 ) COLLATE utf8_unicode_ci NOT NULL COMMENT 'What components are using this price set?';
  
     UPDATE `civicrm_price_set` SET extends = (select id from civicrm_component where name = 'CiviEvent');
 

@@ -84,7 +84,7 @@
       <type>varchar</type>
       <length>255</length>
       <required>true</required>
-      <comment>Type of object this price set extends (e.g. Events, Contributions etc.).</comment>
+      <comment>What components are using this price set?</comment>
       <add>3.1</add>
   </field>
 </table>
