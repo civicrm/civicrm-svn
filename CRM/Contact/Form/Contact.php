@@ -535,7 +535,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
 
         $allowEditSubType = true;
         if ( $this->_contactId && $this->_contactSubType ) {
-            $allowEditSubType = CRM_Contact_BAO_Contact::allowEditSubtype( $this->_contactId, $this->_contactSubType );
+            $allowEditSubType = CRM_Contact_BAO_ContactType::isAllowEdit( $this->_contactId, $this->_contactSubType );
         }
         $this->assign('allowEditSubType', $allowEditSubType);
         
@@ -635,10 +635,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $customFields     = 
             CRM_Core_BAO_CustomField::getFields( $params['contact_type'], false, true );
 
+        //CRM-5143
+        //if subtype is set, send subtype as extend to validate subtype customfield 
+        $customFieldExtends = (CRM_Utils_Array::value('contact_sub_type', $params)) ? $params['contact_sub_type'] : $params['contact_type'];  
+            
         $params['custom'] = CRM_Core_BAO_CustomField::postProcess( $params, 
                                                                    $customFields, 
                                                                    $this->_contactId,
-                                                                   $params['contact_type'], 
+                                                                   $customFieldExtends, 
                                                                    true );
         
         if ( array_key_exists( 'CommunicationPreferences',  $this->_editOptions ) ) {

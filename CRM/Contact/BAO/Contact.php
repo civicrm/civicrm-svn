@@ -2177,56 +2177,5 @@ UNION
          
          return $contextMenu;
      }
-
-     /**
-      * Function to check whether allow to edit any contact's subtype
-      * on the basis of custom data and relationship of specific subtype
-      *
-      * @param  int     $contactId    contact id.
-      * @param  string  $subType      subtype.  
-      *
-      * @return boolean true/false.
-      * @static
-      */
-     static function allowEditSubtype( $contactId, $subType ) 
-     {
-         if ( !$contactId || empty($subType) ) {
-             return true;
-         }
-
-         require_once 'CRM/Contact/BAO/ContactType.php';
-         $contactType  = CRM_Contact_BAO_ContactType::getBasicType( $subType );
-         
-         //first check for empty custom data which extends subtype
-         $subTypeValue = CRM_Core_DAO::VALUE_SEPARATOR.$subType.CRM_Core_DAO::VALUE_SEPARATOR;
-         $query = "SELECT table_name FROM civicrm_custom_group WHERE extends = '{$contactType}' 
-                                                             AND extends_entity_column_value LIKE '%{$subTypeValue}%'";
-         $dao = CRM_Core_DAO::executeQuery( $query );
-         while( $dao->fetch( ) ) {
-             $sql = "SELECT count(id) FROM {$dao->table_name} WHERE entity_id = {$contactId}";
-             $customDataCount = CRM_Core_DAO::singleValueQuery( $sql ); 
-             
-             if ( !empty($customDataCount) ) {
-                 $dao->free();
-                 return false;
-             }
-         }
-        
-         //then check relationships of type which used for subtype
-         $relationshipQuery = "
-SELECT count(cr.id) FROM civicrm_relationship cr 
-INNER JOIN civicrm_relationship_type crt ON 
-( cr.relationship_type_id = crt.id  AND 
-( ( crt.contact_type_a = '{$contactType}' AND crt.contact_sub_type_a = '{$subType}') OR 
-  ( crt.contact_type_b = '{$contactType}' AND crt.contact_sub_type_b = '{$subType}') ) ) 
-WHERE ( cr.contact_id_a = {$contactId} OR cr.contact_id_b = {$contactId} )";
-         
-         $relationshipCount = CRM_Core_DAO::singleValueQuery( $relationshipQuery ); 
-
-         if ( !empty($relationshipCount) ) {
-             return false;
-         }
-              
-         return true;
-     } 
+    
 }

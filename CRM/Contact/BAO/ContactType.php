@@ -453,4 +453,90 @@ WHERE contact_sub_type = '$name'";
     {
         return CRM_Core_DAO::setFieldValue( 'CRM_Contact_DAO_ContactType', $id, 'is_active', $is_active );
     }
+    
+    /**
+     * Function to check whether allow to change any contact's subtype
+     * on the basis of custom data and relationship of specific subtype
+     *
+     * @param  int     $contactId    contact id.
+     * @param  string  $subType      subtype.  
+     *
+     * @return boolean true/false.
+     * @static
+     */
+    static function isAllowEdit( $contactId, $subType = null ) {
+
+        if ( !$contactId ) {
+            return true;
+        }
+        
+        if ( empty($subType) ) {
+            $subType = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                    $contactId,
+                                                    'contact_sub_type'
+                                                    ); 
+        }
+        
+        if ( self::hasCustomData($contactId, $subType) || self::hasRelationships($contactId, $subType) ) {
+            return false;
+        }
+        
+        return true;
+    } 
+    
+    static function hasCustomData ( $contactId, $contactType ) {
+
+        $subTypeClause = null;
+        if ( self::isaSubType($contactType) ) {
+            $subType = $contactType;
+            $contactType  = self::getBasicType( $subType );
+            
+            //first check for empty custom data which extends subtype
+            $subTypeValue = CRM_Core_DAO::VALUE_SEPARATOR.$subType.CRM_Core_DAO::VALUE_SEPARATOR;
+            $subTypeClause = " AND extends_entity_column_value LIKE '%{$subTypeValue}%' ";  
+        }
+        
+        $query = "SELECT table_name FROM civicrm_custom_group WHERE extends = '{$contactType}' {$subTypeClause}"; 
+        
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        while( $dao->fetch( ) ) {
+            $sql = "SELECT count(id) FROM {$dao->table_name} WHERE entity_id = {$contactId}";
+            $customDataCount = CRM_Core_DAO::singleValueQuery( $sql ); 
+            
+            if ( !empty($customDataCount) ) {
+                $dao->free();
+                return true;
+            }
+        }
+        
+        return false; 
+    }
+    
+    static function hasRelationships ( $contactId, $contactType ) {
+     
+        $subTypeClause = null;
+        if ( self::isaSubType($contactType) ) {
+            $subType = $contactType;
+            $contactType  = self::getBasicType( $subType );
+            $subTypeClause = " AND ( ( crt.contact_type_a = '{$contactType}' AND crt.contact_sub_type_a = '{$subType}') OR 
+                                     ( crt.contact_type_b = '{$contactType}' AND crt.contact_sub_type_b = '{$subType}')  ) ";
+        } else {
+            $subTypeClause = " AND ( crt.contact_type_a = '{$contactType}' OR crt.contact_type_b = '{$contactType}' ) "; 
+        }
+        
+        // check relationships for 
+        $relationshipQuery = "
+SELECT count(cr.id) FROM civicrm_relationship cr 
+INNER JOIN civicrm_relationship_type crt ON 
+( cr.relationship_type_id = crt.id {$subTypeClause} ) 
+WHERE ( cr.contact_id_a = {$contactId} OR cr.contact_id_b = {$contactId} )";
+        
+        $relationshipCount = CRM_Core_DAO::singleValueQuery( $relationshipQuery ); 
+        
+        if ( !empty($relationshipCount) ) {
+            return true;
+        }
+        
+        return false;
+    } 
 }
