@@ -6,13 +6,13 @@
 {ts}Payment Due{/ts}
 
 ===========================================================
-{ts}Amount Due{/ts} : {$amount_due|crmMoney}
-{ts}Due Date{/ts} : {$scheduled_payment_date|truncate:10:''|crmDate}
+{ts}Amount Due{/ts}: {$amount_due|crmMoney}
+{ts}Due Date{/ts}: {$scheduled_payment_date|truncate:10:''|crmDate}
 
 {if $contribution_page_id}
 {capture assign=contributionUrl}{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$contribution_page_id`&cid=`$contact.contact_id`&pledgeId=`$pledge_id`&cs=`$checksumValue`" a=true h=0}{/capture}
 Click this link to go to a web page where you can make your payment online:
-{$contributionUrl} 
+{$contributionUrl}
 {else}
 {ts}Please mail your payment to{/ts}:
 {$domain.address}
@@ -22,9 +22,9 @@ Click this link to go to a web page where you can make your payment online:
 {ts}Pledge Information{/ts}
 
 ===========================================================
-{ts}Pledge Received{/ts} : {$create_date|truncate:10:''|crmDate}
-{ts}Total Pledge Amount{/ts} : {$amount|crmMoney}
-{ts}Total Paid{/ts} : {$amount_paid|crmMoney}
+{ts}Pledge Received{/ts}: {$create_date|truncate:10:''|crmDate}
+{ts}Total Pledge Amount{/ts}: {$amount|crmMoney}
+{ts}Total Paid{/ts}: {$amount_paid|crmMoney}
 
 {ts 1=$domain.phone 2=$domain.email}Please contact us at %1 or send email to %2 if you have questions
 or need to modify your payment schedule.{/ts}
