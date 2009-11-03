@@ -150,8 +150,10 @@ class CRM_Contact_Form_Task_EmailCommon
     	    $form->_contactIds = array( );
     	    foreach( $allToEmails as $value ) {
     	        list( $contactId, $email ) = explode( '::', $value );
-    	        $form->_contactIds[]      =  $contactId;
-    	        $form->_toContactEmails[] = $email;
+    	        if ( $contactId ) {
+    	            $form->_contactIds[]      =  $contactId;
+    	            $form->_toContactEmails[] = $email;
+	            }
     	    }
     	}
 
@@ -160,6 +162,7 @@ class CRM_Contact_Form_Task_EmailCommon
                                        'on_hold' => 1, 'display_name' => 1, 'preferred_mail_format' => 1 );
         
             require_once 'CRM/Mailing/BAO/Mailing.php';
+            
             list( $form->_contactDetails ) = CRM_Mailing_BAO_Mailing::getDetails( $form->_contactIds, $returnProperties, false, false );
 
             // make a copy of all contact details
