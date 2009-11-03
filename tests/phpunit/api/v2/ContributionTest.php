@@ -251,32 +251,30 @@ class api_v2_ContributionTest extends CiviUnitTestCase
 
 ///////////////// civicrm_contribution_search methods
 
-///////////////// civicrm_event_search methods
-
     /**
-     *  Test civicrm_event_search with wrong params type
+     *  Test civicrm_contribution_search with wrong params type
      */
     function testSearchWrongParamsType()
     {
         $params = 'a string';
-        $result =& civicrm_event_search($params);
+        $result =& civicrm_contribution_search($params);
 
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
         $this->assertEquals( $result['error_message'], 'Params need to be an array', 'In line ' . __LINE__ );
     }
 
     /**
-     *  Test civicrm_event_search with empty params
+     *  Test civicrm_contribution_search with empty params
      */
      function testSearchEmptyParams()
      {
         $params = array();
-        $result =& civicrm_event_search($params);
+        $result =& civicrm_contribution_search($params);
         $this->markTestIncomplete();
      }
 
     /**
-     *  Test civicrm_event_search. Success expected.
+     *  Test civicrm_contribution_search. Success expected.
      */
      function testSearch()
      {
