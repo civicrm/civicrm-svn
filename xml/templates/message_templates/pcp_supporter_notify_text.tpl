@@ -1,13 +1,13 @@
 {ts}Dear supporter{/ts},
-{ts}Thanks for creating a personal campaign page in support of {/ts}{$contribPageTitle}
+{ts 1="$contribPageTitle"}Thanks for creating a personal campaign page in support of %1.{/ts}
 
-{* Approved message *}
 {if $pcpStatus eq 'Approved'}
 ====================
 {ts}Promoting Your Page{/ts}
 
 ====================
 {if $isTellFriendEnabled}
+
 {ts}You can begin your fundraising efforts using our "Tell a Friend" form{/ts}:
 
 1. {ts}Login to your account at{/ts}:
@@ -17,8 +17,8 @@
 {$pcpTellFriendURL}
 {else}
 
-{ts}Send email to family, friends and colleagues with a personal message about this campaign.
-Include this link to your fundraising page in your emails.{/ts}:
+{ts}Send email to family, friends and colleagues with a personal message about this campaign.{/ts}
+{ts}Include this link to your fundraising page in your emails{/ts}:
 {$pcpInfoURL}
 {/if}
 
@@ -37,7 +37,6 @@ Include this link to your fundraising page in your emails.{/ts}:
 your page, tell friends, and update your contact info.{/ts}
 
 
-{* Waiting Review message *}
 {elseif $pcpStatus EQ 'Waiting Review'}
 {ts}Your page requires administrator review before you can begin your fundraising efforts.{/ts}
 
