@@ -62,10 +62,12 @@
     </ul>
   
     {* create two selector tabs, first being the ‘user’ one, the second being the ‘workflow’ one *}
-    {section name='template_selector' loop=2}
-      <div id='{if $smarty.section.template_selector.first}user{else}workflow{/if}' class='ui-tabs-panel ui-widget-content ui-corner-bottom'>
+    {include file="CRM/common/enableDisable.tpl"}
+    {include file="CRM/common/jsortable.tpl"}
+    {foreach from=$rows item=template_row key=type}
+      <div id="{if $type eq 'userTemplates'}user{else}workflow{/if}" class='ui-tabs-panel ui-widget-content ui-corner-bottom'>
           <div class="help">
-          {if $smarty.section.template_selector.first}
+          {if $type eq 'userTemplates'}
             {ts}Message templates allow you to save and re-use messages with layouts. They are useful if you need to send similar emails to contacts on a recurring basis. You can also use them in CiviMail Mailings and they are required for CiviMember membership renewal reminders.{/ts} {help id="id-intro"}
           {else}
             {ts}System workflow message templates are used to generate the emails sent to consituents and administrators for contribution receipts, event confirmations and many other workflows. You can customize the style and wording of these messages here.{/ts} {help id="id-system-workflow"}
@@ -73,49 +75,51 @@
           </div>
         <div>
           <p></p>
-            {strip}
-              {include file="CRM/common/enableDisable.tpl"}
-              {include file="CRM/common/jsortable.tpl"}
+            {if !empty( $template_row) }
               <table class="display">
                 <thead>
                   <tr>
-                    <th id="sortable">{if $smarty.section.template_selector.first}{ts}Message Title{/ts}{else}{ts}Workflow{/ts}{/if}</th>
-                    {if $smarty.section.template_selector.first}
+                    <th class="sortable">{if $type eq 'userTemplates'}{ts}Message Title{/ts}{else}{ts}Workflow{/ts}{/if}</th>
+                    {if $type eq 'userTemplates'}
                       <th>{ts}Message Subject{/ts}</th>
                       <th>{ts}Enabled?{/ts}</th>
                     {/if}
                     <th></th>
                   </tr>
                 </thead>
-
-                {* FIXME: the tab UI does not work if the selector is empty; we should get rid of the below line *}
-                {if $smarty.section.template_selector.first}<tr><td></td><td></td><td></td><td></td></tr>{/if}
-{debug}
-                {foreach from=$rows item=row}
-                  {* we want to hide reserved rows; for the first selector show non-workflow_id templates, for the second selector show workflow_id templates *}
-                  {if !$row.is_reserved and (($smarty.section.template_selector.first and !$row.workflow_id) or ($smarty.section.template_selector.last and $row.workflow_id))}
+                <tbody>
+                {foreach from=$template_row item=row}
                     <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
                       <td>{$row.msg_title}</td>
-                      {if $smarty.section.template_selector.first}
+                      {if $type eq 'userTemplates'}
                         <td>{$row.msg_subject}</td>
                         <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
                       {/if}
                       <td>{$row.action|replace:'xx':$row.id}</td>
                     </tr>
-                  {/if}
                 {/foreach}
+                </tbody>
               </table>
-            {/strip}
+              {/if}
 
-            {if $action ne 1 and $action ne 2 and $smarty.section.template_selector.first}
+            {if $action ne 1 and $action ne 2 and $type eq 'userTemplates'}
               <div class="action-link">
                 <a href="{crmURL q="action=add&reset=1"}" id="newMessageTemplates" class="button"><span>&raquo; {ts}New Message Template{/ts}</span></a>
               </div>
               <div class="spacer"></div>
             {/if}
-          </div>
+            
+            {if empty( $template_row) }
+                <div class="messages status">
+                  <dl>
+                    <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
+                    <dd>{ts 1=$crmURL}There are no Message Templates entered. You can <a href='%1'>add one</a>.{/ts}</dd>
+                  </dl>
+                </div>
+            {/if}
+         </div>
       </div>
-    {/section}
+    {/foreach}
   </div>
 
   <script type='text/javascript'>

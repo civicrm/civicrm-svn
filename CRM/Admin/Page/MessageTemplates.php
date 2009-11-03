@@ -214,6 +214,57 @@ class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic
     {
         return 'civicrm/admin/messageTemplates';
     }
+    
+    /**
+     * browse all entities.
+     *
+     * @param int $action
+     *
+     * @return void
+     * @access public
+     */
+    function browse( $action = null, $sort ) {
+        $links =& $this->links();
+        if ($action == null) {
+            if ( ! empty( $links ) ) {
+                $action = array_sum(array_keys($links));
+            }
+        }
+        
+        if ( $action & CRM_Core_Action::DISABLE ) {
+            $action -= CRM_Core_Action::DISABLE;
+        }
+        
+        if ( $action & CRM_Core_Action::ENABLE ) {
+            $action -= CRM_Core_Action::ENABLE;
+        }
+        
+        $messageTemplate = new CRM_Core_BAO_MessageTemplates( );
+        $messageTemplate->orderBy ( 'msg_title' . ' asc' );
+        
+        $userTemplates     = array( );
+        $workflowTemplates = array( );
+        
+        // find all objects
+        $messageTemplate->find();
+        while ($messageTemplate->fetch()) {
+            $values[$messageTemplate->id] = array( );
+            CRM_Core_DAO::storeValues( $messageTemplate, $values[$messageTemplate->id]);
+            // populate action links
+            $this->action( $messageTemplate, $action, $values[$messageTemplate->id], self::$_links, CRM_Core_Permission::EDIT );
+            
+            if ( $messageTemplate->workflow_id ) {
+                $workflowTemplates[$messageTemplate->id] = $values[$messageTemplate->id];
+            } else {
+                $userTemplates[$messageTemplate->id]     = $values[$messageTemplate->id];
+            } 
+        }
+        
+        $rows = array( 'userTemplates'     => $userTemplates,
+                       'workflowTemplates' => $workflowTemplates );
+
+        $this->assign( 'rows', $rows );
+    }
 }
 
 
