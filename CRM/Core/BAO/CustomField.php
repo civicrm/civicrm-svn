@@ -1663,27 +1663,52 @@ ORDER BY html_type";
                           $entityID,
                           $customFieldExtends,
                           $inline = false ) {
+        
         $customData = array( );
+        $invaidCustomFieldIds = array( );
+        //CRM-5143
+        //if subtype is set validate customfield 
+        if ( in_array($customFieldExtends, CRM_Contact_BAO_ContactType::contactTypes()) ) {
+            if ( $subType = CRM_Utils_Array::value('contact_sub_type', $params) ) {
+                $customFieldExtends = $subType;  
+            } else {
+                //otherwise unset subtype customfield
+                $query = "
+SELECT cf.id FROM civicrm_custom_field cf 
+INNER JOIN civicrm_custom_group cg ON 
+( cf. custom_group_id = cg.id ) 
+WHERE  cg.extends = '{$customFieldExtends}' 
+       AND cg.extends_entity_column_value IS NOT NULL";
 
+                $dao =& CRM_Core_DAO::executeQuery( $query );
+                while ( $dao->fetch( ) ) {
+                    $invaidCustomFieldIds[] = $dao->id;
+                }
+            }
+        }
+        
         foreach ( $params as $key => $value ) {
             if ( $customFieldInfo = CRM_Core_BAO_CustomField::getKeyID( $key, true ) ) {
-                // for autocomplete transfer hidden value instead of label
-                if ( $params[$key] && isset ( $params[$key. '_id'] ) ) {
-                    $value = $params[$key. '_id'];
+         
+                if ( empty($invaidCustomFieldIds) || !in_array($customFieldInfo[0], $invaidCustomFieldIds) ) {
+                    // for autocomplete transfer hidden value instead of label
+                    if ( $params[$key] && isset ( $params[$key. '_id'] ) ) {
+                        $value = $params[$key. '_id'];
+                    }
+                    
+                    // we need to append time with date 
+                    if ( $params[$key] && isset ( $params[$key. '_time'] ) ) {
+                        $value .= ' ' . $params[$key. '_time'];
+                    }
+                    
+                    CRM_Core_BAO_CustomField::formatCustomField( $customFieldInfo[0],
+                                                                 $customData,
+                                                                 $value,
+                                                                 $customFieldExtends,
+                                                                 $customFieldInfo[1],
+                                                                 $entityID,
+                                                                 $inline );
                 }
-                
-                // we need to append time with date 
-                if ( $params[$key] && isset ( $params[$key. '_time'] ) ) {
-                    $value .= ' ' . $params[$key. '_time'];
-                }
-                
-                CRM_Core_BAO_CustomField::formatCustomField( $customFieldInfo[0],
-                                                             $customData,
-                                                             $value,
-                                                             $customFieldExtends,
-                                                             $customFieldInfo[1],
-                                                             $entityID,
-                                                             $inline );
             }
         }
         return $customData;

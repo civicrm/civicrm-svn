@@ -534,8 +534,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
 
         $allowEditSubType = true;
-        if ( $this->_contactId ) {
-            $allowEditSubType = CRM_Contact_BAO_Contact::allowEditSubtype( $this->_contactId, $this->_contactSubType, $this->_groupTree );
+        if ( $this->_contactId && $this->_contactSubType ) {
+            $allowEditSubType = CRM_Contact_BAO_Contact::allowEditSubtype( $this->_contactId, $this->_contactSubType );
         }
         $this->assign('allowEditSubType', $allowEditSubType);
         
