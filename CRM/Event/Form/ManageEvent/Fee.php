@@ -274,7 +274,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
 
         require_once 'CRM/Price/BAO/Set.php';
         $this->add('select', 'price_set_id', ts( 'Price Set' ),
-                   array( '' => ts( '- none -' )) + CRM_Price_BAO_Set::getAssoc( false, 'Event'),
+                   array( '' => ts( '- none -' )) + CRM_Price_BAO_Set::getAssoc( false, 'CiviEvent'),
                    null, array('onchange' => "return showHideByValue('price_set_id', '', 'map-field', 'block', 'select', false);")
                    );
         

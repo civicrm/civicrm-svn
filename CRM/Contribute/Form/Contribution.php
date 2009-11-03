@@ -815,7 +815,7 @@ WHERE  contribution_id = {$this->_id}
         
         if ( empty( $this->_lineItems ) ) {
             require_once 'CRM/Price/BAO/Set.php';
-            $priceSets = CRM_Price_BAO_Set::getAssoc( false, 'Contribution');
+            $priceSets = CRM_Price_BAO_Set::getAssoc( false, 'CiviContribute');
             $hasPriceSets = false;
             if ( !empty( $priceSets ) && !$this->_ppID ) {
                 $hasPriceSets = true;

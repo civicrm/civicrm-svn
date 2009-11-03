@@ -138,18 +138,24 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         }
         
         require_once 'CRM/Core/Config.php';
+        require_once 'CRM/Core/Component.php';
         $config =& CRM_Core_Config::singleton( );
-        $components = array( 'CiviEvent'      => array( 'civicrm_event', 'civicrm_participant' ), 
-                             'CiviContribute' => array( 'civicrm_contribution', 'civicrm_contribution_page' ) );
-        
-        foreach ( $components as $compName => $compTables ) {
+        $components = array( 'CiviEvent'      => array( 'title'  => ts( 'Event' ),  
+                                                        'extend' => CRM_Core_Component::getComponentID( 'CiviEvent' ),
+                                                        'tables' => array( 'civicrm_event', 
+                                                                           'civicrm_participant' ) ), 
+                             'CiviContribute' => array( 'title'  => ts( 'Contribution' ),
+                                                        'extend' => CRM_Core_Component::getComponentID( 'CiviContribute' ),
+                                                        'tables' => array( 'civicrm_contribution', 
+                                                                           'civicrm_contribution_page' ) ) );
+        foreach ( $components as $compName => $compValues ) {
             // take only enabled components.
             if ( !in_array( $compName, $config->enableComponents ) ) continue;
-            $option = HTML_QuickForm::createElement( 'checkbox', $compName, null, $compName );
+            $option = HTML_QuickForm::createElement( 'checkbox', $compValues['extend'], null, $compValues['title'] );
             
-            //if price set is used than feeze it.
+            //if price set is used than freeze it.
             if ( !empty( $priceSetUsedTables ) ) {
-                foreach ( $compTables as $table ) {
+                foreach ( $compValues['tables'] as $table ) {
                     if ( in_array( $table, $priceSetUsedTables ) ) {
                         $option->freeze( );
                         break;
@@ -158,7 +164,6 @@ class CRM_Price_Form_Set extends CRM_Core_Form
             }
             $extends[] = $option;
         }
-        
         $this->addGroup( $extends, 'extends', ts('Used For'), '&nbsp;', true );
 
         $this->addRule( 'extends', ts('%1 is a required field.', array(1 => ts('Used For'))), 'required' );
@@ -204,15 +209,13 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         if ( isset( $this->_sid ) ) {
             $params = array( 'id' => $this->_sid );
             CRM_Price_BAO_Set::retrieve( $params, $defaults );
-            $extends = explode( ',', $defaults['extends'] );
+            $extends = explode( CRM_Core_DAO::VALUE_SEPARATOR, $defaults['extends'] );
             unset( $defaults['extends'] );
-            foreach ( $extends as $v ) {
-                $defaults['extends'][$v] = 1;
-            }
+            foreach ( $extends as $compId ) $defaults['extends'][$compId] = 1;
         } else {
             $defaults['is_active'] = 1;
         }
-
+        
         return $defaults;
     }
     
@@ -229,9 +232,15 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         // get the submitted form values.
         $params              = $this->controller->exportValues( 'Set' );
         $params['name']      = CRM_Utils_String::titleToVar( $params['title'] );
-        $params['extends']   = implode( ',', array_keys( $params['extends'] ) );
         $params['is_active'] = CRM_Utils_Array::value( 'is_active', $params, false );
-
+        
+        $compIds = array( );
+        $extends = CRM_Utils_Array::value( 'extends', $params );
+        if ( is_array( $extends ) ) { 
+            foreach ( $extends as $compId => $selected ) if ( $selected ) $compIds[] = $compId; 
+        }
+        $params['extends'] = implode( CRM_Core_DAO::VALUE_SEPARATOR, $compIds );
+        
         if ($this->_action & CRM_Core_Action::UPDATE) {
             $params['id']    = $this->_sid;
         }

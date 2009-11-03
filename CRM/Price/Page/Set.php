@@ -244,13 +244,22 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
     {
         // get all price sets
         $priceSet = array();
+        require_once 'CRM/Core/Component.php';
+        $comps = array( 'CiviEvent'      => ts( 'Event' ),
+                        'CiviContribute' => ts( 'Contribution' ) );
+        
         $dao =& new CRM_Price_DAO_Set();
-
         $dao->find();
-
         while ($dao->fetch()) {
             $priceSet[$dao->id] = array();
             CRM_Core_DAO::storeValues( $dao, $priceSet[$dao->id] );
+            
+            $compIds = explode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                CRM_Utils_Array::value( 'extends', $priceSet[$dao->id] ) );
+            $extends = array( );
+            foreach ( $compIds as $compId ) $extends[] = $comps[CRM_Core_Component::getComponentName($compId)];
+            $priceSet[$dao->id]['extends'] = implode( ', ', $extends );
+            
             // form all action links
             $action = array_sum(array_keys($this->actionLinks()));
             
@@ -260,7 +269,7 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
             } else {
                 $action -= CRM_Core_Action::DISABLE;
             }
-
+            
             $priceSet[$dao->id]['action'] = CRM_Core_Action::formLink(self::actionLinks(), $action, 
                                                                       array('sid' => $dao->id) );
         }

@@ -125,7 +125,7 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
         // add price set fields
         require_once 'CRM/Price/BAO/Set.php';
         $this->add('select', 'price_set_id', ts( 'Price Set' ),
-                   array( '' => ts( '- none -' )) + CRM_Price_BAO_Set::getAssoc( false, 'Contribution'),
+                   array( '' => ts( '- none -' )) + CRM_Price_BAO_Set::getAssoc( false, 'CiviContribute'),
                    null, array('onchange' => "showHideAmountBlock( this.value, 'price_set_id' );")
                    );
         

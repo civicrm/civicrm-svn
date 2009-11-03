@@ -195,10 +195,24 @@ class CRM_Core_Component
 
     static function getComponentID( $componentName ) {
         $info =& self::_info( );
-
+        
         return $info[$componentName]->componentID;
     }
-
+    
+    static function getComponentName( $componentID ) {
+        $info =& self::_info( );
+        
+        $componentName = null;
+        foreach ( $info as $compName => $component ) {
+            if ( $component->componentID == $componentID ) {
+                $componentName = $compName;
+                break;
+            }
+        }
+        
+        return $componentName;
+    }
+    
     static function &getQueryFields( ) 
     {
         $info =& self::_info( );

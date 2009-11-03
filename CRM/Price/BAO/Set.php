@@ -335,15 +335,16 @@ WHERE     ct.id = cp.contribution_type_id AND
 
         return null;
     }
-
+    
     /**
      * Return an associative array of all price sets
      *
-     * @param bool $withInactive whether or not to include inactive entries
+     * @param bool   $withInactive        whether or not to include inactive entries
+     * @param string $extendComponentName name of the component like 'CiviEvent','CiviContribute'
      *
      * @return array associative array of id => name
      */
-    public static function getAssoc( $withInactive = false, $extends = false ) 
+    public static function getAssoc( $withInactive = false, $extendComponentName = false ) 
     {
         $query = "
     SELECT 
@@ -353,13 +354,14 @@ WHERE     ct.id = cp.contribution_type_id AND
        civicrm_price_set 
     WHERE 
        civicrm_price_set.id = civicrm_price_field.price_set_id ";
-
+        
         if ( !$withInactive ) {
-           $query .= " AND civicrm_price_set.is_active = 1 ";
+            $query .= " AND civicrm_price_set.is_active = 1 ";
         }
-
-        if ( $extends ) {
-            $query .= " AND civicrm_price_set.extends LIKE '%{$extends}%' ";
+        
+        if ( $extendComponentName ) {
+            $componentId = CRM_Core_Component::getComponentID( $extendComponentName );
+            if ( $componentId ) $query .= " AND civicrm_price_set.extends LIKE '%$componentId%' ";
         }
         
         $dao =& CRM_Core_DAO::executeQuery( $query );
