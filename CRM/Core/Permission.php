@@ -150,6 +150,7 @@ class CRM_Core_Permission {
         }
 
         $groups = self::ufGroup( $type );
+        CRM_Core_Error::debug( "$gid, $type", $groups );
         return in_array( $gid, $groups ) ? true : false;
     }
 

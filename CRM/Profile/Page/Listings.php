@@ -273,26 +273,17 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
             $this->assign( 'isReset', true );
         }
 
-        // check for search permission
-        $searchPermission = true;
-        if ( $this->_gid ) {
-            $searchPermission = CRM_Core_Permission::ufGroupValid( $this->_gid, CRM_Core_Permission::SEARCH );
-        }
-
-        if ( $searchPermission ) {
-            // we have to build form since pager needs it.
-            $formController =& new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Search',
-                                                               ts('Search Profile'),
-                                                               CRM_Core_Action::ADD );
-            $formController->setEmbedded( true );
-            $formController->process( ); 
-            $formController->run( ); 
-            
-            // also get the search tpl name
-            $this->assign( 'searchTPL', $formController->getTemplateFileName( ) );
-            
-            $this->assign( 'search', $this->_search );
-        }
+        $formController =& new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Search',
+                                                           ts('Search Profile'),
+                                                           CRM_Core_Action::ADD );
+        $formController->setEmbedded( true );
+        $formController->process( ); 
+        $formController->run( ); 
+        
+        // also get the search tpl name
+        $this->assign( 'searchTPL', $formController->getTemplateFileName( ) );
+        
+        $this->assign( 'search', $this->_search );
         
         return parent::run( );
     }
