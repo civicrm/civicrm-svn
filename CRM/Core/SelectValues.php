@@ -348,135 +348,40 @@ class CRM_Core_SelectValues
     /**
      * compose the parameters for a date select object
      *
-     * @param  $type the type of date
+     * @param  $type    the type of date
+     * @param  $format  date format ( QF format) 
      *
      * @return array         the date array
      * @static
      */
-    static function &date( $type = 'birth', $min = null, $max = null, $dateParts = null)
+    static function &date( $type = null, $format = null )
     {
-        static $_date = null;
-        static $config = null;
+        if ( $format ) {
+            $newDate['format'] = $format;
+        } else {
+            if ( $type ) {
+                require_once 'CRM/Core/DAO/PreferencesDate.php';
+                $dao = new CRM_Core_DAO_PreferencesDate( );
+                $dao->name = $type;
+                if ( ! $dao->find( true ) ) {
+                    CRM_Core_Error::fatal( );
+                }
+            }
 
-        if (!$config) {
-            $config =& CRM_Core_Config::singleton();
-        }
-
-        if (!$_date) {
-            require_once 'CRM/Utils/Date.php';
-            $_date = array(
-                'format'           => 'M d Y',
-                'addEmptyOption'   => true,
-                'emptyOptionText'  => ts('- select -'),
-                'emptyOptionValue' => ''
-            );
-        }
-        
-        $newDate = $_date;
-
-        require_once 'CRM/Core/DAO/PreferencesDate.php';
-        $dao = new CRM_Core_DAO_PreferencesDate( );
-        $dao->name = $type;
-        if ( ! $dao->find( true ) ) {
-            CRM_Core_Error::fatal( );
-        }
-
-        if ($type == 'birth') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
+            if ( $type == 'creditCard' ) {
+                $minOffset = $dao->start;
+                $maxOffset = $dao->end;
+                $newDate['format'] = $dao->date_format;
+            }
             
-            // support for birthdate format, CRM-3090 
-            $format = trim( $dao->format );
-            $birthDateFormat = CRM_Utils_Date::checkBirthDateFormat( $format );
-            if ( $birthDateFormat ) {
-                $formatParts = $birthDateFormat['dateParts'];
-                if ( in_array( 'M', $formatParts ) ) {
-                    $formatParts[array_search( 'M', $formatParts )] = $config->dateformatMonthVar;
-                }
-                $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDate, $formatParts );
-            } else {
-                $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDate );
-            }
-        } elseif ($type == 'relative') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-        } elseif ($type == 'custom') {
-            $minOffset = $min; 
-            $maxOffset = $max; 
-            if( $dateParts ) {
-                require_once 'CRM/Core/BAO/CustomOption.php';
-                $filter = explode( CRM_Core_DAO::VALUE_SEPARATOR, $dateParts );
-                $format = $config->dateformatQfDate;
-
-                foreach ( $filter as $val ) {
-                    switch ( $val ) {
-                        case 'M':
-                            $filter[] = 'F';
-                            $filter[] = 'm';
-                            break;
-
-                    case 'd':
-                        $filter[] = 'j';
-                        break;
-
-                    case 'h':
-                        $filter[] = 'H';
-                        $filter[] = 'G';
-                        $filter[] = 'g';
-
-                    case 'i':
-                        $format = $config->dateformatQfDatetime;
-                        break;
-                    }
-                }
-
-                $newDate['format'] = CRM_Utils_Date::posixToPhp( $format, $filter );
-            }
-        } elseif ($type == 'activityDate') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-        } elseif ($type == 'fixed') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-        } elseif ( $type == 'manual' ) {
-            $minOffset = $min;
-            $maxOffset = $max;
-        } elseif ($type == 'creditCard') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-            $newDate['format'] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_PreferencesDate', 'creditCard','date_format','name' );
-        } elseif ($type == 'mailing') {
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-            $format = explode( ' ', trim( $dao->format ) );
-            $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDatetime,
-                                                             $format );
-            $newDate['optionIncrement']['i'] = $dao->minute_increment;
-        } elseif ($type == 'activityDatetime') {
-            require_once 'CRM/Utils/Date.php';
-            //for datetime use datetime format from config
-            $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDatetime );
-            $newDate['optionIncrement']['i'] = $dao->minute_increment;
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-        } elseif ($type == 'datetime') {
-            require_once 'CRM/Utils/Date.php';
-            //for datetime use datetime format from config
-            $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDatetime );
-            $newDate['optionIncrement']['i'] = $dao->minute_increment;
-            $minOffset = $dao->start;
-            $maxOffset = $dao->end;
-        } elseif ($type =='duration') {
-            $format = explode( ' ', trim( $dao->format ) );
-            $newDate['format'] = CRM_Utils_Date::posixToPhp( $config->dateformatQfDate,
-                                                             $format );
-            $newDate['optionIncrement']['i'] = $dao->minute_increment;
+            if ( !$newDate['format'] ) {
+                $newDate['format'] = 'M d';
+            } 
+            
+            $year = date('Y');
+            $newDate['minYear'] = $year - $minOffset;
+            $newDate['maxYear'] = $year + $maxOffset;
         }
-        
-        $year = date('Y');
-        $newDate['minYear'] = $year - $minOffset;
-        $newDate['maxYear'] = $year + $maxOffset;
-        
         return $newDate;
     }
 

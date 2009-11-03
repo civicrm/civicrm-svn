@@ -61,7 +61,7 @@ class CRM_Admin_Form_Setting_Date extends CRM_Admin_Form_Setting
                     CRM_Core_SelectValues::getTimeFormats( ) );
                     
         $this->add('date', 'fiscalYearStart', ts('Fiscal Year Start'),
-                   CRM_Core_SelectValues::date( 'custom', null, null, "M\001d" ) );
+                   CRM_Core_SelectValues::date( null, 'M d' ) );
         
         parent::buildQuickForm();
     }
