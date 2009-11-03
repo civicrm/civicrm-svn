@@ -1346,7 +1346,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         } else if ( ( $fieldName === 'birth_date' ) || ( $fieldName === 'deceased_date' ) ) { 
             $form->addDate( $name, $title, $required, array( 'formatType' => 'birth') );
         } else if ( in_array($fieldName, array( "membership_start_date","membership_end_date","join_date")) ) {  
-            $form->add('date', $name, $title, CRM_Core_SelectValues::date('manual'), $required ); 
+            $form->addDate( $name, $title, $required, array( 'formatType' => 'custom') );
         }  else if ($field['name'] == 'membership_type_id' ) { 
             require_once 'CRM/Member/PseudoConstant.php';
             $form->add('select', 'membership_type_id', $title,
@@ -1449,8 +1449,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 CRM_Core_BAO_CustomField::addQuickFormElement( $form, $name, $customFieldID, false, $required, $search, $title );
             }
         } else if ( in_array($fieldName, array('receive_date', 'receipt_date', 'thankyou_date', 'cancel_date' )) ) {  
-            $form->add('date', $name, $title, CRM_Core_SelectValues::date('manual', 3, 1), $required );  
-            $form->addRule($name, ts('Select a valid date.'), 'qfDate');
+            $form->addDate( $name, $title, $required, array( 'formatType' => 'custom') );
         } else if ($fieldName == 'payment_instrument' ) {
             require_once "CRM/Contribute/PseudoConstant.php";
             $form->add('select', $name, $title,
@@ -1464,8 +1463,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionStatus( ), $required);
         } else if ($fieldName == 'participant_register_date' ) {
-            //use activitydatetime format for participant register date
-            $form->add('date', $name, $title, CRM_Core_SelectValues::date('activityDatetime'), $required );  
+            $form->addDateTime( $name, $title, $required, array( 'formatType' => 'activityDateTime') );
         } else if ($fieldName == 'participant_status_id' ) {
             require_once "CRM/Event/PseudoConstant.php";
             $cond = null;

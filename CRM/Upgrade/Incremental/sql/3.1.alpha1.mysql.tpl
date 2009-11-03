@@ -268,5 +268,6 @@
         WHERE name IN ( 'activityDate', 'activityDatetime', 'birth', 'custom',
                         'datetime', 'fixed', 'mailing', 'manual', 'relative' );
                         
-    UPDATE civicrm_preferences_date SET name = 'searchDate' WHERE name = 'relative';                     
+    UPDATE civicrm_preferences_date SET name = 'searchDate' WHERE name = 'relative';
+    UPDATE civicrm_preferences_date SET name = 'activityDatet=Time' WHERE name = 'activityDatetime';                      
     
