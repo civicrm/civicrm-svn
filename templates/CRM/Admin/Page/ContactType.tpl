@@ -1,5 +1,5 @@
 <div id="help">
-    {ts}Contact Types provide convenient labels to further differentiate contacts. Administrators may define as many additional types as appropriate for your constituents (examples might be Student,Parent...).{/ts}
+    {ts}CiviCRM comes with 3 basic (built-in) contact types: Individual, Household, and Organization. You can create additional contact types based on these types to further differentiate contacts (for example you might create Student, Parent, Staff, and /or Volunteer types from the basic Individual type...).{/ts} {help id="id-contactSubtype-intro"}
 </div>
 
 {if $action eq 1 or $action eq 2 or $action eq 8}
@@ -15,8 +15,8 @@
     <table id="options" class="display">
     <thead>
     <tr>
-        <th>{ts}Types{/ts}</th>
-        <th>{ts}Extends{/ts}</th>
+        <th>{ts}Contact Type{/ts}</th>
+        <th>{ts}Based On{/ts}</th>
         <th id="nosort">{ts}Description{/ts}</th>
         <th></th>
     </tr>
@@ -24,7 +24,7 @@
     {foreach from=$rows item=row}
     	<tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
         <td>{$row.label}</td>
-        <td>{$row.parent}</td>
+        <td>{if $row.parent}{$row.parent}{else}{ts}(built-in){/ts}{/if}</td>
         <td>{$row.description}</td>
         <td>{$row.action|replace:'xx':$row.id}</td>
     </tr>
@@ -42,7 +42,7 @@
      <dl>
         <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
         {capture assign=crmURL}{crmURL p='civicrm/admin/ContactType' q="action=add&reset=1"}{/capture}
-        <dd>{ts 1=$crmURL}There are no Contact Types entered  You can <a href='%1'>add one</a>.{/ts}</dd>
+        <dd>{ts 1=$crmURL}There are currently no Contact Types entered. You can <a href='%1'>add one</a>.{/ts}</dd>
      </dl>
     </div>    
 {/if}

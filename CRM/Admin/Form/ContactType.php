@@ -58,13 +58,16 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form
                    CRM_Core_DAO::getAttribute( 'CRM_Contact_DAO_ContactType', 'label' ),
                    true );
         $this->addRule( 'label',
-                        ts('Name already exists in Database.'),
+                        ts('This contact type name already exists in database. Contact type names must be unique.'),
                         'objectExists',
                         array( 'CRM_Contact_DAO_ContactType', $this->_id ) );
         $contactType = $this->add( 'select', 'parent_id', ts('Basic Contact Type'),
-                                   array('1'=>'Individual','2'=>'Household','3'=>'Organization'));
+                                   array('1'=>ts('Individual'),'2'=>ts('Household'),'3'=>ts('Organization')));
         if ($this->_action & CRM_Core_Action::UPDATE ) {
-            $contactType->freeze( );   
+            $contactType->freeze( );
+            // We'll display actual "name" for built-in types (for reference) when editing their label / image_URL
+            $contactTypeName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType', $this->_id, 'name');
+            $this->assign('contactTypeName', ts($contactTypeName));            
         }
         $this->addElement('text','image_URL', ts('Image URL'));  
         $this->add('text', 'description', ts('Description'), 

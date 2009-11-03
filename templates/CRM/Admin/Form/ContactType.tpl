@@ -20,13 +20,11 @@
         {/if}
         {$form.label.html}
     </dd>
-        {if $is_parent}
-          <dt>{$form.parent_id.label}</dt>
-          <dd>&nbsp;{$form.parent_id.html}</dd>
-        {/if}
-        {if $action eq 1}
-          <dt>{$form.parent_id.label}</dt>
-          <dd>&nbsp;{$form.parent_id.html}</dd> 
+    <dt>{$form.parent_id.label}</dt>
+        {if $is_parent OR $action EQ 1}
+            <dd>&nbsp;{$form.parent_id.html}</dd>
+         {else}
+            <dd>{ts}{$contactTypeName} (built-in){/ts}</dd>
         {/if}
      <dt>{$form.image_URL.label}</dt>
      <dd>
