@@ -75,7 +75,6 @@ implements CRM_Contact_Form_Search_Interface {
         }
 
         foreach ( $this->_dates as $name => $title ) {
-            // if ( ! empty( $this->_formValues[$name] ) ) {
             if ( CRM_Utils_Array::value( $name, $this->_formValues ) ) {
                 $this->{$name} = CRM_Utils_Date::processDate( $this->_formValues[$name] );
             } 

@@ -58,10 +58,8 @@ class CRM_Case_Form_Activity_ChangeCaseStartDate
      */
     function setDefaultValues( &$form ) 
     {
-        $defaults = array( );
-
-        $defaults['start_date'] = array( );
-        $defaults['start_date'] = CRM_Utils_Date::getToday( $defaults['start_date'], 'm/d/Y' );
+        $defaults = array(); 
+        list( $defaults['start_date'] ) = CRM_Utils_Date::setDateDefaults( );
         return $defaults;
     }
 

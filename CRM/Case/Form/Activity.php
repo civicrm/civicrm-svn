@@ -171,14 +171,10 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         if ( $this->_cdType  || $this->_addAssigneeContact || $this->_addTargetContact ) {
             return $this->_defaults;
         }
+        //if mode is update then set default date-time otherwise Set activity date-time to now() 
+        list( $defaults['activity_date_time'], 
+              $defaults['activity_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value('activity_date_time', $defaults) );
         
-        if ( $this->_activityId ) { 
-            $activityDate = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $this->_activityId, 'activity_date_time' );
-        } else {
-            // Set activity date-time to now() in create mode
-            $defaults['activity_date_time'] = array( );
-            CRM_Utils_Date::getAllDefaultValues( $defaults['activity_date_time'] );
-        }
 
         // set default encounter medium CRM-4816
         if ( empty($this->_defaults['medium_id']) ) {
@@ -322,7 +318,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         $recordStatus = 'created';
 
         // store the dates with proper format
-        $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'] );
+        $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'], $params['activity_date_time_time'] );
         $params['activity_type_id']   = $this->_activityTypeId;
         $params['target_contact_id']  = $this->_currentlyViewedContactId;
 

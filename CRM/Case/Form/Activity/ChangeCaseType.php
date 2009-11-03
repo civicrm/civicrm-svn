@@ -63,8 +63,7 @@ class CRM_Case_Form_Activity_ChangeCaseType
         $defaults['is_reset_timeline'] = 1;
         
         $defaults['reset_date_time'] = array( );
-        CRM_Utils_Date::getAllDefaultValues( $defaults['reset_date_time'] );
-        $defaults['reset_date_time']['i'] = (int ) ( $defaults['reset_date_time']['i'] / 15 ) * 15;
+        list( $defaults['reset_date_time'], $defaults['reset_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( );
         $caseType  = CRM_Case_PseudoConstant::caseTypeName( $form->_caseId );
         $defaults['case_type_id'] = $caseType['id'];
 
@@ -80,9 +79,7 @@ class CRM_Case_Form_Activity_ChangeCaseType
 
         // timeline
         $form->addYesNo( 'is_reset_timeline', ts( 'Reset Case Timeline?' ),null, true, array('onclick' =>"return showHideByValue('is_reset_timeline','','resetTimeline','table-row','radio',false);") );
-        $form->add( 'date', 'reset_date_time', ts('Reset Start Date'),
-                    CRM_Core_SelectValues::date('activityDatetime' ), false );   
-        $form->addRule('reset_date_time', ts('Select a valid date.'), 'qfDate');
+        $form->addDateTime( 'reset_date_time', ts('Reset Start Date'), false, 'activityDatetime' );
     }
 
     /**
@@ -115,7 +112,7 @@ class CRM_Case_Form_Activity_ChangeCaseType
             unset($params['reset_date_time']);
         } else {
             // store the date with proper format
-            $params['reset_date_time'] = CRM_Utils_Date::format( $params['reset_date_time'] );
+            $params['reset_date_time'] = CRM_Utils_Date::processDate( $params['reset_date_time'], $params['reset_date_time_time'] );
         }
     }
 
@@ -145,7 +142,6 @@ class CRM_Case_Form_Activity_ChangeCaseType
              ) {
             CRM_Core_Error::fatal('Required parameter missing for ChangeCaseType - end post processing');
         }
-
         // 1. initiate xml processor
         $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
         $xmlProcessorParams = array( 'clientID'           => $form->_currentlyViewedContactId,
