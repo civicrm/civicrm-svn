@@ -1556,7 +1556,7 @@ class CRM_Utils_Date
 
         if ( $formatType ) {
             $format = CRM_Core_Dao::getFieldValue( 'CRM_Core_DAO_PreferencesDate', 
-                                                        $formatType, 'format', 'name' );
+                                                        $formatType, 'date_format', 'name' );
         }
         
         if ( !$format ) {
