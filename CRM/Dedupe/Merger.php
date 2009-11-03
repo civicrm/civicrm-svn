@@ -109,6 +109,12 @@ class CRM_Dedupe_Merger
                     'title'  => ts('PCPs'),
                     'tables' => array('civicrm_pcp'),
                     'url'    => CRM_Utils_System::url('civicrm/contribute/pcp/manage', 'reset=1'),
+                ),
+
+                'rel_table_pledges' => array(
+                    'title'  => ts('Pledges'),
+                    'tables' => array('civicrm_pledge', 'civicrm_pledge_payment' ),
+                    'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=pledge'),
                 )
             );
         }
@@ -187,6 +193,7 @@ class CRM_Dedupe_Merger
                 'civicrm_relationship'            => array('contact_id_a', 'contact_id_b'),
                 'civicrm_subscription_history'    => array('contact_id'),
                 'civicrm_uf_match'                => array('contact_id'),
+                'civicrm_pledge'                  => array('contact_id'),
             );
         }
         return $cidRefs;
