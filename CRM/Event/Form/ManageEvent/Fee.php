@@ -117,11 +117,11 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                 $name = $defaults["discount_name[$i]"] = 
                     CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $optionGroupId, 'label' );
                 
-                $defaults["discount_start_date[$i]"] = 
-                    CRM_Utils_Date::unformat(CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Discount', $optionGroupId, 
+                list( $defaults["discount_start_date[$i]"] ) = 
+                    CRM_Utils_Date::setDateDefaults(CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Discount', $optionGroupId, 
                                                                           'start_date', 'option_group_id' ));
-                $defaults["discount_end_date[$i]"] =
-                    CRM_Utils_Date::unformat(CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Discount', $optionGroupId, 
+                list( $defaults["discount_end_date[$i]"] ) =
+                    CRM_Utils_Date::setDateDefaults(CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Discount', $optionGroupId, 
                                                                           'end_date', 'option_group_id' ));
                 CRM_Core_OptionGroup::getAssoc( "civicrm_event.amount.{$eventId}.discount.{$name}", $defaultDiscounts[] );
                 $i++;
@@ -172,7 +172,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                 }
             }
         }
-        
+
         $defaults = array_merge( $defaults, $parentDefaults );
         $defaults['id'] = $eventId;
         
@@ -318,13 +318,12 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                  ! empty( $this->_submitValues['discount_name'][$i+1] ) &&
                  isset( $this->_submitValues['discount_end_date'] ) &&
                  isset( $this->_submitValues['discount_end_date'][$i] ) &&
-                 array_values( $this->_submitValues['discount_end_date'][$i] ) &&
                  $i <  self::NUM_DISCOUNT - 1 ) {
-                $end_date = CRM_Utils_Date::format( $this->_submitValues['discount_end_date'][$i], '-' );
-                if (! empty( $this->_submitValues['discount_end_date'][$i + 1]['M'] ) 
-                     && empty( $this->_submitValues['discount_start_date'][$i + 1]['M'] ) )  {
-                    $this->_submitValues['discount_start_date'][$i + 1] = 
-                        CRM_Utils_Date::unformat( date('Y-m-d', strtotime ("+1 days $end_date") ));
+                $end_date = CRM_Utils_Date::processDate( $this->_submitValues['discount_end_date'][$i] );
+                if (! empty( $this->_submitValues['discount_end_date'][$i + 1] ) 
+                     && empty( $this->_submitValues['discount_start_date'][$i + 1] ) )  {
+                    list( $this->_submitValues['discount_start_date'][$i + 1] ) = 
+                        CRM_Utils_Date::setDateDefaults( date( 'Y-m-d', strtotime ("+1 days $end_date") ) );
                 }
             }
             //Decrement by 1 of end date from next start date.
@@ -333,14 +332,13 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                  ! empty( $this->_submitValues['discount_name'][$i] ) &&
                  ! empty( $this->_submitValues['discount_name'][$i-1] ) &&
                  isset( $this->_submitValues['discount_start_date'] ) &&
-                 isset( $this->_submitValues['discount_start_date'][$i] ) &&
-                 array_values( $this->_submitValues['discount_start_date'][$i] )
+                 isset( $this->_submitValues['discount_start_date'][$i] )
                  ) {
-                $start_date = CRM_Utils_Date::format( $this->_submitValues['discount_start_date'][$i], '-' );
-                if (! empty( $this->_submitValues['discount_start_date'][$i]['M'] ) 
-                    && empty( $this->_submitValues['discount_end_date'][$i-1]['M'] ) )  {
-                    $this->_submitValues['discount_end_date'][$i - 1] = 
-                        CRM_Utils_Date::unformat( date('Y-m-d', strtotime ("-1 days $start_date") ));
+                $start_date = CRM_Utils_Date::processDate( $this->_submitValues['discount_start_date'][$i] );
+                if (! empty( $this->_submitValues['discount_start_date'][$i] ) 
+                    && empty( $this->_submitValues['discount_end_date'][$i-1] ) )  {
+                    list( $this->_submitValues['discount_end_date'][$i - 1] ) = 
+                        CRM_Utils_Date::setDateDefaults( date( 'Y-m-d', strtotime ("-1 days $start_date") ) );
                 }
             }
             
@@ -349,12 +347,10 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                        CRM_Core_DAO::getAttribute('CRM_Core_DAO_OptionValue', 'label'));
             
             //discount start date
-            $this->add('date', 'discount_start_date['.$i.']', ts('Discount Start Date'),
-                       CRM_Core_SelectValues::date('activityDate') );
+            $this->addDate( 'discount_start_date['.$i.']', ts('Discount Start Date'), false, array( 'formatType' => 'activityDate') );
             
             //discount end date
-            $this->add('date', 'discount_end_date['.$i.']', ts('Discount End Date'),
-                       CRM_Core_SelectValues::date('activityDate') );
+            $this->addDate( 'discount_end_date['.$i.']', ts('Discount End Date'), false, array( 'formatType' => 'activityDate') );
         }
         $_showHide->addToTemplate();   
         $this->addElement( 'submit', $this->getButtonName('submit'), ts('Add Discount Set to Fee Table'), 
@@ -394,11 +390,11 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
             for ( $i = 1; $i <= self::NUM_DISCOUNT; $i++ ) {
                 if ( CRM_Utils_Array::value( $i,  $values['discount_name'] ) ) {
                     if ( CRM_Utils_Array::value( $i, $values['discount_start_date'] ) ) {
-                        $start_date = CRM_Utils_Date::format( $values['discount_start_date'][$i] );
+                        $start_date = CRM_Utils_Date::processDate( $values['discount_start_date'][$i] );
                     }
                     
                     if ( CRM_Utils_Array::value( $i, $values['discount_end_date'] ) ) {
-                        $end_date   = CRM_Utils_Date::format( $values['discount_end_date'][$i] );
+                        $end_date   = CRM_Utils_Date::processDate( $values['discount_end_date'][$i] );
                     }
 
                     if ( $start_date && $end_date && (int ) $end_date < (int ) $start_date ) {
@@ -616,8 +612,8 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                                                         'entity_table'    => 'civicrm_event',
                                                         'entity_id'       => $this->_id,
                                                         'option_group_id' => $discountOptionsGroupId,
-                                                        'start_date'      => CRM_Utils_Date::format( $params["discount_start_date"][$j]),
-                                                        'end_date'        => CRM_Utils_Date::format( $params["discount_end_date"][$j])
+                                                        'start_date'      => CRM_Utils_Date::processDate( $params["discount_start_date"][$j]),
+                                                        'end_date'        => CRM_Utils_Date::processDate( $params["discount_end_date"][$j])
                                                         );                                
                                 require_once 'CRM/Core/BAO/Discount.php';
                                 CRM_Core_BAO_Discount::add($discountParams);

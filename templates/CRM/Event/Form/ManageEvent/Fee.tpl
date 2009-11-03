@@ -94,28 +94,16 @@
 	{section name=rowLoop start=1 loop=6}
 	   {assign var=index value=$smarty.section.rowLoop.index}
 	   <tr id="discount_{$index}" {if $index GT 1 AND empty( $form.discount_name[$index].value) } style="display:none"{/if} class="form-item {cycle values="odd-row,even-row"}">
-           <td>{if $index GT 1} <a onclick="hiderow('discount_{$index}','discount');discountValues('{$index}'); return false;" name="discount_{$index}" href="#discount_{$index}" class="form-link"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}hide field or section{/ts}"/></a>{/if}
+           <td>{if $index GT 1} <a onclick="hiderow('discount_{$index}','discount');discountValues('{$index}'); return false;" name="discount_{$index}" href="javascript:" class="form-link"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}hide field or section{/ts}"/></a>{/if}
            </td>
-	   <td> {$form.discount_name.$index.html}</td>
-	   <td> {$form.discount_start_date.$index.html | crmDate }
-		 <span class="description">
-                      {include file="CRM/common/calendar/desc.tpl" trigger=trigger_discount_start|cat:$index}
-                      {include file="CRM/common/calendar/body.tpl" dateVar=discount_start_date[$index]  startDate=currentYear 
-                	      startDate=startYear offset=10 trigger=trigger_discount_start|cat:$index ampm=1}
-          </span>
-	   </td>
-	   <td> {$form.discount_end_date.$index.html | crmDate}
-		 <span class="description">
-                      {include file="CRM/common/calendar/desc.tpl" trigger=trigger_discount_end|cat:$index}
-                      {include file="CRM/common/calendar/body.tpl" dateVar=discount_end_date[$index]  endDate=currentYear 
-                	      endDate=startYear offset=10 trigger=trigger_discount_end|cat:$index ampm=1}
-         </span>
-	   </td>
+           <td> {$form.discount_name.$index.html}</td>
+           <td> {include file="CRM/common/jcalendar.tpl" elementName='discount_start_date' elementIndex=$index} </td>
+           <td> {include file="CRM/common/jcalendar.tpl" elementName='discount_end_date' elementIndex=$index} </td>
 	   </tr>
         {/section}
         </table>
         <div id="discountLink" class="add-remove-link">
-           <a onclick="showrow('discount',5);return false;" name="discountLink" href="#discountLink" class="form-link"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}show field or section{/ts}"/>{ts}another discount set{/ts}</a>
+           <a onclick="showrow('discount',5);return false;" name="discountLink" href="javascript:" class="form-link"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}show field or section{/ts}"/>{ts}another discount set{/ts}</a>
         </div>
         {$form._qf_Fee_submit.html}
 	
@@ -186,14 +174,9 @@
        }
 function discountValues( discount_id )
 {
-	document.getElementById("discount_name_"+ discount_id).value = "";
-	document.getElementById("discount_start_date["+ discount_id +"][M]").value = "";
-	document.getElementById("discount_start_date["+ discount_id +"][d]").value = "";
-	document.getElementById("discount_start_date["+ discount_id +"][Y]").value = "";
-
-	document.getElementById("discount_end_date["+ discount_id +"][M]").value = "";
-	document.getElementById("discount_end_date["+ discount_id +"][d]").value = "";
-	document.getElementById("discount_end_date["+ discount_id +"][Y]").value = "";
+	cj("#discount_name_"+ discount_id).val('');
+	cj("#discount_start_date["+ discount_id +"]").val('');
+	cj("#discount_end_date["+ discount_id +"]").val('');
 
 }
 function warnDiscountDel( ) {
