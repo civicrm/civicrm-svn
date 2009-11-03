@@ -359,13 +359,15 @@ WHERE     ct.id = cp.contribution_type_id AND
             $query .= " AND civicrm_price_set.is_active = 1 ";
         }
         
+        $priceSets = array( );
+        
         if ( $extendComponentName ) {
             $componentId = CRM_Core_Component::getComponentID( $extendComponentName );
-            if ( $componentId ) $query .= " AND civicrm_price_set.extends LIKE '%$componentId%' ";
+            if ( !$componentId ) return $priceSets; 
+            $query .= " AND civicrm_price_set.extends LIKE '%$componentId%' ";
         }
         
         $dao =& CRM_Core_DAO::executeQuery( $query );
-        $priceSets = array();
         while ( $dao->fetch() ) {
             $priceSets[$dao->id] = $dao->title;
         }       
