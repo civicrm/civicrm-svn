@@ -144,6 +144,15 @@ class CRM_Core_Permission {
         }
     }
 
+    public static function ufGroupValid( $gid, $type = CRM_Core_Permission::VIEW ) {
+        if ( empty( $gid ) ) {
+            return true;
+        }
+
+        $groups = self::ufGroup( $type );
+        return in_array( $gid, $groups ) ? true : false;
+    }
+
     public static function ufGroup( $type = CRM_Core_Permission::VIEW ) {
         $ufGroups = CRM_Core_PseudoConstant::ufGroup( );
 

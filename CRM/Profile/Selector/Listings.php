@@ -191,17 +191,24 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
      * @access public
      *
      */
-    static function &links( $map = false, $editLink = false, $ufLink = false )
+    static function &links( $map = false, $editLink = false, $ufLink = false, $gid = null )
     {
         if ( ! self::$_links ) {
-            self::$_links = array( 
-                                  CRM_Core_Action::VIEW   => array(
-                                                                   'name'  => ts('View'),
-                                                                   'url'   => 'civicrm/profile/view',
-                                                                   'qs'    => 'reset=1&id=%%id%%&gid=%%gid%%',
-                                                                   'title' => ts('View Profile Details'),
-                                                                   ),
-                                  ); 
+            self::$_links = array( );
+            
+            $viewPermission = true;
+            if ( $gid ) {
+                $viewPermission = CRM_Core_Permission::ufGroupValid( $gid, CRM_Core_Permission::VIEW );
+            }
+             
+            if ( $viewPermission ) {
+                self::$_links[CRM_Core_Action::VIEW] = array(
+                                                             'name'  => ts('View'),
+                                                             'url'   => 'civicrm/profile/view',
+                                                             'qs'    => 'reset=1&id=%%id%%&gid=%%gid%%',
+                                                             'title' => ts('View Profile Details'),
+                                                             );
+            }
 
             if ( $editLink ) {
                 self::$_links[CRM_Core_Action::UPDATE] = array(
@@ -400,7 +407,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                 $this->_editLink = true;
             }
         }
-        $links =& self::links( $this->_map, $this->_editLink, $this->_linkToUF );
+        $links =& self::links( $this->_map, $this->_editLink, $this->_linkToUF, $this->_gid );
         
         require_once 'CRM/Core/PseudoConstant.php';
         $locationTypes = CRM_Core_PseudoConstant::locationType( );
