@@ -156,7 +156,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
     /*
      * Store the line items if price set used.
      */
-    protected $_lineItems;
+    public $_lineItems;
 
     protected $_formType;
     protected $_cdType;

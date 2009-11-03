@@ -371,6 +371,9 @@ class CRM_Contribute_Form_AdditionalInfo
             if ( CRM_Utils_Array::value( 'thankyou_date', $params ) ) {
                 $form->assign('thankyou_date', CRM_Utils_Date::processDate( $params['thankyou_date'] ) );
             }
+            if ( $form->_action & CRM_Core_Action::UPDATE ) {
+                $form->assign( 'lineItem', empty( $form->_lineItems ) ? false : $form->_lineItems );
+            }
         }
         
         //handle custom data
