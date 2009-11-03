@@ -92,7 +92,7 @@
     ALTER TABLE `civicrm_price_set`
         ADD `extends` VARCHAR( 255 ) COLLATE utf8_unicode_ci NOT NULL COMMENT 'Type of object this price set extends (e.g. Events, Contributions etc.).';
  
-    UPDATE `civicrm_price_set` SET extends = 'Event';
+    UPDATE `civicrm_price_set` SET extends = (select id from civicrm_component where name = 'CiviEvent');
 
 --  CRM-4160
     ALTER TABLE `civicrm_acl`
