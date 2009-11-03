@@ -31,7 +31,7 @@
       'participant_expired'   => ts('Events - Pending Registration Expiration Notice',           array('escape' => 'sql')),
     ),
     'friend' => array(
-      'friend' => 'Tell-a-Friend Email',
+      'friend' => ts('Tell-a-Friend Email', array('escape' => 'sql')),
     ),
     'meta' => array(
       'test_preview' => ts('Test-drive - Receipt Header', array('escape' => 'sql')),
