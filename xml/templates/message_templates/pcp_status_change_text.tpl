@@ -4,7 +4,7 @@
 
 ============================
 
-{ts}Your personal campaign page has been approved and is now live.{/ts} 
+{ts}Your personal campaign page has been approved and is now live.{/ts}
 
 {ts}Whenever you want to preview, update or promote your page{/ts}:
 1. {ts}Login to your account at{/ts}:
@@ -40,7 +40,7 @@ which prevented us from approving the page. We are sorry for any inconvenience.{
 
 {if $pcpNotifyEmailAddress}
 
-{ts}Please contact our site administrator for more information{/ts}: 
+{ts}Please contact our site administrator for more information{/ts}:
 {$pcpNotifyEmailAddress}
 {/if}
 
