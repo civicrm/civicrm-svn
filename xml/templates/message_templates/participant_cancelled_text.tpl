@@ -10,7 +10,7 @@
 {$event.event_title}
 {$event.event_start_date|crmDate}{if $event.event_end_date}-{if $event.event_end_date|date_format:"%Y%m%d" == $event.event_start_date|date_format:"%Y%m%d"}{$event.event_end_date|crmDate:0:1}{else}{$event.event_end_date|crmDate}{/if}{/if}
 
-{ts}Participant Role{/ts} : {$participant.role}
+{ts}Participant Role{/ts}: {$participant.role}
 
 {if $isShowLocation}
 {if $event.location.address.1.name}
@@ -43,7 +43,7 @@
 {/if}
 
 {capture assign=icalFeed}{crmURL p='civicrm/event/ical' q="reset=1&id=`$event.id`" h=0 a=1}{/capture}
-{ts}Download iCalendar File:{/ts} {$icalFeed} 
+{ts}Download iCalendar File{/ts}: {$icalFeed}
 {if $contact.email}
 
 ===========================================================
@@ -58,7 +58,4 @@
 {/if}
 
 {ts 1=$domain.phone 2=$domain.email}Please contact us at %1 or send email to %2 if you have questions.{/ts}
-
-
-
 
