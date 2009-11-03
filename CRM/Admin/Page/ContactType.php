@@ -132,7 +132,15 @@ class CRM_Admin_Page_ContactType extends CRM_Core_Page_Basic
                 } else {
                     $mask -= CRM_Core_Action::DISABLE;
                 }
-            }            
+            } else {
+                $mask -= CRM_Core_Action::DELETE - 2 ;
+                if( CRM_Utils_Array::value( 'is_active', $value )) {
+                    $mask -= CRM_Core_Action::ENABLE;
+                } else {
+                    $mask -= CRM_Core_Action::DISABLE;
+                }
+            }
+
             $rows[$key]['action'] = CRM_Core_Action::formLink( self::links(), $mask,
                                                                array('id' =>$value['id'] ) );
         }
