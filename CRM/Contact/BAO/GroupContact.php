@@ -666,6 +666,7 @@ AND civicrm_group_contact.group_id = %2";
     }
 
     static function isContactInGroup( $contactID, $groupID ) {
+        require_once 'CRM/Utils/Rule.php';
         if ( ! CRM_Utils_Rule::positiveInteger( $contactID ) ||
              ! CRM_Utils_Rule::positiveInteger( $groupID ) ) {
             return false;
