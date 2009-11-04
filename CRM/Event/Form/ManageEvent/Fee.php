@@ -390,14 +390,14 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
             for ( $i = 1; $i <= self::NUM_DISCOUNT; $i++ ) {
                 if ( CRM_Utils_Array::value( $i,  $values['discount_name'] ) ) {
                     if ( CRM_Utils_Array::value( $i, $values['discount_start_date'] ) ) {
-                        $start_date = CRM_Utils_Date::processDate( $values['discount_start_date'][$i] );
+                        $start_date = ( $values['discount_start_date'][$i] ) ? CRM_Utils_Date::processDate( $values['discount_start_date'][$i] ) : 0;
                     }
                     
                     if ( CRM_Utils_Array::value( $i, $values['discount_end_date'] ) ) {
-                        $end_date   = CRM_Utils_Date::processDate( $values['discount_end_date'][$i] );
+                        $end_date   = ( $values['discount_end_date'][$i] ) ? CRM_Utils_Date::processDate( $values['discount_end_date'][$i] ) : 0;
                     }
-
-                    if ( $start_date && $end_date && (int ) $end_date < (int ) $start_date ) {
+                    
+                    if ( $start_date && $end_date && strcmp( $end_date, $start_date ) == -1 ) {
                         $errors["discount_end_date[$i]"] = ts( 'The discount end date cannot be prior to the start date.' );
                     }
                     
@@ -406,8 +406,8 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
                     }
                     
                     if ( $i > 1 ) {
-                        $end_date_1 = CRM_Utils_Date::format( $values['discount_end_date'][$i-1] );
-                        if ( $start_date && $end_date_1 && (int ) $end_date_1 >= (int ) $start_date ) {
+                        $end_date_1 = ( $values['discount_end_date'][$i-1] ) ? CRM_Utils_Date::processDate( $values['discount_end_date'][$i-1] ) : 0;
+                        if ( $start_date && $end_date_1 && strcmp( $end_date_1, $start_date ) >= 0 ) {
                             $errors["discount_start_date[$i]"] = ts( 'Select non-overlapping discount start date.' );
                         } elseif ( ! $start_date && ! $end_date_1 ) {
                             $j = $i-1;
