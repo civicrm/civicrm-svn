@@ -73,15 +73,39 @@ class CRM_Admin_Form_PreferencesDate extends CRM_Admin_Form
         $formatType = CRM_Core_Dao::getFieldValue( 'CRM_Core_DAO_PreferencesDate', $this->_id, 'name' );
 
         if ( $formatType  == 'creditCard' ) {
-            $this->add('text', 'format', ts('Format'), $attributes['format'] , true  );
+            $this->add('text', 'date_format', ts('Format'), $attributes['date_format'] , true  );
         } else {
-            $this->add('select', 'format', ts('Format'),  
+            $this->add('select', 'date_format', ts('Format'),  
                         array( '' => ts( '- default input format -') ) + CRM_Core_SelectValues::getDatePluginInputFormats( ) );
+            $this->add( 'select', 'time_format', ts('Time'), 
+                        array( '' => ts( '- none -') ) + CRM_Core_SelectValues::getTimeFormats( ) );
         }
-        $this->addRule( 'start'           , ts( 'Value should be a positive number' ) , 'positiveInteger');
-        $this->addRule( 'end'             , ts( 'Value should be a positive number' ) , 'positiveInteger');
+        $this->addRule( 'start', ts( 'Value should be a positive number' ) , 'positiveInteger');
+        $this->addRule( 'end'  , ts( 'Value should be a positive number' ) , 'positiveInteger');
+    
+        // add a form rule
+        $this->addFormRule( array( 'CRM_Admin_Form_PreferencesDate', 'formRule' ) );
     }
 
+    /**
+     * global validation rules for the form
+     *
+     * @param array  $fields   (referance) posted values of the form
+     *
+     * @return array    if errors then list of errors to be posted back to the form,
+     *                  true otherwise
+     * @static
+     * @access public
+     */
+    static function formRule( &$fields ) {
+        $errors = array( );
+        
+        if ( $fields['name'] == 'activityDateTime' && !$fields['time_format'] ) {
+            $errors['time_format'] = ts('Time is required for this format.');
+        }
+        
+        return empty($errors) ? true : $errors;
+    }
        
     /**
      * Function to process the form
@@ -100,13 +124,13 @@ class CRM_Admin_Form_PreferencesDate extends CRM_Admin_Form
         $params = $this->controller->exportValues( $this->_name );
         
         // action is taken depending upon the mode
-        $dao                   =& new CRM_Core_DAO_PreferencesDate( );
+        $dao                   = new CRM_Core_DAO_PreferencesDate( );
         $dao->id               =  $this->_id;
         $dao->description      =  $params['description'];  
         $dao->start            =  $params['start'];  
         $dao->end              =  $params['end'];
-        $dao->minute_increment =  $params['minute_increment'];
-        $dao->format           =  $params['format'];
+        $dao->date_format      =  $params['date_format'];
+        $dao->time_format      =  $params['time_format'];
         
         $dao->save( );
         

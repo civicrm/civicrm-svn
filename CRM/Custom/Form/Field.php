@@ -363,7 +363,7 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
                     array( '' => ts( '- select -' ) ) + CRM_Core_SelectValues::getDatePluginInputFormats( ) );
                     
         $this->add( 'select', 'time_format', ts('Time'),
-                    array( '' => ts( '- select -' ) ) + CRM_Core_SelectValues::getTimeFormats( ) );
+                    array( '' => ts( '- none -' ) ) + CRM_Core_SelectValues::getTimeFormats( ) );
                     
         // for Note field
         $this->add('text',
@@ -396,7 +396,7 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
         // default value, help pre, help post, mask, attributes, javascript ?
         $this->add('text', 'default_value', ts('Default Value'),
                     $attributes['default_value']);
-	$this->add('textarea', 'help_pre', ts('Field Pre Help'), 
+        $this->add('textarea', 'help_pre', ts('Field Pre Help'), 
                    $attributes['help_pre']);
         $this->add('textarea', 'help_post', ts('Field Post Help'), 
                    $attributes['help_post']);        

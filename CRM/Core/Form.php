@@ -955,8 +955,12 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
             $values = array( );
             CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_PreferencesDate', $params, $values );
             
-            if ( $values['format'] ) {
-                $attributes['format']  = $values['format'];
+            if ( $values['date_format'] ) {
+                $attributes['format']  = $values['date_format'];
+            }
+            
+            if ( $values['time_format'] ) {
+                $attributes['timeFormat']  = $values['time_format'];
             }
             $attributes['startOffset'] = $values['start'];
             $attributes['endOffset']   = $values['end'];
