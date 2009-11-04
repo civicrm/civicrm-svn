@@ -51,6 +51,7 @@ class CRM_Contact_BAO_Contact_Utils
             $imageInfo[$contactType] = array( );
             
             $params = array( 'name' => $contactType );
+            require_once 'CRM/Contact/BAO/ContactType.php';
             CRM_Contact_BAO_ContactType::retrieve( $params, $typeInfo );
 
             if ( $typeInfo['image_URL'] ) {
