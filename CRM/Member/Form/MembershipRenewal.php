@@ -435,13 +435,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
         $renewalDate = null;
 
         if ( $formValues['renewal_date'] ) {
-            $renewalDate = CRM_Utils_Date::processDate( $formValues['renewal_date'] );
-            $changeToday = array( );
-            $dateUnformated = CRM_Utils_Date::unformat( $renewalDate,'' );
-            $changeToday['month'] = $dateUnformated[$config->dateformatMonthVar];
-            $changeToday['day']   = $dateUnformated['d'];
-            $changeToday['year']  = $dateUnformated['Y'];
-            $this->set( 'renewDate', $changeToday );
+            $this->set( 'renewDate', CRM_Utils_Date::processDate( $formValues['renewal_date'] ) );
         }
         $this->_membershipId = $this->_id;
         
@@ -451,7 +445,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
                                                                        $this->_memType,
                                                                        $isTestMembership, $this, null );
         
-        $endDate = CRM_Utils_Date::mysqlToIso( CRM_Utils_Date::format( $renewMembership->end_date ) );
+        $endDate = CRM_Utils_Date::processDate( $renewMembership->end_date );
         
         require_once 'CRM/Contact/BAO/Contact/Location.php';
         // Retrieve the name and email of the current user - this will be the FROM for the receipt email

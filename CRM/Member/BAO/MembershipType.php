@@ -487,7 +487,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             }
             $today = date( 'Y-m-d' );
         } else {
-            $today = CRM_Utils_Date::getToday( $changeToday );
+            $today = $changeToday;
             
             $rollover = false;
                         
