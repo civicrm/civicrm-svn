@@ -546,8 +546,8 @@ class CRM_Profile_Form extends CRM_Core_Form
 		                 $contactLinks = CRM_Contact_BAO_Contact_Utils::formatContactIDSToLinks( $ids, true, true, $contactID );
 		
 		                 $duplicateContactsLinks = '<div class="matching-contacts-found">';
-		                 $duplicateContactsLinks .= ts('One matching contact was found.', array('count' => count($contactLinks), 'plural' => '%count matching contacts were found.<br />'));                 
-		                 $duplicateContactsLinks .= ts('You can View or Edit the existing contact in a new tab or Merge this contact with an existing contact.');
+		                 $duplicateContactsLinks .= ts('One matching contact was found. ', array('count' => count($contactLinks), 'plural' => '%count matching contacts were found.<br />'));                 
+		                 $duplicateContactsLinks .= ts('You can View or Edit the existing contact in a new tab.');
 		                 $duplicateContactsLinks .= '</div>';
 		                 $duplicateContactsLinks .= '<table class="matching-contacts-actions">';
 		
