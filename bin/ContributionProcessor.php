@@ -95,6 +95,7 @@ class CiviContributeProcessor {
                                      'item-name'           => 'note',
                                      'timestamp'           => 'receive_date',
                                      'latest-charge-fee'   => 'fee_amount',
+                                     'net-amount'          => 'net_amount',
                                      ),
               );
 

@@ -474,6 +474,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
                            );
                 if ( array_key_exists('latest-charge-fee', $apiParams[2]) ) {
                     $localMapper['latest-charge-fee'] = $apiParams[2]['latest-charge-fee']['total']['VALUE'];
+                    $localMapper['net-amount'] = $localMapper['total-charge-amount'] - $localMapper['latest-charge-fee'];
                 }
                 foreach ( $localMapper as $localKey => $localVal ) {
                     if ( CRM_Utils_Array::value($localKey, $mapper['transaction']) ) {
