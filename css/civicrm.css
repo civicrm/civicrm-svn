@@ -1936,7 +1936,7 @@ div.grippie {
 
 /* civicrm admin menu */
 
-#civicrm-menu .ac_input {
+#civicrm-menu .ac_input, #crm-container .ac_input {
 	background:white url(../i/magnify.gif) no-repeat scroll right center;
 	padding-right:16px; /* so that text doesn't flow on top of icon */
 	}
