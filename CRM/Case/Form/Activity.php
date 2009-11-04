@@ -171,11 +171,6 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         if ( $this->_cdType  || $this->_addAssigneeContact || $this->_addTargetContact ) {
             return $this->_defaults;
         }
-        //if mode is update then set default date-time otherwise Set activity date-time to now() 
-        list( $defaults['activity_date_time'], 
-              $defaults['activity_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value('activity_date_time', $defaults) );
-        
-
         // set default encounter medium CRM-4816
         if ( empty($this->_defaults['medium_id']) ) {
             require_once "CRM/Core/OptionGroup.php";
