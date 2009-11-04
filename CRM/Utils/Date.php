@@ -1060,33 +1060,34 @@ class CRM_Utils_Date
      */
     function intervalAdd($unit, $interval, $date, $dontCareTime = false ) 
     {  
-        $hours   = CRM_Utils_Array::value( 'H', $date );
-        $minutes = CRM_Utils_Array::value( 'i', $date );
-        $seconds = CRM_Utils_Array::value( 's', $date );
-        $month   = CRM_Utils_Array::value( 'M', $date );
-        $day     = CRM_Utils_Array::value( 'd', $date );
-        $year    = CRM_Utils_Array::value( 'Y', $date );
-        
-        $date = mktime ($hours, $minutes, $seconds, $month, $day, $year);
-       
+        if ( is_array( $date ) ) {
+            $hour    = CRM_Utils_Array::value( 'H', $date );
+            $minute  = CRM_Utils_Array::value( 'i', $date );
+            $second  = CRM_Utils_Array::value( 's', $date );
+            $month   = CRM_Utils_Array::value( 'M', $date );
+            $day     = CRM_Utils_Array::value( 'd', $date );
+            $year    = CRM_Utils_Array::value( 'Y', $date );    
+        } else {
+            extract( date_parse( $date ) );
+        }
+        $date = mktime ($hour, $minute, $second, $month, $day, $year);
         switch ( $unit ) {
 
         case 'year':
-            $date   =   mktime ($hours, $minutes, $seconds, $month, $day, $year+$interval);
+            $date   =   mktime ($hour, $minute, $second, $month, $day, $year+$interval);
             break;
         case 'month':
-            $date   =   mktime ($hours, $minutes, $seconds, $month+$interval, $day, $year);
+            $date   =   mktime ($hour, $minute, $second, $month+$interval, $day, $year);
             break;
         case 'week':
             $interval = $interval * 7;
-            $date   =   mktime ($hours, $minutes, $seconds, $month, $day+$interval, $year);
+            $date   =   mktime ($hour, $minute, $second, $month, $day+$interval, $year);
             break;
         case 'day':
-            $date   =   mktime ($hours, $minutes, $seconds, $month, $day+$interval, $year);
+            $date   =   mktime ($hour, $minute, $second, $month, $day+$interval, $year);
             break;
         }
-        
-       
+              
         $scheduleDate = explode ( "-", date("n-j-Y-H-i-s", $date ) );
                               
         $date = array( );

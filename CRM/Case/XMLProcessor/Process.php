@@ -319,6 +319,9 @@ AND        ca.case_id = %3
                                     );
         }
         
+        //parsing date to default preference format
+        $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'] );
+        
         if ( $activityTypeName == 'Open Case' ) {
             // we don't set activity_date_time for auto generated
             // activities, but we want it to be set for open case.
@@ -360,10 +363,8 @@ AND        ca.case_id = %3
             if ( !$activityDate ) {
                 $activityDate = $params['activity_date_time'];
             }
-
-            $datetime     = new DateTime( $activityDate );
-            $activityDateTime = CRM_Utils_Date::unformat( $datetime->format('Y:m:d:H:i:s'), ':' );
-
+            list( $activity_date, $activity_time ) = CRM_Utils_Date::setDateDefaults( $activityDate );
+            $activityDateTime = CRM_Utils_Date::processDate( $activity_date, $activity_time );
             //add reference offset to date.
             if ( (int) $activityTypeXML->reference_offset ) {
                 $activityDateTime = CRM_Utils_Date::intervalAdd( 'day', (int) $activityTypeXML->reference_offset, 

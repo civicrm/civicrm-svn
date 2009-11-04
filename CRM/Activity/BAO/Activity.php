@@ -292,7 +292,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
 
         if ( ! CRM_Utils_Array::value( 'status_id', $params ) ) {
             if ( isset( $params['activity_date_time'] ) &&
-                 $params['activity_date_time'] < date('Ymd') ) {
+                 strcmp( $params['activity_date_time'], CRM_Utils_Date::processDate( date() ) == -1 ) ) {
                 $params['status_id'] = 2;
             } else {
                 $params['status_id'] = 1;
@@ -314,6 +314,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         if ( !empty( $params['assignee_contact_id'] ) && is_array( $params['assignee_contact_id'] ) ) {
             $params['assignee_contact_id'] = array_unique( $params['assignee_contact_id'] );
         }
+
         $activity->copyValues( $params );
 
         // start transaction        
@@ -1487,12 +1488,10 @@ AND cl.modified_id  = c.id
             $followupParams['target_contact_id'] = $params['target_contact_id'];
         }
         
-        CRM_Utils_Date::getAllDefaultValues( $currentDate );
+        $currentDate  = CRM_Utils_Date::setDateDefaults( );
         $followupDate = CRM_Utils_Date::intervalAdd( $params['interval_unit'], $params['interval'], $currentDate );
-        $followupDate = CRM_Utils_Date::format( $followupDate );
-        
-        $followupParams['activity_date_time'] = $followupDate;
-               
+        $followupParams['activity_date_time'] = CRM_Utils_Date::processDate( $followupDate );
+
         $followupActivity = self::create( $followupParams );
         
         return $followupActivity;
