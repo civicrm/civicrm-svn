@@ -354,7 +354,7 @@ class CRM_Core_SelectValues
      * @return array         the date array
      * @static
      */
-    static function &date( $type = null, $format = null )
+    static function &date( $type = null, $format = null, $minOffset = null, $maxOffset = null )
     {
         if ( $format ) {
             $newDate['format'] = $format;
@@ -377,11 +377,10 @@ class CRM_Core_SelectValues
             if ( !$newDate['format'] ) {
                 $newDate['format'] = 'M d';
             } 
-            
-            $year = date('Y');
-            $newDate['minYear'] = $year - $minOffset;
-            $newDate['maxYear'] = $year + $maxOffset;
         }
+        $year = date('Y');
+        $newDate['minYear'] = $year - $minOffset;
+        $newDate['maxYear'] = $year + $maxOffset;
         return $newDate;
     }
 

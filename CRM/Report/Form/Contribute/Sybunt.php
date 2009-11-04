@@ -47,8 +47,7 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
     function __construct( ) {
         $yearsInPast      = 8;
         $yearsInFuture    = 2;
-        $dateParts        = implode( CRM_Core_DAO::VALUE_SEPARATOR, array( 'Y') );
-        $date             = CRM_Core_SelectValues::date('custom', $yearsInPast, $yearsInFuture, $dateParts ) ;        
+        $date             = CRM_Core_SelectValues::date( 'custom', null, $yearsInPast, $yearsInFuture ) ;        
         $count            = $date['maxYear'] ;
         while ( $date['minYear'] <= $count )  {
             $optionYear[ $date['minYear'] ] = $date['minYear'];
