@@ -136,6 +136,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                           $action = CRM_Core_Action::NONE,
                           $method = 'post',
                           $name = null ) {
+
         if ( $name ) {
             $this->_name  = $name;
         } else {

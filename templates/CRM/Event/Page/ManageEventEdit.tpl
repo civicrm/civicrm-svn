@@ -46,13 +46,13 @@
     </tr>
 
     <tr>
-        <td class="nowrap"><a href="{crmURL p='civicrm/event/info' q="reset=1&id=`$id`"}" id="idDisplayEvent">&raquo; {ts}View Event Info{/ts}</a></td>
+        <td class="nowrap"><a href="{crmURL p='civicrm/event/info' q="reset=1&id=`$id`" fe=1}" id="idDisplayEvent">&raquo; {ts}View Event Info{/ts}</a></td>
         <td>{ts}View the Event Information page as it will be displayed to site visitors.{/ts}</td>
     </tr>
 
     {if $isOnlineRegistration}
     <tr>
-        <td class="nowrap"><a href="{crmURL p='civicrm/event/register' q="reset=1&action=preview&id=`$id`"}" id="idTest-drive">&raquo; {ts}Test-drive Registration{/ts}</a></td>
+        <td class="nowrap"><a href="{crmURL p='civicrm/event/register' q="reset=1&action=preview&id=`$id`" fe=1}" id="idTest-drive">&raquo; {ts}Test-drive Registration{/ts}</a></td>
         <td>{ts}Test-drive the entire online registration process - including custom fields, confirmation, thank-you page, and receipting. Fee payment transactions will be directed to your payment processor's test server. <strong>No live financial transactions will be submitted. However, a contact record will be created or updated and participant and contribution records will be saved to the database. Use obvious test contact names so you can review and delete these records as needed.</strong>{/ts}</td>
     </tr>
 

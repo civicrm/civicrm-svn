@@ -171,7 +171,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                                                                false, null,
                                                                $this->_skipPermission,
                                                                null,
-                                                               CRM_Core_Permission::EDIT );
+                                                               ( $this->_action == CRM_Core_Action::ADD ) ? CRM_Core_Permission::CREATE : CRM_Core_Permission::EDIT );
             
             ///is profile double-opt process configurablem, key
             ///should be present in civicrm.settting.php file

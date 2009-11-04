@@ -308,8 +308,8 @@ class CRM_Core_Invoke
                 $wrapper =& new CRM_Utils_Wrapper( ); 
                 return $wrapper->run( 'CRM_Profile_Form_Edit',
                                       ts( 'Create Profile' ),
-                                      CRM_Core_Action::ADD,
-                                      false, true );
+                                      array( 'mode' => CRM_Core_Action::ADD,
+                                             'ignoreKey' => true ) );
             } 
         } 
 
