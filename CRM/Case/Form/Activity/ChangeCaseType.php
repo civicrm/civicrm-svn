@@ -79,7 +79,7 @@ class CRM_Case_Form_Activity_ChangeCaseType
 
         // timeline
         $form->addYesNo( 'is_reset_timeline', ts( 'Reset Case Timeline?' ),null, true, array('onclick' =>"return showHideByValue('is_reset_timeline','','resetTimeline','table-row','radio',false);") );
-        $form->addDateTime( 'reset_date_time', ts('Reset Start Date'), false, 'activityDatetime' );
+        $form->addDateTime( 'reset_date_time', ts('Reset Start Date'), false, array( 'formatType' => 'activityDatetime' ) );
     }
 
     /**
