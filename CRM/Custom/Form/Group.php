@@ -58,6 +58,22 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
     protected $_isGroupEmpty = true;
     
     /**
+     * array of existing subtypes set for a custom group
+     *
+     * @var array
+     * @access protected
+     */
+    protected $_subtypes = array( );
+
+    /**
+     * array of default params
+     *
+     * @var array
+     * @access protected
+     */
+    protected $_defaults = array( );
+
+    /**
      * Function to set variables up before form is built
      * 
      * @param null
@@ -81,6 +97,17 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         } else {
             CRM_Utils_System::setTitle(ts('New Custom Data Group'));
         }
+
+        if ( isset($this->_id) ) {
+            $params = array( 'id' => $this->_id );
+            CRM_Core_BAO_CustomGroup::retrieve( $params, $this->_defaults );
+
+            $subExtends = CRM_Utils_Array::value( 'extends_entity_column_value', $this->_defaults );
+            if ( !empty( $subExtends ) ) {
+                $this->_subtypes = 
+                    explode( CRM_Core_DAO::VALUE_SEPARATOR, substr($subExtends,1,-1) );
+            } 
+        }
     }
      
     /**
@@ -97,6 +124,14 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
     static function formRule(&$fields, &$files, $self) 
     {
         $errors = array();
+
+        if ( !$self->_isGroupEmpty ) {
+            $updates = array_diff($self->_subtypes, array_intersect($self->_subtypes, $fields['extends'][1]));
+            if ( ! empty($updates) ) {
+                $errors['extends'] = ts("Removing any existing subtypes is not allowed at this moment. However you can add more subtypes.");
+            } 
+        }
+
         if ( empty( $fields['extends'][0] ) ) {
             $errors['extends'] = ts("You need to select the type of record that this group of custom fields is applicable for.");
         }
@@ -258,11 +293,18 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
 
         if ($this->_action == CRM_Core_Action::UPDATE) {
             //allow to edit settings if custom group is empty CRM-5258
-            $this->_isGroupEmpty = CRM_Core_BAO_CustomGroup::isGroupEmpty($this->_id, $extends);
-           
+            $this->_isGroupEmpty = CRM_Core_BAO_CustomGroup::isGroupEmpty( $this->_id );
             if ( !$this->_isGroupEmpty ) {
-                $sel->freeze();
-            } 
+                if ( !empty($this->_subtypes) &&
+                     (count($this->_subtypes) < count($sel2[$this->_defaults['extends']])) ) {
+                    // we only want to allow adding subtypes for this case, 
+                    // and therefore freeze the first selector only.
+                    $sel->_elements[0]->freeze();
+                } else {
+                    // freeze both the selectors
+                    $sel->freeze();
+                }
+            }
             $this->assign('gid', $this->_id);
         }
         
@@ -337,21 +379,14 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
      */
     function setDefaultValues()
     {
-        $defaults = array();
+        $defaults =& $this->_defaults; 
     
         if ($this->_action == CRM_Core_Action::ADD) {
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_CustomGroup');
 
             $defaults['is_multiple'] = $defaults['min_multiple'] = 0;
-        }
-
-        if (isset($this->_id)) {
-            $params = array('id' => $this->_id);
-            CRM_Core_BAO_CustomGroup::retrieve($params, $defaults);
-            
-        } else {
-            $defaults['is_active'] = 1;
-            $defaults['style'] = 'Inline';
+            $defaults['is_active']   = 1;
+            $defaults['style']       = 'Inline';
         }
 
         if ( isset ($defaults['extends'] ) ) {
@@ -359,10 +394,9 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             unset($defaults['extends']);
 
             $defaults['extends'][0] = $extends;
-            $subExtends = CRM_Utils_Array::value( 'extends_entity_column_value', $defaults );
             
-            if ( !empty($subExtends) ) {
-                $defaults['extends'][1] = explode( CRM_Core_DAO::VALUE_SEPARATOR, substr($subExtends,1,-1) );
+            if ( !empty( $this->_subtypes ) ) {
+                $defaults['extends'][1] = $this->_subtypes;
             } 
             
             $subName = CRM_Utils_Array::value( 'extends_entity_column_id', $defaults );
@@ -373,7 +407,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
 				} elseif ( $subName == 2 ) {
 					$defaults['extends'][0] = 'ParticipantEventName';
 				}
-			} else if ( $extends == 'Relationship' && !empty($subExtends) ) {
+			} else if ( $extends == 'Relationship' && !empty($this->_subtypes) ) {
                 $relationshipDefaults = array ( );
                 foreach ( $defaults['extends'][1] as $donCare => $rel_type_id ) {
                     $relationshipDefaults[] = $rel_type_id.'_a_b';

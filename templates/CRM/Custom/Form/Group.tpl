@@ -104,5 +104,11 @@ function showRange()
   	} 
   }
 
+// In update mode, when 'extends' is set to an option which doesn't have 
+// any options in 2nd selector (for subtypes)  -
+var subtypes = document.getElementById('extends[1]');
+if ( document.getElementById('extends[1]').options.length <= 0 ) {
+   document.getElementById('extends[1]').style.display = 'none';
+}
 </script>
 {/literal}

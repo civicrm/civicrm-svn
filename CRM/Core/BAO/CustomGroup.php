@@ -79,27 +79,30 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
             $group->extends = $params['extends'][0];
         }
 
-        if ( is_array($params['extends'][1]) && !empty($params['extends'][1]) ) {
-            $params['extends'][1] = implode ( CRM_Core_DAO::VALUE_SEPARATOR, $params['extends'][1] );
+        $group->extends_entity_column_id = null;
+        if ( $params['extends'][0] == 'ParticipantRole' ||
+             $params['extends'][0] == 'ParticipantEventName' ||
+             $params['extends'][0] == 'ParticipantEventType' ) {
+            $group->extends_entity_column_id  = 
+                CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', $params['extends'][0], 'value', 'name' );
         }
 
-        $group->extends_entity_column_id = null;
-        if ( ($params['extends'][0] == 'Relationship') && !empty($params['extends'][1])) {
-            $group->extends_entity_column_value = str_replace( array('_a_b', '_b_a'), array('', ''), $params['extends'][1]);
-        } elseif ( empty($params['extends'][1]) ) {
-            $group->extends_entity_column_value = null;
-        } else {
-            $group->extends_entity_column_value = $params['extends'][1];
-            if ( $params['extends'][0] == 'ParticipantRole' ||
-                 $params['extends'][0] == 'ParticipantEventName' ||
-                 $params['extends'][0] == 'ParticipantEventType' ) {
-                $group->extends_entity_column_id  = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', $params['extends'][0], 'value', 'name' );
-            } 
+        if ( is_array($params['extends'][1]) && !empty($params['extends'][1]) ) {
+            $params['extends'][1] = implode ( CRM_Core_DAO::VALUE_SEPARATOR, $params['extends'][1] );
+
+            if ( $params['extends'][0] == 'Relationship' ) {
+                $group->extends_entity_column_value = 
+                    str_replace( array('_a_b', '_b_a'), array('', ''), $params['extends'][1]);
+            } else {
+                $group->extends_entity_column_value = $params['extends'][1];
+            }
         }
         
-        if ( $group->extends_entity_column_value ) {
+        if ( !empty($group->extends_entity_column_value) ) {
             $group->extends_entity_column_value = CRM_Core_DAO::VALUE_SEPARATOR . 
                 $group->extends_entity_column_value . CRM_Core_DAO::VALUE_SEPARATOR;
+        } else {
+            $group->extends_entity_column_value = "null";
         }
 
         if ( isset( $params['id'] ) ) {
