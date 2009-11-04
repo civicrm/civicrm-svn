@@ -106,13 +106,6 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
             $this->assign('customDataSubType',  $defaults["event_type_id"] );
         }
 
-        if( !isset ( $defaults['start_date'] ) ) {
-            $defaultDate = array( );
-            CRM_Utils_Date::getAllDefaultValues( $defaultDate );
-            $defaultDate['i'] = (int ) ( $defaultDate['i'] / 15 ) * 15;
-            $defaults['start_date'] = $defaultDate;
-        }
-
         require_once 'CRM/Core/ShowHideBlocks.php';
         $this->_showHide =& new CRM_Core_ShowHideBlocks( );
         // Show waitlist features or event_full_text if max participants set
