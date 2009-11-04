@@ -76,7 +76,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 $dat = $defaults[$per];
                 $dat = ( $dat < 999) ? '0'.$dat : $dat; 
                 $defaults[$per] = array();
-                $defaults[$per][$config->dateformatMonthVar] = substr($dat, 0, 2);
+                $defaults[$per]['M'] = substr($dat, 0, 2);
                 $defaults[$per]['d'] = substr($dat, 2, 3);
             }
         }
@@ -277,7 +277,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 ( $params['duration_unit'] == 'year'  ) ) {
                 $periods = array('fixed_period_start_day', 'fixed_period_rollover_day');
                 foreach ( $periods as $period ) {
-                    $month = $params[$period][$config->dateformatMonthVar];
+                    $month = $params[$period]['M'];
                     $date  = $params[$period]['d'];
                     if ( !$month || !$date ) {
                         switch ($period) {
@@ -362,8 +362,8 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
             $config =& CRM_Core_Config::singleton( );
             $periods = array('fixed_period_start_day', 'fixed_period_rollover_day');
             foreach ( $periods as $per ) {
-                if ($params[$per][$config->dateformatMonthVar] && $params[$per]['d']) {
-                    $mon = $params[$per][$config->dateformatMonthVar];
+                if ($params[$per]['M'] && $params[$per]['d']) {
+                    $mon = $params[$per]['M'];
                     $dat = $params[$per]['d'];
                     $mon = ( $mon < 9) ? '0'.$mon : $mon; 
                     $dat = ( $dat < 9) ? '0'.$dat : $dat; 

@@ -165,24 +165,6 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $dateInputFormat = 'mm/dd/yy';
 
     /**
-     * String format for date-month
-     * @var string
-     */
-    public $dateformatMonthVar = 'M';
-  
-    /**
-     * String format for date-month
-     * @var string
-     */
-    public $datetimeformatMonthVar = 'M';
-
-    /**
-     * String format for date-month
-     * @var string
-     */
-    public $datetimeformatHourVar = 'h';
-
-    /**
      * Month and day on which fiscal year starts.
      *
      * @var array

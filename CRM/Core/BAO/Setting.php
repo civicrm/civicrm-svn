@@ -156,16 +156,6 @@ class CRM_Core_BAO_Setting
         if ($domain->config_backend) {
             $defaults   = unserialize($domain->config_backend);
 
-            // calculate month var
-            $defaults['dateformatMonthVar'] = 
-                strstr($defaults['dateformatQfDate'], '%m') ? 'm' : (strstr($defaults['dateformatQfDate'], '%b') ? 'M' : (strstr($defaults['dateformatQfDate'], '%B') ? 'F' : null)); 
-            
-            //calculate month var for Date Time
-            $defaults['datetimeformatMonthVar'] = 
-                strstr($defaults['dateformatQfDatetime'], '%m') ? 'm' : (strstr($defaults['dateformatQfDatetime'], '%b') ? 'M' : (strstr($defaults['dateformatQfDatetime'], '%B') ? 'F' : null));
-            //calculate hour var for Date Time 
-            $defaults['datetimeformatHourVar'] =  strstr($defaults['dateformatQfDatetime'], '%I') ?'h' : (strstr($defaults['dateformatQfDatetime'], '%l') ? 'g' : null);
-
             // set proper monetary formatting, falling back to en_US and C (CRM-2782)
             setlocale(LC_MONETARY, $defaults['lcMonetary'].'.utf8', $defaults['lcMonetary'], 'en_US.utf8', 'en_US', 'C');
 

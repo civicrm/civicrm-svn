@@ -165,6 +165,8 @@ class CRM_Utils_Date
      */     
     static function &unformat( $date, $separator = '-' ) 
     {
+        CRM_Core_Session::setStatus( ts('Need to remove CRM_Utils_Date::unformat.') );
+        
         $value = array( );
         if ( empty( $date ) ) {
             return $value;
