@@ -42,7 +42,7 @@ registration process.{/ts}
 {$event.event_start_date|crmDate}{if $event.event_end_date}-{if $event.event_end_date|date_format:"%Y%m%d" == $event.event_start_date|date_format:"%Y%m%d"}{$event.event_end_date|crmDate:0:1}{else}{$event.event_end_date|crmDate}{/if}{/if}
 
 {if $event.participant_role neq 'Attendee' and $defaultRole}
-{ts}Participant Role{/ts} : {$event.participant_role}
+{ts}Participant Role{/ts}: {$event.participant_role}
 {/if}
 
 {if $isShowLocation}
@@ -76,7 +76,7 @@ registration process.{/ts}
 {/if}
 
 {capture assign=icalFeed}{crmURL p='civicrm/event/ical' q="reset=1&id=`$event.id`" h=0 a=1}{/capture}
-{ts}Download iCalendar File:{/ts} {$icalFeed} 
+{ts}Download iCalendar File:{/ts} {$icalFeed}
 {if $email}
 
 ===========================================================
@@ -95,7 +95,7 @@ registration process.{/ts}
 {if $value neq 'skip'}
 {if $isPrimary}
 {if $lineItem|@count GT 1} {* Header for multi participant registration cases. *}
-Participant {$priceset+1}
+{ts 1=$priceset+1}Participant %1{/ts}
 {/if}
 {/if}
 ---------------------------------------------------------
@@ -111,13 +111,13 @@ Participant {$priceset+1}
 {/if}
 {/foreach}
 {/if}
-{if $amount && !$lineItem} 
-{foreach from=$amount item=amount key=level}{$amount.amount|crmMoney} {$amount.label}	
+{if $amount && !$lineItem}
+{foreach from=$amount item=amount key=level}{$amount.amount|crmMoney} {$amount.label}
 {/foreach}
 {/if}
 {if $isPrimary }
 
-{ts}Total Amount{/ts}     : {$totalAmount|crmMoney} {if $hookDiscount.message}({$hookDiscount.message}){/if}
+{ts}Total Amount{/ts}: {$totalAmount|crmMoney} {if $hookDiscount.message}({$hookDiscount.message}){/if}
 
 {if $is_pay_later }
 
@@ -130,19 +130,19 @@ Participant {$priceset+1}
 {ts}Registration Date{/ts}: {$register_date|crmDate}
 {/if}
 {if $receive_date}
-{ts}Transaction Date{/ts} : {$receive_date|crmDate}
+{ts}Transaction Date{/ts}: {$receive_date|crmDate}
 {/if}
 {if $contributionTypeName}
 {ts}Contribution Type{/ts}: {$contributionTypeName}
 {/if}
 {if $trxn_id}
-{ts}Transaction #{/ts}    : {$trxn_id}
+{ts}Transaction #{/ts}: {$trxn_id}
 {/if}
 {if $paidBy}
 {ts}Paid By{/ts}: {$paidBy}
 {/if}
 {if $checkNumber}
-{ts}Check Number{/ts}: {$checkNumber} 
+{ts}Check Number{/ts}: {$checkNumber}
 {/if}
 {if $contributeMode ne 'notify' and !$isAmountzero and !$is_pay_later and !$isOnWaitlist and !$isRequireApproval}
 
@@ -172,7 +172,7 @@ Participant {$priceset+1}
 ===========================================================
 {foreach from=$customPre item=value key=customName}
 {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
-{$customName} : {$value}
+{$customName}: {$value}
 {/if}
 {/foreach}
 {/if}
@@ -183,7 +183,7 @@ Participant {$priceset+1}
 ===========================================================
 {foreach from=$customPost item=value key=customName}
 {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
-{$customName} : {$value}
+{$customName}: {$value}
 {/if}
 {/foreach}
 {/if}
@@ -206,19 +206,19 @@ Participant {$priceset+1}
 ----------------------------------------------------------
 {/if}
 {foreach from=$val item=v key=f}
-{$f} : {$v}
+{$f}: {$v}
 {/foreach}
 {/if}
 {/foreach}
-{/foreach} 
+{/foreach}
 {/if}
 {if $customGroup}
-{foreach from=$customGroup item=value key=customName} 
+{foreach from=$customGroup item=value key=customName}
 ==========================================================
 {$customName}
 ==========================================================
 {foreach from=$value item=v key=n}
-{$n} : {$v}
+{$n}: {$v}
 {/foreach}
 {/foreach}
 {/if}
