@@ -1,16 +1,9 @@
 <?php
 
-$req_headers = array();
-loadHeaders();
-
-function loadHeaders() {
-    global $req_headers;
-    if (function_exists('apache_request_headers')) {
-        $req_headers = apache_request_headers();
-    } else {
-        $req_headers = $_SERVER;
-    }
-}
+// often we're here before we get a full include path,
+// so we should make sure we can find this file
+set_include_path(get_include_path() . PATH_SEPARATOR . "..");
+require_once 'CRM/Utils/System.php';
 
 function displayError($message) {
     echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../packages/jquery/css/openid-selector.css\" />"; 
@@ -84,7 +77,7 @@ function &getConsumer() {
 }
 
 function getScheme() {
-    global $req_headers;
+    $req_headers = CRM_Utils_System::getRequestHeaders();
     $scheme = 'http';
     if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ||
         (isset($req_headers['X_FORWARDED_PROTO']) &&
@@ -95,7 +88,6 @@ function getScheme() {
 }
 
 function getReturnTo() {
-    loadHeaders();
     $urlPort = getUrlPort();
     
     return sprintf("%s://%s%s%s/finish_auth.php",
@@ -114,7 +106,7 @@ function getTrustRoot() {
 }
 
 function getUrlPort() {
-    global $req_headers;
+    $req_headers = CRM_Utils_System::getRequestHeaders();
     $scheme = getScheme();
     if ( array_key_exists('X_FORWARDED_PROTO', $req_headers ) &&
          $req_headers['X_FORWARDED_PROTO'] == 'https' ) {

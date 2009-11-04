@@ -825,12 +825,21 @@ class CRM_Utils_System {
         return $headers;
     }
 
+    static function getRequestHeaders() {
+        if (function_exists('apache_request_headers')) {
+            return apache_request_headers();
+        } else {
+            return $_SERVER;
+        }
+    }
+
     static function redirectToSSL( $abort = false ) {
         $config = CRM_Core_Config::singleton( );
+        $req_headers = CRM_Utils_System::getRequestHeaders();
         if ( $config->enableSSL             &&
              ( ! isset( $_SERVER['HTTPS'] ) ||
                strtolower( $_SERVER['HTTPS'] )  == 'off' ) &&
-               strtolower( $_SERVER['X_FORWARDED_PROTO'] ) != 'https' ) {
+               strtolower( $req_headers['X_FORWARDED_PROTO'] ) != 'https' ) {
             // ensure that SSL is enabled on a civicrm url (for cookie reasons etc)
             $url = "https://{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}";
             if ( ! self::checkURL( $url, true ) ) {
