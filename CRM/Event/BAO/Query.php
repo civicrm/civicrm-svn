@@ -516,8 +516,8 @@ class CRM_Event_BAO_Query
         $eventTypeId      =& $form->add( 'hidden', 'event_type_id'     , '', array( 'id' => 'event_type_id'      ) );
         $participantFeeId =& $form->add( 'hidden', 'participant_fee_id', '', array( 'id' => 'participant_fee_id' ) );
 
-        $form->addDate( 'event_start_date_low', ts('Event Dates - From'), false, array( 'formatType' => 'relative') );
-        $form->addDate( 'event_end_date_high', ts('To'), false, array( 'formatType' => 'relative') );
+        $form->addDate( 'event_start_date_low', ts('Event Dates - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'event_end_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
         require_once 'CRM/Event/PseudoConstant.php';
         foreach (CRM_Event_PseudoConstant::participantStatus( ) as $id => $Name) {

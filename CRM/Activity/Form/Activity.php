@@ -536,7 +536,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $this->addRule('interval', ts('Please enter the follow-up interval as a number (integers only).'), 
                        'positiveInteger');
 
-        $this->addDateTime( 'activity_date_time', ts('Date'), true, array( 'formatType' => 'activityDatetime') );  
+        $this->addDateTime( 'activity_date_time', ts('Date'), true, array( 'formatType' => 'activityDateTime') );  
         
         $dataUrl = CRM_Utils_System::url( "civicrm/ajax/search",
                                           "reset=1",

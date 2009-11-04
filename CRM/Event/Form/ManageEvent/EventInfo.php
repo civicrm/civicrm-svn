@@ -203,8 +203,8 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         $this->addElement('checkbox', 'is_public', ts('Public Event?') );
         $this->addElement('checkbox', 'is_map', ts('Include Map to Event Location?') );
          
-        $this->addDateTime( 'start_date', ts('Start Date'), false, array('formatType' => 'activityDatetime') );
-        $this->addDateTime( 'end_date', ts('End Date / Time'), false, array('formatType' => 'activityDatetime') );
+        $this->addDateTime( 'start_date', ts('Start Date'), false, array('formatType' => 'activityDateTime') );
+        $this->addDateTime( 'end_date', ts('End Date / Time'), false, array('formatType' => 'activityDateTime') );
      
         $this->add('text','max_participants', ts('Max Number of Participants'),
                     array('onchange' => "if (this.value != '') {show('id-waitlist','table-row'); showHideByValue('has_waitlist','0','id-waitlist-text','table-row','radio',false); showHideByValue('has_waitlist','0','id-event_full','table-row','radio',true); return;} else {hide('id-event_full','table-row'); hide('id-waitlist','table-row'); hide('id-waitlist-text','table-row'); return;}"));

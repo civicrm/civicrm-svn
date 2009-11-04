@@ -63,7 +63,7 @@ class CRM_Mailing_Form_Schedule extends CRM_Core_Form
      */
     public function buildQuickform() 
     {
-        $this->addDateTime( 'start_date', ts('Schedule Mailing'), false, array( 'formatType' => 'relative') );
+        $this->addDateTime( 'start_date', ts('Schedule Mailing'), false, array( 'formatType' => 'mailing') );
 				
         $this->addElement('checkbox', 'now', ts('Send Immediately'));
         

@@ -597,7 +597,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             }
         }
        
-        $this->addDateTime( 'register_date', ts('Registration Date'), true, array( 'formatType' => 'activityDatetime') );
+        $this->addDateTime( 'register_date', ts('Registration Date'), true, array( 'formatType' => 'activityDateTime') );
         
 		if ( $this->_participantId ) {
 			$this->assign( 'entityID', $this->_participantId );

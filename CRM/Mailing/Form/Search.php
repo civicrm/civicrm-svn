@@ -45,8 +45,8 @@ class CRM_Mailing_Form_Search extends CRM_Core_Form {
         $this->add( 'text', 'mailing_name', ts( 'Mailing Name' ),
                     CRM_Core_DAO::getAttribute('CRM_Mailing_DAO_Mailing', 'title') );
                     
-        $this->addDate( 'mailing_from', ts('From'), false, array( 'formatType' => 'relative') );
-        $this->addDate( 'mailing_to', ts('To'), false, array( 'formatType' => 'relative') );
+        $this->addDate( 'mailing_from', ts('From'), false, array( 'formatType' => 'searchDate') );
+        $this->addDate( 'mailing_to', ts('To'), false, array( 'formatType' => 'searchDate') );
         
         $this->add( 'text', 'sort_name', ts( 'Created or Sent by' ), 
                     CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name') );

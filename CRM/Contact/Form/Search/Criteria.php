@@ -211,8 +211,8 @@ class CRM_Contact_Form_Search_Criteria {
 
         $config =& CRM_Core_Config::singleton( );
 
-        $form->addDate( 'activity_date_low', ts('Activity Dates - From'), false, array( 'formatType' => 'relative') );
-        $form->addDate( 'activity_date_high', ts('To'), false, array( 'formatType' => 'relative') );
+        $form->addDate( 'activity_date_low', ts('Activity Dates - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'activity_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
         
         $activityRoles  = array( ts('With'), ts('Created by'), ts('Assigned to') );
         $form->addRadio( 'activity_role', ts( 'Contact Role and Name' ), $activityRoles, null, '<br />');
@@ -257,8 +257,8 @@ class CRM_Contact_Form_Search_Criteria {
         // block for change log
         $form->addElement('text', 'changed_by', ts('Modified By'), null);
 
-        $form->addDate( 'modified_date_low', ts('Modified Between'), false, array( 'formatType' => 'relative') );
-        $form->addDate( 'modified_date_high', ts('and'), false, array( 'formatType' => 'relative') );
+        $form->addDate( 'modified_date_low', ts('Modified Between'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'modified_date_high', ts('and'), false, array( 'formatType' => 'searchDate') );
     }
 
     static function task( &$form ) {
@@ -322,11 +322,11 @@ class CRM_Contact_Form_Search_Criteria {
         }
         $form->addGroup($genderOptions, 'gender', ts('Gender'));
          
-        $form->addDate( 'birth_date_low', ts('Birth Dates - From'), false, array( 'formatType' => 'relative') );
-        $form->addDate( 'birth_date_high', ts('To'), false, array( 'formatType' => 'relative') );
+        $form->addDate( 'birth_date_low', ts('Birth Dates - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'birth_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
-        $form->addDate( 'deceased_date_low', ts('Deceased Dates - From'), false, array( 'formatType' => 'relative') );
-        $form->addDate( 'deceased_date_high', ts('To'), false, array( 'formatType' => 'relative') );
+        $form->addDate( 'deceased_date_low', ts('Deceased Dates - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'deceased_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
     }
     
     static function notes( &$form ) {

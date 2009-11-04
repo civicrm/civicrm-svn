@@ -164,8 +164,8 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $this->add('select', 'status_id',  ts( 'Status' ), array( "" => ts(' - any status - ') ) + $activityStatus );
 
         // activity dates
-        $this->addDate( 'activity_date_low', ts('Activity Dates - From'), false, array( 'formatType' => 'relative') );
-        $this->addDate( 'activity_date_high', ts('To'), false, array( 'formatType' => 'relative') );
+        $this->addDate( 'activity_date_low', ts('Activity Dates - From'), false, array( 'formatType' => 'searchDate') );
+        $this->addDate( 'activity_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
         
 		require_once"CRM/Core/Permission.php";
 		if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) { 

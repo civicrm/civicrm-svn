@@ -345,14 +345,14 @@ class CRM_Member_BAO_Query
 
         $form->addElement( 'text', 'member_source', ts( 'Source' ) );
  
-        $form->addDate( 'member_join_date_low', ts('Join Date - From'), false, array( 'formatType' => 'relative') );
-        $form->addDate( 'member_join_date_high', ts('To'), false, array( 'formatType' => 'relative') );
+        $form->addDate( 'member_join_date_low', ts('Join Date - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'member_join_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
-        $form->addDate( 'member_start_date_low', ts('Start Date - From'), false, array( 'formatType' => 'relative') );
-        $form->addDate( 'member_start_date_high', ts('To'), false, array( 'formatType' => 'relative') );
+        $form->addDate( 'member_start_date_low', ts('Start Date - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'member_start_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
-        $form->addDate( 'member_end_date_low', ts('End Date - From'), false, array( 'formatType' => 'relative') );
-        $form->addDate( 'member_end_date_high', ts('To'), false, array( 'formatType' => 'relative') );
+        $form->addDate( 'member_end_date_low', ts('End Date - From'), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'member_end_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
         $form->addElement( 'checkbox', 'member_test' , ts( 'Find Test Memberships?' ) );
         $form->addElement( 'checkbox', 'member_pay_later', ts( 'Find Pay Later Memberships?' ) );
