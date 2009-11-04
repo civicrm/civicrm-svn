@@ -40,14 +40,22 @@
     
 --  CRM-5218
 --  added menu for contact Types in navigation
-    SELECT @domain_id := min(id) FROM civicrm_domain;
-    SELECT @nav_ol    := id FROM civicrm_navigation WHERE name = 'Option Lists';
-    SELECT @nav_ol_wt := max(weight) from civicrm_navigation WHERE parent_id = @nav_ol;
+    SELECT @domain_id   := min(id) FROM civicrm_domain;
+    SELECT @nav_ol      := id FROM civicrm_navigation WHERE name = 'Option Lists';
+    SELECT @nav_indi    := id FROM civicrm_navigation WHERE name = 'New Individual';
+    SELECT @nav_org     := id FROM civicrm_navigation WHERE name = 'New Organization';
+    SELECT @nav_ol_wt   := max(weight) from civicrm_navigation WHERE parent_id = @nav_ol;
+    SELECT @nav_indi_wt := max(weight) from civicrm_navigation WHERE parent_id = @nav_indi;
+    SELECT @nav_org_wt  := max(weight) from civicrm_navigation WHERE parent_id = @nav_org;
     INSERT INTO `civicrm_navigation`
         ( domain_id, url, label, name,permission, permission_operator, parent_id, is_active, has_separator, weight ) 
     VALUES
-        (  @domain_id,'civicrm/admin/options/subtype&reset=1', 'Contact Types', 'Contact Types', 'administer CiviCRM', '', @nav_ol, '1', NULL, @nav_ol_wt+1 ); 
-
+        (  @domain_id,'civicrm/admin/options/subtype&reset=1', 'Contact Types', 'Contact Types', 'administer CiviCRM', '', @nav_ol, '1', NULL, @nav_ol_wt+1 ),
+	(  @domain_id,'civicrm/contact/add&ct=Individual&cst=Student&reset=1', 'New Student', 'New Student', 'add contacts', '', @nav_indi, '1', NULL, @nav_indi_wt+1 ), 
+        (  @domain_id,'civicrm/contact/add&ct=Individual&cst=Parent&reset=1', 'New Parent', 'New Parent', 'add contacts', '', @nav_indi, '1', NULL, @nav_indi_wt+2 ),
+	(  @domain_id,'civicrm/contact/add&ct=Individual&cst=Staff&reset=1', 'New Staff', 'New Staff', 'add contacts', '', @nav_indi, '1', NULL, @nav_indi_wt+3 ),
+	(  @domain_id,'civicrm/contact/add&ct=Organization&cst=Team&reset=1', 'New Team', 'New Team', 'add contacts', '', @nav_org, '1', NULL, @nav_org_wt+1 ),
+	(  @domain_id,'civicrm/contact/add&ct=Organization&cst=Sponsor&reset=1', 'New Sponsor', 'New Sponsor', 'add contacts', '', @nav_org, '1', NULL, @nav_org_wt+2 );
 --  make changes for CRM-5100 
     ALTER TABLE `civicrm_relationship_type`
         ADD `contact_sub_type_a` varchar(64) collate utf8_unicode_ci DEFAULT NULL AFTER `contact_type_b`,

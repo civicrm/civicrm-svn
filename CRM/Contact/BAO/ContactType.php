@@ -33,7 +33,7 @@
  */
 
 require_once 'CRM/Contact/DAO/ContactType.php';
-
+require_once 'CRM/Core/BAO/Navigation.php';
 class CRM_Contact_BAO_ContactType extends CRM_Contact_DAO_ContactType {
 
     /**
@@ -402,15 +402,9 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
     static function del( $ContactTypeId ) {
         require_once 'CRM/Core/DAO/CustomGroup.php';
         require_once 'CRM/Contact/DAO/Contact.php';
-        $sql = "
-SELECT name from civicrm_contact_type  
-WHERE id = %1
-AND parent_id IS NOT NULL";
-        $params = array( 1 => array( $ContactTypeId , 'Integer' ) );
-        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
-        if( $dao->fetch( ) ) {
-            $name = $dao->name;       
-        }
+        $params = array( 'id'=> $ContactTypeId  );
+        self::retrieve( $params , $contactinfo );
+        $name = $contactinfo['name'];
         $custom = & new CRM_Core_DAO_CustomGroup ( );
         $custom->extends = $name;  
         if( $custom->find( ) ) {
@@ -423,6 +417,15 @@ WHERE contact_sub_type = '$name'";
         $ContactType = & new CRM_Contact_DAO_ContactType( );
         $ContactType->id = $ContactTypeId;
         $ContactType->delete( );
+        if( $name ) {
+        $sql = "
+DELETE
+FROM civicrm_navigation 
+WHERE name = %1";
+        $params = array( 1 => array( "New $name" , 'String' ) );
+        $dao = CRM_Core_DAO::executeQuery( $sql , $params );
+        CRM_Core_BAO_Navigation::resetNavigation( );
+        }
         return true; 
     }
     /**
@@ -438,6 +441,29 @@ WHERE contact_sub_type = '$name'";
         $ContactType->copyValues( $params );
         $ContactType->id = CRM_Utils_Array::value( 'id', $params );
         $ContactType->save( );
+        if( $ContactType->find( true ) ) {
+            $contactName = $ContactType->name;
+            $contact     = ucfirst( $ContactType->label );
+            $active      = $ContactType->is_active;
+        }
+        if( CRM_Utils_Array::value( 'id', $params ) ) {
+            $params    = array( 'name' => "New $contactName");
+            $newParams = array ('label' => "New $contact" );
+            CRM_Core_BAO_Navigation::processUpdate( $params ,$newParams );
+        } else if( CRM_Utils_Array::value( 'parent_id', $params ) ) {
+            $name = self::getBasicType( $contact );    
+            $value = array( 'name' => "New $name" );
+            CRM_Core_BAO_Navigation::retrieve( $value ,$navinfo );
+            $navigation = array(
+                                'label'   => "New $contact",
+                                'url'     => "civicrm/contact/add&ct=$name&cst=$contact&reset=1",
+                                'permission' => "add contacts",
+                                'parent_id'  => $navinfo['id'],
+                                'is_active'  => $active
+                                ); 
+            CRM_Core_BAO_Navigation::add( $navigation );
+        }
+        CRM_Core_BAO_Navigation::resetNavigation( );
         return $ContactType;
     }
     /**
@@ -453,7 +479,22 @@ WHERE contact_sub_type = '$name'";
     {
         return CRM_Core_DAO::setFieldValue( 'CRM_Contact_DAO_ContactType', $id, 'is_active', $is_active );
     }
-    
+/**
+     * function to update contact menu
+     *
+     * @param int      $id        id of the database record
+     * @param boolean  $is_active value we want to set the is_active field
+     *
+     * @static
+     */
+    static function enableDisable( $id ,$isActive ) {
+        $params = array( 'id'=> $id );
+        self::retrieve( $params , $contactinfo );
+        $params    = array ( 'name'=> "New $contactinfo[name]" );
+        $newParams = array('is_active'=> $isActive );
+        CRM_Core_BAO_Navigation::processUpdate( $params ,$newParams );
+        CRM_Core_BAO_Navigation::resetNavigation( );
+    }    
     /**
      * Function to check whether allow to change any contact's subtype
      * on the basis of custom data and relationship of specific subtype

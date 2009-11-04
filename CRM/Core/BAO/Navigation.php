@@ -100,9 +100,11 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
             $params['name']   = $params['label'];
             $params['weight'] = self::calculateWeight( $params['parent_id'] );
         }
-                        
-        $params['permission'] = implode( ',', $params['permission'] );
-
+        
+        if( is_array( $params['permission'] )) {           
+            $params['permission'] = implode( ',', $params['permission'] );
+        }
+        
         $navigation->copyValues( $params );
 
         $navigation->domain_id = CRM_Core_Config::domainID( );
@@ -649,6 +651,20 @@ ORDER BY parent_id, weight";
           $dao->fetch();            
           return array( 'parent_id' => $dao->parent_id,
                         'weight'    => $dao->weight );
-      }      
- }
-
+      }
+      /**
+       * Function to update menu 
+       * 
+       * @param array  $params  
+       * @param array  $newParams new value of params
+       * @static
+       */
+      static function processUpdate( $params, $newParams ) {
+          $dao = new CRM_Core_DAO_Navigation( );
+          $dao->copyValues( $params );
+          if( $dao->find( true ) ) {
+              $dao->copyValues( $newParams );
+              $dao->save( );
+          }
+      } 
+}

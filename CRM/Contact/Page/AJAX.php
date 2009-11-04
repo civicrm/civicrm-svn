@@ -463,8 +463,11 @@ WHERE sort_name LIKE '%$name%'";
              $method  = 'setIsActive'; 
              $result  = array($recordBAO,$method);
              $updated = call_user_func_array(($result), array($recordID,$isActive));
-               if ( $updated ) {
+               if ( $updated ) {   
               $status = array( 'status' => 'record-updated-success' );
+              if ( $recordBAO == CRM_Contact_BAO_ContactType ) {
+                    CRM_Contact_BAO_ContactType::enableDisable( $recordID ,$isActive );
+                   }
            }
         }
         echo json_encode( $status );
@@ -588,5 +591,4 @@ WHERE ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$queryS
        echo json_encode( $subTypes );
        exit;
     }
-
-}
+ }
