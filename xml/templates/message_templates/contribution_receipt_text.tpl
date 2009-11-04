@@ -28,8 +28,8 @@
 {if !$membershipBlock AND $amount}{ts}Contribution Information{/ts}{else}{ts}Membership Fee{/ts}{/if}
 
 ===========================================================
-{if $membership_amount } 
-{ts 1=$membership_name}%1 Membership{/ts}: {$membership_amount|crmMoney} 
+{if $membership_amount }
+{ts 1=$membership_name}%1 Membership{/ts}: {$membership_amount|crmMoney}
 {if $amount}
 {if ! $is_separate_payment }
 {ts}Contribution Amount{/ts}: {$amount|crmMoney}
@@ -101,11 +101,11 @@
 {ts}Personal Campaign Page{/ts}
 
 ===========================================================
-{ts}Display In Roll{/ts} : {if $pcp_display_in_roll}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}
+{ts}Display In Roll{/ts}: {if $pcp_display_in_roll}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}
 
-{if $pcp_roll_nickname}{ts}Nick Name{/ts} : {$pcp_roll_nickname}{/if}
+{if $pcp_roll_nickname}{ts}Nick Name{/ts}: {$pcp_roll_nickname}{/if}
 
-{if $pcp_personal_note}{ts}Note{/ts} : {$pcp_personal_note}{/if}
+{if $pcp_personal_note}{ts}Note{/ts}: {$pcp_personal_note}{/if}
 
 {/if}
 {if $onBehalfName}
@@ -156,16 +156,16 @@
 ===========================================================
 {$product_name}
 {if $option}
-Option: {$option}
+{ts}Option{/ts}: {$option}
 {/if}
 {if $sku}
-SKU   : {$sku}
+{ts}SKU{/ts}: {$sku}
 {/if}
 {if $start_date}
-Start Date: {$start_date|crmDate}
+{ts}Start Date{/ts}: {$start_date|crmDate}
 {/if}
 {if $end_date}
-End Date: {$end_date|crmDate}
+{ts}End Date{/ts}: {$end_date|crmDate}
 {/if}
 {if $contact_email OR $contact_phone}
 
@@ -190,7 +190,7 @@ End Date: {$end_date|crmDate}
 ===========================================================
 {foreach from=$customPre item=customValue key=customName}
 {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
- {$customName} : {$customValue}
+ {$customName}: {$customValue}
 {/if}
 {/foreach}
 {/if}
@@ -203,7 +203,7 @@ End Date: {$end_date|crmDate}
 ===========================================================
 {foreach from=$customPost item=customValue key=customName}
 {if ( $trackingFields and ! in_array( $customName, $trackingFields ) ) or ! $trackingFields}
- {$customName} : {$customValue}
+ {$customName}: {$customValue}
 {/if}
 {/foreach}
 {/if}
