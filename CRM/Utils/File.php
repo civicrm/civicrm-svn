@@ -274,8 +274,8 @@ class CRM_Utils_File {
         $info   = pathinfo( $name );
         $basename = substr($info['basename'],
                            0,
-                           -( strlen( CRM_Utils_Array::( 'extension', $info ) ) + ( CRM_Utils_Array::( 'extension', $info ) == '' ? 0 : 1 ) ) );
-        if ( ! self::isExtensionSafe( CRM_Utils_Array::( 'extension', $info ) ) ) {
+                           -( strlen( CRM_Utils_Array::value( 'extension', $info ) ) + ( CRM_Utils_Array::value( 'extension', $info ) == '' ? 0 : 1 ) ) );
+        if ( ! self::isExtensionSafe( CRM_Utils_Array::value( 'extension', $info ) ) ) {
             // munge extension so it cannot have an embbeded dot in it
             // The maximum length of a filename for most filesystems is 255 chars.  
             // We'll truncate at 240 to give some room for the extension.
