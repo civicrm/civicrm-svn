@@ -3,7 +3,7 @@
 {capture assign="contribPageURL"}{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$pcp.contribution_page_id`"}{/capture}
 <div class="messages status">
   <dl>
-	<dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}PCPInfo{/ts}"/></dt>
+	<dt><div class="icon inform-icon"></div></dt>
 	<dd><p><strong>{ts}Personal Fundraiser View{/ts}</strong> - {ts 1=$contribPageURL 2=$pageName}This is a preview of your Personal Campaign Page in support of <a href="%1"><strong>"%2"</strong></a>.{/ts}</p></dd>
     <dt></dt>
     <dd>
@@ -25,106 +25,86 @@
         {/foreach}
   	   </table>
 	</dd>
-	<dt><img src="{$config->resourceBase}i/Bulb.png" alt="{ts}Tip{/ts}"/></dt>
+	<dt><div class="icon tip-icon"></div></dt>
     <dd><strong>{ts}Tip{/ts}</strong> - <span class="description">{ts}You must be logged in to your account to access the editing options above. (If you visit this page without logging in, you will be viewing the page in "live" mode - as your visitors and friends see it.){/ts}</span></dd>
  </dl>
 </div>
 {/if}
-<div>
-  <table class="campaign">
-    <tr>
-        <th colspan="2">{$pcp.intro_text}</th>
-    </tr>
-    <tr>
-      <td width="60%">{$image} {$pcp.page_text}</td>
-      <td width="*">
-      {if $validDate && $contributeURL} 
-        {* Show link to PCP contribution if configured for online contribution *}
-        <div class="action-link" style="margin-bottom: 4em;">
-            <a href={$contributeURL} class="button" style="font-size: 20px;"><span>&raquo; <strong>{$contributionText}</strong></span></a>
-        </div>
-      {/if}
-
-      {if $pcp.is_thermometer OR $pcp.is_honor_roll}  
-      <table class="form-layout">
-	  <tr>
+<div class="campaign">
+    <div class="pcp-intro-text">
+    	{$pcp.intro_text}
+	</div>   	
+    {if $image}
+    <div class="pcp-image">
+   		{$image}
+   	</div>
+   	{/if}
+   	{if $pcp.is_thermometer OR $pcp.is_honor_roll}  
+      <div class="pcp-widgets">
 	    {if $pcp.is_thermometer}
-            <td style="width:10px">&nbsp;</td>
-            <td style="width:150px">
-            <table>
-                <tr>
-                    <td colspan="2" align="left"><strong>{$pcp.goal_amount|crmMoney}</strong></td><td>&nbsp;</td>
-                </tr>
-                <tr>
-                    <td>&nbsp;</td>
-                    <td height="200px" width="50px">
-                        <div class="remaining" id="remain">&nbsp;</div>
-                        <div class="achieved"  id="achieve">&nbsp;</div>
-                    </td>
-                    <td><div vertical-align="bottom"><strong>{$achieved}%</strong></div></td>
-                </tr>
-                <tr>
-                    <td colspan="3" align="left"><strong>{ts}Raised{/ts} {$total|crmMoney}</strong></td>
-                </tr>
-            </table>
-            </td>
+	    <div class="thermometer-wrapper">
+	        <div class="pcp-amount-goal">
+		        {ts}Goal{/ts} <span class="goal-amount crmMoney">{$pcp.goal_amount|crmMoney}</span>
+		    </div>
+		    <div class="thermometer-fill-wrapper">
+		        <div style="height: {$achieved}%;" class="thermometer-fill">
+		        	<div class="thermometer-pointer"><span class="pcp-percent-raised">{$achieved}%</span> towards our goal</div>
+		        </div><!-- /.thermometer-fill -->
+		    </div><!-- /.thermometer-fill-wrapper -->
+		    <div class="pcp-amount-raised">
+		         <span class="raised-amount crmMoney">{$total|crmMoney}</span> {ts}raised{/ts}
+		    </div>
+		</div>
 	    {/if} 
 	    {if $pcp.is_honor_roll}
-	    <td style="width:120px"><strong>{ts}HONOR ROLL{/ts}</strong><br />
-        <div class="honor_roll">
-            <marquee behavior="scroll" direction="up" id="pcp_roll"	scrolldelay="200" bgcolor="#fafafa"> 
-              {foreach from = $honor item = v} 
-              <div class="pcp_honor_roll_entry">
-                  <strong>{$v.nickname}</strong><br />{$v.total_amount}<br />
-                  {$v.personal_note}<br /><br />
-	      </div>
-              {/foreach} 
-            </marquee>
-        </div>	
-        <div class="description">
-            [<a href="javascript:roll_start_stop();" id="roll" title="Stop scrolling">{ts}Stop{/ts}</a>]
+	    <div class="honor-roll-wrapper">
+	    	<div class="honor-roll-title">{ts}HONOR ROLL{/ts}</div>
+        	<div class="honor_roll">
+        	    <marquee behavior="scroll" direction="up" id="pcp_roll"	scrolldelay="200" bgcolor="#fafafa"> 
+        	      {foreach from = $honor item = v} 
+        	      <div class="pcp_honor_roll_entry">
+        	          <div class="pcp-honor_roll-nickname">{$v.nickname}</div>
+        	          <div class="pcp-honor_roll-total_amount">{$v.total_amount}</div>
+        	          <div class="pcp-honor_roll-personal_note">{$v.personal_note}</div>
+	    	  </div>
+        	      {/foreach} 
+        	    </marquee>
+        	</div>	
+        	<div class="description">
+        	    [<a href="javascript:roll_start_stop();" id="roll" title="Stop scrolling">{ts}Stop{/ts}</a>]
+        	</div>
         </div>
-	    </td>
 	   {/if}
-	   {if !$pcp.is_thermometer || !$pcp.is_honor_roll}
-	       <td style="width:150px">&nbsp;</td>
-	   {/if}
-	   </tr>
-	  </table>
+	   
+	   </div>
       {/if}
-      
-      </td>
-    </tr>
-   {if $linkText} 
-    <tr>
-        <td colspan="2">
-            <div class="action-link">
-                <br /><a href={$linkTextUrl}>&raquo; <strong>{$linkText}</strong></a>
-            </div>
-        </td>
-    </tr>
-   {/if}
-  </table>
+   	
+   	 
+    <div class="pcp-page-text">
+    	{$pcp.page_text}
+    </div>
+    
+    {if $validDate && $contributeURL}
+    	<div class="pcp-donate"> 
+        {* Show link to PCP contribution if configured for online contribution *}
+            <a href={$contributeURL} class="button contribute-button pcp-contribute-button"><span>{$contributionText}</span></a>
+        </div>
+    {/if}
 
-</div>
+      
+
+   {if $linkText}
+   <div class="pcp-create-your-own"> 
+        <a href={$linkTextUrl} class="pcp-create-link"><span>{$linkText}</span></a>
+   </div>     
+   {/if}
+</div><!-- /.campaign -->
+
 
 
 
 {literal}
 <script language="JavaScript">
-
-{/literal}
-{if $remaining}
-    document.getElementById("remain").style.height  = "{$remaining}%";
-{else}
-    document.getElementById('remain').style.display = "none";
-{/if}
-{if $achieved}
-    document.getElementById("achieve").style.height  = "{$achieved}%";
-{else}
-    document.getElementById('achieve').style.display = "none";
-{/if}
-{literal}
 
 
 var start=true;

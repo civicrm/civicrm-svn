@@ -1163,7 +1163,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     color: #444;
     display: block;
     float: left;
-    font: normal 12px arial, sans-serif;
+    font-size:12px;
     height: 24px;
     margin-right: 6px;
     padding: 0 14px 0 0; /* sliding doors padding */
@@ -1235,12 +1235,81 @@ table.campaign td,
 }
 
 #crm-container .honor_roll {
-   margin           : 5px 20px 0 0;
+   margin           : 1em 20px 0 0;
    padding          : 10px;	
    width            : 120px;
    background-color : #fafafa;
    border           : 1px solid #9d9fca;
+   height:220px;
 }
+
+#crm-container .thermometer-wrapper,
+#crm-container .honor-roll-wrapper {
+	float:left;
+	width:150px;
+	margin-left:1em;
+	}
+	
+#crm-container .thermometer-fill-wrapper {
+	background:transparent url("../i/contribute/pcp_remain.gif") repeat-y scroll left bottom;
+	height:220px;
+	position:relative;
+	margin:1em 0 1.5em 0;
+	}
+
+#crm-container .thermometer-fill {
+	background:transparent url(../i/contribute/pcp_achieve.gif) repeat-y scroll 0 bottom;
+	bottom:0;
+	left:0;
+	position:absolute;
+	width:130px;
+	}
+
+#crm-container .thermometer-pointer {
+	background:transparent url(images/thermometer-pointer.gif) no-repeat scroll 130px 3px;
+	padding-left:45px; /* width of thermometer + a little actual padding */
+	position:absolute;
+	top:-10px; /* vertically center text on percentage raised */
+	line-height: 1em;
+	}
+
+#crm-container .pcp-intro-text {padding-bottom: 1em;}
+
+#crm-container .pcp-image {
+	float:left;
+	margin: 0 1em 1em 0;
+	}
+
+#crm-container .pcp-widgets {
+	border:1px solid #CCCCCC;
+	float:right;
+	margin:0 0 1em 1em;
+	padding:0.5em;
+	}
+
+#crm-container .pcp_honor_roll_entry {
+	margin-bottom:1em;
+	}
+
+#crm-container .pcp-honor_roll-nickname {
+	font-weight:bold;
+	}
+
+#crm-container .pcp-donate {
+	height:24px;
+	}
+	#crm-container a.pcp-contribute-button {font-weight:bold;}
+
+#crm-container .pcp-create-your-own {
+	clear:left;
+	margin:1em 0;
+	}
+
+#crm-container .pcp-page-text {
+	margin-bottom: 1em;
+	}
+
+
 
 #crm-container .flexigrid th {
   border-bottom : 0px;
@@ -1883,6 +1952,11 @@ div.grippie {
 	color:#333;
 	}
 
+.light-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png")}
+.dark-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png")}
+.red-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_cd0a0a_256x240.png")}
+.blue-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_2e83ff_256x240.png")}
+
 .edit-icon { background-position: -66px -114px;}
 	.button:hover .edit-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png"); }
 		
@@ -1929,6 +2003,8 @@ div.grippie {
 .Participant-icon { background-position: 0px -32px; }
 .Note-icon { background-position: -16px -32px; }
 
+.inform-icon { background-position: -16px -144px; }
+.tip-icon { background-position: -128px -128px; }
 
  
 
