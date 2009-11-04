@@ -593,14 +593,28 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             
             $this->confirmPostProcess( $contactID, $contribution, $payment );
         }
+
+        //handle if no additional participant.
+        if ( !$registerByID ) {
+            $registerByID = $this->get('registerByID');
+        }
         
         // create line items, CRM-5313 
         if ( $this->_priceSetId && !empty( $this->_lineItem ) ) {
             require_once 'CRM/Price/BAO/LineItem.php';
+            
+            // take all processed participant ids.
+            $allParticipantIds = $this->_participantIDS;
+            
+            // when participant re-walk wizard.
+            if ( $this->_allowConfirmation && !empty( $this->_additionalParticipantIds ) ) {
+                $allParticipantIds = array_merge( array( $registerByID ), $this->_additionalParticipantIds );
+            }
+
             $entityTable = 'civicrm_participant';
             foreach ( $this->_lineItem as $key => $value ) {
                 if ( ( $value != 'skip' ) &&
-                     ( $entityId = CRM_Utils_Array::value( $key, $this->_participantIDS ) ) ) {
+                     ( $entityId = CRM_Utils_Array::value( $key, $allParticipantIds ) ) ) {
                     
                     // do cleanup line  items if participant re-walking wizard.
                     if ( $this->_allowConfirmation ) {
@@ -631,11 +645,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             $isTest = true;
         }
         
-        //handle if no additional participant.
-        if ( !$registerByID ) {
-            $registerByID = $this->get('registerByID');
-        }
-
         // for Transfer checkout.
         require_once "CRM/Event/BAO/Event.php";
         if ( ( $this->_contributeMode == 'checkout' ||
