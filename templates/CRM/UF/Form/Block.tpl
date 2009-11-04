@@ -7,7 +7,6 @@
     {foreach from=$fields item=field key=fieldName} 
     {if $field.groupTitle != $fieldset} 
         {if $fieldset != $zeroField} 
-           </table> 
            {if $groupHelpPost && $action neq 4} 
               <div class="messages help">{$groupHelpPost}</div> 
            {/if} 
@@ -24,7 +23,6 @@
         {if $field.groupHelpPre && $action neq 4 && $action neq 1028} 
             <div class="messages help">{$field.groupHelpPre}</div> 
         {/if} 
-        <table class="{if $action EQ 4}view-layout{else}form-layout-compressed{/if}"> 
     {/if} 
      
     {assign var=n value=$field.name} 
@@ -107,7 +105,6 @@
         </div> 
     {/if}     
     {/foreach} 
-   </table>
    
     {if $field.groupHelpPost && $action neq 4  && $action neq 1028} 
         <div class="messages help">{$field.groupHelpPost}</div> 
