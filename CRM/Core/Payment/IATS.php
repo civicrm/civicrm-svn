@@ -74,7 +74,6 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
       if (!in_array($params['currencyID'],explode(',',self::CURRENCIES))) {
          return self::error('Invalid currency selection, must be one of '.self::CURRENCIES);
       }
-      $canDollar = ($params['currencyID'] == 'CAD');  //define currency type
       $isRecur = ($params['is_recur'] && $params['installments'] > 1);
       # AgentCode  = $this->_paymentProcessor['signature'];
       # Password = $this->_paymentProcessor['password' ];
@@ -112,20 +111,13 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
       // send IATS my invoiceID to match things up later
       $iatslink1->setInvoiceNumber($params['invoiceID']);
  
-      if ($canDollar && !$isRecur) {  
-        //Fields setting for one-time Canadian credit card processing
-        $CardHolderName = $params['billing_first_name'].' '.$params['billing_last_name'];
-        $iatslink1->setCardholderName($CardHolderName);
-      }   
-      else {    
-        //Fields setting for US credit card processing.
-        $iatslink1->setFirstName($parames['billing_first_name']);
-        $iatslink1->setLastName($params['billing_last_name']);
-        $iatslink1->setStreetAddress($params['street_address']);
-        $iatslink1->setCity($params['city']);
-        $iatslink1->setState($params['state_province']);
-        $iatslink1->setZipCode($params['postal_code']);
-      }
+      //Fields setting [now applies to all modes/currencies]
+      $iatslink1->setFirstName($parames['billing_first_name']);
+      $iatslink1->setLastName($params['billing_last_name']);
+      $iatslink1->setStreetAddress($params['street_address']);
+      $iatslink1->setCity($params['city']);
+      $iatslink1->setState($params['state_province']);
+      $iatslink1->setZipCode($params['postal_code']);
       // and now go! ... uses curl to post and retrieve values
       // after various data integrity tests 
       if (!$isRecur) {  // simple version
