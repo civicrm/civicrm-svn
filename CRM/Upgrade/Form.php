@@ -40,13 +40,47 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
     protected $_config;
 
     public    $latestVersion;
+    
+    /**
+     * Upgrade for multilingual     
+     *
+     * @var boolean
+     * @public 
+     */ 
+    public $multilingual = false;
+    
+    /**
+     * locales available for multilingual upgrade
+     *
+     * @var array
+     * @public 
+     */ 
+    public $locales;
 
     function __construct( $state = null,
                           $action = CRM_Core_Action::NONE,
                           $method = 'post',
                           $name = null ) {
         $this->_config =& CRM_Core_Config::singleton( );
-        $this->latestVersion = CRM_Utils_System::version();
+        $this->latestVersion = CRM_Utils_System::version();                
+        
+        require_once "CRM/Core/DAO/Domain.php";                        
+        $domain =& new CRM_Core_DAO_Domain();
+        $domain->find(true);
+        
+        $this->multilingual = (bool) $domain->locales;
+        $this->locales      = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
+        
+        $smarty =& CRM_Core_Smarty::singleton( );        
+        $smarty->compile_dir = $this->_config->templateCompileDir;
+        $smarty->assign('multilingual', $this->multilingual);
+        $smarty->assign('locales',      $this->locales);
+        
+        // we didn't call CRM_Core_BAO_Setting::retrieve(), so we need to set $dbLocale by hand
+        if ($this->multilingual) {          
+            global $dbLocale;
+            $dbLocale = "_{$this->_config->lcMessages}";            
+        }
 
         parent::__construct( $state, $action, $method, $name );
     }
@@ -192,31 +226,15 @@ SET    version = '$version'
     }
 
     function processLocales($tplFile, $rev) {
-        $config =& CRM_Core_Config::singleton();
-        $smarty =& CRM_Core_Smarty::singleton( );
-        $smarty->compile_dir = $config->templateCompileDir;
-        
-        $domain =& new CRM_Core_DAO_Domain();
-        $domain->find(true);
-        $multilingual = (bool) $domain->locales;
-        $locales      = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
-        $smarty->assign('multilingual', $multilingual);
-        $smarty->assign('locales',      $locales);
-        
-        // we didn't call CRM_Core_BAO_Setting::retrieve(), so we need to set $dbLocale by hand
-        if ($multilingual) {
-            global $dbLocale;
-            $dbLocale = "_{$config->lcMessages}";
-        }
+        $smarty =& CRM_Core_Smarty::singleton( );                                
         
         $this->source( $smarty->fetch($tplFile), true );
 
-        if ( $multilingual ) {
+        if ( $this->multilingual ) {
             require_once 'CRM/Core/I18n/Schema.php';
-            CRM_Core_I18n_Schema::rebuildMultilingualSchema($locales, $rev);
-        }
-        
-        return $multilingual;
+            CRM_Core_I18n_Schema::rebuildMultilingualSchema($this->locales, $rev);
+        }        
+        return $this->multilingual;
     }
 
     function processSQL( $rev ) {
