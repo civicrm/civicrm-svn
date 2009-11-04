@@ -472,6 +472,9 @@ class CRM_Contribute_BAO_Contribution_Utils {
                            'item-name'           => $newOrder['shopping-cart']['items']['item']['item-name']['VALUE'],
                            'timestamp'           => $apiParams[2]['timestamp']['VALUE'],
                            );
+                if ( array_key_exists('latest-charge-fee', $apiParams[2]) ) {
+                    $localMapper['latest-charge-fee'] = $apiParams[2]['latest-charge-fee']['total']['VALUE'];
+                }
                 foreach ( $localMapper as $localKey => $localVal ) {
                     if ( CRM_Utils_Array::value($localKey, $mapper['transaction']) ) {
                         $transaction[$mapper['transaction'][$localKey]] = $localVal;
