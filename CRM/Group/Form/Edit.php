@@ -41,7 +41,8 @@ require_once 'CRM/Core/BAO/Domain.php';
 /**
  * This class is to build the form for adding Group
  */
-class CRM_Group_Form_Edit extends CRM_Core_Form {
+class CRM_Group_Form_Edit extends CRM_Core_Form 
+{
     
     /**
      * the group id, used when editing a group
@@ -124,8 +125,14 @@ class CRM_Group_Form_Edit extends CRM_Core_Form {
                                       'saved_search_id' =>
                                       isset( $this->_groupValues['saved_search_id'] ) ?
                                       $this->_groupValues['saved_search_id'] : '' );
+                if ( isset($this->_groupValues['saved_search_id']) ){
+                    $groupValues['mapping_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_SavedSearch', 
+                                                                              $this->_groupValues['saved_search_id'], 
+                                                                              'mapping_id' ) ;
+                }
                 $this->assign_by_ref( 'group', $groupValues );
-                CRM_Utils_System::setTitle( ts('Group Settings: %1', array( 1 => $this->_title)));
+                
+                CRM_Utils_System::setTitle( ts('Group Settings: %1', array( 1 => $this->_title ) ) );
             }
             $session =& CRM_Core_Session::singleton( );
             $session->pushUserContext(CRM_Utils_System::url('civicrm/group', 'reset=1'));

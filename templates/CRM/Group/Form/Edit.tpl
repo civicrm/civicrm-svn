@@ -86,7 +86,12 @@
 	    <a href="{$crmURL}">&raquo; {ts}Show Group Members{/ts}</a>
 	    {if $group.saved_search_id} 
 	        <br />
-		<a href="{crmURL p="civicrm/contact/search/advanced" q="reset=1&force=1&ssID=`$group.saved_search_id`"}">&raquo; {ts}Edit Smart Group Criteria{/ts}</a>
+		{if $group.mapping_id}
+		    <a href="{crmURL p="civicrm/contact/search/builder" q="reset=1&force=1&ssID=`$group.saved_search_id`"}">&raquo; {ts}Edit Smart Group Criteria{/ts}</a>
+		{else} 
+		    <a href="{crmURL p="civicrm/contact/search/advanced" q="reset=1&force=1&ssID=`$group.saved_search_id`"}">&raquo; {ts}Edit Smart Group Criteria{/ts}</a>
+		{/if}
+		
 	    {/if}
 	</div>
     {/if}
