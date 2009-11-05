@@ -89,7 +89,8 @@
   <index>
        <name>UI_activity_assignee_contact_id</name>
        <fieldName>assignee_contact_id</fieldName>
-       <fieldName>activity_id</fieldName>       
+       <fieldName>activity_id</fieldName>  
+       <unique>true</unique>
        <add>2.0</add>
   </index>
 
