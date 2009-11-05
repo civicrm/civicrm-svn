@@ -546,22 +546,74 @@ UPDATE civicrm_contact
      * @static
      * @access public
      */
-    static function formatContactIDSToLinks( $contactIDs, $addViewLink = true, $addEditLink = true, $originalId = null ) {
-                
+    static function formatContactIDSToLinks( $contactIDs, $addViewLink = true, $addEditLink = true, $originalId = null ) 
+    {
+        $contactLinks = array( );
+        if ( !is_array( $contactIDs ) || empty( $contactIDs ) ) {
+            return $contactLinks;
+        }
+        
+        // does contact has sufficient permissions.
+        require_once 'CRM/Core/Permission.php';
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+        $permissions = array( 'view'  => 'view all contacts',
+                              'edit'  => 'edit all contacts',
+                              'merge' => 'administer CiviCRM' );
+        
+        $permissionedContactIds = array( );
+        foreach ( $permissions as $task => $permission ) {
+            // give permission.
+            if ( CRM_Core_Permission::check( $permission ) ) {
+                foreach ( $contactIDs as $contactId ) {
+                    $permissionedContactIds[$contactId][$task] = true;
+                }
+                continue;
+            }
+            
+            // check permission on acl basis.
+            if ( in_array( $task, array( 'view', 'edit' ) ) ) {
+                $aclPermission = CRM_Core_Permission::VIEW;
+                if ( $task == 'edit' ) $aclPermission = CRM_Core_Permission::EDIT;
+                foreach ( $contactIDs as $contactId ) {
+                    if ( CRM_Contact_BAO_Contact_Permission::allow( $contactId, $aclPermission ) ) {
+                        $permissionedContactIds[$contactId][$task] = true;
+                    }
+                }
+            }
+        }
+        
         // retrieve display names for all contacts
-        $query = 'SELECT c.id, c.display_name, c.contact_type, ce.email FROM civicrm_contact c LEFT JOIN civicrm_email ce ON ce.contact_id=c.id WHERE ce.is_primary = 1 AND c.id IN (' . implode( ',', $contactIDs) . ' ) LIMIT 20';
+        $query = '
+   SELECT  c.id, c.display_name, c.contact_type, ce.email 
+     FROM  civicrm_contact c 
+LEFT JOIN  civicrm_email ce ON ce.contact_id=c.id 
+    WHERE  ce.is_primary = 1 AND c.id 
+       IN  (' . implode( ',', $contactIDs ) . ' ) LIMIT 20';
         $dao = CRM_Core_DAO::executeQuery( $query );
         
-        $i=0;
+        $i = 0;
         while ( $dao->fetch( ) ) {
-        	$contactLinks[$i]['display_name'] = $dao->display_name;
+            
+            $contactLinks[$i]['display_name'] = $dao->display_name;
         	$contactLinks[$i]['primary_email'] = $dao->email;
-            $contactLinks[$i]['view'] = '<a class="action-item action-item-first" href="' . CRM_Utils_System::url( 'civicrm/contact/view', 'reset=1&cid=' . $dao->id ) .
-                '" target="_blank">'.ts('View').'</a>';
-            $contactLinks[$i]['edit'] = '<a class="action-item" href="' . CRM_Utils_System::url( 'civicrm/contact/add', 'reset=1&action=update&cid=' . $dao->id ) .
-                '" target="_blank">'.ts('Edit').'</a>'; 
-                
-        	if( !empty( $originalId ) ) {
+            
+            // get the permission for current contact id.
+            $hasPermissions = CRM_Utils_Array::value( $dao->id, $permissionedContactIds );
+            if ( !is_array( $hasPermissions ) || empty( $hasPermissions ) ) {
+                $i++;
+                continue; 
+            }
+            
+            // do check for view.
+            if ( array_key_exists( 'view', $hasPermissions ) ) {
+                $contactLinks[$i]['view'] = '<a class="action-item action-item-first" href="' . CRM_Utils_System::url( 'civicrm/contact/view', 'reset=1&cid=' . $dao->id ) .
+                    '" target="_blank">'.ts('View').'</a>';  
+            }
+            if ( array_key_exists( 'edit', $hasPermissions ) ) {
+                $contactLinks[$i]['edit'] = '<a class="action-item" href="' . CRM_Utils_System::url( 'civicrm/contact/add', 'reset=1&action=update&cid=' . $dao->id ) .
+                    '" target="_blank">'.ts('Edit').'</a>'; 
+            }
+            if( !empty( $originalId ) && array_key_exists( 'merge', $hasPermissions ) ) {
         	    $rgBao =& new CRM_Dedupe_BAO_RuleGroup( );
         	    $rgBao->contact_type = $dao->contact_type;
         	    $rgBao->level = 'Fuzzy';
@@ -572,13 +624,13 @@ UPDATE civicrm_contact
         	    if ( $rgid && isset( $dao->id ) ) {
         	        //get an url to merge the contact
 	    	        $contactLinks[$i]['merge'] = '<a class="action-item" href="' . CRM_Utils_System::url( 'civicrm/contact/merge', "reset=1&cid=" . $originalId . "&oid=" . $dao->id . "&action=update&rgid=" . $rgid  ) .
-        	        '">'.ts('Merge').'</a>'; 
+                        '">'.ts('Merge').'</a>'; 
         	    }
-        	} 
-        	$i++;
+        	}
+        	
+            $i++;
         }
         
-           
         return $contactLinks;
     }
     
