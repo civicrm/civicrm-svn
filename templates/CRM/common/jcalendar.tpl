@@ -8,7 +8,7 @@
     {$form.$elementName.html|crmReplace:class:twelve}
 {/if}
 &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
-
+(<a href="javascript:clearDateTime( '{$elementId}' );">clear</a>)
 <script type="text/javascript">
     var element_date   = "#{$elementId}"; 
     var cal_img        = "{$config->resourceBase}i/cal.gif";    
@@ -49,6 +49,13 @@
         var format = cj( element ).attr('format');
         if ( format == 'dd/mm' || format == 'mm/dd' ) {
             cj(".ui-datepicker-year").css( 'display', 'none' );
+        }
+    }
+    
+    function clearDateTime( element ) {
+        cj('#' + element).val( '');
+        if ( cj('#' + element + '_time') ) {
+            cj('#' + element + '_time' ).val( '');
         }
     }
     {/literal}
