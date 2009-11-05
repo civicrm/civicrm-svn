@@ -75,8 +75,6 @@ class CRM_Contact_Form_Task_Email extends CRM_Contact_Form_Task {
      */
     
     function preProcess( ) {
-        CRM_Contact_Form_Task_EmailCommon::preProcess( $this );
-        
         // store case id if present
         $this->_caseId  = CRM_Utils_Request::retrieve( 'caseid', 'Positive', $this, false );
         $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );

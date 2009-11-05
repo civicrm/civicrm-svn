@@ -137,11 +137,15 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
      * @static 
      * @return object
      */
-    static function getMessageTemplates() {
+    static function getMessageTemplates( $all = true) {
         $msgTpls =array();
 
-        $messageTemplates =& new CRM_Core_DAO_MessageTemplates( );
+        $messageTemplates = new CRM_Core_DAO_MessageTemplates( );
         $messageTemplates->is_active = 1;
+        
+        if ( ! $all ) {
+            $messageTemplates->workflow_id = 'NULL';
+        } 
         $messageTemplates->find();
         while ( $messageTemplates->fetch() ) {
             $msgTpls[$messageTemplates->id] = $messageTemplates->msg_title;
