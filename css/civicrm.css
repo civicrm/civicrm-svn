@@ -1498,7 +1498,7 @@ table.campaign td,
   list-style: none;
   background-image: none;
   border-bottom: 1px solid #CCCCCC;
-  width:80px;
+  width:auto;
 }
 
 .btn-slide {
