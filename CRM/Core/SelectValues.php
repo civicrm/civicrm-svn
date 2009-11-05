@@ -356,8 +356,15 @@ class CRM_Core_SelectValues
      */
     static function &date( $type = null, $format = null, $minOffset = null, $maxOffset = null )
     {
+
+        $date = array(
+                        'addEmptyOption'   => true,
+                        'emptyOptionText'  => ts('- select -'),
+                        'emptyOptionValue' => ''
+                      );
+        
         if ( $format ) {
-            $newDate['format'] = $format;
+            $date['format'] = $format;
         } else {
             if ( $type ) {
                 require_once 'CRM/Core/DAO/PreferencesDate.php';
@@ -371,17 +378,22 @@ class CRM_Core_SelectValues
             if ( $type == 'creditCard' ) {
                 $minOffset = $dao->start;
                 $maxOffset = $dao->end;
-                $newDate['format'] = $dao->date_format;
+                $date['format'] = $dao->date_format;
+                $date['addEmptyOption']   = true;
+                $date['emptyOptionText']  = ts('- select -');
+                $date['emptyOptionValue'] = '';
             }
             
-            if ( !$newDate['format'] ) {
-                $newDate['format'] = 'M d';
+            if ( !$date['format'] ) {
+                $date['format'] = 'M d';
             } 
         }
+        
         $year = date('Y');
-        $newDate['minYear'] = $year - $minOffset;
-        $newDate['maxYear'] = $year + $maxOffset;
-        return $newDate;
+        $date['minYear'] = $year - $minOffset;
+        $date['maxYear'] = $year + $maxOffset;
+        
+        return $date;
     }
 
     /**
