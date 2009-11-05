@@ -163,7 +163,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
         }
 
         // if password is present, encrypt it
-        if ( isset( $formValues['smtpPassword'] ) ) {
+        if ( ! empty( $formValues['smtpPassword'] ) ) {
             require_once 'CRM/Utils/Crypt.php';
             $formValues['smtpPassword'] = CRM_Utils_Crypt::encrypt( $formValues['smtpPassword'] );
         }
@@ -229,7 +229,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
             if ( $mailingDomain->mailing_backend ) {
                 $this->_defaults = unserialize( $mailingDomain->mailing_backend );
 
-                if ( isset( $this->_defaults['smtpPassword'] ) ) {
+                if ( ! empty( $this->_defaults['smtpPassword'] ) ) {
                     require_once 'CRM/Utils/Crypt.php';
                     $this->_defaults['smtpPassword'] = CRM_Utils_Crypt::decrypt( $this->_defaults['smtpPassword'] );
                 }
