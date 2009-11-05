@@ -886,6 +886,7 @@ class CRM_Report_Form extends CRM_Core_Form {
 
     static function getFromTo( $relative, $from, $to ) {
         require_once 'CRM/Utils/Date.php';
+        //FIX ME not working for relative 
         if ( $relative ) {
             list( $term, $unit ) = explode( '.', $relative );
             $dateRange = CRM_Utils_Date::relativeToAbsolute( $term, $unit );
@@ -893,19 +894,8 @@ class CRM_Report_Form extends CRM_Core_Form {
             $to   = $dateRange['to'];
         }
 
-        if ( CRM_Utils_Date::isDate( $from ) ) {
-            $revDate = array_reverse( $from );
-            $from    = CRM_Utils_Date::format( $revDate );
-        } else {
-            $from    = null;
-        }
-
-        if ( CRM_Utils_Date::isDate( $to ) ) {
-            $revDate = array_reverse( $to );
-            $to      = CRM_Utils_Date::format( $revDate );
-        } else {
-            $to      = null;
-        }
+        $from = ( $from ) ? CRM_Utils_Date::processDate( $from ) : null;
+        $to   = ( $to ) ? CRM_Utils_Date::processDate( $to ) : null;
 
         return array($from, $to);
     }

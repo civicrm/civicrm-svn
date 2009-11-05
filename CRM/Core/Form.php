@@ -731,17 +731,9 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         $this->addButtons( $buttons );
     }
 
-    function addDateRange( $name, $label = 'From:', $dateFormat = 'relative', $required = null ) {
-        require_once 'CRM/Utils/Money.php';
-
-        $this->add('date', $name . '_from', $label, CRM_Core_SelectValues::date($dateFormat)); 
-        $this->add('date', $name . '_to', ts('To:'), CRM_Core_SelectValues::date($dateFormat)); 
-        
-        if ( $required ) {
-            foreach ( array ( 'from', 'to' ) as $key ) { 
-                $form->addRule($name .'_' . $key , ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
-            }
-        }
+    function addDateRange( $name, $label = 'From:', $dateFormat = 'searchDate', $required = false ) {
+        $this->addDate( $name . '_from', $label   , $required, array( 'formatType' => $dateFormat ) ); 
+        $this->addDate( $name . '_to'  , ts('To:'), $required, array( 'formatType' => $dateFormat ) ); 
     }
     
     function addSelect( $name, $label, $prefix = null, $required = null, $extra = null, $select = '- select -' ) {
