@@ -2205,7 +2205,7 @@ th.sorting_desc {
 
 /* Date plugin */
 
-#crm-container .dateplugin {
+#crm-container input.dateplugin {
 	background:white url(../i/cal.gif) no-repeat scroll right center;
 	padding-right:16px; /* so that text doesn't flow on top of icon */
 	width: 9em;

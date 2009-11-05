@@ -7,8 +7,10 @@
     {assign var="timeElement" value=$elementName|cat:'_time'}
     {$form.$elementName.html|crmReplace:class:dateplugin}
 {/if}
-&nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
-(<a href="javascript:clearDateTime( '{$elementId}' );">clear</a>)&nbsp;
+{if $timeElement}
+    &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
+{/if}
+(<a href="javascript:clearDateTime( '{$elementId}' );">{ts}clear{/ts}</a>)&nbsp;
 <script type="text/javascript">
     var element_date   = "#{$elementId}"; 
     var cal_img        = "{$config->resourceBase}i/cal.gif";    
@@ -50,10 +52,7 @@
     }
     
     function clearDateTime( element ) {
-        cj('#' + element).val( '');
-        if ( cj('#' + element + '_time') ) {
-            cj('#' + element + '_time' ).val( '');
-        }
+        cj('input#' + element + ',input#' + element + '_time').val(" ");
     }
     {/literal}
 </script>
