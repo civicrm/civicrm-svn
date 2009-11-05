@@ -475,26 +475,17 @@ WHERE name = %1";
      * @return Object             DAO object on success, null otherwise
      * @static
      */
-    static function setIsActive( $id, $is_active ) 
-    {
-        return CRM_Core_DAO::setFieldValue( 'CRM_Contact_DAO_ContactType', $id, 'is_active', $is_active );
-    }
-/**
-     * function to update contact menu
-     *
-     * @param int      $id        id of the database record
-     * @param boolean  $is_active value we want to set the is_active field
-     *
-     * @static
-     */
-    static function enableDisable( $id ,$isActive ) {
+    static function setIsActive( $id, $is_active ) {
         $params = array( 'id'=> $id );
         self::retrieve( $params , $contactinfo );
         $params    = array ( 'name'=> "New $contactinfo[name]" );
-        $newParams = array('is_active'=> $isActive );
+        $newParams = array('is_active'=> $is_active );
         CRM_Core_BAO_Navigation::processUpdate( $params ,$newParams );
         CRM_Core_BAO_Navigation::resetNavigation( );
-    }    
+        return CRM_Core_DAO::setFieldValue( 'CRM_Contact_DAO_ContactType', $id, 
+                                            'is_active', $is_active );
+    }
+    
     /**
      * Function to check whether allow to change any contact's subtype
      * on the basis of custom data and relationship of specific subtype
