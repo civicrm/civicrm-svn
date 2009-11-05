@@ -279,10 +279,10 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
     function getDatesForMembershipType( $membershipTypeId, $joinDate = null, $startDate = null, $endDate = null ) 
     {
         $membershipTypeDetails = self::getMembershipTypeDetails( $membershipTypeId );
-        $joinDate = $joinDate ? $joinDate : date('Y-m-d');
+        $joinDate = ( $joinDate ) ? date( 'Y-m-d', strtotime( $joinDate ) ) : date( 'Y-m-d' );
 
         if ( $startDate ) {
-            $actualStartDate = $startDate;
+            $actualStartDate = date( 'Y-m-d', strtotime( $startDate ) );
         }
 
         $fixed_period_rollover = false;
@@ -404,9 +404,8 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             }
         }
 
+        $reminderDate    = null;
         $membershipDates = array( );
-        $membershipDates['start_date']  = CRM_Utils_Date::customFormat( $startDate,'%Y%m%d' );
-        $membershipDates['end_date'  ]  = CRM_Utils_Date::customFormat( $endDate,'%Y%m%d' );
 
         if ( isset( $membershipTypeDetails["renewal_reminder_day"] ) &&
              $membershipTypeDetails["renewal_reminder_day"]          &&
@@ -417,14 +416,20 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             $day   = $date[2];
             $day   = $day - $membershipTypeDetails["renewal_reminder_day"];
             $reminderDate = date( 'Y-m-d', mktime( 0, 0, 0, $month, $day-1, $year) );
-            $membershipDates['reminder_date'] = CRM_Utils_Date::customFormat($reminderDate,'%Y%m%d');
         }
+
+        $dates = array(  'start_date'    => 'startDate',
+                         'end_date'      => 'endDate',
+                         'join_date'     => 'joinDate',
+                         'reminder_date' => 'reminderDate' );
+        foreach ( $dates as $varName => $valName )  {
+            $membershipDates[$varName] = CRM_Utils_Date::customFormat( $$valName,'%Y%m%d');
+        } 
 
         if ( !$endDate ) {
             $membershipDates['reminder_date'] = null;
         }
 
-        $membershipDates['join_date']   = CRM_Utils_Date::customFormat($joinDate,'%Y%m%d');
         return $membershipDates;
     }
 

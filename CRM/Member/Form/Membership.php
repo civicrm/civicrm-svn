@@ -623,10 +623,10 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
         $params['membership_type_id'] = $formValues['membership_type_id'][1];
         
-        $joinDate  = CRM_Utils_Date::processDate( $formValues['join_date'] );
-        $startDate = CRM_Utils_Date::processDate( $formValues['start_date'] );
-        $endDate   = CRM_Utils_Date::processDate( $formValues['end_date'] );
-               
+        $joinDate  = $formValues['join_date'];
+        $startDate = $formValues['start_date'];
+        $endDate   = $formValues['end_date'];
+        
         $calcDates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($params['membership_type_id'],
                                                                               $joinDate, $startDate, $endDate);
         
@@ -638,12 +638,12 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                         );
         $currentTime = getDate();        
         foreach ( $dates as $d ) {
-            if ( isset( $formValues[$d] ) &&
-                 ! CRM_Utils_System::isNull( $formValues[$d] ) ) {
-                $params[$d] = CRM_Utils_Date::processDate( $formValues[$d] );
-            } else if ( isset( $calcDates[$d] ) ) {
-                $params[$d] = CRM_Utils_Date::processDate($calcDates[$d]);
+            //first give priority to form values then calDates.
+            $date = CRM_Utils_Array::value( $d, $formValues ); 
+            if ( !$date ) {
+                $date = CRM_Utils_Array::value( $d, $calcDates );
             }
+            $params[$d] = CRM_Utils_Date::processDate( $date );
         }
         
         if ( $this->_id ) {

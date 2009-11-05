@@ -1446,8 +1446,7 @@ class CRM_Utils_Date
      *  @return string $mysqlDate date format that is excepted by mysql
      */
     static function processDate( $date, $time = null ) {
-        $mysqlDate = date( 'YmdHis', strtotime( $date . ' '. $time ) );
-        return $mysqlDate;
+        return ( $date ) ? date( 'YmdHis', strtotime( $date . ' '. $time ) ) : null;
     }
     
     /**
