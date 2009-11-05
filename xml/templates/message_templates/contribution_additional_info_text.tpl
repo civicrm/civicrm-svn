@@ -1,4 +1,4 @@
-{if $formValues.receipt_text }
+{if $formValues.receipt_text}
 {$formValues.receipt_text}
 {else}{ts}Thanks for your support.{/ts}{/if}
 
@@ -10,7 +10,7 @@
 
 ===========================================================
 {ts}Contribution Type{/ts}: {$formValues.contributionType_name}
-{if $lineItem} 
+{if $lineItem}
 {foreach from=$lineItem item=value key=priceset}
 ---------------------------------------------------------
 {capture assign=ts_item}{ts}Item{/ts}{/capture}
@@ -56,12 +56,12 @@
 {ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}
 {/if}
 {if $customGroup}
-{foreach from=$customGroup item=value key=customName} 
+{foreach from=$customGroup item=value key=customName}
 ===========================================================
 {$customName}
 ===========================================================
 {foreach from=$value item=v key=n}
-{$n} : {$v}
+{$n}: {$v}
 {/foreach}
 {/foreach}
 {/if}
@@ -76,7 +76,7 @@
 {/if}
 {/if}
 
-{if $formValues.product_name }
+{if $formValues.product_name}
 ===========================================================
 {ts}Premium Information{/ts}
 
@@ -86,9 +86,9 @@
 {ts}Option{/ts}: {$formValues.product_option}
 {/if}
 {if $formValues.product_sku}
-{ts}SKU{/ts}   : {$formValues.product_sku}
+{ts}SKU{/ts}: {$formValues.product_sku}
 {/if}
 {if $fulfilled_date}
-{ts}Sent{/ts}  : {$fulfilled_date|crmDate}
+{ts}Sent{/ts}: {$fulfilled_date|crmDate}
 {/if}
 {/if}
