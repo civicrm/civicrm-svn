@@ -1475,7 +1475,7 @@ class CRM_Utils_Date
         
         foreach ( array( 'from', 'to' ) as $item ) {
             if ( !empty ( $$item ) ) {
-                $dateRange[$item] = $$item;
+                $dateRange[$item] = self::format( $$item );
             } else {
                 $dateRange[$item] = null;
             }
