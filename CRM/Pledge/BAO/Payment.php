@@ -87,13 +87,17 @@ WHERE pledge_id = %1
     }
 
     static function create( $params )
-    { 
+    {
         require_once 'CRM/Contribute/PseudoConstant.php';
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-
-        $scheduled_date =  CRM_Utils_Date::unformat( $params['scheduled_date'], '' );
-
+        $date = array();
+        $scheduled_date =  CRM_Utils_Date::processDate( $params['scheduled_date']);
+        
+        $date['year']   = (int) substr($scheduled_date,  0, 4);
+        $date['month']  = (int) substr($scheduled_date,  4, 2);
+        $date['day']    = (int) substr($scheduled_date,  6, 2);
+        
         $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
         //calculation of schedule date according to frequency day of period
         //frequency day is not applicable for daily installments
@@ -101,39 +105,40 @@ WHERE pledge_id = %1
             if ( $params['frequency_unit'] != 'week' ) {
                 
                 //for month use day of next month & for year use day of month Jan of next year as next payment date 
-                $scheduled_date['d'] = $params['frequency_day'];
+                $date['day'] = $params['frequency_day'];
                 if ( $params['frequency_unit'] == 'year' ) {
-                    $scheduled_date['M'] = 1;
+                    $date['month'] = '1';
                 }   
             } else if ( $params['frequency_unit'] == 'week' ) {
                 
                 //for week calculate day of week ie. Sunday,Monday etc. as next payment date
-                $dayOfWeek = date('w',mktime(0, 0, 0, $scheduled_date['M'], $scheduled_date['d'], $scheduled_date['Y'] ));
+                $dayOfWeek = date('w',mktime(0, 0, 0, $date['month'], $date['day'], $date['year'] ));
                 $frequencyDay =   $params['frequency_day'] - $dayOfWeek;
                 
-                $scheduleDate =  explode ( "-", date( 'n-j-Y', mktime ( 0, 0, 0, $scheduled_date['M'], 
-                                                                        $scheduled_date['d'] + $frequencyDay, $scheduled_date['Y'] )) );
-                $scheduled_date['M'] = $scheduleDate[0];
-                $scheduled_date['d'] = $scheduleDate[1];
-                $scheduled_date['Y'] = $scheduleDate[2];
+                $scheduleDate =  explode ( "-", date( 'n-j-Y', mktime ( 0, 0, 0, $date['month'], 
+                                                                        $date['day'] + $frequencyDay, $date['year'] )) );
+                $date['month'] = $scheduleDate[0];
+                $date['day']   = $scheduleDate[1];
+                $date['year']  = $scheduleDate[2];
             }
         }
-        
         //calculate the scheduled date for every installment
-        $now = date('Ymd');
-        $prevScheduledDate = array ( );
-        $statues = array( );
-        $prevScheduledDate[1] = CRM_Utils_Date::format( $params['scheduled_date'] );
-        if ( CRM_Utils_Date::overdue( CRM_Utils_Date::customFormat(  $prevScheduledDate[1], '%Y%m%d'), $now ) ) {
+        $now = date('YmdHis');
+        $statues = $prevScheduledDate = array ( );         
+        $prevScheduledDate[1] = $scheduled_date;
+
+        if ( CRM_Utils_Date::overdue( $prevScheduledDate[1], $now ) ) {
             $statues[1] = array_search( 'Overdue', $contributionStatus); 
         } else {
-            $statues[1] = array_search( 'Pending', $contributionStatus); 
+            $statues[1] = array_search( 'Pending', $contributionStatus);            
         }
+        
+        $newDate = date( 'YmdHis', mktime ( 0, 0, 0, $date['month'], $date['day'], $date['year'] ));
         
         for ( $i = 1; $i < $params['installments']; $i++ ) {
             $prevScheduledDate[$i+1] = CRM_Utils_Date::format(CRM_Utils_Date::intervalAdd( $params['frequency_unit'], 
-                                                                                           $i * ($params['frequency_interval']) , $scheduled_date ));
-            if ( CRM_Utils_Date::overdue( CRM_Utils_Date::customFormat(  $prevScheduledDate[$i+1], '%Y%m%d'), $now ) ) {
+                                                                                           $i * ($params['frequency_interval']) , $newDate ));
+            if ( CRM_Utils_Date::overdue( $prevScheduledDate[$i+1], $now ) ) {
                 $statues[$i+1] = array_search( 'Overdue', $contributionStatus);
             } else {
                 $statues[$i+1] = array_search( 'Pending', $contributionStatus);
