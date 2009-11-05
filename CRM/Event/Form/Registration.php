@@ -304,17 +304,16 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
                 CRM_Core_Error::statusBounce( ts( 'Event templates are not meant to be registered.' ), $infoUrl );
             }
 
-            $now = time( );
-
-            $startDate = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'registration_start_date',
-                                                                           $this->_values['event'] ) );
+            $now = CRM_Utils_Date::processDate( '' );
+            $startDate = CRM_Utils_Date::processDate( CRM_Utils_Array::value( 'registration_start_date',
+                                                                               $this->_values['event'] ) );
             if ( $startDate &&
                  $startDate >= $now ) {
                 CRM_Core_Error::statusBounce( ts( 'Registration for this event begins on %1', array( 1 => CRM_Utils_Date::customFormat( CRM_Utils_Array::value( 'registration_start_date', $this->_values['event'] ) ) ) ), $infoUrl );
             }
 
-            $endDate = CRM_Utils_Date::unixTime( CRM_Utils_Array::value( 'registration_end_date',
-                                                                         $this->_values['event'] ) );
+            $endDate = CRM_Utils_Date::processDate( CRM_Utils_Array::value( 'registration_end_date',
+                                                                             $this->_values['event'] ) );
             if ( $endDate &&
                  $endDate < $now ) {
                 CRM_Core_Error::statusBounce( ts( 'Registration for this event ended on %1', array( 1 => CRM_Utils_Date::customFormat( CRM_Utils_Array::value( 'registration_end_date', $this->_values['event'] ) ) ) ), $infoUrl );
