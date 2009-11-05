@@ -27,3 +27,14 @@
   DROP INDEX `UI_activity_target_contact_id` ,
   ADD UNIQUE INDEX `UI_activity_target_contact_id` (`target_contact_id`,`activity_id`);
 
+
+-- CRM-5322
+
+  SELECT @option_group_id_sfe := max(id) from civicrm_option_group where name = 'safe_file_extension';
+
+  INSERT INTO 
+     `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+  VALUES
+  (@option_group_id_sfe, 'docx'     , 12, NULL   ,  NULL, 0, 0, 12, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_sfe, 'xlsx'     , 13, NULL   ,  NULL, 0, 0, 13, NULL, 0, 0, 1, NULL, NULL);
+
