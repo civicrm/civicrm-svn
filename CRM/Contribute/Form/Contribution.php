@@ -1196,17 +1196,12 @@ SELECT  id, name
             if ( CRM_Utils_Array::value( 'is_email_receipt', $this->_params ) ) {
                 $this->_params['receipt_date'] = $now;
             } else {
-                if ( ! CRM_Utils_System::isNull( $this->_params[ 'receipt_date' ] ) ) {
-                    $this->_params['receipt_date'] = CRM_Utils_Date::processDate( $this->_params['receipt_date'] );
-                } else{
-                    $this->_params['receipt_date'] = 'null';
-                }
+                $this->_params['receipt_date'] = CRM_Utils_Date::processDate( $this->_params['receipt_date'], null, true );
             }
             
             $this->set( 'params', $this->_params );
             $this->assign( 'trxn_id', $result['trxn_id'] );
-            $this->assign( 'receive_date',
-                           CRM_Utils_Date::processDate( $this->_params['receive_date']) );
+            $this->assign( 'receive_date', CRM_Utils_Date::processDate( $this->_params['receive_date']) );
             
             // result has all the stuff we need
             // lets archive it to a financial transaction
@@ -1337,15 +1332,13 @@ SELECT  id, name
                             'cancel_date' );
             
             foreach ( $dates as $d ) {
-                if ( ! CRM_Utils_System::isNull( $formValues[$d] ) ) {
-                    $params[$d] = CRM_Utils_Date::processDate( $formValues[$d] );
-                } else if ( array_key_exists( $d, $formValues ) ) {
-                    $params[$d] = 'null';
-                }
+                $params[$d] = CRM_Utils_Date::processDate( $formValues[$d], null, true );
             }
+
             if ( CRM_Utils_Array::value( 'is_email_receipt', $formValues ) ) {
                 $params['receipt_date'] = date("Y-m-d");
             }
+
             if ( $params["contribution_status_id"] == 3 ) {
                 if ( CRM_Utils_System::isNull( CRM_Utils_Array::value( 'cancel_date', $params ) ) ) {
                     $params['cancel_date'] = date("Y-m-d");

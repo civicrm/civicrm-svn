@@ -166,8 +166,8 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
                                            ? CRM_Utils_Array::value('is_for_organization', $params, false) 
                                            : 0;
 
-        $params['start_date']            = CRM_Utils_Date::processDate( $params['start_date'], $params['start_date_time'] );
-        $params['end_date'  ]            = CRM_Utils_Date::processDate( $params['end_date'], $params['end_date_time'] );
+        $params['start_date']            = CRM_Utils_Date::processDate( $params['start_date'], $params['start_date_time'], true );
+        $params['end_date'  ]            = CRM_Utils_Date::processDate( $params['end_date'], $params['end_date_time'], true );
         
         $params['goal_amount'] = CRM_Utils_Rule::cleanMoney( $params['goal_amount'] );
 

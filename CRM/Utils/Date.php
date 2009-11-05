@@ -1294,11 +1294,23 @@ class CRM_Utils_Date
      *
      *  @param string $date date string
      *  @param string $time time string
+     *  @param string $returnNullString  'null' needs to be returned
+     *                so that db oject will set null in db
      *
      *  @return string $mysqlDate date format that is excepted by mysql
      */
-    static function processDate( $date, $time = null ) {
-        return ( $date ) ? date( 'YmdHis', strtotime( $date . ' '. $time ) ) : null;
+    static function processDate( $date, $time = null, $returnNullString = false ) {
+        $mysqlDate = null;
+        
+        if ( $returnNullString ) {
+            $mysqlDate = 'null';
+        }
+        
+        if ( trim( $date ) ) {
+            $mysqlDate = date( 'YmdHis', strtotime( $date . ' '. $time ) );
+        }
+        
+        return $mysqlDate;
     }
     
     /**

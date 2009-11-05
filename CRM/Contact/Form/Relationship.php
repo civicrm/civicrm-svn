@@ -190,10 +190,13 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             if ( !empty( $this->_values ) ) {
-                //$defaults['relationship_type_id'] = $relationship->relationship_type_id . '_' . $this->_rtype;
                 $defaults['relationship_type_id'] = $this->_rtypeId;
-                list( $defaults['start_date'  ] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( 'start_date', $this->_values ) );
-                list( $defaults['end_date'    ] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( 'end_date', $this->_values )   );
+                if ( $this->_values['start_date'] ) {
+                    list( $defaults['start_date'] ) = CRM_Utils_Date::setDateDefaults( $this->_values['start_date'] );
+                }
+                if ( $this->_values['end_date'] ) {
+                    list( $defaults['end_date'] ) = CRM_Utils_Date::setDateDefaults( $defaults['end_date'] );
+                }
                 $defaults['description'         ] = CRM_Utils_Array::value( 'description', $this->_values );
                 $defaults['is_active'           ] = CRM_Utils_Array::value( 'is_active', $this->_values );
                 $defaults['is_permission_a_b'   ] = CRM_Utils_Array::value( 'is_permission_a_b', $this->_values );
@@ -439,8 +442,8 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                 CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $this->_values['current_employee_id'] );
             }
         }
-        $params['start_date'] = ( $params['start_date'] ) ? CRM_Utils_Date::processDate( $params['start_date'] ) : '';
-        $params['end_date']   = ( $params['end_date']   ) ? CRM_Utils_Date::processDate( $params['end_date']   ) : '';
+        $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'], null, true );
+        $params['end_date']   = CRM_Utils_Date::processDate( $params['end_date'], null, true );
 
         //special case to handle if all checkboxes are unchecked
         $customFields = CRM_Core_BAO_CustomField::getFields( 'Relationship', false, false, $relationshipTypeId );

@@ -390,8 +390,8 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
 
         //add various dates
         if ( !$this->_id || $this->_isPending ) {
-            $this->addDate( 'create_date', ts('Pledge Made') );    
-            $this->addDate( 'start_date', ts('Payments Start') );
+            $this->addDate( 'create_date', ts('Pledge Made'), true );    
+            $this->addDate( 'start_date', ts('Payments Start'), true );
         }
         
         if ( $this->_id &&

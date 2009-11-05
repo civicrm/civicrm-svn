@@ -132,8 +132,8 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form
                             'grant_due_date' );
             
             foreach( $dates as $key ) {
-                if ( CRM_Utils_Array::value( $key, $defaults ) ) {
-                    list( $defaults[$key] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( $key, $defaults ) );
+                if ( $defaults[$key] ) {
+                    list( $defaults[$key] ) = CRM_Utils_Date::setDateDefaults( $defaults[$key] );
                 }
             }
         } else {
@@ -178,10 +178,10 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form
         $this->add('select', 'status_id',  ts( 'Grant Status' ),
                    array( '' => ts( '- select -' ) ) + $grantStatus , true);
 
-        $this->addDate( 'application_received_date', ts('Application Received'), false, array( 'formatType' => 'manual') );
-        $this->addDate( 'decision_date', ts('Grant Decision'), false, array( 'formatType' => 'manual') );
-        $this->addDate( 'money_transfer_date', ts('Money Transferred'), false, array( 'formatType' => 'manual') );
-        $this->addDate( 'grant_due_date', ts('Grant Report Due'), false, array( 'formatType' => 'manual') );
+        $this->addDate( 'application_received_date', ts('Application Received'), false, array( 'formatType' => 'custom') );
+        $this->addDate( 'decision_date', ts('Grant Decision'), false, array( 'formatType' => 'custom') );
+        $this->addDate( 'money_transfer_date', ts('Money Transferred'), false, array( 'formatType' => 'custom') );
+        $this->addDate( 'grant_due_date', ts('Grant Report Due'), false, array( 'formatType' => 'custom') );
 
         $this->addElement('checkbox','grant_report_received', ts('Grant Report Received?'),null );
         $this->add('textarea', 'rationale', ts('Rationale'), $attributes['rationale']);
@@ -286,11 +286,7 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form
                         'grant_due_date' );
         
         foreach ( $dates as $d ) {
-            if ( !CRM_Utils_System::isNull( $params[$d] ) ) {
-                $params[$d] = CRM_Utils_Date::processDate( $params[$d] );
-            } else if ( array_key_exists( $d, $params ) ) {
-                $params[$d] = 'null';
-            }
+            $params[$d] = CRM_Utils_Date::processDate( $params[$d], null, true );
         }
      
         $ids['note'] = array( );
@@ -312,7 +308,7 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form
                                              $this->_id );
 
         require_once 'CRM/Grant/BAO/Grant.php';
-        $grant =& CRM_Grant_BAO_Grant::create($params, $ids);
+        $grant = CRM_Grant_BAO_Grant::create($params, $ids);
 
         $buttonName = $this->controller->getButtonName( );
         $session =& CRM_Core_Session::singleton( );
