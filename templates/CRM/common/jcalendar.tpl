@@ -1,11 +1,11 @@
 {if $elementIndex}
     {assign var='elementId'   value=$form.$elementName.$elementIndex.id}
     {assign var="timeElement" value=$elementName|cat:"_time.$elementIndex"}
-    {$form.$elementName.$elementIndex.html|crmReplace:class:eight}
+    {$form.$elementName.$elementIndex.html|crmReplace:class:dateplugin}
 {else}
     {assign var='elementId'   value=$form.$elementName.id}
     {assign var="timeElement" value=$elementName|cat:'_time'}
-    {$form.$elementName.html|crmReplace:class:eight}
+    {$form.$elementName.html|crmReplace:class:dateplugin}
 {/if}
 &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
 (<a href="javascript:clearDateTime( '{$elementId}' );">clear</a>)&nbsp;
@@ -28,10 +28,7 @@
 
     {literal} 
     cj(element_date).datepicker({
-                                    showOn            : 'both',
                                     closeAtTop        : true, 
-                                    buttonImage       : cal_img, 
-                                    buttonImageOnly   : true, 
                                     dateFormat        : date_format,
                                     changeMonth       : true,
                                     changeYear        : true,

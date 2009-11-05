@@ -253,8 +253,6 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         
         if ( !($this->_action & CRM_Core_Action::DELETE) ) {
             $this->addRule('relationship_type_id', ts('Please select a relationship type.'), 'required' );
-            $this->addRule('start_date'          , ts('Start date is not valid.')           , 'qfDate' );
-            $this->addRule('end_date'            , ts('End date is not valid.')             , 'qfDate' );
 
             // add a form rule only when creating a new relationship
             // edit is severely limited, so add a simpleer form rule

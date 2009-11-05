@@ -694,129 +694,9 @@ class CRM_Utils_Date
         return false;
     }
 
-    /**
-     * splits the given date range into given units
-     *
-     * @param  array $from          start date for the time frame to be splitted
-     * @param  array $to            end date for the time frame to be splitted
-     * @param  int   $unit          frequency unit like year, month, week etc..
-     * @return array $dateSplitted  array of dates having splitted time period between 
-     *                              from date and to date on the basis of unit
-     * @static
-     */
-    function splitIntoInterval( $from, $to, $unit ) 
-    {
-        $fromFormat = self::format($from);
-        $toFormat   = self::format($to);
-        
-        //compare to ensure from date > to date 
-        if ( self::overdue( $toFormat, $fromFormat ) == true ) {
-            return false;
-        }
-        
-        $i = 1;
-        switch( $unit ) {
-        case 'month':
-            $dateSplitted[$i] = array ('from' => $from,
-                                       'to'   => array( 'd' => cal_days_in_month(CAL_GREGORIAN, $from['M'], $from['Y']),
-                                                        'M' => $from['M'],
-                                                        'Y' => $from['Y']
-                                                        ) );
-            
-            // check whether the month  end date  < to date         
-            while( self::overdue( self::format($dateSplitted[$i]['to']), $toFormat ) == true ) {
-                $i++;
-                $dateSplitted[$i] = array ('from' => self::intervalAdd( 'day', 1, $dateSplitted[$i-1]['to'], true ));
-                $dateSplitted[$i]['to'] = array(
-                                                'd' => cal_days_in_month(CAL_GREGORIAN, $dateSplitted[$i]['from']['M'], $dateSplitted[$i]['from']['Y']),
-                                                'M' => $dateSplitted[$i]['from']['M'],
-                                                'Y' => $dateSplitted[$i]['from']['Y']
-                                                );
-            }
-            break;
-
-        case 'day'  :
-            $dateSplitted[$i] = array ('from' => $from,
-                                       'to'   => $from );
-            while( self::overdue( self::format($dateSplitted[$i]['to']), $toFormat ) == true ) {
-                $i++;
-                $dateSplitted[$i]['from'] = self::intervalAdd( 'day', 1, $dateSplitted[$i-1]['to'], true );
-                $dateSplitted[$i]['to'] = $dateSplitted[$i]['from'];
-            }
-            break;
-            
-        case 'year' :
-            $dateSplitted[$i] = array ('from' => $from,
-                                       'to'   => array( 'd' => 31,
-                                                        'M' => 12,
-                                                        'Y' => $from['Y']
-                                                        ) );
-            
-            // check whether the year end   < to date         
-            while( self::overdue( self::format($dateSplitted[$i]['to']), $toFormat ) == true ) {
-                $i++;
-                $dateSplitted[$i] = array ('from' => self::intervalAdd( 'day', 1, $dateSplitted[$i-1]['to'], true ));
-                $dateSplitted[$i]['to'] = array( 'd' => 31,
-                                                 'M' => 12,
-                                                 'Y' => $dateSplitted[$i]['from']['Y']
-                                                 );
-            }
-            break;
-
-        case 'quarter':
-            $quarter = 3 * ((int) ($from['M'] / 4) + 1);
-            $dateSplitted[$i] = array ('from' => $from,
-                                       'to'   => array( 'd' => cal_days_in_month(CAL_GREGORIAN, $quarter, $from['Y']),
-                                                        'M' => $quarter,
-                                                        'Y' => $from['Y']
-                                                        ) );
-            
-            // check whether the quarter  end date  < to date         
-            while( self::overdue( self::format($dateSplitted[$i]['to']), $toFormat ) == true ) {
-                $i++;
-                $dateSplitted[$i] = array ('from' => self::intervalAdd( 'day', 1, $dateSplitted[$i-1]['to'], true ));
-                $start = self::intervalAdd( 'month', 3, $dateSplitted[$i]['from'], true );
-                $dateSplitted[$i]['to'] = self::intervalAdd( 'day', -1, $start, true );
-            }
-            break;
-
-        case 'week':
-            $day = $from['Y'] .'/'. $from['M'] . '/' . $from['d'];
-            $weekday   = date( 'l', strtotime( $day ) );
-            $week      = self::getFullWeekdayNames();
-            $dayOfWeek = CRM_Utils_Array::key($weekday,$week);
-            
-            $dateSplitted[$i] = array ('from' => $from,
-                                       'to'   => self::intervalAdd( 'day', 6 - $dayOfWeek, $from, true ) );
-            
-            // check whether the week  end date  < to date
-            while( self::overdue( self::format($dateSplitted[$i]['to']), $toFormat ) == true ) {
-                $i++;
-                $dateSplitted[$i]['from'] = self::intervalAdd( 'day', 1, $dateSplitted[$i-1]['to'], true );
-                $dateSplitted[$i]['to'] = self::intervalAdd( 'day', 7, $dateSplitted[$i-1]['to'], true );
-            }
-            break;
-        } 
-        
-        $dateSplitted[$i]['to'] = $to;
-        foreach ( $dateSplitted as $key => &$value) {
-            $value['from']['H'] = $value['from']['i'] = $value['from']['s'] = 0;
-            $value['to']['H'] = 11;
-            $value['to']['i'] = $value['to']['s'] = 59;
-        }
-        //CRM_Core_Error::debug( '$dateSplitted', $dateSplitted );
-
-
-        return $dateSplitted;
-    }
-
     static function isDate( &$date ) 
     {
-        if ( ! is_array( $date )                    ||
-             CRM_Utils_System::isNull( $date )      ||
-             ! CRM_Utils_Array::value( 'Y', $date ) ||
-             ! CRM_Utils_Array::value( 'M', $date ) ||
-             ! CRM_Utils_Array::value( 'd', $date ) ) {
+        if ( CRM_Utils_System::isNull( $date ) ) {
             return false;
         }
         return true;
@@ -892,34 +772,6 @@ class CRM_Utils_Date
         return false;
     }
     
-
-    static function getAllDefaultValues( &$defaults, $format = null, $time = null ) 
-    {
-        if ( ! $format ) {
-            // lets include EVERYTHING for now
-            $format = 'a-A-d-h-H-i-g-G-j-M-S-Y';
-        }
-        // always include 'm' (see hack for QF below)
-        $format .= '-m-F';
-
-        if ( ! $time ) {
-            $time = time( );
-        }
-
-        $val = date( $format, $time );
-        $values = explode( '-', $val    );
-        $keys   = explode( '-', $format );
-        if ( count( $values ) != count( $keys ) ) {
-            CRM_Core_Error::fatal( ts( 'Please contact CiviCRM support' ) );
-        }
-        for ( $i = 0; $i < count( $values ); $i++ ) {
-            $defaults[$keys[$i]] = $values[$i];
-        }
-        // for some strange reason QF wants it as M, so we oblige for now
-        $defaults['M'] = $defaults['m'];
-        $defaults['F'] = $defaults['m'];
-    }
-
     /**
      * Function to calculate Age in Years if greater than one year else in months
      * 
