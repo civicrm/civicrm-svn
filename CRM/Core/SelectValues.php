@@ -605,13 +605,26 @@ class CRM_Core_SelectValues
         $dateInputFormats = array( 
                                   "mm/dd/yy"      => ts('mm/dd/yy (12/31/2009)'),
                                   "yy-mm-dd"      => ts('yy-mm-dd (2009-12-31)'),
-                                  "d M, y"        => ts('d M, y (31 Dec, 09)'),
-                                  "d MM, y"       => ts('d MM, y (31 December, 09)'),
+                                  "M d, yy"       => ts('M d, yy (Dec 31, 2009)'),
+                                  "MM d, yy"      => ts('MM d, yy (December 31, 2009)'),
                                   "DD, d MM, yy"  => ts('DD, d MM, yy (Thursday, 31 December, 2009)'),
                                   "mm/dd"         => ts('mm/dd (12/31)'),
                                   "dd/mm"         => ts('dd/mm (31/12)'),
                                   "dd.mm.yy"      => ts('dd.mm.yy (31.12.2009)')
                                    );
+        
+        /*
+         Year greater than 2000 get wrong result for following format
+         echo date( 'Y-m-d', strtotime( '7 Nov, 2001') );
+         echo date( 'Y-m-d', strtotime( '7 November, 2001') );
+         Return current year
+         expected :: 2001-11-07
+         output   :: 2009-11-07
+         However
+         echo date( 'Y-m-d', strtotime( 'Nov 7, 2001') );
+         echo date( 'Y-m-d', strtotime( 'November 7, 2001') );
+         gives proper result
+        */
         
         return $dateInputFormats;
     }
@@ -622,8 +635,8 @@ class CRM_Core_SelectValues
     static function datePluginToPHPFormats( ) {
         $dateInputFormats = array( "mm/dd/yy"      => 'm/d/Y',
                                    "yy-mm-dd"      => 'Y-m-d',
-                                   "d M, y"        => 'j M, y',
-                                   "d MM, y"       => 'j F, y',
+                                   "M d, yy"       => 'M j, Y',
+                                   "MM d, yy"      => 'F j, Y',
                                    "DD, d MM, yy"  => 'l, j F, Y',                                   
                                    "mm/dd"         => 'm/d',
                                    "dd/mm"         => 'd/m',
