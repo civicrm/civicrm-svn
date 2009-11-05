@@ -1,14 +1,14 @@
 {if $elementIndex}
     {assign var='elementId'   value=$form.$elementName.$elementIndex.id}
     {assign var="timeElement" value=$elementName|cat:"_time.$elementIndex"}
-    {$form.$elementName.$elementIndex.html|crmReplace:class:twelve}
+    {$form.$elementName.$elementIndex.html|crmReplace:class:eight}
 {else}
     {assign var='elementId'   value=$form.$elementName.id}
     {assign var="timeElement" value=$elementName|cat:'_time'}
-    {$form.$elementName.html|crmReplace:class:twelve}
+    {$form.$elementName.html|crmReplace:class:eight}
 {/if}
 &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
-(<a href="javascript:clearDateTime( '{$elementId}' );">clear</a>)
+(<a href="javascript:clearDateTime( '{$elementId}' );">clear</a>)&nbsp;
 <script type="text/javascript">
     var element_date   = "#{$elementId}"; 
     var cal_img        = "{$config->resourceBase}i/cal.gif";    
