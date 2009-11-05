@@ -470,37 +470,6 @@ class CRM_Utils_Date
     }
 
     /**
-     * converts the format string from POSIX notation to PHP notation
-     *
-     * example: converts '%Y-%m-%d' to 'Y-M-d'
-     * note: the blank-padded sequences are converted to non-blank-padded ones
-     *
-     * @param string $format  format string in POSIX % notation
-     * @param array  $filter  only include these elements for the date string
-     *
-     * @return string  format string in PHP notation
-     *
-     * @static
-     */
-    static function posixToPhp($format, $filter = null)
-    {
-        $replacements = CRM_Core_SelectValues::qfDatePartsMapping( ); 
-        if ( $filter ) {
-            $filteredReplacements = $replacements;
-            foreach ( $replacements as $key => $value ) {
-                if ( in_array( $value, $filter ) ) {
-                    $filteredReplacements[$key] = $value;
-                } else {
-                    $filteredReplacements[$key] = null;
-                }
-            }
-            return  strtr($format, $filteredReplacements);
-        } else {
-            return strtr($format, $replacements);
-        }
-    }
-
-    /**
      * converts the date/datetime from MySQL format to ISO format
      *
      * @param string $mysql  date/datetime in MySQL format
