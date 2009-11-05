@@ -115,6 +115,16 @@ WHERE  parent_id IS NULL
         return array_keys( self::contactTypeInfo( $all ) );
     }
 
+    static function contactTypePairs( $all = false ) {
+        $subtypes = self::contactTypeInfo( $all );
+
+        $pairs = array( );
+        foreach ( $subtypes as $name => $info ) {
+            $pairs[$name] = $info['label'];
+        }
+        return $pairs;
+    }
+
     /**
      *
      *function to retrieve basic contacttypes & subtypes.

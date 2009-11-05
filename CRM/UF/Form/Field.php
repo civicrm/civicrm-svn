@@ -380,9 +380,12 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         
         $this->_location_types = array ('Primary') + $this->_location_types;
 
+        $contactTypes = CRM_Core_SelectValues::contactType();
+        unset($contactTypes['']);
+        $contactTypes = !empty($contactTypes) ? array( 'Contact' => 'Contacts' ) + $contactTypes : array( );
+
         $sel1 = array( '' => '- select -' ) 
-            + array( 'Contact' => 'Contacts' ) 
-            + CRM_Core_SelectValues::contactType()
+            + $contactTypes
             + $contactSubTypes;
         
         if ( CRM_Core_Permission::access( 'Quest' ) ) {

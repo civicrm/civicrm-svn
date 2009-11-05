@@ -98,16 +98,13 @@ class CRM_Core_SelectValues
      * various pre defined contact super types
      * @static
      */
-    static function &contactType()
+    static function &contactType( )
     {
         static $contactType = null;
         if (!$contactType) {
-            $contactType = array(
-                ''             => ts('- any contact type -'),
-                'Individual'   => ts('Individual'),
-                'Household'    => ts('Household'),
-                'Organization' => ts('Organization')
-            );
+            require_once 'CRM/Contact/BAO/ContactType.php';
+            $contactType = array( '' => ts('- any contact type -') );
+            $contactType = $contactType + CRM_Contact_BAO_ContactType::contactTypePairs( );
         }
         return $contactType;
     }
