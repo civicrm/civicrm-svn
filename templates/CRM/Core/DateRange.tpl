@@ -6,8 +6,7 @@
         {assign var=fromName   value=$fieldName|cat:"_from"}
         {$form.$fromName.label}
         {include file="CRM/common/jcalendar.tpl" elementName=$fromName} 
-    <br/>               
-        {assign var=toName   value=$fieldName|cat:"_to"}&nbsp;&nbsp;
+        {assign var=toName   value=$fieldName|cat:"_to"}
         {$form.$toName.label}
         {include file="CRM/common/jcalendar.tpl" elementName=$toName} 
     </span>   
