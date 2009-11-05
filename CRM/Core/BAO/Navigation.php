@@ -186,10 +186,15 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
         }
 
         $domainID = CRM_Core_Config::domainID( );
-        $query = "SELECT id, label, parent_id, weight, is_active FROM civicrm_navigation WHERE {$whereClause} AND domain_id = $domainID ORDER BY weight, parent_id ASC";
+        $query = "SELECT id, label, parent_id, weight, is_active, name FROM civicrm_navigation WHERE {$whereClause} AND domain_id = $domainID ORDER BY weight, parent_id ASC";
         $navigation = CRM_Core_DAO::executeQuery( $query );
-
+        
+        $config = CRM_Core_Config::singleton( );
         while ( $navigation->fetch() ) {
+            // CRM-5336
+            if ( $config->userFramework == 'Joomla' &&  $navigation->name == 'Access Control' ) {
+                continue;
+            }
             if ( !$navigation->parent_id ) {
                 $label = "{$navigation->label}";
             } else {
@@ -223,14 +228,20 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation {
 
         // get the list of menus
         $query = "
-SELECT id, label, url, permission, permission_operator, has_separator, parent_id, is_active 
+SELECT id, label, url, permission, permission_operator, has_separator, parent_id, is_active, name 
 FROM civicrm_navigation 
 WHERE {$whereClause}
 AND domain_id = $domainID
 ORDER BY parent_id, weight";
 
         $navigation = CRM_Core_DAO::executeQuery( $query );
-        while ( $navigation->fetch() ) { 
+        $config = CRM_Core_Config::singleton( );
+        while ( $navigation->fetch() ) {
+            // CRM-5336
+            if ( $config->userFramework == 'Joomla' &&  $navigation->name == 'Access Control' ) {
+                continue;
+            }
+             
             // for each menu get their children
             $navigationTree[$navigation->id] = array( 'attributes' => array( 'label'      => ts($navigation->label),
                                                                              'url'        => $navigation->url,
