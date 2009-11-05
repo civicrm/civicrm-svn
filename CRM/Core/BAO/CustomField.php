@@ -811,16 +811,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 $qf->addRule($elementName, ts('%1 must be an integer (whole number).', array(1 => $label)), 'integer');
             }
             break;
-/*            
-        case 'Date':
-            if ( $field->is_search_range && $search) {
-                $qf->addRule($elementName.'_from', ts('%1 From is not a valid date.', array(1 => $label)), 'qfDate');
-                $qf->addRule($elementName.'_to', ts('%1 To is not a valid date.', array(1 => $label)), 'qfDate');
-            } else {
-                $qf->addRule($elementName, ts('%1 is not a valid date.', array(1 => $label)), 'qfDate');
-            }
-            break;
-*/            
+
         case 'Float':
             if ( $field->is_search_range && $search) {
                 $qf->addRule($elementName.'_from', ts('%1 From must be a number (with or without decimal point).', array(1 => $label)), 'numeric');

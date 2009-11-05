@@ -542,6 +542,52 @@ class CRM_Utils_Rule
         }
         return true;
     }
+    
+    /**
+     * check the validity of the date (in qf format)
+     * note that only a year is valid, or a mon-year is
+     * also valid in addition to day-mon-year
+     *
+     * @param array $date
+     *
+     * @return bool true if valid date
+     * @static
+     * @access public
+     */
+    static function qfDate( $date ) 
+    {
+        $config =& CRM_Core_Config::singleton( );
+
+        $d = CRM_Utils_Array::value( 'd', $date );
+        $m = CRM_Utils_Array::value( 'M', $date );
+        $y = CRM_Utils_Array::value( 'Y', $date );
+        if ( isset( $date['h'] ) ||
+            isset( $date['g'] ) ){
+            $m = CRM_Utils_Array::value( 'M', $date );
+        }
+
+        if ( ! $d && ! $m && ! $y ) {
+            return true; 
+        } 
+ 
+        $day = $mon = 1; 
+        $year = 0;
+        if ( $d ) $day  = $d;
+        if ( $m ) $mon  = $m;
+        if ( $y ) $year = $y;
+
+        // if we have day we need mon, and if we have mon we need year 
+        if ( ( $d && ! $m ) || 
+             ( $d && ! $y ) || 
+             ( $m && ! $y ) ) { 
+            return false; 
+        } 
+
+        if ( ! empty( $day ) || ! empty( $mon ) || ! empty( $year ) ) {
+            return checkdate( $mon, $day, $year );
+        }
+        return false;
+    }
 }
 
 
