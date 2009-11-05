@@ -245,27 +245,29 @@ class CRM_Core_SelectValues
         static $customGroupExtends = null;
         if (!$customGroupExtends) {
             $customGroupExtends = array(
-                'Contact'      => ts('Contacts'),
-                'Individual'   => ts('Individuals'),
-                'Household'    => ts('Households'),
-                'Organization' => ts('Organizations'),
-                'Activity'     => ts('Activities'),
-                'Relationship' => ts('Relationships'),
-                'Contribution' => ts('Contributions'),
-                'Group'        => ts('Groups'),
-                'Membership'   => ts('Memberships'),
-                'Event'        => ts('Events'),
-                'Participant'  => ts('Participants'),
-                'ParticipantRole'      => ts('Participants (Role)'),
-                'ParticipantEventName' => ts('Participants (Event Name)'),
-                //'ParticipantEventType' => ts('Participants (Event Type)'),
-                'Pledge'       => ts('Pledges'),
-                'Grant'        => ts('Grants'),
-            );
+                                        'Activity'     => ts('Activities'),
+                                        'Relationship' => ts('Relationships'),
+                                        'Contribution' => ts('Contributions'),
+                                        'Group'        => ts('Groups'),
+                                        'Membership'   => ts('Memberships'),
+                                        'Event'        => ts('Events'),
+                                        'Participant'  => ts('Participants'),
+                                        'ParticipantRole'      => ts('Participants (Role)'),
+                                        'ParticipantEventName' => ts('Participants (Event Name)'),
+                                        //'ParticipantEventType'=>ts('Participants 
+                                        //                           (Event Type)'),
+                                        'Pledge'       => ts('Pledges'),
+                                        'Grant'        => ts('Grants'),
+                                        );
+            $contactTypes = self::contactType( );
+            unset( $contactTypes[''] ); 
+            $contactTypes = !empty( $contactTypes ) ? array( 'Contact' => 'Contacts' ) 
+                + $contactTypes : array( );
+            $customGroupExtends = array_merge( $contactTypes, $customGroupExtends );
         }
         return $customGroupExtends;
     }
-
+    
     /**
      * styles for displaying the custom data group
      *

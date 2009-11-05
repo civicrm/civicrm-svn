@@ -148,16 +148,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                                        CRM_Core_DAO::$_nullObject,
                                                        false, null, 'GET' );
             if ( $this->_contactSubType ) {
-                CRM_Utils_System::setTitle( ts( 'New %1', array(1 => $this->_contactSubType ) ) );
+                $params = array( 'name' => $this->_contactSubType );
             } else {
-                $title = ts( 'New Individual' );
-                if ( $this->_contactType == 'Household' ) {
-                    $title = ts( 'New Household' );
-                } else if ( $this->_contactType == 'Organization' ) {
-                    $title = ts( 'New Organization' );
-                }
-                CRM_Utils_System::setTitle( $title );
+                $params = array( 'name' => $this->_contactType );
             }
+            require_once "CRM/Contact/BAO/ContactType.php";
+            CRM_Contact_BAO_ContactType::retrieve( $params ,$contact );
+            CRM_Utils_System::setTitle( ts( 'New %1', array( 1 => $contact['label'] ) ) );
             $session->pushUserContext(CRM_Utils_System::url('civicrm/dashboard', 'reset=1'));
             $this->_contactId = null;
         } else {
