@@ -96,7 +96,8 @@ class CRM_Event_Form_SearchEvent extends CRM_Core_Form
                 if ( isset( $params[$field] ) &&
                      ! CRM_Utils_System::isNull( $params[$field] ) ) {
                         if ( substr( $field, -4 ) == 'date' ) {
-                            $parent->set( $field, CRM_Utils_Date::unformat( CRM_Utils_Date::processDate( $params[$field] ), '' ) );
+                            $time = ( $field == 'end_date' ) ? '235959' : null;
+                            $parent->set( $field, CRM_Utils_Date::processDate( $params[$field], $time ) );
                         } else {
                             $parent->set( $field, $params[$field] );
                         }

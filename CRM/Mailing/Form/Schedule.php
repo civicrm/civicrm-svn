@@ -138,10 +138,7 @@ class CRM_Mailing_Form_Schedule extends CRM_Core_Form
         if ( isset($params['now']) || $params['_qf_Schedule_back'] == '<< Previous' ) {
             return true;
         }
-        if (! CRM_Utils_Rule::qfDate($params['start_date'])) {
-            return array('start_date' => ts('Scheduled date is not valid.'));
-        }
-
+       
         if (CRM_Utils_Date::format( CRM_Utils_Date::processDate( $params['start_date'] ) ) < date('YmdHi00') ) {
             return array('start_date' => 
                 ts('Start date cannot be earlier than the current time.'));

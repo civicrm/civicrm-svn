@@ -894,8 +894,8 @@ class CRM_Report_Form extends CRM_Core_Form {
             $to   = $dateRange['to'];
         }
 
-        $from = ( $from ) ? CRM_Utils_Date::processDate( $from ) : null;
-        $to   = ( $to ) ? CRM_Utils_Date::processDate( $to ) : null;
+        $from = CRM_Utils_Date::processDate( $from );
+        $to   = CRM_Utils_Date::processDate( $to, '235959' );
 
         return array($from, $to);
     }

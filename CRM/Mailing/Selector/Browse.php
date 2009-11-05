@@ -363,16 +363,12 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
 
         $from = $this->_parent->get( 'mailing_from' );
         if ( ! CRM_Utils_System::isNull( $from ) ) {
-            $from = CRM_Utils_date::format( $from );
-            $from .= '000000';
             $clauses[] = 'start_date >= %2';
             $params[2] = array( $from, 'String' );
         }
 
         $to = $this->_parent->get( 'mailing_to' );
         if ( ! CRM_Utils_System::isNull( $to ) ) {
-            $to = CRM_Utils_date::format( $to );
-            $to .= '235959';
             $clauses[] = 'start_date <= %3';
             $params[3] = array( $to, 'String' );
         }

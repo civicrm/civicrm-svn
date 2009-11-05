@@ -340,16 +340,12 @@ ORDER BY start_date desc
                 
                 $from = $this->get( 'start_date' );
                 if ( ! CRM_Utils_System::isNull( $from ) ) {
-                    $from = CRM_Utils_date::format( $from );
-                    $from .= '000000';
                     $clauses[] = '( start_date >= %3 OR start_date IS NULL )';
                     $params[3] = array( $from, 'String' );
                 }
                 
                 $to = $this->get( 'end_date' );
                 if ( ! CRM_Utils_System::isNull( $to ) ) {
-                    $to = CRM_Utils_date::format( $to );
-                    $to .= '235959';
                     $clauses[] = '( end_date <= %4 OR end_date IS NULL )';
                     $params[4] = array( $to, 'String' );
                 }
