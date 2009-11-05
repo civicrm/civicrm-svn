@@ -1117,24 +1117,6 @@ class CRM_Utils_Date
                                                            'birth', 'date_format', 'name' );
         }
         
-        
-        // crm_core_error::debug( '$birthDateFormat', $birthDateFormat );
-        // exit( );
-        
-        // //get complete qf mapping to all date parts
-        // $allMapping = CRM_Core_SelectValues::qfDatePartsMapping( );
-        // 
-        // $dateFormat = null;
-        // $formatMapping = array( );
-        // for ( $i = 0; $i <= strlen( $format ); $i++ ) {
-        //     if ( $char = trim( $format[$i] ) ) {
-        //         if ( in_array( $char, $allMapping ) ) {
-        //             $dateFormat .= $char;
-        //             $formatMapping[] = $char;
-        //         }
-        //     }
-        // }
-        // 
         $supportableFormats = array(
                                     'mm/dd'   => '%B %E%f',
                                     'dd/mm'   => '%E%f %B'

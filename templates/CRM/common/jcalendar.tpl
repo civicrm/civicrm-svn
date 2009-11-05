@@ -35,8 +35,7 @@
                                     dateFormat        : date_format,
                                     changeMonth       : true,
                                     changeYear        : true,
-                                    yearRange         : '-'+startYear+':+'+endYear,
-                                    showButtonPanel   : true
+                                    yearRange         : '-'+startYear+':+'+endYear
                                 });
     
     cj(element_date).click( function( ) {
