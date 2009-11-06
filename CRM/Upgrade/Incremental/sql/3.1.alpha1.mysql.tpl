@@ -278,4 +278,8 @@
                         
     UPDATE civicrm_preferences_date SET name = 'searchDate' WHERE name = 'relative';
     UPDATE civicrm_preferences_date SET name = 'activityDateTime' WHERE name = 'activityDatetime';                      
-    
+
+
+
+-- message templates, CRM-3507
+-- {include file='../../../../xml/templates/civicrm_msg_template.tpl'}

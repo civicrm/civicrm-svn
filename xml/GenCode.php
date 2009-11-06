@@ -166,6 +166,10 @@ if (file_exists($localeDir)) {
 }
 if (!in_array('en_US', $locales)) array_unshift($locales, 'en_US');
 
+// CRM-5308 / CRM-3507 - we need {localize} to work in the templates
+require_once 'CRM/Core/Smarty/plugins/block.localize.php';
+$smarty->register_block('localize', 'smarty_block_localize');
+
 global $tsLocale;
 foreach ($locales as $locale) {
     echo "Generating data files for $locale\n";

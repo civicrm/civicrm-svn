@@ -49,9 +49,9 @@
 {/php}
 
 INSERT INTO civicrm_option_group
-  (name,                         label,            description,      is_reserved, is_active) VALUES
+  (name,                         {localize field='label'}label{/localize},            {localize field='description'}description{/localize},      is_reserved, is_active) VALUES
   {foreach from=$ogNames key=name item=description name=for_groups}
-    ('msg_tpl_workflow_{$name}', '{$description}', '{$description}', 0,           1) {if $smarty.foreach.for_groups.last};{else},{/if}
+    ('msg_tpl_workflow_{$name}', {localize}'{$description}'{/localize},               {localize}'{$description}'{/localize},                     0,           1) {if $smarty.foreach.for_groups.last};{else},{/if}
   {/foreach}
 
 {foreach from=$ogNames key=name item=description}
@@ -59,10 +59,10 @@ INSERT INTO civicrm_option_group
 {/foreach}
 
 INSERT INTO civicrm_option_value
-  (option_group_id,        name,       label,   value,  weight ) VALUES
+  (option_group_id,        name,       {localize field='label'}label{/localize},   value,  weight ) VALUES
   {foreach from=$ovNames key=gName item=ovs name=for_groups}
     {foreach from=$ovs key=vName item=label name=for_values}
-      (@tpl_ogid_{$gName}, '{$vName}', '{$label}', {$smarty.foreach.for_values.iteration}, {$smarty.foreach.for_values.iteration}) {if $smarty.foreach.for_groups.last and $smarty.foreach.for_values.last};{else},{/if}
+      (@tpl_ogid_{$gName}, '{$vName}', {localize}'{$label}'{/localize},            {$smarty.foreach.for_values.iteration}, {$smarty.foreach.for_values.iteration}) {if $smarty.foreach.for_groups.last and $smarty.foreach.for_values.last};{else},{/if}
     {/foreach}
   {/foreach}
 
