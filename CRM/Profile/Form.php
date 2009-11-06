@@ -546,22 +546,26 @@ class CRM_Profile_Form extends CRM_Core_Form
 		                 $contactLinks = CRM_Contact_BAO_Contact_Utils::formatContactIDSToLinks( $ids, true, true, $contactID );
 		
 		                 $duplicateContactsLinks = '<div class="matching-contacts-found">';
-		                 $duplicateContactsLinks .= ts('One matching contact was found. ', array('count' => count($contactLinks), 'plural' => '%count matching contacts were found.<br />'));                 
-		                 $duplicateContactsLinks .= ts('You can View or Edit the existing contact in a new tab.');
+		                 $duplicateContactsLinks .= ts('One matching contact was found. ', array('count' => count($contactLinks['rows']), 'plural' => '%count matching contacts were found.<br />'));                 
+                         if ( $contactLinks['msg'] == 'view') {
+                             $duplicateContactsLinks .= ts('You can View the existing contact.', array('count' => count($contactLinks['rows']), 'plural' => 'You can View the existing contacts.'));
+                         } else {
+                             $duplicateContactsLinks .= ts('You can View or Edit the existing contact.', array('count' => count($contactLinks['rows']), 'plural' => 'You can View or Edit the existing contacts.'));
+                         }
 		                 $duplicateContactsLinks .= '</div>';
 		                 $duplicateContactsLinks .= '<table class="matching-contacts-actions">';
 		
-		                 for ($i=0;$i<sizeof($contactLinks);$i++) {                 
+		                 for ($i=0;$i<sizeof($contactLinks['rows']);$i++) {                 
 		            	   $row .='  <tr>	 ';
 		            	   $row .='  	<td class="matching-contacts-name"> ';
-		            	   $row .=  		$contactLinks[$i]['display_name'];
+		            	   $row .=  		$contactLinks['rows'][$i]['display_name'];
 		            	   $row .='  	</td>';
 		            	   $row .='  	<td class="matching-contacts-email"> ';
-		            	   $row .=  		$contactLinks[$i]['primary_email'];
+		            	   $row .=  		$contactLinks['rows'][$i]['primary_email'];
 		            	   $row .='  	</td>';            	   
 		            	   $row .='  	<td class="action-items"> ';
-		            	   $row .=  		$contactLinks[$i]['view'].' ';
-		            	   $row .=  		$contactLinks[$i]['edit'];
+		            	   $row .=  		$contactLinks['rows'][$i]['view'].' ';
+		            	   $row .=  		$contactLinks['rows'][$i]['edit'];
 		            	   $row .='  	</td>';
 		            	   $row .='  </tr>	 ';
 		                 }
