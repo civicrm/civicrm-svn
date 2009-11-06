@@ -245,7 +245,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                $showAll= false, $restrict = null,
                                $skipPermission = false,
                                $ctype = null,
-                               $permissionType = CRM_Core_Permission::EDIT ) 
+                               $permissionType = CRM_Core_Permission::CREATE ) 
     {
         if ( $restrict ) {
             $query  = "SELECT g.* from civicrm_uf_group g, civicrm_uf_join j 
