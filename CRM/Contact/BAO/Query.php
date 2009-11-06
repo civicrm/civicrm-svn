@@ -2292,6 +2292,10 @@ WHERE  id IN ( $groupIDs )
         $newName = $name;
         $name    = trim( $value ); 
         
+        if ( empty( $name ) ) {
+            return;
+        }
+
         $config =& CRM_Core_Config::singleton( );
 
         $sub  = array( ); 
