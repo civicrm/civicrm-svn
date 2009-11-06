@@ -367,14 +367,17 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
             $params['is_email_confirm'] = false;
         }
         
-        if (!$this->_isTemplate) {
-            $params['registration_start_date'] = CRM_Utils_Date::processDate( $params['registration_start_date'], $params['registration_start_date_time'] );
-            $params['registration_end_date']   = CRM_Utils_Date::processDate( $params['registration_end_date'], $params['registration_end_date_time'] );
+        if ( !$this->_isTemplate ) {
+            $params['registration_start_date'] = CRM_Utils_Date::processDate( $params['registration_start_date'], 
+                                                                              $params['registration_start_date_time'],
+                                                                              true );
+            $params['registration_end_date']   = CRM_Utils_Date::processDate( $params['registration_end_date'],
+                                                                              $params['registration_end_date_time'],
+                                                                              true );
         }
         
         require_once 'CRM/Event/BAO/Event.php';
         CRM_Event_BAO_Event::add( $params );
-        
         
         // also update the ProfileModule tables 
         $ufJoinParams = array( 'is_active'    => 1, 

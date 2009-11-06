@@ -133,7 +133,10 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         $defaults['event_full_text'] = CRM_Utils_Array::value('event_full_text', $defaults, ts('This event is currently full.') );
         $defaults['waitlist_text'] = CRM_Utils_Array::value('waitlist_text', $defaults, ts('This event is currently full. However you can register now and get added to a waiting list. You will be notified if spaces become available.') );
         list( $defaults['start_date'], $defaults['start_date_time'] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( 'start_date' , $defaults ) );
-        list( $defaults['end_date'], $defaults['end_date_time'] )     = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( 'end_date' , $defaults ) );
+        
+        if ( CRM_Utils_Array::value( 'end_date' , $defaults ) ) {
+            list( $defaults['end_date'], $defaults['end_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['end_date'] );
+        }
         return $defaults;
     }
     
@@ -271,7 +274,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         
         //format params
         $params['start_date']      = CRM_Utils_Date::processDate( $params['start_date'], $params['start_date_time'] );
-        $params['end_date'  ]      = CRM_Utils_Date::processDate( $params['end_date'], $params['end_date_time'] );
+        $params['end_date'  ]      = CRM_Utils_Date::processDate( $params['end_date'], $params['end_date_time'], true );
         $params['has_waitlist']    = CRM_Utils_Array::value('has_waitlist', $params, false);
         $params['is_map'    ]      = CRM_Utils_Array::value('is_map', $params, false);
         $params['is_active' ]      = CRM_Utils_Array::value('is_active', $params, false);
