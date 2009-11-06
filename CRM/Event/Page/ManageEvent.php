@@ -150,23 +150,18 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
         if ( !$this->_isTemplate && $id ) {
             $breadCrumb = array(array('title' => ts('Manage Events'),
                                       'url'   => CRM_Utils_System::url(CRM_Utils_System::currentPath(), 'reset=1')));
+            CRM_Utils_System::appendBreadCrumb( $breadCrumb );
         }
 
         // what action to take ?
-        if ( $action & CRM_Core_Action::ADD ) {
+        if ( $action & CRM_Core_Action::ADD || $action & CRM_Core_Action::UPDATE ) {
             require_once 'CRM/Event/Page/ManageEventEdit.php';
-            $page =& new CRM_Event_Page_ManageEventEdit( );
-            return $page->run( );
-        } else if ($action & CRM_Core_Action::UPDATE ) {
-            CRM_Utils_System::appendBreadCrumb( $breadCrumb );
-
-            require_once 'CRM/Event/Page/ManageEventEdit.php';
-            $page =& new CRM_Event_Page_ManageEventEdit( );
+            $page = new CRM_Event_Page_ManageEventEdit( );
             return $page->run( );
         } else if ( $action & CRM_Core_Action::DELETE ) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=browse' ) );
-            $controller =& new CRM_Core_Controller_Simple( 'CRM_Event_Form_ManageEvent_Delete',
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_ManageEvent_Delete',
                                                            'Delete Event',
                                                            $action );
             $id = CRM_Utils_Request::retrieve('id', 'Positive',

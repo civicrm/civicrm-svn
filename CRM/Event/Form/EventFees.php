@@ -40,6 +40,7 @@
  */
 class CRM_Event_Form_EventFees
 {
+    
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -100,7 +101,7 @@ class CRM_Event_Form_EventFees
             $defaults[$form->_pId]['send_receipt'] = 0;
         } else {
             $defaults[$form->_pId]['send_receipt'] = 1;
-            if ( $form->_eventId ) {
+            if ( $form->_eventId && CRM_Utils_Array::value( 'confirm_email_text', $details[$form->_eventId] ) ) {
                 //set receipt text
                 $defaults[$form->_pId]['receipt_text'] = $details[$form->_eventId]['confirm_email_text'];
             }
@@ -235,7 +236,7 @@ class CRM_Event_Form_EventFees
                     $defaults[$form->_pId]["price_{$priceField->id}"] = $optionId;
                 }
             }
-            if ( $form->_action == CRM_Core_Action::ADD ) {
+            if ( $form->_action == CRM_Core_Action::ADD && CRM_Utils_Array::value( 'fields', $form->_priceSet ) ) {
                 foreach( $form->_priceSet['fields'] as $key => $val ) {
                     foreach ( $val['options'] as $keys => $values ) {
                         if ( $values['is_default'] ) {
@@ -367,7 +368,9 @@ class CRM_Event_Form_EventFees
         }
 
         //CRM-4453
-        $form->assign( 'fee_currency', $defaults[$form->_pId]['participant_fee_currency']);
+        if ( CRM_Utils_Array::value( 'participant_fee_currency', $defaults[$form->_pId] ) ) {
+            $form->assign( 'fee_currency', $defaults[$form->_pId]['participant_fee_currency']);
+        }
         
         // CRM-4395 
         if ( $contriId = $form->get( 'onlinePendingContributionId' ) ) {

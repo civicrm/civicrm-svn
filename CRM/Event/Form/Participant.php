@@ -160,6 +160,11 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
      */
     public $_originalDiscountId = null;
 	
+	/**
+     * event id
+     */
+    public $_eventId = null;
+    
     /** 
      * Function to set variables up before form is built 
      *                                                           
