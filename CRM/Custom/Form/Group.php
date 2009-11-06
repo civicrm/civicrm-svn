@@ -296,8 +296,9 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             $this->_isGroupEmpty = CRM_Core_BAO_CustomGroup::isGroupEmpty( $this->_id );
             if ( !$this->_isGroupEmpty ) {
                 if ( !empty($this->_subtypes) &&
-                     (count($this->_subtypes) < count($sel2[$this->_defaults['extends']])) ) {
-                    // we only want to allow adding subtypes for this case, 
+                     (count(array_intersect($this->_subtypes, $sel2[$this->_defaults['extends']])) < 
+                      count($sel2[$this->_defaults['extends']])) ) {
+                    // we want to allow adding subtypes for this case, 
                     // and therefore freeze the first selector only.
                     $sel->_elements[0]->freeze();
                 } else {
