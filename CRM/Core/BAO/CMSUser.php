@@ -231,12 +231,34 @@ class CRM_Core_BAO_CMSUser
             }
             
         } 
+
         $loginUrl =  $config->userFrameworkBaseURL;
         if ( $isJoomla ) {
             $loginUrl  = str_replace( 'administrator/', '', $loginUrl );
             $loginUrl .= 'index.php?option=com_user&view=login';
         } elseif ( $isDrupal ) {
             $loginUrl .= 'user';
+            // For Drupal we can redirect user to current page after login by passing it as destination.
+            require_once 'CRM/Utils/System.php';
+            $qPart = CRM_Utils_System::currentPath( );
+            $args = CRM_Utils_System::currentPath( ) . "?reset=1";
+
+            $id = $form->get( 'id' );
+            if ( $id ) {
+                $args .= "&id=$id";
+             } else {
+                $gid =  $form->get( 'gid' );
+                if ( $args ) {
+                    $args .= "&gid=$gid";
+                } else {
+                    $args = null;
+                }
+             }
+
+            if ( $args ) {
+                // append destination so user is returned to form they came from after login
+                $loginUrl .= '?destination=' . urlencode( $args );
+             }
         }
         $form->assign( 'loginUrl', $loginUrl );
         $form->assign( 'showCMS', $showCMS ); 
