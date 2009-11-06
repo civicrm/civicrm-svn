@@ -397,10 +397,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             }
             
             if ( !CRM_Utils_Array::value('activity_date_time', $defaults) ) {
-                list( $defaults['activity_date_time'], $defaults['activity_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( );
+                list( $defaults['activity_date_time'], $defaults['activity_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( null, 'activityDateTime' );
             } else {
                 list( $defaults['activity_date_time'], 
-                      $defaults['activity_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['activity_date_time'] );
+                      $defaults['activity_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['activity_date_time'], 'activityDateTime' );
             }
 
             //set the assigneed contact count to template
@@ -439,7 +439,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 $target_contact[$this->_targetContactId] = self::_getDisplayNameById( $this->_targetContactId );
             }
             $this->assign( 'target_contact', $target_contact ); 
-            list( $defaults['activity_date_time'], $defaults['activity_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( );
+            list( $defaults['activity_date_time'], $defaults['activity_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( null, 'activityDateTime' );
         }
 
         if (  $this->_activityTypeId ) {

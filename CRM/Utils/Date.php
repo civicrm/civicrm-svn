@@ -1327,10 +1327,19 @@ class CRM_Utils_Date
         }
 
         $config =& CRM_Core_Config::singleton();
-
         if ( $formatType ) {
-            $format = CRM_Core_Dao::getFieldValue( 'CRM_Core_DAO_PreferencesDate', 
-                                                        $formatType, 'date_format', 'name' );
+            // get actual format
+            $params = array( 'name' => $formatType );
+            $values = array( );
+            CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_PreferencesDate', $params, $values );
+            
+            if ( $values['date_format'] ) {
+                $format  = $values['date_format'];
+            }
+            
+            if ( $values['time_format'] ) {
+                $timeFormat = $values['time_format'];
+            }
         }
         
         if ( !$format ) {
