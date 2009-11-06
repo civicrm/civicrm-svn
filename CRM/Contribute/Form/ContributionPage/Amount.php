@@ -121,14 +121,18 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
         $this->addElement('textarea', 'pay_later_receipt', ts( 'Pay later instructions' ),  
                           CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_ContributionPage', 'pay_later_receipt' ),
                           false );
-
         // add price set fields
         require_once 'CRM/Price/BAO/Set.php';
+        $price = CRM_Price_BAO_Set::getAssoc( false, 'CiviContribute');
+        if (CRM_Utils_System::isNull($price)) {
+            $this->assign('price', false );
+        } else {
+            $this->assign('price', true );
+        }
         $this->add('select', 'price_set_id', ts( 'Price Set' ),
-                   array( '' => ts( '- none -' )) + CRM_Price_BAO_Set::getAssoc( false, 'CiviContribute'),
+                   array( '' => ts( '- none -' )) + $price,
                    null, array('onchange' => "showHideAmountBlock( this.value, 'price_set_id' );")
                    );
-        
         //CiviPledge fields.
         $config =& CRM_Core_Config::singleton( );
         if ( in_array('CiviPledge', $config->enableComponents) ) {

@@ -59,8 +59,13 @@
 
         <div id="priceSet">
             <dl>
-            <dt>{$form.price_set_id.label}</dt><dd>{$form.price_set_id.html}</dd>
-            <dt>&nbsp;</dt><dd class="description">{ts 1=$adminPriceSets}Select a pre-configured Price Set to offer multiple individually priced options for event registrants. Otherwise, select &quot;-none-&quot; and enter one or more fee levels in the table below. Create or edit Price Sets <a href='%1'>here</a>.{/ts}</dd>
+            <dt>{$form.price_set_id.label}</dt>
+	    <dd>{if $price eq false}
+	    	    <div class="status message">{ts 1=$adminPriceSets}No Price Set has been configured / enabled for your site. Price sets allow you to meet the complex demands of your event registration structure.(e.g. "Pay $15 more for lunch."). Click <a href='%1'>here</a> if you want to configure price sets for your site.{/ts}</div>
+	    	{else}
+		    {$form.price_set_id.html}</dd><dt>&nbsp;</dt><dd class="description">{ts 1=$adminPriceSets}Select a pre-configured Price Set to offer multiple individually priced options for event registrants. Otherwise, select &quot;-none-&quot; and enter one or more fee levels in the table below. Create or edit Price Sets <a href='%1'>here</a>.{/ts}
+	    	{/if}
+	    </dd>
             </dl>
         </div>
         <div id="map-field" >

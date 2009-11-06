@@ -273,11 +273,16 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
         $this->add('text','fee_label',ts('Fee Label'));
 
         require_once 'CRM/Price/BAO/Set.php';
+        $price = CRM_Price_BAO_Set::getAssoc( false, 'CiviEvent');
+        if ( CRM_Utils_System::isNull( $price ) ) {
+            $this->assign('price', false );
+        } else {
+            $this->assign('price', true );
+        }
         $this->add('select', 'price_set_id', ts( 'Price Set' ),
-                   array( '' => ts( '- none -' )) + CRM_Price_BAO_Set::getAssoc( false, 'CiviEvent'),
+                   array( '' => ts( '- none -' )) + $price,
                    null, array('onchange' => "return showHideByValue('price_set_id', '', 'map-field', 'block', 'select', false);")
                    );
-        
         $default = array( );
         for ( $i = 1; $i <= self::NUM_OPTION; $i++ ) {
             // label 

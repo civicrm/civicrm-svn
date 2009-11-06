@@ -46,14 +46,18 @@
             </table>
             </td>
         </tr>
-    </table>
+	<tr id="priceSet">
+	     <th scope="row" class="label">{$form.price_set_id.label}</th>
+	     {if $price eq true}
+	     	 <td>{$form.price_set_id.html}<br /><span class="description">{ts 1=$adminPriceSets}Select a pre-configured Price Set to offer multiple individually priced options for contributions. Otherwise, select &quot;-none-&quot; and enter one or more fee levels in the table below. Create or edit Price Sets <a href='%1'>here</a>.{/ts}</span></td>
+	     {else}
+		<td><div class="status message">{ts 1=$adminPriceSets}No Price Set has been configured / enabled for your site. Price sets allow you to configure more complex contribution options (e.g. "Contribute $25 more to receive our monthly magazine."). Click <a href='%1'>here</a> if you want to configure price sets for your site.{/ts}</div></td>
+	     {/if}
+        </tr>
 
-    <div id="priceSet">
-            <dl>
-            <dt>{$form.price_set_id.label}</dt><dd>{$form.price_set_id.html}</dd>
-            <dt>&nbsp;</dt><dd class="description">{ts 1=$adminPriceSets}Select a pre-configured Price Set to offer multiple individually priced options for contributions. Otherwise, select &quot;-none-&quot; and enter one or more fee levels in the table below. Create or edit Price Sets <a href='%1'>here</a>.{/ts}</dd>
-            </dl>
-        </div>
+
+    </table>
+   
     <div id="amountFields">
         <table class="form-layout-compressed">
             {* handle CiviPledge fields *} 
