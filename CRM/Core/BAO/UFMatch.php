@@ -390,7 +390,7 @@ WHERE     openid = %1";
         $ufmatch->uf_id     = $ufID;
         $ufmatch->domain_id = CRM_Core_Config::domainID( );
         if ( $ufmatch->find( true ) ) {
-            return $ufmatch->contact_id;
+            return (int ) $ufmatch->contact_id;
         }
         return null;
     }
