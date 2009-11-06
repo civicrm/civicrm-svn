@@ -165,7 +165,8 @@ class CRM_Core_Permission {
 
         switch ( $type ) {
         case CRM_Core_Permission::VIEW :
-            if ( self::check( 'access profile view' ) ) {
+            if ( self::check( 'access profile view' ) ||
+                 self::check( 'access profile edit' ) ) {
                 return $allGroups;
             }
             break;
