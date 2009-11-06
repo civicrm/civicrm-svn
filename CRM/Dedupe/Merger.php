@@ -222,7 +222,66 @@ class CRM_Dedupe_Merger
         }
         return $eidRefs;
     }
-
+    
+    /**
+     * return payment related table.
+     */
+    static function &paymentTables( )
+    {
+        static $tables;
+        if ( !$tables ) {
+            $tables = array( 'civicrm_pledge', 'civicrm_membership', 'civicrm_participant' );
+        }
+        
+        return $tables;
+    }
+    
+    /**
+     * return payment update Query.
+     */
+    static function paymentSql( $tableName, $mainContactId, $otherContactId )
+    {
+        $sqls = array( );
+        if ( !$tableName || !$mainContactId || !$otherContactId ) {
+            return $sqls;
+        }
+        
+        $paymentTables = self::paymentTables( );
+        if ( !in_array( $tableName, $paymentTables ) ) {
+            return $sqls; 
+        }
+        
+        switch ( $tableName ) {
+        case 'civicrm_pledge' :
+            $sqls[] = "
+    UPDATE  IGNORE  civicrm_contribution contribution
+INNER JOIN  civicrm_pledge_payment payment ON ( payment.contribution_id = contribution.id )
+INNER JOIN  civicrm_pledge pledge ON ( pledge.id = payment.pledge_id )                                               
+       SET  contribution.contact_id = $mainContactId
+     WHERE  pledge.contact_id = $otherContactId";
+            $sqls[] = "UPDATE IGNORE civicrm_pledge_payment SET contact_id=$mainContactId WHERE contact_id=$otherContactId";
+            break;
+        case 'civicrm_membership' :
+            $sqls[] = "
+    UPDATE  IGNORE  civicrm_contribution contribution
+INNER JOIN  civicrm_membership_payment payment ON ( payment.contribution_id = contribution.id )
+INNER JOIN  civicrm_membership membership ON ( membership.id = payment.membership_id )      
+       SET  contribution.contact_id = $mainContactId
+     WHERE  membership.contact_id = $otherContactId";
+            break;
+        case 'civicrm_participant' :
+            $sqls[] = "
+    UPDATE  IGNORE  civicrm_contribution contribution
+INNER JOIN  civicrm_participant_payment payment ON ( payment.contribution_id = contribution.id )
+INNER JOIN  civicrm_participant participant ON ( participant.id = payment.participant_id )      
+       SET  contribution.contact_id = $mainContactId
+     WHERE  participant.contact_id = $otherContactId";
+            break;
+        }
+        
+        return $sqls;
+    }
+    
     /**
      * Based on the provided two contact_ids and a set of tables, move the 
      * belongings of the other contact to the main one.
@@ -231,6 +290,8 @@ class CRM_Dedupe_Merger
     {
         $cidRefs =& self::cidRefs();
         $eidRefs =& self::eidRefs();
+        $paymentTables = self::paymentTables( );
+        
         $affected = array_merge(array_keys($cidRefs), array_keys($eidRefs));
         if ($tables !== false) {
             // if there are specific tables, sanitize the list
@@ -253,6 +314,10 @@ class CRM_Dedupe_Merger
         foreach ($affected as $table) {
             if (isset($cidRefs[$table])) {
                 foreach ($cidRefs[$table] as $field) {
+                    // carry related contributions CRM-5359
+                    if ( in_array( $table, $paymentTables ) ) {
+                        $sqls = self::paymentSql( $table, $mainId, $otherId );
+                    }
                     $sqls[] = "UPDATE IGNORE $table SET $field = $mainId WHERE $field = $otherId";
                     $sqls[] = "DELETE FROM $table WHERE $field = $otherId";
                 }
