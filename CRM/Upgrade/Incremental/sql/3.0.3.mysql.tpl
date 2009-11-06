@@ -31,10 +31,12 @@
 -- CRM-5322
 
   SELECT @option_group_id_sfe := max(id) from civicrm_option_group where name = 'safe_file_extension';
+  SELECT @max_val             := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id  = @option_group_id_activity_type;
+  SELECT @max_wt              := max(weight) from civicrm_option_value where option_group_id=@option_group_id_activity_type;
 
   INSERT INTO 
      `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
   VALUES
-  (@option_group_id_sfe, 'docx'     , 12, NULL   ,  NULL, 0, 0, 12, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_sfe, 'xlsx'     , 13, NULL   ,  NULL, 0, 0, 13, NULL, 0, 0, 1, NULL, NULL);
+  (@option_group_id_sfe, 'docx'     , (SELECT @max_val := @max_val+1), NULL   ,  NULL, 0, 0, (SELECT @max_wt := @max_wt+1), NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_sfe, 'xlsx'     , (SELECT @max_val := @max_val+1), NULL   ,  NULL, 0, 0, (SELECT @max_wt := @max_wt+1), NULL, 0, 0, 1, NULL, NULL);
 
