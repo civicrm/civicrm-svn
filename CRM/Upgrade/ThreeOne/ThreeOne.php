@@ -134,6 +134,50 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
             require_once "CRM/Core/BAO/Setting.php";
             CRM_Core_BAO_Setting::add($defaults);                            
         }
+        
+        $sql     = "SELECT id, form_values FROM civicrm_report_instance";
+        $instDAO = CRM_Core_DAO::executeQuery( $sql );
+        while ( $instDAO->fetch( ) ) {
+            $fromVal = unserialize($instDAO->form_values);
+            foreach ( (array)$fromVal as $key => $value ) {
+                if ( strstr( $key, '_relative' ) ) {
+                    $elementName =  substr($key, 0, (strlen($key) - strlen('_relative') ) );
+                    
+                    $fromNamekey = $elementName . '_from';
+                    $toNamekey   = $elementName . '_to';
+                    
+                    $fromNameVal = $fromVal[$fromNamekey];
+                    $toNameVal   = $fromVal[$toNamekey];
+                    //check 'choose date range' is set
+                    if ( $value == '0' ) {
+                        if ( CRM_Utils_Date::isDate($fromNameVal) ) {
+                            $fromDate= CRM_Utils_Date::setDateDefaults(CRM_Utils_Date::format($fromNameVal));
+                            $fromNameVal = $fromDate[0];
+                        } else {
+                            $fromNameVal = '';
+                        }
+                        
+                        if ( CRM_Utils_Date::isDate($toNameVal) ) {
+                            $toDate= CRM_Utils_Date::setDateDefaults(CRM_Utils_Date::format($toNameVal));
+                            $toNameVal = $toDate[0];
+                        } else {
+                            $toNameVal = '';
+                        }
+                    } else {
+                        $fromNameVal = '';
+                        $toNameVal   = '';
+                    }
+                    $fromVal[$fromNamekey] = $fromNameVal;
+                    $fromVal[$toNamekey]   = $toNameVal;
+                    continue; 
+                }
+            }
+
+            $fromVal   = serialize($fromVal);
+            $updateSQL = "UPDATE civicrm_report_instance SET form_values = '{$fromVal}' WHERE id = {$instDAO->id}";
+            CRM_Core_DAO::executeQuery( $updateSQL );
+        }
+
         $template = & CRM_Core_Smarty::singleton( );
         $afterUpgradeMessage = '';
         if ( $afterUpgradeMessage = $template->get_template_vars('afterUpgradeMessage') ) $afterUpgradeMessage .= "<br/><br/>";
