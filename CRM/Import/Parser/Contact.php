@@ -1015,6 +1015,10 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
      */
     public function checkGender( $gender ) {
         $gender     = trim( $gender, '.'  );
+        if ( !$gender ) {
+            return false;
+        }
+        
         $allGenders = CRM_Core_PseudoConstant::gender( );
         foreach( $allGenders as $key => $value ) {
             if ( strlen( $gender ) > strlen( $value ) ) {
