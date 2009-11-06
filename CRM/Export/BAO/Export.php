@@ -664,7 +664,18 @@ class CRM_Export_BAO_Export
             if ( CRM_Utils_Array::value('contact_type', $row ) && $row['contact_type'] == 'Individual' ) {
                 $row['organization_name'] = '';
             }
-            
+
+            // CRM-3157: localise the output
+            // FIXME: we should move this to multilingual stack some day
+            require_once 'CRM/Core/I18n.php';
+            $i18n =& CRM_Core_I18n::singleton();
+            $translatable = array('preferred_communication_method', 'preferred_mail_format', 'gender', 'state_province', 'country', 'world_region');
+            foreach ($translatable as $column) {
+                if (isset($row[$column]) and $row[$column]) {
+                    $row[$column] = $i18n->translate($row[$column]);
+                }
+            }
+
             // add component info
             $componentDetails[] = $row;         
         }
