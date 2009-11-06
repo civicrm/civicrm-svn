@@ -154,16 +154,14 @@ function selectValue( val ) {
     {/literal}
     {if $editor eq "ckeditor"}
         {literal}
-        function CKeditor_OnComplete( editorInstance )
-        {
+        cj( function() {
             oEditor = CKEDITOR.instances[html_message];
             oEditor.setData( {/literal}'{$message_html}'{literal});
             oEditor.BaseHref = '' ;
             oEditor.UserFilesPath = '' ; 
             loadEditor();
-	        oEditor.Events.AttachEvent( 'OnFocus',verify ) ;
-            
-        }
+	        oEditor.on( 'focus', verify );
+        });
         {/literal}
     {else if $editor eq "tinymce"}
         {literal}
