@@ -342,13 +342,22 @@ function fileOnCase() {
 {literal}
 <script type="text/javascript">
 function verify( ) {
-    var d = new Date();
-    var currentDateTime = d.getTime();
-    d.setFullYear(cj("select#activity_date_time\\[Y\\]").val());
-    d.setMonth(cj("select#activity_date_time\\[M\\]").val() - 1);
-    d.setDate(cj("select#activity_date_time\\[d\\]").val());
-    var hours = cj("select#activity_date_time\\[h\\]").val();
-    var ampm = cj("select#activity_date_time\\[A\\]").val();
+    var d = new Date(), time = [], i;
+    var currentDateTime = d.getTime()
+    var activityTime    = cj("input#activity_date_time_time").val().replace(":", "");
+    
+    //chunk the time in bunch of 2 (hours,minutes,ampm)
+	for(i=0; i<activityTime.length; i+=2 ) { 
+        time.push( activityTime.slice( i, i+2 ) );
+    }
+    var activityDate = new Date( cj("input#activity_date_time").val() );
+      
+    d.setFullYear(activityDate.getFullYear());
+    d.setMonth(activityDate.getMonth());
+    d.setDate(activityDate.getDate());
+    var hours = time['0'];
+    var ampm  = time['2'];
+
     if (ampm == "PM" && hours != 0 && hours != 12) {
         // force arithmetic instead of string concatenation
         hours = hours*1 + 12;
@@ -356,7 +365,7 @@ function verify( ) {
         hours = 0;
     }
     d.setHours(hours);
-    d.setMinutes(cj("select#activity_date_time\\[i\\]").val());
+    d.setMinutes(time['1']);
 
     var activity_date_time = d.getTime();
 
