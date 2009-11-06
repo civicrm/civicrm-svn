@@ -1645,14 +1645,25 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 } else {
                     list($fieldName, $locTypeId, $phoneTypeId) = CRM_Utils_System::explode( '-', $name, 3 );
                     if ( is_array($details) ) {   
-                        
-                        // get primary loc type as per loc block, CRM-5319
+                        // FIXME :
+                        // from v3.0 onward we can have different location type id
+                        // as primary for different location blocks, therefore
+                        // apiQuery gives multiple result set, also we need to fix 
+                        // $details structure, therefore reverting below changes                                
+                        /****
+                        // get primary loc type as per loc block,                         
                         if ( $locTypeId == 'Primary' ) {
                             require_once 'CRM/Core/BAO/Block.php';
                             $locTypeId = CRM_Core_BAO_Block::getPrimaryLocTypeID( $contactId, $fieldName ); 
                         }
+                        ***/
                         
                         foreach ($details as $key => $value) {
+                            // when we fixed CRM-5319 - get primary loc
+                            // type as per loc field and removed below code. 
+                            if ($locTypeId == 'Primary') {
+                                $locTypeId = CRM_Contact_BAO_Contact::getPrimaryLocationType( $contactId ); 
+                            }
                             
                             if (is_numeric($locTypeId)) {//fixed for CRM-665
                                 if ($locTypeId == CRM_Utils_Array::value('location_type_id',$value) ) {
