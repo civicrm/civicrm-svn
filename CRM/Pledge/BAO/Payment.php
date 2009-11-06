@@ -123,7 +123,7 @@ WHERE pledge_id = %1
             }
         }
         //calculate the scheduled date for every installment
-        $now = date('YmdHis');
+        $now = date('Ymd') . '000000';
         $statues = $prevScheduledDate = array ( );         
         $prevScheduledDate[1] = $scheduled_date;
 
