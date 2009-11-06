@@ -259,7 +259,6 @@ INNER JOIN  civicrm_pledge_payment payment ON ( payment.contribution_id = contri
 INNER JOIN  civicrm_pledge pledge ON ( pledge.id = payment.pledge_id )                                               
        SET  contribution.contact_id = $mainContactId
      WHERE  pledge.contact_id = $otherContactId";
-            $sqls[] = "UPDATE IGNORE civicrm_pledge_payment SET contact_id=$mainContactId WHERE contact_id=$otherContactId";
             break;
         case 'civicrm_membership' :
             $sqls[] = "
@@ -311,13 +310,16 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
                 
         // use UPDATE IGNORE + DELETE query pair to skip on situations when 
         // there's a UNIQUE restriction on ($field, some_other_field) pair
+        $sqls = array( );
         foreach ($affected as $table) {
             if (isset($cidRefs[$table])) {
                 foreach ($cidRefs[$table] as $field) {
                     // carry related contributions CRM-5359
                     if ( in_array( $table, $paymentTables ) ) {
-                        $sqls = self::paymentSql( $table, $mainId, $otherId );
+                        $paymentSqls = self::paymentSql( $table, $mainId, $otherId ); 
+                        $sqls = array_merge( $sqls, $paymentSqls ); 
                     }
+                    
                     $sqls[] = "UPDATE IGNORE $table SET $field = $mainId WHERE $field = $otherId";
                     $sqls[] = "DELETE FROM $table WHERE $field = $otherId";
                 }
@@ -333,9 +335,6 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
         // call the SQL queries in one transaction
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-        if ( ! isset( $sqls ) ) {
-            $sqls = array( );
-        }
         foreach ($sqls as $sql) {
             CRM_Core_DAO::executeQuery( $sql,
                                         CRM_Core_DAO::$_nullArray,
