@@ -534,7 +534,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         if ( $this->_contactId && $this->_contactSubType ) {
             $allowEditSubType = CRM_Contact_BAO_ContactType::isAllowEdit( $this->_contactId, $this->_contactSubType );
         }
-        $this->assign('allowEditSubType', $allowEditSubType);
+        if ( !$allowEditSubType ) {
+            $subtypeElem->freeze( );
+        }
         
         // build edit blocks ( custom data, demographics, communication preference, notes, tags and groups )
         foreach( $this->_editOptions as $name => $label ) {                
