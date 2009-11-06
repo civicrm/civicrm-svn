@@ -273,6 +273,11 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                                           
         unset( $fields['Contact']['contact_type'] );
 
+        // since we need a hierarchical list to display contact types & subtypes, 
+        // this is what we going to display in first selector
+        $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements( false, false );
+        unset($contactTypes['']);
+
         // Contact Sub Types For Profile
         $contactSubTypes = array( );
         $subTypes = CRM_Contact_BAO_ContactType::subTypeInfo( );
@@ -287,6 +292,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                     $fields[$name] = $subTypeFields;
                 }
                 $contactSubTypes[$name] = $val['label'];
+            } else {
+                unset($contactTypes[$name]);
             }
         }
         unset( $subTypes );
@@ -380,14 +387,9 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         
         $this->_location_types = array ('Primary') + $this->_location_types;
 
-        $contactTypes = CRM_Core_SelectValues::contactType();
-        unset($contactTypes['']);
         $contactTypes = !empty($contactTypes) ? array( 'Contact' => 'Contacts' ) + $contactTypes : array( );
+        $sel1 = array( '' => '- select -' ) + $contactTypes;
 
-        $sel1 = array( '' => '- select -' ) 
-            + $contactTypes
-            + $contactSubTypes;
-        
         if ( CRM_Core_Permission::access( 'Quest' ) ) {
             $sel1['Student'] = 'Students';
         }

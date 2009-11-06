@@ -228,7 +228,9 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
         return $pairs;
     }
     
-    static function &getSelectElements( $all = false , $seperator = CRM_Core_DAO::VALUE_SEPARATOR ) {
+    static function &getSelectElements( $all         = false, 
+                                        $isSeperator = true, 
+                                        $seperator   = CRM_Core_DAO::VALUE_SEPARATOR ) {
         static $_cache = null;
 
         if ( $_cache === null ) {
@@ -259,7 +261,7 @@ AND   ( p.is_active = 1 OR p.id IS NULL )
             $dao = CRM_Core_DAO::executeQuery( $sql );
             while ( $dao->fetch( ) ) {
                 if ( ! empty( $dao->parent_id ) ) {
-                    $key   = $dao->parent_name . $seperator . $dao->child_name;
+                    $key   = $isSeperator ? $dao->parent_name . $seperator . $dao->child_name : $dao->child_name;
                     $label = "&nbsp;&nbsp;{$dao->child_label}";
                     $pName = $dao->parent_name;
                 } else {
@@ -293,7 +295,26 @@ AND   ( p.is_active = 1 OR p.id IS NULL )
      *@static
      *
      */
-   
+    static function removeKeySeparator( &$contactTypes, $seperator = CRM_Core_DAO::VALUE_SEPARATOR ) {
+        $types = array();
+        foreach ( $contactTypes as $key => $val ) {
+            $allKeys = explode(CRM_Core_DAO::VALUE_SEPARATOR, $key);
+            if ( array_key_exists( 1, $allKeys ) ) {
+                $key = $allKeys[1];
+            }
+            $types[$key] = $val;
+        }
+        $contactTypes = $types;
+    }
+
+    /**
+     * function to check if a given type is a subtype
+     *
+     *@param string $subType contact subType.
+     *@return  boolean true if subType, false otherwise.
+     *@static
+     *
+     */
     static function isaSubType( $subType ) {
         return in_array( $subType, self::subTypes( ) );
     }
