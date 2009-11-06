@@ -31,8 +31,8 @@
 -- CRM-5322
 
   SELECT @option_group_id_sfe := max(id) from civicrm_option_group where name = 'safe_file_extension';
-  SELECT @max_val             := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id  = @option_group_id_activity_type;
-  SELECT @max_wt              := max(weight) from civicrm_option_value where option_group_id=@option_group_id_activity_type;
+  SELECT @max_val             := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id  = @option_group_id_sfe;
+  SELECT @max_wt              := max(weight) from civicrm_option_value where option_group_id= @option_group_id_sfe;
 
   INSERT INTO 
      `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
