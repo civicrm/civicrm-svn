@@ -1645,11 +1645,18 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 } else {
                     list($fieldName, $locTypeId, $phoneTypeId) = CRM_Utils_System::explode( '-', $name, 3 );
                     if ( is_array($details) ) {   
-                        foreach ($details as $key => $value) {
-                            if ($locTypeId == 'Primary') {
-                                $locTypeId = CRM_Contact_BAO_Contact::getPrimaryLocationType( $contactId ); 
+                        
+                        // get primary loc type as per loc block, CRM-5319
+                        if ( $locTypeId == 'Primary' ) {
+                            static $primaryLocTypeIds = array( );
+                            if ( empty( $primaryLocTypeIds ) ) {
+                                $primaryLocTypeIds = CRM_Contact_BAO_Contact::getPrimaryLocTypeIDs( $contactId ); 
                             }
-
+                            $locTypeId = CRM_Utils_Array::value( $fieldName, $primaryLocTypeIds );
+                        }
+                        
+                        foreach ($details as $key => $value) {
+                            
                             if (is_numeric($locTypeId)) {//fixed for CRM-665
                                 if ($locTypeId == CRM_Utils_Array::value('location_type_id',$value) ) {
                                     if (CRM_Utils_Array::value($fieldName, $value )) {
