@@ -21,58 +21,60 @@
         </p> 
     </div>
     {if $is_pay_later}
-        <div class="bold">{$pay_later_receipt}</div>
+        <div class="bold" class="pay_later_receipt-section">{$pay_later_receipt}</div>
     {/if}
     
     {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="confirmContribution"}
 
     {if $amount GT 0 OR $minimum_fee GT 0 OR ( $priceSetID and $lineItem ) }
-    <div class="header-dark">
-        {if !$membershipBlock AND $amount OR ( $priceSetID and $lineItem ) }{ts}Contribution Amount{/ts}{else}{ts}Membership Fee{/ts} {/if}
-    </div>
-    <div class="display-block">
-        {if $lineItem and $priceSetID}
-	    {if !$amount}{assign var="amount" value=0}{/if}
-	    {assign var="totalAmount" value=$amount}
-            {include file="CRM/Price/Page/LineItem.tpl" context="Contribution"}
-        {elseif $is_separate_payment }
-            {if $amount AND $minimum_fee}
-                {$membership_name} {ts}Membership{/ts}: <strong>{$minimum_fee|crmMoney}</strong><br />
-                {ts}Additional Contribution{/ts}: <strong>{$amount|crmMoney}</strong><br />
-                <strong> -------------------------------------------</strong><br />
-                {ts}Total{/ts}: <strong>{$amount+$minimum_fee|crmMoney}</strong><br />
-            {elseif $amount }
-                {ts}Amount{/ts}: <strong>{$amount|crmMoney} {if $amount_level } - {$amount_level} {/if}</strong>
+    <div class="amount_display-group">
+        <div class="header-dark">
+            {if !$membershipBlock AND $amount OR ( $priceSetID and $lineItem ) }{ts}Contribution Amount{/ts}{else}{ts}Membership Fee{/ts} {/if}
+        </div>
+        <div class="display-block">
+            {if $lineItem and $priceSetID}
+            {if !$amount}{assign var="amount" value=0}{/if}
+            {assign var="totalAmount" value=$amount}
+                {include file="CRM/Price/Page/LineItem.tpl" context="Contribution"}
+            {elseif $is_separate_payment }
+                {if $amount AND $minimum_fee}
+                    {$membership_name} {ts}Membership{/ts}: <strong>{$minimum_fee|crmMoney}</strong><br />
+                    {ts}Additional Contribution{/ts}: <strong>{$amount|crmMoney}</strong><br />
+                    <strong> -------------------------------------------</strong><br />
+                    {ts}Total{/ts}: <strong>{$amount+$minimum_fee|crmMoney}</strong><br />
+                {elseif $amount }
+                    {ts}Amount{/ts}: <strong>{$amount|crmMoney} {if $amount_level } - {$amount_level} {/if}</strong>
+                {else}
+                    {$membership_name} {ts}Membership{/ts}: <strong>{$minimum_fee|crmMoney}</strong>
+                {/if}
             {else}
-                {$membership_name} {ts}Membership{/ts}: <strong>{$minimum_fee|crmMoney}</strong>
+                {if $amount }
+                    {ts}Total Amount{/ts}: <strong>{$amount|crmMoney} {if $amount_level } - {$amount_level} {/if}</strong>
+                {else}
+                    {$membership_name} {ts}Membership{/ts}: <strong>{$minimum_fee|crmMoney}</strong>
+                {/if}
             {/if}
-        {else}
-            {if $amount }
-                {ts}Total Amount{/ts}: <strong>{$amount|crmMoney} {if $amount_level } - {$amount_level} {/if}</strong>
-            {else}
-                {$membership_name} {ts}Membership{/ts}: <strong>{$minimum_fee|crmMoney}</strong>
+            {if $is_recur}
+                {if $installments}
+                    <p><strong>{ts 1=$frequency_interval 2=$frequency_unit 3=$installments}I want to contribute this amount every %1 %2(s) for %3 installments.{/ts}</strong></p>
+                {else}
+                    <p><strong>{ts 1=$frequency_interval 2=$frequency_unit}I want to contribute this amount every %1 %2(s).{/ts}</strong></p>
+                {/if}
+                <p>{ts}Your initial contribution will be processed once you complete the confirmation step. You will be able to modify or cancel future contributions at any time by logging in to your account.{/ts}</p>
             {/if}
-        {/if}
-        {if $is_recur}
-            {if $installments}
-                <p><strong>{ts 1=$frequency_interval 2=$frequency_unit 3=$installments}I want to contribute this amount every %1 %2(s) for %3 installments.{/ts}</strong></p>
-            {else}
-                <p><strong>{ts 1=$frequency_interval 2=$frequency_unit}I want to contribute this amount every %1 %2(s).{/ts}</strong></p>
+            {if $is_pledge }
+                {if $pledge_frequency_interval GT 1}
+                    <p><strong>{ts 1=$pledge_frequency_interval 2=$pledge_frequency_unit 3=$pledge_installments}I pledge to contribute this amount every %1 %2s for %3 installments.{/ts}</strong></p>
+                {else}
+                    <p><strong>{ts 1=$pledge_frequency_interval 2=$pledge_frequency_unit 3=$pledge_installments}I pledge to contribute this amount every %2 for %3 installments.{/ts}</strong></p>
+                {/if}
+                {if $is_pay_later}
+                    <p>{ts 1=$receiptFromEmail}Click &quot;Make Contribution&quot; below to register your pledge. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}</p>
+                {else}
+                    <p>{ts 1=$receiptFromEmail}Your initial pledge payment will be processed when you click &quot;Make Contribution&quot; below. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}</p>
+                {/if}
             {/if}
-            <p>{ts}Your initial contribution will be processed once you complete the confirmation step. You will be able to modify or cancel future contributions at any time by logging in to your account.{/ts}</p>
-        {/if}
-        {if $is_pledge }
-            {if $pledge_frequency_interval GT 1}
-                <p><strong>{ts 1=$pledge_frequency_interval 2=$pledge_frequency_unit 3=$pledge_installments}I pledge to contribute this amount every %1 %2s for %3 installments.{/ts}</strong></p>
-            {else}
-                <p><strong>{ts 1=$pledge_frequency_interval 2=$pledge_frequency_unit 3=$pledge_installments}I pledge to contribute this amount every %2 for %3 installments.{/ts}</strong></p>
-            {/if}
-            {if $is_pay_later}
-                <p>{ts 1=$receiptFromEmail}Click &quot;Make Contribution&quot; below to register your pledge. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}</p>
-            {else}
-                <p>{ts 1=$receiptFromEmail}Your initial pledge payment will be processed when you click &quot;Make Contribution&quot; below. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}</p>
-            {/if}
-        {/if}
+        </div>
     </div>
     {/if}
         
@@ -89,6 +91,7 @@
         {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
     {/if}
     {if $pcpBlock}
+    <div class="pcp-display-group">
         <div class="header-dark">
             {ts}Contribution Honor Roll{/ts}
         </div>
@@ -110,57 +113,64 @@
             {/if}
             <br />
         </div>
+    </div>
     {/if}
     {if $onBehalfName}
-    <div class="header-dark">
-        {ts}On Behalf Of{/ts}
-    </div>
-    <div class="display-block">
-        <strong>{$onBehalfName}</strong><br />
-        {$onBehalfAddress|nl2br}
-    </div>
-    <div class="display-block">
-        {$onBehalfEmail}
+    <div class="onBehalf-display-group">
+        <div class="header-dark">
+            {ts}On Behalf Of{/ts}
+        </div>
+        <div class="display-block">
+            <strong>{$onBehalfName}</strong><br />
+            {$onBehalfAddress|nl2br}
+        </div>
+        <div class="display-block">
+            {$onBehalfEmail}
+        </div>
     </div>
     {/if}
 
     {if $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) }
-    <div class="header-dark">
-        {ts}Billing Name and Address{/ts}
-    </div>
-    <div class="display-block">
-        <strong>{$billingName}</strong><br />
-        {$address|nl2br}
-    </div>
-    {/if}
-    {if $email}
-    <div class="header-dark">
-        {ts}Your Email{/ts}
-    </div>
-    <div class="display-block">
-        {$email}
+    <div class="billing_name_address-group">
+        <div class="header-dark">
+            {ts}Billing Name and Address{/ts}
+        </div>
+        <div class="display-block">
+            <strong>{$billingName}</strong><br />
+            {$address|nl2br}
+        </div>
+        {/if}
+        {if $email}
+        <div class="header-dark">
+            {ts}Your Email{/ts}
+        </div>
+        <div class="display-block">
+            {$email}
+        </div>
     </div>
     {/if}
     
     {if $contributeMode eq 'direct' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) }
-    <div class="header-dark">
-    {if $paymentProcessor.payment_type & 2}
-         {ts}Direct Debit Information{/ts}
-    {else}
-        {ts}Credit Card Information{/ts}
-    {/if}
-    </div>
-    <div class="display-block">
-    {if $paymentProcessor.payment_type & 2}
-        {ts}Account Holder{/ts}: {$account_holder}<br />
-        {ts}Bank Account Number{/ts}: {$bank_account_number}<br />
-        {ts}Bank Identification Number{/ts}: {$bank_identification_number}<br />
-        {ts}Bank Name{/ts}: {$bank_name}<br />
-    {else}
-        {$credit_card_type}<br />
-        {$credit_card_number}<br />
-        {ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}<br />
-    {/if}
+    <div class="credit_card-group">
+        <div class="header-dark">
+        {if $paymentProcessor.payment_type & 2}
+             {ts}Direct Debit Information{/ts}
+        {else}
+            {ts}Credit Card Information{/ts}
+        {/if}
+        </div>
+        <div class="display-block">
+        {if $paymentProcessor.payment_type & 2}
+            {ts}Account Holder{/ts}: {$account_holder}<br />
+            {ts}Bank Account Number{/ts}: {$bank_account_number}<br />
+            {ts}Bank Identification Number{/ts}: {$bank_identification_number}<br />
+            {ts}Bank Name{/ts}: {$bank_name}<br />
+        {else}
+            {$credit_card_type}<br />
+            {$credit_card_number}<br />
+            {ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}<br />
+        {/if}
+        </div>
     </div>
     {/if}
     
@@ -179,16 +189,18 @@
     {/if}
   
     {if $contributeMode eq 'direct' and $paymentProcessor.payment_type & 2}
+    <div class="debit_agreement-section">
         <div class="header-dark">
             {ts}Agreement{/ts}
         </div>
         <div class="display-block">
         {ts}Your account data will be used to charge your bank account via direct debit. While submitting this form you agree to the charging of your bank account via direct debit.{/ts}
         </div>
+    </div>
     {/if}
 
     {if $contributeMode NEQ 'notify' and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) } {* In 'notify mode, contributor is taken to processor payment forms next *}
-    <div class="messages status">
+    <div class="messages status continue_instructions-section">
         <p>
         {if $is_pay_later OR $amount LE 0.0}
             {ts}Your transaction will not be completed until you click the <strong>Continue</strong> button. Please click the button one time only.{/ts}
@@ -200,7 +212,7 @@
     {/if}
     
     {if $paymentProcessor.payment_processor_type EQ 'Google_Checkout' and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) and ! $is_pay_later}
-        <fieldset><legend>{ts}Checkout with Google{/ts}</legend>
+        <fieldset class="google_checkout-group"><legend>{ts}Checkout with Google{/ts}</legend>
         <table class="form-layout-compressed">
             <tr>
                 <td class="description">{ts}Click the Google Checkout button to continue.{/ts}</td>

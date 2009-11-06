@@ -1,5 +1,5 @@
 {if $membershipBlock}
-<div id="membership">
+<div id="membership" class="membership-group">
   {if $context EQ "makeContribution"}
   <fieldset>    
       {if $renewal_mode }

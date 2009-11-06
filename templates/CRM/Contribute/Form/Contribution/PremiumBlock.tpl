@@ -1,5 +1,5 @@
 {if $products}
-<div id="premiums">
+<div id="premiums" class="premiums-group">
     {if $context EQ "makeContribution"}
 
 {literal}
@@ -20,7 +20,7 @@ function selectPremium(optionField) {
 </script>
 {/literal}
 
-        <fieldset>
+        <fieldset class="premiums-select-group">
         {if $premiumBlock.premiums_intro_title}
             <legend>{$premiumBlock.premiums_intro_title}</legend>
         {/if}
@@ -32,6 +32,7 @@ function selectPremium(optionField) {
     {/if}
 
     {if $context EQ "confirmContribution" OR $context EQ "thankContribution"}
+    <div class="premium-display-group">
         <div class="header-dark">
             {if $premiumBlock.premiums_intro_title}
                 {$premiumBlock.premiums_intro_title}
@@ -87,6 +88,8 @@ function selectPremium(optionField) {
     {/strip}
     {if $context EQ "makeContribution"}
         </fieldset>
+    {else} {* Close premium-display-group div *}
+        </div>
     {/if}
 </div>
 {/if}

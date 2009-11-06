@@ -6,7 +6,7 @@
 
 <div class="form-item">
     {if $thankyou_text}
-    <div id="thankyou_text">
+    <div id="thankyou_text" class="thankyou_text-section">
         <p>
         {$thankyou_text}
         </p>
@@ -15,13 +15,13 @@
     
     {* Show link to Tell a Friend (CRM-2153) *}
     {if $friendText}
-        <div id="tell-a-friend">
+        <div id="tell-a-friend" class="friendText-section">
             <a href="{$friendURL}" title="{$friendText}" class="button"><span>&raquo; {$friendText}</span></a>
        </div>{if !$linkText}<br /><br />{/if}
     {/if}  
     {* Add button for donor to create their own Personal Campaign page *}
     {if $linkText}
- 	<div>
+ 	<div class="linkText-section">
         <a href="{$linkTextUrl}" title="{$linkText}" class="button"><span>&raquo; {$linkText}</span></a>
     </div><br /><br />
     {/if}  
@@ -68,77 +68,79 @@
     {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="thankContribution"}
 
     {if $amount GT 0 OR $minimum_fee GT 0 OR ( $priceSetID and $lineItem ) }
-    <div class="header-dark">
-        {if !$membershipBlock AND $amount OR ( $priceSetID and $lineItem )}{ts}Contribution Information{/ts}{else}{ts}Membership Fee{/ts}{/if}
-    </div>
-    <div class="display-block">
-    	{if $lineItem and $priceSetID}
-	    {if !$amount}{assign var="amount" value=0}{/if}
-	    {assign var="totalAmount" value=$amount}
-            {include file="CRM/Price/Page/LineItem.tpl" context="Contribution"}
-        {elseif $membership_amount } 
-            {$membership_name} {ts}Membership{/ts}: <strong>{$membership_amount|crmMoney}</strong><br />
-            {if $amount}
-                {if ! $is_separate_payment }
-		    {ts}Contribution Amount{/ts}: <strong>{$amount|crmMoney}</strong><br />
-	        {else}
-		    {ts}Additional Contribution{/ts}: <strong>{$amount|crmMoney}</strong><br />
-  	        {/if}
-            {/if} 		
-            <strong> -------------------------------------------</strong><br />
-            {ts}Total{/ts}: <strong>{$amount+$membership_amount|crmMoney}</strong><br />
-        {else}
-            {ts}Amount{/ts}: <strong>{$amount|crmMoney} {if $amount_level } - {$amount_level} {/if}</strong><br />
-        {/if}
-        {if $receive_date}
-        {ts}Date{/ts}: <strong>{$receive_date|crmDate}</strong><br />
-        {/if}
-        {if $contributeMode ne 'notify' and $is_monetary and ! $is_pay_later and $trxn_id}
-	    {ts}Transaction #{/ts}: {$trxn_id}<br />
-        {/if}
-        {if $membership_trx_id}
-	    {ts}Membership Transaction #{/ts}: {$membership_trx_id}
-        {/if}
+    <div class="amount_display-group">
+        <div class="header-dark">
+            {if !$membershipBlock AND $amount OR ( $priceSetID and $lineItem )}{ts}Contribution Information{/ts}{else}{ts}Membership Fee{/ts}{/if}
+        </div>
+        <div class="display-block">
+        	{if $lineItem and $priceSetID}
+    	    {if !$amount}{assign var="amount" value=0}{/if}
+    	    {assign var="totalAmount" value=$amount}
+                {include file="CRM/Price/Page/LineItem.tpl" context="Contribution"}
+            {elseif $membership_amount } 
+                {$membership_name} {ts}Membership{/ts}: <strong>{$membership_amount|crmMoney}</strong><br />
+                {if $amount}
+                    {if ! $is_separate_payment }
+    		    {ts}Contribution Amount{/ts}: <strong>{$amount|crmMoney}</strong><br />
+    	        {else}
+    		    {ts}Additional Contribution{/ts}: <strong>{$amount|crmMoney}</strong><br />
+      	        {/if}
+                {/if} 		
+                <strong> -------------------------------------------</strong><br />
+                {ts}Total{/ts}: <strong>{$amount+$membership_amount|crmMoney}</strong><br />
+            {else}
+                {ts}Amount{/ts}: <strong>{$amount|crmMoney} {if $amount_level } - {$amount_level} {/if}</strong><br />
+            {/if}
+            {if $receive_date}
+            {ts}Date{/ts}: <strong>{$receive_date|crmDate}</strong><br />
+            {/if}
+            {if $contributeMode ne 'notify' and $is_monetary and ! $is_pay_later and $trxn_id}
+    	    {ts}Transaction #{/ts}: {$trxn_id}<br />
+            {/if}
+            {if $membership_trx_id}
+    	    {ts}Membership Transaction #{/ts}: {$membership_trx_id}
+            {/if}
         
-        {* Recurring contribution / pledge information *}
-        {if $is_recur}
-            {if $installments}
-		<p><strong>{ts 1=$frequency_interval 2=$frequency_unit 3=$installments}This recurring contribution will be automatically processed every %1 %2(s) for a total %3 installments (including this initial contribution).{/ts}</strong></p>
-            {else}
-                <p><strong>{ts 1=$frequency_interval 2=$frequency_unit}This recurring contribution will be automatically processed every %1 %2(s).{/ts}</strong></p>
+            {* Recurring contribution / pledge information *}
+            {if $is_recur}
+                {if $installments}
+    		<p><strong>{ts 1=$frequency_interval 2=$frequency_unit 3=$installments}This recurring contribution will be automatically processed every %1 %2(s) for a total %3 installments (including this initial contribution).{/ts}</strong></p>
+                {else}
+                    <p><strong>{ts 1=$frequency_interval 2=$frequency_unit}This recurring contribution will be automatically processed every %1 %2(s).{/ts}</strong></p>
+                {/if}
+                <p>
+    	    {if $contributeMode EQ 'notify'}
+    		{ts 1=$cancelSubscriptionUrl}You can modify or cancel future contributions at any time by <a href='%1'>logging in to your account</a>.{/ts}
+    	    {/if}
+    	    {if $contributeMode EQ 'direct'}
+    		{ts 1=$receiptFromEmail}To modify or cancel future contributions please contact us at %1.{/ts}
+    	    {/if}
+                {if $is_email_receipt}
+                    {ts}You will receive an email receipt for each recurring contribution.{/ts}
+                {/if}
+    	    {if $contributeMode EQ 'notify'}
+    		{ts}The receipts will also include a link you can use if you decide to modify or cancel your future contributions.{/ts}
+    	    {/if}
+                </p>
             {/if}
-            <p>
-	    {if $contributeMode EQ 'notify'}
-		{ts 1=$cancelSubscriptionUrl}You can modify or cancel future contributions at any time by <a href='%1'>logging in to your account</a>.{/ts}
-	    {/if}
-	    {if $contributeMode EQ 'direct'}
-		{ts 1=$receiptFromEmail}To modify or cancel future contributions please contact us at %1.{/ts}
-	    {/if}
-            {if $is_email_receipt}
-                {ts}You will receive an email receipt for each recurring contribution.{/ts}
+            {if $is_pledge}
+                {if $pledge_frequency_interval GT 1}
+                    <p><strong>{ts 1=$pledge_frequency_interval 2=$pledge_frequency_unit 3=$pledge_installments}I pledge to contribute this amount every %1 %2s for %3 installments.{/ts}</strong></p>
+                {else}
+                    <p><strong>{ts 1=$pledge_frequency_interval 2=$pledge_frequency_unit 3=$pledge_installments}I pledge to contribute this amount every %2 for %3 installments.{/ts}</strong></p>
+                {/if}
+                <p>
+                {if $is_pay_later}
+                    {ts 1=$receiptFromEmail}We will record your initial pledge payment when we receive it from you. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}
+                {else}
+                    {ts 1=$receiptFromEmail}Your initial pledge payment has been processed. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}
+                {/if}
+                {if $max_reminders}
+                    {ts 1=$initial_reminder_day}We will send you a payment reminder %1 days prior to each scheduled payment date. The reminder will include a link to a page where you can make your payment online.{/ts}
+                {/if}
+                </p>
             {/if}
-	    {if $contributeMode EQ 'notify'}
-		{ts}The receipts will also include a link you can use if you decide to modify or cancel your future contributions.{/ts}
-	    {/if}
-            </p>
-        {/if}
-        {if $is_pledge}
-            {if $pledge_frequency_interval GT 1}
-                <p><strong>{ts 1=$pledge_frequency_interval 2=$pledge_frequency_unit 3=$pledge_installments}I pledge to contribute this amount every %1 %2s for %3 installments.{/ts}</strong></p>
-            {else}
-                <p><strong>{ts 1=$pledge_frequency_interval 2=$pledge_frequency_unit 3=$pledge_installments}I pledge to contribute this amount every %2 for %3 installments.{/ts}</strong></p>
-            {/if}
-            <p>
-            {if $is_pay_later}
-                {ts 1=$receiptFromEmail}We will record your initial pledge payment when we receive it from you. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}
-            {else}
-                {ts 1=$receiptFromEmail}Your initial pledge payment has been processed. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}
-            {/if}
-            {if $max_reminders}
-                {ts 1=$initial_reminder_day}We will send you a payment reminder %1 days prior to each scheduled payment date. The reminder will include a link to a page where you can make your payment online.{/ts}
-            {/if}
-            </p>
-        {/if}
+        </div>
     </div>
     {/if}
     
@@ -155,6 +157,7 @@
         {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
     {/if}
     {if $pcpBlock}
+    <div class="pcp-display-group">
         <div class="header-dark">
             {ts}Contribution Honor Roll{/ts}
         </div>
@@ -172,57 +175,63 @@
                      {/if}
                 {/if}
             {else}
-		{ts}Don't list my contribution in the honor roll.{/ts}
+		        {ts}Don't list my contribution in the honor roll.{/ts}
             {/if}
             <br />
        </div>
+    </div>
     {/if}
+    
     {if $onBehalfName}
-    <div class="header-dark">
-        {ts}On Behalf Of{/ts}
-    </div>
-    <div class="display-block">
-        <strong>{$onBehalfName}</strong><br />
-        {$onBehalfAddress|nl2br}
-    </div>
-    <div class="display-block">
-        {$onBehalfEmail}
-    </div>
+    <div class="onBehalf-display-group">
+        <div class="header-dark">
+            {ts}On Behalf Of{/ts}
+        </div>
+        <div class="display-block">
+            <strong>{$onBehalfName}</strong><br />
+            {$onBehalfAddress|nl2br}
+        </div>
+        <div class="display-block">
+            {$onBehalfEmail}
+        </div>
+    <div>
     {/if}
 
     {if $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )}    
-    <div class="header-dark">
-        {ts}Billing Name and Address{/ts}
-    </div>
-    <div class="display-block">
-        <strong>{$billingName}</strong><br />
-        {$address|nl2br}
-    </div>
-    <div class="display-block">
-        {$email}
-    </div>
+    <div class="billing_name_address-group">
+        <div class="header-dark">
+            {ts}Billing Name and Address{/ts}
+        </div>
+        <div class="display-block">
+            <strong>{$billingName}</strong><br />
+            {$address|nl2br}
+        </div>
+        <div class="display-block">
+            {$email}
+        </div>
     {/if}
 
     {if $contributeMode eq 'direct' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )}
-    <div class="header-dark">
-     {if $paymentProcessor.payment_type & 2}
-        {ts}Direct Debit Information{/ts}
-     {else}
-        {ts}Credit Card Information{/ts}
-     {/if}
-    </div>
-    <div class="display-block">
-     {if $paymentProcessor.payment_type & 2}
-        {ts}Account Holder{/ts}: {$account_holder}<br />
-        {ts}Bank Identification Number{/ts}: {$bank_identification_number}<br />
-        {ts}Bank Name{/ts}: {$bank_name}<br />
-        {ts}Bank Account Number{/ts}: {$bank_account_number}<br />
-     {else}
-        {$credit_card_type}<br />
-        {$credit_card_number}<br />
-        {ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}
-     {/if}
-    </div>
+    <div class="credit_card-group">
+        <div class="header-dark">
+         {if $paymentProcessor.payment_type & 2}
+            {ts}Direct Debit Information{/ts}
+         {else}
+            {ts}Credit Card Information{/ts}
+         {/if}
+        </div>
+        <div class="display-block">
+         {if $paymentProcessor.payment_type & 2}
+            {ts}Account Holder{/ts}: {$account_holder}<br />
+            {ts}Bank Identification Number{/ts}: {$bank_identification_number}<br />
+            {ts}Bank Name{/ts}: {$bank_name}<br />
+            {ts}Bank Account Number{/ts}: {$bank_account_number}<br />
+         {else}
+            {$credit_card_type}<br />
+            {$credit_card_number}<br />
+            {ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}
+         {/if}
+        </div>
     {/if}
 
     {include file="CRM/Contribute/Form/Contribution/PremiumBlock.tpl" context="thankContribution"}
@@ -239,7 +248,7 @@
         {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
     {/if}
 
-    <div id="thankyou_footer">
+    <div id="thankyou_footer" class="thankyou_footer-section">
         <p>
         {$thankyou_footer}
         </p>

@@ -1,8 +1,8 @@
 {if $showCMS }{*true if is_cms_user field is set *}
  {* NOTE: We are currently not supporting the Drupal registration mode where user enters their password. But logic is left here for when we figure it out. *}
 
-   <fieldset>
-      <div class="messages help">
+   <fieldset class="crm_user-group">
+      <div class="messages help cms_user_help_section">
 	 {if !$isCMS}
 	    {ts}If you would like to create an account on this site, check the box below and enter a user name{/ts}
 	    {if $form.cms_pass}
@@ -14,9 +14,9 @@
 	 {ts 1=$loginUrl}If you already have an account, <a href='%1'>please login</a> before completing this form.{/ts}
       </div>
       <div>{$form.cms_create_account.html} {$form.cms_create_account.label}</div>
-      <div id="details">
+     <div id="details" class="crm_user_signup-section">
 	 <table class="form-layout-compressed">
-	    <tr>
+	    <tr class="cms_name-section">
 	       <td>{$form.cms_name.label}</td>
 	       <td>{$form.cms_name.html} <a id="checkavailability" href="#" onClick="return false;">{ts}<strong>Check Availability</strong>{/ts}</a>
 	          <span id="msgbox" style="display:none"></span><br />
@@ -25,11 +25,11 @@
 	    </tr>
     
 	    {if $form.cms_pass}
-	       <tr>
+	       <tr class="cms_pass-section">
 	          <td>{$form.cms_pass.label}</td>
 	          <td>{$form.cms_pass.html}</td>
 	       </tr>        
-	       <tr>
+	       <tr class="crm_confirm_pass-section">
 	          <td>{$form.cms_confirm_pass.label}</td>
 	          <td>{$form.cms_confirm_pass.html}<br />
 	             <span class="description">{ts}Provide a password for the new account in both fields.{/ts}
@@ -37,7 +37,7 @@
 	       </tr>
 	    {/if}
 	 </table>        
-      </div>
+     </div>
    </fieldset>
 
    {literal}

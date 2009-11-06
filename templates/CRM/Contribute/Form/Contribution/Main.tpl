@@ -141,7 +141,7 @@ function clearAmountOther() {
 				</div>
 		    </div>
 		{/if}
-		<div id="honorType" class="section">
+		<div id="honorType" class="honoree-name-email-section">
 			<div class="section {$form.honor_prefix_id.name}-section">	
 			    <div class="content">{$form.honor_prefix_id.html}</div>
 			</div>
