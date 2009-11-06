@@ -284,8 +284,61 @@ class CRM_Core_BAO_Block
 
         $block->delete();
     }
-    
 
+    /**
+     * Function to return primary location type id 
+     * for given loc field and contact id.
+     * 
+     * @param  int $contactId - contact id 
+     *
+     * @access public
+     * @static
+     */
+    static function getPrimaryLocTypeID( $contactId, $locFieldName ) {
+        $primaryLocTypeId = null;
+        if ( !$contactId || !$locFieldName ) {
+            return $primaryLocTypeId;
+        }
+        
+        static $primaryLocTypeIds = array( );
+        if ( empty( $primaryLocTypeIds ) ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $primaryLocTypeIds = CRM_Contact_BAO_Contact::getPrimaryLocTypeIDs( $contactId );
+        }
+        
+        $im      = array( 'im' );
+        $phone   = array( 'phone' );
+        $email   = array( 'email' );
+        $openid  = array( 'openid' );
+        $address = array( 'street_address',
+                          'supplemental_address_1',
+                          'supplemental_address_2',
+                          'city',
+                          'postal_code',
+                          'postal_code_suffix',
+                          'geo_code_1',
+                          'geo_code_2',
+                          'state_province',
+                          'country',
+                          'county',
+                          'address_name' );
+        
+        $blocks = array( 'email', 'address', 'phone', 'im', 'openid' );
+        foreach ( $blocks as $block ) {
+            if ( !CRM_Utils_Array::value( $block, $primaryLocTypeIds ) ) {
+                continue;
+            }
+            
+            if ( $locFieldName == $block || 
+                 in_array( $locFieldName, $$block ) ) {
+                $primaryLocTypeId = $primaryLocTypeIds[$block];
+                break;
+            }
+        }
+        
+        return $primaryLocTypeId;
+    }
+    
 }
 
 

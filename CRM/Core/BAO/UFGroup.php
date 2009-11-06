@@ -1648,11 +1648,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                         
                         // get primary loc type as per loc block, CRM-5319
                         if ( $locTypeId == 'Primary' ) {
-                            static $primaryLocTypeIds = array( );
-                            if ( empty( $primaryLocTypeIds ) ) {
-                                $primaryLocTypeIds = CRM_Contact_BAO_Contact::getPrimaryLocTypeIDs( $contactId ); 
-                            }
-                            $locTypeId = CRM_Utils_Array::value( $fieldName, $primaryLocTypeIds );
+                            require_once 'CRM/Core/BAO/Block.php';
+                            $locTypeId = CRM_Core_BAO_Block::getPrimaryLocTypeID( $contactId, $fieldName ); 
                         }
                         
                         foreach ($details as $key => $value) {
