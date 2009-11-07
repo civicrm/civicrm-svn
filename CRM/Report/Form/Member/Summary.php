@@ -436,9 +436,12 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                  CRM_Utils_Array::value('civicrm_membership_join_date_start', $row) &&
                  $row['civicrm_membership_join_date_start'] && 
                  $row['civicrm_membership_join_date_subtotal'] ) {
-                $dateStart = CRM_Utils_Date::customFormat($row['civicrm_membership_join_date_start'], 
-                                                          '%Y%m%d');
-                $dateEnd   = CRM_Utils_Date::unformat($dateStart, '');
+
+                $dateStart = CRM_Utils_Date::customFormat( $row['civicrm_membership_join_date_start'], '%Y%m%d' );
+                $endDate   = new DateTime( $dateStart );
+                $dateEnd   = array( );
+
+                list( $dateEnd['Y'], $dateEnd['M'], $dateEnd['d'] ) = explode( ':', $endDate->format('Y:m:d') );
                 
                 switch(strtolower($this->_params['group_bys_freq']['join_date'])) {
                 case 'month': 

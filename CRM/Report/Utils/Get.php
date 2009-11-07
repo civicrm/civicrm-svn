@@ -66,8 +66,18 @@ class CRM_Report_Utils_Get {
             // unset other criteria
             self::unsetFilters( $defaults );
         }
-        $defaults["{$fieldName}_from"] = CRM_Utils_Date::unformat($from, '');
-        $defaults["{$fieldName}_to"]   = CRM_Utils_Date::unformat($to, '');
+
+        $fromDate = new DateTime( $from );
+        $dateFrom = array( );
+        list( $dateFrom['Y'], $dateFrom['M'], $dateFrom['d'] ) = explode( ':', $fromDate->format('Y:m:d') );
+        
+        $defaults["{$fieldName}_from"] = $dateFrom;
+
+        $toDate = new DateTime( $to );
+        $dateTo = array( );
+        list( $dateTo['Y'], $dateTo['M'], $dateTo['d'] ) = explode( ':', $toDate->format('Y:m:d') );
+        
+        $defaults["{$fieldName}_from"] = $dateTo;
     }
 
     static function stringParam( $fieldName, &$field, &$defaults ) {

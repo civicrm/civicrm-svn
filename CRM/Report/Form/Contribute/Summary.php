@@ -508,9 +508,11 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                  CRM_Utils_Array::value('civicrm_contribution_receive_date_start',    $row) && 
                  CRM_Utils_Array::value('civicrm_contribution_receive_date_subtotal', $row) ) {
 
-                $dateStart = CRM_Utils_Date::customFormat($row['civicrm_contribution_receive_date_start'], 
-                                                          '%Y%m%d');
-                $dateEnd   = CRM_Utils_Date::unformat($dateStart, '');
+                $dateStart = CRM_Utils_Date::customFormat( $row['civicrm_contribution_receive_date_start'], '%Y%m%d' );
+                $endDate   = new DateTime( $dateStart );
+                $dateEnd   = array( );
+
+                list( $dateEnd['Y'], $dateEnd['M'], $dateEnd['d'] ) = explode(':', $endDate->format('Y:m:d') );
 
                 switch(strtolower($this->_params['group_bys_freq']['receive_date'])) {
                 case 'month': 
