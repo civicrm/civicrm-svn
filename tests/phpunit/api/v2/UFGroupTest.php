@@ -218,7 +218,7 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
         $this->assertEquals($ufProfile['country-Primary']['visibility'],       $params['visibility']);
         $this->assertEquals($ufProfile['country-Primary']['group_id'],         $this->_ufGroupId);
         $this->assertEquals($ufProfile['country-Primary']['groupTitle'],       'Test Profile');
-        $this->assertEquals($ufProfile['country-Primary']['groupHelpPre'],     'Profle to Test API');
+        $this->assertEquals($ufProfile['country-Primary']['groupHelpPre'],     'Profile to Test API');
     }
 
     function testGetUFProfileFieldsWithEmptyParam()
@@ -450,7 +450,7 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
     public function testGetUFProfileGroups()
     {
         $ufProfileGroup = civicrm_uf_profile_groups_get();
-        $this->assertEquals(1, count($ufProfileGroup));
+        $this->assertEquals(7, count($ufProfileGroup));
     }
 
     function testGroupCreate()

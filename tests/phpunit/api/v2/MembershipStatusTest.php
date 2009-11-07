@@ -70,7 +70,7 @@ class api_v2_MembershipStatusTest extends CiviUnitTestCase {
         $result =& civicrm_membership_status_get($params);
 
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Params need to be an array', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Params is not an array.', 'In line ' . __LINE__ );
     }
 
     /**
@@ -81,7 +81,9 @@ class api_v2_MembershipStatusTest extends CiviUnitTestCase {
         $params = array();
         $result =& civicrm_membership_status_get($params);
 
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
+        // It should be 8 statuses, 7 default from mysql_data 
+        // plus one test status added in setUp        
+        $this->assertEquals ( 8, count( $result ), 'In line ' . __LINE__ );
      }
 
     /**

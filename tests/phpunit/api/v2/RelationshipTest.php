@@ -120,6 +120,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
      */
     function testRelationshipCreateWithIncorrectData( )
     {
+
         $params = array(
                         'contact_id_a'         => $this->_cId_a,
                         'contact_id_b'         => $this->_cId_b,
@@ -573,7 +574,6 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
      */
     function testRelationshipsGet( )
     {
-
         $relParams = array(
                            'contact_id_a'         => $this->_cId_a,
                            'contact_id_b'         => $this->_cId_b,

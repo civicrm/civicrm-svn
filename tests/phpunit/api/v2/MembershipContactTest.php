@@ -233,10 +233,14 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
                           'membership_type_id' => $memType['id'] );
                           
         $membership =& civicrm_membership_contact_get( $params );
+        
+        var_dump( $membership );
+        
+        
         $result = $membership[$this->_contactID][$membershipID];
 
         $this->assertEquals($result['status_id'], $this->_membershipStatusID, "In line " . __LINE__);
-        $this->assertEquals($result['contact_id'], $orgContact , "In line " . __LINE__);
+        $this->assertEquals($result['contact_id'], $this->_contactID , "In line " . __LINE__);
     }
 
 ///////////////// civicrm_membership_contact_create methods

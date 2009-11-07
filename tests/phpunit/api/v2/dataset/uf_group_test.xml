@@ -10,7 +10,7 @@
   <civicrm_uf_group
     id         = '7'
     group_type = 'Contact'
-    help_pre   = 'Profle to Test API'
+    help_pre   = 'Profile to Test API'
     is_active  = '1'
     title      = 'Test Profile'
   />
