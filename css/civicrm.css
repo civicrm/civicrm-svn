@@ -2003,6 +2003,8 @@ div.grippie {
 	background:white url(../i/magnify.gif) no-repeat scroll right center;
 	padding-right:16px; /* so that text doesn't flow on top of icon */
 	}
+	#crm-container .ac_input { width: 20em;}
+	
 #civicrm-menu #crm-qsearch {
     padding: 1px 3px 1px 2px;
     height: 20px;

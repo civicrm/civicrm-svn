@@ -48,7 +48,7 @@ eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-inpu
 
 var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
 var tokenDataUrl  = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='noemail=1' h=0 }{literal}";
-var hintText = "{/literal}{ts}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
+var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
 cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   classes: tokenClass, hintText: hintText });
 cj( "#assignee_contact_id").tokenInput( tokenDataUrl, { prePopulate: assignee_contact, classes: tokenClass, hintText: hintText });
 cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
@@ -99,9 +99,7 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
              <tr>
                 <td class="label">{$form.source_contact_id.label}</td>
                 <td class="view-value">
-                    {if $admin and $action neq 4}{$form.source_contact_id.html} {else} 
-			{$source_contact_value} 
-		   {/if}
+                    {if $admin and $action neq 4}{$form.source_contact_id.html} {else} {$source_contact_value} {/if}
                 </td>
              </tr>
              
