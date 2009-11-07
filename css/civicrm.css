@@ -1164,6 +1164,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     display: block;
     float: left;
     font-size:12px;
+    font-weight:normal;
     height: 24px;
     margin-right: 6px;
     padding: 0 14px 0 0; /* sliding doors padding */

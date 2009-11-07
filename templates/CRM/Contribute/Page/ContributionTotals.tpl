@@ -1,26 +1,30 @@
 {*Table displays contribution totals for a contact or search result-set *}
+{if $annual.count OR $contributionSummary}
+    <table class="form-layout-compressed">
+    
     {if $annual.count}
-      <table class="form-layout-compressed">
         <tr>
-        <th class="right">{ts}Current Year-to-Date{/ts} - {$annual.amount}</th>
-        <th class="right"> &nbsp; {ts}# Contributions{/ts} - {$annual.count}</th>
-        <th class="right"> &nbsp; {ts}Avg Amount{/ts} - {$annual.avg}</th>
+            <th class="contriTotalLeft right">{ts}Current Year-to-Date{/ts} - {$annual.amount}</th>
+            <th class="right"> &nbsp; {ts}# Contributions{/ts} - {$annual.count}</th>
+            <th class="right contriTotalRight"> &nbsp; {ts}Avg Amount{/ts} - {$annual.avg}</th>
+            {if $contributionSummary.cancel.amount}
+                <td>&nbsp;</td>
+            {/if}
         </tr>
-      </table> 
     {/if}
 
     {if $contributionSummary }
-     <table class="form-layout-compressed">
       <tr>
-      {if $contributionSummary.total.amount}
-        <th class="contriTotalLeft">{ts}Total Amount{/ts} - {$contributionSummary.total.amount}</th>
-        <th class="right" width="39px"> &nbsp; </th>
-        <th class="right"> &nbsp; {ts}# Contributions{/ts} - {$contributionSummary.total.count}</th>
-        <th class="right contriTotalRight"> &nbsp; {ts}Avg Amount{/ts} - {$contributionSummary.total.avg}</th>
-      {/if}
-      {if $contributionSummary.cancel.amount}
-        <th class="disabled right"> &nbsp; {ts}Total Cancelled Amount{/ts} - {$contributionSummary.cancel.amount}</th>
-      {/if}
+          {if $contributionSummary.total.amount}
+            <th class="contriTotalLeft right">{ts}Total Amount{/ts} - {$contributionSummary.total.amount}</th>
+            <th class="right"> &nbsp; {ts}# Contributions{/ts} - {$contributionSummary.total.count}</th>
+            <th class="right contriTotalRight"> &nbsp; {ts}Avg Amount{/ts} - {$contributionSummary.total.avg}</th>
+          {/if}
+          {if $contributionSummary.cancel.amount}
+            <th class="disabled right contriTotalRight"> &nbsp; {ts}Total Cancelled Amount{/ts} - {$contributionSummary.cancel.amount}</th>
+          {/if}
       </tr>  
-     </table>
-    {/if} 
+    {/if}
+    
+    </table>
+{/if}
