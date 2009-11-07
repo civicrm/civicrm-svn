@@ -52,7 +52,7 @@
     }
     
     function clearDateTime( element ) {
-        cj('input#' + element + ',input#' + element + '_time').val(" ");
+        cj('input#' + element + ',input#' + element + '_time').val('');
     }
     {/literal}
 </script>
