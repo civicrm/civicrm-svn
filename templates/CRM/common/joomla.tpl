@@ -36,7 +36,7 @@
 {/if}
 <script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
 
-<table border="0" cellpadding="0" cellspacing="0" id="content">
+<table border="0" cellpadding="0" cellspacing="0" id="crm-content">
   <tr>
 {if $sidebarLeft}
     <td id="sidebar-left" valign="top">
