@@ -1298,6 +1298,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     {
         require_once "CRM/Profile/Form.php";
         require_once "CRM/Core/OptionGroup.php";
+        require_once 'CRM/Core/BAO/UFField.php';
+        require_once 'CRM/Contact/BAO/ContactType.php';
         
         $fieldName  = $field['name'];
         $title      = $field['title'];
@@ -1371,15 +1373,31 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         } else if ( $fieldName === 'individual_suffix' ){
             $form->add('select', $name, $title, 
                        array('' => ts('- select -')) + CRM_Core_PseudoConstant::individualSuffix(), $required);
+        } else if ( $fieldName === 'contact_sub_type' ){
+            $profileType = CRM_Core_BAO_UFField::getProfileType( $form->get('gid') );
+            
+            $setSubtype  = false;
+            if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
+                $setSubtype  = $profileType;
+                $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
+            }
+            $subtypes = CRM_Contact_BAO_ContactType::subTypePairs( $profileType );
+            if ( $setSubtype ) {
+                $subtypeList = array( );
+                $subtypeList[$setSubtype] = $subtypes[$setSubtype];
+            } else {
+                $subtypeList = array('' => ts('- select -')) + $subtypes;
+            }
+            
+            $form->add('select', $name, $title, $subtypeList, $required);
         } else if (in_array($fieldName, array('email_greeting', 'postal_greeting', 'addressee' ) ) ) {
             //add email greeting, postal greeting, addressee, CRM-4575
             $gId =$form->get('gid');
-            require_once 'CRM/Core/BAO/UFField.php';
             $profileType = CRM_Core_BAO_UFField::getProfileType( $gId);
-	    require_once 'CRM/Contact/BAO/ContactType.php';
-	    if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
-	      $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
-	    }
+
+            if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
+                $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
+            }
             if ( $fieldName == 'email_greeting') {
                 $emailGreeting = array( 'contact_type'  => $profileType, 
                                         'greeting_type' => 'email_greeting');

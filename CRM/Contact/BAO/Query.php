@@ -2042,7 +2042,7 @@ class CRM_Contact_BAO_Query
             $clause = "'" . CRM_Utils_Type::escape( $value, 'String' ) . "'";
         
             $this->_where[$grouping][] = "contact_a.contact_sub_type = $clause";
-            $this->_qill [$grouping][]  = ts('Contact Sub Type') . ' - ' . $clause;
+            $this->_qill [$grouping][]  = ts('Contact Subtype') . ' - ' . $clause;
         } else {
             $clause = array( );
             foreach ( $value as $k => $v) { 
@@ -2053,7 +2053,7 @@ class CRM_Contact_BAO_Query
             
             if ( ! empty( $clause ) ) {
                 $this->_where[$grouping][] = 'contact_a.contact_sub_type IN (' . implode( ',', $clause ) . ')';
-                $this->_qill [$grouping][] = ts('Contact Sub Type') . ' - ' . implode( ' ' . ts('or') . ' ', $clause );
+                $this->_qill [$grouping][] = ts('Contact Subtype') . ' - ' . implode( ' ' . ts('or') . ' ', $clause );
             }
         }
     }

@@ -262,7 +262,7 @@ AND   ( p.is_active = 1 OR p.id IS NULL )
             while ( $dao->fetch( ) ) {
                 if ( ! empty( $dao->parent_id ) ) {
                     $key   = $isSeperator ? $dao->parent_name . $seperator . $dao->child_name : $dao->child_name;
-                    $label = "&nbsp;&nbsp;{$dao->child_label}";
+                    $label = "-&nbsp;{$dao->child_label}";
                     $pName = $dao->parent_name;
                 } else {
                     $key   = $dao->child_name;

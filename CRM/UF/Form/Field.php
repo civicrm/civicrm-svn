@@ -278,22 +278,16 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements( false, false );
         unset($contactTypes['']);
 
-        // Contact Sub Types For Profile
-        $contactSubTypes = array( );
+        // include Subtypes For Profile
         $subTypes = CRM_Contact_BAO_ContactType::subTypeInfo( );
         foreach ( $subTypes as $name => $val ) {
             //custom fields for sub type
             $subTypeFields = CRM_Core_BAO_CustomField::getFieldsForImport( $name );
 
-            if ( ! empty( $subTypeFields ) ) {
-                if ( array_key_exists($val['parent'], $fields) ) {
-                    $fields[$name] = $fields[$val['parent']] + $subTypeFields;
-                } else {
-                    $fields[$name] = $subTypeFields;
-                }
-                $contactSubTypes[$name] = $val['label'];
+            if ( array_key_exists($val['parent'], $fields) ) {
+                $fields[$name] = $fields[$val['parent']] + $subTypeFields;
             } else {
-                unset($contactTypes[$name]);
+                $fields[$name] = $subTypeFields;
             }
         }
         unset( $subTypes );
