@@ -196,11 +196,10 @@
 		  case 'price_set_id':
 		       if ( element ) {
 		       	  hide('amountFields', 'block');
-		   	  cj("#amount_block_is_active").attr( 'checked', amountAttribute );		     
 		       } else {
 		       	  show('amountFields', 'block');
-		          cj("#amount_block_is_active").attr( 'checked', amountAttribute );
-		       } 
+		       }
+		       cj("#amount_block_is_active").attr( 'checked', true );
 		  break;   	
 	   	  
 		  case 'is_pledge_active' :
@@ -220,10 +219,12 @@
 			  } else {
 			     show('amountFields', 'block');
 			     cj( "#price_set_id" ).val( '' ); 
-			  } 
+			  }
+			  show('priceSet', 'table-row' );
 		       } else {
 		    	  cj( "#price_set_id" ).val( '' );
 		    	  hide('amountFields', 'block' );
+			  hide('priceSet', 'table-row' );
 		       }
 		  break;
 	   }
