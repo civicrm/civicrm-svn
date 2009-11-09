@@ -71,7 +71,7 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
                     ),
                     array(
                         'type'      => 'cancel',
-                        'name'      => ts('Camcel'),
+                        'name'      => ts('Cancel'),
                         'js'        => array('onclick' => "location.href='{$cancelURL}'; return false;"),
                     ),
                 )
