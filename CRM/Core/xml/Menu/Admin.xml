@@ -411,6 +411,7 @@
      <title>Contact Types</title>
      <page_callback>CRM_Admin_Page_ContactType</page_callback>
      <adminGroup>Option Lists</adminGroup>
+     <icon>admin/small/09.png</icon>
   </item>
   <item>
      <path>civicrm/admin/dedupefind</path>

@@ -59,13 +59,13 @@ class CRM_Contact_BAO_ContactType extends CRM_Contact_DAO_ContactType {
         }
         return null;
     } 
+
     static function isActive( $contactType ) {
         $contact = self::contactTypeInfo( false );
         $active = array_key_exists( $contactType, $contact ) ? true : false;
         return $active;
     }
     
-
     /**
      *
      *function to retrieve basic contact type information.
@@ -232,8 +232,7 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
      *
      */
     static function contactTypes( $all = false ) {
-        return array_merge( self::basicTypes( $all ),
-                            self::subTypes( null, $all ) );
+        return array_keys( self::contactTypeInfo( $all ) );
     }
     
     /**
@@ -245,12 +244,40 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
      *
      */
     static function contactTypeInfo( $all = false ) {
-        // Note currently this method fires two queries to get info about all types. 
-        // Most of the time we are sure about the category & we can use basicTypeInfo() or subTypeInfo.
-        // FIXME: As we start using this method more & more we can write a single query 
-        // to retrieve all the info.
-        return array_merge( self::basicTypeInfo( $all ),
-                            self::subTypeInfo( null, $all ) );
+        static $_cache = null;
+        
+        if ( $_cache === null ) {
+            $_cache = array( );
+        }
+
+        $argString = $all ? '1' : '0';
+        if ( ! array_key_exists( $argString, $_cache ) ) {
+            $_cache[$argString] = array( );
+
+            $sql = "
+SELECT type.*, parent.name as parent
+FROM      civicrm_contact_type type
+LEFT JOIN civicrm_contact_type parent ON type.parent_id = parent.id
+WHERE  type.name IS NOT NULL 
+";
+            if ( $all === false ) {
+                $sql .= " AND type.is_active = 1";
+            }
+
+            $dao = CRM_Core_DAO::executeQuery( $sql,
+                                               CRM_Core_DAO::$_nullArray,
+                                               false,
+                                               'CRM_Contact_DAO_ContactType' );
+            while ( $dao->fetch( ) ) {
+                $value = array( );
+                CRM_Core_DAO::storeValues( $dao, $value );
+                if ( array_key_exists('parent_id', $value) ) {
+                    $value['parent'] = $dao->parent;
+                }
+                $_cache[$argString][$dao->name] = $value;
+            }
+        }
+        return $_cache[$argString];
     }
 
     /**
