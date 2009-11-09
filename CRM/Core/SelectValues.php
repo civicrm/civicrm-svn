@@ -607,7 +607,7 @@ class CRM_Core_SelectValues
                                   "yy-mm-dd"      => ts('yy-mm-dd (2009-12-31)'),
                                   "M d, yy"       => ts('M d, yy (Dec 31, 2009)'),
                                   "MM d, yy"      => ts('MM d, yy (December 31, 2009)'),
-                                  "DD, d MM, yy"  => ts('DD, d MM, yy (Thursday, 31 December, 2009)'),
+                                  "DD, d MM yy"   => ts('DD, d MM yy (Thursday, 31 December 2009)'),
                                   "mm/dd"         => ts('mm/dd (12/31)'),
                                   "dd/mm"         => ts('dd/mm (31/12)'),
                                   "dd.mm.yy"      => ts('dd.mm.yy (31.12.2009)')
@@ -637,7 +637,7 @@ class CRM_Core_SelectValues
                                    "yy-mm-dd"      => 'Y-m-d',
                                    "M d, yy"       => 'M j, Y',
                                    "MM d, yy"      => 'F j, Y',
-                                   "DD, d MM, yy"  => 'l, j F, Y',                                   
+                                   "DD, d MM yy"   => 'l, j F Y',                                   
                                    "mm/dd"         => 'm/d',
                                    "dd/mm"         => 'd/m',
                                    "dd.mm.yy"      => 'd.m.Y'                                   
