@@ -124,7 +124,7 @@ class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic
                                                                     'name'  => ts('Revert to Default'),
                                                                     'extra' => "onclick = 'return confirm(\"$confirm\");'",
                                                                     'url'   => 'civicrm/admin/messageTemplates',
-                                                                    'qs'    => 'action=revert&id=%%id%%',
+                                                                    'qs'    => 'action=revert&id=%%id%%&selectedChild=workflow',
                                                                     'title' => ts('Revert this workflow message template to the system default'),
                                                                     ),
                                   CRM_Core_Action::VIEW    => array(

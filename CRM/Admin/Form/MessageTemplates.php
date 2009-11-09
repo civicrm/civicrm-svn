@@ -57,6 +57,27 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
         $defaults =& parent::setDefaultValues( );
         $this->_workflow_id = $defaults['workflow_id'];
         $this->assign('workflow_id', $defaults['workflow_id']);
+
+        // FIXME: we need to fix the Cancel button here as we don’t know whether it’s a workflow template in buildQuickForm()
+        if ($this->_workflow_id and $this->_action & CRM_Core_Action::UPDATE) {
+            $cancelURL = CRM_Utils_System::url('civicrm/admin/messageTemplates', 'selectedChild=workflow&reset=1');
+            $cancelURL = str_replace('&amp;', '&', $cancelURL);
+            $this->addButtons(
+                array(
+                    array(
+                        'type'      => 'next',
+                        'name'      => ts('Save'),
+                        'isDefault' => true,
+                    ),
+                    array(
+                        'type'      => 'cancel',
+                        'name'      => ts('Camcel'),
+                        'js'        => array('onclick' => "location.href='{$cancelURL}'; return false;"),
+                    ),
+                )
+            );
+        }
+
         return $defaults;
     }
 
