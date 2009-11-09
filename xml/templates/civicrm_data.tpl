@@ -904,11 +904,7 @@ INSERT INTO `civicrm_contact_type`
  VALUES
   ( 1, 'Individual'  , '{ts escape="sql"}Individual{/ts}'  , NULL, NULL, 1, 1),
   ( 2, 'Household'   , '{ts escape="sql"}Household{/ts}'   , NULL, NULL, 1, 1),
-  ( 3, 'Organization', '{ts escape="sql"}Organization{/ts}', NULL, NULL, 1, 1),
-  ( 4, 'Student'     , '{ts escape="sql"}Student{/ts}'     , NULL, 1, 1, 0),
-  ( 5, 'Parent'      , '{ts escape="sql"}Parent{/ts}'      , NULL, 1, 1, 0),
-  ( 6, 'Staff'       , '{ts escape="sql"}Staff{/ts}'       , NULL, 1, 1, 0),
-  ( 7, 'Team'        , '{ts escape="sql"}Team{/ts}'        , NULL, 3, 1, 0),
-  ( 8, 'Sponsor'     , '{ts escape="sql"}Sponsor{/ts}'     , NULL, 3, 1, 0);
+  ( 3, 'Organization', '{ts escape="sql"}Organization{/ts}', NULL, NULL, 1, 1);
+  
 
 {include file='civicrm_msg_template.tpl'}
