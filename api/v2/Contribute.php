@@ -168,6 +168,10 @@ function civicrm_contribution_delete( &$params ) {
 function &civicrm_contribution_search( &$params ) {
     _civicrm_initialize( );
 
+    if ( ! is_array( $params ) ) {
+        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
+    }
+
     $inputParams      = array( );
     $returnProperties = array( );
     $otherVars = array( 'sort', 'offset', 'rowCount' );
