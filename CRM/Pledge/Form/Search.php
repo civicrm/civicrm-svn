@@ -442,7 +442,7 @@ class CRM_Pledge_Form_Search extends CRM_Core_Form
         $fromDate = CRM_Utils_Request::retrieve( 'start', 'Date',
                                                  CRM_Core_DAO::$_nullObject );
         if ( $fromDate ) {
-            $date = CRM_Utils_Date::unformat( $fromDate, '' );
+            list( $date )= CRM_Utils_Date::setDateDefaults( $fromDate );
             $this->_formValues['pledge_payment_date_low'] = $date;
             $this->_defaults['pledge_payment_date_low'  ] = $date;
         }
@@ -450,7 +450,7 @@ class CRM_Pledge_Form_Search extends CRM_Core_Form
         $toDate= CRM_Utils_Request::retrieve( 'end', 'Date',
                                               CRM_Core_DAO::$_nullObject );
         if ( $toDate ) { 
-            $date = CRM_Utils_Date::unformat( $toDate, '' );
+            list( $date ) = CRM_Utils_Date::setDateDefaults( $toDate );
             $this->_formValues['pledge_payment_date_high'] = $date;
             $this->_defaults['pledge_payment_date_high'  ] = $date;
         }
