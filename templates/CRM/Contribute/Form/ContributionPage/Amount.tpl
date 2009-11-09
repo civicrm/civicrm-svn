@@ -161,6 +161,7 @@
 	var priceSetID = {/literal}'{$priceSetID}'{literal};
   	
 	if ( ! amount_block[0].checked || priceSetID ) {
+	   if ( !priceSetID ) hide('priceSet', 'table-row' ); 
 	   hide('amountFields', 'block');
         }
 	var pay_later = document.getElementsByName('is_pay_later');
