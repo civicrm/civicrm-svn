@@ -142,7 +142,7 @@ class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic
     {
         if ( $object->workflow_id ) {
             // do not expose action link for reverting to default if the template did not diverge or we just reverted it now
-            if ( !in_array($object->id, $this->_revertible ) or
+            if (!in_array($object->id, array_keys($this->_revertible)) or
                 ( $this->_action & CRM_Core_Action::REVERT and $object->id == $this->_revertedId ) ) {
                 $action &= ~CRM_Core_Action::REVERT;
                 $action &= ~CRM_Core_Action::VIEW;
@@ -255,7 +255,7 @@ class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic
             
             if ( !$messageTemplate->workflow_id ) {
                 $userTemplates[$messageTemplate->id]     = $values[$messageTemplate->id];
-            } elseif( !$messageTemplate->is_default ) {
+            } elseif( !$messageTemplate->is_reserved ) {
                 $workflowTemplates[$messageTemplate->id] = $values[$messageTemplate->id];
             }
         }
