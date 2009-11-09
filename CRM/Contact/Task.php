@@ -38,6 +38,8 @@
  * used by the search forms
  *
  */
+require_once 'CRM/Contact/BAO/ContactType.php';
+
 class CRM_Contact_Task {
     const
         GROUP_CONTACTS        =     1,
@@ -106,12 +108,7 @@ class CRM_Contact_Task {
                                   8     => array( 'title'  => ts( 'Delete Contacts'               ),
                                                   'class'  => 'CRM_Contact_Form_Task_Delete',
                                                   'result' => false ),
-                                  9     => array( 'title'  => ts( 'Add Contacts to Household'     ),
-                                                  'class'  => 'CRM_Contact_Form_Task_AddToHousehold',
-                                                  'result' => true ),
-                                  10    => array( 'title'  => ts( 'Add Contacts to Organization'  ),
-                                                  'class'  => 'CRM_Contact_Form_Task_AddToOrganization',
-                                                  'result' => true ),
+                                  
                                   11    => array( 'title'  => ts( 'Record Activity for Contacts'  ),
                                                   'class'  => 'CRM_Activity_Form_Activity',
                                                   'result' => true ),
@@ -138,7 +135,22 @@ class CRM_Contact_Task {
                                                   'class'  => 'CRM_Contact_Form_Task_Merge',
                                                   'result' => true ),
                                   );
-            
+            if( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
+                $label = CRM_Contact_BAO_ContactType::basicTypePairs( false, 'Household' );
+                self::$_tasks[9] = array( 'title'  => ts( 'Add Contacts to %1',
+                                                          array( 1=> $label ) ) ,
+                                          'class'  => 'CRM_Contact_Form_Task_AddToHousehold',
+                                          'result' => true
+                                          );
+            }
+            if( CRM_Contact_BAO_ContactType::isActive( 'Organization' ) ) {
+                $label = CRM_Contact_BAO_ContactType::basicTypePairs( false, 'Organization' );
+                self::$_tasks[10] = array( 'title'  => ts( 'Add Contacts to %1',
+                                                           array( 1=> $label ) ) ,
+                                           'class'  => 'CRM_Contact_Form_Task_AddToOrganization',
+                                           'result' => true
+                                           );
+            }
             //CRM-4418, check for delete 
             if ( !CRM_Core_Permission::check( 'delete contacts' ) ) {
                 unset( self::$_tasks[8] );

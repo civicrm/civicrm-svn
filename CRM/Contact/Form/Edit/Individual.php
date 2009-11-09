@@ -93,7 +93,12 @@ class CRM_Contact_Form_Edit_Individual {
         }
        
         //Shared Address Element
-        $form->addElement('checkbox', 'use_household_address', null, ts('Use Household Address') );
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        if( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
+            $label = CRM_Contact_BAO_ContactType::basicTypePairs( false, 'Household' );
+            $form->addElement( 'checkbox', 'use_household_address', null, 
+                               ts('Use %1 Address',array( 1=> $label ) ) );
+        }
         $housholdDataURL = CRM_Utils_System::url( 'civicrm/ajax/search', "hh=1", false, null, false );
         $form->assign('housholdDataURL',$housholdDataURL );
         $form->add( 'text', 'shared_household', ts( 'Select Household' ) );
