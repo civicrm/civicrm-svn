@@ -218,7 +218,7 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
 
         $pairs = array( );
         foreach ( $subtypes as $name => $info ) {
-            $pairs[$name] = $info['label'];
+            $pairs[$name] = '- ' . $info['label'];
         }
         return $pairs;
     }

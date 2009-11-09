@@ -152,13 +152,20 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
                                     CRM_Import_Parser::DUPLICATE_SKIP));
         $js = array('onClick' => "buildSubTypes();");    
         // contact types option
-        $contactOptions = array();        
-        $contactOptions[] = HTML_QuickForm::createElement('radio',
-            null, null, ts('Individual'), CRM_Import_Parser::CONTACT_INDIVIDUAL, $js);
-        $contactOptions[] = HTML_QuickForm::createElement('radio',
-            null, null, ts('Household'), CRM_Import_Parser::CONTACT_HOUSEHOLD, $js);
-        $contactOptions[] = HTML_QuickForm::createElement('radio',
-            null, null, ts('Organization'), CRM_Import_Parser::CONTACT_ORGANIZATION, $js);
+        require_once 'CRM/Contact/BAO/ContactType.php';
+        $contactOptions = array();
+        if ( CRM_Contact_BAO_ContactType::isActive( 'Individual' ) ) {
+            $contactOptions[] = HTML_QuickForm::createElement('radio',
+                null, null, ts('Individual'), CRM_Import_Parser::CONTACT_INDIVIDUAL, $js);        
+        }
+        if ( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
+            $contactOptions[] = HTML_QuickForm::createElement('radio',
+                null, null, ts('Household'), CRM_Import_Parser::CONTACT_HOUSEHOLD, $js);
+        }
+        if ( CRM_Contact_BAO_ContactType::isActive( 'Organization' ) ) {
+            $contactOptions[] = HTML_QuickForm::createElement('radio',
+                null, null, ts('Organization'), CRM_Import_Parser::CONTACT_ORGANIZATION, $js);
+        } 
 
         $this->addGroup($contactOptions, 'contactType', 
                         ts('Contact Type'));

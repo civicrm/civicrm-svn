@@ -12,20 +12,22 @@
  <div id="upload-file" class="form-item">
  <fieldset>
     <dl>
-        <dt>{$form.uploadFile.label}</dt><dd>{$form.uploadFile.html}</dd>
-        <dt>&nbsp;</dt>
-        <dd class="description">{ts}File format must be comma-separated-values (CSV).{/ts}</dd>
+        <dt>{$form.uploadFile.label}</dt>
+            <dd>{$form.uploadFile.html}<br />
+                <span class="description">{ts}File format must be comma-separated-values (CSV).{/ts}</span>
+            </dd>
         <dt>&nbsp;</dt>
 	    <dd>{ts 1=$uploadSize}Maximum Upload File Size: %1 MB{/ts}</dd>
-        <dt> </dt><dd>{$form.skipColumnHeader.html} {$form.skipColumnHeader.label}</dd>
-        <dt>&nbsp;</dt>
-        <dd class="description">
-            {ts}Check this box if the first row of your file consists of field names (Example: 'Contact ID', 'Amount').{/ts}
-        </dd>
+        <dt> </dt>
+            <dd>{$form.skipColumnHeader.html} {$form.skipColumnHeader.label}<br />
+                <span class="description">
+                    {ts}Check this box if the first row of your file consists of field names (Example: 'Contact ID', 'Amount').{/ts}
+                </span>
+            </dd>
         <dt class="{$form.contactType.name}">{$form.contactType.label}</dt><dd class="{$form.contactType.name}">{$form.contactType.html}<br />
             <span class="description">
                 {ts}Select 'Individual' if you are importing contributions made by individual persons.{/ts}
-                {ts}Select 'Organization' or 'Household' if you are importing contributions made by contacts of that type.{/ts}
+                {ts}Select 'Organization' or 'Household' if you are importing contributions made by contacts of that type. (NOTE: Some built-in contact types may not be enabled for your site.){/ts}
             </span>
         </dd> 
         <dt>{$form.onDuplicate.label}</dt><dd>{$form.onDuplicate.html}{help id="id-onDuplicate"}</dd>
