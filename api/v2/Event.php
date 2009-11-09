@@ -107,10 +107,13 @@ function civicrm_event_create( &$params )
 function civicrm_event_get( &$params ) 
 {
     _civicrm_initialize();
-    
-    if ( ! is_array( $params ) || empty( $params ) ) {
 
-        return civicrm_create_error('Params is not an array');
+    if ( ! is_array( $params ) ) {
+        return civicrm_create_error( 'Input parameters is not an array.' );
+    }
+    
+    if ( empty( $params ) ) {
+        return civicrm_create_error('Params cannot be empty.');
     }
     
     $event  =& civicrm_event_search( $params );
@@ -140,6 +143,11 @@ function civicrm_event_get( &$params )
 
 function civicrm_event_search( &$params ) 
 {
+
+    if ( ! is_array( $params ) ) {
+        return civicrm_create_error( ts( 'Input parameters is not an array.' ) );
+    }
+
     $inputParams            = array( );
     $returnProperties       = array( );
     $returnCustomProperties = array( );
