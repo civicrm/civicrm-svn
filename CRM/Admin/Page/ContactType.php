@@ -120,9 +120,7 @@ class CRM_Admin_Page_ContactType extends CRM_Core_Page_Basic
     }
     function browse()
     {   
-        $basicType = CRM_Contact_BAO_ContactType::contactTypeInfo( true );
-        $subType = CRM_Contact_BAO_ContactType::subTypeInfo( null , true );
-        $rows = array_merge( $basicType ,$subType );
+        $rows = CRM_Contact_BAO_ContactType::contactTypeInfo( true );
         foreach( $rows  as $key=>$value ) {
             $mask = null;
             if( CRM_Utils_Array::value( 'is_reserved', $value ) ) {

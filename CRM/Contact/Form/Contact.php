@@ -35,6 +35,7 @@
 require_once 'CRM/Core/Form.php';
 require_once 'CRM/Contact/Form/Location.php';
 require_once 'CRM/Custom/Form/CustomData.php';
+require_once 'CRM/Contact/BAO/ContactType.php';
 
 /**
  * This class generates form components generic to all the contact types.
@@ -147,14 +148,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $this->_tid = CRM_Utils_Request::retrieve( 'tid', 'Integer',
                                                        CRM_Core_DAO::$_nullObject,
                                                        false, null, 'GET' );
-            if ( $this->_contactSubType ) {
-                $params = array( 'name' => $this->_contactSubType );
-            } else {
-                $params = array( 'name' => $this->_contactType );
-            }
-            require_once "CRM/Contact/BAO/ContactType.php";
-            CRM_Contact_BAO_ContactType::retrieve( $params ,$contact );
-            CRM_Utils_System::setTitle( ts( 'New %1', array( 1 => $contact['label'] ) ) );
+            $typeLabel = 
+                CRM_Contact_BAO_ContactType::contactTypePairs( true, $this->_contactSubType ? 
+                                                               $this->_contactSubType : $this->_contactType );
+            CRM_Utils_System::setTitle( ts( 'New %1', array( 1 => $typeLabel ) ) );
             $session->pushUserContext(CRM_Utils_System::url('civicrm/dashboard', 'reset=1'));
             $this->_contactId = null;
         } else {
@@ -523,12 +520,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         eval( 'CRM_Contact_Form_Edit_' . $this->_contactType . '::buildQuickForm( $this, $this->_action );' );
         
         // subtype is a common field. lets keep it here
-        require_once 'CRM/Contact/BAO/ContactType.php';
-        $subtypes = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
-        if ( ! empty($subtypes) ) {
-            $subtypeElem =& $this->addElement( 'select', 'contact_sub_type', 
-                                               ts('Subtype'), array( '' => '' ) + $subtypes );
-        }
+        $typeLabel = CRM_Contact_BAO_ContactType::basicTypePairs( true, $this->_contactType );
+        $subtypes  = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
+        $subtypeElem =& $this->addElement( 'select', 'contact_sub_type', 
+                                           ts('Contact Type'), array( '' => $typeLabel ) + $subtypes );
 
         $allowEditSubType = true;
         if ( $this->_contactId && $this->_contactSubType ) {

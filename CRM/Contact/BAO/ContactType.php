@@ -60,7 +60,7 @@ class CRM_Contact_BAO_ContactType extends CRM_Contact_DAO_ContactType {
         return null;
     } 
     
-     /**
+    /**
      *
      *function to retrieve basic contact type information.
      *
@@ -68,8 +68,7 @@ class CRM_Contact_BAO_ContactType extends CRM_Contact_DAO_ContactType {
      *@static
      *
      */
-    
-    static function &contactTypeInfo( $all = false ) {
+    static function &basicTypeInfo( $all = false ) {
         static $_cache = null;
         
         if ( $_cache === null ) {
@@ -110,35 +109,27 @@ WHERE  parent_id IS NULL
      *@static
      *
      */ 
-
-    static function contactTypes( $all = false ) {
-        return array_keys( self::contactTypeInfo( $all ) );
+    static function basicTypes( $all = false ) {
+        return array_keys( self::basicTypeInfo( $all ) );
     }
 
-    static function contactTypePairs( $all = false ) {
-        $subtypes = self::contactTypeInfo( $all );
+    static function basicTypePairs( $all = false, $typeName = null ) {
+        $subtypes = self::basicTypeInfo( $all );
 
-        $pairs = array( );
-        foreach ( $subtypes as $name => $info ) {
-            $pairs[$name] = $info['label'];
+        if ( $typeName ) {
+            if ( array_key_exists($typeName, $subtypes) ) {
+                return $subtypes[$typeName]['label'];
+            }
+        } else {
+            $pairs = array( );
+            foreach ( $subtypes as $name => $info ) {
+                $pairs[$name] = $info['label'];
+            }
+            return $pairs;
         }
-        return $pairs;
+        return null;
     }
 
-    /**
-     *
-     *function to retrieve basic contacttypes & subtypes.
-     *
-     *@return  array of basic contact types + all subtypes.
-     *@static
-     *
-     */
-
-    static function contactSubTypes( $all = false ) {
-        return array_merge( self::contactTypes( $all ),
-                            self::subTypes( null, $all ) );
-    }
-    
     /**
      *
      *function to retrieve all subtypes Information.
@@ -216,8 +207,6 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
      *@static
      *
      */
-
-
     static function subTypePairs( $contactType = null, $all = false ) {
         $subtypes = self::subTypeInfo( $contactType, $all );
 
@@ -228,6 +217,62 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
         return $pairs;
     }
     
+    /**
+     *
+     *function to retrieve list of all types i.e basic + subtypes.
+     *
+     *@return  array of basic types + all subtypes.
+     *@static
+     *
+     */
+    static function contactTypes( $all = false ) {
+        return array_merge( self::basicTypes( $all ),
+                            self::subTypes( null, $all ) );
+    }
+    
+    /**
+     *
+     *function to retrieve info array about all types i.e basic + subtypes.
+     *
+     *@return  array of basic types + all subtypes.
+     *@static
+     *
+     */
+    static function contactTypeInfo( $all = false ) {
+        // Note currently this method fires two queries to get info about all types. 
+        // Most of the time we are sure about the category & we can use basicTypeInfo() or subTypeInfo.
+        // FIXME: As we start using this method more & more we can write a single query 
+        // to retrieve all the info.
+        return array_merge( self::basicTypeInfo( $all ),
+                            self::subTypeInfo( null, $all ) );
+    }
+
+    /**
+     *
+     *function to retrieve basic type pairs with name as 'built-in name' and 'label' as value
+     *
+     *@param array $contactType.
+     *@return list of basictypes with name as 'built-in name' and 'label' as value
+     *@static
+     *
+     */
+    static function contactTypePairs( $all = false, $typeName = null ) {
+        $types = self::contactTypeInfo( $all );
+
+        if ( $typeName ) {
+            if ( array_key_exists($typeName, $types) ) {
+                return $types[$typeName]['label'];
+            }
+        } else {
+            $pairs = array( );
+            foreach ( $types as $name => $info ) {
+                $pairs[$name] = $info['label'];
+            }
+            return $pairs;
+        }
+        return null;
+    }
+
     static function &getSelectElements( $all         = false, 
                                         $isSeperator = true, 
                                         $seperator   = CRM_Core_DAO::VALUE_SEPARATOR ) {
@@ -295,26 +340,6 @@ AND   ( p.is_active = 1 OR p.id IS NULL )
      *@static
      *
      */
-    static function removeKeySeparator( &$contactTypes, $seperator = CRM_Core_DAO::VALUE_SEPARATOR ) {
-        $types = array();
-        foreach ( $contactTypes as $key => $val ) {
-            $allKeys = explode(CRM_Core_DAO::VALUE_SEPARATOR, $key);
-            if ( array_key_exists( 1, $allKeys ) ) {
-                $key = $allKeys[1];
-            }
-            $types[$key] = $val;
-        }
-        $contactTypes = $types;
-    }
-
-    /**
-     * function to check if a given type is a subtype
-     *
-     *@param string $subType contact subType.
-     *@return  boolean true if subType, false otherwise.
-     *@static
-     *
-     */
     static function isaSubType( $subType ) {
         return in_array( $subType, self::subTypes( ) );
     }
@@ -328,7 +353,6 @@ AND   ( p.is_active = 1 OR p.id IS NULL )
      *@static
      *
      */
-
     static function getBasicType( $subType ) { 
         static $_cache = null;
         if ( $_cache === null ) {
@@ -371,7 +395,6 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
      *@static
      *
      */
-   
     static function suppressSubTypes( &$subTypes ) {
         $subTypes = array_diff( $subTypes, self::subTypes( ) );
         return $subTypes;
@@ -387,7 +410,6 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
      *@static
      *
      */
- 
     static function isExtendsContactType( $subType, $contactType ) {
         return in_array( $subType, self::subTypes( $contactType ) );
     }

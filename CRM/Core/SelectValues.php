@@ -104,7 +104,7 @@ class CRM_Core_SelectValues
         if (!$contactType) {
             require_once 'CRM/Contact/BAO/ContactType.php';
             $contactType = array( '' => ts('- any contact type -') );
-            $contactType = $contactType + CRM_Contact_BAO_ContactType::contactTypePairs( );
+            $contactType = $contactType + CRM_Contact_BAO_ContactType::basicTypePairs( );
         }
         return $contactType;
     }
