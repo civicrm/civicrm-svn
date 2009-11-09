@@ -468,7 +468,7 @@ class CRM_Case_Form_Search extends CRM_Core_Form
         $caseFromDate = CRM_Utils_Request::retrieve( 'pstart', 'Date',
                                                        CRM_Core_DAO::$_nullObject );
         if ( $caseFromDate ) {
-            $date = CRM_Utils_Date::unformat( $caseFromDate, '' );
+            list( $date )= CRM_Utils_Date::setDateDefaults( $caseFromDate );
             $this->_formValues['case_start_date_low'] = $date;
             $this->_defaults['case_start_date_low'  ] = $date;
         }
@@ -476,7 +476,7 @@ class CRM_Case_Form_Search extends CRM_Core_Form
         $caseToDate= CRM_Utils_Request::retrieve( 'pend', 'Date',
                                               CRM_Core_DAO::$_nullObject );
         if ( $caseToDate ) { 
-            $date = CRM_Utils_Date::unformat( $caseToDate, '' );
+            list( $date )= CRM_Utils_Date::setDateDefaults( $caseToDate );
             $this->_formValues['case_start_date_high'] = $date;
             $this->_defaults['case_start_date_high'  ] = $date;
         }
