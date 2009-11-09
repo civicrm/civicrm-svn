@@ -1331,6 +1331,10 @@ SELECT id
         $date = null;
         if ( $customFields[$customFieldId]['data_type'] == 'Date' ) {
             if ( ! CRM_Utils_System::isNull( $value ) ) {
+                $format = $customFields[$customFieldId]['date_format'];
+                if ( in_array( $format, array('dd/mm', 'mm/dd' ) ) ) {
+                    $value = "{$value}/1902";
+                }
                 $date = CRM_Utils_Date::processDate( $value );   
             }
             $value = $date;

@@ -1497,10 +1497,20 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
         case 'Date':
             // remove time element display if time is not set
             if ( !$timeFormat ) {
+                $customFormat = null;
                 $value = substr( $value, 0, 10 );
+                $supportableFormats = array(
+                                            'mm/dd'   => '%B %E%f',
+                                            'dd/mm'   => '%E%f %B'
+                                            );
+                if ( $format = CRM_Utils_Array::value( 'date_format', $field ) ) {
+                    if ( array_key_exists( $format, $supportableFormats ) ) {
+                        $customFormat = $supportableFormats["$format"];
+                    }
+                }
             }
             
-            $retValue = CRM_Utils_Date::customFormat( $value );
+            $retValue = CRM_Utils_Date::customFormat( $value, $customFormat );
             break;	
 
         case 'Boolean':
