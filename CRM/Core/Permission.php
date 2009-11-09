@@ -165,26 +165,26 @@ class CRM_Core_Permission {
 
         switch ( $type ) {
         case CRM_Core_Permission::VIEW :
-            if ( self::check( 'access profile view' ) ||
-                 self::check( 'access profile edit' ) ) {
+            if ( self::check( 'profile view' ) ||
+                 self::check( 'profile edit' ) ) {
                 return $allGroups;
             }
             break;
 
         case CRM_Core_Permission::CREATE :
-            if ( self::check( 'access profile create' ) ) {
+            if ( self::check( 'profile create' ) ) {
                 return $allGroups;
             }
             break;
 
         case CRM_Core_Permission::EDIT :
-            if ( self::check( 'access profile edit' ) ) {
+            if ( self::check( 'profile edit' ) ) {
                 return $allGroups;
             }
             break;
 
         case CRM_Core_Permission::SEARCH :
-            if ( self::check( 'access profile listings' ) ) {
+            if ( self::check( 'profile listings' ) ) {
                 return $allGroups;
             }
             break;
@@ -348,10 +348,10 @@ class CRM_Core_Permission {
                       'administer CiviCRM'                => ts( 'administer CiviCRM' ),
                       'access uploaded files'             => ts( 'access uploaded files' ),
                       'profile listings and forms'        => ts( 'profile listings and forms' ),
-                      'access profile listings'           => ts( 'access profile listings' ),
-                      'access profile create'             => ts( 'access profile create' ),
-                      'access profile edit'               => ts( 'access profile edit' ),
-                      'access profile view'               => ts( 'access profile view' ),
+                      'profile listings'                  => ts( 'profile listings' ),
+                      'profile create'                    => ts( 'profile create' ),
+                      'profile edit'                      => ts( 'profile edit' ),
+                      'profile view'                      => ts( 'profile view' ),
                       'access all custom data'            => ts( 'access all custom data' ),
                       'view all activities'               => ts( 'view all activities' ),
                       'delete activities'                 => ts( 'delete activities' ),
