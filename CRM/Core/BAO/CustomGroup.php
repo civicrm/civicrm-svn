@@ -1733,7 +1733,7 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
                                                   $gID,
                                                   'table_name' );
         
-        $query = "SELECT count(id) FROM {$tableName} WHERE id IS NOT NULL";
+        $query = "SELECT count(id) FROM {$tableName} WHERE id IS NOT NULL LIMIT 1";
         $value = CRM_Core_DAO::singleValueQuery( $query ); 
 
         if ( empty($value) ) {

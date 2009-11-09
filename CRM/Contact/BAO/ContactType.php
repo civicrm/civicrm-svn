@@ -520,6 +520,7 @@ WHERE name = %1";
     /**
      * Function to check whether allow to change any contact's subtype
      * on the basis of custom data and relationship of specific subtype
+     * currently used in contact/edit form amd in import validation
      *
      * @param  int     $contactId    contact id.
      * @param  string  $subType      subtype.  
@@ -592,7 +593,8 @@ WHERE name = %1";
 SELECT count(cr.id) FROM civicrm_relationship cr 
 INNER JOIN civicrm_relationship_type crt ON 
 ( cr.relationship_type_id = crt.id {$subTypeClause} ) 
-WHERE ( cr.contact_id_a = {$contactId} OR cr.contact_id_b = {$contactId} )";
+WHERE ( cr.contact_id_a = {$contactId} OR cr.contact_id_b = {$contactId} ) 
+LIMIT 1";
         
         $relationshipCount = CRM_Core_DAO::singleValueQuery( $relationshipQuery ); 
         
