@@ -394,7 +394,8 @@ function _civicrm_member_roles_sync($ext_uid = NULL)
 SELECT    status_id, email, cm.contact_id
 FROM      civicrm_membership cm
 LEFT JOIN civicrm_email ce ON cm.contact_id = ce.contact_id 
-WHERE     contact_type = 'Individual'  
+LEFT JOIN civicrm_contact cc ON cm.contact_id = cc.id  
+WHERE     cc.contact_type = 'Individual'  
 AND       ce.is_primary = 1
 AND       membership_type_id = %1
 ";

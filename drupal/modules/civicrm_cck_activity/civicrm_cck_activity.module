@@ -37,7 +37,7 @@ function civicrm_cck_activity_civicrm_postProcess( $formName, &$form )
             $date           = $formValues['activity_date_time'];
             
             // Presener ID
-            $presenterId_civi = $formValues['source_contact_id'];
+            $presenterId_civi = $formValues['source_contact_qid'];
             
             //get drupal user id 
             require_once 'api/v2/UFGroup.php';
