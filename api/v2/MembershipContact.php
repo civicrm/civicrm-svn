@@ -124,7 +124,7 @@ function civicrm_membership_contact_create(&$params)
 function civicrm_membership_contact_get(&$params)
 {
     _civicrm_initialize();
-    
+
     $activeOnly = false;
     if ( is_array($params) ) {
         $contactID = CRM_Utils_Array::value('contact_id', $params);
@@ -134,7 +134,7 @@ function civicrm_membership_contact_get(&$params)
         } else {
             $activeOnly = false;
         }
-    } elseif( is_integer($params) ) {
+    } elseif( CRM_Utils_Rule::integer($params) ) {
         $contactID = $params;
     } else {
         return civicrm_create_error( 'Paramers can be only of type array or integer' );

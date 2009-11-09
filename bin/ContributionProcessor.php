@@ -94,6 +94,8 @@ class CiviContributeProcessor {
                                      'currency'            => 'currency',
                                      'item-name'           => 'note',
                                      'timestamp'           => 'receive_date',
+                                     'latest-charge-fee'   => 'fee_amount',
+                                     'net-amount'          => 'net_amount',
                                      ),
               );
 
@@ -165,6 +167,11 @@ class CiviContributeProcessor {
 
                 // only process completed payments
                 if ( strtolower( $trxnDetails['paymentstatus'] ) != 'completed' ) {
+                    continue;
+                }
+
+                // only process receipts, not payments
+                if ( strtolower( $trxnDetails['transactiontype'] ) == 'sendmoney' ) {
                     continue;
                 }
 
