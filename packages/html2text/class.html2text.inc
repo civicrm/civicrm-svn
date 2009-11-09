@@ -184,7 +184,7 @@ class html2text
         '/&(bull|#149|#8226);/i',                // Bullet
         '/&(pound|#163);/i',                     // Pound sign
         '/&(euro|#8364);/i',                     // Euro sign
-        '/&[^&;]+;/i',                           // Unknown/unhandled entities
+//      '/&[^&;]+;/i',                           // Unknown/unhandled entities [commented-out for CiviCRM¿s CRM-5321]
         '/[ ]{2,}/'                              // Runs of spaces, post-handling
     );
 
@@ -236,7 +236,7 @@ class html2text
         '*',
         '£',
         'EUR',                                  // Euro sign. € ?
-        '',                                     // Unknown/unhandled entities
+//      '',                                     // Unknown/unhandled entities [commented-out for CiviCRM¿s CRM-5321]
         ' '                                     // Runs of spaces, post-handling
     );
 
@@ -444,7 +444,8 @@ class html2text
         	$text = wordwrap($text, $this->width);
         }
 
-        $this->text = $text;
+        // added html_entity_decode() call for CiviCRM¿s CRM-5321
+        $this->text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
 
         $this->_converted = true;
     }
