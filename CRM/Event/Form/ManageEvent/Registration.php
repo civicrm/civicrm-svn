@@ -113,12 +113,12 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         
         if ( CRM_Utils_Array::value( 'registration_start_date' , $defaults ) ) {
             list( $defaults['registration_start_date'], 
-                  $defaults['registration_start_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['registration_start_date'] );    
+                  $defaults['registration_start_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['registration_start_date'], 'activityDateTime' );    
         }
         
         if ( CRM_Utils_Array::value( 'registration_end_date' , $defaults ) ) {                                                                                          
             list( $defaults['registration_end_date'], 
-                  $defaults['registration_end_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['registration_end_date'] );
+                  $defaults['registration_end_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['registration_end_date'], 'activityDateTime' );
         }                                                                                            
         return $defaults;
     }   
@@ -195,8 +195,8 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         $this->add('text','registration_link_text',ts('Registration Link Text'));
 
         if (!$this->_isTemplate) {
-            $this->addDateTime( 'registration_start_date', ts('Registration Start Date') );
-            $this->addDateTime( 'registration_end_date', ts('Registration End Date') );
+            $this->addDateTime( 'registration_start_date', ts('Registration Start Date'), false, array( 'formatType' => 'activityDateTime' ) );
+            $this->addDateTime( 'registration_end_date', ts('Registration End Date'), false, array( 'formatType' => 'activityDateTime' ) );
         }
      
         $this->addElement('checkbox',

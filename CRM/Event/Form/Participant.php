@@ -457,7 +457,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         
         list( $defaults[$this->_participantId]['register_date'], 
               $defaults[$this->_participantId]['register_date_time'] ) = CRM_Utils_Date::setDateDefaults( 
-                                                                         CRM_Utils_Array::value( 'register_date' , $defaults[$this->_participantId] ) );
+                                                                         CRM_Utils_Array::value( 'register_date', $defaults[$this->_participantId] ), 'activityDateTime' );
         
 		//assign event and role id, this is needed for Custom data building
 		if ( isset( $_POST['role_id'] ) ) {

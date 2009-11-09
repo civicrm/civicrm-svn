@@ -63,7 +63,7 @@ class CRM_Case_Form_Activity_ChangeCaseType
         $defaults['is_reset_timeline'] = 1;
         
         $defaults['reset_date_time'] = array( );
-        list( $defaults['reset_date_time'], $defaults['reset_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( );
+        list( $defaults['reset_date_time'], $defaults['reset_date_time_time'] ) = CRM_Utils_Date::setDateDefaults( null, 'activityDateTime' );
         $caseType  = CRM_Case_PseudoConstant::caseTypeName( $form->_caseId );
         $defaults['case_type_id'] = $caseType['id'];
 

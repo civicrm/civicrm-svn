@@ -1243,11 +1243,16 @@ SELECT $select
                         }
                     } else if ( $field['data_type'] == 'Date' ) {
                         require_once 'CRM/Utils/Date.php';
-                        if( is_numeric( $value ) ){
-                            $value = CRM_Utils_Date::unformat( $value , null );
-                        } else {
-                            $value = CRM_Utils_Date::unformat( $value , $separator = '-' );
-                        }
+                        if ( !empty( $value ) ) {
+                            $time = null;
+                            if ( CRM_Utils_Array::value( 'time_format', $field ) ) {  
+                                $time = CRM_Utils_Request::retrieve( $fieldName . '_time', 'String', $form );       
+                            }
+                            list($value, $time) = CRM_Utils_Date::setDateDefaults( $value. ' ' . $time );
+                            if ( CRM_Utils_Array::value( 'time_format', $field ) ) {
+                                $customValue[$fieldName . '_time'] = $time;
+                            }
+                        } 
                         $valid = true; 
                     }
                     if ( $valid ) {
