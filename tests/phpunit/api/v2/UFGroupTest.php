@@ -156,6 +156,40 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
         $this->assertEquals($result['is_error'], 1);
     }
 
+
+
+    public function testUFJoinEditWrongParamsType()
+    {
+        $params = 'a string';
+        $result = civicrm_uf_join_edit($params);
+
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'params is not an array' );
+    }
+    
+    public function testUFJoinEditEmptyParams()
+    {
+        $params = array();
+        $result = civicrm_uf_join_edit($params);
+
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'params is an empty array' );
+    }
+
+    public function testUFJoinEditWithoutUFGroupId()
+    {
+        $params = array(
+            'module'       => 'CiviContribute',
+            'entity_table' => 'civicrm_contribution_page',
+            'entity_id'    => 1,
+            'weight'       => 1,
+            'is_active'    => 1 );
+        $result = civicrm_uf_join_edit($params);
+
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'uf_group_id is required field' );
+    }
+
     /**
      * fetch profile HTML with group id
      */
@@ -398,6 +432,39 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
     }
 
 
+    public function testFindUFJoinWrongParamsType()
+    {
+        $params = 'a string';
+        $result = civicrm_uf_join_add($params);
+
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'params is not an array' );
+    }
+    
+    public function testFindUFJoinEmptyParams()
+    {
+        $params = array();
+        $result = civicrm_uf_join_add($params);
+
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'params is an empty array' );
+    }
+
+    public function testFindUFJoinWithoutUFGroupId()
+    {
+        $params = array(
+            'module'       => 'CiviContribute',
+            'entity_table' => 'civicrm_contribution_page',
+            'entity_id'    => 1,
+            'weight'       => 1,
+            'is_active'    => 1
+        );
+        $result = civicrm_uf_join_add($params);
+
+        $this->assertEquals( $result['is_error'], 1 );
+        $this->assertEquals( $result['error_message'], 'uf_group_id is required field' );
+    }
+    
     /**
      * find uf join id
      */
