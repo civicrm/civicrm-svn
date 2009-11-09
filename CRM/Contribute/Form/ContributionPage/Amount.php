@@ -173,10 +173,12 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
             $defaults['pay_later_text'] = ts( 'I will send payment by check' );
         }
         
-        $this->assign( 'priceSetID', $this->_priceSetID );
-        if ( $this->_priceSetID ) return $defaults;
-        
         if ( CRM_Utils_Array::value( 'amount_block_is_active', $defaults ) ) {
+            
+            // don't allow other amount option when price set present.
+            $this->assign( 'priceSetID', $this->_priceSetID );
+            if ( $this->_priceSetID ) return $defaults;
+            
             require_once 'CRM/Core/OptionGroup.php'; 
             CRM_Core_OptionGroup::getAssoc( "civicrm_contribution_page.amount.{$this->_id}", $this->_amountBlock );
             $hasAmountBlock = false;
@@ -184,8 +186,7 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
                 $hasAmountBlock = true;
                 $defaults = array_merge( $defaults, $this->_amountBlock );
             }
-            $this->assign( 'hasAmountBlock', $hasAmountBlock );
-            
+                        
             if ( CRM_Utils_Array::value( 'value', $defaults ) && is_array( $defaults['value'] ) ) { 
                 if ( CRM_Utils_Array::value( 'default_amount_id', $defaults ) && 
                      CRM_Utils_Array::value( 'amount_id', $defaults ) && 
@@ -276,17 +277,14 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
             if ( $hasMembershipBlk ) {
                 $errors['price_set_id'] = ts( 'You cannot enable both Price Set and Membership Signup on the same online contribution page.' );  
             }
-            if ( CRM_Utils_Array::value( 'amount_block_is_active', $fields ) ) {
-                $errors['amount_block_is_active'] = ts( 'You cannot enable both Price Set and Contribution Amounts section on the same online contribution page.' );
-            }
         } else {
             if ( isset( $fields['is_recur'] ) ) {
                 if ( empty( $fields['recur_frequency_unit'] ) ) {
                     $errors['recur_frequency_unit'] = ts( 'At least one recurring frequency option needs to be checked.' );
                 }
-            }        
+            }     
             
-            //validation for pledge fields.
+            // validation for pledge fields.
             if ( CRM_Utils_array::value( 'is_pledge_active', $fields ) ) {
                 if ( empty( $fields['pledge_frequency_unit'] ) ) {
                     $errors['pledge_frequency_unit'] = ts( 'At least one pledge frequency option needs to be checked.' );
@@ -300,7 +298,8 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
             // Allow other amounts must be enabeld OR the Fixed Contribution
             // Contribution options must contain at least one set of values.
             if ( CRM_Utils_Array::value( 'amount_block_is_active', $fields ) ) {
-                if ( !CRM_Utils_Array::value( 'is_allow_other_amount', $fields ) ) {
+                if ( !CRM_Utils_Array::value( 'is_allow_other_amount', $fields ) &&
+                     !$priceSetId ) {
                     //get the values and labels of amount block
                     $labels  = CRM_Utils_Array::value( 'label'  , $fields );
                     $values  = CRM_Utils_Array::value( 'value'  , $fields );
@@ -351,8 +350,7 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
                          );
         $resetFields = array( );
         if ( $priceSetID ) {
-            $resetFields = array( 'min_amount', 'max_amount', 
-                                  'is_allow_other_amount', 'amount_block_is_active' );
+            $resetFields = array( 'min_amount', 'max_amount', 'is_allow_other_amount' );
         }
         foreach ( $fields as $field => $defaultVal ) {
             $val = CRM_Utils_Array::value( $field, $params, $defaultVal );
@@ -383,56 +381,59 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
             require_once 'CRM/Core/OptionGroup.php';
             require_once 'CRM/Pledge/BAO/PledgeBlock.php';
             
-            // handle price set.
-            if ( $priceSetID ) {
-                // add/update price set.
-                $deletePriceSet = false;
-                CRM_Price_BAO_Set::addTo( 'civicrm_contribution_page', $contributionPageID, $priceSetID );
-            } else if ( CRM_Utils_Array::value('amount_block_is_active', $params ) ) {
-                // process contribution amount block
-                $deleteAmountBlk = false; 
-                
-                $labels  = CRM_Utils_Array::value( 'label', $params );
-                $values  = CRM_Utils_Array::value( 'value', $params );
-                $default = CRM_Utils_Array::value( 'default', $params ); 
-                
-                $options = array( );
-                for ( $i = 1; $i < self::NUM_OPTION; $i++ ) {
-                    if ( isset( $values[$i] ) &&
-                         ( strlen( trim( $values[$i] ) ) > 0 ) ) {
-                        $options[] = array( 'label'      => trim( $labels[$i] ),
-                                            'value'      => CRM_Utils_Rule::cleanMoney( trim( $values[$i] ) ),
-                                            'weight'     => $i,
-                                            'is_active'  => 1,
-                                            'is_default' => $default == $i );
+            if ( CRM_Utils_Array::value('amount_block_is_active', $params ) ) {
+                // handle price set.
+                if ( $priceSetID ) {
+                    // add/update price set.
+                    $deletePriceSet = false;
+                    CRM_Price_BAO_Set::addTo( 'civicrm_contribution_page', $contributionPageID, $priceSetID );
+                } else {
+                    
+                    // process contribution amount block
+                    $deleteAmountBlk = false; 
+                    
+                    $labels  = CRM_Utils_Array::value( 'label', $params );
+                    $values  = CRM_Utils_Array::value( 'value', $params );
+                    $default = CRM_Utils_Array::value( 'default', $params ); 
+                    
+                    $options = array( );
+                    for ( $i = 1; $i < self::NUM_OPTION; $i++ ) {
+                        if ( isset( $values[$i] ) &&
+                             ( strlen( trim( $values[$i] ) ) > 0 ) ) {
+                            $options[] = array( 'label'      => trim( $labels[$i] ),
+                                                'value'      => CRM_Utils_Rule::cleanMoney( trim( $values[$i] ) ),
+                                                'weight'     => $i,
+                                                'is_active'  => 1,
+                                                'is_default' => $default == $i );
+                        }
                     }
-                }
-                CRM_Core_OptionGroup::createAssoc( "civicrm_contribution_page.amount.{$contributionPageID}",
-                                                   $options,
-                                                   $params['default_amount_id'] );
-                if ( $params['default_amount_id'] ) {
-                    CRM_Core_DAO::setFieldValue( 'CRM_Contribute_DAO_ContributionPage', 
-                                                 $contributionPageID, 'default_amount_id', 
-                                                 $params['default_amount_id'] );
-                }
-                
-                if ( CRM_Utils_Array::value('is_pledge_active', $params ) ) {
-                    $deletePledgeBlk = false; 
-                    $pledgeBlockParams = array( 'entity_id'    => $contributionPageID,
-                                                'entity_table' => ts( 'civicrm_contribution_page' ) );
-                    if ( $this->_pledgeBlockID ) {
-                        $pledgeBlockParams['id'] = $this->_pledgeBlockID;
+                    CRM_Core_OptionGroup::createAssoc( "civicrm_contribution_page.amount.{$contributionPageID}",
+                                                       $options,
+                                                       $params['default_amount_id'] );
+                    if ( $params['default_amount_id'] ) {
+                        CRM_Core_DAO::setFieldValue( 'CRM_Contribute_DAO_ContributionPage', 
+                                                     $contributionPageID, 'default_amount_id', 
+                                                     $params['default_amount_id'] );
                     }
-                    $pledgeBlock = array( 'pledge_frequency_unit', 'max_reminders', 
-                                          'initial_reminder_day', 'additional_reminder_day' );
-                    foreach ( $pledgeBlock  as $key ) {
-                        $pledgeBlockParams[$key] = CRM_Utils_Array::value( $key, $params );    
+                    
+                    if ( CRM_Utils_Array::value('is_pledge_active', $params ) ) {
+                        $deletePledgeBlk = false; 
+                        $pledgeBlockParams = array( 'entity_id'    => $contributionPageID,
+                                                    'entity_table' => ts( 'civicrm_contribution_page' ) );
+                        if ( $this->_pledgeBlockID ) {
+                            $pledgeBlockParams['id'] = $this->_pledgeBlockID;
+                        }
+                        $pledgeBlock = array( 'pledge_frequency_unit', 'max_reminders', 
+                                              'initial_reminder_day', 'additional_reminder_day' );
+                        foreach ( $pledgeBlock  as $key ) {
+                            $pledgeBlockParams[$key] = CRM_Utils_Array::value( $key, $params );    
+                        }
+                        $pledgeBlockParams['is_pledge_interval'] = CRM_Utils_Array::value( 'is_pledge_interval', 
+                                                                                           $params, false );
+                        // create pledge block.
+                        require_once 'CRM/Pledge/BAO/PledgeBlock.php';
+                        CRM_Pledge_BAO_PledgeBlock::create( $pledgeBlockParams );
                     }
-                    $pledgeBlockParams['is_pledge_interval'] = CRM_Utils_Array::value( 'is_pledge_interval', 
-                                                                                       $params, false );
-                    // create pledge block.
-                    require_once 'CRM/Pledge/BAO/PledgeBlock.php';
-                    CRM_Pledge_BAO_PledgeBlock::create( $pledgeBlockParams );
                 }
             }
             
