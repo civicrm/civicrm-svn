@@ -515,8 +515,11 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         
         $locationTypes = array (' ' => ts('Primary')) + $locationTypes;
         
-        $sel1 = array('' => ts('- select record type -')) + 
-            CRM_Core_SelectValues::contactType() + $compArray + $contactSubTypes;
+        // since we need a hierarchical list to display contact types & subtypes, 
+        // this is what we going to display in first selector
+        $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements( false, false );
+
+        $sel1 = array('' => ts('- select record type -')) + $contactTypes + $compArray;
         
         foreach ( $sel1 as $key => $sel ) {
             if ( $key ) {

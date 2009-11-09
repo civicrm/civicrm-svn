@@ -163,7 +163,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         $this->addGroup($contactOptions, 'contactType', 
                         ts('Contact Type'));
         
-        $this->addElement('select','subType', ts('Contact SubType'));
+        $this->addElement('select','subType', ts('Subtype'));
 
         $this->setDefaults(array('contactType' =>
                                  CRM_Import_Parser::CONTACT_INDIVIDUAL));
