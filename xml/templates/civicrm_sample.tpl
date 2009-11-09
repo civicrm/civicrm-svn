@@ -78,10 +78,10 @@ VALUES
 
 
 INSERT INTO `civicrm_contact_type`
-  (`id`, `name`, `label`,`image_URL`, `parent_id`, `is_active`,`is_reserved`)
+  ( `name`, `label`,`image_URL`, `parent_id`, `is_active`,`is_reserved`)
  VALUES
-  ( 4, 'Student'     , '{ts escape="sql"}Student{/ts}'     , NULL, 1, 1, 0),
-  ( 5, 'Parent'      , '{ts escape="sql"}Parent{/ts}'      , NULL, 1, 1, 0),
-  ( 6, 'Staff'       , '{ts escape="sql"}Staff{/ts}'       , NULL, 1, 1, 0),
-  ( 7, 'Team'        , '{ts escape="sql"}Team{/ts}'        , NULL, 3, 1, 0),
-  ( 8, 'Sponsor'     , '{ts escape="sql"}Sponsor{/ts}'     , NULL, 3, 1, 0);
+  ( 'Student'     , '{ts escape="sql"}Student{/ts}'     , NULL, 1, 1, 0),
+  ( 'Parent'      , '{ts escape="sql"}Parent{/ts}'      , NULL, 1, 1, 0),
+  ( 'Staff'       , '{ts escape="sql"}Staff{/ts}'       , NULL, 1, 1, 0),
+  ( 'Team'        , '{ts escape="sql"}Team{/ts}'        , NULL, 3, 1, 0),
+  ( 'Sponsor'     , '{ts escape="sql"}Sponsor{/ts}'     , NULL, 3, 1, 0);
