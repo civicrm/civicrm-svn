@@ -112,15 +112,17 @@ WHERE  ( contact_id_a = %1 AND contact_id_b = %2 AND is_permission_a_b = 1 ) OR
             $config =& CRM_Core_Config::singleton( );
             CRM_Core_Error::statusBounce( ts( 'You do not have permission to edit this contact record. Contact the site administrator if you need assistance.' ),
                                           $config->userFrameworkBaseURL );
+            // does not come here, we redirect in the above statement
         }
+        return true;
     }
 
     static function validateChecksumContact( $contactID, &$form ) {
         if ( ! self::allow( $contactID, CRM_Core_Permission::EDIT ) ) {
             // check if this is of the format cs=XXX
-            self::validateOnlyChecksum( $contactID, $form );
+            return self::validateOnlyChecksum( $contactID, $form );
         }
-        return;
+        return true;
     }
 
 }
