@@ -60,32 +60,11 @@ SET @contactlastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES        
-    ( @domainID, 'civicrm/contact/add&reset=1&ct=Individual',               '{ts escape="sql"}New Individual{/ts}',         'New Individual',       'add contacts',     '',             @contactlastID, '1', NULL,  1 );
+    ( @domainID, 'civicrm/contact/add&reset=1&ct=Individual',       '{ts escape="sql"}New Individual{/ts}',         'New Individual',       'add contacts',     '',             @contactlastID, '1', NULL,  1 ),
+    ( @domainID, 'civicrm/contact/add&reset=1&ct=Household',        '{ts escape="sql"}New Household{/ts}',          'New Household',        'add contacts',     '',             @contactlastID, '1', NULL,  2 ),
+       ( @domainID, 'civicrm/contact/add&reset=1&ct=Organization',  '{ts escape="sql"}New Organization{/ts}',       'New Organization',     'add contacts',     '',             @contactlastID, '1', 1,     3 );
 
-SET @IndividualID:= LAST_INSERT_ID();
 
-INSERT INTO civicrm_navigation
-    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES        
-    ( @domainID, 'civicrm/contact/add&ct=Individual&cst=Student&reset=1',    '{ts escape="sql"}New Student{/ts}',         'New Student',       'add contacts',     '',             @IndividualID, '1', NULL,  1 ),
-    ( @domainID, 'civicrm/contact/add&ct=Individual&cst=Parent&reset=1',    '{ts escape="sql"}New Parent{/ts}',         'New Parent',       'add contacts',     '',             @IndividualID, '1', NULL,  2 ),
-    ( @domainID, 'civicrm/contact/add&ct=Individual&cst=Staff&reset=1',    '{ts escape="sql"}New Staff{/ts}',         'New Staff',       'add contacts',     '',             @IndividualID, '1', NULL,  3 );
-
- INSERT INTO civicrm_navigation
-    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES          
-    ( @domainID, 'civicrm/contact/add&reset=1&ct=Household',        '{ts escape="sql"}New Household{/ts}',          'New Household',        'add contacts',     '',             @contactlastID, '1', NULL,  2 );
- INSERT INTO civicrm_navigation
-    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES      
-    ( @domainID, 'civicrm/contact/add&reset=1&ct=Organization',             '{ts escape="sql"}New Organization{/ts}',       'New Organization',     'add contacts',     '',             @contactlastID, '1', 1,     3 );
-
-SET @OrganizationID:= LAST_INSERT_ID();
-INSERT INTO civicrm_navigation
-    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
-VALUES   
-    ( @domainID, 'civicrm/contact/add&ct=Organization&cst=Team&reset=1',    '{ts escape="sql"}New Team{/ts}',         'New Team',       'add contacts',     '',             @OrganizationID, '1', NULL,  1 ),
-    ( @domainID, 'civicrm/contact/add&ct=Organization&cst=Sponsor&reset=1',    '{ts escape="sql"}New Sponsor{/ts}',         'New Sponsor',       'add contacts',     '',             @OrganizationID, '1', NULL,  2 );
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
