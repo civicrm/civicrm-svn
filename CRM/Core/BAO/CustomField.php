@@ -1333,9 +1333,18 @@ SELECT id
             if ( ! CRM_Utils_System::isNull( $value ) ) {
                 $format = $customFields[$customFieldId]['date_format'];
                 if ( in_array( $format, array('dd/mm', 'mm/dd' ) ) ) {
-                    $value = "{$value}/1902";
+                    $dateTimeArray = explode(' ', $value);
+                    
+                    $formatExplode = explode('/', $format);
+                    $dateExplode   = explode('/', $dateTimeArray[0]);
+                    $finalDate     = array_combine($formatExplode, $dateExplode );
+                    $value         = "{$finalDate['mm']}/{$finalDate['dd']}/1902";
+                    
+                    if ( array_key_exists( 1, $dateTimeArray) ) {
+                        $value .= ' ' . $dateTimeArray[1];
+                    }
                 }
-                $date = CRM_Utils_Date::processDate( $value );   
+                $date = CRM_Utils_Date::processDate( $value );
             }
             $value = $date;
         }

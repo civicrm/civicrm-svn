@@ -1482,7 +1482,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
     static function formatCustomValues( &$values, &$field )
     {
         $value = $values['data'];
-        
+
         //changed isset CRM-4601
         if ( CRM_Utils_System::isNull( $value ) ) {
             return; 
@@ -1500,21 +1500,24 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
         switch ( $dataType ) {
 
         case 'Date':
-            // remove time element display if time is not set
-            if ( !$timeFormat ) {
-                $customFormat = null;
-                $value = substr( $value, 0, 10 );
-                $supportableFormats = array(
-                                            'mm/dd'   => '%B %E%f',
-                                            'dd/mm'   => '%E%f %B'
-                                            );
-                if ( $format = CRM_Utils_Array::value( 'date_format', $field ) ) {
-                    if ( array_key_exists( $format, $supportableFormats ) ) {
-                        $customFormat = $supportableFormats["$format"];
-                    }
+            $customTimeFormat = '';
+            $customFormat     = null;
+            if ( $timeFormat == 1) {
+                $customTimeFormat = '%l:%M %P';
+            } else if ( $timeFormat == 2 ) {
+                $customTimeFormat = '%H:%M';
+            }
+
+            $supportableFormats = array(
+                                        'mm/dd'   => "%B %E%f $customTimeFormat",
+                                        'dd/mm'   => "%E%f %B $customTimeFormat"
+                                        );
+            if ( $format = CRM_Utils_Array::value( 'date_format', $field ) ) {
+                if ( array_key_exists( $format, $supportableFormats ) ) {
+                    $customFormat = $supportableFormats["$format"];
                 }
             }
-            
+
             $retValue = CRM_Utils_Date::customFormat( $value, $customFormat );
             break;	
 

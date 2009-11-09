@@ -208,7 +208,10 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         if ( $date = CRM_Utils_Array::value('birth_date', $params) ) {
            
             if ( in_array( $format, array('dd/mm', 'mm/dd' ) ) ) {
-                $date = "{$date}/1902";
+                $formatExplode = explode('/', $format);
+                $dateExplode   = explode('/', $date);
+                $finalDate     = array_combine($formatExplode, $dateExplode );
+                $date = "{$finalDate['mm']}/{$finalDate['dd']}/1902";
             }
             
             $contact->birth_date = CRM_Utils_Date::processDate($date) ;
@@ -220,7 +223,10 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         if ( $date = CRM_Utils_Array::value('deceased_date', $params) ) {
 
             if ( in_array( $format, array('dd/mm', 'mm/dd' ) ) ) {
-                $date = "{$date}/1902";
+                $formatExplode = explode('/', $format);
+                $dateExplode   = explode('/', $date);
+                $finalDate     = array_combine($formatExplode, $dateExplode );
+                $date = "{$finalDate['mm']}/{$finalDate['dd']}/1902";
             }
             
             $contact->deceased_date = CRM_Utils_Date::processDate($date) ;
