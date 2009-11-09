@@ -178,6 +178,14 @@
         ( @domain_id, 'civicrm/admin/price&reset=1&action=add', '{ts escape="sql"}New Price Set{/ts}',     'New Price Set',     'access CiviContribute,administer CiviCRM', 'AND',  @nav_contrbutionID_admin, '1', NULL, @nav_contribution_wt_admin+1 ),
         ( @domain_id, 'civicrm/admin/price&reset=1',            '{ts escape="sql"}Manage Price Sets{/ts}', 'Manage Price Sets', 'access CiviContribute,administer CiviCRM', 'AND',  @nav_contrbutionID_admin, '1', NULL, @nav_contribution_wt_admin+2 );   
     
+    
+    SELECT @nav_customize_admin    := id FROM civicrm_navigation WHERE name = 'Customize';
+    SELECT @nav_customize_wt_admin := max(weight) from civicrm_navigation WHERE parent_id = @nav_customize_admin;
+    INSERT INTO civicrm_navigation
+        ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+    VALUES        
+        ( @domain_id, 'civicrm/admin/price&reset=1', '{ts escape="sql"}Price Sets{/ts}', 'Price Sets', 'administer CiviCRM', '',  @nav_customize_admin, '1', NULL, @nav_customize_wt_admin+1 );
+    
     UPDATE civicrm_navigation
         SET url = 'civicrm/admin/price&reset=1'
         WHERE civicrm_navigation.url = 'civicrm/event/price&reset=1';

@@ -215,7 +215,8 @@ VALUES
     ( @domainID, 'civicrm/admin/custom/group&reset=1',      '{ts escape="sql"}Custom Data{/ts}',     'Custom Data',     'administer CiviCRM', '', @CustomizelastID, '1', NULL, 1 ), 
     ( @domainID, 'civicrm/admin/uf/group&reset=1',          '{ts escape="sql"}CiviCRM Profile{/ts}', 'CiviCRM Profile', 'administer CiviCRM', '', @CustomizelastID, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/admin/menu&reset=1',              '{ts escape="sql"}Navigation Menu{/ts}', 'Navigation Menu', 'administer CiviCRM', '', @CustomizelastID, '1', NULL, 3 ), 
-    ( @domainID, 'civicrm/admin/options/custom_search&reset=1&group=custom_search', '{ts escape="sql"}Manage Custom Searches{/ts}', 'Manage Custom Searches', 'administer CiviCRM', '', @CustomizelastID, '1', NULL, 4 );
+    ( @domainID, 'civicrm/admin/options/custom_search&reset=1&group=custom_search', '{ts escape="sql"}Manage Custom Searches{/ts}', 'Manage Custom Searches', 'administer CiviCRM', '', @CustomizelastID, '1', NULL, 4 ),
+    ( @domainID, 'civicrm/admin/price&reset=1',             '{ts escape="sql"}Price Sets{/ts}',      'Price Sets',      'administer CiviCRM', '', @CustomizelastID, '1', NULL, 5 );
     
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
