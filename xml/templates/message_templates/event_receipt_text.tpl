@@ -112,7 +112,7 @@ registration process.{/ts}
 {/foreach}
 {/if}
 {if $amount && !$lineItem}
-{foreach from=$amount item=amount key=level}{$amount.amount|crmMoney} {$amount.label}
+{foreach from=$amount item=amnt key=level}{$amnt.amount|crmMoney} {$amnt.label}
 {/foreach}
 {/if}
 {if $isPrimary }

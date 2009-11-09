@@ -203,10 +203,10 @@ registration process.{/ts}</p>
       {/if}
 
       {if $amount && !$lineItem}
-       {foreach from=$amount item=amount key=level}
+       {foreach from=$amount item=amnt key=level}
         <tr>
          <td colspan="2" {$valueStyle}>
-          {$amount.amount|crmMoney} {$amount.label}
+          {$amnt.amount|crmMoney} {$amnt.label}
          </td>
         </tr>
        {/foreach}
