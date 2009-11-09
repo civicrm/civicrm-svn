@@ -51,7 +51,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
                          'contact_type'      => 'Organization',
                          'contact_sub_type'  => 'Sponsor'
                          );
-        $this->organization_spansor = Contact::create( $params );
+        $this->organization_sponsor = Contact::create( $params );
         
         $this->household = Contact::createHousehold( );
 
@@ -266,7 +266,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $params = array( 'relationship_type_id' => $relType->id.'_a_b',
                          'contact_check'        => array( $this->indivi_student => 1 )
                          );
-        $ids = array('contact' => $this->organization_spansor );
+        $ids = array('contact' => $this->organization_sponsor );
         list( $valid, $invalid, $duplicate, $saved, $relationshipIds)  
             = CRM_Contact_BAO_Relationship::create( $params, $ids );
        
@@ -288,7 +288,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
                                  );
         $relType = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
         $params = array( 'relationship_type_id' => $relType->id.'_a_b',
-                         'contact_check'        => array( $this->organization_spansor => 1 )
+                         'contact_check'        => array( $this->organization_sponsor => 1 )
                          );
         $ids = array('contact' => $this->indivi_student );
         list( $valid, $invalid, $duplicate, $saved, $relationshipIds)  
@@ -311,7 +311,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
                                  );
         $relType = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
         $params = array( 'relationship_type_id' => $relType->id.'_a_b',
-                         'contact_check'        => array( $this->organization_spansor => 1 )
+                         'contact_check'        => array( $this->organization_sponsor => 1 )
                          );
         $ids = array('contact' => $this->household );
 
