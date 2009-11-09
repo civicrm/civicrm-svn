@@ -86,11 +86,9 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form
         if( $this->_action & CRM_Core_Action::DELETE ) { 
             $isDelete = CRM_Contact_BAO_ContactType::del( $this->_id );
             if ( $isDelete ) {
-                CRM_Core_Session::setStatus( ts('Selected Contact Type has been deleted.') );
+                CRM_Core_Session::setStatus( ts('Selected contact type has been deleted.') );
             } else {
-                CRM_Core_Session::setStatus( ts('Selected Contact Type can not be  deleted.')
-                                             .'<br/>'. ts('If you want to delete Contact  Type
-                                            ,first delete all custom data related to Type. '));
+                CRM_Core_Session::setStatus( ts( 'Selected contact type can not be deleted. Make sure contact type doesn\'t have any associated custom data or group.' ) );
             }
             return;
         }
