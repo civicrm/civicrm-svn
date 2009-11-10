@@ -1378,10 +1378,14 @@ AND    civicrm_contact.id = %1";
                     $data['addressee_id'] = $value;  
                 } else if ($customFieldId = CRM_Core_BAO_CustomField::getKeyID($key)) {
                     // for autocomplete transfer hidden value instead of label
-                    if ( isset ( $params[$key. '_id'] ) ) {
+                    if ( $params[$key] && isset ( $params[$key. '_id'] ) ) {
                         $value = $params[$key. '_id'];
                     }
-                    
+
+                    // we need to append time with date 
+                    if ( $params[$key] && isset ( $params[$key. '_time'] ) ) {
+                        $value .= ' ' . $params[$key. '_time'];
+                    }
 
                     $type = CRM_Utils_Array::value('contact_sub_type', $data) ? $data['contact_sub_type'] : $data['contact_type'];
                     
