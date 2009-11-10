@@ -593,8 +593,8 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
             require_once 'CRM/Core/BAO/MessageTemplates.php';
             list ($mailSend, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
                 array(
-                    'groupName' => 'msg_tpl_workflow_contribution',
-                    'valueName' => 'contribution_offline_receipt',
+                    'groupName' => 'msg_tpl_workflow_membership',
+                    'valueName' => 'membership_offline_receipt',
                     'contactId' => $this->_contactID,
                     'from'      => $receiptFrom,
                     'toName'    => $this->_contributorDisplayName,

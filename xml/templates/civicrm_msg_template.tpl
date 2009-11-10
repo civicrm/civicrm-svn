@@ -5,6 +5,7 @@
     'contribution' => ts('Message Template Workflow for Contributions',  array('escape' => 'sql')),
     'event'        => ts('Message Template Workflow for Events',         array('escape' => 'sql')),
     'friend'       => ts('Message Template Workflow for Tell-a-Friend',  array('escape' => 'sql')),
+    'membership'   => ts('Message Template Workflow for Memberships',    array('escape' => 'sql')),
     'meta'         => ts('Message Template Workflow for Meta Templates', array('escape' => 'sql')),
     'pledge'       => ts('Message Template Workflow for Pledges',        array('escape' => 'sql')),
     'uf'           => ts('Message Template Workflow for Profiles',       array('escape' => 'sql')),
@@ -16,7 +17,6 @@
     'contribution' => array(
       'contribution_additional_info'  => ts('Contributions - Receipt (off-line)',                             array('escape' => 'sql')),
       'contribution_dupalert'         => ts('Contributions - Duplicate Organization Alert',                   array('escape' => 'sql')),
-      'contribution_offline_receipt'  => ts('Memberships - Signup and Renewal Receipts (off-line)',           array('escape' => 'sql')),
       'contribution_receipt'          => ts('Contributions and Memberships - Receipt (on-line)',              array('escape' => 'sql')),
       'contribution_recurring_notify' => ts('Contributions - Recurring Start and End Notification',           array('escape' => 'sql')),
       'pcp_notify'                    => ts('Personal Campaign Pages - Admin Notification',                   array('escape' => 'sql')),
@@ -32,6 +32,9 @@
     ),
     'friend' => array(
       'friend' => ts('Tell-a-Friend Email', array('escape' => 'sql')),
+    ),
+    'membership' => array(
+      'membership_offline_receipt' => ts('Memberships - Signup and Renewal Receipts (off-line)', array('escape' => 'sql')),
     ),
     'meta' => array(
       'test_preview' => ts('Test-drive - Receipt Header', array('escape' => 'sql')),
