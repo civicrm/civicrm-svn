@@ -56,7 +56,7 @@ class CRM_Core_BAO_OpenID extends CRM_Core_DAO_OpenID
         
         // normalize the OpenID URL
         require_once 'Auth/OpenID.php';
-        $params['endpoint_url'] = Auth_OpenID::normalizeURL($params['endpoint_url']);
+        $params['openid'] = Auth_OpenID::normalizeURL($params['openid']);
         
         $openId->copyValues($params);
 
@@ -87,12 +87,11 @@ class CRM_Core_BAO_OpenID extends CRM_Core_DAO_OpenID
      * @access public
      * @static
      */
-    static function isAllowedToLogin( $openid ) {
-        $dao =& new CRM_Core_DAO_OpenID( );
-        $dao->endpoint_url = $openid->endpoint_url;
-        $dao->claimed_id   = $openid->claimed_id;
-        if ( $dao->find( true ) ) {
-            return $dao->allowed_to_login == 1;
+    static function isAllowedToLogin( $identity_url ) {
+        $openId =& new CRM_Core_DAO_OpenID( );
+        $openId->openid = $identity_url;
+        if ( $openId->find( true ) ) {
+            return $openId->allowed_to_login == 1;
         }
         return false;
     }
@@ -113,7 +112,7 @@ class CRM_Core_BAO_OpenID extends CRM_Core_DAO_OpenID
         }
 
         $query = "
-SELECT display_id, civicrm_location_type.name as locationType, civicrm_openid.is_primary as is_primary,
+SELECT openid, civicrm_location_type.name as locationType, civicrm_openid.is_primary as is_primary, 
 civicrm_openid.allowed_to_login as allowed_to_login, civicrm_openid.id as openid_id, 
 civicrm_openid.location_type_id as locationTypeId
 FROM      civicrm_contact
@@ -131,7 +130,7 @@ ORDER BY
             $openids[$dao->openid_id] = array( 'locationType'     => $dao->locationType,
                                                'is_primary'       => $dao->is_primary,
                                                'id'               => $dao->openid_id,
-                                               'openid'           => $dao->display_id,
+                                               'openid'           => $dao->openid,
                                                'locationTypeId'   => $dao->locationTypeId,
                                                'allowed_to_login' => $dao->allowed_to_login );
         }

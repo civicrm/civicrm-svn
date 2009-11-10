@@ -43,9 +43,7 @@ class CRM_Core_BAO_Block
     static $requiredBlockFields = array ( 'email'  => array( 'email' ),
                                           'phone'  => array( 'phone' ),
                                           'im'     => array( 'name' ),
-                                          'openid' => array( 'endpoint_url',
-                                                             'claimed_id',
-                                                             'display_id' )
+                                          'openid' => array( 'openid' )
                                           );
 
     /**

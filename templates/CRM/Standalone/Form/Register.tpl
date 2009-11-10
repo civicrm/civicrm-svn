@@ -3,7 +3,7 @@
   <legend>{ts}Standalone Registration Form{/ts}</legend>
 
 <dl>
-    <dt>{ts}OpenID{/ts}</dt><dd>{$user_unique_id}</dd>
+    <dt>{$form.user_unique_id.label}</dt><dd>{$form.user_unique_id.html}</dd>
 </dl>
 <dl>
     <dt>{$form.email.label}</dt><dd>{$form.email.html}</dd>

@@ -1335,10 +1335,7 @@ AND    civicrm_contact.id = %1";
                     }
                     $data['im'][$loc]['name']  = $value;  
                 } else if ($fieldName == 'openid') {
-                    # $value should be a hash of the OpenID fields
-                    foreach ($value as $key => $val) {
-                        $data['openid'][$loc][$key] = $val;
-                    }
+                    $data['openid'][$loc]['openid']     = $value;
                 } else {
                     if ($fieldName === 'state_province') {
                         // CRM-3393
@@ -1619,8 +1616,7 @@ WHERE      civicrm_email.email = %1";
      */
     static function &matchContactOnOpenId( $openId, $ctype = null ) 
     {
-        $endpoint_url = strtolower( trim( $openId['endpoint_url'] ) );
-        $claimed_id   = strtolower( trim( $openId['claimed_id'  ] ) );
+        $openId = strtolower( trim( $openId ) );
         $query  = "
 SELECT     civicrm_contact.id as contact_id,
            civicrm_contact.hash as hash,
@@ -1628,9 +1624,8 @@ SELECT     civicrm_contact.id as contact_id,
            civicrm_contact.contact_sub_type as contact_sub_type
 FROM       civicrm_contact
 INNER JOIN civicrm_openid    ON ( civicrm_contact.id = civicrm_openid.contact_id )
-WHERE      civicrm_openid.endpoint_url = %1 AND civicrm_openid.claimed_id = %2";
-        $p = array( 1 => array( $endpoint_url, 'String' ),
-                    2 => array( $claimed_id,   'String' ) );
+WHERE      civicrm_openid.openid = %1";
+        $p = array( 1 => array( $openId, 'String' ) );
 
        if ( $ctype ) {
            $query .= " AND civicrm_contact.contact_type = %3";
@@ -1681,8 +1676,7 @@ LEFT JOIN civicrm_email    ON ( civicrm_contact.id = civicrm_email.contact_id )
      *
      * @param int $contactID contact id
      *
-     * @return string $dao->openid   OpenID if present else null;
-     *          returns the claimed ID
+     * @return string $dao->openid   OpenID if present else null
      * @static
      * @access public
      */
@@ -1690,7 +1684,7 @@ LEFT JOIN civicrm_email    ON ( civicrm_contact.id = civicrm_email.contact_id )
     {
         // fetch the primary OpenID
         $query = "
-SELECT    civicrm_openid.claimed_id as openid
+SELECT    civicrm_openid.openid as openid
 FROM      civicrm_contact
 LEFT JOIN civicrm_openid ON ( civicrm_contact.id = civicrm_openid.contact_id )
 WHERE     civicrm_contact.id = %1
