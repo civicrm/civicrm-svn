@@ -255,9 +255,9 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
         $subTypes['Participant']  = array( );
 		$subTypes['ParticipantRole'     ] = CRM_Core_OptionGroup::values( 'participant_role' );;
 	    $subTypes['ParticipantEventName'] = CRM_Event_PseudoConstant::event( );
-        $subTypes['Individual']           = CRM_Contact_BAO_ContactType::subTypePairs( 'Individual' );
-        $subTypes['Household' ]           = CRM_Contact_BAO_ContactType::subTypePairs( 'Household' );
-        $subTypes['Organization']         = CRM_Contact_BAO_ContactType::subTypePairs( 'Organization' );
+        $subTypes['Individual']           = CRM_Contact_BAO_ContactType::subTypePairs( 'Individual', false, null );
+        $subTypes['Household' ]           = CRM_Contact_BAO_ContactType::subTypePairs( 'Household', false, null );
+        $subTypes['Organization']         = CRM_Contact_BAO_ContactType::subTypePairs( 'Organization', false, null );
                
         require_once "CRM/Contact/BAO/Relationship.php";
         

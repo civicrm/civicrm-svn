@@ -214,12 +214,12 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
      *@static
      *
      */
-    static function subTypePairs( $contactType = null, $all = false ) {
+    static function subTypePairs( $contactType = null, $all = false, $labelPrefix = '- ' ) {
         $subtypes = self::subTypeInfo( $contactType, $all );
 
         $pairs = array( );
         foreach ( $subtypes as $name => $info ) {
-            $pairs[$name] = '- ' . $info['label'];
+            $pairs[$name] = $labelPrefix . $info['label'];
         }
         return $pairs;
     }

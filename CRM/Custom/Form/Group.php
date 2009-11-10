@@ -252,9 +252,9 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         $sel2['Contribution']         = CRM_Contribute_PseudoConstant::contributionType( );
         $sel2['Relationship']         = $allRelationshipType;
 
-        $sel2['Individual']           = CRM_Contact_BAO_ContactType::subTypePairs( 'Individual' );
-        $sel2['Household' ]           = CRM_Contact_BAO_ContactType::subTypePairs( 'Household' );
-        $sel2['Organization']         = CRM_Contact_BAO_ContactType::subTypePairs( 'Organization' );
+        $sel2['Individual']           = CRM_Contact_BAO_ContactType::subTypePairs( 'Individual', false, null );
+        $sel2['Household' ]           = CRM_Contact_BAO_ContactType::subTypePairs( 'Household', false, null );
+        $sel2['Organization']         = CRM_Contact_BAO_ContactType::subTypePairs( 'Organization', false, null );
 
         
         require_once "CRM/Core/Component.php";
