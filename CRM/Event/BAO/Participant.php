@@ -257,7 +257,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             $eventTitle = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $participant->event_id, 'title' );
             $title = CRM_Contact_BAO_Contact::displayName( $participant->contact_id ) . ' (' . $participantRoles[$participant->role_id] . ' - ' . $eventTitle . ')' ;
             
-            // add the recently created Activity
+            // add the recently created Participant
             CRM_Utils_Recent::add( $title,
                                    $url,
                                    $participant->id,

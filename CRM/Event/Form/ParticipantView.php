@@ -107,7 +107,7 @@ class CRM_Event_Form_ParticipantView extends CRM_Core_Form
         $eventTitle = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $values[$params['id']]['event_id'], 'title' );
         $title = CRM_Contact_BAO_Contact::displayName( $values[$params['id']]['contact_id'] ) . ' (' . $participantRoles[$values[$params['id']]['role_id']] . ' - ' . $eventTitle . ')' ;
         
-        // add the recently created Activity
+        // add Participant to Recent Items
         CRM_Utils_Recent::add( $title,
                                $url,
                                $values[$params['id']]['id'],

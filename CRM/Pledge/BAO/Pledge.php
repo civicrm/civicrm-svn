@@ -228,7 +228,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
                  ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format( $pledge->amount ) . 
                  ' - ' . $contributionTypes[$pledge->contribution_type_id] . ')';
 
-        // add the recently created Activity
+        // add the recently created Pledge
         CRM_Utils_Recent::add( $title,
                                $url,
                                $pledge->id,

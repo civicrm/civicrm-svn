@@ -231,7 +231,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         $grantTypes = CRM_Grant_PseudoConstant::grantType();
         $title = CRM_Contact_BAO_Contact::displayName( $grant->contact_id ) . ' - ' . ts('Grant') . ': ' . $grantTypes[$grant->grant_type_id];
 
-        // add the recently created Activity
+        // add the recently created Grant
         CRM_Utils_Recent::add( $title,
                                $url,
                                $grant->id,

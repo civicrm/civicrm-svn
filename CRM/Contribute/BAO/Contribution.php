@@ -287,7 +287,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
                 ' - (' . CRM_Utils_Money::format( $contribution->total_amount ) . ' ' . 
                 ' - ' . $contributionTypes[$contribution->contribution_type_id] . ')';
             
-            // add the recently created Activity
+            // add the recently created Contribution
             CRM_Utils_Recent::add( $title,
                                    $url,
                                    $contribution->id,

@@ -329,7 +329,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             $membershipTypes = CRM_Member_PseudoConstant::membershipType();
             $title = CRM_Contact_BAO_Contact::displayName( $membership->contact_id ) . ' - ' . ts('Membership Type:') . ' ' . $membershipTypes[$membership->membership_type_id];
             
-            // add the recently created Activity
+            // add the recently created Membership
             CRM_Utils_Recent::add( $title,
                                    $url,
                                    $membership->id,

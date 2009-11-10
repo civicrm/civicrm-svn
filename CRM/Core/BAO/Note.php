@@ -120,6 +120,8 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note {
                                         $note->id );
             require_once 'CRM/Contact/BAO/Contact.php';
             $displayName = CRM_Contact_BAO_Contact::displayName( $note->entity_id );
+
+            // add the recently created Participant
             require_once 'CRM/Utils/Recent.php';
             CRM_Utils_Recent::add( $displayName . ' - ' . $note->subject,
                                    CRM_Utils_System::url( 'civicrm/contact/view/note', "reset=1&action=view&cid={$note->entity_id}&id={$note->id}" ),
