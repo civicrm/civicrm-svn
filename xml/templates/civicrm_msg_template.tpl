@@ -17,7 +17,7 @@
     'contribution' => array(
       'contribution_dupalert'         => ts('Contributions - Duplicate Organization Alert',                   array('escape' => 'sql')),
       'contribution_offline_receipt'  => ts('Contributions - Receipt (off-line)',                             array('escape' => 'sql')),
-      'contribution_receipt'          => ts('Contributions - Receipt (on-line)',                              array('escape' => 'sql')),
+      'contribution_online_receipt'   => ts('Contributions - Receipt (on-line)',                              array('escape' => 'sql')),
       'contribution_recurring_notify' => ts('Contributions - Recurring Start and End Notification',           array('escape' => 'sql')),
       'pcp_notify'                    => ts('Personal Campaign Pages - Admin Notification',                   array('escape' => 'sql')),
       'pcp_status_change'             => ts('Personal Campaign Pages - Supporter Status Change Notification', array('escape' => 'sql')),
@@ -25,7 +25,7 @@
     ),
     'event' => array(
       'event_offline_receipt' => ts('Events - Registration Confirmation and Receipt (off-line)', array('escape' => 'sql')),
-      'event_receipt'         => ts('Events - Registration Confirmation and Receipt (on-line)',  array('escape' => 'sql')),
+      'event_online_receipt'  => ts('Events - Registration Confirmation and Receipt (on-line)',  array('escape' => 'sql')),
       'participant_cancelled' => ts('Events - Registration Cancellation Notice',                 array('escape' => 'sql')),
       'participant_confirm'   => ts('Events - Registration Confirmation Invite',                 array('escape' => 'sql')),
       'participant_expired'   => ts('Events - Pending Registration Expiration Notice',           array('escape' => 'sql')),
@@ -35,7 +35,7 @@
     ),
     'membership' => array(
       'membership_offline_receipt' => ts('Memberships - Signup and Renewal Receipts (off-line)', array('escape' => 'sql')),
-      'membership_receipt'         => ts('Memberships - Receipt (on-line)',                      array('escape' => 'sql')),
+      'membership_online_receipt'  => ts('Memberships - Receipt (on-line)',                      array('escape' => 'sql')),
     ),
     'meta' => array(
       'test_preview' => ts('Test-drive - Receipt Header', array('escape' => 'sql')),
