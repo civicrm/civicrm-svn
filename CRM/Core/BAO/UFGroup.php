@@ -2249,11 +2249,28 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
      */
     static function getReservedProfiles( $type = 'Contact' ) {
         $reservedProfiles = array( );
+        $profileNames = array( );
         if ( $type == 'Contact' ) {
-            $whereClause = ' IN ( "new_individual", "new_organization", "new_household" )';
+            require_once 'CRM/Contact/BAO/ContactType.php';
+            $whereClause = 'name IN ( "new_individual", "new_organization", "new_household" )';
+            if ( CRM_Contact_BAO_ContactType::isActive( 'Individual' ) ) {
+                $profileNames[] = '"new_individual"';
+            }
+            if ( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
+                $profileNames[] = '"new_household"';
+            }
+            if ( CRM_Contact_BAO_ContactType::isActive( 'Organization' ) ) {
+                $profileNames[] = '"new_organization"';
+            }
+        }
+        if ( ! empty( $profileNames ) ) {
+            $whereClause = 'name IN ( ' . implode( ',', $profileNames) . ' ) AND is_reserved = 1';   
+        } else {
+            $whereClause = 'is_reserved = 1';
         }
         
-        $query = "SELECT id, title FROM civicrm_uf_group WHERE name {$whereClause} ";
+        $query = "SELECT id, title FROM civicrm_uf_group WHERE {$whereClause}";
+        
         $dao =& CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch( ) ) {
             $reservedProfiles[$dao->id] = $dao->title;
