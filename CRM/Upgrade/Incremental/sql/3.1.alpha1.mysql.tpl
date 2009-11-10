@@ -277,8 +277,15 @@
     UPDATE civicrm_preferences_date SET name = 'searchDate' WHERE name = 'relative';
     UPDATE civicrm_preferences_date SET name = 'activityDateTime' WHERE name = 'activityDatetime';
     UPDATE civicrm_preferences_date SET time_format = 1 WHERE name = 'activityDatetime';
-
-
+--  CRM-5263    
+    ALTER TABLE civicrm_country
+	ADD is_province_abbreviated tinyint(4) default '0' COMMENT 'Should state/province be displayed as abbreviation for contacts from this country?';
 
 -- message templates, CRM-3507
--- {include file='../../../../xml/templates/civicrm_msg_template.tpl'}
+    ALTER TABLE civicrm_msg_template
+        CHANGE msg_subject msg_subject TEXT NULL COMMENT 'Subject for email message.',
+        ADD workflow_id int(10) unsigned default NULL COMMENT 'a pseudo-FK to civicrm_option_value AFTER is_active',
+        ADD is_default  tinyint(4) default '1'  COMMENT 'is this the default message template for the workflow referenced by workflow_id?' AFTER workflow_id,
+        ADD is_reserved tinyint(4) default NULL COMMENT 'is this the reserved message template which we ship for the workflow referenced by workflow_id?' AFTER is_default;
+
+--  {include file='../../../../xml/templates/civicrm_msg_template.tpl'}
