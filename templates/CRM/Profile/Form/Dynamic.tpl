@@ -195,7 +195,7 @@ cj(document).ready(function(){
 {if $context eq 'dialog'}
 {literal}
     var options = { 
-        beforeSubmit:  showRequest,  // pre-submit callback  
+        beforeSubmit:  showRequest  // pre-submit callback  
     }; 
     
     // bind form using 'ajaxForm'
@@ -208,22 +208,23 @@ cj(document).ready(function(){
         var queryString = cj.param(formData); 
         queryString = queryString + '&snippet=5&gid=' + {/literal}"{$profileID}"{literal};
         var postUrl = {/literal}"{crmURL p='civicrm/profile/create' h=0 }"{literal}; 
-        cj.ajax({
+        var response = cj.ajax({
            type: "POST",
            url: postUrl,
            async: false,
            data: queryString,
+           dataType: "json",
            success: function( response ) {
-               cj("#contact-dialog").html( response );
-               eval("var checkSuccess = " + response )
-               if ( checkSuccess.newContactSuccess ) {
-                   cj("#contact").val( checkSuccess.sortName ).focus( );
-                   cj("input[name=contact_select_id]").val( checkSuccess.contactID );
+               if ( response.newContactSuccess ) {
+                   cj("#contact").val( response.sortName ).focus( );
+                   cj("input[name=contact_select_id]").val( response.contactID );
                    cj("#contact-success").show( );
                    cj("#contact-dialog").dialog("close");
                }
            }
-         });
+         }).responseText;
+
+         cj("#contact-dialog").html( response );
 
         // here we could return false to prevent the form from being submitted; 
         // returning anything other than false will allow the form submit to continue 
