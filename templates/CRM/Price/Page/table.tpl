@@ -1,5 +1,7 @@
 {foreach from=$contexts item=context}
 {if $context EQ "Event"}
+{ts}If you no longer want to use this price set, click the event title below, and modify the fees for that event.{/ts}
+
 <table class="report">
       <thead class="sticky">
        	   <th scope="col">{ts}Event{/ts}</th>
@@ -19,6 +21,8 @@
 </table>
 {/if}
 {if $context EQ "Contribution"}
+{ts}If you no longer want to use this price set, click the contribution page title below, and modify the amount for that contribution page.{/ts}
+
 <table class="report">
       <thead class="sticky">
        	   <th scope="col">{ts}Contribution Page{/ts}</th>

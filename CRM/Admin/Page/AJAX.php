@@ -104,7 +104,7 @@ class CRM_Admin_Page_AJAX
                     
                     $show   = "noButton";
                     $table  = $template->fetch( 'CRM/Price/Page/table.tpl' );
-                    $status = ts('Unable to disable the \'%1\' price set - it is currently in use by one or more active events. If you no longer want to use this price set, click the event title below, and modify the fees for that event.', array(1 => $priceSet)) . "<br/> $table";
+                    $status = ts('Unable to disable the \'%1\' price set - it is currently in use by one or more active events, contribution pages or contributions.', array(1 => $priceSet)) . "<br/> $table";
                 } else {
                     $status = ts('Are you sure you want to disable \'%1\' Price Set?', array(1 => $priceSet));
                 }
