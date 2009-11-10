@@ -51,11 +51,11 @@ class CRM_Contact_BAO_ContactType extends CRM_Contact_DAO_ContactType {
      * @static
      */  
     static function retrieve( &$params, &$defaults ) {
-        $ContactType =& new CRM_Contact_DAO_ContactType( );
-        $ContactType->copyValues( $params );
-        if ( $ContactType->find( true ) ) {
-            CRM_Core_DAO::storeValues( $ContactType, $defaults );
-            return $ContactType;
+        $contactType =& new CRM_Contact_DAO_ContactType( );
+        $contactType->copyValues( $params );
+        if ( $contactType->find( true ) ) {
+            CRM_Core_DAO::storeValues( $contactType, $defaults );
+            return $contactType;
         }
         return null;
     } 
@@ -534,21 +534,21 @@ WHERE name = %1";
      * @static
      */
     static function add( $params ) {
-        $ContactType = & new CRM_Contact_DAO_ContactType( );
-        $ContactType->copyValues( $params );
-        $ContactType->id = CRM_Utils_Array::value( 'id', $params );
-        $ContactType->save( );
-        if( $ContactType->find( true ) ) {
-            $contactName = $ContactType->name;
-            $contact     = ucfirst( $ContactType->label );
-            $active      = $ContactType->is_active;
+        $contactType = & new CRM_Contact_DAO_ContactType( );
+        $contactType->copyValues( $params );
+        $contactType->id = CRM_Utils_Array::value( 'id', $params );
+        $contactType->save( );
+        if( $contactType->find( true ) ) {
+            $contactName = $contactType->name;
+            $contact     = ucfirst( $contactType->label );
+            $active      = $contactType->is_active;
         }
         if( CRM_Utils_Array::value( 'id', $params ) ) {
-            $params    = array( 'name' => "New $contactName");
-            $newParams = array ('label' => "New $contact" );
+            $params    = array( 'name' => "New $contactName" );
+            $newParams = array ( 'label' => "New $contact" );
             CRM_Core_BAO_Navigation::processUpdate( $params ,$newParams );
         } else if( CRM_Utils_Array::value( 'parent_id', $params ) ) {
-            $name = self::getBasicType( $contact );    
+            $name = self::getBasicType( $contactName );    
             $value = array( 'name' => "New $name" );
             CRM_Core_BAO_Navigation::retrieve( $value ,$navinfo );
             $navigation = array(
@@ -561,7 +561,7 @@ WHERE name = %1";
             CRM_Core_BAO_Navigation::add( $navigation );
         }
         CRM_Core_BAO_Navigation::resetNavigation( );
-        return $ContactType;
+        return $contactType;
     }
     /**
      * update the is_active flag in the db
