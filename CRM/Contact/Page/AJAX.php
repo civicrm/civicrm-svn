@@ -583,7 +583,7 @@ WHERE ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$queryS
        }
  
        require_once 'CRM/Contact/BAO/ContactType.php';
-       $subTypes = CRM_Contact_BAO_ContactType::subTypes( $contactType );
+       $subTypes = CRM_Contact_BAO_ContactType::subTypes( $contactType, false, 'label' );
        sort($subTypes);
        echo json_encode( $subTypes );
        exit;
