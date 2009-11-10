@@ -11,35 +11,12 @@
 {ts}Please print this receipt for your records.{/ts}
 {/if}
 
-{if $membership_assign}
-===========================================================
-{ts}Membership Information{/ts}
-
-===========================================================
-{ts}Membership Type{/ts}: {$membership_name}
-{if $mem_start_date}{ts}Membership Start Date{/ts}: {$mem_start_date|crmDate}
-{/if}
-{if $mem_start_date}{ts}Membership End Date{/ts}: {$mem_end_date|crmDate}
-{/if}
-
-{/if}
 {if $amount}
 ===========================================================
-{if !$membershipBlock AND $amount}{ts}Contribution Information{/ts}{else}{ts}Membership Fee{/ts}{/if}
+{ts}Contribution Information{/ts}
 
 ===========================================================
-{if $membership_amount }
-{ts 1=$membership_name}%1 Membership{/ts}: {$membership_amount|crmMoney}
-{if $amount}
-{if ! $is_separate_payment }
-{ts}Contribution Amount{/ts}: {$amount|crmMoney}
-{else}
-{ts}Additional Contribution{/ts}: {$amount|crmMoney}
-{/if}
-{/if}
--------------------------------------------
-{ts}Total{/ts}: {$amount+$membership_amount|crmMoney}
-{elseif $lineItem and $priceSetID}
+{if $lineItem and $priceSetID}
 {foreach from=$lineItem item=value key=priceset}
 ---------------------------------------------------------
 {capture assign=ts_item}{ts}Item{/ts}{/capture}
@@ -57,12 +34,6 @@
 {else}
 {ts}Amount{/ts}: {$amount|crmMoney} {if $amount_level } - {$amount_level} {/if}
 {/if}
-{elseif $membership_amount}
-===========================================================
-{ts}Membership Fee{/ts}
-
-===========================================================
-{ts 1=$membership_name}%1 Membership{/ts}: {$membership_amount|crmMoney}
 {/if}
 {if $receive_date}
 
@@ -71,10 +42,7 @@
 {if $is_monetary and $trxn_id}
 {ts}Transaction #{/ts}: {$trxn_id}
 {/if}
-{if $membership_trx_id}
-{ts}Membership Transaction #{/ts}: {$membership_trx_id}
 
-{/if}
 {if $is_recur}
 {if $contributeMode eq 'notify'}
 {ts}This is a recurring contribution. You can modify or cancel future contributions by logging in to your account at:{/ts}
@@ -127,7 +95,7 @@
 
 ===========================================================
 {$email}
-{elseif $amount GT 0 OR $membership_amount GT 0 }
+{elseif $amount GT 0}
 ===========================================================
 {ts}Billing Name and Address{/ts}
 
@@ -138,7 +106,7 @@
 {$email}
 {/if} {* End ! is_pay_later condition. *}
 {/if}
-{if $contributeMode eq 'direct' AND !$is_pay_later AND ( $amount GT 0 OR $membership_amount GT 0 ) }
+{if $contributeMode eq 'direct' AND !$is_pay_later AND $amount GT 0}
 
 ===========================================================
 {ts}Credit Card Information{/ts}

@@ -25,7 +25,7 @@
 {/if}
 {if $amount}
 ===========================================================
-{if !$membershipBlock AND $amount}{ts}Contribution Information{/ts}{else}{ts}Membership Fee{/ts}{/if}
+{ts}Membership Fee{/ts}
 
 ===========================================================
 {if $membership_amount }

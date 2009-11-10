@@ -80,11 +80,7 @@
 
       <tr>
        <th {$headerStyle}>
-        {if !$membershipBlock AND $amount}
-         {ts}Contribution Information{/ts}
-        {else}
-         {ts}Membership Fee{/ts}
-        {/if}
+        {ts}Membership Fee{/ts}
        </th>
       </tr>
 

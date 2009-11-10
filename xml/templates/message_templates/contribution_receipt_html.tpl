@@ -38,97 +38,16 @@
    <td>
     <table style="border: 1px solid #999; margin: 1em 0em 1em; border-collapse: collapse; width:100%;">
 
-     {if $membership_assign}
-      <tr>
-       <th {$headerStyle}>
-        {ts}Membership Information{/ts}
-       </th>
-      </tr>
-      <tr>
-       <td {$labelStyle}>
-        {ts}Membership Type{/ts}
-       </td>
-       <td {$valueStyle}>
-        {$membership_name}
-       </td>
-      </tr>
-      {if $mem_start_date}
-       <tr>
-        <td {$labelStyle}>
-         {ts}Membership Start Date{/ts}
-        </td>
-        <td {$valueStyle}>
-         {$mem_start_date|crmDate}
-        </td>
-       </tr>
-      {/if}
-      {if $mem_start_date}
-       <tr>
-        <td {$labelStyle}>
-         {ts}Membership End Date{/ts}
-        </td>
-        <td {$valueStyle}>
-          {$mem_end_date|crmDate}
-        </td>
-       </tr>
-      {/if}
-     {/if}
-
-
      {if $amount}
 
 
       <tr>
        <th {$headerStyle}>
-        {if !$membershipBlock AND $amount}
-         {ts}Contribution Information{/ts}
-        {else}
-         {ts}Membership Fee{/ts}
-        {/if}
+        {ts}Contribution Information{/ts}
        </th>
       </tr>
 
-      {if $membership_amount}
-
-       <tr>
-        <td {$labelStyle}>
-         {ts 1=$membership_name}%1 Membership{/ts}
-        </td>
-        <td {$valueStyle}>
-         {$membership_amount|crmMoney}
-        </td>
-       </tr>
-       {if $amount}
-        {if ! $is_separate_payment }
-         <tr>
-          <td {$labelStyle}>
-           {ts}Contribution Amount{/ts}
-          </td>
-          <td {$valueStyle}>
-           {$amount|crmMoney}
-          </td>
-         </tr>
-        {else}
-         <tr>
-          <td {$labelStyle}>
-           {ts}Additional Contribution{/ts}
-          </td>
-          <td {$valueStyle}>
-           {$amount|crmMoney}
-          </td>
-         </tr>
-        {/if}
-       {/if}
-       <tr>
-        <td {$labelStyle}>
-         {ts}Total{/ts}
-        </td>
-        <td {$valueStyle}>
-         {$amount+$membership_amount|crmMoney}
-        </td>
-       </tr>
-
-      {elseif $lineItem and $priceSetID}
+      {if $lineItem and $priceSetID}
 
        {foreach from=$lineItem item=value key=priceset}
         <tr>
@@ -183,24 +102,6 @@
       {/if}
 
 
-     {elseif $membership_amount}
-
-
-      <tr>
-       <th {$headerStyle}>
-        {ts}Membership Fee{/ts}
-       </th>
-      </tr>
-      <tr>
-       <td {$labelStyle}>
-        {ts 1=$membership_name}%1 Membership{/ts}
-       </td>
-       <td {$valueStyle}>
-        {$membership_amount|crmMoney}
-       </td>
-      </tr>
-
-
      {/if}
 
 
@@ -222,17 +123,6 @@
        </td>
        <td {$valueStyle}>
         {$trxn_id}
-       </td>
-      </tr>
-     {/if}
-
-     {if $membership_trx_id}
-      <tr>
-       <td {$labelStyle}>
-        {ts}Membership Transaction #{/ts}
-       </td>
-       <td {$valueStyle}>
-        {$membership_trx_id}
        </td>
       </tr>
      {/if}
@@ -339,7 +229,7 @@
          {$email}
         </td>
        </tr>
-      {elseif $amount GT 0 OR $membership_amount GT 0}
+      {elseif $amount GT 0}
        <tr>
         <th {$headerStyle}>
          {ts}Billing Name and Address{/ts}
@@ -355,7 +245,7 @@
       {/if}
      {/if}
 
-     {if $contributeMode eq 'direct' AND !$is_pay_later AND ($amount GT 0 OR $membership_amount GT 0)}
+     {if $contributeMode eq 'direct' AND !$is_pay_later AND $amount GT 0}
       <tr>
        <th {$headerStyle}>
         {ts}Credit Card Information{/ts}
