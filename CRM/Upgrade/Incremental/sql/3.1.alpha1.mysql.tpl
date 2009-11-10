@@ -288,4 +288,4 @@
         ADD is_default  tinyint(4) default '1'  COMMENT 'is this the default message template for the workflow referenced by workflow_id?' AFTER workflow_id,
         ADD is_reserved tinyint(4) default NULL COMMENT 'is this the reserved message template which we ship for the workflow referenced by workflow_id?' AFTER is_default;
 
---  {include file='../../../../xml/templates/civicrm_msg_template.tpl'}
+    {include file='../CRM/Upgrade/3.1.alpha1.msg_template/civicrm_msg_template.tpl'}
