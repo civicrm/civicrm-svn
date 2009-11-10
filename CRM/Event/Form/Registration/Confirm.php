@@ -336,8 +336,13 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         foreach ($fields as $name => $dontCare ) {
             if ( isset($this->_params[0][$name]) ) {
                 $defaults[$name] = $this->_params[0][$name];
-                if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting'))
-                     && CRM_Utils_Array::value($name.'_custom', $this->_params[0]) ) { 
+                if ( substr( $name, 0, 7 ) == 'custom_' ) {
+                    $timeField = "{$name}_time";
+                    if ( isset( $this->_params[0][ $timeField ] ) ) {
+                        $defaults[ $timeField ] = $this->_params[0][ $timeField ];
+                    }
+                } else if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting'))
+                            && CRM_Utils_Array::value($name.'_custom', $this->_params[0]) ) { 
                     $defaults[$name.'_custom'] = $this->_params[0][$name.'_custom'];
                 }
             }

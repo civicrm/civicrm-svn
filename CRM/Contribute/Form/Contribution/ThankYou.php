@@ -174,11 +174,9 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
                     if ( isset( $contact[ $timeField ] ) ) {
                         $defaults[ $timeField ] = $contact[ $timeField ];
                     }
-                } else {
-                    if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting'))
-                         && CRM_Utils_Array::value($name.'_custom', $contact) ) { 
-                        $defaults[$name.'_custom'] = $contact[$name.'_custom'];
-                    }
+                } else if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting'))
+                            && CRM_Utils_Array::value( $name.'_custom', $contact ) ) { 
+                    $defaults[$name.'_custom'] = $contact[$name.'_custom'];
                 } 
             }
         }
