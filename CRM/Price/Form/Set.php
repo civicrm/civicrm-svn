@@ -164,6 +164,13 @@ class CRM_Price_Form_Set extends CRM_Core_Form
             }
             $extends[] = $option;
         }
+
+        if ( CRM_Utils_System::isNull( $extends ) ) {
+            $this->assign( 'extends', false );
+        } else {
+            $this->assign( 'extends', true );
+        }
+        
         $this->addGroup( $extends, 'extends', ts('Used For'), '&nbsp;', true );
 
         $this->addRule( 'extends', ts('%1 is a required field.', array(1 => ts('Used For'))), 'required' );
