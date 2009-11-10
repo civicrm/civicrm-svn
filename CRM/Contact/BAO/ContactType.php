@@ -140,15 +140,14 @@ WHERE  parent_id IS NULL
      *
      *function to retrieve all subtypes Information.
      *
-     *@param array  $contactType.
-     *@param string $field whether return label or name 
+     *@param array $contactType.
      *@return  array of sub type information
      *@static
      *
      */
-    static function &subTypeInfo( $contactType = null, $all = false, $columnName = 'name' ) {
+     static function &subTypeInfo( $contactType = null, $all = false ) {
         static $_cache = null;
-        
+
         if ( $_cache === null ) {
             $_cache = array( );
         }
@@ -160,7 +159,7 @@ WHERE  parent_id IS NULL
         if ( ! empty( $contactType ) ) {
             $argString .= implode( "_" , $contactType );
         }
-        
+
         if ( ! array_key_exists( $argString, $_cache ) ) {
             $_cache[$argString] = array( );
 
@@ -184,9 +183,9 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
                 $value = array( );
                 CRM_Core_DAO::storeValues( $dao, $value );
                 $value['parent'] = $dao->parent;
-                $_cache[$argString][$dao->{$columnName}] = $value;
+                $_cache[$argString][$dao->name] = $value;
             }
-        } 
+        }
         return $_cache[$argString];
     }
      
@@ -201,10 +200,14 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
      *
      */
  
-    static function subTypes( $contactType = null, $all = false, $columnName = 'name' ) {
-        return array_keys( self::subTypeInfo( $contactType, $all, $columnName ) );
-    }
-    
+     static function subTypes( $contactType = null, $all = false, $columnName = 'name' ) {
+         if ( $columnName == 'name' ) {
+             return array_keys( self::subTypeInfo( $contactType, $all ) );
+         } else {
+             return array_values( self::subTypePairs( $contactType, false, null ) );
+         }
+     }
+
     /**
      *
      *function to retrieve subtype pairs with name as 'subtype-name' and 'label' as value
