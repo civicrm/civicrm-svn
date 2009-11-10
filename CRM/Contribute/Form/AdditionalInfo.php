@@ -421,7 +421,7 @@ class CRM_Contribute_Form_AdditionalInfo
         list ($sendReceipt, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
             array(
                 'groupName' => 'msg_tpl_workflow_contribution',
-                'valueName' => 'contribution_additional_info',
+                'valueName' => 'contribution_offline_receipt',
                 'contactId' => $params['contact_id'],
                 'from'      => "$userName <$userEmail>",
                 'toName'    => $contributorDisplayName,
