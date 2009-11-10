@@ -1653,7 +1653,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                             break;
                             
                         case 'Select Date':
-                            list( $defaults[$fldName] ) = CRM_Utils_Date::setDateDefaults( $details[$name] );
+                            list( $defaults[$fldName], $defaults[$fldName.'_time'] ) = CRM_Utils_Date::setDateDefaults( $details[$name] );
                             break;
                         
                         default:

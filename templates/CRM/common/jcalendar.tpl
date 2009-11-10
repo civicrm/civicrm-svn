@@ -10,7 +10,7 @@
 {if $timeElement}
     &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
 {/if}
-{if $action ne 1028}
+{if $action neq 4 && $action neq 1028}
     (<a href="javascript:clearDateTime( '{$elementId}' );">{ts}clear{/ts}</a>)&nbsp;
 {/if}
 <script type="text/javascript">

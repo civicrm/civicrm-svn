@@ -168,13 +168,13 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
 
         foreach ($fields as $name => $dontCare ) {
             if ( isset( $contact[$name] ) ) {
+                $defaults[$name] = $contact[$name];
                 if ( substr( $name, 0, 7 ) == 'custom_' ) {
-                    $id = substr( $name, 7 );
-                    $defaults[$name] = CRM_Core_BAO_CustomField::getDefaultValue( $contact[$name],
-                                                                                  $id,
-                                                                                  $options );
+                    $timeField = "{$name}_time";
+                    if ( isset( $contact[ $timeField ] ) ) {
+                        $defaults[ $timeField ] = $contact[ $timeField ];
+                    }
                 } else {
-                    $defaults[$name] = $contact[$name];
                     if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting'))
                          && CRM_Utils_Array::value($name.'_custom', $contact) ) { 
                         $defaults[$name.'_custom'] = $contact[$name.'_custom'];
