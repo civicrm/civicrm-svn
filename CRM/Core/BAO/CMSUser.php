@@ -240,24 +240,28 @@ class CRM_Core_BAO_CMSUser
             $loginUrl .= 'user';
             // For Drupal we can redirect user to current page after login by passing it as destination.
             require_once 'CRM/Utils/System.php';
-            $qPart = CRM_Utils_System::currentPath( );
-            $args = CRM_Utils_System::currentPath( ) . "?reset=1";
+            $args = null;
 
             $id = $form->get( 'id' );
             if ( $id ) {
                 $args .= "&id=$id";
-             } else {
+            } else {
                 $gid =  $form->get( 'gid' );
-                if ( $args ) {
+                if ( $gid ) {
                     $args .= "&gid=$gid";
                 } else {
-                    $args = null;
+                     // Setup Personal Campaign Page link uses pageId
+                     $pageId =  $form->get( 'pageId' );
+                    if ( $pageId ) {
+                        $args .= "&pageId=$pageId&action=add";
+                    }
                 }
-             }
-
+            }
+    
             if ( $args ) {
                 // append destination so user is returned to form they came from after login
-                $loginUrl .= '?destination=' . urlencode( $args );
+                $destination = CRM_Utils_System::currentPath( ) . "?reset=1" . $args;
+                $loginUrl .= '?destination=' . urlencode( $destination );
              }
         }
         $form->assign( 'loginUrl', $loginUrl );
