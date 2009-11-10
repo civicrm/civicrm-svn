@@ -342,9 +342,47 @@ class api_v2_ContributionTest extends CiviUnitTestCase
      */
      function testSearch()
      {
-          $this->markTestIncomplete();        
+         $p1 = array(
+                     'contact_id'             => $this->_individualId,
+                     'receive_date'           => date('Ymd'),
+                     'total_amount'           => 100.00,
+                     'contribution_type_id'   => $this->_contributionTypeId,
+                     'non_deductible_amount'  => 10.00,
+                     'contribution_status_id' => 1
+                     );       
+         $contribution1 =& civicrm_contribution_add($p1);
+         
+         $p2 = array(
+                     'contact_id'             => $this->_individualId,
+                     'receive_date'           => date('Ymd'),
+                     'total_amount'           => 200.00,
+                     'contribution_type_id'   => $this->_contributionTypeId,
+                     'non_deductible_amount'  => 20.00,
+                     'trxn_id'                => 5454565,
+                     'invoice_id'             => 1212124,
+                     'fee_amount'             => 50.00,
+                     'net_amount'             => 60.00,
+                     'contribution_status_id' => 2,
+                     );    
+         $contribution2 =& civicrm_contribution_add($p2);
+         
+         $params = array( 'contribution_id'=> $contribution2['id'] );
+         $result =& civicrm_contribution_search($params);
+         $res    = $result[$contribution2['id']];
+         
+         $this->assertEquals( $p2['contact_id'],            $res['contact_id'], 'In line ' . __LINE__ );
+         $this->assertEquals( $p2['total_amount'],          $res['total_amount'], 'In line ' . __LINE__ );
+         $this->assertEquals( $p2['contribution_type_id'],  $res['contribution_type_id'], 'In line ' . __LINE__ );
+         $this->assertEquals( $p2['net_amount'],            $res['net_amount'], 'In line ' . __LINE__ );
+         $this->assertEquals( $p2['non_deductible_amount'], $res['non_deductible_amount'], 'In line ' . __LINE__ );        
+         $this->assertEquals( $p2['fee_amount'],            $res['fee_amount'], 'In line ' . __LINE__ );        
+         $this->assertEquals( $p2['trxn_id'],               $res['trxn_id'], 'In line ' . __LINE__ );                
+         $this->assertEquals( $p2['invoice_id'],            $res['invoice_id'], 'In line ' . __LINE__ );    
+         // contribution_status_id = 2 => Pending
+         $this->assertEquals( 'Pending',                    $res['contribution_status_id'], 'In line ' . __LINE__ ); 
+         
      }
-
+     
 ///////////////// civicrm_contribution_format_create methods
 
      /**
