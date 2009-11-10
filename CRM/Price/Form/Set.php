@@ -134,7 +134,7 @@ class CRM_Price_Form_Set extends CRM_Core_Form
            
         $priceSetUsedTables = $extends = array( );
         if ( $this->_action == CRM_Core_Action::UPDATE && $this->_sid ) {
-            $tables = CRM_Price_BAO_Set::getUsedBy( $this->_sid, true );
+            $priceSetUsedTables = CRM_Price_BAO_Set::getUsedBy( $this->_sid, true );
         }
         
         require_once 'CRM/Core/Config.php';
