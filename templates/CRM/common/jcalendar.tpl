@@ -10,7 +10,9 @@
 {if $timeElement}
     &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
 {/if}
-(<a href="javascript:clearDateTime( '{$elementId}' );">{ts}clear{/ts}</a>)&nbsp;
+{if $action ne 1028}
+    (<a href="javascript:clearDateTime( '{$elementId}' );">{ts}clear{/ts}</a>)&nbsp;
+{/if}
 <script type="text/javascript">
     var element_date   = "#{$elementId}"; 
     var cal_img        = "{$config->resourceBase}i/cal.gif";    
