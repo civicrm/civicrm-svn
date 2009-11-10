@@ -728,7 +728,7 @@ SELECT $select
         $customGroupDAO->whereAdd("is_active = 1");
 
         // add whereAdd for entity type
-        self::_addWhereAdd($customGroupDAO, $entityType);
+        self::_addWhereAdd($customGroupDAO, $entityType, $cidToken);
 
         $groups = array( );
 
@@ -820,13 +820,16 @@ SELECT $select
      * @static
      *
      */
-    private static function _addWhereAdd(&$customGroupDAO, $entityType)
+    private static function _addWhereAdd(&$customGroupDAO, $entityType, $entityID = null)
     {
+        $addSubtypeClause = false;
+
         switch($entityType) {
         case 'Contact':
             // if contact, get all related to contact
             $extendList = "'Contact','Individual','Household','Organization'";
             $customGroupDAO->whereAdd("extends IN ( $extendList )");
+            $addSubtypeClause = true;
             break;
         case 'Individual':
         case 'Household':
@@ -834,11 +837,24 @@ SELECT $select
             // is I/H/O then get I/H/O and contact
             $extendList = "'Contact','$entityType'";
             $customGroupDAO->whereAdd("extends IN ( $extendList )");
+            $addSubtypeClause = true;
             break;
         case 'Location':
         case 'Address':
             $customGroupDAO->whereAdd("extends IN ('$entityType')");
             break;
+        }
+
+        if ( $addSubtypeClause ) { 
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $csType = is_numeric($entityID) ? CRM_Contact_BAO_Contact::getContactSubType($entityID) : false;
+
+            if ( $csType ) {
+                $csType = CRM_Core_DAO::VALUE_SEPARATOR . $csType . CRM_Core_DAO::VALUE_SEPARATOR;
+                $customGroupDAO->whereAdd("extends_entity_column_value LIKE '%{$csType}%'");
+            } else {
+                $customGroupDAO->whereAdd("extends_entity_column_value IS NULL");
+            }
         }
     }
 

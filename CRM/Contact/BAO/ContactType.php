@@ -494,10 +494,10 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
 
         // check if any custom group
         $custom = & new CRM_Core_DAO_CustomGroup ( );
-        $custom->whereAdd("extends_entity_column_value LIKE '" . 
+        $custom->whereAdd("extends_entity_column_value LIKE '%" . 
                           CRM_Core_DAO::VALUE_SEPARATOR . 
                           $name . 
-                          CRM_Core_DAO::VALUE_SEPARATOR . "'");  
+                          CRM_Core_DAO::VALUE_SEPARATOR . "%'");  
         if ( $custom->find( ) ) {
             return false;
         }
