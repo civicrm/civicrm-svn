@@ -352,9 +352,15 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
         if ( $priceSetID ) {
             $resetFields = array( 'min_amount', 'max_amount', 'is_allow_other_amount' );
         }
+        
         foreach ( $fields as $field => $defaultVal ) {
             $val = CRM_Utils_Array::value( $field, $params, $defaultVal );
             if ( in_array( $field, $resetFields ) ) $val = $defaultVal;
+            
+            if ( in_array( $field, array( 'min_amount', 'max_amount' ) ) ) {
+                $val = CRM_Utils_Rule::cleanMoney( $val );
+            }
+             
             $params[$field] = $val;
         }
         
