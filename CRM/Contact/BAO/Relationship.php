@@ -897,11 +897,9 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         // accrodingly.
         $status = self::CURRENT;
         
-        if ( ! empty( $params['end_date']['Y'] ) &&
-             ! empty( $params['end_date']['M'] ) &&
-             ! empty( $params['end_date']['d'] ) ) {
-            $endDate = date( 'Ymd', mktime( 0, 0, 0, $params['end_date']['M'], $params['end_date']['d'], $params['end_date']['Y'] ) );
-            $today = CRM_Utils_Date::customFormat( CRM_Utils_Date::getToday( ), '%Y%m%d' );
+        if ( ! empty( $params['end_date'] ) ) {
+            $endDate = CRM_Utils_Date::setDateDefaults( $params['end_date'], null, 'Ymd' );
+            $today   = date('Ymd' );
             
             if ( $today > $endDate ) {
                 $status = self::PAST;
