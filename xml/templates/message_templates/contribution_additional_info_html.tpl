@@ -233,7 +233,7 @@
          {ts}Sent{/ts}
         </td>
         <td {$valueStyle}>
-         {$fulfilled_date|crmDate}
+         {$fulfilled_date|truncate:10:''|crmDate}
         </td>
        </tr>
       {/if}
