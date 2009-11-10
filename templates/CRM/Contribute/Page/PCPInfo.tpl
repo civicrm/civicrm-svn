@@ -17,10 +17,10 @@
         <tr><td colspan="2"><strong>{ts}You can{/ts}:</strong></td></tr>
 		{foreach from = $links key = k item = v}
           <tr>
-            <td style="padding:0px 5px 0px 0px;">
+            <td>
                 <a href="{crmURL p=$v.url q=$v.qs|replace:'%%pcpId%%':$replace.id|replace:'%%pcpBlock%%':$replace.block}" title="{$v.title}"{if $v.extra}{$v.extra}{/if}><strong>&raquo; {$v.name}</strong></a>
 		   </td>
-  		   <td style="padding:0px;">&nbsp;<cite>{$hints.$k}</cite></td>
+  		   <td>&nbsp;<cite>{$hints.$k}</cite></td>
 	 	 </tr>
         {/foreach}
   	   </table>

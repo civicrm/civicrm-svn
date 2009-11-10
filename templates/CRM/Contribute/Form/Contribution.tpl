@@ -146,25 +146,25 @@
         <tr><td class="label">{$form.soft_credit_to.label}</td>
             <td>{$form.soft_credit_to.html} {help id="id-soft_credit"}</td>
         </tr>
-	{if $action eq 2 and $form.pcp_made_through_id.value[0]}
-	    <tr><td class="label">{$form.pcp_display_in_roll.label}</td>
-	        <td>{$form.pcp_display_in_roll.html}</td>
-	    </tr>
-	    <tr id="nameID">
-	        <td></td>
-	        <td>{$form.pcp_is_anonymous.html}</td>
-	    </tr>
-	    <tr id="nickID">
-	        <td>{$form.pcp_roll_nickname.label}</td>
-	        <td>{$form.pcp_roll_nickname.html}<br />
-		<span class="description">{ts}Enter the name you want listed with this contribution. You can use a nick name like 'The Jones Family' or 'Sarah and Sam'.{/ts}</span></td>
-	    </tr>
-	    <tr id="personalNoteID">
-	        <td style="vertical-align: top">{$form.pcp_personal_note.label}</td>
-	        <td>{$form.pcp_personal_note.html}
-                <span class="description">{ts}Enter a message to accompany this contribution.{/ts}</span>
-		</td>
-	    </tr>
+	    {if $action eq 2 and $form.pcp_made_through_id.value[0]} {* Include PCP honor roll fields if contrib came from PCP page *}
+    	    <tr><td class="label">{$form.pcp_display_in_roll.label}</td>
+    	        <td>{$form.pcp_display_in_roll.html}</td>
+    	    </tr>
+    	    <tr id="nameID">
+    	        <td></td>
+    	        <td>{$form.pcp_is_anonymous.html}</td>
+    	    </tr>
+    	    <tr id="nickID">
+    	        <td class="label">{$form.pcp_roll_nickname.label}</td>
+    	        <td>{$form.pcp_roll_nickname.html}<br />
+    		    <span class="description">{ts}Name displayed in the Honor Roll.{/ts}</span></td>
+    	    </tr>
+    	    <tr id="personalNoteID">
+    	        <td class="label" style="vertical-align: top">{$form.pcp_personal_note.label}</td>
+    	        <td>{$form.pcp_personal_note.html}
+                    <span class="description">{ts}Personal message submitted by contributor for display in the Honor Roll.{/ts}</span>
+    		    </td>
+    	    </tr>
         {/if}	
       </table>
 

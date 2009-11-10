@@ -284,7 +284,7 @@
       </tr>
       <tr>
        <td {$labelStyle}>
-        {ts}Display In Roll{/ts}
+        {ts}Display In Honor Roll{/ts}
        </td>
        <td {$valueStyle}>
         {if $pcp_display_in_roll}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}
@@ -303,7 +303,7 @@
       {if $pcp_personal_note}
        <tr>
         <td {$labelStyle}>
-         {ts}Note{/ts}
+         {ts}Personal Note{/ts}
         </td>
         <td {$valueStyle}>
          {$pcp_personal_note}

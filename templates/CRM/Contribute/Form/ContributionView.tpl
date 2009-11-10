@@ -141,18 +141,20 @@
 {/if}
 
 {if $pcp_id}
-<fieldset><legend>{ts}Personal Campaign Page{/ts}</legend>
+<fieldset><legend>{ts}Personal Campaign Page Contribution Information{/ts}</legend>
 <table class="view-layout">
-	<td>{ts}Campaign Page{/ts}</td>
-    <td><a href="{crmURL p="civicrm/contribute/pcp/info" q="reset=1&id=`$pcp_id`"}">{$pcp}</a><br />
-        <span class="description">{ts}Contribution was made through this personal campaign page.{/ts}</span>
-    </td>
-	<td>{ts}In Public Honor Roll?{/ts}</td><td>{if $pcp_display_in_roll}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
+    <tr>
+	    <td class="label">{ts}Campaign Page{/ts}</td>
+        <td><a href="{crmURL p="civicrm/contribute/pcp/info" q="reset=1&id=`$pcp_id`"}">{$pcp}</a><br />
+            <span class="description">{ts}Contribution was made through this personal campaign page.{/ts}</span>
+        </td>
+    </tr>
+    <tr><td class="label">{ts}In Public Honor Roll?{/ts}</td><td>{if $pcp_display_in_roll}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td></tr>
     {if $pcp_roll_nickname}
-        <td>{ts}Honor Roll Name{/ts}</td><td>{$pcp_roll_nickname}</td>
+        <tr><td class="label">{ts}Honor Roll Name{/ts}</td><td>{$pcp_roll_nickname}</td></tr>
     {/if}
     {if $pcp_personal_note}
-        <td>{ts}Honor Roll Note{/ts}</td><td>{$pcp_personal_note}</td>
+        <tr><td class="label">{ts}Personal Note{/ts}</td><td>{$pcp_personal_note}</td></tr>
     {/if}
 </table>
 </fieldset>

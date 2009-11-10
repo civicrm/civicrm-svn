@@ -400,7 +400,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             }
             $this->assign( 'pcp', true );
             $this->add( 'checkbox', 'pcp_display_in_roll', ts('Show my contribution in the public honor roll'), null, null,
-                        array('onclick' => "showHideByValue('pcp_display_in_roll','','nameID|nickID|personalNoteID','table-row','radio',false); pcpAnonymous( );")
+                        array('onclick' => "showHideByValue('pcp_display_in_roll','','nameID|nickID|personalNoteID','block','radio',false); pcpAnonymous( );")
                         );
             $extraOption = array('onclick' =>"return pcpAnonymous( );");
             $elements = array( );
@@ -409,8 +409,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->addGroup( $elements, 'pcp_is_anonymous', null, '&nbsp;&nbsp;&nbsp;' );
             $this->_defaults['pcp_is_anonymous'] = 0;
             
-            $this->add( 'text', 'pcp_roll_nickname', ts('Name'), array( 'size' => 25, 'maxlength' => 20 ) );
-            $this->add( 'textarea', "pcp_personal_note", ts( 'Personal Note' ), array( 'rows' => 4, 'coloums' => 80 ) );
+            $this->add( 'text', 'pcp_roll_nickname', ts('Name'), array( 'maxlength' => 30 ) );
+            $this->add( 'textarea', "pcp_personal_note", ts( 'Personal Note' ), array( 'style' => 'height: 3em; width: 40em;' ) );
         }
         
         if ( !( $this->_paymentProcessor['billing_mode'] == CRM_Core_Payment::BILLING_MODE_BUTTON &&
@@ -576,7 +576,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( !in_array( $this->_paymentProcessor['billing_mode'], array( 2, 4 ) ) && 
              $this->_values['is_monetary'] && is_array( $this->_paymentProcessor ) ) {
             $attributes = array('onclick' => "return showHideByValue('is_pay_later','','payment_information',
-                                                     'table-row','radio',true);");
+                                                     'block','radio',true);");
             
             $this->assign( 'hidePaymentInformation', true );
         }

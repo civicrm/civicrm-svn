@@ -271,16 +271,6 @@ function clearAmountOther() {
     invert              = 1
 }
 {/if}
-{*{if $pcp}
-{include file="CRM/common/showHideByFieldValue.tpl" 
-    trigger_field_id    ="pcp_display_in_roll"
-    trigger_value       =""
-    target_element_id   ="nameID|nickID" 
-    target_element_type ="table-row"
-    field_type          ="radio"
-    invert              = 0
-}
-{/if}*}
 
 <script type="text/javascript">
 {if $pcp}pcpAnonymous();{/if}
@@ -349,18 +339,18 @@ function pcpAnonymous( ) {
         document.getElementById('pcp_roll_nickname').value = '';
     }
     if ( ! document.getElementsByName("pcp_display_in_roll")[0].checked ) { 
-        hide('nickID', 'table-row');
-        hide('nameID', 'table-row');
-	hide('personalNoteID', 'table-row');
+        hide('nickID', 'block');
+        hide('nameID', 'block');
+	hide('personalNoteID', 'block');
     } else {
         if ( document.getElementsByName("pcp_is_anonymous")[0].checked ) {
-            show('nameID', 'table-row');
-            show('nickID', 'table-row');
-	    show('personalNoteID', 'table-row');
+            show('nameID', 'block');
+            show('nickID', 'block');
+	    show('personalNoteID', 'block');
         } else {
-            show('nameID', 'table-row');
-            hide('nickID', 'table-row');
-	    hide('personalNoteID', 'table-row');
+            show('nameID', 'block');
+            hide('nickID', 'block');
+	    hide('personalNoteID', 'block');
         }
     }
 }

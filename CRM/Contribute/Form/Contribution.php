@@ -852,7 +852,7 @@ WHERE  contribution_id = {$this->_id}
                                      CRM_Contribute_PseudoConstant::pcPage( ) );
             $ele->freeze();
             $this->addElement('checkbox','pcp_display_in_roll', ts('Honor Roll?'), null, 
-                              array('onclick' =>"return showHideByValue('pcp_display_in_roll','','softCreditInfo','table-row','radio',false);") );
+                              array('onclick' =>"return showHideByValue('pcp_display_in_roll','','nameID|nickID|personalNoteID','table-row','radio',false);") );
             $this->addElement('text', 'pcp_roll_nickname', ts('Nickname') );
             $this->addElement('textarea', 'pcp_personal_note', ts('Personal Note'));
         }
