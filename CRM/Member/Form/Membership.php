@@ -620,13 +620,15 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         if ( !CRM_Utils_Array::value( 'is_override', $params ) ) {
             $params['exclude_is_admin'] = true;
         }
-        
         $params['membership_type_id'] = $formValues['membership_type_id'][1];
         
-        $joinDate  = $formValues['join_date'];
-        $startDate = $formValues['start_date'];
-        $endDate   = $formValues['end_date'];
-        
+        // process date params to mysql date format.
+        $dateTypes = array( 'join_date'  => 'joinDate',
+                            'start_date' => 'startDate',
+                            'end_date'   => 'endDate' );
+        foreach ( $dateTypes as $dateField => $dateVariable ) {
+            $$dateVariable = CRM_Utils_Date::processDate( $formValues[$dateField] );
+        }
         $calcDates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($params['membership_type_id'],
                                                                               $joinDate, $startDate, $endDate);
         

@@ -270,8 +270,8 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
      * Function to calculate start date and end date for new membership 
      * 
      * @param int  $membershipTypeId membership type id
-     * @param date $joinDate join date
-     * @param date $startDate start date
+     * @param date $joinDate join date ( in mysql date format ) 
+     * @param date $startDate start date ( in mysql date format ) 
      *
      * @return array associated array with  start date, end date and join date for the membership
      * @static
@@ -279,12 +279,21 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
     function getDatesForMembershipType( $membershipTypeId, $joinDate = null, $startDate = null, $endDate = null ) 
     {
         $membershipTypeDetails = self::getMembershipTypeDetails( $membershipTypeId );
-        $joinDate = ( $joinDate ) ? date( 'Y-m-d', strtotime( $joinDate ) ) : date( 'Y-m-d' );
-
-        if ( $startDate ) {
-            $actualStartDate = date( 'Y-m-d', strtotime( $startDate ) );
+        
+        // convert all dates to 'Y-m-d' format.
+        foreach ( array( 'joinDate', 'startDate', 'endDate' ) as $dateParam ) {
+            if ( !empty( $$dateParam ) ) { 
+                $$dateParam = CRM_Utils_Date::processDate( $$dateParam, null, false, 'Y-m-d' );
+            }
         }
-
+        if ( !$joinDate ) {
+            $joinDate = date( 'Y-m-d' );
+        }
+        $actualStartDate = $joinDate;
+        if ( $startDate ) {
+            $actualStartDate = $startDate; 
+        }
+        
         $fixed_period_rollover = false;
         if ( $membershipTypeDetails['period_type'] == 'rolling' ) {
             if ( !$startDate ) {

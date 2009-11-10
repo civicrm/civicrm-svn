@@ -1296,10 +1296,11 @@ class CRM_Utils_Date
      *  @param string $time time string
      *  @param string $returnNullString  'null' needs to be returned
      *                so that db oject will set null in db
+     *  @param string $format expected return date format.( default is  mysql )
      *
      *  @return string $mysqlDate date format that is excepted by mysql
      */
-    static function processDate( $date, $time = null, $returnNullString = false ) {
+    static function processDate( $date, $time = null, $returnNullString = false, $format = 'YmdHis' ) {
         $mysqlDate = null;
         
         if ( $returnNullString ) {
@@ -1307,7 +1308,7 @@ class CRM_Utils_Date
         }
         
         if ( trim( $date ) ) {
-            $mysqlDate = date( 'YmdHis', strtotime( $date . ' '. $time ) );
+            $mysqlDate = date( $format, strtotime( $date . ' '. $time ) );
         }
         
         return $mysqlDate;
