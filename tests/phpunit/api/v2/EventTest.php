@@ -88,7 +88,7 @@ class api_v2_EventTest extends CiviUnitTestCase
         $result = civicrm_event_get( $params );
 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Params is not an array' );
+        $this->assertEquals( $result['error_message'], 'Input parameters is not an array.' );
     }
 
 
@@ -98,7 +98,7 @@ class api_v2_EventTest extends CiviUnitTestCase
         $result = civicrm_event_get( $params );
 
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Params is not an array' );
+        $this->assertEquals( $result['error_message'], 'Params cannot be empty.' );
     }
     
     function testGetEventById( )
@@ -212,7 +212,7 @@ class api_v2_EventTest extends CiviUnitTestCase
         $result =& civicrm_event_search($params);
 
         $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'Params need to be an array', 'In line ' . __LINE__ );
+        $this->assertEquals( $result['error_message'], 'Input parameters is not an array.', 'In line ' . __LINE__ );
     }
 
     /**
@@ -220,11 +220,17 @@ class api_v2_EventTest extends CiviUnitTestCase
      */
      function testSearchEmptyParams()
      {
-        $params = array();
-        $result =& civicrm_event_search($params);
+         $event  = civicrm_event_create( $this->_params );
 
-        $this->assertEquals( $result['is_error'], 1, 'In line ' . __LINE__ );
-        $this->assertEquals( $result['error_message'], 'No input parameters present', 'In line ' . __LINE__ );
+         $params = array( );
+         $result =& civicrm_event_search($params);
+         $res    = $result[$event['event_id']];
+
+         $this->assertEquals( $res['id'], $event['event_id'], 'In line ' . __LINE__ );
+         $this->assertEquals( $res['title'], $this->_params['title'] , 'In line ' . __LINE__ );
+         $this->assertEquals( $res['event_type_id'], $this->_params['event_type_id'] , 'In line ' . __LINE__ );
+         $this->assertEquals( $res['is_online_registration'], $this->_params['is_online_registration'] , 'In line ' . __LINE__ );
+        
      }
 
     /**
