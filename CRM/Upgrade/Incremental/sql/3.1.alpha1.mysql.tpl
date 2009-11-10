@@ -255,25 +255,28 @@
     ALTER TABLE civicrm_mail_settings
         ADD `domain_id` int(10) unsigned NOT NULL COMMENT 'Which Domain is this match entry for' AFTER id;
 
+    UPDATE civicrm_mail_settings SET domain_id = @domain_id;
+
 -- Date migration CRM-4312    
     ALTER TABLE civicrm_custom_field
-        ADD date_format int unsigned  COMMENT 'date format for custom date' AFTER end_date_years,
-        ADD time_format int unsigned  COMMENT 'time format for custom date' AFTER date_format,
-        DROP date_parts;
+        CHANGE date_parts date_format VARCHAR( 64 )  NULL DEFAULT NULL COMMENT 'date format for custom date',        
+        ADD time_format int unsigned  COMMENT 'time format for custom date' AFTER date_format;        
 
     ALTER TABLE `civicrm_preferences_date` 
         CHANGE `format` `date_format` VARCHAR( 64 )  NULL DEFAULT NULL COMMENT 'The date type',
         ADD `time_format` VARCHAR( 64 ) NULL DEFAULT NULL COMMENT 'store time format' AFTER `date_format`;
         ALTER TABLE `civicrm_preferences_date`
             DROP `minute_increment`;
-
+    
+    DELETE FROM civicrm_preferences_date WHERE name IN ('datetime','duration','fixed','manual' );
+    
     UPDATE civicrm_preferences_date
         SET date_format = ''
-        WHERE name IN ( 'activityDate', 'activityDatetime', 'birth', 'custom',
-                        'datetime', 'fixed', 'mailing', 'manual', 'relative' );
+        WHERE name IN ( 'activityDate', 'activityDatetime', 'birth', 'custom', 'mailing', 'relative' );
                         
     UPDATE civicrm_preferences_date SET name = 'searchDate' WHERE name = 'relative';
-    UPDATE civicrm_preferences_date SET name = 'activityDateTime' WHERE name = 'activityDatetime';                      
+    UPDATE civicrm_preferences_date SET name = 'activityDateTime' WHERE name = 'activityDatetime';
+    UPDATE civicrm_preferences_date SET time_format = 1 WHERE name = 'activityDatetime';
 
 
 

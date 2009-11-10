@@ -122,12 +122,16 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
                     $defaults['dateInputFormat']= 'mm/dd/yy';
                 }
             }
-
-            //Need to fix
             // %p - lowercase ante/post meridiem ('am', 'pm')
             // %P - uppercase ante/post meridiem ('AM', 'PM')
-            $defaults['timeInputFormat'] = 1;
-            
+            if ( $dateTimeFormat = $defaults['dateformatQfDatetime'] ) {
+                $defaults['timeInputFormat'] = 2;
+                $dateTimeFormatArray =  explode(" ", $dateFormat );
+                if ( in_array('%P', $dateTimeFormatArray) || in_array('%p', $dateTimeFormatArray)) {
+                    $defaults['timeInputFormat'] = 1;
+                }
+            }
+
             unset($defaults['dateformatQfDate']);
             unset($defaults['dateformatQfDatetime']);
             unset($defaults['dateformatTime']);
@@ -177,11 +181,41 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
             $updateSQL = "UPDATE civicrm_report_instance SET form_values = '{$fromVal}' WHERE id = {$instDAO->id}";
             CRM_Core_DAO::executeQuery( $updateSQL );
         }
+        
+        $customFieldSQL = "SELECT id, date_format FROM civicrm_custom_field WHERE data_type = 'Date' ";
+        $customDAO      = CRM_Core_DAO::executeQuery( $customFieldSQL );
+        while ( $customDAO->fetch( ) ) {
+            $datePartKey =$dateParts   = explode(CRM_Core_DAO::VALUE_SEPARATOR ,$customDAO->date_format);                    
+            $dateParts   = array_combine($datePartKey, $dateParts);
+            
+            $year       = CRM_Utils_Array::value('Y', $dateParts);
+            $month      = CRM_Utils_Array::value('M', $dateParts);
+            $date       = CRM_Utils_Array::value('d', $dateParts);
+            $hour       = CRM_Utils_Array::value('h', $dateParts);
+            $minute     = CRM_Utils_Array::value('i', $dateParts);
+            $timeFormat = CRM_Utils_Array::value('A', $dateParts);
+            
+            $newDateFormat = 'mm/dd/yy';
+            if ($year && $month && $date ) {
+                $newDateFormat = 'mm/dd/yy';
+            } else if (!$year && $month && $date ) {
+                $newDateFormat = 'mm/dd';
+            }
+            
+            $newTimeFormat = 'NULL';
+            if ( $timeFormat && $hour == 'h') {
+                $newTimeFormat = 1;    
+            } else if ($hour) {
+                $newTimeFormat = 2;            
+            }
+            $updateSQL = "UPDATE civicrm_custom_field SET date_format = '{$newDateFormat}', time_format = {$newTimeFormat} WHERE id = {$customDAO->id}";
+            CRM_Core_DAO::executeQuery( $updateSQL );
+        }
 
         $template = & CRM_Core_Smarty::singleton( );
         $afterUpgradeMessage = '';
         if ( $afterUpgradeMessage = $template->get_template_vars('afterUpgradeMessage') ) $afterUpgradeMessage .= "<br/><br/>";
-        $afterUpgradeMessage .= ts("Most of the Date Format has been changed to mm/dd/yy format. If you want to use a different format please check Date settings" );
+        $afterUpgradeMessage .= ts("Date Input Format has been set to %1 format. If you want to use a different format please check Date settings", array( 1 => $defaults['dateInputFormat']) );
         $template->assign('afterUpgradeMessage', $afterUpgradeMessage);
     }
 }
