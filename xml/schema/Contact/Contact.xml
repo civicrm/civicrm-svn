@@ -38,11 +38,12 @@
   </index>
   <field>
        <name>contact_sub_type</name>
+       <title>Contact Subtype</title>
        <type>varchar</type>
        <length>64</length>
        <export>true</export>
        <import>true</import>
-       <headerPattern>/C(ontact )?(sub-type|sub type)/i</headerPattern>
+       <headerPattern>/C(ontact )?(subtype|sub-type|sub type)/i</headerPattern>
        <comment>May be used to over-ride contact view and edit templates.</comment>
        <add>1.5</add>
   </field>
