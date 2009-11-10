@@ -171,7 +171,10 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     $this->_defaults["billing_" . $name] = $this->_defaults[$name];
                 }
             }
-        } else {
+        } 
+        
+        //set custom field defaults set by admin if value is not set
+        if ( ! empty( $this->_fields ) ) {
             //set custom field defaults
             require_once "CRM/Core/BAO/CustomField.php";
             foreach ( $this->_fields as $name => $field ) {
