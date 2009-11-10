@@ -1,3 +1,4 @@
+{foreach from=$contexts item=context}
 {if $context EQ "Event"}
 <table class="report">
       <thead class="sticky">
@@ -16,7 +17,8 @@
            </tr>
       {/foreach}
 </table>
-{elseif $context EQ "Contribution"}
+{/if}
+{if $context EQ "Contribution"}
 <table class="report">
       <thead class="sticky">
        	   <th scope="col">{ts}Contribution Page{/ts}</th>
@@ -33,3 +35,4 @@
       {/foreach}
 </table>
 {/if}
+{/foreach}

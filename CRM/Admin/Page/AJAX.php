@@ -86,11 +86,22 @@ class CRM_Admin_Page_AJAX
             
             case 'CRM_Price_BAO_Set':
                 require_once(str_replace('_', DIRECTORY_SEPARATOR, $recordBAO) . ".php");
-                $priceSet = CRM_Price_BAO_Set::getTitle($recordID);
-                $usedBy  =& CRM_Price_BAO_Set::getUsedBy($recordID);
-                if (!empty($usedBy)) {
+                $usedBy   = CRM_Price_BAO_Set::getUsedBy( $recordID );
+                $priceSet = CRM_Price_BAO_Set::getTitle( $recordID );
+                
+                if ( !CRM_Utils_System::isNull( $usedBy ) ) {
                     $template =& CRM_Core_Smarty::singleton( );
                     $template->assign( 'usedBy', $usedBy );
+                    $comps = array( "Event"        => "civicrm_event", 
+                                    "Contribution" => "civicrm_contribution_page" );
+                    $contexts = array( );
+                    foreach ( $comps as $name => $table ) {
+                        if ( array_key_exists( $table, $usedBy ) ) {
+                            $contexts[] = $name;
+                        }
+                    }
+                    $template->assign( 'contexts', $contexts );
+                    
                     $show   = "noButton";
                     $table  = $template->fetch( 'CRM/Price/Page/table.tpl' );
                     $status = ts('Unable to disable the \'%1\' price set - it is currently in use by one or more active events. If you no longer want to use this price set, click the event title below, and modify the fees for that event.', array(1 => $priceSet)) . "<br/> $table";
