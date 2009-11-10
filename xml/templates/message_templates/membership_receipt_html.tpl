@@ -62,7 +62,7 @@
         </td>
        </tr>
       {/if}
-      {if $mem_start_date}
+      {if $mem_end_date}
        <tr>
         <td {$labelStyle}>
          {ts}Membership End Date{/ts}
