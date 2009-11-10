@@ -17,7 +17,7 @@
     'contribution' => array(
       'contribution_dupalert'         => ts('Contributions - Duplicate Organization Alert',                   array('escape' => 'sql')),
       'contribution_offline_receipt'  => ts('Contributions - Receipt (off-line)',                             array('escape' => 'sql')),
-      'contribution_receipt'          => ts('Contributions and Memberships - Receipt (on-line)',              array('escape' => 'sql')),
+      'contribution_receipt'          => ts('Contributions - Receipt (on-line)',                              array('escape' => 'sql')),
       'contribution_recurring_notify' => ts('Contributions - Recurring Start and End Notification',           array('escape' => 'sql')),
       'pcp_notify'                    => ts('Personal Campaign Pages - Admin Notification',                   array('escape' => 'sql')),
       'pcp_status_change'             => ts('Personal Campaign Pages - Supporter Status Change Notification', array('escape' => 'sql')),
@@ -35,6 +35,7 @@
     ),
     'membership' => array(
       'membership_offline_receipt' => ts('Memberships - Signup and Renewal Receipts (off-line)', array('escape' => 'sql')),
+      'membership_receipt'         => ts('Memberships - Receipt (on-line)',                      array('escape' => 'sql')),
     ),
     'meta' => array(
       'test_preview' => ts('Test-drive - Receipt Header', array('escape' => 'sql')),
