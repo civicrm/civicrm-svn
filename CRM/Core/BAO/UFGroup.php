@@ -1381,7 +1381,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 $setSubtype  = $profileType;
                 $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
             }
-            $subtypes = CRM_Contact_BAO_ContactType::subTypePairs( $profileType );
+            $subtypes = $profileType ? 
+                CRM_Contact_BAO_ContactType::subTypePairs( $profileType ) : array( );
             if ( $setSubtype ) {
                 $subtypeList = array( );
                 $subtypeList[$setSubtype] = $subtypes[$setSubtype];

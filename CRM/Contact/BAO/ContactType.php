@@ -374,7 +374,7 @@ AND   ( p.is_active = 1 OR p.id IS NULL )
      *
      */
     static function isaSubType( $subType ) {
-        return in_array( $subType, self::subTypes( ) );
+        return in_array( $subType, self::subTypes( null, true ) );
     }
     
     /**
@@ -429,7 +429,7 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
      *
      */
     static function suppressSubTypes( &$subTypes ) {
-        $subTypes = array_diff( $subTypes, self::subTypes( ) );
+        $subTypes = array_diff( $subTypes, self::subTypes( null, true ) );
         return $subTypes;
     }
 
@@ -444,7 +444,7 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
      *
      */
     static function isExtendsContactType( $subType, $contactType ) {
-        return in_array( $subType, self::subTypes( $contactType ) );
+        return in_array( $subType, self::subTypes( $contactType, true ) );
     }
 
     /**
