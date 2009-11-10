@@ -94,7 +94,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
      */
     function preProcess( ) 
 	{
-		$this->_id    = $this->get( 'id' );
+		$this->_id = $this->get( 'id' );
         
         if ( $this->_id ) {
             $breadCrumb = array( array('title' => ts('Manage Groups'),
@@ -194,7 +194,6 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
      */
     public function buildQuickForm( ) 
 	{
-        
         if ( $this->_action == CRM_Core_Action::DELETE ) {
             $this->addButtons( array(
                                      array ( 'type'      => 'next',
@@ -350,7 +349,6 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
      */
     public function postProcess( ) 
 	{
-        
         $updateNestingCache = false;
         if ($this->_action & CRM_Core_Action::DELETE ) {
             CRM_Contact_BAO_Group::discard( $this->_id );
@@ -411,16 +409,6 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
             require_once 'CRM/Contact/BAO/GroupNestingCache.php';
             CRM_Contact_BAO_GroupNestingCache::update( );
         }
-
-        require_once 'CRM/Utils/Recent.php';
-
-        // add the recently added group
-        CRM_Utils_Recent::add( $group->title,
-                               CRM_Utils_System::url( 'civicrm/group/search', 'reset=1&force=1&context=smog&gid=' . $group->id ),
-                               $group->id,
-                               'Group',
-                               null,
-                               null );
     }
 }
 

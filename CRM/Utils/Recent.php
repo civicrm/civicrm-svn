@@ -33,12 +33,11 @@
  *
  */
 
-
-
 /**
  *
  */
-class CRM_Utils_Recent {
+class CRM_Utils_Recent 
+{
     
     /**
      * max number of items in queue
@@ -64,7 +63,8 @@ class CRM_Utils_Recent {
      * @access public
      * @static
      */
-    static function initialize( ) {
+    static function initialize( ) 
+    {
         if ( ! self::$_recent ) {
             $session =& CRM_Core_Session::singleton( );
             self::$_recent = $session->get( self::STORE_NAME );
@@ -81,7 +81,8 @@ class CRM_Utils_Recent {
      * @access public
      * @static
      */
-    static function &get( ) {
+    static function &get( ) 
+    {
         self::initialize( );
         return self::$_recent;
     }
@@ -105,9 +106,9 @@ class CRM_Utils_Recent {
                          $contactId, 
                          $contactName, 
                          $imageUrl = null,
-                         $subtype  = null ) {
+                         $subtype  = null ) 
+    {
         self::initialize( );
-
         $session =& CRM_Core_Session::singleton( );
 
         // make sure item is not already present in list
@@ -147,9 +148,9 @@ class CRM_Utils_Recent {
      * @access public
      * @static
      */
-    static function del( $id ) {
+    static function del( $id ) 
+    {
         self::initialize( );
-
         $tempRecent = self::$_recent;
         
         self::$_recent = '';
@@ -165,7 +166,6 @@ class CRM_Utils_Recent {
         $session->set( self::STORE_NAME, self::$_recent );
     }
 
-
     /**
      * delete an item from the recent stack
      *
@@ -175,7 +175,8 @@ class CRM_Utils_Recent {
      * @access public
      * @static
      */
-    static function delContact( $id ) {
+    static function delContact( $id ) 
+    {
         self::initialize( );
         
         $tempRecent = self::$_recent;
@@ -194,7 +195,6 @@ class CRM_Utils_Recent {
         $session =& CRM_Core_Session::singleton( );
         $session->set( self::STORE_NAME, self::$_recent );
     }
-
 }
 
 

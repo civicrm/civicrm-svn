@@ -129,6 +129,10 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         $transaction->commit( );
 
         CRM_Utils_Hook::post( 'delete', 'Group', $id, $group );
+
+        // delete the recently created Group
+        require_once 'CRM/Utils/Recent.php';
+        CRM_Utils_Recent::del( $id );
     }
 
 
@@ -409,6 +413,14 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
             CRM_Utils_Hook::post( 'create', 'Group', $group->id, $group ); 
         }
 
+        require_once 'CRM/Utils/Recent.php';
+        // add the recently added group
+        CRM_Utils_Recent::add( $group->title,
+                               CRM_Utils_System::url( 'civicrm/group/search', 'reset=1&force=1&context=smog&gid=' . $group->id ),
+                               $group->id,
+                               'Group',
+                               null,
+                               null );
         return $group;
     }
 
