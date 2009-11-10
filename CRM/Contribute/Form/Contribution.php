@@ -814,10 +814,28 @@ WHERE  contribution_id = {$this->_id}
         }
         
         if ( empty( $this->_lineItems ) ) {
+            $buildPriceSet = false;
             require_once 'CRM/Price/BAO/Set.php';
             $priceSets = CRM_Price_BAO_Set::getAssoc( false, 'CiviContribute');
-            $hasPriceSets = false;
             if ( !empty( $priceSets ) && !$this->_ppID ) {
+                $buildPriceSet = true;
+            }
+            
+            // don't allow price set for contribution if it is related to participant,
+            // and if we already have line items for that participant. CRM-5095
+            if ( $buildPriceSet && $this->_id ) {
+                $componentDetails = CRM_Contribute_BAO_Contribution::getComponentDetails( $this->_id );
+                if ( $participantID = CRM_Utils_Array::value( 'participant', $componentDetails ) ) {
+                    require_once 'CRM/Price/BAO/LineItem.php';
+                    $participantLI = CRM_Price_BAO_LineItem::getLineItems( $participantID );
+                    if ( !CRM_Utils_System::isNull( $participantLI ) ) {
+                        $buildPriceSet = false;  
+                    }
+                }
+            }
+            
+            $hasPriceSets = false;
+            if ( $buildPriceSet ) {
                 $hasPriceSets = true;
                 $element =& $this->add( 'select', 'price_set_id', ts( 'Choose price set' ),
                                         array( '' => ts( 'Choose price set' )) + $priceSets,
