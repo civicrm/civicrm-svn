@@ -1,6 +1,4 @@
 {if $showCMS }{*true if is_cms_user field is set *}
- {* NOTE: We are currently not supporting the Drupal registration mode where user enters their password. But logic is left here for when we figure it out. *}
-
    <fieldset class="crm_user-group">
       <div class="messages help cms_user_help_section">
 	 {if !$isCMS}
