@@ -660,24 +660,29 @@ class CRM_UF_Form_Field extends CRM_Core_Form
      */
     static function formRuleSubType( $fieldType, $groupType, &$errors )
     { 
-        if( in_array( $fieldType, array('Participant','Contribution','Membership') ) ) {
+        if( in_array( $fieldType, array( 'Participant', 'Contribution', 'Membership') ) ) {
             $individualSubTypes  = CRM_Contact_BAO_ContactType::subTypes( 'Individual' );
             foreach( $groupType as $value ) {
-                if ( !in_array( $value, $individualSubTypes ) ) {
+                if ( !in_array( $value, $individualSubTypes ) && 
+                     !in_array( $value, array( 'Participant', 'Contribution', 'Membership',
+                                               'Individual' ) ) ) {
                     $errors['field_name'] = 
-                        ts( 'Cannot add or update profile field "%1" with combination of  Household or Organization or any subtypes of Household or Organisation.',array( 1=>$fieldType ) );
+                        ts( 'Cannot add or update profile field "%1" with combination 
+                             of  Household or Organization or any subtypes of Household or 
+                             Organisation.', array( 1 => $fieldType ) );
                     break;
                 }
             }  
         } else {
             $basicTypes  = CRM_Contact_BAO_ContactType::getBasicType( $groupType );
-	    if( $basicTypes ) {
-	        if( !in_array( $fieldType, $basicTypes ) ) {
-		    $errors['field_name'] = 
-		        ts( 'Cannot add or update profile field type "%1" with combination of subtype other than "%1".',array( 1=> $fieldType ) ); 
-		}
-	    }
-        }
+            if( $basicTypes ) {
+                if( !in_array( $fieldType, $basicTypes ) ) {
+                    $errors['field_name'] = 
+                        ts( 'Cannot add or update profile field type "%1" with combination 
+                         of subtype other than "%1".',array( 1=> $fieldType ) ); 
+                }
+            }
+        }      
     }
     
     
@@ -815,23 +820,25 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             } 
             break;
         default:
-	  if ( CRM_Contact_BAO_ContactType::isaSubType( $fieldType ) ) {
-	      $profileType = CRM_Core_BAO_UFField::getProfileType( $fields['group_id'] );
-	      if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
-		  if ( $fieldType != $profileType ) {
-		      $errors['field_name'] = 
-			  ts( 'Cannot add or update profile field type "%1" with combination of "%2".', array( 1 => $fieldType, 2 => $profileType ) );
-		  }
-	      } else {
-		  $basicType = CRM_Contact_BAO_ContactType::getBasicType( $fieldType );
-		  if ( $profileType && 
-		       $profileType != $basicType  &&
-		       $profileType != 'Contact'   ) {
-		      $errors['field_name'] = 
-			  ts( 'Cannot add or update profile field type "%1" with combination of "%2".', array( 1 => $fieldType, 2 => $profileType ) );    
-		  }
-	      }        
-	    }
+            if ( CRM_Contact_BAO_ContactType::isaSubType( $fieldType ) ) {
+                $profileType = CRM_Core_BAO_UFField::getProfileType( $fields['group_id'] );
+                if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
+                    if ( $fieldType != $profileType ) {
+                        $errors['field_name'] = 
+                            ts( 'Cannot add or update profile field type "%1" with combination 
+                                 of "%2".', array( 1 => $fieldType, 2 => $profileType ) );
+                    }
+                } else {
+                    $basicType = CRM_Contact_BAO_ContactType::getBasicType( $fieldType );
+                    if ( $profileType && 
+                         $profileType != $basicType  &&
+                         $profileType != 'Contact'   ) {
+                        $errors['field_name'] = 
+                            ts( 'Cannot add or update profile field type "%1" with combination 
+                                 of "%2".', array( 1 => $fieldType, 2 => $profileType ) );    
+                    }
+                }        
+            }
         }
         
         return empty($errors) ? true : $errors;
