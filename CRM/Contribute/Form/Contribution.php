@@ -410,14 +410,14 @@ WHERE  contribution_id = {$this->_id}
                                                                         $softCredit['soft_credit_to'], 'sort_name' );
                 
             }
-            $this->_values['soft_credit_to' ] = $softCredit['sort_name'     ];
-            $this->_values['softID'         ] = $softCredit['soft_credit_id'];
-            $this->_values['soft_contact_id'] = $softCredit['soft_credit_to'];
+            $this->_values['soft_credit_to' ] = CRM_Utils_Array::value( 'sort_name',      $softCredit);
+            $this->_values['softID'         ] = CRM_Utils_Array::value( 'soft_credit_id', $softCredit);
+            $this->_values['soft_contact_id'] = CRM_Utils_Array::value( 'soft_credit_to', $softCredit);
             
-            $this->_values['pcp_made_through_id']  = $softCredit['pcp_id'];
-            $this->_values['pcp_display_in_roll' ] = $softCredit['pcp_display_in_roll'];
-            $this->_values['pcp_roll_nickname' ]   = $softCredit['pcp_roll_nickname'];
-            $this->_values['pcp_personal_note' ]   = $softCredit['pcp_personal_note'];
+            $this->_values['pcp_made_through_id']  = CRM_Utils_Array::value( 'pcp_id',              $softCredit);
+            $this->_values['pcp_display_in_roll' ] = CRM_Utils_Array::value( 'pcp_display_in_roll', $softCredit);
+            $this->_values['pcp_roll_nickname' ]   = CRM_Utils_Array::value( 'pcp_roll_nickname',   $softCredit);
+            $this->_values['pcp_personal_note' ]   = CRM_Utils_Array::value( 'pcp_personal_note',   $softCredit);
             
             //display check number field only if its having value or its offline mode.
             if ( CRM_Utils_Array::value( 'payment_instrument_id', $this->_values ) == CRM_Core_OptionGroup::getValue( 'payment_instrument', 'Check', 'name' ) 
@@ -921,7 +921,7 @@ WHERE  contribution_id = {$this->_id}
         $errors = array( );
         
         //check if contact is selected in standalone mode
-        if ( isset( $fields[contact_select_id] ) && !$fields[contact_select_id] ) {
+        if ( isset( $fields['contact_select_id'] ) && !$fields['contact_select_id'] ) {
             $errors['contact'] = ts('Please select a contact or create new contact');
         }
          

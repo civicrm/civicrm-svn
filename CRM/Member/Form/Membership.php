@@ -684,7 +684,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                 $params['contribution_source'] = "{$membershipType} Membership: Offline membership signup (by {$userName})";
             }
             
-            if ( $formValues['send_receipt'] ) {
+            if ( CRM_Utils_Array::value( 'send_receipt', $formValues ) ) {
                 $params['receipt_date'] = $params['receive_date'];
             }
             

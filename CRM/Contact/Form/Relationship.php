@@ -601,7 +601,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                 }
 
                 $this->set( 'contact_type', $type );
-                $this->set( 'contact_sub_type', $sub_type );
+                $this->set( 'contact_sub_type', $subType );
                 if ( $type == 'Individual' || $type == 'Organization' || $type == 'Household' ) {
                     $searchValues[] = array( 'contact_type', '=', $type, 0, 0 );
                     $contactTypeAdded = true;

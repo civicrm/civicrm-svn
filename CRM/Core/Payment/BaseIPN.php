@@ -114,7 +114,7 @@ class CRM_Core_Payment_BaseIPN {
             return false;
         }
         $objects['contributionType'] = $contributionType;
-
+        $paymentProcessorID          = null;
         if ( $input['component'] == 'contribute' ) {
             // get the contribution page id from the contribution
             // and then initialize the payment processor from it

@@ -95,7 +95,7 @@ class CRM_Custom_Form_CustomData
         // we should use simplified formatted groupTree
         $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, $form->_groupCount, $form );
 
-        if ( is_array($form->_groupTree) ) {
+        if ( isset($form->_groupTree) && is_array($form->_groupTree) ) {
             $keys = array_keys($groupTree);
             foreach ( $keys as $key ) {
                 $form->_groupTree[$key] = $groupTree[$key];

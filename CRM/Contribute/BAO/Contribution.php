@@ -124,8 +124,8 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
         $contribution->id        = CRM_Utils_Array::value( 'contribution', $ids );
 
         // also add financial_trxn details as part of fix for CRM-4724
-        $contribution->trxn_result_code = $params['trxn_result_code'];
-        $contribution->payment_processor = $params['payment_processor'];
+        $contribution->trxn_result_code  = CRM_Utils_Array::value('trxn_result_code',  $params );
+        $contribution->payment_processor = CRM_Utils_Array::value('payment_processor', $params );
                                     
         require_once 'CRM/Utils/Rule.php';
         if (!CRM_Utils_Rule::currencyCode($contribution->currency)) {
@@ -1004,7 +1004,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
 
         $cs =& new CRM_Contribute_DAO_ContributionSoft( );
         $cs->copyValues( $params );
-
+        $softContribution = array();
         if ( $cs->find(true) ) {
             if ( $all ){
                 foreach ( array ('pcp_id','pcp_display_in_roll', 'pcp_roll_nickname', 'pcp_personal_note' ) as $key=>$val ) {

@@ -687,7 +687,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         // $values['event_id'] is empty, then return 
         // instead of proceeding further.
         
-        if ( ( $values['_qf_Participant_next'] == 'Delete' ) ||  
+        if ( ( CRM_Utils_Array::value( '_qf_Participant_next', $values) == 'Delete' ) ||  
              ( ! $values['event_id'] ) 
              ) {
             return true;
@@ -781,7 +781,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
                 $params['amount']       = $this->_values['discount'][$discountId][$params['amount']]['value'];
                 $this->assign( 'amount_level', $params['amount_level'] );
 
-            } else if ( ! isset( $params['priceSetId'] ) ) {
+            } else if ( ! isset( $params['priceSetId'] ) && CRM_Utils_Array::value('amount', $params ) ) {
                 $params['amount_level'] = $this->_values['fee'][$params['amount']]['label'];
                 $params['amount']       = $this->_values['fee'][$params['amount']]['value'];
                 $this->assign( 'amount_level', $params['amount_level'] );
@@ -1269,7 +1269,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         
         if ( ( $this->_action & CRM_Core_Action::UPDATE ) ) {
             $statusMsg = ts('Event registration information for %1 has been updated.', array(1 => $this->_contributorDisplayName));
-            if ( $params['send_receipt']  && count($sent) ) {
+            if ( CRM_Utils_Array::value( 'send_receipt', $params ) && count($sent) ) {
                 $statusMsg .= ' ' .  ts('A confirmation email has been sent to %1', array(1 => $this->_contributorEmail));
             }
             

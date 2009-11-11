@@ -208,9 +208,8 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             list( $defaults['start_date' ] ) = CRM_Utils_Date::setDateDefaults( $startDate );
             list( $defaults['create_date'] ) = CRM_Utils_Date::setDateDefaults( $createDate );
             
-            if ( $this->_values['acknowledge_date'] ) {
-                list( $defaults['acknowledge_date'] ) = CRM_Utils_Date::setDateDefaults( 
-                                                        CRM_Utils_Array::value( 'acknowledge_date', $this->_values ) );
+            if ( $ackDate = CRM_Utils_Array::value( 'acknowledge_date', $this->_values ) ) {
+                list( $defaults['acknowledge_date'] ) = CRM_Utils_Date::setDateDefaults( $ackDate );
             }
             
             //check is this pledge pending 
@@ -470,7 +469,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         $errors = array( );
 
         //check if contact is selected in standalone mode
-        if ( isset( $fields[contact_select_id] ) && !$fields[contact_select_id] ) {
+        if ( isset( $fields['contact_select_id'] ) && !$fields['contact_select_id'] ) {
             $errors['contact'] = ts('Please select a valid contact or create new contact');
         }
         
