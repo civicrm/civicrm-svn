@@ -41,6 +41,10 @@
         <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/setting/misc" q="reset=1&destination=`$destination`"}" title="{$linkTitle}">{ts}Miscellaneous{/ts}</a></td>
         <td>{ts}Contact search behaviors, RECAPTCHA configuration.{/ts}</li>
     </tr>
+    <tr class="even">
+        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/options/subtype" q="reset=1&destination=`$destination`"}" title="{$linkTitle}">{ts}Contact Types{/ts}</a></td>
+        <td>{ts}You can modify the names of the built-in contact types (Individual, Household, Organizations), and you can create or modify "contact subtypes" for more specific uses (e.g. Student, Parent, Team, etc.).{/ts}</li>
+    </tr>
 
     <tr class="columnheader">
         <td colspan="2">{ts}Sending Emails (includes contribution receipts and event confirmations){/ts}</td>
@@ -60,14 +64,17 @@
     <tr class="even">
         <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/paymentProcessor" q="action=add&reset=1&pp=PayPal&destination=`$destination`"}" title="{$linkTitle}">{ts}Payment Processors{/ts}</a></td>
         <td>{ts}Select and configure one or more payment processing services for online contributions, events and / or membership fees.{/ts}</td>
-    </tr>
-  
+    </tr>  
     {if $config->userFramework EQ 'Drupal'}
         <tr class="even">
             <td class="tasklist"><a href="{$config->userFrameworkBaseURL}?q=admin/user/permissions&destination=civicrm/admin/configtask">{ts}Permissions for Anonymous Users{/ts}</a></td>
             <td>{ts}You will also need to change Drupal permissions so anonymous users can make contributions, register for events and / or use profiles to enter contact information.{/ts} {docURL page="Default Permissions and Roles"}</li>
         </tr>
     {/if}
+    <tr class="even">
+        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/messageTemplates" q="selectedChild=workflow&reset=1&destination=`$destination`"}" title="{$linkTitle}">{ts}System Workflow Templates{/ts}</a></td>
+        <td>{ts}Review and modify the templates used for system-generated emails, including contribution receipts and event registration confirmations.{/ts}</td>
+    </tr>
 </table>
 <br />
 
