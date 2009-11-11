@@ -24,7 +24,7 @@
     {foreach from=$rows item=row}
     	<tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
         <td>{$row.label}</td>
-        <td>{if $row.parent}{$row.parent}{else}{ts}(built-in){/ts}{/if}</td>
+        <td>{if $row.parent}{$row.parent_label}{else}{ts}(built-in){/ts}{/if}</td>
         <td>{$row.description}</td>
         <td>{$row.action|replace:'xx':$row.id}</td>
     </tr>

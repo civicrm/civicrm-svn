@@ -119,7 +119,7 @@ WHERE  parent_id IS NULL
         return array_keys( self::basicTypeInfo( $all ) );
     }
 
-    static function basicTypePairs( $all = false, $typeName = null ) {
+    static function basicTypePairs( $all = false, $typeName = null, $key = 'name' ) {
         $subtypes = self::basicTypeInfo( $all );
 
         if ( $typeName ) {
@@ -129,7 +129,8 @@ WHERE  parent_id IS NULL
         } else {
             $pairs = array( );
             foreach ( $subtypes as $name => $info ) {
-                $pairs[$name] = $info['label'];
+                $index = ($key == 'name') ? $name : $info[$key];
+                $pairs[$index] = $info['label'];
             }
             return $pairs;
         }
@@ -169,7 +170,7 @@ WHERE  parent_id IS NULL
             }
 
             $sql = "
-SELECT subtype.*, parent.name as parent
+SELECT subtype.*, parent.name as parent, parent.label as parent_label
 FROM   civicrm_contact_type subtype
 INNER JOIN civicrm_contact_type parent ON subtype.parent_id = parent.id
 WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE} 
@@ -183,6 +184,7 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
                 $value = array( );
                 CRM_Core_DAO::storeValues( $dao, $value );
                 $value['parent'] = $dao->parent;
+                $value['parent_label'] = $dao->parent_label;
                 $_cache[$argString][$dao->name] = $value;
             }
         }
@@ -259,7 +261,7 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
             $_cache[$argString] = array( );
 
             $sql = "
-SELECT type.*, parent.name as parent
+SELECT type.*, parent.name as parent, parent.label as parent_label
 FROM      civicrm_contact_type type
 LEFT JOIN civicrm_contact_type parent ON type.parent_id = parent.id
 WHERE  type.name IS NOT NULL 
@@ -277,6 +279,7 @@ WHERE  type.name IS NOT NULL
                 CRM_Core_DAO::storeValues( $dao, $value );
                 if ( array_key_exists('parent_id', $value) ) {
                     $value['parent'] = $dao->parent;
+                    $value['parent_label'] = $dao->parent_label;
                 }
                 $_cache[$argString][$dao->name] = $value;
             }

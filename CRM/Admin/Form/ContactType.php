@@ -62,7 +62,7 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form
                         'objectExists',
                         array( 'CRM_Contact_DAO_ContactType', $this->_id ) );
         $contactType = $this->add( 'select', 'parent_id', ts('Basic Contact Type'),
-                                   array('1'=>ts('Individual'),'2'=>ts('Household'),'3'=>ts('Organization')));
+                                   CRM_Contact_BAO_ContactType::basicTypePairs( false, null, 'id' ) );
         if ($this->_action & CRM_Core_Action::UPDATE ) {
             $contactType->freeze( );
             // We'll display actual "name" for built-in types (for reference) when editing their label / image_URL
