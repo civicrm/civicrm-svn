@@ -586,9 +586,9 @@ UPDATE civicrm_contact
         $query = '
    SELECT  c.id, c.display_name, c.contact_type, ce.email 
      FROM  civicrm_contact c 
-LEFT JOIN  civicrm_email ce ON ce.contact_id=c.id 
-    WHERE  ce.is_primary = 1 AND c.id 
-       IN  (' . implode( ',', $contactIDs ) . ' ) LIMIT 20';
+LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
+    WHERE  c.id IN  (' . implode( ',', $contactIDs ) . ' ) LIMIT 20';
+       
         $dao = CRM_Core_DAO::executeQuery( $query );
         
         $contactLinks['msg'] = null;

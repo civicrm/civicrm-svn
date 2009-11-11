@@ -543,7 +543,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                     if ( $form->_context == 'dialog' ) {
                         require_once 'CRM/Contact/BAO/Contact/Utils.php';
                  
-		                 $contactLinks = CRM_Contact_BAO_Contact_Utils::formatContactIDSToLinks( $ids, true, true, $contactID );
+		                 $contactLinks = CRM_Contact_BAO_Contact_Utils::formatContactIDSToLinks( $ids, true, true );
 		
 		                 $duplicateContactsLinks = '<div class="matching-contacts-found">';
 		                 $duplicateContactsLinks .= ts('One matching contact was found. ', array('count' => count($contactLinks['rows']), 'plural' => '%count matching contacts were found.<br />'));                 
