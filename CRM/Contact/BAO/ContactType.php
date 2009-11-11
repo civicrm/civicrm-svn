@@ -119,22 +119,15 @@ WHERE  parent_id IS NULL
         return array_keys( self::basicTypeInfo( $all ) );
     }
 
-    static function basicTypePairs( $all = false, $typeName = null, $key = 'name' ) {
+    static function basicTypePairs( $all = false, $key = 'name' ) {
         $subtypes = self::basicTypeInfo( $all );
 
-        if ( $typeName ) {
-            if ( array_key_exists($typeName, $subtypes) ) {
-                return $subtypes[$typeName]['label'];
-            }
-        } else {
-            $pairs = array( );
-            foreach ( $subtypes as $name => $info ) {
-                $index = ($key == 'name') ? $name : $info[$key];
-                $pairs[$index] = $info['label'];
-            }
-            return $pairs;
+        $pairs = array( );
+        foreach ( $subtypes as $name => $info ) {
+            $index = ($key == 'name') ? $name : $info[$key];
+            $pairs[$index] = $info['label'];
         }
-        return null;
+        return $pairs;
     }
 
     /**
@@ -591,6 +584,15 @@ WHERE name = %1";
                                             'is_active', $is_active );
     }
     
+    static function getLabel( $typeName ) {
+        $types = self::contactTypeInfo( true );
+
+        if ( array_key_exists($typeName, $types) ) {
+            return $types[$typeName]['label'];
+        }
+        return $typeName;    
+    }
+
     /**
      * Function to check whether allow to change any contact's subtype
      * on the basis of custom data and relationship of specific subtype

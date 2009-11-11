@@ -520,7 +520,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         eval( 'CRM_Contact_Form_Edit_' . $this->_contactType . '::buildQuickForm( $this, $this->_action );' );
         
         // subtype is a common field. lets keep it here
-        $typeLabel = CRM_Contact_BAO_ContactType::basicTypePairs( true, $this->_contactType );
+        $typeLabel = CRM_Contact_BAO_ContactType::getLabel( $this->_contactType );
         $subtypes  = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
         $subtypeElem =& $this->addElement( 'select', 'contact_sub_type', 
                                            ts('Contact Type'), array( '' => $typeLabel ) + $subtypes );

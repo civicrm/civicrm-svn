@@ -95,7 +95,7 @@ class CRM_Contact_Form_Edit_Individual {
         //Shared Address Element
         require_once 'CRM/Contact/BAO/ContactType.php';
         if( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
-            $label = CRM_Contact_BAO_ContactType::basicTypePairs( false, 'Household' );
+            $label = CRM_Contact_BAO_ContactType::getLabel( 'Household' );
             $form->addElement( 'checkbox', 'use_household_address', null, 
                                ts('Use %1 Address',array( 1=> $label ) ) );
         }

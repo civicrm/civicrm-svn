@@ -136,7 +136,7 @@ class CRM_Contact_Task {
                                                   'result' => true ),
                                   );
             if( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
-                $label = CRM_Contact_BAO_ContactType::basicTypePairs( false, 'Household' );
+                $label = CRM_Contact_BAO_ContactType::getLabel( 'Household' );
                 self::$_tasks[9] = array( 'title'  => ts( 'Add Contacts to %1',
                                                           array( 1=> $label ) ) ,
                                           'class'  => 'CRM_Contact_Form_Task_AddToHousehold',
@@ -144,7 +144,7 @@ class CRM_Contact_Task {
                                           );
             }
             if( CRM_Contact_BAO_ContactType::isActive( 'Organization' ) ) {
-                $label = CRM_Contact_BAO_ContactType::basicTypePairs( false, 'Organization' );
+                $label = CRM_Contact_BAO_ContactType::getLabel( 'Organization' );
                 self::$_tasks[10] = array( 'title'  => ts( 'Add Contacts to %1',
                                                            array( 1=> $label ) ) ,
                                            'class'  => 'CRM_Contact_Form_Task_AddToOrganization',
