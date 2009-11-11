@@ -789,8 +789,13 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             } else {
                 if ( ! $this->_online ) {
                     $lineItem = array( );
-                    CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], 
-                                                      $params, $lineItem[0] );
+                    if ( $this->_action & CRM_Core_Action::UPDATE ) {
+                        require_once 'CRM/Price/BAO/LineItem.php';
+                        $lineItem[0] = CRM_Price_BAO_LineItem::getLineItems( $this->_participantId );
+                    } elseif ( $this->_action & CRM_Core_Action::ADD ) {
+                        CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], 
+                                                          $params, $lineItem[0] );
+                    }
                     $this->set( 'lineItem', $lineItem );
                     $this->assign( 'lineItem', $lineItem );
                     $this->_lineItem = $lineItem;
@@ -1082,7 +1087,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         }
 
         // also store lineitem stuff here        
-        if ( $this->_lineItem ) {
+        if ( $this->_lineItem  & $this->_action & CRM_Core_Action::ADD ) {
             require_once 'CRM/Price/BAO/LineItem.php';
             foreach ( $this->_contactIds as $num => $contactID ) {
                 foreach ( $this->_lineItem as $key => $value ) {
