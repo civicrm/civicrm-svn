@@ -319,7 +319,8 @@ WHERE  type.name IS NOT NULL
             $_cache = array( );
         }
 
-        $argString = $all ? '1' : '0';
+        $argString  = $all ? '1' : '0';
+        $argString .= $isSeperator ? '_1' : '_0';
         if ( ! array_key_exists( $argString, $_cache ) ) {
             $_cache[$argString] = array( );
 
