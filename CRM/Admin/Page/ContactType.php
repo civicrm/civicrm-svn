@@ -124,21 +124,15 @@ class CRM_Admin_Page_ContactType extends CRM_Core_Page_Basic
         foreach( $rows  as $key=>$value ) {
             $mask = null;
             if( CRM_Utils_Array::value( 'is_reserved', $value ) ) {
-                $mask -= CRM_Core_Action::DELETE + 1;
-                if( CRM_Utils_Array::value( 'is_active', $value )) {
-                    $mask -= CRM_Core_Action::ENABLE;
-                } else {
-                    $mask -= CRM_Core_Action::DISABLE;
-                }
+                $mask = CRM_Core_Action::UPDATE;
             } else {
                 $mask -= CRM_Core_Action::DELETE - 2 ;
-                if( CRM_Utils_Array::value( 'is_active', $value )) {
+                if( CRM_Utils_Array::value( 'is_active', $value ) ) {
                     $mask -= CRM_Core_Action::ENABLE;
                 } else {
                     $mask -= CRM_Core_Action::DISABLE;
                 }
             }
-
             $rows[$key]['action'] = CRM_Core_Action::formLink( self::links(), $mask,
                                                                array('id' =>$value['id'] ) );
         }

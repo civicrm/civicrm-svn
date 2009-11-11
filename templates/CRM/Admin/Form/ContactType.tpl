@@ -38,7 +38,9 @@
         {/if}
         {$form.description.html}
      </dd>
-    <dt>{$form.is_active.label}</dt><dd>{$form.is_active.html}</dd>
+     {if $is_parent}
+     <dt>{$form.is_active.label}</dt><dd>{$form.is_active.html}</dd>
+     {/if}
   </dl>
 {/if}
   <dl> 
