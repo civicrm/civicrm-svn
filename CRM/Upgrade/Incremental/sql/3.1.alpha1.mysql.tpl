@@ -224,17 +224,7 @@
         SET is_recur  = 1,
             url_recur = 'https://www.sandbox.paypal.com/'
         WHERE payment_processor_type = 'PayPal' AND is_test = 1;
-            
-    ALTER TABLE `civicrm_openid`
-        ADD `endpoint_url` text NULL DEFAULT NULL AFTER location_type_id,
-        ADD `claimed_id`   text NULL DEFAULT NULL AFTER endpoint_url,
-        ADD `display_id`   text NULL DEFAULT NULL AFTER claimed_id,
-        ADD UNIQUE `UI_endpoint_url_claimed_id` (`endpoint_url`(166), `claimed_id`(166));
-        
-    ALTER TABLE `civicrm_openid`
-        DROP INDEX UI_openid,
-        DROP openid;
-        
+                    
 --  CRM-5313 
 --  migrate the contribution id's to participant id's in lineitem table
     UPDATE civicrm_line_item AS li
