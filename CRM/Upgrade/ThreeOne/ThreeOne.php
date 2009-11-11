@@ -107,7 +107,7 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
         $domain->find(true);
         if ( $domain->config_backend ) {
             $defaults = unserialize($domain->config_backend);
-            if ( $dateFormat = $defaults['dateformatQfDate'] ) {
+            if ( $dateFormat = CRM_Utils_Array::value( 'dateformatQfDate', $defaults ) ) {
                 $dateFormatArray =  explode(" ", $dateFormat );
 
                 //replace new date format based on previous month format
@@ -129,16 +129,16 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
             }
             // %p - lowercase ante/post meridiem ('am', 'pm')
             // %P - uppercase ante/post meridiem ('AM', 'PM')
-            if ( $dateTimeFormat = $defaults['dateformatQfDatetime'] ) {
+            if ( $dateTimeFormat = CRM_Utils_Array::value( 'dateformatQfDatetime', $defaults ) ) {
                 $defaults['timeInputFormat'] = 2;
                 $dateTimeFormatArray =  explode(" ", $dateFormat );
                 if ( in_array('%P', $dateTimeFormatArray) || in_array('%p', $dateTimeFormatArray)) {
                     $defaults['timeInputFormat'] = 1;
                 }
+                unset($defaults['dateformatQfDatetime']);
             }
 
             unset($defaults['dateformatQfDate']);
-            unset($defaults['dateformatQfDatetime']);
             unset($defaults['dateformatTime']);
             require_once "CRM/Core/BAO/Setting.php";
             CRM_Core_BAO_Setting::add($defaults);                            
