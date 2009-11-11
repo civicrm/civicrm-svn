@@ -891,8 +891,7 @@ class CRM_Utils_Date
     {
         $birthDateFormat = null;
         if ( !$format ) {
-            $birthDateFormat = CRM_Core_Dao::getFieldValue('CRM_Core_DAO_PreferencesDate', 
-                                                           'birth', 'date_format', 'name' );
+            $birthDateFormat = self::getDateFormat( 'birth');
         }
         
         $supportableFormats = array(
@@ -1376,7 +1375,9 @@ class CRM_Utils_Date
     
     /**
      * Function get date format
+     * @param  string $formatType Date name e.g. birth
      *
+     * @return string $format 
      */
     static function getDateFormat( $formatType = null ) {
         $format = null;
