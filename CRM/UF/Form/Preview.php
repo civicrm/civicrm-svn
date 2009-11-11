@@ -73,6 +73,7 @@ class CRM_UF_Form_Preview extends CRM_Core_Form
     {     
         $flag  = false;
         $this->_gid = $this->get( 'id' );
+        $this->set( 'gid', $this->_gid );
         $field = CRM_Utils_Request::retrieve('field', 'Boolean', $this, true , 0);
 
         if( $field ) {
