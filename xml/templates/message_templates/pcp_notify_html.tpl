@@ -16,7 +16,7 @@
 
   <!-- BEGIN HEADER -->
   <!-- You can add table row(s) here with logo or other header elements -->
-  <!-- BEGIN HEADER -->
+  <!-- END HEADER -->
 
   <!-- BEGIN CONTENT -->
 
