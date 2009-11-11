@@ -114,10 +114,15 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
                 //%b month name [abbreviated]
                 //%B full month name ('January'..'December')
                 //%m decimal number, 0-padded ('01'..'12')                
-                if ( in_array('%b', $dateFormatArray) ) {
-                    $defaults['dateInputFormat']= 'd M, y';
-                } else if ( in_array('%B', $dateFormatArray) ) {
-                    $defaults['dateInputFormat']= 'd MM, y';
+
+                if ( $dateFormat == '%b %d %Y' ) {
+                    $defaults['dateInputFormat']= 'mm/dd/yy';
+                } else if ( $dateFormat == '%d-%b-%Y') {
+                    $defaults['dateInputFormat']= 'dd-mm-yy';
+                } else if ( in_array( '%b', $dateFormatArray ) ) {
+                    $defaults['dateInputFormat']= 'M d, yy';
+                } else if ( in_array( '%B', $dateFormatArray ) ) {
+                    $defaults['dateInputFormat']= 'MM d, yy';
                 } else {
                     $defaults['dateInputFormat']= 'mm/dd/yy';
                 }
