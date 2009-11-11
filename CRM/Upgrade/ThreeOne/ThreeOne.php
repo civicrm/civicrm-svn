@@ -94,7 +94,7 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
                 if ( isset( $values['smtpPassword'] ) ) {
                     require_once 'CRM/Utils/Crypt.php';
                     $values['smtpPassword'] = CRM_Utils_Crypt::encrypt( $values['smtpPassword'] );
-                    $mailingDomain->mailing_backend = setialize( $values );
+                    $mailingDomain->mailing_backend = serialize( $values );
                     $mailingDomain->save( );
                 }
             }
