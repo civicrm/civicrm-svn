@@ -83,7 +83,8 @@ INSERT INTO civicrm_msg_template
       {fetch assign=subject file="`$smarty.const.SMARTY_DIR`/../../xml/templates/message_templates/`$vName`_subject.tpl"}
       {fetch assign=text    file="`$smarty.const.SMARTY_DIR`/../../xml/templates/message_templates/`$vName`_text.tpl"}
       {fetch assign=html    file="`$smarty.const.SMARTY_DIR`/../../xml/templates/message_templates/`$vName`_html.tpl"}
-      ('{$title}', '{$subject|escape:"quotes"}', '{$text|escape:"quotes"}', '{$html|escape:"quotes"}', @tpl_ovid_{$vName}, 1,          0),
-      ('{$title}', '{$subject|escape:"quotes"}', '{$text|escape:"quotes"}', '{$html|escape:"quotes"}', @tpl_ovid_{$vName}, 0,          1) {if $smarty.foreach.for_groups.last and $smarty.foreach.for_values.last};{else},{/if}
+      {* FIXME: CRM_Utils_File::sourceSQLFile() explodes the queries on semicolons without checking whether they’re not part of the string content, hence a gross hack *}
+        ('{$title}', '{$subject|replace:";":"_XXXSemicolonHackXXX_"|escape:"quotes"}', '{$text|replace:";":"_XXXSemicolonHackXXX_"|escape:"quotes"}', '{$html|replace:";":"_XXXSemicolonHackXXX_"|escape:"quotes"}', @tpl_ovid_{$vName}, 1,          0),
+        ('{$title}', '{$subject|replace:";":"_XXXSemicolonHackXXX_"|escape:"quotes"}', '{$text|replace:";":"_XXXSemicolonHackXXX_"|escape:"quotes"}', '{$html|replace:";":"_XXXSemicolonHackXXX_"|escape:"quotes"}', @tpl_ovid_{$vName}, 0,          1) {if $smarty.foreach.for_groups.last and $smarty.foreach.for_values.last};{else},{/if}
     {/foreach}
   {/foreach}
