@@ -281,7 +281,7 @@ class CRM_Core_Menu
                 ? str_replace(',', '&', $item['path_arguments']) . '&reset=1' : 'reset=1';
             
             $value = array( 'title' => $item['title'],
-                            'desc'  => $item['desc'],
+                            'desc'  => CRM_Utils_Array::value( 'desc', $item ),
                             'id'    => strtr($item['title'], array('('=>'_', ')'=>'', ' '=>'',
                                                                    ','=>'_', '/'=>'_' 
                                                                    )
