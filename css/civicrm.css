@@ -1776,6 +1776,10 @@ div.grippie {
 	/*WIDTH: 89%;*/ 
 	FLOAT      : left
 	}
+	#crm-container div.buttons ul#actions {
+	    list-style-type:none;
+	    padding-left:0px;
+        }
 	#crm-container div.buttons #actions li {
 		float:left;
 		padding:0px;
