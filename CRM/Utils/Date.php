@@ -1373,4 +1373,22 @@ class CRM_Utils_Date
         
         return array( $date, $time );
     }
+    
+    /**
+     * Function get date format
+     *
+     */
+    static function getDateFormat( $formatType = null ) {
+        $format = null;
+        if ( $formatType ) {
+            $format = CRM_Core_Dao::getFieldValue( 'CRM_Core_DAO_PreferencesDate', 
+                                                   $formatType, 'date_format', 'name' );
+        }
+        
+        if ( !$format ) {
+            $config = CRM_Core_Config::singleton();
+            $format = $config->dateInputFormat; 
+        } 
+        return $format;
+    } 
 }
