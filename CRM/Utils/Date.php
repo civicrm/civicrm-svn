@@ -897,7 +897,7 @@ class CRM_Utils_Date
         
         $supportableFormats = array(
                                     'mm/dd'   => '%B %E%f',
-                                    'dd/mm'   => '%E%f %B'
+                                    'dd-mm'   => '%E%f %B'
                                     );
         
         if ( array_key_exists( $birthDateFormat, $supportableFormats ) ) {

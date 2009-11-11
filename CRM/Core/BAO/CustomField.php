@@ -1296,13 +1296,14 @@ SELECT id
         if ( $customFields[$customFieldId]['data_type'] == 'Date' ) {
             if ( ! CRM_Utils_System::isNull( $value ) ) {
                 $format = $customFields[$customFieldId]['date_format'];
-                if ( in_array( $format, array('dd/mm', 'mm/dd' ) ) ) {
+                if ( in_array( $format, array('dd-mm', 'mm/dd' ) ) ) {
                     $dateTimeArray = explode(' ', $value);
-                    
-                    $formatExplode = explode('/', $format);
-                    $dateExplode   = explode('/', $dateTimeArray[0]);
-                    $finalDate     = array_combine($formatExplode, $dateExplode );
-                    $value         = "{$finalDate['mm']}/{$finalDate['dd']}/1902";
+
+                    $separator = '/';
+                    if ( $format == 'dd-mm' ) {
+                        $separator = '-';
+                    }
+                    $value = $dateTimeArray[0] . $separator . '1902';
                     
                     if ( array_key_exists( 1, $dateTimeArray) ) {
                         $value .= ' ' . $dateTimeArray[1];
