@@ -38,7 +38,7 @@
         {/if}
         {$form.description.html}
      </dd>
-     {if $is_parent}
+     {if $is_parent OR $action eq 1}
      <dt>{$form.is_active.label}</dt><dd>{$form.is_active.html}</dd>
      {/if}
   </dl>
