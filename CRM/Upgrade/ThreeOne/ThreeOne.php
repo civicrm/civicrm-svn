@@ -142,7 +142,7 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
         $sql     = "SELECT id, form_values FROM civicrm_report_instance";
         $instDAO = CRM_Core_DAO::executeQuery( $sql );
         while ( $instDAO->fetch( ) ) {
-            $fromVal = unserialize($instDAO->form_values);
+            $fromVal = @unserialize($instDAO->form_values);
             foreach ( (array)$fromVal as $key => $value ) {
                 if ( strstr( $key, '_relative' ) ) {
                     $elementName =  substr($key, 0, (strlen($key) - strlen('_relative') ) );

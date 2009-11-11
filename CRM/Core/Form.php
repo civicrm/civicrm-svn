@@ -951,7 +951,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                 $attributes['format']  = $values['date_format'];
             }
             
-            if ( $values['time_format'] ) {
+            if ( CRM_Utils_Array::value( 'time_format', $values ) ) {
                 $attributes['timeFormat']  = $values['time_format'];
             }
             $attributes['startOffset'] = $values['start'];
