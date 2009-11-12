@@ -38,8 +38,12 @@
         <td>{ts}Configure a mapping provider (e.g. Google or Yahoo) to display maps for contact addresses and event locations.{/ts}</td>
     </tr>
     <tr class="even">
+        <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/setting/search" q="reset=1&destination=`$destination`"}" title="{$linkTitle}">{ts}Search Settings{/ts}</a></td>
+        <td>{ts}Adjust search behaviors including wildcards, and data to include in quick search results. Adjusting search settings can improve performance for larger datasets.{/ts}</li>
+    </tr>
+    <tr class="even">
         <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/setting/misc" q="reset=1&destination=`$destination`"}" title="{$linkTitle}">{ts}Miscellaneous{/ts}</a></td>
-        <td>{ts}Contact search behaviors, RECAPTCHA configuration.{/ts}</li>
+        <td>{ts}Version reporting and alerts, reCAPTCHA configuration and attachments.{/ts}</li>
     </tr>
     <tr class="even">
         <td class="tasklist nowrap"><a href="{crmURL p="civicrm/admin/options/subtype" q="reset=1&destination=`$destination`"}" title="{$linkTitle}">{ts}Contact Types{/ts}</a></td>
