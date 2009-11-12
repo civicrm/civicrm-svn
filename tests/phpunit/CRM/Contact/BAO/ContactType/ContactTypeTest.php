@@ -161,7 +161,7 @@ class CRM_Contact_BAO_ContactType_ContactTypeTest extends CiviUnitTestCase
                          'is_active' => 1
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
-        $this->assertEquals( $result['is_error'], 1,'In line '. __LINE__ );
+        $this->assertEquals( $result->is_error, 1,'In line '. __LINE__ );
         
         // params does not have name and lable keys
         $params = array( 'parent_id' => 1,
