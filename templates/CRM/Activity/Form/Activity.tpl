@@ -215,17 +215,18 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
                  </tr>
              {/if}
         {/if} {* End Delete vs. Add / Edit action *}
-        <tr>
-            <td>{$form.buttons.html}</td><td>
-       {if $action eq 4}
-                        <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=home"}" class="edit button" title="{ts}Edit{/ts}">
-                        <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
-                        </a>
-                        <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=delete&reset=1&id=$entityID&cid=$contactId&context=home"}" class="delete button" title="{ts}Delete{/ts}">
-                        <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
-                        </a>
-	{/if}
-		</td>
+        <tr class="buttons">
+            <td>{$form.buttons.html}</td>
+            <td>
+            {if $action eq 4}
+                <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=home"}" class="edit button" title="{ts}Edit{/ts}">
+                <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
+                </a>
+                <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=delete&reset=1&id=$entityID&cid=$contactId&context=home"}" class="delete button" title="{ts}Delete{/ts}">
+                <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
+                </a>
+	        {/if}
+		    </td>
         </tr> 
         </table>   
       </fieldset> 

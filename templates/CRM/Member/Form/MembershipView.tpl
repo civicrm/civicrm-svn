@@ -1,4 +1,3 @@
-<div class="form-item"> 
 <fieldset>
       <legend>{ts}View Membership{/ts}</legend>
     <table class="view-layout">
@@ -15,7 +14,7 @@
         <tr><td class="label">{ts}Reminder date{/ts}</td><td>{$reminder_date|crmDate}&nbsp;</td></tr>
     </table>
         {include file="CRM/Custom/Page/CustomDataView.tpl"}
-    <table class="form-layout">
+    <table class="form-layout buttons">
        <tr>   
          <td>&nbsp;</td>
             <td>
@@ -34,5 +33,4 @@
 	    {include file="CRM/Contribute/Form/Selector.tpl" context="Search"}	
 	{/if}
 </fieldset>  
-</div>  
  

@@ -170,7 +170,7 @@
 </fieldset>
 {/if}
 
-<table class="form-layout">
+<table class="form-layout buttons">
     <tr>
 	    <td>&nbsp;</td>
         <td>
