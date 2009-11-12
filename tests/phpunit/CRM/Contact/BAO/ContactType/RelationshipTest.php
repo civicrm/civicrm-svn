@@ -21,20 +21,20 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
     function setUp( ) 
     {        
         parent::setUp();
-
+        
         $params = array( 'first_name'   => 'Anne',     
                          'last_name'    => 'Grant',
                          'contact_type' => 'Individual',
                          );
         $this->individual = Contact::create( $params );
-
+        
         $params = array( 'first_name'   => 'Bill',     
                          'last_name'    => 'Adams',
                          'contact_type' => 'Individual',
                          'contact_sub_type' => 'Student'
                          );
         $this->indivi_student = Contact::create( $params );
-
+        
         $params = array( 'first_name'   => 'Alen',     
                          'last_name'    => 'Adams',
                          'contact_type' => 'Individual',
@@ -53,7 +53,6 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
                          );
         $this->organization_sponsor = Contact::create( $params );
         
-        $this->household = Contact::createHousehold( );
 
     }
 
@@ -108,29 +107,17 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $this->assertEquals( $result->contact_sub_type_b , 'Sponsor' );
         CRM_Contact_BAO_RelationshipType::del( $result->id );
 
-        //check for Household to Sponcer RelationshipType
-        $params = array( 'name_a_b'           => 'HouseholdToSponser',
-                         'name_b_a'           => 'SponsorToHousehold',
-                         'contact_type_a'     => 'Household',
-                         'contact_type_b'     => 'Organization',
-                         'contact_sub_type_b' => 'Sponsor',
-                         );
-        $result = CRM_Contact_BAO_RelationshipType::add( $params, $ids );
-        $this->assertEquals( $result->name_a_b , 'HouseholdToSponser' );
-        $this->assertEquals( $result->contact_type_a , 'Household' );
-        $this->assertEquals( $result->contact_type_b , 'Organization' );
-        $this->assertEquals( $result->contact_sub_type_b , 'Sponsor' );
-        CRM_Contact_BAO_RelationshipType::del( $result->id );
+
     }
 
     /**
-     * methods create relationshipe with invalid Relationships
+     * methods create relationshipe within same contact type with invalid Relationships
      * 
      */
-    function testRelationshipCreateInvalidRelationships( ) {
+    function testRelationshipCreateInvalidWithinSameType( ) {
         
         $relTypeIds = array( );
-
+        
         //check for Individual to Parent
         $relTypeParams = array( 'name_a_b'           => 'indivToparent',
                                 'name_b_a'           => 'parentToindiv',
@@ -153,6 +140,15 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         CRM_Contact_BAO_RelationshipType::del( $relType->id );
 
 
+    }
+    
+    /**
+     * methods create relationshipe within diff contact type with invalid Relationships
+     * 
+     */
+    function testRelationshipCreateInvalidWithinDiffType( ) {
+
+        $relTypeIds = array( );
         //check for Sponcer to Individual
         $relTypeParams = array( 'name_a_b'           => 'SponsorToIndiv',
                                 'name_b_a'           => 'IndivToSponsor',
@@ -197,37 +193,14 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $this->assertEquals( empty($relationshipIds), true , 'In line '. __LINE__ );
         CRM_Contact_BAO_RelationshipType::del( $relType->id );
 
-        
-        //check for Household to Sponcer
-        $relTypeParams =  array( 'name_a_b'           => 'HouseholdToSponser',
-                                 'name_b_a'           => 'SponsorToHousehold',
-                                 'contact_type_a'     => 'Individual',
-                                 'contact_sub_type_a' => 'Student',
-                                 'contact_type_b'     => 'Organization',
-                                 'contact_sub_type_b' => 'Sponser',
-                                 );
-        $relType = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
-
-        $params = array( 'relationship_type_id' => $relType->id.'_a_b',
-                         'contact_check'        => array( $this->individual => 1 )
-                         );
-        $ids = array('contact' => $this->household );
-
-        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)  
-            = CRM_Contact_BAO_Relationship::create( $params, $ids );
-
-        $this->assertEquals( $invalid, 1, 'In line '. __LINE__ );
-        $this->assertEquals( empty($relationshipIds), true , 'In line '. __LINE__ );
-        CRM_Contact_BAO_RelationshipType::del( $relType->id );
-
     }
     
     /**
-     * methods create relationshipe with valid data
-     * success expected
+     * methods create relationshipe within same contact type with valid data
+     * success expected 
      * 
      */
-    function testRelationshipCreate( ) {
+    function testRelationshipCreateWithinSameType( ) {
 
         $relTypeIds = array( );
 
@@ -253,8 +226,17 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         foreach( $relationshipIds as $id ) {
             CRM_Contact_BAO_Relationship::del( $id );
         }
-        
+    }
 
+    /**
+     * methods create relationshipe within different contact type with valid data
+     * success expected 
+     * 
+     */
+    function testRelationshipCreateWithinDiffType( ) { 
+
+        $relTypeIds = array( );
+        
         //check for Sponcer to Individual
         $relTypeParams = array( 'name_a_b'           => 'SponsorToIndiv',
                                 'name_b_a'           => 'IndivToSponsor',
@@ -301,29 +283,6 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
             CRM_Contact_BAO_Relationship::del( $id );
         }
 
-        
-        //check for Household to Sponcer
-        $relTypeParams =  array( 'name_a_b'           => 'HouseholdToSponser',
-                                 'name_b_a'           => 'SponsorToHousehold',
-                                 'contact_type_a'     => 'Household',
-                                 'contact_type_b'     => 'Organization',
-                                 'contact_sub_type_b' => 'Sponsor',
-                                 );
-        $relType = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
-        $params = array( 'relationship_type_id' => $relType->id.'_a_b',
-                         'contact_check'        => array( $this->organization_sponsor => 1 )
-                         );
-        $ids = array('contact' => $this->household );
-
-        list( $valid, $invalid, $duplicate, $saved, $relationshipIds)  
-            = CRM_Contact_BAO_Relationship::create( $params, $ids );
-       
-        $this->assertEquals( $valid, 1 , 'In line '. __LINE__ );
-        $this->assertEquals( empty($relationshipIds), false , 'In line '. __LINE__ );
-        CRM_Contact_BAO_RelationshipType::del( $relType->id );
-        foreach( $relationshipIds as $id ) {
-            CRM_Contact_BAO_Relationship::del( $id );
-        }
     }
     
 }
