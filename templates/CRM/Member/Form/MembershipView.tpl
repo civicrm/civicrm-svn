@@ -1,4 +1,3 @@
-<div class="form-item"> 
 <fieldset>
       <legend>{ts}View Membership{/ts}</legend>
     <table class="view-layout">
@@ -33,5 +32,4 @@
 	    {include file="CRM/Contribute/Form/Selector.tpl" context="Search"}	
 	{/if}
 </fieldset>  
-</div>  
  
