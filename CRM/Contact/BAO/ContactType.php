@@ -487,6 +487,11 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
      * @static
      */
     static function del( $contactTypeId ) {
+        
+        if ( !$contactTypeId  ) {
+            return false;
+        }
+        
         require_once 'CRM/Core/DAO/CustomGroup.php';
         require_once 'CRM/Contact/DAO/Contact.php';
         $params = array( 'id'=> $contactTypeId  );
