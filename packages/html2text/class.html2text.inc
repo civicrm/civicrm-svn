@@ -220,7 +220,7 @@ class html2text
         "\n-------------------------\n",        // <hr>
         "\n\n",                                 // <table> and </table>
         "\n",                                   // <tr> and </tr>
-        "\t\t\\1\n",                            // <td> and </td>
+        "\t\t\\1",                              // <td> and </td> [CiviCRM] adjusted to make the formatting saner, as per http://forum.civicrm.org/?topic=10556#msg46422
         "strtoupper(\"\t\t\\1\n\")",            // <th> and </th>
         ' ',                                    // Non-breaking space
         '"',                                    // Double quotes
