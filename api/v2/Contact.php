@@ -130,11 +130,14 @@ function civicrm_contact_update( &$params, $create_new = false ) {
     $values   = array( );
     $entityId = CRM_Utils_Array::value( 'contact_id', $params, null );
 
-    if ( !CRM_Utils_Array::value('contact_type', $params) ) {
+    if ( ! CRM_Utils_Array::value('contact_type', $params) &&
+         $entityId ) {
         $params['contact_type'] = CRM_Contact_BAO_Contact::getContactType( $entityId );
     }
     
-    if ( !$csType=CRM_Utils_Array::value('contact_sub_type', $params) ) {
+    if ( ! ( $csType = CRM_Utils_Array::value('contact_sub_type', $params) ) &&
+         $entityId ) {
+        require_once 'CRM/Contact/BAO/Contact.php';
         $csType = CRM_Contact_BAO_Contact::getContactSubType( $entityId );
     }
     
