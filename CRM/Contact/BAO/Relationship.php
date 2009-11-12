@@ -470,14 +470,19 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         $relationshipType     =& new CRM_Contact_DAO_RelationshipType( );
         $relationshipType->id = $relationshipTypeId;
         $relationshipType->selectAdd( );
-        $relationshipType->selectAdd('contact_type_a, contact_type_b');
+        $relationshipType->selectAdd('contact_type_a, contact_type_b, contact_sub_type_a, contact_sub_type_b');
         if ( $relationshipType->find(true) ) {
             require_once 'CRM/Contact/BAO/Contact.php';
             $contact_type_a = CRM_Contact_BAO_Contact::getContactType( $contact_a );
             $contact_type_b = CRM_Contact_BAO_Contact::getContactType( $contact_b );
-            
-            if ( ( ( ! $relationshipType->contact_type_a ) || ( $relationshipType->contact_type_a == $contact_type_a )  ) &&
-                 ( ( ! $relationshipType->contact_type_b ) || ( $relationshipType->contact_type_b == $contact_type_b ) ) ) {
+
+            $contact_sub_type_a = CRM_Contact_BAO_Contact::getContactSubType( $contact_a );
+            $contact_sub_type_b = CRM_Contact_BAO_Contact::getContactSubType( $contact_b );
+
+            if ( ( ( ! $relationshipType->contact_type_a )     || ( $relationshipType->contact_type_a == $contact_type_a ) )         &&
+                 ( ( ! $relationshipType->contact_type_b )     || ( $relationshipType->contact_type_b == $contact_type_b ) )         &&
+                 ( ( ! $relationshipType->contact_sub_type_a ) || ( $relationshipType->contact_sub_type_a == $contact_sub_type_a ) ) && 
+                 ( ( ! $relationshipType->contact_sub_type_b ) || ( $relationshipType->contact_sub_type_b == $contact_sub_type_b ) )   ) {
                 return true;
             } else {
                 return false;
