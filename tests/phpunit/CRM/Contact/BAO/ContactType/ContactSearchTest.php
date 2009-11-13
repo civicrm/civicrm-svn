@@ -3,7 +3,7 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
 require_once 'api/v2/Contact.php';
-
+require_once 'CRM/Contact/BAO/ContactType.php';
 
 class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase 
 {
@@ -21,6 +21,33 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
     {        
         parent::setUp();
 
+        
+        $params = array( 'label'    => 'indivi_student',
+                         'name'      => 'indivi_student',
+                         'parent_id' => 1,//Individual
+                         'is_active' => 1
+                         );
+        $result  = CRM_Contact_BAO_ContactType::add( $params );
+        $this->student = $params['name']; 
+        
+        $params = array( 'label'     => 'indivi_parent',
+                         'name'      => 'indivi_parent',
+                         'parent_id' => 1,//Individual
+                         'is_active' => 1
+                         );
+        $result  = CRM_Contact_BAO_ContactType::add( $params );
+        $this->parent = $params['name']; 
+
+
+        $params = array( 'label'     => 'org_sponsor',
+                         'name'      => 'org_sponsor',
+                         'parent_id' => 3,//Organization
+                         'is_active' => 1
+                         );
+        $result  = CRM_Contact_BAO_ContactType::add( $params );
+        $this->sponsor =  $params['name'];
+
+
         $this->indiviParams = array( 'first_name'   => 'Anne',     
                                      'last_name'    => 'Grant',
                                      'contact_type' => 'Individual',
@@ -30,14 +57,14 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
         $this->indiviStudentParams = array( 'first_name'       => 'Bill',     
                                             'last_name'        => 'Adams',
                                             'contact_type'     => 'Individual',
-                                            'contact_sub_type' => 'Student'
+                                            'contact_sub_type' => $this->student
                                             );
         $this->indiviStudent = Contact::create( $this->indiviStudentParams );
         
         $this->indiviParentParams = array( 'first_name'       => 'Alen',     
                                            'last_name'        => 'Adams',
                                            'contact_type'     => 'Individual',
-                                           'contact_sub_type' => 'Parent'
+                                           'contact_sub_type' => $this->parent
                                            );
         $this->indiviParent = Contact::create(  $this->indiviParentParams );
         
@@ -48,7 +75,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
         
         $this->orgSponsorParams = array( 'organization_name' => 'Conservation Corp' ,     
                                          'contact_type'      => 'Organization',
-                                         'contact_sub_type'  => 'Sponsor'
+                                         'contact_sub_type'  => $this->sponsor
                                          );
         $this->orgSponsor = Contact::create( $this->orgSponsorParams );
         
@@ -140,7 +167,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
          * for subtype:Student
          */
         $defaults = array( );
-        $params   = array( 'contact_sub_type' => 'Student' );
+        $params   = array( 'contact_sub_type' => $this->student );
         $result   =& civicrm_contact_search( $params, $defaults );
         
         $indiviStudent = $result[$this->indiviStudent];
@@ -162,7 +189,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
         /*
          * for subtype:Sponsor
          */
-        $params   = array( 'contact_sub_type' => 'Sponsor' );
+        $params   = array( 'contact_sub_type' => $this->sponsor );
         $result   =& civicrm_contact_search( $params, $defaults );
         
         $orgSponsor = $result[$this->orgSponsor];
@@ -194,7 +221,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
          */
         $defaults = array( );
         $params   = array('contact_type'     => 'Individual', 
-                          'contact_sub_type' => 'Student' );
+                          'contact_sub_type' => $this->student );
         $result   =& civicrm_contact_search( $params, $defaults );
         
         $indiviStudent = $result[$this->indiviStudent];
@@ -217,7 +244,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
          * for type:Organization subtype:Sponsor
          */
         $params   = array('contact_type'     => 'Organization', 
-                          'contact_sub_type' => 'Sponsor' );
+                          'contact_sub_type' => $this->sponsor );
         $result   =& civicrm_contact_search( $params, $defaults );
         
         $orgSponsor = $result[$this->orgSponsor];
@@ -272,7 +299,7 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
         
         // for invalid type and valid subtype
         $params   = array( 'contact_type'     => 'Invalid',
-                           'contact_sub_type' => 'Student' );
+                           'contact_sub_type' => $this->student );
         $result   =& civicrm_contact_search( $params, $defaults );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ ); 
     }
@@ -285,27 +312,27 @@ class CRM_Contact_BAO_ContactType_ContactSearchTest extends CiviUnitTestCase
         // for type:Individual subtype:Sponsor 
         $defaults = array( );
         $params   = array( 'contact_type'     => 'Individual',
-                           'contact_sub_type' => 'Sponsor' );
+                           'contact_sub_type' => $this->sponsor );
         $result   =& civicrm_contact_search( $params, $defaults );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ );
         
         // for type:Orgaization subtype:Parent
         $params   = array( 'contact_type'     => 'Orgaization',
-                           'contact_sub_type' => 'Parent' );
+                           'contact_sub_type' => $this->parent );
         $result   =& civicrm_contact_search( $params, $defaults );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ );
 
         
         // for type:Household subtype:Sponsor
         $params   = array( 'contact_type'     => 'Household',
-                           'contact_sub_type' => 'Sponsor' );
+                           'contact_sub_type' => $this->sponsor );
         $result   =& civicrm_contact_search( $params, $defaults );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ );
 
         
         // for type:Household subtype:Student
         $params   = array( 'contact_type'     => 'Household',
-                           'contact_sub_type' => 'Student' );
+                           'contact_sub_type' => $this->student );
         $result   =& civicrm_contact_search( $params, $defaults );
         $this->assertEquals( empty($result), true, 'In line '. __LINE__ ); 
         
