@@ -176,14 +176,16 @@ foreach ($locales as $locale) {
     $tsLocale = $locale;
     $smarty->assign('locale', $locale);
 
-    $data = '';
-    $data .= $smarty->fetch('civicrm_country.tpl');
-    $data .= $smarty->fetch('civicrm_state_province.tpl');
-    $data .= $smarty->fetch('civicrm_currency.tpl');
-    $data .= $smarty->fetch('civicrm_data.tpl');
-    $data .= $smarty->fetch('civicrm_navigation.tpl');
+    $data   = array();
+    $data[] = $smarty->fetch('civicrm_country.tpl');
+    $data[] = $smarty->fetch('civicrm_state_province.tpl');
+    $data[] = $smarty->fetch('civicrm_currency.tpl');
+    $data[] = $smarty->fetch('civicrm_data.tpl');
+    $data[] = $smarty->fetch('civicrm_navigation.tpl');
 
-    $data .= " UPDATE civicrm_domain SET version = '$db_version';";
+    $data[] = " UPDATE civicrm_domain SET version = '$db_version';";
+
+    $data = implode("\n", $data);
 
     // write the initialize base-data sql script
     $filename = 'civicrm_data';
