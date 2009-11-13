@@ -113,7 +113,9 @@ require_once '$configFile';
 
 function civicrm_source( $fileName, $lineMode = false ) {
 
-    $dsn = CIVICRM_DSN;
+    // 65536 is the CLIENT_MULTI_STATEMENTS MySQL client
+    // flag for, well, handling multi-statement queries
+    $dsn = CIVICRM_DSN . '&client_flags=65536';
 
     require_once 'DB.php';
 
@@ -121,37 +123,13 @@ function civicrm_source( $fileName, $lineMode = false ) {
     if ( PEAR::isError( $db ) ) {
         die( "Cannot open $dsn: " . $db->getMessage( ) );
     }
-
-    if ( ! $lineMode ) {
-        $string = JFile::read( $fileName );
-
-        //get rid of comments starting with # and --
-        $string = preg_replace("/^#[^\n]*$/m", "\n", $string );
-        $string = preg_replace("/^\-\-[^\n]*$/m", "\n", $string );
-    
-        $queries  = explode( ';', $string );
-        foreach ( $queries as $query ) {
-            $query = trim( $query );
-            if ( ! empty( $query ) ) {
-                $res =& $db->query( $query );
-                if ( PEAR::isError( $res ) ) {
-                    die( "Cannot execute $query: " . $res->getMessage( ) );
-                }
-            }
-        }
-    } else {
-        $fd = fopen( $fileName, "r" );
-        while ( $string = fgets( $fd ) ) {
-            $string = ereg_replace("\n#[^\n]*\n", "\n", $string );
-            $string = ereg_replace("\n\-\-[^\n]*\n", "\n", $string );
-            $string = trim( $string );
-            if ( ! empty( $string ) ) {
-                $res =& $db->query( $string );
-                if ( PEAR::isError( $res ) ) {
-                    die( "Cannot execute $string: " . $res->getMessage( ) );
-                }
-            }
-        }
+    // we’re using the 65536 (CLIENT_MULTI_STATEMENTS) MySQL client
+    // flag, so we can run the file’s contents as one (multi-)query
+    $queries = file_get_contents($fileName);
+    $queries = preg_replace("/^\s*--.*$/m", "\n", $queries);
+    $res =& $db->query($queries);
+    if (PEAR::isError($res)) {
+        die("Cannot execute $queries: " . $res->getMessage());
     }
 }
 
