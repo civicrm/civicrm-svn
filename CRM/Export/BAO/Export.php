@@ -276,18 +276,19 @@ class CRM_Export_BAO_Export
                     $relContactArray[$relContactDAO->refContact] = $relContactDAO->relContact;
                 }
                 $uniqueContacts      = array_unique($relContactArray);
-                
-                $relationWhere       = " WHERE contact_a.id IN (". implode(',', $uniqueContacts ) .") GROUP BY contact_id";
-
-                $relationQueryString = "$relationSelect $relationFrom $relationWhere";
-
-                $allRelContactDAO    = CRM_Core_DAO::executeQuery( $relationQueryString );
-                while ( $allRelContactDAO->fetch() ) {
-                    foreach ( $relContactArray as $k => $v ) {
-                        if ($allRelContactDAO->contact_id == $v ) {
-                            //$allRelContactArray[$rel][$k] = array();
-                            // build the array of all related contacts
-                            $allRelContactArray[$rel][$k] = clone($allRelContactDAO);
+                if ( !empty ($uniqueContacts ) ) {
+                    $relationWhere       = " WHERE contact_a.id IN (". implode(',', $uniqueContacts ) .") GROUP BY contact_id";
+                    
+                    $relationQueryString = "$relationSelect $relationFrom $relationWhere";
+                    
+                    $allRelContactDAO    = CRM_Core_DAO::executeQuery( $relationQueryString );
+                    while ( $allRelContactDAO->fetch() ) {
+                        foreach ( $relContactArray as $k => $v ) {
+                            if ($allRelContactDAO->contact_id == $v ) {
+                                //$allRelContactArray[$rel][$k] = array();
+                                // build the array of all related contacts
+                                $allRelContactArray[$rel][$k] = clone($allRelContactDAO);
+                            }
                         }
                     }
                 }
@@ -474,8 +475,9 @@ class CRM_Export_BAO_Export
                         } else {
                             $fieldValue = '';
                         }
-                        
-                        if ( is_array( $relationValue ) && $relationField == 'location' ) {
+                        if ( $relationField == 'id' ) {
+                            $row[$field . $relationField] = $relDAO->contact_id;
+                        } else  if ( is_array( $relationValue ) && $relationField == 'location' ) {
                             foreach ( $relationValue as $ltype => $val ) {
                                 foreach ( array_keys($val) as $fld ) {
                                     $type     = explode('-', $fld );
