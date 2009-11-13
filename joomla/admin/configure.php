@@ -129,7 +129,7 @@ function civicrm_source( $fileName, $lineMode = false ) {
         $string = preg_replace("/^#[^\n]*$/m", "\n", $string );
         $string = preg_replace("/^\-\-[^\n]*$/m", "\n", $string );
     
-        $queries  = explode( ';', $string );
+        $queries  = preg_split('/;$/m', $string);
         foreach ( $queries as $query ) {
             $query = trim( $query );
             if ( ! empty( $query ) ) {

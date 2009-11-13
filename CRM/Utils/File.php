@@ -229,7 +229,7 @@ class CRM_Utils_File {
         $string = preg_replace("/^#[^\n]*$/m", "\n", $string );
         $string = preg_replace("/^\-\-[^\n]*$/m", "\n", $string );
         
-        $queries  = explode( ';', $string );
+        $queries  = preg_split('/;$/m', $string);
         foreach ( $queries as $query ) {
             $query = trim( $query );
             if ( ! empty( $query ) ) {

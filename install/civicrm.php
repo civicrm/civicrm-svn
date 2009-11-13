@@ -111,7 +111,7 @@ function civicrm_source( $dsn, $fileName, $lineMode = false ) {
         $string = ereg_replace("\n#[^\n]*\n", "\n", $string );
         $string = ereg_replace("\n\-\-[^\n]*\n", "\n", $string );
         
-        $queries  = explode( ';', $string );
+        $queries  = preg_split('/;$/m', $string);
         foreach ( $queries as $query ) {
             $query = trim( $query );
             if ( ! empty( $query ) ) {
