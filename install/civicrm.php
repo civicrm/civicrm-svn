@@ -53,8 +53,7 @@ function civicrm_main( &$config ) {
         civicrm_setup( $filesDirectory );
     }
 
-    // 65536 is the CLIENT_MULTI_STATEMENTS MySQL client flag for, well, handling multi-statement queries
-    $dsn = "mysql://{$config['mysql']['username']}:{$config['mysql']['password']}@{$config['mysql']['server']}/{$config['mysql']['database']}?new_link=true&client_flags=65536";
+    $dsn = "mysql://{$config['mysql']['username']}:{$config['mysql']['password']}@{$config['mysql']['server']}/{$config['mysql']['database']}?new_link=true";
 
     civicrm_source( $dsn, $sqlPath . DIRECTORY_SEPARATOR . 'civicrm.mysql'   );
 
@@ -105,14 +104,38 @@ function civicrm_source( $dsn, $fileName, $lineMode = false ) {
         die( "Cannot open $dsn: " . $db->getMessage( ) );
     }
 
-    // we’re using the 65536 (CLIENT_MULTI_STATEMENTS) MySQL client
-    // flag, so we can run the file’s contents as one (multi-)query
-    $queries = file_get_contents($fileName);
-    $queries = preg_replace("/^\s*--.*$/m", "\n", $queries);
-    $res =& $db->query($queries);
-    if (PEAR::isError($res)) {
-        die("Cannot execute $queries: " . $res->getMessage());
+    if ( ! $lineMode ) {
+        $string = file_get_contents( $fileName );
+        
+        //get rid of comments starting with # and --
+        $string = ereg_replace("\n#[^\n]*\n", "\n", $string );
+        $string = ereg_replace("\n\-\-[^\n]*\n", "\n", $string );
+        
+        $queries  = explode( ';', $string );
+        foreach ( $queries as $query ) {
+            $query = trim( $query );
+            if ( ! empty( $query ) ) {
+                $res =& $db->query( $query );
+                if ( PEAR::isError( $res ) ) {
+                    die( "Cannot execute $query: " . $res->getMessage( ) );
+                }
+            }
+        }
+    } else {
+        $fd = fopen( $fileName, "r" );
+        while ( $string = fgets( $fd ) ) {
+            $string = ereg_replace("\n#[^\n]*\n", "\n", $string );
+            $string = ereg_replace("\n\-\-[^\n]*\n", "\n", $string );
+            $string = trim( $string );
+            if ( ! empty( $string ) ) {
+                $res =& $db->query( $string );
+                if ( PEAR::isError( $res ) ) {
+                    die( "Cannot execute $string: " . $res->getMessage( ) );
+                }
+            }
+        }
     }
+
 }
 
 function civicrm_config( &$config ) {
