@@ -1,6 +1,6 @@
  -- CRM-4866
 
-    SELECT @domain_id := min(id) FROM civicrm_domain;    
+    SELECT @domain_id := min(id) FROM civicrm_domain;
     SELECT @nav_pl    := id FROM civicrm_navigation WHERE name = 'Pledges';
     SELECT @nav_pl_wt := max(weight) from civicrm_navigation WHERE parent_id = @nav_pl;
 

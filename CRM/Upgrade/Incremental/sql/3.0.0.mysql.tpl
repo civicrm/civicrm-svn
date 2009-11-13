@@ -1,6 +1,6 @@
 -- CRM-5119
     UPDATE civicrm_navigation SET permission ='add contacts'
-        WHERE civicrm_navigation.name IN('New Individual','New Household','New Organization');    
+        WHERE civicrm_navigation.name IN('New Individual','New Household','New Organization');
 
     UPDATE civicrm_navigation SET permission ='import contacts'
         WHERE civicrm_navigation.name IN( 'Import Contacts','Import Activities');
@@ -33,10 +33,10 @@
     
     UPDATE civicrm_navigation SET permission ='access CiviEvent,administer CiviCRM', permission_operator ='AND'
         WHERE civicrm_navigation.name IN( 'New Event','Manage Events','Event Templates','New Price Set', 'Manage Price Sets',
-                                          'Participant Listing Templates','Event Types','Participant Statuses','Participant Roles');        
+                                          'Participant Listing Templates','Event Types','Participant Statuses','Participant Roles');
         
     UPDATE civicrm_navigation SET permission ='access CiviMail'
-        WHERE civicrm_navigation.name IN ( 'New Mailing','Draft and Unscheduled Mailings','Scheduled and Sent Mailings','Archived Mailings');    
+        WHERE civicrm_navigation.name IN ( 'New Mailing','Draft and Unscheduled Mailings','Scheduled and Sent Mailings','Archived Mailings');
     
     UPDATE civicrm_navigation SET permission ='access CiviMail,administer CiviCRM',  permission_operator ='AND'
             WHERE civicrm_navigation.name IN ( 'Headers, Footers, and Automated Messages','Mail Accounts');
@@ -67,13 +67,13 @@
                                            'Addressee Formats','Email Greetings','Postal Greetings','Instant Messenger Services','Mobile Phone Providers',
                                            'Phone Types','Preferred Communication Methods');
 
-    UPDATE civicrm_navigation SET permission ='administer CiviCRM' WHERE civicrm_navigation.name= 'Location Types (Home, Work...)';    
-    UPDATE civicrm_navigation SET permission ='administer CiviCRM' WHERE civicrm_navigation.name= 'Tags (Categories)';    
+    UPDATE civicrm_navigation SET permission ='administer CiviCRM' WHERE civicrm_navigation.name= 'Location Types (Home, Work...)';
+    UPDATE civicrm_navigation SET permission ='administer CiviCRM' WHERE civicrm_navigation.name= 'Tags (Categories)';
     UPDATE civicrm_navigation SET permission ='administer CiviCRM' WHERE civicrm_navigation.name= 'Individual Prefixes (Ms, Mr...)';
     UPDATE civicrm_navigation SET permission ='administer CiviCRM' WHERE civicrm_navigation.name= 'Individual Suffixes (Jr, Sr...)';
     
     UPDATE civicrm_navigation SET permission ='access CiviCase,administer CiviCRM',  permission_operator ='AND'
-        WHERE civicrm_navigation.name IN ( 'Case Types','Redaction Rules'); 
+        WHERE civicrm_navigation.name IN ( 'Case Types','Redaction Rules');
     
     UPDATE civicrm_navigation SET permission ='access CiviGrant,administer CiviCRM',  permission_operator ='AND' WHERE civicrm_navigation.name= 'Grant Types';
             

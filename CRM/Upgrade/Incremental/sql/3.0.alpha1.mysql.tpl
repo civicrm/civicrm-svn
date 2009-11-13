@@ -38,7 +38,7 @@
 
     -- CRM-3140
     ALTER TABLE `civicrm_mapping_field`
-        ADD `im_provider_id` int(10) unsigned default NULL COMMENT 'Which type of IM Provider does this name belong' AFTER `phone_type_id`; 
+        ADD `im_provider_id` int(10) unsigned default NULL COMMENT 'Which type of IM Provider does this name belong' AFTER `phone_type_id`;
 
 
     -- migrate participant status types, CRM-4321
@@ -147,7 +147,7 @@
     VALUES
         (@option_group_id_activity_type, {localize}'Bulk Email'{/localize},        {localize}'Bulk Email Sent.'{/localize},              (SELECT @max_val := @max_val+1), 'Bulk Email',       (SELECT @max_wt := @max_wt+1), 1,      NULL),
         (@option_group_id_activity_type, {localize}'Assign Case Role'{/localize},  {localize}''{/localize},                              (SELECT @max_val := @max_val+2), 'Assign Case Role', (SELECT @max_wt := @max_wt+2), 0,      @caseCompId),
-        (@option_group_id_activity_type, {localize}'Remove Case Role'{/localize},  {localize}''{/localize},                              (SELECT @max_val := @max_val+3), 'Remove Case Role', (SELECT @max_wt := @max_wt+3), 0,      @caseCompId);   
+        (@option_group_id_activity_type, {localize}'Remove Case Role'{/localize},  {localize}''{/localize},                              (SELECT @max_val := @max_val+3), 'Remove Case Role', (SELECT @max_wt := @max_wt+3), 0,      @caseCompId);
 
     -- CRM-5333
     -- Drop unique indexes of activity_target and activity_assignment
@@ -180,7 +180,7 @@
         ('addressee',       {localize}'Addressee Type'{/localize},                0,           1);
     
     SELECT @og_id_pr := id FROM civicrm_option_group WHERE name = 'priority';
-    SELECT @og_id_rr := id FROM civicrm_option_group WHERE name = 'redaction_rule';    
+    SELECT @og_id_rr := id FROM civicrm_option_group WHERE name = 'redaction_rule';
     SELECT @og_id_rt := id FROM civicrm_option_group WHERE name = 'report_template';
     INSERT INTO civicrm_option_value
         (option_group_id, {localize field='label'}label{/localize},                                          value,   name,     filter, weight, is_active)
@@ -450,7 +450,7 @@
     UPDATE civicrm_option_value
         SET is_active = 1
     WHERE   option_group_id = @option_group_id_report AND
-            value IN ('activity','contribute/organizationSummary','contribute/householdSummary','contribute/topDonor','pledge/summary','pledge/pbnp');           
+            value IN ('activity','contribute/organizationSummary','contribute/householdSummary','contribute/topDonor','pledge/summary','pledge/pbnp');
 
     -- Add New templates
     INSERT INTO civicrm_option_value
@@ -680,7 +680,7 @@
     
     -- remove location blocks from address_options.
     SELECT @option_group_id_adOpt := max(id) from civicrm_option_group where name = 'address_options';
-    DELETE FROM civicrm_option_value where option_group_id = @option_group_id_adOpt AND name IN ( 'im', 'openid' );  
+    DELETE FROM civicrm_option_value where option_group_id = @option_group_id_adOpt AND name IN ( 'im', 'openid' );
 
     -- update civicrm_preferences.contact_edit_options.
     -- ideally we should append value, but we did changed wt and values so lets reset it to default.
@@ -698,10 +698,10 @@
     -- drop column greeting type and custom greeting from civicrm_contact
     ALTER TABLE `civicrm_contact`
         DROP `greeting_type_id`,
-        DROP `custom_greeting`;   
+        DROP `custom_greeting`;
 
     -- delete greeting type option group
-    SELECT @og_id_greeting := max(id) from civicrm_option_group where name = 'greeting_type';     
+    SELECT @og_id_greeting := max(id) from civicrm_option_group where name = 'greeting_type';
     DELETE FROM civicrm_option_value WHERE option_group_id = @og_id_greeting;
     DELETE FROM civicrm_option_group WHERE              id = @og_id_greeting;
 

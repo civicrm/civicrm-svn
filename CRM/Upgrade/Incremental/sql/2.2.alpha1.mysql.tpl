@@ -134,7 +134,7 @@ UPDATE civicrm_tell_friend tf
 UPDATE civicrm_price_set_entity pse
   SET pse.`entity_table`='civicrm_event',
       pse.`entity_id` = (SELECT e.`event_id` FROM civicrm_event_page e WHERE e.`id` = pse.`entity_id`)
-  WHERE pse.`entity_table`='civicrm_event_page'; 
+  WHERE pse.`entity_table`='civicrm_event_page';
 
 -- /*******************************************************
 -- *
@@ -289,7 +289,7 @@ SELECT @option_group_id_ao := max(id) from civicrm_option_group where name = 'ad
     (@option_group_id_ao, 'OpenID',             14,    'openid', 14,     1);
 {/if}
 
-UPDATE civicrm_preferences SET address_options  = CONCAT(address_options, '1314'); 
+UPDATE civicrm_preferences SET address_options  = CONCAT(address_options, '1314');
 
 
 -- * Fix for CRM-3248
@@ -354,7 +354,7 @@ ALTER TABLE `civicrm_uf_field`      DROP `phone_type`;
 -- custom Group table 
 ALTER TABLE civicrm_custom_group
   ADD  min_multiple int unsigned   DEFAULT 0 COMMENT 'minimum number of multiple records (typically 0?)',
-  ADD  max_multiple int unsigned   DEFAULT 0 COMMENT 'maximum number of multiple records, if 0 - no max'; 
+  ADD  max_multiple int unsigned   DEFAULT 0 COMMENT 'maximum number of multiple records, if 0 - no max';
 
 ALTER TABLE civicrm_custom_field
   ADD text_length int unsigned    COMMENT 'field length if alphanumeric' AFTER options_per_line;
@@ -547,7 +547,7 @@ ALTER TABLE `civicrm_group_nesting`
     ADD CONSTRAINT `FK_civicrm_group_nesting_child_group_id` FOREIGN KEY (`child_group_id`) REFERENCES `civicrm_group` (`id`) ON DELETE CASCADE;
 
 ALTER TABLE `civicrm_group`
- ADD `is_hidden` tinyint   DEFAULT 0 COMMENT 'Is this group hidden?'; 
+ ADD `is_hidden` tinyint   DEFAULT 0 COMMENT 'Is this group hidden?';
 
 -- New field for CRM-3494 (billing name and address for contributions)
 ALTER TABLE `civicrm_contribution`
@@ -670,7 +670,7 @@ UPDATE `civicrm_country` SET `region_id` = @region_id  WHERE `civicrm_country`.`
 
 SELECT @region_id   := max(id) from civicrm_worldregion where name = "unassigned";
 
-UPDATE `civicrm_country` SET `region_id` = @region_id WHERE `civicrm_country`.`iso_code` IN( "JE","GG","IM" ) AND `civicrm_country`.`region_id` IS null; 
+UPDATE `civicrm_country` SET `region_id` = @region_id WHERE `civicrm_country`.`iso_code` IN( "JE","GG","IM" ) AND `civicrm_country`.`region_id` IS null;
 
 
 -- update minute increment to 1 in activitydatetime in preferences_date

@@ -7,5 +7,5 @@
   INSERT INTO civicrm_option_value
         (option_group_id,                {localize field='label'}label{/localize}, {localize field='description'}description{/localize}, value,                           name,                    weight,                      filter, is_reserved)
         VALUES
-        (@option_group_id_activity_type, {localize}'Inbound Email'{/localize},        {localize}'Inbound Email.'{/localize},              (SELECT @max_val := @max_val+1), 'Inbound Email',       (SELECT @max_wt := @max_wt+1), 1,     1); 
+        (@option_group_id_activity_type, {localize}'Inbound Email'{/localize},        {localize}'Inbound Email.'{/localize},              (SELECT @max_val := @max_val+1), 'Inbound Email',       (SELECT @max_wt := @max_wt+1), 1,     1);
 {/if}

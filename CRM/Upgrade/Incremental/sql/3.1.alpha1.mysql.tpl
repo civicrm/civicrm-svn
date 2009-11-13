@@ -1,7 +1,7 @@
 --  CRM-4795
 --  modify type fee_level of civicrm_participant and amount_level of civicrm_contribution
 
-    ALTER TABLE civicrm_participant MODIFY column fee_level text collate utf8_unicode_ci default NULL COMMENT 'Populate with the label (text) associated with a fee level for paid events with multiple levels. Note that we store the label value and not the key'; 
+    ALTER TABLE civicrm_participant MODIFY column fee_level text collate utf8_unicode_ci default NULL COMMENT 'Populate with the label (text) associated with a fee level for paid events with multiple levels. Note that we store the label value and not the key';
 
     ALTER TABLE civicrm_contribution MODIFY column amount_level text collate utf8_unicode_ci default NULL;
 
@@ -9,7 +9,7 @@
 --  make changes for CRM-4970
 
 --  modify contact_type column definition
-    ALTER TABLE  `civicrm_contact` MODIFY column contact_type varchar(64) collate utf8_unicode_ci DEFAULT NULL COMMENT 'Type of Contact'; 
+    ALTER TABLE  `civicrm_contact` MODIFY column contact_type varchar(64) collate utf8_unicode_ci DEFAULT NULL COMMENT 'Type of Contact';
     
 --  add table definiton and data for civicrm_contact_type table    
     CREATE TABLE civicrm_contact_type (
@@ -147,7 +147,7 @@
     VALUES
         (10013, 'Clwyd',             'CLD', 1226),
         (10014, 'Dyfed',             'DFD', 1226),
-        (10015, 'South Glamorgan',   'GNS', 1226);        
+        (10015, 'South Glamorgan',   'GNS', 1226);
 
 --  CRM-5288
     SELECT @domain_id := min(id) FROM civicrm_domain;
@@ -176,7 +176,7 @@
         ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
     VALUES
         ( @domain_id, 'civicrm/admin/price&reset=1&action=add', '{ts escape="sql"}New Price Set{/ts}',     'New Price Set',     'access CiviContribute,administer CiviCRM', 'AND',  @nav_contrbutionID_admin, '1', NULL, @nav_contribution_wt_admin+1 ),
-        ( @domain_id, 'civicrm/admin/price&reset=1',            '{ts escape="sql"}Manage Price Sets{/ts}', 'Manage Price Sets', 'access CiviContribute,administer CiviCRM', 'AND',  @nav_contrbutionID_admin, '1', NULL, @nav_contribution_wt_admin+2 );   
+        ( @domain_id, 'civicrm/admin/price&reset=1',            '{ts escape="sql"}Manage Price Sets{/ts}', 'Manage Price Sets', 'access CiviContribute,administer CiviCRM', 'AND',  @nav_contrbutionID_admin, '1', NULL, @nav_contribution_wt_admin+2 );
     
     
     SELECT @nav_customize_admin    := id FROM civicrm_navigation WHERE name = 'Customize';
@@ -250,7 +250,7 @@
 -- Date migration CRM-4312    
     ALTER TABLE civicrm_custom_field
         CHANGE date_parts date_format VARCHAR( 64 )  NULL DEFAULT NULL COMMENT 'date format for custom date',        
-        ADD time_format int unsigned  COMMENT 'time format for custom date' AFTER date_format;        
+        ADD time_format int unsigned  COMMENT 'time format for custom date' AFTER date_format;
 
     ALTER TABLE `civicrm_preferences_date` 
         CHANGE `format` `date_format` VARCHAR( 64 )  NULL DEFAULT NULL COMMENT 'The date type',

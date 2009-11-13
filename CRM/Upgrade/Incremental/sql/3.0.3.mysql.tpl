@@ -7,7 +7,7 @@
                            GROUP BY activity_id, target_contact_id HAVING count(*) > 1 ) dup_cat 
                       ON ( cat.activity_id = dup_cat.activity_id 
                            AND cat.target_contact_id = dup_cat.target_contact_id 
-                           AND cat.id <> dup_cat.id ); 
+                           AND cat.id <> dup_cat.id );
 
  DELETE caa.* FROM civicrm_activity_assignment caa 
               INNER JOIN ( SELECT id, activity_id, assignee_contact_id 
@@ -15,7 +15,7 @@
                            GROUP BY activity_id, assignee_contact_id HAVING count(*) > 1 ) dup_caa 
                       ON ( caa.activity_id = dup_caa.activity_id 
                            AND caa.assignee_contact_id = dup_caa.assignee_contact_id 
-                           AND caa.id <> dup_caa.id ); 
+                           AND caa.id <> dup_caa.id );
 
  -- Drop unique indexes of activity_target and activity_assignment
 
