@@ -37,15 +37,15 @@
         </th>
        </tr>
        <tr>
-        <td colspan="2" {$valuestyle}>
-         {if $istellfriendenabled}
-          <p>{ts}you can begin your fundraising efforts using our "tell a friend" form{/ts}:</p>
+        <td colspan="2" {$valueStyle}>
+         {if $isTellFriendEnabled}
+          <p>{ts}You can begin your fundraising efforts using our "Tell a Friend" form{/ts}:</p>
           <ol>
-           <li><a href="{$loginurl}">{ts}login to your account{/ts}</a></li>
-           <li><a href="{$pcptellfriendurl}">{ts}click this link and follow the prompts{/ts}</a></li>
+           <li><a href="{$loginUrl}">{ts}Login to your account{/ts}</a></li>
+           <li><a href="{$pcpTellFriendURL}">{ts}Click this link and follow the prompts{/ts}</a></li>
           </ol>
          {else}
-          <p>{ts}send email to family, friends and colleagues with a personal message about this campaign.{/ts} {ts}include this link to your fundraising page in your emails{/ts}: {$pcpinfourl}</p>
+          <p>{ts}Send email to family, friends and colleagues with a personal message about this campaign.{/ts} {ts}Include this link to your fundraising page in your emails{/ts}: {$pcpInfoURL}</p>
          {/if}
         </td>
        </tr>
@@ -54,7 +54,7 @@
          {ts}Managing Your Page{/ts}
         </th>
        <tr>
-        <td colspan="2" {$valuestyle}>
+        <td colspan="2" {$valueStyle}>
          <p>{ts}Whenever you want to preview, update or promote your page{/ts}:</p>
          <ol>
           <li><a href="{$loginUrl}">{ts}Login to your account{/ts}</a></li>
