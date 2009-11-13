@@ -4,7 +4,7 @@ require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CRM/Contact/BAO/Relationship.php';
 require_once 'CRM/Contact/BAO/RelationshipType.php';
 require_once 'CiviTest/Contact.php';
-
+require_once 'CRM/Contact/BAO/ContactType.php';
 
 class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase 
 {
@@ -21,6 +21,32 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
     function setUp( ) 
     {        
         parent::setUp();
+
+        $params = array( 'label'    => 'indivi_student',
+                         'name'      => 'indivi_student',
+                         'parent_id' => 1,//Individual
+                         'is_active' => 1
+                         );
+        $result  = CRM_Contact_BAO_ContactType::add( $params );
+        $this->student = $params['name']; 
+        
+        $params = array( 'label'     => 'indivi_parent',
+                         'name'      => 'indivi_parent',
+                         'parent_id' => 1,//Individual
+                         'is_active' => 1
+                         );
+        $result  = CRM_Contact_BAO_ContactType::add( $params );
+        $this->parent = $params['name']; 
+
+
+        $params = array( 'label'     => 'org_sponsor',
+                         'name'      => 'org_sponsor',
+                         'parent_id' => 3,//Organization
+                         'is_active' => 1
+                         );
+        $result  = CRM_Contact_BAO_ContactType::add( $params );
+        $this->sponsor =  $params['name'];
+
         
         $params = array( 'first_name'   => 'Anne',     
                          'last_name'    => 'Grant',
@@ -31,14 +57,14 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $params = array( 'first_name'   => 'Bill',     
                          'last_name'    => 'Adams',
                          'contact_type' => 'Individual',
-                         'contact_sub_type' => 'Student'
+                         'contact_sub_type' => $this->student
                          );
         $this->indivi_student = Contact::create( $params );
         
         $params = array( 'first_name'   => 'Alen',     
                          'last_name'    => 'Adams',
                          'contact_type' => 'Individual',
-                         'contact_sub_type' => 'Parent'
+                         'contact_sub_type' => $this->parent
                          );
         $this->indivi_parent = Contact::create( $params );
         
@@ -49,7 +75,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         
         $params = array( 'organization_name' => 'Conservation Corp' ,     
                          'contact_type'      => 'Organization',
-                         'contact_sub_type'  => 'Sponsor'
+                         'contact_sub_type'  => $this->sponsor
                          );
         $this->organization_sponsor = Contact::create( $params );
         
@@ -68,26 +94,26 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
                          'name_b_a'           => 'parentToindiv',
                          'contact_type_a'     => 'Individual',
                          'contact_type_b'     => 'Individual',
-                         'contact_sub_type_b' => 'Parent',
+                         'contact_sub_type_b' => $this->parent,
                          );
         $result = CRM_Contact_BAO_RelationshipType::add( $params, $ids );
         $this->assertEquals( $result->name_a_b , 'indivToparent' );
         $this->assertEquals( $result->contact_type_a , 'Individual' );
         $this->assertEquals( $result->contact_type_b , 'Individual' );
-        $this->assertEquals( $result->contact_sub_type_b , 'Parent' );
+        $this->assertEquals( $result->contact_sub_type_b , $this->parent );
         CRM_Contact_BAO_RelationshipType::del( $result->id );
         
         //check Sponcer to Individual RelationshipType
         $params = array( 'name_a_b'           => 'SponsorToIndiv',
                          'name_b_a'           => 'IndivToSponsor',
                          'contact_type_a'     => 'Organization',
-                         'contact_sub_type_a' => 'Sponsor',
+                         'contact_sub_type_a' => $this->sponsor,
                          'contact_type_b'     => 'Individual',
                          );
         $result = CRM_Contact_BAO_RelationshipType::add( $params, $ids );
         $this->assertEquals( $result->name_a_b , 'SponsorToIndiv' );
         $this->assertEquals( $result->contact_type_a , 'Organization' );
-        $this->assertEquals( $result->contact_sub_type_a , 'Sponsor' );
+        $this->assertEquals( $result->contact_sub_type_a ,  $this->sponsor );
         $this->assertEquals( $result->contact_type_b , 'Individual' );
         CRM_Contact_BAO_RelationshipType::del( $result->id );
 
@@ -95,16 +121,16 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $params = array( 'name_a_b'           => 'StudentToSponser',
                          'name_b_a'           => 'SponsorToStudent',
                          'contact_type_a'     => 'Individual',
-                         'contact_sub_type_a' => 'Student',
+                         'contact_sub_type_a' => $this->student,
                          'contact_type_b'     => 'Organization',
-                         'contact_sub_type_b' => 'Sponsor',
+                         'contact_sub_type_b' => $this->sponsor,
                          );
         $result = CRM_Contact_BAO_RelationshipType::add( $params, $ids );
         $this->assertEquals( $result->name_a_b , 'StudentToSponser' );
         $this->assertEquals( $result->contact_type_a , 'Individual' );
-        $this->assertEquals( $result->contact_sub_type_a , 'Student' );
+        $this->assertEquals( $result->contact_sub_type_a , $this->student );
         $this->assertEquals( $result->contact_type_b , 'Organization' );
-        $this->assertEquals( $result->contact_sub_type_b , 'Sponsor' );
+        $this->assertEquals( $result->contact_sub_type_b , $this->sponsor );
         CRM_Contact_BAO_RelationshipType::del( $result->id );
 
 
@@ -123,7 +149,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
                                 'name_b_a'           => 'parentToindiv',
                                 'contact_type_a'     => 'Individual',
                                 'contact_type_b'     => 'Individual',
-                                'contact_sub_type_b' => 'Parent',
+                                'contact_sub_type_b' => $this->parent,
                                 );
         $relType = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
 
@@ -153,7 +179,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $relTypeParams = array( 'name_a_b'           => 'SponsorToIndiv',
                                 'name_b_a'           => 'IndivToSponsor',
                                 'contact_type_a'     => 'Organization',
-                                'contact_sub_type_a' => 'Sponsor',
+                                'contact_sub_type_a' => $this->sponsor,
                                 'contact_type_b'     => 'Individual',
                                 );
         $relType = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
@@ -175,7 +201,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $relTypeParams =  array( 'name_a_b'           => 'StudentToSponser',
                                  'name_b_a'           => 'SponsorToStudent',
                                  'contact_type_a'     => 'Individual',
-                                 'contact_sub_type_a' => 'Student',
+                                 'contact_sub_type_a' => $this->student,
                                  'contact_type_b'     => 'Organization',
                                  'contact_sub_type_b' => 'Sponser',
                                  );
@@ -209,7 +235,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
                                 'name_b_a'           => 'parentToindiv',
                                 'contact_type_a'     => 'Individual',
                                 'contact_type_b'     => 'Individual',
-                                'contact_sub_type_b' => 'Parent',
+                                'contact_sub_type_b' => $this->parent,
                                 );
 
         $relType = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
@@ -241,7 +267,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $relTypeParams = array( 'name_a_b'           => 'SponsorToIndiv',
                                 'name_b_a'           => 'IndivToSponsor',
                                 'contact_type_a'     => 'Organization',
-                                'contact_sub_type_a' => 'Sponsor',
+                                'contact_sub_type_a' => $this->sponsor,
                                 'contact_type_b'     => 'Individual',
                                 );
         $relType = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
@@ -264,9 +290,9 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $relTypeParams =  array( 'name_a_b'           => 'StudentToSponsor',
                                  'name_b_a'           => 'SponsorToStudent',
                                  'contact_type_a'     => 'Individual',
-                                 'contact_sub_type_a' => 'Student',
+                                 'contact_sub_type_a' => $this->student,
                                  'contact_type_b'     => 'Organization',
-                                 'contact_sub_type_b' => 'Sponsor',
+                                 'contact_sub_type_b' => $this->sponsor,
                                  );
         $relType = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
         $params = array( 'relationship_type_id' => $relType->id.'_a_b',
