@@ -130,8 +130,6 @@ function civicrm_source( $fileName, $lineMode = false ) {
         $string = preg_replace("/^\-\-[^\n]*$/m", "\n", $string );
     
         $queries  = explode( ';', $string );
-        str_replace('_XXXSemicolonHackXXX_', ';', $queries);
-        
         foreach ( $queries as $query ) {
             $query = trim( $query );
             if ( ! empty( $query ) ) {
