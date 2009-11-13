@@ -292,7 +292,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
 
         if ( ! CRM_Utils_Array::value( 'status_id', $params ) ) {
             if ( isset( $params['activity_date_time'] ) &&
-                 strcmp( $params['activity_date_time'], CRM_Utils_Date::processDate( date() ) == -1 ) ) {
+                 strcmp( $params['activity_date_time'], CRM_Utils_Date::processDate( date('Ymd') ) == -1 ) ) {
                 $params['status_id'] = 2;
             } else {
                 $params['status_id'] = 1;
