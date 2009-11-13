@@ -65,15 +65,15 @@ class CRM_Member_BAO_MembershipStatusTest extends CiviUnitTestCase
     function testRetrieve( ) { 
  
         $ids    = array();
-        $params = array( 'name' => 'pending',
+        $params = array( 'name' => 'testStatus',
                          'is_active' => 1    
                          );
         
         $membershipStatus = CRM_Member_BAO_MembershipStatus::add( $params, $ids );
         $defaults = array();
         $result = CRM_Member_BAO_MembershipStatus::retrieve( $params, $defaults );
-        $this->assertEquals( $result->name, 'pending', 'Verify membership status name.');
-
+        $this->assertEquals( $result->name, 'testStatus', 'Verify membership status name.');
+        CRM_Member_BAO_MembershipStatus::del($membershipStatus->id);
     }
 
     function testSetIsActive( ) { 
@@ -107,7 +107,7 @@ class CRM_Member_BAO_MembershipStatusTest extends CiviUnitTestCase
 
     function testDel( ) {
         $ids    = array();
-        $params = array( 'name' => 'pending',
+        $params = array( 'name' => 'testStatus',
                          'is_active' => 1    
                          );
         
