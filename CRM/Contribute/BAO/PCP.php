@@ -471,13 +471,13 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
                 $pcpTellFriendURL = 
                     CRM_Utils_System::url('civicrm/friend', 
                                           "reset=1&eid=$eid&blockId=$blockId&page=pcp", 
-                                          true, null, false);
+                                          true, null, false, true);
                 $template->assign( 'pcpTellFriendURL', $pcpTellFriendURL );
             }
         }
         $pcpInfoURL = CRM_Utils_System::url('civicrm/contribute/pcp/info', 
                                             "reset=1&id=$pcpId", 
-                                            true, null, false);
+                                            true, null, false, true);
         $template->assign( 'pcpInfoURL', $pcpInfoURL );
         $template->assign( 'contribPageTitle', $contribPageTitle );
         if ( $emails = CRM_Utils_Array::value( 'notify_email', $pcpBlockInfo ) ) {

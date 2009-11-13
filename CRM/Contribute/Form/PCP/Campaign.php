@@ -228,7 +228,7 @@ class CRM_Contribute_Form_PCP_Campaign extends CRM_Core_Form
             $supporterUrl = CRM_Utils_System::url( "civicrm/contact/view",
                                                    "reset=1&cid={$pcp->contact_id}",
                                                    true, null, true,
-                                                   true );
+                                                   false );
             $this->assign( 'supporterUrl', $supporterUrl );
             $supporterName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $pcp->contact_id, 'display_name' );
             $this->assign( 'supporterName', $supporterName );
@@ -244,7 +244,7 @@ class CRM_Contribute_Form_PCP_Campaign extends CRM_Core_Form
             $managePCPUrl =  CRM_Utils_System::url( "civicrm/admin/pcp",
                                                     "reset=1",
                                                     true, null, true,
-                                                    true );
+                                                    false );
             $this->assign( 'managePCPUrl', $managePCPUrl );
             
             $subject = ts('Personal Campaign Page Notification');
