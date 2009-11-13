@@ -228,19 +228,8 @@ class CRM_Utils_File {
         //get rid of comments starting with # and --
         $string = preg_replace("/^#[^\n]*$/m", "\n", $string );
         $string = preg_replace("/^\-\-[^\n]*$/m", "\n", $string );
-
-        // FIXME: unconditional exploding on semicolons is inherently broken,
-        // as (a) semicolons can be used in more contexts than SQL query
-        // delimiters (say, inside string content) and (b) the query delimiter
-        // might be changed with the DELIMITER command; rather than trying to
-        // split the file’s contents into separate queries (which would require
-        // an SQL parser), we should send the whole multi-query string to the
-        // db and make it handle it
-        // a gross hack is employed below, as currently it only bites us
-        // in CRM/Upgrade/3.1.alpha1.msg_template/civicrm_msg_template.tpl
+        
         $queries  = explode( ';', $string );
-        str_replace('_XXXSemicolonHackXXX_', ';', $queries);
-
         foreach ( $queries as $query ) {
             $query = trim( $query );
             if ( ! empty( $query ) ) {
