@@ -49,11 +49,12 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
         parent::setUp();
 
         $this->_contactID           = $this->individualCreate( ) ;
-        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_contactID  );
+        $this->_orgContact          = $this->organizationCreate( );
+        $this->_membershipTypeID    = $this->membershipTypeCreate( $this->_orgContact );
         $this->_membershipStatusID  = $this->membershipStatusCreate( 'test status' );                
 
         $params = array(
-                        'contact_id'         => $this->_contactID,  
+                        'contact_id'         => $this->_contactID,
                         'membership_type_id' => $this->_membershipTypeID,
                         'join_date'          => '2009-01-21',
                         'start_date'         => '2009-01-21',
@@ -181,7 +182,8 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
     function testGetWithRelationship()
     {
 
-        $orgContact  = $this->organizationCreate( );
+        $membershipOrgId = $this->organizationCreate( );
+        $memberContactId = $this->individualCreate( ) ;
 
         $relTypeParams = array(
                                'name_a_b'       => 'Relation 1',
@@ -192,32 +194,30 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
                                'is_reserved'    => 1,
                                'is_active'      => 1
                                );
-        $relTypeID = $this->relationshipTypeCreate($relTypeParams );
+        $relTypeID = $this->relationshipTypeCreate( $relTypeParams );
 
-        $params = array( 'contact_id_a'         => $orgContact,
-                         'contact_id_b'         => $this->_contactID,
-                         'relationship_type_id' => $relTypeID,
-                         'start_date'           => array('d'=>'10','M'=>'1','Y'=>'2008'),
-                         'is_active'            => 1
-                         );
-        
-        $result = & civicrm_relationship_create( $params );
+//        $params = array( 'contact_id_a'         => $membershipOrgId,
+//                         'contact_id_b'         => $memberContactId,
+//                         'relationship_type_id' => $relTypeID,
+//                         'start_date'           => array('d'=>'10','M'=>'1','Y'=>'2008'),
+//                         'is_active'            => 1
+//                         );
+//        $result = & civicrm_relationship_create( $params );
 
-        $params = array( 'name'                 => 'test General',
-                         'duration_unit'        => 'year',
-                         'duration_interval'    => 1,
-                         'period_type'          => 'rolling',
-                         'member_of_contact_id' => $this->_contactID,
-                         'domain_id'		    => 1,
-                         'contribution_type_id' => 1,
-                         'relationship_type_id' => $relTypeID,
+        $params = array( 'name'                   => 'test General',
+                         'duration_unit'          => 'year',
+                         'duration_interval'      => 1,
+                         'period_type'            => 'rolling',
+                         'member_of_contact_id'   => $membershipOrgId,
+                         'domain_id'		  => 1,
+                         'contribution_type_id'   => 1,
+                         'relationship_type_id'   => $relTypeID,
                          'relationship_direction' => 'b_a',
-                         'is_active'            => 1 );
-        
+                         'is_active'              => 1 );        
         $memType = civicrm_membership_type_create( $params );
 
         $params = array(
-                        'contact_id'         => $this->_contactID,  
+                        'contact_id'         => $memberContactId,
                         'membership_type_id' => $memType['id'],
                         'join_date'          => '2009-01-21',
                         'start_date'         => '2009-01-21',
@@ -226,21 +226,28 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
                         'is_override'        => 1,
                         'status_id'          => $this->_membershipStatusID
                         );
-        
         $membershipID = $this->contactMembershipCreate( $params );
 
-        $params = array ( 'contact_id'  => $this->_contactID ,
+        $params = array ( 'contact_id'  => $memberContactId ,
                           'membership_type_id' => $memType['id'] );
                           
-        $membership =& civicrm_membership_contact_get( $params );
+        $result =& civicrm_membership_contact_get( $params );
         
-        var_dump( $membership );
-        
-        
-        $result = $membership[$this->_contactID][$membershipID];
+        $this->assertArrayHasKey( $memberContactId, $result,
+                                  "In line " . __LINE__ );
 
-        $this->assertEquals($result['status_id'], $this->_membershipStatusID, "In line " . __LINE__);
-        $this->assertEquals($result['contact_id'], $this->_contactID , "In line " . __LINE__);
+        var_dump( $result );
+        
+        $this->assertEquals( 1, count( $result ),
+                             "In line " . __LINE__ );
+
+
+
+        $membership = $result[$memberContactId][$membershipID];
+        $this->assertEquals( $this->_membershipStatusID, $membership['status_id'], 
+                             "In line " . __LINE__);
+        $this->assertEquals( $membershipOrgId , $result['contact_id'], 
+                             "In line " . __LINE__);
     }
 
 ///////////////// civicrm_membership_contact_create methods
