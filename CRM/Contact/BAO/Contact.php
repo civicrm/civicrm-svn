@@ -2182,48 +2182,5 @@ UNION
          
          return $contextMenu;
      }
-    
-     /**
-      * Function to return primary location type id for each loc block.
-      * 
-      * @param  int $contactId contact_id
-      *
-      * @return an array of primary loc type id for each loc block.
-      * @access public
-      * @static
-      */
-     static function getPrimaryLocTypeIDs( $contactId ) 
-     {
-         $primaryLocIds = array( );
-         if ( !$contactId ) {
-             return $primaryLocIds;
-         }
-         
-         $query = "
-   SELECT 
-       IF  ( civicrm_email.location_type_id   IS NULL, null, civicrm_email.location_type_id   ) as email,
-       IF  ( civicrm_address.location_type_id IS NULL, null, civicrm_address.location_type_id ) as address,
-       IF  ( civicrm_phone.location_type_id   IS NULL, null, civicrm_phone.location_type_id   ) as phone,
-       IF  ( civicrm_im.location_type_id      IS NULL, null, civicrm_im.location_type_id      ) as im,
-       IF  ( civicrm_openid.location_type_id  IS NULL, null, civicrm_openid.location_type_id  ) as openid
-     FROM  civicrm_contact
-LEFT JOIN  civicrm_email   ON ( civicrm_email.is_primary   = 1 AND civicrm_email.contact_id   = civicrm_contact.id )
-LEFT JOIN  civicrm_address ON ( civicrm_address.is_primary = 1 AND civicrm_address.contact_id = civicrm_contact.id )
-LEFT JOIN  civicrm_phone   ON ( civicrm_phone.is_primary   = 1 AND civicrm_phone.contact_id   = civicrm_contact.id )
-LEFT JOIN  civicrm_im      ON ( civicrm_im.is_primary      = 1 AND civicrm_im.contact_id      = civicrm_contact.id )
-LEFT JOIN  civicrm_openid  ON ( civicrm_openid.is_primary  = 1 AND civicrm_openid.contact_id  = civicrm_contact.id )
-    WHERE  civicrm_contact.id = %1";
-         
-         $params = array( 1 => array( $contactId, 'Integer' ) );
-         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
-         $blocks = array( 'email', 'phone', 'address', 'im', 'openid' );
-         if ( $dao->fetch() ) {
-             foreach ( $blocks as $block ) {
-                 $primaryLocIds[$block] = $dao->$block;
-             }
-         }
-         
-         return $primaryLocIds;
-     }
-     
+
 }
