@@ -281,9 +281,33 @@ class CRM_Utils_System_Drupal {
      */
     static function getUFLocale()
     {
-        # FIXME: actally fetch the locale from Drupal
-        return null;
+        // an array of xx_YY locales
+        static $locales = null;
+        if ($locales === null) {
+            require_once 'CRM/Core/I18n/PseudoConstant.php';
+            $locales = array_keys(CRM_Core_I18n_PseudoConstant::languages());
+            sort($locales);
+        }
+
+        // an array of xx → xx_YY mappings (naïve, as pt_PT will trump pt_BR
+        // and en_US will trump other English entries, but works in our case)
+        static $prefixes = null;
+        if ($prefixes === null) {
+            foreach ($locales as $locale) {
+                $prefixes[substr($locale, 0, 2)] = $locale;
+            }
+        }
+
+        // return CiviCRM locale that either matches Drupal’s xx_YY
+        // or begins with Drupal’s xx (so Drupal’s pt_BR will return
+        // CiviCRM’s pt_BR, while Drupal’s pt will return CiviCRM’s pt_PT)
+        global $language;
+        if (in_array($language->language, $locales)) {
+            return $language->language;
+        } elseif (in_array($language->language, array_keys($prefixes))) {
+            return $prefixes[$language->language];
+        } else {
+            return null;
+        }
     }
 }
-
-
