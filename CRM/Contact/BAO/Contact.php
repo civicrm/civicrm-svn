@@ -109,7 +109,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
 
         //fix for validate contact sub type CRM-5143
         $subType = CRM_Utils_Array::value('contact_sub_type', $params );
-        if ( $subType && (!CRM_Contact_BAO_ContactType::isExtendsContactType($subType, $params['contact_type'])) ) {
+        if ( $subType && !(CRM_Contact_BAO_ContactType::isExtendsContactType($subType, $params['contact_type'], true)) ) {
             return;     
         }
         

@@ -40,7 +40,7 @@
  * Include common API util functions
  */
 require_once 'api/v2/utils.php';
-
+require_once 'CRM/Contact/BAO/Contact.php';
 /**
  * @todo Write sth
  *
@@ -69,6 +69,13 @@ function civicrm_contact_update( &$params, $create_new = false ) {
     _civicrm_initialize( );
     require_once 'CRM/Utils/Array.php';
     $contactID = CRM_Utils_Array::value( 'contact_id', $params );
+
+    $dupeCheck = CRM_Utils_Array::value( 'dupe_check', $params, false );
+    $values    = civicrm_contact_check_params( $params, $dupeCheck );
+    if ( $values ) {
+        return $values;
+    }
+    
     if ( $create_new ) {
         // Make sure nothing is screwed up before we create a new contact
         if ( !empty( $contactID ) ) {
@@ -77,15 +84,8 @@ function civicrm_contact_update( &$params, $create_new = false ) {
         if ( empty( $params[ 'contact_type' ] ) ) {
             return civicrm_create_error( 'Contact Type not specified' );
         }
-
-        $dupeCheck = CRM_Utils_Array::value( 'dupe_check', $params, false );
-        $values    = civicrm_contact_check_params( $params, $dupeCheck );
-        if ( $values ) {
-            return $values;
-        }
-
+        
         // If we get here, we're ready to create a new contact
-
         if ( ($email = CRM_Utils_Array::value( 'email', $params ) ) && !is_array( $params['email'] ) ) {
             require_once 'CRM/Core/BAO/LocationType.php';
             $defLocType = CRM_Core_BAO_LocationType::getDefault( );
@@ -137,7 +137,6 @@ function civicrm_contact_update( &$params, $create_new = false ) {
     
     if ( ! ( $csType = CRM_Utils_Array::value('contact_sub_type', $params) ) &&
          $entityId ) {
-        require_once 'CRM/Contact/BAO/Contact.php';
         $csType = CRM_Contact_BAO_Contact::getContactSubType( $entityId );
     }
     
@@ -396,6 +395,12 @@ function civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorAr
         $fields = CRM_Utils_Array::value( $params['contact_type'], $required );
         if ( $fields == null ) {
             return civicrm_create_error( "Invalid Contact Type: {$params['contact_type']}" );
+        }
+        
+        if ( $csType = CRM_Utils_Array::value('contact_sub_type', $params) ) {
+            if ( !(CRM_Contact_BAO_ContactType::isExtendsContactType($csType, $params['contact_type'])) ) {
+                return civicrm_create_error( "Invalid or Mismatched Contact SubType: {$csType}" );
+            }
         }
         
         $valid = false;

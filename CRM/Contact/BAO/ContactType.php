@@ -139,9 +139,9 @@ WHERE  parent_id IS NULL
      *@static
      *
      */
-     static function &subTypeInfo( $contactType = null, $all = false ) {
+    static function &subTypeInfo( $contactType = null, $all = false,  $ignoreCache = false ) {
         static $_cache = null;
-
+        
         if ( $_cache === null ) {
             $_cache = array( );
         }
@@ -154,7 +154,7 @@ WHERE  parent_id IS NULL
             $argString .= implode( "_" , $contactType );
         }
 
-        if ( ! array_key_exists( $argString, $_cache ) ) {
+        if ( (!array_key_exists( $argString, $_cache )) || $ignoreCache ) {
             $_cache[$argString] = array( );
 
             $ctWHERE = '';
@@ -195,11 +195,11 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
      *
      */
  
-     static function subTypes( $contactType = null, $all = false, $columnName = 'name' ) {
+     static function subTypes( $contactType = null, $all = false, $columnName = 'name', $ignoreCache = false ) {
          if ( $columnName == 'name' ) {
-             return array_keys( self::subTypeInfo( $contactType, $all ) );
+             return array_keys( self::subTypeInfo( $contactType, $all, $ignoreCache ) );
          } else {
-             return array_values( self::subTypePairs( $contactType, false, null ) );
+             return array_values( self::subTypePairs( $contactType, false, null, $ignoreCache ) );
          }
      }
 
@@ -212,16 +212,16 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
      *@static
      *
      */
-    static function subTypePairs( $contactType = null, $all = false, $labelPrefix = '- ' ) {
-        $subtypes = self::subTypeInfo( $contactType, $all );
-
-        $pairs = array( );
-        foreach ( $subtypes as $name => $info ) {
-            $pairs[$name] = $labelPrefix . $info['label'];
-        }
-        return $pairs;
-    }
-    
+     static function subTypePairs( $contactType = null, $all = false, $labelPrefix = '- ', $ignoreCache = false ) {
+         $subtypes = self::subTypeInfo( $contactType, $all, $ignoreCache );
+         
+         $pairs = array( );
+         foreach ( $subtypes as $name => $info ) {
+             $pairs[$name] = $labelPrefix . $info['label'];
+         }
+         return $pairs;
+     }
+     
     /**
      *
      *function to retrieve list of all types i.e basic + subtypes.
@@ -374,8 +374,8 @@ AND   ( p.is_active = 1 OR p.id IS NULL )
      *@static
      *
      */
-    static function isaSubType( $subType ) {
-        return in_array( $subType, self::subTypes( null, true ) );
+    static function isaSubType( $subType, $ignoreCache = false ) {
+        return in_array( $subType, self::subTypes( null, true, 'name', $ignoreCache ) );
     }
     
     /**
@@ -429,11 +429,11 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
      *@static
      *
      */
-    static function suppressSubTypes( &$subTypes ) {
-        $subTypes = array_diff( $subTypes, self::subTypes( null, true ) );
+    static function suppressSubTypes( &$subTypes, $ignoreCache = false ) {
+        $subTypes = array_diff( $subTypes, self::subTypes( null, true, 'name', $ignoreCache ) );
         return $subTypes;
     }
-
+    
     /**
      *
      *function to verify if a given subtype is associated with a given basic contact type.
@@ -444,8 +444,8 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
      *@static
      *
      */
-    static function isExtendsContactType( $subType, $contactType ) {
-        return in_array( $subType, self::subTypes( $contactType, true ) );
+    static function isExtendsContactType( $subType, $contactType, $ignoreCache = false ) {
+        return in_array( $subType, self::subTypes( $contactType, true, 'name', $ignoreCache ) );
     }
 
     /**
