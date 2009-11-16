@@ -23,7 +23,7 @@
    <td>
 
     {if $formValues.receipt_text}
-     <p>{$formValues.receipt_text}</p>
+     <p>{$formValues.receipt_text|htmlize}</p>
     {else}
      <p>{ts}Thanks for your support.{/ts}</p>
     {/if}

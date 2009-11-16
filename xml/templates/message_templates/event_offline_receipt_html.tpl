@@ -23,7 +23,7 @@
    <td>
 
     {if $event.confirm_email_text AND (not $isOnWaitlist AND not $isRequireApproval)}
-     <p>{$event.confirm_email_text|regex_replace:'@(https?://([-\\w\\.]+)+(:\\d+)?(/([\\w/_\\.]*(\\?\\S+)?)?)?)@':'<a href="$1">$1</a>'}</p>
+     <p>{$event.confirm_email_text|htmlize}</p>
     {/if}
 
     {if $isOnWaitlist}
