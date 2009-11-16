@@ -177,6 +177,7 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
      */
     function testimportableFields()
     {
+        require_once 'CRM/Event/BAO/Participant.php';
         $importableFields = CRM_Event_BAO_Participant::importableFields();
         $this->assertNotEquals( count( $importableFields ) , 0, 'Checking array not to be empty.' );
 
@@ -337,6 +338,7 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
      */
     function testexportableFields() 
     {
+        require_once 'CRM/Event/BAO/Participant.php';
         $exportableFields = CRM_Event_BAO_Participant::exportableFields();
         $this->assertNotEquals( count( $exportableFields ) , 0, 'Checking array not to be empty.' );
         
@@ -408,6 +410,7 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
         $ids    = array( );
         $params = array( 'id' =>  $participant->id);
         
+        require_once 'CRM/Event/BAO/Participant.php';
         CRM_Event_BAO_Participant::getValues( $params, $values, $ids );
         $this->assertNotEquals( count($values), 0, 'Checking for empty array.' );
 
