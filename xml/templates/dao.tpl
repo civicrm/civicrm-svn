@@ -190,10 +190,12 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
                                       'dataPattern' => '{$field.dataPattern}',
 				      {/if}	
 {/if} {* field.export *}
-
 {if $field.rule}
 								      'rule'      => '{$field.rule}',
 {/if} {* field.rule *}
+{if $field.FKClassName}
+								      'FKClassName' => '{$field.FKClassName}',
+{/if} {* field.FKClassName *}
                                                                     ), 
 {/foreach} {* table.fields *}
                                       );
