@@ -131,9 +131,10 @@ class CRM_Contact_BAO_ContactType_ContactTest extends CiviUnitTestCase
         $contact = CRM_Contact_BAO_Contact::add( $params );
         $this->assertNull( $contact , 'In line '. __LINE__ );
         
-        //check for Type:null, Subtype:Student
+        //check for Type:invalid , Subtype:Student
         $params = array( 'first_name'       => 'Anne',     
                          'last_name'        => 'Grant',
+                         'contact_type'      => 'Invalid',
                          'contact_sub_type' => $this->student
                          );
         $contact = CRM_Contact_BAO_Contact::add( $params );
@@ -142,7 +143,7 @@ class CRM_Contact_BAO_ContactType_ContactTest extends CiviUnitTestCase
         //check for Type:Individual, Subtype:Sponsor
         $params = array( 'organization_name' => 'Conservation Corp',
                          'contact_type'      => 'Individual',
-                         'contact_sub_type'  => $this->student
+                         'contact_sub_type'  => $this->sponsor
                          ); 
         $contact = CRM_Contact_BAO_Contact::add( $params );
         $this->assertNull( $contact , 'In line '. __LINE__ );
