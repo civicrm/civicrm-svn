@@ -64,10 +64,11 @@ class CRM_Activity_BAO_ActivityTargetTest extends CiviUnitTestCase
 
     public function testRetrieveTargetIdsByActivityIdOneID( ) {
         $activity = $this->activityCreate( );
-        
+
         $targetIDs = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activity['id'] );
 
         // assert that we have at least one targetID
         $this->assertEquals( count( $targetIDs ), 1, 'One target ID match for activity' );
+        $this->assertEquals( $targetIDs[1], $activity['target_contact_id'], 'The returned target contacts ids match' );
     }
 }
