@@ -70,24 +70,6 @@ class CRM_Activity_BAO_ActivityTarget extends CRM_Activity_DAO_ActivityTarget
     }
 
     /**
-     * function to remove activity target
-     *
-     * @param int    $id  ID of the activity for which the records needs to be deleted.
-     * 
-     * @return void
-     * 
-     * @access public
-     * 
-     */
-    public function removeTarget( $id )
-    {
-        $this->id = $id;
-        if( $this->find( true ) ) {
-            return $this->delete();
-        }
-    }
-
-    /**
      * function to retrieve id of target contact by activity_id
      *
      * @param int    $id  ID of the activity

@@ -675,7 +675,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                 'individual_prefix'              => '3',
                                 'individual_suffix'              => '2',
                                 'city-Primary'                   => 'Newark',
-                                'contact_sub_type'               => 'Individual',
+                                'contact_type'                   => 'Individual',
                                 'country-Primary'                => '1228',
                                 'do_not_email'                   => '1',
                                 'do_not_mail'                    => '1',
@@ -732,8 +732,8 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                           'id',  $params['privacy'][$key], 'Check for do_not_email creation.' );
         }
         
-        $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'contact_sub_type', 
-                                      'id',$profileParams['contact_sub_type'],'Check for contact sub type creation.');
+        $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'contact_type', 
+                                      'id',$profileParams['contact_type'],'Check for contact type creation.');
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'user_unique_id', 
                                       'id', $profileParams['user_unique_id'], 'Check for user_unique_id creation.');
         
@@ -867,7 +867,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                   'individual_prefix'              => '2',
                                   'individual_suffix'              => '3',
                                   'city-Primary'                   => 'Mumbai',
-                                  'contact_sub_type'               => 'Individual',
+                                  'contact_type'               => 'Individual',
                                   'country-Primary'                => '1228',
                                   'do_not_email'                   => '1',
                                   'do_not_mail'                    => '1',
@@ -925,8 +925,8 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                           'id',  $updateCParams['privacy'][$key], 'Check for do_not_email creation.' );
         }
         
-        $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'contact_sub_type', 
-                                      'id',$updatePfParams['contact_sub_type'],'Check for contact sub type creation.');
+        $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'contact_type', 
+                                      'id',$updatePfParams['contact_type'],'Check for contact type creation.');
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'user_unique_id', 
                                       'id', $updatePfParams['user_unique_id'], 'Check for user_unique_id creation.');
         

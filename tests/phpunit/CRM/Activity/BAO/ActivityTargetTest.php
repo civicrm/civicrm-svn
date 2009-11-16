@@ -25,6 +25,7 @@
 */
 
 require_once 'CiviTest/CiviUnitTestCase.php';
+require_once 'CRM/Activity/BAO/ActivityTarget.php';
 
 /**
  * Test class for CRM_Activity_BAO_ActivityTarget BAO
@@ -54,7 +55,6 @@ class CRM_Activity_BAO_ActivityTargetTest extends CiviUnitTestCase
     protected function tearDown()
     {
     }
-
 
 
 }
