@@ -1163,28 +1163,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
     }
     
     /**
-     * test case for getContactSubType( ) 
-     * 
-     */
-    function testgetContactSubType( )
-    {
-        //get the contact params
-        $params = $this->contactParams( ); 
-        $params['contact_sub_type'] = 'Individual';
-        //create contact
-        require_once 'CRM/Contact/BAO/Contact.php';
-        $contact = CRM_Contact_BAO_Contact::create( $params );
-        $contactId = $contact->id;
-        
-        //get contact sub type.
-        $contactType = CRM_Contact_BAO_Contact::getContactSubType( $contactId );
-        $this->assertEquals( $contactType, $params['contact_sub_type'], 'Check For Contact Sub Type' );
-        
-        //cleanup DB by deleting the contact
-        Contact::delete( $contactId );
-    }
-    
-    /**
      * test case for displayName( ) 
      * 
      */
