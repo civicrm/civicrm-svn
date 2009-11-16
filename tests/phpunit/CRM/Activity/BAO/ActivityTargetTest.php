@@ -56,5 +56,18 @@ class CRM_Activity_BAO_ActivityTargetTest extends CiviUnitTestCase
     {
     }
 
+    public function testRetrieveTargetIdsByActivityIdZeroID( ) {
+        $target = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( 0 );
+        $this->assertSame( $target, array( ), 'No targets returned' );
+    }
 
+
+    public function testRetrieveTargetIdsByActivityIdOneID( ) {
+        $activity = $this->activityCreate( );
+        
+        $targetIDs = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activity['id'] );
+
+        // assert that we have at least one targetID
+        $this->assertEquals( count( $targetIDs ), 1, 'One target ID match for activity' );
+    }
 }

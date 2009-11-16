@@ -71,24 +71,6 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
 
 
     /**
-     * Delete activity assignment.
-     *
-     * @param int    $id  ID of the activity assignment.
-     * 
-     * @return void
-     * 
-     * @access public
-     * 
-     */
-    public function removeAssignment( $id )
-    {
-        $this->id = $id;
-        if( $this->find( true ) ) {
-            return $this->delete();
-        }
-    }
-
-    /**
      * Retrieve assignee_id by activity_id
      *
      * @param int    $id  ID of the activity

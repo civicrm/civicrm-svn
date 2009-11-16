@@ -932,6 +932,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             $params = array(
                             'source_contact_id'   => $individualSourceID,
                             'target_contact_id'   => array( $individualTargetID ),
+                            'assignee_contact_id' => array( $individualTargetID ),
                             'subject'             => 'Discussion on Apis for v2',
                             'activity_date_time'  => date('Ymd'),
                             'duration_hours'      => 30,
@@ -943,8 +944,10 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                             );
         }
 
+        require_once 'api/v2/Activity.php';
         $result =& civicrm_activity_create($params, true);
         $result['target_contact_id']   = $individualTargetID;
+        $result['assignee_contact_id']   = $individualTargetID;
         return $result;
     }
     

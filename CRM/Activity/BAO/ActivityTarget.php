@@ -81,10 +81,15 @@ class CRM_Activity_BAO_ActivityTarget extends CRM_Activity_DAO_ActivityTarget
      */
     static function retrieveTargetIdsByActivityId( $activity_id ) 
     {
+        $targetArray = array();
+        require_once 'CRM/Utils/Rule.php';
+        if ( ! CRM_Utils_Rule::positiveInteger( $activity_id ) ) {
+            return $targetArray;
+        }
+
         $target =& new CRM_Activity_BAO_ActivityTarget( );
         $target->activity_id = $activity_id;
         $target->find();
-        $targetArray = array();
         $count = 1;
         while ( $target->fetch() ) {
             $targetArray[$count] = $target->target_contact_id;
