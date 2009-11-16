@@ -53,7 +53,7 @@
     <row>
       <value>23</value>  <!--  id  -->
       <value>Individual</value>           <!--  contact_type  -->
-      <value>CertainSubType</value>           <!--  contact_sub_type  -->
+      <value></value>  <!-- contact_sub_type  -->
       <value>1</value>           <!--  do_not_email  -->
       <value>1</value>           <!--  do_not_phone  -->
       <value>1</value>           <!--  do_not_mail  -->

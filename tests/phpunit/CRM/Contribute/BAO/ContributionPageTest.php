@@ -98,7 +98,8 @@ class CRM_Contribute_BAO_ContributionPageTest extends CiviUnitTestCase
                 
         $id = $contributionpage->id;
         $values = array ();
-        $setValues  = CRM_Contribute_BAO_ContributionPage::setValues($id , &$values );
+        $setValues  = CRM_Contribute_BAO_ContributionPage::setValues($id , $values );
+
         //CRM_Core_Error::debug( '$setValues',$values );
         $this->assertEquals( $Values->title ,'Test Cotribution Page' , 'Verify contribution title.');
         $this->assertEquals( $Values->contribution_type_id,$this->_contributionTypeID, 'Verify contribution types id.');
@@ -176,7 +177,7 @@ class CRM_Contribute_BAO_ContributionPageTest extends CiviUnitTestCase
                          'contribution_id' =>$contribution->id, 
                          );
         
-        $sendmail = CRM_Contribute_BAO_ContributionPage::sendMail($contactId, &$params , $isTest = false, $returnMessageText = false);
+        $sendmail = CRM_Contribute_BAO_ContributionPage::sendMail($contactId, $params , false, false);
         
     }
      

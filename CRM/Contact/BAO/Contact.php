@@ -339,6 +339,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             }
         }
 
+
         // update the UF user_unique_id if that has changed
         require_once 'CRM/Core/BAO/UFMatch.php';
         CRM_Core_BAO_UFMatch::updateUFName( $contact->id );

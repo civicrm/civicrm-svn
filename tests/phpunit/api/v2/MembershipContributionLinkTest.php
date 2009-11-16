@@ -133,7 +133,7 @@ class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase
     public function testGetWrongParamsType()
     { 
         $params = 'eeee';
-        $GetWrongParamsType = civicrm_membershipcontributionlink_get(&$params);
+        $GetWrongParamsType = civicrm_membershipcontributionlink_get($params);
         $this->assertEquals( $GetWrongParamsType['error_message'],'Input parameters is not an array');
     }
 
@@ -143,7 +143,7 @@ class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase
     public function testGetEmptyParams()
     {
         $params = array();
-        $GetEmptyParams = civicrm_membershipcontributionlink_get(&$params);
+        $GetEmptyParams = civicrm_membershipcontributionlink_get($params);
         $this->assertEquals( $GetEmptyParams['error_message'],'No input parameters present');
         
     }
@@ -183,7 +183,7 @@ class api_v2_MembershipContributionLinkTest extends CiviUnitTestCase
                         );
         $Create = civicrm_membershipcontributionlink_create($params);
      
-        $GetParams = civicrm_membershipcontributionlink_get(&$params);
+        $GetParams = civicrm_membershipcontributionlink_get($params);
         
         $this->assertEquals( $GetParams[$Create['id']]['membership_id'],$membership->id ,'Check Membership Id');
         $this->assertEquals( $GetParams[$Create['id']]['contribution_id'],$contribution->id ,'Check Contribution Id');

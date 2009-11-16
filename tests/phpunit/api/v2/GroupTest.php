@@ -31,7 +31,7 @@ class api_v2_GroupTest extends CiviUnitTestCase
     function testgroupAddEmptyParams( )
     {
         $params = array();
-        $group = & civicrm_group_add( &$params );
+        $group = & civicrm_group_add( $params );
         $this->assertEquals( $group['error_message'] , 'Required parameter missing' );        
     }
     
@@ -47,7 +47,7 @@ class api_v2_GroupTest extends CiviUnitTestCase
                                                 '2' => 1 ) 
                         );
         
-        $group = & civicrm_group_add( &$params );
+        $group = & civicrm_group_add( $params );
         $this->assertEquals( $group['error_message'] , 'Required parameter title missing' );        
     }
     
@@ -138,14 +138,14 @@ class api_v2_GroupTest extends CiviUnitTestCase
     function testgroupdeleteNonArrayParams( )
     {
         $params = 'TestNotArray';
-        $group = & civicrm_group_delete( &$params );
+        $group = & civicrm_group_delete( $params );
         $this->assertEquals( $group['error_message'] , 'Required parameter missing' );        
     }
     
     function testgroupdeleteParamsnoId( )
     {
         $params = array();
-        $group = & civicrm_group_delete( &$params );
+        $group = & civicrm_group_delete( $params );
         $this->assertEquals( $group['error_message'] , 'Required parameter missing' );        
     }    
 }
