@@ -223,6 +223,9 @@ class CRM_UF_Page_Group extends CRM_Core_Page
             $profile = str_replace( '/administrator/index2.php', '/index.php', $profile );
         }
 
+        // add jquery files
+        $profile = CRM_Utils_String::addJqueryFiles( $profile );
+        
         $this->assign( 'profile', htmlentities( $profile ) );
         //get the title of uf group
         if ($gid) {
