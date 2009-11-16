@@ -82,10 +82,15 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
      */
     static function retrieveAssigneeIdsByActivityId( $activity_id ) 
     {
+        $assigneeArray = array();
+        require_once 'CRM/Utils/Rule.php';
+        if ( ! CRM_Utils_Rule::positiveInteger( $activity_id ) ) {
+            return $assigneeArray;
+        }
+
         $assignment =& new CRM_Activity_BAO_ActivityAssignment( );
         $assignment->activity_id = $activity_id;
         $assignment->find();
-        $assigneeArray = array();
         $count = 1;
         while ( $assignment->fetch( ) ) {
             $assigneeArray[$count] = $assignment->assignee_contact_id;
