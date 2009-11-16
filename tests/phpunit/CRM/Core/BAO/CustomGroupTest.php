@@ -119,7 +119,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         //check for object update
         $this->assertEquals( true, $result );
         //check for is_active
-        $this->assertDBCompareValue( 'CRM_Core_DAO_CustomGroup', $customGroupId, 'is_active', 'id', true, 
+        $this->assertDBCompareValue( 'CRM_Core_DAO_CustomGroup', $customGroupId, 'is_active', 'id', 1, 
                                      'Database check for custom group is_active field.' );
         //cleanup DB by deleting customGroup
         Custom::deleteGroup( $customGroup );
