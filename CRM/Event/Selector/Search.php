@@ -303,8 +303,10 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
              }
              
              // gross hack to show extra information for pending status
-             $statusId    = array_search($row['participant_status_id'], $statusTypes);
-             $statusClass = $statusClasses[$statusId];
+             $statusClass = null;
+             if( $statusId   = array_search( $row['participant_status_id'], $statusTypes ) ) {
+                $statusClass = $statusClasses[$statusId];
+             }
 
              $extraInfo = array();
              $row['showConfirmUrl'] = false;

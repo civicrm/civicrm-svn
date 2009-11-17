@@ -531,11 +531,11 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         
         if ( $this->_contributeMode == 'direct' &&
              ! CRM_Utils_Array::value( 'is_pay_later', $params ) ) {
-            $date = CRM_Utils_Date::format( $params['credit_card_exp_date'] );
+            $date = CRM_Utils_Date::format( CRM_Utils_Array::value( 'credit_card_exp_date', $params ) );
             $date = CRM_Utils_Date::mysqlToIso( $date );
             $this->assign( 'credit_card_exp_date', $date );
             $this->assign( 'credit_card_number',
-                           CRM_Utils_System::mungeCreditCard( $params['credit_card_number'] ) );
+                           CRM_Utils_System::mungeCreditCard( CRM_Utils_Array::value( 'credit_card_number', $params ) ) );
         }
         
         $this->assign( 'email', $this->controller->exportValue( 'Register', "email-{$this->_bltID}" ) );
