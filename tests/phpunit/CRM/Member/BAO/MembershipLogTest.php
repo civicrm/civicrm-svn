@@ -38,11 +38,8 @@ require_once 'api/v2/MembershipStatus.php';
  *
  *  @package   CiviCRM
  */
-
-
 class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase 
-{
-    
+{    
     function get_info( ) 
     {
         return array(
@@ -71,7 +68,6 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase
                          'relationship_type_id' => $this->_relationshipTypeId,
                          'visibility' => 'Public'
                          );
-        
         $membershipType = CRM_Member_BAO_MembershipType::add( $params, $ids );
         $this->_membershipTypeID    = $membershipType->id;
         $this->_mebershipStatusID  = $this->membershipStatusCreate( 'test status' );           
@@ -95,16 +91,11 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase
                         'status_id'          => $this->_mebershipStatusID
                         );
         $ids = array();
-        $membership = CRM_Member_BAO_Membership::create( $params, $ids );
-        
-        $membership_id = $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog',$membership->id ,
+        $membership = CRM_Member_BAO_Membership::create( $params, $ids );      
+        $this->assertDBNotNull( 'CRM_Member_BAO_MembershipLog',$membership->id ,
                                                  'membership_id', 'id',
                                                  'Database checked on membershiplog record.' );
-        
-        
-        
     }
-    
     
     /**
      *  Test del()
@@ -123,18 +114,15 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase
                         'is_override'        => 1,
                         'status_id'          => $this->_mebershipStatusID
                         );
-        $ids = array();
+        $ids = array( 
+                     'userId'   => $contactId
+                      );
         $membership = CRM_Member_BAO_Membership::create( $params, $ids );
-        
-        $membershipDelete =  CRM_Member_BAO_Membership::deleteMembership( $membership->id );
-
-        $membershipdelete = $this->assertDBNull( 'CRM_Member_BAO_MembershipLog',$membership->id, 'membership_id', 
+        $membershipDelete =  CRM_Member_BAO_MembershipLog::del( $membership->id );
+        $this->assertDBNull( 'CRM_Member_BAO_MembershipLog',$membership->id, 'membership_id', 
                                                  'id', 'Database check for deleted membership log.' );
         
-        
-        
     }
-    
     
     /**
      *  Test resetmodified()
@@ -153,13 +141,12 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase
                         'is_override'        => 1,
                         'status_id'          => $this->_mebershipStatusID
                         );
-        $ids = array();
+        $ids = array( 
+                     'userId'   => $contactId
+                     );
         $membership = CRM_Member_BAO_Membership::create( $params, $ids );
-        
-        
-        $contactId2 = Contact::createIndividual( );
-        
-        $this->assertDBNull( 'CRM_Member_BAO_MembershipLog',$contactId2, 'modified_id', 
+        $resetModifiedId =  CRM_Member_BAO_MembershipLog::resetModifiedID( $contactId );
+        $this->assertDBNull( 'CRM_Member_BAO_MembershipLog',$contactId, 'modified_id', 
                              'modified_id', 'Database check for NULL modified id.' );      
     }
 }
