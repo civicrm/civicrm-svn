@@ -1195,7 +1195,7 @@ SELECT contact_id
 
                 case CRM_Utils_Type::T_DATE:
                 case CRM_Utils_Type::T_TIMESTAMP:
-                    $object->$dbName='1970-01-01 00:00:00';
+                    $object->$dbName='19700101';
                     break;
 
                 case CRM_Utils_Type::T_TIME:
