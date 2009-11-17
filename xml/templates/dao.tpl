@@ -194,7 +194,7 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
 								      'rule'      => '{$field.rule}',
 {/if} {* field.rule *}
 {if $field.default}
-    								      'default'   => '{$field.default}',
+    								      'default'   => '{$field.default|substring:1:-1}',
 {/if} {* field.default *}
 {if $field.enumValues}
     								      'enumValues' => '{$field.enumValues}',

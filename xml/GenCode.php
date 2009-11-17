@@ -52,6 +52,7 @@ function createDir( $dir, $perm = 0755 ) {
 
 $smarty = new Smarty( );
 $smarty->template_dir = './templates';
+$smarty->plugins_dir  = array( '../packages/Smarty/plugins', '../CRM/Core/Smarty/plugins' );
 
  if ( isset ( $_SERVER['TMPDIR'] ) ) {
      $tempDir = $_SERVER['TMPDIR'];
