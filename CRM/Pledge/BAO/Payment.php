@@ -234,14 +234,18 @@ WHERE pledge_id = %1
      */
     static function deletePayments( $id )
     { 
+        require_once 'CRM/Utils/Rule.php';
+        if ( ! CRM_Utils_Rule::positiveInteger( $id ) ) {
+            return false;
+        }
+        
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
         $payment = new CRM_Pledge_DAO_Payment( );
         $payment->pledge_id = $id;
-        $payment->find( );
         
-        while ( $payment->fetch( ) ) {
+        if ( $payment->find( true ) ) {
             //also delete associated contribution.
             if ( $payment->contribution_id ) {
                 require_once 'CRM/Contribute/BAO/Contribution.php';
