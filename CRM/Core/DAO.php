@@ -1153,4 +1153,114 @@ SELECT contact_id
         return $_dao->escape( $string );
     }
 
+    //Creates a test object, including any required objects it needs via recursion
+    //ONLY USE FOR TESTING
+    static function createTestObject($daoName, &$params=array()) {
+
+        require_once("CRM/Utils/Type.php");
+	require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+        eval( '$object   =& new ' . $daoName . '( );' );
+ 
+        $fields =& $object->fields( );
+        foreach ( $fields as $name => $value ) {
+            
+		$dbName = $value['name'];
+
+		$FKClassName = CRM_Utils_Array::value( 'FKClassName', $value );
+                $required = CRM_Utils_Array::value( 'required', $value );
+
+	     	if ( array_key_exists( $dbName, $params ) ) {
+
+			$object->$dbName=$params[$dbName];
+
+		} elseif ($dbName!='id') {
+
+			if ($FKClassName!=null) {
+			
+				//skip the FK if it is not required
+				if (!$required) continue;
+
+				//if it is required we need to generate the dependency object first
+				$depObject = CRM_Core_DAO::createTestObject( $FKClassName, $params );
+				
+				$object->$dbName = $depObject->id;
+			}
+
+			switch ($value['type']) {
+
+				case CRM_Utils_Type::T_INT:
+                                case CRM_Utils_Type::T_BOOL:
+                                case CRM_Utils_Type::T_BOOLEAN:
+                                case CRM_Utils_Type::T_FLOAT:
+                                case CRM_Utils_Type::T_MONEY:
+					$object->$dbName=1;
+					break;
+
+                               case CRM_Utils_Type::T_DATE:
+                               case CRM_Utils_Type::T_TIMESTAMP:
+                                        $object->$dbName='1970-01-01 00:00:00';
+                                        break;
+
+                               case CRM_Utils_Type::T_TIME:
+                                        $object->$dbName='00:00:00';
+                                        break;
+
+                               case CRM_Utils_Type::T_CCNUM:
+                                        $object->$dbName='1234 1234 1234 1234';
+                                        break;
+
+
+                               case CRM_Utils_Type::T_URL:
+                                        $object->$dbName='http://www.civicrm.org';
+                                        break;
+
+                                case CRM_Utils_Type::T_STRING:
+                                case CRM_Utils_Type::T_BLOB:
+                                case CRM_Utils_Type::T_MEDIUMBLOB:
+                                case CRM_Utils_Type::T_ENUM:
+                                case CRM_Utils_Type::T_TEXT:
+                                case CRM_Utils_Type::T_LONGTEXT:
+	                        case CRM_Utils_Type::T_EMAIL:
+				default:
+
+					$object->$dbName = (strlen($dbName)>$value['maxlength']) ? substr($dbName,0,$value['maxlength']) : $dbName;;
+
+			}
+		}
+	}
+
+	$object->save();
+
+	return $object;
+    }
+
+    //deletes the this object plus any dependent objects that are associated with it
+    //ONLY USE FOR TESTING
+    static function deleteTestObjects($daoName, $params=array()) {
+
+        require_once("CRM/Utils/Type.php");
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+        eval( '$object   =& new ' . $daoName . '( );' );
+        $object->id = CRM_Utils_Array::value( 'id', $params );
+	
+	if ( $object->find( true ) ) {
+        
+		$fields =& $object->fields( );
+	        foreach ( $fields as $name => $value ) {
+
+                	$dbName = $value['name'];
+
+        	        $FKClassName = CRM_Utils_Array::value( 'FKClassName', $value );
+
+	                if ($FKClassName!=null && $object->$dbName ) {
+
+                   	//if it is required we need to generate the dependency object first
+                	   CRM_Core_DAO::deleteTestObjects( $FKClassName, array( 'id' => $object->$dbName ));
+
+                	}
+		}
+	}
+
+	$object->delete();
+  }
 }
