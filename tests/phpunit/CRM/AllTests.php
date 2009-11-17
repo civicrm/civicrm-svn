@@ -1,7 +1,7 @@
 <?php  // vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
 
 /**
- *  File for the AllTests class
+ *  File for the CRM_AllTests class
  *
  *  (PHP 5)
  *  
@@ -35,11 +35,11 @@
 require_once 'CiviTest/CiviTestSuite.php';
 
 /**
- *  Class containing all test suites
+ *  Class containing all CRM test suites
  *
  *  @package   CiviCRM
  */
-class AllTests extends CiviTestSuite
+class CRM_AllTests extends CiviTestSuite
 {
     private static $instance = null;
 

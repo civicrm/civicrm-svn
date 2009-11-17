@@ -40,7 +40,6 @@ require_once 'PHPUnit/Extensions/Database/TestCase.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/FlatXmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/XmlDataSet.php';
 require_once 'PHPUnit/Extensions/Database/DataSet/QueryDataSet.php';
-require_once 'tests/phpunit/AllTests.php';
 require_once 'tests/phpunit/Utils.php';
 
 /**
@@ -50,6 +49,13 @@ require_once 'tests/phpunit/Utils.php';
  *  @package CiviCRM
  */
 class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
+
+    /**
+     *  Database has been initialized
+     *
+     *  @var boolean
+     */
+    private static $dbInit = false;
 
     /**
      *  Database connection
@@ -79,19 +85,58 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function __construct($name = NULL, array $data = array(), $dataName = '' ) {
         parent::__construct($name, $data, $dataName);
-
-
     }
 
     /**
      *  Create database connection for this instance
      *
+     *  Initialize the test database if it hasn't been initialized
+     *
      *  @return PHPUnit_Extensions_Database_DB_IDatabaseConnection connection
      */
     protected function getConnection()
     {
-        AllTests::installDB();
-        return $this->createDefaultDBConnection(AllTests::$utils->pdo,
+        if ( !self::$dbInit ) {
+
+            //  install test database
+            echo PHP_EOL
+                . "Installing civicrm_tests_dev database"
+                . PHP_EOL;
+
+            //  create test database
+            self::$utils = new Utils( $GLOBALS['mysql_host'],
+                                $GLOBALS['mysql_user'],
+                                $GLOBALS['mysql_pass'] );
+            $query = "DROP DATABASE IF EXISTS civicrm_tests_dev;"
+                   . "CREATE DATABASE civicrm_tests_dev DEFAULT"
+                   . " CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
+                   . "USE civicrm_tests_dev;"
+                   . "SET SQL_MODE='STRICT_ALL_TABLES';"
+                   . "SET foreign_key_checks = 0";
+            if ( self::$utils->do_query($query) === false ) {
+
+                //  failed to create test database
+                exit;
+            }
+
+            //  initialize test database
+            $sql_file = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
+                . "/sql/civicrm.mysql";
+            $sql_file1 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
+                . "/sql/civicrm_data.mysql";
+            $query = file_get_contents( $sql_file );
+            $query1 = file_get_contents( $sql_file1 );
+            if ( self::$utils->do_query($query) === false ) {
+                //  failed to initialze test database
+                exit;
+            }
+            if ( self::$utils->do_query($query1) === false ) {
+                //  failed to initialze test database
+                exit;
+            }
+            self::$dbInit = true;
+        }
+        return $this->createDefaultDBConnection(self::$utils->pdo,
                                              'civicrm_tests_dev');
     }
 
@@ -137,7 +182,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
         $query = file_get_contents( $sql_file );
 
-        if ( AllTests::$utils->do_query($query) === false ) {
+        if ( self::$utils->do_query($query) === false ) {
             //  failed to initialze test database
             echo "Cannot load civicrm_data.mysql";
             exit;

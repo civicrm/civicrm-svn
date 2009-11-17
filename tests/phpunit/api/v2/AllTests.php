@@ -1,7 +1,7 @@
 <?php  // vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
 
 /**
- *  File for the AllTests class
+ *  File for the api_v2_AllTests class
  *
  *  (PHP 5)
  *  
@@ -35,11 +35,11 @@
 require_once 'CiviTest/CiviTestSuite.php';
 
 /**
- *  Class containing all test suites
+ *  Class containing all API v2 test suites
  *
  *  @package   CiviCRM
  */
-class AllTests extends CiviTestSuite
+class api_v2_AllTests extends CiviTestSuite
 {
     private static $instance = null;
 
@@ -62,7 +62,7 @@ class AllTests extends CiviTestSuite
         $inst = self::getInstance( );
         return $inst->implSuite( __FILE__ );
     } 
-} // class AllTests
+} // class api_v2_AllTests
 
 // -- set Emacs parameters --
 // Local variables:
