@@ -1852,11 +1852,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         $p = array( 1 => array( $maxWeight + 1, 'Integer' ),
                     2 => array( $copy->id     , 'Integer' ) ); 
         CRM_Core_DAO::executeQuery($query, $p);
-        
-        $query  = "UPDATE civicrm_uf_group SET is_reserved = 0 WHERE id = %1";
-        $params = array( 1 => array( $copy->id, 'Integer' ) );
-        CRM_Core_DAO::executeQuery($query, $params);
-
+        if ( $copy->is_reserved ) {
+            $query  = "UPDATE civicrm_uf_group SET is_reserved = 0 WHERE id = %1";
+            $params = array( 1 => array( $copy->id, 'Integer' ) );
+            CRM_Core_DAO::executeQuery($query, $params);
+        }
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::copy( 'UFGroup', $copy );
 
