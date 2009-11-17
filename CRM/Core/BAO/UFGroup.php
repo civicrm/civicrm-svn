@@ -79,10 +79,15 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      */
     static function getContactType($id)
     {
-        $valid = array_filter(array_keys(CRM_Core_SelectValues::contactType()));
+        require_once 'CRM/Contact/BAO/ContactType.php';
+
+        $validTypes    = array_filter(array_keys(CRM_Core_SelectValues::contactType()));
+        $validSubTypes = CRM_Contact_BAO_ContactType::subTypeInfo();
+        
         $types = explode(',', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $id, 'group_type'));
         foreach ($types as $type) {
-            if (in_array($type, $valid)) return $type;
+            $cType = (in_array($type, $validTypes)) ? $type : (array_key_exists($type, $validSubTypes)) ? $validSubTypes[$type]['parent'] : null;
+            if( $cType ) return $cType;
         }
     }
     
