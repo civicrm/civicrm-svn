@@ -88,11 +88,32 @@ class CRM_Contact_Page_AJAX
             $where .= " AND $aclWhere ";
         }
 
+        //contact's based of relationhip type
+        $relType = null; 
+        if ( isset($_GET['rel']) ) {
+            $relation = explode( '_', $_GET['rel'] );
+            $relType  = CRM_Utils_Type::escape( $relation[0], 'Integer');
+            $rel      = CRM_Utils_Type::escape( $relation[2], 'String');
+        }
+        
+        $whereClause = " WHERE sort_name LIKE '%$name%' {$where} ";
+        $additionalFrom = '';
+        if ( $relType ) {
+            $whereClause = " WHERE sort_name LIKE '%$name' {$where} ";
+            $additionalFrom = "
+            INNER JOIN civicrm_relationship_type r ON ( 
+                r.id = {$relType}
+                AND ( cc.contact_type = r.contact_type_{$rel} OR r.contact_type_{$rel} IS NULL )
+                AND ( cc.contact_sub_type = r.contact_sub_type_{$rel} OR r.contact_sub_type_{$rel} IS NULL )
+            )";
+        }
+        
         $query = "
 SELECT DISTINCT(cc.id) as id, CONCAT_WS( ' :: ', {$select} ) as data
 FROM civicrm_contact cc {$from}
 {$aclFrom}
-WHERE sort_name LIKE '%$name%' {$where} 
+{$additionalFrom}
+{$whereClause} 
 ORDER BY sort_name
 LIMIT 0, {$limit}
 ";
@@ -331,16 +352,6 @@ WHERE c.sort_name LIKE '%$name%'
 AND civicrm_relationship.relationship_type_id = $relType
 GROUP BY sort_name 
 ";
-                } else {
-                    $query = "
-SELECT c.sort_name, c.id
-FROM civicrm_contact c, civicrm_relationship_type r
-WHERE c.sort_name LIKE '%$name'
-AND r.id = $relType
-AND ( c.contact_type = r.contact_type_{$rel} OR r.contact_type_{$rel} IS NULL )
-AND ( c.contact_sub_type = r.contact_sub_type_{$rel} OR r.contact_sub_type_{$rel} IS NULL )
-    {$whereIdClause} 
-ORDER BY sort_name" ;
                 }
             } else {
                 

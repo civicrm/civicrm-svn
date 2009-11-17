@@ -74,19 +74,20 @@
                   <script type="text/javascript">
                     var relType = 0;
                     cj( function( ) {
-                        createRelation( cj('#relationship_type_id').val( ) ); 
+                        createRelation( ); 
                     	cj('#relationship_type_id').change( function() { 
                             cj('#rel_contact').val('');
                             cj("input[name=rel_contact_id]").val('');
-                            createRelation( cj(this).val() ); 
+                            createRelation( ); 
                         });
                     });
                     
-                    function createRelation( relType ) {
+                    function createRelation(  ) {
+                        var relType = cj('#relationship_type_id').val( );
                         if ( relType ) {
                              cj('#rel_contact').unbind( 'click' );
                              cj("input[name=rel_contact_id]").val('');
-                             var dataUrl = {/literal}'{crmURL p="civicrm/ajax/search" h=0 q="rel="}'{literal} + relType;
+                             var dataUrl = {/literal}'{crmURL p="civicrm/ajax/contactlist" h=0 q="rel="}'{literal} + relType;
                              cj('#rel_contact').autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
                              cj('#rel_contact').result(function( event, data ) {
                                	cj("input[name=rel_contact_id]").val(data[1]);
