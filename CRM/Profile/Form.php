@@ -513,7 +513,9 @@ class CRM_Profile_Form extends CRM_Core_Form
             $session =& CRM_Core_Session::singleton();
 
             $ctype = CRM_Core_BAO_UFGroup::getContactType($form->_gid);
-
+            // If all profile fields is of Contact Type then consider
+            // profile is of Individual type(default).
+            if (!$ctype) $ctype = 'Individual';
             require_once 'CRM/Dedupe/Finder.php';
             $dedupeParams = CRM_Dedupe_Finder::formatParams($fields, $ctype);
             if ( $form->_mode == CRM_Profile_Form::MODE_CREATE ) {

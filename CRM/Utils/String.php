@@ -362,5 +362,12 @@ class CRM_Utils_String {
         return $result;
     }
 
+    /**
+     * Function to add include files needed for jquery
+     */
+    static function addJqueryFiles( &$html ) {
+        $smarty = CRM_Core_Smarty::singleton( );
+        return $smarty->fetch( 'CRM/common/jquery.tpl' ) . $html . '<script type="text/javascript">jQuery.noConflict(true);</script>';
+    }
 }
 

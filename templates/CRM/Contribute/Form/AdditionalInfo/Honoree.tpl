@@ -7,7 +7,7 @@
 	       <td colspan="3">
 		  {$form.honor_type_id.html}
 		  &nbsp;&nbsp;&nbsp;&nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('honor_type_id', '{$form.formName}'); enableHonorType(); return false;">{ts}unselect{/ts}</a>&nbsp;)<br />
-		  <span class="description">{ts}Please include the name, and / or email address of the person you are honoring,{/ts}</span>
+		  <span class="description">{ts}Please include the name, and / or email address of the person you are honoring.{/ts}</span>
 	       </td>
 	    </tr>
          {/if}

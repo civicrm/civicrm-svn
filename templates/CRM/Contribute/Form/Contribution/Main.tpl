@@ -137,7 +137,7 @@ function clearAmountOther() {
 				<div class="content" >
 					{$form.honor_type_id.html}
 					<span class="unselect">(<a href="#" title="unselect" onclick="unselectRadio('honor_type_id', '{$form.formName}');enableHonorType(); return false;">{ts}unselect{/ts}</a>)</span>
-					<div class="description">{ts}Please include the name, and / or email address of the person you are honoring,{/ts}</div>
+					<div class="description">{ts}Please include the name, and / or email address of the person you are honoring.{/ts}</div>
 				</div>
 		    </div>
 		{/if}
