@@ -99,7 +99,6 @@ class CRM_Contact_Page_AJAX
         $whereClause = " WHERE sort_name LIKE '%$name%' {$where} ";
         $additionalFrom = '';
         if ( $relType ) {
-            $whereClause = " WHERE sort_name LIKE '%$name' {$where} ";
             $additionalFrom = "
             INNER JOIN civicrm_relationship_type r ON ( 
                 r.id = {$relType}
