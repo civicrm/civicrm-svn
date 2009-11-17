@@ -1199,7 +1199,7 @@ SELECT contact_id
                     break;
 
                 case CRM_Utils_Type::T_TIME:
-		    CRM_Core_Error::fatal('T_TIME shouldn't be used.');
+		    CRM_Core_Error::fatal('T_TIME shouldnt be used.');
                     //$object->$dbName='000000';
                     //break;
 
