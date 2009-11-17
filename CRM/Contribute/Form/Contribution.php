@@ -844,7 +844,7 @@ WHERE  contribution_id = {$this->_id}
             }
             $this->assign( 'hasPriceSets', $hasPriceSets );
             $element =& $this->add( 'text', 'total_amount', ts('Total Amount'),
-                                    $attributes['total_amount'], ($hasPriceSets)?false:true );
+                                    array( 'class' => 'six', 'maxlength' => 10 ), ($hasPriceSets)?false:true );
             $this->addRule('total_amount', ts('Please enter a valid amount.'), 'money');
             if ( $this->_online || $this->_ppID ) {
                 $element->freeze( );
