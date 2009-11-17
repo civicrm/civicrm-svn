@@ -1171,7 +1171,7 @@ SELECT contact_id
             $required = CRM_Utils_Array::value( 'required', $value );
 	     	if ( CRM_Utils_Array::value( $dbName, $params ) &&
                  ! is_array( $params[$dbName] ) ) {
-                $object->$dbName=$i."_".$params[$dbName];
+                $object->$dbName=$params[$dbName];
             } elseif ( $dbName != 'id' ) {
                 if ( $FKClassName != null ) {
                     //skip the FK if it is not required
@@ -1182,7 +1182,7 @@ SELECT contact_id
                     //if it is required we need to generate the dependency object first
                     $depObject = CRM_Core_DAO::createTestObject( $FKClassName,
                                                                  CRM_Utils_Array::value( $dbName, $params, 1 ) );
-                    $object->$dbName = is_array($depObject) ? $depObject->id[$i] : $depObject->id;
+                    $object->$dbName = is_array($depObject) ? $depObject->id : $depObject->id;
 
 			continue;
                 }
@@ -1230,9 +1230,11 @@ SELECT contact_id
                 case CRM_Utils_Type::T_LONGTEXT:
                 case CRM_Utils_Type::T_EMAIL:
 				default:
-
-					$object->$dbName = (strlen($dbName)>$value['maxlength']) ? substr($dbName,0,$value['maxlength']) : $dbName;
-
+			if ($value['maxlength']>0 && strlen($dbName)>$value['maxlength']) {
+				substr($dbName,0,$value['maxlength']);
+			} else {
+				$object->$dbName=$dbName;
+			}
                 }
             }
         }
