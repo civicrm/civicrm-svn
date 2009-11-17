@@ -512,6 +512,7 @@ function getField( &$fieldXML, &$fields ) {
         $value = (string ) $fieldXML->values;
         $field['sqlType'] = 'enum(';
         $field['values']  = array( );
+        $field['enumValues'] = $value;
         $values = explode( ',', $value );
         $first = true;
         foreach ( $values as $v ) {

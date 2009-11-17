@@ -193,6 +193,13 @@ class {$table.className} extends CRM_Core_DAO {ldelim}
 {if $field.rule}
 								      'rule'      => '{$field.rule}',
 {/if} {* field.rule *}
+{if $field.default}
+    								      'default'   => '{$field.default}',
+{/if} {* field.default *}
+{if $field.enumValues}
+    								      'enumValues' => '{$field.enumValues}',
+{/if} {* field.enumValues *}
+
 {if $field.FKClassName}
 								      'FKClassName' => '{$field.FKClassName}',
 {/if} {* field.FKClassName *}
