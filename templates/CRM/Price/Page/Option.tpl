@@ -62,7 +62,7 @@
 	    <td>{$row.is_default}</td>
             <td class="nowrap">{$row.weight}</td>
             <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-            <td>{$row.action}</td>
+            <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
         </tbody>
