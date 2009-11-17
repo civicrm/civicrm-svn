@@ -1199,8 +1199,9 @@ SELECT contact_id
                     break;
 
                 case CRM_Utils_Type::T_TIME:
-                    $object->$dbName='00:00:00';
-                    break;
+		    CRM_Core_Error::fatal('T_TIME shouldn't be used.');
+                    //$object->$dbName='000000';
+                    //break;
 
                 case CRM_Utils_Type::T_CCNUM:
                     $object->$dbName='4111 1111 1111 1111';
