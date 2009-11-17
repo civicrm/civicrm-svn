@@ -311,7 +311,8 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         // add a ajax facility for searching contacts
 		$dataUrl = CRM_Utils_System::url( "civicrm/ajax/search", "reset=1", true, null, false );
 		$this->assign('dataUrl',$dataUrl );
-        $this->addElement('text', 'name'      , ts('Find Target Contact') );
+        $this->add('text', 'rel_contact', ts('Find Target Contact') );
+        $this->add('hidden', "rel_contact_id" );
         $this->addDate( 'start_date', ts('Start Date'), false, array( 'formatType' => 'searchDate' ) );
         $this->addDate( 'end_date'  , ts('End Date')  , false, array( 'formatType' => 'searchDate' ) );
         $this->addElement('advcheckbox', 'is_active', ts('Enabled?'), null, 'setChecked()');
@@ -575,11 +576,11 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
     {
         //max records that will be listed
         $searchValues = array();
-        if ( CRM_Utils_Array::value( 'name', $params ) ) {
-            if ( is_numeric( $params['name'] ) ) {
-                $searchValues[] = array( 'contact_id', '=', $params['name'], 0, 1 );
+        if ( CRM_Utils_Array::value( 'rel_contact', $params ) ) {
+            if ( is_numeric( $params['rel_contact_id'] ) ) {
+                $searchValues[] = array( 'contact_id', '=', $params['rel_contact_id'], 0, 1 );
             } else {
-                $searchValues[] = array( 'sort_name', 'LIKE', $params['name'], 0, 1 );
+                $searchValues[] = array( 'sort_name', 'LIKE', $params['rel_contact'], 0, 1 );
             }
         }
         $contactTypeAdded = false;

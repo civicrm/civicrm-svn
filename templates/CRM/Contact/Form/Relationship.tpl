@@ -69,30 +69,37 @@
                 </dl>
             {else} {* action = add *}
                 </dd>
-		    <dt>{$form.name.label}</dt>
+		    <dt>{$form.rel_contact.label}</dt>
                 {literal}
                   <script type="text/javascript">
                     var relType = 0;
-                    cj(document).ready( function() { 
+                    cj( function( ) {
+                        createRelation( cj('#relationship_type_id').val( ) ); 
                     	cj('#relationship_type_id').change( function() { 
-                            cj('#name').val( '' );
+                            cj('#rel_contact').val('');
+                            cj("input[name=rel_contact_id]").val('');
                             createRelation( cj(this).val() ); 
                         });
- 
                     });
+                    
                     function createRelation( relType ) {
-                        if( relType ) {
-                             cj('#name').unbind( 'click' );
+                        if ( relType ) {
+                             cj('#rel_contact').unbind( 'click' );
+                             cj("input[name=rel_contact_id]").val('');
                              var dataUrl = {/literal}'{crmURL p="civicrm/ajax/search" h=0 q="rel="}'{literal} + relType;
-                             cj('#name').autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
+                             cj('#rel_contact').autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
+                             cj('#rel_contact').result(function( event, data ) {
+                               	cj("input[name=rel_contact_id]").val(data[1]);
+                             });
                         } else { 
-                            cj('#name').unautocomplete( );
-                            cj('#name').click( function() { alert( '{/literal}{ts}First Select Relationship Type{/ts}{literal} ...' );});
+                            cj('#rel_contact').unautocomplete( );
+                            cj("input[name=rel_contact_id]").val('');
+                            cj('#rel_contact').click( function() { alert( '{/literal}{ts}First Select Relationship Type{/ts}{literal} ...' );});
                         }
                     }       
 				  </script>
                 {/literal}
-                <dd  class="tundra">{$form.name.html}</dd>
+                <dd>{$form.rel_contact.html}</dd>
                 <dt> </dt>
                   <dd>
                     {$form._qf_Relationship_refresh.html}
