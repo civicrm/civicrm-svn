@@ -10,6 +10,8 @@
               <dt>{$form.addLanguage.label}</dt><dd>{$form.addLanguage.html}</dd>
               <dt>&nbsp;</dt><dd class="description">{ts}Add a new language to this installation.{/ts}</dd>
             {/if}
+            <dt>{$form.inheritLocale.label}</dt><dd>{$form.inheritLocale.html}</dd>
+            <dt>&nbsp;</dt><dd class="description">{ts}If checked, CiviCRM will follow CMS language changes.{/ts}</dd>
             <dt>{$form.defaultCurrency.label}</dt><dd>{$form.defaultCurrency.html}</dd>
             <dt>&nbsp;</dt><dd class="description">{ts}Default currency assigned to contributions and other monetary transactions.{/ts}</dd>
             <dt>{$form.lcMonetary.label}</dt><dd>{$form.lcMonetary.html}</dd>

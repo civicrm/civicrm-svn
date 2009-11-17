@@ -230,8 +230,8 @@ class CRM_Core_BAO_Setting
                 }
             }
 
-            // if unset, try to inherit the language from the hosting CMS
-            if ($lcMessages === null) {
+            // if unset and the install is so configured, try to inherit the language from the hosting CMS
+            if ($lcMessages === null and $defaults['inheritLocale']) {
                 require_once 'CRM/Utils/System.php';
                 $lcMessages = CRM_Utils_System::getUFLocale();
                 require_once 'CRM/Core/BAO/CustomOption.php';

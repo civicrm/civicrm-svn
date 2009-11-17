@@ -98,6 +98,7 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
             }
         }
 
+        $this->addElement('checkbox', 'inheritLocale', ts('Inherit CMS Language'));
         $this->addElement('select', 'lcMonetary', ts('Monetary Locale'),  $locales);
         $this->addElement('text', 'moneyformat',      ts('Monetary Amount Display'));
         $this->addElement('text', 'moneyvalueformat', ts('Monetary Value Display'));
@@ -168,6 +169,9 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
     public function postProcess() 
     {
         $values = $this->exportValues();
+
+        // FIXME: stupid QF not submitting unchecked checkboxen…
+        if (!isset($values['inheritLocale'])) $values['inheritLocale'] = 0;
 
         // make the site multi-lang if requested
         if ( CRM_Utils_Array::value( 'makeMultilingual', $values ) ) {
