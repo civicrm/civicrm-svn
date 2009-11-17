@@ -402,31 +402,33 @@ function civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorAr
                 return civicrm_create_error( "Invalid or Mismatched Contact SubType: {$csType}" );
             }
         }
-        
-        $valid = false;
-        $error = '';
-        foreach ( $fields as $field ) {
-            if ( is_array( $field ) ) {
-                $valid = true;
-                foreach ( $field as $element ) {
-                    if ( ! CRM_Utils_Array::value( $element, $params ) ) {
-                        $valid = false;
-                        $error .= $element; 
-                        break;
+
+        if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) { 
+            $valid = false;
+            $error = '';
+            foreach ( $fields as $field ) {
+                if ( is_array( $field ) ) {
+                    $valid = true;
+                    foreach ( $field as $element ) {
+                        if ( ! CRM_Utils_Array::value( $element, $params ) ) {
+                            $valid = false;
+                            $error .= $element; 
+                            break;
+                        }
+                    }
+                } else {
+                    if ( CRM_Utils_Array::value( $field, $params ) ) {
+                        $valid = true;
                     }
                 }
-            } else {
-                if ( CRM_Utils_Array::value( $field, $params ) ) {
-                    $valid = true;
+                if ( $valid ) {
+                    break;
                 }
             }
-            if ( $valid ) {
-                break;
+            
+            if ( ! $valid ) {
+                return civicrm_create_error( "Required fields not found for {$params['contact_type']} : $error" );
             }
-        }
-        
-        if ( ! $valid ) {
-            return civicrm_create_error( "Required fields not found for {$params['contact_type']} : $error" );
         }
     }
     
@@ -434,7 +436,8 @@ function civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorAr
         // check for record already existing
         require_once 'CRM/Dedupe/Finder.php';
         $dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
-        $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']));        
+        $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']));
+        
         if ( $ids != null ) {
             if ( $dupeErrorArray ) {
                 $error = CRM_Core_Error::createError( "Found matching contacts: $ids",
@@ -442,7 +445,7 @@ function civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorAr
                                                       'Fatal', $ids );
                 return civicrm_create_error( $error->pop( ) );
             }
-
+            
             return civicrm_create_error( "Found matching contacts: $ids", $ids );
         }
     }
