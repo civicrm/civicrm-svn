@@ -470,7 +470,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
             if ( $pcpBlockInfo['is_tellfriend_enabled'] ) {
                 $pcpTellFriendURL = 
                     CRM_Utils_System::url('civicrm/friend', 
-                                          "reset=1&eid=$eid&blockId=$blockId&page=pcp", 
+                                          "reset=1&eid=$pcpId&blockId=$blockId&page=pcp",
                                           true, null, false, true);
                 $template->assign( 'pcpTellFriendURL', $pcpTellFriendURL );
             }

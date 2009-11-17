@@ -227,7 +227,7 @@ class CRM_Contribute_Form_PCP_Campaign extends CRM_Core_Form
             
             $supporterUrl = CRM_Utils_System::url( "civicrm/contact/view",
                                                    "reset=1&cid={$pcp->contact_id}",
-                                                   true, null, true,
+                                                   true, null, false,
                                                    false );
             $this->assign( 'supporterUrl', $supporterUrl );
             $supporterName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $pcp->contact_id, 'display_name' );
@@ -235,7 +235,7 @@ class CRM_Contribute_Form_PCP_Campaign extends CRM_Core_Form
            
             $contribPageUrl   = CRM_Utils_System::url( "civicrm/contribute/transact",
                                                        "reset=1&id={$pcp->contribution_page_id}",
-                                                       true, null, true,
+                                                       true, null, false,
                                                        true );
             $this->assign( 'contribPageUrl', $contribPageUrl );
             $contribPageTitle = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $pcp->contribution_page_id, 'title' );
@@ -243,7 +243,7 @@ class CRM_Contribute_Form_PCP_Campaign extends CRM_Core_Form
             
             $managePCPUrl =  CRM_Utils_System::url( "civicrm/admin/pcp",
                                                     "reset=1",
-                                                    true, null, true,
+                                                    true, null, false,
                                                     false );
             $this->assign( 'managePCPUrl', $managePCPUrl );
             
