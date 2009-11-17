@@ -1155,11 +1155,13 @@ SELECT contact_id
 
     //Creates a test object, including any required objects it needs via recursion
     //ONLY USE FOR TESTING
-    static function createTestObject($daoName, $params=array()) {
+    static function createTestObject($daoName, $params=array(), $numObjects = 1) {
 
         require_once("CRM/Utils/Type.php");
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-        eval( '$object   =& new ' . $daoName . '( );' );
+
+	for ($i=0;$i<$numObjects;++$i) {
+	eval( '$object   =& new ' . $daoName . '( );' );
  
         $fields =& $object->fields( );
         foreach ( $fields as $name => $value ) {
@@ -1169,7 +1171,7 @@ SELECT contact_id
             $required = CRM_Utils_Array::value( 'required', $value );
 	     	if ( CRM_Utils_Array::value( $dbName, $params ) &&
                  ! is_array( $params[$dbName] ) ) {
-                $object->$dbName=$params[$dbName];
+                $object->$dbName=$i."_".$params[$dbName];
             } elseif ( $dbName != 'id' ) {
                 if ( $FKClassName != null ) {
                     //skip the FK if it is not required
@@ -1179,8 +1181,10 @@ SELECT contact_id
 
                     //if it is required we need to generate the dependency object first
                     $depObject = CRM_Core_DAO::createTestObject( $FKClassName,
-                                                                 CRM_Utils_Array::value( $dbName, $params ) );
-                    $object->$dbName = $depObject->id;
+                                                                 CRM_Utils_Array::value( $dbName, $params, 1 ) );
+                    $object->$dbName = is_array($depObject) ? $depObject->id[$i] : $depObject->id;
+
+			continue;
                 }
 
                 switch ($value['type']) {
@@ -1190,7 +1194,7 @@ SELECT contact_id
                 case CRM_Utils_Type::T_BOOLEAN:
                 case CRM_Utils_Type::T_FLOAT:
                 case CRM_Utils_Type::T_MONEY:
-					$object->$dbName=1;
+					$object->$dbName=1+$i;
 					break;
 
                 case CRM_Utils_Type::T_DATE:
@@ -1208,14 +1212,20 @@ SELECT contact_id
                     break;
 
 
+                case CRM_Utils_Type::T_ENUM:
+		    
+                    if (isset($value['default'])) $object->$dbName=$value['default'];
+		    else $object->$dbName=$value['enumValues'][0];
+                    break;
+
                 case CRM_Utils_Type::T_URL:
                     $object->$dbName='http://www.civicrm.org';
                     break;
 
+
                 case CRM_Utils_Type::T_STRING:
                 case CRM_Utils_Type::T_BLOB:
                 case CRM_Utils_Type::T_MEDIUMBLOB:
-                case CRM_Utils_Type::T_ENUM:
                 case CRM_Utils_Type::T_TEXT:
                 case CRM_Utils_Type::T_LONGTEXT:
                 case CRM_Utils_Type::T_EMAIL:
@@ -1229,7 +1239,11 @@ SELECT contact_id
 
         $object->save();
 
-        return $object;
+	$objects[$i]=$object;
+	}
+
+	if ($numObjects==1) return $objects[0];
+        else return $objects;
     }
 
     //deletes the this object plus any dependent objects that are associated with it
