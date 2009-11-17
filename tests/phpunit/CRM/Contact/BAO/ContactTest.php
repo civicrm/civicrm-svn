@@ -115,9 +115,9 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $this->assertEquals( $params['gender_id'], $contact->gender_id, 'Check for gender_id creation.' ); 
         $this->assertEquals( '1', $contact->is_deceased, 'Check for is_deceased creation.' );
         require_once 'CRM/Utils/Date.php';
-        $this->assertEquals( CRM_Utils_Date::format( $params['birth_date']  ), 
+        $this->assertEquals( CRM_Utils_Date::processDate( $params['birth_date'] ), 
                             $contact->birth_date, 'Check for birth_date creation.' ); 
-        $this->assertEquals( CRM_Utils_Date::format( $params['deceased_date']  ), 
+        $this->assertEquals( CRM_Utils_Date::processDate( $params['deceased_date'] ), 
                             $contact->deceased_date, 'Check for deceased_date creation.' ); 
         require_once 'CRM/Core/BAO/CustomOption.php';
         $dbPrefComm = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
@@ -146,16 +146,8 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                    'external_identifier'   => 111111111,
                                    'preferred_mail_format' => 'Both',
                                    'is_opt_out'            => 0,
-                                   'deceased_date'                  => array (
-                                                                              'M'            => 3,
-                                                                              'd'            => 3,
-                                                                              'Y'            => 1981,
-                                                                              ),
-                                   'birth_date'                     => array (
-                                                                              'M'            => 4,
-                                                                              'd'            => 4,
-                                                                              'Y'            => 1951,
-                                                                              ),
+                                   'deceased_date'         => '1981-03-03',
+                                   'birth_date'            => '1951-04-04',
                                    'privacy'                        => array (
                                                                               'do_not_phone' => 0,
                                                                               'do_not_email' => 0,
@@ -205,9 +197,9 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $this->assertEquals( $updateParams['gender_id'], $contact->gender_id, 'Check for gender_id creation.' ); 
         $this->assertEquals( '1', $contact->is_deceased, 'Check for is_deceased creation.' );
         require_once 'CRM/Utils/Date.php';
-        $this->assertEquals( CRM_Utils_Date::format( $updateParams['birth_date']  ), 
+        $this->assertEquals( CRM_Utils_Date::processDate( $updateParams['birth_date'] ), 
                             $contact->birth_date, 'Check for birth_date creation.' ); 
-        $this->assertEquals( CRM_Utils_Date::format( $updateParams['deceased_date']  ), 
+        $this->assertEquals( CRM_Utils_Date::processDate( $updateParams['deceased_date'] ), 
                             $contact->deceased_date, 'Check for deceased_date creation.' ); 
         require_once 'CRM/Core/BAO/CustomOption.php';
         $dbPrefComm = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
@@ -739,10 +731,10 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         
         require_once 'CRM/Utils/Date.php';
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'birth_date', 
-                                      'id', CRM_Utils_Date::format( $params['birth_date'], '-' ),'Check for birth_date creation.');
+                                      'id', $params['birth_date'],'Check for birth_date creation.');
         
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'deceased_date', 
-                                      'id', CRM_Utils_Date::format( $params['deceased_date'], '-' ),'Check for deceased_date creation.');
+                                      'id', $params['deceased_date'],'Check for deceased_date creation.');
         
         require_once 'CRM/Core/BAO/CustomOption.php';
         $dbPrefComm = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
@@ -838,16 +830,8 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                 'is_opt_out'            => 0,
                                 'legal_identifier'      => '123123123123',
                                 'image_URL'             => 'http://imageupdate.com',
-                                'deceased_date'                  => array (
-                                                                           'M'            => 10,
-                                                                           'd'            => 10,
-                                                                           'Y'            => 1981,
-                                                                           ),
-                                'birth_date'                     => array (
-                                                                           'M'            => 11,
-                                                                           'd'            => 11,
-                                                                           'Y'            => 1951,
-                                                                           ),
+                                'deceased_date'         => '1981-10-10',
+                                'birth_date'            => '1951-11-11',
                                 'privacy'                        => array (
                                                                            'do_not_phone' => 1,
                                                                            'do_not_email' => 1,
@@ -932,10 +916,10 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         
         require_once 'CRM/Utils/Date.php';
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'birth_date', 'id', 
-                                      CRM_Utils_Date::format( $updateCParams['birth_date'], '-' ),'Check for birth_date creation.');
+                                       $updateCParams['birth_date'],'Check for birth_date creation.');
         
         $this->assertDBCompareValue(  'CRM_Contact_DAO_Contact', $contactId, 'deceased_date', 'id',
-                                      CRM_Utils_Date::format( $updateCParams['deceased_date'], '-'),'Check for deceased_date creation.');
+                                      $updateCParams['deceased_date'],'Check for deceased_date creation.');
         
         require_once 'CRM/Core/BAO/CustomOption.php';
         $dbPrefComm = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
@@ -1277,16 +1261,8 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                         'is_opt_out'            => 1,
                         'legal_identifier'      => '123456789',
                         'image_URL'             => 'http://image.com',
-                        'deceased_date'                  => array (
-                                                                   'M'            => 7,
-                                                                   'd'            => 7,
-                                                                   'Y'            => 1991,
-                                                                   ),
-                        'birth_date'                     => array (
-                                                                   'M'            => 6,
-                                                                   'd'            => 6,
-                                                                   'Y'            => 1961,
-                                                                   ),
+                        'deceased_date'         => '1991-07-07',
+                        'birth_date'            => '1961-06-06',
                         'privacy'                        => array (
                                                                    'do_not_phone' => 1,
                                                                    'do_not_email' => 1,
