@@ -376,9 +376,24 @@ class api_v2_LocationTest extends CiviUnitTestCase
 
     function testGetTwoSeriesCompliance()
     {
-        $this->markTestIncomplete();
+        $location = $this->locationAdd( $this->_contactID );
+        $params = array('contact_id'             => $this->_contactID,
+                        'location_type'          => 'Home',
+                        'name'                   => 'Saint Helie',
+                        'country'                => 'United States', 
+                        'state_province'         => 'Michigan',
+                        'supplemental_address_1' => 'Hallmark ', 
+                        'supplemental_address_2' => 'Jersey Village'
+                        );
+        $locationHome = civicrm_location_add( $params );
+        $result = civicrm_location_get( array('contact_id' => $params['contact_id']));
+        foreach ($result as $location) {
+            if ( CRM_Utils_Array::value( 'address', $location ) ) {
+                $this->assertEquals($location['address']['contact_id'], $this->_contactID);
+            } 
+        }
     }
-
+    
 ///////////////// civicrm_location_update methods
 
 
