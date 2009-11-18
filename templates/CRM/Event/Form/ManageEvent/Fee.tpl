@@ -98,17 +98,17 @@
 	
 	{section name=rowLoop start=1 loop=6}
 	   {assign var=index value=$smarty.section.rowLoop.index}
-	   <tr id="discount_{$index}" {if $index GT 1 AND empty( $form.discount_name[$index].value) } style="display:none"{/if} class="form-item {cycle values="odd-row,even-row"}">
-           <td>{if $index GT 1} <a onclick="hiderow('discount_{$index}','discount');discountValues('{$index}'); return false;" name="discount_{$index}" href="javascript:" class="form-link"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}hide field or section{/ts}"/></a>{/if}
+	   <tr id="discount_{$index}" class="{if $index GT 1 AND empty( $form.discount_name[$index].value) } hiddenElement {/if} form-item {cycle values="odd-row,even-row"}">
+           <td>{if $index GT 1} <a onclick="showHideDiscountRow('discount_{$index}', false, {$index}); return false;" name="discount_{$index}" href="javascript:" class="form-link"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}hide field or section{/ts}"/></a>{/if}
            </td>
            <td> {$form.discount_name.$index.html}</td>
            <td> {include file="CRM/common/jcalendar.tpl" elementName='discount_start_date' elementIndex=$index} </td>
            <td> {include file="CRM/common/jcalendar.tpl" elementName='discount_end_date' elementIndex=$index} </td>
 	   </tr>
-        {/section}
-        </table>
+    {/section}
+    </table>
         <div id="discountLink" class="add-remove-link">
-           <a onclick="showrow('discount',5);return false;" name="discountLink" href="javascript:" class="form-link"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}show field or section{/ts}"/>{ts}another discount set{/ts}</a>
+           <a onclick="showHideDiscountRow( 'discount', true);return false;" id="discountLink" href="#" class="form-link"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}show field or section{/ts}"/>{ts}another discount set{/ts}</a>
         </div>
         {$form._qf_Fee_submit.html}
 	
@@ -165,30 +165,73 @@
             r.style.display = 'none';
         }
     }
-    {/literal}
-    {* hide and display the appropriate blocks as directed by the php code *}
+
+    //hide and display the appropriate blocks as directed by the php code
     on_load_init_blocks( showRows, hideBlocks, '' );
 
-    {literal} 
+    {/literal} 
+    {if $price}
+    {literal}
     // Re-show Fee Level grid if Price Set select has been set to none.
     if ( document.getElementById('price_set_id').options[document.getElementById('price_set_id').selectedIndex].value == '' ) {
        show( 'map-field' );
-       }
+    }
+    {/literal} 
+    {/if}
+    {literal}
+    
     if ( document.getElementsByName('is_monetary')[0].checked ) {
         show( 'event-fees', 'block' );
-       }
-function discountValues( discount_id )
-{
-	cj("#discount_name_"+ discount_id).val('');
-	cj("#discount_start_date["+ discount_id +"]").val('');
-	cj("#discount_end_date["+ discount_id +"]").val('');
-
-}
-function warnDiscountDel( ) {
-    if ( ! document.getElementsByName('is_discount')[0].checked ) {
-        alert('{/literal}{ts}If you uncheck "Discounts by Signup Date" and Save this form, any existing discount sets will be deleted. This action cannot be undone. If this is NOT what you want to do, you can check "Discounts by Signup Date" again{/ts}{literal}.');
     }
-}
+    
+    function warnDiscountDel( ) {
+        if ( ! document.getElementsByName('is_discount')[0].checked ) {
+            alert('{/literal}{ts}If you uncheck "Discounts by Signup Date" and Save this form, any existing discount sets will be deleted. This action cannot be undone. If this is NOT what you want to do, you can check "Discounts by Signup Date" again{/ts}{literal}.');
+        }
+    }
+    
+    /**
+     * Function used to show /hide discount and set defaults
+     */
+    function showHideDiscountRow( rowName, show, index ) {
+        if ( show ) {
+            // show first hidden element and set date default
+            var counter = 0;
+            cj('tr[id^=' + rowName + ']').each( function( i ) {
+                counter++;
+                if ( cj(this).css('display') == 'none' ) {
+                    cj(this).show( );
+
+                    // set default
+                    var currentRowId = cj(this).attr('id');
+                    var temp = currentRowId.split('_');
+                    var currentElementID = temp[1];
+                    var lastElementID    = currentElementID - 1 ;
+
+                    var lastEndDate = cj( '#discount_end_date_' + lastElementID ).datepicker( 'getDate' );
+                    if ( lastEndDate ) {
+                        var discountDate = new Date( Date.parse( lastEndDate ) );
+                        discountDate.setDate( discountDate.getDate() + 1 );
+                        var newDate = discountDate.toDateString();
+                        newDate = new Date( Date.parse( newDate ) );
+                        cj( '#discount_start_date_' + currentElementID ).datepicker('setDate', newDate );
+                    }
+                    console.log( counter );
+                    if ( counter == 5 ) {
+                        cj('#discountLink').hide( );
+                    }
+                    return false;
+                }
+            });
+        } else {
+            // hide tr and clear dates
+            cj( '#discount_end_date_' + index ).val('');
+            cj( '#discount_name_' + index ).val('');
+            cj( '#discount_start_date_' + index ).val('');
+            cj( '#' + rowName ).hide( );
+            cj('#discountLink').show( );
+        }
+    }
 {/literal}
 </script>
 
@@ -201,6 +244,7 @@ function warnDiscountDel( ) {
     field_type          ="radio"
     invert              = 0
 }
+{if $price }
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    ="price_set_id"
     trigger_value       =""
@@ -209,6 +253,7 @@ function warnDiscountDel( ) {
     field_type          ="select"
     invert              = 0
 }
+{/if}
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    ="is_discount"
     trigger_value       =""
