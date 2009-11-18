@@ -140,6 +140,10 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
      */
     static function getValues( &$params, &$values, &$ids ) 
     {
+        if ( empty ( $params ) ) {
+            return null;
+            
+        }
         $participant =& new CRM_Event_BAO_Participant( );
         $participant->copyValues( $params );
         $participant->find();
