@@ -797,7 +797,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
                                                           $params, $lineItem[0] );
                     }
                     $this->set( 'lineItem', $lineItem );
-                    $this->assign( 'lineItem', $lineItem );
+                    $this->assign ( 'lineItem', empty($lineItem[0])?false:$lineItem );
                     $this->_lineItem = $lineItem;
                 }
             }
