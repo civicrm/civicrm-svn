@@ -194,7 +194,7 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
             $mailParams['module'] = 'contribute';
         } 
 
-        $mailParams['page_url'] = CRM_Utils_System::url($urlPath, "reset=1&id={$params['entity_id']}", true, null, false);
+        $mailParams['page_url'] = CRM_Utils_System::url($urlPath, "reset=1&id={$params['entity_id']}", true, null, false, true);
 
         //send mail
         self::sendMail( $params['source_contact_id'], $mailParams ); 

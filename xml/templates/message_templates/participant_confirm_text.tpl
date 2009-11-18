@@ -5,7 +5,7 @@
 {ts}Confirm Your Registration{/ts}
 
 ===========================================================
-{capture assign=confirmUrl}{crmURL p='civicrm/event/confirm' q="reset=1&participantId=`$participant.id`&cs=`$checksumValue`" a=true h=0}{/capture}
+{capture assign=confirmUrl}{crmURL p='civicrm/event/confirm' q="reset=1&participantId=`$participant.id`&cs=`$checksumValue`" a=true h=0 fe=1 }{/capture}
 Click this link to go to a web page where you can confirm your registration online:
 {$confirmUrl}
 {/if}
@@ -49,7 +49,7 @@ Click this link to go to a web page where you can confirm your registration onli
 {ts}Email{/ts}: {$eventEmail.email}{/if}{/foreach}
 {/if}
 
-{capture assign=icalFeed}{crmURL p='civicrm/event/ical' q="reset=1&id=`$event.id`" h=0 a=1}{/capture}
+{capture assign=icalFeed}{crmURL p='civicrm/event/ical' q="reset=1&id=`$event.id`" h=0 a=1 fe=1 }{/capture}
 {ts}Download iCalendar File{/ts}: {$icalFeed}
 {if $contact.email}
 
