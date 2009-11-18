@@ -35,6 +35,7 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/v2/Activity.php';
 require_once 'CRM/Core/BAO/CustomGroup.php';
+require_once 'Utils.php';
 
 /**
  *  Test APIv2 civicrm_activity_* functions
@@ -340,8 +341,9 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                              . '/dataset/custom_group_activity_type_5.xml') );
 
         //  Drop and create table civicrm_value_activity_custom_9
-        $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
-        AllTests::$utils->do_query( $query );
+        $query = 'USE civicrm_tests_dev; DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
+        $utils = new Utils( $GLOBALS['mysql_host'], $GLOBALS['mysql_user'], $GLOBALS['mysql_pass'] );
+        $utils->do_query( $query );
         $group = new CRM_Core_DAO_CustomGroup();
         $group->extends = "Activity";
         $group->table_name = 'civicrm_value_activity_custom_9';
@@ -599,8 +601,9 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                              . '/dataset/custom_group_activity_type_5.xml') );
 
         //  Drop and create table civicrm_value_activity_custom_9
-        $query = 'DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
-        AllTests::$utils->do_query( $query );
+        $query = 'USE civicrm_tests_dev; DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
+        $utils = new Utils( $GLOBALS['mysql_host'], $GLOBALS['mysql_user'], $GLOBALS['mysql_pass'] );
+        $utils->do_query( $query );
         $group = new CRM_Core_DAO_CustomGroup();
         $group->extends = "Activity";
         $group->table_name = 'civicrm_value_activity_custom_9';
@@ -619,10 +622,11 @@ class api_v2_ActivityTest extends CiviUnitTestCase
         CRM_Core_BAO_CustomField::createField( $customField, 'add' );
 
         //  Insert a test value into the new table
-        $query = "INSERT INTO civicrm_value_activity_custom_9"
+        $query = "USE civicrm_tests_dev; INSERT INTO civicrm_value_activity_custom_9"
                . "( entity_id, activity_custom_11 )"
                . " VALUES ( 4,  'bite my test data' )";
-        AllTests::$utils->do_query( $query );
+        $utils = new Utils( $GLOBALS['mysql_host'], $GLOBALS['mysql_user'], $GLOBALS['mysql_pass'] );
+        $utils->do_query( $query );
 
         //  Retrieve the test value
         $params = array( 'activity_id' => 4,
