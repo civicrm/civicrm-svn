@@ -1233,10 +1233,9 @@ SELECT contact_id
                             else $object->$dbName=$value['enumValues'][0];
                         } else {
                             $object->$dbName=$dbName.'_'.$counter;
-			    if ($value['maxlength']>0 && strlen($object->$dbName)>$value['maxlength']) {
+			    if ($value['maxlength']>0 && strlen($object->$dbName)>$value['maxlength']) { 
                             	$object->$dbName=substr($object->$dbName,0,$value['maxlength']);
-                        } else {
-                            $object->$dbName=$dbName.'_'.$counter;
+			    }
                         }
                     }
                 }
