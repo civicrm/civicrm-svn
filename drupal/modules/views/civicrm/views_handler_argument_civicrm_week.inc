@@ -19,6 +19,6 @@ class views_handler_argument_civicrm_week extends views_handler_argument_date {
    */
   function summary_name($data) {
     $created = $data->{$this->name_alias};
-    return t('Week @week', array('@week' => $created));
+    return t('Week %week', array('%week' => $created));
   }
 }

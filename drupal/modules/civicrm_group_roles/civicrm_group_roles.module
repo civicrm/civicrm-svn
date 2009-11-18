@@ -73,7 +73,7 @@ function civicrm_group_roles_user($op, $edit, &$user, $category = NULL)
                             $msg = 'Error: Unable to sync role @role';
                             $variables = array('@role' => $role);
                             watchdog('civicrm_group_roles', $msg, $variables);
-                            if ($debug_mode) drupal_set_message(t($msg, $variables));
+                            if ($debug_mode) drupal_set_message(t('Error: Unable to sync role %role', array('%role' => $role)));
                         } elseif ($debug_mode && $result['added'] > 0) {
                             drupal_set_message("Added user $user->name to Group: $role");
                             drupal_set_message(var_export($result, TRUE));
@@ -90,7 +90,7 @@ function civicrm_group_roles_user($op, $edit, &$user, $category = NULL)
                 $msg = 'CiviCRM contact not found for @mail';
                 $variables = array( '@mail' => $user->mail );
                 watchdog('civicrm',  $msg, $variables);
-                if ($debug_mode) drupal_set_message(t($msg, $variables));
+                if ($debug_mode) drupal_set_message(t('CiviCRM contact not found for %mail', array('%mail' => $user->mail)));
             } //end if $contact
         } //endif $roles
 
@@ -216,7 +216,7 @@ function civicrm_role_granted_by_other_group($contact_id, $rid, $group_id) {
   $result = civicrm_group_contact_get($params);
   
   if (civicrm_error ($result )) {
-    drupal_set_message(t($result['error_message']));
+    drupal_set_message($result['error_message']);
   } 
   else {
     //contact is not in *any* other groups so delete the role

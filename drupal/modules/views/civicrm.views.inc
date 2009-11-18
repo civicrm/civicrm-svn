@@ -814,9 +814,10 @@ function civicrm_views_data() {
                                                 );
 
     //Address name
+    $link = l(t('In Global Settings'), 'civicrm/admin/setting/preferences/address', array('query' => 'reset=1'));
     $data['civicrm_address']['name'] = array(
                                              'title' => t('Address Name'),
-                                             'help' => t('Be sure addres name is enabled '. l('In Global Settings','civicrm/admin/setting/preferences/address',array('query'=>'reset=1'))),
+                                             'help' => t('Be sure addres name is enabled %link', array('%link' => $link)),
                                              'field' => array(
                                                               'handler' => 'views_handler_field',
                                                               'click sortable' => TRUE,
@@ -3990,7 +3991,7 @@ function civicrm_views_add_fields( &$fields, &$data, &$skipFields, $tableName ) 
 function civicrm_views_add_date_arguments(&$data,$value){
 
          $data[$value['name'].'_full'] = array(
-                                                     'title' => t($value['title']),
+                                                     'title' => $value['title'],
                                                      'help' => t('In the form of CCYYMMDD.'),
                                                      'argument' => array(
                                                                          'field'=>$value['name'],
@@ -3998,7 +3999,7 @@ function civicrm_views_add_date_arguments(&$data,$value){
                                                                         ),
                                                      );
          $data[$value['name'].'_year_month'] = array(
-                                                           'title' => t($value['title'].' year + month'),
+                                                           'title' => t('%title year + month', array('%title' => $value['title'])),
                                                            'help' => t('In the form of YYYYMM.'),
                                                            'argument' => array(
                                                                                'field' => $value['name'],
@@ -4006,7 +4007,7 @@ function civicrm_views_add_date_arguments(&$data,$value){
                                                                               ),
                                                            );
          $data[$value['name'].'_year'] = array(
-                                                     'title' => t($value['title'].' year'),
+                                                     'title' => t('%title year', array('%title' => $value['title'])),
                                                      'help' => t('In the form of YYYY.'),
                                                      'argument' => array(
                                                                          'field' => $value['name'],
@@ -4014,7 +4015,7 @@ function civicrm_views_add_date_arguments(&$data,$value){
                                                                         ),
                                                       );
          $data[$value['name'].'_month'] = array(
-                                                      'title' => t($value['title'].'  month'),
+                                                      'title' => t('%title month', array('%title' => $value['title'])),
                                                       'help' => t('In the form of MM (01 - 12).'),
                                                       'argument' => array(
                                                                           'field' => $value['name'],
@@ -4022,7 +4023,7 @@ function civicrm_views_add_date_arguments(&$data,$value){
                                                                          ),
                                                       );
          $data[$value['name'].'_day'] = array(
-                                                    'title' => t($value['title'].'  day'),
+                                                    'title' => t('%title day', array('%title' => $value['title'])),
                                                     'help' => t('In the form of DD (01 - 31).'),
                                                     'argument' => array(
                                                                         'field' => $value['name'],
@@ -4030,7 +4031,7 @@ function civicrm_views_add_date_arguments(&$data,$value){
                                                                        ),
                                                    );
          $data[$value['name'].'_week'] = array(
-                                                     'title' => t($value['title'].'  week'),
+                                                     'title' => t('%title week', array('%title' => $value['title'])),
                                                      'help' => t('In the form of WW (01 - 53).'),
                                                      'argument' => array(
                                                                          'field' => $value['name'],

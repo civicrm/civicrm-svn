@@ -243,7 +243,7 @@ ORDER BY parent_id, weight";
             }
              
             // for each menu get their children
-            $navigationTree[$navigation->id] = array( 'attributes' => array( 'label'      => ts($navigation->label),
+            $navigationTree[$navigation->id] = array( 'attributes' => array( 'label'      => $navigation->label,
                                                                              'url'        => $navigation->url,
                                                                              'permission' => $navigation->permission,
                                                                              'operator'   => $navigation->permission_operator,
