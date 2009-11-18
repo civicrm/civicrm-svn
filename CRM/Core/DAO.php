@@ -1157,10 +1157,14 @@ SELECT contact_id
     //ONLY USE FOR TESTING
     static function createTestObject($daoName, $params=array(), $numObjects = 1) {
 
+	static $counter=0;
+
         require_once("CRM/Utils/Type.php");
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
 
         for ($i=0;$i<$numObjects;++$i) {
+
+	    ++$counter;
             eval( '$object   =& new ' . $daoName . '( );' );
  
             $fields =& $object->fields( );
@@ -1194,7 +1198,7 @@ SELECT contact_id
                     case CRM_Utils_Type::T_BOOLEAN:
                     case CRM_Utils_Type::T_FLOAT:
                     case CRM_Utils_Type::T_MONEY:
-                        $object->$dbName=1+$i;
+                        $object->$dbName=$counter;
                         break;
 
                     case CRM_Utils_Type::T_DATE:
@@ -1230,7 +1234,7 @@ SELECT contact_id
                         } else if ($value['maxlength']>0 && strlen($dbName)>$value['maxlength']) {
                             substr($dbName,0,$value['maxlength']);
                         } else {
-                            $object->$dbName=$dbName;
+                            $object->$dbName=$dbName.'_'.$counter;
                         }
                     }
                 }
