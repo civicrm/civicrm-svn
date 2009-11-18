@@ -283,10 +283,17 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         return $value;
     }
 
-    // Request a record from the DB by seachColumn+searchValue. Success if NO record is found. 
+    // Request a record from the DB by seachColumn+searchValue. Success if returnColumn value is NULL. 
     function assertDBNull(  $daoName, $searchValue, $returnColumn, $searchColumn, $message  ) 
     {
         $value = CRM_Core_DAO::getFieldValue( $daoName, $searchValue, $returnColumn, $searchColumn );
+        $this->assertNull(  $value, $message );
+    }
+
+    // Request a record from the DB by id. Success if row not found. 
+    function assertDBRowNotExist(  $daoName, $id, $message  ) 
+    {
+        $value = CRM_Core_DAO::getFieldValue( $daoName, $id, 'id', 'id' );
         $this->assertNull(  $value, $message );
     }
 

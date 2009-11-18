@@ -54,10 +54,10 @@ class CRM_Contribute_BAO_PCP extends CRM_Contribute_DAO_PCP
     }
 
     /**
-     * function to add the Personal Campaign Page Block
+     * function to add or update either a Personal Campaign Page OR a PCP Block
      *
      * @param array $params reference array contains the values submitted by the form
-     * @param array $ids    reference array contains the id     * 
+     * @param bool  $pcpBlock if true, create or update PCPBlock, else PCP
      * @access public
      * @static 
      * @return object
