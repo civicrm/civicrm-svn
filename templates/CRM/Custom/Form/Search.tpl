@@ -2,7 +2,7 @@
 {foreach from=$groupTree item=cd_edit key=group_id}
 {if $showHideLinks or $form.formName eq 'Advanced'}
   <div id="{$cd_edit.name}_show" class="section-hidden section-hidden-border">
-    <a href="#" onclick="hide('{$cd_edit.name}_show'); show('{$cd_edit.name}'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}" /></a><label>{ts}{$cd_edit.title}{/ts}</label><br />
+    <a href="#" onclick="hide('{$cd_edit.name}_show'); show('{$cd_edit.name}'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}" /></a><label>{$cd_edit.title}</label><br />
   </div>
 {/if}
 

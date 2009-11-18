@@ -37,7 +37,7 @@
 	</fieldset>
     
     <fieldset><legend>{ts}Domain Address{/ts}</legend>
-        <div class="description">{ts}CiviMail mailings must include the sending organization's address. This is done by putting the {ldelim}domain.address{rdelim} token in either the body or footer of the mailing. This token may also be used in regular "Send Email to Contacts" messages and in other Message Templates. The token is replaced by the address entered below when the message is sent.{/ts}</div>
+        <div class="description">{ts 1=&#123;domain.address&#125;}CiviMail mailings must include the sending organization's address. This is done by putting the %1 token in either the body or footer of the mailing. This token may also be used in regular 'Send Email to Contacts' messages and in other Message Templates. The token is replaced by the address entered below when the message is sent.{/ts}</div>
         {include file="CRM/Contact/Form/Edit/Address.tpl"} 
     </fieldset>
     <fieldset><legend>{ts}Additional Domain Contact Information{/ts}</legend>

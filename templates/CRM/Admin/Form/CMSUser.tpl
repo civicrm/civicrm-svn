@@ -1,7 +1,7 @@
 {* this template is for synchronizing CMS user*}
 
 <div id="help">
-    <p>{ts}Synchronize {$config->userFramework} Users{/ts}</p>
+    <p>{ts 1=$config->userFramework}Synchronize %1 Users{/ts}</p>
 </div>
    
 <div class="messages status">

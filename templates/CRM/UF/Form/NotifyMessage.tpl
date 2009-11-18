@@ -5,7 +5,7 @@ Date: {$currentDate}
 Contact Summary: {$contactLink} 
 
 ===========================================================
-{ts}{$grouptitle} {/ts}
+{$grouptitle}
 
 ===========================================================
 {foreach from=$values item=value key=valueName}
