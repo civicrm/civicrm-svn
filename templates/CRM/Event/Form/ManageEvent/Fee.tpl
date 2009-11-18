@@ -216,7 +216,7 @@
                         newDate = new Date( Date.parse( newDate ) );
                         cj( '#discount_start_date_' + currentElementID ).datepicker('setDate', newDate );
                     }
-                    console.log( counter );
+
                     if ( counter == 5 ) {
                         cj('#discountLink').hide( );
                     }
