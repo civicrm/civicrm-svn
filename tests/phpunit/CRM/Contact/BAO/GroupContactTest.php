@@ -65,10 +65,7 @@ class CRM_Contact_BAO_GroupContactTest extends CiviUnitTestCase
 
         //creates a test group contact by recursively creation
         //lets create 10 groupContacts for fun
-        //$groupContacts = CRM_Core_DAO::createTestObject( 'CRM_Contact_DAO_GroupContact',null,10);
-
-        $contacts = CRM_Core_DAO::createTestObject( 'CRM_Contact_DAO_Contact',null,1);
-        foreach ($contacts as $c) print_r($c);
+        $groupContacts = CRM_Core_DAO::createTestObject( 'CRM_Contact_DAO_GroupContact',null,10);
 
         //check the group contact id is not null for each of them
         foreach ($groupContacts as $gc) $this->assertNotNull( $gc->id );
