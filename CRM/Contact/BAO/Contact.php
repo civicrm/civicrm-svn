@@ -363,7 +363,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         
         $transaction->commit( );
         
-        $contact->contact_type_display = CRM_Contact_DAO_Contact::tsEnum('contact_type', $contact->contact_type);
+        $contact->contact_type_display = $contact->contact_type;
 
         // reset the group contact cache for this group
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
@@ -1138,7 +1138,7 @@ WHERE  civicrm_contact.id = %1 ";
         $contactType =  self::getContactType( $id );
 
         $nameFields = ($contactType == 'Individual') ?
-            "civicrm_contact.first_name, civicrm_contact.last_name" :
+            "civicrm_contact.first_name, civicrm_contact.last_name, civicrm_contact.display_name" :
             "civicrm_contact.display_name";
         
        $sql = "

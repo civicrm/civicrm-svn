@@ -208,11 +208,11 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
             $this->_priceSetID = CRM_Price_BAO_Set::getFor( 'civicrm_contribution_page', $this->_id );
             if ( $this->_priceSetID ) $defaults['price_set_id'] = $this->_priceSetID;
             
-            if ( $defaults['end_date'] ) {
+            if ( CRM_Utils_Array::value( 'end_date', $defaults ) ) {
                 list( $defaults['end_date'], $defaults['end_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['end_date'] );
             }
             
-            if ( $defaults['start_date'] ) {
+            if ( CRM_Utils_Array::value( 'start_date', $defaults ) ) {
                 list( $defaults['start_date'], $defaults['start_date_time'] ) = CRM_Utils_Date::setDateDefaults( $defaults['start_date'] );
             }
         } else {
