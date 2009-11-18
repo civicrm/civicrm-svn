@@ -445,7 +445,9 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
         list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
         
         if ( !$domainEmailAddress || $domainEmailAddress == 'info@FIXME.ORG') {
-            CRM_Core_Error::fatal( ts( 'The site administrator needs to enter a valid \'FROM Email Address\' in Administer CiviCRM &raquo; Configure &raquo; Domain Information. The email address used may need to be a valid mail account with your email service provider.' ) );
+            require_once 'CRM/Utils/System.php';
+            $fixUrl = CRM_Utils_System::url("civicrm/admin/domain", 'action=update&reset=1');
+            CRM_Core_Error::fatal( ts( 'The site administrator needs to enter a valid \'FROM Email Address\' in <a href="%1">Administer CiviCRM &raquo; Configure &raquo; Domain Information</a>. The email address used may need to be a valid mail account with your email service provider.', array( 1 => $fixUrl ) ) );
         }
             
         $receiptFrom = '"' . $domainEmailName . '" <' . $domainEmailAddress . '>';

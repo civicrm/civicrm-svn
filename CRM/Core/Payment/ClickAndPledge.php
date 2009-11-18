@@ -153,7 +153,9 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
 
         // ensure that the returnURL is absolute.
         if ( substr( $returnURL, 0, 4 ) != 'http' ) {
-            CRM_Core_Error::fatal( ts( 'Sending a relative URL to Click And Pledge is erroneous. Please make your resource URL (in Administer CiviCRM >> Global Settings) complete' ) );
+            require_once 'CRM/Utils/System.php';
+            $fixUrl = CRM_Utils_System::url("civicrm/admin/setting/url", '&reset=1');
+            CRM_Core_Error::fatal( ts( 'Sending a relative URL to Click And Pledge is erroneous. Please make your resource URL (in <a href="%1">Administer CiviCRM &raquo; Global Settings &raquo; Resource URLs</a> ) complete.', array( 1 => $fixUrl ) ) );
         }
         
         $ClickAndPledgeParams = array( 'WID' => $this->_paymentProcessor['user_name'],
