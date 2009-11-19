@@ -1,6 +1,6 @@
 {if $honor_block_is_active}
     <div class="header-dark">
-        {ts}{$honor_block_title}{/ts}
+        {$honor_block_title}
     </div>
     <div class="display-block">
          <strong>{$honor_type}  : </strong>

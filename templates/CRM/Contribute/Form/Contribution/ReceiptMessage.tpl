@@ -166,7 +166,7 @@ End Date: {$end_date|crmDate}
 
 {if $customPre}
 ===========================================================
-{ts}{$customPre_grouptitle} {/ts}
+{$customPre_grouptitle}
 
 ===========================================================
 {foreach from=$customPre item=customValue key=customName}
@@ -179,7 +179,7 @@ End Date: {$end_date|crmDate}
 
 {if $customPost}
 ===========================================================
-{ts}{$customPost_grouptitle}{/ts}
+{$customPost_grouptitle}
 
 ===========================================================
 {foreach from=$customPost item=customValue key=customName}

@@ -64,7 +64,7 @@
         {if $contributionMode}
             {if $email and $outBound_option != 2}
                 <tr><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}</td></tr>
-                <tr><td class="label">&nbsp;</td><td class="description">{ts}Automatically email a receipt for this contribution to {$email}?{/ts}</td></tr>
+                <tr><td class="label">&nbsp;</td><td class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</td></tr>
             {elseif $context eq 'standalone' and $outBound_option != 2 }
                 <tr id="email-receipt" style="display:none;"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
             {/if}
@@ -89,7 +89,7 @@
             {/if}
             <tr><td class="label">{$form.trxn_id.label}</td><td{$valueStyle}>{$form.trxn_id.html|crmReplace:class:twelve} {help id="id-trans_id"}</td></tr>
             {if $email and $outBound_option != 2}
-                <tr><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {$email}?{/ts}</span></td></tr>
+                <tr><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</span></td></tr>
             {elseif $context eq 'standalone' and $outBound_option != 2 }
                 <tr id="email-receipt" style="display:none;"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
             {/if}

@@ -79,17 +79,28 @@ INSERT INTO civicrm_tag( name, description, parent_id )
 INSERT INTO civicrm_tag( name, description, parent_id )
     VALUES( '{ts escape="sql"}Volunteer{/ts}', '{ts escape="sql"}Active volunteers.{/ts}', NULL );
 
+{capture assign=subgroup}{ldelim}subscribe.group{rdelim}{/capture}
+{capture assign=suburl}{ldelim}subscribe.url{rdelim}{/capture}
+{capture assign=welgroup}{ldelim}welcome.group{rdelim}{/capture}
+{capture assign=unsubgroup}{ldelim}unsubscribe.group{rdelim}{/capture}
+{capture assign=actresub}{ldelim}action.resubscribe{rdelim}{/capture}
+{capture assign=actresuburl}{ldelim}action.resubscribeUrl{rdelim}{/capture}
+{capture assign=resubgroup}{ldelim}resubscribe.group{rdelim}{/capture}
+{capture assign=actunsub}{ldelim}action.unsubscribe{rdelim}{/capture}
+{capture assign=actunsuburl}{ldelim}action.unsubscribeUrl{rdelim}{/capture}
+{capture assign=domname}{ldelim}domain.name{rdelim}{/capture}
+
 -- sample CiviCRM mailing components
 INSERT INTO civicrm_mailing_component
     (name,component_type,subject,body_html,body_text,is_default,is_active)
 VALUES
     ('{ts escape="sql"}Mailing Header{/ts}','Header','{ts escape="sql"}Descriptive Title for this Header{/ts}','{ts escape="sql"}Sample Header for HTML formatted content.{/ts}','{ts escape="sql"}Sample Header for TEXT formatted content.{/ts}',1,1),
     ('{ts escape="sql"}Mailing Footer{/ts}','Footer','{ts escape="sql"}Descriptive Title for this Footer.{/ts}','{ts escape="sql"}Sample Footer for HTML formatted content.{/ts}','{ts escape="sql"}Sample Footer for TEXT formatted content.{/ts}',1,1),
-    ('{ts escape="sql"}Subscribe Message{/ts}','Subscribe','{ts escape="sql"}Subscription Confirmation Request{/ts}','{ts escape="sql"}You have a pending subscription to the {ldelim}subscribe.group{rdelim} mailing list. To confirm this subscription, reply to this email or click <a href="{ldelim}subscribe.url{rdelim}">here</a>.{/ts}','{ts escape="sql"}You have a pending subscription to the {ldelim}subscribe.group{rdelim} mailing list. To confirm this subscription, reply to this email or click on this link: {ldelim}subscribe.url{rdelim}{/ts}',1,1),
-    ('{ts escape="sql"}Welcome Message{/ts}','Welcome','{ts escape="sql"}Your Subscription has been Activated{/ts}','{ts escape="sql"}Welcome. Your subscription to the {ldelim}welcome.group{rdelim} mailing list has been activated.{/ts}','{ts escape="sql"}Welcome. Your subscription to the {ldelim}welcome.group{rdelim} mailing list has been activated.{/ts}',1,1),
-    ('{ts escape="sql"}Unsubscribe Message{/ts}','Unsubscribe','{ts escape="sql"}Un-subscribe Confirmation{/ts}','{ts escape="sql"}You have been un-subscribed from the following groups: {ldelim}unsubscribe.group{rdelim}. You can re-subscribe by mailing {ldelim}action.resubscribe{rdelim} or clicking <a href="{ldelim}action.resubscribeUrl{rdelim}">here</a>.{/ts}','{ts escape="sql"}You have been un-subscribed from the following groups: {ldelim}unsubscribe.group{rdelim}. You can re-subscribe by mailing {ldelim}action.resubscribe{rdelim} or clicking {ldelim}action.resubscribeUrl{rdelim}{/ts}',1,1),
-    ('{ts escape="sql"}Resubscribe Message{/ts}','Resubscribe','{ts escape="sql"}Re-subscribe Confirmation{/ts}','{ts escape="sql"}You have been re-subscribed to the following groups: {ldelim}resubscribe.group{rdelim}. You can un-subscribe by mailing {ldelim}action.unsubscribe{rdelim} or clicking <a href="{ldelim}action.unsubscribeUrl{rdelim}">here</a>.{/ts}','{ts escape="sql"}You have been re-subscribed to the following groups: {ldelim}resubscribe.group{rdelim}. You can un-subscribe by mailing {ldelim}action.unsubscribe{rdelim} or clicking {ldelim}action.unsubscribeUrl{rdelim}{/ts}',1,1),
-    ('{ts escape="sql"}Opt-out Message{/ts}','OptOut','{ts escape="sql"}Opt-out Confirmation{/ts}','{ts escape="sql"}Your email address has been removed from {ldelim}domain.name{rdelim} mailing lists.{/ts}','{ts escape="sql"}Your email address has been removed from {ldelim}domain.name{rdelim} mailing lists.{/ts}',1,1),
+    ('{ts escape="sql"}Subscribe Message{/ts}','Subscribe','{ts escape="sql"}Subscription Confirmation Request{/ts}','{ts escape="sql" 1=$subgroup 2=$suburl}You have a pending subscription to the %1 mailing list. To confirm this subscription, reply to this email or click <a href="%2">here</a>.{/ts}','{ts escape="sql" 1=$subgroup 2=$suburl}You have a pending subscription to the %1 mailing list. To confirm this subscription, reply to this email or click on this link: %2{/ts}',1,1),
+    ('{ts escape="sql"}Welcome Message{/ts}','Welcome','{ts escape="sql"}Your Subscription has been Activated{/ts}','{ts escape="sql" 1=$welgroup}Welcome. Your subscription to the %1 mailing list has been activated.{/ts}','{ts escape="sql" 1=$welgroup}Welcome. Your subscription to the %1 mailing list has been activated.{/ts}',1,1),
+    ('{ts escape="sql"}Unsubscribe Message{/ts}','Unsubscribe','{ts escape="sql"}Un-subscribe Confirmation{/ts}','{ts escape="sql" 1=$unsubgroup 2=$actresub 3=$actresuburl}You have been un-subscribed from the following groups: %1. You can re-subscribe by mailing %2 or clicking <a href="%3">here</a>.{/ts}','{ts escape="sql" 1=$unsubgroup 2=$actresub}You have been un-subscribed from the following groups: %1. You can re-subscribe by mailing %2 or clicking %3{/ts}',1,1),
+    ('{ts escape="sql"}Resubscribe Message{/ts}','Resubscribe','{ts escape="sql"}Re-subscribe Confirmation{/ts}','{ts escape="sql" 1=$resubgroup 2=$actunsub 3=$actunsuburl}You have been re-subscribed to the following groups: %1. You can un-subscribe by mailing %2 or clicking <a href="%3">here</a>.{/ts}','{ts escape="sql" 1=$resubgroup 2=$actunsub 3=$actunsuburl}You have been re-subscribed to the following groups: %1. You can un-subscribe by mailing %2 or clicking %3{/ts}',1,1),
+    ('{ts escape="sql"}Opt-out Message{/ts}','OptOut','{ts escape="sql"}Opt-out Confirmation{/ts}','{ts escape="sql" 1=$domname}Your email address has been removed from %1 mailing lists.{/ts}','{ts escape="sql" 1=$domname}Your email address has been removed from %1 mailing lists.{/ts}',1,1),
     ('{ts escape="sql"}Auto-responder{/ts}','Reply','{ts escape="sql"}Please Send Inquiries to Our Contact Email Address{/ts}','{ts escape="sql"}This is an automated reply from an un-attended mailbox. Please send any inquiries to the contact email address listed on our web-site.{/ts}','{ts escape="sql"}This is an automated reply from an un-attended mailbox. Please send any inquiries to the contact email address listed on our web-site.{/ts}',1,1);
 
 

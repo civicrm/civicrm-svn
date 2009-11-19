@@ -152,7 +152,11 @@
 		 <tr> 
             <td class="label">{if $paid}{ts}Send Confirmation and Receipt{/ts}{else}{ts}Send Confirmation{/ts}{/if}</td>
             <td>{$form.send_receipt.html}<br>
-                <span class="description">{ts}Automatically email a confirmation {if $paid} and receipt {/if} to {$email}?{/ts}</span></td>
+              {if $paid}
+                <span class="description">{ts 1=$email}Automatically email a confirmation and receipt to %1?{/ts}</span></td>
+              {else}
+                <span class="description">{ts 1=$email}Automatically email a confirmation to %1?{/ts}</span></td>
+              {/if}
         </tr>
         <tr id='notice'>
  			<td class="label">{$form.receipt_text.label}</td> 
@@ -170,7 +174,11 @@
     	 <tr> 
             <td class="label">{if $paid}{ts}Send Confirmation and Receipt{/ts}{else}{ts}Send Confirmation{/ts}{/if}</td>
             <td>{$form.send_receipt.html}<br>
-                <span class="description">{ts}Automatically email a confirmation {if $paid} and receipt {/if} to {/ts}<span id="email-address"></span>?</span>
+              {if $paid}
+                <span class="description">{ts 1='<span id="email-address"></span>'}Automatically email a confirmation and receipt to %1?{/ts}</span>
+              {else}
+                <span class="description">{ts 1='<span id="email-address"></span>'}Automatically email a confirmation to %1?{/ts}</span>
+              {/if}
             </td>
         </tr>
         <tr id='notice'>

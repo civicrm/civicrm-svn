@@ -1,5 +1,5 @@
 {htxt id="domain-name"}
-{ts}Enter the name of the organization or entity which owns this CiviCRM domain. Use the {ldelim}domain.name{rdelim} token to include this value in mailing content. It is used in the default Opt-out Message.{/ts}
+{ts 1='&#123;domain.name&#125;'}Enter the name of the organization or entity which owns this CiviCRM domain. Use the %1 token to include this value in mailing content. It is used in the default Opt-out Message.{/ts}
 {/htxt}
 
 
@@ -17,6 +17,6 @@
 
 {capture assign=componentUrl}{crmURL p="civicrm/admin/component" q="reset=1"}{/capture}
 {htxt id="additional-contact"}
-{ts 1=$componentUrl}You can also include general email and/or phone contact information in mailings by filling in the fields below, and then using the {ldelim}domain.email{rdelim} and {ldelim}domain.phone{rdelim} tokens in your mailings. These are particularly useful for inclusion in pre-configured mailing <a href='%1'>Headers or Footers</a>.{/ts}
+{ts 1=$componentUrl 2='&#123;domain.email&#125;' 3='&#123;domain.phone&#125;'}You can also include general email and/or phone contact information in mailings by filling in the fields below, and then using the %2 and %3 tokens in your mailings. These are particularly useful for inclusion in pre-configured mailing <a href='%1'>Headers or Footers</a>.{/ts}
 {/htxt}
 

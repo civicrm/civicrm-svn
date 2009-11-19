@@ -10,7 +10,7 @@
      
     {if $action ne 1 and $action ne 2 and $permission EQ 'edit'}
         <div id="help">
-            {ts 1=$newURL}Current and inactive memberships for {$displayName} are listed below.{/ts}
+            {ts 1=$displayName}Current and inactive memberships for %1 are listed below.{/ts}
             {if $permission EQ 'edit'}{ts 1=$newURL}Click <a href='%1'>New Membership</a> to record a new membership.{/ts}{/if}
 	    {if $newCredit}	
             {capture assign=newCreditURL}{crmURL p="civicrm/contact/view/membership" q="reset=1&action=add&cid=`$contactId`&context=membership&mode=live"}{/capture}

@@ -60,7 +60,8 @@
    </div>
   {else}
       <div class="status message">
-         {ts}You need to have at least one <a href="{crmURL p="civicrm/admin/member/membershipType" q="reset=1"}">Membership Type</a> to enable Member Signup.{/ts}
+         {capture assign=docURL}{crmURL p="civicrm/admin/member/membershipType" q="reset=1"}{/capture}
+         {ts 1=$docURL}You need to have at least one <a href="%1">Membership Type</a> to enable Member Signup.{/ts}
       </div>
   {/if} 
   {if $action ne 4}

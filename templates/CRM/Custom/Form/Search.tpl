@@ -11,7 +11,7 @@
 {if $showHideLinks or $form.formName eq 'Advanced'}
 <a href="#" onclick="hide('{$cd_edit.name}'); show('{$cd_edit.name}_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}" /></a>
 {/if}
-{ts}{$cd_edit.title}{/ts}</legend>
+{$cd_edit.title}</legend>
     <dl>
     {foreach from=$cd_edit.fields item=element key=field_id}
       {assign var="element_name" value='custom_'|cat:$field_id}

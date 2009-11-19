@@ -39,9 +39,9 @@
 <tr class="{cycle values="odd-row,even-row"}">
 <td>
 {if $group.mailing}
-{ts}Recipients of <a href="{$group.link}">{$group.name}</a>{/ts}
+{ts 1=$group.link 2=$group.name}Recipients of <a href="%1">%2</a>{/ts}
 {else}
-{ts}Members of <a href="{$group.link}">{$group.name}</a>{/ts}
+{ts 1=$group.link 2=$group.name}Members of <a href="%1">%2</a>{/ts}
 {/if}
 </td>
 </tr>
@@ -58,9 +58,9 @@
 <tr class="{cycle values="odd-row,even-row"}">
 <td>
 {if $group.mailing}
-{ts}Recipients of <a href="{$group.link}">{$group.name}</a>{/ts}
+{ts 1=$group.link 2=$group.name}Recipients of <a href="%1">%2</a>{/ts}
 {else}
-{ts}Members of <a href="{$group.link}">{$group.name}</a>{/ts}
+{ts 1=$group.link 2=$group.name}Members of <a href="%1">%2</a>{/ts}
 {/if}
 </td>
 </tr>

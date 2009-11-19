@@ -4,14 +4,14 @@
     <tr class="columnheader-dark">
         <th scope="col">{ts}Members by Type{/ts}</th>
         {if $preMonth}
-            <th scope="col">{ts 1=$premonth}%1  &ndash; New/Renew (Last Month){/ts}</th>
+            <th scope="col">{$premonth} &ndash; {ts}New/Renew (Last Month){/ts}</th>
         {/if}
-        <th scope="col">{ts 1=$month}%1 &ndash; New/Renew{if $isCurrent} (MTD){/if}{/ts}</th>
+        <th scope="col">{$month} &ndash; {if $isCurrent}{ts}New/Renew (MTD){/ts}{else}{ts}New/Renew{/ts}{/if}</th>
         <th scope="col">
             {if $year eq $currentYear}
-                {ts 1=$year}%1 &ndash; New/Renew (YTD){/ts}
+                {$year} &ndash; {ts}New/Renew (YTD){/ts}
             {else}
-                {ts 1=$year 2=$month}%1 &ndash; New/Renew through %2{/ts}
+                {$year} &ndash; {ts 1=$month}New/Renew through %1{/ts}
             {/if}
         </th>
         <th scope="col">

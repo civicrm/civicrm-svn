@@ -266,7 +266,7 @@ cj(document).ready(function(){
   <br />
   
   {if $globalRelationships}
-    <div><input type="button" class="form-submit default" onClick="window.location='{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}'" value="{ts}Add members to {$globalGroupInfo.title}{/ts}" /></div>
+    <div><input type="button" class="form-submit default" onClick="window.location='{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}'" value="{ts 1=$globalGroupInfo.title}Add members to %1{/ts}" /></div>
 	
     <table class="report">
     	<tr class="columnheader">
@@ -288,7 +288,7 @@ cj(document).ready(function(){
       <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
         <dd>          
           {capture assign=crmURL}{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}{/capture}
-          {ts 1=$crmURL}The group {$globalGroupInfo.title} has no members. You can <a href='%1'>add one</a>.{/ts}
+          {ts 1=$crmURL 2=$globalGroupInfo.title}The group %2 has no members. You can <a href='%1'>add one</a>.{/ts}
         </dd>
       </dl>
     </div>

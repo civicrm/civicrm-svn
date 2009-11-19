@@ -67,7 +67,7 @@
         {if $email and $outBound_option != 2}
             {if $form.is_acknowledge }
                 <tr><td class="label">{$form.is_acknowledge.label}</td><td>{$form.is_acknowledge.html}<br />
-                <span class="description">{ts}Automatically email an acknowledgment of this pledge to {$email}?{/ts}</span></td></tr>
+                <span class="description">{ts 1=$email}Automatically email an acknowledgment of this pledge to %1?{/ts}</span></td></tr>
             {/if}
 	    {elseif $context eq 'standalone' and $outBound_option != 2 }
                 <tr id="acknowledgment-receipt" style="display:none;"><td class="label">{$form.is_acknowledge.label}</td><td>{$form.is_acknowledge.html} <span class="description">{ts}Automatically email an acknowledgment of this pledge to {/ts}<span id="email-address"></span>?</span></td></tr>

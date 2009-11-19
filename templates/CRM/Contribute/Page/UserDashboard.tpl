@@ -85,7 +85,7 @@
                 </tr>
                 {foreach from=$recurRows item=row key=id}
                     <tr class="{cycle values="odd-row,even-row"}">
-                        <td><label>{ts}{$recurRows.$id.amount|crmMoney}{/ts}</label>  every {$recurRows.$id.frequency_interval} {$recurRows.$id.frequency_unit} for {$recurRows.$id.installments} installments</td>
+                        <td><label>{$recurRows.$id.amount|crmMoney}</label>  every {$recurRows.$id.frequency_interval} {$recurRows.$id.frequency_unit} for {$recurRows.$id.installments} installments</td>
                         <td>{$recurRows.$id.recur_status}</td>
                         <td>{if $recurRows.$id.completed}<a href="{$recurRows.$id.link}">{$recurRows.$id.completed}/{$recurRows.$id.installments}</a>
                             {else}0/{$recurRows.$id.installments} {/if}</td>
