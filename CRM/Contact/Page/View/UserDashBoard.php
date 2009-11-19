@@ -100,7 +100,7 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
     function preProcess()
     {
         if ( ! $this->_contactId) {
-            CRM_Core_Error::fatal( ts( 'We could not find a contact id.' ) );
+            CRM_Core_Error::fatal( ts( 'You must be logged in to view this page.' ) );
         }
 
         list( $displayName, $contactImage ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $this->_contactId );
