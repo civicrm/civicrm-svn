@@ -156,12 +156,14 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
             }
         } 
         $mailingDomain =& new CRM_Core_DAO_Preferences();
+        $mailingDomain->domain_id  = CRM_Core_Config::domainID( );
+        $mailingDomain->is_domain  = true;
         $mailingDomain->find(true);
         if ( $mailingDomain->mailing_backend ) {
             $values = unserialize( $mailingDomain->mailing_backend );
             CRM_Core_BAO_Setting::formatParams( $formValues, $values );
         }
-
+        
         // if password is present, encrypt it
         if ( ! empty( $formValues['smtpPassword'] ) ) {
             require_once 'CRM/Utils/Crypt.php';
