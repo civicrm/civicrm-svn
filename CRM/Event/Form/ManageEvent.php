@@ -93,10 +93,11 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
 
         $subPage       = CRM_Utils_Request::retrieve( 'subPage', 'String', $this );
 
-        $this->_isTemplate = (bool) CRM_Utils_Request::retrieve('is_template', 'Boolean', $this);
-        if (!$this->_isTemplate and $this->_id) {
-            $this->_isTemplate = (bool) CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $this->_id, 'is_template');
+        $this->_isTemplate = CRM_Utils_Request::retrieve('is_template', 'Boolean', $this);
+        if ( !$this->_isTemplate && $this->_id ) {
+            $this->_isTemplate = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $this->_id, 'is_template');
         }
+        
         $this->assign('isTemplate', $this->_isTemplate);
 
         $this->_templateId = (int) CRM_Utils_Request::retrieve('template_id', 'Integer', $this);
@@ -106,12 +107,19 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         CRM_Event_Form_ManageEvent_TabHeader::build( $this );
 
         // Set Done button URL and breadcrumb. Templates go back to Manage Templates, 
-        // otherwise go to ManageEventEdit for this event.
-        if ( !$this->_isTemplate && $this->_id ) {
-            $this->_doneUrl = CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 
-                                                     "action=update&reset=1&id={$this->_id}" );
-            $breadCrumb     = array( array('title' => ts('Configure Event'),
-                                           'url'   => $this->_doneUrl) );
+        // otherwise go to Manage Event for new event or ManageEventEdit if event if exists.        
+        if ( !$this->_isTemplate ) {
+            if ( $this->_id ) {
+                $this->_doneUrl = CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 
+                                                         "action=update&reset=1&id={$this->_id}" );
+                $breadCrumb     = array( array('title' => ts('Configure Event'),
+                                               'url'   => $this->_doneUrl) );
+            } else {
+                $this->_doneUrl = CRM_Utils_System::url( 'civicrm/event/manage', 
+                                                         'reset=1' );
+                $breadCrumb     = array( array('title' => ts('Manage Events'),
+                                               'url'   => $this->_doneUrl) );
+            }
         } else {
             $this->_doneUrl = CRM_Utils_System::url( 'civicrm/admin/eventTemplate', 'reset=1' );
             $breadCrumb     = array( array('title' => ts('Manage Event Templates'),

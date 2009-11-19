@@ -443,7 +443,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         foreach ( $blocks as $name => $label ) {
             $hasData = $hasPrimary = array( );
             $name = strtolower( $name );
-            if ( is_array( $fields[$name] ) ) {
+            if ( CRM_Utils_Array::value( $name, $fields ) && is_array( $fields[$name] ) ) {
                 foreach ( $fields[$name] as $instance => $blockValues ) {
                     $dataExists = self::blockDataExists( $blockValues );
                     if ( !$dataExists && $name == 'address' &&  $instance == 1 ) {
