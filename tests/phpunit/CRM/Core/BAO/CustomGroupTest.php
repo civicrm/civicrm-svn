@@ -21,7 +21,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         require_once 'CRM/Core/Config.php';
         $config =& CRM_Core_Config::singleton( );
     }
-
+    
     /**
      * Function to test getTree()
      */
@@ -37,10 +37,10 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'extends'    => 'Individual',
                              'is_active'  => 1
                              );
-
+        
         $customGroup = Custom::createGroup( $groupParams );
         $customGroupId = $customGroup->id;
-
+        
         $fields      = array (
                               'groupId'  =>  $customGroupId,
                               'dataType' => 'String',
@@ -51,7 +51,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         $formParams = NULL;
         require_once 'CRM/Core/BAO/CustomGroup.php';
         $getTree = CRM_Core_BAO_CustomGroup::getTree('Individual', $formParams, $customGroupId );
-              
+        
         $dbCustomGroupTitle = $this->assertDBNotNull( 'CRM_Core_DAO_CustomGroup', $customGroupId, 'title', 'id',
                                                       'Database check for custom group record.' );
         
@@ -59,6 +59,29 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         Custom::deleteGroup( $customGroup );
         Contact::delete( $contactId );
         $customGroup->free();
+    }
+    
+    
+    /**
+     * Function to test retrieve() with Empty Params
+     */
+    function testRetrieveEmptyParams( )
+    { 
+        $params = array( ); 
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $customGroup = CRM_Core_BAO_CustomGroup::retrieve( $params, $dafaults );
+        $this->assertNull( $customGroup , 'Check that no custom Group is retreived'  );
+    }
+    
+    /**
+     * Function to test retrieve() with Inalid Params
+     */
+    function testRetrieveInvalidParams( )
+    { 
+        $params = array( 'id' => 99 ); 
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $customGroup = CRM_Core_BAO_CustomGroup::retrieve( $params, $dafaults );
+        $this->assertNull( $customGroup , 'Check that no custom Group is retreived'  );      
     }
     
     /**
@@ -116,6 +139,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         require_once 'CRM/Core/BAO/CustomGroup.php';
         //update is_active
         $result = CRM_Core_BAO_CustomGroup::setIsActive( $customGroupId, true );
+        
         //check for object update
         $this->assertEquals( true, $result );
         //check for is_active
@@ -123,6 +147,28 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                                      'Database check for custom group is_active field.' );
         //cleanup DB by deleting customGroup
         Custom::deleteGroup( $customGroup );
+    }
+    
+    /**
+     * Function to test getGroupDetail() with Empty Params
+     */
+    function testGetGroupDetailEmptyParams( )
+    {   
+        $customGroupId = array( ); 
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $customGroup = CRM_Core_BAO_CustomGroup::getGroupDetail( $customGroupId );
+        $this->assertEquals( empty( $customGroup ) , 'Check that no custom Group  details is retreived'  );
+    }
+    
+    /**
+     * Function to test getGroupDetail() with Inalid Params
+     */
+    function testGetGroupDetailInvalidParams( )
+    { 
+        $customGroupId =  99; 
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $customGroup = CRM_Core_BAO_CustomGroup::getGroupDetail( $customGroupId );
+        $this->assertEquals( empty( $customGroup ) ,  'Check that no custom Group  details is retreived'  );
     }
     
     /**
@@ -176,6 +222,19 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
     }
     
     /**
+     * Function to test getTitle() with Invalid Params()
+     */
+    function testGetTitleWithInvalidParams( )
+    {
+        $params = 99;
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $customGroupTitle =  CRM_Core_BAO_CustomGroup::getTitle( $params );
+        
+        $this->assertNull( $customGroupTitle , 'Check that no custom Group Title is retreived'  );
+    }
+    
+    
+    /**
      * Function to test getTitle()
      */
     function testGetTitle()
@@ -218,6 +277,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              );
         
         $customGroup = Custom::createGroup( $groupParams );
+        
         $customGroupId = $customGroup->id;
         
         //get the custom group title
@@ -275,7 +335,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         //cleanup DB by deleting customGroup
         Custom::deleteGroup( $customGroup );
     }
-
+    
     /**
      * Function to test checkCustomField()
      */
@@ -333,7 +393,18 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         Custom::deleteField( $customField ); 
         Custom::deleteGroup( $customGroup );
     }
-   
+    
+    /**
+     * Function to test getActiveGroups() with Invalid Params()
+     */
+    function testGetActiveGroupsWithInvalidParams( )
+    {   
+        $contactId = Contact::createIndividual( );      
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $activeGroups =  CRM_Core_BAO_CustomGroup::getActiveGroups('ABC', 'civicrm/contact/view/cd', $contactId );
+        $this->assertEquals( empty($activeGroups) ,true, 'Check that Emprt params are retreived');
+    }
+    
     function testGetActiveGroups()
     {
         $contactId = Contact::createIndividual( );
@@ -347,7 +418,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                              'is_active'  => 1
                              );
 
-       
+        
         $customGroup = Custom::createGroup( $groupParams );
         require_once 'CRM/Core/BAO/CustomGroup.php';
         $activeGroup = CRM_Core_BAO_CustomGroup::getActiveGroups('Individual', 'civicrm/contact/view/cd', $contactId );
@@ -364,10 +435,12 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
         Contact::delete( $contactId );
 
     }
-
+    
+    /**
+     * Function to test create()
+     */
     function testCreate( )
-    {
-
+    {        
         $params = array( 'title'            => 'Test_Group_1',
                          'name'             => 'test_group_1',
                          'extends'          => array('Individual'),
@@ -380,10 +453,91 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
                          );
         require_once 'CRM/Core/BAO/CustomGroup.php';
         $customGroup =  CRM_Core_BAO_CustomGroup::create( $params );
-
+        
         $dbCustomGroupTitle = $this->assertDBNotNull( 'CRM_Core_DAO_CustomGroup', $customGroup->id, 'title', 'id',
                                                       'Database check for custom group record.' );
         $this->assertEquals( $params['title'], $dbCustomGroupTitle );
         Custom::deleteGroup( $customGroup );
     } 
+    
+    
+    /**
+     * Function to test isGroupEmpty()
+     */
+    function testIsGroupEmpty( )
+    {
+        $customGrouptitle = 'Test Custom Group';
+        $groupParams = array(
+                             'title'      => $customGrouptitle,
+                             'name'       => 'test_custom_group',
+                             'style'      => 'Tab',
+                             'extends'    => 'Individual',
+                             'weight'     => 10,
+                             'is_active'  => 1
+                             );
+        
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $customGroup = Custom::createGroup( $groupParams );
+        $customGroupId = $customGroup->id;
+        $isEmptyGroup =  CRM_Core_BAO_CustomGroup::isGroupEmpty( $customGroupId );
+        
+        $this->assertEquals( $isEmptyGroup , true,  'Check that custom Group is Empty.' );
+        Custom::deleteGroup( $customGroup );
+    }
+    
+    
+    
+    /**
+     * Function to test getGroupTitles() with Invalid Params()
+     */
+    function testgetGroupTitlesWithInvalidParams( )
+    {
+        $params = array ( 99 );
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $groupTitles =  CRM_Core_BAO_CustomGroup::getGroupTitles( $params );
+        $this->assertEquals( empty($groupTitles) , 'Check that no titles are recieved'  );
+    }
+    
+    /**
+     * Function to test getGroupTitles()
+     */
+    function testgetGroupTitles( )
+    {
+        $customGrouptitle = 'Test Custom Group';
+        $groupParams = array(
+                             'title'      => $customGrouptitle,
+                             'name'       => 'test_custom_group',
+                             'style'      => 'Tab',
+                             'extends'    => 'Individual',
+                             'weight'     => 10,
+                             'is_active'  => 1
+                             );
+        
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $customGroup = Custom::createGroup( $groupParams );
+         
+        $customGroupId = $customGroup->id;
+        
+        $customFieldLabel = 'Test Custom Field';
+        $fieldParams = array(
+                             'custom_group_id' => $customGroupId,
+                             'label'           => $customFieldLabel,
+                             'html_type'       => 'Text',
+                             'data_type'       => 'String',
+                             'is_required'     => 1,
+                             'is_searchable'   => 0,
+                             'is_active'       => 1
+                             );
+        
+        $customField = Custom::createField( $fieldParams );
+        $customFieldId = $customField->id;
+        
+        $params = array( $customFieldId );
+        
+        $groupTitles =  CRM_Core_BAO_CustomGroup::getGroupTitles( $params );
+        
+        $this->assertEquals( $groupTitles[$customGroup->id]['groupTitle'] ,'Test Custom Group' ,  'Check Group Title.' );
+        Custom::deleteGroup( $customGroup );
+    }
+
 }
