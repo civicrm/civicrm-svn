@@ -32,7 +32,7 @@
    </tr>
    <tr>
     <td colspan="2" {$valueStyle}>
-     {capture assign=confirmUrl}{crmURL p='civicrm/event/confirm' q="reset=1&participantId=`$participant.id`&cs=`$checksumValue`" a=true h=0}{/capture}
+     {capture assign=confirmUrl}{crmURL p='civicrm/event/confirm' q="reset=1&participantId=`$participant.id`&cs=`$checksumValue`" a=true h=0 fe=1}{/capture}
      <a href="{$confirmUrl}">Go to a web page where you can confirm your registration online</a>
     </td>
    </tr>
@@ -117,7 +117,7 @@
       {/foreach}
      {/if}
 
-     {capture assign=icalFeed}{crmURL p='civicrm/event/ical' q="reset=1&id=`$event.id`" h=0 a=1}{/capture}
+     {capture assign=icalFeed}{crmURL p='civicrm/event/ical' q="reset=1&id=`$event.id`" h=0 a=1 fe=1}{/capture}
      <tr>
       <td colspan="2" {$valueStyle}>
        <a href="{$icalFeed}">{ts}Download iCalendar File{/ts}</a>
