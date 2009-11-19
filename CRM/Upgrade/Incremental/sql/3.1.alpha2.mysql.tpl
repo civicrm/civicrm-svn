@@ -22,3 +22,7 @@ VALUES
     (@option_group_id_acsOpt, {localize}'City'{/localize}           , 5, 'city',           NULL, 0, NULL, 5,  0, 0, 1, NULL, NULL),
     (@option_group_id_acsOpt, {localize}'State/Province'{/localize} , 6, 'state_province', NULL, 0, NULL, 6,  0, 0, 1, NULL, NULL),
     (@option_group_id_acsOpt, {localize}'Country'{/localize}        , 7, 'country',        NULL, 0, NULL, 7,  0, 0, 1, NULL, NULL);
+    
+--  CRM-5388
+UPDATE civicrm_option_value SET label = CONCAT( label, '.' ),  name = CONCAT(name, '.')  WHERE name IN('Mr','Ms','Mrs','Dr','Jr','Sr');
+    
