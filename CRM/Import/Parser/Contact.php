@@ -241,7 +241,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         return CRM_Import_Parser::VALID;
     }
 
-
     /**
      * handle the values in preview mode
      *
@@ -821,7 +820,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                             $relationParams = array( );
                             $relationParams = array('relationship_type_id' => $key, 
                                                     'contact_check'        => array( $relContactId => 1),
-                                                    'is_active'            => 1
+                                                    'is_active'            => 1,
+                                                    'skipRecentView'       => true
                                                     );
                             
                             // we only handle related contact success, we ignore failures for now
@@ -990,7 +990,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
      *  
      *  @access public 
      */
-
     function isErrorInCustomData($params, &$errorMessage) 
     {
         $session =& CRM_Core_Session::singleton();
@@ -1160,8 +1159,9 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
      *  retunr gender value / false
      *  @access public
      */
-    public function checkGender( $gender ) {
-        $gender     = trim( $gender, '.'  );
+    public function checkGender( $gender ) 
+    {
+        $gender = trim( $gender, '.'  );
         if ( !$gender ) {
             return false;
         }

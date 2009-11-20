@@ -62,7 +62,6 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
      */
     static function create( &$params, &$ids ) 
     {  
-       
         $valid = $invalid = $duplicate = $saved = 0;
         require_once 'CRM/Utils/Array.php';
         $relationshipId = CRM_Utils_Array::value( 'relationship', $ids );
@@ -117,10 +116,28 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             $saved++;
         }
         
+        // do not add to recent items for import, CRM-4399
+        if ( !CRM_Utils_Array::value( 'skipRecentView', $params ) ) {
+            require_once 'CRM/Utils/Recent.php';
+            $url = CRM_Utils_System::url( 'civicrm/contact/view/rel', 
+                                          "action=view&reset=1&id={$relationship->id}&cid={$relationship->contact_id_a}" );
+            
+            $title = CRM_Contact_BAO_Contact::displayName( $relationship->contact_id_a ) . ' (' . 
+                     CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_RelationshipType', 
+                                                  $relationship->relationship_type_id, 'label_a_b' ) . ' ' . 
+                     CRM_Contact_BAO_Contact::displayName( $relationship->contact_id_b )  . ')';
+            
+            // add the recently created Relationship
+            CRM_Utils_Recent::add( $title,
+                                   $url,
+                                   $relationship->id,
+                                   'Relationship',
+                                   $relationship->contact_id_a,
+                                   null );
+        }
+        
         return array( $valid, $invalid, $duplicate, $saved, $relationshipIds );
-       
     }
-    
     
     /**
      * This is the function that check/add if the relationship created is valid
@@ -196,7 +213,6 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         
         return $relationship;
     }
-
 
     /**
      * Check if there is data to create the object
@@ -319,7 +335,6 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
      */
     static function del ( $id ) 
     {
-
         // delete from relationship table
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::pre( 'delete', 'Relationship', $id, CRM_Core_DAO::$_nullArray );
@@ -363,6 +378,11 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         CRM_Core_Session::setStatus( ts('Selected Relationship has been Deleted Successfuly.') );
         
         CRM_Utils_Hook::post( 'delete', 'Relationship', $relationship->id, $relationship );
+
+        // delete the recently created Relationship
+        require_once 'CRM/Utils/Recent.php';
+        CRM_Utils_Recent::del( $id );
+        
         return $relationship;
     }
 
@@ -724,7 +744,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         return array( $select, $from, $where );
     }
 
-   /**
+    /**
      * This is the function to get the list of relationships
      * 
      * @param int $contactId contact id
@@ -761,7 +781,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         // building the query string
         $queryString = '';
         $queryString = $select1 . $from1 . $where1 . $select2 . $from2 . $where2 . $order . $limit;
-        
+
         $relationship =& new CRM_Contact_DAO_Relationship( );
        
         $relationship->query($queryString);
@@ -858,7 +878,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         }
     }
     
-   /**
+    /**
      * Function to get get list of relationship type based on the target contact type.
      *
      * @param string $targetContactType it's valid contact tpye(may be Individual , Organization , Household)  
@@ -1054,7 +1074,6 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
      * return- set 'mail_to_household' field to null
      *
      */ 
-
     function deleteSharedAddress( $id )
     {
         return CRM_Core_DAO::setFieldValue('CRM_Contact_DAO_Contact', $id, 'mail_to_household_id','NULL' );
@@ -1088,7 +1107,6 @@ WHERE id IN ( {$contacts} )
         
         return $currentEmployer;
     }
-
 
     /**
      * Function to return list of permissioned employer for a given contact.

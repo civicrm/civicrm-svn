@@ -350,7 +350,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         
         $grant->find();
         
-        // delete the recently created Activity
+        // delete the recently created Grant
         require_once 'CRM/Utils/Recent.php';
         CRM_Utils_Recent::del( $id );
         

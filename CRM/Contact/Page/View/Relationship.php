@@ -35,7 +35,8 @@
 
 require_once 'CRM/Contact/Page/View.php';
 
-class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
+class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View 
+{
     /**
      * The action links that we need to display for the browse screen
      *
@@ -61,7 +62,6 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
     {
         require_once 'CRM/Core/DAO.php';
         $viewRelationship = CRM_Contact_BAO_Relationship::getRelationship( $this->_contactId, null, null, null, $this->_id );
-       
         //To check whether selected contact is a contact_id_a in
         //relationship type 'a_b' in relationship table, if yes then
         //revert the permissionship text in template
@@ -75,20 +75,39 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
         }
         $relType = $viewRelationship[$this->_id]['civicrm_relationship_type_id'];
         $this->assign( 'viewRelationship', $viewRelationship );
+
         $viewNote = CRM_Core_BAO_Note::getNote($this->_id);
         $this->assign( 'viewNote', $viewNote );
 		
         $groupTree =& CRM_Core_BAO_CustomGroup::getTree('Relationship', $this, $this->_id,0,$relType);
         CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
+
+        // add viewed contribution to recent items list
+        require_once 'CRM/Utils/Recent.php';
+        $url = CRM_Utils_System::url( 'civicrm/contact/view/rel', 
+                                      "action=view&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}" );
+        
+        $title = CRM_Contact_BAO_Contact::displayName( $this->_contactId ) . ' (' . 
+                 $viewRelationship[$this->_id]['relation']. ' ' . 
+                 CRM_Contact_BAO_Contact::displayName( $viewRelationship[$this->_id]['cid'] )  . ')';
+        
+        // add the recently viewed Relationship
+        CRM_Utils_Recent::add( $title,
+                               $url,
+                               $viewRelationship[$this->_id]['id'],
+                               'Relationship',
+                               $this->_contactId,
+                               null );
     }
 
-   /**
+    /**
      * This function is called when action is browse
      * 
      * return null
      * @access public
      */
-    function browse( ) {
+    function browse( ) 
+    {
         $links =& self::links( );
         
         //CRM-4418, handling edit and delete separately. 
@@ -123,7 +142,8 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
      * return null
      * @access public
      */
-    function edit( ) {
+    function edit( ) 
+    {
         $controller =& new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Relationship', ts('Contact Relationships'), $this->_action );
         $controller->setEmbedded( true );
 
@@ -161,14 +181,15 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
         $controller->run( );
     }
 
-   /**
+    /**
      * This function is the main function that is called when the page loads,
      * it decides the which action has to be taken for the page.
      * 
      * return null
      * @access public
      */
-    function run( ) {
+    function run( ) 
+    {
         $this->preProcess( );
         
         $this->setContext( );
@@ -217,17 +238,18 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View {
         $session->pushUserContext( $url );
     }
     
-   /**
+    /**
      * This function is called to delete the relationship of a contact
      * 
      * return null
      * @access public
      */
-    function delete( ) {
+    function delete( ) 
+    {
         // calls a function to delete relationship
         CRM_Contact_BAO_Relationship::del($this->_id);
     }
-
+    
     /**
      * Get action links
      *

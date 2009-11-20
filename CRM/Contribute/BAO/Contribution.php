@@ -561,7 +561,7 @@ GROUP BY currency
 
         CRM_Utils_Hook::post( 'delete', 'Contribution', $dao->id, $dao );
  
-        // delete the recently created Activity
+        // delete the recently created Contribution
         require_once 'CRM/Utils/Recent.php';
         CRM_Utils_Recent::del( $id );
         
