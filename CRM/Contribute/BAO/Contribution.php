@@ -163,6 +163,9 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
      */
     static function &getValues( &$params, &$values, &$ids ) 
     {
+        if ( empty ( $params ) ) {
+            return null;
+        }
         $contribution =& new CRM_Contribute_BAO_Contribution( );
 
         $contribution->copyValues( $params );

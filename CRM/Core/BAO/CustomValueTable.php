@@ -541,6 +541,9 @@ AND    cf.id IN ( $fieldIDList )
      * @static
      */
     static function &getValues( &$params ) {
+        if ( empty( $params ) ) {
+            return null;
+        }
         if ( ! isset( $params['entityID'] ) ||
              CRM_Utils_Type::escape( $params['entityID'],
                                      'Integer', false ) === null ) {

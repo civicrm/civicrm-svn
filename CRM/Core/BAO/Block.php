@@ -61,6 +61,9 @@ class CRM_Core_BAO_Block
      */
     static function &getValues( $blockName, $params )  
     {
+        if ( empty( $params ) ) {
+            return null; 
+        }
         eval ('$block = & new CRM_Core_BAO_' . $blockName .'( );');
         
         $blocks = array( );

@@ -170,6 +170,9 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
      */
     static function &getValues( &$params, &$values, $numNotes = self::MAX_NOTES ) 
     {
+        if ( empty( $params ) ) {
+            return null;
+        }
         $note =& new CRM_Core_BAO_Note( );
        
         $note->entity_id    = $params['contact_id'] ;        

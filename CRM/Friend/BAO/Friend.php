@@ -237,6 +237,9 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
      */
     static function getValues( &$defaults )
     {
+        if ( empty( $defaults ) ) {
+            return null;
+        }
         $friend =& new CRM_Friend_BAO_Friend( );
         $friend->copyValues( $defaults );        
         $found = $friend->find(true);

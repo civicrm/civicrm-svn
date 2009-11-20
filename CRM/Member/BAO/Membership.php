@@ -153,6 +153,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
      */
     static function &getValues( &$params, &$values, $active=false ) 
     {
+        if ( empty ( $params ) ) {
+            return null;
+        }
         $membership =& new CRM_Member_BAO_Membership( );
         
         $membership->copyValues( $params );

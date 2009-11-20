@@ -254,6 +254,10 @@ WHERE e.id = %1";
      */
     static function &getValues( $entityBlock, $microformat = false ) 
     {  
+        if ( empty( $entityBlock ) ) {
+            return null;
+        }
+
         //get all the blocks for this contact
         foreach ( self::$blocks as $block ) {
             $name = ucfirst( $block );

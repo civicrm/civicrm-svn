@@ -130,6 +130,9 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
      */
     static function &getValues( &$params, &$values, $returnProperties = null ) 
     {
+        if ( empty( $params ) ) {
+            return null;
+        }
         CRM_Core_DAO::commonRetrieve('CRM_Pledge_BAO_Pledge', $params, $values, $returnProperties );
         return $values;
     }
