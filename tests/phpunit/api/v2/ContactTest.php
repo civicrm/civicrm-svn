@@ -475,7 +475,6 @@ class api_v2_ContactTest extends CiviUnitTestCase
                         'do_not_phone'          => '1',
                         'do_not_mail'           => '1',
                         'do_not_trade'          => '1',
-                        'contact_sub_type'      => '',
                         'legal_identifier'      => 'ABC23853ZZ2235',
                         'external_identifier'   => '1928837465',
                         'home_URL'              => 'http://some.url.com',
