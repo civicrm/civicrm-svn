@@ -1187,7 +1187,8 @@ SELECT contact_id
                         //if it is required we need to generate the dependency object first
                         $depObject = CRM_Core_DAO::createTestObject( $FKClassName,
                                                                      CRM_Utils_Array::value( $dbName, $params, 1 ) );
-                        $object->$dbName = is_array($depObject) ? $depObject->id : $depObject->id;
+                        $object->$dbName = $depObject->id;
+			unset($depObject);
 
                         continue;
                     }
@@ -1245,6 +1246,7 @@ SELECT contact_id
             $object->save();
 
             if (!$createOnly) $objects[$i]=$object;
+	    else unset($object);
         }
 
 	if ($createOnly) return;
