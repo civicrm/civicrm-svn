@@ -597,6 +597,8 @@ function civitest_civicrm_buildForm( $formName, &$form ) {
     if ( $formName == 'CRM_Event_Form_Registration_Register' &&
          $form->getVar( '_eventId' ) == 3 ) { 
         $form->addElement( 'text', 'discountCode', ts( 'Discount Code' ) );
+	// in template use
+	// {$form.discountCode.label}&nbsp;{$form.discountCode.html}
 
         // also assign to template
         $template =& CRM_Core_Smarty::singleton( );
