@@ -79,9 +79,10 @@ AND      civicrm_participant.status_id IN ( 1, 2 )";
         list( $offset, $rowCount ) = $this->_pager->getOffsetAndRowCount( );
         
         $query = "
-SELECT   civicrm_contact.id           as contact_id,
-         civicrm_contact.display_name as name      ,
-         civicrm_contact.sort_name    as sort_name ,
+SELECT   civicrm_contact.id           as contact_id    ,
+         civicrm_contact.display_name as name          ,
+         civicrm_contact.sort_name    as sort_name     ,
+         civicrm_participant.id       as participant_id,
          civicrm_email.email          as email
          $fromClause
          $whereClause
@@ -91,9 +92,10 @@ LIMIT    $offset, $rowCount";
         $rows = array( );
         $object = CRM_Core_DAO::executeQuery( $query, $params );
         while ( $object->fetch( ) ) {
-            $row = array( 'id'    => $object->contact_id,
-                          'name'  => $object->name      ,
-                          'email' => $object->email );
+            $row = array( 'id'            => $object->contact_id    ,
+                          'participantID' => $object->participant_id,
+                          'name'          => $object->name          ,
+                          'email'         => $object->email          );
             $rows[] = $row;
         }
         $this->assign_by_ref( 'rows', $rows );

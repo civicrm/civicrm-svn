@@ -85,10 +85,11 @@ WHERE    civicrm_event.id = %1";
         list( $offset, $rowCount ) = $this->_pager->getOffsetAndRowCount( );
         
         $query = "
-SELECT   civicrm_contact.id                as contact_id   ,
-         civicrm_contact.display_name      as name         ,
-         civicrm_contact.sort_name         as sort_name    ,
-         civicrm_participant.status_id     as status_id    ,
+SELECT   civicrm_contact.id                as contact_id    ,
+         civicrm_contact.display_name      as name          ,
+         civicrm_contact.sort_name         as sort_name     ,
+         civicrm_participant.id            as participant_id,
+         civicrm_participant.status_id     as status_id     ,
          civicrm_participant.register_date as register_date
          $fromClause
          $whereClause
@@ -100,12 +101,13 @@ LIMIT    $offset, $rowCount";
         require_once 'CRM/Event/PseudoConstant.php';
         $statusLookup = CRM_Event_PseudoConstant::participantStatus( );
         while ( $object->fetch( ) ) {
-            $row = array( 'id'     => $object->contact_id,
-                          'name'   => $object->name      ,
-                          'email'  => $object->email,
-                          'status' => CRM_Utils_Array::value( $object->status_id,
-                                                              $statusLookup ),
-                          'date'   => $object->register_date );
+            $row = array( 'id'            => $object->contact_id,
+                          'participantID' => $object->participant_id,
+                          'name'          => $object->name      ,
+                          'email'         => $object->email,
+                          'status'        => CRM_Utils_Array::value( $object->status_id,
+                                                                     $statusLookup ),
+                          'date'          => $object->register_date );
             $rows[] = $row;
         }
         $this->assign_by_ref( 'rows', $rows );
