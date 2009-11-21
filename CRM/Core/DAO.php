@@ -1154,8 +1154,9 @@ SELECT contact_id
     }
 
     //Creates a test object, including any required objects it needs via recursion
+    //createOnly: only create in database, do not store or return the objects (useful for perf testing)
     //ONLY USE FOR TESTING
-    static function createTestObject($daoName, $params=array(), $numObjects = 1) {
+    static function createTestObject($daoName, $params=array(), $numObjects = 1, $createOnly=false) {
 
 	static $counter=0;
 
@@ -1243,15 +1244,17 @@ SELECT contact_id
 
             $object->save();
 
-            $objects[$i]=$object;
+            if (!$createOnly) $objects[$i]=$object;
         }
 
-        if ($numObjects==1) return $objects[0];
+	if ($createOnly) return;
+        else if ($numObjects==1) return $objects[0];
         else return $objects;
     }
 
     //deletes the this object plus any dependent objects that are associated with it
     //ONLY USE FOR TESTING
+
     static function deleteTestObjects($daoName, $params=array()) {
 
         require_once "CRM/Utils/Type.php";
