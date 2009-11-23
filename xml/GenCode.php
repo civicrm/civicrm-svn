@@ -1,7 +1,7 @@
 <?php
 
 ini_set( 'include_path', '.' . PATH_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'packages' . PATH_SEPARATOR . '..' );
-ini_set( 'memory_limit', '256M' );
+ini_set( 'memory_limit', '512M' );
 
 $versionFile = "version.xml";
 $versionXML  =& parseInput( $versionFile );
