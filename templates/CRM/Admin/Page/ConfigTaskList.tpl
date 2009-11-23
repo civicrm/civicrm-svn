@@ -83,7 +83,8 @@
 <br />
 
 <div class="description">
-    {ts 1=$adminMenu}The next set of tasks involve planning and have multiple steps. You may want to check out the {docURL page="Getting Started" text="Getting Started"} documentation before you begin. You will not be returned to this page after completing these tasks, but you can always get back here from the <a href="%1">Administer CiviCRM</a> menu.{/ts}
+    {capture assign=docLink}{docURL page="Getting Started" text="Getting Started"}{/capture}
+    {ts 1=$adminMenu 2=$docLink}The next set of tasks involve planning and have multiple steps. You may want to check out the %2 documentation before you begin. You will not be returned to this page after completing these tasks, but you can always get back here from the <a href="%1">Administer CiviCRM</a> menu.{/ts}
 </div>  
 
 <table class="selector">

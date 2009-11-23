@@ -5,7 +5,7 @@
     		<tr>
     		    <td class="label">{$form.mailing_format.label}</td>
     			<td>{$form.mailing_format.html|crmReplace:class:huge12}<br />
-    			<span class="description">{ts}Address format for mailing labels. Use the {literal}{contact.state_province}{/literal} token for state/province abbreviation or {literal}{contact.state_province_name}{/literal} for full name.{/ts}{help id='label-tokens'}</span>
+    			<span class="description">{ts 1=&#123;contact.state_province&#125; 2=&#123;contact.state_province_name&#125;}Address format for mailing labels. Use the %1 token for state/province abbreviation or %2 for full name.{/ts}{help id='label-tokens'}</span>
     			</td>
     		</tr>
     	</table>
@@ -16,7 +16,7 @@
     	    <tr>
     	        <td class="label">{$form.address_format.label}</td>
     	        <td>{$form.address_format.html|crmReplace:class:huge12}<br />
-    	        <span class="description">{ts}Format for displaying addresses in the Contact Summary and Event Information screens.<br />Use {literal}{contact.state_province}{/literal} for state/province abbreviation or {literal}{contact.state_province_name}{/literal} for state province name.{/ts}{help id='address-tokens'}</span>
+    	        <span class="description">{ts}Format for displaying addresses in the Contact Summary and Event Information screens.{/ts}<br />{ts 1=&#123;contact.state_province&#125; 2=&#123;contact.state_province_name&#125;}Use %1 for state/province abbreviation or %2 for state province name.{/ts}{help id='address-tokens'}</span>
     	        </td>
     	    </tr>
     	</table>

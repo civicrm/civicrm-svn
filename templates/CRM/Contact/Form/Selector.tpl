@@ -93,7 +93,7 @@
 <!-- Context Menu populated as per component and permission-->
 <ul id="contactMenu" class="contextMenu">
 {foreach from=$contextMenu item=value key=key}
-  <li class="{$value.ref}"><a href="#{$key}">{ts}{$value.title}{/ts}</a></li>
+  <li class="{$value.ref}"><a href="#{$key}">{$value.title}</a></li>
 {/foreach}
 </ul>
 <script type="text/javascript">

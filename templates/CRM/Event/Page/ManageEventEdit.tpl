@@ -38,7 +38,11 @@
     <tr>
     {if $participantListingURL}
         <td class="nowrap"><a href="{$participantListingURL}" id="idParticipantListing">&raquo; {ts}Public Participant Listing{/ts}</a></td>
-        <td>{ts 1=$participantListingURL}The following URL will display a list of registered participants for this event {if $config->userFramework EQ 'Drupal'} to users whose role includes "view event participants" permission{/if}: <a href="%1">%1</a>{/ts}</td>
+        {if}
+          <td>{ts 1=$participantListingURL}The following URL will display a list of registered participants for this event to users whose role includes "view event participants" permission: <a href="%1">%1</a>{/ts}</td>
+        {else}
+          <td>{ts 1=$participantListingURL}The following URL will display a list of registered participants for this event: <a href="%1">%1</a>{/ts}</td>
+        {/if}
     {else}
         <td class="nowrap">&raquo; {ts}Public Participant Listing{/ts}</td>
         <td>{ts}Participant Listing is not enabled for this event. You can enable it from{/ts} <a href="{crmURL q="reset=1&action=update&id=`$id`&subPage=EventInfo"}">{ts}Event Information and Settings{/ts}</a>.

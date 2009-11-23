@@ -32,7 +32,7 @@
   {elseif $gName eq 'from_email_address'}
     {ts}By default, CiviCRM uses the primary email address of the logged in user as the FROM address when sending emails to contacts. However, you can use this page to define one or more general Email Addresses that can be selected as an alternative. EXAMPLE: <em>"Client Services" &lt;clientservices@example.org&gt;</em>{/ts}
   {else}
-    {ts}The existing option choices for {$GName} group are listed below. You can add, edit or delete them from this screen.{/ts}
+    {ts 1=$GName}The existing option choices for %1 group are listed below. You can add, edit or delete them from this screen.{/ts}
   {/if}
 </div>
 
@@ -101,7 +101,7 @@
 
         {if $action ne 1 and $action ne 2}
             <div class="action-link">
-                <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span>&raquo; {ts}New {$GName}{/ts}</span></a>
+                <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span>&raquo; {ts 1=$GName}New %1{/ts}</span></a>
             </div>
         {/if}
 </div>

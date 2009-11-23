@@ -110,7 +110,7 @@
 
 	{if $honor_display}
 	    <tr>
-	        <td class="label">{ts}{$honor_type}{/ts}</td>
+	        <td class="label">{$honor_type}</td>
 	        <td>{$honor_display}&nbsp;</td>
 	    </tr>
 	{/if} 

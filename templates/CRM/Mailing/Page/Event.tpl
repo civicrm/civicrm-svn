@@ -25,7 +25,7 @@
    <div class="messages status">
     <dl>
         <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
-        <dd>{ts}There are currently no {$title}.{/ts}</dd>
+        <dd>{ts 1=$title}There are currently no %1.{/ts}</dd>
         </dl>
     </div>    
 {/if}  

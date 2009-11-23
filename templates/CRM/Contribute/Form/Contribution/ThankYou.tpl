@@ -152,7 +152,7 @@
             {/if}
         {/foreach}
         <div class="header-dark">
-	    {ts}{$groupTitlePre}{/ts}
+            {$groupTitlePre}
         </div>  
         {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
     {/if}
@@ -243,7 +243,7 @@
             {/if}
         {/foreach}
         <div class="header-dark">
-	    {ts}{$groupTitlePost}{/ts}
+            {$groupTitlePost}
         </div>  
         {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
     {/if}

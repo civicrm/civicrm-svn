@@ -30,7 +30,7 @@
     {/if}   
         <tr><td class="label">{ts}Pledge Status{/ts}</td><td{if $status_id eq 3} class="font-red bold"{/if}>{$pledge_status} </td></tr>
     {if $honor_contact_id}
-            <tr><td class="label">{ts}{$honor_type}{/ts}</td><td>{$honor_display}&nbsp;</td></tr>
+            <tr><td class="label">{$honor_type}</td><td>{$honor_display}&nbsp;</td></tr>
     {/if}
         <tr><td class="label">{ts}Initial Reminder Day{/ts}</td><td>{$initial_reminder_day}&nbsp;days prior to schedule date </td></tr>
         <tr><td class="label">{ts}Maximum Reminders Send{/ts}</td><td>{$max_reminders}&nbsp;</td></tr>

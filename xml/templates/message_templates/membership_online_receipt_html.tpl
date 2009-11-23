@@ -442,7 +442,7 @@
      {if $customPre}
       <tr>
        <th {$headerStyle}>
-        {ts}{$customPre_grouptitle} {/ts}
+        {$customPre_grouptitle}
        </th>
       </tr>
       {foreach from=$customPre item=customValue key=customName}
@@ -462,7 +462,7 @@
      {if $customPost}
       <tr>
        <th {$headerStyle}>
-        {ts}{$customPost_grouptitle}{/ts}
+        {$customPost_grouptitle}
        </th>
       </tr>
       {foreach from=$customPost item=customValue key=customName}

@@ -71,7 +71,7 @@
      {if $email and $outBound_option != 2}	
 	 <dl>
 	    <dt>{$form.send_receipt.label}</dt><dd class="html-adjust">{$form.send_receipt.html}<br />
-		<span class="description">{ts}Automatically email a membership confirmation and receipt to {$email}?{/ts}</span></dd>
+	    <span class="description">{ts 1=$email}Automatically email a membership confirmation and receipt to %1?{/ts}</span></dd>
 	 </dl> 
 	 <div id='notice'>
 	    <dl>		

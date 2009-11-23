@@ -245,7 +245,7 @@ ORDER BY parent_id, weight";
             }
              
             // for each menu get their children
-            $navigationTree[$navigation->id] = array( 'attributes' => array( 'label'      => ts($navigation->label),
+            $navigationTree[$navigation->id] = array( 'attributes' => array( 'label'      => $navigation->label,
                                                                              'url'        => $navigation->url,
                                                                              'permission' => $navigation->permission,
                                                                              'operator'   => $navigation->permission_operator,
@@ -448,7 +448,14 @@ ORDER BY parent_id, weight";
              !CRM_Core_DAO::checkFieldExists( 'civicrm_preferences', 'navigation' ) ) {
             return;
         }
-        
+
+        $config =& CRM_Core_Config::singleton();
+        // For Joomla front end user, there is no need to create
+        // navigation menu items, CRM-5349
+        if ($config->userFramework == 'Joomla' && $config->userFrameworkFrontend ) {
+            return "<!-- $config->lcMessages -->";
+        }
+
         $navParams = array( 'contact_id' => $contactID );
         if ( CRM_Core_DAO::checkFieldExists('civicrm_preferences', 'domain_id') ) {
             // FIXME: if() condition check was required especially for upgrade 
@@ -458,8 +465,6 @@ ORDER BY parent_id, weight";
 
         CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_Preferences', $navParams, $navParams );
         $navigation = array_key_exists('navigation', $navParams) ? $navParams['navigation'] : false;
-
-        $config =& CRM_Core_Config::singleton();
 
         // FIXME: hack for CRM-5027: we need to prepend the navigation string with
         // (HTML-commented-out) locale info so that we rebuild menu on locale changes

@@ -44,10 +44,10 @@
         {else} 
 	   {if $context neq 'dialog'}
               <div id="profilewrap{$field.group_id}">
-              <fieldset><legend>{ts}{$field.groupTitle}{/ts}</legend>
+              <fieldset><legend>{$field.groupTitle}</legend>
            {else}
               <div>
-	      <fieldset><legend>{ts}{$field.groupTitle}{/ts}</legend>
+	      <fieldset><legend>{$field.groupTitle}</legend>
 	   {/if}	
         {/if}
         {assign var=fieldset  value=`$field.groupTitle`}

@@ -8,7 +8,7 @@
     <fieldset><legend>{ts}Include Profiles{/ts}</legend>
 <div class="status message">
   <dl> 
-  <dd>{ts 1=$crmURL 2=Profile}No Profile has been configured / enabled for your site. You need to first configure <a href="%1"><strong>&raquo; %2</a>(s). {docURL page="Profiles Admin"}{/ts}</dd>
+  <dd>{ts 1=$crmURL 2=Profile}No Profile has been configured / enabled for your site. You need to first configure <a href="%1"><strong>&raquo; %2</a>(s).{/ts} {docURL page="Profiles Admin"}</dd>
   </dl>
 </div>
 {else}

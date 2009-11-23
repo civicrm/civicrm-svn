@@ -534,7 +534,7 @@ function civicrm_cck_autocomplete_validate($element, &$form_state) {
             // No explicit nid.
             $nids = _civicrm_cck_potential_references($field, $value, TRUE);
             if (empty($nids)) {
-                form_error($element[$field_key], t('%name: found no valid post with that title.', array('%name' => t($field['widget']['label']))));
+                form_error($element[$field_key], t('%name: found no valid post with that title.', array('%name' => $field['widget']['label'])));
             }
             else {
                 // TODO:
