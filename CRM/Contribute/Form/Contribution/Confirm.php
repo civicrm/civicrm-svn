@@ -834,10 +834,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $pledgeParams['installments'           ] = $params['pledge_installments'];
                 $pledgeParams['frequency_unit'         ] = $params['pledge_frequency_unit'];
                 $pledgeParams['frequency_day'          ] = 1;
-                $pledgeParams['create_date'            ] = $pledgeParams['start_date'] = date( "Ymd" );
-                $pledgeParams['scheduled_date'    ]['M'] = date("m"); 
-                $pledgeParams['scheduled_date'    ]['d'] = date("d");
-                $pledgeParams['scheduled_date'    ]['Y'] = date("Y");
+                $pledgeParams['create_date'            ] = $pledgeParams['start_date'] = $pledgeParams['scheduled_date'] = date( "Ymd" );
                 $pledgeParams['status_id'              ] = $contribution->contribution_status_id;
                 $pledgeParams['max_reminders'          ] = $form->_values['max_reminders'];
                 $pledgeParams['initial_reminder_day'   ] = $form->_values['initial_reminder_day'];
