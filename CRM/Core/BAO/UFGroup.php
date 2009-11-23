@@ -625,6 +625,9 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      */
     public static function getValues( $cid, &$fields, &$values, $searchable = true, $componentWhere = null ) 
     {
+        if ( empty ( $cid ) ) {
+            return null;
+        }
         $options = array( );
         $studentFields = array( );
         if ( CRM_Core_Permission::access( 'Quest', false ) ) {
