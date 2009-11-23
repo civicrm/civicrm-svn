@@ -38,7 +38,7 @@
     <tr>
     {if $participantListingURL}
         <td class="nowrap"><a href="{$participantListingURL}" id="idParticipantListing">&raquo; {ts}Public Participant Listing{/ts}</a></td>
-        {if}
+        {if $config->userFramework EQ 'Drupal'}
           <td>{ts 1=$participantListingURL}The following URL will display a list of registered participants for this event to users whose role includes "view event participants" permission: <a href="%1">%1</a>{/ts}</td>
         {else}
           <td>{ts 1=$participantListingURL}The following URL will display a list of registered participants for this event: <a href="%1">%1</a>{/ts}</td>
