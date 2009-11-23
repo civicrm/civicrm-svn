@@ -137,6 +137,7 @@ function civicrm_contact_update( &$params, $create_new = false ) {
     
     if ( ! ( $csType = CRM_Utils_Array::value('contact_sub_type', $params) ) &&
          $entityId ) {
+        require_once 'CRM/Contact/BAO/Contact.php';
         $csType = CRM_Contact_BAO_Contact::getContactSubType( $entityId );
     }
     
@@ -492,6 +493,7 @@ function _civicrm_contact_update( &$params, $contactID = null )
         $params['contact_id'] = $contactID;
     }
     require_once 'CRM/Contact/BAO/Contact.php';
+    
     $contact = CRM_Contact_BAO_Contact::create( $params );
 
     $transaction->commit( );
