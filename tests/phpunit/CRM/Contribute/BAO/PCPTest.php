@@ -70,6 +70,12 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
         $this->assertEquals( $params['tellfriend_limit'], $pcpBlock->tellfriend_limit, 'Check for tell friend limit .' );
         $this->assertEquals( $params['link_text'], $pcpBlock->link_text, 'Check for link text.' );
         $this->assertEquals( $params['is_active'], $pcpBlock->is_active, 'Check for is_active.' );
+        // Delete our test object
+        require_once 'CRM/Core/DAO.php';
+        $delParams = array( 'id' => $pcpBlock->id );
+        // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_contribution_type  WHERE (  civicrm_contribution_type.id = 5 )
+        // CRM_Core_DAO::deleteTestObjects( 'CRM_Contribute_DAO_PCPBlock', $delParams );
+        
     }
 
     function testAddWithPCPBlockFalse()
@@ -92,6 +98,13 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
         $this->assertEquals( $params['goal_amount'], $pcp->goal_amount, 'Check for goal_amount.' );
         $this->assertEquals( $params['referer'], $pcp->referer, 'Check for referer.' );
         $this->assertEquals( $params['is_active'], $pcp->is_active, 'Check for is_active.' );
+        
+        // Delete our test object
+        require_once 'CRM/Core/DAO.php';
+        $delParams = array( 'id' => $pcp->id );
+        // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_contribution_type  WHERE (  civicrm_contribution_type.id = 5 )
+        // CRM_Core_DAO::deleteTestObjects( 'CRM_Contribute_DAO_PCP', $delParams );
+        
     }
 
     function testAddWithPCPBlockFalseNoStatus()
@@ -115,6 +128,12 @@ class CRM_Contribute_BAO_PCPTest extends CiviUnitTestCase
         $this->assertEquals( $params['goal_amount'], $pcp->goal_amount, 'Check for goal_amount.' );
         $this->assertEquals( $params['referer'], $pcp->referer, 'Check for referer.' );
         $this->assertEquals( $params['is_active'], $pcp->is_active, 'Check for is_active.' );
+
+        // Delete our test object
+        require_once 'CRM/Core/DAO.php';
+        $delParams = array( 'id' => $pcp->id );
+        // FIXME: Currently this delete fails with an FK constraint error: DELETE FROM civicrm_contribution_type  WHERE (  civicrm_contribution_type.id = 5 )
+        // CRM_Core_DAO::deleteTestObjects( 'CRM_Contribute_DAO_PCP', $delParams );
     }
 
     function testDeletePCP()
