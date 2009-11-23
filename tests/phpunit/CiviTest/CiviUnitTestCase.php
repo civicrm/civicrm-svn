@@ -170,17 +170,43 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $this->_dbconn = $this->getConnection();
 
         //  Truncate the tables
-        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
-        $op->execute( $this->_dbconn,
-                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
-                             dirname(__FILE__) . '/truncate.xml') );
+//        $op = new PHPUnit_Extensions_Database_Operation_Truncate( );
+//        $op->execute( $this->_dbconn,
+//                      new PHPUnit_Extensions_Database_DataSet_FlatXMLDataSet(
+//                             dirname(__FILE__) . '/truncate.xml') );
 
+
+            $query = "DROP DATABASE IF EXISTS civicrm_tests_dev;"
+                   . "CREATE DATABASE civicrm_tests_dev DEFAULT"
+                   . " CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
+                   . "USE civicrm_tests_dev;"
+                   . "SET SQL_MODE='STRICT_ALL_TABLES';"
+                   . "SET foreign_key_checks = 0";
+            if ( self::$utils->do_query($query) === false ) {
+                //  failed to create test database
+                echo 'Drop in setUp crapped out.';
+                exit;
+            }
+
+            //  initialize test database
+            $sql_file1 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
+                . "/sql/civicrm.mysql";
+
+            $query1 = file_get_contents( $sql_file1 );
+
+            if ( self::$utils->do_query($query1) === false ) {
+                //  failed to initialze test database
+                echo 'Loading schema in setUp crapped out.';
+                exit;
+            }
 
         // Load clean db state
         $sql_file = dirname( dirname( dirname( __FILE__ ) ) )
                               . "/../sql/civicrm_data.mysql";
 
         $query = file_get_contents( $sql_file );
+
+
 
         if ( self::$utils->do_query($query) === false ) {
             //  failed to initialze test database
