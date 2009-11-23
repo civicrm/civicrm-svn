@@ -412,8 +412,8 @@ class CRM_Core_DAO extends DB_DataObject
                 $attributes['cols'] = $cols;
                 return $attributes;
             } else if ( CRM_Utils_Array::value('type',$field) == CRM_Utils_Type::T_INT || CRM_Utils_Array::value('type',$field) == CRM_Utils_Type::T_FLOAT || CRM_Utils_Array::value('type',$field) == CRM_Utils_Type::T_MONEY ) {
-                $attributes['size']      = 4;
-                $attributes['maxlength'] = 8; 
+                $attributes['size']      = 6;
+                $attributes['maxlength'] = 14; 
                 return $attributes;
             }
         }

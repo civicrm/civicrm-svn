@@ -69,17 +69,17 @@
 	{else}
         <tr>
             <td class="label">{$form.total_amount.label}</td>
-	    <td {$valueStyle}>
-	    <span id='totalAmount'>{$form.total_amount.html|crmMoney:$currency}</span> 
-	    {if $hasPriceSets}
-	    <span id='totalAmountORPriceSet'> {ts}OR{/ts}</span>
-	    <span id='selectPriceSet'>{$form.price_set_id.html}</span>
-            <div id="priceset" class="hiddenElement"></div>	    
-	    {/if}
-	    <span class="description">{ts}Actual amount given by contributor.{/ts}</span>
+    	    <td {$valueStyle}>
+        	    <span id='totalAmount'>{$form.total_amount.html|crmMoney:$currency|crmReplace:class:eight}</span> 
+        	    {if $hasPriceSets}
+        	        <span id='totalAmountORPriceSet'> {ts}OR{/ts}</span>
+        	        <span id='selectPriceSet'>{$form.price_set_id.html}</span>
+                    <div id="priceset" class="hiddenElement"></div>	    
+        	    {/if}
+        	    <span class="description">{ts}Actual amount given by contributor.{/ts}</span>
             </td>
         </tr>
-        {/if}
+    {/if}
 
         <tr><td class="label">{$form.source.label}</td><td{$valueStyle}>{$form.source.html} {help id="id-contrib_source"}</td></tr>
 
@@ -98,12 +98,15 @@
         {if !$contributionMode}
             <tr>
                 <td class="label">{$form.receive_date.label}</td>
-                <td{$valueStyle}>{if $hideCalender neq true}{include file="CRM/common/jcalendar.tpl" elementName=receive_date}{else}{$receive_date|truncate:10:''|crmDate}{/if}
+                <td{$valueStyle}>{if $hideCalender neq true}{include file="CRM/common/jcalendar.tpl" elementName=receive_date}{else}{$receive_date|truncate:10:''|crmDate}{/if}<br />
+                    <span class="description">{ts}The date this contribution was received.{/ts}</span>
                 </td>
             </tr>
-            <tr><td class="label">&nbsp;</td><td class="description">{ts}The date this contribution was received.{/ts}</td></tr>
-            <tr><td class="label">{$form.payment_instrument_id.label}</td><td{$valueStyle}>{$form.payment_instrument_id.html}</td></tr>
-            <tr><td class="label">&nbsp;</td><td class="description">{ts}Leave blank for non-monetary contributions.{/ts}</td></tr>
+            <tr>
+                <td class="label">{$form.payment_instrument_id.label}</td><td{$valueStyle}>{$form.payment_instrument_id.html}<br />
+                    <span class="description">{ts}Leave blank for non-monetary contributions.{/ts}</span>
+                </td>
+            </tr>
             {if $showCheckNumber || !$isOnline}  
                 <tr id="checkNumber"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmReplace:class:six}</td></tr>
             {/if}
@@ -116,7 +119,9 @@
             <tr id="receiptDate">
                 <td class="label">{$form.receipt_date.label}</td>
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=receipt_date}<br />
-            <span class="description">{ts}Date that a receipt was sent to the contributor.{/ts}</span></td></tr>
+                    <span class="description">{ts}Date that a receipt was sent to the contributor.{/ts}</span>
+                </td>
+            </tr>
             <tr><td class="label">{$form.contribution_status_id.label}</td><td>{$form.contribution_status_id.html}
             {if $contribution_status_id eq 2}{if $is_pay_later }: {ts}Pay Later{/ts} {else}: {ts}Incomplete Transaction{/ts}{/if}{/if}</td></tr>
 
