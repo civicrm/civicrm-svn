@@ -4,11 +4,8 @@ var stregexp = new RegExp;
 function initFilter( id ) {
     //build the array
     filterArray = new Array();
-    {/literal}
-    {foreach from=$tokens item=tokenName key=tokenKey}
-    filterArray["{$tokenKey}"] = "{$tokenName}";
-    {/foreach}
-    {literal}
+    filterArray = {/literal}{$tokens}{literal};    
+
     tempArray  = new Array();
     remvdArray = new Array();
 
