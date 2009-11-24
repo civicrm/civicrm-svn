@@ -478,7 +478,11 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
 
         // delete the recently created Membership
         require_once 'CRM/Utils/Recent.php';
-        CRM_Utils_Recent::del( $membershipId );
+        $membershipRecent = array(
+                              'id'   => $membershipId,
+                              'type' => 'Membership'
+                              );
+        CRM_Utils_Recent::del( $membershipRecent );
 
         return $results;
         

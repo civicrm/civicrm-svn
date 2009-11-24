@@ -678,7 +678,12 @@ WHERE  civicrm_participant.id = {$participantId}
 
         // delete the recently created Participant
         require_once 'CRM/Utils/Recent.php';
-        CRM_Utils_Recent::del( $id );
+        $participantRecent = array(
+                                   'id'   => $id,
+                                   'type' => 'Participant'
+                                   );
+        
+        CRM_Utils_Recent::del( $participantRecent );
         
         return $participant;
     }

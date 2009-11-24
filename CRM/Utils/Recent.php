@@ -142,13 +142,13 @@ class CRM_Utils_Recent
     /**
      * delete an item from the recent stack
      *
-     * @param string $id  contact id that had to be removed
+     * @param array $recentItem array of the recent Item to be removed
      *
      * @return void
      * @access public
      * @static
      */
-    static function del( $id ) 
+    static function del( $recentItem ) 
     {
         self::initialize( );
         $tempRecent = self::$_recent;
@@ -157,39 +157,10 @@ class CRM_Utils_Recent
         
         // make sure item is not already present in list
         for ( $i = 0; $i < count( $tempRecent ); $i++ ) {
-            if ( $tempRecent[$i]['id' ] != $id ) {
+            if ( !( $tempRecent[$i]['id'] == $recentItem['id'] && 
+                    $tempRecent[$i]['type'] == $recentItem['type'] ) ) {
                 self::$_recent[] = $tempRecent[$i];
             }
-        }
-        
-        $session =& CRM_Core_Session::singleton( );
-        $session->set( self::STORE_NAME, self::$_recent );
-    }
-
-    /**
-     * delete an item from the recent stack
-     *
-     * @param string $id  contact id that had to be removed
-     *
-     * @return void
-     * @access public
-     * @static
-     */
-    static function delContact( $id ) 
-    {
-        self::initialize( );
-        
-        $tempRecent = self::$_recent;
-        
-        self::$_recent = '';
-        
-        // rebuild recent.
-        for ( $i = 0; $i < count( $tempRecent ); $i++ ) {
-            // don't include deleted contact in recent.
-            if ( CRM_Utils_Array::value( 'contact_id', $tempRecent[$i] ) == $id ) {
-                continue;
-            }
-            self::$_recent[] = $tempRecent[$i];
         }
         
         $session =& CRM_Core_Session::singleton( );

@@ -35,8 +35,8 @@
 
 require_once 'CRM/Contact/DAO/Group.php';
 
-class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
-
+class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group 
+{
     /**
      * class constructor
      */
@@ -58,8 +58,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      * @access public
      * @static
      */
-    static function retrieve( &$params, &$defaults ) {
-        
+    static function retrieve( &$params, &$defaults )
+    {
         $group =& new CRM_Contact_DAO_Group( );
         $group->copyValues( $params );
         if ( $group->find( true ) ) {
@@ -82,7 +82,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      * @static
      *
      */
-    static function discard ( $id ) {
+    static function discard( $id ) 
+    {
         require_once 'CRM/Utils/Hook.php';
         require_once 'CRM/Contact/DAO/SubscriptionHistory.php';
         CRM_Utils_Hook::pre( 'delete', 'Group', $id, CRM_Core_DAO::$_nullArray );
@@ -132,20 +133,23 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
 
         // delete the recently created Group
         require_once 'CRM/Utils/Recent.php';
-        CRM_Utils_Recent::del( $id );
+        $groupRecent = array(
+                             'id'   => $id,
+                             'type' => 'Group'
+                        );
+        CRM_Utils_Recent::del( $groupRecent );
     }
-
 
     /**
      * Returns an array of the contacts in the given group.
      *
      */
-
-    static function getGroupContacts( $id ) {
-      require_once 'api/v2/Contact.php';
-      $params = array( 'group' => array($id => 1),
-		       'return.contactId' => 1);
-      return civicrm_contact_search($params);
+    static function getGroupContacts( $id ) 
+    {
+        require_once 'api/v2/Contact.php';
+        $params = array( 'group'            => array( $id => 1 ),
+                         'return.contactId' => 1 );
+        return civicrm_contact_search( $params );
     }
 
     /**
@@ -157,7 +161,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      * @return int count of members in the group with above status
      * @access public
      */
-    static function memberCount( $id, $status = 'Added', $countChildGroups = false ) {
+    static function memberCount( $id, $status = 'Added', $countChildGroups = false ) 
+    {
         require_once 'CRM/Contact/DAO/GroupContact.php';
 	    $groupContact =& new CRM_Contact_DAO_GroupContact( );
         $groupIds = array( $id );
@@ -167,19 +172,19 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         }
         $count = 0;
 
-	    $contacts = self::getGroupContacts($id);
+	    $contacts = self::getGroupContacts( $id );
 
 	    foreach ( $groupIds as $groupId ) {
 
-	        $groupContacts = self::getGroupContacts($groupId);
-	        foreach ($groupContacts as $gcontact){
-	            if ($groupId != $id) { 
+	        $groupContacts = self::getGroupContacts( $groupId );
+	        foreach ( $groupContacts as $gcontact ) {
+	            if ( $groupId != $id ) { 
 	                // Loop through main group's contacts
 	                // and subtract from the count for each contact which
 	                // matches one in the present group, if it is not the
 	                // main group
-	                foreach ($contacts as $contact){
-		                if ($contact['contact_id'] == $gcontact['contact_id']){
+	                foreach ( $contacts as $contact ) {
+		                if ( $contact['contact_id'] == $gcontact['contact_id'] ) {
 		                    $count--;
 		                }
 	                }
@@ -203,7 +208,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      * @access public
      * @static
      */
-    static function &getMember( $groupID, $useCache = true ) {
+    static function &getMember( $groupID, $useCache = true ) 
+    {
         $params['group'] = array( $groupID => 1 );
         $params['return.contact_id'] = 1;
         $params['offset']            = 0;
@@ -225,16 +231,16 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
     /**
      * Returns array of group object(s) matching a set of one or Group properties.
      *
-     *
-     * @param array       $param                 Array of one or more valid property_name=>value pairs. Limits the set of groups returned.
-     * @param array       $returnProperties      Which properties should be included in the returned group objects. (member_count should be last element.)
+     * @param array       $param             Array of one or more valid property_name=>value pairs. 
+     *                                       Limits the set of groups returned.
+     * @param array       $returnProperties  Which properties should be included in the returned group objects. 
+     *                                       (member_count should be last element.)
      *  
      * @return  An array of group objects.
      *
      * @access public
      */
-
-    static function getGroups($params = null, $returnProperties = null) 
+    static function getGroups( $params = null, $returnProperties = null ) 
     {
         $dao =& new CRM_Contact_DAO_Group();
         $dao->is_active = 1;
@@ -250,7 +256,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
             }
         }
         // return only specific fields if returnproperties are sent
-        if ( !empty($returnProperties  ) ) {
+        if ( !empty( $returnProperties ) ) {
             $dao->selectAdd( );
             $dao->selectAdd( implode( ',' , $returnProperties ) );
         }
@@ -258,7 +264,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
 
         $flag = $returnProperties && in_array( 'member_count', $returnProperties ) ? 1 : 0;
 
-        $groups =array();
+        $groups = array();
         while ( $dao->fetch( ) ) { 
             $group =& new CRM_Contact_DAO_Group();
             if ( $flag ) {
@@ -279,7 +285,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      * @access public
      * @static
      */
-    static function checkPermission( $id, $title ) {
+    static function checkPermission( $id, $title ) 
+    {
         require_once 'CRM/ACL/API.php';
         require_once 'CRM/Core/Permission.php';
 
@@ -313,7 +320,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      * @access public
      * @static
      */
-    public static function &create(&$params) 
+    public static function &create( &$params ) 
     {
         require_once 'CRM/Utils/Hook.php';
        
@@ -354,7 +361,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         $group->save( );
 
         // add custom field values
-        if (CRM_Utils_Array::value('custom', $params)) {
+        if ( CRM_Utils_Array::value( 'custom', $params ) ) {
             require_once 'CRM/Core/BAO/CustomValueTable.php';
             CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_group', $group->id );
         }
@@ -366,7 +373,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         $domainGroupID = CRM_Core_BAO_Domain::getGroupId( );
         if ( CRM_Utils_Array::value( 'no_parent', $params ) !== 1 ) {
             if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE && 
-                 empty($params['parents']) && ( $domainGroupID != $group->id ) && 
+                 empty( $params['parents'] ) && ( $domainGroupID != $group->id ) && 
                  !CRM_Contact_BAO_GroupNesting::hasParentGroups( $group->id  ) ) {
                 // if no parent present and the group doesn't already have any parents, 
                 // make sure site group goes as parent
@@ -428,7 +435,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      * given a saved search compute the clause and the tables
      * and store it for future use
      */
-    function buildClause( ) {
+    function buildClause( ) 
+    {
         $params = array( array( 'group', 'IN', array( $this->id => 1 ), 0, 0 ) );
 
         if ( ! empty( $params ) ) {
@@ -454,9 +462,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      * @access public
      * @static
      */
-
-    public static function createGroup(&$params) {
-         
+    public static function createGroup( &$params ) 
+    {
         if ( CRM_Utils_Array::value( 'saved_search_id', $params ) ) {
             $savedSearch =& new CRM_Contact_BAO_SavedSearch();
             $savedSearch->form_values = CRM_Utils_Array::value( 'formValues', $params );
@@ -472,13 +479,14 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      * update the is_active flag in the db
      *
      * @param int      $id        id of the database record
-     * @param boolean  $is_active value we want to set the is_active field
+     * @param boolean  $isActive  value we want to set the is_active field
      *
      * @return Object             DAO object on sucess, null otherwise
      * @static
      */
-    static function setIsActive( $id, $is_active ) {
-        return CRM_Core_DAO::setFieldValue( 'CRM_Contact_DAO_Group', $id, 'is_active', $is_active );
+    static function setIsActive( $id, $isActive ) 
+    {
+        return CRM_Core_DAO::setFieldValue( 'CRM_Contact_DAO_Group', $id, 'is_active', $isActive );
     }
 
     /**
@@ -490,7 +498,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
      * @return string $condition 
      * @static
      */
-    static function groupTypeCondition( $groupType = null, $excludeHidden = true ) {
+    static function groupTypeCondition( $groupType = null, $excludeHidden = true ) 
+    {
         $value = null;
         if ( $groupType == 'Mailing' ) {
             $value = CRM_Core_DAO::VALUE_SEPARATOR . '2' . CRM_Core_DAO::VALUE_SEPARATOR;
@@ -514,7 +523,8 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         return $condition;
     }
 
-    public function __toString( ) {
+    public function __toString( )
+    {
         return $this->title;
     }
     
@@ -587,7 +597,6 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group {
         
         return array( $smartGroupId, $ssId );
     }
-    
-}
+ }
 
 

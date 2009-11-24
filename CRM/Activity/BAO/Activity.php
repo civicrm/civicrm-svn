@@ -192,7 +192,13 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         
         // delete the recently created Activity
         require_once 'CRM/Utils/Recent.php';
-        if ( $result ) CRM_Utils_Recent::del( $activity->id );
+        if ( $result ) {
+            $activityRecent = array(
+                                    'id'   => $activity->id,
+                                    'type' => 'Activity'
+                                    ); 
+            CRM_Utils_Recent::del( $activityRecent );
+        }
         
         $transaction->commit( );
         return $result;

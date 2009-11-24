@@ -381,7 +381,11 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
 
         // delete the recently created Relationship
         require_once 'CRM/Utils/Recent.php';
-        CRM_Utils_Recent::del( $id );
+        $relationshipRecent = array(
+                                    'id'   => $id,
+                                    'type' => 'Relationship'
+                                    );
+        CRM_Utils_Recent::del( $relationshipRecent );
         
         return $relationship;
     }

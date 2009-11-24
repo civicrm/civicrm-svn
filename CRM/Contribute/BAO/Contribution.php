@@ -566,7 +566,11 @@ GROUP BY currency
  
         // delete the recently created Contribution
         require_once 'CRM/Utils/Recent.php';
-        CRM_Utils_Recent::del( $id );
+        $contributionRecent = array(
+                                    'id'   => $id,
+                                    'type' => 'Contribution'
+                                    );
+        CRM_Utils_Recent::del( $contributionRecent );
         
         return $results;
     }

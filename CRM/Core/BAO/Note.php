@@ -220,10 +220,14 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
         $note->id = $id;
         $return   = $note->delete();
         CRM_Core_Session::setStatus( ts('Selected Note has been Deleted Successfully.') );
-
+        
         // delete the recently created Note
         require_once 'CRM/Utils/Recent.php';
-        CRM_Utils_Recent::del( $id );
+        $noteRecent = array(
+                        'id'   => $id,
+                        'type' => 'Note'
+                        );
+        CRM_Utils_Recent::del( $noteRecent );
 
         return $return;
     }

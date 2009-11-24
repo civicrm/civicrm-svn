@@ -93,7 +93,6 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         return $summary;
     }
 
-
     /**
      * Function to get events Summary
      *
@@ -119,7 +118,6 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         return $og;
     }
 
-
     static function getGrantStatuses( ) 
     {
         $og = CRM_Grant_BAO_Grant::getGrantStatusOptGroup();
@@ -139,14 +137,14 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         return $statuses;
     }
 
-
     /**
      * Function to retrieve grant types.
      * 
      * @static
      * @return array Array of grant summary statistics
      */
-    static function getGrantTypes( ) {
+    static function getGrantTypes( )
+    {
         require_once 'CRM/Core/BAO/OptionValue.php';
         return CRM_Core_OptionGroup::values( CRM_Grant_BAO_Grant::$typeGroupName );
     }
@@ -197,7 +195,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
      * @static 
      * @return object
      */
-    static function add(&$params, &$ids)
+    static function add( &$params, &$ids )
     {
         require_once 'CRM/Utils/Hook.php';
         
@@ -258,7 +256,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
      * @static 
      * 
      */
-    public static function create( &$params, &$ids) 
+    public static function create( &$params, &$ids ) 
     {
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
@@ -327,7 +325,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
     static function deleteContact( $id )
     {
         require_once 'CRM/Grant/DAO/Grant.php';
-        $grant     = & new CRM_Grant_DAO_Grant( );
+        $grant = & new CRM_Grant_DAO_Grant( );
         $grant->contact_id = $id; 
         $grant->delete();
         return false;
@@ -352,9 +350,13 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         
         // delete the recently created Grant
         require_once 'CRM/Utils/Recent.php';
-        CRM_Utils_Recent::del( $id );
+        $grantRecent = array(
+                             'id'   => $id,
+                             'type' => 'Grant'
+                             );
+        CRM_Utils_Recent::del( $grantRecent );
         
-        while ($grant->fetch() ) {
+        while ( $grant->fetch() ) {
             return $grant->delete();
         }
         return false;
