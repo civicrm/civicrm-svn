@@ -162,7 +162,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
      * @access public
      * @static
      */
-    static function setDefaults( $id, &$defaults, $type = CRM_Contact_Form_GroupTag::ALL, $fieldName = null ) 
+    static function setDefaults( $id, &$defaults, $type = CRM_Contact_Form_Edit_TagsandGroups::ALL, $fieldName = null ) 
     {
         $type = (int ) $type; 
         if ( $type & self::GROUP ) { 
