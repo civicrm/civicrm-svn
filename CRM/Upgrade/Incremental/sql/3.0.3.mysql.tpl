@@ -38,3 +38,7 @@
     (option_group_id,      {localize field='label'}label{/localize}, value,                           filter, weight) VALUES
     (@option_group_id_sfe, {localize}'docx'{/localize},              (SELECT @max_val := @max_val+1), 0,      (SELECT @max_wt := @max_wt+1)),
     (@option_group_id_sfe, {localize}'xlsx'{/localize},              (SELECT @max_val := @max_val+1), 0,      (SELECT @max_wt := @max_wt+1));
+
+
+-- CRM-5437
+UPDATE civicrm_participant_status_type SET class = 'Pending' WHERE class NOT IN ('Positive', 'Pending', 'Waiting', 'Negative');

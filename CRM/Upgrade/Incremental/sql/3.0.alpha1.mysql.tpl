@@ -73,8 +73,7 @@
                         WHEN 'Attended'   THEN 'Positive'
                         WHEN 'No-show'    THEN 'Negative'
                         WHEN 'Cancelled'  THEN 'Negative'
-                        WHEN 'Pending'    THEN 'Pending'
-                        ELSE name
+                        ELSE 'Pending'
                     END;
                     
     UPDATE civicrm_participant_status_type
