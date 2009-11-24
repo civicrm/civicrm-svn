@@ -105,7 +105,7 @@
       {/foreach}
      {/if}
 
-     {capture assign=icalFeed}{crmURL p='civicrm/event/ical' q="reset=1&id=`$event.id`" h=0 a=1}{/capture}
+     {capture assign=icalFeed}{crmURL p='civicrm/event/ical' q="reset=1&id=`$event.id`" h=0 a=1 fe=1}{/capture}
      <tr>
       <td colspan="2" {$valueStyle}>
        <a href="{$icalFeed}">{ts}Download iCalendar File{/ts}</a>
