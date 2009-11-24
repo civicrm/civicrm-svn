@@ -3,7 +3,7 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
 
-class DISABLED_CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase 
+class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase 
 {
     
     function get_info( ) 
