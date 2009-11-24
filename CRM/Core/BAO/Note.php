@@ -90,7 +90,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
      * @access public
      * @static
      */
-    static function &add( &$params , $ids) 
+    static function &add( &$params , $ids ) 
     {
         $dataExists = self::dataExists( $params );
         if ( ! $dataExists ) {
@@ -99,7 +99,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
 
         $note =& new CRM_Core_BAO_Note( );
         
-        $params['modified_date']  = date("Ymd");
+        $params['modified_date'] = date("Ymd");
         
         $note->copyValues( $params );
         if ( ! $params['contact_id'] ) {
@@ -127,7 +127,8 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
             // add the recently created Note
             require_once 'CRM/Utils/Recent.php';
             CRM_Utils_Recent::add( $displayName . ' - ' . $note->subject,
-                                   CRM_Utils_System::url( 'civicrm/contact/view/note', "reset=1&action=view&cid={$note->entity_id}&id={$note->id}" ),
+                                   CRM_Utils_System::url( 'civicrm/contact/view/note', 
+                                                          "reset=1&action=view&cid={$note->entity_id}&id={$note->id}" ),
                                    $note->id,
                                    'Note',
                                    $note->entity_id,
@@ -174,7 +175,6 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
             return null;
         }
         $note =& new CRM_Core_BAO_Note( );
-       
         $note->entity_id    = $params['contact_id'] ;        
         $note->entity_table = 'civicrm_contact';
 
@@ -186,13 +186,11 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
         $note->limit( $numNotes );
         $note->find();
 
-        $notes       = array( );
+        $notes = array( );
         $count = 0;
         while ( $note->fetch() ) {
             $values['note'][$note->id] = array();
-            
             CRM_Core_DAO::storeValues( $note, $values['note'][$note->id] );
-
             $notes[] = $note;
 
             $count++;
@@ -215,13 +213,13 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
      * @static
      * 
      */
-    static function del ( $id ) 
+    static function del( $id ) 
     {
         $return   = null;
         $note     =& new CRM_Core_DAO_Note( );
         $note->id = $id;
         $return   = $note->delete();
-        CRM_Core_Session::setStatus( ts('Selected Note has been Deleted Successfuly.') );
+        CRM_Core_Session::setStatus( ts('Selected Note has been Deleted Successfully.') );
 
         // delete the recently created Note
         require_once 'CRM/Utils/Recent.php';
@@ -240,7 +238,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
      * @access public
      * @static
      */
-    public static function deleteContact($id)
+    public static function deleteContact( $id )
     {
         // need to delete for both entity_id
         $dao =& new CRM_Core_DAO_Note();
@@ -264,7 +262,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
      * @access public
      * @static
      */
-    public static function &getNote( $id, $entityTable = 'civicrm_relationship')
+    public static function &getNote( $id, $entityTable = 'civicrm_relationship' )
     {
         $viewNote = array();
         

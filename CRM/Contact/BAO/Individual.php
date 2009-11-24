@@ -240,36 +240,6 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
     }
 
     /**
-     * Given the list of params in the params array, fetch the object
-     * and store the values in the values array
-     *
-     * @param array $params input parameters to find object
-     * @param array $values output values of the object
-     * @param array $ids    the array that holds all the db ids
-     *
-     * @return CRM_Contact_BAO_Contact|null the found object or null
-     * @access public
-     * @static
-     */
-    static function getValues( &$params, &$values, &$ids ) 
-    {
-        $individual =& new CRM_Contact_BAO_Individual( );
-        
-        $individual->copyValues( $params );
-        if ( $individual->find(true) ) {
-            $ids['individual'] = $individual->id;
-            CRM_Core_DAO::storeValues( $individual, $values );
-
-            if ( isset( $individual->birth_date ) ) {
-                $values['birth_date'] = CRM_Utils_Date::unformat( $individual->birth_date );
-            }
-
-            return $individual;
-        }
-        return null;
-    }
-
-    /**
      * regenerates display_name for contacts with given prefixes/suffixes
      *
      * @param array $ids     the array with the prefix/suffix id governing which contacts to regenerate

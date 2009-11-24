@@ -66,7 +66,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      * @access public
      * @static
      */
-    static function retrieve(&$params, &$defaults)
+    static function retrieve( &$params, &$defaults )
     {
         return CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_UFGroup', $params, $defaults );
     }
@@ -77,7 +77,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      * @param int $id  id of uf_group
      * @return string  contact type
      */
-    static function getContactType($id)
+    static function getContactType( $id )
     {
         require_once 'CRM/Contact/BAO/ContactType.php';
 
@@ -116,7 +116,8 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      * @access public
      * @static
      */
-    static function setIsActive($id, $is_active) {
+    static function setIsActive( $id, $is_active )
+    {
         return CRM_Core_DAO::setFieldValue( 'CRM_Core_DAO_UFGroup', $id, 'is_active', $is_active );
     }
 
@@ -956,7 +957,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      * @static
      *
      */
-    public static function del($id) 
+    public static function del( $id ) 
     {                
         //check whether this group contains  any profile fields
         require_once 'CRM/Core/BAO/UFField.php';
@@ -990,7 +991,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
      * @static 
      * @return object
      */
-    static function add(&$params, &$ids) 
+    static function add( &$params, &$ids ) 
     {
         require_once 'CRM/Utils/Array.php';
         $fields = array( 'is_active', 'add_captcha', 'is_map', 'is_update_dupe', 'is_edit_link', 'is_uf_link', 'is_cms_user' );
@@ -1025,7 +1026,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
         $groupTypes = $params['uf_group_type'];
         
         // get ufjoin records for uf group
-        $ufGroupRecord =& CRM_Core_BAO_UFGroup::getUFJoinRecord($ufGroupId);
+        $ufGroupRecord =& CRM_Core_BAO_UFGroup::getUFJoinRecord( $ufGroupId );
         
         // get the list of all ufgroup types
         $allUFGroupType =& CRM_Core_SelectValues::ufGroupTypes( );
@@ -1202,7 +1203,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
      * @access public
      * @static
      */
-    public static function getModuleUFGroup( $moduleName = null, $count = 0, $skipPermission = true) 
+    public static function getModuleUFGroup( $moduleName = null, $count = 0, $skipPermission = true ) 
     {
         require_once 'CRM/Core/DAO.php';
 
@@ -1259,7 +1260,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
      * @static
      * @access public
      */
-    static function filterUFGroups ($ufGroupId, $contactID = null) 
+    static function filterUFGroups( $ufGroupId, $contactID = null ) 
     {
         if ( ! $contactID ) {
            $session =& CRM_Core_Session::singleton( );

@@ -72,32 +72,6 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
     }
     
     /**
-     * Given the list of params in the params array, fetch the object
-     * and store the values in the values array
-     *
-     * @param array $params input parameters to find object
-     * @param array $values output values of the object
-     * @param array $ids    the array that holds all the db ids
-     *
-     * @return CRM_Pledge_BAO_PledgeBlock|null the found object or null
-     * @access public
-     * @static
-     */
-    static function &getValues( &$params, &$values, &$ids ) 
-    {
-        $pledgeBlock =& new CRM_Pledge_BAO_PledgeBlock( );
-        $pledgeBlock->copyValues( $params );
-        
-        if ( $pledgeBlock->find(true) ) {
-            $ids['pledgeBlock'] = $pledgeBlock->id;
-            CRM_Core_DAO::storeValues( $pledgeBlock, $values );
-            return $pledgeBlock;
-        }
-        
-        return null;
-    }
-    
-    /**
      * takes an associative array and creates a pledgeBlock object
      *
      * @param array $params (reference ) an assoc array of name/value pairs

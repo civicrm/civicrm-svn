@@ -1410,7 +1410,8 @@ SELECT $columnName
         return $customFormatted;
     }
 
-    static function &defaultCustomTableSchema( &$params ) {
+    static function &defaultCustomTableSchema( &$params ) 
+    {
         // add the id and extends_id
         $table = array( 'name'        => $params['name'],
                         'is_multiple' => $params['is_multiple'],
@@ -1441,7 +1442,8 @@ SELECT $columnName
         return $table;
     }
 
-    static function createField( $field, $operation, $indexExist = false ) {
+    static function createField( $field, $operation, $indexExist = false ) 
+    {
         require_once 'CRM/Core/BAO/CustomValueTable.php';
         $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
                                                   $field->custom_group_id,
@@ -1492,7 +1494,8 @@ SELECT $columnName
         CRM_Core_BAO_SchemaHandler::alterFieldSQL( $params, $indexExist );
     }
 
-    static function getTableColumnGroup( $fieldID ) {
+    static function getTableColumnGroup( $fieldID ) 
+    {
         static $cache = array( );
 
         if ( ! array_key_exists( $fieldID, $cache ) ) {
@@ -1587,7 +1590,8 @@ WHERE  option_group_id = {$optionGroupId}";
         }
     }
 
-    static function getOptionGroupDefault( $optionGroupId, $htmlType ) {
+    static function getOptionGroupDefault( $optionGroupId, $htmlType ) 
+    {
         $query = "
 SELECT   default_value, html_type
 FROM     civicrm_custom_field
@@ -1631,8 +1635,8 @@ ORDER BY html_type";
                           &$customFields,
                           $entityID,
                           $customFieldExtends,
-                          $inline = false ) {
-        
+                          $inline = false ) 
+    {
         $customData = array( );
               
         foreach ( $params as $key => $value ) {
@@ -1660,8 +1664,8 @@ ORDER BY html_type";
         return $customData;
     }
 
-    static function buildOption( $field, &$options ) {
-
+    static function buildOption( $field, &$options ) 
+    {
         $options['attributes'] = array( 'label'     => $field['label'],
                                         'data_type' => $field['data_type'],
                                         'html_type' => $field['html_type'] );

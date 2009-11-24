@@ -538,8 +538,8 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
     }
 
     static function addStateCountryMap( &$stateCountryMap,
-                                        $defaults = null ) {
-
+                                        $defaults = null ) 
+    {
         // first fix the statecountry map if needed
         if ( empty( $stateCountryMap ) ) {
             return;
@@ -554,7 +554,8 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
                                                 $stateCountryMap );
     }
 
-    static function fixAllStateSelects( &$form, &$defaults ) {
+    static function fixAllStateSelects( &$form, &$defaults ) 
+    {
         $config =& CRM_Core_Config::singleton( );
 
         if ( ! empty(  $config->stateCountryMap ) ) {
@@ -578,7 +579,8 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
      *
      * @return  array of address sequence.
      */
-    static function addressSequence(  ) {
+    static function addressSequence(  ) 
+    {
         $config =& CRM_Core_Config::singleton( );
         $addressSequence = $config->addressSequence();
         

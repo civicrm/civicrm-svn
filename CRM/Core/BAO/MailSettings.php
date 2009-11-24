@@ -153,24 +153,6 @@ class CRM_Core_BAO_MailSettings extends CRM_Core_DAO_MailSettings
     }
     
     /**
-     * Given the list of params in the params array, fetch the object
-     * and store the values in the values array
-     *
-     * @param array $params input parameters to find object
-     * @param array $values output values of the object
-     * @param array $returnProperties  if you want to return specific fields
-     *
-     * @return array associated array of field values
-     * @access public
-     * @static
-     */
-    static function &getValues( &$params, &$values, $returnProperties = null ) 
-    {
-        CRM_Core_DAO::commonRetrieve('CRM_Core_DAO_MailSettings', $params, $values, $returnProperties );
-        return $values;
-    }
-    
-    /**
      * takes an associative array and creates a mail settings object
      *
      * @param array $params (reference ) an assoc array of name/value pairs

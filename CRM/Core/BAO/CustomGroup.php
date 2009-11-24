@@ -51,7 +51,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
     }
 
   
-   /**
+    /**
      * takes an associative array and creates a custom group object
      *
      * This function is invoked from within the web form layer and also from the api layer
@@ -194,7 +194,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
      * @access public
      * @static
      */
-    static function retrieve(&$params, &$defaults)
+    static function retrieve( &$params, &$defaults )
     {
         return CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_CustomGroup', $params, $defaults );
     }
@@ -209,9 +209,10 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
      * @static
      * @access public
      */
-    static function setIsActive($id, $is_active) {
-         require_once 'CRM/Core/BAO/UFField.php';
-        if($is_active){
+    static function setIsActive( $id, $is_active ) 
+    {
+        require_once 'CRM/Core/BAO/UFField.php';
+        if( $is_active ) {
             //CRM_Core_BAO_UFField::setUFFieldStatus($id, $is_active);
         } else {
             CRM_Core_BAO_UFField::setUFFieldStatus($id, $is_active);
@@ -586,7 +587,7 @@ SELECT $select
      * @static
      *
      */
-    public static function &getGroupDetail($groupId = null, $searchable = null, &$extends = null)
+    public static function &getGroupDetail( $groupId = null, $searchable = null, &$extends = null )
     {
         // create a new tree
         $groupTree = array();
@@ -766,10 +767,10 @@ SELECT $select
      * @static
      *
      */
-    private static function _getTableName($entityType)
+    private static function _getTableName( $entityType )
     {
         $tableName = '';
-        switch($entityType) {
+        switch( $entityType ) {
         case 'Contact':
         case 'Individual':
         case 'Household':
@@ -820,11 +821,11 @@ SELECT $select
      * @static
      *
      */
-    private static function _addWhereAdd(&$customGroupDAO, $entityType, $entityID = null)
+    private static function _addWhereAdd( &$customGroupDAO, $entityType, $entityID = null )
     {
         $addSubtypeClause = false;
 
-        switch($entityType) {
+        switch( $entityType ) {
         case 'Contact':
             // if contact, get all related to contact
             $extendList = "'Contact','Individual','Household','Organization'";
@@ -884,7 +885,7 @@ SELECT $select
         // forcing the delete, otherwise delete the fields one by one
         while ($customField->fetch()) {
             if (!$force) return false;
-            CRM_Core_BAO_CustomField::deleteField($customField);
+            CRM_Core_BAO_CustomField::deleteField( $customField );
         }
 
         // drop the table associated with this custom group
@@ -1293,7 +1294,7 @@ SELECT $select
      * @static
      * @access public
      */
-    static function checkCustomField($customFieldId, &$removeCustomFieldTypes ) 
+    static function checkCustomField( $customFieldId, &$removeCustomFieldTypes ) 
     {
         $query = "SELECT cg.extends as extends
                   FROM civicrm_custom_group as cg, civicrm_custom_field as cf
@@ -1739,7 +1740,8 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
         return $groupLabels;
     }
 
-    static function dropAllTables( ) {
+    static function dropAllTables( ) 
+    {
         $query = "SELECT table_name FROM civicrm_custom_group";
         $dao = CRM_Core_DAO::executeQuery( $query );
 
@@ -1756,9 +1758,8 @@ SELECT  civicrm_custom_group.id as groupID, civicrm_custom_group.title as groupT
      * @return boolean true if empty otherwise false.
      * @access public
      */
-
-    function isGroupEmpty( $gID ) {
-
+    function isGroupEmpty( $gID ) 
+    {
         if ( !$gID ) {
             return;
         }
