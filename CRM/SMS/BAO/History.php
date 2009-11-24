@@ -33,7 +33,6 @@
  *
  */
 
-require_once 'CRM/SMS/DAO/History.php';
 require_once 'CRM/SMS/Protocol.php';
 
 /**
