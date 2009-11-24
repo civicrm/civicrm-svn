@@ -616,7 +616,7 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
             if ( array_key_exists( 'edit', $hasPermissions ) ) {
                 $contactLinks['rows'][$i]['edit'] = '<a class="action-item" href="' . CRM_Utils_System::url( 'civicrm/contact/add', 'reset=1&action=update&cid=' . $dao->id ) .
                     '" target="_blank">'.ts('Edit').'</a>'; 
-                if ( ! $contactLinks['msg'] || $contactsLinks['msg'] != 'merge')   {
+                if ( ! $contactLinks['msg'] || $contactLinks['msg'] != 'merge')   {
                     $contactLinks['msg'] = 'edit';
                 }
             }

@@ -556,7 +556,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                          }
 		                 $duplicateContactsLinks .= '</div>';
 		                 $duplicateContactsLinks .= '<table class="matching-contacts-actions">';
-		
+                         $row = '';
 		                 for ($i=0;$i<sizeof($contactLinks['rows']);$i++) {                 
 		            	   $row .='  <tr>	 ';
 		            	   $row .='  	<td class="matching-contacts-name"> ';
