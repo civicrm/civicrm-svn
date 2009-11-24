@@ -364,6 +364,9 @@ class CRM_Core_OptionValue
      */
     static function getValues( $groupParams, &$values, $orderBy = 'weight', $isActive = false ) 
     {
+        if ( empty ( $groupParams ) ) {
+            return null;
+        }
         $select = "
 SELECT 
    option_value.id          as id,
