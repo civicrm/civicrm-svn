@@ -342,8 +342,7 @@ class api_v2_ActivityTest extends CiviUnitTestCase
 
         //  Drop and create table civicrm_value_activity_custom_9
         $query = 'USE civicrm_tests_dev; DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
-        $utils = new Utils( $GLOBALS['mysql_host'], $GLOBALS['mysql_user'], $GLOBALS['mysql_pass'] );
-        $utils->do_query( $query );
+        self::$utils->do_query( $query );
         $group = new CRM_Core_DAO_CustomGroup();
         $group->extends = "Activity";
         $group->table_name = 'civicrm_value_activity_custom_9';
@@ -602,8 +601,7 @@ class api_v2_ActivityTest extends CiviUnitTestCase
 
         //  Drop and create table civicrm_value_activity_custom_9
         $query = 'USE civicrm_tests_dev; DROP TABLE IF EXISTS civicrm_value_activity_custom_9';
-        $utils = new Utils( $GLOBALS['mysql_host'], $GLOBALS['mysql_user'], $GLOBALS['mysql_pass'] );
-        $utils->do_query( $query );
+        self::$utils->do_query( $query );
         $group = new CRM_Core_DAO_CustomGroup();
         $group->extends = "Activity";
         $group->table_name = 'civicrm_value_activity_custom_9';
@@ -625,8 +623,7 @@ class api_v2_ActivityTest extends CiviUnitTestCase
         $query = "USE civicrm_tests_dev; INSERT INTO civicrm_value_activity_custom_9"
                . "( entity_id, activity_custom_11 )"
                . " VALUES ( 4,  'bite my test data' )";
-        $utils = new Utils( $GLOBALS['mysql_host'], $GLOBALS['mysql_user'], $GLOBALS['mysql_pass'] );
-        $utils->do_query( $query );
+        self::$utils->do_query( $query );
 
         //  Retrieve the test value
         $params = array( 'activity_id' => 4,
