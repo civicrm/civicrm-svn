@@ -236,8 +236,6 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
         $this->assertArrayHasKey( $memberContactId, $result,
                                   "In line " . __LINE__ );
 
-        var_dump( $result );
-        
         $this->assertEquals( 1, count( $result ),
                              "In line " . __LINE__ );
 

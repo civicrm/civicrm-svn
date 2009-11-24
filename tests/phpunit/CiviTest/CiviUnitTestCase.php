@@ -439,7 +439,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $params['contact_id'] = $contactID;
         $result = civicrm_contact_delete( $params );
         if ( CRM_Utils_Array::value( 'is_error', $result ) ) {
-            var_dump( $result );
             throw new Exception( 'Could not delete contact: ' . $result['error_message'] );
         }
         return;
