@@ -128,7 +128,8 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
                 
         //sorted in ascending order tokens by ignoring word case
         natcasesort($tokens);
-        $this->assign('tokens', $tokens);
+        $this->assign('tokens', json_encode( $tokens ) );
+        
         $this->add( 'select', 'token1',  ts( 'Insert Tokens' ), 
                     $tokens , false, 
                     array(

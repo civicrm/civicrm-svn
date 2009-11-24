@@ -2078,7 +2078,7 @@ SELECT $selectClause
         //sorted in ascending order tokens by ignoring word case
         natcasesort($tokens);
 
-        $form->assign('tokens', $tokens);
+        $form->assign( 'tokens', json_encode( $tokens ) );
 
         $form->add( 'select', 'token1',  ts( 'Insert Tokens' ), 
                     $tokens , false, 
