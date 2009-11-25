@@ -173,18 +173,40 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
         $domainDetails = CRM_Core_BAO_Domain::getNameAndEmail( );
         list( $username, $mailParams['domain'] ) = split( '@', $domainDetails[1] );
         
+        $default          = array( );
+        $findProperties   = array('id'=> $params['entity_id']);
+        
         if ( $params['entity_table'] == 'civicrm_contribution_page' ) {
-            $mailParams['email_from'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage',
-                                                                     $params['entity_id'],
-                                                                     'receipt_from_email',
-                                                                     'id' );
+            
+            $returnProperties = array('receipt_from_email' ,'is_email_receipt');
+            CRM_Core_DAO::commonRetrieve( 'CRM_Contribute_DAO_ContributionPage',
+                                          $findProperties,
+                                          $default,
+                                          $returnProperties );
+            //if is_email_receipt is set then take receipt_from_email
+            //as from_email
+            if( CRM_Utils_Array::value( 'is_email_receipt', $default ) &&  CRM_Utils_Array::value( 'receipt_from_email', $default ) ) {
+                $mailParams['email_from'] = $default['receipt_from_email'];
+            }
+
             $urlPath = 'civicrm/contribute/transact';
             $mailParams['module'] = 'contribute';
         } elseif ( $params['entity_table'] == 'civicrm_event' ) {
-            $mailParams['email_from'] = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event',
-                                                                     $params['entity_id'],
-                                                                     'confirm_from_email' );
-            $mailParams['email_from'] = ( $mailParams['email_from'] ) ? $mailParams['email_from'] : $domainDetails['1'];
+            
+            $returnProperties = array('confirm_from_email' ,'is_email_confirm');
+            CRM_Core_DAO::commonRetrieve( 'CRM_Event_DAO_Event',
+                                          $findProperties,
+                                          $default,
+                                          $returnProperties );
+
+            $mailParams['email_from'] = $domainDetails['1'];
+            
+            //if is_email_confirm is set then take confirm_from_email
+            //as from_email
+            if( CRM_Utils_Array::value( 'is_email_confirm', $default ) &&  CRM_Utils_Array::value( 'confirm_from_email', $default ) ) {
+                $mailParams['email_from'] = $default['confirm_from_email'];
+            }
+            
             $urlPath                  = 'civicrm/event/info';
             $mailParams['module']     = 'event';
         } elseif ( $params['entity_table'] == 'civicrm_pcp' ) {
