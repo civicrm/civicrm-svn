@@ -182,7 +182,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             //get assignee contacts.
             $assigneeContactIds = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $activity->id );
             if ( !empty($assigneeContactIds) ) {
-                $msgs[] = " assigne =".implode( ',', array_keys($assigneeContactIds) );   
+                $msgs[] = " assignee =".implode( ',', array_keys($assigneeContactIds) );   
             }
             
             $logMsg .= implode( ', ', $msgs );
@@ -490,29 +490,31 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                     $url = CRM_Utils_System::url( 'civicrm/activity', $q );
                 }
             }
-            
-            require_once 'CRM/Contact/BAO/Contact.php';
-            $recentContactDisplay = CRM_Contact_BAO_Contact::displayName( $recentContactId );
-            // add the recently created Activity
-            $activityTypes   = CRM_Core_Pseudoconstant::activityType( true, true );
-            $activitySubject = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $activity->id, 'subject' );
-
-            $title = "";
-            if ( isset($activitySubject) ) {
-                $title =  $activitySubject . ' - ';
+         
+            if ( ! isset( $activity->parent_id ) ) {
+                require_once 'CRM/Contact/BAO/Contact.php';
+                $recentContactDisplay = CRM_Contact_BAO_Contact::displayName( $recentContactId );
+                // add the recently created Activity
+                $activityTypes   = CRM_Core_Pseudoconstant::activityType( true, true );
+                $activitySubject = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $activity->id, 'subject' );
+                
+                $title = "";
+                if ( isset($activitySubject) ) {
+                    $title =  $activitySubject . ' - ';
+                }
+                
+                $title = $title . $recentContactDisplay .' (' . $activityTypes[$activity->activity_type_id] . ')';
+                
+                CRM_Utils_Recent::add( $title,
+                                       $url,
+                                       $activity->id,
+                                       'Activity',
+                                       $recentContactId,
+                                       $recentContactDisplay
+                                       );
             }
-            
-            $title =  $title . $recentContactDisplay .' (' . $activityTypes[$activity->activity_type_id] . ')';
-
-            CRM_Utils_Recent::add( $title,
-                                   $url,
-                                   $activity->id,
-                                   'Activity',
-                                   $recentContactId,
-                                   $recentContactDisplay
-                                   );
         }
-        
+
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
             CRM_Utils_Hook::post( 'edit', 'Activity', $activity->id, $activity );
         } else {
