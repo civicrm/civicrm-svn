@@ -1329,7 +1329,7 @@ function civicrm_views_data() {
                                                                  ),
 
                                                'sort' => array(
-                                                               'handler' => 'views_handler_sort_date',
+                                                               'handler' => 'civicrm_handler_sort_date',
                                                                ),
                                                );
 
@@ -1349,7 +1349,7 @@ function civicrm_views_data() {
                                                                  ),
 
                                                'sort' => array(
-                                                               'handler' => 'views_handler_sort_date',
+                                                               'handler' => 'civicrm_handler_sort_date',
                                                                ),
                                                );
 
@@ -1387,7 +1387,7 @@ function civicrm_views_data() {
                                                                                 ),
 
                                                               'sort' => array(
-                                                                              'handler' => 'views_handler_sort_date',
+                                                                              'handler' => 'civicrm_handler_sort_date',
                                                                               ),
                                                               );
 
@@ -1407,7 +1407,7 @@ function civicrm_views_data() {
                                                                               ),
 
                                                             'sort' => array(
-                                                                            'handler' => 'views_handler_sort_date',
+                                                                            'handler' => 'civicrm_handler_sort_date',
                                                                             ),
                                                             );
 
@@ -1585,7 +1585,7 @@ function civicrm_views_data() {
                                                                             ),
 
                                                           'sort' => array(
-                                                                          'handler' => 'views_handler_sort_date',
+                                                                          'handler' => 'civicrm_handler_sort_date',
                                                                           ),
                                                           );
    civicrm_views_add_date_arguments($data['civicrm_participant'],array('title' =>'Register Date',
@@ -1838,7 +1838,7 @@ function civicrm_views_data() {
                                                                             ),
 
                                                           'sort' => array(
-                                                                          'handler' => 'views_handler_sort_date',
+                                                                          'handler' => 'civicrm_handler_sort_date',
                                                                           ),
                                                           );
 
@@ -2022,7 +2022,7 @@ function civicrm_views_data() {
                                                                            ),
 
                                                          'sort' => array(
-                                                                         'handler' => 'views_handler_sort_date',
+                                                                         'handler' => 'civicrm_handler_sort_date',
                                                                          ),
                                                          );
     civicrm_views_add_date_arguments($data['civicrm_contribution'],array('title' =>'Cancel Date',
@@ -2065,7 +2065,7 @@ function civicrm_views_data() {
                                                                             ),
 
                                                           'sort' => array(
-                                                                          'handler' => 'views_handler_sort_date',
+                                                                          'handler' => 'civicrm_handler_sort_date',
                                                                           ),
                                                           );
     civicrm_views_add_date_arguments($data['civicrm_contribution'],array('title' =>'Receipt Date',
@@ -2085,7 +2085,7 @@ function civicrm_views_data() {
                                                                              ),
 
                                                            'sort' => array(
-                                                                           'handler' => 'views_handler_sort_date',
+                                                                           'handler' => 'civicrm_handler_sort_date',
                                                                            ),
                                                            );
     civicrm_views_add_date_arguments($data['civicrm_contribution'],array('title' =>'Thank You Date',
@@ -2334,7 +2334,7 @@ function civicrm_views_data() {
                                                                               ),
 
                                                             'sort' => array(
-                                                                            'handler' => 'views_handler_sort_date',
+                                                                            'handler' => 'civicrm_handler_sort_date',
                                                                             ),
                                                             );
     civicrm_views_add_date_arguments($data['civicrm_activity'],array('title' =>'Scheduled Activity Date',
@@ -2671,7 +2671,7 @@ function civicrm_views_data() {
                                                                           ),
 
                                                         'sort' => array(
-                                                                        'handler' => 'views_handler_sort_date',
+                                                                        'handler' => 'civicrm_handler_sort_date',
                                                                         ),
                                                         );
 
@@ -2692,7 +2692,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
 
@@ -2812,7 +2812,7 @@ function civicrm_views_data() {
                                                                           ),
 
                                                         'sort' => array(
-                                                                        'handler' => 'views_handler_sort_date',
+                                                                        'handler' => 'civicrm_handler_sort_date',
                                                                         ),
                                                         );
 
@@ -2833,7 +2833,7 @@ function civicrm_views_data() {
                                                                           ),
 
                                                         'sort' => array(
-                                                                        'handler' => 'views_handler_sort_date',
+                                                                        'handler' => 'civicrm_handler_sort_date',
                                                                         ),
                                                         );
 
@@ -2855,7 +2855,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
 
@@ -2948,7 +2948,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
 
@@ -3412,7 +3412,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
 
@@ -3436,7 +3436,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
 
@@ -3460,7 +3460,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
 
@@ -3518,7 +3518,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
     //Tracks who click through, traces each individual click through
@@ -3550,7 +3550,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
     //ID of click through event
@@ -3639,7 +3639,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
     $data['civicrm_mailing_event_bounce']['id'] = array(
@@ -3715,7 +3715,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
     $data['civicrm_mailing_event_delivered']['id'] = array(
@@ -3770,7 +3770,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
     $data['civicrm_mailing_event_opened']['id'] = array(
@@ -3825,7 +3825,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
     $data['civicrm_mailing_event_reply']['id'] = array(
@@ -3880,7 +3880,7 @@ function civicrm_views_data() {
                                                                         ),
 
                                                       'sort' => array(
-                                                                      'handler' => 'views_handler_sort_date',
+                                                                      'handler' => 'civicrm_handler_sort_date',
                                                                       ),
                                                       );
 
