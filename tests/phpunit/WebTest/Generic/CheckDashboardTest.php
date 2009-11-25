@@ -1,23 +1,20 @@
 <?php
-require_once '/var/www/api.dev.civicrm.org/trunk/tools/packages/PHPUnit/Extensions/SeleniumTestCase.php';
+require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
  
 class WebTest_Generic_CheckDashboardTest extends PHPUnit_Extensions_SeleniumTestCase
 {
-    protected $captureScreenshotOnFailure = TRUE;
-    protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-    protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
 
-
+  protected $coverageScriptUrl = 'http://tests.dev.civicrm.org/drupal/phpunit_coverage.php';
+    
   function setUp()
   {
     $this->setBrowser('*firefox');
-    $this->setBrowserUrl("http://sandbox.civicrm.org/");
-
+    $this->setBrowserUrl("http://tests.dev.civicrm.org/");
   }
 
   function testCheckDashboardElements()
   {
-    $this->open("/");
+    $this->open("/drupal/");
     $this->type("edit-name", "demo");
     $this->type("edit-pass", "demo");
     $this->click("edit-submit");
