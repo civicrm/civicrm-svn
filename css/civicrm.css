@@ -556,6 +556,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 	border-radius:3px; 
 	-moz-border-radius:3px; 
 	-webkit-border-radius:3px; 
+	-khtml-border-radius:3px;
 	}
 #crm-container .tree-default li a:hover, 
 .tree-default li a.hover { 
