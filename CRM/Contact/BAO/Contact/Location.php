@@ -189,7 +189,7 @@ AND civicrm_contact.id IN $idString ";
             $location['location_type' ] = $dao->location_type;
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
             $location['image'] = 
-                CRM_Contact_BAO_Contact_Utils::getImage( $dao->contact_sub_type ? 
+                CRM_Contact_BAO_Contact_Utils::getImage( isset( $dao->contact_sub_type ) ? 
                                                          $dao->contact_sub_type : $dao->contact_type );
             $locations[] = $location;
         }
