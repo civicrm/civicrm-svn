@@ -649,11 +649,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
 
         //delete the contact id from recently view
         require_once 'CRM/Utils/Recent.php';
-        $contactRecent = array(
-                               'id'   => $id,
-                               'type' => $contactType
-                               );
-        CRM_Utils_Recent::del( $contactRecent );
+        CRM_Utils_Recent::delContact( $id );
 
         // reset the group contact cache for this group
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
