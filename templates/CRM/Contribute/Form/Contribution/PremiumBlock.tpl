@@ -88,7 +88,7 @@ function selectPremium(optionField) {
     {/strip}
     {if $context EQ "makeContribution"}
         </fieldset>
-    {else} {* Close premium-display-group div *}
+    {elseif ! $preview} {* Close premium-display-group div for Confirm and Thank-you pages *}
         </div>
     {/if}
 </div>
