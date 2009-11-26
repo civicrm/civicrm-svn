@@ -93,7 +93,6 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
      * @access public
      * @return None
      */
-    
     function setDefaultValues( )
     {
         if ( $this->_cdType ) {
@@ -146,7 +145,6 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
      * @return None 
      * @access public 
      */ 
-    
     public function buildQuickForm( )  
     { 
         if ( $this->_cdType ) {
@@ -170,8 +168,12 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         if ($this->_action & CRM_Core_Action::ADD) {
             require_once 'CRM/Event/PseudoConstant.php';
             $eventTemplates =& CRM_Event_PseudoConstant::eventTemplates();
-            $this->add('select', 'template_id', ts('From Template'), array('' => ts('- select -')) + $eventTemplates,
-                       false, array('onchange' => "window.location += '&template_id=' + this.value"));
+            if (CRM_Utils_System::isNull( $eventTemplates )) {
+                $this->assign('noEventTemplates', true);
+            } else {
+                $this->add('select', 'template_id', ts('From Template'), array('' => ts('- select -')) + $eventTemplates,
+                           false, array('onchange' => "window.location += '&template_id=' + this.value"));
+            }
         }
 
         // add event title, make required if this is not a template

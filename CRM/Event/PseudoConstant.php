@@ -245,7 +245,13 @@ class CRM_Event_PseudoConstant extends CRM_Core_PseudoConstant
     public static function &eventTemplates($id = null)
     {
         if (!self::$eventTemplates) {
-            CRM_Core_PseudoConstant::populate(self::$eventTemplates, 'CRM_Event_DAO_Event', false, 'template_title', 'is_template');
+            CRM_Core_PseudoConstant::populate(self::$eventTemplates, 
+                                              'CRM_Event_DAO_Event', 
+                                              false, 
+                                              'template_title', 
+                                              'is_active', 
+                                              "is_template = 1"
+                                              );
         }
         if ($id) {
             return self::$eventTemplates[$id];
