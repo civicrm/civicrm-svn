@@ -789,8 +789,11 @@ function civicrm_add_jquery( &$html ) {
 }
 
 function  civicrm_form_alter( $form, $formValues, $formID ) {
-    if ( $formID == 'user_admin_perm' && !empty( $formValues['post'] ) ) {
-        // reset navigation only when permissions are changed
+    if ( in_array( $formID, array( 'user_admin_perm', 'system_clean_url_settings' ) ) && !empty( $formValues['post'] ) ) {
+        // reset navigation for permissions changed and clean url
+        if ( ! civicrm_initialize( ) ) {
+            return;
+        }
         require_once 'CRM/Core/BAO/Navigation.php';
         CRM_Core_BAO_Navigation::resetNavigation( );
     }
