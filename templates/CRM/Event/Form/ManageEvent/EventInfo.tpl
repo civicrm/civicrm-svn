@@ -9,16 +9,16 @@
         </div>
 	<fieldset>
 	<table class="form-layout-compressed">
+    	{if $form.template_id}
+    		<tr>
+    			<td class="label">{$form.template_id.label}</td>
+    			<td>{$form.template_id.html} {help id="id-select-template"}</td>
+    		</tr>
+    	{/if}
 		{if $form.template_title}
 			<tr>
 				<td class="label">{$form.template_title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='template_title' id=$eventID}{/if}</td>
-				<td>{$form.template_title.html}</td>
-			</tr>
-		{/if}
-		{if $form.template_id}
-			<tr>
-				<td class="label">{$form.template_id.label}</td>
-				<td>{$form.template_id.html}</td>
+				<td>{$form.template_title.html} {help id="id-template-title"}</td>
 			</tr>
 		{/if}
 		<tr>
