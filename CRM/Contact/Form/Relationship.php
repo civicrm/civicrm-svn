@@ -709,7 +709,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         
         if ( CRM_Utils_Array::value('employee_of', $params ) &&
              !$employerId ) {
-            $errors['employee_of'] = ts( 'Current employer should be one of the selected contact.' );
+            $errors['employee_of'] = ts( 'Current employer should be one of the selected contacts.' );
         }
         
         if ( CRM_Utils_Array::value('employer_of', $params ) && 

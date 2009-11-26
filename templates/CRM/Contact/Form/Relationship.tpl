@@ -67,6 +67,11 @@
             {if $action EQ 2} {* action = update *}
                 <label>{$sort_name_b}</label></dd>
                 </dl>
+        	    <div>
+                    <dt id="employee">{ts}Current Employee?{/ts}</dt>
+                    <dt id="employer">{ts}Current Employer?{/ts}</dt>
+                    <dd id="current_employer">{$form.is_current_employer.html}</dd>
+        	    </div>
             {else} {* action = add *}
                 </dd>
 		    <dt>{$form.rel_contact.label}</dt>
@@ -120,23 +125,23 @@
                         <tr class="columnheader">
                         <th>&nbsp;</th>
                         <th>{ts}Name{/ts}</th>
+                        {if $isEmployeeOf}<th>{ts}Current Employer?{/ts}</th> 
+                        {elseif $isEmployerOf}<th>{ts}Current Employee?{/ts}</th>{/if}
                         <th>{ts}City{/ts}</th>
                         <th>{ts}State{/ts}</th>
                         <th>{ts}Email{/ts}</th>
                         <th>{ts}Phone{/ts}</th>
-                        {if $isEmployeeOf}<th>{ts}Is current employer{/ts}</th> 
-                        {elseif $isEmployerOf}<th>{ts}Is current employee{/ts}</th>{/if}
                         </tr>
                         {foreach from=$searchRows item=row}
                         <tr class="{cycle values="odd-row,even-row"}">
                             <td>{$form.contact_check[$row.id].html}</td>
                             <td>{$row.type} {$row.name}</td>
+                            {if $isEmployeeOf}<td>{$form.employee_of[$row.id].html}</td>
+                            {elseif $isEmployerOf}<td>{$form.employer_of[$row.id].html}</td>{/if}
                             <td>{$row.city}</td>
                             <td>{$row.state}</td>
                             <td>{$row.email}</td>
                             <td>{$row.phone}</td>
-                            {if $isEmployeeOf}<td>{$form.employee_of[$row.id].html}</td>
-                            {elseif $isEmployerOf}<td>{$form.employer_of[$row.id].html}</td>{/if}
                         </tr>
                         {/foreach}
                         </table>
@@ -184,13 +189,6 @@
                     <dt>{$form.is_active.label}</dt><dd>{$form.is_active.html}</dd>
                 </dl>
             </div>
-        {if $action eq 2}
-	<div>
-            <dt id="employee">{ts}Is current employee?{/ts}</dt>
-            <dt id="employer">{ts}Is current employer?{/ts}</dt>
-            <dd id="current_employer">{$form.is_current_employer.html}</dd>
-	</div>
-        {/if}
         <div id="customData"></div>
         <div class="spacer"></div>
         <dl>
