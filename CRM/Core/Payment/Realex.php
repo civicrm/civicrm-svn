@@ -230,9 +230,14 @@ class CRM_Core_Payment_Realex extends CRM_Core_Payment {
             if ( $ret > 0 ) {
                 $result['#return'] = $this->_xml_parse($input);
             } else {
-                $result['#error']  = t ('Error parsing XML result - error code = '. xml_get_error_code($xmlparser) .' at '.
-                                        'line '. xml_get_current_line_number($xmlparser) .' '.
-                                        'char '. xml_get_current_column_number($xmlparser));
+                $result['#error']  = ts(
+                    'Error parsing XML result - error code = %1 at line %2 char %3',
+                    array(
+                        1 => xml_get_error_code($xmlparser),
+                        2 => xml_get_current_line_number($xmlparser),
+                        3 => xml_get_current_column_number($xmlparser)
+                    )
+                );
             }
         }
         return $result;

@@ -67,7 +67,7 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form
             $contactType->freeze( );
             // We'll display actual "name" for built-in types (for reference) when editing their label / image_URL
             $contactTypeName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType', $this->_id, 'name');
-            $this->assign('contactTypeName', ts($contactTypeName));            
+            $this->assign('contactTypeName', $contactTypeName);
         }
         $this->addElement('text','image_URL', ts('Image URL'));  
         $this->add('text', 'description', ts('Description'), 
