@@ -47,7 +47,7 @@ implements CRM_Contact_Form_Search_Interface {
          * Define the columns for search result rows
          */
         $this->_columns = array( ts(' '      )   => 'activity_id',
-       				 ts(' '      )   => 'activity_type_id',
+       				 ts('  '     )   => 'activity_type_id',
 				 ts('Name'   )   => 'sort_name',
 				 ts('Status' )   => 'activity_status',
 				 ts('Activity Type'     )   => 'activity_type',
