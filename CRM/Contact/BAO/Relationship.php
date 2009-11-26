@@ -117,7 +117,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         }
         
         // do not add to recent items for import, CRM-4399
-        if ( !CRM_Utils_Array::value( 'skipRecentView', $params ) ) {
+        if ( !( CRM_Utils_Array::value( 'skipRecentView', $params ) || $invalid || $duplicate ) ) {
             require_once 'CRM/Utils/Recent.php';
             $url = CRM_Utils_System::url( 'civicrm/contact/view/rel', 
                                           "action=view&reset=1&id={$relationship->id}&cid={$relationship->contact_id_a}" );
