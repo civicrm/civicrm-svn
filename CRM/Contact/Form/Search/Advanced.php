@@ -217,7 +217,6 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
           
             //assigning event values for autocomplete event selection
             $eventSearchIds = array( 
-                                    'event_id'              => 'event_name_id',
                                     'event_type'            => 'event_type_id',
                                     'participant_fee_level' => 'participant_fee_id'
                                     );
