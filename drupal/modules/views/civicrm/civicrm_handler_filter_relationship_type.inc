@@ -17,7 +17,7 @@ class civicrm_handler_filter_relationship_type extends views_handler_filter_in_o
         if ( ! self::$_relationshipType ) {
             civicrm_initialize( );
             require_once 'CRM/Core/PseudoConstant.php';
-            $relationshipType_array = CRM_Core_PseudoConstant::relationshipType( );
+            $relationshipType_array = CRM_Core_PseudoConstant::relationshipType( $columnName = 'name' );
 			
 			// relationshipType() returns information about relations as array with fields
 			// 'name_a_b', 'name_b_a', 'contact_type_a' and 'contact_type_b'.

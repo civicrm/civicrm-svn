@@ -26,7 +26,7 @@ class civicrm_handler_filter_tag_title extends views_handler_filter_in_operator 
             $this->value_title = t('Tag Name');
             $options = array( );
             foreach (self::$_tagName as $id => $name ) {
-                $options[$id] = $name;
+                $options[$name] = $name;
             }
             $this->value_options = $options;
         }
