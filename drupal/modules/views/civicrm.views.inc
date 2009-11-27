@@ -4483,8 +4483,10 @@ function civicrm_views_handlers() {
                        'civicrm_handler_filter_membership_status' => array(
                                                                            'parent' => 'views_handler_filter_in_operator',
                                                                            ),
-                                                               
-                                                        
+                       'civicrm_handler_filter_mailing_name' => array(
+                                                                      'parent' => 'views_handler_filter_in_operator',
+                                                                      ),                                      
+                       
                        // ARGUMENT HANDLERS
                        'civicrm_handler_argument_date_api_contact' => array(
                                                                             'parent' => 'date_api_argument_handler',
