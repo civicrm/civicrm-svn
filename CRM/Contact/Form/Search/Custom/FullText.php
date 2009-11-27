@@ -90,7 +90,8 @@ class CRM_Contact_Form_Search_Custom_FullText
                 $this->_textID = $this->_text;
             } 
 
-            $this->_text = strtolower( CRM_Core_DAO::escapeString( $this->_text ) );
+            $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+            $this->_text = $strtolower( CRM_Core_DAO::escapeString( $this->_text ) );
             if ( strpos( $this->_text, '%' ) === false ) {
                 $this->_text = "'%{$this->_text}%'";
             } else {

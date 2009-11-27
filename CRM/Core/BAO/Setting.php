@@ -255,6 +255,9 @@ class CRM_Core_BAO_Setting
             // FIXME: an ugly hack to fix CRM-4041
             global $tsLocale;
             $tsLocale = $lcMessages;
+
+            // FIXME: as goo^W bad place as any to fix CRM-5428 (to be moved to a sane location along with the above)
+            if (function_exists('mb_internal_encoding')) mb_internal_encoding('UTF-8');
         }
     }
 }

@@ -304,6 +304,8 @@ SELECT label, value
                 continue;
             }
 
+            $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+
             foreach ( $values as $tuple ) {
                 list( $name, $op, $value, $grouping, $wildcard ) = $tuple;
 
@@ -379,11 +381,11 @@ SELECT label, value
                                 $wildcard = false; 
                                 $val = CRM_Utils_Type::escape( $value, 'String' );
                             } else {
-                                $val = CRM_Utils_Type::escape( strtolower(trim($value)), 'String' );
+                                $val = CRM_Utils_Type::escape( $strtolower(trim($value)), 'String' );
                             }
 
                             if ( $wildcard ) {
-                                $val = strtolower( CRM_Core_DAO::escapeString( $val ) );
+                                $val = $strtolower( CRM_Core_DAO::escapeString( $val ) );
                                 $val = "%$val%";
                                 $op  = 'LIKE';
                             }

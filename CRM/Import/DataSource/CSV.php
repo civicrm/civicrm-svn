@@ -107,7 +107,8 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
             //need to get original headers.
             $result['original_col_header'] = $firstrow;
             
-            $columns = array_map('strtolower', $firstrow);
+            $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+            $columns = array_map($strtolower, $firstrow);
             $columns = str_replace(' ', '_', $columns);
             $columns = preg_replace('/[^a-z_]/', '', $columns);
             

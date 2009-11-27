@@ -56,7 +56,8 @@ class CRM_Core_BAO_Email extends CRM_Core_DAO_Email
         $email->copyValues($params);
 
         // lower case email field to optimize queries
-        $email->email = strtolower( $email->email );
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+        $email->email = $strtolower( $email->email );
 
         // since we're setting bulkmail for 1 of this contact's emails, first reset all their emails to is_bulkmail false
         // (only 1 email address can have is_bulkmail = true)

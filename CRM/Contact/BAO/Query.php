@@ -1328,16 +1328,9 @@ class CRM_Contact_BAO_Query
         }
 
         $setTables = true;
-        
-        // FIXME: the LOWER/strtolower pairs below most probably won't work
-        // with non-US-ASCII characters, as even if MySQL does the proper
-        // thing with LOWER-ing them (4.0 almost certainly won't, but then
-        // we don't officially support 4.0 for non-US-ASCII data), PHP
-        // won't do the proper thing with strtolower-ing them unless the
-        // underlying operating system uses an UTF-8 locale for LC_CTYPE
-        // for the user the webserver runs at (or suEXECs); we should use
-        // mb_strtolower(), but then we'd require mb_strings support; we
-        // could wrap this in function_exist(), though
+
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+
         if ( substr($name,0,14) === 'state_province' ) {
             if ( isset( $locType[1] ) &&
                  is_numeric( $locType[1] ) ) {
@@ -1485,7 +1478,7 @@ class CRM_Contact_BAO_Query
                 $this->_qill[$grouping][]  = "$field[title] $op $value";
             }
         } else if ( $name === 'name' ) {
-            $value = strtolower( CRM_Core_DAO::escapeString( $value ) );
+            $value = $strtolower( CRM_Core_DAO::escapeString( $value ) );
             if ( $wildcard ) {
                 $value = "%$value%"; 
                 $op    = 'LIKE';
@@ -1494,7 +1487,7 @@ class CRM_Contact_BAO_Query
             $this->_where[$grouping][] = self::buildClause( $wc, $op, "'$value'" );
             $this->_qill[$grouping][]  = "$field[title] $op \"$value\"";
         } else if ( $name === 'current_employer' ) {
-            $value = strtolower( CRM_Core_DAO::escapeString( $value ) );
+            $value = $strtolower( CRM_Core_DAO::escapeString( $value ) );
             if ( $wildcard ) {
                 $value = "%$value%"; 
                 $op    = 'LIKE';
@@ -1538,7 +1531,7 @@ class CRM_Contact_BAO_Query
 
             if ( ! empty( $field['where'] ) ) {
                 if ( $op != 'IN' ) {
-                    $value = strtolower( CRM_Core_DAO::escapeString( $value ) );
+                    $value = $strtolower( CRM_Core_DAO::escapeString( $value ) );
                 }
                 if ( $wildcard ) {
                     $value = "%$value%"; 
@@ -2261,8 +2254,9 @@ WHERE  id IN ( $groupIDs )
             " LEFT JOIN civicrm_note ON ( civicrm_note.entity_table = 'civicrm_contact' AND
                                           contact_a.id = civicrm_note.entity_id ) ";
 
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
         $n = trim( $value );
-        $value = strtolower(CRM_Core_DAO::escapeString($n));
+        $value = $strtolower(CRM_Core_DAO::escapeString($n));
         if ( $wildcard || $op == 'LIKE' ) {
             if ( strpos( $value, '%' ) !== false ) {
                 // only add wild card if not there
@@ -2302,12 +2296,14 @@ WHERE  id IN ( $groupIDs )
 
 		//By default, $sub elements should be joined together with OR statements (don't change this variable).
         $subGlue = ' OR ';
+
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
         
         if ( substr( $name, 0 , 1 ) == '"' &&
              substr( $name, -1, 1 ) == '"' ) {
 			//If name is encased in double quotes, the value should be taken to be the string in entirety and the 
             $value = substr( $name, 1, -1 );
-            $value = strtolower(CRM_Core_DAO::escapeString($value));
+            $value = $strtolower(CRM_Core_DAO::escapeString($value));
             $wc = ( $newName == 'sort_name') ? 'LOWER(contact_a.sort_name)' : 'LOWER(contact_a.display_name)';
             $sub[] = " ( $wc = '$value' ) ";
             if ( $config->includeEmailInName ) {
@@ -2315,7 +2311,7 @@ WHERE  id IN ( $groupIDs )
             }
         } else if ( strpos( $name, ',' ) !== false ) {
             // if we have a comma in the string, search for the entire string 
-            $value = strtolower(CRM_Core_DAO::escapeString($name));
+            $value = $strtolower(CRM_Core_DAO::escapeString($name));
             if ( $wildcard ) {
                 if ( $config->includeWildCardInName ) {
                     $value = "'%$value%'";
@@ -2367,7 +2363,7 @@ WHERE  id IN ( $groupIDs )
                 $pieces =  explode( ' ', $name );
             }
             foreach ( $pieces as $piece ) { 
-                $value = strtolower( CRM_Core_DAO::escapeString( trim( $piece ) ) );
+                $value = $strtolower( CRM_Core_DAO::escapeString( trim( $piece ) ) );
                 if ( strlen( $value ) ) {
              		// Added If as a sanitization - without it, when you do an OR search, any string with
              		// double spaces (i.e. "  ") or that has a space after the keyword (e.g. "OR: ") will

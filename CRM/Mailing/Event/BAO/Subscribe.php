@@ -69,7 +69,8 @@ class CRM_Mailing_Event_BAO_Subscribe extends CRM_Mailing_Event_DAO_Subscribe {
             return null;
         }
         
-        $email = strtolower( $email );
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+        $email = $strtolower( $email );
 
         /* First, find out if the contact already exists */  
         $query = "
@@ -290,7 +291,8 @@ SELECT     civicrm_email.id as email_id
      * @access public
      */
     function getContactGroups($email) {
-        $email = strtolower( $email );
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+        $email = $strtolower( $email );
 
         $query = "
                  SELECT DISTINCT group_a.group_id, group_a.status, civicrm_group.title 

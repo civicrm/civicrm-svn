@@ -96,10 +96,12 @@ class CRM_Activity_BAO_Query
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
         
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+
         switch( $name ) {
             
         case 'activity_activitytag1_id':
-            $value = strtolower(CRM_Core_DAO::escapeString(trim($value)));
+            $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
             $query->_where[$grouping][] = "civicrm_activity.activity_tag1_id $op {$value}";
 
             require_once 'CRM/Core/OptionGroup.php' ;
@@ -111,7 +113,7 @@ class CRM_Activity_BAO_Query
             return;
 
         case 'activity_activitytag2_id':
-            $value = strtolower(CRM_Core_DAO::escapeString(trim($value)));
+            $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
             $query->_where[$grouping][] = "civicrm_activity.activity_tag2_id $op {$value}";
 
             require_once 'CRM/Core/OptionGroup.php' ;
@@ -143,7 +145,7 @@ class CRM_Activity_BAO_Query
             return;
 
         case 'activity_details':
-            $value = strtolower(CRM_Core_DAO::escapeString(trim($value)));
+            $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
             $op = 'LIKE';
             $query->_where[$grouping][] = "civicrm_activity.details $op '%{$value}%'";
 

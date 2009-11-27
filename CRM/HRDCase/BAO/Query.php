@@ -92,7 +92,8 @@ class CRM_Case_BAO_Query
         switch( $name ) {
             
         case 'case_subject':
-            $value = strtolower(CRM_Core_DAO::escapeString(trim($value)));
+            $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+            $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
             $query->_where[$grouping][] = "civicrm_case.subject $op '{$value}'";
             $query->_qill[$grouping ][] = ts( 'Case Subject %2 %1', array( 1 => $value, 2 => $op) );
             $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;

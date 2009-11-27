@@ -167,6 +167,9 @@ class CRM_Contribute_BAO_Query
         if ( !empty ( $value ) ) {
             $quoteValue = "\"$value\"";
         }
+
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+
         switch ( $name ) {
        
         case 'contribution_date':
@@ -250,7 +253,7 @@ class CRM_Contribute_BAO_Query
             $newName = str_replace(',' , " " ,$name );
             $pieces  =  explode( ' ', $newName ); 
             foreach ( $pieces as $piece ) { 
-                $value = strtolower(CRM_Core_DAO::escapeString(trim($piece)));
+                $value = $strtolower(CRM_Core_DAO::escapeString(trim($piece)));
                 $value = "'%$value%'";
                 $sub[] = " ( contact_b.sort_name LIKE $value )";
             }
@@ -297,7 +300,7 @@ class CRM_Contribute_BAO_Query
             return;
 
         case 'contribution_source':
-            $value = strtolower( CRM_Core_DAO::escapeString( $value ) );
+            $value = $strtolower( CRM_Core_DAO::escapeString( $value ) );
             if ( $wildcard ) {
                 $value = "%$value%";
                 $op    = 'LIKE';
@@ -359,7 +362,7 @@ class CRM_Contribute_BAO_Query
             return;
 
         case 'contribution_note':
-            $value = strtolower( CRM_Core_DAO::escapeString( $value ) );
+            $value = $strtolower( CRM_Core_DAO::escapeString( $value ) );
             if ( $wildcard ) {
                 $value = "%$value%"; 
                 $op    = 'LIKE';

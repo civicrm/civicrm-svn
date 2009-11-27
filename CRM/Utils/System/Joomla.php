@@ -239,7 +239,8 @@ class CRM_Utils_System_Joomla {
             CRM_Core_Error::fatal( "Cannot connect to joomla db via $config->userFrameworkDSN, " . $dbJoomla->getMessage( ) ); 
         }                                                      
 
-        $name      = $dbJoomla->escapeSimple( strtolower( $name ) );
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+        $name      = $dbJoomla->escapeSimple( $strtolower( $name ) );
         $sql = 'SELECT u.* FROM ' . $config->userFrameworkUsersTableName .
             " u WHERE LOWER(u.username) = '$name' AND u.block = 0";
         $query = $dbJoomla->query( $sql );

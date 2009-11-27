@@ -1580,7 +1580,8 @@ AND    civicrm_contact.id = %1";
      */
     static function &matchContactOnEmail( $mail, $ctype = null ) 
     {
-        $mail = strtolower( trim( $mail ) );
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+        $mail = $strtolower( trim( $mail ) );
         $query = "
 SELECT     civicrm_contact.id as contact_id,
            civicrm_contact.hash as hash,
@@ -1630,7 +1631,8 @@ WHERE      civicrm_email.email = %1";
      */
     static function &matchContactOnOpenId( $openId, $ctype = null ) 
     {
-        $openId = strtolower( trim( $openId ) );
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+        $openId = $strtolower( trim( $openId ) );
         $query  = "
 SELECT     civicrm_contact.id as contact_id,
            civicrm_contact.hash as hash,

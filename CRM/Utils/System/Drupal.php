@@ -227,8 +227,9 @@ class CRM_Utils_System_Drupal {
             CRM_Core_Error::fatal( "Cannot connect to drupal db via $config->userFrameworkDSN, " . $dbDrupal->getMessage( ) ); 
         }                                                      
 
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
         $password  = md5( $password );
-        $name      = $dbDrupal->escapeSimple( strtolower( $name ) );
+        $name      = $dbDrupal->escapeSimple( $strtolower( $name ) );
         $sql = 'SELECT u.* FROM ' . $config->userFrameworkUsersTableName .
             " u WHERE LOWER(u.name) = '$name' AND u.pass = '$password' AND u.status = 1";
         $query = $dbDrupal->query( $sql );

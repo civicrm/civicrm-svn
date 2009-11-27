@@ -327,7 +327,8 @@ WHERE     openid = %1";
      */
     static function updateContactEmail($contactId, $emailAddress) 
     {
-        $emailAddress = strtolower( $emailAddress );
+        $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+        $emailAddress = $strtolower( $emailAddress );
 
         $ufmatch =& new CRM_Core_DAO_UFMatch( );
         $ufmatch->contact_id = $contactId;
