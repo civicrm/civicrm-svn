@@ -9,7 +9,7 @@
  *
  */
 
-class civicrm_handler_filter_group_name extends views_handler_filter_in_operator {
+class civicrm_handler_filter_group_title extends views_handler_filter_in_operator {
     static $_groupName;
 
     function construct( ) {
@@ -26,7 +26,7 @@ class civicrm_handler_filter_group_name extends views_handler_filter_in_operator
             $this->value_title = t('Group Name');
             $options = array( );
             foreach (self::$_groupName as $id => $name ) {
-                $options[$id] = $name;
+                $options[$name] = $name;
             }
             $this->value_options = $options;
         }
