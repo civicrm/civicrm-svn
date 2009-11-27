@@ -23,3 +23,10 @@ SELECT @option_group_id_suffix := max(id) from civicrm_option_group where name =
     UPDATE civicrm_option_value SET label = CONCAT( label, '.') , name = CONCAT( `name`, '.')
             WHERE name IN ('Jr','Sr') AND option_group_id = @option_group_id_suffix;
 {/if}
+
+--  CRM-5435
+ALTER TABLE `civicrm_contribution_soft` 
+    ADD CONSTRAINT `FK_civicrm_contribution_soft_pcp_id` FOREIGN KEY (`pcp_id`) REFERENCES `civicrm_pcp` (`id`) ON DELETE SET NULL;
+
+ALTER TABLE `civicrm_contribution_soft` 
+    CHANGE `pcp_id` `pcp_id` int(10) unsigned default NULL COMMENT 'FK to civicrm_pcp.id';

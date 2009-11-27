@@ -66,8 +66,16 @@
       <name>pcp_id</name> 
       <type>int unsigned</type> 
       <default>NULL</default>
+      <comment>FK to civicrm_pcp.id</comment> 
       <add>2.2</add> 
   </field> 
+  <foreignKey>
+      <name>pcp_id</name> 
+      <table>civicrm_pcp</table> 
+      <key>id</key> 
+      <add>3.1</add> 
+      <onDelete>SET NULL</onDelete>
+  </foreignKey>
   <index>
       <name>index_id</name>
       <fieldName>pcp_id</fieldName>
