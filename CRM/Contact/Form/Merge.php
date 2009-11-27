@@ -409,10 +409,13 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
 
         // FIXME: fix custom fields so they're edible by createProfileContact()
         $cgTree =& CRM_Core_BAO_CustomGroup::getTree($this->_contactType, $this, null, -1);
+
+        $cgFields = $cFields = array( );
         foreach ($cgTree as $key => $group) {
             if (!isset($group['fields'])) continue;
             foreach ($group['fields'] as $fid => $field) {
                 $cFields[$fid]['attributes'] = $field;
+                $cgFields[$key][] = $fid;
             }
         }
         
@@ -489,7 +492,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                 }
             }
         }
-        
+
         // handle the related tables
         if (isset($moveTables)) {
             CRM_Dedupe_Merger::moveContactBelongings($this->_cid, $this->_oid, $moveTables);
@@ -527,7 +530,43 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             $sql = "UPDATE civicrm_entity_file SET entity_id = {$this->_cid} WHERE entity_table = '{$tableName}' AND file_id = {$fileIds[$this->_oid]}";
             CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);
         }
-
+        
+        // move view only custom fields CRM-5362
+        $viewOnlyCustomFields = array( );
+        foreach ( $submitted as $key => $value ) {
+            $fid = (int) substr($key, 7);
+            $isViewOnly = false;
+            if ( array_key_exists( $fid, $cFields ) ) {
+                $isViewOnly = CRM_Utils_Array::value( 'is_view', $cFields[$fid]['attributes'], false );  
+            }
+            
+            // we are only interesting in view only fields.
+            if ( !$isViewOnly ) continue;  
+            
+            // update view only field only when there is no other
+            // custom field going to update from same custom group.
+            $updateViewOnly = true;
+            foreach ( $cgFields as $gId => $gfieldIds ) {
+                if ( in_array( $fid, $gfieldIds ) ) {
+                    foreach ( $gfieldIds as $fieldId ) {
+                        if ( $fieldId == $fid ) continue;
+                        $submittedKey = "custom_" .$fieldId;
+                        if ( array_key_exists( $submittedKey, $submitted ) ) {
+                            $updateViewOnly = CRM_Utils_Array::value( 'is_view', $cFields[$fieldId]['attributes'], false );
+                            if ( !$updateViewOnly ) break;  
+                        }
+                    }
+                }
+            }
+            if ( $updateViewOnly ) $viewOnlyCustomFields[$key] = $value; 
+        }
+        //special case to set values for view only, CRM-5362
+        if ( !empty( $viewOnlyCustomFields ) ) {
+            require_once 'CRM/Core/BAO/CustomValueTable.php';
+            $viewOnlyCustomFields['entityID'] = $this->_cid;
+            CRM_Core_BAO_CustomValueTable::setValues( $viewOnlyCustomFields );
+        }
+        
         // move other's belongings and delete the other contact
         CRM_Dedupe_Merger::moveContactBelongings($this->_cid, $this->_oid);
         $otherParams = array('contact_id' => $this->_oid);
