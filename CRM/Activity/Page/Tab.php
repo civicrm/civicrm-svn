@@ -168,7 +168,7 @@ class CRM_Activity_Page_Tab extends CRM_Contact_Page_View
     function run( )
     {
         $context    = CRM_Utils_Request::retrieve('context', 'String', $this );
-        $contactId  = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullArray );
+        $contactId  = CRM_Utils_Request::retrieve('cid', 'Positive', $this );
         $action     = CRM_Utils_Request::retrieve('action', 'String', $this );
         $activityId = CRM_Utils_Request::retrieve('id', 'Positive', $this );
         
