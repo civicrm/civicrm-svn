@@ -11,12 +11,12 @@
                 {if $paymentProcessor.payment_processor_type EQ 'Google_Checkout'} 
                     {ts}Click the <strong>Google Checkout</strong> button to checkout to Google, where you will select your payment method and complete the contribution.{/ts}
                 {else} 
-                    {ts 1=$paymentProcessor.processorName}Click the <strong>Continue</strong> button to go to %1, where you will select your payment method and complete the contribution.{/ts}
+                    {ts 1=$paymentProcessor.processorName 2=$button}Click the <strong>%2</strong> button to go to %1, where you will select your payment method and complete the contribution.{/ts}
                 {/if} 
             {elseif ! $is_monetary or $amount LE 0.0 or $is_pay_later}
-                {ts}To complete this transaction, click the <strong>Continue</strong> button below.{/ts}
+                {ts 1=$button}To complete this transaction, click the <strong>%1</strong> button below.{/ts}
             {else}
-                {ts}To complete your contribution, click the <strong>Make Contribution</strong> button below.{/ts}
+                {ts 1=$button}To complete your contribution, click the <strong>%1</strong> button below.{/ts}
             {/if}
         </p> 
     </div>
@@ -69,9 +69,9 @@
                     <p><strong>{ts 1=$pledge_frequency_interval 2=$pledge_frequency_unit 3=$pledge_installments}I pledge to contribute this amount every %2 for %3 installments.{/ts}</strong></p>
                 {/if}
                 {if $is_pay_later}
-                    <p>{ts 1=$receiptFromEmail}Click &quot;Make Contribution&quot; below to register your pledge. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}</p>
+                    <p>{ts 1=$receiptFromEmail 2=$button}Click &quot;%2&quot; below to register your pledge. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}</p>
                 {else}
-                    <p>{ts 1=$receiptFromEmail}Your initial pledge payment will be processed when you click &quot;Make Contribution&quot; below. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}</p>
+                    <p>{ts 1=$receiptFromEmail 2=$button}Your initial pledge payment will be processed when you click &quot;%2&quot; below. You will be able to modify or cancel future pledge payments at any time by logging in to your account or contacting us at %1.{/ts}</p>
                 {/if}
             {/if}
         </div>
@@ -203,9 +203,9 @@
     <div class="messages status continue_instructions-section">
         <p>
         {if $is_pay_later OR $amount LE 0.0}
-            {ts}Your transaction will not be completed until you click the <strong>Continue</strong> button. Please click the button one time only.{/ts}
+            {ts 1=$button}Your transaction will not be completed until you click the <strong>%1</strong> button. Please click the button one time only.{/ts}
         {else}
-            {ts}Your contribution will not be completed until you click the <strong>Make Contribution</strong> button. Please click the button one time only.{/ts}
+            {ts 1=$button}Your contribution will not be completed until you click the <strong>%1</strong> button. Please click the button one time only.{/ts}
         {/if}
         </p>
     </div>
