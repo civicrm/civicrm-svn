@@ -538,11 +538,18 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
         $this->addDateTime( 'activity_date_time', ts('Date'), true, array( 'formatType' => 'activityDateTime') );  
         
+        //autocomplete url
         $dataUrl = CRM_Utils_System::url( "civicrm/ajax/contactlist",
                                           "reset=1",
                                           false, null, false );
-        $this->assign('dataUrl',$dataUrl );
+        $this->assign( 'dataUrl',$dataUrl );
 
+        //tokeninput url
+        $tokenUrl = CRM_Utils_System::url( "civicrm/ajax/checkemail",
+                                           "noemail=1",
+                                           false, null, false );
+        $this->assign( 'tokenUrl', $tokenUrl );
+        
         $admin = CRM_Core_Permission::check( 'administer CiviCRM' );
         //allow to edit sourcecontactfield field if context is civicase.
         if ( $this->_context == 'caseActivity' ) {

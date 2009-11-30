@@ -47,7 +47,7 @@ cj(document).ready( function( ) {
 eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
 
 var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
-var tokenDataUrl  = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='noemail=1' h=0 }{literal}";
+var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
 var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
 cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   classes: tokenClass, hintText: hintText });
 cj( "#assignee_contact_id").tokenInput( tokenDataUrl, { prePopulate: assignee_contact, classes: tokenClass, hintText: hintText });
