@@ -42,3 +42,11 @@
 
 -- CRM-5437
 UPDATE civicrm_participant_status_type SET class = 'Pending' WHERE class NOT IN ('Positive', 'Pending', 'Waiting', 'Negative');
+
+-- CRM-5451
+ALTER TABLE `civicrm_custom_group`
+DROP FOREIGN KEY `FK_civicrm_custom_group_created_id`;
+
+ALTER TABLE `civicrm_custom_group`
+ADD CONSTRAINT `FK_civicrm_custom_group_created_id` FOREIGN KEY (`created_id`) REFERENCES `civicrm_contact` (`id`) ON DELETE SET NULL;
+
