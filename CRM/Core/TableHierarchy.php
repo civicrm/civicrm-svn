@@ -43,14 +43,6 @@ class CRM_Core_TableHierarchy {
      */
     static $info = array(
                          'civicrm_contact'              => '01',
-                         'civicrm_individual'           => '02',
-                         'civicrm_household'            => '03',
-                         'civicrm_organization'         => '04',
-                         'quest_student'                => '05',
-                         'quest_student_summary'        => '05',
-                         'civicrm_individual_prefix'    => '06',
-                         'civicrm_individual_suffix'    => '07',
-                         'civicrm_gender'               => '08',
                          'civicrm_address'              => '09',
                          'civicrm_county'               => '10',
                          'civicrm_state_province'       => '11',
