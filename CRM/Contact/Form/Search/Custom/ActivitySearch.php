@@ -47,15 +47,15 @@ implements CRM_Contact_Form_Search_Interface {
          * Define the columns for search result rows
          */
         $this->_columns = array(
-            ts(' ')                  => 'activity_id',
-            ts('  ')                 => 'activity_type_id',
+            ' '                      => 'activity_id',
+            '  '                     => 'activity_type_id',
             ts('Name')               => 'sort_name',
             ts('Status')             => 'activity_status',
             ts('Activity Type')      => 'activity_type',
             ts('Activity Subject')   => 'activity_subject',
             ts('Scheduled By')       => 'source_contact',
             ts('Scheduled Date')     => 'activity_date',
-            ts('   ')                => 'case_id',
+            '   '                    => 'case_id',
         );
 
         $this->_groupId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
