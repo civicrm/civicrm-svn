@@ -116,6 +116,9 @@ class CRM_Mailing_MailStore
         }
         $mails = array();
         $parser = new ezcMailParser;
+        //set property text attachment as file CRM-5408
+        $parser->options->parseTextAttachmentsAsFiles = true;
+
         foreach ($set->getMessageNumbers() as $nr) {
             if ($this->_debug) print "retrieving message $nr\n";
             $single = $parser->parseMail($this->_transport->fetchByMessageNr($nr));

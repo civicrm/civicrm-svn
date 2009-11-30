@@ -64,6 +64,9 @@ class CRM_Mailing_MailStore_Maildir extends CRM_Mailing_MailStore
     {
         $mails = array();
         $parser = new ezcMailParser;
+        //set property text attachment as file CRM-5408
+        $parser->options->parseTextAttachmentsAsFiles = true;
+        
         foreach (array('cur', 'new') as $subdir) {
             $dir = $this->_dir . DIRECTORY_SEPARATOR . $subdir;
             foreach (scandir($dir) as $file) {

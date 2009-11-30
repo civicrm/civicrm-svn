@@ -77,6 +77,9 @@ class CRM_Mailing_MailStore_Localdir extends CRM_Mailing_MailStore
 
             $set    = new ezcMailFileSet( array( $file ) );
             $parser = new ezcMailParser;
+            //set property text attachment as file CRM-5408
+            $parser->options->parseTextAttachmentsAsFiles = true;
+
             $mail   = $parser->parseMail( $set );
 
             if ( ! $mail ) {
