@@ -15,6 +15,9 @@
    */ 
 function civicrm_cck_activity_civicrm_postProcess( $formName, &$form )
 {
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
     // check Acivity 
     if ( $formName  == 'CRM_Activity_Form_Activity' ) {
         $filename    = drupal_get_path('module','civicrm_cck_activity') . "/civicrm_cck_activity.cck";
@@ -249,7 +252,9 @@ function civicrm_cck_activity_civicrm_customFieldOptions ($fieldID, &$options)
 
 function civicrm_cck_activity_copyfiles ( $fileInfo, $entityID, $is_newAct )
 {
-    
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
     require_once 'api/File.php';
     
     // Take files attached for activity

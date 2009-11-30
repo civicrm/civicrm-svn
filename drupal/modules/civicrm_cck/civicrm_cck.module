@@ -1,6 +1,7 @@
 <?php
 
-function civicrm_cck_menu() {
+function civicrm_cck_menu() 
+{
     $items = array();
     $items['civicrm_cck/autocomplete'] = array(
                                                'title' => t('Contacts'),
@@ -14,7 +15,11 @@ function civicrm_cck_menu() {
 /**
  * Menu callback; Retrieve a pipe delimited string of autocomplete suggestions for existing users
  */
-function civicrm_cck_autocomplete($field_name, $string = '') {
+function civicrm_cck_autocomplete($field_name, $string = '') 
+{
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
     $fields = content_fields();
     $field = $fields[$field_name];
     $matches = array();
@@ -36,7 +41,8 @@ function civicrm_cck_autocomplete($field_name, $string = '') {
  * drupal know there is a theme array
  * The ones that follow define the theme
  */
-function civicrm_cck_theme() {
+function civicrm_cck_theme() 
+{
     return array(
                  'civicrm_cck' => array(
                                         'arguments' => array('node'),
@@ -90,7 +96,11 @@ function civicrm_cck_field_info() {
 /**
  * Implementation of hook_field_settings().
  */
-function civicrm_cck_field_settings($op, $field) {
+function civicrm_cck_field_settings($op, $field) 
+{
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
     switch ($op) {
     case 'database columns':
         $columns = array(
@@ -122,7 +132,11 @@ function civicrm_cck_field_settings($op, $field) {
 /**
  * Implementation of hook_field().
  */
-function civicrm_cck_field($op, &$node, $field, &$items, $teaser, $page) {
+function civicrm_cck_field($op, &$node, $field, &$items, $teaser, $page) 
+{
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
     switch ($op) {
     case 'validate':
         $refs = _civicrm_cck_potential_references($field);
@@ -150,14 +164,16 @@ function civicrm_cck_field($op, &$node, $field, &$items, $teaser, $page) {
 /**
  * Implementation of hook_content_is_empty().
  */
-function civicrm_cck_content_is_empty($item, $field) {
+function civicrm_cck_content_is_empty($item, $field) 
+{
     return empty($item['contact_id']) ? true : false;
 }
 
 /**
  * Implementation of hook_field_formatter_info().
  */
-function civicrm_cck_field_formatter_info() {
+function civicrm_cck_field_formatter_info() 
+{
     return array(
                  'default' => array(
                                     'label' => t('Title (link)'),
@@ -176,7 +192,11 @@ function civicrm_cck_field_formatter_info() {
 /**
  * Theme function for 'default' civicrm_cck field formatter.
  */
-function theme_civicrm_cck_formatter_default($element) {
+function theme_civicrm_cck_formatter_default($element) 
+{
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
     $output = '';
     if (!empty($element['#item']['contact_id'])     && 
         is_numeric($element['#item']['contact_id']) &&
@@ -188,7 +208,8 @@ function theme_civicrm_cck_formatter_default($element) {
     return $output;
 }
 
-function theme_civicrm_cck_formatter_plain($element) {
+function theme_civicrm_cck_formatter_plain($element) 
+{
     $output = '';
     if (!empty($element['#item']['contact_id']) &&
         is_numeric($element['#item']['contact_id']) && 
@@ -203,12 +224,14 @@ function theme_civicrm_cck_formatter_plain($element) {
  *
  * Store node titles collected in the curent request.
  */
-function _civicrm_cck_titles($cid) {
+function _civicrm_cck_titles($cid) 
+{
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
     static $titles = array();
-
+    
     if ( ! isset( $titles[$cid] ) ) {
-        civicrm_initialize( );
-
         $q = "
 SELECT display_name
 FROM   civicrm_contact
@@ -235,7 +258,8 @@ WHERE  id = %1";
  * as an example for custom modules that might do things
  * differently.
  */
-function civicrm_cck_widget_info() {
+function civicrm_cck_widget_info() 
+{
     return array(
                  'civicrm_cck_select' => array(
                                                'label' => t('Select list'),
