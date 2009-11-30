@@ -10,7 +10,9 @@ class civicrm_handler_field_phone_type extends views_handler_field {
 
     function construct( ) {
         if ( ! self::$_phoneTypes ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/PseudoConstant.php';
             self::$_phoneTypes = CRM_Core_PseudoConstant::phoneType( );
         }

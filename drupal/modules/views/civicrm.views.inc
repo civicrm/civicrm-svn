@@ -44,8 +44,11 @@
    * Implementation of hook_views_data()
    */
 function civicrm_views_data() {
-    civicrm_initialize();
-
+    
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }	
+    
     require_once 'CRM/Core/Config.php';
     require_once 'CRM/Core/BAO/CustomGroup.php';
     require_once 'CRM/Core/DAO.php';

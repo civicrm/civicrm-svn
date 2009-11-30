@@ -15,7 +15,9 @@ class civicrm_handler_filter_event_type extends views_handler_filter_in_operator
     function construct( ) {
         parent::construct();
         if ( ! self::$_event_type ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/OptionGroup.php';
             self::$_event_type = CRM_Core_OptionGroup::values( 'event_type', false );;
         }

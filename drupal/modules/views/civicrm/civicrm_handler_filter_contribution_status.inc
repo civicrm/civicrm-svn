@@ -15,7 +15,9 @@ class civicrm_handler_filter_contribution_status extends views_handler_filter_in
     function construct( ) {
         parent::construct();
         if ( ! self::$_contributionStatus ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Contribute/PseudoConstant.php';
             self::$_contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
         }

@@ -11,7 +11,9 @@ class civicrm_handler_field_relationship_type extends views_handler_field {
 
     function construct( ) {
         if ( ! self::$_relationshipType ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/PseudoConstant.php';
             $relationshipType_array = CRM_Core_PseudoConstant::relationshipType( );
 			

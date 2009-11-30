@@ -16,7 +16,9 @@ class civicrm_handler_filter_participant_status extends views_handler_filter_in_
     function construct( ) {
         parent::construct();
         if ( ! self::$_participant_status ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/PseudoConstant.php';
             CRM_Core_PseudoConstant::populate(self::$_participant_status, 'CRM_Event_DAO_ParticipantStatusType', false, 'label');
         }

@@ -8,7 +8,9 @@
 class civicrm_handler_field_activityType extends civicrm_handler_field_option {
     function initialize( ) {
         if ( ! self::$_options ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/PseudoConstant.php';
             self::$_options = CRM_Core_PseudoConstant::activityType( );
         }

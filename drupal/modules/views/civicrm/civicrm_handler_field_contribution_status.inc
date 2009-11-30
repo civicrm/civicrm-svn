@@ -11,7 +11,9 @@ class civicrm_handler_field_contribution_status extends views_handler_field {
 
     function construct( ) {
         if ( ! self::$_contributionStatus ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Contribute/PseudoConstant.php';
             self::$_contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
         }

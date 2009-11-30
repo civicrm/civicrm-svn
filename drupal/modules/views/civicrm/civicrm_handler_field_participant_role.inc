@@ -10,7 +10,9 @@ class civicrm_handler_field_participant_role extends views_handler_field {
 
     function construct( ) {
         if ( ! self::$_participant_role ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/OptionGroup.php';
             self::$_participant_role = CRM_Core_OptionGroup::values( 'participant_role', false );
         }

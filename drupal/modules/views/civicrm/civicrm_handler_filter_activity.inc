@@ -6,7 +6,9 @@ class civicrm_handler_filter_activity extends views_handler_filter_in_operator {
     function construct( ) {
         parent::construct();
         if ( ! self::$_activityTypes ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/PseudoConstant.php';
             self::$_activityTypes = CRM_Core_PseudoConstant::activityType( );
         }

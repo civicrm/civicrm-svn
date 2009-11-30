@@ -10,7 +10,9 @@ class civicrm_handler_field_activity extends civicrm_handler_field {
 
     function construct( ) {
         if ( ! self::$_activityTypes ) {
-            civicrm_initialize( );
+	     if ( ! civicrm_initialize( ) ) {
+     	         return;
+    		}	
             require_once 'CRM/Core/PseudoConstant.php';
             self::$_activityTypes = CRM_Core_PseudoConstant::activityType( );
         }

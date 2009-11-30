@@ -11,7 +11,9 @@ class civicrm_handler_field_membership_status extends views_handler_field {
 
     function construct( ) {
         if ( ! self::$_membershipStatus ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Member/PseudoConstant.php';
             self::$_membershipStatus = CRM_Member_PseudoConstant::membershipStatus( );
         }

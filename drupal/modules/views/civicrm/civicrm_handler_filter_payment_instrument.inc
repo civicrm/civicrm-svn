@@ -16,7 +16,9 @@ class civicrm_handler_filter_payment_instrument extends views_handler_filter_in_
     function construct( ) {
         parent::construct();
         if ( ! self::$_paymentInstrument ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Contribute/PseudoConstant.php';
             self::$_paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument( );
         }

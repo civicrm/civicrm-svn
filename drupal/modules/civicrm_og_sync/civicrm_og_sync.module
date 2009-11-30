@@ -44,15 +44,12 @@ function civicrm_og_sync_nodeapi( &$node, $op, $a3 = null, $a4 = null ) {
         return;
     }
 
-    // check if civicrm is present
-    if ( ! function_exists( 'civicrm_initialize' ) ) {
+    if ( ! civicrm_initialize( ) ) {
         return;
     }
-
-    civicrm_initialize( );
-
-	require_once 'CRM/Bridge/OG/Drupal.php';
-
+    
+    require_once 'CRM/Bridge/OG/Drupal.php';
+    
     $title  = trim( $node->title );
     $params = array( 'name'        => $title,
                      'title'       => $title,
@@ -98,7 +95,9 @@ function civicrm_og_sync_og( $op, $nid, $uid, $args = array( ) ) {
         return;
     }
 
-    civicrm_initialize( );
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
 
     // create the CiviCRM groups if they dont exist
     $node = node_load(array('nid' => $nid ));
@@ -206,12 +205,9 @@ function civicrm_og_sync_civicrm_post( $op, $objectName, $objectID, $objectRef )
  */
 function civicrm_og_sync_enable() 
 {
-    // check if civicrm is present
-    if ( ! function_exists( 'civicrm_initialize' ) ) {
+    if ( ! civicrm_initialize( ) ) {
         return;
     }
-    
-    civicrm_initialize( );
     
     require_once 'CRM/Bridge/OG/Drupal.php';
     

@@ -15,7 +15,9 @@ class civicrm_handler_filter_tag_title extends views_handler_filter_in_operator 
     function construct( ) {
         parent::construct();
         if ( ! self::$_tagName ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Member/PseudoConstant.php';
             self::$_tagName = CRM_Member_PseudoConstant::tag( );
         }

@@ -11,7 +11,9 @@ class civicrm_handler_field_membership_type extends views_handler_field {
 
     function construct( ) {
         if ( ! self::$_membershipType ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Member/PseudoConstant.php';
             self::$_membershipType = CRM_Member_PseudoConstant::membershipType( );
         }

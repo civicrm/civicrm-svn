@@ -11,7 +11,9 @@ class civicrm_handler_field_contribution_page extends views_handler_field {
 
     function construct( ) {
         if ( ! self::$_contributionPage ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Contribute/PseudoConstant.php';
             self::$_contributionPage = CRM_Contribute_PseudoConstant::contributionPage( );
         }

@@ -10,7 +10,9 @@ class civicrm_handler_field_payment_instrument extends views_handler_field {
 
     function construct( ) {
         if ( ! self::$_paymentInstrument ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Contribute/PseudoConstant.php';
             self::$_paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument( );
         }

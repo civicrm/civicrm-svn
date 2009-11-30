@@ -10,7 +10,9 @@ class views_handler_field_civicrm_country extends views_handler_field_civicrm {
 
     function construct( ) {
         if ( ! self::$_countries ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/PseudoConstant.php';
             self::$_countries = CRM_Core_PseudoConstant::countryIsoCode( );
         }

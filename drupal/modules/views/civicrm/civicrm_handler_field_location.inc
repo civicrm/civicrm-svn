@@ -10,7 +10,9 @@ class civicrm_handler_field_location extends civicrm_handler_field {
 
     function construct( ) {
         if ( ! self::$_locationTypes ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/PseudoConstant.php';
             self::$_locationTypes = CRM_Core_PseudoConstant::locationType( );
         }

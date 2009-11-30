@@ -15,7 +15,9 @@ class civicrm_handler_filter_relationship_type extends views_handler_filter_in_o
     function construct( ) {
         parent::construct();
         if ( ! self::$_relationshipType ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/PseudoConstant.php';
             $relationshipType_array = CRM_Core_PseudoConstant::relationshipType( $columnName = 'name' );
 			

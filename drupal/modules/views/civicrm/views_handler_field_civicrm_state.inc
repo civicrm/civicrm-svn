@@ -10,7 +10,9 @@ class views_handler_field_civicrm_state extends views_handler_field_civicrm {
 
     function construct( ) {
         if ( ! self::$_states ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/PseudoConstant.php';
             self::$_states = CRM_Core_PseudoConstant::stateProvinceAbbreviation( );
         }

@@ -21,7 +21,9 @@ class civicrm_handler_field_event_price_set extends views_handler_field_prerende
 
     function pre_render ($values) {
 
-     civicrm_initialize( );
+      if ( ! civicrm_initialize( ) ) {
+          return;
+      }
       require_once 'CRM/Utils/Money.php';
       require_once 'CRM/Price/BAO/Set.php';
       require_once 'CRM/Core/OptionGroup.php';

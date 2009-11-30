@@ -6,7 +6,9 @@ class civicrm_handler_filter_mailing_name extends views_handler_filter_in_operat
     function construct( ) {
         parent::construct();
         if ( ! self::$_mailingNames ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Mailing/PseudoConstant.php';
             self::$_mailingNames = CRM_Mailing_PseudoConstant::completed( );
         }

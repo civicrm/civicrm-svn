@@ -13,7 +13,10 @@ function civicrm_cck_sync_menu( ) {
 }
 
 function civicrm_cck_sync_invoke( ) {
-    civicrm_initialize( );
+    
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
     
     require_once 'CRM/Utils/Wrapper.php';
     $wrapper =& new CRM_Utils_Wrapper( );

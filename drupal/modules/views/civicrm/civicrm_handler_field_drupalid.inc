@@ -8,7 +8,9 @@
 class civicrm_handler_field_drupalid extends views_handler_field {
 
   function construct( ) {
-      civicrm_initialize( );
+      if ( ! civicrm_initialize( ) ) {
+          return;
+      }
       require_once 'CRM/Core/BAO/UFMatch.php';
   }
 

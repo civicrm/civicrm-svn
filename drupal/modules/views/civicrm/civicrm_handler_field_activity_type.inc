@@ -11,7 +11,9 @@ class civicrm_handler_field_activity_type extends views_handler_field {
 
     function construct( ) {
         if ( ! self::$_activityType ) {
-            civicrm_initialize( );
+             if ( ! civicrm_initialize( ) ) {
+                 return;
+             }
             require_once 'CRM/Core/PseudoConstant.php';
             self::$_activityType = CRM_Core_PseudoConstant::activityType( );
         }

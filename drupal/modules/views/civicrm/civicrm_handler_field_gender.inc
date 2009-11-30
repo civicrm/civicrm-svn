@@ -11,7 +11,9 @@ class civicrm_handler_field_gender extends views_handler_field {
 
     function construct( ) {
         if ( ! self::$_gender ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/PseudoConstant.php';
             self::$_gender = CRM_Core_PseudoConstant::gender( );
         }

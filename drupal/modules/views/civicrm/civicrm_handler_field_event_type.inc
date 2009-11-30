@@ -11,7 +11,9 @@ class civicrm_handler_field_event_type extends views_handler_field {
 
     function construct( ) {
         if ( ! self::$_event_type ) {
-            civicrm_initialize( );
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
             require_once 'CRM/Core/OptionGroup.php';
             self::$_event_type = CRM_Core_OptionGroup::values( 'event_type', false );
         }
