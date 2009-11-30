@@ -73,7 +73,6 @@ class CRM_Event_Form_Task_Email extends CRM_Event_Form_Task {
      */
     
     function preProcess( ) {
-        CRM_Contact_Form_Task_EmailCommon::preProcess( $this );
 
         $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive',
                                             $this, false );
