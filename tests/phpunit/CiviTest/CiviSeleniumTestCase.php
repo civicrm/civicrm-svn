@@ -1,4 +1,4 @@
-<?php
+<?php  // vim: set si ai expandtab tabstop=4 shiftwidth=4 softtabstop=4:
 
 /*
  +--------------------------------------------------------------------+
@@ -25,28 +25,27 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CiviTest/CiviSeleniumTestCase.php';
- 
-class WebTest_Generic_CheckDashboardTest extends CiviSeleniumTestCase
-{
-    
+require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
+
+/**
+ *  Base class for CiviCRM Selenium tests
+ *
+ *  Common functions for unit tests
+ *  @package CiviCRM
+ */
+class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
+
+
+    protected $coverageScriptUrl = 'http://tests.dev.civicrm.org/drupal/phpunit_coverage.php';
+
   protected function setUp()
   {
-      parent::setUp();
+    $this->setBrowser('*firefox');
+    $this->setBrowserUrl("http://tests.dev.civicrm.org/");
   }
 
-  function testCheckDashboardElements()
+  protected function tearDown()
   {
-    $this->open("/drupal/");
-    $this->type("edit-name", "demo");
-    $this->type("edit-pass", "demo");
-    $this->click("edit-submit");
-    $this->waitForPageToLoad("30000");
-    $this->click("link=CiviCRM");
-    $this->waitForPageToLoad("30000");
-    $this->assertTrue($this->isTextPresent("Activities"));
-    $this->assertTrue($this->isElementPresent("link=My Contact Dashboard"));
   }
 
 }
-?>
