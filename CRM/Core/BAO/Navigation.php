@@ -366,7 +366,11 @@ ORDER BY parent_id, weight";
      *  Get Menu name
      */
     function getMenuName( &$value, &$skipMenuItems ) {
-        $name       = $value['attributes']['label'];
+        // we need to localise the menu labels (CRM-5456) and don’t
+        // want to use ts() as it would throw the ts-extractor off
+        $i18n =& CRM_Core_I18n::singleton();
+
+        $name       = $i18n->crm_translate($value['attributes']['label']);
         $url        = $value['attributes']['url'];
         $permission = $value['attributes']['permission'];
         $operator   = $value['attributes']['operator'];

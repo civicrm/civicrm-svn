@@ -150,7 +150,7 @@ class CRM_Core_I18n
      * @param $params array   the params of the translation (if any)
      * @return        string  the translated string
      */
-    function crm_translate($text, $params)
+    function crm_translate($text, $params = array())
     {
         if (isset($params['escape'])) {
             $escape = $params['escape'];
