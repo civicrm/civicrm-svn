@@ -211,6 +211,7 @@ SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviCon
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
 SELECT @memberCompId     := max(id) FROM civicrm_component where name = 'CiviMember';
 SELECT @pledgeCompId     := max(id) FROM civicrm_component where name = 'CiviPledge';
+SELECT @caseCompId       := max(id) FROM civicrm_component where name = 'CiviCase';
 
 
 INSERT INTO 
@@ -226,27 +227,27 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Phone Call{/ts}',                         2, 'Phone Call',          NULL, 0, NULL, 2, NULL,                                                          				0, 1, 1, NULL, NULL),
    (@option_group_id_act, '{ts escape="sql"}Email{/ts}',                              3, 'Email',               NULL, 1, NULL, 3, '{ts escape="sql"}Email sent.{/ts}',                                                          0, 1, 1, NULL, NULL),
    (@option_group_id_act, '{ts escape="sql"}Text Message (SMS){/ts}',                 4, 'SMS',                 NULL, 1, NULL, 4, '{ts escape="sql"}Text message (SMS) sent.{/ts}',                                             0, 1, 1, NULL, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Event Registration{/ts}',                 5, 'Event Registration',  NULL, 1, NULL, 5, '{ts escape="sql"}Online or offline event registration.{/ts}',                                0, 1, 1, 1, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Contribution{/ts}',                       6, 'Contribution',        NULL, 1, NULL, 6, '{ts escape="sql"}Online or offline contribution.{/ts}',                                      0, 1, 1, 2, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Membership Signup{/ts}',                  7, 'Membership Signup',   NULL, 1, NULL, 7, '{ts escape="sql"}Online or offline membership signup.{/ts}',                                 0, 1, 1, 3, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Membership Renewal{/ts}',                 8, 'Membership Renewal',  NULL, 1, NULL, 8, '{ts escape="sql"}Online or offline membership renewal.{/ts}',                                0, 1, 1, 3, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Event Registration{/ts}',                 5, 'Event Registration',  NULL, 1, NULL, 5, '{ts escape="sql"}Online or offline event registration.{/ts}',                                0, 1, 1, @eventCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Contribution{/ts}',                       6, 'Contribution',        NULL, 1, NULL, 6, '{ts escape="sql"}Online or offline contribution.{/ts}',                                      0, 1, 1, @contributeCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Membership Signup{/ts}',                  7, 'Membership Signup',   NULL, 1, NULL, 7, '{ts escape="sql"}Online or offline membership signup.{/ts}',                                 0, 1, 1, @memberCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Membership Renewal{/ts}',                 8, 'Membership Renewal',  NULL, 1, NULL, 8, '{ts escape="sql"}Online or offline membership renewal.{/ts}',                                0, 1, 1, @memberCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Tell a Friend{/ts}',                      9, 'Tell a Friend',       NULL, 1, NULL, 9, '{ts escape="sql"}Send information about a contribution campaign or event to a friend.{/ts}', 0, 1, 1, NULL, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Pledge Acknowledgment{/ts}',              10, 'Pledge Acknowledgment',  NULL, 1, NULL, 10, '{ts escape="sql"}Send Pledge Acknowledgment.{/ts}',                                     0, 1, 1, 6, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Pledge Reminder{/ts}',                    11, 'Pledge Reminder',    NULL, 1, NULL, 11, '{ts escape="sql"}Send Pledge Reminder.{/ts}',                                               0, 1, 1, 6, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Pledge Acknowledgment{/ts}',              10, 'Pledge Acknowledgment',  NULL, 1, NULL, 10, '{ts escape="sql"}Send Pledge Acknowledgment.{/ts}',                                     0, 1, 1, @pledgeCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Pledge Reminder{/ts}',                    11, 'Pledge Reminder',    NULL, 1, NULL, 11, '{ts escape="sql"}Send Pledge Reminder.{/ts}',                                               0, 1, 1, @pledgeCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Inbound Email{/ts}',                      12, 'Inbound Email',      NULL, 1, NULL, 12, '{ts escape="sql"}Inbound Email.{/ts}',                                                      0, 1, 1, NULL, NULL),
   
 -- Activity Types for case activities
-   (@option_group_id_act, '{ts escape="sql"}Open Case{/ts}',          13, 'Open Case',          NULL, 0,  0, 13, '', 0, 0, 1 ,7, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Follow up{/ts}',          14, 'Follow up',          NULL, 0,  0, 14, '', 0, 0, 1, 7, NULL ),
-   (@option_group_id_act, '{ts escape="sql"}Change Case Type{/ts}',   15, 'Change Case Type',   NULL, 0,  0, 15, '', 0, 0, 1, 7, NULL ),  
-   (@option_group_id_act, '{ts escape="sql"}Change Case Status{/ts}', 16, 'Change Case Status', NULL, 0,  0, 16, '', 0, 0, 1, 7, NULL ),  
-   (@option_group_id_act, '{ts escape="sql"}Close Case{/ts}',         17, 'Close Case',         NULL, 0,  0, 17, '', 0, 0, 1, 7, NULL ),  
+   (@option_group_id_act, '{ts escape="sql"}Open Case{/ts}',          13, 'Open Case',          NULL, 0,  0, 13, '', 0, 0, 1, @caseCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Follow up{/ts}',          14, 'Follow up',          NULL, 0,  0, 14, '', 0, 0, 1, @caseCompId, NULL ),
+   (@option_group_id_act, '{ts escape="sql"}Change Case Type{/ts}',   15, 'Change Case Type',   NULL, 0,  0, 15, '', 0, 0, 1, @caseCompId, NULL ),  
+   (@option_group_id_act, '{ts escape="sql"}Change Case Status{/ts}', 16, 'Change Case Status', NULL, 0,  0, 16, '', 0, 0, 1, @caseCompId, NULL ),  
+   (@option_group_id_act, '{ts escape="sql"}Close Case{/ts}',         17, 'Close Case',         NULL, 0,  0, 17, '', 0, 0, 1, @caseCompId, NULL ),  
 
-   (@option_group_id_act, '{ts escape="sql"}Membership Renewal Reminder{/ts}',        18, 'Membership Renewal Reminder',  NULL, 1, NULL, 18, '{ts escape="sql"}offline membership renewal reminder.{/ts}',                      0, 1, 1, 3, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Change Case Start Date{/ts}',         19, 'Change Case Start Date',         NULL, 0,  0, 19, '', 0, 0, 1, 7, NULL ), 
+   (@option_group_id_act, '{ts escape="sql"}Membership Renewal Reminder{/ts}',        18, 'Membership Renewal Reminder',  NULL, 1, NULL, 18, '{ts escape="sql"}offline membership renewal reminder.{/ts}',                      0, 1, 1, @memberCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Change Case Start Date{/ts}',         19, 'Change Case Start Date',         NULL, 0,  0, 19, '', 0, 0, 1, @caseCompId, NULL ), 
    (@option_group_id_act, '{ts escape="sql"}Bulk Email{/ts}',                         20, 'Bulk Email',         NULL, 1, NULL, 20, '{ts escape="sql"}Bulk Email Sent.{/ts}',                                                    0, 1, 1, NULL, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Assign Case Role{/ts}',                   21, 'Assign Case Role', NULL,0, 0, 21, '', 0, 0, 1, 7, NULL),
-   (@option_group_id_act, '{ts escape="sql"}Remove Case Role{/ts}',                   22, 'Remove Case Role', NULL,0, 0, 22, '', 0, 0, 1, 7, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Assign Case Role{/ts}',                   21, 'Assign Case Role', NULL,0, 0, 21, '', 0, 0, 1, @caseCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Remove Case Role{/ts}',                   22, 'Remove Case Role', NULL,0, 0, 22, '', 0, 0, 1, @caseCompId, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Female{/ts}',      1, 'Female',      NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Male{/ts}',        2, 'Male',        NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Transgender{/ts}', 3, 'Transgender', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
@@ -657,202 +658,223 @@ INSERT INTO civicrm_county (name, state_province_id) VALUES ('Santa Clara', 1004
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
         VALUES ('AOL', '{ts escape="sql"}AOL Terms of Service complaint{/ts}', 1);
+
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'AOL';
 INSERT INTO civicrm_mailing_bounce_pattern 
         (bounce_type_id, pattern) 
         VALUES
-    (1, 'Client TOS Notification');
+    (@bounceTypeID, 'Client TOS Notification');
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
         VALUES ('Away', '{ts escape="sql"}Recipient is on vacation{/ts}', 3);
+
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Away';
 INSERT INTO civicrm_mailing_bounce_pattern 
         (bounce_type_id, pattern) 
         VALUES
-    (2, '(be|am)? (out of|away from) (the|my)? (office|computer|town)'),
-    (2, 'i am on vacation');
+    (@bounceTypeID, '(be|am)? (out of|away from) (the|my)? (office|computer|town)'),
+    (@bounceTypeID, 'i am on vacation');
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
         VALUES ('Dns', '{ts escape="sql"}Unable to resolve recipient domain{/ts}', 3);
+
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Dns';
 INSERT INTO civicrm_mailing_bounce_pattern 
         (bounce_type_id, pattern) 
         VALUES
-    (3, 'name(server entry| lookup failure)'),
-    (3, 'no (mail server|matches to nameserver query|dns entries)'),
-    (3, 'reverse dns entry');
+    (@bounceTypeID, 'name(server entry| lookup failure)'),
+    (@bounceTypeID, 'no (mail server|matches to nameserver query|dns entries)'),
+    (@bounceTypeID, 'reverse dns entry');
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
         VALUES ('Host', '{ts escape="sql"}Unable to deliver to destintation mail server{/ts}', 3);
+
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Host';
 INSERT INTO civicrm_mailing_bounce_pattern 
         (bounce_type_id, pattern) 
         VALUES
-    (4, '(unknown|not local) host'),
-    (4, 'all hosts have been failing'),
-    (4, 'allowed rcpthosts'),
-    (4, 'connection (refused|timed out)'),
-    (4, 'couldn\'t find any host named'),
-    (4, 'error involving remote host'),
-    (4, 'host unknown'),
-    (4, 'invalid host name'),
-    (4, 'isn\'t in my control/locals file'),
-    (4, 'local configuration error'),
-    (4, 'not a gateway'),
-    (4, 'server is down or unreachable'),
-    (4, 'too many connections'),
-    (4, 'unable to connect');
+    (@bounceTypeID, '(unknown|not local) host'),
+    (@bounceTypeID, 'all hosts have been failing'),
+    (@bounceTypeID, 'allowed rcpthosts'),
+    (@bounceTypeID, 'connection (refused|timed out)'),
+    (@bounceTypeID, 'couldn\'t find any host named'),
+    (@bounceTypeID, 'error involving remote host'),
+    (@bounceTypeID, 'host unknown'),
+    (@bounceTypeID, 'invalid host name'),
+    (@bounceTypeID, 'isn\'t in my control/locals file'),
+    (@bounceTypeID, 'local configuration error'),
+    (@bounceTypeID, 'not a gateway'),
+    (@bounceTypeID, 'server is down or unreachable'),
+    (@bounceTypeID, 'too many connections'),
+    (@bounceTypeID, 'unable to connect');
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
         VALUES ('Inactive', '{ts escape="sql"}User account is no longer active{/ts}', 1);
+
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Inactive';
 INSERT INTO civicrm_mailing_bounce_pattern 
         (bounce_type_id, pattern) 
         VALUES
-    (5, '(my )?e-?mail( address)? has changed'),
-    (5, 'account (inactive|expired|deactivated)'),
-    (5, 'account is locked'),
-    (5, 'changed \w+( e-?mail)? address'),
-    (5, 'deactivated mailbox'),
-    (5, 'disabled or discontinued'),
-    (5, 'inactive user'),
-    (5, 'is inactive on this domain'),
-    (5, 'mail receiving disabled'),
-    (5, 'mail( ?)address is administrative?ly disabled'),
-    (5, 'mailbox (temporarily disabled|currently suspended)'),
-    (5, 'no longer (accepting mail|on server|in use|with|employed|on staff|works for|using this account)'),
-    (5, 'not accepting mail'),
-    (5, 'please use my new e-?mail address'),
-    (5, 'this address no longer accepts mail'),
-    (5, 'user account suspended');
+    (@bounceTypeID, '(my )?e-?mail( address)? has changed'),
+    (@bounceTypeID, 'account (inactive|expired|deactivated)'),
+    (@bounceTypeID, 'account is locked'),
+    (@bounceTypeID, 'changed \w+( e-?mail)? address'),
+    (@bounceTypeID, 'deactivated mailbox'),
+    (@bounceTypeID, 'disabled or discontinued'),
+    (@bounceTypeID, 'inactive user'),
+    (@bounceTypeID, 'is inactive on this domain'),
+    (@bounceTypeID, 'mail receiving disabled'),
+    (@bounceTypeID, 'mail( ?)address is administrative?ly disabled'),
+    (@bounceTypeID, 'mailbox (temporarily disabled|currently suspended)'),
+    (@bounceTypeID, 'no longer (accepting mail|on server|in use|with|employed|on staff|works for|using this account)'),
+    (@bounceTypeID, 'not accepting mail'),
+    (@bounceTypeID, 'please use my new e-?mail address'),
+    (@bounceTypeID, 'this address no longer accepts mail'),
+    (@bounceTypeID, 'user account suspended');
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
         VALUES ('Invalid', '{ts escape="sql"}Email address is not valid{/ts}', 1);
+
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Invalid';
 INSERT INTO civicrm_mailing_bounce_pattern 
         (bounce_type_id, pattern) 
         VALUES
-    (6, '(user|recipient( name)?) is not recognized'),
-    (6, '554 delivery error'),
-    (6, 'address does not exist'),
-    (6, 'address(es)? could not be found'),
-    (6, 'addressee unknown'),
-    (6, 'bad destination'),
-    (6, 'badly formatted address'),
-    (6, 'can\'t open mailbox for'),
-    (6, 'cannot deliver'),
-    (6, 'delivery to the following recipients failed'),
-    (6, 'destination addresses were unknown'),
-    (6, 'did not reach the following recipient'),
-    (6, 'does not exist'),
-    (6, 'does not like recipient'),
-    (6, 'does not specify a valid notes mail file'),
-    (6, 'illegal alias'),
-    (6, 'invalid (mailbox|(e-?mail )?address|recipient|final delivery)'),
-    (6, 'invalid( or unknown)?( virtual)? user'),
-    (6, 'mail delivery to this user is not allowed'),
-    (6, 'mailbox (not found|unavailable|name not allowed)'),
-    (6, 'message could not be forwarded'),
-    (6, 'missing or malformed local(-| )part'),
-    (6, 'no e-?mail address registered'),
-    (6, 'no such (mail drop|mailbox( \w+)?|(e-?mail )?address|recipient|(local )?user)( here)?'),
-    (6, 'no mailbox here by that name'),
-    (6, 'not (listed in|found in directory|known at this site|our customer)'),
-    (6, 'not a valid( (user|mailbox))?'),
-    (6, 'not present in directory entry'),
-    (6, 'recipient (does not exist|(is )?unknown)'),
-    (6, 'this user doesn\'t have a yahoo.com address'),
-    (6, 'unavailable to take delivery of the message'),
-    (6, 'unavailable mailbox'),
-    (6, 'unknown (local( |-)part|recipient)'),
-    (6, 'unknown( or illegal)? user( account)?'),
-    (6, 'unrecognized recipient'),
-    (6, 'unregistered address'),
-    (6, 'user (unknown|does not exist)'),
-    (6, 'user doesn\'t have an? \w+ account'),
-    (6, 'user(\'s e-?mail name is)? not found');
+    (@bounceTypeID, '(user|recipient( name)?) is not recognized'),
+    (@bounceTypeID, '554 delivery error'),
+    (@bounceTypeID, 'address does not exist'),
+    (@bounceTypeID, 'address(es)? could not be found'),
+    (@bounceTypeID, 'addressee unknown'),
+    (@bounceTypeID, 'bad destination'),
+    (@bounceTypeID, 'badly formatted address'),
+    (@bounceTypeID, 'can\'t open mailbox for'),
+    (@bounceTypeID, 'cannot deliver'),
+    (@bounceTypeID, 'delivery to the following recipients failed'),
+    (@bounceTypeID, 'destination addresses were unknown'),
+    (@bounceTypeID, 'did not reach the following recipient'),
+    (@bounceTypeID, 'does not exist'),
+    (@bounceTypeID, 'does not like recipient'),
+    (@bounceTypeID, 'does not specify a valid notes mail file'),
+    (@bounceTypeID, 'illegal alias'),
+    (@bounceTypeID, 'invalid (mailbox|(e-?mail )?address|recipient|final delivery)'),
+    (@bounceTypeID, 'invalid( or unknown)?( virtual)? user'),
+    (@bounceTypeID, 'mail delivery to this user is not allowed'),
+    (@bounceTypeID, 'mailbox (not found|unavailable|name not allowed)'),
+    (@bounceTypeID, 'message could not be forwarded'),
+    (@bounceTypeID, 'missing or malformed local(-| )part'),
+    (@bounceTypeID, 'no e-?mail address registered'),
+    (@bounceTypeID, 'no such (mail drop|mailbox( \w+)?|(e-?mail )?address|recipient|(local )?user)( here)?'),
+    (@bounceTypeID, 'no mailbox here by that name'),
+    (@bounceTypeID, 'not (listed in|found in directory|known at this site|our customer)'),
+    (@bounceTypeID, 'not a valid( (user|mailbox))?'),
+    (@bounceTypeID, 'not present in directory entry'),
+    (@bounceTypeID, 'recipient (does not exist|(is )?unknown)'),
+    (@bounceTypeID, 'this user doesn\'t have a yahoo.com address'),
+    (@bounceTypeID, 'unavailable to take delivery of the message'),
+    (@bounceTypeID, 'unavailable mailbox'),
+    (@bounceTypeID, 'unknown (local( |-)part|recipient)'),
+    (@bounceTypeID, 'unknown( or illegal)? user( account)?'),
+    (@bounceTypeID, 'unrecognized recipient'),
+    (@bounceTypeID, 'unregistered address'),
+    (@bounceTypeID, 'user (unknown|does not exist)'),
+    (@bounceTypeID, 'user doesn\'t have an? \w+ account'),
+    (@bounceTypeID, 'user(\'s e-?mail name is)? not found');
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
         VALUES ('Loop', '{ts escape="sql"}Mail routing error{/ts}', 3);
+
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Loop';
 INSERT INTO civicrm_mailing_bounce_pattern 
         (bounce_type_id, pattern) 
         VALUES
-    (7, '(mail|routing) loop'),
-    (7, 'excessive recursion'),
-    (7, 'loop detected'),
-    (7, 'maximum hop count exceeded'),
-    (7, 'message was forwarded more than the maximum allowed times'),
-    (7, 'too many hops');
+    (@bounceTypeID, '(mail|routing) loop'),
+    (@bounceTypeID, 'excessive recursion'),
+    (@bounceTypeID, 'loop detected'),
+    (@bounceTypeID, 'maximum hop count exceeded'),
+    (@bounceTypeID, 'message was forwarded more than the maximum allowed times'),
+    (@bounceTypeID, 'too many hops');
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
         VALUES ('Quota', '{ts escape="sql"}User inbox is full{/ts}', 3);
+
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Quota';
 INSERT INTO civicrm_mailing_bounce_pattern 
         (bounce_type_id, pattern) 
         VALUES
-    (8, '(disk|over the allowed|exceed(ed|s)?|storage) quota'),
-    (8, '522_mailbox_full'),
-    (8, 'exceeds allowed message count'),
-    (8, 'file too large'),
-    (8, 'full mailbox'),
-    (8, 'mailbox ((for user \w+ )?is )?full'),
-    (8, 'mailbox has exceeded the limit'),
-    (8, 'mailbox( exceeds allowed)? size'),
-    (8, 'no space left for this user'),
-    (8, 'over\s?quota'),
-    (8, 'quota (for the mailbox )?has been exceeded'),
-    (8, 'quota (usage|violation|exceeded)'),
-    (8, 'recipient storage full'),
-    (8, 'not able to receive more mail');
+    (@bounceTypeID, '(disk|over the allowed|exceed(ed|s)?|storage) quota'),
+    (@bounceTypeID, '522_mailbox_full'),
+    (@bounceTypeID, 'exceeds allowed message count'),
+    (@bounceTypeID, 'file too large'),
+    (@bounceTypeID, 'full mailbox'),
+    (@bounceTypeID, 'mailbox ((for user \w+ )?is )?full'),
+    (@bounceTypeID, 'mailbox has exceeded the limit'),
+    (@bounceTypeID, 'mailbox( exceeds allowed)? size'),
+    (@bounceTypeID, 'no space left for this user'),
+    (@bounceTypeID, 'over\s?quota'),
+    (@bounceTypeID, 'quota (for the mailbox )?has been exceeded'),
+    (@bounceTypeID, 'quota (usage|violation|exceeded)'),
+    (@bounceTypeID, 'recipient storage full'),
+    (@bounceTypeID, 'not able to receive more mail');
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
         VALUES ('Relay', '{ts escape="sql"}Unable to reach destination mail server{/ts}', 3);
+
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Relay';
 INSERT INTO civicrm_mailing_bounce_pattern 
         (bounce_type_id, pattern) 
         VALUES
-    (9, 'cannot find your hostname'),
-    (9, 'ip name lookup'),
-    (9, 'not configured to relay mail'),
-    (9, 'relay (not permitted|access denied)'),
-    (9, 'relayed mail to .+? not allowed'),
-    (9, 'sender ip must resolve'),
-    (9, 'unable to relay');
+    (@bounceTypeID, 'cannot find your hostname'),
+    (@bounceTypeID, 'ip name lookup'),
+    (@bounceTypeID, 'not configured to relay mail'),
+    (@bounceTypeID, 'relay (not permitted|access denied)'),
+    (@bounceTypeID, 'relayed mail to .+? not allowed'),
+    (@bounceTypeID, 'sender ip must resolve'),
+    (@bounceTypeID, 'unable to relay');
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
         VALUES ('Spam', '{ts escape="sql"}Message caught by a content filter{/ts}', 1);
+
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Spam';
 INSERT INTO civicrm_mailing_bounce_pattern 
         (bounce_type_id, pattern) 
         VALUES
-    (10, '(bulk( e-?mail)|content|attachment blocking|virus|mail system) filters?'),
-    (10, '(hostile|questionable|unacceptable) content'),
-    (10, 'address .+? has not been verified'),
-    (10, 'anti-?spam (polic\w+|software)'),
-    (10, 'anti-?virus gateway has detected'),
-    (10, 'blacklisted'),
-    (10, 'blocked message'),
-    (10, 'content control'),
-    (10, 'delivery not authorized'),
-    (10, 'does not conform to our e-?mail policy'),
-    (10, 'excessive spam content'),
-    (10, 'message looks suspicious'),
-    (10, 'open relay'),
-    (10, 'sender was rejected'),
-    (10, 'spam(check| reduction software| filters?)'),
-    (10, 'blocked by a user configured filter'),
-    (10, 'detected as spam');
+    (@bounceTypeID, '(bulk( e-?mail)|content|attachment blocking|virus|mail system) filters?'),
+    (@bounceTypeID, '(hostile|questionable|unacceptable) content'),
+    (@bounceTypeID, 'address .+? has not been verified'),
+    (@bounceTypeID, 'anti-?spam (polic\w+|software)'),
+    (@bounceTypeID, 'anti-?virus gateway has detected'),
+    (@bounceTypeID, 'blacklisted'),
+    (@bounceTypeID, 'blocked message'),
+    (@bounceTypeID, 'content control'),
+    (@bounceTypeID, 'delivery not authorized'),
+    (@bounceTypeID, 'does not conform to our e-?mail policy'),
+    (@bounceTypeID, 'excessive spam content'),
+    (@bounceTypeID, 'message looks suspicious'),
+    (@bounceTypeID, 'open relay'),
+    (@bounceTypeID, 'sender was rejected'),
+    (@bounceTypeID, 'spam(check| reduction software| filters?)'),
+    (@bounceTypeID, 'blocked by a user configured filter'),
+    (@bounceTypeID, 'detected as spam');
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
         VALUES ('Syntax', '{ts escape="sql"}Error in SMTP transaction{/ts}', 3);
 
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Syntax';
 INSERT INTO civicrm_mailing_bounce_pattern 
         (bounce_type_id, pattern) 
         VALUES
-    (11, 'nonstandard smtp line terminator'),
-    (11, 'syntax error in from address'),
-    (11, 'unknown smtp code');
+    (@bounceTypeID, 'nonstandard smtp line terminator'),
+    (@bounceTypeID, 'syntax error in from address'),
+    (@bounceTypeID, 'unknown smtp code');
 
 -- add sample profile
 
