@@ -72,7 +72,12 @@ function civicrm_cck_activity_civicrm_postProcess( $formName, &$form )
             $form_state['values']['name']  = $user->name;
             
             // title of node
-            $form_state['values']['title'] = $formValues['subject'];
+            // Check if the Subject of Activity is giver or not. If Blank, give Custom Title to Node Created.
+            if( trim($formValues['subject']) == NULL ) {
+                $form_state['values']['title'] = 'Activity Node For Activity Id - '.$entityID;
+            } else {
+                $form_state['values']['title'] = $formValues['subject'];
+            }
             
             // body of node
             $form_state['values']['body']  = $formValues['details'];
