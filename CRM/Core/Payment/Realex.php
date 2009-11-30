@@ -36,7 +36,7 @@ class CRM_Core_Payment_Realex extends CRM_Core_Payment {
     function __construct( $mode, &$paymentProcessor ) {
         $this->_mode             = $mode;
         $this->_paymentProcessor = $paymentProcessor;
-	$this->_processorName    = ts('Realex');
+        $this->_processorName    = ts('Realex');
         
         $this->_setParam( 'merchant_ref', $paymentProcessor['user_name'] );
         $this->_setParam( 'secret' ,      $paymentProcessor['password']  );
@@ -230,14 +230,13 @@ class CRM_Core_Payment_Realex extends CRM_Core_Payment {
             if ( $ret > 0 ) {
                 $result['#return'] = $this->_xml_parse($input);
             } else {
-                $result['#error']  = ts(
-                    'Error parsing XML result - error code = %1 at line %2 char %3',
-                    array(
-                        1 => xml_get_error_code($xmlparser),
-                        2 => xml_get_current_line_number($xmlparser),
-                        3 => xml_get_current_column_number($xmlparser)
-                    )
-                );
+                $result['#error']  = ts('Error parsing XML result - error code = %1 at line %2 char %3',
+                                        array(
+                                              1 => xml_get_error_code($xmlparser),
+                                              2 => xml_get_current_line_number($xmlparser),
+                                              3 => xml_get_current_column_number($xmlparser)
+                                              )
+                                        );
             }
         }
         return $result;
@@ -322,7 +321,7 @@ class CRM_Core_Payment_Realex extends CRM_Core_Payment {
         }
         
         $this->_setParam('card_name',     $credit_card_name);
-        $this->_setParam('card_number',   $params['credit_card_number']);
+        $this->_setParam('card_number',   str_replace(' ', '', $params['credit_card_number']));
         $this->_setParam('cvn',           $params['cvv2']);
         $this->_setParam('country',       $params['country']);
         $this->_setParam('post_code',     $params['postal_code']);
@@ -437,7 +436,7 @@ class CRM_Core_Payment_Realex extends CRM_Core_Payment {
         }
         
         if ( ! empty( $error ) ) {
-	      return implode( '<p>', $error );
+            return implode( '<p>', $error );
         } else {
             return null;
         }
