@@ -725,3 +725,20 @@ function executeInnerHTML ( elementName )
 function imagePopUp ( path ) 
 {      window.open(path,'popupWindow','toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=no,resizable=yes,copyhistory=no,screenX=150,screenY=150,top=150,left=150');
 }
+
+/**
+ * Function to show / hide the row in optionFields
+ *
+ * @param element name index, that whose innerHTML is to hide else will show the hidden row.
+ */
+function showHideRow( index )
+{
+   if( index) {
+    cj( 'tr#optionField_' + index ).hide( );
+    if( cj( 'table#optionField tr:hidden:first' ).length )  cj( 'div#optionFieldLink' ).show( );
+   } else {
+    cj( 'table#optionField tr:hidden:first' ).show( );
+    if( ! cj( 'table#optionField tr:hidden:last' ).length ) cj( 'div#optionFieldLink' ).hide( );
+   }
+    return false; 
+}
