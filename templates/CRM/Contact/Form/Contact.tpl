@@ -43,13 +43,12 @@
         {$form._qf_Contact_refresh_dedupe.html}
         {if $isDuplicate}&nbsp;&nbsp;{$form._qf_Contact_upload_duplicate.html}{/if}
         <div class="spacer"></div>
-
+        </fieldset>
     </div>
     
     {foreach from = $editOptions item = "title" key="name"}
         {include file="CRM/Contact/Form/Edit/$name.tpl"}
     {/foreach}
-    </fieldset>
 </div>
 <br />
 <div class="crm-submit-buttons">
