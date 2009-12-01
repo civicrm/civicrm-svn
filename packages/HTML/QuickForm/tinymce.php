@@ -145,8 +145,8 @@ class HTML_QuickForm_TinyMCE extends HTML_QuickForm_textarea
                 // tinymce is wierd, it needs to be loaded initially along with jquery
                 $html = null;
                 $html .= sprintf( '<script type="text/javascript">
-cj( function( ) {
-    cj("textarea.tinymce").tinymce({
+        var configArray = [{
+        
         theme : "advanced",
         editor_selector : "form-TinyMCE",
         plugins : "safari,spellchecker,layer,table,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,pagebreak",
@@ -165,7 +165,7 @@ cj( function( ) {
         convert_urls : false,
         remove_script_host : false,
         width : "' . $this->Width .'%",
-        setup : function(ed) { 
+        setup : function(ed) {
                  ed.onInit.addToTop( function(){ 
                     var height = cj("#" + ed.editorId).attr("height");
                     cj("#" + ed.editorId + "_tbl").css("height", height);
@@ -175,8 +175,11 @@ cj( function( ) {
                     global_formNavigate = false;
                 });
         }
-    });    
-});
+        }];
+ 
+        tinyMCE.settings = configArray[0];
+        tinyMCE.execCommand("mceAddControl", true, "' . $this->_attributes['id'] .'");
+        
 </script>' );
 
                 define('HTML_QUICKFORM_TINYMCEEDITOR_LOADED', true);
