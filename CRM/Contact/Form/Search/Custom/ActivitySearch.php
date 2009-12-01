@@ -219,19 +219,22 @@ LEFT JOIN civicrm_case_activity cca ON activity.id = cca.activity_id
 	}
 
         $startDate = $this->_formValues['start_date'];
-        $startDate .= '00:00:00';
-        $startDateFormatted = CRM_Utils_Date::processDate( $startDate );
-        if ( $startDateFormatted ) {
-            $clauses[] = "activity.activity_date_time >= $startDateFormatted";
+        if (! empty($startDate)) {
+            $startDate .= '00:00:00';
+            $startDateFormatted = CRM_Utils_Date::processDate( $startDate );
+            if ( $startDateFormatted ) {
+                $clauses[] = "activity.activity_date_time >= $startDateFormatted";
+            }
         }
 
         $endDate = $this->_formValues['end_date'];
-        $endDate .= '23:59:59';
-        $endDateFormatted = CRM_Utils_Date::processDate( $endDate );
-        if ( $endDateFormatted ) {
-                    $clauses[] = "activity.activity_date_time <= $endDateFormatted";
-                }
-		
+        if (! empty($endDate)) {
+            $endDate .= '23:59:59';
+            $endDateFormatted = CRM_Utils_Date::processDate( $endDate );
+            if ( $endDateFormatted ) {
+                $clauses[] = "activity.activity_date_time <= $endDateFormatted";
+            }
+        }		
 		
         if ( $includeContactIDs ) {
             $contactIDs = array( );
