@@ -336,8 +336,6 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
      */
     function testMembershipCreateInvalidMemData( ) 
     {
-        $this->markTestSkipped( "Need to check error(not a object of class CRM_Core_Error)" );
-            
         //membership_contact_id as string
         $params = array(
                         'membership_contact_id' => 'Invalid',

@@ -186,7 +186,6 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
      */
     function testRelationshipCreateAlreadyExists( )
     {
-        $this->markTestIncomplete( 'failing with fatal' );
         $params = array( 'contact_id_a'         => $this->_cId_a,
                          'contact_id_b'         => $this->_cId_b,
                          'relationship_type_id' => $this->_relTypeID,
