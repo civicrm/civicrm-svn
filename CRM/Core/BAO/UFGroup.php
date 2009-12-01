@@ -1915,7 +1915,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         require_once 'CRM/Core/BAO/MessageTemplates.php';
         foreach ($emailList as $emailTo) {
             // FIXME: take the below out of the foreach loop
-            CRM_Core_BAO_MessageTemplates::sendTemplateParams(
+            CRM_Core_BAO_MessageTemplates::sendTemplate(
                 array(
                     'groupName' => 'msg_tpl_workflow_uf',
                     'valueName' => 'uf_notify',
