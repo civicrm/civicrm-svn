@@ -1962,6 +1962,10 @@ div.grippie {
 .user-record-icon { background-position:-145px -99px; }
     .button:hover .user-record-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png");}
 
+.inform-icon { background-position: -16px -144px; }
+
+.tip-icon { background-position: -128px -128px; }
+
 #crm-container .geotag {
     padding: 2px 0 2px 20px !important;
     background: url('../i/geotag_16.png') left center no-repeat;
@@ -1969,14 +1973,12 @@ div.grippie {
 }
 
 
-/* recently viewed icons */
+/* These .crm-icon classes use item_sprites.png */
 
 .block-civicrm #recently-viewed .crm-icon, .crm-icon {
 	background-image: url('../i/item_sprites.png');
 	margin:2px 4px 0 0;
 	}
-
-/* anywhere in CiviCRM - use <div class="icon Item-icon"></div> - and you will get 16x16 icon (may need to be floated left) */
 
 .Individual-icon { background-position: 0px 0px; }
 .Group-icon { background-position: -16px 0px; }
@@ -1996,12 +1998,6 @@ div.grippie {
 .Participant-icon { background-position: 0px -32px; }
 .Note-icon { background-position: -16px -32px; }
 .Relationship-icon { background-position: -32px -32px; }
-
-.inform-icon { background-position: -16px -144px; }
-.tip-icon { background-position: -128px -128px; }
-
- 
-
 
 
 /* civicrm admin menu */

@@ -2,7 +2,9 @@
 {if $noEventTemplates}
 	{capture assign=etUrl}{crmURL p='civicrm/admin/eventTemplate' q="reset=1"}{/capture}
         <div class="status message">
-	     <p>{ts 1=$etUrl}If you find that you are creating multiple events with similar settings, you may want to use the <a href='%1'>Event Templates</a> feature to streamline your workflow.{/ts}</p>
+	        <dl><dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+	            <dd>{ts 1=$etUrl}If you find that you are creating multiple events with similar settings, you may want to use the <a href='%1'>Event Templates</a> feature to streamline your workflow.{/ts}J</dd>
+	        </dl>
         </div>
 {/if}
 {if $cdType} 
