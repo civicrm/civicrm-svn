@@ -27,19 +27,6 @@
   DROP INDEX `UI_activity_target_contact_id` ,
   ADD UNIQUE INDEX `UI_activity_target_contact_id` (`target_contact_id`,`activity_id`);
 
-
--- CRM-5322
-
-  SELECT @option_group_id_sfe := max(id) from civicrm_option_group where name = 'safe_file_extension';
-  SELECT @max_val             := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id  = @option_group_id_sfe;
-  SELECT @max_wt              := max(weight) from civicrm_option_value where option_group_id= @option_group_id_sfe;
-
-  INSERT INTO civicrm_option_value
-    (option_group_id,      {localize field='label'}label{/localize}, value,                           filter, weight) VALUES
-    (@option_group_id_sfe, {localize}'docx'{/localize},              (SELECT @max_val := @max_val+1), 0,      (SELECT @max_wt := @max_wt+1)),
-    (@option_group_id_sfe, {localize}'xlsx'{/localize},              (SELECT @max_val := @max_val+1), 0,      (SELECT @max_wt := @max_wt+1));
-
-
 -- CRM-5437
 UPDATE civicrm_participant_status_type SET class = 'Pending' WHERE class NOT IN ('Positive', 'Pending', 'Waiting', 'Negative');
 
