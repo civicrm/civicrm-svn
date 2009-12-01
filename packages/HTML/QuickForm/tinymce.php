@@ -133,18 +133,16 @@ class HTML_QuickForm_TinyMCE extends HTML_QuickForm_textarea
         // return frozen state
         if ($this->_flagFrozen) {
             return $this->getFrozenHtml();
-        // return textarea if incompatible
+            // return textarea if incompatible
         } elseif (!$this->IsCompatible()) {
             return parent::toHtml();
-        // return textarea
+            // return textarea
         } else {
-            //FIX for multiple editors in a form, initialize once (CRM-3559)
-            if ( !defined('HTML_QUICKFORM_TINYMCEEDITOR_LOADED' ) ) {                
-                // load tinyMCEeditor
-                $config = CRM_Core_Config::singleton( );
-                // tinymce is wierd, it needs to be loaded initially along with jquery
-                $html = null;
-                $html .= sprintf( '<script type="text/javascript">
+            // load tinyMCEeditor
+            $config = CRM_Core_Config::singleton( );
+            // tinymce is wierd, it needs to be loaded initially along with jquery
+            $html = null;
+            $html .= sprintf( '<script type="text/javascript">
         var configArray = [{
         
         theme : "advanced",
@@ -181,9 +179,6 @@ class HTML_QuickForm_TinyMCE extends HTML_QuickForm_textarea
         tinyMCE.execCommand("mceAddControl", true, "' . $this->_attributes['id'] .'");
         
 </script>' );
-
-                define('HTML_QUICKFORM_TINYMCEEDITOR_LOADED', true);
-            }
                         
             // include textarea as well (TinyMCE transforms it)
             $html .=  parent::toHTML();
