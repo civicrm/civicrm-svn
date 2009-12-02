@@ -72,10 +72,12 @@ html>body .innerbox
 li.menu-separator.active{
 	background-color: transparent;
 }
-li.active {
+
+.menu-ul li.active {
 	background-color: #aaa;
 }
-.activetarget{
+
+#civicrm-menu .activetarget{
 	background-color: #aaa;
 }
 
