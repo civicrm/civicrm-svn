@@ -131,6 +131,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             require_once 'CRM/Core/Permission.php';
             if ( ! CRM_Core_Permission::check( 'add contacts' ) ) {
                 CRM_Utils_System::permissionDenied( );
+                exit;
                 return;
             }
             $this->_contactType = CRM_Utils_Request::retrieve( 'ct', 'String',
