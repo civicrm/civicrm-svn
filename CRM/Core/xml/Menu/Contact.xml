@@ -266,7 +266,7 @@
 <item>
      <path>civicrm/ajax/auto</path>
      <page_callback>CRM_Contact_Page_AJAX::autocomplete</page_callback>
-     <access_arguments>access CiviCRM</access_arguments>
+     <access_callback>1</access_callback>
 </item>
 <item>
      <path>civicrm/ajax/subtype</path>
