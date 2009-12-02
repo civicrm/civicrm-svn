@@ -29,7 +29,7 @@
       <dl>
       <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>      
       <dd class="font-red">
-        {ts}WARNING: Debug is currently enabled in Global Settings.{/ts}
+        {ts}WARNING: Debug is currently enabled in Global Settings.{/ts} {docURL page="Debugging"}
       </dd>
       </dl>
     </div>
