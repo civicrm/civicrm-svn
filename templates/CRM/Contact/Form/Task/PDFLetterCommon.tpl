@@ -2,7 +2,7 @@
 <table class="form-layout">
     <tr>
         <td class="label-left">{$form.template.label}</td>
-	<td>{$form.template.html}</td>
+	    <td>{$form.template.html}</td>
     </tr>
     <tr>
         <td colspan="2" class="ui-accordion ui-widget">
@@ -42,8 +42,9 @@
     </div>
 </div>
 
-<div id="saveDetails">
-    {$form.saveTemplateName.label}</dt><dd>{$form.saveTemplateName.html}
+<div id="saveDetails" class="section">
+    <div class="label">{$form.saveTemplateName.label}</div>
+    <div class="content">{$form.saveTemplateName.html|crmReplace:class:huge}</div>
 </div>
 
 {literal}

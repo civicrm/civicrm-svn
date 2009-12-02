@@ -1,8 +1,8 @@
 {*common template for compose mail*}
 <table class="form-layout-compressed">
     <tr>
-	<td class="label">{$form.template.label}</td>
-	<td>{$form.template.html}</td>
+	    <td class="label">{$form.template.label}</td>
+	    <td>{$form.template.html}</td>
     </tr>
 </table>
 <div class="accordion ui-accordion ui-widget ui-helper-reset">
@@ -38,18 +38,21 @@
 	{$form.text_message.html}<br />
     </div>
 </div>
-<div id="editMessageDetails">
-    <div id="updateDetails" >
+<div class="spacer" style="height:1em;"></div>
+<div id="editMessageDetails" class="section">
+    <div id="updateDetails" class="section" >
 	{$form.updateTemplate.html}&nbsp;{$form.updateTemplate.label}
     </div>
-    <div>
+    <div class="section">
 	{$form.saveTemplate.html}&nbsp;{$form.saveTemplate.label}
     </div>
 </div>
 
-<div id="saveDetails">
-    {$form.saveTemplateName.label}&nbsp;{$form.saveTemplateName.html}
+<div id="saveDetails" class="section">
+   <div class="label">{$form.saveTemplateName.label}</div>
+   <div class="content">{$form.saveTemplateName.html|crmReplace:class:huge}</div>
 </div>
+
 {if ! $noAttach}
     {include file="CRM/Form/attachment.tpl"}
 {/if}

@@ -2090,7 +2090,7 @@ SELECT $selectClause
                     );
         
         require_once 'CRM/Core/BAO/MessageTemplates.php';
-        $form->_templates = CRM_Core_BAO_MessageTemplates::getMessageTemplates();
+        $form->_templates = CRM_Core_BAO_MessageTemplates::getMessageTemplates( false );
         if ( !empty( $form->_templates ) ) {
             $form->assign('templates', true);
             $form->add('select', 'template', ts('Select Template'),
@@ -2105,7 +2105,7 @@ SELECT $selectClause
       
        
         $form->addWysiwyg( 'html_message',
-                           ts('HTML Message'),
+                           ts('Your Letter'),
                            array('cols' => '80', 'rows' => '8',
                                  'onkeyup' =>"return verify(this)" ) );
     }
