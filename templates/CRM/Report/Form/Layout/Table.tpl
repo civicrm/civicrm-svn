@@ -55,7 +55,7 @@
                                 {$row.$field|truncate:10:''|crmDate}
                             {/if}	
                         {elseif $header.type eq 1024}
-                            {$row.$field|crmMoney}
+                            <span class="nowrap">{$row.$field|crmMoney}</span>
                         {else}
                             {$row.$field}
                         {/if}

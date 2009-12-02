@@ -67,7 +67,7 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
                                         'required'   => true,
                                         ),
                                  'display_name_constituent'   => 
-                                 array( 'title'      => ts( 'Constituent Name' ),
+                                 array( 'title'      => ts( 'Contributor Name' ),
                                         'name'       => 'display_name',
                                         'alias'      => 'constituentname',
                                         'required'   => true,
@@ -94,7 +94,7 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
                                         'no_repeat'  => true,
                                         ),
                                  'email_constituent' => 
-                                 array( 'title'      => ts('Constituent\'s Email'), 
+                                 array( 'title'      => ts('Contributor\'s Email'), 
                                         'name'       => 'email',
                                         'alias'      => 'emailconst',
                                         ),
@@ -112,7 +112,7 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
                                         'default'    => true,
                                         ),
                                  'phone_constituent' => 
-                                 array( 'title'      => ts('Constituent\'s Phone'), 
+                                 array( 'title'      => ts('Contributor\'s Phone'), 
                                         'name'       => 'phone',
                                         'alias'      => 'pconst',
                                         'no_repeat'  => true,
@@ -393,7 +393,19 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
         $prev_email = $prev_dispname = $prev_phone = null;
 
         foreach ( $rows as $rowNum => $row ) {
-            
+            // Link constituent (contributor) to contribution detail
+            if ( array_key_exists('civicrm_contact_display_name_constituent', $row) && 
+                 array_key_exists('civicrm_contact_id_constituent', $row) ) {
+                
+                 $url = CRM_Report_Utils_Report::getNextUrl( 'contribute/detail', 
+                                                             'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id_constituent'],
+                                                             $this->_absoluteUrl, $this->_id );
+                 $rows[$rowNum]['civicrm_contact_display_name_constituent_link' ] = $url;
+                 $rows[$rowNum]['civicrm_contact_display_name_constituent_hover'] =  
+                         ts("List all direct contribution(s) from this contact.");
+                $entryFound = true;
+            }
+
             // Handling Creditor's display_name no Repeat
             if ( array_key_exists('civicrm_contact_display_name_creditor', $row) ) {
                 if ( $value = $row['civicrm_contact_display_name_creditor'] ) {
@@ -417,7 +429,7 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
                                                                     $this->_absoluteUrl, $this->_id );
                         $rows[$rowNum]['civicrm_contact_display_name_creditor_link' ] = $url;
                         $rows[$rowNum]['civicrm_contact_display_name_creditor_hover'] =  
-                            ts("Lists detailed contribution(s) for this record.");
+                            ts("List direct contribution(s) from this contact.");
                     }
                     $entryFound = true;
                 }
