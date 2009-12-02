@@ -130,7 +130,9 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
      */ 
     public function buildQuickForm( )  
     {
-        $id = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCPBlock', $this->_pageId, 'supporter_profile_id', 'entity_id' );
+        if ( ! $id = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCPBlock', $this->_pageId, 'supporter_profile_id', 'entity_id' ) ) {
+            CRM_Core_Error::fatal( ts('Supporter profile is not set for this Personal Campaign Page. Please contact the site administrator if you need assistance.') );
+        }
         require_once 'CRM/Contribute/BAO/PCP.php';
         if ( CRM_Contribute_BAO_PCP::checkEmailProfile( $id ) ){
             $this->assign('profileDisplay', true);

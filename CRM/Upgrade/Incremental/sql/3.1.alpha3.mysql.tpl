@@ -31,6 +31,12 @@ ALTER TABLE `civicrm_contribution_soft`
 ALTER TABLE `civicrm_contribution_soft` 
     CHANGE `pcp_id` `pcp_id` int(10) unsigned default NULL COMMENT 'FK to civicrm_pcp.id';
 
+ALTER TABLE `civicrm_pcp_block`  
+    ADD CONSTRAINT `FK_civicrm_pcp_block_supporter_profile_id` FOREIGN KEY (`supporter_profile_id`) REFERENCES `civicrm_uf_group` (`id`) ON DELETE SET NULL;
+
+ALTER TABLE `civicrm_pcp_block`
+    CHANGE `supporter_profile_id` `supporter_profile_id` int(10) unsigned default NULL COMMENT 'FK to civicrm_uf_group.id. Does Personal Campaign Page require manual activation by administrator? (is inactive by default after setup)?';
+
 -- CRM-5322
 
   SELECT @option_group_id_sfe := max(id) from civicrm_option_group where name = 'safe_file_extension';
