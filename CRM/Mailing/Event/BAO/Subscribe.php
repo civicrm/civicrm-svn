@@ -254,7 +254,12 @@ SELECT     civicrm_email.id as email_id
         // render the &amp; entities in text mode, so that the links work
         $text = str_replace('&amp;', '&', $text);
 
-        $message =& new Mail_Mime("\n");
+        // we need to wrap Mail_mime because PEAR is apparently unable to fix
+        // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
+        // this fixes CRM-5466
+        require_once 'CRM/Utils/Mail/FixedMailMIME.php';
+        $message =& new CRM_Utils_Mail_FixedMailMIME("\n");
+
         $message->setHTMLBody($html);
         $message->setTxtBody($text);
         $b =& CRM_Utils_Mail::setMimeParams( $message );

@@ -165,7 +165,12 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             require_once 'CRM/Core/BAO/MailSettings.php';
             $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
             
-            $message =& new Mail_Mime("\n");
+            // we need to wrap Mail_mime because PEAR is apparently unable to fix
+            // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
+            // this fixes CRM-5466
+            require_once 'CRM/Utils/Mail/FixedMailMIME.php';
+            $message =& new CRM_Utils_Mail_FixedMailMIME("\n");
+
             $headers = array(
                 'Subject'       => "Re: {$mailing->subject}",
                 'To'            => $mailing->replyto_email,
