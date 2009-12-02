@@ -157,7 +157,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
             }
         }
         
-        $previousURL = CRM_Utils_System::url('civicrm/import/contact', '_qf_MapField_display=true');
+        $previousURL = CRM_Utils_System::url('civicrm/import/contact', '_qf_MapField_display=true', false, null , false);
         $cancelURL   = CRM_Utils_System::url('civicrm/import/contact', 'reset=1');
         
         $buttons = array(
