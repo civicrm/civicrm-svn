@@ -852,11 +852,11 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             $toActivityDate   = $toActivityDate ? $toActivityDate + 235959 : null;
         }
         
-        if ( $fromActivityDate ) {
+        if ( !empty( $fromActivityDate ) ) {
             $where .= " AND ca.activity_date_time >= '{$fromActivityDate}'";
         }
             
-        if ( $toActivityDate ) {
+        if ( !empty( $toActivityDate ) ) {
             $where .= " AND ca.activity_date_time <= '{$toActivityDate}'";
         }
             

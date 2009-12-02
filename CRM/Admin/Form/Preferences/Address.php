@@ -99,6 +99,7 @@ class CRM_Admin_Form_Preferences_Address extends CRM_Admin_Form_Preferences
      */
     public function buildQuickForm( ) 
     {
+        $this->applyFilter('__ALL__', 'trim');
         // address formatting options
         $this->addElement('textarea','mailing_format', ts('Mailing Label Format'));  
         $this->addElement('textarea','address_format', ts('Display Format'));  
