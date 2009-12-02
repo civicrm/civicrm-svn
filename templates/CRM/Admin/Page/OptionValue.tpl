@@ -10,8 +10,7 @@
 {if $rows}
 
 <div id="browseValues">
-    <div class="form-item">
-        {strip}
+    {strip}
 	 {* handle enable/disable actions*}
  	 {include file="CRM/common/enableDisable.tpl"}
  	 {include file="CRM/common/jsortable.tpl"}
@@ -31,10 +30,10 @@
         </tr>
         </thead>
         {foreach from=$rows item=row}
-	<tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+	    <tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td>{$row.label}</td>
-	    <td>{$row.value}</td>	
-	    <td>{$row.description}</td>
+	        <td>{$row.value}</td>	
+	        <td>{$row.description}</td>
             <td class="nowrap">{$row.weight}</td>
            {if $showIsDefault} 
             <td>{$row.default_value}</td> 
@@ -45,14 +44,13 @@
         </tr>
         {/foreach}
         </table>
-        {/strip}
+    {/strip}
 
-        {if $action ne 1 and $action ne 2}
+    {if $action ne 1 and $action ne 2}
 	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1&gid=$gid"}" id="newOptionValue">&raquo; {ts}New Option Value{/ts}</a>
+    	    <a href="{crmURL q="action=add&reset=1&gid=$gid"}" id="newOptionValue">&raquo; {ts}New Option Value{/ts}</a>
         </div>
-        {/if}
-    </div>
+    {/if}
 </div>
 {elseif $action ne 1}
     <div class="messages status">
