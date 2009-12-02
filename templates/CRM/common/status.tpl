@@ -22,3 +22,15 @@
       </dl>
     </div>
 {/if}
+
+{if ! $urlIsPublic AND $config->debug}
+    <div class='spacer'></div>
+    <div class="messages status">
+      <dl>
+      <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>      
+      <dd class="font-red">
+        {ts}WARNING: Debug is currently enabled in Global Settings.{/ts}
+      </dd>
+      </dl>
+    </div>
+{/if}
