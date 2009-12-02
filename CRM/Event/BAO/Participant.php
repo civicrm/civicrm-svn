@@ -180,7 +180,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         }
         
         $participant =& self::add($params);
-        
+            
         if ( is_a( $participant, 'CRM_Core_Error') ) {
             $transaction->rollback( );
             return $participant;
@@ -190,6 +190,14 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
              ( $params['status_id'] != $status ) ) {
             require_once 'CRM/Activity/BAO/Activity.php';
             CRM_Activity_BAO_Activity::addActivity( $participant );
+        }
+        
+        //CRM-5403
+        //Registered -> Attended, Registered -> No-show etc 
+        //should NOT be cascaded to the additional participants
+        //for update mode
+        if ( !empty($status) && self::allowCascadeStatus($participant->id, $participant->status_id, $status) ) {
+            self::updateParticipantStatus($participant->id, $participant->status_id);
         }
         
         $session = & CRM_Core_Session::singleton();
@@ -234,14 +242,13 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
 
         // Log the information on successful add/edit of Participant data.
         require_once 'CRM/Core/BAO/Log.php';
-        require_once 'CRM/Event/PseudoConstant.php' ;
         $logParams = array(
-                        'entity_table'  => 'civicrm_participant',
-                        'entity_id'     => $participant->id,
-                        'data'          => CRM_Event_PseudoConstant::participantStatus($participant->status_id),
-                        'modified_id'   => $id,
-                        'modified_date' => date('Ymd')
-                        );
+                           'entity_table'  => 'civicrm_participant',
+                           'entity_id'     => $participant->id,
+                           'data'          => CRM_Event_PseudoConstant::participantStatus($participant->status_id),
+                           'modified_id'   => $id,
+                           'modified_date' => date('Ymd')
+                           );
         
         CRM_Core_BAO_Log::add( $logParams );
         
@@ -871,9 +878,10 @@ UPDATE  civicrm_participant
         //thumb rule is if we triggering  primary participant need to triggered additional
         $allParticipantIds = $primaryANDAdditonalIds = array( );
         foreach ( $participantIds as $id ) {
-            $allParticipantIds[] = $id; 
-            $additionalIds = self::getAdditionalParticipantIds( $id );
-            if ( !empty( $additionalIds ) ) {
+            $allParticipantIds[] = $id;
+            if ( self::isPrimaryParticipant( $id ) &&
+                 self::allowCascadeStatus( $id, $toStatusId, $fromStatusId ) ) {
+                $additionalIds = self::getAdditionalParticipantIds( $id );
                 $primaryANDAdditonalIds[$id] = $additionalIds;
                 $allParticipantIds = array_merge( $allParticipantIds, $additionalIds );
             }
@@ -1007,6 +1015,7 @@ UPDATE  civicrm_participant
             //check is it primary and has additional.
             if ( array_key_exists( $participantId, $primaryANDAdditonalIds ) ) {
                 foreach ( $primaryANDAdditonalIds[$participantId] as $additonalId ) {
+                    
                     if ( $emailType ) {
                         $mail = self::sendTransitionParticipantMail( $additonalId, 
                                                                      $participantDetails[$additonalId],
@@ -1249,6 +1258,64 @@ However, you can still override this limit and register additional participants 
         
         return $eventfullMsg;
     }
-  
+
+    /** 
+     * check for whether participant is primary or not
+     * @param $participantId  
+     * @return true if participant is primary 
+     * @access public 
+     */ 
+    static function isPrimaryParticipant( $participantId ) {
+
+        $participant = & new CRM_Event_DAO_Participant( );
+        $participant->register_by_id = $participantId;
+        
+        if ($participant->find( true)) {
+            return true;
+        }    
+        return false;
+    }
+    /** 
+     * check for whether update additional participant's stautus 
+     * should cascade with primary participant status while updating status
+     * also considering transaction of old status -> new status.
+     *
+     * @param  int  $participantId   participant id.  
+     * @param  int  $oldStatusId     previous status
+     * @param  int  $newStatusId     new status 
+     *
+     * @return true if allowed 
+     * @access public 
+     */ 
+    static function allowCascadeStatus( $participantId, $newStatusId, $oldStatusId = null ) {
+
+        if ( !$oldStatusId ) {
+            return true;
+        }
+        
+        if ( !($participantId || $newStatusId) ) {
+            return false;
+        }
+        
+        require_once 'CRM/Event/PseudoConstant.php' ;
+        static $participantStatuses = array( );
+        static $statusWithReserved  = array( );
+        
+        if ( empty($participantStatuses) ) {
+          $participantStatuses = CRM_Event_PseudoConstant::participantStatus();
+        }
+        
+        if ( empty($statusWithReserved) ) {
+            $statusWithReserved = CRM_Event_PseudoConstant::participantStatus( null, null, 'is_reserved' );
+        }
+        
+        if( self::isPrimaryParticipant( $participantId ) && 
+            !( ($participantStatuses[$oldStatusId] == 'Registered' || !$statusWithReserved[$oldStatusId]) && 
+               ! $statusWithReserved[$newStatusId] ) ) {
+            return true;
+        } 
+
+        return false;
+    }
 }
 
