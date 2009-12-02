@@ -88,6 +88,9 @@ class CiviMailProcessor {
         // a common-for-all-actions regex to handle CiviCRM 2.2 address patterns
         $regex = '/^' . preg_quote($dao->localpart) . '(b|c|e|o|r|u)' . $twoDigitString . '([0-9a-f]{16})@' . preg_quote($dao->domain) . '$/';
 
+        // a tighter regex for finding bounce info in soft bounces’ mail bodies
+        $rpRegex = '/Return-Path: ' . preg_quote($dao->localpart) . '(b)' . $twoDigitString . '([0-9a-f]{16})@' . preg_quote($dao->domain) . '/';
+
         // retrieve the emails
         require_once 'CRM/Mailing/MailStore.php';
         $store = CRM_Mailing_MailStore::getStore($name);
@@ -112,6 +115,12 @@ class CiviMailProcessor {
                         list($match, $action, $_, $job) = $matches;
                         break;
                     }
+                }
+
+                // CRM-5471: if $matches is empty, it still might be a soft bounce sent
+                // to another address, so scan the body for ‘Return-Path: …bounce-pattern…’
+                if (!$matches and preg_match($rpRegex, $mail->generateBody(), $matches)) {
+                    list($match, $action, $job, $queue, $hash) = $matches;
                 }
 
                 // if $matches is empty, this email is not CiviMail-bound

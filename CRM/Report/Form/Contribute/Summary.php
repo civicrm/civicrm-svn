@@ -368,7 +368,8 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         $this->_from = "
         FROM civicrm_contact  {$this->_aliases['civicrm_contact']}
              INNER JOIN civicrm_contribution   {$this->_aliases['civicrm_contribution']} 
-                     ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id
+                     ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND
+                        {$this->_aliases['civicrm_contribution']}.is_test = 0
              LEFT  JOIN civicrm_contribution_type  {$this->_aliases['civicrm_contribution_type']} 
                      ON {$this->_aliases['civicrm_contribution']}.contribution_type_id ={$this->_aliases['civicrm_contribution_type']}.id
              LEFT  JOIN civicrm_email {$this->_aliases['civicrm_email']} 
@@ -486,9 +487,6 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             }
             
             if ( CRM_Utils_Array::value( 'receive_date', $this->_params['group_bys'] ) ) {
-                foreach ( array ( 'receive_date', $this->_interval, 'value' ) as $ignore ) {
-                    unset( $graphRows[$ignore][$count-1] );
-                }
                 $graphs = CRM_Utils_PChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
                 $this->assign( 'graphFilePath', $graphs['0']['file_name'] );
                 $this->_graphPath =  $graphs['0']['file_name'];
