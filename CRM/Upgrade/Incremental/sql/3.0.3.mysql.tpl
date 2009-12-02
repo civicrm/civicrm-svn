@@ -55,3 +55,8 @@ DROP FOREIGN KEY `FK_civicrm_uf_group_created_id`;
 ALTER TABLE `civicrm_uf_group`
 ADD CONSTRAINT `FK_civicrm_uf_group_created_id` FOREIGN KEY (`created_id`) REFERENCES `civicrm_contact` (`id`) ON DELETE SET NULL;
 
+-- CRM-5471
+UPDATE civicrm_mailing_bounce_pattern
+   SET pattern = 'delivery to the following recipient(s)? failed'
+ WHERE pattern = 'delivery to the following recipients failed';
+

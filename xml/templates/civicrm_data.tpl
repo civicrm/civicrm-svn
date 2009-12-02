@@ -747,7 +747,7 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'badly formatted address'),
     (@bounceTypeID, 'can\'t open mailbox for'),
     (@bounceTypeID, 'cannot deliver'),
-    (@bounceTypeID, 'delivery to the following recipients failed'),
+    (@bounceTypeID, 'delivery to the following recipient(s)? failed'),
     (@bounceTypeID, 'destination addresses were unknown'),
     (@bounceTypeID, 'did not reach the following recipient'),
     (@bounceTypeID, 'does not exist'),
