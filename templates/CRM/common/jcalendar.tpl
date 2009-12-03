@@ -1,3 +1,4 @@
+{strip}
 {if $elementIndex}
     {assign var='elementId'   value=$form.$elementName.$elementIndex.id}
     {assign var="timeElement" value=$elementName|cat:"_time.$elementIndex"}
@@ -58,5 +59,4 @@
     }
     {/literal}
 </script>
-
-
+{/strip}
