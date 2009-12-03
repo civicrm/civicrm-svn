@@ -144,7 +144,8 @@ WHERE  id = %1
         case 'AdvMulti-Select':
         case 'Select':
         case 'Radio':
-            if ( $dataType != 'Boolean' ) {
+        case 'Autocomplete-Select':
+            if ( !in_array( $dataType, array( 'Boolean', 'ContactReference' ) ) ) {
                 $options =& self::valuesByID( $fieldId );
             }
         }
