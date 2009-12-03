@@ -122,17 +122,19 @@ class CRM_Event_Form_ManageEvent_Location extends CRM_Event_Form_ManageEvent
                 $this->assign('locUsed', true);
             }
         }
+
+        $config = CRM_Core_Config::singleton( );
+        if ( !isset( $defaults['address'][1]['country_id'] ) ) {
+            $defaults['address'][1]['country_id'] = $config->defaultContactCountry;
+        }
         
         require_once 'CRM/Contact/Form/Edit/Address.php';
         if ( ! empty ( $defaults['address'] ) ) {
-            $config = CRM_Core_Config::singleton( );
             foreach ( $defaults['address'] as $key => $value ) {
                 CRM_Contact_Form_Edit_Address::fixStateSelect( $this,
                                                           "address[$key][country_id]",
                                                           "address[$key][state_province_id]",
-                                                          CRM_Utils_Array::value( 'country_id',
-                                                                                  CRM_Utils_Array::value( 'address',
-                                                                                                          $defaults ),
+                                                          CRM_Utils_Array::value( 'country_id', $value,
                                                                                   $config->defaultContactCountry ) );
             }
         }
