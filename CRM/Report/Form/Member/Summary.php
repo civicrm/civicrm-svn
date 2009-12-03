@@ -185,10 +185,11 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                         
                         // only include statistics columns if set
                         if ( CRM_Utils_Array::value('statistics', $field) ) {
+                            $this->_statFields[] = 'civicrm_membership_member_count';
                             foreach ( $field['statistics'] as $stat => $label ) {
                                 switch (strtolower($stat)) {
                                 case 'sum':
-                                    $select[] = "SUM({$field['dbAlias']}) as {$tableName}_{$fieldName}_{$stat}";
+                                    $select[] = "IFNULL(SUM({$field['dbAlias']}), 0) as {$tableName}_{$fieldName}_{$stat}";
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['title'] = $label;
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['type'] = $field['type'];
                                     $this->_statFields[] = "{$tableName}_{$fieldName}_{$stat}";
@@ -200,7 +201,7 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                                     $this->_statFields[] = "{$tableName}_{$fieldName}_{$stat}";
                                     break;
                                 case 'avg':
-                                    $select[] = "ROUND(AVG({$field['dbAlias']}),2) as {$tableName}_{$fieldName}_{$stat}";
+                                    $select[] = "IFNULL(ROUND(AVG({$field['dbAlias']}),2), 0) as {$tableName}_{$fieldName}_{$stat}";
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['type'] =  $field['type'];
                                     $this->_columnHeaders["{$tableName}_{$fieldName}_{$stat}"]['title'] = $label;
                                     $this->_statFields[] = "{$tableName}_{$fieldName}_{$stat}";
@@ -240,7 +241,7 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                         ON ({$this->_aliases['civicrm_membership']}.status_id = civicrm_membership_status.id  )
               LEFT JOIN civicrm_membership_payment payment
                         ON ( {$this->_aliases['civicrm_membership']}.id = payment.membership_id )
-              INNER JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
+              LEFT JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
                          ON payment.contribution_id = {$this->_aliases['civicrm_contribution']}.id";
         
     }// end of from
@@ -316,12 +317,8 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                 }
             }
             
-            if ( !empty($this->_statFields) && 
-                 CRM_Utils_Array::value( 'include_grand_total', $this->_params['options'] ) && 
-                 (( $append && count($this->_groupBy) <= 1 ) || (!$append)) ) {
-                $this->_rollup = " WITH ROLLUP";
-            }
-            $this->_groupBy = "GROUP BY " . implode( ', ', $this->_groupBy ) . " {$this->_rollup} ";
+            $this->_rollup  = ' WITH ROLLUP';
+            $this->_groupBy = 'GROUP BY ' . implode( ', ', $this->_groupBy ) . " {$this->_rollup} ";
         } else {
             $this->_groupBy = "GROUP BY {$this->_aliases['civicrm_membership']}.join_date";
         }
@@ -332,9 +329,9 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
 
         $select = "
         SELECT COUNT({$this->_aliases['civicrm_contribution']}.total_amount ) as count,
-               SUM({$this->_aliases['civicrm_contribution']}.total_amount ) as amount,
-               ROUND(AVG({$this->_aliases['civicrm_contribution']}.total_amount), 2) as avg
-        ";
+               IFNULL(SUM({$this->_aliases['civicrm_contribution']}.total_amount ), 0) as amount,
+               IFNULL(ROUND(AVG({$this->_aliases['civicrm_contribution']}.total_amount), 2), 0) as avg,
+               COUNT( DISTINCT {$this->_aliases['civicrm_membership']}.id ) as memberCount ";
         
         $sql = "{$select} {$this->_from} {$this->_where}";
         $dao = CRM_Core_DAO::executeQuery( $sql );
@@ -345,9 +342,16 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                                                      'type'  => CRM_Utils_Type::T_MONEY );
             $statistics['counts']['count '] = array( 'value' => $dao->count,
                                                      'title' => 'Total Donations' );
+            $statistics['counts']['memberCount'] = array( 'value' => $dao->memberCount,
+                                                          'title' => 'Total Member' );
             $statistics['counts']['avg   '] = array( 'value' => $dao->avg,
                                                      'title' => 'Average',
                                                      'type'  => CRM_Utils_Type::T_MONEY );
+            
+            if ( !(int)$statistics['counts']['amount']['value']) {
+                //if total amount is zero then hide Chart Options
+                $this->assign( 'chartSupported', false );
+            }
         }
         
         return $statistics;
@@ -366,6 +370,10 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
         $isJoiningDate        = CRM_Utils_Array::value( 'join_date', $this->_params['group_bys'] );
         if ( CRM_Utils_Array::value('charts', $this->_params ) ) {
             foreach ( $rows as $key => $row ) {                                              
+                if ( !($row['civicrm_membership_join_date_subtotal'] &&
+                       $row['civicrm_membership_membership_type_id'] ) ) {
+                    continue;
+                }
                 if ( $isMembershipType ) { 
                     $join_date            = CRM_Utils_Array::value( 'civicrm_membership_join_date_start',    $row );
                     $displayInterval      = CRM_Utils_Array::value( 'civicrm_membership_join_date_interval', $row );
@@ -491,6 +499,12 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
             if ( array_key_exists('civicrm_membership_join_date_subtotal', $row) && 
                  !$row['civicrm_membership_join_date_subtotal'] ) {
                 $this->fixSubTotalDisplay( $rows[$rowNum], $this->_statFields );
+                $entryFound = true;
+            } else if (array_key_exists('civicrm_membership_join_date_subtotal', $row) && 
+                       $row['civicrm_membership_join_date_subtotal'] &&
+                       !$row['civicrm_membership_membership_type_id']) {
+                $this->fixSubTotalDisplay( $rows[$rowNum], $this->_statFields ,false);
+                $rows[$rowNum]['civicrm_membership_membership_type_id'] = '<b>SubTotal</b>';
                 $entryFound = true;
             }
             
