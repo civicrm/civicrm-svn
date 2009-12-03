@@ -151,11 +151,25 @@ class CRM_UF_Form_Preview extends CRM_Core_Form
      */
     public function buildQuickForm()
     {
+        $stateCountry = array( );
         foreach ($this->_fields as $name => $field ) {
             if ( ! CRM_Utils_Array::value( 'is_view', $field ) ) {
                 CRM_Core_BAO_UFGroup::buildProfile($this, $field, CRM_Profile_Form::MODE_CREATE );
             }
+            
+            if ( (($fieldName = substr($name,0,14)) === 'state_province') || 
+                 (($fieldName = substr($name,0,7)) === 'country') ) {
+                $stateCountry[$fieldName] = $name;
+            }
         }
+
+        // also take care of state country widget
+        if ( !empty($stateCountry) ) {
+            require_once 'CRM/Core/BAO/Address.php';
+            $stateCountryMap = array( 1 => $stateCountry );
+            CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
+        }
+        
         $this->addButtons(array(
                                 array ('type'      => 'cancel',
                                        'name'      => ts('Done with Preview'),
