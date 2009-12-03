@@ -44,6 +44,7 @@ class CRM_Contact_Form_NewContact
         $attributes = array( 'width' => '200px' );    
         $form->add('text', "contact", ts('Select Contact'), $attributes );
         $form->addElement('hidden', "contact_select_id" );
+        $form->addRule("contact", ts('Please select a contact or create new contact.'), 'validContact' );
         
         if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
              CRM_Core_Permission::check( 'add contacts' ) ) {            
