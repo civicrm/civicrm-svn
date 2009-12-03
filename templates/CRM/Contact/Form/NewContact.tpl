@@ -18,19 +18,17 @@
   cj( function( ) {
       var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=newcontact' h=0 }"{literal};
 
-      cj("#contact").autocomplete( contactUrl, {
-      	selectFirst: false, 
-	matchContains: true 
-      }).focus();
-
-      cj("#contact").result(function(event, data, formatted) {
-      	cj("input[name=contact_select_id]").val(data[1]);
-      });
-
-      cj("#contact").bind("keypress keyup", function(e) {
+      cj('#contact').autocomplete( contactUrl, { 
+          selectFirst : false, matchContains: true, minChars: 2
+      }).result( function(event, data, formatted) { 
+          cj("input[name=contact_select_id]").val(data[1]);
+      }).focus( );
+                                  
+      cj("#contact").bind("click keypress keyup", function(e) {
           if ( e.keyCode == 13 ) {
               return false;
           }
+          cj("input[name=contact_select_id]").val('');
       });
   });
 
