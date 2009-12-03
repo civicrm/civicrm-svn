@@ -420,6 +420,8 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
         if ($params['additional_custom_post_id'] == 'none') {
             $ufJoinParams['is_active']   = 0;
         } elseif ($params['additional_custom_post_id']) {
+            //minor fix for CRM-4377
+            $ufJoinParams['is_active']   = 1;
             $ufJoinParams['uf_group_id'] = $params['additional_custom_post_id'];
         }
         CRM_Core_BAO_UFJoin::create($ufJoinParams);
