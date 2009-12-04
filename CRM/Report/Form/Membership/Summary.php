@@ -41,8 +41,8 @@ class CRM_Report_Form_Membership_Summary extends CRM_Report_Form {
     protected $_summary = null;
 
     protected $_charts  = array( ''         => 'Tabular',
-                                 'barGraph' => 'Bar Graph',
-                                 'pieGraph' => 'Pie Graph'
+                                 'barChart' => 'Bar Chart',
+                                 'pieChart' => 'Pie Chart'
                                  );
     
     function __construct( ) {
@@ -325,9 +325,13 @@ LEFT  JOIN civicrm_contribution  {$this->_aliases['civicrm_contribution']}
                 unset( $graphRows[$ignore][$count-1] );
             }
             
-            $graphs = CRM_Utils_PChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
-            $this->assign( 'graphFilePath', $graphs['0']['file_name'] );
-
+            // build chart.
+            require_once 'CRM/Utils/OpenFlashChart.php';
+            $openFlashChart = CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
+            
+            // assign chart data to template.
+            $this->assign( 'openFlashChartData', json_encode( $openFlashChart ) );
+            $this->assign( 'hasOpenFlashChart', empty( $openFlashChart ) ? false : true );
         }
         parent::endPostProcess( );
     }

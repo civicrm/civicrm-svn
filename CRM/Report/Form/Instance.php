@@ -78,6 +78,8 @@ class CRM_Report_Form_Instance {
         $form->addElement( 'checkbox', 'is_navigation', ts('Include Report in Navigation Menu?'), null, 
                            array('onclick' =>"return showHideByValue('is_navigation','','navigation_menu','table-row','radio',false);") );
 
+        $form->addElement( 'checkbox', 'addToDashboard', ts('Include Report on Dashboard?') );
+        
         $config =& CRM_Core_Config::singleton( );
         if ( $config->userFramework != 'Joomla' ) {
             $form->addElement( 'select',
@@ -171,7 +173,6 @@ class CRM_Report_Form_Instance {
 
         //navigation parameters
         if ( CRM_Utils_Array::value( 'is_navigation', $params ) ) {
-
             $form->_navigation['permission'] = array( );
             $permission = CRM_Utils_Array::value( 'permission', $params );
             
@@ -189,7 +190,27 @@ class CRM_Report_Form_Instance {
             unset($params['parent_id']);
             unset($params['is_navigation']);
         }
+        
+        // add to dashboard
+        $dashletParams = array( );
+        if ( CRM_Utils_Array::value( 'addToDashboard', $params ) ) {
+            $section = 2;
+            $chart = '';
+            if ( CRM_Utils_Array::value( 'charts', $params ) ) {
+                $section = 1;
+                $chart = "&charts=". $params['charts'];
+            }
+            
+            $id = $form->getVar( '_id' );
+            $url = "civicrm/report/instance/{$id}&force=1&section={$section}&snippet=4{$chart}";
 
+            $dashletParams = array( 'label'     =>  $params['title'],
+                                    'url'       =>  $url,
+                                    'is_active' => 1 );
+
+            unset( $params['addToDashboard'] );
+        }
+        
         require_once 'CRM/Report/DAO/Instance.php';
         $dao = new CRM_Report_DAO_Instance( );
         $dao->copyValues( $params );
@@ -232,6 +253,12 @@ class CRM_Report_Form_Instance {
 
                 // in order to reflect change in navigation, template needs to be reloaded 
                 $reloadTemplate = true;
+            }
+            
+            // add to dashlet
+            if ( !empty( $dashletParams ) ) {
+                require_once 'CRM/Core/BAO/Dashboard.php';
+                CRM_Core_BAO_Dashboard::addDashlet(  $dashletParams );
             }
             
             $instanceParams   = array( 'value' => $dao->report_id );

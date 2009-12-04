@@ -970,7 +970,34 @@ class CRM_Utils_System {
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
         return eval("return {$config->userFrameworkClass}::getUFLocale();");
     }
+    
+    /**
+     * Execute external or internal urls and return server response
+     *
+     *  @param string   $url request url 
+     *  @param boolean  $addCookie  should be true to access internal urls
+     *
+     *  @return string  $response response from url
+     *  @static
+     */
+    static function getServerResponse( $url, $addCookie = true) {
+        CRM_Core_Error::ignoreException( );
+        require_once 'HTTP/Request.php';
+        $params = array( 'method' => 'GET' );
+        $request = new HTTP_Request( $url, $params );
+        
+        if ( $addCookie ) {
+            foreach ( $_COOKIE as $name => $value ) {
+                $request->addCookie( $name, $value );
+            }
+        }
 
+        $request->sendRequest( );
+        $response = $request->getResponseBody( );
+
+        CRM_Core_Error::setCallback( );
+        return $response;
+    }
 }
 
 

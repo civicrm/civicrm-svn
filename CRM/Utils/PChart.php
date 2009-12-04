@@ -407,7 +407,22 @@ class CRM_Utils_PChart
             break;
             
         }
-        return self::$chart($barChart);
+        
+        //return self::$chart($barChart);
+
+        // FIXME
+        // time being tweak to use flash chart.
+        if ( strpos( $chart, 'pie' ) !== false ) {
+            require_once 'CRM/Utils/OpenFlashChart.php';
+            $data = array_pop( $barChart );
+            return CRM_Utils_OpenFlashChart::pieChart( $data );
+        } else if ( strpos( $chart, 'bar' ) !== false ) {
+            require_once 'CRM/Utils/OpenFlashChart.php';
+            $data = array_pop( $barChart );
+            return CRM_Utils_OpenFlashChart::barChart( $data ); 
+        } else {
+            return self::$chart( $barChart );
+        }
     }
 
     static function reportChart($rows, $chart, $interval, &$chartInfo ) 

@@ -6,7 +6,7 @@
      <title>CiviCRM</title>
      <access_callback>CRM_Core_Permission::checkMenu</access_callback>
      <access_arguments>access CiviCRM</access_arguments>
-     <page_callback>CRM_Contact_Page_View_DashBoard</page_callback>
+     <page_callback>CRM_Contact_Page_DashBoard</page_callback>
      <page_arguments>null</page_arguments>
      <is_ssl>false</is_ssl>
      <weight>0</weight>
@@ -15,9 +15,17 @@
      <path>civicrm/dashboard</path>
      <title>CiviCRM Home</title>
      <page_type>1</page_type>
-     <page_callback>CRM_Contact_Page_View_DashBoard</page_callback>
+     <page_callback>CRM_Contact_Page_DashBoard</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
      <weight>0</weight>
+  </item>
+  <item>
+     <path>civicrm/dashlet</path>
+     <title>CiviCRM Dashlets</title>
+     <page_type>1</page_type>
+     <page_callback>CRM_Contact_Page_Dashlet</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+     <weight>1</weight>
   </item>
   <item>
      <path>civicrm/contact/search</path>
@@ -204,6 +212,21 @@
      <weight>0</weight>
   </item>
   <item>
+     <path>civicrm/dashlet/activity</path>
+     <title>Activity Dashlet</title>
+     <page_callback>CRM_Dashlet_Page_Activity</page_callback>
+  </item>
+  <item>
+    <path>civicrm/ajax/state</path>
+    <page_callback>CRM_Core_Page_AJAX_Location::state</page_callback>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/ajax/country</path>
+    <page_callback>CRM_Core_Page_AJAX_Location::country</page_callback>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
     <path>civicrm/ajax/search</path>
     <page_callback>CRM_Contact_Page_AJAX::search</page_callback>
     <access_arguments>access CiviCRM</access_arguments>
@@ -261,6 +284,11 @@
 <item>
      <path>civicrm/ajax/subtype</path>
      <page_callback>CRM_Contact_Page_AJAX::buildSubTypes</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+</item>
+<item>
+     <path>civicrm/ajax/dashboard</path>
+     <page_callback>CRM_Contact_Page_AJAX::dashboard</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
 </item>
 </menu>

@@ -188,7 +188,10 @@ class CRM_Report_Form extends CRM_Core_Form {
                                                      'Boolean',
                                                      CRM_Core_DAO::$_nullObject );
 
-
+        $this->_section = CRM_Utils_Request::retrieve( 'section', 'Integer', CRM_Core_DAO::$_nullObject );
+        
+        $this->assign( 'section', $this->_section );
+                                                 
         $this->_id = $this->get( 'instanceId' );
         if ( !$this->_id ) {
             $this->_id  = CRM_Report_Utils_Report::getInstanceID( );

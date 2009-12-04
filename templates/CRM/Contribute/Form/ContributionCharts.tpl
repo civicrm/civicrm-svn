@@ -1,39 +1,22 @@
 {* Display monthly and yearly contributions using Google charts (Bar and Pie) *} 
 {if $hasContributions}
 <table class="chart">
-<tr>
- {if $monthlyData}
-     <td><img src="{$monthFilePath}" usemap="#monthMap"/>
-	<map id="monthMap" name="monthMap">
-	{foreach from=$monthCoords item=values key=field}
-	   {if $chartType eq 'pie'}   
-	       {foreach from=$values item=coordinates}
-	       <area shape="{$shape}" coords="{$coordinates}" href="{$monthUrls.$field}" title="{ts 1=$field}Contribution(s) for the month of %1{/ts}"/>
-	       {/foreach}
-	   {else}	
-	        <area shape="{$shape}" coords="{$values}" href="{$monthUrls.$field}" title="{ts 1=$field}Contribution(s) for the month of %1{/ts}"/>
-	   {/if}
-	{/foreach}
-	</map>
+  <tr>
+     <td>
+         {if $hasByMonthChart}
+      	     {* display monthly chart *}
+             <div id="open_flash_chart_1"></div>
+         {else}
+	     {ts}There were no contributions during the selected year.{/ts}  
+         {/if}	
+     </td> 
+     <td>
+       	 {* display yearly chart *}
+         <div id="open_flash_chart_2"></div>
      </td>
- {else}
-     <td>{ts}There were no contributions during the selected year.{/ts} </td>
- {/if}
-     <td><img src="{$yearFilePath}" usemap="#yearMap"/>
-	<map id="yearMap" name="yearMap">
-	{foreach from=$yearCoords item=values key=field}
-	   {if $chartType eq 'pie'}   
-	       {foreach from=$values item=coordinates}
-	       <area shape="{$shape}" coords="{$coordinates}" href="{$yearUrls.$field}" title="{ts 1=$field}Contribution(s) for the year of %1{/ts}"/>
-	       {/foreach}
-	   {else}
-	       <area shape="{$shape}" coords="{$values}" href="{$yearUrls.$field}" title="{ts 1=$field}Contribution(s) for the year of %1{/ts}"/>	
-	   {/if}
-	{/foreach}
-	</map>
-     </td>
-</tr>
+  </tr>
 </table>
+
 <table  class="form-layout-compressed" >
       <td class="label">{$form.select_year.label}</td><td>{$form.select_year.html}</td> 
       <td class="label">{$form.chart_type.label}</td><td>{$form.chart_type.html}</td> 
@@ -41,7 +24,7 @@
         {$form.buttons.html}<br />
         <span class="add-remove-link"><a href="{crmURL p="civicrm/contribute" q="reset=1"}">{ts}Table View{/ts}...</a></span>
       </td> 
-</table> 
+</table>
 {else}
  <div class="messages status"> 
       <dl> 
@@ -50,3 +33,46 @@
  </div>
 {/if}
 
+{if $hasOpenFlashChart}
+{include file="CRM/common/openFlashChart.tpl"}
+
+{literal}
+<script type="text/javascript">
+
+  cj( function( ) {
+      buildChart( );
+  });
+
+  function buildChart( ) {
+     var chartData = {/literal}{$openFlashChartData}{literal};	
+     cj.each( chartData, function( chartID, chartValues ) {
+
+	 var xSize   = eval( "chartValues.size.xSize" );
+	 var ySize   = eval( "chartValues.size.ySize" );
+	 var divName = eval( "chartValues.divName" );
+
+	 createSWFObject( chartID, divName, xSize, ySize );  
+     });
+  }
+  
+  function loadData( chartID ) {
+     var allData = {/literal}{$openFlashChartData}{literal};
+     var data    = eval( "allData." + chartID + ".object" );
+     return JSON.stringify( data );
+  }
+ 
+  function byMonthOnClick( barIndex ) {
+     var allData = {/literal}{$openFlashChartData}{literal};
+     var url     = eval( "allData.by_month.on_click_urls.url_" + barIndex );
+     if ( url ) window.location = url;
+  }
+
+  function byYearOnClick( barIndex ) {
+     var allData = {/literal}{$openFlashChartData}{literal};
+     var url     = eval( "allData.by_year.on_click_urls.url_" + barIndex );
+     if ( url ) window.location = url;
+  }
+
+</script>
+{/literal}
+{/if}

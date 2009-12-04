@@ -40,8 +40,8 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
     
       
     protected $_charts = array( ''         => 'Tabular',
-                                'barGraph' => 'Bar Graph',
-                                'pieGraph' => 'Pie Graph'
+                                'barChart' => 'Bar Chart',
+                                'pieChart' => 'Pie Chart'
                                 );
 
     protected $lifeTime_from  = null;
@@ -433,12 +433,17 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                                      'xname'  => ts('Amount'),
                                      'yname'  => ts('Year')
                                      );
-        if($this->_params['charts']) {
-            $graphs = CRM_Utils_PChart::reportChart( $graphRows, $this->_params['charts'] , $interval , $chartInfo );
-            $this->assign( 'graphFilePath', $graphs['0']['file_name'] );
-            $this->_graphPath =  $graphs['0']['file_name'];
-        }        
-    } 
+        if ( $this->_params['charts'] ) {
+            require_once 'CRM/Utils/OpenFlashChart.php';
+            // build chart.
+            $openFlashChart = CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], 
+                                                                     $interval, $chartInfo );
+            
+            // assign chart data to template.
+            $this->assign( 'openFlashChartData', json_encode( $openFlashChart ) );
+            $this->assign( 'hasOpenFlashChart', empty( $openFlashChart ) ? false : true );
+        }
+    }
  
     function alterDisplay( &$rows ) {
         foreach ( $rows as $rowNum => $row ) {

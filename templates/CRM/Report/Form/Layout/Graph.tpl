@@ -1,5 +1,13 @@
 {* Display weekly,Quarterly,monthly and yearly contributions using pChart (Bar and Pie) *}
-{if $chartEnabled && $chartSupported && $rows}
+{if $hasOpenFlashChart}
+<table class="chart">
+        <tr>
+            <td>
+                <div id="open_flash_chart"></div>
+            </td>
+        </tr>
+</table>
+{elseif $chartEnabled && $chartSupported && $rows}
     <table class="chart">
         <tr>
             <td>
@@ -8,3 +16,34 @@
         </tr>
     </table>
 {/if} 
+
+{if $hasOpenFlashChart}
+    {if !$section}
+        {include file="CRM/common/openFlashChart.tpl"}
+    {/if}
+{literal}
+<script type="text/javascript">
+
+  cj( function( ) {
+      buildChart( );
+  });
+
+  function buildChart( ) {
+     var chartData = {/literal}{$openFlashChartData}{literal};	
+     cj.each( chartData, function( chartID, chartValues ) {
+	 var xSize   = eval( "chartValues.size.xSize" );
+	 var ySize   = eval( "chartValues.size.ySize" );
+	 var divName = eval( "chartValues.divName" );
+
+	 createSWFObject( chartID, divName, xSize, ySize );  
+     });
+  }
+  
+  function loadData( chartID ) {
+     var allData = {/literal}{$openFlashChartData}{literal};
+     var data    = eval( "allData." + chartID + ".object" );
+     return JSON.stringify( data );
+  }
+</script>
+{/literal}
+{/if}

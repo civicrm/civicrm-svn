@@ -39,8 +39,8 @@ require_once 'CRM/Contribute/PseudoConstant.php';
 class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
 
        protected $_charts = array( ''         => 'Tabular',
-                                'barGraph' => 'Bar Graph',
-                                'pieGraph' => 'Pie Graph'
+                                'barChart' => 'Bar Chart',
+                                'pieChart' => 'Pie Chart'
                                 );
        protected $_add2groupSupported = false;
 
@@ -448,11 +448,15 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
                                      'xname'  => 'Amount',
                                      'yname'  => 'Year'
                                      );
-        if($this->_params['charts']) {
-            $graphs = CRM_Utils_PChart::reportChart( $graphRows, $this->_params['charts'] , $interval , $chartInfo );
-            $this->assign( 'graphFilePath', $graphs['0']['file_name'] );
-            $this->_graphPath =  $graphs['0']['file_name'];
-        }        
+        if ( $this->_params['charts'] ) {
+            require_once 'CRM/Utils/OpenFlashChart.php';
+            // build the chart.
+            $openFlashChart = CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], 
+                                                                     $interval, $chartInfo );
+            // assign chart data to template.
+            $this->assign( 'openFlashChartData', json_encode( $openFlashChart ) );
+            $this->assign( 'hasOpenFlashChart', empty( $openFlashChart ) ? false : true );
+        }
     }
     
     function alterDisplay( &$rows ) {

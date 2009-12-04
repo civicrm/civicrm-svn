@@ -598,4 +598,36 @@ WHERE ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$queryS
        echo json_encode( $subTypes );
        exit;
     }
+    
+    /**
+     * Function used for CiviCRM dashboard operations
+     */
+    static function dashboard( ) {
+        $operation = CRM_Utils_Type::escape( $_REQUEST['op'], 'String' );
+        
+        switch ( $operation ) {
+            case 'get_widgets_by_column':
+                // This would normally be coming from either the database (this user's settings) or a default/initial dashboard configuration.
+                // get contact id of logged in user
+
+                require_once 'CRM/Core/BAO/Dashboard.php';
+                $dashlets = CRM_Core_BAO_Dashboard::getContactDashlets( );
+                break;
+            
+            case 'get_widget':
+                $dashletID = CRM_Utils_Type::escape( $_GET['id'], 'Positive' );
+
+                require_once 'CRM/Core/BAO/Dashboard.php';
+                $dashlets = CRM_Core_BAO_Dashboard::getDashletInfo( $dashletID );
+                break;
+            
+            case 'save_columns':
+                require_once 'CRM/Core/BAO/Dashboard.php';
+                CRM_Core_BAO_Dashboard::saveDashletChanges( $_POST['columns'] );
+                return;
+        }
+        
+        echo json_encode( $dashlets ); 
+        exit();
+    }
  }

@@ -117,6 +117,8 @@
 
   <civicrm_custom_field />
 
+  <civicrm_dashboard />
+
   <civicrm_email />
 
   <civicrm_entity_file />
@@ -148,6 +150,8 @@
   <civicrm_openid />
 
   <civicrm_acl_cache />
+
+  <civicrm_dashboard_contact />
 
   <civicrm_group />
 
@@ -187,8 +191,6 @@
 
   <civicrm_pcp />
 
-  <civicrm_pcp_block />
-
   <civicrm_membership />
 
   <civicrm_membership_block />
@@ -216,6 +218,8 @@
   <civicrm_uf_field />
 
   <civicrm_uf_join />
+
+  <civicrm_pcp_block />
 
   <civicrm_address />
 

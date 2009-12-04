@@ -44,8 +44,8 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
     protected $_summary = null;
     protected $_interval= null;
     protected $_charts  = array( ''         => 'Tabular',
-                                 'barGraph' => 'Bar Graph',
-                                 'pieGraph' => 'Pie Graph'
+                                 'barChart' => 'Bar Chart',
+                                 'pieChart' => 'Pie Chart'
                                  );
     protected $_add2groupSupported = false;
     
@@ -429,21 +429,27 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                 } 
             }
             
-            if( $isMembershipType ) {  
+            require_once 'CRM/Utils/OpenFlashChart.php';
+            $openFlashChart = array( );
+            
+            // build chart.
+            if ( $isMembershipType ) { 
                 
                 $graphRows['value'] = $display;
                 $chartInfo          = array( 'legend' => 'MemberShip Summary',
                                              'xname'  => 'Amount',
                                              'yname'  => 'Year' );                
-                $graphs             = CRM_Utils_PChart::reportChart( $graphRows, $this->_params['charts'] , $interval , $chartInfo );
+                $openFlashChart = CRM_Utils_OpenFlashChart::reportChart( $graphRows, 
+                                                                         $this->_params['charts'], 
+                                                                         $interval , $chartInfo );
                 
             } else {                
-                $graphs             = CRM_Utils_PChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
+                $openFlashChart = CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
             }
             
-            $this->assign( 'graphFilePath', $graphs['0']['file_name'] );
-            $this->_graphPath =  $graphs['0']['file_name'];
-            
+            // assign chart data to template.
+            $this->assign( 'openFlashChartData', json_encode( $openFlashChart ) );
+            $this->assign( 'hasOpenFlashChart', empty( $openFlashChart ) ? false : true );
         }
     }
     

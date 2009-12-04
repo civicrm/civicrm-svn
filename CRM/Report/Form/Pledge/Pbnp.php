@@ -38,8 +38,8 @@ require_once 'CRM/Contribute/PseudoConstant.php';
 
 class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
     protected $_charts = array( ''         => 'Tabular',
-                                'barGraph' => 'Bar Graph',
-                                'pieGraph' => 'Pie Graph'
+                                'barChart' => 'Bar Chart',
+                                'pieChart' => 'Pie Chart'
                                 );
     
     function __construct( ) {

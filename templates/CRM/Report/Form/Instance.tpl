@@ -66,6 +66,12 @@
             <td>{$form.permission.html|crmReplace:class:huge}</td>
         </tr>
     {/if}
+    <tr>
+	<td class="report-label">{$form.addToDashboard.label}</td>
+        <td>{$form.addToDashboard.html}<br />
+            <span class="description">{ts}Make this report instance available as dashlet.{/ts}</span>
+        </td>
+    </tr>
 </table>
 
 {include file="CRM/common/showHideByFieldValue.tpl" 

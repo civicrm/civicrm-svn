@@ -1,9 +1,10 @@
 {* Displays Activities. *}
 
 <div>
+  {if !$noFieldSet}	
   <fieldset>
   <legend>{ts}Activities{/ts}</legend>
-
+  {/if}
 {if $rows}
   <form title="activity_pager" action="{crmURL}" method="post">
   {include file="CRM/common/pager.tpl" location="top"}
@@ -102,7 +103,8 @@
   </div>
 
 {/if}
-
+{if !$noFieldSet}
 </fieldset>
+{/if}
 </div>
 

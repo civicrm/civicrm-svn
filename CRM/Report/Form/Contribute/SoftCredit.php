@@ -43,8 +43,8 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
     protected $_phoneField       = false;
     protected $_phoneFieldCredit = false;
     protected $_charts = array( ''         => 'Tabular',
-                                'barGraph' => 'Bar Graph',
-                                'pieGraph' => 'Pie Graph'
+                                'barChart' => 'Bar Chart',
+                                'pieChart' => 'Pie Chart'
                                 );
     
     function __construct( ) {

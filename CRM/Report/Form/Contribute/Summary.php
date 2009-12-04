@@ -40,8 +40,8 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
     protected $_addressField = false;
 
     protected $_charts = array( ''         => 'Tabular',
-                                'barGraph' => 'Bar Graph',
-                                'pieGraph' => 'Pie Graph'
+                                'barChart' => 'Bar Chart',
+                                'pieChart' => 'Pie Chart'
                                 );
     
     function __construct( ) {
@@ -487,14 +487,18 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             }
             
             if ( CRM_Utils_Array::value( 'receive_date', $this->_params['group_bys'] ) ) {
-                $graphs = CRM_Utils_PChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
-                $this->assign( 'graphFilePath', $graphs['0']['file_name'] );
-                $this->_graphPath =  $graphs['0']['file_name'];
+                
+                // build the chart.
+                require_once 'CRM/Utils/OpenFlashChart.php';
+                $openFlashChart = CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
+                
+                // assign chart data to template.
+                $this->assign( 'openFlashChartData', json_encode( $openFlashChart ) );
+                $this->assign( 'hasOpenFlashChart', empty( $openFlashChart ) ? false : true );
             }
         }
     }
-
-
+    
     function alterDisplay( &$rows ) {
         // custom code to alter rows
         $entryFound = false;

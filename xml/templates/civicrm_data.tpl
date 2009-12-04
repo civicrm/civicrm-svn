@@ -951,5 +951,9 @@ INSERT INTO `civicrm_contact_type`
   ( 'Team'        , '{ts escape="sql"}Team{/ts}'        , NULL, 3, 1, 0),
   ( 'Sponsor'     , '{ts escape="sql"}Sponsor{/ts}'     , NULL, 3, 1, 0);
   
+INSERT INTO `civicrm_dashboard` 
+    ( `domain_id`, `label`, `url`, `content`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `created_date`) 
+    VALUES 
+    ( @domainID, '{ts escape="sql"}Activities{/ts}', 'civicrm/dashlet/activity?reset=1&snippet=4', NULL, NULL, NULL, '0', '0', '1', '1', NULL);
 
 {include file='civicrm_msg_template.tpl'}
