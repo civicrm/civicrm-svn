@@ -147,7 +147,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
              $config = CRM_Core_Config::singleton( );
              $url = $config->userFrameworkBaseURL . $dao->url;
              
-             //  get content from url
+             //get content from url
              $dao->content = CRM_Utils_System::getServerResponse( $url );
              $dao->created_date = date( "YmdHis" );
              $dao->save( );
@@ -271,5 +271,16 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
 
               CRM_Core_DAO::executeQuery( $query );
           } 
+      }
+      
+      /**
+       * Function to reset dashlet cache
+       *
+       * @return void
+       * @static 
+       */
+      static function resetDashletCache( ) {
+          $query = "UPDATE civicrm_dashboard SET content = NULL";
+          $dao = CRM_Core_DAO::executeQuery( $query );
       }
 }

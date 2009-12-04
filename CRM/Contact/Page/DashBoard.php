@@ -50,6 +50,13 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page
      */
     function run( )
     {
+        $resetCache = CRM_Utils_Request::retrieve( 'resetCache', 'Positive' );
+        
+        if ( $resetCache ) {
+            require_once 'CRM/Core/BAO/Dashboard.php';
+            CRM_Core_BAO_Dashboard::resetDashletCache( );
+        }
+        
         CRM_Utils_System::setTitle( ts('CiviCRM Home') );
         
         // call hook to get html from other modules
