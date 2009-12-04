@@ -58,7 +58,7 @@
                 <td>{$activeMember.end_date|crmDate}</td>
                 <td>{$activeMember.status}</td>
                 <td>{$activeMember.source}</td>
-                <td>{$activeMember.action}</td>
+                <td>{$activeMember.action|replace:'xx':$activeMember.id}</td>
             </tr>
             {/foreach}
         </table>
@@ -87,7 +87,7 @@
                 <td>{$inActiveMember.end_date|crmDate}</td>
                 <td>{$inActiveMember.status}</td>
                 <td>{$inActiveMember.source}</td>
-                <td>{$inActiveMember.action}</td>
+                <td>{$inActiveMember.action|replace:'xx':$inActiveMember.id}</td>
             </tr>
             {/foreach}
         </table>
