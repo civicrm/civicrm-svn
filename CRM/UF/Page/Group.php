@@ -85,6 +85,12 @@ class CRM_UF_Page_Group extends CRM_Core_Page
                                                                           'qs'    => 'action=preview&id=%%id%%&field=0&context=group',
                                                                           'title' => ts('Edit CiviCRM Profile Group') 
                                                                           ),
+                                        CRM_Core_Action::ADD     => array(
+                                                                          'name'  => ts('Use Profile-Create Mode'),
+                                                                          'url'   => 'civicrm/profile/create',
+                                                                          'qs'    => 'gid=%%id%%&reset=1',
+                                                                          'title' => ts('Use Profile-Create Mode'),
+                                                                          ),
                                         CRM_Core_Action::DISABLE => array(
                                                                           'name'  => ts('Disable'),
                                                                           'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Core_BAO_UFGroup' . '\',\'' . 'enable-disable' . '\' );"',
@@ -300,6 +306,11 @@ class CRM_UF_Page_Group extends CRM_Core_Page
                 $action -= CRM_Core_Action::UPDATE;
                 $action -= CRM_Core_Action::DISABLE;
                 $action -= CRM_Core_Action::DELETE;
+            }
+            
+            // drop Create, Edit and View mode links if profile group_type is Contribution, Membership, or Participant
+            if ( $value['group_type'] == 'Contribution' || $value['group_type'] == 'Membership' || $value['group_type'] == 'Participant' ) {
+                $action -= CRM_Core_Action::ADD;
             }
             
             $ufGroup[$id]['action'] = CRM_Core_Action::formLink(self::actionLinks(), $action, 
