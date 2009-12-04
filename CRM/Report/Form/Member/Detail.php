@@ -95,6 +95,7 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
                                              'tid'          =>
                                              array( 'name'          =>  'membership_type_id',
                                                     'title'         =>  ts( 'Membership Types' ),
+                                                    'type'          =>  CRM_Utils_Type::T_INT,
                                                     'operatorType'  =>  CRM_Report_Form::OP_MULTISELECT,
                                                     'options'       =>  CRM_Member_PseudoConstant::membershipType(),
                                                     ), ),

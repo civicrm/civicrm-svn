@@ -121,8 +121,12 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
     
     function select( ) {
         $select = array( );
+        $groupBys = false;
         $this->_columnHeaders = array( ); 
         $select[] = " COUNT( DISTINCT {$this->_aliases['civicrm_membership']}.id ) as civicrm_membership_member_count";
+        $select['joinDate'] = " {$this->_aliases['civicrm_membership']}.join_date  as civicrm_membership_member_join_date";
+        $this->_columnHeaders["civicrm_membership_member_join_date"] = array( 'title' => ts('Join Date'),
+                                                                              'type'  => CRM_Utils_Type::T_DATE);
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('group_bys', $table) ) {
                 foreach ( $table['group_bys'] as $fieldName => $field ) {
@@ -174,6 +178,7 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                             $this->_columnHeaders["{$tableName}_{$fieldName}_interval"] = array('no_display' => true);
                             $this->_columnHeaders["{$tableName}_{$fieldName}_subtotal"] = array('no_display' => true);
                         }
+                        $groupBys = true;
                     }
                 }
             }// end of select
@@ -228,10 +233,15 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                 }
             }
             $this->_columnHeaders["civicrm_membership_member_count"] = array('title' => ts('Member Count'),
-                                                                             'type'  => CRM_Utils_Type::T_INT); 
+                                                                             'type'  => CRM_Utils_Type::T_INT);            
+        }
+        //If grouping is availabled then remove join date from field
+        if ( $groupBys ) {
+            unset($select['joinDate']);
+            unset($this->_columnHeaders["civicrm_membership_member_join_date"]);
         }
         $this->_select = "SELECT " . implode( ', ', $select ) . " ";
-        
+
     }
     
     function from( ) {
@@ -471,10 +481,15 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                                                     $dateEnd['d']-1, $dateEnd['Y']));
                     break;
                 }
-                
+                $typeUrl = '';
+                if ( CRM_Utils_Array::value( 'membership_type_id', $this->_params['group_bys'] ) && 
+                     $typeID = $row['civicrm_membership_membership_type_id'] ) {
+                    $typeUrl = "&tid_op=in&tid_value={$typeID}";
+                }
+                     
                 $url =
                     CRM_Report_Utils_Report::getNextUrl( 'member/detail',
-                                                         "reset=1&force=1&join_date_from={$dateStart}&join_date_to={$dateEnd}", 
+                                                         "reset=1&force=1&join_date_from={$dateStart}&join_date_to={$dateEnd}{$typeUrl}", 
                                                          $this->_absoluteUrl, $this->_id );
                 $row['civicrm_membership_join_date_start'] =  CRM_Utils_Date::format($row['civicrm_membership_join_date_start']);
                 $rows[$rowNum]['civicrm_membership_join_date_start_link' ] = $url;

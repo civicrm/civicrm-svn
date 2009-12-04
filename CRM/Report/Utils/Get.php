@@ -58,6 +58,8 @@ class CRM_Report_Utils_Get {
         $relative = CRM_Utils_Array::value("{$fieldName}_relative", $_GET );
         if( $relative ) {
             list( $from, $to ) = CRM_Report_Form::getFromTo( $relative, null, null );
+            $from = substr($from, 0, 8 );
+            $to   = substr($to,   0, 8 );
         }
 
         if ( !($from || $to) ) {
@@ -67,17 +69,11 @@ class CRM_Report_Utils_Get {
             self::unsetFilters( $defaults );
         }
 
-        $fromDate = new DateTime( $from );
-        $dateFrom = array( );
-        list( $dateFrom['Y'], $dateFrom['M'], $dateFrom['d'] ) = explode( ':', $fromDate->format('Y:m:d') );
-        
-        $defaults["{$fieldName}_from"] = $dateFrom;
+        $dateFrom = CRM_Utils_Date::setDateDefaults($from);
+        $dateTo   = CRM_Utils_Date::setDateDefaults($to);
 
-        $toDate = new DateTime( $to );
-        $dateTo = array( );
-        list( $dateTo['Y'], $dateTo['M'], $dateTo['d'] ) = explode( ':', $toDate->format('Y:m:d') );
-        
-        $defaults["{$fieldName}_from"] = $dateTo;
+        $defaults["{$fieldName}_from"] = $dateFrom[0];        
+        $defaults["{$fieldName}_to"]   = $dateTo[0];
     }
 
     static function stringParam( $fieldName, &$field, &$defaults ) {
