@@ -1041,34 +1041,32 @@ SELECT $select
                 continue;
             }              
             foreach ($group['fields'] as $field) {
-                $groupId = $group['id'];
                 $fieldId = $field['id'];
 
                 //added Multi-Select option in the below if-statement
                 if ( $field['html_type'] == 'CheckBox' || $field['html_type'] == 'Radio' || 
                      $field['html_type'] == 'AdvMulti-Select' || $field['html_type'] == 'Multi-Select' ) {
-                    $groupTree[$groupId]['fields'][$fieldId]['customValue']['data'] = 'NULL';
+                    $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = 'NULL';
                 }
 
-                $v = CRM_Utils_Array::value( 'custom_' . $field['id'], $params );
-
-                if ( ! isset($groupTree[$groupId]['fields'][$fieldId]['customValue'] ) ) {
+                CRM_Core_Error::debug( "XXX: $fieldId", $v );
+                if ( ! isset($groupTree[$groupID]['fields'][$fieldId]['customValue'] ) ) {
                     // field exists in db so populate value from "form".
-                    $groupTree[$groupId]['fields'][$fieldId]['customValue'] = array();
+                    $groupTree[$groupID]['fields'][$fieldId]['customValue'] = array();
                 }
 
-                switch ( $groupTree[$groupId]['fields'][$fieldId]['html_type'] ) {
+                switch ( $groupTree[$groupID]['fields'][$fieldId]['html_type'] ) {
 
                 //added for CheckBox
                 case 'CheckBox':  
                     if ( ! empty( $v ) ) {
                         $customValue = array_keys( $v );
-                        $groupTree[$groupId]['fields'][$fieldId]['customValue']['data'] = 
+                        $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = 
                             CRM_Core_DAO::VALUE_SEPARATOR .
                             implode(CRM_Core_DAO::VALUE_SEPARATOR, $customValue) .
                             CRM_Core_DAO::VALUE_SEPARATOR;
                     } else {
-                        $groupTree[$groupId]['fields'][$fieldId]['customValue']['data'] = null;
+                        $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = null;
                     }
                     break;
                     
@@ -1077,18 +1075,18 @@ SELECT $select
                 //added for Multi-Select
                 case 'Multi-Select':  
                     if ( ! empty( $v ) ) {
-                        $groupTree[$groupId]['fields'][$fieldId]['customValue']['data'] = 
+                        $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = 
                             CRM_Core_DAO::VALUE_SEPARATOR .
                             implode(CRM_Core_DAO::VALUE_SEPARATOR, $v) .
                             CRM_Core_DAO::VALUE_SEPARATOR;
                     } else {
-                        $groupTree[$groupId]['fields'][$fieldId]['customValue']['data'] = null;
+                        $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = null;
                     }
                     break;
 
                 case 'Select Date':
                     $date = CRM_Utils_Date::format( $v );
-                    $groupTree[$groupId]['fields'][$fieldId]['customValue']['data'] = $date;
+                    $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = $date;
                     break;
          
                 case 'File':
@@ -1100,16 +1098,16 @@ SELECT $select
                     $entityId   = explode( '=', $groupTree['info']['where'][0] );
                     $fileParams = array( 'upload_date'=> date('Ymdhis') );
                     
-                    if ( $groupTree[$groupId]['fields'][$fieldId]['customValue']['fid'] ) {
-                        $fileParams['id'] = $groupTree[$groupId]['fields'][$fieldId]['customValue']['fid'];
+                    if ( $groupTree[$groupID]['fields'][$fieldId]['customValue']['fid'] ) {
+                        $fileParams['id'] = $groupTree[$groupID]['fields'][$fieldId]['customValue']['fid'];
                     }     
                     if ( ! empty( $v ) ) {
                         require_once 'CRM/Core/BAO/File.php';
                         $fileParams['uri'] = $v['name'];
                         $fileParams['mime_type'] = $v['type'];
                         CRM_Core_BAO_File::filePostProcess($v['name'], 
-                                                           $groupTree[$groupId]['fields'][$fieldId]['customValue']['fid'], 
-                                                           $groupTree[$groupId]['table_name'],
+                                                           $groupTree[$groupID]['fields'][$fieldId]['customValue']['fid'], 
+                                                           $groupTree[$groupID]['table_name'],
                                                            trim( $entityId[1] ),
                                                            false,
                                                            true,
@@ -1119,18 +1117,18 @@ SELECT $select
                                                            );
                     }
                     $defaults   = array( );
-                    $paramsFile =  array( 'entity_table' => $groupTree[$groupId]['table_name'],
+                    $paramsFile =  array( 'entity_table' => $groupTree[$groupID]['table_name'],
                                           'entity_id'    => $entityId[1] );
                     
                     CRM_Core_DAO::commonRetrieve('CRM_Core_DAO_EntityFile',
                                                  $paramsFile,
                                                  $defaults);
                     
-                    $groupTree[$groupId]['fields'][$fieldId]['customValue']['data'] = $defaults['file_id'];
+                    $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = $defaults['file_id'];
                     break;
                     
                 default:
-                    $groupTree[$groupId]['fields'][$fieldId]['customValue']['data'] = $v;
+                    $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = $v;
                     break;
                 }
             }
@@ -1152,12 +1150,13 @@ SELECT $select
     static function buildQuickForm( &$form,
                                     &$groupTree,
                                     $inactiveNeeded = false,
-                                    $groupCount = 1 ) 
+                                    $groupCount = 1,
+                                    $prefix = '' ) 
     {
         require_once 'CRM/Core/BAO/CustomField.php';
         require_once 'CRM/Core/BAO/CustomOption.php';
         
-        $form->assign_by_ref( 'groupTree', $groupTree );
+        $form->assign_by_ref( "{$prefix}groupTree", $groupTree );
         $sBlocks = array( );
         $hBlocks = array( );
 
@@ -1446,7 +1445,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
      *  @param array   $groupTree associated array  
 	 *  @param boolean $returnCount true if customValue count needs to be returned
      */
-    static function buildCustomDataView ( &$form, &$groupTree, $returnCount = false, $groupID = null )
+    static function buildCustomDataView ( &$form, &$groupTree, $returnCount = false, $groupID = null, $prefix = null )
     {
         foreach ( $groupTree as $key => $group ) {
             if ( $key === 'info' ) {
@@ -1488,7 +1487,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
 		if ( $returnCount ) {
 			return count( $details[$groupID]);
 		} else {
-			$form->assign_by_ref( 'viewCustomData', $details );
+			$form->assign_by_ref( "{$prefix}viewCustomData", $details );
 		}
     }
 

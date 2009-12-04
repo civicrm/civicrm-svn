@@ -684,7 +684,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         require_once 'CRM/Contact/BAO/Contact.php';
         $contact =& CRM_Contact_BAO_Contact::create( $params, true,false );
-        
+
+        // set the contact ID
+        $this->_contactId = $contact->id;
+
         if ( $this->_contactType == 'Individual' && ( CRM_Utils_Array::value( 'use_household_address', $params )) &&
              CRM_Utils_Array::value( 'mail_to_household_id',$params ) ) {
             // add/edit/delete the relation of individual with household, if use-household-address option is checked/unchecked.
