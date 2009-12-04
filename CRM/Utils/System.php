@@ -983,8 +983,7 @@ class CRM_Utils_System {
     static function getServerResponse( $url, $addCookie = true) {
         CRM_Core_Error::ignoreException( );
         require_once 'HTTP/Request.php';
-        $params = array( 'method' => 'GET' );
-        $request = new HTTP_Request( $url, $params );
+        $request = new HTTP_Request( $url );
         
         if ( $addCookie ) {
             foreach ( $_COOKIE as $name => $value ) {
