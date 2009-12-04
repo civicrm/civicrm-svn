@@ -635,4 +635,30 @@ WHERE pcp.id = %1";
 
         return array( );
     }
+     
+    /**
+     * Function to get supporter profile id
+     * 
+     * @param int $contributionPageId contribution page id
+     *
+     * @return int
+     * @access public
+     *
+     */
+    public function getSupporterProfileId( $contributionPageId )
+    {
+        $query = "
+SELECT pcp.supporter_profile_id
+FROM civicrm_pcp_block pcp 
+INNER JOIN civicrm_uf_group ufgroup 
+      ON pcp.supporter_profile_id = ufgroup.id 
+WHERE pcp.entity_id = %1 
+      AND ufgroup.is_active = 1";
+        $params = array ( 1 => array( $contributionPageId, 'Integer' ) );
+        if ( ! $supporterProfileId = CRM_Core_DAO::singleValueQuery( $query, $params ) ) {
+            CRM_Core_Error::fatal( ts('Supporter profile is not set for this Personal Campaign Page or the profile is disabled. Please contact the site administrator if you need assistance.') ); 
+        } else {
+            return $supporterProfileId;
+        }  
+    }
 }
