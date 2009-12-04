@@ -306,6 +306,8 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
             $templateParams = array('id' => $params['template_id']);
             CRM_Event_BAO_Event::retrieve($templateParams, $defaults);
             unset($defaults['id']);
+            unset($defaults['default_fee_id']);
+            unset($defaults['default_discount_fee_id']);
             foreach ($defaults as $key => $value) {
                 if (!isset($params[$key])) $params[$key] = $value;
             }
@@ -320,9 +322,25 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
             $defaults = array();
             require_once 'CRM/Core/BAO/OptionGroup.php';
             if (is_null(CRM_Core_BAO_OptionGroup::retrieve($ogParams, $defaults))) {
-                CRM_Core_BAO_OptionGroup::copyValue('event', $params['template_id'], $event->id);
+                
+                // Copy the Main Event Fees
+                CRM_Core_BAO_OptionGroup::copyValue('event', $params['template_id'], $event->id );
+                
+                // Copy the Discount option Group and Values
+                require_once 'CRM/Core/BAO/Discount.php';
+                $optionGroupIds = CRM_Core_BAO_Discount::getOptionGroup($params['template_id'], "civicrm_event");
+                foreach ( $optionGroupIds as $id ) {
+                    $discountSuffix = '.discount.'. CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup',
+                                                                                 $id,
+                                                                                 'label' );
+                    CRM_Core_BAO_OptionGroup::copyValue('event', 
+                                                        $params['template_id'], 
+                                                        $event->id , 
+                                                        false, 
+                                                        $discountSuffix);
+                }
             }
-
+          
             // copy price sets if any
             require_once 'CRM/Price/BAO/Set.php';
             $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_event', $params['template_id'] );
