@@ -337,55 +337,5 @@ function fileOnCase() {
     </script>
     {/literal}
 {/if}
-
-{literal}
-<script type="text/javascript">
-function verify( ) {
-    var d = new Date(), time = [], i;
-    var currentDateTime = d.getTime()
-    var activityTime    = cj("input#activity_date_time_time").val().replace(":", "");
-    
-    //chunk the time in bunch of 2 (hours,minutes,ampm)
-	for(i=0; i<activityTime.length; i+=2 ) { 
-        time.push( activityTime.slice( i, i+2 ) );
-    }
-    var activityDate = new Date( cj("input#activity_date_time").val() );
-      
-    d.setFullYear(activityDate.getFullYear());
-    d.setMonth(activityDate.getMonth());
-    d.setDate(activityDate.getDate());
-    var hours = time['0'];
-    var ampm  = time['2'];
-
-    if (ampm == "PM" && hours != 0 && hours != 12) {
-        // force arithmetic instead of string concatenation
-        hours = hours*1 + 12;
-    } else if (ampm == "AM" && hours == 12) {
-        hours = 0;
-    }
-    d.setHours(hours);
-    d.setMinutes(time['1']);
-
-    var activity_date_time = d.getTime();
-
-    var activityStatusId = cj('#status_id').val();
-
-    if ( activityStatusId == 2 && currentDateTime < activity_date_time ) {
-        var okMessage = confirm( '{/literal}{ts}Are you sure? This is a COMPLETED activity with the DATE in the FUTURE. Click Cancel to change the date / status. Otherwise, click OK to save.{/ts}{literal}' ); 
-        if (!okMessage ) {
-            return false;
-        }
-    } else if ( activity_date_time && activityStatusId == 1 && currentDateTime >= activity_date_time ) {
-        var ok = confirm( '{/literal}{ts}Are you sure? This is a SCHEDULED activity with the DATE in the PAST. Click Cancel to change the date / status. Otherwise, click OK to save.{/ts}{literal}' ); 
-        if (!ok ) {
-            return false;
-        }
-    }
-}
-
-</script>
-{/literal}
-
 {include file="CRM/common/formNavigate.tpl"}
-
 {/if} {* end of snippet if*}	

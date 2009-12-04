@@ -8,6 +8,7 @@
     {assign var="timeElement" value=$elementName|cat:'_time'}
     {$form.$elementName.html|crmReplace:class:dateplugin}
 {/if}
+{assign var='dateFormated' value=$elementId|cat:"_hidden"}<input type="text" name="{$dateFormated}" id="{$dateFormated}" class="hiddenElement"/>
 {if $timeElement}
     &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
 {/if}
@@ -16,11 +17,8 @@
 {/if}
 <script type="text/javascript">
     var element_date   = "#{$elementId}"; 
-    var cal_img        = "{$config->resourceBase}i/cal.gif";    
-
     {if $timeElement}
         var element_time  = "#{$timeElement}";
-        {*var time_img    = "{$config->resourceBase}packages/jquery/css/images/calendar/spinnerDefault.png";*}
         var time_format   = cj( element_time ).attr('timeFormat');
         {literal}
             cj(element_time).timeEntry({ show24Hours : time_format });
@@ -30,13 +28,15 @@
     var date_format = cj( element_date ).attr('format');
     var startYear   = cj( element_date ).attr('startOffset');
     var endYear     = cj( element_date ).attr('endOffset');
-
+    var alt_field   = 'input#{$dateFormated}';
     {literal} 
     cj(element_date).datepicker({
                                     closeAtTop        : true, 
                                     dateFormat        : date_format,
                                     changeMonth       : true,
                                     changeYear        : true,
+                                    altField          : alt_field,
+                                    altFormat         : 'mm/dd/yy',
                                     yearRange         : '-'+startYear+':+'+endYear
                                 });
     

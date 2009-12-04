@@ -230,43 +230,4 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
     {include file="CRM/common/formNavigate.tpl"}
 
 {/if } {* end of main if block*}
-
 </script>
-{literal}
-<script type="text/javascript">
-     function verify( ) {
-
-         var d = new Date();
-         var currentDateTime = d.getTime();
-         d.setFullYear(cj("select#activity_date_time\\[Y\\]").val());
-         d.setMonth(cj("select#activity_date_time\\[M\\]").val() - 1);
-         d.setDate(cj("select#activity_date_time\\[d\\]").val());
-         var hours = cj("select#activity_date_time\\[h\\]").val();
-         var ampm = cj("select#activity_date_time\\[A\\]").val();
-         if (ampm == "PM" && hours != 12) {
-             // force arithmetic instead of string concatenation by multiplying by 1, otherwise something like 06 + 12 ends up as 612.
-             hours = hours*1 + 12;
-         } else if (ampm == "AM" && hours == 12) {
-             hours = 0;
-         }
-         d.setHours(hours);
-         d.setMinutes(cj("select#activity_date_time\\[i\\]").val());
-
-         var activity_date_time = d.getTime();
-
-	  var activityStatusId = cj('#status_id').val();
-
-	  if ( activityStatusId == 2 && currentDateTime < activity_date_time ) {
-	       var okMessage = confirm( '{/literal}{ts}Are you sure? This is a COMPLETED activity with the DATE in the FUTURE. Click Cancel to change the date / status. Otherwise, click OK to save.{/ts}{literal}' ); 
-               if (!okMessage ) {
-                    return false;
-	       }
-	  } else if ( activity_date_time && activityStatusId == 1 && currentDateTime >= activity_date_time ) {
-	       var ok = confirm( '{/literal}{ts}Are you sure? This is a SCHEDULED activity with the DATE in the PAST. Click Cancel to change the date / status. Otherwise, click OK to save.{/ts}{literal}' ); 
-               if (!ok ) {
-                    return false;
-	       }
-          }
-     }
-</script>
-{/literal}
