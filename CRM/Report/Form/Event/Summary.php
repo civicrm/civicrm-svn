@@ -128,7 +128,7 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
                         $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
                         
                         if ( $relative || $from || $to ) {
-                            $clause = $this->dateClause( $field['name'], $relative, $from, $to );
+                            $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
                         }
                     } else { 
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );

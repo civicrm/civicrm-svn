@@ -843,15 +843,17 @@ class CRM_Report_Form extends CRM_Core_Form {
     }
 
     static function dateClause( $fieldName,
-                                $relative, $from, $to ) {
+                                $relative, $from, $to ,$type = null ) {
         $clauses         = array( );
         list($from, $to) = self::getFromTo($relative, $from, $to);
-
+        
         if ( $from ) {
+            $form = ($type == CRM_Utils_Type::T_DATE)?substr($from,0,8 ):$from;
             $clauses[] = "( {$fieldName} >= $from )";
         }
 
         if ( $to ) {
+            $to   = ($type == CRM_Utils_Type::T_DATE)?substr($to, 0, 8 ):$to;
             $clauses[] = "( {$fieldName} <= {$to} )";
         }
 
@@ -1013,7 +1015,7 @@ class CRM_Report_Form extends CRM_Core_Form {
                         $from     = CRM_Utils_Array::value( "{$fieldName}_from"    , $this->_params );
                         $to       = CRM_Utils_Array::value( "{$fieldName}_to"      , $this->_params );
 
-                        $clause = $this->dateClause( $field['name'], $relative, $from, $to );
+                        $clause = $this->dateClause( $field['name'], $relative, $from, $to, $field['type'] );
                     } else {
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
                         if ( $op ) {
