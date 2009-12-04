@@ -182,6 +182,7 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         } elseif (CRM_Utils_Array::value('makeSinglelingual', $values)) {
             require_once 'CRM/Core/I18n/Schema.php';
             CRM_Core_I18n_Schema::makeSinglelingual($values['lcMessages']);
+            $values['languageLimit'] = '';
         }
 
         // add a new db locale if the requested language is not yet supported by the db
@@ -197,7 +198,7 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         }
 
         // if we manipulated the language list, return to the localization admin screen
-        $return = (bool) (CRM_Utils_Array::value('makeMultilingual', $values) or CRM_Utils_Array::value('addLanguage', $values) or CRM_Utils_Array::value('makeSinglelingual', $values));
+        $return = (bool) (CRM_Utils_Array::value('makeMultilingual', $values) or CRM_Utils_Array::value('addLanguage', $values) );
         
         //cache contact fields retaining localized titles
         //though we changed localization, so reseting cache.
