@@ -209,6 +209,7 @@
         <div class="display-block">
             {$email}
         </div>
+    </div>
     {/if}
 
     {if $contributeMode eq 'direct' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )}
@@ -232,6 +233,7 @@
             {ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}
          {/if}
         </div>
+    </div>
     {/if}
 
     {include file="CRM/Contribute/Form/Contribution/PremiumBlock.tpl" context="thankContribution"}
