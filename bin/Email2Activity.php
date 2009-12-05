@@ -34,7 +34,7 @@
  */
 
 define( 'EMAIL_ACTIVITY_TYPE_ID', 1 );
-define( 'MAIL_DIR_DEFAULT'      , '/Users/lobo/public_html/drupal6/files/civicrm/upload/incoming/');
+define( 'MAIL_DIR_DEFAULT'      , 'PUT YOUR MAIL DIR HERE' );
 
 class bin_Email2Activity {
 
@@ -147,6 +147,11 @@ function run( $supportedArgs, $context ) {
     $mailDir = MAIL_DIR_DEFAULT;
     if ( isset( $_GET['mailDir'] ) ) {
         $mailDir = $_GET['mailDir'];
+    }
+
+    if ( $mailDir == 'PUT YOUR MAIL DIR HERE' ) {
+        require_once 'CRM/Core/Error.php';
+        CRM_Core_Error::fatal( );
     }
 
     if ( array_key_exists( 'context', $_GET ) && 
