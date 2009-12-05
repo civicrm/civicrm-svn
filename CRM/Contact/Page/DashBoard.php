@@ -50,7 +50,7 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page
      */
     function run( )
     {
-        $resetCache = CRM_Utils_Request::retrieve( 'resetCache', 'Positive' );
+        $resetCache = CRM_Utils_Request::retrieve( 'resetCache', 'Positive', CRM_Core_DAO::$_nullObject );
         
         if ( $resetCache ) {
             require_once 'CRM/Core/BAO/Dashboard.php';
