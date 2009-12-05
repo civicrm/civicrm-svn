@@ -130,8 +130,9 @@
     </div>
     {/if}
 
-    {if $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) }
+    {if ( $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) ) or $email }
     <div class="billing_name_address-group">
+        {if $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 ) }
         <div class="header-dark">
             {ts}Billing Name and Address{/ts}
         </div>
@@ -147,6 +148,7 @@
         <div class="display-block">
             {$email}
         </div>
+        {/if}
     </div>
     {/if}
     
