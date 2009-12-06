@@ -234,19 +234,20 @@ class CRM_Group_Form_Edit extends CRM_Core_Form {
         
         $groupNames =& CRM_Core_PseudoConstant::group();
 
-        $parentGroups = array( );
+        $parentGroups = $parentGroupElements = array( );
         if ( isset( $this->_id ) &&
              CRM_Utils_Array::value( 'parents', $this->_groupValues ) ) {
             $parentGroupIds = explode( ',', $this->_groupValues['parents'] );
             foreach ( $parentGroupIds as $parentGroupId ) {
+                $parentGroups[$parentGroupId] = $groupNames[$parentGroupId];
                 if ( array_key_exists($parentGroupId, $groupNames) ) {
-                    $parentGroups[$parentGroupId] = $groupNames[$parentGroupId];
+                    $parentGroupElements[$parentGroupId] = $groupNames[$parentGroupId];
                     $this->addElement( 'checkbox', "remove_parent_group_$parentGroupId",
                                        $groupNames[$parentGroupId] );
                 }
             }
         }
-        $this->assign_by_ref( 'parent_groups', $parentGroups );
+        $this->assign_by_ref( 'parent_groups', $parentGroupElements );
         
         if ( isset( $this->_id ) ) {
             require_once 'CRM/Contact/BAO/GroupNestingCache.php';
