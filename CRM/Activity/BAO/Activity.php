@@ -1059,16 +1059,21 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             $toDisplayName = $toEmail;
         }
         
-        if ( ! CRM_Utils_Mail::send( $from,
-                                     $toDisplayName,
-                                     $toEmail,
-                                     $subject,
-                                     $text_message,
-                                     $cc,
-                                     $bcc,
-                                     null,
-                                     $html_message,
-                                     $attachments ) ) {
+        // create the params array
+        $params                = array( );
+
+        $params['groupName'  ] = 'Activity Email Sender';
+        $params['from'       ] = $from;
+        $params['toName'     ] = $toDisplayName;
+        $params['toEmail'    ] = $toEmail;
+        $params['subject'    ] = $subject;
+        $params['cc'         ] = $cc;
+        $params['bcc'        ] = $bcc;
+        $params['text'       ] = $text_message;
+        $params['html'       ] = $html_message;
+        $params['attachments'] = $attachments;
+
+        if ( ! CRM_Utils_Mail::send( $params ) ) {
             return false;
         }
 

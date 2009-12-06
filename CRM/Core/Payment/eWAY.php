@@ -469,14 +469,19 @@ Regards
 The CiviCRM eWAY Payment Processor Module
 ";
        //$cc       = 'Name@Domain';
-
-       CRM_Utils_Mail::send( $from,
-                             $toName,
-                             $toEmail,
-                             $subject,
-                             $message,
-                             $cc );
        
+       // create the params array
+       $params                = array( );
+
+       $params['groupName'  ] = 'eWay Email Sender';
+       $params['from'       ] = $from;
+       $params['toName'     ] = $toName;
+       $params['toEmail'    ] = $toEmail;
+       $params['subject'    ] = $subject;
+       $params['cc'         ] = $cc;
+       $params['text'       ] = $message;
+
+       CRM_Utils_Mail::send( $params );
    }
 
    

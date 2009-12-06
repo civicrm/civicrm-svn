@@ -36,43 +36,48 @@
 
 class CRM_Utils_Mail
 {
-    static function send( $from,
-                          $toDisplayName,
-                          $toEmail,
-                          $subject,
-                          $text_message = null,
-                          $cc = null,
-                          $bcc = null,
-                          $replyTo = null,
-                          $html_message = null,
-                          $attachments = null ) {
-        
+    static function send( &$params ) {
         require_once 'CRM/Core/BAO/MailSettings.php';
         $returnPath = CRM_Core_BAO_MailSettings::defaultReturnPath();
         
         if ( ! $returnPath ) {
             $returnPath = self::pluckEmailFromHeader($from);
         }
+        $params['returnPath'] = $returnPath;
 
-        $headers = array( );  
-        $headers['From']                      = $from;
-        $headers['To']                        = "$toDisplayName <$toEmail>";
-        $headers['Cc']                        = $cc;
-        $headers['Subject']                   = $subject;
-        $headers['Content-Type']              = $html_message ? 'multipart/mixed; charset=utf-8' : 'text/plain; charset=utf-8';
-        $headers['Content-Disposition']       = 'inline';  
-        $headers['Content-Transfer-Encoding'] = '8bit';  
-        $headers['Return-Path']               = $returnPath;
-        $headers['Reply-To']                  = isset($replyTo) ? $replyTo : $from;
-        $headers['Date']                      = date('r');
+        // first call the mail alter hook
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::alterMailParams( $params );
 
-        $to = array( $toEmail );
-        if ( $cc ) {
-            $to[] = $cc;
+        // check if any module has aborted mail sending
+        if ( $params['abortMailSend'] ||
+             ! CRM_Utils_Array::value( 'toEmail', $params ) ) {
+            return false;;
         }
 
-        if ( $bcc ) {
-            $to[] = $bcc;
+        $textMessage = CRM_Utils_Array::value( 'text'       , $params );
+        $htmlMessage = CRM_Utils_Array::value( 'html'       , $params );
+        $attachments = CRM_Utils_Array::value( 'attachments', $params );
+
+        $headers = array( );  
+        $headers['From']                      = $params['from'];
+        $headers['To']                        = "{$params['toName']} <{$params['toEmail']}>";
+        $headers['Cc']                        = CRM_Utils_Array::value( 'cc', $params );
+        $headers['Subject']                   = CRM_Utils_Array::value( 'subject', $params );
+        $headers['Content-Type']              = $htmlMessage ? 'multipart/mixed; charset=utf-8' : 'text/plain; charset=utf-8';
+        $headers['Content-Disposition']       = 'inline';  
+        $headers['Content-Transfer-Encoding'] = '8bit';  
+        $headers['Return-Path']               = $params['returnPath'];
+        $headers['Reply-To']                  = CRM_Utils_Array::value( 'replyTo', $params, $from );
+        $headers['Date']                      = date('r');
+
+        $to = array( $params['toEmail'] );
+        if ( CRM_Utils_Array::value( 'cc', $params ) ) {
+            $to[] = CRM_Utils_Array::value( 'cc', $params );
+        }
+
+        if ( CRM_Utils_Array::value( 'bcc', $params ) ) {
+            $to[] = CRM_Utils_Array::value( 'bcc', $params );
         }
 
         // we need to wrap Mail_mime because PEAR is apparently unable to fix
@@ -80,8 +85,13 @@ class CRM_Utils_Mail
         // this fixes CRM-4631
         require_once 'CRM/Utils/Mail/FixedMailMIME.php';
         $msg = new CRM_Utils_Mail_FixedMailMIME("\n");
-        if ($text_message) $msg->setTxtBody($text_message);
-        if ($html_message) $msg->setHTMLBody($html_message);
+        if ( $textMessage ) {
+            $msg->setTxtBody($textMessage);
+        }
+
+        if ( $htmlMessage ) {
+            $msg->setHTMLBody($htmlMessage);
+        }
 
         if ( ! empty( $attachments ) ) {
             foreach ( $attachments as $fileID => $attach ) {

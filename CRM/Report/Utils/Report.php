@@ -130,25 +130,19 @@ WHERE  inst.report_id = %1";
                                       $params,
                                       $instanceInfo );
 
-        $from          = '"' . $domainEmailName . '" <' . $domainEmailAddress . '>';
-        $toDisplayName = "";//$domainEmailName;
-        $toEmail       = CRM_Utils_Array::value( 'email_to', $instanceInfo );
-        $ccEmail       = CRM_Utils_Array::value( 'email_cc', $instanceInfo );
-        $subject       = CRM_Utils_Array::value( 'email_subject', $instanceInfo );
-        $attachments   = CRM_Utils_Array::value( 'attachments', $instanceInfo );
+        $params                = array( );
+        $params['groupName'  ] = 'Report Email Sender';
+        $params['from'       ] = '"' . $domainEmailName . '" <' . $domainEmailAddress . '>';
+        $params['toName'     ] = ""; //$domainEmailName;
+        $params['toEmail'    ] = CRM_Utils_Array::value( 'email_to', $instanceInfo );
+        $params['cc'         ] = CRM_Utils_Array::value( 'email_cc', $instanceInfo );
+        $params['subject'    ] = CRM_Utils_Array::value( 'email_subject', $instanceInfo );
+        $params['attachments'] = CRM_Utils_Array::value( 'attachments', $instanceInfo );
+        $params['text'       ] = '';
+        $params['html'       ] = $fileContent;
 
-        require_once 'Mail/mime.php';
         require_once "CRM/Utils/Mail.php";
-        return CRM_Utils_Mail::send( $from, 
-                                     $toDisplayName, 
-                                     $toEmail, 
-                                     $subject, 
-                                     '',
-                                     $ccEmail, 
-                                     null,  
-                                     null, 
-                                     $fileContent, 
-                                     $attachments );
+        return CRM_Utils_Mail::send( $params );
     }
 
     static function export2csv( &$form, &$rows ) {
