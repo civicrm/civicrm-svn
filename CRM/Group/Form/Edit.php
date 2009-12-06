@@ -239,9 +239,11 @@ class CRM_Group_Form_Edit extends CRM_Core_Form {
              CRM_Utils_Array::value( 'parents', $this->_groupValues ) ) {
             $parentGroupIds = explode( ',', $this->_groupValues['parents'] );
             foreach ( $parentGroupIds as $parentGroupId ) {
-                $parentGroups[$parentGroupId] = $groupNames[$parentGroupId];
-                $this->addElement( 'checkbox', "remove_parent_group_$parentGroupId",
-                                   $groupNames[$parentGroupId] );
+                if ( array_key_exists($parentGroupId, $groupNames) ) {
+                    $parentGroups[$parentGroupId] = $groupNames[$parentGroupId];
+                    $this->addElement( 'checkbox', "remove_parent_group_$parentGroupId",
+                                       $groupNames[$parentGroupId] );
+                }
             }
         }
         $this->assign_by_ref( 'parent_groups', $parentGroups );
@@ -265,7 +267,8 @@ class CRM_Group_Form_Edit extends CRM_Core_Form {
         if ( count( $parentGroupSelectValues ) > 1 ) {
             if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {
                 $required = empty($parentGroups) ? true : false;
-                $required = ($this->_id && CRM_Core_BAO_Domain::isDomainGroup($this->_id)) ? false : $required;
+                $required = ( ($this->_id && CRM_Core_BAO_Domain::isDomainGroup($this->_id)) || 
+                              !isset($this->_id) ) ? false : $required;
             } else {
                 $required = false;
             }
@@ -329,7 +332,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form {
             $grpAdd++;
         }
 
-        if ( ($grpRemove - $grpAdd) >=  count($parentGroups) ) {
+        if ( (count($parentGroups) >= 1) && (($grpRemove - $grpAdd) >=  count($parentGroups)) ) {
             $errors['parents'] = ts( 'Make sure at least one parent group is set.' );
         }
         return empty($errors) ? true : $errors;

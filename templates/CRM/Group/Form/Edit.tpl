@@ -41,6 +41,7 @@
 	</tr> 
     </table>
 
+    {if $parent_groups|@count > 0 or $form.parents.html}
     <fieldset>
 	<legend>{ts}Parent Groups{/ts} {help id="id-group-parent" file="CRM/Group/Page/Group.hlp"}</legend>
         {if $parent_groups|@count > 0}
@@ -64,6 +65,8 @@
 	    </tr>
 	</table>
     </fieldset>
+    {/if}
+
     {if $form.organization}
 	<fieldset>
 	    <legend>{ts}Associated Organization{/ts} {help id="id-group-organization" file="CRM/Group/Page/Group.hlp"}</legend>
