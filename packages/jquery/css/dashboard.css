@@ -70,12 +70,12 @@
     display: inline; 
     padding:0px;
 }
+
 #crm-container .widget-icon, #crm-container .full-screen-close-icon img {
     display: block;
     float: right;
     margin-left: 2px;
     margin-top: 5px;
-    /* Although these are <a> links, they don't have href="" attributes. */
     cursor: pointer;
 }
 
@@ -96,7 +96,6 @@
 }
 
 #crm-container .minimize-icon {
-    cursor      : pointer;
     background-position:-62px -191px;
     background-image:url('../themes/smoothness/images/ui-icons_454545_256x240.png');
     height:16px;
@@ -105,7 +104,6 @@
 }
 
 #crm-container .maximize-icon {
-    cursor      : pointer;
     background-position:-46px -191px;
     background-image:url('../themes/smoothness/images/ui-icons_454545_256x240.png');
     height:16px;
@@ -114,7 +112,6 @@
 }
 
 #crm-container .close-icon {
-    cursor      : pointer;
     background-position:-32px -191px;
     background-image:url('../themes/smoothness/images/ui-icons_454545_256x240.png');
     height:16px;
@@ -123,7 +120,6 @@
 }
 
 #crm-container .fullscreen-icon {
-    cursor      : pointer;
     background-position:-176px -191px;
     background-image:url('../themes/smoothness/images/ui-icons_454545_256x240.png');
     height:16px;
