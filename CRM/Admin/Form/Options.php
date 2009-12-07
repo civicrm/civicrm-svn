@@ -183,11 +183,11 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
             ( ($this->_action & CRM_Core_Action::ADD) || ! $isReserved ) ) {
                 require_once 'CRM/Core/Component.php';
                 $caseID = CRM_Core_Component::getComponentID('CiviCase');
-                $components   = array( '' => ts( 'Core' ), $caseID => 'CiviCase' );
+                $components   = array( '' => ts( 'Contact' ), $caseID => 'CiviCase' );
                 $this->add( 'select',
                             'component_id',
                             ts( 'Component' ),
-                            array( '' => ts( 'Core' ) ) + $components, false );
+                            $components, false );
         }
 
         $enabled = $this->add('checkbox', 'is_active', ts('Enabled?'));
