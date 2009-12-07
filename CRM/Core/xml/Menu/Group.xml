@@ -13,7 +13,8 @@
      <path>civicrm/group/search</path>
      <title>Group Members</title>
      <page_callback>CRM_Contact_Controller_Search</page_callback>
-     <access_arguments>view all contacts</access_arguments>
+     <comment>Note: group search already respect ACL, so a strict permission at url level is not required. A simple/basic permission like 'access CiviCRM' could be used. CRM-5417</comment>
+     <access_arguments>access CiviCRM</access_arguments>
      <page_arguments>mode=256</page_arguments>
   </item>
   <item>
