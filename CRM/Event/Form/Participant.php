@@ -1322,7 +1322,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             }
         } else if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view/participant', 
-                                                               "reset=1&action=add&context=participant&cid={$this->_contactID}") );
+                                                               "reset=1&action=add&context={$this->_context}&cid={$this->_contactID}") );
         }
     }
     

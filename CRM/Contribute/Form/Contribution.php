@@ -1184,7 +1184,7 @@ WHERE  contribution_id = {$this->_id}
                                               "reset=1&cid={$this->_contactID}&selectedChild=contribute" ) );
             }
         } else if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
-            $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view/contribution', "reset=1&action=add&context=contribution&cid={$this->_contactID}") );
+            $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view/contribution', "reset=1&action=add&context={$this->_context}&cid={$this->_contactID}") );
         }
     }
     
