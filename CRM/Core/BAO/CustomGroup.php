@@ -1049,7 +1049,6 @@ SELECT $select
                     $groupTree[$groupID]['fields'][$fieldId]['customValue']['data'] = 'NULL';
                 }
 
-                CRM_Core_Error::debug( "XXX: $fieldId", $v );
                 if ( ! isset($groupTree[$groupID]['fields'][$fieldId]['customValue'] ) ) {
                     // field exists in db so populate value from "form".
                     $groupTree[$groupID]['fields'][$fieldId]['customValue'] = array();
