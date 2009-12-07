@@ -1,10 +1,6 @@
-/**
- * @file
- *    Demo implementation of jQuery.dashboard() plugin.
- *
- * Released under the GNU General Public License.  See LICENSE.txt.
- */
-
+{literal}
+<script type="text/javascript">
+    
 // Create closure, so that we don't accidentally spoil the global/window namespace.
 cj(function() {
   // The set of options we can use to initialize jQuery.dashboard().
@@ -28,7 +24,7 @@ cj(function() {
       // booleans; true if the widget is minimized.  False if not.
       // E.g. [{ widgetID: isMinimized, ...}, ...]
       getWidgetsByColumn: {
-        url: '/civicrm/ajax/dashboard',
+        url:  {/literal}'{crmURL p='civicrm/ajax/dashboard' h=0 }'{literal},
         data: {
           op: 'get_widgets_by_column'
         }
@@ -63,7 +59,7 @@ cj(function() {
       //
       // The 'id' property of data is reserved for the widget ID – a string.
       getWidget: {
-        url: '/civicrm/ajax/dashboard',
+        url: {/literal}'{crmURL p='civicrm/ajax/dashboard' h=0 }'{literal},
         data: {
           // id: widgetID,
           op: 'get_widget'
@@ -77,13 +73,29 @@ cj(function() {
       //    An array (keyed by zero-indexed column ID), of arrays (keyed by widget ID)
       //    of ints; 1 if the widget is minimized.  0 if not.
       saveColumns: {
-        url: '/civicrm/ajax/dashboard',
+        url: {/literal}'{crmURL p='civicrm/ajax/dashboard' h=0 }'{literal},
         data: {
           // columns: array(0 => array(widgetId => isMinimized, ...), ...),
           op: 'save_columns'
         }
       },
-
+      
+      // function to retrieve content via url
+      getContent: {
+        url: {/literal}'{crmURL p='civicrm/ajax/dashboard' h=0 }'{literal},
+        data: {
+          op: 'get_content'
+        }
+      },
+      
+      // function to retrieve content via url
+      saveContent: {
+        url: {/literal}'{crmURL p='civicrm/ajax/dashboard' h=0 }'{literal},
+        data: {
+          op: 'save_content'
+        }
+      },
+      
       // jQuery.dashboard() GETs a widget's settings object and POST's a users submitted
       // settings back to the server.  The return, in both cases, is an associative
       // array with the new settings markup and other info:
@@ -103,7 +115,7 @@ cj(function() {
       // The 'settings' property of data is reserved for the user-submitted settings.
       //    An array (keyed by the name="" attributes of <input>s), of <input> values.
       widgetSettings: {
-        url: '/civicrm/ajax/dashboard',
+        url: {/literal}'{crmURL p='civicrm/ajax/dashboard' h=0 }'{literal},
         data: {
           // id: widgetId,
           // settings: array(name => value, ...),
@@ -228,3 +240,6 @@ cj(function() {
     }
   }
 }); // End closure.
+
+</script>
+{/literal}
