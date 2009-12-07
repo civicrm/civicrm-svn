@@ -96,10 +96,10 @@
                             </tr>
                             
                             {if $element.help_post}
-				<tr>
-				    <td>&nbsp;</td>
-				    <td class="description">{$element.help_post}<br />&nbsp;</td>
-				</tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td class="description">{$element.help_post}<br />&nbsp;</td>
+                            </tr>
 				
                             {/if}
                         {/if}
