@@ -1309,7 +1309,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         require_once "CRM/Core/OptionGroup.php";
         require_once 'CRM/Core/BAO/UFField.php';
         require_once 'CRM/Contact/BAO/ContactType.php';
-        
+
+        $defaultValues = array( );
         $fieldName  = $field['name'];
         $title      = $field['title'];
         $attributes = $field['attributes'];
@@ -1339,6 +1340,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         } else if ( substr($fieldName,0,7) === 'country' ) {
             $form->add('select', $name, $title, 
                        array('' => ts('- select -')) + CRM_Core_PseudoConstant::country(), $required);
+            $config =& CRM_Core_Config::singleton( );                       
+            if ( $config->defaultContactCountry ) {
+                $defaultValues[$name] = $config->defaultContactCountry;
+                $form->setDefaults( $defaultValues ); 
+            }
         } else if ( substr($fieldName,0,6) === 'county' ) {
             if ( $addressOptions['county'] ) {
                 $form->add('select', $name, $title, 

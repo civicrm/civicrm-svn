@@ -64,7 +64,7 @@
                 <td>{$activeMember.status}</td>
                 <td>{$activeMember.source}</td>
                 <td>
-                    {$activeMember.action|replace:xx:$activeMember.id}
+                    {$activeMember.action|replace:'xx':$activeMember.id}
                     {if $activeMember.owner_membership_id}
                         &nbsp;|&nbsp;<a href="{crmURL p='civicrm/membership/view' q="reset=1&id=`$activeMember.owner_membership_id`&action=view&context=membership&selectedChild=member"}" title="{ts}View Primary member record{/ts}">{ts}View Primary{/ts}</a>
                     {/if}
@@ -99,7 +99,7 @@
                 <td>{$inActiveMember.end_date|crmDate}</td>
                 <td>{$inActiveMember.status}</td>
                 <td>{$inActiveMember.source}</td>
-                <td>{$inActiveMember.action|replace:xx:$inActiveMember.id}</td>
+                <td>{$inActiveMember.action|replace:'xx':$inActiveMember.id}</td>
             </tr>
             {/foreach}
         </table>

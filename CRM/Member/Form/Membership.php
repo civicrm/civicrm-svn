@@ -330,6 +330,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         $selOrgMemType[0][0] = $selMemTypeOrg[0] = ts('- select -');
         
         $dao =& new CRM_Member_DAO_MembershipType();
+        $dao->domain_id = CRM_Core_Config::domainID( );
         $dao->find();
         while ($dao->fetch()) {
             if ($dao->is_active) {
