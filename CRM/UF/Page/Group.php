@@ -216,7 +216,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
         $profile  =  trim( $template->fetch( 'CRM/Form/default.tpl' ) ); 
         // not sure how to circumvent our own navigation system to generate the right form url
         $profile = str_replace( 'civicrm/admin/uf/group', 'civicrm/profile/create&amp;gid='.$gid.'&amp;reset=1', $profile );
-
+        $profile = str_replace( '&nbsp;', ' ', $profile );
         // FIXME: (CRM-3587) hack to make standalone profile in joomla work
         // without administrator login 
         if ( $config->userFramework == 'Joomla' ) {
