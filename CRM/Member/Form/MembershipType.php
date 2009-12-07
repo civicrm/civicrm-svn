@@ -382,6 +382,12 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
             
             $membershipType = CRM_Member_BAO_MembershipType::add($params, $ids);
             CRM_Core_Session::setStatus( ts('The membership type \'%1\' has been saved.', array( 1 => $membershipType->name )) );
+            $buttonName = $this->controller->getButtonName( );
+            $session =& CRM_Core_Session::singleton( );
+            if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
+                CRM_Core_Session::setStatus( ts(' You can add another membership type.') );
+                $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/admin/member/membershipType', 'action=add&reset=1' ) );
+            }
         } 
     }
 
