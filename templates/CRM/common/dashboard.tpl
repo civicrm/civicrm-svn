@@ -80,22 +80,6 @@ cj(function() {
         }
       },
       
-      // function to retrieve content via url
-      getContent: {
-        url: {/literal}'{crmURL p='civicrm/ajax/dashboard' h=0 }'{literal},
-        data: {
-          op: 'get_content'
-        }
-      },
-      
-      // function to retrieve content via url
-      saveContent: {
-        url: {/literal}'{crmURL p='civicrm/ajax/dashboard' h=0 }'{literal},
-        data: {
-          op: 'save_content'
-        }
-      },
-      
       // jQuery.dashboard() GETs a widget's settings object and POST's a users submitted
       // settings back to the server.  The return, in both cases, is an associative
       // array with the new settings markup and other info:

@@ -101,6 +101,7 @@
     background-image:url('../themes/smoothness/images/ui-icons_454545_256x240.png');
     height:16px;
     width:16px;
+    padding-right:2px;
 }
 
 #crm-container .maximize-icon {
@@ -109,6 +110,7 @@
     background-image:url('../themes/smoothness/images/ui-icons_454545_256x240.png');
     height:16px;
     width:16px;
+    padding-right:2px;
 }
 
 #crm-container .close-icon {
@@ -118,6 +120,14 @@
     height:16px;
     width:16px;
     padding-right:2px;
+}
+
+#crm-container .fullscreen-icon {
+    cursor      : pointer;
+    background-position:-176px -191px;
+    background-image:url('../themes/smoothness/images/ui-icons_454545_256x240.png');
+    height:16px;
+    width:16px;
 }
 
 /* CSS for Dashlets */

@@ -578,7 +578,7 @@
   $.fn.dashboard.defaults = {
     columns: 2,
     emptyPlaceholderInner: 'There are no widgets in this column of your dashboard.',
-    fullscreenHeaderInner: '<img alt="Close this widget" src="images/dashboard/close.gif" /> Return to Dashboard',
+    fullscreenHeaderInner: 'Return to Dashboard',
     throbberMarkup: '<div class="throbber"><img alt="Loading, please wait" src="images/dashboard/throbber.gif" /><p>Loading...</p></div>',
     animationSpeed: 200,
     callbacks: {},
@@ -590,7 +590,7 @@
     defaults: {
       minimized: false,
       settings: false,
-      fullscreen: false
+      fullscreen: true
     }
   };
 })(jQuery); // end of closure
