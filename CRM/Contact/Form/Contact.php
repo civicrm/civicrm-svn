@@ -341,10 +341,27 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $config =& CRM_Core_Config::singleton( );
         foreach ( $allBlocks as $blockName => $label ) {
             $name = strtolower( $blockName );
-            if ( array_key_exists( $name, $defaults ) && !CRM_Utils_System::isNull( $defaults[$name] ) ) continue;
-            for( $instance = 1; $instance<= $this->get( $blockName ."_Block_Count" ); $instance++ ) {
+            $hasPrimary = $updateMode = false;
+            
+            // user is in update mode. 
+            if ( array_key_exists( $name, $defaults ) && 
+                 !CRM_Utils_System::isNull( $defaults[$name] ) ) {
+                $updateMode = true;
+            }
+            
+            for ( $instance = 1; $instance <= $this->get( $blockName ."_Block_Count" ); $instance++ ) {
+                
+                // make we require one primary block, CRM-5505
+                if ( $updateMode ) {
+                    if ( !$hasPrimary ) {
+                        $hasPrimary = CRM_Utils_Array::value( 'is_primary', $defaults[$name][$instance] );
+                    }
+                    continue;
+                }
+                
                 //set location to primary for first one.
                 if ( $instance == 1 ) {
+                    $hasPrimary = true;
                     $defaults[$name][$instance]['is_primary']       = true;
                     $defaults[$name][$instance]['location_type_id'] = $locationType->id;
                 } else {
@@ -366,6 +383,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 if ( $name == 'im' && $defIMProviderId ) {
                     $defaults[$name][$instance]['provider_id'] = $defIMProviderId;
                 }
+            }
+            
+            if ( !$hasPrimary ) {
+                $defaults[$name][1]['is_primary'] = true;
             }
         }
         
