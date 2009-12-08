@@ -413,11 +413,13 @@
 
       // Removes the widget from the dashboard, and saves columns.
       widget.remove = function() {
-        invokeCallback(opts.widgetCallbacks.remove, widget);
-        widget.element.fadeOut(opts.animationSpeed, function() {
-          $(this).remove();
-          dashboard.saveColumns();
-        });
+          if ( confirm( 'Are you sure you want to remove "' + widget.title + '"?') ) {  
+              invokeCallback(opts.widgetCallbacks.remove, widget);
+              widget.element.fadeOut(opts.animationSpeed, function() {
+                  $(this).remove();
+                  dashboard.saveColumns();
+              });
+          }
       };
       // End public methods of widget.
 
