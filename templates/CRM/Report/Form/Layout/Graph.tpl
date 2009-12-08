@@ -29,10 +29,7 @@
   });
 
   function buildChart( ) {
-      {/literal}
-      {assign var="chartData" value="openFlashChartData_"|cat:$uniqueId}
-      var chartData = "{$chartData};
-      {literal}
+     var chartData = {/literal}{$openFlashChartData}{literal};
      cj.each( chartData, function( chartID, chartValues ) {
 	     var xSize   = eval( "chartValues.size.xSize" );
 	     var ySize   = eval( "chartValues.size.ySize" );
@@ -43,11 +40,8 @@
   }
   
   function loadData( chartID ) {
-      {/literal}
-      {assign var='chatData' value='openFlashChartData_'|cat:$uniqueId}
-      var chartData = "{$chatData}";
-      {literal}
-      var data    = eval( "chartData." + chartID + ".object" );
+      var allData = {/literal}{$openFlashChartData}{literal};
+      var data    = eval( "allData." + chartID + ".object" );
       return JSON.stringify( data );
   }
 </script>

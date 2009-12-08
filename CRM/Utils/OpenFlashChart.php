@@ -333,7 +333,7 @@ class CRM_Utils_OpenFlashChart
                 // assign chart data to template
                 $template = CRM_Core_Smarty::singleton( );
                 $template->assign( 'uniqueId', $uniqueId );
-                $template->assign( "openFlashChartData_{$uniqueId}", json_encode( $openFlashChart ) );
+                $template->assign( "openFlashChartData", json_encode( $openFlashChart ) );
                 $template->assign( "hasOpenFlashChart", empty( $openFlashChart ) ? false : true );
             }
         }
