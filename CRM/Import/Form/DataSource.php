@@ -67,7 +67,23 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         if ( $daoTestPrivilege->_lastError ) {
             CRM_Core_Error::fatal( ts('Database Configuration Error: Insufficient permissions. Import requires that the CiviCRM database user has permission to create temporary tables. Contact your site administrator for assistance.') );
         }
+        
+        $results = array();
+        $config  =& CRM_Core_Config::singleton( );
+        $handler = opendir($config->uploadDir);
+        $errorFiles = array( 'sqlImport.errors', 'sqlImport.conflicts', 'sqlImport.duplicates', 'sqlImport.mismatch' );
 
+        while ($file = readdir($handler)) {
+            if ( $file != '.' && $file != '..' &&
+                 in_array( $file, $errorFiles) && !is_writable( $config->uploadDir . $file ) ) {
+                $results[] = $file;
+            }
+        }
+        closedir($handler);
+        if (!empty($results ) ) {            
+            CRM_Core_Error::fatal (ts('<b>%1</b> file(s) in %2 directory are not writable. Listed file(s) might be used during the import to log the errors occurred during Import process. Contact your site administrator for assistance.', array( 1 => implode(', ', $results), 2 => $config->uploadDir ) ) );
+        }
+        
         $this->_dataSourceIsValid = false;
         $this->_dataSource = CRM_Utils_Request::retrieve( 'dataSource', 'String',
                                                           CRM_Core_DAO::$_nullObject );

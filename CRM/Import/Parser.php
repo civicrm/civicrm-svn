@@ -844,6 +844,9 @@ abstract class CRM_Import_Parser {
      */
     static function exportCSV($fileName, $header, $data) {
         
+        if ( file_exists($fileName) && !is_writable( $fileName ) ) {
+            CRM_Core_Error::movedSiteError($fileName);
+        }
         //hack to remove '_status', '_statusMsg' and '_id' from error file
         $errorValues    = array( );
         $dbRecordStatus = array( 'IMPORTED', 'ERROR', 'DUPLICATE', 'INVALID', 'NEW' );
