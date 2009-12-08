@@ -219,11 +219,16 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
       static function addDashlet( &$params ) {
           require_once "CRM/Core/DAO/Dashboard.php";
           $dashlet  = new CRM_Core_DAO_Dashboard( );
+          
+          // check url is same as exiting entries, if yes just update existing
+          $dashlet->url = CRM_Utils_Array::value( 'url', $params );
+          $dashlet->find( true );
+          
           $dashlet->copyValues( $params );
 
           $dashlet->created_date = date( "YmdHis" );
           $dashlet->domain_id = CRM_Core_Config::domainID( );
-          $dashlet->find( true );
+          
           $dashlet->save( );
           
           // now we need to make dashlet entries for each contact

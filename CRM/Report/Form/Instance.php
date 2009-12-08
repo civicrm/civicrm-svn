@@ -194,18 +194,7 @@ class CRM_Report_Form_Instance {
         // add to dashboard
         $dashletParams = array( );
         if ( CRM_Utils_Array::value( 'addToDashboard', $params ) ) {
-            $section = 2;
-            $chart = '';
-            if ( CRM_Utils_Array::value( 'charts', $params ) ) {
-                $section = 1;
-                $chart = "&charts=". $params['charts'];
-            }
-            
-            $id = $form->getVar( '_id' );
-            $url = "civicrm/report/instance/{$id}&force=1&section={$section}&snippet=4{$chart}";
-
             $dashletParams = array( 'label'     =>  $params['title'],
-                                    'url'       =>  $url,
                                     'is_active' => 1 );
 
             unset( $params['addToDashboard'] );
@@ -257,6 +246,15 @@ class CRM_Report_Form_Instance {
             
             // add to dashlet
             if ( !empty( $dashletParams ) ) {
+                $section = 2;
+                $chart = '';
+                if ( CRM_Utils_Array::value( 'charts', $params ) ) {
+                    $section = 1;
+                    $chart = "&charts=". $params['charts'];
+                }
+
+                $dashletParams['url'] = "civicrm/report/instance/{$dao->id}&force=1&section={$section}&snippet=4{$chart}";
+                
                 require_once 'CRM/Core/BAO/Dashboard.php';
                 CRM_Core_BAO_Dashboard::addDashlet(  $dashletParams );
             }
