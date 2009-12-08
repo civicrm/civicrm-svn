@@ -23,12 +23,15 @@
       }).result( function(event, data, formatted) { 
           cj("input[name=contact_select_id]").val(data[1]);
       }).focus( );
+
+      cj("#contact").click( function( ) {
+          cj("input[name=contact_select_id]").val('');
+      });
                                   
-      cj("#contact").bind("click keypress keyup", function(e) {
+      cj("#contact").bind("keypress keyup", function(e) {
           if ( e.keyCode == 13 ) {
               return false;
           }
-          cj("input[name=contact_select_id]").val('');
       });
   });
 
