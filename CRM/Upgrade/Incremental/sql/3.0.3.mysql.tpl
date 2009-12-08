@@ -60,3 +60,4 @@ UPDATE civicrm_mailing_bounce_pattern
    SET pattern = 'delivery to the following recipient(s)? failed'
  WHERE pattern = 'delivery to the following recipients failed';
 
+UPDATE civicrm_navigation SET permission ='access CiviCRM', permission_operator ='' WHERE civicrm_navigation.name= 'Manage Groups';
