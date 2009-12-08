@@ -497,7 +497,7 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
         $params = array( 'id'=> $contactTypeId  );
         self::retrieve( $params, $typeInfo );
         $name   = $typeInfo['name'];
-
+        $label  = $typeInfo['label'];
         // check if any custom group
         $custom = & new CRM_Core_DAO_CustomGroup ( );
         $custom->whereAdd("extends_entity_column_value LIKE '%" . 
@@ -520,12 +520,12 @@ WHERE contact_sub_type = '$name'";
         $contactType->delete( );
 
         // remove navigation entry if any
-        if( $name ) {
+        if( $label ) {
             $sql = "
 DELETE
 FROM civicrm_navigation 
 WHERE name = %1";
-            $params = array( 1 => array( "New $name" , 'String' ) );
+            $params = array( 1 => array( "New $label" , 'String' ) );
             $dao = CRM_Core_DAO::executeQuery( $sql , $params );
             CRM_Core_BAO_Navigation::resetNavigation( );
         }
@@ -559,7 +559,7 @@ WHERE name = %1";
             CRM_Core_BAO_Navigation::retrieve( $value ,$navinfo );
             $navigation = array(
                                 'label'   => "New $contact",
-                                'url'     => "civicrm/contact/add&ct=$name&cst=$contact&reset=1",
+                                'url'     => "civicrm/contact/add&ct=$name&cst=$contactName&reset=1",
                                 'permission' => "add contacts",
                                 'parent_id'  => $navinfo['id'],
                                 'is_active'  => $active
@@ -581,7 +581,7 @@ WHERE name = %1";
     static function setIsActive( $id, $is_active ) {
         $params = array( 'id'=> $id );
         self::retrieve( $params , $contactinfo );
-        $params    = array ( 'name'=> "New $contactinfo[name]" );
+        $params    = array ( 'name'=> "New $contactinfo[label]" );
         $newParams = array('is_active'=> $is_active );
         CRM_Core_BAO_Navigation::processUpdate( $params ,$newParams );
         CRM_Core_BAO_Navigation::resetNavigation( );
