@@ -323,12 +323,12 @@ class CRM_Utils_OpenFlashChart
                     //hack to show tooltip.
                     if ( $xSize < 170 ) $xSize = 170;
                 }
-                
-                $openFlashChart['chart']['size']    = array( 'xSize' =>  $xSize, 'ySize' => $ySize );
-                $openFlashChart['chart']['object']  = $chartObj;
-                
+
                 // generate unique id for this chart instance
                 $uniqueId = md5( uniqid( rand( ), true ) );
+                
+                $openFlashChart["chart_{$uniqueId}"]['size']    = array( 'xSize' =>  $xSize, 'ySize' => $ySize );
+                $openFlashChart["chart_{$uniqueId}"]['object']  = $chartObj;
 
                 // assign chart data to template
                 $template = CRM_Core_Smarty::singleton( );

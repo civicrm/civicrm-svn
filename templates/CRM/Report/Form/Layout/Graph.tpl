@@ -35,15 +35,16 @@
 	     var ySize   = eval( "chartValues.size.ySize" );
 	     var divName = {/literal}"open_flash_chart_{$uniqueId}"{literal};
 
-	     createSWFObject( chartID, divName, xSize, ySize );  
+         var loadDataFunction  = {/literal}"loadData{$uniqueId}"{literal};
+	     createSWFObject( chartID, divName, xSize, ySize, loadDataFunction );  
      });
   }
   
-  function loadData( chartID ) {
+  function loadData{/literal}{$uniqueId}{literal}( chartID ) {
       var allData = {/literal}{$openFlashChartData}{literal};
       var data    = eval( "allData." + chartID + ".object" );
       return JSON.stringify( data );
-  }
+  }  
 </script>
 {/literal}
 {/if}
