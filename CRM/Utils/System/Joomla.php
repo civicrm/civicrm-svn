@@ -117,8 +117,36 @@ class CRM_Utils_System_Joomla {
      * @access public
      * @static
      */
-    static function addHTMLHead( $head ) {
-        return;
+    static function addHTMLHead( $string = null, $includeAll = false ) {
+        $document =& JFactory::getDocument( );
+
+        if ( $string ) {
+            $document->addCustomTag( $string );
+        }
+
+        if ( $includeAll ) {
+            require_once 'CRM/Core/Config.php';
+            $config =& CRM_Core_Config::singleton();
+
+            if ( ! $config->userFrameworkFrontend ) {
+                $document->addStyleSheet( "{$config->resourceBase}css/joomla.css" );
+            } else {
+                $document->addStyleSheet( "{$config->resourceBase}css/joomla_frontend.css" );
+            }
+            if ( isset( $config->customCSSURL ) && ! empty( $config->customCSSURL ) ) {
+                $document->addStyleSheet( $config->customCSSURL );
+            }
+
+            $document->addStyleSheet( "{$config->resourceBase}css/deprecate.css" );
+            $document->addStyleSheet( "{$config->resourceBase}css/civicrm.css" );
+            $document->addStyleSheet( "{$config->resourceBase}css/extras.css" );
+
+            $document->addScript( "{$config->resourceBase}js/Common.js" );
+    
+            $template =& CRM_Core_Smarty::singleton( );
+            $document->addCustomTag( $template->fetch( 'CRM/common/jquery.tpl' ) );
+            $document->addCustomTag( $template->fetch( 'CRM/common/action.tpl' ) );
+        }
     }
 
     /**
@@ -305,6 +333,7 @@ class CRM_Utils_System_Joomla {
         }
         return null;
     }
+
 }
 
 

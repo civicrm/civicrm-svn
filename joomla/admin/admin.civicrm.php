@@ -36,6 +36,10 @@ function civicrm_invoke( ) {
     civicrm_init( );
 
     plugin_init( );
+
+    require_once 'CRM/Utils/System/Joomla.php';
+    CRM_Utils_System_Joomla::addHTMLHead( null, true );
+
     $user = JFactory::getUser( );
     require_once 'CRM/Core/BAO/UFMatch.php';
     CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Joomla', 'Individual' );

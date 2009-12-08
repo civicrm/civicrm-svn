@@ -6,39 +6,9 @@
     
 {* Only include joomla.css in administrator (backend). Page layout style ids and classes conflict with typical front-end css and break the page layout. *}
 
-{if ! $config->userFrameworkFrontend}
-    <link rel="stylesheet" href="{$config->resourceBase}css/joomla.css" type="text/css" />
-{else}
-    <link rel="stylesheet" href="{$config->resourceBase}css/joomla_frontend.css" type="text/css" />
-{/if}
-{if $config->customCSSURL}
-    <link rel="stylesheet" href="{$config->customCSSURL}" type="text/css" />
-{else}
-    {assign var="revamp" value=0}
-    {foreach from=$config->revampPages item=page}
-        {if $page eq $tplFile}
-            {assign var="revamp" value=1}
-        {/if}
-    {/foreach}
-
-    {if $revamp eq 0}
-        <link rel="stylesheet" href="{$config->resourceBase}css/deprecate.css" type="text/css" />
-        <link rel="stylesheet" href="{$config->resourceBase}css/civicrm.css" type="text/css" />
-    {else}
-        <link rel="stylesheet" href="{$config->resourceBase}css/deprecate.css" type="text/css" />
-        <link rel="stylesheet" href="{$config->resourceBase}css/civicrm-new.css" type="text/css" />
-
-    {/if}
-    <link rel="stylesheet" href="{$config->resourceBase}css/extras.css" type="text/css" />
-{/if}
-
-{include file="CRM/common/jquery.tpl"}
-{include file="CRM/common/action.tpl"}
-
 {if $buildNavigation }
     {include file="CRM/common/Navigation.tpl" }
 {/if}
-<script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
 
 <table border="0" cellpadding="0" cellspacing="0" id="crm-content">
   <tr>
