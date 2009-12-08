@@ -63,8 +63,9 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                                        'required'   => true,
                                        ), ),
                          'filters'    =>
-                         array( 'sort_name'    =>
+                         array( 'sort_name_a'    =>
                                 array( 'title'     => ts('Contact A'),
+                                       'name'      => 'sort_name',
                                        'operator'  => 'like',
                                        'type'      => CRM_Report_Form::OP_STRING ), ),
                          'grouping'   => 'conact_a_fields',
@@ -84,8 +85,9 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                                         'required'   => true,
                                        ), ),
                          'filters'    =>
-                         array( 'sort_name'=>
+                         array( 'sort_name_b'=>
                                 array( 'title'     => ts('Contact B'),
+                                       'name'      => 'sort_name',
                                        'operator'  => 'like',
                                        'type'      => CRM_Report_Form::OP_STRING ), ),
                          'grouping'   => 'conact_b_fields',
