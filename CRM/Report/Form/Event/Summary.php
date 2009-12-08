@@ -324,7 +324,8 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
                     foreach ( $graphRows[$this->_interval] as $key => $val ) {
                         $graph[$val] = $graphRows['value'][$key];
                     }
-                    $chartInfo['values'] = $graph;
+                    $chartInfo['values']      = $graph;
+                    $chartInfo['xLabelAngle'] = 20;
                     
                     // build the chart.
                     require_once 'CRM/Utils/OpenFlashChart.php';

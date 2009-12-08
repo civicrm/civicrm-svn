@@ -113,6 +113,11 @@ class CRM_Utils_OpenFlashChart
         // create x axis label obj.
         $xLabels = new x_axis_labels( );
         $xLabels->set_labels( $xValues );
+
+        // set angle for labels.
+        if ( $xLabelAngle = CRM_Utils_Array::value( 'xLabelAngle', $params ) ) {
+            $xLabels->rotate( $xLabelAngle );
+        }
         
         // create x axis obj.
         $xAxis = new x_axis( );
@@ -266,6 +271,9 @@ class CRM_Utils_OpenFlashChart
             
         }
         
+        // rotate the x labels.
+        $chartData['xLabelAngle'] = CRM_Utils_Array::value( 'xLabelAngle', $rows, 20 );
+        
         // carry some chart params if pass.
         foreach ( array( 'xSize', 'ySize', 'divName' ) as $f ) {
             if ( CRM_Utils_Array::value( $f, $rows ) ) {
@@ -287,6 +295,9 @@ class CRM_Utils_OpenFlashChart
                             'xname'  => $chartInfo['xname'],
                             'yname'  => $chartInfo['yname']
                             );
+        
+        // rotate the x labels.
+        $chartData['xLabelAngle'] = CRM_Utils_Array::value( 'xLabelAngle',$chartInfo, 20 );
         
         // carry some chart params if pass.
         foreach ( array( 'xSize', 'ySize', 'divName' ) as $f ) {
