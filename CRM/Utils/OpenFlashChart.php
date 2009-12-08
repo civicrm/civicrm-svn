@@ -312,9 +312,11 @@ class CRM_Utils_OpenFlashChart
                 $ySize = CRM_Utils_Array::value( 'ySize', $params, 300 );
                 if ( $chart == 'barChart' ) {
                     $ySize = CRM_Utils_Array::value( 'ySize', $params, 250 );
-                    $xSize = 55*count( $params['values'] );
+                    $xSize = 60*count( $params['values'] );
                     //hack to show tooltip.
-                    if ( $xSize < 170 ) $xSize = 170;
+                    if ( $xSize < 200 ) {
+                        $xSize = (count( $params['values'] ) > 1) ? 100*count( $params['values'] ) : 170;
+                    }
                 }
 
                 // generate unique id for this chart instance
@@ -322,12 +324,12 @@ class CRM_Utils_OpenFlashChart
                 
                 $openFlashChart["chart_{$uniqueId}"]['size']    = array( 'xSize' =>  $xSize, 'ySize' => $ySize );
                 $openFlashChart["chart_{$uniqueId}"]['object']  = $chartObj;
-
+                
                 // assign chart data to template
                 $template = CRM_Core_Smarty::singleton( );
                 $template->assign( 'uniqueId', $uniqueId );
                 $template->assign( "openFlashChartData", json_encode( $openFlashChart ) );
-                $template->assign( "hasOpenFlashChart", empty( $openFlashChart ) ? false : true );
+                $template->assign( "hasOpenFlashChart",  true );
             }
         }
         
