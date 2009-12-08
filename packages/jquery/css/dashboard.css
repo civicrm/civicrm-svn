@@ -90,9 +90,14 @@
 
 /* Make the throbber in-yer-face. */
 #crm-container .throbber {
-    padding: 50px;
-    text-align: center;
-    background: #eee;
+    text-align: right;    
+    background:url("images/throbber.gif") no-repeat scroll 0 0 transparent;
+    height:40px;
+    width:39px;
+}
+
+#crm-container p.loadtext {
+    margin:1.6em 0 0 4em;
 }
 
 #crm-container .minimize-icon {

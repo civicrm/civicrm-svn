@@ -376,7 +376,7 @@
         if (!widget.fullscreen.element) {
           // Initialize the full screen element for this widget.
           var markup = '<div id="widget-' + widget.id + '-full-screen">' + widget.fullscreen + '</div>';
-
+          
           // Overwrite the widget.fullscreen string.
           widget.fullscreen = {
             initialMarkup: widget.fullscreen,
@@ -579,7 +579,7 @@
     columns: 2,
     emptyPlaceholderInner: 'There are no widgets in this column of your dashboard.',
     fullscreenHeaderInner: 'Return to Dashboard',
-    throbberMarkup: '<div class="throbber"><img alt="Loading, please wait" src="images/dashboard/throbber.gif" /><p>Loading...</p></div>',
+    throbberMarkup: '<div class="throbber"><p class="loadtext">Loading...</p></div>',
     animationSpeed: 200,
     callbacks: {},
     widgetCallbacks: {}
