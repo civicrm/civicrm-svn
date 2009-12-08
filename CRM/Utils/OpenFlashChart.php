@@ -72,7 +72,7 @@ class CRM_Utils_OpenFlashChart
         // get the required data.
         $xValues = $yValues = array( );
         foreach ( $values as $xVal => $yVal ) {
-            $yValues[] = (int)$yVal;
+            $yValues[] = (double)$yVal;
             
             // we has to have x values as string.
             $xValues[] = (string)$xVal;
@@ -148,14 +148,14 @@ class CRM_Utils_OpenFlashChart
         // add x axis legend.
         if ( $xName = CRM_Utils_Array::value('xname', $params ) ) {
             $xLegend = new x_legend( $xName );
-            $xLegend->set_style( '{font-size: 15px; color: #778877}' );
+            $xLegend->set_style( "{font-size: 13px; color:#000000; font-family: Verdana; text-align: center;}" );
             $chart->set_x_legend( $xLegend );
         }
         
         // add y axis legend.
         if ( $yName = CRM_Utils_Array::value( 'yname', $params ) ) {
             $yLegend = new y_legend( $yName );
-            $yLegend->set_style( '{font-size: 15px; color: #778877}' );
+            $yLegend->set_style( "{font-size: 13px; color:#000000; font-family: Verdana; text-align: center;}" );
             $chart->set_y_legend( $yLegend );
         }
         
