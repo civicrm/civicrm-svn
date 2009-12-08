@@ -1,3 +1,6 @@
+-- CRM-3507: upgrade message templates (if changed)
+{include file='../CRM/Upgrade/3.1.beta2.msg_template/civicrm_msg_template.tpl'}
+
 -- CRM-5496
     SELECT @option_group_id_report         := max(id) from civicrm_option_group where name = 'report_template';
     SELECT @caseCompId       := max(id) FROM civicrm_component where name = 'CiviCase';
