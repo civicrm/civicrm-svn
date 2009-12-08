@@ -3,7 +3,7 @@
 <table class="chart">
         <tr>
             <td>
-                <div id="open_flash_chart"></div>
+                <div id="open_flash_chart_{$uniqueId}"></div>
             </td>
         </tr>
 </table>
@@ -29,20 +29,26 @@
   });
 
   function buildChart( ) {
-     var chartData = {/literal}{$openFlashChartData}{literal};	
+      {/literal}
+      {assign var="chartData" value="openFlashChartData_"|cat:$uniqueId}
+      var chartData = "{$chartData};
+      {literal}
      cj.each( chartData, function( chartID, chartValues ) {
-	 var xSize   = eval( "chartValues.size.xSize" );
-	 var ySize   = eval( "chartValues.size.ySize" );
-	 var divName = eval( "chartValues.divName" );
+	     var xSize   = eval( "chartValues.size.xSize" );
+	     var ySize   = eval( "chartValues.size.ySize" );
+	     var divName = {/literal}"open_flash_chart_{$uniqueId}"{literal};
 
-	 createSWFObject( chartID, divName, xSize, ySize );  
+	     createSWFObject( chartID, divName, xSize, ySize );  
      });
   }
   
   function loadData( chartID ) {
-     var allData = {/literal}{$openFlashChartData}{literal};
-     var data    = eval( "allData." + chartID + ".object" );
-     return JSON.stringify( data );
+      {/literal}
+      {assign var='chatData' value='openFlashChartData_'|cat:$uniqueId}
+      var chartData = "{$chatData}";
+      {literal}
+      var data    = eval( "chartData." + chartID + ".object" );
+      return JSON.stringify( data );
   }
 </script>
 {/literal}

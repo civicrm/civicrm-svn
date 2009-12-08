@@ -303,8 +303,16 @@ class CRM_Utils_OpenFlashChart
                 }
                 
                 $openFlashChart['chart']['size']    = array( 'xSize' =>  $xSize, 'ySize' => $ySize );
-                $openFlashChart['chart']['divName'] = CRM_Utils_Array::value( 'divName', $params, 'open_flash_chart' );
                 $openFlashChart['chart']['object']  = $chartObj;
+                
+                // generate unique id for this chart instance
+                $uniqueId = md5( uniqid( rand( ), true ) );
+
+                // assign chart data to template
+                $template = CRM_Core_Smarty::singleton( );
+                $template->assign( 'uniqueId', $uniqueId );
+                $template->assign( "openFlashChartData_{$uniqueId}", json_encode( $openFlashChart ) );
+                $template->assign( "hasOpenFlashChart", empty( $openFlashChart ) ? false : true );
             }
         }
         

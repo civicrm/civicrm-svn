@@ -490,11 +490,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
                 
                 // build the chart.
                 require_once 'CRM/Utils/OpenFlashChart.php';
-                $openFlashChart = CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
-                
-                // assign chart data to template.
-                $this->assign( 'openFlashChartData', json_encode( $openFlashChart ) );
-                $this->assign( 'hasOpenFlashChart', empty( $openFlashChart ) ? false : true );
+                CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
             }
         }
     }
