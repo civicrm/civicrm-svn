@@ -93,7 +93,15 @@ class CRM_Utils_OpenFlashChart
         // glass seem to be more cool 
         $bar = new bar_glass();
         
-        $bar->set_values( $yValues );
+        // set colours.
+        foreach ( $yValues as $index => $val ) {
+            $valueObjects[$index] = new bar_value( $val );
+            $valueObjects[$index]->set_colour( CRM_Utils_Array::value( $index, self::$_colours,  self::$_colours[0] ) ); 
+        }
+        
+        //set values.
+        $bar->set_values( $valueObjects );
+        //$bar->set_values( $yValues );
         
         // call user define function to handle on click event.
         if ( $onClickFunName = CRM_Utils_Array::value( 'on_click_fun_name', $params ) ) {
@@ -138,6 +146,20 @@ class CRM_Utils_OpenFlashChart
         
         // add bar element to chart.
         $chart->add_element( $bar );
+
+        // add x axis legend.
+        if ( $xName = CRM_Utils_Array::value('xname', $params ) ) {
+            $xLegend = new x_legend( $xName );
+            $xLegend->set_style( '{font-size: 20px; color: #778877}' );
+            $chart->set_x_legend( $xLegend );
+        }
+        
+        // add y axis legend.
+        if ( $yName = CRM_Utils_Array::value( 'yname', $params ) ) {
+            $yLegend = new y_legend( $yName );
+            $yLegend->set_style( '{font-size: 20px; color: #778877}' );
+            $chart->set_y_legend( $yLegend );
+        }
         
         return $chart;
     }
