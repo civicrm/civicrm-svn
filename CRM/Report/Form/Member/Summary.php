@@ -428,27 +428,17 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                 } 
             }
             
-            require_once 'CRM/Utils/OpenFlashChart.php';
-            $openFlashChart = array( );
-            
             // build chart.
+            require_once 'CRM/Utils/OpenFlashChart.php';
             if ( $isMembershipType ) { 
-                
                 $graphRows['value'] = $display;
                 $chartInfo          = array( 'legend' => 'MemberShip Summary',
                                              'xname'  => 'Amount',
                                              'yname'  => 'Year' );                
-                $openFlashChart = CRM_Utils_OpenFlashChart::reportChart( $graphRows, 
-                                                                         $this->_params['charts'], 
-                                                                         $interval , $chartInfo );
-                
+                CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], $interval, $chartInfo );
             } else {                
-                $openFlashChart = CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
+                CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
             }
-            
-            // assign chart data to template.
-            $this->assign( 'openFlashChartData', json_encode( $openFlashChart ) );
-            $this->assign( 'hasOpenFlashChart', empty( $openFlashChart ) ? false : true );
         }
     }
     

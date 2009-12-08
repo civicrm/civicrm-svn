@@ -151,7 +151,7 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
             if ( $chartKey == 'by_year'  ) $yearlyChart  = true;
             if ( $chartKey == 'by_month' ) $monthlyChart = true;
             
-            $values['divName'] = "open_flash_chart_" . $chartCnt++;
+            $values['divName'] = "open_flash_chart_{$chartKey}";
             $funName = ( $chartType == 'bvg' ) ? 'barChart':'pieChart';
             
             // build the chart objects.

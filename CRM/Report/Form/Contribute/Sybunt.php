@@ -449,13 +449,9 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
                                      'yname'  => 'Year'
                                      );
         if ( $this->_params['charts'] ) {
-            require_once 'CRM/Utils/OpenFlashChart.php';
             // build the chart.
-            $openFlashChart = CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], 
-                                                                     $interval, $chartInfo );
-            // assign chart data to template.
-            $this->assign( 'openFlashChartData', json_encode( $openFlashChart ) );
-            $this->assign( 'hasOpenFlashChart', empty( $openFlashChart ) ? false : true );
+            require_once 'CRM/Utils/OpenFlashChart.php';
+            CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], $interval, $chartInfo );
         }
     }
     

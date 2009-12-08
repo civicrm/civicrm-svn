@@ -5,14 +5,14 @@
      <td>
          {if $hasByMonthChart}
       	     {* display monthly chart *}
-             <div id="open_flash_chart_1"></div>
+             <div id="open_flash_chart_by_month"></div>
          {else}
 	     {ts}There were no contributions during the selected year.{/ts}  
          {/if}	
      </td> 
      <td>
        	 {* display yearly chart *}
-         <div id="open_flash_chart_2"></div>
+         <div id="open_flash_chart_by_year"></div>
      </td>
   </tr>
 </table>
@@ -51,7 +51,7 @@
 	 var ySize   = eval( "chartValues.size.ySize" );
 	 var divName = eval( "chartValues.divName" );
 
-	 createSWFObject( chartID, divName, xSize, ySize );  
+	 createSWFObject( chartID, divName, xSize, ySize, 'loadData' );  
      });
   }
   
