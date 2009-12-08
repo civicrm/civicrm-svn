@@ -5,6 +5,7 @@ CRM/Case/DAO
 CRM/Contact/DAO/ACLContactCache.php
 CRM/Contact/DAO/Contact.php
 CRM/Contact/DAO/ContactType.php
+CRM/Contact/DAO/DashboardContact.php
 CRM/Contact/DAO/Group.php
 CRM/Contact/DAO/GroupContact.php
 CRM/Contact/DAO/GroupContactCache.php
@@ -23,6 +24,7 @@ CRM/Core/DAO/County.php
 CRM/Core/DAO/Currency.php
 CRM/Core/DAO/CustomField.php
 CRM/Core/DAO/CustomGroup.php
+CRM/Core/DAO/Dashboard.php
 CRM/Core/DAO/Discount.php
 CRM/Core/DAO/Domain.php
 CRM/Core/DAO/Email.php
