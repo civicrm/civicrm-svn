@@ -388,6 +388,9 @@ ORDER BY civicrm_custom_group.weight,
                          is_null( $crmDAO->$fullFieldName ) ) {
                         continue;
                     }
+                    if ( $fieldName == 'extends_entity_column_value' && $subType ) { // CRM-5507
+                        $groupTree[$groupID]['subtype'] = trim( $subType, CRM_Core_DAO::VALUE_SEPARATOR );
+                    }
                     $groupTree[$groupID][$fieldName] = $crmDAO->$fullFieldName;
                 }
                 $groupTree[$groupID]['fields'] = array();
@@ -410,7 +413,7 @@ ORDER BY civicrm_custom_group.weight,
                      is_null( $crmDAO->$fullFieldName ) ) {
                     continue;
                 } 
-                $groupTree[$groupID]['fields'][$fieldId][$fieldName] = $crmDAO->$fullFieldName;                    
+                $groupTree[$groupID]['fields'][$fieldId][$fieldName] = $crmDAO->$fullFieldName;
             }
         }
 
@@ -1404,6 +1407,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
             $formattedGroupTree[$key]['extends']                     = CRM_Utils_Array::value('extends', $value);
             $formattedGroupTree[$key]['extends_entity_column_id']    = CRM_Utils_Array::value('extends_entity_column_id', $value);
             $formattedGroupTree[$key]['extends_entity_column_value'] = CRM_Utils_Array::value('extends_entity_column_value', $value);
+            $formattedGroupTree[$key]['subtype']                     = CRM_Utils_Array::value('subtype', $value);
             $formattedGroupTree[$key]['max_multiple']                = CRM_Utils_Array::value('max_multiple', $value);
 
             // add field information
