@@ -1,5 +1,5 @@
 {* Display weekly,Quarterly,monthly and yearly contributions using pChart (Bar and Pie) *}
-{if $hasOpenFlashChart and $chartEnabled and $chartSupported}
+{if $chartEnabled and $chartSupported}
 <table class="chart">
         <tr>
             <td>

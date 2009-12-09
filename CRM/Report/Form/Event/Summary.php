@@ -264,8 +264,8 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
 
         //set pager before exicution of query in function participantInfo() 
         $this->setPager( );
-
-        require_once 'CRM/Utils/PChart.php';
+        
+        require_once 'CRM/Utils/OpenFlashChart.php';
         $rows  = $graphRows = array();
         $count = 0;
         while ( $dao->fetch( ) ) {	

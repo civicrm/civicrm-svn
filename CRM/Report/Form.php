@@ -976,7 +976,7 @@ class CRM_Report_Form extends CRM_Core_Form {
 
         // allow building charts if any
         if ( ! empty($this->_params['charts']) && !empty($rows) ) {
-            require_once 'CRM/Utils/PChart.php';
+            require_once 'CRM/Utils/OpenFlashChart.php';
             $this->buildChart( $rows );
             $this->assign( 'chartEnabled', true );
         }
