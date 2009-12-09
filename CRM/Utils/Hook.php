@@ -450,7 +450,7 @@ class CRM_Utils_Hook {
         return empty( $result ) ? true : $result;
     }
 
-    static function customFieldOptions( $customFieldID, &$options ) {
+    static function customFieldOptions( $customFieldID, &$options, $detailedFormat = false ) {
         $config =& CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
@@ -458,7 +458,7 @@ class CRM_Utils_Hook {
         return   
             eval( 'return ' .
                   $config->userHookClass .
-                  '::invoke( 2, $customFieldID, $options, $null, $null, $null, \'civicrm_customFieldOptions\' );' );
+                  '::invoke( 3, $customFieldID, $options, $detailedFormat, $null, $null, \'civicrm_customFieldOptions\' );' );
     }
 
     static function searchTasks( $objectType, &$tasks ) {
