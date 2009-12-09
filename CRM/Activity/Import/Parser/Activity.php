@@ -261,7 +261,12 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         //date-Format part ends
         
         $formatError = _civicrm_activity_formatted_param( $params, $params, true );
-
+        
+        if ( $formatError ) {
+            array_unshift( $values, $formatError['error_message'] );
+            return CRM_Activity_Import_Parser::ERROR;
+        }
+        
         $params['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
                                                                    CRM_Core_DAO::$_nullObject,
                                                                    null,
