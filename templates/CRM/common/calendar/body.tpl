@@ -21,11 +21,11 @@
 {/literal}
 {if !$doTime}
          dateField   : "{$dateVar}[d]",
-         monthField  : "{$dateVar}[{$config->dateformatMonthVar}]",
+         monthField  : "{$dateVar}[M]",
          yearField   : "{$dateVar}[Y]",
 {elseif $doTime}
          dateField   : "{$dateVar}[d]",
-         monthField  : "{$dateVar}[{$config->datetimeformatMonthVar}]",
+         monthField  : "{$dateVar}[M]",
          yearField   : "{$dateVar}[Y]",
        {if $ampm}
          hourField   : "{$dateVar}[{$config->datetimeformatHourVar}]",

@@ -173,7 +173,7 @@ class CRM_Utils_Date
         }
 
         $config =& CRM_Core_Config::singleton( );
-        $value['Y'] = $value[$config->dateformatMonthVar] = $value['d'] = null;
+        $value['Y'] = $value['M'] = $value['d'] = null;
 
         if ( $separator != '' ) {
             list( $year, $mon, $day ) = explode( $separator, $date, 3 );
@@ -196,7 +196,7 @@ class CRM_Utils_Date
         }
 
         if ( is_numeric( $mon ) && $mon > 0 ) {
-            $value[$config->dateformatMonthVar] = $mon;
+            $value['M'] = $mon;
         }
 
         if ( is_numeric( $day ) && $day > 0 ) {
