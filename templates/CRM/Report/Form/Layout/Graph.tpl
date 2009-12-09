@@ -1,5 +1,5 @@
 {* Display weekly,Quarterly,monthly and yearly contributions using pChart (Bar and Pie) *}
-{if $hasOpenFlashChart}
+{if $hasOpenFlashChart and $chartEnabled and $chartSupported}
 <table class="chart">
         <tr>
             <td>
@@ -7,20 +7,11 @@
             </td>
         </tr>
 </table>
-{elseif $chartEnabled && $chartSupported && $rows}
-    <table class="chart">
-        <tr>
-            <td>
-                <img src="{$graphFilePath}"/>
-            </td>
-        </tr>
-    </table>
-{/if} 
 
-{if $hasOpenFlashChart}
-    {if !$section}
+{if !$section}
         {include file="CRM/common/openFlashChart.tpl"}
-    {/if}
+{/if}
+
 {literal}
 <script type="text/javascript">
 
