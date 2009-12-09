@@ -160,9 +160,16 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $this->_params['onbehalf_location'][$loc] = $this->_params[$loc];
                 unset($this->_params[$loc]);
             }
+        } else if ( CRM_Utils_Array::value( 'is_for_organization', $this->_values ) ) {
+            // no on behalf of an organization, CRM-5519 
+            // so reset loc blocks from main params.
+            foreach ( array('phone', 'email', 'address') as $blk ) {
+                if ( isset( $this->_params[$blk] ) ) {
+                    unset( $this->_params[$blk] );
+                }
+            }
         }
-
-
+        
         if ( $this->_pcpId ) { 
             $this->_params['pcp_made_through_id'] = $this-> _pcpInfo['pcp_id'];
             $this->assign( 'pcpBlock', true );
