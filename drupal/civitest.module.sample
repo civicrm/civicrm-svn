@@ -734,3 +734,19 @@ function civitest_civicrm_alterPaymentProcessorParams( $paymentObj,
         $cookedParams['x_ship_to_company']   = $country_info['iso_code'];
     }
 }
+
+function civitest_civicrm_customFieldOptions($fieldID, &$options, $detailedFormat = false ) {
+    if ( $fieldID == 1 || $fieldID == 2 ) {
+        if ( $detailedFormat ) {
+            $options['fake_id_1'] = array( 'id'    => 'fake_id_1',
+                                           'value' => 'XXX',
+                                           'label' => 'XXX' );
+            $options['fake_id_2'] = array( 'id'    => 'fake_id_2',
+                                           'value' => 'YYY',
+                                           'label' => 'YYY' );
+        } else {
+            $options['XXX'] = 'XXX';
+            $options['YYY'] = 'YYY';
+        } 
+    }
+}
