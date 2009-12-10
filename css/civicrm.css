@@ -2161,6 +2161,11 @@ div#toolTip {
   border: 0px none;
 } 
 
+/* Override Drupal .2em margin-bottom on forms for Dashboard elements (we don't want to give up that space) */
+div#civicrm-dashboard form {
+margin-bottom:0em;
+}
+
 /* This is the style for the trigger icon. The margin-bottom value causes the icon to shift down to center it. */
 .ui-datepicker-trigger {
   margin-top: 4px;
