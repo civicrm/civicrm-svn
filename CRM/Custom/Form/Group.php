@@ -248,7 +248,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         $sel2['ParticipantRole']      = $participantRole;
         $sel2['ParticipantEventName'] = 
             CRM_Event_PseudoConstant::event( null, false, "( is_template IS NULL OR is_template != 1 )" );
-        //$sel2['ParticipantEventType'] = array( "" => "-- Any --" ) + $eventType;
+        $sel2['ParticipantEventType'] = $eventType;
         $sel2['Contribution']         = CRM_Contribute_PseudoConstant::contributionType( );
         $sel2['Relationship']         = $allRelationshipType;
 
@@ -407,6 +407,8 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
 					$defaults['extends'][0] = 'ParticipantRole';
 				} elseif ( $subName == 2 ) {
 					$defaults['extends'][0] = 'ParticipantEventName';
+				} elseif ( $subName == 3 ) {
+					$defaults['extends'][0] = 'ParticipantEventType';
 				}
 			} else if ( $extends == 'Relationship' && !empty($this->_subtypes) ) {
                 $relationshipDefaults = array ( );

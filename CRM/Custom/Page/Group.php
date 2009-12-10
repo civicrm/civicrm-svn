@@ -255,6 +255,7 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
         $subTypes['Participant']  = array( );
 		$subTypes['ParticipantRole'     ] = CRM_Core_OptionGroup::values( 'participant_role' );;
 	    $subTypes['ParticipantEventName'] = CRM_Event_PseudoConstant::event( );
+	    $subTypes['ParticipantEventType'] = CRM_Core_OptionGroup::values('event_type');
         $subTypes['Individual']           = CRM_Contact_BAO_ContactType::subTypePairs( 'Individual', false, null );
         $subTypes['Household' ]           = CRM_Contact_BAO_ContactType::subTypePairs( 'Household', false, null );
         $subTypes['Organization']         = CRM_Contact_BAO_ContactType::subTypePairs( 'Organization', false, null );
@@ -306,6 +307,9 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
                             } elseif ( $subName == 2 ) {
                                 $colValue = $colValue ? $colValue . ', ' .  
                                     $subTypes['ParticipantEventName'][$sub] : $subTypes['ParticipantEventName'][$sub];
+                            } elseif ( $subName == 3 ) {
+                                $colValue = $colValue ? $colValue . ', ' .  
+                                    $subTypes['ParticipantEventType'][$sub] : $subTypes['ParticipantEventType'][$sub];
                             }
                         } else {
                             $colValue = $colValue ? $colValue . ', ' . 
