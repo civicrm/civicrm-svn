@@ -280,9 +280,9 @@ ORDER BY parent_id, weight";
                 $data = $value['attributes']['label'];
                 $class = '';
                 if ( !$value['attributes']['active'] ) {
-                    $class = ', attributes: {class : "disabled"} ';
+                    $class = ', attributes: { "class" : "disabled"} ';
                 }
-                $navigationString .= ' { attributes: { id : "node_'.$key.'"}, data: { title:"'. $data. '"' .$class.'}';
+                $navigationString .= ' { attributes: { "id" : "node_'.$key.'"}, data: { title:"'. $data. '"' .$class.'}';
             } else {
                 $name = self::getMenuName( $value, $skipMenuItems );
                 if ( $name ) { 
@@ -322,9 +322,9 @@ ORDER BY parent_id, weight";
                     $data = $val['attributes']['label'];
                     $class = '';
                     if ( !$val['attributes']['active'] ) {
-                        $class = ', attributes: {class : "disabled"} ';
+                        $class = ', attributes: { "class" : "disabled"} ';
                     }                      
-                    $navigationString .= ' { attributes: { id : "node_'.$k.'"}, data: { title:"'. $data. '"' .$class.'}';
+                    $navigationString .= ' { attributes: { "id" : "node_'.$k.'"}, data: { title:"'. $data. '"' .$class.'}';
                     self::recurseNavigation($val, $navigationString, $json, $skipMenuItems );
                     if ( $appendComma ) {
                         $navigationString .= ' },';
