@@ -178,6 +178,10 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
      */
     static function del( $id )
     { 
+        if ( !$id ) {
+            return null;
+        }
+        
         require_once 'CRM/Core/BAO/CustomGroup.php';
         $extends   = array('event');
         $groupTree = CRM_Core_BAO_CustomGroup::getGroupDetail( null, null, $extends );
@@ -220,6 +224,11 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         }
         require_once 'CRM/Core/OptionGroup.php';
         CRM_Core_OptionGroup::deleteAssoc ("civicrm_event.amount.{$id}.discount.%", "LIKE");
+        
+        // clean up price set if enabled, CRM-5526
+        require_once 'CRM/Core/BAO/PriceSet.php';
+        CRM_Core_BAO_PriceSet::removeFrom( 'civicrm_event', $id );
+        
         require_once 'CRM/Event/DAO/Event.php';
         $event     = & new CRM_Event_DAO_Event( );
         $event->id = $id; 
