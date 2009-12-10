@@ -60,9 +60,9 @@ class CRM_Contact_Page_Dashlet extends CRM_Core_Page
         
         $contactDashlets = $availableDashlets = array( );
         foreach( $allDashlets as $dashletID => $values ) {
-            if ( is_array( $currentDashlets[0] ) && array_key_exists( $dashletID, $currentDashlets[0] ) ) {
+            if ( ! empty( $currentDashlets ) && is_array( $currentDashlets[0] ) && array_key_exists( $dashletID, $currentDashlets[0] ) ) {
                $contactDashlets[0][$dashletID] = $values['label'];
-            } else if ( is_array( $currentDashlets[1] ) && array_key_exists( $dashletID, $currentDashlets[1] ) ) {
+            } else if ( ! empty( $currentDashlets ) && is_array( $currentDashlets[1] ) && array_key_exists( $dashletID, $currentDashlets[1] ) ) {
                   $contactDashlets[1][$dashletID] = $values['label'];
             } else {
                $availableDashlets[$dashletID] = $values['label'];

@@ -58,11 +58,12 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page
         }
         
         CRM_Utils_System::setTitle( ts('CiviCRM Home') );
-        
+        $session   = CRM_Core_Session::singleton( );
+        $contactID = $session->get('userID');
         // call hook to get html from other modules
         require_once 'CRM/Utils/Hook.php';
         $contentPlacement = CRM_Utils_Hook::DASHBOARD_BELOW;  // ignored but needed to prevent warnings
-        $html = CRM_Utils_Hook::dashboard( $uid, $contentPlacement );
+        $html = CRM_Utils_Hook::dashboard( $contactID, $contentPlacement );
         if ( is_array( $html ) ) {
             $this->assign_by_ref( 'hookContent', $html );
             $this->assign( 'hookContentPlacement', $contentPlacement );
