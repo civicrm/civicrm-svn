@@ -711,7 +711,7 @@ SELECT $select
 
         $groups = array( );
 
-        $permissionClause = CRM_Core_Permission::customGroupClause( null, null, true );
+        $permissionClause = CRM_Core_Permission::customGroupClause( CRM_Core_Permission::VIEW, null, true );
         $customGroupDAO->whereAdd( $permissionClause );
         
         // order by weight
