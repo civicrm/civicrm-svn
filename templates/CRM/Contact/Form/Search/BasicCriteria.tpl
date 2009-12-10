@@ -140,7 +140,7 @@ dojo.addOnLoad( function( ) {
             </td>
 {/if}
 {if $form.tag}
-            <td class="label">{$form.tag.label} {$form.tag.html}</td>
+            <td class="label">{$form.tag.label} {$form.tag.html|crmReplace:class:medium}</td>
 {/if}
             <td style="vertical-align: bottom;">
                 {$form.buttons.html}
