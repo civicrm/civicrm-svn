@@ -158,6 +158,7 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
             // if action is delete do the needful.
             if ($action & (CRM_Core_Action::DELETE)) {
                 $usedBy =& CRM_Price_BAO_Set::getUsedBy( $sid );
+                
                 if ( empty( $usedBy ) ) {
                     // prompt to delete
                     $session = & CRM_Core_Session::singleton();
@@ -174,6 +175,15 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
                     CRM_Utils_System::appendBreadCrumb( ts('Price Sets'), $url );
                     $this->assign( 'usedPriceSetTitle', CRM_Price_BAO_Set::getTitle( $sid ) );
                     $this->assign( 'usedBy', $usedBy );
+                    $comps = array( "Event"        => "civicrm_event", 
+                                    "Contribution" => "civicrm_contribution_page" );
+                    $priceSetContexts = array( );
+                    foreach ( $comps as $name => $table ) {
+                        if ( array_key_exists( $table, $usedBy ) ) {
+                            $priceSetContexts[] = $name;
+                        }
+                    }
+                    $this->assign( 'contexts', $priceSetContexts );
                 }
             } 
             

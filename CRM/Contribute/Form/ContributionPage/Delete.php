@@ -153,6 +153,10 @@ class CRM_Contribute_Form_ContributionPage_Delete extends CRM_Contribute_Form_Co
         require_once 'CRM/Contribute/BAO/Premium.php';
         CRM_Contribute_BAO_Premium::deletePremium( $this->_id );
         
+        // price set cleanup, CRM-5527 
+        require_once 'CRM/Price/BAO/Set.php';
+        CRM_Price_BAO_Set::removeFrom( 'civicrm_contribution_page', $this->_id );
+        
         // finally delete the contribution page
         require_once 'CRM/Contribute/DAO/ContributionPage.php';
         $dao =& new CRM_Contribute_DAO_ContributionPage( );
