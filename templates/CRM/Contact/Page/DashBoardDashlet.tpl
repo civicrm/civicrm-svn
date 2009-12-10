@@ -1,8 +1,8 @@
 {include file="CRM/common/dashboard.tpl"}
 {include file="CRM/common/openFlashChart.tpl"}
-<a href="javascript:addDashlet( );" class="button show-add" style="margin-left: 6px;"><span>&raquo; {ts}Configure Home Dashboard{/ts}</span></a>
+<a href="javascript:addDashlet( );" class="button show-add" style="margin-left: 6px;"><span>&raquo; {ts}Configure Your Dashboard{/ts}</span></a>
 <a style="display:none;" href="{crmURL p="civicrm/dashboard" q="reset=1"}" class="button show-done" style="margin-left: 6px;"><span>&raquo; {ts}Done{/ts}</span></a>
-<a style="float:right;" href="{crmURL p="civicrm/dashboard" q="reset=1&resetCache=1"}" class="button show-add" style="margin-left: 6px;"><span>&raquo; {ts}Refresh Dashlets{/ts}</span></a>
+<a style="float:right;" href="{crmURL p="civicrm/dashboard" q="reset=1&resetCache=1"}" class="button show-add" style="margin-left: 6px;"><span>&raquo; {ts}Refresh Dashboard Data{/ts}</span></a>
 <div class="spacer"></div>
 
 <div id="configure-dashlet" class='hidden'></div>

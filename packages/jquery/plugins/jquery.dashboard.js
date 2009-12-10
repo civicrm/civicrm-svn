@@ -434,15 +434,15 @@
           callback: widget.toggleSettings
         },
         minimize: {
-          description: 'Show & hide this widget',
+          description: 'Collapse or expand this widget',
           callback: widget.toggleMinimize
         },
         fullscreen: {
-          description: 'Open widget to full screen mode',
+          description: 'View this widget in full screen mode',
           callback: widget.enterFullscreen
         },
         close: {
-          description: 'Remove this widget',
+          description: 'Remove this widget from your dashboard',
           callback: widget.remove
         }
       };
@@ -580,7 +580,7 @@
   $.fn.dashboard.defaults = {
     columns: 2,
     emptyPlaceholderInner: 'There are no widgets in this column of your dashboard.',
-    fullscreenHeaderInner: 'Return to Dashboard',
+    fullscreenHeaderInner: 'Back to dashboard mode',
     throbberMarkup: '<div class="throbber"><p class="loadtext">Loading...</p></div>',
     animationSpeed: 200,
     callbacks: {},

@@ -19,6 +19,7 @@
                 </tr>
             {/foreach}
         </table>
+        <br />
     {/if}
 {/if}
 

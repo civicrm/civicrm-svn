@@ -5,7 +5,6 @@
             {include file="CRM/common/pager.tpl" noForm=0}
         </div>
     {/if}
-    <br />
     <table class="report-layout">
         <thead class="sticky">
         <tr> 
