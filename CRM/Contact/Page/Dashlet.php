@@ -57,12 +57,12 @@ class CRM_Contact_Page_Dashlet extends CRM_Core_Page
         
         // get dashlets for logged in contact
         $currentDashlets  = CRM_Core_BAO_Dashboard::getContactDashlets( );
-        
+
         $contactDashlets = $availableDashlets = array( );
         foreach( $allDashlets as $dashletID => $values ) {
-            if ( ! empty( $currentDashlets ) && is_array( $currentDashlets[0] ) && array_key_exists( $dashletID, $currentDashlets[0] ) ) {
+            if ( ! empty( $currentDashlets ) && CRM_Utils_Array::value( '0', $currentDashlets ) && array_key_exists( $dashletID, $currentDashlets[0] ) ) {
                $contactDashlets[0][$dashletID] = $values['label'];
-            } else if ( ! empty( $currentDashlets ) && is_array( $currentDashlets[1] ) && array_key_exists( $dashletID, $currentDashlets[1] ) ) {
+            } else if ( ! empty( $currentDashlets ) && CRM_Utils_Array::value( '1', $currentDashlets ) && array_key_exists( $dashletID, $currentDashlets[1] ) ) {
                   $contactDashlets[1][$dashletID] = $values['label'];
             } else {
                $availableDashlets[$dashletID] = $values['label'];

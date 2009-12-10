@@ -144,7 +144,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
 
          // if content is empty and url is set, retrieve it from url
          if ( !$dao->content && $dao->url ) {
-             $url = CRM_Utils_System::url( 'civicrm/dashlet/activity', "reset=1&snippet=4", true, null, false );
+             $url = CRM_Utils_System::url( $dao->url, null, true, null, false );
 
              //get content from url
              $dao->content = CRM_Utils_System::getServerResponse( $url );
