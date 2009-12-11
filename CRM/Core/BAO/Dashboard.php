@@ -175,6 +175,9 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
           $widgetIDs = array( );
           if ( is_array( $columns ) ) {
               foreach ( $columns as $colNo => $dashlets ) {
+                  if( ! is_integer( $colNo ) ) {
+                      continue;
+                  }
                   $weight = 1;
                   foreach ( $dashlets as $widgetID => $isMinimized ) {
                       $isMinimized = (int) $isMinimized;
