@@ -65,7 +65,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
                                             'Pending from pay later'  => array('Registered', 'Cancelled'),
                                             'On waitlist'             => array('Cancelled' , 'Pending from waitlist'),
                                             'Pending from waitlist'   => array('Registered', 'Cancelled'),
-                                            'Awaitlng approval'       => array('Cancelled' , 'Pending from approval'),
+                                            'Awaiting approval'       => array('Cancelled' , 'Pending from approval'),
                                             'Pending from approval'   => array('Registered', 'Cancelled') 
                                              );
 
