@@ -600,6 +600,80 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         return $addressSequence;
     }
     
+    /**
+     * Parse given street address string in to street_name, 
+     * street_unit, 'street_number and street_number_suffix
+     * eg "54A Excelsior Ave. Apt 1C", or "917 1/2 Elm Street"
+     * 
+     * @param  string   Street address including number and apt
+     *
+     * @return array    $parseFields    parsed fields values.
+     * @access public
+     * @static
+     */
+    static function parseStreetAddress( $streetAddress ) 
+    {
+        $parseFields = array( 'street_name'          => null, 
+                              'street_unit'          => null,
+                              'street_number'        => null, 
+                              'street_number_suffix' => null );
+        
+        if ( empty( $streetAddress ) ) {
+            return $parseFields;
+        }
+        
+        // get street number and suffix.
+        $matches = array( );
+        if ( preg_match( '/^[A-Za-z0-9]+/', $streetAddress, $matches ) ) {
+            $steetNumAndSuffix = $matches[0];
+            
+            // get street number.
+            $matches = array( );
+            if ( preg_match( '/^(\d+)/', $steetNumAndSuffix, $matches ) ) {
+                $parseFields['street_number'] = $matches[0];
+            }
+            
+            // get street number suffix.
+            $matches = array( );
+            if ( preg_match( '/[A-Za-z]+/', $steetNumAndSuffix, $matches ) ) {
+                $parseFields['street_number_suffix'] = $matches[0];
+            }
+            
+            // unset from main street address.
+            $streetAddress = preg_replace( '/^[A-Za-z0-9]+/', '', $streetAddress );
+            $streetAddress = trim( $streetAddress );
+        }
+        
+        // suffix might be like 1/2
+        $matches = array( );
+        if ( preg_match( '/^\d\/\d/', $streetAddress, $matches ) ) {
+            $parseFields['street_number_suffix'] .= $matches[0];
+            
+            // unset from main street address.
+            $streetAddress = preg_replace( '/^\d+\/\d+/', '', $streetAddress );
+            $streetAddress = trim( $streetAddress );
+        }
+        
+        // now get the street unit.
+        $matches = array( );
+        preg_match( '/^(.+)\s+(APT|BSMT|BLDG|DEPT|FL|FRNT|HNGR|KEY|LBBY|LOT|LOWR|OFC|PH|PIER|REAR|RM|SIDE|SLIP|SPC|STOP|STE|SUITE|TRLR|UNIT|UPPR|#)(\s+\w+)?/i', $streetAddress, $matches );
+        
+        if ( !empty( $matches ) ) {
+            $parseFields['street_unit'] = CRM_Utils_Array::value( 2, $matches );
+            if ( $appendStreetUnit = CRM_Utils_Array::value( 3, $matches ) ) {
+                $parseFields['street_unit'] .= $appendStreetUnit;
+            }
+            
+            //carry remaing string for street name.
+            $streetAddress = $matches[1]; 
+        }
+        
+        // consider remaining string as street name.
+        $parseFields['street_name'] = $streetAddress;
+        
+        return $parseFields;
+    }
+    
 }
 
 
