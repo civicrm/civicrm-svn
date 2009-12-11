@@ -232,6 +232,11 @@
 	  		  cj("#is_notify").attr('checked',true);
    		 }
 	}
+
+        function buildEventTypeCustomData( eventID, eventTypeCustomDataTypeID, eventAndTypeMapping ) {
+                 var mapping = eval('(' + eventAndTypeMapping + ')');
+                 buildCustomData( 'Participant', mapping[eventID], eventTypeCustomDataTypeID );
+        }
 {/literal}
 </script>
 

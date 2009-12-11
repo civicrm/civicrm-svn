@@ -611,10 +611,23 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             $this->add( 'select', 'payment_processor_id', ts( 'Payment Processor' ), $this->_processors, true );
         }
         
+        // build array(event -> eventType) mapper
+        $query = "
+SELECT     civicrm_event.id as id, civicrm_event.event_type_id as event_type_id
+FROM       civicrm_event
+WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
+        $dao =& CRM_Core_DAO::executeQuery( $query );
+        $eventAndTypeMapping = array();
+        while ( $dao->fetch( ) ) {
+            $eventAndTypeMapping[$dao->id] = $dao->event_type_id;
+        }
+        $eventAndTypeMapping = json_encode($eventAndTypeMapping);
+        // building of mapping ends --
+
         $element = $this->add('select', 'event_id',  ts( 'Event' ),  
                               array( '' => ts( '- select -' ) ) + $events,
                               true,
-                              array('onchange' => "buildFeeBlock( this.value ); buildCustomData( 'Participant', this.value, {$this->_eventNameCustomDataTypeID} );", 'class' => 'huge' ) 
+                              array('onchange' => "buildFeeBlock( this.value ); buildCustomData( 'Participant', this.value, {$this->_eventNameCustomDataTypeID} ); buildEventTypeCustomData( this.value, {$this->_eventTypeCustomDataTypeID}, '{$eventAndTypeMapping}' );", 'class' => 'huge' ) 
                               );
         
         //frozen the field fix for CRM-4171
