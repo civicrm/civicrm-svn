@@ -13,3 +13,12 @@
         (@option_group_id_report , '{ts escape="sql"}Database Log Report{/ts}',                     'contact/log',                    'CRM_Report_Form_Contact_Log',                    NULL, 0, NULL, 27, '{ts escape="sql"}Log of contact and activity records created or updated in a given date range.{/ts}', 0, 0, 1, NULL, NULL);
 -- CRM-5438
 UPDATE civicrm_navigation SET permission ='access CiviCRM', permission_operator ='' WHERE civicrm_navigation.name= 'Manage Groups';
+
+-- CRM-5450
+ 
+SELECT @option_group_id_address_options := max(id) from civicrm_option_group where name = 'address_options';
+
+INSERT INTO 
+   civicrm_option_value(`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+VALUES(@option_group_id_address_options, {localize}'Street Address Parsing'{/localize}, 15, 'street_address_parsing', NULL, 0, NULL, 15, 0, 0, 1, NULL, NULL);
+
