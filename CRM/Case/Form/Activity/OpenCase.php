@@ -170,7 +170,7 @@ class CRM_Case_Form_Activity_OpenCase
         }
         
         // for open case start date should be set to current date
-        $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'] );
+        $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'], date('Hi') );
         require_once 'CRM/Case/PseudoConstant.php';
         $caseStatus = CRM_Case_PseudoConstant::caseStatus( );
         // for resolved case the end date should set to now    
