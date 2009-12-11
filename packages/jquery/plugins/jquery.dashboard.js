@@ -33,14 +33,16 @@
       // Update the display status of the empty placeholders.
       for (var c in dashboard.columns) {
         var col = dashboard.columns[c];
-        // Are there any visible children of the column (excluding the empty placeholder)?
-        if (col.element.children(':visible').not(col.emptyPlaceholder).length > 0) {
-          col.emptyPlaceholder.hide();
-        }
-        else {
-          col.emptyPlaceholder.show();
-        }
-      }
+       if ( typeof col == 'object' ) {
+			// Are there any visible children of the column (excluding the empty placeholder)?
+			if (col.element.children(':visible').not(col.emptyPlaceholder).length > 0) {
+			  col.emptyPlaceholder.hide();
+			}
+			else {
+			  col.emptyPlaceholder.show();
+			}
+		}
+	  }
 
       // Don't save any changes to the server unless the dashboard has finished initiating.
       if (!dashboard.ready) {
@@ -54,16 +56,16 @@
       for (var c in dashboard.columns) {
 
         // IDs of the sortable elements in this column.
-        var ids = dashboard.columns[c].element.sortable('toArray');
+        if( typeof dashboard.columns[c] == 'object' ) var ids = dashboard.columns[c].element.sortable('toArray');
 
         // For each id...
         for (var w in ids) {
           // Chop 'widget-' off of the front so that we have the real widget id.
-          var id = ids[w].substring('widget-'.length);
+          if( typeof ids[w] == 'string' ) var id = ids[w].substring('widget-'.length);
 
           // Add one flat property to the params object that will look like an array element to the PHP server.
           // Unfortunately jQuery doesn't do this for us.
-          params['columns[' + c + '][' + id + ']'] = (dashboard.widgets[id].minimized ? '1' : '0');
+          if ( typeof dashboard.widgets[id] == 'object' ) params['columns[' + c + '][' + id + ']'] = (dashboard.widgets[id].minimized ? '1' : '0');
         }
       }
 
@@ -227,7 +229,7 @@
     // Callback for when a user starts resorting a list.  Hides all the empty placeholders.
     function hideEmptyPlaceholders(e, ui) {
       for (var c in dashboard.columns) {
-        dashboard.columns[c].emptyPlaceholder.hide();
+        if( typeof dashboard.columns[c] == 'object ' ) dashboard.columns[c].emptyPlaceholder.hide();
       }
     }
 
