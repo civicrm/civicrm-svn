@@ -102,6 +102,7 @@
                         <div id="customData"></div>  {* Participant Custom data *}
                         <div id="customData{$eventNameCustomDataTypeID}"></div> {* Event Custom Data *}
                         <div id="customData{$roleCustomDataTypeID}"></div> {* Role Custom Data *}	
+                        <div id="customData{$eventTypeCustomDataTypeID}"></div> {* Role Custom Data *}	
                     </td>
                 </tr>
             </table>
@@ -199,6 +200,9 @@
 		{/if}
 		{if $eventID}
 		    buildCustomData( '{$customDataType}', {$eventID}, {$eventNameCustomDataTypeID} );
+		{/if}
+		{if $eventTypeID}
+		    buildCustomData( '{$customDataType}', {$eventTypeID}, {$eventTypeCustomDataTypeID} );
 		{/if}
 		{literal}
 	});

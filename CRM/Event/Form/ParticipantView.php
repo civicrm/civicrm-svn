@@ -84,14 +84,21 @@ class CRM_Event_Form_ParticipantView extends CRM_Core_Form
         // get the option value for custom data type 	
         $roleCustomDataTypeID      = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantRole', 'name' );
         $eventNameCustomDataTypeID = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantEventName', 'name' );
+        $eventTypeCustomDataTypeID = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantEventType', 'name' );
         
         $roleGroupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Participant', $this, $params['id'], null, 
                                                              $values[$params['id']]['role_id'], $roleCustomDataTypeID );
         
         $eventGroupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Participant', $this, $params['id'], null, 
                                                               $values[$params['id']]['event_id'], $eventNameCustomDataTypeID );
-        
+        $eventTypeID = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", 
+                                                    $values[$params['id']]['event_id'], 'event_type_id', 'id' );
+        $eventTypeGroupTree =& 
+            CRM_Core_BAO_CustomGroup::getTree( 'Participant', $this, $params['id'], null, 
+                                               $eventTypeID, $eventTypeCustomDataTypeID );
+
         $groupTree = CRM_Utils_Array::crmArrayMerge( $roleGroupTree, $eventGroupTree );
+        $groupTree = CRM_Utils_Array::crmArrayMerge( $groupTree, $eventTypeGroupTree );
         $groupTree = CRM_Utils_Array::crmArrayMerge( $groupTree, CRM_Core_BAO_CustomGroup::getTree( 'Participant', $this, $params['id'] ) );
         
         CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
