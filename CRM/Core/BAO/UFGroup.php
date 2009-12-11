@@ -1389,7 +1389,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->add('select', $name, $title, 
                        array('' => ts('- select -')) + CRM_Core_PseudoConstant::individualSuffix(), $required);
         } else if ( $fieldName === 'contact_sub_type' ){
-            $gId         = $form->get('gid');
+            $gId         = $form->get('gid') ? $form->get('gid') : CRM_Utils_Array::value('group_id', $form->_fields[$fieldName]);
             $profileType = $gId ? CRM_Core_BAO_UFField::getProfileType( $gId ) : null;
             
             $setSubtype  = false;

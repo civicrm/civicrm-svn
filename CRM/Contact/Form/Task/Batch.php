@@ -102,7 +102,7 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
         $this->addDefaultButtons( ts('Save') );
         $this->_fields  = array( );
         $this->_fields  = CRM_Core_BAO_UFGroup::getFields( $ufGroupId, false, CRM_Core_Action::VIEW );
-
+        
         // remove file type field and then limit fields
         $suppressFields = false;
         $removehtmlTypes = array( 'File', 'Autocomplete-Select' );
@@ -216,9 +216,18 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
 
         $ufGroupId = $this->get( 'ufGroupId' );
         $notify = null;
+        $inValidSubtypeCnt = 0;
         //send profile notification email if 'notify' field is set
         $notify = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $ufGroupId, 'notify' );        
         foreach( $params['field'] as $key => $value ) {
+           
+            //CRM-5521
+            //validate subtype before updating
+            if( CRM_Utils_Array::value('contact_sub_type', $value) && !CRM_Contact_BAO_ContactType::isAllowEdit($key) ) {
+                unset($value['contact_sub_type']);
+                $inValidSubtypeCnt++;
+            }
+            
             CRM_Contact_BAO_Contact::createProfileContact($value, $this->_fields, $key, null, $ufGroupId );
             if ( $notify ) {
                 $values = CRM_Core_BAO_UFGroup::checkFieldsEmptyValues( $ufGroupId, $key, null );      
@@ -226,7 +235,12 @@ class CRM_Contact_Form_Task_Batch extends CRM_Contact_Form_Task
             }    
         }
         
-        CRM_Core_Session::setStatus("Your updates have been saved.");
+        $statusMsg = ts("Your updates have been saved.");
+
+        if ( $inValidSubtypeCnt ) {
+          $statusMsg .= ' ' .  ts('Contact SubType field of %1 nunber of contact(s) has not been updated.', array(1 => $inValidSubtypeCnt));  
+        }
+        CRM_Core_Session::setStatus("{$statusMsg}");
     }//end of function
 }
 
