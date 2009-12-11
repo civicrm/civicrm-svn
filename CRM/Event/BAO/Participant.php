@@ -55,6 +55,20 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
      */
     static $_exportableFields = null;
 
+    /**
+     * static array for valid status transitions rules
+     *
+     * @var array
+     * @static
+     */
+    static $_statusTransitionsRules = array( 
+                                            'Pending from pay later'  => array('Registered', 'Cancelled'),
+                                            'On waitlist'             => array('Cancelled' , 'Pending from waitlist'),
+                                            'Pending from waitlist'   => array('Registered', 'Cancelled'),
+                                            'Awaitlng approval'       => array('Cancelled' , 'Pending from approval'),
+                                            'Pending from approval'   => array('Registered', 'Cancelled') 
+                                             );
+
     function __construct()
     {
         parent::__construct();
@@ -193,11 +207,9 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         }
         
         //CRM-5403
-        //Registered -> Attended, Registered -> No-show etc 
-        //should NOT be cascaded to the additional participants
         //for update mode
-        if ( !empty($status) && self::allowCascadeStatus($participant->id, $participant->status_id, $status) ) {
-            self::updateParticipantStatus($participant->id, $participant->status_id);
+        if ( self::isPrimaryParticipant($participant->id) ) {
+            self::updateParticipantStatus( $participant->id, $status, $participant->status_id );
         }
         
         $session = & CRM_Core_Session::singleton();
@@ -769,7 +781,7 @@ WHERE  civicrm_participant.id = {$participantId}
      * @return array $additionalParticipantIds
      * @static
      */
-    static function getAdditionalParticipantIds( $primaryParticipantId, $excludeCancel = true )
+    static function getAdditionalParticipantIds( $primaryParticipantId, $excludeCancel = true, $oldStatusId = null )
     {
         $additionalParticipantIds = array( );
         if ( !$primaryParticipantId ) {
@@ -783,9 +795,14 @@ WHERE  civicrm_participant.id = {$participantId}
             $cancelStatusId = array_search( 'Cancelled', $negativeStatuses );
             $where .= " AND participant.status_id != {$cancelStatusId}";
         }
+
+        $statusClause      = "";
+        if ( $oldStatusId ) {
+            $where .= " AND participant.status_id = {$oldStatusId}";    
+        }
         
         $query = "
-  SELECT  participant.id
+  SELECT  participant.id {$statusClause}
     FROM  civicrm_participant participant
    WHERE  {$where}"; 
         
@@ -808,17 +825,26 @@ WHERE  civicrm_participant.id = {$participantId}
      * @access public
      * @static
      */
-    static function updateParticipantStatus( $participantID, $statusID ) 
+    static function updateParticipantStatus( $participantID, $oldStatusID, $newStatusID = null ) 
     {    
-        if ( !$participantID ) {
+        if ( !$participantID || !$oldStatusID ) {
             return;
         }
-        
-        $query = "UPDATE civicrm_participant cp SET cp.status_id = %1 WHERE ( cp.id = %2 OR cp.registered_by_id = %2 )";
 
-        $params = array( 1 => array( $statusID, 'Integer' ), 2 => array( $participantID, 'Integer' ) );
-        
-        $dao = CRM_Core_DAO::executeQuery( $query, $params );
+        if ( !$newStatusID ) {
+            $newStatusID = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', $participantID, 'status_id' );           
+        }
+
+        $cascadeAdditionalIds = self::getValidAdditionalIds( $participantID, $oldStatusID, $newStatusID );
+    
+        if ( !empty($cascadeAdditionalIds) ) {
+            $cascadeAdditionalIds = implode(',', $cascadeAdditionalIds);
+            $query = "UPDATE civicrm_participant cp SET cp.status_id = %1 WHERE  cp.id IN ({$cascadeAdditionalIds})";
+            $params = array( 1 => array( $newStatusID, 'Integer' ) );
+            $dao = CRM_Core_DAO::executeQuery( $query, $params );
+            return true;
+        }
+        return false; 
     }
     
     /**
@@ -880,7 +906,7 @@ UPDATE  civicrm_participant
         foreach ( $participantIds as $id ) {
             $allParticipantIds[] = $id;
             if ( self::isPrimaryParticipant( $id ) &&
-                 self::allowCascadeStatus( $id, $toStatusId, $fromStatusId ) ) {
+                 self::getValidAdditionalIds( $id, $fromStatusId, $toStatusId ) ) {
                 $additionalIds = self::getAdditionalParticipantIds( $id );
                 $primaryANDAdditonalIds[$id] = $additionalIds;
                 $allParticipantIds = array_merge( $allParticipantIds, $additionalIds );
@@ -1275,10 +1301,9 @@ However, you can still override this limit and register additional participants 
         }    
         return false;
     }
+
     /** 
-     * check for whether update additional participant's stautus 
-     * should cascade with primary participant status while updating status
-     * also considering transaction of old status -> new status.
+     * get additional participant Ids for cascading with primary participant status 
      *
      * @param  int  $participantId   participant id.  
      * @param  int  $oldStatusId     previous status
@@ -1287,35 +1312,23 @@ However, you can still override this limit and register additional participants 
      * @return true if allowed 
      * @access public 
      */ 
-    static function allowCascadeStatus( $participantId, $newStatusId, $oldStatusId = null ) {
+    static function getValidAdditionalIds( $participantId, $oldStatusId, $newStatusId ) {
 
-        if ( !$oldStatusId ) {
-            return true;
-        }
-        
-        if ( !($participantId || $newStatusId) ) {
-            return false;
-        }
-        
+        $additionalParticipantIds = array( );
+
         require_once 'CRM/Event/PseudoConstant.php' ;
         static $participantStatuses = array( );
-        static $statusWithReserved  = array( );
         
         if ( empty($participantStatuses) ) {
-          $participantStatuses = CRM_Event_PseudoConstant::participantStatus();
+            $participantStatuses = CRM_Event_PseudoConstant::participantStatus();
         }
         
-        if ( empty($statusWithReserved) ) {
-            $statusWithReserved = CRM_Event_PseudoConstant::participantStatus( null, null, 'is_reserved' );
+        if ( CRM_Utils_Array::value($participantStatuses[$oldStatusId], self::$_statusTransitionsRules) && 
+             in_array($participantStatuses[$newStatusId], self::$_statusTransitionsRules[$participantStatuses[$oldStatusId]]) ) {
+            $additionalParticipantIds = self::getAdditionalParticipantIds( $participantId, true, $oldStatusId );
         }
         
-        if( self::isPrimaryParticipant( $participantId ) && 
-            !( ($participantStatuses[$oldStatusId] == 'Registered' || !$statusWithReserved[$oldStatusId]) && 
-               ! $statusWithReserved[$newStatusId] ) ) {
-            return true;
-        } 
-
-        return false;
+        return $additionalParticipantIds;
     }
 }
 
