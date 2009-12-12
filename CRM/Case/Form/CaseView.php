@@ -190,6 +190,12 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             }
         }
         
+        // activity type filter for case activity search, need to add Email Sent activity type
+        $emailSentID = CRM_Core_OptionGroup::getValue('activity_type', 'Email', 'name' );
+        $aTypesFilter = array( $emailSentID => 'Email' ) + $aTypes;
+        asort($aTypesFilter);
+        $this->add('select', 'activity_type_filter_id',  ts( 'Activity Type' ), array( '' => ts( '- select activity type -' ) ) + $aTypesFilter );
+        
         $this->assign('caseRelationships', $caseRelationships);
         
         //also add client as role. CRM-4438
