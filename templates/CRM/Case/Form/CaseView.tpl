@@ -424,7 +424,7 @@ curDate = (new Date()).getTime();
   <div><a id="searchFilter" href="javascript:showHideSearch( );" class="collapsed">{ts}Search Filters{/ts}</a></div>
   <table class="no-border form-layout-compressed" id="searchOptions">
     <tr>
-        <td><label for="reporter_id">{ts}Reporter/Role{/ts}</label><br />
+        <td colspan="2"><label for="reporter_id">{ts}Reporter/Role{/ts}</label><br />
             {$form.reporter_id.html}
         </td>
         <td><label for="status_id">{$form.status_id.label}</label><br />
@@ -440,6 +440,10 @@ curDate = (new Date()).getTime();
         <td> 
             {$form.activity_date_high.label}<br /> 
             {include file="CRM/common/jcalendar.tpl" elementName=activity_date_high}
+        </td>
+        <td>
+            {$form.activity_type_filter_id.label}<br />
+            {$form.activity_type_filter_id.html}
         </td>
     </tr>
     {if $form.activity_deleted}    
@@ -507,6 +511,7 @@ function search(com)
 	    newp:1, 
 		params:[{name:'reporter_id', value: cj("select#reporter_id").val()},
 			{name:'status_id', value: cj("select#status_id").val()},
+			{name:'activity_type_id', value: cj("select#activity_type_filter_id").val()},
 			{name:'activity_date_low', value: activity_date_low},
 			{name:'activity_date_high', value: activity_date_high},
 			{name:'activity_deleted', value: activity_deleted }
