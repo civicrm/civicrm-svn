@@ -222,13 +222,27 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
       * @static
       */
       static function addDashlet( &$params ) {
+          
+          // special case to handle duplicate entires for report instances
+          $dashboardID = null;
+          if ( CRM_Utils_Array::value( 'instanceURL', $params ) ) {
+              $query = "SELECT id
+                        FROM `civicrm_dashboard`
+                        WHERE url LIKE '" . CRM_Utils_Array::value( 'instanceURL', $params ) ."%'";
+              $dashboardID = CRM_Core_DAO::singleValueQuery( $query );  
+          }
+                    
           require_once "CRM/Core/DAO/Dashboard.php";
           $dashlet  = new CRM_Core_DAO_Dashboard( );
           
-          // check url is same as exiting entries, if yes just update existing
-          $dashlet->url = CRM_Utils_Array::value( 'url', $params );
-          $dashlet->find( true );
-          
+          if ( !$dashboardID ) {
+              // check url is same as exiting entries, if yes just update existing
+              $dashlet->url = CRM_Utils_Array::value( 'url', $params );
+              $dashlet->find( true );
+          } else {
+              $dashlet->id = $dashboardID;
+          }
+
           $dashlet->copyValues( $params );
 
           $dashlet->created_date = date( "YmdHis" );
