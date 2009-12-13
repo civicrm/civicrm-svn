@@ -155,13 +155,14 @@
 
       // Build the dashboard in the DOM.  For each column...
       // (Don't iterate on widgets since this will break badly if the dataset has empty columns.)
+      var emptyDashboard = true;
       for (var c = 0; c < opts.columns; c++) {
         // Save the column to both the public scope for external accessibility and the local scope for readability.
         var col = dashboard.columns[c] = {
           initialWidgets: Array(),
           element: $('<ul id="column-' + c + '" class="column column-' + c + '"></ul>').appendTo(dashboard.element)
         };
-
+        
         // Add the empty placeholder now, hide it and save it.
         col.emptyPlaceholder = $(markup).appendTo(col.element).hide();
 
@@ -174,12 +175,25 @@
             initialColumn: col,
             minimized: ( widgets[c][id] > 0  ? true : false )
           });
+          
+          //set empty Dashboard to false
+          emptyDashboard = false;
         }
       }
 
+      if ( emptyDashboard ) {
+          emptyDashboardCondition( );
+      }
+      
       invokeCallback(opts.callbacks.init, dashboard);
     }
 
+    // function that is called when dashboard is empty
+    function emptyDashboardCondition( ) {
+        cj(".show-refresh").hide( );
+        cj("#empty-message").show( );
+    }
+    
     // Contructors for each widget call this when initialization has finished so that dashboard can complete it's intitialization.
     function completeInit() {
       // Don't do anything if any widgets are waiting for ajax requests to complete in order to finish initialization.
