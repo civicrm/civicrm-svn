@@ -309,7 +309,7 @@ IFNULL( ACOS( $cosLat * COS( RADIANS( $latitude ) ) *
         // state country js, CRM-5233
         require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap ); 
-        CRM_Core_BAO_Address::fixAllStateSelects( &$form, $defaults );
+        CRM_Core_BAO_Address::fixAllStateSelects( $form, $defaults );
         
 
         /**
