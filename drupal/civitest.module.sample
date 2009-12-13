@@ -1,16 +1,5 @@
 <?php
 
-function civitest_help( $section ) {
-	switch ($section) { 
-	case 'admin/help#civitest':
-        return t( 'CiviTest module v0.01' );
-
-    case 'admin/modules#description':
-        return t( 'CiviTest module v0.01' );
-
-    }
-}
-
 function civitest_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
 }
 
