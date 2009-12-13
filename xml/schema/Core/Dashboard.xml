@@ -78,6 +78,13 @@
         <add>3.1</add>
     </field>
     <field>
+        <name>is_fullscreen</name>
+        <type>boolean</type>
+        <comment>Is Fullscreen?</comment>
+        <default>1</default>
+        <add>3.1</add>
+    </field>
+    <field>
         <name>is_active</name>
         <type>boolean</type>
         <comment>Is this widget active?</comment>

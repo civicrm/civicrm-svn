@@ -153,9 +153,12 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
          }
          
          $dashletInfo = array( 'title'      => $dao->label,
-                               'content'    => $dao->content,
-                               'fullscreen' => $dao->content );
-                              
+                               'content'    => $dao->content);
+
+         if ( $dao->is_fullscreen ) {                       
+            $dashletInfo['fullscreen'] = $dao->content;
+         }                     
+
          return $dashletInfo;
      }
      

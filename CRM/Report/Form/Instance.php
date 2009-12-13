@@ -251,6 +251,7 @@ class CRM_Report_Form_Instance {
                 if ( CRM_Utils_Array::value( 'charts', $params ) ) {
                     $section = 1;
                     $chart = "&charts=". $params['charts'];
+                    $dashletParams['is_fullscreen'] = 0;
                 }
 
                 $dashletParams['url'] = "civicrm/report/instance/{$dao->id}&force=1&section={$section}&snippet=4{$chart}";

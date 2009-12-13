@@ -594,7 +594,7 @@
     defaults: {
       minimized: false,
       settings: false,
-      fullscreen: true
+      fullscreen: false
     }
   };
 })(jQuery); // end of closure
