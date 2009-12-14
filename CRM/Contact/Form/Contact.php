@@ -711,8 +711,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         
         // parse street address, CRM-5450
+        $parseStatusMsg = null;
         if ( $this->_parseStreetAddress ) {
-            $this->parseAddress( $params );
+            $parseResult    = $this->parseAddress( $params );
+            $parseStatusMsg = $this->parseAddressStatusMsg( $parseResult );
         }
         
         require_once 'CRM/Contact/BAO/Contact.php';
@@ -739,10 +741,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             CRM_Core_BAO_EntityTag::create( $params['tag'], $params['contact_id'] );
         }
         
-        // here we replace the user context with the url to view this contact
+        $statusMsg = ts('Your %1 contact record has been saved.', array( 1 => $contact->contact_type_display ) );
+        if ( $parseStatusMsg ) {
+            $statusMsg =  "$statusMsg <br > $parseStatusMsg";
+        }
         $session =& CRM_Core_Session::singleton( );
-        CRM_Core_Session::setStatus(ts('Your %1 contact record has been saved.', array(1 => $contact->contact_type_display)));
+        CRM_Core_Session::setStatus( $statusMsg );
         
+        // here we replace the user context with the url to view this contact
         $buttonName = $this->controller->getButtonName( );
         if ( ($buttonName == $this->getButtonName( 'next', 'new' ) ) ||
              ($buttonName == $this->getButtonName( 'upload', 'new' ) ) ) {
@@ -889,20 +895,98 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         return parent::getTemplateFileName( );
     }
     
+    /* Parse all address blocks present in given params
+     * and return parse result for all address blocks.
+     *
+     * @params $params an array of key value consist of address  blocks.
+     *
+     * @return $parseSuccess as array of sucess/fails for every address block.
+     */
     function parseAddress( &$params ) 
     {
+        $parseSuccess = array( );
         if ( !is_array( $params['address'] ) || 
              CRM_Utils_System::isNull( $params['address'] ) ) {
-            return;
+            return $parseSuccess;
         }
         
         require_once 'CRM/Core/BAO/Address.php';
-        foreach ( $params['address'] as &$address ) {
+        foreach ( $params['address'] as $instance => &$address ) {
             $parseAddr = CRM_Core_BAO_Address::parseStreetAddress(CRM_Utils_Array::value('street_address', $address)); 
             $address   = array_merge( $address, $parseAddr );
+            
+            $success   = true;
+            foreach ( $parseAddr as $parseVal ) {
+                if ( empty( $parseVal ) ) {
+                    $success = false;
+                    break;
+                }
+            }
+            $parseSuccess[$instance] = $success;
         }
         
-        return $params;
+        return $parseSuccess;
+    }
+    
+    /* check parse result and if some address block fails then this
+     * function return the status message for all address blocks.
+     * 
+     * @param  $parseResult an array of address blk instance and its status.
+     *
+     * @return $statusMsg   string status message for all address blocks. 
+     */
+    function parseAddressStatusMsg( $parseResult ) 
+    {
+        $statusMsg = null;
+        if ( !is_array( $parseResult ) || empty( $parseResult ) ) {
+            return $statusMsg;
+        }
+        
+        $parseFails = array( );
+        foreach ( $parseResult as $instance => $success ) {
+            if ( !$success ) $parseFails[] = $this->ordinalNumber( $instance );
+        }
+        
+        if ( !empty( $parseFails ) ) {
+            $statusMsg = ts( "It looks like %1 address block(s) street address are not successfully parsed.",
+                             array( 1 =>  implode( ', ', $parseFails ) ) );
+        }
+        
+        return $statusMsg;
+    }
+    
+    /* 
+     * Convert normal number to ordinal number format.
+     * like 1 => 1st, 2 => 2nd and so on...
+     *
+     * @param  $number int number to convert in to ordinal number.
+     *
+     * @return ordinal number for given number.
+     */
+    function ordinalNumber( $number ) 
+    {
+        if ( empty( $number )  ) {
+            return null;
+        }
+        
+        $str = 'th';
+        switch( floor( $number/10 ) % 10 ) {
+        case 1:            
+        default:
+            switch( $number % 10 ) {
+            case 1: 
+                $str = 'st';
+                break;
+            case 2:
+                $str = 'nd';
+                break;
+            case 3: 
+                $str = 'rd';
+                break;
+            }
+        }
+        
+        return "$number$str";
     }
     
 }
