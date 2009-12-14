@@ -825,16 +825,18 @@ WHERE  civicrm_participant.id = {$participantId}
      * @access public
      * @static
      */
-    static function updateParticipantStatus( $participantID, $oldStatusID, $newStatusID = null ) 
+    static function updateParticipantStatus( $participantID, $oldStatusID, $newStatusID = null, $updatePrimaryStatus = false ) 
     {    
         if ( !$participantID || !$oldStatusID ) {
             return;
         }
-
+        
         if ( !$newStatusID ) {
             $newStatusID = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', $participantID, 'status_id' );           
+        } else if ( $updatePrimaryStatus ) {
+            CRM_Core_DAO::setFieldValue( 'CRM_Event_DAO_Participant', $participantID, 'status_id', $newStatusID );   
         }
-
+        
         $cascadeAdditionalIds = self::getValidAdditionalIds( $participantID, $oldStatusID, $newStatusID );
     
         if ( !empty($cascadeAdditionalIds) ) {

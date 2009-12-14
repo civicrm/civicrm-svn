@@ -1331,7 +1331,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
             
             if ( $participant ) {
                 $updatedStatusId = array_search('Cancelled', $participantStatuses);
-                CRM_Event_BAO_Participant::updateParticipantStatus( $participant->id, $oldStatus, $updatedStatusId );
+                CRM_Event_BAO_Participant::updateParticipantStatus( $participant->id, $oldStatus, $updatedStatusId, true );
                 
                 $updateResult['updatedComponents']['CiviEvent'] = $updatedStatusId;
                 if ( $processContributionObject ) $processContribution = true;
@@ -1354,7 +1354,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
             
             if ( $participant ) {
                 $updatedStatusId = array_search( 'Cancelled', $participantStatuses );
-                CRM_Event_BAO_Participant::updateParticipantStatus( $participant->id, $oldStatus, $updatedStatusId );
+                CRM_Event_BAO_Participant::updateParticipantStatus( $participant->id, $oldStatus, $updatedStatusId, true );
                 
                 $updateResult['updatedComponents']['CiviEvent'] = $updatedStatusId;
                 if ( $processContributionObject ) $processContribution = true;
@@ -1440,7 +1440,7 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
             
             if ( $participant ) { 
                 $updatedStatusId = array_search( 'Registered', $participantStatuses );
-                CRM_Event_BAO_Participant::updateParticipantStatus( $participant->id, $oldStatus, $updatedStatusId );
+                CRM_Event_BAO_Participant::updateParticipantStatus( $participant->id, $oldStatus, $updatedStatusId, true );
                 
                 $updateResult['updatedComponents']['CiviEvent'] = $updatedStatusId;
                 if ( $processContributionObject ) $processContribution = true;
