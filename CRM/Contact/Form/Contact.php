@@ -314,18 +314,32 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         
         // build street address, CRM-5450.
+        $addressValues = array( );
         if ( $this->_parseStreetAddress ) {
             if ( is_array( $defaults['address'] ) && 
                  !CRM_Utils_system::isNull( $defaults['address'] ) ) {
-                foreach ( $defaults['address'] as &$address ) {
+                $parseFields = array( 'street_address', 'street_number', 'street_name', 'street_unit' );
+                foreach ( $defaults['address'] as $cnt => &$address ) {
                     $streetAddress = null;
                     foreach ( array( 'street_number', 'street_number_suffix', 'street_name', 'street_unit' ) as $fld ) {
                         if ( $fld == 'street_name' ) $streetAddress .= ' ';
                         $streetAddress .= CRM_Utils_Array::value( $fld, $address );
                     }
                     $address['street_address'] = $streetAddress;
+                    $address['street_number'] .= CRM_Utils_Array::value( 'street_number_suffix', $address ); 
+                    
+                    // build array for set default.
+                    foreach ( $parseFields as $field ) {
+                        $addressValues["{$field}_{$cnt}"] = CRM_Utils_Array::value( $field, $address ); 
+                    }
+                    
+                    // don't load fields, use js to populate.
+                    foreach ( array( 'street_number', 'street_name', 'street_unit' ) as $f ) {
+                        if ( isset( $address[$f] ) ) unset( $address[$f] );
+                    }
                 }
             }
+            $this->assign( 'allAddressFieldValues', json_encode( $addressValues ) );
         }
         
         //set location type and country to default for each block
@@ -555,16 +569,20 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                                       CRM_Core_BAO_Preferences::valueOptions( 'address_options' ) );
         if ( $parseStreetAddress ) {
             if ( is_array( $fields['address'] ) ) {  
+                $invalidStreetNumbers = array( );
                 foreach ( $fields['address'] as $cnt => $address ) {
-                    if ( CRM_Utils_Array::value( 'parse_street_address', $address ) != 2 ) {
-                        continue;
-                    }
                     if ( $streetNumber = CRM_Utils_Array::value( 'street_number', $address ) ) {
                         $parsedAddress = CRM_Core_BAO_Address::parseStreetAddress( $address['street_number'] );
                         if ( !CRM_Utils_Array::value( 'street_number', $parsedAddress ) ) {
-                            $errors["address[$cnt][street_number]"] = ts('The street number you entered is not in an expected format. Street numbers may include numeric digit(s) followed by other characters. You can still enter the complete street address (unparsed) by clicking "Edit Street Address".');
+                            $invalidStreetNumbers[] = $cnt;
                         }
                     }
+                }
+                
+                if ( !empty( $invalidStreetNumbers ) ) {
+                    $first = $invalidStreetNumbers[0];
+                    foreach ( $invalidStreetNumbers as &$num ) $num = CRM_Contact_Form_Contact::ordinalNumber( $num );
+                    $errors["address[$first][street_number]"] = ts('The street number you entered for %1 address block(s) are not in an expected format. Street numbers may include numeric digit(s) followed by other characters. You can still enter the complete street address (unparsed) by clicking "Edit Street Address".', array( implode( ', ', $invalidStreetNumbers) ) );
                 }
             }
         }
@@ -959,10 +977,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $buildStreetAddress = false;
         foreach ( $params['address'] as $instance => &$address ) {
             $parseFieldName = 'street_address';
-            if ( CRM_Utils_Array::value( 'parse_street_address', $address ) == 2 ) {
-                $parseFieldName     = 'street_number';
-                $buildStreetAddress = true;
+            foreach ( array( 'street_number', 'street_name', 'street_unit' ) as $fld ) {
+                if ( CRM_Utils_Array::value( $fld, $address )  ) {
+                    $parseFieldName     = 'street_number';
+                    $buildStreetAddress = true;
+                    break;
+                }
             }
+            
             // parse address field.
             $parsedFields = CRM_Core_BAO_Address::parseStreetAddress(CRM_Utils_Array::value($parseFieldName, $address));
             

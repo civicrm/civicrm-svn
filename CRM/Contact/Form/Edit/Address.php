@@ -72,9 +72,6 @@ class CRM_Contact_Form_Edit_Address
                           ts('Primary location for this contact'), 
                           $js );
         
-        $form->addElement( 'hidden', "address[$blockId][parse_street_address]", $form->get( 'parseStreetAddress' ), 
-                           array( 'id' => "hidden_parseStreetAddress_$blockId" ) );
-        
         $js = array( 'id' => "Address_".$blockId."_IsBilling", 'onClick' => 'singleSelect( this.id );');
         $form->addElement(
                           'checkbox', 

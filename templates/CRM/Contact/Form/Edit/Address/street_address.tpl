@@ -41,19 +41,41 @@
            </tr>
         </table>
     {/if}
-{/if}
+
 {literal}
 <script type="text/javascript">
 function showHideAddress( id, blockId ) {
+	var allAddressValues = {/literal}{$allAddressFieldValues}{literal}; 
+        
+	var streetName    = eval( "allAddressValues.street_name_"    + blockId );
+	var streetUnit    = eval( "allAddressValues.street_unit_"    + blockId );
+	var streetNumber  = eval( "allAddressValues.street_number_"  + blockId );
+	var streetAddress = eval( "allAddressValues.street_address_" + blockId );
+
+	var showBlockName = '';
+	var hideBlockName = '';
+
         if ( id == 'addressElements' ) {
-             show( 'addressElements_'+blockId );
-             hide( 'streetAddress_'+blockId );
-	     cj( "#hidden_parseStreetAddress_" + blockId ).val( 2 );
-        } else {
-             show( 'streetAddress_'+blockId );
-             hide( 'addressElements_'+blockId );
-	     cj( '#hidden_parseStreetAddress_' + blockId ).val( 1 );
-        }     
+             streetAddress = '';
+	     
+             showBlockName = 'addressElements_' + blockId;		   
+	     hideBlockName = 'streetAddress_' + blockId;
+	} else {
+             streetNumber = streetName = streetUnit = ''; 
+
+             showBlockName = 'streetAddress_' +  blockId;
+             hideBlockName = 'addressElements_'+ blockId;
+       }
+
+       show( showBlockName );
+       hide( hideBlockName );
+
+       //set the values.
+       cj( '#address_' + blockId +'_street_name'    ).val( streetName    );   
+       cj( '#address_' + blockId +'_street_unit'    ).val( streetUnit    );
+       cj( '#address_' + blockId +'_street_number'  ).val( streetNumber  );
+       cj( '#address_' + blockId +'_street_address' ).val( streetAddress );
 }
 </script>
 {/literal}
+{/if}
