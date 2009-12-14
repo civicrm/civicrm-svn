@@ -665,7 +665,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             foreach( $groupType as $value ) {
                 if ( !in_array( $value, $individualSubTypes ) && 
                      !in_array( $value, array( 'Participant', 'Contribution', 'Membership',
-                                               'Individual' ) ) ) {
+                                               'Individual', 'Contact' ) ) ) {
                     $errors['field_name'] = 
                         ts( 'Cannot add or update profile field "%1" with combination 
                              of  Household or Organization or any subtypes of Household or 
@@ -765,7 +765,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         
         //get the group type. 
         $groupType = CRM_Core_BAO_UFGroup::calculateGroupType( $self->_gid, CRM_Utils_Array::value( 'field_id', $fields ) );
-        
+                     
         switch ( $fieldType ) {
             
         case 'Individual' :
@@ -820,8 +820,8 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             } 
             break;
         default:
+            $profileType = CRM_Core_BAO_UFField::getProfileType( $fields['group_id'] );
             if ( CRM_Contact_BAO_ContactType::isaSubType( $fieldType ) ) {
-                $profileType = CRM_Core_BAO_UFField::getProfileType( $fields['group_id'] );
                 if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
                     if ( $fieldType != $profileType ) {
                         $errors['field_name'] = 
@@ -838,6 +838,12 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                                  of "%2".', array( 1 => $fieldType, 2 => $profileType ) );    
                     }
                 }        
+            } elseif( $fields['field_name'][1] == 'contact_sub_type' && 
+                      !in_array( $profileType, array('Individual', 'Household', 'Organization') ) &&
+                      !in_array( $profileType, CRM_Contact_BAO_ContactType::subTypes() )  ) { 
+                
+                $errors['field_name'] = 
+                    ts( 'Cannot add or update profile field Contact Subtype as profile type is not one of Individual, Household or Organization.' );
             }
         }
         
