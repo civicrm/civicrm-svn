@@ -340,6 +340,24 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 }
             }
             $this->assign( 'allAddressFieldValues', json_encode( $addressValues ) );
+
+            //hack to handle show/hide address fields.
+            $parsedAddress = array( );
+            if ( CRM_Utils_Array::value( 'address', $_POST ) 
+                 && is_array( $_POST['address'] ) ) {
+                foreach ( $_POST['address'] as $cnt => $values ) {
+                    $showField = 'streetAddress';
+                    foreach ( array( 'street_number', 'street_name', 'street_unit' ) as $fld ) {
+                        if ( CRM_Utils_Array::value( $fld, $values ) ) {
+                            $showField = 'addressElements';
+                            break;
+                        }
+                    }
+                    $parsedAddress[$cnt] = $showField;
+                }
+            }
+            $this->assign( 'showHideAddressFields',     $parsedAddress );
+            $this->assign( 'loadShowHideAddressFields', empty( $parsedAddress  ) ? false : true  );
         }
         
         //set location type and country to default for each block

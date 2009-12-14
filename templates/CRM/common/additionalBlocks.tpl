@@ -9,6 +9,12 @@ cj( function( ) {
             {/foreach}  	
         {/foreach}
     {/if}
+
+    {if $loadShowHideAddressFields}
+        {foreach from=$showHideAddressFields key="blockId" item="fieldName"}
+           processAddressFields( '{$fieldName}', '{$blockId}',  1 );
+        {/foreach}  
+    {/if}
     {literal}
 });
 

@@ -8,7 +8,7 @@
         </td>
         {if $parseStreetAddress eq 1 && $action eq 2}
            <td><br />
-           <a href="#" title="{ts}Edit Address Elements{/ts}" onClick="showHideAddress( 'addressElements' , '{$blockId}' );return false;">{ts}Edit Address Elements{/ts}</a>
+           <a href="#" title="{ts}Edit Address Elements{/ts}" onClick="processAddressFields( 'addressElements' , '{$blockId}' );return false;">{ts}Edit Address Elements{/ts}</a>
            </td> 
         {/if}   
     </tr>
@@ -36,32 +36,39 @@
                   <span class="description font-italic">Apartment/Unit/Suite</span> 
                </td>
                <td>
-               <a href="#" title="{ts}Edit Street Address{/ts}" onClick="showHideAddress( 'streetAddress', '{$blockId}' );return false;">{ts}Edit Street Address{/ts}</a><br />
+               <a href="#" title="{ts}Edit Street Address{/ts}" onClick="processAddressFields( 'streetAddress', '{$blockId}' );return false;">{ts}Edit Street Address{/ts}</a><br />
                </td>
            </tr>
         </table>
     {/if}
 
 {literal}
+
 <script type="text/javascript">
-function showHideAddress( id, blockId ) {
-	var allAddressValues = {/literal}{$allAddressFieldValues}{literal}; 
+function processAddressFields( name, blockId, onlyShowHide ) {
+	if ( !onlyShowHide ) { 
+	    var allAddressValues = {/literal}{$allAddressFieldValues}{literal}; 
         
-	var streetName    = eval( "allAddressValues.street_name_"    + blockId );
-	var streetUnit    = eval( "allAddressValues.street_unit_"    + blockId );
-	var streetNumber  = eval( "allAddressValues.street_number_"  + blockId );
-	var streetAddress = eval( "allAddressValues.street_address_" + blockId );
+	    var streetName    = eval( "allAddressValues.street_name_"    + blockId );
+	    var streetUnit    = eval( "allAddressValues.street_unit_"    + blockId );
+	    var streetNumber  = eval( "allAddressValues.street_number_"  + blockId );
+	    var streetAddress = eval( "allAddressValues.street_address_" + blockId );
+	}
 
 	var showBlockName = '';
 	var hideBlockName = '';
 
-        if ( id == 'addressElements' ) {
-             streetAddress = '';
+        if ( name == 'addressElements' ) {
+             if ( !onlyShowHide ) {
+	          streetAddress = '';
+	     }
 	     
              showBlockName = 'addressElements_' + blockId;		   
 	     hideBlockName = 'streetAddress_' + blockId;
 	} else {
-             streetNumber = streetName = streetUnit = ''; 
+             if ( !onlyShowHide ) {
+                  streetNumber = streetName = streetUnit = ''; 
+             }
 
              showBlockName = 'streetAddress_' +  blockId;
              hideBlockName = 'addressElements_'+ blockId;
@@ -70,12 +77,15 @@ function showHideAddress( id, blockId ) {
        show( showBlockName );
        hide( hideBlockName );
 
-       //set the values.
-       cj( '#address_' + blockId +'_street_name'    ).val( streetName    );   
-       cj( '#address_' + blockId +'_street_unit'    ).val( streetUnit    );
-       cj( '#address_' + blockId +'_street_number'  ).val( streetNumber  );
-       cj( '#address_' + blockId +'_street_address' ).val( streetAddress );
+       // set the values.
+       if ( !onlyShowHide ) {
+          cj( '#address_' + blockId +'_street_name'    ).val( streetName    );   
+          cj( '#address_' + blockId +'_street_unit'    ).val( streetUnit    );
+          cj( '#address_' + blockId +'_street_number'  ).val( streetNumber  );
+          cj( '#address_' + blockId +'_street_address' ).val( streetAddress );
+       }
 }
+
 </script>
 {/literal}
 {/if}
