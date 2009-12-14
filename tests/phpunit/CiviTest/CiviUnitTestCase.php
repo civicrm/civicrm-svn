@@ -157,8 +157,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         }
         require_once 'CRM/Core/Config.php';
         $config =& CRM_Core_Config::singleton();
+
+        // when running unit tests, use mockup user framework
+        $config->setUserFramework( 'UnitTests' );
+        // enable backtrace to get meaningful errors
         $config->backtrace = 1;
- 
+        
         //  Use a temporary file for STDIN
         $GLOBALS['stdin'] = tmpfile( );
         if ( $GLOBALS['stdin'] === false ) {
