@@ -202,6 +202,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         
         // parse street address, CRM-5450
+        require_once 'CRM/Core/BAO/Preferences.php';
         $this->_parseStreetAddress = $this->get( 'parseStreetAddress' );
         if ( !isset( $this->_parseStreetAddress ) ) { 
             $this->_parseStreetAddress = CRM_Utils_Array::value( 'street_address_parsing',
