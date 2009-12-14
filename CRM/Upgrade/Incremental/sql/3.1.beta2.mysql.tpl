@@ -22,3 +22,10 @@ INSERT INTO
    civicrm_option_value(`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
 VALUES(@option_group_id_address_options, {localize}'Street Address Parsing'{/localize}, 15, 'street_address_parsing', NULL, 0, NULL, 15, 0, 0, 1, NULL, NULL);
 
+-- CRM-5528
+
+SELECT @option_group_id_cdt            := max(id) from civicrm_option_group where name = 'custom_data_type';
+
+INSERT INTO 
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+VALUES(@option_group_id_cdt, {localize}'Participant Event Type'{/localize}, '3', 'ParticipantEventType', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL );
