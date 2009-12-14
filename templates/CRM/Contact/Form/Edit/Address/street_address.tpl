@@ -48,9 +48,11 @@ function showHideAddress( id, blockId ) {
         if ( id == 'addressElements' ) {
              show( 'addressElements_'+blockId );
              hide( 'streetAddress_'+blockId );
+	     cj( "#hidden_parseStreetAddress_" + blockId ).val( 2 );
         } else {
              show( 'streetAddress_'+blockId );
              hide( 'addressElements_'+blockId );
+	     cj( '#hidden_parseStreetAddress_' + blockId ).val( 1 );
         }     
 }
 </script>
