@@ -42,23 +42,26 @@ function run( ) {
     require_once 'CRM/Core/Config.php'; 
     
     $config =& CRM_Core_Config::singleton(); 
-
+    
     require_once 'Console/Getopt.php';
-    $shortOptions = "n:p:s:e:k:";
-    $longOptions  = array( 'name=', 'pass=', 'key=', 'start=', 'end=' );
-
+    $shortOptions = "n:p:s:e:k:g:parse";
+    $longOptions  = array( 'name=', 'pass=', 'key=', 'start=', 'end=', 'geocoding=', 'parse=' );
+    
     $getopt  = new Console_Getopt( );
     $args = $getopt->readPHPArgv( );
+    
     array_shift( $args );
     list( $valid, $dontCare ) = $getopt->getopt2( $args, $shortOptions, $longOptions );
-
+    
     $vars = array(
-                  'start' => 's',
-                  'end'   => 'e',
-                  'name'  => 'n',
-                  'pass'  => 'p',
-                  'key'   => 'k' );
-
+                  'start'     => 's',
+                  'end'       => 'e',
+                  'name'      => 'n',
+                  'pass'      => 'p',
+                  'key'       => 'k',
+                  'geocoding' => 'g',
+                  'parse'     => 'parse' );
+    
     foreach ( $vars as $var => $short ) {
         $$var = null;
         foreach ( $valid as $v ) {
@@ -72,27 +75,61 @@ function run( ) {
         }
         $_REQUEST[$var] = $$var;
     }
-
+    
     // this does not return on failure
     // require_once 'CRM/Utils/System.php';
     CRM_Utils_System::authenticateScript( true, $name, $pass );
-
-    // check that we have a geocodeMethod
+    
+    // do check for geocoding.
+    $processGeocode = false;
     if ( empty( $config->geocodeMethod ) ) {
-        echo ts( 'Error: You need to set a mapping provider under Global Settings' );
+        if ( $geocoding == 'true' ) {
+            echo ts( 'Error: You need to set a mapping provider under Global Settings' );
+            exit( ); 
+        }
+    } else {
+        $processGeocode = true;
+        // user might want to over-ride.
+        if ( $geocoding == 'false' ) {
+            $processGeocode = false;
+        }
+    }
+    
+    // do check for parse street address.
+    require_once 'CRM/Core/BAO/Preferences.php';
+    $parseAddress = CRM_Utils_Array::value( 'street_address_parsing',
+                                            CRM_Core_BAO_Preferences::valueOptions( 'address_options' ), false );
+    $parseStreetAddress = false;
+    if ( !$parseAddress ) {
+        if ( $parse == 'true' ) {
+            echo ts( 'Error: You need to set a Street Address Parsing under Global Settings >> Address Settings.' );
+            exit( );
+        }
+    } else {
+        $parseStreetAddress = true;
+        // user might want to over-ride.
+        if ( $parse == 'false' ) {
+            $parseStreetAddress = false;
+        }
+    }
+    
+    // don't process.
+    if ( !$parseStreetAddress && !$processGeocode ) {
+        echo ts( 'Error: Both Geocode mapping as well as Street Address Parsing are disabled.' );
         exit( );
     }
-
+    
     $config->userFramework      = 'Soap'; 
     $config->userFrameworkClass = 'CRM_Utils_System_Soap'; 
     $config->userHookClass      = 'CRM_Utils_Hook_Soap';
-
-
+    
     // we have an exclusive lock - run the mail queue
-    processContacts( $config, $start, $end );
+    processContacts( $config, $processGeocode, $parseStreetAddress, $start, $end );
 }
 
-function processContacts( &$config, $start = null, $end = null ) {
+
+function processContacts( &$config, $processGeocode, $parseStreetAddress, $start = null, $end = null ) 
+{
     $contactClause = array( );
     if ( $start ) {
         $contactClause[] = "c.id >= $start";
@@ -105,7 +142,7 @@ function processContacts( &$config, $start = null, $end = null ) {
     } else {
         $contactClause = null;
     }
-
+    
     $query = "
 SELECT     c.id,
            a.id as address_id,
@@ -126,12 +163,17 @@ WHERE      c.id           = a.contact_id
 ORDER BY a.id
 ";
     
-    $totalGeocoded = $totalAddresses = 0;
-
+    $totalGeocoded = $totalAddresses = $totalAddressParsed = 0;
+    
     $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
     
-    require_once( str_replace('_', DIRECTORY_SEPARATOR, $config->geocodeMethod ) . '.php' );
+    if ( $processGeocode ) {
+        require_once( str_replace('_', DIRECTORY_SEPARATOR, $config->geocodeMethod ) . '.php' );
+    }
+    
     require_once 'CRM/Core/DAO/Address.php';
+    require_once 'CRM/Core/BAO/Address.php';
+    
     while ( $dao->fetch( ) ) {
         $totalAddresses++;
         $params = array( 'street_address'    => $dao->street_address,
@@ -139,36 +181,71 @@ ORDER BY a.id
                          'city'              => $dao->city,
                          'state_province'    => $dao->state,
                          'country'           => $dao->country );
-
-        // loop through the address removing more information
-        // so we can get some geocode for a partial address
-        // i.e. city -> state -> country
-
-        $maxTries = 5;
-        do {
-            if ( defined( 'THROTTLE_REQUESTS' ) &&
-                 THROTTLE_REQUESTS ) {
-                usleep( 50000 );
-            }
-
-            eval( $config->geocodeMethod . '::format( $params, true );' );
-            array_shift( $params );
-            $maxTries--;
-        } while ( ( ! isset( $params['geo_code_1'] ) ) &&
-                  ( $maxTries > 1 ) );
+        
+        $addressParams = array( );
+        
+        // process geocode.
+        if ( $processGeocode ) {
+            // loop through the address removing more information
+            // so we can get some geocode for a partial address
+            // i.e. city -> state -> country
             
-        if ( isset( $params['geo_code_1'] ) ) {
+            $maxTries = 5;
+            do {
+                if ( defined( 'THROTTLE_REQUESTS' ) &&
+                     THROTTLE_REQUESTS ) {
+                    usleep( 50000 );
+                }
+                
+                eval( $config->geocodeMethod . '::format( $params, true );' );
+                array_shift( $params );
+                $maxTries--;
+            } while ( ( ! isset( $params['geo_code_1'] ) ) &&
+                      ( $maxTries > 1 ) );
+            
+            if ( isset( $params['geo_code_1'] ) ) {
+                $totalGeocoded++;
+                $addressParams['geo_code_1'] = $params['geo_code_1'];
+                $addressParams['geo_code_2'] = $params['geo_code_2'];
+            }
+        }
+        
+        // parse street address
+        if ( $parseStreetAddress ) {
+            $parsedFields = CRM_Core_BAO_Address::parseStreetAddress( $dao->street_address );
+            $success = true;
+            foreach ( $parsedFields as $parseVal ) {
+                if ( empty( $parseVal ) ) {
+                    $success = false;
+                    break;
+                }
+            }
+            
+            // do check for all elements.
+            if ( $success ) {
+                $totalAddressParsed++;
+                $addressParams = array_merge( $addressParams, $parsedFields ); 
+            }
+        }
+        
+        // finally update address object.
+        if ( !empty( $addressParams ) ) {
             $address = new CRM_Core_DAO_Address( );
             $address->id = $dao->address_id;
-            $address->geo_code_1 = $params['geo_code_1'];
-            $address->geo_code_2 = $params['geo_code_2'];
+            $address->copyValues( $parsedFields );
             $address->save( );
-            $totalGeocoded++;
+            $address->free( );
         }
     }
-
+    
     echo ts( "Addresses Evaluated: $totalAddresses\n" );
-    echo ts( "Addresses Geocoded : $totalGeocoded\n" );
+    if ( $processGeocode ) {
+        echo ts( "Addresses Geocoded : $totalGeocoded\n" );
+    }
+    if ( $parseStreetAddress ) {
+        echo ts( "Street Address Parsed : $totalAddressParsed\n" );
+    }
+    
     return;
 }
 
