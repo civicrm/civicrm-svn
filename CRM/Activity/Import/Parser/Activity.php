@@ -193,20 +193,11 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         foreach ($params as $key => $val) {
             if ( $key == 'activity_date_time' ) {
                 if ( $val ) {
-                    if( $dateType == 1) {
-                        if ( CRM_Utils_Rule::date( $params[$key] ) ) {
-                            $params[$key] = CRM_Utils_Date::customFormat($val,'%Y%m%d%H%i');
-                        } else {
-                            CRM_Import_Parser_Contact::addToErrorMsg( 'Activity date', $errorMessage );
-                        }
-                    } else{
-                        if ( CRM_Utils_Date::convertToDefaultDate( $params, $dateType, $key )) {
-                            if ( !CRM_Utils_Rule::date($params[$key])) {
-                                CRM_Import_Parser_Contact::addToErrorMsg('Activity date', $errorMessage);
-                            }
-                        } else {
-                            CRM_Import_Parser_Contact::addToErrorMsg('Activity date', $errorMessage);
-                        }
+                    $dateValue = self::formatDate( $val, $dateType );
+                    if ( $dateValue ) {
+                        $params[$key] = $dateValue;
+                    } else {
+                        CRM_Import_Parser_Contact::addToErrorMsg( 'Activity date', $errorMessage );  
                     }
                 }
             }
@@ -259,14 +250,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         foreach ($params as $key => $val) {
             if ( $key ==  'activity_date_time' ) {
                 if ( $val ) {
-                    if ( $dateType == 1) { 
-                        $params[$key] = CRM_Utils_Date::customFormat($val,'%Y%m%d%H%i');
-                        //hack to add seconds
-                        $params[$key] = $params[$key] . '00';
-                    } else {
-                        CRM_Utils_Date::convertToDefaultDate( $params, $dateType, $key );
-                    }
-                    
+                    $params[$key] = self::formatDate( $val, $dateType );
                 }
             } elseif ( $key == 'duration' ) {
                 $params['duration_minutes'] = $params['duration'];
@@ -384,6 +368,49 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
     {
     }
 
+    static function formatDate( $date, $dateType ) 
+    {
+        //1. first convert date to default format.
+        //2. append time to default formatted date (might be removed during format)  
+        //3. validate date / date time.
+        //4. If date and time then convert to default date time format.
+        
+        $dateKey       = 'date';
+        $dateParams    = array( $dateKey => $date ); 
+        $formattedDate = null;
+        
+        require_once 'CRM/Utils/Date.php';
+        if ( CRM_Utils_Date::convertToDefaultDate( $dateParams, $dateType, $dateKey ) ) { 
+            $dateVal   = $dateParams[$dateKey];
+            $ruleName  = 'date';
+            if ( $dateType == 1 ) {
+                $matches = array( );
+                if ( preg_match("/(?: [01]\d|2[0-3]|\d):(?:[0-4]\d|5[1-9])/", $date, $matches ) ) {
+                    $ruleName = 'dateTime';
+                    if ( strpos( $date, '-' ) !== false ) {
+                        $dateVal .= array_pop( $matches );
+                    }
+                }
+            }
+            
+            // validate date.
+            require_once 'CRM/Utils/Rule.php';
+            eval( '$valid = CRM_Utils_Rule::' . $ruleName . '( $dateVal );' );
+            
+            if ( $valid ) {
+                //format date and time to default.
+                if ( $ruleName == 'dateTime' ) {
+                    $dateVal  = CRM_Utils_Date::customFormat( preg_replace("/(:|\s)?/", "", $dateVal ), '%Y%m%d%H%i' );
+                    //hack to add seconds
+                    $dateVal .= '00';
+                }
+                $formattedDate = $dateVal;
+            }
+        }
+        
+        return $formattedDate;
+    }
+    
 }
 
 

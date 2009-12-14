@@ -156,6 +156,17 @@ class CRM_Utils_Rule
         return $default;
     }
     
+    static function dateTime($value, $default = null) 
+    {
+        $result = $default;
+        if ( is_string( $value ) &&
+             preg_match( '/^\d\d\d\d-?\d\d-?\d\d(\s\d\d:\d{1,2})?$/', $value ) ) {
+            $result = $value;
+        }
+        
+        return $result;
+    }
+    
     /** 
      * check the validity of the date (in qf format) 
      * note that only a year is valid, or a mon-year is 
