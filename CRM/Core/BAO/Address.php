@@ -656,7 +656,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         
         // now get the street unit.
         $matches = array( );
-        preg_match( '/^(.+)\s+(APT|BSMT|BLDG|DEPT|FL|FRNT|HNGR|KEY|LBBY|LOT|LOWR|OFC|PH|PIER|REAR|RM|SIDE|SLIP|SPC|STOP|STE|SUITE|TRLR|UNIT|UPPR|#)(\s+\w+)?/i', $streetAddress, $matches );
+        preg_match( '/^(.+)\s?+(APT|BSMT|BLDG|DEPT|FL|FRNT|HNGR|KEY|LBBY|LOT|LOWR|OFC|PH|PIER|REAR|RM|SIDE|SLIP|SPC|STOP|STE|SUITE|TRLR|UNIT|UPPR|#)(\s+\w+)?/i', $streetAddress, $matches );
         
         if ( !empty( $matches ) ) {
             $parseFields['street_unit'] = CRM_Utils_Array::value( 2, $matches );

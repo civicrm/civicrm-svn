@@ -113,6 +113,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     public $_greetings;
     
     /**
+     * Do we want to parse street address. 
+     */
+    private $_parseStreetAddress; 
+    
+    /**
      * build all the data structures needed to build the form
      *
      * @return void
@@ -194,6 +199,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             } else {
                 CRM_Core_Error::statusBounce( ts('Could not get a contact_id and/or contact_type') );
             }
+        }
+        
+        // parse street address, CRM-5450
+        $this->_parseStreetAddress = $this->get( 'parseStreetAddress' );
+        if ( !isset( $this->_parseStreetAddress ) ) { 
+            $this->_parseStreetAddress = CRM_Utils_Array::value( 'street_address_parsing',
+                                                                 CRM_Core_BAO_Preferences::valueOptions( 'address_options' ), false );
+            $this->set( 'parseStreetAddress', $this->_parseStreetAddress );
         }
         
         $this->_editOptions = $this->get( 'contactEditOptions' ); 
@@ -295,6 +308,21 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             if ( !in_array( $name, array( 'Address', 'Notes' ) ) ) {
                 require_once(str_replace('_', DIRECTORY_SEPARATOR, "CRM_Contact_Form_Edit_" . $name ) . ".php");
                 eval( 'CRM_Contact_Form_Edit_' . $name . '::setDefaultValues( $this, $defaults );' );
+            }
+        }
+        
+        // build street address, CRM-5450.
+        if ( $this->_parseStreetAddress ) {
+            if ( is_array( $defaults['address'] ) && 
+                 !CRM_Utils_system::isNull( $defaults['address'] ) ) {
+                foreach ( $defaults['address'] as &$address ) {
+                    $streetAddress = null;
+                    foreach ( array( 'street_number', 'street_number_suffix', 'street_name', 'street_unit' ) as $fld ) {
+                        if ( $fld == 'street_name' ) $streetAddress .= ' ';
+                        $streetAddress .= CRM_Utils_Array::value( $fld, $address );
+                    }
+                    $address['street_address'] = $streetAddress;
+                }
             }
         }
         
@@ -682,6 +710,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             }
         }
         
+        // parse street address, CRM-5450
+        if ( $this->_parseStreetAddress ) {
+            $this->parseAddress( $params );
+        }
+        
         require_once 'CRM/Contact/BAO/Contact.php';
         $contact =& CRM_Contact_BAO_Contact::create( $params, true,false );
 
@@ -855,6 +888,23 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         return parent::getTemplateFileName( );
     }
+    
+    function parseAddress( &$params ) 
+    {
+        if ( !is_array( $params['address'] ) || 
+             CRM_Utils_System::isNull( $params['address'] ) ) {
+            return;
+        }
+        
+        require_once 'CRM/Core/BAO/Address.php';
+        foreach ( $params['address'] as &$address ) {
+            $parseAddr = CRM_Core_BAO_Address::parseStreetAddress(CRM_Utils_Array::value('street_address', $address)); 
+            $address   = array_merge( $address, $parseAddr );
+        }
+        
+        return $params;
+    }
+    
 }
 
 
