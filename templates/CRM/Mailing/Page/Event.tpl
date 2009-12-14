@@ -1,16 +1,16 @@
 {include file="CRM/common/pager.tpl" location="top"}
 
 {if $rows }
+{include file="CRM/common/jsortable.tpl"}
 {strip}
-<table>
-  <tr class="columnheader">
+<table id="mailing_event" class="display">
+  <thead>
+  <tr>
   {foreach from=$columnHeaders item=header}
-    <th>
-      {$header.name}
-    </th>
+    <th>{$header.name}</th>
   {/foreach}
   </tr>
-
+  </thead>
   {counter start=0 skip=1 print=false} 
   {foreach from=$rows item=row}
   <tr class="{cycle values="odd-row,even-row"}">
