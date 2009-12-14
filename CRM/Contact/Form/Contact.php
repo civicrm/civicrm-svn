@@ -527,6 +527,22 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             }
         }
         
+        // street number should be digit + suffix, CRM-5450
+        $parseStreetAddress = CRM_Utils_Array::value( 'street_address_parsing', 
+                                                      CRM_Core_BAO_Preferences::valueOptions( 'address_options' ) );
+        if ( $parseStreetAddress ) {
+            if ( is_array( $fields['address'] ) ) {  
+                foreach ( $fields['address'] as $cnt => $address ) {
+                    if ( $streetNumber = CRM_Utils_Array::value( 'street_number', $address ) ) {
+                        $parsedAddress = CRM_Core_BAO_Address::parseStreetAddress( $address['street_number'] );
+                        if ( !CRM_Utils_Array::value( 'street_number', $parsedAddress ) ) {
+                            $errors['address'][$cnt]['street_number'] = ts('The street number you entered is not in an expected format. Street numbers may include numeric digit(s) followed by other characters. You can still enter the complete street address (unparsed) by clicking "Edit Street Address".');  
+                        }
+                    }
+                }
+            }
+        }
+        
         return $primaryID;
     }
     
@@ -896,7 +912,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     }
     
     /* Parse all address blocks present in given params
-     * and return parse result for all address blocks.
+     * and return parse result for all address blocks,
+     * This function either parse street address in to child 
+     * elements or build street address from child elements.
      *
      * @params $params an array of key value consist of address  blocks.
      *
@@ -911,20 +929,47 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         
         require_once 'CRM/Core/BAO/Address.php';
+        
+        $buildStreetAddress = false;
         foreach ( $params['address'] as $instance => &$address ) {
-            $parseAddr = CRM_Core_BAO_Address::parseStreetAddress(CRM_Utils_Array::value('street_address', $address)); 
-            $success   = true;
-            foreach ( $parseAddr as $parseVal ) {
-                if ( empty( $parseVal ) ) {
-                    $success = false;
+            $parseFieldName = 'street_address';
+            foreach ( array( 'street_number', 'street_name', 'street_unit' ) as $fld ) {
+                if ( array_key_exists( $fld, $address ) ) {
+                    $parseFieldName     = 'street_number';
+                    $buildStreetAddress = true;
                     break;
                 }
             }
-            $parseSuccess[$instance] = $success;
             
-            // do check for all elements.
-            if ( $success ) {
-                $address = array_merge( $address, $parseAddr ); 
+            // parse address field.
+            $parsedFields = CRM_Core_BAO_Address::parseStreetAddress(CRM_Utils_Array::value($parseFieldName, $address)); 
+            
+            if ( $buildStreetAddress ) {
+                $address['street_number']        = $parsedFields['street_number'];
+                $address['street_number_suffix'] = $parsedFields['street_number_suffix'];
+                
+                $streetAddress = null;
+                foreach ( array( 'street_number', 'street_number_suffix', 'street_name', 'street_unit' ) as $fld ) {
+                    if ( $fld == 'street_name' ) $streetAddress .= ' ';
+                    $streetAddress .= CRM_Utils_Array::value( $fld, $address );
+                }
+                
+                $address['street_address'] = $streetAddress;
+                $parseSuccess[$instance]   = true;
+            } else {
+                $success = true;
+                foreach ( $parsedFields as $parseVal ) {
+                    if ( empty( $parseVal ) ) {
+                        $success = false;
+                        break;
+                    }
+                }
+                $parseSuccess[$instance] = $success;
+                
+                // do check for all elements.
+                if ( $success ) {
+                    $address = array_merge( $address, $parsedFields ); 
+                }
             }
         }
         
