@@ -97,7 +97,9 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
         require_once "CRM/Core/DAO/Navigation.php";
         $navigation  =& new CRM_Core_DAO_Navigation( );
         
-        $params['is_active'] = CRM_Utils_Array::value( 'is_active', $params, false );
+        $params['is_active'    ] = CRM_Utils_Array::value( 'is_active', $params, false );
+        $params['has_separator'] = CRM_Utils_Array::value( 'has_separator', $params, false );
+        
         if ( !isset( $params['id'] ) || 
              ( $params['parent_id'] !=  CRM_Utils_Array::value( 'current_parent_id', $params ) ) ) {
             /* re/calculate the weight, if the Parent ID changed OR create new menu */
@@ -291,9 +293,9 @@ ORDER BY parent_id, weight";
                 $data = $value['attributes']['label'];
                 $class = '';
                 if ( !$value['attributes']['active'] ) {
-                    $class = ', attributes: {class : "disabled"} ';
+                    $class = ', attributes: { "class" : "disabled"} ';
                 }
-                $navigationString .= ' { attributes: { id : "node_'.$key.'"}, data: { title:"'. $data. '"' .$class.'}';
+                $navigationString .= ' { attributes: { "id" : "node_'.$key.'"}, data: { title:"'. $data. '"' .$class.'}';
             } else {
                 $name = self::getMenuName( $value, $skipMenuItems );
                 if ( $name ) { 
@@ -334,9 +336,9 @@ ORDER BY parent_id, weight";
                     $data = $val['attributes']['label'];
                     $class = '';
                     if ( !$val['attributes']['active'] ) {
-                        $class = ', attributes: {class : "disabled"} ';
+                        $class = ', attributes: { "class" : "disabled"} ';
                     }                      
-                    $navigationString .= ' { attributes: { id : "node_'.$k.'"}, data: { title:"'. $data. '"' .$class.'}';
+                    $navigationString .= ' { attributes: { "id" : "node_'.$k.'"}, data: { title:"'. $data. '"' .$class.'}';
                     self::recurseNavigation($val, $navigationString, $json, $skipMenuItems );
                     if ( $appendComma ) {
                         $navigationString .= ' },';
@@ -353,7 +355,7 @@ ORDER BY parent_id, weight";
                 $navigationString .= '<ul>';  
             } else {
                 $navigationString .= '</li>';
-                if ( isset( $value['attributes']['separator'] ) ) {
+                if ( isset( $value['attributes']['separator'] ) && $value['attributes']['separator'] ) {
                     $navigationString .= '<li class="menu-separator"></li>';
                 } 
             }

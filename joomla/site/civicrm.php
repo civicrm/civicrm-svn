@@ -36,8 +36,10 @@ function civicrm_invoke( ) {
 
     // check and ensure that we have a valid session
     if ( ! empty( $_POST ) ) {
-        if ( count( $_SESSION ) <= 1 ||
-             empty( $_SESSION['CiviCRM'] ) ) {
+        // the session should not be empty
+        // however for standalone forms, it will not have any CiviCRM variables in the
+        // session either, so dont check for it
+        if ( count( $_SESSION ) <= 1 ) {
             require_once 'CRM/Utils/System.php';
 
             $config =& CRM_Core_Config::singleton( );

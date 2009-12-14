@@ -101,7 +101,14 @@ class CRM_Contact_Page_View_CustomData extends CRM_Contact_Page_View {
         
         $editCustomData = ( CRM_Core_Permission::VIEW == $permUser ) ? 0 : 1;
         $this->assign('editCustomData', $editCustomData);
-
+        
+        //allow to edit own customdata CRM-5518
+        $editOwnCustomData = false;
+        if ( $session->get( 'userID' ) == $this->_contactId ) {
+            $editOwnCustomData = true;
+        }
+        $this->assign( 'editOwnCustomData', $editOwnCustomData );
+        
         if ( $this->_action == CRM_Core_Action::BROWSE ) {
             //Custom Groups Inline
             $entityType = CRM_Contact_BAO_Contact::getContactType( $this->_contactId );

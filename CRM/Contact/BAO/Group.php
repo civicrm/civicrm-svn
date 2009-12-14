@@ -305,7 +305,10 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
             $permissions[] =  CRM_Core_Permission::VIEW;
         }
         
-        if ( CRM_Core_Permission::check( 'delete contacts' ) ) {
+        if ( ! empty($permissions) && CRM_Core_Permission::check( 'delete contacts' ) ) {
+            // Note: using !empty() in if condition, restricts the scope of delete 
+            // permission to groups/contacts that are editable/viewable. 
+            // We can remove this !empty condition once we have ACL support for delete functionality.
             $permissions[] =  CRM_Core_Permission::DELETE;
         }
         

@@ -1295,8 +1295,16 @@ function _civicrm_activity_formatted_param( &$params, &$values, $create=false)
                     }
                 }
             }
+        } else if ( $key == 'target_contact_id' ) {
+            if ( !CRM_Utils_Rule::integer( $value ) ) {
+                return civicrm_create_error("contact_id not valid: $value");
+            }
+            $contactID = CRM_Core_DAO::singleValueQuery( "SELECT id FROM civicrm_contact WHERE id = $value" );
+            if ( !$contactID ) {
+                return civicrm_create_error("Invalid Contact ID: There is no contact record with contact_id = $value.");
+            }
         }
-
+        
     }
     return null;
 }

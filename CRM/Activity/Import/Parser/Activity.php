@@ -248,15 +248,9 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         $customFields = CRM_Core_BAO_CustomField::getFields( CRM_Utils_Array::value( 'contact_type',$params ) );
         
         foreach ($params as $key => $val) {
-            if ( $key ==  'activity_date_time' ) {
-                if ( $val ) {
-                    $params[$key] = self::formatDate( $val, $dateType );
-                }
-            } elseif ( $key == 'duration' ) {
-                $params['duration_minutes'] = $params['duration'];
-                unset($params['duration']);
-            }
-            if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $key ) ) {
+            if ( $key ==  'activity_date_time' && $val ) {
+                $params[$key] = self::formatDate( $val, $dateType );
+            } else if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $key ) ) {
                 if ( $customFields[$customFieldID]['data_type'] == 'Date' ) {
                     CRM_Import_Parser_Contact::formatCustomDate( $params, $params, $dateType, $key );
                 } else if ( $customFields[$customFieldID]['data_type'] == 'Boolean' ) {
@@ -267,7 +261,12 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         //date-Format part ends
         
         $formatError = _civicrm_activity_formatted_param( $params, $params, true );
-
+        
+        if ( $formatError ) {
+            array_unshift( $values, $formatError['error_message'] );
+            return CRM_Activity_Import_Parser::ERROR;
+        }
+        
         $params['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
                                                                    CRM_Core_DAO::$_nullObject,
                                                                    null,
@@ -389,10 +388,10 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
             $ruleName  = 'date';
             if ( $dateType == 1 ) {
                 $matches = array( );
-                if ( preg_match("/(?: [01]\d|2[0-3]|\d):(?:[0-4]\d|5[1-9])/", $date, $matches ) ) {
+                if ( preg_match("/(\s(([01]\d)|[2][0-3]):([0-5]\d))$/", $date, $matches ) ) {
                     $ruleName = 'dateTime';
                     if ( strpos( $date, '-' ) !== false ) {
-                        $dateVal .= array_pop( $matches );
+                        $dateVal .= array_shift( $matches );
                     }
                 }
             }

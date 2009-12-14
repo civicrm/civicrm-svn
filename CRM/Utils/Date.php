@@ -533,9 +533,10 @@ class CRM_Utils_Date
         $cen = substr($now['year'],  0, 2);
         $prevCen = $cen - 1;
 
-        if ($params[$dateParam]) {
+        $value = null;
+        if ( CRM_Utils_Array::value( $dateParam, $params ) ) {
             //suppress hh:mm if it exists
-            $value = preg_replace("/(?: [01]\d|2[0-3]|\d):(?:[0-4]\d|5[1-9])/", "", $params[$dateParam] );
+            $value = preg_replace( "/(\s(([01]\d)|[2][0-3]):([0-5]\d))$/", "", $params[$dateParam] );
         }
         
         switch( $dateType ) {

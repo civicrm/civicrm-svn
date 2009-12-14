@@ -329,6 +329,10 @@ class CRM_Event_Form_Search extends CRM_Core_Form
             $this->_formValues = $this->controller->exportValues($this->_name);
         } 
         
+        if ( empty(  $this->_formValues ) ) {       
+            $this->_formValues = $this->controller->exportValues($this->_name);
+        }
+        
         $this->fixFormValues( );
         
         if ( isset( $this->_ssID ) && empty( $_POST ) ) {

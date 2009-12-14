@@ -10,33 +10,48 @@
 <div id="help">
 {ts}Allow constituents to create their own personal fundraising pages linked to this contribution page.{/ts}
 </div>
-<dl>
-	<dt></dt>
-	<dd>{$form.is_active.html} {$form.is_active.label}</dd>
-</dl>
+
+<table class="form-layout">
+	<tr>
+	    <td class="label">&nbsp;</td>
+	    <td>{$form.is_active.html} {$form.is_active.label}</td>
+	</tr>
+</table>
+
 <div class="spacer"></div>
 
 <div id="pcpFields">
-<dl>
-	<dt>{$form.is_approval_needed.label}</dt>
-	<dd>{$form.is_approval_needed.html} {help id="id-approval_needed"}</dd>
+<table class="form-layout">
+    <tr>
+	    <td class="label">{$form.is_approval_needed.label}</td>
+	    <td>{$form.is_approval_needed.html} {help id="id-approval_needed"}</td>
+   </tr>
 
-	<dt>{$form.notify_email.label}</dt>
-	<dd>{$form.notify_email.html} {help id="id-notify"}
-       
-	<dt>{$form.supporter_profile_id.label} <span class="marker"> *</span></dt>
-	<dd>{$form.supporter_profile_id.html} {help id="id-supporter_profile"}</dd>
+    <tr>
+	    <td class="label">{$form.notify_email.label}</td>
+	    <td>{$form.notify_email.html} {help id="id-notify"}</td>
+   </tr>
+          
+    <tr>
+	    <td class="label">{$form.supporter_profile_id.label} <span class="marker"> *</span></td>
+	    <td>{$form.supporter_profile_id.html} {help id="id-supporter_profile"}</td>
+    </tr>
 
-	<dt>{$form.is_tellfriend_enabled.label}</dt>
-	<dd>{$form.is_tellfriend_enabled.html} {help id="id-is_tellfriend"}</dd>
+    <tr>
+	    <td class="label">{$form.is_tellfriend_enabled.label}</td>
+	    <td>{$form.is_tellfriend_enabled.html} {help id="id-is_tellfriend"}</td>
+	</tr>
 
-	<span id="tflimit">
-	<dt>{$form.tellfriend_limit.label}</dt>
-	<dd>{$form.tellfriend_limit.html|crmReplace:class:four} {help id="id-tellfriend_limit"}</dd>
-	</span>
-	<dt>{$form.link_text.label}</dt>
-	<dd>{$form.link_text.html|crmReplace:class:huge} {help id="id-link_text"}</dd>
-</dl>
+	<tr id="tflimit">
+	    <td class="label">{$form.tellfriend_limit.label}</td>
+	    <td>{$form.tellfriend_limit.html|crmReplace:class:four} {help id="id-tellfriend_limit"}</td>
+	</tr>
+
+	<tr>
+	    <td class="label">{$form.link_text.label}</td>
+	    <td>{$form.link_text.html|crmReplace:class:huge} {help id="id-link_text"}</td>
+	</tr>
+</table>
 </div>
 <div class="spacer"></div>
 <div id="crm-submit-buttons">
@@ -51,7 +66,7 @@
     trigger_field_id    = "is_active"
     trigger_value       = "true"
     target_element_id   = "pcpFields" 
-    target_element_type = "table-row"
+    target_element_type = "block"
     field_type          = "radio"
     invert              = "false"
 }
