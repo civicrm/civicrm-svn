@@ -209,6 +209,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                                                  CRM_Core_BAO_Preferences::valueOptions( 'address_options' ), false );
             $this->set( 'parseStreetAddress', $this->_parseStreetAddress );
         }
+        $this->assign( 'parseStreetAddress', $this->_parseStreetAddress );
         
         $this->_editOptions = $this->get( 'contactEditOptions' ); 
         if ( CRM_Utils_System::isNull( $this->_editOptions ) ) {

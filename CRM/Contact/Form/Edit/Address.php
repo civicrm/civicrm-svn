@@ -96,7 +96,10 @@ class CRM_Contact_Form_Edit_Address
                           'state_province_id'      => array( ts('State / Province')  ,  $attributes['state_province_id'],null ),
                           'country_id'             => array( ts('Country')           ,  $attributes['country_id'], null ), 
                           'geo_code_1'             => array( ts('Latitude') ,  array( 'size' => 9, 'maxlength' => 10 ), null ),
-                          'geo_code_2'             => array( ts('Longitude'),  array( 'size' => 9, 'maxlength' => 10 ), null )
+                          'geo_code_2'             => array( ts('Longitude'),  array( 'size' => 9, 'maxlength' => 10 ), null ),
+                          'street_number'          => array( ts('Street Number')       , $attributes['street_number'], null ),
+                          'street_name'            => array( ts('Street Name')         , $attributes['street_name'], null ),
+                          'street_unit'            => array( ts('Street Unit')         , $attributes['street_unit'], null )
                           );
 
         $stateCountryMap = array( );
@@ -105,7 +108,14 @@ class CRM_Contact_Form_Edit_Address
 
             $nameWithoutID = strpos( $name, '_id' ) !== false ? substr( $name, 0, -3 ) : $name;
             if ( ! CRM_Utils_Array::value( $nameWithoutID, $addressOptions ) ) {
-                continue;
+                $continue = true;
+                if ( in_array( $nameWithoutID, array('street_number', 'street_name', 'street_unit' ) ) &&
+                     CRM_Utils_Array::value( 'street_address_parsing', $addressOptions ) ) {
+                    $continue = false;
+                }
+                if ( $continue ) {
+                    continue;
+                }
             }
             
             if ( ! $attributes ) {
