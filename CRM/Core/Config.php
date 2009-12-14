@@ -214,6 +214,62 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     }
 
 
+    private function _setUserFrameworkConfig( $userFramework ) {
+
+        $this->userFrameworkClass  = 'CRM_Utils_System_'    . $userFramework;
+        $this->userHookClass       = 'CRM_Utils_Hook_'      . $userFramework;
+        $this->userPermissionClass = 'CRM_Core_Permission_' . $userFramework;            
+
+        if ( $userFramework == 'Joomla' ) {
+            $this->userFrameworkURLVar = 'task';
+        }
+
+        if ( defined( 'CIVICRM_UF_BASEURL' ) ) {
+            $this->userFrameworkBaseURL = CRM_Utils_File::addTrailingSlash( CIVICRM_UF_BASEURL, '/' );
+            if ( isset( $_SERVER['HTTPS'] ) &&
+                 strtolower( $_SERVER['HTTPS'] ) != 'off' ) {
+                $this->userFrameworkBaseURL     = str_replace( 'http://', 'https://', 
+                                                               $this->userFrameworkBaseURL );
+            }
+            if ($userFramework == 'Drupal' and function_exists('variable_get')) {
+                global $language;
+                if (module_exists('locale') && $mode = variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE))
+                    if (isset($language->prefix) and $language->prefix
+                        and ($mode == LANGUAGE_NEGOTIATION_PATH_DEFAULT or $mode == LANGUAGE_NEGOTIATION_PATH)) {
+                        $this->userFrameworkBaseURL .= $language->prefix . '/';
+                }
+            }
+        }
+
+        if ( defined( 'CIVICRM_UF_DSN' ) ) { 
+            $this->userFrameworkDSN = CIVICRM_UF_DSN;
+        }
+
+        // this is dynamically figured out in the civicrm.settings.php file
+        if ( defined( 'CIVICRM_CLEANURL' ) ) {        
+            $this->cleanURL = CIVICRM_CLEANURL;
+        } else {
+            $this->cleanURL = 0;
+        }
+
+        if ( $userFramework == 'Joomla' ) {
+            $this->userFrameworkVersion = '1.5';
+            if ( class_exists('JVersion') ) {
+                $version = new JVersion;
+                $this->userFrameworkVersion = $version->getShortVersion();
+            }
+
+            global $mainframe;
+            $dbprefix = $mainframe ? $mainframe->getCfg( 'dbprefix' ) : 'jos_';
+            $this->userFrameworkUsersTableName = $dbprefix . 'users';
+        }
+
+        if ( $userFramework == 'Drupal' && defined('VERSION') ) {
+            $this->userFrameworkVersion = VERSION;
+        }    
+    }
+
+
     /**
      * Initializes the entire application.
      * Reads constants defined in civicrm.settings.php and
@@ -249,62 +305,12 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             CRM_Utils_File::createDir( $this->configAndLogDir );
         }
 
-
         if ( defined( 'CIVICRM_UF' ) ) {
             $this->userFramework       = CIVICRM_UF;
-            if ( $this->userFramework == 'Joomla' ) {
-                $this->userFrameworkURLVar = 'task';
-            }
-            $this->userFrameworkClass  = 'CRM_Utils_System_'    . $this->userFramework;
-            $this->userHookClass       = 'CRM_Utils_Hook_'      . $this->userFramework;
-            $this->userPermissionClass = 'CRM_Core_Permission_' . $this->userFramework;            
+            $this->_setUserFrameworkConfig( $this->userFramework );
         } else {
             echo 'You need to define CIVICRM_UF in civicrm.settings.php';
             exit( );
-        }
-
-        if ( defined( 'CIVICRM_UF_BASEURL' ) ) {
-            $this->userFrameworkBaseURL = CRM_Utils_File::addTrailingSlash( CIVICRM_UF_BASEURL, '/' );
-            if ( isset( $_SERVER['HTTPS'] ) &&
-                 strtolower( $_SERVER['HTTPS'] ) != 'off' ) {
-                $this->userFrameworkBaseURL     = str_replace( 'http://', 'https://', 
-                                                               $this->userFrameworkBaseURL );
-            }
-            if ($this->userFramework == 'Drupal' and function_exists('variable_get')) {
-                global $language;
-                if (module_exists('locale') && $mode = variable_get('language_negotiation', LANGUAGE_NEGOTIATION_NONE))
-                    if (isset($language->prefix) and $language->prefix
-                        and ($mode == LANGUAGE_NEGOTIATION_PATH_DEFAULT or $mode == LANGUAGE_NEGOTIATION_PATH)) {
-                        $this->userFrameworkBaseURL .= $language->prefix . '/';
-                }
-            }
-        }
-
-        if ( defined( 'CIVICRM_UF_DSN' ) ) { 
-            $this->userFrameworkDSN = CIVICRM_UF_DSN;
-        }
-
-        // this is dynamically figured out in the civicrm.settings.php file
-        if ( defined( 'CIVICRM_CLEANURL' ) ) {        
-            $this->cleanURL = CIVICRM_CLEANURL;
-        } else {
-            $this->cleanURL = 0;
-        }
-
-        if ( $this->userFramework == 'Joomla' ) {
-            $this->userFrameworkVersion = '1.5';
-            if ( class_exists('JVersion') ) {
-                $version = new JVersion;
-                $this->userFrameworkVersion = $version->getShortVersion();
-            }
-
-            global $mainframe;
-            $dbprefix = $mainframe ? $mainframe->getCfg( 'dbprefix' ) : 'jos_';
-            $this->userFrameworkUsersTableName = $dbprefix . 'users';
-        }
-
-        if ( $this->userFramework == 'Drupal' && defined('VERSION') ) {
-            $this->userFrameworkVersion = VERSION;
         }
 
         $this->_initDAO( );
@@ -575,4 +581,13 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         }
         return false;
     }
+    
+    /**
+     * Wrapper function to allow unit tests to switch user framework on the fly
+     */    
+    public function setUserFramework( $userFramework ) {
+        $this->userFramework       = $userFrameWork;
+        $this->_setUserFrameworkConfig( $userFramework );
+    }
+    
 } // end CRM_Core_Config
