@@ -913,8 +913,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         require_once 'CRM/Core/BAO/Address.php';
         foreach ( $params['address'] as $instance => &$address ) {
             $parseAddr = CRM_Core_BAO_Address::parseStreetAddress(CRM_Utils_Array::value('street_address', $address)); 
-            $address   = array_merge( $address, $parseAddr );
-            
             $success   = true;
             foreach ( $parseAddr as $parseVal ) {
                 if ( empty( $parseVal ) ) {
@@ -923,6 +921,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 }
             }
             $parseSuccess[$instance] = $success;
+            
+            // do check for all elements.
+            if ( $success ) {
+                $address = array_merge( $address, $parseAddr ); 
+            }
         }
         
         return $parseSuccess;
@@ -948,7 +951,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         
         if ( !empty( $parseFails ) ) {
-            $statusMsg = ts( "It looks like %1 address block(s) street address are not successfully parsed.",
+            $statusMsg = ts( "The complete street address has been saved. However we were unable to parse %1 address block(s) into address elements due to an unrecognized address format. You can set the address elements manually by clicking 'Edit Address Elements' next the Street Address field while in edit mode.",
                              array( 1 =>  implode( ', ', $parseFails ) ) );
         }
         
