@@ -1351,7 +1351,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
             }
         } else if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view/participant', 
-                                                               "reset=1&action=add&context=participant&cid={$this->_contactID}") );
+                                                               "reset=1&action=add&context={$this->_context}&cid={$this->_contactID}") );
         }
     }
       

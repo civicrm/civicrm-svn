@@ -370,6 +370,11 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
 
     static function formatDate( $date, $dateType ) 
     {
+        $formattedDate = null;
+        if ( empty( $date ) ) {
+            return $formattedDate;  
+        }
+        
         //1. first convert date to default format.
         //2. append time to default formatted date (might be removed during format)  
         //3. validate date / date time.
@@ -377,7 +382,6 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         
         $dateKey       = 'date';
         $dateParams    = array( $dateKey => $date ); 
-        $formattedDate = null;
         
         require_once 'CRM/Utils/Date.php';
         if ( CRM_Utils_Date::convertToDefaultDate( $dateParams, $dateType, $dateKey ) ) { 
