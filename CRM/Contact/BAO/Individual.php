@@ -211,8 +211,13 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                     $separator = '-';
                 }
                 $date = $date . $separator . '1902';
+            } else if ( in_array( $format, array( 'yy-mm' ) ) ) {
+                $date = $date .'-01';
+            } else if ( in_array( $format, array( 'M yy' ) ) ) {
+                $date = '01 '.$date;
+            } else if ( in_array( $format, array( 'yy' ) ) ) {
+                $date = $date.'-01-01';
             }
-            
             $contact->birth_date = CRM_Utils_Date::processDate($date) ;
         } else if ( $contact->birth_date ) {
             $contact->birth_date = CRM_Utils_Date::isoToMysql( $contact->birth_date );
@@ -225,13 +230,19 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                     $separator = '-';
                 }
                 $date = $date . $separator . '1902';
+            } else if ( in_array( $format, array( 'yy-mm' ) ) ) {
+                $date = $date .'-01'; 
+            } else if ( in_array( $format, array( 'M yy' ) ) ) {
+                $date = '01 '.$date;
+            } else if ( in_array( $format, array( 'yy' ) ) ) {
+                $date = $date.'-01-01';
             }
             
             $contact->deceased_date = CRM_Utils_Date::processDate($date) ;
         } else if ( $contact->deceased_date ) {
             $contact->deceased_date = CRM_Utils_Date::isoToMysql( $contact->deceased_date );
         }
-
+        
         if ( $middle_name = CRM_Utils_Array::value('middle_name', $params)) {
             $contact->middle_name = $middle_name;
         }

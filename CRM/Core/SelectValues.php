@@ -390,8 +390,8 @@ class CRM_Core_SelectValues
         $year = date('Y');
         $date['minYear'] = $year - $minOffset;
         $date['maxYear'] = $year + $maxOffset;
-        
         return $date;
+       
     }
 
     /**
@@ -613,6 +613,11 @@ class CRM_Core_SelectValues
                                   "DD, d MM yy"   => ts('DD, d MM yy (Thursday, 31 December 2009)'),
                                   "mm/dd"         => ts('mm/dd (12/31)'),
                                   "dd-mm"         => ts('dd-mm (31-12)'),
+                                  "yy-mm"         => ts('yy-mm (2009-12)'),
+                                  'M yy'          => ts('M yy (Dec 2009)'),
+                                  "yy"            => ts('yy (2009)'),
+                                 
+                                  
                                    );
         
         /*
@@ -646,6 +651,10 @@ class CRM_Core_SelectValues
                                    "DD, d MM yy"   => 'l, j F Y',                                   
                                    "mm/dd"         => 'm/d',
                                    "dd-mm"         => 'd-m',
+                                   "yy-mm"         => 'Y-m',
+                                   "M yy"          => 'M Y',
+                                   "yy"            => 'Y',
+                                  
                                   );
         return $dateInputFormats;
     }
