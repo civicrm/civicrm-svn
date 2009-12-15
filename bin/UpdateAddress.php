@@ -224,8 +224,11 @@ ORDER BY a.id
             // do check for all elements.
             if ( $success ) {
                 $totalAddressParsed++;
-                $addressParams = array_merge( $addressParams, $parsedFields ); 
+            } else {
+                // reset element values.
+                $parsedFields = array_fill_keys( array_keys($parsedFields), '' );
             }
+            $addressParams = array_merge( $addressParams, $parsedFields ); 
         }
         
         // finally update address object.
