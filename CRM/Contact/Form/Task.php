@@ -57,6 +57,13 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
     public $_contactIds;
 
     /**
+     * The array that holds all the contact types
+     *
+     * @var array
+     */
+    public $_contactTypes;
+
+    /**
      * The additional clause that we restrict the search with
      *
      * @var string
@@ -79,8 +86,9 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
      */
     function preProcess( ) 
     {
-        $this->_contactIds = array( );
-      
+        $this->_contactIds   = array( );
+        $this->_contactTypes = array( );
+
         // get the submitted values of the search form
         // we'll need to get fv from either search or adv search in the future
         $fragment = 'search';
@@ -106,7 +114,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         $this->_task         = $values['task'];
         $crmContactTaskTasks = CRM_Contact_Task::taskTitles();
         $this->assign( 'taskName', $crmContactTaskTasks[$this->_task] );
-
+       
         // all contacts or action = save a search
         if ( ( CRM_Utils_Array::value('radio_ts', $values ) == 'ts_all' ) ||
              ( $this->_task == CRM_Contact_Task::SAVE_SEARCH ) ) {
@@ -153,7 +161,20 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
                 }
             }
         }
-
+        
+        //contact type for pick up profiles as per selected contact types with subtypes
+        //CRM-5521
+        if ( $selectedTypes = CRM_Utils_Array::value( 'contact_type' , $values ) ) {
+            foreach( $selectedTypes as $ct => $dontcare ) {
+                if ( strpos($ct, CRM_Core_DAO::VALUE_SEPARATOR) === false ) {
+                    $this->_contactTypes[] = $ct;  
+                } else {
+                    $separator = strpos($ct, CRM_Core_DAO::VALUE_SEPARATOR);
+                    $this->_contactTypes[] = substr($ct, $separator+1);
+                }
+            }  
+        }
+       
         if ( ! empty( $this->_contactIds ) ) {
             $this->_componentClause =
                 ' contact_a.id IN ( ' .

@@ -110,23 +110,20 @@ class CRM_Contact_Form_Task_PickProfile extends CRM_Contact_Form_Task {
     function buildQuickForm( ) 
     {
         CRM_Utils_System::setTitle( ts('Batch Profile Update') );
-        $types    = array();
-        foreach($this->_contactIds as $id) {
-            $types[]    = CRM_Contact_BAO_Contact::getContactType($id);
-            break;
-        }
+        
         if ( CRM_Core_Permission::access( 'Quest' ) ) {
-            $types['Student'] = 'Student';            
+            $this->_contactTypes['Student'] = 'Student';            
         }
         
         //add Contact type profiles
-        $types[] = 'Contact';
-
+        $this->_contactTypes[] = 'Contact';
+        
         require_once "CRM/Core/BAO/UFGroup.php";
-        $profiles = CRM_Core_BAO_UFGroup::getProfiles($types);
-
+        $profiles = CRM_Core_BAO_UFGroup::getProfiles($this->_contactTypes);
+        
         if ( empty( $profiles ) ) {
-            CRM_Core_Session::setStatus("The contact type selected for Batch Update do not have corresponding profiles. Please make sure that {$types[0]} has a profile and try again." );
+            $types = implode( 'or', $this->_contactTypes );
+            CRM_Core_Session::setStatus("The contact type selected for Batch Update do not have corresponding profiles. Please make sure that {$types} has a profile and try again." );
             CRM_Utils_System::redirect( $this->_userContext );
         }
         $ufGroupElement = $this->add('select', 'uf_group_id', ts('Select Profile'), array( '' => ts('- select profile -')) + $profiles, true);
