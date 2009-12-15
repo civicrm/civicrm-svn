@@ -325,7 +325,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                         if ( $fld == 'street_name' ) $streetAddress .= ' ';
                         $streetAddress .= CRM_Utils_Array::value( $fld, $address );
                     }
-                    $address['street_address'] = $streetAddress;
+                    if ( empty( $streetAddress ) ) {
+                        $address['street_address'] = $streetAddress;
+                    }
                     $address['street_number'] .= CRM_Utils_Array::value( 'street_number_suffix', $address ); 
                     
                     // build array for set default.

@@ -889,7 +889,16 @@ class CRM_GCD {
         $addressDAO->street_name = ucwords($this->_getRandomElement($this->streetName));
         $addressDAO->street_type = $this->_getRandomElement($this->streetType);
         $addressDAO->street_number_postdirectional = $this->_getRandomElement($this->addressDirection);
-        $addressDAO->street_address = $addressDAO->street_number_predirectional . " " . $addressDAO->street_number .  $addressDAO->street_number_suffix .  " " . $addressDAO->street_name .  " " . $addressDAO->street_type . " " . $addressDAO->street_number_postdirectional;
+        
+        // previous street address.
+        // $streetAddress = $addressDAO->street_number_predirectional . " " . $addressDAO->street_number .  $addressDAO->street_number_suffix .  " " . $addressDAO->street_name .  " " . $addressDAO->street_type . " " . $addressDAO->street_number_postdirectional;
+        
+        // CRM-5450 now for parse address we require street number should be first in
+        // street address string, time being removed - $addressDAO->street_number_predirectional.
+        $streetAddress = $addressDAO->street_number .  $addressDAO->street_number_suffix .  " " . $addressDAO->street_name .  " " . $addressDAO->street_type . " " . $addressDAO->street_number_postdirectional;
+        
+        $addressDAO->street_address = $streetAddress;
+        
         $addressDAO->supplemental_address_1 = ucwords($this->_getRandomElement($this->supplementalAddress1));
         
         // some more random skips
@@ -1340,17 +1349,17 @@ VALUES
     {
         $event = "INSERT INTO civicrm_address ( contact_id, location_type_id, is_primary, is_billing, street_address, street_number, street_number_suffix, street_number_predirectional, street_name, street_type, street_number_postdirectional, street_unit, supplemental_address_1, supplemental_address_2, supplemental_address_3, city, county_id, state_province_id, postal_code_suffix, postal_code, usps_adc, country_id, geo_code_1, geo_code_2, timezone)
       VALUES
-      ( NULL, 1, 1, 1, 'S 14S El Camino Way E', 14, 'S', NULL, 'El Camino', 'Way', NULL, NULL, NULL, NULL, NULL, 'Collinsville', NULL, 1006, NULL, '6022', NULL, 1228, 41.8328, -72.9253, NULL),
-      ( NULL, 1, 1, 1, 'E 11B Woodbridge Path SW', 11, 'B', NULL, 'Woodbridge', 'Path', NULL, NULL, NULL, NULL, NULL, 'Dayton', NULL, 1034, NULL, '45417', NULL, 1228, 39.7531, -84.2471, NULL),
-      ( NULL, 1, 1, 1, 'E 581O Lincoln Dr SW', 581, 'O', NULL, 'Lincoln', 'Dr', NULL, NULL, NULL, NULL, NULL, 'Santa Fe', NULL, 1030, NULL, '87594', NULL, 1228, 35.5212, -105.982, NULL)
+      ( NULL, 1, 1, 1, '14S El Camino Way E', 14, 'S', NULL, 'El Camino', 'Way', NULL, NULL, NULL, NULL, NULL, 'Collinsville', NULL, 1006, NULL, '6022', NULL, 1228, 41.8328, -72.9253, NULL),
+      ( NULL, 1, 1, 1, '11B Woodbridge Path SW', 11, 'B', NULL, 'Woodbridge', 'Path', NULL, NULL, NULL, NULL, NULL, 'Dayton', NULL, 1034, NULL, '45417', NULL, 1228, 39.7531, -84.2471, NULL),
+      ( NULL, 1, 1, 1, '581O Lincoln Dr SW', 581, 'O', NULL, 'Lincoln', 'Dr', NULL, NULL, NULL, NULL, NULL, 'Santa Fe', NULL, 1030, NULL, '87594', NULL, 1228, 35.5212, -105.982, NULL)
       ";
         CRM_Core_DAO::executeQuery( $event, CRM_Core_DAO::$_nullArray ); 
         
-        $sql = "SELECT id from civicrm_address where street_address = 'S 14S El Camino Way E'";
+        $sql = "SELECT id from civicrm_address where street_address = '14S El Camino Way E'";
         $eventAdd1 = CRM_Core_DAO::singleValueQuery( $sql, CRM_Core_DAO::$_nullArray ); 
-        $sql = "SELECT id from civicrm_address where street_address = 'E 11B Woodbridge Path SW'";
+        $sql = "SELECT id from civicrm_address where street_address = '11B Woodbridge Path SW'";
         $eventAdd2 = CRM_Core_DAO::singleValueQuery( $sql, CRM_Core_DAO::$_nullArray ); 
-        $sql = "SELECT id from civicrm_address where street_address = 'E 581O Lincoln Dr SW'";
+        $sql = "SELECT id from civicrm_address where street_address = '581O Lincoln Dr SW'";
         $eventAdd3 = CRM_Core_DAO::singleValueQuery( $sql, CRM_Core_DAO::$_nullArray ); 
         
         $event = "INSERT INTO civicrm_email (contact_id, location_type_id, email, is_primary, is_billing, on_hold, hold_date, reset_date)
