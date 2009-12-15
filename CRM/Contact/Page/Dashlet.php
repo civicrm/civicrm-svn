@@ -60,12 +60,19 @@ class CRM_Contact_Page_Dashlet extends CRM_Core_Page
 
         $contactDashlets = $availableDashlets = array( );
         foreach( $allDashlets as $dashletID => $values ) {
-            if ( ! empty( $currentDashlets ) && CRM_Utils_Array::value( '0', $currentDashlets ) && array_key_exists( $dashletID, $currentDashlets[0] ) ) {
-               $contactDashlets[0][$dashletID] = $values['label'];
-            } else if ( ! empty( $currentDashlets ) && CRM_Utils_Array::value( '1', $currentDashlets ) && array_key_exists( $dashletID, $currentDashlets[1] ) ) {
-                  $contactDashlets[1][$dashletID] = $values['label'];
+            if ( ! empty( $currentDashlets ) && CRM_Utils_Array::value( '0', $currentDashlets ) 
+                 && array_key_exists( $dashletID, $currentDashlets[0] ) ) {
+                // we need append state of dashlet to id
+                $key = "{$dashletID}-{$currentDashlets[0][$dashletID]}";
+                $contactDashlets[0][$key] = $values['label'];
+            } else if ( ! empty( $currentDashlets ) && CRM_Utils_Array::value( '1', $currentDashlets ) 
+                        && array_key_exists( $dashletID, $currentDashlets[1] ) ) {
+                $key = "{$dashletID}-{$currentDashlets[1][$dashletID]}";
+                $contactDashlets[1][$key] = $values['label'];
             } else {
-               $availableDashlets[$dashletID] = $values['label'];
+                // always keep maximize state for available
+                $key = "{$dashletID}-0";
+                $availableDashlets[$key] = $values['label'];
             }
         }
 

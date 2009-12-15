@@ -58,7 +58,9 @@
                 // build post params
                 cj('div[id^=existing-dashlets-col-]').each( function( i ) {
                     cj(this).find('.portlet-header').each( function( j ) {
-                        params['columns[' + i + '][' + this.id + ']'] = 0;
+                        var elementID = this.id;
+                        var idState = elementID.split('-');
+                        params['columns[' + i + '][' + idState[0] + ']'] = idState[1];
                     });
                 }); 
             
