@@ -214,11 +214,11 @@ ORDER BY a.id
         if ( $parseStreetAddress ) {
             $parsedFields = CRM_Core_BAO_Address::parseStreetAddress( $dao->street_address );
             $success = true;
-            foreach ( $parsedFields as $parseVal ) {
-                if ( empty( $parseVal ) ) {
-                    $success = false;
-                    break;
-                }
+            // consider address is automatically parseable,
+            // when we should found street_number and street_name
+            if ( ! CRM_Utils_Array::value( 'street_name', $parsedFields ) ||
+                 ! CRM_Utils_Array::value( 'street_number', $parsedFields ) ) {
+                $success = false;
             }
             
             // do check for all elements.

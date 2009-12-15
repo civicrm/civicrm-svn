@@ -1020,11 +1020,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 $parseSuccess[$instance]   = true;
             } else {
                 $success = true;
-                foreach ( $parsedFields as $parseVal ) {
-                    if ( empty( $parseVal ) ) {
-                        $success = false;
-                        break;
-                    }
+                // consider address is automatically parseable,
+                // when we should found street_number and street_name
+                if ( ! CRM_Utils_Array::value( 'street_name', $parsedFields ) ||
+                     ! CRM_Utils_Array::value( 'street_number', $parsedFields ) ) {
+                    $success = false;
                 }
                 $parseSuccess[$instance] = $success;
                 
