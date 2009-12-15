@@ -376,7 +376,7 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
         if ( empty( $_POST ) ) {
             return civicrm_register_data($edit, $user, $category, true, false );
         } else {
-            return civicrm_register_data( $edit, $user, $category, false, false );
+            return civicrm_register_data( $edit, $user, $category, false, true );
         }
         break;
 

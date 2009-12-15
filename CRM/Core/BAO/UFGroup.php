@@ -510,6 +510,9 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             $controller->set( 'skipPermission', 1 );
             $controller->set( 'ctype'   , $ctype );
             $controller->process( );
+            if ( $doNotProcess ) {
+                $controller->validate( );
+            }
             $controller->setEmbedded( true );
             $controller->run( );
 
