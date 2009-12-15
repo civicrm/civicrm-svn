@@ -1028,10 +1028,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 }
                 $parseSuccess[$instance] = $success;
                 
-                // do check for all elements.
-                if ( $success ) {
-                    $address = array_merge( $address, $parsedFields ); 
+                // reset element values.
+                if ( !$success ) {
+                    $parsedFields = array_fill_keys( array_keys($parsedFields), '' );
                 }
+                
+                // merge parse address in to main address block.
+                $address = array_merge( $address, $parsedFields );
             }
         }
         
