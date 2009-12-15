@@ -1,4 +1,8 @@
-    <div>{ts}Drag and drop dashlets to their place. Changes are automatically saved.{/ts}</div><br/>
+    <div class="status" style="padding: 1em;">
+        {ts}Available dashboard elements - dashlets - are displayed in the dark gray top bar.
+        Drag and drop dashlets onto the right or left columns below to add them to your dashboard. Changes are automatically saved.{/ts}
+        {help id="id-dash_configure" file="CRM/Contact/Page/Dashboard.hlp"}
+    </div><br/>
     <div id="available-dashlets" class="dash-column">
         {foreach from=$availableDashlets item=row key=dashID}
     	<div class="portlet">

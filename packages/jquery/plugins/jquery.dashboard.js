@@ -595,7 +595,7 @@
   // Public static properties of dashboard.  Default settings.
   $.fn.dashboard.defaults = {
     columns: 2,
-    emptyPlaceholderInner: 'There are no widgets in this column of your dashboard.',
+    emptyPlaceholderInner: 'There are no dashlets in this column of your dashboard.',
     fullscreenHeaderInner: 'Back to dashboard mode',
     throbberMarkup: '<div class="throbber"><p class="loadtext">Loading...</p></div>',
     animationSpeed: 200,
