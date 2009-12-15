@@ -1,13 +1,23 @@
 <fieldset>
     <table class="form-layout">
         <tr>
-            <td style="white-space: normal;">{$form.versionCheck.label}</td>
+            <td class="label">{$form.dashboardCacheTimeout.label}</td>
+            <td>{$form.dashboardCacheTimeout.html}<br />
+                <span class="description">{ts}The number of minutes to cache dashlet content on dashboard.{/ts}</span></td>
+        </tr>
+    </table>
+</fieldset>
+
+<fieldset>
+    <table class="form-layout">
+        <tr>
+            <td class="label">{$form.versionCheck.label}</td>
             <td>{$form.versionCheck.html}<br />
                 <p class="description">{ts}If enabled, CiviCRM automatically checks availablity of a newer version of the software. New version alerts will be displayed on the main CiviCRM Administration page.{/ts}</p>
                 <p class="description">{ts}When enabled, statistics about your CiviCRM installation are reported anonymously to the CiviCRM team to assist in prioritizing ongoing development efforts. The following information is gathered: CiviCRM version, versions of PHP, MySQL and framework (Drupal/Joomla/standalone), and default language. Counts (but no actual data) of the following record types are reported: contacts, activities, cases, relationships, contributions, contribution pages, contribution products, contribution widgets, discounts, price sets, profiles, events, participants, tell-a-friend pages, grants, mailings, memberships, membership blocks, pledges, pledge blocks and active payment processor types.{/ts}</p></td>
         </tr>
         <tr>
-            <td>{$form.maxAttachments.label}</td>
+            <td class="label">{$form.maxAttachments.label}</td>
             <td>{$form.maxAttachments.html}<br />
                 <span class="description">{ts}Maximum number of files (documents, images, etc.) which can attached to emails or activities.{/ts}</span></td>
         </tr>
@@ -19,11 +29,11 @@
     </div>
     <table class="form-layout">
         <tr>
-            <td>{$form.recaptchaPublicKey.label}</td>
+            <td class="label">{$form.recaptchaPublicKey.label}</td>
             <td>{$form.recaptchaPublicKey.html}</td>
         </tr>
         <tr>
-            <td>{$form.recaptchaPrivateKey.label}</td>
+            <td class="label">{$form.recaptchaPrivateKey.label}</td>
             <td>{$form.recaptchaPrivateKey.html}</td>
         </tr>
         <tr>

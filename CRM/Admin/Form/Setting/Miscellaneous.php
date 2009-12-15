@@ -57,6 +57,9 @@ class CRM_Admin_Form_Setting_Miscellaneous extends  CRM_Admin_Form_Setting
                           array( 'size' => 64, 'maxlength' => 64 ) );
         $this->addElement('text','recaptchaPrivateKey', ts('Private Key'),
                           array( 'size' => 64, 'maxlength' => 64 ) );
+
+        $this->addElement('text', 'dashboardCacheTimeout', ts('Dashboard cache timeout'),
+                          array( 'size' => 3, 'maxlength' => 5 ) );
        
         parent::buildQuickForm();    
     }

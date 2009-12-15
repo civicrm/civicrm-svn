@@ -960,6 +960,6 @@ INSERT INTO `civicrm_contact_type`
 INSERT INTO `civicrm_dashboard` 
     ( `domain_id`, `label`, `url`, `content`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `created_date`, `is_fullscreen`) 
     VALUES 
-    ( @domainID, '{ts escape="sql"}Activities{/ts}', 'civicrm/dashlet/activity?reset=1&snippet=4', NULL, NULL, NULL, '0', '0', '1', '1', NULL, 1);
+    ( @domainID, '{ts escape="sql"}Activities{/ts}', 'civicrm/dashlet/activity&reset=1&snippet=4', NULL, NULL, NULL, '0', '0', '1', '1', NULL, 1);
 
 {include file='civicrm_msg_template.tpl'}
