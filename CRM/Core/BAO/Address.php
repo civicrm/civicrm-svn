@@ -622,6 +622,8 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
             return $parseFields;
         }
         
+        $streetAddress = trim( $streetAddress );
+        
         // get street number and suffix.
         $matches = array( );
         if ( preg_match( '/^[A-Za-z0-9]+/', $streetAddress, $matches ) ) {
@@ -656,16 +658,11 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         
         // now get the street unit.
         $matches = array( );
-        preg_match( '/^(.+)\s?+(APT|BSMT|BLDG|DEPT|FL|FRNT|HNGR|KEY|LBBY|LOT|LOWR|OFC|PH|PIER|REAR|RM|SIDE|SLIP|SPC|STOP|STE|SUITE|TRLR|UNIT|UPPR|#)(\s+\w+)?/i', $streetAddress, $matches );
-        
+        preg_match( '/(APT|BSMT|BLDG|DEPT|FL|FRNT|HNGR|KEY|LBBY|LOT|LOWR|OFC|PH|PIER|REAR|RM|SIDE|SLIP|SPC|STOP|STE|SUITE|TRLR|UNIT|UPPR|#)([.\s\w\d]+)?/i', $streetAddress, $matches );
         if ( !empty( $matches ) ) {
-            $parseFields['street_unit'] = CRM_Utils_Array::value( 2, $matches );
-            if ( $appendStreetUnit = CRM_Utils_Array::value( 3, $matches ) ) {
-                $parseFields['street_unit'] .= $appendStreetUnit;
-            }
-            
-            //carry remaing string for street name.
-            $streetAddress = $matches[1]; 
+            $parseFields['street_unit'] = $matches[0];
+            $streetAddress = str_replace( $matches[0], '', $streetAddress );
+            $streetAddress = trim( $streetAddress );
         }
         
         // consider remaining string as street name.
