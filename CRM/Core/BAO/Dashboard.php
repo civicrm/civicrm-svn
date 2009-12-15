@@ -60,7 +60,6 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         }
 
         $dao->find( );
-        $dao->orderBy( 'column_no, weight' );
         while( $dao->fetch( ) ) {
             $values = array( );
             CRM_Core_DAO::storeValues( $dao, $values );
@@ -92,8 +91,8 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         require_once 'CRM/Contact/DAO/DashboardContact.php';
         $dao = new CRM_Contact_DAO_DashboardContact( );
         $dao->contact_id = $contactID;
+        $dao->orderBy( 'column_no asc, weight asc' );
         $dao->find( );
-        $dao->orderBy( 'column_no, weight' );
         while( $dao->fetch( ) ) {
             $hasDashlets = true;
             if ( !$dao->is_active ) {
