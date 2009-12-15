@@ -34,6 +34,8 @@
 
 require_once 'CRM/Core/Payment/BaseIPN.php';
 
+define( 'GOOGLE_DEBUG_PP', 0 );
+
 class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
 
     /**
@@ -407,12 +409,14 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         require_once('Google/library/xml-processing/xmlparser.php');
         
         $config =& CRM_Core_Config::singleton();
-        define('RESPONSE_HANDLER_LOG_FILE', $config->uploadDir . 'CiviCRM.Google.log');
         
-        //Setup the log file
-        if (!$message_log = fopen(RESPONSE_HANDLER_LOG_FILE, "a")) {
-            echo "Cannot open " . RESPONSE_HANDLER_LOG_FILE . " file.\n";
-            exit(1);
+        if ( GOOGLE_DEBUG_PP ) {
+            define('RESPONSE_HANDLER_LOG_FILE', $config->uploadDir . 'CiviCRM.Google.log');
+            //Setup the log file
+            if (! $message_log = fopen(RESPONSE_HANDLER_LOG_FILE, "a")) {
+                echo "Cannot open " . RESPONSE_HANDLER_LOG_FILE . " file.\n";
+                exit(1);
+            }
         }
         
         // Retrieve the XML sent in the HTTP POST request to the ResponseHandler
@@ -422,8 +426,11 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
 
         require_once 'CRM/Utils/System.php';
         $headers = CRM_Utils_System::getAllHeaders();
-        fwrite($message_log, sprintf("\n\r%s:- %s\n",date("D M j G:i:s T Y"),
-                                     $xml_response));
+
+        if ( GOOGLE_DEBUG_PP ) {
+            fwrite($message_log, sprintf("\n\r%s:- %s\n",date("D M j G:i:s T Y"),
+                                         $xml_response));
+        }
         
         // Retrieve the root and data from the xml response
         $xmlParser = new XmlParser($xml_response);
@@ -452,8 +459,10 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         
         $response = new GoogleResponse($merchant_id, $merchant_key,
                                        $xml_response, $server_type);
-        fwrite($message_log, sprintf("\n\r%s:- %s\n",date("D M j G:i:s T Y"),
-                                     $response->root));
+        if ( GOOGLE_DEBUG_PP ) {
+            fwrite($message_log, sprintf("\n\r%s:- %s\n",date("D M j G:i:s T Y"),
+                                         $response->root));
+        }
 
         //Check status and take appropriate action
         $status = $response->HttpAuthentication($headers);
