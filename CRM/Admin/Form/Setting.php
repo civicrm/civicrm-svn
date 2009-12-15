@@ -133,6 +133,14 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
             $config->save();
         }
         
+        // update time for date formats when global time is changed
+        if ( CRM_Utils_Array::value( 'timeInputFormat', $params ) ) {
+            $query = "UPDATE civicrm_preferences_date SET time_format = " . $params['timeInputFormat'] . " 
+                      WHERE time_format IS NOT NULL AND time_format <> ''";
+            
+            CRM_Core_DAO::executeQuery( $query );
+        }
+        
         CRM_Core_Session::setStatus( ts('Your changes have been saved.') );
     }
 
