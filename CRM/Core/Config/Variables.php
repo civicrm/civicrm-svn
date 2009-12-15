@@ -367,7 +367,12 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $smartGroupCacheTimeout = 0;
 
     public $defaultSearchProfileID = null;
-
+    
+    /**
+     * Dashboard timeout
+     */
+    public $dashboardCacheTimeout = 1440;    
+    
     /**
      * Optimization related variables
      */

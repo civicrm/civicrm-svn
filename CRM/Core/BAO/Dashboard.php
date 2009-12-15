@@ -141,6 +141,16 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
          
          $dao->id = $dashletID;
          $dao->find( true );
+
+         //reset content based on the cache time set in config
+         $currentDate = strtotime( date('Y-m-d h:i:s') );
+         $createdDate = strtotime( $dao->created_date );
+         $dateDiff    = round(abs($currentDate - $createdDate) / 60 );
+
+         $config = CRM_Core_Config::singleton( );
+         if ( $config->dashboardCacheTimeout <= $dateDiff ) {
+             $dao->content = NULL;
+         }
          
          // if content is empty and url is set, retrieve it from url
          if ( !$dao->content && $dao->url ) {
