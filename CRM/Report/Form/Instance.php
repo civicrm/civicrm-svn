@@ -154,7 +154,11 @@ class CRM_Report_Form_Instance {
                 CRM_Core_BAO_Navigation::retrieve( $params, $navigationDefaults );
                 $defaults['is_navigation'] = 1;
                 $defaults['parent_id']     = CRM_Utils_Array::value( 'parent_id', $navigationDefaults );
-
+                
+                if ( CRM_Utils_Array::value( 'is_active', $navigationDefaults ) ) {
+                    $form->assign('is_navigation', true);
+                }
+                
                 if ( CRM_Utils_Array::value( 'id', $navigationDefaults ) ) {
                     $form->_navigation['id']        = $navigationDefaults['id'];
                     $form->_navigation['parent_id'] = $navigationDefaults['parent_id'];

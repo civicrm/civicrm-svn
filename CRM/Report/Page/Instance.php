@@ -61,8 +61,17 @@ class CRM_Report_Page_Instance extends CRM_Core_Page
                 CRM_Core_Error::statusBounce( $statusMessage,
                                               $reportUrl );
             }
-            CRM_Report_BAO_Instance::delete( $instanceId );
 
+            $navId  = CRM_Core_DAO::getFieldValue( 'CRM_Report_DAO_Instance', $instanceId, 'navigation_id', 'id' );
+            CRM_Report_BAO_Instance::delete( $instanceId );
+          
+            //delete navigation if exists
+            if ( $navId ) {
+                require_once 'CRM/Core/BAO/Navigation.php';
+                CRM_Core_BAO_Navigation::processDelete( $navId ); 
+                CRM_Core_BAO_Navigation::resetNavigation( );
+            }
+            
             CRM_Core_Session::setStatus( ts( 'Selected Instance has been deleted.' ) );
         } else {
             require_once 'CRM/Core/OptionGroup.php';

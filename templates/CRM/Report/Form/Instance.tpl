@@ -82,3 +82,10 @@
     field_type          ="radio"
     invert              = 0
 }
+
+{if $is_navigation}
+ <script type="text/javascript">
+     document.getElementById('is_navigation').checked = true;
+     showHideByValue('is_navigation','','navigation_menu','table-row','radio',false);
+ </script>
+{/if}
