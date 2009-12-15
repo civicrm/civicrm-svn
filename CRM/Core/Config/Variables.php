@@ -153,6 +153,12 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $dateformatYear = '%Y';
 
     /**
+     * Display format for time
+     * @var string
+     */
+    public $dateformatTime = '%l:%M %P';
+
+    /**
      * Input format for time 
      * @var string
      */
