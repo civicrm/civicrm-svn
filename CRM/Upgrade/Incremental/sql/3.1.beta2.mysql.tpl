@@ -17,14 +17,24 @@ UPDATE civicrm_navigation SET permission ='access CiviCRM', permission_operator 
 -- CRM-5450
  
 SELECT @option_group_id_address_options := max(id) from civicrm_option_group where name = 'address_options';
+SELECT @adOpt_max_val := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id = @option_group_id_address_options;
+SELECT @adOpt_max_wt := MAX(ROUND(val.weight)) FROM civicrm_option_value val where val.option_group_id = @option_group_id_address_options;
 
 INSERT INTO 
    civicrm_option_value(`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
-VALUES(@option_group_id_address_options, {localize}'Street Address Parsing'{/localize}, 15, 'street_address_parsing', NULL, 0, NULL, 15, 0, 0, 1, NULL, NULL);
+VALUES(@option_group_id_address_options, {localize}'Street Address Parsing'{/localize}, (SELECT @adOpt_max_val := @adOpt_max_val+1), 'street_address_parsing', NULL, 0, NULL, (SELECT @adOpt_max_wt := @adOpt_max_wt + 1 ), 0, 0, 1, NULL, NULL);
+
+--fix broken default address options.
+SELECT  @domain_id := min(id) FROM civicrm_domain;
+
+UPDATE  `civicrm_preferences`
+   SET  `address_options` = REPLACE( `address_options`, '1314', '' )
+ WHERE  `domain_id` = @domain_id 
+   AND  `contact_id` IS NULL;
 
 -- CRM-5528
 
-SELECT @option_group_id_cdt            := max(id) from civicrm_option_group where name = 'custom_data_type';
+SELECT @option_group_id_cdt := max(id) from civicrm_option_group where name = 'custom_data_type';
 
 INSERT INTO 
    `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
