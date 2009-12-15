@@ -674,9 +674,9 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 }
             }  
         } else {
-            $basicTypes  = CRM_Contact_BAO_ContactType::getBasicType( $groupType );
+            $basicType  = CRM_Contact_BAO_ContactType::getBasicType( $groupType );
             if( $basicTypes ) {
-                if( !in_array( $fieldType, $basicTypes ) ) {
+                if( $fieldType != $basicType ) {
                     $errors['field_name'] = 
                         ts( 'Cannot add or update profile field type "%1" with combination 
                          of subtype other than "%1".',array( 1=> $fieldType ) ); 

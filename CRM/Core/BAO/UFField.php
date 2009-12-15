@@ -409,7 +409,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
     static function getProfileType( $ufGroupId, $returnMixType = true, $onlyPure = false ) 
     {
         // profile types
-        $contactTypes = array( 'Contact', 'Individual', 'Household', 'Organization', 'Student' );
+        $contactTypes = array( 'Contact', 'Individual', 'Household', 'Organization' );
         require_once 'CRM/Contact/BAO/ContactType.php';
         $contactTypes = array_merge( $contactTypes, 
                                      CRM_Contact_BAO_ContactType::subTypes( ) );
