@@ -1,5 +1,4 @@
 {if $form.address.$blockId.street_address}
-    <!--table id="streetAddress_{$blockId}" style="border:0;"-->
     <tr id="streetAddress_{$blockId}">
         <td>
            {$form.address.$blockId.street_address.label}<br />
