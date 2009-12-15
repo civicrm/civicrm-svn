@@ -9,7 +9,7 @@
  *
  */
 
-class civicrm_handler_filter_group_name extends views_handler_filter_in_operator {
+class civicrm_handler_filter_group_title extends views_handler_filter_in_operator {
     static $_groupName;
 
     function construct( ) {
