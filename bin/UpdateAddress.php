@@ -60,7 +60,7 @@ function run( ) {
                   'pass'      => 'p',
                   'key'       => 'k',
                   'geocoding' => 'g',
-                  'parse'     => 'parse' );
+                  'parse'     => 'ap' );
     
     foreach ( $vars as $var => $short ) {
         $$var = null;

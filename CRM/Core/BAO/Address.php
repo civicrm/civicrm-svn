@@ -382,6 +382,12 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
         
         $count = 1;
         while ( $address->fetch( ) ) {
+            // deprecate reference.
+            if ( $count > 1 ) { 
+                foreach ( array( 'state', 'state_name', 'country', 'world_region' ) as $fld ) {
+                    if ( isset( $address->$fld ) ) unset( $address->$fld );
+                }
+            }
             $stree = $address->street_address;
             $values = array( );
             CRM_Core_DAO::storeValues( $address, $values );
