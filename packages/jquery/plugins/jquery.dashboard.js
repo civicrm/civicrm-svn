@@ -87,7 +87,7 @@
     dashboard.enterFullscreen = function(element) {
       // Hide the columns.
       for (var c in dashboard.columns) {
-        dashboard.columns[c].element.hide();
+       if ( typeof dashboard.columns[c] == 'object' ) dashboard.columns[c].element.hide();
       }
 
       if (!dashboard.fullscreen) {
@@ -116,7 +116,7 @@
 
       // Show the columns.
       for (var c in dashboard.columns) {
-        dashboard.columns[c].element.show();
+       if ( typeof dashboard.columns[c] == 'object' ) dashboard.columns[c].element.show();
       }
 
       invokeCallback(opts.callbacks.exitFullscreen, dashboard, dashboard.fullscreen.currentElement);
