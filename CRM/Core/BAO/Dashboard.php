@@ -141,7 +141,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
          
          $dao->id = $dashletID;
          $dao->find( true );
-
+         
          // if content is empty and url is set, retrieve it from url
          if ( !$dao->content && $dao->url ) {
              $url = CRM_Utils_System::url( $dao->url, null, true, null, false );
@@ -155,7 +155,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
          $dashletInfo = array( 'title'      => $dao->label,
                                'content'    => $dao->content);
 
-         if ( isset( $dao->is_fullscreen ) ) {                       
+         if ( $dao->is_fullscreen ) {                       
             $dashletInfo['fullscreen'] = $dao->content;
          }                     
 
