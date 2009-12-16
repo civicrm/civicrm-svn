@@ -326,7 +326,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 foreach ( $defaults['address'] as $cnt => &$address ) {
                     $streetAddress = null;
                     foreach ( array( 'street_number', 'street_number_suffix', 'street_name', 'street_unit' ) as $fld ) {
-                        if ( $fld == 'street_name' ) $streetAddress .= ' ';
+                        if ( in_array( $fld, array( 'street_name', 'street_unit' ) ) ) { 
+                            $streetAddress .= ' ';
+                        }
                         $streetAddress .= CRM_Utils_Array::value( $fld, $address );
                     }
                     $streetAddress = trim( $streetAddress );
@@ -1019,11 +1021,12 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 
                 $streetAddress = null;
                 foreach ( array( 'street_number', 'street_number_suffix', 'street_name', 'street_unit' ) as $fld ) {
-                    if ( $fld == 'street_name' ) $streetAddress .= ' ';
+                    if ( in_array( $fld, array( 'street_name', 'street_unit') ) ) {
+                        $streetAddress .= ' ';
+                    }
                     $streetAddress .= CRM_Utils_Array::value( $fld, $address );
                 }
-                
-                $address['street_address'] = $streetAddress;
+                $address['street_address'] = trim( $streetAddress );
                 $parseSuccess[$instance]   = true;
             } else {
                 $success = true;

@@ -619,10 +619,10 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
      */
     static function parseStreetAddress( $streetAddress ) 
     {
-        $parseFields = array( 'street_name'          => null, 
-                              'street_unit'          => null,
-                              'street_number'        => null, 
-                              'street_number_suffix' => null );
+        $parseFields = array( 'street_name'          => '', 
+                              'street_unit'          => '',
+                              'street_number'        => '', 
+                              'street_number_suffix' => '' );
         
         if ( empty( $streetAddress ) ) {
             return $parseFields;
