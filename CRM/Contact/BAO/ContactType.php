@@ -497,7 +497,6 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
         $params = array( 'id'=> $contactTypeId  );
         self::retrieve( $params, $typeInfo );
         $name   = $typeInfo['name'];
-        $label  = $typeInfo['label'];
         // check if any custom group
         $custom = & new CRM_Core_DAO_CustomGroup ( );
         $custom->whereAdd("extends_entity_column_value LIKE '%" . 
@@ -520,12 +519,12 @@ WHERE contact_sub_type = '$name'";
         $contactType->delete( );
 
         // remove navigation entry if any
-        if( $label ) {
+        if( $name ) {
             $sql = "
 DELETE
 FROM civicrm_navigation 
 WHERE name = %1";
-            $params = array( 1 => array( "New $label" , 'String' ) );
+            $params = array( 1 => array( "New $name" , 'String' ) );
             $dao = CRM_Core_DAO::executeQuery( $sql , $params );
             CRM_Core_BAO_Navigation::resetNavigation( );
         }
@@ -549,6 +548,7 @@ WHERE name = %1";
             $contact     = ucfirst( $contactType->label );
             $active      = $contactType->is_active;
         }
+       
         if( CRM_Utils_Array::value( 'id', $params ) ) {
             $params    = array( 'name' => "New $contactName" );
             $newParams = array ( 'label' => "New $contact" );
@@ -559,6 +559,7 @@ WHERE name = %1";
             CRM_Core_BAO_Navigation::retrieve( $value ,$navinfo );
             $navigation = array(
                                 'label'   => "New $contact",
+                                'name'    => "New $contactName",
                                 'url'     => "civicrm/contact/add&ct=$name&cst=$contactName&reset=1",
                                 'permission' => "add contacts",
                                 'parent_id'  => $navinfo['id'],

@@ -57,10 +57,6 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form
         $this->add('text', 'label', ts('Name'), 
                    CRM_Core_DAO::getAttribute( 'CRM_Contact_DAO_ContactType', 'label' ),
                    true );
-        $this->addRule( 'label',
-                        ts('This contact type name already exists in database. Contact type names must be unique.'),
-                        'objectExists',
-                        array( 'CRM_Contact_DAO_ContactType', $this->_id ) );
         $contactType = $this->add( 'select', 'parent_id', ts('Basic Contact Type'),
                                    CRM_Contact_BAO_ContactType::basicTypePairs( false, 'id' ) );
         if ($this->_action & CRM_Core_Action::UPDATE ) {
@@ -74,8 +70,33 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form
                    CRM_Core_DAO::getAttribute( 'CRM_Contact_DAO_ContactType', 'description' ) );
         $this->add('checkbox', 'is_active', ts('Enabled?'));
         $this->assign('id', $this->_id );
+        $this->addFormRule( array( 'CRM_Admin_Form_ContactType', 'formRule' ) , $this );
     }
     
+    /**
+     * global form rule
+     *
+     * @param array $fields  the input form values
+     *
+     * @return true if no errors, else array of errors
+     * @access public
+     * @static
+     */
+    static function formRule( &$fields, $files, $self ) {
+
+        $errors = array( );
+        
+        if ( $self->_id ) {
+            $contactName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType', $self->_id, 'name' );  
+        }else {
+            $contactName = ucfirst( CRM_Utils_String::munge($fields['label'] ) );
+        }
+        
+        if ( !CRM_Core_DAO::objectExists($contactName, 'CRM_Contact_DAO_ContactType', $self->_id) ) {
+            $errors['label'] = ts( 'This contact type name already exists in database. Contact type names must be unique.');
+        }
+        return empty( $errors ) ? true : $errors;
+    }
     /**
      * Function to process the form
      *
