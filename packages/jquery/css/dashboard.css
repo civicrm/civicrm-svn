@@ -134,24 +134,58 @@
 
 /* CSS for Dashlets */
 
+#crm-container #available-dashlets { 
+    width: 98%; 
+    border: 2px dashed pink; 
+    background-color: #999999; 
+    min-height:40px;
+}
+
 #crm-container .dash-column { 
-    width: 170px; 
+    border: 2px solid #696969;
+    min-height: 100px; 
+    background-color: #EEEEEE
+}
+
+#crm-container .dashlets-header {
+    font-weight: bold;
+} 
+
+#crm-container #dashlets-header-col-0 { 
     float: left; 
-    padding-bottom: 100px; 
+    width: 40%; 
+}
+
+#crm-container #dashlets-header-col-1 { 
+    margin-left: 42%;
+    width: 56%; 
+}
+
+#crm-container #existing-dashlets-col-0 { 
+    float: left; 
+    width: 40%; 
+}
+
+#crm-container #existing-dashlets-col-1 { 
+    margin-left: 42%;
+    width: 56%; 
 }
 
 #crm-container .portlet { 
-    margin: 0 1em 1em 0;
-    width: 200px; 
-    float: left;
+    margin: .5em;
+    width: 75%;
+    display: inline-block; 
 }
 
 #crm-container .portlet-header { 
     margin: 0.3em; 
-    padding-bottom: 4px; 
-    padding-left: 0.2em; 
+    padding: 0.5em; 
     cursor: pointer;
 }
+
+#crm-container #available-dashlets .portlet {
+    width: auto;
+} 
 
 #crm-container .portlet-header .ui-icon { 
     float: right; 
@@ -165,25 +199,6 @@
     border: 1px dotted black; 
     visibility: visible !important; 
     height: 50px !important; 
-}
-
-#crm-container #available-dashlets { 
-    width: 96%; 
-    border: 2px dotted pink; 
-    background-color: grey; 
-    padding-bottom:20px;
-}
-
-#crm-container #existing-dashlets-col-0 { 
-    width: 40%; 
-    border: 2px dotted pink; 
-    background-color: #EEEEEE
-}
-
-#crm-container #existing-dashlets-col-1 { 
-    width: 40%; 
-    border: 2px dotted pink; 
-    background-color: #EEEEEE
 }
 
 #crm-container .ui-sortable-placeholder * { 
