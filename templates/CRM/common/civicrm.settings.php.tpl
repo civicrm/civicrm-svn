@@ -147,6 +147,8 @@ define( 'CIVICRM_DOMAIN_ID'      , 1 );
 define( 'CIVICRM_DOMAIN_GROUP_ID', null );
 define( 'CIVICRM_DOMAIN_ORG_ID'  , null );
 
+define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
+
 /**
  * 
  * Do not change anything below this line. Keep as is

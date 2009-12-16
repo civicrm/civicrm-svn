@@ -64,6 +64,9 @@ class CRM_Price_BAO_Set extends CRM_Price_DAO_Set
     {
         $priceSetBAO =& new CRM_Price_BAO_Set( );
         $priceSetBAO->copyValues( $params );
+        if ( defined( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID' ) && CIVICRM_EVENT_PRICE_SET_DOMAIN_ID ) {
+            $priceSetBAO->domain_id = CRM_Core_Config::domainID( );
+        }
         return $priceSetBAO->save( );
     }
 
@@ -359,6 +362,10 @@ WHERE     ct.id = cp.contribution_type_id AND
             $query .= " AND civicrm_price_set.is_active = 1 ";
         }
         
+        if ( defined( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID' ) && CIVICRM_EVENT_PRICE_SET_DOMAIN_ID ) {
+            $query .= " AND civicrm_price_set.domain_id = " . CRM_Core_Config::domainID( );
+        }
+
         $priceSets = array( );
         
         if ( $extendComponentName ) {

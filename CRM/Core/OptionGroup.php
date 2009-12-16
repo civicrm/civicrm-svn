@@ -37,6 +37,14 @@ class CRM_Core_OptionGroup
 {
     static $_values = array( );
 
+    /*
+     * $_domainIDGroups array maintains the list of option groups for whom 
+     * domainID is to be considered.
+     *
+     */
+    static $_domainIDGroups = array( 'from_email_address', 
+                                     'grant_type' );
+
     static function &valuesCommon( $dao, $flip = false, $grouping = false,
                                    $localize = false, $valueColumnName = 'label' ) 
     {
@@ -77,11 +85,15 @@ WHERE  v.option_group_id = g.id
   AND  v.is_active       = 1 
   AND  g.is_active       = 1 ";
         
+        if ( in_array( $name, self::$_domainIDGroups ) ) {
+            $query .= " AND g.domain_id = " . CRM_Core_Config::domainID( );
+        }
+
         if ( $condition ) {
             $query .= $condition;
         } 
         
-        $query .= "  ORDER BY v.weight"; 
+        $query .= "  ORDER BY v.weight";
 
         $p = array( 1 => array( $name, 'String' ) );
         $dao =& CRM_Core_DAO::executeQuery( $query, $p );
