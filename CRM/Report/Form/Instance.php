@@ -174,7 +174,7 @@ class CRM_Report_Form_Instance {
         $config =& CRM_Core_Config::singleton(); 
         $params['header']    = $params['report_header'];
         $params['footer']    = $params['report_footer'];
-
+        $params['domain_id'] = CRM_Core_Config::domainID( );
         //navigation parameters
         if ( CRM_Utils_Array::value( 'is_navigation', $params ) ) {
             $form->_navigation['permission'] = array( );

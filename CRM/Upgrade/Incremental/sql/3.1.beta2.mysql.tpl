@@ -39,3 +39,12 @@ SELECT @option_group_id_cdt := max(id) from civicrm_option_group where name = 'c
 INSERT INTO 
    `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
 VALUES(@option_group_id_cdt, {localize}'Participant Event Type'{/localize}, '3', 'ParticipantEventType', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL );
+
+-- CRM-5549
+ALTER TABLE `civicrm_report_instance`
+    ADD `domain_id` INT(10) UNSIGNED NOT NULL COMMENT 'Which Domain is this instance for' AFTER `id`;
+
+UPDATE `civicrm_report_instance` SET domain_id = @domain_id;
+
+ALTER TABLE `civicrm_report_instance`
+    ADD CONSTRAINT `FK_civicrm_report_instance_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `civicrm_domain` (`id`);

@@ -18,6 +18,19 @@
        <autoincrement>false</autoincrement>
   </primaryKey>
   <field>
+      <name>domain_id</name>
+      <type>int unsigned</type>
+      <required>true</required>
+      <comment>Which Domain is this instance for</comment>
+      <add>3.1</add>
+  </field>
+  <foreignKey>
+       <name>domain_id</name>
+       <table>civicrm_domain</table>
+       <key>id</key>
+       <add>3.1</add>
+  </foreignKey>
+  <field>
        <name>title</name>
        <title>Report Instance Title</title>
        <type>varchar</type>
