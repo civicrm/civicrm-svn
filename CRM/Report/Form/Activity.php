@@ -377,7 +377,6 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
             $onHover    = ts('View Contact Summary for this Contact');
             $onHoverAct = ts('View Activity Record');
         }
-        
         foreach ( $rows as $rowNum => $row ) {
             
             if ( array_key_exists('civicrm_contact_contact_source', $row ) ) {
@@ -423,10 +422,18 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                 if ( $value = $row['civicrm_activity_activity_type_id'] ) {
                     $rows[$rowNum]['civicrm_activity_activity_type_id'] = $activityType[$value];
                     if ( $viewLinks ) {
-                        $url = CRM_Utils_System::url( "civicrm/contact/view/activity"  , 
-                                                      'action=view&reset=1&cid=' . $rows[$rowNum]['civicrm_contact_source_contact_id'] .
-                                                      '&id=' . $rows[$rowNum]['civicrm_activity_id'] . '&atype=' . $value ,
-                                                      $this->_absoluteUrl );
+                        // case activities get a special view link
+                        if ( $rows[$rowNum]['civicrm_case_activity_case_id'] ) {
+                            $url = CRM_Utils_System::url( "civicrm/case/activity/view"  , 
+                                                          'reset=1&cid=' . $rows[$rowNum]['civicrm_contact_source_contact_id'] .
+                                                          '&aid=' . $rows[$rowNum]['civicrm_activity_id'] . '&caseID=' . $rows[$rowNum]['civicrm_case_activity_case_id'],
+                                                          $this->_absoluteUrl );
+                        } else {
+                            $url = CRM_Utils_System::url( "civicrm/contact/view/activity"  , 
+                                                          'action=view&reset=1&cid=' . $rows[$rowNum]['civicrm_contact_source_contact_id'] .
+                                                          '&id=' . $rows[$rowNum]['civicrm_activity_id'] . '&atype=' . $value ,
+                                                          $this->_absoluteUrl );
+                        }
                         $rows[$rowNum]['civicrm_activity_activity_type_id_link'] = $url;
                         $rows[$rowNum]['civicrm_activity_activity_type_id_hover'] = $onHoverAct;
                     }
