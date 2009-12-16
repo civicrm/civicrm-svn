@@ -582,7 +582,7 @@ WHERE name = %1";
     static function setIsActive( $id, $is_active ) {
         $params = array( 'id'=> $id );
         self::retrieve( $params , $contactinfo );
-        $params    = array ( 'name'=> "New $contactinfo[label]" );
+        $params    = array ( 'name'=> "New $contactinfo[name]" );
         $newParams = array('is_active'=> $is_active );
         CRM_Core_BAO_Navigation::processUpdate( $params ,$newParams );
         CRM_Core_BAO_Navigation::resetNavigation( );
