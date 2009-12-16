@@ -813,7 +813,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                      !$this->_allowWaitlist && !$this->_requireApproval ) { 
                     $this->set( 'contributeMode', 'express' ); 
                     
-                                      
+                    // Send Event Name & Id in Params
+                    $params['eventName']  = $this->_values['event']['title'];
+                    $params['eventId']    = $this->_values['event']['id'];
+           
                     $params['cancelURL' ] = CRM_Utils_System::url( 'civicrm/event/register',
                                                                    '_qf_Register_display=1',
                                                                    true, null, false );

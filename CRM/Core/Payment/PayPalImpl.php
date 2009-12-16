@@ -84,6 +84,9 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         $args['returnURL'   ]   = $params['returnURL'];
         $args['cancelURL'   ]   = $params['cancelURL'];
 
+        // Allow further manipulation of the arguments via custom hooks ..
+        CRM_Utils_Hook::alterPaymentProcessorParams( $this, $params, $args );
+
         $result = $this->invokeAPI( $args );
 
         if ( is_a( $result, 'CRM_Core_Error' ) ) {  
