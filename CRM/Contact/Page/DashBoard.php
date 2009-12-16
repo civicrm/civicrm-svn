@@ -60,6 +60,24 @@ class CRM_Contact_Page_DashBoard extends CRM_Core_Page
         CRM_Utils_System::setTitle( ts('CiviCRM Home') );
         $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get('userID');
+        
+        // add current contact to recentlty viewed
+        if ( $contactID ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            list( $displayName, $contactImage, $contactType, $contactSubtype, $contactImageUrl ) = 
+                CRM_Contact_BAO_Contact::getDisplayAndImage( $contactID, true, true );
+                
+            CRM_Utils_Recent::add( $displayName,
+                                   CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$contactID}" ),
+                                   $contactID,
+                                   $contactType,
+                                   $contactID,
+                                   $displayName,
+                                   $contactImageUrl,
+                                   $contactSubtype );
+        }
+        
+        
         // call hook to get html from other modules
         require_once 'CRM/Utils/Hook.php';
         $contentPlacement = CRM_Utils_Hook::DASHBOARD_BELOW;  // ignored but needed to prevent warnings
