@@ -1,44 +1,37 @@
 {if $form.address.$blockId.street_address}
     <tr id="streetAddress_{$blockId}">
-        <td>
+        <td colspan="2">
            {$form.address.$blockId.street_address.label}<br />
-           {$form.address.$blockId.street_address.html}<br />
+           {$form.address.$blockId.street_address.html}
+        {if $parseStreetAddress eq 1 && $action eq 2}
+           &nbsp;&nbsp;<a href="#" title="{ts}Edit Address Elements{/ts}" onClick="processAddressFields( 'addressElements' , '{$blockId}' );return false;">{ts}Edit Address Elements{/ts}</a>
+        {/if}
+        <br />
            <span class="description font-italic">Street number, street name, apartment/unit/suite - OR P.O. box</span>
         </td>
-        {if $parseStreetAddress eq 1 && $action eq 2}
-           <td><br />
-           <a href="#" title="{ts}Edit Address Elements{/ts}" onClick="processAddressFields( 'addressElements' , '{$blockId}' );return false;">{ts}Edit Address Elements{/ts}</a>
-           </td> 
-        {/if}   
     </tr>
         
     {if $parseStreetAddress eq 1 && $action eq 2}
-        <table id="addressElements_{$blockId}" class=hiddenElement style="border:0;">
-           <tr>
+           <tr id="addressElements_{$blockId}" class=hiddenElement>
                <td>
                   {$form.address.$blockId.street_number.label}<br />
                   {$form.address.$blockId.street_number.html}<br />
                   <span class="description font-italic">Street number and prefix</span>
                </td>
-           </tr>
-           <tr>
+           
                <td>
                   {$form.address.$blockId.street_name.label}<br />
                   {$form.address.$blockId.street_name.html}<br />
                   <span class="description font-italic">Street name</span>
                </td>
-           </tr>
-           <tr>
-               <td>
+               
+               <td colspan="2">
                   {$form.address.$blockId.street_unit.label}<br />       
-                  {$form.address.$blockId.street_unit.html}<br />
+                  {$form.address.$blockId.street_unit.html}
+                  <a href="#" title="{ts}Edit Street Address{/ts}" onClick="processAddressFields( 'streetAddress', '{$blockId}' );return false;">{ts}Edit Street Address{/ts}</a><br />
                   <span class="description font-italic">Apartment/Unit/Suite</span> 
                </td>
-               <td>
-               <a href="#" title="{ts}Edit Street Address{/ts}" onClick="processAddressFields( 'streetAddress', '{$blockId}' );return false;">{ts}Edit Street Address{/ts}</a><br />
-               </td>
            </tr>
-        </table>
     {/if}
 
 {literal}
