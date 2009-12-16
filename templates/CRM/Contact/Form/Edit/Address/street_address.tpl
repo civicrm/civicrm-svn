@@ -4,7 +4,7 @@
            {$form.address.$blockId.street_address.label}<br />
            {$form.address.$blockId.street_address.html}
         {if $parseStreetAddress eq 1 && $action eq 2}
-           &nbsp;&nbsp;<a href="#" title="{ts}Edit Address Elements{/ts}" onClick="processAddressFields( 'addressElements' , '{$blockId}' );return false;">{ts}Edit Address Elements{/ts}</a>
+           &nbsp;&nbsp;<a href="#" title="{ts}Edit Address Elements{/ts}" onClick="processAddressFields( 'addressElements' , '{$blockId}', 1 );return false;">{ts}Edit Address Elements{/ts}</a>
         {/if}
         <br />
            <span class="description font-italic">Street number, street name, apartment/unit/suite - OR P.O. box</span>
@@ -28,18 +28,19 @@
                <td colspan="2">
                   {$form.address.$blockId.street_unit.label}<br />       
                   {$form.address.$blockId.street_unit.html}
-                  <a href="#" title="{ts}Edit Street Address{/ts}" onClick="processAddressFields( 'streetAddress', '{$blockId}' );return false;">{ts}Edit Street Address{/ts}</a><br />
+                  <a href="#" title="{ts}Edit Street Address{/ts}" onClick="processAddressFields( 'streetAddress', '{$blockId}', 1 );return false;">{ts}Edit Street Address{/ts}</a><br />
                   <span class="description font-italic">Apartment/Unit/Suite</span> 
                </td>
            </tr>
     {/if}
 
+{if $parseStreetAddress eq 1}
 {literal}
-
 <script type="text/javascript">
-function processAddressFields( name, blockId, onlyShowHide ) {
-	if ( !onlyShowHide ) { 
-	    var allAddressValues = {/literal}{$allAddressFieldValues}{literal}; 
+function processAddressFields( name, blockId, loadData ) {
+
+	if ( loadData ) { 
+	    var allAddressValues = {/literal}{$allAddressFieldValues}{literal};
         
 	    var streetName    = eval( "allAddressValues.street_name_"    + blockId );
 	    var streetUnit    = eval( "allAddressValues.street_unit_"    + blockId );
@@ -51,14 +52,14 @@ function processAddressFields( name, blockId, onlyShowHide ) {
 	var hideBlockName = '';
 
         if ( name == 'addressElements' ) {
-             if ( !onlyShowHide ) {
+             if ( loadData ) {
 	          streetAddress = '';
 	     }
 	     
              showBlockName = 'addressElements_' + blockId;		   
 	     hideBlockName = 'streetAddress_' + blockId;
 	} else {
-             if ( !onlyShowHide ) {
+             if ( loadData ) {
                   streetNumber = streetName = streetUnit = ''; 
              }
 
@@ -70,7 +71,7 @@ function processAddressFields( name, blockId, onlyShowHide ) {
        hide( hideBlockName );
 
        // set the values.
-       if ( !onlyShowHide ) {
+       if ( loadData ) {
           cj( '#address_' + blockId +'_street_name'    ).val( streetName    );   
           cj( '#address_' + blockId +'_street_unit'    ).val( streetUnit    );
           cj( '#address_' + blockId +'_street_number'  ).val( streetNumber  );
@@ -81,3 +82,5 @@ function processAddressFields( name, blockId, onlyShowHide ) {
 </script>
 {/literal}
 {/if}
+{/if}
+
