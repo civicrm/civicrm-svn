@@ -1277,13 +1277,13 @@ VALUES
                 $membershipType = self::_getRandomElement($membershipTypes);
                 $startDate      = date( 'Y-m-d', mktime( 0, 0, 0, 
                                                          date('m'), 
-                                                         ( date('d') - ($count*($randId+1)*($randId+1)*($randId+1) ) ), 
-                                                         ( date('Y') - ($randId+1) ) ) );
+                                                         ( date('d') - ($count*($randId)*($randId)*($randId) ) ), 
+                                                         ( date('Y') - ($randId) ) ) );
                 $partOfDate     = explode( '-', $startDate );
                 $endDate        = date( 'Y-m-d', mktime( 0, 0, 0, 
                                                          $partOfDate[1], 
                                                          ( $partOfDate[2] - 1 ),
-                                                         ( $partOfDate[0] + ($randId + 1) ) )  );
+                                                         ( $partOfDate[0] + ($randId) ) )  );
                 $membership .= "( {$randomContacts[$count]}, {$membershipType}, '{$startDate}', '{$startDate}', '{$endDate}', '{$source}', {$statuses[$randId]})";
                 $activity   .= "( {$randomContacts[$count]}, {$acititySourceId}, 7, '{$membershipTypeNames[$randId]}', '{$startDate} 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 )";
             } else if ( ($count+1) % 2 == 0 ) {
@@ -1454,8 +1454,8 @@ VALUES
         $event = "INSERT INTO civicrm_event
         ( title, summary, description, event_type_id, participant_listing_id, is_public, start_date, end_date, is_online_registration, registration_link_text, max_participants, event_full_text, is_monetary, contribution_type_id, is_map, is_active, fee_label, is_show_location, loc_block_id,intro_text, footer_text, confirm_title, confirm_text, confirm_footer_text, is_email_confirm, confirm_email_text, confirm_from_name, confirm_from_email, cc_confirm, bcc_confirm, default_fee_id, thankyou_title, thankyou_text, thankyou_footer_text, is_pay_later, pay_later_text, pay_later_receipt, is_multiple_registrations, allow_same_participant_emails )
         VALUES
-        ( 'Fall Fundraiser Dinner', 'Kick up your heels at our Fall Fundraiser Dinner/Dance at Glen Echo Park! Come by yourself or bring a partner, friend or the entire family!', 'This event benefits our teen programs. Admission includes a full 3 course meal and wine or soft drinks. Grab your dancing shoes, bring the kids and come join the party!', 3, 1, 1, '2009-11-21 17:00:00', '2009-11-21 23:00:00', 1, 'Register Now', 100, 'Sorry! The Fall Fundraiser Dinner is full. Please call Jane at 204 222-1000 ext 33 if you want to be added to the waiting list.', 1, 4, 1, 1, 'Dinner Contribution', 1 ,$eventLok1,'Fill in the information below to join as at this wonderful dinner event.', NULL, 'Confirm Your Registration Information', 'Review the information below carefully.', NULL, 1, 'Contact the Development Department if you need to make any changes to your registration.', 'Fundraising Dept.', 'development@example.org', NULL, NULL, {$defaultFee1}, 'Thanks for Registering!', '<p>Thank you for your support. Your contribution will help us build even better tools.</p><p>Please tell your friends and colleagues about this wonderful event.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 1, 'I will send payment by check', 'Send a check payable to Our Organization within 3 business days to hold your reservation. Checks should be sent to: 100 Main St., Suite 3, San Francisco CA 94110', 1, 0 ),
-        ( 'Summer Solstice Festival Day Concert', 'Festival Day is coming! Join us and help support your parks.', 'We will gather at noon, learn a song all together,  and then join in a joyous procession to the pavilion. We will be one of many groups performing at this wonderful concert which benefits our city parks.', 5, 1, 1, '2009-01-01 12:00:00', '2009-01-01 17:00:00', 1, 'Register Now', 50, 'We have all the singers we can handle. Come to the pavilion anyway and join in from the audience.', 1, 2, NULL, 1, 'Festival Fee', 1, $eventLok2, 'Complete the form below and click Continue to register online for the festival. Or you can register by calling us at 204 222-1000 ext 22.', '', 'Confirm Your Registration Information', '', '', 1, 'This email confirms your registration. If you have questions or need to change your registration - please do not hesitate to call us.', 'Event Dept.', 'events@example.org', '', NULL, {$defaultFee2}, 'Thanks for Your Joining In!', '<p>Thank you for your support. Your participation will help build new parks.</p><p>Please tell your friends and colleagues about the concert.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 0, NULL, NULL, 1, 0 ),
+        ( 'Fall Fundraiser Dinner', 'Kick up your heels at our Fall Fundraiser Dinner/Dance at Glen Echo Park! Come by yourself or bring a partner, friend or the entire family!', 'This event benefits our teen programs. Admission includes a full 3 course meal and wine or soft drinks. Grab your dancing shoes, bring the kids and come join the party!', 3, 1, 1, '2010-03-03 17:00:00', '2010-03-05 23:00:00', 1, 'Register Now', 100, 'Sorry! The Fall Fundraiser Dinner is full. Please call Jane at 204 222-1000 ext 33 if you want to be added to the waiting list.', 1, 4, 1, 1, 'Dinner Contribution', 1 ,$eventLok1,'Fill in the information below to join as at this wonderful dinner event.', NULL, 'Confirm Your Registration Information', 'Review the information below carefully.', NULL, 1, 'Contact the Development Department if you need to make any changes to your registration.', 'Fundraising Dept.', 'development@example.org', NULL, NULL, {$defaultFee1}, 'Thanks for Registering!', '<p>Thank you for your support. Your contribution will help us build even better tools.</p><p>Please tell your friends and colleagues about this wonderful event.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 1, 'I will send payment by check', 'Send a check payable to Our Organization within 3 business days to hold your reservation. Checks should be sent to: 100 Main St., Suite 3, San Francisco CA 94110', 1, 0 ),
+        ( 'Summer Solstice Festival Day Concert', 'Festival Day is coming! Join us and help support your parks.', 'We will gather at noon, learn a song all together,  and then join in a joyous procession to the pavilion. We will be one of many groups performing at this wonderful concert which benefits our city parks.', 5, 1, 1, '2010-01-01 12:00:00', '2010-01-01 17:00:00', 1, 'Register Now', 50, 'We have all the singers we can handle. Come to the pavilion anyway and join in from the audience.', 1, 2, NULL, 1, 'Festival Fee', 1, $eventLok2, 'Complete the form below and click Continue to register online for the festival. Or you can register by calling us at 204 222-1000 ext 22.', '', 'Confirm Your Registration Information', '', '', 1, 'This email confirms your registration. If you have questions or need to change your registration - please do not hesitate to call us.', 'Event Dept.', 'events@example.org', '', NULL, {$defaultFee2}, 'Thanks for Your Joining In!', '<p>Thank you for your support. Your participation will help build new parks.</p><p>Please tell your friends and colleagues about the concert.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 0, NULL, NULL, 1, 0 ),
         ( 'Rain-forest Cup Youth Soccer Tournament', 'Sign up your team to participate in this fun tournament which benefits several Rain-forest protection groups in the Amazon basin.', 'This is a FYSA Sanctioned Tournament, which is open to all USSF/FIFA affiliated organizations for boys and girls in age groups: U9-U10 (6v6), U11-U12 (8v8), and U13-U17 (Full Sided).', 3, 1, 1, '2009-12-27 07:00:00', '2009-12-29 17:00:00', 1, 'Register Now', 500, 'Sorry! All available team slots for this tournament have been filled. Contact Jill Futbol for information about the waiting list and next years event.', 1, 4, NULL, 1, 'Tournament Fees',1, $eventLok3, 'Complete the form below to register your team for this year''s tournament.', '<em>A Soccer Youth Event</em>', 'Review and Confirm Your Registration Information', '', '<em>A Soccer Youth Event</em>', 1, 'Contact our Tournament Director for eligibility details.', 'Tournament Director', 'tournament@example.org', '', NULL, {$defaultFee3}, 'Thanks for Your Support!', '<p>Thank you for your support. Your participation will help save thousands of acres of rainforest.</p>', '<p><a href=http://civicrm.org>Back to CiviCRM Home Page</a></p>', 0, NULL, NULL, 0, 0 )
          ";
         CRM_Core_DAO::executeQuery( $event, CRM_Core_DAO::$_nullArray );      
@@ -1518,56 +1518,56 @@ SELECT  id
 INSERT INTO civicrm_participant
         (contact_id, event_id, status_id, role_id, register_date, source, fee_level, is_test, fee_amount, fee_currency)
 VALUES
-        ( ". $randomContacts[0]  .", 1, 1, 1, '2006-01-21', 'Check', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[1]  .", 2, 2, 2, '2005-05-07', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[2]  .", 3, 3, 3, '2005-05-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD') ,
-        ( ". $randomContacts[3]  .", 1, 4, 4, '2005-10-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[4]  .", 2, 1, 1, '2005-01-10', 'Check', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[5]  .", 3, 2, 2, '2005-03-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[6]  .", 1, 3, 3, '2006-07-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[7]  .", 2, 4, 4, '2006-03-07', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[8]  .", 3, 1, 1, '2005-02-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[9]  .", 1, 2, 2, '2005-02-01', 'Check', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[10]  .", 2, 3, 3, '2006-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[11]  .", 3, 4, 4, '2006-03-06', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[12]  .", 1, 1, 2, '2005-06-04', 'Credit Card', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[13]  .", 2, 2, 3, '2004-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[14]  .", 3, 4, 1, '2005-07-04', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[15]  .", 1, 4, 2, '2006-01-21', 'Credit Card', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[16]  .", 2, 2, 3, '2005-01-10', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[17]  .", 3, 3, 1, '2006-03-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[18]  .", 1, 2, 1, '2005-10-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[19]  .", 2, 4, 1, '2006-01-10', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[20]  .", 3, 1, 4, '2005-03-25', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[21]  .", 1, 2, 3, '2006-10-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[22]  .", 2, 4, 1, '2005-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[23]  .", 3, 3, 1, '2005-03-11', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[24]  .", 3, 2, 2, '2005-04-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[25]  .", 1, 1, 1, '2006-01-21', 'Check', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[26]  .", 2, 2, 2, '2007-05-07', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[27]  .", 3, 3, 3, '2007-05-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[28]  .", 1, 4, 4, '2007-10-21', 'Credit Card', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[29]  .", 2, 1, 1, '2007-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[30]  .", 3, 2, 2, '2007-03-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[31]  .", 1, 3, 3, '2006-07-21', 'Check', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[32]  .", 2, 4, 4, '2006-03-07', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[33]  .", 3, 1, 1, '2007-02-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[34]  .", 1, 2, 2, '2007-02-01', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[35]  .", 2, 3, 3, '2006-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[36]  .", 3, 4, 4, '2006-03-06', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[37]  .", 1, 1, 2, '2007-06-04', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[38]  .", 2, 2, 3, '2004-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[39]  .", 3, 4, 1, '2007-07-04', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[40]  .", 1, 4, 2, '2006-01-21', 'Credit Card', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[41]  .", 2, 2, 3, '2007-01-10', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[42]  .", 3, 3, 1, '2006-03-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[43]  .", 1, 2, 1, '2007-10-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[44]  .", 2, 4, 1, '2006-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[45]  .", 3, 1, 4, '2007-03-25', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[46]  .", 1, 2, 3, '2006-10-21', 'Credit Card', 'Single', 0, 50, 'USD'),
-        ( ". $randomContacts[47]  .", 2, 4, 1, '2007-01-10', 'Credit Card', 'Soprano', 0, 50, 'USD'),
-        ( ". $randomContacts[48]  .", 3, 3, 1, '2007-03-11', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
-        ( ". $randomContacts[49]  .", 3, 2, 2, '2007-04-05', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD');
+        ( ". $randomContacts[0]  .", 1, 1, 1, '2009-01-21', 'Check', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[1]  .", 2, 2, 2, '2008-05-07', 'Credit Card', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[2]  .", 3, 3, 3, '2008-05-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD') ,
+        ( ". $randomContacts[3]  .", 1, 4, 4, '2008-10-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[4]  .", 2, 1, 1, '2008-01-10', 'Check', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[5]  .", 3, 2, 2, '2008-03-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[6]  .", 1, 3, 3, '2009-07-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[7]  .", 2, 4, 4, '2009-03-07', 'Credit Card', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[8]  .", 3, 1, 1, '2008-02-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[9]  .", 1, 2, 2, '2008-02-01', 'Check', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[10]  .", 2, 3, 3, '2009-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[11]  .", 3, 4, 4, '2009-03-06', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[12]  .", 1, 1, 2, '2008-06-04', 'Credit Card', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[13]  .", 2, 2, 3, '2008-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[14]  .", 3, 4, 1, '2008-07-04', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[15]  .", 1, 4, 2, '2009-01-21', 'Credit Card', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[16]  .", 2, 2, 3, '2008-01-10', 'Credit Card', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[17]  .", 3, 3, 1, '2009-03-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[18]  .", 1, 2, 1, '2008-10-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[19]  .", 2, 4, 1, '2009-01-10', 'Credit Card', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[20]  .", 3, 1, 4, '2008-03-25', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[21]  .", 1, 2, 3, '2009-10-21', 'Direct Transfer', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[22]  .", 2, 4, 1, '2008-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[23]  .", 3, 3, 1, '2008-03-11', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[24]  .", 3, 2, 2, '2008-04-05', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[25]  .", 1, 1, 1, '2009-01-21', 'Check', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[26]  .", 2, 2, 2, '2008-05-07', 'Credit Card', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[27]  .", 3, 3, 3, '2009-12-12', 'Direct Transfer', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[28]  .", 1, 4, 4, '2009-12-13', 'Credit Card', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[29]  .", 2, 1, 1, '2009-12-14', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[30]  .", 3, 2, 2, '2009-12-15', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[31]  .", 1, 3, 3, '2009-07-21', 'Check', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[32]  .", 2, 4, 4, '2009-03-07', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[33]  .", 3, 1, 1, '2009-12-15', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[34]  .", 1, 2, 2, '2009-12-13', 'Direct Transfer', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[35]  .", 2, 3, 3, '2009-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[36]  .", 3, 4, 4, '2009-03-06', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[37]  .", 1, 1, 2, '2009-12-13', 'Direct Transfer', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[38]  .", 2, 2, 3, '2008-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[39]  .", 3, 4, 1, '2009-12-14', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[40]  .", 1, 4, 2, '2009-01-21', 'Credit Card', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[41]  .", 2, 2, 3, '2009-12-15', 'Credit Card', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[42]  .", 3, 3, 1, '2009-03-05', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[43]  .", 1, 2, 1, '2009-12-13', 'Direct Transfer', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[44]  .", 2, 4, 1, '2009-01-10', 'Direct Transfer', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[45]  .", 3, 1, 4, '2009-12-13', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[46]  .", 1, 2, 3, '2009-10-21', 'Credit Card', 'Single', 0, 50, 'USD'),
+        ( ". $randomContacts[47]  .", 2, 4, 1, '2009-12-10', 'Credit Card', 'Soprano', 0, 50, 'USD'),
+        ( ". $randomContacts[48]  .", 3, 3, 1, '2009-03-11', 'Credit Card', 'Tiny-tots (ages 5-8)', 0, 800, 'USD'),
+        ( ". $randomContacts[49]  .", 3, 2, 2, '2009-04-05', 'Check', 'Tiny-tots (ages 5-8)', 0, 800, 'USD');
 ";
         CRM_Core_DAO::executeQuery( $participant, CRM_Core_DAO::$_nullArray );
    
@@ -1575,56 +1575,56 @@ VALUES
 INSERT INTO civicrm_activity
     (source_contact_id, source_record_id, activity_type_id, subject, activity_date_time, duration, location, phone_id, phone_number, details, priority_id,parent_id, is_test, status_id)
 VALUES
-    ($randomContacts[0], 01, 5, 'NULL', '2006-01-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[1], 02, 5, 'NULL', '2005-05-07 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[2], 03, 5, 'NULL', '2005-05-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[3], 04, 5, 'NULL', '2005-10-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[4], 05, 5, 'NULL', '2005-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[5], 06, 5, 'NULL', '2005-03-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[6], 07, 5, 'NULL', '2006-07-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[7], 08, 5, 'NULL', '2006-03-07 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[8], 09, 5, 'NULL', '2005-02-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[9], 10, 5, 'NULL', '2005-02-01 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[10], 11, 5, 'NULL', '2006-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[11], 12, 5, 'NULL', '2006-03-06 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[12], 13, 5, 'NULL', '2005-06-04 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[13], 14, 5, 'NULL', '2004-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[14], 15, 5, 'NULL', '2005-07-04 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[15], 16, 5, 'NULL', '2006-01-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[16], 17, 5, 'NULL', '2005-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[17], 18, 5, 'NULL', '2006-03-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[18], 19, 5, 'NULL', '2005-10-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[19], 20, 5, 'NULL', '2006-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[20], 21, 5, 'NULL', '2005-03-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[21], 22, 5, 'NULL', '2006-10-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[22], 23, 5, 'NULL', '2005-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[23], 24, 5, 'NULL', '2005-03-11 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[24], 25, 5, 'NULL', '2005-04-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[25], 26, 5, 'NULL', '2006-01-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[26], 27, 5, 'NULL', '2007-05-07 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[27], 28, 5, 'NULL', '2005-05-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[28], 29, 5, 'NULL', '2007-10-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[29], 30, 5, 'NULL', '2007-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[30], 31, 5, 'NULL', '2007-03-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[31], 32, 5, 'NULL', '2006-07-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[32], 33, 5, 'NULL', '2006-03-07 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[33], 34, 5, 'NULL', '2007-02-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[34], 35, 5, 'NULL', '2007-02-01 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[35], 36, 5, 'NULL', '2006-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[36], 37, 5, 'NULL', '2006-03-06 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[37], 38, 5, 'NULL', '2007-06-04 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[38], 39, 5, 'NULL', '2004-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[39], 40, 5, 'NULL', '2007-07-04 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[40], 41, 5, 'NULL', '2006-01-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[41], 42, 5, 'NULL', '2007-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[42], 43, 5, 'NULL', '2006-03-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[43], 44, 5, 'NULL', '2007-10-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[44], 45, 5, 'NULL', '2006-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[45], 46, 5, 'NULL', '2007-03-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[46], 47, 5, 'NULL', '2006-10-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[47], 48, 5, 'NULL', '2006-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[48], 49, 5, 'NULL', '2007-03-11 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    ($randomContacts[49], 50, 5, 'NULL', '2007-04-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 )
+    ($randomContacts[0], 01, 5, 'NULL', '2009-01-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[1], 02, 5, 'NULL', '2008-05-07 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[2], 03, 5, 'NULL', '2008-05-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[3], 04, 5, 'NULL', '2008-10-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[4], 05, 5, 'NULL', '2008-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[5], 06, 5, 'NULL', '2008-03-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[6], 07, 5, 'NULL', '2009-07-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[7], 08, 5, 'NULL', '2009-03-07 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[8], 09, 5, 'NULL', '2008-02-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[9], 10, 5, 'NULL', '2008-02-01 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[10], 11, 5, 'NULL', '2009-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[11], 12, 5, 'NULL', '2009-03-06 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[12], 13, 5, 'NULL', '2008-06-04 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[13], 14, 5, 'NULL', '2008-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[14], 15, 5, 'NULL', '2008-07-04 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[15], 16, 5, 'NULL', '2009-01-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[16], 17, 5, 'NULL', '2008-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[17], 18, 5, 'NULL', '2009-03-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[18], 19, 5, 'NULL', '2008-10-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[19], 20, 5, 'NULL', '2009-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[20], 21, 5, 'NULL', '2008-03-25 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[21], 22, 5, 'NULL', '2009-10-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[22], 23, 5, 'NULL', '2008-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[23], 24, 5, 'NULL', '2008-03-11 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[24], 25, 5, 'NULL', '2008-04-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[25], 26, 5, 'NULL', '2009-01-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[26], 27, 5, 'NULL', '2008-05-07 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[27], 28, 5, 'NULL', '2009-12-12 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[28], 29, 5, 'NULL', '2009-12-13 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[29], 30, 5, 'NULL', '2009-12-14 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[30], 31, 5, 'NULL', '2009-12-15 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[31], 32, 5, 'NULL', '2009-07-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[32], 33, 5, 'NULL', '2009-03-07 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[33], 34, 5, 'NULL', '2009-12-15 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[34], 35, 5, 'NULL', '2009-12-13 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[35], 36, 5, 'NULL', '2009-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[36], 37, 5, 'NULL', '2009-03-06 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[37], 38, 5, 'NULL', '2009-12-13 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[38], 39, 5, 'NULL', '2008-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[39], 40, 5, 'NULL', '2009-12-14 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[40], 41, 5, 'NULL', '2009-01-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[41], 42, 5, 'NULL', '2009-12-15 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[42], 43, 5, 'NULL', '2009-03-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[43], 44, 5, 'NULL', '2009-12-13 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[44], 45, 5, 'NULL', '2009-01-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[45], 46, 5, 'NULL', '2009-12-13 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[46], 47, 5, 'NULL', '2009-10-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[47], 48, 5, 'NULL', '2009-12-10 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[48], 49, 5, 'NULL', '2009-03-11 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    ($randomContacts[49], 50, 5, 'NULL', '2009-04-05 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 )
     ";
         CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
  
@@ -1647,19 +1647,19 @@ VALUES
 INSERT INTO civicrm_contribution
     (contact_id, contribution_type_id, payment_instrument_id, receive_date, non_deductible_amount, total_amount, trxn_id, currency, cancel_date, cancel_reason, receipt_date, thankyou_date, source )
 VALUES
-    (2, 1, 4, '2007-04-11 00:00:00', 0.00, 125.00, 'check #1041', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (4, 1, 1, '2007-03-21 00:00:00', 0.00, 50.00, 'P20901X1', 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
-    (6, 1, 4, '2007-04-29 00:00:00', 0.00, 25.00, 'check #2095', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (8, 1, 4, '2007-04-11 00:00:00', 0.00, 50.00, 'check #10552', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (16, 1, 4, '2007-04-15 00:00:00', 0.00, 500.00, 'check #509', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (19, 1, 4, '2007-04-11 00:00:00', 0.00, 175.00, 'check #102', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
-    (82, 1, 1, '2007-03-27 00:00:00', 0.00, 50.00, 'P20193L2', 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
-    (92, 1, 1, '2007-03-08 00:00:00', 0.00, 10.00, 'P40232Y3', 'USD', NULL, NULL, NULL, NULL, 'Online: Help CiviCRM' ),
-    (34, 1, 1, '2007-04-22 00:00:00', 0.00, 250.00, 'P20193L6', 'USD', NULL, NULL, NULL, NULL, 'Online: Help CiviCRM' ),
-    (71, 1, 1, '2008-07-03 11:53:50', 0.00, 500.00, 'PL71', 'USD', NULL, NULL, NULL, NULL, NULL ),
-    (43, 1, 1, '2008-07-02 12:55:41', 0.00, 200.00, 'PL43II', 'USD', NULL, NULL, NULL, NULL, NULL ),
-    (32, 1, 1, '2008-06-02 11:53:50', 0.00, 200.00, 'PL32I', 'USD', NULL, NULL, NULL, NULL, NULL ),
-    (32, 1, 1, '2008-07-01 12:55:41', 0.00, 200.00, 'PL32II', 'USD', NULL, NULL, NULL, NULL, NULL );
+    (2, 1, 4, '2009-04-11 00:00:00', 0.00, 125.00, 'check #1041', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
+    (4, 1, 1, '2009-03-21 00:00:00', 0.00, 50.00, 'P20901X1', 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
+    (6, 1, 4, '2009-04-29 00:00:00', 0.00, 25.00, 'check #2095', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
+    (8, 1, 4, '2009-04-11 00:00:00', 0.00, 50.00, 'check #10552', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
+    (16, 1, 4, '2009-04-15 00:00:00', 0.00, 500.00, 'check #509', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
+    (19, 1, 4, '2009-04-11 00:00:00', 0.00, 175.00, 'check #102', 'USD', NULL, NULL, NULL, NULL, 'Apr 2007 Mailer 1' ),
+    (82, 1, 1, '2009-03-27 00:00:00', 0.00, 50.00, 'P20193L2', 'USD', NULL, NULL, NULL, NULL, 'Online: Save the Penguins' ),
+    (92, 1, 1, '2009-03-08 00:00:00', 0.00, 10.00, 'P40232Y3', 'USD', NULL, NULL, NULL, NULL, 'Online: Help CiviCRM' ),
+    (34, 1, 1, '2009-04-22 00:00:00', 0.00, 250.00, 'P20193L6', 'USD', NULL, NULL, NULL, NULL, 'Online: Help CiviCRM' ),
+    (71, 1, 1, '2009-07-01 11:53:50', 0.00, 500.00, 'PL71', 'USD', NULL, NULL, NULL, NULL, NULL ),
+    (43, 1, 1, '2009-07-01 12:55:41', 0.00, 200.00, 'PL43II', 'USD', NULL, NULL, NULL, NULL, NULL ),
+    (32, 1, 1, '2009-10-01 11:53:50', 0.00, 200.00, 'PL32I', 'USD', NULL, NULL, NULL, NULL, NULL ),
+    (32, 1, 1, '2009-12-01 12:55:41', 0.00, 200.00, 'PL32II', 'USD', NULL, NULL, NULL, NULL, NULL );
 ";
         CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         
@@ -1667,19 +1667,19 @@ VALUES
 INSERT INTO civicrm_activity
     (source_contact_id, source_record_id, activity_type_id, subject, activity_date_time, duration, location, phone_id, phone_number, details, priority_id,parent_id, is_test, status_id)
 VALUES
-    (2, 1, 6, '$ 125.00-Apr 2007 Mailer 1', '2007-04-11 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (4, 2, 6, '$ 50.00-Online: Save the Penguins', '2007-03-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (6, 3, 6, '$ 25.00-Apr 2007 Mailer 1', '2007-04-29 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (8, 4, 6, '$ 50.00-Apr 2007 Mailer 1', '2007-04-11 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (16, 5, 6, '$ 500.00-Apr 2007 Mailer 1', '2007-04-15 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (19, 6, 6, '$ 175.00-Apr 2007 Mailer 1', '2007-04-11 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (82, 7, 6, '$ 50.00-Online: Save the Penguins', '2007-03-27 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (92, 8, 6, '$ 10.00-Online: Save the Penguins', '2007-03-08 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (34, 9, 6, '$ 250.00-Online: Save the Penguins', '2007-04-22 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (71, 10, 6, NULL, '2008-07-17 11:53:50', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (43, 11, 6, NULL, '2008-07-02 12:55:41', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (32, 12, 6, NULL, '2008-06-21 11:53:50', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
-    (32, 13, 6, NULL, '2008-07-28 12:55:41', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 );
+    (2, 1, 6, '$ 125.00-Apr 2007 Mailer 1', '2009-04-11 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (4, 2, 6, '$ 50.00-Online: Save the Penguins', '2009-03-21 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (6, 3, 6, '$ 25.00-Apr 2007 Mailer 1', '2009-04-29 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (8, 4, 6, '$ 50.00-Apr 2007 Mailer 1', '2009-04-11 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (16, 5, 6, '$ 500.00-Apr 2007 Mailer 1', '2009-04-15 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (19, 6, 6, '$ 175.00-Apr 2007 Mailer 1', '2009-04-11 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (82, 7, 6, '$ 50.00-Online: Save the Penguins', '2009-03-27 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (92, 8, 6, '$ 10.00-Online: Save the Penguins', '2009-03-08 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (34, 9, 6, '$ 250.00-Online: Save the Penguins', '2009-04-22 00:00:00', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (71, 10, 6, NULL, '2009-07-01 11:53:50', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (43, 11, 6, NULL, '2009-07-01 12:55:41', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (32, 12, 6, NULL, '2009-10-01 11:53:50', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 ),
+    (32, 13, 6, NULL, '2009-12-01 12:55:41', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, 2 );
     ";
         CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
     }
@@ -1708,9 +1708,9 @@ VALUES
         $pledge = "INSERT INTO civicrm_pledge
         (contact_id, contribution_type_id, contribution_page_id, amount, frequency_unit, frequency_interval, frequency_day, installments, start_date, create_date, acknowledge_date, modified_date, cancel_date, end_date, honor_contact_id, honor_type_id, status_id, is_test) 
         VALUES 
-       (71, 1, 1, 500.00, 'month', 1, 1, 1, '2008-07-01 21:19:02', '2008-06-26 00:00:00', NULL, NULL, NULL,'2008-07-01 00:00:00', NULL, NULL, 1, 0),
-       (43, 1, 1, 800.00, 'month', 3, 1, 4, '2008-07-01 10:11:09', '2008-06-23 10:11:14', '2008-06-23 10:11:18', NULL, NULL, '2009-04-01 10:11:40', NULL, NULL, 5, 0),
-       (32, 1, 1, 600.00, 'month', 1, 1, 3, '2008-06-01 10:12:35', '2008-05-14 10:12:44', '2008-05-14 10:12:52', NULL, NULL, '2008-08-01 10:13:11', NULL, NULL, 5, 0);
+       (71, 1, 1, 500.00, 'month', 1, 1, 1, '2009-07-01 00:00:00', '2009-06-26 00:00:00', NULL, NULL, NULL,'2009-07-01 00:00:00', NULL, NULL, 1, 0),
+       (43, 1, 1, 800.00, 'month', 3, 1, 4, '2009-07-01 00:00:00', '2009-06-23 00:00:00', '2009-06-23 00:00:00', NULL, NULL, '2009-04-01 10:11:40', NULL, NULL, 5, 0),
+       (32, 1, 1, 600.00, 'month', 1, 1, 3, '2009-10-01 00:00:00', '2009-09-14 00:00:00', '2009-09-14 00:00:00', NULL, NULL, '2009-12-01 00:00:00', NULL, NULL, 5, 0);
 ";
         CRM_Core_DAO::executeQuery( $pledge, CRM_Core_DAO::$_nullArray );      
     }
@@ -1720,14 +1720,16 @@ VALUES
         $pledgePayment = "INSERT INTO civicrm_pledge_payment 
         ( pledge_id, contribution_id, scheduled_amount, scheduled_date, reminder_date, reminder_count, status_id) 
        VALUES 
-         (1, 10, 500.00, '2008-07-01 13:03:45', null, 0, 1),
-         (2, 11, 200.00, '2008-07-01 10:59:35', null, 0, 1),
-         (2, null, 200.00, '2008-10-01 10:59:35',null, 0, 2),
-         (2, null, 200.00, '2009-01-01 10:59:35',null, 0, 2),
-         (2, null, 200.00, '2009-04-01 10:59:35',null, 0, 2),
-         (3, 12, 200.00, '2008-06-01 11:00:12', null, 0, 1),
-         (3, 13, 200.00, '2008-07-01 10:59:35', '2008-06-28 10:59:41', 1, 1),
-         (3, null, 200.00, '2008-08-01 11:00:12', null, 0, 2);
+         (1, 10, 500.00, '2009-07-01 00:00:00', null, 0, 1 ),
+
+         (2, 11,   200.00, '2009-07-01 00:00:00', null, 0,  1 ),
+         (2, null, 200.00, '2009-10-01 00:00:00', null, 0,  2 ),
+         (2, null, 200.00, '2009-01-01 00:00:00', null, 0,  2 ),
+         (2, null, 200.00, '2009-04-01 00:00:00', null, 0,  2 ),
+
+         (3, 12,   200.00, '2009-10-01 00:00:00', null, 0, 1 ),
+         (3, 13,   200.00, '2009-11-01 00:0:00', '2009-10-28 00:00:00', 1, 1),
+         (3, null, 200.00, '2009-12-01 00:00:00', null, 0, 2 );
         ";
         CRM_Core_DAO::executeQuery( $pledgePayment, CRM_Core_DAO::$_nullArray );
     }
