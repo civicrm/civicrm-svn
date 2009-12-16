@@ -27,6 +27,7 @@
        <name>dashboard_id</name>
        <table>civicrm_dashboard</table>
        <key>id</key>
+       <onDelete>CASCADE</onDelete>
        <add>3.1</add>
   </foreignKey>
   <field>
@@ -40,6 +41,7 @@
        <name>contact_id</name>
        <table>civicrm_contact</table>
        <key>id</key>
+       <onDelete>CASCADE</onDelete>
        <add>3.1</add>
   </foreignKey>
   <field>
