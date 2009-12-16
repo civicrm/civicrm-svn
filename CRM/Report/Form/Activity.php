@@ -182,6 +182,17 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                                                     'required'   => true ), ),
                                        'alias'   => 'activity_target'
                                        ),
+                                'civicrm_case_activity'        =>
+                                array( 'dao'     => 'CRM_Case_DAO_CaseActivity',
+                                       'fields'  =>
+                                       array(
+                                             'case_id' =>
+                                             array( 'name'       => 'case_id',
+                                                    'no_display' => true,
+                                                    'required'   => true,
+                                                    ),),
+                                       'alias'   => 'case_activity'
+                                       ),
  
                                   );
         
@@ -234,10 +245,10 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
                     ON ( {$this->_aliases['civicrm_activity']}.activity_type_id = civicrm_option_value.value )
              LEFT JOIN civicrm_option_group 
                     ON civicrm_option_group.id = civicrm_option_value.option_group_id
-             LEFT JOIN civicrm_case_activity 
-                    ON civicrm_case_activity.activity_id = {$this->_aliases['civicrm_activity']}.id
+             LEFT JOIN civicrm_case_activity case_activity_civireport 
+                    ON case_activity_civireport.activity_id = {$this->_aliases['civicrm_activity']}.id
              LEFT JOIN civicrm_case 
-                    ON civicrm_case_activity.case_id = civicrm_case.id
+                    ON case_activity_civireport.case_id = civicrm_case.id
              LEFT JOIN civicrm_case_contact 
                     ON civicrm_case_contact.case_id = civicrm_case.id ";
         
