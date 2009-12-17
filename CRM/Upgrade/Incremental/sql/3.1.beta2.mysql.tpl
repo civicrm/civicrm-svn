@@ -78,7 +78,7 @@ VALUES(@option_group_id_cdt, {localize}'Participant Event Type'{/localize}, '3',
         PRIMARY KEY  (`id`),
         KEY `FK_civicrm_dashboard_contact_dashboard_id` (`dashboard_id`),
         KEY `FK_civicrm_dashboard_contact_contact_id` (`contact_id`)
-    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- CRM-5549
 
