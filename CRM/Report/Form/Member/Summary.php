@@ -110,7 +110,6 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                          array( 'contribution_status_id' => 
                                 array( 'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                        'options'      => CRM_Contribute_PseudoConstant::contributionStatus( ),
-                                       'default'      => array( 1 )
                                        ),
                                 ),
                          'grouping'   => 'member-fields',
