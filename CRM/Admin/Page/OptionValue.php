@@ -149,6 +149,11 @@ class CRM_Admin_Page_OptionValue extends CRM_Core_Page_Basic
         
         $dao->option_group_id = $this->_gid;
 
+        require_once 'CRM/Core/OptionGroup.php';
+        if ( in_array($this->_gName, CRM_Core_OptionGroup::$_domainIDGroups) ) {
+            $dao->domain_id = CRM_Core_Config::domainID( );
+        }
+
         $dao->orderBy('name');
         $dao->find();
 
