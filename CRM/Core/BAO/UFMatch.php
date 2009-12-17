@@ -103,7 +103,7 @@ WHERE     openid = %1";
         // if the id of the object is zero (true for anon users in drupal)
         // have we already processed this user, if so early
         // return.
-        $userID = $session->get( 'userID' );
+        $userID = $session->get( 'userID' );        
         $ufID   = $session->get( 'ufID'   );
 
         if ( ! $update && $ufID == $user->$key ) {
@@ -132,9 +132,25 @@ WHERE     openid = %1";
             return;
         }
 
-        $session->set( 'ufID'    , $ufmatch->uf_id          );
-        $session->set( 'userID'  , $ufmatch->contact_id     );
+        $session->set( 'ufID'    , $ufmatch->uf_id      );
+        $session->set( 'userID'  , $ufmatch->contact_id );
         $session->set( 'ufUniqID', isset($ufmatch->user_unique_id) ? $ufmatch->user_unique_id : "");
+
+        // add current contact to recentlty viewed
+        if ( $ufmatch->contact_id ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            list( $displayName, $contactImage, $contactType, $contactSubtype, $contactImageUrl ) = 
+                CRM_Contact_BAO_Contact::getDisplayAndImage( $ufmatch->contact_id, true, true );
+                
+            CRM_Utils_Recent::add( $displayName,
+                                   CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&cid={$ufmatch->contact_id}" ),
+                                   $ufmatch->contact_id,
+                                   $contactType,
+                                   $ufmatch->contact_id,
+                                   $displayName,
+                                   $contactImageUrl,
+                                   $contactSubtype );
+        }
 
         if ( $update ) {
             // the only information we care about is uniqId, so lets check that
