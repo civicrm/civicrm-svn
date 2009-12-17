@@ -259,7 +259,7 @@ class CRM_Report_Form_Instance {
                     $dashletParams['is_fullscreen'] = 0;
                 }
 
-                $dashletParams['url'        ] = "civicrm/report/instance/{$dao->id}&force=1&section={$section}&snippet=4{$chart}";
+                $dashletParams['url'        ] = "civicrm/report/instance/{$dao->id}&reset=1&section={$section}&snippet=4{$chart}";
                 $dashletParams['instanceURL'] = "civicrm/report/instance/{$dao->id}";
                 require_once 'CRM/Core/BAO/Dashboard.php';
                 CRM_Core_BAO_Dashboard::addDashlet(  $dashletParams );
