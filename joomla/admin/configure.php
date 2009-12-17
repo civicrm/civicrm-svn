@@ -100,7 +100,6 @@ require_once '$configFile';
         
         civicrm_source( $sqlPath . DIRECTORY_SEPARATOR . 'civicrm.mysql'     );
         civicrm_source( $sqlPath . DIRECTORY_SEPARATOR . 'civicrm_data.mysql');
-        civicrm_source( $sqlPath . DIRECTORY_SEPARATOR . 'civicrm_sample_report.mysql', true );
 
         require_once 'CRM/Core/Config.php';
         $config =& CRM_Core_Config::singleton( );
