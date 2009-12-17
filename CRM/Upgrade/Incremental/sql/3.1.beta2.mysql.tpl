@@ -92,5 +92,20 @@ UPDATE `civicrm_report_instance` SET domain_id = @domain_id;
 ALTER TABLE `civicrm_report_instance`
     ADD CONSTRAINT `FK_civicrm_report_instance_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `civicrm_domain` (`id`);
 
+-- CRM-5546
 
+ALTER TABLE `civicrm_price_set`
+    ADD `domain_id` INT(10)  UNSIGNED DEFAULT NULL COMMENT 'Which Domain is this price-set for' AFTER `id`;
+ALTER TABLE `civicrm_price_set`
+    ADD CONSTRAINT `FK_civicrm_price_set_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `civicrm_domain` (`id`);
 
+ALTER TABLE `civicrm_option_value`
+    ADD `domain_id` INT(10) UNSIGNED DEFAULT NULL COMMENT 'Which Domain is this option value for' AFTER `component_id`;
+
+ALTER TABLE `civicrm_option_value`
+    ADD CONSTRAINT `FK_civicrm_option_value_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `civicrm_domain` (`id`);
+
+SELECT @option_group_id_grant         := id from civicrm_option_group where name = 'grant_type';
+SELECT @option_group_id_email         := id from civicrm_option_group where name = 'from_email_address';
+
+UPDATE `civicrm_option_value` SET domain_id = @domain_id WHERE option_group_id IN (@option_group_id_grant,@option_group_id_email );
