@@ -376,7 +376,7 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
         require_once 'CRM/Core/BAO/CustomValueTable.php';
         $mainEvs  =& CRM_Core_BAO_CustomValueTable::getEntityValues($mainId);
         $otherEvs =& CRM_Core_BAO_CustomValueTable::getEntityValues($otherId);
-        $keys = array_keys($mainEvs) + array_keys($otherEvs);
+        $keys = array_unique(array_merge(array_keys($mainEvs), array_keys($otherEvs)));
         foreach ($keys as $key) {
             if ($mainEvs[$key] != $otherEvs[$key]) $diffs['custom'][] = $key;
         }
