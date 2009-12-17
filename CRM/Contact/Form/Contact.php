@@ -834,21 +834,20 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         $session =& CRM_Core_Session::singleton( );
         CRM_Core_Session::setStatus( $statusMsg );
+
+        require_once 'CRM/Utils/Recent.php';
+        // add the recently viewed contact
+        $displayName = CRM_Contact_BAO_Contact::displayName( $contact->id );
+        CRM_Utils_Recent::add( $displayName,
+                               CRM_Utils_System::url( 'civicrm/contact/view', 'reset=1&cid=' . $contact->id ),
+                               $contact->id,
+                               $this->_contactType,
+                               $contact->id,
+                               $displayName );
         
         // here we replace the user context with the url to view this contact
         $buttonName = $this->controller->getButtonName( );
-        if ( ($buttonName == $this->getButtonName( 'next', 'new' ) ) ||
-             ($buttonName == $this->getButtonName( 'upload', 'new' ) ) ) {
-            require_once 'CRM/Utils/Recent.php';
-            
-            // add the recently viewed contact
-            $displayName = CRM_Contact_BAO_Contact::displayName( $contact->id );
-            CRM_Utils_Recent::add( $displayName,
-                                   CRM_Utils_System::url( 'civicrm/contact/view', 'reset=1&cid=' . $contact->id ),
-                                   $contact->id,
-                                   $this->_contactType,
-                                   $contact->id,
-                                   $displayName );
+        if ( $buttonName == $this->getButtonName( 'upload', 'new' )  ) {
             $resetStr  = "reset=1&ct={$contact->contact_type}";
             $resetStr .= $this->_contactSubType ? "&cst={$this->_contactSubType}" : '';
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/add', $resetStr ) );
