@@ -702,7 +702,8 @@ function civitest_civicrm_alterPaymentProcessorParams( $paymentObj,
                                                        &$rawParams, 
                                                        &$cookedParams ) {
     $mode = $paymentObj->getVar('_mode');
-
+    $type = $paymentObj->getVar('_paymentProcessor');
+    $processorType = $type['payment_processor_type'];
     if ( $paymentObj instanceof CRM_Core_Payment_Dummy ) {
         $employer   = empty($rawParams['custom_1']) ? '' : $rawParams['custom_1'];
         $occupation = empty($rawParams['custom_2']) ? '' : $rawParams['custom_2'];
@@ -721,7 +722,24 @@ function civitest_civicrm_alterPaymentProcessorParams( $paymentObj,
         $cookedParams['x_ship_to_last_name'] = $rawParams['accountingCode']; //for now
         $country_info = da_core_fetch_country_data_by_crm_id($rawParams['country-1']);    
         $cookedParams['x_ship_to_company']   = $country_info['iso_code'];
-    }
+    } else if( $paymentObj instanceof CRM_Core_Payment_PayPalImpl && $processorType == 'PayPal' ) {        
+        // Website Pro  Checkout
+        $obj   = $paymentObj->getVar('_paymentForm');
+        $value = $obj->getVar('_values');
+        $id    = $value['id'];
+        if ( $value['event']['id'] ) {
+            $id =  $value['event']['id'];
+        } 
+        
+        $cookedParams['desc'] = $rawParams['description'];
+        $cookedParams['custom'] = $id;  
+        
+    } elseif ( $paymentObj instanceof CRM_Core_Payment_PayPalImpl && $processorType == 'PayPal_Express' ) {
+        
+        // Express  Checkout
+        $cookedParams['desc']   = $rawParams['eventName'];
+        $cookedParams['custom'] = $rawParams['eventId'];  
+    } 
 }
 
 function civitest_civicrm_customFieldOptions($fieldID, &$options, $detailedFormat = false ) {
