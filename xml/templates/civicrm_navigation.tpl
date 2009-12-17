@@ -14,6 +14,13 @@ VALUES
 
 INSERT INTO civicrm_mail_settings (domain_id, name, is_default, domain) VALUES (@domainID, 'default', true, 'FIXME.ORG');
 
+-- dashlets 
+
+INSERT INTO `civicrm_dashboard` 
+    ( `domain_id`, `label`, `url`, `content`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `created_date`, `is_fullscreen`) 
+    VALUES 
+    ( @domainID, '{ts escape="sql"}Activities{/ts}', 'civicrm/dashlet/activity&reset=1&snippet=4', NULL, NULL, NULL, 0, 0,'1', '1', NULL, 1);
+
 -- navigation 
 
 INSERT INTO civicrm_navigation

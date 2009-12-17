@@ -40,7 +40,50 @@ INSERT INTO
    `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
 VALUES(@option_group_id_cdt, {localize}'Participant Event Type'{/localize}, '3', 'ParticipantEventType', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL );
 
+-- add table dashboard and dashboard contact    
+-- CRM-5423
+
+    CREATE TABLE civicrm_dashboard (
+        id int(10)    unsigned NOT NULL auto_increment,
+        domain_id`    int(10) unsigned NOT NULL      COMMENT 'Domain for dashboard',
+        {localize field='label'}label varchar(255)   COMMENT 'Widget Title'{/localize} default NULL,
+        url           varchar(255) default NULL      COMMENT 'url in case of external widget',
+        content       text                           COMMENT 'widget content',
+        permission    varchar(255)      default NULL COMMENT 'Permission for the widget',
+        permission_operator` varchar(3) default NULL COMMENT 'Permission Operator',
+        column_no     tinyint(4)        default '0'  COMMENT 'column no for this widget',
+        is_minimized  tinyint(4)        default '0'  COMMENT 'Is Minimized?',
+        is_fullscreen tinyint(4)        default '1'  COMMENT 'Is Fullscreen?',
+        is_active     tinyint(4)        default '0'  COMMENT 'Is this widget active?',
+        weight        int(11)           default '0'  COMMENT 'Ordering of the widgets.',
+        created_date  datetime          default NULL COMMENT 'When was content populated',
+        PRIMARY KEY   (`id`),
+        KEY `FK_civicrm_dashboard_domain_id` (`domain_id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
+
+    INSERT INTO civicrm_dashboard 
+        ( domain_id, {localize field='label'}`label`{/localize}, url, content, permission, permission_operator, column_no, is_minimized, is_fullscreen, is_active, weight, created_date ) 
+    VALUES
+    ( @domainID, '{ts escape="sql"}Activities{/ts}', 'civicrm/dashlet/activity&reset=1&snippet=4', NULL, NULL, NULL, 0, 0,'1', '1', NULL, 1 );
+
+
+
+    CREATE TABLE civicrm_dashboard_contact (
+        id int(10)    unsigned NOT NULL auto_increment,
+        dashboard_id  int(10) unsigned NOT NULL    COMMENT 'Dashboard ID',
+        contact_id    int(10) unsigned NOT NULL    COMMENT 'Contact ID',
+        column_no     tinyint(4) default '0'       COMMENT 'column no for this widget',
+        is_minimized  tinyint(4) default '0'       COMMENT 'Is Minimized?',
+        is_fullscreen tinyint(4) default '1'       COMMENT 'Is Fullscreen?',
+        is_active     tinyint(4) default '0'       COMMENT 'Is this widget active?',
+        weight        int(11)    default '0'       COMMENT 'Ordering of the widgets.',
+        PRIMARY KEY  (`id`),
+        KEY `FK_civicrm_dashboard_contact_dashboard_id` (`dashboard_id`),
+        KEY `FK_civicrm_dashboard_contact_contact_id` (`contact_id`)
+    ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=3 ;
+
 -- CRM-5549
+
 ALTER TABLE `civicrm_report_instance`
     ADD `domain_id` INT(10) UNSIGNED NOT NULL COMMENT 'Which Domain is this instance for' AFTER `id`;
 
@@ -48,3 +91,4 @@ UPDATE `civicrm_report_instance` SET domain_id = @domain_id;
 
 ALTER TABLE `civicrm_report_instance`
     ADD CONSTRAINT `FK_civicrm_report_instance_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `civicrm_domain` (`id`);
+

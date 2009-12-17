@@ -59,6 +59,8 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             $dao->is_active = 1;
         }
 
+        $dao->domain_id = CRM_Core_Config::domainID( );
+        
         $dao->find( );
         while( $dao->fetch( ) ) {
             $values = array( );
