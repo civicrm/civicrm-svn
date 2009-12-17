@@ -1,7 +1,9 @@
 {* this div is being used to apply special css *}
-{include file="CRM/Report/Form/Fields.tpl"}
-    {*Statistics at the Top of the page*}
-    {include file="CRM/Report/Form/Statistics.tpl" top=true}    
+    {if !$section }
+        {include file="CRM/Report/Form/Fields.tpl"}
+        {*Statistics at the Top of the page*}
+        {include file="CRM/Report/Form/Statistics.tpl" top=true}    
+    {/if}
     
     {if $events}
         <div class="report-pager">
@@ -54,8 +56,10 @@
             </table>       
         {/foreach}
         
-        {*Statistics at the bottom of the page*}
-        {include file="CRM/Report/Form/Statistics.tpl" bottom=true}    
+        {if !$section }
+            {*Statistics at the bottom of the page*}
+            {include file="CRM/Report/Form/Statistics.tpl" bottom=true}
+        {/if}    
     {/if}
     
 {include file="CRM/Report/Form/ErrorMessage.tpl"}

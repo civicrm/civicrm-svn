@@ -1,6 +1,8 @@
 {* this div is being used to apply special css *}
-{include file="CRM/Report/Form/Fields.tpl"}
-{include file="CRM/Report/Form/Statistics.tpl" top=true}
+    {if !$section }
+        {include file="CRM/Report/Form/Fields.tpl"}
+        {include file="CRM/Report/Form/Statistics.tpl" top=true}
+    {/if}
 
     {if $rows}
         <div class="report-pager">
@@ -132,8 +134,10 @@
                 </tr>
             </table>
         {/if}
-   
-        {*Statistics at the bottom of the page*}
-        {include file="CRM/Report/Form/Statistics.tpl" bottom=true}
+        
+        {if !$section }
+            {*Statistics at the bottom of the page*}
+            {include file="CRM/Report/Form/Statistics.tpl" bottom=true}
+        {/if}
     {/if} 
 {include file="CRM/Report/Form/ErrorMessage.tpl"}

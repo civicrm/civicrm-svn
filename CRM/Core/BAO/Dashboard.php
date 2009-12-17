@@ -244,7 +244,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
           if ( CRM_Utils_Array::value( 'instanceURL', $params ) ) {
               $query = "SELECT id
                         FROM `civicrm_dashboard`
-                        WHERE url LIKE '" . CRM_Utils_Array::value( 'instanceURL', $params ) ."%'";
+                        WHERE url LIKE '" . CRM_Utils_Array::value( 'instanceURL', $params ) ."&%'";
               $dashboardID = CRM_Core_DAO::singleValueQuery( $query );  
           }
                     
