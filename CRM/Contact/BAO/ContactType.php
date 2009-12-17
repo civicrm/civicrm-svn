@@ -541,7 +541,8 @@ WHERE name = %1";
     static function add( $params ) {
         $contactType = & new CRM_Contact_DAO_ContactType( );
         $contactType->copyValues( $params );
-        $contactType->id = CRM_Utils_Array::value( 'id', $params );
+        $contactType->id        = CRM_Utils_Array::value( 'id', $params );
+        $contactType->is_active = CRM_Utils_Array::value( 'is_active', $params, 0 );
         $contactType->save( );
         if( $contactType->find( true ) ) {
             $contactName = $contactType->name;
@@ -551,7 +552,8 @@ WHERE name = %1";
        
         if( CRM_Utils_Array::value( 'id', $params ) ) {
             $params    = array( 'name' => "New $contactName" );
-            $newParams = array ( 'label' => "New $contact" );
+            $newParams = array ( 'label' => "New $contact",
+                                 'is_active'=> $active );
             CRM_Core_BAO_Navigation::processUpdate( $params ,$newParams );
         } else if( CRM_Utils_Array::value( 'parent_id', $params ) ) {
             $name = self::getBasicType( $contactName );    
