@@ -45,12 +45,12 @@ VALUES(@option_group_id_cdt, {localize}'Participant Event Type'{/localize}, '3',
 
     CREATE TABLE civicrm_dashboard (
         id int(10)    unsigned NOT NULL auto_increment,
-        domain_id`    int(10) unsigned NOT NULL      COMMENT 'Domain for dashboard',
+        domain_id    int(10) unsigned NOT NULL      COMMENT 'Domain for dashboard',
         {localize field='label'}label varchar(255)   COMMENT 'Widget Title'{/localize} default NULL,
         url           varchar(255) default NULL      COMMENT 'url in case of external widget',
         content       text                           COMMENT 'widget content',
         permission    varchar(255)      default NULL COMMENT 'Permission for the widget',
-        permission_operator` varchar(3) default NULL COMMENT 'Permission Operator',
+        permission_operator varchar(3) default NULL COMMENT 'Permission Operator',
         column_no     tinyint(4)        default '0'  COMMENT 'column no for this widget',
         is_minimized  tinyint(4)        default '0'  COMMENT 'Is Minimized?',
         is_fullscreen tinyint(4)        default '1'  COMMENT 'Is Fullscreen?',
@@ -64,7 +64,7 @@ VALUES(@option_group_id_cdt, {localize}'Participant Event Type'{/localize}, '3',
     INSERT INTO civicrm_dashboard 
         ( domain_id, {localize field='label'}`label`{/localize}, url, content, permission, permission_operator, column_no, is_minimized, is_fullscreen, is_active, weight, created_date ) 
     VALUES
-    ( @domainID, '{ts escape="sql"}Activities{/ts}', 'civicrm/dashlet/activity&reset=1&snippet=4', NULL, NULL, NULL, 0, 0,'1', '1', NULL, 1 );
+    ( @domain_id, '{ts escape="sql"}Activities{/ts}', 'civicrm/dashlet/activity&reset=1&snippet=4', NULL, NULL, NULL, 0, 0,'1', '1', NULL, 1 );
 
 
 
@@ -91,4 +91,6 @@ UPDATE `civicrm_report_instance` SET domain_id = @domain_id;
 
 ALTER TABLE `civicrm_report_instance`
     ADD CONSTRAINT `FK_civicrm_report_instance_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `civicrm_domain` (`id`);
+
+
 
