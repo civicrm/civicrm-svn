@@ -17,18 +17,6 @@
        <autoincrement>true</autoincrement>
   </primaryKey>
   <field>
-      <name>domain_id</name>
-      <type>int unsigned</type>
-      <comment>Which Domain is this option group for</comment>
-      <add>3.1</add>
-  </field>
-  <foreignKey>
-       <name>domain_id</name>
-       <table>civicrm_domain</table>
-       <key>id</key>
-       <add>3.1</add>
-  </foreignKey>
-  <field>
        <name>name</name>
        <title>Option Group Name</title>
        <type>varchar</type>

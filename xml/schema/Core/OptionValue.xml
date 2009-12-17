@@ -128,6 +128,18 @@
        <add>2.0</add>
   </foreignKey>  
   <field>
+      <name>domain_id</name>
+      <type>int unsigned</type>
+      <comment>Which Domain is this option value for</comment>
+      <add>3.1</add>
+  </field>
+  <foreignKey>
+       <name>domain_id</name>
+       <table>civicrm_domain</table>
+       <key>id</key>
+       <add>3.1</add>
+  </foreignKey>
+  <field>
        <name>visibility_id</name>
        <type>int unsigned</type>
        <default>NULL</default>

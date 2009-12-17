@@ -86,7 +86,7 @@ WHERE  v.option_group_id = g.id
   AND  g.is_active       = 1 ";
         
         if ( in_array( $name, self::$_domainIDGroups ) ) {
-            $query .= " AND g.domain_id = " . CRM_Core_Config::domainID( );
+            $query .= " AND v.domain_id = " . CRM_Core_Config::domainID( );
         }
 
         if ( $condition ) {

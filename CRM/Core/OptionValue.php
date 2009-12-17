@@ -394,11 +394,19 @@ FROM
         if ( CRM_Utils_Array::value( 'id', $groupParams ) ) {
             $where .= " AND option_group.id = %1";
             $params[1] = array( $groupParams['id'], 'Integer' );
+            $groupName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
+                                                      $params[1], 'name', 'id' );
         }
         
         if ( CRM_Utils_Array::value( 'name', $groupParams ) ) {
             $where .= " AND option_group.name = %2";
             $params[2] = array( $groupParams['name'], 'String' );
+            $groupName = $params[2];
+        }
+
+        require_once 'CRM/Core/OptionGroup.php';
+        if ( in_array($groupName, CRM_Core_OptionGroup::$_domainIDGroups) ) {
+            $where .= " AND option_value.domain_id = " . CRM_Core_Config::domainID( );
         }
         
         $query = $select . $from . $where . $order;
