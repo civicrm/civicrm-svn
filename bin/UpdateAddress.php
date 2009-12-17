@@ -211,7 +211,7 @@ ORDER BY a.id
         }
         
         // parse street address
-        if ( $parseStreetAddress ) {
+        if ( $parseStreetAddress && !empty( $dao->street_address ) ) {
             $parsedFields = CRM_Core_BAO_Address::parseStreetAddress( $dao->street_address );
             $success = true;
             // consider address is automatically parseable,

@@ -1012,8 +1012,13 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 }
             }
             
+            $parseString = CRM_Utils_Array::value( $parseFieldName, $address );
+            if ( empty( $parseString ) ) {
+                continue;
+            }
+            
             // parse address field.
-            $parsedFields = CRM_Core_BAO_Address::parseStreetAddress(CRM_Utils_Array::value($parseFieldName, $address));
+            $parsedFields = CRM_Core_BAO_Address::parseStreetAddress( $parseString );
             
             if ( $buildStreetAddress ) {
                 $address['street_number']        = $parsedFields['street_number'];
