@@ -52,12 +52,11 @@
     color: black;
     height: 30px;
     line-height: 30px;
-    overflow: hidden;
     cursor: move;
     background: #DFDFDF;
     width: 100%;
     font-size: 1.2em;
-    margin-top: 0px;
+    margin: 0px;
 }
 
 /* widget content / body*/
