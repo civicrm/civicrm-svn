@@ -306,9 +306,11 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                 $membership->source             = CRM_Utils_Array::value( 'source', $data[$membership->id] );
             }
             
-            // need to remember original id, CRM-5551 
+            // since we are going to create activity record w/
+            // individual contact as a target in case of on behalf signup,
+            // so get the copy of organization id, CRM-5551
             $realMembershipContactId = $membership->contact_id;
-
+            
             // create activity source = individual, target = org CRM-4027
             $targetContactID = null;
             if ( CRM_Utils_Array::value( 'is_for_organization', $params ) ) {
@@ -318,8 +320,10 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             
             require_once 'CRM/Activity/BAO/Activity.php';
             CRM_Activity_BAO_Activity::addActivity( $membership, $activityType, $targetContactID );
-
-            // copy real contact id, CRM-5551
+            
+            // we might created activity record w/ individual
+            // contact as target so update membership object w/
+            // original organization id, CRM-5551
             $membership->contact_id = $realMembershipContactId;
         }
         
