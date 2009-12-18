@@ -869,6 +869,11 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
             $params['fee_amount' ] = $participantBAO->fee_amount;
         }
         
+        // overwrite actual payment amount if entered
+        if ( CRM_Utils_Array::value( 'total_amount', $params ) ) {
+            $contributionParams['total_amount'] = CRM_Utils_Array::value( 'total_amount', $params );
+        }
+        
         require_once 'CRM/Contact/BAO/Contact.php';
         // Retrieve the name and email of the current user - this will be the FROM for the receipt email
         $session =& CRM_Core_Session::singleton( );

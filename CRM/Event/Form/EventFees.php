@@ -293,8 +293,12 @@ class CRM_Event_Form_EventFees
             $contribution =& new CRM_Contribute_DAO_Contribution( );
             $contribution->id = $contriId;
             $contribution->find( true );
-            foreach( array('contribution_type_id', 'payment_instrument_id','contribution_status_id', 'receive_date' ) as $f ) {
-                $defaults[$form->_pId][$f] = $contribution->$f;
+            foreach( array('contribution_type_id', 'payment_instrument_id','contribution_status_id', 'receive_date', 'total_amount' ) as $f ) {
+                if ( $f == 'receive_date' ) {
+                    list( $defaults[$form->_pId]['receive_date'] ) = CRM_Utils_Date::setDateDefaults( $contribution->$f );
+                } else {
+                    $defaults[$form->_pId][$f] = $contribution->$f;                    
+                }
             }
         }
         
@@ -501,6 +505,8 @@ SELECT  id, label, name, option_group_id
                 $form->add( 'text', 'check_number', ts('Check Number'), 
                             CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_Contribution', 'check_number' ) );
 
+                $form->add( 'text', 'total_amount', ts('Total Amount'), 
+                            CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_Contribution', 'total_amount' ) );
             }
         } else {
             $form->add( 'text', 'amount', ts('Event Fee(s)') );
