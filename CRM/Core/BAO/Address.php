@@ -661,9 +661,18 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         }
         
         // now get the street unit.
+        // supportable street unit formats.
+        $streetUnitFormats = array( 'APT',  'APARTMENT',  'BSMT',  'BASEMENT',  'BLDG', 'BUILDING', 
+                                    'DEPT', 'DEPARTMENT', 'FL',    'FLOOR',     'FRNT', 'FRONT',  
+                                    'HNGR', 'HANGER',     'LBBY',  'LOBBY',     'LOWR', 'LOWER',
+                                    'OFC',  'OFFICE',     'PH',    'PENTHOUSE', 'TRLR', 'TRAILER', 
+                                    'UPPR', 'RM',         'ROOM',  'SIDE',      'SLIP', 'KEY',  
+                                    'LOT',  'PIER',       'REAR',  'SPC',       'SPACE', 
+                                    'STOP', 'STE',        'SUITE', 'UNIT',      '#'  );
+        
+        $streetUnitPreg = '/('. implode( '|', $streetUnitFormats ) . ')(.+)?/i';
         $matches = array( );
-        preg_match( '/(APT|BSMT|BLDG|DEPT|FL|FRNT|HNGR|KEY|LBBY|LOT|LOWR|OFC|PH|PIER|REAR|RM|SIDE|SLIP|SPC|STOP|STE|SUITE|TRLR|UNIT|UPPR|Apartment|#)(.+)?/i', $streetAddress, $matches );
-        if ( !empty( $matches ) ) {
+        if ( preg_match( $streetUnitPreg, $streetAddress, $matches ) ) {
             $parseFields['street_unit'] = $matches[0];
             $streetAddress = str_replace( $matches[0], '', $streetAddress );
             $streetAddress = trim( $streetAddress );
