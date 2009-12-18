@@ -632,7 +632,7 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         
         // get street number and suffix.
         $matches = array( );
-        if ( preg_match( '/^[A-Za-z0-9]+/', $streetAddress, $matches ) ) {
+        if ( preg_match( '/^[A-Za-z0-9]+([^\s]+)/', $streetAddress, $matches ) ) {
             $steetNumAndSuffix = $matches[0];
             
             // get street number.
@@ -641,14 +641,12 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
                 $parseFields['street_number'] = $matches[0];
             }
             
-            // get street number suffix.
-            $matches = array( );
-            if ( preg_match( '/[A-Za-z]+/', $steetNumAndSuffix, $matches ) ) {
-                $parseFields['street_number_suffix'] = $matches[0];
-            }
+            // consider remaining part as suffix.
+            $suffix = preg_replace( '/^(\d+)/', '', $steetNumAndSuffix );
+            $parseFields['street_number_suffix'] = trim( $suffix ); 
             
             // unset from main street address.
-            $streetAddress = preg_replace( '/^[A-Za-z0-9]+/', '', $streetAddress );
+            $streetAddress = preg_replace( '/^[A-Za-z0-9]+([^\s]+)/', '', $streetAddress );
             $streetAddress = trim( $streetAddress );
         }
         
