@@ -5,9 +5,10 @@
            {$form.address.$blockId.street_address.html}
         {if $parseStreetAddress eq 1 && $action eq 2}
            &nbsp;&nbsp;<a href="#" title="{ts}Edit Address Elements{/ts}" onClick="processAddressFields( 'addressElements' , '{$blockId}', 1 );return false;">{ts}Edit Address Elements{/ts}</a>
+           {help id="id-edit-street-elements" file="CRM/Contact/Form/Contact.hlp"}
         {/if}
         <br />
-           <span class="description font-italic">Street number, street name, apartment/unit/suite - OR P.O. box</span>
+        <span class="description font-italic">{ts}Street number, street name, apartment/unit/suite - OR P.O. box{/ts}</span>
         </td>
     </tr>
         
@@ -15,21 +16,19 @@
            <tr id="addressElements_{$blockId}" class=hiddenElement>
                <td>
                   {$form.address.$blockId.street_number.label}<br />
-                  {$form.address.$blockId.street_number.html}<br />
-                  <span class="description font-italic">Street number and prefix</span>
-               </td>
+                  {$form.address.$blockId.street_number.html}
+                </td>
            
                <td>
                   {$form.address.$blockId.street_name.label}<br />
                   {$form.address.$blockId.street_name.html}<br />
-                  <span class="description font-italic">Street name</span>
                </td>
                
                <td colspan="2">
                   {$form.address.$blockId.street_unit.label}<br />       
                   {$form.address.$blockId.street_unit.html}
-                  <a href="#" title="{ts}Edit Street Address{/ts}" onClick="processAddressFields( 'streetAddress', '{$blockId}', 1 );return false;">{ts}Edit Street Address{/ts}</a><br />
-                  <span class="description font-italic">Apartment/Unit/Suite</span> 
+                  <a href="#" title="{ts}Edit Street Address{/ts}" onClick="processAddressFields( 'streetAddress', '{$blockId}', 1 );return false;">{ts}Edit Complete Street Address{/ts}</a>
+                  {help id="id-edit-complete-street" file="CRM/Contact/Form/Contact.hlp"} 
                </td>
            </tr>
     {/if}

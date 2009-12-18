@@ -99,7 +99,7 @@ class CRM_Contact_Form_Edit_Address
                           'geo_code_2'             => array( ts('Longitude'),  array( 'size' => 9, 'maxlength' => 10 ), null ),
                           'street_number'          => array( ts('Street Number')       , $attributes['street_number'], null ),
                           'street_name'            => array( ts('Street Name')         , $attributes['street_name'], null ),
-                          'street_unit'            => array( ts('Street Unit')         , $attributes['street_unit'], null )
+                          'street_unit'            => array( ts('Apt/Unit/Suite')         , $attributes['street_unit'], null )
                           );
 
         $stateCountryMap = array( );

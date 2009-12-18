@@ -32,3 +32,13 @@
 {/ts}</p>
 <p>{ts 1=$docLink}You may also create a customized greeting and use field tokens to insert fields of your choice. For more information on available tokens, see the online documentation %1.{/ts}</p>
 {/htxt}
+
+{htxt id="id-edit-street-elements"}
+<p>{ts}CiviCRM will attempt to split street addresses into separate elements (street number, street name and unit/apt) to help you make lists and reports where
+you need to sort by street number (and/or separate addresses with odd and even numbers). For most addresses, this is done for you automatically. However, you can
+manually edit these elements, and potentially handle addresses that are in unusual formats, by clicking 'Edit Address Elements'.{/ts}</p>
+{/htxt}
+
+{htxt id="id-edit-complete-street"}
+<p>{ts}Click here to return to editing the street address as a single field. Addresses which don't fit the expected format for address elements can still be saved by entering them in the single 'Street Address' field.{/ts}
+{/htxt}
