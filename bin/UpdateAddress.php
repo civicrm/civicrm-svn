@@ -102,7 +102,7 @@ function run( ) {
     $parseStreetAddress = false;
     if ( !$parseAddress ) {
         if ( $parse == 'true' ) {
-            echo ts( 'Error: You need to set a Street Address Parsing under Global Settings >> Address Settings.' );
+            echo ts( 'Error: You need to enable Street Address Parsing under Global Settings >> Address Settings.' );
             exit( );
         }
     } else {
@@ -115,7 +115,7 @@ function run( ) {
     
     // don't process.
     if ( !$parseStreetAddress && !$processGeocode ) {
-        echo ts( 'Error: Both Geocode mapping as well as Street Address Parsing are disabled.' );
+        echo ts( 'Error: Both Geocode mapping as well as Street Address Parsing are disabled. You must configure one or both options to use this script.' );
         exit( );
     }
     
