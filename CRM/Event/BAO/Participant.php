@@ -765,7 +765,7 @@ WHERE  civicrm_participant.id = {$participantId}
      */
     static function fixEventLevel( &$eventLevel )
     {
-        if ( ( substr( $eventLevel, 0, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) &&
+        if ( ( substr( $eventLevel, 0, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) ||
              ( substr( $eventLevel, -1, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) ) {
             $eventLevel = implode( ', ', explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
                                                   substr( $eventLevel, 1, -1) ) );
