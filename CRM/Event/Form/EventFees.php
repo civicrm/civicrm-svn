@@ -294,7 +294,11 @@ class CRM_Event_Form_EventFees
             $contribution->id = $contriId;
             $contribution->find( true );
             foreach( array('contribution_type_id', 'payment_instrument_id','contribution_status_id', 'receive_date' ) as $f ) {
-                $defaults[$form->_pId][$f] = $contribution->$f;
+                if ( $f == 'receive_date' ) {
+                    list( $defaults[$form->_pId]['receive_date'] ) = CRM_Utils_Date::setDateDefaults( $contribution->$f );
+                } else {
+                    $defaults[$form->_pId][$f] = $contribution->$f;                    
+                }
             }
         }
         
