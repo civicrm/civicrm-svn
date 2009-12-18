@@ -39,8 +39,8 @@
 function processAddressFields( name, blockId, loadData ) {
 
 	if ( loadData ) { 
-	    var allAddressValues = {/literal}{$allAddressFieldValues}{literal};
-        
+            var allAddressValues = {/literal}{if $allAddressFieldValues}{$allAddressFieldValues}{else}''{/if}{literal};
+
 	    var streetName    = eval( "allAddressValues.street_name_"    + blockId );
 	    var streetUnit    = eval( "allAddressValues.street_unit_"    + blockId );
 	    var streetNumber  = eval( "allAddressValues.street_number_"  + blockId );

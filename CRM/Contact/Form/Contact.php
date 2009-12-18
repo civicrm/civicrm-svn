@@ -349,10 +349,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 }
             }
             $this->assign( 'allAddressFieldValues', json_encode( $addressValues ) );
-
+            
             //hack to handle show/hide address fields.
             $parsedAddress = array( );
-            if ( CRM_Utils_Array::value( 'address', $_POST ) 
+            if ( $this->_contactId &&
+                 CRM_Utils_Array::value( 'address', $_POST ) 
                  && is_array( $_POST['address'] ) ) {
                 foreach ( $_POST['address'] as $cnt => $values ) {
                     $showField = 'streetAddress';
@@ -1018,8 +1019,17 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $parsedFields = CRM_Core_BAO_Address::parseStreetAddress( $parseString );
             
             if ( $buildStreetAddress ) {
+                //hack to ignore spaces between number and suffix.
+                //here user gives input as street_number so it has to
+                //be street_number and street_number_suffix, but
+                //due to spaces though preg detect string as street_name
+                //consider it as 'street_number_suffix'.
+                $suffix = $parsedFields['street_number_suffix'];
+                if ( !$suffix ) {
+                    $suffix = $parsedFields['street_name'];
+                }
+                $address['street_number_suffix'] = $suffix;
                 $address['street_number']        = $parsedFields['street_number'];
-                $address['street_number_suffix'] = $parsedFields['street_number_suffix'];
                 
                 $streetAddress = null;
                 foreach ( array( 'street_number', 'street_number_suffix', 'street_name', 'street_unit' ) as $fld ) {
