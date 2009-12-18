@@ -16,21 +16,25 @@
     (<a href="javascript:clearDateTime( '{$elementId}' );">{ts}clear{/ts}</a>)&nbsp;
 {/if}
 <script type="text/javascript">
-    var element_date   = "#{$elementId}"; 
-    {if $timeElement}
-        var element_time  = "#{$timeElement}";
-        var time_format   = cj( element_time ).attr('timeFormat');
-        {literal}
-            cj(element_time).timeEntry({ show24Hours : time_format });
-        {/literal}
-    {/if}
+    {literal}
+    cj( function() {
+      {/literal}	
+      var element_date   = "#{$elementId}"; 
+      {if $timeElement}
+          var element_time  = "#{$timeElement}";
+          var time_format   = cj( element_time ).attr('timeFormat');
+          {literal}
+              cj(element_time).timeEntry({ show24Hours : time_format });
+          {/literal}
+      {/if}
 
-    var date_format = cj( element_date ).attr('format');
-    var startYear   = cj( element_date ).attr('startOffset');
-    var endYear     = cj( element_date ).attr('endOffset');
-    var alt_field   = 'input#{$dateFormated}';
-    {literal} 
-    cj(element_date).datepicker({
+      var date_format = cj( element_date ).attr('format');
+      var startYear   = cj( element_date ).attr('startOffset');
+      var endYear     = cj( element_date ).attr('endOffset');
+      var alt_field   = 'input#{$dateFormated}';
+      {literal}
+ 
+      cj(element_date).datepicker({
                                     closeAtTop        : true, 
                                     dateFormat        : date_format,
                                     changeMonth       : true,
@@ -40,12 +44,13 @@
                                     yearRange         : '-'+startYear+':+'+endYear
                                 });
     
-    cj(element_date).click( function( ) {
-        hideYear( this );
-    });  
-    cj('.ui-datepicker-trigger').click( function( ) {
-        hideYear( cj(this).prev() );
-    });  
+      cj(element_date).click( function( ) {
+          hideYear( this );
+      });  
+      cj('.ui-datepicker-trigger').click( function( ) {
+          hideYear( cj(this).prev() );
+      });  
+    });
     
     function hideYear( element ) {
         var format = cj( element ).attr('format');
