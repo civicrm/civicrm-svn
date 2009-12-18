@@ -93,13 +93,13 @@ function enableDisable( recordID, recordBAO, op ) {
         				      }
 				    });
 				    cj('#enableDisableStatusMsg').dialog('removebutton', 'Cancel'); 
-				    cj('#enableDisableStatusMsg').dialog('removebutton', 'Ok'); 
+				    cj('#enableDisableStatusMsg').dialog('removebutton', 'OK'); 
        			    }  
 	       	        }, 'json' );
 		},
 	
 		buttons: { 
-			"Ok": function() { 	    
+			"OK": function() { 	    
 			        saveEnableDisable( recordID, recordBAO, op );
 			        cj(this).dialog("close"); 
 			        cj(this).dialog("destroy");
