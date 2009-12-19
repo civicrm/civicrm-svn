@@ -78,7 +78,7 @@ class CRM_Report_Form_Instance {
         $form->addElement( 'checkbox', 'is_navigation', ts('Include Report in Navigation Menu?'), null, 
                            array('onclick' =>"return showHideByValue('is_navigation','','navigation_menu','table-row','radio',false);") );
 
-        $form->addElement( 'checkbox', 'addToDashboard', ts('Include Report on Dashboard?') );
+        $form->addElement( 'checkbox', 'addToDashboard', ts('Available for Dashboard?') );
         
         $config =& CRM_Core_Config::singleton( );
         if ( $config->userFramework != 'Joomla' ) {
