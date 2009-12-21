@@ -513,7 +513,8 @@ class CRM_Report_Form extends CRM_Core_Form {
         foreach ( $this->_filters as $table => $attributes ) {
             foreach ( $attributes as $fieldName => $field ) {
                 // get ready with option value pair
-                $operations = self::getOperationPair( CRM_Utils_Array::value( 'operatorType', $field ) );
+                $operations = $this->getOperationPair( CRM_Utils_Array::value( 'operatorType', $field ), 
+                                                       $fieldName );
                 
                 $filters[$table][$fieldName] = $field;
                 
@@ -522,7 +523,9 @@ class CRM_Report_Form extends CRM_Core_Form {
                     // assume a multi-select field
                     if ( !empty( $field['options'] ) ) {
                         $element = $this->addElement('select', "{$fieldName}_op", ts( 'Operator:' ), $operations);
-                        $element->freeze();
+                        if ( count($operations) <= 1 ) {
+                            $element->freeze();
+                        }
                         $select = $this->addElement('select', "{$fieldName}_value", null, 
                                                     $field['options'], array( 'size' => 4, 
                                                                               'style' => 'width:200px'));
@@ -674,7 +677,9 @@ class CRM_Report_Form extends CRM_Core_Form {
         }
     }
     
-    static function getOperationPair( $type = "string" ) {
+    // Note: $fieldName param allows inheriting class to build operationPairs 
+    // specific to a field.
+    function getOperationPair( $type = "string", $fieldName = null ) {
         // FIXME: At some point we should move these key-val pairs 
         // to option_group and option_value table.
 
@@ -1243,7 +1248,8 @@ class CRM_Report_Form extends CRM_Core_Form {
                         $op    = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
                         $value = null;
                         if ( $op ) {
-                            $pair  = self::getOperationPair( CRM_Utils_Array::value( 'operatorType', $field ) );
+                            $pair  = $this->getOperationPair( CRM_Utils_Array::value( 'operatorType', $field ),
+                                                              $fieldName );
                             $min   = CRM_Utils_Array::value( "{$fieldName}_min",  $this->_params );
                             $max   = CRM_Utils_Array::value( "{$fieldName}_max",  $this->_params );
                             $val   = CRM_Utils_Array::value( "{$fieldName}_value",$this->_params );
