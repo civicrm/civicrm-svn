@@ -520,7 +520,9 @@ class CRM_Event_BAO_Query
         $form->addDate( 'event_end_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
         require_once 'CRM/Event/PseudoConstant.php';
-        foreach (CRM_Event_PseudoConstant::participantStatus( ) as $id => $Name) {
+        $status = CRM_Event_PseudoConstant::participantStatus( );
+        asort( $status );
+        foreach ( $status as $id => $Name) {
             $form->_participantStatus =& $form->addElement('checkbox', "participant_status_id[$id]", null,$Name);
         }
         
