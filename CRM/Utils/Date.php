@@ -325,19 +325,13 @@ class CRM_Utils_Date
         if ( empty( $string ) ) {
             return 0;
         }
-        $v = self::unformat( $string );
-        
-        if ( empty( $v ) ) {
-            return 0;
-        }
-        
-        if ( CRM_Utils_Array::value( 'A', $v ) == 'PM' or CRM_Utils_Array::value( 'a', $v ) == 'pm') {
-            $v['h'] += 12;
-        }
-        
-        return mktime( CRM_Utils_Array::value( 'h', $v ),
-                       CRM_Utils_Array::value( 'i', $v ), 
-                       59, $v['M'], $v['d'], $v['Y'] );
+        $parsedDate = date_parse( $string ); 
+        return mktime( CRM_Utils_Array::value( 'hour', $parsedDate ), 
+                       CRM_Utils_Array::value( 'minute', $parsedDate ), 
+                       59, 
+                       CRM_Utils_Array::value( 'month', $parsedDate ), 
+                       CRM_Utils_Array::value( 'day', $parsedDate ),
+                       CRM_Utils_Array::value( 'year', $parsedDate ) );
     }
 
     /**
