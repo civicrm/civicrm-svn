@@ -201,7 +201,11 @@ class CRM_Report_Form_Instance {
             $dashletParams = array( 'label'     =>  $params['title'],
                                     'is_active' => 1,
                                     'content'   => 'NULL');
-
+                                
+            $permission = CRM_Utils_Array::value( 'permission', $params );
+            if ( $permission ) {
+                $dashletParams['permission'][] = $permission;
+            }
             unset( $params['addToDashboard'] );
         }
         

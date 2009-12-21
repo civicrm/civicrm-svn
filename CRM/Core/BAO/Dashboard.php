@@ -63,6 +63,10 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         
         $dao->find( );
         while( $dao->fetch( ) ) {
+            if ( !self::checkPermission( $dao->permission, $dao->permission_operator ) ) {
+                continue;
+            }
+            
             $values = array( );
             CRM_Core_DAO::storeValues( $dao, $values );
             $dashlets[$dao->id] = $values;
@@ -97,7 +101,8 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         $dao->find( );
         while( $dao->fetch( ) ) {
             $hasDashlets = true;
-            if ( !$dao->is_active ) {
+            $hasPermission = self::checkPermission( $dao->permission, $dao->permission_operator );
+            if ( !$dao->is_active && $hasPermission ) {
                 continue;
             }
             
@@ -125,6 +130,52 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         }
          
         return $dashlets;
+    }
+    
+    /**
+     * Function to check dashlet permission for current user
+     *
+     * @param string permission string
+     * 
+     * @return boolean true if use has permission else false
+     */
+    static function checkPermission( $permission, $operator ) {
+        if ( isset( $permission) && $permission ) {
+            $permissions = explode(',', $permission ); 
+            $config  = CRM_Core_Config::singleton( );
+            
+            $hasPermission = false;    
+            foreach ( $permissions as $key ) {
+                $showDashlet = true;
+                //hack to determine if it's a component related permission
+                if ( $key != 'access CiviCRM' && substr( $key, 0, 6 ) === 'access' ) {
+                    $componentName = trim(substr( $key, 6 ));
+                    if ( !in_array( $componentName, $config->enableComponents ) || 
+                         !CRM_Core_Permission::check( $key ) ) {
+                        $showDashlet = false;
+                        if ( $operator == 'AND' ) {
+                            return $showDashlet;
+                        }
+                    } else {
+                        $hasPermission = true;
+                    }
+               } else if ( !CRM_Core_Permission::check( $key ) ) {
+                     $showDashlet = false;
+                     if ( $operator == 'AND' ) {
+                         return $showDashlet;
+                     }
+                } else {
+                    $hasPermission = true;
+                }
+            }
+            
+            if ( !$showDashlet && !$hasPermission ) {
+                return false;
+            }   
+        } else {
+            // if permission is not set consider everyone has permission to access it.
+            return true;
+        }        
     }
     
     /**
@@ -259,6 +310,9 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
               $dashlet->id = $dashboardID;
           }
 
+          if ( is_array( $params['permission'] )) {           
+              $params['permission'] = implode( ',', $params['permission'] );
+          }
           $dashlet->copyValues( $params );
 
           $dashlet->created_date = date( "YmdHis" );
