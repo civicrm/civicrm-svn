@@ -990,6 +990,10 @@ class CRM_Utils_System {
                 $request->addCookie( $name, $value );
             }
         }
+        
+        if ( isset( $_SERVER['AUTH_TYPE'] ) ) {
+            $request->setBasicAuth( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'] );
+        } 
 
         $config =& CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Standalone' ) {
@@ -1003,5 +1007,3 @@ class CRM_Utils_System {
         return $response;
     }
 }
-
-

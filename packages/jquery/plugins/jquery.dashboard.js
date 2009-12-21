@@ -446,19 +446,19 @@
       // Default controls.  External script can add more with widget.addControls()
       widget.controls = {
         settings: {
-          description: 'Configure this widget',
+          description: 'Configure this dashlet',
           callback: widget.toggleSettings
         },
         minimize: {
-          description: 'Collapse or expand this widget',
+          description: 'Collapse or expand this dashlet',
           callback: widget.toggleMinimize
         },
         fullscreen: {
-          description: 'View this widget in full screen mode',
+          description: 'View this dashlet in full screen mode',
           callback: widget.enterFullscreen
         },
         close: {
-          description: 'Remove this widget from your dashboard',
+          description: 'Remove this dashlet from your dashboard',
           callback: widget.remove
         }
       };

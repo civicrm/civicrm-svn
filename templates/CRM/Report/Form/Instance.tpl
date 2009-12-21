@@ -68,8 +68,8 @@
     {/if}
     <tr>
 	<td class="report-label">{$form.addToDashboard.label}</td>
-        <td>{$form.addToDashboard.html}<br />
-            <span class="description">{ts}Make this report instance available as dashlet.{/ts}</span>
+        <td>{$form.addToDashboard.html}
+            <span class="description">{ts}Users with appropriate permissions can add this report to their dashboard.{/ts}</span>
         </td>
     </tr>
 </table>
