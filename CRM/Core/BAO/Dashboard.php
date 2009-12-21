@@ -140,7 +140,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
      * @return boolean true if use has permission else false
      */
     static function checkPermission( $permission, $operator ) {
-        if ( isset( $permission) && $permission ) {
+        if ( $permission ) {
             $permissions = explode(',', $permission ); 
             $config  = CRM_Core_Config::singleton( );
             
@@ -171,6 +171,8 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
             
             if ( !$showDashlet && !$hasPermission ) {
                 return false;
+            } else {
+                return true;
             }   
         } else {
             // if permission is not set consider everyone has permission to access it.
