@@ -101,8 +101,7 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
         $dao->find( );
         while( $dao->fetch( ) ) {
             $hasDashlets = true;
-            $hasPermission = self::checkPermission( $dao->permission, $dao->permission_operator );
-            if ( !$dao->is_active && $hasPermission ) {
+            if ( !$dao->is_active ) {
                 continue;
             }
             
