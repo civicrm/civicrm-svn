@@ -85,10 +85,18 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
         $validSubTypes = CRM_Contact_BAO_ContactType::subTypeInfo();
         
         $types = explode(',', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', $id, 'group_type'));
-        foreach ($types as $type) {
-            $cType = (in_array($type, $validTypes)) ? $type : (array_key_exists($type, $validSubTypes)) ? CRM_Utils_Array::value( 'parent', $validSubTypes[$type] ) : null;
-            if ( $cType ) return $cType;
+        
+        $cType = null;
+        foreach ( $types as $type ) {
+            if ( in_array( $type, $validTypes ) ) {
+                $cType = $type;
+            } else if ( array_key_exists( $type, $validSubTypes ) ) {
+                $cType = CRM_Utils_Array::value( 'parent', $validSubTypes[$type] );
+            }
+            if ( $cType ) break;
         }
+        
+        return $cType;
     }
     
     /**
