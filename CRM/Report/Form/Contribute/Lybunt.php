@@ -437,6 +437,7 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
             // build chart.
             require_once 'CRM/Utils/OpenFlashChart.php';
             CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], $interval, $chartInfo );
+            $this->assign( 'chartType', $this->_params['charts'] );
         }
     }
  
