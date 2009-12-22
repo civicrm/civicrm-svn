@@ -78,6 +78,7 @@ class CRM_Core_OptionValue
     {
         $optionValue = array();
         
+        $optionGroupID = null;
         if (! isset( $groupParams['id'] ) || ! $groupParams['id'] ) {
             if ( $groupParams['name'] ) {
                 $config =& CRM_Core_Config::singleton( );
@@ -89,10 +90,22 @@ class CRM_Core_OptionValue
             $optionGroupID = $groupParams['id'];
         }
         
+        $groupName = CRM_Utils_Array::value( 'name', $groupParams );
+        if ( !$groupName && $optionGroupID ) {
+            $groupName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
+                                                      $optionGroupID, 'name', 'id' );
+        }
+        
         $dao =& new CRM_Core_DAO_OptionValue();
         
         if ( $optionGroupID ) {
             $dao->option_group_id = $optionGroupID;
+
+            require_once 'CRM/Core/OptionGroup.php';
+            if ( in_array( $groupName, CRM_Core_OptionGroup::$_domainIDGroups ) ) {
+                $dao->domain_id = CRM_Core_Config::domainID( );
+            }
+            
             $dao->orderBy($orderBy);
             $dao->find();
         }
@@ -134,6 +147,7 @@ class CRM_Core_OptionValue
             }
 
         }
+        
         return $optionValue;
     }
 
@@ -391,21 +405,25 @@ FROM
                 
         $order = " ORDER BY " . $orderBy;
         
-        if ( CRM_Utils_Array::value( 'id', $groupParams ) ) {
+        $groupId   = CRM_Utils_Array::value( 'id', $groupParams );
+        $groupName = CRM_Utils_Array::value( 'name', $groupParams );
+        
+        if ( $groupId ) {
             $where .= " AND option_group.id = %1";
-            $params[1] = array( $groupParams['id'], 'Integer' );
-            $groupName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
-                                                      $params[1], 'name', 'id' );
+            $params[1] = array( $groupId, 'Integer' );
+            if ( !$groupName ) {
+                $groupName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', 
+                                                          $groupId, 'name', 'id' );
+            }
         }
         
-        if ( CRM_Utils_Array::value( 'name', $groupParams ) ) {
+        if ( $groupName ) {
             $where .= " AND option_group.name = %2";
-            $params[2] = array( $groupParams['name'], 'String' );
-            $groupName = $params[2];
+            $params[2] = array( $groupName, 'String' );
         }
-
+        
         require_once 'CRM/Core/OptionGroup.php';
-        if ( in_array($groupName, CRM_Core_OptionGroup::$_domainIDGroups) ) {
+        if ( in_array( $groupName, CRM_Core_OptionGroup::$_domainIDGroups ) ) {
             $where .= " AND option_value.domain_id = " . CRM_Core_Config::domainID( );
         }
         

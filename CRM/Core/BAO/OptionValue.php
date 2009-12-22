@@ -106,16 +106,19 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         $optionValue               =& new CRM_Core_DAO_OptionValue( );
         $optionValue->copyValues( $params );;
         
-        if ( $params['is_default'] ) {
+        if ( CRM_Utils_Array::value( 'is_default', $params ) ) {
             $query = 'UPDATE civicrm_option_value SET is_default = 0 WHERE  option_group_id = %1';
-            $p     = array( 1 => array( $params['option_group_id'], 'Integer' ) );
-            //CRM-4575
-            //setting default as per contact type
-            if( CRM_Utils_Array::value('defaultGreeting', $params) ) {
-                $query .= " AND ( filter = %2 OR filter = 0 ) ";
-                $p [2]  = array(  $params['filter'], 'Integer' );
+            
+            // tweak default reset, and allow multiple default within group. 
+            if ( $resetDefaultFor = CRM_Utils_Array::value( 'reset_default_for',  $params ) ) {
+                if ( is_array( $resetDefaultFor ) ) {
+                    $colName = key( $resetDefaultFor );
+                    $colVal  = $resetDefaultFor[$colName];
+                    $query  .= " AND ( $colName IN (  $colVal ) )";
+                }
             }
             
+            $p = array( 1 => array( $params['option_group_id'], 'Integer' ) );
             CRM_Core_DAO::executeQuery( $query, $p );
         }
         

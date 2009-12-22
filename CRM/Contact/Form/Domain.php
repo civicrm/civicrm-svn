@@ -261,6 +261,10 @@ class CRM_Contact_Form_Domain extends CRM_Core_Form {
         }
         
         require_once 'CRM/Core/OptionValue.php';
+        
+        //reset default within domain.
+        $emailParams['reset_default_for'] = array( 'domain_id' => CRM_Core_Config::domainID( ) );
+        
         CRM_Core_OptionValue::addOptionValue( $emailParams, $groupParams, $action, $this->_fromEmailId );
        
         CRM_Core_Session::setStatus( ts('Domain information for \'%1\' has been saved.', array( 1 => $domain->name )) );
