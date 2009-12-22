@@ -45,15 +45,16 @@ class CRM_Contact_Form_Search_Custom_Basic
         parent::__construct( $formValues );
 
         $this->normalize( );
-        $this->_columns = array( ts('')        => 'contact_type'  ,
-                                 ts('Name'   ) => 'sort_name'     ,
-                                 ts('Address') => 'street_address',
-                                 ts('City'   ) => 'city'          ,
-                                 ts('State'  ) => 'state_province',
-                                 ts('Postal' ) => 'postal_code'   ,
-                                 ts('Country') => 'country'       ,
-                                 ts('Email'  ) => 'email'         ,
-                                 ts('Phone'  ) => 'phone'         );
+        $this->_columns = array( ts('')        => 'contact_type'    ,
+                                 ts('')        => 'contact_sub_type',
+                                 ts('Name'   ) => 'sort_name'       ,
+                                 ts('Address') => 'street_address'  ,
+                                 ts('City'   ) => 'city'            ,
+                                 ts('State'  ) => 'state_province'  ,
+                                 ts('Postal' ) => 'postal_code'     ,
+                                 ts('Country') => 'country'         ,
+                                 ts('Email'  ) => 'email'           ,
+                                 ts('Phone'  ) => 'phone'           );
 
         $params           =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         $returnProperties = array( );
@@ -96,7 +97,8 @@ class CRM_Contact_Form_Search_Custom_Basic
     }
 
     function buildForm( &$form ) {
-        $form->add('select', 'contact_type', ts('Find...'), CRM_Core_SelectValues::contactType());
+        $contactTypes = array( '' => ts('- any contact type -') ) + CRM_Contact_BAO_ContactType::getSelectElements( );
+        $form->add('select', 'contact_type', ts('Find...'), $contactTypes );
 
         // add select for groups
         $group = 
