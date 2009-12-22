@@ -51,6 +51,8 @@ class CRM_Contact_Page_Dashlet extends CRM_Core_Page
     function run( ) {
         CRM_Utils_System::setTitle( ts('Dashlets') );
         
+        $this->assign( 'admin', CRM_Core_Permission::check( 'administer CiviCRM' ) );
+           
         // get all dashlets
         require_once 'CRM/Core/BAO/Dashboard.php';
         $allDashlets = CRM_Core_BAO_Dashboard::getDashlets( false );
@@ -62,14 +64,16 @@ class CRM_Contact_Page_Dashlet extends CRM_Core_Page
         foreach( $currentDashlets as $columnNo => $values ) {
            foreach ( $values as $dashletID => $isMinimized ) {
                 $key = "{$dashletID}-{$isMinimized}";
-                $contactDashlets[$columnNo][$key] = $allDashlets[$dashletID]['label'];                
+                $contactDashlets[$columnNo][$key] = array( 'label'       => $allDashlets[$dashletID]['label'],
+                                                           'is_reserved' => $allDashlets[$dashletID]['is_reserved'] );                
                 unset( $allDashlets[$dashletID] );
             }
         }
     
        foreach ( $allDashlets as $dashletID => $values ) {
             $key = "{$dashletID}-0";
-            $availableDashlets[$key] = $values['label'];                
+            $availableDashlets[$key] = array( 'label'       => $values['label'],
+                                              'is_reserved' => $values['is_reserved'] );                
         }
         
         $this->assign( 'contactDashlets'  , $contactDashlets   );

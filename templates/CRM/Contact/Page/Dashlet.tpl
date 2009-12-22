@@ -8,7 +8,7 @@
     <div id="available-dashlets" class="dash-column">
         {foreach from=$availableDashlets item=row key=dashID}
     	<div class="portlet">
-    		<div class="portlet-header" id="{$dashID}">{$row}</div>
+    		<div class="portlet-header" id="{$dashID}">{$row.label}{if $admin and !$row.is_reserved}&nbsp;<a class="close-icon delete-dashlet"></a>{/if}</div>
     	</div>
         {/foreach}
     </div>
@@ -19,7 +19,7 @@
     <div id="existing-dashlets-col-0" class="dash-column">
         {foreach from=$contactDashlets.0 item=row key=dashID}
     	<div class="portlet">
-    		<div class="portlet-header" id="{$dashID}">{$row}</div>
+    		<div class="portlet-header" id="{$dashID}">{$row.label}{if $admin and !$row.is_reserved}&nbsp;<a class="close-icon delete-dashlet"></a>{/if}</div>
     	</div>
         {/foreach}
     </div>
@@ -27,7 +27,7 @@
     <div id="existing-dashlets-col-1" class="dash-column">
         {foreach from=$contactDashlets.1 item=row key=dashID}
     	<div class="portlet">
-    		<div class="portlet-header" id="{$dashID}">{$row}</div>
+    		<div class="portlet-header" id="{$dashID}">{$row.label}{if $admin and !$row.is_reserved}&nbsp;<a class="close-icon delete-dashlet"></a>{/if}</div>
     	</div>
         {/foreach}
     </div>
@@ -55,7 +55,7 @@
             // this is to prevent double post call
 		    if (!currentReSortEvent || e.originalEvent != currentReSortEvent) {
                 currentReSortEvent = e.originalEvent;
-
+                
                 // Build a list of params to post to the server.
                 var params = {};
 
@@ -79,6 +79,27 @@
                 });
             }
         }
+        
+        cj('.delete-dashlet').click( function( ) {
+            var message = {/literal}{ts}"Do you want to permanently delete this dashlet?"{/ts}{literal};
+            if ( confirm( message) ) {
+                var dashletID = cj(this).parent().attr('id');
+                var idState = dashletID.split('-')
+                
+                // Build a list of params to post to the server.
+                var params = {};
+                
+                params['dashlet_id'] = idState[0];
+
+                // delete dashlet
+                var postUrl = {/literal}"{crmURL p='civicrm/ajax/dashboard' h=0 }"{literal};
+                params['op'] = 'delete_dashlet';
+                cj.post( postUrl, params, function(response, status) {
+                    // delete dom object
+                    cj('#' + dashletID ).parent().remove();
+                });
+            }
+        });
 	});
 </script>
 {/literal}

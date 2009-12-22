@@ -620,10 +620,16 @@ WHERE ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$queryS
                 require_once 'CRM/Core/BAO/Dashboard.php';
                 $dashlets = CRM_Core_BAO_Dashboard::getDashletInfo( $dashletID );
                 break;
-            
+
             case 'save_columns':
                 require_once 'CRM/Core/BAO/Dashboard.php';
                 CRM_Core_BAO_Dashboard::saveDashletChanges( $_POST['columns'] );
+                exit();
+                
+            case 'delete_dashlet':
+                $dashletID = CRM_Utils_Type::escape( $_POST['dashlet_id'], 'Positive' );
+                require_once 'CRM/Core/BAO/Dashboard.php';
+                CRM_Core_BAO_Dashboard::deleteDashlet( $dashletID );
                 exit();
         }
         
