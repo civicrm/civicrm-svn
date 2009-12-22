@@ -198,6 +198,7 @@ class CRM_Report_Form extends CRM_Core_Form {
         }
 
         if ( $this->_id ) {
+            $this->assign( 'instanceId', $this->_id );
             $params = array( 'id' => $this->_id );
             $this->_instanceValues = array( );
             CRM_Core_DAO::commonRetrieve( 'CRM_Report_DAO_Instance',
@@ -1309,7 +1310,24 @@ class CRM_Report_Form extends CRM_Core_Form {
             } else if ( $this->_outputMode == 'print' ) {
                 echo $content;
             } else {
-                require_once 'CRM/Utils/PDF/Utils.php';                                
+                if( $chartType = CRM_Utils_Array::value( 'charts', $this->_params ) ) {
+                    $config    = CRM_Core_Config::Singleton();
+                    //get chart image name
+                    $chartImg  = $chartType . '_' . $this->_id . '.png';
+                    //get image url path
+                    $uploadUrl = str_replace( 'persist/contribute', 'upload', $config->imageUploadURL ) . $chartImg;
+                    //get image doc path to overwrite
+                    $uploadImg = $config->uploadDir . $chartImg ;
+                    //Load the image
+                    $chart = imagecreatefrompng( $uploadUrl );
+                    //convert it into formattd png
+                    header('Content-type: image/png');
+                    //overwrite with same image
+                    imagepng($chart, $uploadImg);
+                    //delete the object
+                    imagedestroy($chart);
+                }
+                require_once 'CRM/Utils/PDF/Utils.php';                     
                 CRM_Utils_PDF_Utils::html2pdf( $content, "CiviReport.pdf" );
             }
             exit( );
