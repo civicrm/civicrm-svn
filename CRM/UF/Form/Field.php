@@ -660,7 +660,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
      */
     static function formRuleSubType( $fieldType, $groupType, &$errors )
     { 
-        if( in_array( $fieldType, array( 'Participant', 'Contribution', 'Membership') ) ) {
+        if ( in_array( $fieldType, array( 'Participant', 'Contribution', 'Membership' ) ) ) {
             $individualSubTypes  = CRM_Contact_BAO_ContactType::subTypes( 'Individual' );
             foreach( $groupType as $value ) {
                 if ( !in_array( $value, $individualSubTypes ) && 
@@ -675,14 +675,14 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             }  
         } else {
             $basicType  = CRM_Contact_BAO_ContactType::getBasicType( $groupType );
-            if( $basicTypes ) {
+            if( $basicType ) {
                 if( $fieldType != $basicType ) {
                     $errors['field_name'] = 
                         ts( 'Cannot add or update profile field type "%1" with combination 
                          of subtype other than "%1".',array( 1=> $fieldType ) ); 
                 }
             }
-        }      
+        }  
     }
     
     
