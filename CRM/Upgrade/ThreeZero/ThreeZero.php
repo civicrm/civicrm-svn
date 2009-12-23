@@ -226,12 +226,12 @@ class CRM_Upgrade_ThreeZero_ThreeZero extends CRM_Upgrade_Form {
                                                               'id',
                                                               'name' );
             
-            $optionValueParams = array( 'label'          => $individualNameFormat,
-                                        'is_active'      => 1, 
-                                        'contactOptions' => 1,
-                                        'filter'         => 1,
-                                        'defaultGreeting'=> 1,
-                                        'is_default'     => 1
+            $optionValueParams = array( 'label'             => $individualNameFormat,
+                                        'is_active'         => 1, 
+                                        'contactOptions'    => 1,
+                                        'filter'            => 1,
+                                        'is_default'        => 1,
+                                        'reset_default_for' => array( 'filter' => "0, 1" )
                                         );
             
             $action               = CRM_Core_Action::ADD;
@@ -240,7 +240,7 @@ class CRM_Upgrade_ThreeZero_ThreeZero extends CRM_Upgrade_Form {
             $weight               = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_OptionValue', $fieldValues);
             
             $optionValueParams['weight'] = $weight;
-            $addresseeTokne              = CRM_Core_OptionValue::addOptionValue( $optionValueParams, $addresseeGroupParams, 
+            $addresseeToken              = CRM_Core_OptionValue::addOptionValue( $optionValueParams, $addresseeGroupParams, 
                                                                                  $action, $optionId = null );
             
             $afterUpgradeMessage = ts("During this upgrade, Postal Addressee values have been stored for each contact record using the system default format - %2.You will need to run the included command-line script to update your Individual contact records to use the \"Individual Name Format\" previously specified for your site %1", array( 1 => $docURL, 2 => array_pop($defaultAddressee) ) ); 
