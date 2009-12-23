@@ -81,7 +81,7 @@
         }
         
         cj('.delete-dashlet').click( function( ) {
-            var message = {/literal}{ts}"Do you want to permanently delete this dashlet?"{/ts}{literal};
+            var message = {/literal}"{ts}Do you want to permanently delete this dashlet?{/ts}"{literal};
             if ( confirm( message) ) {
                 var dashletID = cj(this).parent().attr('id');
                 var idState = dashletID.split('-')
