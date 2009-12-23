@@ -45,7 +45,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
     
     function __construct( ) {
 
-        $contact_type = CRM_Contact_BAO_ContactType::getSelectElements( false, '_' );
+        $contact_type = CRM_Contact_BAO_ContactType::getSelectElements( false, true, '_' );
          
         $this->_columns = 
             array(
