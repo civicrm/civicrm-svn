@@ -300,13 +300,14 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                                 $cTypes = CRM_Utils_Array::value( "{$fieldName}_value", $this->_params );
                                 $contactTypes    = array( );
                                 $contactSubTypes = array( );
-                                foreach( $cTypes as $ctype ) {
-                                    $getTypes =  CRM_Utils_System::explode( '_', $ctype, 2 );
-                                    if( $getTypes[1] && !in_array($getTypes[1],$contactSubTypes ) ) {
-                                        $contactSubTypes[] = $getTypes[1];
-                                        
-                                    } elseif( $getTypes[0] && !in_array($getTypes[0],$contactTypes ) ) {
-                                        $contactTypes[] = $getTypes[0];
+                                if ( is_array( $cTypes ) ) {
+                                    foreach ( $cTypes as $ctype ) {
+                                        $getTypes = CRM_Utils_System::explode( '_', $ctype, 2 );
+                                        if ( $getTypes[1] && !in_array($getTypes[1],$contactSubTypes ) ) {
+                                            $contactSubTypes[] = $getTypes[1];    
+                                        } elseif ( $getTypes[0] && !in_array( $getTypes[0], $contactTypes ) ) {
+                                            $contactTypes[] = $getTypes[0];
+                                        }
                                     }
                                 }
                                 
