@@ -67,7 +67,7 @@
         </tr>
     {/if}
     <tr>
-	<td class="report-label">{$form.addToDashboard.label}</td>
+	    <td class="report-label">{$form.addToDashboard.label} {help id="id-dash_avail" file="CRM/Report/Form/Settings.hlp"}</td>
         <td>{$form.addToDashboard.html}
             <span class="description">{ts}Users with appropriate permissions can add this report to their dashboard.{/ts}</span>
         </td>
