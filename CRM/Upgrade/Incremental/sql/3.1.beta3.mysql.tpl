@@ -1,6 +1,6 @@
 --Add permission for dashlet access
 
-ALTER TABLE `civicrm_dashboard` ADD `is_reserved` TINYINT NULL DEFAULT '0' COMMENT 'Is this dashlet reserved?'
+ALTER TABLE `civicrm_dashboard` ADD `is_reserved` TINYINT NULL DEFAULT '0' COMMENT 'Is this dashlet reserved?';
 
 DELETE FROM `civicrm_dashboard` WHERE `id` BETWEEN 2 AND 5;
 
