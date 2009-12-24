@@ -856,6 +856,11 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                 }
                 // suppress form values in template.
                 $this->assign( 'cancelled', $cancelled );
+                
+                // here we might updated dates, so get from object.
+                foreach ( $calcDates as $date => &$val ) {
+                    if ( $membership->$date ) $val = $membership->$date;
+                }
             } else {
                 $membership =& CRM_Member_BAO_Membership::create( $params, $ids );
             }
