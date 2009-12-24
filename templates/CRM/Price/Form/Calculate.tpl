@@ -160,15 +160,14 @@ function calculateText( object ) {
 
 //display calculated amount
 function display( totalfee ) {
-  if ( totalfee > 0 ) {
-    document.getElementById('pricelabel').style.display = "block";
+    document.getElementById('pricelabel').style.display = ( totalfee == 0 ) ? "none" : "block";
     var totalEventFee  = formatMoney( totalfee, 2, seperator, thousandMarker);
     document.getElementById('pricevalue').innerHTML = "<b>"+symbol+"</b> "+totalEventFee;
     scriptfee   = totalfee;
     scriptarray = price;
-  } else{
-    document.getElementById('pricelabel').style.display = "none";
-  }
+    
+    ( totalfee < 0 ) ? cj('table#pricelabel').addClass('disabled') : cj('table#pricelabel').removeClass('disabled');
+    
 }
 
 //money formatting/localization
