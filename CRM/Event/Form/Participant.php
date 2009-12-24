@@ -450,22 +450,11 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
 			}
         } else {
             $defaults[$this->_participantId]['record_contribution'] = 0;
-            $recordContribution = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_ParticipantPayment', 
-                                                               $defaults[$this->_participantId]['id'], 
-                                                               'contribution_id', 
-                                                               'participant_id' );
-            
-            //contribution record exists for this participation
-            if ( $recordContribution ) {
-                foreach( array('contribution_type_id', 'payment_instrument_id','contribution_status_id', 'receive_date' ) 
-                         as $field ) {
-                    $defaults[$this->_participantId][$field] =  CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution', 
-                                                                                  $recordContribution, $field );
-                }
-            }
+
             if ( $defaults[$this->_participantId]['participant_is_pay_later'] ) {
                 $this->assign( 'participant_is_pay_later', true );
             }
+
             $this->assign( 'participant_status_id', $defaults[$this->_participantId]['participant_status_id'] );
 			$roleID  = $defaults[$this->_participantId]['participant_role_id'];
 			$eventID = $defaults[$this->_participantId]['event_id'];
