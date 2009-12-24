@@ -39,17 +39,16 @@
     </td> 
     {assign var="participant_id" value=$row.participant_id}
     {if $lineItems.$participant_id}
-    <td>
+        <td>
         {foreach from=$lineItems.$participant_id item=line name=lineItemsIter}
-        {$line.description}: {$line.qty}
-        {if ! $smarty.foreach.lineItemsIter.last}<br>{/if}
+            {$line.description}: {$line.qty}
+            {if ! $smarty.foreach.lineItemsIter.last}<br />{/if}
         {/foreach}
-    </td>
-    <td>{$row.participant_fee_amount|crmMoney:$row.participant_fee_currency}</td>
+        </td>
     {else}
-    <td>{if !$row.paid && !$row.participant_fee_level} {ts}(no fee){/ts}{else} {$row.participant_fee_level}{/if}</td>
-    <td>{$row.participant_fee_amount|crmMoney:$row.participant_fee_currency}</td>
+        <td>{if !$row.paid && !$row.participant_fee_level} {ts}(no fee){/ts}{else} {$row.participant_fee_level}{/if}</td>
     {/if}
+    <td class="right nowrap">{$row.participant_fee_amount|crmMoney:$row.participant_fee_currency}</td>
     <td>{$row.event_start_date|truncate:10:''|crmDate}
         {if $row.event_end_date && $row.event_end_date|date_format:"%Y%m%d" NEQ $row.event_start_date|date_format:"%Y%m%d"}
             <br/>- {$row.event_end_date|truncate:10:''|crmDate}
