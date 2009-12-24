@@ -27,11 +27,12 @@
               cj(element_time).timeEntry({ show24Hours : time_format });
           {/literal}
       {/if}
-
+      var currentYear = new Date().getFullYear();
       var date_format = cj( element_date ).attr('format');
-      var startYear   = cj( element_date ).attr('startOffset');
-      var endYear     = cj( element_date ).attr('endOffset');
       var alt_field   = 'input#{$dateFormated}';
+      var yearRange   = currentYear - parseInt( cj( element_date ).attr('startOffset') ); 
+          yearRange  += ':';
+          yearRange  += currentYear + parseInt( cj( element_date ).attr('endOffset'  ) ); 
       {literal}
  
       cj(element_date).datepicker({
@@ -41,7 +42,7 @@
                                     changeYear        : true,
                                     altField          : alt_field,
                                     altFormat         : 'mm/dd/yy',
-                                    yearRange         : '-'+startYear+':+'+endYear
+                                    yearRange         : yearRange
                                 });
     
       cj(element_date).click( function( ) {
