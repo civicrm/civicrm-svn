@@ -38,7 +38,7 @@
         <tr>
             <td>{$form.autocompleteContactSearch.label}</td>
             <td>{$form.autocompleteContactSearch.html}<br/>
-            <span class="description">{ts}The fields you want to fetch at the time of autocomplete contact search, Contact Name would be the default to list in.{/ts}</span></td>
+            <span class="description">{ts}Selected fields will be displayed in autocomplete dropdown lists. Contact Name is always included.{/ts}</span></td>
         </tr>
         <tr>
             <td></td>
