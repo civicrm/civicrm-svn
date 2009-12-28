@@ -96,6 +96,7 @@ cj('#current_employer').autocomplete( dataUrl, { width : 250, selectFirst : fals
     if ( !parseInt ( cj( "#current_employer_id" ).val( ) ) ) {
         cj('div#employer_address').html( newContactText );
     }
+    if ( !cj('#current_employer').val().trim() ) cj( "div#employer_address" ).html('');
 });
 
 // remove current employer id when current employer removed.
