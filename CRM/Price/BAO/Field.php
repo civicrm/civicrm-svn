@@ -225,7 +225,8 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             /* FIXME: failure! */
             return null;
         }
-        $config =& CRM_Core_Config::singleton();
+        $config    =& CRM_Core_Config::singleton();
+        $seperator = $config->monetaryThousandSeparator;
         $qf->assign('currencySymbol', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency',$config->defaultCurrency,'symbol','name') );
         if (!isset($label)) {
             $label = $field->label;
@@ -237,7 +238,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
         
         //use value field.
         $valueFieldName = 'value';
-        
         switch($field->html_type) {
         case 'Text':
             $customOption = CRM_Price_BAO_Field::getOptions( $field->id, $inactiveNeeded );
@@ -252,8 +252,8 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             
             $element =& $qf->add( 'text', $elementName, $label, 
                                   array_merge( array('size' =>"4"), 
-                                               array( 'price' => 
-                                                      $optionKey."_".$customOption[$optionKey][$valueFieldName] )),
+                                               array( 'price' => json_encode( array( $optionKey , str_replace( $seperator, '', $customOption[$optionKey][$valueFieldName] ) ) ) ) 
+                                             ),
                                   $useRequired && $field->is_required
                                   );
             
@@ -266,7 +266,9 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             $customOption = CRM_Price_BAO_Field::getOptions($field->id, $inactiveNeeded);
             if ( !$field->is_required ) {
                 // add "none" option
-                $choice[] = $qf->createElement('radio', null, '', '-none-', '0', array('price' => $elementName."-0" ));
+                $choice[] = $qf->createElement('radio', null, '', '-none-', '0', 
+                                                array('price' => json_encode( array( $elementName, "0" ) ) ) 
+                                              );
             }
             
             foreach ($customOption as $opt) {
@@ -274,8 +276,10 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                     $opt['label'] .= '&nbsp;-&nbsp;';
                     $opt['label'] .= CRM_Utils_Money::format( $opt[$valueFieldName] );
                 }
+
                 $choice[] = $qf->createElement('radio', null, '', $opt['label'], $opt['id'],
-                                               array('price' => $elementName."-".$opt[$valueFieldName] ) );
+                                               array('price' => json_encode( array( $elementName, str_replace( $seperator, '', $opt[$valueFieldName] ) ) ) )
+                                              );
             }
             $element =& $qf->addGroup($choice, $elementName, $label);
             
@@ -300,7 +304,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             $element =& $qf->add('select', $elementName, $label,
                                  array( '' => ts('- select -')) + $selectOption,
                                  $useRequired && $field->is_required, 
-                                 array( 'price' => $amount ) );
+                                 array( 'price' => str_replace( $seperator, '', $amount ) ) );
             break;
             
         case 'CheckBox':
@@ -312,7 +316,8 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                     $opt['label'] .= CRM_Utils_Money::format( $opt[$valueFieldName] );
                 }
                 $check[] =& $qf->createElement('checkbox', $opt['id'], null, $opt['label'], 
-                                               array('price' => $opt['id']."_".$opt[$valueFieldName] ) );
+                                               array('price' => json_encode( array( $opt['id'] , str_replace( $seperator, '', $opt[$valueFieldName] ) ) ) ) 
+                                              );
             }
             $element =& $qf->addGroup($check, $elementName, $label);
             if ( $useRequired && $field->is_required ) {
@@ -436,7 +441,7 @@ WHERE
      * 
      */
 
-    public static function priceSetValidation( $priceSetId, $fields ) 
+    public static function priceSetValidation( $priceSetId, $fields, &$error ) 
     {
         // check for at least one positive 
         // amount price field should be selected.
@@ -502,10 +507,10 @@ WHERE  id IN (" .implode( ',', $amountIds ).')';
             // now we have all selected amount in hand.
             $totalAmount = array_sum( $setectedAmounts );
             if ( $totalAmount < 0 ) {
-                return ts( $componentName . " amount can not be less than zero. Please select the options accordingly." );
+                $error['_qf_default'] = ts( $componentName . " amount can not be less than zero. Please select the options accordingly." );
             }
         } else {
-            return ts( "Please select at least one option from price set." );
+            $error['_qf_default'] = ts( "Please select at least one option from price set." );
         }
     }
 }

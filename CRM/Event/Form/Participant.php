@@ -765,7 +765,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
         if ( !CRM_Utils_Array::value( 'total_amount', $values ) && empty( $self->_lineItem ) ) {
             if ( $priceSetId = CRM_Utils_Array::value( 'priceSetId', $values ) ) {
                 require_once 'CRM/Price/BAO/Field.php';
-                $errorMsg['_qf_default'] = CRM_Price_BAO_Field::priceSetValidation( $priceSetId, $values );
+                CRM_Price_BAO_Field::priceSetValidation( $priceSetId, $values, $errorMsg );
             }
         }
         return empty( $errorMsg ) ? true : $errorMsg;

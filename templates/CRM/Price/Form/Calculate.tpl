@@ -26,7 +26,7 @@ cj("input,#priceset select,#priceset").each(function () {
   case 'checkbox':
     
     //default calcution of element. 
-    var option = cj(this).attr('price').split('_');
+    eval( 'var option = ' + cj(this).attr('price') ) ;
     ele        = option[0];
     addprice   = parseFloat( option[1] );    
     
@@ -53,9 +53,9 @@ cj("input,#priceset select,#priceset").each(function () {
   case 'radio':
 
     //default calcution of element. 
-    var option = cj(this).attr('price').split('-');
+    eval( 'var option = ' + cj(this).attr('price') ); 
     ele        = option[0];
-    addprice   = parseFloat( option[1] );   
+    addprice   = parseFloat( option[1] );
     if ( ! price[ele] ) {
       price[ele] = 0;
     }
@@ -80,7 +80,7 @@ cj("input,#priceset select,#priceset").each(function () {
     //default calcution of element. 
     var textval = parseFloat( cj(this).val() );
     if ( textval ) {
-      var option  = cj(this).attr('price').split('_');
+      eval( 'var option = '+ cj(this).attr('price') );
       ele         = option[0];
       if ( ! price[ele] ) {
        price[ele] = 0;
@@ -140,8 +140,8 @@ cj("input,#priceset select,#priceset").each(function () {
 
 //calculation for text box.
 function calculateText( object ) {
-  var option  = cj(object).attr('price').split('_');
-  ele         = option[0];
+  eval( 'var option = ' + cj(object).attr('price') );
+  ele = option[0];
   if ( ! price[ele] ) {
     price[ele] = 0;
   }

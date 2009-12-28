@@ -944,7 +944,7 @@ WHERE  contribution_id = {$this->_id}
         if ( !CRM_Utils_Array::value( 'total_amount', $fields ) && empty( $self->_lineItems ) ) {
             if ( $priceSetId = CRM_Utils_Array::value( 'price_set_id', $fields ) ) {
                 require_once 'CRM/Price/BAO/Field.php';
-                $errors['_qf_default'] = CRM_Price_BAO_Field::priceSetValidation( $priceSetId, $fields );
+                CRM_Price_BAO_Field::priceSetValidation( $priceSetId, $fields, $error );
             } else { 
                 $errors['total_amount'] = ts('Please enter a valid amount.');
             }
