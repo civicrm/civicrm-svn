@@ -450,7 +450,7 @@ ORDER BY parent_id, weight";
         }
               
         if ( $makeLink ) {
-            return $name = "<a href='{$url}'>{$name}</a>";
+            return $name = "<a href=\"{$url}\">{$name}</a>";
         }
  
         return $name;
@@ -497,16 +497,16 @@ ORDER BY parent_id, weight";
             
             //add additional navigation items
             $logoutURL       = CRM_Utils_System::url( 'civicrm/logout', 'reset=1');
-            $appendSring     = "<li id='menu-logout' class='menumain'><a href='{$logoutURL}'>" . ts('Logout') . "</a></li>";
+            $appendSring     = "<li id=\"menu-logout\" class=\"menumain\"><a href=\"{$logoutURL}\">" . ts('Logout') . "</a></li>";
 
             $homeURL       = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1');
 
             if ( ( $config->userFramework == 'Drupal' ) && 
                  function_exists( 'module_exists' ) &&
                  module_exists('admin_menu') ) {
-               $prepandString = "<li class='menumain'>" . ts('Home') . "<ul id='civicrm-home'><li><a href='{$homeURL}'>" . ts('CiviCRM Home') . "</a></li><li><a href='#' onclick='cj.Menu.closeAll( );cj(\"#civicrm-menu\").toggle( );'>" . ts('Drupal Menu') . "</a></li></ul></li>";
+                $prepandString = "<li class=\"menumain\">" . ts('Home') . "<ul id=\"civicrm-home\"><li><a href=\"{$homeURL}\">" . ts('CiviCRM Home') . "</a></li><li><a href=\"#\" onclick=\"cj.Menu.closeAll( );cj(\"#civicrm-menu\").toggle( );\">" . ts('Drupal Menu') . "</a></li></ul></li>";
             } else {
-                $prepandString = "<li class='menumain'><a href='{$homeURL}' title='" . ts('CiviCRM Home') . "'>" . ts('Home') . "</a></li>";
+                $prepandString = "<li class=\"menumain\"><a href=\"{$homeURL}\" title=\"" . ts('CiviCRM Home') . "\">" . ts('Home') . "</a></li>";
             }
 
             // prepend the navigation with locale info for CRM-5027
