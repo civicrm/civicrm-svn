@@ -797,21 +797,23 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
     {
         $values = array( );
         
-        $select = 'SELECT count(ca.id) as ismultiple, ca.id as id, 
+        // CRM-5081 - formatting the dates to omit seconds.
+        // Note the 00 in the date format string is needed otherwise later on it thinks scheduled ones are overdue.
+        $select = "SELECT count(ca.id) as ismultiple, ca.id as id, 
                           ca.activity_type_id as type, 
                           cc.sort_name as reporter,
                           cc.id as reporter_id,
                           acc.sort_name AS assignee,
                           acc.id AS assignee_id,
-                          IF(ca.activity_date_time < NOW() AND ca.status_id=ov.value,
+                          DATE_FORMAT(IF(ca.activity_date_time < NOW() AND ca.status_id=ov.value,
                             ca.activity_date_time,
                             DATE_ADD(NOW(), INTERVAL 1 YEAR)
-                          ) as overdue_date,
-                          ca.activity_date_time as display_date,
+                          ), '%Y%m%d%H%i00') as overdue_date,
+                          DATE_FORMAT(ca.activity_date_time, '%Y%m%d%H%i00') as display_date,
                           ca.status_id as status, 
                           ca.subject as subject, 
                           ca.is_deleted as deleted,
-                          ca.priority_id as priority ';
+                          ca.priority_id as priority ";
 
         $from  = 'FROM civicrm_case_activity cca 
                   INNER JOIN civicrm_activity ca ON ca.id = cca.activity_id
@@ -875,7 +877,8 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         $groupBy = " GROUP BY ca.id ";
         
         if ( !$sortname AND !$sortorder ) {
-            $orderBy = " ORDER BY overdue_date ASC, display_date DESC";
+            // CRM-5081 - added id to act like creation date
+            $orderBy = " ORDER BY overdue_date ASC, display_date DESC, ca.id DESC";
         } else {
             $orderBy = " ORDER BY {$sortname} {$sortorder}, display_date DESC";
         }
