@@ -291,20 +291,18 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
         case 'Select':
             $customOption = CRM_Price_BAO_Field::getOptions($field->id, $inactiveNeeded);
             $selectOption = array();
-            $amount = '[{';
             foreach ($customOption as $opt) {
-                $amount .= $opt['id'].':"'. $opt[$valueFieldName] .'",';
+                $amount[ $opt['id'] ] = str_replace( $seperator, '', $opt[$valueFieldName] );
                 if ($field->is_display_amounts) {
                     $opt['label'] .= '&nbsp;-&nbsp;';
                     $opt['label'] .= CRM_Utils_Money::format( $opt[$valueFieldName] );
                 }
                 $selectOption[$opt['id']] = $opt['label'];
             }
-            $amount .= '}]';
             $element =& $qf->add('select', $elementName, $label,
                                  array( '' => ts('- select -')) + $selectOption,
                                  $useRequired && $field->is_required, 
-                                 array( 'price' => str_replace( $seperator, '', $amount ) ) );
+                                 array( 'price' => json_encode( $amount ) ) );
             break;
             
         case 'CheckBox':
