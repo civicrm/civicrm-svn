@@ -119,7 +119,7 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
                         require_once 'CRM/Event/BAO/Participant.php';
                         $ids = array( $participantId );
                         $expiredId = array_search( 'Expired', $expiredStatuses );
-                        $results = CRM_Event_BAO_Participant::transitionParticipants( $ids, $expiredId, $values['status_id'], true );
+                        $results = CRM_Event_BAO_Participant::transitionParticipants( $ids, $expiredId, $values['status_id'], true, true );
                         $transaction->commit( ); 
                         
                         if ( !empty( $results ) ) {
@@ -177,7 +177,7 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
                                     $updateStatusId = array_search( 'Awaiting approval', $waitingStatuses );
                                 }
                                 $results = CRM_Event_BAO_Participant::transitionParticipants( $ids, $updateStatusId, 
-                                                                                              $values['status_id'], true );
+                                                                                              $values['status_id'], true, true );
                                 //commit the transaction.
                                 $transaction->commit( );
                                 

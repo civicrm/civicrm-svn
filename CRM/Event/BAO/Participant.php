@@ -906,7 +906,8 @@ UPDATE  civicrm_participant
      * @access public
      * @static
      */
-    static function transitionParticipants( $participantIds, $toStatusId, $fromStatusId = null, $returnResult = false )
+    static function transitionParticipants( $participantIds, $toStatusId, 
+                                            $fromStatusId = null, $returnResult = false, $skipCascadeRule = false )
     {   
         if ( !is_array( $participantIds ) || empty( $participantIds ) || !$toStatusId ) {
             return;
@@ -916,11 +917,17 @@ UPDATE  civicrm_participant
         $allParticipantIds = $primaryANDAdditonalIds = array( );
         foreach ( $participantIds as $id ) {
             $allParticipantIds[] = $id;
-            if ( self::isPrimaryParticipant( $id ) &&
-                 self::getValidAdditionalIds( $id, $fromStatusId, $toStatusId ) ) {
-                $additionalIds = self::getAdditionalParticipantIds( $id );
-                $primaryANDAdditonalIds[$id] = $additionalIds;
-                $allParticipantIds = array_merge( $allParticipantIds, $additionalIds );
+            if ( self::isPrimaryParticipant( $id ) ) {
+                //filter additional as per status transition rules, CRM-5403
+                if ( $skipCascadeRule ) {
+                    $additionalIds = self::getAdditionalParticipantIds( $id );
+                } else {
+                    $additionalIds = self::getValidAdditionalIds( $id, $fromStatusId, $toStatusId );
+                }
+                if ( !empty( $additionalIds ) ) {
+                    $allParticipantIds = array_merge( $allParticipantIds, $additionalIds );
+                    $primaryANDAdditonalIds[$id] = $additionalIds;
+                }
             }
         }
         
