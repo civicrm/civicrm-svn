@@ -122,7 +122,7 @@
             <td>{$rel.state}</td>
     	    <td>{$rel.phone}</td>
             <td>{$rel.end_date|crmDate}</td>
-            <td class="nowrap">{$rel.action}</td>
+            <td class="nowrap">{$rel.action|replace:'xx':$rel.id}</td>
           </tr>
         {/foreach}
         </table>
