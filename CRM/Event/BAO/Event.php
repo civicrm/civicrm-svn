@@ -438,7 +438,7 @@ LIMIT      0, 10
                                $values['location']['address'][1]['city'] && 
                                $values['location']['address'][1]['state_province_id']
                              ) ) {
-                            $set = CRM_Utils_System::url( 'civicrm/contact/map',"reset=1&eid={$dao->id}" );
+                            $set = CRM_Utils_System::url( 'civicrm/contact/map/event',"reset=1&eid={$dao->id}" );
                         }
                     }
                     
