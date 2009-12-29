@@ -109,6 +109,15 @@ class bin_migrate_import {
                 $optionValue->option_group_id =
                     $idMap['option_group'][(string ) $optionValueXML->option_group_name];
                 $this->copyData( $optionValue, $optionValueXML, false, 'label' );
+                if ( ! isset( $optionValue->value ) ) {
+                    $sql = "
+SELECT     MAX(ROUND(v.value)) + 1
+FROM       civicrm_option_value v
+WHERE      v.option_group_id = %1
+";
+                    $params = array( 1 => array( $optionValue->option_group_id, 'Integer' ) );
+                    $optionValue->value = CRM_Core_DAO::singleValueQuery( $sql, $params );
+                }
                 $optionValue->save( );
             }
         }
