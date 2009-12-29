@@ -1281,6 +1281,8 @@ AND civicrm_membership.is_test = %2";
         }
         
         $membership =& self::create( $memParams, $ids, false, $activityType );
+        // not sure why this statement is here, seems quite odd :( - Lobo: 12/26/2010
+        // related to: http://forum.civicrm.org/index.php/topic,11416.msg49072.html#msg49072
         $membership->find(true);
         if ( !empty( $dates ) ) {
             $form->assign('mem_start_date',  
