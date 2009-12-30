@@ -38,8 +38,9 @@
     
     <tr>
         <td colspan="2">
-            {$form.current_employer.label}&nbsp;&nbsp;<span id="employer_address" class="success-status" style="padding:0px;display:none;"></span><br />
+            {$form.current_employer.label}&nbsp;&nbsp;<br />
             {$form.current_employer.html|crmReplace:class:twenty}
+            <div id="employer_address" style="display:none;"></div>
         </td>
         <td>
             {$form.job_title.label}<br />
@@ -59,17 +60,24 @@
 </table>
 {literal}
 <script type="text/javascript">
-var dataUrl = "{/literal}{$employerDataURL}{literal}";
+var dataUrl        = "{/literal}{$employerDataURL}{literal}";
+var newContactText = "{/literal}({ts}new contact record{/ts}){literal}";
 cj('#current_employer').autocomplete( dataUrl, { 
                                       width        : 250, 
                                       selectFirst  : false,
                                       matchCase    : true, 
                                       matchContains: true
     }).result( function(event, data, formatted) {
-        var newContactText = "{/literal}{ts} New Contact Record {/ts}{literal}";
+        
         var foundContact   = ( parseInt( data[1] ) ) ? cj( "#current_employer_id" ).val( data[1] ) : cj( "#current_employer_id" ).val('');
         if ( ! foundContact.val() ) {
-            cj('span#employer_address').html(newContactText).fadeIn(2000).fadeOut("slow");
+            cj('div#employer_address').html(newContactText).show();    
+        } else {
+            cj('div#employer_address').html('').hide();    
+        }
+    }).bind('change blur', function() {
+        if( cj( "#current_employer_id" ).val( ) ) {
+            cj('div#employer_address').html(newContactText).show();    
         }
 });
 
