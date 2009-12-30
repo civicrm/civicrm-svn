@@ -45,25 +45,25 @@
             {if $values.participants and $values.participants_url}
 		<a href="{$values.participants_url}" title="{ts 1=$eventSummary.countedStatusANDRoles}List %1 participants{/ts}">{ts}Counted{/ts}:&nbsp;{$values.participants}</a>
 	    {else}
-		{$eventSummary.countedStatusANDRoles}:&nbsp;{$values.participants}
+		{ts}Counted{/ts}:&nbsp;{$values.participants}
 	    {/if}
            
 	    {if $values.notCountedParticipants and $values.notCountedParticipants_url}
-		<a href="{$values.notCountedParticipants_url}" title="{ts 1=$eventSummary.nonCountedStatusANDRoles}List %1 participants{/ts}">{ts}Not&nbsp;Counted{/ts}:&nbsp;{$values.notCountedParticipants}</a>
+		<a href="{$values.notCountedParticipants_url}" title="{ts 1=$eventSummary.nonCountedStatusANDRoles}List %1 participants{/ts}">{ts}Not&nbsp;Counted{/ts}:&nbsp;{$values.notCountedParticipants}</a><hr />
 	    {else}
-		{$eventSummary.nonCountedStatusANDRoles}:&nbsp;{$values.notCountedParticipants}
+		{ts}Not&nbsp;Counted{/ts}:&nbsp;{$values.notCountedParticipants}<hr />
 	    {/if}
 
 	    {if $values.notCountedDueToStatus and $values.notCountedDueToStatus_url}
 		<a href="{$values.notCountedDueToStatus_url}" title="{ts 1=$eventSummary.nonCountedStatus}List %1 participants{/ts}">{ts}Not&nbsp;Counted&nbsp;Due&nbsp;To&nbsp;Status{/ts}:&nbsp;{$values.notCountedDueToStatus}</a><hr />
-	    {else}{
-		$eventSummary.nonCountedStatus}:&nbsp;{$values.notCountedDueToStatus}<hr />
+	    {else}
+		{ts}Not&nbsp;Counted&nbsp;Due&nbsp;To&nbsp;Status{/ts}:&nbsp;{$values.notCountedDueToStatus}<hr />
 	    {/if}
 
             {if $values.notCountedDueToRole and $values.notCountedDueToRole_url}
 		<a href="{$values.notCountedDueToRole_url}" title="{ts 1=$eventSummary.nonCountedRoles}List %1 participants{/ts}">{ts}Not&nbsp;Counted&nbsp;Due&nbsp;To&nbsp;Role{/ts}:&nbsp;{$values.notCountedDueToRole}</a><hr />
-	    {else}{
-		$eventSummary.nonCountedRoles}:&nbsp;{$values.notCountedDueToRole}<hr />
+	    {else}
+		{ts}Not&nbsp;Counted&nbsp;Due&nbsp;To&nbsp;Role{/ts}:&nbsp;{$values.notCountedDueToRole}<hr />
 	    {/if}
             
             {foreach from=$values.statuses item=class}
