@@ -522,7 +522,13 @@ GROUP BY  event_id, status_id";
         // consider both role and status for counted participants, CRM-4924.
         require_once 'CRM/Event/PseudoConstant.php';
         
-        $statusSQL = '';
+        $operator = " AND ";
+        // not counted participant.
+        if ( $considerStatus && $considerRole && !$status && !$role ) {
+            $operator = " OR ";
+        }
+        
+        $clause = array( );
         if ( $considerStatus ) {
             $statusTypes  = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' ); 
             $statusClause = 'NOT IN';
@@ -533,10 +539,9 @@ GROUP BY  event_id, status_id";
             if ( empty( $status ) ) {
                 $status = 0;
             }
-            $statusSQL = " AND civicrm_participant.status_id {$statusClause} ( {$status} ) ";
+            $clause[] = "civicrm_participant.status_id {$statusClause} ( {$status} ) ";
         }
         
-        $roleSQL = '';
         if ( $considerRole ) {
             $roleTypes  = CRM_Event_PseudoConstant::participantRole( null, 'filter = 1' );
             $roleClause = 'NOT IN';
@@ -547,7 +552,12 @@ GROUP BY  event_id, status_id";
             if ( empty( $roles ) ) {
                 $roles = 0;
             }
-            $roleSQL = " AND civicrm_participant.role_id {$roleClause} ( $roles )";
+            $clause[] = "civicrm_participant.role_id {$roleClause} ( $roles )";
+        }
+        
+        $sqlClause = '';
+        if ( !empty( $clause ) ) {
+            $sqlClause = ' AND ( ' . implode( $operator, $clause ) . ' )';
         }
         
         $query = "
@@ -556,8 +566,7 @@ GROUP BY  event_id, status_id";
 LEFT JOIN  civicrm_participant ON ( civicrm_event.id = civicrm_participant.event_id )
     WHERE  civicrm_participant.is_test = 0 
       AND  civicrm_event.is_active = 1
-           {$statusSQL}
-           {$roleSQL}
+           {$sqlClause}
  GROUP BY  civicrm_event.id
  ORDER BY  civicrm_event.end_date DESC
   LIMIT 0, 10
