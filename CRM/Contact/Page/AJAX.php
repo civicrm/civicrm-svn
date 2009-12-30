@@ -87,7 +87,14 @@ class CRM_Contact_Page_AJAX
         if ( $aclWhere ) {
             $where .= " AND $aclWhere ";
         }
-
+        
+        if( CRM_Utils_Array::value( 'org', $_GET) ) {
+            $where .= " AND contact_type = \"Organization\"";
+            //set default for current_employer
+            if ( $orgId = CRM_Utils_Array::value( 'id', $_GET) ) {
+                 $where .= " AND cc.id = {$orgId}";
+             }
+        }
         //contact's based of relationhip type
         $relType = null; 
         if ( isset($_GET['rel']) ) {
@@ -128,6 +135,10 @@ LIMIT 0, {$limit}
         $contactList = null;
         while ( $dao->fetch( ) ) {
             echo $contactList = "$dao->data|$dao->id\n";
+        }
+        //return organization name if doesn't exist in db
+        if( ! $contactList && CRM_Utils_Array::value( 'org', $_GET) ) {
+            echo CRM_Utils_Array::value( 's', $_GET );
         }
         exit();
     } 
