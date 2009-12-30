@@ -62,7 +62,7 @@ if ( $installType == 'drupal' ) {
     if ( ! preg_match( "/" . preg_quote('sites' . CIVICRM_DIRECTORY_SEPARATOR, CIVICRM_DIRECTORY_SEPARATOR) . 
                        "([a-zA-Z0-9_.]+)" . 
                        preg_quote(CIVICRM_DIRECTORY_SEPARATOR . 'modules', CIVICRM_DIRECTORY_SEPARATOR) . "/",
-                       $_SERVER['SCRIPT_FILENAME'] ) ) {
+                       str_replace( "\\","/",$_SERVER['SCRIPT_FILENAME'] ) ) ) {
         $errorTitle = "Oops! Please Correct Your Install Location";
         $errorMsg = "Please untar (uncompress) your downloaded copy of CiviCRM in the <strong>" . implode(CIVICRM_DIRECTORY_SEPARATOR, array('sites', 'all', 'modules')) . "</strong> directory below your Drupal root directory. Refer to the online " . $docLink . " for more information.<p>If you want to setup / install a <strong>Standalone CiviCRM</strong> version (i.e. not a Drupal or Joomla module), <a href=\"?mode=standalone\">click here</a>.</p>";
         errorDisplayPage( $errorTitle, $errorMsg );
@@ -317,9 +317,14 @@ class InstallRequirements {
             }
         }
 
-        // Check for rewriting
-        $webserver = strip_tags(trim($_SERVER['SERVER_SIGNATURE']));
-        if($webserver == '') {
+        // Check for rewriting        
+        if (isset($_SERVER['SERVER_SOFTWARE'])) {
+            $webserver = strip_tags(trim($_SERVER['SERVER_SOFTWARE']));
+        } elseif (isset($_SERVER['SERVER_SIGNATURE']))  {
+            $webserver = strip_tags(trim($_SERVER['SERVER_SIGNATURE']));
+        }
+                 
+        if ($webserver == '') {
             $webserver = "I can't tell what webserver you are running";
         }
 
