@@ -315,9 +315,10 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
             }
 
             if ( (!empty($rows)) && $countEvent != 1 ) {
+                $config  = CRM_Core_Config::Singleton();
                 $chartInfo = array( 'legend' => 'Event Summary',
-                                    'xname'  => 'Total Amount',
-                                    'yname'  => 'Event'
+                                    'xname'  => 'Event',
+                                    'yname'  => "Total Amount ({$config->defaultCurrency})"
                                     );
                 if ( !empty($graphRows) ) {
                     foreach ( $graphRows[$this->_interval] as $key => $val ) {

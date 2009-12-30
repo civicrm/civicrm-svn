@@ -433,7 +433,7 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
         $interval[$previous_year]                = $previous_year ;
         $interval[$previous_two_year]            = $previous_two_year ;
         $interval[$previous_three_year]          = $previous_three_year ;
-        $interval["upto_{$upto}"]   = "upto_{$upto}";
+        $interval["upto_{$upto}"]   = "Up To {$upto}";
    
         foreach ( $rows as $key => $row ) {
             $display["upto_{$upto}"] =  
@@ -444,9 +444,10 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
         }
         
         $graphRows['value'] = $display;
+        $config  = CRM_Core_Config::Singleton();
         $chartInfo          = array( 'legend' => 'Sybunt Report',
-                                     'xname'  => 'Amount',
-                                     'yname'  => 'Year'
+                                     'xname'  => 'Year',
+                                     'yname'  => "Amount ({$config->defaultCurrency})"
                                      );
         if ( $this->_params['charts'] ) {
             // build the chart.

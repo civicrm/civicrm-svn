@@ -212,6 +212,8 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
             $values['monetaryThousandSeparator'] = CRM_Utils_Array::value('thousands_sep', $monetaryPointSeparator);
         }
 
+        $values['defaultCurrencySymbol'] = $config->defaultCurrencySymbol( );
+        
         // save all the settings
         parent::commonProcess($values);
 

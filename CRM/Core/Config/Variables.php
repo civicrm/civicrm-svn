@@ -431,7 +431,7 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
                 
                 $this->currencySymbols = array_combine( $currencySymbolName, $currencySymbol );
                 
-                $cachedSymbol = CRM_Utils_Array::value($this->defaultCurrency, $this->currencySymbols, '');
+                $cachedSymbol = $this->defaultCurrencySymbol = CRM_Utils_Array::value($this->defaultCurrency, $this->currencySymbols, '');
             } else {
                 $cachedSymbol = '$';
             }
