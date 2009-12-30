@@ -1121,7 +1121,8 @@ class CRM_Report_Form extends CRM_Core_Form {
         $this->_formValues = $this->_params ;
         if ( CRM_Core_Permission::check( 'administer Reports' ) &&
              isset( $this->_id ) && 
-             $this->_instanceButtonName == $this->controller->getButtonName( ).'_save' ) {
+             ( $this->_instanceButtonName == $this->controller->getButtonName( ) . '_save' ||
+               $this->_chartButtonName    == $this->controller->getButtonName( ) ) ) {
             $this->assign( 'updateReportButton', true );
         }
         $this->processReportMode( );
@@ -1315,9 +1316,10 @@ class CRM_Report_Form extends CRM_Core_Form {
                     //get chart image name
                     $chartImg  = $chartType . '_' . $this->_id . '.png';
                     //get image url path
-                    $uploadUrl = str_replace( 'persist/contribute', 'upload', $config->imageUploadURL ) . $chartImg;
+                    $uploadUrl  = str_replace( 'persist/contribute', 'upload/openFlashChart', $config->imageUploadURL );
+                    $uploadUrl .= $chartImg;
                     //get image doc path to overwrite
-                    $uploadImg = $config->uploadDir . $chartImg ;
+                    $uploadImg = $config->uploadDir . 'openFlashChart/' . $chartImg;
                     //Load the image
                     $chart = imagecreatefrompng( $uploadUrl );
                     //convert it into formattd png
