@@ -485,6 +485,24 @@ function civicrm_views_data() {
                                                                        'handler' => 'civicrm_handler_filter_contact_type',
                                                                        ),
                                                      );
+    //Contact Sub Type
+    $data['civicrm_contact']['contact_sub_type'] = array(
+                                                      'title' => t('Contact Sub Type'),
+
+                                                      'help' => t('The Sub-type for the Contact'),
+                                                      'field' => array(
+                                                                       'handler' => 'civicrm_handler_field',
+                                                                       'click sortable' => TRUE,
+                                                                       ),
+
+                                                      'filter' => array(
+                                                                        'handler' => 'civicrm_handler_filter_contact_type',
+                                                                        ),
+
+                                                      'sort' => array(
+                                                                      'handler' => 'views_handler_sort',
+                                                                      ),
+                                                      );
 
     // add the other generic fields
     $objType = 'Individual';
@@ -2188,6 +2206,532 @@ function civicrm_views_data() {
                                                           );
 
 
+    /*
+     * Soft Credits
+     */
+
+    $data['civicrm_contribution_soft']['table']['group']  = t('CiviCRM  Soft Credits');
+
+
+    //TABLE JOINS FOR CIVICRM CONTRIBUTIONS GO HERE!
+    $data['civicrm_contribution_soft']['table']['join']['civicrm_contribution'] = array(
+                                                                                  'left_table' => 'civicrm_contribution',
+                                                                                  'left_field' => 'id',
+                                                                                  'field' => 'contribution_id',
+                                                                                  );
+    //CiviCRM Soft Credits - FIELDS
+
+    //Numeric Soft Credit ID
+    $data['civicrm_contribution_soft']['id'] = array(
+                                                'title' => t('Contribution Soft Credit ID'),
+                                                'help' => t('The numeric ID of the Soft Credit'),
+                                                'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+   //Soft Credit Amount
+    $data['civicrm_contribution_soft']['amount'] = array(
+                                                               'title' => t('Amount'),
+                                                               'help' => t('The amount of the soft credit'),
+                                                               'field' => array(
+                                                                                'handler' => 'views_handler_field_numeric',
+                                                                                'click sortable' => TRUE,
+                                                                                ),
+
+                                                               'argument' => array(
+                                                                                   'handler' => 'views_handler_argument',
+                                                                                   ),
+
+                                                               'filter' => array(
+                                                                                 'handler' => 'views_handler_filter_numeric',
+                                                                                 'allow empty' => TRUE,
+                                                                                 ),
+
+                                                               'sort' => array(
+                                                                               'handler' => 'views_handler_sort',
+                                                                               ),
+                                                               );
+
+    //Personal Campaign Page
+    $data['civicrm_contribution_soft']['pcp_roll_nickname'] = array(
+                                                               'title' => t('Personal Campaign Page Nickname'),
+                                                               'help' => t('The Page this Contribution came from'),
+                                                               'field' => array(
+                                                                                'handler' => 'views_handler_field',
+                                                                                'click sortable' => TRUE,
+                                                                                ),
+
+                                                               'argument' => array(
+                                                                                   'handler' => 'views_handler_argument',
+                                                                                   ),
+
+                                                               'filter' => array(
+                                                                                 'handler' => 'views_handler_filter_string',
+                                                                                 'allow empty' => TRUE,
+                                                                                 ),
+
+                                                               'sort' => array(
+                                                                               'handler' => 'views_handler_sort',
+                                                                               ),
+                                                               );
+    //Personal Campaign Page Personla Note
+    $data['civicrm_contribution_soft']['pcp_personal_note'] = array(
+                                                               'title' => t('Personal Campaign Page Personal Note'),
+                                                               'help' => t('The Personal note form PCP'),
+                                                               'field' => array(
+                                                                                'handler' => 'views_handler_field',
+                                                                                'click sortable' => TRUE,
+                                                                                ),
+
+                                                               'argument' => array(
+                                                                                   'handler' => 'views_handler_argument',
+                                                                                   ),
+
+                                                               'filter' => array(
+                                                                                 'handler' => 'views_handler_filter_string',
+                                                                                 'allow empty' => TRUE,
+                                                                                 ),
+
+                                                               'sort' => array(
+                                                                               'handler' => 'views_handler_sort',
+                                                                               ),
+                                                               );
+
+
+   /*
+     * Soft Credits
+     */
+
+    $data['civicrm_contribution_recur']['table']['group']  = t('CiviCRM  Recurring Contributions');
+
+
+    //TABLE JOINS FOR CIVICRM CONTRIBUTIONS GO HERE!
+     $data['civicrm_contribution_recur']['table']['join']['civicrm_contribution'] = array(
+                                                                                  'left_table' => 'civicrm_contribution',
+                                                                                  'left_field' => 'contact_id',
+                                                                                  'field' => 'contact_id',
+                                                                                  );
+
+    //CiviCRM Soft Credits - FIELDS
+
+    //Numeric Recurring Contribution ID
+    $data['civicrm_contribution_recur']['id'] = array(
+                                                'title' => t('Recurring Contribution ID'),
+                                                'help' => t('The numeric ID of the  Recurring Contribution'),
+                                                'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+    //Recurring Contribution Amount
+    $data['civicrm_contribution_recur']['amount'] = array(
+                                                               'title' => t('Amount'),
+                                                               'help' => t('The amunt of the recurring contribution'),
+                                                               'field' => array(
+                                                                                'handler' => 'views_handler_field_numeric',
+                                                                                'click sortable' => TRUE,
+                                                                                ),
+
+                                                               'argument' => array(
+                                                                                   'handler' => 'views_handler_argument',
+                                                                                   ),
+
+                                                               'filter' => array(
+                                                                                 'handler' => 'views_handler_filter_numeric',
+                                                                                 'allow empty' => TRUE,
+                                                                                 ),
+
+                                                               'sort' => array(
+                                                                               'handler' => 'views_handler_sort',
+                                                                               ),
+                                                               );
+    //Frequency of recurring contribution
+    $data['civicrm_contribution_recur']['frequency_unit'] = array(
+                                                               'title' => t('Frequency Unit'),
+                                                               'help' => t('Day, Week, Month, Year'),
+                                                               'field' => array(
+                                                                                'handler' => 'views_handler_field',
+                                                                                'click sortable' => TRUE,
+                                                                                ),
+
+                                                               'argument' => array(
+                                                                                   'handler' => 'views_handler_argument',
+                                                                                   ),
+
+                                                               'filter' => array(
+                                                                                 'handler' => 'views_handler_filter_string',
+                                                                                 'allow empty' => TRUE,
+                                                                                 ),
+
+                                                               'sort' => array(
+                                                                               'handler' => 'views_handler_sort',
+                                                                               ),
+                                                               );
+    //Frequency Interval
+    $data['civicrm_contribution_recur']['frequency_interval'] = array(
+                                                'title' => t('Frequency Interval'),
+                                                'help' => t('The Interval of the Frequency Unit'),
+                                                'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+    //# of Installments
+    $data['civicrm_contribution_recur']['installments'] = array(
+                                                'title' => t('Installments'),
+                                                'help' => t('Number of Installments'),
+                                                'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+    //Recurring Contribution Start Date
+    $data['civicrm_contribution_recur']['start_date'] = array(
+                                                          'title' => t('Start Date'),
+                                                          'help' => t('The Date the recurring contribution started.'),
+                                                          'field' => array(
+                                                                           'handler' => 'civicrm_handler_field_datetime',
+                                                                           'click sortable' => TRUE,
+                                                                           ),
+
+                                                          'filter' => array(
+                                                                            'handler' => 'civicrm_handler_filter_datetime',
+                                                                            ),
+
+                                                          'sort' => array(
+                                                                          'handler' => 'civicrm_handler_sort_date',
+                                                                          ),
+                                                          );
+    civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Start Date',
+                                                                    'name' => 'start_date'));
+    //Recurring Contribution Create Date
+    $data['civicrm_contribution_recur']['create_date'] = array(
+                                                          'title' => t('Create Date'),
+                                                          'help' => t('The Date the recurring contribution was created.'),
+                                                          'field' => array(
+                                                                           'handler' => 'civicrm_handler_field_datetime',
+                                                                           'click sortable' => TRUE,
+                                                                           ),
+
+                                                          'filter' => array(
+                                                                            'handler' => 'civicrm_handler_filter_datetime',
+                                                                            ),
+
+                                                          'sort' => array(
+                                                                          'handler' => 'civicrm_handler_sort_date',
+                                                                          ),
+                                                          );
+    civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Create Date',
+                                                                    'name' => 'create_date'));
+    //Recurring Contribution Modified Date
+    $data['civicrm_contribution_recur']['modified_date'] = array(
+                                                          'title' => t('Modified Date'),
+                                                          'help' => t('The Date the recurring contribution was modified.'),
+                                                          'field' => array(
+                                                                           'handler' => 'civicrm_handler_field_datetime',
+                                                                           'click sortable' => TRUE,
+                                                                           ),
+
+                                                          'filter' => array(
+                                                                            'handler' => 'civicrm_handler_filter_datetime',
+                                                                            ),
+
+                                                          'sort' => array(
+                                                                          'handler' => 'civicrm_handler_sort_date',
+                                                                          ),
+                                                          );
+    civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Modified Date',
+                                                                    'name' => 'modified_date'));
+    //Recurring Contribution Cancel Date
+    $data['civicrm_contribution_recur']['cancel_date'] = array(
+                                                          'title' => t('Cancel Date'),
+                                                          'help' => t('The Date the recurring contribution was cancelled.'),
+                                                          'field' => array(
+                                                                           'handler' => 'civicrm_handler_field_datetime',
+                                                                           'click sortable' => TRUE,
+                                                                           ),
+
+                                                          'filter' => array(
+                                                                            'handler' => 'civicrm_handler_filter_datetime',
+                                                                            ),
+
+                                                          'sort' => array(
+                                                                          'handler' => 'civicrm_handler_sort_date',
+                                                                          ),
+                                                          );
+    civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Cancel Date',
+                                                                    'name' => 'cancel_date'));
+    //Recurring Contribution End Date
+    $data['civicrm_contribution_recur']['end_date'] = array(
+                                                          'title' => t('End Date'),
+                                                          'help' => t('The Date the recurring contribution ended.'),
+                                                          'field' => array(
+                                                                           'handler' => 'civicrm_handler_field_datetime',
+                                                                           'click sortable' => TRUE,
+                                                                           ),
+
+                                                          'filter' => array(
+                                                                            'handler' => 'civicrm_handler_filter_datetime',
+                                                                            ),
+
+                                                          'sort' => array(
+                                                                          'handler' => 'civicrm_handler_sort_date',
+                                                                          ),
+                                                          );
+    civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution End Date',
+                                                                    'name' => 'end_date'));
+    //Unique Transaction ID
+    $data['civicrm_contribution_recur']['trxn_id'] = array(
+                                                'title' => t('Unique Transaction ID'),
+                                                'help' => t('The Transaction ID of the  Recurring Contribution'),
+                                                'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+    //Invoice ID
+    $data['civicrm_contribution_recur']['invoice_id'] = array(
+                                                'title' => t('Invoice ID'),
+                                                'help' => t('The Unique CiviCRM Generated Invoice ID'),
+                                                'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+    //Participant Status
+    $data['civicrm_contribution_recur']['contiribution_status'] = array(
+                                                   'title' => t('Contribution Status'),
+                                                   'real field' => 'contribution_status_id',
+                                                   'help' => t('The Contribution\'s Status'),
+                                                   'field' => array(
+                                                                    'handler' => 'civicrm_handler_field_contribution_status',
+                                                                    'click sortable' => TRUE,
+                                                                    ),
+
+                                                   'argument' => array(
+                                                                       'handler' => 'views_handler_argument',
+                                                                       ),
+
+                                                   'filter' => array(
+                                                                     'handler' => 'civicrm_handler_filter_contribution_status',
+                                                                     'allow empty' => TRUE,
+                                                                     ),
+
+                                                   'sort' => array(
+                                                                   'handler' => 'views_handler_sort',
+                                                                   ),
+                                                   );
+    //BOOLEAN : IS A TEST CONTRIBUTION
+    $data['civicrm_contribution_recur']['is_test'] = array(
+                                                     'title' => t('Is Test'),
+                                                     'help' => t('Is the recurring contribution a test entry?'),
+                                                     'field' => array(
+                                                                      'handler' => 'views_handler_field_boolean',
+                                                                      'click sortable' => TRUE,
+                                                                      ),
+
+                                                     'argument' => array(
+                                                                         'handler' => 'views_handler_argument',
+                                                                         ),
+
+                                                     'filter' => array(
+                                                                       'handler' => 'views_handler_filter_boolean_operator',
+                                                                       ),
+
+                                                     'sort' => array(
+                                                                     'handler' => 'views_handler_sort',
+                                                                     ),
+                                                     );
+    //Cycle contibution Day
+    $data['civicrm_contribution_recur']['cycle_day'] = array(
+                                                'title' => t('Cycle Day'),
+                                                'help' => t('What day in the contribution will the debit occur'),
+                                                'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+    //Recurring Contribution End Date
+    $data['civicrm_contribution_recur']['next_sched_contribution'] = array(
+                                                          'title' => t('Next Contribution Date'),
+                                                          'help' => t('The Next Contribution Date.'),
+                                                          'field' => array(
+                                                                           'handler' => 'civicrm_handler_field_datetime',
+                                                                           'click sortable' => TRUE,
+                                                                           ),
+
+                                                          'filter' => array(
+                                                                            'handler' => 'civicrm_handler_filter_datetime',
+                                                                            ),
+
+                                                          'sort' => array(
+                                                                          'handler' => 'civicrm_handler_sort_date',
+                                                                          ),
+                                                          );
+    civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Next Date',
+                                                                    'name' => 'next_sched_contribution'));
+    //How many times has the contribution failed
+    $data['civicrm_contribution_recur']['failure_count'] = array(
+                                                'title' => t('Failure Count'),
+                                                'help' => t('How many times has theis recurring contribution failed?'),
+                                                'field' => array(
+                                                                 'handler' => 'views_handler_field_numeric',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument_numeric',
+                                                                    'numeric' => TRUE,
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'views_handler_filter_numeric',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+    //when will the filed contribution be retried?
+    $data['civicrm_contribution_recur']['failure_retry_date'] = array(
+                                                          'title' => t('Failed retry date'),
+                                                          'help' => t('When will the failed contribution be retried?'),
+                                                          'field' => array(
+                                                                           'handler' => 'civicrm_handler_field_datetime',
+                                                                           'click sortable' => TRUE,
+                                                                           ),
+
+                                                          'filter' => array(
+                                                                            'handler' => 'civicrm_handler_filter_datetime',
+                                                                            ),
+
+                                                          'sort' => array(
+                                                                          'handler' => 'civicrm_handler_sort_date',
+                                                                          ),
+                                                          );
+    civicrm_views_add_date_arguments($data['civicrm_contribution_recur'],array('title' =>'Recurring Contribution Failure Retry Date',
+                                                                    'name' => 'failure_retry_date'));
+    //BOOLEAN : Does thie recurring contribution auto-renew?
+    $data['civicrm_contribution_recur']['auto_renew'] = array(
+                                                     'title' => t('Auto-renew'),
+                                                     'help' => t('Will this recurring contribution automayically renew?'),
+                                                     'field' => array(
+                                                                      'handler' => 'views_handler_field_boolean',
+                                                                      'click sortable' => TRUE,
+                                                                      ),
+
+                                                     'argument' => array(
+                                                                         'handler' => 'views_handler_argument',
+                                                                         ),
+
+                                                     'filter' => array(
+                                                                       'handler' => 'views_handler_filter_boolean_operator',
+                                                                       ),
+
+                                                     'sort' => array(
+                                                                     'handler' => 'views_handler_sort',
+                                                                     ),
+                                                     );
 
 
     //----------------------------------------------------------------------------------------
@@ -2299,6 +2843,54 @@ function civicrm_views_data() {
                                                                 'handler' => 'views_handler_sort',
                                                                 ),
                                                 );
+
+    //Activity Priority
+    $data['civicrm_activity']['priority'] = array(
+                                                'title' => t('Priority'),
+                                                'real field' => 'priority_id',
+                                                'help' => t('The Priority of this Activity'),
+                                                'field' => array(
+                                                                 'handler' => 'civicrm_handler_field_priority',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument',
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'civicrm_handler_filter_priority',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+    //Parent ID
+    $data['civicrm_activity']['parent_id'] = array(
+                                            'title' => t('Parent Activity ID'),
+                                            'help' => t('The numeric ID of the Parent Activity '),
+
+                                            'field' => array(
+                                                             'handler' => 'views_handler_field_numeric',
+                                                             'click sortable' => TRUE,
+                                                             ),
+
+                                            'argument' => array(
+                                                                'handler' => 'views_handler_argument_numeric',
+                                                                'numeric' => TRUE,
+                                                                ),
+
+                                            'filter' => array(
+                                                              'handler' => 'views_handler_filter_numeric',
+                                                              'allow empty' => TRUE,
+                                                              ),
+
+                                            'sort' => array(
+                                                            'handler' => 'views_handler_sort',
+                                                            ),
+                                            );
 
     //Activity Subject
     $data['civicrm_activity']['subject'] = array(
@@ -2414,10 +3006,55 @@ function civicrm_views_data() {
                                                                  ),
                                                  );
 
+
     //BOOLEAN : IS A TEST ACTIVITY
     $data['civicrm_activity']['is_test'] = array(
                                                  'title' => t('Is Test'),
                                                  'help' => t('Is the activity a test entry?'),
+                                                 'field' => array(
+                                                                  'handler' => 'views_handler_field_boolean',
+                                                                  'click sortable' => TRUE,
+                                                                  ),
+
+                                                 'argument' => array(
+                                                                     'handler' => 'views_handler_argument',
+                                                                     ),
+
+                                                 'filter' => array(
+                                                                   'handler' => 'views_handler_filter_boolean_operator',
+                                                                   ),
+
+                                                 'sort' => array(
+                                                                 'handler' => 'views_handler_sort',
+                                                                 ),
+                                                 );
+    //Activity Medium (ie Phone, e-mail etc...)
+    $data['civicrm_activity']['medium'] = array(
+                                                'title' => t('Medium'),
+                                                'real field' => 'medium_id',
+                                                'help' => t('The Medium of this Activity (ie phone, e-mail, etc...'),
+                                                'field' => array(
+                                                                 'handler' => 'civicrm_handler_field_encounter_medium',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument',
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'civicrm_handler_filter_encounter_medium',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+    //BOOLEAN : IS A TEST ACTIVITY
+    $data['civicrm_activity']['is_auto'] = array(
+                                                 'title' => t('Is Automaticaly created'),
+                                                 'help' => t('Is the activity created by the system?'),
                                                  'field' => array(
                                                                   'handler' => 'views_handler_field_boolean',
                                                                   'click sortable' => TRUE,
@@ -4397,7 +5034,14 @@ function civicrm_views_handlers() {
                        'civicrm_handler_field_activity_type' => array(
                                                                       'parent' => 'views_handler_field',
                                                                       ),
-					   'civicrm_handler_field_relationship_type' => array(
+                        'civicrm_handler_field_priority' => array(
+                                                                      'parent' => 'views_handler_field',
+                                                                  ),
+                       'civicrm_handler_field_encounter_medium' => array (
+                                                                    'parent' => 'views_handler_field',
+                                                                        ),
+
+                        'civicrm_handler_field_relationship_type' => array(
                                                                           'parent' => 'views_handler_field',
                                                                           ),
                                                                           
@@ -4471,6 +5115,12 @@ function civicrm_views_handlers() {
                        'civicrm_handler_filter_activity_type' => array(
                                                                        'parent' => 'views_handler_filter_in_operator',
                                                                        ),
+                       'civicrm_handler_filter_priority' => array(
+                                                                    'parent' => 'views_handler_filter_in_operator'
+                                                                ),
+                       'civicrm_handler_filter_encounter_medium' => array (
+                                                                    'parent' => 'views_handler_filter_in_operator',
+                                                                        ),
                        'civicrm_contact_date_api_filter_handler' => array(
                                                                           'parent' => 'date_api_filter_handler',
                                                                           ),
