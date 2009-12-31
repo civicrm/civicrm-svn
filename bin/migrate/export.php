@@ -69,6 +69,11 @@ class bin_migrate_export {
                                             'scope'    => 'ProfileFields',
                                             'required' => false,
                                             'map'      => array( ) ),
+                   'profileJoin'  => array( 'data'     => null           ,
+                                            'name'     => 'ProfileJoin'  ,
+                                            'scope'    => 'ProfileJoins',
+                                            'required' => false,
+                                            'map'      => array( ) ),
                    );
     }
 
@@ -165,6 +170,18 @@ AND    cg.is_active = 1
         $this->fetch( 'profileField',
                       'CRM_Core_DAO_UFField',
                       null,
+                      null,
+                      array( array( 'profileGroup', 'uf_group_id', 'profile_group_name' ) ) );
+
+        $sql = "
+SELECT *
+FROM   civicrm_uf_join
+WHERE  entity_table IS NULL
+AND    entity_id    IS NULL
+";
+        $this->fetch( 'profileJoin',
+                      'CRM_Core_DAO_UFJoin',
+                      $sql,
                       null,
                       array( array( 'profileGroup', 'uf_group_id', 'profile_group_name' ) ) );
 

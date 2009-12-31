@@ -62,6 +62,7 @@ class bin_migrate_import {
         // now create profile groups
         $this->profileGroups( $xml, $idMap );
         $this->profileFields( $xml, $idMap );
+        $this->profileJoins( $xml, $idMap );
     }
 
     function copyData( &$dao, &$xml, $save = false, $keyName = null ) {
@@ -211,6 +212,18 @@ AND        v.name = %2
                 $profileField->uf_group_id = $idMap['profile_group'][(string ) $profileFieldXML->profile_group_name];
                 $this->copyData( $profileField, $profileFieldXML, false, 'name' );
                 $profileField->save( );
+            }
+        }
+    }
+
+    function profileJoins( &$xml, &$idMap ) {
+        require_once 'CRM/Core/DAO/UFJoin.php';
+        foreach ( $xml->ProfileJoins as $profileJoinsXML ) {
+            foreach ( $profileJoinsXML->ProfileJoin as $profileJoinXML ) {
+                $profileJoin = new CRM_Core_DAO_UFJoin( );
+                $profileJoin->uf_group_id = $idMap['profile_group'][(string ) $profileJoinXML->profile_group_name];
+                $this->copyData( $profileJoin, $profileJoinXML, false, 'module' );
+                $profileJoin->save( );
             }
         }
     }
