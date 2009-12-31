@@ -489,7 +489,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         }
         
         $joinDate = CRM_Utils_Date::processDate( $params['join_date'] );
-        
         if ( $joinDate ) {
             require_once 'CRM/Member/BAO/MembershipType.php';
             $membershipDetails = CRM_Member_BAO_MembershipType::getMembershipTypeDetails( $params['membership_type_id'][1] );
@@ -518,7 +517,21 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                     }
                 }
             }
-            
+
+	    //  Default values for start and end dates if not supplied
+	    //  on the form
+	    $defaultDates = CRM_Member_BAO_MembershipType::getDatesForMembershipType(
+                $params['membership_type_id'][1], $joinDate,
+		$startDate, $endDate);
+	    if ( !$startDate ) {
+                $startDate = CRM_Utils_Array::value( 'start_date',
+						     $defaultDates );
+	    }
+	    if ( !$endDate ) {
+                $endDate = CRM_Utils_Array::value( 'end_date',
+						     $defaultDates );
+	    }
+
             //CRM-3724, check for availability of valid membership status.
             if ( !CRM_Utils_Array::value( 'is_override',  $params ) ) {
                 require_once 'CRM/Member/BAO/MembershipStatus.php';
