@@ -42,7 +42,8 @@ class CRM_Contact_Page_AJAX
     static function getContactList( &$config ) 
     {
         require_once 'CRM/Core/BAO/Preferences.php';
-        $name   = CRM_Utils_Type::escape( $_GET['s'], 'String' );
+        $name   = CRM_Utils_Array::value( 's', $_GET );
+        $name   = CRM_Utils_Type::escape( $name, 'String' );
         $limit  = '10';
         $list   = array_keys( CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' ), '1' );
         $select = array( 'sort_name' );
