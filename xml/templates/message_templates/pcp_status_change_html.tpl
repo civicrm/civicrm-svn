@@ -25,7 +25,7 @@
      <p>{ts}Your personal campaign page has been approved and is now live.{/ts}</p>
      <p>{ts}Whenever you want to preview, update or promote your page{/ts}:</p>
      <ol>
-      <li><a href="{$config->userFrameworkBaseURL}">{ts}Login to your account{/ts}</a></li>
+      <li><a href="{$loginUrl}">{ts}Login to your account{/ts}</a></li>
       <li><a href="{$pcpInfoURL}">{ts}Go to your page{/ts}</a></li>
      </ol>
      <p>{ts}When you view your campaign page WHILE LOGGED IN, the page includes links to edit
@@ -39,7 +39,7 @@ your page, tell friends, and update your contact info.{/ts}</p>
       <p>{ts}Questions? Send email to{/ts}: {$pcpNotifyEmailAddress}</p>
      {/if}
 
-    {elseif $pcpStatus eq 'Rejected'}
+    {elseif $pcpStatus eq 'Not Approved'}
 
      <p>{ts}Your personal campaign page has been reviewed. There were some issues with the content
 which prevented us from approving the page. We are sorry for any inconvenience.{/ts}</p>
