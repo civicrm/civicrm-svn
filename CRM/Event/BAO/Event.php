@@ -463,9 +463,9 @@ LIMIT      0, 10
         
         require_once 'CRM/Event/PseudoConstant.php';
         $countedRoles     = CRM_Event_PseudoConstant::participantRole( null, 'filter = 1' );
-        $nonCountedRoles  = CRM_Event_PseudoConstant::participantRole( null, 'filter = 0' );
+        $nonCountedRoles  = CRM_Event_PseudoConstant::participantRole( null, '( filter = 0 OR filter IS NULL )' );
         $countedStatus    = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 1' );
-        $nonCountedStatus = CRM_Event_PseudoConstant::participantStatus( null, 'is_counted = 0' );
+        $nonCountedStatus = CRM_Event_PseudoConstant::participantStatus( null, '( is_counted = 0 OR is_counted IS NULL )' );
         
         $roleSQL = '';
         if ( !empty( $countedRoles ) ) {
