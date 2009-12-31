@@ -488,6 +488,9 @@ GROUP BY  event_id, status_id";
         $st = CRM_Core_DAO::executeQuery( $query );
         
         while ($st->fetch()) {
+            if ( !CRM_Utils_Array::value( $st->status_id, $statusTypes ) ) {
+                continue;
+            }
             $eventSummary['events'][$st->event_id]['statuses'][$st->class][] = 
                 array( 'url'   => CRM_Utils_System::url( 'civicrm/event/search', 
                                                          "reset=1&force=1&event=$st->event_id&status=$st->status_id"),
