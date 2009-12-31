@@ -208,6 +208,11 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             // set the callback at the very very end, to avoid an infinite loop 
             // set the error callback
             CRM_Core_Error::setCallback();
+
+            // call the hook so other modules can add to the config
+            // again doing this at the very very end
+            require_once 'CRM/Utils/Hook.php';
+            CRM_Utils_Hook::config( self::$_singleton );
         }
 
         return self::$_singleton;
