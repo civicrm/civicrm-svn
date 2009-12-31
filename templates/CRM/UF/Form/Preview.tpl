@@ -76,7 +76,8 @@
            {include file="CRM/Contact/Form/Edit/TagsAndGroups.tpl" type=$n}
         {elseif $n eq 'email_greeting' or  $n eq 'postal_greeting' or $n eq 'addressee'}
                {include file="CRM/Profile/Form/GreetingType.tpl"}  
-        {elseif $field.data_type eq 'Date' AND $element.skip_calendar NEQ true } 
+        {elseif ( $field.data_type eq 'Date' AND $element.skip_calendar NEQ true ) or
+                ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) } 
                {include file="CRM/common/jcalendar.tpl" elementName=$form.$n.name}
         {else}
             {$form.$n.html}
@@ -115,20 +116,4 @@
 <div class=" horizontal-center "> 
 	{$form.buttons.html}
 </div>
-{literal}
-<script type="text/javascript">
-    cj(document).ready(function(){ 
-
-    // Initialise the table
-    cj("#table-1").tableDnD();
-    
-    cj("#table-5 tr").hover(function() {
-        cj(this.cells[0]).addClass('showDragHandle');
-    }, function() {
-        cj(this.cells[0]).removeClass('showDragHandle');
-    });
-    
-});
-</script>
-{/literal}
 
