@@ -432,8 +432,9 @@ LIMIT      0, 10
                             $set = CRM_Utils_System::url( 'civicrm/event/search',
                                                           "reset=1&force=1&event=$dao->id&status=true&role=true" );
                         } else if ( $name == 'notCountedParticipants' ) {
-                            $set = CRM_Utils_System::url( 'civicrm/event/search',
-                                                          "reset=1&force=1&event=$dao->id&status=false&role=false" );
+                            // FIXME : selector fail to search w/ OR operator.
+                            // $set = CRM_Utils_System::url( 'civicrm/event/search',
+                            // "reset=1&force=1&event=$dao->id&status=false&role=false" );
                         } else if ( $name == 'notCountedDueToStatus' ) {
                             $set = CRM_Utils_System::url( 'civicrm/event/search',
                                                           "reset=1&force=1&event=$dao->id&status=false" );
