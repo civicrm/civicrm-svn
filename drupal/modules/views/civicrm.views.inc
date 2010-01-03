@@ -4881,11 +4881,9 @@ function civicrm_get_sort_handler($type) {
     switch ($type) {
     case "String":
     case "Memo":
-        return 'views_handler_sort';   
-
     case "Float":
     case "Int":
-        return 'views_handler_sort_numeric';
+        return 'views_handler_sort';
 
     case "Date":
         return 'views_handler_sort_date';
