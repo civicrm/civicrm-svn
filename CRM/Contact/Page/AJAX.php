@@ -103,8 +103,17 @@ class CRM_Contact_Page_AJAX
             $relType  = CRM_Utils_Type::escape( $relation[0], 'Integer');
             $rel      = CRM_Utils_Type::escape( $relation[2], 'String');
         }
-        
-        $whereClause = " WHERE sort_name LIKE '%$name%' {$where} ";
+       
+        $config =& CRM_Core_Config::singleton( );
+
+        if ( $config->includeWildCardInName ) {
+           $strSearch = "%$name%";
+        } else {
+           $strSearch = "$name%";
+        }
+
+        $whereClause = " WHERE sort_name LIKE '$strSearch' {$where} ";
+ 
         $additionalFrom = '';
         if ( $relType ) {
             $additionalFrom = "
