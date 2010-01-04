@@ -358,8 +358,12 @@ class CRM_Core_Permission {
                       'access CiviCRM'                    => ts( 'access CiviCRM' ),
                       'access Contact Dashboard'          => ts( 'access Contact Dashboard' ),
                       'translate CiviCRM'                 => ts( 'translate CiviCRM' ),
-                      'administer Multiple Organizations' => ts( 'administer Multiple Organizations' ),
                       );
+
+            if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {
+                $permissions['administer Multiple Organizations'] = 
+                    ts( 'administer Multiple Organizations' );
+            }
 
             $config = CRM_Core_Config::singleton( );
             require_once 'CRM/Core/Component.php';
