@@ -380,14 +380,16 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
      */
     function setDefaultValues()
     {
-        $defaults =& $this->_defaults; 
-    
+        $defaults =& $this->_defaults;
+        $this->assign('showMaxMultiple', true);
         if ($this->_action == CRM_Core_Action::ADD) {
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_CustomGroup');
 
             $defaults['is_multiple'] = $defaults['min_multiple'] = 0;
             $defaults['is_active']   = 1;
             $defaults['style']       = 'Inline';
+        } elseif ( !CRM_Utils_Array::value('max_multiple', $defaults) && !$this->_isGroupEmpty) {
+            $this->assign('showMaxMultiple', false);
         }
 
         if ( isset ($defaults['extends'] ) ) {
