@@ -198,6 +198,7 @@ class CRM_Report_Form extends CRM_Core_Form {
         }
 
         if ( $this->_id ) {
+            $this->assign( 'instanceId', $this->_id );
             $params = array( 'id' => $this->_id );
             $this->_instanceValues = array( );
             CRM_Core_DAO::commonRetrieve( 'CRM_Report_DAO_Instance',
@@ -513,7 +514,8 @@ class CRM_Report_Form extends CRM_Core_Form {
         foreach ( $this->_filters as $table => $attributes ) {
             foreach ( $attributes as $fieldName => $field ) {
                 // get ready with option value pair
-                $operations = self::getOperationPair( CRM_Utils_Array::value( 'operatorType', $field ) );
+                $operations = $this->getOperationPair( CRM_Utils_Array::value( 'operatorType', $field ), 
+                                                       $fieldName );
                 
                 $filters[$table][$fieldName] = $field;
                 
@@ -522,7 +524,9 @@ class CRM_Report_Form extends CRM_Core_Form {
                     // assume a multi-select field
                     if ( !empty( $field['options'] ) ) {
                         $element = $this->addElement('select', "{$fieldName}_op", ts( 'Operator:' ), $operations);
-                        $element->freeze();
+                        if ( count($operations) <= 1 ) {
+                            $element->freeze();
+                        }
                         $select = $this->addElement('select', "{$fieldName}_value", null, 
                                                     $field['options'], array( 'size' => 4, 
                                                                               'style' => 'width:200px'));
@@ -674,7 +678,9 @@ class CRM_Report_Form extends CRM_Core_Form {
         }
     }
     
-    static function getOperationPair( $type = "string" ) {
+    // Note: $fieldName param allows inheriting class to build operationPairs 
+    // specific to a field.
+    function getOperationPair( $type = "string", $fieldName = null ) {
         // FIXME: At some point we should move these key-val pairs 
         // to option_group and option_value table.
 
@@ -1115,7 +1121,8 @@ class CRM_Report_Form extends CRM_Core_Form {
         $this->_formValues = $this->_params ;
         if ( CRM_Core_Permission::check( 'administer Reports' ) &&
              isset( $this->_id ) && 
-             $this->_instanceButtonName == $this->controller->getButtonName( ).'_save' ) {
+             ( $this->_instanceButtonName == $this->controller->getButtonName( ) . '_save' ||
+               $this->_chartButtonName    == $this->controller->getButtonName( ) ) ) {
             $this->assign( 'updateReportButton', true );
         }
         $this->processReportMode( );
@@ -1243,7 +1250,8 @@ class CRM_Report_Form extends CRM_Core_Form {
                         $op    = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
                         $value = null;
                         if ( $op ) {
-                            $pair  = self::getOperationPair( CRM_Utils_Array::value( 'operatorType', $field ) );
+                            $pair  = $this->getOperationPair( CRM_Utils_Array::value( 'operatorType', $field ),
+                                                              $fieldName );
                             $min   = CRM_Utils_Array::value( "{$fieldName}_min",  $this->_params );
                             $max   = CRM_Utils_Array::value( "{$fieldName}_max",  $this->_params );
                             $val   = CRM_Utils_Array::value( "{$fieldName}_value",$this->_params );
@@ -1303,7 +1311,25 @@ class CRM_Report_Form extends CRM_Core_Form {
             } else if ( $this->_outputMode == 'print' ) {
                 echo $content;
             } else {
-                require_once 'CRM/Utils/PDF/Utils.php';                                
+                if( $chartType = CRM_Utils_Array::value( 'charts', $this->_params ) ) {
+                    $config    = CRM_Core_Config::Singleton();
+                    //get chart image name
+                    $chartImg  = $chartType . '_' . $this->_id . '.png';
+                    //get image url path
+                    $uploadUrl  = str_replace( 'persist/contribute', 'upload/openFlashChart', $config->imageUploadURL );
+                    $uploadUrl .= $chartImg;
+                    //get image doc path to overwrite
+                    $uploadImg = $config->uploadDir . 'openFlashChart/' . $chartImg;
+                    //Load the image
+                    $chart = imagecreatefrompng( $uploadUrl );
+                    //convert it into formattd png
+                    header('Content-type: image/png');
+                    //overwrite with same image
+                    imagepng($chart, $uploadImg);
+                    //delete the object
+                    imagedestroy($chart);
+                }
+                require_once 'CRM/Utils/PDF/Utils.php';                     
                 CRM_Utils_PDF_Utils::html2pdf( $content, "CiviReport.pdf" );
             }
             exit( );

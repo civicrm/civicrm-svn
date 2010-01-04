@@ -45,9 +45,9 @@
                                 <td style="vertical-align:top;" rowspan=3 align="left">
                                 {assign var=showDirectly value="1"}
                                 {if $mapProvider eq 'Google'}
-                                    {include file="CRM/Contact/Form/Task/Map/Google.tpl" fields=$showDirectly}
+                                    {include file="CRM/Contact/Form/Task/Map/Google.tpl" fields=$showDirectly skipLocationType=true}
                                 {elseif $mapProvider eq 'Yahoo'}
-                                    {include file="CRM/Contact/Form/Task/Map/Yahoo.tpl"  fields=$showDirectly}
+                                    {include file="CRM/Contact/Form/Task/Map/Yahoo.tpl"  fields=$showDirectly skipLocationType=true}
                                 {/if}
                                 <br/><a href="{$mapURL}" title="{ts}Show large map{/ts}">{ts}Show large map{/ts}</a>
                                 </td>

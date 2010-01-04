@@ -765,10 +765,19 @@ WHERE  civicrm_participant.id = {$participantId}
      */
     static function fixEventLevel( &$eventLevel )
     {
-        if ( ( substr( $eventLevel, 0, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) ||
+        if ( ( substr( $eventLevel, 0, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) &&
              ( substr( $eventLevel, -1, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) ) {
             $eventLevel = implode( ', ', explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
                                                   substr( $eventLevel, 1, -1) ) );
+            if ($pos = strrpos($eventLevel, "(multiple participants)", 0) ) {
+                $eventLevel = substr_replace($eventLevel, "", $pos-3, 1) ;
+            }
+        } elseif ( ( substr( $eventLevel, 0, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) ) {
+            $eventLevel = implode( ', ', explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                                                  substr( $eventLevel, 0, 1) ) );
+        } elseif ( ( substr( $eventLevel, -1, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) ) {
+            $eventLevel = implode( ', ', explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
+                                                  substr( $eventLevel, 0, -1) ) );            
         }
     }
     
@@ -781,7 +790,7 @@ WHERE  civicrm_participant.id = {$participantId}
      * @return array $additionalParticipantIds
      * @static
      */
-    static function getAdditionalParticipantIds( $primaryParticipantId, $excludeCancel = true, $oldStatusId = null )
+    static function getAdditionalParticipantIds( $primaryParticipantId, $excludeCancel = true, $oldStatusId = null, $includeFeeLevels = array( ) )
     {
         $additionalParticipantIds = array( );
         if ( !$primaryParticipantId ) {
@@ -796,21 +805,42 @@ WHERE  civicrm_participant.id = {$participantId}
             $where .= " AND participant.status_id != {$cancelStatusId}";
         }
 
-        $statusClause      = "";
         if ( $oldStatusId ) {
             $where .= " AND participant.status_id = {$oldStatusId}";    
         }
         
+        $feeLevelClause    =  "";
+        $displaynameClause =  "";
+        if ( CRM_Utils_Array::value('fee_level', $includeFeeLevels) ) {
+            $feeLevelClause    = " ,participant.fee_level, participant.fee_amount, contact.display_name ";
+            $displaynameClause = " LEFT JOIN civicrm_contact contact ON participant.contact_id = contact.id "; 
+        }
+        
         $query = "
-  SELECT  participant.id {$statusClause}
+  SELECT  participant.id {$feeLevelClause}
     FROM  civicrm_participant participant
+    {$displaynameClause}
    WHERE  {$where}"; 
         
         $dao = CRM_Core_DAO::executeQuery( $query );
-        $cnt = 1;
-        while ( $dao->fetch( ) ) {
-            $additionalParticipantIds[$cnt] = $dao->id;
-            $cnt++;
+        if ( !$includeFeeLevels ) {
+            $cnt = 1;
+            while ( $dao->fetch( ) ) {
+                $additionalParticipantIds[$cnt] = $dao->id;
+                $cnt++;
+            }
+        } else {
+            if ( CRM_Utils_Array::value('fee_level', $includeFeeLevels) ) {
+                while ( $dao->fetch( ) ) {
+                    $additionalParticipantIds[$dao->id] = array( 'label'  => $dao->amount_level.' - '.$dao->display_name, 
+                                                                 'amount' => $dao->fee_amount   );
+                }   
+            } elseif (  CRM_Utils_Array::value('priceset', $includeFeeLevels) ) {
+                require_once 'CRM/Price/BAO/LineItem.php';
+                while ( $dao->fetch( ) ) {
+                    $additionalParticipantIds[] = CRM_Price_BAO_LineItem::getLineItems( $dao->id );  
+                }  
+            }
         }
         
         return $additionalParticipantIds;
@@ -897,7 +927,8 @@ UPDATE  civicrm_participant
      * @access public
      * @static
      */
-    static function transitionParticipants( $participantIds, $toStatusId, $fromStatusId = null, $returnResult = false )
+    static function transitionParticipants( $participantIds, $toStatusId, 
+                                            $fromStatusId = null, $returnResult = false, $skipCascadeRule = false )
     {   
         if ( !is_array( $participantIds ) || empty( $participantIds ) || !$toStatusId ) {
             return;
@@ -907,11 +938,17 @@ UPDATE  civicrm_participant
         $allParticipantIds = $primaryANDAdditonalIds = array( );
         foreach ( $participantIds as $id ) {
             $allParticipantIds[] = $id;
-            if ( self::isPrimaryParticipant( $id ) &&
-                 self::getValidAdditionalIds( $id, $fromStatusId, $toStatusId ) ) {
-                $additionalIds = self::getAdditionalParticipantIds( $id );
-                $primaryANDAdditonalIds[$id] = $additionalIds;
-                $allParticipantIds = array_merge( $allParticipantIds, $additionalIds );
+            if ( self::isPrimaryParticipant( $id ) ) {
+                //filter additional as per status transition rules, CRM-5403
+                if ( $skipCascadeRule ) {
+                    $additionalIds = self::getAdditionalParticipantIds( $id );
+                } else {
+                    $additionalIds = self::getValidAdditionalIds( $id, $fromStatusId, $toStatusId );
+                }
+                if ( !empty( $additionalIds ) ) {
+                    $allParticipantIds = array_merge( $allParticipantIds, $additionalIds );
+                    $primaryANDAdditonalIds[$id] = $additionalIds;
+                }
             }
         }
         

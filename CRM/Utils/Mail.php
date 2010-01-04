@@ -39,7 +39,7 @@ class CRM_Utils_Mail
     static function send( &$params ) {
         require_once 'CRM/Core/BAO/MailSettings.php';
         $returnPath = CRM_Core_BAO_MailSettings::defaultReturnPath();
-        
+        $from       = CRM_Utils_Array::value( 'from', $params );
         if ( ! $returnPath ) {
             $returnPath = self::pluckEmailFromHeader($from);
         }
@@ -50,7 +50,7 @@ class CRM_Utils_Mail
         CRM_Utils_Hook::alterMailParams( $params );
 
         // check if any module has aborted mail sending
-        if ( $params['abortMailSend'] ||
+        if ( CRM_Utils_Array::value( 'abortMailSend', $params ) ||
              ! CRM_Utils_Array::value( 'toEmail', $params ) ) {
             return false;;
         }
@@ -67,7 +67,7 @@ class CRM_Utils_Mail
         $headers['Content-Type']              = $htmlMessage ? 'multipart/mixed; charset=utf-8' : 'text/plain; charset=utf-8';
         $headers['Content-Disposition']       = 'inline';  
         $headers['Content-Transfer-Encoding'] = '8bit';  
-        $headers['Return-Path']               = $params['returnPath'];
+        $headers['Return-Path']               = CRM_Utils_Array::value( 'returnPath', $params );
         $headers['Reply-To']                  = CRM_Utils_Array::value( 'replyTo', $params, $from );
         $headers['Date']                      = date('r');
 

@@ -214,6 +214,8 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             require_once "CRM/Contribute/BAO/Contribution.php";
             CRM_Contribute_BAO_Contribution::getValues( $contributionParams, $defaults, $contributionIds );
             
+            list( $defaults['receive_date'] ) = CRM_Utils_Date::setDateDefaults( $defaults['receive_date'] );
+            
             // Contribution::getValues() over-writes the membership record's source field value - so we need to restore it.
             if ( CRM_Utils_Array::value( 'membership_source', $defaults ) ) {
                 $defaults['source'] = $defaults['membership_source'];
@@ -869,6 +871,11 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                 }
                 // suppress form values in template.
                 $this->assign( 'cancelled', $cancelled );
+                
+                // here we might updated dates, so get from object.
+                foreach ( $calcDates as $date => &$val ) {
+                    if ( $membership->$date ) $val = $membership->$date;
+                }
             } else {
                 $membership =& CRM_Member_BAO_Membership::create( $params, $ids );
             }

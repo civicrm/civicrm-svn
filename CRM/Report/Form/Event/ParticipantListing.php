@@ -272,8 +272,13 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                     }
                 }
             }
-            $this->_groupBy = "ORDER BY " . implode( ', ', $this->_groupBy ) ;
         } 
+        
+        if ( !empty( $this->_groupBy ) ) {
+            $this->_groupBy = "ORDER BY " . implode( ', ', $this->_groupBy )  . ", {$this->_aliases['civicrm_contact']}.sort_name";
+        } else {
+            $this->_groupBy = "ORDER BY {$this->_aliases['civicrm_contact']}.sort_name";
+        }
     }
 
     function postProcess( ) {

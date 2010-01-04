@@ -588,4 +588,14 @@ class CRM_Utils_Hook {
                   '::invoke( 1, $params, $null, $null, $null, $null, \'civicrm_alterMailParams\' );' );
     }
 
+    static function config( &$config ) {
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+        $null =& CRM_Core_DAO::$_nullObject;
+
+        return   
+            eval( 'return ' .
+                  $config->userHookClass .
+                  '::invoke( 1, $config, $null, $null, $null, $null, \'civicrm_config\' );' );
+    }
+
 }

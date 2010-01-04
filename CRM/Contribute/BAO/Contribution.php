@@ -1207,8 +1207,8 @@ LEFT JOIN  civicrm_contribution contribution ON ( componentPayment.contribution_
                  $dao->contribution_status_id == $pendingStatusId &&
                  strpos( $dao->source, $source ) !== false ) {
                 $contributionId = $dao->contribution_id;
+                $dao->free( );
             }
-            $dao->free( );
         }
         
         return $contributionId; 

@@ -48,7 +48,7 @@ class CRM_Admin_Form_Setting_Path extends CRM_Admin_Form_Setting
      * @access public
      */
     public function buildQuickForm( ) {
-        CRM_Utils_System::setTitle(ts('Settings - Upload Directories'));
+        CRM_Utils_System::setTitle(ts('Settings - Directories'));
 
         $directories = array( 'uploadDir'           => ts( 'Temporary Files'  ),
                               'imageUploadDir'      => ts( 'Images'           ),

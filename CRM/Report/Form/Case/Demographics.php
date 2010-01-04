@@ -200,7 +200,7 @@ where (cg.extends='Contact' OR cg.extends='Individual' OR cg.extends_entity_colu
                 $curFields = array();
         	}    	
         	
-        	$curFields[$crmDAO->column_name] = array('title' => ts($crmDAO->label));
+        	$curFields[$crmDAO->column_name] = array('title' => $crmDAO->label);
         }
 		if (! empty($curFields)) {
             $this->_columns[$curTable] = array('dao' => 'CRM_Contact_DAO_Contact', // dummy DAO

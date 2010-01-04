@@ -56,6 +56,7 @@ class CRM_Contact_Form_Task_Map_Event  extends CRM_Contact_Form_Task_Map {
         $type = 'Event';
         self::createMapXML( $ids, $lid, $this, true ,$type);
         $this->assign( 'single', false );
+        $this->assign( 'skipLocationType', true );
     }
 
     function getTemplateFileName( ) {

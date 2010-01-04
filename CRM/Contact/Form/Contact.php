@@ -610,7 +610,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 if ( !empty( $invalidStreetNumbers ) ) {
                     $first = $invalidStreetNumbers[0];
                     foreach ( $invalidStreetNumbers as &$num ) $num = CRM_Contact_Form_Contact::ordinalNumber( $num );
-                    $errors["address[$first][street_number]"] = ts('The street number you entered for the %1 address block(s) is not in an expected format. Street numbers may include numeric digit(s) followed by other characters. You can still enter the complete street address (unparsed) by clicking "Edit Complete Street Address".', array( implode( ', ', $invalidStreetNumbers) ) );
+                    $errors["address[$first][street_number]"] = ts('The street number you entered for the %1 address block(s) is not in an expected format. Street numbers may include numeric digit(s) followed by other characters. You can still enter the complete street address (unparsed) by clicking "Edit Complete Street Address".', array(1 => implode(', ', $invalidStreetNumbers)));
                 }
             }
         }

@@ -203,3 +203,9 @@
 #crm-container .ui-sortable-placeholder * { 
     visibility: hidden; 
 }
+
+#crm-container .delete-dashlet {
+    display: block;
+    float: right;
+    cursor: pointer;
+}

@@ -538,8 +538,10 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
             $dao->free();
 
             // delete the main contact's file
-            CRM_Core_BAO_File::delete($fileIds[$this->_cid], $this->_cid, $customId);
-
+            if ( !empty($fileIds[$this->_cid]) ) {
+                CRM_Core_BAO_File::delete($fileIds[$this->_cid], $this->_cid, $customId);
+            }
+            
             // move the other contact's file to main contact
             $sql = "UPDATE {$tableName} SET {$columnName} = {$fileIds[$this->_oid]} WHERE entity_id = {$this->_cid}";
             CRM_Core_DAO::executeQuery($sql, CRM_Core_DAO::$_nullArray);

@@ -125,7 +125,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
     {
         $errors = array();
 
-        if ( !$self->_isGroupEmpty ) {
+        if ( !$self->_isGroupEmpty && CRM_Utils_Array::value(1, $fields['extends']) ) {
             $updates = array_diff($self->_subtypes, array_intersect($self->_subtypes, $fields['extends'][1]));
             if ( ! empty($updates) ) {
                 $errors['extends'] = ts("Removing any existing subtypes is not allowed at this moment. However you can add more subtypes.");

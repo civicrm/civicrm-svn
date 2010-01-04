@@ -104,11 +104,11 @@ class CRM_Utils_OpenFlashChart
         // get the currency.
         require_once 'CRM/Utils/Money.php';
         $config   =& CRM_Core_Config::singleton();
-        $symbol   = substr( CRM_Utils_Money::Format( 1 ), 0, 1 );
+        $symbol   = $config->defaultCurrencySymbol;
         $currency = $config->defaultCurrency;
         
         // set the tooltip.
-        $bar->set_tooltip( "Amount is $symbol#val#" );
+        $bar->set_tooltip( "Amount is $symbol #val#" );
         
         // create x axis label obj.
         $xLabels = new x_axis_labels( );
@@ -189,7 +189,7 @@ class CRM_Utils_OpenFlashChart
         //get the currency.
         require_once 'CRM/Utils/Money.php';
         $config   =& CRM_Core_Config::singleton();
-        $symbol   = substr( CRM_Utils_Money::Format( 1 ), 0, 1 );
+        $symbol   = $config->defaultCurrencySymbol;
         
         $pie = new pie();
         $pie->radius( 100 );
@@ -204,7 +204,7 @@ class CRM_Utils_OpenFlashChart
         $pie->add_animation( new pie_bounce( 2 ) );
         
         // set the tooltip.
-        $pie->set_tooltip( "Contribution amount is $symbol#val# of $symbol#total# <br>#percent# of 100%" );
+        $pie->set_tooltip( "Contribution amount is $symbol #val# of $symbol #total# <br>#percent# of 100%" );
         
         // set colours.
         $pie->set_colours( self::$_colours );
@@ -273,6 +273,9 @@ class CRM_Utils_OpenFlashChart
         
         // rotate the x labels.
         $chartData['xLabelAngle'] = CRM_Utils_Array::value( 'xLabelAngle', $rows, 20 );
+        //legend
+        $chartData['xname']       = CRM_Utils_Array::value( 'xname', $rows );
+        $chartData['yname']       = CRM_Utils_Array::value( 'yname', $rows );
         
         // carry some chart params if pass.
         foreach ( array( 'xSize', 'ySize', 'divName' ) as $f ) {

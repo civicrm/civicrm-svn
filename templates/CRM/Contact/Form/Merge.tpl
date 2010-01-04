@@ -16,7 +16,13 @@
   {foreach from=$rows item=row key=field}
      <tr class="{cycle values="odd-row,even-row"}">
         <td>{$row.title}</td>
-        <td>{$row.other}</td>
+        <td>
+           {if !is_array($row.other)}
+               {$row.other}
+           {else}
+               {$row.other.fileName}
+           {/if} 
+        </td>
         <td style='white-space: nowrap'>{if $form.$field}=={$form.$field.html}==&gt;{/if}</td>
         <td>
             {if $row.title|substr:0:5 == "Email"   OR 

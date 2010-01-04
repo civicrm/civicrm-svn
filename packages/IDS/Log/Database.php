@@ -67,7 +67,7 @@ require_once 'IDS/Log/Interface.php';
  * @author    Christian Matthies <ch0012@gmail.com>
  * @author    Mario Heiderich <mario.heiderich@gmail.com>
  * @author    Lars Strojny <lars@strojny.net>
- * @copyright 2007 The PHPIDS Group
+ * @copyright 2007-2009 The PHPIDS Group
  * @license   http://www.gnu.org/licenses/lgpl.html LGPL
  * @version   Release: $Id:Database.php 517 2007-09-15 15:04:13Z mario $
  * @link      http://php-ids.org/
@@ -206,10 +206,11 @@ class IDS_Log_Database implements IDS_Log_Interface
      * an array.
      *
      * @param mixed $config IDS_Init | array
+     * @param string the class name to use
      * 
      * @return object $this
      */
-    public static function getInstance($config)
+    public static function getInstance($config, $classname = 'IDS_Log_Database')
     {
         if ($config instanceof IDS_Init) {
             $wrapper = $config->config['Logging']['wrapper'];
@@ -218,7 +219,7 @@ class IDS_Log_Database implements IDS_Log_Interface
         }
 
         if (!isset(self::$instances[$wrapper])) {
-            self::$instances[$wrapper] = new IDS_Log_Database($config);
+            self::$instances[$wrapper] = new $classname($config);
         }
 
         return self::$instances[$wrapper];

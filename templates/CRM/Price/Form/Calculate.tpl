@@ -26,7 +26,7 @@ cj("input,#priceset select,#priceset").each(function () {
   case 'checkbox':
     
     //default calcution of element. 
-    var option = cj(this).attr('price').split('_');
+    eval( 'var option = ' + cj(this).attr('price') ) ;
     ele        = option[0];
     addprice   = parseFloat( option[1] );    
     
@@ -53,9 +53,9 @@ cj("input,#priceset select,#priceset").each(function () {
   case 'radio':
 
     //default calcution of element. 
-    var option = cj(this).attr('price').split('-');
+    eval( 'var option = ' + cj(this).attr('price') ); 
     ele        = option[0];
-    addprice   = parseFloat( option[1] );   
+    addprice   = parseFloat( option[1] );
     if ( ! price[ele] ) {
       price[ele] = 0;
     }
@@ -80,7 +80,7 @@ cj("input,#priceset select,#priceset").each(function () {
     //default calcution of element. 
     var textval = parseFloat( cj(this).val() );
     if ( textval ) {
-      var option  = cj(this).attr('price').split('_');
+      eval( 'var option = '+ cj(this).attr('price') );
       ele         = option[0];
       if ( ! price[ele] ) {
        price[ele] = 0;
@@ -108,7 +108,7 @@ cj("input,#priceset select,#priceset").each(function () {
 	price[ele] = 0;
       }
       eval( 'var selectedText = ' + cj(this).attr('price') );
-      var addprice = parseFloat( cj(selectedText).attr( cj(this).val( ) ) );
+      var addprice = parseFloat( selectedText[cj(this).val( )] );
     if ( addprice ) {
 	totalfee   = parseFloat(totalfee) + addprice - parseFloat(price[ele]);
 	price[ele] = addprice;
@@ -140,8 +140,8 @@ cj("input,#priceset select,#priceset").each(function () {
 
 //calculation for text box.
 function calculateText( object ) {
-  var option  = cj(object).attr('price').split('_');
-  ele         = option[0];
+  eval( 'var option = ' + cj(object).attr('price') );
+  ele = option[0];
   if ( ! price[ele] ) {
     price[ele] = 0;
   }
@@ -160,15 +160,14 @@ function calculateText( object ) {
 
 //display calculated amount
 function display( totalfee ) {
-  if ( totalfee > 0 ) {
-    document.getElementById('pricelabel').style.display = "block";
+    document.getElementById('pricelabel').style.display = ( totalfee == 0 ) ? "none" : "block";
     var totalEventFee  = formatMoney( totalfee, 2, seperator, thousandMarker);
     document.getElementById('pricevalue').innerHTML = "<b>"+symbol+"</b> "+totalEventFee;
     scriptfee   = totalfee;
     scriptarray = price;
-  } else{
-    document.getElementById('pricelabel').style.display = "none";
-  }
+    
+    ( totalfee < 0 ) ? cj('table#pricelabel').addClass('disabled') : cj('table#pricelabel').removeClass('disabled');
+    
 }
 
 //money formatting/localization

@@ -176,7 +176,9 @@ class HTML_QuickForm_TinyMCE extends HTML_QuickForm_textarea
         }];
  
         tinyMCE.settings = configArray[0];
-        tinyMCE.execCommand("mceAddControl", true, "' . $this->_attributes['id'] .'");
+        //remove the control if element is already having 
+        tinyMCE.execCommand("mceRemoveControl", false,"' . $this->_attributes['id'] .'");
+        tinyMCE.execCommand("mceAddControl"   , true, "' . $this->_attributes['id'] .'");
         
 </script>' );
                         

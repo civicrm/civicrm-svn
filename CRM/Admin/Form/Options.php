@@ -283,10 +283,16 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
             $params = $ids = array( );
             $params = $this->exportValues();
            
-            //set defaultGreeting option in params as per contact type 
-            if ( CRM_Utils_Array::value( 'contactOptions', $params ) ) {
-                $params['filter']          = CRM_Utils_Array::value( 'contactOptions', $params );
-                $params['defaultGreeting'] = 1;
+            // allow multiple defaults within group.
+            $allowMultiDefaults = array('email_greeting', 'postal_greeting', 'addressee', 'from_email_address');
+            if ( CRM_Utils_Array::value( 'is_default', $params ) && 
+                 in_array( $this->_gName,  $allowMultiDefaults ) ) {
+                if ( $this->_gName == 'from_email_address' ) {
+                    $params['reset_default_for'] = array( 'domain_id' => CRM_Core_Config::domainID( ) );
+                } else if ( $filter = CRM_Utils_Array::value( 'contactOptions', $params ) )  {
+                    $params['filter'] = $filter;
+                    $params['reset_default_for'] = array( 'filter' => "0, ". $params['filter'] );
+                }
             }
             
             $groupParams = array( 'name' => ($this->_gName) );

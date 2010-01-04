@@ -64,7 +64,7 @@ VALUES(@option_group_id_cdt, {localize}'Participant Event Type'{/localize}, '3',
     INSERT INTO civicrm_dashboard 
         ( domain_id, {localize field='label'}`label`{/localize}, url, content, permission, permission_operator, column_no, is_minimized, is_fullscreen, is_active, weight, created_date ) 
     VALUES
-        ( @domain_id, {localize }'Activities'{/localize}, 'civicrm/dashlet/activity&reset=1&snippet=4', NULL, NULL, NULL, 0, 0,'1', '1', NULL, 1 );
+        ( @domain_id, {localize }'Activities'{/localize}, 'civicrm/dashlet/activity&reset=1&snippet=4', NULL, NULL, NULL, 0, 0,'1', '1', NULL, NULL );
 
     CREATE TABLE civicrm_dashboard_contact (
         id int(10)    unsigned NOT NULL auto_increment,

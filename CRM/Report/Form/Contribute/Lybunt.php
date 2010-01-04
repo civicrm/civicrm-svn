@@ -421,22 +421,24 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
         $current_year             = $this->_params['yid_value'];
         $previous_year            = $current_year - 1 ;
         $interval[$previous_year] = $previous_year ;
-        $interval['life_time']    = 'life_time' ; 
+        $interval['life_time']    = 'Life Time' ; 
         
         foreach ( $rows as $key => $row ) {
             $display['life_time']                   =  CRM_Utils_Array::value('life_time', $display) + $row[ 'civicrm_life_time_total' ];           
             $display[ $previous_year ]              =  CRM_Utils_Array::value($previous_year, $display) + $row [ $previous_year ];                    
         }
-        
+
+        $config  = CRM_Core_Config::Singleton();
         $graphRows['value'] = $display;
         $chartInfo          = array( 'legend' => ts('Lybunt Report'),
-                                     'xname'  => ts('Amount'),
-                                     'yname'  => ts('Year')
+                                     'xname'  => ts('Year'),
+                                     'yname'  => ts("Amount ({$config->defaultCurrency})")
                                      );
         if ( $this->_params['charts'] ) {
             // build chart.
             require_once 'CRM/Utils/OpenFlashChart.php';
             CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], $interval, $chartInfo );
+            $this->assign( 'chartType', $this->_params['charts'] );
         }
     }
  

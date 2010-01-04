@@ -113,7 +113,7 @@ class CRM_Contact_Form_Edit_Individual {
         $form->addRule('home_URL', ts('Enter a valid web location beginning with \'http://\' or \'https://\'. EXAMPLE: http://www.mysite.org/'), 'url');
         
         //Current Employer Element
-        $employerDataURL =  CRM_Utils_System::url( 'civicrm/ajax/search', 'org=1', false, null, false );
+        $employerDataURL =  CRM_Utils_System::url( 'civicrm/ajax/contactlist', 'org=1', false, null, false );
         $form->assign('employerDataURL',$employerDataURL );
         
         $form->addElement('text', 'current_employer', ts('Current Employer'), '' );

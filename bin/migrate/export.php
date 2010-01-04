@@ -69,10 +69,28 @@ class bin_migrate_export {
                                             'scope'    => 'ProfileFields',
                                             'required' => false,
                                             'map'      => array( ) ),
+                   'profileJoin'  => array( 'data'     => null           ,
+                                            'name'     => 'ProfileJoin'  ,
+                                            'scope'    => 'ProfileJoins',
+                                            'required' => false,
+                                            'map'      => array( ) ),
                    );
     }
 
     function run( ) {
+        // fetch the option group / values for
+        // activity type and event_type
+        
+        $sql = "
+SELECT distinct(g.id), g.*
+FROM   civicrm_option_group g
+WHERE  g.name IN ( 'activity_type', 'event_type' )
+";
+        $this->fetch( 'optionGroup',
+                      'CRM_Core_DAO_OptionGroup',
+                      $sql,
+                      array( 'id', 'name' ) );
+
         $sql = "
 SELECT distinct(g.id), g.*
 FROM   civicrm_option_group g,
@@ -85,10 +103,24 @@ AND    cg.is_active = 1
         $this->fetch( 'optionGroup',
                       'CRM_Core_DAO_OptionGroup',
                       $sql,
-                      array( 'id', 'label' ) );
+                      array( 'id', 'name' ) );
 
         $sql = "
-SELECT v.*
+SELECT v.*, g.name as prefix
+FROM   civicrm_option_value v,
+       civicrm_option_group g
+WHERE  v.option_group_id = g.id
+AND    g.name IN ( 'activity_type', 'event_type' )
+";
+
+        $this->fetch( 'optionValue',
+                      'CRM_Core_DAO_OptionValue',
+                      $sql,
+                      array( 'value', 'name', 'prefix' ),
+                      array( array( 'optionGroup', 'option_group_id', 'option_group_name' ) ) );
+
+        $sql = "
+SELECT distinct(v.id), v.*, g.name as prefix
 FROM   civicrm_option_value v,
        civicrm_option_group g,
        civicrm_custom_field f,
@@ -102,8 +134,8 @@ AND    cg.is_active = 1
         $this->fetch( 'optionValue',
                       'CRM_Core_DAO_OptionValue',
                       $sql,
-                      null,
-                      array( array( 'optionGroup', 'option_group_id', 'option_group_label' ) ) );
+                      array( 'id', 'name', 'prefix' ),
+                      array( array( 'optionGroup', 'option_group_id', 'option_group_name' ) ) );
 
         $sql = "
 SELECT cg.*
@@ -113,7 +145,7 @@ WHERE  cg.is_active = 1
         $this->fetch( 'customGroup',
                       'CRM_Core_DAO_CustomGroup',
                       $sql,
-                      array( 'id', 'title' ) );
+                      array( 'id', 'name' ) );
 
         $sql = "
 SELECT f.*
@@ -126,20 +158,32 @@ AND    cg.is_active = 1
                       'CRM_Core_DAO_CustomField',
                       $sql,
                       null,
-                      array( array( 'optionGroup', 'option_group_id', 'option_group_label' ),
-                             array( 'customGroup', 'custom_group_id', 'custom_group_title' ) ) );
+                      array( array( 'optionGroup', 'option_group_id', 'option_group_name' ),
+                             array( 'customGroup', 'custom_group_id', 'custom_group_name' ) ) );
 
         $this->fetch( 'profileGroup',
                       'CRM_Core_DAO_UFGroup',
                       null,
-                      array( 'id', 'title' ),
+                      array( 'id', 'name'),
                       null );
 
         $this->fetch( 'profileField',
                       'CRM_Core_DAO_UFField',
                       null,
                       null,
-                      array( array( 'profileGroup', 'uf_group_id', 'profile_group_title' ) ) );
+                      array( array( 'profileGroup', 'uf_group_id', 'profile_group_name' ) ) );
+
+        $sql = "
+SELECT *
+FROM   civicrm_uf_join
+WHERE  entity_table IS NULL
+AND    entity_id    IS NULL
+";
+        $this->fetch( 'profileJoin',
+                      'CRM_Core_DAO_UFJoin',
+                      $sql,
+                      null,
+                      array( array( 'profileGroup', 'uf_group_id', 'profile_group_name' ) ) );
 
         $buffer  = '<?xml version="1.0" encoding="iso-8859-1" ?>';
         $buffer .= "\n\n<CustomData>\n";
@@ -179,7 +223,11 @@ AND    cg.is_active = 1
                                                                  $this->_xml[$groupName]['name'],
                                                                  $additional );
             if ( $map ) {
-                $this->_xml[$groupName]['map'][$dao->{$map[0]}] = $dao->{$map[1]};
+                if ( isset( $map[2] ) ) {
+                    $this->_xml[$groupName]['map'][$dao->{$map[2]} . '.' . $dao->{$map[0]}] = $dao->{$map[1]};
+                } else {
+                    $this->_xml[$groupName]['map'][$dao->{$map[0]}] = $dao->{$map[1]};
+                }
             }
         }
         
@@ -197,10 +245,30 @@ AND    cg.is_active = 1
             }
             if ( isset( $object->$name ) &&
                  $object->$name !== null ) {
-                $value = str_replace( CRM_Core_DAO::VALUE_SEPARATOR,
-                                      ":;:;:;",
-                                      $object->$name );
-                $xml .= "\n      <$name>$value</$name>";
+                // hack for extends_entity_column_value
+                if ( $name == 'extends_entity_column_value' ) {
+                    if ( $object->extends == 'Event' ||
+                         $object->extends == 'Activity' ) {
+                        $key = ( $object->extends == 'Event' ) ? 'event_type' : 'activity_type';
+                        $xml .= "\n      <extends_entity_column_value_option_group>$key</extends_entity_column_value_option_group>";
+                        $types = explode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                          substr( $object->$name, 1, -1 ) );
+                        $value = array( );
+                        foreach ( $types as $type ) {
+                            $values[] = $this->_xml['optionValue']['map']["$key.{$type}"];
+                        }
+                        $value = implode( ',', $values );
+                        $xml .= "\n      <extends_entity_column_value_option_value>$value</extends_entity_column_value_option_value>";
+                    } else {
+                        echo "This extension: {$object->extends} is not yet handled";
+                        exit( );
+                    }
+                } else {
+                    $value = str_replace( CRM_Core_DAO::VALUE_SEPARATOR,
+                                          ":;:;:;",
+                                          $object->$name );
+                    $xml .= "\n      <$name>$value</$name>";
+                }
             }
         }
         if ( $additional ) {

@@ -18,7 +18,7 @@
 
     {if ($instanceForm and $rows) OR $instanceFormError} {* settings section starts *}
         <div id="id_{$instanceForm}_show" class="section-hidden section-hidden-border">
-            <a href="#" onclick="hide('id_{$instanceForm}_show'); show('id_{$instanceForm}'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a>
+            <a href="#" onclick="hide('id_{$instanceForm}_show'); show('id_{$instanceForm}'); {if $updateReportButton} hide('update-button');{/if} return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a>
             <label>{if $mode eq 'template'}{ts}Create Report{/ts}{else}{ts}Report Settings{/ts}{/if}</label>
             <br />
         </div>
@@ -26,24 +26,22 @@
         <div id="id_{$instanceForm}">
             <fieldset>
                 <legend>
-                    <a href="#" onclick="hide('id_{$instanceForm}'); show('id_{$instanceForm}_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{if $mode eq 'template'}{ts}Create Report{/ts}{else}{ts}Report Settings{/ts}{/if}
+                    <a href="#" onclick="hide('id_{$instanceForm}'); show('id_{$instanceForm}_show'); {if $updateReportButton} show('update-button'); {/if} return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{if $mode eq 'template'}{ts}Create Report{/ts}{else}{ts}Report Settings{/ts}{/if}
                 </legend>
                 <div id="instanceForm">
                     {include file="CRM/Report/Form/Instance.tpl"}
                     {assign var=save value="_qf_"|cat:$form.formName|cat:"_submit_save"}
-                    {if !$updateReportButton}
                         <div>
                             <br />
                             {$form.$save.html}
                         </div>
-                    {/if}
                 </div>
             </fieldset>
         </div>
     {/if} {* settings section ends *}
     
     {if $updateReportButton}
-        <div class="section-hidden-border" style="margin:-5px 0 5px 5px;">        
+        <div id="update-button" class="section-hidden-border" style="margin:-5px 0 5px 5px;">        
             &nbsp;&nbsp;{$form.$save.html}            
         </div>
     {/if}

@@ -74,8 +74,8 @@ class HTML_QuickForm_CKeditor extends HTML_QuickForm_textarea
                     editor.on( 'key', function( evt ){
                         global_formNavigate = false;
                     } );
-                    CKEDITOR.config.width  = '".$this->width."';
-                    CKEDITOR.config.height = '".$this->height."';
+                    editor.config.width  = '".$this->width."';
+                    editor.config.height = '".$this->height."';
                 }); 
             </script>";
             return $html;

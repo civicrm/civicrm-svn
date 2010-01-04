@@ -450,22 +450,11 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
 			}
         } else {
             $defaults[$this->_participantId]['record_contribution'] = 0;
-            $recordContribution = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_ParticipantPayment', 
-                                                               $defaults[$this->_participantId]['id'], 
-                                                               'contribution_id', 
-                                                               'participant_id' );
-            
-            //contribution record exists for this participation
-            if ( $recordContribution ) {
-                foreach( array('contribution_type_id', 'payment_instrument_id','contribution_status_id', 'receive_date' ) 
-                         as $field ) {
-                    $defaults[$this->_participantId][$field] =  CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution', 
-                                                                                  $recordContribution, $field );
-                }
-            }
+
             if ( $defaults[$this->_participantId]['participant_is_pay_later'] ) {
                 $this->assign( 'participant_is_pay_later', true );
             }
+
             $this->assign( 'participant_status_id', $defaults[$this->_participantId]['participant_status_id'] );
 			$roleID  = $defaults[$this->_participantId]['participant_role_id'];
 			$eventID = $defaults[$this->_participantId]['event_id'];
@@ -651,13 +640,21 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
         
         // CRM-4395
         $checkCancelledJs = array('onchange' => "return sendNotification( );");
+        $confirmJS = null;
         if ( $this->_onlinePendingContributionId ) {
             $cancelledparticipantStatusId  = array_search( 'Cancelled',CRM_Event_PseudoConstant::participantStatus() );
             $cancelledContributionStatusId = array_search( 'Cancelled', 
                                                            CRM_Contribute_PseudoConstant::contributionStatus(null, 'name') ); 
             $checkCancelledJs = array('onchange' => 
                                       "checkCancelled( this.value, {$cancelledparticipantStatusId},{$cancelledContributionStatusId});");
+            
+            $participantStatusId  = array_search( 'Pending from pay later', 
+                                                  CRM_Event_PseudoConstant::participantStatus() );
+            $contributionStatusId = array_search( 'Completed', 
+                                                  CRM_Contribute_PseudoConstant::contributionStatus(null, 'name') ); 
+            $confirmJS = array( 'onclick' => "return confirmStatus( {$participantStatusId}, {$contributionStatusId} );" );
         }
+        
         $this->add( 'select', 'status_id' , ts( 'Participant Status' ),
                     array( '' => ts( '- select -' ) ) + CRM_Event_PseudoConstant::participantStatus( null, null, 'label' ),
                     true, 
@@ -669,15 +666,6 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
         
         $noteAttributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Note' );
         $this->add('textarea', 'note', ts('Notes'), $noteAttributes['note']);
-        
-        $confirmJS = null;
-        if ( $this->_onlinePendingContributionId ) {
-            $participantStatusId  = array_search( 'Pending from pay later', 
-                                                  CRM_Event_PseudoConstant::participantStatus() );
-            $contributionStatusId = array_search( 'Completed', 
-                                                  CRM_Contribute_PseudoConstant::contributionStatus(null, 'name') ); 
-            $confirmJS = array( 'onclick' => "return confirmStatus( {$participantStatusId}, {$contributionStatusId} );" );
-        }
         
         $this->addButtons(array( 
                                 array ( 'type'      => 'upload',
@@ -771,8 +759,15 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
                 $errorMsg['_qf_default'] = ts( "Event Fee(s) can not be less than zero. Please select the options accordingly" );
             }
         }
-   
-        return empty( $errorMsg ) ? true : $errorMsg;
+
+        // do the amount validations.
+        if ( !CRM_Utils_Array::value( 'total_amount', $values ) && empty( $self->_values['line_items'] ) ) {
+            if ( $priceSetId = CRM_Utils_Array::value( 'priceSetId', $values ) ) {
+                require_once 'CRM/Price/BAO/Field.php';
+                CRM_Price_BAO_Field::priceSetValidation( $priceSetId, $values, $errorMsg );
+            }
+        }
+        return CRM_Utils_Array::crmIsEmptyArray( $errorMsg ) ? true : $errorMsg;
     }    
     
     /** 
@@ -790,84 +785,92 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
         
         // get the submitted form values.  
         $params = $this->controller->exportValues( $this->_name );
-        
+             
         // set the contact, when contact is selected
         if ( CRM_Utils_Array::value('contact_select_id', $params ) ) {
             $this->_contactID = CRM_Utils_Array::value('contact_select_id', $params);
         }
         
-        $config =& CRM_Core_Config::singleton();        
-        //check if discount is selected
-        if ( CRM_Utils_Array::value( 'discount_id', $params ) ) {
-            $discountId = $params['discount_id'];
-        } else {
-            $params['discount_id'] = 'null';
-            $discountId = null;
+        if ( $this->_participantId ) {
+            $params['id'] = $this->_participantId;
         }
 
+        $config =& CRM_Core_Config::singleton();        
         if ( $this->_isPaidEvent ) {
             
-            //lets carry currency, CRM-4453
-            $params['fee_currency'] = $config->defaultCurrency;
-            
-            // fix for CRM-3088
-            if ( $discountId &&
-                 ! empty( $this->_values['discount'][$discountId] ) ) {
-                $params['amount_level'] = $this->_values['discount'][$discountId][$params['amount']]['label'];
-                $params['amount']       = $this->_values['discount'][$discountId][$params['amount']]['value'];
-                $this->assign( 'amount_level', $params['amount_level'] );
-
-            } else if ( ! isset( $params['priceSetId'] ) && CRM_Utils_Array::value('amount', $params ) ) {
-                $params['amount_level'] = $this->_values['fee'][$params['amount']]['label'];
-                $params['amount']       = $this->_values['fee'][$params['amount']]['value'];
-                $this->assign( 'amount_level', $params['amount_level'] );
-
-            } else {
-                if ( ! $this->_online ) {
-                    $lineItem = array( );
-                    if ( $this->_action & CRM_Core_Action::UPDATE ) {
-                        require_once 'CRM/Price/BAO/LineItem.php';
-                        $lineItem[0] = CRM_Price_BAO_LineItem::getLineItems( $this->_participantId );
-                    } elseif ( $this->_action & CRM_Core_Action::ADD ) {
-                        CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], 
-                                                          $params, $lineItem[0] );
-                    }
-                    $this->set( 'lineItem', $lineItem );
-                    $this->assign ( 'lineItem', empty($lineItem[0])?false:$lineItem );
-                    $this->_lineItem = $lineItem;
+            $contributionParams           = array( );
+            $lineItem                     = array( );
+            $additionalParticipantDetails = array( );
+            if ( $this->_participantId && $this->_action & CRM_Core_Action::UPDATE ) {
+                $participantBAO     =& new CRM_Event_BAO_Participant( );
+                $participantBAO->id = $this->_participantId;
+                $participantBAO->find(true);
+                $contributionParams['total_amount'] = $participantBAO->fee_amount;
+               
+                $params['discount_id'] = null;
+                //re-enter the values for UPDATE mode
+                $params['fee_level'  ] = $params['amount_level'] = $participantBAO->fee_level;
+                $params['fee_amount' ] = $participantBAO->fee_amount;
+                if ( isset($params['priceSetId']) ) {
+                    require_once 'CRM/Price/BAO/LineItem.php';
+                    $lineItem[0] = CRM_Price_BAO_LineItem::getLineItems( $this->_participantId );   
                 }
+                //also add additional participant's fee level/priceset
+                if ( CRM_Event_BAO_Participant::isPrimaryParticipant($this->_participantId) ) {
+                    if ( !isset($params['priceSetId']) ) {
+                        $additionalParticipantDetails = CRM_Event_BAO_Participant::getAdditionalParticipantIds( $this->_participantId, true, null, array( 'fee_level' => 1) );
+                        
+                    } else {
+                        $additionalParticipantDetails = CRM_Event_BAO_Participant::getAdditionalParticipantIds( $this->_participantId, true, null, array( 'priceset' => 1) ); 
+                    }
+                }
+            } else {
+                
+                //check if discount is selected
+                if ( CRM_Utils_Array::value( 'discount_id', $params ) ) {
+                    $discountId = $params['discount_id'];
+                } else {
+                    $discountId = $params['discount_id'] = 'null';
+                }
+                
+                //lets carry currency, CRM-4453
+                $params['fee_currency'] = $config->defaultCurrency;
+                // fix for CRM-3088
+                if ( $discountId &&
+                     ! empty( $this->_values['discount'][$discountId] ) ) {
+                    $params['amount_level'] = $this->_values['discount'][$discountId][$params['amount']]['label'];
+                    $params['amount']       = $this->_values['discount'][$discountId][$params['amount']]['value'];
+                    
+                } else if ( ! isset( $params['priceSetId'] ) && CRM_Utils_Array::value('amount', $params ) ) {
+                    $params['amount_level'] = $this->_values['fee'][$params['amount']]['label'];
+                    $params['amount']       = $this->_values['fee'][$params['amount']]['value'];
+                    
+                } else {
+                    CRM_Price_BAO_Set::processAmount( $this->_values['fee']['fields'], 
+                                                      $params, $lineItem[0] );
+                }
+                
+                $params['fee_level']                = $params['amount_level'];
+                $contributionParams['total_amount'] = $params['amount'];
+                //fix for CRM-3086
+                $params['fee_amount'] = $params['amount'];
             }
             
-            $params['fee_level']                = $params['amount_level'];
-            $contributionParams                 = array( );
-            $contributionParams['total_amount'] = $params['amount'];
-        }
-       
-        //fix for CRM-3086
-        $params['fee_amount'] = $params['amount'];
+            if ( isset( $params['priceSetId'] ) ) {
+                $this->set( 'lineItem', $lineItem );
+                $this->_lineItem = $lineItem;
+                $lineItem = array_merge($lineItem, $additionalParticipantDetails);
+                $this->assign ( 'lineItem', empty($lineItem[0])?false:$lineItem );
+            } else {
+                $this->assign( 'amount_level', $params['amount_level'] ); 
+            }
+        } 
+                
         $this->_params = $params;
         unset($params['amount']);
         $params['register_date'] = CRM_Utils_Date::processDate( $params['register_date'], $params['register_date_time'] );
         $params['receive_date' ] = CRM_Utils_Date::processDate( CRM_Utils_Array::value( 'receive_date', $params ) );
         $params['contact_id'   ] = $this->_contactID;
-        if ( $this->_participantId ) {
-            $params['id'] = $this->_participantId;
-        }
-        
-        $status = null;
-        if ( $this->_action & CRM_Core_Action::UPDATE ) {
-            $participantBAO     =& new CRM_Event_BAO_Participant( );
-            $participantBAO->id = $this->_participantId;
-            $participantBAO->find( );
-            while ( $participantBAO->fetch() ) {
-                $status = $participantBAO->status_id;
-                $contributionParams['total_amount'] = $participantBAO->fee_amount;
-            }
-            $params['discount_id'] = null;
-            //re-enter the values for UPDATE mode
-            $params['fee_level'  ] = $params['amount_level'] = $participantBAO->fee_level;
-            $params['fee_amount' ] = $participantBAO->fee_amount;
-        }
         
         // overwrite actual payment amount if entered
         if ( CRM_Utils_Array::value( 'total_amount', $params ) ) {
@@ -903,6 +906,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
             
             // set email for primary location.
             $fields["email-Primary"] = 1;
+            list( $this->_contributorDisplayName, $this->_contributorEmail, $this->_toDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_contactID );
             $params["email-Primary"] = $params["email-{$this->_bltID}"] = $this->_contributorEmail;
             
             $params['register_date'] = $now;
@@ -1284,10 +1288,15 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
                 if ( $this->_isPaidEvent ) {
                     // fix amount for each of participants ( for bulk mode )
                     $eventAmount = array();
+                    if ( !empty($additionalParticipantDetails) ) {
+                        $params['amount_level'] = $params['amount_level'].' - '.$this->_contributorDisplayName;
+                    }
+                    
                     $eventAmount[$num] = array( 'label'  => $params['amount_level'], 
                                                 'amount' => $params['fee_amount'] );
                     //as we are using same template for online & offline registration.
                     //So we have to build amount as array.
+                    $eventAmount = array_merge( $eventAmount, $additionalParticipantDetails );
                     $this->assign( 'amount', $eventAmount );
                 }
 

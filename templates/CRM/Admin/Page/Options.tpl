@@ -84,7 +84,9 @@
             {/if}
 	        <td>{$row.label}</td>	
 	        <td>{$row.value}</td>
-	        {if $showCounted}<td>{if $row.filter eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>{/if}
+		{if $showCounted}
+		<td class="yes-no">{if $row.filter eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
+		{/if}
             {if $showVisibility}<td>{$row.visibility_label}</td>{/if}
 	        <td>{$row.description}</td>	
 	        <td class="nowrap">{$row.order}</td>

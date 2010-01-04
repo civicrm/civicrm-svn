@@ -241,21 +241,26 @@ class CRM_Event_Form_Search extends CRM_Core_Form
             require_once 'CRM/Event/BAO/Event.php';
             
             if ( !$this->_single ) {
-                $this->addElement( 'checkbox', 'toggleSelect', null, null, array( 'onclick' => "toggleTaskAction( true ); return toggleCheckboxVals('mark_x_',this);" ) ); 
-
-                foreach ($rows as $row) { 
+                $this->addElement( 'checkbox', 
+                                   'toggleSelect', 
+                                   null, 
+                                   null, 
+                                   array( 'onclick' => "toggleTaskAction( true ); return toggleCheckboxVals('mark_x_',this);" ) ); 
+            }
+            foreach ( $rows as $row ) { 
+                if ( !$this->_single ) {
                     $this->addElement( 'checkbox', $row['checkbox'], 
                                        null, null, 
                                        array( 'onclick' => "toggleTaskAction( true ); return checkSelectedBox('" . $row['checkbox'] . "', '" . $this->getName() . "');" )
                                        ); 
-                    
-                    if ( CRM_Event_BAO_Event::usesPriceSet( $row['event_id'] ) ) {
-                        // add line item details if applicable
-                        require_once 'CRM/Price/BAO/LineItem.php';
-                        $lineItems[$participant_id] = CRM_Price_BAO_LineItem::getLineItems( $row['participant_id'] );
-                    }
+                }
+                if ( CRM_Event_BAO_Event::usesPriceSet( $row['event_id'] ) ) {
+                    // add line item details if applicable
+                    require_once 'CRM/Price/BAO/LineItem.php';
+                    $lineItems[$row['participant_id']] = CRM_Price_BAO_LineItem::getLineItems( $row['participant_id'] );
                 }
             }
+            
             $this->assign( 'lineItems', $lineItems );
 
             $total = $cancel = 0;
@@ -327,7 +332,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
 
         if ( ! empty( $_POST ) ) {
             $this->_formValues = $this->controller->exportValues($this->_name);
-        } 
+        }
         
         if ( empty(  $this->_formValues ) ) {       
             $this->_formValues = $this->controller->exportValues($this->_name);

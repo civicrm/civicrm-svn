@@ -177,6 +177,11 @@ class CRM_Dedupe_Finder
                 if (is_array($flat[$date])) $flat[$date] = CRM_Utils_Date::format($flat[$date]);
             }
         }
+        
+        if ( CRM_Utils_Array::value( 'contact_source', $flat ) ) {
+            $flat['source'] = $flat['contact_source'];
+            unset( $flat['contact_source'] );
+        }
 
         // handle preferred_communication_method
         if (array_key_exists('preferred_communication_method', $fields)) {

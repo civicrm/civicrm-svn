@@ -757,3 +757,21 @@ function civitest_civicrm_customFieldOptions($fieldID, &$options, $detailedForma
         } 
     }
 }
+
+function civitest_civicrm_config( &$config ) {
+    $civitestRoot = dirname( __FILE__ ) . DIRECTORY_SEPARATOR;
+
+    // fix php include path 
+    $include_path = $civitestRoot . PATH_SEPARATOR . get_include_path( );
+    set_include_path( $include_path );
+
+    // fix template path
+    $templateDir = $civitestRoot . 'templates' . DIRECTORY_SEPARATOR;
+    $template =& CRM_Core_Smarty::singleton( );
+    if ( is_array( $template->template_dir ) ) {
+        $template->template_dir = array( $templateDir ) + $template->template_dir;                            
+    } else {
+        $template->template_dir = array( $templateDir, $template->template_dir );
+    }
+
+}

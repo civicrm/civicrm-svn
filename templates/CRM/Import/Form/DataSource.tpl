@@ -106,9 +106,9 @@
                                                        cj("#subType").empty();                                   
 
                                                        cj("#subType").append("<option value=''>-Select-</option>");  
-                                                       for (var i = 0; i < subtype.length; i++) {
+                                                       for ( var key in  subtype ) {
                                                            // stick these new options in the subtype select 
-                                                           cj("#subType").append("<option value="+subtype[i]+">"+subtype[i]+" </option>");  
+                                                           cj("#subType").append("<option value="+key+">"+subtype[key]+" </option>");  
                                                        }
                                                    } 
                                        

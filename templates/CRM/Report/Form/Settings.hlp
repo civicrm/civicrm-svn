@@ -30,3 +30,16 @@ have access to the report). You can also prevent users from modifying the defaul
 by NOT giving them <em>access Report Criteria</em> permission. Those users will be able to run the report - but only
 with the criteria and filters that you've established for them.{/ts}
 {/htxt} 
+
+{htxt id="id-dash_avail"}
+{ts}You can make this report instance available for users to include in their CiviCRM 'Home Dashboard' by checking this box.
+Users with appropriate permissions will see the report in the 'Available Dashlets' box when they 'Configure' their dashboard.
+If you want to make a graphic version of the report available, select the desired 'View' and click 'Update Report'.
+You may want to create a set of report instances specifically for use as dashlets (and you can choose to NOT include them in the
+navigation menu if you want to distinguish these from the reports that users typically utilize in full screen mode).{/ts}
+<p>
+{ts}If you need to make a dashlet NOT available, AND remove it from existing user dashboards - you can do that
+from the 'Configure' screen on your dashboard. Click the 'x' on the right side of the dashlet's icon.{/ts}
+</p>
+{/htxt}
+ 

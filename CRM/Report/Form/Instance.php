@@ -132,7 +132,7 @@ class CRM_Report_Form_Instance {
   </head>
   <body><div id=\"crm-container\">";
 
-        $defaults['report_footer'] = $report_footer = "<p><img src=\"{$config->userFrameworkResourceURL}i/powered_by.png\"></p></div></body>
+        $defaults['report_footer'] = $report_footer = "<p><img src=\"{$config->userFrameworkResourceURL}i/powered_by.png /\"></p></div></body>
 </html>
 ";
        
@@ -201,7 +201,11 @@ class CRM_Report_Form_Instance {
             $dashletParams = array( 'label'     =>  $params['title'],
                                     'is_active' => 1,
                                     'content'   => 'NULL');
-
+                                
+            $permission = CRM_Utils_Array::value( 'permission', $params );
+            if ( $permission ) {
+                $dashletParams['permission'][] = $permission;
+            }
             unset( $params['addToDashboard'] );
         }
         

@@ -42,7 +42,8 @@ class CRM_Contact_Page_AJAX
     static function getContactList( &$config ) 
     {
         require_once 'CRM/Core/BAO/Preferences.php';
-        $name   = CRM_Utils_Type::escape( $_GET['s'], 'String' );
+        $name   = CRM_Utils_Array::value( 's', $_GET );
+        $name   = CRM_Utils_Type::escape( $name, 'String' );
         $limit  = '10';
         $list   = array_keys( CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' ), '1' );
         $select = array( 'sort_name' );
@@ -87,7 +88,14 @@ class CRM_Contact_Page_AJAX
         if ( $aclWhere ) {
             $where .= " AND $aclWhere ";
         }
-
+        
+        if( CRM_Utils_Array::value( 'org', $_GET) ) {
+            $where .= " AND contact_type = \"Organization\"";
+            //set default for current_employer
+            if ( $orgId = CRM_Utils_Array::value( 'id', $_GET) ) {
+                 $where .= " AND cc.id = {$orgId}";
+             }
+        }
         //contact's based of relationhip type
         $relType = null; 
         if ( isset($_GET['rel']) ) {
@@ -128,6 +136,10 @@ LIMIT 0, {$limit}
         $contactList = null;
         while ( $dao->fetch( ) ) {
             echo $contactList = "$dao->data|$dao->id\n";
+        }
+        //return organization name if doesn't exist in db
+        if( ! $contactList && CRM_Utils_Array::value( 'org', $_GET) ) {
+            echo CRM_Utils_Array::value( 's', $_GET );
         }
         exit();
     } 
@@ -593,8 +605,8 @@ WHERE ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$queryS
        }
  
        require_once 'CRM/Contact/BAO/ContactType.php';
-       $subTypes = CRM_Contact_BAO_ContactType::subTypes( $contactType, false, 'label' );
-       sort($subTypes);
+       $subTypes = CRM_Contact_BAO_ContactType::subTypePairs( $contactType, false, null );
+       asort($subTypes);
        echo json_encode( $subTypes );
        exit;
     }
@@ -620,10 +632,16 @@ WHERE ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$queryS
                 require_once 'CRM/Core/BAO/Dashboard.php';
                 $dashlets = CRM_Core_BAO_Dashboard::getDashletInfo( $dashletID );
                 break;
-            
+
             case 'save_columns':
                 require_once 'CRM/Core/BAO/Dashboard.php';
                 CRM_Core_BAO_Dashboard::saveDashletChanges( $_POST['columns'] );
+                exit();
+                
+            case 'delete_dashlet':
+                $dashletID = CRM_Utils_Type::escape( $_POST['dashlet_id'], 'Positive' );
+                require_once 'CRM/Core/BAO/Dashboard.php';
+                CRM_Core_BAO_Dashboard::deleteDashlet( $dashletID );
                 exit();
         }
         

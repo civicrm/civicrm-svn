@@ -439,6 +439,7 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                 CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
             }
         }
+        $this->assign( 'chartType', $this->_params['charts'] );
     }
     
     function alterDisplay( &$rows ){ 

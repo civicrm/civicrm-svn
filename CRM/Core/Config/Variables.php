@@ -421,17 +421,17 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      * @param
      * @return string
      */
-    public function defaultCurrencySymbol( ) {
+    public function defaultCurrencySymbol( $defaultCurrency = null ) {
         static $cachedSymbol = null;
-        if ( ! $cachedSymbol ) {
-            if ( $this->defaultCurrency ) {
+        if ( ! $cachedSymbol || $defaultCurrency ) {
+            if ( $this->defaultCurrency || $defaultCurrency ) {
                 require_once "CRM/Core/PseudoConstant.php";
                 $currencySymbolName = CRM_Core_PseudoConstant::currencySymbols( 'name' );
                 $currencySymbol     = CRM_Core_PseudoConstant::currencySymbols( );
                 
                 $this->currencySymbols = array_combine( $currencySymbolName, $currencySymbol );
-                
-                $cachedSymbol = CRM_Utils_Array::value($this->defaultCurrency, $this->currencySymbols, '');
+                $currency     = $defaultCurrency ? $defaultCurrency : $this->defaultCurrency;
+                $cachedSymbol = CRM_Utils_Array::value( $currency, $this->currencySymbols, '');
             } else {
                 $cachedSymbol = '$';
             }

@@ -62,9 +62,20 @@ class bin_migrate_import {
         // now create profile groups
         $this->profileGroups( $xml, $idMap );
         $this->profileFields( $xml, $idMap );
+        $this->profileJoins( $xml, $idMap );
     }
 
-    function copyData( &$dao, &$xml, $save = false ) {
+    function copyData( &$dao, &$xml, $save = false, $keyName = null ) {
+        if ( $keyName ) {
+            if ( isset( $xml->$keyName ) ) {
+                $dao->$keyName = (string ) $xml->$keyName;
+                if ( $dao->find( true ) ) {
+                    echo "Found $keyName, {$dao->$keyName}, {$dao->__table}<p>";
+                    return;
+                }
+            }
+        }
+
         $fields =& $dao->fields( );
         foreach ( $fields as $name => $dontCare ) {
             if ( isset( $xml->$name ) ) {
@@ -85,8 +96,8 @@ class bin_migrate_import {
         foreach ( $xml->OptionGroups as $optionGroupsXML ) {
             foreach ( $optionGroupsXML->OptionGroup as $optionGroupXML ) {
                 $optionGroup = new CRM_Core_DAO_OptionGroup( );
-                $this->copyData( $optionGroup, $optionGroupXML, true );
-                $idMap['option_group'][$optionGroup->label] = $optionGroup->id;
+                $this->copyData( $optionGroup, $optionGroupXML, true, 'name' );
+                $idMap['option_group'][$optionGroup->name] = $optionGroup->id;
             }
         }
     }
@@ -96,9 +107,18 @@ class bin_migrate_import {
         foreach ( $xml->OptionValues as $optionValuesXML ) {
             foreach ( $optionValuesXML->OptionValue as $optionValueXML ) {
                 $optionValue = new CRM_Core_DAO_OptionValue( );
-                $this->copyData( $optionValue, $optionValueXML, false );
                 $optionValue->option_group_id =
-                    $idMap['option_group'][(string ) $optionValueXML->option_group_label];
+                    $idMap['option_group'][(string ) $optionValueXML->option_group_name];
+                $this->copyData( $optionValue, $optionValueXML, false, 'label' );
+                if ( ! isset( $optionValue->value ) ) {
+                    $sql = "
+SELECT     MAX(ROUND(v.value)) + 1
+FROM       civicrm_option_value v
+WHERE      v.option_group_id = %1
+";
+                    $params = array( 1 => array( $optionValue->option_group_id, 'Integer' ) );
+                    $optionValue->value = CRM_Core_DAO::singleValueQuery( $sql, $params );
+                }
                 $optionValue->save( );
             }
         }
@@ -110,17 +130,45 @@ class bin_migrate_import {
         foreach ( $xml->CustomGroups as $customGroupsXML ) {
             foreach ( $customGroupsXML->CustomGroup as $customGroupXML ) {
                 $customGroup = new CRM_Core_DAO_CustomGroup( );
-                $this->copyData( $customGroup, $customGroupXML, true );
+                $this->copyData( $customGroup, $customGroupXML, true, 'name' );
 
-                // fix table name
-                $customGroup->table_name = 
-                    "civicrm_value_" .
-                    strtolower( CRM_Utils_String::munge( $customGroup->title, '_', 32 ) ) .
-                    "_{$customGroup->id}";
-                $customGroup->save( );
+                $saveAgain = false;
+                if ( ! isset( $customGroup->table_name ) ||
+                     empty( $customGroup->table_name ) ) {
+                    // fix table name
+                    $customGroup->table_name = 
+                        "civicrm_value_" .
+                        strtolower( CRM_Utils_String::munge( $customGroup->title, '_', 32 ) ) .
+                        "_{$customGroup->id}";
+
+                    $saveAgain = true;
+                }
+
+                // fix extends stuff if it exists
+                if ( isset( $customGroupXML->extends_entity_column_value_option_group ) &&
+                     isset( $customGroupXML->extends_entity_column_value_option_value ) ) {
+                    $sql = "
+SELECT     v.value
+FROM       civicrm_option_value v
+INNER JOIN civicrm_option_group g ON g.id = v.option_group_id
+WHERE      g.name = %1
+AND        v.name = %2
+";
+                    $params = array( 1 => array( (string ) $customGroupXML->extends_entity_column_value_option_group, 'String' ),
+                                     2 => array( (string ) $customGroupXML->extends_entity_column_value_option_value, 'String' ) );
+                    $valueID = (int ) CRM_Core_DAO::singleValueQuery( $sql, $params );
+                    if ( $valueID ) {
+                        $customGroup->extends_entity_column_id = $customGroup->extends_entity_column_value = $valueID;
+                        $saveAgain = true;
+                    }
+                }
+
+                if ( $saveAgain ) {
+                    $customGroup->save( );
+                }
 
                 CRM_Core_BAO_CustomGroup::createTable( $customGroup );
-                $idMap['custom_group'][$customGroup->title] = $customGroup->id;
+                $idMap['custom_group'][$customGroup->name] = $customGroup->id;
             }
         }
     }
@@ -130,19 +178,14 @@ class bin_migrate_import {
         foreach ( $xml->CustomFields as $customFieldsXML ) {
             foreach ( $customFieldsXML->CustomField as $customFieldXML ) {
                 $customField = new CRM_Core_DAO_CustomField( );
-                $this->copyData( $customField, $customFieldXML, false );
                 $customField->custom_group_id =
-                    $idMap['custom_group'][(string ) $customFieldXML->custom_group_title];
-                if ( isset( $customFieldXML->option_group_label ) ) {
+                    $idMap['custom_group'][(string ) $customFieldXML->custom_group_name];
+                $this->copyData( $customField, $customFieldXML, false, 'name' );
+                if ( empty( $customField->option_group_id ) &&
+                     isset( $customFieldXML->option_group_name ) ) {
                     $customField->option_group_id =
-                        $idMap['option_group'][(string ) $customFieldXML->option_group_label];
+                        $idMap['option_group'][(string ) $customFieldXML->option_group_name];
                 }
-                $customField->save( );
-
-                // fix column name
-                $customField->table_name = 
-                    strtolower( CRM_Utils_String::munge( $customField->label, '_', 32 ) ) .
-                    "_{$customField->id}";
                 $customField->save( );
 
                 CRM_Core_BAO_CustomField::createField( $customField, 'add' );
@@ -155,8 +198,8 @@ class bin_migrate_import {
         foreach ( $xml->ProfileGroups as $profileGroupsXML ) {
             foreach ( $profileGroupsXML->ProfileGroup as $profileGroupXML ) {
                 $profileGroup = new CRM_Core_DAO_UFGroup( );
-                $this->copyData( $profileGroup, $profileGroupXML, true );
-                $idMap['profile_group'][$profileGroup->title] = $profileGroup->id;
+                $this->copyData( $profileGroup, $profileGroupXML, true, 'name' );
+                $idMap['profile_group'][$profileGroup->name] = $profileGroup->id;
             }
         }
     }
@@ -166,9 +209,21 @@ class bin_migrate_import {
         foreach ( $xml->ProfileFields as $profileFieldsXML ) {
             foreach ( $profileFieldsXML->ProfileField as $profileFieldXML ) {
                 $profileField = new CRM_Core_DAO_UFField( );
-                $this->copyData( $profileField, $profileFieldXML, false );
-                $profileField->uf_group_id = $idMap['profile_group'][(string ) $profileFieldXML->profile_group_title];
+                $profileField->uf_group_id = $idMap['profile_group'][(string ) $profileFieldXML->profile_group_name];
+                $this->copyData( $profileField, $profileFieldXML, false, 'name' );
                 $profileField->save( );
+            }
+        }
+    }
+
+    function profileJoins( &$xml, &$idMap ) {
+        require_once 'CRM/Core/DAO/UFJoin.php';
+        foreach ( $xml->ProfileJoins as $profileJoinsXML ) {
+            foreach ( $profileJoinsXML->ProfileJoin as $profileJoinXML ) {
+                $profileJoin = new CRM_Core_DAO_UFJoin( );
+                $profileJoin->uf_group_id = $idMap['profile_group'][(string ) $profileJoinXML->profile_group_name];
+                $this->copyData( $profileJoin, $profileJoinXML, false, 'module' );
+                $profileJoin->save( );
             }
         }
     }

@@ -224,7 +224,7 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
      * @param 
      * @access public
      */
-    function getPagerParams($action, &$params) 
+    function getPagerParams( $action, &$params ) 
     {
         $params['status']       = ts('Event') . ' %%StatusMessage%%';
         $params['csvString']    = null;
@@ -253,7 +253,6 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                                            false, 
                                            $this->_eventClause );
     }
-
     
     /**
      * returns all the rows in the given offset and rowCount
@@ -266,14 +265,13 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
      *
      * @return array  rows in the given offset and rowCount
      */
-     function &getRows($action, $offset, $rowCount, $sort, $output = null) 
+     function &getRows( $action, $offset, $rowCount, $sort, $output = null ) 
      {
          $result = $this->_query->searchQuery( $offset, $rowCount, $sort,
                                                false, false, 
                                                false, false, 
                                                false, 
                                                $this->_eventClause );
-
          // process the result of the query
          $rows = array( );
          
@@ -336,12 +334,17 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                  CRM_Event_BAO_Participant::fixEventLevel( $row['participant_fee_level'] );
              }
              
+             if ( CRM_Event_BAO_Event::usesPriceSet( $row['event_id'] ) ) {
+                 // add line item details if applicable
+                 require_once 'CRM/Price/BAO/LineItem.php';
+                 $lineItems[$row['participant_id']] = CRM_Price_BAO_LineItem::getLineItems( $row['participant_id'] );
+             }
              $rows[] = $row;
          }
+         CRM_Core_Selector_Controller::$_template->assign_by_ref( 'lineItems', $lineItems );
 
          return $rows;
      }
-     
      
      /**
       * @return array              $qill         which contains an array of strings
@@ -421,7 +424,8 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
         return self::$_columnHeaders;
     }
     
-    function &getQuery( ) {
+    function &getQuery( )
+    {
         return $this->_query;
     }
 
@@ -431,9 +435,10 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
      * @param string $output type of output 
      * @return string name of the file 
      */ 
-     function getExportFileName( $output = 'csv') { 
-         return ts('CiviCRM Event Search'); 
-     } 
+    function getExportFileName( $output = 'csv')
+    { 
+        return ts('CiviCRM Event Search'); 
+    } 
 
 }//end of class
 

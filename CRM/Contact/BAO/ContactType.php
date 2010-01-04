@@ -444,8 +444,8 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
      *@static
      *
      */
-    static function isExtendsContactType( $subType, $contactType, $ignoreCache = false ) {
-        return in_array( $subType, self::subTypes( $contactType, true, 'name', $ignoreCache ) );
+    static function isExtendsContactType( $subType, $contactType, $ignoreCache = false, $columnName = 'name') {
+        return in_array( $subType, self::subTypes( $contactType, true, $columnName, $ignoreCache ) );
     }
 
     /**
