@@ -79,6 +79,10 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         $showLocation = false;
         // when custom data is included in this page
         if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
+            $this->set('type',     'Event');
+            $this->set('subType',  CRM_Utils_Array::value( 'event_type_id', $_POST ) );
+            $this->set('entityId', $this->_id );
+
             CRM_Custom_Form_Customdata::preProcess( $this );
             CRM_Custom_Form_Customdata::buildQuickForm( $this );
             CRM_Custom_Form_Customdata::setDefaultValues( $this );
@@ -180,7 +184,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                 $this->assign('noEventTemplates', true);
             } else {
                 $this->add('select', 'template_id', ts('From Template'), array('' => ts('- select -')) + $eventTemplates,
-                           false, array('onchange' => "window.location += '&template_id=' + this.value"));
+                           false, array('onchange' => "reloadWindow( this.value );" ) );
             }
         }
 
