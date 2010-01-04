@@ -855,7 +855,7 @@ SELECT $select
 
             if ( $csType ) {
                 $csType = CRM_Core_DAO::VALUE_SEPARATOR . $csType . CRM_Core_DAO::VALUE_SEPARATOR;
-                $customGroupDAO->whereAdd("extends_entity_column_value LIKE '%{$csType}%'");
+                $customGroupDAO->whereAdd("( extends_entity_column_value LIKE '%{$csType}%' OR extends_entity_column_value IS NULL )");
             } else {
                 $customGroupDAO->whereAdd("extends_entity_column_value IS NULL");
             }
