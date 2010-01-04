@@ -790,7 +790,7 @@ WHERE  civicrm_participant.id = {$participantId}
      * @return array $additionalParticipantIds
      * @static
      */
-    static function getAdditionalParticipantIds( $primaryParticipantId, $excludeCancel = true, $oldStatusId = null )
+    static function getAdditionalParticipantIds( $primaryParticipantId, $excludeCancel = true, $oldStatusId = null, $includeFeeLevels = array( ) )
     {
         $additionalParticipantIds = array( );
         if ( !$primaryParticipantId ) {
@@ -805,21 +805,42 @@ WHERE  civicrm_participant.id = {$participantId}
             $where .= " AND participant.status_id != {$cancelStatusId}";
         }
 
-        $statusClause      = "";
         if ( $oldStatusId ) {
             $where .= " AND participant.status_id = {$oldStatusId}";    
         }
         
+        $feeLevelClause    =  "";
+        $displaynameClause =  "";
+        if ( CRM_Utils_Array::value('fee_level', $includeFeeLevels) ) {
+            $feeLevelClause    = " ,participant.fee_level, participant.fee_amount, contact.display_name ";
+            $displaynameClause = " LEFT JOIN civicrm_contact contact ON participant.contact_id = contact.id "; 
+        }
+        
         $query = "
-  SELECT  participant.id {$statusClause}
+  SELECT  participant.id {$feeLevelClause}
     FROM  civicrm_participant participant
+    {$displaynameClause}
    WHERE  {$where}"; 
         
         $dao = CRM_Core_DAO::executeQuery( $query );
-        $cnt = 1;
-        while ( $dao->fetch( ) ) {
-            $additionalParticipantIds[$cnt] = $dao->id;
-            $cnt++;
+        if ( !$includeFeeLevels ) {
+            $cnt = 1;
+            while ( $dao->fetch( ) ) {
+                $additionalParticipantIds[$cnt] = $dao->id;
+                $cnt++;
+            }
+        } else {
+            if ( CRM_Utils_Array::value('fee_level', $includeFeeLevels) ) {
+                while ( $dao->fetch( ) ) {
+                    $additionalParticipantIds[$dao->id] = array( 'label'  => $dao->amount_level.' - '.$dao->display_name, 
+                                                                 'amount' => $dao->fee_amount   );
+                }   
+            } elseif (  CRM_Utils_Array::value('priceset', $includeFeeLevels) ) {
+                require_once 'CRM/Price/BAO/LineItem.php';
+                while ( $dao->fetch( ) ) {
+                    $additionalParticipantIds[] = CRM_Price_BAO_LineItem::getLineItems( $dao->id );  
+                }  
+            }
         }
         
         return $additionalParticipantIds;
