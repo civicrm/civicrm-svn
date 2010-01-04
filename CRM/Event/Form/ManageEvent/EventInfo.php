@@ -96,7 +96,15 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
     function setDefaultValues( )
     {
         if ( $this->_cdType ) {
-            return CRM_Custom_Form_CustomData::setDefaultValues( $this );
+            $tempId = (int) CRM_Utils_Request::retrieve('template_id', 'Integer', $this );
+            // set template custom data as a default for event, CRM-5596
+            if ( $tempId && !$this->_id ) { 
+                $defaults = $this->templateCustomDataValues( $tempId );
+            } else {
+                $defaults = CRM_Custom_Form_CustomData::setDefaultValues( $this );
+            }
+            
+            return $defaults;
         }
         $defaults = parent::setDefaultValues();
         
@@ -396,6 +404,34 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
     public function getTitle( ) 
     {
         return ts('Event Information and Settings');
+    }
+    
+    /* Retrieve event template custom data values 
+     * and set as default values for current new event.
+     *
+     * @params int $tempId event template id.
+     *
+     * @return $defaults an array of custom data defaults.
+     */
+    public function templateCustomDataValues( $templateId ) 
+    {
+        $defaults = array( );
+        if ( !$templateId ) {
+            return $defaults;  
+        }
+        
+        // pull template custom data as a default for event, CRM-5596
+        $groupTree = CRM_Core_BAO_CustomGroup::getTree( $this->_type, $this, $templateId, null, $this->_subType );
+        $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, $this->_groupCount, $this );
+        $customValues = array( );
+        CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $customValues );
+        foreach ( $customValues as $key => $val ) {
+            if ( $fieldKey = CRM_Core_BAO_CustomField::getKeyID( $key ) ) {
+                $defaults["custom_{$fieldKey}_-1"] = $val;
+            }
+        }
+        
+        return $defaults;
     }
 }
 
