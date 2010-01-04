@@ -1,4 +1,19 @@
 {* Custom Data form*}
+{if $formEdit}
+    {if $cd_edit.help_pre}
+        <div class="messages help">{$cd_edit.help_pre}</div>
+    {/if}
+    <table class="form-layout-compressed">
+        {foreach from=$cd_edit.fields item=element key=field_id}
+           {include file="CRM/Custom/Form/CustomField.tpl"}
+        {/foreach}
+    </table>
+    <div class="spacer"></div>
+    {if $cd_edit.help_post}<div class="messages help">{$cd_edit.help_post}</div>{/if}
+    {if $cd_edit.is_multiple and ( ( $cd_edit.max_multiple eq '' )  or ( $cd_edit.max_multiple > 0 and $cd_edit.max_multiple >= $cgCount ) ) }
+        <div id="add-more-link-{$cgCount}"><a href="javascript:buildCustomData('{$cd_edit.extends}',{if $cd_edit.subtype}'{$cd_edit.subtype}'{else}'{$cd_edit.extends_entity_column_id}'{/if}, '', {$cgCount}, {$group_id}, true );">{ts 1=$cd_edit.title}Add another %1 record{/ts}</a></div>	
+    {/if}
+{else}
 {foreach from=$groupTree item=cd_edit key=group_id}    
     <div id="{$cd_edit.name}_show_{$cgCount}" class="section-hidden section-hidden-border">
             <a href="#" onclick="cj('#{$cd_edit.name}_show_{$cgCount}').hide(); cj('#{$cd_edit.name}_{$cgCount}').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a>
@@ -33,3 +48,4 @@
     {/if}
     </script>
 {/foreach}
+{/if}

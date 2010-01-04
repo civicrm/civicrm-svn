@@ -58,6 +58,7 @@
 {literal}
 <script type="text/javascript" >
 var action = "{/literal}{$action}{literal}";
+showTab[0] = {"spanShow":"span#contact","divShow":"div#contactDetails"};
 cj(function( ) {
     cj('.accordion .head').addClass( "ui-accordion-header ui-helper-reset ui-state-default ui-corner-all");
 
@@ -76,9 +77,12 @@ cj(function( ) {
         cj(this).next( ).toggle(); return false; 
     }).next( ).hide( );
     
-    cj('span#contact').removeClass( ).addClass('ui-icon ui-icon-triangle-1-s');
-    cj("#contactDetails").show( );
-	
+    cj(showTab).each( function(){ 
+        if( this.spanShow ) {
+            cj(this.spanShow).removeClass( ).addClass('ui-icon ui-icon-triangle-1-s');
+            cj(this.divShow).show( );
+        }
+    });
 	cj('div.accordion div.ui-accordion-content').each( function() {
 		//remove tab which doesn't have any element
 		if ( ! cj.trim( cj(this).text() ) ) { 
