@@ -505,7 +505,7 @@ WHERE  id IN (" .implode( ',', $amountIds ).')';
             // now we have all selected amount in hand.
             $totalAmount = array_sum( $setectedAmounts );
             if ( $totalAmount < 0 ) {
-                $error['_qf_default'] = ts( $componentName . " amount can not be less than zero. Please select the options accordingly." );
+                $error['_qf_default'] = ts('%1 amount can not be less than zero. Please select the options accordingly.', array(1 => $componentName));
             }
         } else {
             $error['_qf_default'] = ts( "Please select at least one option from price set." );
