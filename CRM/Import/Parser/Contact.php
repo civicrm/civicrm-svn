@@ -1393,6 +1393,18 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         self::addToErrorMsg( $key, $errorMessage);
                     }
                     break;
+                    
+                case 'email':
+                    if ( is_array( $value ) ) {
+                        foreach ( $value as $values ) {
+                            if ( CRM_Utils_Array::value( 'email', $values ) &&
+                                 !CRM_Utils_Rule::email( $values['email'] ) ) {
+                                self::addToErrorMsg( $key, $errorMessage );
+                            }
+                        }
+                    }
+                    break;
+                    
                 default : 
                     if ( is_array( $params[$key] ) && 
                          isset( $params[$key]["contact_type"] ) ) {
