@@ -229,6 +229,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
                                      $subType  = null,
                                      $subName  = null )
     {
+        require_once 'CRM/Core/Action.php';
         // create a new tree
         $groupTree = array();
         $strSelect = $strFrom = $strWhere = $orderBy = ''; 
