@@ -628,6 +628,10 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         $logDAO->entity_table = 'civicrm_contact';
         $logDAO->entity_id    = $id;
         $logDAO->delete();
+
+        // do activity cleanup, CRM-5604  
+        require_once 'CRM/Activity/BAO/Activity.php';
+        CRM_Activity_BAO_activity::cleanupActivity( $id );
         
         $contact->delete( );
 
