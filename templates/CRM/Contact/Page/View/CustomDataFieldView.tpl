@@ -1,4 +1,4 @@
-<tr>
+<tr class= "{if $cd_edit.collapse_display}hiddenElement{/if}">
 {if $element.options_per_line != 0}
       <td class="label">{$element.field_title}</td>
       <td>
