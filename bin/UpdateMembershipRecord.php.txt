@@ -128,7 +128,8 @@ AND    civicrm_membership.is_test = 0
                                              'end_date'           => $dao->end_date,
                                              'reminder_date'      => $dao->reminder_date,
                                              'source'             => $dao->source,
-                                             'skipStatusCal'      => true );
+                                             'skipStatusCal'      => true,
+                                             'skipRecentView'     => true );
                 
                 //create activity when status changed. CRM-2521.
                 //as BAO::create( ) create activity so let BAO handle it.
@@ -167,7 +168,8 @@ AND    civicrm_membership.is_test = 0
                                         'end_date'           => $dao->end_date,
                                         'reminder_date'      => $dao->reminder_date,
                                         'source'             => $dao->source,
-                                        'skipStatusCal'      => true );
+                                        'skipStatusCal'      => true,
+                                        'skipRecentView'     => true );
                     
                     //create activity when status changed. CRM-2521.
                     //as BAO::create create activity so let BAO handle it.

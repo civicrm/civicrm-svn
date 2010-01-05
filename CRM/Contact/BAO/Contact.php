@@ -556,7 +556,12 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
      */
     static function displayName( $id ) 
     {
-        return CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $id, 'display_name' );
+        $displayName = null;
+        if ( $id ) {
+            $displayName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $id, 'display_name' ); 
+        }
+        
+        return $displayName;
     }
 
     /**
