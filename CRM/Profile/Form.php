@@ -227,7 +227,7 @@ class CRM_Profile_Form extends CRM_Core_Form
             if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
                 $htmlType = $field['html_type'];
                 
-                if ( !CRM_Utils_Array::value( $name, $this->_defaults ) || $htmlType == 'File') {
+                if ( !isset( $this->_defaults[$name] ) || $htmlType == 'File') {
                     CRM_Core_BAO_CustomField::setProfileDefaults( $customFieldID,
                                                                   $name,
                                                                   $this->_defaults,
