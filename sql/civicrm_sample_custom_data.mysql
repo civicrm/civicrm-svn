@@ -11,7 +11,7 @@
 -- * create custom group
 -- *
 -- *******************************************************/
-INSERT INTO `civicrm_custom_group` (`name`, `title`, `extends`, `style`, `collapse_display`, `help_pre`, `weight`, `is_active`, `table_name`, `is_multiple`) VALUES ( 'constituent_information', 'Constituent Information', 'Individual', 'Inline', 0, 'Please enter additional constituent information as data becomes available for this contact.', 1, 1,'civicrm_value_constituent_information_1', 0);
+INSERT INTO `civicrm_custom_group` (`name`, `title`, `extends`, `style`, `collapse_display`, `help_pre`, `weight`, `is_active`, `table_name`, `is_multiple`) VALUES ( 'constituent_information', 'Constituent Information', 'Individual', 'Inline', 1, 'Please enter additional constituent information as data becomes available for this contact.', 1, 1,'civicrm_value_constituent_information_1', 0);
 
 
 
