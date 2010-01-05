@@ -1400,6 +1400,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                             if ( CRM_Utils_Array::value( 'email', $values ) &&
                                  !CRM_Utils_Rule::email( $values['email'] ) ) {
                                 self::addToErrorMsg( $key, $errorMessage );
+                                break;
                             }
                         }
                     }
