@@ -261,6 +261,7 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      */
     public $maxImportFileSize = 1048576;
     public $maxAttachments    = 3;
+    public $maxFileSize       = 2;
     public $civiHRD           = 0;
 
     /**

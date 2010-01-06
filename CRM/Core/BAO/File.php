@@ -280,20 +280,24 @@ AND       CEF.entity_id    = %2";
     
     static function buildAttachment( &$form, $entityTable, $entityID = null, $numAttachments = null ) {
 
+        $config =& CRM_Core_Config::singleton( );
+
         if( ! $numAttachments ) {
-            $config =& CRM_Core_Config::singleton( );
             $numAttachments = $config->maxAttachments;
         }
+        
+        $maxFileSize = $config->maxFileSize;
+
         $form->assign( 'numAttachments', $numAttachments );
         // add attachments
         for ( $i = 1; $i <= $numAttachments; $i++ ) {
             $form->addElement( 'file', "attachFile_$i", ts('Attach File'), 'size=30 maxlength=60' );
-            $form->setMaxFileSize( 2 * 1024 * 1024 );
+            $form->setMaxFileSize( $maxFileSize * 1024 * 1024 );
             $form->addRule( "attachFile_$i",
                             ts( 'File size should be less than %1 MByte(s)',
-                                array( 1 => 2 ) ),
+                                array( 1 => $maxFileSize ) ),
                             'maxfilesize',
-                            2 * 1024 * 1024 );
+                            $maxFileSize * 1024 * 1024 );
         }
 
         $attachmentInfo = self::attachmentInfo(  $entityTable, $entityID );
