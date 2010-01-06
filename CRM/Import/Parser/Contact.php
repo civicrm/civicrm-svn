@@ -467,7 +467,9 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         
         //get contact id to format common data in update/fill mode,
         //if external identifier is present, CRM-4423
-        if ( $this->_updateWithId  && !CRM_Utils_Array::value('id', $params) ) {
+        if ( $this->_updateWithId && 
+             ! CRM_Utils_Array::value( 'id', $params ) &&
+             CRM_Utils_Array::value( 'external_identifier', $params ) ) {
             if ( $cid = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                                      $params['external_identifier'], 'id',
                                                      'external_identifier' ) ) {
