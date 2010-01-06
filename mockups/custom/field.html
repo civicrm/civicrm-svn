@@ -6,21 +6,21 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <script type="text/javascript" src="field_files/jquery_020.js"></script>
 <script type="text/javascript" src="field_files/jquery-ui.js"></script>
-<style type="text/css">@import url("/sites/civicrm/modules/civicrm/packages/jquery/themes/smoothness/jquery-ui.css");</style>
+<style type="text/css">@import url("../../packages/jquery/themes/smoothness/jquery-ui.css");</style>
 
 <script type="text/javascript" src="field_files/flexigrid.js"></script>
-<style type="text/css">@import url("/sites/civicrm/modules/civicrm/packages/jquery/css/flexigrid.css");</style>
+<style type="text/css">@import url("../../packages/jquery/css/flexigrid.css");</style>
 
 <script type="text/javascript" src="field_files/jquery_013.js"></script>
-<style type="text/css">@import url("/sites/civicrm/modules/civicrm/packages/jquery/css/jquery.autocomplete.css");</style>
+<style type="text/css">@import url("../../packages/jquery/css/jquery.autocomplete.css");</style>
 
 <script type="text/javascript" src="field_files/tree_component.js"></script>
 <script type="text/javascript" src="field_files/css.js"></script>
-<style type="text/css">@import url("/sites/civicrm/modules/civicrm/packages/jquery/css/tree_component.css");</style>
+<style type="text/css">@import url("../../packages/jquery/css/tree_component.css");</style>
 
 <script type="text/javascript" src="field_files/jquery_003.js"></script>
 <script type="text/javascript" src="field_files/jquery_010.js"></script>
-<style type="text/css">@import url("/sites/civicrm/modules/civicrm/packages/jquery/css/menu.css");</style>
+<style type="text/css">@import url("../../packages/jquery/css/menu.css");</style>
 
 <script type="text/javascript" src="field_files/jquery_009.js"></script>
 <script type="text/javascript" src="field_files/jquery_012.js"></script>
@@ -39,18 +39,18 @@
 <script type="text/javascript" src="field_files/jquery_007.js"></script>
 
 <script type="text/javascript" src="field_files/jquery_014.js"></script>
-<style type="text/css">@import url("/sites/civicrm/modules/civicrm/packages/jquery/css/token-input-facebook.css");></style>
+<style type="text/css">@import url("../../packages/jquery/css/token-input-facebook.css");></style>
 
 <script type="text/javascript" src="field_files/jquery_002.js"></script>
 <script type="text/javascript" src="field_files/jquery.js"></script>
 
 <script type="text/javascript" src="field_files/jquery_017.js"></script>
 
-<style type="text/css">@import url("/sites/civicrm/modules/civicrm/packages/jquery/css/dataTable.css");></style>
+<style type="text/css">@import url("../../packages/jquery/css/dataTable.css");></style>
 <script type="text/javascript" src="field_files/jquery_008.js"></script>
 
 <script type="text/javascript" src="field_files/jquery_004.js"></script>
-<style type="text/css">@import url(/sites/civicrm/modules/civicrm/packages/jquery/css/dashboard.css);></style>
+<style type="text/css">@import url(../../packages/jquery/css/dashboard.css);></style>
 
 <script type="text/javascript" src="field_files/jquery_006.js"></script>
 
@@ -319,7 +319,7 @@ if( framework != 'Joomla') {
 			cj('img.menu-item-arrow').css({ 'top' : '4px' }); 
 		});
 }
-	var resourceBase   = "/sites/civicrm/modules/civicrm/";
+	var resourceBase   = "../../";
 	cj('#civicrm-menu').menu( {arrowSrc: resourceBase + 'packages/jquery/css/images/arrow.png'} );
 </script>
 <script type="text/javascript" src="field_files/Common.js"></script>
@@ -657,7 +657,17 @@ cj("#" + fname ).show( ).html( cj("#opt-id").html() ).dialog({
 
      beforeclose: function(event, ui) {
          cj(this).dialog("destroy");
-     }
+     },
+
+	buttons: {
+		'Done': function() {
+			$(this).dialog('close');
+		},
+		Cancel: function() {
+			$(this).dialog('close');
+		}
+	}
+     
  });
 
 }
