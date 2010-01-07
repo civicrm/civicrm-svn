@@ -1682,7 +1682,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         $dateType = $session->get("dateTypes");
         foreach ( $params  as $key => $val ) {
             if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $key ) ) {
-                if ( $customFields[$customFieldID]['data_type'] == 'Date' ) {
+                //we should not update Date to null, CRM-4062
+                if ( $val && ( $customFields[$customFieldID]['data_type'] == 'Date' ) ) {
                     self::formatCustomDate( $params, $formatted, $dateType, $key );
                     unset( $params[$key] );
                 } else if ( $customFields[$customFieldID]['data_type'] == 'Boolean' ) {

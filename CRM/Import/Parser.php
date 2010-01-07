@@ -687,8 +687,8 @@ abstract class CRM_Import_Parser {
                     }
                 }
                 
-                if ( isset($this->_activeFields[$i]->_related) && !empty($this->_activeFields[$i]->_value) ) {
-                    //CRM_Core_Error::debug( "$i enter", "****" );
+                //minor fix for CRM-4062
+                if ( isset($this->_activeFields[$i]->_related) ) {
                     if (! isset($params[$this->_activeFields[$i]->_related])) {
                         $params[$this->_activeFields[$i]->_related] = array();
                     }
