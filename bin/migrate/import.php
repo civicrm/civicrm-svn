@@ -147,19 +147,61 @@ WHERE      v.option_group_id = %1
                 // fix extends stuff if it exists
                 if ( isset( $customGroupXML->extends_entity_column_value_option_group ) &&
                      isset( $customGroupXML->extends_entity_column_value_option_value ) ) {
-                    $sql = "
+                    $optValues = explode( ",", $customGroupXML->extends_entity_column_value_option_value );
+                    $optValues = implode( "','", $optValues );
+                    if ( trim($customGroup->extends) != 'Participant' ) {
+                        $sql = "
 SELECT     v.value
 FROM       civicrm_option_value v
 INNER JOIN civicrm_option_group g ON g.id = v.option_group_id
 WHERE      g.name = %1
-AND        v.name = %2
+AND        v.name IN (%2)
 ";
-                    $params = array( 1 => array( (string ) $customGroupXML->extends_entity_column_value_option_group, 'String' ),
-                                     2 => array( (string ) $customGroupXML->extends_entity_column_value_option_value, 'String' ) );
-                    $valueID = (int ) CRM_Core_DAO::singleValueQuery( $sql, $params );
-                    if ( $valueID ) {
-                        $customGroup->extends_entity_column_id = $customGroup->extends_entity_column_value = $valueID;
-                        $saveAgain = true;
+                        $params = array( 1 => array( (string ) $customGroupXML->extends_entity_column_value_option_group, 
+                                                     'String' ),
+                                         2 => array( (string ) $optValues, 'String' ) );
+                        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+
+                        $valueIDs = array( );
+                        while ( $dao->fetch() ) {
+                            $valueIDs[] = $dao->value;
+                        }
+                        if ( ! empty($valueIDs) ) {
+                            $customGroup->extends_entity_column_value = 
+                                CRM_Core_DAO::VALUE_SEPARATOR . implode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                                                         $valueIDs ) . 
+                                CRM_Core_DAO::VALUE_SEPARATOR;
+
+                            // Note: No need to set extends_entity_column_id here.
+
+                            $saveAgain = true;
+                        }
+                    } else {
+                        // when custom group extends 'Participant'
+                        $sql = "
+SELECT     v.value
+FROM       civicrm_option_value v
+INNER JOIN civicrm_option_group g ON g.id = v.option_group_id
+WHERE      g.name = 'custom_data_type'
+AND        v.name = %1
+";
+                        $params = array( 1 => array( (string ) $customGroupXML->extends_entity_column_value_option_group, 
+                                                     'String' ) );
+                        $valueID = (int ) CRM_Core_DAO::singleValueQuery( $sql, $params );
+                        if ( $valueID ) {
+                            $customGroup->extends_entity_column_id = $valueID;
+                        }
+                        switch ( $valueID ) {
+                        case 1: // ParticipantRole
+                            
+                            break;
+                        case 2: // ParticipantEventName
+                            
+                            break;
+                        case 3: // ParticipantEventType
+                            
+                            break;
+                        }
                     }
                 }
 
