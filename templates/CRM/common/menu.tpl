@@ -65,10 +65,10 @@
   <ul id="menu">
 
 <li id="searchType">
-<img  src='{$config->resourceBase}/i/contact_all.ico' alt =""/>
+<img  src="{$config->resourceBase}/i/contact_all.ico" alt =""/>
 <ul>
-<li><img  src='{$config->resourceBase}/i/contact_all.ico' alt =""/>All contacts</li>
-<li><img  src='{$config->resourceBase}/i/contact_ind.gif' alt ="Search only individuals"/>Only individuals</li>
+<li><img  src="{$config->resourceBase}/i/contact_all.ico" alt =""/>All contacts</li>
+<li><img  src="{$config->resourceBase}/i/contact_ind.gif" alt ="Search only individuals"/>Only individuals</li>
 <li><img  src="/sites/all/modules/civicrm/i/contact_org.gif" alt ="Search only Organizations"/>Only organisations</li>
 <li><img  src="/sites/all/modules/civicrm/i/contact_house.png" alt ="Search only Household"/>Only households</li>
 <li>by email</li>
@@ -185,15 +185,15 @@
       <a href={crmURL p="civicrm/event" q="reset=1"}>CiviEvent</a>
 
       <ul>
-        <li><a href={crmURL p="civicrm/event/search" q="reset=1"}>Find Participants</a></li>
+        <li><a href="{crmURL p="civicrm/event/search" q="reset=1"}">Find Participants</a></li>
 
-        <li><a class="active" href={crmURL p="civicrm/event/manage" q="reset=1"}>Manage Events</a></li>
+        <li><a class="active" href="{crmURL p="civicrm/event/manage" q="reset=1"}">Manage Events</a></li>
 
-        <li><a href={crmURL p="civicrm/event/add" q="action=add&reset=1"}>New Event</a></li>
+        <li><a href="{crmURL p="civicrm/event/add" q="action=add&reset=1"}">New Event</a></li>
 
-        <li><a href={crmURL p="civicrm/event/import" q="reset=1"}>Import Participants</a></li>
+        <li><a href="{crmURL p="civicrm/event/import" q="reset=1"}">Import Participants</a></li>
 
-        <li><a href={crmURL p="civicrm/event/price" q="reset=1"}>Manage Price Sets</a></li>
+        <li><a href="{crmURL p="civicrm/event/price" q="reset=1"}">Manage Price Sets</a></li>
       </ul>
     </li>
 
@@ -217,5 +217,5 @@
       </ul>
     </li>
 
-    <li><a href={crmURL p="civicrm/admin" q="reset=1"}>Configuration</a></li>
+    <li><a href="{crmURL p="civicrm/admin" q="reset=1"}">Configuration</a></li>
   </ul>

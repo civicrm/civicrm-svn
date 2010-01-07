@@ -4,7 +4,7 @@
 
 {include file="CRM/common/TrackingFields.tpl"}
 
-<div class="form-item">
+<div>
     {if $isOnWaitlist}
         <div class="help">
             {ts}Please verify the information below. <span class="bold">Then click 'Continue' to be added to the WAIT LIST for this event</span>. If space becomes available you will receive an email with a link to a web page where you can complete your registration.{/ts}
@@ -52,16 +52,32 @@
             {include file="CRM/Price/Page/LineItem.tpl" context="Event"}
         {elseif $amount || $amount == 0}
             {foreach from= $amount item=amount key=level}  
-		<strong>{$amount.amount|crmMoney} &nbsp;&nbsp; {$amount.label}</strong><br />	
+				<div class="section amount-item-section">
+					<div class="label">{$amount.label}</div>
+        			<div class="content">{$amount.amount|crmMoney}</div>
+        			<div class="clear"/>
+        		</div>	
             {/foreach}
             {if $totalAmount}
-		<br /><strong>{ts}Total Amount{/ts}:&nbsp;&nbsp;{$totalAmount|crmMoney}</strong>
+			<div class="section total-amount-section">
+        		<div class="label">{ts}Total Amount{/ts}</div>
+        		<div class="content">{$totalAmount|crmMoney}</div>
+        		<div class="clear"/>
+        	</div>
             {/if}	 		
             {if $hookDiscount.message}
                 <em>({$hookDiscount.message})</em>
             {/if}
         {/if}
     </div>
+    
+    <div class="section billingName-section">
+        		<div class="label">Name</div>
+        		<div class="content">{$billingName}</div>
+        		<div class="clear"/>
+        	</div>
+    
+    
     {/if}
 	
     <div class="header-dark">
@@ -140,21 +156,38 @@
     <div class="header-dark">
         {ts}Billing Name and Address{/ts}
     </div>
-    <div class="display-block">
-        <strong>{$billingName}</strong><br />
-        {$address|nl2br}
-    </div>
+
+    		<div class="section billingName-section">
+        		<div class="label">Name</div>
+        		<div class="content">{$billingName}</div>
+        		<div class="clear"/>
+        	</div>
+        	<div class="section billing_address-section">
+        		<div class="label">Address</div>
+        		<div class="content">{$address|nl2br}</div>
+        		<div class="clear"/>
+        	</div>
     {/if}
     
     {if $contributeMode eq 'direct' and ! $is_pay_later and !$isAmountzero and !$isOnWaitlist and !$isRequireApproval}
     <div class="header-dark">
         {ts}Credit Card Information{/ts}
     </div>
-    <div class="display-block">
-        {$credit_card_type}<br />
-        {$credit_card_number}<br />
-        {ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}<br />
-    </div>
+   <div class="section credit_card_type-section">
+        		<div class="label">Card Type</div>
+        		<div class="content">{$credit_card_type}</div>
+        		<div class="clear"/>
+        	</div>
+        	<div class="section credit_card_number-section">
+        		<div class="label">Card Number</div>
+        		<div class="content">{$credit_card_number}</div>
+        		<div class="clear"/>
+        	</div>
+        	<div class="section credit_card_expiration-section">
+        		<div class="label">{ts}Expires{/ts}</div>
+        		<div class="content">{$credit_card_exp_date|truncate:7:''|crmDate}</div>
+        		<div class="clear"/>
+        	</div>
     {/if}
     
     {if $contributeMode NEQ 'notify'} {* In 'notify mode, contributor is taken to processor payment forms next *}
