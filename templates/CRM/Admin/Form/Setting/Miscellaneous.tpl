@@ -24,7 +24,7 @@
 	<tr>
 	    <td class="label">{$form.maxFileSize.label} (in MB)</td>
             <td>{$form.maxFileSize.html}<br />
-                <span class="description">{ts}Maximum Size of file (documents, images, etc.) which can attached to emails or activities.<br />Note: php.inc should support this file size.{/ts}</span></td>
+                <span class="description">{ts}Maximum Size of file (documents, images, etc.) which can attached to emails or activities.<br />Note: php.ini should support this file size.{/ts}</span></td>
         </tr>
     </table>
 </fieldset>
