@@ -193,6 +193,28 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         }
         
         $html .= '</body></html>';
+        require_once 'CRM/Activity/BAO/Activity.php';
+        
+        $session =& CRM_Core_Session::singleton( );
+        $userID = $session->get( 'userID' );         
+        $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
+                                                          'Print PDF Letter',
+                                                          'name' );
+        $activityParams = array('source_contact_id'    => $userID,
+                                'activity_type_id'     => $activityTypeID,
+                                'activity_date_time'   => date('YmdHis'),
+                                'details'              => $html,
+                                );
+        $activity = CRM_Activity_BAO_Activity::create( $activityParams );
+        
+        foreach ( $form->_contactIds  as $values ) {
+            $contactId = $values;
+            $activityTargetParams = array( 
+                                          'activity_id'       => $activity->id,
+                                          'target_contact_id' => $contactId, 
+                                           );
+            CRM_Activity_BAO_Activity::createActivityTarget( $activityTargetParams );
+        }
         
         require_once 'CRM/Utils/PDF/Utils.php';
         CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", 'portrait' ); 
