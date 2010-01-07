@@ -286,14 +286,9 @@ AND       CEF.entity_id    = %2";
             $numAttachments = $config->maxAttachments;
         }
 
-        // if max file size is 0
-        if( $config->maxFileSize == 0 ) {
-            $maxFileSize = 0;
-        } else {
-            // set default max file size as 2MB
-            $maxFileSize = $config->maxFileSize ? $config->maxFileSize : 2;
-        }
-
+        // set default max file size as 2MB
+        $maxFileSize = $config->maxFileSize ? $config->maxFileSize : 2;
+        
         $form->assign( 'numAttachments', $numAttachments );
         // add attachments
         for ( $i = 1; $i <= $numAttachments; $i++ ) {
