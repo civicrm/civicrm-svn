@@ -4,9 +4,9 @@
 {else}
     <div id="mainTabContainer" >
         <ul>
-            <li id="tab_summary"><a href="#contact-summary" title="{ts}Summary{/ts}" >{ts}Summary{/ts}</a></li>
+            <li id="tab_summary"><a href="#contact-summary" title="{ts}Summary{/ts}"><span>&nbsp;</span>&nbsp;{ts}Summary{/ts}</a></li>
             {foreach from=$allTabs key=tabName item=tabValue}
-            <li id="tab_{$tabValue.id}"><a href="{$tabValue.url}" title="{$tabValue.title}">{$tabValue.title}&nbsp;({$tabValue.count})</a></li>
+            <li id="tab_{$tabValue.id}"><a href="{$tabValue.url}" title="{$tabValue.title}"><span>&nbsp;</span>&nbsp;{$tabValue.title}&nbsp;({$tabValue.count})</a></li>
             {/foreach}
         </ul>
 
@@ -210,7 +210,7 @@
                                         {foreach from=$privacy item=priv key=index}
                                             {if $priv}{$privacy_values.$index}<br />{/if}
                                         {/foreach}
-					{if $is_opt_out}{ts}No Bulk Emails (User Opt Out){/ts}{/if}
+                                        {if $is_opt_out}{ts}No Bulk Emails (User Opt Out){/ts}{/if}
                                     </span></td>
                                 </tr>
                                 <tr>
@@ -224,7 +224,7 @@
 
                         {include file="CRM/Contact/Page/View/Demographics.tpl"}
 						
-		<div class="clear"></div>
+                        <div class="clear"></div>
                         <div class="separator"></div>
 						
 						<div class="contactCardLeft">
@@ -277,14 +277,14 @@
         </div>
 
     </div>
-
     <script type="text/javascript"> 
-    var selectedTab = 'summary';
-    {if $selectedChild}selectedTab = "{$selectedChild}";{/if}    
-	{literal}
+    var selectedTab  = 'summary';
+    var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:8px;height:10px"/>';
+    {if $selectedChild}selectedTab = "{$selectedChild}";{/if}  
+    {literal}
 	cj( function() {
         var tabIndex = cj('#tab_' + selectedTab).prevAll().length
-        cj("#mainTabContainer").tabs( {selected: tabIndex} );        
+        cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage });        
     });
     {/literal}
     </script>
