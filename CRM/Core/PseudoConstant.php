@@ -322,7 +322,7 @@ class CRM_Core_PseudoConstant
     public static function populate( &$var, $name, $all = false, $retrieve = 'name',
                                      $filter = 'is_active', $condition = null, $orderby = null, $key = 'id' ) 
     {
-        $cacheKey = "{$name}_{$all}_{$key}_{$retrieve}_{$filter}_{$condition}_{$orderby}";
+        $cacheKey = "CRM_PC_{$name}_{$all}_{$key}_{$retrieve}_{$filter}_{$condition}_{$orderby}";
         $cache =& CRM_Utils_Cache::singleton( );
         $var = $cache->get( $cacheKey );
         if ( $var ) {

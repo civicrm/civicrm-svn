@@ -81,27 +81,31 @@ class CRM_Contact_BAO_ContactType extends CRM_Contact_DAO_ContactType {
             $_cache = array( );
         }
 
-        $argString = $all ? '1' : '0';
+        $argString = $all ? 'CRM_CT_BTI_1' : 'CRM_CT_BTI_0';
         if ( ! array_key_exists( $argString, $_cache ) ) {
-            $_cache[$argString] = array( );
-
-            $sql = "
+            $cache =& CRM_Utils_Cache::singleton( );
+            $_cache[$argString] = $cache->get( $argString );
+            if ( ! $_cache[$argString] ) {
+                $sql = "
 SELECT *
 FROM   civicrm_contact_type
 WHERE  parent_id IS NULL
 ";
-            if ( $all === false ) {
-                $sql .= " AND is_active = 1";
-            }
+                if ( $all === false ) {
+                    $sql .= " AND is_active = 1";
+                }
+                
+                $dao = CRM_Core_DAO::executeQuery( $sql,
+                                                   CRM_Core_DAO::$_nullArray,
+                                                   false,
+                                                   'CRM_Contact_DAO_ContactType' );
+                while ( $dao->fetch( ) ) {
+                    $value = array( );
+                    CRM_Core_DAO::storeValues( $dao, $value );
+                    $_cache[$argString][$dao->name] = $value;
+                }
 
-            $dao = CRM_Core_DAO::executeQuery( $sql,
-                                               CRM_Core_DAO::$_nullArray,
-                                               false,
-                                               'CRM_Contact_DAO_ContactType' );
-            while ( $dao->fetch( ) ) {
-                $value = array( );
-                CRM_Core_DAO::storeValues( $dao, $value );
-                $_cache[$argString][$dao->name] = $value;
+                $cache->set( $argString, $_cache[$argString] );
             }
         }
         return $_cache[$argString];
@@ -149,36 +153,42 @@ WHERE  parent_id IS NULL
             $contactType = array( $contactType );
         }
 
-        $argString = $all ? '1_' : '0_';
+        $argString = $all ? 'CRM_CT_STI_1_' : 'CRM_CT_STI_0_';
         if ( ! empty( $contactType ) ) {
             $argString .= implode( "_" , $contactType );
         }
 
         if ( (!array_key_exists( $argString, $_cache )) || $ignoreCache ) {
-            $_cache[$argString] = array( );
+            $cache =& CRM_Utils_Cache::singleton( );
+            $_cache[$argString] = $cache->get( $argString );
+            if ( ! $_cache[$argString] || $ignoreCache ) {
+                $_cache[$argString] = array( );
 
-            $ctWHERE = '';
-            if ( ! empty($contactType) ) {
-                $ctWHERE = " AND parent.name IN ('" . implode( "','" , $contactType ) . "')" ;
-            }
+                $ctWHERE = '';
+                if ( ! empty($contactType) ) {
+                    $ctWHERE = " AND parent.name IN ('" . implode( "','" , $contactType ) . "')" ;
+                }
 
-            $sql = "
+                $sql = "
 SELECT subtype.*, parent.name as parent, parent.label as parent_label
 FROM   civicrm_contact_type subtype
 INNER JOIN civicrm_contact_type parent ON subtype.parent_id = parent.id
 WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE} 
 ";
-            if ( $all === false ) {
-                $sql .= " AND subtype.is_active = 1 AND parent.is_active = 1 ORDER BY parent.id";
-            }
-            $dao = CRM_Core_DAO::executeQuery( $sql, array( ), 
-                                               false, 'CRM_Contact_DAO_ContactType' );
-            while ( $dao->fetch( ) ) {
-                $value = array( );
-                CRM_Core_DAO::storeValues( $dao, $value );
-                $value['parent'] = $dao->parent;
-                $value['parent_label'] = $dao->parent_label;
-                $_cache[$argString][$dao->name] = $value;
+                if ( $all === false ) {
+                    $sql .= " AND subtype.is_active = 1 AND parent.is_active = 1 ORDER BY parent.id";
+                }
+                $dao = CRM_Core_DAO::executeQuery( $sql, array( ), 
+                                                   false, 'CRM_Contact_DAO_ContactType' );
+                while ( $dao->fetch( ) ) {
+                    $value = array( );
+                    CRM_Core_DAO::storeValues( $dao, $value );
+                    $value['parent'] = $dao->parent;
+                    $value['parent_label'] = $dao->parent_label;
+                    $_cache[$argString][$dao->name] = $value;
+                }
+ 
+                $cache->set( $argString, $_cache[$argString] );
             }
         }
         return $_cache[$argString];
@@ -249,34 +259,41 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
             $_cache = array( );
         }
 
-        $argString = $all ? '1' : '0';
+        $argString = $all ? 'CRM_CT_CTI_1' : 'CRM_CT_CTI_0';
         if ( ! array_key_exists( $argString, $_cache ) ) {
-            $_cache[$argString] = array( );
+            $cache =& CRM_Utils_Cache::singleton( );
+            $_cache[$argString] = $cache->get( $argString );
+            if ( ! $_cache[$argString] ) {
+                $_cache[$argString] = array( );
 
-            $sql = "
+                $sql = "
 SELECT type.*, parent.name as parent, parent.label as parent_label
 FROM      civicrm_contact_type type
 LEFT JOIN civicrm_contact_type parent ON type.parent_id = parent.id
 WHERE  type.name IS NOT NULL 
 ";
-            if ( $all === false ) {
-                $sql .= " AND type.is_active = 1";
-            }
-
-            $dao = CRM_Core_DAO::executeQuery( $sql,
-                                               CRM_Core_DAO::$_nullArray,
-                                               false,
-                                               'CRM_Contact_DAO_ContactType' );
-            while ( $dao->fetch( ) ) {
-                $value = array( );
-                CRM_Core_DAO::storeValues( $dao, $value );
-                if ( array_key_exists('parent_id', $value) ) {
-                    $value['parent'] = $dao->parent;
-                    $value['parent_label'] = $dao->parent_label;
+                if ( $all === false ) {
+                    $sql .= " AND type.is_active = 1";
                 }
-                $_cache[$argString][$dao->name] = $value;
+
+                $dao = CRM_Core_DAO::executeQuery( $sql,
+                                                   CRM_Core_DAO::$_nullArray,
+                                                   false,
+                                                   'CRM_Contact_DAO_ContactType' );
+                while ( $dao->fetch( ) ) {
+                    $value = array( );
+                    CRM_Core_DAO::storeValues( $dao, $value );
+                    if ( array_key_exists('parent_id', $value) ) {
+                        $value['parent'] = $dao->parent;
+                        $value['parent_label'] = $dao->parent_label;
+                    }
+                    $_cache[$argString][$dao->name] = $value;
+                }
+                
+                $cache->set( $argString, $_cache[$argString] );
             }
         }
+
         return $_cache[$argString];
     }
 
@@ -315,12 +332,16 @@ WHERE  type.name IS NOT NULL
             $_cache = array( );
         }
 
-        $argString  = $all ? '1' : '0';
+        $argString  = $all ? 'CRM_CT_GSE_1' : 'CRM_CT_GSE_0';
         $argString .= $isSeperator ? '_1' : '_0';
         if ( ! array_key_exists( $argString, $_cache ) ) {
-            $_cache[$argString] = array( );
+            $cache =& CRM_Utils_Cache::singleton( );
+            $_cache[$argString] = $cache->get( $argString );
+            
+            if ( ! $_cache[$argString] ) {
+                $_cache[$argString] = array( );
 
-            $sql = "
+                $sql = "
 SELECT    c.name as child_name , c.label as child_label , c.id as child_id,
           p.name as parent_name, p.label as parent_label, p.id as parent_id
 FROM      civicrm_contact_type c
@@ -328,40 +349,43 @@ LEFT JOIN civicrm_contact_type p ON ( c.parent_id = p.id )
 WHERE     ( c.name IS NOT NULL )
 ";
             
-            if ( $all === false ) {
-                $sql .= "
+                if ( $all === false ) {
+                    $sql .= "
 AND   c.is_active = 1
 AND   ( p.is_active = 1 OR p.id IS NULL )
 ";
-            }
-            $sql .= " ORDER BY c.id";
-            
-            $values = array( );
-            $dao = CRM_Core_DAO::executeQuery( $sql );
-            while ( $dao->fetch( ) ) {
-                if ( ! empty( $dao->parent_id ) ) {
-                    $key   = $isSeperator ? $dao->parent_name . $seperator . $dao->child_name : $dao->child_name;
-                    $label = "-&nbsp;{$dao->child_label}";
-                    $pName = $dao->parent_name;
-                } else {
-                    $key   = $dao->child_name;
-                    $label = $dao->child_label;
-                    $pName = $dao->child_name;
+                }
+                $sql .= " ORDER BY c.id";
+                
+                $values = array( );
+                $dao = CRM_Core_DAO::executeQuery( $sql );
+                while ( $dao->fetch( ) ) {
+                    if ( ! empty( $dao->parent_id ) ) {
+                        $key   = $isSeperator ? $dao->parent_name . $seperator . $dao->child_name : $dao->child_name;
+                        $label = "-&nbsp;{$dao->child_label}";
+                        $pName = $dao->parent_name;
+                    } else {
+                        $key   = $dao->child_name;
+                        $label = $dao->child_label;
+                        $pName = $dao->child_name;
+                    }
+                    
+                    if ( ! isset( $values[$pName] ) ) {
+                        $values[$pName] = array( );
+                    }
+                    $values[$pName][] = array( 'key' => $key, 'label' => $label );
                 }
 
-                if ( ! isset( $values[$pName] ) ) {
-                    $values[$pName] = array( );
+                $selectElements = array( );
+                foreach ( $values as $pName => $elements ) {
+                    foreach ( $elements as $element ) {
+                        $selectElements[$element['key']] = $element['label'];
+                    }
                 }
-                $values[$pName][] = array( 'key' => $key, 'label' => $label );
+                $_cache[$argString] = $selectElements;
+ 
+                $cache->set( $argString, $_cache[$argString] );
             }
-
-            $selectElements = array( );
-            foreach ( $values as $pName => $elements ) {
-                foreach ( $elements as $element ) {
-                    $selectElements[$element['key']] = $element['label'];
-                }
-            }
-            $_cache[$argString] = $selectElements;
         }
         return $_cache[$argString];
     }

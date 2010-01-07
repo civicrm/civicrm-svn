@@ -71,7 +71,6 @@ class CRM_Utils_Cache {
     static function &singleton( $host      = 'localhost',
                                 $port      = 11211,
                                 $timeout   = 3600 ) {
-
         if (self::$_singleton === null ) {
             if ( defined( 'CIVICRM_USE_MEMCACHE' ) && CIVICRM_USE_MEMCACHE) {
                 require_once 'CRM/Utils/Cache/Memcache.php';

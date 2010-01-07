@@ -715,10 +715,17 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
     public static function getContactTypes( $id )
     {
         $params  = array( 'id' => $id );
-        $contact = CRM_Core_DAO::commonRetrieve( 'CRM_Contact_DAO_Contact', $params,
-                                                 $details, array('contact_type', 'contact_sub_type') );
-        return array( $contact->contact_type, 
-                      $contact->contact_sub_type );
+        $details = array( );
+        $contact = CRM_Core_DAO::commonRetrieve( 'CRM_Contact_DAO_Contact',
+                                                 $params,
+                                                 $details,
+                                                 array('contact_type', 'contact_sub_type') );
+        if ( $contact ) {
+            return array( $contact->contact_type, 
+                          $contact->contact_sub_type );
+        } else {
+            CRM_Core_Error::fatal( );
+        }
     }
 
     /**
@@ -1835,15 +1842,16 @@ UNION
      * Given the component name and returns 
      * the count of participation of contact
      *
-     * @param string $component input component name
+     * @param string  $component input component name
      * @param integer $contactId input contact id
+     * @param string  $tableName optional tableName if component is custom group
      *
      * @return total number of count of occurence in database
      * @access public
      * @static
      */
     
-    static function getCountComponent( $component, $contactId ) 
+    static function getCountComponent( $component, $contactId, $tableName = null ) 
     {
         $object = null;
         switch ($component) {
@@ -1912,7 +1920,9 @@ UNION
 			$custom = explode( '_', $component );
 			if( $custom['0'] = 'custom' ) {
 				require_once 'CRM/Core/DAO/CustomGroup.php';
-				$tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup', $custom['1'], 'table_name' );
+                if ( ! $tableName ) {
+                    $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup', $custom['1'], 'table_name' );
+                }
 				$queryString = "SELECT count(id) FROM {$tableName} WHERE entity_id = {$contactId}";
 				return CRM_Core_DAO::singleValueQuery( $queryString );
 			}

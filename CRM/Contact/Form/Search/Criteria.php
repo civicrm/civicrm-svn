@@ -79,7 +79,7 @@ class CRM_Contact_Form_Search_Criteria {
         $form->add('text', 'contact_source', ts('Contact Source'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'source') );
 
         // add checkbox for cms users only
-        if (CIVICRM_UF != 'Standalone'){
+o        if (CIVICRM_UF != 'Standalone'){
           $form->addYesNo( 'uf_user', ts( 'CMS User?' ) );
         }
         // add search profiles

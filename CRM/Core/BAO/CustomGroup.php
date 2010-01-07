@@ -746,11 +746,12 @@ SELECT $select
         // process each group with menu tab
         while ($customGroupDAO->fetch( ) ) { 
             $group = array();
-            $group['id']      = $customGroupDAO->id;
-            $group['path']    = $path;
-            $group['title']   = "$customGroupDAO->title";
-            $group['query']   = "reset=1&gid={$customGroupDAO->id}&cid={$cidToken}";
-            $group['extra' ]  = array( 'gid' => $customGroupDAO->id );
+            $group['id']         = $customGroupDAO->id;
+            $group['path']       = $path;
+            $group['title']      = "$customGroupDAO->title";
+            $group['query']      = "reset=1&gid={$customGroupDAO->id}&cid={$cidToken}";
+            $group['extra' ]     = array( 'gid' => $customGroupDAO->id );
+            $group['table_name'] = $customGroupDAO->table_name;
             $groups[] = $group;
         }
        
