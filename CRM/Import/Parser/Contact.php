@@ -67,6 +67,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
 
     protected $_externalIdentifierIndex;
     protected $_allExternalIdentifiers;
+    protected $_parseStreetAddress;
 
     /**
      * Array of succesfully imported contact id's
@@ -226,6 +227,11 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                in_array( $this->_onDuplicate, array( CRM_Import_Parser::DUPLICATE_UPDATE, CRM_Import_Parser::DUPLICATE_FILL ) ) ) ) {
             $this->_updateWithId = true;
         }
+        
+        require_once 'CRM/Core/BAO/Preferences.php';
+        $this->_parseStreetAddress = CRM_Utils_Array::value( 'street_address_parsing', 
+                                                             CRM_Core_BAO_Preferences::valueOptions( 'address_options' ), 
+                                                             false );
     }
 
     /**
@@ -1841,6 +1847,31 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 }
             }
         }
+        
+        // parse street address, CRM-5450
+        if ( $this->_parseStreetAddress ) {
+            require_once 'CRM/Core/BAO/Address.php';
+            if ( array_key_exists( 'address', $formatted ) && is_array( $formatted['address'] ) ) { 
+                foreach ( $formatted['address'] as $instance => &$address ) {
+                    $streetAddress = CRM_Utils_Array::value( 'street_address', $address );
+                    if ( empty( $streetAddress ) ) continue;
+                    
+                    // parse address field.
+                    $parsedFields = CRM_Core_BAO_Address::parseStreetAddress( $streetAddress );
+                    
+                    //street address consider to be parsed properly, 
+                    //If we get street_name and street_number.                     
+                    if ( !CRM_Utils_Array::value( 'street_name', $parsedFields ) || 
+                         !CRM_Utils_Array::value( 'street_number', $parsedFields ) ) {
+                        $parsedFields = array_fill_keys( array_keys($parsedFields), '' );
+                    }
+                    
+                    // merge parse address w/ main address block.
+                    $address = array_merge( $address, $parsedFields );
+                }
+            }
+        }
+        
     }
     
 }
