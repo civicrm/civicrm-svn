@@ -409,16 +409,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         require_once('Google/library/xml-processing/xmlparser.php');
         
         $config =& CRM_Core_Config::singleton();
-        
-        if ( GOOGLE_DEBUG_PP ) {
-            define('RESPONSE_HANDLER_LOG_FILE', $config->uploadDir . 'CiviCRM.Google.log');
-            //Setup the log file
-            if (! $message_log = fopen(RESPONSE_HANDLER_LOG_FILE, "a")) {
-                echo "Cannot open " . RESPONSE_HANDLER_LOG_FILE . " file.\n";
-                exit(1);
-            }
-        }
-        
+               
         // Retrieve the XML sent in the HTTP POST request to the ResponseHandler
         if (get_magic_quotes_gpc()) {
             $xml_response = stripslashes($xml_response);
@@ -428,8 +419,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $headers = CRM_Utils_System::getAllHeaders();
 
         if ( GOOGLE_DEBUG_PP ) {
-            fwrite($message_log, sprintf("\n\r%s:- %s\n",date("D M j G:i:s T Y"),
-                                         $xml_response));
+            CRM_Core_Error::debug_var( 'RESPONSE', $xml_response, true, true, 'Google' );
         }
         
         // Retrieve the root and data from the xml response
@@ -460,8 +450,7 @@ class CRM_Core_Payment_GoogleIPN extends CRM_Core_Payment_BaseIPN {
         $response = new GoogleResponse($merchant_id, $merchant_key,
                                        $xml_response, $server_type);
         if ( GOOGLE_DEBUG_PP ) {
-            fwrite($message_log, sprintf("\n\r%s:- %s\n",date("D M j G:i:s T Y"),
-                                         $response->root));
+            CRM_Core_Error::debug_var( 'RESPONSE-ROOT', $response->root, true, true, 'Google' );
         }
 
         //Check status and take appropriate action

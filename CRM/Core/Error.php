@@ -331,7 +331,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     static function debug_var($variable_name,
                               &$variable,
                               $print = true,
-                              $log   = true)
+                              $log   = true,
+                              $comp  = '' )
     {
         // check if variable is set
         if(!isset($variable)) {
@@ -353,7 +354,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
                 reset($variable);
             }
         }
-        return self::debug_log_message($out);
+        return self::debug_log_message($out, false, $comp );
     }
     
     /**
@@ -368,14 +369,29 @@ class CRM_Core_Error extends PEAR_ErrorStack {
      *
      * @static
      */
-    static function debug_log_message( $message, $out = false )
+    static function debug_log_message( $message, $out = false , $comp = '' )
     {
         $config =& CRM_Core_Config::singleton( );
-        $file_log = Log::singleton( 'file',
-                                    "{$config->configAndLogDir}CiviCRM." . 
-                                    md5( $config->dsn . $config->userFrameworkResourceURL ) .
-                                    ".log"
-                                    );
+
+        if ( $comp ) {
+            $comp = $comp . '.';
+        }
+
+        $fileName =
+            "{$config->configAndLogDir}CiviCRM." . 
+            $comp .
+            md5( $config->dsn . $config->userFrameworkResourceURL ) .
+            '.log';
+        //Roll log file monthly
+        if ( file_exists($fileName) ) {
+            $fileTime = date ("Ym", filemtime($fileName));
+            if ($fileTime < date('Ym') ) {
+                rename( $fileName,
+                        $fileName . '.' . date('Ym', mktime(0, 0, 0, date("m")-1, date("d"), date("Y")) ) );
+            }
+        }
+
+        $file_log = Log::singleton( 'file',$fileName );
         $file_log->log("$message\n");
         $str = "<p/><code>$message</code>";
         if ( $out ) {
