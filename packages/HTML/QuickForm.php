@@ -1930,11 +1930,40 @@ class HTML_QuickForm extends HTML_Common
      */
     function exportValues($elementList = null)
     {
+        $skipFields = array( 'widget_code',
+                             'html_message',
+                             'body_html',
+                             'msg_html',
+                             'description',
+                             'intro',
+                             'thankyou_text',
+                             'intro_text',
+                             'body_text',
+                             'footer_text',
+                             'thankyou_text',
+                             'thankyou_footer',
+                             'new_text',
+                             'renewal_text',
+                             'help_pre',
+                             'help_post',
+                             'msg_html',
+                             'confirm_title',
+                             'confirm_text',
+                             'confirm_footer_text',
+                             'confirm_email_text' );
+                                    
         $values = array();
         if (null === $elementList) {
             // iterate over all elements, calling their exportValue() methods
             foreach (array_keys($this->_elements) as $key) {
+                $fldName = $this->_elements[$key]->_attributes['name'];                
                 $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
+
+                if ( in_array( $this->_elements[$key]->_type, array('text', 'textarea') ) 
+                      && !in_array( $fldName, $skipFields ) ) {
+                    $value[$fldName]= htmlspecialchars( $value[$fldName] );
+                }
+                
                 if (is_array($value)) {
                     // This shit throws a bogus warning in PHP 4.3.x
                     $values = HTML_QuickForm::arrayMerge($values, $value);
@@ -1946,6 +1975,11 @@ class HTML_QuickForm extends HTML_Common
             }
             foreach ($elementList as $elementName) {
                 $value = $this->exportValue($elementName);
+                
+                if ( !in_array( $elementName, $skipFields ) ) {
+                    $value = htmlspecialchars( $value );
+                }
+                
                 if (PEAR::isError($value)) {
                     return $value;
                 }
