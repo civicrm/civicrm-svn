@@ -1422,7 +1422,10 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             //add email greeting, postal greeting, addressee, CRM-4575
             $gId = $form->get('gid') ? $form->get('gid') : CRM_Utils_Array::value('group_id', $field);
             $profileType = CRM_Core_BAO_UFField::getProfileType( $gId, true, false, true );
-            
+             
+            if ( empty($profileType) || in_array($profileType, array( 'Contribution', 'Participant', 'Membership' )) ) {
+                $profileType = 'Individual';
+            }
             if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
                 $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
             }
