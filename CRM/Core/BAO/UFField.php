@@ -406,7 +406,7 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
      * @acess public
      * @static
      */
-    static function getProfileType( $ufGroupId, $returnMixType = true, $onlyPure = false ) 
+    static function getProfileType( $ufGroupId, $returnMixType = true, $onlyPure = false, $skipComponentType = false ) 
     {
         // profile types
         $contactTypes = array( 'Contact', 'Individual', 'Household', 'Organization' );
@@ -466,7 +466,12 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
 
             if ( count( $componentCount ) == 1 && count( $contactTypeCount ) == 1 ) { 
                 // this case if valid profile contact + component
-                 $profileType = $componentCount[0];
+                if ( !$skipComponentType ) {
+                    $profileType = $componentCount[0];
+                } else {
+                    $profileType = $contactTypeCount[0];
+                }
+         
             } elseif( count( $componentCount ) > 1 ) { 
                 // this is mix component profiles
                 $mixProfileType = $componentCount[1];
