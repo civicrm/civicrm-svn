@@ -1950,7 +1950,10 @@ class HTML_QuickForm extends HTML_Common
                              'confirm_title',
                              'confirm_text',
                              'confirm_footer_text',
-                             'confirm_email_text' );
+                             'confirm_email_text',
+                             'report_header',
+                             'report_footer',
+                             );
                                     
         $values = array();
         if (null === $elementList) {
