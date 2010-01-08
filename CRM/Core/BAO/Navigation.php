@@ -390,7 +390,7 @@ ORDER BY parent_id, weight";
         $i18n =& CRM_Core_I18n::singleton();
 
         $name       = $i18n->crm_translate($value['attributes']['label']);
-        $url        = $value['attributes']['url'];
+        $url        = str_replace('&', '&amp;', $value['attributes']['url']);
         $permission = $value['attributes']['permission'];
         $operator   = $value['attributes']['operator'];
         $parentID   = $value['attributes']['parentID'];
