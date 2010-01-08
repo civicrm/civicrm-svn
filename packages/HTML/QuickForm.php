@@ -1956,12 +1956,15 @@ class HTML_QuickForm extends HTML_Common
         if (null === $elementList) {
             // iterate over all elements, calling their exportValue() methods
             foreach (array_keys($this->_elements) as $key) {
-                $fldName = $this->_elements[$key]->_attributes['name'];                
                 $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
-
+                
+                //filter the value across XSS vulnerability issues.
+                $fldName = $this->_elements[$key]->_attributes['name'];                
                 if ( in_array( $this->_elements[$key]->_type, array('text', 'textarea') ) 
-                      && !in_array( $fldName, $skipFields ) ) {
-                    $value[$fldName]= htmlspecialchars( $value[$fldName] );
+                     && !in_array( $fldName, $skipFields ) ) {
+                    //here value might be array or single value.
+                    //so we should iterate and get filtered value.
+                    $this->filterValue( $value );
                 }
                 
                 if (is_array($value)) {
@@ -1976,8 +1979,9 @@ class HTML_QuickForm extends HTML_Common
             foreach ($elementList as $elementName) {
                 $value = $this->exportValue($elementName);
                 
+                //filter the value across XSS vulnerability issues.
                 if ( !in_array( $elementName, $skipFields ) ) {
-                    $value = htmlspecialchars( $value );
+                    $this->filterValue( $value );
                 }
                 
                 if (PEAR::isError($value)) {
@@ -1987,6 +1991,21 @@ class HTML_QuickForm extends HTML_Common
             }
         }
         return $values;
+    }
+
+   /**
+    * This function is going to filter the
+    * submitted values across XSS vulnerability.
+    */
+    function filterValue( &$values ) 
+    {
+        if ( is_array( $values ) ) {
+            foreach ( $values as &$value ) {
+                $this->filterValue( $value );
+            }
+        } else {
+            $values = htmlspecialchars( $values );
+        }
     }
 
     // }}}
