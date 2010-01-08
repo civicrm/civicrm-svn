@@ -157,7 +157,7 @@ AND    cg.is_active = 1
         $this->fetch( 'customField',
                       'CRM_Core_DAO_CustomField',
                       $sql,
-                      null,
+                      array( 'id', 'column_name' ),
                       array( array( 'optionGroup', 'option_group_id', 'option_group_name' ),
                              array( 'customGroup', 'custom_group_id', 'custom_group_name' ) ) );
 
@@ -263,6 +263,15 @@ AND    entity_id    IS NULL
                         echo "This extension: {$object->extends} is not yet handled";
                         exit( );
                     }
+                } if ( $name == 'field_name' ) {
+                    $value = $object->$name;
+                    if ( substr( $value, 0, 7 ) == 'custom_' ) { // hack for profile field_name
+                        $cfID = substr( $value, 7 );
+                        require_once 'CRM/Core/BAO/CustomField.php';
+                        list( $tableName, $columnName, $groupID ) = CRM_Core_BAO_CustomField::getTableColumnGroup( $cfID );
+                        $value = "custom.{$tableName}.{$columnName}";
+                    }
+                    $xml .= "\n      <$name>$value</$name>";
                 } else {
                     $value = str_replace( CRM_Core_DAO::VALUE_SEPARATOR,
                                           ":;:;:;",

@@ -253,6 +253,26 @@ AND        v.name = %1
                 $profileField = new CRM_Core_DAO_UFField( );
                 $profileField->uf_group_id = $idMap['profile_group'][(string ) $profileFieldXML->profile_group_name];
                 $this->copyData( $profileField, $profileFieldXML, false, 'name' );
+
+                // fix field name
+                if ( substr( $profileField->field_name, 0, 7 ) == 'custom.' ) {
+                    list( $dontCare, $tableName, $columnName ) = explode( '.', $profileField->field_name );
+                    $sql = "
+SELECT     f.id
+FROM       civicrm_custom_field f
+INNER JOIN civicrm_custom_group g ON f.custom_group_id = g.id
+WHERE      g.table_name  = %1
+AND        f.column_name = %2
+";
+                    $params = array( 1 => array( $tableName, 'String' ),
+                                     2 => array( $columnName, 'String' ) );
+                    $cfID = CRM_Core_DAO::singleValueQuery( $sql, $params );
+                    if ( ! $cfID ) {
+                        echo "Could not find custom field for {$profileField->field_name}, $tableName, $columnName<p>";
+                        exit( );
+                    }
+                    $profileField->field_name = "custom_{$cfID}";
+                }
                 $profileField->save( );
             }
         }
