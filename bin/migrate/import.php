@@ -191,16 +191,33 @@ AND        v.name = %1
                         if ( $valueID ) {
                             $customGroup->extends_entity_column_id = $valueID;
                         }
+                        
+                        $optionIDs = array( );
                         switch ( $valueID ) {
                         case 1: // ParticipantRole
-                            
+                            require_once 'CRM/Core/OptionGroup.php';
+                            $condition = "AND v.name IN ( '{$optValues}' )";
+                            $optionIDs = CRM_Core_OptionGroup::values( 'participant_role', false, false, false, $condition, 'name' );
                             break;
                         case 2: // ParticipantEventName
-                            
+                            require_once 'CRM/Event/PseudoConstant.php';
+                            $condition = "( is_template IS NULL OR is_template != 1 ) AND title IN( '{$optValues}' )";
+                            $optionIDs = CRM_Event_PseudoConstant::event( null, false, $condition );
                             break;
                         case 3: // ParticipantEventType
-                            
+                            require_once 'CRM/Core/OptionGroup.php';
+                            $condition = "AND v.name IN ( '{$optValues}' )";
+                            $optionIDs = CRM_Core_OptionGroup::values( 'event_type', false, false, false, $condition, 'name' ); 
                             break;
+                        }
+                        
+                        if( is_array($optionIDs) && !empty($optionIDs) ) {
+                            $customGroup->extends_entity_column_value = 
+                                CRM_Core_DAO::VALUE_SEPARATOR . implode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                                                         array_keys( $optionIDs ) ) . 
+                                CRM_Core_DAO::VALUE_SEPARATOR; 
+                            
+                            $saveAgain = true;
                         }
                     }
                 }
