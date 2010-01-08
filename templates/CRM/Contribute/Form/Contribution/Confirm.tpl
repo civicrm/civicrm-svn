@@ -21,7 +21,7 @@
         </p> 
     </div>
     {if $is_pay_later}
-        <div class="bold" class="pay_later_receipt-section">{$pay_later_receipt}</div>
+        <div class="bold pay_later_receipt-section">{$pay_later_receipt}</div>
     {/if}
     
     {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="confirmContribution"}
@@ -136,10 +136,16 @@
         <div class="header-dark">
             {ts}Billing Name and Address{/ts}
         </div>
-        <div class="display-block">
-            <strong>{$billingName}</strong><br />
-            {$address|nl2br}
-        </div>
+        <div class="section billingName-section">
+        		<div class="label">Name</div>
+        		<div class="content">{$billingName}</div>
+        		<div class="clear"/>
+        	</div>
+        	<div class="section billing_address-section">
+        		<div class="label">Address</div>
+        		<div class="content">{$address|nl2br}</div>
+        		<div class="clear"/>
+        	</div>
         {/if}
         {if $email}
         <div class="header-dark">
@@ -168,9 +174,21 @@
             {ts}Bank Identification Number{/ts}: {$bank_identification_number}<br />
             {ts}Bank Name{/ts}: {$bank_name}<br />
         {else}
-            {$credit_card_type}<br />
-            {$credit_card_number}<br />
-            {ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}<br />
+        	<div class="section credit_card_type-section">
+        		<div class="label">Card Type</div>
+        		<div class="content">{$credit_card_type}</div>
+        		<div class="clear"/>
+        	</div>
+        	<div class="section credit_card_number-section">
+        		<div class="label">Card Number</div>
+        		<div class="content">{$credit_card_number}</div>
+        		<div class="clear"/>
+        	</div>
+        	<div class="section credit_card_expiration-section">
+        		<div class="label">{ts}Expires{/ts}</div>
+        		<div class="content">{$credit_card_exp_date|truncate:7:''|crmDate}</div>
+        		<div class="clear"/>
+        	</div>
         {/if}
         </div>
     </div>

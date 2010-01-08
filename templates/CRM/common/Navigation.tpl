@@ -2,9 +2,11 @@
     <ul id="civicrm-menu">
         <li id="crm-qsearch" class="menumain">
             <form action="{crmURL p='civicrm/contact/search/basic' h=0 }" name="search_block" id="id_search_block" method="post" onsubmit="getSearchURLValue( );">
+            	<div>
                 <input type="text" class="form-text" id="sort_name" name="sort_name" style="width: 12em;"/>
-                <input type="hidden" id="sort_contact_id" value="">
+                <input type="hidden" id="sort_contact_id" value="" />
                 <input type="submit" value="{ts}Go{/ts}" name="_qf_Basic_refresh" class="form-submit default" style="display: none;"/>
+            	</div>
             </form>
         </li>
         {$navigation}
@@ -38,8 +40,8 @@ function getSearchURLValue( )
 
 /* Need to fix this properly*/
 cj( function() {
-    cj('#admin-menu').find("li :contains('CiviCRM')").click(function() {
-        cj('#civicrm-menu').toggle();
+    cj("#admin-menu").find("li :contains('CiviCRM')").click(function() {
+        cj("#civicrm-menu").toggle();
         return false;
     });
 
@@ -58,16 +60,16 @@ cj( function() {
 
 var framework = "{/literal}{$config->userFramework}{literal}";
 if( framework != 'Joomla') {
-	cj('body').prepend( cj('#menu-container').html() );
+	cj('body').prepend( cj("#menu-container").html() );
 
 	//Track Scrolling
 	cj(window).scroll( function () { 
 	   var scroll = document.documentElement.scrollTop || document.body.scrollTop;
-	   cj('#civicrm-menu').css({top: 'scroll', position: 'fixed', top: '0px'}); 
-	   cj('div.sticky-header').css({ 'top' : '23px', position: 'fixed' });
+	   cj('#civicrm-menu').css({top: "scroll", position: "fixed", top: "0px"}); 
+	   cj('div.sticky-header').css({ 'top' : "23px", position: "fixed" });
 	});
 } else {
-	   cj('div#toolbar-box div.m').html(cj('#menu-container').html());
+	   cj('div#toolbar-box div.m').html(cj("#menu-container").html());
 	   cj('#civicrm-menu').ready( function(){ 
 			cj('.outerbox').css({ 'margin-top': '6px'});
 			cj('#root-menu-div .menu-ul li').css({ 'padding-bottom' : '2px', 'margin-top' : '2px' });

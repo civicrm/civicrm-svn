@@ -24,18 +24,14 @@
 {/if}
 
 {if $form.additional_participants.html}
-    <div class="additional_participants-section" id="noOfparticipants">
-        <table class="form-layout-compressed">
-            <tr>
-                <td class="label" style="width: 15%;">{$form.additional_participants.label}</td>
-        		<td>&nbsp;</td>
-                <td>
-                    {$form.additional_participants.html} &nbsp; ({ts}including yourself{/ts})<br />
-                    <span class="description">{ts}Fill in your registration information on this page. If you are registering additional people, you will be able to enter their registration information after you complete this page and click &quot;Continue&quot;.{/ts}</span>
-                </td>
-           	</tr>
-        </table>
-    </div><div class="spacer"></div> 
+    <div class="section additional_participants-section" id="noOfparticipants">
+        <div class="label">{$form.additional_participants.label}</div>
+        <div class="content">
+            {$form.additional_participants.html} &nbsp; ({ts}including yourself{/ts})<br />
+            <span class="description">{ts}Fill in your registration information on this page. If you are registering additional people, you will be able to enter their registration information after you complete this page and click &quot;Continue&quot;.{/ts}</span>
+        </div>
+        <div class="clear"></div>
+    </div>
 {/if}
 
 {if $priceSet}
@@ -43,39 +39,33 @@
         {include file="CRM/Price/Form/PriceSet.tpl"}
     </fieldset>
     {if $form.is_pay_later}
-    <dl id="is-pay-later">
-	<dt>&nbsp;</dt>
-        <dd>{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}</dd>
-    </dl>
+        <div class="section pay_later-section">
+	        <div class="label">&nbsp;</div>
+            <div class="content">{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}</div>
+            <div class="clear"></div>
+        </div>
     {/if}
 
 {else}
     {if $paidEvent}
-    <div class="paidEvent-section">
-	<table class="form-layout-compressed">
-	    <tr>
-		<td class="label nowrap">{$event.fee_label} <span class="marker">*</span></td>
-		<td>&nbsp;</td>
-		<td>{$form.amount.html}</td>
-	    </tr>
+    <div class="section paid_event-section">
+	    <div class="label">{$event.fee_label} <span class="marker">*</span></div>
+		<div class="content">{$form.amount.html}
 	    {if $form.is_pay_later}
-	        <tr id="is-pay-later">
-		        <td>&nbsp;</td>
-		        <td>&nbsp;</td>
-		        <td>{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}</td>
-	        </tr>
+            <br />{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}
 	    {/if}
- 	</table>
- 	</div><div class="spacer"></div>
+        </div>
+        <div class="clear">
+ 	</div>
     {/if}
 {/if}
 
 {assign var=n value=email-$bltID}
-<table class="form-layout-compressed">
-    <tr>
-	    <td class="label nowrap">{$form.$n.label}</td><td>{$form.$n.html}</td>
-    </tr>
-</table>
+    <div class="section email-section">
+        <div class="label">{$form.$n.label}</div>
+        <div class="content">{$form.$n.html}</div>
+        <div class="clear"></div>
+    </div>
 
 
 {* User account registration option. Displays if enabled for one of the profiles on this page. *}
@@ -98,14 +88,9 @@
 {if $paymentProcessor.payment_processor_type EQ 'PayPal_Express' and $buildExpressPayBlock}
     {assign var=expressButtonName value='_qf_Register_upload_express'}
     <fieldset><legend>{ts}Checkout with PayPal{/ts}</legend>
-    <table class="form-layout-compressed">
-	<tr>
-	    <td class="description">{ts}Click the PayPal button to continue.{/ts}</td>
-	</tr>
-	<tr>
-	    <td>{$form.$expressButtonName.html} <span style="font-size:11px; font-family: Arial, Verdana;">Checkout securely.  Pay without sharing your financial information. </span></td>
-	</tr>
-    </table>
+    <div class="description">{ts}Click the PayPal button to continue.{/ts}</div>
+	<div>{$form.$expressButtonName.html} <span style="font-size:11px; font-family: Arial, Verdana;">Checkout securely.  Pay without sharing your financial information. </span>
+    </div>
     </fieldset>
 {/if}
 </div>
