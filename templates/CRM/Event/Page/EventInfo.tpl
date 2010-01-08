@@ -108,4 +108,5 @@
             <br />{include file="CRM/Event/Page/iCalLinks.tpl"}
         {/if}
     </div>
+    </div>
 </div>
