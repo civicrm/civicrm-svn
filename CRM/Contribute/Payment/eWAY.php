@@ -52,11 +52,11 @@ class CRM_Contribute_Payment_eWAY extends CRM_Core_Payment_eWAY
     */ 
    static function &singleton( $mode, &$paymentProcessor ) 
    {
-      if (self::$_singleton === null ) 
-      { 
-         self::$_singleton =& new CRM_Contribute_Payment_eWAY( $mode, $paymentProcessor );
-      } 
-      return self::$_singleton; 
+      $processorName = $paymentProcessor['name'];
+      if (self::$_singleton[$processorName] === null ) {
+          self::$_singleton[$processorName] =& new CRM_Contribute_Payment_eWAY( $mode, $paymentProcessor );
+      }
+      return self::$_singleton[$processorName];
    } 
 
 } // end class CRM_Contribute_Payment_eWAY

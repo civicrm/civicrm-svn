@@ -60,16 +60,17 @@ class CRM_Contribute_Payment_Moneris extends CRM_Core_Payment_Moneris {
      * singleton function used to manage this object 
      * 
      * @param string $mode the mode of operation: live or test
- 
+     *
      * @return object 
      * @static 
      * 
      */ 
     static function &singleton( $mode, &$paymentProcessor ) {
-        if (self::$_singleton === null ) { 
-            self::$_singleton =& new CRM_Contribute_Payment_Moneris( $mode, $paymentProcessor );
-        } 
-        return self::$_singleton; 
+        $processorName = $paymentProcessor['name'];
+        if (self::$_singleton[$processorName] === null ) {
+            self::$_singleton[$processorName] =& new CRM_Contribute_Payment_Moneris( $mode, $paymentProcessor );
+        }
+        return self::$_singleton[$processorName];
     } 
 }
 
