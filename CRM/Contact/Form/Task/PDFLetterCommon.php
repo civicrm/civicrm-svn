@@ -207,15 +207,12 @@ class CRM_Contact_Form_Task_PDFLetterCommon
                                 );
         $activity = CRM_Activity_BAO_Activity::create( $activityParams );
         
-        foreach ( $form->_contactIds  as $values ) {
-            $contactId = $values;
-            $activityTargetParams = array( 
-                                          'activity_id'       => $activity->id,
-                                          'target_contact_id' => $contactId, 
+        foreach ( $form->_contactIds as $contactId ) {
+            $activityTargetParams = array( 'activity_id'       => $activity->id,
+                                           'target_contact_id' => $contactId, 
                                            );
             CRM_Activity_BAO_Activity::createActivityTarget( $activityTargetParams );
         }
-        
         require_once 'CRM/Utils/PDF/Utils.php';
         CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", 'portrait' ); 
         exit(1);
