@@ -56,7 +56,7 @@
                 <tr><td class="label nowrap">{$form.payment_processor_id.label}</td><td>{$form.payment_processor_id.html}</td></tr>
             {/if}
             <tr><td class="label">{$form.event_id.label}</td><td class="view-value bold">{$form.event_id.html}&nbsp;        
-    					{if $action eq 1 && !$past }<br /><a href="{$pastURL}">&raquo; {ts}Include past event(s) in this select list.{/ts}</a>{/if}    
+    					{if $action eq 1 && !$past }<br /><a href='javascript:buildSelect( "event_id" );' id='past-event'>&raquo; {ts}Include past event(s) in this select list.{/ts}</a>{/if}    
     					{if $is_test}
     					{ts}(test){/ts}
     					{/if}
@@ -118,6 +118,23 @@
 {if $action eq 1 or $action eq 2}
 {literal}
 <script type="text/javascript">
+    // event select
+    function buildSelect( selectID ) {
+        var elementID = '#' + selectID;
+        cj( elementID ).html('');
+        var postUrl = "{/literal}{crmURL p='civicrm/ajax/eventlist' h=0}{literal}";
+        cj.post( postUrl, null,
+            function ( response ) {
+                response = eval( response );
+                for (i = 0; i < response.length; i++) {
+                    cj( elementID ).get(0).add(new Option(response[i].name, response[i].value), document.all ? i : null);
+                }
+                cj('#past-event').hide( );
+                cj('input[name=past_event]').val(1);
+            }
+        );
+    }
+
 	//build fee block
 	buildFeeBlock( );
 	

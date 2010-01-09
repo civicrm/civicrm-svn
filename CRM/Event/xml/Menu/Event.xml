@@ -183,4 +183,9 @@
      <page_callback>CRM_Core_Page_AJAX_Location::getLocBlock</page_callback>
      <access_arguments>access CiviCRM,access CiviEvent</access_arguments>
   </item>
+  <item>
+     <path>civicrm/ajax/eventlist</path>
+     <page_callback>CRM_Event_Page_AJAX::eventList</page_callback>
+     <access_arguments>access CiviCRM,access CiviEvent</access_arguments>
+  </item>
 </menu>

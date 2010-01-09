@@ -117,5 +117,21 @@ WHERE cg.name LIKE 'civicrm_event.amount%'
             echo $elements = "$dao->label|$dao->id\n";
         }
         exit();
+    }
+    
+    function eventList(  ) {
+        require_once "CRM/Event/BAO/Event.php";
+        $events = CRM_Event_BAO_Event::getEvents( true );
+
+        $elements = array( array( 'name'  => ts('- select -'),
+                                  'value' => '' ) );
+        foreach ( $events as $id => $name ) {
+            $elements[] = array( 'name'  => $name,
+                                 'value' => $id );
+        }
+
+        require_once "CRM/Utils/JSON.php";
+        echo json_encode( $elements );
+        exit();
     } 
 }

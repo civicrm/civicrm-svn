@@ -557,9 +557,6 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
                 $urlParams .= "&action=add";
             }
             
-            if (CRM_Utils_Request::retrieve( 'past', 'Boolean', $this ) ) {
-                $urlParams .= "&past=true";
-            }
             if ( $this->_mode ) {
                 $urlParams .= "&mode={$this->_mode}";
             }
@@ -574,14 +571,13 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         }
 
         $this->assign("refreshURL",$url);
-        $url .= "&past=true";
-        $this->assign("pastURL", $url);
-        
+
+        $this->add( 'hidden', 'past_event' );
+
         $events = array( );
         $this->assign("past", false);
-        
         require_once "CRM/Event/BAO/Event.php";
-        if ( CRM_Utils_Request::retrieve( 'past', 'Boolean', $this ) || ( $this->_action & CRM_Core_Action::UPDATE ) ) {
+        if ( $this->getElementValue( 'past_event' ) || ( $this->_action & CRM_Core_Action::UPDATE ) ) {
             $events = CRM_Event_BAO_Event::getEvents( true );
             $this->assign("past", true);
         } else {
