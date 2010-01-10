@@ -1417,10 +1417,13 @@ class CRM_Report_Form extends CRM_Core_Form {
         $group->find();
         while( $group->fetch( ) ) {
              if( in_array( $group->id, $this->_params['gid_value'] ) && $group->saved_search_id ) {
-                $smartGroups[] = $group->id;                
+                 $smartGroups[] = $group->id;
              }
         }
         
+        require_once 'CRM/Contact/BAO/GroupContactCache.php';
+        CRM_Contact_BAO_GroupContactCache::check( $smartGroups );
+
         if( !empty($smartGroups) ) {   
             $smartGroups = implode( ',', $smartGroups );
             $smartGroupQuery =                                                                             
