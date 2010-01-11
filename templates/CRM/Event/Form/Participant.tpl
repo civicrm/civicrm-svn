@@ -131,6 +131,7 @@
                 }
                 cj('#past-event').hide( );
                 cj('input[name=past_event]').val(1);
+                cj("#feeBlock").html( '' );
             }
         );
     }
