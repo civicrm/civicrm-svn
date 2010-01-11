@@ -1527,5 +1527,45 @@ WHERE  ce.loc_block_id = $locBlockId";
         return false;
     }
 
+    /**
+     * make sure that the user has permission to access this event
+     *
+     * @param int $id   the id of the event
+     * @param int $name the name or title of the event
+     *
+     * @return string   the permission that the user has (or null)
+     * @access public
+     * @static
+     */
+    static function checkPermission( $id, $title ) 
+    {
+        require_once 'CRM/ACL/API.php';
+        require_once 'CRM/Event/PseudoConstant.php';
+        $allEvents = CRM_Event_PseudoConstant::event( null, true );
+
+        $permissions = null;
+        if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
+             CRM_ACL_API::groupPermission( CRM_ACL_API::EDIT, $id, null,
+                                           'civicrm_event', $allEvents ) ) {
+            //FIXME: Need to figure out exact permission to allow event edit
+            $permissions[] = CRM_Core_Permission::EDIT;
+        }
+        
+        if ( CRM_Core_Permission::check( 'view all contacts' ) ||
+             CRM_ACL_API::groupPermission( CRM_ACL_API::VIEW, $id, null,
+                                           'civicrm_event', $allEvents ) ) {
+            //FIXME: Need to figure out exact permission to allow event view
+            $permissions[] =  CRM_Core_Permission::VIEW;
+        }
+        
+        if ( ! empty($permissions) && CRM_Core_Permission::check( 'delete in CiviEvent' ) ) {
+            // Note: using !empty() in if condition, restricts the scope of delete 
+            // permission to events that are editable/viewable. 
+            // We can remove this !empty condition once we have ACL support for delete functionality.
+            $permissions[] =  CRM_Core_Permission::DELETE;
+        }
+        
+        return $permissions;
+    }
 }
 

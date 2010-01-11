@@ -71,6 +71,13 @@ class CRM_Event_Page_ManageEventEdit extends CRM_Core_Page
             $params = array( 'id' => $this->_id );
             require_once 'CRM/Event/BAO/Event.php';
             CRM_Event_BAO_Event::retrieve( $params, $eventInfo );
+
+            // its an update mode, do a permission check
+            require_once 'CRM/Event/BAO/Event.php';
+            $permissions = CRM_Event_BAO_Event::checkPermission( $this->_id, $eventInfo['title'] );
+            if ( empty( $permissions ) || ! in_array( CRM_Core_Permission::EDIT, $permissions ) ) {
+                CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
+            } 
         }
 
         // figure out whether we’re handling an event or an event template
