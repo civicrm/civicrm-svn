@@ -832,7 +832,7 @@ WHERE  civicrm_participant.id = {$participantId}
         } else {
             if ( CRM_Utils_Array::value('fee_level', $includeFeeLevels) ) {
                 while ( $dao->fetch( ) ) {
-                    $additionalParticipantIds[$dao->id] = array( 'label'  => $dao->amount_level.' - '.$dao->display_name, 
+                    $additionalParticipantIds[$dao->id] = array( 'label'  => $dao->fee_level.' - '.$dao->display_name, 
                                                                  'amount' => $dao->fee_amount   );
                 }   
             } elseif (  CRM_Utils_Array::value('priceset', $includeFeeLevels) ) {
