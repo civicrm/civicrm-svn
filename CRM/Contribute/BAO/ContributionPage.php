@@ -306,7 +306,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
             list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contactID, false );
 
             require_once 'CRM/Core/BAO/MessageTemplates.php';
-            list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplateParams(
+            list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate(
                 array(
                     'groupName' => 'msg_tpl_workflow_contribution',
                     'valueName' => 'contribution_recurring_notify',
