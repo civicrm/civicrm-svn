@@ -1953,6 +1953,8 @@ class HTML_QuickForm extends HTML_Common
                              'confirm_email_text',
                              'report_header',
                              'report_footer',
+                             'cc_id',
+                             'bcc_id'
                              );
                                     
         $values = array();
