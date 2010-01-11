@@ -456,8 +456,7 @@ class CRM_Utils_Date
                           '%p' => strtolower($type),
                           '%P' => $type,
                           '%A' => $type,
-                          '%Y' => $year,
-                          '%A' => date('l', strtotime($dateString)),
+                          '%Y' => $year
                           );
 
             return strtr($format, $date);
