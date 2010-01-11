@@ -281,7 +281,7 @@ class CRM_Utils_File {
             // We'll truncate at 240 to give some room for the extension.
             return CRM_Utils_String::munge( "{$basename}_". CRM_Utils_Array::value( 'extension', $info ) . "_{$uniqID}", '_',  240 ) . ".unknown";
         } else {
-            return CRM_Utils_String::munge( "{$basename}_{$uniqID}", '_',  240 ) . CRM_Utils_Array::value( 'extension', $info );
+            return CRM_Utils_String::munge( "{$basename}_{$uniqID}", '_',  240 ) . "." . CRM_Utils_Array::value( 'extension', $info );
         }
     }
 
