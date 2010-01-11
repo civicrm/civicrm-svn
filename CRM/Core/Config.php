@@ -196,7 +196,12 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             } else {
                 // we retrieve the object from memcache, so we now initialize the objects
                 self::$_singleton->_initialize( );
+                
+                // add component specific settings
+                self::$_singleton->componentRegistry->addConfig( $this );
             }
+
+            
             self::$_singleton->initialized = 1;
 
             if ( isset( self::$_singleton->customPHPPathDir ) &&
@@ -283,7 +288,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
      * @return void
      * @access public
      */
-    private function _initialize() 
+    private function _initialize( ) 
     {
 
         // following variables should be set in CiviCRM settings and
@@ -322,6 +327,12 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
 
         // also initialize the logger
         self::$_log =& Log::singleton( 'display' );
+
+        // initialize component registry early to avoid "race" 
+        // between CRM_Core_Config and CRM_Core_Component (they
+        // are co-dependant)
+        require_once 'CRM/Core/Component.php';
+        $this->componentRegistry = new CRM_Core_Component();
     }
 
 
@@ -364,13 +375,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
      */
     private function _initVariables() 
     {
-
-        // initialize component registry early to avoid "race" 
-        // between CRM_Core_Config and CRM_Core_Component (they
-        // are co-dependant)
-        require_once 'CRM/Core/Component.php';
-        $this->componentRegistry = new CRM_Core_Component();
-
         // retrieve serialised settings
         require_once "CRM/Core/BAO/Setting.php";
         $variables = array();

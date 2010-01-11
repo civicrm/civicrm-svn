@@ -775,3 +775,39 @@ function civitest_civicrm_config( &$config ) {
     }
 
 }
+
+function custom_ts( $string, $params = array( ) ) {  
+    $string = str_replace( 'Participant', 'Delegate', $string );
+    
+    static $i18n = null;
+    if ( ! $i18n ) {
+        $i18n =& CRM_Core_I18n::singleton();
+    }
+    return $i18n->crm_translate( $string, $params );
+}
+
+/**
+ * You want a contribution page with exactly one amount and you
+ * you want to set all the values fixed and not give the user
+ * any choice
+ */
+function civitest_civicrm_buildForm( $formName, &$form ) {
+    if ( $formName == 'CRM_Contribute_Form_Contribution_Main' &&
+         $form->getVar( '_id' ) == 1 ) {
+        // 358 is the "option value id" of the only  value in the amount table,
+        // you can get this id, by doing a view source on the HTML
+        $defaults = array( 'amount'   => 358,
+                           'is_recur' => 1,
+                           'frequency_interval' => 1,
+                           'frequency_unit' => 'month',
+                           'installments' => 12 );
+        $form->setDefaults( $defaults );
+
+        // also freeze these elements
+        $elementNames = array_keys( $defaults );
+        foreach ( $elementNames as $element ) {
+            $elm =& $form->getElement( $element );
+            $elm->freeze( );
+        }
+    }
+}

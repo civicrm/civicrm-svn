@@ -49,16 +49,37 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
      * @return boolean true if we did not regenerate, false if we did
      */
     static function check( $groupID ) {
-        $cacheDate = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group',
-                                                  $groupID,
-                                                  'cache_date' );
-
-        // we'll modify the below if to regenerate if cacheDate is quite old
-        if ( $cacheDate != null ) {
+        if ( empty( $groupID ) ) {
             return true;
         }
-        self::add( $groupID );
-        return false;
+
+        if ( ! is_array( $groupID ) ) {
+            $groupID = array( $groupID );
+        }
+        // note escapeString is a must here and we can't send the imploded value as second arguement to 
+        // the executeQuery(), since that would put single quote around the string and such a string 
+        // of comma separated integers would not work. 
+        $groupID = CRM_Core_DAO::escapeString( implode( ', ', $groupID ) );
+
+        // we'll modify the below if to regenerate if cacheDate is quite old
+        $query  = "
+SELECT     g.id
+FROM       civicrm_group g
+WHERE      g.id IN ( {$groupID} ) AND g.saved_search_id = 1 AND g.cache_date IS NULL
+";
+
+        $dao      =& CRM_Core_DAO::executeQuery( $query );
+        $groupIDs = array( );
+        while ( $dao->fetch() ) {
+            $groupIDs[] = $dao->id;
+        }
+
+        if ( empty( $groupIDs ) ) {
+            return true;
+        } else {
+            self::add( $groupIDs );
+            return false;
+        }
     }
 
     static function add( $groupID ) {

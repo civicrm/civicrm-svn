@@ -67,6 +67,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
 
     protected $_externalIdentifierIndex;
     protected $_allExternalIdentifiers;
+    protected $_parseStreetAddress;
 
     /**
      * Array of succesfully imported contact id's
@@ -226,6 +227,11 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                in_array( $this->_onDuplicate, array( CRM_Import_Parser::DUPLICATE_UPDATE, CRM_Import_Parser::DUPLICATE_FILL ) ) ) ) {
             $this->_updateWithId = true;
         }
+        
+        require_once 'CRM/Core/BAO/Preferences.php';
+        $this->_parseStreetAddress = CRM_Utils_Array::value( 'street_address_parsing', 
+                                                             CRM_Core_BAO_Preferences::valueOptions( 'address_options' ), 
+                                                             false );
     }
 
     /**
@@ -467,7 +473,9 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         
         //get contact id to format common data in update/fill mode,
         //if external identifier is present, CRM-4423
-        if ( $this->_updateWithId  && !CRM_Utils_Array::value('id', $params) ) {
+        if ( $this->_updateWithId && 
+             ! CRM_Utils_Array::value( 'id', $params ) &&
+             CRM_Utils_Array::value( 'external_identifier', $params ) ) {
             if ( $cid = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                                      $params['external_identifier'], 'id',
                                                      'external_identifier' ) ) {
@@ -1014,7 +1022,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             if ($customFieldID = CRM_Core_BAO_CustomField::getKeyID($key)) {
                 /* check if it's a valid custom field id */
                 if ( !array_key_exists($customFieldID, $customFields)) {
-                    self::addToErrorMsg('field ID', $errorMessage);
+                    self::addToErrorMsg(ts('field ID'), $errorMessage);
                 }
                 /* validate the data against the CF type */
      
@@ -1204,30 +1212,30 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 case 'birth_date': 
                     if( CRM_Utils_Date::convertToDefaultDate( $params, $dateType, $key  )) {
                         if (! CRM_Utils_Rule::date($params[$key])) {
-                            self::addToErrorMsg('Birth Date', $errorMessage);
+                            self::addToErrorMsg(ts('Birth Date'), $errorMessage);
                         } 
                     } else {
-                        self::addToErrorMsg('Birth-Date', $errorMessage); 
+                        self::addToErrorMsg(ts('Birth-Date'), $errorMessage); 
                     }
                     
                     break;
                 case 'deceased_date': 
                     if( CRM_Utils_Date::convertToDefaultDate( $params, $dateType, $key  )) {
                         if (! CRM_Utils_Rule::date($params[$key])) {
-                            self::addToErrorMsg('Deceased Date', $errorMessage);
+                            self::addToErrorMsg(ts('Deceased Date'), $errorMessage);
                         }
                     } else {
-                        self::addToErrorMsg('Deceased Date', $errorMessage); 
+                        self::addToErrorMsg(ts('Deceased Date'), $errorMessage); 
                     }
                     break;
                 case 'is_deceased': 
                     if (CRM_Utils_String::strtoboolstr($value) === false) {
-                        self::addToErrorMsg('Is Deceased', $errorMessage);
+                        self::addToErrorMsg(ts('Is Deceased'), $errorMessage);
                     }
                     break;
                 case 'gender':  
                     if ( !self::checkGender( $value ) ) {
-                        self::addToErrorMsg('Gender', $errorMessage);  
+                        self::addToErrorMsg(ts('Gender'), $errorMessage);  
                     }
                     break;
                 case 'preferred_communication_method':    
@@ -1235,24 +1243,24 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $preffComm = explode(',', $value);
                     foreach ($preffComm as $v) {
                         if (!self::in_value( trim($v), CRM_Core_PseudoConstant::pcm())) {
-                            self::addToErrorMsg('Preferred Communication Method', $errorMessage);
+                            self::addToErrorMsg(ts('Preferred Communication Method'), $errorMessage);
                         }
                     }
                     break;
                     
                 case 'preferred_mail_format':
                     if(!array_key_exists(strtolower($value),array_change_key_case(CRM_Core_SelectValues::pmf(), CASE_LOWER))) {
-                        self::addToErrorMsg('Preferred Mail Format', $errorMessage);
+                        self::addToErrorMsg(ts('Preferred Mail Format'), $errorMessage);
                     }
                     break;
                 case 'individual_prefix':
                     if (! self::in_value($value,CRM_Core_PseudoConstant::individualPrefix())) {
-                        self::addToErrorMsg('Individual Prefix', $errorMessage);
+                        self::addToErrorMsg(ts('Individual Prefix'), $errorMessage);
                     }
                     break;
                 case 'individual_suffix':
                     if (!self::in_value($value,CRM_Core_PseudoConstant::individualSuffix())) {
-                        self::addToErrorMsg('Individual Suffix', $errorMessage);
+                        self::addToErrorMsg(ts('Individual Suffix'), $errorMessage);
                     }   
                     break;
                 case 'state_province':
@@ -1263,7 +1271,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                     || self::in_value($stateValue['state_province'], CRM_Core_PseudoConstant::stateProvince())) {
                                     continue;
                                 } else {
-                                    self::addToErrorMsg('State Province', $errorMessage);
+                                    self::addToErrorMsg(ts('State / Province'), $errorMessage);
                                 }
                             }
                         }
@@ -1291,10 +1299,10 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                      continue;
                                 } else {  
                                     if( self::in_value($stateValue['country'], $countryIsoCodes) || self::in_value($stateValue['country'], $countryNames)) {
-                                        self::addToErrorMsg('country input is in table but not "available": "This Country is valid but is NOT in the list of Available Countries currently configured for your site. This can be viewed and modifed from Global Settings >> Localization." ', $errorMessage);
+                                        self::addToErrorMsg(ts('Country input value is in table but not "available": "This Country is valid but is NOT in the list of Available Countries currently configured for your site. This can be viewed and modifed from Global Settings >> Localization." '), $errorMessage);
                                     }
                                     else {
-                                        self::addToErrorMsg('country input value not in country table: "The Country value appears to be invalid. It does not match any value in CiviCRM table of countries."', $errorMessage);
+                                        self::addToErrorMsg(ts('Country input value not in country table: "The Country value appears to be invalid. It does not match any value in CiviCRM table of countries."'), $errorMessage);
                                     }
                                 }
                                 
@@ -1309,7 +1317,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                 if ( CRM_Utils_Rule::numeric($codeValue['geo_code_1'])) {
                                     continue;
                                 } else {
-                                    self::addToErrorMsg('geo_code_1', $errorMessage);
+                                    self::addToErrorMsg(ts('Geo code 1'), $errorMessage);
                                 }
                             }
                         }
@@ -1322,7 +1330,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                 if ( CRM_Utils_Rule::numeric($codeValue['geo_code_2'])) {
                                     continue;
                                 } else {
-                                    self::addToErrorMsg('geo_code_2', $errorMessage);
+                                    self::addToErrorMsg(ts('Geo code 2'), $errorMessage);
                                 }
                             }
                         }
@@ -1334,21 +1342,21 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         $emailGreetingFilter = array( 'contact_type'  =>  $this->_contactType,
                                                       'greeting_type' => 'email_greeting' );
                     if ( !self::in_value($value, CRM_Core_PseudoConstant::greeting($emailGreetingFilter) ) ) {
-                        self::addToErrorMsg('Email Greeting', $errorMessage);
+                        self::addToErrorMsg(ts('Email Greeting must be one of the configured format options. Check Administer >> Option Lists >> Email Greetings for valid values'), $errorMessage);
                     }   
                     break;  
                 case 'postal_greeting':
                     $postalGreetingFilter = array( 'contact_type'  =>  $this->_contactType,
                                                    'greeting_type' => 'postal_greeting' );
                     if ( !self::in_value($value, CRM_Core_PseudoConstant::greeting($postalGreetingFilter) ) ) {
-                        self::addToErrorMsg('Postal Greeting', $errorMessage);
+                        self::addToErrorMsg(ts('Postal Greeting must be one of the configured format options. Check Administer >> Option Lists >> Postal Greetings for valid values'), $errorMessage);
                     }   
                     break;  
                 case 'addressee':
                     $addresseeFilter = array( 'contact_type'  =>  $this->_contactType,
                                               'greeting_type' => 'addressee' );
                     if ( !self::in_value($value,CRM_Core_PseudoConstant::greeting($addresseeFilter) ) ) {
-                        self::addToErrorMsg('Addressee', $errorMessage);
+                        self::addToErrorMsg(ts('Addressee must be one of the configured format options. Check Administer >> Option Lists >> Addressee for valid values'), $errorMessage);
                     }   
                     break; 
                 case 'email_greeting_custom' :
@@ -1356,7 +1364,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         $emailGreetingLabel = key( CRM_Core_OptionGroup::values('email_greeting', true, null,
                                                                                 null, 'AND v.name = "Customized"' ));
                         if ( CRM_Utils_Array::value( 'email_greeting', $params ) != $emailGreetingLabel ) {
-                            self::addToErrorMsg('Email Greeting', $errorMessage);
+                            self::addToErrorMsg(ts('Email Greeting - Custom'), $errorMessage);
                         }
                     }
                     break;
@@ -1365,7 +1373,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         $postalGreetingLabel = key( CRM_Core_OptionGroup::values('postal_greeting', true, 
                                                                                  null, null, 'AND v.name = "Customized"' ));
                         if ( CRM_Utils_Array::value( 'postal_greeting', $params ) != $postalGreetingLabel ) {
-                            self::addToErrorMsg('Postal Greeting', $errorMessage);
+                            self::addToErrorMsg(ts('Postal Greeting - Custom'), $errorMessage);
                         }
                     }
                     break;
@@ -1374,13 +1382,13 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         $addresseeLabel = key( CRM_Core_OptionGroup::values('addressee', true, null, null, 
                                                                             'AND v.name = "Customized"' ));
                         if ( CRM_Utils_Array::value( 'addressee', $params ) != $addresseeLabel ) {
-                            self::addToErrorMsg('Addressee', $errorMessage);
+                            self::addToErrorMsg(ts('Addressee - Custom'), $errorMessage);
                         }
                     }
                     break;
                 case 'home_URL':
                     if ( CRM_Utils_Rule::url( $value ) === false ) {
-                        self::addToErrorMsg('Website', $errorMessage);
+                        self::addToErrorMsg(ts('Website'), $errorMessage);
                     }
                     break;
                 case 'do_not_email':
@@ -1390,9 +1398,22 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 case 'do_not_trade':                
                     if( CRM_Utils_Rule::boolean( $value )== false ) {
                         $key = ucwords( str_replace( "_", " ", $key ) );
-                        self::addToErrorMsg( $key, $errorMessage);
+                        self::addToErrorMsg( ts( '%1', array( 1 => $key ) ), $errorMessage);
                     }
                     break;
+                    
+                case 'email':
+                    if ( is_array( $value ) ) {
+                        foreach ( $value as $values ) {
+                            if ( CRM_Utils_Array::value( 'email', $values ) &&
+                                 !CRM_Utils_Rule::email( $values['email'] ) ) {
+                                self::addToErrorMsg( ts( '%1', array( 1 => $key) ), $errorMessage );
+                                break;
+                            }
+                        }
+                    }
+                    break;
+                    
                 default : 
                     if ( is_array( $params[$key] ) && 
                          isset( $params[$key]["contact_type"] ) ) {
@@ -1661,7 +1682,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         $dateType = $session->get("dateTypes");
         foreach ( $params  as $key => $val ) {
             if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $key ) ) {
-                if ( $customFields[$customFieldID]['data_type'] == 'Date' ) {
+                //we should not update Date to null, CRM-4062
+                if ( $val && ( $customFields[$customFieldID]['data_type'] == 'Date' ) ) {
                     self::formatCustomDate( $params, $formatted, $dateType, $key );
                     unset( $params[$key] );
                 } else if ( $customFields[$customFieldID]['data_type'] == 'Boolean' ) {
@@ -1826,6 +1848,31 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 }
             }
         }
+        
+        // parse street address, CRM-5450
+        if ( $this->_parseStreetAddress ) {
+            require_once 'CRM/Core/BAO/Address.php';
+            if ( array_key_exists( 'address', $formatted ) && is_array( $formatted['address'] ) ) { 
+                foreach ( $formatted['address'] as $instance => &$address ) {
+                    $streetAddress = CRM_Utils_Array::value( 'street_address', $address );
+                    if ( empty( $streetAddress ) ) continue;
+                    
+                    // parse address field.
+                    $parsedFields = CRM_Core_BAO_Address::parseStreetAddress( $streetAddress );
+                    
+                    //street address consider to be parsed properly, 
+                    //If we get street_name and street_number.                     
+                    if ( !CRM_Utils_Array::value( 'street_name', $parsedFields ) || 
+                         !CRM_Utils_Array::value( 'street_number', $parsedFields ) ) {
+                        $parsedFields = array_fill_keys( array_keys($parsedFields), '' );
+                    }
+                    
+                    // merge parse address w/ main address block.
+                    $address = array_merge( $address, $parsedFields );
+                }
+            }
+        }
+        
     }
     
 }

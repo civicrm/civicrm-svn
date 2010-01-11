@@ -62,15 +62,15 @@ if ( isGroupEmpty ) {
      showRange();
 }	
 
-
 function showHideStyle()
 {   	     
 	var isShow  = false;
 	var extends = document.getElementById('extends[0]').value;
-        var contactTypes  = {/literal}'{$contactTypes}'{literal};
-        var showStyle     = {/literal}'{$showStyle}'{literal};
-        var showMultiple  = {/literal}'{$showMultiple}'{literal};
-              
+        var contactTypes     = {/literal}'{$contactTypes}'{literal};
+        var showStyle        = {/literal}'{$showStyle}'{literal};
+        var showMultiple     = {/literal}'{$showMultiple}'{literal};
+        var showMaxMultiple  = {/literal}'{$showMaxMultiple}'{literal};
+      
         contactTypes = eval('(' + contactTypes + ')');
         if ( contactTypes.indexOf(extends) >= 0 ) {
             isShow  = true;
@@ -91,6 +91,12 @@ function showHideStyle()
         show("is_multiple");
         show("style");
     }
+
+    if ( !showMaxMultiple ) {
+         hide('multiple');
+    } else if( cj( '#is_multiple').attr('checked') ) {
+         show('multiple');
+    }
 }
 
 function showRange()
@@ -107,10 +113,12 @@ function showRange()
 // In update mode, when 'extends' is set to an option which doesn't have 
 // any options in 2nd selector (for subtypes)  -
 var subtypes = document.getElementById('extends[1]');
-if ( subtypes.options.length <= 0 ) {
-   subtypes.style.display = 'none';
-} else {
-   subtypes.style.display = 'inline';
+if ( subtypes != null ) {
+     if ( subtypes.options.length <= 0 ) {
+          subtypes.style.display = 'none';
+     } else {
+          subtypes.style.display = 'inline';
+     }
 }
 </script>
 {/literal}

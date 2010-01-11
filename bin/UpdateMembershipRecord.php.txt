@@ -117,10 +117,16 @@ AND    civicrm_membership.is_test = 0
             
             //update membership record to Deceased if contact is deceased
             if ( $dao->is_deceased ) { 
+                // check for 'Deceased' membership status, CRM-5636
+                $deceaseStatusId = array_search( 'Deceased', $allStatus );
+                if ( !$deceaseStatusId ) {
+                    CRM_Core_Error::fatal( ts( "Deceased Membership status is missing or not active. <a href='%1'>Click here to check</a>.", array( 1 => CRM_Utils_System::url( 'civicrm/admin/member/membershipStatus', 'reset=1' ) ) ) );
+                }
+                
                 //since we are calculating status here so no
                 //need to calculate again in BAO::create( );
                 $deceasedMembership = array( 'id'                 => $dao->membership_id,
-                                             'status_id'          => array_search( 'Deceased', $allStatus ),
+                                             'status_id'          => $deceaseStatusId,
                                              'contact_id'         => $dao->contact_id,
                                              'membership_type_id' => $dao->membership_type_id,
                                              'join_date'          => $dao->join_date,
@@ -128,7 +134,8 @@ AND    civicrm_membership.is_test = 0
                                              'end_date'           => $dao->end_date,
                                              'reminder_date'      => $dao->reminder_date,
                                              'source'             => $dao->source,
-                                             'skipStatusCal'      => true );
+                                             'skipStatusCal'      => true,
+                                             'skipRecentView'     => true );
                 
                 //create activity when status changed. CRM-2521.
                 //as BAO::create( ) create activity so let BAO handle it.
@@ -167,7 +174,8 @@ AND    civicrm_membership.is_test = 0
                                         'end_date'           => $dao->end_date,
                                         'reminder_date'      => $dao->reminder_date,
                                         'source'             => $dao->source,
-                                        'skipStatusCal'      => true );
+                                        'skipStatusCal'      => true,
+                                        'skipRecentView'     => true );
                     
                     //create activity when status changed. CRM-2521.
                     //as BAO::create create activity so let BAO handle it.

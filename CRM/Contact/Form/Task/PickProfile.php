@@ -118,6 +118,10 @@ class CRM_Contact_Form_Task_PickProfile extends CRM_Contact_Form_Task {
         //add Contact type profiles
         $this->_contactTypes[] = 'Contact';
         
+        foreach($this->_contactIds as $id) {
+            $this->_contactTypes   = CRM_Contact_BAO_Contact::getContactTypes( $id );
+        }
+        
         require_once "CRM/Core/BAO/UFGroup.php";
         $profiles = CRM_Core_BAO_UFGroup::getProfiles($this->_contactTypes);
         

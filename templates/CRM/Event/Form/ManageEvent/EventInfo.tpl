@@ -148,4 +148,18 @@
     {include file="CRM/common/formNavigate.tpl"}
 {/if}
 
+{literal}
+<script type="text/javascript">
+
+function reloadWindow( tempId ) {
+
+   //freeze the event type element 
+   //when template form is loading.
+   cj( "#event_type_id" ).attr('disabled', true );
+
+   window.location += '&template_id=' + tempId;
+}
+
+</script>
+{/literal}
 

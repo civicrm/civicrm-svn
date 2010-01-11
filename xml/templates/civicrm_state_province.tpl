@@ -1481,7 +1481,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (3006, 1055, "13", "Zadaraka"),
 (3007, 1055, "01", "Zagrebacka zupanija"),
 (3008, 1094, "GA", "Grande-Anse"),
-(3009, 1094, "NE", "Nord-Eat"),
+(3009, 1094, "NE", "Nord-Est"),
 (3010, 1094, "NO", "Nord-Ouest"),
 (3011, 1094, "OU", "Ouest"),
 (3012, 1094, "SD", "Sud"),
@@ -3732,4 +3732,8 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 -- new UK provinces (CRM-5224)
 (10013, 1226, '', 'Clwyd'),
 (10014, 1226, '', 'Dyfed'),
-(10015, 1226, '', 'South Glamorgan');
+(10015, 1226, '', 'South Glamorgan'),
+(10016, 1094, 'AR', 'Artibonite'),
+(10017, 1094, 'CE', 'Centre'),
+(10018, 1094, 'NI', 'Nippes'),
+(10019, 1094, 'ND', 'Nord');

@@ -820,7 +820,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             } 
             break;
         default:
-            $profileType = CRM_Core_BAO_UFField::getProfileType( $fields['group_id'] );
+            $profileType = CRM_Core_BAO_UFField::getProfileType( $fields['group_id'], true, false, true );
             if ( CRM_Contact_BAO_ContactType::isaSubType( $fieldType ) ) {
                 if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
                     if ( $fieldType != $profileType ) {

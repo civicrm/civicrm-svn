@@ -1930,11 +1930,46 @@ class HTML_QuickForm extends HTML_Common
      */
     function exportValues($elementList = null)
     {
+        $skipFields = array( 'widget_code',
+                             'html_message',
+                             'body_html',
+                             'msg_html',
+                             'description',
+                             'intro',
+                             'thankyou_text',
+                             'intro_text',
+                             'body_text',
+                             'footer_text',
+                             'thankyou_text',
+                             'thankyou_footer',
+                             'new_text',
+                             'renewal_text',
+                             'help_pre',
+                             'help_post',
+                             'msg_html',
+                             'confirm_title',
+                             'confirm_text',
+                             'confirm_footer_text',
+                             'confirm_email_text',
+                             'report_header',
+                             'report_footer',
+                             );
+                                    
         $values = array();
         if (null === $elementList) {
             // iterate over all elements, calling their exportValue() methods
             foreach (array_keys($this->_elements) as $key) {
                 $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
+                
+                //filter the value across XSS vulnerability issues.
+                $fldName = $this->_elements[$key]->_attributes['name'];                
+                if ( in_array( $this->_elements[$key]->_type, array('text', 'textarea') ) 
+                     && !in_array( $fldName, $skipFields ) ) {
+                    //here value might be array or single value.
+                    //so we should iterate and get filtered value.
+                    $this->filterValue( $value );
+                }
+                
                 if (is_array($value)) {
                     // This shit throws a bogus warning in PHP 4.3.x
                     $values = HTML_QuickForm::arrayMerge($values, $value);
@@ -1946,6 +1981,12 @@ class HTML_QuickForm extends HTML_Common
             }
             foreach ($elementList as $elementName) {
                 $value = $this->exportValue($elementName);
+                
+                //filter the value across XSS vulnerability issues.
+                if ( !in_array( $elementName, $skipFields ) ) {
+                    $this->filterValue( $value );
+                }
+                
                 if (PEAR::isError($value)) {
                     return $value;
                 }
@@ -1953,6 +1994,21 @@ class HTML_QuickForm extends HTML_Common
             }
         }
         return $values;
+    }
+
+   /**
+    * This function is going to filter the
+    * submitted values across XSS vulnerability.
+    */
+    function filterValue( &$values ) 
+    {
+        if ( is_array( $values ) ) {
+            foreach ( $values as &$value ) {
+                $this->filterValue( $value );
+            }
+        } else {
+            $values = htmlspecialchars( $values );
+        }
     }
 
     // }}}

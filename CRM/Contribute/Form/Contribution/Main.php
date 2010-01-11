@@ -658,7 +658,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
     { 
         $errors = array( );
         $amount = self::computeAmount( $fields, $self );
-
+        
         $email = $fields["email-{$self->_bltID}"];
         require_once 'CRM/Core/BAO/UFMatch.php';
         if ( CRM_Core_BAO_UFMatch::isDuplicateUser( $email ) ) {
@@ -666,6 +666,33 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                                                    array( 1 => $email ) );
         }
 
+        //check for atleast one pricefields should be selected
+        if ( CRM_Utils_Array::value( 'priceSetId', $fields ) ) {
+            $priceField = new CRM_Price_DAO_Field( );
+            $priceField->price_set_id = $fields['priceSetId'];
+            $priceField->find( );
+            
+            $check = array( );
+            
+            while ( $priceField->fetch( ) ) {
+                if ( ! empty( $fields["price_{$priceField->id}"] ) ) {
+                    $check[] = $priceField->id; 
+                }
+            }
+            
+            if ( empty( $check ) ) {
+                $errors['_qf_default'] = ts( "Select at least one option from Contribution(s)." );
+            }
+            
+            require_once 'CRM/Price/BAO/Set.php';
+            CRM_Price_BAO_Set::processAmount( $self->_priceSet['fields'], 
+                                              $fields, $lineItem );
+            if ($fields['amount'] < 0) {
+                $errors['_qf_default'] = ts( "Contribution can not be less than zero. Please select the options accordingly" );
+            }
+            $amount = $fields['amount'];
+        }
+        
         if ( isset( $fields['selectProduct'] ) &&
              $fields['selectProduct'] != 'no_thanks' &&
              $self->_values['amount_block_is_active'] ) {
@@ -675,6 +702,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $productDAO->id = $fields['selectProduct'];
             $productDAO->find(true);
             $min_amount = $productDAO->min_contribution;
+            
             if ( $amount < $min_amount ) {
                 $errors['selectProduct'] = ts('The premium you have selected requires a minimum contribution of %1', array(1 => CRM_Utils_Money::format($min_amount)));
             }
@@ -733,33 +761,6 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 // we dont have an amount, so lets get an amount for cc checks
                 $amount = $memTypeDetails['minimum_fee'];
             }
-        }
-        
-        //check for atleast one pricefields should be selected
-        if ( CRM_Utils_Array::value( 'priceSetId', $fields ) ) {
-            $priceField = new CRM_Price_DAO_Field( );
-            $priceField->price_set_id = $fields['priceSetId'];
-            $priceField->find( );
-            
-            $check = array( );
-            
-            while ( $priceField->fetch( ) ) {
-                if ( ! empty( $fields["price_{$priceField->id}"] ) ) {
-                    $check[] = $priceField->id; 
-                }
-            }
-            
-            if ( empty( $check ) ) {
-                $errors['_qf_default'] = ts( "Select at least one option from Contribution(s)." );
-            }
-            
-            require_once 'CRM/Price/BAO/Set.php';
-            CRM_Price_BAO_Set::processAmount( $self->_priceSet['fields'], 
-                                              $fields, $lineItem );
-            if ($fields['amount'] < 0) {
-                $errors['_qf_default'] = ts( "Contribution can not be less than zero. Please select the options accordingly" );
-            }
-            $amount = $fields['amount'];
         }
         
         if ( $self->_values['is_monetary'] ) {

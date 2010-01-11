@@ -836,7 +836,7 @@ class CRM_Utils_Date
      * @return array $dateRange    start date and end date for the relative time frame
      * @static
      */
-    function relativeToAbsolute( $relativeTerm, $unit) 
+    function relativeToAbsolute( $relativeTerm, $unit ) 
     {
         $now  = getDate();
         $from = $to = $dateRange = array();
@@ -1024,36 +1024,67 @@ class CRM_Utils_Date
                 $from['d'] = 1;
                 $to['d']   = cal_days_in_month(CAL_GREGORIAN, $now['mon'], $now['year']);
                 $from['M'] = $to['M'] = $now['mon'];
-                $to['Y'] = $from['Y'] = $now['year'];
+                $from['Y'] = $to['Y'] = $now['year'];
                 break;
                 
             case 'previous':
                 $from['d'] = 1;
-                $to['d']   = cal_days_in_month(CAL_GREGORIAN, $now['mon'] - 1, $now['year']);
-                $from['M'] = $to['M'] = $now['mon'] - 1;
-                $to['Y'] = $from['Y'] = $now['year'];
+                if ( $now['mon'] == 1 ) {
+                    $from['M'] = $to['M'] = 12;
+                    $from['Y'] = $to['Y'] = $now['year'] - 1;
+                } else {
+                    $from['M'] = $to['M'] = $now['mon'] - 1;
+                    $from['Y'] = $to['Y'] = $now['year'];
+                } 
+                
+                $to['d'] = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
                 break;
 
             case 'previous_before':
                 $from['d'] = 1;
-                $to['d']   = cal_days_in_month(CAL_GREGORIAN, $now['mon'] - 2, $now['year']);
-                $from['M'] = $to['M'] = $now['mon'] - 2;
-                $to['Y'] = $from['Y'] = $now['year'];
+                if ( $now['mon'] < 3 ) {
+                    $from['M'] = $to['M'] = 10 + $now['mon'];
+                    $from['Y'] = $to['Y'] = $now['year'] - 1;
+                } else {
+                    $from['M'] = $to['M'] = $now['mon'] - 2;
+                    $from['Y'] = $to['Y'] = $now['year'];
+                } 
+                
+                $to['d'] = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
                 break;
 
             case 'previous_2':
                 $from['d'] = 1;
-                $to['d']   = cal_days_in_month(CAL_GREGORIAN, $now['mon'] - 1, $now['year']);
-                $from['M'] = $now['mon'] - 2;
-                $to['M'] = $now['mon'] - 1;
-                $to['Y'] = $from['Y'] = $now['year'];
+                if ( $now['mon'] < 3 ) {
+                    $from['M'] = 10 + $now['mon'];
+                    $from['Y'] = $now['year'] - 1;
+                } else {
+                    $from['M'] = $now['mon'] - 2;
+                    $from['Y'] = $now['year'];
+                } 
+
+                if ( $now['mon'] == 1 ) {
+                    $to['M'] = 12;
+                    $to['Y'] = $now['year'] - 1;
+                } else {
+                    $to['M'] = $now['mon'] - 1;
+                    $to['Y'] = $now['year'];
+                } 
+                
+                $to['d'] = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
                 break;
 
             case 'earlier':
                 //before end of past month
-                $to['d'] = cal_days_in_month(CAL_GREGORIAN, $now['mon'] - 1, $now['year']);
-                $to['M'] = $now['mon'] - 1;
-                $to['Y'] = $now['year'];
+                if ( $now['mon'] == 1 ) {
+                    $to['M'] = 12;
+                    $to['Y'] = $now['year'] - 1;
+                } else {
+                    $to['M'] = $now['mon'] - 1;
+                    $to['Y'] = $now['year'];
+                } 
+                
+                $to['d'] = cal_days_in_month(CAL_GREGORIAN, $to['M'], $to['Y']);
                 unset($from);
                 break;
                 

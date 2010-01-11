@@ -147,19 +147,78 @@ WHERE      v.option_group_id = %1
                 // fix extends stuff if it exists
                 if ( isset( $customGroupXML->extends_entity_column_value_option_group ) &&
                      isset( $customGroupXML->extends_entity_column_value_option_value ) ) {
-                    $sql = "
+                    $optValues = explode( ",", $customGroupXML->extends_entity_column_value_option_value );
+                    $optValues = implode( "','", $optValues );
+                    if ( trim($customGroup->extends) != 'Participant' ) {
+                        $sql = "
 SELECT     v.value
 FROM       civicrm_option_value v
 INNER JOIN civicrm_option_group g ON g.id = v.option_group_id
 WHERE      g.name = %1
-AND        v.name = %2
+AND        v.name IN (%2)
 ";
-                    $params = array( 1 => array( (string ) $customGroupXML->extends_entity_column_value_option_group, 'String' ),
-                                     2 => array( (string ) $customGroupXML->extends_entity_column_value_option_value, 'String' ) );
-                    $valueID = (int ) CRM_Core_DAO::singleValueQuery( $sql, $params );
-                    if ( $valueID ) {
-                        $customGroup->extends_entity_column_id = $customGroup->extends_entity_column_value = $valueID;
-                        $saveAgain = true;
+                        $params = array( 1 => array( (string ) $customGroupXML->extends_entity_column_value_option_group, 
+                                                     'String' ),
+                                         2 => array( (string ) $optValues, 'String' ) );
+                        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
+
+                        $valueIDs = array( );
+                        while ( $dao->fetch() ) {
+                            $valueIDs[] = $dao->value;
+                        }
+                        if ( ! empty($valueIDs) ) {
+                            $customGroup->extends_entity_column_value = 
+                                CRM_Core_DAO::VALUE_SEPARATOR . implode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                                                         $valueIDs ) . 
+                                CRM_Core_DAO::VALUE_SEPARATOR;
+
+                            // Note: No need to set extends_entity_column_id here.
+
+                            $saveAgain = true;
+                        }
+                    } else {
+                        // when custom group extends 'Participant'
+                        $sql = "
+SELECT     v.value
+FROM       civicrm_option_value v
+INNER JOIN civicrm_option_group g ON g.id = v.option_group_id
+WHERE      g.name = 'custom_data_type'
+AND        v.name = %1
+";
+                        $params = array( 1 => array( (string ) $customGroupXML->extends_entity_column_value_option_group, 
+                                                     'String' ) );
+                        $valueID = (int ) CRM_Core_DAO::singleValueQuery( $sql, $params );
+                        if ( $valueID ) {
+                            $customGroup->extends_entity_column_id = $valueID;
+                        }
+                        
+                        $optionIDs = array( );
+                        switch ( $valueID ) {
+                        case 1: // ParticipantRole
+                            require_once 'CRM/Core/OptionGroup.php';
+                            $condition = "AND v.name IN ( '{$optValues}' )";
+                            $optionIDs = CRM_Core_OptionGroup::values( 'participant_role', false, false, false, $condition, 'name' );
+                            break;
+                        case 2: // ParticipantEventName
+                            require_once 'CRM/Event/PseudoConstant.php';
+                            $condition = "( is_template IS NULL OR is_template != 1 ) AND title IN( '{$optValues}' )";
+                            $optionIDs = CRM_Event_PseudoConstant::event( null, false, $condition );
+                            break;
+                        case 3: // ParticipantEventType
+                            require_once 'CRM/Core/OptionGroup.php';
+                            $condition = "AND v.name IN ( '{$optValues}' )";
+                            $optionIDs = CRM_Core_OptionGroup::values( 'event_type', false, false, false, $condition, 'name' ); 
+                            break;
+                        }
+                        
+                        if( is_array($optionIDs) && !empty($optionIDs) ) {
+                            $customGroup->extends_entity_column_value = 
+                                CRM_Core_DAO::VALUE_SEPARATOR . implode( CRM_Core_DAO::VALUE_SEPARATOR, 
+                                                                         array_keys( $optionIDs ) ) . 
+                                CRM_Core_DAO::VALUE_SEPARATOR; 
+                            
+                            $saveAgain = true;
+                        }
                     }
                 }
 
@@ -211,6 +270,26 @@ AND        v.name = %2
                 $profileField = new CRM_Core_DAO_UFField( );
                 $profileField->uf_group_id = $idMap['profile_group'][(string ) $profileFieldXML->profile_group_name];
                 $this->copyData( $profileField, $profileFieldXML, false, 'name' );
+
+                // fix field name
+                if ( substr( $profileField->field_name, 0, 7 ) == 'custom.' ) {
+                    list( $dontCare, $tableName, $columnName ) = explode( '.', $profileField->field_name );
+                    $sql = "
+SELECT     f.id
+FROM       civicrm_custom_field f
+INNER JOIN civicrm_custom_group g ON f.custom_group_id = g.id
+WHERE      g.table_name  = %1
+AND        f.column_name = %2
+";
+                    $params = array( 1 => array( $tableName, 'String' ),
+                                     2 => array( $columnName, 'String' ) );
+                    $cfID = CRM_Core_DAO::singleValueQuery( $sql, $params );
+                    if ( ! $cfID ) {
+                        echo "Could not find custom field for {$profileField->field_name}, $tableName, $columnName<p>";
+                        exit( );
+                    }
+                    $profileField->field_name = "custom_{$cfID}";
+                }
                 $profileField->save( );
             }
         }

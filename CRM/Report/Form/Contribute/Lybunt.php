@@ -432,7 +432,7 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
         $graphRows['value'] = $display;
         $chartInfo          = array( 'legend' => ts('Lybunt Report'),
                                      'xname'  => ts('Year'),
-                                     'yname'  => ts("Amount ({$config->defaultCurrency})")
+                                     'yname'  => ts('Amount (%1)', array(1 => $config->defaultCurrency))
                                      );
         if ( $this->_params['charts'] ) {
             // build chart.

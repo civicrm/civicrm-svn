@@ -54,16 +54,21 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
         parent::preProcess( );
 
         //Custom Groups Inline
-        $entityType    = CRM_Contact_BAO_Contact::getContactType   ( $this->_contactId );
-        $entitySubType = CRM_Contact_BAO_Contact::getContactSubType( $this->_contactId );
-        $groupTree =& CRM_Core_BAO_CustomGroup::getTree( $entityType, $this, 
-                                                         $this->_contactId, null, $entitySubType );
+        list( $entityType, $entitySubType ) = CRM_Contact_BAO_Contact::getContactTypes( $this->_contactId );
 
-        CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
+        $groupTree =& CRM_Core_BAO_CustomGroup::getTree( $entityType,
+                                                         $this, 
+                                                         $this->_contactId,
+                                                         null,
+                                                         $entitySubType );
+
+        CRM_Core_BAO_CustomGroup::buildCustomDataView( $this,
+                                                       $groupTree );
 
         // also create the form element for the activity links box
         $controller =& new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityLinks',
-                                                       ts('Activity Links'), null );
+                                                       ts('Activity Links'),
+                                                       null );
         $controller->setEmbedded( true );
         $controller->run( );
     }
@@ -297,14 +302,14 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
             CRM_Core_BAO_CustomGroup::getActiveGroups( CRM_Contact_BAO_Contact::getContactType($this->_contactId),
                                                        'civicrm/contact/view/cd',
                                                        $this->_contactId );
-                                                                    
+                                             
         foreach ( $activeGroups as $group ) {
             $id = "custom_{$group['id']}";
             $allTabs[] = array( 'id'     => $id,
                                 'url'    => CRM_Utils_System::url( $group['path'], $group['query'] . "&snippet=1&selectedChild=$id"),
                                 'title'  => $group['title'],
                                 'weight' => $weight,
-								'count'  => CRM_Contact_BAO_Contact::getCountComponent( $id, $this->_contactId )  );
+								'count'  => CRM_Contact_BAO_Contact::getCountComponent( $id, $this->_contactId, $group['table_name'] )  );
             $weight += 10;
         }
 

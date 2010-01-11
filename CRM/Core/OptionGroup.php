@@ -76,6 +76,13 @@ class CRM_Core_OptionGroup
                              $localize = false, $condition = null,
                              $valueColumnName = 'label' ) 
     {
+        $cacheKey = "CRM_OG_{$name}_{$flip}_{$grouping}_{$localize}_{$condition}_{$valueColumnName}";
+        $cache =& CRM_Utils_Cache::singleton( );
+        $var = $cache->get( $cacheKey );
+        if ( $var ) {
+            return $var;
+        }
+        
         $query = "
 SELECT  v.{$valueColumnName} as {$valueColumnName} ,v.value as value, v.grouping as grouping
 FROM   civicrm_option_value v,
@@ -98,11 +105,23 @@ WHERE  v.option_group_id = g.id
         $p = array( 1 => array( $name, 'String' ) );
         $dao =& CRM_Core_DAO::executeQuery( $query, $p );
         
-        return self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
+        $var =& self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
+        $cache->set( $cacheKey, $var );
+
+        return $var;
     }
 
     static function &valuesByID( $id, $flip = false, $grouping = false, $localize = false, $valueColumnName = 'label' ) 
     {
+        $cacheKey = "CRM_OG_ID_{$id}_{$flip}_{$grouping}_{$localize}_{$valueColumnName}";
+
+        $cache =& CRM_Utils_Cache::singleton( );
+        $var = $cache->get( $cacheKey );
+        if ( $var ) {
+            return $var;
+        }
+        
+
         $query = "
 SELECT  v.{$valueColumnName} as {$valueColumnName} ,v.value as value, v.grouping as grouping
 FROM   civicrm_option_value v,
@@ -116,7 +135,10 @@ WHERE  v.option_group_id = g.id
         $p = array( 1 => array( $id, 'Integer' ) );
         $dao =& CRM_Core_DAO::executeQuery( $query, $p );
            
-        return self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
+        $var =& self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
+        $cache->set( $cacheKey, $var );
+
+        return $var;
     }
     
     /**
