@@ -804,9 +804,7 @@ class Installer extends InstallRequirements {
             } elseif ( $installType == 'standalone' ) {
                 $standaloneURL = civicrm_cms_base( ) . 'standalone/index.php';
                 $checkListURL  = $standaloneURL . "?q=civicrm/admin/configtask&reset=1";
-                echo "<li>Click <a target=\"_blank\" href=\"$standaloneURL\">here</a> to go to your CiviCRM Standalone home page.</li>
-                      <li>Use the <a target=\"_blank\" href=\"$checkListURL\">Configuration Checklist</a> to review and configure settings for your new site</li>";
-
+                echo "<li>Click <a target=\"_blank\" href=\"$standaloneURL\">here</a> to go to your CiviCRM Standalone home page.</li>";
             }
             echo '</ul>';
             echo '</div>';

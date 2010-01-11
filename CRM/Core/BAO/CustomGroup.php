@@ -249,6 +249,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
             $entityID = CRM_Utils_Type::escape( $entityID, 'Integer' );
         }
 
+        require_once 'CRM/Core/Action.php';
         // create a new tree
         $groupTree = array();
         $strSelect = $strFrom = $strWhere = $orderBy = ''; 

@@ -1669,4 +1669,75 @@ AND cl.modified_id  = c.id
             }
         }
     }
+    
+    /**
+     * This function delete activity record related to contact record,
+     * when there are no target and assignee record w/ other contact.
+     *
+     * @param  int $contactId contactId
+     *
+     * @return true/null
+     * @access public
+     */
+    public function cleanupActivity( $contactId ) 
+    {
+        $result = null;
+        if ( !$contactId  ) {
+            return $result;
+        }
+        
+        require_once 'CRM/Core/Transaction.php';
+        $transaction = new CRM_Core_Transaction( );
+        
+        // delete activity if there are no record in 
+        // civicrm_activity_assignment or civicrm_activity_target
+        // pointing to any other contact record.
+        
+        require_once 'CRM/Activity/DAO/ActivityTarget.php';
+        require_once 'CRM/Activity/DAO/ActivityAssignment.php';
+        
+        $activity = new CRM_Activity_DAO_Activity( ); 
+        $activity->source_contact_id = $contactId;
+        $activity->find( );
+        
+        while ( $activity->fetch( ) ) {
+            $noTarget = $noAssignee = true;
+            
+            // check for target activity record.
+            $target = new CRM_Activity_DAO_ActivityTarget( );
+            $target->activity_id = $activity->id;
+            $target->find( );
+            while ( $target->fetch( ) ) {
+                if ( $target->target_contact_id != $contactId ) {
+                    $noTarget = false;
+                    break;
+                }
+            }
+            $target->free( );
+            
+            // check for assignee activity record.
+            $assignee = new CRM_Activity_DAO_ActivityAssignment( );
+            $assignee->activity_id = $activity->id;
+            $assignee->find( );
+            while ( $assignee->fetch( ) ) {
+                if ( $assignee->assignee_contact_id != $contactId ) {
+                    $noAssignee = false;
+                    break;
+                }
+            }
+            $assignee->free( );
+            
+            // finally delete activity.
+            if ( $noTarget && $noAssignee ) {
+                $activityParams = array( 'id' => $activity->id );
+                $result = self::deleteActivity( $activityParams ); 
+            }
+        }
+        $activity->free( );
+        
+        $transaction->commit( );
+        
+        return $result;
+    }
+    
 }
