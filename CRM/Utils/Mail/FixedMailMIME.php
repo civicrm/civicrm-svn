@@ -60,6 +60,10 @@ class CRM_Utils_Mail_FixedMailMIME extends Mail_mime
         foreach ($emails as $field => $email) {
             $input[$field] = str_replace('\\', '\\\\', $input[$field]);
             $input[$field] = str_replace('"',  '\"',   $input[$field]);
+            // if the name was actually doubly-quoted, strip these (the next line will add them back); CRM-5640
+            if (substr($input[$field], 0, 2) == '\"' and substr($input[$field], -2) == '\"') {
+                $input[$field] = substr($input[$field], 2, -2);
+            }
             $input[$field] = "\"$input[$field]\" <$email>";
         }
 
