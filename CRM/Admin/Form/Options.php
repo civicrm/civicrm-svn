@@ -87,6 +87,14 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         $params = "group={$this->_gName}&reset=1";
         $session->pushUserContext( CRM_Utils_System::url( $url, $params ) );
         $this->assign('id', $this->_id);
+        
+        require_once 'CRM/Core/OptionGroup.php';
+        if ( $this->_id && in_array( $this->_gName, CRM_Core_OptionGroup::$_domainIDGroups ) ) {
+            $domainID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', $this->_id, 'domain_id', 'id' ) ;
+            if( CRM_Core_Config::domainID( ) != $domainID ) {
+                CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) ); 
+            }
+        }
     }
     
     /**
