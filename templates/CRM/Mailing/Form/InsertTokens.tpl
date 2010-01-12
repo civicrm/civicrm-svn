@@ -105,7 +105,7 @@ function selectValue( val ) {
             oEditor = CKEDITOR.instances[html_message];
             oEditor.setData( html_body );
         } else if ( editor == "tinymce" ) {
-            cj('#'+ html_message).html( html_body );
+            cj('#'+ html_message).tinymce().execCommand('mceSetContent',false, html_body);
         } else {	
             cj("#"+ html_message).val( html_body );
         }
