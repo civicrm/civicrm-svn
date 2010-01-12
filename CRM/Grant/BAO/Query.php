@@ -38,8 +38,8 @@ class CRM_Grant_BAO_Query
     static function &getFields( ) 
     {
         $fields = array( );
-        require_once 'CRM/Grant/DAO/Grant.php';
-        $fields = array_merge( $fields, CRM_Grant_DAO_Grant::export( ) );
+        require_once 'CRM/Grant/BAO/Grant.php';
+        $fields = CRM_Grant_BAO_Grant::exportableFields( );
         return $fields;
     }
    

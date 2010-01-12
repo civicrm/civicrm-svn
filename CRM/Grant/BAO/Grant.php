@@ -48,7 +48,15 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
      * the name of option value group from civicrm_option_group table
      * that stores grant statuses
      */
-    static $typeGroupName = 'grant_type';    
+    static $typeGroupName = 'grant_type';
+
+    /**
+     * static field for all the grant information that we can potentially export
+     * @var array
+     * @static
+     */
+    static $_exportableFields = null;
+		
 
     /**
      * class constructor
@@ -361,6 +369,25 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         }
         return false;
     }
+    /**
+     * combine all the exportable fields from the lower levels object
+     *     
+     * @return array array of exportable Fields
+     * @access public
+     */
+    function &exportableFields( ) 
+        {
+            if ( ! self::$_exportableFields ) {
+                if ( ! self::$_exportableFields ) {
+                    self::$_exportableFields = array( );
+                }
+                require_once 'CRM/Grant/DAO/Grant.php';
+                $fields = CRM_Grant_DAO_Grant::export( );
+                $fields = array_merge( $fields, CRM_Core_BAO_CustomField::getFieldsForImport('Grant'));
+                self::$_exportableFields = $fields;
+            }
+            
+            return self::$_exportableFields;
+        }
 }
-
 

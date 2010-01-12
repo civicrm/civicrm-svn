@@ -88,6 +88,10 @@ class CRM_Export_BAO_Export
         case CRM_Export_Form_Select::CASE_EXPORT :
             $queryMode = CRM_Contact_BAO_Query::MODE_CASE;
             break;
+        case CRM_Export_Form_Select::GRANT_EXPORT :
+            $queryMode = CRM_Contact_BAO_Query::MODE_GRANT;
+            break;
+            
         }
         require_once 'CRM/Core/BAO/CustomField.php';
         if ( $fields ) {
@@ -181,7 +185,10 @@ class CRM_Export_BAO_Export
                 $returnProperties['pledge_id'] = 1;
             } else if ( $exportMode == CRM_Export_Form_Select::CASE_EXPORT ) {
                 $returnProperties['case_id'] = 1;
+            } else if ( $exportMode == CRM_Export_Form_Select::GRANT_EXPORT ) {
+                $returnProperties['grant_id'] = 1;
             }
+            
          } else {
             $primary = true;
             $fields = CRM_Contact_BAO_Contact::exportableFields( 'All', true, true );
@@ -599,8 +606,13 @@ class CRM_Export_BAO_Export
 
         case CRM_Export_Form_Select::PLEDGE_EXPORT : 
             return ts('CiviCRM Pledge Search');
+            
         case CRM_Export_Form_Select::CASE_EXPORT : 
             return ts('CiviCRM Case Search');
+            
+        case CRM_Export_Form_Select::GRANT_EXPORT : 
+            return ts('CiviCRM Grant Search');
+
         }
     }
 
