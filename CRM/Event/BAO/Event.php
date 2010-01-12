@@ -297,7 +297,8 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         
         $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         while ( $dao->fetch( ) ) {
-            if ( $dao->title ) { 
+            $permissions = CRM_Event_BAO_Event::checkPermission( $dao->id, $dao->title );
+            if ( $permissions && $dao->title ) { 
                 $events[$dao->id] = $dao->title . ' - '.CRM_Utils_Date::customFormat($dao->start_date);
             }
         }
@@ -379,86 +380,91 @@ LIMIT      0, 10
         $params = array( 1 => array( $optionGroupId, 'Integer' ) );
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
         while ( $dao->fetch( ) ) {
-            foreach ( $properties as $property => $name ) {
-                $set = null;
-                switch ( $name ) {
-                case 'is_public' :
-                    if ( $dao->$name ) {
-                        $set = 'Yes';
-                    } else {
-                        $set = 'No';
-                    }
-                    $eventSummary['events'][$dao->id][$property] = $set;
-                    break;
-                    
-                case 'is_map' :
-                    if ( $dao->$name && $config->mapAPIKey ) {
-                        $params = array();
-                        $values = array();
-                        $ids    = array();
-                        $params = array( 'entity_id' => $dao->id ,'entity_table' => 'civicrm_event');
-                        require_once 'CRM/Core/BAO/Location.php';
-                        $values['location'] = CRM_Core_BAO_Location::getValues( $params, true );
-                        if ( is_numeric( CRM_Utils_Array::value('geo_code_1',$values['location']['address'][1]) ) ||
-                             ( $config->mapGeoCoding &&
-                               $values['location']['address'][1]['city'] && 
-                               $values['location']['address'][1]['state_province_id']
-                               ) ) {
-                            $set = CRM_Utils_System::url( 'civicrm/contact/map/event',"reset=1&eid={$dao->id}" );
-                        }
-                    }
-                    
-                    $eventSummary['events'][$dao->id][$property] = $set;
-                    if ( $admin ) {
-                        $eventSummary['events'][$dao->id]['configure'] =
-                            CRM_Utils_System::url( "civicrm/admin/event", "action=update&id=$dao->id&reset=1" );
-                    }
-                    break;
-                    
-                case 'end_date' :
-                case 'start_date':
-                    $eventSummary['events'][$dao->id][$property] =  CRM_Utils_Date::customFormat( $dao->$name,  
-                                                                                                  null, array( 'd' ) );
-                    break;
-                    
-                case 'participants' :
-                case 'notCountedDueToRole' :
-                case 'notCountedDueToStatus' :
-                case 'notCountedParticipants' :
-                    $propertyCnt = 0;
-                    if ( CRM_Utils_Array::value( $dao->id, $eventParticipant[$name] ) ) {
-                        $propertyCnt = $eventParticipant[$name][$dao->id];
-                        if ( $name == 'participants' ) {
-                            $set = CRM_Utils_System::url( 'civicrm/event/search',
-                                                          "reset=1&force=1&event=$dao->id&status=true&role=true" );
-                        } else if ( $name == 'notCountedParticipants' ) {
-                            // FIXME : selector fail to search w/ OR operator.
-                            // $set = CRM_Utils_System::url( 'civicrm/event/search',
-                            // "reset=1&force=1&event=$dao->id&status=false&role=false" );
-                        } else if ( $name == 'notCountedDueToStatus' ) {
-                            $set = CRM_Utils_System::url( 'civicrm/event/search',
-                                                          "reset=1&force=1&event=$dao->id&status=false" );
+            $permissions = CRM_Event_BAO_Event::checkPermission( $dao->id, $dao->title );
+            if ( $permissions ) {
+                foreach ( $properties as $property => $name ) {
+                    $set = null;
+                    switch ( $name ) {
+                    case 'is_public' :
+                        if ( $dao->$name ) {
+                            $set = 'Yes';
                         } else {
-                            $set = CRM_Utils_System::url( 'civicrm/event/search',
-                                                          "reset=1&force=1&event=$dao->id&role=false" );
+                            $set = 'No';
                         }
+                        $eventSummary['events'][$dao->id][$property] = $set;
+                        break;
+                        
+                    case 'is_map' :
+                        if ( $dao->$name && $config->mapAPIKey ) {
+                            $params = array();
+                            $values = array();
+                            $ids    = array();
+                            $params = array( 'entity_id' => $dao->id ,'entity_table' => 'civicrm_event');
+                            require_once 'CRM/Core/BAO/Location.php';
+                            $values['location'] = CRM_Core_BAO_Location::getValues( $params, true );
+                            if ( is_numeric( CRM_Utils_Array::value('geo_code_1',$values['location']['address'][1]) ) ||
+                                 ( $config->mapGeoCoding &&
+                                   $values['location']['address'][1]['city'] && 
+                                   $values['location']['address'][1]['state_province_id']
+                                   ) ) {
+                                $set = CRM_Utils_System::url( 'civicrm/contact/map/event',"reset=1&eid={$dao->id}" );
+                            }
+                        }
+                        
+                        $eventSummary['events'][$dao->id][$property] = $set;
+                        if ( $admin || in_array( CRM_Core_Permission::EDIT, $permissions ) ) {
+                            $eventSummary['events'][$dao->id]['configure'] =
+                                CRM_Utils_System::url( "civicrm/admin/event", "action=update&id=$dao->id&reset=1" );
+                        }
+                        break;
+                        
+                    case 'end_date' :
+                    case 'start_date':
+                        $eventSummary['events'][$dao->id][$property] =  CRM_Utils_Date::customFormat( $dao->$name,  
+                                                                                                      null, array( 'd' ) );
+                        break;
+                        
+                    case 'participants' :
+                    case 'notCountedDueToRole' :
+                    case 'notCountedDueToStatus' :
+                    case 'notCountedParticipants' :
+                        $propertyCnt = 0;
+                        if ( CRM_Utils_Array::value( $dao->id, $eventParticipant[$name] ) ) {
+                            $propertyCnt = $eventParticipant[$name][$dao->id];
+                            if ( $name == 'participants' ) {
+                                $set = CRM_Utils_System::url( 'civicrm/event/search',
+                                                              "reset=1&force=1&event=$dao->id&status=true&role=true" );
+                            } else if ( $name == 'notCountedParticipants' ) {
+                                // FIXME : selector fail to search w/ OR operator.
+                                // $set = CRM_Utils_System::url( 'civicrm/event/search',
+                                // "reset=1&force=1&event=$dao->id&status=false&role=false" );
+                            } else if ( $name == 'notCountedDueToStatus' ) {
+                                $set = CRM_Utils_System::url( 'civicrm/event/search',
+                                                              "reset=1&force=1&event=$dao->id&status=false" );
+                            } else {
+                                $set = CRM_Utils_System::url( 'civicrm/event/search',
+                                                              "reset=1&force=1&event=$dao->id&role=false" );
+                            }
+                        }
+                        $eventSummary['events'][$dao->id][$property]    = $propertyCnt; 
+                        $eventSummary['events'][$dao->id][$name.'_url'] = $set;
+                        break;
+                        
+                    default :
+                        $eventSummary['events'][$dao->id][$property] = $dao->$name;
+                        break;
                     }
-                    $eventSummary['events'][$dao->id][$property]    = $propertyCnt; 
-                    $eventSummary['events'][$dao->id][$name.'_url'] = $set;
-                    break;
-                
-                default :
-                    $eventSummary['events'][$dao->id][$property] = $dao->$name;
-                    break;
                 }
+                
+                // prepare the area for per-status participant counts
+                $statusClasses = array( 'Positive', 'Pending', 'Waiting', 'Negative' );
+                $eventSummary['events'][$dao->id]['statuses'] = array_fill_keys($statusClasses, array());
+                
+                // get eventIds.
+                if ( !in_array( $dao->id, $eventIds ) ) $eventIds[] = $dao->id;
+            } else {
+                $eventSummary['total_events']--;
             }
-            
-            // prepare the area for per-status participant counts
-            $statusClasses = array( 'Positive', 'Pending', 'Waiting', 'Negative' );
-            $eventSummary['events'][$dao->id]['statuses'] = array_fill_keys($statusClasses, array());
-            
-            // get eventIds.
-            if ( !in_array( $dao->id, $eventIds ) ) $eventIds[] = $dao->id;
         }
         
         require_once 'CRM/Event/PseudoConstant.php';
