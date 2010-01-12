@@ -87,7 +87,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
                 CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', $params['extends'][0], 'value', 'name' );
         }
 
-        if ( is_array($params['extends'][1]) && !empty($params['extends'][1]) ) {
+        if ( is_array($params['extends'][1]) && !CRM_Utils_Array::crmIsEmptyArray($params['extends'][1]) ) {
             $params['extends'][1] = implode ( CRM_Core_DAO::VALUE_SEPARATOR, $params['extends'][1] );
 
             if ( $params['extends'][0] == 'Relationship' ) {
