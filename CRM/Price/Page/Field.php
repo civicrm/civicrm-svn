@@ -227,6 +227,11 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
                                            $this, false, 0);
         $action = CRM_Utils_Request::retrieve('action', 'String',
                                               $this, false, 'browse'); // default to 'browse'
+        
+        if ( $this->_sid ) {
+            require_once 'CRM/Price/BAO/Set.php';
+            CRM_Price_BAO_Set::checkPermission( $this->_sid );
+        }
         if ($action & ( CRM_Core_Action::DELETE)) {
             require_once 'CRM/Price/BAO/Set.php';
             $usedBy =& CRM_Price_BAO_Set::getUsedBy( $this->_sid );
