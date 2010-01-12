@@ -203,7 +203,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         $activityParams = array('source_contact_id'    => $userID,
                                 'activity_type_id'     => $activityTypeID,
                                 'activity_date_time'   => date('YmdHis'),
-                                'details'              => $html,
+                                'details'              => $html_message,
                                 );
         $activity = CRM_Activity_BAO_Activity::create( $activityParams );
         

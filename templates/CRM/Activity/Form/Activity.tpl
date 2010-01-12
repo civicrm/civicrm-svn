@@ -1,4 +1,5 @@
- {* this template is used for adding/editing other (custom) activities. *}
+{debug}
+{* this template is used for adding/editing other (custom) activities. *}
 {if $cdType }
    {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
@@ -170,7 +171,17 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
                 <td class="label">{$form.status_id.label}</td><td class="view-value">{$form.status_id.html}</td>
              </tr> 
              <tr>
-                <td class="label">{$form.details.label}</td><td class="view-value">{$form.details.html|crmReplace:class:huge}</td>
+               <td class="label">{$form.details.label}</td>
+	        {if $activityTypeName eq "Print PDF Letter"}
+		  <td class="view-value report">
+	    	    {$form.details.value|crmReplace:class:huge}
+		  </td>
+		{else}
+	          <td class="view-value report">
+	    	    {$form.details.html|crmReplace:class:huge}
+		  </td>
+		{/if}     
+               </td>
              </tr> 
              <tr>
                 <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
