@@ -1,4 +1,3 @@
-{debug}
 {* this template is used for adding/editing other (custom) activities. *}
 {if $cdType }
    {include file="CRM/Custom/Form/CustomData.tpl"}
