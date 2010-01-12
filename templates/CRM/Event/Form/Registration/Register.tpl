@@ -48,15 +48,18 @@
 
 {else}
     {if $paidEvent}
-    <div class="section paid_event-section">
-	    <div class="label">{$event.fee_label} <span class="marker">*</span></div>
-		<div class="content">{$form.amount.html}
-	    {if $form.is_pay_later}
-            <br />{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}
-	    {/if}
-        </div>
-        <div class="clear">
- 	</div>
+        <div class="section paid_event-section">
+    	    <div class="label">{$event.fee_label} <span class="marker">*</span></div>
+    		<div class="content">{$form.amount.html}</div>
+            <div class="clear"></div>
+     	</div>
+        {if $form.is_pay_later}
+            <div class="section pay_later-section">
+    	        <div class="label">&nbsp;</div>
+                <div class="content">{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}</div>
+                <div class="clear"></div>
+            </div>
+        {/if}
     {/if}
 {/if}
 
