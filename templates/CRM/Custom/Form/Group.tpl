@@ -54,9 +54,9 @@
 {literal}
 <script type="text/Javascript">
 
-showHideStyle();
+showHideStyle( );
 
-var  isGroupEmpty = {/literal}"{$isGroupEmpty}"{literal};
+var  isGroupEmpty = "{/literal}{$isGroupEmpty}{literal}";
 
 if ( isGroupEmpty ) {
      showRange();
@@ -64,20 +64,20 @@ if ( isGroupEmpty ) {
 
 function showHideStyle()
 {   	     
-	var isShow  = false;
-	var extends = document.getElementById('extends[0]').value;
-        var contactTypes     = {/literal}'{$contactTypes}'{literal};
-        var showStyle        = {/literal}'{$showStyle}'{literal};
-        var showMultiple     = {/literal}'{$showMultiple}'{literal};
-        var showMaxMultiple  = {/literal}'{$showMaxMultiple}'{literal};
-      
-        contactTypes = eval('(' + contactTypes + ')');
-        if ( contactTypes.indexOf(extends) >= 0 ) {
-            isShow  = true;
-        }
+	var isShow          = false;
+	var extend          = document.getElementById("extends[0]");
+    var contactTypes    = {/literal}'{$contactTypes}'{literal};
+    var showStyle       = "{/literal}{$showStyle}{literal}";
+    var showMultiple    = "{/literal}{$showMultiple}{literal}";
+    var showMaxMultiple = "{/literal}{$showMaxMultiple}{literal}";
+  
+    eval('var contactTypes = ' + contactTypes); 
+    if ( extend && contactTypes.indexOf(extend) >= 0 ) {
+        isShow  = true;
+    }
 	if( isShow  ) {	
-            show("style");
-            show("is_multiple");
+        show("style");
+        show("is_multiple");
 	} else {
 	    hide("style");
         hide("is_multiple");
@@ -113,7 +113,7 @@ function showRange()
 // In update mode, when 'extends' is set to an option which doesn't have 
 // any options in 2nd selector (for subtypes)  -
 var subtypes = document.getElementById('extends[1]');
-if ( subtypes != null ) {
+if ( subtypes ) {
      if ( subtypes.options.length <= 0 ) {
           subtypes.style.display = 'none';
      } else {
