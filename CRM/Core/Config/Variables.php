@@ -535,21 +535,20 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      */
     public function defaultMonetaryPointSeparator( $lcMonetary ) 
     {
-        static $cachedDecPoint = array( );
-        if ( empty($cachedDecPoint) ) {
-            if ( $this->defaultCurrency ) {
-                //set locale settings for selected monetary language.
-                setlocale( LC_ALL, $lcMonetary.'.utf8', $lcMonetary, 'en_US.utf8', 'en_US', 'C');
-                //get locale settings for selected monetary language.
+        static $cachedDecPoint = null;
+
+        if (is_null($cachedDecPoint)) {
+            // first set the defaults, then alter them if the system supports locales and localeconv() returned something sane, CRM-5554
+            $cachedDecPoint = array('decimal_point' => '.', 'thousands_sep' => ',');
+            if ($this->defaultCurrency and setlocale(LC_MONETARY, $lcMonetary . '.utf8', $lcMonetary, 'en_US.utf8', 'en_US', 'C')) {
                 $localeInfo = localeconv();
-                $cachedDecPoint['decimal_point'] = $this->monetaryDecimalPoint      = CRM_Utils_Array::value( 'mon_decimal_point', $localeInfo );
-                $cachedDecPoint['thousands_sep'] = $this->monetaryThousandSeparator = CRM_Utils_Array::value( 'mon_thousands_sep', $localeInfo );
-            } else {
-                $cachedDecPoint = array( 'decimal_point' => '.',
-                                         'thousands_sep' => ','
-                                         );
+                if (CRM_Utils_Array::value('mon_decimal_point', $localeInfo) and CRM_Utils_Array::value('mon_thousands_sep', $localeInfo)) {
+                    $cachedDecPoint['decimal_point'] = $this->monetaryDecimalPoint      = CRM_Utils_Array::value('mon_decimal_point', $localeInfo);
+                    $cachedDecPoint['thousands_sep'] = $this->monetaryThousandSeparator = CRM_Utils_Array::value('mon_thousands_sep', $localeInfo);
+                }
             }
         }
+
         return $cachedDecPoint;
     }
     
