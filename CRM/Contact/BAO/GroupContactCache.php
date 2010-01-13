@@ -61,11 +61,15 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
         // of comma separated integers would not work. 
         $groupID = CRM_Core_DAO::escapeString( implode( ', ', $groupID ) );
 
-        // we'll modify the below if to regenerate if cacheDate is quite old
+        $config  =& CRM_Core_Config::singleton( );
+        $smartGroupCacheTimeout = 
+            isset( $config->smartGroupCacheTimeout ) && 
+            is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;
         $query  = "
 SELECT     g.id
 FROM       civicrm_group g
-WHERE      g.id IN ( {$groupID} ) AND g.saved_search_id = 1 AND g.cache_date IS NULL
+WHERE      g.id IN ( {$groupID} ) AND g.saved_search_id = 1 AND 
+          (g.cache_date IS NULL OR (TIMESTAMPDIFF(MINUTE, g.cache_date, NOW()) >= $smartGroupCacheTimeout))
 ";
 
         $dao      =& CRM_Core_DAO::executeQuery( $query );
