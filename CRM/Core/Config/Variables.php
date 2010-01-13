@@ -208,7 +208,7 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
      * Format for monetary amounts
      * @var string
      */
-    public $defaultCurrencySymbol = null;
+    public $defaultCurrencySymbol = '$';
    
     /**
      * Monetary decimal point character
