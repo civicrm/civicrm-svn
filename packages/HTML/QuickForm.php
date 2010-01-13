@@ -1942,6 +1942,7 @@ class HTML_QuickForm extends HTML_Common
                              'footer_text',
                              'thankyou_text',
                              'thankyou_footer',
+                             'thankyou_footer_text',
                              'new_text',
                              'renewal_text',
                              'help_pre',
