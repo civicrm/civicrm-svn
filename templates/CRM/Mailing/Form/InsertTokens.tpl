@@ -75,7 +75,7 @@ function selectValue( val ) {
             oEditor = CKEDITOR.instances[html_message];
             oEditor.setData('');
         } else if ( editor == "tinymce" ) {
-            cj('#' + html_message).html('');
+            tinyMCE.getInstanceById(html_message).setContent( html_body );
         } else {	
             document.getElementById(html_message).value = '' ;
         }
