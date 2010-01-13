@@ -10,8 +10,8 @@
         <tr><td class="label">{ts}Money Transferred{/ts}     </td> <td>{$money_transfer_date|crmDate}</td></tr>
         <tr><td class="label">{ts}Grant Report Due{/ts}      </td> <td>{$grant_due_date|crmDate}</td></tr>
         <tr><td class="label">{ts}Amount Requested{/ts}      </td> <td>{$amount_total|crmMoney}</td></tr>
-        <tr><td class="label">{ts}Amount Requested <br />
-          (original currency){/ts}   </td> <td>{$amount_requested|crmMoney}</td></tr>
+        <tr><td class="label">{ts}Amount Requested{/ts}<br />
+                              {ts}(original currency){/ts}   </td> <td>{$amount_requested|crmMoney}</td></tr>
         <tr><td class="label">{ts}Amount Granted{/ts}        </td> <td>{$amount_granted|crmMoney}</td></tr>
         <tr><td class="label">{ts}Grant Report Received?{/ts}</td> <td>{if $grant_report_received}{ts}Yes{/ts} {else}{ts}No{/ts}{/if}</td></tr>
         <tr><td class="label">{ts}Rationale{/ts}             </td> <td>{$rationale}</td></tr>

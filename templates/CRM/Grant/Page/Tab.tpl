@@ -11,7 +11,7 @@
     <div id="help">
         <p>{ts 1=$displayName}This page lists all grants for %1 since inception.{/ts} 
         {if $permission EQ 'edit'}
-            {ts 1=$newGrantURL}Click <a accesskey="N" href='%1'>New Grant</a> to record a Grant for this contact.{/ts}
+            {ts 1=$newGrantURL}Click <a accesskey='N' href='%1'>New Grant</a> to record a Grant for this contact.{/ts}
         {/if}
         </p>
     </div>
