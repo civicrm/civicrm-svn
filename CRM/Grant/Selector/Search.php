@@ -159,6 +159,7 @@ class CRM_Grant_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
     {
         // submitted form values
         $this->_queryParams =& $queryParams;
+        
 
         $this->_single  = $single;
         $this->_limit   = $limit;
@@ -171,6 +172,7 @@ class CRM_Grant_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
 
         $this->_query =& new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                     CRM_Contact_BAO_Query::MODE_GRANT );
+        
     }//end of constructor
 
 
@@ -289,13 +291,7 @@ class CRM_Grant_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
              $permissions[] = CRM_Core_Permission::DELETE;
          }
          $mask = CRM_Core_Action::mask( $permissions );
-         
-         require_once 'CRM/Grant/PseudoConstant.php';
-         $grantStatus  = array( );
-         $grantStatus  = CRM_Grant_PseudoConstant::grantStatus( );
-         $grantType    = array( );
-         $grantType    = CRM_Grant_PseudoConstant::grantType( );
-         
+                 
          while ($result->fetch()) {
              $row = array();
              // the columns we are interested in
@@ -304,11 +300,10 @@ class CRM_Grant_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
                      $row[$property] = $result->$property;
                  }
              }
-
              //fix status display
-             $row['grant_status'] = $grantStatus[$row['grant_status_id']];
-             $row['grant_type']   = $grantType[$row['grant_type_id']];
-
+             $row['grant_status'] = $row['grant_status_id'];
+             $row['grant_type']   = $row['grant_type_id'];
+             
              if ($this->_context == 'search') {
                  $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->grant_id;
              }
