@@ -53,10 +53,10 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                   array( 'dao'       => 'CRM_Contact_DAO_Contact',
                          'fields'    =>
                          array( 'display_name_a' => 
-                                 array( 'title'     => ts( 'Contact A' ),
-                                        'name'      => 'display_name',
-                                        'required'  => true,
-                                        ),
+                                array( 'title'     => ts( 'Contact A' ),
+                                       'name'      => 'display_name',
+                                       'required'  => true,
+                                       ),
                                 'id' => 
                                 array( 'no_display' => true,
                                        'required'   => true,
@@ -64,7 +64,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                          'filters'    =>
                          array( 'sort_name_a'    =>
                                 array( 'title'     => ts('Contact A'),
-                                       'name'      => 'sort_name',
+                                       'name'      => 'sort_name', 
                                        'operator'  => 'like',
                                        'type'      => CRM_Report_Form::OP_STRING ), ),
                          'grouping'   => 'conact_a_fields',
@@ -75,13 +75,13 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                          'alias'     => 'contact_b',
                          'fields'    =>
                          array( 'display_name_b' => 
-                                 array( 'title'     => ts( 'Contact B' ),
-                                        'name'      => 'display_name',
-                                        'required'  => true,
-                                        ),
+                                array( 'title'     => ts( 'Contact B' ),
+                                       'name'      => 'display_name',
+                                       'required'  => true,
+                                       ),
                                 'id' => 
                                 array( 'no_display' => true,
-                                        'required'   => true,
+                                       'required'   => true,
                                        ), ),
                          'filters'    =>
                          array( 'sort_name_b'=>
@@ -223,11 +223,11 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                         if ( $fieldName == 'email_a' ) {
                             $this->_emailField_a = true;
                         }
-                        if( $fieldName == 'email_b' ) {
+                        if ( $fieldName == 'email_b' ) {
                             $this->_emailField_b = true;
                         }
                         $select[] = "{$field['dbAlias']} as {$tableName}_{$fieldName}";
-                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['type'] = CRM_Utils_Array::value( 'type', $field );
+                        $this->_columnHeaders["{$tableName}_{$fieldName}"]['type']  = CRM_Utils_Array::value( 'type', $field );
                         $this->_columnHeaders["{$tableName}_{$fieldName}"]['title'] = CRM_Utils_Array::value( 'title', $field );
                     }
                 }
@@ -238,7 +238,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
     }
     
     function from( ) {        
-       $this->_from = "
+        $this->_from = "
         FROM civicrm_relationship {$this->_aliases['civicrm_relationship']}
  
              INNER JOIN civicrm_contact {$this->_aliases['civicrm_contact']}
@@ -249,34 +249,39 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                         ON ( {$this->_aliases['civicrm_relationship']}.contact_id_b = 
                              {$this->_aliases['civicrm_contact_b']}.id )
 
-             {$this->_aclFrom}
-
-             LEFT  JOIN civicrm_address {$this->_aliases['civicrm_address']} 
+             {$this->_aclFrom} ";
+       
+        if ( !empty($this->_params['country_id_value']) || 
+             !empty($this->_params['state_province_id_value']) ){
+            $this->_from .= "
+            INNER  JOIN civicrm_address {$this->_aliases['civicrm_address']} 
                          ON (( {$this->_aliases['civicrm_address']}.contact_id =
                                {$this->_aliases['civicrm_contact']}.id  OR
                                {$this->_aliases['civicrm_address']}.contact_id =
                                {$this->_aliases['civicrm_contact_b']}.id ) AND 
-                             {$this->_aliases['civicrm_address']}.is_primary = 1 )
+                               {$this->_aliases['civicrm_address']}.is_primary = 1 ) ";
+        }
 
-             LEFT  JOIN civicrm_relationship_type {$this->_aliases['civicrm_relationship_type']}
+        $this->_from .= "
+        INNER JOIN civicrm_relationship_type {$this->_aliases['civicrm_relationship_type']}
                         ON ( {$this->_aliases['civicrm_relationship']}.relationship_type_id  = 
                              {$this->_aliases['civicrm_relationship_type']}.id  ) ";
         
         // include Email Field 
-       if ( $this->_emailField_a ) {
-           $this->_from .= " 
+        if ( $this->_emailField_a ) {
+            $this->_from .= " 
              LEFT JOIN civicrm_email {$this->_aliases['civicrm_email']}
                        ON ( {$this->_aliases['civicrm_contact']}.id =
                             {$this->_aliases['civicrm_email']}.contact_id AND 
                             {$this->_aliases['civicrm_email']}.is_primary = 1 )";
-       }
-       if ( $this->_emailField_b ) {
+        }
+        if ( $this->_emailField_b ) {
             $this->_from .= " 
              LEFT JOIN civicrm_email {$this->_aliases['civicrm_email_b']} 
                        ON ( {$this->_aliases['civicrm_contact_b']}.id =
                             {$this->_aliases['civicrm_email_b']}.contact_id AND 
                             {$this->_aliases['civicrm_email_b']}.is_primary = 1 )";
-       }
+        }
     }
 
     function where( ) {
@@ -296,54 +301,53 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                         $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
                         if ( $op ) {
                             
-                            if( $tableName == 'civicrm_relationship_type' && ($fieldName== 'contact_type_a' || $fieldName== 'contact_type_b') ) {
+                            if( $tableName   == 'civicrm_relationship_type' && 
+                                ( $fieldName == 'contact_type_a' || $fieldName == 'contact_type_b' ) ) {
                                 $cTypes = CRM_Utils_Array::value( "{$fieldName}_value", $this->_params );
-                                $contactTypes    = array( );
-                                $contactSubTypes = array( );
-                                if ( is_array( $cTypes ) ) {
+                                $contactTypes = $contactSubTypes = array( );
+                                if (!empty($cTypes)) {
                                     foreach ( $cTypes as $ctype ) {
-                                        $getTypes = CRM_Utils_System::explode( '_', $ctype, 2 );
-                                        if ( $getTypes[1] && !in_array($getTypes[1],$contactSubTypes ) ) {
-                                            $contactSubTypes[] = $getTypes[1];    
-                                        } elseif ( $getTypes[0] && !in_array( $getTypes[0], $contactTypes ) ) {
+                                        $getTypes =  CRM_Utils_System::explode( '_', $ctype, 2 );
+                                        if ( $getTypes[1] && !in_array($getTypes[1], $contactSubTypes ) ) {
+                                            $contactSubTypes[] = $getTypes[1];
+                                        } elseif( $getTypes[0] && !in_array($getTypes[0],$contactTypes ) ) {
                                             $contactTypes[] = $getTypes[0];
                                         }
                                     }
                                 }
                                 
-                            if( !empty($contactTypes) ) {
-                            $clause = 
-                                $this->whereClause( $field,
-                                                    $op,
-                                                    $contactTypes,
-                                                    CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
-                                                    CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
-                            }
-                            
-                            if( !empty($contactSubTypes) ) {
-                                if( $fieldName == 'contact_type_a' ) {
-                                    $field['name'] = 'contact_sub_type_a';
-                                } else {
-                                    $field['name'] = 'contact_sub_type_b';
+                                if ( !empty($contactTypes) ) {
+                                    $clause = 
+                                        $this->whereClause( $field,
+                                                            $op,
+                                                            $contactTypes,
+                                                            CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
+                                                            CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
                                 }
-                                $field['dbAlias'] = $field['alias'].'.'.$field['name']; 
-                                $subTypeClause =  $this->whereClause( $field,
-                                                               $op,
-                                                               $contactSubTypes,
-                                                               CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
-                                                               CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
-                                if( $clause ) {
-                                    $clause = '('.$clause.' OR '.$subTypeClause.')';
-                                } else {
-                                    $clause = $subTypeClause;
+                                
+                                if ( !empty($contactSubTypes) ) {
+                                    if ( $fieldName == 'contact_type_a' ) {
+                                        $field['name'] = 'contact_sub_type_a';
+                                    } else {
+                                        $field['name'] = 'contact_sub_type_b';
+                                    }
+                                    $field['dbAlias'] = $field['alias'].'.'.$field['name']; 
+                                    $subTypeClause = $this->whereClause( $field,
+                                                                         $op,
+                                                                         $contactSubTypes,
+                                                                         CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
+                                                                         CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
+                                    if ( $clause ) {
+                                        $clause = '(' . $clause . ' OR ' . $subTypeClause . ')';
+                                    } else {
+                                        $clause = $subTypeClause;
+                                    }
                                 }
-                            }
-
                             } else {
                                 
                                 $clause = 
                                     $this->whereClause( $field,
-                                                    $op,
+                                                        $op,
                                                         CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
                                                         CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
                                                         CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
@@ -365,10 +369,10 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
         }
 
         if ( empty( $whereClauses ) ) {
-            $this->_where = "WHERE ( 1 ) ";
-            $this->_having = "";
+            $this->_where = 'WHERE ( 1 ) ';
+            $this->_having = '';
         } else {
-            $this->_where = "WHERE " . implode( ' AND ', $whereClauses );
+            $this->_where = 'WHERE ' . implode( ' AND ', $whereClauses );
         }
 
         if ( $this->_aclWhere ) {
@@ -377,7 +381,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
  
         if ( !empty( $havingClauses ) ) {
             // use this clause to construct group by clause.
-            $this->_having = "HAVING " . implode( ' AND ', $havingClauses );
+            $this->_having = 'HAVING ' . implode( ' AND ', $havingClauses );
         }
     }
 
@@ -478,7 +482,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                  array_key_exists('civicrm_contact_id', $row) ) {
                 $url = CRM_Report_Utils_Report::getNextUrl( 'contact/detail', 
                                                             'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_id'],
-                                              $this->_absoluteUrl, $this->_id );
+                                                            $this->_absoluteUrl, $this->_id );
                 $rows[$rowNum]['civicrm_contact_display_name_a_link' ] = $url;
                 $rows[$rowNum]['civicrm_contact_display_name_a_hover'] = ts("View Contact details for this contact.");
                 $entryFound = true;
@@ -488,7 +492,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                  array_key_exists('civicrm_contact_b_id', $row) ) {
                 $url = CRM_Report_Utils_Report::getNextUrl( 'contact/detail', 
                                                             'reset=1&force=1&id_op=eq&id_value=' . $row['civicrm_contact_b_id'],
-                                              $this->_absoluteUrl, $this->_id );
+                                                            $this->_absoluteUrl, $this->_id );
                 $rows[$rowNum]['civicrm_contact_b_display_name_b_link' ] = $url;
                 $rows[$rowNum]['civicrm_contact_b_display_name_b_hover'] = ts("View Contact details for this contact.");
                 $entryFound = true;
