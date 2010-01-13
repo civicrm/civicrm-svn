@@ -226,7 +226,8 @@ class CRM_Grant_BAO_Query
             $properties = array(
                                 'contact_type'                    => 1,
                                 'contact_sub_type'                => 1,
-                                'sort_name'                       => 1,   
+                                'sort_name'                       => 1,
+                                'grant_id'                        => 1, 
                                 'grant_type_id'                   => 1, 
                                 'grant_status_id'                 => 1, 
                                 'grant_amount_requested'          => 1,
