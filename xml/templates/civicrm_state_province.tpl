@@ -3730,10 +3730,10 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (10012, 1107, "Mon", "Monza e Brianza"),
 
 -- new UK provinces (CRM-5224)
-(10013, 1226, '', 'Clwyd'),
-(10014, 1226, '', 'Dyfed'),
-(10015, 1226, '', 'South Glamorgan'),
-(10016, 1094, 'AR', 'Artibonite'),
-(10017, 1094, 'CE', 'Centre'),
-(10018, 1094, 'NI', 'Nippes'),
-(10019, 1094, 'ND', 'Nord');
+(10013, 1226, "", "Clwyd"),
+(10014, 1226, "", "Dyfed"),
+(10015, 1226, "", "South Glamorgan"),
+(10016, 1094, "AR", "Artibonite"),
+(10017, 1094, "CE", "Centre"),
+(10018, 1094, "NI", "Nippes"),
+(10019, 1094, "ND", "Nord");
