@@ -55,8 +55,8 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
     public function setDefaultValues( ) {
         $defaults = array( );
         $defaults =& parent::setDefaultValues( );
-        $this->_workflow_id = $defaults['workflow_id'];
-        $this->assign('workflow_id', $defaults['workflow_id']);
+        $this->_workflow_id = CRM_Utils_Array::value( 'workflow_id', $defaults );
+        $this->assign( 'workflow_id', $this->_workflow_id );
 
         // FIXME: we need to fix the Cancel button here as we don’t know whether it’s a workflow template in buildQuickForm()
         if ($this->_workflow_id and $this->_action & CRM_Core_Action::UPDATE) {
