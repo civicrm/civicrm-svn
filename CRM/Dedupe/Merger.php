@@ -62,7 +62,7 @@ class CRM_Dedupe_Merger
                 'rel_table_contribution_page' => array(
                     'title'  => ts('Contribution Pages'),
                     'tables' => array('civicrm_contribution_page'),
-                    'url'    => CRM_Utils_System::url('civicrm/admin/contribute', 'reset=1'),
+                    'url'    => CRM_Utils_System::url('civicrm/admin/contribute', 'reset=1&cid=$cid'),
                 ),
                 'rel_table_memberships' => array(
                     'title'  => ts('Memberships'),
@@ -77,7 +77,7 @@ class CRM_Dedupe_Merger
                 'rel_table_events' => array(
                     'title'  => ts('Events'),
                     'tables' => array('civicrm_event'),
-                    'url'    => CRM_Utils_System::url('civicrm/event/manage', 'reset=1'),
+                    'url'    => CRM_Utils_System::url('civicrm/event/manage', 'reset=1&cid=$cid'),
                 ),
                 'rel_table_activities' => array(
                     'title'  => ts('Activities'),
@@ -117,7 +117,7 @@ class CRM_Dedupe_Merger
                 'rel_table_mailings' => array(
                     'title'  => ts('Mailings'),
                     'tables' => array('civicrm_mailing', 'civicrm_mailing_event_queue', 'civicrm_mailing_event_subscribe' ),
-                    'url'    => CRM_Utils_System::url('civicrm/mailing', 'reset=1'),
+                    'url'    => CRM_Utils_System::url('civicrm/mailing', 'reset=1&force=1&cid=$cid'),
                 ),
                 'rel_table_cases' => array(
                     'title'  => ts('Cases'),

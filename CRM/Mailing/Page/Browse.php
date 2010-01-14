@@ -140,7 +140,12 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
             $this->_scheduled = true;
         }
         $this->set( 'scheduled', $this->_scheduled );
-
+        
+        $this->_createdId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false, 0 );
+        if ( $this->_createdId ) {
+            $this->set( 'createdId', $this->_createdId );
+        }
+        
         $this->search( );
         
         $session =& CRM_Core_Session::singleton();

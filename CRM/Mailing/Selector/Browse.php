@@ -410,6 +410,12 @@ class CRM_Mailing_Selector_Browse   extends CRM_Core_Selector_Base
             $params[4] = array( '%' . $createOrSentBy . '%', 'String' );
         }
         
+        $createdId = $this->_parent->get( 'createdId' );
+        if ( $createdId ) {
+            $clauses[] = "(created_id = {$createdId})";
+            $params[5] = array( $createdId, 'Integer' );
+        }
+        
         if ( empty( $clauses ) ) {
             return 1;
         }

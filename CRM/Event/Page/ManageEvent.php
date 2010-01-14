@@ -191,6 +191,7 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
         $this->_sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter',
                                                                'String',
                                                                $this );
+        $createdId = CRM_Utils_Request::retrieve('cid', 'Positive', $this, false, 0);
         if ( $this->_sortByCharacter == 1 ||
              ! empty( $_POST ) ) {
             $this->_sortByCharacter = '';
@@ -305,6 +306,12 @@ ORDER BY start_date desc
         $values  =  array( );
         $clauses = array( );
         $title   = $this->get( 'title' );
+        $createdId = $this->get( 'cid' );
+        
+        if( $createdId ) {
+            $clauses[] = "(created_id = {$createdId})";
+        }
+
         if ( $title ) {
             $clauses[] = "title LIKE %1";
             if ( strpos( $title, '%' ) !== false ) {

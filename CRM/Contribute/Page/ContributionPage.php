@@ -250,6 +250,9 @@ WHERE cp.contribution_page_id = {$id}";
         $this->_sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter',
                                                                'String',
                                                                $this );
+        $createdId = CRM_Utils_Request::retrieve('cid', 'Positive',
+                                          $this, false, 0);
+
         if ( $this->_sortByCharacter == 1 ||
              ! empty( $_POST ) ) {
             $this->_sortByCharacter = '';
@@ -326,6 +329,12 @@ ORDER BY title asc
         $values  =  array( );
         $clauses = array( );
         $title   = $this->get( 'title' );
+        $createdId = $this->get( 'cid' );
+        
+        if( $createdId ) {
+            $clauses[] = "(created_id = {$createdId})";
+        }
+
         if ( $title ) {
             $clauses[] = "title LIKE %1";
             if ( strpos( $title, '%' ) !== false ) {
