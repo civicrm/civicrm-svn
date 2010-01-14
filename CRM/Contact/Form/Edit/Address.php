@@ -232,11 +232,17 @@ class CRM_Contact_Form_Edit_Address
                                     $countryDefaultValue ) {
         $countryID = null;
         if ( isset( $form->_elementIndex[$countryElementName] ) ) {
-            $countryValue = $form->getElementValue( $countryElementName );
-            if ( $countryValue ) {
-                $countryID = $countryValue[0];
-            } else {
+            //get the country id to load states -
+            //first check for submitted value,
+            //then check for user passed value.
+            //finally check for element default val.
+            $submittedVal = $form->getSubmitValue( $countryElementName );
+            if ( $submittedVal ) {
+                $countryID = $submittedVal;
+            } else if ( $countryDefaultValue ) {
                 $countryID = $countryDefaultValue;
+            } else {
+                $countryID = CRM_Utils_Array::value( 0, $form->getElementValue( $countryElementName ) );
             }
         }
         
