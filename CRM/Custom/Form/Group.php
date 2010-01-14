@@ -263,7 +263,9 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         $sel2['Organization']         = CRM_Contact_BAO_ContactType::subTypePairs( 'Organization', false, null );
 
         foreach ( $sel2 as $main => $sub ) {
-            $sel2[$main] = array( '' => ts("- Any -") ) + $sel2[$main]; 
+            if ( !empty($sel2[$main]) ) {
+                $sel2[$main] = array( '' => ts("- Any -") ) + $sel2[$main]; 
+            }
         }
         
         require_once "CRM/Core/Component.php";
