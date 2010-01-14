@@ -914,9 +914,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             $allowSameEmailAddress = CRM_Utils_Array::value( 'allow_same_participant_emails', $this->_values['event'] );
             
             require_once 'CRM/Dedupe/Finder.php';
-            //Dedupe couldn't recognize "email-Primary".So modify params temporary.
-            if ( !$allowSameEmailAddress && CRM_Utils_Array::value('email-Primary', $params) ) {
-                $params['email'] = $params['email-Primary'];
+            //suppress "email-Primary" when allow_same_participant_emails = 1
+            if ( $allowSameEmailAddress && CRM_Utils_Array::value('email-Primary', $params) ) {
+                unset($params['email-Primary']);
             }
             $dedupeParams = CRM_Dedupe_Finder::formatParams($params, 'Individual');
             $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual');
