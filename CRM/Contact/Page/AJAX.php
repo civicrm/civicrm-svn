@@ -568,6 +568,7 @@ WHERE sort_name LIKE '%$name%'";
             list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( 'cc' );
             if ( $aclWhere ) {
                 $aclWhere = " AND $aclWhere";
+            }
             if ( $noemail ) {
               $query="
 SELECT sort_name name, cc.id
