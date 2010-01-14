@@ -50,6 +50,9 @@ function run( ) {
     // this does not return on failure
     CRM_Utils_System::authenticateScript( true );
 
+    //log the execution of script
+    CRM_Core_Error::debug_log_message( 'civimail.cronjob.php');
+    
     // we now use DB locks on a per job basis
     processQueue( );
 }

@@ -44,6 +44,9 @@ class CRM_ParticipantProcessor
         
         CRM_Utils_System::authenticateScript( true );
         $config->cleanURL = 1;
+
+        //log the execution time of script
+        CRM_Core_Error::debug_log_message( 'ParticipantProcessor.php' );
     }
     
     public function updateParticipantStatus( )

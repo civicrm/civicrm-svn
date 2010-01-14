@@ -144,6 +144,9 @@ function run( $supportedArgs, $context ) {
     // this does not return on failure
     CRM_Utils_System::authenticateScript( true );
 
+    //log the execution of script
+    CRM_Core_Error::debug_log_message( 'Email2Activity.php' );
+
     $mailDir = MAIL_DIR_DEFAULT;
     if ( isset( $_GET['mailDir'] ) ) {
         $mailDir = $_GET['mailDir'];

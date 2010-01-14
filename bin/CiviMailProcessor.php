@@ -203,6 +203,9 @@ $config =& CRM_Core_Config::singleton();
 
 CRM_Utils_System::authenticateScript(true);
 
+//log the execution of script
+CRM_Core_Error::debug_log_message( 'CiviMailProcessor.php' );
+
 require_once 'CRM/Core/Lock.php';
 $lock = new CRM_Core_Lock('CiviMailProcessor');
 

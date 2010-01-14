@@ -79,7 +79,9 @@ $lock = new CRM_Core_Lock('CiviReportMail');
 if ($lock->isAcquired()) {
     // try to unset any time limits
     if (!ini_get('safe_mode')) set_time_limit(0);
-    
+
+    //log the execution of script
+    CRM_Core_Error::debug_log_message( 'CiviReportMail.php' );
     // if there are named sets of settings, use them - otherwise use the default (null)
     CiviReportMail::processReport();
     

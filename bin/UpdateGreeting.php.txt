@@ -47,6 +47,9 @@ class CRM_UpdateGreeting {
 
         // this does not return on failure
         CRM_Utils_System::authenticateScript( true );
+
+        //log the execution time of script
+        CRM_Core_Error::debug_log_message( 'UpdateGreeting.php');
     }
 
     function initialize( ) {

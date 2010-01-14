@@ -44,6 +44,9 @@ class CRM_UpdatePledgeRecord
         
         CRM_Utils_System::authenticateScript( true );
         $config->cleanURL = 1;
+
+        //log the execution time of script
+        CRM_Core_Error::debug_log_message( 'UpdatePledgeRecord.php');
     }
     
     public function updatePledgeStatus( $sendReminders = false )

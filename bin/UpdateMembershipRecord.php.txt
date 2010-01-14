@@ -44,6 +44,9 @@ class CRM_UpdateMembershipRecord {
 
         // this does not return on failure
         CRM_Utils_System::authenticateScript( true );
+
+        //log the execution time of script
+        CRM_Core_Error::debug_log_message( 'UpdateMembershipRecord.php');
     }
 
     function initialize( ) {

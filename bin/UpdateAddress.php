@@ -79,6 +79,9 @@ function run( ) {
     // this does not return on failure
     // require_once 'CRM/Utils/System.php';
     CRM_Utils_System::authenticateScript( true, $name, $pass );
+
+    //log the execution of script
+    CRM_Core_Error::debug_log_message( 'UpdateAddress.php' );
     
     // do check for geocoding.
     $processGeocode = false;
