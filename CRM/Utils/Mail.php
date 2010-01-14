@@ -52,7 +52,7 @@ class CRM_Utils_Mail
         // check if any module has aborted mail sending
         if ( CRM_Utils_Array::value( 'abortMailSend', $params ) ||
              ! CRM_Utils_Array::value( 'toEmail', $params ) ) {
-            return false;;
+            return false;
         }
 
         $textMessage = CRM_Utils_Array::value( 'text'       , $params );
