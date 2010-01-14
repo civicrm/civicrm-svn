@@ -1955,7 +1955,8 @@ class HTML_QuickForm extends HTML_Common
                              'report_header',
                              'report_footer',
                              'cc_id',
-                             'bcc_id'
+                             'bcc_id',
+                             'label', // This is needed for FROM Email Address configuration. dgg
                              );
                                     
         $values = array();
