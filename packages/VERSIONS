@@ -3,8 +3,10 @@ Licensing info in this file:
   BSD 2-cl. two-clause BSD license
   BSD 3-cl. three-clause BSD license
   GPL 2+    GNU General Public License 2 or later
+  GPL 3     GNU General Public License 3
   LGPL 2.1+ GNU Lesser General Public License 2.1 or later
   LGPL 3+   GNU Lesser General Public License 3 or later
+  LGPL 3    GNU Lesser General Public License 3
   PHP 2     PHP License 2.*
   PHP 3     PHP License 3.*
   X11       X11 (a.k.a. MIT) license
@@ -50,10 +52,10 @@ DB_Table                      1.5.6      BSD 3-cl.
 HTML_Common                   1.2.5      PHP 3
 HTML_QuickForm                3.2.11     PHP 3          local changes, hierselect.php from a very old version (PHP 2)
 HTML_QuickForm_advmultiselect 1.5.1      BSD 3-cl.      local changes
-HTML_QuickForm_Controller     1.0.9                     local changes
-HTML_Template_IT              1.2.1
+HTML_QuickForm_Controller     1.0.9      PHP 3          local changes
+HTML_Template_IT              1.2.1      BSD 3-cl.
 HTTP_Request                  1.4.4      BSD 3-cl.
-Log                           1.11.5
+Log                           1.11.5     X11
 Mail                          1.1.14     PHP 2          local changes
 Mail_Mime                     1.5.2      BSD 3-cl.      local changes
 Mail_mimeDecode               1.5.0      BSD 3-cl.
@@ -67,13 +69,13 @@ Pager                         2.4.8      BSD 3-cl.
 PEAR                          1.9.0      PHP 3.0
 PHP_Beautifier                0.1.14     PHP 3.0
 Services_JSON                 1.0.1      BSD 2-cl.
-Structures_Graph              1.0.2
+Structures_Graph              1.0.2      LGPL 2.1+
 System_Command                1.0.6      PHP 2
 Validate                      0.8.2      BSD 3-cl.
 Validate_Finance              0.5.4      BSD 3-cl.
 Validate_Finance_CreditCard   0.5.3      BSD 3-cl.      local changes
 XML_RPC                       1.5.3      PHP 3
-XML_Util                      1.2.1
+XML_Util                      1.2.1      BSD 3-cl.
 
 
 NON-PEAR
@@ -93,13 +95,20 @@ html2text      1.0.0      GPL 2+      http://chuggnutt.com/html2text.php        
 reCAPTCHA      1.10       X11         http://recaptcha.net/
 
 
+
+payment processors for CiviCRM
+==============================
+eWAY             by Dolphin Software
+IATS             by adixon, in Services/IATS
+Moneris          by adixon, in Services/mpgClasses.php
+PayJunction      by Phase2 Technology
+PaymentExpress   by Lucas Baker
+
+
 Unknown status
 ==============
-Google
-PayJunction
-PaymentExpress
-eWAY
-Facebook
-FCKeditor
+CKEditor      GPL 3/LGPL 3/MPL 1.1
+Google        Apache 2/GPL 2+
+Facebook      BSD 2-cl.
 jQuery
 TinyMCE
