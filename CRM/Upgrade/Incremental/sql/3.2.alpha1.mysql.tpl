@@ -6,10 +6,14 @@ VALUES
 ( 'PayflowPro', '{ts escape="sql"}PayflowPro{/ts}', NULL, 1, 0, 'Vendor ID', 'Password', 'Partner (merchant)', 'User', 'Payment_PayflowPro', 'https://Payflowpro.paypal.com', NULL, NULL, NULL, 'https://pilot-Payflowpro.paypal.com', NULL, NULL, NULL, 1, 0, 1),
 ( 'FirstData', '{ts escape="sql"}FirstData (aka linkpoint){/ts}', '{ts escape="sql"}FirstData (aka linkpoint){/ts}', 1, 0, 'Store Name', 'Certificate Path', NULL, NULL, 'Payment_FirstData', 'https://secure.linkpt.net', NULL, NULL, NULL, 'https://staging.linkpt.net', NULL, NULL, NULL, 1, NULL, 1);
 
---CRM-5461 
-    SELECT @option_group_id_act := max(id) from civicrm_option_group where name = 'activity_type';     
+-- CRM-5461 
+    SELECT @option_group_id_act := max(id) from civicrm_option_group where name = 'activity_type';
 
     INSERT INTO civicrm_option_value
         ( `option_group_id`,{localize field='label'}`label`{/localize},`value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `domain_id`, `visibility_id`)
     VALUES
         ( @option_group_id_act, {localize}'Print PDF Letter'{/localize}, '23', 'Print PDF Letter', NULL, 1, NULL, 23, 'Print PDF Letter.', 0, 1, 1, NULL, NULL, NULL);
+
+-- CRM-5344
+    ALTER TABLE civicrm_uf_group
+    MODIFY notify text;
