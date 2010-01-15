@@ -339,9 +339,16 @@ class CRM_Profile_Form extends CRM_Core_Form
         $admin = true;
         if ( $this->_mode == self::MODE_EDIT ) {
             $admin = false;
-            // show all fields that are visibile: if we are a admin or the same user or in registration mode
+            // show all fields that are visibile: 
+            // if we are a admin OR the same user OR acl-user with access to the profile
+            require_once 'CRM/ACL/API.php';
             if ( CRM_Core_Permission::check( 'administer users' ) ||
-                 $this->_id == $session->get( 'userID' )                 ) {
+                 $this->_id == $session->get( 'userID' )          ||
+                 in_array( $this->_gid, 
+                           CRM_ACL_API::group( CRM_Core_Permission::EDIT, 
+                                               null, 
+                                               'civicrm_uf_group', 
+                                               CRM_Core_PseudoConstant::ufGroup( ) ) ) ) {
                 $admin = true;
             } 
         }
