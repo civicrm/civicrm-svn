@@ -81,17 +81,15 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
 
         require_once 'CRM/Contribute/PseudoConstant.php';
         require_once 'CRM/Core/OptionGroup.php';
-        $pcpStatus     = CRM_Contribute_PseudoConstant::pcpStatus( );
-        $approvedId    = CRM_Core_OptionGroup::getValue( 'pcp_status', 'Approved', 'name' );        
+        $pcpStatus  = CRM_Contribute_PseudoConstant::pcpStatus( );
+        $approvedId = CRM_Core_OptionGroup::getValue( 'pcp_status', 'Approved', 'name' );        
         
         // check if PCP is created by anonymous user
-        $anonymousPCP  = CRM_Utils_Request::retrieve( 'ap', 'Boolean', $this );
+        $anonymousPCP = CRM_Utils_Request::retrieve( 'ap', 'Boolean', $this );
         if ( $anonymousPCP ) {
             $loginUrl = $config->userFrameworkBaseURL;
             
-            switch ( ucfirst($config->userFramework) ) 
-            {
-            
+            switch ( ucfirst($config->userFramework) ) {
             case 'Joomla' : 
                 $loginUrl  = str_replace( 'administrator/', '', $loginUrl );
                 $loginUrl .= 'index.php?option=com_user&view=login';

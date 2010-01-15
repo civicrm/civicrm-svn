@@ -50,7 +50,7 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
      */
     public function preProcess()
     {
-        if ( $this->_action & CRM_Core_Action::DELETE  ) {
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
             //check permission for action.
             if ( !CRM_Core_Permission::checkActionPermission( 'CiviContribute', $this->_action ) ) {
                 CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
@@ -63,29 +63,34 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
         }
         
         if ( ! $this->_action ) {
-            $action = CRM_Utils_Array::value( 'action', $_GET );
-            $id     = CRM_Utils_Array::value( 'id', $_GET );
-            
-            switch ($action)
-            {
-            case 'delete':
-                require_once 'CRM/Contribute/BAO/PCP.php';
-                $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $id, 'title' );
-                CRM_Contribute_BAO_PCP::delete( $id );
-                CRM_Core_Session::setStatus( ts("The Campaign Page '%1' has been deleted.", array(1 => $title)) );
-                break;
-                
-            case 'disable':
-                require_once 'CRM/Contribute/BAO/PCP.php';
-                CRM_Contribute_BAO_PCP::setDisable( $id, '0' );
-                break;
-                
-            case 'enable':
-                require_once 'CRM/Contribute/BAO/PCP.php';
-                CRM_Contribute_BAO_PCP::setDisable( $id, '1' );
-                break;
+            $action  = CRM_Utils_Array::value( 'action', $_GET );
+            $id      = CRM_Utils_Array::value( 'id', $_GET );
+            $session =& CRM_Core_Session::singleton( );
+            $userID  = $session->get('userID');
+            //do not allow destructive actions without permissions
+            $permission = false;
+            if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ||
+                 ( $userID && (CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_PCP', $id , 'contact_id') == $userID ) ) ) {
+                $permission = true;
             }
-            $session =& CRM_Core_Session::singleton();
+            if ( $permission ) {
+                require_once 'CRM/Contribute/BAO/PCP.php';
+                switch ( $action ) {
+                case 'delete':
+                    $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $id, 'title' );
+                    CRM_Contribute_BAO_PCP::delete( $id );
+                    CRM_Core_Session::setStatus( ts("The Campaign Page '%1' has been deleted.", array(1 => $title)) );
+                    break;
+                    
+                case 'disable':
+                    CRM_Contribute_BAO_PCP::setDisable( $id, '0' );
+                    break;
+                    
+                case 'enable':
+                    CRM_Contribute_BAO_PCP::setDisable( $id, '1' );
+                    break;
+                }
+            }
             CRM_Utils_System::redirect( $session->popUserContext() );
         }
     }
@@ -104,7 +109,6 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
         $defaults = array();
         return $defaults;
     }
-
  
     /**
      * Function to actually build the form
@@ -168,7 +172,6 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
      * @return void
      * @access public
      */
-
     public function postProcess()
     {
         if ( $this->_action & CRM_Core_Action::DELETE ) {
