@@ -10,29 +10,15 @@
  *
  * PHP versions 4 and 5
  *
- * LICENSE: License is granted to use or modify this software
- * ("XML-RPC for PHP") for commercial or non-commercial use provided the
- * copyright of the author is preserved in any distributed or derivative work.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESSED OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  * @category   Web Services
  * @package    XML_RPC
  * @author     Edd Dumbill <edd@usefulinc.com>
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1999-2001 Edd Dumbill, 2001-2006 The PHP Group
- * @version    CVS: $Id: Server.php 222479 2006-10-28 16:42:34Z danielc $
+ * @copyright  1999-2001 Edd Dumbill, 2001-2010 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License
+ * @version    SVN: $Id: Server.php 293224 2010-01-07 15:36:40Z danielc $
  * @link       http://pear.php.net/package/XML_RPC
  */
 
@@ -269,8 +255,9 @@ function XML_RPC_Server_debugmsg($m)
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1999-2001 Edd Dumbill, 2001-2006 The PHP Group
- * @version    Release: 1.5.2
+ * @copyright  1999-2001 Edd Dumbill, 2001-2010 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License
+ * @version    Release: 1.5.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Server
