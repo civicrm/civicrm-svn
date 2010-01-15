@@ -92,12 +92,12 @@
 #crm-container .throbber {
     text-align: right;    
     background:url("images/throbber.gif") no-repeat scroll 0 0 transparent;
-    height:40px;
-    width:39px;
+    height:20px;
+    width:20px;
 }
 
 #crm-container p.loadtext {
-    margin:1.6em 0 0 4em;
+    margin:1.6em 0 0 26px;
 }
 
 #crm-container .minimize-icon {
