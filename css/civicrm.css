@@ -1960,7 +1960,7 @@ div.grippie {
 	background:transparent url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png") no-repeat top right;
 	float:left;
 	}
-	.button:hover .icon {background:transparent url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png") no-repeat top right;}
+	.button:hover .icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png")}
 	
 .button:hover {
 	color:#333;
@@ -1972,16 +1972,13 @@ div.grippie {
 .blue-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_2e83ff_256x240.png")}
 
 .edit-icon { background-position: -66px -114px;}
-	.button:hover .edit-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png"); }
 		
 .delete-icon { background-position: -179px -99px;}
 	.button:hover .delete-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_cd0a0a_256x240.png");}
 
 .dashboard-icon { background-position: -193px -130px; }
-	.button:hover .dashboard-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png");}
 
 .user-record-icon { background-position:-145px -99px; }
-    .button:hover .user-record-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png");}
 
 .inform-icon { background-position: -16px -144px; }
 
