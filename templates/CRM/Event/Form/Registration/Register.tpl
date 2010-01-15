@@ -18,7 +18,7 @@
 {/if}
 
 {if $event.intro_text}
-    <div id="intro_text">
+    <div id="intro_text" class="section intro_text-section">
         <p>{$event.intro_text}</p>
     </div>
 {/if}
@@ -35,7 +35,7 @@
 {/if}
 
 {if $priceSet}
-    <fieldset id="priceset"><legend>{$event.fee_label}</legend>
+    <fieldset id="priceset" class="crm-group priceset-group"><legend>{$event.fee_label}</legend>
         {include file="CRM/Price/Form/PriceSet.tpl"}
     </fieldset>
     {if $form.is_pay_later}
@@ -90,7 +90,7 @@
 {* Put PayPal Express button after customPost block since it's the submit button in this case. *}
 {if $paymentProcessor.payment_processor_type EQ 'PayPal_Express' and $buildExpressPayBlock}
     {assign var=expressButtonName value='_qf_Register_upload_express'}
-    <fieldset><legend>{ts}Checkout with PayPal{/ts}</legend>
+    <fieldset class="crm-group payPalExpress-group"><legend>{ts}Checkout with PayPal{/ts}</legend>
     <div class="description">{ts}Click the PayPal button to continue.{/ts}</div>
 	<div>{$form.$expressButtonName.html} <span style="font-size:11px; font-family: Arial, Verdana;">Checkout securely.  Pay without sharing your financial information. </span>
     </div>
@@ -103,7 +103,7 @@
 </div>
 
 {if $event.footer_text}
-    <div id="footer_text">
+    <div id="footer_text" class="section event_footer_text-section">
         <p>{$event.footer_text}</p>
     </div>
 {/if}

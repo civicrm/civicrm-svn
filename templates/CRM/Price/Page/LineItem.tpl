@@ -24,13 +24,20 @@
     {/if}
 {/foreach}
 
-{if $context EQ "Contribution"}
-  <br /><strong>{ts}Contribution Total{/ts}:
-{elseif $context EQ "Event"}
-  <br /><strong>{ts}Event Total{/ts}: 
-{/if}
-{$totalAmount|crmMoney}</strong>
+<div class="section no-label total_amount-section">
+    <div class="content bold">
+        {if $context EQ "Contribution"}
+            {ts}Contribution Total{/ts}:
+        {elseif $context EQ "Event"}
+            {ts}Event Total{/ts}: 
+        {/if}
+    {$totalAmount|crmMoney}
+    </div>
+    <div class="clear"></div>
+</div>
 
 {if $hookDiscount.message}
-    <em>({$hookDiscount.message})</em>
+    <div class="section hookDiscount-section">
+        <em>({$hookDiscount.message})</em>
+    </div>
 {/if}

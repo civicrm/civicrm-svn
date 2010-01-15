@@ -1,5 +1,5 @@
-{* Displays Test-drive mode header for Contribution pages. *}
-<div class="messages status">
+{* Displays Test-drive mode header for Event Registration pages. *}
+<div class="messages status section test_drive-section">
     <dl>
     <dt><img src="{$config->resourceBase}i/Eyeball.gif" alt="{ts}Test-drive{/ts}"/></dt>
     <dd><p><strong>{ts}Test-drive Your Event Registration Page{/ts}</strong></p>
