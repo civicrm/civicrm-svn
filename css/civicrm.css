@@ -1960,7 +1960,8 @@ div.grippie {
 	background:transparent url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png") no-repeat top right;
 	float:left;
 	}
-
+	.button:hover .icon {background:transparent url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png") no-repeat top right;}
+	
 .button:hover {
 	color:#333;
 	}
