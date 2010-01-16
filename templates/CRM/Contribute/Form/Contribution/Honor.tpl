@@ -1,5 +1,5 @@
 {if $honor_block_is_active}
-<div class="honor_block-group">
+<div class="crm-group honor_block-group">
     <div class="header-dark">
         {$honor_block_title}
     </div>

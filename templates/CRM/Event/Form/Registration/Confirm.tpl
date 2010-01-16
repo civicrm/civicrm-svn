@@ -4,7 +4,7 @@
 
 {include file="CRM/common/TrackingFields.tpl"}
 
-<div class="event_confirmation_page">
+<div class="event_confirmation-page">
     {if $isOnWaitlist}
         <div class="help">
             {ts}Please verify the information below. <span class="bold">Then click 'Continue' to be added to the WAIT LIST for this event</span>. If space becomes available you will receive an email with a link to a web page where you can complete your registration.{/ts}
@@ -209,7 +209,7 @@
    
     {if $paymentProcessor.payment_processor_type EQ 'Google_Checkout' and $paidEvent and !$is_pay_later and ! $isAmountzero and !$isOnWaitlist and !$isRequireApproval}
         <fieldset><legend>{ts}Checkout with Google{/ts}</legend>
-            <div class="section googleCheckout-section">
+            <div class="section google_checkout-section">
                 <table class="form-layout-compressed">
             	    <tr>
             		    <td class="description">{ts}Click the Google Checkout button to continue.{/ts}</td>

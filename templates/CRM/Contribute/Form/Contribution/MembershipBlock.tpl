@@ -1,5 +1,5 @@
 {if $membershipBlock}
-<div id="membership" class="membership-group">
+<div id="membership" class="crm-group membership-group">
   {if $context EQ "makeContribution"}
   <fieldset>    
       {if $renewal_mode }
@@ -7,7 +7,7 @@
             <legend>{$membershipBlock.renewal_title}</legend>
         {/if}
         {if $membershipBlock.renewal_text}
-            <div id="membership-intro">
+            <div id="membership-intro" class="section membership_renewal_intro-section">
                 <p>{$membershipBlock.renewal_text}</p>
             </div> 
         {/if}
@@ -17,7 +17,7 @@
             <legend>{$membershipBlock.new_title}</legend>
         {/if}
         {if $membershipBlock.new_text}
-            <div id="membership-intro">
+            <div id="membership-intro" class="section membership_new_intro-section">
                 <p>{$membershipBlock.new_text}</p>
             </div> 
         {/if}

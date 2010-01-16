@@ -1,5 +1,5 @@
 {if $recaptchaHTML}
-<div class="section recaptchaHTML-section">
+<div class="section recaptcha-section">
     <table class="form-layout-compressed">
         <tr>
           <td class="recaptcha_label">&nbsp;</td>

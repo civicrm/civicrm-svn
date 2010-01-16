@@ -1,15 +1,18 @@
 {* Enduser Tell-a-Friend form. *} 
 {if $status eq 'thankyou' } {* Form has been submitted. *}
-    <p>{$thankYouText}</p>
+    <div class="section tell_friend_thankyou-section">
+        {$thankYouText}
+    </div>
     
     {* Add button for donor to create their own Personal Campaign page *}
     {if $linkText}
- 	<div>
+ 	<div class="section create_pcp_link-section">
         <a href="{$linkTextUrl}" title="{$linkText}" class="button"><span>&raquo; {$linkText}</span></a>
     </div><br /><br />
     {/if}
       
 {else}
+<div class="crm-group tell_friend_form-group">
 <table class="form-layout-compressed">
 	<tr>
 		<td colspan=2>
@@ -35,22 +38,23 @@
 	<tr>
 		<td></td>
 		<td>
-		<fieldset><legend>{ts}Send to these Friend(s){/ts}</legend>
-		<table>
-			<tr class="columnheader">
-				<td>{ts}First Name{/ts}</td>
-				<td>{ts}Last Name{/ts}</td>
-				<td>{ts}Email Address{/ts}</td>
-			</tr>
-			{section name=mail start=1 loop=$mailLimit} 
-			{assign var=idx	value=$smarty.section.mail.index}
-			<tr>
-				<td class="even-row">{$form.friend.$idx.first_name.html}</td>
-				<td class="even-row">{$form.friend.$idx.last_name.html}</td>
-				<td class="even-row">{$form.friend.$idx.email.html}</td>
-			</tr>
-			{/section}
-		</table>
+		<fieldset class="crm-group tell_friend_emails-group">
+    		<legend>{ts}Send to these Friend(s){/ts}</legend>
+    		<table>
+    			<tr class="columnheader">
+    				<td>{ts}First Name{/ts}</td>
+    				<td>{ts}Last Name{/ts}</td>
+    				<td>{ts}Email Address{/ts}</td>
+    			</tr>
+    			{section name=mail start=1 loop=$mailLimit} 
+    			{assign var=idx	value=$smarty.section.mail.index}
+    			<tr>
+    				<td class="even-row">{$form.friend.$idx.first_name.html}</td>
+    				<td class="even-row">{$form.friend.$idx.last_name.html}</td>
+    				<td class="even-row">{$form.friend.$idx.email.html}</td>
+    			</tr>
+    			{/section}
+    		</table>
 		</fieldset>
 		</td>
 	</tr>
@@ -59,4 +63,5 @@
 		<td>{$form.buttons.html}</td>
 	</tr>
 </table>
+</div>
 {/if}
