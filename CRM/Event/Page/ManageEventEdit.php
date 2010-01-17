@@ -74,8 +74,7 @@ class CRM_Event_Page_ManageEventEdit extends CRM_Core_Page
 
             // its an update mode, do a permission check
             require_once 'CRM/Event/BAO/Event.php';
-            $permissions = CRM_Event_BAO_Event::checkPermission( $this->_id, $eventInfo['title'] );
-            if ( empty( $permissions ) || ! in_array( CRM_Core_Permission::EDIT, $permissions ) ) {
+            if ( ! CRM_Event_BAO_Event::checkPermission( $this->_id, CRM_Core_Permission::EDIT ) ) {
                 CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
             } 
         }

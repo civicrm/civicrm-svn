@@ -297,8 +297,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         
         $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         while ( $dao->fetch( ) ) {
-            $permissions = CRM_Event_BAO_Event::checkPermission( $dao->id, $dao->title );
-            if ( $permissions && $dao->title ) { 
+            if ( CRM_Event_BAO_Event::checkPermission( $dao->id ) && $dao->title ) { 
                 $events[$dao->id] = $dao->title . ' - '.CRM_Utils_Date::customFormat($dao->start_date);
             }
         }
@@ -377,11 +376,12 @@ LIMIT      0, 10
                              'notCountedParticipants' => 'notCountedParticipants'
                              );
         
+        $permissions = CRM_Event_BAO_Event::checkPermission( );
+
         $params = array( 1 => array( $optionGroupId, 'Integer' ) );
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
         while ( $dao->fetch( ) ) {
-            $permissions = CRM_Event_BAO_Event::checkPermission( $dao->id, $dao->title );
-            if ( $permissions ) {
+            if ( in_array( $dao->id, $permissions[CRM_Core_Permission::VIEW] ) ) {
                 foreach ( $properties as $property => $name ) {
                     $set = null;
                     switch ( $name ) {
@@ -412,7 +412,7 @@ LIMIT      0, 10
                         }
                         
                         $eventSummary['events'][$dao->id][$property] = $set;
-                        if ( $admin || in_array( CRM_Core_Permission::EDIT, $permissions ) ) {
+                        if ( $admin || in_array( $dao->id, $permissions[CRM_Core_Permission::EDIT] ) ) {
                             $eventSummary['events'][$dao->id]['configure'] =
                                 CRM_Utils_System::url( "civicrm/admin/event", "action=update&id=$dao->id&reset=1" );
                         }
@@ -1543,34 +1543,47 @@ WHERE  ce.loc_block_id = $locBlockId";
      * @access public
      * @static
      */
-    static function checkPermission( $id, $title ) 
+    static function checkPermission( $eventId = null, $type = CRM_Core_Permission::VIEW ) 
     {
-        require_once 'CRM/ACL/API.php';
-        require_once 'CRM/Event/PseudoConstant.php';
-        $allEvents = CRM_Event_PseudoConstant::event( null, true );
+        static $permissions = null;
 
-        $permissions = null;
-        if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
-             CRM_ACL_API::groupPermission( CRM_ACL_API::EDIT, $id, null,
-                                           'civicrm_event', $allEvents ) ) {
-            //FIXME: Need to figure out exact permission to allow event edit
-            $permissions[] = CRM_Core_Permission::EDIT;
+        if ( empty($permissions) ) {
+            require_once 'CRM/ACL/API.php';
+            require_once 'CRM/Event/PseudoConstant.php';
+            $allEvents = CRM_Event_PseudoConstant::event( null, true );
+
+            // Note: for a multisite setup, a user with edit all events, can edit all events 
+            // including those from other sites 
+            if ( CRM_Core_Permission::check( 'edit all events' ) ) {
+                $permissions[CRM_Core_Permission::EDIT] = array_keys( $allEvents );
+            } else {
+                $permissions[CRM_Core_Permission::EDIT] =& 
+                    CRM_ACL_API::group( CRM_Core_Permission::EDIT, null, 'civicrm_event', $allEvents );
+            }
+
+            if ( CRM_Core_Permission::check( 'edit all events' ) ||
+                 ( CRM_Core_Permission::check( 'access CiviEvent' ) && 
+                   CRM_Core_Permission::check( 'view event participants' ) ) ) {
+                $permissions[CRM_Core_Permission::VIEW] = array_keys( $allEvents );
+            } else {
+                $permissions[CRM_Core_Permission::VIEW] =& 
+                    CRM_ACL_API::group( CRM_Core_Permission::VIEW, null, 'civicrm_event', $allEvents );
+            }
+            
+            if ( CRM_Core_Permission::check( 'delete in CiviEvent' ) ) {
+                // Note: we want to restrict the scope of delete permission to 
+                // events that are editable/viewable (usecase multisite).
+                // We can remove array_intersect once we have ACL support for delete functionality.
+                $permissions[CRM_Core_Permission::DELETE] = 
+                    array_intersect( $permissions[CRM_Core_Permission::EDIT],
+                                 $permissions[CRM_Core_Permission::VIEW] );
+            }
         }
-        
-        if ( CRM_Core_Permission::check( 'view all contacts' ) ||
-             CRM_ACL_API::groupPermission( CRM_ACL_API::VIEW, $id, null,
-                                           'civicrm_event', $allEvents ) ) {
-            //FIXME: Need to figure out exact permission to allow event view
-            $permissions[] =  CRM_Core_Permission::VIEW;
+
+        if ( $eventId ) {
+            return in_array( $eventId, $permissions[$type] ) ? true : false;
         }
-        
-        if ( ! empty($permissions) && CRM_Core_Permission::check( 'delete in CiviEvent' ) ) {
-            // Note: using !empty() in if condition, restricts the scope of delete 
-            // permission to events that are editable/viewable. 
-            // We can remove this !empty condition once we have ACL support for delete functionality.
-            $permissions[] =  CRM_Core_Permission::DELETE;
-        }
-        
+
         return $permissions;
     }
 }

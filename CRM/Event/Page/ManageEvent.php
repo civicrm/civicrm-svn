@@ -34,6 +34,7 @@
  */
 
 require_once 'CRM/Core/Page.php';
+require_once 'CRM/Event/BAO/Event.php';
 
 /**
  * Page for displaying list of events
@@ -118,21 +119,6 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
         return self::$_actionLinks;
     }
     
-    /**
-     * make sure that the user has permission to access this event
-     *
-     * @param int $id   the id of the event
-     * @param int $name the name or title of the event
-     *
-     * @return string   the permission that the user has (or null)
-     * @access public
-     */
-    function checkPermission( $id, $title ) 
-    {
-        require_once 'CRM/Event/BAO/Event.php';
-        return CRM_Event_BAO_Event::checkPermission( $id, $title );
-    }
-
     /**
      * Run the page.
      *
@@ -245,11 +231,10 @@ ORDER BY start_date desc
    LIMIT $offset, $rowCount";
         
         $dao = CRM_Core_DAO::executeQuery( $query, $params, true, 'CRM_Event_DAO_Event' );
-     
-        while ($dao->fetch()) {
-            $permissions = $this->checkPermission( $dao->id, $dao->title );
+        $permissions = CRM_Event_BAO_Event::checkPermission( );
 
-            if ( $permissions ) {
+        while ($dao->fetch()) {
+            if ( in_array( $dao->id, $permissions[CRM_Core_Permission::VIEW] ) ) {
                 $manageEvent[$dao->id] = array();
                 CRM_Core_DAO::storeValues( $dao, $manageEvent[$dao->id]);
             
@@ -262,10 +247,10 @@ ORDER BY start_date desc
                     $action -= CRM_Core_Action::DISABLE;
                 }
             
-                if ( ! in_array( CRM_Core_Permission::DELETE, $permissions ) ) {
+                if ( ! in_array( $dao->id, $permissions[CRM_Core_Permission::DELETE] ) ) {
                     $action -= CRM_Core_Action::DELETE; 
                 }
-                if ( ! in_array( CRM_Core_Permission::EDIT, $permissions ) ) {
+                if ( ! in_array( $dao->id, $permissions[CRM_Core_Permission::EDIT] ) ) {
                     $action -= CRM_Core_Action::UPDATE; 
                 }
             
