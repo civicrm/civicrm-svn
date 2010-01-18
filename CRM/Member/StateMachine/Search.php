@@ -66,7 +66,9 @@ class CRM_Member_StateMachine_Search extends CRM_Core_StateMachine {
         } else {
             $this->_pages[$task] = null;
         }
-
+        if ( $result ) {
+            $this->_pages['CRM_Member_Form_Task_Result'] = null;
+        }
         $this->addSequentialPages( $this->_pages, $action );
     }
 
@@ -92,35 +94,7 @@ class CRM_Member_StateMachine_Search extends CRM_Core_StateMachine {
             $value = $this->_controller->get( 'task' );
         }
         $this->_controller->set( 'task', $value );
-
-        $result = false;
-        switch ( $value ) {
-        case CRM_Member_Task::DELETE_MEMBERS:
-            $task   = 'CRM_Member_Form_Task_Delete';
-            break;
-
-        case CRM_Member_Task::EXPORT_MEMBERS:
-            $task   = array('CRM_Export_Form_Select',
-                            'CRM_Export_Form_Map');
-            break;
-
-        case CRM_Member_Task::EMAIL_CONTACTS:
-            $task   = array ('CRM_Member_Form_Task_Email',
-                             'CRM_Member_Form_Task_Result');
-            break;
-        case CRM_Member_Task::BATCH_MEMBERS:
-            $task   = array( 'CRM_Member_Form_Task_PickProfile',
-                             'CRM_Member_Form_Task_Batch',
-                             'CRM_Member_Form_Task_Result');
-            break;
-
-        default: // the print task is the default and catch=all task
-            $task = 'CRM_Member_Form_Task_Print';
-            break;
-
-        }
-
-        return array( $task, $result );
+        return CRM_Member_Task::getTask( $value );
     }
 
     /**
