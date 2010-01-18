@@ -150,6 +150,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         while ( $messageTemplates->fetch() ) {
             $msgTpls[$messageTemplates->id] = $messageTemplates->msg_title;
         }
+        asort($msgTpls);
         return $msgTpls;
     }
 
