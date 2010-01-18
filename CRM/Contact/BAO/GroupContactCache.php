@@ -171,14 +171,14 @@ INNER JOIN civicrm_contact c ON c.id = g.contact_id
 WHERE      g.group_id IN (
     SELECT id
     FROM   civicrm_group
-    WHERE  TIMESTAMPDIFF(MINUTE, cache_date, NOW()) > $smartGroupCacheTimeout   
+    WHERE  TIMESTAMPDIFF(MINUTE, cache_date, NOW()) >= $smartGroupCacheTimeout   
 )
 ";
 
             $update = "
 UPDATE civicrm_group g
 SET    cache_date = null
-WHERE  TIMESTAMPDIFF(MINUTE, cache_date, NOW()) > $smartGroupCacheTimeout
+WHERE  TIMESTAMPDIFF(MINUTE, cache_date, NOW()) >= $smartGroupCacheTimeout
 ";
             $params = array( );
         } else if ( is_array( $groupID ) ) {
