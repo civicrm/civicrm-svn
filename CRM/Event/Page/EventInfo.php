@@ -107,6 +107,8 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                         }
                     }
                 }
+                // Tell tpl we have price set fee data
+                $this->assign( 'isPriceSet', 1); 
             } else {
                 //retrieve event fee block.
                 require_once 'CRM/Core/OptionGroup.php';

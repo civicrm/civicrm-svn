@@ -125,13 +125,19 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
     {
         $errors = array();
 
-        if ( !$self->_isGroupEmpty && CRM_Utils_Array::value(1, $fields['extends']) ) {
-            $updates = array_diff($self->_subtypes, array_intersect($self->_subtypes, $fields['extends'][1]));
-            if ( ! empty($updates) ) {
-                $errors['extends'] = ts("Removing any existing subtypes is not allowed at this moment. However you can add more subtypes.");
-            } 
+        if ( CRM_Utils_Array::value(1, $fields['extends']) ) {
+            if ( !$self->_isGroupEmpty ) {
+                $updates = array_diff($self->_subtypes, array_intersect($self->_subtypes, $fields['extends'][1]));
+                if ( ! empty($updates) ) {
+                    $errors['extends'] = ts("Removing any existing subtypes is not allowed at this moment. However you can add more subtypes.");
+                } 
+            }
+            
+            if( in_array('', $fields['extends'][1]) && count($fields['extends'][1]) > 1) {
+                $errors['extends'] = ts("Can not combine other option with 'Any'. It doesn't make any sense.");
+            }  
         }
-
+        
         if ( empty( $fields['extends'][0] ) ) {
             $errors['extends'] = ts("You need to select the type of record that this group of custom fields is applicable for.");
         }
@@ -256,6 +262,11 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         $sel2['Household' ]           = CRM_Contact_BAO_ContactType::subTypePairs( 'Household', false, null );
         $sel2['Organization']         = CRM_Contact_BAO_ContactType::subTypePairs( 'Organization', false, null );
 
+        foreach ( $sel2 as $main => $sub ) {
+            if ( !empty($sel2[$main]) ) {
+                $sel2[$main] = array( '' => ts("- Any -") ) + $sel2[$main]; 
+            }
+        }
         
         require_once "CRM/Core/Component.php";
         $cSubTypes = CRM_Core_Component::contactSubTypes();
@@ -400,7 +411,10 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             
             if ( !empty( $this->_subtypes ) ) {
                 $defaults['extends'][1] = $this->_subtypes;
+            } else {
+                $defaults['extends'][1] = array( 0 => '' );  
             } 
+            
             
             $subName = CRM_Utils_Array::value( 'extends_entity_column_id', $defaults );
 			

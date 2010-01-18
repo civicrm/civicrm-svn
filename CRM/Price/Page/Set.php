@@ -140,8 +140,12 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
         // assign vars to templates
         $this->assign('action', $action);
         $sid = CRM_Utils_Request::retrieve('sid', 'Positive',
-                                          $this, false, 0);
+                                           $this, false, 0);
         
+        if ( $sid ) {
+            require_once 'CRM/Price/BAO/Set.php';
+            CRM_Price_BAO_Set::checkPermission( $sid );
+        }
         // what action to take ?
         if ($action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD)) {
             $this->edit($sid, $action) ;

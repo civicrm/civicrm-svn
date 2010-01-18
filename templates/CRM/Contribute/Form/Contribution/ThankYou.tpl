@@ -4,24 +4,22 @@
 
 {include file="CRM/common/TrackingFields.tpl"}
 
-<div class="form-item">
+<div class="contribution_thankyou-page">
     {if $thankyou_text}
-    <div id="thankyou_text" class="thankyou_text-section">
-        <p>
-        {$thankyou_text}
-        </p>
-    </div>
+        <div id="thankyou_text" class="section thankyou_text-section">
+            {$thankyou_text}
+        </div>
     {/if}
     
     {* Show link to Tell a Friend (CRM-2153) *}
     {if $friendText}
-        <div id="tell-a-friend" class="friendText-section">
+        <div id="tell-a-friend" class="section friend_link-section">
             <a href="{$friendURL}" title="{$friendText}" class="button"><span>&raquo; {$friendText}</span></a>
        </div>{if !$linkText}<br /><br />{/if}
     {/if}  
     {* Add button for donor to create their own Personal Campaign page *}
     {if $linkText}
- 	<div class="linkText-section">
+ 	<div class="section create_pcp_link-section">
         <a href="{$linkTextUrl}" title="{$linkText}" class="button"><span>&raquo; {$linkText}</span></a>
     </div><br /><br />
     {/if}  
@@ -68,7 +66,7 @@
     {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="thankContribution"}
 
     {if $amount GT 0 OR $minimum_fee GT 0 OR ( $priceSetID and $lineItem ) }
-    <div class="amount_display-group">
+    <div class="crm-group amount_display-group">
         <div class="header-dark">
             {if !$membershipBlock AND $amount OR ( $priceSetID and $lineItem )}{ts}Contribution Information{/ts}{else}{ts}Membership Fee{/ts}{/if}
         </div>
@@ -145,19 +143,25 @@
     {/if}
     
     {include file="CRM/Contribute/Form/Contribution/Honor.tpl"}
+
     {if $customPre}
         {foreach from=$customPre item=field key=cname}
             {if $field.groupTitle}
                 {assign var=groupTitlePre  value=$field.groupTitle} 
             {/if}
         {/foreach}
-        <div class="header-dark">
-            {$groupTitlePre}
-        </div>  
-        {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
+    	<div class="crm-group custom_pre-group">
+            <div class="header-dark">
+                {$groupTitlePre}
+            </div>  
+            <fieldset class="label-left">
+                {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
+            </fieldset>
+        </div>
     {/if}
+    
     {if $pcpBlock}
-    <div class="pcp-display-group">
+    <div class="crm-group pcp_display-group">
         <div class="header-dark">
             {ts}Contribution Honor Roll{/ts}
         </div>
@@ -183,7 +187,7 @@
     {/if}
     
     {if $onBehalfName}
-    <div class="onBehalf-display-group">
+    <div class="crm-group onBehalf_display-group">
         <div class="header-dark">
             {ts}On Behalf Of{/ts}
         </div>
@@ -198,22 +202,27 @@
     {/if}
 
     {if $contributeMode ne 'notify' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )}    
-    <div class="billing_name_address-group">
+    <div class="crm-group billing_name_address-group">
         <div class="header-dark">
             {ts}Billing Name and Address{/ts}
         </div>
-        <div class="display-block">
-            <strong>{$billingName}</strong><br />
-            {$address|nl2br}
-        </div>
-        <div class="display-block">
-            {$email}
+    	<div class="section no-label billing_name-section">
+    		<div class="content">{$billingName}</div>
+    		<div class="clear"></div>
+    	</div>
+    	<div class="section no-label billing_address-section">
+    		<div class="content">{$address|nl2br}</div>
+    		<div class="clear"></div>
+    	</div>
+        <div class="section no-label contributor_email-section">
+        	<div class="content">{$email}</div>
+        	<div class="clear"></div>
         </div>
     </div>
     {/if}
 
     {if $contributeMode eq 'direct' and ! $is_pay_later and $is_monetary and ( $amount GT 0 OR $minimum_fee GT 0 )}
-    <div class="credit_card-group">
+    <div class="crm-group credit_card-group">
         <div class="header-dark">
          {if $paymentProcessor.payment_type & 2}
             {ts}Direct Debit Information{/ts}
@@ -221,16 +230,20 @@
             {ts}Credit Card Information{/ts}
          {/if}
         </div>
-        <div class="display-block">
          {if $paymentProcessor.payment_type & 2}
-            {ts}Account Holder{/ts}: {$account_holder}<br />
-            {ts}Bank Identification Number{/ts}: {$bank_identification_number}<br />
-            {ts}Bank Name{/ts}: {$bank_name}<br />
-            {ts}Bank Account Number{/ts}: {$bank_account_number}<br />
+            <div class="display-block">
+                {ts}Account Holder{/ts}: {$account_holder}<br />
+                {ts}Bank Identification Number{/ts}: {$bank_identification_number}<br />
+                {ts}Bank Name{/ts}: {$bank_name}<br />
+                {ts}Bank Account Number{/ts}: {$bank_account_number}<br />
+            </div>
          {else}
-            {$credit_card_type}<br />
-            {$credit_card_number}<br />
-            {ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}
+             <div class="section no-label credit_card_details-section">
+                 <div class="content">{$credit_card_type}</div>
+             	<div class="content">{$credit_card_number}</div>
+             	<div class="content">{ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}</div>
+             	<div class="clear"></div>
+             </div>
          {/if}
         </div>
     </div>
@@ -244,13 +257,17 @@
                 {assign var=groupTitlePost  value=$field.groupTitle} 
             {/if}
         {/foreach}
-        <div class="header-dark">
-            {$groupTitlePost}
-        </div>  
-        {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
+    	<div class="crm-group custom_post-group">
+            <div class="header-dark">
+                {$groupTitlePost}
+            </div>  
+            <fieldset class="label-left">
+                {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
+            </fieldset>
+        </div>
     {/if}
 
-    <div id="thankyou_footer" class="thankyou_footer-section">
+    <div id="thankyou_footer" class="contribution_thankyou_footer-section">
         <p>
         {$thankyou_footer}
         </p>

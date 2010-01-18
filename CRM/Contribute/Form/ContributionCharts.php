@@ -91,6 +91,9 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
         //get the submitted form values.
         $submittedValues = $this->controller->exportValues( $this->_name );
         
+        // get the chart type.
+        $chartType = CRM_Utils_Array::value( 'chart_type', $submittedValues, 'bvg' );
+        
         //take contribution information monthly
         require_once 'CRM/Contribute/BAO/Contribution/Utils.php';
         $selectedYear     = CRM_Utils_Array::value( 'select_year', $submittedValues, date('Y') ); 
@@ -103,21 +106,19 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
             }
             
             foreach ( $abbrMonthNames as $monthKey => $monthName ) {
-                if ( ! CRM_Utils_Array::value( $monthKey, $chartInfoMonthly['By Month'] ) ) {
-                    //set zero value to month which is not in db
-                    $chartInfoMonthly['By Month'][$monthKey] = 0;
-                }
+                $val = CRM_Utils_Array::value( $monthKey, $chartInfoMonthly['By Month'], 0 );
+                
+                // don't include zero value month.
+                if ( !$val && ($chartType != 'bvg' ) ) continue; 
+                
+                //build the params for chart.
+                $chartData['by_month']['values'][$monthName] = $val;
             }
-            
-            //sort the array.
-            ksort( $chartInfoMonthly['By Month'] );
-            
-            //build the params for pChart.
-            $chartData['by_month']['values'] = array_combine( $abbrMonthNames, $chartInfoMonthly['By Month'] );
             $chartData['by_month']['legend'] = 'By Month' . ' - ' . $selectedYear;
             
             // handle onclick event.
             $chartData['by_month']['on_click_fun_name'] = 'byMonthOnClick';
+            $chartData['by_month']['yname'] = ts( 'Contribution' );
         }
         
         //take contribution information by yearly
@@ -133,13 +134,14 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
             
             // handle onclick event.
             $chartData['by_year']['on_click_fun_name'] = 'byYearOnClick';
+            $chartData['by_year']['yname'] = ts( 'Contribution' );
         }
         $this->assign( 'hasContributions', $hasContributions );
         
         // process the data.
         require_once 'CRM/Utils/OpenFlashChart.php';
         $chartCnt     = 1;
-        $chartType    = CRM_Utils_Array::value( 'chart_type', $submittedValues, 'bvg' );
+
         $monthlyChart = $yearlyChart = false;
         
         foreach ( $chartData as $chartKey => &$values ) {
@@ -182,7 +184,7 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
             $ySize = 300;
             if ( $chartType == 'bvg' ) {
                 $ySize = 250;
-                $xSize = 55*count( $chartValues );
+                $xSize = 60*count( $chartValues );
                 //hack to show tooltip.
                 if ( $xSize < 150 ) $xSize = 150;
             }

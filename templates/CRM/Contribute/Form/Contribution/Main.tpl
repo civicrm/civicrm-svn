@@ -33,8 +33,8 @@ function clearAmountOther() {
 
 {capture assign='reqMark'}<span class="marker" title="{ts}This field is required.{/ts}">*</span>{/capture}
 <div class="form-item">
-    <div id="intro_text">
-        <p>{$intro_text}</p>
+    <div id="intro_text" class="section intro_text-section">
+        {$intro_text}
     </div>
 
 {if $priceSet}
@@ -130,7 +130,7 @@ function clearAmountOther() {
     {include file="CRM/Contribute/Form/Contribution/PremiumBlock.tpl" context="makeContribution"} 
 
     {if $honor_block_is_active}
-	<fieldset class="honor_block-group">
+	<fieldset class="crm-group honor_block-group">
 		<legend>{$honor_block_title}</legend>
 	    	<div class="section honor_block_text-section">
 	    		{$honor_block_text}
@@ -173,32 +173,34 @@ function clearAmountOther() {
 	</fieldset>
     {/if} 
 
-    <div class="custom_pre-profile">
+    <div class="crm-group custom_pre_profile-group">
     	{include file="CRM/UF/Form/Block.tpl" fields=$customPre} 	
     </div>
 
     {if $pcp}
-    <fieldset class="pcp-group">
+    <fieldset class="crm-group pcp-group">
     	<div class="section pcp-section">
-			<div class="section">
+			<div class="section display_in_roll-section">
 				<div class="content">
 			        {$form.pcp_display_in_roll.html} &nbsp;
 			        {$form.pcp_display_in_roll.label}
 			    </div>
+			    <div class="clear"></div> 
 			</div>
-			<div id="nameID" class="section nameId-section">
+			<div id="nameID" class="section is_anonymous-section">
 			    <div class="content">
 			        {$form.pcp_is_anonymous.html}
 			    </div>
+			    <div class="clear"></div> 
 			</div>
-			<div id="nickID" class="section nickID-section">
+			<div id="nickID" class="section pcp_roll_nickname-section">
 			    <div class="label">{$form.pcp_roll_nickname.label}</div>
 			    <div class="content">{$form.pcp_roll_nickname.html}
 				<div class="description">{ts}Enter the name you want listed with this contribution. You can use a nick name like 'The Jones Family' or 'Sarah and Sam'.{/ts}</div>
 			    </div>
 			    <div class="clear"></div> 
 			</div>
-			<div id="personalNoteID" class="section personalNoteID-section">
+			<div id="personalNoteID" class="section pcp_personal_note-section">
 			    <div class="label">{$form.pcp_personal_note.label}</div>
 			    <div class="content">
 			    	{$form.pcp_personal_note.html}
@@ -214,13 +216,13 @@ function clearAmountOther() {
         {include file='CRM/Core/BillingBlock.tpl'} 
     {/if} 
 
-    <div class="custom_post-profile">
+    <div class="crm-group custom_post_profile-group">
     	{include file="CRM/UF/Form/Block.tpl" fields=$customPost}
 	</div>
 	
     {if $is_monetary and $form.bank_account_number}
     <div id="payment_notice">
-      <fieldset class="payment_notice-group">
+      <fieldset class="crm-group payment_notice-group">
           <legend>{ts}Agreement{/ts}</legend>
           {ts}Your account data will be used to charge your bank account via direct debit. While submitting this form you agree to the charging of your bank account via direct debit.{/ts}
       </fieldset>
@@ -235,7 +237,7 @@ function clearAmountOther() {
 	{* Put PayPal Express button after customPost block since it's the submit button in this case. *} 
 	{if $paymentProcessor.payment_processor_type EQ 'PayPal_Express'} 
 	    {assign var=expressButtonName value='_qf_Main_upload_express'}
-	    <fieldset class="paypal_checkout-group">
+	    <fieldset class="crm-group paypal_checkout-group">
 	    	<legend>{ts}Checkout with PayPal{/ts}</legend>
 	    	<div class="section">
 				<div class="section paypalButtonInfo-section">
@@ -257,7 +259,7 @@ function clearAmountOther() {
     </div>
     <div id="crm-submit-buttons">{$form.buttons.html}</div>
     {if $footer_text}
-    	<div id="footer_text">
+    	<div id="footer_text" class="section contribution_footer_text-section">
 			<p>{$footer_text}</p>
     	</div>
     {/if}

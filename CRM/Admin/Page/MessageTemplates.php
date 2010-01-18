@@ -156,7 +156,9 @@ class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic
             }
 
             // rebuild the action links HTML, as we need to handle %%orig_id%% for revertible templates
-            $values['action'] = CRM_Core_Action::formLink($links, $action, array('id' => $object->id, 'orig_id' => $this->_revertible[$object->id]));
+            $values['action'] = CRM_Core_Action::formLink($links, $action, array( 'id'      => $object->id, 
+                                                                                  'orig_id' => CRM_Utils_Array::value( $object->id, $this->_revertible ) 
+                                                                                ));
         } else {
             $action &= ~CRM_Core_Action::REVERT;
             $action &= ~CRM_Core_Action::VIEW;
@@ -224,6 +226,9 @@ class CRM_Admin_Page_MessageTemplates extends CRM_Core_Page_Basic
      * @access public
      */
     function browse( $action = null, $sort ) {
+        if( $this->_action & CRM_Core_Action::ADD) {
+            return;
+        }
         $links = $this->links();
         if ($action == null) {
             if ( ! empty( $links ) ) {

@@ -115,40 +115,28 @@ cj(function() {
       // Called when dashboard is initializing.
       init: function() {
         var dashboard = this;
-        log('init');
-        debug(dashboard);
       },
 
       // Called when dashboard has finished initializing.
       ready: function() {
         var dashboard = this;
-        log('ready');
-        debug(dashboard);
       },
 
       // Called when dashboard has saved columns to the server.
       saveColumns: function() {
         var dashboard = this;
-        log('saveColumns');
-        debug(dashboard);
       },
 
       // Called when a widget has gone into fullscreen mode.
       // Takes one argument for the widget.
       enterFullscreen: function(widget) {
         var dashboard = this;
-        log('enterFullscreen');
-        debug(dashboard);
-        debug(widget);
       },
 
       // Called when a widget has come out of fullscreen mode.
       // Takes one argument for the widget.
       exitFullscreen: function(widget) {
         var dashboard = this;
-        log('exitFullscreen');
-        debug(dashboard);
-        debug(widget);
       }
     },
 
@@ -159,8 +147,6 @@ cj(function() {
       // Called when a widget has been gotten from the server.
       get: function() {
         var widget = this;
-        log('get');
-        debug(widget);
       },
 
       // Called when an external script has invoked the widget.reloadContent() method.
@@ -169,36 +155,26 @@ cj(function() {
       // for the method to do anything.)
       reloadContent: function() {
         var widget = this;
-        log('reloadContent');
-        debug(widget);
       },
 
       // Called when the widget has gone into settings-edit mode.
       showSettings: function() {
         var widget = this;
-        log('showSettings');
-        debug(widget);
       },
 
       // Called when the widget's settings have been saved to the server.
       saveSettings: function() {
         var widget = this;
-        log('saveSettings');
-        debug(widget);
       },
 
       // Called when the widget has gone out of settings-edit mode.
       hideSettings: function() {
         var widget = this;
-        log('hideSettings');
-        debug(widget);
       },
 
       // Called when the widget has been removed from the dashboard.
       remove: function() {
         var widget = this;
-        log('remove');
-        debug(widget);
       }
     }
   };
@@ -207,22 +183,7 @@ cj(function() {
   // namesapace so that server-side executable js file callbacks can access
   // window.dashboardDemo.widgets by ID.
   window.dashboardDemo = cj('#civicrm-dashboard').dashboard(options);
-  log('executed');
-  debug(window.dashboardDemo);
 
-  // Wraps the log function in a check for it.
-  function log(message) {
-    if (window.console && console.log) {
-      //console.log(message);
-    }
-  }
-
-  // Wraps the debug function in a check for it.
-  function debug(variable) {
-    if (window.console && console.debug) {
-      //console.debug(variable);
-    }
-  }
 }); // End closure.
 
 </script>

@@ -20,12 +20,12 @@
                 {else}
                     {assign var="count" value=`$count+1`}
                 {/if}
-                {if $element.help_post}
-                    <div class="description">{$element.help_post}</div>
-                {/if}
             {/if}
         {/foreach}
             </div>
+	    {if $element.help_post}
+                    <div class="description">{$element.help_post}</div>
+            {/if}
         </div>
         <div class="clear"></div>
 
@@ -46,8 +46,6 @@
     {if $priceSet.help_post}
     <div class="description">{$priceSet.help_post}</div>
     {/if}
-
-
 
     {include file="CRM/Price/Form/Calculate.tpl"} 
 

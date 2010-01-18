@@ -20,19 +20,19 @@ function selectPremium(optionField) {
 </script>
 {/literal}
 
-        <fieldset class="premiums-select-group">
+        <fieldset class="crm-group premiums_select-group">
         {if $premiumBlock.premiums_intro_title}
             <legend>{$premiumBlock.premiums_intro_title}</legend>
         {/if}
         {if $premiumBlock.premiums_intro_text}
-            <div id=premiums-intro>
-                <p>{$premiumBlock.premiums_intro_text}</p>
+            <div id="premiums-intro" class="section premiums_intro-section">
+                {$premiumBlock.premiums_intro_text}
             </div> 
         {/if}
     {/if}
 
     {if $context EQ "confirmContribution" OR $context EQ "thankContribution"}
-    <div class="premium-display-group">
+    <div class="crm-group premium_display-group">
         <div class="header-dark">
             {if $premiumBlock.premiums_intro_title}
                 {$premiumBlock.premiums_intro_title}

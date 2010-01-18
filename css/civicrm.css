@@ -253,17 +253,25 @@ div.spacer,
 	}
 	#crm-container .section .section {
 		margin-bottom:0.5em; /* make subsections sit closer together */
-		}
+	    }
 
 #crm-container .section .label {
 	float:left;
 	width:15%;
 	text-align: right;
-	}
+    }
 
+#crm-container .label-left .label {
+    text-align: left;
+    }
+    
 #crm-container .section .content {
 	margin-left:16%;
-	}
+    }
+	
+#crm-container .no-label .content {
+	margin-left: 2em;
+    }
 
 #crm-container #cvv2 {vertical-align: top; }
 

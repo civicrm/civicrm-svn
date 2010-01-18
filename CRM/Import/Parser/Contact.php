@@ -1398,7 +1398,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 case 'do_not_trade':                
                     if( CRM_Utils_Rule::boolean( $value )== false ) {
                         $key = ucwords( str_replace( "_", " ", $key ) );
-                        self::addToErrorMsg( ts( '%1', array( 1 => $key ) ), $errorMessage);
+                        self::addToErrorMsg($key, $errorMessage);
                     }
                     break;
                     
@@ -1407,7 +1407,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         foreach ( $value as $values ) {
                             if ( CRM_Utils_Array::value( 'email', $values ) &&
                                  !CRM_Utils_Rule::email( $values['email'] ) ) {
-                                self::addToErrorMsg( ts( '%1', array( 1 => $key) ), $errorMessage );
+                                self::addToErrorMsg($key, $errorMessage);
                                 break;
                             }
                         }

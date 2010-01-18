@@ -495,7 +495,7 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
                                       'path'  => "civicrm/contact/add",
                                       'query' => "$typeUrl&reset=1",
                                       'ref'   => "new-$value",
-                                      'title' => ts( "%1", array( 1=>$value ) )
+                                      'title' => $value,
                                       );          
             }
         }

@@ -549,6 +549,10 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 if ( $ctype ) {
                     require_once 'CRM/Core/BAO/UFField.php';
                     $profileType = CRM_Core_BAO_UFField::getProfileType( $profileID );
+                    if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
+                        $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
+                    }
+
                     if ( ( $profileType != 'Contact' ) && ( $profileType != $ctype ) ) {
                         return null;
                     }
@@ -1352,7 +1356,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->add('select', $name, $title, 
                        array('' => ts('- select -')) + CRM_Core_PseudoConstant::country(), $required);
             $config =& CRM_Core_Config::singleton( );                       
-            if ( $config->defaultContactCountry ) {
+            if ( ($mode != CRM_Profile_Form::MODE_EDIT) && $config->defaultContactCountry ) {
                 $defaultValues[$name] = $config->defaultContactCountry;
                 $form->setDefaults( $defaultValues ); 
             }

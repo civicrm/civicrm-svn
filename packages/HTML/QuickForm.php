@@ -1930,7 +1930,7 @@ class HTML_QuickForm extends HTML_Common
      */
     function exportValues($elementList = null)
     {
-        $skipFields = array( 'widget_code',
+        $skipFields = array( 'widget_code', 
                              'html_message',
                              'body_html',
                              'msg_html',
@@ -1938,10 +1938,12 @@ class HTML_QuickForm extends HTML_Common
                              'intro',
                              'thankyou_text',
                              'intro_text',
+                             'page_text',
                              'body_text',
                              'footer_text',
                              'thankyou_text',
                              'thankyou_footer',
+                             'thankyou_footer_text',
                              'new_text',
                              'renewal_text',
                              'help_pre',
@@ -1951,8 +1953,16 @@ class HTML_QuickForm extends HTML_Common
                              'confirm_text',
                              'confirm_footer_text',
                              'confirm_email_text',
+                             'event_full_text',
+                             'waitlist_text',
+                             'approval_req_text',
                              'report_header',
                              'report_footer',
+                             'cc_id',
+                             'bcc_id',
+                             'premiums_intro_text',
+                             'honor_block_text',
+                             'label', // This is needed for FROM Email Address configuration. dgg
                              );
                                     
         $values = array();

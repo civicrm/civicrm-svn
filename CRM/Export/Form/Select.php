@@ -57,7 +57,8 @@ class CRM_Export_Form_Select extends CRM_Core_Form
         MEMBER_EXPORT      = 3,
         EVENT_EXPORT       = 4,
         PLEDGE_EXPORT      = 5,
-        CASE_EXPORT        = 6;
+        CASE_EXPORT        = 6,
+        GRANT_EXPORT       = 7;
 
     /**
      * current export mode
@@ -99,7 +100,7 @@ class CRM_Export_Form_Select extends CRM_Core_Form
             $stateMachine  =& $this->controller->getStateMachine( );
             $formName      = CRM_Utils_System::getClassName($stateMachine);
             $componentName = explode( '_', $formName );
-            $components    = array( 'Contribute', 'Member', 'Event', 'Pledge', 'Case' );
+            $components    = array( 'Contribute', 'Member', 'Event', 'Pledge', 'Case', 'Grant' );
             
             if ( in_array( $componentName[1], $components ) ) {
                 eval( '$this->_exportMode = self::' . strtoupper( $componentName[1] ) . '_EXPORT;');
@@ -228,28 +229,37 @@ class CRM_Export_Form_Select extends CRM_Core_Form
      *
      */
     function buildMapping( ) 
-    {
+    { 
         switch ( $this->_exportMode ) {
         case CRM_Export_Form_Select::CONTACT_EXPORT : 
             $exportType = 'Export Contact';
             break;
+            
         case CRM_Export_Form_Select::CONTRIBUTE_EXPORT : 
             $exportType = 'Export Contribution';
             break;
+            
         case CRM_Export_Form_Select::MEMBER_EXPORT : 
             $exportType = 'Export Membership';
             break;
+            
         case CRM_Export_Form_Select::EVENT_EXPORT : 
             $exportType = 'Export Participant';
             break;
+            
         case CRM_Export_Form_Select::PLEDGE_EXPORT : 
             $exportType = 'Export Participant';
             break;
+            
         case CRM_Export_Form_Select::CASE_EXPORT : 
             $exportType = 'Export Case';
             break;
+            
+        case CRM_Export_Form_Select::GRANT_EXPORT : 
+            $exportType = 'Export Grant';
+            break;
         }
-
+        
         require_once "CRM/Core/BAO/Mapping.php";
         $mappingTypeId = CRM_Core_OptionGroup::getValue( 'mapping_type', $exportType, 'name' );
         $this->set( 'mappingTypeId', $mappingTypeId );

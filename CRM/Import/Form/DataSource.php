@@ -330,7 +330,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         $alterQuery = "ALTER TABLE $importTableName
                        ADD COLUMN $statusFieldName VARCHAR(32)
                             DEFAULT 'NEW' NOT NULL,
-                       ADD COLUMN ${statusFieldName}Msg VARCHAR(255),
+                       ADD COLUMN ${statusFieldName}Msg TEXT,
                        ADD COLUMN $primaryKeyName INT PRIMARY KEY NOT NULL
                                AUTO_INCREMENT";
         $db->query( $alterQuery );

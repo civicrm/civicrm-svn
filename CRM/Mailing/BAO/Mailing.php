@@ -1052,7 +1052,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             }
         }
 
-        $recipient = '"' . addcslashes($contact['display_name'], '"') . "\" <$email>";
+        $recipient = "{$contact['display_name']} <$email>";
         $headers['To'] = $recipient;
 
         //CRM-5058

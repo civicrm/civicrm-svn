@@ -38,8 +38,8 @@ class CRM_Grant_BAO_Query
     static function &getFields( ) 
     {
         $fields = array( );
-        require_once 'CRM/Grant/DAO/Grant.php';
-        $fields = array_merge( $fields, CRM_Grant_DAO_Grant::export( ) );
+        require_once 'CRM/Grant/BAO/Grant.php';
+        $fields = CRM_Grant_BAO_Grant::exportableFields( );
         return $fields;
     }
    
@@ -52,15 +52,25 @@ class CRM_Grant_BAO_Query
     static function select( &$query ) 
     {
         if ( $query->_mode & CRM_Contact_BAO_Query::MODE_GRANT ) {
-
-            $query->_select['grant_type_id']          = "civicrm_grant.grant_type_id as grant_type_id";
-            $query->_select['grant_status_id' ]       = "civicrm_grant.status_id as grant_status_id";
-            $query->_select['grant_amount_requested'] = "civicrm_grant.amount_requested as grant_amount_requested";
-            $query->_select['grant_amount_granted']   = "civicrm_grant.amount_granted as grant_amount_granted";
-            $query->_select['grant_amount_total']     = "civicrm_grant.amount_total as grant_amount_total";
-            $query->_select['grant_application_received_date']  = "civicrm_grant.application_received_date as grant_application_received_date ";
-            $query->_select['grant_report_received']  = "civicrm_grant.grant_report_received as grant_report_received";
-            $query->_select['grant_money_transfer_date']  = "civicrm_grant.money_transfer_date as grant_money_transfer_date ";
+            if ( CRM_Utils_Array::value( 'grant_status_id', $query->_returnProperties ) ) {
+                $query->_select['grant_status_id']  = 'grant_status.name as grant_status_id';
+                $query->_element['grant_status']    = 1;
+                $query->_tables['grant_status']     = $query->_whereTables['grant_status'] = 1;
+                $query->_tables['civicrm_grant']    = $query->_whereTables['civicrm_grant'] = 1;
+            }
+            if ( CRM_Utils_Array::value( 'grant_type_id', $query->_returnProperties ) ) {
+                $query->_select['grant_type_id']  = 'grant_type.name as grant_type_id';
+                $query->_element['grant_type']    = 1;
+                $query->_tables['grant_type']     = $query->_whereTables['grant_type'] = 1;
+                $query->_tables['civicrm_grant']  = $query->_whereTables['civicrm_grant'] = 1;
+            }
+            
+            $query->_select['grant_amount_requested'] = 'civicrm_grant.amount_requested as grant_amount_requested';
+            $query->_select['grant_amount_granted']   = 'civicrm_grant.amount_granted as grant_amount_granted';
+            $query->_select['grant_amount_total']     = 'civicrm_grant.amount_total as grant_amount_total';
+            $query->_select['grant_application_received_date']  = 'civicrm_grant.application_received_date as grant_application_received_date ';
+            $query->_select['grant_report_received']  = 'civicrm_grant.grant_report_received as grant_report_received';
+            $query->_select['grant_money_transfer_date']  = 'civicrm_grant.money_transfer_date as grant_money_transfer_date';
             $query->_element['grant_type_id']     = 1;
             $query->_element['grant_status_id']   = 1;
             $query->_tables['civicrm_grant']      = 1;
@@ -98,7 +108,7 @@ class CRM_Grant_BAO_Query
             return;
         
         case 'grant_money_transfer_date_notset' :
-            $query->_where[$grouping][] =   "civicrm_grant.money_transfer_date IS NULL";
+            $query->_where[$grouping][] = "civicrm_grant.money_transfer_date IS NULL";
             $query->_qill[$grouping][]  = "Grant Money Transfer Date is NULL";
             $query->_tables['civicrm_grant'] = $query->_whereTables['civicrm_grant'] = 1;
             return;
@@ -112,7 +122,7 @@ class CRM_Grant_BAO_Query
             return;
 
         case 'grant_application_received_notset' :
-            $query->_where[$grouping][] =   "civicrm_grant.application_received_date IS NULL";
+            $query->_where[$grouping][] = "civicrm_grant.application_received_date IS NULL";
             $query->_qill[$grouping][]  = "Grant Application Received Date is NULL";
             $query->_tables['civicrm_grant'] = $query->_whereTables['civicrm_grant'] = 1;
             return ;
@@ -138,7 +148,7 @@ class CRM_Grant_BAO_Query
                                       'decision_date', 'Grant Decision Date' );
             return;
         case 'grant_decision_date_notset':
-          $query->_where[$grouping][] =   "civicrm_grant.decision_date IS NULL";
+          $query->_where[$grouping][] = "civicrm_grant.decision_date IS NULL";
           $query->_qill[$grouping][]  = "Grant Decision Date is NULL";
           $query->_tables['civicrm_grant'] = $query->_whereTables['civicrm_grant'] = 1;
           return ;
@@ -177,10 +187,10 @@ class CRM_Grant_BAO_Query
 
             if ( $value == 1 ) {
                 $yesNo = 'Yes';
-                $query->_where[$grouping][] =   "civicrm_grant.grant_report_received $op $value";
+                $query->_where[$grouping][] = "civicrm_grant.grant_report_received $op $value";
             } else if ( $value == 0 ){
                 $yesNo = 'No';
-                $query->_where[$grouping][]  = "civicrm_grant.grant_report_received IS NULL";
+                $query->_where[$grouping][] = "civicrm_grant.grant_report_received IS NULL";
             }
 
             $query->_qill[$grouping][]  = "Grant Report Received = $yesNo ";
@@ -197,18 +207,27 @@ class CRM_Grant_BAO_Query
     }
 
     static function from( $name, $mode, $side ) 
-    {
+    { 
         $from = null;
         switch ( $name ) {
-        
         case 'civicrm_grant':
             $from = " INNER JOIN civicrm_grant ON civicrm_grant.contact_id = contact_a.id ";
             break;
-    
-        }
+            
+        case 'grant_status':
+            $from .= " $side JOIN civicrm_option_group option_group_grant_status ON (option_group_grant_status.name = 'grant_status')";
+            $from .= " $side JOIN civicrm_option_value grant_status ON (civicrm_grant.status_id = grant_status.value AND option_group_grant_status.id = grant_status.option_group_id ) ";
+            break;
+            
+        case 'grant_type':
+            $from .= " $side JOIN civicrm_option_group option_group_grant_type ON (option_group_grant_type.name = 'grant_type')";
+            $from .= " $side JOIN civicrm_option_value grant_type ON (civicrm_grant.grant_type_id = grant_type.value AND option_group_grant_type.id = grant_type.option_group_id ) ";
+            break;
+        } 
         return $from;
+        
     }
-
+    
     /**
      * getter for the qill object
      *
@@ -226,7 +245,8 @@ class CRM_Grant_BAO_Query
             $properties = array(
                                 'contact_type'                    => 1,
                                 'contact_sub_type'                => 1,
-                                'sort_name'                       => 1,   
+                                'sort_name'                       => 1,
+                                'grant_id'                        => 1, 
                                 'grant_type_id'                   => 1, 
                                 'grant_status_id'                 => 1, 
                                 'grant_amount_requested'          => 1,

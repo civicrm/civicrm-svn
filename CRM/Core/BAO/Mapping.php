@@ -431,6 +431,14 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
                 unset($fields['Case']['case_contact_id']);
             }
         }
+        if ( ( $mappingType == 'Search Builder' ) || ( $exportMode == CRM_Export_Form_Select::GRANT_EXPORT ) ) {
+            if ( CRM_Core_Permission::access( 'CiviGrant' ) ) {
+                require_once 'CRM/Grant/BAO/Grant.php';
+                $fields['Grant'] =& CRM_Grant_BAO_Grant::exportableFields( );
+                unset( $fields['Grant']['grant_contact_id'] );
+                $compArray['Grant'] = ts('Grant');
+            }
+        }
 
         //Contact Sub Type For export
         $contactSubTypes = array( );

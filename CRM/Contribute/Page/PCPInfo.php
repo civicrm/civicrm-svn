@@ -81,17 +81,15 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
 
         require_once 'CRM/Contribute/PseudoConstant.php';
         require_once 'CRM/Core/OptionGroup.php';
-        $pcpStatus     = CRM_Contribute_PseudoConstant::pcpStatus( );
-        $approvedId    = CRM_Core_OptionGroup::getValue( 'pcp_status', 'Approved', 'name' );        
+        $pcpStatus  = CRM_Contribute_PseudoConstant::pcpStatus( );
+        $approvedId = CRM_Core_OptionGroup::getValue( 'pcp_status', 'Approved', 'name' );        
         
         // check if PCP is created by anonymous user
-        $anonymousPCP  = CRM_Utils_Request::retrieve( 'ap', 'Boolean', $this );
+        $anonymousPCP = CRM_Utils_Request::retrieve( 'ap', 'Boolean', $this );
         if ( $anonymousPCP ) {
             $loginUrl = $config->userFrameworkBaseURL;
             
-            switch ( ucfirst($config->userFramework) ) 
-            {
-            
+            switch ( ucfirst($config->userFramework) ) {
             case 'Joomla' : 
                 $loginUrl  = str_replace( 'administrator/', '', $loginUrl );
                 $loginUrl .= 'index.php?option=com_user&view=login';
@@ -159,7 +157,8 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
             $blockId = array_pop( $blockValues );
             $replace = array( 'id'    => $this->_id,
                               'block' => $blockId['id'] );
-            if ( !CRM_Utils_Array::value( 'is_tellfriend_enabled', $blockId ) || CRM_Utils_Array::value( 'status_id', $pcpInfo )!= $approvedId ){
+            if ( !CRM_Utils_Array::value( 'is_tellfriend_enabled', $blockId ) || 
+                 CRM_Utils_Array::value( 'status_id', $pcpInfo )!= $approvedId ) {
                 unset($link['all'][CRM_Core_Action::DETACH]);   
             }
             
@@ -221,7 +220,7 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
             $this->assign( 'contributionText', $contributionText );
             
             // we always generate urls for the front end in joomla
-            if ( $action ==  CRM_Core_Action::PREVIEW ) {
+            if ( $action == CRM_Core_Action::PREVIEW ) {
                 $url    = CRM_Utils_System::url( 'civicrm/contribute/transact',
                                                  "id={$pcpInfo['contribution_page_id']}&pcpId={$this->_id}&reset=1&action=preview",
                                                  true, null, true,
@@ -237,8 +236,8 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
         
         // we do not want to display recently viewed items, so turn off
         $this->assign('displayRecent' , false );
-
-        $single = false;
+        
+        $single = $permission = false;
         switch ( $action ) {
         case CRM_Core_Action::BROWSE:
             $subForm = 'PCPAccount';
@@ -252,11 +251,18 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
             $single  = true;
             break;
         }
-        
-        if ( $single ){
+
+        $userID = $session->get('userID');
+        //make sure the user has "administer CiviCRM" permission 
+        //OR has created the PCP
+        if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ||
+             ( $userID && (CRM_Core_DAO::getFieldValue('CRM_Contribute_DAO_PCP', $this->_id , 'contact_id') ==  $userID ) ) ) {
+            $permission = true;
+        }
+        if ( $single && $permission ) {
             require_once 'CRM/Core/Controller/Simple.php';
             $controller =& new CRM_Core_Controller_Simple( $form, $subForm, $action); 
-            $controller->set('id', $this->_id); 
+            $controller->set('id', $this->_id);
             $controller->set('single', true );
             $controller->process(); 
             return $controller->run();

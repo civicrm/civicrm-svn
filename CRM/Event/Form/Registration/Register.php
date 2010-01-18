@@ -905,8 +905,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     if ( $registerByID ) {
                         $value['registered_by_id'] = $registerByID;
                     }
-                    if ( CRM_Utils_Array::value( 'email-{$this->_bltID}', $value ) ) {
-                        $this->_participantInfo[] = $value['email-{$this->_bltID}']; 
+                    if ( CRM_Utils_Array::value( "email-{$this->_bltID}", $value ) ) {
+                        $this->_participantInfo[] = $value["email-{$this->_bltID}"]; 
                     } else {
                         $this->_participantInfo[] = $value['first_name'] .' ' . $value['last_name'];  
                     }

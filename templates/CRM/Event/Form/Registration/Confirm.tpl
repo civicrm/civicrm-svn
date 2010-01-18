@@ -4,7 +4,7 @@
 
 {include file="CRM/common/TrackingFields.tpl"}
 
-<div>
+<div class="event_confirmation-page">
     {if $isOnWaitlist}
         <div class="help">
             {ts}Please verify the information below. <span class="bold">Then click 'Continue' to be added to the WAIT LIST for this event</span>. If space becomes available you will receive an email with a link to a web page where you can complete your registration.{/ts}
@@ -32,166 +32,175 @@
     {/if}
 
     {if $event.confirm_text}
-        <div id="intro_text">
-	    <p>{$event.confirm_text}</p>
+        <div id="intro_text" class="section event_confirm_text-section">
+	        <p>{$event.confirm_text}</p>
         </div>
     {/if}
     
-    <div class="header-dark">
-        {ts}Event Information{/ts}
-    </div>
-    <div class="display-block">
-        {include file="CRM/Event/Form/Registration/EventInfoBlock.tpl"}
-    </div>
-    {if $paidEvent} 
-    <div class="header-dark">
-        {$event.fee_label}
-    </div>
-    <div class="display-block">
-        {if $lineItem}
-            {include file="CRM/Price/Page/LineItem.tpl" context="Event"}
-        {elseif $amount || $amount == 0}
-            {foreach from= $amount item=amount key=level}  
-				<div class="section amount-item-section">
-					<div class="label">{$amount.label}</div>
-        			<div class="content">{$amount.amount|crmMoney}</div>
-        			<div class="clear"/>
-        		</div>	
-            {/foreach}
-            {if $totalAmount}
-			<div class="section total-amount-section">
-        		<div class="label">{ts}Total Amount{/ts}</div>
-        		<div class="content">{$totalAmount|crmMoney}</div>
-        		<div class="clear"/>
-        	</div>
-            {/if}	 		
-            {if $hookDiscount.message}
-                <em>({$hookDiscount.message})</em>
-            {/if}
-        {/if}
-    </div>
-    
-    <div class="section billingName-section">
-        		<div class="label">Name</div>
-        		<div class="content">{$billingName}</div>
-        		<div class="clear"/>
-        	</div>
-    
-    
-    {/if}
-	
-    <div class="header-dark">
-    	{ts}Registered Email{/ts}
-    </div>
-    <div class="display-block">
-        {$email}
-    </div>
-    {if $event.participant_role neq 'Attendee' and $defaultRole}
+    <div class="crm-group event_info-group">
         <div class="header-dark">
-            {ts}Participant Role{/ts}
+            {ts}Event Information{/ts}
         </div>
         <div class="display-block">
-            {$event.participant_role}
+            {include file="CRM/Event/Form/Registration/EventInfoBlock.tpl"}
+        </div>
+    </div>
+    
+    {if $paidEvent} 
+        <div class="crm-group event_fees-group">
+            <div class="header-dark">
+                {$event.fee_label}
+            </div>
+            {if $lineItem}
+                {include file="CRM/Price/Page/LineItem.tpl" context="Event"}
+            {elseif $amount || $amount == 0}
+			    <div class="section no-label amount-item-section">
+                    {foreach from= $amount item=amount key=level}  
+    					<div class="content">
+    					    {$amount.amount|crmMoney}&nbsp;&nbsp;{$amount.label}
+    					</div>
+            			<div class="clear"></div>
+                    {/foreach}
+    		    </div>	
+                {if $totalAmount}
+        			<div class="section no-label total-amount-section">
+                		<div class="content bold">{ts}Total Amount{/ts}:&nbsp;&nbsp;{$totalAmount|crmMoney}</div>
+                		<div class="clear"></div>
+                	</div>
+                {/if}	 		
+                {if $hookDiscount.message}
+                    <div class="section hookDiscount-section">
+                        <em>({$hookDiscount.message})</em>
+                    </div>
+                {/if}
+            {/if}
+        </div>
+    {/if}
+	
+    <div class="crm-group registered_email-group">
+        <div class="header-dark">
+        	{ts}Registered Email{/ts}
+        </div>
+        <div class="section no-label registered_email-section">
+            <div class="content">{$email}</div>
+		    <div class="clear"></div>
+		</div>
+    </div>
+    
+    {if $event.participant_role neq 'Attendee' and $defaultRole}
+        <div class="crm-group participant_role-group">
+            <div class="header-dark">
+                {ts}Participant Role{/ts}
+            </div>
+            <div class="section no-label participant_role-section">
+                <div class="content">
+                    {$event.participant_role}
+                </div>
+            	<div class="clear"></div>
+            </div>
         </div>
     {/if}
 
 
     {if $customPre}
         {foreach from=$customPre item=field key=cname}
-	    {if $field.groupTitle}
-		{assign var=groupTitlePre  value=$field.groupTitle} 
+	        {if $field.groupTitle}
+		        {assign var=groupTitlePre  value=$field.groupTitle} 
             {/if}
-	{/foreach}
-        <div class="header-dark">
-	    {$groupTitlePre}
-        </div>  
-         {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
+	    {/foreach}
+    	<div class="crm-group custom_pre-group">
+            <div class="header-dark">
+    	        {$groupTitlePre}
+            </div>
+            <fieldset class="label-left">
+                {include file="CRM/UF/Form/Block.tpl" fields=$customPre}
+            </fieldset>
+        </div>
     {/if}
+    
     {if $customPost}
         {foreach from=$customPost item=field key=cname}
             {if $field.groupTitle}
-		{assign var=groupTitlePost  value=$field.groupTitle} 
+		        {assign var=groupTitlePost  value=$field.groupTitle} 
             {/if}
         {/foreach}
-        <div class="header-dark">
-	    {$groupTitlePost}
-        </div>  
-        {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
+    	<div class="crm-group custom_post-group">
+            <div class="header-dark">
+    	        {$groupTitlePost}
+            </div>
+            <fieldset class="label-left">  
+                {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
+            </fieldset>
+        </div>
     {/if}
 
     {*display Additional Participant Profile Information*}
     {if $addParticipantProfile}
         {foreach from=$addParticipantProfile item=participant key=participantNo}
-            <div class="header-dark">
-                {ts 1=$participantNo+1}Participant Information - Participant %1{/ts}	
-            </div>
-            {if $participant.additionalCustomPre}
-                <fieldset><legend>{$participant.additionalCustomPreGroupTitle}</legend>
-                    <table class="form-layout-compressed">
+            <div class="crm-group participant_info-group">
+                <div class="header-dark">
+                    {ts 1=$participantNo+1}Participant Information - Participant %1{/ts}	
+                </div>
+                {if $participant.additionalCustomPre}
+                    <fieldset class="label-left"><legend>{$participant.additionalCustomPreGroupTitle}</legend>
                         {foreach from=$participant.additionalCustomPre item=value key=field}
-                        <tr>
-			    <td class="label twenty">{$field}</td><td class="view-value">{$value}</td>
-                        </tr>
+                            <div class="section {$field}-section">
+                                <div class="label">{$field}</div>
+                                <div class="content">{$value}</div>
+                                <div class="clear"></div>
+                            </div>
                         {/foreach}
-                    </table>
-                </fieldset>
-            {/if}
+                    </fieldset>
+                {/if}
 
-            {if $participant.additionalCustomPost}
-                <fieldset><legend>{$participant.additionalCustomPostGroupTitle}</legend>
-                    <table class="form-layout-compressed">
+                {if $participant.additionalCustomPost}
+                    <fieldset class="label-left"><legend>{$participant.additionalCustomPostGroupTitle}</legend>
                         {foreach from=$participant.additionalCustomPost item=value key=field}
-                        <tr>
-			    <td class="label twenty">{$field}</td><td class="view-value">{$value}</td>
-                        </tr>
+                            <div class="section {$field}-section">
+                                <div class="label">{$field}</div>
+                                <div class="content">{$value}</div>
+                                <div class="clear"></div>
+                            </div>
                         {/foreach}
-                    </table>
-                </fieldset>
-            {/if}
+                    </fieldset>
+                {/if}
+            </div>
         <div class="spacer"></div>
         {/foreach}
     {/if}
 
     {if $contributeMode ne 'notify' and !$is_pay_later and $paidEvent and !$isAmountzero and !$isOnWaitlist and !$isRequireApproval}
-    <div class="header-dark">
-        {ts}Billing Name and Address{/ts}
-    </div>
-
-    		<div class="section billingName-section">
-        		<div class="label">Name</div>
+	    <div class="crm-group billing_name_address-group">
+            <div class="header-dark">
+                {ts}Billing Name and Address{/ts}
+            </div>
+        	<div class="section no-label billing_name-section">
         		<div class="content">{$billingName}</div>
-        		<div class="clear"/>
+        		<div class="clear"></div>
         	</div>
-        	<div class="section billing_address-section">
-        		<div class="label">Address</div>
+        	<div class="section no-label billing_address-section">
         		<div class="content">{$address|nl2br}</div>
-        		<div class="clear"/>
+        		<div class="clear"></div>
         	</div>
+    	</div>
     {/if}
     
     {if $contributeMode eq 'direct' and ! $is_pay_later and !$isAmountzero and !$isOnWaitlist and !$isRequireApproval}
-    <div class="header-dark">
-        {ts}Credit Card Information{/ts}
-    </div>
-   <div class="section credit_card_type-section">
-        		<div class="label">Card Type</div>
-        		<div class="content">{$credit_card_type}</div>
-        		<div class="clear"/>
-        	</div>
-        	<div class="section credit_card_number-section">
-        		<div class="label">Card Number</div>
+        <div class="crm-group credit_card-group">
+            <div class="header-dark">
+                {ts}Credit Card Information{/ts}
+            </div>
+            <div class="section no-label credit_card_details-section">
+                <div class="content">{$credit_card_type}</div>
         		<div class="content">{$credit_card_number}</div>
-        		<div class="clear"/>
+        		<div class="content">{ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}</div>
+        		<div class="clear"></div>
         	</div>
-        	<div class="section credit_card_expiration-section">
-        		<div class="label">{ts}Expires{/ts}</div>
-        		<div class="content">{$credit_card_exp_date|truncate:7:''|crmDate}</div>
-        		<div class="clear"/>
-        	</div>
+        </div>
     {/if}
     
     {if $contributeMode NEQ 'notify'} {* In 'notify mode, contributor is taken to processor payment forms next *}
-    <div class="messages status">
+    <div class="messages status section continue_message-section">
         <p>
         {ts}Your registration will not be submitted until you click the <strong>Continue</strong> button. Please click the button one time only.{/ts}
         </p>
@@ -200,23 +209,25 @@
    
     {if $paymentProcessor.payment_processor_type EQ 'Google_Checkout' and $paidEvent and !$is_pay_later and ! $isAmountzero and !$isOnWaitlist and !$isRequireApproval}
         <fieldset><legend>{ts}Checkout with Google{/ts}</legend>
-        <table class="form-layout-compressed">
-	    <tr>
-		<td class="description">{ts}Click the Google Checkout button to continue.{/ts}</td>
-	    </tr>
-	    <tr>
-		<td>{$form._qf_Confirm_next_checkout.html} <span style="font-size:11px; font-family: Arial, Verdana;">Checkout securely.  Pay without sharing your financial information. </span></td>
-	    </tr>
-        </table>
+            <div class="section google_checkout-section">
+                <table class="form-layout-compressed">
+            	    <tr>
+            		    <td class="description">{ts}Click the Google Checkout button to continue.{/ts}</td>
+            	    </tr>
+            	    <tr>
+            		    <td>{$form._qf_Confirm_next_checkout.html} <span style="font-size:11px; font-family: Arial, Verdana;">Checkout securely.  Pay without sharing your financial information. </span></td>
+            	    </tr>
+                </table>
+            </div>
         </fieldset>    
     {/if}
 
     <div id="crm-submit-buttons">
-	{$form.buttons.html}
+	    {$form.buttons.html}
     </div>
 
     {if $event.confirm_footer_text}
-        <div id="footer_text">
+        <div id="footer_text" class="section event_confirm_footer-section">
             <p>{$event.confirm_footer_text}</p>
         </div>
     {/if}

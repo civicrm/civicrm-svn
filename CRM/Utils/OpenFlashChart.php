@@ -105,10 +105,9 @@ class CRM_Utils_OpenFlashChart
         require_once 'CRM/Utils/Money.php';
         $config   =& CRM_Core_Config::singleton();
         $symbol   = $config->defaultCurrencySymbol;
-        $currency = $config->defaultCurrency;
-        
+                        
         // set the tooltip.
-        $bar->set_tooltip( "Amount is $symbol #val#" );
+        $bar->set_tooltip( "$symbol #val#" );
         
         // create x axis label obj.
         $xLabels = new x_axis_labels( );
@@ -204,7 +203,7 @@ class CRM_Utils_OpenFlashChart
         $pie->add_animation( new pie_bounce( 2 ) );
         
         // set the tooltip.
-        $pie->set_tooltip( "Contribution amount is $symbol #val# of $symbol #total# <br>#percent# of 100%" );
+        $pie->set_tooltip( "Amount is $symbol #val# of $symbol #total# <br>#percent#" );
         
         // set colours.
         $pie->set_colours( self::$_colours );

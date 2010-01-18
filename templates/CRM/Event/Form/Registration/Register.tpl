@@ -18,7 +18,7 @@
 {/if}
 
 {if $event.intro_text}
-    <div id="intro_text">
+    <div id="intro_text" class="section intro_text-section">
         <p>{$event.intro_text}</p>
     </div>
 {/if}
@@ -35,7 +35,7 @@
 {/if}
 
 {if $priceSet}
-    <fieldset id="priceset"><legend>{$event.fee_label}</legend>
+    <fieldset id="priceset" class="crm-group priceset-group"><legend>{$event.fee_label}</legend>
         {include file="CRM/Price/Form/PriceSet.tpl"}
     </fieldset>
     {if $form.is_pay_later}
@@ -48,15 +48,18 @@
 
 {else}
     {if $paidEvent}
-    <div class="section paid_event-section">
-	    <div class="label">{$event.fee_label} <span class="marker">*</span></div>
-		<div class="content">{$form.amount.html}
-	    {if $form.is_pay_later}
-            <br />{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}
-	    {/if}
-        </div>
-        <div class="clear">
- 	</div>
+        <div class="section paid_event-section">
+    	    <div class="label">{$event.fee_label} <span class="marker">*</span></div>
+    		<div class="content">{$form.amount.html}</div>
+            <div class="clear"></div>
+     	</div>
+        {if $form.is_pay_later}
+            <div class="section pay_later-section">
+    	        <div class="label">&nbsp;</div>
+                <div class="content">{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}</div>
+                <div class="clear"></div>
+            </div>
+        {/if}
     {/if}
 {/if}
 
@@ -87,7 +90,7 @@
 {* Put PayPal Express button after customPost block since it's the submit button in this case. *}
 {if $paymentProcessor.payment_processor_type EQ 'PayPal_Express' and $buildExpressPayBlock}
     {assign var=expressButtonName value='_qf_Register_upload_express'}
-    <fieldset><legend>{ts}Checkout with PayPal{/ts}</legend>
+    <fieldset class="crm-group payPalExpress-group"><legend>{ts}Checkout with PayPal{/ts}</legend>
     <div class="description">{ts}Click the PayPal button to continue.{/ts}</div>
 	<div>{$form.$expressButtonName.html} <span style="font-size:11px; font-family: Arial, Verdana;">Checkout securely.  Pay without sharing your financial information. </span>
     </div>
@@ -100,7 +103,7 @@
 </div>
 
 {if $event.footer_text}
-    <div id="footer_text">
+    <div id="footer_text" class="section event_footer_text-section">
         <p>{$event.footer_text}</p>
     </div>
 {/if}

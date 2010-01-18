@@ -34,6 +34,7 @@
  */
 
 require_once 'CRM/Core/Page.php';
+require_once 'CRM/Event/BAO/Event.php';
 
 /**
  * Page for displaying list of events
@@ -223,10 +224,6 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
         // get all custom groups sorted by weight
         $manageEvent = array();
 
-        //check for delete CRM-4418
-        require_once 'CRM/Core/Permission.php'; 
-        $allowToDelete = CRM_Core_Permission::check( 'delete in CiviEvent' );
-        
         $query = "
   SELECT *
     FROM civicrm_event
@@ -235,36 +232,41 @@ ORDER BY start_date desc
    LIMIT $offset, $rowCount";
         
         $dao = CRM_Core_DAO::executeQuery( $query, $params, true, 'CRM_Event_DAO_Event' );
-     
-        while ($dao->fetch()) {
-            $manageEvent[$dao->id] = array();
-            CRM_Core_DAO::storeValues( $dao, $manageEvent[$dao->id]);
-            
-            // form all action links
-            $action = array_sum(array_keys($this->links()));
-            
-            if ($dao->is_active) {
-                $action -= CRM_Core_Action::ENABLE;
-            } else {
-                $action -= CRM_Core_Action::DISABLE;
-            }
-            
-            //CRM-4418
-            if ( !$allowToDelete ) {
-                $action -= CRM_Core_Action::DELETE; 
-            }
-            
-            $manageEvent[$dao->id]['action'] = CRM_Core_Action::formLink(self::links(), $action, 
-                                                                         array('id' => $dao->id));
+        $permissions = CRM_Event_BAO_Event::checkPermission( );
 
-            $params = array( 'entity_id' => $dao->id, 'entity_table' => 'civicrm_event');
-            require_once 'CRM/Core/BAO/Location.php';
-            $defaults['location'] = CRM_Core_BAO_Location::getValues( $params, true );
-            if ( isset ( $defaults['location']['address'][1]['city'] ) ) {
-                $manageEvent[$dao->id]['city'] = $defaults['location']['address'][1]['city'];
-            }
-            if ( isset( $defaults['location']['address'][1]['state_province_id'] )) {
-                $manageEvent[$dao->id]['state_province'] = CRM_Core_PseudoConstant::stateProvince($defaults['location']['address'][1]['state_province_id']);
+        while ($dao->fetch()) {
+            if ( in_array( $dao->id, $permissions[CRM_Core_Permission::VIEW] ) ) {
+                $manageEvent[$dao->id] = array();
+                CRM_Core_DAO::storeValues( $dao, $manageEvent[$dao->id]);
+            
+                // form all action links
+                $action = array_sum(array_keys($this->links()));
+            
+                if ($dao->is_active) {
+                    $action -= CRM_Core_Action::ENABLE;
+                } else {
+                    $action -= CRM_Core_Action::DISABLE;
+                }
+            
+                if ( ! in_array( $dao->id, $permissions[CRM_Core_Permission::DELETE] ) ) {
+                    $action -= CRM_Core_Action::DELETE; 
+                }
+                if ( ! in_array( $dao->id, $permissions[CRM_Core_Permission::EDIT] ) ) {
+                    $action -= CRM_Core_Action::UPDATE; 
+                }
+            
+                $manageEvent[$dao->id]['action'] = CRM_Core_Action::formLink(self::links(), $action, 
+                                                                             array('id' => $dao->id));
+
+                $params = array( 'entity_id' => $dao->id, 'entity_table' => 'civicrm_event');
+                require_once 'CRM/Core/BAO/Location.php';
+                $defaults['location'] = CRM_Core_BAO_Location::getValues( $params, true );
+                if ( isset ( $defaults['location']['address'][1]['city'] ) ) {
+                    $manageEvent[$dao->id]['city'] = $defaults['location']['address'][1]['city'];
+                }
+                if ( isset( $defaults['location']['address'][1]['state_province_id'] )) {
+                    $manageEvent[$dao->id]['state_province'] = CRM_Core_PseudoConstant::stateProvince($defaults['location']['address'][1]['state_province_id']);
+                }
             }
         }
         $this->assign('rows', $manageEvent);

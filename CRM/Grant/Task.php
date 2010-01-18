@@ -42,7 +42,8 @@ class CRM_Grant_Task
 {
     const
         DELETE_GRANTS                     =     1,
-        PRINT_GRANTS                      =     2;
+        PRINT_GRANTS                      =     2,
+        EXPORT_GRANTS                     =     3; 
      
     /**
      * the task array
@@ -71,14 +72,15 @@ class CRM_Grant_Task
     static function &tasks()
     {
         if (!(self::$_tasks)) {
-            if ( CRM_Core_Permission::checkActionPermission( 'CiviGrant', CRM_Core_Action::DELETE ) ) {
-                self::$_tasks = array( 1 => ts( 'Delete Grants' ) );
-            }
+            self::$_tasks = array( 1 => ts( 'Delete Grants' ) ,
+                                   3 => ts( 'Export Grants'));
         }
-        
+        if ( !CRM_Core_Permission::check( 'delete in CiviGrant' ) ) {
+            unset( self::$_tasks[1] );
+        }
         return self::$_tasks;
     }
-
+    
     /**
      * show tasks selectively based on the permission level
      * of the user

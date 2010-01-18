@@ -118,6 +118,10 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $parsed = array_shift($parser->parseMail($set));
             $parsed->to = array(new ezcMailAddress($mailing->replyto_email));
 
+            // CRM-5567: we need to set Reply-To: so that any response
+            // to the forward goes to the sender of the reply
+            $parsed->setHeader('Reply-To', empty($replyto) ? $parsed->from->__toString() : $replyto);
+
             // $h must be an array, so we can't use generateHeaders()'s result, 
             // but we have to regenerate the headers because we changed To
             $parsed->generateHeaders();

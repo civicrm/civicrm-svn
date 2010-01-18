@@ -10,29 +10,15 @@
  *
  * PHP versions 4 and 5
  *
- * LICENSE: License is granted to use or modify this software
- * ("XML-RPC for PHP") for commercial or non-commercial use provided the
- * copyright of the author is preserved in any distributed or derivative work.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR "AS IS" AND ANY EXPRESSED OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
  * @category   Web Services
  * @package    XML_RPC
  * @author     Edd Dumbill <edd@usefulinc.com>
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1999-2001 Edd Dumbill, 2001-2006 The PHP Group
- * @version    CVS: $Id: RPC.php 222479 2006-10-28 16:42:34Z danielc $
+ * @copyright  1999-2001 Edd Dumbill, 2001-2010 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License
+ * @version    SVN: $Id: RPC.php 293238 2010-01-08 03:21:06Z danielc $
  * @link       http://pear.php.net/package/XML_RPC
  */
 
@@ -578,8 +564,9 @@ function XML_RPC_cd($parser_resource, $data)
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1999-2001 Edd Dumbill, 2001-2006 The PHP Group
- * @version    Release: 1.5.2
+ * @copyright  1999-2001 Edd Dumbill, 2001-2010 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License
+ * @version    Release: 1.5.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Base {
@@ -623,8 +610,9 @@ class XML_RPC_Base {
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1999-2001 Edd Dumbill, 2001-2006 The PHP Group
- * @version    Release: 1.5.2
+ * @copyright  1999-2001 Edd Dumbill, 2001-2010 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License
+ * @version    Release: 1.5.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Client extends XML_RPC_Base {
@@ -920,6 +908,26 @@ class XML_RPC_Client extends XML_RPC_Base {
     function sendPayloadHTTP10($msg, $server, $port, $timeout = 0,
                                $username = '', $password = '')
     {
+        // Pre-emptive BC hacks for fools calling sendPayloadHTTP10() directly
+        if ($username != $this->username) {
+            $this->setCredentials($username, $password);
+        }
+
+        // Only create the payload if it was not created previously
+        if (empty($msg->payload)) {
+            $msg->createPayload();
+        }
+        $this->createHeaders($msg);
+
+        $op  = $this->headers . "\r\n\r\n";
+        $op .= $msg->payload;
+
+        if ($this->debug) {
+            print "\n<pre>---SENT---\n";
+            print $op;
+            print "\n---END---</pre>\n";
+        }
+
         /*
          * If we're using a proxy open a socket to the proxy server
          * instead to the xml-rpc server
@@ -977,20 +985,6 @@ class XML_RPC_Client extends XML_RPC_Base {
              */
             socket_set_timeout($fp, $timeout);
         }
-
-        // Pre-emptive BC hacks for fools calling sendPayloadHTTP10() directly
-        if ($username != $this->username) {
-            $this->setCredentials($username, $password);
-        }
-
-        // Only create the payload if it was not created previously
-        if (empty($msg->payload)) {
-            $msg->createPayload();
-        }
-        $this->createHeaders($msg);
-
-        $op  = $this->headers . "\r\n\r\n";
-        $op .= $msg->payload;
 
         if (!fputs($fp, $op, strlen($op))) {
             $this->errstr = 'Write error';
@@ -1065,8 +1059,9 @@ class XML_RPC_Client extends XML_RPC_Base {
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1999-2001 Edd Dumbill, 2001-2006 The PHP Group
- * @version    Release: 1.5.2
+ * @copyright  1999-2001 Edd Dumbill, 2001-2010 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License
+ * @version    Release: 1.5.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Response extends XML_RPC_Base
@@ -1156,8 +1151,9 @@ class XML_RPC_Response extends XML_RPC_Base
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1999-2001 Edd Dumbill, 2001-2006 The PHP Group
- * @version    Release: 1.5.2
+ * @copyright  1999-2001 Edd Dumbill, 2001-2010 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License
+ * @version    Release: 1.5.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Message extends XML_RPC_Base
@@ -1569,8 +1565,9 @@ class XML_RPC_Message extends XML_RPC_Base
  * @author     Stig Bakken <stig@php.net>
  * @author     Martin Jansen <mj@php.net>
  * @author     Daniel Convissor <danielc@php.net>
- * @copyright  1999-2001 Edd Dumbill, 2001-2006 The PHP Group
- * @version    Release: 1.5.2
+ * @copyright  1999-2001 Edd Dumbill, 2001-2010 The PHP Group
+ * @license    http://www.php.net/license/3_01.txt  PHP License
+ * @version    Release: 1.5.3
  * @link       http://pear.php.net/package/XML_RPC
  */
 class XML_RPC_Value extends XML_RPC_Base
@@ -1738,8 +1735,8 @@ class XML_RPC_Value extends XML_RPC_Base
         case 2:
             // array
             $rs .= "<array>\n<data>\n";
-            for ($i = 0; $i < sizeof($val); $i++) {
-                $rs .= $this->serializeval($val[$i]);
+            foreach ($val as $value) {
+                $rs .= $this->serializeval($value);
             }
             $rs .= "</data>\n</array>";
             break;
