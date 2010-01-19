@@ -59,12 +59,18 @@ function civicrm_activity_contact_get( $params ) {
       return civicrm_create_error( ts ( "Required parameter not found" ) );
   }
   
-  if ( !is_numeric( $contactId ) ) {
+  //check if $contactId is valid
+  if ( !is_numeric( $contactId ) || !preg_match( '/^\d+$/', $contactId ) ) {
       return civicrm_create_error( ts ( "Invalid contact Id" ) );
   }
   
   $activities =  & _civicrm_activities_get( $contactId );
      
+  //show success for empty $activities array 
+  if ( empty( $activities ) ) { 
+      return civicrm_create_success( ts( "0 activity record matching input params" ) );
+  }
+   
   if ( $activities ) {
       return civicrm_create_success( $activities );
   } else {

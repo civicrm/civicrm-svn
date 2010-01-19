@@ -27,6 +27,7 @@
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'api/v2/ActivityContact.php';
 require_once 'CRM/Core/BAO/CustomGroup.php';
+require_once 'api/v2/Contact.php';
 
 class api_v2_ActivityContactTest extends CiviUnitTestCase
 {
@@ -138,6 +139,26 @@ class api_v2_ActivityContactTest extends CiviUnitTestCase
         $result = civicrm_activity_contact_get( $params );
         $this->assertEquals( $result['is_error'], 1,
                              "In line " . __LINE__ );
+    }
+
+    /**
+     *  Test civicrm_activity_contact_get() with contact having no Activity
+     */
+    function testActivitiesContactGetHavingNoActivity( )
+    {
+        $params = array(
+                        'first_name'    => 'dan',
+                        'last_name'     => 'conberg',
+                        'email'         => 'dan.conberg@w.co.in',
+                        'contact_type'  => 'Individual'
+                        );
+        
+        $contact =&civicrm_contact_add( $params );
+        $params  = array( 'contact_id' => $contact['contact_id'] );
+        $result  = civicrm_activity_contact_get( $params );
+        $this->assertEquals( $result['is_error'], 0 );
+        $this->assertEquals( $result['result'],
+                             '0 activity record matching input params');        
     }
 
 } 
