@@ -2216,3 +2216,6 @@ th.sorting_desc {
 	width: 9em;
 }
 /* Date plugin */
+#crm-container div.batch-update {
+  	 overflow: visible; 
+	}
