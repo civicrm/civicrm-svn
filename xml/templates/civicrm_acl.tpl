@@ -9,6 +9,7 @@ VALUES
 ('Core ACL', 0, 'civicrm_acl_role', 0, 'All', 'make online contributions', NULL, NULL, NULL, 1),
 ('Core ACL', 0, 'civicrm_acl_role', 0, 'All', 'make online pledges', NULL, NULL, NULL, 1),
 ('Core ACL', 0, 'civicrm_acl_role', 0, 'All', 'profile listings and forms', NULL, NULL, NULL, 1),
+('Core ACL', 0, 'civicrm_acl_role', 0, 'All', 'view event info', NULL, NULL, NULL, 1),
 ('Core ACL', 0, 'civicrm_acl_role', 0, 'All', 'register for events', NULL, NULL, NULL, 1),
 ('Core ACL', 0, 'civicrm_acl_role', 1, 'All', 'access CiviCRM', NULL, NULL, NULL, 1),
 ('Core ACL', 0, 'civicrm_acl_role', 1, 'All', 'access CiviContribute', NULL, NULL, NULL, 1),
