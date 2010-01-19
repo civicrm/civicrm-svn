@@ -3,8 +3,8 @@
  * File containing the ezcMailMultipart class.
  *
  * @package Mail
- * @version 1.6
- * @copyright Copyright (C) 2005-2008 eZ systems as. All rights reserved.
+ * @version 1.7beta1
+ * @copyright Copyright (C) 2005-2009 eZ Systems AS. All rights reserved.
  * @license http://ez.no/licenses/new_bsd New BSD License
  */
 
@@ -24,7 +24,7 @@
  *           value is stored in the constant {@link self::DEFAULT_NO_MIME_MESSAGE}.
  *
  * @package Mail
- * @version 1.6
+ * @version 1.7beta1
  */
 abstract class ezcMailMultipart extends ezcMailPart
 {
@@ -73,7 +73,7 @@ abstract class ezcMailMultipart extends ezcMailPart
             {
                 $this->parts[] = $part;
             }
-            elseif( is_array( $part ) ) // add each and everyone of the parts in the array
+            elseif ( is_array( $part ) ) // add each and everyone of the parts in the array
             {
                 foreach ( $part as $array_part )
                 {

@@ -3,8 +3,8 @@
  * File containing the ezcMailFileParser class
  *
  * @package Mail
- * @version 1.6
- * @copyright Copyright (C) 2005-2008 eZ systems as. All rights reserved.
+ * @version 1.7beta1
+ * @copyright Copyright (C) 2005-2009 eZ Systems AS. All rights reserved.
  * @license http://ez.no/licenses/new_bsd New BSD License
  */
 
@@ -12,7 +12,7 @@
  * Parses application/image/video and audio parts.
  *
  * @package Mail
- * @version 1.6
+ * @version 1.7beta1
  * @access private
  */
 class ezcMailFileParser extends ezcMailPartParser
@@ -197,7 +197,7 @@ class ezcMailFileParser extends ezcMailPartParser
                 break;
             case 'quoted-printable':
                 // fetch the type of linebreak
-                preg_match( "/[\r\n|\r|\n]$/", $line, $matches );
+                preg_match( "/(\r\n|\r|\n)$/", $line, $matches );
                 $lb = count( $matches ) > 0 ? $matches[0] : ezcMailTools::lineBreak();
 
                 $param = array( 'line-break-chars' => $lb );

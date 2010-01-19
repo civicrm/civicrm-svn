@@ -3,8 +3,8 @@
  * File containing the ezcMailPartParser class
  *
  * @package Mail
- * @version 1.6
- * @copyright Copyright (C) 2005-2008 eZ systems as. All rights reserved.
+ * @version 1.7beta1
+ * @copyright Copyright (C) 2005-2009 eZ Systems AS. All rights reserved.
  * @license http://ez.no/licenses/new_bsd New BSD License
  */
 
@@ -30,11 +30,41 @@
  *
  * @todo case on headers
  * @package Mail
- * @version 1.6
+ * @version 1.7beta1
  * @access private
  */
 abstract class ezcMailPartParser
 {
+    /**
+     * Mail headers which can appear maximum one time in a mail message,
+     * as defined by RFC 2822.
+     *
+     * @var array(string)
+     */
+    protected static $uniqueHeaders = array( 'bcc', 'cc', 'content-type',
+                                             'content-disposition', 'from',
+                                             'content-transfer-encoding',
+                                             'return-path',
+                                             'in-reply-to', 'references',
+                                             'message-id', 'date', 'reply-to',
+                                             'sender', 'subject', 'sender', 'to' );
+
+    /**
+     * The default is to parse text attachments into ezcMailTextPart objects.
+     *
+     * Setting this to true before calling the parser will parse text attachments
+     * into ezcMailFile objects. Use the parser options for this:
+     *
+     * <code>
+     * $parser = new ezcMailParser();
+     * $parser->options->parseTextAttachmentsAsFiles = true;
+     * // call $parser->parseMail( $set );
+     * </code>
+     *
+     * @var bool
+     */
+    public static $parseTextAttachmentsAsFiles = false;
+
     /**
      * The name of the last header parsed.
      *
@@ -122,7 +152,16 @@ abstract class ezcMailPartParser
                 break;
 
             case 'text':
-                $bodyParser = new ezcMailTextParser( $subType, $headers );
+                if ( (ezcMailPartParser::$parseTextAttachmentsAsFiles === true)                   && 
+                     (preg_match('/\s*filename="?([^;"]*);?/i', $headers['Content-Disposition']) ||
+                      preg_match( '/\s*name="?([^;"]*);?/i'   , $headers['Content-Type'])        )  )
+                {
+                    $bodyParser = new ezcMailFileParser( $mainType, $subType, $headers );
+                }
+                else
+                {
+                    $bodyParser = new ezcMailTextParser( $subType, $headers );
+                }
                 break;
 
             case 'multipart':
@@ -175,12 +214,30 @@ abstract class ezcMailPartParser
         preg_match_all( "/^([\w-_]*):\s?(.*)/", $line, $matches, PREG_SET_ORDER );
         if ( count( $matches ) > 0 )
         {
-            $headers[$matches[0][1]] = str_replace( "\t", " ", trim( $matches[0][2] ) );
+            if ( !in_array( strtolower( $matches[0][1] ), self::$uniqueHeaders ) )
+            {
+                $arr = $headers[$matches[0][1]];
+                $arr[0][] = str_replace( "\t", " ", trim( $matches[0][2] ) );
+                $headers[$matches[0][1]] = $arr;
+            }
+            else
+            {
+                $headers[$matches[0][1]] = str_replace( "\t", " ", trim( $matches[0][2] ) );
+            }
             $this->lastParsedHeader = $matches[0][1];
         }
         else if ( $this->lastParsedHeader !== null ) // take care of folding
         {
-            $headers[$this->lastParsedHeader] .= str_replace( "\t", " ", $line );
+            if ( !in_array( strtolower( $this->lastParsedHeader ), self::$uniqueHeaders ) )
+            {
+                $arr = $headers[$this->lastParsedHeader];
+                $arr[0][count( $arr[0] ) - 1] .= str_replace( "\t", " ", $line );
+                $headers[$this->lastParsedHeader] = $arr;
+            }
+            else
+            {
+                $headers[$this->lastParsedHeader] .= str_replace( "\t", " ", $line );
+            }
         }
         // else -invalid syntax, this should never happen.
     }
