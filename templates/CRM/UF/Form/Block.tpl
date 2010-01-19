@@ -75,9 +75,8 @@
 				<table id="selector" class="selector" style="width:auto;">
 					<tr><td>{$form.$n.html}{* quickform add closing </td> </tr>*}
 				</table>
-             {elseif ( $field.data_type eq 'Date'  or 
-                      ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) ) and 
-			    !call_user_func( array('CRM_Utils_Date','checkBirthDateFormat') ) ) ) }
+             {elseif ( $field.data_type eq 'Date' or 
+                      ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) ) ) ) }
                       {include file="CRM/common/jcalendar.tpl" elementName=$n}
    	    	 {else}
                {$form.$n.html}
