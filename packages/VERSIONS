@@ -4,9 +4,10 @@ Licensing info in this file:
   BSD 3-cl. three-clause BSD license
   GPL 2+    GNU General Public License 2 or later
   GPL 3     GNU General Public License 3
+  LGPL 2.1  GNU Lesser General Public License 2.1
   LGPL 2.1+ GNU Lesser General Public License 2.1 or later
-  LGPL 3+   GNU Lesser General Public License 3 or later
   LGPL 3    GNU Lesser General Public License 3
+  LGPL 3+   GNU Lesser General Public License 3 or later
   PHP 2     PHP License 2.*
   PHP 3     PHP License 3.*
   X11       X11 (a.k.a. MIT) license
@@ -98,17 +99,17 @@ reCAPTCHA      1.10       X11         http://recaptcha.net/
 
 payment processors for CiviCRM
 ==============================
-eWAY             by Dolphin Software
 IATS             by adixon, in Services/IATS
 Moneris          by adixon, in Services/mpgClasses.php
 PayJunction      by Phase2 Technology
 PaymentExpress   by Lucas Baker
+eWAY             by Dolphin Software
 
 
 Unknown status
 ==============
 CKEditor      GPL 3/LGPL 3/MPL 1.1
-Google        Apache 2/GPL 2+
 Facebook      BSD 2-cl.
-jQuery
-TinyMCE
+Google        Apache 2/GPL 2+
+TinyMCE       LGPL 2.1
+jQuery        GPL 2/X11
