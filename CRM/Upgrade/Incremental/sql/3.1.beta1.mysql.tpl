@@ -2,17 +2,17 @@
 {include file='../CRM/Upgrade/3.1.beta1.msg_template/civicrm_msg_template.tpl'}
 
 --  CRM-5388
-SELECT @option_group_id_prefix := max(id) from civicrm_option_group where name = 'individual_prefix';
-SELECT @option_group_id_suffix := max(id) from civicrm_option_group where name = 'individual_suffix';
-
 -- we definitely shouldn't fix non-English strings, so skipping the multilingual part
 {if !$multilingual}
-    -- prefix
-    UPDATE civicrm_option_value SET label = CONCAT( label, '.') , name = CONCAT( `name`, '.')
-            WHERE name IN ('Mrs','Ms','Mr','Dr') AND option_group_id = @option_group_id_prefix;
-    -- suffix    
-    UPDATE civicrm_option_value SET label = CONCAT( label, '.') , name = CONCAT( `name`, '.')
-            WHERE name IN ('Jr','Sr') AND option_group_id = @option_group_id_suffix;
+-- prefix
+    UPDATE civicrm_option_value SET label = 'Mr.' , name = 'Mr.'  WHERE label = 'Mr'  AND name = 'Mr';
+    UPDATE civicrm_option_value SET label = 'Ms.' , name = 'Ms.'  WHERE label = 'Ms'  AND name = 'Ms';
+    UPDATE civicrm_option_value SET label = 'Mrs.', name = 'Mrs.' WHERE label = 'Mrs' AND name = 'Mrs';
+    UPDATE civicrm_option_value SET label = 'Dr.',  name = 'Dr.'  WHERE label = 'Dr'  AND name = 'Dr';
+
+-- suffix
+    UPDATE civicrm_option_value SET label = 'Jr.',  name = 'Jr.'  WHERE label = 'Jr'  AND name = 'Jr';
+    UPDATE civicrm_option_value SET label = 'Sr.',  name = 'Sr.'  WHERE label = 'Sr'  AND name = 'Sr';
 {/if}
 
 --  CRM-5435
