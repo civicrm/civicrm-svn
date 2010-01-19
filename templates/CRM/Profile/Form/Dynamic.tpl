@@ -149,8 +149,7 @@
         </div>
     {/if}
 
-
-{if $mode eq 4 or $mode eq 8}
+{if $action eq 1 or $action eq 2 }
 <div class="crm-submit-buttons"> 
      {$form.buttons.html}{if $isDuplicate}&nbsp;&nbsp;{$form._qf_Edit_upload_duplicate.html}{/if}
 </div>
