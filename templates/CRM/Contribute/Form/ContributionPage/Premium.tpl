@@ -16,9 +16,9 @@
      <dt>{$form.premiums_active.label}</dt><dd>{$form.premiums_active.html}</dd>
      <dt>&nbsp;</dt><dd class="description">{ts}Is the Premiums section enabled for this Online Contributions page?{/ts}</dd></dl>
     <div class="form-item"><dl id= "premiumFields" class="html-adjust">
-    <dt>{$form.premiums_intro_title.label}</dt><dd>{$form.premiums_intro_title.html}</dd>
+    <dt>{$form.premiums_intro_title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_premiums' field='premiums_intro_title' id=$id}{/if}</dt><dd>{$form.premiums_intro_title.html}</dd>
     <dt>&nbsp;</dt><dd class="description">{ts}Title to appear at the top of the Premiums section.{/ts}</dd>
-    <dt>{$form.premiums_intro_text.label}</dt><dd>{$form.premiums_intro_text.html}</dd>
+    <dt>{$form.premiums_intro_text.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_premiums' field='premiums_intro_text' id=$id}{/if}</dt><dd>{$form.premiums_intro_text.html}</dd>
     <dt>&nbsp;</dt><dd class="description">{ts}Enter content for the introductory message. This will be displayed below the Premiums section title. You may include HTML formatting tags. You can also include images, as long as they are already uploaded to a server - reference them using complete URLs.{/ts}</dd>
     
     <dt>{$form.premiums_contact_email.label}</dt><dd>{$form.premiums_contact_email.html}</dd>

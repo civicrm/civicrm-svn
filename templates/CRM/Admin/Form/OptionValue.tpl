@@ -15,6 +15,9 @@
       <dl>
  	    <dt>{$form.label.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_value' field='label' id=$id}{/if}</dt><dd>{$form.label.html}</dd>
         <dt>{$form.value.label}</dt><dd>{$form.value.html}</dd>
+        {if $config->languageLimit|@count >= 2}
+          <dt></dt><dd class="description">{ts}The same option value is stored for all languages. Changing this value will change it for all languages.{/ts}</dd>
+        {/if}
         <dt>{$form.name.label}</dt><dd>{$form.name.html}</dd>
         <dt>{$form.grouping.label}</dt><dd>{$form.grouping.html}</dd>
     	<dt>{$form.description.label}</dt><dd>{$form.description.html}</dd>

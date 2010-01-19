@@ -28,15 +28,15 @@
     </dl>
     <div id="friendFields">
     <table class="form-layout">
-        <tr><td class="label">{$form.tf_title.label}</td><td>{$form.tf_title.html}</td></tr>   
-        <tr><td class="label">{$form.intro.label}</td><td>{$form.intro.html}<br />
+        <tr><td class="label">{$form.tf_title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_tell_friend' field='title' id=$id}{/if}</td><td>{$form.tf_title.html}</td></tr>
+        <tr><td class="label">{$form.intro.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_tell_friend' field='intro' id=$id}{/if}</td><td>{$form.intro.html}<br />
         <span class="description">{ts 1=$enduser}This message is displayed to the %1 at the top of the Tell a Friend form. You may include HTML tags to add formatting or links.{/ts}</span></td></tr>     
-        <tr><td class="label">{$form.suggested_message.label}</td><td>{$form.suggested_message.html}<br />
+        <tr><td class="label">{$form.suggested_message.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_tell_friend' field='suggested_message' id=$id}{/if}</td><td>{$form.suggested_message.html}<br />
         <span class="description">{ts 1=$enduser}Provides the %1 with suggested text for their personalized message to their friends.{/ts}</span></td></tr> 
         <tr><td class="label">{$form.general_link.label}</td><td>{$form.general_link.html}<br />
         <span class="description">{ts 1=$pageType}A link to this %1 is automatically included in the email sent to friends. If you ALSO want to include a link providing general information about your organization, enter that link here (e.g <em>http://www.example.org/</em>){/ts}</span></td></tr>
-	<tr><td class="label">{$form.thankyou_title.label}</td><td>{$form.thankyou_title.html}</td></tr>            
-	<tr><td class="label">{$form.thankyou_text.label}</td><td>{$form.thankyou_text.html}<br />
+	<tr><td class="label">{$form.thankyou_title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_tell_friend' field='thankyou_title' id=$id}{/if}</td><td>{$form.thankyou_title.html}</td></tr>
+	<tr><td class="label">{$form.thankyou_text.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_tell_friend' field='thankyou_text' id=$id}{/if}</td><td>{$form.thankyou_text.html}<br />
         <span class="description">{ts 1=$enduser}Your message thanking the %1 for helping to spread the word. You may include HTML tags to add formatting or links.{/ts}</span></td></tr>
     </table>	
     </div>
