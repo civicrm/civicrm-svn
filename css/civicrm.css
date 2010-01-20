@@ -407,7 +407,12 @@ div.spacer,
   vertical-align: top;
 }
 
-#crm-container .form-layout .buttons, #crm-container .form-layout-compressed .buttons {
+#crm-submit-buttons {
+	width: 100%; /* fix ie7/ie8 bug where page goes bananas */
+}
+
+#crm-container .form-layout .buttons, 
+#crm-container .form-layout-compressed .buttons {
  padding-top: 10px;
 }
 
