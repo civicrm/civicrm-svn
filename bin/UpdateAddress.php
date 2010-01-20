@@ -130,18 +130,20 @@ function run( ) {
 
 function processContacts( &$config, $processGeocode, $parseStreetAddress, $start = null, $end = null ) 
 {
-    $contactClause = array( );
+    // build where clause.
+    $clause = array( '( c.id = a.contact_id )' );
     if ( $start ) {
-        $contactClause[] = "c.id >= $start";
+        $clause[] = "( c.id >= $start )";
     }
     if ( $end ) {
-        $contactClause[] = "c.id <= $end";
+        $clause[] = "( c.id <= $end )";
     }
-    if ( ! empty( $contactClause ) ) {
-        $contactClause = ' AND ' . implode( ' AND ', $contactClause );
-    } else {
-        $contactClause = null;
+    if ( $processGeocode ) {
+        $clause[] = '( a.geo_code_1 is null OR a.geo_code_1 = 0 )';
+        $clause[] = '( a.geo_code_2 is null OR a.geo_code_2 = 0 )';
+        $clause[] = '( a.country_id is not null )';
     }
+    $whereClause = implode( ' AND ', $clause );
     
     $query = "
 SELECT     c.id,
@@ -153,16 +155,12 @@ SELECT     c.id,
            o.name as country
 FROM       civicrm_contact  c
 INNER JOIN civicrm_address        a ON a.contact_id = c.id
-INNER JOIN civicrm_country        o ON a.country_id = o.id
+LEFT  JOIN civicrm_country        o ON a.country_id = o.id
 LEFT  JOIN civicrm_state_province s ON a.state_province_id = s.id
-WHERE      c.id           = a.contact_id
-  AND      ( a.geo_code_1 is null OR a.geo_code_1 = 0 )
-  AND      ( a.geo_code_2 is null OR a.geo_code_2 = 0 )
-  AND      a.country_id is not null
-  $contactClause
-ORDER BY a.id
+WHERE      {$whereClause}
+  ORDER BY a.id
 ";
-    
+   
     $totalGeocoded = $totalAddresses = $totalAddressParsed = 0;
     
     $dao =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
@@ -228,14 +226,14 @@ ORDER BY a.id
                 // reset element values.
                 $parsedFields = array_fill_keys( array_keys($parsedFields), '' );
             }
-            $addressParams = array_merge( $addressParams, $parsedFields ); 
+            $addressParams = array_merge( $addressParams, $parsedFields );
         }
         
         // finally update address object.
         if ( !empty( $addressParams ) ) {
             $address = new CRM_Core_DAO_Address( );
             $address->id = $dao->address_id;
-            $address->copyValues( $parsedFields );
+            $address->copyValues( $addressParams );
             $address->save( );
             $address->free( );
         }
