@@ -1,32 +1,32 @@
 {* Included in Custom/Form/Field.tpl - used for fields with multiple choice options. *}
-<dl>
-    <dt>{$form.option_type.label}</dt><dd>{$form.option_type.html}</dd>
-    <dt>&nbsp;</dt><dd class="description">{ts}You can create new multiple choice options for this field, or select an existing set of options which you've already created for another custom field.{/ts}</dd>
-</dl>
-{if $form.option_group_id}
-<div id="option_group">
-  <dl>
-      <dt>{$form.option_group_id.label}</dt><dd>{$form.option_group_id.html}</dd>
-  </dl>
-</div>
-{/if}
+<tr>
+<td class="label">{$form.option_type.label}</td>
+<td class="html-adjust">{$form.option_type.html}<br />
+    <span class="description">{ts}You can create new multiple choice options for this field, or select an existing set of options which you've already created for another custom field.{/ts}</span>
+</td>
+</tr>
 
-<div class="spacer"></div>
-<div id="multiple" class="form-item">
-<fieldset><legend>{ts}Multiple Choice Options{/ts}</legend>
-    <div class="description">
+<tr id="option_group" {if !$form.option_group_id}class="hiddenElement"{/if}>
+  <td class="label">{$form.option_group_id.label}</td>
+  <td class="html-adjust">{$form.option_group_id.html}</td>
+</tr>
+
+<tr id="multiple">
+<td colspan="2" class="html-adjust">
+    <fieldset><legend>{ts}Multiple Choice Options{/ts}</legend>
+    <span class="description">
         {ts}Enter up to ten (10) multiple choice options in this table (click 'another choice' for each additional choice). If you need more than ten options, you can create an unlimited number of additional choices using the Edit Multiple Choice Options link after saving this new field. If desired, you can mark one of the choices as the default choice. The option 'label' is displayed on the form, while the option 'value' is stored in the contact record. The label and value may be the same or different. Inactive options are hidden when the field is presented.{/ts}
-    </div>
+    </span>
 	{strip}
 	<table id="optionField">
 	<tr>
-           <th>&nbsp;</th>
-	   <th> {ts}Default{/ts}</th>
-           <th> {ts}Label{/ts}</th>
-           <th> {ts}Value{/ts}</th>
-           <th> {ts}Weight{/ts}</th>
-	   <th> {ts}Active?{/ts}</th>
-       </tr>
+        <th>&nbsp;</th>
+        <th> {ts}Default{/ts}</th>
+        <th> {ts}Label{/ts}</th>
+        <th> {ts}Value{/ts}</th>
+        <th> {ts}Weight{/ts}</th>
+        <th> {ts}Active?{/ts}</th>
+    </tr>
 	
 	{section name=rowLoop start=1 loop=12}
 	{assign var=index value=$smarty.section.rowLoop.index}
@@ -54,13 +54,14 @@
 	<div id="optionFieldLink" class="add-remove-link">
         <a onclick="showHideRow();" name="optionFieldLink" href="javascript:void(0)" class="form-link"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}show field or section{/ts}"/>{ts}another choice{/ts}</a>
     </div>
-	<div id="additionalOption" class="description">
+	<span id="additionalOption" class="description">
 		{ts}If you need additional options - you can add them after you Save your current entries.{/ts}
-	</div>
+	</span>
     {/strip}
     
 </fieldset>
-</div>
+</td>
+</tr>
 <script type="text/javascript">
     var showRows   = new Array({$showBlocks});
     var hideBlocks = new Array({$hideBlocks});
@@ -80,11 +81,11 @@
 {literal}
 function showOptionSelect( ) {
    if ( document.getElementsByName("option_type")[0].checked ) {
-      show('multiple');
-      hide('option_group');
+      cj('#multiple').show();
+      cj('#option_group').hide();
    } else {
-      hide('multiple');
-      show('option_group');
+      cj('#multiple').hide();
+      cj('#option_group').show();
    }
 }
 showOptionSelect( );

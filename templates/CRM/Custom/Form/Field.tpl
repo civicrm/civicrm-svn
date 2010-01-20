@@ -11,44 +11,32 @@ function custom_option_html_type( ) {
 
     if ( data_type_id < 4 ) {
         if ( html_type_name != "Text" ) {
-            document.getElementById("showoption").style.display="block";		
-            document.getElementById("hideDefaultValTxt").style.display="none";
-            document.getElementById("hideDefaultValDef").style.display="none";
-            document.getElementById("hideDescTxt").style.display="none";
-            document.getElementById("hideDescDef").style.display="none";
-            document.getElementById("searchByRange").style.display = "none";
+            cj("#showoption").show();
+            cj("#hideDefault").hide();
+            cj("#hideDesc").hide();
+            cj("#searchByRange").hide();
             document.getElementsByName("is_search_range")[1].checked = true;
-            document.getElementById("is_searchable").style.display = "block";
+            cj("#is_searchable").show();
         } else {
-            document.getElementById("showoption").style.display="none";
-            document.getElementById("showoption").style.display="none";
-            document.getElementById("hideDefaultValTxt").style.display="block";
-            document.getElementById("hideDefaultValDef").style.display="block";
-            document.getElementById("hideDescTxt").style.display="block";
-            document.getElementById("hideDescDef").style.display="block";
-            document.getElementById("is_searchable").style.display = "block";
+            cj("#showoption").hide();
+            cj("#hideDefault").show();
+            cj("#hideDesc").show();
+            cj("#is_searchable").show();
         }
     } else {
         if ( data_type_id == 9 ) { 
             document.getElementById("default_value").value = '';
-            document.getElementById("hideDefaultValTxt").style.display="none";
-            document.getElementById("hideDefaultValDef").style.display="none";		
-            document.getElementById("is_searchable").style.display = "none";
-            document.getElementById("hideDescTxt").style.display="none";
-            document.getElementById("hideDescDef").style.display="none";
+            cj("#hideDefault").hide();
+            cj("#is_searchable").hide();
+            cj("#hideDesc").hide();
         } else if ( data_type_id == 11 ) {
-            document.getElementById("hideDefaultValTxt").style.display="none";
-            document.getElementById("hideDefaultValDef").style.display="none";            
+            cj("#hideDefault").hide();
         } else {
-            document.getElementById("hideDefaultValTxt").style.display="block";
-            document.getElementById("hideDefaultValDef").style.display="block";
-            document.getElementById("is_searchable").style.display = "block";
-            document.getElementById("hideDescTxt").style.display="block";
-            document.getElementById("hideDescDef").style.display="block";
+            cj("#hideDefault").show();
+            cj("#is_searchable").show();
+            cj("#hideDesc").show();
         }
-
-        document.getElementById("showoption").style.display="none";           
-
+        cj("#showoption").hide();
     }
 
     var radioOption, checkBoxOption;
@@ -59,11 +47,11 @@ function custom_option_html_type( ) {
         if ( data_type_id < 4 ) {
             if ( html_type_name != "Text") {
                 if ( html_type_name == "CheckBox" || html_type_name == "Multi-Select") {
-                    document.getElementById(checkBoxOption).style.display="block";
-                    document.getElementById(radioOption).style.display="none";
+                    cj("#"+checkBoxOption).show();
+                    cj("#"+radioOption).hide();
                 } else {
-                    document.getElementById(radioOption).style.display="block";	
-                    document.getElementById(checkBoxOption).style.display="none";
+                    cj("#"+radioOption).show();
+                    cj("#"+checkBoxOption).hide();
                 }
             }
         }
@@ -71,53 +59,38 @@ function custom_option_html_type( ) {
 
     if ( data_type_id < 4 ) {	
         if (html_type_name == "CheckBox" || html_type_name == "Radio") {
-            document.getElementById("optionsPerLine").style.display="block";
-            document.getElementById("optionsPerLineDef").style.display="block";
+            cj("#optionsPerLine").show();
         } else {
-            document.getElementById("optionsPerLine").style.display="none";
-            document.getElementById("optionsPerLineDef").style.display="none";
+            cj("#optionsPerLine").hide();
         }
     }
 
     if ( data_type_id == 5) {
-        document.getElementById("startDateRange").style.display="block";
-        document.getElementById("startDateRangeDef").style.display="block";
-        document.getElementById("endDateRange").style.display="block";
-        document.getElementById("endDateRangeDef").style.display="block";
-        document.getElementById("incudedDatePart").style.display="block";
-        document.getElementById("incudedDatePartDef").style.display="block";	
+        cj("#startDateRange").show();
+        cj("#endDateRange").show();
+        cj("#includedDatePart").show();
     } else {
-        document.getElementById("startDateRange").style.display="none";
-        document.getElementById("startDateRangeDef").style.display="none";
-        document.getElementById("endDateRange").style.display="none";
-        document.getElementById("endDateRangeDef").style.display="none";
-        document.getElementById("incudedDatePart").style.display="none";
-        document.getElementById("incudedDatePartDef").style.display="none";	 	
+        cj("#startDateRange").hide();
+        cj("#endDateRange").hide();
+        cj("#includedDatePart").hide();
     }
 
     if ( data_type_id == 0 ) {
-        document.getElementById("textLength").style.display="block";
-        document.getElementById("textLengthDef").style.display="block";
+        cj("#textLength").show();
     } else {
-        document.getElementById("textLength").style.display="none";
-        document.getElementById("textLengthDef").style.display="none";
+        cj("#textLength").hide();
     }
 
     if ( data_type_id == 4 ) {
-        document.getElementById("noteColumns").style.display="block";
-        document.getElementById("noteColumnsDef").style.display="block";
-        document.getElementById("noteRows").style.display="block";
-        document.getElementById("noteRowsDef").style.display="block";
+        cj("#noteCloumns").show();
+        cj("#noteRows").show();
     } else {
-        document.getElementById("noteColumns").style.display="none";
-        document.getElementById("noteColumnsDef").style.display="none";
-        document.getElementById("noteRows").style.display="none";
-        document.getElementById("noteRowsDef").style.display="none";
+        cj("#noteColumns").hide();
+        cj("#noteRows").hide();
     }
 
     if ( data_type_id > 3) {
-        document.getElementById("optionsPerLine").style.display="none";
-        document.getElementById("optionsPerLineDef").style.display="none";
+        cj("#optionsPerLine").hide();
     }
 
     {/literal}{if $action eq 1}{literal}
@@ -128,104 +101,114 @@ function custom_option_html_type( ) {
 {/literal}
 <fieldset><legend>{ts}Custom Data Field{/ts}</legend>
 
-    <div class="form-item">
-        <dl class="html-adjust">
-	    <dt>{$form.label.label}
-		{if $action == 2}
-		    {include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_custom_field' field='label' id=$id}
-		{/if}
-	    </dt>
-	    <dd>{$form.label.html}</dd>
-	
-	    <dt class="">{$form.data_type.label}</dt>
-	    <dd>{$form.data_type.html}</dd>
-	    {if $action neq 4 and $action neq 2}
-		<dt>&nbsp;</dt>
-		<dd class="description">{ts}Select the type of data you want to collect and store for this contact. Then select from the available HTML input field types (choices are based on the type of data being collected).{/ts}</dd>
-	    {/if}
-	
-	<div class="spacer"></div>    
-	<dt id="textLength" {if ( $action eq 1 || $action eq 2 ) && ($form.data_type.value.0.0 == 0)}class="show-block"{else} class="hide-block" {/if}>{$form.text_length.label}</dt>
-	<dd id="textLengthDef" {if ( $action eq 1 || $action eq 2 ) && ($form.data_type.value.0.0 == 0)}class="show-block"{else} class="hide-block"{/if}>{$form.text_length.html}</dd> 
-
-	{if $action eq 1 or $action eq 2 }
-	    {* Conditionally show table for setting up selection options - for field types = radio, checkbox or select *}
-	    <div id='showoption' class="hide-block">{ include file="CRM/Custom/Form/Optionfields.tpl"}</div>    
-	{/if}</dl>
-        <dl class="html-adjust">
-	    <dt id="optionsPerLine" {if $action eq 2 && ($form.data_type.value.0.0 < 4 && $form.data_type.value.1.0 EQ 'CheckBox' || $form.data_type.value.1.0 EQ 'Radio' )}class="show-block"{else} class="hide-block" {/if}>{$form.options_per_line.label}</dt>	
-	    <dd id="optionsPerLineDef" {if $action eq 2 && ($form.data_type.value.0.0 < 4 && $form.data_type.value.1.0 EQ 'CheckBox' || $form.data_type.value.1.0 EQ 'Radio' )}class="show-block"{else} class="hide-block"{/if}>{$form.options_per_line.html|crmReplace:class:two}</dd>
-
-	    <dt id="startDateRange" {if $action eq 2 && ($form.data_type.value.0.0 == 5)}class="show-block"{else} class="hide-block" {/if}>{$form.start_date_years.label}</dt>
-	    <dd id="startDateRangeDef" {if $action eq 2 && ($form.data_type.value.0.0 == 5)}class="show-block"{else} class="hide-block"{/if}>{$form.start_date_years.html} {ts}years prior to current date.{/ts}</dd> 
-        
-	    <dt id="endDateRange" {if $action eq 2 && ($form.data_type.value.0.0 == 5)}class="show-block"{else} class="hide-block"{/if}>{$form.end_date_years.label}</dt>
-	    <dd id="endDateRangeDef" {if $action eq 2 && ($form.data_type.value.0.0 == 5)}class="show-block"{else} class="hide-block"{/if}>{$form.end_date_years.html} {ts}years after the current date.{/ts}</dd> 
-
-	    <dt id="incudedDatePart"{if $action eq 2 && ($form.data_type.value.0.0 == 5)}class="show-block"{else} class="hide-block"{/if}>{$form.date_format.label}</dt>
-	    <dd id="incudedDatePartDef" {if $action eq 2 && ($form.data_type.value.0.0 == 5)}class="show-block"{else} class="hide-block"{/if}>{$form.date_format.html}&nbsp;&nbsp;&nbsp;{$form.time_format.label}&nbsp;&nbsp;{$form.time_format.html}</dd> 
-        
-	    <dt id="noteRows" {if $action eq 2 && ($form.data_type.value.0.0 == 4)}class="show-block"{else} class="hide-block"{/if}>{$form.note_rows.label}</dt>
-	    <dd id="noteRowsDef" {if $action eq 2 && ($form.data_type.value.0.0 == 4)}class="show-block"{else} class="hide-block"{/if}>{$form.note_rows.html}</dd> 
-
-	    <dt id="noteColumns" {if $action eq 2 && ($form.data_type.value.0.0 == 4)}class="show-block"{else} class="hide-block" {/if}>{$form.note_columns.label}</dt>
-	    <dd id="noteColumnsDef" {if $action eq 2 && ($form.data_type.value.0.0 == 4)}class="show-block"{else} class="hide-block"{/if}>{$form.note_columns.html}</dd>
-
-	    <dt>{$form.weight.label}</dt>
-	    <dd>{$form.weight.html|crmReplace:class:two}</dd>
-	    {if $action neq 4}
-		<dt>&nbsp;</dt>
-		<dd class="description">{ts}Weight controls the order in which fields are displayed in a group. Enter a positive or negative integer - lower numbers are displayed ahead of higher numbers.{/ts}</dd>
-	    {/if}
-	    <dt id="hideDefaultValTxt" title="hideDefaultValTxt" {if $action eq 2 && ($form.data_type.value.0.0 < 4 && $form.data_type.value.1.0 NEQ 'Text')}class="hide-block"{/if}>{$form.default_value.label}</dt>
-	    <dd id="hideDefaultValDef" title="hideDefaultValDef" {if $action eq 2 && ($form.data_type.value.0.0 < 4 && $form.data_type.value.1.0 NEQ 'Text')}class="hide-block"{/if}>{$form.default_value.html}</dd>
-	    
-	    {if $action neq 4}
-		<dt id="hideDescTxt" title="hideDescTxt" {if $action eq 2 && ($form.data_type.value.0.0 < 4 && $form.data_type.value.1.0 NEQ 'Text')}class="hide-block"{/if}>&nbsp;</dt>
-		<dd id="hideDescDef" title="hideDescDef" {if $action eq 2 && ($form.data_type.value.0.0 < 4 && $form.data_type.value.1.0 NEQ 'Text')}class="hide-block"{/if}><span class="description">{ts}If you want to provide a default value for this field, enter it here. For date fields, format is YYYY-MM-DD.{/ts}</span></dd>
-	    {/if}
-	    <dt>{$form.help_pre.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_custom_field' field='help_pre' id=$id}{/if}</dt>
-	    <dd>&nbsp;{$form.help_pre.html|crmReplace:class:huge}&nbsp;</dd>
-
-	    <dt>{$form.help_post.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_custom_field' field='help_post' id=$id}{/if}</dt>
-	    <dd>&nbsp;{$form.help_post.html|crmReplace:class:huge}&nbsp;</dd>
-            {if $action neq 4}
-	        <dt>&nbsp;</dt>
-		<dd class="description">{ts}Explanatory text displayed to users for this field.{/ts}</dd>
+    <table class="form-layout">
+        <tr>
+            <td class="label">{$form.label.label}
+            {if $action == 2}
+                {include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_custom_field' field='label' id=$id}
             {/if}
-            <dl><div class="spacer"></div>
-	    <dt>{$form.is_required.label}</dt><dd>&nbsp;{$form.is_required.html}</dd></dl>
-	<div class="spacer"></div>
-	<div id ="is_searchable">
-	    <dl>
-		<dt>{$form.is_searchable.label}</dt><dd>&nbsp;{$form.is_searchable.html}</dd>
-	    </dl>
-	    {if $action neq 4}
-		<dl>
-		    <dt class="">&nbsp;</dt>
-		    <dd class="description">{ts}Can you search on this field in the Advanced and component search forms? NOTE: This feature is available to custom fields used for <strong>Contacts (individuals, organizations and househoulds), Contributions, Pledges, Memberships, Event Participants, Activities, and Relationships</strong>.{/ts}</dd>
-		</dl>
-	    {/if}        
-        </div>        
-        <div id="searchByRange" {if $action eq 2 && $form.is_searchable.value && ($form.data_type.value.0.0 eq 1 OR $form.data_type.value.0.0 eq 2 OR $form.data_type.value.0.0 eq 3 OR $form.data_type.value.0.0 eq 5) && ($form.data_type.value.1.0 eq 'Text' OR $form.data_type.value.1.0 eq 'Date')} class="show-block"{else} class="hide-block"{/if} >
-    	    <dl>
-	        <dt>{$form.is_search_range.label}</dt>
-		<dd>&nbsp;{$form.is_search_range.html}</dd>
-    	    </dl>
-	</div>        
-        <dl>
-	    <dt>{$form.is_active.label}</dt>
-	    <dd>&nbsp;{$form.is_active.html}</dd>
-        </dl>    
-        <dl>
-	    <dt>{$form.is_view.label}</dt>
-	    <dd>&nbsp;{$form.is_view.html}</dd>
-        <dl>
-	    <dt>&nbsp;</dt>
-	    <dd class="description">{ts}Is this field set by PHP code (via a custom hook). This field will not be updated by CiviCRM.{/ts}</dd>
-        </dl>    
-    </div>
-    
+            </td>
+            <td class="html-adjust">{$form.label.html}</td>
+        </tr>
+        <tr>
+            <td class="label">{$form.data_type.label}</td>
+            <td class="html-adjust">{$form.data_type.html}
+                {if $action neq 4 and $action neq 2}
+                    <br /><span class="description">{ts}Select the type of data you want to collect and store for this contact. Then select from the available HTML input field types (choices are based on the type of data being collected).{/ts}</span>
+                {/if}
+            </td>
+        </tr>
+        <tr id="textLength" {if !( $action eq 1 || $action eq 2 ) && ($form.data_type.value.0.0 != 0)}class="hide-block"{/if}>
+            <td class="label">{$form.text_length.label}</td>
+            <td class="html-adjust">{$form.text_length.html}</td> 
+        </tr>
+        
+        <tr id='showoption' {if $action eq 1 or $action eq 2 }class="hide-block"{/if}>
+            <td colspan="2">
+            <table class="form-layout-compressed">
+                {* Conditionally show table for setting up selection options - for field types = radio, checkbox or select *}
+                {include file="CRM/Custom/Form/Optionfields.tpl"}
+            </table>
+            </td>
+        </tr>
+        <tr id="optionsPerLine" {if $action neq 2 && ($form.data_type.value.0.0 >= 4 && $form.data_type.value.1.0 neq 'CheckBox' || $form.data_type.value.1.0 neq 'Radio' )}class="hide-block"{/if}>
+            <td class="label">{$form.options_per_line.label}</td>	
+            <td class="html-adjust">{$form.options_per_line.html|crmReplace:class:two}</td>
+        </tr>
+	    <tr id="startDateRange" {if $action neq 2 && ($form.data_type.value.0.0 != 5)}class="hide-block"{/if}>
+            <td class="label">{$form.start_date_years.label}</td>
+            <td class="html-adjust">{$form.start_date_years.html} {ts}years prior to current date.{/ts}</td> 
+        </tr>
+        <tr id="endDateRange" {if $action neq 2 && ($form.data_type.value.0.0 != 5)}class="hide-block"{/if}>
+            <td class="label">{$form.end_date_years.label}</td>
+            <td class="html-adjust">{$form.end_date_years.html} {ts}years after the current date.{/ts}</td> 
+        </tr>
+        <tr id="includedDatePart" {if $action neq 2 && ($form.data_type.value.0.0 != 5)}class="hide-block"{/if}>
+            <td class="label">{$form.date_format.label}</td>
+            <td class="html-adjust">{$form.date_format.html}&nbsp;&nbsp;&nbsp;{$form.time_format.label}&nbsp;&nbsp;{$form.time_format.html}</td> 
+        </tr>
+        <tr id="noteRows" {if $action neq 2 && ($form.data_type.value.0.0 != 4)}class="hide-block"{/if}>
+            <td class="label">{$form.note_rows.label}</td>
+            <td class="html-adjust">{$form.note_rows.html}</td> 
+        </tr>
+	    <tr id="noteColumns" {if $action neq 2 && ($form.data_type.value.0.0 != 4)}class="hide-block"{/if}>
+            <td class="label">{$form.note_columns.label}</td>
+            <td class="html-adjust">{$form.note_columns.html}</td>
+        </tr>
+        <tr>
+            <td class="label">{$form.weight.label}</td>
+            <td>{$form.weight.html|crmReplace:class:two}
+                {if $action neq 4}
+                <span class="description">{ts}Weight controls the order in which fields are displayed in a group. Enter a positive or negative integer - lower numbers are displayed ahead of higher numbers.{/ts}</span>
+                {/if}
+            </td>
+        </tr>
+        <tr id="hideDefault" {if $action eq 2 && ($form.data_type.value.0.0 < 4 && $form.data_type.value.1.0 NEQ 'Text')}class="hide-block"{/if}>
+            <td title="hideDefaultValTxt" class="label">{$form.default_value.label}</td>
+            <td title="hideDefaultValDef" class="html-adjust">{$form.default_value.html}</td>
+        </tr>
+        <tr id="hideDesc" {if $action neq 4 && $action eq 2 && ($form.data_type.value.0.0 < 4 && $form.data_type.value.1.0 NEQ 'Text')}class="hide-block"{/if}>
+            <td title="hideDescTxt" class="label">&nbsp;</td>
+            <td title="hideDescDef" class="html-adjust"><span class="description">{ts}If you want to provide a default value for this field, enter it here. For date fields, format is YYYY-MM-DD.{/ts}</span></td>
+        </tr>
+        <tr>
+            <td class="label">{$form.help_pre.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_custom_field' field='help_pre' id=$id}{/if}</td>
+            <td class="html-adjust">{$form.help_pre.html|crmReplace:class:huge}</td>
+        </tr>
+        <tr>
+            <td class="label">{$form.help_post.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_custom_field' field='help_post' id=$id}{/if}</td>
+            <td class="html-adjust">{$form.help_post.html|crmReplace:class:huge}
+                {if $action neq 4}
+                    <span class="description">{ts}Explanatory text displayed to users for this field.{/ts}</span>
+                {/if}
+            </td>
+        </tr>
+        <tr>
+            <td class="label">{$form.is_required.label}</td>
+            <td class="html-adjust">{$form.is_required.html}</td>
+        </tr>
+        <tr id ="is_searchable">
+            <td class="label">{$form.is_searchable.label}</td>
+            <td class="html-adjust">{$form.is_searchable.html}</td>
+            {if $action neq 4}
+                <span class="description">{ts}Can you search on this field in the Advanced and component search forms? NOTE: This feature is available to custom fields used for <strong>Contacts (individuals, organizations and househoulds), Contributions, Pledges, Memberships, Event Participants, Activities, and Relationships</strong>.{/ts}</span>
+            {/if}        
+        </tr>
+        <tr id="searchByRange" {if $action eq 2 && $form.is_searchable.value && ($form.data_type.value.0.0 eq 1 OR $form.data_type.value.0.0 eq 2 OR $form.data_type.value.0.0 eq 3 OR $form.data_type.value.0.0 eq 5) && ($form.data_type.value.1.0 eq 'Text' OR $form.data_type.value.1.0 eq 'Date')} class="show-block"{else} class="hide-block"{/if} >
+	        <td class="label">{$form.is_search_range.label}</td>
+            <td class="html-adjust">{$form.is_search_range.html}</td>
+        </tr>
+        <tr>
+            <td class="label">{$form.is_active.label}</td>
+            <td class="html-adjust">{$form.is_active.html}</td>
+        </tr>    
+        <tr>
+            <td class="label">{$form.is_view.label}</td>
+            <td class="html-adjust">{$form.is_view.html}
+                <span class="description">{ts}Is this field set by PHP code (via a custom hook). This field will not be updated by CiviCRM.{/ts}</span>
+            </td>
+        </tr>
+    </table>
     <div id="crm-submit-buttons" class="form-item">
         <dl>
 	    {if $action ne 4}
@@ -252,7 +235,7 @@ function custom_option_html_type( ) {
         if ( ((data_type == 1 || data_type == 2 || data_type == 3) && (html_type == "Text")) || data_type == 5) {
             if (chkbox.checked) {
 		        document.getElementsByName("is_search_range")[0].checked = true;
-        	    document.getElementById("searchByRange").style.display = "block";
+                cj("#searchByRange").show();
             } else {
                 clearSearchBoxes( );
             }
@@ -268,7 +251,7 @@ function custom_option_html_type( ) {
         if ( action != 2 ) {
 	    document.getElementsByName("is_searchable")[0].checked   = false; 
 	    document.getElementsByName("is_search_range")[1].checked = true;
-	    document.getElementById("searchByRange").style.display = "none";
+	    cj("#searchByRange").hide();
         } 	
     }
 </script>
