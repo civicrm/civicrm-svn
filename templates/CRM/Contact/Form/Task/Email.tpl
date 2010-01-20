@@ -19,7 +19,7 @@
 <tr id="cc" {if ! $form.cc_id.value}style="display:none;"{/if}><td class="label">{$form.cc_id.label}</td><td>{$form.cc_id.html}</td></tr>
 <tr id="bcc" {if ! $form.bcc_id.value}style="display:none;"{/if}><td class="label">{$form.bcc_id.label}</td><td>{$form.bcc_id.html}</td></tr>
 <tr>
-    <td class="label">{$form.subject.label}<br />{help id="id-message-text" file="CRM/Contact/Form/Task/Email.hlp"}</td>
+    <td class="label">{$form.subject.label}</td>
     <td>
         {$form.subject.html|crmReplace:class:huge}&nbsp;
         <a href="#" onClick="return showToken('Subject', 3);">{$form.token3.label}</a>

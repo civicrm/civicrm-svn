@@ -15,6 +15,7 @@
 	    {$form.token2.html}
 	</div>
     </span>
+    <div class="messageHelp">{help id="id-message-text" file="CRM/Contact/Form/Task/Email.hlp"}</div>
     <h3 class="head"> 
 	<span class="ui-icon ui-icon-triangle-1-e" id='html'></span><a href="#">{ts}HTML Format{/ts}</a>
     </h3>

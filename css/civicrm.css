@@ -2218,4 +2218,12 @@ th.sorting_desc {
 /* Date plugin */
 #crm-container div.batch-update {
   	 overflow: visible; 
-	}
+}
+
+/* Help text in Send Mail*/
+#crm-container div.messageHelp{
+    z-index : 1;
+    position: absolute;
+    left    : 160px;
+    margin  : 8px;
+}
