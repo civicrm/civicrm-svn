@@ -82,7 +82,7 @@ function custom_option_html_type( ) {
     }
 
     if ( data_type_id == 4 ) {
-        cj("#noteCloumns").show();
+        cj("#noteColumns").show();
         cj("#noteRows").show();
     } else {
         cj("#noteColumns").hide();
@@ -189,10 +189,11 @@ function custom_option_html_type( ) {
         </tr>
         <tr id ="is_searchable">
             <td class="label">{$form.is_searchable.label}</td>
-            <td class="html-adjust">{$form.is_searchable.html}</td>
-            {if $action neq 4}
-                <span class="description">{ts}Can you search on this field in the Advanced and component search forms? NOTE: This feature is available to custom fields used for <strong>Contacts (individuals, organizations and househoulds), Contributions, Pledges, Memberships, Event Participants, Activities, and Relationships</strong>.{/ts}</span>
-            {/if}        
+            <td class="html-adjust">{$form.is_searchable.html}
+                {if $action neq 4}
+                    <br /><span class="description">{ts}Can you search on this field in the Advanced and component search forms? NOTE: This feature is available to custom fields used for <strong>Contacts (individuals, organizations and househoulds), Contributions, Pledges, Memberships, Event Participants, Activities, and Relationships</strong>.{/ts}</span>
+                {/if}        
+            </td>
         </tr>
         <tr id="searchByRange" {if $action eq 2 && $form.is_searchable.value && ($form.data_type.value.0.0 eq 1 OR $form.data_type.value.0.0 eq 2 OR $form.data_type.value.0.0 eq 3 OR $form.data_type.value.0.0 eq 5) && ($form.data_type.value.1.0 eq 'Text' OR $form.data_type.value.1.0 eq 'Date')} class="show-block"{else} class="hide-block"{/if} >
 	        <td class="label">{$form.is_search_range.label}</td>
