@@ -844,7 +844,9 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
         // send copy to assignee contacts.CRM-4509
         $mailStatus = '';
-        if ( !CRM_Utils_Array::crmIsEmptyArray($params['assignee_contact_id']) ) {
+        $config   =& CRM_Core_Config::singleton( );
+        
+        if ( !CRM_Utils_Array::crmIsEmptyArray($params['assignee_contact_id']) && $config->activityAssigneeNotification ) {
             $mailToContacts = array( );
             $assigneeContacts = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $activity->id, true, false );
            

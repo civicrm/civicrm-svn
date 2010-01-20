@@ -482,8 +482,17 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         // send copy to selected contacts.        
         $mailStatus = '';
         $mailToContacts = array( );
+
+        //CRM-5695
+        //check for notification settings for assignee contacts
+        $selectedContacts = array( 'contact_check' );
         
-        foreach( array( 'contact_check', 'assignee_contact_id' ) as $val ) {
+        $config   =& CRM_Core_Config::singleton( );
+        if ( $config->activityAssigneeNotification ) {
+            $selectedContacts[] = 'assignee_contact_id';  
+        }
+        
+        foreach( $selectedContacts as $dnt => $val ) {
             if ( array_key_exists ( $val, $params ) && !CRM_Utils_array::crmIsEmptyArray($params[$val]) ) {
                 if ( $val == 'contact_check' ) {
                     $mailStatus = ts("A copy of the activity has also been sent to selected contacts(s).");  
