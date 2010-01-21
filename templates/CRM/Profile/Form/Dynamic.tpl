@@ -181,8 +181,14 @@ target_element_type ="block"
 field_type          ="radio"
 invert              = 0
 }
+{elseif $statusMessage}
+    <div class="messages status">
+      <dl>
+        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+        <dd>{$statusMessage}</dd>
+      </dl>
+    </div>
 {/if}
-
 {literal}
 <script type="text/javascript">
     
