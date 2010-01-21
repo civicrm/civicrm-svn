@@ -1,4 +1,8 @@
 <?php // no direct access
+/*
+ * Copyright (C) 2009 Elin Waring
+ * Licensed to CiviCRM under the Academic Free License version 3.0.
+ */
 defined('_JEXEC') or die('Restricted access'); ?>
 <?php if ( $this->params->def( 'show_page_title', 1 ) ) : ?>
 	<div class="componentheading <?php echo $this->params->get( 'pageclass_sfx' ); ?>">
