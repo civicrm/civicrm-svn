@@ -282,22 +282,19 @@ class CRM_Profile_Form extends CRM_Core_Form
             if ( $this->_id ) {
                 list( $contactType, $contactSubType ) = 
                     CRM_Contact_BAO_Contact::getContactTypes( $this->_id );
-                if ( ( $profileType != 'Contact' ) && 
-                     ( $contactType != $profileType ) && 
-                     ! CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
-                    $return = true;
-                    if ( !$statusMessage ) {
-                        $statusMessage =  ts('This profile is not configured for "%1" contact type.', 
-                                             array( 1 => $contactType ) );
-                    }
+
+                $profileSubType = false;
+                if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
+                    $profileSubType = $profileType;
+                    $profileType    = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
                 }
-                if ( $contactSubType && 
-                     CRM_Contact_BAO_ContactType::isaSubType( $profileType ) && 
-                     ( $profileType != $contactSubType ) ) {
+
+                if ( ($profileType != 'Contact') && 
+                     (($profileSubType && $contactSubType && ($profileSubType != $contactSubType)) ||
+                      ($profileType    !=  $contactType)) ) {
                     $return = true;
                     if ( !$statusMessage ) {
-                        $statusMessage =  ts('This profile is configured for contact type "%1". It can not be used to edit contacts of other types.', 
-                                             array( 1 => $profileType ) );
+                        $statusMessage =  ts('This profile is configured for contact type "%1". It can not be used to edit contacts of other types', array( 1 => $profileSubType ? $profileSubType : $profileType ) );
                     }
                 }
             }
