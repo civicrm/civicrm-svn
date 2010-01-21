@@ -1971,9 +1971,11 @@ class HTML_QuickForm extends HTML_Common
             // iterate over all elements, calling their exportValue() methods
             foreach (array_keys($this->_elements) as $key) {
                 $value = $this->_elements[$key]->exportValue($this->_submitValues, true);
-                
-                //filter the value across XSS vulnerability issues.
-                $fldName = $this->_elements[$key]->_attributes['name'];                
+                $fldName = null;
+                if ( isset( $this->_elements[$key]->_attributes['name'] ) ) {
+					//filter the value across XSS vulnerability issues.
+					$fldName = $this->_elements[$key]->_attributes['name'];                
+				}
                 if ( in_array( $this->_elements[$key]->_type, array('text', 'textarea') ) 
                      && !in_array( $fldName, $skipFields ) ) {
                     //here value might be array or single value.
