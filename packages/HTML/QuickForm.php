@@ -1963,6 +1963,7 @@ class HTML_QuickForm extends HTML_Common
                              'premiums_intro_text',
                              'honor_block_text',
                              'label', // This is needed for FROM Email Address configuration. dgg
+                             'url',  // This is needed for navigation items urls
                              );
                                     
         $values = array();

@@ -797,6 +797,8 @@ class Installer extends InstallRequirements {
                 module_rebuild_cache( );
                 // now enable civicrm module.
                 module_enable( array('civicrm') );
+                // clear block and page cache, to make sure civicrm link is present in navigation block
+                cache_clear_all();
                 
                 //add basic drupal permissions
                 db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', access CiviMail subscribe/unsubscribe pages, access all custom data, access uploaded files, make online contributions, profile listings and forms, register for events, view event info, view event participants\') WHERE rid IN (1, 2)' );
