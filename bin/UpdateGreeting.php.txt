@@ -60,7 +60,7 @@ class CRM_UpdateGreeting {
     public function updateGreeting( )
     {
 	    $config =& CRM_Core_Config::singleton();
-	    $contactType = CRM_Utils_Request::retrieve( 'ct', 'String', CRM_Core_DAO::$_nullArray );
+        $contactType = CRM_Utils_Request::retrieve( 'ct', 'String', CRM_Core_DAO::$_nullArray );
         if ( ! in_array( $contactType,
                          array( 'Individual', 'Household', 'Organization' ) ) ) {
             CRM_Core_Error::fatal( ts('Invalid Contact Type.') );
@@ -88,10 +88,10 @@ class CRM_UpdateGreeting {
                                                            "value");
             $valueID = array_pop( $defaulValueID );
         }
-            
+        
         $filter =  array( 'contact_type'  => $contactType, 
                           'greeting_type' => $greeting );
-    
+        
         $allGreetings   = CRM_Core_PseudoConstant::greeting( $filter );            
         $originalGreetingString = $greetingString = CRM_Utils_Array::value( $valueID, $allGreetings );
         if ( !$greetingString ) {
@@ -116,51 +116,44 @@ class CRM_UpdateGreeting {
         
         //FIXME : apiQuery should handle these clause.
         $filterContactIds = array( );
-        $idFldName = $displayFldName = null;
-        if ( $greeting == 'email_greeting' ) {
-            $idFldName      = 'email_greeting_id';
-            $displayFldName = 'email_greeting_display';
-        } else if ( $greeting == 'postal_greeting' ) {
-            $idFldName      = 'postal_greeting_id';
-            $displayFldName = 'postal_greeting_display';
-        } else if ( $greeting == 'addressee' ) {
-            $idFldName      = 'addressee_id';
-            $displayFldName = 'addressee_display';
-        }
-        
-        if ( $idFldName ) {
-            $restWhereClause = " AND {$idFldName} IS NOT NULL";
-            if ( !$processAll && $displayFldName ) {
-                $restWhereClause .= " AND {$displayFldName} IS NULL";
+        if ( !$processAll ) {
+            $idFldName = null;
+            if ( $greeting == 'email_greeting' ) {
+                $idFldName = 'email_greeting_id';
+            } else if ( $greeting == 'postal_greeting' ) {
+                $idFldName = 'postal_greeting_id';
+            } else if ( $greeting == 'addressee' ) {
+                $idFldName = 'addressee_id';
             }
-            
-            $sql = "
+            if ( $idFldName ) {
+                $sql = "
 SELECT DISTINCT id 
   FROM civicrm_contact 
  WHERE contact_type = %1 
-       {$restWhereClause}
+   AND {$idFldName} IS NOT NULL
    ";
-            $dao = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $contactType, 'String' ) ) );
-            while ( $dao->fetch( ) ) {
-                $filterContactIds[] = $dao->id;
+                $dao = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $contactType, 'String' ) ) );
+                while ( $dao->fetch( ) ) {
+                    $filterContactIds[] = $dao->id;
+                }
+            }
+            if ( empty( $filterContactIds ) ) {
+                $filterContactIds[] = 0;
             }
         }
         
         // retrieve only required contact information
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        if ( empty( $filterContactIds ) ) {
-            $filterContactIds[] = 0;
-        }
         $extraParams[] = array( 'contact_type', '=', $contactType, 0, 0 );
-        
         list($greetingDetails)  = CRM_Mailing_BAO_Mailing::getDetails( $filterContactIds, 
                                                                        $greetingsReturnProperties, 
                                                                        false, false, $extraParams );
+        
         // perform token replacement and build update SQL
         $contactIds = array( );
         $cacheFieldQuery = "UPDATE civicrm_contact SET {$greeting}_display = CASE id ";
         foreach ( $greetingDetails as $contactID => $contactDetails ) {
-            if ( !in_array( $contactID, $filterContactIds ) ) {
+            if ( !$processAll && !in_array( $contactID, $filterContactIds ) ) {
                 continue;
             }
             
