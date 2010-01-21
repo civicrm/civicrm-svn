@@ -40,7 +40,7 @@ body,html,h1{
     width: 325px;  
     background-position: 97% 50%; 
     background-repeat: no-repeat; 
-    background-image: url("images/openid/openid.gif"); 
+    background-image: url("images/openid/openid.ico"); 
 } 
 #openid-providers { 
     position: absolute; 
