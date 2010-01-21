@@ -287,7 +287,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                      ! CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
                     $return = true;
                     if ( !$statusMessage ) {
-                        $statusMessage =  ts('This profile is not configured for "%1" contact type. It can not be used to edit contacts of other types.', 
+                        $statusMessage =  ts('This profile is not configured for "%1" contact type.', 
                                              array( 1 => $contactType ) );
                     }
                 }

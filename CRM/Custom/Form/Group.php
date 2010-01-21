@@ -134,7 +134,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             }
             
             if( in_array('', $fields['extends'][1]) && count($fields['extends'][1]) > 1) {
-                $errors['extends'] = ts("Can not combine other option with 'Any'. It doesn't make any sense.");
+                $errors['extends'] = ts("Can not combine other option with 'Any'. ");
             }  
         }
         
