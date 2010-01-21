@@ -134,7 +134,7 @@ class CRM_Utils_File {
      * @access public 
      * @static 
      */ 
-    public function cleanDir( $target ) {
+    public function cleanDir( $target, $rmdir = true ) {
         static $exceptions = array( '.', '..' );
 
         if ( $sourcedir = @opendir( $target ) ) {
@@ -143,14 +143,17 @@ class CRM_Utils_File {
                     $object = $target . DIRECTORY_SEPARATOR . $sibling;
                     
                     if ( is_dir( $object ) ) {
-                        CRM_Utils_File::cleanDir( $object );
+                        CRM_Utils_File::cleanDir( $object, $rmdir );
                     } else if ( is_file( $object ) ) {
                         $result = @unlink( $object );
                     }
                 }
             }
             closedir( $sourcedir );
-            $result = @rmdir( $target );
+            
+            if ( $rmdir ) {
+                $result = @rmdir( $target );
+            }
         }
     }
 
