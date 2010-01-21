@@ -107,49 +107,60 @@ class CRM_UpdateGreeting {
             $greetingsReturnProperties = array_fill_keys( array_values( $tokens ), 1 );
         }
         
-        // retrieve only required contact information
-        require_once 'CRM/Mailing/BAO/Mailing.php';
-        $extraParams[] = array( 'contact_type', '=', $contactType, 0, 0 );
-        list($greetingDetails)  = CRM_Mailing_BAO_Mailing::getDetails( CRM_Core_DAO::$_nullArray, 
-                                                                       $greetingsReturnProperties, 
-                                                                       false, false, $extraParams );
         //process all contacts only when force pass. 
         $force = CRM_Utils_Request::retrieve( 'force', 'String', CRM_Core_DAO::$_nullArray ); 
-        $filterContacts   = false;
-        $filterContactIds = array( );
+        $processAll = false;
+        if ( in_array( $force, array( 1, 'true' ) ) ) {
+            $processAll = true;
+        }
+        
         //FIXME : apiQuery should handle these clause.
-        if ( !in_array( $force, array( 1, 'true' ) ) ) { 
-            $idFldName = $diaplayFldName = null;
-            if ( $greeting == 'email_greeting' ) {
-                $idFldName      = 'email_greeting_id';
-                $diaplayFldName = 'email_greeting_display';
-            } else if ( $greeting == 'postal_greeting' ) {
-                $idFldName      = 'postal_greeting_id';
-                $diaplayFldName = 'postal_greeting_display';
-            } else if ( $greeting == 'addressee' ) {
-                $idFldName      = 'addressee_id';
-                $diaplayFldName = 'addressee_display';
+        $filterContactIds = array( );
+        $idFldName = $displayFldName = null;
+        if ( $greeting == 'email_greeting' ) {
+            $idFldName      = 'email_greeting_id';
+            $displayFldName = 'email_greeting_display';
+        } else if ( $greeting == 'postal_greeting' ) {
+            $idFldName      = 'postal_greeting_id';
+            $displayFldName = 'postal_greeting_display';
+        } else if ( $greeting == 'addressee' ) {
+            $idFldName      = 'addressee_id';
+            $displayFldName = 'addressee_display';
+        }
+        
+        if ( $idFldName ) {
+            $restWhereClause = " AND {$idFldName} IS NOT NULL";
+            if ( !$processAll && $displayFldName ) {
+                $restWhereClause .= " AND {$displayFldName} IS NULL";
             }
-            if ( $idFldName && $diaplayFldName ) {
-                $filterContacts = true;
-                $sql = "
+            
+            $sql = "
 SELECT DISTINCT id 
   FROM civicrm_contact 
  WHERE contact_type = %1 
-   AND {$idFldName} IS NOT NULL 
-   AND {$diaplayFldName} IS NULL";
-                $dao = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $contactType, 'String' ) ) );
-                while ( $dao->fetch( ) ) {
-                    $filterContactIds[] = $dao->id;
-                }
+       {$restWhereClause}
+   ";
+            $dao = CRM_Core_DAO::executeQuery( $sql, array( 1 => array( $contactType, 'String' ) ) );
+            while ( $dao->fetch( ) ) {
+                $filterContactIds[] = $dao->id;
             }
         }
         
+        // retrieve only required contact information
+        require_once 'CRM/Mailing/BAO/Mailing.php';
+        if ( empty( $filterContactIds ) ) {
+            $filterContactIds[] = 0;
+        }
+        $extraParams[] = array( 'contact_type', '=', $contactType, 0, 0 );
+        
+        list($greetingDetails)  = CRM_Mailing_BAO_Mailing::getDetails( $filterContactIds, 
+                                                                       $greetingsReturnProperties, 
+                                                                       false, false, $extraParams );
         // perform token replacement and build update SQL
         $contactIds = array( );
         $cacheFieldQuery = "UPDATE civicrm_contact SET {$greeting}_display = CASE id ";
         foreach ( $greetingDetails as $contactID => $contactDetails ) {
-            if ( $filterContacts && !in_array( $contactID, $filterContactIds ) ) {
+            if ( !in_array( $contactID, $filterContactIds ) ) {
                 continue;
             }
             
