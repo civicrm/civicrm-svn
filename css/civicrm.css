@@ -2229,6 +2229,5 @@ th.sorting_desc {
 #crm-container div.messageHelp{
     z-index : 1;
     position: absolute;
-    left    : 160px;
-    margin  : 8px;
+    margin  : 6px 0px 0px 115px;
 }
