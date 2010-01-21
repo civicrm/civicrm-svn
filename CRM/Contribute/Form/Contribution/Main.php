@@ -680,10 +680,10 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
 
         if ( CRM_Utils_Array::value( 'is_for_organization', $fields ) ) {
-            if ( $fields['org_option'] && ! $fields['onbehalfof_id'] ) {
+            if ( CRM_Utils_Array::value( 'org_option',$fields ) && ! $fields['onbehalfof_id'] ) {
                 $errors['organization_id'] = ts('Please select an organization or enter a new one.'); 
             }
-            if ( ! $fields['org_option'] && ! $fields['organization_name'] ) {
+            if ( !CRM_Utils_Array::value( 'org_option',$fields ) && ! $fields['organization_name'] ) {
                 $errors['organization_name'] = ts('Please enter the organization name.'); 
             }
             if ( ! $fields['email'][1]['email'] ) {
