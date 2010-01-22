@@ -236,26 +236,6 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $fields['Individual']['current_employer'] = array( 'name'  => 'organization_name',
                                                            'title' => ts('Current Employer') );
         
-        require_once 'CRM/Core/BAO/UFGroup.php';
-        
-        //group selected and unwanted fields list
-        $groupFieldList = array_merge( CRM_Core_BAO_UFGroup::getFields( $this->_gid ), 
-                                       array( 'note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id' ) 
-                                     );
-        //unset selected fields
-        foreach( $groupFieldList as $key => $value ) {
-            if ( is_integer( $key) ) {
-                unset( $fields['Individual'][$value], $fields['Household'][$value], $fields['Organization'][$value] );
-                continue;
-            }
-            if ( is_array( $defaults['field_name'] ) 
-                && $defaults['field_name']['0'] == $value['field_type'] 
-                && $defaults['field_name']['1'] == $key ) {
-                continue;
-            } 
-            unset( $fields[$value['field_type']][$key] );
-        }
-        
         require_once 'CRM/Core/BAO/Preferences.php';
         $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
         
@@ -300,6 +280,25 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             } else {
                 $fields[$name] = $subTypeFields;
             }
+        }
+        
+        //group selected and unwanted fields list
+        require_once 'CRM/Core/BAO/UFGroup.php';
+        $groupFieldList = array_merge( CRM_Core_BAO_UFGroup::getFields( $this->_gid, false, null, null , null, true ), 
+                                       array( 'note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id' ) 
+                                     );
+        //unset selected fields
+        foreach( $groupFieldList as $key => $value ) {
+            if ( is_integer( $key) ) {
+                unset( $fields['Individual'][$value], $fields['Household'][$value], $fields['Organization'][$value] );
+                continue;
+            }
+            if ( is_array( $defaults['field_name'] ) 
+                && $defaults['field_name']['0'] == $value['field_type'] 
+                && $defaults['field_name']['1'] == $key ) {
+                continue;
+            } 
+            unset( $fields[$value['field_type']][$key] );
         }
         unset( $subTypes );
 

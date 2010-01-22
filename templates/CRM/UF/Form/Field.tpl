@@ -87,15 +87,17 @@
 {literal}
 <script type="text/javascript">
 function showLabel( ) {
-
+    var labelValue = '';
     /* Code to set the Field Label */		
     if (document.forms.Field['field_name[0]'].options[document.forms.Field['field_name[0]'].selectedIndex].value) { 
-        var labelValue = document.forms.Field['field_name[1]'].options[document.forms.Field['field_name[1]'].selectedIndex].text; 
+        if ( document.forms.Field['field_name[1]'].value ) {
+            labelValue = document.forms.Field['field_name[1]'].options[document.forms.Field['field_name[1]'].selectedIndex].text; 
+        }
 
-        if (document.forms.Field['field_name[3]'].value) { 
+        if ( document.forms.Field['field_name[3]'].value ) { 
             labelValue = labelValue + '-' + document.forms.Field['field_name[3]'].options[document.forms.Field['field_name[3]'].selectedIndex].text + ''; 
         }   
-        if (document.forms.Field['field_name[2]'].value) { 
+        if ( document.forms.Field['field_name[2]'].value ) { 
             labelValue = labelValue + ' (' + document.forms.Field['field_name[2]'].options[document.forms.Field['field_name[2]'].selectedIndex].text + ')'; 
         }   
     } else {
