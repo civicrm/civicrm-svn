@@ -69,7 +69,7 @@ function smarty_function_help( $params, &$smarty ) {
     $help = $smarty->fetch( $file );
     return <<< EOT
 <script type="text/javascript"> cj( function() { cj(".helpicon").toolTip(); });</script>
-<div class="helpicon">&nbsp;<span id="{$id}_help" style="display:none">$help</span></div>
+<div class="helpicon">&nbsp;<span id="{$id}_help" style="display:none">$help</span></div>&nbsp;&nbsp;
 EOT;
 }
 
