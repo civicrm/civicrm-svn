@@ -212,7 +212,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         } else {
             $defaults['is_active'] = 1;
         }
-        
+
         if ($this->_action & CRM_Core_Action::ADD) {
             $fieldValues = array('uf_group_id' => $this->_gid);
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_UFField', $fieldValues);
@@ -236,13 +236,24 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $fields['Individual']['current_employer'] = array( 'name'  => 'organization_name',
                                                            'title' => ts('Current Employer') );
         
-        // unset unwanted fields
-        $unsetFieldArray = array( 'note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id' );
+        require_once 'CRM/Core/BAO/UFGroup.php';
         
-        foreach ( $unsetFieldArray as $value ) {
-            unset( $fields['Individual'  ][$value]);
-            unset( $fields['Household'   ][$value]);
-            unset( $fields['Organization'][$value]);
+        //group selected and unwanted fields list
+        $groupFieldList = array_merge( CRM_Core_BAO_UFGroup::getFields( $this->_gid ), 
+                                       array( 'note', 'email_greeting_custom', 'postal_greeting_custom', 'addressee_custom', 'id' ) 
+                                     );
+        //unset selected fields
+        foreach( $groupFieldList as $key => $value ) {
+            if ( is_integer( $key) ) {
+                unset( $fields['Individual'][$value], $fields['Household'][$value], $fields['Organization'][$value] );
+                continue;
+            }
+            if ( is_array( $defaults['field_name'] ) 
+                && $defaults['field_name']['0'] == $value['field_type'] 
+                && $defaults['field_name']['1'] == $key ) {
+                continue;
+            } 
+            unset( $fields[$value['field_type']][$key] );
         }
         
         require_once 'CRM/Core/BAO/Preferences.php';
