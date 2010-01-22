@@ -107,7 +107,7 @@ class CRM_Member_Task {
     
     /**
      * These tasks are the core set of task titles
-     * on contributors
+     * on members
      *
      * @return array the set of task titles 
      * @static

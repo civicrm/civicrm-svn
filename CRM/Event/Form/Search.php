@@ -134,6 +134,13 @@ class CRM_Event_Form_Search extends CRM_Core_Form
 
     protected $_defaults;
 
+    /**
+     * the saved search ID retrieved from the GET vars
+     *
+     * @var int
+     * @access protected
+     */
+    protected $_ssID;
 
     /** 
      * processing needed for buildForm and later 
@@ -161,7 +168,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
         $this->_force   = CRM_Utils_Request::retrieve( 'force', 'Boolean',  $this, false ); 
         $this->_limit   = CRM_Utils_Request::retrieve( 'limit', 'Positive', $this );
         $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'search' );
-
+        $this->_ssID    = CRM_Utils_Request::retrieve( 'ssID',  'Positive', $this );
         $this->assign( "context", $this->_context );
         
         // get user submitted values  

@@ -339,10 +339,51 @@ function civitest_civicrm_customFieldOptions( $fieldID, &$options ) {
     }
 }
 
+/**
+ * The hook_searchTasks is implemented to display the list of actions allowed after doing a search
+ * More examples are shown to call this hook
+ *
+ * @param string $$objectType specifies the component 
+ * @param array  $tasks       the list of actions
+ *
+ * @access public
+ */
 function civitest_civicrm_searchTasks( $objectType, &$tasks ) {
-    $tasks[100] = array( 'title'  => t( 'Hook Action Task' ),
-                         'class'  => 'CRM_Contact_Form_Task_HookSample',
-                         'result' => false );
+    if ( $objectType == 'contact' ) {
+        $tasks[100] = array( 'title'  => t( 'Contact Hook Action Task' ),
+                             'class'  => 'CRM_Contact_Form_Task_HookSample',
+                             'result' => false );
+    }
+    if ( $objectType == 'contribution' ) {
+        $tasks[102] = array( 'title'  => t( 'Contribution Hook Action Task' ),
+                             'class'  => 'CRM_Contribute_Form_Task_SearchTaskHookSample',
+                             'result' => false );
+    } 
+    if ( $objectType == 'membership' ) {
+        $tasks[103] = array( 'title'  => t( 'Member Hook Action Task' ),
+                             'class'  => 'CRM_Member_Form_Task_SearchTaskHookSample',
+                             'result' => false );
+    } 
+    if ( $objectType == 'pledge' ) {
+        $tasks[104] = array( 'title'  => t( 'Pledge Hook Action Task' ),
+                             'class'  => 'CRM_Pledge_Form_Task_SearchTaskHookSample',
+                             'result' => false );
+    }
+    if ( $objectType == 'event' ) {
+        $tasks[105] = array( 'title'  => t( 'Event Hook Action Task' ),
+                             'class'  => 'CRM_Event_Form_Task_SearchTaskHookSample',
+                             'result' => false );
+    }
+    if ( $objectType == 'case' ) {
+        $tasks[106] = array( 'title'  => t( 'Case Hook Action Task' ),
+                             'class'  => 'CRM_Case_Form_Task_SearchTaskHookSample',
+                             'result' => false );
+    }
+    if ( $objectType == 'grant' ) {
+        $tasks[107] = array( 'title'  => t( 'Grant Hook Action Task' ),
+                             'class'  => 'CRM_Grant_Form_Task_SearchTaskHookSample',
+                             'result' => false );
+    }
 }
 
 function civitest_civicrm_validate( $formName, &$fields, &$files, &$form ) {
