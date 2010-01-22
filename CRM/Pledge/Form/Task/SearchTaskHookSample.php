@@ -51,17 +51,16 @@ class CRM_Pledge_Form_Task_SearchTaskHookSample extends CRM_Pledge_Form_Task
     {
         parent::preProcess( );
         $rows = array( );
-        // display name and email of all contact ids
+        // display name and pledge details of all selected contacts
         $pledgeIDs = implode( ',', $this->_pledgeIds );      
         
         $query = "
-SELECT c.display_name as display_name,
-       p.amount       as amount,
-       p.create_date  as create_date    
-FROM   civicrm_contact c,
-       civicrm_pledge p
-WHERE  p.contact_id = c.id
-AND    p.id IN ( $pledgeIDs )";
+    SELECT plg.amount      as amount,
+           plg.create_date as create_date,
+           ct.display_name as display_name
+      FROM civicrm_pledge plg
+INNER JOIN civicrm_contact ct ON ( plg.contact_id = ct.id )       
+     WHERE plg.id IN ( $pledgeIDs )";
         
         $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         while ( $dao->fetch( ) ) {

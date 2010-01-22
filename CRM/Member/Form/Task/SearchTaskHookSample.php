@@ -51,18 +51,17 @@ class CRM_Member_Form_Task_SearchTaskHookSample extends CRM_Member_Form_Task
     {
         parent::preProcess( );
         $rows = array( );
-        // display name and email of all contact ids
+        // display name and membership details of all selected contacts
         $memberIDs = implode( ',', $this->_memberIds );      
         
         $query = "
-SELECT c.display_name as display_name,
-       m.start_date  as start_date,
-       m.end_date    as end_date,
-       m.source      as source      
-FROM   civicrm_contact c,
-       civicrm_membership m
-WHERE  m.contact_id = c.id
-AND    m.id IN ( $memberIDs )";
+    SELECT mem.start_date  as start_date,
+           mem.end_date    as end_date,
+           mem.source      as source,  
+           ct.display_name as display_name    
+FROM       civicrm_membership mem
+INNER JOIN civicrm_contact ct ON ( mem.contact_id = ct.id )     
+WHERE      mem.id IN ( $memberIDs )";
         
         $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         while ( $dao->fetch( ) ) {

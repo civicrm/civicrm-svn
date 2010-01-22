@@ -51,18 +51,17 @@ class CRM_Contribute_Form_Task_SearchTaskHookSample extends CRM_Contribute_Form_
     {
         parent::preProcess( );
         $rows = array();
-        // display name and email of all contact ids
+        // display name and contribution details of all selected contacts
         $contribIDs = implode( ',', $this->_contributionIds);      
         
         $query = "
-SELECT c.display_name  as display_name,
-       co.total_amount as amount,
-       co.receive_date as receive_date,
-       co.source       as source      
-FROM   civicrm_contact c,
-       civicrm_contribution co
-WHERE  co.contact_id = c.id
-AND    co.id IN ( $contribIDs )";
+    SELECT co.total_amount as amount,
+           co.receive_date as receive_date,
+           co.source       as source,   
+           ct.display_name as display_name  
+      FROM civicrm_contribution co 
+INNER JOIN civicrm_contact ct ON ( co.contact_id = ct.id )      
+     WHERE co.id IN ( $contribIDs )";
         
         $dao = CRM_Core_DAO::executeQuery( $query,
                                            CRM_Core_DAO::$_nullArray );

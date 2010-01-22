@@ -51,18 +51,17 @@ class CRM_Grant_Form_Task_SearchTaskHookSample extends CRM_Grant_Form_Task
     {
         parent::preProcess( );
         $rows = array( );
-        // display name and email of all contact ids
+        // display name and grant details of all selectced contacts
         $grantIDs = implode( ',', $this->_grantIds );      
         
         $query = "
-SELECT ct.display_name   as display_name,
-       cg.decision_date  as decision_date,
-       cg.amount_total   as amount_total,
-       cg.amount_granted as amount_granted      
-FROM   civicrm_contact ct,
-       civicrm_grant cg
-WHERE  cg.contact_id = ct.id
-AND    cg.id IN ( $grantIDs )";
+    SELECT grt.decision_date  as decision_date,
+           grt.amount_total   as amount_total,
+           grt.amount_granted as amount_granted,
+           ct.display_name    as display_name      
+      FROM civicrm_grant grt
+INNER JOIN civicrm_contact ct ON ( grt.contact_id = ct.id )       
+     WHERE grt.id IN ( $grantIDs )";
         
         $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         
