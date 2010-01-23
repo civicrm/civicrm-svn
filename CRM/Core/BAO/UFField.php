@@ -493,35 +493,6 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
     }
 
     /**
-     * function to get the profile sub type (eg: staff/student/team ..)
-     *
-     * @param int      $ufGroupId      uf group id 
-     * @param boolean  $contactType    basic contact type, the subtypes should to be limited
-     * @param boolean  $returnMultiple true if multiple subtypes be returned, 
-     *                                 otherwise the first valid subtype is returned
-     *
-     * @return  profile sub_type
-     * @acess public
-     * @static
-     */
-    static function getProfileSubType( $ufGroupId, $contactType = null, $returnMultiple = false ) 
-    {
-        $groupType    = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $ufGroupId, 'group_type' );
-        $profileTypes = $groupType ? explode( ',',  $groupType ) : array( );
-
-        $subTypes     = CRM_Contact_BAO_ContactType::subTypes( $contactType );
-        $profileTypes = array_values( array_intersect($profileTypes, $subTypes) );
-
-        if ( $returnMultiple && ! empty( $profileTypes ) ) {
-            return implode( ',', $profileTypes );
-        }
-        if ( array_key_exists( 0, $profileTypes ) ) {
-            return $profileTypes[0];
-        }
-        return null;
-    }
-
-    /**
      * function to check for mix profiles groups (eg: individual + other contact types)
      *
      * @return  true for mix profile group else false

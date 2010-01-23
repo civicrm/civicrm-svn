@@ -179,17 +179,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             }
         }
 
-        if ( ($mode & CRM_Profile_Form::MODE_REGISTER) &&
-             !array_key_exists('contact_sub_type', $fields) && $profileSubType ) { 
-            // if the subtype element doesn't already exist in the profile AND its a registration mode -
-
-            // In this mode, we don't get/know profile-id and therefore can't determine the profile type 
-            // (which could be a subtype), as the params are submitted via POST.
-            // For now, for such cases, lets plan to add a hidden subtype value.
-            $fields['contact_sub_type_hidden'] = array( 'name'       => 'contact_sub_type_hidden',
-                                                        'field_type' => $profileSubType );
-        }
-
         return $fields;
     }
 
@@ -1437,12 +1426,6 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             }
             
             $form->add('select', $name, $title, $subtypeList, $required);
-        } else if ( $fieldName === 'contact_sub_type_hidden' && $field['field_type'] ) {
-            // if the subtype element doesn't already exist in the profile AND
-            // its a registration mode (_hidden can only be found for registration mode) AND
-            // we know the subtype, we add a hidden subtype element to the profile
-            $form->addElement( 'hidden', 'contact_sub_type', $field['field_type'] );
-
         } else if (in_array($fieldName, array('email_greeting', 'postal_greeting', 'addressee' ) ) ) {
             //add email greeting, postal greeting, addressee, CRM-4575
             $gId = $form->get('gid') ? $form->get('gid') : CRM_Utils_Array::value('group_id', $field);

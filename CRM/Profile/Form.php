@@ -367,6 +367,8 @@ class CRM_Profile_Form extends CRM_Core_Form
         // in create or register mode
         $stateCountryMap = array( );
         
+        $hiddenSubtype   = false;
+
         // add the form elements
         foreach ($this->_fields as $name => $field ) {
             // make sure that there is enough permission to expose this field
@@ -392,6 +394,15 @@ class CRM_Profile_Form extends CRM_Core_Form
                 $stateCountryMap[$index][$prefixName] = $name;
             }
             
+            if ( !$hiddenSubtype && CRM_Contact_BAO_ContactType::isaSubType( $field['field_type'] ) ) {
+                // In registration mode params are submitted via POST and we don't have any clue about 
+                // profile-id or the profile-type (which could be a subtype). To generalize the behavior and 
+                // simplify the process lets always add the hidden subtype value if there is any, and we won't
+                // have to compute it while processing.
+                $this->addElement( 'hidden', 'contact_sub_type_hidden', $field['field_type'] );
+                $hiddenSubtype = true;
+            }
+
             CRM_Core_BAO_UFGroup::buildProfile($this, $field, $this->_mode );
             
             if ($field['add_to_group_id']) {
