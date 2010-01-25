@@ -24,7 +24,7 @@
           var element_time  = "#{$timeElement}";
           var time_format   = cj( element_time ).attr('timeFormat');
           {literal}
-              cj(element_time).timeEntry({ show24Hours : time_format });
+              cj(element_time).timeEntry({ show24Hours : time_format, spinnerImage: '' });
           {/literal}
       {/if}
       var currentYear = new Date().getFullYear();
