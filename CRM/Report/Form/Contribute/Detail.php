@@ -115,25 +115,35 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                    'civicrm_contribution' =>
                    array( 'dao'     => 'CRM_Contribute_DAO_Contribution',
                           'fields'  =>
-                          array( 'total_amount'  => array( 'title'    => ts( 'Amount' ),
-                                                           'required' => true,
-                                                           'statistics'   => 
-                                                           array('sum'    => ts( 'Amount' )), ),
-                                 'trxn_id'       => null,
-                                 'receive_date'  => array( 'default' => true ),
-                                 'receipt_date'  => null,
+                          array(
+                                 'contribution_type_id' => array( 'title'   => ts('Contribution Type'),
+                                                                  'default' => true,
+                                                                ),
+                                 'trxn_id'              => null,
+                                 'receive_date'         => array( 'default' => true ),
+                                 'receipt_date'         => null,
+                                 'total_amount'         => array( 'title'        => ts( 'Amount' ),
+                                                                    'required'     => true,
+                                                                    'statistics'   => 
+                                                                          array('sum' => ts( 'Amount' )),
+                                                                  ),
                                  ),
                           'filters' =>             
                           array( 'receive_date'           => 
-                                 array( 'operatorType' => CRM_Report_Form::OP_DATE ),
-                                 'contribution_status_id' => 
-                                 array( 'title'        => ts( 'Contribution Status' ), 
+                                    array( 'operatorType' => CRM_Report_Form::OP_DATE ),
+                                 'contribution_type_id'   =>
+                                    array( 'title'        => ts( 'Contribution Type' ), 
+                                           'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                           'options'      => CRM_Contribute_PseudoConstant::contributionType( )
+                                         ),
+                                'contribution_status_id' => 
+                                    array( 'title'        => ts( 'Contribution Status' ), 
                                         'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                         'options'      => CRM_Contribute_PseudoConstant::contributionStatus( ),
                                         'default'      => array( 1 ),
                                         ),
                                  'total_amount'           => 
-                                 array( 'title'        => ts( 'Contribution Amount' ) ),
+                                    array( 'title'        => ts( 'Contribution Amount' ) ),
                                  ),
                           'grouping'=> 'contri-fields',
                           ),
@@ -329,6 +339,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $checkList  = array();
         $entryFound = false;
         $display_flag = $prev_cid = $cid =  0;
+        $contributionTypes = CRM_Contribute_PseudoConstant::contributionType( );
         
         foreach ( $rows as $rowNum => $row ) {
             if ( !empty($this->_noRepeats) ) {
@@ -404,6 +415,10 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                 $rows[$rowNum]['civicrm_contact_display_name_link' ] = $url;
                 $rows[$rowNum]['civicrm_contact_display_name_hover'] =  
                     ts("View Contact Summary for this Contact.");
+            }
+            if ( $value = CRM_Utils_Array::value( 'civicrm_contribution_contribution_type_id', $row ) ) {
+                $rows[$rowNum]['civicrm_contribution_contribution_type_id'] = $contributionTypes[$value];
+                $entryFound = true;
             }
 
             // skip looking further in rows, if first row itself doesn't 
