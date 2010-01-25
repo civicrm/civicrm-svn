@@ -55,6 +55,7 @@
       <div id="create_org" class="section create_org-section">
 		<div class="label">{$form.organization_name.label}</div>
         <div class="content">{$form.organization_name.html|crmReplace:class:big}</div>
+        <div class="clear"></div>
       </div>
     </div>
  {if $contactEditMode}
@@ -87,10 +88,12 @@
 		<div class="section {$form.phone.$index.phone.id}-section">
             <div class="label">{$form.phone.$index.phone.label}</div>
             <div class="content">{$form.phone.$index.phone.html}</div>
+            <div class="clear"></div>
         </div>
 		<div class="section {$form.email.$index.email.id}-section">
             <div class="label">{$form.email.$index.email.label}</div>
             <div class="content">{$form.email.$index.email.html}</div>
+            <div class="clear"></div>
         </div>
         {/if}
         {if $addressSequence.street_address}
@@ -100,6 +103,7 @@
                 <br class="spacer"/>
                 <span class="description">{ts}Street number, street name, apartment/unit/suite - OR P.O. box{/ts}</span>
             </div>
+            <div class="clear"></div>
         </div>
         {/if}
         {if $addressSequence.supplemental_address_1}
@@ -109,19 +113,21 @@
                 <br class="spacer"/>
                 <span class="description">{ts} Supplemental address info, e.g. c/o, department name, building name, etc.{/ts}</span>
             </div>
+            <div class="clear"></div>
         </div>
         {/if}
         {if $addressSequence.supplemental_address_2}
 		<div class="section {$form.address.$index.supplemental_address_2.id}-section">
             <div class="label">{$form.address.$index.supplemental_address_2.label}</div>
-            <div class="content">{$form.address.$index.supplemental_address_2.html}    
-            </div>
+            <div class="content">{$form.address.$index.supplemental_address_2.html}</div>
+            <div class="clear"></div>
         </div>
         {/if}
         {if $addressSequence.city}
 		<div class="section {$form.address.$index.city.id}<-section">
             <div class="label">{$form.address.$index.city.label}</div>
             <div class="content">{$form.address.$index.city.html}</div>
+            <div class="clear"></div>
         </div>
         {/if}
         {if $addressSequence.postal_code}
@@ -134,18 +140,21 @@
                     <span class="description">{ts}Enter optional 'add-on' code after the dash ('plus 4' code for U.S. addresses).{/ts}</span>
                 {/if}
             </div>
+            <div class="clear"></div>
         </div>
         {/if}
         {if $addressSequence.country}
 		<div class="section {$form.address.$index.country_id.id}-section">
             <div class="label">{$form.address.$index.country_id.label}</div>
             <div class="content">{$form.address.$index.country_id.html}</div>
+            <div class="clear"></div>
         </div>
         {/if}
         {if $addressSequence.state_province}
 		<div class="section {$form.address.$index.state_province_id.id}-section">
             <div class="label">{$form.address.$index.state_province_id.label}</div>
             <div class="content">{$form.address.$index.state_province_id.html}</div>
+            <div class="clear"></div>
         </div>
         {/if}
         {if $contactEditMode and $form.location.$index.address.geo_code_1.label}
@@ -156,6 +165,7 @@
                 <span class="description">
                     {ts}Latitude and longitude may be automatically populated by enabling a Mapping Provider.{/ts} {docURL page="Mapping and Geocoding"}</span>
             </div>
+            <div class="clear"></div>
         </div>
         {/if}
     </div>
