@@ -90,6 +90,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function __construct($name = NULL, array $data = array(), $dataName = '' ) {
         parent::__construct($name, $data, $dataName);
+
+        //  create test database
+        self::$utils = new Utils( $GLOBALS['mysql_host'],
+                                $GLOBALS['mysql_user'],
+                                $GLOBALS['mysql_pass'] );        
+        
     }
 
     /**
@@ -123,11 +129,6 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     private function _populateDB() {
 
-            //  create test database
-            self::$utils = new Utils( $GLOBALS['mysql_host'],
-                                $GLOBALS['mysql_user'],
-                                $GLOBALS['mysql_pass'] );
-
             $query = "DROP DATABASE IF EXISTS civicrm_tests_dev;"
                    . "CREATE DATABASE civicrm_tests_dev DEFAULT"
                    . " CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
@@ -141,27 +142,29 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             }
 
             //  initialize test database
-            $sql_file = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
-                . "/sql/civicrm.mysql";
             $sql_file1 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
-                . "/sql/civicrm_data.mysql";
+                . "/sql/civicrm.mysql";
             $sql_file2 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
+                . "/sql/civicrm_data.mysql";
+            $sql_file3 = dirname( dirname( dirname( dirname( __FILE__ ) ) ) )
                 . "/sql/test_data.mysql";
-            $query = file_get_contents( $sql_file );
             $query1 = file_get_contents( $sql_file1 );
             $query2 = file_get_contents( $sql_file2 );
-            if ( self::$utils->do_query($query) === false ) {
+            $query3 = file_get_contents( $sql_file3 );
+            if ( self::$utils->do_query($query1) === false ) {
                 echo "Loading schema in setUp crapped out. Aborting.";
                 exit;
             }
-            if ( self::$utils->do_query($query1) === false ) {
+            if ( self::$utils->do_query($query2) === false ) {
                 echo "Cannot load civicrm_data.mysql. Aborting.";
                 exit;
             }
-            if ( self::$utils->do_query($query2) === false ) {
+            if ( self::$utils->do_query($query3) === false ) {
                 echo "Cannot load test_data.mysql. Aborting.";
                 exit;
-            }                
+            }
+            
+            unset( $query, $query1, $query2);
     }
 
     /**
