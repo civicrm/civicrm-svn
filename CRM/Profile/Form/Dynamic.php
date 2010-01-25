@@ -81,7 +81,7 @@ class CRM_Profile_Form_Dynamic extends CRM_Profile_Form
     public function buildQuickForm()
     {
         $this->addButtons(array(
-                                array ('type'      => 'submit',
+                                array ('type'      => 'upload',
                                        'name'      => ts('Save'),
                                        'isDefault' => true)
                                 )

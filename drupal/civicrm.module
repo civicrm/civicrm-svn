@@ -791,7 +791,7 @@ function civicrm_add_jquery( &$html ) {
     return CRM_Utils_String::addJqueryFiles( $html );
 }
 
-function  civicrm_form_alter( $form, $formValues, $formID ) {
+function  civicrm_form_alter( &$form, $formValues, $formID ) {
     if ( in_array( $formID, array( 'user_admin_perm', 'system_clean_url_settings' ) ) && !empty( $formValues['post'] ) ) {
         // reset navigation for permissions changed and clean url
         if ( ! civicrm_initialize( ) ) {
@@ -799,5 +799,7 @@ function  civicrm_form_alter( $form, $formValues, $formID ) {
         }
         require_once 'CRM/Core/BAO/Navigation.php';
         CRM_Core_BAO_Navigation::resetNavigation( );
+    } else if ( $formID == 'user_register' ) {
+        $form['#attributes']['enctype'] = 'multipart/form-data';
     }
 }
