@@ -64,7 +64,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
         //get the mapping name displayed if the mappingId is set
         $mappingId = $this->get('loadMappingId');
         if ( $mappingId ) {
-            $mapDAO =& new CRM_Core_DAO_Mapping();
+            $mapDAO = new CRM_Core_DAO_Mapping();
             $mapDAO->id = $mappingId;
             $mapDAO->find( true );
             $this->assign('loadedMapping', $mappingId);
@@ -245,7 +245,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
     
             // there is no fileName since this is a sql import
             // so fudge it
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $errorFile =$config->uploadDir . "sqlImport.error.log"; 
             if ( $fd = fopen( $errorFile, 'w' ) ) {
                 fwrite($fd, implode('\n', $errorMessage));
@@ -312,7 +312,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
 
             list($id, $first, $second) = explode('_', $mapper[$key][0]);
             if ( ($first == 'a' && $second == 'b') || ($first == 'b' && $second == 'a') ) {
-                $relationType =& new CRM_Contact_DAO_RelationshipType();
+                $relationType = new CRM_Contact_DAO_RelationshipType();
                 $relationType->id = $id;
                 $relationType->find(true);
                 eval( '$mapperRelatedContactType[$key] = $relationType->contact_type_'.$second.';');
@@ -329,7 +329,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
             }
         }
         
-        $parser =& new CRM_Import_Parser_Contact( $mapperKeys, $mapperLocTypes,
+        $parser = new CRM_Import_Parser_Contact( $mapperKeys, $mapperLocTypes,
                                                   $mapperPhoneTypes, $mapperRelated, $mapperRelatedContactType,
                                                   $mapperRelatedContactDetails, $mapperRelatedContactLocType, 
                                                   $mapperRelatedContactPhoneType);
@@ -343,7 +343,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
             $header = array();
             list($id, $first, $second) = explode('_', $mapper[$key][0]);
             if ( ($first == 'a' && $second == 'b') || ($first == 'b' && $second == 'a') ) {
-                $relationType =& new CRM_Contact_DAO_RelationshipType();
+                $relationType = new CRM_Contact_DAO_RelationshipType();
                 $relationType->id = $id;
                 $relationType->find(true);
                 
@@ -497,7 +497,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
     
             // there is no fileName since this is a sql import
             // so fudge it
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $errorFile =$config->uploadDir . "sqlImport.error.log"; 
             if ( $fd = fopen( $errorFile, 'w' ) ) {
                 fwrite($fd, implode('\n', $errorMessage));
@@ -551,7 +551,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
      * @access public
      * @static
      */
-    static function newTagRule( &$params ) {
+    static function newTagRule( $params ) {
         if (CRM_Utils_Array::value('_qf_Import_refresh', $_POST)) {
             return true;
         }

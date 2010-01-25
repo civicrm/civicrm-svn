@@ -142,7 +142,7 @@ function &civicrm_membership_status_update( &$params )
     }
     
     require_once 'CRM/Member/BAO/MembershipStatus.php';
-    $membershipStatusBAO =& new CRM_Member_BAO_MembershipStatus( );
+    $membershipStatusBAO = new CRM_Member_BAO_MembershipStatus( );
     $membershipStatusBAO->id = $params['id'];
     if ($membershipStatusBAO->find(true)) {
         $fields = $membershipStatusBAO->fields( );

@@ -169,7 +169,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         $errorMessage = null;
         
         //for date-Formats
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $dateType = $session->get("dateTypes");
         foreach ($params as $key => $val) {
             if( $val ) {
@@ -256,7 +256,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
         $formatted['skipRecentView'] = true;
         
         //for date-Formats
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $dateType = $session->get("dateTypes");
      
         $customFields = CRM_Core_BAO_CustomField::getFields( CRM_Utils_Array::value( 'contact_type',$params ) );
@@ -365,7 +365,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
                         $noteID = array();
                         $contactID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution', $ids['contribution'], 'contact_id' );                       
                         require_once 'CRM/Core/BAO/Note.php';
-                        $daoNote = & new CRM_Core_BAO_Note();
+                        $daoNote = new CRM_Core_BAO_Note();
                         $daoNote->entity_table = 'civicrm_contribution';
                         $daoNote->entity_id    = $ids['contribution'];
                         if ( $daoNote->find(true) ) {

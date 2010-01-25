@@ -61,7 +61,7 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
                                                        $this, false, 0);
 
         if ( $this->_pid  ) {
-            $dao =& new CRM_Contribute_DAO_PremiumsProduct();
+            $dao = new CRM_Contribute_DAO_PremiumsProduct();
             $dao->id = $this->_pid;
             $dao->find(true);
             $temp = CRM_Contribute_PseudoConstant::products();
@@ -84,7 +84,7 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
         $defaults = array();
 
         if ( $this->_pid ) {
-            $dao =& new CRM_Contribute_DAO_PremiumsProduct();
+            $dao = new CRM_Contribute_DAO_PremiumsProduct();
             $dao->id = $this->_pid;
             $dao->find(true);
             $defaults['product_id']    = $dao->product_id;
@@ -94,7 +94,7 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
             $pageID    = CRM_Utils_Request::retrieve('id', 'Positive',
                                                      $this, false, 0);
             require_once 'CRM/Contribute/DAO/Premium.php';
-            $dao =& new CRM_Contribute_DAO_Premium();
+            $dao = new CRM_Contribute_DAO_Premium();
             $dao->entity_table = 'civicrm_contribution_page';
             $dao->entity_id = $pageID; 
             $dao->find(true);
@@ -118,13 +118,13 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
     public function buildQuickForm()
     {
         if ( $this->_action & CRM_Core_Action::DELETE ) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $url = CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=update&id='.$this->_id.'&subPage=Premium'); 
             $session->pushUserContext( $url );
             if (CRM_Utils_Request::retrieve('confirmed', 'Boolean',
                                             CRM_Core_DAO::$_nullObject, '', '', 'GET') ) {
                 require_once 'CRM/Contribute/DAO/PremiumsProduct.php';
-                $dao =& new CRM_Contribute_DAO_PremiumsProduct();
+                $dao = new CRM_Contribute_DAO_PremiumsProduct();
                 $dao->id = $this->_pid;
                 $dao->delete();
                 CRM_Core_Session::setStatus( ts('Selected Premium Product has been removed from this Contribution Page.') );
@@ -157,7 +157,7 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
             return;
         }
         
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $url = CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=update&id='.$this->_id.'&subPage=Premium'); 
         $session->pushUserContext( $url );
 
@@ -166,7 +166,7 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
         $this->addElement('text','weight', ts('Weight'),CRM_Core_DAO::getAttribute('CRM_Contribute_DAO_PremiumsProduct', 'weight') );
              
         $this->addRule('weight',ts('Please enter integer value for weight') , 'integer');
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $single = $session->get('singleForm');
         $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'action=update&reset=1&id=' . $this->_id .'&subPage=Premium') );
       
@@ -199,7 +199,7 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
                                                  $this, false, 0);
         
         if($this->_action & CRM_Core_Action::PREVIEW) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $url = CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=update&id='.$this->_id.'&subPage=Premium');
             $single = $session->get('singleForm');
             CRM_Utils_System::redirect($url);
@@ -207,22 +207,22 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
         }
         
         if($this->_action & CRM_Core_Action::DELETE) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $url = CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=update&id='.$this->_id.'&subPage=Premium');
             require_once 'CRM/Contribute/DAO/PremiumsProduct.php';
-            $dao =& new CRM_Contribute_DAO_PremiumsProduct();
+            $dao = new CRM_Contribute_DAO_PremiumsProduct();
             $dao->id = $this->_pid;
             $dao->delete();
             CRM_Core_Session::setStatus( ts('Selected Premium Product has been removed from this Contribution Page.') );
             CRM_Utils_System::redirect($url);
         } else { 
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $url = CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=update&id='.$this->_id.'&subPage=Premium');
             if ( $this->_pid ) {
                 $params['id'] =  $this->_pid;
             }
             require_once 'CRM/Contribute/DAO/Premium.php';
-            $dao =& new CRM_Contribute_DAO_Premium();
+            $dao = new CRM_Contribute_DAO_Premium();
             $dao->entity_table = 'civicrm_contribution_page';
             $dao->entity_id = $pageID; 
             $dao->find(true);
@@ -231,7 +231,7 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
             
 
             require_once 'CRM/Contribute/DAO/PremiumsProduct.php';
-            $dao =& new CRM_Contribute_DAO_PremiumsProduct();
+            $dao = new CRM_Contribute_DAO_PremiumsProduct();
             $dao->copyValues($params);
             $dao->save();
             CRM_Utils_System::redirect($url);

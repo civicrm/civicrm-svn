@@ -107,9 +107,10 @@ function civicrm_source( $dsn, $fileName, $lineMode = false ) {
         $string = file_get_contents( $fileName );
         
         //get rid of comments starting with # and --
-        $string = ereg_replace("\n#[^\n]*\n", "\n", $string );
-        $string = ereg_replace("\n\-\-[^\n]*\n", "\n", $string );
-        
+
+        $string = preg_replace("/^#[^\n]*$/m",   "\n", $string );
+        $string = preg_replace("/^(--[^-]).*/m", "\n", $string );
+
         $queries  = preg_split('/;$/m', $string);
         foreach ( $queries as $query ) {
             $query = trim( $query );
@@ -123,8 +124,9 @@ function civicrm_source( $dsn, $fileName, $lineMode = false ) {
     } else {
         $fd = fopen( $fileName, "r" );
         while ( $string = fgets( $fd ) ) {
-            $string = ereg_replace("\n#[^\n]*\n", "\n", $string );
-            $string = ereg_replace("\n\-\-[^\n]*\n", "\n", $string );
+            $string = preg_replace("/^#[^\n]*$/m",   "\n", $string );
+            $string = preg_replace("/^(--[^-]).*/m", "\n", $string );
+
             $string = trim( $string );
             if ( ! empty( $string ) ) {
                 $res =& $db->query( $string );

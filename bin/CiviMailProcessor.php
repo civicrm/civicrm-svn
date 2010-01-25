@@ -75,7 +75,7 @@ class CiviMailProcessor {
             throw new Exception("Could not find entry named $name in civicrm_mail_settings");
         }
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $verpSeperator = preg_quote( $config->verpSeparator );
         $twoDigitStringMin = $verpSeperator . '(\d+)' . $verpSeperator . '(\d+)';
         $twoDigitString    = $twoDigitStringMin . $verpSeperator;
@@ -199,7 +199,7 @@ class CiviMailProcessor {
 session_start();
 require_once '../civicrm.config.php';
 require_once 'CRM/Core/Config.php';
-$config =& CRM_Core_Config::singleton();
+$config = CRM_Core_Config::singleton();
 
 CRM_Utils_System::authenticateScript(true);
 

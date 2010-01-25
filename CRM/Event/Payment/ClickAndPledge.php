@@ -47,7 +47,7 @@ class CRM_Event_Payment_ClickAndPledge extends CRM_Core_Payment_ClickAndPledge {
      */ 
     static function &singleton( $mode, &$paymentProcessor ) {
         if (self::$_singleton === null ) { 
-            self::$_singleton =& new CRM_Event_Payment_ClickAndPledge( $mode, $paymentProcessor );
+            self::$_singleton = new CRM_Event_Payment_ClickAndPledge( $mode, $paymentProcessor );
         } 
         return self::$_singleton; 
     } 

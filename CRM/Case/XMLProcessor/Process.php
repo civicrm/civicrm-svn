@@ -197,7 +197,7 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
     function createRelationship( &$params ) {
         require_once 'CRM/Contact/DAO/Relationship.php';
 
-        $dao =& new CRM_Contact_DAO_Relationship( );
+        $dao = new CRM_Contact_DAO_Relationship( );
         $dao->copyValues( $params );
         // only create a relationship if it does not exist
         if ( ! $dao->find( true ) ) {

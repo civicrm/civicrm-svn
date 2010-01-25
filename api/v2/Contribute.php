@@ -202,7 +202,7 @@ function &civicrm_contribution_search( &$params ) {
     
     $newParams =& CRM_Contact_BAO_Query::convertFormValues( $inputParams );
 
-    $query =& new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
+    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
     list( $select, $from, $where ) = $query->query( );
     
     $sql = "$select $from $where";  
@@ -351,7 +351,7 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
             if (!CRM_Utils_Rule::integer($value)) {
                 return civicrm_create_error("contact_id not valid: $value");
             }
-            $dao =& new CRM_Core_DAO();
+            $dao = new CRM_Core_DAO();
             $qParams = array();
             $svq = $dao->singleValueQuery("SELECT id FROM civicrm_contact WHERE id = $value",
                                           $qParams);

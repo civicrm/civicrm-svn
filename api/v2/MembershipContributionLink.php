@@ -70,7 +70,7 @@ function &civicrm_membershipcontributionlink_create( &$params ) {
     $transaction = new CRM_Core_Transaction( );
 
     require_once 'CRM/Member/DAO/MembershipPayment.php';
-    $mpDAO =& new CRM_Member_DAO_MembershipPayment();    
+    $mpDAO = new CRM_Member_DAO_MembershipPayment();    
     $mpDAO->copyValues($params);
     $result = $mpDAO->save();
     
@@ -108,7 +108,7 @@ function &civicrm_membershipcontributionlink_get( &$params ) {
     }
 
     require_once 'CRM/Member/DAO/MembershipPayment.php';
-    $mpDAO =& new CRM_Member_DAO_MembershipPayment();    
+    $mpDAO = new CRM_Member_DAO_MembershipPayment();    
     $mpDAO->copyValues($params);
     $mpDAO->id = CRM_Utils_Array::value( 'membership_contribution_id', $params );
     $mpDAO->find();

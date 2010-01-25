@@ -49,7 +49,7 @@ class CRM_Contribute_Payment_ClickAndPledge extends CRM_Core_Payment_ClickAndPle
     static function &singleton( $mode, &$paymentProcessor ) {
         $processorName = $paymentProcessor['name'];
         if (self::$_singleton[$processorName] === null ) {
-            self::$_singleton[$processorName] =& new CRM_Contribute_Payment_ClickAndPledge( $mode, $paymentProcessor );
+            self::$_singleton[$processorName] = new CRM_Contribute_Payment_ClickAndPledge( $mode, $paymentProcessor );
         }
         return self::$_singleton[$processorName];
     } 

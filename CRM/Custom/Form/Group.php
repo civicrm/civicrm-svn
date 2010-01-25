@@ -121,7 +121,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
      * @access public
      * @static
      */
-    static function formRule(&$fields, &$files, $self) 
+    static function formRule( $fields, $files, $self) 
     {
         $errors = array();
 
@@ -457,7 +457,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             $params['id'] = $this->_id;
         } elseif ($this->_action & CRM_Core_Action::ADD) {
             //new custom group, so lets set the created_id
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $params['created_id']   = $session->get( 'userID' );
             $params['created_date'] = date('YmdHis');
         } 
@@ -474,7 +474,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             $url = CRM_Utils_System::url( 'civicrm/admin/custom/group/field', 'reset=1&action=add&gid=' . $group->id);
             CRM_Core_Session::setStatus(ts('Your custom data group \'%1\' has been added. You can add custom fields to this group now.',
                                            array(1 => $group->title)));
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $session->replaceUserContext($url);
         }
     }

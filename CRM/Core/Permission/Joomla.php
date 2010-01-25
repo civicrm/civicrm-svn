@@ -87,7 +87,7 @@ class CRM_Core_Permission_Joomla {
      * @access public
      */
     static function check( $str ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $config->userFrameworkFrontend && $str == 'administer users' ) {
             return false;
         }

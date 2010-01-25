@@ -203,7 +203,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form
     {
         $defaults = array();
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $showHide =& new CRM_Core_ShowHideBlocks( );
+        $showHide = new CRM_Core_ShowHideBlocks( );
 
         if ($this->_action == CRM_Core_Action::ADD) {
             $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_UFJoin');
@@ -300,7 +300,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form
                 // CRM-5284
                 // lets skip trying to mess around with profile weights and allow the user to do as needed.
             } else if ( $this->_action & CRM_Core_Action::ADD ) {
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $params['created_id']   = $session->get( 'userID' );
                 $params['created_date'] = date('YmdHis');
             }
@@ -323,7 +323,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form
                 $url = CRM_Utils_System::url( 'civicrm/admin/uf/group/field', 'reset=1&action=add&gid=' . $ufGroup->id);
                 CRM_Core_Session::setStatus(ts('Your CiviCRM Profile \'%1\' has been added. You can add fields to this profile now.',
                                                array(1 => $ufGroup->title)));
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $session->replaceUserContext($url);
             }
         }

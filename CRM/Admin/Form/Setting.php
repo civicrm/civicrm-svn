@@ -121,7 +121,7 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
 
         // save autocomplete search options
         if ( CRM_Utils_Array::value( 'autocompleteContactSearch', $params ) ) {
-            $config =& new CRM_Core_DAO_Preferences( );
+            $config = new CRM_Core_DAO_Preferences( );
             $config->domain_id  = CRM_Core_Config::domainID( );
             $config->find(true);
             $config->contact_autocomplete_options = 
@@ -145,7 +145,7 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
 
     public function rebuildMenu( ) {
         // ensure config is set with new values
-        $config =& CRM_Core_Config::singleton(true, true);
+        $config = CRM_Core_Config::singleton(true, true);
 
         // rebuild menu items
         require_once 'CRM/Core/Menu.php';

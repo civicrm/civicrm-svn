@@ -60,7 +60,7 @@ class CRM_Admin_Page_AJAX
      * Function to build status message while 
      * enabling/ disabling various objects
      */
-    static function getStatusMsg( &$config ) 
+    static function getStatusMsg( ) 
     {        
         $recordID  = CRM_Utils_Type::escape( $_POST['recordID'], 'Integer' );
         $recordBAO = CRM_Utils_Type::escape( $_POST['recordBAO'], 'String' );
@@ -90,7 +90,7 @@ class CRM_Admin_Page_AJAX
                 $priceSet = CRM_Price_BAO_Set::getTitle( $recordID );
                 
                 if ( !CRM_Utils_System::isNull( $usedBy ) ) {
-                    $template =& CRM_Core_Smarty::singleton( );
+                    $template = CRM_Core_Smarty::singleton( );
                     $template->assign( 'usedBy', $usedBy );
                     $comps = array( "Event"        => "civicrm_event", 
                                     "Contribution" => "civicrm_contribution_page" );

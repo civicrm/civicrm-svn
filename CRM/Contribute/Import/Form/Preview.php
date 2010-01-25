@@ -63,7 +63,7 @@ class CRM_Contribute_Import_Form_Preview extends CRM_Core_Form {
         //get the mapping name displayed if the mappingId is set
         $mappingId = $this->get('loadMappingId');
         if ( $mappingId ) {
-            $mapDAO =& new CRM_Core_DAO_Mapping();
+            $mapDAO = new CRM_Core_DAO_Mapping();
             $mapDAO->id = $mappingId;
             $mapDAO->find( true );
             $this->assign('loadedMapping', $mappingId);
@@ -150,7 +150,7 @@ class CRM_Contribute_Import_Form_Preview extends CRM_Core_Form {
         $conflictRowCount   = $this->get('conflictRowCount');
         $onDuplicate        = $this->get('onDuplicate');
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $seperator = $config->fieldSeparator;
        
         $mapper = $this->controller->exportValue( 'MapField', 'mapper' );
@@ -166,7 +166,7 @@ class CRM_Contribute_Import_Form_Preview extends CRM_Core_Form {
             }
         }
        
-        $parser =& new CRM_Contribute_Import_Parser_Contribution( $mapperKeys, $mapperSoftCredit, $mapperPhoneType );
+        $parser = new CRM_Contribute_Import_Parser_Contribution( $mapperKeys, $mapperSoftCredit, $mapperPhoneType );
         
         $mapFields = $this->get('fields');
 

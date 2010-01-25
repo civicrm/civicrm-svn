@@ -105,7 +105,7 @@ class CRM_Custom_Form_DeleteField extends CRM_Core_Form {
      * @access public
      */
     public function postProcess( ) {
-        $field = & new CRM_Core_DAO_CustomField();
+        $field = new CRM_Core_DAO_CustomField();
         $field->id = $this->_id;
         $field->find( true );
         

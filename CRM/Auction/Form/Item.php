@@ -93,7 +93,7 @@ class CRM_Auction_Form_Item extends CRM_Core_Form
         $this->assign( 'auctionTitle', $this->_auctionValues['auction_title'] );
 
         // set donor id
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $this->_donorID = $this->get('donorID');
 
         $this->assign( 'donorName',
@@ -220,7 +220,7 @@ class CRM_Auction_Form_Item extends CRM_Core_Form
                                       'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
                                       'isDefault' => true   ) );
             
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             if ( $session->get('userID') ) {
                 $buttons[] = array ( 'type'      => 'next',
                                      'name'      => ts('Save and New'),
@@ -245,7 +245,7 @@ class CRM_Auction_Form_Item extends CRM_Core_Form
      * @access public  
      * @static  
      */  
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {
         $errors = array();
 
@@ -297,7 +297,7 @@ class CRM_Auction_Form_Item extends CRM_Core_Form
         CRM_Auction_BAO_Item::add( $params );
 
         if ( $this->controller->getButtonName( ) == $this->getButtonName( 'next', 'new' ) ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             //CRM_Core_Session::setStatus(ts(' You can add another profile field.'));
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/auction/item',
                                                                "reset=1&action=add&aid={$this->_aid}"));

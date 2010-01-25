@@ -191,7 +191,7 @@ WHERE pledge_id = %1
     static function add( $params )
     {
         require_once 'CRM/Pledge/DAO/Payment.php';
-        $payment =& new CRM_Pledge_DAO_Payment( );
+        $payment = new CRM_Pledge_DAO_Payment( );
         $payment->copyValues( $params );
         $result = $payment->save( );
         
@@ -214,7 +214,7 @@ WHERE pledge_id = %1
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $payment =& new CRM_Pledge_DAO_Payment;
+        $payment = new CRM_Pledge_DAO_Payment;
         $payment->copyValues( $params );
         if ( $payment->find( true ) ) {
             CRM_Core_DAO::storeValues( $payment, $defaults );
@@ -276,7 +276,7 @@ WHERE pledge_id = %1
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
-        $payment =& new CRM_Pledge_DAO_Payment( );
+        $payment = new CRM_Pledge_DAO_Payment( );
         $payment->contribution_id = $contributionID;
         if ( $payment->find( true ) ) {
             $payment->contribution_id = 'null'; 

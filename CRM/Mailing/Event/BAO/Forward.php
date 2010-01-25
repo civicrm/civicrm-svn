@@ -65,7 +65,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
        
         $domain     =& CRM_Core_BAO_Domain::getDomain( );
        
-        $dao =& new CRM_Core_Dao();
+        $dao = new CRM_Core_Dao();
         $dao->query("
                 SELECT      $contact.id as contact_id,
                             $email.id as email_id,
@@ -116,7 +116,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
             }
             $contact_id = $contact['id'];
         } 
-        $email =& new CRM_Core_DAO_Email();
+        $email = new CRM_Core_DAO_Email();
         $email->email = $forward_email;
         $email->find(true); 
         $email_id = $email->id;
@@ -133,7 +133,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
         
         $queue =& CRM_Mailing_Event_BAO_Queue::create($queue_params);
         
-        $forward =& new CRM_Mailing_Event_BAO_Forward();
+        $forward = new CRM_Mailing_Event_BAO_Forward();
         $forward->time_stamp = date('YmdHis');
         $forward->event_queue_id = $queue_id;
         $forward->dest_queue_id = $queue->id;
@@ -145,11 +145,11 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
                         WHERE   $job.id = " . 
                         CRM_Utils_Type::escape($job_id, 'Integer'));
         $dao->fetch();
-        $mailing_obj =& new CRM_Mailing_BAO_Mailing();
+        $mailing_obj = new CRM_Mailing_BAO_Mailing();
         $mailing_obj->id = $dao->mailing_id;
         $mailing_obj->find(true);
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $mailer =& $config->getMailer();
 
         $recipient = null;
@@ -204,7 +204,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
      */
     public static function getTotalCount($mailing_id, $job_id = null,
                                             $is_distinct = false) {
-        $dao =& new CRM_Core_DAO();
+        $dao = new CRM_Core_DAO();
         
         $forward    = self::getTableName();
         $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();
@@ -258,7 +258,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
     public static function &getRows($mailing_id, $job_id = null, 
         $is_distinct = false, $offset = null, $rowCount = null, $sort = null) {
         
-        $dao =& new CRM_Core_Dao();
+        $dao = new CRM_Core_Dao();
         
         $forward    = self::getTableName();
         $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();

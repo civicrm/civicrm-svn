@@ -91,7 +91,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
     {
         parent::__construct('CiviCRM');
 
-        $log =& CRM_Core_Config::getLog();
+        $log = CRM_Core_Config::getLog();
         $this->setLogger( $log );
 
         // set up error handling for Pear Error Stack
@@ -115,7 +115,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         $message = self::getMessages( $error, $separator );
         if ( $message ) {
             $status = ts( "Payment Processor Error message" ) . "{$separator}: $message"; 
-            $session =& CRM_Core_Session::singleton( ); 
+            $session = CRM_Core_Session::singleton( ); 
             $session->setStatus( $status ); 
         }
     }
@@ -139,8 +139,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         CRM_Core_Transaction::rollback( );
 
         // setup smarty with config, session and template location.
-        $template =& CRM_Core_Smarty::singleton( );
-        $config   =& CRM_Core_Config::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
+        $config   = CRM_Core_Config::singleton( );
 
         if ( $config->backtrace ) {
             self::backtrace( );
@@ -239,7 +239,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         $vars = array( 'message' => $message,
                        'code'    => $code );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( $config->fatalErrorHandler &&
              function_exists( $config->fatalErrorHandler ) ) {
@@ -256,7 +256,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
             self::backtrace( );
         }
 
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->assign( $vars );
 
         CRM_Core_Error::debug_var( 'Fatal Error Details', $vars );
@@ -371,7 +371,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
      */
     static function debug_log_message( $message, $out = false , $comp = '' )
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( $comp ) {
             $comp = $comp . '.';
@@ -443,7 +443,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
      * @static
      */
     public static function statusBounce( $status, $redirect = null ) {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         if ( ! $redirect ) {
             $redirect = $session->readUserContext();
         }

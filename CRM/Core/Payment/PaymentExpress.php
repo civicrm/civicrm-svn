@@ -33,7 +33,7 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
     }
 
     function checkConfig( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $error = array( );
 
@@ -78,7 +78,7 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
     function doTransferCheckout( &$params, $component ) 
     {
         $component = strtolower( $component );
-	$config    =& CRM_Core_Config::singleton( );
+	$config    = CRM_Core_Config::singleton( );
         if ( $component != 'contribute' && $component != 'event' ) {
             CRM_Core_Error::fatal( ts( 'Component is invalid' ) );
         }

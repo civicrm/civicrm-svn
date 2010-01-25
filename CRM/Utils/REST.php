@@ -68,7 +68,7 @@ class CRM_Utils_REST
      * @access public
      */
     public function ping($var = NULL) {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $key = $session->get('key');
         //$session->set( 'key', $var );
         return self::simple( array( 'message' => "PONG: $key" ) );
@@ -94,7 +94,7 @@ class CRM_Utils_REST
             return self::error( 'Could not authenticate user, invalid name or password.' );
         }
 	
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
 	$api_key = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $result[0], 'api_key');
 	
 	if ( empty($api_key) ) {
@@ -226,7 +226,7 @@ class CRM_Utils_REST
         // Check for valid session.  Session ID's only appear here if you have
         // run the rest_api login function.  That might be a problem for the 
         // AJAX methods.  
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         if ($session->get('PHPSESSID') ) {
             $valid_user = true;
         }

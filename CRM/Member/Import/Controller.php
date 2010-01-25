@@ -49,13 +49,13 @@ class CRM_Member_Import_Controller extends CRM_Core_Controller {
         }
  
         require_once 'CRM/Member/Import/StateMachine.php';
-        $this->_stateMachine =& new CRM_Member_Import_StateMachine( $this, $action );
+        $this->_stateMachine = new CRM_Member_Import_StateMachine( $this, $action );
 
         // create and instantiate the pages
         $this->addPages( $this->_stateMachine, $action );
 
         // add all the actions
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $this->addActions( $config->uploadDir, array( 'uploadFile' ) );
     }
 

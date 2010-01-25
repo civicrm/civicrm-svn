@@ -67,7 +67,7 @@ class CRM_Admin_Form_OptionValue extends CRM_Admin_Form
         if( !empty( $this->_gid ) ) {
             $this->_gName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $this->_gid, 'name');
         }
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $url = CRM_Utils_System::url('civicrm/admin/optionValue', 'reset=1&action=browse&gid='.$this->_gid); 
         $session->pushUserContext( $url );
         $this->assign('id', $this->_id);
@@ -93,7 +93,7 @@ class CRM_Admin_Form_OptionValue extends CRM_Admin_Form
         $defaults = parent::setDefaultValues( );
         if (! CRM_Utils_Array::value( 'weight', $defaults ) ) {
             $query = "SELECT max( `weight` ) as weight FROM `civicrm_option_value` where option_group_id=" . $this->_gid;
-            $dao =& new CRM_Core_DAO( );
+            $dao = new CRM_Core_DAO( );
             $dao->query( $query );
             $dao->fetch();
             $defaults['weight'] = ($dao->weight + 1);   

@@ -204,7 +204,7 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
       
         $this->search( );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         $params = array( );
         $this->_force = CRM_Utils_Request::retrieve( 'force', 'Boolean',

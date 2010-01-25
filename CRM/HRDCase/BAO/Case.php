@@ -69,7 +69,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      */
     static function add( &$params ) 
     {
-        $caseDAO =& new CRM_Case_DAO_Case();
+        $caseDAO = new CRM_Case_DAO_Case();
         $caseDAO->copyValues($params);
         return $caseDAO->save();
     }
@@ -88,7 +88,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      */
     static function &getValues( &$params, &$values, &$ids ) 
     {
-        $case =& new CRM_Case_BAO_Case( );
+        $case = new CRM_Case_BAO_Case( );
 
         $case->copyValues( $params );
         
@@ -152,7 +152,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      */
     function addCaseToContact( $params ) {
         require_once 'CRM/Case/DAO/CaseContact.php';
-        $caseContact =& new CRM_Case_DAO_CaseContact();
+        $caseContact = new CRM_Case_DAO_CaseContact();
         $caseContact->case_id = $params['case_id'];
         $caseContact->contact_id = $params['contact_id'];
         $caseContact->find(true);
@@ -171,7 +171,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      */
     function deleteCaseContact( $caseID ) {
         require_once 'CRM/Case/DAO/CaseContact.php';
-        $caseContact =& new CRM_Case_DAO_CaseContact();
+        $caseContact = new CRM_Case_DAO_CaseContact();
         $caseContact->case_id = $caseID;
         $caseContact->delete();
     }
@@ -253,7 +253,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
     static function processCaseActivity( &$params ) 
     {
         require_once 'CRM/Case/DAO/CaseActivity.php';
-        $caseActivityDAO =& new CRM_Case_DAO_CaseActivity();
+        $caseActivityDAO = new CRM_Case_DAO_CaseActivity();
         $caseActivityDAO->activity_id = $params['activity_id'];
         $caseActivityDAO->case_id = $params['case_id'];
 
@@ -295,7 +295,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
         $transaction = new CRM_Core_Transaction( );
 
         require_once 'CRM/Case/DAO/Case.php';
-        $case     = & new CRM_Case_DAO_Case( );
+        $case     = new CRM_Case_DAO_Case( );
         $case->id = $caseId; 
         $case->delete( );
 
@@ -314,7 +314,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
     static function deleteCaseActivity( $activityId ) 
     {
         require_once 'CRM/Case/DAO/CaseActivity.php';
-        $case              = & new CRM_Case_DAO_CaseActivity( );
+        $case              = new CRM_Case_DAO_CaseActivity( );
         $case->activity_id = $activityId; 
         $case->delete( );
     }

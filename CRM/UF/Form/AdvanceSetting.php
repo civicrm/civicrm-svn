@@ -74,11 +74,11 @@ class CRM_UF_Form_AdvanceSetting extends CRM_UF_Form_Group {
         $form->addElement('checkbox', 'is_edit_link', ts('Include profile edit links in search results?'));
 
         // should we display a link to the website profile
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $form->addElement('checkbox', 'is_uf_link', ts('Include %1 user account information links in search results?', array( 1 => $config->userFramework )));
         
         // want to create cms user
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $cmsId = false;
         if ( $form->_cId = $session->get( 'userID' ) ){
             $form->_cmsId = true;

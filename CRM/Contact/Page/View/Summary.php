@@ -66,7 +66,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                                                        $groupTree );
 
         // also create the form element for the activity links box
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityLinks',
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityLinks',
                                                        ts('Activity Links'),
                                                        null );
         $controller->setEmbedded( true );
@@ -103,11 +103,11 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
     function edit( ) 
     {
         // set the userContext stack
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $url = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $this->_contactId );
         $session->pushUserContext( $url );
         
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Contact', ts('Contact Page'), CRM_Core_Action::UPDATE );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Contact', ts('Contact Page'), CRM_Core_Action::UPDATE );
         $controller->setEmbedded( true );
         $controller->process( );
         return $controller->run( );
@@ -121,7 +121,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
      */
     function view( ) 
     {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $url     = CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $this->_contactId );
         $session->pushUserContext( $url );
 
@@ -277,7 +277,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                        'log'           => ts('Change Log')    ,
                        );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( isset( $config->sunlight ) &&
              $config->sunlight ) {
             $title = ts('Elected Officials');

@@ -180,7 +180,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         $returnProperties['sort_name'   ]     = 1;
             
         $queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_params, 1 );            
-        $this->_query   =& new CRM_Contact_BAO_Query( $queryParams, $returnProperties, $this->_fields );
+        $this->_query   = new CRM_Contact_BAO_Query( $queryParams, $returnProperties, $this->_fields );
         $this->_options =& $this->_query->_options;
     }//end of constructor
 
@@ -375,7 +375,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
                 $field = $vars[$key];
                 $fieldArray = explode('-' , $field['name']);
                 if( is_numeric(CRM_Utils_Array::value('1',$fieldArray)) ) {
-                    $locationType = & new CRM_Core_DAO_LocationType();
+                    $locationType = new CRM_Core_DAO_LocationType();
                     $locationType->id = $fieldArray[1];
                     $locationType->find(true);
                     if ($fieldArray[0] == 'email' || $fieldArray[0] == 'im' || $fieldArray[0] == 'phone') {
@@ -403,7 +403,7 @@ class CRM_Profile_Selector_Listings extends CRM_Core_Selector_Base implements CR
         $mask = CRM_Core_Action::mask( array( CRM_Core_Permission::getPermission( ) ) );
         if ( $editLink && ( $mask & CRM_Core_Permission::EDIT ) ) {
             // do not allow edit for anon users in joomla frontend, CRM-4668
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( ! $config->userFrameworkFrontend ) {
                 $this->_editLink = true;
             }

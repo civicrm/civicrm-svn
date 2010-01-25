@@ -297,7 +297,7 @@ class CRM_Core_SelectValues
                                   'Profile'           => ts('Profile'),
                                   'Search Profile'    => ts('Search Results'),
                                   );
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( $config->userFramework == 'Drupal' ) {
                 $ufGroupType += array(
                                       'User Registration' => ts('Drupal User Registration'),

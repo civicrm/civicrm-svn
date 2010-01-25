@@ -52,7 +52,7 @@ class CRM_Utils_System {
      * @access public
      */
     static function makeURL( $urlVar, $includeReset = false, $includeForce = true ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
 
         if ( ! isset( $_GET[$config->userFrameworkURLVar] ) ) {
             return '';
@@ -175,7 +175,7 @@ class CRM_Utils_System {
             $query = htmlentities( $query );
         }
 
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return eval( 'return ' .
                      $config->userFrameworkClass .
@@ -190,20 +190,20 @@ class CRM_Utils_System {
     }
 
     function permissionDenied( ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return eval( "return {$config->userFrameworkClass}::permissionDenied( );" );
     }
 
     static function logout( ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return eval( "return {$config->userFrameworkClass}::logout( );" );
     }
 
     // this is a very drupal specific function for now
     static function updateCategories( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Drupal' ) {
             require_once 'CRM/Utils/System/Drupal.php';
             CRM_Utils_System_Drupal::updateCategories( );
@@ -217,7 +217,7 @@ class CRM_Utils_System {
      * @access public
      */
     static function currentPath( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         return trim( CRM_Utils_Array::value($config->userFrameworkURLVar,$_GET), '/' );
     }
 
@@ -253,7 +253,7 @@ class CRM_Utils_System {
      * @access public
      */
     function setTitle( $title, $pageTitle = null ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return eval( $config->userFrameworkClass . '::setTitle( $title, $pageTitle );' );
     }
@@ -271,7 +271,7 @@ class CRM_Utils_System {
     static function setUserContext( $names, $default = null ) {
         $url = $default;
 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $referer = CRM_Utils_Array::value( 'HTTP_REFERER', $_SERVER );
 
         if ( $referer && ! empty( $names ) ) {
@@ -335,7 +335,7 @@ class CRM_Utils_System {
      * @static
      */
     static function appendBreadCrumb( $breadCrumbs ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return eval( 'return ' . $config->userFrameworkClass . '::appendBreadCrumb( $breadCrumbs );' );
     }
@@ -348,7 +348,7 @@ class CRM_Utils_System {
      * @static
      */
     static function resetBreadCrumb( ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return eval( 'return ' . $config->userFrameworkClass . '::resetBreadCrumb( );' );
     }
@@ -363,7 +363,7 @@ class CRM_Utils_System {
      * @static
      */
     static function addHTMLHead( $bc ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return eval( 'return ' . $config->userFrameworkClass . '::addHTMLHead( $bc );' );
     }
@@ -378,7 +378,7 @@ class CRM_Utils_System {
      * @static
      */
     static function postURL( $action ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return eval( 'return ' . $config->userFrameworkClass . '::postURL( $action  ); ' );
     }
@@ -391,7 +391,7 @@ class CRM_Utils_System {
      * @static 
      */ 
     static function mapConfigToSSL( ) {
-        $config   =& CRM_Core_Config::singleton( ); 
+        $config   = CRM_Core_Config::singleton( ); 
         $config->userFrameworkResourceURL = str_replace( 'http://', 'https://', 
                                                          $config->userFrameworkResourceURL );
         $config->resourceBase = $config->userFrameworkResourceURL;
@@ -409,7 +409,7 @@ class CRM_Utils_System {
      * @static
      */
     static function baseURL() {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         return $config->userFrameworkBaseURL;
     }
 
@@ -480,7 +480,7 @@ class CRM_Utils_System {
             // lets store contact id and user id in session
             list( $userID, $ufID, $randomNumber ) = $result;
             if ( $userID && $ufID ) {
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $session->set( 'ufID'  , $ufID );
                 $session->set( 'userID', $userID );
             } else {
@@ -504,7 +504,7 @@ class CRM_Utils_System {
      * @static 
      */ 
     static function authenticate( $name, $password ) {
-        $config =& CRM_Core_Config::singleton( ); 
+        $config = CRM_Core_Config::singleton( ); 
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return  
             eval( 'return ' . $config->userFrameworkClass . '::authenticate($name, $password);' ); 
@@ -520,7 +520,7 @@ class CRM_Utils_System {
      * @static  
      */  
     static function setUFMessage( $message ) {
-        $config =& CRM_Core_Config::singleton( );  
+        $config = CRM_Core_Config::singleton( );  
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userFrameworkClass ) . '.php' );
         return   
             eval( 'return ' . $config->userFrameworkClass . '::setMessage( $message );' );
@@ -711,7 +711,7 @@ class CRM_Utils_System {
                 $request->addCookie( $name, $value );
             }
         }
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Standalone' ) {
             session_write_close();
         }
@@ -790,7 +790,7 @@ class CRM_Utils_System {
         static $version;
         
         if ( ! $version ) {
-            $config  =& CRM_Core_Config::singleton( );
+            $config  = CRM_Core_Config::singleton( );
             $verFile = implode( DIRECTORY_SEPARATOR, 
                                 array(dirname(__FILE__), '..', '..', 'civicrm-version.txt') );
             if ( $str = file_get_contents( $verFile ) ) {
@@ -966,7 +966,7 @@ class CRM_Utils_System {
      */
     static function getUFLocale()
     {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
         return eval("return {$config->userFrameworkClass}::getUFLocale();");
     }
@@ -995,7 +995,7 @@ class CRM_Utils_System {
             $request->setBasicAuth( $_SERVER['PHP_AUTH_USER'], $_SERVER['PHP_AUTH_PW'] );
         } 
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Standalone' ) {
             session_write_close();
         }

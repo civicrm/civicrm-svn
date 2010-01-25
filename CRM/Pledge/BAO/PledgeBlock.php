@@ -117,7 +117,7 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
             CRM_Utils_Hook::pre( 'create', 'PledgeBlock', null, $params ); 
         }
         
-        $pledgeBlock =& new CRM_Pledge_DAO_PledgeBlock( );
+        $pledgeBlock = new CRM_Pledge_DAO_PledgeBlock( );
         
         //fix for pledge_frequency_unit
         require_once 'CRM/Core/BAO/CustomOption.php';
@@ -192,7 +192,7 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
     {
         $pledgeBlock   = array( );
         
-        $dao =& new CRM_Pledge_DAO_PledgeBlock( );
+        $dao = new CRM_Pledge_DAO_PledgeBlock( );
         $dao->entity_table = 'civicrm_contribution_page';
         $dao->entity_id    = $pageID; 
         if ( $dao->find(true) ) {

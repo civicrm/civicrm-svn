@@ -354,7 +354,7 @@ function civicrm_relationship_types_get( $params = null )
     require_once 'CRM/Contact/DAO/RelationshipType.php';
     $relationshipTypes = array();
     $relationshipType  = array();
-    $relationType      = & new CRM_Contact_DAO_RelationshipType();
+    $relationType      = new CRM_Contact_DAO_RelationshipType();
     if ( !empty( $params ) && is_array( $params ) ) {
         $properties = array_keys( $relationType->fields() );
         foreach ($properties as $name) {
@@ -403,7 +403,7 @@ function _civicrm_relationship_format_params( &$params, &$values ) {
             if (!CRM_Utils_Rule::integer($value)) {
                 return civicrm_create_error("contact_id not valid: $value");
             }
-            $dao =& new CRM_Core_DAO();
+            $dao = new CRM_Core_DAO();
             $qParams = array();
             $svq = $dao->singleValueQuery("SELECT id FROM civicrm_contact WHERE id = $value",
                                           $qParams);

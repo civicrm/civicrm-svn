@@ -115,7 +115,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     function setDefaultValues( ) 
     {  
         // check if the user is registered and we have a contact ID
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' ); 
         if ( $contactID ) {
             $options = array( );
@@ -266,7 +266,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
     public function buildQuickForm( ) 
     {  
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $this->add('hidden','scriptFee',null);
         $this->add('hidden','scriptArray',null);
         $this->add( 'text',
@@ -383,7 +383,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         $this->assign( 'buildExpressPayBlock', $buildExpressPayBlock );
         $this->assign( 'showHidePaymentInformation', $showHidePaymentInformation );
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $userID = $session->get( 'userID' );
         
         if ( ! $userID ) {
@@ -515,7 +515,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
      * @access public 
      * @static 
      */ 
-    static function formRule(&$fields, &$files, &$self) 
+    static function formRule( $fields, $files, $self) 
     {
         //To check if the user is already registered for the event(CRM-2426)
         self::checkRegistration($fields, $self);
@@ -588,7 +588,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 }
             }
             // return if this is express mode
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( $self->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_BUTTON ) {
                 if ( CRM_Utils_Array::value( $self->_expressButtonName . '_x', $fields ) ||
                      CRM_Utils_Array::value( $self->_expressButtonName . '_y', $fields ) ||
@@ -732,7 +732,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         }
 
         if ($this->_values['event']['is_monetary']) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             
             // we first reset the confirm page so it accepts new values
             $this->controller->resetPage( 'Confirm' );
@@ -851,7 +851,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $this->set( 'contributeMode', 'notify' );
             }
         } else {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $contactID = $session->get( 'userID' );
             $params['description'] = ts( 'Online Event Registration' ) . ' ' . $this->_values['event']['title'];
             
@@ -885,7 +885,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
      */
     public function processRegistration( $params, $contactID = null ) 
     {
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' );
         $this->_participantInfo   = array();
         
@@ -1032,7 +1032,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         }
         
         $contactID = null;
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         if( ! $isAdditional ) {
             $contactID = $session->get( 'userID' );
         }
@@ -1051,7 +1051,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
         if ( $contactID ) {
             require_once 'CRM/Event/BAO/Participant.php';
-            $participant =& new CRM_Event_BAO_Participant();
+            $participant = new CRM_Event_BAO_Participant();
             $participant->contact_id = $contactID;
             $participant->event_id   = $self->_values['event']['id'];
             $participant->role_id    = $self->_values['event']['default_role_id'];

@@ -1003,7 +1003,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
      */
     function isErrorInCustomData($params, &$errorMessage) 
     {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $dateType = $session->get("dateTypes");
        
         //CRM-5125
@@ -1113,7 +1113,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                                                    'CRM_Core_DAO_Country',true, 
                                                                    'iso_code');
                                 
-                                $config =& CRM_Core_Config::singleton( );
+                                $config = CRM_Core_Config::singleton( );
                                 $limitCodes = $config->countryLimit( );
                                 
                                 $error = true;
@@ -1144,7 +1144,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     list($id, $first, $second) = CRM_Utils_System::explode('_', $relation, 3);
                     $direction = "contact_sub_type_$second";
                     require_once 'CRM/Contact/BAO/RelationshipType.php';
-                    $relationshipType =& new CRM_Contact_BAO_RelationshipType( ); 
+                    $relationshipType = new CRM_Contact_BAO_RelationshipType( ); 
                     $relationshipType->id = $id;
                     if ( $relationshipType->find( true ) ) {
                         if ( isset($relationshipType->$direction) ) {
@@ -1205,7 +1205,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         require_once 'CRM/Core/OptionGroup.php';
         foreach ($params as $key => $value) {
             if ( $value ) {
-                $session =& CRM_Core_Session::singleton();
+                $session = CRM_Core_Session::singleton();
                 $dateType = $session->get("dateTypes");
                 
                 switch( $key ) {
@@ -1287,7 +1287,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                 CRM_Core_PseudoConstant::populate( $countryIsoCodes, 
                                                                    'CRM_Core_DAO_Country',true, 
                                                                    'iso_code');
-                                $config =& CRM_Core_Config::singleton();
+                                $config = CRM_Core_Config::singleton();
                                 $limitCodes = $config->countryLimit( );
                                 //If no country is selected in
                                 //localization then take all countries
@@ -1678,7 +1678,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         }
         
         //format date first
-        $session  =& CRM_Core_Session::singleton();
+        $session  = CRM_Core_Session::singleton();
         $dateType = $session->get("dateTypes");
         foreach ( $params  as $key => $val ) {
             if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $key ) ) {
@@ -1809,7 +1809,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     
                 case 'Multi-Select Country' :
                     
-                    $config          =& CRM_Core_Config::singleton( );
+                    $config          = CRM_Core_Config::singleton( );
                     $limitCodes      = $config->countryLimit( );
                     $mulValues       = explode( ',' , $field );
                     $formatted[$key] = array( );

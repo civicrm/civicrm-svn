@@ -51,7 +51,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         require_once 'CRM/Core/BAO/MessageTemplates.php';
         $messageText    = array( );
         $messageSubject = array( );
-        $dao =& new CRM_Core_BAO_MessageTemplates( );
+        $dao = new CRM_Core_BAO_MessageTemplates( );
         $dao->is_active= 1;
         $dao->find();
         while ( $dao->fetch() ){
@@ -100,10 +100,10 @@ class CRM_Contact_Form_Task_PDFLetterCommon
      * @access public  
      * 
      */  
-    static function formRule($fields, $dontCare, &$self) 
+    static function formRule($fields, $dontCare, $self) 
     {
         $errors = array();
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
 
         //Added for CRM-1393
         if( CRM_Utils_Array::value('saveTemplate',$fields) && empty($fields['saveTemplateName']) ){
@@ -166,7 +166,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         }
                     
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing = & new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
 		
         $first = TRUE;
 
@@ -195,7 +195,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         $html .= '</body></html>';
         require_once 'CRM/Activity/BAO/Activity.php';
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $userID = $session->get( 'userID' );         
         $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                           'Print PDF Letter',

@@ -166,13 +166,13 @@ class CRM_Dedupe_BAO_Rule extends CRM_Dedupe_DAO_Rule
     function dedupeRuleFields( $params)
     {
         require_once 'CRM/Dedupe/BAO/RuleGroup.php';
-        $rgBao =& new CRM_Dedupe_BAO_RuleGroup();
+        $rgBao = new CRM_Dedupe_BAO_RuleGroup();
         $rgBao->level = $params['level'];
         $rgBao->contact_type = $params['contact_type'];
         $rgBao->is_default = 1;
         $rgBao->find(true);
         
-        $ruleBao =& new CRM_Dedupe_BAO_Rule();
+        $ruleBao = new CRM_Dedupe_BAO_Rule();
         $ruleBao->dedupe_rule_group_id = $rgBao->id;
         $ruleBao->find();
         $ruleFields = array();

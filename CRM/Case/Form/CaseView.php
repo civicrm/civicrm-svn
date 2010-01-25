@@ -228,7 +228,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         
 		// List of relationship types
 		require_once 'CRM/Contact/BAO/Relationship.php';
-		$baoRel =& new CRM_Contact_BAO_Relationship();
+		$baoRel = new CRM_Contact_BAO_Relationship();
 		$relType = $baoRel->getRelationType('Individual');
 		$roleTypes = array();
 		foreach ($relType as $k => $v)
@@ -260,12 +260,12 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         // user context
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
                                       "reset=1&action=view&cid={$this->_contactID}&id={$this->_caseID}&show=1" );
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
 
         if ( CRM_Utils_Array::value( 'timeline_id', $params ) && 
              CRM_Utils_Array::value( '_qf_CaseView_next', $_POST ) ) {
-            $session    =& CRM_Core_Session::singleton();
+            $session    = CRM_Core_Session::singleton();
             $this->_uid = $session->get('userID');
             $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
             $xmlProcessorParams = array( 

@@ -160,7 +160,7 @@ class CRM_ACL_Page_EntityRole extends CRM_Core_Page_Basic
 
         // get all acl's sorted by weight
         $entityRoles =  array( );
-        $dao =& new CRM_ACL_DAO_EntityRole( );
+        $dao = new CRM_ACL_DAO_EntityRole( );
         $dao->find( );
 
         require_once 'CRM/Core/OptionGroup.php';

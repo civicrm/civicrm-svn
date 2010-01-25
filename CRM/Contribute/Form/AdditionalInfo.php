@@ -48,7 +48,7 @@ class CRM_Contribute_Form_AdditionalInfo
         require_once 'CRM/Contribute/DAO/Product.php';
         $sel1 = $sel2 = array();
         
-        $dao = & new CRM_Contribute_DAO_Product();
+        $dao = new CRM_Contribute_DAO_Product();
         $dao->is_active = 1;
         $dao->find();
         $min_amount = array();
@@ -186,7 +186,7 @@ class CRM_Contribute_Form_AdditionalInfo
     function processPremium( &$params, $contributionID, $premiumID = null, &$options = null )
     {
         require_once 'CRM/Contribute/DAO/ContributionProduct.php';
-        $dao = & new CRM_Contribute_DAO_ContributionProduct();
+        $dao = new CRM_Contribute_DAO_ContributionProduct();
         $dao->contribution_id = $contributionID;
         $dao->product_id      = $params['product_name'][0];
         $dao->fulfilled_date  = CRM_Utils_Date::processDate( $params['fulfilled_date'] );
@@ -194,7 +194,7 @@ class CRM_Contribute_Form_AdditionalInfo
             $dao->product_option  = $options[$params['product_name'][0]][$params['product_name'][1]];
         }
         if ($premiumID) {
-            $premoumDAO = & new CRM_Contribute_DAO_ContributionProduct();
+            $premoumDAO = new CRM_Contribute_DAO_ContributionProduct();
             $premoumDAO->id  = $premiumID;
             $premoumDAO->find(true);
             if ( $premoumDAO->product_id == $params['product_name'][0] ) {
@@ -319,7 +319,7 @@ class CRM_Contribute_Form_AdditionalInfo
             //fix for crm-4584
             if(!empty($params['product_name'])){
                 require_once 'CRM/Contribute/DAO/Product.php';
-                $productDAO =& new CRM_Contribute_DAO_Product();
+                $productDAO = new CRM_Contribute_DAO_Product();
                 $productDAO->id = $params['product_name'][0];
                 $productDAO->find(true);
                 $params['product_name'] = $productDAO->name;
@@ -413,7 +413,7 @@ class CRM_Contribute_Form_AdditionalInfo
         $this->assign( 'contactID', $params['contact_id'] );
         $this->assign( 'contributionID', $params['contribution_id'] );
 
-        $session  =& CRM_Core_Session::singleton( );
+        $session  = CRM_Core_Session::singleton( );
         $userID   = $session->get( 'userID' );
         list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
 

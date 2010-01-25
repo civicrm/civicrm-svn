@@ -43,7 +43,7 @@ class CRM_UpdateGreeting {
     {
         $this->initialize( );
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
         // this does not return on failure
         CRM_Utils_System::authenticateScript( true );
@@ -62,7 +62,7 @@ class CRM_UpdateGreeting {
     
     public function updateGreeting( )
     {
-	    $config =& CRM_Core_Config::singleton();
+	    $config = CRM_Core_Config::singleton();
 	    $contactType = CRM_Utils_Request::retrieve( 'ct', 'String', CRM_Core_DAO::$_nullArray );
         if ( ! in_array( $contactType,
                          array( 'Individual', 'Household', 'Organization' ) ) ) {
@@ -135,6 +135,6 @@ class CRM_UpdateGreeting {
     }
 }
 
-$obj =& new CRM_UpdateGreeting( );
+$obj = new CRM_UpdateGreeting( );
 $obj->updateGreeting( );
 echo "\n\n Greeting is updated for contact(s). (Done) \n";

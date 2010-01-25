@@ -63,7 +63,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
         CRM_Core_Payment_Form::mapParams( $form->_bltID, $form->_params, $paymentParams, true );
         
         require_once 'CRM/Contribute/DAO/ContributionType.php';
-        $contributionType =& new CRM_Contribute_DAO_ContributionType( );
+        $contributionType = new CRM_Contribute_DAO_ContributionType( );
         if( isset( $paymentParams['contribution_type'] ) ) {
             $contributionType->id = $paymentParams['contribution_type'];
         } else {
@@ -368,7 +368,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
         if ( isset( $transaction['trxn_id'] ) ) {
             // set error message if transaction has already been processed.
             require_once 'CRM/Contribute/DAO/Contribution.php';
-            $contribution =& new CRM_Contribute_DAO_Contribution();
+            $contribution = new CRM_Contribute_DAO_Contribution();
             $contribution->trxn_id = $transaction['trxn_id'];
             if ( $contribution->find(true) ) {
                 $params['error'][] = ts( 'transaction already processed.' );
@@ -430,7 +430,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
                                 'M' => 'month',
                                 'Y' => 'year'
                             );
-                            list($frequency_interval, $frequency_unit) = split(' ', $val);
+                            list($frequency_interval, $frequency_unit) = explode(' ', $val);
                             $transaction['frequency_interval'] = $frequency_interval;
                             $transaction['frequency_unit'] = $freqUnits[$frequency_unit];
                             break;

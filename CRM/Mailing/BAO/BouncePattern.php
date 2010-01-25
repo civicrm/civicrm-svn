@@ -58,7 +58,7 @@ class CRM_Mailing_BAO_BouncePattern extends CRM_Mailing_DAO_BouncePattern {
      */
     public static function buildPatterns() {
         self::$_patterns = array();
-        $bp =& new CRM_Mailing_BAO_BouncePattern();
+        $bp = new CRM_Mailing_BAO_BouncePattern();
         $bp->find();
         
         while ($bp->fetch()) {

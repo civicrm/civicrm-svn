@@ -128,7 +128,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form
        
         if ( isset($this->_currentlyViewedContactId) ) {
             require_once 'CRM/Contact/BAO/Contact.php';
-            $contact =& new CRM_Contact_DAO_Contact( );
+            $contact = new CRM_Contact_DAO_Contact( );
             $contact->id = $this->_currentlyViewedContactId;
             if ( ! $contact->find( true ) ) {
                 CRM_Core_Error::statusBounce( ts('Client contact does not exist: %1', array(1 => $this->_currentlyViewedContactId)) );
@@ -137,7 +137,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         }
         
         
-        $session              =& CRM_Core_Session::singleton();
+        $session              = CRM_Core_Session::singleton();
         $this->_currentUserId = $session->get('userID');
         
         //when custom data is included in this page
@@ -225,7 +225,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$values, $files, &$form ) 
+    static function formRule( $values, $files, $form ) 
     {
         return true;
     }
@@ -292,7 +292,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         // user context
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
                                       "reset=1&action=view&cid={$this->_currentlyViewedContactId}&id={$caseObj->id}" );
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
 
         // 3. format activity custom data

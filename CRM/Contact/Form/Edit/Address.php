@@ -53,7 +53,7 @@ class CRM_Contact_Form_Edit_Address
     {
         $blockId    = ( $form->get( 'Address_Block_Count' ) ) ? $form->get( 'Address_Block_Count' ) : 1;
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $countryDefault = $config->defaultContactCountry;
         
         $form->applyFilter('__ALL__','trim');
@@ -179,7 +179,7 @@ class CRM_Contact_Form_Edit_Address
      * @access public
      * @static
      */
-    static function formRule( &$fields, &$errors )
+    static function formRule( $fields, $errors )
     {
         // check for state/county match if not report error to user.
         if ( is_array( $fields['address'] ) ) {
@@ -208,7 +208,7 @@ class CRM_Contact_Form_Edit_Address
                 
                 //do check for mismatch countries 
                 if ( $stateProvinceId && $countryId ) {
-                    $stateProvinceDAO =& new CRM_Core_DAO_StateProvince();
+                    $stateProvinceDAO = new CRM_Core_DAO_StateProvince();
                     $stateProvinceDAO->id = $stateProvinceId;
                     $stateProvinceDAO->find(true);
                     if ( $stateProvinceDAO->country_id != $countryId ) {
@@ -223,7 +223,7 @@ class CRM_Contact_Form_Edit_Address
                 
                 //state county validation
                 if ( $stateProvinceId && $countyId ) {
-                    $countyDAO =& new CRM_Core_DAO_County();
+                    $countyDAO = new CRM_Core_DAO_County();
                     $countyDAO->id = $countyId;
                     $countyDAO->find(true);
                     

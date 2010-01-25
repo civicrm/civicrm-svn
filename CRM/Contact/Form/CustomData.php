@@ -232,7 +232,7 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields )
+    static function formRule( $fields )
     {
         $errors = array( );
         foreach ( $fields as $key => $value ) {

@@ -65,7 +65,7 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View
         //To check whether selected contact is a contact_id_a in
         //relationship type 'a_b' in relationship table, if yes then
         //revert the permissionship text in template
-        $relationship =& new CRM_Contact_DAO_Relationship( );
+        $relationship = new CRM_Contact_DAO_Relationship( );
         $relationship->id = $viewRelationship[$this->_id]['id'];
         
         if ($relationship->find(true)) {
@@ -144,11 +144,11 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View
      */
     function edit( ) 
     {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Relationship', ts('Contact Relationships'), $this->_action );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Relationship', ts('Contact Relationships'), $this->_action );
         $controller->setEmbedded( true );
 
         // set the userContext stack
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         
         // if this is called from case view, we need to redirect back to same page
         if ( $this->_caseId ) {
@@ -203,13 +203,13 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View
         } else if ( $this->_action & CRM_Core_Action::DISABLE ) {
             CRM_Contact_BAO_Relationship::disableEnableRelationship( $this->_id, CRM_Core_Action::DISABLE );
             CRM_Contact_BAO_Relationship::setIsActive( $this->_id, 0 ) ;
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             CRM_Utils_System::redirect( $session->popUserContext() );
          
         } else if ( $this->_action & CRM_Core_Action::ENABLE ) {
             CRM_Contact_BAO_Relationship::disableEnableRelationship( $this->_id, CRM_Core_Action::ENABLE );
             CRM_Contact_BAO_Relationship::setIsActive( $this->_id, 1 ) ;
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             CRM_Utils_System::redirect( $session->popUserContext() );
         }
  
@@ -234,7 +234,7 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View
         } else {
             $url = CRM_Utils_System::url('civicrm/contact/view', 'action=browse&selectedChild=rel' );
         }
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
     }
     

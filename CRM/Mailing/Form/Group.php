@@ -61,7 +61,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         }
         
         // use previous context unless mailing is not schedule, CRM-4290
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         if ( strpos( $session->readUserContext( ), 'civicrm/mailing' ) === false ) { 
             $session->pushUserContext( CRM_Utils_System::url( 'civicrm/mailing','reset=1' ) );
         }
@@ -116,7 +116,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         
         //when the context is search hide the mailing recipients.
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $showHide =& new CRM_Core_ShowHideBlocks( );
+        $showHide = new CRM_Core_ShowHideBlocks( );
         $context  = $this->get( 'context' );
         $showGroupSelector = true;
         if ( $context == 'search' ) {
@@ -275,7 +275,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         if ( $context == 'search' && $this->_contactIds ) {
             //get the hidden smart group id.
             $ssId = $this->get( 'ssID' );
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $hiddenSmartParams = array( 'group_type'       => array( '2' => 1),
                                         'form_values'      => $this->get( 'formValues' ),
                                         'saved_search_id'  => $ssId, 
@@ -345,7 +345,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             }
         }
         
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $params['groups']         = $groups;
         $params['mailings']       = $mailings;
         
@@ -360,7 +360,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             // delete previous includes/excludes, if mailing already existed
             require_once 'CRM/Contact/DAO/Group.php';
             foreach( array( 'groups', 'mailings' ) as $entity ) {
-                $mg =& new CRM_Mailing_DAO_Group();
+                $mg = new CRM_Mailing_DAO_Group();
                 $mg->mailing_id     = $ids['mailing_id'];                        
                 $mg->entity_table   =
                     ( $entity == 'groups' )
@@ -373,7 +373,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
             }
         } else {
             // new mailing, so lets set the created_id
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $params['created_id']   = $session->get( 'userID' );
             $params['created_date'] = date('YmdHis');
         }
@@ -441,7 +441,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
      * @static
      * @access public
      */
-    static function formRule( &$fields ) 
+    static function formRule( $fields ) 
     {
         $errors = array( );
         if ( isset( $fields['includeGroups'] )    &&

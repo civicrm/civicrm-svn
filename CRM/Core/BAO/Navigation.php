@@ -72,7 +72,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
         $menus = array( );
 
         require_once "CRM/Core/DAO/Menu.php";
-        $menu  =& new CRM_Core_DAO_Menu( );
+        $menu  = new CRM_Core_DAO_Menu( );
         $menu->domain_id = CRM_Core_Config::domainID( );
         $menu->find();
 
@@ -95,7 +95,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
     static function add( &$params ) 
     {
         require_once "CRM/Core/DAO/Navigation.php";
-        $navigation  =& new CRM_Core_DAO_Navigation( );
+        $navigation  = new CRM_Core_DAO_Navigation( );
         
         $params['is_active'    ] = CRM_Utils_Array::value( 'is_active', $params, false );
         $params['has_separator'] = CRM_Utils_Array::value( 'has_separator', $params, false );
@@ -140,7 +140,7 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $navigation =& new CRM_Core_DAO_Navigation( );
+        $navigation = new CRM_Core_DAO_Navigation( );
         $navigation->copyValues( $params );
 
         $navigation->domain_id = CRM_Core_Config::domainID( );
@@ -414,7 +414,7 @@ ORDER BY parent_id, weight";
                     
         if ( isset( $permission) && $permission ) {
             $permissions = explode(',', $permission ); 
-            $config  =& CRM_Core_Config::singleton( );
+            $config  = CRM_Core_Config::singleton( );
             
             $hasPermission = false;    
             foreach ( $permissions as $key ) {
@@ -471,7 +471,7 @@ ORDER BY parent_id, weight";
             return;
         }
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         // For Joomla front end user, there is no need to create
         // navigation menu items, CRM-5349
         if ($config->userFramework == 'Joomla' && $config->userFrameworkFrontend ) {
@@ -515,12 +515,12 @@ ORDER BY parent_id, weight";
             // before inserting check if contact id exists in db
             // this is to handle wierd case when contact id is in session but not in db
             require_once 'CRM/Contact/DAO/Contact.php';
-            $contact =& new CRM_Contact_DAO_Contact( );
+            $contact = new CRM_Contact_DAO_Contact( );
             $contact->id = $contactID;
             if ( $contact->find(true ) ) {
                 // save in preference table for this particular user
                 require_once 'CRM/Core/DAO/Preferences.php';
-                $preference =& new CRM_Core_DAO_Preferences();
+                $preference = new CRM_Core_DAO_Preferences();
                 $preference->contact_id = $contactID;
                 $preference->domain_id  = CRM_Core_Config::domainID( );
                 $preference->find(true);

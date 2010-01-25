@@ -77,14 +77,14 @@ class CRM_Core_Invoke
         $ids = new CRM_Core_IDS( );
         $ids->check( $args );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         // also initialize the i18n framework
         $i18n   =& CRM_Core_I18n::singleton( );
 
         if ( $config->userFramework == 'Standalone' ) {
             require_once 'CRM/Core/Session.php';
-            $session =& CRM_Core_Session::singleton( ); 
+            $session = CRM_Core_Session::singleton( ); 
             if ( $session->get('new_install') !== true ) {
                 require_once 'CRM/Core/Standalone.php';
                 CRM_Core_Standalone::sidebarLeft( );
@@ -115,7 +115,7 @@ class CRM_Core_Invoke
         }
 
         // set active Component
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->assign( 'activeComponent', 'CiviCRM' );
         $template->assign( 'formTpl'        , 'default' );
 
@@ -149,7 +149,7 @@ class CRM_Core_Invoke
                 $pageArgs = CRM_Core_Menu::getArrayForPathArgs( $item['page_arguments'] );
             }
 
-            $template =& CRM_Core_Smarty::singleton( );
+            $template = CRM_Core_Smarty::singleton( );
             if ( isset( $item['is_public'] ) &&
                  $item['is_public'] ) {
                 $template->assign( 'urlIsPublic', true );
@@ -158,7 +158,7 @@ class CRM_Core_Invoke
             }
 
             if ( isset($item['return_url']) ) {
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $args = CRM_Utils_Array::value( 'return_url_args',
                                                 $item,
                                                 'reset=1' );
@@ -175,7 +175,7 @@ class CRM_Core_Invoke
                 return call_user_func( $item['page_callback'], 
                                        $newArgs );
             } else if (strstr($item['page_callback'], '_Form')) {
-                $wrapper =& new CRM_Utils_Wrapper( );
+                $wrapper = new CRM_Utils_Wrapper( );
                 return $wrapper->run( CRM_Utils_Array::value('page_callback', $item),
                                       CRM_Utils_Array::value('title', $item), 
                                       isset($pageArgs) ? $pageArgs : null );
@@ -192,7 +192,7 @@ class CRM_Core_Invoke
                 }
                 $title = CRM_Utils_Array::value( 'title', $item );
                 if (strstr($item['page_callback'], '_Page')) {
-                    eval ( '$object =& ' .
+                    eval ( '$object = ' .
                            "new {$item['page_callback']}( \$title, \$mode );" );
                 } else if (strstr($item['page_callback'], '_Controller')) { 
                     $addSequence = 'false';
@@ -201,7 +201,7 @@ class CRM_Core_Invoke
                         $addSequence = $addSequence ? 'true' : 'false';
                         unset( $pageArgs['addSequence'] );
                     }
-                    eval ( '$object =& ' .
+                    eval ( '$object = ' .
                            "new {$item['page_callback']} ( \$title, true, \$mode, null, \$addSequence );" );
                 } else {
                     CRM_Core_Error::fatal( );
@@ -226,7 +226,7 @@ class CRM_Core_Invoke
     static function form( $action, $contact_type, $contact_sub_type ) 
     {
         CRM_Utils_System::setUserContext( array( 'civicrm/contact/search/basic', 'civicrm/contact/view' ) );
-        $wrapper =& new CRM_Utils_Wrapper( );
+        $wrapper = new CRM_Utils_Wrapper( );
         
         require_once 'CRM/Core/Component.php';
         $properties =& CRM_Core_Component::contactSubTypeProperties( $contact_sub_type, 'Edit' );
@@ -255,7 +255,7 @@ class CRM_Core_Invoke
 
         if ($secondArg == 'map' ) {
 
-            $controller =& new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Task_Map',
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Contact_Form_Task_Map',
                                                            ts('Map Contact'),
                                                            null, false, false, true );
 
@@ -266,7 +266,7 @@ class CRM_Core_Invoke
                                                         $controller,
                                                         false );
             // set the userContext stack
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             if ( $profileView ) {
                 $session->pushUserContext( CRM_Utils_System::url( 'civicrm/profile/view' ) );
             } else {
@@ -280,7 +280,7 @@ class CRM_Core_Invoke
 
         if ( $secondArg == 'edit' || $secondArg == 'create' ) {
             // set the userContext stack
-            $session =& CRM_Core_Session::singleton(); 
+            $session = CRM_Core_Session::singleton(); 
             $session->pushUserContext( CRM_Utils_System::url('civicrm/profile', 'reset=1' ) ); 
 
             $buttonType = CRM_Utils_Array::value('_qf_Edit_cancel',$_POST);
@@ -297,7 +297,7 @@ class CRM_Core_Invoke
             }
 
             if ( $secondArg == 'edit' ) {
-                $controller =& new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Edit',
+                $controller = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Edit',
                                                                ts('Create Profile'),
                                                                CRM_Core_Action::UPDATE,
                                                                false, false, true );
@@ -305,7 +305,7 @@ class CRM_Core_Invoke
                 $controller->process( );
                 return $controller->run( );
             } else {
-                $wrapper =& new CRM_Utils_Wrapper( ); 
+                $wrapper = new CRM_Utils_Wrapper( ); 
                 return $wrapper->run( 'CRM_Profile_Form_Edit',
                                       ts( 'Create Profile' ),
                                       array( 'mode' => CRM_Core_Action::ADD,
@@ -314,7 +314,7 @@ class CRM_Core_Invoke
         } 
 
         require_once 'CRM/Profile/Page/Listings.php';
-        $page =& new CRM_Profile_Page_Listings( );
+        $page = new CRM_Profile_Page_Listings( );
         return $page->run( );
     }
 

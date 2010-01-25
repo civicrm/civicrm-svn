@@ -62,7 +62,7 @@ function civicrm_location_add( &$params ) {
     if ( !$locationTypeId && 
          '3.0' != CRM_Utils_Array::value( 'version', $params ) ) {
         require_once 'CRM/Core/DAO/LocationType.php';
-        $locationTypeDAO = & new CRM_Core_DAO_LocationType();
+        $locationTypeDAO = new CRM_Core_DAO_LocationType();
         $locationTypeDAO->name      = $params['location_type'];
         $locationTypeDAO->find(true);
         $locationTypeId = $locationTypeDAO->id;
@@ -507,7 +507,7 @@ function _civicrm_location_update( $params, $locations ) {
  */
 function _civicrm_location_delete( &$contact ) {
     require_once 'CRM/Core/DAO/LocationType.php';
-    $locationTypeDAO     =& new CRM_Core_DAO_LocationType( );
+    $locationTypeDAO     = new CRM_Core_DAO_LocationType( );
     $locationTypeDAO->id = $contact['location_type'];
         
     if ( ! $locationTypeDAO->find( ) ) {

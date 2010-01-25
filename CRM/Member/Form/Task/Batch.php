@@ -209,7 +209,7 @@ class CRM_Member_Form_Task_Batch extends CRM_Member_Form_Task {
                 unset($value['membership_source']);
                             
                 //Get the membership status
-                $membership =& new CRM_Member_BAO_Membership();
+                $membership = new CRM_Member_BAO_Membership();
                 $membership->id = CRM_Utils_Array::value( 'membership', $ids );
                 $membership->find(true);
                 $membership->free();

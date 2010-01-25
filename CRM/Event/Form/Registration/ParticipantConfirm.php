@@ -69,7 +69,7 @@ class CRM_Event_Form_Registration_ParticipantConfirm extends CRM_Event_Form_Regi
         // make sure we have right permission to edit this user
         $this->_csContactID = null;
         if ( $csContactId && $this->_eventId ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             if ( $csContactId == $session->get( 'userID' ) ) {
                 $this->_csContactID = $csContactId;
             } else {
@@ -83,7 +83,7 @@ class CRM_Event_Form_Registration_ParticipantConfirm extends CRM_Event_Form_Regi
         }
         
         if ( !$this->_csContactID ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             CRM_Core_Error::statusBounce( ts( 'You do not have permission to access this event registration. Contact the site administrator if you need assistance.' ),$config->userFrameworkBaseURL );
         }
     }
@@ -165,7 +165,7 @@ class CRM_Event_Form_Registration_ParticipantConfirm extends CRM_Event_Form_Regi
         
         if ( $buttonName == '_qf_ParticipantConfirm_next' ) {
             //lets get contact id in session.
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $session->set( 'userID', $this->_csContactID );
             
             //check user registration status is from pending class

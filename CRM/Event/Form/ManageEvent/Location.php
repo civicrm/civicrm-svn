@@ -163,7 +163,7 @@ class CRM_Event_Form_ManageEvent_Location extends CRM_Event_Form_ManageEvent
      * @static
      * @access public
      */
-    static function formRule( &$fields ) 
+    static function formRule( $fields ) 
     {
         $errors = array( );
         // check for state/country mapping

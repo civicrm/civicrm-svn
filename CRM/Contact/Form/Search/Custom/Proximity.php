@@ -267,7 +267,7 @@ IFNULL( ACOS( $cosLat * COS( RADIANS( $latitude ) ) *
 
     function buildForm( &$form ) {
 
-        $config         =& CRM_Core_Config::singleton( );
+        $config         = CRM_Core_Config::singleton( );
         $countryDefault = $config->defaultContactCountry; 
         $tag =
             array('' => ts('- any tag -')) +
@@ -402,7 +402,7 @@ AND t.tag_id = {$this->_tag}
     }
 
     function setDefaultValues( ) {
-    	$config =& CRM_Core_Config::singleton( );
+    	$config = CRM_Core_Config::singleton( );
     	$countryDefault = $config->defaultContactCountry;
     	
     	if ($countryDefault) {

@@ -81,7 +81,7 @@ class CRM_Core_OptionValue
         $optionGroupID = null;
         if (! isset( $groupParams['id'] ) || ! $groupParams['id'] ) {
             if ( $groupParams['name'] ) {
-                $config =& CRM_Core_Config::singleton( );
+                $config = CRM_Core_Config::singleton( );
                 
                 $optionGroup = CRM_Core_BAO_OptionGroup::retrieve($groupParams, $dnc);
                 $optionGroupID = $optionGroup->id;
@@ -96,7 +96,7 @@ class CRM_Core_OptionValue
                                                       $optionGroupID, 'name', 'id' );
         }
         
-        $dao =& new CRM_Core_DAO_OptionValue();
+        $dao = new CRM_Core_DAO_OptionValue();
         
         if ( $optionGroupID ) {
             $dao->option_group_id = $optionGroupID;
@@ -169,7 +169,7 @@ class CRM_Core_OptionValue
         $params['is_active'] =  CRM_Utils_Array::value( 'is_active', $params, false );
         // checking if the group name with the given id or name (in $groupParams) exists
         if (! empty($groupParams)) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $groupParams['is_active']   = 1;
             $optionGroup = CRM_Core_BAO_OptionGroup::retrieve($groupParams, $defaults);
         }
@@ -235,7 +235,7 @@ class CRM_Core_OptionValue
     static function optionExists( $value, $daoName, $daoID, $optionGroupID, $fieldName = 'name' ) 
     {
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
-        eval( '$object =& new ' . $daoName . '( );' );
+        eval( '$object = new ' . $daoName . '( );' );
         $object->$fieldName      = $value;
         $object->option_group_id = $optionGroupID;
 

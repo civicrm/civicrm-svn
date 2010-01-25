@@ -178,7 +178,7 @@ function &civicrm_participant_search( &$params ) {
     }
 
     $newParams =& CRM_Contact_BAO_Query::convertFormValues( $params);
-    $query =& new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
+    $query = new CRM_Contact_BAO_Query( $newParams, $returnProperties, null );
     list( $select, $from, $where ) = $query->query( );
     
     $sql = "$select $from $where";  
@@ -223,7 +223,7 @@ function &civicrm_participant_update(&$params)
     }
     
     require_once 'CRM/Event/BAO/Participant.php';
-    $participantBAO =& new CRM_Event_BAO_Participant( );
+    $participantBAO = new CRM_Event_BAO_Participant( );
     $participantBAO->id = $params['id'];
     $fields = $participantBAO->fields( );
     $datefields = array("register_date" => "register_date");    

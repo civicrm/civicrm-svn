@@ -98,7 +98,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             $params['is_override'] = 'null';
         }
         
-        $membership =& new CRM_Member_BAO_Membership();
+        $membership = new CRM_Member_BAO_Membership();
         $membership->copyValues($params);
 
         $membership->id = CRM_Utils_Array::value( 'membership', $ids );
@@ -156,7 +156,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         if ( empty ( $params ) ) {
             return null;
         }
-        $membership =& new CRM_Member_BAO_Membership( );
+        $membership = new CRM_Member_BAO_Membership( );
         
         $membership->copyValues( $params );
         $membership->find();
@@ -265,7 +265,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         //record contribution for this membership
         if ( CRM_Utils_Array::value( 'contribution_status_id', $params ) ) {
             $contributionParams = array( );
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $contributionParams['currency'  ] = $config->defaultCurrency;
             $contributionParams['receipt_date'] = $params['receipt_date'] ? $params['receipt_date'] : 'null';
             $contributionParams['source']       = $params['contribution_source'];
@@ -281,7 +281,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             //insert payment record for this membership
             if( !CRM_Utils_Array::value( 'contribution', $ids ) ) {
                 require_once 'CRM/Member/DAO/MembershipPayment.php';
-                $mpDAO =& new CRM_Member_DAO_MembershipPayment();    
+                $mpDAO = new CRM_Member_DAO_MembershipPayment();    
                 $mpDAO->membership_id   = $membership->id;
                 $mpDAO->contribution_id = $contribution->id;
                 $mpDAO->save();
@@ -427,7 +427,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $membership =& new CRM_Member_DAO_Membership( );
+        $membership = new CRM_Member_DAO_Membership( );
         $membership->copyValues( $params );
         $idList = array('membership_type' => 'MembershipType',
                         'status'          => 'MembershipStatus',
@@ -481,7 +481,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         self::deleteMembershipPayment( $membershipId );
         
         require_once 'CRM/Member/DAO/Membership.php';
-        $membership = & new CRM_Member_DAO_Membership( );
+        $membership = new CRM_Member_DAO_Membership( );
         $membership->id = $membershipId;
         $results = $membership->delete( );
         $transaction->commit( );
@@ -595,7 +595,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                                            CRM_Utils_Array::value( 'minimum_fee', $memType ) );
                             $form->assign( 'membership_name', $memType['name'] );
                             if ( !$thankPage && $cid ) {
-                                $membership =& new CRM_Member_DAO_Membership();
+                                $membership = new CRM_Member_DAO_Membership();
                                 $membership->contact_id         = $cid;
                                 $membership->membership_type_id = $memType['id'];
                                 if ( $membership->find(true) ) {
@@ -608,7 +608,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                     } else if ( $memType['is_active'] ) {
                         $radio[$memType['id']] = $form->createElement('radio',null, null, null, $memType['id'] , null);
                         if ( $cid ) {
-                            $membership =& new CRM_Member_DAO_Membership();
+                            $membership = new CRM_Member_DAO_Membership();
                             $membership->contact_id         = $cid;
                             $membership->membership_type_id = $memType['id'];
 
@@ -668,7 +668,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
     {
         $membershipBlock = array();
         require_once 'CRM/Member/DAO/MembershipBlock.php';
-        $dao = & new CRM_Member_DAO_MembershipBlock();
+        $dao = new CRM_Member_DAO_MembershipBlock();
         $dao->entity_table = 'civicrm_contribution_page';
         
         $dao->entity_id = $pageID; 
@@ -690,7 +690,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
      */
     static function getContactMembership( $contactID , $memType, $isTest, $membershipId = null ) 
     {
-        $dao = &new CRM_Member_DAO_Membership( );
+        $dao = new CRM_Member_DAO_Membership( );
         if ( $membershipId ) {
             $dao->id = $membershipId;
         }
@@ -872,12 +872,12 @@ AND civicrm_membership.is_test = %2";
     function statusAvilability( $contactId ) 
     {
         require_once 'CRM/Member/DAO/MembershipStatus.php';
-        $membership =& new CRM_Member_DAO_MembershipStatus( );
+        $membership = new CRM_Member_DAO_MembershipStatus( );
         $membership->whereAdd('1');
         $count = $membership->count();
         
         if(!$count){
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             CRM_Core_Session::setStatus(ts('There are no status present, You cannot add membership.'));
             return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/contact/view', "reset=1&force=1&cid={$contactId}&selectedChild=member"));
         }
@@ -949,7 +949,7 @@ AND civicrm_membership.is_test = %2";
         $memBlockDetails    = CRM_Member_BAO_Membership::getMembershipBlock( $form->_id );
         if ( $memBlockDetails['is_separate_payment']  && ! $paymentDone ) {
             require_once 'CRM/Contribute/DAO/ContributionType.php';
-            $contributionType =& new CRM_Contribute_DAO_ContributionType( );
+            $contributionType = new CRM_Contribute_DAO_ContributionType( );
             $contributionType->id = $membershipDetails['contribution_type_id']; 
             if ( ! $contributionType->find( true ) ) {
                 CRM_Core_Error::fatal( "Could not find a system table" );
@@ -1027,7 +1027,7 @@ AND civicrm_membership.is_test = %2";
             if ( isset( $contribution[$index] ) ) {
                 //insert payment record
                 require_once 'CRM/Member/DAO/MembershipPayment.php';
-                $dao =& new CRM_Member_DAO_MembershipPayment();    
+                $dao = new CRM_Member_DAO_MembershipPayment();    
                 $dao->membership_id   = $membership->id;
                 $dao->contribution_id = $contribution[$index]->id;
                 //Fixed for avoiding duplicate entry error when user goes
@@ -1052,7 +1052,7 @@ AND civicrm_membership.is_test = %2";
                 }
             }
             $message = ts( "Payment Processor Error message" ) . ": " . implode( '<br/>', $message );
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $session->setStatus( $message );
             CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/contribute/transact',
                                                                '_qf_Main_display=true' ) );
@@ -1130,7 +1130,7 @@ AND civicrm_membership.is_test = %2";
             //2. Paylater/IPN renew. CRM-4556.
             if ( $pending || in_array($currentMembership['status_id'], array( array_search( 'Pending', $allStatus ),
                                                                               array_search( 'Cancelled', $allStatus ) ) ) ) {
-                $membership =& new CRM_Member_DAO_Membership();
+                $membership = new CRM_Member_DAO_Membership();
                 $membership->id = $currentMembership['id'];
                 $membership->find(true);
                 return $membership;
@@ -1181,7 +1181,7 @@ AND civicrm_membership.is_test = %2";
                 
             } else {
                 // CURRENT Membership
-                $membership =& new CRM_Member_DAO_Membership();
+                $membership = new CRM_Member_DAO_Membership();
                 $membership->id = $currentMembership['id'];
                 $membership->find( true ); 
 
@@ -1402,7 +1402,7 @@ SELECT c.contribution_page_id as pageID
      */
     static function deleteRelatedMemberships( $ownerMembershipId, $contactId = null ) 
     {
-        $membership = & new CRM_Member_DAO_Membership( );
+        $membership = new CRM_Member_DAO_Membership( );
         $membership->owner_membership_id = $ownerMembershipId;
 
         if ( $contactId ) {
@@ -1427,12 +1427,12 @@ SELECT c.contribution_page_id as pageID
      */
     static function  updateRelatedMemberships( $ownerMembershipId, $params )
     {
-        $membership = & new CRM_Member_DAO_Membership( );
+        $membership = new CRM_Member_DAO_Membership( );
         $membership->owner_membership_id = $ownerMembershipId;
         $membership->find( );
         
         while ( $membership->fetch( ) ) {
-            $relatedMembership = & new CRM_Member_DAO_Membership( );
+            $relatedMembership = new CRM_Member_DAO_Membership( );
             $relatedMembership->id = $membership->id;
             $relatedMembership->copyValues( $params );
             $relatedMembership->save( );
@@ -1589,7 +1589,7 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
     {
      
         require_once 'CRM/Member/DAO/MembershipPayment.php';
-        $membesrshipPayment =& new CRM_Member_DAO_MembershipPayment( );
+        $membesrshipPayment = new CRM_Member_DAO_MembershipPayment( );
         $membesrshipPayment->membership_id  = $membershipId;
         $membesrshipPayment->find( );
 

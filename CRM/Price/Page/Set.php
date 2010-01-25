@@ -152,7 +152,7 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
         } else if ($action & CRM_Core_Action::PREVIEW) {
             $this->preview($sid) ;
         } else if ($action & CRM_Core_Action::COPY) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             CRM_Core_Session::setStatus("A copy of the price set has been created" );
             $this->copy( );
         } else {
@@ -167,7 +167,7 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
                     // prompt to delete
                     $session = & CRM_Core_Session::singleton();
                     $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/price', 'action=browse'));
-                    $controller =& new CRM_Core_Controller_Simple( 'CRM_Price_Form_DeleteSet','Delete Price Set', null );
+                    $controller = new CRM_Core_Controller_Simple( 'CRM_Price_Form_DeleteSet','Delete Price Set', null );
                     // $id = CRM_Utils_Request::retrieve('sid', 'Positive', $this, false, 0);
                     $controller->set('sid', $sid);
                     $controller->setEmbedded( true );
@@ -211,10 +211,10 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
     function edit($sid, $action)
     {
         // create a simple controller for editing price sets
-        $controller =& new CRM_Core_Controller_Simple('CRM_Price_Form_Set', ts('Price Set'), $action);
+        $controller = new CRM_Core_Controller_Simple('CRM_Price_Form_Set', ts('Price Set'), $action);
 
         // set the userContext stack
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/price', 'action=browse'));
         $controller->set('sid', $sid);
         $controller->setEmbedded(true);
@@ -231,8 +231,8 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
      */
     function preview($sid)
     {
-        $controller =& new CRM_Core_Controller_Simple('CRM_Price_Form_Preview', ts('Preview Price Set'), null);
-        $session =& CRM_Core_Session::singleton();
+        $controller = new CRM_Core_Controller_Simple('CRM_Price_Form_Preview', ts('Preview Price Set'), null);
+        $session = CRM_Core_Session::singleton();
         $context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
         if ( $context == 'field' ) {
             $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/price/field', "action=browse&sid={$sid}"));
@@ -262,7 +262,7 @@ class CRM_Price_Page_Set extends CRM_Core_Page {
         $comps = array( 'CiviEvent'      => ts( 'Event' ),
                         'CiviContribute' => ts( 'Contribution' ) );
         
-        $dao =& new CRM_Price_DAO_Set();
+        $dao = new CRM_Price_DAO_Set();
         if ( defined( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID' ) && CIVICRM_EVENT_PRICE_SET_DOMAIN_ID ) {
             $dao->domain_id = CRM_Core_Config::domainID( );
         }

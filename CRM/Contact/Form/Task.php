@@ -107,7 +107,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         
         //set the user context for redirection of task actions
         $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, 'force=1' );
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->replaceUserContext( $url );
         
         require_once 'CRM/Contact/Task.php';
@@ -134,7 +134,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
             require_once "CRM/Core/BAO/Mapping.php";
             $returnProperties = CRM_Core_BAO_Mapping::returnProperties( $values);
 
-            eval( '$selector   =& new ' .
+            eval( '$selector   = new ' .
                   $selectorName . 
                   '( $customClass, $fv, null, $returnProperties ); '
                   );

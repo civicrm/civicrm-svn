@@ -191,8 +191,8 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
      */ 
     public function preProcess()  
     {  
-        $config  =& CRM_Core_Config::singleton( );
-        $session =& CRM_Core_Session::singleton( );
+        $config  = CRM_Core_Config::singleton( );
+        $session = CRM_Core_Session::singleton( );
 
         // current contribution page id 
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive',
@@ -214,7 +214,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             $this->_mid = CRM_Utils_Request::retrieve( 'mid', 'Positive', $this );
             if ( $this->_mid ) {
                 require_once 'CRM/Member/DAO/Membership.php';
-                $membership =& new CRM_Member_DAO_Membership( );
+                $membership = new CRM_Member_DAO_Membership( );
                 $membership->id = $this->_mid;
                 
                 if ( $membership->find(true) ) {
@@ -563,7 +563,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         $vars = array( 'amount', 'currencyID',
                        'credit_card_type', 'trxn_id', 'amount_level' );
  
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( isset($this->_values['is_recur']) && 
              $this->_paymentProcessor['is_recur'] ) {
             $this->assign( 'is_recur_enabled', 1 );
@@ -671,7 +671,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         if ( $id ) {
             require_once 'CRM/Core/BAO/UFGroup.php';
             require_once 'CRM/Profile/Form.php';
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $contactID = $this->_userID;
             
             // we don't allow conflicting fields to be

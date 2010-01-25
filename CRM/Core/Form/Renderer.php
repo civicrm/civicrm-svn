@@ -71,7 +71,7 @@ class CRM_Core_Form_Renderer extends HTML_QuickForm_Renderer_ArraySmarty {
      * @access public 
      */  
     function __construct( ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         parent::__construct( $template );
     }
 
@@ -82,7 +82,7 @@ class CRM_Core_Form_Renderer extends HTML_QuickForm_Renderer_ArraySmarty {
      */ 
     static function &singleton( ) { 
         if ( ! isset( self::$_singleton ) ) { 
-            self::$_singleton =& new CRM_Core_Form_Renderer( );
+            self::$_singleton = new CRM_Core_Form_Renderer( );
         }
         return self::$_singleton; 
     } 

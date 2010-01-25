@@ -118,7 +118,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             CRM_Utils_Hook::pre( 'create', 'Contribution', null, $params ); 
         }
 
-        $contribution =& new CRM_Contribute_BAO_Contribution();
+        $contribution = new CRM_Contribute_BAO_Contribution();
         $contribution->copyValues($params);
         
         $contribution->id        = CRM_Utils_Array::value( 'contribution', $ids );
@@ -130,7 +130,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
         require_once 'CRM/Utils/Rule.php';
         if (!CRM_Utils_Rule::currencyCode($contribution->currency)) {
             require_once 'CRM/Core/Config.php';
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $contribution->currency = $config->defaultCurrency;
         }
 
@@ -166,7 +166,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
         if ( empty ( $params ) ) {
             return null;
         }
-        $contribution =& new CRM_Contribute_BAO_Contribution( );
+        $contribution = new CRM_Contribute_BAO_Contribution( );
 
         $contribution->copyValues( $params );
 
@@ -245,7 +245,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
         // check if activity record exist for this contribution, if
         // not add activity
         require_once "CRM/Activity/DAO/Activity.php";
-        $activity =& new CRM_Activity_DAO_Activity( );
+        $activity = new CRM_Activity_DAO_Activity( );
         $activity->source_record_id = $contribution->id;
         $activity->activity_type_id = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                                       'Contribution',
@@ -688,7 +688,7 @@ SELECT p.goal_amount as goal, sum( c.total_amount ) as total
 GROUP BY p.id
 ";
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $params = array( 1 => array( $pageID, 'Integer' ) );
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
         
@@ -742,7 +742,7 @@ GROUP BY p.id
     {
         $params=array( );
         require_once 'CRM/Contribute/DAO/Contribution.php';
-        $honorDAO =& new CRM_Contribute_DAO_Contribution();
+        $honorDAO = new CRM_Contribute_DAO_Contribution();
         $honorDAO->honor_contact_id =  $honorId;
         $honorDAO->find( );
 
@@ -793,7 +793,7 @@ WHERE  civicrm_contribution.contact_id = civicrm_contact.id
             $contactIDs = $contactID;
         }
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $startDate = $endDate = null;
 
         $currentMonth = date( 'm' );
@@ -1009,7 +1009,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
     { 
         require_once 'CRM/Contribute/DAO/ContributionSoft.php';
 
-        $cs =& new CRM_Contribute_DAO_ContributionSoft( );
+        $cs = new CRM_Contribute_DAO_ContributionSoft( );
         $cs->copyValues( $params );
         $softContribution = array();
         if ( $cs->find(true) ) {

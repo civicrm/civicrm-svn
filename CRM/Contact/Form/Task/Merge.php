@@ -75,7 +75,7 @@ class CRM_Contact_Form_Task_Merge extends CRM_Contact_Form_Task {
             $oid = $contactIds[1];
             
             //don't allow to delete logged in user.
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             if ( $oid == $session->get('userID') ) {
                 $oid = $cid;
                 $cid = $session->get('userID');
@@ -87,7 +87,7 @@ class CRM_Contact_Form_Task_Merge extends CRM_Contact_Form_Task {
             $cType = key( $contactTypes );
             
             require_once 'CRM/Dedupe/DAO/RuleGroup.php';
-            $rgBao =& new CRM_Dedupe_DAO_RuleGroup();
+            $rgBao = new CRM_Dedupe_DAO_RuleGroup();
             $rgBao->level        = $level;
             $rgBao->is_default   = 1;
             $rgBao->contact_type = $cType;
@@ -95,7 +95,7 @@ class CRM_Contact_Form_Task_Merge extends CRM_Contact_Form_Task {
                 CRM_Core_Error::statusBounce("You can not merge contact records because $level rule for $cType does not exist.");
             }
             $ruleGroupID = $rgBao->id;
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $session->set( 'selectedSearchContactIds', $contactIds );
             
             // create a hidden group and poceed to merge

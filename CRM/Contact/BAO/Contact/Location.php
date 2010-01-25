@@ -161,7 +161,7 @@ AND civicrm_contact.id IN $idString ";
         $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
 
         $locations = array( );
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         while ( $dao->fetch( ) ) {
             $location = array( );

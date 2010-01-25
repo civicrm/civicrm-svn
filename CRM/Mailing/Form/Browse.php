@@ -65,7 +65,7 @@ class CRM_Mailing_Form_Browse extends CRM_Core_Form
         }
         
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $this->_mailingId;
         if ($mailing->find(true)) {
             $this->assign('subject', $mailing->subject);

@@ -44,7 +44,7 @@ class CRM_Utils_Sunlight {
         $params = array( 'method' => HTTP_REQUEST_METHOD_GET,
                          'allowRedirects' => false );
 
-        $request =& new HTTP_Request( self::$_apiURL . $uri, $params );
+        $request = new HTTP_Request( self::$_apiURL . $uri, $params );
         $result = $request->sendRequest( );
         if ( PEAR::isError( $result ) ) {
             CRM_Core_Error::fatal( $result->getMessage( ) );

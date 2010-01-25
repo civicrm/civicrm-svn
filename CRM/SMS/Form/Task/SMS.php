@@ -122,7 +122,7 @@ class CRM_SMS_Form_Task_SMS extends CRM_Contact_Form_Task {
             }
         }
 
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $userID  =  $session->get( 'userID' );
         list( $fromDisplayName, 
               $fromSMS ) = CRM_Contact_BAO_Contact_Location::getPhoneDetails( $userID, 'Mobile' );

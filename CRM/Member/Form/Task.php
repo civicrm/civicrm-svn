@@ -102,7 +102,7 @@ class CRM_Member_Form_Task extends CRM_Core_Form
             }
         } else {
             $queryParams =  $this->get( 'queryParams' );
-            $query       =& new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
+            $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
                                                        CRM_Contact_BAO_Query::MODE_MEMBER);
             $result = $query->searchQuery(0, 0, null);
 
@@ -121,7 +121,7 @@ class CRM_Member_Form_Task extends CRM_Core_Form
         $this->_memberIds = $this->_componentIds = $ids;
 
         //set the context for redirection for any task actions
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/member/search', 'force=1' ) );
     }
 

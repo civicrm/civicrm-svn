@@ -69,7 +69,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         }
         
         $results = array();
-        $config  =& CRM_Core_Config::singleton( );
+        $config  = CRM_Core_Config::singleton( );
         $handler = opendir($config->uploadDir);
         $errorFiles = array( 'sqlImport.errors', 'sqlImport.conflicts', 'sqlImport.duplicates', 'sqlImport.mismatch' );
 
@@ -103,7 +103,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
         if ( strpos( $this->_dataSource, 'CRM_Import_DataSource_' ) === 0 ) {
             $this->_dataSourceIsValid = true;
             $this->assign( 'showDataSourceFormPane', true );
-            $dataSourcePath = split( '_', $this->_dataSource );
+            $dataSourcePath = explode( '_', $this->_dataSource );
             $templateFile = "CRM/Import/Form/" . $dataSourcePath[3] . ".tpl";
             $this->assign( 'dataSourceFormTemplateFile', $templateFile );
         }
@@ -268,7 +268,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
             $this->set('dataSource', $this->_params['dataSource'] );
             $this->set('skipColumnHeader', CRM_Utils_Array::value( 'skipColumnHeader', $this->_params ) );
             
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $session->set('dateTypes', $dateFormats);
 
             // Get the PEAR::DB object
@@ -289,7 +289,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
             $fieldNames = $this->_prepareImportTable( $db, $importTableName );
             $mapper = array( );
 
-            $parser =& new CRM_Import_Parser_Contact( $mapper );
+            $parser = new CRM_Import_Parser_Contact( $mapper );
             $parser->setMaxLinesToProcess( 100 );
             $parser->run( $importTableName, $mapper,
                           CRM_Import_Parser::MODE_MAPFIELD, $contactType,

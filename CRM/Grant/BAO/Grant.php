@@ -222,7 +222,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
                 $params[$field] = CRM_Utils_Rule::cleanMoney( $params[$field] );
             }
         }
-        $grant =& new CRM_Grant_DAO_Grant( );
+        $grant = new CRM_Grant_DAO_Grant( );
         $grant->id = CRM_Utils_Array::value( 'grant', $ids );
         
         $grant->copyValues( $params );
@@ -333,7 +333,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
     static function deleteContact( $id )
     {
         require_once 'CRM/Grant/DAO/Grant.php';
-        $grant = & new CRM_Grant_DAO_Grant( );
+        $grant = new CRM_Grant_DAO_Grant( );
         $grant->contact_id = $id; 
         $grant->delete();
         return false;
@@ -351,7 +351,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
     static function del( $id )
     { 
         require_once 'CRM/Grant/DAO/Grant.php';
-        $grant     = & new CRM_Grant_DAO_Grant( );
+        $grant     = new CRM_Grant_DAO_Grant( );
         $grant->id = $id; 
         
         $grant->find();

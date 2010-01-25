@@ -22,7 +22,7 @@ $user = array( 'openid'    => $openid,
                'firstname' => $firstname,
                'lastname'  => $lastname,
                'email'     => $email );
-$session =& CRM_Core_Session::singleton();
+$session = CRM_Core_Session::singleton();
 $session->set('user', $user);
 $session->set('new_install', true);
 

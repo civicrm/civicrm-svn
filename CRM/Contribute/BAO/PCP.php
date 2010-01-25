@@ -67,13 +67,13 @@ class CRM_Contribute_BAO_PCP extends CRM_Contribute_DAO_PCP
         if ( $pcpBlock ) {
             // action is taken depending upon the mode
             require_once 'CRM/Contribute/DAO/PCPBlock.php';
-            $dao =& new CRM_Contribute_DAO_PCPBlock( );
+            $dao = new CRM_Contribute_DAO_PCPBlock( );
             $dao->copyValues( $params );
             $dao->save( );
             return $dao;
         } else {
             require_once 'CRM/Contribute/DAO/PCP.php';
-            $dao              =& new CRM_Contribute_DAO_PCP( );
+            $dao              = new CRM_Contribute_DAO_PCP( );
             $dao->copyValues( $params );
 
             // ensure we set status_id since it is a not null field
@@ -343,7 +343,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
         $transaction = new CRM_Core_Transaction( );
         
         // delete from pcp table
-        $pcp     =& new CRM_Contribute_DAO_PCP( );
+        $pcp     = new CRM_Contribute_DAO_PCP( );
         $pcp->id = $id;
         $pcp->delete( );
        
@@ -408,7 +408,7 @@ WHERE pcp.id = %1 AND cc.contribution_status_id =1 AND cc.is_test = 0";
     static function sendStatusUpdate( $pcpId, $newStatus, $isInitial = false ) {
         require_once 'CRM/Contribute/PseudoConstant.php';
         $pcpStatus = CRM_Contribute_PseudoConstant::pcpStatus( );
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( ! isset($pcpStatus[$newStatus]) ) {
             return false;

@@ -153,7 +153,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
      */ 
     public function buildQuickForm( ) 
     {  
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $button = substr( $this->controller->getButtonName(), -4 );
         
         $this->add('hidden','scriptFee',null);
@@ -303,7 +303,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
      * @access public 
      * @static 
      */ 
-    static function formRule(&$fields, &$files, &$self) 
+    static function formRule( $fields, $files, $self) 
     {
         $errors = array( );
         //get the button name.

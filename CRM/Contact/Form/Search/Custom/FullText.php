@@ -191,7 +191,7 @@ CREATE TEMPORARY TABLE {$this->_entityIDTableName} (
 
     function fillTable( ) {
         require_once 'CRM/Core/Permission.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
        
         if ( ( ! $this->_table ||
                $this->_table == 'Contact') ) {
@@ -596,7 +596,7 @@ WHERE      c.display_name LIKE {$this->_text}
     
     function buildForm( &$form ) {
         require_once 'CRM/Core/Permission.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $form->applyFilter('__ALL__', 'trim');
         $form->add( 'text',

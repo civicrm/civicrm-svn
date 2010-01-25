@@ -186,7 +186,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
     public static function products( $pageID = null ) {
         $products = array();
         require_once 'CRM/Contribute/DAO/Product.php';
-        $dao = & new CRM_Contribute_DAO_Product();
+        $dao = new CRM_Contribute_DAO_Product();
         $dao->is_active = 1;
         $dao->orderBy( 'id' );
         $dao->find( );
@@ -196,7 +196,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
         }
         if ( $pageID ) {
             require_once 'CRM/Contribute/DAO/Premium.php';
-            $dao =& new CRM_Contribute_DAO_Premium();
+            $dao = new CRM_Contribute_DAO_Premium();
             $dao->entity_table = 'civicrm_contribution_page';
             $dao->entity_id = $pageID; 
             $dao->find(true);
@@ -205,7 +205,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
             $productID = array();  
             
             require_once 'CRM/Contribute/DAO/PremiumsProduct.php';
-            $dao =& new CRM_Contribute_DAO_PremiumsProduct();
+            $dao = new CRM_Contribute_DAO_PremiumsProduct();
             $dao->premiums_id = $premiumID;
             $dao->find();
             while ($dao->fetch()) {

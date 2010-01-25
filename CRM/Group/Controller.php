@@ -44,7 +44,7 @@ class CRM_Group_Controller extends CRM_Core_Controller {
         parent::__construct( $title, $modal );
 
         require_once 'CRM/Group/StateMachine.php';
-        $this->_stateMachine =& new CRM_Group_StateMachine( $this, $action );
+        $this->_stateMachine = new CRM_Group_StateMachine( $this, $action );
 
         // create and instantiate the pages
         $this->addPages( $this->_stateMachine, $action );
@@ -53,7 +53,7 @@ class CRM_Group_Controller extends CRM_Core_Controller {
         $this->_pages['Basic']->setAction( CRM_Core_Action::BASIC );
 
         // add all the actions
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         // to handle file type custom data
         $uploadDir = $config->uploadDir;

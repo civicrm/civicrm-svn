@@ -67,7 +67,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
         $fieldLength = CRM_Core_DAO::getAttribute('CRM_Core_DAO_CustomGroup', 'name');
               
         // create custom group dao, populate fields and then save.           
-        $group =& new CRM_Core_DAO_CustomGroup();
+        $group = new CRM_Core_DAO_CustomGroup();
         $group->title = $params['title'];
         $group->name  = CRM_Utils_String::titleToVar($params['title'], $fieldLength['maxlength'] );
         if ( in_array( $params['extends'][0],
@@ -496,8 +496,8 @@ SELECT $select
                                 if ( $dataType == 'File' ) {
                                     if ( isset( $dao->$fieldName ) ) { 
                                         require_once 'CRM/Core/DAO/File.php';
-                                        $config =& CRM_Core_Config::singleton( );
-                                        $fileDAO =& new CRM_Core_DAO_File();
+                                        $config = CRM_Core_Config::singleton( );
+                                        $fileDAO = new CRM_Core_DAO_File();
                                         $fileDAO->id = $dao->$fieldName;
                                         
                                         if ( $fileDAO->find(true) ) {
@@ -726,7 +726,7 @@ SELECT $select
     public static function &getActiveGroups( $entityType, $path, $cidToken = '%%cid%%' ) 
     {
         // for Group's
-        $customGroupDAO =& new CRM_Core_DAO_CustomGroup();
+        $customGroupDAO = new CRM_Core_DAO_CustomGroup();
        
         // get only 'Tab' groups
         $customGroupDAO->whereAdd("style = 'Tab'");
@@ -882,7 +882,7 @@ SELECT $select
         require_once 'CRM/Core/BAO/CustomField.php';
 
         //check wheter this contain any custom fields
-        $customField = & new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->custom_group_id = $group->id;
         $customField->find();
 
@@ -1004,7 +1004,7 @@ SELECT $select
                     if ( $value ) {
                         $defaults[$elementName] = $value;
                     } else {
-                        $config          =& CRM_Core_Config::singleton( );
+                        $config          = CRM_Core_Config::singleton( );
                         $defaults[$elementName] = $config->defaultContactCountry;
                     }
                     break;

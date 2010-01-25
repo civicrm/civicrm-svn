@@ -49,7 +49,7 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
     {
         require_once 'CRM/Mailing/BAO/Mailing.php';
 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         
         $qfKey = CRM_Utils_Request::retrieve('qfKey', 'String', CRM_Core_DAO::$_nullObject, false, 'text');
         $type  = CRM_Utils_Request::retrieve('type', 'String', CRM_Core_DAO::$_nullObject, false, 'text');
@@ -65,7 +65,7 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
         // FIXME: the below and CRM_Mailing_Form_Test::testMail()
         // should be refactored
         $fromEmail = null;
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         if ( !empty( $options ) ) { 
             $mailing->id = $options['mailing_id'];
             $fromEmail   = $options['from_email'];

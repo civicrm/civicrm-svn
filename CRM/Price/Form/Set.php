@@ -85,7 +85,7 @@ class CRM_Price_Form_Set extends CRM_Core_Form
      * @access public
      * @static
      */
-    static function formRule( &$fields, &$files, $options ) 
+    static function formRule( $fields, $files, $options ) 
     {
         $errors = array( );
         
@@ -139,7 +139,7 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         
         require_once 'CRM/Core/Config.php';
         require_once 'CRM/Core/Component.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $components = array( 'CiviEvent'      => array( 'title'  => ts( 'Event' ),  
                                                         'extend' => CRM_Core_Component::getComponentID( 'CiviEvent' ),
                                                         'tables' => array( 'civicrm_event', 
@@ -259,7 +259,7 @@ class CRM_Price_Form_Set extends CRM_Core_Form
             $url = CRM_Utils_System::url( 'civicrm/admin/price/field', 'reset=1&action=add&sid=' . $set->id);
             CRM_Core_Session::setStatus( ts('Your Set \'%1\' has been added. You can add fields to this set now.', 
                                              array( 1 => $set->title ) ) );
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $session->replaceUserContext( $url );
         }
     }

@@ -79,7 +79,7 @@ class CRM_Case_Form_Activity_ChangeCaseStartDate
      * @static
      * @access public
      */
-    static function formRule( &$values, $files, &$form ) 
+    static function formRule( $values, $files, $form ) 
     {
         return true;
     }

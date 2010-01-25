@@ -562,7 +562,7 @@ abstract class CRM_Contribute_Import_Parser
         require_once 'CRM/Contribute/Import/Field.php';
         foreach ( $fieldKeys as $key ) {
             if ( empty( $this->_fields[$key] ) ) {
-                $this->_activeFields[] =& new CRM_Contribute_Import_Field( '', ts( '- do not import -' ) );
+                $this->_activeFields[] = new CRM_Contribute_Import_Field( '', ts( '- do not import -' ) );
             } else {
                 $this->_activeFields[] = clone( $this->_fields[$key] );
             }
@@ -664,14 +664,14 @@ abstract class CRM_Contribute_Import_Parser
 
     function addField( $name, $title, $type = CRM_Utils_Type::T_INT, $headerPattern = '//', $dataPattern = '//') {
         if ( empty( $name ) ) {
-            $this->_fields['doNotImport'] =& new CRM_Contribute_Import_Field($name, $title, $type, $headerPattern, $dataPattern);
+            $this->_fields['doNotImport'] = new CRM_Contribute_Import_Field($name, $title, $type, $headerPattern, $dataPattern);
         } else {
             $tempField = CRM_Contact_BAO_Contact::importableFields('All', null );
             if (! array_key_exists ($name,$tempField) ) {
-                $this->_fields[$name] =& new CRM_Contribute_Import_Field($name, $title, $type, $headerPattern, $dataPattern);
+                $this->_fields[$name] = new CRM_Contribute_Import_Field($name, $title, $type, $headerPattern, $dataPattern);
             } else {
                 require_once 'CRM/Import/Field.php';
-                $this->_fields[$name] =& new CRM_Import_Field( $name, $title, $type, $headerPattern, $dataPattern,
+                $this->_fields[$name] = new CRM_Import_Field( $name, $title, $type, $headerPattern, $dataPattern,
                                                                CRM_Utils_Array::value( 'hasLocationType', $tempField[$name] ) );
             }
                 
@@ -772,7 +772,7 @@ abstract class CRM_Contribute_Import_Parser
         foreach ($header as $key => $value) {
             $header[$key] = "\"$value\"";
         }
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $output[] = implode($config->fieldSeparator, $header);
         
         foreach ($data as $datum) {

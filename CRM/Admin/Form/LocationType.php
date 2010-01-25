@@ -103,7 +103,7 @@ class CRM_Admin_Form_LocationType extends CRM_Admin_Form
         $params['is_default'] =  CRM_Utils_Array::value( 'is_default', $params, false );
             
         // action is taken depending upon the mode
-        $locationType               =& new CRM_Core_DAO_LocationType( );
+        $locationType               = new CRM_Core_DAO_LocationType( );
         $locationType->name         = $params['name'];
         $locationType->vcard_name   = $params['vcard_name'];
         $locationType->description  = $params['description'];

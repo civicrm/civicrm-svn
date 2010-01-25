@@ -331,7 +331,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
         $selOrgMemType[0][0] = $selMemTypeOrg[0] = ts('- select -');
         
-        $dao =& new CRM_Member_DAO_MembershipType();
+        $dao = new CRM_Member_DAO_MembershipType();
         $dao->domain_id = CRM_Core_Config::domainID( );
         $dao->find();
         while ($dao->fetch()) {
@@ -460,7 +460,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
      * @access public
      * @static
      */
-    public function formRule( &$params, &$files, $self ) 
+    public function formRule( $params, $files, $self ) 
     {
         $errors = array( );
         
@@ -599,7 +599,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             CRM_Member_BAO_Membership::deleteMembership( $this->_id );
             return;
         }
-        $config =& CRM_Core_Config::singleton(); 
+        $config = CRM_Core_Config::singleton(); 
         // get the submitted form values.  
         $this->_params = $formValues = $this->controller->exportValues( $this->_name );
         
@@ -853,7 +853,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                 $result = CRM_Contribute_BAO_Contribution::transitionComponents( $params, true );
                 
                 //carry updated membership object.
-                $membership =& new CRM_Member_DAO_Membership( );
+                $membership = new CRM_Member_DAO_Membership( );
                 $membership->id = $this->_id;
                 $membership->find( true );
                 

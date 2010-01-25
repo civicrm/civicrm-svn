@@ -139,7 +139,7 @@ class CRM_Contribute_Page_Premium extends CRM_Core_Page_Basic
         require_once 'CRM/Contribute/DAO/Product.php';
         $pageID = CRM_Utils_Request::retrieve('id', 'Positive',
                                               $this, false, 0);
-        $dao =& new CRM_Contribute_DAO_Premium();
+        $dao = new CRM_Contribute_DAO_Premium();
         $dao->entity_table = 'civicrm_contribution_page';
         $dao->entity_id = $pageID; 
         $dao->find(true);
@@ -150,13 +150,13 @@ class CRM_Contribute_Page_Premium extends CRM_Core_Page_Basic
         }
         
         require_once 'CRM/Contribute/DAO/PremiumsProduct.php';
-        $dao =& new CRM_Contribute_DAO_PremiumsProduct();
+        $dao = new CRM_Contribute_DAO_PremiumsProduct();
         $dao->premiums_id = $premiumID;
         $dao->orderBy('weight');
         $dao->find();
 
         while ($dao->fetch()) {
-            $productDAO =& new CRM_Contribute_DAO_Product();
+            $productDAO = new CRM_Contribute_DAO_Product();
             $productDAO->id = $dao->product_id;
             $productDAO->is_active = 1;
            

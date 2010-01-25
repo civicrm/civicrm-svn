@@ -54,7 +54,7 @@ class CRM_Event_Payment_eWAY extends CRM_Core_Payment_eWAY
    {
       if (self::$_singleton === null ) 
       { 
-         self::$_singleton =& new CRM_Event_Payment_eWAY( $mode, $paymentProcessor );
+         self::$_singleton = new CRM_Event_Payment_eWAY( $mode, $paymentProcessor );
       } 
       return self::$_singleton; 
    } 

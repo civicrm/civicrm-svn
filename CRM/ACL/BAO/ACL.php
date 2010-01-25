@@ -97,7 +97,7 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
                                             $object_table = null, $object_id = null, 
                                             $acl_id = null, $acl_role = false) 
     {
-        $dao =& new CRM_ACL_DAO_ACL;
+        $dao = new CRM_ACL_DAO_ACL;
         
         $t = array(
             'ACL'           => self::getTableName(),
@@ -108,7 +108,7 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
             'GroupContact'  => CRM_Contact_DAO_GroupContact::getTableName()
         );
 
-        $session     =& CRM_Core_Session::singleton();
+        $session     = CRM_Core_Session::singleton();
         $contact_id  =  $session->get('userID');
         
         $where = " {$t['ACL']}.operation = '" .
@@ -365,7 +365,7 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
             $group_id   = CRM_Utils_Type::escape($group_id, 'Integer');
         }
         
-        $rule       =& new CRM_ACL_BAO_ACL();
+        $rule       = new CRM_ACL_BAO_ACL();
 
         require_once 'CRM/Contact/BAO/Group.php';
         require_once 'CRM/Contact/BAO/GroupContact.php';
@@ -426,7 +426,7 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
             $group_id   = CRM_Utils_Type::escape($group_id, 'Integer');
         }
 
-        $rule       =& new CRM_ACL_BAO_ACL();
+        $rule       = new CRM_ACL_BAO_ACL();
 
         require_once 'CRM/ACL/DAO/EntityRole.php';
         $acl           = self::getTableName();
@@ -490,7 +490,7 @@ class CRM_ACL_BAO_ACL extends CRM_ACL_DAO_ACL {
     public static function &getGroupACLs($contact_id, $aclRoles = false) {
         $contact_id = CRM_Utils_Type::escape($contact_id, 'Integer');
 
-        $rule       =& new CRM_ACL_BAO_ACL();
+        $rule       = new CRM_ACL_BAO_ACL();
 
         require_once 'CRM/Contact/BAO/GroupContact.php';
         require_once 'CRM/Contact/BAO/Group.php';
@@ -536,7 +536,7 @@ INNER JOIN  $c2g
     public static function &getGroupACLRoles($contact_id) {
         $contact_id = CRM_Utils_Type::escape($contact_id, 'Integer');
         
-        $rule       =& new CRM_ACL_BAO_ACL();
+        $rule       = new CRM_ACL_BAO_ACL();
                                                                                 
         $acl        = self::getTableName();
         $aclRole   = 'civicrm_acl_role';
@@ -578,7 +578,7 @@ INNER JOIN  $c2g
         // also get all acls for "Any Role" case
         // and authenticated User Role if present
         $roles = "0";
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         if ( $session->get( 'ufID' ) > 0 ) {
             $roles .= ",2";
         }
@@ -620,7 +620,7 @@ SELECT $acl.*
     }
 
     static function create( &$params ) {
-        $dao =& new CRM_ACL_DAO_ACL( );
+        $dao = new CRM_ACL_DAO_ACL( );
         $dao->copyValues( $params );
         $dao->save( );
     }
@@ -863,7 +863,7 @@ ORDER BY a.object_id
         require_once 'CRM/ACL/BAO/Cache.php';
         CRM_ACL_BAO_Cache::resetCache( );
 
-        $acl = & new CRM_ACL_DAO_ACL();
+        $acl = new CRM_ACL_DAO_ACL();
         $acl->id = $aclId;
         $acl->delete();
     }

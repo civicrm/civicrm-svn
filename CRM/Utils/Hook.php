@@ -57,7 +57,7 @@ class CRM_Utils_Hook {
      * @access public 
      */ 
     static function pre( $op, $objectName, $id, &$params ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         return   
             eval( 'return ' .
@@ -78,7 +78,7 @@ class CRM_Utils_Hook {
      * @access public 
      */ 
     static function post( $op, $objectName, $objectId, &$objectRef ) {
-        $config =& CRM_Core_Config::singleton( );  
+        $config = CRM_Core_Config::singleton( );  
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         return   
             eval( 'return ' .
@@ -99,7 +99,7 @@ class CRM_Utils_Hook {
      * @access public
      */
     static function links( $op, $objectName, &$objectId ) {
-        $config =& CRM_Core_Config::singleton( );  
+        $config = CRM_Core_Config::singleton( );  
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         return   
             eval( 'return ' .
@@ -117,7 +117,7 @@ class CRM_Utils_Hook {
      * @return null the return value is ignored
      */
     static function buildForm( $formName, &$form ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         return   
             eval( 'return ' .
@@ -135,7 +135,7 @@ class CRM_Utils_Hook {
      * @return null the return value is ignored
      */
     static function postProcess( $formName, &$form ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         return   
             eval( 'return ' .
@@ -157,7 +157,7 @@ class CRM_Utils_Hook {
      * @access public 
      */ 
     static function validate( $formName, &$fields, &$files, &$form ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         return   
             eval( 'return ' .
@@ -177,7 +177,7 @@ class CRM_Utils_Hook {
      * @access public 
      */ 
     static function custom( $op, $groupID, $entityID, &$params ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         return   
             eval( 'return ' .
@@ -199,7 +199,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function aclWhereClause( $type, &$tables, &$whereTables, &$contactID, &$where ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         return   
             eval( 'return ' .
@@ -221,7 +221,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function aclGroup( $type, $contactID, $tableName, &$allGroups, &$currentGroups ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         return   
             eval( 'return ' .
@@ -238,7 +238,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function xmlMenu( &$files ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
         return   
@@ -257,7 +257,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function dashboard( $contactID, &$contentPlacement = self::DASHBOARD_BELOW ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
         $retval =   
@@ -286,7 +286,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function recent( &$recentArray ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
         return eval( 'return ' .
@@ -305,7 +305,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function buildAmount( $pageType, &$form, &$amount ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
         return   
@@ -324,7 +324,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function tabs( &$tabs, $contactID ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
         return   
@@ -342,7 +342,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function tokens( &$tokens ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
         return   
@@ -362,7 +362,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function tokenValues( &$details, &$contactIDs, $jobID = null ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
 
@@ -382,7 +382,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function pageRun( &$page ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
 
@@ -403,7 +403,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function copy( $objectName, &$object ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
 
@@ -451,7 +451,7 @@ class CRM_Utils_Hook {
     }
 
     static function customFieldOptions( $customFieldID, &$options, $detailedFormat = false ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
 
@@ -462,7 +462,7 @@ class CRM_Utils_Hook {
     }
 
     static function searchTasks( $objectType, &$tasks ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
 
@@ -473,7 +473,7 @@ class CRM_Utils_Hook {
     }
     
     static function eventDiscount( &$form, &$params ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
 
@@ -484,7 +484,7 @@ class CRM_Utils_Hook {
     }
 
     static function mailingGroups( &$form, &$groups, &$mailings ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
 
@@ -495,7 +495,7 @@ class CRM_Utils_Hook {
     }
 
     static function shortcuts( &$options ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
 
@@ -507,7 +507,7 @@ class CRM_Utils_Hook {
     }
 
     static function membershipTypeValues( &$form, &$membershipTypes ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
 
@@ -528,7 +528,7 @@ class CRM_Utils_Hook {
      * @access public 
      */
     static function summary( $contactID, &$content, &$contentPlacement = self::SUMMARY_BELOW ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
         return   
@@ -538,7 +538,7 @@ class CRM_Utils_Hook {
     }
 
     static function contactListQuery( &$query, $name, $context, $id ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
         return   
@@ -567,7 +567,7 @@ class CRM_Utils_Hook {
     static function alterPaymentProcessorParams( $paymentObj,
                                                  &$rawParams, 
                                                  &$cookedParams ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
 
@@ -578,7 +578,7 @@ class CRM_Utils_Hook {
     }
 
     static function alterMailParams( &$params ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
 

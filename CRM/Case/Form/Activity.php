@@ -152,7 +152,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
 
         CRM_Utils_System::setTitle( $this->_activityTypeName );
 
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->pushUserContext( $url );
     }
     
@@ -247,7 +247,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
      * @access public  
      * @static  
      */  
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {  
         // skip form rule if deleting
         if  ( CRM_Utils_Array::value( '_qf_Activity_next_',$fields) == 'Delete' || CRM_Utils_Array::value( '_qf_Activity_next_',$fields) == 'Restore' ) {
@@ -390,7 +390,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             // work done by bao create method , lets use dao object to make the changes 
             $params = array('id' => $this->_activityId);
             $params['is_current_revision'] = 0;
-            $activity =& new CRM_Activity_DAO_Activity( );
+            $activity = new CRM_Activity_DAO_Activity( );
             $activity->copyValues( $params );
             $activity->save( );        
         }

@@ -152,7 +152,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
 
         // let the constructor initialize this, should happen only once
         if ( ! isset( self::$_template ) ) {
-            self::$_template =& CRM_Core_Smarty::singleton( );
+            self::$_template = CRM_Core_Smarty::singleton( );
         }
 
     }
@@ -472,7 +472,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
      * @access public
      */     
     function getLink( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         return CRM_Utils_System::url( $_GET[$config->userFrameworkURLVar],
                                       '_qf_' . $this->_name . '_display=true' );
     }
@@ -797,7 +797,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
             $locationName = "location";
         }
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Address');
 
         $location[$locationId]['address']['street_address']         =
@@ -907,7 +907,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         }
         $this->set( 'uploadNames', $uploadNames );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( ! empty( $uploadNames ) ) {
             $this->controller->addUploadAction( $config->customFileUploadDir, $uploadNames );
         }
@@ -958,7 +958,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
             $attributes['endOffset']   = $values['end'];
         }
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( !CRM_Utils_Array::value( 'format', $attributes ) ) {
             $attributes['format']  = $config->dateInputFormat;
         }

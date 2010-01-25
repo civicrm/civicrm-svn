@@ -53,7 +53,7 @@ class CRM_Core_I18n
     private function __construct($locale)
     {
         if ($locale != '' and $locale != 'en_US') {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $streamer = new FileReader(implode(DIRECTORY_SEPARATOR, array($config->gettextResourceDir, $locale, 'civicrm.mo')));
             $this->_phpgettext = new gettext_reader($streamer);
         }
@@ -75,7 +75,7 @@ class CRM_Core_I18n
             $all =& CRM_Core_I18n_PseudoConstant::languages();
 
             // check which ones are available; add them to $all if not there already
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $codes = array();
             if (is_dir($config->gettextResourceDir)) {
                 $dir = opendir($config->gettextResourceDir);
@@ -96,7 +96,7 @@ class CRM_Core_I18n
         }
 
         if ($enabled === null) {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $enabled = array();
             if (isset($config->languageLimit) and $config->languageLimit) {
                 foreach ($all as $code => $name) {
@@ -295,7 +295,7 @@ function ts($text, $params = array())
     }
 
     if (!$config) {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
     }
 
     global $tsLocale;

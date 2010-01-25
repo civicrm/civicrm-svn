@@ -58,7 +58,7 @@ class CRM_Standalone_Form_Register extends CRM_Core_Form {
         }
         
         require_once 'CRM/Core/Session.php';
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $this->_openID = $session->get( 'openid' );
     }
     
@@ -123,14 +123,14 @@ class CRM_Standalone_Form_Register extends CRM_Core_Form {
         CRM_Utils_System_Standalone::getUserID( $user );
         
         require_once 'CRM/Core/Session.php';
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $contactId = $session->get( 'userID' );
 
         $query   = "SELECT count(id) FROM civicrm_uf_match";
         $ufCount = CRM_Core_DAO::singleValueQuery( $query );
 
         if ( ($ufCount == 1) || defined('ALLOWED_TO_LOGIN') ) {
-            $openId =& new CRM_Core_DAO_OpenID( );
+            $openId = new CRM_Core_DAO_OpenID( );
             $openId->contact_id = $contactId;
             $openId->find( true );
             $openId->allowed_to_login = 1;
@@ -141,7 +141,7 @@ class CRM_Standalone_Form_Register extends CRM_Core_Form {
         if ( $ufCount == 1 ) {
             require_once 'CRM/Contact/BAO/GroupContact.php';
             require_once 'CRM/Contact/DAO/Group.php';
-            $group =& new CRM_Contact_DAO_Group( );
+            $group = new CRM_Contact_DAO_Group( );
             $group->name       = 'Administrators';
             $group->is_active  = 1;
             if ( $group->find(true) ) {

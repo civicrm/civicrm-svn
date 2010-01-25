@@ -57,7 +57,7 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
      */
     function browse( )
     {
-         $controller =& new CRM_Core_Controller_Simple( 'CRM_Grant_Form_Search', ts('Grants'), $this->_action );
+         $controller = new CRM_Core_Controller_Simple( 'CRM_Grant_Form_Search', ts('Grants'), $this->_action );
          $controller->setEmbedded( true );
          $controller->reset( );
          $controller->set( 'cid'  , $this->_contactId );
@@ -74,7 +74,7 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
      */ 
     function view( ) 
     { 
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Grant_Form_GrantView', 'View Grant', $this->_action ); 
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Grant_Form_GrantView', 'View Grant', $this->_action ); 
         $controller->setEmbedded( true );  
         $controller->set( 'id' , $this->_id );  
         $controller->set( 'cid', $this->_contactId );  
@@ -90,7 +90,7 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
      */
     function edit( ) 
     { 
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Grant_Form_Grant', 'Create grant', $this->_action );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Grant_Form_Grant', 'Create grant', $this->_action );
         $controller->setEmbedded( true ); 
         $controller->set( 'id' , $this->_id ); 
         $controller->set( 'cid', $this->_contactId ); 
@@ -133,7 +133,7 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
     {
         $context   = CRM_Utils_Request::retrieve( 'context', 'String', $this );
         $this->_id = CRM_Utils_Request::retrieve('id', 'Integer', $this );
-        $session   =& CRM_Core_Session::singleton( ); 
+        $session   = CRM_Core_Session::singleton( ); 
         
         switch ( $context ) {
             

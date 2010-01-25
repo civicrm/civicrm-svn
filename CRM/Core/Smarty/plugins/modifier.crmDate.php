@@ -50,7 +50,7 @@ function smarty_modifier_crmDate($dateString, $dateFormat = null, $onlyTime = fa
             $dateFormat = null;
         }
         if ( $onlyTime ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $dateFormat  = $config->dateformatTime;
         }
 

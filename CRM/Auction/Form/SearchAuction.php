@@ -44,7 +44,7 @@ class CRM_Auction_Form_SearchAuction extends CRM_Core_Form
         $defaults['auctionsByDates'] = 0;
 
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $this->_showHide =& new CRM_Core_ShowHideBlocks( );
+        $this->_showHide = new CRM_Core_ShowHideBlocks( );
         if ( !CRM_Utils_Array::value('auctionsByDates',$defaults) ) {
             $this->_showHide->addHide( 'id_fromToDates' );
         }

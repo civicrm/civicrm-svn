@@ -62,7 +62,7 @@ class CRM_Member_Page_Tab extends CRM_Contact_Page_View {
 
         $membership = array();
         require_once 'CRM/Member/DAO/Membership.php';
-        $dao =& new CRM_Member_DAO_Membership();
+        $dao = new CRM_Member_DAO_Membership();
         $dao->contact_id = $this->_contactId;
         $dao->is_test = 0;
         //$dao->orderBy('name');
@@ -136,7 +136,7 @@ class CRM_Member_Page_Tab extends CRM_Contact_Page_View {
      */ 
     function view( ) 
     {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Member_Form_MembershipView', 'View Membership',  
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Member_Form_MembershipView', 'View Membership',  
                                                        $this->_action ); 
         $controller->setEmbedded( true );  
         $controller->set( 'id' , $this->_id );  
@@ -169,7 +169,7 @@ class CRM_Member_Page_Tab extends CRM_Contact_Page_View {
             $path  = 'CRM_Member_Form_Membership';
             $title = ts('Create Membership');
         }
-        $controller =& new CRM_Core_Controller_Simple( $path, $title, $this->_action );
+        $controller = new CRM_Core_Controller_Simple( $path, $title, $this->_action );
         $controller->setEmbedded( true ); 
         $controller->set('BAOName', $this->getBAOName());
         $controller->set( 'id' , $this->_id ); 
@@ -283,7 +283,7 @@ class CRM_Member_Page_Tab extends CRM_Contact_Page_View {
             break;
         }
 
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
     }
 
@@ -391,7 +391,7 @@ class CRM_Member_Page_Tab extends CRM_Contact_Page_View {
 
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
             $this->assign( 'accessContribution', true );
-            $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );  
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );  
             $controller->setEmbedded( true );                           
             $controller->reset( );  
             $controller->set( 'force', 1 );

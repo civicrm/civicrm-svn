@@ -100,7 +100,7 @@ class CRM_Contact_Form_Search_Custom extends CRM_Contact_Form_Search {
 
     function postProcess( ) 
     {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->set('isAdvanced', '3');
         $session->set('isCustom'  , '1');
 

@@ -103,7 +103,7 @@ class CRM_Utils_OpenFlashChart
         
         // get the currency.
         require_once 'CRM/Utils/Money.php';
-        $config   =& CRM_Core_Config::singleton();
+        $config   = CRM_Core_Config::singleton();
         $symbol   = $config->defaultCurrencySymbol;
                         
         // set the tooltip.
@@ -187,7 +187,7 @@ class CRM_Utils_OpenFlashChart
         
         //get the currency.
         require_once 'CRM/Utils/Money.php';
-        $config   =& CRM_Core_Config::singleton();
+        $config   = CRM_Core_Config::singleton();
         $symbol   = $config->defaultCurrencySymbol;
         
         $pie = new pie();

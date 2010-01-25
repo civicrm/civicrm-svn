@@ -55,7 +55,7 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
         }
         $this->assign( 'id', $this->_id );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage',
                                               $this->_id,
                                               'title' );
@@ -137,7 +137,7 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
         } 
     
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $showHide =& new CRM_Core_ShowHideBlocks( );
+        $showHide = new CRM_Core_ShowHideBlocks( );
         $showHide->addHide( "id-colors" );
         $showHide->addToTemplate( );
         return $defaults;
@@ -190,7 +190,7 @@ class CRM_Contribute_Form_ContributionPage_Widget extends CRM_Contribute_Form_Co
      * @access public
      * @static
      */
-    public static function formRule( &$params, &$files, $self ) 
+    public static function formRule( $params, $files, $self ) 
     { 
         $errors = array( );
         if ( CRM_Utils_Array::value( 'is_active', $params ) ) {

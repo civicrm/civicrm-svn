@@ -53,7 +53,7 @@ class CiviReportMail {
                 $obj->assign( 'reportTitle', $templateInfo['label'] );
             }
             
-            $wrapper =& new CRM_Utils_Wrapper( );
+            $wrapper = new CRM_Utils_Wrapper( );
             $arguments['urlToSession'] = array( array( 'urlVar'     => 'instanceId',
                                                        'type'       => 'Positive',
                                                        'sessionVar' => 'instanceId',
@@ -69,7 +69,7 @@ require_once 'CRM/Core/Config.php';
 require_once 'CRM/Report/Page/Instance.php';
 require_once 'CRM/Utils/Wrapper.php';
 
-$config =& CRM_Core_Config::singleton();
+$config = CRM_Core_Config::singleton();
 
 CRM_Utils_System::authenticateScript(true);
 

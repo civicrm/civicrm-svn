@@ -56,11 +56,11 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
      * @static
      */
     public static function runJobs($testParams = null) {
-        $job =& new CRM_Mailing_BAO_Job();
+        $job = new CRM_Mailing_BAO_Job();
         
-        $mailing =& new CRM_Mailing_DAO_Mailing();
+        $mailing = new CRM_Mailing_DAO_Mailing();
         
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $jobTable     = CRM_Mailing_DAO_Job::getTableName();
         $mailingTable = CRM_Mailing_DAO_Mailing::getTableName();
 
@@ -174,7 +174,7 @@ ORDER BY j.scheduled_date,
     public function queue($testParams = null) {
        
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $this->mailing_id;
         if (!empty($testParams)) {
             $mailing->getTestRecipients($testParams);
@@ -203,7 +203,7 @@ ORDER BY j.scheduled_date,
      */
     public function getMailingSize() {
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $this->mailing_id;
 
         $recipients =& $mailing->getRecipientsObject($this->id, true);
@@ -223,11 +223,11 @@ ORDER BY j.scheduled_date,
      */
     public function deliver(&$mailer, $testParams =null) {
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $this->mailing_id;
         $mailing->find(true);
 
-        $eq =& new CRM_Mailing_Event_BAO_Queue();
+        $eq = new CRM_Mailing_Event_BAO_Queue();
         $eqTable        = CRM_Mailing_Event_BAO_Queue::getTableName();
         $emailTable     = CRM_Core_BAO_Email::getTableName();
         $contactTable   = CRM_Contact_BAO_Contact::getTableName();
@@ -255,7 +255,7 @@ ORDER BY j.scheduled_date,
         $mailsProcessed = 0;
 
         if ( $config == null ) {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
         }
 
         $job_date = CRM_Utils_Date::isoToMysql( $this->scheduled_date );
@@ -423,7 +423,7 @@ WHERE civicrm_activity.activity_type_id = %1
      * @static
      */
     public static function cancel($mailingId) {
-        $job =& new CRM_Mailing_BAO_Job();
+        $job = new CRM_Mailing_BAO_Job();
         $job->mailing_id = $mailingId;
         if ($job->find(true) and in_array($job->status, array('Scheduled', 'Running', 'Paused'))) {
             // fix MySQL dates...

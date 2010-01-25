@@ -64,7 +64,7 @@ class CRM_Core_BAO_Block
         if ( empty( $params ) ) {
             return null; 
         }
-        eval ('$block = & new CRM_Core_BAO_' . $blockName .'( );');
+        eval ('$block = new CRM_Core_BAO_' . $blockName .'( );');
         
         $blocks = array( );
         if ( ! isset( $params['entity_table'] ) ) {
@@ -82,7 +82,7 @@ class CRM_Core_BAO_Block
             
             $count = 1;
             foreach( $blockIds as $blockId ) {
-                eval ('$block = & new CRM_Core_BAO_' . $blockName .'( );');
+                eval ('$block = new CRM_Core_BAO_' . $blockName .'( );');
                 $block->id = $blockId['id'];
                 $getBlocks = self::retrieveBlock( $block, $blockName );
                 $blocks[$count++] = array_pop( $getBlocks );
@@ -281,7 +281,7 @@ class CRM_Core_BAO_Block
      */
     static function blockDelete ( $blockName, $params ) 
     {
-        eval ( '$block =& new CRM_Core_DAO_' . $blockName . '( );' );
+        eval ( '$block = new CRM_Core_DAO_' . $blockName . '( );' );
 
         $block->copyValues( $params );
 

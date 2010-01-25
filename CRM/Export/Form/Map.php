@@ -112,7 +112,7 @@ class CRM_Export_Form_Map extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields, $values, $mappingTypeId ) 
+    static function formRule( $fields, $values, $mappingTypeId ) 
     {
         $errors  = array( );
 
@@ -131,7 +131,7 @@ class CRM_Export_Form_Map extends CRM_Core_Form
         if ( !empty($errors) ) {
             $_flag = 1;
             require_once 'CRM/Core/Page.php';
-            $assignError =& new CRM_Core_Page(); 
+            $assignError = new CRM_Core_Page(); 
             $assignError->assign('mappingDetailsError', $_flag);
             return $errors;
         } else {

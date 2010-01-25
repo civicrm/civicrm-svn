@@ -64,7 +64,7 @@ class CRM_Activity_Page_AJAX
         $newSubject = CRM_Utils_Array::value( 'newSubject', $_POST );
 
         require_once "CRM/Case/DAO/CaseActivity.php";
-        $caseActivity =& new CRM_Case_DAO_CaseActivity();
+        $caseActivity = new CRM_Case_DAO_CaseActivity();
         $caseActivity->case_id = $caseID;
         $caseActivity->activity_id = $activityID;
         $caseActivity->find(true);
@@ -74,7 +74,7 @@ class CRM_Activity_Page_AJAX
 		
 		if (! empty($newSubject)) {
             require_once "CRM/Activity/DAO/Activity.php";
-            $activity =& new CRM_Activity_DAO_Activity();
+            $activity = new CRM_Activity_DAO_Activity();
             $params = array('id' => $activityID, 'subject' => $newSubject);
             $activity->copyValues($params);
             $activity->save();

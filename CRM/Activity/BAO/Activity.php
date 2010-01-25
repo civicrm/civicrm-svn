@@ -95,7 +95,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
      */
     public function retrieve ( &$params, &$defaults ) 
     {
-        $activity =& new CRM_Activity_DAO_Activity( );
+        $activity = new CRM_Activity_DAO_Activity( );
         $activity->copyValues( $params );
 
         if ( $activity->find( true ) ) {
@@ -157,7 +157,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
                
-        $activity    =& new CRM_Activity_DAO_Activity( );
+        $activity    = new CRM_Activity_DAO_Activity( );
         $activity->copyValues( $params );
         
         if ( ! $moveToTrash ) {  
@@ -215,7 +215,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
     public function deleteActivityAssignment( $activityId ) 
     {
         require_once 'CRM/Activity/BAO/ActivityAssignment.php';
-        $assignment              =& new CRM_Activity_BAO_ActivityAssignment( );
+        $assignment              = new CRM_Activity_BAO_ActivityAssignment( );
         $assignment->activity_id = $activityId;
         $assignment->delete( );
     }
@@ -231,7 +231,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
     public function deleteActivityTarget( $activityId ) 
     {
         require_once 'CRM/Activity/BAO/ActivityTarget.php';
-        $target              =& new CRM_Activity_BAO_ActivityTarget( );
+        $target              = new CRM_Activity_BAO_ActivityTarget( );
         $target->activity_id = $activityId;
         $target->delete( );
     }
@@ -250,7 +250,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             return;
         }
         require_once 'CRM/Activity/BAO/ActivityTarget.php';
-        $target              =& new CRM_Activity_BAO_ActivityTarget( );
+        $target              = new CRM_Activity_BAO_ActivityTarget( );
         $target->activity_id = $params['activity_id'];
         $target->target_contact_id = $params['target_contact_id'];
         $target->save( );
@@ -270,7 +270,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             return;
         }
         require_once 'CRM/Activity/BAO/ActivityAssignment.php';
-        $assignee              =& new CRM_Activity_BAO_ActivityAssignment( );
+        $assignee              = new CRM_Activity_BAO_ActivityAssignment( );
         $assignee->activity_id = $params['activity_id'];
         $assignee->assignee_contact_id = $params['assignee_contact_id'];
         $assignee->save( );
@@ -294,7 +294,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             CRM_Core_Error::fatal( 'Not enough data to create activity object,' );
         }
         
-        $activity =& new CRM_Activity_DAO_Activity( );
+        $activity = new CRM_Activity_DAO_Activity( );
 
         if ( ! CRM_Utils_Array::value( 'status_id', $params ) ) {
             if ( isset( $params['activity_date_time'] ) &&
@@ -367,7 +367,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                 $assignmentParams['assignee_contact_id'] = $params['assignee_contact_id'];
             
                 if ( CRM_Utils_Array::value( 'id', $params ) ) {
-                    $assignment =& new CRM_Activity_BAO_ActivityAssignment( );
+                    $assignment = new CRM_Activity_BAO_ActivityAssignment( );
                     $assignment->activity_id = $activityId;
                     $assignment->find( true );
 
@@ -412,7 +412,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                 $targetParams['target_contact_id'] = $params['target_contact_id'];
 
                 if ( CRM_Utils_Array::value( 'id', $params ) ) {
-                    $target =& new CRM_Activity_BAO_ActivityTarget( );
+                    $target = new CRM_Activity_BAO_ActivityTarget( );
                     $target->activity_id = $activityId;
                     $target->find( true );
                 
@@ -566,7 +566,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                                                               'Bulk Email',
                                                               'name' );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
                
         $randomNum = md5( uniqid( ) );
         $activityTempTable = "civicrm_temp_activity_details_{$randomNum}";
@@ -763,7 +763,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         $params = array( );
         $clause = 1 ;
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( !$admin ) {
             $clauseArray = array( 'source_contact_id = %1',
                                   'at.target_contact_id = %1', 
@@ -875,7 +875,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
     {        
         // get the contact details of logged in contact, which we set as from email
         if ( $userID == null ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $userID  =  $session->get( 'userID' );
         }
         
@@ -955,7 +955,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         $categories = array_keys( $tokens );
 
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
-            $smarty =& CRM_Core_Smarty::singleton( );
+            $smarty = CRM_Core_Smarty::singleton( );
 
             require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
@@ -1531,7 +1531,7 @@ AND cl.modified_id  = c.id
         }
         
         global $civicrm_root;
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         if ( !file_exists(rtrim($civicrm_root, '/') . "/CRM/{$crmDir}/Form/Activity/{$activityTypeFile}.php") ) {
             if (empty($config->customPHPPathDir)) {
                 return false;
@@ -1553,7 +1553,7 @@ AND cl.modified_id  = c.id
      */
     public function restoreActivity( &$params ) 
     {
-        $activity    =& new CRM_Activity_DAO_Activity( );
+        $activity    = new CRM_Activity_DAO_Activity( );
         $activity->copyValues( $params );
 
         $activity->is_deleted = 0;
@@ -1619,7 +1619,7 @@ AND cl.modified_id  = c.id
         
         if ( $matches[1] ) {
             foreach ( $matches[1] as $token ) {
-                list($type,$name) = split( '\.', $token, 2 );
+                list($type,$name) = preg_split( '/\./', $token, 2 );
                 if ( $name ) {
                     if ( ! isset( $tokens['contact'] ) ) {
                         $tokens['contact'] = array( );

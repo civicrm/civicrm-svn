@@ -200,7 +200,7 @@ class CRM_Core_Action {
      * @static
      */
     static function formLink( &$links, $mask, $values ) {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         if ( empty( $links ) ) {
             return null;
         }

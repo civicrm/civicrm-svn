@@ -53,7 +53,7 @@ class CRM_Core_Report_Excel {
         
         $result = '';
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $seperator     = $config->fieldSeparator;
         $enclosed      = '"';
         $escaped       = $enclosed;
@@ -93,7 +93,8 @@ class CRM_Core_Report_Excel {
                     $schema_insert .= '';
                 } else if ($value == '0' || $value != '') {
                     // loic1 : always enclose fields
-                    $value = ereg_replace("\015(\012)?", "\012", $value);
+                    //$value = ereg_replace("\015(\012)?", "\012", $value);
+                    $value = preg_replace("/\015(\012)?", "\012", $value);
                     if ($enclosed == '') {
                         $schema_insert .= $value;
                     } else {

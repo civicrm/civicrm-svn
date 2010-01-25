@@ -97,7 +97,7 @@ class CRM_Admin_Form_PreferencesDate extends CRM_Admin_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields ) {
+    static function formRule( $fields ) {
         $errors = array( );
         
         if ( $fields['name'] == 'activityDateTime' && !$fields['time_format'] ) {

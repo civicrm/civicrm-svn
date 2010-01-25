@@ -116,7 +116,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
     public function postProcess ( )
     {
         $fv = $this->controller->exportValues($this->_name);
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $locName = null;
         //get the address format sequence from the config file
         require_once 'CRM/Core/BAO/Preferences.php';
@@ -193,7 +193,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         //get the total number of contacts to fetch from database.
         $numberofContacts = count( $this->_contactIds );
         require_once 'CRM/Contact/BAO/Query.php';      
-        $query   =& new CRM_Contact_BAO_Query( $params, $returnProperties );
+        $query   = new CRM_Contact_BAO_Query( $params, $returnProperties );
         $details = $query->apiQuery( $params, $returnProperties, NULL, NULL, 0, $numberofContacts );
                       
         // also get all token values
@@ -389,7 +389,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                         PREG_PATTERN_ORDER);
         if ( $matches[1] ) {
             foreach ( $matches[1] as $token ) {
-                list( $type, $name ) = split( '\.', $token, 2 );
+                list( $type, $name ) = preg_split( '/\./', $token, 2 );
                 if ( $name ) {
                     $returnProperties["{$name}"] = 1;
                 }

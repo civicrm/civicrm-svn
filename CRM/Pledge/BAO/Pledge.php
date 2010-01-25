@@ -97,7 +97,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
             CRM_Utils_Hook::pre( 'create', 'Pledge', null, $params ); 
         }
         
-        $pledge =& new CRM_Pledge_DAO_Pledge( );
+        $pledge = new CRM_Pledge_DAO_Pledge( );
         
         // if pledge is complete update end date as current date
         if ( $pledge->status_id == 1 ) {
@@ -224,7 +224,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
         $url = CRM_Utils_System::url( 'civicrm/contact/view/pledge', 
                "action=view&reset=1&id={$pledge->id}&cid={$pledge->contact_id}" );
        
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         require_once 'CRM/Utils/Money.php';
         $contributionTypes = CRM_Contribute_PseudoConstant::contributionType();
         $title = CRM_Contact_BAO_Contact::displayName( $pledge->contact_id ) . 
@@ -427,7 +427,7 @@ WHERE  $whereCond
     {
         $params = array( );
         require_once 'CRM/Pledge/DAO/Pledge.php';
-        $honorDAO =& new CRM_Pledge_DAO_Pledge( );
+        $honorDAO = new CRM_Pledge_DAO_Pledge( );
         $honorDAO->honor_contact_id = $honorId;
         $honorDAO->find( );
         
@@ -585,7 +585,7 @@ WHERE  $whereCond
               $pledgerEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $params['contact_id'] );
 
         //check for online pledge.
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         if ( CRM_Utils_Array::value('receipt_from_email', $params ) ) {
             $userName  = CRM_Utils_Array::value('receipt_from_name', $params );
             $userEmail = CRM_Utils_Array::value('receipt_from_email', $params );
@@ -615,7 +615,7 @@ WHERE  $whereCond
         //Acknowledgment, if exist do not add activity.
         require_once "CRM/Activity/DAO/Activity.php";
         $activityType = 'Pledge Acknowledgment';
-        $activity =& new CRM_Activity_DAO_Activity( );
+        $activity = new CRM_Activity_DAO_Activity( );
         $activity->source_record_id = $params['id'];
         $activity->activity_type_id = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                                       $activityType,

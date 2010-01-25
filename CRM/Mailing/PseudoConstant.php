@@ -89,7 +89,7 @@ class CRM_Mailing_PseudoConstant extends CRM_Core_PseudoConstant {
 
                 require_once 'CRM/Mailing/DAO/Component.php';
 
-                $object =& new CRM_Mailing_DAO_Component( );
+                $object = new CRM_Mailing_DAO_Component( );
                 $object->component_type = $type;
                 $object->selectAdd( );
                 $object->selectAdd( "id, name" );

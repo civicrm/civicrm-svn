@@ -208,7 +208,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
         //get the additional participant ids.
         $this->_additionalParticipantIds = $this->get( 'additionalParticipantIds' );
         
-        $config  =& CRM_Core_Config::singleton( );
+        $config  = CRM_Core_Config::singleton( );
         
         if ( ! $this->_values ) {
             // create redirect URL to send folks back to event info page is registration not available
@@ -569,7 +569,7 @@ class CRM_Event_Form_Registration extends CRM_Core_Form
             $button = substr( $this->controller->getButtonName(), -4 );
             require_once 'CRM/Core/BAO/UFGroup.php';
             require_once 'CRM/Profile/Form.php';
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $contactID = $session->get( 'userID' );
             
             // we don't allow conflicting fields to be

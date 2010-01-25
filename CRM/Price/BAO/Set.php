@@ -62,7 +62,7 @@ class CRM_Price_BAO_Set extends CRM_Price_DAO_Set
      */
     static function create( &$params )
     {
-        $priceSetBAO =& new CRM_Price_BAO_Set( );
+        $priceSetBAO = new CRM_Price_BAO_Set( );
         $priceSetBAO->copyValues( $params );
         if ( defined( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID' ) && CIVICRM_EVENT_PRICE_SET_DOMAIN_ID ) {
             $priceSetBAO->domain_id = CRM_Core_Config::domainID( );
@@ -217,7 +217,7 @@ WHERE     ct.id = cp.contribution_type_id AND
         if ( isset( $usedBy['civicrm_event'] ) ) {
             require_once 'CRM/Event/DAO/Event.php';
             foreach ( $usedBy['civicrm_event'] as $eventId => $unused ) {
-                $eventDAO =& new CRM_Event_DAO_Event( );
+                $eventDAO = new CRM_Event_DAO_Event( );
                 $eventDAO->id = $eventId;
                 $eventDAO->find( );
                 while ( $eventDAO->fetch( ) ) {
@@ -227,7 +227,7 @@ WHERE     ct.id = cp.contribution_type_id AND
         }
         
         // delete price fields
-        $priceField =& new CRM_Price_DAO_Field( );
+        $priceField = new CRM_Price_DAO_Field( );
         $priceField->price_set_id = $id;
         $priceField->find( );
         while ( $priceField->fetch( ) ) {
@@ -235,7 +235,7 @@ WHERE     ct.id = cp.contribution_type_id AND
             CRM_Price_BAO_Field::deleteField( $priceField->id );
         }
         
-        $set     =& new CRM_Price_DAO_Set( );
+        $set     = new CRM_Price_DAO_Set( );
         $set->id = $id;
         return $set->delete( );
     }
@@ -251,7 +251,7 @@ WHERE     ct.id = cp.contribution_type_id AND
     public static function addTo( $entityTable, $entityId, $priceSetId ) 
     {
         // verify that the price set exists
-        $dao =& new CRM_Price_DAO_Set( );
+        $dao = new CRM_Price_DAO_Set( );
         $dao->id = $priceSetId;
         if ( !$dao->find( ) ) {
             return false;
@@ -259,7 +259,7 @@ WHERE     ct.id = cp.contribution_type_id AND
         unset( $dao );
         
         require_once 'CRM/Price/DAO/SetEntity.php';
-        $dao =& new CRM_Price_DAO_SetEntity( );
+        $dao = new CRM_Price_DAO_SetEntity( );
         // find if this already exists
         $dao->entity_id    = $entityId;
         $dao->entity_table = $entityTable;
@@ -279,7 +279,7 @@ WHERE     ct.id = cp.contribution_type_id AND
     public static function removeFrom( $entityTable, $entityId ) 
     {
         require_once 'CRM/Price/DAO/SetEntity.php';
-        $dao =& new CRM_Price_DAO_SetEntity( );
+        $dao = new CRM_Price_DAO_SetEntity( );
         $dao->entity_table = $entityTable;
         $dao->entity_id    = $entityId;
         return $dao->delete();
@@ -297,7 +297,7 @@ WHERE     ct.id = cp.contribution_type_id AND
         if ( !$entityTable || !$entityId ) return false;  
         
         require_once 'CRM/Price/DAO/SetEntity.php';
-        $dao =& new CRM_Price_DAO_SetEntity( );
+        $dao = new CRM_Price_DAO_SetEntity( );
         $dao->entity_table = $entityTable;
         $dao->entity_id    = $entityId;
         $dao->find( true );
@@ -623,7 +623,7 @@ WHERE  id = %1";
      */
     public static function getFieldIds( $id )
     {
-        $priceField =& new CRM_Price_DAO_Field();
+        $priceField = new CRM_Price_DAO_Field();
         $priceField->price_set_id = $id;
         $priceField->find( );
         while ( $priceField->fetch( ) ) {

@@ -57,7 +57,7 @@ class CRM_Core_Page_AJAX_Location
         $entityBlock = array( 'contact_id' => $cid );
         $location    =& CRM_Core_BAO_Location::getValues( $entityBlock );
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $addressSequence = array_flip($config->addressSequence());
         
         $elements = array( "phone_1_phone" => 

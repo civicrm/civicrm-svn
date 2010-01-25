@@ -50,7 +50,7 @@ class CRM_Contact_Form_Search_Simple extends CRM_Core_Form {
     }
 
     public function buildQuickForm( ) { 
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         
         $this->add('select',
                    'country_id',

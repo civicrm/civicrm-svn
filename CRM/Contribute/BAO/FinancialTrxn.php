@@ -52,13 +52,13 @@ class CRM_Contribute_BAO_FinancialTrxn extends CRM_Contribute_DAO_FinancialTrxn
      * @static
      */
     static function create(&$params) {
-        $trxn =& new CRM_Contribute_DAO_FinancialTrxn();
+        $trxn = new CRM_Contribute_DAO_FinancialTrxn();
         $trxn->copyValues($params);
 
         require_once 'CRM/Utils/Rule.php';
         if (!CRM_Utils_Rule::currencyCode($trxn->currency)) {
             require_once 'CRM/Core/Config.php';
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $trxn->currency = $config->defaultCurrency;
         }
 

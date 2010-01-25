@@ -159,7 +159,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             if ( $params['option_type'] == 1 ) {
                 // first create an option group for this custom group
                 require_once 'CRM/Core/BAO/OptionGroup.php';
-                $optionGroup            =& new CRM_Core_DAO_OptionGroup( );
+                $optionGroup            = new CRM_Core_DAO_OptionGroup( );
                 $optionGroup->name      =  "{$params['column_name']}_". date( 'YmdHis' );
                 $optionGroup->label     =  $params['label'];
                 $optionGroup->is_active = 1;
@@ -213,7 +213,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             $params['attributes'] = 'rows=4, cols=60';
         }
 
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->copyValues( $params );
         $customField->is_required      = CRM_Utils_Array::value( 'is_required'    , $params, false );
         $customField->is_searchable    = CRM_Utils_Array::value( 'is_searchable'  , $params, false );
@@ -584,7 +584,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             $useRequired = 0;
         }
         
-        $field =& new CRM_Core_DAO_CustomField();
+        $field = new CRM_Core_DAO_CustomField();
         
         $field->id = $fieldId;
         if (! $field->find(true)) {
@@ -1075,7 +1075,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                         $mode = null ) 
     {
         //get the type of custom field
-        $customField =& new CRM_Core_BAO_CustomField();
+        $customField = new CRM_Core_BAO_CustomField();
         $customField->id = $customFieldId;
         $customField->find(true);
         
@@ -1095,7 +1095,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             
             if ( $customField->data_type == 'Country' ) {
                 if ( ! $value ) {
-                    $config =& CRM_Core_Config::singleton();
+                    $config = CRM_Core_Config::singleton();
                     if ( $config->defaultContactCountry ) {
                         $value = $config->defaultContactCountry( );
                     }
@@ -1364,7 +1364,7 @@ SELECT $columnName
                 $fileId = CRM_Core_DAO::singleValueQuery( $query, $params );
             }
             
-            $fileDAO =& new CRM_Core_DAO_File();
+            $fileDAO = new CRM_Core_DAO_File();
             
             if ( $fileId ) {
                 $fileDAO->id = $fileId;

@@ -62,7 +62,7 @@ class CRM_Utils_ReCAPTCHA {
      */
     static function &singleton( ) {
         if (self::$_singleton === null ) {
-            self::$_singleton =& new CRM_Utils_ReCAPTCHA( );
+            self::$_singleton = new CRM_Utils_ReCAPTCHA( );
         }
         return self::$_singleton;
     }
@@ -76,7 +76,7 @@ class CRM_Utils_ReCAPTCHA {
      */
     function add( &$form ) {
         $error  = null;
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         require_once 'packages/recaptcha/recaptchalib.php';
         $html = recaptcha_get_html($config->recaptchaPublicKey, $error);
@@ -100,7 +100,7 @@ class CRM_Utils_ReCAPTCHA {
     }
 
     function validate( $value, &$form ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $resp = recaptcha_check_answer( $config->recaptchaPrivateKey,
                                         $_SERVER['REMOTE_ADDR'],

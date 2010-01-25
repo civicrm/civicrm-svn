@@ -67,7 +67,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( $csContactID != $this->_userID ) {
             require_once 'CRM/Contact/BAO/Contact/Permission.php';
             if ( CRM_Contact_BAO_Contact_Permission::validateChecksumContact( $csContactID, $this ) ) {
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $session->set( 'userID', $csContactID ) ;
                 $this->_userID = $csContactID;
             }
@@ -121,7 +121,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
 
         // check if the user is registered and we have a contact ID
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $contactID = $this->_userID;
         
         if ( $contactID ) {
@@ -290,7 +290,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      */
     public function buildQuickForm( ) 
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $this->applyFilter('__ALL__', 'trim');
         $this->add( 'text', "email-{$this->_bltID}",
@@ -357,7 +357,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         
         //don't build pledge block when mid is passed
         if ( ! $this->_mid ) {  
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( in_array('CiviPledge', $config->enableComponents ) 
                 && CRM_Utils_Array::value( 'pledge_block_id', $this->_values ) ) {
                 require_once 'CRM/Pledge/BAO/PledgeBlock.php';
@@ -654,7 +654,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      * @access public 
      * @static 
      */ 
-    static function formRule( &$fields, &$files, &$self ) 
+    static function formRule( $fields, $files, $self ) 
     { 
         $errors = array( );
         $amount = self::computeAmount( $fields, $self );
@@ -698,7 +698,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
              $self->_values['amount_block_is_active'] ) {
             require_once 'CRM/Contribute/DAO/Product.php';
             require_once 'CRM/Utils/Money.php';
-            $productDAO =& new CRM_Contribute_DAO_Product();
+            $productDAO = new CRM_Contribute_DAO_Product();
             $productDAO->id = $fields['selectProduct'];
             $productDAO->find(true);
             $min_amount = $productDAO->min_contribution;
@@ -798,7 +798,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
         
         // return if this is express mode
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $self->_paymentProcessor['billing_mode'] & CRM_Core_Payment::BILLING_MODE_BUTTON ) {
             if ( CRM_Utils_Array::value( $self->_expressButtonName . '_x', $fields ) ||
                  CRM_Utils_Array::value( $self->_expressButtonName . '_y', $fields ) ||
@@ -929,7 +929,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
      */
     public function postProcess() 
     {   
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
     
         // we first reset the confirm page so it accepts new values
         $this->controller->resetPage( 'Confirm' );

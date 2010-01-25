@@ -306,7 +306,7 @@ class CRM_Core_Block {
      * @access private
      */
     private function setTemplateShortcutValues( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         static $shortCuts = array( );
         
@@ -509,7 +509,7 @@ class CRM_Core_Block {
      * @access private
      */
     private function setTemplateMenuValues( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $path = 'navigation';
         $values =& CRM_Core_Menu::getNavigation( );
@@ -525,13 +525,13 @@ class CRM_Core_Block {
      * @access private
      */
     private function setTemplateEventValues( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         require_once 'CRM/Event/BAO/Event.php';
         $info = CRM_Event_BAO_Event::getCompleteInfo( );
 
         if ( $info ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             // check if registration link should be displayed
             foreach ( $info as $id => $event ) {
                 $info[$id]['onlineRegistration'] = CRM_Event_BAO_Event::validRegistrationDate( $event,
@@ -553,7 +553,7 @@ class CRM_Core_Block {
      */
     static function getContent( $id ) {
         // return if upgrade mode
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( CRM_Utils_Array::value( $config->userFrameworkURLVar, $_GET ) == 'civicrm/upgrade' ) {
             return;
         }
@@ -610,7 +610,7 @@ class CRM_Core_Block {
      * @access public
      */
     static function fetch( $id, $fileName, $properties ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
 
         if ( $properties ) {
             $template->assign( $properties );

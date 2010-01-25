@@ -416,13 +416,13 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                                                $this );
         
         // reset from session, CRM-3526 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         if ( $this->_force && $session->get( 'selectedSearchContactIds' ) ) {
             $session->resetScope( 'selectedSearchContactIds' );
         }
         
         // if we dont get this from the url, use default if one exsts
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $this->_ufGroupID == null &&
              $config->defaultSearchProfileID != null ) {
             $this->_ufGroupID = $config->defaultSearchProfileID;
@@ -497,7 +497,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         
         // CRM_Core_Error::debug( 'f', $this->_formValues );
         // CRM_Core_Error::debug( 'p', $this->_params );
-        eval( '$selector =& new ' . $this->_selectorName . 
+        eval( '$selector = new ' . $this->_selectorName . 
               '( $this->_customSearchClass,
                  $this->_formValues,
                  $this->_params,
@@ -505,7 +505,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                  $this->_action,
                  false, true,
                  $this->_context );' );
-        $controller =& new CRM_Contact_Selector_Controller($selector ,
+        $controller = new CRM_Contact_Selector_Controller($selector ,
                                                            $this->get( CRM_Utils_Pager::PAGE_ID ),
                                                            $this->get( CRM_Utils_Sort::SORT_ID  ),
                                                            CRM_Core_Action::VIEW,
@@ -526,7 +526,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 $sortID = CRM_Utils_Sort::sortIDValue( $this->get( CRM_Utils_Sort::SORT_ID  ),
                                                        $this->get( CRM_Utils_Sort::SORT_DIRECTION ) );
             }
-            $controller =& new CRM_Contact_Selector_Controller($selector ,
+            $controller = new CRM_Contact_Selector_Controller($selector ,
                                                                $this->get( CRM_Utils_Pager::PAGE_ID ),
                                                                $sortID,
                                                                CRM_Core_Action::VIEW, $this, CRM_Core_Selector_Controller::TRANSFER );
@@ -581,11 +581,11 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             
             // create the selector, controller and run - store results in session
             $searchChildGroups = true;
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             if ( $session->get( 'isAdvanced' ) ) {
                 $searchChildGroups = false;
             }
-            eval( '$selector =& new ' . $this->_selectorName . 
+            eval( '$selector = new ' . $this->_selectorName . 
                   '( $this->_customSearchClass,
                      $this->_formValues,
                      $this->_params,
@@ -600,7 +600,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             // lets recompute the aToZ bar without the sortByCharacter
             // we need this in most cases except when just pager or sort values change, which
             // we'll ignore for now
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( $config->includeAlphabeticalPager ) {
                 if ($this->_reset || !$this->_sortByCharacter) {
                     $aToZBar = CRM_Utils_PagerAToZ::getAToZBar( $selector, $this->_sortByCharacter );
@@ -613,7 +613,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 $sortID = CRM_Utils_Sort::sortIDValue( $this->get( CRM_Utils_Sort::SORT_ID  ),
                                                        $this->get( CRM_Utils_Sort::SORT_DIRECTION ) );
             }
-            $controller =& new CRM_Contact_Selector_Controller($selector ,
+            $controller = new CRM_Contact_Selector_Controller($selector ,
                                                                $this->get( CRM_Utils_Pager::PAGE_ID ),
                                                                $sortID,
                                                                CRM_Core_Action::VIEW,

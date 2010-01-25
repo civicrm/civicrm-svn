@@ -112,7 +112,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
     }
 
     function doTransferCheckout( &$params, $component = 'contribute' ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( $component != 'contribute' && $component != 'event' ) {
             CRM_Core_Error::fatal( ts( 'Component is invalid' ) );
@@ -180,7 +180,7 @@ class CRM_Core_Payment_ClickAndPledge extends CRM_Core_Payment {
 
         foreach ( array_keys( $params ) as $p ) {
             // get the base name without the location type suffixed to it
-            $parts = split( '-', $p );
+            $parts = explode( '-', $p );
             $name  = count( $parts ) > 1 ? $parts[0] : $p;
             if ( isset( $otherVars[$name] ) ) {
                 $value = $params[$p];

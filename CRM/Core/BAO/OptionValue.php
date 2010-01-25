@@ -62,7 +62,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $optionValue =& new CRM_Core_DAO_OptionValue( );
+        $optionValue = new CRM_Core_DAO_OptionValue( );
         $optionValue->copyValues( $params );
         if ( $optionValue->find( true ) ) {
             CRM_Core_DAO::storeValues( $optionValue, $defaults );
@@ -103,7 +103,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         $params['filter'     ] =  CRM_Utils_Array::value( 'filter', $params, false );
 
         // action is taken depending upon the mode
-        $optionValue               =& new CRM_Core_DAO_OptionValue( );
+        $optionValue               = new CRM_Core_DAO_OptionValue( );
         $optionValue->copyValues( $params );;
         
         if ( CRM_Utils_Array::value( 'is_default', $params ) ) {
@@ -146,7 +146,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
      */
     static function del($optionValueId) 
     {
-        $optionValue =& new CRM_Core_DAO_OptionValue( );
+        $optionValue = new CRM_Core_DAO_OptionValue( );
         $optionValue->id = $optionValueId;
         require_once 'CRM/Core/Action.php';
         if ( self::updateRecords($optionValueId, CRM_Core_Action::DELETE) ){
@@ -207,11 +207,11 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
      */
     static function updateRecords(&$optionValueId, $action) {
         //finding group name
-        $optionValue =& new CRM_Core_DAO_OptionValue( );
+        $optionValue = new CRM_Core_DAO_OptionValue( );
         $optionValue->id = $optionValueId;
         $optionValue->find(true);
         
-        $optionGroup =& new CRM_Core_DAO_OptionGroup( );
+        $optionGroup = new CRM_Core_DAO_OptionGroup( );
         $optionGroup->id = $optionValue->option_group_id;
         $optionGroup->find(true);
         
@@ -240,7 +240,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         
         if (array_key_exists($gName, $individuals)) {
             require_once 'CRM/Contact/BAO/Contact.php';
-            $contactDAO =& new CRM_Contact_DAO_Contact();
+            $contactDAO = new CRM_Contact_DAO_Contact();
             
             $contactDAO->$fieldName = $value;
             $contactDAO->find();
@@ -264,7 +264,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         
         if (array_key_exists($gName, $contributions)) {
             require_once 'CRM/Contribute/DAO/Contribution.php';
-            $contribution =& new CRM_Contribute_DAO_Contribution();
+            $contribution = new CRM_Contribute_DAO_Contribution();
             $contribution->$fieldName = $value;
             $contribution->find();
             while ($contribution->fetch()) {
@@ -278,7 +278,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         
         if (array_key_exists($gName, $activities)) {
             require_once 'CRM/Activity/DAO/Activity.php';
-            $activity =& new CRM_Activity_DAO_Activity( );
+            $activity = new CRM_Activity_DAO_Activity( );
             $activity->$fieldName = $value;
             $activity->find();
             while ($activity->fetch()) {
@@ -290,7 +290,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         //delete participant role, type and event type option value
         if (array_key_exists($gName, $participant)) {
             require_once 'CRM/Event/DAO/Participant.php';
-            $participantValue =& new CRM_Event_DAO_Participant( );
+            $participantValue = new CRM_Event_DAO_Participant( );
             $participantValue->$fieldName = $value;
             if ( $participantValue->find(true)) {
                 return false;
@@ -301,7 +301,7 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         //delete event type option value
         if (array_key_exists($gName, $eventType)) {
             require_once 'CRM/Event/DAO/Event.php';
-            $event =& new CRM_Event_DAO_Event( );
+            $event = new CRM_Event_DAO_Event( );
             $event->$fieldName = $value;
             if ( $event->find(true) ) {
                 return false;
@@ -313,10 +313,10 @@ class CRM_Core_BAO_OptionValue extends CRM_Core_DAO_OptionValue
         if (array_key_exists( $gName, $aclRole )) {
             require_once 'CRM/ACL/DAO/EntityRole.php';
             require_once 'CRM/ACL/DAO/ACL.php';
-            $entityRole =& new CRM_ACL_DAO_EntityRole( );
+            $entityRole = new CRM_ACL_DAO_EntityRole( );
             $entityRole->$fieldName = $value;
 
-            $aclDAO =& new CRM_ACL_DAO_ACL( );
+            $aclDAO = new CRM_ACL_DAO_ACL( );
             $aclDAO->entity_id = $value;
             if ( $entityRole->find(true) || $aclDAO->find(true)) {
                 return false;

@@ -271,7 +271,7 @@ class CRM_Case_BAO_Query
         case 'case_owner': 
         case 'case_mycases'  : 
             if ( $value == 0 ) {
-                $session =& CRM_Core_Session::singleton();
+                $session = CRM_Core_Session::singleton();
                 $userID  = $session->get('userID');
                 $query->_where[$grouping][] = "case_relationship.contact_id_b $op $userID";
                 $query->_qill[$grouping ][] = ts( 'Case %1 My Cases', array( 1 => $op ) );
@@ -561,7 +561,7 @@ case_relation_type.id = case_relationship.relationship_type_id )";
      */  
     static function buildSearchForm( &$form ) 
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         require_once "CRM/Case/PseudoConstant.php";
         $caseTypes = CRM_Case_PseudoConstant::caseType( );

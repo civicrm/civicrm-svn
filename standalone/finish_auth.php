@@ -2,8 +2,8 @@
 require_once "auth_common.php";
 
 function run() {
-    $session  =& CRM_Core_Session::singleton( );
-    $config   =& CRM_Core_Config::singleton( );
+    $session  = CRM_Core_Session::singleton( );
+    $config   = CRM_Core_Config::singleton( );
 
     $consumer = getConsumer();
 
@@ -40,13 +40,13 @@ function run() {
             // update group clause
             require_once 'CRM/Core/Transaction.php';
             require_once 'CRM/Contact/BAO/Group.php';
-            $groupDAO =& new CRM_Contact_DAO_Group();
+            $groupDAO = new CRM_Contact_DAO_Group();
             $groupDAO->find( );
             while ( $groupDAO->fetch() ) {
                 if ( !isset($transaction) ) {
                     $transaction = new CRM_Core_Transaction( );
                 }
-                $group =& new CRM_Contact_BAO_Group();
+                $group = new CRM_Contact_BAO_Group();
                 $group->id = $groupDAO->id;
                 $group->find( true );
                 $group->buildClause( );

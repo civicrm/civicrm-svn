@@ -54,13 +54,13 @@ class CRM_Activity_Page_Tab extends CRM_Contact_Page_View
 
         $output = CRM_Core_Selector_Controller::SESSION;
         require_once 'CRM/Activity/Selector/Activity.php';
-        $selector   =& new CRM_Activity_Selector_Activity($this->_contactId, $this->_permission );
+        $selector   = new CRM_Activity_Selector_Activity($this->_contactId, $this->_permission );
         $sortID     = null;
         if ( $this->get( CRM_Utils_Sort::SORT_ID  ) ) {
             $sortID = CRM_Utils_Sort::sortIDValue( $this->get( CRM_Utils_Sort::SORT_ID  ),
                                                    $this->get( CRM_Utils_Sort::SORT_DIRECTION ) );
         }
-        $controller =& new CRM_Core_Selector_Controller($selector,
+        $controller = new CRM_Core_Selector_Controller($selector,
                                                         $this->get(CRM_Utils_Pager::PAGE_ID),
                                                         $sortID,
                                                         CRM_Core_Action::VIEW, $this, $output);
@@ -94,12 +94,12 @@ class CRM_Activity_Page_Tab extends CRM_Contact_Page_View
         $activityTypeId = CRM_Utils_Request::retrieve('atype', 'Positive', $this );
         
         if ( $activityTypeId != 3 ) {
-            $controller =& new CRM_Core_Controller_Simple( 'CRM_Activity_Form_Activity',
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Activity_Form_Activity',
                                                            ts('Contact Activities'),
                                                            $this->_action,
                                                            false, false, false, true );
         } else {
-            $wrapper =& new CRM_Utils_Wrapper( );
+            $wrapper = new CRM_Utils_Wrapper( );
             $arguments = array( 'attachUpload' => 1 );
             return $wrapper->run( 'CRM_Contact_Form_Task_Email', ts('Email a Contact'),  $arguments );
         }
@@ -141,7 +141,7 @@ class CRM_Activity_Page_Tab extends CRM_Contact_Page_View
         $this->assign($defaults);
 
         // also create the form element for the activity links box
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityLinks',
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityLinks',
                                                        ts('Activity Links'), null );
         $controller->setEmbedded( true );
         $controller->run( );
@@ -149,7 +149,7 @@ class CRM_Activity_Page_Tab extends CRM_Contact_Page_View
 
     function delete( )
     {
-        $controller =& new CRM_Core_Controller_Simple('CRM_Activity_Form_Activity',
+        $controller = new CRM_Core_Controller_Simple('CRM_Activity_Form_Activity',
                                                       ts('Activity Record'),
                                                       $this->_action );
         $controller->set('id', $this->_id);

@@ -46,7 +46,7 @@ class CRM_Contact_Page_View_Log extends CRM_Contact_Page_View {
     function browse( ) {
         require_once 'CRM/Core/DAO/Log.php';
 
-        $log =& new CRM_Core_DAO_Log( );
+        $log = new CRM_Core_DAO_Log( );
         
         $log->entity_table = 'civicrm_contact';
         $log->entity_id    = $this->_contactId;

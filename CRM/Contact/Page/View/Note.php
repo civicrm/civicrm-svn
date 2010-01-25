@@ -57,7 +57,7 @@ class CRM_Contact_Page_View_Note extends CRM_Contact_Page_View
      */
     function view( ) {
       
-        $note =& new CRM_Core_DAO_Note( );
+        $note = new CRM_Core_DAO_Note( );
         $note->id = $this->_id;
         if ( $note->find( true ) ) {
             $values = array( );
@@ -74,7 +74,7 @@ class CRM_Contact_Page_View_Note extends CRM_Contact_Page_View
      * @access public
      */
     function browse( ) {
-        $note =& new CRM_Core_DAO_Note( );
+        $note = new CRM_Core_DAO_Note( );
         $note->entity_table = 'civicrm_contact';
         $note->entity_id    = $this->_contactId;
 
@@ -122,11 +122,11 @@ class CRM_Contact_Page_View_Note extends CRM_Contact_Page_View
     function edit( ) {
        
 
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Note_Form_Note', ts('Contact Notes'), $this->_action );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Note_Form_Note', ts('Contact Notes'), $this->_action );
         $controller->setEmbedded( true );
 
         // set the userContext stack
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $url = CRM_Utils_System::url('civicrm/contact/view', 'action=browse&selectedChild=note&cid=' . $this->_contactId );
         $session->pushUserContext( $url );
 

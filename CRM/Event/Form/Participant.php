@@ -278,7 +278,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             $advanced = null;
             $builder  = null;
 
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $advanced = $session->get('isAdvanced');
             $builder  = $session->get('isSearchBuilder');
             
@@ -701,7 +701,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
      * @static
      * @access public
      */
-    static function formRule( &$values, $files, $self ) 
+    static function formRule( $values, $files, $self ) 
     {
         // If $values['_qf_Participant_next'] is Delete or 
         // $values['event_id'] is empty, then return 
@@ -791,14 +791,14 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
             $params['id'] = $this->_participantId;
         }
 
-        $config =& CRM_Core_Config::singleton();        
+        $config = CRM_Core_Config::singleton();        
         if ( $this->_isPaidEvent ) {
             
             $contributionParams           = array( );
             $lineItem                     = array( );
             $additionalParticipantDetails = array( );
             if ( $this->_participantId && $this->_action & CRM_Core_Action::UPDATE ) {
-                $participantBAO     =& new CRM_Event_BAO_Participant( );
+                $participantBAO     = new CRM_Event_BAO_Participant( );
                 $participantBAO->id = $this->_participantId;
                 $participantBAO->find(true);
                 $contributionParams['total_amount'] = $participantBAO->fee_amount;
@@ -875,7 +875,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
         
         require_once 'CRM/Contact/BAO/Contact.php';
         // Retrieve the name and email of the current user - this will be the FROM for the receipt email
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $userID  = $session->get( 'userID' );
         list( $userName, 
               $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
@@ -1122,7 +1122,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
                 if( !$ids['contribution'] ) {
                     require_once 'CRM/Event/DAO/ParticipantPayment.php';
                     foreach ( $this->_contactIds as $num => $contactID ) {
-                        $ppDAO =& new CRM_Event_DAO_ParticipantPayment();   
+                        $ppDAO = new CRM_Event_DAO_ParticipantPayment();   
                         $ppDAO->participant_id  = $participants[$num]->id;
                         $ppDAO->contribution_id = $contributions[$num]->id;
                         $ppDAO->save();
@@ -1261,7 +1261,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
                 $participant[] = array( 'participant_test', '=', 1, 0, 0 ); 
             } 
             
-            $template =& CRM_Core_Smarty::singleton( );
+            $template = CRM_Core_Smarty::singleton( );
             $customGroup = array( );
             //format submitted data
             foreach ( $params['custom'] as $fieldID => $values) {

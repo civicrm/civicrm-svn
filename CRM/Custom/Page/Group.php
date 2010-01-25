@@ -130,7 +130,7 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
         if ($action & CRM_Core_Action::DELETE) {
             $session = & CRM_Core_Session::singleton();
             $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/custom/group/', 'action=browse'));
-            $controller =& new CRM_Core_Controller_Simple( 'CRM_Custom_Form_DeleteGroup',"Delete Cutom Group", null );
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Custom_Form_DeleteGroup',"Delete Cutom Group", null );
             $id = CRM_Utils_Request::retrieve('id', 'Positive',
                                               $this, false, 0);
             $controller->set('id', $id);
@@ -171,10 +171,10 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
     function edit($id, $action)
     {
         // create a simple controller for editing custom data
-        $controller =& new CRM_Core_Controller_Simple('CRM_Custom_Form_Group', ts('Custom Group'), $action);
+        $controller = new CRM_Core_Controller_Simple('CRM_Custom_Form_Group', ts('Custom Group'), $action);
 
         // set the userContext stack
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/custom/group/', 'action=browse'));
         $controller->set('id', $id);
         $controller->setEmbedded(true);
@@ -191,8 +191,8 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
      */
     function preview($id)
     {
-        $controller =& new CRM_Core_Controller_Simple('CRM_Custom_Form_Preview', ts('Preview Custom Data'), null);
-        $session =& CRM_Core_Session::singleton();
+        $controller = new CRM_Core_Controller_Simple('CRM_Custom_Form_Preview', ts('Preview Custom Data'), null);
+        $session = CRM_Core_Session::singleton();
         $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/custom/group', 'action=browse'));
         $controller->set('groupId', $id);
         $controller->setEmbedded(true);
@@ -213,7 +213,7 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
     {
         // get all custom groups sorted by weight
         $customGroup = array();
-        $dao =& new CRM_Core_DAO_CustomGroup();
+        $dao = new CRM_Core_DAO_CustomGroup();
 
         $dao->orderBy('weight, title');
         $dao->find();

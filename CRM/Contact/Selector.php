@@ -197,7 +197,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             //$this->_returnProperties['groups'      ] = 1;
         }
         
-        $this->_query   =& new CRM_Contact_BAO_Query( $this->_params,
+        $this->_query   = new CRM_Contact_BAO_Query( $this->_params,
                                                       $this->_returnProperties, null, $includeContactIds,
                                                       false, 1, false, $searchDescendentGroups );
         $this->_options =& $this->_query->_options;
@@ -459,7 +459,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
      */
 
     function &getRows($action, $offset, $rowCount, $sort, $output = null) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( ( $output == CRM_Core_Selector_Controller::EXPORT || 
                $output == CRM_Core_Selector_Controller::SCREEN ) &&
@@ -765,9 +765,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
 
     function contactIDQuery( $params, $action, $sortID ) {
         $sortOrder =& $this->getSortOrder( $this->_action );
-        $sort      =& new CRM_Utils_Sort( $sortOrder, $sortID );
+        $sort      = new CRM_Utils_Sort( $sortOrder, $sortID );
 
-        $query =& new CRM_Contact_BAO_Query( $params, $this->_returnProperties );
+        $query = new CRM_Contact_BAO_Query( $params, $this->_returnProperties );
         $value =  $query->searchQuery( 0, 0, $sort,
                                        false, false, false,
                                        false, false );

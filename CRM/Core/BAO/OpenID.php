@@ -52,7 +52,7 @@ class CRM_Core_BAO_OpenID extends CRM_Core_DAO_OpenID
      */
     static function add( &$params ) 
     {
-        $openId =& new CRM_Core_DAO_OpenID();
+        $openId = new CRM_Core_DAO_OpenID();
         
         // normalize the OpenID URL
         require_once 'Auth/OpenID.php';
@@ -88,7 +88,7 @@ class CRM_Core_BAO_OpenID extends CRM_Core_DAO_OpenID
      * @static
      */
     static function isAllowedToLogin( $identity_url ) {
-        $openId =& new CRM_Core_DAO_OpenID( );
+        $openId = new CRM_Core_DAO_OpenID( );
         $openId->openid = $identity_url;
         if ( $openId->find( true ) ) {
             return $openId->allowed_to_login == 1;

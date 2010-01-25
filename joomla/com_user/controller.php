@@ -86,7 +86,7 @@ class UserController extends JController
         // do civicrm validation here
         require_once 'administrator/components/com_civicrm/civicrm.settings.php';
         require_once 'CRM/Core/Config.php';
-        $civiConfig =& CRM_Core_Config::singleton( );
+        $civiConfig = CRM_Core_Config::singleton( );
         $civiConfig->formKeyDisable = true;
 
         require_once 'CRM/Core/BAO/UFGroup.php';
@@ -242,7 +242,7 @@ class UserController extends JController
         // do civicrm validation here
         require_once 'administrator/components/com_civicrm/civicrm.settings.php';
         require_once 'CRM/Core/Config.php';
-        $civiConfig =& CRM_Core_Config::singleton( );
+        $civiConfig = CRM_Core_Config::singleton( );
         $civiConfig->formKeyDisable = true;
 
         require_once 'CRM/Core/BAO/UFGroup.php';
@@ -310,7 +310,7 @@ class UserController extends JController
                 require_once 'CRM/Core/BAO/UFGroup.php';
                 CRM_Core_BAO_UFGroup::getEditHTML( $userID, null, 2, true, false, null, false, 'Individual' );
                 
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $session->reset( );
             }
         }

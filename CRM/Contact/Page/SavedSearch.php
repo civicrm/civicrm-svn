@@ -61,13 +61,13 @@ class CRM_Contact_Page_SavedSearch extends CRM_Core_Page {
     function delete($id)
     {
         // first delete the group associated with this saved search
-        $group =& new CRM_Contact_DAO_Group( );
+        $group = new CRM_Contact_DAO_Group( );
         $group->saved_search_id =  $id;
         if ( $group->find( true ) ) {
             CRM_Contact_BAO_Group::discard( $group->id );
         }
         
-        $savedSearch =& new CRM_Contact_DAO_SavedSearch();
+        $savedSearch = new CRM_Contact_DAO_SavedSearch();
         $savedSearch->id = $id;
         $savedSearch->is_active = 0;
         $savedSearch->save();
@@ -86,7 +86,7 @@ class CRM_Contact_Page_SavedSearch extends CRM_Core_Page {
     {
         $rows = array();
 
-        $savedSearch =& new CRM_Contact_DAO_SavedSearch();
+        $savedSearch = new CRM_Contact_DAO_SavedSearch();
         $savedSearch->is_active = 1;
         $savedSearch->selectAdd();
         $savedSearch->selectAdd('id, form_values');
@@ -94,7 +94,7 @@ class CRM_Contact_Page_SavedSearch extends CRM_Core_Page {
         $properties = array('id', 'name', 'description');
         while ($savedSearch->fetch()) {
             // get name and description from group object
-            $group =& new CRM_Contact_DAO_Group( );
+            $group = new CRM_Contact_DAO_Group( );
             $group->saved_search_id =  $savedSearch->id;
             if ( $group->find( true ) ) {
                 $permissions = CRM_Group_Page_Group::checkPermission( $group->id, $group->title );
@@ -106,7 +106,7 @@ class CRM_Contact_Page_SavedSearch extends CRM_Core_Page {
 
                     $row['id']           =  $savedSearch->id;
                     $formValues          =  unserialize($savedSearch->form_values);
-                    $query               =& new CRM_Contact_BAO_Query( $formValues );
+                    $query               = new CRM_Contact_BAO_Query( $formValues );
                     $row['query_detail'] =  $query->qill( );
 
                     $action = array_sum( array_keys( self::links() ) );

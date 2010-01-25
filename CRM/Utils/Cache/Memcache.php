@@ -79,7 +79,7 @@ class CRM_Utils_Cache_Memcache {
         $this->_port    = $port;
         $this->_timeout = $timeout;
         
-        $this->_cache =& new Memcache( );
+        $this->_cache = new Memcache( );
         
         if ( ! $this->_cache->connect( $this->_host, $this->_port ) ) {
             // dont use fatal here since we can go in an infinite loop

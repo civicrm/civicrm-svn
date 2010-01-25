@@ -182,7 +182,7 @@ class CRM_Utils_Rule
      */
     static function currentDate( $date, $monthRequired = true ) 
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         $d = CRM_Utils_Array::value( 'd', $date );
         $m = CRM_Utils_Array::value( 'M', $date );
@@ -317,7 +317,7 @@ class CRM_Utils_Rule
         // first remove all white space
         $value = str_replace( array( ' ', "\t", "\n" ), '', $value );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         setlocale( LC_ALL, $config->lcMessages );
         $localeInfo = localeconv( );
 
@@ -381,7 +381,7 @@ class CRM_Utils_Rule
     {
         static $qfRule = null;
         if ( ! isset( $qfRule ) ) {
-            $qfRule =& new HTML_QuickForm_Rule_Email();
+            $qfRule = new HTML_QuickForm_Rule_Email();
         }
         return $qfRule->validate( $value, $checkDomain );
     }
@@ -567,7 +567,7 @@ class CRM_Utils_Rule
      */
     static function qfDate( $date ) 
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $d = CRM_Utils_Array::value( 'd', $date );
         $m = CRM_Utils_Array::value( 'M', $date );

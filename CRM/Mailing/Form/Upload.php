@@ -78,7 +78,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         $htmlMessage = null;
         if ( $mailingID  ) {
             require_once "CRM/Mailing/DAO/Mailing.php";
-            $dao =& new  CRM_Mailing_DAO_Mailing();
+            $dao = new  CRM_Mailing_DAO_Mailing();
             $dao->id = $mailingID; 
             $dao->find(true);
             $dao->storeValues($dao, $defaults);
@@ -89,7 +89,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
             $this->assign('templateSelected', $templateId ? $templateId : 0 );
             if ( isset($defaults['msg_template_id']) && !$templateId ) {
                 $defaults['template'] = $defaults['msg_template_id'];
-                $messageTemplate =& new CRM_Core_DAO_MessageTemplates( );
+                $messageTemplate = new CRM_Core_DAO_MessageTemplates( );
                 $messageTemplate->id = $defaults['msg_template_id'];
                 $messageTemplate->selectAdd( );
                 $messageTemplate->selectAdd( 'msg_text, msg_html' );
@@ -182,7 +182,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
      */
     public function buildQuickForm( ) 
     {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         
         require_once 'CRM/Core/PseudoConstant.php';
         $formEmailAddress = CRM_Core_PseudoConstant::fromEmailAddress( "from_email_address" );
@@ -325,7 +325,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
 
         $params['name'] = $this->get('name');
 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $params['contact_id'] = $session->get('userID');
         $composeFields        = array ( 'template', 'saveTemplate',
                                         'updateTemplate', 'saveTemplateName' );
@@ -408,7 +408,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
                     $fragment = 'search/custom';
                 }
                 
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $draftURL = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1' );
                 $status = ts("Your mailing has been saved. You can continue later by clicking the 'Continue' action to resume working on it.<br /> From <a href='%1'>Draft and Unscheduled Mailings</a>.", array( 1 => $draftURL ) );
                 CRM_Core_Session::setStatus( $status );
@@ -434,13 +434,13 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
      * @access public
      * @static
      */
-    static function formRule( &$params, &$files, &$self )
+    static function formRule( $params, $files, $self )
     {
         if (CRM_Utils_Array::value('_qf_Import_refresh', $_POST)) {
             return true;
         }
         $errors = array();
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
        
 
         if (isset($params['html_message'])){
@@ -453,11 +453,11 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         $domain =& CRM_Core_BAO_Domain::getDomain();
 
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing = & new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         $mailing->id = $self->_mailingID;
         $mailing->find(true);
 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $values = array('contact_id' => $session->get('userID'));
         require_once 'api/v2/Contact.php';
         $contact =& civicrm_contact_get( $values );
@@ -482,7 +482,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
             $$part = array( );
             if ($params["{$part}_id"]) {
 	        //echo "found<p>";
-                $component =& new CRM_Mailing_BAO_Component();
+                $component = new CRM_Mailing_BAO_Component();
                 $component->id = $params["{$part}_id"];
                 $component->find(true);
                 ${$part}['textFile'] = $component->body_text;

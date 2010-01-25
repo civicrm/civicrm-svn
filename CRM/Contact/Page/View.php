@@ -114,7 +114,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
                                                           'url'   => self::getSearchURL( ) ) ) );
 
         // also store in session for future use
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->set( 'view.id', $this->_contactId );
 
         $this->_action = CRM_Utils_Request::retrieve('action', 'String',
@@ -172,7 +172,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $activityNum = count($otherAct);
         $this->assign('showOtherActivityLink',$activityNum);
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         require_once 'CRM/Core/BAO/UFMatch.php';
         if ( $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ) ) {
@@ -230,7 +230,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
     }
 
     function getSearchURL( ) {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
 
         $isAdvanced = $session->get('isAdvanced');
         if ( $isAdvanced == '1' ) {

@@ -121,7 +121,7 @@ class CRM_Utils_PDF_Utils {
                 CRM_Core_Error::statusBounce( "PDFlib Error: " . $pdf->get_errmsg( ) );
             }
 
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $pdf->set_parameter( 'resourcefile', $config->templateDir . '/Quest/pdf/pdflib.upr' );
             $pdf->set_parameter( 'textformat', 'utf8' );
 

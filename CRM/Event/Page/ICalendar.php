@@ -68,8 +68,8 @@ class CRM_Event_Page_ICalendar extends CRM_Core_Page
         $this->assign( 'events', $info );
         
         // Send data to the correct template for formatting (iCal vs. gData)
-        $template =& CRM_Core_Smarty::singleton( );
-        $config =& CRM_Core_Config::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $rss ) {
             // rss 2.0 requires lower case dash delimited locale
             $this->assign( 'rssLang', str_replace( '_', '-', strtolower($config->lcMessages) ) );

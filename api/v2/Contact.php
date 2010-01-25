@@ -558,7 +558,7 @@ function civicrm_contact_search_count( &$params ) {
     // convert the params to new format
     require_once 'CRM/Contact/Form/Search.php';
     $newP =& CRM_Contact_BAO_Query::convertFormValues( $params );
-    $query =& new CRM_Contact_BAO_Query( $newP );
+    $query = new CRM_Contact_BAO_Query( $newP );
     return $query->searchQuery( 0, 0, null, true );
 }
 

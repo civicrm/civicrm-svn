@@ -85,7 +85,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         $params['is_deceased'] = CRM_Utils_Array::value( 'is_deceased', $params, false );
         
         if ( $contact->id ) {
-            $individual =& new CRM_Contact_BAO_Contact();
+            $individual = new CRM_Contact_BAO_Contact();
             $individual->id = $contact->id;
             if ( $individual->find( true ) ) {
                 
@@ -278,14 +278,14 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
 
         // query for the affected individuals
         $fieldValue = CRM_Utils_Type::escape($fieldValue, 'Integer');
-        $contact =& new CRM_Contact_BAO_Contact( );
+        $contact = new CRM_Contact_BAO_Contact( );
         $contact->$fieldName = $fieldValue;
         $contact->find();
 
         // iterate through the affected individuals and rebuild their display_names
         require_once 'CRM/Contact/BAO/Contact.php';
         while ($contact->fetch()) {
-            $contact =& new CRM_Contact_BAO_Contact();
+            $contact = new CRM_Contact_BAO_Contact();
             $contact->id = $contact->contact_id;
             if ($action == CRM_Core_Action::DELETE) {
                 $contact->$fieldName = 'NULL';

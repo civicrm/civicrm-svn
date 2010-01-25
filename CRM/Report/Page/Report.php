@@ -62,10 +62,10 @@ class CRM_Report_Page_Report extends CRM_Core_Page
             CRM_Utils_System::setTitle( $templateInfo['label'] . ' - Template' );
             $this->assign( 'reportTitle', $templateInfo['label'] );
 
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $session->set( 'reportDescription', $templateInfo['description'] );
 
-            $wrapper =& new CRM_Utils_Wrapper( );
+            $wrapper = new CRM_Utils_Wrapper( );
             return $wrapper->run( $templateInfo['name'], null, null );
         }
 

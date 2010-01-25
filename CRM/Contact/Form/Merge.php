@@ -72,7 +72,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         $rgid  = CRM_Utils_Request::retrieve('rgid','Positive', $this, false);
         $gid   = CRM_Utils_Request::retrieve('gid','Positive', $this, false);
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         
         // context fixed.
         if ( $rgid ) {
@@ -325,7 +325,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
         
         // reset all selected contact ids from session 
         // when we came from search context, CRM-3526
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         if ( $session->get('selectedSearchContactIds') ) {
             $session->resetScope( 'selectedSearchContactIds' );
         }
@@ -386,7 +386,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                     if ( !$updateBlockId ) continue;
                     
                     require_once "CRM/Core/DAO/{$daoName}.php";
-                    eval("\$updateDAO =& new CRM_Core_DAO_$daoName();");
+                    eval("\$updateDAO = new CRM_Core_DAO_$daoName();");
                     $updateDAO->id = $updateBlockId;
                     $updateDAO->contact_id = $this->_cid;
                     $updateDAO->location_type_id = $locTypeId;
@@ -397,7 +397,7 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
                     
                     // overwrite - need to delete block from main contact.
                     if ( $deleteBlockId && ($operation == 2) ) {
-                        eval("\$deleteDAO =& new CRM_Core_DAO_$daoName();");
+                        eval("\$deleteDAO = new CRM_Core_DAO_$daoName();");
                         $deleteDAO->id = $deleteBlockId;
                         $deleteDAO->find( true );
                         

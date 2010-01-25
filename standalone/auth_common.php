@@ -51,7 +51,7 @@ function &getStore() {
     /**
      * Setup the database store for the OpenID sessions.
      */
-    $dao =& new CRM_Core_DAO();
+    $dao = new CRM_Core_DAO();
     if (defined('CIVICRM_DSN')) {
         $dsn = CIVICRM_DSN;
     }
@@ -62,7 +62,7 @@ function &getStore() {
     $associations_table = "civicrm_openid_associations";
     $nonces_table       = "civicrm_openid_nonces";
     
-    $store =& new Auth_OpenID_MySQLStore($connection,
+    $store = new Auth_OpenID_MySQLStore($connection,
                                          $associations_table,$nonces_table);
     return $store;
 }
@@ -72,7 +72,7 @@ function &getConsumer() {
      * Create a consumer object using the store object created earlier.
      */
     $store    = getStore();
-    $consumer =& new Auth_OpenID_Consumer($store);
+    $consumer = new Auth_OpenID_Consumer($store);
     return $consumer;
 }
 

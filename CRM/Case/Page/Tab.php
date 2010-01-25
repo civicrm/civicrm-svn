@@ -93,7 +93,7 @@ class CRM_Case_Page_Tab extends CRM_Contact_Page_View
      */
     function view( ) 
     {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Case_Form_CaseView',
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Case_Form_CaseView',
                                                        'View Case',  
                                                        $this->_action ); 
         $controller->setEmbedded( true ); 
@@ -105,8 +105,8 @@ class CRM_Case_Page_Tab extends CRM_Contact_Page_View
         require_once 'CRM/Activity/Selector/Activity.php' ;
         require_once 'CRM/Core/Selector/Controller.php';
         $output = CRM_Core_Selector_Controller::SESSION;
-        $selector   =& new CRM_Activity_Selector_Activity($this->_contactId, $this->_permission, false, 'case' );
-        $controller =& new CRM_Core_Selector_Controller($selector, $this->get(CRM_Utils_Pager::PAGE_ID),
+        $selector   = new CRM_Activity_Selector_Activity($this->_contactId, $this->_permission, false, 'case' );
+        $controller = new CRM_Core_Selector_Controller($selector, $this->get(CRM_Utils_Pager::PAGE_ID),
                                                         null, CRM_Core_Action::VIEW, $this,  $output, null, $this->_id);
         
         
@@ -126,7 +126,7 @@ class CRM_Case_Page_Tab extends CRM_Contact_Page_View
      */
     function browse( ) {
        
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Case_Form_Search', ts('Case'), null ); 
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Case_Form_Search', ts('Case'), null ); 
         $controller->setEmbedded( true ); 
         $controller->reset( ); 
         $controller->set( 'limit', 20 );
@@ -144,9 +144,9 @@ class CRM_Case_Page_Tab extends CRM_Contact_Page_View
      */
     function edit( ) 
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Case_Form_Case', 
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Case_Form_Case', 
                                                        'Open Case', 
                                                        $this->_action );
         
@@ -199,7 +199,7 @@ class CRM_Case_Page_Tab extends CRM_Contact_Page_View
      */
     static function &links()
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
        
         if (!(self::$_links)) {
             $deleteExtra = ts('Are you sure you want to delete this case?');
@@ -261,7 +261,7 @@ class CRM_Case_Page_Tab extends CRM_Contact_Page_View
         }
         
         if ( $url ) {
-            $session =& CRM_Core_Session::singleton( ); 
+            $session = CRM_Core_Session::singleton( ); 
             $session->pushUserContext( $url );
         }
     }

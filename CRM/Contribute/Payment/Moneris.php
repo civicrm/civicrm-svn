@@ -68,7 +68,7 @@ class CRM_Contribute_Payment_Moneris extends CRM_Core_Payment_Moneris {
     static function &singleton( $mode, &$paymentProcessor ) {
         $processorName = $paymentProcessor['name'];
         if (self::$_singleton[$processorName] === null ) {
-            self::$_singleton[$processorName] =& new CRM_Contribute_Payment_Moneris( $mode, $paymentProcessor );
+            self::$_singleton[$processorName] = new CRM_Contribute_Payment_Moneris( $mode, $paymentProcessor );
         }
         return self::$_singleton[$processorName];
     } 

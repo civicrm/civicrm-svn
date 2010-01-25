@@ -168,7 +168,7 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
         
         // type of selector
         $this->_action = $action;
-        $this->_query =& new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
+        $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                     CRM_Contact_BAO_Query::MODE_MEMBER );
         // CRM_Core_Error::debug( 'q', $this->_query );
        

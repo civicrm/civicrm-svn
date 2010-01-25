@@ -161,7 +161,7 @@ class CRM_Import_ImportJob {
                         
             list($id, $first, $second) = explode('_', $mapper[$key][0]);
             if ( ($first == 'a' && $second == 'b') || ($first == 'b' && $second == 'a') ) {
-                $relationType =& new CRM_Contact_DAO_RelationshipType();
+                $relationType = new CRM_Contact_DAO_RelationshipType();
                 $relationType->id = $id;
                 $relationType->find(true);
                 eval( '$this->_mapperRelatedContactType[$key] = $relationType->contact_type_'.$second.';');
@@ -211,7 +211,7 @@ class CRM_Import_ImportJob {
             $header = array();
             list($id, $first, $second) = explode('_', $mapper[$key][0]);
             if ( ($first == 'a' && $second == 'b') || ($first == 'b' && $second == 'a') ) {
-                $relationType =& new CRM_Contact_DAO_RelationshipType();
+                $relationType = new CRM_Contact_DAO_RelationshipType();
                 $relationType->id = $id;
                 $relationType->find(true);
                 

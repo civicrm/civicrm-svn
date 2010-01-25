@@ -39,7 +39,7 @@ require_once 'CRM/Utils/Type.php';
  */
 class CRM_Contact_Page_AJAX
 {
-    static function getContactList( &$config ) 
+    static function getContactList( ) 
     {
         require_once 'CRM/Core/BAO/Preferences.php';
         $name   = CRM_Utils_Array::value( 's', $_GET );
@@ -104,7 +104,7 @@ class CRM_Contact_Page_AJAX
             $rel      = CRM_Utils_Type::escape( $relation[2], 'String');
         }
        
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( $config->includeWildCardInName ) {
            $strSearch = "%$name%";
@@ -156,7 +156,7 @@ LIMIT 0, {$limit}
     /**
      * Function to fetch the values 
      */
-    function autocomplete( &$config ) 
+    static function autocomplete( ) 
     {
         $fieldID       = CRM_Utils_Type::escape( $_GET['cfid'], 'Integer' );
         $optionGroupID = CRM_Utils_Type::escape( $_GET['ogid'], 'Integer' );
@@ -174,7 +174,7 @@ LIMIT 0, {$limit}
         exit();
     }
     
-    static function relationship( &$config ) 
+    static function relationship( ) 
     {
         // CRM_Core_Error::debug_var( 'GET' , $_GET , true, true );
         // CRM_Core_Error::debug_var( 'POST', $_POST, true, true );
@@ -223,7 +223,7 @@ LIMIT 0, {$limit}
     /**
      * Function to fetch the custom field help 
      */
-    function customField( &$config ) 
+    static function customField( ) 
     {
         $fieldId = CRM_Utils_Type::escape( $_POST['id'], 'Integer' );
 
@@ -238,7 +238,7 @@ LIMIT 0, {$limit}
     /**
      * Function to obtain list of permissioned employer for the given contact-id.
      */
-    function getPermissionedEmployer( &$config ) 
+    static function getPermissionedEmployer( ) 
     {
         $cid       = CRM_Utils_Type::escape( $_GET['cid'], 'Integer' );
         $name      = trim(CRM_Utils_Type::escape( $_GET['name'], 'String')); 
@@ -256,7 +256,7 @@ LIMIT 0, {$limit}
     }
 
 
-    function groupTree( $config ) 
+    static function groupTree( ) 
     {
         $gids  = CRM_Utils_Type::escape( $_GET['gids'], 'String' ); 
         require_once 'CRM/Contact/BAO/GroupNestingCache.php';
@@ -267,7 +267,7 @@ LIMIT 0, {$limit}
     /**
      * Function for building contact combo box
      */
-    function search( &$config ) 
+    static function search( ) 
     {
         $json = true;
         $name = CRM_Utils_Array::value( 'name', $_GET, '' );
@@ -435,7 +435,7 @@ ORDER BY sort_name ";
      * Function to check how many contact exits in db for given criteria, 
      * if one then return contact id else null                                                                                  
      */
-    function contact( &$config )
+    static function contact( )
     {
         $name = CRM_Utils_Type::escape( $_GET['name'], 'String' );
 
@@ -457,7 +457,7 @@ WHERE sort_name LIKE '%$name%'";
      * Function to delete custom value
      *
      */
-    function deleteCustomValue( &$config ) {
+    static function deleteCustomValue( ) {
         $customValueID  = CRM_Utils_Type::escape( $_POST['valueID'], 'Positive' );
         $customGroupID  = CRM_Utils_Type::escape( $_POST['groupID'], 'Positive' );
         
@@ -477,7 +477,7 @@ WHERE sort_name LIKE '%$name%'";
      * Function to perform enable / disable actions on record.
      *
      */
-    function enableDisable( &$config ) {
+    static function enableDisable( ) {
         $op        = CRM_Utils_Type::escape( $_POST['op'       ],  'String'   );
         $recordID  = CRM_Utils_Type::escape( $_POST['recordID' ],  'Positive' );
         $recordBAO = CRM_Utils_Type::escape( $_POST['recordBAO'],  'String'   );
@@ -508,7 +508,7 @@ WHERE sort_name LIKE '%$name%'";
     */
     static public function checkUserName() 
     {
-        $config   =& CRM_Core_Config::singleton();
+        $config   = CRM_Core_Config::singleton();
         $username = trim(htmlentities($_POST['cms_name']));
              
         $isDrupal = ucfirst($config->userFramework) == 'Drupal' ? TRUE : FALSE;

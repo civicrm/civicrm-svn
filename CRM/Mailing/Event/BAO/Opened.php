@@ -56,10 +56,10 @@ class CRM_Mailing_Event_BAO_Opened extends CRM_Mailing_Event_DAO_Opened {
         /* First make sure there's a matching queue event */
         require_once 'CRM/Mailing/Event/BAO/Queue.php';
 
-        $q =& new CRM_Mailing_Event_BAO_Queue();
+        $q = new CRM_Mailing_Event_BAO_Queue();
         $q->id = $queue_id;
         if ($q->find(true)) {
-            $oe =& new CRM_Mailing_Event_BAO_Opened();
+            $oe = new CRM_Mailing_Event_BAO_Opened();
             $oe->event_queue_id = $queue_id;
             $oe->time_stamp = date('YmdHis');
             $oe->save();
@@ -79,7 +79,7 @@ class CRM_Mailing_Event_BAO_Opened extends CRM_Mailing_Event_DAO_Opened {
     public static function getTotalCount($mailing_id,
                                          $job_id = null,
                                          $is_distinct = false) {
-        $dao =& new CRM_Core_DAO();
+        $dao = new CRM_Core_DAO();
         
         $open       = self::getTableName();
         $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();
@@ -135,7 +135,7 @@ class CRM_Mailing_Event_BAO_Opened extends CRM_Mailing_Event_DAO_Opened {
     public static function &getRows($mailing_id, $job_id = null, 
         $is_distinct = false, $offset = null, $rowCount = null, $sort = null) {
         
-        $dao =& new CRM_Core_Dao();
+        $dao = new CRM_Core_Dao();
         
         $open       = self::getTableName();
         $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();

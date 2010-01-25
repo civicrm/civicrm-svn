@@ -185,7 +185,7 @@ class CRM_Core_StateMachine {
      * @access public
      */
     function addState( $name, $type, $prev, $next ) {
-        $this->_states[$name] =& new CRM_Core_State( $name, $type, $prev, $next, $this );
+        $this->_states[$name] = new CRM_Core_State( $name, $type, $prev, $next, $this );
     }
 
     /**

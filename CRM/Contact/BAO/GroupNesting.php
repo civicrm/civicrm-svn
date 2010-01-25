@@ -166,7 +166,7 @@ class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implemen
     function _getNextParentlessGroup( &$group = null ) {
         require_once 'CRM/Contact/BAO/Group.php';
         $lastParentlessGroup = $this->_lastParentlessGroup;
-        $nextGroup =& new CRM_Contact_BAO_Group( );
+        $nextGroup = new CRM_Contact_BAO_Group( );
         $nextGroup->order_by = "title " . self::$_sortOrder;
         $nextGroup->find( );
         if ( $group == null ) {
@@ -189,7 +189,7 @@ class CRM_Contact_BAO_GroupNesting extends CRM_Contact_DAO_GroupNesting implemen
         if ( count( $children ) > 0 ) {
             // we have child groups, so get the first one based on _sortOrder
             require_once 'CRM/Contact/BAO/Group.php';
-            $childGroup =& new CRM_Contact_BAO_Group( );
+            $childGroup = new CRM_Contact_BAO_Group( );
             $cgQuery = "SELECT * FROM civicrm_group WHERE id IN (" .
                 implode( ',', $children ) . ") ORDER BY title " .
                 self::$_sortOrder;

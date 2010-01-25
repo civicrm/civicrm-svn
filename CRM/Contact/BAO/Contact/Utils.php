@@ -56,7 +56,7 @@ class CRM_Contact_BAO_Contact_Utils
 
             if (  CRM_Utils_Array::value( 'image_URL', $typeInfo ) ) {
                 $imageUrl = $typeInfo['image_URL'];
-                $config   =& CRM_Core_Config::singleton( );
+                $config   = CRM_Core_Config::singleton( );
                 
                 if ( ! preg_match("/^(\/|(http(s)?:)).+$/i", $imageUrl) ) {
                     $imageUrl = $config->resourceBase . $imageUrl;
@@ -311,7 +311,7 @@ UNION
         //we do not know that triggered relationship record is active.
         if ( $duplicate ) {
             require_once 'CRM/Contact/DAO/Relationship.php';
-            $relationship =& new CRM_Contact_DAO_Relationship( );
+            $relationship = new CRM_Contact_DAO_Relationship( );
             $relationship->contact_id_a = $contactID;
             $relationship->contact_id_b = $employerID;
             $relationship->relationship_type_id = $relationshipParams['relationship_type_id'];
@@ -394,7 +394,7 @@ WHERE id={$contactId}; ";
             //get relationship id.
             if ( CRM_Contact_BAO_Relationship::checkDuplicateRelationship( $relMembershipParams, $contactId, $employerId ) ) {
                 require_once 'CRM/Contact/DAO/Relationship.php';
-                $relationship =& new CRM_Contact_DAO_Relationship( );
+                $relationship = new CRM_Contact_DAO_Relationship( );
                 $relationship->contact_id_a = $contactId;
                 $relationship->contact_id_b = $employerId;
                 $relationship->relationship_type_id = $relTypeId;
@@ -433,7 +433,7 @@ WHERE id={$contactId}; ";
         }
 
         require_once 'CRM/Contact/Form/Location.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $form->assign( 'contact_type' , $contactType );
         $form->assign( 'fieldSetTitle', $title );
@@ -443,7 +443,7 @@ WHERE id={$contactId}; ";
 
         switch ( $contactType ) {
         case 'Organization':
-            $session   =& CRM_Core_Session::singleton( );
+            $session   = CRM_Core_Session::singleton( );
             $contactID = $session->get( 'userID' );
 
             if ( $contactID ) {
@@ -621,7 +621,7 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
                 }
             }
             if( !empty( $originalId ) && array_key_exists( 'merge', $hasPermissions ) ) {
-        	    $rgBao =& new CRM_Dedupe_BAO_RuleGroup( );
+        	    $rgBao = new CRM_Dedupe_BAO_RuleGroup( );
         	    $rgBao->contact_type = $dao->contact_type;
         	    $rgBao->level = 'Fuzzy';
         	    $rgBao->is_default = 1;

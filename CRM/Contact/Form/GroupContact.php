@@ -122,7 +122,7 @@ class CRM_Contact_Form_GroupContact extends CRM_Core_Form
         asort($groupList);
 
         if ( count( $groupList ) > 1 ) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             // user dashboard
             if ( strstr( $session->readUserContext( ) ,'user') ) {
                 $msg = ts('Join a Group');            
@@ -154,7 +154,7 @@ class CRM_Contact_Form_GroupContact extends CRM_Core_Form
         $method = 'Admin';
         $method = ( $this->_context == 'user' ) ? 'Web' : 'Admin';
 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $userID  = $session->get( 'userID' );
 
         if ( $userID == $this->_contactId ) {

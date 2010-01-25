@@ -246,7 +246,7 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
 
         $this->search( );
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $params = array( );
         $whereClause = $this->whereClause( $params, false );

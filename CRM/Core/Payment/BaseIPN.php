@@ -45,7 +45,7 @@ class CRM_Core_Payment_BaseIPN {
 
         // make sure contact exists and is valid
         require_once 'CRM/Contact/DAO/Contact.php';
-        $contact =& new CRM_Contact_DAO_Contact( );
+        $contact = new CRM_Contact_DAO_Contact( );
         $contact->id = $ids['contact'];
         if ( ! $contact->find( true ) ) {
             CRM_Core_Error::debug_log_message( "Could not find contact record: $contactID" );
@@ -55,7 +55,7 @@ class CRM_Core_Payment_BaseIPN {
 
         // make sure contribution exists and is valid
         require_once 'CRM/Contribute/DAO/Contribution.php';
-        $contribution =& new CRM_Contribute_DAO_Contribution( );
+        $contribution = new CRM_Contribute_DAO_Contribution( );
         $contribution->id = $ids['contribution'];
         if ( ! $contribution->find( true ) ) {
             CRM_Core_Error::debug_log_message( "Could not find contribution record: $contributionID" );
@@ -106,7 +106,7 @@ class CRM_Core_Payment_BaseIPN {
         $objects['pledge_payment']    = null;
 
         require_once 'CRM/Contribute/DAO/ContributionType.php';
-        $contributionType =& new CRM_Contribute_DAO_ContributionType( );
+        $contributionType = new CRM_Contribute_DAO_ContributionType( );
         $contributionType->id = $contribution->contribution_type_id;
         if ( ! $contributionType->find( true ) ) {
             CRM_Core_Error::debug_log_message( "Could not find contribution type record: $contributionTypeID" );
@@ -174,7 +174,7 @@ class CRM_Core_Payment_BaseIPN {
            
             if ( isset( $ids['contributionRecur'] ) ) {
                 require_once 'CRM/Contribute/DAO/ContributionRecur.php';
-                $recur =& new CRM_Contribute_DAO_ContributionRecur( );
+                $recur = new CRM_Contribute_DAO_ContributionRecur( );
                 $recur->id = $ids['contributionRecur'];
                 if ( ! $recur->find( true ) ) {
                     CRM_Core_Error::debug_log_message( "Could not find recur record: $contributionRecurID" );
@@ -187,7 +187,7 @@ class CRM_Core_Payment_BaseIPN {
             // we are in event mode
             // make sure event exists and is valid
             require_once 'CRM/Event/DAO/Event.php';
-            $event =& new CRM_Event_DAO_Event( );
+            $event = new CRM_Event_DAO_Event( );
             $event->id = $ids['event'];
             if ( $ids['event'] &&
                  ! $event->find( true ) ) {
@@ -199,7 +199,7 @@ class CRM_Core_Payment_BaseIPN {
             $objects['event'] =& $event;
 
             require_once 'CRM/Event/DAO/Participant.php';
-            $participant =& new CRM_Event_DAO_Participant( );
+            $participant = new CRM_Event_DAO_Participant( );
             $participant->id = $ids['participant'];
             if ( $ids['participant'] &&
                  ! $participant->find( true ) ) {
@@ -564,7 +564,7 @@ class CRM_Core_Payment_BaseIPN {
             }
         }
 
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         // CRM_Core_Error::debug('tpl',$template);
         //assign honor infomation to receiptmessage
         if ( $honarID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution',
@@ -592,14 +592,14 @@ class CRM_Core_Payment_BaseIPN {
         }
 
         require_once 'CRM/Contribute/DAO/ContributionProduct.php';
-        $dao = & new CRM_Contribute_DAO_ContributionProduct();
+        $dao = new CRM_Contribute_DAO_ContributionProduct();
         $dao->contribution_id =  $contribution->id;
         if ( $dao->find(true) ) {
             $premiumId = $dao->product_id;
             $template->assign('option',       $dao->product_option );
            
             require_once 'CRM/Contribute/DAO/Product.php';
-            $productDAO =& new CRM_Contribute_DAO_Product();
+            $productDAO = new CRM_Contribute_DAO_Product();
             $productDAO->id = $premiumId;
             $productDAO->find(true);
             $template->assign('selectPremium', true );
@@ -615,7 +615,7 @@ class CRM_Core_Payment_BaseIPN {
 
             //PCP Info
             require_once 'CRM/Contribute/DAO/ContributionSoft.php';
-            $softDAO = & new CRM_Contribute_DAO_ContributionSoft();
+            $softDAO = new CRM_Contribute_DAO_ContributionSoft();
             $softDAO->contribution_id =  $contribution->id;
             if ( $softDAO->find(true) ) {
                 $template->assign( 'pcpBlock'           , true );
@@ -625,7 +625,7 @@ class CRM_Core_Payment_BaseIPN {
                 
                 //assign the pcp page title for email subject
                 require_once 'CRM/Contribute/DAO/PCP.php';
-                $pcpDAO = & new CRM_Contribute_DAO_PCP();
+                $pcpDAO = new CRM_Contribute_DAO_PCP();
                 $pcpDAO->id = $softDAO->pcp_id;
                 if ( $pcpDAO->find(true) ) {
                     $template->assign( 'title', $pcpDAO->title );
@@ -693,7 +693,7 @@ class CRM_Core_Payment_BaseIPN {
                 foreach ( $additionalIDs as $pId => $cId ) {
                     $amount = array( );
                     //to change the status pending to completed
-                    $additional = & new CRM_Event_DAO_Participant( );
+                    $additional = new CRM_Event_DAO_Participant( );
                     $additional->id = $pId;
                     $additional->contact_id = $cId; 
                     $additional->find(true);
@@ -824,7 +824,7 @@ class CRM_Core_Payment_BaseIPN {
         $transaction = new CRM_Core_Transaction( );
         
         // reset template values.
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->clearTemplateVars( ); 
         
         if ( !$baseIPN->validateData( $input, $ids, $objects, false ) ) {

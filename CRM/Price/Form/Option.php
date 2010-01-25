@@ -221,7 +221,7 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
      * @access public
      */
 
-    static function formRule( &$fields, &$files, &$form ) 
+    static function formRule( $fields, $files, $form ) 
     {
         $errors = array( );
 

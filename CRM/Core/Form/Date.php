@@ -127,7 +127,7 @@ Class CRM_Core_Form_Date
                            'greater.day'     => ts('Greater Day')
                            );
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         //if fiscal year start on 1 jan then remove fiscal year task
         //form list
         if ( $config->fiscalYearStart['d'] == 1 & $config->fiscalYearStart['M'] == 1 ) {

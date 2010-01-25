@@ -48,7 +48,7 @@ class CRM_Admin_Form_Setting_UF extends CRM_Admin_Form_Setting
      * @access public
      */
     public function buildQuickForm( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $uf     = $config->userFramework;
         
         CRM_Utils_System::setTitle( ts( 'Settings - %1 Integration',

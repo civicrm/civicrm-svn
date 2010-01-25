@@ -60,7 +60,7 @@ class CRM_Mailing_Event_BAO_Bounce extends CRM_Mailing_Event_DAO_Bounce {
 
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-        $bounce =& new CRM_Mailing_Event_BAO_Bounce();
+        $bounce = new CRM_Mailing_Event_BAO_Bounce();
         $bounce->time_stamp = date('YmdHis');
 
         // if we dont have a valid bounce type, we should set it
@@ -101,7 +101,7 @@ class CRM_Mailing_Event_BAO_Bounce extends CRM_Mailing_Event_DAO_Bounce {
 
         while ($bounce->fetch()) {
             if ($bounce->bounces >= $bounce->threshold) {
-                $email =& new CRM_Core_BAO_Email();
+                $email = new CRM_Core_BAO_Email();
                 $email->id = $q->email_id;
                 $email->on_hold = true;
                 $email->hold_date = date('YmdHis');
@@ -124,7 +124,7 @@ class CRM_Mailing_Event_BAO_Bounce extends CRM_Mailing_Event_DAO_Bounce {
      */
     public static function getTotalCount($mailing_id, $job_id = null,
                                             $is_distinct = false) {
-        $dao =& new CRM_Core_DAO();
+        $dao = new CRM_Core_DAO();
         
         $bounce     = self::getTableName();
         $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();
@@ -177,7 +177,7 @@ class CRM_Mailing_Event_BAO_Bounce extends CRM_Mailing_Event_DAO_Bounce {
     public static function &getRows($mailing_id, $job_id = null, 
         $is_distinct = false, $offset = null, $rowCount = null, $sort = null) {
        
-        $dao =& new CRM_Core_Dao();
+        $dao = new CRM_Core_Dao();
         
         $bounce     = self::getTableName();
         $bounceType = CRM_Mailing_DAO_BounceType::getTableName();

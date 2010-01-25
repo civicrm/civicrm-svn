@@ -49,14 +49,14 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
      */
     public function buildQuickForm( ) {
       
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
        
         $i18n   =& CRM_Core_I18n::singleton();
         CRM_Utils_System::setTitle(ts('Settings - Localization'));
 
         $locales =& CRM_Core_I18n::languages();
 
-        $domain =& new CRM_Core_DAO_Domain();
+        $domain = new CRM_Core_DAO_Domain();
         $domain->find(true);
         if ($domain->locales) {
             // for multi-lingual sites, populate default language drop-down with available languages
@@ -148,7 +148,7 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         parent::buildQuickForm();
     }
 
-    static function formRule( &$fields ) {
+    static function formRule( $fields ) {
         $errors = array( );
         if ( trim( $fields['customTranslateFunction'] ) &&
              ! function_exists( trim( $fields['customTranslateFunction'] ) ) ) {
@@ -188,7 +188,7 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         // add a new db locale if the requested language is not yet supported by the db
         if (!CRM_Utils_Array::value('makeSinglelingual', $values) and CRM_Utils_Array::value('addLanguage', $values)) {
             require_once 'CRM/Core/DAO/Domain.php';
-            $domain =& new CRM_Core_DAO_Domain();
+            $domain = new CRM_Core_DAO_Domain();
             $domain->find(true);
             if (!substr_count($domain->locales, $values['addLanguage'])) {
                 require_once 'CRM/Core/I18n/Schema.php';
@@ -206,7 +206,7 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );  
         
         // we do this only to initialize monetary decimal point and thousand separator
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         if ( $monetaryPointSeparator = $config->defaultMonetaryPointSeparator( $values['lcMonetary'] ) ) {
             $values['monetaryDecimalPoint'     ] = CRM_Utils_Array::value('decimal_point', $monetaryPointSeparator);
             $values['monetaryThousandSeparator'] = CRM_Utils_Array::value('thousands_sep', $monetaryPointSeparator);

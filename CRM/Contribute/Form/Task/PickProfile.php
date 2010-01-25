@@ -74,7 +74,7 @@ class CRM_Contribute_Form_Task_PickProfile extends CRM_Contribute_Form_Task {
          * initialize the task and row fields
          */
         parent::preProcess( );
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $this->_userContext = $session->readUserContext( );
 
         CRM_Utils_System::setTitle( ts('Batch Profile Update for Contribution') );
@@ -134,7 +134,7 @@ class CRM_Contribute_Form_Task_PickProfile extends CRM_Contribute_Form_Task {
      * @static
      * @access public
      */
-    static function formRule( &$fields ) 
+    static function formRule( $fields ) 
     {
         return true;
     }    

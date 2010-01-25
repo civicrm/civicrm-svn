@@ -31,7 +31,7 @@ function run( $argc, $argv ) {
     $org_name = $argv[1];
     $org_desc = $argv[2];
 
-    $config =& CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
 
     # create the domain
     $existing_domain = civicrm_domain_get( );

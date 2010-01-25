@@ -97,7 +97,7 @@ class CRM_Import_Form_Summary extends CRM_Core_Form {
             $this->assign( $property, $this->get( $property ) );
         }
 
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->pushUserContext( CRM_Utils_System::url('civicrm/import/contact', 'reset=1') );
     }
 

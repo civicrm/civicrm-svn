@@ -60,7 +60,7 @@ class CRM_Contact_Page_View_SMS extends CRM_Core_Page {
         $id     = CRM_Utils_Request::retrieve('id', 'Positive',
                                               $this);
         
-        $dao =& new CRM_Core_DAO_ActivityHistory();
+        $dao = new CRM_Core_DAO_ActivityHistory();
         $dao->activity_id   = $id;
         $dao->activity_type = ts( 'SMS Sent' );
         if ( $dao->find(true) ) {
@@ -68,7 +68,7 @@ class CRM_Contact_Page_View_SMS extends CRM_Core_Page {
         }
 
         require_once 'CRM/SMS/DAO/History.php';
-        $dao =& new CRM_SMS_DAO_History();
+        $dao = new CRM_SMS_DAO_History();
         $dao->id = $id;
        
         if ( $dao->find(true) ) {

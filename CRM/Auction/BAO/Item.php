@@ -105,7 +105,7 @@ class CRM_Auction_BAO_Item extends CRM_Auction_DAO_Auction
             CRM_Utils_Hook::pre( 'create', 'Auction_Item', null, $params ); 
         }
         
-        $auction =& new CRM_Auction_DAO_Item( );
+        $auction = new CRM_Auction_DAO_Item( );
         
         $auction->copyValues( $params );
         $auction->save( );
@@ -167,7 +167,7 @@ class CRM_Auction_BAO_Item extends CRM_Auction_DAO_Auction
     static function del( $id )
     { 
         require_once 'CRM/Auction/DAO/Item.php';
-        $auction     = & new CRM_Auction_DAO_Item( );
+        $auction     = new CRM_Auction_DAO_Item( );
         $auction->id = $id; 
         $result = $auction->delete( );
         return $result;

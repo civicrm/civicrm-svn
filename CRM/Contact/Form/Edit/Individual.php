@@ -128,7 +128,7 @@ class CRM_Contact_Form_Edit_Individual {
                         ts('External ID already exists in Database.'), 
                         'objectExists', 
                         array( 'CRM_Contact_DAO_Contact', $form->_contactId, 'external_identifier' ) );
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         CRM_Core_ShowHideBlocks::links($form, 'demographics', '' , '');
     }
 
@@ -143,7 +143,7 @@ class CRM_Contact_Form_Edit_Individual {
      * @access public
      * @static
      */
-    static function formRule( &$fields, &$files, $contactID = null ) 
+    static function formRule( $fields, $files, $contactID = null ) 
     {
         $errors = array( );
         //FIXME 
@@ -288,7 +288,7 @@ class CRM_Contact_Form_Edit_Individual {
             $relID  = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_RelationshipType', 'Household Member of', 'id', 'name_a_b' );
             
             if ( CRM_Utils_Array::value( 'old_mail_to_household_id', $params ) ) {
-                $relationship =& new CRM_Contact_DAO_Relationship( );
+                $relationship = new CRM_Contact_DAO_Relationship( );
                 $relationship->contact_id_b         = $params['old_mail_to_household_id'];
                 $relationship->contact_id_a         = $contactID;
                 $relationship->relationship_type_id = $relID;
@@ -304,7 +304,7 @@ class CRM_Contact_Form_Edit_Individual {
                 $relationshipParams['relationship_type_id'] = $relID.'_b_a';
                 $relationshipParams['is_active']            = 1;
                 
-                $relationship =& new CRM_Contact_DAO_Relationship( );
+                $relationship = new CRM_Contact_DAO_Relationship( );
                 $relationship->contact_id_b         = $params['mail_to_household_id'];
                 $relationship->contact_id_a         = $contactID;
                 $relationship->relationship_type_id = $relID;

@@ -201,7 +201,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
      */
     function profile( ) 
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         // reassign resource base to be the full url, CRM-4660
         $config->resourceBase = $config->userFrameworkResourceURL;
@@ -209,14 +209,14 @@ class CRM_UF_Page_Group extends CRM_Core_Page
 
         $gid = CRM_Utils_Request::retrieve('gid', 'Positive',
                                            $this, false, 0, 'GET');
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Edit', ts('Create'), CRM_Core_Action::ADD,
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Edit', ts('Create'), CRM_Core_Action::ADD,
                                                        false, false, true ); 
         $controller->reset( );
         $controller->process( ); 
         $controller->set('gid', $gid);
         $controller->setEmbedded( true ); 
         $controller->run( ); 
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->assign( 'gid', $gid );
         $template->assign( 'tplFile', 'CRM/Profile/Form/Edit.tpl' );
         $profile  =  trim( $template->fetch( 'CRM/Form/default.tpl' ) ); 
@@ -257,7 +257,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
     function edit($id, $action)
     {
         // create a simple controller for editing uf data
-        $controller =& new CRM_Core_Controller_Simple('CRM_UF_Form_Group', ts('CiviCRM Profile Group'), $action);
+        $controller = new CRM_Core_Controller_Simple('CRM_UF_Form_Group', ts('CiviCRM Profile Group'), $action);
         $this->setContext( $id, $action );
         $controller->set('id', $id);
         $controller->setEmbedded(true);
@@ -332,7 +332,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
      */
     function preview( $id, $action ) 
     {
-      $controller =& new CRM_Core_Controller_Simple('CRM_UF_Form_Preview', ts('CiviCRM Profile Group Preview'),null);   
+      $controller = new CRM_Core_Controller_Simple('CRM_UF_Form_Preview', ts('CiviCRM Profile Group Preview'),null);   
       $this->setContext( $id, $action );
       $controller->set('id', $id);
       $controller->setEmbedded(true);
@@ -365,7 +365,7 @@ class CRM_UF_Page_Group extends CRM_Core_Page
             break;
         }
         
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
     }
 }

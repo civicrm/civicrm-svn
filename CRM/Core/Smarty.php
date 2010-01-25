@@ -73,7 +73,7 @@ class CRM_Core_Smarty extends Smarty {
     function __construct( ) {
         parent::__construct( );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( isset( $config->customTemplateDir ) && $config->customTemplateDir ) {
             $this->template_dir = array( $config->customTemplateDir, $config->templateDir );
@@ -92,7 +92,7 @@ class CRM_Core_Smarty extends Smarty {
         $this->plugins_dir  = array ( $config->smartyDir . 'plugins', $config->pluginsDir );
 
         // add the session and the config here
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
 
         $this->assign_by_ref( 'config'        , $config  );
         $this->assign_by_ref( 'session'       , $session );
@@ -139,7 +139,7 @@ class CRM_Core_Smarty extends Smarty {
      */
     static function &singleton( ) {
         if ( ! isset( self::$_singleton ) ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             self::$_singleton = new CRM_Core_Smarty( $config->templateDir, $config->templateCompileDir );
         }
         return self::$_singleton;

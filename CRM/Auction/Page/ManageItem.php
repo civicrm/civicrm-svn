@@ -144,9 +144,9 @@ class CRM_Auction_Page_ManageItem extends CRM_Core_Page
             require_once 'CRM/Auction/BAO/Item.php';
             CRM_Auction_BAO_Item::setIsActive($id ,1); 
         } else if ($action & CRM_Core_Action::DELETE ) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=browse' ) );
-            $controller =& new CRM_Core_Controller_Simple( 'CRM_Auction_Form_Auction_Delete',
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Auction_Form_Auction_Delete',
                                                            'Delete Auction',
                                                            $action );
             $id = CRM_Utils_Request::retrieve('id', 'Positive',
@@ -194,7 +194,7 @@ class CRM_Auction_Page_ManageItem extends CRM_Core_Page
       
         $this->search( );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         $params = array( );
         $this->_force = CRM_Utils_Request::retrieve( 'force', 'Boolean',

@@ -220,7 +220,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
         }
 
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $this->_showHide =& new CRM_Core_ShowHideBlocks( );
+        $this->_showHide = new CRM_Core_ShowHideBlocks( );
         if ( !$defaults['is_monetary'] ) {
             $this->_showHide->addHide( 'event-fees' );
         }
@@ -306,7 +306,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
         require_once 'CRM/Core/ShowHideBlocks.php';
         // form fields of Discount sets
         $defaultOption = array();
-        $_showHide =& new CRM_Core_ShowHideBlocks('','');
+        $_showHide = new CRM_Core_ShowHideBlocks('','');
         
         for($i = 1; $i <= self::NUM_DISCOUNT; $i++) {
             //the show hide blocks
@@ -385,7 +385,7 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
      * @static
      * @access public
      */
-    static function formRule( &$values ) 
+    static function formRule( $values ) 
     {
         $errors = array( );
         if ( CRM_Utils_Array::value( 'is_discount', $values ) ) {

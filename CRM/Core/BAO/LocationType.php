@@ -66,7 +66,7 @@ class CRM_Core_BAO_LocationType extends CRM_Core_DAO_LocationType {
      * @static
      */
     static function retrieve( &$params, &$defaults ) {
-        $locationType =& new CRM_Core_DAO_LocationType( );
+        $locationType = new CRM_Core_DAO_LocationType( );
         $locationType->copyValues( $params );
         if ( $locationType->find( true ) ) {
             CRM_Core_DAO::storeValues( $locationType, $defaults );
@@ -128,12 +128,12 @@ class CRM_Core_BAO_LocationType extends CRM_Core_DAO_LocationType {
                 $name = ucfirst($key);
             }
             require_once(str_replace('_', DIRECTORY_SEPARATOR, 'CRM_Core_DAO_' . $name) . ".php");
-            eval( '$object =& new CRM_Core_DAO_' . $name . '( );' );     
+            eval( '$object = new CRM_Core_DAO_' . $name . '( );' );     
             $object->location_type_id = $locationTypeId;
             $object->delete();
         }
 
-        $locationType = & new CRM_Core_DAO_LocationType();
+        $locationType = new CRM_Core_DAO_LocationType();
         $locationType->id = $locationTypeId;
         $locationType->delete();
     }

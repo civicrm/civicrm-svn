@@ -145,7 +145,7 @@ class CRM_Admin_Page_OptionValue extends CRM_Core_Page_Basic
     function browse()
     {
         require_once 'CRM/Core/DAO/OptionValue.php';
-        $dao =& new CRM_Core_DAO_OptionValue();
+        $dao = new CRM_Core_DAO_OptionValue();
         
         $dao->option_group_id = $this->_gid;
 

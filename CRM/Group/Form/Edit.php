@@ -134,7 +134,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
                 
                 CRM_Utils_System::setTitle( ts('Group Settings: %1', array( 1 => $this->_title ) ) );
             }
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $session->pushUserContext(CRM_Utils_System::url('civicrm/group', 'reset=1'));
         }
 
@@ -217,7 +217,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
 
         require_once 'CRM/Core/OptionGroup.php';
         $groupTypes = CRM_Core_OptionGroup::values( 'group_type', true );
-        $config=& CRM_Core_Config::singleton( );
+        $config= CRM_Core_Config::singleton( );
         if ( (isset( $this->_id ) &&
              CRM_Utils_Array::value( 'saved_search_id', $this->_groupValues ) ) 
              || ( $config->userFramework == 'Joomla' ) ) {
@@ -323,7 +323,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields, $fileParams, $parentGroups ) 
+    static function formRule( $fields, $fileParams, $parentGroups ) 
     {
         $errors = array( );
 
@@ -403,7 +403,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
                 $this->set( 'context', 'amtg' );
                 $this->set( 'amtgID' , $group->id );
                 
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $session->pushUserContext( CRM_Utils_System::url( 'civicrm/group/search', 'reset=1&force=1&context=smog&gid=' . $group->id ) );
             }
         }

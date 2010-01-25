@@ -120,7 +120,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         if ( !CRM_Utils_System::isNull( $participantBAO->fee_amount ) && 
              !CRM_Utils_Rule::currencyCode( $participantBAO->fee_currency ) ) {
             require_once 'CRM/Core/Config.php';
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $participantBAO->fee_currency = $config->defaultCurrency;
         }
         
@@ -158,7 +158,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             return null;
             
         }
-        $participant =& new CRM_Event_BAO_Participant( );
+        $participant = new CRM_Event_BAO_Participant( );
         $participant->copyValues( $params );
         $participant->find();
         $participants = array();
@@ -1332,7 +1332,7 @@ However, you can still override this limit and register additional participants 
      */ 
     static function isPrimaryParticipant( $participantId ) {
 
-        $participant = & new CRM_Event_DAO_Participant( );
+        $participant = new CRM_Event_DAO_Participant( );
         $participant->register_by_id = $participantId;
         
         if ($participant->find( true)) {

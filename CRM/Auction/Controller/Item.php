@@ -57,7 +57,7 @@ class CRM_Auction_Controller_Item extends CRM_Core_Controller {
         require_once 'CRM/Auction/StateMachine/Item.php';
         parent::__construct( $title, $modal );
         
-        $this->_stateMachine =& new CRM_Auction_StateMachine_Item( $this, $action );
+        $this->_stateMachine = new CRM_Auction_StateMachine_Item( $this, $action );
 
         // create and instantiate the pages
         $this->addPages( $this->_stateMachine, $action );
@@ -65,7 +65,7 @@ class CRM_Auction_Controller_Item extends CRM_Core_Controller {
         // add all the actions
         $uploadNames = $this->get( 'uploadNames' );
         if ( ! empty( $uploadNames ) ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $this->addActions( $config->customFileUploadDir, $uploadNames );
         } else {
             $this->addActions( );

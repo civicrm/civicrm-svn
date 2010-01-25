@@ -63,7 +63,7 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
             return $error;
         }
 
-        $recurring =& new CRM_Contribute_BAO_ContributionRecur();
+        $recurring = new CRM_Contribute_BAO_ContributionRecur();
         $recurring->copyValues($params);
         $recurring->id        = CRM_Utils_Array::value( 'contribution', $ids );
 

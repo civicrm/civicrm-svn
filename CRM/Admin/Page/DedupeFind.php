@@ -76,7 +76,7 @@ class CRM_Admin_Page_DedupeFind extends CRM_Core_Page_Basic
         $action  = CRM_Utils_Request::retrieve( 'action',  'String',   $this, false, 0);
         $context = CRM_Utils_Request::retrieve( 'context', 'String',   $this );
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $contactIds = $session->get( 'selectedSearchContactIds' );
         if ( $context == 'search' || !empty( $contactIds ) ) {
             $context = 'search';
@@ -105,7 +105,7 @@ class CRM_Admin_Page_DedupeFind extends CRM_Core_Page_Basic
                 $ruleGroup->id = $rgid;
                 $ruleGroup->find(true);
                 
-                $session =& CRM_Core_Session::singleton();
+                $session = CRM_Core_Session::singleton();
                 $session->setStatus("No possible duplicates were found using {$ruleGroup->name} rule.");
                 $url = CRM_Utils_System::url('civicrm/admin/deduperules', "reset=1");
                 if ( $context == 'search' )  $url = $session->readUserContext( ); 
@@ -118,7 +118,7 @@ class CRM_Admin_Page_DedupeFind extends CRM_Core_Page_Basic
                 }
                 $cidString = implode(', ', array_keys($cids));
                 $sql = "SELECT id, display_name FROM civicrm_contact WHERE id IN ($cidString) ORDER BY sort_name";
-                $dao =& new CRM_Core_DAO();
+                $dao = new CRM_Core_DAO();
                 $dao->query($sql);
                 $displayNames = array();
                 while ($dao->fetch()) {
@@ -129,7 +129,7 @@ class CRM_Admin_Page_DedupeFind extends CRM_Core_Page_Basic
                 // (also, consider sorting by dupe count first)
                 // lobo - change the sort to by threshold value
                 // so the more likely dupes are sorted first
-                $session =& CRM_Core_Session::singleton();
+                $session = CRM_Core_Session::singleton();
                 $userId  = $session->get('userID');
                 $mainContacts = array();
                 foreach ($foundDupes as $dupes) {
@@ -150,7 +150,7 @@ class CRM_Admin_Page_DedupeFind extends CRM_Core_Page_Basic
                 $this->_rgid = $rgid;
                 $this->_mainContacts = $mainContacts;
                 
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 if ($this->_cid) {
                     $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/deduperules', "action=update&rgid={$this->_rgid}&gid={$this->_gid}&cid={$this->_cid}"));
                 } else {

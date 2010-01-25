@@ -59,7 +59,7 @@ class CRM_Contribute_Page_DashBoard extends CRM_Core_Page
         $status = array( 'Valid', 'Cancelled' );
         
         $startDate = null;
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $currentMonth = date('m');
         $currentDay   = date('d');
         if ( (int ) $config->fiscalYearStart['M']  > $currentMonth ||
@@ -122,7 +122,7 @@ class CRM_Contribute_Page_DashBoard extends CRM_Core_Page
     function run( ) { 
         $this->preProcess( );
         
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );
         $controller->setEmbedded( true ); 
         $controller->reset( ); 
         $controller->set( 'limit', 10 );

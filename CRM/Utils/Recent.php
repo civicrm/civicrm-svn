@@ -66,7 +66,7 @@ class CRM_Utils_Recent
     static function initialize( ) 
     {
         if ( ! self::$_recent ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             self::$_recent = $session->get( self::STORE_NAME );
             if ( ! self::$_recent ) {
                 self::$_recent = array( );
@@ -109,7 +109,7 @@ class CRM_Utils_Recent
                          $subtype  = null ) 
     {
         self::initialize( );
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
 
         // make sure item is not already present in list
         for ( $i = 0; $i < count( self::$_recent ); $i++ ) {
@@ -163,7 +163,7 @@ class CRM_Utils_Recent
             }
         }
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->set( self::STORE_NAME, self::$_recent );
     }
     
@@ -193,7 +193,7 @@ class CRM_Utils_Recent
             self::$_recent[] = $tempRecent[$i];
         }
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->set( self::STORE_NAME, self::$_recent );
     }
 

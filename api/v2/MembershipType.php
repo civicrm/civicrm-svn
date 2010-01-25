@@ -159,7 +159,7 @@ function &civicrm_membership_type_update( &$params ) {
     }
     
     require_once 'CRM/Member/BAO/MembershipType.php';
-    $membershipTypeBAO =& new CRM_Member_BAO_MembershipType( );
+    $membershipTypeBAO = new CRM_Member_BAO_MembershipType( );
     $membershipTypeBAO->id = $params['id'];
     if ($membershipTypeBAO->find(true)) {
         $fields = $membershipTypeBAO->fields( );

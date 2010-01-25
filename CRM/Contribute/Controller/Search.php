@@ -58,13 +58,13 @@ class CRM_Contribute_Controller_Search extends CRM_Core_Controller {
 
         parent::__construct( $title, $modal );
 
-        $this->_stateMachine =& new CRM_Contribute_StateMachine_Search( $this, $action );
+        $this->_stateMachine = new CRM_Contribute_StateMachine_Search( $this, $action );
 
         // create and instantiate the pages
         $this->addPages( $this->_stateMachine, $action );
 
         // add all the actions
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $this->addActions( );
     }
 

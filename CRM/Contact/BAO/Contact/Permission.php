@@ -194,7 +194,7 @@ WHERE $permission
       */
     static function relationship ( $selectedContactID, $contactID = null ) 
     {
-        $session   =& CRM_Core_Session::singleton( );
+        $session   = CRM_Core_Session::singleton( );
         if ( ! $contactID ) {
             $contactID =  $session->get( 'userID' );
             if ( ! $contactID ) {
@@ -222,7 +222,7 @@ WHERE  ( contact_id_a = %1 AND contact_id_b = %2 AND is_permission_a_b = 1 ) OR
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
         if ( !  CRM_Contact_BAO_Contact_Utils::validChecksum( $contactID,
                                                               CRM_Utils_Request::retrieve( 'cs', 'String' , $form, false ) ) ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             CRM_Core_Error::statusBounce( ts( 'You do not have permission to edit this contact record. Contact the site administrator if you need assistance.' ),
                                           $config->userFrameworkBaseURL );
             // does not come here, we redirect in the above statement

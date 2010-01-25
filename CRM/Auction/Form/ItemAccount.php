@@ -58,7 +58,7 @@ class CRM_Auction_Form_ItemAccount extends CRM_Core_Form
 
     public function preProcess()  
     {
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $this->_action = CRM_Utils_Request::retrieve( 'action', 'String', $this, false, 'add' );
         $this->_aid    = CRM_Utils_Request::retrieve( 'aid', 'Positive', $this );
 
@@ -179,7 +179,7 @@ class CRM_Auction_Form_ItemAccount extends CRM_Core_Form
      * @access public  
      * @static  
      */  
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {
         $errors = array( );
         require_once "CRM/Utils/Rule.php";

@@ -5,7 +5,7 @@ require_once 'CRM/Core/Config.php';
 require_once 'CRM/Core/Error.php';
 require_once 'CRM/Utils/Array.php';
 
-$config =& CRM_Core_Config::singleton();
+$config = CRM_Core_Config::singleton();
 
 // to keep backward compatibility for URLs generated
 // by CiviCRM < 1.7, we check for the q variable as well

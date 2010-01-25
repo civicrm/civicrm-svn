@@ -165,7 +165,7 @@ WHERE e.id = %1";
     static function addLocBlock( &$params ) 
     {
         require_once 'CRM/Core/DAO/LocBlock.php';
-        $locBlock =& new CRM_Core_DAO_LocBlock();
+        $locBlock = new CRM_Core_DAO_LocBlock();
         
         $locBlock->copyValues($params);
 

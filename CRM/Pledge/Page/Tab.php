@@ -45,7 +45,7 @@ class CRM_Pledge_Page_Tab extends CRM_Contact_Page_View
      */
     function browse( ) 
     {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Pledge_Form_Search', ts('Pledges'), $this->_action );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Pledge_Form_Search', ts('Pledges'), $this->_action );
         $controller->setEmbedded( true );
         $controller->reset( );
         $controller->set( 'cid'  , $this->_contactId );
@@ -62,7 +62,7 @@ class CRM_Pledge_Page_Tab extends CRM_Contact_Page_View
      */ 
     function view( ) 
     {    
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Pledge_Form_PledgeView',  
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Pledge_Form_PledgeView',  
                                                        'View Pledge',  
                                                        $this->_action ); 
         $controller->setEmbedded( true );  
@@ -80,7 +80,7 @@ class CRM_Pledge_Page_Tab extends CRM_Contact_Page_View
      */ 
     function edit( ) 
     { 
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Pledge_Form_Pledge', 
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Pledge_Form_Pledge', 
                                                        'Create Pledge', 
                                                        $this->_action );
         $controller->setEmbedded( true ); 
@@ -135,7 +135,7 @@ class CRM_Pledge_Page_Tab extends CRM_Contact_Page_View
             require_once 'CRM/Contribute/PseudoConstant.php';
             CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $this->_id, null, null, array_search( 'Cancelled', CRM_Contribute_PseudoConstant::contributionStatus() ) );
 
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $session->setStatus( ts('Pledge has been Cancelled and all scheduled (not completed) payments have been cancelled.<br />') );
             CRM_Utils_System::redirect( $session->popUserContext() );
            
@@ -191,7 +191,7 @@ class CRM_Pledge_Page_Tab extends CRM_Contact_Page_View
                                           'force=1' . $cid );
             break;
         }
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
     }
 }

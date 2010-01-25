@@ -52,7 +52,7 @@ class CRM_Core_BAO_IM extends CRM_Core_DAO_IM
      */
     static function add( &$params ) 
     {
-        $im =& new CRM_Core_DAO_IM();
+        $im = new CRM_Core_DAO_IM();
         
         $im->copyValues($params);
 

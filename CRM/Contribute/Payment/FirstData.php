@@ -46,7 +46,7 @@ class CRM_Contribute_Payment_FirstData extends CRM_Core_Payment_FirstData
     static function &singleton( $mode, &$paymentProcessor ) 
     {
         if (self::$_singleton === null ) { 
-            self::$_singleton =& new CRM_Contribute_Payment_FirstData( $mode, $paymentProcessor );
+            self::$_singleton = new CRM_Contribute_Payment_FirstData( $mode, $paymentProcessor );
         } 
         return self::$_singleton; 
     } 

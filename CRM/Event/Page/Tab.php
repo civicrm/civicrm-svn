@@ -45,7 +45,7 @@ class CRM_Event_Page_Tab extends CRM_Contact_Page_View
      */
     function browse( ) 
     {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Event_Form_Search', ts('Events'), $this->_action );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_Search', ts('Events'), $this->_action );
         $controller->setEmbedded( true );
         $controller->reset( );
         $controller->set( 'cid'  , $this->_contactId );
@@ -65,7 +65,7 @@ class CRM_Event_Page_Tab extends CRM_Contact_Page_View
         // build associated contributions
         $this->associatedContribution( );
         
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Event_Form_ParticipantView',  
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_ParticipantView',  
                                                        'View Participant',  
                                                        $this->_action ); 
         $controller->setEmbedded( true );  
@@ -91,7 +91,7 @@ class CRM_Event_Page_Tab extends CRM_Contact_Page_View
 
         // build associated contributions
         $this->associatedContribution( );
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Event_Form_Participant', 
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_Participant', 
                                                        'Create Participation', 
                                                        $this->_action );
         $controller->setEmbedded( true ); 
@@ -199,7 +199,7 @@ class CRM_Event_Page_Tab extends CRM_Contact_Page_View
                                           'force=1' . $cid );
             break;
         }
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
     }
 
@@ -214,7 +214,7 @@ class CRM_Event_Page_Tab extends CRM_Contact_Page_View
     {
         if ( CRM_Core_Permission::access( 'CiviContribute' ) ) {
             $this->assign( 'accessContribution', true );
-            $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );  
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );  
             $controller->setEmbedded( true );                           
             $controller->set( 'force', 1 );
             $controller->set( 'cid'  , $this->_contactId );

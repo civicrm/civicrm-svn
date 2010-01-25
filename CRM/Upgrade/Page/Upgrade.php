@@ -69,13 +69,13 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         
         // This could be removed in later rev
         if ( $currentVer == '2.1.6' ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             // also cleanup the templates_c directory
             $config->cleanup( 1 );
             
             if ( $config->userFramework !== 'Standalone' ) {
                 // clean the session
-                $session =& CRM_Core_Session::singleton( );
+                $session = CRM_Core_Session::singleton( );
                 $session->reset( 2 );
             }
         }
@@ -84,9 +84,9 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         CRM_Utils_System::setTitle(ts('Upgrade CiviCRM to Version %1', 
                                       array( 1 => $latestVer )));
         
-        $upgrade  =& new CRM_Upgrade_Form( );
+        $upgrade  = new CRM_Upgrade_Form( );
 
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->assign( 'pageTitle', ts('Upgrade CiviCRM to Version %1', 
                                            array( 1 => $latestVer )));
         $template->assign( 'menuRebuildURL', 
@@ -131,7 +131,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                 $template->assign( 'upgraded', true );
                 
                 // also cleanup the templates_c directory
-                $config =& CRM_Core_Config::singleton( );
+                $config = CRM_Core_Config::singleton( );
                 $config->cleanup( 1 );
 
                 // clear db caching
@@ -140,7 +140,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                 // clean the session. Note: In case of standalone this makes the user logout. 
                 // So skip this step for standalone. 
                 if ( $config->userFramework !== 'Standalone' ) {
-                    $session =& CRM_Core_Session::singleton( );
+                    $session = CRM_Core_Session::singleton( );
                     $session->reset( 2 );
                 }
             }
@@ -169,7 +169,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                 return;
             }
 
-            $template =& CRM_Core_Smarty::singleton( );
+            $template = CRM_Core_Smarty::singleton( );
 
             $eventFees = array( );
             $query = "SELECT og.id ogid FROM civicrm_option_group og WHERE og.name LIKE  %1";
@@ -222,7 +222,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
     function upgrade_2_2_alpha3( $rev ) {
         // skip processing sql file, if fresh install -
         if ( ! CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup','mail_protocol','id','name' ) ) {
-            $upgrade  =& new CRM_Upgrade_Form( );
+            $upgrade  = new CRM_Upgrade_Form( );
             $upgrade->processSQL( $rev );
         }
         return true;
@@ -230,15 +230,15 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
 
     function upgrade_2_2_beta1( $rev ) {
         if ( ! CRM_Core_DAO::checkFieldExists( 'civicrm_pcp_block', 'notify_email' ) ) {
-            $template =& CRM_Core_Smarty::singleton( );
+            $template = CRM_Core_Smarty::singleton( );
             $template->assign( 'notifyAbsent', true );
         }
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
 
     function upgrade_2_2_beta2( $rev ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         if ( ! CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', 
                                             'CRM_Contact_Form_Search_Custom_ZipCodeRange','id','name' ) ) {
             $template->assign( 'customSearchAbsentAll', true );
@@ -246,17 +246,17 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                                                    'CRM_Contact_Form_Search_Custom_MultipleValues','id','name' ) ) {
             $template->assign( 'customSearchAbsent', true );
         }
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
     
     function upgrade_2_2_beta3( $rev ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         if ( ! CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup','custom_data_type','id','name' ) ) {
             $template->assign( 'customDataType', true );
         }
         
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
     
@@ -293,7 +293,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
     }
     
     function upgrade_2_2_7( $rev ) {
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
         $sql = "UPDATE civicrm_report_instance 
                        SET form_values = REPLACE(form_values,'#',';') ";
@@ -301,7 +301,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
 
         // make report component enabled by default
         require_once "CRM/Core/DAO/Domain.php";
-        $domain =& new CRM_Core_DAO_Domain();
+        $domain = new CRM_Core_DAO_Domain();
         $domain->selectAdd( );
         $domain->selectAdd( 'config_backend' );
         $domain->find(true);
@@ -324,7 +324,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
   
     function upgrade_3_0_2( $rev ) {
         
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         require_once 'CRM/Core/OptionGroup.php';
         //check whether upgraded from 2.1.x or 2.2.x 
         $inboundEmailID = CRM_Core_OptionGroup::getValue('activity_type', 'Inbound Email', 'name' );
@@ -335,14 +335,14 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
             $template->assign( 'addInboundEmail', true ); 
         }
 
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
 
     function upgrade_3_0_4( $rev ) 
     {
         //make sure 'Deceased' membership status present in db,CRM-5636
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         
         $addDeceasedStatus = false;
         $sql = "SELECT max(id) FROM civicrm_membership_status where name = 'Deceased'"; 
@@ -351,7 +351,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         }
         $template->assign( 'addDeceasedStatus', $addDeceasedStatus ); 
         
-        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade = new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
 

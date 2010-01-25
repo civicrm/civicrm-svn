@@ -160,7 +160,7 @@ class CRM_Utils_System_Drupal {
     function url($path = null, $query = null, $absolute = false,
                  $fragment = null, $htmlize = true,
                  $frontend = false ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $script =  'index.php';
 
         if (isset($fragment)) {
@@ -220,7 +220,7 @@ class CRM_Utils_System_Drupal {
     static function authenticate( $name, $password ) {
         require_once 'DB.php';
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         $dbDrupal = DB::connect( $config->userFrameworkDSN );
         if ( DB::isError( $dbDrupal ) ) {

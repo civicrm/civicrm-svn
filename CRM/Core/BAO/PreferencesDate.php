@@ -66,7 +66,7 @@ class CRM_Core_BAO_PreferencesDate extends CRM_Core_DAO_PreferencesDate {
      * @static
      */
     static function retrieve( &$params, &$defaults ) {
-        $dao =& new CRM_Core_DAO_PreferencesDate( );
+        $dao = new CRM_Core_DAO_PreferencesDate( );
         $dao->copyValues( $params );
         if ( $dao->find( true ) ) {
             CRM_Core_DAO::storeValues( $dao, $defaults );

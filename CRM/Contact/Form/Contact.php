@@ -167,7 +167,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             
             if ( $this->_contactId ) {
                 require_once 'CRM/Contact/BAO/Contact.php';
-                $contact =& new CRM_Contact_DAO_Contact( );
+                $contact = new CRM_Contact_DAO_Contact( );
                 $contact->id = $this->_contactId;
                 if ( ! $contact->find( true ) ) {
                     CRM_Core_Error::statusBounce( ts('contact does not exist: %1', array(1 => $this->_contactId)) );
@@ -408,7 +408,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $allBlocks['Address'] = $this->_editOptions['Address'];
         }
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         foreach ( $allBlocks as $blockName => $label ) {
             $name = strtolower( $blockName );
             $hasPrimary = $updateMode = false;
@@ -507,9 +507,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields, &$errors, $contactId = null )
+    static function formRule( $fields, $errors, $contactId = null )
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $config->civiHRD && ! isset( $fields['tag'] ) ) {
             $errors["tag"] = ts('Please select at least one tag.');
         }
@@ -563,7 +563,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                     if ( $name == 'openid' && CRM_Utils_Array::value( $name, $blockValues ) ) {
                         require_once 'CRM/Core/DAO/OpenID.php';
                         require_once 'Auth/OpenID.php';
-                        $oid =& new CRM_Core_DAO_OpenID( );
+                        $oid = new CRM_Core_DAO_OpenID( );
                         $oid->openid = $openIds[$instance] = Auth_OpenID::normalizeURL( CRM_Utils_Array::value( $name, $blockValues ) );
                         $cid = isset($contactId) ? $contactId : 0;
                         if ( $oid->find(true) && ($oid->contact_id != $cid) ) {
@@ -833,7 +833,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         if ( $parseStatusMsg ) {
             $statusMsg =  "$statusMsg <br > $parseStatusMsg";
         }
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         CRM_Core_Session::setStatus( $statusMsg );
 
         require_once 'CRM/Utils/Recent.php';
@@ -962,7 +962,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                  
 
                  // let smarty know that there are duplicates
-                 $template =& CRM_Core_Smarty::singleton( );
+                 $template = CRM_Core_Smarty::singleton( );
                  $template->assign( 'isDuplicate', 1 );
              } else if ( CRM_Utils_Array::value( '_qf_Contact_refresh_dedupe', $fields ) ) {
                  // add a session message for no matching contacts

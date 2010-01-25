@@ -118,7 +118,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
      * @static
      * @access public
      */
-    static function formRule( &$values ) {
+    static function formRule( $values ) {
         //CRM_Core_Error::debug('s', $values);
         if ( CRM_Utils_Array::value('addMore',$values) || CRM_Utils_Array::value('addBlock',$values) ) {
             return true;
@@ -275,7 +275,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
      * @access public
      */
     public function postProcess( ) {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->set('isAdvanced', '2');
         $session->set('isSearchBuilder', '1');
 

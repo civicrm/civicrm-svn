@@ -51,7 +51,7 @@ class CRM_Contact_BAO_ContactType extends CRM_Contact_DAO_ContactType {
      * @static
      */  
     static function retrieve( &$params, &$defaults ) {
-        $contactType =& new CRM_Contact_DAO_ContactType( );
+        $contactType = new CRM_Contact_DAO_ContactType( );
         $contactType->copyValues( $params );
         if ( $contactType->find( true ) ) {
             CRM_Core_DAO::storeValues( $contactType, $defaults );
@@ -522,7 +522,7 @@ WHERE  subtype.name IN ('".implode("','",$subType)."' )";
         self::retrieve( $params, $typeInfo );
         $name   = $typeInfo['name'];
         // check if any custom group
-        $custom = & new CRM_Core_DAO_CustomGroup ( );
+        $custom = new CRM_Core_DAO_CustomGroup ( );
         $custom->whereAdd("extends_entity_column_value LIKE '%" . 
                           CRM_Core_DAO::VALUE_SEPARATOR . 
                           $name . 
@@ -538,7 +538,7 @@ WHERE contact_sub_type = '$name'";
         CRM_Core_DAO::executeQuery( $sql );
 
         // remove subtype from contact type table
-        $contactType = & new CRM_Contact_DAO_ContactType( );
+        $contactType = new CRM_Contact_DAO_ContactType( );
         $contactType->id = $contactTypeId;
         $contactType->delete( );
 
@@ -563,7 +563,7 @@ WHERE name = %1";
      * @static
      */
     static function add( $params ) {
-        $contactType = & new CRM_Contact_DAO_ContactType( );
+        $contactType = new CRM_Contact_DAO_ContactType( );
         $contactType->copyValues( $params );
         $contactType->id        = CRM_Utils_Array::value( 'id', $params );
         if ( CRM_Utils_Array::value('parent_id', $params) ) { 

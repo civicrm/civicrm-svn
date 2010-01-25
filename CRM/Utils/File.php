@@ -167,7 +167,7 @@ class CRM_Utils_File {
         static $config         = null;
         static $legacyEncoding = null;
         if ($config == null) {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $legacyEncoding = $config->legacyEncoding;
         }
 

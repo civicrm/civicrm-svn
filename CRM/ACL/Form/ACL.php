@@ -58,7 +58,7 @@ class CRM_ACL_Form_ACL extends CRM_Admin_Form
         }
         
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $showHide =& new CRM_Core_ShowHideBlocks( );
+        $showHide = new CRM_Core_ShowHideBlocks( );
 
         if ( isset( $defaults['object_table'] ) ) {
             switch ( $defaults['object_table'] ) {
@@ -193,8 +193,8 @@ class CRM_ACL_Form_ACL extends CRM_Admin_Form
     }
 
 
-    static function formRule( &$params ) {
-        $showHide =& new CRM_Core_ShowHideBlocks( );
+    static function formRule( $params ) {
+        $showHide = new CRM_Core_ShowHideBlocks( );
 
         // Make sure role is not -1
         if ( $params['entity_id'] == -1 ) {

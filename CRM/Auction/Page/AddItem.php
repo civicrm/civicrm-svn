@@ -63,23 +63,23 @@ class CRM_Auction_Page_AddItem extends CRM_Core_Page
                                                                       'reset=1' )) );
         // what action to take ?
         if ($action & CRM_Core_Action::ADD ) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             if ( $session->get('userID') ) {
                 // For logged in user directly go to add/update item page.
-                $controller =& new CRM_Core_Controller_Simple( 'CRM_Auction_Form_Item',
+                $controller = new CRM_Core_Controller_Simple( 'CRM_Auction_Form_Item',
                                                                'New Item',
                                                                $action );
                 $controller->set('donorID', $session->get('userID'));
             } else {
                 // For anonymous user go via account creation wizard.
                 require_once 'CRM/Auction/Controller/Item.php';
-                $controller =& new CRM_Auction_Controller_Item( 'New Item', $action );
+                $controller = new CRM_Auction_Controller_Item( 'New Item', $action );
             }
             return $controller->run( );
         } else if ($action & CRM_Core_Action::UPDATE ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             if ( $session->get('userID') ) {
-                $controller =& new CRM_Core_Controller_Simple( 'CRM_Auction_Form_Item',
+                $controller = new CRM_Core_Controller_Simple( 'CRM_Auction_Form_Item',
                                                                'Update Item',
                                                                $action );
                 $controller->set('donorID', $session->get('userID'));

@@ -62,8 +62,8 @@ class CRM_Core_QuickForm_Action extends HTML_QuickForm_Action {
      * @access public
      */
     function popUserContext( ) {
-        $session =& CRM_Core_Session::singleton( );
-        $config  =& CRM_Core_Config::singleton( );
+        $session = CRM_Core_Session::singleton( );
+        $config  = CRM_Core_Config::singleton( );
 
         // check if destination is set, if so goto destination
         $destination = $this->_stateMachine->getDestination( );

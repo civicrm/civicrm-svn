@@ -931,7 +931,7 @@ class CRM_Contact_BAO_Query
                     $groupId = $groups[0];
 
                     //check if group is saved search
-                    $group =& new CRM_Contact_BAO_Group(); 
+                    $group = new CRM_Contact_BAO_Group(); 
                     $group->id = $groupId;
                     $group->find(true); 
                     
@@ -1229,7 +1229,7 @@ class CRM_Contact_BAO_Query
         $this->_where[0] = array( );
         $this->_qill[0]  = array( );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $this->includeContactIds( );       
         if ( ! empty( $this->_params ) ) {
@@ -1696,7 +1696,7 @@ class CRM_Contact_BAO_Query
      */
     static function getWhereClause( $params, $fields, &$tables, &$whereTables, $strict = false ) 
     {
-        $query =& new CRM_Contact_BAO_Query( $params, null, $fields,
+        $query = new CRM_Contact_BAO_Query( $params, null, $fields,
                                              false, $strict );
 
         $tables      = array_merge( $query->tables( ), $tables );
@@ -2152,7 +2152,7 @@ class CRM_Contact_BAO_Query
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         // find all the groups that are part of a saved search
         $groupIDs = implode( ',', array_keys( $value ) );
@@ -2290,7 +2290,7 @@ WHERE  id IN ( $groupIDs )
             return;
         }
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $sub  = array( ); 
 
@@ -2423,7 +2423,7 @@ WHERE  id IN ( $groupIDs )
         
         $n = trim( $value ); 
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( substr( $n, 0 , 1 ) == '"' &&
              substr( $n, -1, 1 ) == '"' ) {
@@ -3036,7 +3036,7 @@ WHERE  id IN ( $groupIDs )
      */
     static function getQuery( $params = null, $returnProperties = null, $count = false ) 
     {
-        $query =& new CRM_Contact_BAO_Query( $params, $returnProperties );
+        $query = new CRM_Contact_BAO_Query( $params, $returnProperties );
         list( $select, $from, $where ) = $query->query( );
         
         return "$select $from $where";
@@ -3062,7 +3062,7 @@ WHERE  id IN ( $groupIDs )
                               $row_count = 25,
                               $smartGroupCache = true )
     {
-        $query =& new CRM_Contact_BAO_Query( $params, $returnProperties,
+        $query = new CRM_Contact_BAO_Query( $params, $returnProperties,
                                              null, true, false, 1,
                                              false, true, $smartGroupCache );
  
@@ -3156,7 +3156,7 @@ WHERE  id IN ( $groupIDs )
         $order = $orderBy = $limit = '';
 
         if ( ! $count ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( $config->includeOrderByClause ) {
                 if ($sort) {
                     if ( is_string( $sort ) ) {
@@ -3192,7 +3192,7 @@ WHERE  id IN ( $groupIDs )
                 $doOpt = true;
                 // hack for order clause
                 if ( $orderBy ) {
-                    list( $field, $dir ) = split( ' ', $orderBy );
+                    list( $field, $dir ) = explode( ' ', $orderBy );
                     if ( $field ) {
                         switch ( $field ) {
                         case 'sort_name':

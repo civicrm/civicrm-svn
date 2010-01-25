@@ -93,7 +93,7 @@ class CRM_Contact_Page_View_CustomData extends CRM_Contact_Page_View {
 
         //set the userContext stack
         $doneURL = 'civicrm/contact/view';
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->pushUserContext( CRM_Utils_System::url( $doneURL, 'action=browse&selectedChild=custom_' . $this->_groupId ), false );
         
         // get permission detail view or edit
@@ -118,7 +118,7 @@ class CRM_Contact_Page_View_CustomData extends CRM_Contact_Page_View {
             CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree );
         } else {
             
-            $controller =& new CRM_Core_Controller_Simple('CRM_Contact_Form_CustomData',
+            $controller = new CRM_Core_Controller_Simple('CRM_Contact_Form_CustomData',
                                                           ts('Custom Data'),
                                                           $this->_action );
             $controller->setEmbedded(true);

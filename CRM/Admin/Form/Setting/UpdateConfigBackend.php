@@ -53,7 +53,7 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
     public function buildQuickForm( ) {
         CRM_Utils_System::setTitle(ts('Settings - Update Directory Path and URL'));
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( $config->userFramework == 'Joomla' ) {
             $this->_oldBaseURL = substr( $config->userFrameworkResourceURL,
@@ -94,7 +94,7 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
         return $this->_defaults;
     }
 
-    static function formRule(&$fields) {
+    static function formRule( $fields) {
         $tmpDir = trim( $fields['newBaseDir'] );
 
         $errors = array( );
@@ -107,7 +107,7 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
 
     function postProcess( ) {
         // redirect to admin page after saving
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin') );
 
         $params = $this->controller->exportValues( $this->_name );

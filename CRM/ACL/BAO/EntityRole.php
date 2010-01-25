@@ -51,7 +51,7 @@ class CRM_ACL_BAO_EntityRole extends CRM_ACL_DAO_EntityRole {
     }
 
     static function create( &$params ) {
-        $dao =& new CRM_ACL_DAO_EntityRole( );
+        $dao = new CRM_ACL_DAO_EntityRole( );
         $dao->copyValues( $params );
 
         $dao->save( );
@@ -85,7 +85,7 @@ class CRM_ACL_BAO_EntityRole extends CRM_ACL_DAO_EntityRole {
      */
     static function del( $entityRoleId ) 
     {
-        $entityDAO = & new CRM_ACL_DAO_EntityRole();
+        $entityDAO = new CRM_ACL_DAO_EntityRole();
         $entityDAO->id = $entityRoleId;
         $entityDAO->find( true );
         $entityDAO->delete();

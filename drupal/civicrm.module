@@ -41,7 +41,7 @@ function civicrm_html_head()
     }
 
     require_once 'CRM/Core/Config.php';
-    $config =& CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
 
     $head = null;
     if ( isset( $config->customCSSURL ) && ! empty( $config->customCSSURL ) ) {
@@ -59,7 +59,7 @@ function civicrm_html_head()
     }
 
     if ( $includeCommon ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $head .= $template->fetch( 'CRM/common/jquery.tpl' );
     }
 
@@ -132,7 +132,7 @@ function civicrm_perm()
         return;
     }
 
-    $config =& CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
 
     require_once 'CRM/Core/Permission.php';
     $permissions =& CRM_Core_Permission::basicPermissions( );
@@ -265,7 +265,7 @@ function civicrm_initialize( )
         $initialized = true;
 
         // initialize the system by creating a config object
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
       
         // Add module-specific header elements
         drupal_set_html_head(civicrm_html_head());
@@ -368,7 +368,7 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
         return CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Drupal',
                                                   civicrm_get_ctype( 'Individual' ) );
     case 'register':
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $config->inCiviCRM ) {
             return;
         }
@@ -381,7 +381,7 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
         break;
 
     case 'insert':
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $config->inCiviCRM ) {
             return;
         }
@@ -695,7 +695,7 @@ function civicrm_cache_disable( ) {
  * qfKey
  */
 function civicrm_key_disable( ) {
-    $config =& CRM_Core_Config::singleton( );
+    $config = CRM_Core_Config::singleton( );
     $config->keyDisable = true;
 }
 

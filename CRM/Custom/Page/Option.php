@@ -127,7 +127,7 @@ class CRM_Custom_Page_Option extends CRM_Core_Page {
     function browse()
     {
         //get the default value from custom fields
-        $customFieldBAO =& new CRM_Core_BAO_CustomField();
+        $customFieldBAO = new CRM_Core_BAO_CustomField();
         $customFieldBAO->id = $this->_fid;
         if ( $customFieldBAO->find( true ) ) {
             $defaultValue  = $customFieldBAO->default_value;
@@ -173,7 +173,7 @@ ORDER BY weight, label
 
         $customOption = array( );
         $fields = array( 'label', 'value', 'is_active', 'weight' );
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         while ($dao->fetch()) {
             $customOption[$dao->id] = array( ); 
             foreach ( $fields as $field ) {
@@ -235,10 +235,10 @@ ORDER BY weight, label
     function edit($action)
     {
         // create a simple controller for editing custom data
-        $controller =& new CRM_Core_Controller_Simple('CRM_Custom_Form_Option', ts('Custom Option'), $action);
+        $controller = new CRM_Core_Controller_Simple('CRM_Custom_Form_Option', ts('Custom Option'), $action);
 
         // set the userContext stack
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/custom/group/field/option', "reset=1&action=browse&fid={$this->_fid}&gid={$this->_gid}"));
        
         $controller->set('gid', $this->_gid);

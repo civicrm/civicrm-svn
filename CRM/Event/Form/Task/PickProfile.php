@@ -74,7 +74,7 @@ class CRM_Event_Form_Task_PickProfile extends CRM_Event_Form_Task
          */
         parent::preProcess( );
 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $this->_userContext = $session->readUserContext( );
 
         CRM_Utils_System::setTitle( ts('Batch Update for Event Participants') );
@@ -133,7 +133,7 @@ class CRM_Event_Form_Task_PickProfile extends CRM_Event_Form_Task
      * @static
      * @access public
      */
-    static function formRule( &$fields ) 
+    static function formRule( $fields ) 
     {
         return true;
     }    

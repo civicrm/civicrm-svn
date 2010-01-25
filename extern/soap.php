@@ -36,16 +36,16 @@ session_start( );
 require_once '../civicrm.config.php';
 require_once 'CRM/Core/Config.php';
 
-$server =& new SoapServer(null, 
+$server = new SoapServer(null, 
                           array('uri' => 'urn:civicrm',
                                 'soap_version' => SOAP_1_2 ) );
 
 
 require_once 'CRM/Utils/SoapServer.php';
-$crm_soap =& new CRM_Utils_SoapServer();
+$crm_soap = new CRM_Utils_SoapServer();
 
 /* Cache the real UF, override it with the SOAP environment */
-$config =& CRM_Core_Config::singleton();
+$config = CRM_Core_Config::singleton();
 
 $server->setClass('CRM_Utils_SoapServer', $config->userFrameworkClass);
 

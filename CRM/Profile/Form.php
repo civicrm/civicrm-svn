@@ -175,7 +175,7 @@ class CRM_Profile_Form extends CRM_Core_Form
             
             ///is profile double-opt process configurablem, key
             ///should be present in civicrm.settting.php file
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( $config->profileDoubleOptIn &&
                  CRM_Utils_Array::value( 'group', $this->_fields ) ) {
                 $emailField = false;
@@ -185,14 +185,14 @@ class CRM_Profile_Form extends CRM_Core_Form
                     }
                 }
                 if ( ! $emailField ) {
-                    $session =& CRM_Core_Session::singleton( );
+                    $session = CRM_Core_Session::singleton( );
                     $status = ts( "Email field should be included in profile if you want to use Group(s) when Profile double-opt in process is enabled." ); 
                     $session->setStatus( $status );
                 }
             }
         }
         if (! is_array($this->_fields)) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             CRM_Core_Session::setStatus(ts('This feature is not currently available.'));
             
             return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm', 'reset=1' ) );
@@ -318,7 +318,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         
         $sBlocks = array( );
         $hBlocks = array( );
-        $config  =& CRM_Core_Config::singleton( );
+        $config  = CRM_Core_Config::singleton( );
         
         $this->assign( 'id'          , $this->_id       );
         $this->assign( 'mode'        , $this->_mode     );
@@ -333,7 +333,7 @@ class CRM_Profile_Form extends CRM_Core_Form
             $inactiveNeeded = false;
         }
         
-        $session  =& CRM_Core_Session::singleton( );
+        $session  = CRM_Core_Session::singleton( );
         
         // should we restrict what we display
         $admin = true;
@@ -490,7 +490,7 @@ class CRM_Profile_Form extends CRM_Core_Form
      * @access public
      * @static
      */
-    static function formRule( &$fields, &$files, &$form )
+    static function formRule( $fields, $files, $form )
     {
         $errors = array( );
         // if no values, return
@@ -517,7 +517,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                 $fields['email'] = CRM_Utils_Array::value( 'email-Primary', $fields );
             }
             
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
 
             $ctype = CRM_Core_BAO_UFGroup::getContactType($form->_gid);
             // If all profile fields is of Contact Type then consider
@@ -586,7 +586,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                         
                         
                         // let smarty know that there are duplicates
-                        $template =& CRM_Core_Smarty::singleton( );
+                        $template = CRM_Core_Smarty::singleton( );
                         $template->assign( 'isDuplicate', 1 );
                     } else {
                         $errors['_qf_default'] = ts( 'A record already exists with the same information.' );
@@ -603,7 +603,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                 $stateProvinceId = $value;
                 
                 if ($stateProvinceId && $countryId) {
-                    $stateProvinceDAO =& new CRM_Core_DAO_StateProvince();
+                    $stateProvinceDAO = new CRM_Core_DAO_StateProvince();
                     $stateProvinceDAO->id = $stateProvinceId;
                     $stateProvinceDAO->find(true);
                     
@@ -622,7 +622,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                 $countyId = $value;
                 
                 if ($countyId && $stateProvinceId) {
-                    $countyDAO =& new CRM_Core_DAO_County();
+                    $countyDAO = new CRM_Core_DAO_County();
                     $countyDAO->id = $countyId;
                     $countyDAO->find(true);
                     
@@ -675,7 +675,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         //used to send subcribe mail to the group which user want.
         //if the profile double option in is enabled
         $mailingType = array( );
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $config->profileDoubleOptIn && CRM_Utils_Array::value( 'group', $params ) ) {
             $result = null;
             foreach ( $params as $name => $values ) {

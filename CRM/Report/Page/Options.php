@@ -179,7 +179,7 @@ class CRM_Report_Page_Options extends CRM_Core_Page_Basic
                                               "reset=1" );
         $filter		 = "option_group_id = " . self::$_gId;
         
-        $session =& new CRM_Core_Session();
+        $session = new CRM_Core_Session();
         $session->replaceUserContext($returnURL);
         require_once 'CRM/Utils/Weight.php';
         CRM_Utils_Weight::addOrder( $optionValue, 'CRM_Core_DAO_OptionValue',

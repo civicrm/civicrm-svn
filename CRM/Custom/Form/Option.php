@@ -208,7 +208,7 @@ class CRM_Custom_Form_Option extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields, &$files, &$form ) 
+    static function formRule( $fields, $files, $form ) 
     {
         $optionLabel   = CRM_Utils_Type::escape( $fields['label'], 'String' );
         $optionValue   = CRM_Utils_Type::escape( $fields['value'], 'String' );
@@ -357,7 +357,7 @@ SELECT count(*)
         // set values for custom field properties and save
         require_once 'CRM/Core/DAO/OptionValue.php';
         require_once 'CRM/Utils/String.php';
-        $customOption                =& new CRM_Core_DAO_OptionValue();
+        $customOption                = new CRM_Core_DAO_OptionValue();
         $customOption->label         = $params['label'];
         $customOption->name          = CRM_Utils_String::titleToVar( $params['label'] );
         $customOption->weight        = $params['weight'];
@@ -386,7 +386,7 @@ SELECT count(*)
         
         $customOption->option_group_id = $this->_optionGroupID;
         
-        $customField =& new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->id = $this->_fid;
         if ( $customField->find( true ) &&
              ( $customField->html_type == 'CheckBox' ||
@@ -441,7 +441,7 @@ SELECT count(*)
              
         CRM_Core_Session::setStatus(ts('Your multiple choice option \'%1\' has been saved', array(1 => $customOption->label)));
         $buttonName = $this->controller->getButtonName( );
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus( ts(' You can add another option.') );
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/custom/group/field/option', 'reset=1&action=add&fid=' . $this->_fid . '&gid=' . $this->_gid));

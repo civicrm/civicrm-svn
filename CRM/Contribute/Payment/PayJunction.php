@@ -53,7 +53,7 @@ class CRM_Contribute_Payment_PayJunction extends CRM_Core_Payment_PayJunction
    {
        $processorName = $paymentProcessor['name'];
        if (self::$_singleton[$processorName] === null ) {
-           self::$_singleton[$processorName] =& new CRM_Contribute_Payment_PayJunction( $mode, $paymentProcessor );
+           self::$_singleton[$processorName] = new CRM_Contribute_Payment_PayJunction( $mode, $paymentProcessor );
        }
        return self::$_singleton[$processorName];
    } 

@@ -46,7 +46,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
         $this->_paymentProcessor = $paymentProcessor;
         $this->_processorName    = ts('Authorized .Net');
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $this->_setParam( 'apiLogin'   , $paymentProcessor['user_name'] );
         $this->_setParam( 'paymentKey' , $paymentProcessor['password']  );
         $this->_setParam( 'paymentType', 'AIM' );
@@ -159,7 +159,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
      * @public
      */
     function doRecurPayment( &$params ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
 
         $intervalLength = $this->_getParam('frequency_interval');
         $intervalUnit   = $this->_getParam('frequency_unit');
@@ -301,7 +301,7 @@ class CRM_Core_Payment_AuthorizeNet extends CRM_Core_Payment {
      */
     function _checkDupe( $invoiceId ) {
         require_once 'CRM/Contribute/DAO/Contribution.php';
-        $contribution =& new CRM_Contribute_DAO_Contribution( );
+        $contribution = new CRM_Contribute_DAO_Contribution( );
         $contribution->invoice_id = $invoiceId;
         return $contribution->find( );
     }

@@ -96,7 +96,7 @@ class CRM_Pledge_Page_Payment extends CRM_Core_Page
      */ 
     function edit( ) 
     { 
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Pledge_Form_Payment', 
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Pledge_Form_Payment', 
                                                        'Update Pledge Payment', 
                                                        $this->_action );
 

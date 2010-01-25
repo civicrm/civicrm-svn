@@ -201,7 +201,7 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
             $action -= CRM_Core_Action::ENABLE;
         }
         
-        eval( '$object =& new ' . $this->getBAOName( ) . '( );' );
+        eval( '$object = new ' . $this->getBAOName( ) . '( );' );
         
         $values = array();
         
@@ -315,11 +315,11 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
      */
     function edit( $mode, $id = null , $imageUpload = false , $pushUserContext = true) 
     {
-        $controller =& new CRM_Core_Controller_Simple( $this->editForm( ), $this->editName( ), $mode , $imageUpload );
+        $controller = new CRM_Core_Controller_Simple( $this->editForm( ), $this->editName( ), $mode , $imageUpload );
 
        // set the userContext stack
         if( $pushUserContext ) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $session->pushUserContext( CRM_Utils_System::url( $this->userContext( $mode ), $this->userContextParams( $mode ) ) );
         }
         if ($id !== null) {

@@ -225,14 +225,14 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
 
         case 'queue':
             require_once 'CRM/Mailing/Event/BAO/Queue.php';
-            $event =& new CRM_Mailing_Event_BAO_Queue();
+            $event = new CRM_Mailing_Event_BAO_Queue();
             return $event->getTotalCount(   $this->_mailing_id, 
                                             $this->_job_id );
             break;
 
         case 'delivered':
             require_once 'CRM/Mailing/Event/BAO/Delivered.php';
-            $event =& new CRM_Mailing_Event_BAO_Delivered();
+            $event = new CRM_Mailing_Event_BAO_Delivered();
             return $event->getTotalCount(   $this->_mailing_id, 
                                             $this->_job_id,
                                             $this->_is_distinct );
@@ -240,7 +240,7 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
 
         case 'opened':
             require_once 'CRM/Mailing/Event/BAO/Opened.php';
-            $event =& new CRM_Mailing_Event_BAO_Opened();
+            $event = new CRM_Mailing_Event_BAO_Opened();
             return $event->getTotalCount(   $this->_mailing_id, 
                                             $this->_job_id,
                                             $this->_is_distinct );
@@ -248,7 +248,7 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
 
         case 'bounce':
             require_once 'CRM/Mailing/Event/BAO/Bounce.php';
-            $event =& new CRM_Mailing_Event_BAO_Bounce();
+            $event = new CRM_Mailing_Event_BAO_Bounce();
             return $event->getTotalCount(   $this->_mailing_id, 
                                             $this->_job_id,
                                             $this->_is_distinct );
@@ -256,14 +256,14 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
 
         case 'forward':
             require_once 'CRM/Mailing/Event/BAO/Forward.php';
-            $event =& new CRM_Mailing_Event_BAO_Forward();
+            $event = new CRM_Mailing_Event_BAO_Forward();
             return $event->getTotalCount(   $this->_mailing_id,
                                             $this->_job_id,
                                             $this->_is_distinct );
 
         case 'reply':
             require_once 'CRM/Mailing/Event/BAO/Reply.php';
-            $event =& new CRM_Mailing_Event_BAO_Reply();
+            $event = new CRM_Mailing_Event_BAO_Reply();
             return $event->getTotalCount(   $this->_mailing_id, 
                                             $this->_job_id,
                                             $this->_is_distinct );
@@ -271,7 +271,7 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
 
         case 'unsubscribe':
             require_once 'CRM/Mailing/Event/BAO/Unsubscribe.php';
-            $event =& new CRM_Mailing_Event_BAO_Unsubscribe();
+            $event = new CRM_Mailing_Event_BAO_Unsubscribe();
             return $event->getTotalCount(   $this->_mailing_id, 
                                             $this->_job_id,
                                             $this->_is_distinct );
@@ -279,7 +279,7 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
 
         case 'click':
             require_once 'CRM/Mailing/Event/BAO/TrackableURLOpen.php';
-            $event =& new CRM_Mailing_Event_BAO_TrackableURLOpen();
+            $event = new CRM_Mailing_Event_BAO_TrackableURLOpen();
             return $event->getTotalCount(   $this->_mailing_id, 
                                             $this->_job_id,
                                             $this->_is_distinct,

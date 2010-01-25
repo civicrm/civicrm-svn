@@ -54,7 +54,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         $defaults = array();
         if ( isset($this->_id ) ) {
             require_once 'CRM/Member/DAO/MembershipBlock.php';
-            $dao =& new CRM_Member_DAO_MembershipBlock();
+            $dao = new CRM_Member_DAO_MembershipBlock();
             $dao->entity_table = 'civicrm_contribution_page';
             $dao->entity_id = $this->_id; 
             $dao->find(true);
@@ -121,7 +121,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             $this->addFormRule(array('CRM_Member_Form_MembershipBlock', 'formRule') , $this->_id);
         }
 
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $single = $session->get('singleForm');
         if ( $single ) {
             $this->addButtons(array(
@@ -148,7 +148,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
      * @access public
      * @static
      */
-    public function formRule(&$params, &$files, $contributionPageId = null ) 
+    static function formRule( $params, $files, $contributionPageId = null ) 
     {
         $errors = array( );
         if ( CRM_Utils_Array::value( 'is_active', $params ) ) {
@@ -173,7 +173,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             //for CRM-1302
             //if Membership status is not present, then display an error message
             require_once 'CRM/Member/BAO/MembershipStatus.php';
-            $dao =& new CRM_Member_BAO_MembershipStatus();
+            $dao = new CRM_Member_BAO_MembershipStatus();
             if ( ! $dao->find( ) ) {
                 $errors['_qf_default'] = ts( 'Add status rules, before configuring membership' );
             }    
@@ -210,7 +210,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
         if ( $params['membership_type'] ) {
             // we do this in case the user has hit the forward/back button
             require_once 'CRM/Member/DAO/MembershipBlock.php';
-            $dao =& new CRM_Member_DAO_MembershipBlock();
+            $dao = new CRM_Member_DAO_MembershipBlock();
             $dao->entity_table = 'civicrm_contribution_page';
             $dao->entity_id = $this->_id; 
             $dao->find(true);
@@ -237,7 +237,7 @@ class CRM_Member_Form_MembershipBlock extends CRM_Contribute_Form_ContributionPa
             $params['entity_table']                  = 'civicrm_contribution_page';
             $params['entity_id']                     =  $this->_id;
             
-            $dao =& new CRM_Member_DAO_MembershipBlock();
+            $dao = new CRM_Member_DAO_MembershipBlock();
             $dao->copyValues($params);
             $dao->save();
         }

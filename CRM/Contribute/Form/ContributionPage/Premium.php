@@ -54,7 +54,7 @@ class CRM_Contribute_Form_ContributionPage_Premium extends CRM_Contribute_Form_C
         if ( isset($this->_id ) ) {
             $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $this->_id, 'title' );
             CRM_Utils_System::setTitle(ts('Premiums (%1)', array(1 => $title)));
-            $dao =& new CRM_Contribute_DAO_Premium();
+            $dao = new CRM_Contribute_DAO_Premium();
             $dao->entity_table = 'civicrm_contribution_page';
             $dao->entity_id = $this->_id; 
             $dao->find(true);
@@ -92,7 +92,7 @@ class CRM_Contribute_Form_ContributionPage_Premium extends CRM_Contribute_Form_C
   
         if ( $this->_single ) {
             if ( $this->_id ) {
-                $daoPremium =& new CRM_Contribute_DAO_Premium( );
+                $daoPremium = new CRM_Contribute_DAO_Premium( );
                 $daoPremium->entity_id    = $this->_id;
                 $daoPremium->entity_table = 'civicrm_contribution_page';
                 if ( $daoPremium->find( true ) ) {
@@ -118,7 +118,7 @@ class CRM_Contribute_Form_ContributionPage_Premium extends CRM_Contribute_Form_C
 
         // we do this in case the user has hit the forward/back button
 
-        $dao =& new CRM_Contribute_DAO_Premium();
+        $dao = new CRM_Contribute_DAO_Premium();
         $dao->entity_table = 'civicrm_contribution_page';
         $dao->entity_id = $this->_id; 
         $dao->find(true);
@@ -132,7 +132,7 @@ class CRM_Contribute_Form_ContributionPage_Premium extends CRM_Contribute_Form_C
         $params['entity_table']                      = 'civicrm_contribution_page';
         $params['entity_id']                         =  $this->_id;
        
-        $dao =& new CRM_Contribute_DAO_Premium();
+        $dao = new CRM_Contribute_DAO_Premium();
         $dao->copyValues($params);
         $dao->save();
 

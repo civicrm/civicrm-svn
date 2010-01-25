@@ -60,7 +60,7 @@ class CRM_Admin_Form_DedupeRules extends CRM_Admin_Form
         $this->_rgid        = CRM_Utils_Request::retrieve('id', 'Positive', $this, false, 0);
         $this->_contactType = CRM_Utils_Request::retrieve('contact_type', 'String', $this, false, 0);
         if ($this->_rgid) {
-            $rgDao            =& new CRM_Dedupe_DAO_RuleGroup();
+            $rgDao            = new CRM_Dedupe_DAO_RuleGroup();
             $rgDao->id        = $this->_rgid;
             $rgDao->find(true);
             $this->_defaults['threshold']  = $rgDao->threshold;
@@ -68,7 +68,7 @@ class CRM_Admin_Form_DedupeRules extends CRM_Admin_Form
             $this->_defaults['level']      = $rgDao->level;
             $this->_defaults['name']       = $rgDao->name;
             
-            $ruleDao =& new CRM_Dedupe_DAO_Rule();
+            $ruleDao = new CRM_Dedupe_DAO_Rule();
             $ruleDao->dedupe_rule_group_id = $this->_rgid;
             $ruleDao->find();
             $count = 0;
@@ -132,7 +132,7 @@ class CRM_Admin_Form_DedupeRules extends CRM_Admin_Form
     public function postProcess() 
     {
         $values = $this->exportValues();
-        $rgDao            =& new CRM_Dedupe_DAO_RuleGroup();
+        $rgDao            = new CRM_Dedupe_DAO_RuleGroup();
         if ($this->_action & CRM_Core_Action::UPDATE ) {
             $rgDao->id           = $this->_rgid;
         }
@@ -143,7 +143,7 @@ class CRM_Admin_Form_DedupeRules extends CRM_Admin_Form
         
         $rgDao->save();
         
-        $ruleDao =& new CRM_Dedupe_DAO_Rule();
+        $ruleDao = new CRM_Dedupe_DAO_Rule();
         $ruleDao->dedupe_rule_group_id = $rgDao->id;
         $ruleDao->delete();
         $ruleDao->free();
@@ -157,7 +157,7 @@ class CRM_Admin_Form_DedupeRules extends CRM_Admin_Form
             $length = CRM_Utils_Array::value( "length_$count", $values ) ? CRM_Utils_Array::value( "length_$count", $values ) : null;
             $weight = $values["weight_$count"];
             if ($table and $field) {
-                $ruleDao =& new CRM_Dedupe_DAO_Rule();
+                $ruleDao = new CRM_Dedupe_DAO_Rule();
                 $ruleDao->dedupe_rule_group_id = $rgDao->id;
                 $ruleDao->rule_table           = $table;
                 $ruleDao->rule_field           = $field;

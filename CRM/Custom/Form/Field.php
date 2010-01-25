@@ -297,7 +297,7 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
         
         // form fields of Custom Option rows
         $defaultOption = array();
-        $_showHide =& new CRM_Core_ShowHideBlocks('','');
+        $_showHide = new CRM_Core_ShowHideBlocks('','');
         for($i = 1; $i <= self::NUM_OPTION; $i++) {
             
             //the show hide blocks
@@ -459,7 +459,7 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields, &$files, &$self ) 
+    static function formRule( $fields, $files, $self ) 
     {
         $default = CRM_Utils_Array::value( 'default_value', $fields );
         
@@ -569,7 +569,7 @@ SELECT count(*)
          *  Incomplete row checking is also required.
          */
         $_flagOption = $_rowError = 0;
-        $_showHide =& new CRM_Core_ShowHideBlocks('','');
+        $_showHide = new CRM_Core_ShowHideBlocks('','');
         $dataType = self::$_dataTypeKeys[$fields['data_type'][0]];
         if ( isset( $fields['data_type'][1] ) ) {
             $dataField = $fields['data_type'][1];
@@ -854,7 +854,7 @@ SELECT id
         CRM_Core_Session::setStatus(ts('Your custom field \'%1\' has been saved.', array(1 => $customField->label)));
 
         $buttonName = $this->controller->getButtonName( );
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another custom field.'));
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/custom/group/field', 'reset=1&action=add&gid=' . $this->_gid));

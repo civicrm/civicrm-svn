@@ -125,7 +125,7 @@ class CRM_Price_Page_Option extends CRM_Core_Page
         
         require_once 'CRM/Core/OptionValue.php';
         CRM_Core_OptionValue::getValues( $groupParams, $customOption );
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         foreach ( $customOption as $id => $values ) {
             $action = array_sum( array_keys( $this->actionLinks( ) ) );
             
@@ -181,10 +181,10 @@ class CRM_Price_Page_Option extends CRM_Core_Page
             $usedBy  =& CRM_Price_BAO_Set::getUsedBy( $sid );   
         }
         // set the userContext stack
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin/price/field/option', 
                                                           "reset=1&action=browse&fid={$this->_fid}&sid={$this->_sid}" ) );
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Price_Form_Option', ts('Price Field Option'), $action );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Price_Form_Option', ts('Price Field Option'), $action );
         $controller->set( 'fid', $this->_fid );
         $controller->setEmbedded( true );
         $controller->process( );

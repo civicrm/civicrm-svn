@@ -42,7 +42,7 @@ class CRM_Report_Utils_Report {
                                                       $instanceID,
                                                       'report_id' );
         } else {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $args   = explode( '/', $_GET[$config->userFrameworkURLVar] );
 
             // remove 'civicrm/report' from args
@@ -153,7 +153,7 @@ WHERE  inst.report_id = %1";
         header('Content-Disposition: attachment; filename=Report_' . $_SERVER['REQUEST_TIME'] . '.csv');
                   
         require_once 'CRM/Utils/Money.php';
-        $config    =& CRM_Core_Config::singleton( );
+        $config    = CRM_Core_Config::singleton( );
           
         //Output headers if this is the first row.
         $columnHeaders = array_keys( $form->_columnHeaders );
@@ -219,7 +219,7 @@ WHERE  inst.report_id = %1";
     }
     static function getInstanceID() {
 
-        $config    =& CRM_Core_Config::singleton( );
+        $config    = CRM_Core_Config::singleton( );
         $arg       = explode( '/', $_GET[$config->userFrameworkURLVar] );
         
         require_once 'CRM/Utils/Rule.php';

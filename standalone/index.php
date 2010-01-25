@@ -2,8 +2,8 @@
 require_once 'bootstrap_common.php';
 
 function invoke() {
-    $session  =& CRM_Core_Session::singleton( );
-    $config   =& CRM_Core_Config::singleton( );
+    $session  = CRM_Core_Session::singleton( );
+    $config   = CRM_Core_Config::singleton( );
 
     // display error if any
     showError( $session );

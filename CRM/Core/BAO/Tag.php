@@ -59,7 +59,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
      * @static
      */
     static function retrieve( &$params, &$defaults ) {
-        $tag =& new CRM_Core_DAO_Tag( );
+        $tag = new CRM_Core_DAO_Tag( );
         $tag->copyValues( $params );
         if ( $tag->find( true ) ) {
             CRM_Core_DAO::storeValues( $tag, $defaults );
@@ -129,7 +129,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
     static function del ( $id ) {
         // delete all crm_entity_tag records with the selected tag id
         require_once 'CRM/Core/DAO/EntityTag.php';
-        $entityTag =& new CRM_Core_DAO_EntityTag( );
+        $entityTag = new CRM_Core_DAO_EntityTag( );
         $entityTag->tag_id = $id;
         if ( $entityTag->find( ) ) {
             while ( $entityTag->fetch() ) {
@@ -138,7 +138,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
         }
         
         // delete from tag table
-        $tag =& new CRM_Core_DAO_Tag( );
+        $tag = new CRM_Core_DAO_Tag( );
         $tag->id = $id;
         if ( $tag->delete( ) ) {
             CRM_Core_Session::setStatus( ts('Selected Tag has been Deleted Successfuly.') );
@@ -166,7 +166,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
             return null;
         }
 
-        $tag               =& new CRM_Core_DAO_Tag( );
+        $tag               = new CRM_Core_DAO_Tag( );
         $tag->copyValues( $params );
         $tag->id = CRM_Utils_Array::value( 'tag', $ids );
 

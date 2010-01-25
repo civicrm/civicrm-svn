@@ -197,7 +197,7 @@ class CRM_Auction_Form_Auction extends CRM_Core_Form
      * @access public  
      * @static  
      */  
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {
         $errors = array();
 

@@ -564,12 +564,12 @@ class CRM_Utils_Token
      {
         if (self::token_match('unsubscribe', 'group', $str)) {
             if ( !empty($groups) ) {
-                $config =& CRM_Core_Config::singleton();
+                $config = CRM_Core_Config::singleton();
                 $base = CRM_Utils_System::baseURL();
 
                 // FIXME: an ugly hack for CRM-2035, to be dropped once CRM-1799 is implemented
                 require_once 'CRM/Contact/DAO/Group.php';
-                $dao =& new CRM_Contact_DAO_Group();
+                $dao = new CRM_Contact_DAO_Group();
                 $dao->find();
                 while ($dao->fetch()) {
                     if (substr($dao->visibility, 0, 6) == 'Public') {
@@ -660,7 +660,7 @@ class CRM_Utils_Token
         if ( preg_match('/\{action\.subscribe.\d+\}/', $str, $matches) ) {
             foreach ( $matches as $key => $value ) {
                 $gid = substr($value, 18, -1);
-                $config =& CRM_Core_Config::singleton();
+                $config = CRM_Core_Config::singleton();
                 require_once 'CRM/Core/BAO/MailSettings.php';
                 $domain    = CRM_Core_BAO_MailSettings::defaultDomain();
                 $localpart = CRM_Core_BAO_MailSettings::defaultLocalpart();

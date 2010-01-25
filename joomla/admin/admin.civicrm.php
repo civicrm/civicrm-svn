@@ -22,7 +22,7 @@ require_once 'CRM/Core/Invoke.php';
 civicrm_invoke( );
 
 function civicrm_init( ) {
-    $config =& CRM_Core_Config::singleton();
+    $config = CRM_Core_Config::singleton();
 }
 
 function plugin_init( ) {

@@ -148,7 +148,7 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
         
         $this->search( );
         
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $context = $session->readUserContext( );
         
         if ($this->_action & CRM_Core_Action::DISABLE) {                 
@@ -157,7 +157,7 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
                 CRM_Mailing_BAO_Job::cancel($this->_mailingId);
                 CRM_Utils_System::redirect( $context );
             } else {
-                $controller =& new CRM_Core_Controller_Simple( 'CRM_Mailing_Form_Browse',
+                $controller = new CRM_Core_Controller_Simple( 'CRM_Mailing_Form_Browse',
                                                                ts('Cancel Mailing'),
                                                                $this->_action );
                 $controller->setEmbedded( true );
@@ -175,7 +175,7 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
                 CRM_Mailing_BAO_Mailing::del($this->_mailingId);
                 CRM_Utils_System::redirect($context);
             } else {
-                $controller =& new CRM_Core_Controller_Simple( 'CRM_Mailing_Form_Browse',
+                $controller = new CRM_Core_Controller_Simple( 'CRM_Mailing_Form_Browse',
                                                                ts('Delete Mailing'),
                                                                $this->_action );
                 $controller->setEmbedded( true );
@@ -188,7 +188,7 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
                 CRM_Core_DAO::setFieldValue( 'CRM_Mailing_DAO_Mailing', $this->_mailingId, 'is_archived', true );
                 CRM_Utils_System::redirect($context);
             } else {
-                $controller =& new CRM_Core_Controller_Simple( 'CRM_Mailing_Form_Browse',
+                $controller = new CRM_Core_Controller_Simple( 'CRM_Mailing_Form_Browse',
                                                                ts('Archive Mailing'),
                                                                $this->_action );
                 $controller->setEmbedded( true );
@@ -196,10 +196,10 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
             }
         }
      
-        $selector =& new CRM_Mailing_Selector_Browse( );
+        $selector = new CRM_Mailing_Selector_Browse( );
         $selector->setParent( $this );
         
-        $controller =& new CRM_Core_Selector_Controller(
+        $controller = new CRM_Core_Selector_Controller(
                                                         $selector ,
                                                         $this->get( CRM_Utils_Pager::PAGE_ID ),
                                                         $this->get( CRM_Utils_Sort::SORT_ID ).$this->get(CRM_Utils_Sort::SORT_DIRECTION),
@@ -244,7 +244,7 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
             $urlParams .= '&crmSID=' . $crmSID;
         } 
 
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $url = CRM_Utils_System::url( $urlString, $urlParams );
         $session->pushUserContext( $url );
         

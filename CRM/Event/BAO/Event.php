@@ -104,7 +104,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
             CRM_Utils_Hook::pre( 'create', 'Event', null, $params ); 
         }
         
-        $event =& new CRM_Event_DAO_Event( );
+        $event = new CRM_Event_DAO_Event( );
         
         $event->copyValues( $params );
         $result = $event->save( );
@@ -203,7 +203,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         require_once 'CRM/Core/BAO/OptionGroup.php';
         foreach ( $dependencies as $daoName => $values ) {
             require_once (str_replace( '_', DIRECTORY_SEPARATOR, $daoName ) . ".php");
-            eval('$dao =& new ' . $daoName . '( );');
+            eval('$dao = new ' . $daoName . '( );');
             if ( $daoName == 'CRM_Core_DAO_OptionGroup' ) {
                 $dao->name = $values['name'];
                 $dao->find( );
@@ -230,7 +230,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         CRM_Price_BAO_Set::removeFrom( 'civicrm_event', $id );
         
         require_once 'CRM/Event/DAO/Event.php';
-        $event     = & new CRM_Event_DAO_Event( );
+        $event     = new CRM_Event_DAO_Event( );
         $event->id = $id; 
         
         if ( $event->find( true ) ) {
@@ -627,12 +627,12 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
   AND civicrm_address.geo_code_2 IS NOT NULL 
   AND civicrm_event.id = " . CRM_Utils_Type::escape( $id, 'Integer' );
        
-        $dao =& new CRM_Core_DAO( );
+        $dao = new CRM_Core_DAO( );
         $dao->query( $sql );
 
         $locations = array( );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         while ( $dao->fetch( ) ) {
        
@@ -755,7 +755,7 @@ WHERE civicrm_event.is_active = 1
         $params = array( 1 => array( $optionGroupId, 'Integer' ) );
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
         $all = array( );
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         $baseURL = parse_url( $config->userFrameworkBaseURL );
         $url = "@".$baseURL['host'];
@@ -953,7 +953,7 @@ WHERE civicrm_event.is_active = 1
     static function sendMail( $contactID, &$values, $participantId, $isTest = false, $returnMessageText = false ) 
     {
         require_once 'CRM/Core/BAO/UFGroup.php';
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $gIds = array(
                       'custom_pre_id' => $values['custom_pre_id'],
                       'custom_post_id'=> $values['custom_post_id']
@@ -1153,7 +1153,7 @@ WHERE civicrm_event.is_active = 1
             require_once 'CRM/Core/BAO/UFGroup.php';
             require_once 'CRM/Profile/Form.php';
             require_once 'CRM/Event/PseudoConstant.php';
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $contactID = $session->get( 'userID' );
             if ( $contactID ) {
                 if ( CRM_Core_BAO_UFGroup::filterUFGroups($gid, $contactID ) ) {
@@ -1179,7 +1179,7 @@ WHERE civicrm_event.is_active = 1
                 }
             }
             
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             require_once 'CRM/Core/PseudoConstant.php'; 
             $locationTypes = $imProviders = array( );
             $locationTypes = CRM_Core_PseudoConstant::locationType( );
@@ -1323,7 +1323,7 @@ WHERE  id = $cfID
                                 //take the custom field options
                                 $returnProperties = array( $name => 1 );
                                 require_once 'CRM/Contact/BAO/Query.php';
-                                $query   =& new CRM_Contact_BAO_Query( $params, $returnProperties, $fields );
+                                $query   = new CRM_Contact_BAO_Query( $params, $returnProperties, $fields );
                                 $options =& $query->_options;
                                 $displayValue = CRM_Core_BAO_CustomField::getDisplayValue( $customVal, $cfID, $options );
                                 
@@ -1412,7 +1412,7 @@ WHERE  id = $cfID
         //else build array of Additional participant's information. 
         if ( count($additionalIDs) ) { 
             if ( $values['additional_custom_pre_id'] || $values['additional_custom_post_id'] ) {
-                $template =& CRM_Core_Smarty::singleton( );
+                $template = CRM_Core_Smarty::singleton( );
                 $isCustomProfile = true;
                 $i = 1;
                 foreach ( $additionalIDs as $pId => $cId ) {
@@ -1505,7 +1505,7 @@ WHERE  ce.loc_block_id = $locBlockId";
      */
     static function ShowHideRegistrationLink( $values ) {
 
-        $session   =& CRM_Core_Session::singleton( );
+        $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' );
         $alreadyRegistered = false;
         
@@ -1514,7 +1514,7 @@ WHERE  ce.loc_block_id = $locBlockId";
             require_once 'CRM/Event/DAO/Participant.php';
             $statusTypes = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
             
-            $participant =& new CRM_Event_DAO_Participant();
+            $participant = new CRM_Event_DAO_Participant();
             $participant->contact_id = $contactID;
             $participant->event_id   = $values['event']['id'];
             $participant->role_id    = $values['event']['default_role_id'];

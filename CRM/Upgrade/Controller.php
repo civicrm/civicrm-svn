@@ -46,7 +46,7 @@ class CRM_Upgrade_Controller extends CRM_Core_Controller {
         parent::__construct( $title, $modal );
 
         require_once 'CRM/Upgrade/StateMachine.php';
-        $this->_stateMachine =& new CRM_Upgrade_StateMachine( $this,
+        $this->_stateMachine = new CRM_Upgrade_StateMachine( $this,
                                                               $this->getPages( ), 
                                                               $action );
 
@@ -54,7 +54,7 @@ class CRM_Upgrade_Controller extends CRM_Core_Controller {
         $this->addPages( $this->_stateMachine, $action );
 
         // add all the actions
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $this->addActions( );
     }
 

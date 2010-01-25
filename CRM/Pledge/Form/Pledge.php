@@ -122,7 +122,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             //set the post url
             $postURL = CRM_Utils_System::url( 'civicrm/contact/view',
                                               "reset=1&force=1&cid={$this->_contactID}&selectedChild=pledge" );
-            $session =& CRM_Core_Session::singleton( ); 
+            $session = CRM_Core_Session::singleton( ); 
             $session->pushUserContext( $postURL );
         }
         
@@ -177,7 +177,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             // also set the post url
             $postURL = CRM_Utils_System::url( 'civicrm/contact/view',
                                               "reset=1&force=1&cid={$this->_contactID}&selectedChild=pledge" );
-            $session =& CRM_Core_Session::singleton( ); 
+            $session = CRM_Core_Session::singleton( ); 
             $session->pushUserContext( $postURL );
         }
     }
@@ -464,7 +464,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
      * @access public  
      * @static  
      */  
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {
         $errors = array( );
 
@@ -522,8 +522,8 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             $this->_contactID = CRM_Utils_Array::value('contact_select_id', $formValues);
         }
         
-        $config  =& CRM_Core_Config::singleton( );
-        $session =& CRM_Core_Session::singleton( );
+        $config  = CRM_Core_Config::singleton( );
+        $session = CRM_Core_Session::singleton( );
         
         //get All Payments status types.
         $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( );

@@ -46,7 +46,7 @@ class CRM_Contribute_Payment_Elavon extends CRM_Core_Payment_Elavon
     {
         $processorName = $paymentProcessor['name'];
         if (self::$_singleton[$processorName] === null ) {
-            self::$_singleton[$processorName] =& new CRM_Contribute_Payment_Elavon( $mode, $paymentProcessor );
+            self::$_singleton[$processorName] = new CRM_Contribute_Payment_Elavon( $mode, $paymentProcessor );
         }
         return self::$_singleton[$processorName];
     } 

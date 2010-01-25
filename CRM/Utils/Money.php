@@ -65,7 +65,7 @@ class CRM_Utils_Money {
             return '';
         }
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
         if ( !self::$_currencySymbols ) {
             require_once "CRM/Core/PseudoConstant.php";

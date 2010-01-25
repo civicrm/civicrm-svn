@@ -40,7 +40,7 @@ class CRM_Core_I18n_Form extends CRM_Core_Form
 {
     function buildQuickForm()
     {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $this->_locales = array_keys($config->languageLimit);
 
         // get the part of the database we want to edit and validate it
@@ -62,7 +62,7 @@ class CRM_Core_I18n_Form extends CRM_Core_Form
         }
         $query = 'SELECT ' . implode(', ', $cols) . " FROM $table WHERE id = $id";
 
-        $dao =& new CRM_Core_DAO();
+        $dao = new CRM_Core_DAO();
         $dao->query($query, false);
         $dao->fetch();
 
@@ -109,7 +109,7 @@ class CRM_Core_I18n_Form extends CRM_Core_Form
             $i++;
         }
         $query = "UPDATE $table SET " . implode(', ', $cols) . " WHERE id = %0";
-		$dao   =& new CRM_Core_DAO();
+		$dao   = new CRM_Core_DAO();
         $query = CRM_Core_DAO::composeQuery($query, $params, true);
         $dao->query($query, false);
 

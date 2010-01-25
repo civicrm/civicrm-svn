@@ -83,7 +83,7 @@ class CRM_Contact_Form_Task_Map  extends CRM_Contact_Form_Task
                 } elseif ( $seachType == 'custom') {
                     $fragment = '/custom';
                 }
-                $session =& CRM_Core_Session::singleton();
+                $session = CRM_Core_Session::singleton();
                 $url = CRM_Utils_System::url( 'civicrm/contact/search' . $fragment, 'force=1' );
                 $session->replaceUserContext( $url );
             }
@@ -142,7 +142,7 @@ class CRM_Contact_Form_Task_Map  extends CRM_Contact_Form_Task
      */
     static function createMapXML( $ids, $locationId, &$page, $addBreadCrumb, $type = 'Contact' ) 
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         CRM_Utils_System::setTitle( ts('Map Location(s)'));
         $page->assign( 'query', 'CiviCRM Search Query' );
@@ -161,7 +161,7 @@ class CRM_Contact_Form_Task_Map  extends CRM_Contact_Form_Task
         }
 
         if ( $addBreadCrumb ) {
-            $session =& CRM_Core_Session::singleton(); 
+            $session = CRM_Core_Session::singleton(); 
             $redirect = $session->readUserContext();
             if ( $type == 'Contact') {
                 $bcTitle = ts('Contact');

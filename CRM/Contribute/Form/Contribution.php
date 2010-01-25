@@ -279,7 +279,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
             return;
         }
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( in_array("CiviPledge", $config->enableComponents) &&
              ! $this->_formType ) {
     
@@ -392,7 +392,7 @@ WHERE  contribution_id = {$this->_id}
             }
             //to get note id 
             require_once 'CRM/Core/BAO/Note.php';
-            $daoNote = & new CRM_Core_BAO_Note();
+            $daoNote = new CRM_Core_BAO_Note();
             $daoNote->entity_table = 'civicrm_contribution';
             $daoNote->entity_id = $this->_id;
             if ( $daoNote->find(true) ) {
@@ -654,7 +654,7 @@ WHERE  contribution_id = {$this->_id}
         
         //Add Premium pane only if Premium is exists.
         require_once 'CRM/Contribute/DAO/Product.php';
-        $dao = & new CRM_Contribute_DAO_Product();
+        $dao = new CRM_Contribute_DAO_Product();
         $dao->is_active = 1;
         
         if ( $dao->find( true ) ) {
@@ -916,7 +916,7 @@ WHERE  contribution_id = {$this->_id}
      * @access public  
      * @static  
      */  
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {  
         $errors = array( );
         
@@ -993,8 +993,8 @@ WHERE  contribution_id = {$this->_id}
             $this->_contactID = CRM_Utils_Array::value('contact_select_id', $submittedValues);
         }
         
-        $config  =& CRM_Core_Config::singleton( );
-        $session =& CRM_Core_Session::singleton( );
+        $config  = CRM_Core_Config::singleton( );
+        $session = CRM_Core_Session::singleton( );
         
         //Credit Card Contribution.
         if ( $this->_mode ) {
@@ -1104,7 +1104,7 @@ WHERE  contribution_id = {$this->_id}
             require_once 'CRM/Core/Payment/Form.php';
             CRM_Core_Payment_Form::mapParams( $this->_bltID, $this->_params, $paymentParams, true );
             
-            $contributionType =& new CRM_Contribute_DAO_ContributionType( );
+            $contributionType = new CRM_Contribute_DAO_ContributionType( );
             $contributionType->id = $params['contribution_type_id'];
             if ( ! $contributionType->find( true ) ) {
                 CRM_Core_Error::fatal( "Could not find a system table" );

@@ -52,7 +52,7 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
 
     public function buildQuickForm() 
     {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $this->add('text', 'test_email', ts('Send to This Address'));
         $defaults['test_email'] = $session->get('ufUniqID');
         $qfKey = $this->get('qfKey');
@@ -121,7 +121,7 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
      * @return boolean          true on succesful SMTP handoff
      * @access public
      */
-    public function &testMail($testParams, &$files, &$self) 
+    static function &testMail( $testParams, $files, $self) 
     {
         $error = null;
         
@@ -196,12 +196,12 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
         }
         
         require_once 'CRM/Mailing/BAO/Job.php';
-        $job =& new CRM_Mailing_BAO_Job();
+        $job = new CRM_Mailing_BAO_Job();
         $job->mailing_id = $self->get('mailing_id' );
         $job->is_test    = true;
         $job->save( );
         $newEmails  = null;
-        $session    =& CRM_Core_Session::singleton();
+        $session    = CRM_Core_Session::singleton();
         if ( !empty($testParams['emails']) ) {
             $query = "
                       SELECT id, contact_id, email  

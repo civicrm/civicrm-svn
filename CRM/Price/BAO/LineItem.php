@@ -58,7 +58,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem
      */
     static function create ( &$params )
     {
-        $lineItemBAO =& new CRM_Price_BAO_LineItem( );
+        $lineItemBAO = new CRM_Price_BAO_LineItem( );
         $lineItemBAO->copyValues( $params );
         return $lineItemBAO->save( );
     }
@@ -78,7 +78,7 @@ class CRM_Price_BAO_LineItem extends CRM_Price_DAO_LineItem
      */
     static function retrieve( &$params, &$defaults )
     {
-        $lineItem =& new CRM_Price_BAO_LineItem( );
+        $lineItem = new CRM_Price_BAO_LineItem( );
         $lineItem->copyValues( $params );
         if ( $lineItem->find( true ) ) {
             CRM_Core_DAO::storeValues( $lineItem, $defaults );

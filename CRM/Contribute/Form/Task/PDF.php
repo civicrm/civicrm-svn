@@ -129,7 +129,7 @@ AND    {$this->_componentClause}";
         $baseIPN = new CRM_Core_Payment_BaseIPN( );
 
         $message  =  array( );
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
 
         foreach ( $details as $contribID => $detail ) {
             $input = $ids = $objects = array( );

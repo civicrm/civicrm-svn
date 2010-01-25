@@ -134,7 +134,7 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
                    null, array('onchange' => "showHideAmountBlock( this.value, 'price_set_id' );")
                    );
         //CiviPledge fields.
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( in_array('CiviPledge', $config->enableComponents) ) {
             $this->assign('civiPledge', true );
             require_once 'CRM/Core/OptionGroup.php';
@@ -229,7 +229,7 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
      * @access public  
      * @static  
      */  
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {  
         $errors = array( );
 
@@ -259,7 +259,7 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
         //then disable contribution amount section. CRM-3801,
         
         require_once 'CRM/Member/DAO/MembershipBlock.php';
-        $membershipBlock =& new CRM_Member_DAO_MembershipBlock( );
+        $membershipBlock = new CRM_Member_DAO_MembershipBlock( );
         $membershipBlock->entity_table = 'civicrm_contribution_page';
         $membershipBlock->entity_id = $self->_id;
         $membershipBlock->is_active = 1;

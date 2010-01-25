@@ -53,7 +53,7 @@ class CRM_Group_Form_Search extends CRM_Core_Form {
 
         require_once 'CRM/Core/OptionGroup.php';
         $groupTypes = CRM_Core_OptionGroup::values( 'group_type', true );
-        $config=& CRM_Core_Config::singleton( );
+        $config= CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Joomla' ) {
             unset( $groupTypes['Access Control'] );
         }

@@ -250,7 +250,7 @@ class CRM_Export_BAO_Export
             $returnProperties = array_merge( $returnProperties, $moreReturnProperties );
         }
 
-        $query =& new CRM_Contact_BAO_Query( 0, $returnProperties, null, false, false, $queryMode );
+        $query = new CRM_Contact_BAO_Query( 0, $returnProperties, null, false, false, $queryMode );
 
         list( $select, $from, $where ) = $query->query( );
         $allRelContactArray = $relationQuery = array();
@@ -258,7 +258,7 @@ class CRM_Export_BAO_Export
             if (  $relationReturnProperties = CRM_Utils_Array::value( $rel, $returnProperties ) ) {
                 $allRelContactArray[$rel] = array();
                 // build Query for each relationship
-                $relationQuery[$rel] =& new CRM_Contact_BAO_Query( 0, $relationReturnProperties,
+                $relationQuery[$rel] = new CRM_Contact_BAO_Query( 0, $relationReturnProperties,
                                                              null, false, false, $queryMode );
                 list( $relationSelect, $relationFrom, $relationWhere ) = $relationQuery[$rel]->query( );
                 
@@ -630,7 +630,7 @@ class CRM_Export_BAO_Export
         // FIXME:  2005-06-22 15:17:33 by Brian McFee <brmcfee@gmail.com>
         // This function is a dirty, dirty hack.  It should live in its own
         // file.
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $type = $_GET['type'];
         
         if ($type == 1) {
@@ -676,7 +676,7 @@ class CRM_Export_BAO_Export
         
         $fileName = $session->get($varName . 'FileName', "{$controller}_{$qfKey}");
         
-        $config =& CRM_Core_Config::singleton( ); 
+        $config = CRM_Core_Config::singleton( ); 
         
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Content-Description: File Transfer');

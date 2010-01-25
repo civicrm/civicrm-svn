@@ -50,7 +50,7 @@ class CRM_Admin_Form_Setting_Debugging extends CRM_Admin_Form_Setting
     public function buildQuickForm( ) {
         CRM_Utils_System::setTitle(ts('Settings - Debugging'));
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $this->addYesNo( 'debug', ts( 'Enable Debugging' ));
         if ($config->userFramework == 'Drupal') {

@@ -74,7 +74,7 @@ class CRM_Custom_Form_Preview extends CRM_Core_Form
             // field preview
             $defaults = array();
             $params   = array( 'id' => $this->_fieldId );
-            $fieldDAO =& new CRM_Core_DAO_CustomField();                    
+            $fieldDAO = new CRM_Core_DAO_CustomField();                    
             CRM_Core_DAO::commonRetrieve( 'CRM_Core_DAO_CustomField', $params, $defaults );
             
             if ( CRM_Utils_Array::value( 'is_view', $defaults ) ) {

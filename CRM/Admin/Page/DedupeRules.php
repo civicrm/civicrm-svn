@@ -129,7 +129,7 @@ class CRM_Admin_Page_DedupeRules extends CRM_Core_Page_Basic
             $this->delete($id);
         }
         if ($action & CRM_Core_Action::MAP ) {
-            $rgDao             =& new CRM_Dedupe_DAO_RuleGroup();
+            $rgDao             = new CRM_Dedupe_DAO_RuleGroup();
             $rgDao->id         = $id;
             $rgDao->find(true);
             $rgDao->is_default = 1;
@@ -155,7 +155,7 @@ class CRM_Admin_Page_DedupeRules extends CRM_Core_Page_Basic
     {
         // get all rule groups
         $ruleGroups = array();
-        $dao =& new CRM_Dedupe_DAO_RuleGroup();
+        $dao = new CRM_Dedupe_DAO_RuleGroup();
         $dao->orderBy('contact_type,level,is_default DESC');
         $dao->find();
         
@@ -208,11 +208,11 @@ class CRM_Admin_Page_DedupeRules extends CRM_Core_Page_Basic
 
     function delete($id)
     {
-        $ruleDao =& new CRM_Dedupe_DAO_Rule();
+        $ruleDao = new CRM_Dedupe_DAO_Rule();
         $ruleDao->dedupe_rule_group_id = $id;
         $ruleDao->delete();
 
-        $rgDao            =& new CRM_Dedupe_DAO_RuleGroup();
+        $rgDao            = new CRM_Dedupe_DAO_RuleGroup();
         $rgDao->id        = $id;
         $rgDao->delete();
     }

@@ -51,7 +51,7 @@ class CRM_Core_BAO_Phone extends CRM_Core_DAO_Phone
      */
     static function add( &$params ) 
     {
-        $phone =& new CRM_Core_DAO_Phone();
+        $phone = new CRM_Core_DAO_Phone();
         
         $phone->copyValues($params);
 

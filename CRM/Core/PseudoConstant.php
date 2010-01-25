@@ -644,7 +644,7 @@ class CRM_Core_PseudoConstant
     {
         if ( ( $id && !CRM_Utils_Array::value( $id, self::$stateProvince ) ) || !self::$stateProvince || !$id ) {
             $whereClause = false;
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             if ( $limit ) {
                 // limit the state/province list to the countries specified in CIVICRM_PROVINCE_LIMIT
                 $countryIsoCodes =& self::countryIsoCode();
@@ -707,7 +707,7 @@ WHERE  id = %1";
             $whereClause = false;
 
             if ( $limit ) {
-                $config =& CRM_Core_Config::singleton();
+                $config = CRM_Core_Config::singleton();
                 $countryIsoCodes =& self::countryIsoCode();
                 $limitCodes = $config->provinceLimit( );
                 $limitIds = array();
@@ -757,7 +757,7 @@ WHERE  id = %1";
     {
         if ( ( $id && !CRM_Utils_Array::value( $id, self::$country ) ) || !self::$country || !$id  ) {
 
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $limitCodes = array( );
             
             if ( $applyLimit ) {
@@ -1143,7 +1143,7 @@ WHERE  id = %1";
     {
         if (!self::$county) {
 
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             // order by id so users who populate civicrm_county can have more control over sort by the order they load the counties
             self::populate( self::$county, 'CRM_Core_DAO_County', true, 'name', null, null, 'id');
         }

@@ -290,7 +290,7 @@ class CRM_Event_Form_EventFees
         // CRM-4395 
         if ( $contriId = $form->get( 'onlinePendingContributionId' ) ) {
             require_once 'CRM/Contribute/DAO/Contribution.php';
-            $contribution =& new CRM_Contribute_DAO_Contribution( );
+            $contribution = new CRM_Contribute_DAO_Contribution( );
             $contribution->id = $contriId;
             $contribution->find( true );
             foreach( array('contribution_type_id', 'payment_instrument_id','contribution_status_id', 'receive_date', 'total_amount' ) as $f ) {

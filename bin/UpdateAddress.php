@@ -41,7 +41,7 @@ function run( ) {
     require_once '../civicrm.config.php'; 
     require_once 'CRM/Core/Config.php'; 
     
-    $config =& CRM_Core_Config::singleton(); 
+    $config = CRM_Core_Config::singleton(); 
     
     require_once 'Console/Getopt.php';
     $shortOptions = "n:p:s:e:k:g:parse";

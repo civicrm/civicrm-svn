@@ -117,7 +117,7 @@ class CRM_UF_Page_Field extends CRM_Core_Page {
     function browse()
     {
         $ufField = array();
-        $ufFieldBAO =& new CRM_Core_BAO_UFField();
+        $ufFieldBAO = new CRM_Core_BAO_UFField();
         
         // fkey is gid
         $ufFieldBAO->uf_group_id = $this->_gid;
@@ -182,7 +182,7 @@ class CRM_UF_Page_Field extends CRM_Core_Page {
         $this->assign('ufField', $ufField);
         
         // retrieve showBestResult from session
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $showBestResult = $session->get( 'showBestResult');
         $this->assign( 'showBestResult', $showBestResult );
         $session->set( 'showBestResult', false );
@@ -202,10 +202,10 @@ class CRM_UF_Page_Field extends CRM_Core_Page {
     function edit($action)
     {
         // create a simple controller for editing CiviCRM Profile data
-        $controller =& new CRM_Core_Controller_Simple('CRM_UF_Form_Field', ts('CiviCRM Profile Field'), $action);
+        $controller = new CRM_Core_Controller_Simple('CRM_UF_Form_Field', ts('CiviCRM Profile Field'), $action);
         
         // set the userContext stack
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/uf/group/field','reset=1&action=browse&gid=' . $this->_gid));
         $controller->set('gid', $this->_gid);
         $controller->setEmbedded(true);
@@ -270,8 +270,8 @@ class CRM_UF_Page_Field extends CRM_Core_Page {
      */
     function preview($fieldId,$groupId)
     {
-        $controller =& new CRM_Core_Controller_Simple('CRM_UF_Form_Preview', ts('Preview Custom Data'), CRM_Core_Action::PREVIEW);
-        $session =& CRM_Core_Session::singleton();
+        $controller = new CRM_Core_Controller_Simple('CRM_UF_Form_Preview', ts('Preview Custom Data'), CRM_Core_Action::PREVIEW);
+        $session = CRM_Core_Session::singleton();
         $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/uf/group/field','reset=1&action=browse&gid=' . $this->_gid));
         $controller->set('fieldId', $fieldId);
         $controller->set('id', $groupId);

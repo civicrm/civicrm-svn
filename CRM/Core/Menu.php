@@ -67,7 +67,7 @@ class CRM_Core_Menu
 
     static function &xmlItems( ) {
         if ( ! self::$_items ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
 
             // We needs this until Core becomes a component
             $coreMenuFilesNamespace = 'CRM_Core_xml_Menu';
@@ -94,7 +94,7 @@ class CRM_Core_Menu
     
     static function read( $name, &$menu ) {
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $xml = simplexml_load_file( $name );
         foreach ( $xml->item as $item ) {
@@ -239,16 +239,16 @@ class CRM_Core_Menu
             $query = 'TRUNCATE civicrm_menu';
             CRM_Core_DAO::executeQuery( $query );
         }
-        $menu =& self::items( );
+        $menuArray =& self::items( );
 
-        self::build( $menu );
+        self::build( $menuArray );
 
         require_once "CRM/Core/DAO/Menu.php";
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
-        foreach ( $menu as $path => $item ) {
-            $menu  =& new CRM_Core_DAO_Menu( );
+        foreach ( $menuArray as $path => $item ) {
+            $menu  = new CRM_Core_DAO_Menu( );
             $menu->path      = $path;
             $menu->domain_id = CRM_Core_Config::domainID( );
 
@@ -336,7 +336,7 @@ class CRM_Core_Menu
         }
 
         $values =& $nav['breadcrumb'];
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         foreach ( $values as $index => $item ) {
             if ( strpos( CRM_Utils_Array::value( $config->userFrameworkURLVar, $_REQUEST ),
                          $item['path'] ) === 0 ) {
@@ -519,7 +519,7 @@ class CRM_Core_Menu
     static function get( $path )
     {
         // return null if menu rebuild
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $params = array( );
 
@@ -567,7 +567,7 @@ UNION (
         }
         
         require_once "CRM/Core/DAO/Menu.php";
-        $menu  =& new CRM_Core_DAO_Menu( );
+        $menu  = new CRM_Core_DAO_Menu( );
         $menu->query( $query );
 
         self::$_menuCache = array( );

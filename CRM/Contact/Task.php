@@ -157,7 +157,7 @@ class CRM_Contact_Task {
             }
 
             //show map action only if map provider and key is set
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
 
             if ( $config->mapProvider && $config->mapAPIKey ) {
                 self::$_tasks[12] = array( 'title'  => ts( 'Map Contacts'),
@@ -214,7 +214,7 @@ class CRM_Contact_Task {
         unset( $titles[14] );
         unset( $titles[15] );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         require_once 'CRM/Utils/Mail.php';
         if ( !CRM_Utils_Mail::validOutBoundMail() ) { 

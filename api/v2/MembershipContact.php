@@ -254,7 +254,7 @@ function _civicrm_membership_format_params( &$params, &$values, $create=false)
             if (!CRM_Utils_Rule::integer($value)) {
                 return civicrm_create_error("contact_id not valid: $value");
             }
-            $dao =& new CRM_Core_DAO();
+            $dao = new CRM_Core_DAO();
             $qParams = array();
             $svq = $dao->singleValueQuery("SELECT id FROM civicrm_contact WHERE id = $value",
                                           $qParams);

@@ -65,11 +65,11 @@ class CRM_Core_Page_File extends CRM_Core_Page
                 CRM_Core_BAO_File::delete($id, $eid, $fid);
                 CRM_Core_Session::setStatus( ts('The attached file has been deleted.') );
                 
-                $session =& CRM_Core_Session::singleton();   
+                $session = CRM_Core_Session::singleton();   
                 $toUrl   = $session->popUserContext();
                 CRM_Utils_System::redirect($toUrl);
             } else {
-                $wrapper =& new CRM_Utils_Wrapper( );
+                $wrapper = new CRM_Utils_Wrapper( );
                 return $wrapper->run( 'CRM_Custom_Form_DeleteFile', ts('Domain Information Page'), null);
             }
         } else {

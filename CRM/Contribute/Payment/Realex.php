@@ -41,7 +41,7 @@ class CRM_Contribute_Payment_Realex extends CRM_Core_Payment_Realex {
     static function &singleton( $mode, &$paymentProcessor ) 
     {
         if (self::$_singleton === null ) {
-            self::$_singleton =& new CRM_Contribute_Payment_Realex( $mode, $paymentProcessor );
+            self::$_singleton = new CRM_Contribute_Payment_Realex( $mode, $paymentProcessor );
         }
         return self::$_singleton;
     }

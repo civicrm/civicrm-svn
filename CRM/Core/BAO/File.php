@@ -47,7 +47,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
                    $quest = false  ) {
         require_once 'CRM/Core/DAO/EntityFile.php'; 
         
-        $entityFileDAO =& new CRM_Core_DAO_EntityFile();
+        $entityFileDAO = new CRM_Core_DAO_EntityFile();
         if ($entityTable) {
             $entityFileDAO->entity_table = $entityTable;
         }
@@ -56,10 +56,10 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
         
         if ( $entityFileDAO->find( true ) ) {
             require_once 'CRM/Core/DAO/File.php'; 
-            $fileDAO =& new CRM_Core_DAO_File( );
+            $fileDAO = new CRM_Core_DAO_File( );
             $fileDAO->id = $fileID;
             if ( $fileDAO->find( true ) ) {
-                $config =& CRM_Core_Config::singleton( );
+                $config = CRM_Core_Config::singleton( );
                 if ( $quest ) {
                     if ($quest == '1') {
                         // to make quest part work as before
@@ -133,7 +133,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
         }
         
         require_once "CRM/Core/DAO/File.php";
-        $fileDAO =& new CRM_Core_DAO_File();
+        $fileDAO = new CRM_Core_DAO_File();
         if ( isset( $dao->cfID ) &&
              $dao->cfID ) {
             $fileDAO->id = $dao->cfID;
@@ -152,7 +152,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
     
         // need to add/update civicrm_entity_file
         require_once "CRM/Core/DAO/EntityFile.php";
-        $entityFileDAO =& new CRM_Core_DAO_EntityFile();
+        $entityFileDAO = new CRM_Core_DAO_EntityFile();
         if ( isset( $dao->cefID ) &&
              $dao->cefID ) {
             $entityFileDAO->id =  $dao->cefID;
@@ -170,7 +170,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
         list( $tableName, $columnName, $groupID ) = CRM_Core_BAO_CustomField::getTableColumnGroup( $fieldID );
 
         require_once "CRM/Core/DAO/EntityFile.php";
-        $entityFileDAO =& new CRM_Core_DAO_EntityFile();
+        $entityFileDAO = new CRM_Core_DAO_EntityFile();
         $entityFileDAO->file_id      = $fileID;
         $entityFileDAO->entity_id    = $entityID;
         $entityFileDAO->entity_table = $tableName;
@@ -182,7 +182,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
         }
 
         require_once "CRM/Core/DAO/File.php";
-        $fileDAO =& new CRM_Core_DAO_File();
+        $fileDAO = new CRM_Core_DAO_File();
         $fileDAO->id = $fileID;
         if ( $fileDAO->find(true) ) {
             $fileDAO->delete();
@@ -206,7 +206,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
             return;
         }
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         list( $sql, $params ) = self::sql( $entityTable, $entityID, null );
         $dao    = CRM_Core_DAO::executeQuery( $sql, $params );
@@ -237,7 +237,7 @@ class CRM_Core_BAO_File extends CRM_Core_DAO_File {
      */
     public function &getEntityFile( $entityTable, $entityID ) {
         require_once 'CRM/Utils/File.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         list( $sql, $params ) = self::sql( $entityTable, $entityID, null );
         $dao    = CRM_Core_DAO::executeQuery( $sql, $params );
@@ -280,7 +280,7 @@ AND       CEF.entity_id    = %2";
     
     static function buildAttachment( &$form, $entityTable, $entityID = null, $numAttachments = null ) {
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if( ! $numAttachments ) {
             $numAttachments = $config->maxAttachments;
@@ -340,7 +340,7 @@ AND       CEF.entity_id    = %2";
                                                  $entityID );
         }
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $numAttachments = $config->maxAttachments;
 
         // setup all attachments
@@ -364,7 +364,7 @@ AND       CEF.entity_id    = %2";
     static function processAttachment( &$params,
                                        $entityTable,
                                        $entityID ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $numAttachments = $config->maxAttachments;
 
         for ( $i = 1; $i <= $numAttachments; $i++ ) {
@@ -384,7 +384,7 @@ AND       CEF.entity_id    = %2";
     }
 
     static function uploadNames( ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $numAttachments = $config->maxAttachments;
 
         $names = array( );
@@ -401,13 +401,13 @@ AND       CEF.entity_id    = %2";
      */
     static function copyEntityFile( $oldEntityTable, $oldEntityId, $newEntityTable, $newEntityId ) {
         require_once "CRM/Core/DAO/EntityFile.php";
-        $oldEntityFile =& new CRM_Core_DAO_EntityFile();
+        $oldEntityFile = new CRM_Core_DAO_EntityFile();
         $oldEntityFile->entity_id    = $oldEntityId;
         $oldEntityFile->entity_table = $oldEntityTable;
         $oldEntityFile->find( );
 
         while ( $oldEntityFile->fetch( ) ) {
-            $newEntityFile =& new CRM_Core_DAO_EntityFile();
+            $newEntityFile = new CRM_Core_DAO_EntityFile();
             $newEntityFile->entity_id    = $newEntityId;
             $newEntityFile->entity_table = $newEntityTable;
             $newEntityFile->file_id      = $oldEntityFile->file_id;

@@ -231,7 +231,7 @@ function civicrm_activity_delete( &$params )
 function _civicrm_activity_update( $params ) 
 {
     require_once 'CRM/Activity/DAO/Activity.php';
-    $dao =& new CRM_Activity_BAO_Activity();
+    $dao = new CRM_Activity_BAO_Activity();
     $dao->id = $params['id'];
     if ( $dao->find( true ) ) {
         $dao->copyValues( $params );

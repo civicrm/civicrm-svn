@@ -52,7 +52,7 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
         $this->_paymentProcessor = $paymentProcessor;
         $this->_processorName    = ts('IATS');
 
-        $config =& CRM_Core_Config::singleton( ); // get merchant data from config
+        $config = CRM_Core_Config::singleton( ); // get merchant data from config
         $this->_profile['mode']      = $mode; // live or test
         $this->_profile['webserver'] = parse_url($this->_paymentProcessor['url_site'],PHP_URL_HOST);
         $currencyID                  = $config->defaultCurrency;

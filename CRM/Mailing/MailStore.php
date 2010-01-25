@@ -135,7 +135,7 @@ class CRM_Mailing_MailStore
      */
     function maildir($name)
     {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $dir = $config->customFileUploadDir . DIRECTORY_SEPARATOR . $name;
         foreach (array('cur', 'new', 'tmp') as $sub) {
             if (!file_exists($dir . DIRECTORY_SEPARATOR . $sub)) {

@@ -119,7 +119,7 @@ class CRM_Core_Config_Defaults
      */
     public function setValues(&$defaults, $formMode = false) 
     {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $baseURL = $config->userFrameworkBaseURL;
 

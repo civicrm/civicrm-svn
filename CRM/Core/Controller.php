@@ -154,8 +154,8 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
 
         // let the constructor initialize this, should happen only once
         if ( ! isset( self::$_template ) ) {
-            self::$_template =& CRM_Core_Smarty::singleton( );
-            self::$_session  =& CRM_Core_Session::singleton( );
+            self::$_template = CRM_Core_Smarty::singleton( );
+            self::$_session  = CRM_Core_Session::singleton( );
         }
 
         $snippet = CRM_Utils_Array::value( 'snippet', $_REQUEST );
@@ -191,7 +191,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     }
 
     function key( $name, $addSequence = false, $ignoreKey = false ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( $ignoreKey ||
              ( isset( $config->keyDisable ) && $config->keyDisable ) ) {
@@ -350,7 +350,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
                 $formName = CRM_Utils_String::getClassName( $name );
             }
             require_once(str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php');
-            $$stateName =& new $className( $stateMachine->find( $className ), $action, 'post', $formName );
+            $$stateName = new $className( $stateMachine->find( $className ), $action, 'post', $formName );
             if ( $title ) {
                 $$stateName->setTitle( $title );
             }
@@ -547,14 +547,14 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
                 return 'CRM/common/snippet.tpl';
             }
         } else {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             return 'CRM/common/'. strtolower($config->userFramework) .'.tpl';
         }
     }
 
     public function addUploadAction( $uploadDir, $uploadNames ) {
         if ( empty( $uploadDir ) ) {
-            $config  =& CRM_Core_Config::singleton( );
+            $config  = CRM_Core_Config::singleton( );
             $uploadDir = $config->uploadDir;
         }
 
@@ -570,7 +570,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         }
 
         require_once 'CRM/Core/QuickForm/Action/Upload.php';
-        $action =& new CRM_Core_QuickForm_Action_Upload ( $this->_stateMachine,
+        $action = new CRM_Core_QuickForm_Action_Upload ( $this->_stateMachine,
                                                           $uploadDir,
                                                           $uploadNames );
         $this->addAction('upload' , $action );
@@ -593,7 +593,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
             if ( $setToReferer ) {
                 $url = $_SERVER['HTTP_REFERER'];
             } else {
-                $config =& CRM_Core_Config::singleton( );
+                $config = CRM_Core_Config::singleton( );
                 $url = $config->userFrameworkBaseURL;
             }
         }

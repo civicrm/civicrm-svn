@@ -57,7 +57,7 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
      * @static
      */
     public static function &create(&$params) {
-        $eq =& new CRM_Mailing_Event_BAO_Queue();
+        $eq = new CRM_Mailing_Event_BAO_Queue();
         $eq->copyValues($params);
         $eq->hash = self::hash($params);
         $eq->save();
@@ -93,7 +93,7 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
      * @static
      */
     public static function &verify($job_id, $queue_id, $hash) {
-        $q =& new CRM_Mailing_Event_BAO_Queue();
+        $q = new CRM_Mailing_Event_BAO_Queue();
         if (!empty($job_id) && !empty($queue_id) && !empty($hash)) {
             $q->id = $queue_id;
             $q->job_id = $job_id;
@@ -124,7 +124,7 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
                     WHERE       $eq.id = " 
                                 . CRM_Utils_Type::rule($queue_id, 'Integer');
 
-        $q =& new CRM_Mailing_Event_BAO_Queue();
+        $q = new CRM_Mailing_Event_BAO_Queue();
         $q->query($query);
         if (! $q->fetch()) {
             return null;
@@ -143,7 +143,7 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
      * @static
      */
     public static function getTotalCount($mailing_id, $job_id = null) {
-        $dao =& new CRM_Core_DAO();
+        $dao = new CRM_Core_DAO();
 
         $queue      = self::getTableName();
         $mailing    = CRM_Mailing_BAO_Mailing::getTableName();
@@ -181,7 +181,7 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
      */
     public static function &getRows($mailing_id, $job_id = null, $offset = null,
                                     $rowCount = null, $sort = null) {
-        $dao =& new CRM_Core_Dao();
+        $dao = new CRM_Core_Dao();
         
         $queue      = self::getTableName();
         $mailing    = CRM_Mailing_BAO_Mailing::getTableName();
@@ -244,7 +244,7 @@ class CRM_Mailing_Event_BAO_Queue extends CRM_Mailing_Event_DAO_Queue {
      * @access public
      */
     public function &getMailing() {
-        $mailing    =& new CRM_Mailing_BAO_Mailing();
+        $mailing    = new CRM_Mailing_BAO_Mailing();
         $jobs       = CRM_Mailing_BAO_Job::getTableName();
         $mailings   = CRM_Mailing_BAO_Mailing::getTableName();
         $queue      = self::getTableName();

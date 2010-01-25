@@ -121,7 +121,7 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
      * @access public
      * @static
      */
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {
         //CRM-4575
         require_once 'CRM/Core/OptionGroup.php';

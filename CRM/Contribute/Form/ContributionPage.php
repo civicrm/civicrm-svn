@@ -96,7 +96,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
         $this->_single = $this->get( 'single' );
 
         if ( !$this->_single ) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $this->_single = $session->get('singleForm');
         }
  

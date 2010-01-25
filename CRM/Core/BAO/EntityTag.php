@@ -55,7 +55,7 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
     {
         $tag = array();
         
-        $entityTag =& new CRM_Core_BAO_EntityTag();
+        $entityTag = new CRM_Core_BAO_EntityTag();
         $entityTag->contact_id = $contactID;
         $entityTag->find();
         
@@ -86,7 +86,7 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
             return null;
         }
       
-        $entityTag =& new CRM_Core_BAO_EntityTag( );
+        $entityTag = new CRM_Core_BAO_EntityTag( );
         $entityTag->copyValues( $params );
 
         // dont save the object if it already exists, CRM-1276
@@ -123,7 +123,7 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
      */
     static function del( &$params ) 
     {
-        $entityTag =& new CRM_Core_BAO_EntityTag( );
+        $entityTag = new CRM_Core_BAO_EntityTag( );
         $entityTag->copyValues( $params );
         $entityTag->delete( );
         //return $entityTag;
@@ -145,7 +145,7 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
         $numContactsAdded    = 0;
         $numContactsNotAdded = 0;
         foreach ( $contactIds as $contactId ) {
-            $tag =& new CRM_Core_DAO_EntityTag( );
+            $tag = new CRM_Core_DAO_EntityTag( );
             
             $tag->contact_id = $contactId;
             $tag->tag_id     = $tagId;
@@ -180,7 +180,7 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
         $numContactsRemoved    = 0;
         $numContactsNotRemoved = 0;
         foreach ( $contactIds as $contactId ) {
-            $tag =& new CRM_Core_DAO_EntityTag( );
+            $tag = new CRM_Core_DAO_EntityTag( );
             $tag->contact_id = $contactId;
             $tag->tag_id     = $tagId;
             if (  $tag->find( ) ) {
@@ -255,7 +255,7 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
     function getEntitiesByTag($tag)
     {
         $contactIds = array();
-        $entityTagDAO = & new CRM_Core_DAO_EntityTag();
+        $entityTagDAO = new CRM_Core_DAO_EntityTag();
         $entityTagDAO->tag_id = $tag->id;
         $entityTagDAO->find();
         while($entityTagDAO->fetch()) {

@@ -62,7 +62,7 @@ class CRM_Contact_Form_Search_Custom_Basic
             $returnProperties[$field] = 1;
         }
 
-        $this->_query =& new CRM_Contact_BAO_Query( $params, $returnProperties, null,
+        $this->_query = new CRM_Contact_BAO_Query( $params, $returnProperties, null,
                                                     false, false, 1, false, false );
     }
 

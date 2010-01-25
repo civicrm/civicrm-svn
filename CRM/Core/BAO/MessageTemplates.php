@@ -55,7 +55,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $messageTemplates =& new CRM_Core_DAO_MessageTemplates( );
+        $messageTemplates = new CRM_Core_DAO_MessageTemplates( );
         $messageTemplates->copyValues( $params );
         if ( $messageTemplates->find( true ) ) {
             CRM_Core_DAO::storeValues( $messageTemplates, $defaults );
@@ -91,7 +91,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
     {
         $params['is_active']            =  CRM_Utils_Array::value( 'is_active', $params, false );
 
-        $messageTemplates               =& new CRM_Core_DAO_MessageTemplates( );
+        $messageTemplates               = new CRM_Core_DAO_MessageTemplates( );
         $messageTemplates->copyValues( $params );
         
         $messageTemplates->save( );
@@ -124,7 +124,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                   WHERE msg_template_id = %1";
         CRM_Core_DAO::executeQuery( $query, $params );
         
-        $messageTemplates =& new CRM_Core_DAO_MessageTemplates( );
+        $messageTemplates = new CRM_Core_DAO_MessageTemplates( );
         $messageTemplates->id = $messageTemplatesID;
         $messageTemplates->delete();
         CRM_Core_Session::setStatus( ts('Selected message templates has been deleted.') );
@@ -158,7 +158,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         require_once "CRM/Utils/String.php";
         require_once "CRM/Utils/Token.php";
 
-        $messageTemplates =& new CRM_Core_DAO_MessageTemplates( );
+        $messageTemplates = new CRM_Core_DAO_MessageTemplates( );
         $messageTemplates->id = $messageTemplateID;
 
         $domain = CRM_Core_BAO_Domain::getDomain( );
@@ -204,7 +204,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
             // this fixes CRM-5466
             require_once 'CRM/Utils/Mail/FixedMailMIME.php';
-            $message =& new CRM_Utils_Mail_FixedMailMIME("\n");
+            $message = new CRM_Utils_Mail_FixedMailMIME("\n");
             
             /* Do contact-specific token replacement in text mode, and add to the
              * message if necessary */
@@ -236,7 +236,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $subjectToken = null;
             if ( $matches[1] ) {
                 foreach ( $matches[1] as $token ) {
-                    list($type,$name) = split( '\.', $token, 2 );
+                    list($type,$name) = preg_split( '/\./', $token, 2 );
                     if ( $name ) {
                         if ( ! isset( $subjectToken['contact'] ) ) {
                             $subjectToken['contact'] = array( );
@@ -263,7 +263,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $message->get($mailMimeParams);
             $message->headers($headers);
 
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $mailer =& $config->getMailer();
             
             $body = $message->get();
@@ -403,7 +403,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         // parse the three elements with Smarty
         require_once 'CRM/Core/Smarty/resources/String.php';
         civicrm_smarty_register_string_resource();
-        $smarty =& CRM_Core_Smarty::singleton();
+        $smarty = CRM_Core_Smarty::singleton();
         foreach ($params['tplParams'] as $name => $value) {
             $smarty->assign($name, $value);
         }

@@ -45,7 +45,7 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
     */
     function listContribution( ) 
     {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );
         $controller->setEmbedded( true );
         $controller->reset( );
         $controller->set( 'limit', 12 ); 
@@ -69,12 +69,12 @@ class CRM_Contribute_Page_UserDashboard extends CRM_Contact_Page_View_UserDashBo
         require_once 'CRM/Contribute/Form/ContributionBase.php';
         require_once 'CRM/Contribute/BAO/ContributionRecur.php';
 
-        $recur             =& new CRM_Contribute_DAO_ContributionRecur( );
+        $recur             = new CRM_Contribute_DAO_ContributionRecur( );
         $recur->contact_id = $this->_contactId;
         $recur->is_test    = 0;
         $recur->find( );
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $recurStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
 

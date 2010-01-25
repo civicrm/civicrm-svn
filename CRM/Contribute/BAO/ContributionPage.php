@@ -51,7 +51,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
      */
     public static function &create(&$params) 
     {
-        $dao =& new CRM_Contribute_DAO_ContributionPage( );
+        $dao = new CRM_Contribute_DAO_ContributionPage( );
         $dao->copyValues( $params );
         $dao->save( );
         return $dao;
@@ -158,7 +158,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
         }
 
         if ( CRM_Utils_Array::value( 'is_email_receipt', $values )  || CRM_Utils_Array::value( 'onbehalf_dupe_alert', $values ) ) {
-            $template =& CRM_Core_Smarty::singleton( );
+            $template = CRM_Core_Smarty::singleton( );
 
             // get the billing location type
             if ( !array_key_exists('related_contact', $values) ) {

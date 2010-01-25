@@ -318,11 +318,11 @@ abstract class CRM_Import_Parser {
         if ( $statusID ) {
             $skip = 50;
             // $skip = 1;
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $statusFile = "{$config->uploadDir}status_{$statusID}.txt";
             $status = "<div class='description'>&nbsp; " . ts('No processing status reported yet.') . "</div>";
             require_once 'Services/JSON.php';
-            $json =& new Services_JSON( ); 
+            $json = new Services_JSON( ); 
             $contents = $json->encode( array( 0, $status ) );
 
             file_put_contents( $statusFile, $contents );
@@ -391,7 +391,7 @@ abstract class CRM_Import_Parser {
 </div>
 ";
 
-                    $json =& new Services_JSON( ); 
+                    $json = new Services_JSON( ); 
                     $contents = $json->encode( array( $processedPercent, $status ) );
 
                     file_put_contents( $statusFile, $contents );
@@ -482,7 +482,7 @@ abstract class CRM_Import_Parser {
                     $customHeaders[$key] = $customfields[$id][0];
                 }
             }
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $fileName = $config->uploadDir . "sqlImport";
             if ($this->_invalidRowCount) {
                 // removed view url for invlaid contacts
@@ -541,7 +541,7 @@ abstract class CRM_Import_Parser {
         $this->_activeFieldCount = count( $fieldKeys );
         foreach ( $fieldKeys as $key ) {
             if ( empty( $this->_fields[$key] ) ) {
-                $this->_activeFields[] =& new CRM_Import_Field( '', ts( '- do not import -' ) );
+                $this->_activeFields[] = new CRM_Import_Field( '', ts( '- do not import -' ) );
             } else {
                 $this->_activeFields[] = clone( $this->_fields[$key] );
             }
@@ -760,9 +760,9 @@ abstract class CRM_Import_Parser {
     function addField( $name, $title, $type = CRM_Utils_Type::T_INT,
                        $headerPattern = '//', $dataPattern = '//',
                        $hasLocationType = false) {
-        $this->_fields[$name] =& new CRM_Import_Field($name, $title, $type, $headerPattern, $dataPattern, $hasLocationType);
+        $this->_fields[$name] = new CRM_Import_Field($name, $title, $type, $headerPattern, $dataPattern, $hasLocationType);
         if ( empty( $name ) ) {
-            $this->_fields['doNotImport'] =& new CRM_Import_Field($name, $title, $type, $headerPattern, $dataPattern, $hasLocationType);
+            $this->_fields['doNotImport'] = new CRM_Import_Field($name, $title, $type, $headerPattern, $dataPattern, $hasLocationType);
         }
     }
 
@@ -871,7 +871,7 @@ abstract class CRM_Import_Parser {
         foreach ($header as $key => $value) {
             $header[$key] = "\"$value\"";
         }
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $output[] = implode($config->fieldSeparator, $header);
 
         foreach ($data as $datum) {

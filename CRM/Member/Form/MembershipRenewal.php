@@ -293,7 +293,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
      * @access public
      * @static
      */
-    public function formRule( &$params ) 
+    static function formRule( $params ) 
     {
         $errors = array( );
         //total amount condition arise when membership type having no
@@ -327,7 +327,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
         
         $params = array( );
         $ids    = array( );
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $params['contact_id']  = $this->_contactID;
         if ( $this->_mode ) {
             $formValues['total_amount']         = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
@@ -449,7 +449,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
         
         require_once 'CRM/Contact/BAO/Contact/Location.php';
         // Retrieve the name and email of the current user - this will be the FROM for the receipt email
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $userID  = $session->get( 'userID' );
         list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
 
@@ -458,7 +458,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
         if ( CRM_Utils_Array::value( 'record_contribution', $formValues ) || $this->_mode ) {
             //building contribution params 
             $contributionParams = array( );
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $contributionParams['currency'             ] = $config->defaultCurrency;
             $contributionParams['contact_id'           ] = $params['contact_id'];
             $contributionParams['source'               ] = "{$memType} Membership: Offline membership renewal (by {$userName})";
@@ -476,7 +476,7 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
             $contribution =& CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
            
             require_once 'CRM/Member/DAO/MembershipPayment.php';
-            $mpDAO =& new CRM_Member_DAO_MembershipPayment();    
+            $mpDAO = new CRM_Member_DAO_MembershipPayment();    
             $mpDAO->membership_id   = $renewMembership->id;
             $mpDAO->contribution_id = $contribution->id;
             $mpDAO->save();

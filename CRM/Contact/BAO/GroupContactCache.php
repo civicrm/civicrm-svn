@@ -61,7 +61,7 @@ class CRM_Contact_BAO_GroupContactCache extends CRM_Contact_DAO_GroupContactCach
         // of comma separated integers would not work. 
         $groupID = CRM_Core_DAO::escapeString( implode( ', ', $groupID ) );
 
-        $config  =& CRM_Core_Config::singleton( );
+        $config  = CRM_Core_Config::singleton( );
         $smartGroupCacheTimeout = 
             isset( $config->smartGroupCacheTimeout ) && 
             is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;
@@ -248,7 +248,7 @@ WHERE  id = %1
                 $searchSQL   = $customClass->contactIDs( );
                 $idName = 'contact_id';
             } else {
-                $query =& new CRM_Contact_BAO_Query($ssParams, $returnProperties, null,
+                $query = new CRM_Contact_BAO_Query($ssParams, $returnProperties, null,
                                                     false, false, 1,
                                                     true, true, false );
                 $query->_useGroupBy = false;

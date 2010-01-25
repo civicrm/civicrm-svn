@@ -209,7 +209,7 @@ class CRM_Contact_Form_Search_Criteria {
                    $form->_activityType,
                    false);
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         $form->addDate( 'activity_date_low', ts('Activity Dates - From'), false, array( 'formatType' => 'searchDate') );
         $form->addDate( 'activity_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );

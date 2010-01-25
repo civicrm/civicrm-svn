@@ -105,7 +105,7 @@ class CRM_Utils_Mail
         $headers =& $msg->headers($headers);
 
         $result = null;
-        $mailer =& CRM_Core_Config::getMailer( );
+        $mailer = CRM_Core_Config::getMailer( );
         CRM_Core_Error::ignoreException( );
         if ( is_object( $mailer ) ) {
             $result = $mailer->send($to, $headers, $message);
@@ -162,7 +162,7 @@ class CRM_Utils_Mail
         $content .= "\n" . $message . "\n";
 
         if ( is_numeric( CIVICRM_MAIL_LOG ) ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             // create the directory if not there
             $dirName = $config->uploadDir . 'mail' . DIRECTORY_SEPARATOR;
             CRM_Utils_File::createDir( $dirName );

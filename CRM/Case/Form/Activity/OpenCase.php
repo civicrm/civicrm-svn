@@ -191,7 +191,7 @@ class CRM_Case_Form_Activity_OpenCase
      * @static
      * @access public
      */
-    static function formRule( &$values, $files, &$form ) 
+    static function formRule( $values, $files, $form ) 
     {
         if ( $form->_context == 'caseActivity' ) {
             return true;
@@ -257,7 +257,7 @@ class CRM_Case_Form_Activity_OpenCase
         $params['statusMsg'] = ts('Case opened successfully.');
         
         $buttonName = $this->controller->getButtonName( );
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
             if ( $this->_context == 'standalone' ) {
                 $session->replaceUserContext(CRM_Utils_System::url('civicrm/case/add', 

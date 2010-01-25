@@ -37,7 +37,7 @@ class CRM_UpdatePledgeRecord
 {
     function __construct( ) 
     {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         // this does not return on failure
         require_once 'CRM/Utils/System.php';
         require_once 'CRM/Utils/Hook.php';
@@ -163,7 +163,7 @@ class CRM_UpdatePledgeRecord
             list( $contactDetails ) = CRM_Mailing_BAO_Mailing::getDetails( $contactIds );
             
             // assign domain values to template
-            $template =& CRM_Core_Smarty::singleton( );
+            $template = CRM_Core_Smarty::singleton( );
             $template->assign( 'domain', $domainValues );
             
             //set receipt from
@@ -259,7 +259,7 @@ class CRM_UpdatePledgeRecord
     }
 }
 
-$obj =& new CRM_UpdatePledgeRecord( );
+$obj = new CRM_UpdatePledgeRecord( );
 echo "Updating<br />";
 $obj->updatePledgeStatus( );
 echo "<br />Pledge records updated. (Done)";

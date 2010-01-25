@@ -47,7 +47,7 @@ class CRM_Core_BAO_Log extends CRM_Core_DAO_Log
     {
         require_once 'CRM/Core/DAO/Log.php';
         
-        $log =& new CRM_Core_DAO_Log( );
+        $log = new CRM_Core_DAO_Log( );
         
         $log->entity_table = $table;
         $log->entity_id    = $id;
@@ -75,7 +75,7 @@ class CRM_Core_BAO_Log extends CRM_Core_DAO_Log
     {
         require_once 'CRM/Core/DAO/Log.php';
         
-        $log =& new CRM_Core_DAO_Log( );
+        $log = new CRM_Core_DAO_Log( );
         $log->copyValues($params);
         $log->save();
     }
@@ -89,7 +89,7 @@ class CRM_Core_BAO_Log extends CRM_Core_DAO_Log
         }
 
         if ( ! $userID ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $userID  =  $session->get( 'userID' );
         }
 
@@ -101,7 +101,7 @@ class CRM_Core_BAO_Log extends CRM_Core_DAO_Log
             return;
         }
 
-        $log =& new CRM_Core_DAO_Log( );
+        $log = new CRM_Core_DAO_Log( );
         $log->id = null;
 
         if ( isset( self::$_processed[$contactID] ) ) {

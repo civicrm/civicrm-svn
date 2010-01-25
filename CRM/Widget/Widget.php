@@ -60,7 +60,7 @@ class CRM_Widget_Widget {
 	 * @return stdClass
 	 */
 	public function getContributionPageData( $contributionPageID, $widgetID ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         self::registerRequest( $contributionPageID, $widgetID, __FUNCTION__ );
 

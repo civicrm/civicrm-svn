@@ -122,9 +122,9 @@ class CRM_Contribute_Page_PCP extends CRM_Core_Page_Basic
             CRM_Contribute_BAO_PCP::setIsActive( $id, 0 );
         } elseif ( $action & CRM_Core_Action::DELETE) {
             $id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false );
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=browse' ) );
-            $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_PCP_PCP',
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_PCP_PCP',
                                                            'Personal Campaign Page',
                                                            CRM_Core_Action::DELETE );
             //$this->setContext( $id, $action );

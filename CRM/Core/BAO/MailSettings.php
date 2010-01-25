@@ -145,7 +145,7 @@ class CRM_Core_BAO_MailSettings extends CRM_Core_DAO_MailSettings
             CRM_Core_DAO::executeQuery( $query );
         }
         
-        $mailSettings =& new CRM_Core_DAO_MailSettings( ); 
+        $mailSettings = new CRM_Core_DAO_MailSettings( ); 
         $mailSettings->copyValues( $params );
         $result = $mailSettings->save( );
         

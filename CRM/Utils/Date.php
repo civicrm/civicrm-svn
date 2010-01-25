@@ -291,7 +291,7 @@ class CRM_Utils_Date
         $fullMonths = self::getFullMonthNames();
 
         if ( ! $format ) {
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
 
             if ($dateParts) {
                 if (array_intersect(array('h', 'H'), $dateParts)) {
@@ -891,7 +891,7 @@ class CRM_Utils_Date
             break;
             
         case 'fiscal_year':
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
             $from['d'] = $config->fiscalYearStart['d'];
             $from['M'] = $config->fiscalYearStart['M'];
             $fYear     = self::calculateFiscalYear( $from['d'],$from['M'] );
@@ -1278,7 +1278,7 @@ class CRM_Utils_Date
             $mysqlDate = date( 'Y-m-d G:i:s' ) ;
         }
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         if ( $formatType ) {
             // get actual format
             $params = array( 'name' => $formatType );

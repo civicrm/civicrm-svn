@@ -76,7 +76,7 @@ class CRM_Core_IDS {
       require_once 'IDS/Init.php';
 
       // init the PHPIDS and pass the REQUEST array
-      $config =& CRM_Core_Config::singleton( );
+      $config = CRM_Core_Config::singleton( );
       $configFile = $config->configAndLogDir . 'Config.IDS.ini';
         if ( ! file_exists( $configFile ) ) {
             global $civicrm_root;
@@ -193,7 +193,7 @@ class CRM_Core_IDS {
              '127.0.0.1');
 
         $data = array( );
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         foreach ($result as $event) {
             $data[] = array(
                             'name'      => $event->getName(),
@@ -226,7 +226,7 @@ class CRM_Core_IDS {
      *
      */
     private function kick($result) {
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $session->reset( 2 );
 
         CRM_Core_Error::fatal( ts( 'There is a validation error with your HTML input. Your activity is a bit suspicious, hence aborting' ) );

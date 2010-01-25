@@ -19,7 +19,7 @@ function civicrm_cck_sync_invoke( ) {
     }
     
     require_once 'CRM/Utils/Wrapper.php';
-    $wrapper =& new CRM_Utils_Wrapper( );
+    $wrapper = new CRM_Utils_Wrapper( );
     
     return $wrapper->run( 'Configure', ts('Configure'), null );
 }

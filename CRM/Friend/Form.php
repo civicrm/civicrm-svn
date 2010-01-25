@@ -102,7 +102,7 @@ class CRM_Friend_Form extends CRM_Core_Form
             CRM_Core_Error::fatal( ts( 'page argument missing or invalid' ) );
         }
        
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $this->_contactID = $session->get( 'userID' );
         if ( ! $this->_contactID ) {
             $this->_contactID = $session->get( 'transaction.userID' );
@@ -205,7 +205,7 @@ class CRM_Friend_Form extends CRM_Core_Form
      * @access public
      * @static
      */
-    public function formRule( &$fields ) 
+    static function formRule( $fields ) 
     {
 
         $errors = array( ); 

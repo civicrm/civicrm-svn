@@ -263,7 +263,7 @@ LEFT JOIN  civicrm_contact scheduledContact ON ( $mailing.scheduled_id = schedul
         }
 
         
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         
         $params = array( );
         $whereClause = ' AND ' . $this->whereClause( $params );

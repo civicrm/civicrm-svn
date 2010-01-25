@@ -56,7 +56,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
     {
         //get the event id.
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, true );
-        $config    =& CRM_Core_Config::singleton( );
+        $config    = CRM_Core_Config::singleton( );
         require_once 'CRM/Event/BAO/Event.php';
         // ensure that the user has permission to see this page
         if ( ! CRM_Core_Permission::event( CRM_Core_Permission::VIEW,

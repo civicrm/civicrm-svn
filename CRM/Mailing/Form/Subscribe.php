@@ -133,7 +133,7 @@ ORDER BY title";
         $addCaptcha = true;
 
         // if recaptcha is not set, then dont add it
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( empty( $config->recaptchaPublicKey ) ||
              empty( $config->recaptchaPrivateKey ) ) {
             $addCaptcha = false;
@@ -165,7 +165,7 @@ ORDER BY title";
                            );
     }
     
-    static function formRule( &$fields ) {
+    static function formRule( $fields ) {
         $groups = CRM_Mailing_Event_BAO_Subscribe::getContactGroups($fields['email']);
         foreach ( $fields as $name => $dontCare ) {
             if ( substr( $name, 0, CRM_Core_Form::CB_PREFIX_LEN ) == CRM_Core_Form::CB_PREFIX ) {

@@ -53,7 +53,7 @@ class CRM_Utils_System_Joomla {
             $pageTitle = $title;
         }
 
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $template->assign( 'pageTitle', $pageTitle );
 
 		$document=& JFactory::getDocument();
@@ -73,7 +73,7 @@ class CRM_Utils_System_Joomla {
      * @static
      */
     static function appendBreadCrumb( $breadCrumbs ) {
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         $bc = $template->get_template_vars( 'breadcrumb' );
 
         if ( is_array( $breadCrumbs ) ) {
@@ -126,7 +126,7 @@ class CRM_Utils_System_Joomla {
 
         if ( $includeAll ) {
             require_once 'CRM/Core/Config.php';
-            $config =& CRM_Core_Config::singleton();
+            $config = CRM_Core_Config::singleton();
 
             if ( ! $config->userFrameworkFrontend ) {
                 $document->addStyleSheet( "{$config->resourceBase}css/joomla.css" );
@@ -143,7 +143,7 @@ class CRM_Utils_System_Joomla {
 
             $document->addScript( "{$config->resourceBase}js/Common.js" );
     
-            $template =& CRM_Core_Smarty::singleton( );
+            $template = CRM_Core_Smarty::singleton( );
             $document->addCustomTag( $template->fetch( 'CRM/common/jquery.tpl' ) );
             $document->addCustomTag( $template->fetch( 'CRM/common/action.tpl' ) );
         }
@@ -168,7 +168,7 @@ class CRM_Utils_System_Joomla {
     function url($path = null, $query = null, $absolute = true,
                  $fragment = null, $htmlize = true,
                  $frontend = false ) {
-        $config        =& CRM_Core_Config::singleton( );
+        $config        = CRM_Core_Config::singleton( );
 
         if ( $config->userFrameworkFrontend ) {
             $script = 'index.php';
@@ -260,7 +260,7 @@ class CRM_Utils_System_Joomla {
     static function authenticate( $name, $password ) {
         require_once 'DB.php';
 
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         $dbJoomla = DB::connect( $config->userFrameworkDSN );
         if ( DB::isError( $dbJoomla ) ) {

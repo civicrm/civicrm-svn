@@ -201,7 +201,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
         $errorMessage = null;
         
         //for date-Formats
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $dateType = $session->get( "dateTypes" );
                 
         foreach ( $params as $key => $val ) {
@@ -255,7 +255,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             return $response;
         }
         $params =& $this->getActiveFieldParams( );
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $dateType = $session->get( 'dateTypes' );
         $formatted = array();
         $customFields = CRM_Core_BAO_CustomField::getFields( CRM_Utils_Array::value( 'contact_type',$params ) );
@@ -292,7 +292,7 @@ class CRM_Event_Import_Parser_Participant extends CRM_Event_Import_Parser
             } else {
                 $eventTitle = $params['event_title'];
                 $qParams = array();
-                $dao =& new CRM_Core_DAO();
+                $dao = new CRM_Core_DAO();
                 $roleId =
                     $dao->singleValueQuery("SELECT default_role_id FROM civicrm_event WHERE title = '$eventTitle' ",
                                            $qParams);

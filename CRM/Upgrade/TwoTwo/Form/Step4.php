@@ -77,7 +77,7 @@ class CRM_Upgrade_TwoTwo_Form_Step4 extends CRM_Upgrade_Form {
         
         // update config defaults
         require_once "CRM/Core/DAO/Domain.php";
-        $domain =& new CRM_Core_DAO_Domain();
+        $domain = new CRM_Core_DAO_Domain();
         $domain->selectAdd( );
         $domain->selectAdd( 'config_backend' );
         $domain->find(true);

@@ -174,7 +174,7 @@ class CRM_Contact_Form_Task_EmailCommon
 
         $form->assign('noEmails', $form->_noEmails);
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $userID  =  $session->get( 'userID' );
         list( $fromDisplayName, $fromEmail, $fromDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $userID );
         
@@ -242,10 +242,10 @@ class CRM_Contact_Form_Task_EmailCommon
      * @access public  
      * 
      */  
-    static function formRule($fields, $dontCare, &$self) 
+    static function formRule($fields, $dontCare, $self) 
     {
         $errors = array( );
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
         
         if ( isset( $fields['html_message'] ) ) {
             $htmlMessage = str_replace( array("\n","\r"), ' ', $fields['html_message']);

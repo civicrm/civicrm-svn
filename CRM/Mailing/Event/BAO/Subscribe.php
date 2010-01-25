@@ -120,7 +120,7 @@ LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
         require_once 'CRM/Contact/BAO/Contact.php';
 
         /* Get the primary email id from the contact to use as a hash input */
-        $dao =& new CRM_Core_DAO();
+        $dao = new CRM_Core_DAO();
 
         $query = "
 SELECT     civicrm_email.id as email_id
@@ -136,7 +136,7 @@ SELECT     civicrm_email.id as email_id
             return null;
         }
 
-        $se =& new CRM_Mailing_Event_BAO_Subscribe();
+        $se = new CRM_Mailing_Event_BAO_Subscribe();
         $se->group_id = $group_id;
         $se->contact_id = $contact_id;
         $se->time_stamp = date('YmdHis');
@@ -165,7 +165,7 @@ SELECT     civicrm_email.id as email_id
      * @static
      */
     public static function &verify($contact_id, $subscribe_id, $hash) {
-        $se =& new CRM_Mailing_Event_BAO_Subscribe();
+        $se = new CRM_Mailing_Event_BAO_Subscribe();
         $se->contact_id = $contact_id;
         $se->id = $subscribe_id;
         $se->hash = $hash;
@@ -183,7 +183,7 @@ SELECT     civicrm_email.id as email_id
      * @access public
      */
     public function send_confirm_request($email) {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
         require_once 'CRM/Core/BAO/Domain.php';
         $domain =& CRM_Core_BAO_Domain::getDomain();
@@ -204,12 +204,12 @@ SELECT     civicrm_email.id as email_id
                           ) . "@$emailDomain";
         
         require_once 'CRM/Contact/BAO/Group.php';
-        $group =& new CRM_Contact_BAO_Group();
+        $group = new CRM_Contact_BAO_Group();
         $group->id = $this->group_id;
         $group->find(true);
         
         require_once 'CRM/Mailing/BAO/Component.php';
-        $component =& new CRM_Mailing_BAO_Component();
+        $component = new CRM_Mailing_BAO_Component();
         $component->is_default = 1;
         $component->is_active = 1;
         $component->component_type = 'Subscribe';
@@ -237,7 +237,7 @@ SELECT     civicrm_email.id as email_id
         }
 
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $bao =& new CRM_Mailing_BAO_Mailing();
+        $bao = new CRM_Mailing_BAO_Mailing();
         $bao->body_text = $text;
         $bao->body_html = $html;
         $tokens = $bao->getTokens();
@@ -259,7 +259,7 @@ SELECT     civicrm_email.id as email_id
         // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
         // this fixes CRM-5466
         require_once 'CRM/Utils/Mail/FixedMailMIME.php';
-        $message =& new CRM_Utils_Mail_FixedMailMIME("\n");
+        $message = new CRM_Utils_Mail_FixedMailMIME("\n");
 
         $message->setHTMLBody($html);
         $message->setTxtBody($text);

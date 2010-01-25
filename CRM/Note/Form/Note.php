@@ -137,7 +137,7 @@ class CRM_Note_Form_Note extends CRM_Core_Form
         // store the submitted values in an array
         $params = $this->exportValues();
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $params['contact_id'  ] = $session->get( 'userID' );
         $params['entity_table'] = $this->_entityTable;
         $params['entity_id'   ] = $this->_entityId;

@@ -134,7 +134,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
     function setShowHide( &$defaults) 
     {
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $this->_showHide =& new CRM_Core_ShowHideBlocks( array('registration' => 1 ),
+        $this->_showHide = new CRM_Core_ShowHideBlocks( array('registration' => 1 ),
                                                          '') ;
         if ( empty($defaults)) {
             $this->_showHide->addShow( 'registration_screen_show' );
@@ -316,7 +316,7 @@ class CRM_Event_Form_ManageEvent_Registration extends CRM_Event_Form_ManageEvent
      * @static
      * @access public
      */
-    static function formRule( &$values ) 
+    static function formRule( $values ) 
     {
         if ( $values['is_online_registration'] ) {
             if ( !$values['confirm_title'] ) {

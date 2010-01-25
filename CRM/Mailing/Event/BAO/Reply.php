@@ -71,7 +71,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             return null;
         }
 
-        $mailing =& new CRM_Mailing_BAO_Mailing();
+        $mailing = new CRM_Mailing_BAO_Mailing();
         $mailings = CRM_Mailing_BAO_Mailing::getTableName();
         $jobs = CRM_Mailing_BAO_Job::getTableName();
         $mailing->query(
@@ -84,7 +84,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             self::autoRespond($mailing, $queue_id, $replyto);
         }
 
-        $re =& new CRM_Mailing_Event_BAO_Reply();
+        $re = new CRM_Mailing_Event_BAO_Reply();
         $re->event_queue_id = $queue_id;
         $re->time_stamp = date('YmdHis');
         $re->save();
@@ -148,7 +148,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $eq = CRM_Mailing_Event_BAO_Queue::getTableName();
             $contacts = CRM_Contact_BAO_Contact::getTableName();
             
-            $dao =& new CRM_Core_DAO();
+            $dao = new CRM_Core_DAO();
             $dao->query("SELECT     $contacts.display_name as display_name,
                                     $emails.email as email
                         FROM        $eq
@@ -173,7 +173,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
             // this fixes CRM-5466
             require_once 'CRM/Utils/Mail/FixedMailMIME.php';
-            $message =& new CRM_Utils_Mail_FixedMailMIME("\n");
+            $message = new CRM_Utils_Mail_FixedMailMIME("\n");
 
             $headers = array(
                 'Subject'       => "Re: {$mailing->subject}",
@@ -189,7 +189,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $h =& $message->headers($headers);
         }
 
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $mailer =& $config->getMailer();
 
         PEAR::setErrorHandling( PEAR_ERROR_CALLBACK,
@@ -211,13 +211,13 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
      * @static
      */
     private static function autoRespond(&$mailing, $queue_id, $replyto) {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
 
         $contacts   = CRM_Contact_DAO_Contact::getTableName();
         $email      = CRM_Core_DAO_Email::getTableName();
         $queue      = CRM_Mailing_Event_DAO_Queue::getTableName();
         
-        $eq =& new CRM_Core_DAO();
+        $eq = new CRM_Core_DAO();
         $eq->query(
         "SELECT     $contacts.preferred_mail_format as format,
                     $email.email as email
@@ -230,11 +230,11 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
 
         $to = empty($replyto) ? $eq->email : $replyto;
         
-        $component =& new CRM_Mailing_BAO_Component();
+        $component = new CRM_Mailing_BAO_Component();
         $component->id = $mailing->reply_id;
         $component->find(true);
 
-        $message =& new Mail_Mime("\n");
+        $message = new Mail_Mime("\n");
 
         require_once 'CRM/Core/BAO/Domain.php';        
         $domain =& CRM_Core_BAO_Domain::getDomain( );
@@ -260,7 +260,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
         }
         
         require_once 'CRM/Mailing/BAO/Mailing.php';
-        $bao =& new CRM_Mailing_BAO_Mailing();
+        $bao = new CRM_Mailing_BAO_Mailing();
         $bao->body_text = $text;
         $bao->body_html = $html;
         $tokens = $bao->getTokens();
@@ -303,7 +303,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
      */
     public static function getTotalCount($mailing_id, $job_id = null,
                                             $is_distinct = false) {
-        $dao =& new CRM_Core_DAO();
+        $dao = new CRM_Core_DAO();
         
         $reply      = self::getTableName();
         $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();
@@ -357,7 +357,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
     public static function &getRows($mailing_id, $job_id = null, 
         $is_distinct = false, $offset = null, $rowCount = null, $sort = null) {
         
-        $dao =& new CRM_Core_Dao();
+        $dao = new CRM_Core_Dao();
         
         $reply      = self::getTableName();
         $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();

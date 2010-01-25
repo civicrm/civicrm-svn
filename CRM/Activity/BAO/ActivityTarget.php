@@ -63,7 +63,7 @@ class CRM_Activity_BAO_ActivityTarget extends CRM_Activity_DAO_ActivityTarget
     public function create( &$params ) 
     {
         require_once 'CRM/Activity/BAO/ActivityTarget.php';
-        $target =& new CRM_Activity_BAO_ActivityTarget();
+        $target = new CRM_Activity_BAO_ActivityTarget();
 
         $target->copyValues( $params );
         return $target->save();
@@ -87,7 +87,7 @@ class CRM_Activity_BAO_ActivityTarget extends CRM_Activity_DAO_ActivityTarget
             return $targetArray;
         }
 
-        $target =& new CRM_Activity_BAO_ActivityTarget( );
+        $target = new CRM_Activity_BAO_ActivityTarget( );
         $target->activity_id = $activity_id;
         $target->find();
         $count = 1;

@@ -68,7 +68,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
             $defaults['relationship_type_id'] = $defaults['relationship_type_id'].'_'.$defaults['relationship_direction'];
         }
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         //setting default fixed_period_start_day & fixed_period_rollover_day
         $periods = array('fixed_period_start_day',  'fixed_period_rollover_day');
         foreach ( $periods as $per ) {
@@ -234,7 +234,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
      * @access public
      * @static
      */
-    public function formRule( &$params ) 
+    static function formRule( $params ) 
     {
         require_once 'CRM/Utils/Rule.php';        
         $errors = array( );
@@ -272,7 +272,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 $errors['period_type'] = ts('Period type should be Rolling when duration unit is Day');
             }
             
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( ( $params['period_type']   == 'fixed' ) && 
                 ( $params['duration_unit'] == 'year'  ) ) {
                 $periods = array('fixed_period_start_day', 'fixed_period_rollover_day');
@@ -359,7 +359,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 $params['duration_interval'] = 1;
             }
             
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $periods = array('fixed_period_start_day', 'fixed_period_rollover_day');
             foreach ( $periods as $per ) {
                 if ($params[$per]['M'] && $params[$per]['d']) {
@@ -383,7 +383,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
             $membershipType = CRM_Member_BAO_MembershipType::add($params, $ids);
             CRM_Core_Session::setStatus( ts('The membership type \'%1\' has been saved.', array( 1 => $membershipType->name )) );
             $buttonName = $this->controller->getButtonName( );
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
                 CRM_Core_Session::setStatus( ts(' You can add another membership type.') );
                 $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/admin/member/membershipType', 'action=add&reset=1' ) );
@@ -411,15 +411,15 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
 
         // get the count of contact
         require_once 'CRM/Contact/BAO/Contact.php';
-        $contactBAO  =& new CRM_Contact_BAO_Contact( );
-        $query =& new CRM_Contact_BAO_Query( $searchValues );
+        $contactBAO  = new CRM_Contact_BAO_Contact( );
+        $query = new CRM_Contact_BAO_Query( $searchValues );
         $searchCount = $query->searchQuery(0, 0, null, true );
         $this->set( 'searchCount', $searchCount );
         if ( $searchCount <= self::MAX_CONTACTS ) {
             // get the result of the search
             $result = $query->searchQuery(0, self::MAX_CONTACTS, null);
 
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $searchRows = array( );
 
             while($result->fetch()) {

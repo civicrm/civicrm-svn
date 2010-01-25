@@ -47,7 +47,7 @@ class CRM_Core_Key {
      */
     static function privateKey( ) {
         if ( ! self::$_key ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             self::$_key     =  $session->get( 'qfPrivateKey' );
             if ( ! self::$_key ) {
                 self::$_key =
@@ -61,7 +61,7 @@ class CRM_Core_Key {
 
     static function sessionID( ) {
         if ( ! self::$_sessionID ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             self::$_sessionID = $session->get( 'qfSessionID' );
             if ( ! self::$_sessionID ) {
                 self::$_sessionID = session_id( );

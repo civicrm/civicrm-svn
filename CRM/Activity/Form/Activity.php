@@ -220,7 +220,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $this->assign('addTargetContact', true);
         }
 
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $this->_currentUserId = $session->get( 'userID' );
 
         // this is used for setting jQuery tabs
@@ -271,7 +271,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $advanced = null;
             $builder  = null;
             
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $advanced = $session->get('isAdvanced');
             $builder  = $session->get('isSearchBuilder');
 
@@ -377,7 +377,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         $defaults = array( );
         $params   = array( );
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
 
         // if we're editing...
         if ( isset( $this->_activityId ) ) {
@@ -594,7 +594,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             }
 
 			$buttons = array();
-            $config   =& CRM_Core_Config::singleton( );
+            $config   = CRM_Core_Config::singleton( );
 			require_once 'CRM/Core/OptionGroup.php'; 
     	    $emailActivityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type', 
                                                                'Inbound Email', 
@@ -669,7 +669,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
      * @access public  
      * @static  
      */  
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     { 
         // skip form rule if deleting
         if  ( CRM_Utils_Array::value( '_qf_Activity_next_',$fields) == 'Delete' ) {

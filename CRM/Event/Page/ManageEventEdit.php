@@ -59,7 +59,7 @@ class CRM_Event_Page_ManageEventEdit extends CRM_Core_Page
         $action = CRM_Utils_Request::retrieve('action', 'String',
                                               $this, false, 'browse'); // default to 'browse'
         
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( in_array("CiviEvent", $config->enableComponents) ) {
             $this->assign('CiviEvent', true );
         }
@@ -166,7 +166,7 @@ class CRM_Event_Page_ManageEventEdit extends CRM_Core_Page
 
         if ( $form ) {
             require_once 'CRM/Core/Controller/Simple.php'; 
-            $controller =& new CRM_Core_Controller_Simple($form, $subPage, $action); 
+            $controller = new CRM_Core_Controller_Simple($form, $subPage, $action); 
             $controller->set('id', $this->_id); 
             $controller->set('single', true );
             $controller->process(); 
@@ -174,7 +174,7 @@ class CRM_Event_Page_ManageEventEdit extends CRM_Core_Page
         }
 
         if ( $this->_id ) {
-            $session =& CRM_Core_Session::singleton(); 
+            $session = CRM_Core_Session::singleton(); 
             $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ),
                                                               "action=update&reset=1&id={$this->_id}" ) );
         }

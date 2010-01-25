@@ -67,7 +67,7 @@ class CRM_Event_Payment_PayPalImpl extends CRM_Core_Payment_PayPalImpl {
      */ 
     static function &singleton( $mode, &$paymentProcessor ) {
         if (self::$_singleton === null ) { 
-            self::$_singleton =& new CRM_Event_Payment_PaypalImpl( $mode, $paymentProcessor );
+            self::$_singleton = new CRM_Event_Payment_PaypalImpl( $mode, $paymentProcessor );
         } 
         return self::$_singleton; 
     } 

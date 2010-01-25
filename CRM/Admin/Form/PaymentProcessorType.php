@@ -157,7 +157,7 @@ class CRM_Admin_Form_PaymentProcessorType extends CRM_Admin_Form
             return $defaults;
         }
 
-        $dao =& new CRM_Core_DAO_PaymentProcessorType( );
+        $dao = new CRM_Core_DAO_PaymentProcessorType( );
         $dao->id        = $this->_id;
 
         if ( ! $dao->find( true ) ) {
@@ -190,7 +190,7 @@ UPDATE civicrm_payment_processor SET is_default = 0";
             CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         }
 
-        $dao =& new CRM_Core_DAO_PaymentProcessorType( );
+        $dao = new CRM_Core_DAO_PaymentProcessorType( );
 
         $dao->id         = $this->_id;
         $dao->is_default = CRM_Utils_Array::value( 'is_default', $values, 0 );

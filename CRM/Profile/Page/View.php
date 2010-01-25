@@ -67,7 +67,7 @@ class CRM_Profile_Page_View extends CRM_Core_Page
         $this->_id = CRM_Utils_Request::retrieve('id', 'Positive',
                                                  $this, false);
         if ( ! $this->_id ) {
-            $session =& CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton();
             $this->_id = $session->get( 'userID' );
             if ( ! $this->_id ) {
                 CRM_Core_Error::fatal( ts( 'Could not find the required contact id parameter (id=) for viewing a contact record with a Profile.' ) );
@@ -80,7 +80,7 @@ class CRM_Profile_Page_View extends CRM_Core_Page
         
         if ($this->_gid) {
             require_once 'CRM/Profile/Page/Dynamic.php';
-            $page =& new CRM_Profile_Page_Dynamic($this->_id, $this->_gid, 'Profile' );
+            $page = new CRM_Profile_Page_Dynamic($this->_id, $this->_gid, 'Profile' );
             $profileGroup            = array( );
             $profileGroup['title']   = null;
             $profileGroup['content'] = $page->run();
@@ -104,7 +104,7 @@ class CRM_Profile_Page_View extends CRM_Core_Page
             $profileGroups = array();
             foreach ($ufGroups as $groupid => $group) {
                 require_once 'CRM/Profile/Page/Dynamic.php';
-                $page =& new CRM_Profile_Page_Dynamic( $this->_id, $groupid, 'Profile');
+                $page = new CRM_Profile_Page_Dynamic( $this->_id, $groupid, 'Profile');
                 $profileGroup = array( );
                 $profileGroup['title'] = $group['title'];
                 $profileGroup['content'] = $page->run();

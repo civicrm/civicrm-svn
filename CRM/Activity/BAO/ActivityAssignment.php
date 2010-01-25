@@ -63,7 +63,7 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
     public function create( &$params ) 
     {
         require_once 'CRM/Activity/BAO/ActivityAssignment.php';
-        $assignment =& new CRM_Activity_BAO_ActivityAssignment();
+        $assignment = new CRM_Activity_BAO_ActivityAssignment();
 
         $assignment->copyValues( $params );
         return $assignment->save();
@@ -88,7 +88,7 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
             return $assigneeArray;
         }
 
-        $assignment =& new CRM_Activity_BAO_ActivityAssignment( );
+        $assignment = new CRM_Activity_BAO_ActivityAssignment( );
         $assignment->activity_id = $activity_id;
         $assignment->find();
         $count = 1;

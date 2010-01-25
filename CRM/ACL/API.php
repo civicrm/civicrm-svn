@@ -62,7 +62,7 @@ class CRM_ACL_API {
      */
     static function check( $str, $contactID = null ) {
         if ( $contactID == null ) {
-            $session   =& CRM_Core_Session::singleton( );
+            $session   = CRM_Core_Session::singleton( );
             $contactID =  $session->get( 'userID' );
         }
 
@@ -94,7 +94,7 @@ class CRM_ACL_API {
         }
 
         if ( $contactID == null ) {
-            $session   =& CRM_Core_Session::singleton( );
+            $session   = CRM_Core_Session::singleton( );
             $contactID =  $session->get( 'userID' );
         }
 
@@ -117,7 +117,7 @@ class CRM_ACL_API {
      */
     public static function group( $type, $contactID = null, $tableName = 'civicrm_saved_search', $allGroups = null ) {
         if ( $contactID == null ) {
-            $session   =& CRM_Core_Session::singleton( );
+            $session   = CRM_Core_Session::singleton( );
             $contactID =  $session->get( 'userID' );
         }
 

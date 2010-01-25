@@ -73,7 +73,7 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
         
         $this->_contactId =  CRM_Utils_Request::retrieve('id', 'Positive', $this );
 
-        $session          =& CRM_Core_Session::singleton( );
+        $session          = CRM_Core_Session::singleton( );
         $userID           =  $session->get( 'userID' );
          
         if ( ! $this->_contactId ) { 
@@ -123,7 +123,7 @@ class CRM_Contact_Page_View_UserDashBoard extends CRM_Core_Page
     {
         //build component selectors
         $dashboardElements = array( );
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         require_once 'CRM/Core/BAO/Preferences.php';
         $this->_userOptions  = CRM_Core_BAO_Preferences::valueOptions( 'user_dashboard_options' );

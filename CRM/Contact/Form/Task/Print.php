@@ -76,7 +76,7 @@ class CRM_Contact_Form_Task_Print extends CRM_Contact_Form_Task {
 
         $returnP = isset($returnPropeties) ? $returnPropeties : "";
         $customSearchClass = $this->get( 'customSearchClass' );
-        eval( '$selector   =& new ' .
+        eval( '$selector   = new ' .
               $selectorName . 
               '( $customSearchClass,
                  $fv,
@@ -84,7 +84,7 @@ class CRM_Contact_Form_Task_Print extends CRM_Contact_Form_Task {
                  $returnP,
                  $this->_action,
                  $includeContactIds );' );
-        $controller =& new CRM_Core_Selector_Controller($selector ,
+        $controller = new CRM_Core_Selector_Controller($selector ,
                                                         null,
                                                         $sortID,
                                                         CRM_Core_Action::VIEW,

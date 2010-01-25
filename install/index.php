@@ -427,7 +427,7 @@ class InstallRequirements {
 
         list($reqA, $reqB, $reqC) = explode('.', $version);
         list($a, $b, $c) = explode('.', phpversion());
-        $c = ereg_replace('-.*$','',$c);
+        $c = preg_replace('[-.*$]','',$c);
 
         if($a > $reqA) return true;
         if($a == $reqA && $b > $reqB) return true;

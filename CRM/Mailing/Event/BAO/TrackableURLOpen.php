@@ -60,7 +60,7 @@ class CRM_Mailing_Event_BAO_TrackableURLOpen extends CRM_Mailing_Event_DAO_Track
         require_once 'CRM/Mailing/Event/BAO/Queue.php';
         require_once 'CRM/Mailing/BAO/Job.php';
 
-        $search =& new CRM_Mailing_BAO_TrackableURL();
+        $search = new CRM_Mailing_BAO_TrackableURL();
         
         /* To find the url, we also join on the queue and job tables.  This
          * prevents foreign key violations. */
@@ -83,7 +83,7 @@ class CRM_Mailing_Event_BAO_TrackableURLOpen extends CRM_Mailing_Event_DAO_Track
             return CRM_Utils_System::baseURL();
         }
 
-        $open =& new CRM_Mailing_Event_BAO_TrackableURLOpen();
+        $open = new CRM_Mailing_Event_BAO_TrackableURLOpen();
         $open->event_queue_id = $queue_id;
         $open->trackable_url_id = $url_id;
         $open->time_stamp = date('YmdHis');
@@ -106,7 +106,7 @@ class CRM_Mailing_Event_BAO_TrackableURLOpen extends CRM_Mailing_Event_DAO_Track
      */
     public static function getTotalCount($mailing_id, $job_id = null,
                                         $is_distinct = false, $url_id = null) {
-        $dao =& new CRM_Core_DAO();
+        $dao = new CRM_Core_DAO();
         
         $click      = self::getTableName();
         $queue      = CRM_Mailing_Event_BAO_Queue::getTableName();
@@ -167,7 +167,7 @@ class CRM_Mailing_Event_BAO_TrackableURLOpen extends CRM_Mailing_Event_DAO_Track
         $is_distinct = false, $url_id, 
         $offset = null, $rowCount = null, $sort = null) {
         
-        $dao =& new CRM_Core_Dao();
+        $dao = new CRM_Core_Dao();
         
         $click      = self::getTableName();
         $url        = CRM_Mailing_BAO_TrackableURL::getTableName();

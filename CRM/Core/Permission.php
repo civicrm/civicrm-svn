@@ -66,7 +66,7 @@ class CRM_Core_Permission {
      * @return string the permission of the user (edit or view or null)
      */
     public static function getPermission( ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userPermissionClass ) . '.php' );
         return eval( 'return ' . $config->userPermissionClass . '::getPermission( );' );
     }
@@ -81,7 +81,7 @@ class CRM_Core_Permission {
      * @access public
      */
     static function check( $str ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userPermissionClass ) . '.php' );
         return eval( 'return ' . $config->userPermissionClass . '::check( $str ); ' );
     }
@@ -97,7 +97,7 @@ class CRM_Core_Permission {
      * @access public
      */
     public static function whereClause( $type, &$tables, &$whereTables ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userPermissionClass ) . '.php' );
         return eval( 'return ' . $config->userPermissionClass . '::whereClause( $type, $tables, $whereTables );' );
     }
@@ -116,7 +116,7 @@ class CRM_Core_Permission {
      *
      */
     public static function group( $groupType, $excludeHidden = true ) {
-        $config   =& CRM_Core_Config::singleton( );
+        $config   = CRM_Core_Config::singleton( );
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userPermissionClass ) . '.php' );
         return eval( 'return ' . $config->userPermissionClass . '::group( $groupType, $excludeHidden );' );
     }
@@ -238,7 +238,7 @@ class CRM_Core_Permission {
     }
 
     static function access( $module, $checkPermission = true ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
 
         if ( ! in_array( $module, $config->enableComponents ) ) {
             return false;
@@ -304,7 +304,7 @@ class CRM_Core_Permission {
         // if component_id is present, ensure it is enabled
         if ( isset( $item['component_id'] ) &&
              $item['component_id'] ) {
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( is_array( $config->enableComponentIDs ) &&
                  in_array( $item['component_id'],
                            $config->enableComponentIDs ) ) {

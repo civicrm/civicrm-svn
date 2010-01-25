@@ -192,7 +192,7 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
         }
 
         // set the params in session
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->set('profileParams', $this->_params);
    }
 
@@ -251,16 +251,16 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
             // the selector will override this if the user does have
             // edit permissions as determined by the mask, CRM-4341
             // do not allow edit for anon users in joomla frontend, CRM-4668
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             if ( ! CRM_Core_Permission::check( 'access CiviCRM' ) ||
                  $config->userFrameworkFrontend == 1 ) {
                 $editLink = false;
             }
             
-            $selector =& new CRM_Profile_Selector_Listings( $this->_params, $this->_customFields, $this->_gid,
+            $selector = new CRM_Profile_Selector_Listings( $this->_params, $this->_customFields, $this->_gid,
                                                             $map, $editLink, $linkToUF );
             
-            $controller =& new CRM_Core_Selector_Controller($selector ,
+            $controller = new CRM_Core_Selector_Controller($selector ,
                                                             $this->get( CRM_Utils_Pager::PAGE_ID ),
                                                             $this->get( CRM_Utils_Sort::SORT_ID  ),
                                                             CRM_Core_Action::VIEW,
@@ -273,7 +273,7 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
             $this->assign( 'isReset', true );
         }
 
-        $formController =& new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Search',
+        $formController = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Search',
                                                            ts('Search Profile'),
                                                            CRM_Core_Action::ADD );
         $formController->setEmbedded( true );
@@ -297,7 +297,7 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
      */
     function getProfileContact( $gid ) 
     {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $params = $session->get('profileParams');
         
         $details = array( );
@@ -331,7 +331,7 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
         $returnProperties['sort_name'   ] = 1;
 
         $queryParams =& CRM_Contact_BAO_Query::convertFormValues( $params, 1 );
-        $query   =& new CRM_Contact_BAO_Query( $queryParams, $returnProperties, $fields );
+        $query   = new CRM_Contact_BAO_Query( $queryParams, $returnProperties, $fields );
         
         $ids = $query->searchQuery( 0, 0, null, 
                                     false, false, false, 

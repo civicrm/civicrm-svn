@@ -610,7 +610,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 CRM_Core_BAO_UFField::resetInSelectorANDSearchable( $this->_gid );
             }
             
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $showBestResult = false;
             if ( in_array( $ufField->field_name, array( 'country', 'state_province' ) ) && count( $config->countryLimit ) > 1 ) {
                 // get state or country field weight if exists
@@ -618,7 +618,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 if ( $ufField->field_name == 'state_province' ) {
                     $field = 'country';
                 }
-                $ufFieldDAO =& new CRM_Core_DAO_UFField();
+                $ufFieldDAO = new CRM_Core_DAO_UFField();
                 $ufFieldDAO->field_name = $field;
                 $ufFieldDAO->location_type_id = $ufField->location_type_id;
                 $ufFieldDAO->uf_group_id = $ufField->uf_group_id;
@@ -647,7 +647,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         }
         $buttonName = $this->controller->getButtonName( );
 
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another profile field.'));
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/uf/group/field', "reset=1&action=add&gid={$this->_gid}&sbr={$showBestResult}"));
@@ -668,7 +668,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRuleSubType( $fieldType, $groupType, &$errors )
+    static function formRuleSubType( $fieldType, $groupType, $errors )
     { 
         if ( in_array( $fieldType, array( 'Participant', 'Contribution', 'Membership' ) ) ) {
             $individualSubTypes  = CRM_Contact_BAO_ContactType::subTypes( 'Individual' );
@@ -705,7 +705,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {
         $is_required     = CRM_Utils_Array::value( 'is_required'    , $fields, false );
         $is_registration = CRM_Utils_Array::value( 'is_registration', $fields, false );
@@ -736,7 +736,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             //get custom field id 
             $customFieldId = explode('_', $fieldName);
             if ($customFieldId[0] == 'custom') {
-                $customField =& new CRM_Core_DAO_CustomField();
+                $customField = new CRM_Core_DAO_CustomField();
                 $customField->id = $customFieldId[1];
                 $customField->find(true);
                 
@@ -749,11 +749,11 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         //check profile is configured for double option process
         //adding group field, email field should be present in the group 
         //fixed for  issue CRM-2861 & CRM-4153
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $config->profileDoubleOptIn ) { 
             if ( $fields['field_name'][1] == 'group' ) {
                 require_once 'CRM/Core/BAO/UFField.php';
-                $dao =& new CRM_Core_BAO_UFField();
+                $dao = new CRM_Core_BAO_UFField();
                 $dao->uf_group_id = $fields['group_id'];
                 $dao->find( );
                 $emailField = false ;

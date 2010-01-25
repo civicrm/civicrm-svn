@@ -126,8 +126,8 @@ class CRM_Core_Page {
 
         // let the constructor initialize this, should happen only once
         if ( ! isset( self::$_template ) ) {
-            self::$_template =& CRM_Core_Smarty::singleton( );
-            self::$_session  =& CRM_Core_Session::singleton( );
+            self::$_template = CRM_Core_Smarty::singleton( );
+            self::$_session  = CRM_Core_Session::singleton( );
 
         }
 
@@ -181,7 +181,7 @@ class CRM_Core_Page {
             }
             exit( );
         }
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         $content = self::$_template->fetch( 'CRM/common/'. strtolower($config->userFramework) .'.tpl' );
         echo CRM_Utils_System::theme( 'page', $content, true, $this->_print );
         return;

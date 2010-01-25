@@ -159,7 +159,7 @@ SELECT count( civicrm_contact.id )
             $sortID = CRM_Utils_Sort::sortIDValue( $this->get( CRM_Utils_Sort::SORT_ID  ),
                                                    $this->get( CRM_Utils_Sort::SORT_DIRECTION ) );
         }
-        $sort =& new CRM_Utils_Sort( $headers, $sortID );
+        $sort = new CRM_Utils_Sort( $headers, $sortID );
         $this->assign_by_ref( 'headers', $headers );
         $this->assign_by_ref( 'sort'   , $sort    );
         $this->set( CRM_Utils_Sort::SORT_ID,

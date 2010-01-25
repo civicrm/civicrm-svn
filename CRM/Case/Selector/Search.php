@@ -165,7 +165,7 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
         // type of selector
         $this->_action = $action;
 
-        $this->_query =& new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
+        $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                     CRM_Contact_BAO_Query::MODE_CASE);
 
         $this->_query->_distinctComponentClause = " DISTINCT ( civicrm_case.id )";

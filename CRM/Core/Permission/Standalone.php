@@ -89,7 +89,7 @@ class CRM_Core_Permission_Standalone {
     static function check( $str ) {
         static $isAdmin = null;
         if ( $isAdmin === null ) {
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             if ( $session->get( 'new_install' ) == 1 && $session->get( 'goahead' ) == 'yes' ) {
                 return true;
             }

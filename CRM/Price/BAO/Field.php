@@ -60,7 +60,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
      */
     static function &add( &$params, $ids ) 
     {
-        $priceFieldBAO         =& new CRM_Price_BAO_Field( );
+        $priceFieldBAO         = new CRM_Price_BAO_Field( );
         
         $priceFieldBAO->copyValues( $params );
         
@@ -219,13 +219,13 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                                                 $label = null ) 
     {
         require_once 'CRM/Utils/Money.php';
-        $field =& new CRM_Price_DAO_Field();
+        $field = new CRM_Price_DAO_Field();
         $field->id = $fieldId;
         if (! $field->find(true)) {
             /* FIXME: failure! */
             return null;
         }
-        $config    =& CRM_Core_Config::singleton();
+        $config    = CRM_Core_Config::singleton();
         $seperator = $config->monetaryThousandSeparator;
         $qf->assign('currencySymbol', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency',$config->defaultCurrency,'symbol','name') );
         if (!isset($label)) {
@@ -392,7 +392,7 @@ WHERE
      */
     public static function deleteField( $id ) 
     {
-        $field     = & new CRM_Price_DAO_Field( );
+        $field     = new CRM_Price_DAO_Field( );
         $field->id = $id;
         
         if ( $field->find( true ) ) {

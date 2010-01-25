@@ -169,7 +169,7 @@ class CRM_Utils_System_Soap {
      * @static
      */
     public static function swapUF() {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         
         self::$uf       = $config->userFramework;
         $config->userFramework = 'Soap';

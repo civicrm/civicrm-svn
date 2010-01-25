@@ -443,10 +443,10 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
     static function isValid( $userID, $title, $register = false, $action = null ) 
     {
         require_once 'CRM/Core/Controller/Simple.php';
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
 
         if ( $register ) {
-            $controller =& new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Dynamic',
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Dynamic',
                                                            ts('Dynamic Form Creator'),
                                                            $action );
             $controller->set( 'id'      , $userID );
@@ -455,12 +455,12 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             return $controller->validate( );
         } else {
             // make sure we have a valid group
-            $group =& new CRM_Core_DAO_UFGroup( );
+            $group = new CRM_Core_DAO_UFGroup( );
             
             $group->title     = $title;
             
             if ( $group->find( true ) && $userID ) {
-                $controller =& new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Dynamic', ts('Dynamic Form Creator'), $action );
+                $controller = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Dynamic', ts('Dynamic Form Creator'), $action );
                 $controller->set( 'gid'     , $group->id );
                 $controller->set( 'id'      , $userID );
                 $controller->set( 'register', 0 );
@@ -496,10 +496,10 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
     {
         require_once "CRM/Core/Controller/Simple.php";
         
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
 
         if ( $register ) {
-            $controller =& new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Dynamic',
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Dynamic',
                                                            ts('Dynamic Form Creator'),
                                                            $action );
             if ( $reset || $doNotProcess ) {
@@ -529,13 +529,13 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 $_POST['_qf_default'] = $_REQUEST['_qf_default'] = $oldQFDefault;
             }
             
-            $template =& CRM_Core_Smarty::singleton( );
+            $template = CRM_Core_Smarty::singleton( );
 
             return trim( $template->fetch( 'CRM/Profile/Form/Dynamic.tpl' ) );
         } else {
             if ( ! $profileID ) {
                 // make sure we have a valid group
-                $group =& new CRM_Core_DAO_UFGroup( );
+                $group = new CRM_Core_DAO_UFGroup( );
                 
                 $group->title     = $title;
 
@@ -558,7 +558,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                     }
                 }
 
-                $controller =& new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Dynamic',
+                $controller = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Dynamic',
                                                                ts('Dynamic Form Creator'),
                                                                $action );
                 if ( $reset ) {
@@ -575,7 +575,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 $controller->setEmbedded( true );
                 $controller->run( );
                 
-                $template =& CRM_Core_Smarty::singleton( );
+                $template = CRM_Core_Smarty::singleton( );
 
                 $templateFile = "CRM/Profile/Form/{$profileID}/Dynamic.tpl";
                 if ( ! $template->template_exists( $templateFile ) ) {
@@ -589,7 +589,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 // if post not empty then only proceed
                 if ( ! empty ( $_POST ) ) {
                     // get the new email
-                    $config =& CRM_Core_Config::singleton( );
+                    $config = CRM_Core_Config::singleton( );
                     $email = CRM_Utils_Array::value( 'mail', $_POST );
                     
                     if ( CRM_Utils_Rule::email( $email ) && ( $email  != $userEmail[1] ) ) {
@@ -662,7 +662,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             $params = array_merge($params, $componentWhere);
         }
        
-        $query   =& new CRM_Contact_BAO_Query( $params, $returnProperties, $fields );
+        $query   = new CRM_Contact_BAO_Query( $params, $returnProperties, $fields );
         $options =& $query->_options;
         
         $details = $query->searchQuery( );
@@ -670,7 +670,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             return;
         }
             
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         
         require_once 'CRM/Core/PseudoConstant.php'; 
         $locationTypes = $imProviders = array( );
@@ -951,7 +951,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                  FROM civicrm_uf_join
                  WHERE civicrm_uf_join.uf_group_id=$id" ; 
         
-        $dao =& new CRM_Core_DAO( );
+        $dao = new CRM_Core_DAO( );
         $dao->query( $sql );
         if ( $dao->fetch( ) ) {        
             return true;
@@ -976,7 +976,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
     {                
         //check whether this group contains  any profile fields
         require_once 'CRM/Core/BAO/UFField.php';
-        $profileField = & new CRM_Core_DAO_UFField();
+        $profileField = new CRM_Core_DAO_UFField();
         $profileField->uf_group_id = $id;
         $profileField->find();
         while($profileField->fetch()) {
@@ -985,12 +985,12 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
         
         //delete records from uf join table
         require_once 'CRM/Core/DAO/UFJoin.php';
-        $ufJoin = & new CRM_Core_DAO_UFJoin();
+        $ufJoin = new CRM_Core_DAO_UFJoin();
         $ufJoin->uf_group_id = $id; 
         $ufJoin->delete();
 
         //delete profile group
-        $group = & new CRM_Core_DAO_UFGroup();
+        $group = new CRM_Core_DAO_UFGroup();
         $group->id = $id; 
         $group->delete();
         return 1;
@@ -1017,7 +1017,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
         $params['limit_listings_group_id'] = CRM_Utils_Array::value( 'group', $params );
         $params['add_to_group_id'        ] = CRM_Utils_Array::value( 'add_contact_to_group', $params );
 
-        $ufGroup =& new CRM_Core_DAO_UFGroup();
+        $ufGroup = new CRM_Core_DAO_UFGroup();
         $ufGroup->copyValues( $params ); 
         $ufGroup->id = CRM_Utils_Array::value( 'ufgroup', $ids );
         $ufGroup->save();
@@ -1087,7 +1087,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
 
         // do a menu rebuild if we are on drupal, so it gets all the new menu entries
         // for user account
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( $menuRebuild &&
              $config->userFramework == 'Drupal' ) {
             menu_rebuild( );
@@ -1116,7 +1116,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         
         $ufJoin = array();
         require_once 'CRM/Core/DAO/UFJoin.php';
-        $dao =& new CRM_Core_DAO_UFJoin( );
+        $dao = new CRM_Core_DAO_UFJoin( );
         
         if ($ufGroupId) {
             $dao->uf_group_id = $ufGroupId;
@@ -1154,7 +1154,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     static function addUFJoin( &$params ) 
     {
         require_once 'CRM/Core/DAO/UFJoin.php';
-        $ufJoin =& new CRM_Core_DAO_UFJoin( );
+        $ufJoin = new CRM_Core_DAO_UFJoin( );
         $ufJoin->copyValues( $params );
         $ufJoin->save( );
         return $ufJoin;
@@ -1172,7 +1172,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     static function delUFJoin( &$params ) 
     {
         require_once 'CRM/Core/DAO/UFJoin.php';
-        $ufJoin =& new CRM_Core_DAO_UFJoin( );
+        $ufJoin = new CRM_Core_DAO_UFJoin( );
         $ufJoin->copyValues( $params );
         $ufJoin->delete( );
     }
@@ -1222,7 +1222,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     {
         require_once 'CRM/Core/DAO.php';
 
-        $dao =& new CRM_Core_DAO( );
+        $dao = new CRM_Core_DAO( );
         $queryString = 'SELECT civicrm_uf_group.id, title, civicrm_uf_group.is_active, is_reserved, group_type
                         FROM civicrm_uf_group
                         LEFT JOIN civicrm_uf_join ON (civicrm_uf_group.id = uf_group_id)';
@@ -1278,7 +1278,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     static function filterUFGroups( $ufGroupId, $contactID = null ) 
     {
         if ( ! $contactID ) {
-           $session =& CRM_Core_Session::singleton( );
+           $session = CRM_Core_Session::singleton( );
            $contactID = $session->get( 'userID' );
         }
 
@@ -1355,7 +1355,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         } else if ( substr($fieldName,0,7) === 'country' ) {
             $form->add('select', $name, $title, 
                        array('' => ts('- select -')) + CRM_Core_PseudoConstant::country(), $required);
-            $config =& CRM_Core_Config::singleton( );                       
+            $config = CRM_Core_Config::singleton( );                       
             if ( ($mode != CRM_Profile_Form::MODE_EDIT) && $config->defaultContactCountry ) {
                 $defaultValues[$name] = $config->defaultContactCountry;
                 $form->setDefaults( $defaultValues ); 
@@ -1718,7 +1718,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                                         } else if ( $fieldName == 'country' ) {
                                             $defaults[$fldName] = $value['country_id'];
                                             if ( ! isset($value['country_id']) || ! $value['country_id'] ) {
-                                                $config =& CRM_Core_Config::singleton();
+                                                $config = CRM_Core_Config::singleton();
                                                 if ( $config->defaultContactCountry ) {
                                                     $defaults[$fldName] = $config->defaultContactCountry;
                                                 }
@@ -1836,7 +1836,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     {
         foreach($fields as $name=>$field) {
             if ( substr( $name, 0, 8 ) == 'country-' ) {
-                $config =& CRM_Core_Config::singleton();
+                $config = CRM_Core_Config::singleton();
                 if ( $config->defaultContactCountry ) {
                     $defaults[$name] = $config->defaultContactCountry;
                 }
@@ -1912,7 +1912,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             return;
         }
         
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
 
         $displayName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                                     $contactID,

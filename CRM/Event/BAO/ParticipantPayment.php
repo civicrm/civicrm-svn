@@ -41,7 +41,7 @@ class CRM_Event_BAO_ParticipantPayment extends CRM_Event_DAO_ParticipantPayment
   
     static function &create(&$params, &$ids) 
     { 
-        $paymentParticipant =& new CRM_Event_BAO_ParticipantPayment(); 
+        $paymentParticipant = new CRM_Event_BAO_ParticipantPayment(); 
         $paymentParticipant->copyValues($params);
         if ( isset( $ids['id'] ) ) {
             $paymentParticipant->id = CRM_Utils_Array::value( 'id', $ids );
@@ -65,7 +65,7 @@ class CRM_Event_BAO_ParticipantPayment extends CRM_Event_DAO_ParticipantPayment
     static function deleteParticipantPayment( $params ) 
     {
         require_once 'CRM/Event/DAO/ParticipantPayment.php';
-        $participantPayment =& new CRM_Event_DAO_ParticipantPayment( );
+        $participantPayment = new CRM_Event_DAO_ParticipantPayment( );
 
         $valid = false;
         foreach ( $params as $field => $value ) {

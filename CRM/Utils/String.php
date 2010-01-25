@@ -267,7 +267,7 @@ class CRM_Utils_String {
      * @access public
      */
     function extractURLVarValue( $query ) {
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $urlVar =  $config->userFrameworkURLVar;
 
         $params = explode( '&', $query );

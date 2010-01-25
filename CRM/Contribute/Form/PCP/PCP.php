@@ -65,7 +65,7 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
         if ( ! $this->_action ) {
             $action  = CRM_Utils_Array::value( 'action', $_GET );
             $id      = CRM_Utils_Array::value( 'id', $_GET );
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $userID  = $session->get('userID');
             //do not allow destructive actions without permissions
             $permission = false;
@@ -161,7 +161,7 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function formRule( &$fields, &$files, &$form ) {
+    static function formRule( $fields, $files, $form ) {
     }
 
     /**

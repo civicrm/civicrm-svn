@@ -60,7 +60,7 @@ class CRM_Core_BAO_Discount extends CRM_Core_DAO_Discount
     static function del ( $id ) 
     {
         // delete all discount records with the selected discounted id
-        $discount =& new CRM_Core_DAO_Discount( );
+        $discount = new CRM_Core_DAO_Discount( );
         $discount->id = $id;
         if ( $discount->delete( ) ) {
             return true;
@@ -82,7 +82,7 @@ class CRM_Core_BAO_Discount extends CRM_Core_DAO_Discount
      */
     static function add( &$params ) 
     {
-        $discount =& new CRM_Core_DAO_Discount( );
+        $discount = new CRM_Core_DAO_Discount( );
         $discount->copyValues( $params );
         $discount->save( );
         return $discount;
@@ -101,7 +101,7 @@ class CRM_Core_BAO_Discount extends CRM_Core_DAO_Discount
     {
         $optionGroupIDs = array();
         require_once 'CRM/Core/DAO/Discount.php';
-        $dao =& new CRM_Core_DAO_Discount( );
+        $dao = new CRM_Core_DAO_Discount( );
         $dao->entity_id    = $entityId;
         $dao->entity_table = $entityTable;
         $dao->find( );
@@ -130,7 +130,7 @@ class CRM_Core_BAO_Discount extends CRM_Core_DAO_Discount
         }
         
         require_once 'CRM/Core/DAO/Discount.php';
-        $dao =& new CRM_Core_DAO_Discount( );
+        $dao = new CRM_Core_DAO_Discount( );
         $dao->entity_id    = $entityID;
         $dao->entity_table = $entityTable;
         $dao->find( );

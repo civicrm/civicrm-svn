@@ -70,7 +70,7 @@ class CRM_Custom_Form_DeleteGroup extends CRM_Core_Form {
         
         require_once 'CRM/Core/BAO/CustomField.php';
         //check wheter this contain any custom fields
-        $customField = & new CRM_Core_DAO_CustomField();
+        $customField = new CRM_Core_DAO_CustomField();
         $customField->custom_group_id = $this->_id;
         
         if ($customField->find(true)) {
@@ -109,7 +109,7 @@ class CRM_Custom_Form_DeleteGroup extends CRM_Core_Form {
      * @access public
      */
     public function postProcess( ) {
-        $group = & new CRM_Core_DAO_CustomGroup();
+        $group = new CRM_Core_DAO_CustomGroup();
         $group->id = $this->_id;
         $group->find( true );
         

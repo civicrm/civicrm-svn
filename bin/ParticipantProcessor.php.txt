@@ -36,7 +36,7 @@ class CRM_ParticipantProcessor
 {
     function __construct( ) 
     {
-        $config =& CRM_Core_Config::singleton();
+        $config = CRM_Core_Config::singleton();
         
         //this does not return on failure
         require_once 'CRM/Utils/System.php';
@@ -228,7 +228,7 @@ LEFT JOIN  civicrm_event event ON ( event.id = participant.event_id )
     }
 }
 
-$obj =& new CRM_ParticipantProcessor( );
+$obj = new CRM_ParticipantProcessor( );
 echo "Updating..";
 $obj->updateParticipantStatus( );
 echo "<br />Participant records updated. (Done)";

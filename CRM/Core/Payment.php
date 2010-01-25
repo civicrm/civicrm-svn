@@ -89,7 +89,7 @@ abstract class CRM_Core_Payment {
      */  
     static function &singleton( $mode = 'test', $component, &$paymentProcessor, &$paymentForm = null ) {
         if ( self::$_singleton === null ) {
-            $config       =& CRM_Core_Config::singleton( );
+            $config       = CRM_Core_Config::singleton( );
             $paymentClass = "CRM_{$component}_" . $paymentProcessor['class_name'];
             
             $classPath = str_replace( '_', '/', $paymentClass ) . '.php';

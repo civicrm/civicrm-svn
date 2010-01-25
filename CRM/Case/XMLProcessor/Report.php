@@ -570,7 +570,7 @@ LIMIT  1
         require_once 'CRM/Contact/BAO/Contact.php';
         require_once 'CRM/Core/BAO/CustomField.php';
         
-        $template =& CRM_Core_Smarty::singleton( );
+        $template = CRM_Core_Smarty::singleton( );
       
         $template->assign( 'caseId',   $caseID ); 
         $template->assign( 'clientID', $clientID );

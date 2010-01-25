@@ -80,7 +80,7 @@ class CRM_Utils_SoapServer
      * @access public
      */
     public function ping($var) {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $key = $session->get('key');
         $session->set( 'key', $var );
         return "PONG: $var ($key)";
@@ -95,7 +95,7 @@ class CRM_Utils_SoapServer
      * @access public
      */
     public function verify($key) {
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
 
         $soap_key = $session->get('soap_key');
         $t = time();
@@ -131,7 +131,7 @@ class CRM_Utils_SoapServer
             throw new SoapFault('Client', 'Invalid login');
         }
         
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $session->set('soap_key', $result[2]);
         $session->set('soap_time', time());
         

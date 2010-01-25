@@ -201,7 +201,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                 $defaults['is_active'           ] = CRM_Utils_Array::value( 'is_active', $this->_values );
                 $defaults['is_permission_a_b'   ] = CRM_Utils_Array::value( 'is_permission_a_b', $this->_values );
                 $defaults['is_permission_b_a'   ] = CRM_Utils_Array::value( 'is_permission_b_a', $this->_values );
-                $contact =& new CRM_Contact_DAO_Contact( );
+                $contact = new CRM_Contact_DAO_Contact( );
                 if ( $this->_rtype == 'a_b' && $this->_values['contact_id_a'] == $this->_contactId ) {
                     $contact->id = $this->_values['contact_id_b'];
                 } else {
@@ -477,7 +477,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             $status .= ts('Relationship record has been updated.');
         }
         
-        $note =& new CRM_Core_DAO_Note( );
+        $note = new CRM_Core_DAO_Note( );
         $note->entity_id = $relationshipIds[0];
         $note->entity_table = 'civicrm_relationship';
         $noteIds = array();
@@ -588,7 +588,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         $excludedContactIds = array( $this->_contactId );
 
         if ( $params['relationship_type_id'] ) {
-            $relationshipType =& new CRM_Contact_DAO_RelationshipType( );
+            $relationshipType = new CRM_Contact_DAO_RelationshipType( );
             list( $rid, $direction ) = explode( '_', $params['relationship_type_id'], 2 );
            
             $relationshipType->id = $rid;
@@ -619,15 +619,15 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         }
 
         // get the count of contact
-        $contactBAO  =& new CRM_Contact_BAO_Contact( );
-        $query =& new CRM_Contact_BAO_Query( $searchValues );
+        $contactBAO  = new CRM_Contact_BAO_Contact( );
+        $query = new CRM_Contact_BAO_Query( $searchValues );
         $searchCount = $query->searchQuery(0, 0, null, true );
         $this->set( 'searchCount', $searchCount );
         if ( $searchCount <= self::MAX_RELATIONSHIPS ) {
             // get the result of the search
             $result = $query->searchQuery(0, 50, null);
             
-            $config =& CRM_Core_Config::singleton( );
+            $config = CRM_Core_Config::singleton( );
             $searchRows = array( );
 
             //variable is set if only one record is foun and that record already has relationship with the contact
@@ -677,7 +677,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
    * @access public
    * @static
    */
-    static function formRule( &$params, &$files, &$form ) {
+    static function formRule( $params, $files, $form ) {
         
         // hack, no error check for refresh
         if ( CRM_Utils_Array::value( '_qf_Relationship_refresh', $_POST ) ) {
@@ -685,7 +685,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         }
         
         $ids = array( );
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $ids['contact'     ] = $form->get( 'contactId'     );
         $ids['relationship'] = $form->get( 'relationshipId');
         
@@ -730,7 +730,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
      * @access public
      * @static
      */
-    static function dateRule( &$params ) {
+    static function dateRule( $params ) {
         $errors = array( );
 
         // check start and end date

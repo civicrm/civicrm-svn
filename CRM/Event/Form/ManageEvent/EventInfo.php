@@ -118,7 +118,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
         }
 
         require_once 'CRM/Core/ShowHideBlocks.php';
-        $this->_showHide =& new CRM_Core_ShowHideBlocks( );
+        $this->_showHide = new CRM_Core_ShowHideBlocks( );
         // Show waitlist features or event_full_text if max participants set
         if ( CRM_Utils_Array::value('max_participants', $defaults) ) {
             $this->_showHide->addShow( 'id-waitlist' );
@@ -252,7 +252,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
      * @static
      * @access public
      */
-    static function formRule( &$values ) 
+    static function formRule( $values ) 
     {
         $errors = array( );
 
@@ -298,7 +298,7 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
 
         //new event, so lets set the created_id
         if ( $this->_action & CRM_Core_Action::ADD ) { 
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $params['created_id']   = $session->get( 'userID' );
             $params['created_date'] = date('YmdHis');
         }   

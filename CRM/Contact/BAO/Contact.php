@@ -101,7 +101,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
      */
     static function add( &$params ) 
     {
-        $contact =& new CRM_Contact_DAO_Contact();
+        $contact = new CRM_Contact_DAO_Contact();
 
         if ( empty($params) ) {
             return;
@@ -297,7 +297,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         }
         
         //get userID from session
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         $userID  = $session->get( 'userID' );
         // add notes
         if ( CRM_Utils_Array::value( 'note', $params ) ) {
@@ -400,7 +400,7 @@ FROM      civicrm_contact
 LEFT JOIN civicrm_email ON civicrm_email.contact_id = civicrm_contact.id
      AND  civicrm_email.is_primary = 1
 WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
-        $dao =& new CRM_Core_DAO( );
+        $dao = new CRM_Core_DAO( );
         $dao->query( $sql );
         if ( $dao->fetch( ) ) {
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
@@ -618,7 +618,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
             return false;
         }
                                                          
-        $contact =& new CRM_Contact_DAO_Contact();
+        $contact = new CRM_Contact_DAO_Contact();
         $contact->id = $id;
         if (! $contact->find(true)) {
             return false;
@@ -645,7 +645,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         
         // delete the log entries since we dont have triggers enabled as yet
         require_once 'CRM/Core/DAO/Log.php';
-        $logDAO =& new CRM_Core_DAO_Log(); 
+        $logDAO = new CRM_Core_DAO_Log(); 
         $logDAO->entity_table = 'civicrm_contact';
         $logDAO->entity_id    = $id;
         $logDAO->delete();
@@ -1546,14 +1546,14 @@ AND    civicrm_contact.id = %1";
         //to update student record
         if ( CRM_Core_Permission::access( 'Quest' ) && $studentFieldPresent ) {
             $ids = array();
-            $dao = & new CRM_Quest_DAO_Student();
+            $dao = new CRM_Quest_DAO_Student();
             $dao->contact_id = $contactID;
             if ($dao->find(true)) {
                 $ids['id'] = $dao->id;
             }
 
             $ssids = array( );
-            $studentSummary = & new CRM_Quest_DAO_StudentSummary();
+            $studentSummary = new CRM_Quest_DAO_StudentSummary();
             $studentSummary->contact_id = $contactID;
             if ($studentSummary->find(true)) {
                 $ssids['id'] = $studentSummary->id;
@@ -1783,7 +1783,7 @@ UNION
      */
     private static function _getValues( &$params, &$values ) 
     {
-        $contact =& new CRM_Contact_BAO_Contact( );
+        $contact = new CRM_Contact_BAO_Contact( );
 
         $contact->copyValues( $params );
 
@@ -1879,7 +1879,7 @@ UNION
             
         case 'log' :
         case 'note':
-            eval( '$object =& new CRM_Core_DAO_'.$component.'( );');
+            eval( '$object = new CRM_Core_DAO_'.$component.'( );');
             $object->entity_table = 'civicrm_contact';
             $object->entity_id    = $contactId;
             $object->orderBy( 'modified_date desc' );
@@ -1892,21 +1892,21 @@ UNION
             
         case 'membership' :
             require_once 'CRM/Member/DAO/Membership.php';
-            eval( '$object =& new CRM_Member_DAO_Membership( );');
+            eval( '$object = new CRM_Member_DAO_Membership( );');
             $object->contact_id = $contactId;
             $object->is_test    = 0;
             break;
             
         case 'participant' :
             require_once 'CRM/Event/DAO/Participant.php';
-            eval( '$object =& new CRM_Event_DAO_Participant( );');
+            eval( '$object = new CRM_Event_DAO_Participant( );');
             $object->contact_id = $contactId;
             $object->is_test    = 0;
             break;
             
         case 'pledge' :
             require_once 'CRM/Pledge/DAO/Pledge.php';
-            eval( '$object =& new CRM_Pledge_DAO_Pledge( );');
+            eval( '$object = new CRM_Pledge_DAO_Pledge( );');
             $object->contact_id = $contactId;
             $object->is_test    = 0;
             break;
@@ -1917,7 +1917,7 @@ UNION
             
         case 'grant' :
             require_once 'CRM/Grant/DAO/Grant.php';
-            eval( '$object =& new CRM_Grant_DAO_Grant( );');
+            eval( '$object = new CRM_Grant_DAO_Grant( );');
             $object->contact_id = $contactId;
             break;
             
@@ -2042,7 +2042,7 @@ UNION
          foreach ( array( 'Email', 'OpenID', 'Phone', 'Address', 'IM' ) as $block ) {
              $name = strtolower( $block );
              require_once "CRM/Core/DAO/{$block}.php";
-             eval("\$blockDAO =& new CRM_Core_DAO_$block();");
+             eval("\$blockDAO = new CRM_Core_DAO_$block();");
              
              // build the condition.
              if ( is_array( $criteria ) ) {
@@ -2145,7 +2145,7 @@ UNION
                                         'new-email', 'group-add-contact', 'tag-contact' );
          $corePermission = CRM_Core_Permission::getPermission( );
          
-         $config =& CRM_Core_Config::singleton( );
+         $config = CRM_Core_Config::singleton( );
          
          $contextMenu = array( );
          foreach ( $menu as $key => $values ) {

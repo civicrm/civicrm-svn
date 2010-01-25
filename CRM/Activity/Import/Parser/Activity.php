@@ -187,7 +187,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
         $errorMessage = null;
         
         //for date-Formats
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $dateType = $session->get("dateTypes");
         $params['source_contact_id'] = $session->get( 'userID' );
         foreach ($params as $key => $val) {
@@ -241,7 +241,7 @@ class CRM_Activity_Import_Parser_Activity extends CRM_Activity_Import_Parser
             $params = array_merge( $params, array( 'activity_name' => $values[$activityName]) );
         }
         //for date-Formats
-        $session =& CRM_Core_Session::singleton();
+        $session = CRM_Core_Session::singleton();
         $dateType = $session->get("dateTypes");
         $params['source_contact_id'] = $session->get( 'userID' );
         $formatted = array();

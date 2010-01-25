@@ -125,7 +125,7 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
      * @static
      * @access public
      */
-    static function formRule( &$values ) 
+    static function formRule( $values ) 
     {
         $errors = array( );
         
@@ -152,7 +152,7 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
         if ( $this->_id ) {
             $params['id'] = $this->_id;
         } else { 
-            $session =& CRM_Core_Session::singleton( );
+            $session = CRM_Core_Session::singleton( );
             $params['created_id']   = $session->get( 'userID' );
             $params['created_date'] = date('YmdHis');
         }            

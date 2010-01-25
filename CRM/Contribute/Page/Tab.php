@@ -102,7 +102,7 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
             CRM_Contribute_BAO_Contribution::annual( $this->_contactId );
         $this->assign( 'annual', $annual );
 
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), $this->_action );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), $this->_action );
         $controller->setEmbedded( true );
         $controller->reset( );
         $controller->set( 'cid'  , $this->_contactId );
@@ -167,7 +167,7 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
      */ 
     function view( ) 
     {
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_ContributionView',  
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_ContributionView',  
                                                        'View Contribution',  
                                                        $this->_action ); 
         $controller->setEmbedded( true );  
@@ -191,7 +191,7 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
             CRM_Utils_System::redirectToSSL( );
         }
 
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Contribution', 
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Contribution', 
                                                        'Create Contribution', 
                                                        $this->_action );
         $controller->setEmbedded( true ); 
@@ -253,7 +253,7 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
     {
         $context = CRM_Utils_Request::retrieve( 'context', 'String',
                                                 $this, false, 'search' );
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
        
         switch ( $context ) {
 
@@ -337,7 +337,7 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
             break;
         }
 
-        $session =& CRM_Core_Session::singleton( ); 
+        $session = CRM_Core_Session::singleton( ); 
         $session->pushUserContext( $url );
     }
 }

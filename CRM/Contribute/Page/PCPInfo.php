@@ -55,8 +55,8 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
      */
     function run()
     {
-        $session =& CRM_Core_Session::singleton( );
-        $config =& CRM_Core_Config::singleton( );
+        $session = CRM_Core_Session::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $permissionCheck = false;
         $statusMessage = '';
         if ( $config->userFramework != 'Joomla') {
@@ -261,7 +261,7 @@ class CRM_Contribute_Page_PCPInfo extends CRM_Core_Page
         }
         if ( $single && $permission ) {
             require_once 'CRM/Core/Controller/Simple.php';
-            $controller =& new CRM_Core_Controller_Simple( $form, $subForm, $action); 
+            $controller = new CRM_Core_Controller_Simple( $form, $subForm, $action); 
             $controller->set('id', $this->_id);
             $controller->set('single', true );
             $controller->process(); 

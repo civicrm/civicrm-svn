@@ -69,7 +69,7 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
     public function preProcess( ) 
     {
         parent::preProcess( );
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         if ( ! $this->_gName ) {
             $this->_gName = CRM_Utils_Request::retrieve('group','String', $this, false, 0);
             $this->_gid   = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup',
@@ -186,7 +186,7 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         // If CiviCase enabled AND "Add" mode OR "edit" mode for non-reserved activities, only allow user to pick Core or CiviCase component.
         // FIXME: Each component should define whether adding new activity types is allowed.
         require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ($this->_gName == 'activity_type' && in_array("CiviCase", $config->enableComponents) &&
             ( ($this->_action & CRM_Core_Action::ADD) || ! $isReserved ) ) {
                 require_once 'CRM/Core/Component.php';
@@ -245,7 +245,7 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
      * @access public  
      * @static  
      */  
-    static function formRule( &$fields, &$files, $self ) 
+    static function formRule( $fields, $files, $self ) 
     {
         $errors = array( );
         if ( $self->_gName == 'from_email_address' ) {

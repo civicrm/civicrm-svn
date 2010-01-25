@@ -71,7 +71,7 @@ class CRM_Grant_Form_GrantView extends CRM_Core_Form
 
         if ( isset( $this->_id ) ) {
             require_once 'CRM/Core/BAO/Note.php';
-            $noteDAO               = & new CRM_Core_BAO_Note();
+            $noteDAO               = new CRM_Core_BAO_Note();
             $noteDAO->entity_table = 'civicrm_grant';
             $noteDAO->entity_id    = $this->_id;
             if ( $noteDAO->find(true) ) {

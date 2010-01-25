@@ -165,7 +165,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         }
 
         // form fields of Custom Option rows
-        $_showHide =& new CRM_Core_ShowHideBlocks('','');
+        $_showHide = new CRM_Core_ShowHideBlocks('','');
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue' );
         $labelAttribute  = $attributes['label' ];
         $nameAttribute   = $attributes['name'  ];
@@ -276,7 +276,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
      * @static
      * @access public
      */
-    static function formRule( &$fields, &$files, &$form ) {
+    static function formRule( $fields, $files, $form ) {
         
         // all option fields are of type "money"
         $errors = array( );
@@ -362,7 +362,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
                 }
             }
           
-            $_showHide = & new CRM_Core_ShowHideBlocks('','');
+            $_showHide = new CRM_Core_ShowHideBlocks('','');
             
             // do not process if no option rows were submitted
             if ( empty( $fields['option_name'] ) && empty( $fields['option_label'] ) ) {
@@ -517,7 +517,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
             CRM_Core_Session::setStatus(ts('Price Field \'%1\' has been saved.', array(1 => $priceField->label)));
         }
         $buttonName = $this->controller->getButtonName( );
-        $session =& CRM_Core_Session::singleton( );
+        $session = CRM_Core_Session::singleton( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another price set field.'));
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/admin/price/field', 'reset=1&action=add&sid=' . $this->_sid));

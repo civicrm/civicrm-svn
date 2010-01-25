@@ -122,7 +122,7 @@ class CRM_Admin_Page_Options extends CRM_Core_Page_Basic
             $this->assign( 'showCounted', true );
         }
         require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         if ( in_array("CiviCase", $config->enableComponents) && self::$_gName == 'activity_type' ) {
             $this->assign( 'showComponent', true );
         }

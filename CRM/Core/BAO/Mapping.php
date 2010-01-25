@@ -62,7 +62,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
      */
     static function retrieve( &$params, &$defaults ) 
     {
-        $mapping =& new CRM_Core_DAO_Mapping( );
+        $mapping = new CRM_Core_DAO_Mapping( );
         $mapping->copyValues( $params );
         if ( $mapping->find( true ) ) {
             CRM_Core_DAO::storeValues( $mapping, $defaults );
@@ -85,7 +85,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
     {
         // delete from mapping_field table
         require_once "CRM/Core/DAO/MappingField.php";
-        $mappingField =& new CRM_Core_DAO_MappingField( );
+        $mappingField = new CRM_Core_DAO_MappingField( );
         $mappingField->mapping_id = $id;
         $mappingField->find();
         while ( $mappingField->fetch() ) {
@@ -93,7 +93,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         }
         
         // delete from mapping table
-        $mapping =& new CRM_Core_DAO_Mapping( );
+        $mapping = new CRM_Core_DAO_Mapping( );
         $mapping->id = $id;
         $mapping->delete();
         CRM_Core_Session::setStatus( ts('Selected Mapping has been Deleted Successfuly.') );
@@ -116,7 +116,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
      */
     static function add( &$params ) 
     {
-        $mapping            =& new CRM_Core_DAO_Mapping( );
+        $mapping            = new CRM_Core_DAO_Mapping( );
         $mapping->copyValues( $params );
         $mapping->save( );
 
@@ -160,7 +160,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
     {
         //mapping is to be loaded from database
         require_once "CRM/Core/DAO/MappingField.php";
-        $mapping =& new CRM_Core_DAO_MappingField();
+        $mapping = new CRM_Core_DAO_MappingField();
         $mapping->mapping_id = $mappingId;
         $mapping->orderBy('column_number');
         $mapping->find();
@@ -214,7 +214,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
      */
     static function checkMapping( $nameField, $mapTypeId )
     {
-        $mapping =& new CRM_Core_DAO_Mapping();
+        $mapping = new CRM_Core_DAO_Mapping();
         $mapping->name = $nameField;
         $mapping->mapping_type_id = $mapTypeId;
         if ( $mapping->find(true) ) {
@@ -239,7 +239,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         $returnFields = array();
 
         //get the fields from mapping table
-        $dao =& new CRM_Core_DAO_MappingField( );
+        $dao = new CRM_Core_DAO_MappingField( );
         $dao->mapping_id = $smartGroupId;
         $dao->find();
         while ( $dao->fetch( ) ) {
@@ -578,7 +578,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
                             asort( $relationshipCustomFields ) ;
                             
                             require_once 'CRM/Contact/BAO/RelationshipType.php';
-                            $relationshipType =& new CRM_Contact_BAO_RelationshipType( ); 
+                            $relationshipType = new CRM_Contact_BAO_RelationshipType( ); 
                             $relationshipType->id = $id;
                             if ( $relationshipType->find( true ) ) {
                                 $direction = "contact_sub_type_$second";
@@ -1062,7 +1062,7 @@ for(var i=0;i<noneArray.length;i++) {
     {
         //delete mapping fields records for exixting mapping
         require_once "CRM/Core/DAO/MappingField.php";
-        $mappingFields =& new CRM_Core_DAO_MappingField();
+        $mappingFields = new CRM_Core_DAO_MappingField();
         $mappingFields->mapping_id = $mappingId;
         $mappingFields->delete( );
         
@@ -1076,7 +1076,7 @@ for(var i=0;i<noneArray.length;i++) {
             foreach ($value as $k => $v) {
                 
                 if ( CRM_Utils_Array::value( '1' ,$v ) ) {
-                    $saveMappingFields =& new CRM_Core_DAO_MappingField();
+                    $saveMappingFields = new CRM_Core_DAO_MappingField();
                                        
                     $saveMappingFields->mapping_id       = $mappingId;
                     $saveMappingFields->name             = CRM_Utils_Array::value( '1' ,$v );

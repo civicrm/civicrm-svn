@@ -199,7 +199,7 @@ class CRM_Contribute_Form_ManagePremiums extends CRM_Contribute_Form
      * @access public
      * @static
      */
-    public function formRule(&$params, &$files) {
+    public function formRule( $params, $files) {
         if ( isset ( $params['imageOption'] ) ) {
             if ( $params['imageOption'] == 'thumbnail' ) {
                 if ( ! $params['imageUrl']) {

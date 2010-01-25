@@ -64,7 +64,7 @@ class CRM_Pledge_Page_DashBoard extends CRM_Core_Page
         $startDateEnd   = null;
         
         // current year - prefix = 'year'
-        $config =& CRM_Core_Config::singleton( );
+        $config = CRM_Core_Config::singleton( );
         $yearDate = $config->fiscalYearStart;
         $year  = array('Y' => date('Y'));
         $this->assign('curYear', $year['Y']);
@@ -109,7 +109,7 @@ class CRM_Pledge_Page_DashBoard extends CRM_Core_Page
     {
         $this->preProcess( );
         
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Pledge_Form_Search', 
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Pledge_Form_Search', 
                                                        ts('Pledge'), 
                                                        null );
         $controller->setEmbedded( true ); 

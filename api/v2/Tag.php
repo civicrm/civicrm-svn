@@ -125,7 +125,7 @@ function civicrm_tag_get($params)
 {
     _civicrm_initialize( );
     require_once 'CRM/Core/BAO/Tag.php';
-    $tagBAO =& new CRM_Core_BAO_Tag();
+    $tagBAO = new CRM_Core_BAO_Tag();
     
     if ( ! is_array($params) ) {
         return civicrm_create_error('Params is not an array.');
