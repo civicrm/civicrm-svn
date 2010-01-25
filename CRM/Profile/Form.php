@@ -282,22 +282,19 @@ class CRM_Profile_Form extends CRM_Core_Form
             if ( $this->_id ) {
                 list( $contactType, $contactSubType ) = 
                     CRM_Contact_BAO_Contact::getContactTypes( $this->_id );
-                if ( ( $profileType != 'Contact' ) && 
-                     ( $contactType != $profileType ) && 
-                     ! CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
-                    $return = true;
-                    if ( !$statusMessage ) {
-                        $statusMessage =  ts('This profile is not configured for "%1" contact type.', 
-                                             array( 1 => $contactType ) );
-                    }
+
+                $profileSubType = false;
+                if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
+                    $profileSubType = $profileType;
+                    $profileType    = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
                 }
-                if ( $contactSubType && 
-                     CRM_Contact_BAO_ContactType::isaSubType( $profileType ) && 
-                     ( $profileType != $contactSubType ) ) {
+
+                if ( ($profileType != 'Contact') && 
+                     (($profileSubType && $contactSubType && ($profileSubType != $contactSubType)) ||
+                      ($profileType    !=  $contactType)) ) {
                     $return = true;
                     if ( !$statusMessage ) {
-                        $statusMessage =  ts('This profile is not configured for "%1" contact subtype.', 
-                                             array( 1 => $contactSubType ) );
+                        $statusMessage =  ts('This profile is configured for contact type "%1". It can not be used to edit contacts of other types', array( 1 => $profileSubType ? $profileSubType : $profileType ) );
                     }
                 }
             }
@@ -370,6 +367,8 @@ class CRM_Profile_Form extends CRM_Core_Form
         // in create or register mode
         $stateCountryMap = array( );
         
+        $hiddenSubtype   = false;
+
         // add the form elements
         foreach ($this->_fields as $name => $field ) {
             // make sure that there is enough permission to expose this field
@@ -395,6 +394,15 @@ class CRM_Profile_Form extends CRM_Core_Form
                 $stateCountryMap[$index][$prefixName] = $name;
             }
             
+            if ( !$hiddenSubtype && CRM_Contact_BAO_ContactType::isaSubType( $field['field_type'] ) ) {
+                // In registration mode params are submitted via POST and we don't have any clue about 
+                // profile-id or the profile-type (which could be a subtype). To generalize the behavior and 
+                // simplify the process lets always add the hidden subtype value if there is any, and we won't
+                // have to compute it while processing.
+                $this->addElement( 'hidden', 'contact_sub_type_hidden', $field['field_type'] );
+                $hiddenSubtype = true;
+            }
+
             CRM_Core_BAO_UFGroup::buildProfile($this, $field, $this->_mode );
             
             if ($field['add_to_group_id']) {

@@ -163,6 +163,9 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                      ! CRM_Contact_BAO_ContactType::isExtendsContactType( $fieldType, $ctype ) ) {
                     continue;
                 }
+                if ( CRM_Contact_BAO_ContactType::isaSubType( $fieldType ) ) {
+                    $profileSubType = $fieldType;
+                }
             }
 
             $subset = self::getFields( $id, true, $action,
@@ -175,6 +178,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 }
             }
         }
+
         return $fields;
     }
 

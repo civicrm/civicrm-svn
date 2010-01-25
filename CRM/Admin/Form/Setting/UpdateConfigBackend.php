@@ -112,6 +112,13 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
 
         $params = $this->controller->exportValues( $this->_name );
 
+        //CRM-5679
+        foreach ( $params as $name => &$val ) {
+            if ( $val && in_array( $name, array( 'newBaseURL', 'newBaseDir' ) ) ) {
+                $val = CRM_Utils_File::addTrailingSlash( $val );
+            }
+        }
+        
         $newValues = str_replace( array( $this->_oldBaseURL, $this->_oldBaseDir ),
                                   array( trim( $params['newBaseURL'] ),
                                          trim( $params['newBaseDir'] ) ),

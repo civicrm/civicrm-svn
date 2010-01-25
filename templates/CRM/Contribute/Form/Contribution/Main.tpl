@@ -246,7 +246,7 @@ function clearAmountOther() {
 					</div>
 					<div class="clear"></div> 
 				</div>	
-				<div class="section {$form.$expressButtonName.html}-section">
+				<div class="section {$expressButtonName}-section">
 				    <div class="content">
 				    	{$form.$expressButtonName.html} <span class="description">Checkout securely. Pay without sharing your financial information. </span>
 				    </div>

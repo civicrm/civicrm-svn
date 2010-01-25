@@ -1,4 +1,4 @@
-<div class="form-item">
+<div class="batch-update form-item">
 <fieldset>
 <div id="help">
     {if $context EQ 'statusChange'} {* Update Participant Status task *}
@@ -16,6 +16,7 @@
 </div>
     <legend>{$profileTitle}</legend>
          <table>
+	  <thead class="sticky">
             <tr class="columnheader">
              <th>{ts}Name{/ts}</th>
              <th>{ts}Event{/ts}</th>
@@ -28,6 +29,7 @@
                 {/if}
              {/foreach}
             </tr>
+          </thead>
             {foreach from=$componentIds item=pid}
              <tr class="{cycle values="odd-row,even-row"}">
               <td>{$details.$pid.name}</td> 

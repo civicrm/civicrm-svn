@@ -1,10 +1,11 @@
-<div class="form-item">
+<div class="batch-update form-item">
 <fieldset>
 <div id="help">
     {ts}Update field values for each contribution as needed. Click <strong>Update Contributions</strong> below to save all your changes. To set a field to the same value for ALL rows, enter that value for the first contribution and then click the <strong>Copy icon</strong> (next to the column title).{/ts}
 </div>
     <legend>{$profileTitle}</legend>
          <table>
+	  <thead class="sticky">
             <tr class="columnheader">
              <th>{ts}Name{/ts}</th>
              {foreach from=$fields item=field key=fieldName}
@@ -16,6 +17,7 @@
                  {/if}
              {/foreach}
             </tr>
+          </thead>
             {foreach from=$componentIds item=cid}
              <tr class="{cycle values="odd-row,even-row"}">
               <td>{$sortName.$cid}</td> 

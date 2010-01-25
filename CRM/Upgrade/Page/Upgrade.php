@@ -71,7 +71,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         if ( $currentVer == '2.1.6' ) {
             $config = CRM_Core_Config::singleton( );
             // also cleanup the templates_c directory
-            $config->cleanup( 1 );
+            $config->cleanup( 1 , false);
             
             if ( $config->userFramework !== 'Standalone' ) {
                 // clean the session
@@ -132,7 +132,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                 
                 // also cleanup the templates_c directory
                 $config = CRM_Core_Config::singleton( );
-                $config->cleanup( 1 );
+                $config->cleanup( 1 , false );
 
                 // clear db caching
                 $config->clearDBCache( );

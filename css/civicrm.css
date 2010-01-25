@@ -230,11 +230,13 @@ div.spacer,
 
 #crm-container div.form-item {
   border-top-style: none;
-  margin: 0px;
-  padding: 3px 0px 5px 0px;
-  clear: none;
-	 overflow: auto; 
-	}
+  margin          : 0px;
+  padding         : 3px 0px 5px 0px;
+  clear           : none;
+  overflow        : auto; 
+  width           : 99%;
+  height          : 100%;
+}
 
 #crm-container div.form-item dl, #crm-container .section-hidden dl{
  margin: 0;
@@ -421,7 +423,12 @@ div.spacer,
   vertical-align: top;
 }
 
-#crm-container .form-layout .buttons, #crm-container .form-layout-compressed .buttons {
+#crm-submit-buttons {
+	width: 100%; /* fix ie7/ie8 bug where page goes bananas */
+}
+
+#crm-container .form-layout .buttons, 
+#crm-container .form-layout-compressed .buttons {
  padding-top: 10px;
 }
 
@@ -2121,13 +2128,15 @@ div.m ul#civicrm-menu li#crm-qsearch {
 /* Pop-up help icon - eliminate forced line break */
 div.helpicon {
 	background  : transparent url(../i/quiz.png) no-repeat;
-	display     : inline-block;
+	display     : inline;
 	cursor      : pointer;
 	background-position:-48px -144px;
 	background-image:url(../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png);
 	background-color:#DDD;
 	width:16px;
 	height:16px;
+	z-index:1;
+	position:absolute;
 	}
 
 div.statusicon {
@@ -2158,9 +2167,9 @@ div#toolTip {
 .helpIcon {
   float       : right;
   padding     : 5px;
-  position    : relative;
+  position    : absolute;
   z-index     : 1;
-  margin-right: 45px;
+  margin-left : 810px;
 }
 
 /* "don't do this" icons */
@@ -2235,3 +2244,13 @@ th.sorting_desc {
 	width: 9em;
 }
 /* Date plugin */
+#crm-container div.batch-update {
+  	 overflow: visible; 
+}
+
+/* Help text in Send Mail*/
+#crm-container div.messageHelp{
+    z-index : 1;
+    position: absolute;
+    margin  : 6px 0px 0px 115px;
+}

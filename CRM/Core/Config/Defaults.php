@@ -88,6 +88,9 @@ class CRM_Core_Config_Defaults
         //profile double opt-in 
         $this->profileDoubleOptIn = defined( 'CIVICRM_PROFILE_DOUBLE_OPTIN' ) ? false : true;
 
+        //email notifications to activity Assignees
+        $this->activityAssigneeNotification = defined( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' ) ? (bool) CIVICRM_ACTIVITY_ASSIGNEE_MAIL : true;
+
         // 
         $size = trim( ini_get( 'upload_max_filesize' ) );
         if ( $size ) {

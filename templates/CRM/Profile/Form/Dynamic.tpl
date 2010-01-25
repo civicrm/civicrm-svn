@@ -6,7 +6,7 @@
 {* wrap in crm-container div so crm styles are used *}
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
 
-    {if $mode eq 8 || $mode eq 1}
+    {if $mode eq 1 || $activeComponent neq "CiviCRM"}
         {include file="CRM/Form/body.tpl"}
     {/if}
     
@@ -149,8 +149,7 @@
         </div>
     {/if}
 
-
-{if $mode eq 4 or $mode eq 8}
+{if ($action eq 1 and $mode eq 4 ) or $action eq 2 }
 <div class="crm-submit-buttons"> 
      {$form.buttons.html}{if $isDuplicate}&nbsp;&nbsp;{$form._qf_Edit_upload_duplicate.html}{/if}
 </div>
@@ -182,8 +181,14 @@ target_element_type ="block"
 field_type          ="radio"
 invert              = 0
 }
+{elseif $statusMessage}
+    <div class="messages status">
+      <dl>
+        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+        <dd>{$statusMessage}</dd>
+      </dl>
+    </div>
 {/if}
-
 {literal}
 <script type="text/javascript">
     

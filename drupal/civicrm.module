@@ -612,6 +612,9 @@ function civicrm_view_data( &$user )
         foreach ( $ufGroups as $id => $title ) {
             
             $fieldType = CRM_Core_BAO_UFField::getProfileType( $id );
+            if ( CRM_Contact_BAO_ContactType::isaSubType( $fieldType ) ) {
+                $fieldType = CRM_Contact_BAO_ContactType::getBasicType( $fieldType );
+            }
             if ( ( $fieldType != 'Contact' ) && ( $fieldType != $ctype ) ) {
                 continue;
             }

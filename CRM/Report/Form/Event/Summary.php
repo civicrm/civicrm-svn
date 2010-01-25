@@ -310,7 +310,7 @@ class CRM_Report_Form_Event_Summary extends CRM_Report_Form {
                 $graphRows[$this->_interval][] = substr( $rows[$key]['civicrm_event_title'], 0, 12)."..(". $rows[$key]['civicrm_event_id'].") ";
             }
             
-            if ( ( $rows[$key]['totalAmount']) == 0 ) {
+            if ( CRM_Utils_Array::value( 'totalAmount', $rows[$key] ) == 0 ) {
                 $countEvent = count($rows);
             }
 

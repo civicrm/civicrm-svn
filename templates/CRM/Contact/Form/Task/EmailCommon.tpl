@@ -7,7 +7,7 @@
 </table>
 <div class="accordion ui-accordion ui-widget ui-helper-reset">
     <span class="helpIcon" id="helphtml">
-	<a href="#" onClick="return showToken('Html', 2);">{$form.token2.label}</a> 
+	<a href="#" onClick="return showToken('Html', 2);" style="float:left;">{$form.token2.label}</a>
 	{help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp"}
 	<div id='tokenHtml' style="display:none">
 	    <input style="border:1px solid #999999;" type="text" id="filter2" size="20" name="filter2" onkeyup="filter(this, 2)"/><br />
@@ -15,6 +15,7 @@
 	    {$form.token2.html}
 	</div>
     </span>
+    <div class="messageHelp">{help id="id-message-text" file="CRM/Contact/Form/Task/Email.hlp"}</div>
     <h3 class="head"> 
 	<span class="ui-icon ui-icon-triangle-1-e" id='html'></span><a href="#">{ts}HTML Format{/ts}</a>
     </h3>
@@ -25,7 +26,7 @@
 	{$form.html_message.html}<br />
     </div>
     <span class="helpIcon" id="helptext" style="display:none;">
-	<a href="#" onClick="return showToken('Text', 1);">{$form.token1.label}</a>
+	<a href="#" onClick="return showToken('Text', 1);" style="float:left;">{$form.token1.label}</a>
 	{help id="id-token-text" file="CRM/Contact/Form/Task/Email.hlp"}
 	<div id='tokenText' style="display:none">
 	    <input  style="border:1px solid #999999;" type="text" id="filter1" size="20" name="filter1" onkeyup="filter(this, 1)"/><br />

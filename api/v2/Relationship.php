@@ -426,10 +426,12 @@ function _civicrm_relationship_format_params( &$params, &$values ) {
             } 
             $relation = $relationTypes[$params['relationship_type_id']];
             require_once 'CRM/Contact/BAO/Contact.php';
-            if ($relation['contact_type_a'] != CRM_Contact_BAO_Contact::getContactType($params['contact_id_a'])) {
+            if ($relation['contact_type_a'] && 
+                $relation['contact_type_a'] != CRM_Contact_BAO_Contact::getContactType($params['contact_id_a'])) {
                 return civicrm_create_error("Contact ID :{$params['contact_id_a']} is not of contact type {$relation['contact_type_a']}");
             }
-            if ($relation['contact_type_b'] != CRM_Contact_BAO_Contact::getContactType($params['contact_id_b'])) {
+            if ($relation['contact_type_b'] && 
+                $relation['contact_type_b'] != CRM_Contact_BAO_Contact::getContactType($params['contact_id_b'])) {
                 return civicrm_create_error("Contact ID :{$params['contact_id_b']} is not of contact type {$relation['contact_type_b']}");
             }
             break;

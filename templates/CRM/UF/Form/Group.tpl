@@ -17,26 +17,31 @@
     {else}
         <fieldset>
             <legend>{ts}CiviCRM Profile{/ts}</legend>
-                <dl class="html-adjust">
-                    <dt>{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_group' field='title' id=$gid}{/if}</dt>
-                    <dd>{$form.title.html}</dd>
-
-                    <dt>{$form.uf_group_type.label} {help id='id-used_for' file="CRM/UF/Form/Group.hlp"}</dt>
-                    <dd>{$form.uf_group_type.html}&nbsp;{$otherModuleString}</dd>
-
-                    <dt>{$form.weight.label}{if $config->userFramework EQ 'Drupal'} {help id='id-profile_weight' file="CRM/UF/Form/Group.hlp"}{/if}</dt>
-                    <dd>{$form.weight.html}</dd>
-
-                    <dt>{$form.help_pre.label} {help id='id-help_pre' file="CRM/UF/Form/Group.hlp"}</dt>
-                    <dd>{$form.help_pre.html}</dd>
-                    
-                    <dt>{$form.help_post.label} {help id='id-help_post' file="CRM/UF/Form/Group.hlp"}</dt>
-                    <dd>{$form.help_post.html}</dd>
-                </dl>
-                <dl>
-                    <div class="spacer"></div>	
-                    <dt></dt><dd>{$form.is_active.html} {$form.is_active.label}</dd>
-                </dl>
+                <table class="form-layout">
+                    <tr>
+                        <td class="label">{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_group' field='title' id=$gid}{/if}</td>
+                        <td class="html-adjust">{$form.title.html}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">{$form.uf_group_type.label} {help id='id-used_for' file="CRM/UF/Form/Group.hlp"}</td>
+                        <td class="html-adjust">{$form.uf_group_type.html}&nbsp;{$otherModuleString}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">{$form.weight.label}{if $config->userFramework EQ 'Drupal'} {help id='id-profile_weight' file="CRM/UF/Form/Group.hlp"}{/if}</td>
+                        <td class="html-adjust">{$form.weight.html}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">{$form.help_pre.label} {help id='id-help_pre' file="CRM/UF/Form/Group.hlp"}</td>
+                        <td class="html-adjust">{$form.help_pre.html}</td>
+                    </tr>
+                    <tr>
+                        <td class="label">{$form.help_post.label} {help id='id-help_post' file="CRM/UF/Form/Group.hlp"}</td>
+                        <td class="html-adjust">{$form.help_post.html}</td>
+                    </tr>
+                    <tr>
+                        <td class="label"></td><td class="html-adjust">{$form.is_active.html} {$form.is_active.label}</td>
+                    </tr>
+                </table>
 	</fieldset>
         {* adding advance setting tab *}
         {include file='CRM/UF/Form/AdvanceSetting.tpl'}        

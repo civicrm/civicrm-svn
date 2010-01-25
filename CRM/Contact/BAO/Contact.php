@@ -1246,9 +1246,9 @@ AND    civicrm_contact.id = %1";
         //fix contact sub type CRM-5125
         if ( $subType = CRM_Utils_Array::value('contact_sub_type', $params) ) {
             $data['contact_sub_type'] = $subType;
-        } else if ( $ufGroupId ) {
-            $data['contact_sub_type'] = 
-                CRM_Core_BAO_UFField::getProfileSubType( $ufGroupId, $data['contact_type'] );
+        } else if ( $subType = CRM_Utils_Array::value('contact_sub_type_hidden', $params ) ) {
+            // if profile was used, and had any subtype, we obtain it from there 
+            $data['contact_sub_type'] = $subType;
         }
         
         if ( $ctype == "Organization" ) {

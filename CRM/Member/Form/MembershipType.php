@@ -146,7 +146,7 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
         $this->add('checkbox', 'is_active', ts('Enabled?'));
                                             
         require_once "CRM/Core/BAO/MessageTemplates.php";
-        $msgTemplates = CRM_Core_BAO_MessageTemplates::getMessageTemplates();
+        $msgTemplates = CRM_Core_BAO_MessageTemplates::getMessageTemplates( false );
         if ( ! empty( $msgTemplates ) ) { 
             $reminderMsg = $this->add( 'select', 'renewal_msg_id', ts('Renewal Reminder Message'), array('' => ts('- select -')) + $msgTemplates );
         } else {
@@ -214,7 +214,6 @@ class CRM_Member_Form_MembershipType extends CRM_Member_Form
                 $reminderMsg  = $this->add( 'select', 'renewal_msg_id', ts('Renewal Reminder Message'), 
                                             array('' => ts('- select -')) + $msgTemplates );
                 $reminderDay->freeze( );
-                $reminderMsg->freeze( );
             }
         }
                

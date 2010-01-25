@@ -168,6 +168,18 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                              'lng' => (float ) ( $maxLng - $minLng ) );
             $this->assign_by_ref( 'center', $center );
             $this->assign_by_ref( 'span'  , $span   );
+            if ( $action ==  CRM_Core_Action::PREVIEW ) {
+                $mapURL = CRM_Utils_System::url( 'civicrm/contact/map/event',
+                                                 "eid={$this->_id}&reset=1&action=preview",
+                                                 true, null, true,
+                                                 true );
+            } else {
+                $mapURL = CRM_Utils_System::url( 'civicrm/contact/map/event',
+                                                 "eid={$this->_id}&reset=1",
+                                                 true, null, true,
+                                                 true );
+            }
+            $this->assign( 'mapURL', $mapURL );
         }
         require_once 'CRM/Event/BAO/Participant.php';
         $eventFullMessage = CRM_Event_BAO_Participant::eventFull( $this->_id );
@@ -213,19 +225,6 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                     $this->assign( 'registerURL', $url    );
                 }
             }
-            
-            if ( $action ==  CRM_Core_Action::PREVIEW ) {
-                $mapURL = CRM_Utils_System::url( 'civicrm/contact/map/event',
-                                                 "eid={$this->_id}&reset=1&action=preview",
-                                                 true, null, true,
-                                                 true );
-            } else {
-                $mapURL = CRM_Utils_System::url( 'civicrm/contact/map/event',
-                                                 "eid={$this->_id}&reset=1",
-                                                 true, null, true,
-                                                 true );
-            }
-            $this->assign( 'mapURL'     , $mapURL );
         }
         
         // we do not want to display recently viewed items, so turn off
