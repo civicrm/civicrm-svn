@@ -392,6 +392,15 @@ class CRM_Contribute_BAO_Query
             $query->_tables['civicrm_contribution_soft'] = $query->_whereTables['civicrm_contribution_soft'] = 1;
             return;
 
+            //supporting search for currency type -- CRM-4711
+        case 'contribution_currency_type':
+            $currencySymbol = CRM_Core_PseudoConstant::currencySymbols( 'name' );
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.currency",
+                                                                               $op, $currencySymbol[$value], "String"); 
+            $query->_qill[$grouping][]  = ts( 'Currency Type - %1', array( 1 => $currencySymbol[$value] ) );
+            $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
+            return;
+
         default: 
             //all other elements are handle in this case
             $fldName    = substr($name, 13 );
@@ -574,6 +583,13 @@ class CRM_Contribute_BAO_Query
 
         $form->add('text', 'contribution_amount_high', ts('To'), array( 'size' => 8, 'maxlength' => 8 ) ); 
         $form->addRule('contribution_amount_high', ts('Please enter a valid money value (e.g. %1).', array(1 => CRM_Utils_Money::format('99.99', ' '))), 'money');
+
+        //adding select option for curreny type -- CRM-4711
+        require_once 'CRM/Core/PseudoConstant.php';
+        $form->add('select', 'contribution_currency_type',
+                   ts( 'Currency Type' ),
+                   array( '' => ts( '- select -' ) ) +
+                   CRM_Core_PseudoConstant::currencySymbols( 'name' ) );
 
         require_once 'CRM/Contribute/PseudoConstant.php';
         $form->add('select', 'contribution_type_id', 

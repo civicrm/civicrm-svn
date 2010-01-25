@@ -52,6 +52,10 @@
 	{$form.contribution_pcp_display_in_roll.html}&nbsp;&nbsp;<a href="javascript:unselectRadio('contribution_pcp_display_in_roll','Search')">unselect</a></td>
 </tr>
 
+<tr>
+	<td><label>{ts}Currency Type{/ts}</label> <br />
+	{$form.contribution_currency_type.html}</td>
+</tr>
 {if $contributeGroupTree}
 <tr>
 	<td colspan="2">
