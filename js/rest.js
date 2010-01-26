@@ -1,4 +1,10 @@
 /*
+* Copyright (C) 2009-2010 Xavier Dutoit
+* Licensed to CiviCRM under the Academic Free License version 3.0.
+*
+*/
+
+/*
 On the template page that includes this js, you have to define a global variable to set the url of the server to be used for the rest
 <script type="text/javascript">
 civicrm_resourceURL="{$config->userFrameworkResourceURL}";
