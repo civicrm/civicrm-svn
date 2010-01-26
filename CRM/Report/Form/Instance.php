@@ -132,7 +132,7 @@ class CRM_Report_Form_Instance {
   </head>
   <body><div id=\"crm-container\">";
 
-        $defaults['report_footer'] = $report_footer = "<p><img src=\"{$config->userFrameworkResourceURL}i/powered_by.png /\"></p></div></body>
+        $defaults['report_footer'] = $report_footer = "<p><img src=\"{$config->userFrameworkResourceURL}i/powered_by.png\" /></p></div></body>
 </html>
 ";
        
