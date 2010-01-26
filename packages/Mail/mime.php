@@ -942,7 +942,7 @@ class Mail_mime
                     $imePrefs['input-charset']  = $build_params['head_charset'];
                     $imePrefs['output-charset'] = $build_params['head_charset'];
                     $imePrefs['line-length'] = 74;
-                    $imePrefs['line-break-chars'] = "\r\n"; //Specified in RFC2047
+                    $imePrefs['line-break-chars'] =  $this->_eol; // CRM-5529: don't encode the eol, let sendmail do it, otherwise double encoding. cf PHP bug 15841, comment 28 Feb 2009 12:48pm
                     
                     $hdr_value = iconv_mime_encode($hdr_name, $hdr_value, $imePrefs);
                     $hdr_value = preg_replace("#^{$hdr_name}\:\ #", "", $hdr_value);
