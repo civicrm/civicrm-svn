@@ -290,6 +290,10 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             }
         }
 
+        // always truncate acl_contact_cache, since its complex to rebuild the cache for all users who have 
+        // permission on this contact being added/updated. CRM-5682
+        CRM_Core_DAO::singleValueQuery( "TRUNCATE TABLE civicrm_acl_contact_cache" );
+
         //add location Block data
         $blocks = CRM_Core_BAO_Location::create( $params, $fixAddress );
         foreach ( $blocks as $name => $value )  {
