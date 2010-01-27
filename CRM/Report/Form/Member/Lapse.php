@@ -187,7 +187,7 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
         FROM  civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
               INNER JOIN civicrm_membership {$this->_aliases['civicrm_membership']} 
                          ON {$this->_aliases['civicrm_contact']}.id = 
-                            {$this->_aliases['civicrm_membership']}.contact_id
+                            {$this->_aliases['civicrm_membership']}.contact_id AND {$this->_aliases['civicrm_membership']}.is_test = 0
               LEFT  JOIN civicrm_membership_status {$this->_aliases['civicrm_membership_status']}
                          ON {$this->_aliases['civicrm_membership_status']}.id = 
                             {$this->_aliases['civicrm_membership']}.status_id

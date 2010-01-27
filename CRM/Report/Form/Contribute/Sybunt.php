@@ -121,7 +121,7 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
                                          'default' => date('Y'),
                                          'clause'  => "contribution_civireport.contact_id NOT IN
 (SELECT distinct cont.id FROM civicrm_contact cont, civicrm_contribution contri
- WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) >= \$value)" ),  
+ WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) >= \$value AND contri.is_test = 0 )" ),  
                                   'contribution_status_id'         => 
                                   array( 'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                          'options'      => CRM_Contribute_PseudoConstant::contributionStatus( ) ,
@@ -274,9 +274,9 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
         }
 
         if ( empty( $clauses ) ) {
-            $this->_where = "WHERE ( 1 ) ";
+            $this->_where = "WHERE {$this->_aliases['civicrm_contribution']}.is_test = 0 ";
         } else {
-            $this->_where = "WHERE " . implode( ' AND ', $clauses );
+            $this->_where = "WHERE {$this->_aliases['civicrm_contribution']}.is_test = 0 AND " . implode( ' AND ', $clauses );
         }
 
         if ( $this->_aclWhere ) {

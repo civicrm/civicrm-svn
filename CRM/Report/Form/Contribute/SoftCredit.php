@@ -330,6 +330,11 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
                                        {$alias_creditor}.display_name";
     }
 
+    function where( ) {
+        parent::where( );
+        $this->_where .= " AND {$this->_aliases['civicrm_contribution']}.is_test = 0 ";
+    }
+
     function statistics( &$rows ) {
         $statistics = parent::statistics( $rows );
 
