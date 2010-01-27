@@ -224,6 +224,8 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                 if ( ! $eventFullMessage ) {
                     $this->assign( 'registerURL', $url    );
                 }
+            } else if ( CRM_Core_Permission::check( 'register for events' ) ) {
+                $this->assign( 'registerClosed', true );
             }
         }
         

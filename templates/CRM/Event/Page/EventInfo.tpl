@@ -1,5 +1,16 @@
 {* this template is used for displaying event information *}
 
+{if $registerClosed }
+<div class="spacer"></div>
+<div class="messages status">
+  <dl>
+    <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+    <dd>
+        <p>{ts}Registration is closed for this event{/ts}</p>
+    </dd>
+  </dl>
+</div>
+{/if}
 <div class="vevent">
 	<div class="event-info">
 	
