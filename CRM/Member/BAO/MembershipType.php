@@ -506,7 +506,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             $rollover = false;
                         
             if ( $membershipTypeDetails['period_type'] == 'rolling' ) {
-                $startDate = $logStartDate = $today;
+                $startDate = $logStartDate = CRM_Utils_Date::mysqlToIso( $today );
             } else if ( $membershipTypeDetails['period_type'] == 'fixed' ) {
                 // Renewing expired membership is two step process. 
                 // 1. Renew the start date
@@ -541,7 +541,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                                                   $yearValue ) );
                 }
                 
-                if ( CRM_Utils_Date::isoToMysql( $today ) > $rolloverDate ) {
+                if ( $today > $rolloverDate ) {
                     $rollover = true;
                 }
             }
