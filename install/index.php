@@ -266,7 +266,7 @@ class InstallRequirements {
 
         $this->errors = null;
 
-        $this->requirePHPVersion('5.2.0', array("PHP Configuration", "PHP5 installed", null, "PHP version " . phpversion()));
+        $this->requirePHPVersion('5.2.0', array("PHP Configuration", "PHP5 installed", null, "PHP version " . phpversion()), '5.3.0');
 
         // Check that we can identify the root folder successfully
         $this->requireFile($crmPath . CIVICRM_DIRECTORY_SEPARATOR . 'README.txt',
@@ -421,23 +421,25 @@ class InstallRequirements {
         else return true;
     }
 
-    function requirePHPVersion($version, $testDetails) {
+    function requirePHPVersion($minVersion, $testDetails, $maxVersion = null) {
 
         $this->testing($testDetails);
 
-        list($reqA, $reqB, $reqC) = explode('.', $version);
-        list($a, $b, $c) = explode('.', phpversion());
-        $c = ereg_replace('-.*$','',$c);
+        $phpVersion = phpversion();
+        $aboveMinVersion = version_compare($phpVersion, $minVersion) >= 0;
+        $belowMaxVersion = $maxVersion ? version_compare($phpVersion, $maxVersion) <  0 : true;
 
-        if($a > $reqA) return true;
-        if($a == $reqA && $b > $reqB) return true;
-        if($a == $reqA && $b == $reqB && $c >= $reqC) return true;
+        if ( $maxVersion && $aboveMinVersion && $belowMaxVersion ) {
+            return true;
+        } else if ( !$maxVersion && $aboveMinVersion ) {
+            return true;
+        }
 
-        if(!$testDetails[2]) {
-            if($a < $reqA) {
-                $testDetails[2] = "You need PHP version $version or later, only $a.$b.$c is installed.  Unfortunately PHP$a and PHP$reqA have some incompatabilities, so if you are on a your web-host may need to move you to a different server.   Some software doesn't work with PHP5 and so upgrading a shared server could be problematic.";
+        if( ! $testDetails[2] ) {
+            if( !$aboveMinVersion ) {
+                $testDetails[2] = "You need PHP version $minVersion or later, only {$phpVersion} is installed.  Please upgrade your server, or ask your web-host to do so.";
             } else {
-                $testDetails[2] = "You need PHP version $version or later, only $a.$b.$c is installed.  Please upgrade your server, or ask your web-host to do so.";
+                $testDetails[2] = "PHP version {$phpVersion} is not supported. PHP version earlier than $maxVersion is required. You might want to downgrade your server, or ask your web-host to do so.";
             }
         }
 
