@@ -1962,6 +1962,7 @@ class HTML_QuickForm extends HTML_Common
                              'bcc_id',
                              'premiums_intro_text',
                              'honor_block_text',
+                             'pay_later_receipt',
                              'label', // This is needed for FROM Email Address configuration. dgg
                              'url',  // This is needed for navigation items urls
                              );
