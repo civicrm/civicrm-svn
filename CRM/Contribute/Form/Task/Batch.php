@@ -204,23 +204,16 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
                         );
         if ( isset( $params['field'] ) ) {
             foreach ( $params['field'] as $key => $value ) {
-                foreach ( $dates as $d ) {
-                    if ( ! CRM_Utils_System::isNull( $value[$d] ) ) {
-                        $value[$d]['H'] = '00';
-                        $value[$d]['i'] = '00';
-                        $value[$d]['s'] = '00';
-                        $value[$d]      =  CRM_Utils_Date::format( $value[$d] );
-                    } else {
-                        unset( $value[$d] );
-                    }   
-                }
-                
+                                
                 $value['custom'] = CRM_Core_BAO_CustomField::postProcess( $value,
                                                                           CRM_Core_DAO::$_nullObject,
                                                                           $key,
                                                                           'Contribution' );
-                
+                                
                 $ids['contribution'] = $key;
+                foreach ( $dates as $val ) {
+                    $value[$val] = CRM_Utils_Date::processDate( $value[$val] );
+                }
                 if ($value['contribution_type']) {
                     $value['contribution_type_id'] = $value['contribution_type'];
                 }
