@@ -226,7 +226,6 @@ div.spacer,
   padding         : 3px 0px 5px 0px;
   clear           : none;
   overflow        : auto; 
-  width           : 99%;
   height          : 100%;
 }
 
@@ -2151,7 +2150,7 @@ div#toolTip {
   padding     : 5px;
   position    : absolute;
   z-index     : 1;
-  margin-left : 810px;
+  margin-left : 765px;
 }
 
 /* "don't do this" icons */
