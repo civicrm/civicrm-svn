@@ -259,6 +259,15 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                                                                   'activity_type_id' );
         }
 
+        //Assigning Activity type name
+        if ( $this->_activityTypeId ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            $activityTName = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, 'AND v.value = '.$this->_activityTypeId , 'name' );
+            if ( $activityTName[$this->_activityTypeId] ) {
+                $this->assign( 'activityTName', $activityTName[$this->_activityTypeId] );
+            }
+        }
+
         //check the mode when this form is called either single or as
         //search task action
         if ( $this->_activityTypeId          || 
