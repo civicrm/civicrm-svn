@@ -367,6 +367,16 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
             }
         }
 
+        //make sure 'Deceased' membership status present in db,CRM-5636
+        $template =& CRM_Core_Smarty::singleton( );
+        
+        $addDeceasedStatus = false;
+        $sql = "SELECT max(id) FROM civicrm_membership_status where name = 'Deceased'"; 
+        if ( !CRM_Core_DAO::singleValueQuery( $sql ) ) {
+            $addDeceasedStatus = true;  
+        }
+        $template->assign( 'addDeceasedStatus', $addDeceasedStatus ); 
+
         $upgrade =& new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
