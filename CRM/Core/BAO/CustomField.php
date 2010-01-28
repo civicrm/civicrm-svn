@@ -1534,7 +1534,7 @@ AND    cf.id = %1";
     {
         static $customOptionGroup = null;
         
-        if ( ! $customOptionGroup || $includeFieldIds ) {
+        if ( ! $customOptionGroup || !empty( $includeFieldIds )) {
             $includeFieldClause = "";
             if ( !empty( $includeFieldIds )) {
                 if ( is_array( $includeFieldIds )) { 
