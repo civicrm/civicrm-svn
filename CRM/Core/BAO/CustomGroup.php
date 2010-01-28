@@ -983,7 +983,7 @@ SELECT $select
                             list( $defaults[$elementName] ) = CRM_Utils_Date::setDateDefaults( $value, null, 
                                                                                                $field['date_format'] );
                         } else {
-                            list( $defaults[$elementName], $defaults[ $elementName. '_time' ] ) = 
+                            list( $defaults[$elementName], $defaults[ $elementName . '_time' ] ) = 
                             CRM_Utils_Date::setDateDefaults( $value, null, $field['date_format'], $field['time_format'] );
                         }
                     }
