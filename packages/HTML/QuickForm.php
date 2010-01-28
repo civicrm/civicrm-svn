@@ -1965,6 +1965,8 @@ class HTML_QuickForm extends HTML_Common
                              'pay_later_receipt',
                              'label', // This is needed for FROM Email Address configuration. dgg
                              'url',  // This is needed for navigation items urls
+                             'msg_text', // message templates’ text versions
+                             'text_message', // (send an) email to contact’s and CiviMail’s text version
                              );
                                     
         $values = array();
