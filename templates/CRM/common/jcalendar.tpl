@@ -1,8 +1,10 @@
 {strip}
 {if $batchUpdate}
     {assign var='elementId'   value=$form.field.$elementIndex.$elementName.id}
-    {assign var="timeElement" value=$elementName|cat:"_time.$elementIndex"}
+    {assign var="tElement" value=$elementName|cat:"_time"}
+    {assign var="timeElement" value=field_`$elementIndex`_`$elementName`_time}
     {$form.field.$elementIndex.$elementName.html|crmReplace:class:dateplugin}
+    &nbsp;&nbsp;{$form.field.$elementIndex.$tElement.label}&nbsp;&nbsp;{$form.field.$elementIndex.$tElement.html|crmReplace:class:six}
 {elseif $elementIndex}
     {assign var='elementId'   value=$form.$elementName.$elementIndex.id}
     {assign var="timeElement" value=$elementName|cat:"_time.$elementIndex"}
@@ -13,7 +15,7 @@
     {$form.$elementName.html|crmReplace:class:dateplugin}
 {/if}
 {assign var='dateFormated' value=$elementId|cat:"_hidden"}<input type="text" name="{$dateFormated}" id="{$dateFormated}" class="hiddenElement"/>
-{if $timeElement}
+{if $timeElement AND !tElement}
     &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
 {/if}
 {if $action neq 4 && $action neq 1028}

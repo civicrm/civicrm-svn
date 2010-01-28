@@ -989,8 +989,14 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                 $show24Hours = true;
                 if ( $timeFormat == 1 ) {
                     $show24Hours = false;
-                }
-                $this->add('text', $name . '_time', ts('Time'), array( 'timeFormat' => $show24Hours ) );
+                } 
+                if( is_a($this, 'CRM_Contact_Form_Task_Batch') ) { 
+                	$name  = substr( $name, 0, $name.length - 1);
+                	$name .= '_time]' ;
+				}else {
+					$name .= '_time' ;
+				}
+                $this->add('text', $name, ts('Time'), array( 'timeFormat' => $show24Hours ) );
             }            
         }
                 

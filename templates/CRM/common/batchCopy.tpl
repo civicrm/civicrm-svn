@@ -116,9 +116,14 @@ function copyValuesDate(fieldName)
         {literal}cId[i++]{/literal} = {$field}
     {/foreach}
     {literal}
-    var firstValue = cj( "#field_" + cId[0] + '_' + fieldName ).val( );
+    var firstDate = cj( "#field_" + cId[0] + '_' + fieldName ).val( );
+    var firstTime = null;
+    if( cj( "#field_" + cId[0] + '_' + fieldName + '_time') ){
+    	firstTime = cj( "#field_" + cId[0] + '_' + fieldName + '_time' ).val( );
+    }
  	cj(cId).each(function(i,id){
- 		cj( '#field_' + id + '_' + fieldName ).val( firstValue );
+ 		cj( '#field_' + id + '_' + fieldName ).val( firstDate );
+		cj( '#field_' + id + '_' + fieldName + '_time').val( firstTime );
  	});    
 }
 
