@@ -1517,18 +1517,39 @@ AND    cf.id = %1";
         return $cache[$fieldID];
     }
 
-    public static function &customOptionGroup( )
+    /**
+     * Function to get custom option groups
+     * 
+     * @params array $includeFieldIds ids of custom fields for which  
+     * option groups must be included.
+     * 
+     * Currently this is required in the cases where option groups are to be included 
+     * for inactive fields : CRM-5369
+     *
+     * @access public
+     * @return $customOptionGroup 
+     * @static
+     */
+    public static function &customOptionGroup( $includeFieldIds = null )
     {
         static $customOptionGroup = null;
         
-        if ( ! $customOptionGroup ) {
+        if ( ! $customOptionGroup || $includeFieldIds ) {
+            $includeFieldClause = "";
+            if ( !empty( $includeFieldIds )) {
+                if ( is_array( $includeFieldIds )) { 
+                    $includeFieldIds = implode( ',', $includeFieldIds );
+                } 
+                $includeFieldClause = "OR f.id in ( $includeFieldIds )";
+            }
+            
             $query = "
 SELECT g.id, f.label
 FROM   civicrm_option_group g,
        civicrm_custom_field f
 WHERE  g.id = f.option_group_id
-AND    g.is_active = 1
-AND    f.is_active = 1";
+AND    (( g.is_active = 1 AND f.is_active = 1 ) $includeFieldClause )";
+            
             $dao = CRM_Core_DAO::executeQuery( $query );
             $customOptionGroup = array( );
             while ( $dao->fetch( ) ) {
@@ -1537,7 +1558,7 @@ AND    f.is_active = 1";
         }
         return $customOptionGroup;
     }
-
+    
     /**
      * Function to fix orphan groups
      * 

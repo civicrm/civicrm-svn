@@ -269,8 +269,11 @@ class CRM_Custom_Form_Field extends CRM_Core_Form
         if ($this->_action == CRM_Core_Action::UPDATE) {
             $this->freeze('data_type');
         }
-        
-        $optionGroups = CRM_Core_BAO_CustomField::customOptionGroup( );
+        $includeFieldIds = null;
+        if ( $this->_action == CRM_Core_Action::UPDATE ) { 
+            $includeFieldIds = $this->_values['id'];
+        }
+        $optionGroups = CRM_Core_BAO_CustomField::customOptionGroup( $includeFieldIds );
         $emptyOptGroup = false;
         if ( empty( $optionGroups ) ) {
             $emptyOptGroup = true;
