@@ -116,12 +116,10 @@ function copyValuesDate(fieldName)
         {literal}cId[i++]{/literal} = {$field}
     {/foreach}
     {literal}
-
-    for ( k=0; k<cId.length; k++ ) {
-        document.getElementById("field["+cId[k]+"]["+fieldName+"][Y]").value = document.getElementById("field["+cId[0]+"]["+fieldName+"][Y]").value;
-        document.getElementById("field["+cId[k]+"]["+fieldName+"][M]").value = document.getElementById("field["+cId[0]+"]["+fieldName+"][M]").value;
-        document.getElementById("field["+cId[k]+"]["+fieldName+"][d]").value = document.getElementById("field["+cId[0]+"]["+fieldName+"][d]").value;
-    }
+    var firstValue = cj( "#field_" + cId[0] + '_' + fieldName ).val( );
+ 	cj(cId).each(function(i,id){
+ 		cj( '#field_' + id + '_' + fieldName ).val( firstValue );
+ 	});    
 }
 
 </script>

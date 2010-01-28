@@ -1,5 +1,9 @@
 {strip}
-{if $elementIndex}
+{if $batchUpdate}
+    {assign var='elementId'   value=$form.field.$elementIndex.$elementName.id}
+    {assign var="timeElement" value=$elementName|cat:"_time.$elementIndex"}
+    {$form.field.$elementIndex.$elementName.html|crmReplace:class:dateplugin}
+{elseif $elementIndex}
     {assign var='elementId'   value=$form.$elementName.$elementIndex.id}
     {assign var="timeElement" value=$elementName|cat:"_time.$elementIndex"}
     {$form.$elementName.$elementIndex.html|crmReplace:class:dateplugin}
