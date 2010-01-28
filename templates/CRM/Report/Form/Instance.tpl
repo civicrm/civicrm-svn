@@ -13,7 +13,7 @@
         <td>{$form.description.html}</td>
     </tr>
     <tr>
-        <td class="report-label" width="20%">{$form.report_header.label}<br /> {help id="id-report_header" file="CRM/Report/Form/Settings.hlp"}</td>
+        <td class="report-label" width="20%">{$form.report_header.label}{help id="id-report_header" file="CRM/Report/Form/Settings.hlp"}</td>
         <td>{$form.report_header.html}</td>
     </tr>
     <tr>
