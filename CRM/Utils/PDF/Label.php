@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
      *  Class to print labels in Avery or custom formats
      * functionality and smarts to the base PDF_Label.
      *
-     * @copyright CiviCRM LLC (c) 2004-2009
+     * @copyright CiviCRM LLC (c) 2004-2010
      * 
      *
      */
