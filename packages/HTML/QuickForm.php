@@ -2021,7 +2021,7 @@ class HTML_QuickForm extends HTML_Common
                 $this->filterValue( $value );
             }
         } else {
-            $values = htmlspecialchars( $values );
+$           $values = str_replace(array('<', '>'), array('&lt;', '&gt;'), $values);
         }
     }
 
