@@ -2252,7 +2252,6 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                             $skipValue = false;
                             
                             foreach ( $formattedGroupTree as $tree ) {
-                            	crm_core_error::debug(CRM_Utils_Array::value( 'data_type', $tree['fields'][$customFieldDetails[0]] ));
                                 if ( 'CheckBox' == CRM_Utils_Array::value( 'html_type', $tree['fields'][$customFieldDetails[0]] ) ) {
                                     $skipValue = true;
                                     $defaults['field'][$componentId][$name] = $customValue;
