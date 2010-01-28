@@ -355,5 +355,21 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         $upgrade->processSQL( $rev );
     }
 
+    function upgrade_3_1_0 ( $rev ) 
+    {
+        // upgrade all roles who have 'access CiviEvent' permission, to also have 
+        // newly added permission 'edit_all_events', CRM-5472
+        $config =& CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' ) {
+            $roles = user_roles(false, 'access CiviEvent');
+            if ( ! empty( $roles ) ) {
+                db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', edit all events\') WHERE rid IN (' . implode(',', array_keys($roles)) . ')' );
+            }
+        }
+
+        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+    }
+
 }
 
