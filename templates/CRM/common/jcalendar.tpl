@@ -15,7 +15,7 @@
     {$form.$elementName.html|crmReplace:class:dateplugin}
 {/if}
 {assign var='dateFormated' value=$elementId|cat:"_hidden"}<input type="text" name="{$dateFormated}" id="{$dateFormated}" class="hiddenElement"/>
-{if $timeElement AND !tElement}
+{if $timeElement AND !$tElement}
     &nbsp;&nbsp;{$form.$timeElement.label}&nbsp;&nbsp;{$form.$timeElement.html|crmReplace:class:six}
 {/if}
 {if $action neq 4 && $action neq 1028}
