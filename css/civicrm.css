@@ -2148,9 +2148,9 @@ div#toolTip {
 .helpIcon {
   float       : right;
   padding     : 5px;
-  position    : absolute;
+  position    : relative;
   z-index     : 1;
-  margin-left : 765px;
+  margin-right : 45px;
 }
 
 /* "don't do this" icons */
