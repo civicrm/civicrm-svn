@@ -249,7 +249,7 @@ class CRM_Core_BAO_Block
                 continue;
             }
             
-            if ( $isPrimary && $value['is_primary'] ) {
+            if ( $isPrimary && CRM_Utils_Array::value( 'is_primary', $value ) ) {
                 $contactFields['is_primary'] = $value['is_primary'];
                 $isPrimary = false;
             } else {
