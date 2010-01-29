@@ -352,7 +352,7 @@ class CRM_Report_Form_Contribute_OrganizationSummary extends CRM_Report_Form {
             }
             
             //remove duplicate Organization names
-            if ( array_key_exists('civicrm_contact_organization_id', $row) ) {
+            if ( array_key_exists('civicrm_contact_organization_id', $row) && $this->_outputMode != 'csv' ) {
                 if ( $value = $row['civicrm_contact_organization_id'] ) {
                     if( $rowNum == 0 ) {
                         $previousOrganization = $value;
@@ -393,7 +393,7 @@ class CRM_Report_Form_Contribute_OrganizationSummary extends CRM_Report_Form {
             }
 
             //remove duplicate Contact names and relationship type
-            if ( array_key_exists('civicrm_contact_id', $row) ) {
+            if ( array_key_exists('civicrm_contact_id', $row ) && $this->_outputMode != 'csv' ) {
                 if ( $value = $row['civicrm_contact_id'] ) {
                     if ( $rowNum == 0 ) {
                         $previousContact= $value;

@@ -295,7 +295,7 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
         
         foreach ( $rows as $rowNum => $row ) {
             
-            if ( !empty($this->_noRepeats) ) {
+            if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
                 // not repeat contact display names if it matches with the one 
                 // in previous row
                 

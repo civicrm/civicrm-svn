@@ -270,7 +270,7 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
                 $entryFound = true;
             }
             
-            if ( !empty($this->_noRepeats) ) {
+            if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
                 // not repeat contact display names if it matches with the one 
                 // in previous row
                 

@@ -412,7 +412,7 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
             }
 
             // Handling Creditor's display_name no Repeat
-            if ( array_key_exists('civicrm_contact_display_name_creditor', $row) ) {
+            if ( array_key_exists('civicrm_contact_display_name_creditor', $row) && $this->_outputMode != 'csv' ) {
                 if ( $value = $row['civicrm_contact_display_name_creditor'] ) {
                     if( $rowNum == 0 ) {
                         $prev_dispname =  $value;
@@ -441,7 +441,7 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
             }
             
             // Handling Creditor's Phone No Repeat
-            if ( array_key_exists('civicrm_phone_phone_creditor', $row) ) {
+            if ( array_key_exists('civicrm_phone_phone_creditor', $row) && $this->_outputMode != 'csv' ) {
                 //$value = 0;
                 if ( $value = $row['civicrm_phone_phone_creditor'] ) {
                     if( $rowNum == 0 ) {
@@ -466,7 +466,7 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
             }
             
             // Handling Creditor's Email No Repeat
-            if ( array_key_exists('civicrm_email_email_creditor', $row) ) {
+            if ( array_key_exists('civicrm_email_email_creditor', $row) && $this->_outputMode != 'csv' ) {
                 if ( $value = $row['civicrm_email_email_creditor'] ) {
                     if( $rowNum == 0 ) {
                         $prev_email=  $value;
@@ -489,7 +489,7 @@ class CRM_Report_Form_Contribute_SoftCredit extends CRM_Report_Form {
                 }
             }
             
-            if ( !empty($this->_noRepeats) ) {
+            if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
                 // not repeat contact display names if it matches with the one 
                 // in previous row
                 $repeatFound = false;

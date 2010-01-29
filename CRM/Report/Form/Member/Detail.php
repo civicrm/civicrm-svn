@@ -305,7 +305,7 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
         $checkList  =  array();
         foreach ( $rows as $rowNum => $row ) {
             
-            if ( !empty($this->_noRepeats) ) {
+            if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
                 // not repeat contact display names if it matches with the one 
                 // in previous row
                 $repeatFound = false;
