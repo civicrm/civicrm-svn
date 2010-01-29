@@ -171,8 +171,6 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
 
         return empty($errors) ? true : $errors;
     }
-    
-    
 
     /**
      * This function is used to add the rules (mainly global rules) for form.
@@ -452,18 +450,21 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
     {
         // get the submitted form values.
         $params = $this->controller->exportValues('Group');
-   
+        $params['overrideFKConstraint'] = 0;
         if ($this->_action & CRM_Core_Action::UPDATE) {
             $params['id'] = $this->_id;
+            if ($this->_defaults['extends'][0] != $params['extends'][0]) {
+                $params['overrideFKConstraint'] = 1;
+            }
         } elseif ($this->_action & CRM_Core_Action::ADD) {
             //new custom group, so lets set the created_id
             $session =& CRM_Core_Session::singleton( );
             $params['created_id']   = $session->get( 'userID' );
             $params['created_date'] = date('YmdHis');
         } 
-       
-        $group = CRM_Core_BAO_CustomGroup::create( $params );
         
+        $group = CRM_Core_BAO_CustomGroup::create( $params );
+
         // reset the cache
         require_once 'CRM/Core/BAO/Cache.php';
         CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
