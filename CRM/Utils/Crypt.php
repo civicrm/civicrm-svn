@@ -36,6 +36,10 @@
 class CRM_Utils_Crypt {
 
     static function encrypt( $string ) {
+        if ( empty( $string ) ) {
+            return $string;
+        }
+
         if ( function_exists( 'mcrypt_module_open' ) &&
              defined( 'CIVICRM_SITE_KEY' ) ) {
             $td = mcrypt_module_open(MCRYPT_RIJNDAEL_256, '', MCRYPT_MODE_ECB, '');
@@ -52,6 +56,10 @@ class CRM_Utils_Crypt {
     }
 
     static function decrypt( $string ) {
+        if ( empty( $string ) ) {
+            return $string;
+        }
+
         $string = base64_decode( $string );
 
         if ( function_exists( 'mcrypt_module_open' ) &&
