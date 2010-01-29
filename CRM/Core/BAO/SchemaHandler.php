@@ -208,13 +208,13 @@ class CRM_Core_BAO_SchemaHandler
 ALTER TABLE {$tableName}
       DROP FOREIGN KEY `FK_{$tableName}_entity_id`;";
 
-        $dao =& CRM_Core_DAO::executeQuery( $dropFKSql );
+        $dao = CRM_Core_DAO::executeQuery( $dropFKSql );
         $dao->free();
 
 $addFKSql = "
 ALTER TABLE {$tableName}
       ADD CONSTRAINT `FK_{$tableName}_entity_id` FOREIGN KEY (`entity_id`) REFERENCES {$fkTableName} (`id`) ON DELETE CASCADE;";
-        $dao =& CRM_Core_DAO::executeQuery( $addFKSql );
+        $dao = CRM_Core_DAO::executeQuery( $addFKSql );
         $dao->free();
 
         return true;
