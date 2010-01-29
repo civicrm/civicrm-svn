@@ -109,7 +109,7 @@ var contactUrl  = "{/literal}{crmURL p='civicrm/contact/changeaction' q="reset=1
 // Show menu when contact row is right clicked
 cj(".selector tr").contextMenu({
       menu: 'contactMenu'
-    }, function( action, el ){
+    }, function( action, el ){ 
         var contactId = el.attr('id').substr(5);
         switch (action) {
           case 'activity':
@@ -130,7 +130,11 @@ cj(".selector tr").contextMenu({
         window.location = locationUrl + '&destination=' + encodeURIComponent(destination);
    });
 });
-
+cj('ul#contactMenu').mouseup( function(e){ 
+   if( e.button !=0 ) {
+    //when right or middle button clicked fire default right click popup
+   }
+});
 {/literal}
 </script>
 {include file="CRM/common/pager.tpl" location="bottom"}
