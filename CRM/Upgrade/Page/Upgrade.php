@@ -62,6 +62,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         $convertVer = array( '2.1'      => '2.1.0',
                              '2.2'      => '2.2.alpha1',
                              '2.2.alph' => '2.2.alpha3',
+                             '3.1.0'    => '3.1.1', // since 3.1.1 had domain.version set as 3.1.0
                              );
         if ( isset($convertVer[$currentVer]) ) {
             $currentVer = $convertVer[$currentVer];
