@@ -45,6 +45,10 @@ require_once 'CRM/Case/BAO/Case.php';
  */
 class CRM_Case_Form_CaseView extends CRM_Core_Form
 {
+    /*
+     * check for merge cases.
+     */
+    private $_mergeCases = false;
     
     /**  
      * Function to set variables up before form is built  
@@ -60,6 +64,11 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $this->assign( 'caseID', $this->_caseID );
         $this->assign( 'contactID', $this->_contactID );
 
+        if ( CRM_Case_BAO_Case::caseCount( $this->_contactID ) >= 2 ) {
+            $this->_mergeCases = true;
+        }
+        $this->assign( 'mergeCases', $this->_mergeCases );
+        
         //retrieve details about case
         $params = array( 'id' => $this->_caseID );
 
@@ -160,6 +169,22 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                            array( 'class'   => 'form-submit-inline',
                                   'onclick' => "return checkSelection( this );") ); 
         
+        if ( $this->_mergeCases ) {
+            $allCases   = CRM_Case_BAO_Case::getCases( false, $this->_contactID );
+            $otherCases = array( );
+            foreach ( $allCases as $caseId => $details ) {
+                if ( $caseId == $this->_caseID ) continue;
+                $otherCases[$caseId] = 'Case ID: '.$caseId.' Type: '.$details['case_type'].' Start: '.$details['case_start_date'];
+            }
+            $this->add( 'select', 'merge_case_id',  
+                        ts( 'Select Case for Merge' ), 
+                        array( '' => ts( '- select case -' ) ) + $otherCases );
+            $this->addElement( 'submit', 
+                               $this->getButtonName( 'next', 'merge_case' ), 
+                               ts('Merge'), 
+                               array( 'class' => 'form-submit-inline' ) ); 
+        }
+        
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
         $this->add('select', 'status_id',  ts( 'Status' ), array( "" => ts(' - any status - ') ) + $activityStatus );
 
@@ -231,8 +256,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
 		$baoRel = new CRM_Contact_BAO_Relationship();
 		$relType = $baoRel->getRelationType('Individual');
 		$roleTypes = array();
-		foreach ($relType as $k => $v)
-		{
+		foreach ( $relType as $k => $v ) {
 			$roleTypes[substr($k,0,strpos($k,'_'))] = $v;
 		}
 		$this->add('select', 'role_type',  ts( 'Relationship Type' ), array( '' => ts( '- select type -' ) ) + $roleTypes );
@@ -255,8 +279,9 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
      */
     public function postProcess()
     {
-        $params = $this->controller->exportValues( $this->_name );
-                      
+        $params     = $this->controller->exportValues( $this->_name );
+        $buttonName = $this->controller->getButtonName( );
+        
         // user context
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
                                       "reset=1&action=view&cid={$this->_contactID}&id={$this->_caseID}&show=1" );
@@ -282,6 +307,18 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             
             CRM_Core_Session::setStatus( ts('Activities from the %1 activity set have been added to this case.', 
                                             array( 1 => $reports[$params['timeline_id']] ) ) );
+        } else if ( $this->_mergeCases &&
+                    $buttonName == '_qf_CaseView_next_merge_case' ) {
+            
+            $mainCaseId  = $params['merge_case_id'];
+            $otherCaseId = $this->_caseID;
+            
+            //redirect user to main case view.
+            $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
+                                          "reset=1&action=view&cid={$this->_contactID}&id={$mainCaseId}&show=1" );
+            $session = CRM_Core_Session::singleton( ); 
+            $session->pushUserContext( $url );
         }
     }
+    
 }

@@ -464,6 +464,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
                   cov_status.label as case_status,
                   cov_status.label as case_status_name,
                   civicrm_activity.status_id,
+                  civicrm_case.start_date as case_start_date,
                   case_relation_type.label_b_a as case_role, ";
         if ( $type == 'upcoming' ) {
             $query .=  " civicrm_activity.activity_date_time as case_scheduled_activity_date,
@@ -611,6 +612,7 @@ AND civicrm_case.status_id != $closedId";
                                'case_status',
                                'case_status_name',
                                'activity_type_id',
+                               'case_start_date',
                                'case_role', 
                                );
 

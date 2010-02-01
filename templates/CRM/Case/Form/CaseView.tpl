@@ -37,6 +37,14 @@
             <td>{$form.timeline_id.label}<br />{$form.timeline_id.html}&nbsp;{$form._qf_CaseView_next.html}</td> 
             <td>{$form.report_id.label}<br />{$form.report_id.html}&nbsp;<input type="button" accesskey="R" value="Go" name="case_report" onclick="checkSelection( this );"/></td> 
         </tr>
+	{if $mergeCases}
+	<tr>
+	   <td colspan='2'><a href="#" onclick='cj("#merge_cases").show( );return false;'>{ts}Merge Case{/ts}</a>	
+	   <span id='merge_cases' style="display:none;">
+	   {$form.merge_case_id.html}&nbsp;{$form._qf_CaseView_next_merge_case.html}</span>
+	   </td>
+	</tr>
+	{/if}
     </table>
 </fieldset>
 
