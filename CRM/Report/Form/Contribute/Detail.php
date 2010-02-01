@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -261,7 +261,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $this->_from = "
         FROM  civicrm_contact      {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
               INNER JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} 
-                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id
+                      ON {$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_contribution']}.contact_id AND {$this->_aliases['civicrm_contribution']}.is_test = 0
               INNER JOIN (SELECT c.id, IF(COUNT(oc.id) = 0, 0, 1) AS ordinality FROM civicrm_contribution c LEFT JOIN civicrm_contribution oc ON c.contact_id = oc.contact_id AND oc.receive_date < c.receive_date GROUP BY c.id) {$this->_aliases['civicrm_contribution_ordinality']} 
                       ON {$this->_aliases['civicrm_contribution_ordinality']}.id = {$this->_aliases['civicrm_contribution']}.id
                LEFT JOIN  civicrm_phone {$this->_aliases['civicrm_phone']} 
@@ -342,7 +342,7 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
         $contributionTypes = CRM_Contribute_PseudoConstant::contributionType( );
         
         foreach ( $rows as $rowNum => $row ) {
-            if ( !empty($this->_noRepeats) ) {
+            if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
                 // don't repeat contact details if its same as the previous row
                 if ( array_key_exists('civicrm_contact_id', $row ) ) {
                     if ( $cid =  $row['civicrm_contact_id'] ) {

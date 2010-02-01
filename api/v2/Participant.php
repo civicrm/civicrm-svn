@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -31,7 +31,7 @@
  * @package CiviCRM_APIv2
  * @subpackage API_Participant
  * 
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * @version $Id$
  *
  */

@@ -23,7 +23,11 @@
               <td>{$sortName.$cid}</td> 
               {foreach from=$fields item=field key=fieldName}
                 {assign var=n value=$field.name}
-                <td class="compressed">{$form.field.$cid.$n.html}</td> 
+                {if ( $fields.$n.data_type eq 'Date') }
+                   <td class="compressed">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$cid batchUpdate=1}</td>
+                {else}
+                	<td class="compressed">{$form.field.$cid.$n.html}</td> 
+                {/if}
               {/foreach}
              </tr>
             {/foreach}

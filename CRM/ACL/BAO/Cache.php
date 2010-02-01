@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -120,15 +120,17 @@ WHERE contact_id = %1
 
     // deletes all the cache entries
     static function resetCache( ) {
-        self::$_cache = null;
-
-        $query = "
-DELETE     c 
-FROM       civicrm_acl_cache c
-INNER JOIN civicrm_acl       a ON c.acl_id = a.id
+        $config  =& CRM_Core_Config::singleton( );
+        $smartGroupCacheTimeout = 
+            isset( $config->smartGroupCacheTimeout ) && 
+            is_numeric(  $config->smartGroupCacheTimeout ) ? $config->smartGroupCacheTimeout : 0;
+        $query  = "
+DELETE FROM civicrm_acl_cache 
+WHERE  modified_date IS NULL OR (TIMESTAMPDIFF(MINUTE, modified_date, NOW()) >= $smartGroupCacheTimeout)
 ";
+        CRM_Core_DAO::singleValueQuery( $query );
 
-        $dao =& CRM_Core_DAO::executeQuery( $query );
+        CRM_Core_DAO::singleValueQuery( "TRUNCATE TABLE civicrm_acl_contact_cache" );
     }
 
 }

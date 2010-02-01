@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -202,7 +202,7 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
                       ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_relationship']}.$this->otherContact )          
             {$this->_aclFrom}
             INNER JOIN civicrm_contribution {$this->_aliases['civicrm_contribution']} ON
-                      ({$this->_aliases['civicrm_contribution']}.contact_id = {$this->_aliases['civicrm_relationship']}.$this->otherContact )";
+                      ({$this->_aliases['civicrm_contribution']}.contact_id = {$this->_aliases['civicrm_relationship']}.$this->otherContact ) AND {$this->_aliases['civicrm_contribution']}.is_test = 0 ";
         
         if( $this->_addressField ) {
             $this->_from .= " 
@@ -349,7 +349,7 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
             }
             
             //remove duplicate Organization names
-            if ( array_key_exists('civicrm_contact_household_household_name', $row) ) {
+            if ( array_key_exists('civicrm_contact_household_household_name', $row) && $this->_outputMode != 'csv' ) {
                 if ( $value = $row['civicrm_contact_household_household_name'] ) {
                     if( $rowNum == 0 ) {
                         $priviousHousehold = $value;
@@ -373,7 +373,7 @@ class CRM_Report_Form_Contribute_HouseholdSummary extends CRM_Report_Form {
             }
             
             //remove duplicate Contact names and relationship type
-            if ( array_key_exists('civicrm_contact_id', $row) ) {
+            if ( array_key_exists('civicrm_contact_id', $row) && $this->_outputMode != 'csv' ) {
                 if ( $value = $row['civicrm_contact_id'] ) {
                     if ( $rowNum == 0 ) {
                         $priviousContact= $value;

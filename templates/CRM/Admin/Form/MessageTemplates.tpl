@@ -16,7 +16,7 @@
        </dl>
       </div>
    {else}
-    <table class="form-layout-compressed" style="width:95%;">
+    <table class="form-layout-compressed">
         <tr>
             <td class="label">{$form.msg_title.label}</td>
             <td>{$form.msg_title.html}

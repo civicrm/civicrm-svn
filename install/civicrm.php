@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -141,7 +141,10 @@ function civicrm_source( $dsn, $fileName, $lineMode = false ) {
 
     if ( ! $lineMode ) {
         $string = file_get_contents( $fileName );
-        
+
+        // change \r\n to fix windows issues
+        $string = ereg_replace("\r\n", "\n", $string );
+
         //get rid of comments starting with # and --
 
         $string = preg_replace("/^#[^\n]*$/m",   "\n", $string );

@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,14 +28,14 @@
      *  Class to print labels in Avery or custom formats
      * functionality and smarts to the base PDF_Label.
      *
-     * @copyright CiviCRM LLC (c) 2004-2009
+     * @copyright CiviCRM LLC (c) 2004-2010
      * 
      *
      */
 
-require_once 'ufpdf/ufpdf.php';
+require_once 'tcpdf/tcpdf.php';
 
-class CRM_Utils_PDF_Label extends UFPDF {
+class CRM_Utils_PDF_Label extends TCPDF {
 
     // Private properties
     private $averyName  = '';       // Name of format
@@ -111,9 +111,9 @@ class CRM_Utils_PDF_Label extends UFPDF {
            $tFormat = $this->averyLabels[$format];
        }
        
-       parent::UFPDF('P', $tFormat['metric'], $tFormat['paper-size']);
+       parent::__construct('P', $tFormat['metric'], $tFormat['paper-size']);
        $this->SetFormat($tFormat);
-       $this->SetFontName('Arial');
+//     $this->SetFontName('Arial'); uncomment this to use non-default font
        $this->SetMargins(0,0);
        $this->SetAutoPageBreak(false);
        
@@ -210,7 +210,7 @@ class CRM_Utils_PDF_Label extends UFPDF {
         $this->SetXY($posX+3, $posY+3);
         $maxwidth = $this->width;
         //wrap the text if it's width is greater than maxwidth 
-        $this->wordWrap( $texte, $maxwidth);
+//      $this->wordWrap( $texte, $maxwidth); not supported by TCPDF, which does its own wrapping
         $this->MultiCell($this->width, $this->lineHeight, $texte);
         $this->countY++;
         

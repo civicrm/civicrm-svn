@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -1153,12 +1153,9 @@ AND civicrm_membership.is_test = %2";
                 
                 $currentMembership['join_date']     = 
                     CRM_Utils_Date::customFormat($currentMembership['join_date'], $format );
-                $currentMembership['start_date']    = 
-                    CRM_Utils_Date::customFormat($dates['start_date'],    $format );
-                $currentMembership['end_date']      = 
-                    CRM_Utils_Date::customFormat($dates['end_date'],      $format );
-                $currentMembership['reminder_date'] = 
-                    CRM_Utils_Date::customFormat($dates['reminder_date'], $format );
+                $currentMembership['start_date']    = CRM_Utils_Array::value( 'start_date',    $dates );
+                $currentMembership['end_date']      = CRM_Utils_Array::value( 'end_date',      $dates );
+                $currentMembership['reminder_date'] = CRM_Utils_Array::value( 'reminder_date', $dates );
                 $currentMembership['is_test']       = $is_test;
                 
                 if ( $form->_params['membership_source'] ) {
@@ -1190,10 +1187,11 @@ AND civicrm_membership.is_test = %2";
                                                                                           $changeToday );
                 
                 // Insert renewed dates for CURRENT membership
-                $memParams               = array( );
-                $memParams['join_date']  = CRM_Utils_Date::isoToMysql( $membership->join_date );
-                $memParams['start_date'] = CRM_Utils_Date::isoToMysql( $membership->start_date );
-                $memParams['end_date']   = CRM_Utils_Date::customFormat( $dates['end_date'], $format );
+                $memParams                  = array( );
+                $memParams['join_date']     = CRM_Utils_Date::isoToMysql( $membership->join_date );
+                $memParams['start_date']    = CRM_Utils_Date::isoToMysql( $membership->start_date );
+                $memParams['end_date']      = CRM_Utils_Array::value( 'end_date',      $dates );
+                $memParams['reminder_date'] = CRM_Utils_Array::value( 'reminder_date', $dates );
                 
                 //set the log start date.
                 $memParams['log_start_date'] = CRM_Utils_Date::customFormat( $dates['log_start_date'], $format );
@@ -1229,14 +1227,10 @@ AND civicrm_membership.is_test = %2";
                 require_once 'CRM/Member/BAO/MembershipType.php';  
                 $dates = CRM_Member_BAO_MembershipType::getDatesForMembershipType($membershipTypeID);
                 
-                $memParams['join_date']     = 
-                    CRM_Utils_Date::customFormat( $dates['join_date'],     $format );
-                $memParams['start_date']    = 
-                    CRM_Utils_Date::customFormat( $dates['start_date'],    $format );
-                $memParams['end_date']      = 
-                    CRM_Utils_Date::customFormat( $dates['end_date'],      $format );
-                $memParams['reminder_date'] = 
-                    CRM_Utils_Date::customFormat( CRM_Utils_Array::value( 'reminder_date', $dates ), $format );
+                $memParams['join_date']     = CRM_Utils_Array::value( 'join_date',     $dates );
+                $memParams['start_date']    = CRM_Utils_Array::value( 'start_date',    $dates );
+                $memParams['end_date']      = CRM_Utils_Array::value( 'end_date',      $dates );
+                $memParams['reminder_date'] = CRM_Utils_Array::value( 'reminder_date', $dates );
                 
                 require_once 'CRM/Member/BAO/MembershipStatus.php';
                 $status =

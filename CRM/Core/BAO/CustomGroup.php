@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -129,12 +129,10 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
                                                        'is_multiple' );
             
             if ( ($params['is_multiple'] != $isMultiple) && (CRM_Utils_Array::value('is_multiple', $params) || $isMultiple) ) {
-
                 $oldTableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
                                                              $params['id'],
                                                              'table_name' );
             }
-            
         } else {
             $group->created_id   = CRM_Utils_Array::value('created_id', $params);
             $group->created_date = CRM_Utils_Array::value('created_date', $params);
@@ -163,6 +161,13 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
         } elseif ( $oldTableName ) {
             require_once 'CRM/Core/BAO/SchemaHandler.php';
             CRM_Core_BAO_SchemaHandler::changeUniqueToIndex( $oldTableName, CRM_Utils_Array::value('is_multiple', $params) );
+        }
+        if ($params['overrideFKConstraint'] ==1 ) {
+            $table = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup',
+                                                  $params['id'],
+                                                  'table_name' );
+            require_once 'CRM/Core/BAO/SchemaHandler.php';
+            CRM_Core_BAO_SchemaHandler::changeFKConstraint( $table, self::mapTableName( $params['extends'][0] ) );
         }
         $transaction->commit( );
 
@@ -983,7 +988,7 @@ SELECT $select
                             list( $defaults[$elementName] ) = CRM_Utils_Date::setDateDefaults( $value, null, 
                                                                                                $field['date_format'] );
                         } else {
-                            list( $defaults[$elementName], $defaults[ $elementName. '_time' ] ) = 
+                            list( $defaults[$elementName], $defaults[ $elementName . '_time' ] ) = 
                             CRM_Utils_Date::setDateDefaults( $value, null, $field['date_format'], $field['time_format'] );
                         }
                     }

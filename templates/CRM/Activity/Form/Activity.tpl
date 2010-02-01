@@ -232,7 +232,7 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
         <tr class="buttons">
             <td>{$form.buttons.html}</td>
             <td>
-            {if $action eq 4}
+            {if $action eq 4 && $activityTName neq 'Inbound Email'}
                 <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=activity"}" class="edit button" title="{ts}Edit{/ts}">
                 <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
                 </a>

@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -402,7 +402,7 @@ class CRM_Report_Form_ActivitySummary extends CRM_Report_Form {
         $onHover        = ts('View Contact Summary for this Contact');
         foreach ( $rows as $rowNum => $row ) {
             
-            if ( array_key_exists('civicrm_contact_display_name', $row ) ) {
+            if ( array_key_exists('civicrm_contact_display_name', $row ) && $this->_outputMode != 'csv' ) {
                 if ( $value = $row['civicrm_contact_id'] ) {  
                     
                     if( $rowNum == 0 ) {

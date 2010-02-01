@@ -28,7 +28,6 @@
 {/htxt}
 
 {htxt id='id-css_url'}
-{ts}If you want to modify the look and feel of CiviCRM screens beyond what your CMS theme does, you
-can replace CiviCRM's primary CSS file (css/civicrm.css) with a customized version. Use this field to
-specify the URL of the replacement CSS file.{/ts}
+{ts}If you want to modify the look and feel of CiviCRM screens beyond what your CMS theme does, you can replace CiviCRM's primary CSS file (css/civicrm.css) with a customized version. Use this field to specify the URL of the replacement CSS file.{/ts}
+<p>{ts}You can also define additional CSS styles to be applied to all or specific page elements by adding CSS styles to the 'extra CSS' file: <em>css/extras.css</em>. This file is included in the downloaded codebase, but is empty by default. If you can accomplish required theming results with this approach, you can avoid the work of merging your custom CSS file changes with upgraded versions.{/ts}</p>
 {/htxt}

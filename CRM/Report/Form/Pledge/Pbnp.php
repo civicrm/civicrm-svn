@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -220,7 +220,7 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
         $display_flag = $prev_cid = $cid =  0;
         
         foreach ( $rows as $rowNum => $row ) {
-            if ( !empty($this->_noRepeats) ) {
+            if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
                 // don't repeat contact details if its same as the previous row
                 if ( array_key_exists('civicrm_contact_id', $row ) ) {
                     if ( $cid =  $row['civicrm_contact_id'] ) {

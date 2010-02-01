@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -27,7 +27,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -289,6 +289,10 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
                 }
             }
         }
+
+        // clear acl cache if any
+        require_once 'CRM/ACL/BAO/Cache.php';
+        CRM_ACL_BAO_Cache::resetCache( );
 
         //add location Block data
         $blocks = CRM_Core_BAO_Location::create( $params, $fixAddress );

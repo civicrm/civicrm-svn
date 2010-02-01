@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -289,7 +289,7 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
         }
         
         if ( !empty($clauses) ) {
-            $this->_where = "WHERE  civicrm_membership_status.is_current_member = 1 AND" . implode( ' AND ', $clauses );
+            $this->_where = "WHERE  civicrm_membership_status.is_current_member = 1 AND {$this->_aliases['civicrm_membership']}.is_test = 0 AND " . implode( ' AND ', $clauses );
         } else { 
             $this->_where = "WHERE {$this->_aliases['civicrm_membership']}.is_test = 0 AND
                             civicrm_membership_status.is_current_member = 1";

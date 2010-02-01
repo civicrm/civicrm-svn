@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -257,6 +257,15 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $this->_activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity',
                                                                   $this->_activityId,
                                                                   'activity_type_id' );
+        }
+
+        //Assigning Activity type name
+        if ( $this->_activityTypeId ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            $activityTName = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, 'AND v.value = '.$this->_activityTypeId , 'name' );
+            if ( $activityTName[$this->_activityTypeId] ) {
+                $this->assign( 'activityTName', $activityTName[$this->_activityTypeId] );
+            }
         }
 
         //check the mode when this form is called either single or as

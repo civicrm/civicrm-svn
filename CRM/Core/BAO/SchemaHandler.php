@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -201,6 +201,24 @@ class CRM_Core_BAO_SchemaHandler
         $sql .= " $indexName ( $indexFields )";
         return $sql;
     }
+    
+    static function changeFKConstraint( $tableName, $fkTableName ) 
+    {
+        $dropFKSql = "
+ALTER TABLE {$tableName}
+      DROP FOREIGN KEY `FK_{$tableName}_entity_id`;";
+
+        $dao = CRM_Core_DAO::executeQuery( $dropFKSql );
+        $dao->free();
+
+$addFKSql = "
+ALTER TABLE {$tableName}
+      ADD CONSTRAINT `FK_{$tableName}_entity_id` FOREIGN KEY (`entity_id`) REFERENCES {$fkTableName} (`id`) ON DELETE CASCADE;";
+        $dao = CRM_Core_DAO::executeQuery( $addFKSql );
+        $dao->free();
+
+        return true;
+    }
 
     static function buildForeignKeySQL( &$params, $separator, $prefix, $tableName ) 
     {
@@ -223,7 +241,7 @@ class CRM_Core_BAO_SchemaHandler
     }
 
     static function alterFieldSQL( &$params, $indexExist = false ) 
-    {
+    {        
         $sql  = str_repeat( ' ', 8 );
         $sql .= "ALTER TABLE {$params['table_name']}";
         

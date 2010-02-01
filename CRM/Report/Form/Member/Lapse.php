@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -187,7 +187,7 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
         FROM  civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
               INNER JOIN civicrm_membership {$this->_aliases['civicrm_membership']} 
                          ON {$this->_aliases['civicrm_contact']}.id = 
-                            {$this->_aliases['civicrm_membership']}.contact_id
+                            {$this->_aliases['civicrm_membership']}.contact_id AND {$this->_aliases['civicrm_membership']}.is_test = 0
               LEFT  JOIN civicrm_membership_status {$this->_aliases['civicrm_membership_status']}
                          ON {$this->_aliases['civicrm_membership_status']}.id = 
                             {$this->_aliases['civicrm_membership']}.status_id
@@ -295,7 +295,7 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
         
         foreach ( $rows as $rowNum => $row ) {
             
-            if ( !empty($this->_noRepeats) ) {
+            if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {
                 // not repeat contact display names if it matches with the one 
                 // in previous row
                 

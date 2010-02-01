@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -333,7 +333,7 @@ LEFT  JOIN (
           sum( contribution1.total_amount ) AS contribution1_total_amount_sum, 
           count( * ) AS contribution1_total_amount_count
    FROM   civicrm_contribution contribution1
-   WHERE  ( $receive_date1 ) $contriStatus1
+   WHERE  ( $receive_date1 ) $contriStatus1 AND contribution1.is_test = 0
    GROUP BY contribution1.$contriCol
 ) contribution1 ON $fromAlias.$fromCol = contribution1.$contriCol
 
@@ -342,7 +342,7 @@ LEFT  JOIN (
           sum( contribution2.total_amount ) AS contribution2_total_amount_sum, 
           count( * ) AS contribution2_total_amount_count
    FROM   civicrm_contribution contribution2
-   WHERE  ( $receive_date2 ) $contriStatus2
+   WHERE  ( $receive_date2 ) $contriStatus2 AND contribution2.is_test = 0
    GROUP BY contribution2.$contriCol
 ) contribution2 ON $fromAlias.$fromCol = contribution2.$contriCol
 ";

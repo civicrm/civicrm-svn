@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -164,15 +164,13 @@ class CRM_Utils_Mail
         if ( is_numeric( CIVICRM_MAIL_LOG ) ) {
             $config = CRM_Core_Config::singleton( );
             // create the directory if not there
-            $dirName = $config->uploadDir . 'mail' . DIRECTORY_SEPARATOR;
+            $dirName = $config->configAndLogDir . 'mail' . DIRECTORY_SEPARATOR;
             CRM_Utils_File::createDir( $dirName );
             $fileName = md5( uniqid( CRM_Utils_String::munge( $fileName ) ) ) . '.txt';
             file_put_contents( $dirName . $fileName,
                                $content );
         } else {
-            $current = file_get_contents( CIVICRM_MAIL_LOG );
-            $current .= $content;
-            file_put_contents( CIVICRM_MAIL_LOG, $current);
+            file_put_contents( CIVICRM_MAIL_LOG, $content, FILE_APPEND );
         }
     }
 

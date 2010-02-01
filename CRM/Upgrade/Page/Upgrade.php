@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -62,6 +62,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         $convertVer = array( '2.1'      => '2.1.0',
                              '2.2'      => '2.2.alpha1',
                              '2.2.alph' => '2.2.alpha3',
+                             '3.1.0'    => '3.1.1', // since 3.1.1 had domain.version set as 3.1.0
                              );
         if ( isset($convertVer[$currentVer]) ) {
             $currentVer = $convertVer[$currentVer];
@@ -352,6 +353,32 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         $template->assign( 'addDeceasedStatus', $addDeceasedStatus ); 
         
         $upgrade = new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+    }
+
+    function upgrade_3_1_0 ( $rev ) 
+    {
+        // upgrade all roles who have 'access CiviEvent' permission, to also have 
+        // newly added permission 'edit_all_events', CRM-5472
+        $config =& CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' ) {
+            $roles = user_roles(false, 'access CiviEvent');
+            if ( ! empty( $roles ) ) {
+                db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', edit all events\') WHERE rid IN (' . implode(',', array_keys($roles)) . ')' );
+            }
+        }
+
+        //make sure 'Deceased' membership status present in db,CRM-5636
+        $template =& CRM_Core_Smarty::singleton( );
+        
+        $addDeceasedStatus = false;
+        $sql = "SELECT max(id) FROM civicrm_membership_status where name = 'Deceased'"; 
+        if ( !CRM_Core_DAO::singleValueQuery( $sql ) ) {
+            $addDeceasedStatus = true;  
+        }
+        $template->assign( 'addDeceasedStatus', $addDeceasedStatus ); 
+
+        $upgrade =& new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
     }
 

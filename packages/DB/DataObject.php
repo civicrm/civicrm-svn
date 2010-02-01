@@ -2343,7 +2343,7 @@ class DB_DataObject extends DB_DataObject_Overload
         if ( defined( 'CIVICRM_DEBUG_LOG_QUERY' ) ) {
             if ( CIVICRM_DEBUG_LOG_QUERY == 'backtrace' ) {
                 CRM_Core_Error::backtrace( $string, true );
-            } else {
+            } else if ( CIVICRM_DEBUG_LOG_QUERY ) {
                 CRM_Core_Error::debug_var( 'Query', $string, false, true );
             }
         }

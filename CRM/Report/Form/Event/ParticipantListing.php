@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -249,9 +249,9 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         }
         
         if ( empty( $clauses ) ) {
-            $this->_where = "WHERE ( 1 ) ";
+            $this->_where = "WHERE {$this->_aliases['civicrm_participant']}.is_test = 0 ";
         } else {
-            $this->_where = "WHERE " . implode( ' AND ', $clauses );
+            $this->_where = "WHERE {$this->_aliases['civicrm_participant']}.is_test = 0 AND " . implode( ' AND ', $clauses );
         }
         if ( $this->_aclWhere ) {
             $this->_where .= " AND {$this->_aclWhere} ";

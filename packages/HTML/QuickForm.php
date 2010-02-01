@@ -1941,14 +1941,12 @@ class HTML_QuickForm extends HTML_Common
                              'page_text',
                              'body_text',
                              'footer_text',
-                             'thankyou_text',
                              'thankyou_footer',
                              'thankyou_footer_text',
                              'new_text',
                              'renewal_text',
                              'help_pre',
                              'help_post',
-                             'msg_html',
                              'confirm_title',
                              'confirm_text',
                              'confirm_footer_text',
@@ -1962,9 +1960,12 @@ class HTML_QuickForm extends HTML_Common
                              'bcc_id',
                              'premiums_intro_text',
                              'honor_block_text',
+                             'pay_later_receipt',
                              'label', // This is needed for FROM Email Address configuration. dgg
                              'url',  // This is needed for navigation items urls
                              'details',
+                             'msg_text', // message templates’ text versions
+                             'text_message', // (send an) email to contact’s and CiviMail’s text version
                              );
                                     
         $values = array();
@@ -2021,7 +2022,7 @@ class HTML_QuickForm extends HTML_Common
                 $this->filterValue( $value );
             }
         } else {
-            $values = htmlspecialchars( $values );
+            $values = str_replace(array('<', '>'), array('&lt;', '&gt;'), $values);
         }
     }
 

@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -1694,7 +1694,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                             list( $defaults[$fldName], $defaults[$fldName.'_time'] ) = CRM_Utils_Date::setDateDefaults( $details[$name] );
                             break;
                         
-                        default:
+                        default:                        
                             $defaults[$fldName] = $details[$name];
                             break;
                         }
@@ -2213,16 +2213,19 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         CRM_Core_DAO::commonRetrieve( $componentBAO, $params, $values );
         
         $formattedGroupTree = array( );
-        foreach ( $fields as $name => $field ) {
+        foreach ( $fields as $name => $field ) { 
             $fldName = "field[$componentId][$name]";
-            if ( array_key_exists( $name, $values ) ) {
+            if ( $name == 'participant_register_date' ) { 
+            	$timefldName = "field[$componentId][{$name}_time]";	
+            	list( $defaults[$fldName], $defaults[$timefldName] ) = CRM_Utils_Date::setDateDefaults( $values[$name] );
+            } else if ( array_key_exists( $name, $values ) ) { 
                 $defaults[$fldName] = $values[$name];
             } else if ( $name == 'participant_note' ) {
                 require_once "CRM/Core/BAO/Note.php";
                 $noteDetails = array( );
                 $noteDetails = CRM_Core_BAO_Note::getNote( $componentId, 'civicrm_participant' );
                 $defaults[$fldName] = array_pop($noteDetails);  
-            } else if ( in_array( $name, array( 'contribution_type', 'payment_instrument') ) )  {
+            }  else if ( in_array( $name, array( 'contribution_type', 'payment_instrument') ) )  {
                 $defaults[$fldName] = $values["{$name}_id"];
             } else if ( $customFieldInfo = CRM_Core_BAO_CustomField::getKeyID( $name, true ) ) {
                 if ( empty( $formattedGroupTree ) ) {
@@ -2246,17 +2249,21 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                             //hack to set default for checkbox
                             //basically this is for weired field name like field[33][custom_19]
                             //we are converting this field name to array structure and assign value.
-                            $checkBox = false;
+                            $skipValue = false;
                             
                             foreach ( $formattedGroupTree as $tree ) {
                                 if ( 'CheckBox' == CRM_Utils_Array::value( 'html_type', $tree['fields'][$customFieldDetails[0]] ) ) {
-                                    $checkBox = true;
+                                    $skipValue = true;
                                     $defaults['field'][$componentId][$name] = $customValue;
                                     break;
-                                }
+                                } else if ( CRM_Utils_Array::value( 'data_type', $tree['fields'][$customFieldDetails[0]] ) == 'Date' ) {
+                                	$skipValue = true;
+                                	list( $defaults['field'][$componentId][$name], $defaults['field'][$componentId][$name . '_time'] ) = 
+                            		CRM_Utils_Date::setDateDefaults( $customValue );	
+								}
                             }
                             
-                            if ( !$checkBox ) {
+                            if ( !$skipValue ) {
                                 $defaults[$fldName] = $customValue;
                             }
                             unset($defaults[$customKey]);

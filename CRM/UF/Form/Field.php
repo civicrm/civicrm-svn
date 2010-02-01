@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -686,7 +686,10 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         } else {
             $basicType  = CRM_Contact_BAO_ContactType::getBasicType( $groupType );
             if( $basicType ) {
-                if( $fieldType != $basicType ) {
+                if ( !is_array( $basicType ) ) {
+                    $basicType = array(  $basicType );
+                }
+                if( !in_array( $fieldType , $basicType ) ) { 
                     $errors['field_name'] = 
                         ts( 'Cannot add or update profile field type "%1" with combination 
                          of subtype other than "%1".',array( 1=> $fieldType ) ); 

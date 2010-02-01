@@ -41,7 +41,7 @@
 
 {if $form.activity_details.html}
     <tr>
-        <td class="label">{$form.activity_details.label}<br />{help id="id-details" file="CRM/Case/Form/Case.hlp"}</td>
+        <td class="label">{$form.activity_details.label}{help id="id-details" file="CRM/Case/Form/Case.hlp"}</td>
         <td class="view-value">{$form.activity_details.html|crmReplace:class:huge40}</td>
     </tr>
 {/if}
@@ -54,7 +54,7 @@
 {/if}
 
 {if $form.activity_subject.html}
-    <tr><td class="label">{$form.activity_subject.label}<br />{help id="id-activity_subject" file="CRM/Case/Form/Case.hlp"}</td><td>{$form.activity_subject.html}</td></tr>
+    <tr><td class="label">{$form.activity_subject.label}{help id="id-activity_subject" file="CRM/Case/Form/Case.hlp"}</td><td>{$form.activity_subject.html}</td></tr>
 {/if}
 
 {* inject activity type-specific form fields *}

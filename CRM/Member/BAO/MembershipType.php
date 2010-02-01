@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -506,7 +506,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             $rollover = false;
                         
             if ( $membershipTypeDetails['period_type'] == 'rolling' ) {
-                $startDate = $logStartDate = $today;
+                $startDate = $logStartDate = CRM_Utils_Date::mysqlToIso( $today );
             } else if ( $membershipTypeDetails['period_type'] == 'fixed' ) {
                 // Renewing expired membership is two step process. 
                 // 1. Renew the start date
@@ -541,7 +541,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
                                                   $yearValue ) );
                 }
                 
-                if ( CRM_Utils_Date::isoToMysql( $today ) > $rolloverDate ) {
+                if ( $today > $rolloverDate ) {
                     $rollover = true;
                 }
             }

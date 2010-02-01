@@ -4,7 +4,7 @@
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2009                                |
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -28,7 +28,7 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2009
+ * @copyright CiviCRM LLC (c) 2004-2010
  * $Id$
  *
  */
@@ -294,7 +294,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                       ($profileType    !=  $contactType)) ) {
                     $return = true;
                     if ( !$statusMessage ) {
-                        $statusMessage =  ts('This profile is configured for contact type "%1". It can not be used to edit contacts of other types', array( 1 => $profileSubType ? $profileSubType : $profileType ) );
+                        $statusMessage =  ts("This profile is configured for contact type '%1'. It cannot be used to edit contacts of other types.", array( 1 => $profileSubType ? $profileSubType : $profileType ) );
                     }
                 }
             }
