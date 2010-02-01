@@ -9,7 +9,7 @@
 	{if $event.description}
 	    <div class="section event_description-section summary">{$event.description}</div>
 	{/if}
-	<div class="section event_date_time-sectino">
+	<div class="section event_date_time-section">
 	    <div class="label"><label>{ts}When{/ts}</label></div>
 	    <div class="content">
             <abbr class="dtstart" title="{$event.event_start_date|crmDate}">
