@@ -77,9 +77,15 @@ class CRM_Utils_ReCAPTCHA {
     function add( &$form ) {
         $error  = null;
         $config =& CRM_Core_Config::singleton( );
-
+        $useSSL = false;
         require_once 'packages/recaptcha/recaptchalib.php';
-        $html = recaptcha_get_html($config->recaptchaPublicKey, $error);
+      
+        // See if we are using SSL
+        if ( isset( $_SERVER['HTTPS'] ) &&
+            strtolower( $_SERVER['HTTPS'] ) != 'off' ) {     
+            $useSSL = true;
+        }       
+        $html = recaptcha_get_html( $config->recaptchaPublicKey, $error, $useSSL );
 
         $form->assign( 'recaptchaHTML', $html );
         $form->add( 'text',
