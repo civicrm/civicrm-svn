@@ -59,6 +59,7 @@ class civicrm_handler_field_event_link extends views_handler_field {
       '#options' => array(
          'none' => t('Don\'t Link this Field'),
          'page' => t('Link to Event Page'),
+         'registration' => t('Link to Event Registration'),
          'config' => t('Link to Event Configuration'),
          'participants' => t('Link to Event Participants'),
          'custom' => t('Link to a Custom Node'),
@@ -98,6 +99,14 @@ class civicrm_handler_field_event_link extends views_handler_field {
            if (user_access('view event info') && $data !== NULL && $data !== '') {
            return civicrm_views_href( $data,
                                             'civicrm/event/info',
+                                            "reset=1&id={$values->{$this->aliases['id']}}" );
+           }
+
+    // LINKING TO EVENT REGISTRATION PAGE
+      case 'registration':
+           if (user_access('register for events') && $data !== NULL && $data !== '') {
+           return civicrm_views_href( $data,
+                                            'civicrm/event/register',
                                             "reset=1&id={$values->{$this->aliases['id']}}" );
            }
 
