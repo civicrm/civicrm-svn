@@ -332,10 +332,15 @@ ORDER BY j.scheduled_date,
             /* Send the mailing */
             $body    =& $message->get();
             $headers =& $message->headers();
+            // make $recipient actually be the *encoded* header, so as not to baffle Mail_RFC822, CRM-5743
+            $recipient = $headers['To'];
             $result = null;
             /* TODO: when we separate the content generator from the delivery
              * engine, maybe we should dump the messages into a table */
-            CRM_Core_Error::ignoreException( );
+
+            // disable error reporting on real mailings (but leave error reporting for tests), CRM-5744
+            if ($job_date) CRM_Core_Error::ignoreException();
+
             if ( is_object( $mailer ) ) {
                 
                 // hack to stop mailing job at run time, CRM-4246.

@@ -201,6 +201,13 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $html = $body_html;
             $text = $body_text;
             
+            require_once 'CRM/Core/Smarty/resources/String.php';
+            civicrm_smarty_register_string_resource( );
+            $smarty =& CRM_Core_Smarty::singleton( );
+            foreach( array( 'text', 'html') as $elem) {
+                $$elem = $smarty->fetch("string:{$$elem}");
+            }
+            
             // we need to wrap Mail_mime because PEAR is apparently unable to fix
             // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
             // this fixes CRM-5466
@@ -248,6 +255,8 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             }
             
             $messageSubject = CRM_Utils_Token::replaceContactTokens($body_subject, $contact, false, $subjectToken);
+            $messageSubject = $smarty->fetch("string:{$messageSubject}");
+
             $headers = array(
                              'From'      => $from,
                              'Subject'   => $messageSubject,

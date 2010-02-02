@@ -482,6 +482,8 @@ class CRM_Core_Error extends PEAR_ErrorStack {
      * @static
      */
     public static function nullHandler( $obj ) {
+        CRM_Core_Error::debug_var( 'Ignoring exception thrown here', $obj );
+        CRM_Core_Error::backtrace( 'backTrace', true );
         return $obj;
     }
 

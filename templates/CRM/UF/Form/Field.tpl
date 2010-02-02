@@ -52,7 +52,7 @@
         <dt id="in_selector_desDt">&nbsp;</dt><dd id="in_selector_desDd" class="description">&nbsp;{ts}Is this field included as a column in the search results table? This setting applies only to fields with 'Public Pages' or 'Public Pages and Listings' visibility.{/ts}</dd>
         {/edit}
 	<dl class="html-adjust">
-        <dt>{$form.help_post.label}</dt><dd>&nbsp;{$form.help_post.html|crmReplace:class:huge}</dd></dl>
+        <dt>{$form.help_post.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_field' field='help_post' id=$fieldId}{/if}</dt><dd>&nbsp;{$form.help_post.html|crmReplace:class:huge}</dd></dl>
         {edit}
 	<div class="spacer"></div>  
         <dt>&nbsp;</dt><dd class="description">&nbsp;{ts}Explanatory text displayed to users for this field (can include HTML formatting tags).{/ts}</dd>
