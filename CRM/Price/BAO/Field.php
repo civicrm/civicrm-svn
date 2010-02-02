@@ -126,7 +126,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                  !CRM_Utils_System::isNull( $params['option_value'][$index] ) ) {
                 $options[] = array( 'label'       => trim( $params['option_label'][$index] ),
                                     'name'        => CRM_Utils_Rule::cleanMoney( trim( $params['option_name'][$index] ) ),
-                                    'value'       => trim( $params['option_value'][$index] ),
+                                    'value'       => CRM_Utils_Rule::cleanMoney( trim( $params['option_value'][$index]) ),
                                     'description' => $description,
                                     'weight'      => $params['option_weight'][$index],
                                     'is_active'   => 1,
