@@ -1653,5 +1653,94 @@ LEFT JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.case
         
         return CRM_Core_DAO::singleValueQuery( $query ); 
     }
+    
+    /**
+     * Function to merge two cases.
+     *
+     * @param int $mainCaseId  id of main case record.
+     * @param int $otherCaseId id of case which we are going to merge.
+     *
+     * @return void.
+     * @static
+     */  
+    function mergeCases( $mainCaseId, $otherCaseId ) 
+    {
+        if ( !$mainCaseId || !$otherCaseId ) {
+            return;
+        }
+        
+        //FIXME : what to do w/ boundary activities. 
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true, true );
+        $openCaseType  = array_search( 'Open Case', $activityTypes );
+        $closeCaseType = array_search( 'Close Case', $activityTypes );
+        
+        $otherCaseActivities = array( );
+        CRM_Core_DAO::commonRetrieveAll( 'CRM_Case_DAO_CaseActivity', 
+                                         'case_id',
+                                         $otherCaseId, 
+                                         $otherCaseActivities );
+        $otherActivityIds = array( );
+        foreach ( $otherCaseActivities as $caseActivityId => $otherIds ) {
+            $otherActivityIds[] = $otherIds['activity_id'];
+        }
+        
+        //process only when we have activities.
+        if ( !empty( $otherActivityIds ) ) {
+            $openActivityId = $closeActivityId = null;
+            if ( $openCaseType ) { 
+                $sql = "
+SELECT  id
+  FROM  civicrm_activity 
+ WHERE  activity_type_id = $openCaseType 
+   AND  id IN ( ". implode( ',', array_values( $otherActivityIds ) ) . ');';
+                $dao = CRM_Core_DAO::executeQuery( $sql );
+                while ( $dao->fetch( ) ) {
+                    $openActivityId = $dao->id;
+                }
+                $dao->free( );
+            }
+            if ( $closeCaseType ) { 
+                $sql = "
+SELECT  id
+  FROM  civicrm_activity 
+ WHERE  activity_type_id = $closeCaseType 
+   AND  id IN ( ". implode( ',', array_values( $otherActivityIds ) ) . ');';
+                $dao = CRM_Core_DAO::executeQuery( $sql );
+                while ( $dao->fetch( ) ) {
+                    $closeActivityId = $dao->id;
+                }
+                $dao->free( );
+            }
+            
+            // create replica's for all activities.
+            foreach ( $otherCaseActivities as $caseActivityId => $otherIds ) {
+                $activityId = CRM_Utils_Array::value( 'activity_id', $otherIds );
+                //don't migrate open and close activities.
+                if ( !$activityId ||
+                     in_array( $activityId, array( $openActivityId, $closeActivityId ) ) ) {
+                    continue;
+                }
+                
+                //copy activity record.
+                $copyActivity = CRM_Core_DAO::copyGeneric( 'CRM_Activity_DAO_Activity', array( 'id' => $activityId ) );
+                if ( $copyActivity->id ) {
+                    require_once 'CRM/Case/DAO/CaseActivity.php';
+                    $caseActivity = new CRM_Case_DAO_CaseActivity( );
+                    $caseActivity->case_id     = $mainCaseId;
+                    $caseActivity->activity_id = $copyActivity->id;
+                    $caseActivity->save( );
+                    $caseActivity->free( );
+                }
+            }
+        }
+        
+        //move other case to trash.
+        require_once 'CRM/Case/BAO/Case.php';
+        $caseDelete = CRM_Case_BAO_Case::deleteCase( $otherCaseId, true );
+        
+        //insert activity record in reference w/ merge process.
+        
+    }
+ 
 }
 

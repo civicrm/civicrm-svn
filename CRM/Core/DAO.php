@@ -1045,7 +1045,8 @@ FROM   civicrm_domain
                     $newObject->$dbName .= $fieldsToSuffix[$dbName];
                 } 
                 
-                if( substr($name , -5) == '_date') {
+                if ( substr($name , -5)  == '_date' ||
+                     substr($name , -10) == '_date_time' ) {
                     $newObject->$dbName = CRM_Utils_Date::isoToMysql($object->$dbName);
                 }
                 
