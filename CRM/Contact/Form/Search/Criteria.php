@@ -132,12 +132,12 @@ class CRM_Contact_Form_Search_Criteria {
 
     static function location( &$form ) {
         $form->addElement( 'hidden', 'hidden_location', 1 );
-
+        
         require_once 'CRM/Core/BAO/Preferences.php';
         $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
         
         $attributes = CRM_Core_DAO::getAttribute('CRM_Core_DAO_Address');
- 
+        
         $elements = array( 
                           'street_address'         => array( ts('Street Address')    ,  $attributes['street_address'], null, null ),
                           'city'                   => array( ts('City')              ,  $attributes['city'] , null, null ),
@@ -147,7 +147,6 @@ class CRM_Contact_Form_Search_Criteria {
                           'country'                => array( ts('Country')           ,  $attributes['country_id'], 'country', false ), 
                           'address_name'           => array( ts('Address Name')      ,  $attributes['address_name'], null, null ), 
                            );
- 
         foreach ( $elements as $name => $v ) {
             list( $title, $attributes, $select, $multiSelect ) = $v;
             
@@ -160,8 +159,36 @@ class CRM_Contact_Form_Search_Criteria {
             }
             
             if ( $select ) {
-                $selectElements = array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::$select( );
-                $element = $form->addElement('select', $name, $title, $selectElements );
+                $config         = CRM_Core_Config::singleton( );
+                $countryDefault = $config->defaultContactCountry; 
+                $stateCountryMap[ ] = array( 'state_province' => 'state_province',
+                                             'country'        => 'country' );
+                if( $select == 'stateProvince' ) {
+                    if ( $countryDefault  && !isset( $form->_submitValues['country'] ) ) {
+                        $selectElements = array( '' => ts('- select -') ) 
+                            + CRM_Core_PseudoConstant::stateProvinceForCountry( $countryDefault );
+                        
+                    } else if ( isset( $form->_submitValues['country'] ) ) {
+                        $selectElements = array( '' => ts('- select -') ) 
+                            + CRM_Core_PseudoConstant::stateProvinceForCountry( $form->_submitValues['country']   );
+                    }
+                    else {
+                        //if not setdefault any country
+                        $selectElements = array( '' => ts('- select -') ) 
+                            + CRM_Core_PseudoConstant::$select( );
+                    }
+                    $element = $form->addElement( 'select', $name, $title, $selectElements );
+                } else if ( $select == 'country' ) {
+                    if ( $countryDefault ) {
+                        //for setdefault country
+                        $defaultValues = array( );
+                        $defaultValues[$name] = $countryDefault ;
+                        $form->setDefaults( $defaultValues );
+                    }
+                    $selectElements = array( '' => ts('- select -') ) 
+                        + CRM_Core_PseudoConstant::$select( );
+                    $element = $form->addElement('select', $name, $title, $selectElements );   
+                }
                 if ( $multiSelect ) {
                     $element->setMultiple( true );
                 }
@@ -175,12 +202,9 @@ class CRM_Contact_Form_Search_Criteria {
                 $form->addElement('text', 'postal_code_high', ts('To'),
                                   CRM_Utils_Array::value( 'postal_code', $attributes ) );
             }
-            
-            // select for state province
-            $stateProvince = array('' => ts('- any state/province -')) + CRM_Core_PseudoConstant::stateProvince( );
-            
         }
-
+        require_once 'CRM/Core/BAO/Address.php';
+        CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap ); 
         $worldRegions =  array('' => ts('- any region -')) + CRM_Core_PseudoConstant::worldRegion( );
         $form->addElement('select', 'world_region', ts('World Region'), $worldRegions);
         
@@ -192,7 +216,7 @@ class CRM_Contact_Form_Search_Criteria {
         }
         $form->addGroup($location_type, 'location_type', ts('Location Types'), '&nbsp;');
     }
-
+    
     static function activity( &$form ) 
     {
         $form->add( 'hidden', 'hidden_activity', 1 );
