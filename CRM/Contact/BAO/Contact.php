@@ -563,9 +563,17 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         $defaults    = array_merge( $defaults, $blocks );
         foreach ( $blocks as $block => $value ) $contact->$block = $value;
         
-        $contact->notes        =& CRM_Core_BAO_Note::getValues( $params, $defaults );
-        $contact->relationship =& CRM_Contact_BAO_Relationship::getValues( $params, $defaults );
-        $contact->groupContact =& CRM_Contact_BAO_GroupContact::getValues( $params, $defaults );
+        if ( !isset( $params['noNotes'] ) ) {    
+            $contact->notes =& CRM_Core_BAO_Note::getValues( $params, $defaults );
+        }
+        
+        if ( !isset( $params['noRelationships'] ) ) { 
+            $contact->relationship =& CRM_Contact_BAO_Relationship::getValues( $params, $defaults );
+        }
+        
+        if ( !isset( $params['noGroups'] ) ) { 
+            $contact->groupContact =& CRM_Contact_BAO_GroupContact::getValues( $params, $defaults );
+        }
         
         return $contact;
     }
@@ -1871,8 +1879,8 @@ UNION
             
         case 'tag' :
             require_once 'CRM/Core/BAO/EntityTag.php';
-            return count( CRM_Core_BAO_EntityTag::getTag( $contactId ) );
-            
+            return CRM_Core_BAO_EntityTag::getContactTags( $contactId, true );
+
         case 'rel':
             require_once 'CRM/Contact/BAO/Relationship.php';
             return count( CRM_Contact_BAO_Relationship::getRelationship( $contactId ) );
@@ -1882,48 +1890,36 @@ UNION
             return CRM_Contact_BAO_GroupContact::getContactGroup( $contactId, null, null, true );
             
         case 'log' :
+            require_once 'CRM/Core/BAO/Log.php';
+            return CRM_Core_BAO_Log::getContactLogCount( $contactId );
+        
         case 'note':
-            eval( '$object =& new CRM_Core_DAO_'.$component.'( );');
-            $object->entity_table = 'civicrm_contact';
-            $object->entity_id    = $contactId;
-            $object->orderBy( 'modified_date desc' );
-            break;
+            require_once 'CRM/Core/BAO/Note.php';
+            return CRM_Core_BAO_Note::getContactNoteCount( $contactId );
             
         case 'contribution' :
             require_once 'CRM/Contribute/BAO/Contribution.php';
             return CRM_Contribute_BAO_Contribution::contributionCount( $contactId );
-            break;
             
         case 'membership' :
-            require_once 'CRM/Member/DAO/Membership.php';
-            eval( '$object =& new CRM_Member_DAO_Membership( );');
-            $object->contact_id = $contactId;
-            $object->is_test    = 0;
-            break;
+            require_once 'CRM/Member/BAO/Membership.php';
+            return CRM_Member_BAO_Membership::getContactMembershipCount( $contactId );
             
         case 'participant' :
-            require_once 'CRM/Event/DAO/Participant.php';
-            eval( '$object =& new CRM_Event_DAO_Participant( );');
-            $object->contact_id = $contactId;
-            $object->is_test    = 0;
-            break;
+            require_once 'CRM/Event/BAO/Participant.php';
+            return CRM_Event_BAO_Participant::getContactParticipantCount( $contactId );
             
         case 'pledge' :
-            require_once 'CRM/Pledge/DAO/Pledge.php';
-            eval( '$object =& new CRM_Pledge_DAO_Pledge( );');
-            $object->contact_id = $contactId;
-            $object->is_test    = 0;
-            break;
+            require_once 'CRM/Pledge/BAO/Pledge.php';
+            return CRM_Pledge_BAO_Pledge::getContactPledgeCount( $contactId );
 
         case 'case' :
             require_once 'CRM/Case/BAO/Case.php';
             return CRM_Case_BAO_Case::caseCount( $contactId );
             
         case 'grant' :
-            require_once 'CRM/Grant/DAO/Grant.php';
-            eval( '$object =& new CRM_Grant_DAO_Grant( );');
-            $object->contact_id = $contactId;
-            break;
+            require_once 'CRM/Grant/BAO/Grant.php';
+            return CRM_Grant_BAO_Grant::getContactGrantCount( $contactId );
             
         case 'activity' :
             require_once 'CRM/Activity/BAO/Activity.php';
@@ -1931,7 +1927,7 @@ UNION
         
 		default :
 			$custom = explode( '_', $component );
-			if( $custom['0'] = 'custom' ) {
+			if ( $custom['0'] = 'custom' ) {
 				require_once 'CRM/Core/DAO/CustomGroup.php';
                 if ( ! $tableName ) {
                     $tableName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomGroup', $custom['1'], 'table_name' );
@@ -1940,9 +1936,6 @@ UNION
 				return CRM_Core_DAO::singleValueQuery( $queryString );
 			}
         }
-        
-        $object->find( );
-        return $object->N;
     }
     
     /**

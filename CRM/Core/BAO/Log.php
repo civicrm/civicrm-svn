@@ -132,6 +132,19 @@ UPDATE civicrm_log
 
         self::$_processed[$contactID][$userID] = $log->id;
     }
+    
+    /**
+     * Function to get log record count for a Contact
+     *
+     * @param int $contactId Contact ID
+     * 
+     * @return int count of log records
+     * @access public
+     * @static
+     */
+     static function getContactLogCount( $contactID ) {
+         $query = "SELECT count(*) FROM civicrm_log 
+                   WHERE civicrm_log.entity_table = 'civicrm_contact' AND civicrm_log.entity_id = {$contactID}";
+         return CRM_Core_DAO::singleValueQuery( $query );
+     }    
 }
-
-

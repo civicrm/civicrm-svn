@@ -1633,6 +1633,18 @@ FROM   civicrm_membership_type
             return $membershipTypeValues;
         }
     }
-
+    
+    /**
+     * Function to get membership record count for a Contact
+     *
+     * @param int $contactId Contact ID
+     * 
+     * @return int count of membership records
+     * @access public
+     * @static
+     */
+    static function getContactMembershipCount( $contactID ) {
+        $query = "SELECT count(*) FROM civicrm_membership WHERE civicrm_membership.contact_id = {$contactID} AND civicrm_membership.is_test = 0 ";
+        return CRM_Core_DAO::singleValueQuery( $query );
+    }
 }
-

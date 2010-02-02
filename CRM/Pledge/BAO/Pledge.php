@@ -711,6 +711,19 @@ WHERE civicrm_pledge.status_id  {$statusClause}
         }
 
         return $pledgeDetails;
+    }
+    
+    /**
+     * Function to get pledge record count for a Contact
+     *
+     * @param int $contactId Contact ID
+     * 
+     * @return int count of pledge records
+     * @access public
+     * @static
+     */
+    static function getContactPledgeCount( $contactID ) {
+        $query = "SELECT count(*) FROM civicrm_pledge WHERE civicrm_pledge.contact_id = {$contactID} AND civicrm_pledge.is_test = 0";
+        return CRM_Core_DAO::singleValueQuery( $query );
     }    
 }
-

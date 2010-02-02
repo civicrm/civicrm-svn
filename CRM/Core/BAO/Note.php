@@ -285,5 +285,19 @@ ORDER BY modified_date desc";
         }
         return $viewNote;
     }
+    
+    /**
+     * Function to get log record count for a Contact
+     *
+     * @param int $contactId Contact ID
+     * 
+     * @return int count of log records
+     * @access public
+     * @static
+     */
+     static function getContactNoteCount( $contactID ) {
+         $query = "SELECT count(*) FROM civicrm_note 
+                   WHERE civicrm_note.entity_table = 'civicrm_contact' AND civicrm_note.entity_id = {$contactID}";
+         return CRM_Core_DAO::singleValueQuery( $query );
+     }
 }
-
