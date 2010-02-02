@@ -217,7 +217,11 @@ class CRM_Contact_Form_Edit_Individual {
             $values['address'][1]['state_province_id']=0;
         }
       
-        $params['address'][1] = $values['address'][1];
+        foreach ( $values['address'][1] as $key => $val ) {
+            if ( ! in_array( $key, array( 'location_type_id', 'is_billing', 'is_primary' ) ) ) {
+                $params['address'][1][$key] = $values['address'][1][$key];
+            }
+        }
 
         // unset all the ids and unwanted fields
         $unsetFields = array( 'id', 'location_id', 'timezone', 'note' );
