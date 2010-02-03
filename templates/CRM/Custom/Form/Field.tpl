@@ -15,25 +15,24 @@ function custom_option_html_type( ) {
             cj("#hideDefault").hide();
             cj("#hideDesc").hide();
             cj("#searchByRange").hide();
-            document.getElementsByName("is_search_range")[1].checked = true;
-            cj("#is_searchable").show();
+            cj("#searchable").show();
         } else {
             cj("#showoption").hide();
             cj("#hideDefault").show();
             cj("#hideDesc").show();
-            cj("#is_searchable").show();
+            cj("#searchable").show();
         }
     } else {
         if ( data_type_id == 9 ) { 
             document.getElementById("default_value").value = '';
             cj("#hideDefault").hide();
-            cj("#is_searchable").hide();
+            cj("#searchable").hide();
             cj("#hideDesc").hide();
         } else if ( data_type_id == 11 ) {
             cj("#hideDefault").hide();
         } else {
             cj("#hideDefault").show();
-            cj("#is_searchable").show();
+            cj("#searchable").show();
             cj("#hideDesc").show();
         }
         cj("#showoption").hide();
@@ -187,7 +186,7 @@ function custom_option_html_type( ) {
             <td class="label">{$form.is_required.label}</td>
             <td class="html-adjust">{$form.is_required.html}</td>
         </tr>
-        <tr id ="is_searchable">
+        <tr id ="searchable">
             <td class="label">{$form.is_searchable.label}</td>
             <td class="html-adjust">{$form.is_searchable.html}
                 {if $action neq 4}
@@ -195,8 +194,8 @@ function custom_option_html_type( ) {
                 {/if}        
             </td>
         </tr>
-        <tr id="searchByRange" {if $action eq 2 && $form.is_searchable.value && ($form.data_type.value.0.0 eq 1 OR $form.data_type.value.0.0 eq 2 OR $form.data_type.value.0.0 eq 3 OR $form.data_type.value.0.0 eq 5) && ($form.data_type.value.1.0 eq 'Text' OR $form.data_type.value.1.0 eq 'Date')} class="show-block"{else} class="hide-block"{/if} >
-	        <td class="label">{$form.is_search_range.label}</td>
+        <tr id="searchByRange">
+	    <td class="label">{$form.is_search_range.label}</td>
             <td class="html-adjust">{$form.is_search_range.html}</td>
         </tr>
         <tr>
@@ -231,11 +230,11 @@ function custom_option_html_type( ) {
 
     function showSearchRange(chkbox) {
         var html_type = document.getElementsByName("data_type[1]")[0].value;
-	    var data_type = document.getElementsByName("data_type[0]")[0].value;
+	var data_type = document.getElementsByName("data_type[0]")[0].value;
 
         if ( ((data_type == 1 || data_type == 2 || data_type == 3) && (html_type == "Text")) || data_type == 5) {
             if (chkbox.checked) {
-		        document.getElementsByName("is_search_range")[0].checked = true;
+		document.getElementsByName("is_search_range")[0].checked = true;
                 cj("#searchByRange").show();
             } else {
                 clearSearchBoxes( );
@@ -245,15 +244,9 @@ function custom_option_html_type( ) {
       
     //should not clear search boxes for update mode. 
     function clearSearchBoxes( ) {
-	{/literal}
-        action = {$action}
-        {literal}
-                         
-        if ( action != 2 ) {
-	    document.getElementsByName("is_searchable")[0].checked   = false; 
-	    document.getElementsByName("is_search_range")[1].checked = true;
-	    cj("#searchByRange").hide();
-        } 	
+    	document.getElementsByName("is_searchable")[0].checked   = false; 
+	document.getElementsByName("is_search_range")[1].checked = true;
+        cj("#searchByRange").hide();
     }
 </script>
 {/literal}
