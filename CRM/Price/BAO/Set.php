@@ -436,8 +436,8 @@ WHERE     ct.id = cp.contribution_type_id AND
                     continue;
                 }
                 $setTree[$setID]['fields'][$fieldID][$field] = $dao->$field;
-                $setTree[$setID]['fields'][$fieldID]['options'] = CRM_Price_BAO_Field::getOptions( $fieldID, false );
             }
+            $setTree[$setID]['fields'][$fieldID]['options'] = CRM_Price_BAO_Field::getOptions( $fieldID, false );
         }
 
         // also get the pre and post help from this price set
