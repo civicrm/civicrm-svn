@@ -226,7 +226,6 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             return null;
         }
         $config    =& CRM_Core_Config::singleton();
-        $seperator = $config->monetaryThousandSeparator;
         $qf->assign('currencySymbol', CRM_Core_DAO::getFieldValue('CRM_Core_DAO_Currency',$config->defaultCurrency,'symbol','name') );
         if (!isset($label)) {
             $label = $field->label;
@@ -252,7 +251,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             
             $element =& $qf->add( 'text', $elementName, $label, 
                                   array_merge( array('size' =>"4"), 
-                                               array( 'price' => json_encode( array( $optionKey , str_replace( $seperator, '', $customOption[$optionKey][$valueFieldName] ) ) ) ) 
+                                               array( 'price' => json_encode( array( $optionKey , $customOption[$optionKey][$valueFieldName] ) ) ) 
                                              ),
                                   $useRequired && $field->is_required
                                   );
@@ -278,7 +277,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                 }
 
                 $choice[] = $qf->createElement('radio', null, '', $opt['label'], $opt['id'],
-                                               array('price' => json_encode( array( $elementName, str_replace( $seperator, '', $opt[$valueFieldName] ) ) ) )
+                                               array('price' => json_encode( array( $elementName, $opt[$valueFieldName] ) ) )
                                               );
             }
             $element =& $qf->addGroup($choice, $elementName, $label);
@@ -292,7 +291,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             $customOption = CRM_Price_BAO_Field::getOptions($field->id, $inactiveNeeded);
             $selectOption = array();
             foreach ($customOption as $opt) {
-                $amount[ $opt['id'] ] = str_replace( $seperator, '', $opt[$valueFieldName] );
+                $amount[ $opt['id'] ] = $opt[$valueFieldName];
                 if ($field->is_display_amounts) {
                     $opt['label'] .= '&nbsp;-&nbsp;';
                     $opt['label'] .= CRM_Utils_Money::format( $opt[$valueFieldName] );
@@ -314,7 +313,7 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
                     $opt['label'] .= CRM_Utils_Money::format( $opt[$valueFieldName] );
                 }
                 $check[] =& $qf->createElement('checkbox', $opt['id'], null, $opt['label'], 
-                                               array('price' => json_encode( array( $opt['id'] , str_replace( $seperator, '', $opt[$valueFieldName] ) ) ) ) 
+                                               array('price' => json_encode( array( $opt['id'] , $opt[$valueFieldName] ) ) ) 
                                               );
             }
             $element =& $qf->addGroup($check, $elementName, $label);
