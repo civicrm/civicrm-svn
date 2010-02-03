@@ -1659,27 +1659,33 @@ LEFT JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.case
      *
      * @param int $mainCaseId  id of main case record.
      * @param int $otherCaseId id of case which we are going to merge.
+     * @param int $contactID   case contact id
      *
      * @return void.
      * @static
      */  
-    function mergeCases( $mainCaseId, $otherCaseId ) 
+    function mergeCases( $mainCaseId, $otherCaseId, $contactID = null ) 
     {
+        $mergeCase = false;
         if ( !$mainCaseId || !$otherCaseId ) {
-            return;
+            return $mergeCase;
         }
         
-        //FIXME : what to do w/ boundary activities. 
+        if ( !$contactID ) {
+            $contactID = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_CaseContact', $mainCaseId, 'contact_id', 'case_id' );
+        }
+        
         $activityTypes = CRM_Core_PseudoConstant::activityType( true, true );
         $openCaseType  = array_search( 'Open Case', $activityTypes );
         $closeCaseType = array_search( 'Close Case', $activityTypes );
         
-        $otherCaseActivities = array( );
+        $mergeActivityDetails = $mergeActivitySubject = null;
+        $otherCaseActivities  = $otherActivityIds = array( );
         CRM_Core_DAO::commonRetrieveAll( 'CRM_Case_DAO_CaseActivity', 
                                          'case_id',
                                          $otherCaseId, 
                                          $otherCaseActivities );
-        $otherActivityIds = array( );
+        
         foreach ( $otherCaseActivities as $caseActivityId => $otherIds ) {
             $otherActivityIds[] = $otherIds['activity_id'];
         }
@@ -1713,9 +1719,10 @@ SELECT  id
             }
             
             // create replica's for all activities.
+            $copiedActivityIds = array( );
             foreach ( $otherCaseActivities as $caseActivityId => $otherIds ) {
                 $activityId = CRM_Utils_Array::value( 'activity_id', $otherIds );
-                //don't migrate open and close activities.
+                //don't migrate open and close case activities.
                 if ( !$activityId ||
                      in_array( $activityId, array( $openActivityId, $closeActivityId ) ) ) {
                     continue;
@@ -1723,7 +1730,9 @@ SELECT  id
                 
                 //copy activity record.
                 $copyActivity = CRM_Core_DAO::copyGeneric( 'CRM_Activity_DAO_Activity', array( 'id' => $activityId ) );
+                
                 if ( $copyActivity->id ) {
+                    $copiedActivityIds[] = $activityId;
                     require_once 'CRM/Case/DAO/CaseActivity.php';
                     $caseActivity = new CRM_Case_DAO_CaseActivity( );
                     $caseActivity->case_id     = $mainCaseId;
@@ -1732,14 +1741,41 @@ SELECT  id
                     $caseActivity->free( );
                 }
             }
+            
+            //get the info for merge activity.
+            if ( !empty( $copiedActivityIds ) ) {
+                $sql = '
+SELECT id, subject, activity_date_time
+  FROM civicrm_activity
+ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
+                $dao = CRM_Core_DAO::executeQuery( $sql );
+                while ( $dao->fetch( ) ) {
+                    $mergeActivityDetails .= "$dao->subject $dao->activity_date_time <br />";
+                }
+            }
         }
         
         //move other case to trash.
         require_once 'CRM/Case/BAO/Case.php';
-        $caseDelete = CRM_Case_BAO_Case::deleteCase( $otherCaseId, true );
+        $mergeCase = CRM_Case_BAO_Case::deleteCase( $otherCaseId, true );
         
-        //insert activity record in reference w/ merge process.
+        if ( $mergeCase ) {
+            //create activity record in reference w/ merge process.
+            $allStatuses          = CRM_Core_PseudoConstant::activityStatus( 'name' );
+            $mergeActivitySubject = "Case $otherCaseId merged into case $mainCaseId";
+            $activityParams = array( 'subject'            => $mergeActivitySubject,
+                                     'details'            => $mergeActivityDetails, 
+                                     'status_id'          => array_search( 'Completed',  $allStatuses ),
+                                     'activity_type_id'   => array_search( 'Merge Case', $activityTypes ),
+                                     'source_record_id'   => $otherCaseId,
+                                     'source_contact_id'  => $contactID,
+                                     'activity_date_time' => date('YmdHis') );
+            
+            require_once 'CRM/Activity/BAO/Activity.php';
+            CRM_Activity_BAO_Activity::create( $activityParams ); 
+        }
         
+        return $mergeCase;
     }
  
 }

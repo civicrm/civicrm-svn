@@ -17,3 +17,18 @@ VALUES
 -- CRM-5344
     ALTER TABLE civicrm_uf_group
     MODIFY notify text;
+
+-- CRM-5598
+
+SELECT @option_group_id_activity_type := max(id) from civicrm_option_group where name = 'activity_type';
+
+SELECT @atOpt_max_val := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id = @option_group_id_activity_type;
+
+SELECT @atOpt_max_wt  := MAX(ROUND(val.weight)) FROM civicrm_option_value val where val.option_group_id = @option_group_id_activity_type;
+
+SELECT @caseCompId    := max(id) FROM civicrm_component where name = 'CiviCase';
+
+INSERT INTO 
+   civicrm_option_value(`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELECT @atOpt_max_val := @atOpt_max_val+1), 'Merge Case', NULL, 0, NULL, (SELECT @atOpt_max_wt := @atOpt_max_wt + 1 ), 0, 1, 1, @caseCompId, NULL );
+

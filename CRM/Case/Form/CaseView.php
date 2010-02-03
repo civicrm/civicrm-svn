@@ -314,7 +314,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             $otherCaseId = $this->_caseID;
             
             //merge two cases.
-            CRM_Case_BAO_Case::mergeCases( $mainCaseId, $otherCaseId );
+            CRM_Case_BAO_Case::mergeCases( $mainCaseId, $otherCaseId, $this->_contactID );
             
             //redirect user to main case view.
             $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
