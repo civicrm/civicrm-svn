@@ -30,6 +30,7 @@
  */
 class civicrm_handler_field_custom extends views_handler_field {
     function construct( ) {
+        civicrm_initialize( );
     }
 
     function render( $values ) {
