@@ -1720,6 +1720,7 @@ SELECT  id
             
             // create replica's for all activities.
             $copiedActivityIds = array( );
+            require_once 'CRM/Case/DAO/CaseActivity.php';
             foreach ( $otherCaseActivities as $caseActivityId => $otherIds ) {
                 $activityId = CRM_Utils_Array::value( 'activity_id', $otherIds );
                 //don't migrate open and close case activities.
@@ -1733,7 +1734,6 @@ SELECT  id
                 
                 if ( $copyActivity->id ) {
                     $copiedActivityIds[] = $activityId;
-                    require_once 'CRM/Case/DAO/CaseActivity.php';
                     $caseActivity = new CRM_Case_DAO_CaseActivity( );
                     $caseActivity->case_id     = $mainCaseId;
                     $caseActivity->activity_id = $copyActivity->id;
@@ -1750,7 +1750,7 @@ SELECT id, subject, activity_date_time
  WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
                 $dao = CRM_Core_DAO::executeQuery( $sql );
                 while ( $dao->fetch( ) ) {
-                    $mergeActivityDetails .= "$dao->subject $dao->activity_date_time <br />";
+                    $mergeActivityDetails .= "$dao->activity_date_time $dao->subject <br />";
                 }
             }
         }
@@ -1772,7 +1772,16 @@ SELECT id, subject, activity_date_time
                                      'activity_date_time' => date('YmdHis') );
             
             require_once 'CRM/Activity/BAO/Activity.php';
-            CRM_Activity_BAO_Activity::create( $activityParams ); 
+            $mergeActivity = CRM_Activity_BAO_Activity::create( $activityParams );
+            
+            //finally attach merge activity to case. 
+            if ( $mergeActivity->id ) {
+                $caseActivity = new CRM_Case_DAO_CaseActivity( );
+                $caseActivity->case_id     = $mainCaseId;
+                $caseActivity->activity_id = $mergeActivity->id;
+                $caseActivity->save( );
+                $caseActivity->free( );
+            }
         }
         
         return $mergeCase;
