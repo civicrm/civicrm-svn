@@ -18,7 +18,8 @@
  | See the Affero General Public License for more details.            |
  |                                                                    |
  | You should have received a copy of the Affero General Public       |
- | License along with this program; if not, contact CiviCRM LLC       |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
  | at info[AT]civicrm[DOT]org.  If you have questions about the       |
  | Affero General Public License or the licensing  of CiviCRM,        |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
