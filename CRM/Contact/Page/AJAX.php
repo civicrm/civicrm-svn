@@ -360,8 +360,11 @@ SELECT CONCAT_WS(':::' , sort_name, supplemental_address_1, sp.abbreviation, pos
 
             } else if ( $hh ) {
                 $query = "
-SELECT CONCAT_WS(' :: ' , sort_name, LEFT(street_address,25),city) 'sort_name' , civicrm_contact.id 'id' FROM civicrm_contact LEFT JOIN civicrm_address ON (civicrm_contact.id =civicrm_address.contact_id AND civicrm_address.is_primary =1 )
-WHERE civicrm_contact.contact_type ='Household' AND household_name LIKE '%$contactName%' {$addStreet} {$addCity} {$whereIdClause} ORDER BY household_name ";
+SELECT CONCAT_WS(' :: ' , sort_name, LEFT(street_address,25),city) 'sort_name' , location_type_id 'location_type_id', is_primary 'is_primary', is_billing 'is_billing', civicrm_contact.id 'id' 
+FROM civicrm_contact 
+LEFT JOIN civicrm_address ON (civicrm_contact.id =civicrm_address.contact_id AND civicrm_address.is_primary =1 )
+WHERE civicrm_contact.contact_type ='Household' 
+AND household_name LIKE '%$contactName%' {$addStreet} {$addCity} {$whereIdClause} ORDER BY household_name ";
             } else if ( $relType ) {
                 if ( CRM_Utils_Array::value( 'case', $_GET ) ) {
                     $query = "
@@ -403,7 +406,7 @@ ORDER BY sort_name ";
                         $elements[] = array( 'name' => addslashes( $dao->sort_name ),
                                          'id'   => $dao->id );
                     } else {
-                        echo $elements = "$dao->sort_name|$dao->id\n";
+                        echo $elements = "$dao->sort_name|$dao->id|$dao->location_type_id|$dao->is_primary|$dao->is_billing\n";
                     }
                 }
                 //for adding new household address / organization

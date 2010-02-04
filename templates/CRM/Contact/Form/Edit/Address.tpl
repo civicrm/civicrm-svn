@@ -110,9 +110,23 @@ cj('#shared_household').autocomplete( dataUrl, { width : 320, selectFirst : fals
         cj( "#shared_household_id" ).val( data[0] );
         cj( 'table#address_1' ).toggle( ); 
     } else {
+        var locationTypeId = 'address_'+{/literal}{$blockId}{literal}+'_location_type_id';
+        var isPrimary      = 'Address_'+{/literal}{$blockId}{literal}+'_IsPrimary';
+        var isBilling      = 'Address_'+{/literal}{$blockId}{literal}+'_IsBilling';
         cj( 'table#address_1' ).hide( ); 
         cj( "span#show_address" ).html( data[0] ); 
         cj( "#shared_household_id" ).val( data[1] );
+        cj( "#"+locationTypeId ).val(data[2]); 
+        if( data[3] == 1 ) {
+            cj( "#"+isPrimary ).attr("checked","checked");
+        } else {
+            cj( "#"+isPrimary ).removeAttr("checked");
+        }
+        if( data[4] == 1 ) {
+            cj( "#"+isBilling ).attr("checked","checked");
+        } else {
+            cj( "#"+isBilling ).removeAttr("checked");
+        } 
     }
 }).bind( 'change blur', function( ) {
     if ( !parseInt( cj( "#shared_household_id" ).val( ) ) ) {
