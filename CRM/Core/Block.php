@@ -48,7 +48,7 @@ class CRM_Core_Block {
      * @var int
      */
     const
-        CREATE_NEW       = 1,
+        CREATE_NEW      = 1,
         RECENTLY_VIEWED = 2,
         DASHBOARD       = 3,
         ADD             = 4,
@@ -328,7 +328,8 @@ class CRM_Core_Block {
                                                                'ref'   => 'new-activity',
                                                                'title' => ts('Activity') ) ));
                     
-            if ( CRM_Core_Permission::check('access CiviCase') &&                
+            if ( CRM_Core_Permission::check('access CiviCase') &&
+                 CRM_Core_Permission::check('access my cases and activities') &&
                  CRM_Core_Permission::check('add contacts') &&
                  in_array( 'CiviCase', $config->enableComponents ) ) {
                 require_once 'CRM/Core/OptionGroup.php';

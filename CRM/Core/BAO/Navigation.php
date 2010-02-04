@@ -420,7 +420,8 @@ ORDER BY parent_id, weight";
             foreach ( $permissions as $key ) {
                 $showItem = true;
                 //hack to determine if it's a component related permission
-                if ( $key != 'access CiviCRM' && substr( $key, 0, 6 ) === 'access' ) {
+                if ( !in_array( $key, array( 'access CiviCRM', 'access my cases and activities' ) )
+                     && substr( $key, 0, 6 ) === 'access' ) {
                     $componentName = trim(substr( $key, 6 ));
                     if ( !in_array( $componentName, $config->enableComponents ) || 
                          !CRM_Core_Permission::check( $key ) ) {
