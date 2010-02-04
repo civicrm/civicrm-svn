@@ -595,10 +595,10 @@ class CRM_Utils_Date
 
         $year = (int ) $year;
         // simple heuristic to determine what century to use
-        // 01 - 09 is always 2000 - 2009
-        // 10 - 99 is always 1910 - 1999
-        if ( $year < 10 ) {
-            $year = $cen . '0' . $year;
+        // 00 - 20 is always 2000 - 2020
+        // 21 - 99 is always 1921 - 1999
+        if ( $year < 21 ) {
+            $year = ( strlen( $year ) == 1 ) ? $cen . '0' . $year : $cen . $year;
         } else if ( $year < 100 ) {
             $year = $prevCen . $year;
         }
