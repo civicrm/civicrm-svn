@@ -1,3 +1,28 @@
+{*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.1                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*}
 {htxt id='id-enable_ssl'}
 <p>{ts}This setting forces a redirect of all online contribution / member / event and CiviCRM administrator page requests to SSL secured URLs (https).{/ts}</p>
 <p>{ts}If you use a payment processor service where credit card and billing information is collected ON YOUR SITE (PayPal Website Payments Pro or Moneris as of now) <strong>it is strongly recommended that you create or obtain an SSL certificate and configure your webserver to support SSL connections</strong>. Consult your hosting provider or web-server documentation for more information on obtaining and installing SSL certificates.{/ts}</p>
