@@ -835,7 +835,8 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                     }
                 } else {
                     $updateMappingFields->name = $mapper[$i];
-                    $updateMappingFields->relationship_type_id = null;
+                    $updateMappingFields->relationship_type_id = 'NULL';
+                    $updateMappingFields->relationship_type_direction = 'NULL';
                     $location = array_keys($locationTypes, $locations[$i]);
                     $updateMappingFields->location_type_id = isset($location) ? $location[0] : null;                    
                     // to store phoneType id and provider id seperately
