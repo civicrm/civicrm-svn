@@ -261,7 +261,8 @@ class CRM_Utils_File {
                 unset( $extensions['htm' ] );
             }
         }
-        return isset( $extensions[$ext] ) ? true : false;
+        //support lower and uppercase file extensions
+        return isset( $extensions[strtolower( $ext )] ) ? true : false;
     }
 
     /**
