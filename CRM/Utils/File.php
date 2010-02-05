@@ -252,6 +252,8 @@ class CRM_Utils_File {
             require_once 'CRM/Core/OptionGroup.php';
             $extensions = CRM_Core_OptionGroup::values( 'safe_file_extension', true );
             
+            //make extensions to lowercase
+            $extensions = array_change_key_case( $extensions, CASE_LOWER );
             // allow html/htm extension ONLY if the user is admin 
             // and/or has access CiviMail
             require_once 'CRM/Core/Permission.php';
