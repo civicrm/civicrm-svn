@@ -991,23 +991,24 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                 if ( $timeFormat == 1 ) {
                     $show24Hours = false;
                 } 
+                $elemetName = $name;
                 if( is_a($this, 'CRM_Contact_Form_Task_Batch') 
                 	|| is_a($this, 'CRM_Contribute_Form_Task_Batch') 
                 	|| is_a($this, 'CRM_Event_Form_Task_Batch') 
                 	|| is_a($this, 'CRM_Member_Form_Task_Batch')) { 
-                	$name  = substr( $name, 0, $name.length - 1);
-                	$name .= '_time]' ;
+                	$elemetName  = substr( $name, 0, $name.length - 1);
+                	$elemetName .= '_time]' ;
 				}else {
-					$name .= '_time' ;
+					$elemetName .= '_time' ;
 				}
-                $this->add('text', $name, ts('Time'), array( 'timeFormat' => $show24Hours ) );
+                $this->add('text', $elemetName, ts('Time'), array( 'timeFormat' => $show24Hours ) );
             }            
         }
                 
         if ( $required ) {
             $this->addRule( $name, ts('Please select %1', array(1 => $label)), 'required');
             if ( CRM_Utils_Array::value( 'addTime', $attributes ) ) {
-                $this->addRule( $name, ts('Please select Time'), 'required');
+                $this->addRule( $elemetName, ts('Please select Time'), 'required'); 
             }
         }
     }
