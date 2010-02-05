@@ -62,7 +62,7 @@
      <title>Manage Events</title>
      <page_callback>CRM_Event_Page_ManageEvent</page_callback>
      <desc>Create and edit event configuration including times, locations, online registration forms, and fees. Links for iCal and RSS syndication.</desc>
-     <access_arguments>administer CiviCRM,access CiviEvent</access_arguments>
+     <access_arguments>access CiviEvent</access_arguments>
      <adminGroup>CiviEvent</adminGroup>
      <icon>admin/small/event_manage.png</icon>
      <weight>370</weight>
@@ -72,7 +72,7 @@
      <title>Event Templates</title>
      <page_callback>CRM_Admin_Page_EventTemplate</page_callback>
      <desc>Administrators can create Event Templates - which are basically master event records pre-filled with default values</desc>
-     <access_arguments>administer CiviCRM,access CiviEvent</access_arguments>
+     <access_arguments>access CiviEvent</access_arguments>
      <adminGroup>CiviEvent</adminGroup>
      <icon>admin/small/template.png</icon>
      <weight>375</weight>
@@ -121,7 +121,7 @@
      <path>civicrm/event/manage</path>
      <title>Manage Events</title>
      <page_callback>CRM_Event_Page_ManageEvent</page_callback>
-     <access_arguments>administer CiviCRM,access CiviEvent</access_arguments>
+     <access_arguments>access CiviEvent</access_arguments>
      <page_type>1</page_type>
      <weight>820</weight>
   </item>
@@ -130,7 +130,7 @@
      <path_arguments>action=add</path_arguments>
      <title>New Event</title>
      <page_callback>CRM_Event_Page_ManageEvent</page_callback>
-     <access_arguments>administer CiviCRM,access CiviEvent</access_arguments>
+     <access_arguments>access CiviEvent</access_arguments>
      <page_type>1</page_type>
      <weight>830</weight>
   </item>
@@ -146,7 +146,7 @@
      <path>civicrm/event/price</path>
      <title>Manage Price Sets</title>
      <page_callback>CRM_Price_Page_Set</page_callback>
-     <access_arguments>administer CiviCRM,access CiviEvent</access_arguments>
+     <access_arguments>access CiviEvent</access_arguments>
      <page_type>1</page_type>
      <weight>850</weight>
   </item>
