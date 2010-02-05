@@ -121,6 +121,10 @@ WHERE contact_id = %1
 
     // deletes all the cache entries
     static function resetCache( ) {
+        // reset any static caching
+        self::$_cache = null;
+
+        // reset any db caching
         $config  =& CRM_Core_Config::singleton( );
         $smartGroupCacheTimeout = 
             isset( $config->smartGroupCacheTimeout ) && 
