@@ -411,7 +411,12 @@ ORDER BY parent_id, weight";
             }
             $makeLink = true;
         }
-                    
+        
+        static $allComponents;
+        if ( !$allComponents ) {
+            $allComponents = CRM_Core_Component::getNames( );
+        }
+        
         if ( isset( $permission) && $permission ) {
             $permissions = explode(',', $permission ); 
             $config  = CRM_Core_Config::singleton( );
@@ -420,9 +425,16 @@ ORDER BY parent_id, weight";
             foreach ( $permissions as $key ) {
                 $showItem = true;
                 //hack to determine if it's a component related permission
-                if ( !in_array( $key, array( 'access CiviCRM', 'access my cases and activities' ) )
-                     && substr( $key, 0, 6 ) === 'access' ) {
-                    $componentName = trim(substr( $key, 6 ));
+                
+                $componentName = null;
+                if ( strpos( $key, 'access' ) === 0 ) { 
+                    $componentName = trim( substr( $key, 6 ) );
+                    if ( !in_array( $componentName, $allComponents ) ) {
+                        $componentName = null;
+                    }
+                }
+                
+                if ( $componentName ) {
                     if ( !in_array( $componentName, $config->enableComponents ) || 
                          !CRM_Core_Permission::check( $key ) ) {
                         $showItem = false;
