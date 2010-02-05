@@ -1571,13 +1571,14 @@ WHERE  ce.loc_block_id = $locBlockId";
                     CRM_ACL_API::group( CRM_Core_Permission::VIEW, null, 'civicrm_event', $allEvents );
             }
             
+            $permissions[CRM_Core_Permission::DELETE] = array( );
             if ( CRM_Core_Permission::check( 'delete in CiviEvent' ) ) {
                 // Note: we want to restrict the scope of delete permission to 
                 // events that are editable/viewable (usecase multisite).
                 // We can remove array_intersect once we have ACL support for delete functionality.
                 $permissions[CRM_Core_Permission::DELETE] = 
                     array_intersect( $permissions[CRM_Core_Permission::EDIT],
-                                 $permissions[CRM_Core_Permission::VIEW] );
+                                     $permissions[CRM_Core_Permission::VIEW] );
             }
         }
 
