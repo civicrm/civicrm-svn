@@ -33,8 +33,8 @@
                 <dt>{$form.is_cms_user.label}</dt>
                 <dd>{$form.is_cms_user.html} {help id='id-is_cms_user' file="CRM/UF/Form/Group.hlp"}</dd>		
             {/if}
-            <dt></dt>
-            <dd>{$form.is_update_dupe.html} {$form.is_update_dupe.label} {help id='id-is_update_dupe' file="CRM/UF/Form/Group.hlp"}</dd>
+            <dt>{$form.is_update_dupe.label}</dt>
+            <dd>{$form.is_update_dupe.html} {help id='id-is_update_dupe' file="CRM/UF/Form/Group.hlp"}</dd>
             
             <dt></dt>
             <dd>{$form.is_map.html} {$form.is_map.label} {help id='id-is_map' file="CRM/UF/Form/Group.hlp"}</dd>

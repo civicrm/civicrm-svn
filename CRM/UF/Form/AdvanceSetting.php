@@ -51,8 +51,12 @@ class CRM_UF_Form_AdvanceSetting extends CRM_UF_Form_Group {
         $form->addElement('checkbox', 'is_map', ts('Enable mapping for this profile?') );
         
         // should we allow updates on a exisitng contact
-        $form->addElement('checkbox', 'is_update_dupe', ts('Update contact on a duplicate match?' ) );
+        $options = array(); 
+        $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Issue warning and do not save'), 0 );
+        $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Update the matching contact'), 1 );
+        $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Allow duplicate contact to be created'), 2 );
         
+        $this->addGroup($options, 'is_update_dupe', ts('What to do upon duplicate match'));
         // we do not have any url checks to allow relative urls
         $form->addElement('text', 'post_URL', ts('Redirect URL'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_UFGroup', 'post_URL') );
         $form->addElement('text', 'cancel_URL', ts('Cancel Redirect URL'), CRM_Core_DAO::getAttribute('CRM_Core_DAO_UFGroup', 'cancel_URL') );

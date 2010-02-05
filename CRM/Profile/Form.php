@@ -107,9 +107,9 @@ class CRM_Profile_Form extends CRM_Core_Form
     /**
      * Do we allow updates of the contact
      *
-     * @var boolean
+     * @var int
      */
-    public $_isUpdateDupe = false;
+    public $_isUpdateDupe = 0;
     
     /**
      * THe context from which we came from, allows us to go there if redirect not set
@@ -437,7 +437,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                         $setCaptcha = true;
                     }
                     if ($dao->is_update_dupe) {
-                        $this->_isUpdateDupe = true;
+                        $this->_isUpdateDupe = $dao->is_update_dupe;
                     }
                 }
             }
@@ -511,7 +511,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         // hack we use a -1 in options to indicate that its registration 
         if ( $form->_id ) {
             $cid = $form->_id;
-            $form->_isUpdateDupe = true;
+            $form->_isUpdateDupe = 1;
         }
         
         if ( $form->_mode == CRM_Profile_Form::MODE_REGISTER ) {
@@ -552,7 +552,9 @@ class CRM_Profile_Form extends CRM_Core_Form
                                                      $ruleType, 
                                                      $exceptions );
             if ( $ids ) {
-                if ( $form->_isUpdateDupe ) {
+                if ( $form->_isUpdateDupe == 2 ) {
+                    CRM_Core_Session::setStatus( ts('Note: this contact may be a duplicate of an existing record.') );
+                } elseif ( $form->_isUpdateDupe == 1 ) {
                     if ( ! $form->_id ) {
                         $form->_id = $ids[0];
                     }
