@@ -177,7 +177,7 @@ cj('a#expand').click( function( ){
 
 //current employer default setting
 var employerId = "{/literal}{$currentEmployer}{literal}";
-if( employerId ) {
+if ( employerId ) {
     var dataUrl = "{/literal}{crmURL p='civicrm/ajax/contactlist' h=0 q="org=1&id=" }{literal}" + employerId ;
     cj.ajax({ 
         url     : dataUrl,   
@@ -191,6 +191,9 @@ if( employerId ) {
     }); 
 }
 
+cj("input#current_employer").click( function( ) {
+    cj("input#current_employer_id").val('');
+});
 </script>
 {/literal}
 
