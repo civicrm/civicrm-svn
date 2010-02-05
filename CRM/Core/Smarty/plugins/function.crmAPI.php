@@ -76,9 +76,6 @@ function smarty_function_crmAPI( $params, &$smarty ) {
         return;
     }
     
-    CRM_Core_Error::debug( $params );
-    CRM_Core_Error::debug( $result );
-
     $smarty->assign($params["var"],$result);
 }
 
