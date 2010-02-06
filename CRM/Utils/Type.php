@@ -119,6 +119,7 @@ class CRM_Utils_Type
         switch($type) {
         case 'Integer':
         case 'Int':
+        case 'ContactReference':
             if (CRM_Utils_Rule::integer($data)) {
                 return $data;
             }
