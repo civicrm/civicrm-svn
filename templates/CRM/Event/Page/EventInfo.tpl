@@ -116,14 +116,14 @@
 	            <table class="form-layout-compressed fee_block-table">
 	                {foreach from=$feeBlock.value name=fees item=value}
 	                    {assign var=idx value=$smarty.foreach.fees.iteration}
-	                    {if $feeBlock.value.$idx}
-	                        {assign var="lClass" value="fee-label"}
+	                    {if $feeBlock.lClass.$idx}
+	                        {assign var="lClass" value=$feeBlock.lClass.$idx}
 	                    {else}
-	                        {assign var="lClass" value="fee_option_group-label"}
+	                        {assign var="lClass" value="fee_level-label"}
 	                    {/if}
 	                    <tr>
 	                        <td class="{$lClass}">{$feeBlock.label.$idx}</td>
-	                        <td class="fee_amount-value">{$feeBlock.value.$idx|crmMoney}</td>
+	                        <td{if $feeBlock.value.$idx} class="fee_amount-value right"{/if}>{$feeBlock.value.$idx|crmMoney}</td>
 	                    </tr>
 	                {/foreach}
 	            </table>
