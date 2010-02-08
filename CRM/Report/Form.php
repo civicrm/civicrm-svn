@@ -448,6 +448,8 @@ class CRM_Report_Form extends CRM_Core_Form {
                     //operator, To freeze the select element
                     if ( CRM_Utils_Array::value('operatorType', $field ) == CRM_Report_FORM::OP_MULTISELECT ) {
                         $this->_defaults["{$fieldName}_op"] = 'in';
+                    } elseif ( CRM_Utils_Array::value('operatorType', $field ) == CRM_Report_FORM::OP_MULTISELECT_SEPARATOR  ) {
+                        $this->_defaults["{$fieldName}_op"] = 'mhas'; 
                     } else if ( $op = CRM_Utils_Array::value( 'default_op', $field ) ) {
                         $this->_defaults["{$fieldName}_op"] = $op;
                     }
@@ -1625,12 +1627,20 @@ ORDER BY cg.table_name";
                 break; 
 
             case 'StateProvince': 
-                $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
+                if ( in_array( $customDAO->html_type, array( 'Multi-Select State/Province' ) ) ) {
+                    $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT_SEPARATOR;
+                } else {
+                    $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
+                }
                 $curFilters[$customDAO->column_name]['options']      = CRM_Core_PseudoConstant::stateProvince();
                 break;
 
             case 'Country':
-                $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
+                if ( in_array( $customDAO->html_type, array( 'Multi-Select Country' ) ) ) {
+                    $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT_SEPARATOR;
+                } else {
+                    $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
+                }
                 $curFilters[$customDAO->column_name]['options']      = CRM_Core_PseudoConstant::country();
                 break;
 
