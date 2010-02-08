@@ -1534,29 +1534,33 @@ AND    cf.id = %1";
     {
         static $customOptionGroup = null;
         
-        if ( ! $customOptionGroup || !empty( $includeFieldIds )) {
-            $includeFieldClause = "";
+        $cacheKey = (empty($includeFieldIds)) ? 'onlyActive':'force';
+        if ( $cacheKey == 'force' ) $customOptionGroup[$cacheKey] = null; 
+        
+        if ( !CRM_Utils_Array::value( $cacheKey, $customOptionGroup ) ) {
+            $whereClause = '( g.is_active = 1 AND f.is_active = 1 )';
+            
+            //support for single as well as array format.
             if ( !empty( $includeFieldIds )) {
                 if ( is_array( $includeFieldIds )) { 
                     $includeFieldIds = implode( ',', $includeFieldIds );
-                } 
-                $includeFieldClause = "OR f.id in ( $includeFieldIds )";
+                }
+                $whereClause .= "OR f.id IN ( $includeFieldIds )";
             }
             
             $query = "
-SELECT g.id, f.label
-FROM   civicrm_option_group g,
-       civicrm_custom_field f
-WHERE  g.id = f.option_group_id
-AND    (( g.is_active = 1 AND f.is_active = 1 ) $includeFieldClause )";
+    SELECT  g.id, f.label
+      FROM  civicrm_option_group g
+INNER JOIN  civicrm_custom_field f ON ( g.id = f.option_group_id ) 
+     WHERE  {$whereClause}";
             
             $dao = CRM_Core_DAO::executeQuery( $query );
-            $customOptionGroup = array( );
             while ( $dao->fetch( ) ) {
-                $customOptionGroup[$dao->id] = $dao->label;
+                $customOptionGroup[$cacheKey][$dao->id] = $dao->label;
             }
         }
-        return $customOptionGroup;
+        
+        return $customOptionGroup[$cacheKey];
     }
     
     /**
