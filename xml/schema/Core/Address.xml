@@ -79,6 +79,7 @@
   <field>
        <name>street_number</name>
        <type>int</type>
+       <export>true</export>
        <comment>Numeric portion of address number on the street, e.g. For 112A Main St, the street_number = 112.</comment>
        <add>1.1</add>
   </field>
@@ -86,6 +87,7 @@
        <name>street_number_suffix</name>
        <type>varchar</type>
        <length>8</length>
+       <export>true</export>
        <comment>Non-numeric portion of address number on the street, e.g. For 112A Main St, the street_number_suffix = A</comment>
        <add>1.1</add>
   </field>
@@ -100,6 +102,7 @@
        <name>street_name</name>
        <type>varchar</type>
        <length>64</length>
+       <export>true</export>
        <comment>Actual street name, excluding St, Dr, Rd, Ave, e.g. For 112 Main St, the street_name = Main.</comment>
        <add>1.1</add>
   </field>
@@ -126,6 +129,7 @@
        <name>street_unit</name>
        <type>varchar</type>
        <length>16</length>
+       <export>true</export>
        <comment>Secondary unit designator, e.g. Apt 3 or Unit # 14, or Bldg 1200</comment>
        <add>1.1</add>
   </field>
