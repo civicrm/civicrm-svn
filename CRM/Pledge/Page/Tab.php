@@ -154,6 +154,7 @@ class CRM_Pledge_Page_Tab extends CRM_Contact_Page_View
         switch ( $context ) {
             
         case 'dashboard':           
+        case 'pledgeDashboard':           
             $url = CRM_Utils_System::url( 'civicrm/pledge', 'reset=1' );
             break;
             
