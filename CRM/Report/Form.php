@@ -924,6 +924,52 @@ class CRM_Report_Form extends CRM_Core_Form {
         // custom code to alter rows
     }
 
+    function alterCustomDataDisplay( &$rows ) {
+        // custom code to alter rows having custom values
+        if ( empty($this->_customGroupExtends) ) {
+            return;
+        }
+
+        $customFields    = array( );
+        $customFieldCols = array( 'id', 'label', 'column_name', 'data_type', 'html_type', 
+                                  'option_group_id', 'time_format', 'options_per_line' );
+
+        $query = "
+SELECT cg.table_name, cf." . implode( ", cf.", $customFieldCols ) . " 
+FROM   civicrm_custom_group cg 
+INNER JOIN civicrm_custom_field cf ON cg.id = cf.custom_group_id
+WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND 
+      cg.is_active = 1 AND 
+      cf.is_active = 1 AND 
+      cf.column_name IN ('". implode( "','", array_keys($this->_params['fields']) ) ."')
+";
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        while( $dao->fetch( ) ) {
+            foreach( $customFieldCols as $key ) {
+                $customFields[$dao->table_name . '_' . $dao->column_name][$key] = $dao->$key;
+            }
+        }
+        $dao->free( );
+
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        foreach ( $rows as $rowNum => $row ) {
+            foreach ( $row as $tableCol => $val ) {
+                if ( array_key_exists( $tableCol, $customFields ) ) {
+                    $params = array( 'data' => $val );
+                    $rows[$rowNum][$tableCol] = 
+                        CRM_Core_BAO_CustomGroup::formatCustomValues($params, $customFields[$tableCol]);
+                    $entryFound = true;
+                }
+            }
+
+            // skip looking further in rows, if first row itself doesn't 
+            // have the column we need
+            if ( !$entryFound ) {
+                break;
+            }
+        }
+    }
+
     function removeDuplicates( &$rows ) {
         if ( empty($this->_noRepeats) ) {
             return;
@@ -1016,6 +1062,9 @@ class CRM_Report_Form extends CRM_Core_Form {
 
         // use this method for formatting rows for display purpose.
         $this->alterDisplay( $rows );
+
+        // use this method for formatting custom rows for display purpose.
+        $this->alterCustomDataDisplay( $rows );
     }
 
     function buildChart( &$rows ) {
@@ -1461,17 +1510,15 @@ class CRM_Report_Form extends CRM_Core_Form {
             $this->_customGroupExtends = array( $this->_customGroupExtends );  
         }
 
-        $sql = "
-SELECT cg.table_name, cg.extends, cf.label, cf.column_name, cf.data_type, cf.html_type, cf.option_group_id 
+        $sql       = "
+SELECT cg.table_name, cg.extends, cf.id as cf_id, cf.label, cf.column_name, cf.data_type, cf.html_type, cf.option_group_id 
 FROM   civicrm_custom_group cg 
-INNER JOIN civicrm_custom_field cf ON cg.id = cf.custom_group_id
+INNER  JOIN civicrm_custom_field cf ON cg.id = cf.custom_group_id
 WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND 
       cg.is_active = 1 AND 
       cf.is_active = 1 
 ORDER BY cg.table_name";
-
         $customDAO =& CRM_Core_DAO::executeQuery( $sql );
-        CRM_Core_Error::debug( '$sql', $sql );
         
         $curTable  = null;
         while( $customDAO->fetch() ) {
@@ -1527,19 +1574,12 @@ ORDER BY cg.table_name";
 
                 if ( !empty($customDAO->option_group_id) ) {
                     $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
-                    // FIXME: check is optionValue is really reqd
-//                     $curFilters[$customDAO->column_name]['optionValue']  = true;
-//                     $curFields [$customDAO->column_name]['optionValue']  = true;  
-                    if ( in_array( $customDAO->html_type, array( 'Multi-Select', 'AdvMulti-Select', 'CheckBox') ) ) {
-                            $curFilters[$customDAO->column_name]['multiOption']  = true;  
-                            $curFields [$customDAO->column_name]['multiOption']  = true; 
-                    }
                     if( $addFilters ) {
                         $curFilters[$customDAO->column_name]['options'] = array( );
                         $ogDAO =& CRM_Core_DAO::executeQuery( "SELECT ov.value, ov.label FROM civicrm_option_value ov WHERE ov.option_group_id = %1 ORDER BY ov.weight", array(1 => array($customDAO->option_group_id, 'Integer')) );
                         while( $ogDAO->fetch() ) {
                             $curFilters[$customDAO->column_name]['options'][$ogDAO->value] = $ogDAO->label;
-                        } 
+                        }
                     }
                 }
                 break; 
@@ -1547,21 +1587,11 @@ ORDER BY cg.table_name";
             case 'StateProvince': 
                 $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
                 $curFilters[$customDAO->column_name]['options']      = CRM_Core_PseudoConstant::stateProvince();
-                //$curFields[$customDAO->column_name]['optionValue']   = true;
-                if ( in_array( $customDAO->html_type, array( 'Multi-Select State/Province') ) ) {
-                    $curFilters[$customDAO->column_name]['multiOption']  = true;  
-                    $curFields [$customDAO->column_name]['multiOption']  = true; 
-                }
                 break;
 
             case 'Country':
                 $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
                 $curFilters[$customDAO->column_name]['options']      = CRM_Core_PseudoConstant::country();
-                //$curFields[$customDAO->column_name]['optionValue']   = true;
-                if ( in_array( $customDAO->html_type, array( 'Multi-Select Country') ) ) {
-                    $curFilters[$customDAO->column_name]['multiOption']  = true; 
-                    $curFields [$customDAO->column_name]['multiOption']  = true; 
-                }
                 break;
 
             default:
