@@ -480,7 +480,7 @@ WHERE grp.name = 'civicrm_price_field.amount.$fieldId'";
                     $textValue = CRM_Core_DAO::executeQuery( $sql );
                     while( $textValue->fetch( ) ) {
                         // calculate text price field amount here itself.
-                        $selectedAmounts[$textValue->id] = $priceFields[$fieldId][$textValue->id]*$textValue->name;
+                        $selectedAmounts[$textValue->id] = $priceFields[$fieldId]*$textValue->name;
                     }
                 } else {
                     if ( is_array( $priceFields[$fieldId] ) ) {
