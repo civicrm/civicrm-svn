@@ -148,8 +148,12 @@ LIMIT 0, {$limit}
             echo $contactList = "$dao->data|$dao->id\n";
         }
         //return organization name if doesn't exist in db
-        if( ! $contactList && CRM_Utils_Array::value( 'org', $_GET) ) {
-            echo CRM_Utils_Array::value( 's', $_GET );
+        if ( !$contactList ) {
+            if ( CRM_Utils_Array::value( 'org', $_GET) ) {
+                echo CRM_Utils_Array::value( 's', $_GET );
+            } else if ( CRM_Utils_Array::value( 'context', $_GET ) == 'customfield' ) {
+                echo "$name|$name\n";
+            }
         }
         exit();
     } 
