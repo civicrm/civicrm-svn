@@ -49,7 +49,8 @@ class CRM_Report_Form extends CRM_Core_Form {
         OP_STRING      =  2,
         OP_DATE        =  4,
         OP_SELECT      =  8,
-        OP_MULTISELECT =  16;
+        OP_MULTISELECT =  16,
+        OP_MULTISELECT_SEPARATOR = 32;
     
     /**
      * The id of the report instance
@@ -529,6 +530,7 @@ class CRM_Report_Form extends CRM_Core_Form {
                 
                 switch ( CRM_Utils_Array::value( 'operatorType', $field )) {
                 case CRM_Report_FORM::OP_MULTISELECT :
+                case CRM_Report_FORM::OP_MULTISELECT_SEPARATOR :
                     // assume a multi-select field
                     if ( !empty( $field['options'] ) ) {
                         $element = $this->addElement('select', "{$fieldName}_op", ts( 'Operator:' ), $operations);
@@ -714,6 +716,11 @@ class CRM_Report_Form extends CRM_Core_Form {
         case CRM_Report_FORM::OP_DATE :
             return array( 'nll'  => ts('Is Null') );
             break;
+        case CRM_Report_FORM::OP_MULTISELECT_SEPARATOR :
+            // use this operator for the values, concatenated with separator. For e.g if 
+            // multiple options for a column is stored as ^A{val1}^A{val2}^A  
+            return array( 'mhas'  => ts('Is one of') );
+            break;
         default:
             // type is string
             return array('has'  => ts('Contains'), 
@@ -813,12 +820,19 @@ class CRM_Report_Form extends CRM_Core_Form {
                 if ( CRM_Utils_Array::value( 'type', $field ) == CRM_Utils_Type::T_STRING ) {
                     $clause = "( {$field['dbAlias']} $sqlOP ( '" . implode( "' , '", $value ) . "') )" ;
                 } else {
-                    
+                    // for numerical values
                     $clause = "( {$field['dbAlias']} $sqlOP (" . implode( ', ', $value ) . ") )";
                 }                
             }
             break;
             
+        case 'mhas': // mhas == multiple has
+            if ( $value !== null && count( $value ) > 0 ) {
+                $sqlOP   = self::getSQLOperator( $op );
+                $clause  = "{$field['dbAlias']} REGEXP '[[:<:]]" . implode( '|', $value) . "[[:>:]]'" ;
+            }
+            break;
+
         case 'sw':
         case 'ew':
             if ( $value !== null && strlen( $value ) > 0 ) {
@@ -953,6 +967,8 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
       cf.is_searchable = 1 AND
       cf.column_name IN ('". implode( "','", array_keys($this->_params['fields']) ) ."')
 ";
+        // make sure selected custom columns are only fetched
+
         $dao = CRM_Core_DAO::executeQuery( $query );
         while( $dao->fetch( ) ) {
             foreach( $customFieldCols as $key ) {
@@ -966,8 +982,11 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
             foreach ( $row as $tableCol => $val ) {
                 if ( array_key_exists( $tableCol, $customFields ) ) {
                     $params = array( 'data' => $val );
-                    $rows[$rowNum][$tableCol] = 
-                        CRM_Core_BAO_CustomGroup::formatCustomValues($params, $customFields[$tableCol]);
+                    if ( $val && $customFields[$tableCol]['data_type'] != 'Date' ) {
+                        // skip for type date, since date format is already handled at tpl level
+                        $rows[$rowNum][$tableCol] = 
+                            CRM_Core_BAO_CustomGroup::formatCustomValues($params, $customFields[$tableCol]);
+                    }
                     $entryFound = true;
                 }
             }
@@ -1590,7 +1609,11 @@ ORDER BY cg.table_name";
                 $curFields [$customDAO->column_name]['type']  = CRM_Utils_Type::T_STRING;
 
                 if ( !empty($customDAO->option_group_id) ) {
-                    $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
+                    if ( in_array( $customDAO->html_type, array( 'Multi-Select', 'AdvMulti-Select', 'CheckBox') ) ) {
+                        $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT_SEPARATOR;
+                    } else {
+                        $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
+                    }
                     if( $addFilters ) {
                         $curFilters[$customDAO->column_name]['options'] = array( );
                         $ogDAO =& CRM_Core_DAO::executeQuery( "SELECT ov.value, ov.label FROM civicrm_option_value ov WHERE ov.option_group_id = %1 ORDER BY ov.weight", array(1 => array($customDAO->option_group_id, 'Integer')) );
