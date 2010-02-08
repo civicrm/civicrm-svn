@@ -50,7 +50,7 @@ class CRM_Report_Form extends CRM_Core_Form {
         OP_DATE        =  4,
         OP_SELECT      =  8,
         OP_MULTISELECT =  16;
-
+    
     /**
      * The id of the report instance
      *
@@ -710,6 +710,9 @@ class CRM_Report_Form extends CRM_Core_Form {
             break;
         case CRM_Report_FORM::OP_MULTISELECT :
             return array( 'in'  => ts('Is one of') );
+            break; 
+        case CRM_Report_FORM::OP_DATE :
+            return array( 'nll'  => ts('Is Null') );
             break;
         default:
             // type is string
@@ -718,7 +721,8 @@ class CRM_Report_Form extends CRM_Core_Form {
                          'ew'   => ts('Ends with'),
                          'nhas' => ts('Does not contain'), 
                          'eq'   => ts('Is equal to'), 
-                         'neq'  => ts('Is not equal to'), 
+                         'neq'  => ts('Is not equal to'),
+                         'nll'  => ts('Is Null')
                          );
         }
     }
@@ -859,9 +863,14 @@ class CRM_Report_Form extends CRM_Core_Form {
         return $clause;
     }
 
-    static function dateClause( $fieldName,
-                                $relative, $from, $to ,$type = null ) {
+    function dateClause( $fieldName,
+                         $relative, $from, $to ,$type = null ) {
         $clauses         = array( );
+        if ( in_array( $relative, array_keys( $this->getOperationPair( CRM_Report_FORM::OP_DATE ) ) ) ) {
+            $sqlOP = self::getSQLOperator( $relative );
+            return "( {$fieldName} {$sqlOP} )";
+        }
+
         list($from, $to) = self::getFromTo($relative, $from, $to);
         
         if ( $from ) {
@@ -940,7 +949,8 @@ FROM   civicrm_custom_group cg
 INNER JOIN civicrm_custom_field cf ON cg.id = cf.custom_group_id
 WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND 
       cg.is_active = 1 AND 
-      cf.is_active = 1 AND 
+      cf.is_active = 1 AND
+      cf.is_searchable = 1 AND
       cf.column_name IN ('". implode( "','", array_keys($this->_params['fields']) ) ."')
 ";
         $dao = CRM_Core_DAO::executeQuery( $query );
@@ -1302,6 +1312,12 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                             $statistics['filters'][] = 
                                 array( 'title' => $field['title'],
                                        'value' => "Between {$from} and {$to}" );
+                        } elseif ( in_array( $rel = CRM_Utils_Array::value( "{$fieldName}_relative", $this->_params ), 
+                                            array_keys( $this->getOperationPair( CRM_Report_FORM::OP_DATE ) ) ) ) {
+                            $pair = $this->getOperationPair( CRM_Report_FORM::OP_DATE );
+                            $statistics['filters'][] = 
+                                array( 'title' => $field['title'],
+                                       'value' => $pair[$rel] );
                         }
                     } else {
                         $op    = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
@@ -1314,6 +1330,8 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                             $val   = CRM_Utils_Array::value( "{$fieldName}_value",$this->_params );
                             if ( in_array($op, array('bw', 'nbw')) && ($min || $max) ) {
                                 $value = "{$pair[$op]} " . $min . ' and ' . $max;
+                            } else if ( $op == 'nll' ) {
+                                $value = $pair[$op];
                             } else if ( is_array($val) && (!empty($val)) ) {
                                 $options = $field['options'];
                                 foreach ( $val as $key => $valIds ) {
@@ -1326,9 +1344,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                                 $value     = "{$pair[$op]} " . $val;
                             } else if ( $val ) {
                                 $value = "{$pair[$op]} " . $val;
-                            } else if ( $op == 'nll' ) {
-                                $value = $pair[$op];
-                            }
+                            } 
                         }
                         if ( $value ) {
                             $statistics['filters'][] = 
@@ -1516,7 +1532,8 @@ FROM   civicrm_custom_group cg
 INNER  JOIN civicrm_custom_field cf ON cg.id = cf.custom_group_id
 WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND 
       cg.is_active = 1 AND 
-      cf.is_active = 1 
+      cf.is_active = 1 AND 
+      cf.is_searchable = 1
 ORDER BY cg.table_name";
         $customDAO =& CRM_Core_DAO::executeQuery( $sql );
         
