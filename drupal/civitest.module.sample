@@ -184,6 +184,27 @@ function civitest_civicrm_tabs( &$tabs, $contactID ) {
                      'weight' => 300 );
 }
 
+function civitest_civicrm_enableDisable( $recordBAO, $recordID, $isActive ) {
+     // create an activity for enable/disable relationship type
+     if ( $recordBAO == 'CRM_Contact_BAO_RelationshipType' ) {
+         $session =& CRM_Core_Session::singleton( );
+         $uid     = $session->get('userID');
+         if( $uid ) {
+             require_once 'api/v2/Activity.php';
+             $params = array( 'activity_type_id'   => 1,
+                              'source_contact_id'  => $uid,
+                              'status_id'          => 2,
+                              'activity_date_time' => date('YmdHis') 
+                              );
+             if( $isActive ) {
+                 $params['subject'] = ts('Enabled relationship type.');
+             } else {
+                 $params['subject'] = ts('Disabled relationship type.');
+             }
+             civicrm_activity_create($params);
+         }
+     }
+ }
 
 function civitest_civicrm_tokens( &$tokens ) { 
     $tokens['contribution'] = array( 'contribution.amount', 'contribution.date' );

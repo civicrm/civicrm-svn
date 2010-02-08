@@ -597,5 +597,14 @@ class CRM_Utils_Hook {
                   $config->userHookClass .
                   '::invoke( 1, $config, $null, $null, $null, $null, \'civicrm_config\' );' );
     }
-
+    
+    static function enableDisable( $recordBAO, $recordID, $isActive ) {
+        $config = CRM_Core_Config::singleton( );
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+        $null =& CRM_Core_DAO::$_nullObject;
+        return   
+            eval( 'return ' .
+                  $config->userHookClass .
+                  '::invoke( 3, $recordBAO, $recordID, $isActive, $null, $null, \'civicrm_enableDisable\' );' );
+    }
 }

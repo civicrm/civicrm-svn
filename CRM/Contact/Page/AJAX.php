@@ -500,6 +500,9 @@ WHERE sort_name LIKE '%$name%'";
              if ( $updated ) {   
                 $status = array( 'status' => 'record-updated-success' );
              }
+             // call hook enableDisable
+             CRM_Utils_Hook::enableDisable( $recordBAO, $recordID, $isActive );
+             
         }
         echo json_encode( $status );
         exit( );
