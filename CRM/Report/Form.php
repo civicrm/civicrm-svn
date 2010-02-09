@@ -506,10 +506,14 @@ class CRM_Report_Form extends CRM_Core_Form {
                 foreach ( $table['fields'] as $fieldName => $field ) {
                     if ( !array_key_exists('no_display', $field) ) {
                         if ( isset($table['grouping']) ) { 
-                            $colGroups[$table['grouping']][$field['title']] = $fieldName;
-                        } else {
-                            $colGroups[$tableName][$field['title']] = $fieldName;
+                            $tableName = $table['grouping'];
                         }
+                        $colGroups[$tableName]['fields'][$field['title']] = $fieldName;
+
+                        if ( isset($table['group_title']) ) { 
+                            $colGroups[$tableName]['group_title'] = $table['group_title'];
+                        }
+
                         $options[$field['title']] = $fieldName;
                     }
                 } 
@@ -1554,7 +1558,8 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         }
 
         $sql       = "
-SELECT cg.table_name, cg.extends, cf.id as cf_id, cf.label, cf.column_name, cf.data_type, cf.html_type, cf.option_group_id 
+SELECT cg.table_name, cg.title, cg.extends, cf.id as cf_id, cf.label, 
+       cf.column_name, cf.data_type, cf.html_type, cf.option_group_id 
 FROM   civicrm_custom_group cg 
 INNER  JOIN civicrm_custom_field cf ON cg.id = cf.custom_group_id
 WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND 
@@ -1567,18 +1572,13 @@ ORDER BY cg.table_name";
         $curTable  = null;
         while( $customDAO->fetch() ) {
         	if ( $customDAO->table_name != $curTable ) {
-                $curTable = $customDAO->table_name;
-                $this->_columns[$curTable]['fields']  = $curFields  = array( );
-                $this->_columns[$curTable]['filters'] = $curFilters = array( );
+                $curTable  = $customDAO->table_name;
+                $curFields = $curFilters = array( );
                 
-                $this->_columns[$curTable]['dao']     = 'CRM_Contact_DAO_Contact'; // dummy dao object
-                $this->_columns[$curTable]['extends'] = $customDAO->extends;
-                if ( $addFields ) {
-                    $curFields  =& $this->_columns[$curTable]['fields'];
-                }
-                if ( $addFilters ) {
-                    $curFilters =& $this->_columns[$curTable]['filters'];
-                }
+                $this->_columns[$curTable]['dao']      = 'CRM_Contact_DAO_Contact'; // dummy dao object
+                $this->_columns[$curTable]['extends']  = $customDAO->extends;
+                $this->_columns[$curTable]['grouping'] = $customDAO->table_name;
+                $this->_columns[$curTable]['group_title'] = $customDAO->title;
             }
             if ( $addFields ) {
                 $curFields[$customDAO->column_name] = array( 'title'    => $customDAO->label,
@@ -1660,6 +1660,13 @@ ORDER BY cg.table_name";
             default:
                 // do nothing
         	}
+
+            if ( $addFields ) {
+                $this->_columns[$curTable]['fields']  = $curFields;
+            }
+            if ( $addFilters ) {
+                $this->_columns[$curTable]['filters'] = $curFilters;
+            }
         }
     }
 
