@@ -803,3 +803,63 @@ function  civicrm_form_alter( &$form, $formValues, $formID ) {
         $form['#attributes']['enctype'] = 'multipart/form-data';
     }
 }
+
+
+
+
+/*
+ * 
+ * Implementation of hook_theme_registry_alter(). 
+ * Based on the jquery_update module. 
+ * 
+ * Make sure this page preprocess function runs last
+ * so that a theme can't call drupal_get_js(). 
+ */
+ function civicrm_theme_registry_alter(&$theme_registry) { 
+ 	if (isset($theme_registry['page'])) { 
+ 		// See if our preprocess function is loaded, if so remove it. 
+ 		if ($key = array_search('civicrm_preprocess_page', $theme_registry['page']['preprocess functions'])) { 
+ 			unset($theme_registry['page']['preprocess functions'][$key]); 
+ 			} 
+ 			// Now add it on at the end of the array so that it runs last. 
+ 			$theme_registry['page']['preprocess functions'][] = 'civicrm_preprocess_page'; 
+ 		} 
+ 	}
+/** 
+ * Implementation of moduleName_preprocess_hook(). 
+ * Based on the jquery_update module functions. 
+ * 
+ * Strips out JS and CSS for a path. 
+ */
+ function civicrm_preprocess_page(&$variables) { 
+	  // I needed a one hit wonder. Can be altered to use function arguments
+	  // to increase it's flexibility. 
+  	if(module_exists('date')) { 
+  		$scripts = drupal_add_js(); 
+  		$css = drupal_add_css(); 
+  		
+		/** 
+		 * Have hidden this function as it is not needed,
+		 * but left as an example when we need to unset js
+		 * in the future...
+		 *
+      	 * // Only do this for pages that have JavaScript on them.
+      	 *  if (!empty($variables['scripts'])) { 
+  		 *  	$path = drupal_get_path('module', 'date_popup'); 
+  		 *  	unset($scripts['module'][$path . '/lib/ui.datepicker.js']); 
+  		 *  	$variables['scripts'] = drupal_get_js('header', $scripts); 
+  		 *  } 
+		 */
+		
+		
+		
+		// Similar process for CSS but there are 2 CSS related variables. 
+		// $variables['css'] and $variables['styles'] are both used. 
+  		if (!empty($variables['css'])) { 
+  			$path = drupal_get_path('module', 'date_popup'); 
+  			unset($css['all']['module'][$path . '/themes/datepicker.css']); 
+  			$variables['styles'] = drupal_get_css($css); 
+  		} 
+  	}
+  	}
+
