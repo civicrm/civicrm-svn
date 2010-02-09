@@ -1176,7 +1176,10 @@ WHERE cr.case_id =  %1 AND ce.is_primary= 1';
         $query = "SELECT count(ca.id) as countact 
 FROM       civicrm_activity ca
 INNER JOIN civicrm_case_activity cca ON ca.id = cca.activity_id 
-WHERE      ca.activity_type_id = %2 AND cca.case_id = %1";
+WHERE      ca.activity_type_id = %2 
+AND       cca.case_id = %1
+AND        ca.is_deleted = 0"            
+;
         
         $dao = CRM_Core_DAO::executeQuery($query, $queryParam);
         if ( $dao->fetch() ) {
