@@ -967,6 +967,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
       cg.is_active = 1 AND 
       cf.is_active = 1 AND
       cf.is_searchable = 1 AND
+      cf.data_type    != 'ContactReference' AND
       cf.column_name IN ('". implode( "','", array_keys($this->_params['fields']) ) ."')
 ";
         // make sure selected custom columns are only fetched
@@ -1643,7 +1644,14 @@ ORDER BY cg.table_name";
                 }
                 $curFilters[$customDAO->column_name]['options']      = CRM_Core_PseudoConstant::country();
                 break;
-
+            case 'ContactReference':
+                $curFilters[$customDAO->column_name]['type']  = CRM_Utils_Type::T_STRING;
+                $curFilters[$customDAO->column_name]['name']  = 'display_name';
+                $curFilters[$customDAO->column_name]['alias'] = "contact_{$customDAO->column_name}_civireport";
+                $curFields[$customDAO->column_name]['type']   = CRM_Utils_Type::T_STRING;
+                $curFields[$customDAO->column_name]['name']   = 'display_name';  
+                $curFields[$customDAO->column_name]['alias']  = "contact_{$customDAO->column_name}_civireport";
+                break;
             default:
                 // do nothing
         	}
@@ -1662,6 +1670,15 @@ ORDER BY cg.table_name";
                 $extendsTable = $mapper[$prop['extends']];
                 $this->_from .= " 
 LEFT JOIN $table {$this->_aliases[$table]} ON {$this->_aliases[$table]}.entity_id = {$this->_aliases[$extendsTable]}.id";
+                // handle for ContactReference
+                if ( array_key_exists( 'fields', $prop ) ) { 
+                    foreach ( $prop['fields'] as $fieldName => $field ) { 
+                        if ( CRM_Utils_Array::value( 'dataType', $field ) == 'ContactReference' ) {
+                            $this->_from .= "
+LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_aliases[$table]}.{$fieldName} ";
+                        }
+                    }
+                }
 			}
 		}
     }
