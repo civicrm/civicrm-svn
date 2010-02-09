@@ -32,11 +32,11 @@
 class CiviReportMail { 
     function processReport( ) {
         $sendmail     = CRM_Utils_Request::retrieve( 'sendmail', 'Boolean', 
-                                                     CRM_Core_DAO::$_nullObject, true );
+                                                     CRM_Core_DAO::$_nullObject, true, null, 'REQUEST' );
         $instanceId   = CRM_Utils_Request::retrieve( 'instanceId', 'Positive', 
-                                                     CRM_Core_DAO::$_nullObject, true );
+                                                     CRM_Core_DAO::$_nullObject, true, null, 'REQUEST' );
         $resetVal     = CRM_Utils_Request::retrieve( 'reset', 'Positive',
-                                                     CRM_Core_DAO::$_nullObject, true );
+                                                     CRM_Core_DAO::$_nullObject, true, null, 'REQUEST' );
               
         $optionVal    = CRM_Report_Utils_Report::getValueFromUrl( $instanceId );
         

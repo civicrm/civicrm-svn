@@ -298,16 +298,16 @@ class CiviContributeProcessor {
     static function process( ) {
         require_once 'CRM/Utils/Request.php';
 
-        $type = CRM_Utils_Request::retrieve( 'type', 'String', CRM_Core_DAO::$_nullObject, false, 'csv' );
+        $type = CRM_Utils_Request::retrieve( 'type', 'String', CRM_Core_DAO::$_nullObject, false, 'csv', 'REQUEST' );
         $type = strtolower( $type );
 
         switch ( $type ) {
         case 'paypal':
         case 'google':
             $start = CRM_Utils_Request::retrieve( 'start', 'String', 
-                                                  CRM_Core_DAO::$_nullObject, false, 31 );
+                                                  CRM_Core_DAO::$_nullObject, false, 31, 'REQUEST' );
             $end   = CRM_Utils_Request::retrieve( 'end', 'String', 
-                                                  CRM_Core_DAO::$_nullObject, false, 0 );
+                                                  CRM_Core_DAO::$_nullObject, false, 0 , 'REQUEST'  );
             if ( $start < $end ) {
                 CRM_Core_Error::fatal("Start offset can't be less than End offset.");
             }
@@ -316,9 +316,9 @@ class CiviContributeProcessor {
             $end   = date( 'Y-m-d', time( ) - $end   * 24 * 60 * 60 ) . 'T23:59:00.00Z';
 
             $ppID  = CRM_Utils_Request::retrieve( 'ppID'  , 'Integer', 
-                                                  CRM_Core_DAO::$_nullObject, true  );
+                                                  CRM_Core_DAO::$_nullObject, true, null, 'REQUEST' );
             $mode  = CRM_Utils_Request::retrieve( 'ppMode', 'String', 
-                                                  CRM_Core_DAO::$_nullObject, false, 'live' );
+                                                  CRM_Core_DAO::$_nullObject, false, 'live', 'REQUEST' );
 
             require_once 'CRM/Core/BAO/PaymentProcessor.php';
             $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $mode );
