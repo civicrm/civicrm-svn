@@ -182,9 +182,9 @@ SET @caselastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
-    ( @domainID, 'civicrm/case&reset=1',        '{ts escape="sql"}Dashboard{/ts}', 'Dashboard', 'access CiviCase,access my cases and activities', '',       @caselastID, '1', NULL, 1 ), 
+    ( @domainID, 'civicrm/case&reset=1',        '{ts escape="sql"}Dashboard{/ts}', 'Dashboard', 'access CiviCase', '',       @caselastID, '1', NULL, 1 ), 
     ( @domainID, 'civicrm/case/add&reset=1&action=add&atype=13&context=standalone', '{ts escape="sql"}New Case{/ts}', 'New Case', 'access CiviCase,add contacts,access my cases and activities', 'AND', @caselastID, '1', NULL, 2 ), 
-    ( @domainID, 'civicrm/case/search&reset=1', '{ts escape="sql"}Find Cases{/ts}', 'Find Cases', 'access CiviCase,access my cases and activities', '',     @caselastID, '1', 1, 3 );
+    ( @domainID, 'civicrm/case/search&reset=1', '{ts escape="sql"}Find Cases{/ts}', 'Find Cases', 'access CiviCase', '',     @caselastID, '1', 1, 3 );
     
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
