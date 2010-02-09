@@ -39,6 +39,7 @@ require_once 'CRM/Report/Form.php';
 class CRM_Report_Form_Activity extends CRM_Report_Form {
 
     protected $_emailField         = false;
+    protected $_customGroupExtends = array( 'Activity' );
 
     function __construct( ) {
         $this->_columns = array(  
