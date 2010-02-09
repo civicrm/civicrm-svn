@@ -1594,9 +1594,6 @@ ORDER BY cg.table_name";
 
         	switch( $customDAO->data_type ) {
             case 'Date':
-                // fields
-                $curFields [$customDAO->column_name]['type']         = CRM_Utils_Type::T_DATE;
-
                 // filters
                 $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_DATE;
                 $curFilters[$customDAO->column_name]['type']         = CRM_Utils_Type::T_DATE;
@@ -1610,12 +1607,15 @@ ORDER BY cg.table_name";
                 break;
 
             case 'Int':
+            case 'Money':
+            case 'Float':
+                // FIXME: for float, we need to have separate OP type 
                 $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_INT;
+                $curFilters[$customDAO->column_name]['type']         = CRM_Utils_Type::T_INT;
                 break;
 
             case 'String':
                 $curFilters[$customDAO->column_name]['type']  = CRM_Utils_Type::T_STRING;
-                $curFields [$customDAO->column_name]['type']  = CRM_Utils_Type::T_STRING;
 
                 if ( !empty($customDAO->option_group_id) ) {
                     if ( in_array( $customDAO->html_type, array( 'Multi-Select', 'AdvMulti-Select', 'CheckBox') ) ) {
@@ -1650,17 +1650,25 @@ ORDER BY cg.table_name";
                 }
                 $curFilters[$customDAO->column_name]['options']      = CRM_Core_PseudoConstant::country();
                 break;
+
             case 'ContactReference':
                 $curFilters[$customDAO->column_name]['type']  = CRM_Utils_Type::T_STRING;
                 $curFilters[$customDAO->column_name]['name']  = 'display_name';
                 $curFilters[$customDAO->column_name]['alias'] = "contact_{$customDAO->column_name}_civireport";
+
                 $curFields[$customDAO->column_name]['type']   = CRM_Utils_Type::T_STRING;
                 $curFields[$customDAO->column_name]['name']   = 'display_name';  
                 $curFields[$customDAO->column_name]['alias']  = "contact_{$customDAO->column_name}_civireport";
                 break;
+
             default:
-                // do nothing
+                $curFields [$customDAO->column_name]['type']  = CRM_Utils_Type::T_STRING;
+                $curFilters[$customDAO->column_name]['type']  = CRM_Utils_Type::T_STRING;
         	}
+
+            if ( ! array_key_exists('type', $curFields[$customDAO->column_name]) ) {
+                $curFields[$customDAO->column_name]['type'] = $curFilters[$customDAO->column_name]['type'];
+            } 
 
             if ( $addFields ) {
                 $this->_columns[$curTable]['fields']  = $curFields;
