@@ -132,6 +132,7 @@ class CRM_Report_Form extends CRM_Core_Form {
      */
     protected $_customGroupExtends = null;
     protected $_customGroupFilters = true;
+    protected $_customGroupGroupBy = false;
 
     /**
      * Navigation fields
@@ -193,7 +194,7 @@ class CRM_Report_Form extends CRM_Core_Form {
         parent::__construct( );
 
         // merge custom data columns to _columns list, if any
-        $this->addCustomDataToColumns( true, $this->_customGroupFilters );
+        $this->addCustomDataToColumns( true, $this->_customGroupFilters, $this->_customGroupGroupBy );
     }
 
     function preProcessCommon( ) {
@@ -1549,7 +1550,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         list( $this->_aclFrom, $this->_aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( $tableAlias );
     }
 
-    function addCustomDataToColumns( $addFields = true, $addFilters = true ) {
+    function addCustomDataToColumns( $addFields = true, $addFilters = true, $addGroupBy = false  ) {
         if ( empty($this->_customGroupExtends) ) {
             return;
         }
@@ -1667,6 +1668,9 @@ ORDER BY cg.table_name";
             if ( $addFilters ) {
                 $this->_columns[$curTable]['filters'] = $curFilters;
             }
+            if ( $addGroupBy ) {
+                $this->_columns[$curTable]['group_bys'] = $curFields;
+            } 
         }
     }
 
