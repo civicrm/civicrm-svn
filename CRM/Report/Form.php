@@ -131,6 +131,7 @@ class CRM_Report_Form extends CRM_Core_Form {
      * @var null
      */
     protected $_customGroupExtends = null;
+    protected $_customGroupFilters = true;
 
     /**
      * Navigation fields
@@ -190,6 +191,9 @@ class CRM_Report_Form extends CRM_Core_Form {
      */
     function __construct( ) {
         parent::__construct( );
+
+        // merge custom data columns to _columns list, if any
+        $this->addCustomDataToColumns( true, $this->_customGroupFilters );
     }
 
     function preProcessCommon( ) {
@@ -1220,6 +1224,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
     function buildQuery( $applyLimit = true ) {
         $this->select ( );
         $this->from   ( );
+        $this->customDataFrom( );
         $this->where  ( );
         $this->groupBy( );
         $this->orderBy( );
@@ -1658,7 +1663,7 @@ ORDER BY cg.table_name";
         }
     }
 
-    function buildCustomDataFrom( ) {
+    function customDataFrom( ) {
         if ( empty($this->_customGroupExtends) ) {
             return;
         }
