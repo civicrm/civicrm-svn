@@ -68,7 +68,12 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
 
         $this->_contactID = isset( $contactID ) ? $contactID : $session->get( 'userID' );     
         if ( ! $this->_pageId ) {
-            $this->_pageId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $this->_id, 'contribution_page_id' );
+            if ( ! $this->_id ) {
+                $msg = ts( 'You have reached an invalid url potentially by clicking on the back button.' );
+                CRM_Core_Error::fatal( $msg );
+            } else {
+                $this->_pageId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $this->_id, 'contribution_page_id' );
+            }
         }
         $config =& CRM_Core_Config::singleton( );
         //redirect back to online Contribution page, we allow only logged in
