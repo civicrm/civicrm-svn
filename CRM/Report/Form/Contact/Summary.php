@@ -44,6 +44,7 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
     
     protected $_phoneField   = false;
     
+    protected $_customGroupExtends = array( 'Contact', 'Individual', 'Household', 'Organization' );
     
     function __construct( ) {
         $this->_columns = 
