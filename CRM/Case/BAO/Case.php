@@ -421,25 +421,34 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
     /** 
      * Retrieve case_id by contact_id
      *
-     * @param int    $contactId  ID of the contact
-     * 
+     * @param int     $contactId      ID of the contact
+     * @param boolean $includeDeleted include the deleted cases in result
      * @return array
      * 
      * @access public
      * 
      */
-    function retrieveCaseIdsByContactId( $contactID ) 
-    {
-         require_once 'CRM/Case/DAO/CaseContact.php';
-         $caseContact =   & new CRM_Case_DAO_CaseContact( );
-         $caseContact->contact_id = $contactID;
-         $caseContact->find();
-         $caseArray = array();
-         $count = 1;
-         while ( $caseContact->fetch( ) ) {
-             $caseArray[$count] = $caseContact->case_id;
-             $count++;
+     function retrieveCaseIdsByContactId( $contactID, $includeDeleted = false ) 
+     {
+         $query = "
+SELECT ca.id as id
+FROM civicrm_case_contact cc
+INNER JOIN civicrm_case ca ON cc.case_id = ca.id
+WHERE cc.contact_id = %1
+";
+         if (!$includeDeleted) {
+             $query .= " AND ca.is_deleted = 0";
          }
+         
+         $params = array( 1 => array( $contactID, 'Integer' ) );
+         $dao = CRM_Core_DAO::executeQuery( $query, $params ); 
+
+         $caseArray = array( );
+         while ( $dao->fetch( ) ) {
+             $caseArray[] = $dao->id;
+         }
+         
+         $dao->free( );
          return $caseArray;
      }
 
