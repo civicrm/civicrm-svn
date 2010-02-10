@@ -48,10 +48,12 @@ class CRM_Report_Form extends CRM_Core_Form {
         OP_INT         =  1,
         OP_STRING      =  2,
         OP_DATE        =  4,
-        OP_SELECT      =  8,
-        OP_MULTISELECT =  16,
-        OP_MULTISELECT_SEPARATOR = 32;
-    
+        OP_FLOAT       =  8,
+
+        OP_SELECT      =  64,
+        OP_MULTISELECT =  65,
+        OP_MULTISELECT_SEPARATOR = 66;
+
     /**
      * The id of the report instance
      *
@@ -194,7 +196,7 @@ class CRM_Report_Form extends CRM_Core_Form {
         parent::__construct( );
 
         // merge custom data columns to _columns list, if any
-        $this->addCustomDataToColumns( true, $this->_customGroupFilters, $this->_customGroupGroupBy );
+        $this->addCustomDataToColumns( );
     }
 
     function preProcessCommon( ) {
@@ -356,11 +358,16 @@ class CRM_Report_Form extends CRM_Core_Form {
                         }
 
                         if ( CRM_Utils_Array::value('type', $this->_columns[$tableName][$fieldGrp][$fieldName] ) && 
-                             in_array($this->_columns[$tableName][$fieldGrp][$fieldName]['type'],
-                                      array(CRM_Utils_Type::T_MONEY, CRM_Utils_Type::T_INT)) && 
                              !isset($this->_columns[$tableName][$fieldGrp][$fieldName]['operatorType']) ) {
-                            $this->_columns[$tableName][$fieldGrp][$fieldName]['operatorType'] = 
-                                CRM_Report_Form::OP_INT;
+                            if ( in_array( $this->_columns[$tableName][$fieldGrp][$fieldName]['type'],
+                                          array( CRM_Utils_Type::T_MONEY, CRM_Utils_Type::T_FLOAT ) ) ) {
+                                $this->_columns[$tableName][$fieldGrp][$fieldName]['operatorType'] = 
+                                    CRM_Report_Form::OP_FLOAT;
+                            } else if ( in_array( $this->_columns[$tableName][$fieldGrp][$fieldName]['type'],
+                                               array( CRM_Utils_Type::T_INT ) ) ) {
+                                $this->_columns[$tableName][$fieldGrp][$fieldName]['operatorType'] = 
+                                    CRM_Report_Form::OP_INT;
+                            }
                         }
                     }
                 }
@@ -568,6 +575,7 @@ class CRM_Report_Form extends CRM_Core_Form {
                     break;
                     
                 case CRM_Report_FORM::OP_INT:
+                case CRM_Report_FORM::OP_FLOAT:   
                     // and a min value input box
                     $this->add( 'text', "{$fieldName}_min", ts('Min') );
                     // and a max value input box
@@ -707,6 +715,7 @@ class CRM_Report_Form extends CRM_Core_Form {
 
         switch ( $type ) {
         case CRM_Report_FORM::OP_INT :
+        case CRM_Report_FORM::OP_FLOAT :
             return array( 'lte' => ts('Is less than or equal to'), 
                           'gte' => ts('Is greater than or equal to'),
                           'bw'  => ts('Is between'),
@@ -1550,7 +1559,8 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         list( $this->_aclFrom, $this->_aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( $tableAlias );
     }
 
-    function addCustomDataToColumns( $addFields = true, $addFilters = true, $addGroupBy = false  ) {
+    function addCustomDataToColumns( $addFields = true ) {
+
         if ( empty($this->_customGroupExtends) ) {
             return;
         }
@@ -1586,7 +1596,7 @@ ORDER BY cg.table_name";
                                                              'dataType' => $customDAO->data_type,
                                                              'htmlType' => $customDAO->html_type );
             }
-            if ( $addFilters ) {
+            if ( $this->_customGroupFilters ) {
                 $curFilters[$customDAO->column_name] = array( 'title'    => $customDAO->label,
                                                               'dataType' => $customDAO->data_type,
                                                               'htmlType' => $customDAO->html_type );
@@ -1607,11 +1617,14 @@ ORDER BY cg.table_name";
                 break;
 
             case 'Int':
-            case 'Money':
-            case 'Float':
-                // FIXME: for float, we need to have separate OP type 
                 $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_INT;
                 $curFilters[$customDAO->column_name]['type']         = CRM_Utils_Type::T_INT;
+                break;
+
+            case 'Money':
+            case 'Float':
+                $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_FLOAT;
+                $curFilters[$customDAO->column_name]['type']         = CRM_Utils_Type::T_FLOAT;
                 break;
 
             case 'String':
@@ -1623,7 +1636,7 @@ ORDER BY cg.table_name";
                     } else {
                         $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
                     }
-                    if( $addFilters ) {
+                    if( $this->_customGroupFilters ) {
                         $curFilters[$customDAO->column_name]['options'] = array( );
                         $ogDAO =& CRM_Core_DAO::executeQuery( "SELECT ov.value, ov.label FROM civicrm_option_value ov WHERE ov.option_group_id = %1 ORDER BY ov.weight", array(1 => array($customDAO->option_group_id, 'Integer')) );
                         while( $ogDAO->fetch() ) {
@@ -1673,10 +1686,10 @@ ORDER BY cg.table_name";
             if ( $addFields ) {
                 $this->_columns[$curTable]['fields']  = $curFields;
             }
-            if ( $addFilters ) {
+            if ( $this->_customGroupFilters ) {
                 $this->_columns[$curTable]['filters'] = $curFilters;
             }
-            if ( $addGroupBy ) {
+            if (  $this->_customGroupGroupBy ) {
                 $this->_columns[$curTable]['group_bys'] = $curFields;
             } 
         }
