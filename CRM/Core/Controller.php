@@ -209,7 +209,8 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         }
 
         if ( ! $key ) {
-            CRM_Core_Error::fatal( 'Could not find valid Key' );
+            $msg = ts('We can\'t load the requested web page. This page requires cookies to be enabled in your browser settings. Please check this setting and enable cookies (if they are not enabled). Then try again. If this error persists, contact the site adminstrator for assistance.') . '<br /><br />' . ts('Error type: Could not find a valid key.');
+            CRM_Core_Error::fatal( $msg );
         }
 
         $this->_key = $key;
