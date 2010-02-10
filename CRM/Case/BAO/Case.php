@@ -394,7 +394,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      * 
      */
      static function getcontactNames( $caseId ) 
-    {
+     {
         $queryParam = array();
         $query = "
                   SELECT contact_a.sort_name name, contact_a.display_name as display_name, contact_a.id cid, ce.email as email, cp.phone as phone
@@ -1727,12 +1727,12 @@ SELECT  id
                 $dao->free( );
             }
             
-            // create replica's for all activities.
+            // create replicas for all activities.
             $copiedActivityIds = array( );
             require_once 'CRM/Case/DAO/CaseActivity.php';
             foreach ( $otherCaseActivities as $caseActivityId => $otherIds ) {
                 $activityId = CRM_Utils_Array::value( 'activity_id', $otherIds );
-                //don't migrate open and close case activities.
+                //do not migrate open and close case activities.
                 if ( !$activityId ||
                      in_array( $activityId, array( $openActivityId, $closeActivityId ) ) ) {
                     continue;
@@ -1795,6 +1795,131 @@ SELECT id, subject, activity_date_time
         
         return $mergeCase;
     }
- 
+    
+    /**
+     * Function to merge cases when two contact are merge..
+     *
+     * @param int $mainContactId  id of main contact record.
+     * @param int $otherContactId id of contact which we are going to merge.
+     *
+     * @return void.
+     * @static
+     */  
+    function mergeCaseContacts( $mainContactId, $otherContactId ) 
+    {
+        //FIXME : we will get back when we triggered CRM-5673
+        $moveToTrash = true;
+        
+        if ( !$mainContactId || !$otherContactId ) {
+            return;
+        }
+        
+        //get all case ids for other contact.
+        $otherCaseIds = self::retrieveCaseIdsByContactId( $otherContactId, true );
+        if ( !is_array( $otherCaseIds ) ) return;
+        
+        require_once 'CRM/Core/PseudoConstant.php';
+        require_once 'CRM/Case/DAO/CaseContact.php';
+        require_once 'CRM/Activity/BAO/Activity.php';
+        require_once 'CRM/Case/DAO/CaseActivity.php';
+        require_once 'CRM/Activity/DAO/ActivityTarget.php';
+        
+        $activityTypes = CRM_Core_PseudoConstant::activityType( true, true );
+        $activityStatuses = CRM_Core_PseudoConstant::activityStatus( 'name' );
+        
+        // copy all cases and connect to main contact id.
+        foreach ( $otherCaseIds as $otherCaseId ) {
+            // create a copy of case record.
+            $copyCase = CRM_Core_DAO::copyGeneric( 'CRM_Case_DAO_Case', array( 'id' => $otherCaseId ) );
+            $copyCaseId = $copyCase->id;
+            $copyCase->free( );
+            if ( !$copyCaseId ) continue;
+            
+            //create a copy if case contact
+            $copyCaseContact = CRM_Core_DAO::copyGeneric( 'CRM_Case_DAO_CaseContact', 
+                                                          array( 'case_id'    => $otherCaseId,
+                                                                 'contact_id' => $otherContactId ),
+                                                          array( 'case_id'    => $copyCaseId,
+                                                                 'contact_id' => $mainContactId ) );
+            $copyCaseContact->free( );
+            
+            // get all activities for given case.
+            $otherCaseActivities = array( );
+            CRM_Core_DAO::commonRetrieveAll( 'CRM_Case_DAO_CaseActivity', 'case_id',  $otherCaseId, $otherCaseActivities );
+            
+            // copy all activities and connect to main contact.
+            foreach ( $otherCaseActivities as $otherIds ) {
+                $activityId = CRM_Utils_Array::value( 'activity_id', $otherIds );
+                if ( !$activityId ) continue; 
+                
+                //copy activity record.
+                $copyActivity = CRM_Core_DAO::copyGeneric( 'CRM_Activity_DAO_Activity', 
+                                                           array( 'id' => $activityId ),
+                                                           array( 'source_contact_id' => $mainContactId ) );
+                $copyActivityId = $copyActivity->id;
+                $copyActivity->free( );
+                if ( !$copyActivityId ) continue; 
+                
+                //copy case activity.
+                $copyCaseActivity = CRM_Core_DAO::copyGeneric( 'CRM/Case/DAO/CaseActivity', 
+                                                               array( 'case_id'     => $otherCaseId,
+                                                                      'activity_id' => $activityId ),
+                                                               array( 'case_id'     => $copyCaseId,
+                                                                      'activity_id' => $copyActivityId ) );
+                $copyCaseActivity->free( );
+                
+                // copy target w/ main contact and copy activity.
+                $copyActivityTarget = CRM_Core_DAO::copyGeneric( 'CRM_Activity_DAO_ActivityTarget', 
+                                                                 array( 'target_activity_id' => $activityId,
+                                                                        'target_contact_id'  => $otherContactId ),
+                                                                 array( 'target_activity_id' => $copyActivityId,
+                                                                        'target_contact_id'  => $mainContactId  ) );
+                $copyActivityTarget->free( );
+            }
+            
+            //copy case relationship.
+            $copyCaseRelationship = CRM_Core_DAO::copyGeneric( 'CRM_Contact_DAO_Relationship',
+                                                               array( 'case_id'      => $otherCaseId,
+                                                                      'contact_id_a' => $otherContactId ),
+                                                               array( 'case_id'      => $copyCaseId,
+                                                                      'contact_id_a' => $mainContactId ) );
+            $copyCaseRelationship->free( );
+            
+            //special case where contact_id_b.
+            $query = "UPDATE civicrm_relationship SET contact_id_b = %1 WHERE case_id = %2 AND contact_id_b = %3";
+            $queryParams = array( 1 => array( $mainContactId,  'Integer' ),
+                                  2 => array( $copyCaseId,     'Integer' ),
+                                  3 => array( $otherContactId, 'Integer' ) );
+            CRM_Core_DAO::executeQuery( $query, $queryParams );
+            
+            //move other case to trash/delete.
+            $mergeCase = CRM_Case_BAO_Case::deleteCase( $otherCaseId, $moveToTrash );
+            if ( !$mergeCase ) continue;
+            
+            //create merge activity record.
+            $subject = ts( "Case %1 copied from contact id %2 to contact id %3 via merge. New Case ID is %4.", 
+                           array( 1 => $otherCaseId, 2 => $otherContactId, 3 => $mainContactId, 4 => $copyCaseId ) ); 
+            
+            $activityParams = array( 'subject'            => $subject,
+                                     'details'            => '',
+                                     'status_id'          => array_search( 'Completed',  $activityStatuses ),
+                                     'activity_type_id'   => array_search( 'Merge Case', $activityTypes ),
+                                     'source_record_id'   => $copyCaseId,
+                                     'source_contact_id'  => $mainContactId,
+                                     'activity_date_time' => date('YmdHis') );
+            
+            $mergeActivity = CRM_Activity_BAO_Activity::create( $activityParams );
+            $mergeActivityId = $mergeActivity->id;
+            if ( !$mergeActivityId ) continue; 
+            $mergeActivity->free( );
+            
+            //connect merge activity to case. 
+            $mergeCaseAct = array( 'case_id'     => $copyCaseId,
+                                   'activity_id' => $mergeActivityId );
+            self::processCaseActivity( $mergeCaseAct );
+        }
+        
+    }
+    
 }
 
