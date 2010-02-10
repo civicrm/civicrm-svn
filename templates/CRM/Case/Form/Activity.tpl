@@ -7,9 +7,13 @@
 {* added onload javascript for source contact*}
 {literal}
 <script type="text/javascript">
-var assignee_contact = '';
-
+var target_contact = assignee_contact = target_contact_id = '';
 {/literal}
+
+{foreach from=$target_contact key=id item=name}
+     {literal} target_contact += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
+{/foreach}
+{literal} eval( 'target_contact = [' + target_contact + ']'); {/literal}
 
 {if $assigneeContactCount}
 {foreach from=$assignee_contact key=id item=name}
@@ -33,6 +37,7 @@ var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
 
 var hintText = "{/literal}{ts}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
 cj( "#assignee_contact_id").tokenInput( tokenDataUrl, { prePopulate: assignee_contact, classes: tokenClass, hintText: hintText });
+cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   classes: tokenClass, hintText: hintText });
 cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
 cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirst : false, matchContains:true
                             }).result( function(event, data, formatted) { cj( "#source_contact_qid" ).val( data[1] );
@@ -76,8 +81,14 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
             {/if}
            <tr>
               <td class="label font-size12pt">{ts}Client{/ts}</td>
-              <td class="view-value font-size12pt bold">{$client_name|escape}</td>
+              <td class="view-value font-size12pt">{$client_name|escape}&nbsp;&nbsp;&nbsp;&nbsp;
+	      <a href="#" id="showWidget" title={ts}With Other Contacts{/ts} onClick="addTargetContacts( );">{ts}With Other Contacts{/ts}</a>
+	      </td>
            </tr>
+	   <tr>
+	      <td class="label font-size10pt hide-block" id="withContactsLabel">{ts}With Contacts{/ts}</td>
+ 	      <td class="hide-block"  id="withContactsWidget">{$form.target_contact_id.html}</td>	
+	   </tr>
            <tr>
               <td class="label">{ts}Activity Type{/ts}</td>
               <td class="view-value bold">{$activityTypeName|escape}</td>
@@ -231,6 +242,15 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
     
     {* include jscript to warn if unsaved form field changes *}
     {include file="CRM/common/formNavigate.tpl"}
+
+    {literal}
+    <script type="text/javascript">
+    function addTargetContacts( ) { 
+    	cj('#withContactsLabel').toggle();
+	cj('#withContactsWidget').toggle();
+    }
+    </script>
+    {/literal}
 
 {/if } {* end of main if block*}
 </script>

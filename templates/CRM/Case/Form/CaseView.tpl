@@ -485,12 +485,13 @@ cj(document).ready(function(){
             dataType: 'json',
             colModel : [
 
-            {display: 'Date',    name : 'display_date', width : 124,  sortable : true, align: 'left'},
-            {display: 'Subject', name : 'subject',     width : 105, sortable : true, align: 'left'},
-            {display: 'Type',    name : 'type',        width : 100,  sortable : true, align: 'left'},
-            {display: 'Reporter / Assignee',name : 'reporter',    width : 100,  sortable : true, align: 'left'},
-            {display: 'Status',  name : 'status',      width : 65,  sortable : true, align: 'left'},
-            {display: '',        name : 'links',       width : 70,  align: 'left'},
+            {display: 'Date',               name : 'display_date',  width : 124,  sortable : true, align: 'left'},
+            {display: 'Subject',            name : 'subject',       width : 105,  sortable : true, align: 'left'},
+            {display: 'Type',               name : 'type',          width : 100,  sortable : true, align: 'left'},
+	     {display: 'With Contacts',      name : 'with_contacts', width : 100,  sortable : false, align: 'left'},
+            {display: 'Reporter / Assignee',name : 'reporter',      width : 100,  sortable : true, align: 'left'},
+            {display: 'Status',             name : 'status',        width : 65,   sortable : true, align: 'left'},
+            {display: '',                   name : 'links',         width : 70,  align: 'left'},
             {name : 'class', hide: true, width: 1}  // this col is use for applying css classes
             ],
             usepager: true,

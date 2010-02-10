@@ -166,7 +166,19 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
     function setDefaultValues( ) 
     {
         $this->_defaults = parent::setDefaultValues( );
-        
+                
+        if ( isset( $this->_activityId ) ) {
+            if ( !CRM_Utils_Array::crmIsEmptyArray( $this->_defaults['target_contact'] ) ) {
+                $targetContactValue = explode(';', trim($this->_defaults['target_contact_value'] ) );
+                $targetContactValue = array_combine( array_unique( $this->_defaults['target_contact'] ), $targetContactValue );
+                // exclude the contact id of client
+                if ( array_key_exists ( $this->_currentlyViewedContactId, $targetContactValue ) ) {
+                    unset( $targetContactValue[$this->_currentlyViewedContactId] );
+                }
+                
+                $this->assign( 'target_contact', $targetContactValue  );
+            }
+        }
         //return form for ajax
         if ( $this->_cdType  || $this->_addAssigneeContact || $this->_addTargetContact ) {
             return $this->_defaults;
@@ -186,6 +198,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
     public function buildQuickForm( ) 
     {
         // modify core Activity fields
+        $targetContactField   =& $this->add( 'text', 'target_contact_id', ts('target') );
         $this->_fields['source_contact_id']['label']     = ts('Reported By'); 
         $this->_fields['status_id']['attributes']        =  array( '' => ts('- select -')) + CRM_Core_PseudoConstant::activityStatus( ); 
     
@@ -315,8 +328,12 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         // store the dates with proper format
         $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'], $params['activity_date_time_time'] );
         $params['activity_type_id']   = $this->_activityTypeId;
-        $params['target_contact_id']  = $this->_currentlyViewedContactId;
-
+                        
+        if ( CRM_Utils_Array::value( 'target_contact_id', $params ) ) {
+            $params['target_contact_id'] = explode( ',', $params['target_contact_id'] );
+        } 
+        $params['target_contact_id'][] = $this->_currentlyViewedContactId;
+                
         // format activity custom data
         if ( CRM_Utils_Array::value( 'hidden_custom', $params ) ) {
             if ( $this->_activityId ) {

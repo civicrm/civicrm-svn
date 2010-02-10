@@ -5,6 +5,7 @@
       <th>{ts}Date{/ts}</th>
       <th>{ts}Subject{/ts}</th>
       <th>{ts}Type{/ts}</th>
+      <th>{ts}With Contacts{/ts}</th>
       <th>{ts}Reporter / Assignee{/ts}</th>
       <th>{ts}Status{/ts}</th>
       <th></th>
@@ -16,6 +17,7 @@
       <td>{$row.display_date}</td>
       <td>{$row.subject}</td>
       <td>{$row.type}</td>
+      <td>{$row.with_contacts}</td>
       <td>{$row.reporter}</td>
       <td>{$row.status}</td>
       <td style="white-space: nowrap;">{$row.links}</td>

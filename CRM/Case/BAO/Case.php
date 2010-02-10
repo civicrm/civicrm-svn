@@ -956,10 +956,19 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         
         $contactViewUrl = CRM_Utils_System::url( "civicrm/contact/view",
                                                  "reset=1&cid=", false, null, false );
+        require_once 'CRM/Activity/BAO/ActivityTarget.php';
         while ( $dao->fetch( ) ) {                 
             $values[$dao->id]['id']           = $dao->id;
             $values[$dao->id]['type']         = $activityTypes[$dao->type]['label'];
             $values[$dao->id]['reporter']     = "<a href='{$contactViewUrl}{$dao->reporter_id}'>$dao->reporter</a>";
+            $targetContactNames = CRM_Activity_BAO_ActivityTarget::getTargetNames( $dao->id );
+            if ( is_array( $targetContactNames ) ) {
+                $targetContactUrls = array();
+                foreach ( $targetContactNames as $cid => $name ) {
+                    $targetContactUrls[] = "<a href='{$contactViewUrl}{$cid}'>$name</a>";
+                }
+                $values[$dao->id]['with_contacts'] = implode( ';', $targetContactUrls );
+            }
             $values[$dao->id]['display_date'] = CRM_Utils_Date::customFormat( $dao->display_date );
             $values[$dao->id]['status']       = $activityStatus[$dao->status];
             $values[$dao->id]['subject']      = "<a href='javascript:viewActivity( {$dao->id}, {$contactID} );' title='{$viewTitle}'>{$dao->subject}</a>";
