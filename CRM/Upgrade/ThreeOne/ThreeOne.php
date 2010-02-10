@@ -45,19 +45,32 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
         
         $errorMessage = ts('Pre-condition failed for upgrade to %1.', array( 1 => $latestVer ));
 
-        // check table, if the db is 3.1
-        if ( CRM_Core_DAO::checkTableExists( 'civicrm_acl_contact_cache' ) ) {
+        // check tables and table-columns, if the db is already 3.1
+        if ( CRM_Core_DAO::checkTableExists( 'civicrm_acl_contact_cache' ) || 
+             CRM_Core_DAO::checkTableExists( 'civicrm_contact_type'      ) ||
+             CRM_Core_DAO::checkTableExists( 'civicrm_dashboard'         ) || 
+             CRM_Core_DAO::checkTableExists( 'civicrm_dashboard_contact' ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_country',           'is_province_abbreviated'      ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_custom_field',      'date_format'                  ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_custom_field',      'time_format'                  ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_mail_settings',     'domain_id'                    ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_msg_template',      'workflow_id'                  ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_msg_template',      'is_default'                   ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_msg_template',      'is_reserved'                  ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_option_value',      'domain_id'                    ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_preferences',       'contact_autocomplete_options' ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_preferences_date',  'date_format'                  ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_preferences_date',  'time_format'                  ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_price_set',         'domain_id'                    ) ||            
+             CRM_Core_DAO::checkFieldExists( 'civicrm_price_set',         'extends'                      ) ||           
+             CRM_Core_DAO::checkFieldExists( 'civicrm_relationship_type', 'contact_sub_type_a'           ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_relationship_type', 'contact_sub_type_b'           ) ||
+             CRM_Core_DAO::checkFieldExists( 'civicrm_report_instance',   'domain_id' ) ) {
             $errorMessage =  ts("Database check failed - it looks like you have already upgraded to the latest version (v%1) of the database. OR If you think this message is wrong, it is very likely that this a partially upgraded db and you will need to reload the correct db on which upgrade was never tried.", array( 1 => $latestVer ));
             return false;
-        } 
-
-        // check table-column, if the db is 3.1 
-        if ( CRM_Core_DAO::checkFieldExists( 'civicrm_custom_field', 'date_format' ) ) {
-            $errorMessage =  ts("Database check failed - it looks like you have already upgraded to the latest version (v%1) of the database. OR If you think this message is wrong, it is very likely that this a partially upgraded db and you will need to reload the correct db on which upgrade was never tried.", array( 1 => $latestVer ));
-            return false;
-        } 
+        }  
         
-        //check previous version table e.g 3.0.*
+        //check previous version tables e.g 3.0.*
         if ( ! CRM_Core_DAO::checkTableExists( 'civicrm_participant_status_type' ) ||
              ! CRM_Core_DAO::checkTableExists( 'civicrm_navigation' ) ) {
             $errorMessage .= ' Few important tables were found missing.';
@@ -65,10 +78,26 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
         }
         
         // check fields which MUST be present if a proper 3.0.* db
-        if ( ! CRM_Core_DAO::checkFieldExists( 'civicrm_relationship_type', 'label_a_b' )      ||
-             ! CRM_Core_DAO::checkFieldExists( 'civicrm_mapping_field',     'im_provider_id' ) ||
-             ! CRM_Core_DAO::checkFieldExists( 'civicrm_contact',           'email_greeting_id' ) ) {
-            // db looks to have stuck somewhere between 2.2 & 3.0
+        if ( ! CRM_Core_DAO::checkFieldExists( 'civicrm_contact',                'email_greeting_id' ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_contribution_page',      'created_id'        ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_custom_group',           'created_date'      ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_event',                  'is_template'       ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_event',                  'created_id'        ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_mailing',                'created_date'      ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_mapping_field',          'im_provider_id'    ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_membership_type',        'domain_id'         ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_menu',                   'domain_id'         ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_participant',            'fee_currency'      ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_payment_processor',      'domain_id'         ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_payment_processor_type', 'payment_type'      ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_preferences',            'domain_id'         ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_preferences',            'navigation'        ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_relationship_type',      'label_a_b'         ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_report_instance',        'navigation_id'     ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_uf_field',               'is_reserved'       ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_uf_group',               'created_id'        ) ||
+             ! CRM_Core_DAO::checkFieldExists( 'civicrm_uf_match',               'domain_id'         ) ) {
+            // db looks to have stuck somewhere between 3.0 & 3.1
             $errorMessage .= ' Few important fields were found missing in some of the tables.';
             return false;
         }
