@@ -69,7 +69,7 @@ class CRM_Contribute_Form_PCP_PCPAccount extends CRM_Core_Form
         $this->_contactID = isset( $contactID ) ? $contactID : $session->get( 'userID' );     
         if ( ! $this->_pageId ) {
             if ( ! $this->_id ) {
-                $msg = ts( 'You have reached an invalid url potentially by clicking on the back button.' );
+                $msg = ts( 'We can\'t load the requested web page due to an incomplete link. This can be caused by using your browser\'s Back button or by using an incomplete or invalid link.' );
                 CRM_Core_Error::fatal( $msg );
             } else {
                 $this->_pageId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_PCP', $this->_id, 'contribution_page_id' );

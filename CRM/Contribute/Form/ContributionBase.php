@@ -201,7 +201,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         if ( ! $this->_id ) {
             $pastContributionID = $session->get( 'pastContributionID' );
             if ( ! $pastContributionID ) {
-                CRM_Core_Error::fatal( ts( 'We could not find contribution details for your request. Please try your request again.' ) );
+                CRM_Core_Error::fatal( ts( 'We can\'t load the requested web page due to an incomplete link. This can be caused by using your browser\'s Back button or by using an incomplete or invalid link.' ) );
             } else {
                 CRM_Core_Error::fatal( ts( 'This contribution has already been submitted. Click <a href=\'%1\'>here</a> if you want to make another contribution.', array( 1 => CRM_Utils_System::url( 'civicrm/contribute/transact', 'reset=1&id=' . $pastContributionID ) ) ) );
             }
