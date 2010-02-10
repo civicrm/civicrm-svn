@@ -972,52 +972,150 @@ class CRM_Report_Form extends CRM_Core_Form {
         if ( empty($this->_customGroupExtends) ) {
             return;
         }
+        $entryFound      = false;
+        $customFields    = $fieldValueMap = array( );
+        $customFieldCols = array( 'column_name', 'data_type', 'html_type', 'option_group_id' );
 
-        $customFields    = array( );
-        $customFieldCols = array( 'id', 'label', 'column_name', 'data_type', 'html_type', 
-                                  'option_group_id', 'time_format', 'options_per_line' );
-
-        $query = "
-SELECT cg.table_name, cf." . implode( ", cf.", $customFieldCols ) . " 
-FROM   civicrm_custom_group cg 
-INNER JOIN civicrm_custom_field cf ON cg.id = cf.custom_group_id
+        // skip for type date and ContactReference since date format is already handled
+        $query = " 
+SELECT cg.table_name, cf." . implode( ", cf.", $customFieldCols ) . ", ov.value, ov.label
+FROM  civicrm_custom_field cf      
+INNER JOIN civicrm_custom_group cg ON cg.id = cf.custom_group_id        
+LEFT JOIN civicrm_option_value ov ON cf.option_group_id = ov.option_group_id
 WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND 
       cg.is_active = 1 AND 
       cf.is_active = 1 AND
       cf.is_searchable = 1 AND
-      cf.data_type    != 'ContactReference' AND
+      cf.data_type   NOT IN ('ContactReference', 'Date') AND
       cf.column_name IN ('". implode( "','", array_keys($this->_params['fields']) ) ."')
-";
-        // make sure selected custom columns are only fetched
+GROUP BY cf.column_name, ov.option_group_id, ov.value ";
 
         $dao = CRM_Core_DAO::executeQuery( $query );
         while( $dao->fetch( ) ) {
             foreach( $customFieldCols as $key ) {
                 $customFields[$dao->table_name . '_' . $dao->column_name][$key] = $dao->$key;
             }
+            if( $dao->option_group_id ) {
+                $fieldValueMap[$dao->option_group_id][$dao->value] = $dao->label;
+            }
         }
         $dao->free( );
-
-        require_once 'CRM/Core/BAO/CustomGroup.php';
+        
         foreach ( $rows as $rowNum => $row ) {
             foreach ( $row as $tableCol => $val ) {
                 if ( array_key_exists( $tableCol, $customFields ) ) {
-                    $params = array( 'data' => $val );
-                    if ( $val && $customFields[$tableCol]['data_type'] != 'Date' ) {
-                        // skip for type date, since date format is already handled at tpl level
                         $rows[$rowNum][$tableCol] = 
-                            CRM_Core_BAO_CustomGroup::formatCustomValues($params, $customFields[$tableCol]);
-                    }
+                            $this->formatCustomValues( $val, $customFields[$tableCol], $fieldValueMap );
                     $entryFound = true;
                 }
             }
-
+            
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
             if ( !$entryFound ) {
                 break;
             }
         }
+    }
+    
+    function formatCustomValues( $value, $customField, $fieldValueMap ) {
+        if ( CRM_Utils_System::isNull( $value ) ) {
+            return; 
+        }
+        
+        $htmlType = $customField['html_type'];
+        
+        switch ( $customField['data_type'] ) {
+        case 'Boolean':
+            if ( $value == '1' ) {
+                $retValue = ts('Yes');
+            } else {
+                $retValue = ts('No');
+            }
+            break;
+        case 'Link': 
+            $retValue = CRM_Utils_System::formatWikiURL( $value );
+            break; 
+        case 'File':
+            $retValue = $value;
+            break;  
+        case 'Memo': 
+            $retValue = $value;
+            break;	   
+        case 'Float':
+            if ( $htmlType == 'Text' ) {
+                $retValue = (float)$value;
+                break;
+            }   
+        case 'Money':
+            if ( $htmlType == 'Text') {
+                require_once 'CRM/Utils/Money.php';
+                $retValue = CRM_Utils_Money::format($value, null, '%a');
+                break;
+            }
+        case 'String':
+        case 'Int':
+            if ( in_array( $htmlType, array( 'Text', 'TextArea' ) ) ) {
+                $retValue = $value;
+                break;
+            }   
+        case 'StateProvince':
+        case 'Country':
+           
+            switch ( $htmlType ) {
+            case 'Multi-Select Country':
+                $value      = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value );
+                $customData = array( );
+                foreach( $value as $val ) {
+                    if( $val ) { 
+                        $customData[] = CRM_Core_PseudoConstant::country( $val, false );
+                    }
+                }
+                $retValue = implode( ', ', $customData );
+                break;
+            case 'Select Country':
+                $retValue = CRM_Core_PseudoConstant::country( $value, false );
+                break;
+            case 'Select State/Province':  
+                $retValue =  CRM_Core_PseudoConstant::stateProvince( $value, false );
+                break;
+            case 'Multi-Select State/Province':
+                $value      = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value );
+                $customData = array( );
+                foreach( $value as $val ) {
+                    if ( $val ) {
+                        $customData[] = CRM_Core_PseudoConstant::stateProvince( $val, false );
+                    }
+                }
+                $retValue = implode( ', ', $customData );
+                break;
+            case 'Select':
+            case 'Radio':
+            case 'Autocomplete-Select':    
+                $retValue = $fieldValueMap[$customField['option_group_id']][$value];
+                break;
+            case 'CheckBox': 
+            case 'AdvMulti-Select':
+            case 'Multi-Select':
+                $value      = explode( CRM_Core_DAO::VALUE_SEPARATOR, $value );
+                $customData = array( );
+                foreach( $value as $val ) {
+                    if( $val ) { 
+                        $customData[] = $fieldValueMap[$customField['option_group_id']][$val];
+                    }
+                }
+                $retValue = implode( ', ', $customData );
+                break;
+            default:
+                $retValue = $value;
+            } 
+        break;
+
+        default:
+             $retValue = $value; 
+        }
+
+        return $retValue;
     }
 
     function removeDuplicates( &$rows ) {
@@ -1622,6 +1720,10 @@ ORDER BY cg.table_name";
                 break;
 
             case 'Money':
+                $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_FLOAT;
+                $curFilters[$customDAO->column_name]['type']         = CRM_Utils_Type::T_MONEY;
+                break;
+
             case 'Float':
                 $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_FLOAT;
                 $curFilters[$customDAO->column_name]['type']         = CRM_Utils_Type::T_FLOAT;
