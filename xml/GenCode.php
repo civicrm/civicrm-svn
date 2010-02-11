@@ -284,6 +284,14 @@ if (isset($argv[2]) and $argv[2] != '') {
 }
 file_put_contents("$tplCodePath/CRM/common/version.tpl", $svnversion);
 
+echo "Generating civicrm-version file\n";
+$smarty->assign('db_version',$db_version);
+$smarty->assign('cms',ucwords($cms));
+$fd  = fopen( $phpCodePath . "civicrm-version.txt", "w" );
+$sql = $smarty->fetch( 'civicrm_version.tpl' );
+fputs( $fd, $sql );
+fclose($fd);
+
 // unlink the templates_c directory
 foreach(glob($tempDir . '/templates_c/*') as $tempFile) {
   unlink($tempFile);
