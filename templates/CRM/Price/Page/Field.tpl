@@ -41,14 +41,10 @@
             {ts 1=$usedPriceSetTitle}Unable to delete the '%1' Price Field - it is currently in use by one or more active events or contribution pages or contributions.{/ts}
        	{/if}<br />        
         
-        {if $usedBy.civicrm_event} {* If and when Price Sets and Price Fields are used by entities other than events, add condition here and change text above. *}
-	    {ts}If you no longer want to use this Price Field, click the event title below, and modify the fees for that event.{/ts}<br />
-	    {include file="CRM/Price/Page/table.tpl" context="Event"}
+	{if $usedBy.civicrm_event or $usedBy.civicrm_contribution_page} 
+            {include file="CRM/Price/Page/table.tpl"} 
         {/if}
-	{if $usedBy.civicrm_contribution_page} 
-	    {ts}If you no longer want to use this Price Field, click the contribution page title below, and modify the amount for that contribution page.{/ts}<br />	    
-	    {include file="CRM/Price/Page/table.tpl" context="Contribution"}
-	{/if}
+
       </dd>
       </dl>
     </div>
