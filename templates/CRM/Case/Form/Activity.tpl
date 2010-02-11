@@ -82,11 +82,11 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            <tr>
               <td class="label font-size12pt">{ts}Client{/ts}</td>
               <td class="view-value font-size12pt">{$client_name|escape}&nbsp;&nbsp;&nbsp;&nbsp;
-	      <a href="#" id="showWidget" title={ts}With Other Contacts{/ts} onClick="addTargetContacts( );">{ts}With Other Contacts{/ts}</a>
+	      <a href="#" onClick="addTargetContacts( ); return false;">{ts}With other contact(s){/ts}</a>
 	      </td>
            </tr>
 	   <tr>
-	      <td class="label font-size10pt hide-block" id="withContactsLabel">{ts}With Contacts{/ts}</td>
+	      <td class="label font-size10pt hide-block" id="withContactsLabel">{ts}With Contact{/ts}</td>
  	      <td class="hide-block"  id="withContactsWidget">{$form.target_contact_id.html}</td>	
 	   </tr>
            <tr>
