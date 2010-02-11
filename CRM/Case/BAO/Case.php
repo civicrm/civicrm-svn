@@ -1664,6 +1664,48 @@ LEFT JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.case
     }
     
     /**
+     * Retrieve cases related to particular contact.
+     *
+     * @param int     $contactId contact id
+     * @param boolean $excludeDeleted do not include deleted cases.
+     *
+     * @return an array of cases.
+     * 
+     * @access public
+     */
+    function getContactCases( $contactId, $excludeDeleted = true )
+    {
+        $cases = array( );
+        if ( !$contactId ) {
+            return $cases;
+        }
+        
+        $whereClause = "civicrm_case_contact.contact_id = %1";
+        if ( $excludeDeleted ) {
+            $whereClause .= " AND ( civicrm_case.is_deleted = 0 OR civicrm_case.is_deleted IS NULL )";
+        }
+        
+        $query = "
+    SELECT  civicrm_case.id, case_type_ov.label as case_type, civicrm_case.start_date
+      FROM  civicrm_case
+INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.case_id )
+ LEFT JOIN  civicrm_option_group case_type_og ON ( case_type_og.name = 'case_type' )
+ LEFT JOIN  civicrm_option_value case_type_ov ON ( civicrm_case.case_type_id = case_type_ov.value
+                                                   AND case_type_og.id = case_type_ov.option_group_id )
+     WHERE  {$whereClause}";
+        
+        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $contactId,  'Integer' ) ) );
+        while ( $dao->fetch( ) ) {
+            $cases[$dao->id] = array( 'case_id'         => $dao->id,
+                                      'case_type'       => $dao->case_type,
+                                      'case_start_date' => $dao->start_date );
+        }
+        $dao->free( );
+        
+        return $cases;
+    }
+    
+    /**
      * Function to merge two cases.
      *
      * @param int $mainCaseId  id of main case record.

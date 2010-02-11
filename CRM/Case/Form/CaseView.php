@@ -170,7 +170,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                                   'onclick' => "return checkSelection( this );") ); 
         
         if ( $this->_mergeCases ) {
-            $allCases   = CRM_Case_BAO_Case::getCases( false, $this->_contactID );
+            $allCases = CRM_Case_BAO_Case::getContactCases( $this->_contactID );
             $otherCases = array( );
             foreach ( $allCases as $caseId => $details ) {
                 if ( $caseId == $this->_caseID ) continue;
