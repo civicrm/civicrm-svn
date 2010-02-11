@@ -764,12 +764,19 @@ SELECT g.*
     public static function group( $type,
                                   $contactID = null,
                                   $tableName = 'civicrm_saved_search',
-                                  $allGroups = null ) {
+                                  $allGroups = null,
+                                  $includedGroups = null ) {
         require_once 'CRM/ACL/BAO/Cache.php';
 
         $acls =& CRM_ACL_BAO_Cache::build( $contactID );
 
-        $ids  = array( );
+        if ( ! empty( $includedGroups ) &&
+             is_array( $includedGroups ) ) {
+            $ids  = $includedGroups;
+        } else {
+            $ids  = array( );
+        }
+
         if ( ! empty( $acls ) ) {
             $aclKeys = array_keys( $acls );
             $aclKeys = implode( ',', $aclKeys );

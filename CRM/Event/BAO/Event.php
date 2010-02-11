@@ -1552,6 +1552,12 @@ WHERE  ce.loc_block_id = $locBlockId";
             require_once 'CRM/ACL/API.php';
             require_once 'CRM/Event/PseudoConstant.php';
             $allEvents = CRM_Event_PseudoConstant::event( null, true );
+            $createdEvents = array( );
+
+            $session =& CRM_Core_Session::singleton( );
+            if ( $userID = $session->get( 'userID' )) {
+                $createdEvents = array_keys( CRM_Event_PseudoConstant::event( null, true, "created_id={$userID}" ) );
+            }
 
             // Note: for a multisite setup, a user with edit all events, can edit all events 
             // including those from other sites 
@@ -1559,7 +1565,7 @@ WHERE  ce.loc_block_id = $locBlockId";
                 $permissions[CRM_Core_Permission::EDIT] = array_keys( $allEvents );
             } else {
                 $permissions[CRM_Core_Permission::EDIT] =& 
-                    CRM_ACL_API::group( CRM_Core_Permission::EDIT, null, 'civicrm_event', $allEvents );
+                    CRM_ACL_API::group( CRM_Core_Permission::EDIT, null, 'civicrm_event', $allEvents, $createdEvents );
             }
 
             if ( CRM_Core_Permission::check( 'edit all events' ) ||
@@ -1568,7 +1574,7 @@ WHERE  ce.loc_block_id = $locBlockId";
                 $permissions[CRM_Core_Permission::VIEW] = array_keys( $allEvents );
             } else {
                 $permissions[CRM_Core_Permission::VIEW] =& 
-                    CRM_ACL_API::group( CRM_Core_Permission::VIEW, null, 'civicrm_event', $allEvents );
+                    CRM_ACL_API::group( CRM_Core_Permission::VIEW, null, 'civicrm_event', $allEvents, $createdEvents );
             }
             
             $permissions[CRM_Core_Permission::DELETE] = array( );
