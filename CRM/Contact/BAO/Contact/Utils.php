@@ -471,10 +471,9 @@ WHERE id={$contactId}; ";
                 $form->assign( 'relatedOrganizationFound', true );
             }
             
-            if ( $form->_values['is_for_organization'] == 2 ) {
+            $isRequired = false;
+            if ( CRM_Utils_Array::value( 'is_for_organization',  $form->_values ) == 2 ) {
                 $isRequired =  true;
-            } else {
-                $isRequired = false;
             }
             $form->add('text', 'organization_name', ts('Organization Name'), $attributes['organization_name'], $isRequired);
             break;
