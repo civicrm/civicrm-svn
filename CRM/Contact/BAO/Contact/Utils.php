@@ -470,7 +470,13 @@ WHERE id={$contactId}; ";
                 $form->addRadio( 'org_option', ts('options'),  $orgOptions, $orgOptionExtra );
                 $form->assign( 'relatedOrganizationFound', true );
             }
-            $form->add('text', 'organization_name', ts('Organization Name'), $attributes['organization_name']);
+            
+            if ( $form->_values['is_for_organization'] == 2 ) {
+                $isRequired =  true;
+            } else {
+                $isRequired = false;
+            }
+            $form->add('text', 'organization_name', ts('Organization Name'), $attributes['organization_name'], $isRequired);
             break;
         case 'Household':
             $form->add('text', 'household_name', ts('Household Name'), 
