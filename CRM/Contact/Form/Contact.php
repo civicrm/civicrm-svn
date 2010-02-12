@@ -967,7 +967,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                  $template->assign( 'isDuplicate', 1 );
              } else if ( CRM_Utils_Array::value( '_qf_Contact_refresh_dedupe', $fields ) ) {
                  // add a session message for no matching contacts
-                 CRM_Core_Session::setStatus( 'No matching contact found.' );
+                 CRM_Core_Session::setStatus(ts('No matching contact found.'));
              }
          }
      }   
