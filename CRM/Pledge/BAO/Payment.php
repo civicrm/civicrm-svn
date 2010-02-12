@@ -361,7 +361,7 @@ WHERE  civicrm_pledge.id = %2
      static function calculatePledgeStatus( $pledgeId )
      {
          require_once 'CRM/Contribute/PseudoConstant.php';
-         $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( );
+         $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
          
          //retrieve all pledge payments for this particular pledge
          $allPledgePayments = array( );

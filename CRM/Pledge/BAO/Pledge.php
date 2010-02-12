@@ -686,7 +686,8 @@ WHERE  $whereCond
      */
     static function getContactPledges( $contactID )
     {
-        $pledgeStatuses = CRM_Core_OptionGroup::values( 'contribution_status');
+        require_once 'CRM/Contribute/PseudoConstant.php';
+        $pledgeStatuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
         //get pending and in progress status
         $status[] = array_search( 'Pending', $pledgeStatuses );
