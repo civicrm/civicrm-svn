@@ -254,7 +254,7 @@ class CRM_Dedupe_Merger
         static $tables;
         if ( !$tables ) {
             $tables = array( 'civicrm_case_contact' => array( 'path'     => 'CRM_Case_BAO_Case',
-                                                              'function' => 'mergeCaseContacts' ) );
+                                                              'function' => 'mergeCases' ) );
         }
         
         return $tables;
@@ -356,7 +356,7 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
                 $fName = CRM_Utils_Array::value( 'function', $cpTables[$table] );
                 if ( $path && $fName ) {
                     require_once( str_replace('_', DIRECTORY_SEPARATOR, $path ) . ".php" );
-                    eval( "$path::$fName( $mainId, $otherId );");
+                    eval( "$path::$fName( $mainId, null, $otherId );");
                 }
                 continue;
             }
