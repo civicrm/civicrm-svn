@@ -234,15 +234,15 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
      */
     public static function &contributionStatus( $id = null, $columnName = 'label' )
     {
-        if ( ! isset( self::$contributionStatus ) ) {
-            require_once "CRM/Core/OptionGroup.php";
-            self::$contributionStatus = CRM_Core_OptionGroup::values("contribution_status", false, false, false, null, $columnName );
+        $cacheKey = $columnName;
+        if ( ! isset( self::$contributionStatus[$cacheKey] ) ) {
+            self::$contributionStatus[$cacheKey] = CRM_Core_OptionGroup::values( 'contribution_status', 
+                                                                                 false, false, false, null, $columnName );
         }
-        if ($id) {
-            $result = CRM_Utils_Array::value( $id, self::$contributionStatus );
-            return $result;
-        }
-        return self::$contributionStatus;
+        $result = self::$contributionStatus[$cacheKey];
+        if ( $id ) $result = CRM_Utils_Array::value( $id, $result );
+        
+        return $result;
     }
 
     /**
