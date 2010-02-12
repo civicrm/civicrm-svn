@@ -317,12 +317,6 @@ class CRM_Contact_Form_Merge extends CRM_Core_Form
     {
         $formValues = $this->exportValues();
         
-        // user can't choose to move cases without activities (CRM-3778)
-        if ( $formValues['move_rel_table_cases'] == '1' && 
-             array_key_exists('move_rel_table_activities', $formValues) ) {
-            $formValues['move_rel_table_activities'] = '1';
-        }
-        
         // reset all selected contact ids from session 
         // when we came from search context, CRM-3526
         $session = CRM_Core_Session::singleton( );

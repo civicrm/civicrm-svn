@@ -122,8 +122,6 @@ class CRM_Dedupe_Merger
                 'rel_table_cases' => array(
                     'title'  => ts('Cases'),
                     'tables' => array('civicrm_case_contact'),
-                    // note civicrm_activity is automatically included
-                    // when cases is checked on
                     'url'    => CRM_Utils_System::url('civicrm/contact/view', 'reset=1&force=1&cid=$cid&selectedChild=case'),
                 ),
                 'rel_table_pcp' => array(
@@ -249,6 +247,20 @@ class CRM_Dedupe_Merger
     }
     
     /**
+     * return custom processing tables.
+     */
+    static function &cpTables( )
+    {
+        static $tables;
+        if ( !$tables ) {
+            $tables = array( 'civicrm_case_contact' => array( 'path'     => 'CRM_Case_BAO_Case',
+                                                              'function' => 'mergeCaseContacts' ) );
+        }
+        
+        return $tables;
+    }
+    
+    /**
      * return payment related table.
      */
     static function &paymentTables( )
@@ -312,8 +324,9 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
      */
     function moveContactBelongings($mainId, $otherId, $tables = false)
     {
-        $cidRefs =& self::cidRefs();
-        $eidRefs =& self::eidRefs();
+        $cidRefs       = self::cidRefs( );
+        $eidRefs       = self::eidRefs( );
+        $cpTables      = self::cpTables( );
         $paymentTables = self::paymentTables( );
         
         $affected = array_merge(array_keys($cidRefs), array_keys($eidRefs));
@@ -337,6 +350,17 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
         // there's a UNIQUE restriction on ($field, some_other_field) pair
         $sqls = array( );
         foreach ($affected as $table) {
+            //here we require custom processing.
+            if ( array_key_exists( $table, $cpTables ) ) {
+                $path  = CRM_Utils_Array::value( 'path',     $cpTables[$table] );
+                $fName = CRM_Utils_Array::value( 'function', $cpTables[$table] );
+                if ( $path && $fName ) {
+                    require_once( str_replace('_', DIRECTORY_SEPARATOR, $path ) . ".php" );
+                    eval( "$path::$fName( $mainId, $otherId );");
+                }
+                continue;
+            }
+            
             if (isset($cidRefs[$table])) {
                 foreach ($cidRefs[$table] as $field) {
                     // carry related contributions CRM-5359

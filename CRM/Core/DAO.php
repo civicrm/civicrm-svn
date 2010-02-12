@@ -1031,7 +1031,7 @@ FROM   civicrm_domain
             }
 
             foreach ( $fields as $name => $value ) {
-                if ( $name == 'id' ) {
+                if ( $name == 'id' || $value['name'] == 'id' ) {
                     // copy everything but the id!
                     continue;
                 }

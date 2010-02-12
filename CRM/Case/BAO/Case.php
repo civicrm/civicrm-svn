@@ -1903,7 +1903,7 @@ SELECT id, subject, activity_date_time
                 if ( !$copyActivityId ) continue; 
                 
                 //copy case activity.
-                $copyCaseActivity = CRM_Core_DAO::copyGeneric( 'CRM/Case/DAO/CaseActivity', 
+                $copyCaseActivity = CRM_Core_DAO::copyGeneric( 'CRM_Case_DAO_CaseActivity', 
                                                                array( 'case_id'     => $otherCaseId,
                                                                       'activity_id' => $activityId ),
                                                                array( 'case_id'     => $copyCaseId,
@@ -1912,9 +1912,9 @@ SELECT id, subject, activity_date_time
                 
                 // copy target w/ main contact and copy activity.
                 $copyActivityTarget = CRM_Core_DAO::copyGeneric( 'CRM_Activity_DAO_ActivityTarget', 
-                                                                 array( 'target_activity_id' => $activityId,
+                                                                 array( 'activity_id' => $activityId,
                                                                         'target_contact_id'  => $otherContactId ),
-                                                                 array( 'target_activity_id' => $copyActivityId,
+                                                                 array( 'activity_id' => $copyActivityId,
                                                                         'target_contact_id'  => $mainContactId  ) );
                 $copyActivityTarget->free( );
             }
