@@ -34,13 +34,13 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 
 /**
  * Main page for viewing activities
  *
  */
-class CRM_Activity_Page_Tab extends CRM_Contact_Page_View 
+class CRM_Activity_Page_Tab extends CRM_Core_Page 
 {
     /**
      * Browse all activities for a particular contact
@@ -129,7 +129,17 @@ class CRM_Activity_Page_Tab extends CRM_Contact_Page_View
      */
     function preProcess()
     {
-        parent::preProcess();
+        //parent::preProcess();
+
+        $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $this->assign( 'contactId', $this->_contactId );
+
+        // check logged in url permission
+        require_once 'CRM/Contact/Page/View.php';
+        CRM_Contact_Page_View::checkUserPermission( $this );
+        
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        $this->assign( 'action', $this->_action);
 
         // we need to retrieve privacy preferences
         // to (un)display the 'Send an Email' link
@@ -142,7 +152,7 @@ class CRM_Activity_Page_Tab extends CRM_Contact_Page_View
         $this->assign($defaults);
 
         // also create the form element for the activity links box
-        $controller =& new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityLinks',
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityLinks',
                                                        ts('Activity Links'), null );
         $controller->setEmbedded( true );
         $controller->run( );

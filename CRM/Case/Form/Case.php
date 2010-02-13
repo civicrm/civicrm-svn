@@ -111,7 +111,8 @@ class CRM_Case_Form_Case extends CRM_Core_Form
             return true;
         }
         
-        if (  $this->_action & CRM_Core_Action::ADD ) {
+        if ( $this->_action & CRM_Core_Action::ADD ) {
+            require_once 'CRM/Core/OptionGroup.php';
             $this->_activityTypeId = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                                      'Open Case',
                                                                      'name' );  

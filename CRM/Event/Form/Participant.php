@@ -94,7 +94,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
      * @var int
      * @protected
      */
-    public $_contactID;
+    public $_contactId;
     
     /**
      * array of event values
@@ -182,10 +182,16 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         $this->_showFeeBlock = CRM_Utils_Array::value( 'eventId', $_GET );
         $this->assign( 'showFeeBlock', false );
 
-        $this->_contactID 	   = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
+        $this->_contactId 	   = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         $this->_mode           = CRM_Utils_Request::retrieve( 'mode', 'String', $this );
         $this->_context        = CRM_Utils_Request::retrieve('context', 'String', $this );
         $this->assign('context', $this->_context );
+        
+        if ( $this->_contactId ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+            $this->assign( 'displayName', $displayName );
+        }
         
         // check the current path, if search based, then dont get participantID
         // CRM-5792
@@ -272,10 +278,10 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
        
         //check the mode when this form is called either single or as
         //search task action
-        if ( $this->_participantId || $this->_contactID || $this->_context == 'standalone') {
+        if ( $this->_participantId || $this->_contactId || $this->_context == 'standalone') {
             $this->_single = true;
             $this->assign( 'urlPath'   , 'civicrm/contact/view/participant' );
-            if ( !$this->_participantId && !$this->_contactID ) {
+            if ( !$this->_participantId && !$this->_contactId ) {
                 $breadCrumbs = array( array( 'title' => ts('CiviEvent Dashboard'),
                                              'url'   => CRM_Utils_System::url('civicrm/event','reset=1') ) );
                 
@@ -304,7 +310,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             parent::preProcess( );
 
             $this->_single    = false;
-            $this->_contactID = null;
+            $this->_contactId = null;
 
             //set ajax path, this used for custom data building
             $this->assign( 'urlPath'   , "civicrm/contact/search/$searchType" );
@@ -406,7 +412,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             
             require_once "CRM/Event/BAO/Participant.php";
             CRM_Event_BAO_Participant::getValues( $params, $defaults, $ids );
-            $this->_contactID = $defaults[$this->_participantId]['contact_id'];
+            $this->_contactId = $defaults[$this->_participantId]['contact_id'];
             $this->_statusId = $defaults[$this->_participantId]['participant_status_id'];
             
             //set defaults for note
@@ -436,10 +442,10 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             if ( $this->_mode ) {
                 $fields["email-{$this->_bltID}"         ] = 1;
                 $fields["email-Primary"                 ] = 1;
-                require_once "CRM/Core/BAO/UFGroup.php";
-                if ( $this->_contactID ) {
+
+                if ( $this->_contactId ) {
                     require_once "CRM/Core/BAO/UFGroup.php";
-                    CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactID, $fields, $defaults  );
+                    CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactId, $fields, $defaults  );
                 }
                
                 if ( empty( $defaults["email-{$this->_bltID}"] ) &&
@@ -531,7 +537,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             if (  $this->_single ) {
                 require_once 'CRM/Event/BAO/Event.php';
-                $additionalParticipant = count (CRM_Event_BAO_Event::buildCustomProfile( $this->_participantId, null, $this->_contactID, false, true )) - 1;
+                $additionalParticipant = count (CRM_Event_BAO_Event::buildCustomProfile( $this->_participantId, null, $this->_contactId, false, true )) - 1;
                 if ( $additionalParticipant ) {
                     $this->assign( "additionalParticipant", $additionalParticipant );
                 }   
@@ -551,7 +557,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
 
         if ( $this->_single ) {
             $urlPath   = 'civicrm/contact/view/participant';
-            $urlParams = "reset=1&cid={$this->_contactID}&context=participant";
+            $urlParams = "reset=1&cid={$this->_contactId}&context=participant";
             if ( $this->_context == 'standalone' ) {
                 require_once 'CRM/Contact/Form/NewContact.php';
                 CRM_Contact_Form_NewContact::buildQuickForm( $this );
@@ -786,7 +792,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
              
         // set the contact, when contact is selected
         if ( CRM_Utils_Array::value('contact_select_id', $params ) ) {
-            $this->_contactID = CRM_Utils_Array::value('contact_select_id', $params);
+            $this->_contactId = CRM_Utils_Array::value('contact_select_id', $params);
         }
         
         if ( $this->_participantId ) {
@@ -868,7 +874,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
         unset($params['amount']);
         $params['register_date'] = CRM_Utils_Date::processDate( $params['register_date'], $params['register_date_time'] );
         $params['receive_date' ] = CRM_Utils_Date::processDate( CRM_Utils_Array::value( 'receive_date', $params ) );
-        $params['contact_id'   ] = $this->_contactID;
+        $params['contact_id'   ] = $this->_contactId;
         
         // overwrite actual payment amount if entered
         if ( CRM_Utils_Array::value( 'total_amount', $params ) ) {
@@ -904,7 +910,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
             
             // set email for primary location.
             $fields["email-Primary"] = 1;
-            list( $this->_contributorDisplayName, $this->_contributorEmail, $this->_toDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_contactID );
+            list( $this->_contributorDisplayName, $this->_contributorEmail, $this->_toDoNotEmail ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_contactId );
             $params["email-Primary"] = $params["email-{$this->_bltID}"] = $this->_contributorEmail;
             
             $params['register_date'] = $now;
@@ -926,7 +932,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
             
             $fields["email-{$this->_bltID}"] = 1;
             
-            $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $this->_contactID, 'contact_type' );
+            $ctype = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $this->_contactId, 'contact_type' );
             
             $nameFields = array( 'first_name', 'middle_name', 'last_name' );
             
@@ -937,7 +943,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
                     $params['preserveDBName'] = true;
                 }
             }
-            $contactID = CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, $this->_contactID, null, null, $ctype );
+            $contactID = CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, $this->_contactId, null, null, $ctype );
             
         }
 
@@ -992,7 +998,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
             if ( is_a( $result, 'CRM_Core_Error' ) ) {
                 CRM_Core_Error::displaySessionError( $result );
                 CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/contact/view/participant',
-                                                                   "reset=1&action=add&cid={$this->_contactID}&context=participant&mode={$this->_mode}" ) );
+                                                                   "reset=1&action=add&cid={$this->_contactId}&context=participant&mode={$this->_mode}" ) );
             }
             
             if ( $result ) {
@@ -1045,7 +1051,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
             $eventTitle = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event',
                                                    $params['event_id'],
                                                    'title' );
-            $this->_contactIds[] = $this->_contactID;
+            $this->_contactIds[] = $this->_contactId;
 
         } else {
             $participants = array();
@@ -1071,7 +1077,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
             }
             
             if ( $this->_single ) {
-                $this->_contactIds[] = $this->_contactID;
+                $this->_contactIds[] = $this->_contactId;
             }
             
             if ( CRM_Utils_Array::value( 'record_contribution', $params ) ) {
@@ -1359,11 +1365,11 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
                                                                    'reset=1&action=add&context=standalone') );
             } else {
                 $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/contact/view',
-                                                                    "reset=1&cid={$this->_contactID}&selectedChild=participant" ) );
+                                                                    "reset=1&cid={$this->_contactId}&selectedChild=participant" ) );
             }
         } else if ( $buttonName == $this->getButtonName( 'upload', 'new' ) ) {
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view/participant', 
-                                                               "reset=1&action=add&context={$this->_context}&cid={$this->_contactID}") );
+                                                               "reset=1&action=add&context={$this->_context}&cid={$this->_contactId}") );
         }
     }
       
