@@ -54,6 +54,8 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         $currentVer = CRM_Core_BAO_Domain::version();
         if ( ! $currentVer ) {
             CRM_Core_Error::fatal( ts('Version information missing in civicrm database.') );
+        } else if ( stripos($currentVer, 'upgrade') ) {
+            CRM_Core_Error::fatal( ts('Database check failed - the database looks to have been partially upgraded. You may want to reload the database with the backup and try the upgrade process again.') );
         }
         if ( ! $latestVer ) {
             CRM_Core_Error::fatal( ts('Version information missing in civicrm codebase.') );
@@ -119,13 +121,18 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                 foreach ( $revisions as $rev ) {
                     // proceed only if $currentVer < $rev
                     if ( version_compare($currentVer, $rev) < 0 ) {
-                        
+                        // as soon as we start doing anything we append ".upgrade" to version.
+                        // this also helps detect any partial upgrade issues
+                        $upgrade->setVersion( $rev . '.upgrade' );
+
                         $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $rev );
                         if ( is_callable(array($this, $phpFunctionName)) ) {
                             eval("\$this->{$phpFunctionName}('$rev');");
                         } else {
                             $upgrade->processSQL( $rev );
                         }
+
+                        // after an successful intermediate upgrade, set the complete version
                         $upgrade->setVersion( $rev );
                     }
                 }

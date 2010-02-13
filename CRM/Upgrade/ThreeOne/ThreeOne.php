@@ -66,7 +66,7 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
              CRM_Core_DAO::checkFieldExists( 'civicrm_relationship_type', 'contact_sub_type_a'           ) ||
              CRM_Core_DAO::checkFieldExists( 'civicrm_relationship_type', 'contact_sub_type_b'           ) ||
              CRM_Core_DAO::checkFieldExists( 'civicrm_report_instance',   'domain_id' ) ) {
-            $errorMessage =  ts("Database check failed - it looks like you have already upgraded to the latest version (v%1) of the database. OR If you think this message is wrong, it is very likely that this a partially upgraded db and you will need to reload the correct db on which upgrade was never tried.", array( 1 => $latestVer ));
+            $errorMessage =  ts("Database check failed - it looks like you have already upgraded to the latest version (v%1) of the database. OR If you think this message is wrong, it is very likely that this a partially upgraded database and you will need to reload the correct database from backup on which upgrade was never tried.", array( 1 => $latestVer ));
             return false;
         }  
         

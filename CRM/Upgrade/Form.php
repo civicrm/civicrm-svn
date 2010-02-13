@@ -40,6 +40,8 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
 
     protected $_config;
 
+    // note latestVersion is legacy code, and 
+    // only used for 2.0 -> 2.1 upgrade
     public    $latestVersion;
     
     /**
@@ -63,8 +65,10 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
                           $method = 'post',
                           $name = null ) {
         $this->_config =& CRM_Core_Config::singleton( );
-        $this->latestVersion = CRM_Utils_System::version();                
-        
+
+        // this->latestVersion is legacy code, only used for 2.0 -> 2.1 upgrade
+        $this->latestVersion = '2.1.6'; // latest ver in 2.1 series               
+
         require_once "CRM/Core/DAO/Domain.php";                        
         $domain =& new CRM_Core_DAO_Domain();
         $domain->find(true);
@@ -165,7 +169,7 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
     }
 
     function setVersion( $version ) {
-        $this->logVersion( );
+        $this->logVersion( $version );
 
         $query = "
 UPDATE civicrm_domain
@@ -174,17 +178,16 @@ SET    version = '$version'
         return $this->runQuery( $query );
     }
 
-    function logVersion( $version = null ) {
-        if ( !$version ) {
-            $version = CRM_Core_BAO_Domain::version();
-        }
-        if ( $version ) {
+    function logVersion( $newVersion ) {
+        if ( $newVersion ) {
+            $oldVersion = CRM_Core_BAO_Domain::version();
+
             require_once 'CRM/Core/BAO/Log.php';
             $session   =& CRM_Core_Session::singleton();
             $logParams = array(
                                'entity_table'  => 'civicrm_domain',
                                'entity_id'     => 1,
-                               'data'          => "version,{$version}",
+                               'data'          => "upgrade:{$oldVersion}->{$newVersion}",
                                // lets skip 'modified_id' for now, as it causes FK issues And 
                                // is not very important for now.
                                'modified_date' => date('YmdHis'),
