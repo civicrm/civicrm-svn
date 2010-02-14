@@ -129,8 +129,6 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
      */
     function preProcess()
     {
-        //parent::preProcess();
-
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
         $this->assign( 'contactId', $this->_contactId );
 
@@ -140,16 +138,6 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
         
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
         $this->assign( 'action', $this->_action);
-
-        // we need to retrieve privacy preferences
-        // to (un)display the 'Send an Email' link
-        $params   = array( );
-        $defaults = array( );
-        $ids      = array( );
-        $params['id'] = $params['contact_id'] = $this->_contactId;
-        CRM_Contact_BAO_Contact::retrieve($params, $defaults, $ids);
-        CRM_Contact_BAO_Contact::resolveDefaults($defaults);
-        $this->assign($defaults);
 
         // also create the form element for the activity links box
         $controller = new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityLinks',
