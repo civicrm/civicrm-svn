@@ -200,19 +200,30 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
         
         return $controller->run( );
     }
-    
-    function preProcess() {
-        $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
-        $this->assign( 'contactId', $this->_contactId );
-        
-        // check logged in url permission
-        require_once 'CRM/Contact/Page/View.php';
-        CRM_Contact_Page_View::checkUserPermission( $this );
-        
+
+    function preProcess( ) {
+        $context       = CRM_Utils_Request::retrieve('context', 'String', $this );
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
-        $this->assign( 'action', $this->_action);
+        
+        if ( $context == 'standalone' ) {
+            $this->_action = CRM_Core_Action::ADD;
+        } else {
+            $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+            $this->assign( 'contactId', $this->_contactId );
+
+            // check logged in url permission
+            require_once 'CRM/Contact/Page/View.php';
+            CRM_Contact_Page_View::checkUserPermission( $this );
+        }      
+
+        $this->assign('action', $this->_action );     
+        
+        if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit contributions' ) ) {
+            $this->_permission = CRM_Core_Permission::VIEW; // demote to view since user does not have edit contrib rights
+            $this->assign( 'permission', 'view' );
+        }
     }
-       
+           
     /**
      * This function is the main function that is called when the page
      * loads, it decides the which action has to be taken for the page.
@@ -222,22 +233,8 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
      */
     function run( ) 
     {
-        $contactID  = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullArray );
-        $context    = CRM_Utils_Request::retrieve('context', 'String', $this );
+        $this->preProcess( );
         
-        if ( $context == 'standalone' && !$contactID ) {
-            $this->_action = CRM_Core_Action::ADD;
-            $this->assign('action', $this->_action );     
-        } else {
-            // we should call contact view, preprocess only for contribution in contact summary
-            $this->preProcess( );           
-        }        
-        
-        if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit contributions' ) ) {
-            $this->_permission = CRM_Core_Permission::VIEW; // demote to view since user does not have edit contrib rights
-            $this->assign( 'permission', 'view' );
-        }
-
         // check if we can process credit card contribs
         $processors = CRM_Core_PseudoConstant::paymentProcessor( false, false,
                                                                  "billing_mode IN ( 1, 3 )" );

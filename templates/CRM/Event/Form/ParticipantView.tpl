@@ -48,7 +48,7 @@
         {/if}
         {foreach from=$note item="rec"}
 	    {if $rec }
-            <tr><td class="label">{ts}Note:{/ts}</td><td>{$rec}</td></tr>
+            <tr><td class="label">{ts}Note{/ts}</td><td>{$rec}</td></tr>
 	    {/if}
         {/foreach}
     </table>         
