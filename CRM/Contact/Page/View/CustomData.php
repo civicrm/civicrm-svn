@@ -69,8 +69,6 @@ class CRM_Contact_Page_View_CustomData extends CRM_Core_Page {
      */ 
     function preProcess( ) 
     { 
-        //parent::preProcess( );
-
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
         $this->assign( 'contactId', $this->_contactId );
 
@@ -81,8 +79,7 @@ class CRM_Contact_Page_View_CustomData extends CRM_Core_Page {
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
         $this->assign( 'action', $this->_action);
 
-        $this->_groupId = CRM_Utils_Request::retrieve( 'gid', 'Positive',
-                                                       $this, true ); 
+        $this->_groupId = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this, true ); 
         $this->assign( 'groupId', $this->_groupId );
     }
 

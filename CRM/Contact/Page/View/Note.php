@@ -121,8 +121,6 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
      * @access public
      */
     function edit( ) {
-       
-
         $controller =& new CRM_Core_Controller_Simple( 'CRM_Note_Form_Note', ts('Contact Notes'), $this->_action );
         $controller->setEmbedded( true );
 
@@ -147,6 +145,7 @@ class CRM_Contact_Page_View_Note extends CRM_Core_Page
     }
 
     function preProcess() {
+        $this->_id        = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
         $this->assign( 'contactId', $this->_contactId );
 

@@ -111,11 +111,7 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
     function run( ) {
         $this->preProcess( );
 
-        $action = CRM_Utils_Request::retrieve( 'action', 'String',
-                                               CRM_Core_DAO::$_nullObject,
-                                               false, 'browse' );
-
-        if ( $action == CRM_Core_Action::DELETE ) {
+        if ( $this->_action == CRM_Core_Action::DELETE ) {
             $groupContactId = CRM_Utils_Request::retrieve( 'gcid', 'Positive',
                                                            CRM_Core_DAO::$_nullObject, true );
             $status         = CRM_Utils_Request::retrieve( 'st', 'String',
