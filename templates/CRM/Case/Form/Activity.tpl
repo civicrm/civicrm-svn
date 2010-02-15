@@ -10,10 +10,12 @@
 var target_contact = assignee_contact = target_contact_id = '';
 {/literal}
 
-{foreach from=$target_contact key=id item=name}
+{if $targetContactValues}
+{foreach from=$targetContactValues key=id item=name}
      {literal} target_contact += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
 {/foreach}
 {literal} eval( 'target_contact = [' + target_contact + ']'); {/literal}
+{/if}
 
 {if $assigneeContactCount}
 {foreach from=$assignee_contact key=id item=name}
@@ -21,13 +23,32 @@ var target_contact = assignee_contact = target_contact_id = '';
 {/foreach}
 {literal} eval( 'assignee_contact = [' + assignee_contact + ']'); {/literal}
 {/if}
+
 {literal}
+var target_contact_id = assignee_contact_id = null;
+//loop to set the value of cc and bcc if form rule.
+var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}"; {/literal}
+{foreach from=","|explode:"assignee,target" key=key item=element}
+  {assign var=currentElement value=`$element`_contact_id}
+  {if $form.$currentElement.value}
+     {literal} var {/literal}{$currentElement}{literal} = cj.ajax({ url: toDataUrl + "&cid={/literal}{$form.$currentElement.value}{literal}", async: false }).responseText;{/literal}
+  {/if}
+{/foreach}
+
+{literal}
+if ( target_contact_id ) {
+  eval( 'target_contact = ' + target_contact_id );
+}
+if ( assignee_contact_id ) {
+  eval( 'assignee_contact = ' + assignee_contact_id );
+}
 
 cj(document).ready( function( ) {
 {/literal}
 {if $source_contact and $admin and $action neq 4} 
 {literal} cj( '#source_contact_id' ).val( "{/literal}{$source_contact}{literal}");{/literal}
 {/if}
+
 {literal}
 
 eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
@@ -82,12 +103,13 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            <tr>
               <td class="label font-size12pt">{ts}Client{/ts}</td>
               <td class="view-value font-size12pt">{$client_name|escape}&nbsp;&nbsp;&nbsp;&nbsp;
-	      <a href="#" onClick="addTargetContacts( ); return false;">{ts}With other contact(s){/ts}</a>
+	      <a href="#" onClick="buildTargetContact(1); return false;">{ts}With other contact(s){/ts}</a>
 	      </td>
            </tr>
 	   <tr>
 	      <td class="label font-size10pt hide-block" id="withContactsLabel">{ts}With Contact{/ts}</td>
- 	      <td class="hide-block"  id="withContactsWidget">{$form.target_contact_id.html}</td>	
+ 	      <td class="hide-block"  id="withContactsWidget">{$form.target_contact_id.html}</td>
+	      <td class="hide-block">{$form.hidden_target_contact.html}</td>
 	   </tr>
            <tr>
               <td class="label">{ts}Activity Type{/ts}</td>
@@ -244,13 +266,42 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
     {include file="CRM/common/formNavigate.tpl"}
 
     {literal}
-    <script type="text/javascript">
-    function addTargetContacts( ) { 
-    	cj('#withContactsLabel').toggle();
-	cj('#withContactsWidget').toggle();
-    }
+    <script type="text/javascript">   
+
+    buildTargetContact( 0 );
+
+    function buildTargetContact( resetVal ) {
+	 var hide  = show = false;	
+    	 var value = cj("#hidden_target_contact").attr( 'checked' );	      
+	 
+	 if ( resetVal ) {
+	     if ( value ) {
+	       hide  = true;
+	       value = false;
+	     } else {
+	       show  = true;
+	       value = true;
+	     }
+	     cj("#hidden_target_contact").attr( 'checked', value );
+	 } else {
+            if ( value ) {
+	       show = true;
+	     } else {
+	       hide = true;
+	     }
+	 }
+	 
+	 if ( hide ) {
+	    cj('#withContactsLabel').hide( );
+	    cj('#withContactsWidget').hide( );
+  	 }
+	 if ( show ) {
+	     cj('#withContactsLabel').show( );
+	     cj('#withContactsWidget').show( ); 
+	 }
+    }	
     </script>
     {/literal}
 
-{/if } {* end of main if block*}
+{/if} {* end of main if block*}
 </script>

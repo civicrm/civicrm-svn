@@ -167,18 +167,19 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
     {
         $this->_defaults = parent::setDefaultValues( );
                 
+        $targetContactValues = array( );
         if ( isset( $this->_activityId ) ) {
             if ( !CRM_Utils_Array::crmIsEmptyArray( $this->_defaults['target_contact'] ) ) {
-                $targetContactValue = explode(';', trim($this->_defaults['target_contact_value'] ) );
-                $targetContactValue = array_combine( array_unique( $this->_defaults['target_contact'] ), $targetContactValue );
+                $targetContactValues = array_combine( array_unique( $this->_defaults['target_contact'] ), 
+                                                      explode(';', trim($this->_defaults['target_contact_value'] ) ) );
                 // exclude the contact id of client
-                if ( array_key_exists ( $this->_currentlyViewedContactId, $targetContactValue ) ) {
-                    unset( $targetContactValue[$this->_currentlyViewedContactId] );
+                if ( array_key_exists ( $this->_currentlyViewedContactId, $targetContactValues ) ) {
+                    unset( $targetContactValues[$this->_currentlyViewedContactId] );
                 }
-                
-                $this->assign( 'target_contact', $targetContactValue  );
             }
         }
+        $this->assign( 'targetContactValues', empty( $targetContactValues ) ? false : $targetContactValues );
+        
         //return form for ajax
         if ( $this->_cdType  || $this->_addAssigneeContact || $this->_addTargetContact ) {
             return $this->_defaults;
@@ -198,7 +199,11 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
     public function buildQuickForm( ) 
     {
         // modify core Activity fields
-        $targetContactField   =& $this->add( 'text', 'target_contact_id', ts('target') );
+        $this->add( 'text', 'target_contact_id', ts('target') );
+        
+        //FIXME : ideally hidden element should work.
+        $this->addElement('advcheckbox', "hidden_target_contact" ); 
+ 
         $this->_fields['source_contact_id']['label']     = ts('Reported By'); 
         $this->_fields['status_id']['attributes']        =  array( '' => ts('- select -')) + CRM_Core_PseudoConstant::activityStatus( ); 
     
@@ -329,11 +334,13 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'], $params['activity_date_time_time'] );
         $params['activity_type_id']   = $this->_activityTypeId;
                         
-        if ( CRM_Utils_Array::value( 'target_contact_id', $params ) ) {
-            $params['target_contact_id'] = explode( ',', $params['target_contact_id'] );
-        } 
-        $params['target_contact_id'][] = $this->_currentlyViewedContactId;
-                
+        $targetContacts = array( $this->_currentlyViewedContactId );
+        if ( CRM_Utils_Array::value( 'hidden_target_contact', $params ) && 
+             CRM_Utils_Array::value( 'target_contact_id', $params ) ) {
+            $targetContacts = array_merge( $targetContacts, explode( ',', $params['target_contact_id'] ) );
+        }
+        $params['target_contact_id'] = $targetContacts;
+        
         // format activity custom data
         if ( CRM_Utils_Array::value( 'hidden_custom', $params ) ) {
             if ( $this->_activityId ) {
