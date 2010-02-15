@@ -140,7 +140,10 @@
                 </tr>
             </table> 
         {/foreach}
-    
+
+	<div class="report-pager">
+            {include file="CRM/common/pager.tpl" noForm=0}
+        </div>
         <br />
         {if $grandStat}
             <table class="report-layout">

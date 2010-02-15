@@ -80,7 +80,10 @@
                 </tr>
             </table>       
         {/foreach}
-        
+         
+	<div class="report-pager">
+            {include file="CRM/common/pager.tpl" noForm=0}
+        </div>
         {if !$section }
             {*Statistics at the bottom of the page*}
             {include file="CRM/Report/Form/Statistics.tpl" bottom=true}
