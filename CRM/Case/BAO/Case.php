@@ -1755,8 +1755,8 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
             if ( $duplicateContacts ) {            
                 $mainCase = CRM_Core_DAO::copyGeneric( 'CRM_Case_DAO_Case', array( 'id' => $otherCaseId ) );
                 $mainCaseId  = $mainCase->id;
-                $mainCase->free( );
                 if ( !$mainCaseId ) continue;
+                $mainCase->free( );
                 
                 // create a copy of case contact
                 $mainCaseContact = CRM_Core_DAO::copyGeneric( 'CRM_Case_DAO_CaseContact', 
@@ -1764,7 +1764,7 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
                                                                      'contact_id' => $otherContactId ),
                                                               array( 'case_id'    => $mainCaseId,
                                                                      'contact_id' => $mainContactId ) );
-                $mainCaseContact->free( );
+                if ( $mainCaseContact->id ) $mainCaseContact->free( );
             } else if ( !$otherContactId ) {
                 $otherContactId = $mainContactId;
             }
@@ -1830,8 +1830,8 @@ SELECT  id
                                                                   'source_contact_id' => $otherContactId ),
                                                            array( 'source_contact_id' => $mainContactId ) );
                 $mainActivityId = $mainActivity->id;
-                $mainActivity->free( );
                 if ( !$mainActivityId ) continue;
+                $mainActivity->free( );
                 $copiedActivityIds[] = $otherActivityId;
                 
                 //copy case activity.
@@ -1840,7 +1840,7 @@ SELECT  id
                                                                       'activity_id' => $otherActivityId ),
                                                                array( 'case_id'     => $mainCaseId,
                                                                       'activity_id' => $mainActivityId ) );
-                $mainCaseActivity->free( );
+                if ( $mainCaseActivity->id ) $mainCaseActivity->free( );
                 
                 // copy target w/ main contact and copy activity.
                 if ( $duplicateContacts ) {
@@ -1849,7 +1849,7 @@ SELECT  id
                                                                             'target_contact_id' => $otherContactId ),
                                                                      array( 'activity_id'       => $mainActivityId,
                                                                             'target_contact_id' => $mainContactId  ) );
-                    $mainActivityTarget->free( );
+                    if ( $mainActivityTarget->id ) $mainActivityTarget->free( );
                 }
             }
             
@@ -1860,7 +1860,7 @@ SELECT  id
                                                                           'contact_id_a' => $otherContactId ),
                                                                    array( 'case_id'      => $mainCaseId,
                                                                           'contact_id_a' => $mainContactId ) );
-                $mainCaseRelationship->free( );
+                if ( $mainCaseRelationship->id ) $mainCaseRelationship->free( );
                 
                 //special case for contact_id_b.
                 $query = "UPDATE civicrm_relationship SET contact_id_b = %1 WHERE case_id = %2 AND contact_id_b = %3";
