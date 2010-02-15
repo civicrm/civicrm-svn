@@ -440,6 +440,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
         $this->beginPostProcess( );
 
         $this->relationType = null;
+        $relType            = array( );
         if ( CRM_Utils_Array::value( 'relationship_type_id_value', $this->_params ) ) {
             $relType = explode('_',  $this->_params['relationship_type_id_value']);
             
@@ -453,6 +454,11 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
 
         $this->formatDisplay( $rows );
         $this->doTemplateAssignment( $rows );
+
+        if ( !empty($relType) ) {
+            // store its old value, CRM-5837
+            $this->_params['relationship_type_id_value'] = implode( '_', $relType );
+        }
         $this->endPostProcess( $rows );
     }
     
