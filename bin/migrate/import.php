@@ -56,6 +56,8 @@ class bin_migrate_import {
         $this->optionGroups( $xml, $idMap );
         $this->optionValues( $xml, $idMap );
 
+        $this->relationshipTypes( $xml );
+
         // now create custom groups
         $this->customGroups( $xml, $idMap );
         $this->customFields( $xml, $idMap );
@@ -72,7 +74,7 @@ class bin_migrate_import {
                 $dao->$keyName = (string ) $xml->$keyName;
                 if ( $dao->find( true ) ) {
                     echo "Found $keyName, {$dao->$keyName}, {$dao->__table}<p>";
-                    return;
+                    return false;
                 }
             }
         }
@@ -90,6 +92,7 @@ class bin_migrate_import {
         if ( $save ) {
             $dao->save( );
         }
+        return true;
     }
 
     function optionGroups( &$xml, &$idMap ) {
@@ -125,14 +128,29 @@ WHERE      v.option_group_id = %1
         }
     }
 
+    function relationshipTypes( &$xml ) {
+        require_once 'CRM/Contact/BAO/RelationshipType.php';
+        
+        foreach ( $xml->RelationshipTypes as $relationshipTypesXML ) {
+            foreach ( $relationshipTypesXML->RelationshipType as $relationshipTypeXML ) {
+                $relationshipType = new CRM_Contact_DAO_RelationshipType( );
+                $this->copyData( $relationshipType, $relationshipTypeXML, true, 'name_a_b' );
+            }
+        }
+    }
+
+
     function customGroups( &$xml, &$idMap ) {
         require_once 'CRM/Core/BAO/CustomGroup.php';
         require_once 'CRM/Utils/String.php';
         foreach ( $xml->CustomGroups as $customGroupsXML ) {
             foreach ( $customGroupsXML->CustomGroup as $customGroupXML ) {
                 $customGroup = new CRM_Core_DAO_CustomGroup( );
-                $this->copyData( $customGroup, $customGroupXML, true, 'name' );
-
+                if ( ! $this->copyData( $customGroup, $customGroupXML, true, 'name' ) ) {
+                    $idMap['custom_group'][$customGroup->name] = $customGroup->id;
+                    continue;
+                }
+                
                 $saveAgain = false;
                 if ( ! isset( $customGroup->table_name ) ||
                      empty( $customGroup->table_name ) ) {
@@ -240,11 +258,18 @@ AND        v.name = %1
                 $customField = new CRM_Core_DAO_CustomField( );
                 $customField->custom_group_id =
                     $idMap['custom_group'][(string ) $customFieldXML->custom_group_name];
-                $this->copyData( $customField, $customFieldXML, false, 'name' );
+                $skipStore = false;
+                if ( ! $this->copyData( $customField, $customFieldXML, false, 'label' ) ) {
+                    $skipStore = true;
+                }
+
                 if ( empty( $customField->option_group_id ) &&
                      isset( $customFieldXML->option_group_name ) ) {
                     $customField->option_group_id =
                         $idMap['option_group'][(string ) $customFieldXML->option_group_name];
+                }
+                if ( $skipStore ) {
+                    continue;
                 }
                 $customField->save( );
 

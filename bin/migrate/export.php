@@ -55,6 +55,11 @@ class bin_migrate_export {
                                             'scope'    => 'OptionGroups',
                                             'required' => false,
                                             'map'      => array( ) ),
+                   'relationshipType'  => array( 'data'     => null           ,
+                                                 'name'     => 'RelationshipType'  ,
+                                                 'scope'    => 'RelationshipTypes',
+                                                 'required' => false,
+                                                 'map'      => array( ) ),
                    'optionValue'  => array( 'data'     => null           ,
                                             'name'     => 'OptionValue'  ,
                                             'scope'    => 'OptionValues',
@@ -137,6 +142,15 @@ AND    cg.is_active = 1
                       $sql,
                       array( 'id', 'name', 'prefix' ),
                       array( array( 'optionGroup', 'option_group_id', 'option_group_name' ) ) );
+
+        $sql = "
+SELECT rt.*
+FROM   civicrm_relationship_type rt
+WHERE  rt.is_active = 1
+";
+        $this->fetch( 'relationshipType',
+                      'CRM_Contact_DAO_RelationshipType',
+                      $sql );
 
         $sql = "
 SELECT cg.*
