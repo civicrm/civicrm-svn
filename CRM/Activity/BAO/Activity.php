@@ -482,9 +482,9 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             if ( CRM_Utils_Array::value( 'case_id', $params ) ) {
                 $caseContactID = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_CaseContact', $params['case_id'], 'contact_id', 'case_id' );
                 $url = CRM_Utils_System::url( 'civicrm/case/activity/view', 
-                                              "reset=1&aid={$activity->id}&cid={$caseContactID}&caseID={$params['case_id']}" );
+                                              "reset=1&aid={$activity->id}&cid={$caseContactID}&caseID={$params['case_id']}&context=home" );
             } else {
-                $q = "action=view&reset=1&id={$activity->id}&atype={$activity->activity_type_id}&cid={$activity->source_contact_id}";
+                $q = "action=view&reset=1&id={$activity->id}&atype={$activity->activity_type_id}&cid={$activity->source_contact_id}&context=home";
                 if ( $activity->activity_type_id != CRM_Core_OptionGroup::getValue( 'activity_type', 'Email', 'name' ) ) {
                     $url = CRM_Utils_System::url( 'civicrm/contact/view/activity', $q );
                 } else {

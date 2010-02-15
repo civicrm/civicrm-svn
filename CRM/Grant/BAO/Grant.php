@@ -233,7 +233,7 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         require_once 'CRM/Grant/PseudoConstant.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         $url = CRM_Utils_System::url( 'civicrm/contact/view/grant', 
-                                      "action=view&reset=1&id={$grant->id}&cid={$grant->contact_id}" );
+                                      "action=view&reset=1&id={$grant->id}&cid={$grant->contact_id}&context=home" );
 
         $grantTypes = CRM_Grant_PseudoConstant::grantType();
         $title = CRM_Contact_BAO_Contact::displayName( $grant->contact_id ) . ' - ' . ts('Grant') . ': ' . $grantTypes[$grant->grant_type_id];

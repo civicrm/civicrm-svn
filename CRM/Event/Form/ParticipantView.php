@@ -118,7 +118,7 @@ class CRM_Event_Form_ParticipantView extends CRM_Core_Form
         require_once 'CRM/Utils/Recent.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         $url = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
-                                      "action=view&reset=1&id={$values[$participantID]['id']}&cid={$values[$participantID]['contact_id']}" );
+                                      "action=view&reset=1&id={$values[$participantID]['id']}&cid={$values[$participantID]['contact_id']}&context=home" );
         
         $participantRoles = CRM_Event_PseudoConstant::participantRole();
         $eventTitle  = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $values[$participantID]['event_id'], 'title' );

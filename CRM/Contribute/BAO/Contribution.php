@@ -289,7 +289,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             require_once 'CRM/Contribute/PseudoConstant.php';
             require_once 'CRM/Contact/BAO/Contact.php';
             $url = CRM_Utils_System::url( 'civicrm/contact/view/contribution', 
-                                          "action=view&reset=1&id={$contribution->id}&cid={$contribution->contact_id}" );
+                                          "action=view&reset=1&id={$contribution->id}&cid={$contribution->contact_id}&context=home" );
             
             $contributionTypes = CRM_Contribute_PseudoConstant::contributionType();
             $title = CRM_Contact_BAO_Contact::displayName( $contribution->contact_id ) . 

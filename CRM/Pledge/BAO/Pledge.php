@@ -223,7 +223,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
         require_once 'CRM/Contact/BAO/Contact.php';
         require_once 'CRM/Core/Config.php';
         $url = CRM_Utils_System::url( 'civicrm/contact/view/pledge', 
-               "action=view&reset=1&id={$pledge->id}&cid={$pledge->contact_id}" );
+               "action=view&reset=1&id={$pledge->id}&cid={$pledge->contact_id}&context=home" );
        
         $config =& CRM_Core_Config::singleton();
         require_once 'CRM/Utils/Money.php';

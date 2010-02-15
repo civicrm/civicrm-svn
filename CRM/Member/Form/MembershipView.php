@@ -103,7 +103,7 @@ class CRM_Member_Form_MembershipView extends CRM_Core_Form
             // add viewed membership to recent items list
             require_once 'CRM/Utils/Recent.php';
             $url = CRM_Utils_System::url( 'civicrm/contact/view/membership', 
-                                          "action=view&reset=1&id={$values['id']}&cid={$values['contact_id']}" );
+                                          "action=view&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home" );
             
             $title = $displayName . ' - ' . ts('Membership Type:') . ' ' . $values['membership_type'];
             

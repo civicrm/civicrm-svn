@@ -90,7 +90,7 @@ class CRM_Pledge_Form_PledgeView extends CRM_Core_Form
         require_once 'CRM/Utils/Recent.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         $url = CRM_Utils_System::url( 'civicrm/contact/view/pledge', 
-               "action=view&reset=1&id={$values['id']}&cid={$values['contact_id']}" );
+               "action=view&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home" );
        
         require_once 'CRM/Utils/Money.php';
         $displayName = CRM_Contact_BAO_Contact::displayName( $values['contact_id'] );

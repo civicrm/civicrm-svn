@@ -208,7 +208,7 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
      * @return array - array reference of all case type name/id
      * @static
      */
-    public static function caseTypeName( $caseId )
+    public static function caseTypeName( $caseId , $column = 'name')
     {
         if ( !$caseId ) {
             return false;
@@ -216,14 +216,14 @@ class CRM_Case_PseudoConstant extends CRM_Core_PseudoConstant
 
         require_once('CRM/Case/BAO/Case.php');
         if ( ! array_key_exists($caseId, self::$caseTypePair) ) {
-            $caseTypes    = self::caseType( 'name' );
-            $caseTypeIds  = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
-                                                         $caseId,
-                                                         'case_type_id' );
-            $caseTypeId   = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, 
-                                     trim($caseTypeIds, 
-                                          CRM_Case_BAO_Case::VALUE_SEPERATOR) );
-            $caseTypeId   = $caseTypeId[0];
+            $caseTypes   = self::caseType( $column );
+            $caseTypeIds = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case',
+                                                        $caseId,
+                                                        'case_type_id' );
+            $caseTypeId  = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, 
+                                    trim($caseTypeIds, 
+                                         CRM_Case_BAO_Case::VALUE_SEPERATOR) );
+            $caseTypeId  = $caseTypeId[0];
             
             self::$caseTypePair[$caseId] = array( 'id'   => $caseTypeId,
                                                   'name' => $caseTypes[$caseTypeId] );

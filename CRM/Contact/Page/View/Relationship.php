@@ -86,7 +86,7 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
         // add viewed contribution to recent items list
         require_once 'CRM/Utils/Recent.php';
         $url = CRM_Utils_System::url( 'civicrm/contact/view/rel', 
-                                      "action=view&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}" );
+                                      "action=view&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}&context=home" );
         
         $title = CRM_Contact_BAO_Contact::displayName( $this->_contactId ) . ' (' . 
                  $viewRelationship[$this->_id]['relation']. ' ' . 

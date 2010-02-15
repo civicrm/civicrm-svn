@@ -129,7 +129,7 @@ class CRM_Core_BAO_Note extends CRM_Core_DAO_Note
             require_once 'CRM/Utils/Recent.php';
             CRM_Utils_Recent::add( $displayName . ' - ' . $note->subject,
                                    CRM_Utils_System::url( 'civicrm/contact/view/note', 
-                                                          "reset=1&action=view&cid={$note->entity_id}&id={$note->id}" ),
+                                                          "reset=1&action=view&cid={$note->entity_id}&id={$note->id}&context=home" ),
                                    $note->id,
                                    'Note',
                                    $note->entity_id,

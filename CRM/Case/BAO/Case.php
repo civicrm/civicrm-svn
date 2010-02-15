@@ -159,10 +159,9 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
         require_once 'CRM/Utils/Recent.php';
         require_once 'CRM/Case/PseudoConstant.php';
         require_once 'CRM/Contact/BAO/Contact.php';
-        $caseType   = CRM_Case_PseudoConstant::caseTypeName( $caseContact->case_id );
-        
+        $caseType = CRM_Case_PseudoConstant::caseTypeName( $caseContact->case_id, 'label' );
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case', 
-                                      "action=view&reset=1&id={$caseContact->case_id}&cid={$caseContact->contact_id}" );
+                                      "action=view&reset=1&id={$caseContact->case_id}&cid={$caseContact->contact_id}&context=home" );
         
         $title = CRM_Contact_BAO_Contact::displayName( $caseContact->contact_id ) . ' - ' . $caseType['name'];
         
