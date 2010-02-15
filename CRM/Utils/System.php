@@ -1007,4 +1007,41 @@ class CRM_Utils_System {
         CRM_Core_Error::setCallback( );
         return $response;
     }
+
+    static function isDBVersionValid( &$errorMessage ) 
+    {
+        require_once 'CRM/Core/BAO/Domain.php';
+        $dbVersion = CRM_Core_BAO_Domain::version( );
+
+        if ( ! $dbVersion ) {
+            // if db.ver missing
+            $errorMessage = ts( 'Version information found to be missing in database. You will need to determine the correct version corresponding to your current database state.' );
+            return false;
+        } else if ( stripos($dbVersion, 'upgrade') ) {
+            // if db.ver indicates a partially upgraded db
+            $upgradeUrl   = CRM_Utils_System::url( "civicrm/upgrade", "reset=1" );
+            $errorMessage = ts( 'Database check failed - the database looks to have been partially upgraded. You may want to reload the database with the backup and try the <a href=\'%1\'>upgrade process</a> again.', array( 1 => $upgradeUrl ) );
+            return false;
+        } else {
+            $codeVersion = CRM_Utils_System::version( );
+
+            // if db.ver < code.ver, time to upgrade
+            if ( version_compare($dbVersion, $codeVersion) < 0 ) {
+                $upgradeUrl   = CRM_Utils_System::url( "civicrm/upgrade", "reset=1" );
+                $errorMessage = ts( 'New codebase version detected. You might want to visit <a href=\'%1\'>upgrade screen</a> to upgrade the database.', array( 1 => $upgradeUrl ) );
+                return false;
+            }
+
+            // if db.ver > code.ver, sth really wrong
+            if ( version_compare($dbVersion, $codeVersion) > 0 ) {
+                $errorMessage = ts( 'Your database is marked with an unexpected version number: %1. The v%2 codebase may not be compatible with your database state. You will need to determine the correct version corresponding to your current database state. You may want to revert to the codebase you were using until you resolve this problem.',
+                                    array( 1 => $dbVersion, 2 => $codeVersion ) );
+                $errorMessage .= "<p>" . ts( 'OR if this is an svn install, you might want to fix version.txt file.' ) . "</p>";
+                return false;
+            }
+        }
+        // FIXME: there should be another check to make sure version is in valid format - X.Y.alpha_num
+
+        return true;
+    }
 }
