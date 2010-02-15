@@ -360,9 +360,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                     }
                     
                     if ( ! empty( $clause ) ) {
-                        if ( CRM_Utils_Array::value( 'group', $field ) ) {
-                            $whereClauses[] = $this->whereGroupClause( $clause );
-                        } else if ( CRM_Utils_Array::value( 'having', $field ) ) {
+                        if ( CRM_Utils_Array::value( 'having', $field ) ) {
                             $havingClauses[] = $clause;
                         } else {
                             $whereClauses[] = $clause;

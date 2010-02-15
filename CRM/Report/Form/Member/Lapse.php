@@ -238,11 +238,7 @@ class CRM_Report_Form_Member_Lapse extends CRM_Report_Form {
                         }
                     }
                     if ( ! empty( $clause ) ) {
-                        if ( CRM_Utils_Array::value( 'group', $field ) ) {
-                            $clauses[$fieldName] = $this->whereGroupClause( $clause );
-                        } else {
-                            $clauses[$fieldName] = $clause;
-                        }
+                        $clauses[$fieldName] = $clause;
                     }
                 }
             }

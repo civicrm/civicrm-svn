@@ -368,9 +368,7 @@ LEFT  JOIN (
                         }
                     }
                     if ( ! empty( $clause ) ) {
-                        if ( CRM_Utils_Array::value( 'group', $field ) ) {
-                            $clauses[] = $this->whereGroupClause( $clause );
-                        } else if ( ! empty( $clause ) && $fieldName != 'contribution_status_id' ) {
+                        if ( ! empty( $clause ) && $fieldName != 'contribution_status_id' ) {
                             $clauses[] = $clause;
                         }
                     }

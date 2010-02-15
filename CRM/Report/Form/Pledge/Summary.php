@@ -250,11 +250,7 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
                     }
                     
                     if ( ! empty( $clause ) ) {
-                        if ( CRM_Utils_Array::value( 'group', $field ) ) {
-                            $clauses[] = $this->whereGroupClause( $clause );
-                        } else {
-                            $clauses[] = $clause;
-                        }
+                        $clauses[] = $clause;
                     }
                 }
             }

@@ -268,11 +268,7 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                     }
                     
                     if ( ! empty( $clause ) ) {
-                        if ( CRM_Utils_Array::value( 'group', $field ) ) {
-                            $clauses[ ] = $this->whereGroupClause( $clause );
-                        } else {
-                            $clauses[ ] = $clause;
-                        }
+                        $clauses[ ] = $clause;
                     }
                 }
             }
@@ -332,10 +328,10 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
         $this->groupBy( true );
 
         if ( !CRM_Utils_Array::value( 'charts', $this->_params ) ) { 
-            $this->limit( ); 
+            $this->limit( );
         }
         
-        $sql   = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy}{$this->_limit}"; 
+        $sql   = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy}{$this->_limit}";
         $this->lifeTime_where = $this->_where;
         $dao   = CRM_Core_DAO::executeQuery( $sql );       
         $rows  = array( );

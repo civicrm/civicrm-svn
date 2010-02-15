@@ -97,7 +97,8 @@ class CRM_Report_Form_Contact_CurrentEmployer extends CRM_Report_Form {
                          'filters'   =>  
                          array( 'start_date' => 
                                 array( 'title'      => ts( 'Employee Since' ),
-                                       'operatorType' => CRM_Report_Form::OP_DATE ),),
+                                       'operatorType' => CRM_Report_Form::OP_DATE,
+                                       'type'         => CRM_Utils_Type::T_DATE ),),
                          ),
                   
                   'civicrm_email'   =>
@@ -221,11 +222,7 @@ FROM civicrm_contact {$this->_aliases['civicrm_contact']}
                     }
                     
                     if ( ! empty( $clause ) ) {
-                        if ( CRM_Utils_Array::value( 'group', $field ) ) {
-                            $clauses[$fieldName] = $this->whereGroupClause( $clause );
-                        } else {
-                            $clauses[$fieldName] = $clause;
-                        }
+                        $clauses[$fieldName] = $clause;
                     }
                 }
             }

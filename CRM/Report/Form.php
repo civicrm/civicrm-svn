@@ -781,8 +781,8 @@ class CRM_Report_Form extends CRM_Core_Form {
         }
     }
 
-    static function whereClause( &$field, $op,
-                                 $value, $min, $max ) {
+    function whereClause( &$field, $op,
+                          $value, $min, $max ) {
 
         $type   = CRM_Utils_Type::typeToString( CRM_Utils_Array::value( 'type', $field ) );
         $clause = null;
@@ -892,6 +892,15 @@ class CRM_Report_Form extends CRM_Core_Form {
                 }
             }
             break;
+        }
+        
+        if ( CRM_Utils_Array::value( 'group', $field ) && $clause ) {
+            $clause = $this->whereGroupClause( $clause );
+        } elseif ( CRM_Utils_Array::value( 'tag', $field ) && $clause ) {
+            // not using left join in query because if any contact
+            // belongs to more than one tag, results duplicate
+            // entries.
+            $clause = $this->whereTagClause( $clause );
         }
         
         return $clause;
@@ -1244,9 +1253,7 @@ GROUP BY cf.column_name, ov.option_group_id, ov.value ";
                     }
                     
                     if ( ! empty( $clause ) ) {
-                        if ( CRM_Utils_Array::value( 'group', $field ) ) {
-                            $whereClauses[] = $this->whereGroupClause( $clause );
-                        } else if ( CRM_Utils_Array::value( 'having', $field ) ) {
+                        if ( CRM_Utils_Array::value( 'having', $field ) ) {
                             $havingClauses[] = $clause;
                         } else {
                             $whereClauses[] = $clause;
@@ -1650,6 +1657,16 @@ GROUP BY cf.column_name, ov.option_group_id, ov.value ";
                           FROM civicrm_group_contact {$this->_aliases['civicrm_group']}
                           WHERE {$clause} AND {$this->_aliases['civicrm_group']}.status = 'Added' 
                           {$smartGroupQuery} ) ";
+    }
+
+    function whereTagClause( $clause ) {
+        // not using left join in query because if any contact
+        // belongs to more than one tag, results duplicate
+        // entries.
+        return  " {$this->_aliases['civicrm_contact']}.id IN ( 
+                          SELECT DISTINCT {$this->_aliases['civicrm_tag']}.contact_id 
+                          FROM civicrm_entity_tag {$this->_aliases['civicrm_tag']}
+                          WHERE {$clause} ) ";
     }
 
     function buildACLClause( $tableAlias = 'contact_a' ) {
