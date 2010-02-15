@@ -218,7 +218,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         $this->_editOptions = $this->get( 'contactEditOptions' ); 
         if ( CRM_Utils_System::isNull( $this->_editOptions ) ) {
-            require_once 'CRM/Core/BAO/Preferences.php';
             $this->_editOptions  = CRM_Core_BAO_Preferences::valueOptions( 'contact_edit_options', true, null, 
                                                                            false, 'name', true, 'AND v.filter = 0' );
             $this->set( 'contactEditOptions', $this->_editOptions );
