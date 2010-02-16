@@ -16,3 +16,4 @@
 {/if}
 </script>
 {/foreach}
+<div id='customData' ></div>

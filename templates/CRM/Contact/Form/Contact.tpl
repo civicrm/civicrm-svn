@@ -1,5 +1,7 @@
 {* This form is for Contact Add/Edit interface *}
-{if $addBlock}
+{if $cdType}
+  {include file="CRM/Custom/Form/CustomData.tpl"}
+{elseif $addBlock}
 {include file="CRM/Contact/Form/Edit/$blockName.tpl"}
 {else}
 <div class="crm-submit-buttons">
@@ -55,11 +57,32 @@
    {$form.buttons.html}
 </div>
 
+{include file="CRM/common/customData.tpl"}	
 {literal}
 <script type="text/javascript" >
 var action = "{/literal}{$action}{literal}";
 showTab[0] = {"spanShow":"span#contact","divShow":"div#contactDetails"};
 cj(function( ) {
+    {/literal}
+        buildCustomData( '{$contactType}' );
+        {if $contactSubType}
+        buildCustomData( '{$contactType}', '{$contactSubType}' );
+        {/if}
+    {literal}
+
+    // alter customData template onload	     
+    cj("#customData").each( function ( ) {
+        cj(this).children("div.section-hidden.section-hidden-border").each( function() {
+	    cj(this).before("<h3 class ='head'><span class='ui-icon ui-icon-triangle-1-e'></span><a href='#'>"+cj(this).text()+"</a></h3>");
+	    cj(this).remove();
+        });
+   
+        cj(this).children("div.form-item").each( function( ){
+            cj(this).addClass("ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom").removeClass("form-item");
+	    cj("legend",this).remove();
+        });
+    });
+    
     cj('.accordion .head').addClass( "ui-accordion-header ui-helper-reset ui-state-default ui-corner-all");
 
     cj('.accordion .head').hover( function( ) { 
