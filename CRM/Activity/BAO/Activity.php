@@ -157,13 +157,26 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
     {
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
-               
-        $activity    =& new CRM_Activity_DAO_Activity( );
-        $activity->copyValues( $params );
         
-        if ( ! $moveToTrash ) {  
-            $result = $activity->delete( );
+        if ( ! $moveToTrash ) { 
+            if ( !isset( $params['id'] ) ) { 
+                if ( is_array( $params['activity_type_id'] ) ) {
+                    $activityTypes = implode( ',', $params['activity_type_id'] );
+                } else {
+                    $activityTypes = $params['activity_type_id'];
+                }
+                              
+                $query = "DELETE FROM civicrm_activity WHERE source_record_id = {$params['source_record_id']} AND activity_type_id IN ( {$activityTypes} )";
+                $dao = CRM_Core_DAO::executeQuery( $query );
+            } else {
+                $activity    = new CRM_Activity_DAO_Activity( );
+                $activity->copyValues( $params );
+                $result = $activity->delete( );
+            }
         } else {
+            $activity    = new CRM_Activity_DAO_Activity( );
+            $activity->copyValues( $params );
+
             $activity->is_deleted = 1;
             $result = $activity->save( );
                       
