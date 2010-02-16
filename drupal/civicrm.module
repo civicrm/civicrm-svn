@@ -390,8 +390,9 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
         if ( civicrm_on_user_page( ) ) {
             $doNotProcess = false;
             $urlVar = $config->userFrameworkURLVar;
-            if ( isset( $_REQUEST[$urlVar] ) && 
-                 strpos( $_REQUEST[$urlVar], 'admin/user/user/create' ) === 0 ) {
+            if ( isset( $_REQUEST[$urlVar] ) &&
+                 (strpos( $_REQUEST[$urlVar], 'admin/user/user/create' ) === 0 ||
+                  strpos( $_REQUEST[$urlVar], 'user/register' ) === 0 ) ) {
                 $doNotProcess = true;
             }
             return civicrm_register_data( $edit, $user, $category, false, $doNotProcess );
