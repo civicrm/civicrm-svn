@@ -88,9 +88,8 @@ class CRM_Report_Form_Instance {
                                ts( 'Permission' ),
                                array( '0' => '- Any One -') + CRM_Core_Permission::basicPermissions( ) );
         }
-        //navigation field
-        $parentMenu = array( );
-        CRM_Core_BAO_Navigation::getNavigationList( $parentMenu );
+        // navigation field
+        $parentMenu = CRM_Core_BAO_Navigation::getNavigationList( );
        
         $form->add( 'select', 'parent_id', ts( 'Parent Menu' ), array( '' => ts('-- select --') ) + $parentMenu );
         

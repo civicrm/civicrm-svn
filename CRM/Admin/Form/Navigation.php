@@ -83,8 +83,7 @@ class CRM_Admin_Form_Navigation extends CRM_Admin_Form
         
         $operators = array( 'AND' => 'AND', 'OR' => 'OR' );
         $this->add('select', 'permission_operator', ts( 'Operator'), $operators ); 
-        $parentMenu = array( );
-        CRM_Core_BAO_Navigation::getNavigationList( $parentMenu );            
+        $parentMenu = CRM_Core_BAO_Navigation::getNavigationList( );            
         
         if ( isset( $this->_id ) ) {
             unset( $parentMenu[$this->_id] );
@@ -124,6 +123,9 @@ class CRM_Admin_Form_Navigation extends CRM_Admin_Form
      * @return None
      */
     public function postProcess() {
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
+
         // get the submitted form values.  
         $params = $this->controller->exportValues( $this->_name );            
         
