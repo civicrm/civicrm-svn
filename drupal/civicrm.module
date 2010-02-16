@@ -388,7 +388,13 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
 
         // did civicrm generate this page, or is it via a user hook?
         if ( civicrm_on_user_page( ) ) {
-            return civicrm_register_data($edit, $user, $category, false);
+            $doNotProcess = false;
+            $urlVar = $config->userFrameworkURLVar;
+            if ( isset( $_REQUEST[$urlVar] ) && 
+                 strpos( $_REQUEST[$urlVar], 'admin/user/user/create' ) === 0 ) {
+                $doNotProcess = true;
+            }
+            return civicrm_register_data( $edit, $user, $category, false, $doNotProcess );
         } else {
             require_once 'CRM/Core/BAO/UFMatch.php';
             CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Drupal',
