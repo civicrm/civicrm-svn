@@ -565,6 +565,9 @@ ORDER BY parent_id, weight";
     {
         $query = "UPDATE civicrm_preferences SET navigation = NULL WHERE contact_id IS NOT NULL";
         CRM_Core_DAO::executeQuery( $query );
+
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
     }          
 
     /**

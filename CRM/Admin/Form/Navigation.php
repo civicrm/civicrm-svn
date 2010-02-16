@@ -123,9 +123,6 @@ class CRM_Admin_Form_Navigation extends CRM_Admin_Form
      * @return None
      */
     public function postProcess() {
-        require_once 'CRM/Core/BAO/Cache.php';
-        CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
-
         // get the submitted form values.  
         $params = $this->controller->exportValues( $this->_name );            
         
