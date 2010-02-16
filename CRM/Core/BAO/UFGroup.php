@@ -1355,10 +1355,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         } else {
             $name = $fieldName;
         }
-        
         require_once 'CRM/Core/BAO/Preferences.php';
         $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
-
+        
         if ( substr($fieldName,0,14) === 'state_province' ) {
             $form->add('select', $name, $title,
                        array('' => ts('- select -')) + CRM_Core_PseudoConstant::stateProvince(), $required);
@@ -1563,6 +1562,19 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 }
             }
         }
+
+        static $hiddenSubtype = false;
+        if ( !$hiddenSubtype && CRM_Contact_BAO_ContactType::isaSubType( $field['field_type'] ) )
+            {
+                // In registration mode params are submitted via POST and we don't have any clue
+                // about profile-id or the profile-type (which could be a subtype)
+                // To generalize the  behavior and simplify the process,
+                // lets always add the hidden
+                //subtype value if there is any, and we won't have to
+                // compute it while processing.
+                $form->addElement( 'hidden', 'contact_sub_type_hidden', $field['field_type'] );
+                $hiddenSubtype = true;
+            }
         
         if ($view && $mode != CRM_Profile_Form::MODE_SEARCH) {
             $form->freeze($name);
