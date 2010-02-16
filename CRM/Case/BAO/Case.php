@@ -1910,6 +1910,8 @@ SELECT  id
                     if ( $mainRelationship->contact_id_b == $otherContactId ) {
                         $mainRelationship->contact_id_b = $mainContactId;
                     }
+                    $mainRelationship->end_date   = CRM_Utils_Date::isoToMysql( $otherRelationship->end_date );
+                    $mainRelationship->start_date = CRM_Utils_Date::isoToMysql( $otherRelationship->start_date );
                     $mainRelationship->save( );
                     $mainRelationship->free( );
                 }
