@@ -50,9 +50,12 @@ class CRM_Contribute_Form_ContributionPage_Custom extends CRM_Contribute_Form_Co
     public function buildQuickForm()
     {
         require_once "CRM/Core/BAO/UFGroup.php";
-        $types    = array( 'Contact', 'Individual', 'Contribution', 'Membership' );
+        require_once "CRM/Contact/BAO/ContactType.php";
+        $types    = array_merge( array( 'Contact', 'Individual','Contribution','Membership'),
+                                 CRM_Contact_BAO_ContactType::subTypes( 'Individual' ) );
+        
         $profiles = CRM_Core_BAO_UFGroup::getProfiles( $types ); 
-
+        
         if ( empty( $profiles ) ) {
             $this->assign( 'noProfile', true );
         }

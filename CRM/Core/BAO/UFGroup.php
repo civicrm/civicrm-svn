@@ -1296,6 +1296,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             require_once "CRM/Core/BAO/UFField.php";
             $profileType = CRM_Core_BAO_UFField::getProfileType($ufGroupId);
             
+            require_once "CRM/Contact/BAO/ContactType.php";
+            if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
+                $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
+            }
+
             //allow special mix profiles for Contribution and Participant
             $specialProfiles = array('Contribution', 'Participant' , 'Membership');
 
