@@ -169,9 +169,9 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
         $context    = CRM_Utils_Request::retrieve('context', 'String', $this );
         $contactId  = CRM_Utils_Request::retrieve('cid', 'Positive', $this );
         $action     = CRM_Utils_Request::retrieve('action', 'String', $this );
-        $activityId = CRM_Utils_Request::retrieve('id', 'Positive', $this );
+        $this->_id  = CRM_Utils_Request::retrieve('id', 'Positive', $this );
         
-        if ( $context == 'standalone' || ( ! $contactId && ( $action != CRM_Core_Action::DELETE ) && !$activityId ) ) {
+        if ( $context == 'standalone' || ( ! $contactId && ( $action != CRM_Core_Action::DELETE ) && !$this->_id ) ) {
             $this->_action = CRM_Core_Action::ADD;
             $this->assign('action', $this->_action );
         } else {
