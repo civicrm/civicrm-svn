@@ -103,14 +103,18 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            <tr>
               <td class="label font-size12pt">{ts}Client{/ts}</td>
               <td class="view-value font-size12pt">{$client_name|escape}&nbsp;&nbsp;&nbsp;&nbsp;
+	      {if $action eq 2}
 	      <a href="#" onClick="buildTargetContact(1); return false;">{ts}With other contact(s){/ts}</a>
+	      {/if}
 	      </td>
            </tr>
+	   {if $action eq 2}
 	   <tr>
 	      <td class="label font-size10pt hide-block" id="withContactsLabel">{ts}With Contact{/ts}</td>
  	      <td class="hide-block"  id="withContactsWidget">{$form.target_contact_id.html}</td>
 	      <td class="hide-block">{$form.hidden_target_contact.html}</td>
 	   </tr>
+	   {/if}
            <tr>
               <td class="label">{ts}Activity Type{/ts}</td>
               <td class="view-value bold">{$activityTypeName|escape}</td>
@@ -268,8 +272,13 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
     {literal}
     <script type="text/javascript">   
 
-    buildTargetContact( 0 );
-
+    {/literal}{if $action eq 2}{literal}
+    cj(document).ready( function( ) {
+       var reset = {/literal}{if $targetContactValues}true{else}false{/if}{literal};	    
+       buildTargetContact( reset );
+    });{/literal}
+    {/if}{literal}
+    
     function buildTargetContact( resetVal ) {
 	 var hide  = show = false;	
     	 var value = cj("#hidden_target_contact").attr( 'checked' );	      
@@ -282,7 +291,6 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 	       show  = true;
 	       value = true;
 	     }
-	     cj("#hidden_target_contact").attr( 'checked', value );
 	 } else {
             if ( value ) {
 	       show = true;
@@ -299,6 +307,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 	     cj('#withContactsLabel').show( );
 	     cj('#withContactsWidget').show( ); 
 	 }
+	 cj("#hidden_target_contact").attr( 'checked', value );
     }	
     </script>
     {/literal}

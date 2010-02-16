@@ -168,7 +168,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         $this->_defaults = parent::setDefaultValues( );
                 
         $targetContactValues = array( );
-        if ( isset( $this->_activityId ) ) {
+        if ( isset( $this->_activityId ) && empty( $_POST ) ) {
             if ( !CRM_Utils_Array::crmIsEmptyArray( $this->_defaults['target_contact'] ) ) {
                 $targetContactValues = array_combine( array_unique( $this->_defaults['target_contact'] ), 
                                                       explode(';', trim($this->_defaults['target_contact_value'] ) ) );
