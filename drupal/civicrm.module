@@ -388,11 +388,11 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
 
         // did civicrm generate this page, or is it via a user hook?
         if ( civicrm_on_user_page( ) ) {
-            $doNotProcess = false;
             $urlVar = $config->userFrameworkURLVar;
-            if ( isset( $_REQUEST[$urlVar] ) &&
-                 (strpos( $_REQUEST[$urlVar], 'admin/user/user/create' ) === 0 ||
-                  strpos( $_REQUEST[$urlVar], 'user/register' ) === 0 ) ) {
+            $path   = isset( $_GET[$urlVar] ) ? $_GET[$urlVar] : '';
+            $doNotProcess = false;
+            if ( strpos( $path, 'user/register' ) === 0 || 
+                 strpos( $path, 'admin/user/user/create' ) === 0 ) {
                 $doNotProcess = true;
             }
             return civicrm_register_data( $edit, $user, $category, false, $doNotProcess );
