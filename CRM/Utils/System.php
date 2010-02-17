@@ -791,17 +791,34 @@ class CRM_Utils_System {
         static $version;
         
         if ( ! $version ) {
-            $config  =& CRM_Core_Config::singleton( );
             $verFile = implode( DIRECTORY_SEPARATOR, 
                                 array(dirname(__FILE__), '..', '..', 'civicrm-version.txt') );
-            if ( $str = file_get_contents( $verFile ) ) {
+            if ( file_exists( $verFile ) ) {
+                $str     = file_get_contents( $verFile );
                 $parts   = explode( ' ', $str );
                 $version = trim( $parts[0] );
             } else {
-                CRM_Core_Error::fatal('Unable to locate civicrm-version.txt file. Make sure it exists.');
+                // svn installs don't have version.txt by default. In that case version.xml should help - 
+                $verFile = implode( DIRECTORY_SEPARATOR,
+                                    array( dirname( __FILE__ ), '..', '..', 'xml', 'version.xml' ) );
+                if ( file_exists( $verFile ) ) {
+                    $str     = file_get_contents( $verFile );
+                    $xmlObj  = simplexml_load_string( $str );
+                    $version = (string) $xmlObj->version_no;
+                }
+            }
+
+            // pattern check
+            if ( !CRM_Utils_System::isVersionFormatValid( $version ) ) {
+                CRM_Core_Error::fatal('Unknown codebase version.');
             }
         }
+
         return $version;
+    }
+
+    static function isVersionFormatValid( $version ) {
+        return preg_match("/^(\d{1,2}\.){2}(\d{1,2}|(alpha|beta)\d{1,2})(\.upgrade)?$/", $version );
     }
 
     static function getAllHeaders( ) {
@@ -1016,6 +1033,9 @@ class CRM_Utils_System {
         if ( ! $dbVersion ) {
             // if db.ver missing
             $errorMessage = ts( 'Version information found to be missing in database. You will need to determine the correct version corresponding to your current database state.' );
+            return false;
+        } else if ( !CRM_Utils_System::isVersionFormatValid( $dbVersion ) ) {
+            $errorMessage = ts( 'Database is marked with invalid version format. You may want to investigate this before you proceed further.' );
             return false;
         } else if ( stripos($dbVersion, 'upgrade') ) {
             // if db.ver indicates a partially upgraded db

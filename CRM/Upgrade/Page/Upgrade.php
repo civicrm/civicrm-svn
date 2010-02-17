@@ -70,7 +70,13 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         if ( isset($convertVer[$currentVer]) ) {
             $currentVer = $convertVer[$currentVer];
         }
-        
+
+        // since version is suppose to be in valid format at this point, especially after conversion ($convertVer),
+        // lets do a pattern check -
+        if ( !CRM_Utils_System::isVersionFormatValid( $currentVer ) ) {
+            CRM_Core_Error::fatal( ts( 'Database is marked with invalid version format. You may want to investigate this before you proceed further.' ) );
+        }
+
         // This could be removed in later rev
         if ( $currentVer == '2.1.6' ) {
             $config =& CRM_Core_Config::singleton( );
