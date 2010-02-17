@@ -39,7 +39,7 @@
         </tr>
 	{if $mergeCases}
 	<tr>
-	   <td colspan='2'><a href="#" onclick='cj("#merge_cases").show( );return false;'>{ts}Merge Case{/ts}</a>	
+	   <td colspan='2'><a href="#" onclick='showCaseList( ); return false;'>{ts}Merge Case{/ts}</a>	
 	   <span id='merge_cases' style="display:none;">
 	   {$form.merge_case_id.html}&nbsp;{$form._qf_CaseView_next_merge_case.html}</span>
 	   </td>
@@ -229,6 +229,10 @@ cj(document).ready(function(){
    cj("#searchOptions").hide( );
    cj("#view-activity").hide( );
 });
+
+function showCaseList( ) {
+   cj("#merge_cases").toggle( )	 
+}
 </script>
 {/literal}
 
@@ -555,6 +559,11 @@ function checkSelection( field ) {
             validationField   = 'report_id';
             successAction     = "window.location='{/literal}{$reportUrl}{literal}' + document.getElementById('report_id').value";
             break;
+ 
+        case '_qf_CaseView_next_merge_case' :
+            validationMessage = 'Please select a case from the list to merge with.';
+            validationField   = 'merge_case_id';
+            break;	    
     }	
 
     if ( document.getElementById( validationField ).value == '' ) {

@@ -182,7 +182,8 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             $this->addElement( 'submit', 
                                $this->getButtonName( 'next', 'merge_case' ), 
                                ts('Merge'), 
-                               array( 'class' => 'form-submit-inline' ) ); 
+                               array( 'class'   => 'form-submit-inline',
+                                      'onclick' => "return checkSelection( this );") ); 
         }
         
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
