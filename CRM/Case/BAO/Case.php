@@ -1755,6 +1755,7 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
         require_once 'CRM/Case/DAO/CaseActivity.php';
         require_once 'CRM/Contact/DAO/Relationship.php';
         require_once 'CRM/Activity/DAO/ActivityTarget.php';
+        require_once 'CRM/Activity/DAO/ActivityAssignment.php';
         
         // copy all cases and connect to main contact id.
         foreach ( $processCaseIds as $otherCaseId ) {
@@ -1872,22 +1873,36 @@ SELECT  id
                 $mainCaseActivity->free( );
                 
                 //migrate target activities.
-                if ( $duplicateContacts ) {
-                    $otherTargetActivity = new CRM_Activity_DAO_ActivityTarget( );
-                    $otherTargetActivity->activity_id = $otherActivityId;
-                    $otherTargetActivity->find( );
-                    while ( $otherTargetActivity->fetch( ) ) {
-                        $mainActivityTarget = new CRM_Activity_DAO_ActivityTarget( );
-                        $mainActivityTarget->activity_id       = $mainActivityId;
-                        $mainActivityTarget->target_contact_id = $otherTargetActivity->target_contact_id; 
-                        if ( $mainActivityTarget->target_contact_id == $otherContactId ) {
-                            $mainActivityTarget->target_contact_id = $mainContactId;
-                        }
-                        $mainActivityTarget->save( );
-                        $mainActivityTarget->free( );
+                $otherTargetActivity = new CRM_Activity_DAO_ActivityTarget( );
+                $otherTargetActivity->activity_id = $otherActivityId;
+                $otherTargetActivity->find( );
+                while ( $otherTargetActivity->fetch( ) ) {
+                    $mainActivityTarget = new CRM_Activity_DAO_ActivityTarget( );
+                    $mainActivityTarget->activity_id       = $mainActivityId;
+                    $mainActivityTarget->target_contact_id = $otherTargetActivity->target_contact_id; 
+                    if ( $mainActivityTarget->target_contact_id == $otherContactId ) {
+                        $mainActivityTarget->target_contact_id = $mainContactId;
                     }
-                    $otherTargetActivity->free( );
+                    $mainActivityTarget->save( );
+                    $mainActivityTarget->free( );
                 }
+                $otherTargetActivity->free( );
+                
+                //migrate assignee activities.
+                $otherAssigneeActivity = new CRM_Activity_DAO_ActivityAssignment( );
+                $otherAssigneeActivity->activity_id = $otherActivityId;
+                $otherAssigneeActivity->find( );
+                while ( $otherAssigneeActivity->fetch( ) ) {
+                    $mainAssigneeActivity = new CRM_Activity_DAO_ActivityAssignment( );
+                    $mainAssigneeActivity->activity_id         = $mainActivityId;
+                    $mainAssigneeActivity->assignee_contact_id = $otherAssigneeActivity->assignee_contact_id;
+                    if ( $mainAssigneeActivity->assignee_contact_id == $otherContactId ) {
+                        $mainAssigneeActivity->assignee_contact_id = $mainContactId;
+                    }
+                    $mainAssigneeActivity->save( );
+                    $mainAssigneeActivity->free( );
+                }
+                $otherAssigneeActivity->free( );
             }
             
             //copy case relationship.
