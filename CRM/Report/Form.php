@@ -1593,12 +1593,13 @@ GROUP BY cf.column_name, ov.option_group_id, ov.value ";
 
             $pageId = CRM_Utils_Request::retrieve( 'crmPID', 'Integer', CRM_Core_DAO::$_nullObject );
            
-            if ( !$pageId && !empty($_POST) && isset($_POST['crmPID_B']) ) {
-                if ( !isset($_POST['PagerBottomButton']) ) {
-                    unset( $_POST['crmPID_B'] );
-                } else {
+            if ( !$pageId && !empty($_POST) ) {
+                if ( isset($_POST['PagerBottomButton']) && isset($_POST['crmPID_B']) ) {
                     $pageId = max( (int) @$_POST['crmPID_B'], 1 );
-                }
+                } elseif(  isset($_POST['PagerTopButton']) && isset($_POST['crmPID']) ) {
+                    $pageId = max( (int) @$_POST['crmPID'], 1 );
+                }   
+                unset( $_POST['crmPID_B'] , $_POST['crmPID'] );
             } 
             
             $pageId = $pageId ? $pageId : 1;
@@ -1618,6 +1619,7 @@ GROUP BY cf.column_name, ov.option_group_id, ov.value ";
                              'rowCount'     => $rowCount,
                              'status'       => ts( 'Records %%StatusMessage%%' ),
                              'buttonBottom' => 'PagerBottomButton',
+                             'buttonTop'    => 'PagerTopButton',
                              'pageID'       => $this->get( CRM_Utils_Pager::PAGE_ID ) );
 
             $pager = new CRM_Utils_Pager( $params );

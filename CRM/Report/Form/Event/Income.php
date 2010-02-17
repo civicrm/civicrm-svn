@@ -276,6 +276,7 @@ class CRM_Report_Form_Event_Income extends CRM_Report_Form {
                          'rowCount'     => self::ROW_COUNT_LIMIT,
                          'status'       => ts( 'Records %%StatusMessage%%' ),
                          'buttonBottom' => 'PagerBottomButton',
+                         'buttonTop'    => 'PagerTopButton',
                          'pageID'       => $this->get( CRM_Utils_Pager::PAGE_ID ) );
         
         $pager = new CRM_Utils_Pager( $params );
