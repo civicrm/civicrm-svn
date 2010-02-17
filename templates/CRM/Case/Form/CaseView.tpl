@@ -39,8 +39,8 @@
         </tr>
 	{if $mergeCases}
 	<tr>
-	   <td colspan='2'><a href="#" onclick='showCaseList( ); return false;'>{ts}Merge Case{/ts}</a>	
-	   <span id='merge_cases' style="display:none;">
+	   <td colspan='2'><a href="#" onClick='cj("#merge_cases").toggle( ); return false;'>{ts}Merge Case{/ts}</a>	
+	   <span id='merge_cases' class='hide-block'>
 	   {$form.merge_case_id.html}&nbsp;{$form._qf_CaseView_next_merge_case.html}</span>
 	   </td>
 	</tr>
@@ -229,10 +229,6 @@ cj(document).ready(function(){
    cj("#searchOptions").hide( );
    cj("#view-activity").hide( );
 });
-
-function showCaseList( ) {
-   cj("#merge_cases").toggle( )	 
-}
 </script>
 {/literal}
 
@@ -543,25 +539,25 @@ function checkSelection( field ) {
 
     switch ( fName )  {
         case '_qf_CaseView_next' :
-            validationMessage = 'Please select an activity set from the list.';
+            validationMessage = '{/literal}{ts}Please select an activity set from the list.{/ts}{literal}';
             validationField   = 'timeline_id';
-            successAction     = "confirm('{/literal}{ts}Are you sure you want to add a set of scheduled activities to this case{/ts}{literal}?');";
+            successAction     = "confirm('{/literal}{ts}Are you sure you want to add a set of scheduled activities to this case?{/ts}{literal}');";
             break;
 
         case 'new_activity' :
-            validationMessage = 'Please select an activity type from the list.';
+            validationMessage = '{/literal}{ts}Please select an activity type from the list.{/ts}{literal}';
             validationField   = 'activity_type_id';
             successAction     = "window.location='{/literal}{$newActivityUrl}{literal}' + document.getElementById('activity_type_id').value";
             break;
 
         case 'case_report' :
-            validationMessage = 'Please select a report from the list.';
+            validationMessage = '{/literal}{ts}Please select a report from the list.{/ts}{literal}';
             validationField   = 'report_id';
             successAction     = "window.location='{/literal}{$reportUrl}{literal}' + document.getElementById('report_id').value";
             break;
  
         case '_qf_CaseView_next_merge_case' :
-            validationMessage = 'Please select a case from the list to merge with.';
+            validationMessage = '{/literal}{ts}Please select a case from the list to merge with.{/ts}{literal}';
             validationField   = 'merge_case_id';
             break;	    
     }	
