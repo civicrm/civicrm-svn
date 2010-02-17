@@ -161,6 +161,16 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
+
+      $activityTable = array( 'subject' => $subject,
+                              'duration' => 30 );
+      $this->assertDBState( "CRM_Activity_DAO_Activity", 1, $match );
+      
+      $assignmentTable = array( 'id ' => 1, 
+                                'activity_id' => 1, 
+                                'target_contact_id' => 2 );
+                                
+      
   }
 
 }
