@@ -574,6 +574,16 @@ function civicrm_form_data($edit, &$user, $category, $reset, $doNotProcess = fal
                                    array( 1 => $profileID )));
     }
     
+    // build edit url and replaceusercontext CRM-5846
+    $config = CRM_Core_Config::singleton( );
+    $urlVar = $config->userFrameworkURLVar;    
+    $path   = isset( $_GET[$urlVar] ) ? $_GET[$urlVar] : '';
+    $url    = $path ;
+
+    require_once "CRM/Core/Session.php";
+    $session = CRM_Core_Session::singleton( );
+    $session->replaceUserContext( CRM_Utils_System::url( $url ) );
+    
     if ( $html ) {
         $html = civicrm_add_jquery( $html );
         $index = empty( $category ) ? 'civicrm-profile-my-account' : $category;

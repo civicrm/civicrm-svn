@@ -660,7 +660,7 @@ class CRM_Profile_Form extends CRM_Core_Form
      */
     public function postProcess( ) 
     {
-        $params = $this->controller->exportValues( $this->_name );
+        $params = $this->controller->exportValues( $this->_name );        
                 
         if ( $this->_mode == self::MODE_REGISTER ) {
             require_once 'CRM/Core/BAO/Address.php';
@@ -767,6 +767,19 @@ class CRM_Profile_Form extends CRM_Core_Form
         }
         
         $transaction->commit( );
+        
+        // hack to show save message - CRM-5846
+        $config  = CRM_Core_Config::singleton( );
+        $urlVar  = $config->userFrameworkURLVar;
+        $path    = isset( $_GET[$urlVar] ) ? $_GET[$urlVar] : '';
+
+        $session = CRM_Core_Session::singleton( );
+        $url = 'user/' . $session->get('ufID') . '/edit/';
+                
+        if ( substr( $path, 0, strlen( $url ) ) == $url ) {
+            require_once 'CRM/Utils/System.php';
+            CRM_Utils_System::setUFMessage( ts('The changes have been saved.') );
+        }        
     }
     
     function getTemplateFileName() {
