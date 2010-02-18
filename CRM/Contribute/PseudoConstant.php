@@ -140,7 +140,6 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
      * @return array - array reference of all payment instruments if any
      * @static
      */
-
     public static function &paymentInstrument( )
     {
         require_once 'CRM/Core/OptionGroup.php';
@@ -151,7 +150,6 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
         }
         return $paymentInstrument;
     }
-
 
     /**
      * Get all the valid accepted credit cards
@@ -235,6 +233,7 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
     public static function &contributionStatus( $id = null, $columnName = 'label' )
     {
         $cacheKey = $columnName;
+        require_once 'CRM/Core/OptionGroup.php';
         if ( ! isset( self::$contributionStatus[$cacheKey] ) ) {
             self::$contributionStatus[$cacheKey] = CRM_Core_OptionGroup::values( 'contribution_status', 
                                                                                  false, false, false, null, $columnName );
