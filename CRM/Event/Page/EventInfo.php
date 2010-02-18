@@ -92,8 +92,8 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         if ( $this->_id && CRM_Utils_Array::value( 'is_monetary', $values['event'] ) ) {
             // get price set options, - CRM-5209
             if ( $priceSetId = CRM_Price_BAO_Set::getFor( 'civicrm_event', $this->_id ) ) {
-                $setDetails = CRM_Price_BAO_Set::getSetDetail( $priceSetId );
-                eval("\$priceSetFields = \$setDetails[$priceSetId][fields];" );
+                $setDetails     = CRM_Price_BAO_Set::getSetDetail( $priceSetId );
+                $priceSetFields = $setDetails[$priceSetId]['fields'];
                 if ( is_array( $priceSetFields ) ) {
                     $fieldCnt = 1;
                     foreach ( $priceSetFields as $fid => $fieldValues ) {
@@ -101,9 +101,19 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                              empty( $fieldValues['options'] ) ) {
                             continue;
                         }
+
+                        if ( count( $fieldValues['options'] ) > 1 ) {
+                            $values['feeBlock']['value'][$fieldCnt] = '';
+                            $values['feeBlock']['label'][$fieldCnt] = $fieldValues['label'];
+                            $fieldCnt++;
+                            $prefix = "&nbsp;&nbsp;&nbsp;&nbsp;";
+                        } else {
+                            $prefix = null;
+                        }
+                        
                         foreach ( $fieldValues['options'] as $optionId => $optionVal ) {
                             $values['feeBlock']['value'][$fieldCnt] = $optionVal['value'];
-                            $values['feeBlock']['label'][$fieldCnt] = $optionVal['description'];
+                            $values['feeBlock']['label'][$fieldCnt] = "{$prefix}{$optionVal['label']}";
                             $fieldCnt++;
                         }
                     }
