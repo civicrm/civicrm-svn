@@ -89,7 +89,11 @@ class CRM_Core_Permission_Joomla {
      */
     static function check( $str ) {
         $config =& CRM_Core_Config::singleton( );
-        if ( $config->userFrameworkFrontend && $str == 'administer users' ) {
+        $adminPerm = array( 'administer users',
+                            'edit all contacts',
+                            'view all contacts' );
+        
+        if ( $config->userFrameworkFrontend && in_array( $str, $adminPerm ) ) {
             return false;
         }
         return true;
