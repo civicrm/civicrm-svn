@@ -981,10 +981,23 @@ class CRM_Report_Form extends CRM_Core_Form {
         if ( empty($this->_customGroupExtends) ) {
             return;
         }
+        
+        require_once 'CRM/Core/BAO/CustomField.php';
         $entryFound      = false;
         $customFields    = $fieldValueMap = array( );
-        $customFieldCols = array( 'column_name', 'data_type', 'html_type', 'option_group_id' );
+        $customFieldCols = array( 'column_name', 'data_type', 'html_type', 'option_group_id', 'id' );
+        $selectedFields  = array( );
+        
+        foreach( $this->_params['fields'] as $fieldAlias => $value ) {
+            if ( $fieldId = CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
+                $selectedFields[$fieldAlias] = $fieldId;
+            }
+        }
 
+        if( empty($selectedFields) ) {
+            return;
+        }
+        
         // skip for type date and ContactReference since date format is already handled
         $query = " 
 SELECT cg.table_name, cf." . implode( ", cf.", $customFieldCols ) . ", ov.value, ov.label
@@ -996,25 +1009,25 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
       cf.is_active = 1 AND
       cf.is_searchable = 1 AND
       cf.data_type   NOT IN ('ContactReference', 'Date') AND
-      cf.column_name IN ('". implode( "','", array_keys($this->_params['fields']) ) ."')
+      cf.id IN (". implode( ",", $selectedFields ) .")
 GROUP BY cf.column_name, ov.option_group_id, ov.value ";
 
         $dao = CRM_Core_DAO::executeQuery( $query );
         while( $dao->fetch( ) ) {
             foreach( $customFieldCols as $key ) {
-                $customFields[$dao->table_name . '_' . $dao->column_name][$key] = $dao->$key;
+                $customFields[$dao->table_name . '_custom_'. $dao->id][$key] = $dao->$key;
             }
             if( $dao->option_group_id ) {
                 $fieldValueMap[$dao->option_group_id][$dao->value] = $dao->label;
             }
         }
         $dao->free( );
-        
+
         foreach ( $rows as $rowNum => $row ) {
             foreach ( $row as $tableCol => $val ) {
                 if ( array_key_exists( $tableCol, $customFields ) ) {
-                        $rows[$rowNum][$tableCol] = 
-                            $this->formatCustomValues( $val, $customFields[$tableCol], $fieldValueMap );
+                    $rows[$rowNum][$tableCol] = 
+                        $this->formatCustomValues( $val, $customFields[$tableCol], $fieldValueMap );
                     $entryFound = true;
                 }
             }
@@ -1029,9 +1042,9 @@ GROUP BY cf.column_name, ov.option_group_id, ov.value ";
     
     function formatCustomValues( $value, $customField, $fieldValueMap ) {
         if ( CRM_Utils_System::isNull( $value ) ) {
-            return; 
+            return;
         }
-        
+
         $htmlType = $customField['html_type'];
         
         switch ( $customField['data_type'] ) {
@@ -1707,7 +1720,7 @@ ORDER BY cg.table_name";
                 $this->_columns[$curTable]['grouping'] = $customDAO->table_name;
                 $this->_columns[$curTable]['group_title'] = $customDAO->title;
             }
-            $fieldName = $customDAO->column_name . '_' . $customDAO->cf_id;
+            $fieldName = 'custom_' . $customDAO->cf_id;
 
             if ( $addFields ) {
                 $curFields[$fieldName] = 
@@ -1837,8 +1850,10 @@ LEFT JOIN $table {$this->_aliases[$table]} ON {$this->_aliases[$table]}.entity_i
                 if ( array_key_exists( 'fields', $prop ) ) { 
                     foreach ( $prop['fields'] as $fieldName => $field ) { 
                         if ( CRM_Utils_Array::value( 'dataType', $field ) == 'ContactReference' ) {
+                            require_once 'CRM/Core/BAO/CustomField.php';
+                            $columnName = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_CustomField', CRM_Core_BAO_CustomField::getKeyID($fieldName) , 'column_name' );
                             $this->_from .= "
-LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_aliases[$table]}.{$fieldName} ";
+LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_aliases[$table]}.{$columnName} ";
                         }
                     }
                 }
