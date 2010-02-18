@@ -87,7 +87,19 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
      * @var boolean
      */
     protected $_embedded = false;
-
+    
+    /**
+     * After entire form execution complete,
+     * do we want to skip control redirection.
+     * Default - It get redirect to user context.
+     *
+     * Useful when we run form in non civicrm context
+     * and we need to transfer control back.(eg. drupal)
+     *
+     * @var boolean
+     */
+    protected $_skipRedirection = false;
+    
     /**
      * Are we in print mode? if so we need to modify the display
      * functionality to do a minimal display :)
@@ -518,7 +530,29 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     function getEmbedded( ) {
         return $this->_embedded;
     }
-
+    
+    /**
+     * setter for skipRedirection
+     *
+     * @param boolean $skipRedirection
+     *
+     * @return void
+     * @access public
+     */
+    function setSkipRedirection( $skipRedirection ) {
+        $this->_skipRedirection = $skipRedirection;
+    }
+    
+    /**
+     * getter for skipRedirection
+     *
+     * @return boolean return the skipRedirection value
+     * @access public
+     */
+    function getSkipRedirection( ) {
+        return $this->_skipRedirection;
+    }
+    
     /**
      * setter for print 
      *

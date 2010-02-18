@@ -672,16 +672,24 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
     function addCheckBox( $id, $title, $values, $other = null,
                           $attributes = null, $required = null,
                           $javascriptMethod = null,
-                          $separator = '<br />' ) {
+                          $separator = '<br />', $flipValues = false ) {
         $options = array( );
 
         if ($javascriptMethod) {
             foreach ( $values as $key => $var ) {
-                $options[] =& HTML_QuickForm::createElement( 'checkbox', $var, null, $key, $javascriptMethod );
+                if ( ! $flipValues ) {
+                    $options[] =& HTML_QuickForm::createElement( 'checkbox', $var, null, $key, $javascriptMethod );
+                } else {
+                    $options[] =& HTML_QuickForm::createElement( 'checkbox', $key, null, $var, $javascriptMethod );
+                }
             }
         } else {
             foreach ( $values as $key => $var ) {
-                $options[] =& HTML_QuickForm::createElement( 'checkbox', $var, null, $key );
+                if ( ! $flipValues ) {
+                    $options[] =& HTML_QuickForm::createElement( 'checkbox', $var, null, $key );
+                } else {
+                    $options[] =& HTML_QuickForm::createElement( 'checkbox', $key, null, $var );
+                }
             }
         }
 

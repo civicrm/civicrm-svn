@@ -76,3 +76,10 @@ For all other comments you can reach me at the following e-mail address. Please
 include "CiviMember Roles Sync" somewhere in the subject.
 
 ngoodman AT wisc.edu
+
+
+License Information
+-------------------------------
+
+Copyright (C) Neil Goodman 2010
+Released under GNU General Public License version 2 or later

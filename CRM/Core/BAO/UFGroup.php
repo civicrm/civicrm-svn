@@ -527,6 +527,10 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 $controller->validate( );
             }
             $controller->setEmbedded( true );
+            
+            //CRM-5839 - though we want to process form, get the control back.
+            $controller->setSkipRedirection( ($doNotProcess) ? false : true );
+            
             $controller->run( );
 
             // we are done processing so restore the POST/REQUEST vars

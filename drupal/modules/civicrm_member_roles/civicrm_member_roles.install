@@ -2,6 +2,9 @@
   // $Id: civicrm_member_roles.install,v 1.2.4.2 2008/08/17 21:44:19 posco Exp $
 
   /**
+   * Copyright (C) 2010 Neil Goodman
+   * @license GNU General Public License version 2 or later
+   *
    * @file
    * Install CiviMember Role Sync database table and provide hook_uninstall.
    */

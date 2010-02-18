@@ -516,20 +516,20 @@ class CRM_Report_Form extends CRM_Core_Form {
                         if ( isset($table['grouping']) ) { 
                             $tableName = $table['grouping'];
                         }
-                        $colGroups[$tableName]['fields'][$field['title']] = $fieldName;
+                        $colGroups[$tableName]['fields'][$fieldName] = $field['title'];
 
                         if ( isset($table['group_title']) ) { 
                             $colGroups[$tableName]['group_title'] = $table['group_title'];
                         }
 
-                        $options[$field['title']] = $fieldName;
+                        $options[$fieldName] = $field['title'];
                     }
                 } 
             }
         }
         
         $this->addCheckBox( "fields", ts('Select Columns'), $options, null, 
-                            null, null, null, $this->_fourColumnAttribute );
+                            null, null, null, $this->_fourColumnAttribute, true );
         $this->assign( 'colGroups', $colGroups );
     }
 
@@ -1677,7 +1677,6 @@ GROUP BY cf.column_name, ov.option_group_id, ov.value ";
     }
 
     function addCustomDataToColumns( $addFields = true ) {
-
         if ( empty($this->_customGroupExtends) ) {
             return;
         }
@@ -1708,60 +1707,66 @@ ORDER BY cg.table_name";
                 $this->_columns[$curTable]['grouping'] = $customDAO->table_name;
                 $this->_columns[$curTable]['group_title'] = $customDAO->title;
             }
+            $fieldName = $customDAO->column_name . '_' . $customDAO->cf_id;
+
             if ( $addFields ) {
-                $curFields[$customDAO->column_name] = array( 'title'    => $customDAO->label,
-                                                             'dataType' => $customDAO->data_type,
-                                                             'htmlType' => $customDAO->html_type );
+                $curFields[$fieldName] = 
+                    array( 'name'     => $customDAO->column_name, // this makes aliasing work in favor
+                           'title'    => $customDAO->label,
+                           'dataType' => $customDAO->data_type,
+                           'htmlType' => $customDAO->html_type );
             }
             if ( $this->_customGroupFilters ) {
-                $curFilters[$customDAO->column_name] = array( 'title'    => $customDAO->label,
-                                                              'dataType' => $customDAO->data_type,
-                                                              'htmlType' => $customDAO->html_type );
+                $curFilters[$fieldName] = 
+                    array( 'name'     => $customDAO->column_name, // this makes aliasing work in favor
+                           'title'    => $customDAO->label,
+                           'dataType' => $customDAO->data_type,
+                           'htmlType' => $customDAO->html_type );
             }
 
         	switch( $customDAO->data_type ) {
             case 'Date':
                 // filters
-                $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_DATE;
-                $curFilters[$customDAO->column_name]['type']         = CRM_Utils_Type::T_DATE;
+                $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_DATE;
+                $curFilters[$fieldName]['type']         = CRM_Utils_Type::T_DATE;
                 break;
 
             case 'Boolean':
-                $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_SELECT;
-                $curFilters[$customDAO->column_name]['options']      = 
+                $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_SELECT;
+                $curFilters[$fieldName]['options']      = 
                     array('' => ts('- select -'), 1 => ts('Yes'), 0 => ts('No'), );
-                $curFilters[$customDAO->column_name]['type']         = CRM_Utils_Type::T_INT;
+                $curFilters[$fieldName]['type']         = CRM_Utils_Type::T_INT;
                 break;
 
             case 'Int':
-                $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_INT;
-                $curFilters[$customDAO->column_name]['type']         = CRM_Utils_Type::T_INT;
+                $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_INT;
+                $curFilters[$fieldName]['type']         = CRM_Utils_Type::T_INT;
                 break;
 
             case 'Money':
-                $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_FLOAT;
-                $curFilters[$customDAO->column_name]['type']         = CRM_Utils_Type::T_MONEY;
+                $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_FLOAT;
+                $curFilters[$fieldName]['type']         = CRM_Utils_Type::T_MONEY;
                 break;
 
             case 'Float':
-                $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_FLOAT;
-                $curFilters[$customDAO->column_name]['type']         = CRM_Utils_Type::T_FLOAT;
+                $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_FLOAT;
+                $curFilters[$fieldName]['type']         = CRM_Utils_Type::T_FLOAT;
                 break;
 
             case 'String':
-                $curFilters[$customDAO->column_name]['type']  = CRM_Utils_Type::T_STRING;
+                $curFilters[$fieldName]['type']  = CRM_Utils_Type::T_STRING;
 
                 if ( !empty($customDAO->option_group_id) ) {
                     if ( in_array( $customDAO->html_type, array( 'Multi-Select', 'AdvMulti-Select', 'CheckBox') ) ) {
-                        $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT_SEPARATOR;
+                        $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_MULTISELECT_SEPARATOR;
                     } else {
-                        $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
+                        $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
                     }
                     if( $this->_customGroupFilters ) {
-                        $curFilters[$customDAO->column_name]['options'] = array( );
+                        $curFilters[$fieldName]['options'] = array( );
                         $ogDAO =& CRM_Core_DAO::executeQuery( "SELECT ov.value, ov.label FROM civicrm_option_value ov WHERE ov.option_group_id = %1 ORDER BY ov.weight", array(1 => array($customDAO->option_group_id, 'Integer')) );
                         while( $ogDAO->fetch() ) {
-                            $curFilters[$customDAO->column_name]['options'][$ogDAO->value] = $ogDAO->label;
+                            $curFilters[$fieldName]['options'][$ogDAO->value] = $ogDAO->label;
                         }
                     }
                 }
@@ -1769,39 +1774,39 @@ ORDER BY cg.table_name";
 
             case 'StateProvince': 
                 if ( in_array( $customDAO->html_type, array( 'Multi-Select State/Province' ) ) ) {
-                    $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT_SEPARATOR;
+                    $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_MULTISELECT_SEPARATOR;
                 } else {
-                    $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
+                    $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
                 }
-                $curFilters[$customDAO->column_name]['options']      = CRM_Core_PseudoConstant::stateProvince();
+                $curFilters[$fieldName]['options']      = CRM_Core_PseudoConstant::stateProvince();
                 break;
 
             case 'Country':
                 if ( in_array( $customDAO->html_type, array( 'Multi-Select Country' ) ) ) {
-                    $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT_SEPARATOR;
+                    $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_MULTISELECT_SEPARATOR;
                 } else {
-                    $curFilters[$customDAO->column_name]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
+                    $curFilters[$fieldName]['operatorType'] = CRM_Report_Form::OP_MULTISELECT;
                 }
-                $curFilters[$customDAO->column_name]['options']      = CRM_Core_PseudoConstant::country();
+                $curFilters[$fieldName]['options']      = CRM_Core_PseudoConstant::country();
                 break;
 
             case 'ContactReference':
-                $curFilters[$customDAO->column_name]['type']  = CRM_Utils_Type::T_STRING;
-                $curFilters[$customDAO->column_name]['name']  = 'display_name';
-                $curFilters[$customDAO->column_name]['alias'] = "contact_{$customDAO->column_name}_civireport";
+                $curFilters[$fieldName]['type']  = CRM_Utils_Type::T_STRING;
+                $curFilters[$fieldName]['name']  = 'display_name';
+                $curFilters[$fieldName]['alias'] = "contact_{$fieldName}_civireport";
 
-                $curFields[$customDAO->column_name]['type']   = CRM_Utils_Type::T_STRING;
-                $curFields[$customDAO->column_name]['name']   = 'display_name';  
-                $curFields[$customDAO->column_name]['alias']  = "contact_{$customDAO->column_name}_civireport";
+                $curFields[$fieldName]['type']   = CRM_Utils_Type::T_STRING;
+                $curFields[$fieldName]['name']   = 'display_name';  
+                $curFields[$fieldName]['alias']  = "contact_{$fieldName}_civireport";
                 break;
 
             default:
-                $curFields [$customDAO->column_name]['type']  = CRM_Utils_Type::T_STRING;
-                $curFilters[$customDAO->column_name]['type']  = CRM_Utils_Type::T_STRING;
+                $curFields [$fieldName]['type']  = CRM_Utils_Type::T_STRING;
+                $curFilters[$fieldName]['type']  = CRM_Utils_Type::T_STRING;
         	}
 
-            if ( ! array_key_exists('type', $curFields[$customDAO->column_name]) ) {
-                $curFields[$customDAO->column_name]['type'] = $curFilters[$customDAO->column_name]['type'];
+            if ( ! array_key_exists('type', $curFields[$fieldName]) ) {
+                $curFields[$fieldName]['type'] = $curFilters[$fieldName]['type'];
             } 
 
             if ( $addFields ) {

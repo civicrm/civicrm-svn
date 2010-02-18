@@ -35,7 +35,7 @@
             <table class="report-layout criteria-group">
                 {if $grpFields.group_title}<tr><td colspan=4>&raquo;&nbsp;{$grpFields.group_title}:</td></tr>{/if}
                 <tr>
-                    {foreach from=$grpFields.fields item=field key=title}
+                    {foreach from=$grpFields.fields item=title key=field}
                         {assign var="count" value=`$count+1`}
                         <td width="25%">{$form.fields.$field.html}</td>
                         {if $count is div by 4}
