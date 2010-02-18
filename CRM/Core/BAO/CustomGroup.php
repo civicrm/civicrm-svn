@@ -1506,9 +1506,12 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
 
     /** 
      * Format custom value according to data, view mode
+     * @param array $values associated array of custom values
+     * @param array $field associated array
+     * @param boolean $dncOptionPerLine true if optionPerLine should not be consider
      *
      */
-    static function formatCustomValues( &$values, &$field )
+    static function formatCustomValues( &$values, &$field, $dncOptionPerLine = false )
     {
         $value = $values['data'];
 
@@ -1677,7 +1680,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
                 //to show only values that are checked
                 if ( in_array ( (string) $optionValue, $customData ) ) {
                     $checked = in_array ( $optionValue, $customData ) ? $freezeStringChecked : $freezeString;
-                    if ( !$optionPerLine ) {
+                    if ( !$optionPerLine || $dncOptionPerLine ) {
                         if ( $retValue ) {
                             $retValue .= ",&nbsp;";
                         }

@@ -64,7 +64,11 @@
       </div>
     {else}
     <table class="form-layout-compressed">
-        {if $context eq 'standalone'}
+        {if $context neq 'standalone'}
+            <tr>
+                <td class="font-size12pt right"><strong>{ts}Member{/ts}</strong></td><td class="font-size12pt"><strong>{$displayName}</strong></td>
+            </tr>
+        {else}
             {include file="CRM/Contact/Form/NewContact.tpl"}
         {/if}
     {if $membershipMode}

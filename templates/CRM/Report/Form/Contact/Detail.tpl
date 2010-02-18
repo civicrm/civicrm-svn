@@ -31,7 +31,7 @@
 
     {if $rows}
         <div class="report-pager">
-            {include file="CRM/common/pager.tpl" noForm=0}
+            {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>
         {foreach from=$rows item=row}
             <br />
@@ -140,7 +140,10 @@
                 </tr>
             </table> 
         {/foreach}
-    
+
+	<div class="report-pager">
+            {include file="CRM/common/pager.tpl" noForm=0}
+        </div>
         <br />
         {if $grandStat}
             <table class="report-layout">

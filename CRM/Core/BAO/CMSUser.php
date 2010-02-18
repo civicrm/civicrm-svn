@@ -330,13 +330,6 @@ class CRM_Core_BAO_CMSUser
                 
             self::checkUserNameEmailExists( $params, $errors, $emailName );
 
-            if ( $isJoomla ) {
-                require_once 'CRM/Core/BAO/UFGroup.php';
-                $ids = CRM_Core_BAO_UFGroup::findContact( $fields, null, 'Individual' );
-                if ( $ids ) {
-                    $errors['_qf_default'] = ts( 'An account already exists with the same information.' );
-                }
-            }
         }           
         return ( ! empty( $errors ) ) ? $errors : true;
     }
@@ -571,7 +564,11 @@ SELECT count(*)
             // Error can be accessed via $user->getError();
             return false;
         }
-        require_once 'joomla/com_user/controller.php';
+        //since civicrm don't have own tokens to use in user
+        //activation email. we have to use com_user tokens, CRM-5809
+        $lang =& JFactory::getLanguage();
+        $lang->load( 'com_user' );
+        require_once 'components/com_user/controller.php';
         UserController::_sendMail( $user, $user->password2 );
         return $user->get('id');
     }

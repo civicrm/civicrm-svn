@@ -34,9 +34,9 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 
-class CRM_Contact_Page_View_Tag extends CRM_Contact_Page_View {
+class CRM_Contact_Page_View_Tag extends CRM_Core_Page {
 
    /**
      * This function is called when action is browse
@@ -58,6 +58,18 @@ class CRM_Contact_Page_View_Tag extends CRM_Contact_Page_View {
         $controller->run( );
     }
 
+    function preProcess() {
+        $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $this->assign( 'contactId', $this->_contactId );
+
+        // check logged in url permission
+        require_once 'CRM/Contact/Page/View.php';
+        CRM_Contact_Page_View::checkUserPermission( $this );
+        
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        $this->assign( 'action', $this->_action);
+    }    
+
     /**
      * This function is the main function that is called when the page loads
      * it decides the which action has to be taken for the page.
@@ -74,5 +86,3 @@ class CRM_Contact_Page_View_Tag extends CRM_Contact_Page_View {
     }
 
 }
-
-

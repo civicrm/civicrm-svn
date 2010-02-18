@@ -150,14 +150,8 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
                                $displayName,
                                $contactImageUrl,
                                $contactSubtype );
-        
-        //display OtherActivity link 
-        $otherAct = CRM_Core_PseudoConstant::activityType(false);
-        $activityNum = count($otherAct);
-        $this->assign('showOtherActivityLink',$activityNum);
-        
+                
         $config = CRM_Core_Config::singleton( );
-        
         require_once 'CRM/Core/BAO/UFMatch.php';
         if ( $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ) ) {
             if ($config->userFramework == 'Drupal') {

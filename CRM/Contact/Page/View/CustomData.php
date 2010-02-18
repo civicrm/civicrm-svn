@@ -34,13 +34,13 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 
 /**
  * Page for displaying custom data
  *
  */
-class CRM_Contact_Page_View_CustomData extends CRM_Contact_Page_View {
+class CRM_Contact_Page_View_CustomData extends CRM_Core_Page {
     /**
      * the id of the object being viewed (note/relationship etc)
      *
@@ -69,10 +69,17 @@ class CRM_Contact_Page_View_CustomData extends CRM_Contact_Page_View {
      */ 
     function preProcess( ) 
     { 
-        parent::preProcess( );
+        $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $this->assign( 'contactId', $this->_contactId );
 
-        $this->_groupId = CRM_Utils_Request::retrieve( 'gid', 'Positive',
-                                                       $this, true ); 
+        // check logged in url permission
+        require_once 'CRM/Contact/Page/View.php';
+        CRM_Contact_Page_View::checkUserPermission( $this );
+        
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        $this->assign( 'action', $this->_action);
+
+        $this->_groupId = CRM_Utils_Request::retrieve( 'gid', 'Positive', $this, true ); 
         $this->assign( 'groupId', $this->_groupId );
     }
 

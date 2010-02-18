@@ -34,9 +34,9 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 
-class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View 
+class CRM_Contact_Page_View_Relationship extends CRM_Core_Page 
 {
     /**
      * The action links that we need to display for the browse screen
@@ -86,7 +86,7 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View
         // add viewed contribution to recent items list
         require_once 'CRM/Utils/Recent.php';
         $url = CRM_Utils_System::url( 'civicrm/contact/view/rel', 
-                                      "action=view&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}" );
+                                      "action=view&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}&context=home" );
         
         $title = CRM_Contact_BAO_Contact::displayName( $this->_contactId ) . ' (' . 
                  $viewRelationship[$this->_id]['relation']. ' ' . 
@@ -181,6 +181,19 @@ class CRM_Contact_Page_View_Relationship extends CRM_Contact_Page_View
         $controller->process( );
         $controller->run( );
     }
+
+    function preProcess() {
+        $this->_id        = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $this->assign( 'contactId', $this->_contactId );
+
+        // check logged in url permission
+        require_once 'CRM/Contact/Page/View.php';
+        CRM_Contact_Page_View::checkUserPermission( $this );
+        
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        $this->assign( 'action', $this->_action);
+    }    
 
     /**
      * This function is the main function that is called when the page loads,

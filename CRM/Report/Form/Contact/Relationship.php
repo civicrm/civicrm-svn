@@ -148,6 +148,9 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                                 'end_date'   =>
                                 array( 'title'     => ts( 'Relationship End Date' ),
                                        ),
+                                'description'   =>
+                                array( 'title'     => ts( 'Description' ),
+                                       ),
                                 ),
                          'filters'   =>
                          array('is_active'=> 
@@ -357,9 +360,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                     }
                     
                     if ( ! empty( $clause ) ) {
-                        if ( CRM_Utils_Array::value( 'group', $field ) ) {
-                            $whereClauses[] = $this->whereGroupClause( $clause );
-                        } else if ( CRM_Utils_Array::value( 'having', $field ) ) {
+                        if ( CRM_Utils_Array::value( 'having', $field ) ) {
                             $havingClauses[] = $clause;
                         } else {
                             $whereClauses[] = $clause;
@@ -440,6 +441,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
         $this->beginPostProcess( );
 
         $this->relationType = null;
+        $relType            = array( );
         if ( CRM_Utils_Array::value( 'relationship_type_id_value', $this->_params ) ) {
             $relType = explode('_',  $this->_params['relationship_type_id_value']);
             
@@ -453,6 +455,11 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
 
         $this->formatDisplay( $rows );
         $this->doTemplateAssignment( $rows );
+
+        if ( !empty($relType) ) {
+            // store its old value, CRM-5837
+            $this->_params['relationship_type_id_value'] = implode( '_', $relType );
+        }
         $this->endPostProcess( $rows );
     }
     

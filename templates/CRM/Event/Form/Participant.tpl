@@ -73,7 +73,7 @@
         {else} {* If action is other than Delete *}
             <table class="form-layout-compressed">
             {if $single and $context neq 'standalone'}
-    			<tr><td class="label">{ts}Participant{/ts}</td><td class="view-value bold">{$displayName}&nbsp;</td></tr>
+    			<tr><td class="font-size12pt right bold">{ts}Participant{/ts}</td><td class="font-size12pt bold">{$displayName}&nbsp;</td></tr>
     	    {else}
                 {include file="CRM/Contact/Form/NewContact.tpl"}
             {/if}	

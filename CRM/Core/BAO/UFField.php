@@ -412,8 +412,8 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
         // profile types
         $contactTypes = array( 'Contact', 'Individual', 'Household', 'Organization' );
         require_once 'CRM/Contact/BAO/ContactType.php';
-        $contactTypes = array_merge( $contactTypes, 
-                                     CRM_Contact_BAO_ContactType::subTypes( ) );
+        $subTypes     = CRM_Contact_BAO_ContactType::subTypes( );
+
         $components   = array( 'Contribution', 'Participant', 'Membership' );
 
         require_once 'CRM/Core/DAO/UFGroup.php';
@@ -464,18 +464,24 @@ class CRM_Core_BAO_UFField extends CRM_Core_DAO_UFField
                     $contactTypeCount[] = $value;
                 }
             }
-
-            if ( count( $componentCount ) == 1 && count( $contactTypeCount ) == 1 ) { 
-                // this case if valid profile contact + component
-                if ( !$skipComponentType ) {
-                    $profileType = $componentCount[0];
-                } else {
-                    $profileType = $contactTypeCount[0];
+            // subtype counter
+            $subTypeCount = array( );
+            foreach( $subTypes as $value ) {
+                if ( in_array( $value, $profileTypes ) ) {
+                    $subTypeCount[] = $value;
                 }
-         
-            } elseif( count( $componentCount ) > 1 ) { 
-                // this is mix component profiles
+            }
+            if ( !$skipComponentType && count( $componentCount ) == 1 ) {
+                $profileType = $componentCount[0];
+            } else if( count( $componentCount ) > 1 ) {
                 $mixProfileType = $componentCount[1];
+            } else if ( count( $subTypeCount ) == 1 ) {
+                $profileType = $subTypeCount[0];
+            } else if( count( $contactTypeCount ) == 1 ){
+                $profileType = $contactTypeCount[0];
+            } else if( count( $subTypeCount ) > 1 ) {
+                // this is mix subtype profiles
+                $mixProfileType = $subTypeCount[1];
             } else if( count( $contactTypeCount ) > 1 ) {
                 // this is mix contact profiles
                 $mixProfileType = $contactTypeCount[1];

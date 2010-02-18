@@ -224,8 +224,6 @@ class CRM_Report_Form_Contribute_TopDonor extends CRM_Report_Form {
                         if ( $fieldName == 'total_range' ) {
                             $value = CRM_Utils_Array::value( "total_range_value", $this->_params );
                             $this->_outerCluase = " WHERE (( @rows := @rows + 1) <= {$value}) ";
-                        } else if ( CRM_Utils_Array::value( 'group', $field ) ) {
-                            $clauses[] = $this->whereGroupClause( $clause );
                         } else {
                             $clauses[] = $clause;
                         }

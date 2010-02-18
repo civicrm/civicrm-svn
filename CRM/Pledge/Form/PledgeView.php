@@ -86,15 +86,17 @@ class CRM_Pledge_Form_PledgeView extends CRM_Core_Form
         if ( $values['status_id'] ) { 
             $values['pledge_status'] = CRM_Utils_Array::value( $values['status_id'], CRM_Contribute_PseudoConstant::contributionStatus() );
         }
-
         
         require_once 'CRM/Utils/Recent.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         $url = CRM_Utils_System::url( 'civicrm/contact/view/pledge', 
-               "action=view&reset=1&id={$values['id']}&cid={$values['contact_id']}" );
+               "action=view&reset=1&id={$values['id']}&cid={$values['contact_id']}&context=home" );
        
         require_once 'CRM/Utils/Money.php';
-        $title = CRM_Contact_BAO_Contact::displayName( $values['contact_id'] ) . 
+        $displayName = CRM_Contact_BAO_Contact::displayName( $values['contact_id'] );
+        $this->assign( 'displayName', $displayName );
+        
+        $title = $displayName . 
                  ' - (' . ts('Pledged') . ' ' . CRM_Utils_Money::format( $values['pledge_amount'] ) . 
                  ' - ' . $values['contribution_type'] . ')';
 

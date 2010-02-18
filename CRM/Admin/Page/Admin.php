@@ -49,6 +49,9 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page
             require_once 'CRM/Core/Session.php';
             CRM_Core_Session::setStatus( $errorMessage );
         }
+        if ( !CRM_Utils_System::isDBVersionValid( $errorMessage ) ) {
+            CRM_Core_Session::setStatus( $errorMessage );
+        }
 
         $groups = array( 'Customize'    => ts( 'Customize' ),
                          'Configure'    => ts( 'Configure' ),

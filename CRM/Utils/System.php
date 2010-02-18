@@ -791,17 +791,34 @@ class CRM_Utils_System {
         static $version;
         
         if ( ! $version ) {
-            $config  = CRM_Core_Config::singleton( );
             $verFile = implode( DIRECTORY_SEPARATOR, 
                                 array(dirname(__FILE__), '..', '..', 'civicrm-version.txt') );
-            if ( $str = file_get_contents( $verFile ) ) {
+            if ( file_exists( $verFile ) ) {
+                $str     = file_get_contents( $verFile );
                 $parts   = explode( ' ', $str );
                 $version = trim( $parts[0] );
             } else {
-                CRM_Core_Error::fatal('Unable to locate civicrm-version.txt file. Make sure it exists.');
+                // svn installs don't have version.txt by default. In that case version.xml should help - 
+                $verFile = implode( DIRECTORY_SEPARATOR,
+                                    array( dirname( __FILE__ ), '..', '..', 'xml', 'version.xml' ) );
+                if ( file_exists( $verFile ) ) {
+                    $str     = file_get_contents( $verFile );
+                    $xmlObj  = simplexml_load_string( $str );
+                    $version = (string) $xmlObj->version_no;
+                }
+            }
+
+            // pattern check
+            if ( !CRM_Utils_System::isVersionFormatValid( $version ) ) {
+                CRM_Core_Error::fatal('Unknown codebase version.');
             }
         }
+
         return $version;
+    }
+
+    static function isVersionFormatValid( $version ) {
+        return preg_match("/^(\d{1,2}\.){2}(\d{1,2}|(alpha|beta)\d{1,2})(\.upgrade)?$/", $version );
     }
 
     static function getAllHeaders( ) {
@@ -1006,5 +1023,45 @@ class CRM_Utils_System {
 
         CRM_Core_Error::setCallback( );
         return $response;
+    }
+
+    static function isDBVersionValid( &$errorMessage ) 
+    {
+        require_once 'CRM/Core/BAO/Domain.php';
+        $dbVersion = CRM_Core_BAO_Domain::version( );
+
+        if ( ! $dbVersion ) {
+            // if db.ver missing
+            $errorMessage = ts( 'Version information found to be missing in database. You will need to determine the correct version corresponding to your current database state.' );
+            return false;
+        } else if ( !CRM_Utils_System::isVersionFormatValid( $dbVersion ) ) {
+            $errorMessage = ts( 'Database is marked with invalid version format. You may want to investigate this before you proceed further.' );
+            return false;
+        } else if ( stripos($dbVersion, 'upgrade') ) {
+            // if db.ver indicates a partially upgraded db
+            $upgradeUrl   = CRM_Utils_System::url( "civicrm/upgrade", "reset=1" );
+            $errorMessage = ts( 'Database check failed - the database looks to have been partially upgraded. You may want to reload the database with the backup and try the <a href=\'%1\'>upgrade process</a> again.', array( 1 => $upgradeUrl ) );
+            return false;
+        } else {
+            $codeVersion = CRM_Utils_System::version( );
+
+            // if db.ver < code.ver, time to upgrade
+            if ( version_compare($dbVersion, $codeVersion) < 0 ) {
+                $upgradeUrl   = CRM_Utils_System::url( "civicrm/upgrade", "reset=1" );
+                $errorMessage = ts( 'New codebase version detected. You might want to visit <a href=\'%1\'>upgrade screen</a> to upgrade the database.', array( 1 => $upgradeUrl ) );
+                return false;
+            }
+
+            // if db.ver > code.ver, sth really wrong
+            if ( version_compare($dbVersion, $codeVersion) > 0 ) {
+                $errorMessage = ts( 'Your database is marked with an unexpected version number: %1. The v%2 codebase may not be compatible with your database state. You will need to determine the correct version corresponding to your current database state. You may want to revert to the codebase you were using until you resolve this problem.',
+                                    array( 1 => $dbVersion, 2 => $codeVersion ) );
+                $errorMessage .= "<p>" . ts( 'OR if this is an svn install, you might want to fix version.txt file.' ) . "</p>";
+                return false;
+            }
+        }
+        // FIXME: there should be another check to make sure version is in valid format - X.Y.alpha_num
+
+        return true;
     }
 }

@@ -34,14 +34,14 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 require_once 'CRM/Case/BAO/Case.php';
 
 /**
  * This class handle case related functions
  *
  */
-class CRM_Case_Page_Tab extends CRM_Contact_Page_View 
+class CRM_Case_Page_Tab extends CRM_Core_Page 
 {
     /**
      * The action links that we need to display for the browse screen
@@ -63,19 +63,18 @@ class CRM_Case_Page_Tab extends CRM_Contact_Page_View
         $this->_id        = CRM_Utils_Request::retrieve( 'id' , 'Positive', $this );
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         $this->_context   = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+        $this->_action    = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
                
-        // contact id is not mandatory for case form. If not found, don't call
-        // parent's pre-process and proceed further.
         if ( $this->_contactId ) {
-            parent::preProcess( );
+            $this->assign( 'contactId', $this->_contactId );
+
+            // check logged in url permission
+            require_once 'CRM/Contact/Page/View.php';
+            CRM_Contact_Page_View::checkUserPermission( $this );
         } else {
-            // we would need action to proceed further.
-            $this->_action = CRM_Utils_Request::retrieve('action', 'String',
-                                                         $this, false, 'add');
             if ( $this->_action & CRM_Core_Action::VIEW ) {
                 CRM_Core_Error::fatal('Contact Id is required for view action.');
             }
-            $this->assign( 'action', $this->_action);
         }
 
         $activityTypes = CRM_Case_PseudoConstant::activityType( );
@@ -172,11 +171,12 @@ class CRM_Case_Page_Tab extends CRM_Contact_Page_View
 
         if ( $context == 'standalone' && !$contactID ) {
             $this->_action = CRM_Core_Action::ADD;
-            $this->assign('action', $this->_action );     
         } else {
             // we need to call parent preprocess only when we are viewing / editing / adding participant record
             $this->preProcess( );           
         }        
+
+        $this->assign( 'action', $this->_action);
 
         $this->setContext( );        
 

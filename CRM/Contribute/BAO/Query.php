@@ -421,7 +421,7 @@ class CRM_Contribute_BAO_Query
                 $dataType = "String";
             }
             
-            $wc = ( $op != 'LIKE' ) ? "LOWER($whereTable[where])" : "$whereTable[where]";
+            $wc = ( $op != 'LIKE' && $dataType != 'Date' ) ? "LOWER($whereTable[where])" : "$whereTable[where]";
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( $wc, $op, $value, $dataType) ;
             $query->_qill[$grouping][]  = "$whereTable[title] $op $quoteValue";            
             list( $tableName, $fieldName ) = explode( '.', $whereTable['where'], 2 );  

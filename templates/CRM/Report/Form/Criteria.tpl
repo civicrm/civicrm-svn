@@ -106,6 +106,8 @@
 	</table>
         <table class="report-layout">
             {foreach from=$filters     item=table key=tableName}
+ 	        {assign  var="filterCount" value=$table|@count}
+	        {if $colGroups.$tableName.group_title and $filterCount gte 1}</table><table class="report-layout"><tr><td colspan=3>&raquo;&nbsp;{$colGroups.$tableName.group_title}:</td></tr>{/if} 
                 {foreach from=$table       item=field key=fieldName}
                     {assign var=fieldOp     value=$fieldName|cat:"_op"}
                     {assign var=filterVal   value=$fieldName|cat:"_value"}

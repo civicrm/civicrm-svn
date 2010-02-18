@@ -27,6 +27,7 @@
 */
 
 require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
+require_once '/var/www/tests.dev.civicrm.org/public/drupal/sites/default/civicrm.settings.php';
 
 /**
  *  Base class for CiviCRM Selenium tests
@@ -39,14 +40,102 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     protected $coverageScriptUrl = 'http://tests.dev.civicrm.org/drupal/phpunit_coverage.php';
 
-  protected function setUp()
-  {
-    $this->setBrowser('*firefox');
-    $this->setBrowserUrl("http://localhost/");
-  }
+    /**
+     *  Constructor
+     *
+     *  Because we are overriding the parent class constructor, we
+     *  need to show the same arguments as exist in the constructor of
+     *  PHPUnit_Framework_TestCase, since
+     *  PHPUnit_Framework_TestSuite::createTest() creates a
+     *  ReflectionClass of the Test class and checks the constructor
+     *  of that class to decide how to set up the test.
+     *
+     *  @param  string $name
+     *  @param  array  $data
+     *  @param  string $dataName
+     */
+    function __construct($name = NULL, array $data = array(), $dataName = '', array $browser = array() ) {
+        parent::__construct($name, $data, $dataName, $browser);
+    }
 
-  protected function tearDown()
-  {
-  }
+    protected function setUp()
+    {
+
+        // "initialize" CiviCRM to avoid problems when running single tests
+        // also make sure that webtests and unittests are running off
+        // different configurations
+        // FIXME: look at it closer in second stage
+        if (isset( $config ) ) {
+            unset( $config );
+        }
+        require_once 'CRM/Core/Config.php';
+        $config =& CRM_Core_Config::singleton();
+
+        $this->setBrowser('*firefox');
+        $this->setBrowserUrl("http://tests.dev.civicrm.org/");
+        
+        require_once 'CiviUnitTestCase.php';
+        $cuts = new CiviUnitTestCase();
+        $cuts->cleanDB();
+        unset( $cuts );
+    }
+
+    protected function tearDown()
+    {
+    }
+
+    /** 
+    * Generic function to compare expected values after an api call to retrieved
+    * DB values.
+    * 
+    * @daoName  string   DAO Name of object we're evaluating.
+    * @id       int      Id of object
+    * @match    array    Associative array of field name => expected value. Empty if asserting 
+    *                      that a DELETE occurred
+    * @delete   boolean  True if we're checking that a DELETE action occurred.
+    */
+    function assertDBState( $daoName, $id, $match, $delete=false ) {
+        if ( empty( $id ) ) {
+            // adding this here since developers forget to check for an id
+            // and hence we get the first value in the db
+            $this->fail( 'ID not populated. Please fix your asserDBState usage!!!' );
+        }
+        
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $daoName) . ".php");
+        eval( '$object   =& new ' . $daoName . '( );' );
+        $object->id =  $id;
+        $verifiedCount = 0;
+        
+        // If we're asserting successful record deletion, make sure object is NOT found.
+        if ( $delete ) {
+            if ( $object->find( true ) ) {
+                $this->fail("Object not deleted by delete operation: $daoName, $id");
+            }
+            return;
+        }
+
+        // Otherwise check matches of DAO field values against expected values in $match.
+        if ( $object->find( true ) ) {
+            $fields =& $object->fields( );
+            foreach ( $fields as $name => $value ) {
+                  $dbName = $value['name'];
+                  if ( isset( $match[$name] ) ) {
+                    $verifiedCount++;
+                    $this->assertEquals( $object->$dbName, $match[$name] );
+                  } 
+                  else if ( isset( $match[$dbName] ) ) {
+                    $verifiedCount++;
+                    $this->assertEquals( $object->$dbName, $match[$dbName] );
+                  }
+            }
+        } else {
+            $this->fail("Could not retrieve object: $daoName, $id");
+        }
+        $object->free( );
+        $matchSize = count( $match );
+        if ( $verifiedCount != $matchSize ) {
+            $this->fail("Did not verify all fields in match array: $daoName, $id. Verified count = $verifiedCount. Match array size = $matchSize");
+        }
+    }
 
 }

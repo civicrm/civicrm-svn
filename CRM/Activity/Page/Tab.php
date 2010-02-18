@@ -34,13 +34,13 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 
 /**
  * Main page for viewing activities
  *
  */
-class CRM_Activity_Page_Tab extends CRM_Contact_Page_View 
+class CRM_Activity_Page_Tab extends CRM_Core_Page 
 {
     /**
      * Browse all activities for a particular contact
@@ -129,17 +129,15 @@ class CRM_Activity_Page_Tab extends CRM_Contact_Page_View
      */
     function preProcess()
     {
-        parent::preProcess();
+        $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $this->assign( 'contactId', $this->_contactId );
 
-        // we need to retrieve privacy preferences
-        // to (un)display the 'Send an Email' link
-        $params   = array( );
-        $defaults = array( );
-        $ids      = array( );
-        $params['id'] = $params['contact_id'] = $this->_contactId;
-        CRM_Contact_BAO_Contact::retrieve($params, $defaults, $ids);
-        CRM_Contact_BAO_Contact::resolveDefaults($defaults);
-        $this->assign($defaults);
+        // check logged in url permission
+        require_once 'CRM/Contact/Page/View.php';
+        CRM_Contact_Page_View::checkUserPermission( $this );
+        
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        $this->assign( 'action', $this->_action);
 
         // also create the form element for the activity links box
         $controller = new CRM_Core_Controller_Simple( 'CRM_Activity_Form_ActivityLinks',
@@ -171,9 +169,9 @@ class CRM_Activity_Page_Tab extends CRM_Contact_Page_View
         $context    = CRM_Utils_Request::retrieve('context', 'String', $this );
         $contactId  = CRM_Utils_Request::retrieve('cid', 'Positive', $this );
         $action     = CRM_Utils_Request::retrieve('action', 'String', $this );
-        $activityId = CRM_Utils_Request::retrieve('id', 'Positive', $this );
+        $this->_id  = CRM_Utils_Request::retrieve('id', 'Positive', $this );
         
-        if ( $context == 'standalone' || ( ! $contactId && ( $action != CRM_Core_Action::DELETE ) && !$activityId ) ) {
+        if ( $context == 'standalone' || ( ! $contactId && ( $action != CRM_Core_Action::DELETE ) && !$this->_id ) ) {
             $this->_action = CRM_Core_Action::ADD;
             $this->assign('action', $this->_action );
         } else {

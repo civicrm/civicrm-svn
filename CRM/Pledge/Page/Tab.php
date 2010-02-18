@@ -34,9 +34,9 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 
-class CRM_Pledge_Page_Tab extends CRM_Contact_Page_View 
+class CRM_Pledge_Page_Tab extends CRM_Core_Page 
 {
     /**
      * This function is called when action is browse
@@ -90,7 +90,30 @@ class CRM_Pledge_Page_Tab extends CRM_Contact_Page_View
         
         return $controller->run( );
     }
-    
+
+    function preProcess( ) {
+        $context       = CRM_Utils_Request::retrieve('context', 'String', $this );
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        $this->_id     = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        
+        if ( $context == 'standalone' ) {
+            $this->_action = CRM_Core_Action::ADD;
+        } else {
+            $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+            $this->assign( 'contactId', $this->_contactId );
+
+            // check logged in url permission
+            require_once 'CRM/Contact/Page/View.php';
+            CRM_Contact_Page_View::checkUserPermission( $this );
+        }      
+
+        $this->assign('action', $this->_action );     
+        
+        if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit pledges' ) ) {
+            $this->_permission = CRM_Core_Permission::VIEW; // demote to view since user does not have edit pledge rights
+            $this->assign( 'permission', 'view' );
+        }
+    }    
     
     /**
      * This function is the main function that is called when the page loads, it decides the which action has to be taken for the page.
@@ -100,21 +123,7 @@ class CRM_Pledge_Page_Tab extends CRM_Contact_Page_View
      */
     function run( ) 
     {
-        $contactID  = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullArray );
-        $context    = CRM_Utils_Request::retrieve('context', 'String', $this );
-        
-        if ( $context == 'standalone' && !$contactID ) {
-            $this->_action = CRM_Core_Action::ADD;
-            $this->assign('action', $this->_action );     
-        } else {
-            // we should call contact view, preprocess only for pledge in contact summary
-            $this->preProcess( );           
-        }      
-        
-        if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit pledges' ) ) {
-            $this->_permission = CRM_Core_Permission::VIEW; // demote to view since user does not have edit pledge rights
-            $this->assign( 'permission', 'view' );
-        }
+        $this->preProcess( );
         
         // check if we can process credit card registration
         $processors = CRM_Core_PseudoConstant::paymentProcessor( false, false,

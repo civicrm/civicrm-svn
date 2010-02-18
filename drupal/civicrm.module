@@ -388,7 +388,14 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
 
         // did civicrm generate this page, or is it via a user hook?
         if ( civicrm_on_user_page( ) ) {
-            return civicrm_register_data($edit, $user, $category, false);
+            $urlVar = $config->userFrameworkURLVar;
+            $path   = isset( $_GET[$urlVar] ) ? $_GET[$urlVar] : '';
+            $doNotProcess = false;
+            if ( strpos( $path, 'user/register' ) === 0 || 
+                 strpos( $path, 'admin/user/user/create' ) === 0 ) {
+                $doNotProcess = true;
+            }
+            return civicrm_register_data( $edit, $user, $category, false, $doNotProcess );
         } else {
             require_once 'CRM/Core/BAO/UFMatch.php';
             CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Drupal',
@@ -566,6 +573,16 @@ function civicrm_form_data($edit, &$user, $category, $reset, $doNotProcess = fal
         CRM_Core_Error::fatal( ts( 'The requested Profile (gid=%1) is disabled OR it is not configured to be used for \'Profile\' listings in its Settings OR there is no Profile with that ID OR you do not have permission to access this profile. Please contact the site administrator if you need assistance.',
                                    array( 1 => $profileID )));
     }
+    
+    // build edit url and replaceusercontext CRM-5846
+    $config = CRM_Core_Config::singleton( );
+    $urlVar = $config->userFrameworkURLVar;    
+    $path   = isset( $_GET[$urlVar] ) ? $_GET[$urlVar] : '';
+    $url    = $path ;
+
+    require_once "CRM/Core/Session.php";
+    $session = CRM_Core_Session::singleton( );
+    $session->replaceUserContext( CRM_Utils_System::url( $url ) );
     
     if ( $html ) {
         $html = civicrm_add_jquery( $html );

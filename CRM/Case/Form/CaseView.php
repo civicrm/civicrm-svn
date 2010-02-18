@@ -108,7 +108,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         require_once 'CRM/Contact/BAO/Contact.php';
                
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case', 
-               "action=view&reset=1&id={$this->_caseID}&cid={$this->_contactID}" );
+               "action=view&reset=1&id={$this->_caseID}&cid={$this->_contactID}&context=home" );
 
         $title = CRM_Contact_BAO_Contact::displayName( $this->_contactID ) . ' - ' . $caseType;
         
@@ -120,7 +120,6 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                                $this->_contactID,
                                null
                                );
-        
     }
 
     /**
@@ -148,8 +147,6 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $caseRoles    = $xmlProcessor->get( $this->_caseType, 'CaseRoles' );
         $reports      = $xmlProcessor->get( $this->_caseType, 'ActivitySets' );
 
-        $xmlProcessor  = new CRM_Case_XMLProcessor_Process( );
-        $caseRoles     = $xmlProcessor->get( $this->_caseType, 'CaseRoles' );
         //adding case manager.CRM-4510.
         $managerRoleId = $xmlProcessor->getCaseManagerRoleId( $this->_caseType );
         if ( !empty($managerRoleId) ) {
@@ -271,7 +268,6 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                                   )
                           );
     }
-
 
     /**
      * Process the form

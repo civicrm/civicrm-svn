@@ -121,7 +121,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         if ( !( CRM_Utils_Array::value( 'skipRecentView', $params ) || $invalid || $duplicate ) ) {
             require_once 'CRM/Utils/Recent.php';
             $url = CRM_Utils_System::url( 'civicrm/contact/view/rel', 
-                                          "action=view&reset=1&id={$relationship->id}&cid={$relationship->contact_id_a}" );
+                                          "action=view&reset=1&id={$relationship->id}&cid={$relationship->contact_id_a}&context=home" );
             
             $title = CRM_Contact_BAO_Contact::displayName( $relationship->contact_id_a ) . ' (' . 
                      CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_RelationshipType', 

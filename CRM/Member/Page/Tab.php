@@ -34,10 +34,10 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 require_once 'CRM/Member/BAO/Membership.php';
 
-class CRM_Member_Page_Tab extends CRM_Contact_Page_View {
+class CRM_Member_Page_Tab extends CRM_Core_Page {
 
     /**
      * The action links that we need to display for the browse screen
@@ -177,7 +177,30 @@ class CRM_Member_Page_Tab extends CRM_Contact_Page_View {
         $controller->set( 'cid', $this->_contactId ); 
         return $controller->run( );
     }
+    
+    function preProcess( ) {
+        $context       = CRM_Utils_Request::retrieve('context', 'String', $this );
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        $this->_id     = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        
+        if ( $context == 'standalone' ) {
+            $this->_action = CRM_Core_Action::ADD;
+        } else {
+            $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+            $this->assign( 'contactId', $this->_contactId );
 
+            // check logged in url permission
+            require_once 'CRM/Contact/Page/View.php';
+            CRM_Contact_Page_View::checkUserPermission( $this );
+        }      
+
+        $this->assign('action', $this->_action );     
+        
+        if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit memberships' ) ) {
+            $this->_permission = CRM_Core_Permission::VIEW; // demote to view since user does not have edit membership rights
+            $this->assign( 'permission', 'view' );
+        }
+    }
 
    /**
      * This function is the main function that is called when the page loads, it decides the which action has to be taken for the page.
@@ -187,23 +210,8 @@ class CRM_Member_Page_Tab extends CRM_Contact_Page_View {
      */
     function run( ) 
     {
-        $contactID  = CRM_Utils_Request::retrieve('cid', 'Positive', CRM_Core_DAO::$_nullArray );
-        $context    = CRM_Utils_Request::retrieve('context', 'String', $this );
-        
-        if ( $context == 'standalone' && !$contactID ) {
-            $this->_action = CRM_Core_Action::ADD;
-            $this->assign('action', $this->_action );     
-        } else {
-            // we should call contact view, preprocess only for membership in contact summary
-            if ( $this->_action != CRM_Core_Action::VIEW ) {
-                $this->preProcess( );
-            }           
-        }        
+        $this->preProcess( );
 
-        if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit memberships' ) ) {
-            $this->_permission = CRM_Core_Permission::VIEW; // demote to view since user does not have edit membership rights
-            $this->assign( 'permission', 'view' );
-        }
         // check if we can process credit card membership
         $processors = CRM_Core_PseudoConstant::paymentProcessor( false, false,
                                                                  "billing_mode IN ( 1, 3 )" );

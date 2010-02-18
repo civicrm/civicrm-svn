@@ -34,9 +34,9 @@
  *
  */
 
-require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Core/Page.php';
 
-class CRM_Contact_Page_View_GroupContact extends CRM_Contact_Page_View {
+class CRM_Contact_Page_View_GroupContact extends CRM_Core_Page {
     
     /**
      * This function is called when action is browse
@@ -88,6 +88,18 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Contact_Page_View {
 
     }
 
+    function preProcess() {
+        $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+        $this->assign( 'contactId', $this->_contactId );
+
+        // check logged in url permission
+        require_once 'CRM/Contact/Page/View.php';
+        CRM_Contact_Page_View::checkUserPermission( $this );
+        
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        $this->assign( 'action', $this->_action);
+    }    
+
     /**
      * This function is the main function that is called
      * when the page loads, it decides the which action has
@@ -99,11 +111,7 @@ class CRM_Contact_Page_View_GroupContact extends CRM_Contact_Page_View {
     function run( ) {
         $this->preProcess( );
 
-        $action = CRM_Utils_Request::retrieve( 'action', 'String',
-                                               CRM_Core_DAO::$_nullObject,
-                                               false, 'browse' );
-
-        if ( $action == CRM_Core_Action::DELETE ) {
+        if ( $this->_action == CRM_Core_Action::DELETE ) {
             $groupContactId = CRM_Utils_Request::retrieve( 'gcid', 'Positive',
                                                            CRM_Core_DAO::$_nullObject, true );
             $status         = CRM_Utils_Request::retrieve( 'st', 'String',

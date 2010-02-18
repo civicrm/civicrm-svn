@@ -275,7 +275,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             require_once 'CRM/Event/PseudoConstant.php';
             require_once 'CRM/Contact/BAO/Contact.php';
             $url = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
-                                          "action=view&reset=1&id={$participant->id}&cid={$participant->contact_id}" );
+                                          "action=view&reset=1&id={$participant->id}&cid={$participant->contact_id}&context=home" );
             
             $participantRoles = CRM_Event_PseudoConstant::participantRole();
             $eventTitle = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $participant->event_id, 'title' );

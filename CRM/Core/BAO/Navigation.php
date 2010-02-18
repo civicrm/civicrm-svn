@@ -184,47 +184,73 @@ class CRM_Core_BAO_Navigation extends CRM_Core_DAO_Navigation
     /**
      * Get formatted menu list
      * 
-     * @param array   $navigations navigation array
-     * @param boolean $flatList if result array is flat array or associated array
-     * @param int     $parentID  parent id
-     * @param string  $separtor, separtor to show children
-     *
      * @return array $navigations returns associated array
      * @static
      */
-    static function getNavigationList( &$navigations, $parentID = null, $separtor = '&nbsp;&nbsp;' ) 
+    static function getNavigationList( ) 
     {
-        $whereClause = " parent_id IS NULL";
-        if (  $parentID ) {
-            $whereClause = " parent_id = {$parentID}"; 
-            $separtor .= $separtor;
-        } else {
-            $separator = '';
-        }
+        $cacheKeyString = "navigationList ";
+        $whereClause    = '';
 
-        $domainID = CRM_Core_Config::domainID( );
-        $query = "SELECT id, label, parent_id, weight, is_active, name FROM civicrm_navigation WHERE {$whereClause} AND domain_id = $domainID ORDER BY weight, parent_id ASC";
-        $navigation = CRM_Core_DAO::executeQuery( $query );
-        
         $config = CRM_Core_Config::singleton( );
-        while ( $navigation->fetch() ) {
-            // CRM-5336
-            if ( $config->userFramework == 'Joomla' &&  $navigation->name == 'Access Control' ) {
-                continue;
-            }
-            if ( !$navigation->parent_id ) {
-                $label = "{$navigation->label}";
-            } else {
-                $label = "{$separtor}{$navigation->label}";
-            }
-
-            $navigations[$navigation->id] = $label;
-            self::getNavigationList( $navigations, $navigation->id, $separtor );
+        if ( $config->userFramework == 'Joomla' ) {
+            $whereClause = " AND name NOT IN ('Access Control') ";
+            $cacheKeyString .= "_1";
         }
 
-        return $navigations;           
+        // check if we can retrieve from database cache
+        require_once 'CRM/Core/BAO/Cache.php'; 
+        $navigations =& CRM_Core_BAO_Cache::getItem( 'navigation', $cacheKeyString );
+
+        if ( ! $navigations ) {
+            $domainID  = CRM_Core_Config::domainID( );
+            $query     = "
+SELECT id, label, parent_id, weight, is_active, name 
+FROM civicrm_navigation WHERE domain_id = $domainID {$whereClause} ORDER BY parent_id, weight ASC";
+            $result    = CRM_Core_DAO::executeQuery( $query );
+
+            $pidGroups = array( );
+            while ( $result->fetch( ) ) {
+                $pidGroups[$result->parent_id][$result->label] = $result->id;
+            }
+            
+            foreach ( $pidGroups[''] as $label => $val ) {
+                $pidGroups[''][$label] = self::_getNavigationValue($val, $pidGroups);
+            }
+            
+            $navigations = array();
+            self::_getNavigationLabel( $pidGroups[''], $navigations );
+            
+            CRM_Core_BAO_Cache::setItem( $navigations, 'navigation', $cacheKeyString );
+        }
+        return $navigations;
     }
-        
+
+    // helper function for getNavigationList( )
+    static function _getNavigationLabel( $list, &$navigations, $separator = '' ) {
+        foreach ( $list as $label => $val ) {
+            if ( $label == 'navigation_id' ) continue;
+            $navigations[is_array( $val ) ? $val['navigation_id'] : $val] = "{$separator}{$label}";
+            if ( is_array( $val ) ) {
+                self::_getNavigationLabel( $val, $navigations, $separator . '&nbsp;&nbsp;&nbsp;&nbsp;' );
+            }
+        }
+    }
+
+    // helper function for getNavigationList( )
+    static function _getNavigationValue( $val, &$pidGroups ) {
+        if ( array_key_exists( $val, $pidGroups ) ) {
+            $list = array( 'navigation_id' => $val );
+            foreach ( $pidGroups[$val] as $label => $id ) {
+                $list[$label] = self::_getNavigationValue( $id, $pidGroups );
+            }
+            unset($pidGroups[$val]);
+            return $list;
+        } else {
+            return $val;
+        }
+    }
+
     /**
      * Function to build navigation tree
      * 
@@ -552,6 +578,9 @@ ORDER BY parent_id, weight";
     {
         $query = "UPDATE civicrm_preferences SET navigation = NULL WHERE contact_id IS NOT NULL";
         CRM_Core_DAO::executeQuery( $query );
+
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_BAO_Cache::deleteGroup( 'navigation' );
     }          
 
     /**

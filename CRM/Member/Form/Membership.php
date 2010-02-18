@@ -440,15 +440,19 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         // Retrieve the name and email of the contact - this will be the TO for receipt email
         if ( $this->_contactID ) {
             require_once 'CRM/Contact/BAO/Contact/Location.php';
-            list( $this->_contributorDisplayName, 
-                  $this->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
+            list( $this->_memberDisplayName, 
+                  $this->_memberEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
         
-            $this->assign( 'emailExists', $this->_contributorEmail );
+            $this->assign( 'emailExists', $this->_memberEmail );
+            $this->assign( 'displayName', $this->_memberDisplayName );
         }
+        
         $this->addFormRule(array('CRM_Member_Form_Membership', 'formRule'), $this );
+        
         require_once "CRM/Core/BAO/Preferences.php";
         $mailingInfo =& CRM_Core_BAO_Preferences::mailingPreferences();
         $this->assign( 'outBound_option', $mailingInfo['outBound_option'] );
+        
         parent::buildQuickForm( );
     }
     
@@ -614,13 +618,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
 
         $params['contact_id'] = $this->_contactID;
         
-        // we need to retrieve email address
-        if ( $this->_context == 'standalone' && CRM_Utils_Array::value( 'send_receipt', $formValues ) ) {
-            require_once 'CRM/Contact/BAO/Contact/Location.php';
-            list( $this->_contributorDisplayName, 
-                  $this->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
-        }
-        
         $fields = array( 
                         'status_id',
                         'source',
@@ -689,7 +686,8 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $ids['userId'] );
 
         if ( CRM_Utils_Array::value( 'record_contribution', $formValues ) ) {
-            $recordContribution = array( 'total_amount', 'contribution_type_id', 'payment_instrument_id', 'trxn_id', 'contribution_status_id', 'check_number' );
+            $recordContribution = array( 'total_amount', 'contribution_type_id', 'payment_instrument_id', 
+                                         'trxn_id', 'contribution_status_id', 'check_number' );
             
             foreach ( $recordContribution as $f ) {
                 $params[$f] = CRM_Utils_Array::value( $f, $formValues );
@@ -727,7 +725,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             
             // set email for primary location.
             $fields["email-Primary"] = 1;
-            $formValues["email-5"]   = $formValues["email-Primary"] = $this->_contributorEmail;
+            $formValues["email-5"]   = $formValues["email-Primary"] = $this->_memberEmail;
             $params['register_date'] = $now;
             
             // now set the values for the billing location.
@@ -780,7 +778,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             // so we copy stuff over to first_name etc. 
             $paymentParams = $this->_params;
             if ( CRM_Utils_Array::value( 'send_receipt', $this->_params ) ) {
-                $paymentParams['email'] = $this->_contributorEmail;
+                $paymentParams['email'] = $this->_memberEmail;
             }
             
             require_once 'CRM/Core/Payment/Form.php';
@@ -918,10 +916,9 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                 $members[] = array( 'member_test', '=', 1, 0, 0 ); 
             } 
             CRM_Core_BAO_UFGroup::getValues( $this->_contactID, $customFields, $customValues , false, $members );
-            if( $this->_mode ) {
+            if ( $this->_mode ) {
                 if ( CRM_Utils_Array::value( 'billing_first_name', $this->_params ) ) {
                     $name = $this->_params['billing_first_name'];
-                    
                 }
                 
                 if ( CRM_Utils_Array::value( 'billing_middle_name', $this->_params ) ) {
@@ -979,27 +976,27 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                     'valueName' => 'membership_offline_receipt',
                     'contactId' => $this->_contactID,
                     'from'      => $receiptFrom,
-                    'toName'    => $this->_contributorDisplayName,
-                    'toEmail'   => $this->_contributorEmail,
+                    'toName'    => $this->_memberDisplayName,
+                    'toEmail'   => $this->_memberEmail,
                     'isTest'    => (bool) ($this->_action & CRM_Core_Action::PREVIEW),
                 )
             );
         }
         
         if ( ( $this->_action & CRM_Core_Action::UPDATE ) ) {
-            $statusMsg = ts('Membership for %1 has been updated.', array(1 => $this->_contributorDisplayName));
+            $statusMsg = ts('Membership for %1 has been updated.', array(1 => $this->_memberDisplayName));
             if ( $endDate ) {
                 $endDate=CRM_Utils_Date::customFormat($endDate);
                 $statusMsg .= ' '.ts('The membership End Date is %1.', array(1 => $endDate));
             }
             if ( $receiptSend ) {
-                $statusMsg .= ' '.ts('A confirmation and receipt has been sent to %1.', array(1 => $this->_contributorEmail));
+                $statusMsg .= ' '.ts('A confirmation and receipt has been sent to %1.', array(1 => $this->_memberEmail));
             }
         } elseif ( ( $this->_action & CRM_Core_Action::ADD ) ) {
             require_once 'CRM/Core/DAO.php';
             $memType = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
                                                     $params['membership_type_id'] );
-            $statusMsg = ts('%1 membership for %2 has been added.', array(1 => $memType, 2 => $this->_contributorDisplayName));
+            $statusMsg = ts('%1 membership for %2 has been added.', array(1 => $memType, 2 => $this->_memberDisplayName));
             
             //get the end date from calculated dates. 
             $endDate = ( $endDate ) ? $endDate : CRM_Utils_Array::value( 'end_date', $calcDates ); 
@@ -1009,7 +1006,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                 $statusMsg .= ' '.ts('The new membership End Date is %1.', array(1 => $endDate));
             }
             if ( $receiptSend && $mailSend ) {
-                 $statusMsg .= ' '.ts('A membership confirmation and receipt has been sent to %1.', array(1 => $this->_contributorEmail));
+                 $statusMsg .= ' '.ts('A membership confirmation and receipt has been sent to %1.', array(1 => $this->_memberEmail));
             }
         }
         CRM_Core_Session::setStatus($statusMsg);

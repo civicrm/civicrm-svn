@@ -83,7 +83,9 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
 });
 </script>
 {/literal}
-
+{if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
+    <div class="crm-submit-buttons">{$form.buttons.html}</div>
+{/if}
     <fieldset>
     <legend>
        {if $single eq false}
@@ -255,7 +257,7 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
              {/if}
         {/if} {* End Delete vs. Add / Edit action *}
         <tr class="buttons">
-            <td>{$form.buttons.html}</td>
+            <td>{if $action eq 4 or $action eq 8 or $action eq 32768}{$form.buttons.html}{/if}</td>
             <td>
             {if $action eq 4 && $activityTName neq 'Inbound Email'}
                 <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=activity"}" class="edit button" title="{ts}Edit{/ts}">
@@ -269,6 +271,11 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
         </tr> 
         </table>   
       </fieldset> 
+
+{if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
+  <br />    
+  <div class="crm-submit-buttons">{$form.buttons.html}</div>
+{/if}
 
 {if $form.case_select}
 <div id="fileOnCaseDialog">

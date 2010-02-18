@@ -338,7 +338,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             require_once 'CRM/Member/PseudoConstant.php';
             require_once 'CRM/Contact/BAO/Contact.php';
             $url = CRM_Utils_System::url( 'civicrm/contact/view/membership', 
-                                          "action=view&reset=1&id={$membership->id}&cid={$membership->contact_id}" );
+                                          "action=view&reset=1&id={$membership->id}&cid={$membership->contact_id}&context=home" );
             
             $membershipTypes = CRM_Member_PseudoConstant::membershipType();
             $title = CRM_Contact_BAO_Contact::displayName( $membership->contact_id ) . ' - ' . ts('Membership Type:') . ' ' . $membershipTypes[$membership->membership_type_id];
@@ -473,9 +473,14 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         
         $results = null;
         //delete activity record
+        $activityTypes = CRM_Core_Pseudoconstant::activityType( true, false, false, 'name' );
+        
         require_once "CRM/Activity/BAO/Activity.php";
         $params = array( 'source_record_id' => $membershipId,
-                         'activity_type_id' => 7 );// activity type id for membership
+                         'activity_type_id' => array( array_search( 'Membership Signup', $activityTypes ),
+                                                      array_search( 'Membership Renewal', $activityTypes )
+                                                    ) 
+                       );
 
         CRM_Activity_BAO_Activity::deleteActivity( $params );
 

@@ -199,6 +199,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
         $this->_populateDB();
     }
 
+
+    public function cleanDB() {
+        $this->_dbconn = $this->getConnection();
+        $this->_populateDB();
+    }
+
     /**
      *  Common teardown functions for all unit tests
      */

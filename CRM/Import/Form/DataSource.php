@@ -347,7 +347,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
      * @access public
      */
     public function getTitle( ) {
-        return "Choose Data Source";
+        return ts('Choose Data Source');
     }
     
 }

@@ -190,11 +190,7 @@ class CRM_Report_Form_Contact_Log extends CRM_Report_Form {
                     }
 
                     if ( ! empty( $clause ) ) {
-                        if ( CRM_Utils_Array::value( 'group', $field ) ) {
-                            $clauses[ ] = $this->whereGroupClause( $clause );
-                        } else {
-                            $clauses[ ] = $clause;
-                        }
+                        $clauses[ ] = $clause;
                     }
                 }
             }
