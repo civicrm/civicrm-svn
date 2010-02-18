@@ -266,6 +266,11 @@ class CRM_Contribute_Page_Tab extends CRM_Contact_Page_View
             $url = CRM_Utils_System::url( 'civicrm/contribute',
                                           'reset=1' );
             break;
+
+        case 'pledgeDashboard':
+            $url = CRM_Utils_System::url( 'civicrm/pledge',
+                                          'reset=1' );
+            break;
             
         case 'contribution':
             $honorId = CRM_Utils_Request::retrieve( 'honorId', 'Positive', $this, false );

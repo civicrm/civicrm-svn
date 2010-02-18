@@ -26,6 +26,7 @@
 {if $action eq 2 } {* update *}            
     {include file="CRM/Pledge/Form/Payment.tpl"}
 {else}
+{if $context eq 'dashboard'}{assign var='context' value='pledgeDashboard'}{/if}
 <table class="nestedSelector">
   <tr class="columnheader">
     <th>{ts}Scheduled Amount{/ts}</th>

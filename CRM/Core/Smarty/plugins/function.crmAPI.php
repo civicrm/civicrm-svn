@@ -53,6 +53,7 @@ function smarty_function_crmAPI( $params, &$smarty ) {
         return;
     }
     // trap all fatal errors
+    require_once 'CRM/Utils/REST.php';
     CRM_Core_Error::setCallback( array( 'CRM_Utils_REST', 'fatal' ) );
     unset ($params ['entity']);
     unset ($params ['method']);
@@ -74,7 +75,7 @@ function smarty_function_crmAPI( $params, &$smarty ) {
         $smarty->trigger_error("assign: missing 'var' parameter");
         return;
     }
-
+    
     $smarty->assign($params["var"],$result);
 }
 

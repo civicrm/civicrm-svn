@@ -787,7 +787,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                                                    "reset=1&context=customfield&id={$field->id}",
                                                                    false, null, false );                
                
-                $qf->addRule($elementName."_id", ts('Select a valid contact for %1.', array(1 => $label)), 'validContact' );
+                $actualElementValue = $qf->_submitValues[ $elementName .'_id'];    
+                $qf->addRule($elementName, ts('Select a valid contact for %1.', array(1 => $label)), 'validContact', $actualElementValue );
             } else {
                 $customUrls[$elementName] = CRM_Utils_System::url( "civicrm/ajax/auto",
                                                                    "reset=1&ogid={$field->option_group_id}&cfid={$field->id}",
@@ -1730,6 +1731,34 @@ SELECT label, value
 
             require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::customFieldOptions( $field['id'], $options );
+        }
+    }
+
+    static function getCustomFieldID( $fieldLabel, $groupTitle = null ) {
+        $params = array( 1 => array( $fieldLabel, 'String' ) );
+        if ( $groupTitle ) {
+            $params[2] = array( $groupTitle, 'String' );
+            $sql = "
+SELECT     f.id
+FROM       civicrm_custom_field f
+INNER JOIN civicrm_custom_group g ON f.custom_group_id = g.id
+WHERE      f.label = %1
+AND        g.title = %2
+";
+        } else {
+            $sql = "
+SELECT     f.id
+FROM       civicrm_custom_field f
+WHERE      f.label = %1
+";
+        }
+
+        $dao = CRM_Core_DAO::executeQuery( $sql, $params );
+        if ( $dao->fetch( ) &&
+             $dao->N == 1 ) {
+            return $dao->id;
+        } else {
+            return null;
         }
     }
 

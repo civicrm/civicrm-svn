@@ -184,10 +184,18 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
 
         $this->_contactID 	   = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         $this->_mode           = CRM_Utils_Request::retrieve( 'mode', 'String', $this );
-        $this->_participantId  = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
         $this->_context        = CRM_Utils_Request::retrieve('context', 'String', $this );
         $this->assign('context', $this->_context );
         
+        // check the current path, if search based, then dont get participantID
+        // CRM-5792
+        $path = CRM_Utils_System::currentPath( );
+        if ( strpos( $path, 'civicrm/contact/search' ) === 0 ) {
+            $this->_participantId = null;
+        } else { 
+            $this->_participantId  = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        }
+
 		// get the option value for custom data type 	
 		$this->_roleCustomDataTypeID      = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantRole', 'name' );
 		$this->_eventNameCustomDataTypeID = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantEventName', 'name' );
@@ -264,7 +272,6 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
        
         //check the mode when this form is called either single or as
         //search task action
-        
         if ( $this->_participantId || $this->_contactID || $this->_context == 'standalone') {
             $this->_single = true;
             $this->assign( 'urlPath'   , 'civicrm/contact/view/participant' );
@@ -746,17 +753,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
               array_search( 'Failed', CRM_Contribute_PseudoConstant::contributionStatus(null, 'name'))) ) {
             $errorMsg['contribution_status_id'] = ts( "Please select a valid payment status before updating." );
         }
-        if ( $self->_mode && 
-             CRM_Utils_Array::value( 'priceSetId', $values ) &&
-             !CRM_Utils_System::isNull( $self->_values['fee']['fields'] ) ) {
-            $lineItem = array( );
-            require_once "CRM/Price/BAO/Set.php";
-            CRM_Price_BAO_Set::processAmount( $self->_values['fee']['fields'], $values, $lineItem );
-            if ($values['amount'] < 0) {
-                $errorMsg['_qf_default'] = ts( "Event Fee(s) can not be less than zero. Please select the options accordingly" );
-            }
-        }
-
+        
         // do the amount validations.
         if ( !CRM_Utils_Array::value( 'total_amount', $values ) && empty( $self->_values['line_items'] ) ) {
             if ( $priceSetId = CRM_Utils_Array::value( 'priceSetId', $values ) ) {

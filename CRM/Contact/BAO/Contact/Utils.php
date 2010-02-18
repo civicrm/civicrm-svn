@@ -648,4 +648,90 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
         return $contactLinks;
     }
     
+    /**
+     * This function retrieve component related contact information.
+     *
+     * @param array  $componentIds     array of component Ids.
+     * @param array  $returnProperties array of return elements.
+     *
+     * @return $contactDetails array of contact info.
+     * @static
+     */
+    static function contactDetails( $componentIds, $componentName, $returnProperties = array( ) ) 
+    {
+        $contactDetails = array( );
+        if ( empty( $componentIds ) || 
+             !in_array( $componentName, array( 'CiviContribute', 'CiviMember', 'CiviEvent' ) ) ) {
+            return $contactDetails;
+        }
+        
+        if ( empty( $returnProperties ) ) {
+            require_once 'CRM/Core/BAO/Preferences.php';
+            $autocompleteContactSearch = CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' );
+            $returnProperties = array_fill_keys( array_merge( array( 'sort_name'), 
+                                                              array_keys( $autocompleteContactSearch ) ), 1 );
+        }
+        
+        $compTable = null;
+        if ( $componentName ==  'CiviContribute' ) {
+            $compTable = 'civicrm_contribution';
+        } elseif ( $componentName == 'CiviMember' ) {
+            $compTable = 'civicrm_membership';
+        } else {
+            $compTable = 'civicrm_participant';
+        }
+        
+        $select = $from = array( );
+        foreach ( $returnProperties as $property => $ignore ) {
+            $value = ( in_array( $property, array( 'city', 'street_address' ) ) ) ? 'address' : $property;
+            switch ( $property ) {
+            case 'sort_name' :
+                $select[] = "$property as $property";
+                $from[$value] = "INNER JOIN civicrm_contact contact ON ( contact.id = $compTable.contact_id )"; 
+                break;
+                
+            case 'email' :
+            case 'phone' :
+            case 'city' :
+            case 'street_address' :
+                $select[] = "$property as $property";
+                $from[$value] = "LEFT JOIN civicrm_{$value} {$value} ON ( contact.id = {$value}.contact_id AND {$value}.is_primary = 1 ) ";
+                break;
+                
+            case 'country':
+            case 'state_province':
+                $select[] = "{$property}.name as $property";
+                if ( !in_array( 'address', $from ) ) {
+                    $from['address'] = 'LEFT JOIN civicrm_address address ON ( contact.id = address.contact_id AND address.is_primary = 1) ';
+                }
+                $from[$value] = " LEFT JOIN civicrm_{$value} {$value} ON ( address.{$value}_id = {$value}.id  ) ";
+                break;
+            }
+        }
+        
+        //finally retrieve contact details.
+        if ( !empty( $select ) && !empty( $from ) ) {
+            $fromClause   = implode( ' ' , $from   );
+            $selectClause = implode( ', ', $select );
+            $whereClause  = "{$compTable}.id IN (" . implode( ',',  $componentIds ) . ')';  
+            
+            $query = "
+  SELECT  contact.id as contactId, $compTable.id as componentId, $selectClause 
+    FROM  $compTable as $compTable $fromClause 
+   WHERE  $whereClause
+Group By  componentId";
+            
+            $contact = CRM_Core_DAO::executeQuery( $query );
+            while ( $contact->fetch( ) ) {
+                $contactDetails[$contact->componentId]['contact_id'] = $contact->contactId;
+                foreach ( $returnProperties as $property => $ignore ) {
+                    $contactDetails[$contact->componentId][$property] = $contact->$property;
+                }
+            }
+            $contact->free( );
+        }
+        
+        return $contactDetails;
+    }
+    
 }

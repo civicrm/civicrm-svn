@@ -63,18 +63,29 @@ class CRM_Report_Utils_Get {
             $to   = substr($to,   0, 8 );
         }
 
-        if ( !($from || $to) ) {
+        if ( ! ( $from || $to ) ) {
             return false;
         } else if ( $from || $to || $relative ) {
             // unset other criteria
             self::unsetFilters( $defaults );
         }
 
-        $dateFrom = CRM_Utils_Date::setDateDefaults($from);
-        $dateTo   = CRM_Utils_Date::setDateDefaults($to);
+        if ( $from !== null ) {
+            $dateFrom = CRM_Utils_Date::setDateDefaults( $from );
+            if ( $dateFrom !== null &&
+                 ! empty( $dateFrom[0] ) ) {
+                $defaults["{$fieldName}_from"] = $dateFrom[0];        
+            }
+        }
 
-        $defaults["{$fieldName}_from"] = $dateFrom[0];        
-        $defaults["{$fieldName}_to"]   = $dateTo[0];
+        if ( $to !== null ) {
+            $dateTo   = CRM_Utils_Date::setDateDefaults( $to );
+            if ( $dateTo !== null &&
+                 ! empty( $dateTo[0] ) ) {
+                $defaults["{$fieldName}_to"]   = $dateTo[0];
+            }
+        }
+
     }
 
     static function stringParam( $fieldName, &$field, &$defaults ) {
@@ -123,8 +134,12 @@ class CRM_Report_Utils_Get {
             if ( $minValue !== null ||
                  $maxValue !== null ) {
                 self::unsetFilters( $defaults );
-                $defaults["{$fieldName}_min"] = $minValue;
-                $defaults["{$fieldName}_max"] = $maxValue;
+                if ( $minValue !== null ) {
+                    $defaults["{$fieldName}_min"] = $minValue;
+                }
+                if ( $maxValue !== null ) {
+                    $defaults["{$fieldName}_max"] = $maxValue;
+                }
                 $defaults["{$fieldName}_op" ] = $fieldOP;
             }
             break;
@@ -134,8 +149,10 @@ class CRM_Report_Utils_Get {
             // to diplsay multiple values in url
             $value    = self::getTypedValue( "{$fieldName}_value", $field['type'] );
             self::unsetFilters( $defaults );
-            $defaults["{$fieldName}_value"] = array( $value );
-            $defaults["{$fieldName}_op"   ] = $fieldOP;
+            if ( $value !== null ) {
+                $defaults["{$fieldName}_value"] = array( $value );
+                $defaults["{$fieldName}_op"   ] = $fieldOP;
+            }
             break;
         }
     }
@@ -215,12 +232,12 @@ class CRM_Report_Utils_Get {
     function processFields( &$reportFields, &$defaults ) {
         //add filters from url 
         if ( is_array($reportFields) ) {
-            if ( $urlfileds = CRM_Utils_Array::value( "fld", $_GET) ) {
-                $urlfileds = explode( ',' , $urlfileds );
+            if ( $urlFields = CRM_Utils_Array::value( "fld", $_GET) ) {
+                $urlFields = explode( ',' , $urlFields );
             }
-            if ( !empty( $urlfileds ) ){
+            if ( !empty( $urlFields ) ){
                 foreach ( $reportFields as $tableName => $fields ) {
-                    foreach ( $urlfileds as $fld ) {
+                    foreach ( $urlFields as $fld ) {
                         if ( array_key_exists($fld, $fields) ) {
                             $defaults['fields'][$fld] = 1;
                         }

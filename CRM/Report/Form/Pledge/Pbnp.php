@@ -177,7 +177,7 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
              INNER JOIN civicrm_pledge  {$this->_aliases['civicrm_pledge']} 
                         ON ({$this->_aliases['civicrm_pledge']}.contact_id =
                             {$this->_aliases['civicrm_contact']}.id)  AND 
-                            {$this->_aliases['civicrm_pledge']}.status_id = 2
+                            {$this->_aliases['civicrm_pledge']}.status_id IN ( 2, 5, 6 )
              LEFT  JOIN civicrm_pledge_payment {$this->_aliases['civicrm_pledge_payment']}
                         ON ({$this->_aliases['civicrm_pledge']}.id =
                             {$this->_aliases['civicrm_pledge_payment']}.pledge_id) ";

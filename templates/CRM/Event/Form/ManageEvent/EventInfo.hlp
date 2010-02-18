@@ -44,14 +44,18 @@
 
 {htxt id="id-listing"}
     {ts}To allow users to see a listing of participants, set this field to 'Name' (list names only), or 'Name and Email' (list names and emails).{/ts}
-    {if $config->userFramework EQ 'Drupal'}
-        {ts}You will need to set Drupal Access Control permissions to include 'view event participants' for any Roles you want to access this listing.{/ts}
-        {if $id}
-            {ts}Create links to the listing page by copying the following URL, and adding it to the Event Description below and / or as a menu item or links elsewhere on your site:{/ts}<br />
-            <strong>{crmURL a=true p='civicrm/event/participant' q="reset=1&id=`$id`"}</strong>
+    {if ! $isTemplate}
+        {if $config->userFramework EQ 'Drupal'}
+            {ts}You will need to set Drupal Access Control permissions to include 'view event participants' for any Roles you want to access this listing.{/ts}
+            {if $action eq 2 AND $entityId}
+                {ts}Create links to the listing page by copying the following URL, and adding it to the Event Description below and / or as a menu item or links elsewhere on your site:{/ts}<br />
+                <strong>{crmURL a=true p='civicrm/event/participant' q="reset=1&id=`$entityId`"}</strong>
+            {else} {* Creating new event *}
+                {ts}After adding your event, create links to the listing page by copying the URL provided in the 'Participant Listing' section of the Configure Event page.{/ts}
+            {/if}
+        {elseif $config->userFramework EQ 'Joomla'}
+            {ts 1=$id}Then create front-end links to the Participant Listing page using the Menu Manager. Select <strong>Participant Listing Page</strong> and enter <strong>%1</strong> for the Event ID.{/ts}
         {/if}
-    {elseif $config->userFramework EQ 'Joomla'}
-        {ts 1=$id}Then create front-end links to the Participant Listing page using the Menu Manager. Select <strong>Participant Listing Page</strong> and enter <strong>%1</strong> for the Event ID.{/ts}
     {/if}
 {/htxt}
 

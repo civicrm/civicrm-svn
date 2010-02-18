@@ -452,7 +452,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         }
         $this->assign( 'alreadyMixProfile', $alreadyMixProfile );
         
-        $attributes = array( 'onclick' => "showLabel();mixProfile();", 'onblur' => 'mixProfile();' );
+        $attributes = array( 'onclick' => "showLabel();mixProfile();", 'onblur' => 'showLabel();mixProfile();' );
         
         $sel =& $this->addElement('hierselect', "field_name", ts('Field Name'), $attributes );  
         $formValues = array();

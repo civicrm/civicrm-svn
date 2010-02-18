@@ -914,7 +914,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
  
         // get the add to groups
         $addToGroups = array( );
-   
+
         if ( !empty($this->_fields) ) {
             foreach ( $this->_fields as $key => $value) {
                 if ( CRM_Utils_Array::value( 'add_to_group_id', $value ) ) {
@@ -941,10 +941,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             // here we are making dedupe weak - so to make dedupe
             // more effective please update individual 'Strict' rule.
             $allowSameEmailAddress = CRM_Utils_Array::value( 'allow_same_participant_emails', $this->_values['event'] );
-            
             require_once 'CRM/Dedupe/Finder.php';
             //suppress "email-Primary" when allow_same_participant_emails = 1
-            if ( $allowSameEmailAddress && CRM_Utils_Array::value('email-Primary', $params) ) {
+            if ( $allowSameEmailAddress && $email = CRM_Utils_Array::value('email-Primary', $params) ) {
                 unset($params['email-Primary']);
             }
             $dedupeParams = CRM_Dedupe_Finder::formatParams($params, 'Individual');
@@ -952,6 +951,10 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             
             // if we find more than one contact, use the first one
             $contact_id  = $ids[0];
+            if ( isset( $email ) ) {
+                $params['email-Primary'] = $email;
+            }
+            
             $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, $contact_id, $addToGroups );
             $this->set( 'contactID', $contactID );
         }

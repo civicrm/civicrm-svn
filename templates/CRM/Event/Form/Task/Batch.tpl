@@ -43,7 +43,10 @@
          <table>
 	  <thead class="sticky">
             <tr class="columnheader">
-             <th>{ts}Name{/ts}</th>
+             {foreach from=$readOnlyFields item=fTitle key=fName}
+	        <th>{$fTitle}</th>
+	     {/foreach}
+
              <th>{ts}Event{/ts}</th>
              {foreach from=$fields item=field key=fieldName}
                 {if strpos( $field.name, '_date' ) !== false ||
@@ -57,7 +60,10 @@
           </thead>
             {foreach from=$componentIds item=pid}
              <tr class="{cycle values="odd-row,even-row"}">
-              <td>{$details.$pid.name}</td> 
+	      {foreach from=$readOnlyFields item=fTitle key=fName}
+	         <td>{$contactDetails.$pid.$fName}</td>
+	      {/foreach}
+
               <td>{$details.$pid.title}</td>   
               {foreach from=$fields item=field key=fieldName}
                 {assign var=n value=$field.name}

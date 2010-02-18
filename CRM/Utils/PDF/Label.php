@@ -90,7 +90,7 @@ class CRM_Utils_PDF_Label extends TCPDF {
                                 'tMargin' => 9, 'NX' => 3, 'NY' => 6, 'SpaceX'=> 5, 'SpaceY' => 2,
                                 'width' => 63.5, 'height' => 46.6, 'font-size' => 9),
                'L7163' => array('name' => 'L7163', 'paper-size' => 'A4', 'metric' => 'mm', 'lMargin' => 5,
-                                'tMargin' => 15, 'NX' => 2, 'NY' => 7, 'SpaceX' => 25, 'SpaceY' => 0,
+                                'tMargin' => 15, 'NX' => 2, 'NY' => 7, 'SpaceX' => 2.5, 'SpaceY' => 0,
                                 'width' => 99.1, 'height' => 38.1, 'font-size' => 9)
                );
    

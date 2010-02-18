@@ -839,6 +839,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         $where = " where {$clause}
                    and civicrm_option_group.name = 'activity_type'
                    and {$componentClause}
+                   and civicrm_activity.is_deleted = 0 and civicrm_activity.is_current_revision = 1
                    and is_test = 0 and {$case} and {$statusClause}";
 
         return array( $from.  $join. $where, $params );

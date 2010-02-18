@@ -10,8 +10,8 @@ of the GNU Affero General Public License, version 3. It applies to a given file
 that bears a notice stating that the file is governed by that license along
 with this exception.
 
-Permission is hereby granted to combine the Program with
-works licensed under the PHP License versions 2 and 3.
+Permission is hereby granted to combine the Program with works
+licensed under the PHP License versions 2.01, 2.02, 3.0 and 3.01.
 
 Permission is hereby granted to license modified versions of the
 Program to CiviCRM LLC under the Academic Free License version 3.

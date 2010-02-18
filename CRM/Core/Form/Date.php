@@ -87,7 +87,7 @@ Class CRM_Core_Form_Date
      * @static
      * @access public
      */
-    static function buildDateRange( &$form, $fieldName, $count = 1, $required = false ) {
+    static function buildDateRange( &$form, $fieldName, $count = 1, $required = false, $addReportFilters = true ) {
         $selector = array (ts('Choose Date Range'),
                            'this.year'        => ts('This Year'),
                            'this.fiscal_year' => ts('This Fiscal Year'),
@@ -127,7 +127,10 @@ Class CRM_Core_Form_Date
                            'greater.week'    => ts('Greater Week'),
                            'greater.day'     => ts('Greater Day')
                            );
-
+        if( $addReportFilters ) {
+            require_once 'CRM/Report/Form.php';
+            $selector += CRM_Report_Form::getOperationPair( CRM_Report_FORM::OP_DATE );
+        }
         $config = CRM_Core_Config::singleton();
         //if fiscal year start on 1 jan then remove fiscal year task
         //form list

@@ -201,7 +201,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         if ( ! $this->_id ) {
             $pastContributionID = $session->get( 'pastContributionID' );
             if ( ! $pastContributionID ) {
-                CRM_Core_Error::fatal( ts( 'We could not find contribution details for your request. Please try your request again.' ) );
+                CRM_Core_Error::fatal( ts( 'We can\'t load the requested web page due to an incomplete link. This can be caused by using your browser\'s Back button or by using an incomplete or invalid link.' ) );
             } else {
                 CRM_Core_Error::fatal( ts( 'This contribution has already been submitted. Click <a href=\'%1\'>here</a> if you want to make another contribution.', array( 1 => CRM_Utils_System::url( 'civicrm/contribute/transact', 'reset=1&id=' . $pastContributionID ) ) ) );
             }
@@ -227,6 +227,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                         if ( array_key_exists($membership->contact_id, $employers) ) {
                             $this->_membershipContactID = $membership->contact_id;
                             $this->assign('membershipContactID', $this->_membershipContactID);
+                            $this->assign('membershipContactName', $employers[$this->_membershipContactID]['name']);
                         } else {
                             CRM_Core_Session::setStatus( ts("Oops. The membership you're trying to renew appears to be invalid. Contact your site administrator if you need assistance. If you continue, you will be issued a new membership.") );
                         }

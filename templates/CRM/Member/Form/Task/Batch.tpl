@@ -32,7 +32,10 @@
          <table>
 	  <thead class="sticky">
             <tr class="columnheader">
-             <th>{ts}Name{/ts}</th>
+             {foreach from=$readOnlyFields item=fTitle key=fName}
+	        <th>{$fTitle}</th>
+	     {/foreach}
+
              {foreach from=$fields item=field key=fieldName}
                 {if strpos( $field.name, '_date' ) !== false ||
                     (substr( $field.name, 0, 7 ) == 'custom_' && $field.data_type == 'Date')}
@@ -45,7 +48,11 @@
           </thead>
             {foreach from=$componentIds item=cid}
              <tr class="{cycle values="odd-row,even-row"}">
-              <td>{$sortName.$cid}</td> 
+
+	      {foreach from=$readOnlyFields item=fTitle key=fName}
+	         <td>{$contactDetails.$cid.$fName}</td>
+	      {/foreach}
+
               {foreach from=$fields item=field key=fieldName}
                 {assign var=n value=$field.name}
                 {if ( $fields.$n.data_type eq 'Date') }

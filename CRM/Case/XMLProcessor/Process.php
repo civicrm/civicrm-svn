@@ -256,7 +256,8 @@ INNER JOIN civicrm_activity_target t ON t.activity_id = a.id
 INNER JOIN civicrm_case_activity ca on ca.activity_id = a.id
 WHERE      t.target_contact_id = %1
 AND        a.activity_type_id  = %2
-AND        ca.case_id = %3
+AND       ca.case_id = %3
+AND        a.is_deleted = 0
 ";
         $sqlParams   = array( 1 => array( $params['clientID']      , 'Integer' ),
                               2 => array( $params['activityTypeID'], 'Integer' ),

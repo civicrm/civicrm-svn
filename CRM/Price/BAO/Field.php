@@ -469,7 +469,7 @@ WHERE  id IN (" .implode( ',', array_keys( $priceFields ) ).')';
             }
             
             // all field val present in option value except text.
-            $setectedAmounts = $amountIds = array( );
+            $selectedAmounts = $amountIds = array( );
             foreach ( $htmlTypes as $fieldId => $type ) {
                 if ( $type == 'Text' ) {
                     $sql = "
@@ -480,7 +480,7 @@ WHERE grp.name = 'civicrm_price_field.amount.$fieldId'";
                     $textValue = CRM_Core_DAO::executeQuery( $sql );
                     while( $textValue->fetch( ) ) {
                         // calculate text price field amount here itself.
-                        $setectedAmounts[$textValue->id] = $priceFields[$fieldId]*$textValue->name;
+                        $selectedAmounts[$textValue->id] = $priceFields[$fieldId]*$textValue->name;
                     }
                 } else {
                     if ( is_array( $priceFields[$fieldId] ) ) {
@@ -498,12 +498,12 @@ FROM  civicrm_option_value
 WHERE  id IN (" .implode( ',', $amountIds ).')';
                 $optionsDAO = CRM_Core_DAO::executeQuery( $sql );
                 while ( $optionsDAO->fetch( ) ) {
-                    $setectedAmounts[$optionsDAO->id] = $optionsDAO->name;
+                    $selectedAmounts[$optionsDAO->id] = $optionsDAO->name;
                 }
             }
             list( $componentName ) = explode( ':', $fields['_qf_default'] );
             // now we have all selected amount in hand.
-            $totalAmount = array_sum( $setectedAmounts );
+            $totalAmount = array_sum( $selectedAmounts );
             if ( $totalAmount < 0 ) {
                 $error['_qf_default'] = ts('%1 amount can not be less than zero. Please select the options accordingly.', array(1 => $componentName));
             }

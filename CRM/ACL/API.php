@@ -116,7 +116,10 @@ class CRM_ACL_API {
      * @return array the ids of the groups for which the user has permissions
      * @access public
      */
-    public static function group( $type, $contactID = null, $tableName = 'civicrm_saved_search', $allGroups = null ) {
+    public static function group( $type, $contactID = null, 
+                                  $tableName = 'civicrm_saved_search', 
+                                  $allGroups = null, 
+                                  $includedGroups = null ) {
         if ( $contactID == null ) {
             $session   = CRM_Core_Session::singleton( );
             $contactID =  $session->get( 'userID' );
@@ -127,7 +130,7 @@ class CRM_ACL_API {
         }
 
         require_once 'CRM/ACL/BAO/ACL.php';
-        return CRM_ACL_BAO_ACL::group( $type, $contactID, $tableName, $allGroups );
+        return CRM_ACL_BAO_ACL::group( $type, $contactID, $tableName, $allGroups, $includedGroups );
     }
 
     /**
@@ -141,14 +144,15 @@ class CRM_ACL_API {
      */
     public static function groupPermission( $type, $groupID, $contactID = null,
                                             $tableName = 'civicrm_saved_search',
-                                            $allGroups = null ) {
+                                            $allGroups = null,
+                                            $includedGroups = null ) {
         static $cache = array( );
 
         $key = "{$tableName}_{$type}_{$contactID}";
         if ( array_key_exists( $key, $cache ) ) {
             $groups =& $cache[$key];
         } else {
-            $groups =& self::group( $type, $contactID, $tableName, $allGroups );
+            $groups =& self::group( $type, $contactID, $tableName, $allGroups, $includedGroups );
             $cache[$key] = $groups;
         }
 

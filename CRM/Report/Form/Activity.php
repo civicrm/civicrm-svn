@@ -39,6 +39,7 @@ require_once 'CRM/Report/Form.php';
 class CRM_Report_Form_Activity extends CRM_Report_Form {
 
     protected $_emailField         = false;
+    protected $_customGroupExtends = array( 'Activity' );
 
     function __construct( ) {
         $this->_columns = array(  
@@ -271,7 +272,10 @@ class CRM_Report_Form_Activity extends CRM_Report_Form {
 
     function where( ) {
         $this->_where = " WHERE civicrm_option_group.name = 'activity_type' AND 
-                                {$this->_aliases['civicrm_activity']}.is_test = 0";
+                                {$this->_aliases['civicrm_activity']}.is_test = 0 AND
+                                {$this->_aliases['civicrm_activity']}.is_deleted = 0 AND
+                                {$this->_aliases['civicrm_activity']}.is_current_revision = 1";
+        
         $clauses = array( );
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists('filters', $table) ) {

@@ -132,6 +132,7 @@ class CRM_Utils_Geocode_Google {
         $xml = @simplexml_load_string( $string );
         if ( $xml === false ) {
             // account blocked maybe?
+            CRM_Core_Error::debug_var( 'Geocoding failed.  Message from Google:', $string );
             return false;
         }
 

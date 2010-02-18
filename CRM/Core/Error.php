@@ -234,7 +234,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
      */
     static function fatal($message = null, $code = null, $email = null) {
         if ( ! $message ) {
-            $message = ts( 'We experienced an unexpected error. Please file an issue with the backtrace' );
+            $message = ts( 'We experienced an unexpected error. Please post a detailed description and the backtrace on the CiviCRM forums (http://forum.civicrm.org/)' );
         }
 
         $vars = array( 'message' => $message,

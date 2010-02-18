@@ -254,6 +254,15 @@ class CRM_Price_Page_Field extends CRM_Core_Page {
                                                     $url );
                 $this->assign( 'usedPriceSetTitle', CRM_Price_BAO_Field::getTitle( $fid ) );
                 $this->assign( 'usedBy', $usedBy );
+                $comps = array( "Event"        => "civicrm_event", 
+                                "Contribution" => "civicrm_contribution_page" );
+                $priceSetContexts = array( );
+                foreach ( $comps as $name => $table ) {
+                    if ( array_key_exists( $table, $usedBy ) ) {
+                        $priceSetContexts[] = $name;
+                    }
+                }
+                $this->assign( 'contexts', $priceSetContexts );
             }
         }
                 

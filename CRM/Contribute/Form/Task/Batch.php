@@ -75,8 +75,21 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
          * initialize the task and row fields
          */
         parent::preProcess( );
+        
+        //get the contact read only fields to display.
+        require_once 'CRM/Core/BAO/Preferences.php';
+        $readOnlyFields = array_merge( array( 'sort_name' => ts( 'Name' ) ),
+                                       CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options',
+                                                                               true, null, false, 'name', true ) );
+        //get the read only field data.
+        $returnProperties  = array_fill_keys( array_keys( $readOnlyFields ), 1 );
+        require_once 'CRM/Contact/BAO/Contact/Utils.php';
+        $contactDetails = CRM_Contact_BAO_Contact_Utils::contactDetails( $this->_contributionIds, 
+                                                                         'CiviContribute', $returnProperties );
+        $this->assign( 'contactDetails', $contactDetails );
+        $this->assign( 'readOnlyFields', $readOnlyFields );
     }
-  
+    
     /**
      * Build the form
      *
@@ -178,13 +191,9 @@ class CRM_Contribute_Form_Task_Batch extends CRM_Contribute_Form_Task {
         $defaults = array( );
         foreach ($this->_contributionIds as $contributionId) {
             $details[$contributionId] = array( );
-            //build sortname
-            require_once "CRM/Contribute/BAO/Contribution.php";
-            $sortName[$contributionId] = CRM_Contribute_BAO_Contribution::sortName($contributionId);
             CRM_Core_BAO_UFGroup::setProfileDefaults( null, $this->_fields, $defaults, false, $contributionId, 'Contribute' );
         }
         
-        $this->assign('sortName', $sortName);
         return $defaults;
     }
 

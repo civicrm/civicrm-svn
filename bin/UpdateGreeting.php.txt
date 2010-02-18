@@ -64,13 +64,13 @@ class CRM_UpdateGreeting {
     public function updateGreeting( )
     {
 	    $config = CRM_Core_Config::singleton();
-        $contactType = CRM_Utils_Request::retrieve( 'ct', 'String', CRM_Core_DAO::$_nullArray );
+        $contactType = CRM_Utils_Request::retrieve( 'ct', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
         if ( ! in_array( $contactType,
                          array( 'Individual', 'Household', 'Organization' ) ) ) {
             CRM_Core_Error::fatal( ts('Invalid Contact Type.') );
         }
         
-        $greeting = CRM_Utils_Request::retrieve( 'gt', 'String', CRM_Core_DAO::$_nullArray );	
+        $greeting = CRM_Utils_Request::retrieve( 'gt', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
         if ( ! in_array( $greeting,
                          array( 'email_greeting', 'postal_greeting', 'addressee' ) ) ) {
             CRM_Core_Error::fatal( ts('Invalid Greeting Type.') );
@@ -80,7 +80,7 @@ class CRM_UpdateGreeting {
             CRM_Core_Error::fatal( ts('You cannot use %1 for contact type %2.', array( 1 => $greeting, 2 => $contactType) ) );
         }
         
-        $valueID = CRM_Utils_Request::retrieve( 'id', 'Positive', CRM_Core_DAO::$_nullArray );
+        $valueID = CRM_Utils_Request::retrieve( 'id', 'Positive', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
         
         // if valueID is not passed use default value 
         if ( !$valueID ) {
@@ -112,7 +112,7 @@ class CRM_UpdateGreeting {
         }
         
         //process all contacts only when force pass. 
-        $force = CRM_Utils_Request::retrieve( 'force', 'String', CRM_Core_DAO::$_nullArray ); 
+        $force = CRM_Utils_Request::retrieve( 'force', 'String', CRM_Core_DAO::$_nullArray, false, null, 'REQUEST' );
         $processAll = false;
         if ( in_array( $force, array( 1, 'true' ) ) ) {
             $processAll = true;

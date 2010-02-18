@@ -804,9 +804,6 @@ function  civicrm_form_alter( &$form, $formValues, $formID ) {
     }
 }
 
-
-
-
 /*
  * 
  * Implementation of hook_theme_registry_alter(). 
@@ -831,10 +828,10 @@ function  civicrm_form_alter( &$form, $formValues, $formID ) {
  * 
  * Strips out JS and CSS for a path. 
  */
+ 
  function civicrm_preprocess_page(&$variables) { 
-	  // I needed a one hit wonder. Can be altered to use function arguments
 	  // to increase it's flexibility. 
-  	if(module_exists('date')) { 
+  	if(module_exists('date_popup') && (arg(0) == 'civicrm')) { 
   		$scripts = drupal_add_js(); 
   		$css = drupal_add_css(); 
   		
@@ -850,16 +847,14 @@ function  civicrm_form_alter( &$form, $formValues, $formID ) {
   		 *  	$variables['scripts'] = drupal_get_js('header', $scripts); 
   		 *  } 
 		 */
-		
-		
-		
+				
 		// Similar process for CSS but there are 2 CSS related variables. 
 		// $variables['css'] and $variables['styles'] are both used. 
   		if (!empty($variables['css'])) { 
   			$path = drupal_get_path('module', 'date_popup'); 
   			unset($css['all']['module'][$path . '/themes/datepicker.css']); 
   			$variables['styles'] = drupal_get_css($css); 
-  		} 
-  	}
+  			} 
+  		}
   	}
 

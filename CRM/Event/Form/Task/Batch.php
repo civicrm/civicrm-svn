@@ -79,6 +79,19 @@ class CRM_Event_Form_Task_Batch extends CRM_Event_Form_Task
          * initialize the task and row fields
          */
         parent::preProcess( );
+        
+        //get the contact read only fields to display.
+        require_once 'CRM/Core/BAO/Preferences.php';
+        $readOnlyFields = array_merge( array( 'sort_name' => ts( 'Name' ) ),
+                                       CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options',
+                                                                               true, null, false, 'name', true ) );
+        //get the read only field data.
+        $returnProperties  = array_fill_keys( array_keys( $readOnlyFields ), 1 );
+        require_once 'CRM/Contact/BAO/Contact/Utils.php';
+        $contactDetails = CRM_Contact_BAO_Contact_Utils::contactDetails( $this->_participantIds, 
+                                                                         'CiviEvent', $returnProperties );
+        $this->assign( 'contactDetails', $contactDetails );
+        $this->assign( 'readOnlyFields', $readOnlyFields );             
     }
   
     /**

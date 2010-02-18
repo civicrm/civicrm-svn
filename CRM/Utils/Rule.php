@@ -548,7 +548,11 @@ class CRM_Utils_Rule
         return true;
     }
     
-    static function validContact( $value ) {
+    static function validContact( $value, $actualElementValue = null ) {
+        if ( $actualElementValue ) {
+            $value = $actualElementValue;
+        }
+        
         if ( $value && !is_numeric( $value ) ) {
             return false;
         }
