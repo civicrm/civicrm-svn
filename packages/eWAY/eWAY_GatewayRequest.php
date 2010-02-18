@@ -214,7 +214,9 @@ class GatewayRequest
    ********************************************************/
    function CreateNode($NodeName, $NodeValue)
    {
-      $node = "<" . $NodeName . ">" . $NodeValue . "</" . $NodeName . ">";
+    require_once 'XML/Util.php';
+    
+   	$node = "<" . $NodeName . ">" . XML_Util::replaceEntities($NodeValue) . "</" . $NodeName . ">";
       return $node;
    }
    
