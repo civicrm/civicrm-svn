@@ -210,19 +210,20 @@ class CRM_Core_Permission {
     public static function event( $type = CRM_Core_Permission::VIEW, $eventID = null ) {
         require_once 'CRM/Event/PseudoConstant.php';
         $events = CRM_Event_PseudoConstant::event( null, true );
+        $includeEvents = array( );
 
         // check if user has all powerful permission
         if ( self::check( 'register for events' ) ) {
-            return array_keys( $events );
+            $includeEvents = array_keys( $events );
         }
 
         if ( $type == CRM_Core_Permission::VIEW &&
              self::check( 'view event info' ) ) {
-            return array_keys( $events );
+            $includeEvents = array_keys( $events );
         }
 
         require_once 'CRM/ACL/API.php';
-        $permissionedEvents = CRM_ACL_API::group( $type, null, 'civicrm_event', $events );
+        $permissionedEvents = CRM_ACL_API::group( $type, null, 'civicrm_event', $events, $includeEvents );
         if ( ! $eventID ) {
             return $permissionedEvents;
         }
