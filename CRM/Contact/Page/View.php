@@ -90,6 +90,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
      */
     function preProcess( )
     {
+        // process url params
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
         $this->assign( 'id', $this->_id );
         
@@ -117,38 +118,17 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $session = CRM_Core_Session::singleton( );
         $session->set( 'view.id', $this->_contactId );
 
-        $this->_action = CRM_Utils_Request::retrieve('action', 'String',
-                                                     $this, false, 'browse');
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
         $this->assign( 'action', $this->_action);
 
-        // check for permissions
-        $this->_permission = null;
-
-        // automatically grant permissin for users on their own record. makes 
-        // things easier in dashboard
-        require_once 'CRM/Contact/BAO/Contact/Permission.php';
-        if ( $session->get( 'userID' ) == $this->_contactId ) {
-            $this->assign( 'permission', 'edit' );
-            $this->_permission = CRM_Core_Permission::EDIT;
-        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $this->_contactId, CRM_Core_Permission::EDIT ) ) {
-            $this->assign( 'permission', 'edit' );
-            $this->_permission = CRM_Core_Permission::EDIT;            
-        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $this->_contactId, CRM_Core_Permission::VIEW ) ) {
-            $this->assign( 'permission', 'view' );
-            $this->_permission = CRM_Core_Permission::VIEW;
-        } else {
-            $session->pushUserContext( CRM_Utils_System::url('civicrm', 'reset=1' ) );
-            CRM_Core_Error::statusBounce( ts('You do not have the necessary permission to view this contact.') );
-        }
-
-        $this->getContactDetails();
-
-        $contactImage    = $this->get( 'contactImage' );
-        $displayName     = $this->get( 'displayName'  );
-        $contactType     = $this->get( 'contactType' );
-        $contactSubtype  = $this->get( 'contactSubType' );
-        $contactImageUrl = $this->get( 'contactImageUrl' );
+        // check logged in url permission
+        self::checkUserPermission( $this );
+        
+        list( $displayName, $contactImage, $contactType, $contactSubtype, $contactImageUrl ) = $this->getContactDetails();
         $this->assign( 'displayName', $displayName );
+        
+        $this->set( 'contactType',    $contactType );
+        $this->set( 'contactSubtype', $contactSubtype );
 
         // see if other modules want to add a link activtity bar
         require_once 'CRM/Utils/Hook.php';
@@ -157,7 +137,10 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
             $this->assign( 'hookLinks', $hookLinks );
         }
 
+        // set page title
         CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
+        
+        // add to recently viewed block
         CRM_Utils_Recent::add( $displayName,
                                CRM_Utils_System::url( 'civicrm/contact/view', 'reset=1&cid=' . $this->_contactId ),
                                $this->_contactId,
@@ -215,24 +198,20 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
      * @return void
      * @access public
      */
-    function getContactDetails()
-    {
-        $displayName = $this->get( 'displayName' );
-             
-        list( $displayName, $contactImage, $contactType, $contactSubtype, $contactImageUrl ) = 
-            CRM_Contact_BAO_Contact::getDisplayAndImage( $this->_contactId, true, true );
-
-        $this->set( 'displayName' ,   $displayName    );
-        $this->set( 'contactImage',   $contactImage   );
-        $this->set( 'contactImageUrl',$contactImageUrl);
-        $this->set( 'contactType',    $contactType    );
-        $this->set( 'contactSubType', $contactSubtype );
+    function getContactDetails( ) {
+        return list( $displayName, 
+                     $contactImage, 
+                     $contactType, 
+                     $contactSubtype, 
+                     $contactImageUrl ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $this->_contactId,
+                                                                                       true,
+                                                                                       true );
     }
 
     function getSearchURL( ) {
         $session = CRM_Core_Session::singleton();
-
         $isAdvanced = $session->get('isAdvanced');
+        
         if ( $isAdvanced == '1' ) {
             return CRM_Utils_System::url( 'civicrm/contact/search/advanced', 'force=1' );
         } else if ( $isAdvanced == '2' ) {
@@ -243,6 +222,27 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         return CRM_Utils_System::url( 'civicrm/contact/search/basic', 'force=1' );
     }
 
+    static function checkUserPermission( $page ) {
+        // check for permissions
+        $page->_permission = null;
+
+        // automatically grant permissin for users on their own record. makes 
+        // things easier in dashboard
+        $session = CRM_Core_Session::singleton( );
+        
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+        if ( $session->get( 'userID' ) == $page->_contactId ) {
+            $page->assign( 'permission', 'edit' );
+            $page->_permission = CRM_Core_Permission::EDIT;
+        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $page->_contactId, CRM_Core_Permission::EDIT ) ) {
+            $page->assign( 'permission', 'edit' );
+            $page->_permission = CRM_Core_Permission::EDIT;            
+        } else if ( CRM_Contact_BAO_Contact_Permission::allow( $page->_contactId, CRM_Core_Permission::VIEW ) ) {
+            $page->assign( 'permission', 'view' );
+            $page->_permission = CRM_Core_Permission::VIEW;
+        } else {
+            $session->pushUserContext( CRM_Utils_System::url('civicrm', 'reset=1' ) );
+            CRM_Core_Error::statusBounce( ts('You do not have the necessary permission to view this contact.') );
+        }
+    }
 }
-
-

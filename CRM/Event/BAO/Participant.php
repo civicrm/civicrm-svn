@@ -1369,5 +1369,18 @@ However, you can still override this limit and register additional participants 
         
         return $additionalParticipantIds;
     }
+    
+    /**
+     * Function to get participant record count for a Contact
+     *
+     * @param int $contactId Contact ID
+     * 
+     * @return int count of participant records
+     * @access public
+     * @static
+     */
+     static function getContactParticipantCount( $contactID ) {
+         $query = "SELECT count(*) FROM civicrm_participant WHERE civicrm_participant.contact_id = {$contactID} AND civicrm_participant.is_test = 0";
+         return CRM_Core_DAO::singleValueQuery( $query );
+     }    
 }
-

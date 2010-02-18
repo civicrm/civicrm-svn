@@ -263,5 +263,34 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
         }
         return $contactIds;
     }
+    
+    /** 
+     * Function to get contact tags
+     */
+     function getContactTags( $contactID, $count = false ) {
+         $contactTags = array( );
+         if ( !$count ) {
+             $select = "SELECT name ";
+         } else {
+             $select = "SELECT count(*) as cnt";
+         }
+         
+         $query = "{$select} 
+                   FROM civicrm_tag ct 
+                   INNER JOIN civicrm_entity_tag et ON ( ct.id = et.tag_id AND et.contact_id = {$contactID} )";
+        
+         $dao = CRM_Core_DAO::executeQuery( $query );
+         
+         if ( $count ) {
+             $dao->fetch();
+             return $dao->cnt;
+         }
+         
+         while( $dao->fetch( ) ) {
+             $contactTags[] = $dao->name;
+         }
+         
+         return $contactTags;
+     }
 }
 

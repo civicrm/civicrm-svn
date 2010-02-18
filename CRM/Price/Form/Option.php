@@ -256,7 +256,8 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
             $params = $this->controller->exportValues( 'Option' );
             $fieldLabel = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Field', $this->_fid, 'label') ;
             $params['description'] = $fieldLabel.' - '.$params['label'] ;
-
+            $params['value'] = CRM_Utils_Rule::cleanMoney( trim($params['value']) );
+            
             $groupParams = array( 'id' => $this->_ogId );
            
             // make name value consistant.

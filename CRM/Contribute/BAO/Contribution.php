@@ -100,6 +100,11 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
                               'net_amount',
                               'fee_amount',
                               'non_deductible_amount' );
+        //if priceset is used, no need to cleanup money
+        if ( CRM_UTils_Array::value('skipCleanMoney', $params) ) {
+            unset($moneyFields[0]);
+        }
+        
         foreach ( $moneyFields as $field ) {
             if ( isset( $params[$field] ) ) {
                 $params[$field] = CRM_Utils_Rule::cleanMoney( $params[$field] );

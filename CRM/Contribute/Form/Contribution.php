@@ -1275,6 +1275,12 @@ WHERE  contribution_id = {$this->_id}
             if ( $softID = CRM_Utils_Array::value( 'softID', $this->_values ) ){
                 $params['softID'] = $softID;
             }
+            //if priceset is used, no need to cleanup money
+            //CRM-5740
+            if( $priceSetId ) {
+                $params['skipCleanMoney'] = 1;
+            }
+
             $dates = array( 'receive_date',
                             'receipt_date',
                             'cancel_date' );
