@@ -106,7 +106,7 @@ class CRM_Grant_Form_Task extends CRM_Core_Form
         }
 
         if ( ! empty( $ids ) ) {
-            $this->_grantClause =
+            $this->_componentClause =
                 ' civicrm_grant.id IN ( ' .
                 implode( ',', $ids ) . ' ) ';
             $this->assign( 'totalSelectedGrants', count( $ids ) );             
