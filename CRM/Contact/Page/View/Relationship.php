@@ -153,15 +153,14 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
         
         // if this is called from case view, we need to redirect back to same page
         if ( $this->_caseId ) {
-            $cid = CRM_Utils_Request::retrieve( 'cid', 'Integer', $this, false );
-            $url = CRM_Utils_System::url('civicrm/contact/view/case', "action=view&reset=1&cid={$cid}&id={$this->_caseId}" );
+            $url = CRM_Utils_System::url('civicrm/contact/view/case', "action=view&reset=1&cid={$this->_contactId}&id={$this->_caseId}" );
         } else {
-            $url = CRM_Utils_System::url('civicrm/contact/view', 'action=browse&selectedChild=rel' );
+            $url = CRM_Utils_System::url('civicrm/contact/view', "action=browse&selectedChild=rel&reset=1&cid={$this->_contactId}" );
         }
         
         $session->pushUserContext( $url );
 
-        if (CRM_Utils_Request::retrieve('confirmed', 'Boolean',
+        if ( CRM_Utils_Request::retrieve('confirmed', 'Boolean',
                                         CRM_Core_DAO::$_nullObject ) ) {
             if ( $this->_caseId ) {
                 //create an activity for case role removal.CRM-4480
