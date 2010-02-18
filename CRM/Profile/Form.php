@@ -768,18 +768,6 @@ class CRM_Profile_Form extends CRM_Core_Form
         
         $transaction->commit( );
         
-        // hack to show save message - CRM-5846
-        $config  = CRM_Core_Config::singleton( );
-        $urlVar  = $config->userFrameworkURLVar;
-        $path    = isset( $_GET[$urlVar] ) ? $_GET[$urlVar] : '';
-
-        $session = CRM_Core_Session::singleton( );
-        $url = 'user/' . $session->get('ufID') . '/edit/';
-                
-        if ( substr( $path, 0, strlen( $url ) ) == $url ) {
-            require_once 'CRM/Utils/System.php';
-            CRM_Utils_System::setUFMessage( ts('The changes have been saved.') );
-        }        
     }
     
     function getTemplateFileName() {
