@@ -79,7 +79,7 @@ class CRM_Core_QuickForm_Action extends HTML_QuickForm_Action {
         }
         
         //CRM-5839 -do not redirect control.
-        if ( !$this->_stateMachine->skipRedirection( ) ) {
+        if ( !$this->_stateMachine->getSkipRedirection( ) ) {
             CRM_Utils_System::redirect( $destination );
         }
     }

@@ -344,7 +344,7 @@ class CRM_Core_StateMachine {
         return $this->_controller->getDestination( );
     }
     
-    function skipRedirection( ) {
+    function getSkipRedirection( ) {
         return $this->_controller->getSkipRedirection( );
     }
     
