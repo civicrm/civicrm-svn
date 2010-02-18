@@ -93,7 +93,6 @@ cj('#current_employer').autocomplete( dataUrl, {
                                       matchCase    : true, 
                                       matchContains: true
     }).result( function(event, data, formatted) {
-        
         var foundContact   = ( parseInt( data[1] ) ) ? cj( "#current_employer_id" ).val( data[1] ) : cj( "#current_employer_id" ).val('');
         if ( ! foundContact.val() ) {
             cj('div#employer_address').html(newContactText).show();    
@@ -101,7 +100,7 @@ cj('#current_employer').autocomplete( dataUrl, {
             cj('div#employer_address').html('').hide();    
         }
     }).bind('change blur', function() {
-        if( cj( "#current_employer_id" ).val( ) ) {
+        if ( !cj( "#current_employer_id" ).val( ) ) {
             cj('div#employer_address').html(newContactText).show();    
         }
 });
