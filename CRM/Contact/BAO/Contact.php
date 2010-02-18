@@ -215,9 +215,6 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             CRM_Contact_BAO_Contact_Utils::updateCurrentEmployer( $contact->id );
         }
         
-        // process greetings CRM-4575, cache greetings
-        self::processGreetings( $contact );
-
         return $contact;
     }
     
@@ -382,6 +379,9 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             }
         }
 
+        // process greetings CRM-4575, cache greetings
+        self::processGreetings( $contact );
+        
         return $contact;
     }
 

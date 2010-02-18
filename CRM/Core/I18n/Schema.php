@@ -368,7 +368,8 @@ class CRM_Core_I18n_Schema
         eval("\$columns =& $class::columns();");
         $queries = array();
         $namesTrigger = array();
-
+        $individualNamesTrigger = array();
+        
         foreach (array_merge($locales, array($locale)) as $loc) {
             $namesTrigger[] = "IF NEW.contact_type = 'Household' THEN";
             $namesTrigger[] = "SET NEW.display_name_{$loc} = NEW.household_name_{$loc};";
@@ -384,12 +385,19 @@ class CRM_Core_I18n_Schema
             $namesTrigger[] = "IF NEW.prefix_id IS NOT NULL THEN SELECT v.label_{$loc} INTO @prefix FROM civicrm_option_value v JOIN civicrm_option_group g ON (v.option_group_id = g.id) WHERE g.name = 'individual_prefix' AND v.value = NEW.prefix_id; END IF;";
             $namesTrigger[] = "IF NEW.suffix_id IS NOT NULL THEN SELECT v.label_{$loc} INTO @suffix FROM civicrm_option_value v JOIN civicrm_option_group g ON (v.option_group_id = g.id) WHERE g.name = 'individual_suffix' AND v.value = NEW.suffix_id; END IF;";
             $namesTrigger[] = 'END IF;';
-            
+            $individualNamesTrigger[] = "IF NEW.contact_type = 'Individual' THEN";
+            $individualNamesTrigger[] = "SET NEW.display_name_{$loc} = TRIM(REPLACE(CONCAT_WS(' ', @prefix, NEW.first_name_{$loc}, NEW.middle_name_{$loc}, NEW.last_name_{$loc}, @suffix), '  ', ' '));";
+            $individualNamesTrigger[] = "SET NEW.sort_name_{$loc} = TRIM(', ' FROM CONCAT_WS(', ', NEW.last_name_{$loc}, NEW.first_name_{$loc}));";
+            $individualNamesTrigger[] = 'END IF;';
+            $individualNamesTrigger[] = "SELECT email INTO @email FROM civicrm_email WHERE is_primary = 1 AND contact_id = NEW.id LIMIT 1;";
+            $individualNamesTrigger[] = "IF NEW.display_name_{$loc} = '' THEN SET NEW.display_name_{$loc} = @email; END IF;";
+            $individualNamesTrigger[] = "IF NEW.sort_name_{$loc}    = '' THEN SET NEW.sort_name_{$loc}    = @email; END IF;";
         }
         
+        $beforeUpdateNamesTrigger = implode(' ', $namesTrigger) . implode(' ', $individualNamesTrigger );
         // ...for UPDATE it's a separate trigger, for INSERT it has to be merged into the below, general one
         $queries[] = "DROP TRIGGER IF EXISTS civicrm_contact_before_update";
-        $queries[] = "CREATE TRIGGER civicrm_contact_before_update BEFORE UPDATE ON civicrm_contact FOR EACH ROW BEGIN " . implode(' ', $namesTrigger) . ' END';
+        $queries[] = "CREATE TRIGGER civicrm_contact_before_update BEFORE UPDATE ON civicrm_contact FOR EACH ROW BEGIN " . $beforeUpdateNamesTrigger . ' END';
         
         // take care of the ON INSERT triggers
         foreach ($columns as $table => $hash) {
@@ -400,6 +408,10 @@ class CRM_Core_I18n_Schema
 
             if ($locales) {
                 foreach ($hash as $column => $_) {
+                    if ($table == 'civicrm_contact' and ($column == 'display_name' or $column == 'sort_name')) {
+                        // {display,sort}_name are handled by $individualNamesTrigger and shouldn't be copied between languages
+                        continue;
+                    }
                     $trigger[] = "IF NEW.{$column}_{$locale} IS NOT NULL THEN";
                     foreach ($locales as $old) {
                         $trigger[] = "SET NEW.{$column}_{$old} = NEW.{$column}_{$locale};";
