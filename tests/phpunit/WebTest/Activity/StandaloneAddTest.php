@@ -164,7 +164,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
 
       $activityTable = array( 'subject' => $subject,
                               'duration' => 30 );
-      $this->assertDBState( "CRM_Activity_DAO_Activity", 1, $match );
+      $this->assertDBState( "CRM_Activity_DAO_Activity", 1, $activityTable );
       
       $assignmentTable = array( 'id ' => 1, 
                                 'activity_id' => 1, 
