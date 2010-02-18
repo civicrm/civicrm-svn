@@ -108,6 +108,7 @@
 */
 div#crm-container {
     line-height: 135%;
+    width      :98%;
 }
 
 /* Base #crm-container styles */
@@ -227,6 +228,7 @@ div.spacer,
   clear           : none;
   overflow        : auto; 
   height          : 100%;
+  width           : 98%;
 }
 
 #crm-container div.form-item dl, #crm-container .section-hidden dl{
