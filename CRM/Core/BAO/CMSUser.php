@@ -352,7 +352,8 @@ class CRM_Core_BAO_CMSUser
         $isJoomla = ucfirst($config->userFramework) == 'Joomla' ? true : false;
         
         $dao =& new CRM_Core_DAO( );
-        $name = $dao->escape( $params['name'] );
+        $name  = $dao->escape( $params['name'] );
+        $email = $dao->escape( $params['mail'] );
 
         if ( $isDrupal ) {
             _user_edit_validate(null, $params );
@@ -391,9 +392,9 @@ SELECT count(*)
                 $errors['cms_name'] = ts("Your username contains invalid characters or is too short");
             }
             $sql = "
-SELECT count(*)
+SELECT username, email
   FROM {$config->userFrameworkUsersTableName}
- WHERE LOWER(username) = LOWER('$name')
+ WHERE (LOWER(username) = LOWER('$name')) OR (LOWER(email) = LOWER('$email'))
 ";
         }
 
@@ -403,8 +404,12 @@ SELECT count(*)
         }
         $query = $db_cms->query( $sql );
         $row = $query->fetchRow( );
-        if ( $row[0] >= 1 ) {
-            $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', array( 1 => $name) );
+        if ( !empty( $row ) ) {
+            if ( $row[0] == $name ) {
+                $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', array( 1 => $name) );
+            } else if ( $row[1] == $email ) {
+                $errors['email-5'] = ts( 'This email %1 is already registered. Please select another email.', array( 1 => $email) );
+            }
         }
     }
     
