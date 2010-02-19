@@ -34,11 +34,14 @@
  *
  */
 
+require_once 'CRM/Core/OptionGroup.php';
+
 /**
  * This class holds all the Pseudo constants that are specific to Contributions. This avoids
  * polluting the core class and isolates the mass mailer class
  */
-class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
+class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant 
+{
 
     /**
      * contribution types
@@ -143,11 +146,9 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
      */
     public static function &paymentInstrument( )
     {
-        require_once 'CRM/Core/OptionGroup.php';
         $paymentInstrument = CRM_Core_OptionGroup::values('payment_instrument');
         if ( ! $paymentInstrument ) {
             $paymentInstrument = array( );
-
         }
         return $paymentInstrument;
     }
@@ -162,7 +163,6 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
     public static function &creditCard( ) 
     {
         $acceptCreditCard = array( );    
-        require_once 'CRM/Core/OptionGroup.php';
         $creditCard = CRM_Core_OptionGroup::values('accept_creditcard');
         
         if  ( ! $creditCard ) {
@@ -234,7 +234,6 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
     public static function &contributionStatus( $id = null, $columnName = 'label' )
     {
         $cacheKey = $columnName;
-        require_once 'CRM/Core/OptionGroup.php';
         if ( ! isset( self::$contributionStatus[$cacheKey] ) ) {
             self::$contributionStatus[$cacheKey] = CRM_Core_OptionGroup::values( 'contribution_status', 
                                                                                  false, false, false, null, $columnName );
@@ -256,7 +255,6 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant {
     {
         self::$pcpStatus = array();
         if ( ! self::$pcpStatus ) {
-            require_once "CRM/Core/OptionGroup.php";
             self::$pcpStatus = CRM_Core_OptionGroup::values("pcp_status");
         }
         return self::$pcpStatus;
