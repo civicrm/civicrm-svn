@@ -1838,10 +1838,16 @@ ORDER BY cg.table_name";
         }
         require_once 'CRM/Core/BAO/CustomQuery.php';
         $mapper = CRM_Core_BAO_CustomQuery::$extendsMap;
-        
+
         foreach( $this->_columns as $table => $prop ) {
             if (substr($table, 0, 13) == 'civicrm_value') {
                 $extendsTable = $mapper[$prop['extends']];
+                
+                // check field is in params
+                if( !$this->isFieldSelected( $prop ) ) {
+                    continue;
+                }
+                
                 $this->_from .= " 
 LEFT JOIN $table {$this->_aliases[$table]} ON {$this->_aliases[$table]}.entity_id = {$this->_aliases[$extendsTable]}.id";
                 // handle for ContactReference
@@ -1857,5 +1863,41 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                 }
 			}
 		}
+    }
+    
+    function isFieldSelected( $prop ) {
+        if( empty($prop) ) {
+            return false;
+        }
+        require_once 'CRM/Core/BAO/CustomField.php';
+        
+        if ( !empty($this->_params['fields'] ) ) {
+            foreach( array_keys($prop['fields']) as $fieldAlias ) {
+                if ( array_key_exists( $fieldAlias, $this->_params['fields'] ) && CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
+                    return true;
+                }
+            }
+        }
+        
+        if ( !$fieldFound && !empty($this->_params['group_bys'] ) ) {
+            foreach( array_keys($prop['group_bys']) as $fieldAlias ) {
+                if ( array_key_exists( $fieldAlias, $this->_params['group_bys'] ) && CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
+                    return true;
+                }
+            }
+        }
+        
+        if ( !$fieldFound && !empty( $prop['filters'] ) ) {
+            foreach( $prop['filters'] as $fieldAlias => $val ) {
+                foreach( array( 'value', 'min', 'max', 'relative' ,'from', 'to' ) as $attach ) {
+                    if ( isset( $this->_params[$fieldAlias.'_'.$attach ] ) &&
+                         !empty( $this->_params[$fieldAlias.'_'.$attach ] ) ) {
+                        return true;
+                    } 
+                }
+            }
+        }
+        
+        return false;
     }
 }
