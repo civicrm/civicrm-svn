@@ -724,7 +724,7 @@ class CRM_Report_Form extends CRM_Core_Form {
                           'gt'  => ts('Is greater than'),
                           'neq' => ts('Is not equal to'), 
                           'nbw' => ts('Is not between'),
-                          'nll' => ts('Is Null'),
+                          'nll' => ts('Is empty (Null)'),
                           );
             break;
         case CRM_Report_FORM::OP_SELECT :
@@ -734,7 +734,7 @@ class CRM_Report_Form extends CRM_Core_Form {
             return array( 'in'  => ts('Is one of') );
             break; 
         case CRM_Report_FORM::OP_DATE :
-            return array( 'nll'  => ts('Is Null') );
+            return array( 'nll'  => ts('Is empty (Null)') );
             break;
         case CRM_Report_FORM::OP_MULTISELECT_SEPARATOR :
             // use this operator for the values, concatenated with separator. For e.g if 
@@ -749,7 +749,7 @@ class CRM_Report_Form extends CRM_Core_Form {
                          'nhas' => ts('Does not contain'), 
                          'eq'   => ts('Is equal to'), 
                          'neq'  => ts('Is not equal to'),
-                         'nll'  => ts('Is Null')
+                         'nll'  => ts('Is empty (Null)')
                          );
         }
     }
@@ -982,21 +982,19 @@ class CRM_Report_Form extends CRM_Core_Form {
             return;
         }
         
+        $customFieldIds  = array( );
         require_once 'CRM/Core/BAO/CustomField.php';
-        $entryFound      = false;
-        $customFields    = $fieldValueMap = array( );
-        $customFieldCols = array( 'column_name', 'data_type', 'html_type', 'option_group_id', 'id' );
-        $selectedFields  = array( );
-        
         foreach( $this->_params['fields'] as $fieldAlias => $value ) {
             if ( $fieldId = CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
-                $selectedFields[$fieldAlias] = $fieldId;
+                $customFieldIds[$fieldAlias] = $fieldId;
             }
         }
-
-        if( empty($selectedFields) ) {
+        if( empty($customFieldIds) ) {
             return;
         }
+
+        $customFields    = $fieldValueMap = array( );
+        $customFieldCols = array( 'column_name', 'data_type', 'html_type', 'option_group_id', 'id' );
         
         // skip for type date and ContactReference since date format is already handled
         $query = " 
@@ -1009,8 +1007,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
       cf.is_active = 1 AND
       cf.is_searchable = 1 AND
       cf.data_type   NOT IN ('ContactReference', 'Date') AND
-      cf.id IN (". implode( ",", $selectedFields ) .")
-GROUP BY cf.column_name, ov.option_group_id, ov.value ";
+      cf.id IN (". implode( ",", $customFieldIds ) .")";
 
         $dao = CRM_Core_DAO::executeQuery( $query );
         while( $dao->fetch( ) ) {
@@ -1023,6 +1020,7 @@ GROUP BY cf.column_name, ov.option_group_id, ov.value ";
         }
         $dao->free( );
 
+        $entryFound = false;
         foreach ( $rows as $rowNum => $row ) {
             foreach ( $row as $tableCol => $val ) {
                 if ( array_key_exists( $tableCol, $customFields ) ) {
@@ -1840,7 +1838,7 @@ ORDER BY cg.table_name";
         }
         require_once 'CRM/Core/BAO/CustomQuery.php';
         $mapper = CRM_Core_BAO_CustomQuery::$extendsMap;
-
+        
         foreach( $this->_columns as $table => $prop ) {
             if (substr($table, 0, 13) == 'civicrm_value') {
                 $extendsTable = $mapper[$prop['extends']];
