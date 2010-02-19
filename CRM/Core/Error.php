@@ -134,10 +134,6 @@ class CRM_Core_Error extends PEAR_ErrorStack {
      */
     public static function handle( $pearError )
     {
-        // do a hard rollback of any pending transactions
-        // if we've come here, its because of some unexpected PEAR errors
-        require_once 'CRM/Core/Transaction.php';
-        CRM_Core_Transaction::rollback( );
 
         // setup smarty with config, session and template location.
         $template = CRM_Core_Smarty::singleton( );
@@ -198,9 +194,9 @@ class CRM_Core_Error extends PEAR_ErrorStack {
             echo "Sorry. A non-recoverable error has occurred. The error trace below might help to resolve the issue<p>";
             CRM_Core_Error::debug( null, $error );
         }
-        exit(1);
-    }
 
+        self::abend(1);
+    }
 
     /**
      * Handle errors raised using the PEAR Error Stack.
@@ -234,7 +230,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
      */
     static function fatal($message = null, $code = null, $email = null) {
         if ( ! $message ) {
-            $message = ts('We experienced an unexpected error. Please post a detailed description and the backtrace on the CiviCRM forums: %1', array(1 => 'http://forum.civicrm.org/'));
+            $message = ts('We experienced an unexpected error. Please post a detailed description and the backtrace on the CiviCRM forums: %1', array(1 => 'http://forum.civicrm.org/')); 
         }
 
         $vars = array( 'message' => $message,
@@ -249,7 +245,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
             if ( $ret ) {
                 // the call has been successfully handled
                 // so we just exit
-                exit( CRM_Core_Error::FATAL_ERROR );
+                self::abend( CRM_Core_Error::FATAL_ERROR );
             }
         }
 
@@ -265,7 +261,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         $content = $template->fetch( $config->fatalErrorTemplate );
         echo CRM_Utils_System::theme( 'page', $content );
         // print $content;
-        exit( CRM_Core_Error::FATAL_ERROR );
+        self::abend( CRM_Core_Error::FATAL_ERROR );
     }
 
     /**
@@ -521,7 +517,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         $values['result'  ] = $result;
         return $values;
     }
-
+ 
     public static function movedSiteError( $file ) {
         $url = CRM_Utils_System::url( 'civicrm/admin/setting/updateConfigBackend',
                                       'reset=1',
@@ -531,6 +527,16 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         exit( );
     }
     
+    /**
+     * Terminate execution abnormally
+     */
+    protected static function abend( $code ) {
+        // do a hard rollback of any pending transactions
+        // if we've come here, its because of some unexpected PEAR errors
+        require_once 'CRM/Core/Transaction.php';
+        CRM_Core_Transaction::forceRollbackIfEnabled( );
+        exit( $code );
+    }
 }
 
 PEAR_ErrorStack::singleton('CRM', false, null, 'CRM_Core_Error');
