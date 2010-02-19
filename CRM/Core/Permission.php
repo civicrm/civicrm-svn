@@ -124,16 +124,17 @@ class CRM_Core_Permission {
 
     public static function customGroup( $type = CRM_Core_Permission::VIEW , $reset = false ) {
         $customGroups = CRM_Core_PseudoConstant::customGroup( $reset );
+        $defaultGroups = array( );
 
         // check if user has all powerful permission
         // or administer civicrm permission (CRM-1905)
         if ( self::check( 'access all custom data' ) ||
              self::check( 'administer CiviCRM' ) ) {
-            return array_keys( $customGroups );
+            $defaultGroups = array_keys( $customGroups );
         }
 
         require_once 'CRM/ACL/API.php';
-        return CRM_ACL_API::group( $type, null, 'civicrm_custom_group', $customGroups );
+        return CRM_ACL_API::group( $type, null, 'civicrm_custom_group', $customGroups, $defaultGroups );
     }
 
     static function customGroupClause( $type = CRM_Core_Permission::VIEW, $prefix = null, $reset = false ) {
