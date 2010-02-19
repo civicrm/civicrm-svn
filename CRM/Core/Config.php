@@ -569,9 +569,12 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
      */
     function clearDBCache( ) {
         $queries = array( 'TRUNCATE TABLE civicrm_acl_cache',
+                          'TRUNCATE TABLE civicrm_acl_contact_cache',
                           'TRUNCATE TABLE civicrm_cache',
                           'UPDATE civicrm_group SET cache_date = NULL',
-                          'TRUNCATE TABLE civicrm_group_contact_cache' );
+                          'TRUNCATE TABLE civicrm_group_contact_cache',
+                          'TRUNCATE TABLE civicrm_menu',
+                          );
 
         foreach ( $queries as $query ) {
             CRM_Core_DAO::executeQuery( $query );
