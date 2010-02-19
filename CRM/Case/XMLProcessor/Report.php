@@ -336,7 +336,11 @@ WHERE      a.id = %1
                                        'type'  => 'String' );
         
         // For Emails, include the recipient
-        if ( ($activityTypeInfo['name'] == 'Email' || $activityTypeInfo['name'] == 'Inbound Email') && $activityDAO->targetID ) {
+        $targetContactsLabel = ts('With Contacts');
+        if ( in_array( $activityTypeInfo['name'], array( 'Email', 'Inbound Email' ) ) ) {
+            $targetContactsLabel = ts('Recipient');
+        }
+        if ( $activityDAO->targetID ) {
         	// Re-lookup the target ID since the DAO only has the first recipient if there are multiple.
         	// Maybe not the best solution.
         	require_once 'CRM/Activity/BAO/ActivityTarget.php';
@@ -355,7 +359,7 @@ WHERE      a.id = %1
                  }
         		 $targetRedacted[] = $this->redact($target);
         	}
-            $activity['fields'][] = array( 'label' => 'Recipient',
+            $activity['fields'][] = array( 'label' => $targetContactsLabel,
                                            'value' => implode('; ', $targetRedacted),
                                            'type'  => 'String' );
         }

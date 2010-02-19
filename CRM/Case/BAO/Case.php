@@ -991,7 +991,6 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
                     $values[$dao->id]['reporter'] .= ' / ' .ts('(multiple)');
                 } 
             }
-
             $url = "";
             $additionalUrl = "&id={$dao->id}";
             if ( !$dao->deleted ) {
@@ -1810,7 +1809,9 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
             if ( $duplicateCases ) {
                 $otherActivityIds = array( );
                 foreach ( $otherCaseActivities as $caseActivityId => $otherIds ) {
-                    $otherActivityIds[] = $otherIds['activity_id'];
+                    if ( CRM_Utils_Array::value( 'activity_id', $otherIds ) ) {
+                        $otherActivityIds[] = $otherIds['activity_id'];
+                    }
                 }
                 
                 if ( $openCaseType = array_search( 'Open Case', $activityTypes ) ) { 
@@ -1841,10 +1842,10 @@ SELECT  id
             }
             
             // migrate all activities and connect to main contact.
-            $copiedActivityIds = array( );
-            foreach ( $otherCaseActivities as $otherIds ) {
-                $otherActivityId = CRM_Utils_Array::value( 'activity_id', $otherIds );
-                
+            $copiedActivityIds = $activityMappingIds = array( );
+            sort( $otherActivityIds );
+            foreach ( $otherActivityIds as $otherActivityId ) {
+                         
                 //for duplicate cases - 
                 //do not migrate singleton activities.
                 if ( !$otherActivityId || in_array( $otherActivityId, $singletonActivityIds ) ) {
@@ -1870,9 +1871,17 @@ SELECT  id
                 if ( $mainActivity->source_record_id == $otherCaseId ) {
                     $mainActivity->source_record_id = $mainCaseId;
                 }
+                $mainActivity->original_id = CRM_Utils_Array::value( $mainActivity->original_id, 
+                                                                     $activityMappingIds );
                 $mainActivity->save( );
                 $mainActivityId = $mainActivity->id;
                 if ( !$mainActivityId ) continue;
+                
+                $activityMappingIds[$otherActivityId] = $mainActivityId ;
+                if ( $mainActivity->original_id ) {
+                    CRM_Activity_BAO_Activity::logActivityAction( $mainActivity );
+                }
+                
                 $otherActivity->free( );
                 $mainActivity->free( );
                 $copiedActivityIds[] = $otherActivityId;
