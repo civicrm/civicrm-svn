@@ -128,8 +128,13 @@ class CRM_Core_Permission {
 
         // check if user has all powerful permission
         // or administer civicrm permission (CRM-1905)
-        if ( self::check( 'access all custom data' ) ||
-             self::check( 'administer CiviCRM' ) ) {
+        if ( self::check( 'access all custom data' ) ) {
+            $defaultGroups = array_keys( $customGroups );
+        } else if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {
+            if ( self::check('administer Multiple Organizations') ) {
+                $defaultGroups = array_keys( $customGroups );
+            }
+        } else if ( self::check( 'administer CiviCRM' ) ) {
             $defaultGroups = array_keys( $customGroups );
         }
 
