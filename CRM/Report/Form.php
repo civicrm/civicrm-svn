@@ -706,7 +706,33 @@ class CRM_Report_Form extends CRM_Core_Form {
             $this->addFormRule( array( get_class($this), 'formRule' ), $this );
         }
     }
-    
+       
+    // a formrule function to ensure that fields selected in group_by
+    // (if any) should only be the ones present in display/select fields criteria;
+    // note: works if and only if any custom field selected in group_by.
+    function customDataFormRule( $fields, $ignoreFields = array( ) ) {
+        $errors = array( );
+        if( !empty($this->_customGroupExtends) && $this->_customGroupGroupBy && !empty($fields['group_bys']) ) {
+            foreach( $this->_columns as $tableName => $table ) {
+                if( substr($tableName, 0, 13) == 'civicrm_value' && !empty( $this->_columns[$tableName]['fields']) ) {
+                    foreach( $this->_columns[$tableName]['fields'] as $fieldName => $field ) {
+                        if ( array_key_exists( $fieldName, $fields['group_bys'] ) && 
+                             !array_key_exists( $fieldName, $fields['fields'] ) ) {
+                            $errors['fields'] = "Please make sure fields selected in group-by are also present in display columns.";
+                        } elseif ( array_key_exists( $fieldName, $fields['group_bys'] ) ) {
+                            foreach( $fields['fields'] as $fld => $val ) {
+                                if( !array_key_exists( $fld, $fields['group_bys'] ) && !in_array($fld, $ignoreFields )) {
+                                    $errors['fields'] = "Please ensure that fields selected in group-by should only be the ones present in display columns.";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $errors;
+    }
+
     // Note: $fieldName param allows inheriting class to build operationPairs 
     // specific to a field.
     function getOperationPair( $type = "string", $fieldName = null ) {
