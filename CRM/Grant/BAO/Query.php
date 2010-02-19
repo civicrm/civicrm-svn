@@ -60,7 +60,7 @@ class CRM_Grant_BAO_Query
                 $query->_tables['civicrm_grant']    = $query->_whereTables['civicrm_grant'] = 1;
             }
             if ( CRM_Utils_Array::value( 'grant_type_id', $query->_returnProperties ) ) {
-                $query->_select['grant_type_id']  = 'grant_type.name as grant_type_id';
+                $query->_select['grant_type_id']  = 'grant_type.label as grant_type_id';
                 $query->_element['grant_type']    = 1;
                 $query->_tables['grant_type']     = $query->_whereTables['grant_type'] = 1;
                 $query->_tables['civicrm_grant']  = $query->_whereTables['civicrm_grant'] = 1;
