@@ -53,29 +53,15 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
      */
     public function buildQuickForm( ) {
         CRM_Utils_System::setTitle(ts('Settings - Update Directory Path and URL'));
-
-        $config =& CRM_Core_Config::singleton( );
-
-        if ( $config->userFramework == 'Joomla' ) {
-            $this->_oldBaseURL = substr( $config->userFrameworkResourceURL,
-                                         0, -45 );
-        } else {
-            if ( strpos( $config->userFrameworkResourceURL,
-                         'sites/all/modules' ) == false ) {
-                CRM_Core_Error::statusBounce( ts( 'This function only works when CiviCRM is installed in sites/all/modules' ) );
-            }
-            $this->_oldBaseURL = substr( $config->userFrameworkResourceURL,
-                                         0, -26 );
-        }
-        $this->assign( 'oldBaseURL', $this->_oldBaseURL );
         
-        // 15 characters from end is /civicrm/upload/
-        $this->_oldBaseDir = substr( $config->uploadDir,
-                                    0, -15 ); 
+        require_once 'CRM/Core/BAO/Setting.php';
+        list( $this->_oldBaseURL,
+              $this->_oldBaseDir ) = CRM_Core_BAO_Setting::getConfigDirAndUrl( );
 
+        $this->assign( 'oldBaseURL', $this->_oldBaseURL );
         $this->assign( 'oldBaseDir',
                        $this->_oldBaseDir );
-                               
+
         $this->add( 'text', 'newBaseURL', ts( 'New Base URL' ), null, true );
         $this->add( 'text', 'newBaseDir', ts( 'New Base Directory' ), null, true );
  
@@ -89,9 +75,9 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
         if ( ! $this->_defaults ) {
             parent::setDefaultValues( );
 
-            $this->_defaults['newBaseURL'] = $this->_oldBaseURL;
-            $this->_defaults['newBaseDir'] = $this->_oldBaseDir;
-        }
+            $config =& CRM_Core_Config::singleton( );
+            list( $this->_defaults['newBaseURL'],
+                  $this->_defaults['newBaseDir'] ) = CRM_Core_BAO_Setting::getBestGuessDirAndURL( );
         return $this->_defaults;
     }
 

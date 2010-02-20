@@ -261,6 +261,40 @@ class CRM_Core_BAO_Setting
             if (function_exists('mb_internal_encoding')) mb_internal_encoding('UTF-8');
         }
     }
+
+
+    static function getConfigURLAndDir( ) {
+        $config =& CRM_Core_Config::singleton( );
+
+        if ( $config->userFramework == 'Joomla' ) {
+            $url = preg_replace( '|administrator/components/com_civicrm/civicrm/|',
+                                 '',
+                                 $config->userFrameworkResourceURL );
+        } else {
+            $url = preg_replace( '|sites/[\w\.\-\_]+/modules/civicrm/|',
+                                 '',
+                                 $config->userFrameworkResourceURL );
+        }
+
+        // lets use imageUploadDir since we dont mess around with its values
+        // in the config object
+        $dir =  preg_replace( '|civicrm/upload/|',
+                              '',
+                              $config->imageUploadDir );
+
+        return array( $url, $dir );
+    }
+
+    static function getBestGuessURLAndDir( ) {
+        $config =& CRM_Core_Config::singleton( );
+
+        $url = $config->userFrameworkBaseURL;
+        $dir = preg_replace( '|civicrm/templates_c/.*$|',
+                             '',
+                             $config->templateCompileDir );
+        return array( $url, $dir );
+    }
+
 }
 
 
