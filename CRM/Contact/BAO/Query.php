@@ -2266,7 +2266,7 @@ WHERE  id IN ( $groupIDs )
                 $value = "'%$value%'";
             }
             $op    = 'LIKE';
-        } else if ( $op == 'IS NULL' or $op == 'IS NOT NULL' ) {
+        } else if ( $op == 'IS NULL' || $op == 'IS NOT NULL' ) {
             $value = null;
         } else {
             $value = "'$value'";
