@@ -253,4 +253,75 @@ class CRM_Upgrade_ThreeOne_ThreeOne extends CRM_Upgrade_Form {
         $afterUpgradeMessage .= ts("Date Input Format has been set to %1 format. If you want to use a different format please check Administer CiviCRM &raquo; Global Settings &raquo; Date Formats.", array( 1 => $defaults['dateInputFormat']) );
         $template->assign('afterUpgradeMessage', $afterUpgradeMessage);
     }
+
+    function upgrade_3_1_3( ) 
+    {
+        $count = 0;
+        $totalCount = 0;
+        $addressQuery = "
+     UPDATE civicrm_address as address
+INNER JOIN ( SELECT id, contact_id FROM civicrm_address WHERE is_primary = 1 GROUP BY contact_id HAVING count( id ) > 1 ) as dup_address 
+         ON ( address.contact_id = dup_address.contact_id AND address.id != dup_address.id )
+        SET address.is_primary = 0";
+        CRM_Core_DAO::executeQuery( $addressQuery );
+        
+        $sql = "SELECT ROW_COUNT();";
+       
+        if ( $count = CRM_Core_DAO::singleValueQuery( $sql ) ) {
+            $totalCount += $count;
+        }
+        
+        $emailQuery = "
+    UPDATE civicrm_email as email
+INNER JOIN ( SELECT id, contact_id FROM civicrm_email WHERE is_primary = 1 GROUP BY contact_id HAVING count( id ) > 1 ) as dup_email
+        ON ( email.contact_id = dup_email.contact_id AND email.id != dup_email.id )
+       SET email.is_primary = 0";    
+        CRM_Core_DAO::executeQuery( $emailQuery );
+        
+        if ( $count = CRM_Core_DAO::singleValueQuery( $sql ) ) {
+            $totalCount += $count;
+        }
+        
+        $phoneQuery = "
+    UPDATE civicrm_phone as phone
+INNER JOIN ( SELECT id, contact_id FROM civicrm_phone WHERE is_primary = 1 GROUP BY contact_id HAVING count( id ) > 1 ) as dup_phone
+        ON ( phone.contact_id = dup_phone.contact_id AND phone.id != dup_phone.id )
+       SET phone.is_primary = 0";
+        CRM_Core_DAO::executeQuery( $phoneQuery );
+        
+        if ( $count = CRM_Core_DAO::singleValueQuery( $sql ) ) {
+            $totalCount += $count;
+        }
+        
+        $imQuery = "
+    UPDATE civicrm_im as im
+INNER JOIN ( SELECT id, contact_id FROM civicrm_im WHERE is_primary = 1 GROUP BY contact_id HAVING count( id ) > 1 ) as dup_im
+        ON ( im.contact_id = dup_im.contact_id AND im.id != dup_im.id )
+       SET im.is_primary = 0";
+        CRM_Core_DAO::executeQuery( $imQuery );
+        
+        if ( $count = CRM_Core_DAO::singleValueQuery( $sql ) ) {
+            $totalCount += $count;
+        }
+        
+        $openidQuery = "
+    UPDATE civicrm_openid as openid
+INNER JOIN ( SELECT id, contact_id FROM civicrm_openid WHERE is_primary = 1 GROUP BY contact_id HAVING count( id ) > 1 ) as dup_openid
+        ON ( openid.contact_id = dup_openid.contact_id AND openid.id != dup_openid.id )
+       SET openid.is_primary = 0";
+        CRM_Core_DAO::executeQuery( $openidQuery );
+        
+        if ( $count = CRM_Core_DAO::singleValueQuery( $sql ) ) {
+            $totalCount += $count;
+        }
+        
+        $afterUpgradeMessage = '';
+        if ( !empty( $totalCount ) ) {
+            $template =& CRM_Core_Smarty::singleton( );
+            $afterUpgradeMessage = $template->get_template_vars( 'afterUpgradeMessage' );
+            $afterUpgradeMessage .= "<br/><br/>";
+            $afterUpgradeMessage .= ts("%1 records have been updated so that each contact record should contain only one Address, Email, Phone, Instant Messanger and openID as primary.", array( 1 => $totalCount) );
+            $template->assign( 'afterUpgradeMessage', $afterUpgradeMessage );
+        }
+    }
 }
