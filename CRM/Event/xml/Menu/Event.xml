@@ -123,6 +123,7 @@
      <page_callback>CRM_Event_Page_ManageEvent</page_callback>
      <access_arguments>access CiviEvent</access_arguments>
      <page_type>1</page_type>
+     <is_ssl>true</is_ssl>
      <weight>820</weight>
   </item>
   <item>
