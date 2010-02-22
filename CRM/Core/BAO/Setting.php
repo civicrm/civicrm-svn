@@ -329,6 +329,90 @@ class CRM_Core_BAO_Setting
         return array( $url, $dir, $siteName );
     }
 
+    static function doSiteMove( ) {
+        // get the current and guessed values
+        list( $oldURL, $oldDir, $oldSiteName ) = self::getConfigSettings( );
+        list( $newURL, $newDir, $newSiteName ) = self::getBestGuessSettings( );
+    
+        require_once 'CRM/Utils/Request.php';
+
+        // retrieve these values from the argument list 
+        $variables = array( 'URL', 'Dir', 'SiteName', 'Val_1', 'Val_2', 'Val_3' );
+        $states     = array( 'old', 'new' );
+        foreach ( $variables as $varSuffix ) {
+            foreach ( $states as $state ) {
+                $var = "{$state}{$varSuffix}";
+                if ( ! isset( $$var ) ) {
+                    $$var = null;
+                }
+                $$var = CRM_Utils_Request::retrieve( $var,
+                                                     'String',
+                                                     CRM_Core_DAO::$_nullArray,
+                                                     false,
+                                                     $$var,
+                                                     'REQUEST' );
+            }
+        }
+
+        $from = $to = array( );
+        foreach ( $variables as $varSuffix ) {
+            $oldVar = "old{$varSuffix}";
+            $newVar = "new{$varSuffix}";
+            if ( $$oldVar && $$newVar ) {
+                $from[]  = $$oldVar;
+                $to[]    = $$newVar;
+            }
+        }
+
+        $sql = "
+SELECT config_backend
+FROM   civicrm_domain
+WHERE  id = %1
+";
+        $params = array( 1 => array( CRM_Core_Config::domainID( ), 'Integer' ) );
+        $configBackend = CRM_Core_DAO::singleValueQuery( $sql, $params );
+        if ( ! $configBackend ) {
+            CRM_Core_Error::fatal( );
+        }
+        $configBackend = unserialize( $configBackend );
+
+        $configBackend = str_replace( $from,
+                                      $to  ,
+                                      $configBackend );
+
+        $configBackend = serialize( $configBackend );
+        $sql = "
+UPDATE civicrm_domain
+SET    config_backend = %2
+WHERE  id = %1
+";
+        $params[2] = array( $configBackend, 'String' );
+        CRM_Core_DAO::executeQuery( $sql, $params );
+
+        $config =& CRM_Core_Config::singleton( );
+
+        // clear the template_c and upload directory also
+        $config->cleanup( 3, true );
+    
+        // clear all caches
+        CRM_Core_Config::clearDBCache( );
+
+        $resetSessionTable = CRM_Utils_Request::retrieve( 'resetSessionTable',
+                                                          'Boolean',
+                                                          CRM_Core_DAO::$_nullArray,
+                                                          false,
+                                                          false,
+                                                          'REQUEST' );
+        if ( $config->userFramework == 'Drupal' &&
+             $resetSessionTable ) {
+            db_query("DELETE FROM {sessions} WHERE 1");
+        } else {
+            $session =& CRM_Core_Session::singleton( );
+            $session->reset( 2 );
+        }
+
+    }
+
 }
 
 
