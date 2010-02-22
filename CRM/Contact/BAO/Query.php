@@ -2266,12 +2266,14 @@ WHERE  id IN ( $groupIDs )
                 $value = "'%$value%'";
             }
             $op    = 'LIKE';
-        } else {
+        } else if ( $op == 'IS NULL' or $op == 'IS NOT NULL' ) {
+            $value = null;
+            } else {
             $value = "'$value'";
         }
         $sub = " ( civicrm_email.email $op $value )";
 
-        $this->_where[$grouping][] = " ( civicrm_note.note $op $value OR civicrm_note.subject $op $value ) ";
+        $this->_where[$grouping][] = " ( civicrm_note.note $op $value ) ";
         $this->_qill[$grouping][]  = ts( 'Note' ) . " $op - '$n'";
     }
 
