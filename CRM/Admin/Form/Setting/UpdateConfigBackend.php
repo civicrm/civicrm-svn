@@ -44,6 +44,7 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
 {  
     protected $_oldBaseDir;
     protected $_oldBaseURL;
+    protected $_oldSiteName;
   
     /**
      * Function to build the form
@@ -56,14 +57,16 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
         
         require_once 'CRM/Core/BAO/Setting.php';
         list( $this->_oldBaseURL,
-              $this->_oldBaseDir ) = CRM_Core_BAO_Setting::getConfigDirAndUrl( );
+              $this->_oldBaseDir,
+              $this->_oldSiteName ) = CRM_Core_BAO_Setting::getConfigSettings( );
 
         $this->assign( 'oldBaseURL', $this->_oldBaseURL );
-        $this->assign( 'oldBaseDir',
-                       $this->_oldBaseDir );
+        $this->assign( 'oldBaseDir', $this->_oldBaseDir );
+        $this->assign( 'oldSiteName', $this->_oldSiteName );
 
         $this->add( 'text', 'newBaseURL', ts( 'New Base URL' ), null, true );
         $this->add( 'text', 'newBaseDir', ts( 'New Base Directory' ), null, true );
+        $this->add( 'text', 'newSiteName', ts( 'New Site Name' ), null, true );
  
         $this->addFormRule( array( 'CRM_Admin_Form_Setting_UpdateConfigBackend', 'formRule' ) );
 
@@ -77,7 +80,10 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
 
             $config =& CRM_Core_Config::singleton( );
             list( $this->_defaults['newBaseURL'],
-                  $this->_defaults['newBaseDir'] ) = CRM_Core_BAO_Setting::getBestGuessDirAndURL( );
+                  $this->_defaults['newBaseDir'],
+                  $this->_defaults['newSiteName'] ) = CRM_Core_BAO_Setting::getBestGuessSettings( );
+        }
+
         return $this->_defaults;
     }
 
@@ -101,14 +107,22 @@ class CRM_Admin_Form_Setting_UpdateConfigBackend extends CRM_Admin_Form_Setting
 
         //CRM-5679
         foreach ( $params as $name => &$val ) {
-            if ( $val && in_array( $name, array( 'newBaseURL', 'newBaseDir' ) ) ) {
+            if ( $val && in_array( $name, array( 'newBaseURL', 'newBaseDir', 'newSiteName' ) ) ) {
                 $val = CRM_Utils_File::addTrailingSlash( $val );
             }
         }
-        
-        $newValues = str_replace( array( $this->_oldBaseURL, $this->_oldBaseDir ),
-                                  array( trim( $params['newBaseURL'] ),
-                                         trim( $params['newBaseDir'] ) ),
+
+        $from = array( $this->_oldBaseURL, $this->_oldBaseDir );
+        $to   = array( trim( $params['newBaseURL'] ),
+                       trim( $params['newBaseDir'] ) );
+        if ( $this->_oldSiteName &&
+             $params['newSiteName'] ) {
+            $from[] = $this->_oldSiteName;
+            $to[]   = $params['newSiteName'];
+        }
+
+        $newValues = str_replace( $from,
+                                  $to,
                                   $this->_defaults );
 
         parent::commonProcess( $newValues );

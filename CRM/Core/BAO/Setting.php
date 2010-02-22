@@ -263,36 +263,70 @@ class CRM_Core_BAO_Setting
     }
 
 
-    static function getConfigURLAndDir( ) {
+    static function getConfigSettings( ) {
         $config =& CRM_Core_Config::singleton( );
 
+        $url = $dir = $siteName = null;
         if ( $config->userFramework == 'Joomla' ) {
             $url = preg_replace( '|administrator/components/com_civicrm/civicrm/|',
                                  '',
                                  $config->userFrameworkResourceURL );
+
+            // lets use imageUploadDir since we dont mess around with its values
+            // in the config object, lets kep it a bit generic since folks
+            // might have different values etc
+            $dir =  preg_replace( '|/media/civicrm/.*$|',
+                                  '/files/',
+                                  $config->imageUploadDir );
         } else {
             $url = preg_replace( '|sites/[\w\.\-\_]+/modules/civicrm/|',
                                  '',
                                  $config->userFrameworkResourceURL );
+            
+            // lets use imageUploadDir since we dont mess around with its values
+            // in the config object, lets kep it a bit generic since folks
+            // might have different values etc
+            $dir =  preg_replace( '|/files/civicrm/.*$|',
+                                  '/files/',
+                                  $config->imageUploadDir );
+
+            $matches = array( );
+            if ( preg_match( '|/sites/([\w\.\-\_]+)/|',
+                             $config->imageUploadDir,
+                             $matches ) ) {
+                $siteName = $matches[1];
+                if ( $siteName ) {
+                    $siteName = "/sites/$siteName/";
+                }
+            }
         }
 
-        // lets use imageUploadDir since we dont mess around with its values
-        // in the config object
-        $dir =  preg_replace( '|civicrm/upload/|',
-                              '',
-                              $config->imageUploadDir );
 
-        return array( $url, $dir );
+        return array( $url, $dir, $siteName );
     }
 
-    static function getBestGuessURLAndDir( ) {
+    static function getBestGuessSettings( ) {
         $config =& CRM_Core_Config::singleton( );
 
         $url = $config->userFrameworkBaseURL;
         $dir = preg_replace( '|civicrm/templates_c/.*$|',
                              '',
                              $config->templateCompileDir );
-        return array( $url, $dir );
+
+        $siteName = null;
+        if ( $config->userFramework != 'Joomla' ) {
+            $matches = array( );
+            if ( preg_match( '|/sites/([\w\.\-\_]+)/|',
+                             $config->templateCompileDir,
+                             $matches ) ) {
+                $siteName = $matches[1];
+                if ( $siteName ) {
+                    $siteName = "/sites/$siteName/";
+                }
+            }
+        }
+        
+        return array( $url, $dir, $siteName );
     }
 
 }

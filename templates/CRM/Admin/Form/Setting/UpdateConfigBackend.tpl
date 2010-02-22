@@ -41,6 +41,11 @@
             <dt>{ts}Old Base URL{/ts}</dt><dd>{$oldBaseURL}</dd>
             <dt>{$form.newBaseURL.label}</dt><dd>{$form.newBaseURL.html|crmReplace:class:'huge'}</dd>
             <dt>&nbsp;</dt><dd class="description">{ts}This is the URL for your Drupal or Joomla site URL (e.g. http://www.mysite.com/drupal/).{/ts}</dt>
+{if $oldSiteName}
+            <dt>{ts}Old Site Name{/ts}</dt><dd>{$oldSiteName}</dd>
+            <dt>{$form.newSiteName.label}</dt><dd>{$form.newSiteName.html|crmReplace:class:'huge'}</dd>
+            <dt>&nbsp;</dt><dd class="description">{ts}This is the your site name for a multisite install.{/ts}</dt>
+{/if}
             <dt></dt><dd>{$form.buttons.html}</dd>
         </dl>
    

@@ -48,8 +48,8 @@ function run( ) {
 
     // get the current and guessed values
     require_once 'CRM/Core/BAO/Setting.php';
-    list( $oldURL, $oldDir ) = CRM_Core_BAO_Setting::getConfigURLAndDir( );
-    list( $newURL, $newDir ) = CRM_Core_BAO_Setting::getBestGuessURLAndDir( );
+    list( $oldURL, $oldDir, $oldSiteName ) = CRM_Core_BAO_Setting::getConfigSettings( );
+    list( $newURL, $newDir, $newSiteName ) = CRM_Core_BAO_Setting::getBestGuessSettings( );
     
     $oldVal_1 = $newVal_1 = null;
     $oldVal_2 = $newVal_2 = null;
@@ -72,14 +72,25 @@ function run( ) {
                                              'REQUEST' );
     }
 
+    $from = $to = array( );
 
-    $from = array( $oldURL, $oldDir );
-    $to   = array( $newURL, $newDir );
+    if ( $oldURL && $newURL ) {
+        $from[] = $oldURL;
+        $to[]   = $newURL;
+    }
+    if ( $oldDir && $newDir ) {
+        $from[] = $oldDir;
+        $to[]   = $newDir;
+    }
+    if ( $oldSiteName && $newSiteName ) {
+        $from[] = $oldSiteName;
+        $to[]   = $newSiteName;
+    }
 
     for ( $i = 1 ; $i<=3; $i++ ) {
         $oldVar = "oldVal_$i";
         $newVar = "newVal_$i";
-        if ( $$oldVar ) {
+        if ( $$oldVar && $$newVar ) {
             $from[]  = $$oldVar;
             $to[]    = $$newVar;
         }
