@@ -152,8 +152,10 @@ class CRM_Profile_Form extends CRM_Core_Form
         
         if ( ! $this->_gid ) {
             $this->_gid = CRM_Utils_Request::retrieve('gid', 'Positive', $this, false, 0, 'GET');
-        }  
-        
+        } 
+        $this->_isUpdateDupe = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', 
+                                                           $this->_gid,'is_update_dupe' ) ;
+     
         // if we dont have a gid use the default, else just use that specific gid
         if ( ( $this->_mode == self::MODE_REGISTER || $this->_mode == self::MODE_CREATE ) && ! $this->_gid ) {
             $this->_ctype  = CRM_Utils_Request::retrieve( 'ctype', 'String', $this, false, 'Individual', 'REQUEST' );
@@ -410,29 +412,19 @@ class CRM_Profile_Form extends CRM_Core_Form
             }
         }
         
-        $setCaptcha = false;
         
         // do this only for CiviCRM created forms
         if ( $this->_mode == self::MODE_CREATE ) {
             if (!empty($addCaptcha)) {
                 $setCaptcha = true;
             } 
-            if ($this->_gid ) {
-                $dao = new CRM_Core_DAO_UFGroup();
-                $dao->id = $this->_gid;
-                $dao->addSelect( );
-                $dao->addSelect( 'add_captcha', 'is_update_dupe' );
-                if ( $dao->find( true ) ) {
-                    if ( $dao->add_captcha ) {
-                        $setCaptcha = true;
-                    }
-                    if ($dao->is_update_dupe) {
-                        $this->_isUpdateDupe = true;
-                    }
-                }
+            if ( $this->_gid ) {
+                $isAddCaptcha = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', 
+                                                            $this->_gid,'add_captcha' ) ;
+                
             }
             
-            if ($setCaptcha) {
+            if ( $isAddCaptcha ) {
                 require_once 'CRM/Utils/ReCAPTCHA.php';
                 $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
                 $captcha->add( $this );
@@ -446,7 +438,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                 $this->_addToGroupID = $addToGroupId;
             }
         }
-            
+        
     	// also do state country js
     	require_once 'CRM/Core/BAO/Address.php';
     	CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap, $this->_defaults );
