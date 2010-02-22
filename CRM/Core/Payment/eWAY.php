@@ -226,7 +226,11 @@ class CRM_Core_Payment_eWAY extends CRM_Core_Payment
        curl_setopt($submit, CURLOPT_RETURNTRANSFER, true        );  // return the result on success, FALSE on failure 
        curl_setopt($submit, CURLOPT_POSTFIELDS,     $requestxml ); 
        curl_setopt($submit, CURLOPT_TIMEOUT,        36000       );                                     
-       curl_setopt($submit, CURLOPT_FOLLOWLOCATION, 1           );  // ensures any Location headers are followed 
+       // if open_basedir or safe_mode are enabled in PHP settings CURLOPT_FOLLOWLOCATION won't work so don't apply it
+       // it's not really required CRM-5841
+       if (ini_get('open_basedir') == '' && ini_get('safe_mode' == 'Off')) {
+           curl_setopt($submit, CURLOPT_FOLLOWLOCATION, 1           );  // ensures any Location headers are followed 
+       }
        
        // Send the data out over the wire
        //--------------------------------

@@ -414,7 +414,13 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
      * @access public
      */
     function import( $onDuplicate, &$values, $doGeocodeAddress = false ) 
-    {
+    { 
+        $config =& CRM_Core_Config::singleton( );
+        if ( ! $doGeocodeAddress ) {
+            // CRM-5854, reset the geocode method to null to prevent geocoding
+            $config->geocodeMethod = null;
+        }
+
         // first make sure this is a valid line
         //$this->_updateWithId = false;
         $response = $this->summary( $values );

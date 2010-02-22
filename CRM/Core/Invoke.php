@@ -285,7 +285,9 @@ class CRM_Core_Invoke
             $session->pushUserContext( CRM_Utils_System::url('civicrm/profile', 'reset=1' ) ); 
 
             $buttonType = CRM_Utils_Array::value('_qf_Edit_cancel',$_POST);
-            if ( $buttonType == 'Cancel' ) {
+            // CRM-5849: we should actually check the button *type*, but we get the *value*, potentially translated;
+            // we should keep both English and translated checks just to make sure we also handle untranslated Cancels
+            if ($buttonType == 'Cancel' or $buttonType == ts('Cancel')) {
                 $cancelURL = CRM_Utils_Request::retrieve('cancelURL',
                                                          'String',
                                                          CRM_Core_DAO::$_nullObject,

@@ -582,6 +582,9 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 }
                 $controller->process( );
                 $controller->setEmbedded( true );
+
+                //CRM-5846 - give the control back to drupal.
+                $controller->setSkipRedirection( ($doNotProcess) ? false : true );
                 $controller->run( );
                 
                 $template = CRM_Core_Smarty::singleton( );

@@ -202,42 +202,6 @@ class CRM_Report_Form_Contact_Summary extends CRM_Report_Form {
         }   
     }
 
-    function where( ) {
-        $clauses = array( );
-        $this->_having = '';
-        foreach ( $this->_columns as $tableName => $table ) {
-            if ( array_key_exists('filters', $table) ) {
-                foreach ( $table['filters'] as $fieldName => $field ) {
-                    $clause = null;
-                    $op = CRM_Utils_Array::value( "{$fieldName}_op", $this->_params );
-                    if ( $op ) {
-                        $clause = 
-                            $this->whereClause( $field,
-                                                $op,
-                                                CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
-                                                CRM_Utils_Array::value( "{$fieldName}_min", $this->_params ),
-                                                CRM_Utils_Array::value( "{$fieldName}_max", $this->_params ) );
-                    }
-                    
-                    if ( ! empty( $clause ) ) {
-                        $clauses[ ] = $clause;
-                    }
-                }
-            }
-        }
-        
-        if ( empty( $clauses ) ) {
-            $this->_where = "WHERE ( 1 ) ";
-        } else {
-            $this->_where = "WHERE " . implode( ' AND ', $clauses );
-        }
-
-        if ( $this->_aclWhere ) {
-            $this->_where .= " AND {$this->_aclWhere} ";
-        }            
-        
-    }
-
     function groupBy( ) {
         $this->_groupBy = "GROUP BY {$this->_aliases['civicrm_contact']}.id";
     }

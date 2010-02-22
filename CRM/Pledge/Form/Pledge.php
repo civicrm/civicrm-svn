@@ -257,7 +257,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             $defaults["honor_prefix_id"]  = $honorDefault["prefix_id"];
             $defaults["honor_first_name"] = CRM_Utils_Array::value( "first_name", $honorDefault );
             $defaults["honor_last_name"]  = CRM_Utils_Array::value( "last_name", $honorDefault );
-            $defaults["honor_email"]      = CRM_Utils_Array::value( "email", $honorDefault["location"][1]["email"][1] );
+            $defaults["honor_email"]      = CRM_Utils_Array::value( "email", $honorDefault['email'][1] );
             $defaults["honor_type"]       = $honorType[$defaults["honor_type_id"]];
         }
         

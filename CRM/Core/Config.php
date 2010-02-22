@@ -380,7 +380,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
         require_once "CRM/Core/BAO/Setting.php";
         $variables = array();
         CRM_Core_BAO_Setting::retrieve($variables);  
-        
+
         // if settings are not available, go down the full path
         if ( empty( $variables ) ) {
             // Step 1. get system variables with their hardcoded defaults
@@ -569,9 +569,12 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
      */
     function clearDBCache( ) {
         $queries = array( 'TRUNCATE TABLE civicrm_acl_cache',
+                          'TRUNCATE TABLE civicrm_acl_contact_cache',
                           'TRUNCATE TABLE civicrm_cache',
                           'UPDATE civicrm_group SET cache_date = NULL',
-                          'TRUNCATE TABLE civicrm_group_contact_cache' );
+                          'TRUNCATE TABLE civicrm_group_contact_cache',
+                          'TRUNCATE TABLE civicrm_menu',
+                          );
 
         foreach ( $queries as $query ) {
             CRM_Core_DAO::executeQuery( $query );

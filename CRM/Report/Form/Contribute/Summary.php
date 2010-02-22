@@ -313,6 +313,9 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
         $errors = $grouping = array( );
         //check for searching combination of dispaly columns and
         //grouping criteria
+        $ignoreFields = array( 'total_amount', 'display_name' );
+        $errors       = $self->customDataFormRule( $fields, $ignoreFields );
+        
         if ( CRM_Utils_Array::value( 'receive_date', $fields['group_bys'] ) ) {
             foreach ( $self->_columns as $tableName => $table ) {
                 if ( array_key_exists('fields', $table) ) {

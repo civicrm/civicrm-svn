@@ -124,16 +124,22 @@ class CRM_Core_Permission {
 
     public static function customGroup( $type = CRM_Core_Permission::VIEW , $reset = false ) {
         $customGroups = CRM_Core_PseudoConstant::customGroup( $reset );
+        $defaultGroups = array( );
 
         // check if user has all powerful permission
         // or administer civicrm permission (CRM-1905)
-        if ( self::check( 'access all custom data' ) ||
-             self::check( 'administer CiviCRM' ) ) {
-            return array_keys( $customGroups );
+        if ( self::check( 'access all custom data' ) ) {
+            $defaultGroups = array_keys( $customGroups );
+        } else if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {
+            if ( self::check('administer Multiple Organizations') ) {
+                $defaultGroups = array_keys( $customGroups );
+            }
+        } else if ( self::check( 'administer CiviCRM' ) ) {
+            $defaultGroups = array_keys( $customGroups );
         }
 
         require_once 'CRM/ACL/API.php';
-        return CRM_ACL_API::group( $type, null, 'civicrm_custom_group', $customGroups );
+        return CRM_ACL_API::group( $type, null, 'civicrm_custom_group', $customGroups, $defaultGroups );
     }
 
     static function customGroupClause( $type = CRM_Core_Permission::VIEW, $prefix = null, $reset = false ) {
@@ -210,19 +216,20 @@ class CRM_Core_Permission {
     public static function event( $type = CRM_Core_Permission::VIEW, $eventID = null ) {
         require_once 'CRM/Event/PseudoConstant.php';
         $events = CRM_Event_PseudoConstant::event( null, true );
+        $includeEvents = array( );
 
         // check if user has all powerful permission
         if ( self::check( 'register for events' ) ) {
-            return array_keys( $events );
+            $includeEvents = array_keys( $events );
         }
 
         if ( $type == CRM_Core_Permission::VIEW &&
              self::check( 'view event info' ) ) {
-            return array_keys( $events );
+            $includeEvents = array_keys( $events );
         }
 
         require_once 'CRM/ACL/API.php';
-        $permissionedEvents = CRM_ACL_API::group( $type, null, 'civicrm_event', $events );
+        $permissionedEvents = CRM_ACL_API::group( $type, null, 'civicrm_event', $events, $includeEvents );
         if ( ! $eventID ) {
             return $permissionedEvents;
         }

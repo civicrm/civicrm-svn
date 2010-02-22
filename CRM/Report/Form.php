@@ -706,7 +706,33 @@ class CRM_Report_Form extends CRM_Core_Form {
             $this->addFormRule( array( get_class($this), 'formRule' ), $this );
         }
     }
-    
+       
+    // a formrule function to ensure that fields selected in group_by
+    // (if any) should only be the ones present in display/select fields criteria;
+    // note: works if and only if any custom field selected in group_by.
+    function customDataFormRule( $fields, $ignoreFields = array( ) ) {
+        $errors = array( );
+        if( !empty($this->_customGroupExtends) && $this->_customGroupGroupBy && !empty($fields['group_bys']) ) {
+            foreach( $this->_columns as $tableName => $table ) {
+                if( substr($tableName, 0, 13) == 'civicrm_value' && !empty( $this->_columns[$tableName]['fields']) ) {
+                    foreach( $this->_columns[$tableName]['fields'] as $fieldName => $field ) {
+                        if ( array_key_exists( $fieldName, $fields['group_bys'] ) && 
+                             !array_key_exists( $fieldName, $fields['fields'] ) ) {
+                            $errors['fields'] = "Please make sure fields selected in group-by are also present in display columns.";
+                        } elseif ( array_key_exists( $fieldName, $fields['group_bys'] ) ) {
+                            foreach( $fields['fields'] as $fld => $val ) {
+                                if( !array_key_exists( $fld, $fields['group_bys'] ) && !in_array($fld, $ignoreFields )) {
+                                    $errors['fields'] = "Please ensure that fields selected in group-by should only be the ones present in display columns.";
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $errors;
+    }
+
     // Note: $fieldName param allows inheriting class to build operationPairs 
     // specific to a field.
     function getOperationPair( $type = "string", $fieldName = null ) {
@@ -724,7 +750,7 @@ class CRM_Report_Form extends CRM_Core_Form {
                           'gt'  => ts('Is greater than'),
                           'neq' => ts('Is not equal to'), 
                           'nbw' => ts('Is not between'),
-                          'nll' => ts('Is Null'),
+                          'nll' => ts('Is empty (Null)'),
                           );
             break;
         case CRM_Report_FORM::OP_SELECT :
@@ -734,7 +760,7 @@ class CRM_Report_Form extends CRM_Core_Form {
             return array( 'in'  => ts('Is one of') );
             break; 
         case CRM_Report_FORM::OP_DATE :
-            return array( 'nll'  => ts('Is Null') );
+            return array( 'nll'  => ts('Is empty (Null)') );
             break;
         case CRM_Report_FORM::OP_MULTISELECT_SEPARATOR :
             // use this operator for the values, concatenated with separator. For e.g if 
@@ -749,7 +775,7 @@ class CRM_Report_Form extends CRM_Core_Form {
                          'nhas' => ts('Does not contain'), 
                          'eq'   => ts('Is equal to'), 
                          'neq'  => ts('Is not equal to'),
-                         'nll'  => ts('Is Null')
+                         'nll'  => ts('Is empty (Null)')
                          );
         }
     }
@@ -982,21 +1008,19 @@ class CRM_Report_Form extends CRM_Core_Form {
             return;
         }
         
+        $customFieldIds  = array( );
         require_once 'CRM/Core/BAO/CustomField.php';
-        $entryFound      = false;
-        $customFields    = $fieldValueMap = array( );
-        $customFieldCols = array( 'column_name', 'data_type', 'html_type', 'option_group_id', 'id' );
-        $selectedFields  = array( );
-        
         foreach( $this->_params['fields'] as $fieldAlias => $value ) {
             if ( $fieldId = CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
-                $selectedFields[$fieldAlias] = $fieldId;
+                $customFieldIds[$fieldAlias] = $fieldId;
             }
         }
-
-        if( empty($selectedFields) ) {
+        if( empty($customFieldIds) ) {
             return;
         }
+
+        $customFields    = $fieldValueMap = array( );
+        $customFieldCols = array( 'column_name', 'data_type', 'html_type', 'option_group_id', 'id' );
         
         // skip for type date and ContactReference since date format is already handled
         $query = " 
@@ -1009,8 +1033,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
       cf.is_active = 1 AND
       cf.is_searchable = 1 AND
       cf.data_type   NOT IN ('ContactReference', 'Date') AND
-      cf.id IN (". implode( ",", $selectedFields ) .")
-GROUP BY cf.column_name, ov.option_group_id, ov.value ";
+      cf.id IN (". implode( ",", $customFieldIds ) .")";
 
         $dao = CRM_Core_DAO::executeQuery( $query );
         while( $dao->fetch( ) ) {
@@ -1023,6 +1046,7 @@ GROUP BY cf.column_name, ov.option_group_id, ov.value ";
         }
         $dao->free( );
 
+        $entryFound = false;
         foreach ( $rows as $rowNum => $row ) {
             foreach ( $row as $tableCol => $val ) {
                 if ( array_key_exists( $tableCol, $customFields ) ) {
@@ -1844,6 +1868,12 @@ ORDER BY cg.table_name";
         foreach( $this->_columns as $table => $prop ) {
             if (substr($table, 0, 13) == 'civicrm_value') {
                 $extendsTable = $mapper[$prop['extends']];
+                
+                // check field is in params
+                if( !$this->isFieldSelected( $prop ) ) {
+                    continue;
+                }
+                
                 $this->_from .= " 
 LEFT JOIN $table {$this->_aliases[$table]} ON {$this->_aliases[$table]}.entity_id = {$this->_aliases[$extendsTable]}.id";
                 // handle for ContactReference
@@ -1859,5 +1889,41 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
                 }
 			}
 		}
+    }
+    
+    function isFieldSelected( $prop ) {
+        if( empty($prop) ) {
+            return false;
+        }
+        require_once 'CRM/Core/BAO/CustomField.php';
+        
+        if ( !empty($this->_params['fields'] ) ) {
+            foreach( array_keys($prop['fields']) as $fieldAlias ) {
+                if ( array_key_exists( $fieldAlias, $this->_params['fields'] ) && CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
+                    return true;
+                }
+            }
+        }
+        
+        if ( !$fieldFound && !empty($this->_params['group_bys'] ) ) {
+            foreach( array_keys($prop['group_bys']) as $fieldAlias ) {
+                if ( array_key_exists( $fieldAlias, $this->_params['group_bys'] ) && CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
+                    return true;
+                }
+            }
+        }
+        
+        if ( !$fieldFound && !empty( $prop['filters'] ) ) {
+            foreach( $prop['filters'] as $fieldAlias => $val ) {
+                foreach( array( 'value', 'min', 'max', 'relative' ,'from', 'to' ) as $attach ) {
+                    if ( isset( $this->_params[$fieldAlias.'_'.$attach ] ) &&
+                         !empty( $this->_params[$fieldAlias.'_'.$attach ] ) ) {
+                        return true;
+                    } 
+                }
+            }
+        }
+        
+        return false;
     }
 }

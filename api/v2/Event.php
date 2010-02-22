@@ -178,7 +178,8 @@ function civicrm_event_search( &$params )
         $returnProperties[]='id';
         $returnProperties[]='event_type_id';
     }
-   
+    $returnProperties[] = 'is_template';
+
     require_once 'CRM/Core/BAO/CustomGroup.php';
     require_once 'CRM/Event/BAO/Event.php';
     $eventDAO = new CRM_Event_BAO_Event( );

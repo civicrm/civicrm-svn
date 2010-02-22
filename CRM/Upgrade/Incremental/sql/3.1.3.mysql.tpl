@@ -15,3 +15,7 @@ INNER JOIN civicrm_option_group og ON ( og.id = ov.option_group_id )
        AND ov.name IS NULL;
 {/if}
  
+-- CRM-5825
+    UPDATE civicrm_menu
+           SET is_ssl = 1
+    WHERE path = 'civicrm/event/manage';

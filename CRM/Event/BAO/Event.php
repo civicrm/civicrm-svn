@@ -741,6 +741,7 @@ LEFT JOIN civicrm_option_value ON (
                                     civicrm_option_value.option_group_id = %1 )
 WHERE civicrm_event.is_active = 1 
       AND civicrm_event.is_public = 1
+      AND (is_template = 0 OR is_template IS NULL)
       {$dateCondition}";
       
         if( isset( $typeCondition ) ) {
@@ -764,49 +765,52 @@ WHERE civicrm_event.is_active = 1
             $url .= substr( $baseURL['path'], 0, -1 );
         }
 
+        // check 'view event info' permission
+        $permissions = CRM_Core_Permission::event( CRM_Core_Permission::VIEW );
+
         require_once 'CRM/Utils/String.php';
         while ( $dao->fetch( ) ) {
-        
-            $info                     = array( );
-            $info['uid'          ]    = 
-            $info['uid'          ]    = "CiviCRM_EventID_{$dao->event_id}_" . md5( $config->userFrameworkBaseURL ) . $url;
-
-            $info['title'        ]    = $dao->title;
-            $info['event_id'     ]    = $dao->event_id;
-            $info['summary'      ]    = $dao->summary;
-            $info['description'  ]    = $dao->description;
-            $info['start_date'   ]    = $dao->start;
-            $info['end_date'     ]    = $dao->end;
-            $info['contact_email']    = $dao->email;
-            $info['event_type'   ]    = $dao->event_type;
-            $info['is_show_location'] = $dao->is_show_location;
-            $info['is_online_registration'] = $dao->is_online_registration;
-            $info['registration_link_text'] = $dao->registration_link_text;
-            $info['registration_start_date'] = $dao->registration_start_date;
-            $info['registration_end_date'] = $dao->registration_end_date;
-  
-            $address = '';
-
-            $addrFields = array(
-                                'address_name'           => $dao->address_name,
-                                'street_address'         => $dao->street_address,
-                                'supplemental_address_1' => $dao->supplemental_address_1,
-                                'supplemental_address_2' => $dao->supplemental_address_2,
-                                'city'                   => $dao->city,
-                                'state_province'         => $dao->state,
-                                'postal_code'            => $dao->postal_code,
-                                'postal_code_suffix'     => $dao->postal_code_suffix,
-                                'country'                => $dao->country,
-                                'county'                 => null
-                                );           
-            
-            require_once 'CRM/Utils/Address.php';
-            CRM_Utils_String::append( $address, ', ',
-                                      CRM_Utils_Address::format($addrFields) );
-            $info['location'     ] = $address;
-            $info['url'          ] = CRM_Utils_System::url( 'civicrm/event/info', 'reset=1&id=' . $dao->event_id, true, null, false );
-           
-            $all[] = $info;
+            if ( in_array($dao->event_id, $permissions) ) {
+                $info                     = array( );
+                $info['uid'          ]    = "CiviCRM_EventID_{$dao->event_id}_" . md5( $config->userFrameworkBaseURL ) . $url;
+                
+                $info['title'        ]    = $dao->title;
+                $info['event_id'     ]    = $dao->event_id;
+                $info['summary'      ]    = $dao->summary;
+                $info['description'  ]    = $dao->description;
+                $info['start_date'   ]    = $dao->start;
+                $info['end_date'     ]    = $dao->end;
+                $info['contact_email']    = $dao->email;
+                $info['event_type'   ]    = $dao->event_type;
+                $info['is_show_location'] = $dao->is_show_location;
+                $info['is_online_registration'] = $dao->is_online_registration;
+                $info['registration_link_text'] = $dao->registration_link_text;
+                $info['registration_start_date'] = $dao->registration_start_date;
+                $info['registration_end_date'] = $dao->registration_end_date;
+                
+                $address = '';
+                
+                $addrFields = array(
+                                    'address_name'           => $dao->address_name,
+                                    'street_address'         => $dao->street_address,
+                                    'supplemental_address_1' => $dao->supplemental_address_1,
+                                    'supplemental_address_2' => $dao->supplemental_address_2,
+                                    'city'                   => $dao->city,
+                                    'state_province'         => $dao->state,
+                                    'postal_code'            => $dao->postal_code,
+                                    'postal_code_suffix'     => $dao->postal_code_suffix,
+                                    'country'                => $dao->country,
+                                    'county'                 => null
+                                    );           
+                
+                require_once 'CRM/Utils/Address.php';
+                CRM_Utils_String::append( $address, ', ',
+                                          CRM_Utils_Address::format($addrFields) );
+                $info['location'     ] = $address;
+                $info['url'          ] = CRM_Utils_System::url( 'civicrm/event/info', 'reset=1&id=' . $dao->event_id, true, null, false );
+                
+                $all[] = $info;
+            }
         }
         
         return $all;
@@ -1568,11 +1572,16 @@ WHERE  ce.loc_block_id = $locBlockId";
                     CRM_ACL_API::group( CRM_Core_Permission::EDIT, null, 'civicrm_event', $allEvents, $createdEvents );
             }
 
-            if ( CRM_Core_Permission::check( 'edit all events' ) ||
-                 ( CRM_Core_Permission::check( 'access CiviEvent' ) && 
-                   CRM_Core_Permission::check( 'view event participants' ) ) ) {
+            if ( CRM_Core_Permission::check( 'edit all events' ) ) {
                 $permissions[CRM_Core_Permission::VIEW] = array_keys( $allEvents );
             } else {
+                if ( CRM_Core_Permission::check( 'access CiviEvent' ) && 
+                     CRM_Core_Permission::check( 'view event participants' ) ) {
+                    // use case: allow "view all events" but NOT "edit all events"  
+                    // so for a normal site allow users with these two permissions to view all events AND
+                    // at the same time also allow any hook to override if needed.
+                    $createdEvents = array_keys( $allEvents );
+                }
                 $permissions[CRM_Core_Permission::VIEW] =& 
                     CRM_ACL_API::group( CRM_Core_Permission::VIEW, null, 'civicrm_event', $allEvents, $createdEvents );
             }
