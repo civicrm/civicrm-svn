@@ -251,6 +251,9 @@ $.TokenList = function (input, settings) {
 
     // Pre-populate list if items exist
     function init_list () {
+        //reset tokens, before initialize.
+        hidden_input.val('');
+       
         li_data = settings.prePopulate;
         if(li_data && li_data.length) {
           for(var i in li_data) { 
