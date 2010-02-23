@@ -146,7 +146,12 @@
                                     <tr>
                                         <td class="label">{$item.location_type}&nbsp;{ts}Email{/ts}</td>
                                         <td><span class={if $privacy.do_not_email}"do-not-email" title="{ts}Privacy flag: Do Not Email{/ts}" {elseif $item.on_hold}"email-hold" title="{ts}Email on hold - generally due to bouncing.{/ts}" {elseif $item.is_primary eq 1}"primary"{/if}><a href="mailto:{$item.email}">{$item.email}</a>{if $item.on_hold}&nbsp;({ts}On Hold{/ts}){/if}{if $item.is_bulkmail}&nbsp;({ts}Bulk{/ts}){/if}</span></td>
+					<td class="description">{if $item.signature_text OR $item.signature_html}<a href="#" title="{ts}Signature{/ts}" onClick="showHideSignature( '{$blockId}' ); return false;">{ts}(signature){/ts}</a>{/if}</td>
                                     </tr>
+				    <tr id="Email_Block_{$blockId}_signature">
+				        <td class="hiddenElement"><strong>{ts}Signature Text{/ts}</strong><br />{$item.signature_text}</td>
+					<td class="hiddenElement"><strong>{ts}Signature HTML{/ts}</strong><br />{$item.signature_html}</td>
+				    </tr>
                                     {/if}
                                 {/foreach}
                                 {if $home_URL}
@@ -313,4 +318,42 @@
     });
     {/literal}
     </script>
+
 {/if}
+{literal}
+<script type="text/javascript">
+cj("#Email_Block_{/literal}{$blockId}{literal}_signature").hide();
+
+function showHideSignature( blockId ) {
+	  cj("#Email_Block_{/literal}{$blockId}{literal}_signature").show( );   
+	  
+	  cj("#Email_Block_{/literal}{$blockId}{literal}_signature").dialog({
+		title: "Signature",
+		modal: true,
+		bgiframe: true,
+		width: 900,
+		height: 500,
+		overlay: { 
+			opacity: 0.5, 
+			background: "black"
+		},
+
+		beforeclose: function(event, ui) {
+            		cj(this).dialog("destroy");
+        	},
+
+		open:function() {
+		},
+
+		buttons: { 
+			"Done": function() { 
+				cj(this).dialog("close"); 
+				cj(this).dialog("destroy"); 
+			} 
+		} 
+		
+	  });
+}
+
+</script>
+{/literal}
