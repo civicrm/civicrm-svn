@@ -23,6 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{* 
+ * If you MODIFY this file, please make sure you also modify jquery.files.tpl.
+ * We will unify the two files in a future release
+ *}
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui.js"></script>
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/themes/smoothness/jquery-ui.css");</style>

@@ -60,7 +60,22 @@ function civicrm_html_head()
 
     if ( $includeCommon ) {
         $template =& CRM_Core_Smarty::singleton( );
-        $head .= $template->fetch( 'CRM/common/jquery.tpl' );
+        global $civicrm_root;
+        $buffer = $template->fetch( 'CRM/common/jquery.files.tpl' );
+        $lines  = preg_split( '/\s+/', $buffer );
+        foreach ( $lines as $line ) {
+            $line = trim( $line );
+            if ( strpos( $line, '.js' ) !== false ) {
+                drupal_add_js( drupal_get_path('module', 'civicrm' ) . '/' . $line );
+            }
+            if ( strpos( $line, '.css' ) !== false ) {
+                drupal_add_css( drupal_get_path('module', 'civicrm' ) . '/' . $line );
+            }
+        }
+
+        // add the final assignment
+        drupal_add_js( 'var cj = jQuery.noConflict(); $ = cj;',
+                       'inline' );
     }
 
     return $head;
