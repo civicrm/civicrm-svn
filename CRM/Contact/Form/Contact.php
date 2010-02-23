@@ -234,7 +234,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             unset( $this->_editOptions['Notes'] );
         }
         
-        
         $this->assign( 'editOptions',    $this->_editOptions );
         $this->assign( 'contactType',    $this->_contactType );
         $this->assign( 'contactSubType', $this->_contactSubType );
@@ -248,12 +247,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         $this->assign( 'blocks', $this->_blocks );
         
-        if ( array_key_exists( 'CustomData', $this->_editOptions ) ) {
-            //only custom data has preprocess hence directly call it
-            CRM_Custom_Form_CustomData::preProcess( $this, null, $this->_contactSubType, 
-                                                    1, $this->_contactType, $this->_contactId );
-        }
-        
         // this is needed for custom data.
         $this->assign( 'entityID', $this->_contactId );
         
@@ -262,6 +255,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         // location blocks.
         CRM_Contact_Form_Location::preProcess( $this );
+        
+        // call preProcess for all edit options.
+        foreach ( $this->_editOptions as $name => $label ) {
+            if ( $name != 'CustomData' ) continue;
+            require_once( str_replace('_', DIRECTORY_SEPARATOR, "CRM_Contact_Form_Edit_" . $name ) . ".php");
+            eval( 'CRM_Contact_Form_Edit_' . $name . '::preProcess( $this );' );
+        }
+        
     }
     
     /**
@@ -640,7 +641,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $typeLabel = CRM_Contact_BAO_ContactType::getLabel( $this->_contactType );
         $subtypes  = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
         $subtypeElem =& $this->addElement( 'select', 'contact_sub_type', 
-                                           ts('Contact Type'), array( '' => $typeLabel ) + $subtypes );
+                                           ts('Contact Type'), array( '' => $typeLabel ) + $subtypes,
+                                           array('onchange' => "buildCustomData('{$this->_contactType}',this.value);") );
         
         $allowEditSubType = true;
         if ( $this->_contactId && $this->_contactSubType ) {

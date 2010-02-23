@@ -198,6 +198,14 @@ if ( employerId ) {
 cj("input#current_employer").click( function( ) {
     cj("input#current_employer_id").val('');
 });
+
+ {/literal}
+   buildCustomData( '{$contactType}' );
+   {if $contactSubType}
+   buildCustomData( '{$contactType}', '{$contactSubType}' );
+   {/if}
+ {literal}
+
 </script>
 {/literal}
 

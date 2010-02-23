@@ -41,3 +41,5 @@
 {/if}
 </script>
 {/foreach}
+
+{include file="CRM/common/customData.tpl"}
