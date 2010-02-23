@@ -78,7 +78,7 @@ class CRM_Contact_Form_Edit_Email
             $form->add('textarea', "email[$blockId][signature_text_hidden]", ts('Signature Text'), 
                        CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'signature_text') );
             
-            $form->add('hidden', "email[$blockId][signature_text]" );
+            $form->add('hidden', "email[$blockId][signature_text]", null, array( 'id' => "email_{$blockId}_signature_text") );
             
             //FIXME: fix for CKEditor 
             //hacked to use textarea instead
@@ -87,7 +87,7 @@ class CRM_Contact_Form_Edit_Email
             $form->add('textarea', "email[$blockId][signature_html_hidden]", ts('Signature HTML'), 
                        CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'signature_html') );
             
-            $form->add('hidden', "email[$blockId][signature_html]" );
+            $form->add('hidden', "email[$blockId][signature_html]", null, array( 'id' => "email_{$blockId}_signature_html") );
         }
     }
 }

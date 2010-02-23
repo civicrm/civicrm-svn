@@ -214,8 +214,8 @@ function showHideSignature( blockId ) {
         },
 
         beforeclose: function(event, ui) {
-            cj("email_" + blockId + "_signature_html").val( cj( "#email_" + blockId + "_signature_html_hidden") );
-            cj("email_" + blockId + "_signature_text").val( cj( "#email_" + blockId + "_signature_text_hidden") );
+            cj("#email_" + blockId + "_signature_html").val( cj( "#email_" + blockId + "_signature_html_hidden" ).val( ) );
+            cj("#email_" + blockId + "_signature_text").val( cj( "#email_" + blockId + "_signature_text_hidden" ).val( ) );
             cj(this).dialog("destroy");
         },
 
