@@ -43,6 +43,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
     protected $_summary       = null;
     protected $_emailField_a  = false;
     protected $_emailField_b  = false;
+    protected $_customGroupExtends = array( 'Relationship' ); 
     
     function __construct( ) {
 
