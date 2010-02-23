@@ -353,9 +353,8 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             $sharedContact->find(true);
             if ( $relationship->relationship_type_id == 4 &&
                  $relationship->contact_id_b == $sharedContact->employer_id ) {
-                $sharedContact->organization_name = 'NULL';
-                $sharedContact->employer_id       = 'NULL';
-                $sharedContact->save();
+                require_once 'CRM/Contact/BAO/Contact/Utils.php';     
+                CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $relationship->contact_id_a );         
             } else if ( $sharedContact->mail_to_household_id == $relationship->contact_id_b ) {
                 self::deleteSharedAddress( $relationship->contact_id_a );
             }
