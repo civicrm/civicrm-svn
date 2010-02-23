@@ -145,12 +145,15 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
                                                        CRM_Core_Permission::VIEW );
 
 
+            require_once 'CRM/Contact/BAO/Contact/Permission.php';
+            
             // make sure we dont expose all fields based on permission
             $admin = false; 
             $session  =& CRM_Core_Session::singleton( ); 
             if ( ( ! $config->userFrameworkFrontend &&
                    ( CRM_Core_Permission::check( 'administer users' )  ||
-                     CRM_Core_Permission::check( 'view all contacts' ) ) ) ||
+                     CRM_Core_Permission::check( 'view all contacts' ) ||
+                     CRM_Contact_BAO_Contact_Permission::allow( $this->_id, CRM_Core_Permission::VIEW ) ) ) ||
                  $this->_id == $session->get( 'userID' ) ) {
                 $admin = true; 
             }
