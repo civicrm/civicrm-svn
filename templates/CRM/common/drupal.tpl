@@ -52,7 +52,6 @@
 {if $buildNavigation }
     {include file="CRM/common/Navigation.tpl" }
 {/if}
-<script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
 
 {if isset($browserPrint) and $browserPrint}
 {* Javascript window.print link. Used for public pages where we can't do printer-friendly view. *}

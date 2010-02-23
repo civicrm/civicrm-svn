@@ -25,7 +25,8 @@
 *}
 {* 
  * If you MODIFY this file, please make sure you also modify jquery.files.tpl.
- * We will unify the two files in a future release
+ * Cannot get rid of this since we use it for joomla, standalone, print
+ * html profile etc
  *}
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui.js"></script>

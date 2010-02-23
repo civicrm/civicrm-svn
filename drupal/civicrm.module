@@ -65,13 +65,18 @@ function civicrm_html_head()
         $lines  = preg_split( '/\s+/', $buffer );
         foreach ( $lines as $line ) {
             $line = trim( $line );
-            if ( strpos( $line, '.js' ) !== false ) {
-                drupal_add_js( drupal_get_path('module', 'civicrm' ) . '/' . $line );
+            if ( empty( $line ) ) {
+                continue;
             }
-            if ( strpos( $line, '.css' ) !== false ) {
-                drupal_add_css( drupal_get_path('module', 'civicrm' ) . '/' . $line );
+            if ( strpos( $line, '.js' ) !== false ) {
+                drupal_add_js( drupal_get_path('module', 'civicrm' ) . '/../' . $line );
+            } else if ( strpos( $line, '.css' ) !== false ) {
+                drupal_add_css( drupal_get_path('module', 'civicrm' ) . '/../' . $line );
             }
         }
+
+        // add Common.js
+        drupal_add_css( drupal_get_path('module', 'civicrm' ) . '/../js/Common.js' );
 
         // add the final assignment
         drupal_add_js( 'var cj = jQuery.noConflict(); $ = cj;',

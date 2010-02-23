@@ -27,57 +27,57 @@
  * If you MODIFY this file, please make sure you also modify jquery.tpl.
  * We will unify the two files in a future release
  *}
-../packages/jquery/jquery.js
-../packages/jquery/jquery-ui.js
-../packages/jquery/themes/smoothness/jquery-ui.css
+packages/jquery/jquery.js
+packages/jquery/jquery-ui.js
+packages/jquery/themes/smoothness/jquery-ui.css
 
-../packages/jquery/plugins/flexigrid.js
-../packages/jquery/css/flexigrid.css"
+packages/jquery/plugins/flexigrid.js
+packages/jquery/css/flexigrid.css"
 
-../packages/jquery/plugins/jquery.autocomplete.js
-../packages/jquery/css/jquery.autocomplete.css
+packages/jquery/plugins/jquery.autocomplete.js
+packages/jquery/css/jquery.autocomplete.css
 
-../packages/jquery/plugins/tree_component.min.js
-../packages/jquery/plugins/css.js
-../packages/jquery/css/tree_component.css
+packages/jquery/plugins/tree_component.min.js
+packages/jquery/plugins/css.js
+packages/jquery/css/tree_component.css
 
-../packages/jquery/plugins/jquery.menu.pack.js
-../packages/jquery/plugins/jquery.dimensions.js
-../packages/jquery/css/menu.css
+packages/jquery/plugins/jquery.menu.pack.js
+packages/jquery/plugins/jquery.dimensions.js
+packages/jquery/css/menu.css
 
-../packages/jquery/plugins/jquery.chainedSelects.js
-../packages/jquery/plugins/jquery.treeview.min.js
-../packages/jquery/plugins/jquery.bgiframe.pack.js
+packages/jquery/plugins/jquery.chainedSelects.js
+packages/jquery/plugins/jquery.treeview.min.js
+packages/jquery/plugins/jquery.bgiframe.pack.js
 
-../packages/jquery/plugins/jquery.contextMenu.js
-../packages/jquery/plugins/jquery.tableHeader.js
+packages/jquery/plugins/jquery.contextMenu.js
+packages/jquery/plugins/jquery.tableHeader.js
 
 {*allow select/unselect checkboxes functionality only for search*}
-../packages/jquery/plugins/checkboxselect.js
+packages/jquery/plugins/checkboxselect.js
 
 {if $defaultWysiwygEditor eq 1}
-    ../packages/tinymce/jscripts/tiny_mce/jquery.tinymce.js
-    ../packages/tinymce/jscripts/tiny_mce/tiny_mce.js
+    packages/tinymce/jscripts/tiny_mce/jquery.tinymce.js
+    packages/tinymce/jscripts/tiny_mce/tiny_mce.js
 {else}
-    ../packages/ckeditor/ckeditor.js
+    packages/ckeditor/ckeditor.js
 {/if}
-../packages/jquery/plugins/jquery.textarearesizer.js
-../packages/jquery/plugins/jquery.progressbar.js
-../packages/jquery/plugins/jquery.form.js
+packages/jquery/plugins/jquery.textarearesizer.js
+packages/jquery/plugins/jquery.progressbar.js
+packages/jquery/plugins/jquery.form.js
 
-../packages/jquery/plugins/jquery.tokeninput.js
-../packages/jquery/css/token-input-facebook.css
+packages/jquery/plugins/jquery.tokeninput.js
+packages/jquery/css/token-input-facebook.css
 
-../packages/jquery/plugins/jquery.timeentry.pack.js
-../packages/jquery/plugins/jquery.mousewheel.pack.js
+packages/jquery/plugins/jquery.timeentry.pack.js
+packages/jquery/plugins/jquery.mousewheel.pack.js
 
-../packages/jquery/plugins/jquery.toolTip.js
+packages/jquery/plugins/jquery.toolTip.js
 
-../packages/jquery/css/dataTable.css
-../packages/jquery/plugins/jquery.dataTables.min.js
+packages/jquery/css/dataTable.css
+packages/jquery/plugins/jquery.dataTables.min.js
 
-../packages/jquery/plugins/jquery.dashboard.js
-../packages/jquery/css/dashboard.css
+packages/jquery/plugins/jquery.dashboard.js
+packages/jquery/css/dashboard.css
 
-../packages/jquery/plugins/jquery.FormNavigate.js
+packages/jquery/plugins/jquery.FormNavigate.js
 
