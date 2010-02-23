@@ -718,11 +718,11 @@ class CRM_Report_Form extends CRM_Core_Form {
                     foreach( $this->_columns[$tableName]['fields'] as $fieldName => $field ) {
                         if ( array_key_exists( $fieldName, $fields['group_bys'] ) && 
                              !array_key_exists( $fieldName, $fields['fields'] ) ) {
-                            $errors['fields'] = "Please make sure fields selected in group-by are also present in display columns.";
+                            $errors['fields'] = "Please make sure fields selected in 'Group by Columns' section are also selected in 'Display Columns' section.";
                         } elseif ( array_key_exists( $fieldName, $fields['group_bys'] ) ) {
                             foreach( $fields['fields'] as $fld => $val ) {
                                 if( !array_key_exists( $fld, $fields['group_bys'] ) && !in_array($fld, $ignoreFields )) {
-                                    $errors['fields'] = "Please ensure that fields selected in group-by should only be the ones present in display columns.";
+                                    $errors['fields'] = "Please ensure that fields selected in 'Display Columns' are also selected in 'Group by Columns' section.";
                                 }
                             }
                         }
