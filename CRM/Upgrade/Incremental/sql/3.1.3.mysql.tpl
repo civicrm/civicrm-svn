@@ -19,3 +19,12 @@ INNER JOIN civicrm_option_group og ON ( og.id = ov.option_group_id )
     UPDATE civicrm_menu
            SET is_ssl = 1
     WHERE path = 'civicrm/event/manage';
+    
+-- CRM-5872
+    
+    UPDATE civicrm_option_value ov 
+    INNER JOIN civicrm_option_group og ON ( og.id = ov.option_group_id )
+       SET ov.is_reserved = 1
+     WHERE ov.name = 'Bulk Email' AND
+           og.name = 'activity_type';
+     
