@@ -374,9 +374,6 @@ ORDER BY start_date desc
             }
         }
 
-        require_once 'CRM/Core/Permission.php';
-        $clauses[] = CRM_Core_Permission::eventClause( );
-
         return implode( ' AND ', $clauses );
     }
 
