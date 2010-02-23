@@ -131,15 +131,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $this->_dedupeButtonName    = $this->getButtonName( 'refresh', 'dedupe'    );
         $this->_duplicateButtonName = $this->getButtonName( 'upload',  'duplicate' );
         
-        //custom data reload -- CRM-5728
-        $this->_cdType = CRM_Utils_Array::value( 'type', $_GET );
-        if ( !$this->_contactType ) $this->_contactType = CRM_Utils_Array::value( 'type', $_GET );
-        $this->assign( 'cdType', false);
-        if ( $this->_cdType ) {
-            $this->assign( 'cdType', true );
-            return CRM_Custom_Form_CustomData::preProcess( $this , null, CRM_Utils_Array::value( 'subType', $_GET ) );
-        }
-
         $session = & CRM_Core_Session::singleton( );
         if ( $this->_action == CRM_Core_Action::ADD ) {
             // check for add contacts permissions
@@ -257,23 +248,12 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         $this->assign( 'blocks', $this->_blocks );
         
-        if ( array_key_exists( 'CustomData', $this->_editOptions ) && !$this->_cdType ) {
+        if ( array_key_exists( 'CustomData', $this->_editOptions ) ) {
             //only custom data has preprocess hence directly call it
             CRM_Custom_Form_CustomData::preProcess( $this, null, $this->_contactSubType, 
                                                     1, $this->_contactType, $this->_contactId );
         }
         
-        // custom data
-        if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
-            $this->set('type',     $this->_contactType);
-            $this->set('subType',  CRM_Utils_Array::value( 'contact_sub_type', $_POST ) );
-            $this->set('entityId', $this->_contactId );
-
-            CRM_Custom_Form_Customdata::preProcess( $this );
-            CRM_Custom_Form_Customdata::buildQuickForm( $this );
-            CRM_Custom_Form_Customdata::setDefaultValues( $this );
-        }
-
         // this is needed for custom data.
         $this->assign( 'entityID', $this->_contactId );
         
@@ -295,9 +275,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     {
         $defaults = $this->_values;
         $params   = array( );
-        if ( $this->_cdType ) {
-            return CRM_Custom_Form_CustomData::setDefaultValues( $this );
-        }
+
         if ( $this->_action & CRM_Core_Action::ADD ) {
             if ( array_key_exists( 'TagsAndGroups', $this->_editOptions ) ) {
                 // set group and tag defaults if any
@@ -508,7 +486,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     function addRules( )
     {
         // skip adding formRules when custom data is build
-        if ( $this->_addBlockName || ($this->_action & CRM_Core_Action::DELETE) || $this->_cdType ) {
+        if ( $this->_addBlockName || ($this->_action & CRM_Core_Action::DELETE) ) {
 			return;
 		}
         
@@ -648,10 +626,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
      */
     public function buildQuickForm( ) 
     {
-        if ( $this->_cdType ) {
-            return CRM_Custom_Form_CustomData::buildQuickForm( $this );
-        }
-        
         //load form for child blocks
         if ( $this->_addBlockName ) {
             require_once( str_replace('_', DIRECTORY_SEPARATOR, "CRM_Contact_Form_Edit_" . $this->_addBlockName ) . ".php");
@@ -666,8 +640,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $typeLabel = CRM_Contact_BAO_ContactType::getLabel( $this->_contactType );
         $subtypes  = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
         $subtypeElem =& $this->addElement( 'select', 'contact_sub_type', 
-                                           ts('Contact Type'), array( '' => $typeLabel ) + $subtypes ,
-                                           array('onchange' => "buildCustomData('{$this->_contactType}',this.value);customDataTpl();") );
+                                           ts('Contact Type'), array( '' => $typeLabel ) + $subtypes );
         
         $allowEditSubType = true;
         if ( $this->_contactId && $this->_contactSubType ) {
@@ -681,9 +654,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         foreach( $this->_editOptions as $name => $label ) {                
             if ( $name == 'Address' ) {
                 $this->_blocks['Address'] = $this->_editOptions['Address'];
-                continue;
-            }
-            if ( $name == 'CustomData') { 
                 continue;
             }
             require_once(str_replace('_', DIRECTORY_SEPARATOR, "CRM_Contact_Form_Edit_" . $name ) . ".php");

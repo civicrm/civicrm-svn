@@ -145,38 +145,5 @@ function removeBlock( blockName, blockId ) {
         }
     }
 }
-
-// alter customData template on Reload
-function customDataTpl( ) {
-
-cj(function( ) {
-    cj("#customData").each( function ( ) {
-        cj(this).children("div.section-hidden.section-hidden-border").each( function() {
-	    cj(this).before("<h3 class ='head'><span class='ui-icon ui-icon-triangle-1-e'></span><a href='#'>"+cj(this).text()+"</a></h3>");
-	    cj(this).remove();
-        });
-   	cj(this).children("h3.head").addClass( "ui-accordion-header ui-helper-reset ui-state-default ui-corner-all");
-        
-	cj(this).children("div.form-item").each( function( ){
-            cj(this).addClass("ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom").removeClass("form-item");
-	    cj("legend",this).remove();
-        });
-	cj(this).children("h3.head").hover( function( ) { 
-        cj(this).addClass( "ui-state-hover");
-    	}, function() { 
-           cj(this).removeClass( "ui-state-hover");
-    	}).bind('click', function( ) { 
-        	var checkClass = cj(this).find('span').attr( 'class' );
-        	var len        = checkClass.length;
-        	if ( checkClass.substring( len - 1, len ) == 's' ) {
-            	   cj(this).find('span').removeClass( ).addClass('ui-icon ui-icon-triangle-1-e');
-        	} else {
-            	   cj(this).find('span').removeClass( ).addClass('ui-icon ui-icon-triangle-1-s');
-            	}
-        	cj(this).next( ).toggle(); return false; 
-      	}).next( ).hide( );
-    });    
-});
-}
 </script>
 {/literal}
