@@ -111,6 +111,8 @@ class CRM_Profile_Form extends CRM_Core_Form
      * @var boolean
      */
     public $_isUpdateDupe = false;
+
+    public $_isAddCaptcha = false;
     
     /**
      * THe context from which we came from, allows us to go there if redirect not set
@@ -153,9 +155,18 @@ class CRM_Profile_Form extends CRM_Core_Form
         if ( ! $this->_gid ) {
             $this->_gid = CRM_Utils_Request::retrieve('gid', 'Positive', $this, false, 0, 'GET');
         } 
-        $this->_isUpdateDupe = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', 
-                                                           $this->_gid,'is_update_dupe' ) ;
-     
+        
+        //get values for captch and dupe update.
+        if ( $this->_gid ) {
+            $dao = new CRM_Core_DAO_UFGroup();
+            $dao->id = $this->_gid;
+            if ( $dao->find( true ) ) {
+                $this->_isUpdateDupe = $dao->is_update_dupe;
+                $this->_isAddCaptcha = $dao->add_captcha;
+            }
+            $dao->free( );
+        }
+        
         // if we dont have a gid use the default, else just use that specific gid
         if ( ( $this->_mode == self::MODE_REGISTER || $this->_mode == self::MODE_CREATE ) && ! $this->_gid ) {
             $this->_ctype  = CRM_Utils_Request::retrieve( 'ctype', 'String', $this, false, 'Individual', 'REQUEST' );
@@ -412,25 +423,22 @@ class CRM_Profile_Form extends CRM_Core_Form
             }
         }
         
-        
-        // do this only for CiviCRM created forms
+        // add captcha only for create mode.
         if ( $this->_mode == self::MODE_CREATE ) {
-            if (!empty($addCaptcha)) {
-                $setCaptcha = true;
-            } 
-            if ( $this->_gid ) {
-                $isAddCaptcha = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFGroup', 
-                                                            $this->_gid,'add_captcha' ) ;
-                
+            if ( !$this->_isAddCaptcha && !empty( $addCaptcha ) ) {
+                $this->_isAddCaptcha = true;
             }
-            
-            if ( $isAddCaptcha ) {
-                require_once 'CRM/Utils/ReCAPTCHA.php';
-                $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
-                $captcha->add( $this );
-                $this->assign( "isCaptcha" , true );
-            }
+        } else {
+            $this->_isAddCaptcha = false;
         }
+        
+        //finally add captcha to form.
+        if ( $this->_isAddCaptcha ) {
+            require_once 'CRM/Utils/ReCAPTCHA.php';
+            $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
+            $captcha->add( $this );
+        }
+        $this->assign( "isCaptcha", $this->_isAddCaptcha );
         
         if ( $this->_mode != self::MODE_SEARCH ) {
             if ( isset($addToGroupId) ) {
