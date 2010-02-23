@@ -51,7 +51,7 @@ class CRM_Contact_Form_Edit_CustomData
         $form->_subType = CRM_Utils_Request::retrieve( 'subType', 'String', CRM_Core_DAO::$_nullObject );
         
         //build the custom data as other blocks.
-        $form->assign( "addBlock", false );
+        //$form->assign( "addBlock", false );
         if ( $form->_type ) {
             $form->_addBlockName = 'CustomData';
             $form->assign( "addBlock",  true );
