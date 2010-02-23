@@ -76,7 +76,7 @@ function civicrm_html_head()
         }
 
         // add Common.js
-        drupal_add_css( drupal_get_path('module', 'civicrm' ) . '/../js/Common.js' );
+        drupal_add_js( drupal_get_path('module', 'civicrm' ) . '/../js/Common.js' );
 
         // add the final assignment
         drupal_add_js( 'var cj = jQuery.noConflict(); $ = cj;',
