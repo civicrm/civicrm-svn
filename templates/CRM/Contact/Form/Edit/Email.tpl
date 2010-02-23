@@ -43,8 +43,8 @@
 <tr id="Email_Block_{$blockId}">
     <td>{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
         <div id="Email_Signature_{$blockId}" class="hiddenElement">
-            {$form.email.$blockId.signature_html.label}<br />{$form.email.$blockId.signature_html.html}
-            {$form.email.$blockId.signature_text.label}<br />{$form.email.$blockId.signature_text.html}
+            {$form.email.$blockId.signature_html_hidden.label}<br />{$form.email.$blockId.signature_html_hidden.html}<br />
+            {$form.email.$blockId.signature_text_hidden.label}<br />{$form.email.$blockId.signature_text_hidden.html}
         </div>
     </td>
     <td align="center">{$form.email.$blockId.on_hold.html}</td>

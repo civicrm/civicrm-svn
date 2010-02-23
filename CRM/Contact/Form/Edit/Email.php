@@ -75,16 +75,19 @@ class CRM_Contact_Form_Edit_Email
             $js = array( 'id' => "Email_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
             $form->addElement( 'radio', "email[$blockId][is_primary]", '', '', '1', $js );
             
-            $form->add('textarea', "email[$blockId][signature_text]", ts('Signature Text'), 
+            $form->add('textarea', "email[$blockId][signature_text_hidden]", ts('Signature Text'), 
                        CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'signature_text') );
+            
+            $form->add('hidden', "email[$blockId][signature_text]" );
             
             //FIXME: fix for CKEditor 
             //hacked to use textarea instead
             // $form->addWysiwyg( "email[$blockId][signature_html]", ts('Signature HTML'), 
             //                                CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'email') );
-            $form->add('textarea', "email[$blockId][signature_html]", ts('Signature HTML'), 
+            $form->add('textarea', "email[$blockId][signature_html_hidden]", ts('Signature HTML'), 
                        CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'signature_html') );
-
+            
+            $form->add('hidden', "email[$blockId][signature_html]" );
         }
     }
 }

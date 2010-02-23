@@ -214,15 +214,19 @@ function showHideSignature( blockId ) {
         },
 
         beforeclose: function(event, ui) {
+            cj("email_" + blockId + "_signature_html").val( cj( "#email_" + blockId + "_signature_html_hidden") );
+            cj("email_" + blockId + "_signature_text").val( cj( "#email_" + blockId + "_signature_text_hidden") );
             cj(this).dialog("destroy");
         },
 
         buttons: { 
-            "Save Signature": function() { 	    
+            "Save Signature": function() { 
+                cj('#Email_Signature_' + blockId ).hide( );	    
                 cj(this).dialog('close');
             },
 
             "Cancel": function() { 
+                cj('#Email_Signature_' + blockId ).hide( );
                 cj(this).dialog("close"); 
                 cj(this).dialog("destroy"); 
             } 
