@@ -374,7 +374,7 @@ ORDER BY start_date desc
             }
         }
 
-        return implode( ' AND ', $clauses );
+        return !empty($clauses) ? implode( ' AND ', $clauses ) : '(1)';
     }
 
 
