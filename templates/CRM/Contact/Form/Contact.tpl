@@ -199,13 +199,45 @@ cj("input#current_employer").click( function( ) {
     cj("input#current_employer_id").val('');
 });
 
+function showHideSignature( blockId ) {
+    cj('#Email_Signature_' + blockId ).show( );   
+
+    cj('#Email_Signature_' + blockId ).dialog({
+        title: "Signature",
+        modal: true,
+        bgiframe: true,
+        width: 900,
+        height: 500,
+        overlay: { 
+            opacity: 0.5, 
+            background: "black"
+        },
+
+        beforeclose: function(event, ui) {
+            cj(this).dialog("destroy");
+        },
+
+        buttons: { 
+            "Save Signature": function() { 	    
+                cj(this).dialog('close');
+            },
+
+            "Cancel": function() { 
+                cj(this).dialog("close"); 
+                cj(this).dialog("destroy"); 
+            } 
+        } 
+
+    });
+}
+
  {/literal}
    buildCustomData( '{$contactType}' );
    {if $contactSubType}
    buildCustomData( '{$contactType}', '{$contactSubType}' );
    {/if}
  {literal}
-
+ 
 </script>
 {/literal}
 

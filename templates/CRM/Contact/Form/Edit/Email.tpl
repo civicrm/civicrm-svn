@@ -41,7 +41,12 @@
 {/if}
 
 <tr id="Email_Block_{$blockId}">
-    <td>{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}</td>
+    <td>{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
+        <div id="Email_Signature_{$blockId}" class="hiddenElement">
+            {$form.email.$blockId.signature_html.label}<br />{$form.email.$blockId.signature_html.html}
+            {$form.email.$blockId.signature_text.label}<br />{$form.email.$blockId.signature_text.html}
+        </div>
+    </td>
     <td align="center">{$form.email.$blockId.on_hold.html}</td>
     <td align="center" id="Email-Bulkmail-html">{$form.email.$blockId.is_bulkmail.html}</td>
     <td align="center" id="Email-Primary-html" {if $blockId eq 1}class="hiddenElement"{/if}>{$form.email.$blockId.is_primary.1.html}</td>
@@ -50,49 +55,3 @@
 	<td><a href="#" title="{ts}Delete Email Block{/ts}" onClick="removeBlock( 'Email', '{$blockId}' ); return false;">{ts}delete{/ts}</a></td>
     {/if}
 </tr>
-<tr id="Email_Block_{$blockId}_signature">
-    <td class="hiddenElement">{$form.email.$blockId.signature_html.label}<br />{$form.email.$blockId.signature_html.html}</td>
-    <td class="hiddenElement">{$form.email.$blockId.signature_text.label}<br />{$form.email.$blockId.signature_text.html}</td>
-</tr>
-
-{literal}
-<script type="text/javascript">
-cj("#Email_Block_{/literal}{$blockId}{literal}_signature").hide();
-
-function showHideSignature( blockId ) {
-	  cj("#Email_Block_{/literal}{$blockId}{literal}_signature").show( );   
-	  
-	  cj("#Email_Block_{/literal}{$blockId}{literal}_signature").dialog({
-		title: "Signature",
-		modal: true,
-		bgiframe: true,
-		width: 900,
-		height: 500,
-		overlay: { 
-			opacity: 0.5, 
-			background: "black"
-		},
-
-		beforeclose: function(event, ui) {
-            		cj(this).dialog("destroy");
-        	},
-
-		open:function() {
-		},
-
-		buttons: { 
-			"Save Signature": function() { 	    
-			      cj(this).dialog('close');
-			},
-
-			"Cancel": function() { 
-				cj(this).dialog("close"); 
-				cj(this).dialog("destroy"); 
-			} 
-		} 
-		
-	  });
-}
-
-</script>
-{/literal}
