@@ -70,6 +70,12 @@
 	   </td>
 	</tr>
 	{/if}
+	<tr>
+	   <td colspan='2'><a href="#" onClick='cj("#change_client").toggle( ); return false;'>{ts}Assign to Another Client{/ts}</a>	
+	   <span id='change_client' class='hide-block'>
+	   {$form.change_client_id.html|crmReplace:class:twenty}&nbsp;{$form._qf_CaseView_next_edit_client.html}</span>
+	   </td>
+	</tr>
     </table>
 </fieldset>
 
@@ -138,6 +144,12 @@
 
 {literal}
 <script type="text/javascript">
+var selectedContact = '';
+var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=newcontact' h=0 }"{literal};
+cj( "#change_client_id").autocomplete( contactUrl, { width : 250, selectFirst : false, matchContains:true
+                            }).result( function(event, data, formatted) { cj( "#contact_id" ).val( data[1] ); selectedContact = data[0];
+                            }).bind( 'click', function( ) { cj( "#contact_id" ).val(''); });
+
 show('caseRole_show');
 hide('caseRole');
 
@@ -559,7 +571,9 @@ function checkSelection( field ) {
     var validationMessage = '';
     var validationField   = '';
     var successAction     = '';
-
+   
+    var clientName = new Array( );
+    clientName = selectedContact.split('::');
     var fName = field.name;
 
     switch ( fName )  {
@@ -584,14 +598,25 @@ function checkSelection( field ) {
         case '_qf_CaseView_next_merge_case' :
             validationMessage = '{/literal}{ts}Please select a case from the list to merge with.{/ts}{literal}';
             validationField   = 'merge_case_id';
-            break;	    
+            break;
+        case '_qf_CaseView_next_edit_client' :
+            validationMessage = '{/literal}{ts}Please select a client for this case.{/ts}{literal}';
+            validationField   = 'change_client_id';
+            break;   	    
     }	
 
     if ( document.getElementById( validationField ).value == '' ) {
         alert( validationMessage );
         return false;
+    } else if ( document.getElementById( validationField ).value != '' ) {
+        validationMessage = '{/literal}{ts}Are you sure you want to reassign this case and all related activities and relationships to '+clientName[0]+'?{/ts}{literal}';
+        if ( confirm( validationMessage ) ) {
+	    this.href+='&amp;confirmed=1'; 
+        } else {
+	    return false;
+	}
     } else {
-        return eval( successAction );
+       return eval( successAction );
     }
 }
 

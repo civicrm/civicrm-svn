@@ -51,6 +51,12 @@
      <access_arguments>access CiviCase</access_arguments>
   </item>
   <item>
+     <path>civicrm/contact/view/case/editClient</path>
+     <title>Assign to Another Client</title>
+     <page_callback>CRM_Case_Form_EditClient</page_callback>
+     <access_arguments>access CiviCase</access_arguments>     
+  </item>
+  <item>
      <path>civicrm/case/details</path>
      <title>Case Details</title>
      <page_callback>CRM_Case_Page_CaseDetails</page_callback>

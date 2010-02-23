@@ -273,6 +273,7 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Remove Case Role{/ts}',                   22, 'Remove Case Role', NULL,0, 0, 22, '', 0, 0, 1, @caseCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Print PDF Letter{/ts}',                   23, 'Print PDF Letter',    NULL, 1, NULL, 23, '{ts escape="sql"}Print PDF Letter.{/ts}',                                                  0, 1, 1, NULL, NULL),
    (@option_group_id_act, '{ts escape="sql"}Merge Case{/ts}',                         24, 'Merge Case', NULL, 0,  NULL, 24, '', 0, 1, 1, @caseCompId, NULL ),
+   (@option_group_id_act, '{ts escape="sql"}Reassigned Case{/ts}',                    25, 'Reassigned Case', NULL, 0,  NULL, 25, '', 0, 1, 1, @caseCompId, NULL ),
 
    (@option_group_id_gender, '{ts escape="sql"}Female{/ts}',      1, 'Female',      NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Male{/ts}',        2, 'Male',        NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),

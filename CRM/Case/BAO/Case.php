@@ -1729,7 +1729,7 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
      * @return void.
      * @static
      */  
-    function mergeCases( $mainContactId, $mainCaseId = null, $otherContactId = null, $otherCaseId = null ) 
+    function mergeCases( $mainContactId, $mainCaseId = null, $otherContactId = null, $otherCaseId = null, $changeClient = false ) 
     {
         $moveToTrash = true;
         
@@ -1745,9 +1745,9 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
             $duplicateCases = true;
         }
         
-        $mergeCases = false;
+        $mainCaseIds = array( );
         if ( !$duplicateContacts && !$duplicateCases ) {
-            return $mergeCases;
+            return $mainCaseIds;
         }
         
         require_once 'CRM/Core/PseudoConstant.php';
@@ -1756,8 +1756,12 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
         
         $processCaseIds = array( $otherCaseId );
         if ( $duplicateContacts && !$duplicateCases ) {
-            //get all case ids for other contact.
-            $processCaseIds = self::retrieveCaseIdsByContactId( $otherContactId, true );
+            if ( $changeClient ) {
+                $processCaseIds = array( $mainCaseId );
+            } else {
+                //get all case ids for other contact.
+                $processCaseIds = self::retrieveCaseIdsByContactId( $otherContactId, true );
+            }
             if ( !is_array( $processCaseIds ) ) return;
         }
         
@@ -1775,7 +1779,7 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
                 $mainCaseId = $mainCase->id;
                 if ( !$mainCaseId ) continue;
                 $mainCase->free( );
-                
+                $mainCaseIds[] = $mainCaseId;
                 //insert record for case contact.
                 $otherCaseContact = new CRM_Case_DAO_CaseContact( );
                 $otherCaseContact->case_id = $otherCaseId;
@@ -1805,15 +1809,13 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
             CRM_Core_DAO::commonRetrieveAll( 'CRM_Case_DAO_CaseActivity', 'case_id',  $otherCaseId, $otherCaseActivities );
             
             //for duplicate cases do not process singleton activities.
-            $singletonActivityIds = array( );
-            if ( $duplicateCases ) {
-                $otherActivityIds = array( );
-                foreach ( $otherCaseActivities as $caseActivityId => $otherIds ) {
-                    if ( CRM_Utils_Array::value( 'activity_id', $otherIds ) ) {
-                        $otherActivityIds[] = $otherIds['activity_id'];
-                    }
+            $otherActivityIds = $singletonActivityIds = array( );
+            foreach ( $otherCaseActivities as $caseActivityId => $otherIds ) {
+                if ( CRM_Utils_Array::value( 'activity_id', $otherIds ) ) {
+                    $otherActivityIds[] = $otherIds['activity_id'];
                 }
-                
+            }
+            if ( $duplicateCases ) {
                 if ( $openCaseType = array_search( 'Open Case', $activityTypes ) ) { 
                     $sql = "
 SELECT  id
@@ -1959,7 +1961,11 @@ SELECT  id
             if ( !$mergeCase ) continue;
             
             $mergeActSubject = $mergeActSubjectDetails = '';
-            if ( $duplicateContacts ) {
+            if ( $changeClient ) {
+                $mergeActSubject = ts( "Case %1 reassigned from contact id %2 to contact id %3. New Case ID is %4.", 
+                                       array( 1 => $otherCaseId,   2 => $otherContactId, 
+                                              3 => $mainContactId, 4 => $mainCaseId ) ); 
+            } else if ( $duplicateContacts ) {
                 $mergeActSubject = ts( "Case %1 copied from contact id %2 to contact id %3 via merge. New Case ID is %4.", 
                                        array( 1 => $otherCaseId,   2 => $otherContactId, 
                                               3 => $mainContactId, 4 => $mainCaseId ) ); 
@@ -1981,7 +1987,7 @@ SELECT id, subject, activity_date_time
             $activityParams = array( 'subject'            => $mergeActSubject,
                                      'details'            => $mergeActSubjectDetails,
                                      'status_id'          => array_search( 'Completed',  $activityStatuses ),
-                                     'activity_type_id'   => array_search( 'Merge Case', $activityTypes ),
+                                     'activity_type_id'   => ( $changeClient ) ? array_search( 'Reassigned Case', $activityTypes ) : array_search( 'Merge Case', $activityTypes ),
                                      'source_record_id'   => $mainCaseId,
                                      'source_contact_id'  => $mainContactId,
                                      'activity_date_time' => date('YmdHis') );
@@ -1996,6 +2002,7 @@ SELECT id, subject, activity_date_time
                                    'activity_id' => $mergeActivityId );
             
             self::processCaseActivity( $mergeCaseAct );
+            return $mainCaseIds;
         }
         
     }
