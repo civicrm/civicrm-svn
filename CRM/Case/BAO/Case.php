@@ -393,7 +393,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      * @access public
      * 
      */
-     static function getcontactNames( $caseId ) 
+     static function getContactNames( $caseId ) 
      {
         $queryParam = array();
         $query = "
@@ -1959,17 +1959,20 @@ SELECT  id
             //move other case to trash.
             $mergeCase = self::deleteCase( $otherCaseId, $moveToTrash );
             if ( !$mergeCase ) continue;
-            
-            $mergeActSubject = $mergeActSubjectDetails = '';
+
+            $mergeActSubject = $mergeActSubjectDetails = $mergeActType = '';
             if ( $changeClient ) {
+                $mergeActType = array_search( 'Reassigned Case', $activityTypes );
                 $mergeActSubject = ts( "Case %1 reassigned from contact id %2 to contact id %3. New Case ID is %4.", 
                                        array( 1 => $otherCaseId,   2 => $otherContactId, 
                                               3 => $mainContactId, 4 => $mainCaseId ) ); 
             } else if ( $duplicateContacts ) {
+                $mergeActType = array_search( 'Merge Case', $activityTypes );
                 $mergeActSubject = ts( "Case %1 copied from contact id %2 to contact id %3 via merge. New Case ID is %4.", 
                                        array( 1 => $otherCaseId,   2 => $otherContactId, 
                                               3 => $mainContactId, 4 => $mainCaseId ) ); 
             } else {
+                $mergeActType = array_search( 'Merge Case', $activityTypes );
                 $mergeActSubject = ts( "Case %1 merged into case %2", array( 1 => $otherCaseId, 2 => $mainCaseId ) );
                 if ( !empty( $copiedActivityIds ) ) {
                     $sql = '
@@ -1987,7 +1990,7 @@ SELECT id, subject, activity_date_time
             $activityParams = array( 'subject'            => $mergeActSubject,
                                      'details'            => $mergeActSubjectDetails,
                                      'status_id'          => array_search( 'Completed',  $activityStatuses ),
-                                     'activity_type_id'   => ( $changeClient ) ? array_search( 'Reassigned Case', $activityTypes ) : array_search( 'Merge Case', $activityTypes ),
+                                     'activity_type_id'   => $mergeActType,
                                      'source_record_id'   => $mainCaseId,
                                      'source_contact_id'  => $mainContactId,
                                      'activity_date_time' => date('YmdHis') );
@@ -2002,9 +2005,8 @@ SELECT id, subject, activity_date_time
                                    'activity_id' => $mergeActivityId );
             
             self::processCaseActivity( $mergeCaseAct );
-            return $mainCaseIds;
         }
-        
+        return $mainCaseIds;
     }
     
 }

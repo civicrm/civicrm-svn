@@ -356,7 +356,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
      * @access public
      * 
      */
-    static function getcontactNames( $caseId ) 
+    static function getContactNames( $caseId ) 
     {
         $queryParam = array();
         $query = "SELECT contact_a.sort_name 

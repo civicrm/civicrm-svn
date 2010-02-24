@@ -54,6 +54,10 @@ function checkSelection( field ) {
         validationMessage = '{/literal}{ts}Please select a client for this case.{/ts}{literal}';
 	alert( validationMessage );
         return false;
+    } else if ( cj('#contact_id').val( ) == {/literal}{$contactId}{literal} ) {
+      	validationMessage = '{/literal}{ts}'+clientName[0]+' is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
+	alert( validationMessage );
+        return false;    
     } else {
         validationMessage = '{/literal}{ts}Are you sure you want to reassign this case and all related activities and relationships to '+clientName[0]+'?{/ts}{literal}';
         if ( confirm( validationMessage ) ) {

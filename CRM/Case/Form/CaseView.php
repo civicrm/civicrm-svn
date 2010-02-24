@@ -231,7 +231,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $this->assign('caseRelationships', $caseRelationships);
         
         //also add client as role. CRM-4438
-        $caseRoles['client'] = CRM_Case_BAO_Case::getcontactNames( $this->_caseID );
+        $caseRoles['client'] = CRM_Case_BAO_Case::getContactNames( $this->_caseID );
 
         $this->assign( 'caseRoles', $caseRoles );
         

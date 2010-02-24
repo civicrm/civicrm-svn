@@ -136,7 +136,7 @@ class CRM_Case_Form_Case extends CRM_Contact_Form_Task
             CRM_Case_BAO_Case::retrieve($params, $defaults, $ids);
             
             $defaults['case_contact'] = CRM_Case_BAO_Case::retrieveContactIdsByCaseId( $this->_id, $this->_contactID );
-            $contactNames =  CRM_Case_BAO_Case::getcontactNames( $this->_id );
+            $contactNames =  CRM_Case_BAO_Case::getContactNames( $this->_id );
             foreach( $contactNames as $key => $name ){
                 $defaults['contact_names'] .=  $defaults['contact_names']?",\"$name\"":"\"$name\"";
             }

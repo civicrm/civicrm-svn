@@ -65,12 +65,13 @@ class CRM_Case_Form_EditClient extends CRM_Core_Form
     {
         $this->add( 'text', 'change_client_id', ts( 'Assign to another Client' ) );
         $this->add( 'hidden', 'contact_id', '', array( 'id' => 'contact_id') );
-        $this->add( 'hidden', 'contact_id1', '', array( 'id1' => 'contact_id1') );
         $this->addElement( 'submit', 
                            $this->getButtonName( 'next', 'edit_client' ), 
                            ts('Assign'), 
                            array( 'class'   => 'form-submit-inline',
                                   'onclick' => "return checkSelection( this );") );
+
+        $this->assign( 'contactId', $this->_contactId );
     }
     
     /**

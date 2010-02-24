@@ -608,6 +608,10 @@ function checkSelection( field ) {
     if ( document.getElementById( validationField ).value == '' ) {
         alert( validationMessage );
         return false;
+    } else if ( cj('#contact_id').val( ) == '{/literal}{$contactID}{literal}' ) {
+        validationMessage = '{/literal}{ts}'+clientName[0]+' is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
+	alert( validationMessage );
+        return false;    
     } else if ( document.getElementById( validationField ).value != '' ) {
         validationMessage = '{/literal}{ts}Are you sure you want to reassign this case and all related activities and relationships to '+clientName[0]+'?{/ts}{literal}';
         if ( confirm( validationMessage ) ) {
@@ -616,7 +620,7 @@ function checkSelection( field ) {
 	    return false;
 	}
     } else {
-       return eval( successAction );
+        return eval( successAction );
     }
 }
 

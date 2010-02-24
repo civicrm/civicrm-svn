@@ -683,7 +683,7 @@ LIMIT  1
             }
         }
 
-        $caseRoles['client'] = CRM_Case_BAO_Case::getcontactNames( $caseID );
+        $caseRoles['client'] = CRM_Case_BAO_Case::getContactNames( $caseID );
         if ( $isRedact ) {
             if (!array_key_exists($caseRoles['client']['sort_name'], $report->_redactionStringRules)) {
                 $report->_redactionStringRules = CRM_Utils_Array::crmArrayMerge($report->_redactionStringRules, 
