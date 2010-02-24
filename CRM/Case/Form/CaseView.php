@@ -101,7 +101,10 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case', 
                "action=view&reset=1&id={$this->_caseID}&cid={$this->_contactID}&context=home" );
 
-        $title = CRM_Contact_BAO_Contact::displayName( $this->_contactID ) . ' - ' . $caseType;
+        $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactID );
+        $this->assign( 'displayName' $displayName );
+        
+        $title = $displayName . CRM_Contact_BAO_Contact::displayName( $this->_contactID ) . ' - ' . $caseType;
         
         // add the recently created case
         CRM_Utils_Recent::add( $title,
