@@ -38,23 +38,24 @@ require_once 'tcpdf/tcpdf.php';
 
 class CRM_Utils_PDF_Label extends TCPDF {
 
-    // Private properties
-    private $averyName  = '';       // Name of format
-    private $marginLeft = 0;        // Left margin of labels
-    private $marginTop  = 0;        // Top margin of labels
-    private $xSpace     = 0;        // Horizontal space between 2 labels
-    private $ySpace     = 0;        // Vertical space between 2 labels
-    private $xNumber    = 0;        // Number of labels horizontally
-    private $yNumber    = 0;        // Number of labels vertically
-    private $width      = 0;        // Width of label
-    private $height     = 0;        // Height of label
-    private $charSize   = 10;       // Character size
-    private $lineHeight = 10;       // Default line height
-    private $metric     = 'mm';     // Type of metric for labels.. Will help to calculate good values
-    private $metricDoc  = 'mm';     // Type of metric for the document
-    private $fontName   = 'symbol'; // Name of the font
-    private $countX     = 0;
-    private $countY     = 0;
+    // make these properties public due to
+    // CRM-5880
+    public $averyName  = '';       // Name of format
+    public $marginLeft = 0;        // Left margin of labels
+    public $marginTop  = 0;        // Top margin of labels
+    public $xSpace     = 0;        // Horizontal space between 2 labels
+    public $ySpace     = 0;        // Vertical space between 2 labels
+    public $xNumber    = 0;        // Number of labels horizontally
+    public $yNumber    = 0;        // Number of labels vertically
+    public $width      = 0;        // Width of label
+    public $height     = 0;        // Height of label
+    public $charSize   = 10;       // Character size
+    public $lineHeight = 10;       // Default line height
+    public $metric     = 'mm';     // Type of metric for labels.. Will help to calculate good values
+    public $metricDoc  = 'mm';     // Type of metric for the document
+    public $fontName   = 'symbol'; // Name of the font
+    public $countX     = 0;
+    public $countY     = 0;
     
     // Listing of labels size
     protected  $averyLabels =
