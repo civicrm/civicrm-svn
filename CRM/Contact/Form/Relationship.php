@@ -369,9 +369,12 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         $this->assign('duplicateRelationship', $duplicateRelationship);
         $this->assign('searchCount'          , $searchCount);
         $this->assign('searchDone'           , $searchDone);
+        
         if ( $this->get('contact_type') ) {
-            $this->assign('contact_type'         , $this->get('contact_type'));
-            $this->assign('contact_type_display' , CRM_Contact_DAO_Contact::tsEnum('contact_type', $this->get('contact_type')));
+            require_once 'CRM/Contact/BAO/ContactType.php';
+            $typeLabel = CRM_Contact_BAO_ContactType::getLabel( $this->get('contact_type') );
+            $this->assign('contact_type'         , $this->get('contact_type') );
+            $this->assign('contact_type_display' , $typeLabel );
         }
         
         if ( $searchDone ) {
