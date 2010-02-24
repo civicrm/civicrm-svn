@@ -104,7 +104,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactID );
         $this->assign( 'displayName', $displayName );
         
-        $title = $displayName . CRM_Contact_BAO_Contact::displayName( $this->_contactID ) . ' - ' . $caseType;
+        $title = $displayName . ' - ' . $caseType;
         
         // add the recently created case
         CRM_Utils_Recent::add( $title,
