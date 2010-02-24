@@ -32,7 +32,7 @@ packages/jquery/jquery-ui.js
 packages/jquery/themes/smoothness/jquery-ui.css
 
 packages/jquery/plugins/flexigrid.js
-packages/jquery/css/flexigrid.css"
+packages/jquery/css/flexigrid.css
 
 packages/jquery/plugins/jquery.autocomplete.js
 packages/jquery/css/jquery.autocomplete.css
