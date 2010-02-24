@@ -55,5 +55,5 @@
 {/htxt}
 
 {htxt id="id-verp-override"}
-{ts}If this box is checked, the automatically generated VERP address in the Reply-To will be overriden by the From email address specified above. Consult with your site administrator before using this feature as it may affect handling of bounced emails and replies.{/ts}
+{ts}If this box is checked, the automatically generated VERP address in the Reply-To will be overriden by the From email address specified above. Consult with your site administrator before using this feature as it may affect handling of replies.{/ts}
 {/htxt}
