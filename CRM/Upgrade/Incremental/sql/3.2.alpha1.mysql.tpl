@@ -31,7 +31,9 @@ SELECT @caseCompId    := max(id) FROM civicrm_component where name = 'CiviCase';
 INSERT INTO 
    civicrm_option_value(`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
 VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELECT @atOpt_max_val := @atOpt_max_val+1), 'Merge Case', NULL, 0, NULL, (SELECT @atOpt_max_wt := @atOpt_max_wt + 1 ), 0, 1, 1, @caseCompId, NULL ), 
-      (@option_group_id_activity_type, {localize}'Reassigned Case'{/localize}, (SELECT @atOpt_max_val := @atOpt_max_val+1), 'Reassigned Case', NULL, 0, NULL, (SELECT @atOpt_max_wt := @atOpt_max_wt + 1 ), 0, 1, 1, @caseCompId, NULL );
+      (@option_group_id_activity_type, {localize}'Reassigned Case'{/localize}, (SELECT @atOpt_max_val := @atOpt_max_val+1), 'Reassigned Case', NULL, 0, NULL, (SELECT @atOpt_max_wt := @atOpt_max_wt + 1 ), 0, 1, 1, @caseCompId, NULL ),
+      (@option_group_id_activity_type, {localize}'Link Cases'{/localize}, (SELECT @atOpt_max_val := @atOpt_max_val+1), 'Link Cases', NULL, 0, NULL, (SELECT @atOpt_max_wt := @atOpt_max_wt + 1 ), 0, 1, 1, @caseCompId, NULL );
+      
 
 -- CRM-5752
     UPDATE civicrm_option_value val 
