@@ -122,7 +122,7 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
                                          'default' => date('Y'),
                                          'clause'  => "contribution_civireport.contact_id NOT IN
 (SELECT distinct cont.id FROM civicrm_contact cont, civicrm_contribution contri
- WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) >= \$value AND contri.is_test = 0 )" ),  
+ WHERE  cont.id = contri.contact_id AND YEAR (contri.receive_date) = \$value AND contri.is_test = 0 )" ),  
                                   'contribution_status_id'         => 
                                   array( 'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                          'options'      => CRM_Contribute_PseudoConstant::contributionStatus( ) ,
@@ -222,7 +222,7 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
         
     }
     
-    function where( $min = 0, $max = 0 ) {
+    function where( ) {
         $this->_where = "";
 
         foreach ( $this->_columns as $tableName => $table ) {
@@ -276,16 +276,18 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
      function statistics( &$rows ) {
          $statistics = parent::statistics( $rows );
          
-         $select = "
-        SELECT 
-               SUM({$this->_aliases['civicrm_contribution']}.total_amount ) as amount 
-        ";
-         $sql = "{$select} {$this->_from } {$this->_where}";
-         $dao = CRM_Core_DAO::executeQuery( $sql );
-         if ( $dao->fetch( ) ) {
-             $statistics['counts']['amount'] = array( 'value' => $dao->amount,
-                                                      'title' => 'Total LifeTime',
-                                                      'type'  => CRM_Utils_Type::T_MONEY );
+         if ( !empty($rows) ) {
+             $select = "
+                   SELECT 
+                        SUM({$this->_aliases['civicrm_contribution']}.total_amount ) as amount ";
+             
+             $sql = "{$select} {$this->_from } {$this->_where}";
+             $dao = CRM_Core_DAO::executeQuery( $sql );
+             if ( $dao->fetch( ) ) {
+                 $statistics['counts']['amount'] = array( 'value' => $dao->amount,
+                                                          'title' => 'Total LifeTime',
+                                                          'type'  => CRM_Utils_Type::T_MONEY );
+             }
          }
          return $statistics;
      }
@@ -334,7 +336,7 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
             $contributionSum = 0;
             $yearcal = array( );
             while ( $dao->fetch( ) ) {
-                if( !$dao->civicrm_contribution_contact_id ) {
+                if ( !$dao->civicrm_contribution_contact_id ) {
                     continue;
                 }
                 $row = array();
