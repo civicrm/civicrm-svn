@@ -184,8 +184,8 @@ class CRM_Core_BAO_CustomValueTable
 
                     case 'Boolean':
                         //fix for CRM-3290
-                        $isBool = CRM_Utils_String::strtoboolstr($value);
-                        if ( $isBool === false ) {
+                        $value = CRM_Utils_String::strtoboolstr($value);
+                        if ( $value === false ) {
                             $type = 'Timestamp';
                         }
                         break;
