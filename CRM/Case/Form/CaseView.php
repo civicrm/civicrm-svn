@@ -102,7 +102,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                "action=view&reset=1&id={$this->_caseID}&cid={$this->_contactID}&context=home" );
 
         $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactID );
-        $this->assign( 'displayName' $displayName );
+        $this->assign( 'displayName', $displayName );
         
         $title = $displayName . CRM_Contact_BAO_Contact::displayName( $this->_contactID ) . ' - ' . $caseType;
         
