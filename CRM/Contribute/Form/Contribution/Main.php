@@ -900,7 +900,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $params['amount_other'] = CRM_Utils_Rule::cleanMoney( $params['amount_other'] );
         }
         
-        if ( CRM_Utils_Array::value('amount',$params) == 'amount_other_radio' || ! isset( $params['amount_other'] ) ) {
+        if ( CRM_Utils_Array::value('amount',$params) == 'amount_other_radio' ||
+             CRM_Utils_Array::value( 'amount_other', $params )  ) {
             $amount = $params['amount_other'];
         } else if  ( !empty( $params['pledge_amount'] ) ) {
             $amount = 0;
