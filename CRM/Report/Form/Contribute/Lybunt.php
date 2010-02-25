@@ -224,6 +224,7 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
     
     function where( ) {
         $this->_where = "";  
+        $this->_statusClause = "";
         $clauses = array( );
         $current_year    =  $this->_params['yid_value'] ;
         $previous_year   = $current_year - 1; 
@@ -249,6 +250,9 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                                                     CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
                                                     CRM_Utils_Array::value( "{$fieldName}_min"  , $this->_params ),
                                                     CRM_Utils_Array::value( "{$fieldName}_max"  , $this->_params ) );
+                            if ( $fieldName == 'contribution_status_id' && !empty( $clause ) ) {
+                                $this->_statusClause = " AND ". $clause;
+                            }
                         }
                     }
                     
@@ -328,7 +332,7 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                 $sql = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy}";
 
             } else {
-                $sql = "{$this->_select} {$this->_from} WHERE {$this->_aliases['civicrm_contact']}.id IN (".implode( ',', $contactIds ).") AND {$this->_aliases['civicrm_contribution']}.is_test = 0 {$this->_groupBy} ";
+                $sql = "{$this->_select} {$this->_from} WHERE {$this->_aliases['civicrm_contact']}.id IN (".implode( ',', $contactIds ).") AND {$this->_aliases['civicrm_contribution']}.is_test = 0 {$this->_statusClause} {$this->_groupBy} ";
             }
             
             $dao  = CRM_Core_DAO::executeQuery( $sql );

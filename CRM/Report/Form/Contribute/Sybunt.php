@@ -224,7 +224,7 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
     
     function where( ) {
         $this->_where = "";
-
+        $this->_statusClause = "";
         foreach ( $this->_columns as $tableName => $table ) {
             if ( array_key_exists( 'filters' , $table) ) {
                 foreach ( $table['filters'] as $fieldName => $field ) {
@@ -246,6 +246,9 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
                                                     CRM_Utils_Array::value( "{$fieldName}_value", $this->_params ),
                                                     CRM_Utils_Array::value( "{$fieldName}_min"  , $this->_params ),
                                                     CRM_Utils_Array::value( "{$fieldName}_max"  , $this->_params ) );
+                            if ( $fieldName == 'contribution_status_id' && !empty( $clause ) ) {
+                                $this->_statusClause = " AND ". $clause;
+                            }
                         }
                     }
                     
@@ -322,7 +325,7 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
             if ( CRM_Utils_Array::value( 'charts', $this->_params ) ) {  
                 $sql = "{$this->_select} {$this->_from} {$this->_where} {$this->_groupBy}"; 
             } else {
-                $sql = "{$this->_select} {$this->_from} WHERE {$this->_aliases['civicrm_contact']}.id IN (".implode( ',', $contactIds ).") AND {$this->_aliases['civicrm_contribution']}.is_test = 0 {$this->_groupBy} ";
+                $sql = "{$this->_select} {$this->_from} WHERE {$this->_aliases['civicrm_contact']}.id IN (".implode( ',', $contactIds ).") AND {$this->_aliases['civicrm_contribution']}.is_test = 0 {$this->_statusClause} {$this->_groupBy} ";
             }
             
             $current_year    =  $this->_params['yid_value'] ;
