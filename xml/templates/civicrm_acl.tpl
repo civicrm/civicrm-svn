@@ -80,6 +80,7 @@ VALUES
 ('Core ACL', 0, 'civicrm_acl_role', 1, 'All', 'view all contacts', NULL, NULL, NULL, 1),
 ('Core ACL', 0, 'civicrm_acl_role', 1, 'All', 'view event info', NULL, NULL, NULL, 1),
 ('Core ACL', 0, 'civicrm_acl_role', 1, 'All', 'view event participants', NULL, NULL, NULL, 1),
+('Core ACL', 0, 'civicrm_acl_role', 1, 'All', 'edit all events', NULL, NULL, NULL, 1),
 ('Core ACL', 0, 'civicrm_acl_role', 2, 'All', 'access CiviMail subscribe/unsubscribe pages', NULL, NULL, NULL, 1),
 ('Core ACL', 0, 'civicrm_acl_role', 2, 'All', 'access all custom data', NULL, NULL, NULL, 1),
 ('Core ACL', 0, 'civicrm_acl_role', 2, 'All', 'make online contributions', NULL, NULL, NULL, 1),
