@@ -53,6 +53,14 @@
     {include file="CRM/common/Navigation.tpl" }
 {/if}
 
+{* temporary hack to fix wysiysg editor failure if js compression is on *}
+{if $defaultWysiwygEditor eq 1}
+    <script type="text/javascript" src="{$config->resourceBase}packages/tinymce/jscripts/tiny_mce/jquery.tinymce.js"></script>
+    <script type="text/javascript" src="{$config->resourceBase}packages/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+{else}
+    <script type="text/javascript" src="{$config->resourceBase}packages/ckeditor/ckeditor.js"></script>
+{/if}
+
 {if isset($browserPrint) and $browserPrint}
 {* Javascript window.print link. Used for public pages where we can't do printer-friendly view. *}
 <div id="printer-friendly"><a href="javascript:window.print()" title="{ts}Print this page.{/ts}"><img src="{$config->resourceBase}i/print-icon.png" alt="{ts}Print this page.{/ts}" /></a></div>

@@ -55,12 +55,6 @@ packages/jquery/plugins/jquery.tableHeader.js
 {*allow select/unselect checkboxes functionality only for search*}
 packages/jquery/plugins/checkboxselect.js
 
-{if $defaultWysiwygEditor eq 1}
-    packages/tinymce/jscripts/tiny_mce/jquery.tinymce.js
-    packages/tinymce/jscripts/tiny_mce/tiny_mce.js
-{else}
-    packages/ckeditor/ckeditor.js
-{/if}
 packages/jquery/plugins/jquery.textarearesizer.js
 packages/jquery/plugins/jquery.progressbar.js
 packages/jquery/plugins/jquery.form.js
