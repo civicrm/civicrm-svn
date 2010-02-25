@@ -81,7 +81,7 @@
         </tr>
         </thead>
         {foreach from=$notes item=note}
-        <tr class="{cycle values="odd-row,even-row"}">
+        <tr id="cnote_{$note.id}" class="{cycle values="odd-row,even-row"}">
             <td>
                 {$note.note|mb_truncate:80:"...":true}
                 {* Include '(more)' link to view entire note if it has been truncated *}

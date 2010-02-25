@@ -69,7 +69,7 @@
             {else}
                 {assign var = "rtype" value = "b_a" }
             {/if*}
-            <tr class="{cycle values="odd-row,even-row"}">
+            <tr id="rel_{$rel.id}" class="{cycle values="odd-row,even-row"}">
             {if $relationshipTabContext}
                 <td class="bold"><a href="{crmURL p='civicrm/contact/view/rel' q="action=view&reset=1&selectedChild=rel&cid=`$contactId`&id=`$rel.id`&rtype=`$rel.rtype`"}">{$rel.relation}</a></td>
                 <td><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$rel.cid`"}">{$rel.name}</a></td>
@@ -141,7 +141,7 @@
           {else}
             {assign var = "rtype" value = "a_b" }
           {/if}
-          <tr class="{cycle values="odd-row,even-row"}">
+          <tr id="rel_{$rel.id}" class="{cycle values="odd-row,even-row"}">
             <td class="bold">{$rel.relation}</td>
             <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$rel.cid`"}">{$rel.name}</a></td>
             <td>{$rel.city}</td>

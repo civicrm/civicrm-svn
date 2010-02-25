@@ -48,7 +48,7 @@
 	</tr>
     </thead>
        	{foreach from=$groupIn item=row}
-        <tr class="{cycle values="odd-row,even-row"}">
+        <tr id="grp_{$row.id}" class="{cycle values="odd-row,even-row"}">
         	<td class="bold"><a href="{crmURL p='civicrm/group/search' q="reset=1&force=1&context=smog&gid=`$row.group_id`"}">{$row.title}</a></td>
 	    	<td>{ts 1=$row.in_method}Added (by %1){/ts}</td> 
             <td>{$row.in_date|crmDate}</td>
