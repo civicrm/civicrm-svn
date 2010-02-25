@@ -1372,7 +1372,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->add('select', $name, $title, 
                        array('' => ts('- select -')) + CRM_Core_PseudoConstant::country(), $required);
             $config =& CRM_Core_Config::singleton( );                       
-            if ( ($mode != CRM_Profile_Form::MODE_EDIT) && $config->defaultContactCountry ) {
+            if ( !in_array( $mode, array( CRM_Profile_Form::MODE_EDIT, CRM_Profile_Form::MODE_SEARCH ) ) && 
+                 $config->defaultContactCountry ) {
                 $defaultValues[$name] = $config->defaultContactCountry;
                 $form->setDefaults( $defaultValues ); 
             }
