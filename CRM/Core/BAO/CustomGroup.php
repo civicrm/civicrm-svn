@@ -673,10 +673,11 @@ SELECT $select
             }
             $where .= " AND ( " . implode( ' OR ', $clause ) . " ) ";
 
-            //include case activitiescustomdata if case is enabled
+            //include case activities customdata if case is enabled
             if ( in_array('Activity', $extends) ) {
                 $extendValues = implode( ',', array_keys(CRM_Core_PseudoConstant::activityType( true, true )) );
-                $where .= " AND ( civicrm_custom_group.extends_entity_column_value IN ($extendValues) OR civicrm_custom_group.extends_entity_column_value IS NULL ) ";
+                $where .= " AND ( civicrm_custom_group.extends_entity_column_value IS NULL OR REPLACE( civicrm_custom_group.extends_entity_column_value, %2, ' ') IN ($extendValues) ) ";
+                $params[2] = array( CRM_Core_DAO::VALUE_SEPARATOR, 'String' );
             } 
         }
 
