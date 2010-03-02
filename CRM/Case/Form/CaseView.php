@@ -120,6 +120,16 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                                $this->_contactID,
                                null
                                );
+        
+
+        //get the related cases for given case.
+        $relatedCases = $this->get( 'relatedCases' );
+        if ( !isset( $relatedCases ) ) {
+            $relatedCases = CRM_Case_BAO_Case::getRelatedCases( $this->_caseID, $this->_contactID );
+            $relatedCases = empty( $relatedCases ) ? false : $relatedCases;
+            $this->set( 'relatedCases', $relatedCases );
+        }
+        $this->assign( 'hasRelatedCases', $relatedCases );
     }
 
     /**

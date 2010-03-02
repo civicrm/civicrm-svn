@@ -1724,6 +1724,84 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
     }
     
     /**
+     * Retrieve related cases for give case.
+     *
+     * @param int     $mainCaseId     id of main case
+     * @param int     $contactId      id of contact
+     * @param boolean $excludeDeleted do not include deleted cases.
+     *
+     * @return an array of related cases.
+     * 
+     * @access public
+     */
+    function getRelatedCases( $mainCaseId, $contactId, $excludeDeleted = true )
+    {
+        //FIXME : do check for permissions.
+        
+        $relatedCases = array( );
+        if ( !$mainCaseId || !$contactId ) {
+            return $relatedCases;
+        }
+        
+        require_once 'CRM/Core/PseudoConstant.php';
+        $linkActType = array_search( 'Link Cases', 
+                                     CRM_Core_PseudoConstant::activityType( true, true, false, 'name' ) );
+        if ( !$linkActType ) {
+            return $relatedCases;
+        }
+        
+        //1. first fetch related case ids.
+        $query = "
+    SELECT  relCaseAct.case_id
+      FROM  civicrm_case mainCase
+INNER JOIN  civicrm_case_activity mainCaseAct ON (mainCaseAct.case_id = mainCase.id)
+INNER JOIN  civicrm_activity mainAct          ON (mainCaseAct.activity_id = mainAct.id AND mainAct.activity_type_id = %1)
+INNER JOIN  civicrm_case_activity relCaseAct  ON (relCaseAct.activity_id = mainAct.id AND mainCaseAct.id !=  relCaseAct.id) 
+     WHERE  mainCase.id = %2";
+        
+        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $linkActType, 'Integer' ),
+                                                          2 => array( $mainCaseId,  'Integer' ) ) );
+        $relatedCaseIds = array( );
+        while ( $dao->fetch( ) ) {
+            $relatedCaseIds[$dao->case_id] = $dao->case_id;
+        }
+        $dao->free( );
+        
+        // there are no related cases.
+        if ( empty( $relatedCaseIds ) ) {
+            return $relatedCases;
+        }
+        
+        $whereClause = 'relCase.id IN ( ' . implode( ',', $relatedCaseIds ) . ' )';
+        if ( $excludeDeleted ) {
+            $whereClause .= " AND ( relCase.is_deleted = 0 OR relCase.is_deleted IS NULL )";
+        }
+        
+        //2. fetch the details of related cases.
+        $query = "
+    SELECT  relCase.id as id, 
+            case_type_ov.label as case_type, 
+            client.display_name as client_name
+      FROM  civicrm_case relCase 
+INNER JOIN  civicrm_case_contact relCaseContact ON ( relCase.id = relCaseContact.case_id )
+INNER JOIN  civicrm_contact      client         ON ( client.id = relCaseContact.contact_id ) 
+ LEFT JOIN  civicrm_option_group case_type_og   ON ( case_type_og.name = 'case_type' )
+ LEFT JOIN  civicrm_option_value case_type_ov   ON ( relCase.case_type_id = case_type_ov.value
+                                                     AND case_type_og.id = case_type_ov.option_group_id )
+     WHERE  {$whereClause}";
+        
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        while ( $dao->fetch( ) ) {
+            $relatedCases[$dao->id] = array( 'case_id'      => $dao->id,
+                                             'case_type'    => $dao->case_type,
+                                             'client_name'  => $dao->client_name );
+        }
+        $dao->free( );
+        
+        return $relatedCases;
+    }
+    
+    /**
      * Function perform two task.
      * 1. Merge two duplicate contacts cases - follow CRM-5758 rules.
      * 2. Merge two cases of same contact - follow CRM-5598 rules.

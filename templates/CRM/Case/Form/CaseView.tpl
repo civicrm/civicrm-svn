@@ -62,6 +62,13 @@
             <td>{$form.timeline_id.label}<br />{$form.timeline_id.html}&nbsp;{$form._qf_CaseView_next.html}</td> 
             <td>{$form.report_id.label}<br />{$form.report_id.html}&nbsp;<input type="button" accesskey="R" value="Go" name="case_report" onclick="checkSelection( this );"/></td> 
         </tr>
+	{if $hasRelatedCases}
+	<tr>
+	   <td> 
+	      <a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a>
+	    </td>	
+	</tr>	
+	{/if}
 	{if $mergeCases}
 	<tr>
 	   <td colspan='2'><a href="#" onClick='cj("#merge_cases").toggle( ); return false;'>{ts}Merge Case{/ts}</a>	
@@ -78,6 +85,10 @@
 	</tr>
     </table>
 </fieldset>
+
+<div id="view-related-cases">
+     <div id="related-cases-content"></div>
+</div>
 
 <div id="caseRole_show" class="section-hidden section-hidden-border">
   <a href="#" onclick="hide('caseRole_show'); show('caseRole'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Case Roles{/ts}</label><br />
@@ -249,6 +260,39 @@ function createRelationship( relType, contactID, relID, rowNumber ) {
 		} 
 
 	});
+}
+
+function viewRelatedCases( mainCaseID, contactID ) {
+  cj("#view-related-cases").show( );
+     cj("#view-related-cases").dialog({
+        title: "Related Cases",
+        modal: true, 
+        width : "680px", 
+        height: "560", 
+        resizable: true,
+        bgiframe: true,
+        overlay: { 
+            opacity: 0.5, 
+            background: "black" 
+        },
+
+        beforeclose: function(event, ui) {
+            cj(this).dialog("destroy");
+        },
+
+        open:function() {
+            cj("#related-cases-content").html("");
+            var viewUrl = {/literal}"{crmURL p='civicrm/case/relcases' h=0 q="snippet=4" }"{literal};
+            cj("#related-cases-content").load( viewUrl + "&caseId="+ mainCaseID + "&cid=" + contactID );
+        },
+
+        buttons: { 
+            "Done": function() { 	    
+                cj(this).dialog("close"); 
+                cj(this).dialog("destroy");
+            }
+        }
+    });
 }
 
 function showHideSearch( ) {

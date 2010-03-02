@@ -58,4 +58,20 @@ class CRM_Case_Page_AJAX
         exit( );
     }
     
+    /**
+     * Retrieve and display related case details.
+     */
+    static function getRelatedCases( ) {
+        $contactID  = CRM_Utils_Type::escape( $_GET['cid'],    'Integer' ); 
+        $mainCaseID = CRM_Utils_Type::escape( $_GET['caseId'], 'Integer' );
+        
+        require_once 'CRM/Case/BAO/Case.php';
+        $relatedCases = CRM_Case_BAO_Case::getRelatedCases( $mainCaseID, $contactID );
+        
+        foreach ( $relatedCases as $caseId => $caseDetails ) {
+            echo 'Client Name : ' . $caseDetails['client_name'] . ' Case Type : ' . $caseDetails['case_type'];
+        }
+        
+        exit( );
+    }
 }
