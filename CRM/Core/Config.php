@@ -413,6 +413,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                     // for now we assign it to a know value
                     // CRM-4949
                     $value = $this->templateCompileDir;
+                    $url = CRM_Utils_System::url( 'civicrm/admin/setting/path', 'reset=1' );
+                    CRM_Core_Session::setStatus( ts( "%1 has an incorrect directory path. Please go to the <a href=\"$url\">path setting page</a> and correct it.", array( 1 => $key ) ) . '<br/>' );
                 }
             } else if ( $key == 'lcMessages' ) {
                 // reset the templateCompileDir to locale-specific and make sure it exists

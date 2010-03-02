@@ -69,6 +69,7 @@ class CRM_Core_BAO_Setting
                            'userFrameworkDSN', 
                            'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
                            'userPermissionClass', 'userFrameworkURLVar',
+                           'newBaseURL', 'newBaseDir', 'newSiteName',
                            'qfKey', 'gettextResourceDir', 'cleanURL' );
         foreach ( $skipVars as $var ) {
             unset( $params[$var] );

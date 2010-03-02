@@ -42,7 +42,6 @@ function civicrm_html_head()
 
     if ( arg(0) == 'civicrm' ) {
         $template =& CRM_Core_Smarty::singleton( );
-        global $civicrm_root;
         $buffer = $template->fetch( 'CRM/common/jquery.files.tpl' );
         $lines  = preg_split( '/\s+/', $buffer );
         foreach ( $lines as $line ) {
