@@ -373,7 +373,7 @@ WHERE  id = %1
         $params = array( 1 => array( CRM_Core_Config::domainID( ), 'Integer' ) );
         $configBackend = CRM_Core_DAO::singleValueQuery( $sql, $params );
         if ( ! $configBackend ) {
-            CRM_Core_Error::fatal( );
+            CRM_Core_Error::fatal( ts('Returning early due to unexpected error - civicrm_domain.config_backend column value is NULL. Try visiting CiviCRM Home page.') );
         }
         $configBackend = unserialize( $configBackend );
 
@@ -390,13 +390,13 @@ WHERE  id = %1
         $params[2] = array( $configBackend, 'String' );
         CRM_Core_DAO::executeQuery( $sql, $params );
         
-        $moveStatus .= ts('Directory and Resource URLs update in moved database.') . '<br />';
+        $moveStatus .= ts('Directory and Resource URLs have been updated in the moved database to reflect current site location.') . '<br />';
 
         $config =& CRM_Core_Config::singleton( );
 
         // clear the template_c and upload directory also
         $config->cleanup( 3, true );
-        $moveStatus .= ts('Template cache and upload directory cleared.') . '<br />';
+        $moveStatus .= ts('Template cache and upload directory have been cleared.') . '<br />';
     
         // clear all caches
         CRM_Core_Config::clearDBCache( );
@@ -415,7 +415,7 @@ WHERE  id = %1
         } else {
             $session =& CRM_Core_Session::singleton( );
             $session->reset( 2 );
-            $moveStatus .= ts('Session reset.') . '<br />';
+            $moveStatus .= ts('Session has been reset.') . '<br />';
         }
 
         return $moveStatus;
@@ -423,5 +423,3 @@ WHERE  id = %1
     }
 
 }
-
-
