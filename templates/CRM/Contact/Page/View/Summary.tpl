@@ -62,7 +62,7 @@
                             {include file="CRM/Activity/Form/ActivityLinks.tpl"}
                         </li>
                         {/if}
-                        <li><span class="label">Go to:</span></li>
+                        <li><span class="label">{ts}Go to:{/ts}</span></li>
                         {if $dashboardURL }
                         <li>
                         <a href="{$dashboardURL}" class="dashboard button" title="{ts}dashboard{/ts}">
