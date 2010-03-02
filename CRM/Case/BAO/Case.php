@@ -1771,6 +1771,7 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
         require_once 'CRM/Contact/DAO/Relationship.php';
         require_once 'CRM/Activity/DAO/ActivityTarget.php';
         require_once 'CRM/Activity/DAO/ActivityAssignment.php';
+        require_once 'CRM/Activity/BAO/Activity.php';
         
         // copy all cases and connect to main contact id.
         foreach ( $processCaseIds as $otherCaseId ) {
@@ -1875,12 +1876,14 @@ SELECT  id
                 }
                 $mainActivity->original_id = CRM_Utils_Array::value( $mainActivity->original_id, 
                                                                      $activityMappingIds );
+                $mainActivity->parent_id   = CRM_Utils_Array::value( $mainActivity->parent_id, 
+                                                                     $activityMappingIds );
                 $mainActivity->save( );
                 $mainActivityId = $mainActivity->id;
                 if ( !$mainActivityId ) continue;
                 
                 $activityMappingIds[$otherActivityId] = $mainActivityId ;
-                if ( $mainActivity->original_id ) {
+                if ( $mainActivity->original_id || $mainActivity->parent_id ) {
                     CRM_Activity_BAO_Activity::logActivityAction( $mainActivity );
                 }
                 

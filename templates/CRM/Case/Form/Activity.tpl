@@ -305,30 +305,30 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
     {/if}{literal}
     
     function buildTargetContact( resetVal ) {
-	 var hide  = show = false;	
-    	 var value = cj("#hidden_target_contact").attr( 'checked' );	      
+	 var hideWidget  = showWidget = false;	
+    	 var value       = cj("#hidden_target_contact").attr( 'checked' );	      
 	 
 	 if ( resetVal ) {
 	     if ( value ) {
-	       hide  = true;
-	       value = false;
+	       hideWidget  = true;
+	       value       = false;
 	     } else {
-	       show  = true;
-	       value = true;
+	       showWidget  = true;
+	       value       = true;
 	     }
 	 } else {
             if ( value ) {
-	       show = true;
+	       showWidget = true;
 	     } else {
-	       hide = true;
+	       hideWidget = true;
 	     }
 	 }
 	 
-	 if ( hide ) {
+	 if ( hideWidget ) {
 	    cj('#withContactsLabel').hide( );
 	    cj('#withContactsWidget').hide( );
   	 }
-	 if ( show ) {
+	 if ( showWidget ) {
 	     cj('#withContactsLabel').show( );
 	     cj('#withContactsWidget').show( ); 
 	 }

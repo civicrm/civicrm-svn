@@ -571,6 +571,7 @@ function checkSelection( field ) {
     var validationMessage = '';
     var validationField   = '';
     var successAction     = '';
+    var forceValidation   = false;
    
     var clientName = new Array( );
     clientName = selectedContact.split('::');
@@ -601,25 +602,19 @@ function checkSelection( field ) {
             break;
         case '_qf_CaseView_next_edit_client' :
             validationMessage = '{/literal}{ts}Please select a client for this case.{/ts}{literal}';
+	    if ( cj('#contact_id').val( ) == '{/literal}{$contactID}{literal}' ) {
+	       	forceValidation = true;
+                validationMessage = '{/literal}{ts}'+clientName[0]+' is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
+            }
             validationField   = 'change_client_id';
+	    successAction     = "confirm( '{/literal}{ts}Are you sure you want to reassign this case and all related activities and relationships to '+clientName[0]+'?{/ts}{literal}' )";
             break;   	    
     }	
 
-    if ( document.getElementById( validationField ).value == '' ) {
+    if ( forceValidation || ( document.getElementById( validationField ).value == '' ) ) {
         alert( validationMessage );
         return false;
-    } else if ( cj('#contact_id').val( ) == '{/literal}{$contactID}{literal}' ) {
-        validationMessage = '{/literal}{ts}'+clientName[0]+' is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
-	alert( validationMessage );
-        return false;    
-    } else if ( document.getElementById( validationField ).value != '' ) {
-        validationMessage = '{/literal}{ts}Are you sure you want to reassign this case and all related activities and relationships to '+clientName[0]+'?{/ts}{literal}';
-        if ( confirm( validationMessage ) ) {
-	    this.href+='&amp;confirmed=1'; 
-        } else {
-	    return false;
-	}
-    } else {
+    } else if ( successAction ) {
         return eval( successAction );
     }
 }
