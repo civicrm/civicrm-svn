@@ -1629,24 +1629,31 @@ WHERE civicrm_case.id = %2";
      * 
      * @return array of case and related data keyed on case id
      */
-    static function getUnclosedCases()
+    static function getUnclosedCases( )
     {
-    	$dao    =& CRM_Core_DAO::executeQuery( "SELECT c.id as contact_id, c.display_name, ca.id, ov.label as case_type
-FROM civicrm_case ca INNER JOIN civicrm_case_contact cc ON ca.id=cc.case_id
-INNER JOIN civicrm_contact c ON cc.contact_id=c.id
-INNER JOIN civicrm_option_group og ON og.name='case_type'
-INNER JOIN civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_group_id=og.id)
-WHERE ca.end_date is null ORDER BY c.display_name
-");
+    	$query = "
+    SELECT  c.id as contact_id, 
+            c.display_name, ca.id, 
+            ov.label as case_type,
+            ca.start_date as start_date
+      FROM  civicrm_case ca INNER JOIN civicrm_case_contact cc ON ca.id=cc.case_id
+INNER JOIN  civicrm_contact c ON cc.contact_id=c.id
+INNER JOIN  civicrm_option_group og ON og.name='case_type'
+INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_group_id=og.id)
+     WHERE  ca.end_date is null ORDER BY c.display_name
+";        
+        
+        $dao    =& CRM_Core_DAO::executeQuery( $query );
         $values = array();
         while ( $dao->fetch() ) {
-            $values[$dao->id] = array(
-				'display_name' => $dao->display_name,
-				'case_type' => $dao->case_type,
-				'contact_id' => $dao->contact_id,
-			);
+            $values[$dao->id] = array( 'display_name' => $dao->display_name,
+                                       'case_type'    => $dao->case_type,
+                                       'contact_id'   => $dao->contact_id,
+                                       'start_date'   => $dao->start_date
+                                       );
         }
         $dao->free( );
+        
         return $values;
     }
     

@@ -91,6 +91,11 @@
     <path>civicrm/case/report/print</path>
     <page_callback>CRM_Case_XMLProcessor_Report::printCaseReport</page_callback>
     <access_arguments>access CiviCase</access_arguments>
-  </item>  
+  </item>
+  <item>
+     <path>civicrm/ajax/opencases</path>
+     <page_callback>CRM_Case_Page_AJAX::getOpenCases</page_callback>
+     <access_arguments>access CiviCRM</access_arguments>
+  </item>
 
 </menu>
