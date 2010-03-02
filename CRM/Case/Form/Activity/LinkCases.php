@@ -103,10 +103,17 @@ class CRM_Case_Form_Activity_LinkCases
      * @access public
      * @return None
      */
-    public function endPostProcess( &$form, &$params ) 
+    public function endPostProcess( &$form, &$params, &$activity ) 
     { 
-        CRM_Core_Error::debug( '$params', $params );
-        exit;
+        $activityId = $activity->id;
+        $linkCaseID = CRM_Utils_Array::value( 'link_to_case_id', $params );
         
+        //create a link between two cases.
+        if ( $activityId && $linkCaseID ) {
+            require_once 'CRM/Case/BAO/Case.php';
+            $caseParams = array(  'case_id'     => $linkCaseID,
+                                  'activity_id' => $activityId );
+            CRM_Case_BAO_Case::processCaseActivity( $caseParams );
+        }
     }
 }

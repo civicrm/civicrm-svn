@@ -1819,9 +1819,11 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
             //for duplicate cases do not process singleton activities.
             $otherActivityIds = $singletonActivityIds = array( );
             foreach ( $otherCaseActivities as $caseActivityId => $otherIds ) {
-                if ( CRM_Utils_Array::value( 'activity_id', $otherIds ) ) {
-                    $otherActivityIds[] = $otherIds['activity_id'];
+                $otherActId = CRM_Utils_Array::value( 'activity_id', $otherIds );
+                if ( !$otherActId || in_array( $otherActId, $otherActivityIds ) ) {
+                    continue;
                 }
+                $otherActivityIds[] = $otherActId;
             }
             if ( $duplicateCases ) {
                 if ( $openCaseType = array_search( 'Open Case', $activityTypes ) ) { 
