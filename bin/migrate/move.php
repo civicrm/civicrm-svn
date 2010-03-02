@@ -38,9 +38,10 @@ function run( ) {
     CRM_Utils_System::authenticateScript( true );
 
     require_once 'CRM/Core/BAO/Setting.php';
-    CRM_Core_BAO_Setting::doSiteMove( );
+    $moveStatus = CRM_Core_BAO_Setting::doSiteMove( );
 
-    echo "Site Move Completed. Please visit <a href=\"{$config->userFrameworkBaseURL}\">your moved site</a> and test the move<p>";
+    echo $moveStatus . '<br />';
+    echo ts("If no errors are displayed above, the site move steps have completed successfully. Please visit <a href=\"{$config->userFrameworkBaseURL}\">your moved site</a> and test the move.");
 }
 
 run( );
