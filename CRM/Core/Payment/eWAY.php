@@ -9,7 +9,7 @@
  | Written & Contributed by Dolphin Software P/L - March 2008         |
  +--------------------------------------------------------------------+
  |                                                                    |
- | This file is a NOT YET part of CiviCRM.                            |
+ | This file is a part of CiviCRM.                                    |
  |                                                                    |
  | This code was initially based on the recent PayJunction module     |
  | contributed by Phase2 Technology, and then plundered bits from     |
@@ -73,7 +73,7 @@ require_once 'CRM/Core/Payment.php';
 class CRM_Core_Payment_eWAY extends CRM_Core_Payment 
 { 
    const
-      CHARSET  = 'UFT-8'; # (not used, implicit in the API, might need to convert?)
+      CHARSET  = 'UTF-8'; # (not used, implicit in the API, might need to convert?)
          
    /** 
     * We only need one instance of this object. So we use the singleton 
