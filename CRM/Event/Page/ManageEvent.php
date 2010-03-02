@@ -284,9 +284,14 @@ ORDER BY start_date desc
         $id = CRM_Utils_Request::retrieve('id', 'Positive', $this, true, 0, 'GET');
         
         require_once 'CRM/Event/BAO/Event.php';
-        CRM_Event_BAO_Event::copy( $id );
+        $copyEvent = CRM_Event_BAO_Event::copy( $id );
+        $urlParams = 'reset=1';
+        // Redirect to Copied Event Configuration
+        if ( $copyEvent->id ) {
+            $urlParams .=  '&action=update&id='.$copyEvent->id ;
+        }
 
-        return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', 'reset=1' ) );
+        return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', $urlParams ) );
     }
     
     function search( ) {
