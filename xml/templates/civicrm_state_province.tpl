@@ -743,7 +743,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (2116, 1045, "35", "Fujian"),
 (2117, 1045, "62", "Gansu"),
 (2118, 1045, "44", "Guangdong"),
-(2119, 1045, "52", "Gulzhou"),
+(2119, 1045, "52", "Guizhou"),
 (2120, 1045, "46", "Hainan"),
 (2121, 1045, "13", "Hebei"),
 (2122, 1045, "23", "Heilongjiang"),
