@@ -28,8 +28,8 @@
  
 {literal}
 <script type="text/javascript"> 
-var openCaseUrl = {/literal}"{crmURL p='civicrm/ajax/opencases' h=0}"{literal};
-cj( "#link_to_case").autocomplete( openCaseUrl, { width : 250, selectFirst : false, matchContains:true
+var unclosedCaseUrl = {/literal}"{crmURL p='civicrm/case/ajax/unclosed' h=0}"{literal};
+cj( "#link_to_case").autocomplete( unclosedCaseUrl, { width : 250, selectFirst : false, matchContains:true
                             }).result( function(event, data, formatted) { 
 			             cj( "#link_to_case_id" ).val( data[1] );
                             }).bind( 'click', function( ) { 

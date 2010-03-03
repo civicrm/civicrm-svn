@@ -43,7 +43,7 @@ class CRM_Case_Page_AJAX
     /**
      * Retrieve unclosed cases.
      */
-    static function getOpenCases( ) 
+    static function unclosedCases( ) 
     {
         $limit  = '10';
         
@@ -52,7 +52,7 @@ class CRM_Case_Page_AJAX
         
         $caseList = null;
         foreach ( $unclosedCases as $caseId => $details ) {
-            echo $caseList = 'Case ID: '.$caseId.' Type: '.$details['case_type'].' Start: '.$details['start_date'] .' Client: ' . $details['display_name'] . "|$caseId\n";
+            echo $details['display_name'] . ' - ' . $details['case_type'] . "|$caseId\n";
         }
         
         exit( );

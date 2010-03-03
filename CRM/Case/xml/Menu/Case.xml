@@ -93,12 +93,12 @@
     <access_arguments>access CiviCase</access_arguments>
   </item>
   <item>
-     <path>civicrm/ajax/opencases</path>
-     <page_callback>CRM_Case_Page_AJAX::getOpenCases</page_callback>
+     <path>civicrm/case/ajax/unclosed</path>
+     <page_callback>CRM_Case_Page_AJAX::unclosedCases</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
-     <path>civicrm/case/relcases</path>
+     <path>civicrm/case/ajax/relcases</path>
      <page_callback>CRM_Case_Page_AJAX::getRelatedCases</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
   </item>

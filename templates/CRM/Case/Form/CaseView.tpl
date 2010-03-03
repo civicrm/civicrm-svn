@@ -282,7 +282,7 @@ function viewRelatedCases( mainCaseID, contactID ) {
 
         open:function() {
             cj("#related-cases-content").html("");
-            var viewUrl = {/literal}"{crmURL p='civicrm/case/relcases' h=0 q="snippet=4" }"{literal};
+            var viewUrl = {/literal}"{crmURL p='civicrm/case/ajax/relcases' h=0 q="snippet=4" }"{literal};
             cj("#related-cases-content").load( viewUrl + "&caseId="+ mainCaseID + "&cid=" + contactID );
         },
 
