@@ -308,6 +308,16 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $currentEmployer = CRM_Contact_BAO_Relationship::getCurrentEmployer( array( $this->_contactId ) );
             $defaults['current_employer_id'] = CRM_Utils_Array::value( 'org_id', $currentEmployer[$this->_contactId] );
             $this->assign( 'currentEmployer', $defaults['current_employer_id'] );            
+            
+            foreach ( $defaults['email'] as $dontCare => &$val ) {
+                if (isset( $val['signature_text'] ) ) {
+                    $val['signature_text_hidden'] = $val['signature_text'] ;
+                }
+                if (isset( $val['signature_html'] ) ) {
+                    $val['signature_html_hidden'] = $val['signature_html'] ;
+                }
+            }
+            
         }
         
         // set defaults for blocks ( custom data, address, communication preference, notes, tags and groups )
@@ -373,7 +383,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         //set location type and country to default for each block
         $this->blockSetDefaults( $defaults );
-        
         return $defaults;
     }
     
@@ -382,7 +391,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
      * primary location,  default country
      *
      */
-    function blockSetDefaults( &$defaults ) {
+    function blockSetDefaults( &$defaults ) 
+    {
         $locationTypeKeys = array_filter(array_keys( CRM_Core_PseudoConstant::locationType() ), 'is_int' );
         sort( $locationTypeKeys );
         
@@ -875,7 +885,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
      * @static
      * @access public
      */
-    static function blockDataExists( &$fields ) {
+    static function blockDataExists( &$fields ) 
+    {
         if ( !is_array( $fields ) ) return false;
         
         static $skipFields = array( 'location_type_id', 'is_primary', 'phone_type_id', 'provider_id', 'country_id' );
@@ -913,7 +924,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
      *  @param int    $contactID   contact id
      *  @param string $contactType contact type  
      */
-     static function checkDuplicateContacts( &$fields, &$errors, $contactID, $contactType ) {
+     static function checkDuplicateContacts( &$fields, &$errors, $contactID, $contactType )
+     {
          // if this is a forced save, ignore find duplicate rule
          if ( ! CRM_Utils_Array::value( '_qf_Contact_upload_duplicate', $fields ) ) {
    
@@ -973,7 +985,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
          }
      }   
 
-    function getTemplateFileName() {
+    function getTemplateFileName() 
+    {
         if ( $this->_contactSubType ) {
             $templateFile = "CRM/Contact/Form/Edit/{$this->_contactSubType}.tpl";
             $template     =& CRM_Core_Form::getTemplate( );
