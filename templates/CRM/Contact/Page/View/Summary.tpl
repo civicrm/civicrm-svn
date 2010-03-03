@@ -141,7 +141,7 @@
                     <div class="contact_panel">
                         <div class="contactCardLeft">
                             <table>
-                                {foreach from=$email item=item }
+                                {foreach from=$email key="blockId" item=item}
                                     {if $item.email}
                                     <tr>
                                         <td class="label">{$item.location_type}&nbsp;{ts}Email{/ts}</td>
@@ -149,8 +149,8 @@
 					<td class="description">{if $item.signature_text OR $item.signature_html}<a href="#" title="{ts}Signature{/ts}" onClick="showHideSignature( '{$blockId}' ); return false;">{ts}(signature){/ts}</a>{/if}</td>
                                     </tr>
 				    <tr id="Email_Block_{$blockId}_signature">
+				        <td class="hiddenElement"><strong>{ts}Signature HTML{/ts}</strong><br />{$item.signature_html}</td>
 				        <td class="hiddenElement"><strong>{ts}Signature Text{/ts}</strong><br />{$item.signature_text}</td>
-					<td class="hiddenElement"><strong>{ts}Signature HTML{/ts}</strong><br />{$item.signature_html}</td>
 				    </tr>
                                     {/if}
                                 {/foreach}
@@ -322,12 +322,12 @@
 {/if}
 {literal}
 <script type="text/javascript">
-cj("#Email_Block_{/literal}{$blockId}{literal}_signature").hide();
+cj("#Email_Block_" + blockId + "_signature").hide();
 
 function showHideSignature( blockId ) {
-	  cj("#Email_Block_{/literal}{$blockId}{literal}_signature").show( );   
+	  cj("#Email_Block_" + blockId + "_signature").show( );   
 	  
-	  cj("#Email_Block_{/literal}{$blockId}{literal}_signature").dialog({
+	  cj("#Email_Block_" + blockId + "_signature").dialog({
 		title: "Signature",
 		modal: true,
 		bgiframe: true,
