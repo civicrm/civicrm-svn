@@ -77,10 +77,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->setBrowser('*firefox');
         $this->setBrowserUrl("http://tests.dev.civicrm.org/");
         
-        require_once 'CiviUnitTestCase.php';
-        $cuts = new CiviUnitTestCase();
-        $cuts->cleanDB();
-        unset( $cuts );
     }
 
     protected function tearDown()
