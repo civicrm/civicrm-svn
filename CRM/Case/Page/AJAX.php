@@ -45,14 +45,18 @@ class CRM_Case_Page_AJAX
      */
     static function unclosedCases( ) 
     {
-        $limit  = '10';
+        $criteria =  explode( '-', CRM_Utils_Type::escape( CRM_Utils_Array::value( 's', $_GET ), 'String' ) );
+        $limit    =  CRM_Utils_Type::escape( CRM_Utils_Array::value( 'limit', $_GET ), 'Integer' );
+        $params   =  array( 'limit'     => $limit, 
+                            'case_type' => trim( CRM_Utils_Array::value( 1, $criteria ) ),
+                            'sort_name' => trim( CRM_Utils_Array::value( 0, $criteria ) ) );
         
         require_once 'CRM/Case/BAO/Case.php';
-        $unclosedCases = CRM_Case_BAO_Case::getUnclosedCases( );
+        $unclosedCases = CRM_Case_BAO_Case::getUnclosedCases( $params );
         
         $caseList = null;
         foreach ( $unclosedCases as $caseId => $details ) {
-            echo $details['display_name'] . ' - ' . $details['case_type'] . "|$caseId\n";
+            echo $details['sort_name'] . ' - ' . $details['case_type'] . "|$caseId\n";
         }
         
         exit( );

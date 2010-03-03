@@ -1629,32 +1629,51 @@ WHERE civicrm_case.id = %2";
      * 
      * @return array of case and related data keyed on case id
      */
-    static function getUnclosedCases( )
+    static function getUnclosedCases( $params = array( ) )
     {
-    	$query = "
+    	//params from ajax call.
+        $where = array( '( ca.end_date is null )' ); 
+        if ( $caseType = CRM_Utils_Array::value( 'case_type',$params ) ) {
+            $where[] = "( ov.label LIKE '%$caseType%' )"; 
+        }
+        if ( $sortName = CRM_Utils_Array::value( 'sort_name',$params )  ) {
+            $config  = CRM_Core_Config::singleton( );
+            $search  = ( $config->includeWildCardInName ) ? "%$sortName%" : "$sortName%";
+            $where[] = "( sort_name LIKE '$search' )";
+        }
+        $whereClause = implode( ' AND ', $where );
+        
+        $limitClause = '';
+        if ( $limit = CRM_Utils_Array::value( 'limit', $params ) ) {
+            $limitClause = "LIMIT 0, $limit"; 
+        }
+        
+        $query = "
     SELECT  c.id as contact_id, 
-            c.display_name, ca.id, 
+            c.sort_name,
+            ca.id, 
             ov.label as case_type,
             ca.start_date as start_date
       FROM  civicrm_case ca INNER JOIN civicrm_case_contact cc ON ca.id=cc.case_id
 INNER JOIN  civicrm_contact c ON cc.contact_id=c.id
 INNER JOIN  civicrm_option_group og ON og.name='case_type'
 INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_group_id=og.id)
-     WHERE  ca.end_date is null ORDER BY c.display_name
+     WHERE  {$whereClause} 
+  ORDER BY  c.sort_name
+            {$limitClause}
 ";        
-        
-        $dao    =& CRM_Core_DAO::executeQuery( $query );
-        $values = array();
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        $unclosedCases = array();
         while ( $dao->fetch() ) {
-            $values[$dao->id] = array( 'display_name' => $dao->display_name,
-                                       'case_type'    => $dao->case_type,
-                                       'contact_id'   => $dao->contact_id,
-                                       'start_date'   => $dao->start_date
-                                       );
+            $unclosedCases[$dao->id] = array( 'sort_name'  => $dao->sort_name,
+                                              'case_type'  => $dao->case_type,
+                                              'contact_id' => $dao->contact_id,
+                                              'start_date' => $dao->start_date
+                                              );
         }
         $dao->free( );
         
-        return $values;
+        return $unclosedCases;
     }
     
     function caseCount( $contactId = null, $excludeDeleted = true )
