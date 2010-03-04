@@ -589,6 +589,24 @@ class CRM_Utils_Hook {
                   '::invoke( 1, $params, $null, $null, $null, $null, \'civicrm_alterMailParams\' );' );
     }
 
+   /** 
+     * This hook is called when rendering the Manage Case screen
+     * 
+     * @param int $caseID - the case ID
+     *  
+     * @return array of data to be displayed, where the key is a unique id to be used for styling (div id's) and the value is an array with keys 'label' and 'value' specifying label/value pairs
+     * @access public 
+     */
+    static function caseSummary( $caseID ) {
+        $config = CRM_Core_Config::singleton( );
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+        $null =& CRM_Core_DAO::$_nullObject;
+        return   
+            eval( 'return ' .
+                  $config->userHookClass .
+                  '::invoke( 1, $caseID, $null, $null, $null, $null, \'civicrm_caseSummary\' );' );
+    }
+    
     static function config( &$config ) {
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
         $null =& CRM_Core_DAO::$_nullObject;
