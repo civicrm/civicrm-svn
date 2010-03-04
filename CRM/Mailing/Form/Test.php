@@ -95,8 +95,8 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
         $mailingID = $this->get('mailing_id' );
         $textFile = $this->get('textFile');
         $htmlFile = $this->get('htmlFile');
-        $subject = $this->get('subject');
-        $this->assign('subject', $subject);
+       
+        
 
         $this->addFormRule(array('CRM_Mailing_Form_Test', 'testMail'), $this );
         $preview = array();
@@ -111,6 +111,32 @@ class CRM_Mailing_Form_Test extends CRM_Core_Form
         $preview['attachment'] = CRM_Core_BAO_File::attachmentInfo( 'civicrm_mailing',
                                                                     $mailingID );
         $this->assign('preview', $preview);
+        //Token Replacement of Subject in preview mailing
+        $options = array( );
+        $session->getVars( $options, "CRM_Mailing_Controller_Send_$qfKey" );
+        
+        require_once 'CRM/Mailing/BAO/Mailing.php';
+        $mailing = new CRM_Mailing_BAO_Mailing( );
+        $mailing->id = $options['mailing_id'];
+        $mailing->find(true);
+        $fromEmail   = $mailing->from_email;
+        
+        require_once 'CRM/Core/BAO/File.php';
+        $attachments =& CRM_Core_BAO_File::getEntityFile( 'civicrm_mailing',
+                                                          $mailing->id );
+        
+        $returnProperties = $mailing->getReturnProperties( );
+        $params  = array( 'contact_id' => $session->get('userID') );
+        $details = $mailing->getDetails( $params, $returnProperties );
+        $allDetails =& $mailing->compose( null, null, null, 
+                                          $session->get('userID'), 
+                                          $fromEmail,
+                                          $fromEmail,
+                                          true, 
+                                          $details[0][$session->get('userID')], 
+                                          $attachments );
+        
+        $this->assign( 'subject', $allDetails->_headers['Subject'] );
     }
     
     /**
