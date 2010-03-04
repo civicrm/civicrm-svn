@@ -75,6 +75,13 @@
             </td>
         </tr>
     </table>
+    {if $hookCaseSummary}
+      <div id="caseSummary">
+      {foreach from=$hookCaseSummary item=val key=div_id}
+        <div id="{$div_id}"><label>{$val.label}</label><div class="value">{$val.value}</div></div>
+      {/foreach}
+      </div>
+    {/if}
     <table class="form-layout">
         <tr>
             <td colspan="2">{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>

@@ -312,7 +312,13 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
 			$roleTypes[substr($k,0,strpos($k,'_'))] = $v;
 		}
 		$this->add('select', 'role_type',  ts( 'Relationship Type' ), array( '' => ts( '- select type -' ) ) + $roleTypes );
-	
+
+        require_once('CRM/Utils/Hook.php');
+        $hookCaseSummary = CRM_Utils_Hook::caseSummary( $this->_caseID );
+        if (is_array($hookCaseSummary)) {
+            $this->assign('hookCaseSummary', $hookCaseSummary);
+        }
+        
         $this->addButtons(array(  
                                 array ( 'type'      => 'cancel',  
                                         'name'      => ts('Done'),  
