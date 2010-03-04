@@ -59,6 +59,22 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
      */
     public function preProcess( ) 
     {
+        $this->_showRelatedCases = CRM_Utils_Array::value( 'relatedCases', $_GET );
+        
+        //pull the related cases.
+        $this->assign( 'showRelatedCases', false );
+        if ( $this->_showRelatedCases ) {
+            $relatedCases = $this->get( 'relatedCases' );
+            if ( !isset( $relatedCases ) ) {
+                $cId    = CRM_Utils_Request::retrieve( 'cid', 'Integer', CRM_Core_DAO::$_nullObject );
+                $caseId = CRM_Utils_Request::retrieve( 'id',  'Integer', CRM_Core_DAO::$_nullObject );
+                $relatedCases = CRM_Case_BAO_Case::getRelatedCases( $caseId, $cId );
+            }
+            $this->assign( 'relatedCases', $relatedCases );
+            $this->assign( 'showRelatedCases', true );
+            return;
+        }
+        
         $this->_contactID = $this->get('cid');
         $this->_caseID    = $this->get('id');
             
@@ -153,6 +169,9 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
      */
     public function buildQuickForm( ) 
     {
+        //this call is for show related cases.
+        if ( $this->_showRelatedCases ) return;
+        
         $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
         $caseRoles    = $xmlProcessor->get( $this->_caseType, 'CaseRoles' );
         $reports      = $xmlProcessor->get( $this->_caseType, 'ActivitySets' );

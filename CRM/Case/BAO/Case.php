@@ -1800,7 +1800,8 @@ INNER JOIN  civicrm_case_activity relCaseAct  ON (relCaseAct.activity_id = mainA
         $query = "
     SELECT  relCase.id as id, 
             case_type_ov.label as case_type, 
-            client.display_name as client_name
+            client.display_name as client_name,
+            client.id as client_id
       FROM  civicrm_case relCase 
 INNER JOIN  civicrm_case_contact relCaseContact ON ( relCase.id = relCaseContact.case_id )
 INNER JOIN  civicrm_contact      client         ON ( client.id = relCaseContact.contact_id ) 
@@ -1810,10 +1811,18 @@ INNER JOIN  civicrm_contact      client         ON ( client.id = relCaseContact.
      WHERE  {$whereClause}";
         
         $dao = CRM_Core_DAO::executeQuery( $query );
+        $contactViewUrl = CRM_Utils_System::url( "civicrm/contact/view", "reset=1&cid=" );
+        
         while ( $dao->fetch( ) ) {
+            $caseViewStr = "reset=1&id={$dao->id}&cid={$dao->client_id}&action=view&context=case&selectedChild=case";
+            $caseViewUrl = CRM_Utils_System::url( "civicrm/contact/view/case", $caseViewStr );
+            $clientView  = "<a href='{$contactViewUrl}{$dao->client_id}'>$dao->client_name</a>";
+            $caseView    = "<a href='{$caseViewUrl}'>". ts( 'View Case' ). "</a>";
+            
             $relatedCases[$dao->id] = array( 'case_id'      => $dao->id,
                                              'case_type'    => $dao->case_type,
-                                             'client_name'  => $dao->client_name );
+                                             'client_name'  => $clientView,
+                                             'links'        => $caseView );
         }
         $dao->free( );
         

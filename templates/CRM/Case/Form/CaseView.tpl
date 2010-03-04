@@ -24,6 +24,27 @@
  +--------------------------------------------------------------------+
 *}
 {* CiviCase -  view case screen*}
+
+{* here we are showing related cases w/ jquery dialog *}
+{if $showRelatedCases} 
+    <table class="report">
+      <tr class="columnheader">
+    	  <th>{ts}Client Name{/ts}</th>
+    	  <th>{ts}Case Type{/ts}</th>
+	  <th></th>
+      </tr>
+      
+      {foreach from=$relatedCases item=row key=caseId}
+      <tr>
+      	 <td class="label">{$row.client_name}</td>	 
+	 <td class="label">{$row.case_type}</td>
+	 <td class="label">{$row.links}</td>	 
+      </tr>	
+      {/foreach}
+   </table>
+
+{else}
+
 <div class="form-item">
 <fieldset><legend>{ts}Case Summary{/ts}</legend>
     <table class="report">
@@ -105,7 +126,7 @@
     		<th>{ts}Case Role{/ts}</th>
     		<th>{ts}Name{/ts}</th>
     	   	<th>{ts}Phone{/ts}</th>
-            <th>{ts}Email{/ts}</th>
+                <th>{ts}Email{/ts}</th>
     		<th>{ts}Actions{/ts}</th>
     	</tr>
 		{assign var=rowNumber value = 1}
@@ -268,7 +289,7 @@ function viewRelatedCases( mainCaseID, contactID ) {
         title: "Related Cases",
         modal: true, 
         width : "680px", 
-        height: "560", 
+        height: 'auto', 
         resizable: true,
         bgiframe: true,
         overlay: { 
@@ -281,9 +302,17 @@ function viewRelatedCases( mainCaseID, contactID ) {
         },
 
         open:function() {
-            cj("#related-cases-content").html("");
-            var viewUrl = {/literal}"{crmURL p='civicrm/case/ajax/relcases' h=0 q="snippet=4" }"{literal};
-            cj("#related-cases-content").load( viewUrl + "&caseId="+ mainCaseID + "&cid=" + contactID );
+
+	    var dataUrl = {/literal}"{crmURL p='civicrm/contact/view/case' h=0 q="snippet=4" }"{literal};
+	    dataUrl = dataUrl + '&id=' + mainCaseID + '&cid=' +contactID + '&relatedCases=true&action=view&context=case&selectedChild=case';
+
+	     cj.ajax({ 
+             	       url     : dataUrl,   
+        	       async   : false,
+        	       success : function(html){
+            	       	         cj("#related-cases-content" ).html( html );
+        		         }
+    	     });   
         },
 
         buttons: { 
@@ -680,3 +709,5 @@ function setSelectorClass( ) {
 
 {$form.buttons.html}
 </div>
+
+{/if} {* view related cases if end *}
