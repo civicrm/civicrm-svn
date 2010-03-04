@@ -34,6 +34,8 @@
  *
  */
 
+require_once 'CRM/Case/BAO/Case.php';
+
 /**
  * This class generates form components for OpenCase Activity
  * 
@@ -45,6 +47,9 @@ class CRM_Case_Form_Activity_LinkCases
         if ( !isset($form->_caseId) ) {
             CRM_Core_Error::fatal(ts('Case Id not found.'));
         }
+        
+        $form->assign( 'clientID',      $form->_currentlyViewedContactId );
+        $form->assign( 'caseTypeLabel', CRM_Case_BAO_case::getCaseType( $form->_caseId ) );
     }
     
     /**
@@ -110,7 +115,6 @@ class CRM_Case_Form_Activity_LinkCases
         
         //create a link between two cases.
         if ( $activityId && $linkCaseID ) {
-            require_once 'CRM/Case/BAO/Case.php';
             $caseParams = array(  'case_id'     => $linkCaseID,
                                   'activity_id' => $activityId );
             CRM_Case_BAO_Case::processCaseActivity( $caseParams );

@@ -290,7 +290,30 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
         }
         return null;
     }
-
+    
+    /**
+     * Function to get the case type.
+     *
+     * @param int $caseId
+     *
+     * @return  case type
+     * @access public
+     * @static
+     */
+    static function getCaseType( $caseId, $colName = 'label' )
+    {
+        $caseType = null;
+        if ( !$caseId ) return $caseType;
+        
+        $sql = "
+    SELECT  ov.{$colName}
+      FROM  civicrm_case ca  
+INNER JOIN  civicrm_option_group og ON og.name='case_type'
+INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_group_id=og.id)";
+        
+        return CRM_Core_DAO::singleValueQuery( $sql );
+    }
+    
     /**                                                           
      * Delete the record that are associated with this case 
      * record are deleted from case 
@@ -1769,6 +1792,11 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
             return $relatedCases;
         }
         
+        $whereClause = "mainCase.id = %2";
+        if ( $excludeDeleted ) {
+            $whereClause .= " AND ( relAct.is_deleted = 0 OR relAct.is_deleted IS NULL )";
+        }
+        
         //1. first fetch related case ids.
         $query = "
     SELECT  relCaseAct.case_id
@@ -1776,7 +1804,8 @@ INNER JOIN  civicrm_case_contact ON ( civicrm_case.id = civicrm_case_contact.cas
 INNER JOIN  civicrm_case_activity mainCaseAct ON (mainCaseAct.case_id = mainCase.id)
 INNER JOIN  civicrm_activity mainAct          ON (mainCaseAct.activity_id = mainAct.id AND mainAct.activity_type_id = %1)
 INNER JOIN  civicrm_case_activity relCaseAct  ON (relCaseAct.activity_id = mainAct.id AND mainCaseAct.id !=  relCaseAct.id) 
-     WHERE  mainCase.id = %2";
+INNER JOIN  civicrm_activity relAct           ON (relCaseAct.activity_id = relAct.id  AND relAct.activity_type_id = %1)
+     WHERE  $whereClause";
         
         $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $linkActType, 'Integer' ),
                                                           2 => array( $mainCaseId,  'Integer' ) ) );
@@ -1864,7 +1893,7 @@ INNER JOIN  civicrm_contact      client         ON ( client.id = relCaseContact.
         }
         
         require_once 'CRM/Core/PseudoConstant.php';
-        $activityTypes    = CRM_Core_PseudoConstant::activityType( true, true );
+        $activityTypes    = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
         $activityStatuses = CRM_Core_PseudoConstant::activityStatus( 'name' );
         
         $processCaseIds = array( $otherCaseId );

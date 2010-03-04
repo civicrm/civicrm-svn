@@ -185,11 +185,25 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         } 
         
         $aTypes       = $xmlProcessor->get( $this->_caseType, 'ActivityTypes', true );
+        
+        require_once 'CRM/Core/PseudoConstant.php';
+        $allActTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
+        
         // remove Open Case activity type since we're inside an existing case
-        $openCaseID = CRM_Core_OptionGroup::getValue('activity_type', 'Open Case', 'name' );
-        unset( $aTypes[$openCaseID] );
+        if ( ($openActTypeId = array_search( 'Open Case', $allActTypes )) &&
+             array_key_exists( $openActTypeId, $aTypes ) ) {
+            unset( $aTypes[$openActTypeId] );
+        }
+        
+        //check for link cases.
+        $unclosedCases = CRM_Case_BAO_Case::getUnclosedCases( );
+        if ( empty( $unclosedCases ) &&
+             ($linkActTypeId = array_search('Link Cases', $allActTypes)) &&
+             array_key_exists( $linkActTypeId, $aTypes ) ) {
+            unset( $aTypes[$linkActTypeId] );
+        }
+        
         asort( $aTypes );
-
         
         $this->add('select', 'activity_type_id',  ts( 'New Activity' ), array( '' => ts( '- select activity type -' ) ) + $aTypes );
         $this->add('select', 'report_id',  ts( 'Run QA Audit / Redact' ), array( '' => ts( '- select activity set -' ) ) + $reports );

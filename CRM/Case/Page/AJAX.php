@@ -54,9 +54,8 @@ class CRM_Case_Page_AJAX
         require_once 'CRM/Case/BAO/Case.php';
         $unclosedCases = CRM_Case_BAO_Case::getUnclosedCases( $params );
         
-        $caseList = null;
         foreach ( $unclosedCases as $caseId => $details ) {
-            echo $details['sort_name'] . ' - ' . $details['case_type'] . "|$caseId\n";
+            echo $details['sort_name'].' - '.$details['case_type']."|$caseId|".$details['contact_id'].'|'.$details['case_type'].'|'.$details['sort_name']."\n";
         }
         
         exit( );

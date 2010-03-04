@@ -32,8 +32,11 @@ var unclosedCaseUrl = {/literal}"{crmURL p='civicrm/case/ajax/unclosed' h=0}"{li
 cj( "#link_to_case").autocomplete( unclosedCaseUrl, { width : 250, selectFirst : false, matchContains:true
                             }).result( function(event, data, formatted) { 
 			             cj( "#link_to_case_id" ).val( data[1] );
+				     var subject = {/literal}"Create link between {$client_name} - {$caseTypeLabel} (CaseID: {$caseId})"{literal} + ' AND ' + data[4] + ' - ' + data[3] + ' (CaseID: ' + data[1] + ')';
+				     cj( "#subject" ).val( subject );
                             }).bind( 'click', function( ) { 
-			             cj( "#link_to_case_id" ).val(''); 
+			             cj( "#link_to_case_id" ).val('');
+				     cj( "#subject" ).val( '' ); 
 			    });
 </script>
 {/literal}
