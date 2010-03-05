@@ -1146,13 +1146,22 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             require_once 'CRM/Core/BAO/Domain.php';
             $domain =& CRM_Core_BAO_Domain::getDomain( );
             $data = CRM_Utils_Token::getDomainTokenReplacement($token, $domain, $html);
+        } else if( $type == 'mailing') {
+            require_once 'CRM/Mailing/BAO/Mailing.php';
+            $mailing = new CRM_Mailing_BAO_Mailing( );
+            $mailing->find( true );
+            if ( $token == 'name' ) {
+                $data = $mailing->name ;
+            } else if ( $token == 'group' ) {
+                $groups = $mailing->getGroupNames( );
+                $data = implode(', ', $groups);
+            }         
         } else {
             $data = CRM_Utils_Array::value( "{$type}.{$token}", $contact );
         }
- 
         return $data;
     }
-
+    
     /**
      * Return a list of group names for this mailing.  Does not work with
      * prior-mailing targets.
