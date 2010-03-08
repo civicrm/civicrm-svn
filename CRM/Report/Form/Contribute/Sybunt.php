@@ -144,6 +144,19 @@ class CRM_Report_Form_Contribute_Sybunt extends CRM_Report_Form {
                                        ), 
                                 ), 
                          ),
+                  
+                  'civicrm_tag' => 
+                  array( 'dao'     => 'CRM_Core_DAO_Tag',
+                         'filters' =>             
+                         array( 'tid' => 
+                                array( 'name'         => 'tag_id',
+                                       'title'        => ts( 'Tag' ),
+                                       'tag'          => true,
+                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                       'options'      => CRM_Core_PseudoConstant::tag( ) 
+                                       ), 
+                                ), 
+                         ),
                   );   
      
       

@@ -2167,6 +2167,10 @@ margin-bottom:0em;
   margin-bottom: -6px;
 }
 
+.ui-datepicker { 
+    z-index: 1; 
+}
+
 #activity-content table {width:100%!important;}	
 
 .ui-state-default, 

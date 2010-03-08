@@ -114,6 +114,7 @@ class CRM_Profile_Form extends CRM_Core_Form
 
     public $_isAddCaptcha = false;
     
+    protected $_isPermissionedChecksum = false;
     /**
      * THe context from which we came from, allows us to go there if redirect not set
      *
@@ -352,16 +353,18 @@ class CRM_Profile_Form extends CRM_Core_Form
             $admin = false;
             // show all fields that are visibile: 
             // if we are a admin OR the same user OR acl-user with access to the profile
+            // or we have checksum access to this contact (i.e. the user without a login) - CRM-5909
             require_once 'CRM/ACL/API.php';
             if ( CRM_Core_Permission::check( 'administer users' ) ||
                  $this->_id == $session->get( 'userID' )          ||
+                 $this->_isPermissionedChecksum ||
                  in_array( $this->_gid, 
                            CRM_ACL_API::group( CRM_Core_Permission::EDIT, 
                                                null, 
                                                'civicrm_uf_group', 
                                                CRM_Core_PseudoConstant::ufGroup( ) ) ) ) {
                 $admin = true;
-            } 
+            }
         }
         
         $userID = $session->get( 'userID' );

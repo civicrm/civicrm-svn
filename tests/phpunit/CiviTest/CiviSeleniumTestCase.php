@@ -27,7 +27,7 @@
 */
 
 require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
-require_once '/var/www/tests.dev.civicrm.org/public/drupal/sites/default/civicrm.settings.php';
+//require_once '/var/www/tests.dev.civicrm.org/public/drupal/sites/default/civicrm.settings.php';
 
 /**
  *  Base class for CiviCRM Selenium tests
@@ -37,11 +37,11 @@ require_once '/var/www/tests.dev.civicrm.org/public/drupal/sites/default/civicrm
  */
 class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
-    protected $coverageScriptUrl = 'http://tests.dev.civicrm.org/drupal/phpunit_coverage.php';
+//    protected $coverageScriptUrl = 'http://tests.dev.civicrm.org/drupal/phpunit_coverage.php';
 
-    protected $captureScreenshotOnFailure = TRUE;
-    protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-    protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
+//    protected $captureScreenshotOnFailure = TRUE;
+//    protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
+//    protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
 
     /**
      *  Constructor
@@ -64,23 +64,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     protected function setUp()
     {
 
-        // "initialize" CiviCRM to avoid problems when running single tests
-        // also make sure that webtests and unittests are running off
-        // different configurations
-        // FIXME: look at it closer in second stage
-        if (isset( $config ) ) {
-            unset( $config );
-        }
-        require_once 'CRM/Core/Config.php';
-        $config =& CRM_Core_Config::singleton();
-
         $this->setBrowser('*firefox');
         $this->setBrowserUrl("http://tests.dev.civicrm.org/");
         
-        require_once 'CiviUnitTestCase.php';
-        $cuts = new CiviUnitTestCase();
-        $cuts->cleanDB();
-        unset( $cuts );
     }
 
     protected function tearDown()

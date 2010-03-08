@@ -44,30 +44,72 @@ class CRM_Utils_Mail_FixedMailMIME extends Mail_mime
     // a wrapper for the original function; this fixes PEAR bug #30 and CRM-4631
     function _encodeHeaders($input, $params = array())
     {
-        // strip any emails from headers
-        $emails = array();
-        foreach ($input as $field => $value) {
-            $matches = array();
-            if (preg_match('/^(.*)<([^<]*)>$/', $value, $matches)) {
-                $input[$field]  = trim($matches[1]);
-                $emails[$field] = $matches[2];
+        require_once 'CRM/Utils/Rule.php';
+        $emailValues = array( );
+        foreach ( $input as $fieldName => $fieldValue ) {
+            $fieldNames = $emails = array( );
+            $hasValue = false;
+            
+            //multiple email w/ comma separate. 
+            $fieldValues = explode( ',', $fieldValue );
+            foreach ( $fieldValues as $index => $value ) {
+                $value = trim( $value );
+                //might be case we have only email address.
+                if ( CRM_Utils_Rule::email( $value ) ) {
+                    $hasValue = true;
+                    $emails[$index]     = $value;
+                    $fieldNames[$index] = 'FIXME_HACK_FOR_NO_NAME';
+                } else {
+                    $matches = array( );
+                    if ( preg_match('/^(.*)<([^<]*)>$/', $value, $matches ) ) {
+                        $hasValue = true;
+                        $emails[$index]     = $matches[2];
+                        $fieldNames[$index] = trim($matches[1]);
+                    }
+                }
+            }
+            
+            //get formatted values back in input
+            if ( $hasValue ) {
+                $input[$fieldName]       = implode( ',', $fieldNames );
+                $emailValues[$fieldName] = implode( ',', $emails );
             }
         }
-
+        
         // encode the email-less headers
-        $input = parent::_encodeHeaders($input, $params);
-
+        $input = parent::_encodeHeaders( $input, $params );
+        
         // add emails back to headers, quoting these headers along the way
-        foreach ($emails as $field => $email) {
-            $input[$field] = str_replace('\\', '\\\\', $input[$field]);
-            $input[$field] = str_replace('"',  '\"',   $input[$field]);
-            // if the name was actually doubly-quoted, strip these (the next line will add them back); CRM-5640
-            if (substr($input[$field], 0, 2) == '\"' and substr($input[$field], -2) == '\"') {
-                $input[$field] = substr($input[$field], 2, -2);
+        foreach ( $emailValues as $fieldName => $value ) {
+            $emails     = explode( ',', $value );
+            $fieldNames = explode( ',', $input[$fieldName] );
+            
+            foreach ( $fieldNames as $index => &$name ) {
+                $name = str_replace( '\\', '\\\\', $name );
+                $name = str_replace( '"',  '\"',   $name );
+                
+                // CRM-5640 -if the name was actually doubly-quoted, 
+                // strip these(the next line will add them back);
+                if ( substr( $name, 0, 2 ) == '\"' && substr( $name, -2 ) == '\"' ) {
+                    $name =  substr( $name, 2, -2 );
+                }
             }
-            $input[$field] = "\"$input[$field]\" <$email>";
+            
+            //combine fieldNames and emails.
+            $mergeValues = array( );
+            foreach ( $emails as $index => $email ) {
+                if ( $fieldNames[$index] == 'FIXME_HACK_FOR_NO_NAME' ) {
+                    $mergeValues[] = $email;   
+                } else {
+                    $mergeValues[] = "\"$fieldNames[$index]\" <$email>"; 
+                }
+            }
+            
+            //finally get values in.
+            $input[$fieldName] = implode( ',', $mergeValues );
         }
-
+        
         return $input;
     }
+    
 }

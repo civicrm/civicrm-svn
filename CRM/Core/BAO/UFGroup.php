@@ -2358,5 +2358,80 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         return explode( ',', $profileTypes );
     }
 
+    /**
+     * Function to alter contact params by filtering existing subscribed groups and returns 
+     * unsubscribed groups array for subscription.
+     *
+     * @param  array  $params             contact params
+     * @param  int    $contactId          user contact id
+     *
+     * @return array  $subscribeGroupIds  This contains array of groups for subscription
+     */
+    static function getDoubleOptInGroupIds( &$params , $contactId = null ) {
+
+        require_once 'CRM/Core/Config.php';
+        $config =& CRM_Core_Config::singleton( );
+        $subscribeGroupIds = array( );
+        
+        // process further only if profileDoubleOptIn enabled and if groups exist
+        if ( !$config->profileDoubleOptIn || 
+             !array_key_exists( 'group', $params ) || 
+             CRM_Utils_System::isNull( $params['group'] ) ) {
+            return $subscribeGroupIds;	
+        }
+        
+        //check if contact email exist.
+        $hasEmails = false;	
+        foreach ( $params as $name => $value ) {
+            if ( strpos( $name, 'email-' ) !== false ) {
+                $hasEmails = true;
+                break;
+            }
+        }
+        
+        //Proceed furthur only if email present
+        if ( !$hasEmails ) {
+            return $subscribeGroupIds;
+        }
+        
+        //do check for already subscriptions.	
+        $contactGroups = array( );
+        if ( $contactId ) {
+            $query = "
+SELECT  group_id
+  FROM  civicrm_group_contact
+  WHERE status = 'Added'
+    AND contact_id = %1";
+            
+            $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $contactId, 'Integer' ) ) );  	
+            while ( $dao->fetch( ) ) {
+                $contactGroups[$dao->group_id] = $dao->group_id;
+            }
+        }
+        
+        //since we don't have names, compare w/ label.
+        $mailingListGroupType = array_search( 'Mailing List', CRM_Core_OptionGroup::values( 'group_type' ) );
+        
+        //actual processing start.
+        foreach ( $params['group'] as $groupId => $isSelected ) {
+            //unset group those are not selected.
+            if ( !$isSelected ) {
+                unset( $params['group'][$groupId] );
+                continue;
+	        }
+            
+            $groupTypes = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR,
+                                   CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $groupId, 'group_type', 'id' ) );
+            //get only mailing type group and unset it from params
+	        if ( in_array( $mailingListGroupType, $groupTypes ) && !in_array( $groupId, $contactGroups ) ) {
+                $subscribeGroupIds[$groupId] = $groupId;
+                unset( $params['group'][$groupId] );
+            }
+            
+        }  		
+        
+        return $subscribeGroupIds;
+    }
+    
 }
 

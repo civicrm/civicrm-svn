@@ -69,6 +69,7 @@ class CRM_Core_BAO_Setting
                            'userFrameworkDSN', 
                            'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
                            'userPermissionClass', 'userFrameworkURLVar',
+                           'newBaseURL', 'newBaseDir', 'newSiteName',
                            'qfKey', 'gettextResourceDir', 'cleanURL' );
         foreach ( $skipVars as $var ) {
             unset( $params[$var] );
@@ -330,6 +331,7 @@ class CRM_Core_BAO_Setting
     }
 
     static function doSiteMove( ) {
+        $moveStatus = ts('Beginning site move process...') . '<br />';
         // get the current and guessed values
         list( $oldURL, $oldDir, $oldSiteName ) = self::getConfigSettings( );
         list( $newURL, $newDir, $newSiteName ) = self::getBestGuessSettings( );
@@ -372,7 +374,7 @@ WHERE  id = %1
         $params = array( 1 => array( CRM_Core_Config::domainID( ), 'Integer' ) );
         $configBackend = CRM_Core_DAO::singleValueQuery( $sql, $params );
         if ( ! $configBackend ) {
-            CRM_Core_Error::fatal( );
+            CRM_Core_Error::fatal( ts('Returning early due to unexpected error - civicrm_domain.config_backend column value is NULL. Try visiting CiviCRM Home page.') );
         }
         $configBackend = unserialize( $configBackend );
 
@@ -388,14 +390,18 @@ WHERE  id = %1
 ";
         $params[2] = array( $configBackend, 'String' );
         CRM_Core_DAO::executeQuery( $sql, $params );
+        
+        $moveStatus .= ts('Directory and Resource URLs have been updated in the moved database to reflect current site location.') . '<br />';
 
         $config =& CRM_Core_Config::singleton( );
 
         // clear the template_c and upload directory also
         $config->cleanup( 3, true );
+        $moveStatus .= ts('Template cache and upload directory have been cleared.') . '<br />';
     
         // clear all caches
         CRM_Core_Config::clearDBCache( );
+        $moveStatus .= ts('Database cache tables cleared.') . '<br />';
 
         $resetSessionTable = CRM_Utils_Request::retrieve( 'resetSessionTable',
                                                           'Boolean',
@@ -406,13 +412,15 @@ WHERE  id = %1
         if ( $config->userFramework == 'Drupal' &&
              $resetSessionTable ) {
             db_query("DELETE FROM {sessions} WHERE 1");
+            $moveStatus .= ts('Drupal session table cleared.') . '<br />';
         } else {
             $session =& CRM_Core_Session::singleton( );
             $session->reset( 2 );
+            $moveStatus .= ts('Session has been reset.') . '<br />';
         }
+
+        return $moveStatus;
 
     }
 
 }
-
-
