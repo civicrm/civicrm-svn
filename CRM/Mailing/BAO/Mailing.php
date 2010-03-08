@@ -1061,7 +1061,10 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         $headers['Subject'] = join( '', $pEmails['subject'] );
         
         CRM_Utils_Mail::setMimeParams( $message );
-        $message->headers($headers);
+        $headers = $message->headers( $headers );
+        
+        //get formatted recipient
+        $recipient = $headers['To'];
         
         // make sure we unset a lot of stuff
         unset( $verp );
