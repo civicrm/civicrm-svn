@@ -80,4 +80,9 @@
      <page_callback>CRM_Utils_REST::ajax</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+     <path>civicrm/ajax/chart</path>
+     <page_callback>CRM_Contribute_Form_ContributionCharts</page_callback> 
+     <access_arguments>access CiviCRM</access_arguments> 
+  </item>
 </menu>

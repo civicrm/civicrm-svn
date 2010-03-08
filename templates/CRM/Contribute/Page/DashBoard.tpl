@@ -24,22 +24,37 @@
  +--------------------------------------------------------------------+
 *}
 {* CiviContribute DashBoard (launch page) *}
+{if $buildChart}
+  {include file = "CRM/Contribute/Form/ContributionCharts.tpl"}
+{else} 
+  <h3>{ts}Contribution Summary{/ts} {help id="id-contribute-intro"}</h3>&nbsp;
+      <div id="mainTabContainer" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+        <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
+           <li id="chart_view"   class="ui-corner-top ui-state-active" > 
+             {ts}Chart Layout{/ts} </li>&nbsp;
+           <li id ="table_view"  class="ui-corner-top ui-state-default" >
+             {ts}Table Layout{/ts}
+           </li>
 {if $isAdmin}
-    {capture assign=newPageURL}{crmURL p="civicrm/admin/contribute" q="action=add&reset=1"}{/capture}
-    {capture assign=configPagesURL}{crmURL p="civicrm/admin/contribute" q="reset=1"}{/capture}
+ {capture assign=newPageURL}{crmURL p="civicrm/admin/contribute" q="action=add&reset=1"}{/capture}
+ {capture assign=configPagesURL}{crmURL p="civicrm/admin/contribute" q="reset=1"}{/capture}
+
 <div class="float-right">
 <table class="form-layout-compressed">
 <tr>
-    <td><a href="{$configPagesURL}" class="button"><span>&raquo; {ts}Manage Contribution Pages{/ts}</span></a></td>
-    <td><a href="{$newPageURL}" class="button"><span>&raquo; {ts}New Contribution Page{/ts}</span></a></td>
+    <td>
+     <a href="{$configPagesURL}" class="button"><span>&raquo; {ts}Manage Contribution Pages{/ts}
+       </span></a>
+    </td>
+    <td><a href="{$newPageURL}" class="button"><span>&raquo; {ts}New Contribution Page{/ts}
+        </span></a>
+    </td>
 </tr>
 </table>
 </div>
 {/if}
-{capture assign=chartURL}{crmURL p="civicrm/contribute/chart" q="reset=1"}{/capture}
-
-<h3>{ts}Contribution Summary{/ts} {help id="id-contribute-intro"}</h3>
-<table class="report">
+</ul></div>
+<table class="report" style="display:none;">
 <tr class="columnheader-dark">
     <th scope="col">{ts}Period{/ts}</th>
     <th scope="col">{ts}Total Amount{/ts}</th>
@@ -61,10 +76,10 @@
     <td class="label">{if NOT $startToDate.Valid.amount}{ts}(n/a){/ts}{else}{$startToDate.Valid.amount}{/if}</td>
     <td class="label">{$startToDate.Valid.count}</td>
     <td><a href="{$startToDate.Valid.url}">{ts}view details{/ts}...</a></td>
-<tr><td colspan="4" class="right" style="padding: 8px 10px 0px 4px; vertical-align: middle;"><a href="{$chartURL}" title="{ts}View contribution summary as bar or pie chart using the Google Chart API{/ts}"><img src="{$config->resourceBase}/i/BarGraph.png" alt="{ts}View contribution summary as bar or pie chart using the Google Chart API{/ts}" /></a> <a href="{$chartURL}" title="{ts}View contribution summary as bar or pie chart{/ts}">{ts}Bar or Pie Chart...{/ts}</a></td></tr>
 </tr>
 </table>
-
+ 
+<div id="chartData"></div>
 <div class="spacer"></div>
 
 {if $pager->_totalItems}
@@ -72,4 +87,46 @@
     <div>
         {include file="CRM/Contribute/Form/Selector.tpl" context="dashboard"}
     </div>
+{/if}{literal}
+<script type="text/javascript">
+       cj('#table_view ,#chart_view').click( function() { 
+            cj('.report,.chart,div.form-layout-compressed').toggle();
+              if ( cj('#chart_view').hasClass('ui-state-active')){ 
+                      cj('#chart_view').removeClass().addClass('ui-state-default');
+                }else{ cj('#chart_view').removeClass().addClass('ui-state-active');}
+              if ( cj('#table_view').hasClass('ui-state-default')){ 
+                      cj('#table_view').removeClass().addClass('ui-state-active');
+               }else{ cj('#table_view').removeClass().addClass('ui-state-default');}
+	           
+           });
+       cj('#table_view,#chart_view').hover( function() {
+	           cj(this).toggleClass('ui-state-hover');
+           });
+       cj(document).ready( function( ) {
+                 getChart( );
+           });        
+function getChart( ) {
+           var year        = cj('#select_year').val( );
+           var charttype   = cj('#chart_type').val( );
+	   var date        = new Date()
+  	   var currentYear = date.getFullYear( );
+	   if ( !charttype ) charttype = 'bvg';     
+	   if ( !year ) year           = currentYear;
+
+	  var chartUrl = {/literal}"{crmURL p='civicrm/ajax/chart'}"{literal};
+          chartUrl    += "?year=" + year + "&type=" + charttype + "&snippet=" + 4;
+	  
+          cj.ajax({
+                  url     : chartUrl,
+		  async    : false,
+		  success  : function(html){
+                                     cj( "#chartData" ).html( html );
+                             }	 
+          });
+     
+}
+
+</script>
+{/literal}
+
 {/if}

@@ -123,14 +123,21 @@ class CRM_Contribute_Page_DashBoard extends CRM_Core_Page
     function run( ) { 
         $this->preProcess( );
         
-        $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', ts('Contributions'), null );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_Search', 
+                                                      ts('Contributions'), null );
         $controller->setEmbedded( true ); 
-        $controller->reset( ); 
+        
         $controller->set( 'limit', 10 );
         $controller->set( 'force', 1 );
         $controller->set( 'context', 'dashboard' ); 
         $controller->process( ); 
-        $controller->run( ); 
+        $controller->run( );
+        $chartForm = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_ContributionCharts', 
+                                                     ts('Contributions Charts'), null );
+        
+        $chartForm->setEmbedded( true );
+        $chartForm->process( );
+        $chartForm->run( );
         
         return parent::run( );
     }

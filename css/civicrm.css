@@ -2247,3 +2247,7 @@ th.sorting_desc {
     position: absolute;
     margin  : 6px 0px 0px 115px;
 }
+/*chart */
+#chartData {
+    overflow:auto;
+}
