@@ -193,6 +193,8 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                                                  true, null, true,
                                                  true );
             }
+
+            $this->assign( 'skipLocationType', true );
             $this->assign( 'mapURL', $mapURL );
         }
         require_once 'CRM/Event/BAO/Participant.php';

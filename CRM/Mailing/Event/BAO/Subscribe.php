@@ -56,11 +56,14 @@ class CRM_Mailing_Event_BAO_Subscribe extends CRM_Mailing_Event_DAO_Subscribe {
      *
      * @param int $group_id         The group id to subscribe to
      * @param string $email         The email address of the (new) contact
+     * @params int $contactId       Currently used during event registration/contribution. 
+     *                              Specifically to avoid linking group to wrong duplicate contact 
+     *                              during event registration.
      * @return int|null $se_id      The id of the subscription event, null on failure
      * @access public
      * @static
      */
-    public static function &subscribe($group_id, $email) {
+    public static function &subscribe( $group_id, $email , $contactId = null ) {
         // CRM-1797 - allow subscription only to public groups
         $params = array('id' => (int) $group_id);
         $defaults = array();
@@ -73,21 +76,26 @@ class CRM_Mailing_Event_BAO_Subscribe extends CRM_Mailing_Event_DAO_Subscribe {
         $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
         $email = $strtolower( $email );
 
-        /* First, find out if the contact already exists */  
-        $query = "
+        // process the query only if no contactId
+        if ( $contactId ) {
+            $contact_id = $contactId;
+        } else {
+            /* First, find out if the contact already exists */  
+            $query = "
    SELECT DISTINCT contact_a.id as contact_id 
      FROM civicrm_contact contact_a 
 LEFT JOIN civicrm_email      ON contact_a.id = civicrm_email.contact_id
     WHERE civicrm_email.email = %1";
-
-        $params = array( 1 => array( $email, 'String' ) );
-        $dao =& CRM_Core_DAO::executeQuery( $query, $params );
-        $id = array( );
-        // lets just use the first contact id we got
-        if ( $dao->fetch( ) ) {
-            $contact_id = $dao->contact_id;
+            
+            $params = array( 1 => array( $email, 'String' ) );
+            $dao =& CRM_Core_DAO::executeQuery( $query, $params );
+            $id = array( );
+            // lets just use the first contact id we got
+            if ( $dao->fetch( ) ) {
+                $contact_id = $dao->contact_id;
+            }
+            $dao->free( );
         }
-        $dao->free( );
 
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
@@ -327,15 +335,18 @@ SELECT     civicrm_email.id as email_id
      * Function to send subscribe mail
      * @params  array  $groups the list of group ids for subscribe
      * @params  array  $params the list of email
+     * @params  int    $contactId  Currently used during event registration/contribution. 
+     *                             Specifically to avoid linking group to wrong duplicate contact 
+     *                             during event registration.
      * @public
      * @return void
      */
-    function commonSubscribe( &$groups, &$params ) 
+    function commonSubscribe( &$groups, &$params, $contactId = null ) 
     {
         $success = true;
         foreach ( $groups as $groupID ) {
             $se = self::subscribe( $groupID,
-                                   $params['email'] );
+                                   $params['email'], $contactId );
             if ( $se !== null ) {
                 /* Ask the contact for confirmation */
                 $se->send_confirm_request($params['email']);

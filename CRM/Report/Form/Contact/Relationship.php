@@ -43,6 +43,7 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
     protected $_summary       = null;
     protected $_emailField_a  = false;
     protected $_emailField_b  = false;
+    protected $_customGroupExtends = array( 'Relationship' ); 
     
     function __construct( ) {
 
@@ -205,6 +206,18 @@ class CRM_Report_Form_Contact_Relationship extends CRM_Report_Form {
                                        'group'        => true,
                                        'options'      => CRM_Core_PseudoConstant::group( ) 
                                        ),
+                                ), 
+                         ),
+                  'civicrm_tag' => 
+                  array( 'dao'     => 'CRM_Core_DAO_Tag',
+                         'filters' =>             
+                         array( 'tid' => 
+                                array( 'name'         => 'tag_id',
+                                       'title'        => ts( 'Tag' ),
+                                       'tag'          => true,
+                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                       'options'      => CRM_Core_PseudoConstant::tag( ) 
+                                       ), 
                                 ), 
                          ),
                   );

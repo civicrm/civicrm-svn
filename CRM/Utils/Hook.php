@@ -589,7 +589,7 @@ class CRM_Utils_Hook {
                   '::invoke( 1, $params, $null, $null, $null, $null, \'civicrm_alterMailParams\' );' );
     }
 
-    /** 
+   /** 
      * This hook is called when rendering the Manage Case screen
      * 
      * @param int $caseID - the case ID

@@ -179,6 +179,19 @@ class CRM_Report_Form_Case_Demographics extends CRM_Report_Form {
                                         ), 
                                  ), 
                           ),
+                   
+                   'civicrm_tag' => 
+                   array( 'dao'     => 'CRM_Core_DAO_Tag',
+                          'filters' =>             
+                          array( 'tid' => 
+                                 array( 'name'         => 'tag_id',
+                                        'title'        => ts( 'Tag' ),
+                                        'tag'          => true,
+                                        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                        'options'      => CRM_Core_PseudoConstant::tag( ) 
+                                        ), 
+                                 ), 
+                          ),
                    );
 
         $open_case_val = CRM_Core_OptionGroup::getValue('activity_type', 'Open Case', 'name' );

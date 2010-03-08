@@ -85,7 +85,6 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form
             
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
             if ( $id != $userID ) {
-
                 // do not allow edit for anon users in joomla frontend, CRM-4668, unless u have checksum CRM-5228
                 require_once 'CRM/Contact/BAO/Contact/Permission.php';
                 $config = CRM_Core_Config::singleton( );
@@ -94,6 +93,7 @@ class CRM_Profile_Form_Edit extends CRM_Profile_Form
                 } else {
                     CRM_Contact_BAO_Contact_Permission::validateChecksumContact( $id, $this );
                 }
+                $this->_isPermissionedChecksum = true;
             }
         }
 

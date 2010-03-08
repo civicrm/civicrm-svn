@@ -64,6 +64,7 @@ class CRM_Utils_Mail
         $headers['From']                      = $params['from'];
         $headers['To']                        = "{$params['toName']} <{$params['toEmail']}>";
         $headers['Cc']                        = CRM_Utils_Array::value( 'cc', $params );
+        $headers['Bcc']                       = CRM_Utils_Array::value( 'bcc', $params );
         $headers['Subject']                   = CRM_Utils_Array::value( 'subject', $params );
         $headers['Content-Type']              = $htmlMessage ? 'multipart/mixed; charset=utf-8' : 'text/plain; charset=utf-8';
         $headers['Content-Disposition']       = 'inline';  
@@ -71,15 +72,6 @@ class CRM_Utils_Mail
         $headers['Return-Path']               = CRM_Utils_Array::value( 'returnPath', $params );
         $headers['Reply-To']                  = CRM_Utils_Array::value( 'replyTo', $params, $from );
         $headers['Date']                      = date('r');
-
-        $to = array( $params['toEmail'] );
-        if ( CRM_Utils_Array::value( 'cc', $params ) ) {
-            $to[] = CRM_Utils_Array::value( 'cc', $params );
-        }
-
-        if ( CRM_Utils_Array::value( 'bcc', $params ) ) {
-            $to[] = CRM_Utils_Array::value( 'bcc', $params );
-        }
 
         // we need to wrap Mail_mime because PEAR is apparently unable to fix
         // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
@@ -104,7 +96,18 @@ class CRM_Utils_Mail
         
         $message =  self::setMimeParams( $msg );
         $headers =& $msg->headers($headers);
-
+        
+        $to = array( $params['toEmail'] );
+        //get emails from headers, since these are 
+        //combination of name and email addresses.
+        if ( CRM_Utils_Array::value( 'Cc', $headers ) ) {
+            $to[] = CRM_Utils_Array::value( 'Cc', $headers );
+        }
+        if ( CRM_Utils_Array::value( 'Bcc', $headers ) ) {
+            $to[] = CRM_Utils_Array::value( 'Bcc', $headers );
+            unset( $headers['Bcc'] );
+        }
+        
         $result = null;
         $mailer = CRM_Core_Config::getMailer( );
         CRM_Core_Error::ignoreException( );

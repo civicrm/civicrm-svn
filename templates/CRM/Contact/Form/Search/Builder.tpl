@@ -50,8 +50,10 @@
 {/if}
 
 {if $rows}
-     {assign var="showBlock" value="'searchForm_show'"}
-     {assign var="hideBlock" value="'searchForm'"}
+     {if !$showSearchForm}    
+         {assign var="showBlock" value="'searchForm_show'"}
+         {assign var="hideBlock" value="'searchForm'"}
+     {/if}
      <fieldset>
        {* This section handles form elements for action task select and submit *}         
        {include file="CRM/Contact/Form/Search/ResultTasks.tpl"}

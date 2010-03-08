@@ -85,6 +85,12 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
         }
         
         $this->_loadedMappingId =  $this->get('savedMapping');
+
+        if ( $this->get('showSearchForm' ) ) { 
+            $this->assign( 'showSearchForm', true );
+        } else {
+            $this->assign( 'showSearchForm', false );
+        } 
     }
     
     public function buildQuickForm( ) {
@@ -279,6 +285,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
         $session = CRM_Core_Session::singleton();
         $session->set('isAdvanced', '2');
         $session->set('isSearchBuilder', '1');
+        $this->set('showSearchForm', false);
 
         $params = $this->controller->exportValues( $this->_name );
 
@@ -286,6 +293,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
             if ( CRM_Utils_Array::value('addBlock',$params) )  { 
                 $this->_blockCount = $this->_blockCount + 1;
                 $this->set( 'blockCount', $this->_blockCount );
+                $this->set('showSearchForm', true);
                 return;
             }
             
@@ -293,6 +301,7 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
                 if ( CRM_Utils_Array::value($x,$params['addMore']) ) {
                     $this->_columnCount[$x] = $this->_columnCount[$x] + 1;
                     $this->set( 'columnCount', $this->_columnCount );
+                    $this->set('showSearchForm', true);
                     return;
                 }
             }

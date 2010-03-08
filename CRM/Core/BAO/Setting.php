@@ -69,6 +69,7 @@ class CRM_Core_BAO_Setting
                            'userFrameworkDSN', 
                            'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
                            'userPermissionClass', 'userFrameworkURLVar',
+                           'newBaseURL', 'newBaseDir', 'newSiteName',
                            'qfKey', 'gettextResourceDir', 'cleanURL' );
         foreach ( $skipVars as $var ) {
             unset( $params[$var] );
@@ -263,38 +264,163 @@ class CRM_Core_BAO_Setting
     }
 
 
-    static function getConfigURLAndDir( ) {
+    static function getConfigSettings( ) {
         $config =& CRM_Core_Config::singleton( );
 
+        $url = $dir = $siteName = null;
         if ( $config->userFramework == 'Joomla' ) {
             $url = preg_replace( '|administrator/components/com_civicrm/civicrm/|',
                                  '',
                                  $config->userFrameworkResourceURL );
+
+            // lets use imageUploadDir since we dont mess around with its values
+            // in the config object, lets kep it a bit generic since folks
+            // might have different values etc
+            $dir =  preg_replace( '|/media/civicrm/.*$|',
+                                  '/files/',
+                                  $config->imageUploadDir );
         } else {
             $url = preg_replace( '|sites/[\w\.\-\_]+/modules/civicrm/|',
                                  '',
                                  $config->userFrameworkResourceURL );
+            
+            // lets use imageUploadDir since we dont mess around with its values
+            // in the config object, lets kep it a bit generic since folks
+            // might have different values etc
+            $dir =  preg_replace( '|/files/civicrm/.*$|',
+                                  '/files/',
+                                  $config->imageUploadDir );
+
+            $matches = array( );
+            if ( preg_match( '|/sites/([\w\.\-\_]+)/|',
+                             $config->imageUploadDir,
+                             $matches ) ) {
+                $siteName = $matches[1];
+                if ( $siteName ) {
+                    $siteName = "/sites/$siteName/";
+                }
+            }
         }
 
-        // lets use imageUploadDir since we dont mess around with its values
-        // in the config object
-        $dir =  preg_replace( '|civicrm/upload/|',
-                              '',
-                              $config->imageUploadDir );
 
-        return array( $url, $dir );
+        return array( $url, $dir, $siteName );
     }
 
-    static function getBestGuessURLAndDir( ) {
+    static function getBestGuessSettings( ) {
         $config =& CRM_Core_Config::singleton( );
 
         $url = $config->userFrameworkBaseURL;
         $dir = preg_replace( '|civicrm/templates_c/.*$|',
                              '',
                              $config->templateCompileDir );
-        return array( $url, $dir );
+
+        $siteName = null;
+        if ( $config->userFramework != 'Joomla' ) {
+            $matches = array( );
+            if ( preg_match( '|/sites/([\w\.\-\_]+)/|',
+                             $config->templateCompileDir,
+                             $matches ) ) {
+                $siteName = $matches[1];
+                if ( $siteName ) {
+                    $siteName = "/sites/$siteName/";
+                }
+            }
+        }
+        
+        return array( $url, $dir, $siteName );
+    }
+
+    static function doSiteMove( ) {
+        $moveStatus = ts('Beginning site move process...') . '<br />';
+        // get the current and guessed values
+        list( $oldURL, $oldDir, $oldSiteName ) = self::getConfigSettings( );
+        list( $newURL, $newDir, $newSiteName ) = self::getBestGuessSettings( );
+    
+        require_once 'CRM/Utils/Request.php';
+
+        // retrieve these values from the argument list 
+        $variables = array( 'URL', 'Dir', 'SiteName', 'Val_1', 'Val_2', 'Val_3' );
+        $states     = array( 'old', 'new' );
+        foreach ( $variables as $varSuffix ) {
+            foreach ( $states as $state ) {
+                $var = "{$state}{$varSuffix}";
+                if ( ! isset( $$var ) ) {
+                    $$var = null;
+                }
+                $$var = CRM_Utils_Request::retrieve( $var,
+                                                     'String',
+                                                     CRM_Core_DAO::$_nullArray,
+                                                     false,
+                                                     $$var,
+                                                     'REQUEST' );
+            }
+        }
+
+        $from = $to = array( );
+        foreach ( $variables as $varSuffix ) {
+            $oldVar = "old{$varSuffix}";
+            $newVar = "new{$varSuffix}";
+            if ( $$oldVar && $$newVar ) {
+                $from[]  = $$oldVar;
+                $to[]    = $$newVar;
+            }
+        }
+
+        $sql = "
+SELECT config_backend
+FROM   civicrm_domain
+WHERE  id = %1
+";
+        $params = array( 1 => array( CRM_Core_Config::domainID( ), 'Integer' ) );
+        $configBackend = CRM_Core_DAO::singleValueQuery( $sql, $params );
+        if ( ! $configBackend ) {
+            CRM_Core_Error::fatal( ts('Returning early due to unexpected error - civicrm_domain.config_backend column value is NULL. Try visiting CiviCRM Home page.') );
+        }
+        $configBackend = unserialize( $configBackend );
+
+        $configBackend = str_replace( $from,
+                                      $to  ,
+                                      $configBackend );
+
+        $configBackend = serialize( $configBackend );
+        $sql = "
+UPDATE civicrm_domain
+SET    config_backend = %2
+WHERE  id = %1
+";
+        $params[2] = array( $configBackend, 'String' );
+        CRM_Core_DAO::executeQuery( $sql, $params );
+        
+        $moveStatus .= ts('Directory and Resource URLs have been updated in the moved database to reflect current site location.') . '<br />';
+
+        $config =& CRM_Core_Config::singleton( );
+
+        // clear the template_c and upload directory also
+        $config->cleanup( 3, true );
+        $moveStatus .= ts('Template cache and upload directory have been cleared.') . '<br />';
+    
+        // clear all caches
+        CRM_Core_Config::clearDBCache( );
+        $moveStatus .= ts('Database cache tables cleared.') . '<br />';
+
+        $resetSessionTable = CRM_Utils_Request::retrieve( 'resetSessionTable',
+                                                          'Boolean',
+                                                          CRM_Core_DAO::$_nullArray,
+                                                          false,
+                                                          false,
+                                                          'REQUEST' );
+        if ( $config->userFramework == 'Drupal' &&
+             $resetSessionTable ) {
+            db_query("DELETE FROM {sessions} WHERE 1");
+            $moveStatus .= ts('Drupal session table cleared.') . '<br />';
+        } else {
+            $session =& CRM_Core_Session::singleton( );
+            $session->reset( 2 );
+            $moveStatus .= ts('Session has been reset.') . '<br />';
+        }
+
+        return $moveStatus;
+
     }
 
 }
-
-

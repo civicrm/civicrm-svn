@@ -923,6 +923,10 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             } 
         }
 
+        // check for profile double opt-in and get groups to be subscribed
+        require_once 'CRM/Core/BAO/UFGroup.php';
+        $subscribeGroupIds = CRM_Core_BAO_UFGroup::getDoubleOptInGroupIds( $params, $contactID );
+        
         require_once "CRM/Contact/BAO/Contact.php";
 
         if ($contactID) {
@@ -943,7 +947,10 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             $allowSameEmailAddress = CRM_Utils_Array::value( 'allow_same_participant_emails', $this->_values['event'] );
             require_once 'CRM/Dedupe/Finder.php';
             //suppress "email-Primary" when allow_same_participant_emails = 1
-            if ( $allowSameEmailAddress && $email = CRM_Utils_Array::value('email-Primary', $params) ) {
+            if ( $allowSameEmailAddress && 
+                 ( $email = CRM_Utils_Array::value( 'email-Primary', $params ) ) &&
+                 ( CRM_Utils_Array::value( 'registered_by_id', $params ) ) ) {
+                //skip dedupe check only for additional participants
                 unset($params['email-Primary']);
             }
             $dedupeParams = CRM_Dedupe_Finder::formatParams($params, 'Individual');
@@ -957,6 +964,17 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             
             $contactID =& CRM_Contact_BAO_Contact::createProfileContact( $params, $fields, $contact_id, $addToGroups );
             $this->set( 'contactID', $contactID );
+        }
+
+        //get email primary first if exist
+        $subscribtionEmail =  array ( 'email' => CRM_Utils_Array::value( 'email-Primary', $params ) ) ; 
+        if ( !$subscribtionEmail['email'] ) {            
+            $subscribtionEmail['email'] = CRM_Utils_Array::value( "email-{$this->_bltID}", $params ) ;
+        }
+        // subscribing contact to groups
+        if ( !empty( $subscribeGroupIds ) && $subscribtionEmail['email'] ) {
+            require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
+            CRM_Mailing_Event_BAO_Subscribe::commonSubscribe( $subscribeGroupIds, $subscribtionEmail, $contactID );
         }
 
         return $contactID;

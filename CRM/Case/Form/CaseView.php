@@ -125,10 +125,11 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case', 
                "action=view&reset=1&id={$this->_caseID}&cid={$this->_contactID}&context=home" );
-        
-        //client name.
+
         $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactID );
         $this->assign( 'displayName', $displayName );
+        
+        $title = $displayName . ' - ' . $caseType;
         
         // add the recently created case
         CRM_Utils_Recent::add( $displayName . ' - ' . $caseType,
@@ -319,6 +320,12 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             $this->assign('hookCaseSummary', $hookCaseSummary);
         }
         
+        require_once('CRM/Utils/Hook.php');
+        $hookCaseSummary = CRM_Utils_Hook::caseSummary( $this->_caseID );
+        if (is_array($hookCaseSummary)) {
+            $this->assign('hookCaseSummary', $hookCaseSummary);
+        }
+		
         $this->addButtons(array(  
                                 array ( 'type'      => 'cancel',  
                                         'name'      => ts('Done'),  

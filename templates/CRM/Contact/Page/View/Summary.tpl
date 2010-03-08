@@ -62,7 +62,7 @@
                             {include file="CRM/Activity/Form/ActivityLinks.tpl"}
                         </li>
                         {/if}
-                        <li><span class="label">Go to:</span></li>
+                        <li><span class="label">{ts}Go to:{/ts}</span></li>
                         {if $dashboardURL }
                         <li>
                         <a href="{$dashboardURL}" class="dashboard button" title="{ts}dashboard{/ts}">
@@ -211,7 +211,7 @@
                         <div class="{cycle name=location values="contactCardLeft,contactCardRight"}">
                             <table>
                                 <tr>
-                                    <td class="label">{$add.location_type}&nbsp;{ts}Address{/ts}
+                                    <td class="label">{ts 1=$add.location_type}%1&nbsp;Address{/ts}
                                         {if $config->mapAPIKey AND $add.geo_code_1 AND $add.geo_code_2}
                                             <br /><a href="{crmURL p='civicrm/contact/map' q="reset=1&cid=`$contactId`&lid=`$add.location_type_id`"}" title="{ts 1='&#123;$add.location_type&#125;'}Map %1 Address{/ts}"><span class="geotag">{ts}Map{/ts}</span></a>
                                         {/if}</td>

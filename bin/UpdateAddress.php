@@ -123,10 +123,6 @@ function run( ) {
         exit( );
     }
     
-    $config->userFramework      = 'Soap'; 
-    $config->userFrameworkClass = 'CRM_Utils_System_Soap'; 
-    $config->userHookClass      = 'CRM_Utils_Hook_Soap';
-    
     // we have an exclusive lock - run the mail queue
     processContacts( $config, $processGeocode, $parseStreetAddress, $start, $end );
 }
@@ -176,6 +172,7 @@ WHERE      {$whereClause}
     require_once 'CRM/Core/DAO/Address.php';
     require_once 'CRM/Core/BAO/Address.php';
     
+    $unparseableContactAddress = array( );
     while ( $dao->fetch( ) ) {
         $totalAddresses++;
         $params = array( 'street_address'    => $dao->street_address,
@@ -226,7 +223,11 @@ WHERE      {$whereClause}
             // do check for all elements.
             if ( $success ) {
                 $totalAddressParsed++;
-            } else {
+            } else if ( $dao->street_address ) { 
+                //build contact edit url, 
+                //so that user can manually fill the street address fields if the street address is not parsed, CRM-5886
+                $url = CRM_Utils_System::url( 'civicrm/contact/add', "reset=1&action=update&cid={$dao->id}"  );                  
+                $unparseableContactAddress[] = " Contact ID: " . $dao->id . " <a href =\"$url\"> ". $dao->street_address . " </a> ";
                 // reset element values.
                 $parsedFields = array_fill_keys( array_keys($parsedFields), '' );
             }
@@ -249,6 +250,12 @@ WHERE      {$whereClause}
     }
     if ( $parseStreetAddress ) {
         echo ts( "Street Address Parsed : $totalAddressParsed\n" );
+        if ( $unparseableContactAddress ) {
+            echo ts( "<br />\nFollowing is the list of contacts whose address is not parsed :<br />\n");
+            foreach ( $unparseableContactAddress as $contactLink ) {
+                echo ts("%1<br />\n", array( 1 => $contactLink ) );
+            }
+        }
     }
     
     return;

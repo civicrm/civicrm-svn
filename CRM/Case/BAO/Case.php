@@ -1133,6 +1133,9 @@ WHERE cr.case_id =  %1 AND ce.is_primary= 1';
         require_once 'CRM/Case/XMLProcessor/Report.php';
         $xmlProcessor = new CRM_Case_XMLProcessor_Report( );
         $activityInfo = $xmlProcessor->getActivityInfo($clientId, $activityId, $anyActivity );
+        if ( $caseId ) { 
+		$activityInfo['fields'][] = array( 'label' => 'Case ID', 'type' => 'String', 'value' => $caseId ); 
+	}
         $tplParams['activity'] = $activityInfo;
 
         $activitySubject = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'subject' );

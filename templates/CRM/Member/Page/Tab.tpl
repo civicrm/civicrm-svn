@@ -79,7 +79,7 @@
             </tr>
             </thead>
             {foreach from=$activeMembers item=activeMember}
-            <tr class="{cycle values="odd-row,even-row"} {$activeMember.class}">
+            <tr id="mem_{$activeMember.id}" class="{cycle values="odd-row,even-row"} {$activeMember.class}">
                 <td>
                     {$activeMember.membership_type}
                     {if $activeMember.owner_membership_id}<br />({ts}by relationship{/ts}){/if}
@@ -118,7 +118,7 @@
             </tr>
             </thead>
             {foreach from=$inActiveMembers item=inActiveMember}
-            <tr class="{cycle values="odd-row,even-row"} {$inActiveMember.class}">
+            <tr id="mem_{$inActiveMember.id}" class="{cycle values="odd-row,even-row"} {$inActiveMember.class}">
                 <td>{$inActiveMember.membership_type}</td>
                 <td>{$inActiveMember.start_date|crmDate}</td>
                 <td>{$inActiveMember.end_date|crmDate}</td>

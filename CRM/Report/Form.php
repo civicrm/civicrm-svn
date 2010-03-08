@@ -718,11 +718,11 @@ class CRM_Report_Form extends CRM_Core_Form {
                     foreach( $this->_columns[$tableName]['fields'] as $fieldName => $field ) {
                         if ( array_key_exists( $fieldName, $fields['group_bys'] ) && 
                              !array_key_exists( $fieldName, $fields['fields'] ) ) {
-                            $errors['fields'] = "Please make sure fields selected in group-by are also present in display columns.";
+                            $errors['fields'] = "Please make sure fields selected in 'Group by Columns' section are also selected in 'Display Columns' section.";
                         } elseif ( array_key_exists( $fieldName, $fields['group_bys'] ) ) {
                             foreach( $fields['fields'] as $fld => $val ) {
                                 if( !array_key_exists( $fld, $fields['group_bys'] ) && !in_array($fld, $ignoreFields )) {
-                                    $errors['fields'] = "Please ensure that fields selected in group-by should only be the ones present in display columns.";
+                                    $errors['fields'] = "Please ensure that fields selected in 'Display Columns' are also selected in 'Group by Columns' section.";
                                 }
                             }
                         }
@@ -1905,7 +1905,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
             }
         }
         
-        if ( !$fieldFound && !empty($this->_params['group_bys'] ) ) {
+        if ( !$fieldFound && !empty($this->_params['group_bys'] ) && $this->_customGroupGroupBy ) {
             foreach( array_keys($prop['group_bys']) as $fieldAlias ) {
                 if ( array_key_exists( $fieldAlias, $this->_params['group_bys'] ) && CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
                     return true;
@@ -1913,7 +1913,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
             }
         }
         
-        if ( !$fieldFound && !empty( $prop['filters'] ) ) {
+        if ( !$fieldFound && !empty( $prop['filters'] ) && $this->_customGroupFilters ) {
             foreach( $prop['filters'] as $fieldAlias => $val ) {
                 foreach( array( 'value', 'min', 'max', 'relative' ,'from', 'to' ) as $attach ) {
                     if ( isset( $this->_params[$fieldAlias.'_'.$attach ] ) &&

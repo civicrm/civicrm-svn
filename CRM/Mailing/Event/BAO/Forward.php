@@ -51,8 +51,10 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
      */
     static function &forward($job_id, $queue_id, $hash, $forward_email, $fromEmail = null, $comment = null ) {
         $q =& CRM_Mailing_Event_BAO_Queue::verify($job_id, $queue_id, $hash);
+        
+        $successfulForward = false;
         if (! $q) {
-            return null;
+            return $successfulForward;
         }
 
         /* Find the email address/contact, if it exists */
@@ -92,7 +94,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
         if (isset($dao->queue_id) || $dao->do_not_email == 1) {
             /* We already sent this mailing to $forward_email, or we should
              * never email this contact.  Give up. */
-            return false;
+            return $successfulForward;
         }
 
         require_once 'api/v2/Contact.php';
@@ -113,7 +115,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
             $formatted['fixAddress'] = true;
             $contact =& civicrm_contact_format_create($formatted);
             if (civicrm_error($contact, CRM_Core_Error)) {
-                return null;
+                return $successfulForward;
             }
             $contact_id = $contact['id'];
         } 
@@ -185,12 +187,14 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
                 CRM_Mailing_BAO_BouncePattern::match($result->getMessage()));
             CRM_Mailing_Event_BAO_Bounce::create($params);
         } else {
+            $successfulForward = true;
             /* Register the delivery event */
             CRM_Mailing_Event_BAO_Delivered::create($params);
         }
 
         $transaction->commit( );
-        return true;
+        
+        return $successfulForward;
     }
 
     /**

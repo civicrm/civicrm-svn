@@ -66,6 +66,7 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
      */
     function HTML_QuickForm_radio($elementName=null, $elementLabel=null, $text=null, $value=null, $attributes=null)
     {
+        
         $this->HTML_QuickForm_element($elementName, $elementLabel, $attributes);
         if (isset($value)) {
             $this->setValue($value);
@@ -73,7 +74,20 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
         $this->_persistantFreeze = true;
         $this->setType('radio');
         $this->_text = $text;
-        $this->_generateId();
+        // $this->_generateId();
+        if ( ! $this->getAttribute('id') ) {
+            static $idTextStr = 1;
+
+            //hack to add 'id' for checkbox
+            if ( empty( $text ) ) {
+                $idText = $idTextStr++;
+            } else {
+                // use only first 8 characters of text
+                $idText = substr( $text, 0, 7 );
+            }
+            $idValue = CRM_Utils_String::munge( "CIVICRM_QFID_{$value}_{$idText}" ); 
+            $this->updateAttributes( array('id' => CRM_Utils_String::munge( "CIVICRM_QFID_{$value}_{$idText}" ) ) );
+        }
     } //end constructor
     
     // }}}

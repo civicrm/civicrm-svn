@@ -23,6 +23,11 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{* 
+ * If you MODIFY this file, please make sure you also modify jquery.files.tpl.
+ * Cannot get rid of this since we use it for joomla, standalone, print
+ * html profile etc
+ *}
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/jquery-ui.js"></script>
 <style type="text/css">@import url("{$config->resourceBase}packages/jquery/themes/smoothness/jquery-ui.css");</style>
@@ -54,7 +59,7 @@
 {if $defaultWysiwygEditor eq 1}
     <script type="text/javascript" src="{$config->resourceBase}packages/tinymce/jscripts/tiny_mce/jquery.tinymce.js"></script>
     <script type="text/javascript" src="{$config->resourceBase}packages/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
-{else}
+{elseif $defaultWysiwygEditor eq 2}
     <script type="text/javascript" src="{$config->resourceBase}packages/ckeditor/ckeditor.js"></script>
 {/if}
 <script type="text/javascript" src="{$config->resourceBase}packages/jquery/plugins/jquery.textarearesizer.js"></script>

@@ -111,7 +111,10 @@ class CRM_Profile_Form extends CRM_Core_Form
      * @var int
      */
     public $_isUpdateDupe = 0;
+
+    public $_isAddCaptcha = false;
     
+    protected $_isPermissionedChecksum = false;
     /**
      * THe context from which we came from, allows us to go there if redirect not set
      *
@@ -152,7 +155,18 @@ class CRM_Profile_Form extends CRM_Core_Form
         
         if ( ! $this->_gid ) {
             $this->_gid = CRM_Utils_Request::retrieve('gid', 'Positive', $this, false, 0, 'GET');
-        }  
+        } 
+        
+        //get values for captch and dupe update.
+        if ( $this->_gid ) {
+            $dao = new CRM_Core_DAO_UFGroup();
+            $dao->id = $this->_gid;
+            if ( $dao->find( true ) ) {
+                $this->_isUpdateDupe = $dao->is_update_dupe;
+                $this->_isAddCaptcha = $dao->add_captcha;
+            }
+            $dao->free( );
+        }
         
         // if we dont have a gid use the default, else just use that specific gid
         if ( ( $this->_mode == self::MODE_REGISTER || $this->_mode == self::MODE_CREATE ) && ! $this->_gid ) {
@@ -339,16 +353,18 @@ class CRM_Profile_Form extends CRM_Core_Form
             $admin = false;
             // show all fields that are visibile: 
             // if we are a admin OR the same user OR acl-user with access to the profile
+            // or we have checksum access to this contact (i.e. the user without a login) - CRM-5909
             require_once 'CRM/ACL/API.php';
             if ( CRM_Core_Permission::check( 'administer users' ) ||
                  $this->_id == $session->get( 'userID' )          ||
+                 $this->_isPermissionedChecksum ||
                  in_array( $this->_gid, 
                            CRM_ACL_API::group( CRM_Core_Permission::EDIT, 
                                                null, 
                                                'civicrm_uf_group', 
                                                CRM_Core_PseudoConstant::ufGroup( ) ) ) ) {
                 $admin = true;
-            } 
+            }
         }
         
         $userID = $session->get( 'userID' );
@@ -410,12 +426,10 @@ class CRM_Profile_Form extends CRM_Core_Form
             }
         }
         
-        $setCaptcha = false;
-        
-        // do this only for CiviCRM created forms
+        // add captcha only for create mode.
         if ( $this->_mode == self::MODE_CREATE ) {
-            if (!empty($addCaptcha)) {
-                $setCaptcha = true;
+            if ( !$this->_isAddCaptcha && !empty( $addCaptcha ) ) {
+                $this->_isAddCaptcha = true;
             } 
             if ($this->_gid ) {
                 $dao = new CRM_Core_DAO_UFGroup();
@@ -431,14 +445,17 @@ class CRM_Profile_Form extends CRM_Core_Form
                     }
                 }
             }
-            
-            if ($setCaptcha) {
-                require_once 'CRM/Utils/ReCAPTCHA.php';
-                $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
-                $captcha->add( $this );
-                $this->assign( "isCaptcha" , true );
-            }
+        } else {
+            $this->_isAddCaptcha = false;
         }
+        
+        //finally add captcha to form.
+        if ( $this->_isAddCaptcha ) {
+            require_once 'CRM/Utils/ReCAPTCHA.php';
+            $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
+            $captcha->add( $this );
+        }
+        $this->assign( "isCaptcha", $this->_isAddCaptcha );
         
         if ( $this->_mode != self::MODE_SEARCH ) {
             if ( isset($addToGroupId) ) {
@@ -446,7 +463,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                 $this->_addToGroupID = $addToGroupId;
             }
         }
-            
+        
     	// also do state country js
     	require_once 'CRM/Core/BAO/Address.php';
     	CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap, $this->_defaults );

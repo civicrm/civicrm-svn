@@ -459,6 +459,10 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             }
         }
         
+        // check for profile double opt-in and get groups to be subscribed
+        require_once 'CRM/Core/BAO/UFGroup.php';
+        $subscribeGroupIds = CRM_Core_BAO_UFGroup::getDoubleOptInGroupIds( $params, $contactID );
+                
         if ( ! isset( $contactID ) ) {
             require_once 'CRM/Dedupe/Finder.php';
             $dedupeParams = CRM_Dedupe_Finder::formatParams($params, 'Individual');
@@ -474,6 +478,17 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                                                          null, $ctype);
         }
 
+        //get email primary first if exist
+        $subscribtionEmail =  array ( 'email' => CRM_Utils_Array::value( 'email-Primary', $params ) ) ;
+        if ( !$subscribtionEmail['email'] ) {            
+            $subscribtionEmail['email'] = CRM_Utils_Array::value( "email-{$this->_bltID}", $params ) ;
+        }
+        // subscribing contact to groups
+        if ( !empty( $subscribeGroupIds ) && $subscribtionEmail['email'] ) {
+            require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
+            CRM_Mailing_Event_BAO_Subscribe::commonSubscribe( $subscribeGroupIds, $subscribtionEmail, $contactID );
+        }
+        
         // If onbehalf-of-organization contribution / signup, add organization
         // and it's location.
         if ( isset( $params['is_for_organization'] ) && isset( $behalfOrganization['organization_name'] ) ) {

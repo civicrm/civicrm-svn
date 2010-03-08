@@ -396,5 +396,14 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         $upgrade->processSQL( $rev );
     }
 
+    function upgrade_3_1_3 ( $rev ) 
+    {     
+        require_once 'CRM/Upgrade/ThreeOne/ThreeOne.php';
+        $threeOne = new CRM_Upgrade_ThreeOne_ThreeOne( );
+        $threeOne->upgrade_3_1_3( );
+        
+        $upgrade =& new CRM_Upgrade_Form( );
+        $upgrade->processSQL( $rev );
+    }
 }
 

@@ -86,8 +86,12 @@ class CRM_Core_Config_Defaults
         //$this->revampPages = array( 'CRM/Admin/Form/Setting/Url.tpl', 'CRM/Admin/Form/Preferences/Address.tpl' );
         $this->revampPages = array( );
         
-        //profile double opt-in 
-        $this->profileDoubleOptIn = defined( 'CIVICRM_PROFILE_DOUBLE_OPTIN' ) ? false : true;
+        $this->profileDoubleOptIn = false;
+        // enable profile double Opt-In if Civimail enabled
+        if ( in_array( 'CiviMail', $this->enableComponents ) ) {
+            // set defined value for Profile double Opt-In from civicrm settings file else true 
+            $this->profileDoubleOptIn = defined( 'CIVICRM_PROFILE_DOUBLE_OPTIN' ) ? (bool) CIVICRM_PROFILE_DOUBLE_OPTIN : true;
+        }
 
         //email notifications to activity Assignees
         $this->activityAssigneeNotification = defined( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' ) ? (bool) CIVICRM_ACTIVITY_ASSIGNEE_MAIL : true;
