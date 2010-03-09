@@ -998,6 +998,10 @@ class CRM_Contact_BAO_Query
                         }
                     } 
                 }
+            } else if( $id == 'email_on_hold' ){
+                if ( $formValues['email_on_hold']['on_hold'] ){
+                    $params[] = array( 'on_hold', '=', $formValues['email_on_hold']['on_hold'], 0, 0 );
+                }
             } else {
                 $values =& CRM_Contact_BAO_Query::fixWhereValues( $id, $values, $wildcard, $useEquals );
                 

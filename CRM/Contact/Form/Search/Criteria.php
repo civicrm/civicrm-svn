@@ -127,6 +127,10 @@ class CRM_Contact_Form_Search_Criteria {
         foreach ( $comm as $k => $v ) {
             $commPreff[] = HTML_QuickForm::createElement('advcheckbox', $k , null, $v );
         }
+        
+        $onHold[] = HTML_QuickForm::createElement('advcheckbox', 'on_hold' , null, ts('') ); 
+        $form->addGroup($onHold, 'email_on_hold', ts('Email On Hold'));
+
         $form->addGroup($commPreff, 'preferred_communication_method', ts('Preferred Communication Method'));
         
     }

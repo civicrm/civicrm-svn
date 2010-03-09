@@ -61,7 +61,8 @@ class CRM_Contact_Task {
         LABEL_CONTACTS        =    16,
         BATCH_UPDATE          =    17,
         ADD_EVENT             =    18,
-        PRINT_FOR_CONTACTS    =    19;
+        PRINT_FOR_CONTACTS    =    19,
+        EMAIL_UNHOLD          =    22;
 
 
 
@@ -134,6 +135,9 @@ class CRM_Contact_Task {
                                                   'result' => true ),
                                   21    => array( 'title'  => ts( 'Merge Contacts' ),
                                                   'class'  => 'CRM_Contact_Form_Task_Merge',
+                                                  'result' => true ),
+                                  22    => array( 'title'  => ts('Unhold Emails'),
+                                                  'class'  => 'CRM_Contact_Form_Task_Unhold',
                                                   'result' => true ),
                                   );
             if( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {

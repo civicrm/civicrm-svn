@@ -102,6 +102,12 @@
                 {$form.preferred_communication_method.html}
             </td>
         </tr>
+	<tr>
+	     <td colspan = 4>
+	        {$form.email_on_hold.label}
+		{$form.email_on_hold.html}
+	    </td>
+	</tr>
         <tr>
             <td>{$form.contact_source.label}</td>
             <td colspan="3">{$form.contact_source.html}</td>
