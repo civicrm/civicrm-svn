@@ -183,7 +183,7 @@ define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
 
 /**
  * Setting to disable or enable profile double optin.
- * This is enable by default.
+ * This is enable by default and functions only if Civimail is enabled.
  */
  define( 'CIVICRM_PROFILE_DOUBLE_OPTIN', 1 );
 
