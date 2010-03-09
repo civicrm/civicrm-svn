@@ -2020,12 +2020,12 @@ SELECT  id
                 if ( $mainActivity->source_contact_id == $otherContactId ) {
                     $mainActivity->source_contact_id = $mainContactId;
                 }
-                //do check for merging case.
-                if ( $mainActivity->source_record_id == $otherCaseId ) {
-                    $mainActivity->source_record_id = $mainCaseId;
-                }
+                $mainActivity->source_record_id = CRM_Utils_Array::value( $mainActivity->source_record_id, 
+                                                                          $activityMappingIds );
+                
                 $mainActivity->original_id = CRM_Utils_Array::value( $mainActivity->original_id, 
                                                                      $activityMappingIds );
+                
                 $mainActivity->parent_id   = CRM_Utils_Array::value( $mainActivity->parent_id, 
                                                                      $activityMappingIds );
                 $mainActivity->save( );
@@ -2144,7 +2144,6 @@ SELECT id, subject, activity_date_time
                                      'details'            => $mergeActSubjectDetails,
                                      'status_id'          => array_search( 'Completed',  $activityStatuses ),
                                      'activity_type_id'   => $mergeActType,
-                                     'source_record_id'   => $mainCaseId,
                                      'source_contact_id'  => $mainContactId,
                                      'activity_date_time' => date('YmdHis') );
             
