@@ -664,7 +664,34 @@ class CRM_Profile_Form extends CRM_Core_Form
     public function postProcess( ) 
     {
         $params = $this->controller->exportValues( $this->_name );        
-                
+        
+        $greetingTypes = array( 'addressee'       => 'addressee_id', 
+                                'email_greeting'  => 'email_greeting_id', 
+                                'postal_greeting' => 'postal_greeting_id'
+                                );
+        $profileType = CRM_Core_BAO_UFField::getProfileType( $this->_gid );
+        if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
+            $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
+        }
+        
+        $contactTypeFilters = array( 1 => 'Individual', 2 => 'Household', 3 => 'Organization' );
+        $filter = CRM_Utils_Array::key( $profileType, $contactTypeFilters );
+        if( $filter ) {
+            foreach( $greetingTypes  as $key => $value ) {
+                if( !CRM_Utils_Array::value( $key, $params ) ) {
+                    $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, 
+                                                                           null, null, 
+                                                                           " AND is_default = 1 
+                                                                           AND (filter = {$filter}
+                                                                           OR filter = 0 )",
+                                                                           'value' 
+                                                                           );
+                    
+                    $params[$key] = key( $defaultGreetingTypeId );
+                }
+            }
+        }
+        
         if ( $this->_mode == self::MODE_REGISTER ) {
             require_once 'CRM/Core/BAO/Address.php';
             CRM_Core_BAO_Address::setOverwrite( false );
