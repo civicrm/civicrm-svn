@@ -182,6 +182,12 @@ define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
  define( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' , 1 ); 
 
 /**
+ * Setting to disable or enable profile double optin.
+ * This is enable by default.
+ */
+ define( 'CIVICRM_PROFILE_DOUBLE_OPTIN', 1 );
+
+/**
  * 
  * Do not change anything below this line. Keep as is
  *
