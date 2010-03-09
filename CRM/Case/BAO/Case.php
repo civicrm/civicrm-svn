@@ -1655,7 +1655,7 @@ WHERE civicrm_case.id = %2";
      * 
      * @return array of case and related data keyed on case id
      */
-    static function getUnclosedCases( $params = array( ) )
+    static function getUnclosedCases( $params = array( ), $excludeCaseId = null )
     {
     	//params from ajax call.
         $where = array( '( ca.end_date is null )' ); 
@@ -1666,6 +1666,9 @@ WHERE civicrm_case.id = %2";
             $config  = CRM_Core_Config::singleton( );
             $search  = ( $config->includeWildCardInName ) ? "%$sortName%" : "$sortName%";
             $where[] = "( sort_name LIKE '$search' )";
+        }
+        if ( $excludeCaseId ) {
+            $where[] = " ( ca.id != $excludeCaseId ) ";
         }
         $whereClause = implode( ' AND ', $where );
         

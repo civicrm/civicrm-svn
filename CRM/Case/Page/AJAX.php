@@ -51,8 +51,12 @@ class CRM_Case_Page_AJAX
                             'case_type' => trim( CRM_Utils_Array::value( 1, $criteria ) ),
                             'sort_name' => trim( CRM_Utils_Array::value( 0, $criteria ) ) );
         
+        $excludeCaseId = null;
+        if ( $currentCaseId = CRM_Utils_Array::value( 'currentCaseId', $_GET ) ) {
+            $excludeCaseId = CRM_Utils_Type::escape( $currentCaseId, 'Integer' );
+        }
         require_once 'CRM/Case/BAO/Case.php';
-        $unclosedCases = CRM_Case_BAO_Case::getUnclosedCases( $params );
+        $unclosedCases = CRM_Case_BAO_Case::getUnclosedCases( $params, $excludeCaseId );
         
         foreach ( $unclosedCases as $caseId => $details ) {
             echo $details['sort_name'].' - '.$details['case_type']."|$caseId|".$details['contact_id'].'|'.$details['case_type'].'|'.$details['sort_name']."\n";

@@ -28,7 +28,7 @@
  
 {literal}
 <script type="text/javascript"> 
-var unclosedCaseUrl = {/literal}"{crmURL p='civicrm/case/ajax/unclosed' h=0}"{literal};
+var unclosedCaseUrl = {/literal}"{crmURL p='civicrm/case/ajax/unclosed' h=0 q='currentCaseId='}{$caseId}{literal}";
 cj( "#link_to_case").autocomplete( unclosedCaseUrl, { width : 250, selectFirst : false, matchContains:true
                             }).result( function(event, data, formatted) { 
 			             cj( "#link_to_case_id" ).val( data[1] );
