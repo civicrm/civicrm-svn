@@ -31,41 +31,30 @@
      	<td>{$form.unclosed_cases.html}</td>
      </tr>
      <tr>
-	<td>{$form.target_id.label}</td>
-	<td>{$form.target_id.html}</td>
+	<td>{$form.target_contact_id.label}</td>
+	<td>{$form.target_contact_id.html}</td>
      </tr>
      <tr>	
-     	<td>{$form.case_subject.label}</td>
-	<td>{$form.case_subject.html}</td>
+     	<td>{$form.case_activity_subject.label}</td>
+	<td>{$form.case_activity_subject.html}</td>
      </tr>
 </table>     	
 </div>
 
 {literal}
 <script type="text/javascript">
+var target_contact = target_contact_id = selectedCaseId = contactId = '';
 
-var unclosedCaseUrl = {/literal}"{crmURL p='civicrm/case/ajax/unclosed' h=0 q='currentCaseId='}"{literal};
-
- if ( caseID ) {
-   unclosedCaseUrl = unclosedCaseUrl + caseID;
-}
-var caseId    = '';
-var contactId = '';
-
+var unclosedCaseUrl = {/literal}"{crmURL p='civicrm/case/ajax/unclosed' h=0 q='currentCaseId='}{$currentCaseId}"{literal};
 cj( "#unclosed_cases" ).autocomplete( unclosedCaseUrl, { width : 250, selectFirst : false, matchContains:true
-                            }).result( function(event, data, formatted) { 
-			             cj( "#unclosed_case_id" ).val( data[1] );
-				     caseId    = data[1];
-				     contactId = data[2];
-                            }).bind( 'click', function( ) { 
-			             cj( "#unclosed_case_id" ).val(''); 
-			    });
-
-
-
-
-var target_contact = target_id = '';
-
+                                    }).result( function(event, data, formatted) { 
+			                          cj( "#unclosed_case_id" ).val( data[1] );
+				                  contactId = data[2];
+				                  selectedCaseId = data[1];
+                                              }).bind( 'click', function( ) { 
+			                          cj( "#unclosed_case_id" ).val('');
+						  contactId = selectedCaseId = ''; 
+			                      });
 {/literal}
 {if $targetContactValues}
 {foreach from=$targetContactValues key=id item=name}
@@ -77,28 +66,27 @@ var target_contact = target_id = '';
    {/literal}
 {/if}
 
-{if $form.target_id.value}
+{if $form.target_contact_id.value}
      {literal}
      var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}"; 
-     var target_id = cj.ajax({ url: toDataUrl + "&cid={/literal}{$form.$currentElement.value}{literal}", async: false }).responseText;
+     var target_contact_id = cj.ajax({ url: toDataUrl + "&cid={/literal}{$form.$currentElement.value}{literal}", async: false }).responseText;
      {/literal}
 {/if}
 
 {literal}
-if ( target_id ) {
-  eval( 'target_contact = ' + target_id );
+if ( target_contact_id ) {
+  eval( 'target_contact = ' + target_contact_id );
 }
 
 eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
 
 var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
 var hintText = "{/literal}{ts}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
-cj( "#target_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact, classes: tokenClass, hintText: hintText });
+cj( "#target_contact_id" ).tokenInput(tokenDataUrl,{prePopulate: target_contact, classes: tokenClass, hintText: hintText });
 
-var caseID = '';
 cj( "#fileOnCaseDialog" ).hide( );
+
 function fileOnCase( action, activityID, currentCaseId ) {
-    caseID = currentCaseId;	 
     if ( action == "move" ) {
         dialogTitle = "Move to Case";
     } else if ( action == "copy" ) {
@@ -112,8 +100,8 @@ function fileOnCase( action, activityID, currentCaseId ) {
     }
     
     var dataUrl = {/literal}"{crmURL p='civicrm/case/addToCase' q='reset=1&snippet=4' h=0}"{literal};
-    dataUrl = dataUrl + '&activityId=' + activityID + '&cid=' + {/literal}"{$contactID}"{literal};
-    
+    dataUrl = dataUrl + '&activityId=' + activityID + '&caseId=' + currentCaseId + '&cid=' + {/literal}"{$contactID}"{literal};
+
     cj.ajax({
               url     : dataUrl,
 	      success : function ( content ) { 		
@@ -132,30 +120,27 @@ function fileOnCase( action, activityID, currentCaseId ) {
 
 	      buttons : { 
 			"Ok": function() { 
-			        var selected_case = cj("#unclosed_cases").val( );
-				var case_subject       = cj("#case_subject").val( );
-				var targetContactId = cj("#target_id").val( );
+				var subject         = cj("#case_activity_subject").val( );
+				var targetContactId = cj("#target_contact_id").val( );
 				
-			        if ( ! selected_case ) {
-					alert('{/literal}{ts}Please select a case from the list{/ts}{literal}.');
-					return false;
+			        if ( !cj("#unclosed_cases").val( )  ) {
+			           alert('{/literal}{ts}Please select a case from the list{/ts}{literal}.');
+				   return false;
 				}
-				
-				var destUrl = {/literal}"{crmURL p='civicrm/contact/view/case' q='reset=1&action=view&id=' h=0 }"{literal}; 
 						
 				cj(this).dialog("close"); 
 				cj(this).dialog("destroy");
 									
 				var postUrl = {/literal}"{crmURL p='civicrm/ajax/activity/convert' h=0 }"{literal};
-			        cj.post( postUrl, { activityID: activityID, caseID: caseId, contactID: contactId, newSubject: case_subject, targetContactIds: targetContactId, mode: action },
+			        cj.post( postUrl, { activityID: activityID, caseID: selectedCaseId, contactID: contactId, newSubject: subject, targetContactIds: targetContactId, mode: action },
 					 function( values ) {
 					      if ( values.error_msg ) {
                             		          alert( "{/literal}{ts}Unable to file on case{/ts}{literal}.\n\n" + values.error_msg );
 						  return false;
-                            		      } else { 
-						  window.location.href = destUrl + caseId + '&cid=' + contactId;    
-					      } 
-                    		    	  	       
+                            		      } else {
+					          var destUrl = {/literal}"{crmURL p='civicrm/contact/view/case' q='reset=1&action=view&id=' h=0 }"{literal}; 
+						  window.location.href = destUrl + selectedCaseId + '&cid=' + contactId;    
+					      }
                         	         }
                     		      );
 			},

@@ -34,26 +34,31 @@
  *
  */
 
+require_once 'CRM/Core/Form.php';
+
 /**
  * This class generates form components for building activity to a case
  * 
  */
-require_once 'CRM/Core/Form.php';
-require_once 'CRM/Activity/Form/Activity.php';
-
 class CRM_Case_Form_ActivityToCase extends CRM_Core_Form
 {
     /**
-     * Function to build the form
+     * build all the data structures needed to build the form.
      *
      * @return None
      * @access public
      */
     function preProcess( ) 
     {
-        $this->_activityId = CRM_Utils_Array::value( 'activityId', $_GET );
-        $this->_clientId   = CRM_Utils_Array::value( 'cid', $_GET );
+        $this->_activityId = CRM_Utils_Request::retrieve( 'activityId', 'Integer', CRM_Core_DAO::$_nullObject );
+        if ( !$this->_activityId ) {
+            CRM_Core_Error::fatal('required activity id is missing.');
+        }
+        
+        $this->_currentCaseId = CRM_Utils_Request::retrieve( 'caseId', 'Integer', CRM_Core_DAO::$_nullObject );
+        $this->assign( 'currentCaseId', $this->_currentCaseId );
     }
+    
     /**
      * This function sets the default values for the form. For edit/view mode
      * the default values are retrieved from the database
@@ -64,14 +69,14 @@ class CRM_Case_Form_ActivityToCase extends CRM_Core_Form
     function setDefaultValues( ) 
     {
         $targetContactValues = $defaults = array( );
-        if ( isset( $this->_activityId ) ) {
-            $params = array( 'id' => $this->_activityId );
-            CRM_Activity_BAO_Activity::retrieve( $params, $defaults );
-            $defaults['case_subject'] = $defaults['subject'];
-            if ( !CRM_Utils_Array::crmIsEmptyArray( $defaults['target_contact'] ) ) {
-                $targetContactValues = array_combine( array_unique( $defaults['target_contact'] ),
-                                                      explode(';', trim($defaults['target_contact_value'] ) ) );
-            }
+        $params = array( 'id' => $this->_activityId );
+        
+        require_once 'CRM/Activity/BAO/Activity.php';
+        CRM_Activity_BAO_Activity::retrieve( $params, $defaults );
+        $defaults['case_activity_subject'] = $defaults['subject'];
+        if ( !CRM_Utils_Array::crmIsEmptyArray( $defaults['target_contact'] ) ) {
+            $targetContactValues = array_combine( array_unique( $defaults['target_contact'] ),
+                                                  explode(';', trim($defaults['target_contact_value'] ) ) );
         }
         $this->assign( 'targetContactValues', empty( $targetContactValues ) ? false : $targetContactValues );
         
@@ -90,11 +95,9 @@ class CRM_Case_Form_ActivityToCase extends CRM_Core_Form
         $tokenUrl = CRM_Utils_System::url( "civicrm/ajax/checkemail", "noemail=1" );
         $this->assign( 'tokenUrl', $tokenUrl );
         
-        $this->add( 'text', 'unclosed_cases', ts( 'Build Activity To Case' ) );
-        $this->add( 'hidden', 'unclosed_case_id', '', array( 'id' => 'open_case_id' ) );
-        
-        $this->add( 'text', 'target_id', ts( 'With Contacts' ) );        
-        
-        $this->add( 'text', 'case_subject', ts( 'New Subject' ), array( 'size'=> 50));
+        $this->add( 'text',   'unclosed_cases', ts( 'Build Activity To Case' ) );
+        $this->add( 'hidden', 'unclosed_case_id', '',array( 'id' => 'open_case_id' ) );
+        $this->add( 'text',   'target_contact_id', ts( 'With Contacts' ) );        
+        $this->add( 'text',   'case_activity_subject', ts( 'New Subject' ), array( 'size'=> 50));
     }
 }

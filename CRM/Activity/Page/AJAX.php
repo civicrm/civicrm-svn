@@ -57,55 +57,74 @@ class CRM_Activity_Page_AJAX
         echo CRM_Utils_JSON::encodeSelector( $activities, $page, $total, $selectorElements );
         exit();
     }
-   
+    
     static function convertToCaseActivity()
     {
-        $caseID           = CRM_Utils_Array::value( 'caseID', $_POST );
-        $activityID       = CRM_Utils_Array::value( 'activityID', $_POST );
-        $contactID        = CRM_Utils_Array::value( 'contactID', $_POST );
-        $newSubject       = CRM_Utils_Array::value( 'newSubject', $_POST );
-        $targetContactIds = CRM_Utils_Array::value( 'targetContactIds', $_POST );
-        $mode             = CRM_Utils_Array::value( 'mode', $_POST );
+        $params = array( 'caseID', 'activityID', 'contactID', 'newSubject', 'targetContactIds', 'mode' );
+        foreach ( $params as $param ) {
+            $$param = CRM_Utils_Array::value( $param, $_POST );
+        }
+        
+        if ( !$activityID || !$caseID ) {
+            echo json_encode( array('error_msg' => 'required params missing.' ) );
+            exit( );
+        }
         
         require_once "CRM/Activity/DAO/Activity.php";
         $otherActivity = new CRM_Activity_DAO_Activity();
         $otherActivity->id = $activityID;
-        $otherActivity->find( true );
+        if ( !$otherActivity->find( true ) ) {
+            echo json_encode( array('error_msg' => 'activity record is missing.' ) );
+            exit( );  
+        }
+        $actDateTime = CRM_Utils_Date::isoToMysql( $otherActivity->activity_date_time );
         
-        $mainActVals  = array( );
+        //create new activity record.
         $mainActivity = new CRM_Activity_DAO_Activity( );
+        $mainActVals  = array( );
         CRM_Core_DAO::storeValues( $otherActivity, $mainActVals );
+        
+        //get new activity subject.
         if ( !empty( $newSubject ) ) $mainActVals['subject'] = $newSubject;
+        
         $mainActivity->copyValues( $mainActVals );
         $mainActivity->id = null;
-        $mainActivity->activity_date_time = CRM_Utils_Date::isoToMysql( $otherActivity->activity_date_time );
+        $mainActivity->activity_date_time = $actDateTime;
         $mainActivity->save( );
         $mainActivityId = $mainActivity->id;
         $mainActivity->free( );
-        $otherActivity->free( ); 
-        if( in_array( $mode, array( 'move', 'file' ) ) ) {
-            CRM_Core_DAO::setFieldValue( 'CRM_Activity_DAO_Activity', $activityID, 'is_deleted', 1 );
+        
+        //mark previous activity as deleted.
+        if ( in_array( $mode, array( 'move', 'file' ) ) ) {
+            $otherActivity->activity_date_time = $actDateTime;
+            $otherActivity->is_deleted = 1;
+            $otherActivity->save( );
         }
-                
+        $otherActivity->free( ); 
+        
         require_once "CRM/Activity/BAO/Activity.php";
         $targetContacts = array( $contactID );
         if ( !empty( $targetContactIds ) ) {
             $targetContacts = array_merge( $targetContacts, explode( ',', $targetContactIds ) );
+            $targetContacts = array_unique( $targetContacts );
         }
-        $targetContacts = array_unique( $targetContacts );
+        
         foreach ( $targetContacts as $key => $value ) { 
             $params = array( 'activity_id' => $mainActivityId, 
                              'target_contact_id' => $value );
             CRM_Activity_BAO_Activity::createActivityTarget( $params );
         }
+        
+        //attach newly created activity to case.
         require_once "CRM/Case/DAO/CaseActivity.php";
         $caseActivity = new CRM_Case_DAO_CaseActivity( );
-        $caseActivity->case_id = $caseID;
+        $caseActivity->case_id     = $caseID;
         $caseActivity->activity_id = $mainActivityId;
         $caseActivity->save( );
-        
-		$error_msg = $caseActivity->_lastError;
+        $error_msg = $caseActivity->_lastError;
 		$caseActivity->free( ); 
+        
         echo json_encode(array('error_msg' => $error_msg));
+        exit( );
     }
 }
