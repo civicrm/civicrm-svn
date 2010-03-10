@@ -788,10 +788,15 @@ as tbl ";
         $componentClause = "civicrm_option_value.component_id IS NULL";
         $componentsIn    = null;
         $compInfo        = CRM_Core_Component::getEnabledComponents();
+        $includeCaseActivities = false;
         foreach ( $compInfo as $compObj ) {
             if ( $compObj->info['showActivitiesInCore'] ) {
                 $componentsIn = $componentsIn ? 
                     ($componentsIn . ', ' . $compObj->componentID) : $compObj->componentID;
+                    
+                if ( $compObj->info['name'] == 'CiviCase' ) {
+                    $includeCaseActivities = true;
+                }
             }
         }
         
@@ -803,7 +808,7 @@ as tbl ";
         // or else exclude Inbound Emails that have been filed on a case.
         $caseClause = '';
         
-        if ( in_array( 'CiviCase', $config->enableComponents ) ) {
+        if ( $includeCaseActivities ) {
             $caseSelect = '';
             if ( !$count ) {
                 $caseSelect = ', 
