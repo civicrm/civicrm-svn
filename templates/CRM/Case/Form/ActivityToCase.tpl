@@ -62,36 +62,39 @@ cj( "#unclosed_cases" ).autocomplete( unclosedCaseUrl, { width : 250, selectFirs
 			    });
 
 
-eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
 
-var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
 
-var hintText = "{/literal}{ts}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
-cj( "#target_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contacts,   classes: tokenClass, hintText: hintText });
+var target_contact = target_id = '';
 
-var target_contacts = '';
 {/literal}
-
 {if $targetContactValues}
 {foreach from=$targetContactValues key=id item=name}
-     {literal} target_contacts += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
+   {literal} 
+   target_contact += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
 {/foreach}
-{literal} eval( 'target_contacts = [' + target_contacts + ']'); {/literal}
+   {literal}
+   eval( 'target_contact = [' + target_contact + ']'); 
+   {/literal}
 {/if}
 
-{literal}
-var target_id = null;
-var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}";
- {/literal}
-{if $form.$currentElement.value}
-   {literal} var {/literal}{$currentElement}{literal} = cj.ajax({ url: toDataUrl + "&cid={/literal}{$form.$currentElement.value}{literal}", async: false }).responseText;{/literal}
+{if $form.target_id.value}
+     {literal}
+     var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}"; 
+     var target_id = cj.ajax({ url: toDataUrl + "&cid={/literal}{$form.$currentElement.value}{literal}", async: false }).responseText;
+     {/literal}
 {/if}
-
 
 {literal}
 if ( target_id ) {
-  eval( 'target_contacts = ' + target_id );
+  eval( 'target_contact = ' + target_id );
 }
+
+eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
+
+var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
+var hintText = "{/literal}{ts}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
+cj( "#target_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact, classes: tokenClass, hintText: hintText });
+
 var caseID = '';
 cj( "#fileOnCaseDialog" ).hide( );
 function fileOnCase( action, activityID, currentCaseId ) {

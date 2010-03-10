@@ -197,7 +197,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         }
         
         //check for link cases.
-        $unclosedCases = CRM_Case_BAO_Case::getUnclosedCases( );
+        $unclosedCases = CRM_Case_BAO_Case::getUnclosedCases( null, $this->_caseID );
         if ( empty( $unclosedCases ) &&
              ($linkActTypeId = array_search('Link Cases', $allActTypes)) &&
              array_key_exists( $linkActTypeId, $aTypes ) ) {

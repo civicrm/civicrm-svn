@@ -63,21 +63,16 @@ class CRM_Case_Form_ActivityToCase extends CRM_Core_Form
      */
     function setDefaultValues( ) 
     {
-        $params = $targetContactValues = array( );
+        $targetContactValues = $defaults = array( );
         if ( isset( $this->_activityId ) ) {
             $params = array( 'id' => $this->_activityId );
             CRM_Activity_BAO_Activity::retrieve( $params, $defaults );
             $defaults['case_subject'] = $defaults['subject'];
-            
             if ( !CRM_Utils_Array::crmIsEmptyArray( $defaults['target_contact'] ) ) {
-                $targetContactValues = array_combine( array_unique( $defaults['target_contact'] ),                                                       explode(';', trim($defaults['target_contact_value'] ) ) );
-                // exclude the contact id of client
-                if ( array_key_exists ( $this->_clientId, $targetContactValues ) ) {
-                    unset( $targetContactValues[$this->_clientId] );
-                }
+                $targetContactValues = array_combine( array_unique( $defaults['target_contact'] ),
+                                                      explode(';', trim($defaults['target_contact_value'] ) ) );
             }
         }
-        
         $this->assign( 'targetContactValues', empty( $targetContactValues ) ? false : $targetContactValues );
         
         return $defaults;
