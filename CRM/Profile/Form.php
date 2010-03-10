@@ -670,6 +670,16 @@ class CRM_Profile_Form extends CRM_Core_Form
                                 'postal_greeting' => 'postal_greeting_id'
                                 );
         $profileType = CRM_Core_BAO_UFField::getProfileType( $this->_gid );
+        //Though Profile type is contact we need
+        //Individual/Household/Organization for setting Greetings.
+        if( $profileType == 'Contact' ) {
+            $profileType = 'Individual';
+            //if we editing Household/Organization.
+            if( $this->_id ) {
+                $profileType = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                            $this->_id, 'contact_type', 'id' );
+            }
+        }
         if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
             $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
         }
