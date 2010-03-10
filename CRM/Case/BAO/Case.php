@@ -834,7 +834,8 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         // CRM-5081 - formatting the dates to omit seconds.
         // Note the 00 in the date format string is needed otherwise later on it thinks scheduled ones are overdue.
         $select = "SELECT count(ca.id) as ismultiple, ca.id as id, 
-                          ca.activity_type_id as type, 
+                          ca.activity_type_id as type,
+                          ca.activity_type_id as activity_type_id,  
                           cc.sort_name as reporter,
                           cc.id as reporter_id,
                           acc.sort_name AS assignee,
@@ -936,8 +937,12 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         $query .= $limit;
         $dao    =& CRM_Core_DAO::executeQuery( $query, $params );
        
-        $activityTypes  = CRM_Case_PseudoConstant::activityType( false, true );
-
+        $activityTypes     = CRM_Case_PseudoConstant::activityType( false, true );
+        require_once 'CRM/Core/PseudoConstant.php';
+        $activityTypeNames = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
+        //get the open and close case type id.
+        $openCloseActTypeIds = array( array_search( 'Open Case', $activityTypeNames ), array_search( 'Close Case', $activityTypeNames ) );
+        
         require_once "CRM/Utils/Date.php";
         require_once "CRM/Core/PseudoConstant.php";
         $activityStatus   = CRM_Core_PseudoConstant::activityStatus( );
@@ -985,7 +990,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         foreach($compStatusNames as $name) {
             $compStatusValues[] = CRM_Core_OptionGroup::getValue( 'activity_status', $name, 'name' );
         }
-        
+        $unclosedCases = self::getUnclosedCases( );
         $contactViewUrl = CRM_Utils_System::url( "civicrm/contact/view",
                                                  "reset=1&cid=", false, null, false );
         require_once 'CRM/Activity/BAO/ActivityTarget.php';
@@ -1034,6 +1039,11 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
                 $url = "<a href='" .$restoreUrl.$additionalUrl."'>". ts('Restore') . "</a>";
                 $values[$dao->id]['status']  = $values[$dao->id]['status'].'<br /> (deleted)'; 
             } 
+            
+            if ( count( $unclosedCases ) > 1 && !in_array( $dao->activity_type_id, $openCloseActTypeIds ) ) { 
+                $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"move\", \"{$dao->id}\" ); return false;'>". ts('Move To Case') . "</a> ";
+                $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"copy\", \"{$dao->id}\" ); return false;'>". ts('Copy To Case') . "</a> ";
+            }
             
             $values[$dao->id]['links'] = $url;
             $values[$dao->id]['class'] = "";

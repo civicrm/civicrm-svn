@@ -57,6 +57,12 @@
      <access_arguments>access CiviCase</access_arguments>     
   </item>
   <item>
+     <path>civicrm/case/addToCase</path>
+     <title>Build Activity To Case</title>
+     <page_callback>CRM_Case_Form_ActivityToCase</page_callback>
+     <access_arguments>access CiviCase</access_arguments>
+  </item>
+  <item>
      <path>civicrm/case/details</path>
      <title>Case Details</title>
      <page_callback>CRM_Case_Page_CaseDetails</page_callback>

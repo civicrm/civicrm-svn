@@ -54,3 +54,5 @@
     <strong>{ts}There are no activities defined for this case.{/ts}</strong>
 {/if}
 {/strip}
+
+{include file="CRM/Case/Form/ActivityToCase.tpl"}

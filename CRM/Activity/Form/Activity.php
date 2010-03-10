@@ -613,27 +613,9 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             if (in_array('CiviCase', $config->enableComponents) && $this->_activityTypeId == $emailActivityTypeID ) {
                 $buttons[] = array ( 'type'      => 'cancel',
                                      'name'      => ts('File on case'),
-                                     'js'        => array ('onClick' => "Javascript:fileOnCase(); return false;" ),
+                                     'js'        => array ('onClick' => "Javascript:fileOnCase( \"file\" ); return false;" ),
                                    );
 
-				require_once 'CRM/Case/BAO/Case.php';
-				$unclosedCases = CRM_Case_BAO_Case::getUnclosedCases();
-                $caseList = array();
-                foreach($unclosedCases as $case_id => $case_data) {
-                	$caseList[$case_id . '_' . $case_data['contact_id']] = $case_data['sort_name'] . ' - ' . $case_data['case_type'];
-                }                
-
-				// Don't want to freeze the whole form since then this select gets frozen too,
-				// so get the current list of elements, add our element, then freeze the previous list.
-				$temp_elementList = array();
-				foreach($this->_elements as $e) {
-					$temp_elementList[] = $e->getName();
-				}
-                $this->add('select', 'case_select',  ts( 'Open Cases' ), array( '' => ts( '- select case -' ) ) + $caseList, true);
-                $this->add('text', 'case_subject', ts('New Subject'), array('size'=>50));
-				$this->freeze($temp_elementList);
-            } else {
-                $this->freeze();
             }
             
 			$buttons[] = array ( 'type'      => 'cancel',

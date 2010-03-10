@@ -114,7 +114,8 @@
 
   {include file="CRM/common/pager.tpl" location="bottom"}
   </form>
-
+  
+  {include file="CRM/Case/Form/ActivityToCase.tpl" contactID=$contactId}
 {else}
 
   <div class="messages status">

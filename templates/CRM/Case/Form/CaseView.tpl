@@ -184,6 +184,7 @@
 {literal}
 <script type="text/javascript">
 var selectedContact = '';
+var caseID = {/literal}"{$caseID}"{literal};
 var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=newcontact' h=0 }"{literal};
 cj( "#change_client_id").autocomplete( contactUrl, { width : 250, selectFirst : false, matchContains:true
                             }).result( function(event, data, formatted) { cj( "#contact_id" ).val( data[1] ); selectedContact = data[0];
@@ -531,7 +532,7 @@ curDate = (new Date()).getTime();
 
 </script>
 {/literal}
-
+{include file="CRM/Case/Form/ActivityToCase.tpl"}
 {*include activity view js file*}
 {include file="CRM/common/activityView.tpl"}
 
