@@ -45,6 +45,7 @@ class CRM_Contact_Form_Search_Custom_DateAdded
     function __construct( &$formValues ) {
         parent::__construct( $formValues );
 
+        $this->_includeGroups = $this->_excludeGroups = array( );
         $this->_columns = array( ts('Contact Id')   => 'contact_id'  ,
                                  ts('Contact Type') => 'contact_type',
                                  ts('Name')         => 'sort_name',
@@ -97,9 +98,9 @@ class CRM_Contact_Form_Search_Custom_DateAdded
     function all( $offset = 0, $rowcount = 0, $sort = null,
                   $includeContactIDs = false ) {
                       
-        $this->_includeGroups   = CRM_Utils_Array::value( 'includeGroups', $this->_formValues );
+        $this->_includeGroups = CRM_Utils_Array::value( 'includeGroups', $this->_formValues, array( ) );
 
-        $this->_excludeGroups   = CRM_Utils_Array::value( 'excludeGroups', $this->_formValues );
+        $this->_excludeGroups = CRM_Utils_Array::value( 'excludeGroups', $this->_formValues, array( ) );
         
         $this->_allSearch = false; 
         $this->_groups    = false;
