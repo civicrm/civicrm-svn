@@ -1923,6 +1923,20 @@ div.grippie {
  padding-right: 4px;
 }
 
+/* autocomplet */
+
+.ac_results {
+	background: transparent url(../i/dropdown-pointer.gif) no-repeat 25px 1px;
+	padding-top: 5px;
+	border:none;
+	}
+
+.ac_results-inner {
+	background-color:#2f2f2e;
+	padding:4px;
+	}
+
+
 /* setup for icons */
 
 .ac_results ul li {background-image:url('');}
@@ -1998,6 +2012,7 @@ div.grippie {
 #civicrm-menu .ac_input, #crm-container .ac_input {
 	background:white url(../i/magnify.gif) no-repeat scroll right center;
 	padding-right:16px; /* so that text doesn't flow on top of icon */
+	margin:0px;
 	}
 	#crm-container .ac_input { width: 20em;}
 	
@@ -2016,22 +2031,6 @@ div.grippie {
     border-left: 1px solid #5D5D5D;
 	}
 
-
-/* fix autocomplete colors/styles */
-
-
-.ac_even{ background-color:#F5F5F5; }
-.ac_odd { background-color:#FAFAFA; }
-
-.ac_over { 
-	background-color:#999;
-	color:white;
-	}
-
-.ac_results li strong {
-	color: #000;
-	font-weight: normal;
-	}
 
 /* loader autocomplete */
 
@@ -2228,3 +2227,37 @@ th.sorting_desc {
     position: absolute;
     margin  : 6px 0px 0px 115px;
 }
+
+
+
+
+
+
+/* skin */
+
+/* fix autocomplete colors/styles */
+
+.ac_results {
+	background: transparent url(../i/dropdown-pointer.gif) no-repeat 25px 1px;
+	}
+
+.ac_results-inner {
+	background-color:#2f2f2e;
+	}
+
+.ac_even{ background-color:transparent; }
+.ac_odd { background-color:transparent; }
+
+.ac_over { 
+	background-color:#666;
+	color:white;
+	}
+
+.ac_results li { color:#DFDFDF; }
+	
+.ac_results li strong {
+	color: #FFF;
+	font-weight: normal;
+	}
+
+
