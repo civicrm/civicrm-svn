@@ -1964,7 +1964,7 @@ UNION
                  
                  $emailGreeting = CRM_Core_PseudoConstant::greeting( $filter );
                  $emailGreetingString = $emailGreeting[ $contact->email_greeting_id ];
-             } else {     
+             } else if( $contact->email_greeting_custom ) {     
                  $updateQueryString[] = " email_greeting_display = NULL ";
              }
                   
@@ -2002,7 +2002,7 @@ UNION
 
             $addressee = CRM_Core_PseudoConstant::greeting( $filter ); 
             $addresseeString = $addressee[ $contact->addressee_id ];
-         } else {
+         } else if( $contact->addressee_custom ){
             $updateQueryString[] = " addressee_display = NULL ";
          }
 
