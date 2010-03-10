@@ -2112,15 +2112,24 @@ div.statusicon {
 	}
 
 
-div#toolTip {
+div#crm-toolTip {
 	padding   : 10px;
-	background: #FFFFFF url(../i/popupMenuBg.gif) repeat-x scroll left bottom;
-	border    : 1px solid #999999;
-	font-size : small;
+	background: #eef4b8;
+	border    : 1px solid #f6c147;
+	font-size : 11px;
 	color     : black;
 	text-align: left;
 	margin    : 1em;
+	position: fixed;
+	bottom:20px;
+	right:20px;
+	width:300px;
+	display:none;
 }
+	div#crm-toolTip #hide-tooltip {
+		float:right;
+		cursor: pointer;
+		}
 
 /* Class for tokens and helpicon */
 .helpIcon {
@@ -2260,4 +2269,15 @@ th.sorting_desc {
 	font-weight: normal;
 	}
 
-
+div#toolTip {
+	position:fixed !important;
+	right:10px!important;
+	left:auto!important;
+	bottom:10px!important;
+	-moz-border-radius: 4px;
+	background-image: none;
+	background-color: #CCC;
+	border:none;
+	top:auto!important;
+	width:300px!important;
+	}
