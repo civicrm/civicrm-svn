@@ -1041,8 +1041,8 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             } 
             
             if ( count( $unclosedCases ) > 1 && !in_array( $dao->activity_type_id, $openCloseActTypeIds ) ) { 
-                $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"move\", \"{$dao->id}\" ); return false;'>". ts('Move To Case') . "</a> ";
-                $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"copy\", \"{$dao->id}\" ); return false;'>". ts('Copy To Case') . "</a> ";
+                $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"move\", \"{$dao->id}\", $caseID ); return false;'>". ts('Move To Case') . "</a> ";
+                $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"copy\", \"{$dao->id}\", $caseID ); return false;'>". ts('Copy To Case') . "</a> ";
             }
             
             $values[$dao->id]['links'] = $url;

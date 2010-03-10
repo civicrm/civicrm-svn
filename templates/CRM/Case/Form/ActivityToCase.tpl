@@ -46,6 +46,9 @@
 
 var unclosedCaseUrl = {/literal}"{crmURL p='civicrm/case/ajax/unclosed' h=0 q='currentCaseId='}"{literal};
 
+ if ( caseID ) {
+   unclosedCaseUrl = unclosedCaseUrl + caseID;
+}
 var caseId    = '';
 var contactId = '';
 
@@ -89,10 +92,10 @@ var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1
 if ( target_id ) {
   eval( 'target_contacts = ' + target_id );
 }
-
+var caseID = '';
 cj( "#fileOnCaseDialog" ).hide( );
-function fileOnCase( action, activityID ) {
-   
+function fileOnCase( action, activityID, currentCaseId ) {
+    caseID = currentCaseId;	 
     if ( action == "move" ) {
         dialogTitle = "Move to Case";
     } else if ( action == "copy" ) {
