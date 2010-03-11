@@ -50,6 +50,18 @@ class CRM_Case_Form_Activity_LinkCases
         
         $form->assign( 'clientID',      $form->_currentlyViewedContactId );
         $form->assign( 'caseTypeLabel', CRM_Case_BAO_case::getCaseType( $form->_caseId ) );
+        
+        // get the related cases for given case.
+        $relatedCases = $form->get( 'relatedCases' );
+        if ( !isset( $relatedCases ) ) {
+            $relatedCases = CRM_Case_BAO_Case::getRelatedCases( $form->_caseId, $form->_currentlyViewedContactId );
+            $form->set( 'relatedCases', empty( $relatedCases ) ? false : $relatedCases );
+        }
+        $excludeCaseIds = array( $form->_caseId );
+        if ( is_array( $relatedCases ) && !empty( $relatedCases ) ) {
+            $excludeCaseIds = array_merge( $excludeCaseIds, array_keys( $relatedCases ) );
+        }
+        $form->assign( 'excludeCaseIds', implode( ',', $excludeCaseIds ) );
     }
     
     /**
@@ -82,10 +94,18 @@ class CRM_Case_Form_Activity_LinkCases
     static function formRule( $values, $files, $form ) 
     {
         $errors = array( );
-        if ( !CRM_Utils_Array::value( 'link_to_case_id', $values ) ) {
+        
+        $linkCaseId = CRM_Utils_Array::value( 'link_to_case_id', $values );
+        if ( !$linkCaseId ) {
             $errors['link_to_case'] = ts( 'Please select a case to link.' );
-        } else if ( $values['link_to_case_id'] == $form->_caseId ) {
+        } else if ( $linkCaseId == $form->_caseId ) {
             $errors['link_to_case'] = ts( 'Please select some other case to link.' );
+        }
+        
+        // do check for existing related cases.
+        $relatedCases = $form->get( 'relatedCases' );
+        if ( is_array( $relatedCases ) && array_key_exists( $linkCaseId, $relatedCases ) ) {
+            $errors['link_to_case'] = ts( 'It looks like selected case is already linked.' );
         }
         
         return empty( $errors ) ? true : $errors ;

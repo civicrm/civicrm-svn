@@ -46,7 +46,7 @@
 <script type="text/javascript">
 var target_contact = target_contact_id = selectedCaseId = contactId = '';
 
-var unclosedCaseUrl = {/literal}"{crmURL p='civicrm/case/ajax/unclosed' h=0 q='currentCaseId='}{$currentCaseId}"{literal};
+var unclosedCaseUrl = {/literal}"{crmURL p='civicrm/case/ajax/unclosed' h=0 q='excludeCaseIds='}{$currentCaseId}"{literal};
 cj( "#unclosed_cases" ).autocomplete( unclosedCaseUrl, { width : 250, selectFirst : false, matchContains:true
                                     }).result( function(event, data, formatted) { 
 			                          cj( "#unclosed_case_id" ).val( data[1] );

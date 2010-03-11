@@ -1659,16 +1659,16 @@ WHERE civicrm_case.id = %2";
         
         return $caseManagerContact; 
     }
-
+    
     /**
      * Get all cases with no end dates
      * 
      * @return array of case and related data keyed on case id
      */
-    static function getUnclosedCases( $params = array( ), $excludeCaseId = null )
+    static function getUnclosedCases( $params = array( ), $excludeCaseIds =array( ) )
     {
     	//params from ajax call.
-        $where = array( '( ca.end_date is null )' ); 
+        $where = array( '( ca.end_date is null )' );
         if ( $caseType = CRM_Utils_Array::value( 'case_type',$params ) ) {
             $where[] = "( ov.label LIKE '%$caseType%' )"; 
         }
@@ -1677,8 +1677,9 @@ WHERE civicrm_case.id = %2";
             $search  = ( $config->includeWildCardInName ) ? "%$sortName%" : "$sortName%";
             $where[] = "( sort_name LIKE '$search' )";
         }
-        if ( $excludeCaseId ) {
-            $where[] = " ( ca.id != $excludeCaseId ) ";
+        if ( is_array( $excludeCaseIds ) && 
+             !CRM_Utils_System::isNull( $excludeCaseIds ) ) {
+            $where[] = ' ( ca.id NOT IN ( ' . implode( ',', $excludeCaseIds ) . ' ) ) ';
         }
         $whereClause = implode( ' AND ', $where );
         
