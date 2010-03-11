@@ -675,9 +675,9 @@ class CRM_Profile_Form extends CRM_Core_Form
                                                                               $greetingTypes );
             $details = $contactDetails[0][$this->_id];
         }
-        if( !CRM_Utils_Array::value( 'addressee_id',$details ) || 
-            !CRM_Utils_Array::value( 'email_greeting_id',$details ) || 
-            !CRM_Utils_Array::value( 'postal_greeting_id',$details ) ) {
+        if( !(CRM_Utils_Array::value( 'addressee_id',$details ) || 
+              CRM_Utils_Array::value( 'email_greeting_id',$details ) || 
+              CRM_Utils_Array::value( 'postal_greeting_id',$details ) )) {
             
             $profileType = CRM_Core_BAO_UFField::getProfileType( $this->_gid );
             //Though Profile type is contact we need
@@ -698,7 +698,7 @@ class CRM_Profile_Form extends CRM_Core_Form
             $filter = CRM_Utils_Array::key( $profileType, $contactTypeFilters );
             if( $filter ) {
                 foreach( $greetingTypes  as $key => $value ) {
-                    if( !CRM_Utils_Array::value( $key, $params ) ) {
+                    if( !array_key_exists( $key, $params ) ) {
                         $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, 
                                                                                null, null, 
                                                                                "AND is_default =1
@@ -711,6 +711,10 @@ class CRM_Profile_Form extends CRM_Core_Form
                         $params[$key] = key( $defaultGreetingTypeId );
                     }
                 }
+            }
+            if( $profileType == 'Organization' ) {
+                unset( $params['email_greeting'], $params['postal_greeting'] );
+                
             }
         }  
         if ( $this->_mode == self::MODE_REGISTER ) {
