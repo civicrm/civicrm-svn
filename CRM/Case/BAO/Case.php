@@ -936,18 +936,15 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         $limit  = " LIMIT $start, $rp";
         $query .= $limit;
         $dao    =& CRM_Core_DAO::executeQuery( $query, $params );
-       
-        $activityTypes     = CRM_Case_PseudoConstant::activityType( false, true );
-        require_once 'CRM/Core/PseudoConstant.php';
-        $activityTypeNames = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
-        //get the open and close case type id.
-        $openCloseActTypeIds = array( array_search( 'Open Case', $activityTypeNames ), array_search( 'Close Case', $activityTypeNames ) );
         
         require_once "CRM/Utils/Date.php";
         require_once "CRM/Core/PseudoConstant.php";
+        require_once 'CRM/Case/PseudoConstant.php';
+        
+        $activityTypes    = CRM_Case_PseudoConstant::activityType( false, true );
         $activityStatus   = CRM_Core_PseudoConstant::activityStatus( );
         $activityPriority = CRM_Core_PseudoConstant::priority( );
-
+        
         $url = CRM_Utils_System::url( "civicrm/case/activity",
                                       "reset=1&cid={$contactID}&caseid={$caseID}", false, null, false ); 
         
@@ -990,7 +987,6 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         foreach($compStatusNames as $name) {
             $compStatusValues[] = CRM_Core_OptionGroup::getValue( 'activity_status', $name, 'name' );
         }
-        $unclosedCases = self::getUnclosedCases( );
         $contactViewUrl = CRM_Utils_System::url( "civicrm/contact/view",
                                                  "reset=1&cid=", false, null, false );
         require_once 'CRM/Activity/BAO/ActivityTarget.php';
@@ -1024,7 +1020,9 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             if ( !$dao->deleted ) {
                 //hide edit link of activity type email.CRM-4530.
                 if ( ! in_array($dao->type, $emailActivityTypeIDs) ) {
-                    $url = "<a href='" .$editUrl.$additionalUrl."'>". ts('Edit') . "</a> ";
+                    if ( self::checkOperation( $dao->activity_type_id, 'Edit' ) ) {
+                        $url = "<a href='" .$editUrl.$additionalUrl."'>". ts('Edit') . "</a> ";
+                    }
                 }
                               
                 //block deleting activities which affects
@@ -1040,8 +1038,11 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
                 $values[$dao->id]['status']  = $values[$dao->id]['status'].'<br /> (deleted)'; 
             } 
             
-            if ( count( $unclosedCases ) > 1 && !in_array( $dao->activity_type_id, $openCloseActTypeIds ) ) { 
+            //check for operations.
+            if ( self::checkOperation( $dao->activity_type_id, 'Move To Case' ) ) {
                 $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"move\", \"{$dao->id}\", $caseID ); return false;'>". ts('Move To Case') . "</a> ";
+            }
+            if ( self::checkOperation( $dao->activity_type_id, 'Copy To Case' ) ) {
                 $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"copy\", \"{$dao->id}\", $caseID ); return false;'>". ts('Copy To Case') . "</a> ";
             }
             
@@ -2170,6 +2171,76 @@ SELECT id, subject, activity_date_time
             self::processCaseActivity( $mergeCaseAct );
         }
         return $mainCaseIds;
+    }
+    
+    /**
+     * Do we allow given operation on activity record.
+     *
+     * @param int     $actTypeId       activity type id.
+     * @param string  $operation       user operation.
+     * @param boolean $checkComponent  do we need to check component enabled.
+     *
+     * @return boolean $allow  true/false
+     * @static
+     */
+    function checkOperation( $actTypeId, $operation, $checkComponent = true )  
+    {
+        $allow = false;
+        if ( !$operation || !$actTypeId ) {
+            return $allow;
+        }
+        
+        //do check for civicase component enabled.
+        if ( $checkComponent ) {
+            static $componentEnabled;
+            if ( !isset( $componentEnabled ) ) {
+                $config = CRM_Core_Config::singleton( );
+                $componentEnabled = false;
+                if ( in_array( 'CiviCase', $config->enableComponents ) ) {
+                    $componentEnabled = true;
+                }
+            }
+            if ( !$componentEnabled ) {
+                return $allow;
+            }
+        }
+        
+        //do check for cases.
+        $operations = array( 'File On Case', 'Link Cases', 'Move To Case', 'Copy To Case', 'Edit' );
+        if ( in_array( $operation, $operations ) ) {
+            static $unclosedCases;
+            if ( !is_array( $unclosedCases ) ) {
+                $unclosedCases = self::getUnclosedCases( );
+            }
+            if ( $operation == 'File On Case' ) {
+                $allow = (empty( $unclosedCases )) ? false : true; 
+            } else if ( $operation == 'Edit' ) { 
+                $allow = true;
+            } else {
+                $allow = (count( $unclosedCases ) > 1) ? true : false;
+            }
+        }
+        
+        //do further only when operation is granted. 
+        if ( $allow ) {
+            require_once 'CRM/Core/PseudoConstant.php';
+            $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
+            
+            //do check for singleton activities.
+            $names = array( 'Open Case', 'Close Case', 'Reassigned Case', 'Merge Case', 'Link Cases' );
+            foreach ( $names as $name ) {
+                if ( $actTypeId == array_search( $name, $activityTypes ) ) {
+                    $allow = false;
+                    //allow edit for open and close.
+                    if ( $operation == 'Edit' && in_array( $name, array( 'Open Case', 'Close Case' ) ) ) {
+                        $allow = true;
+                    }
+                    break;
+                }
+            }
+        }
+        
+        return $allow;
     }
     
 }

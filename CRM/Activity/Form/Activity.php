@@ -604,20 +604,21 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             }
             
 			$buttons  = array( );
-            $config   = CRM_Core_Config::singleton( );
-			// do check for permissions                                                
-            if ( in_array( 'CiviCase', $config->enableComponents ) ) {
+            // do check for permissions 
+            require_once 'CRM/Case/BAO/Case.php';
+            if ( CRM_Case_BAO_Case::checkOperation( $this->_activityTypeId, 'File On Case' ) ) {
                 $buttons[] = array ( 'type'      => 'cancel',
                                      'name'      => ts('File on case'),
                                      'js'        => array ('onClick' => "Javascript:fileOnCase( \"file\", $this->_activityId ); return false;" ),
-                                   );
+                                     );
             }
             // form should be frozen for view mode
             $this->freeze( );
-			$buttons[] = array ( 'type'      => 'cancel',
-                                 'name'      => ts('Done'),
-                               );
-            $this->addButtons( $buttons );			
+			
+            $buttons[] = array ( 'type'      => 'cancel',
+                                 'name'      => ts('Done') );
+            
+            $this->addButtons( $buttons );
         } else {
             $message = array( 'completed' => ts('Are you sure? This is a COMPLETED activity with the DATE in the FUTURE. Click Cancel to change the date / status. Otherwise, click OK to save.'),
                               'scheduled' => ts('Are you sure? This is a SCHEDULED activity with the DATE in the PAST. Click Cancel to change the date / status. Otherwise, click OK to save.') 

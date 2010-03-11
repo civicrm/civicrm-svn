@@ -116,9 +116,6 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
     {
         $activityTypes   = CRM_Core_PseudoConstant::activityType( false );
         $activityTypeIds = array_flip( CRM_Core_PseudoConstant::activityType( true, false, false, 'name' ) );
-        $config   = CRM_Core_Config::singleton( );
-        require_once 'CRM/Case/BAO/Case.php';
-        $unclosedCases = CRM_Case_BAO_Case::getUnclosedCases( );
         
         //show  edit link only for meeting/phone and other activities
         $showUpdate = false;
@@ -172,7 +169,9 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                                           'title'    => ts('View Activity'),
                                           )
                                     );
-        if ( in_array( 'CiviCase', $config->enableComponents ) && count( $unclosedCases ) > 0 ) {
+        
+        require_once 'CRM/Case/BAO/Case.php';
+        if ( CRM_Case_BAO_Case::checkOperation( $activityTypeId, 'File On Case' ) ) {
             self::$_actionLinks = self::$_actionLinks +  array ( CRM_Core_Action::ADD =>
                                                                  array( 
                                                                        'name'     => ts('File On Case'),
