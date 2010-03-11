@@ -279,11 +279,39 @@ WHERE     openid = %1";
                 $ufmatch->uf_name        = $uniqId;
             }
 
-            $ufmatch->save( );
-            $ufmatch->free();
-            $newContact   = true;
+            // check that there are not two CMS IDs matching the same CiviCRM contact - this happens when a civicrm
+            // user has two e-mails and there is a cms match for each of them
+            // the gets rid of the nasty fata error but still reports the error
+            $sql = "
+SELECT uf_id
+FROM   civicrm_uf_match
+WHERE  ( contact_id = %1
+OR     uf_name      = %2
+OR     uf_id        = %3 )
+AND    domain_id    = %4
+";
+            $params = array( 1 => array( $ufmatch->contact_id, 'Integer' ),
+                             2 => array( $ufmatch->uf_name   , 'String'  ),
+                             3 => array( $ufmatch->uf_id     , 'Integer' ),
+                             4 => array( $ufmatch->domain_id , 'Integer' ) );
+
+            require_once 'CRM/Core/DAO.php';
+            $conflict = CRM_Core_DAO::singleValueQuery( $sql, $params );
             
-            $transaction->commit();
+            if ( ! $conflict ) {
+                $ufmatch->save( );
+                $ufmatch->free();
+                $newContact   = true;
+                
+                $transaction->commit();
+            } else {
+                $msg = ts( "Contact ID %1 is a match for %2 user %3 but has already been matched to %4",
+                           array( 1 => $ufmatch->contact_id,
+                                  2 => $uf,
+                                  3 => $ufmatch->uf_id,
+                                  4 => $conflict ) );
+                unset ($conflict);
+            }
         }
 
         if ( $status ) {
