@@ -803,56 +803,6 @@ as tbl ";
         if ( $componentsIn ) {
             $componentClause = "($componentClause OR civicrm_option_value.component_id IN ($componentsIn))";
         }
-
-        // Build case clause
-        // or else exclude Inbound Emails that have been filed on a case.
-        $caseClause = '';
-        
-        if ( $includeCaseActivities ) {
-            $caseSelect = '';
-            if ( !$count ) {
-                $caseSelect = ', 
-                civicrm_activity.activity_date_time,
-                civicrm_activity.status_id, 
-                civicrm_activity.subject,
-                civicrm_activity.source_contact_id,
-                civicrm_activity.source_record_id, 
-                null as source_contact_name,
-                civicrm_option_value.value as activity_type_id,
-                civicrm_option_value.label as activity_type,
-                null as case_id, null as case_subject ';
-            }
-            
-            $caseClause = "
-                union all
-
-                SELECT civicrm_activity.id as activity_id
-                {$caseSelect}    
-                from civicrm_activity                   
-                inner join civicrm_case_activity on                               
-                    civicrm_case_activity.activity_id = civicrm_activity.id                     
-                inner join civicrm_case on                               
-                    civicrm_case_activity.case_id = civicrm_case.id                     
-                inner join civicrm_case_contact on                               
-                    civicrm_case_contact.case_id = civicrm_case.id 
-                left join civicrm_option_value on 
-                    civicrm_activity.activity_type_id = civicrm_option_value.value
-                left join civicrm_option_group on                              
-                    civicrm_option_group.id = civicrm_option_value.option_group_id                                  
-                where   {$caseWhere}
-                    and civicrm_option_group.name = 'activity_type'                 
-                    and {$componentClause}                 
-                    and civicrm_activity.is_deleted = 0
-                    and civicrm_activity.is_current_revision = 1                 
-                    and is_test = 0
-                    and {$statusClause}
-                    and  ( ( civicrm_case_activity.case_id Is Null ) OR
-                           ( civicrm_option_value.name <> 'Inbound Email' AND
-                             civicrm_option_value.name <> 'Email' AND civicrm_case_activity.case_id
-                             Is Not Null ) 
-                         )             
-            ";
-        }
  
         // build main activity table select clause
         $sourceSelect = '';
@@ -904,7 +854,7 @@ as tbl ";
                 civicrm_activity.subject,
                 civicrm_activity.source_contact_id,
                 civicrm_activity.source_record_id, 
-                null as source_contact_name,
+                sourceContact.sort_name as source_contact_name,
                 civicrm_option_value.value as activity_type_id,
                 civicrm_option_value.label as activity_type,
                 null as case_id, null as case_subject
@@ -920,7 +870,8 @@ as tbl ";
             left join civicrm_option_value on
                 civicrm_activity.activity_type_id = civicrm_option_value.value
             left join civicrm_option_group on                              
-                civicrm_option_group.id = civicrm_option_value.option_group_id                      
+                civicrm_option_group.id = civicrm_option_value.option_group_id
+            {$sourceJoin}                      
             where   {$targetWhere}
                 and civicrm_option_group.name = 'activity_type'                 
                 and {$componentClause}                 
@@ -941,6 +892,7 @@ as tbl ";
                 civicrm_activity.activity_type_id = civicrm_option_value.value
             left join civicrm_option_group on                              
                 civicrm_option_group.id = civicrm_option_value.option_group_id                      
+            {$sourceJoin}
             where   {$assigneeWhere}
                 and civicrm_option_group.name = 'activity_type'                 
                 and {$componentClause}                 
@@ -949,6 +901,57 @@ as tbl ";
                 and is_test = 0
                 and {$statusClause}
         ";
+
+        // Build case clause
+        // or else exclude Inbound Emails that have been filed on a case.
+        $caseClause = '';
+        
+        if ( $includeCaseActivities ) {
+            $caseSelect = '';
+            if ( !$count ) {
+                $caseSelect = ', 
+                civicrm_activity.activity_date_time,
+                civicrm_activity.status_id, 
+                civicrm_activity.subject,
+                civicrm_activity.source_contact_id,
+                civicrm_activity.source_record_id, 
+                sourceContact.sort_name as source_contact_name,
+                civicrm_option_value.value as activity_type_id,
+                civicrm_option_value.label as activity_type,
+                null as case_id, null as case_subject ';
+            }
+            
+            $caseClause = "
+                union all
+
+                SELECT civicrm_activity.id as activity_id
+                {$caseSelect}    
+                from civicrm_activity                   
+                inner join civicrm_case_activity on                               
+                    civicrm_case_activity.activity_id = civicrm_activity.id                     
+                inner join civicrm_case on                               
+                    civicrm_case_activity.case_id = civicrm_case.id                     
+                inner join civicrm_case_contact on                               
+                    civicrm_case_contact.case_id = civicrm_case.id 
+                left join civicrm_option_value on 
+                    civicrm_activity.activity_type_id = civicrm_option_value.value
+                left join civicrm_option_group on                              
+                    civicrm_option_group.id = civicrm_option_value.option_group_id
+                {$sourceJoin}                                      
+                where   {$caseWhere}
+                    and civicrm_option_group.name = 'activity_type'                 
+                    and {$componentClause}                 
+                    and civicrm_activity.is_deleted = 0
+                    and civicrm_activity.is_current_revision = 1                 
+                    and is_test = 0
+                    and {$statusClause}
+                    and  ( ( civicrm_case_activity.case_id Is Null ) OR
+                           ( civicrm_option_value.name <> 'Inbound Email' AND
+                             civicrm_option_value.name <> 'Email' AND civicrm_case_activity.case_id
+                             Is Not Null ) 
+                         )             
+            ";
+        }
 
         $returnClause = " {$sourceClause}  union all {$targetClause} union all {$assigneeClause} {$caseClause} ";
 
