@@ -84,6 +84,7 @@ eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-inpu
 var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
 var hintText = "{/literal}{ts}Type in a partial or complete name or email address of an existing contact.{/ts}{literal}";
 cj( "#target_contact_id" ).tokenInput(tokenDataUrl,{prePopulate: target_contact, classes: tokenClass, hintText: hintText });
+cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
 
 cj( "#fileOnCaseDialog" ).hide( );
 
@@ -94,17 +95,13 @@ cj( "#fileOnCaseDialog" ).hide( );
 
 {literal}
 <script type="text/javascript">
-function fileOnCase( action, activityID, currentCaseId ) {
+function fileOnCase( action, activityID, currentCaseId ) { 
     if ( action == "move" ) {
         dialogTitle = "Move to Case";
     } else if ( action == "copy" ) {
       	dialogTitle = "Copy to Case";
     } else if ( action == "file" ) {
       	dialogTitle = "File On Case";   
-    }
-
-    if ( !activityID ) {
-	activityID = {/literal}"{$entityID}"{literal};
     }
     
     var dataUrl = {/literal}"{crmURL p='civicrm/case/addToCase' q='reset=1&snippet=4' h=0}"{literal};
