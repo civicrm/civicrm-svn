@@ -146,14 +146,7 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
         $date = date('YmdHis');
         $numContactsAdded    = 0;
         $numContactsNotAdded = 0;
-        
-        // Set status = 'Pending' if profileDoubleOptIn = 1. CRM-5905
-        require_once 'CRM/Core/Config.php';
-        $config = CRM_Core_Config::singleton( );
-        if ( $config->profileDoubleOptIn ) {
-            $status = 'Pending';
-        }
-        
+       
         foreach ( $contactIds as $contactId ) {
             
             $groupContact =& new CRM_Contact_DAO_GroupContact( );
