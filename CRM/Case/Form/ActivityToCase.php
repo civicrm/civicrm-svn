@@ -57,6 +57,7 @@ class CRM_Case_Form_ActivityToCase extends CRM_Core_Form
         
         $this->_currentCaseId = CRM_Utils_Request::retrieve( 'caseId', 'Integer', CRM_Core_DAO::$_nullObject );
         $this->assign( 'currentCaseId', $this->_currentCaseId );
+        $this->assign( 'buildCaseActivityForm', true );
     }
     
     /**

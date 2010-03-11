@@ -24,7 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {* CiviCase -  build activity to a case*}
-<div id="fileOnCaseDialog">
+<div id="fileOnCaseDialog"></div>
+
+{if $buildCaseActivityForm}
 <table class="form-layout">
      <tr>
 	<td>{$form.unclosed_cases.label}</td>
@@ -39,7 +41,6 @@
 	<td>{$form.case_activity_subject.html}</td>
      </tr>
 </table>     	
-</div>
 
 {literal}
 <script type="text/javascript">
@@ -86,6 +87,13 @@ cj( "#target_contact_id" ).tokenInput(tokenDataUrl,{prePopulate: target_contact,
 
 cj( "#fileOnCaseDialog" ).hide( );
 
+</script>
+{/literal}
+
+{/if} {* main form if end *}
+
+{literal}
+<script type="text/javascript">
 function fileOnCase( action, activityID, currentCaseId ) {
     if ( action == "move" ) {
         dialogTitle = "Move to Case";
