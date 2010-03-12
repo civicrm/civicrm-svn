@@ -59,12 +59,12 @@ class CRM_Case_Info extends CRM_Core_Component_Info
     // docs inherited from interface
     public function getPermissions()
     {
-        return array( 'access CiviCase',
-                      'delete in CiviCase',
-                      'access my cases and activities' );
+        return array( 'delete in CiviCase',
+                      'administer CiviCase', 
+                      'access my cases and activities',
+                      'access all cases and activities' );
     }
-
-
+    
     // docs inherited from interface
     public function getUserDashboardElement()
     {
