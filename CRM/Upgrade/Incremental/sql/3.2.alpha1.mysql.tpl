@@ -55,4 +55,13 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
    UPDATE civicrm_option_value val
        	INNER JOIN civicrm_option_group gr ON ( gr.id = val.option_group_id )  	 
 	SET val.grouping = 'Closed'  
-	WHERE gr.name = 'case_status' AND val.name = 'Closed'; 
+	WHERE gr.name = 'case_status' AND val.name = 'Closed';
+
+   SELECT @domain_id := min(id) FROM civicrm_domain; 
+   SELECT @nav_case    := id FROM civicrm_navigation WHERE name = 'CiviCase';
+   SELECT @nav_case_weight := MAX(ROUND(weight)) from civicrm_navigation WHERE parent_id = @nav_case;
+
+   INSERT INTO civicrm_navigation
+        ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+   VALUES
+	( @domain_id, 'civicrm/admin/options/case_status&group=case_status&reset=1', '{ts escape="sql"}Case Statuses{/ts}','Case Statuses',  'administer CiviCase', NULL, @nav_case, '1', NULL, @nav_case_weight+1 );
