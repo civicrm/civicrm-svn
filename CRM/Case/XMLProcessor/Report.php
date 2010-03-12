@@ -54,7 +54,6 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
                   $caseID,
                   $activitySetName,
                   $params ) {
-       
         $contents = self::getCaseReport( $clientID,
                                          $caseID,
                                          $activitySetName,
@@ -73,10 +72,28 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
         ******/
     }
     
+    function &getRedactionRules( ) {
+        require_once "CRM/Case/PseudoConstant.php";
+        foreach ( array('redactionStringRules', 'redactionRegexRules' ) as $key => $rule ) {
+            $$rule = CRM_Case_PseudoConstant::redactionRule($key);
+            
+            if (!empty($$rule)) {
+                foreach($$rule as &$val) {
+                    //suffixed with a randomly generated 4-digit number
+                    $val.= rand(10000 ,100000);
+                }    
+                
+                if (!empty($this->{'_'. $rule})) {
+                    $this->{'_'. $rule} = CRM_Utils_Array::crmArrayMerge( $this->{'_'. $rule}, $$rule );
+                } else {
+                    $this->{'_'. $rule} = $$rule;
+                }
+            }    
+        }     
+    }
+    
     function &caseInfo( $clientID,
                         $caseID ) {
-        
-        require_once "CRM/Case/PseudoConstant.php";
         $case = $this->_redactionRegexRules = array();
         
         if ( empty($this->_redactionStringRules)){
@@ -84,23 +101,7 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
         }
 
         if ( $this->_isRedact == 1 ) {
-            foreach ( array('redactionStringRules', 'redactionRegexRules' ) as $key => $rule ) {
-                $$rule = CRM_Case_PseudoConstant::redactionRule($key);
-                 
-                if (!empty($$rule)) {
-                    foreach($$rule as &$val) {
-                        //suffixed with a randomly generated 4-digit number
-                        $val.= rand(10000 ,100000);
-                    }    
-                    
-                    if (!empty($this->{'_'. $rule})) {
-                        $this->{'_'. $rule} = CRM_Utils_Array::crmArrayMerge( $this->{'_'. $rule}, $$rule );
-                    } else {
-                        $this->{'_'. $rule} = $$rule;
-                    }
-                }    
-            }     
-            
+            $this->getRedactionRules();
         }             
         
         $client = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $clientID, 'display_name' );
@@ -209,8 +210,12 @@ AND    ac.case_id = %1
         }
     }
     
-    function &getActivityInfo( $clientID, $activityID, $anyActivity = false ) {
+    function &getActivityInfo( $clientID, $activityID, $anyActivity = false, $redact = 0 ) {
         static $activityInfos = array( );
+        if ( $redact ) {
+            $this->_isRedact = 1;
+            $this->getRedactionRules();
+        }
         
         require_once 'CRM/Core/OptionGroup.php';
         

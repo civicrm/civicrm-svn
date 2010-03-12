@@ -431,4 +431,9 @@ AND        a.is_deleted = 0
         $xml = $this->retrieve( $caseType );
         return $this->caseRoles( $xml->CaseRoles, true );
     }
+
+    function getRedactActivityEmail(  ) {
+        $xml = $this->retrieve( "Settings" );
+        return ( string ) $xml->RedactActivityEmail ? 1 : 0;
+    }
 }

@@ -1141,15 +1141,24 @@ WHERE cr.case_id =  %1 AND ce.is_primary= 1';
             $anyActivity = true;
         }
         
-        require_once 'CRM/Case/XMLProcessor/Report.php';
-        $xmlProcessor = new CRM_Case_XMLProcessor_Report( );
-        $activityInfo = $xmlProcessor->getActivityInfo($clientId, $activityId, $anyActivity );
-        if ( $caseId ) { 
-		$activityInfo['fields'][] = array( 'label' => 'Case ID', 'type' => 'String', 'value' => $caseId ); 
-	}
-        $tplParams['activity'] = $activityInfo;
+        require_once 'CRM/Case/XMLProcessor/Process.php';
+        $xmlProcessorProcess = new CRM_Case_XMLProcessor_Process( );
+        $isRedact = $xmlProcessorProcess->getRedactActivityEmail( );
 
-        $activitySubject = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'subject' );
+        require_once 'CRM/Case/XMLProcessor/Report.php';
+        $xmlProcessorReport = new CRM_Case_XMLProcessor_Report( );
+
+        $activityInfo = $xmlProcessorReport->getActivityInfo($clientId, $activityId, $anyActivity, $isRedact );
+        if ( $caseId ) { 
+            $activityInfo['fields'][] = array( 'label' => 'Case ID', 'type' => 'String', 'value' => $caseId ); 
+        }
+        $tplParams['activity'] = $activityInfo;
+        foreach ($tplParams['activity']['fields'] as $k => $val) {
+            if ( CRM_Utils_Array::value('label', $val) == ts('Subject') ) {
+                $activitySubject = $val['value'];
+                break;
+            }
+        }
         $session = CRM_Core_Session::singleton( );
         
         //also create activities simultaneously of this copy.
