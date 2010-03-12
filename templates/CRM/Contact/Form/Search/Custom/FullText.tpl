@@ -45,7 +45,7 @@
 {if !empty($summary.Contact) }
     {* Search request has returned 1 or more matching rows. Display results. *}
     <fieldset>
-        <legend>{ts}Contacts{/ts}</legend>
+        <legend>{ts}Contacts{/ts} 1 - {$summary.Contact|@count} {ts}of{/ts} {$summary.Count.Contact}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="contact_listing" class="display" class="selector" summary="{ts}Contact listings.{/ts}">
@@ -71,7 +71,7 @@
     {* Search request has returned 1 or more matching rows. Display results. *}
 
     <fieldset>
-        <legend>{ts}Activities{/ts}</legend>
+        <legend>{ts}Activities{/ts} 1 - {$summary.Activity|@count} {ts}of{/ts} {$summary.Count.Activity}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="activity_listing" class="display" summary="{ts}Activity listings.{/ts}">
@@ -114,7 +114,7 @@
     {* Search request has returned 1 or more matching rows. Display results. *}
 
     <fieldset>
-        <legend>{ts}Cases{/ts}</legend>
+        <legend>{ts}Cases{/ts} 1 - {$summary.Case|@count} {ts}of{/ts} {$summary.Count.Case}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="case_listing" class="display" summary="{ts}Case listings.{/ts}">
@@ -148,7 +148,7 @@
     {* Search request has returned 1 or more matching rows. Display results. *}
 
     <fieldset>
-        <legend>{ts}Contributions{/ts}</legend>
+        <legend>{ts}Contributions{/ts} 1 - {$summary.Contribution|@count} {ts}of{/ts} {$summary.Count.Contribution}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="contribute_listing" class="display" summary="{ts}Contribution listings.{/ts}">
@@ -185,7 +185,7 @@
     {* Search request has returned 1 or more matching rows. *}
 
     <fieldset>
-        <legend>{ts}Event Participants{/ts}</legend>
+        <legend>{ts}Event Participants{/ts} 1 - {$summary.Participant|@count} {ts}of{/ts} {$summary.Count.Participant}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="participant_listing" class="display" summary="{ts}Participant listings.{/ts}">
@@ -226,7 +226,7 @@
     {* Search request has returned 1 or more matching rows. *}
 
     <fieldset>
-        <legend>{ts}Memberships{/ts}</legend>
+        <legend>{ts}Memberships{/ts} 1 - {$summary.Membership|@count} {ts}of{/ts} {$summary.Count.Membership}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="membership_listing" class="display" summary="{ts}Membership listings.{/ts}">

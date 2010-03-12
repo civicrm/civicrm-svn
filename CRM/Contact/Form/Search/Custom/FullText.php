@@ -59,6 +59,8 @@ class CRM_Contact_Form_Search_Custom_FullText
     
     protected $_limitNumber = 10;
 
+    protected $_foundRows   = array();
+
     function __construct( &$formValues ) {
         $this->_formValues =& $formValues;
        
@@ -304,15 +306,19 @@ AND        cf.html_type IN ( 'Text', 'TextArea', 'RichTextEditor' )
         $sql = "TRUNCATE {$this->_entityIDTableName}";
         CRM_Core_DAO::executeQuery( $sql );
 
+        $maxRowCount = 0;
         foreach ( $tables as $tableName => $tableValues ) {
             if ( $tableName == 'sql' ) {
                 foreach ( $tableValues as $sqlStatement ) {
+                    $sqlStatement = str_ireplace( 'SELECT', 'SELECT SQL_CALC_FOUND_ROWS', $sqlStatement );
                     $sql = "
 REPLACE INTO {$this->_entityIDTableName} ( entity_id )
 $sqlStatement
 {$this->_limitClause}
 ";
                     CRM_Core_DAO::executeQuery( $sql );
+                    $totalRows   = CRM_Core_DAO::singleValueQuery( "SELECT FOUND_ROWS();" );
+                    $maxRowCount = ($totalRows > $maxRowCount) ? $totalRows : $maxRowCount;
                 }
             } else {
                 $clauses = array( );
@@ -341,15 +347,20 @@ $sqlStatement
 
                 $sql = "
 REPLACE INTO {$this->_entityIDTableName} ( entity_id )
-SELECT  {$tableValues['id']}
+SELECT  SQL_CALC_FOUND_ROWS distinct {$tableValues['id']}
 FROM    $tableName
 WHERE   ( $whereClause )
 AND     {$tableValues['id']} IS NOT NULL
 {$this->_limitClause}
 ";
                 CRM_Core_DAO::executeQuery( $sql );
+                $totalRows   = CRM_Core_DAO::singleValueQuery( "SELECT FOUND_ROWS();" );
+                $maxRowCount = ($totalRows > $maxRowCount) ? $totalRows : $maxRowCount;
             }
         }
+
+        $tableKey = array_keys($tables);
+        $this->_foundRows[ucfirst(str_replace('civicrm_', '', $tableKey[0]))] = $maxRowCount;
     }
 
     function fillContactIDs( ) {
@@ -390,7 +401,7 @@ AND     {$tableValues['id']} IS NOT NULL
         $contactSQL = array( );
 
         $contactSQL[] = "
-SELECT     ca.id 
+SELECT     distinct ca.id 
 FROM       civicrm_activity ca
 INNER JOIN civicrm_contact c ON ca.source_contact_id = c.id
 LEFT JOIN  civicrm_email e ON e.contact_id = c.id
@@ -403,7 +414,7 @@ WHERE      c.display_name LIKE {$this->_text} OR
 ";
 
         $contactSQL[] = "
-SELECT     ca.id 
+SELECT     distinct ca.id 
 FROM       civicrm_activity ca
 INNER JOIN civicrm_activity_target cat ON cat.activity_id = ca.id
 INNER JOIN civicrm_contact c ON cat.target_contact_id = c.id
@@ -417,7 +428,7 @@ WHERE      c.display_name LIKE {$this->_text} OR
 ";
 
         $contactSQL[] = "
-SELECT     ca.id 
+SELECT     distinct ca.id 
 FROM       civicrm_activity ca
 INNER JOIN civicrm_activity_assignment caa ON caa.activity_id = ca.id
 INNER JOIN civicrm_contact c ON caa.assignee_contact_id = c.id
@@ -450,10 +461,11 @@ AND        c.display_name LIKE {$this->_text}  OR
      }
 
     function fillCase( ) {
+        $maxRowCount = 0;
         $sql = "
 INSERT INTO {$this->_tableName}
 ( table_name, contact_id, display_name, case_id, case_start_date, case_end_date )
-SELECT    'Case', c.id, c.display_name, cc.id, DATE(cc.start_date), DATE(cc.end_date)
+SELECT SQL_CALC_FOUND_ROWS 'Case', c.id, c.display_name, cc.id, DATE(cc.start_date), DATE(cc.end_date)
 FROM      civicrm_case cc 
 LEFT JOIN civicrm_case_contact ccc ON cc.id = ccc.case_id
 LEFT JOIN civicrm_contact c ON ccc.contact_id = c.id
@@ -462,11 +474,14 @@ WHERE     c.display_name LIKE {$this->_text}
 ";
 
         CRM_Core_DAO::executeQuery( $sql );
+        $totalRows   = CRM_Core_DAO::singleValueQuery( "SELECT FOUND_ROWS();" );
+        $maxRowCount = ($totalRows > $maxRowCount) ? $totalRows : $maxRowCount;
+
         if ( $this->_textID ) { 
             $sql = "
 INSERT INTO {$this->_tableName}
   ( table_name, contact_id, display_name, case_id, case_start_date, case_end_date )
-SELECT    'Case', c.id, c.display_name, cc.id, DATE(cc.start_date), DATE(cc.end_date)
+SELECT SQL_CALC_FOUND_ROWS 'Case', c.id, c.display_name, cc.id, DATE(cc.start_date), DATE(cc.end_date)
 FROM      civicrm_case cc 
 LEFT JOIN civicrm_case_contact ccc ON cc.id = ccc.case_id
 LEFT JOIN civicrm_contact c ON ccc.contact_id = c.id
@@ -475,7 +490,11 @@ WHERE     cc.id = {$this->_textID}
     ";
 
             CRM_Core_DAO::executeQuery( $sql );
+            $totalRows   = CRM_Core_DAO::singleValueQuery( "SELECT FOUND_ROWS();" );
+            $maxRowCount = ($totalRows > $maxRowCount) ? $totalRows : $maxRowCount;
         }
+
+        $this->_foundRows['Case'] = $maxRowCount;
     }
     
     function fillContribution( ) {
@@ -493,7 +512,7 @@ WHERE     cc.id = {$this->_textID}
     function fillContributionIDs() {
         $contactSQL = array( );
         $contactSQL[] = "
-SELECT     cc.id 
+SELECT     distinct cc.id 
 FROM       civicrm_contribution cc
 INNER JOIN civicrm_contact c ON cc.contact_id = c.id
 WHERE      c.display_name LIKE {$this->_text}
@@ -536,7 +555,7 @@ WHERE      c.display_name LIKE {$this->_text}
     function fillParticipantIDs() {
         $contactSQL = array( );
         $contactSQL[] = "
-SELECT     cp.id 
+SELECT     distinct cp.id 
 FROM       civicrm_participant cp
 INNER JOIN civicrm_contact c ON cp.contact_id = c.id
 WHERE      c.display_name LIKE {$this->_text}
@@ -577,7 +596,7 @@ WHERE      c.display_name LIKE {$this->_text}
     function fillMembershipIDs() {
         $contactSQL = array( );
         $contactSQL[] = "
-SELECT     cm.id 
+SELECT     distinct cm.id 
 FROM       civicrm_membership cm
 INNER JOIN civicrm_contact c ON cm.contact_id = c.id
 WHERE      c.display_name LIKE {$this->_text}
@@ -673,6 +692,11 @@ WHERE      c.display_name LIKE {$this->_text}
             $summary[$dao->table_name][] = $row;
         }
         
+        $summary['Count'] = array( );
+        foreach ( array_keys($summary) as $table ) {
+            $summary['Count'][$table] = $this->_foundRows[$table];
+        }
+
         if ( ! $this->_table ) {
             $summary['addShowAllLink'] = true;
         }
