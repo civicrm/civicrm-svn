@@ -322,7 +322,9 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
         $url = null;
         // set user context
-        if ( in_array( $this->_context, array( 'standalone', 'home', 'search') ) ) {
+        if ( $this->_context == 'fulltext' ) {
+            $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+        } else if ( in_array( $this->_context, array( 'standalone', 'home', 'search') ) ) {
             $url = CRM_Utils_System::url('civicrm/dashboard', 'reset=1' );
         } else if ( $this->_context != 'caseActivity' ) {
             $url = CRM_Utils_System::url('civicrm/contact/view',

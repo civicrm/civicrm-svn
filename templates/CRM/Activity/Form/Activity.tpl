@@ -259,11 +259,14 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
         <tr class="buttons">
             <td>{if $action eq 4 or $action eq 8 or $action eq 32768}{$form.buttons.html}{/if}</td>
             <td>
-            {if $action eq 4 && $activityTName neq 'Inbound Email'}
-                <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=activity"}" class="edit button" title="{ts}Edit{/ts}">
+            {if $action eq 4 && $activityTName neq 'Inbound Email'} 
+	      {if !$context }
+	        {assign var="context" value='activity'}
+	      {/if}
+                <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=$context"}" class="edit button" title="{ts}Edit{/ts}">
                 <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
                 </a>
-                <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=delete&reset=1&id=$entityID&cid=$contactId&context=activity"}" class="delete button" title="{ts}Delete{/ts}">
+                <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=delete&reset=1&id=$entityID&cid=$contactId&context=$context"}" class="delete button" title="{ts}Delete{/ts}">
                 <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
                 </a>
 	        {/if}

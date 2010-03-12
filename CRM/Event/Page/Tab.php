@@ -200,6 +200,10 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
         case 'standalone':
             $url = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1' );
             break; 
+
+        case 'fulltext':
+            $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+            break;
             
         default:
             $cid = null;

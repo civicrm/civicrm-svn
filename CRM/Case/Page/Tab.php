@@ -253,6 +253,10 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
             $url = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1' );
             break;
             
+        case 'fulltext':
+            $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+            break;
+
         default:
             if ( $this->_contactId ) {
                 $url = CRM_Utils_System::url( 'civicrm/contact/view',
