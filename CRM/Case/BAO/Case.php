@@ -2226,16 +2226,20 @@ SELECT id, subject, activity_date_time
             require_once 'CRM/Core/PseudoConstant.php';
             $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
             
-            //do check for singleton activities.
-            $names = array( 'Open Case', 'Close Case', 'Reassigned Case', 'Merge Case', 'Link Cases' );
-            foreach ( $names as $name ) {
-                if ( $actTypeId == array_search( $name, $activityTypes ) ) {
-                    $allow = false;
-                    //allow edit for open and close.
-                    if ( $operation == 'Edit' && in_array( $name, array( 'Open Case', 'Close Case' ) ) ) {
-                        $allow = true;
-                    }
-                    break;
+            //get the activity type name.
+            $actTypeName = CRM_Utils_Array::value( $actTypeId, $activityTypes );
+            
+            //do not allow multiple copy.
+            $singletonNames = array( 'Open Case', 'Close Case', 'Reassigned Case', 'Merge Case', 'Link Cases' );
+            
+            //allow edit operation.
+            $allowEditNames = array( 'Open Case', 'Close Case' );
+            
+            if ( in_array( $actTypeName, $singletonNames ) ) {
+                $allow = false;
+                //allow edit for open and close.
+                if ( $operation == 'Edit' && in_array( $actTypeName, $allowEditNames ) ) {
+                    $allow = true;
                 }
             }
         }
