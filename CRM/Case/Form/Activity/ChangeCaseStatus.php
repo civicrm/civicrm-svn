@@ -115,8 +115,9 @@ class CRM_Case_Form_Activity_ChangeCaseStatus
             && CRM_Utils_Array::value('activity_date_time', $params) ) {
             $params['end_date'] = $params['activity_date_time'];
             
-        } else if ( $params['case_status_id'] == 
-                    CRM_Core_OptionGroup::getValue( 'case_status', 'Open', 'name' ) ) {
+              
+        } else if ( $params['case_status_id'] != 
+                    CRM_Core_OptionGroup::getValue( 'case_status', 'Closed', 'grouping' ) ) {
             $params['end_date'] = "null";
         }
         

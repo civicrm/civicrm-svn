@@ -84,6 +84,11 @@
                     {ts}Label{/ts}
                 {/if}
             </th>
+	    {if $gName eq "case_status"}
+	    	<th>
+		    {ts}Status Class{/ts}
+		</th>	    
+            {/if}
             <th>
                 {if $gName eq "redaction_rule"}
                     {ts}Replacement{/ts}
@@ -107,7 +112,10 @@
             {if $showComponent}
                 <td>{$row.component_name}</td>
             {/if}
-	        <td>{$row.label}</td>	
+	        <td>{$row.label}</td>
+	    {if $gName eq "case_status"}				
+		<td>{$row.grouping}</td>
+            {/if}	
 	        <td>{$row.value}</td>
 		{if $showCounted}
 		<td class="yes-no">{if $row.filter eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>

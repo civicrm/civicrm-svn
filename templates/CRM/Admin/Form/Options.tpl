@@ -50,6 +50,9 @@
             <dt>{$form.label.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_value' field='label' id=$id}{/if}</dt><dd>{$form.label.html}</dd>
             <dt>&nbsp;</dt><dd class="description">{ts}The option label is displayed to users.{/ts}</dd>
         {/if}
+	{if $gName eq 'case_status'}
+	    <dt>{$form.grouping.label}</dt><dd>{$form.grouping.html}</dd>
+	{/if}
         {if $gName eq 'custom_search'}
             <dt>{ts}Search Title{/ts}</dt><dd>{$form.description.html}</dd>
             <dt>&nbsp;</dt><dd class="description">{ts}This title is displayed to users in the Custom Search listings.{/ts}</dd>

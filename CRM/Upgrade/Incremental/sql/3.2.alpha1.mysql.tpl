@@ -45,3 +45,14 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
     ALTER TABLE civicrm_email 
     	ADD `signature_text` text COLLATE utf8_unicode_ci COMMENT 'Text formatted signature for the email.',
 	ADD `signature_html` text COLLATE utf8_unicode_ci COMMENT 'HTML formatted signature for the email.';
+
+-- CRM-5787
+   UPDATE civicrm_option_value val
+       	LEFT JOIN civicrm_option_group gr ON ( gr.id = val.option_group_id )   
+	SET val.grouping = 'Opened' 
+	WHERE gr.name = 'case_status' AND val.name IN ( 'Open', 'Urgent' );
+   
+   UPDATE civicrm_option_value val
+       	LEFT JOIN civicrm_option_group gr ON ( gr.id = val.option_group_id )  	 
+	SET val.grouping = 'Closed'  
+	WHERE gr.name = 'case_status' AND val.name = 'Closed'; 

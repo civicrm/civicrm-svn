@@ -338,7 +338,8 @@ INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
     ( @domainID, 'civicrm/admin/options/case_type&group=case_type&reset=1',            '{ts escape="sql"}Case Types{/ts}',      'Case Types',      'access CiviCase,administer CiviCRM', 'AND', @adminCaselastID, '1', NULL, 1 ), 
-    ( @domainID, 'civicrm/admin/options/redaction_rule&group=redaction_rule&reset=1',  '{ts escape="sql"}Redaction Rules{/ts}', 'Redaction Rules', 'access CiviCase,administer CiviCRM', 'AND', @adminCaselastID, '1', NULL, 2 );
+    ( @domainID, 'civicrm/admin/options/redaction_rule&group=redaction_rule&reset=1',  '{ts escape="sql"}Redaction Rules{/ts}', 'Redaction Rules', 'access CiviCase,administer CiviCRM', 'AND', @adminCaselastID, '1', NULL, 2 ),
+    ( @domainID, 'civicrm/admin/options/case_status&group=case_status&reset=1',  '{ts escape="sql"}Case Statuses{/ts}', 'Case Statuses', 'access CiviCase,administer CiviCRM', 'AND', @adminCaselastID, '1', NULL, 2 );
 
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )

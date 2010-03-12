@@ -145,6 +145,16 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
                         ts('This Label already exists in the database for this option group. Please select a different Value.'),
                         'optionExists',
                         array( 'CRM_Core_DAO_OptionValue', $this->_id, $this->_gid, 'label' ) );
+
+        if ( $this->_gName == 'case_status' ) {
+            $classes = array( 'Opened' => ts('Opened'),
+                              'Closed' => ts('Closed') );
+            
+            $grouping = $this->add( 'select',
+                                    'grouping',
+                                    ts(' Status Class' ),
+                                    $classes );
+        }       
         
         $required = false;
         if ( $this->_gName == 'custom_search' ) {
@@ -202,7 +212,8 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         $enabled = $this->add('checkbox', 'is_active', ts('Enabled?'));
         
         if ($isReserved) {
-            $enabled->freeze();
+            $enabled->freeze( );
+            $grouping->freeze( );
         }
         
         //fix for CRM-3552, CRM-4575
@@ -249,6 +260,9 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
     static function formRule( $fields, $files, $self ) 
     {
         $errors = array( );
+        if ( isset( $fields['grouping'] ) && !$fields['grouping'] ) {
+            $errors['grouping'] = ts('Status class is a required field');
+        } 
         if ( $self->_gName == 'from_email_address' ) {
             require_once 'CRM/Utils/Mail.php';
             $formEmail = CRM_Utils_Mail::pluckEmailFromHeader( $fields['label'] );

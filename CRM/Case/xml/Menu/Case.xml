@@ -94,6 +94,16 @@
     <weight>400</weight>
   </item>
   <item>
+    <path>civicrm/admin/options/case_status</path>
+    <title>Case Statuses</title>
+    <desc>List of statuses that can be assigned to a case.</desc>
+    <path_arguments>group=case_status</path_arguments>
+    <page_callback>CRM_Admin_Page_Options</page_callback>
+    <adminGroup>CiviCase</adminGroup>
+    <icon>admin/small/case_status</icon>
+    <weight>400</weight>
+  </item>
+  <item>
     <path>civicrm/case/report/print</path>
     <page_callback>CRM_Case_XMLProcessor_Report::printCaseReport</page_callback>
     <access_arguments>access CiviCase</access_arguments>
