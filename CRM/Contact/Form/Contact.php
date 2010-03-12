@@ -524,6 +524,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         // take the location blocks.
         $blocks = CRM_Core_BAO_Preferences::valueOptions( 'contact_edit_options', true, null, 
                                                           false, 'name', true, 'AND v.filter = 1' );
+                                                                  
         $otherEditOptions = CRM_Core_BAO_Preferences::valueOptions( 'contact_edit_options', true, null,
                                                                     false, 'name', true, 'AND v.filter = 0');
         //get address block inside.
@@ -539,11 +540,17 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             if ( CRM_Utils_Array::value( $name, $fields ) && is_array( $fields[$name] ) ) {
                 foreach ( $fields[$name] as $instance => $blockValues ) {
                     $dataExists = self::blockDataExists( $blockValues );
+                    
                     if ( !$dataExists && $name == 'address' &&  $instance == 1 ) {
                         $dataExists = CRM_Utils_Array::value( 'use_household_address', $fields );
                     }
                     
                     if ( $dataExists ) {
+                        // skip remaining checks for website
+                        if ( $name == 'website' ) {
+                            continue;
+                        }
+                        
                         $hasData[] = $instance;
                         if ( CRM_Utils_Array::value( 'is_primary', $blockValues ) ) {
                             $hasPrimary[] = $instance;
@@ -876,12 +883,12 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     static function blockDataExists( &$fields ) {
         if ( !is_array( $fields ) ) return false;
         
-        static $skipFields = array( 'location_type_id', 'is_primary', 'phone_type_id', 'provider_id', 'country_id' );
+        static $skipFields = array( 'location_type_id', 'is_primary', 'phone_type_id', 'provider_id', 'country_id', 'website_type_id' );
         foreach ( $fields as $name => $value ) {
             $skipField = false;
             foreach ( $skipFields as $skip ) {
                 if ( strpos( "[$skip]", $name ) !== false ) {
-                    if($name == 'phone') continue;
+                    if ($name == 'phone') continue;
                     $skipField = true;
                     break;
                 }

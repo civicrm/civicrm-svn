@@ -298,6 +298,10 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             $contact->$name = $value;  
         }
         
+        //add website
+        require_once 'CRM/Core/BAO/Website.php';
+        CRM_Core_BAO_Website::create( $params['website'], $contact->id );
+
         //get userID from session
         $session =& CRM_Core_Session::singleton( );
         $userID  = $session->get( 'userID' );
@@ -574,6 +578,11 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         
         if ( !isset( $params['noGroups'] ) ) { 
             $contact->groupContact =& CRM_Contact_BAO_GroupContact::getValues( $params, $defaults );
+        }
+        
+        if ( !isset( $params['noWebsite'] ) ) {
+            require_once 'CRM/Core/BAO/Website.php'; 
+            $contact->website =& CRM_Core_BAO_Website::getValues( $params, $defaults );
         }
         
         return $contact;

@@ -97,6 +97,13 @@ class CRM_Core_PseudoConstant
     private static $imProvider;
 
     /**
+     * website protocols
+     * @var array
+     * @static
+     */
+    private static $websiteType;
+    
+    /**
      * im protocols
      * @var array
      * @static
@@ -577,6 +584,31 @@ class CRM_Core_PseudoConstant
             self::$imProvider = CRM_Core_OptionGroup::values('instant_messenger_service');
         }        
         return self::$imProvider;
+    }
+
+
+    /**
+     * Get all the website types from database.
+     *
+     * The static array websiteType is returned, and if it's
+     * called the first time, the <b>Website DAO</b> is used 
+     * to get all the Website Types.
+     *
+     * Note: any database errors will be trapped by the DAO.
+     *
+     * @access public
+     * @static
+     *
+     * @return array - array reference of all IM providers.
+     *
+     */
+    public static function &websiteType( ) 
+    {
+        if ( ! self::$websiteType ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            self::$websiteType = CRM_Core_OptionGroup::values('website_type');
+        }        
+        return self::$websiteType;
     }
 
     /**
