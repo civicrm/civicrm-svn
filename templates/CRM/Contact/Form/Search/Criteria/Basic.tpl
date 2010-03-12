@@ -110,6 +110,7 @@
 	</tr>
         <tr>
             <td>{$form.contact_source.label}</td>
-            <td colspan="3">{$form.contact_source.html}</td>
+            <td>{$form.contact_source.html}</td>
+            <td colspan="2">{$form.job_title.label}&nbsp;&nbsp;{$form.job_title.html}</td>
         </tr>
     </table>

@@ -79,6 +79,10 @@ class CRM_Contact_Form_Search_Criteria {
         //added contact source
         $form->add('text', 'contact_source', ts('Contact Source'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'source') );
 
+        //added job title
+        $attributes['job_title']['size'] = 30;
+        $form->addElement('text', 'job_title', ts('Job Title'), $attributes['job_title'], 'size="30"' );
+
         // add checkbox for cms users only
         if (CIVICRM_UF != 'Standalone'){
           $form->addYesNo( 'uf_user', ts( 'CMS User?' ) );
