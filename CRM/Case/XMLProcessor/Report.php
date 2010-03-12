@@ -136,6 +136,7 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
             $case['caseType'] = CRM_Core_OptionGroup::getLabel( 'case_type',
                                                                 $caseTypeID );
 
+            require_once 'CRM/Case/PseudoConstant.php';
             $caseTypeName = CRM_Case_PseudoConstant::caseTypeName( $caseID );
             $case['caseTypeName'] = $caseTypeName['name'];
             $case['status'] = CRM_Core_OptionGroup::getLabel( 'case_status',
