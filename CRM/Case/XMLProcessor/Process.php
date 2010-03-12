@@ -55,7 +55,7 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
     }
 
     function get( $caseType,
-                  $fieldSet, $isLabel = false ) {
+                  $fieldSet, $isLabel = false, $maskAction = false ) {
         $xml = $this->retrieve( $caseType );
 
         if ( $xml === false ) {
@@ -72,7 +72,7 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
         case 'ActivitySets':
             return $this->activitySets( $xml->ActivitySets );
         case 'ActivityTypes':
-            return $this->activityTypes( $xml->ActivityTypes, false, $isLabel );
+            return $this->activityTypes( $xml->ActivityTypes, false, $isLabel, $maskAction );
         }
     }
 
@@ -207,33 +207,42 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
         return true;
     }
 
-    function activityTypes( $activityTypesXML, $maxInst = false, $isLabel = false ) {
+    function activityTypes( $activityTypesXML, $maxInst = false, $isLabel = false, $maskAction = false ) {
         $activityTypes =& $this->allActivityTypes( true, true );
         $result = array( );
         foreach ( $activityTypesXML as $activityTypeXML ) {
             foreach ( $activityTypeXML as $recordXML ) {
                 $activityTypeName = (string ) $recordXML->name;
                 $maxInstances     = (string ) $recordXML->max_instances;
+                if ( $maskAction == 'Edit') {
+                    $edit = (string ) $recordXML->editable;
+                }
                 $activityTypeInfo = CRM_Utils_Array::value( $activityTypeName, $activityTypes );
                               
                 if ( $activityTypeInfo['id'] ) {
-                    if ( !$maxInst ) {
-                        //if we want,labels of activities should be returned.
-                        if ( $isLabel ) {
-                            $result[$activityTypeInfo['id']] = $activityTypeInfo['label'];
-                        } else {
-                            $result[$activityTypeInfo['id']] = $activityTypeName;
+                    if ( $maskAction ) {
+                        if ( $edit === '0' ) {
+                            $result[$maskAction][] = $activityTypeInfo['id'];
                         }
-                    } else {
-                        if ( $maxInstances ) {
-                            $result[$activityTypeName] = $maxInstances;
+                    } else{
+                        if ( !$maxInst ) {
+                            //if we want,labels of activities should be returned.
+                            if ( $isLabel ) {
+                                $result[$activityTypeInfo['id']] = $activityTypeInfo['label'];
+                            } else {
+                                $result[$activityTypeInfo['id']] = $activityTypeName;
+                            }
+                        } else {
+                            if ( $maxInstances ) {
+                                $result[$activityTypeName] = $maxInstances;
+                            }
                         }
                     }
                 }
             }
         }
+        
         return $result;
-
     }
 
     function deleteEmptyActivity( &$params ) {

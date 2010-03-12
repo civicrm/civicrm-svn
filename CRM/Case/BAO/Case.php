@@ -1020,7 +1020,9 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             if ( !$dao->deleted ) {
                 //hide edit link of activity type email.CRM-4530.
                 if ( ! in_array($dao->type, $emailActivityTypeIDs) ) {
-                    if ( self::checkOperation( $dao->activity_type_id, 'Edit' ) ) {
+                    //hide Edit link if activity type is NOT editable (special case activities).CRM-5871
+                    if ( self::getMaskedActions( $dao->activity_type_id, 'Edit' ) &&
+                         self::checkOperation( $dao->activity_type_id, 'Edit' ) ) {
                         $url = "<a href='" .$editUrl.$additionalUrl."'>". ts('Edit') . "</a> ";
                     }
                 }
@@ -2180,6 +2182,36 @@ SELECT id, subject, activity_date_time
             self::processCaseActivity( $mergeCaseAct );
         }
         return $mainCaseIds;
+    }
+     
+    /**
+     * Checks Settings file for masking actions 
+     * on the basis the activity types
+     *
+     * @param int     $actTypeId       activity type id.
+     *
+     * @return boolean $allow  true/false
+     * @static
+     */
+    function getMaskedActions( $actTypeId, $operation )  
+    {
+        $allow = true;
+        
+        static $maskAction;
+        if (!is_array( $maskAction) ) {
+            require_once 'CRM/Case/XMLProcessor/Process.php';
+            $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
+            $maskAction   = $xmlProcessor->get( 'Settings', 'ActivityTypes', false, $operation );
+        }
+        
+        if ( array_key_exists($operation, $maskAction) && 
+             in_array( $actTypeId, $maskAction[$operation] ) ) {
+            $allow = false;
+        } else {
+            $allow = true;
+        }
+        
+        return $allow;
     }
     
     /**
