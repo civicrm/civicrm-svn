@@ -136,6 +136,11 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
 
         $this->applyFilter('__ALL__', 'trim');
         
+        $isReserved = false;
+        if ($this->_id) {
+            $isReserved = (bool) CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $this->_id, 'is_reserved');
+        }
+
         $this->add('text',
                    'label',
                    ts('Label'),
@@ -152,8 +157,9 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
             
             $grouping = $this->add( 'select',
                                     'grouping',
-                                    ts(' Status Class' ),
+                                    ts('Status Class'),
                                     $classes );
+            if ( $isReserved ) $grouping->freeze( );
         }       
         
         $required = false;
@@ -189,11 +195,6 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
                    true);
         $this->addRule('weight', ts('is a numeric field') , 'numeric');
 
-        $isReserved = false;
-        if ($this->_id) {
-            $isReserved = (bool) CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $this->_id, 'is_reserved');
-        }
-
         // If CiviCase enabled AND "Add" mode OR "edit" mode for non-reserved activities, only allow user to pick Core or CiviCase component.
         // FIXME: Each component should define whether adding new activity types is allowed.
         require_once 'CRM/Core/Config.php';
@@ -213,7 +214,6 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         
         if ($isReserved) {
             $enabled->freeze( );
-            $grouping->freeze( );
         }
         
         //fix for CRM-3552, CRM-4575
@@ -260,7 +260,7 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
     static function formRule( $fields, $files, $self ) 
     {
         $errors = array( );
-        if ( isset( $fields['grouping'] ) && !$fields['grouping'] ) {
+        if ( $self->_gName == 'case_status' && !CRM_Utils_Array::value( 'grouping', $fields ) ) {
             $errors['grouping'] = ts('Status class is a required field');
         } 
         if ( $self->_gName == 'from_email_address' ) {
