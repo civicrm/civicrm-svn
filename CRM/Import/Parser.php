@@ -51,7 +51,8 @@ abstract class CRM_Import_Parser {
         STOP            = 16,
         DUPLICATE       = 32,
         MULTIPLE_DUPE   = 64,
-        NO_MATCH        = 128;
+        NO_MATCH        = 128,
+        UNPARSED_ADDRESS_WARNING = 256;
 
     /**
      * various parser modes
@@ -158,6 +159,11 @@ abstract class CRM_Import_Parser {
      * maximum number of warnings to store
      */
     protected $_maxWarningCount = self::MAX_WARNINGS;
+
+    /**
+     * total number of contacts with unparsed addresses
+     */
+    protected $_unparsedAddressCount;
 
     /**
      * array of warning lines, bounded by MAX_WARNING
@@ -293,6 +299,7 @@ abstract class CRM_Import_Parser {
         $this->_errors   = array();
         $this->_warnings = array();
         $this->_conflicts = array();
+        $this->_unparsedAddresses = array();
 
         $status = '';
         
@@ -453,6 +460,11 @@ abstract class CRM_Import_Parser {
                 }
             }
 
+            if ( $returnCode & self::UNPARSED_ADDRESS_WARNING ) {
+                $this->_unparsedAddressCount++;
+                array_unshift( $values, $this->_rowCount );
+                $this->_unparsedAddresses[] = $values;
+            }
             // we give the derived class a way of aborting the process
             // note that the return code could be multiple code or'ed together
             if ( $returnCode & self::STOP ) {
@@ -516,7 +528,13 @@ abstract class CRM_Import_Parser {
                 $this->_misMatchFilemName = $fileName . '.mismatch';
                 self::exportCSV($this->_misMatchFilemName, $headers,$this->_unMatch);
             }
-            
+            if ( $this->_unparsedAddressCount ) {
+                $headers = array_merge( array(  ts('Line Number'),
+                                                ts('Contact Edit URL') ), 
+                                        $customHeaders );
+                $this->_errorFileName= $fileName . '.errors';
+                self::exportCSV( $this->_errorFileName, $headers, $this->_unparsedAddresses );
+            }
         }
         //echo "$this->_totalCount,$this->_invalidRowCount,$this->_conflictCount,$this->_duplicateCount";
         return $this->fini();
@@ -829,10 +847,13 @@ abstract class CRM_Import_Parser {
         
         if ($mode == self::MODE_IMPORT) {
             $store->set( 'duplicateRowCount', $this->_duplicateCount );
+            $store->set( 'unparsedAddressCount', $this->_unparsedAddressCount );
             if ($this->_duplicateCount) {
                 $store->set( 'duplicatesFileName', $this->_duplicateFileName );
             }
-           
+            if ( $this->_unparsedAddressCount ) {
+                $store->set( 'errorsFileName', $this->_errorFileName );
+            }
         }
         //echo "$this->_totalCount,$this->_invalidRowCount,$this->_conflictCount,$this->_duplicateCount";
     }

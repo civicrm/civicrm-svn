@@ -92,6 +92,13 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
     protected $_newRelatedContacts;
 
     /**
+     * array of all the contacts whose street addresses are not parsed
+     * of this import process
+     * @var array
+     */
+    protected $_unparsedStreetAddressContacts;
+
+    /**
      * class constructor
      */
     function __construct( &$mapperKeys, $mapperLocType = null, $mapperPhoneType = null, 
@@ -416,6 +423,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
     function import( $onDuplicate, &$values, $doGeocodeAddress = false ) 
     { 
         $config =& CRM_Core_Config::singleton( );
+        $this->_unparsedStreetAddressContacts = array( );
         if ( ! $doGeocodeAddress ) {
             // CRM-5854, reset the geocode method to null to prevent geocoding
             $config->geocodeMethod = null;
@@ -878,9 +886,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
         }
         if( $this->_updateWithId ) {
-            $importRecordParams = array($statusFieldName => 'IMPORTED');
-            $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
-            return $this->_retCode;
+            //return warning if street address is unparsed, CRM-5886
+            return $this->processMessage( $values, $statusFieldName, $this->_retCode );
         }
         //dupe checking      
         if ( is_array( $newContact ) && civicrm_error( $newContact ) ) {
@@ -915,7 +922,6 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
                     return CRM_Import_Parser::ERROR;
                 }
-                array_unshift($values, $url_string); 
                 
                 // Params only had one id, so shift it out 
                 $contactId = array_shift( $cids );
@@ -946,6 +952,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 }
                 //CRM-262 No Duplicate Checking  
                 if ($onDuplicate == CRM_Import_Parser::DUPLICATE_SKIP) {
+                    array_unshift( $values, $url_string );
                     $importRecordParams = array($statusFieldName => 'DUPLICATE', "${statusFieldName}Msg" => "Skipping duplicate record");
                     $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
                     return CRM_Import_Parser::DUPLICATE; 
@@ -953,7 +960,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 
                 $importRecordParams = array($statusFieldName => 'IMPORTED');
                 $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
-                return CRM_Import_Parser::VALID;
+                //return warning if street address is not parsed, CRM-5886
+                return $this->processMessage( $values, $statusFieldName, CRM_Import_Parser::VALID );
             } else { 
                 // Not a dupe, so we had an error
                 $errorMessage = $newContact['error_message'];
@@ -964,9 +972,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
         }
         // sleep(3);
-        $importRecordParams = array($statusFieldName => 'IMPORTED');
-        $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
-        return CRM_Import_Parser::VALID;
+        return $this->processMessage( $values, $statusFieldName, CRM_Import_Parser::VALID );
     }
 
     /**
@@ -1512,6 +1518,17 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             $newContact = CRM_Contact_BAO_Contact::retrieve($contact, $defaults );
         }
         
+        //get the id of the contact whose street address is not parsable, CRM-5886
+        if ( $this->_parseStreetAddress && $newContact->address ) {
+            foreach ( $newContact->address as $address ) {
+                if ( $address['street_address'] && 
+                     ( ! CRM_Utils_Array::value( 'street_number', $address ) ||
+                       ! CRM_Utils_Array::value( 'street_name', $address ) ) ) {
+                    $this->_unparsedStreetAddressContacts[] = array( 'id'            => $newContact->id, 
+                                                                     'streetAddress' => $address['street_address'] );
+                }  
+            }
+        }
         return $newContact;
     }
     
@@ -1882,6 +1899,31 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         
     }
     
+    /**
+     * Function to generate status and error message for unparsed street address records.
+     *
+     * @param array  $values           the array of values belonging to each row
+     * @param array  $statusFieldName  store formatted date in this array
+     
+     * @access public
+     */
+    function processMessage( &$values, $statusFieldName, $returnCode ) 
+    {
+        if ( empty( $this->_unparsedStreetAddressContacts ) ) {
+            $importRecordParams = array( $statusFieldName => 'IMPORTED' );
+        } else {
+            $errorMessage = ts( "Record imported successfully but unable to parse the street address: " );
+            foreach ( $this->_unparsedStreetAddressContacts as $contactInfo => $contactValue ) {
+                $contactUrl = CRM_Utils_System::url( 'civicrm/contact/add', 'reset=1&action=update&cid=' . $contactValue['id'], true, null, false );
+                $errorMessage .= "\n Contact ID:". $contactValue['id'] . " <a href=\"$contactUrl\"> " . $contactValue['streetAddress'] . "</a>";
+            }
+            array_unshift( $values, $errorMessage );
+            $importRecordParams = array( $statusFieldName => 'ERROR', "${statusFieldName}Msg" => $errorMessage );
+            $returnCode = CRM_Import_Parser::UNPARSED_ADDRESS_WARNING;
+        }
+        $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
+        return $returnCode;        
+    }
 }
 
 
