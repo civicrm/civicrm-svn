@@ -40,11 +40,14 @@
     </tr>
    {/if}
    {if $myCases}
+    {* check for access all cases and activities *}
+    {if call_user_func(array('CRM_Core_Permission','check'), 'access all cases and activities')}
     <tr>
       <td class="right">
         <a href="{crmURL p="civicrm/case" q="reset=1&all=1"}"><span>&raquo; {ts}Show ALL Cases with Upcoming Activities{/ts}</span></a>
       </td>
     </tr>
+    {/if}
    {else}	
     <tr>
       <td class="right">

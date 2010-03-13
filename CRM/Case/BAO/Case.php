@@ -416,28 +416,38 @@ INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_g
      * @access public
      * 
      */
-     static function getContactNames( $caseId ) 
-     {
-        $queryParam = array();
-        $query = "
-                  SELECT contact_a.sort_name name, contact_a.display_name as display_name, contact_a.id cid, ce.email as email, cp.phone as phone
-                  FROM civicrm_contact contact_a 
-                  LEFT JOIN civicrm_case_contact ON civicrm_case_contact.contact_id = contact_a.id
-                  LEFT JOIN civicrm_email ce ON ( ce.contact_id = contact_a.id AND ce.is_primary = 1)
-                  LEFT JOIN civicrm_phone cp ON ( cp.contact_id = contact_a.id AND cp.is_primary = 1)
-                  WHERE civicrm_case_contact.case_id = {$caseId}";
-
-            $dao = CRM_Core_DAO::executeQuery($query,$queryParam);
-            $contactNames = array();
-            while ( $dao->fetch() ) {
-                $contactNames['contact_id']   =  $dao->cid;
-                $contactNames['sort_name']    =  $dao->name;
-                $contactNames['display_name'] =  $dao->display_name;
-                $contactNames['email']        =  $dao->email;
-                $contactNames['phone']        =  $dao->phone;
-                $contactNames['role']         =  ts('Client');
-            }
+    static function getContactNames( $caseId ) 
+    {
+        $contactNames = array( );
+        if ( !$caseId ) {
             return $contactNames;
+        }
+        
+        $query ="
+    SELECT  contact_a.sort_name name, 
+            contact_a.display_name as display_name, 
+            contact_a.id cid, 
+            contact_a.birth_date as birth_date,
+            ce.email as email,
+            cp.phone as phone
+      FROM  civicrm_contact contact_a 
+ LEFT JOIN  civicrm_case_contact ON civicrm_case_contact.contact_id = contact_a.id
+ LEFT JOIN  civicrm_email ce ON ( ce.contact_id = contact_a.id AND ce.is_primary = 1)
+ LEFT JOIN  civicrm_phone cp ON ( cp.contact_id = contact_a.id AND cp.is_primary = 1)
+     WHERE  civicrm_case_contact.case_id = %1";
+        
+        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $caseId, 'Integer' ) ) );
+        while ( $dao->fetch() ) {
+            $contactNames['contact_id']   =  $dao->cid;
+            $contactNames['sort_name']    =  $dao->name;
+            $contactNames['display_name'] =  $dao->display_name;
+            $contactNames['email']        =  $dao->email;
+            $contactNames['phone']        =  $dao->phone;
+            $contactNames['birth_date']   =  $dao->birth_date;
+            $contactNames['role']         =  ts('Client');
+        }
+        
+        return $contactNames;
     }
      
     /** 

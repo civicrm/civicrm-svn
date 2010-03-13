@@ -34,6 +34,7 @@
  *
  */
 
+require_once 'CRM/Case/BAO/Case.php';
 require_once 'CRM/Case/Selector/Search.php';
 require_once 'CRM/Core/Selector/Controller.php';
 
@@ -139,6 +140,11 @@ class CRM_Case_Form_Search extends CRM_Core_Form
      */ 
     function preProcess( ) 
     { 
+        //check for civicase access.
+        if ( !CRM_Case_BAO_Case::accessCiviCase( ) ) {
+            CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+        }
+        
         // Make sure case types have been configured for the component
         require_once 'CRM/Core/OptionGroup.php';        
         $caseType = CRM_Core_OptionGroup::values('case_type');
@@ -335,6 +341,11 @@ class CRM_Case_Form_Search extends CRM_Core_Form
             } else if ( array_key_exists('case_owner', $this->_formValues ) ) {
                 $this->_formValues['case_owner'] = 1;
             } 
+        }
+        
+        //only fetch own cases.
+        if ( !CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+            $this->_formValues['case_owner'] = 0;
         }
  
         if ( ! CRM_Utils_Array::value( 'case_deleted', $this->_formValues ) ) {

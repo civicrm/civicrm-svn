@@ -579,10 +579,16 @@ case_relation_type.id = case_relationship.relationship_type_id )";
         
         $form->assign( 'validCiviCase', true );
     
-        $caseOwner = array( ts('My Cases'), ts('All Cases') );
-        $form->addRadio( 'case_owner', ts( 'Cases' ), $caseOwner );
-        $form->setDefaults(array('case_owner' => 1));
-
+        //give options when all cases are accessible.
+        $accessAllCases = false;
+        if ( CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+            $accessAllCases = true;
+            $caseOwner = array( ts('My Cases'), ts('All Cases') );
+            $form->addRadio( 'case_owner', ts( 'Cases' ), $caseOwner );
+            $form->setDefaults(array('case_owner' => 1));
+        }
+        $form->assign( 'accessAllCases', $accessAllCases );
+        
         require_once"CRM/Core/Permission.php";
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) { 
             $form->addElement( 'checkbox', 'case_deleted' , ts( 'Deleted Cases' ) );

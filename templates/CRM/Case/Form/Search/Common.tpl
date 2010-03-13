@@ -41,7 +41,9 @@
   <td>
     {$form.case_status_id.label}<br /> 
     {$form.case_status_id.html}<br /><br />	
+    {if $accessAllCases}
     {$form.case_owner.html} &nbsp;<a href="javascript:unselectRadio('case_owner', '{$form.formName}')">unselect</a><br />
+    {/if}
     {if $form.case_deleted}	
         {$form.case_deleted.html}	
         {$form.case_deleted.label}	

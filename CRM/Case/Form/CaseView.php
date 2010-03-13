@@ -75,11 +75,27 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             return;
         }
         
+        //check for civicase access.
+        if ( !CRM_Case_BAO_Case::accessCiviCase( ) ) {
+            CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+        }
+        $this->_hasAccessToAllCases = CRM_Core_Permission::check( 'access all cases and activities' );
+        $this->assign( 'hasAccessToAllCases', $this->_hasAccessToAllCases );
+        
         $this->_contactID = $this->get('cid');
         $this->_caseID    = $this->get('id');
             
         $this->assign( 'caseID', $this->_caseID );
         $this->assign( 'contactID', $this->_contactID );
+
+        //validate case id.
+        if ( !$this->_hasAccessToAllCases ) {
+            $session  = CRM_Core_Session::singleton( );
+            $allCases = CRM_Case_BAO_Case::getCases( true, $session->get( 'userID' ) );
+            if ( !array_key_exists( $this->_caseID, $allCases ) ) {
+                CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+            }
+        }
 
         if ( CRM_Case_BAO_Case::caseCount( $this->_contactID ) >= 2 ) {
             $this->_mergeCases = true;
@@ -207,8 +223,12 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         asort( $aTypes );
         
         $this->add('select', 'activity_type_id',  ts( 'New Activity' ), array( '' => ts( '- select activity type -' ) ) + $aTypes );
-        $this->add('select', 'report_id',  ts( 'Run QA Audit / Redact' ), array( '' => ts( '- select activity set -' ) ) + $reports );
-        $this->add('select', 'timeline_id',  ts( 'Add Timeline' ), array( '' => ts( '- select activity set -' ) ) + $reports );
+        if ( $this->_hasAccessToAllCases ) {
+            $this->add('select', 'report_id',  ts( 'Run QA Audit / Redact' ), 
+                       array( '' => ts( '- select activity set -' ) ) + $reports );
+            $this->add('select', 'timeline_id',  ts( 'Add Timeline' ), 
+                       array( '' => ts( '- select activity set -' ) ) + $reports );
+        }
         $this->addElement( 'submit', $this->getButtonName('next'), ts('Go'), 
                            array( 'class'   => 'form-submit-inline',
                                   'onclick' => "return checkSelection( this );") ); 
@@ -252,7 +272,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                                                                                      
 		//get case related relationships (Case Role)
         $caseRelationships = CRM_Case_BAO_Case::getCaseRoles( $this->_contactID, $this->_caseID );
-        
+       
         //build reporter select
         $reporters = array( "" => ts(' - any reporter - ') );
         foreach( $caseRelationships as $key => &$value ) {

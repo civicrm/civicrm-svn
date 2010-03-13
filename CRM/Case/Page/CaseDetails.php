@@ -63,20 +63,16 @@ class CRM_Case_Page_CaseDetails extends CRM_Core_Page
             
         require_once 'CRM/Case/BAO/Case.php';
         $params = array( 'date_range' => 0 );
-       
-        $caseDetails = CRM_Case_BAO_Case::getCaseActivity( $caseId, $params, $this->_contactId );
-
-        $this->assign( 'rows'     , $caseDetails );
-        $this->assign( 'caseId' , $caseId );
-        $this->assign( 'contactId', $this->_contactId );
-            
-        // check is the user has view/edit signer permission
-        $permission = 'view';
-        if ( CRM_Core_Permission::check( 'edit cases' ) ) {
-            $permission = 'edit';
+        
+        $caseDetails = array( );
+        if ( CRM_Case_BAO_Case::accessCiviCase( ) ) {
+            $caseDetails = CRM_Case_BAO_Case::getCaseActivity( $caseId, $params, $this->_contactId );
         }
-        $this->assign( 'permission', $permission );
-
+        
+        $this->assign( 'rows',      $caseDetails );
+        $this->assign( 'caseId' ,   $caseId );
+        $this->assign( 'contactId', $this->_contactId );
+        
         return parent::run();
     }
 

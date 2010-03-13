@@ -51,12 +51,17 @@
         <tr>
             <td>
 		<table class="form-layout-compressed">
-      	       	   <tr><td class="label-left" style="padding: 0px">{ts}Client{/ts}:</td>
-		       <td class="label-left" style="padding: 0px">{$displayName}</td>
+      	       	   <tr>
+		     <td class="label-left" style="padding: 0px">{$displayName}</td>
 		   </tr>
 	       	   {if $caseRoles.client.phone}
-		       <tr><td class="label" style="padding: 0px" ></td>
+		       <tr>
 		       	   <td class="label-left description" style="padding: 0px">{$caseRoles.client.phone}</td>
+		       </tr>
+		   {/if}
+		   {if $caseRoles.client.birth_date}
+		       <tr>
+		       	   <td class="label-left description" style="padding: 0px">{ts}DOB{/ts}: {$caseRoles.client.birth_date|crmDate}</td>
 		       </tr>
 		   {/if}
 	    	</table>
@@ -87,8 +92,10 @@
             <td colspan="2">{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>
 		</tr>
 		<tr>
+	    {if $hasAccessToAllCases}	
             <td>{$form.timeline_id.label}<br />{$form.timeline_id.html}&nbsp;{$form._qf_CaseView_next.html}</td> 
             <td>{$form.report_id.label}<br />{$form.report_id.html}&nbsp;<input type="button" accesskey="R" value="Go" name="case_report" onclick="checkSelection( this );"/></td> 
+	    {/if}
         </tr>
 	{if $hasRelatedCases}
 	<tr>
@@ -125,8 +132,12 @@
 <div id="caseRole" class="section-shown">
  <fieldset>
   <legend><a href="#" onclick="hide('caseRole'); show('caseRole_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Case Roles{/ts}</legend>
-
-    <div><input type="button" class="form-submit default" onClick="Javascript:addRole()" value="{ts}Add new role{/ts}" /></div>
+    
+    {if $hasAccessToAllCases}
+    <div>
+      <input type="button" class="form-submit default" onClick="Javascript:addRole()" value="{ts}Add new role{/ts}" />
+    </div>
+    {/if}
 
     <table class="report">
     	<tr class="columnheader">
@@ -143,10 +154,10 @@
             <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
            
             <td id="phone_{$rowNumber}">{$row.phone}</td><td id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><img src="{$config->resourceBase}i/EnvelopeIn.gif" alt="{ts}compose and send an email{/ts}"/></a>&nbsp;{/if}</td>
-          {if $relId neq 'client'}
+          {if $relId neq 'client' and $hasAccessToAllCases}
             <td id ="edit_{$rowNumber}"><img src="{$config->resourceBase}i/edit.png" title="edit case role" onclick="createRelationship( {$row.relation_type}, {$row.cid}, {$relId}, {$rowNumber} );">&nbsp;&nbsp;<a href="{crmURL p='civicrm/contact/view/rel' q="action=delete&reset=1&cid=`$contactID`&id=`$relId`&caseID=`$caseID`"}" onclick = "if (confirm('{ts}Are you sure you want to remove this person from their case role{/ts}?') ) this.href+='&confirmed=1'; else return false;"><img title="remove contact from case role" src="{$config->resourceBase}i/delete.png"/></a></td>
           {else}
-            <td></td>
+           <td></td>
           {/if}
         </tr>
 		{assign var=rowNumber value = `$rowNumber+1`}
@@ -159,7 +170,12 @@
                <td id="relName_{$rowNumber}">(not assigned)</td>
                <td id="phone_{$rowNumber}"></td>
                <td id="email_{$rowNumber}"></td>
-               <td id ="edit_{$rowNumber}"><img title="assign contact to case role" src="{$config->resourceBase}i/edit.png" onclick="createRelationship( {$relTypeID}, null, null, {$rowNumber} );"></td>
+	       {if $hasAccessToAllCases}               
+	       <td id ="edit_{$rowNumber}"><img title="assign contact to case role" src="{$config->resourceBase}i/edit.png" onclick="createRelationship( {$relTypeID}, null, null, {$rowNumber} );"> 
+	       </td>
+	       {else}
+	       <td></td>
+	       {/if}
            </tr>
          {else}
            <tr>
@@ -175,6 +191,7 @@
     </table>    
  </fieldset>
 </div>
+
 <div id="dialog">
      {ts}Begin typing last name of contact.{/ts}<br/>
      <input type="text" id="rel_contact"/>
@@ -189,6 +206,7 @@ var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=newc
 cj( "#change_client_id").autocomplete( contactUrl, { width : 250, selectFirst : false, matchContains:true
                             }).result( function(event, data, formatted) { cj( "#contact_id" ).val( data[1] ); selectedContact = data[0];
                             }).bind( 'click', function( ) { cj( "#contact_id" ).val(''); });
+
 
 show('caseRole_show');
 hide('caseRole');
@@ -350,6 +368,7 @@ cj(document).ready(function(){
 </script>
 {/literal}
 
+{if $hasAccessToAllCases}
 <div id="otherRel_show" class="section-hidden section-hidden-border">
   <a href="#" onclick="hide('otherRel_show'); show('otherRel'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Other Relationships{/ts}</label><br />
 </div>
@@ -422,12 +441,15 @@ cj(document).ready(function(){
 
  </fieldset>
 </div>
+
 {literal}
 <script type="text/javascript">
-show('otherRel_show');
-hide('otherRel');
-</script>
+   	
+   show('otherRel_show');
+   hide('otherRel');
+ </script>
 {/literal}
+{/if} {* other relationship section ends *} 
 
 <div id="addRoleDialog">
 {$form.role_type.label}<br />

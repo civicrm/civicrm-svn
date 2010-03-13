@@ -105,12 +105,36 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         if ( $this->_caseId ) {
             $this->assign( 'caseId', $this->_caseId );
         }
-
+        
         if ( !$this->_caseId ||
              (!$this->_activityId && !$this->_activityTypeId) ) {
             CRM_Core_Error::fatal('required params missing.');            
         }
-
+        
+        //check for case activity access.
+        if ( !CRM_Case_BAO_Case::accessCiviCase( ) ) {
+            CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+        }
+        //validate case id.
+        if ( $this->_caseId && 
+             !CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+            $session  = CRM_Core_Session::singleton( );
+            $allCases = CRM_Case_BAO_Case::getCases( true, $session->get( 'userID' ) );
+            if ( !array_key_exists( $this->_caseId, $allCases ) ) {
+                CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+            }
+        }
+        //validate case activity id.
+        if ( $this->_activityId &&
+             ($this->_action & CRM_Core_Action::UPDATE) &&
+             !CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+            $valid = CRM_Case_BAO_Case::checkPermission( $this->_activityId, 'edit', 
+                                                         $this->_activityTypeId, null, $this->_caseId );
+            if ( !$valid ) {
+                CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) ); 
+            }
+        }
+        
         $caseType  = CRM_Case_PseudoConstant::caseTypeName( $this->_caseId );
         $this->_caseType  = $caseType['name'];
         $this->assign('caseType', $this->_caseType);

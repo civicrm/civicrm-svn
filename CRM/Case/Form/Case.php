@@ -117,7 +117,16 @@ class CRM_Case_Form_Case extends CRM_Core_Form
                                                                      'Open Case',
                                                                      'name' );  
         }
-      
+        
+        //check for case permissions.
+        if ( !CRM_Case_BAO_Case::accessCiviCase( ) ) {
+            CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+        }
+        if ( ($this->_action & CRM_Core_Action::ADD) && 
+             !CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+            CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+        }
+        
         if ( $this->_activityTypeFile = CRM_Activity_BAO_Activity::getFileForActivityTypeId($this->_activityTypeId, 'Case') ) {
             require_once "CRM/Case/Form/Activity/{$this->_activityTypeFile}.php";
             $this->assign( 'activityTypeFile', $this->_activityTypeFile );
