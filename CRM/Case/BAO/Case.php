@@ -610,7 +610,18 @@ WHERE cc.contact_id = %1
     function getCases( $allCases = true, $userID = null, $type = 'upcoming' )
     {
         $condition = null;
-       
+        $casesList = array( );
+        
+        //validate access for own cases.
+        if ( !self::accessCiviCase( ) ) {
+            return $casesList;
+        }
+        
+        //validate access for all cases.
+        if ( $allCases && !CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+            $allCases = false;
+        }
+        
         if ( !$allCases ) {
             $condition = " AND case_relationship.contact_id_b = {$userID}";
         }
@@ -665,7 +676,7 @@ AND civicrm_case.status_id != $closedId";
         $actions = CRM_Case_Selector_Search::links();
 
         require_once "CRM/Contact/BAO/Contact/Utils.php";
-        $casesList = array( );
+        
         // check is the user has view/edit signer permission
         $permissions = array( CRM_Core_Permission::VIEW );
         if ( CRM_Core_Permission::check( 'edit cases' ) ) {
@@ -712,18 +723,30 @@ AND civicrm_case.status_id != $closedId";
      */
     function getCasesSummary( $allCases = true, $userID )
     {
+        $caseSummary = array( );
+        
+        //validate access for civicase.
+        if ( !self::accessCiviCase( ) ) {
+            return $caseSummary;
+        }
+        
+        //validate access for all cases.
+        if ( $allCases && !CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+            $allCases = false;
+        }
+        
         require_once 'CRM/Core/OptionGroup.php';
         $caseStatuses = CRM_Core_OptionGroup::values( 'case_status' );
         $caseTypes    = CRM_Core_OptionGroup::values( 'case_type' );
         $caseTypes    = array_flip( $caseTypes );  
-     
+        
         // get statuses as headers for the table
-         $url =  CRM_Utils_System::url( 'civicrm/case/search',"reset=1&force=1&all=1&status=" ) ;
-         foreach( $caseStatuses as $key => $name ) {
-             $caseSummary['headers'][$key]['status'] = $name; 
-             $caseSummary['headers'][$key]['url']    = $url.$key; 
-         }
-               
+        $url =  CRM_Utils_System::url( 'civicrm/case/search',"reset=1&force=1&all=1&status=" ) ;
+        foreach( $caseStatuses as $key => $name ) {
+            $caseSummary['headers'][$key]['status'] = $name; 
+            $caseSummary['headers'][$key]['url']    = $url.$key; 
+        }
+        
         // build rows with actual data
         $rows = array();
         $myGroupByClause = $mySelectClause = $myCaseFromClause = $myCaseWhereClause = '';
@@ -2394,16 +2417,22 @@ SELECT id, subject, activity_date_time
      */
     function accessCiviCase( ) 
     {
-        $allow = false;
-        $config = CRM_Core_Config::singleton( );
-        if ( in_array( 'CiviCase', $config->enableComponents ) ) {
-            if ( CRM_Core_Permission::check( 'access my cases and activities' ) ||
-                 CRM_Core_Permission::check( 'access all cases and activities' ) ) {
-                $allow = true;  
+        static $componentEnabled;
+        if ( !isset( $componentEnabled ) ) {
+            $componentEnabled = false;
+            $config = CRM_Core_Config::singleton( );
+            if (  in_array( 'CiviCase', $config->enableComponents ) ) {
+                $componentEnabled = true; 
             }
         }
+        if ( !$componentEnabled ) return false;
         
-        return $allow;
+        if ( CRM_Core_Permission::check( 'access my cases and activities' ) ||
+             CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+            return true;  
+        }
+        
+        return false;
     }
     
 }

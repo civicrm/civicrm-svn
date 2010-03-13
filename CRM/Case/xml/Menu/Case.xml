@@ -5,7 +5,6 @@
      <path>civicrm/case</path>
      <title>CiviCase Dashboard</title>
      <page_callback>CRM_Case_Page_DashBoard</page_callback>
-     <access_arguments>access my cases and activities</access_arguments>
      <page_type>1</page_type>
      <weight>900</weight>
      <component>CiviCase</component>
