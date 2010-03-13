@@ -329,8 +329,7 @@ class CRM_Core_Block {
                                                                'ref'   => 'new-activity',
                                                                'title' => ts('Activity') ) ));
                     
-            if ( CRM_Core_Permission::check('access CiviCase') &&
-                 CRM_Core_Permission::check('access my cases and activities') &&
+            if ( CRM_Core_Permission::check('access all cases and activities') &&
                  CRM_Core_Permission::check('add contacts') &&
                  in_array( 'CiviCase', $config->enableComponents ) ) {
                 require_once 'CRM/Core/OptionGroup.php';

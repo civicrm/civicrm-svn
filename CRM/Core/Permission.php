@@ -251,10 +251,14 @@ class CRM_Core_Permission {
         if ( ! in_array( $module, $config->enableComponents ) ) {
             return false;
         }
-
-        if ( $checkPermission &&
-             ! CRM_Core_Permission::check( "access $module" ) ) {
-            return false;
+        
+        if ( $checkPermission ) {
+            if ( $module == 'CiviCase' ) {
+                require_once 'CRM/Case/BAO/Case.php';
+                return CRM_Case_BAO_Case::accessCiviCase( );
+            } else {
+                return CRM_Core_Permission::check( "access $module" );
+            }
         }
         
         return true;
@@ -276,7 +280,6 @@ class CRM_Core_Permission {
                                       'CiviMember'     => 'edit memberships',
                                       'CiviPledge'     => 'edit pledges',
                                       'CiviContribute' => 'edit contributions',
-                                      'CiviCase'       => 'access CiviCase',
                                       'CiviGrant'      => 'edit grants',
                                       'CiviMail'       => 'access CiviMail',
                                       'CiviAuction'    => 'add auction items'
@@ -284,8 +287,13 @@ class CRM_Core_Permission {
             $permissionName = CRM_Utils_Array::value( $module, $editPermissions );
         }
         
-        //check for permission.
-        return CRM_Core_Permission::check( $permissionName );
+        if ( $module == 'CiviCase' && !$permissionName ) {
+            require_once 'CRM/Case/BAO/Case.php';
+            return CRM_Case_BAO_Case::accessCiviCase( );
+        } else {
+            //check for permission.
+            return CRM_Core_Permission::check( $permissionName );
+        }
     }
     
     static function checkMenu( &$args, $op = 'and' ) {

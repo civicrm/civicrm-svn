@@ -112,7 +112,7 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
      * @access public
      *
      */
-    function actionLinks( $activityTypeId, $sourceRecordId = null, $accessMailingReport = false ) 
+    function actionLinks( $activityTypeId, $sourceRecordId = null, $accessMailingReport = false, $activityId = null ) 
     {
         $activityTypes   = CRM_Core_PseudoConstant::activityType( false );
         $activityTypeIds = array_flip( CRM_Core_PseudoConstant::activityType( true, false, false, 'name' ) );
@@ -171,7 +171,7 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                                     );
         
         require_once 'CRM/Case/BAO/Case.php';
-        if ( CRM_Case_BAO_Case::checkOperation( $activityTypeId, 'File On Case' ) ) {
+        if ( CRM_Case_BAO_Case::checkPermission( $activityId, 'File On Case', $activityTypeId ) ) {
             self::$_actionLinks = self::$_actionLinks +  array ( CRM_Core_Action::ADD =>
                                                                  array( 
                                                                        'name'     => ts('File On Case'),
@@ -347,7 +347,8 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
             
             $actionLinks = $this->actionLinks( CRM_Utils_Array::value( 'activity_type_id', $row ),
                                                CRM_Utils_Array::value( 'source_record_id', $row ),
-                                               $accessMailingReport );
+                                               $accessMailingReport,
+                                               CRM_Utils_Array::value( 'activity_id', $row ) );
             
             $actionMask  = array_sum(array_keys($actionLinks)) & $mask;
             

@@ -14,7 +14,6 @@
      <path>civicrm/case/add</path>
      <title>Open Case</title>
      <page_callback>CRM_Case_Page_Tab</page_callback>
-     <access_arguments>access my cases and activities</access_arguments>
      <page_type>1</page_type>
      <component>CiviCase</component>
   </item>
@@ -22,7 +21,6 @@
      <path>civicrm/case/search</path>
      <title>Find Cases</title>
      <page_callback>CRM_Case_Controller_Search</page_callback>
-     <access_arguments>access my cases and activities</access_arguments>
      <page_type>1</page_type>
      <weight>910</weight>
   </item>
@@ -30,7 +28,6 @@
      <path>civicrm/case/activity</path>
      <title>Case Activity</title>
      <page_callback>CRM_Case_Form_Activity</page_callback>
-     <access_arguments>access my cases and activities</access_arguments>
   </item>  
   <item>
      <path>civicrm/case/report</path>
@@ -42,36 +39,31 @@
      <path>civicrm/contact/view/case</path>
      <title>Case</title>
      <page_callback>CRM_Case_Page_Tab</page_callback>
-     <access_arguments>access my cases and activities</access_arguments>
   </item>
   <item>
      <path>civicrm/case/activity/view</path>
      <title>Activity View</title>
      <page_callback>CRM_Case_Form_ActivityView</page_callback>
-     <access_arguments>access my cases and activities</access_arguments>
   </item>
   <item>
      <path>civicrm/contact/view/case/editClient</path>
      <title>Assign to Another Client</title>
      <page_callback>CRM_Case_Form_EditClient</page_callback>
-     <access_arguments>access my cases and activities</access_arguments>     
   </item>
   <item>
      <path>civicrm/case/addToCase</path>
      <title>Build Activity To Case</title>
      <page_callback>CRM_Case_Form_ActivityToCase</page_callback>
-     <access_arguments>access my cases and activities</access_arguments>
   </item>
   <item>
      <path>civicrm/case/details</path>
      <title>Case Details</title>
      <page_callback>CRM_Case_Page_CaseDetails</page_callback>
-     <access_arguments>access my cases and activities</access_arguments>     
   </item>  
   <item>
     <path>civicrm/ajax/caseSubject</path>
     <page_callback>CRM_HRDCase_Page_AJAX::caseSubject</page_callback>
-    <access_arguments>access CiviCRM,access my cases and activities</access_arguments>  
+    <access_arguments>access CiviCRM</access_arguments>  
   </item>
   <item>
     <path>civicrm/admin/options/case_type</path>
@@ -114,12 +106,10 @@
   <item>
      <path>civicrm/case/ajax/unclosed</path>
      <page_callback>CRM_Case_Page_AJAX::unclosedCases</page_callback>
-     <access_arguments>access my cases and activities</access_arguments>
   </item>
   <item>
      <path>civicrm/case/ajax/relcases</path>
      <page_callback>CRM_Case_Page_AJAX::getRelatedCases</page_callback>
-     <access_arguments>access my cases and activities</access_arguments>
   </item>
   
 </menu>

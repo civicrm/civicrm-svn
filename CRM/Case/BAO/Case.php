@@ -962,10 +962,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
                                                                'name' ),
                                      );
        
-        $activityCondition = " AND v.name IN ('Open Case', 'Change Case Type', 'Change Case Status', 'Change Case Start Date')";
-        $caseAttributeActivities = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, $activityCondition );
-                   
-		require_once 'CRM/Core/OptionGroup.php'; 
+        require_once 'CRM/Core/OptionGroup.php'; 
         $emailActivityTypeIDs = array('Email' => CRM_Core_OptionGroup::getValue( 'activity_type', 
                                                                'Email', 
                                                                'name' ),
@@ -977,10 +974,6 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         require_once 'CRM/Case/BAO/Case.php';
         $caseDeleted = CRM_Core_DAO::getFieldValue( 'CRM_Case_DAO_Case', $caseID, 'is_deleted' );
         
-        //check for delete activities CRM-4418
-        require_once 'CRM/Core/Permission.php'; 
-        $allowToDeleteActivities = CRM_Core_Permission::check( 'delete activities' );
-        
         // define statuses which are handled like Completed status (others are assumed to be handled like Scheduled status)
         $compStatusValues = array();
         $compStatusNames = array('Completed', 'Left Message', 'Cancelled', 'Unreachable', 'Not Required');
@@ -990,7 +983,17 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         $contactViewUrl = CRM_Utils_System::url( "civicrm/contact/view",
                                                  "reset=1&cid=", false, null, false );
         require_once 'CRM/Activity/BAO/ActivityTarget.php';
-        while ( $dao->fetch( ) ) {                 
+        while ( $dao->fetch( ) ) {
+            $allowView   = self::checkPermission( $dao->id, 'view',   $dao->activity_type_id, $contactID, $caseID );
+            $allowEdit   = self::checkPermission( $dao->id, 'edit',   $dao->activity_type_id, $contactID, $caseID );
+            $allowDelete = self::checkPermission( $dao->id, 'delete', $dao->activity_type_id, $contactID, $caseID );
+            
+            //do not have sufficient permission 
+            //to access given case activity record.  
+            if ( !$allowView && !$allowEdit && !$allowDelete ) {
+                continue;
+            }
+            
             $values[$dao->id]['id']           = $dao->id;
             $values[$dao->id]['type']         = $activityTypes[$dao->type]['label'];
             $values[$dao->id]['reporter']     = "<a href='{$contactViewUrl}{$dao->reporter_id}'>$dao->reporter</a>";
@@ -1004,7 +1007,13 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             }
             $values[$dao->id]['display_date'] = CRM_Utils_Date::customFormat( $dao->display_date );
             $values[$dao->id]['status']       = $activityStatus[$dao->status];
-            $values[$dao->id]['subject']      = "<a href='javascript:viewActivity( {$dao->id}, {$contactID} );' title='{$viewTitle}'>{$dao->subject}</a>";
+            
+            //check for view activity.
+            $subject = $dao->subject;
+            if ( $allowView ) {
+                $subject = "<a href='javascript:viewActivity( {$dao->id}, {$contactID} );' title='{$viewTitle}'>{$dao->subject}</a>"; 
+            }
+            $values[$dao->id]['subject'] = $subject;
            
             // add activity assignee to activity selector. CRM-4485.
             if ( isset($dao->assignee) ) {
@@ -1021,15 +1030,11 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
                 //hide edit link of activity type email.CRM-4530.
                 if ( ! in_array($dao->type, $emailActivityTypeIDs) ) {
                     //hide Edit link if activity type is NOT editable (special case activities).CRM-5871
-                    if ( self::getMaskedActions( $dao->activity_type_id, 'Edit' ) &&
-                         self::checkOperation( $dao->activity_type_id, 'Edit' ) ) {
+                    if ( $allowEdit ) {
                         $url = "<a href='" .$editUrl.$additionalUrl."'>". ts('Edit') . "</a> ";
                     }
                 }
-                              
-                //block deleting activities which affects
-                //case attributes.CRM-4543
-                if ( !array_key_exists($dao->type, $caseAttributeActivities) && $allowToDeleteActivities ) {
+                if ( $allowDelete ) {
                     if ( !empty($url) ) {
                         $url .= " | ";   
                     }
@@ -1041,10 +1046,10 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             } 
             
             //check for operations.
-            if ( self::checkOperation( $dao->activity_type_id, 'Move To Case' ) ) {
+            if ( self::checkPermission( $dao->id, 'Move To Case', $dao->activity_type_id ) ) {
                 $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"move\", \"{$dao->id}\", $caseID ); return false;'>". ts('Move To Case') . "</a> ";
             }
-            if ( self::checkOperation( $dao->activity_type_id, 'Copy To Case' ) ) {
+            if ( self::checkPermission( $dao->id, 'Copy To Case', $dao->activity_type_id ) ) {
                 $url .= " | "."<a href='#' onClick='Javascript:fileOnCase( \"copy\", \"{$dao->id}\", $caseID ); return false;'>". ts('Copy To Case') . "</a> ";
             }
             
@@ -1069,8 +1074,8 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
                 } 
             }
         }
-
         $dao->free( );
+
         return $values;
     }
     
@@ -2183,51 +2188,29 @@ SELECT id, subject, activity_date_time
         }
         return $mainCaseIds;
     }
-     
-    /**
-     * Checks Settings file for masking actions 
-     * on the basis the activity types
-     *
-     * @param int     $actTypeId       activity type id.
-     *
-     * @return boolean $allow  true/false
-     * @static
-     */
-    function getMaskedActions( $actTypeId, $operation )  
-    {
-        $allow = true;
-        
-        static $maskAction;
-        if (!is_array( $maskAction) ) {
-            require_once 'CRM/Case/XMLProcessor/Process.php';
-            $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
-            $maskAction   = $xmlProcessor->get( 'Settings', 'ActivityTypes', false, $operation );
-        }
-        
-        if ( array_key_exists($operation, $maskAction) && 
-             in_array( $actTypeId, $maskAction[$operation] ) ) {
-            $allow = false;
-        } else {
-            $allow = true;
-        }
-        
-        return $allow;
-    }
     
     /**
-     * Do we allow given operation on activity record.
+     * Validate contact permission for 
+     * given operation on activity record.
      *
-     * @param int     $actTypeId       activity type id.
+     * @param int     $activityId      activity record id.
      * @param string  $operation       user operation.
+     * @param int     $actTypeId       activity type id.
+     * @param int     $contactId       contact id/if not pass consider logged in
      * @param boolean $checkComponent  do we need to check component enabled.
      *
      * @return boolean $allow  true/false
      * @static
      */
-    function checkOperation( $actTypeId, $operation, $checkComponent = true )  
+    function checkPermission( $activityId, $operation, $actTypeId = null, 
+                              $contactId = null, $caseId = null, $checkComponent = true )  
     {
         $allow = false;
-        if ( !$operation || !$actTypeId ) {
+        if ( !$actTypeId && $activityId ) {
+            $actTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'activity_type_id' );  
+        }
+        
+        if ( !$activityId || !$operation || !$actTypeId ) {
             return $allow;
         }
         
@@ -2247,18 +2230,104 @@ SELECT id, subject, activity_date_time
         }
         
         //do check for cases.
-        $operations = array( 'File On Case', 'Link Cases', 'Move To Case', 'Copy To Case', 'Edit' );
-        if ( in_array( $operation, $operations ) ) {
+        $caseActOperations = array( 'File On Case', 'Link Cases', 'Move To Case', 'Copy To Case' );
+        if ( in_array( $operation, $caseActOperations ) ) {
             static $unclosedCases;
             if ( !is_array( $unclosedCases ) ) {
                 $unclosedCases = self::getUnclosedCases( );
             }
             if ( $operation == 'File On Case' ) {
                 $allow = (empty( $unclosedCases )) ? false : true; 
-            } else if ( $operation == 'Edit' ) { 
-                $allow = true;
             } else {
                 $allow = (count( $unclosedCases ) > 1) ? true : false;
+            }
+        }
+                
+        $actionOperations = array( 'view', 'edit', 'delete' );
+        if ( in_array( $operation, $actionOperations ) ) {
+            
+            //do cache when user has non/supper permission.
+            static $allowOperations;
+            
+            if ( !is_array( $allowOperations ) || 
+                 !array_key_exists( $operation, $allowOperations ) ) {
+                
+                if ( !$contactId ) {
+                    $session   = CRM_Core_Session::singleton( );
+                    $contactId = $session->get('userID'); 
+                }
+                
+                //check for permissions.
+                $permissions = array( 'view'   => array( 'access my cases and activities', 
+                                                         'access all cases and activities' ),
+                                      'edit'   => array( 'access my cases and activities',
+                                                         'access all cases and activities' ),
+                                      'delete' => array( 'delete activities' ) );
+                
+                //check for core permission.
+                require_once 'CRM/Core/Permission.php';
+                $hasPermissions   = array( );
+                $checkPermissions = CRM_Utils_Array::value( $operation, $permissions );
+                if ( is_array( $checkPermissions ) ) {
+                    foreach ( $checkPermissions as $per ) {
+                        if ( CRM_Core_Permission::check( $per ) ) {
+                            $hasPermissions[$operation][] = $per;
+                        }
+                    }
+                }
+                
+                //has permissions.
+                if ( !empty( $hasPermissions ) ) {
+                    //need to check activity object specific.
+                    if ( in_array( $operation, array( 'view', 'edit' ) ) ) {
+                        //do we have supper permission.
+                        if ( in_array( 'access all cases and activities', $hasPermissions[$operation] ) ) {
+                            $allowOperations[$operation] = $allow = true;
+                        } else {
+                            //user has only access to my cases and activity.
+                            //here object specific permmions come in picture.
+                            
+                            //edit - contact must be source or assignee
+                            //view - contact must be source/assignee/target
+                            $isTarget = $isAssignee = $isSource = false;
+                            
+                            require_once 'CRM/Activity/DAO/Activity.php';
+                            require_once 'CRM/Activity/DAO/ActivityTarget.php';
+                            require_once 'CRM/Activity/DAO/ActivityAssignment.php';
+                            
+                            $target = new CRM_Activity_DAO_ActivityTarget( );
+                            $target->activity_id       = $activityId;
+                            $target->target_contact_id = $contactId;
+                            if ( $target->find( true ) ) $isTarget = true;
+                            
+                            $assignee = new CRM_Activity_DAO_ActivityAssignment( );
+                            $assignee->activity_id         = $activityId;
+                            $assignee->assignee_contact_id = $contactId;
+                            if ( $assignee->find( true ) ) $isAssignee = true;
+                            
+                            $activity = new CRM_Activity_DAO_Activity( );
+                            $activity->id                = $activityId;
+                            $activity->source_contact_id = $contactId;
+                            if ( $activity->find( true ) ) $isSource = true;
+                            
+                            if ( $operation == 'edit' ) {
+                                if ( $isAssignee || $isSource ) $allow = true;
+                            }
+                            if ( $operation == 'view' ) {
+                                if ( $isTarget ||$isAssignee || $isSource ) $allow = true;
+                            }
+                        }
+                    } else if ( is_array( $hasPermissions[$operation] ) ) {
+                        $allowOperations[$operation] = $allow = true;
+                    }
+                } else {
+                    //contact do not have permission.
+                    $allowOperations[$operation] = false;
+                }
+            } else {
+                //use cache.
+                //here contact might have supper/non permission.
+                $allow = $allowOperations[$operation];
             }
         }
         
@@ -2273,15 +2342,64 @@ SELECT id, subject, activity_date_time
             //do not allow multiple copy.
             $singletonNames = array( 'Open Case', 'Close Case', 'Reassigned Case', 'Merge Case', 'Link Cases' );
             
+            //do not allow to delete these activities, CRM-4543
+            $doNotDeleteNames = array( 'Open Case', 'Change Case Type', 'Change Case Status', 'Change Case Start Date' );
+            
             //allow edit operation.
             $allowEditNames = array( 'Open Case', 'Close Case' );
             
             if ( in_array( $actTypeName, $singletonNames ) ) {
                 $allow = false;
-                //allow edit for open and close.
-                if ( $operation == 'Edit' && in_array( $actTypeName, $allowEditNames ) ) {
+                if ( in_array( $operation, $actionOperations ) ) {
                     $allow = true;
+                    if ( $operation == 'edit' ) {
+                        $allow = (in_array($actTypeName, $allowEditNames)) ? true : false;
+                    } else if ( $operation == 'delete' ) {
+                        $allow = (in_array($actTypeName, $doNotDeleteNames)) ? false : true;
+                    }
                 }
+            }
+            
+            //check settings file for masking actions
+            //on the basis the activity types
+            //hide Edit link if activity type is NOT editable 
+            //(special case activities).CRM-5871
+            if ( $allow && $caseId && 
+                 in_array( $operation, $actionOperations ) ) {
+                $caseType = self::getCaseType( $caseId, 'name' );
+                
+                //cache should be case type and operation
+                $cacheKey = "{$caseType}_{$operation}";
+                
+                static $actionFilter = array( );
+                if ( !array_key_exists( $cacheKey, $actionFilter ) ) {
+                    require_once 'CRM/Case/XMLProcessor/Process.php';
+                    $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
+                    $actionFilter[$cacheKey] = $xmlProcessor->get( $caseType, 'ActivityTypes', false, $operation );
+                }
+                if ( array_key_exists( $operation, $actionFilter[$cacheKey] ) &&
+                     in_array( $actTypeId, $actionFilter[$cacheKey][$operation] ) ) {
+                    $allow = false;
+                }
+            }
+        }
+        
+        return $allow;
+    }
+    
+    /**
+     * since we drop 'access CiviCase', allow access
+     * if user has 'access my cases and activities' 
+     * or 'access all cases and activities'
+     */
+    function accessCiviCase( ) 
+    {
+        $allow = false;
+        $config = CRM_Core_Config::singleton( );
+        if ( in_array( 'CiviCase', $config->enableComponents ) ) {
+            if ( CRM_Core_Permission::check( 'access my cases and activities' ) ||
+                 CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+                $allow = true;  
             }
         }
         

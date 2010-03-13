@@ -57,7 +57,6 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
     function get( $caseType,
                   $fieldSet, $isLabel = false, $maskAction = false ) {
         $xml = $this->retrieve( $caseType );
-
         if ( $xml === false ) {
             require_once 'CRM/Utils/System.php';
             $docLink = CRM_Utils_System::docURL2( "CiviCase Configuration" );
@@ -214,7 +213,7 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
             foreach ( $activityTypeXML as $recordXML ) {
                 $activityTypeName = (string ) $recordXML->name;
                 $maxInstances     = (string ) $recordXML->max_instances;
-                if ( $maskAction == 'Edit') {
+                if ( $maskAction == 'edit') {
                     $edit = (string ) $recordXML->editable;
                 }
                 $activityTypeInfo = CRM_Utils_Array::value( $activityTypeName, $activityTypes );
