@@ -650,6 +650,8 @@ WHERE      c.display_name LIKE {$this->_text}
                     ts( 'Tables' ),
                     $tables );
         
+        $form->assign( 'csID', $this->_formValues['customSearchID'] );
+
         /**
          * You can define a custom title for the search form
          */

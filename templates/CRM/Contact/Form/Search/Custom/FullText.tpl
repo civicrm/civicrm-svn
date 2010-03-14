@@ -44,8 +44,9 @@
 
 {if !empty($summary.Contact) }
     {* Search request has returned 1 or more matching rows. Display results. *}
+    {assign var=rowCount value=$summary.Contact|@count}
     <fieldset>
-        <legend>{ts}Contacts{/ts} 1 - {$summary.Contact|@count} {ts}of{/ts} {$summary.Count.Contact}</legend>
+        <legend>{ts}Contacts{/ts} 1 - {$rowCount} {ts}of{/ts} {$summary.Count.Contact}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="contact_listing" class="display" class="selector" summary="{ts}Contact listings.{/ts}">
@@ -63,6 +64,7 @@
                 {/foreach}
             </table>
             {/strip}
+	    {if $rowCount < $summary.Count.Contact}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&force=1&table=Contact"}" title="{ts}View all results for contacts{/ts}">&raquo;&nbsp;{ts}View all results for contacts{/ts}</a>{/if}
     </fieldset>
     {* END Actions/Results section *}
 {/if}
@@ -70,8 +72,9 @@
 {if !empty($summary.Activity) }
     {* Search request has returned 1 or more matching rows. Display results. *}
 
+    {assign var=rowCount value=$summary.Activity|@count}
     <fieldset>
-        <legend>{ts}Activities{/ts} 1 - {$summary.Activity|@count} {ts}of{/ts} {$summary.Count.Activity}</legend>
+        <legend>{ts}Activities{/ts} 1 - {$rowCount} {ts}of{/ts} {$summary.Count.Activity}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="activity_listing" class="display" summary="{ts}Activity listings.{/ts}">
@@ -106,6 +109,7 @@
                 {/foreach}
             </table>
             {/strip}
+	    {if $rowCount < $summary.Count.Activity}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&force=1&table=Activity"}" title="{ts}View all results for activitys{/ts}">&raquo;&nbsp;{ts}View all results for activitys{/ts}</a>{/if}
     </fieldset>
     {* END Actions/Results section *}
 {/if}
@@ -113,8 +117,9 @@
 {if !empty($summary.Case) }
     {* Search request has returned 1 or more matching rows. Display results. *}
 
+    {assign var=rowCount value=$summary.Case|@count}
     <fieldset>
-        <legend>{ts}Cases{/ts} 1 - {$summary.Case|@count} {ts}of{/ts} {$summary.Count.Case}</legend>
+        <legend>{ts}Cases{/ts} 1 - {$rowCount} {ts}of{/ts} {$summary.Count.Case}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="case_listing" class="display" summary="{ts}Case listings.{/ts}">
@@ -140,6 +145,7 @@
                 {/foreach}
             </table>
             {/strip}
+	    {if $rowCount < $summary.Count.Case}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&force=1&table=Case"}" title="{ts}View all results for cases{/ts}">&raquo;&nbsp;{ts}View all results for cases{/ts}</a>{/if}
     </fieldset>
     {* END Actions/Results section *}
 {/if}
@@ -147,8 +153,9 @@
 {if !empty($summary.Contribution) }
     {* Search request has returned 1 or more matching rows. Display results. *}
 
+    {assign var=rowCount value=$summary.Contribution|@count}
     <fieldset>
-        <legend>{ts}Contributions{/ts} 1 - {$summary.Contribution|@count} {ts}of{/ts} {$summary.Count.Contribution}</legend>
+        <legend>{ts}Contributions{/ts} 1 - {$rowCount} {ts}of{/ts} {$summary.Count.Contribution}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="contribute_listing" class="display" summary="{ts}Contribution listings.{/ts}">
@@ -177,6 +184,7 @@
                 {/foreach}
             </table>
             {/strip}
+	    {if $rowCount < $summary.Count.Contribution}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&force=1&table=Contribution"}" title="{ts}View all results for contributions{/ts}">&raquo;&nbsp;{ts}View all results for contributions{/ts}</a>{/if}
     </fieldset>
     {* END Actions/Results section *}
 {/if}
@@ -184,8 +192,9 @@
 {if !empty($summary.Participant) }
     {* Search request has returned 1 or more matching rows. *}
 
+    {assign var=rowCount value=$summary.Participant|@count}
     <fieldset>
-        <legend>{ts}Event Participants{/ts} 1 - {$summary.Participant|@count} {ts}of{/ts} {$summary.Count.Participant}</legend>
+        <legend>{ts}Event Participants{/ts} 1 - {$rowCount} {ts}of{/ts} {$summary.Count.Participant}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="participant_listing" class="display" summary="{ts}Participant listings.{/ts}">
@@ -218,6 +227,7 @@
                 {/foreach}
             </table>
             {/strip}
+	    {if $rowCount < $summary.Count.Participant}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&force=1&table=Participant"}" title="{ts}View all results for participants{/ts}">&raquo;&nbsp;{ts}View all results for participants{/ts}</a>{/if}
     </fieldset>
     {* END Actions/Results section *}
 {/if}
@@ -225,8 +235,9 @@
 {if !empty($summary.Membership) }
     {* Search request has returned 1 or more matching rows. *}
 
+    {assign var=rowCount value=$summary.Membership|@count}
     <fieldset>
-        <legend>{ts}Memberships{/ts} 1 - {$summary.Membership|@count} {ts}of{/ts} {$summary.Count.Membership}</legend>
+        <legend>{ts}Memberships{/ts} 1 - {$rowCount} {ts}of{/ts} {$summary.Count.Membership}</legend>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="membership_listing" class="display" summary="{ts}Membership listings.{/ts}">
@@ -258,6 +269,7 @@
                 {/foreach}
             </table>
             {/strip}
+	    {if $rowCount < $summary.Count.Membership}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&force=1&table=Membership"}" title="{ts}View all results for memberships{/ts}">&raquo;&nbsp;{ts}View all results for memberships{/ts}</a>{/if}
     </fieldset>
     {* END Actions/Results section *}
 {/if}
