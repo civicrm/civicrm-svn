@@ -866,7 +866,7 @@ as tbl ";
             {$targetAssigneeSelect}
             from civicrm_activity                   
             inner join civicrm_activity_target at on                             
-                civicrm_activity.id = at.activity_id
+                civicrm_activity.id = at.activity_id and {$targetWhere}
             left join civicrm_option_value on
                 civicrm_activity.activity_type_id = civicrm_option_value.value
             left join civicrm_option_group on                              
@@ -887,7 +887,7 @@ as tbl ";
             {$targetAssigneeSelect}
             from civicrm_activity                   
             inner join civicrm_activity_assignment aa on
-                civicrm_activity.id = aa.activity_id
+                civicrm_activity.id = aa.activity_id and {$assigneeWhere}
             left join civicrm_option_value on
                 civicrm_activity.activity_type_id = civicrm_option_value.value
             left join civicrm_option_group on                              
@@ -928,7 +928,7 @@ as tbl ";
                 {$caseSelect}    
                 from civicrm_activity                   
                 inner join civicrm_case_activity on                               
-                    civicrm_case_activity.activity_id = civicrm_activity.id                     
+                    civicrm_case_activity.activity_id = civicrm_activity.id and {$caseWhere}                  
                 inner join civicrm_case on                               
                     civicrm_case_activity.case_id = civicrm_case.id                     
                 inner join civicrm_case_contact on                               
