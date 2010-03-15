@@ -119,6 +119,7 @@
         {/if}
 -->
         <dt>{$form.is_required.label}</dt><dd>&nbsp;{$form.is_required.html}</dd>
+	<dt>{$form.visibility_id.label}</dt><dd>&nbsp;{$form.visibility_id.html}</dd>
         </dl>
         <dl class="html-adjust">
         <dt>{$form.is_active.label}</dt><dd>&nbsp;{$form.is_active.html}</dd>

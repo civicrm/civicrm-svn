@@ -65,3 +65,7 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
         ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
    VALUES
 	( @domain_id, 'civicrm/admin/options/case_status&group=case_status&reset=1', '{ts escape="sql"}Case Statuses{/ts}','Case Statuses',  'administer CiviCase', NULL, @nav_case, '1', NULL, @nav_case_weight+1 );
+
+-- CRM-5766
+   ALTER TABLE civicrm_price_field
+   ADD `visibility_id` int(10) unsigned default 1 COMMENT 'Implicit FK to civicrm_option_group with name = visibility.';

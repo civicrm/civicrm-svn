@@ -405,7 +405,8 @@ WHERE     ct.id = cp.contribution_type_id AND
                              'help_post',
                              'is_display_amounts',
                              'options_per_line',
-                             'is_active'
+                             'is_active',
+                             'visibility_id'
                              );
         if ( $required == true ) {
             $priceFields[] = 'is_required';   

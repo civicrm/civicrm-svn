@@ -252,6 +252,9 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
                                        'name'      => ts('Cancel')),
                                 )
                           );
+        // is public?
+        require_once 'CRM/Core/PseudoConstant.php';
+        $this->add( 'select', 'visibility_id', ts('Visibility'), CRM_Core_PseudoConstant::visibility( ) );
 
         // add a form rule to check default value
         $this->addFormRule( array( 'CRM_Price_Form_Field', 'formRule' ),$this );
@@ -475,6 +478,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         $params['is_active']          = CRM_Utils_Array::value( 'is_active', $params, false );
         $params['active_on']          = CRM_Utils_Date::format( CRM_Utils_Array::value( 'active_on', $params ) );
         $params['expire_on']          = CRM_Utils_Date::format( CRM_Utils_Array::value( 'expire_on', $params ) );
+        $params['visibility_id']      = CRM_Utils_Array::value( 'visibility_id', $params, false );
         
         // need the FKEY - price set id
         $params['price_set_id'] = $this->_sid;

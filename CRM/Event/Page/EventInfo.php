@@ -95,14 +95,17 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                 $setDetails     = CRM_Price_BAO_Set::getSetDetail( $priceSetId );
                 $priceSetFields = $setDetails[$priceSetId]['fields'];
                 if ( is_array( $priceSetFields ) ) {
-                    $fieldCnt = 1;
+                    $fieldCnt = 1;                    
+                    require_once 'CRM/Core/PseudoConstant.php';
+                    $visibility = CRM_Core_PseudoConstant::visibility( 'name' );
                     
                     foreach ( $priceSetFields as $fid => $fieldValues ) {
-                        if ( !is_array( $fieldValues['options'] ) || 
-                             empty( $fieldValues['options'] ) ) {
+                        if ( !is_array( $fieldValues['options'] ) ||                             
+                             empty( $fieldValues['options'] ) ||
+                             CRM_Utils_Array::value('visibility_id', $fieldValues) !=  array_search( 'public', $visibility ) ) {  
                             continue;
-                        }
-
+                        } 
+                        
                         if ( count( $fieldValues['options'] ) > 1 ) {
                             $values['feeBlock']['value'][$fieldCnt] = '';
                             $values['feeBlock']['label'][$fieldCnt] = $fieldValues['label'];

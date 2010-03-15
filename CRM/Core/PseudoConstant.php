@@ -1344,11 +1344,11 @@ WHERE  id = %1";
      * @return array - array reference of all Visibility levels.
      *
      */
-    public static function &visibility( )
+    public static function &visibility( $column = 'label' )
     {
         if ( ! self::$visibility ) {
             require_once 'CRM/Core/OptionGroup.php';
-            self::$visibility = CRM_Core_OptionGroup::values('visibility');
+            self::$visibility = CRM_Core_OptionGroup::values( 'visibility',false,false, false, null, $column );
         }
         return self::$visibility;
     }
