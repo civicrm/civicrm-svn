@@ -35,7 +35,7 @@
     <div class="float-right">
 	<table class="form-layout-compressed">
 	   <tr>
-		{if $eventAdmin}<td><a href="{$configPagesURL}" class="button"><span>&raquo; {ts}Manage Events{/ts}</span></a></td>{/if}
+		<td><a href="{$configPagesURL}" class="button"><span>&raquo; {ts}Manage Events{/ts}</span></a></td>
 		<td><a href="{$newEventURL}" class="button"><span>&raquo; {ts}New Event{/ts}</span></a></td>
 	   </tr>
 	</table>
@@ -51,9 +51,7 @@
 	<th id="nosort">{ts}Public{/ts}</th>
 	<th id="nosort">{ts}Date(s){/ts}</th>
 	<th id="nosort">{ts}Participants{/ts}</th>
-	{if $eventAdmin or $eventMap}
-	    <th></th>
-	{/if}
+        {if $actionColumn}<th></th>{/if}
     </tr>
     </thead>
     <tbody>
@@ -99,16 +97,16 @@
             {/foreach}
             {if $values.maxParticipants}{ts 1=$values.maxParticipants}(max %1){/ts}{/if}
         </td>
-        {if $values.configure or $eventMap}
-            <td>
-                {if $values.isMap}
-                    <a href="{$values.isMap}" title="{ts}Map event location{/ts}">&raquo;&nbsp;{ts}Map{/ts}</a>&nbsp;|&nbsp;
-                {/if}
-                {if $values.configure}
-                    <a href="{$values.configure}" title="{ts}Configure event information, fees, discounts, online registration...{/ts}">&raquo;&nbsp;{ts}Configure{/ts}</a>
-                {/if}
-            </td>
-        {/if}        
+	{if $actionColumn}
+        <td>
+            {if $values.isMap}
+                <a href="{$values.isMap}" title="{ts}Map event location{/ts}">&raquo;&nbsp;{ts}Map{/ts}</a>&nbsp;|&nbsp;
+            {/if}
+            {if $values.configure}
+                <a href="{$values.configure}" title="{ts}Configure event information, fees, discounts, online registration...{/ts}">&raquo;&nbsp;{ts}Configure{/ts}</a>
+            {/if}
+        </td>
+	{/if}
     </tr>
     {/foreach}
 
@@ -126,9 +124,7 @@
             <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>      
             <dd>
                 {ts}There are no active Events to display.{/ts}
-                {if $eventAdmin}
-                    {ts 1=$newEventURL}You can <a href="%1">Create a New Event</a> now.{/ts}
-                {/if}
+                {ts 1=$newEventURL}You can <a href="%1">Create a New Event</a> now.{/ts}
             </dd>
         </dl>
     </div>
