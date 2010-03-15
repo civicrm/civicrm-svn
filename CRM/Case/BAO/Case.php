@@ -1017,9 +1017,9 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
                                                  "reset=1&cid=", false, null, false );
         require_once 'CRM/Activity/BAO/ActivityTarget.php';
         while ( $dao->fetch( ) ) {
-            $allowView   = self::checkPermission( $dao->id, 'view',   $dao->activity_type_id, $contactID, $caseID );
-            $allowEdit   = self::checkPermission( $dao->id, 'edit',   $dao->activity_type_id, $contactID, $caseID );
-            $allowDelete = self::checkPermission( $dao->id, 'delete', $dao->activity_type_id, $contactID, $caseID );
+            $allowView   = self::checkPermission( $dao->id, 'view',   $dao->activity_type_id, $contactID );
+            $allowEdit   = self::checkPermission( $dao->id, 'edit',   $dao->activity_type_id, $contactID );
+            $allowDelete = self::checkPermission( $dao->id, 'delete', $dao->activity_type_id, $contactID );
             
             //do not have sufficient permission 
             //to access given case activity record.  
@@ -2235,8 +2235,7 @@ SELECT id, subject, activity_date_time
      * @return boolean $allow  true/false
      * @static
      */
-    function checkPermission( $activityId, $operation, $actTypeId = null, 
-                              $contactId = null, $caseId = null, $checkComponent = true )  
+    function checkPermission( $activityId, $operation, $actTypeId = null, $contactId = null, $checkComponent = true )
     {
         $allow = false;
         if ( !$actTypeId && $activityId ) {
@@ -2397,21 +2396,15 @@ SELECT id, subject, activity_date_time
             //on the basis the activity types
             //hide Edit link if activity type is NOT editable 
             //(special case activities).CRM-5871
-            if ( $allow && $caseId && 
-                 in_array( $operation, $actionOperations ) ) {
-                $caseType = self::getCaseType( $caseId, 'name' );
-                
-                //cache should be case type and operation
-                $cacheKey = "{$caseType}_{$operation}";
-                
+            if ( $allow && in_array( $operation, $actionOperations ) ) {
                 static $actionFilter = array( );
-                if ( !array_key_exists( $cacheKey, $actionFilter ) ) {
+                if ( !array_key_exists( $operation, $actionFilter ) ) {
                     require_once 'CRM/Case/XMLProcessor/Process.php';
                     $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
-                    $actionFilter[$cacheKey] = $xmlProcessor->get( $caseType, 'ActivityTypes', false, $operation );
+                    $actionFilter[$operation] = $xmlProcessor->get( 'Settings', 'ActivityTypes', false, $operation );
                 }
-                if ( array_key_exists( $operation, $actionFilter[$cacheKey] ) &&
-                     in_array( $actTypeId, $actionFilter[$cacheKey][$operation] ) ) {
+                if ( array_key_exists( $operation, $actionFilter[$operation] ) &&
+                     in_array( $actTypeId, $actionFilter[$operation][$operation] ) ) {
                     $allow = false;
                 }
             }
