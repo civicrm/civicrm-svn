@@ -2003,7 +2003,10 @@ INNER JOIN  civicrm_contact      client         ON ( client.id = relCaseContact.
                     if ( $mainCaseContact->contact_id == $otherContactId ) {
                         $mainCaseContact->contact_id = $mainContactId;
                     }
-                    $mainCaseContact->save( );
+                    //avoid duplicate object.
+                    if ( !$mainCaseContact->find(true) ) {
+                        $mainCaseContact->save( );
+                    }
                     $mainCaseContact->free( );
                 }
                 $otherCaseContact->free( );
@@ -2122,7 +2125,10 @@ SELECT  id
                     if ( $mainActivityTarget->target_contact_id == $otherContactId ) {
                         $mainActivityTarget->target_contact_id = $mainContactId;
                     }
-                    $mainActivityTarget->save( );
+                    //avoid duplicate object.
+                    if ( !$mainActivityTarget->find( true ) ) {
+                        $mainActivityTarget->save( );
+                    }
                     $mainActivityTarget->free( );
                 }
                 $otherTargetActivity->free( );
@@ -2138,7 +2144,10 @@ SELECT  id
                     if ( $mainAssigneeActivity->assignee_contact_id == $otherContactId ) {
                         $mainAssigneeActivity->assignee_contact_id = $mainContactId;
                     }
-                    $mainAssigneeActivity->save( );
+                    //avoid duplicate object.
+                    if ( $mainAssigneeActivity->find( true ) ) {
+                        $mainAssigneeActivity->save( );
+                    }
                     $mainAssigneeActivity->free( );
                 }
                 $otherAssigneeActivity->free( );
@@ -2166,7 +2175,10 @@ SELECT  id
                     }
                     $mainRelationship->end_date   = CRM_Utils_Date::isoToMysql( $otherRelationship->end_date );
                     $mainRelationship->start_date = CRM_Utils_Date::isoToMysql( $otherRelationship->start_date );
-                    $mainRelationship->save( );
+                    //avoid duplicate object.
+                    if ( $mainRelationship->find( true ) ) {
+                        $mainRelationship->save( );
+                    }
                     $mainRelationship->free( );
                 }
                 $otherRelationship->free( );
