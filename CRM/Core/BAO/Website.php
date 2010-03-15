@@ -68,7 +68,7 @@ class CRM_Core_BAO_Website extends CRM_Core_DAO_Website
      * @access public
      * @static 
      */
-     static function create( &$params, $contactID ) {
+     static function create( &$params, $contactID, $skipDelete ) {
          if ( empty( $params ) ) {
              return false;
          }
@@ -84,7 +84,7 @@ class CRM_Core_BAO_Website extends CRM_Core_DAO_Website
              self::add( $values );
          }
          
-         if ( !empty( $ids ) ) {
+         if ( $skipDelete && !empty( $ids ) ) {
              self::del( $ids );
          }
      }

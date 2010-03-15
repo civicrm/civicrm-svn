@@ -813,7 +813,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         
         require_once 'CRM/Contact/BAO/Contact.php';
-        $contact =& CRM_Contact_BAO_Contact::create( $params, true,false );
+        $contact =& CRM_Contact_BAO_Contact::create( $params, true, false, true );
 
         // set the contact ID
         $this->_contactId = $contact->id;

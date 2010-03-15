@@ -39,7 +39,5 @@
 
 <tr id="Website_Block_{$blockId}">
     <td>{$form.website.$blockId.url.html|crmReplace:class:twenty}&nbsp;{$form.website.$blockId.website_type_id.html}</td>
-    {if $blockId gt 1}
-        <td colspan="3"><a href="#" title="{ts}Delete Website Block{/ts}" onClick="removeBlock('Website','{$blockId}'); return false;">{ts}delete{/ts}</a></td>
-    {/if}    
+    <td colspan="3"><a href="#" title="{ts}Delete Website Block{/ts}" onClick="removeBlock('Website','{$blockId}'); return false;">{ts}delete{/ts}</a></td>
 </tr>

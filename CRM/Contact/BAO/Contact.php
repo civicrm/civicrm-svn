@@ -234,7 +234,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
      * @access public
      * @static
      */
-    static function &create(&$params, $fixAddress = true, $invokeHooks = true ) 
+    static function &create(&$params, $fixAddress = true, $invokeHooks = true, $skipDelete = false ) 
     {
         $contact = null;
         if ( !CRM_Utils_Array::value( 'contact_type', $params ) && 
@@ -301,7 +301,7 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         
         //add website
         require_once 'CRM/Core/BAO/Website.php';
-        CRM_Core_BAO_Website::create( $params['website'], $contact->id );
+        CRM_Core_BAO_Website::create( $params['website'], $contact->id, $skipDelete );
 
         //get userID from session
         $session =& CRM_Core_Session::singleton( );
