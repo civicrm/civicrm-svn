@@ -624,6 +624,9 @@ class CRM_Contact_BAO_Query
         // add location as hierarchical elements
         $this->addHierarchicalElements( );
 
+        // add multiple field like website
+        $this->addMultipleElements( );
+        
         //fix for CRM-951
         require_once 'CRM/Core/Component.php';
         CRM_Core_Component::alterQuery( $this, 'select' );
@@ -891,6 +894,37 @@ class CRM_Contact_BAO_Query
         }
     }
 
+    /**
+     * If the return Properties are set in a hierarchy, traverse the hierarchy to get
+     * the return values
+     *
+     * @return void 
+     * @access public 
+     */
+    function addMultipleElements( ) {
+        if ( ! CRM_Utils_Array::value( 'website', $this->_returnProperties ) ) {
+            return;
+        }
+        if ( ! is_array( $this->_returnProperties['website'] ) ) {
+            return;
+        }
+
+        foreach ( $this->_returnProperties['website'] as $key => $elements ) {
+            foreach ( $elements as $elementFullName => $dontCare ) {
+                $tName = "website-{$key}-{$elementFullName}";
+                $this->_select["{$tName}_id" ]  = "`$tName`.id as `{$tName}_id`"; 
+                $this->_select["{$tName}"    ]  = "`$tName`.url as `{$tName}`";
+                $this->_element["{$tName}_id"]  = 1;
+                $this->_element["{$tName}"   ]  = 1;
+                
+                $type = "website-{$key}-website_type_id";
+                $this->_select[$type]    = "`$tName`.website_type_id as `{$type}`";
+                $this->_element[$type]   = 1;
+                $this->_tables[ $tName ] = "\nLEFT JOIN civicrm_website `$tName` ON (`$tName`.contact_id = contact_a.id )";
+            }
+        }
+    }
+    
     /** 
      * generate the query based on what type of query we need
      *

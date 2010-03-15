@@ -177,7 +177,6 @@ class CRM_UF_Form_Preview extends CRM_Core_Form
             if ( ! CRM_Utils_Array::value( 'is_view', $field ) ) {
                 CRM_Core_BAO_UFGroup::buildProfile($this, $field, CRM_Profile_Form::MODE_CREATE );
             }
-            
         }
         
         $this->addButtons(array(

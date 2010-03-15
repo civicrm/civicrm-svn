@@ -599,7 +599,7 @@ class CRM_Core_PseudoConstant
      * @access public
      * @static
      *
-     * @return array - array reference of all IM providers.
+     * @return array - array reference of all Website types.
      *
      */
     public static function &websiteType( ) 

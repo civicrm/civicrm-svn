@@ -43,6 +43,7 @@ require_once 'CRM/Core/DAO/Address.php';
 require_once 'CRM/Core/DAO/Phone.php';
 require_once 'CRM/Core/DAO/Email.php';
 require_once 'CRM/Core/DAO/IM.php';
+require_once 'CRM/Core/DAO/Website.php';
 require_once 'CRM/Core/DAO/OptionValue.php';
 require_once 'CRM/Core/BAO/CustomField.php';
 require_once 'CRM/Core/BAO/CustomValue.php';
@@ -820,6 +821,10 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
                                       CRM_Contact_DAO_Contact::import( ) );
                 $fields = array_merge($fields,
                                       CRM_Core_DAO_Note::import());          
+                
+                //website fields
+                $fields = array_merge( $fields, CRM_Core_DAO_Website::import( ) );
+                
                 if ( $contactType != 'All' ) {  
                     $fields       = 
                         array_merge($fields, 
@@ -962,6 +967,9 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
                 $fields = array_merge($fields,
                                       CRM_Contact_DAO_Contact::export( ) );
                 
+                //website fields
+                $fields = array_merge( $fields, CRM_Core_DAO_Website::export( ) );
+                
                 if ( $contactType != 'All' ) { 
                     $fields = array_merge($fields,
                                           CRM_Core_BAO_CustomField::getFieldsForImport($contactType, $status, true) );
@@ -1069,34 +1077,39 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
 
         $returnProperties = array( );
         $locationIds = array( );
+        $multipleFields = array( 'website' => 'url' );
         foreach ( $fields as $name => $dontCare ) {
             if ( strpos( $name, '-' ) !== false ) {
                 list( $fieldName, $id, $type ) = CRM_Utils_System::explode( '-', $name, 3 );
 
-                if ($id == 'Primary') {
-                    $locationTypeName = 1;
-                } else {
-                    $locationTypeName = CRM_Utils_Array::value( $id, $locationTypes );
-                    if ( ! $locationTypeName ) {
-                       continue;
+                if ( !in_array( $fieldName, $multipleFields ) ) {
+                    if ($id == 'Primary') {
+                        $locationTypeName = 1;
+                    } else {
+                        $locationTypeName = CRM_Utils_Array::value( $id, $locationTypes );
+                        if ( ! $locationTypeName ) {
+                           continue;
+                        }
                     }
-                }
 
-                if ( ! CRM_Utils_Array::value( 'location', $returnProperties ) ) {
-                    $returnProperties['location'] = array( );
-                }
-                if ( ! CRM_Utils_Array::value( $locationTypeName, $returnProperties['location'] ) ) {
-                    $returnProperties['location'][$locationTypeName] = array( );
-                    $returnProperties['location'][$locationTypeName]['location_type'] = $id;
-                }
-                if ( in_array( $fieldName, array( 'phone', 'im', 'email', 'openid' ) ) ) {
-                    if ( $type ) {
-                        $returnProperties['location'][$locationTypeName][$fieldName . '-' . $type] = 1;
+                    if ( ! CRM_Utils_Array::value( 'location', $returnProperties ) ) {
+                        $returnProperties['location'] = array( );
+                    }
+                    if ( ! CRM_Utils_Array::value( $locationTypeName, $returnProperties['location'] ) ) {
+                        $returnProperties['location'][$locationTypeName] = array( );
+                        $returnProperties['location'][$locationTypeName]['location_type'] = $id;
+                    }
+                    if ( in_array( $fieldName, array( 'phone', 'im', 'email', 'openid' ) ) ) {
+                        if ( $type ) {
+                            $returnProperties['location'][$locationTypeName][$fieldName . '-' . $type] = 1;
+                        } else {
+                            $returnProperties['location'][$locationTypeName][$fieldName] = 1;
+                        }
                     } else {
                         $returnProperties['location'][$locationTypeName][$fieldName] = 1;
                     }
                 } else {
-                    $returnProperties['location'][$locationTypeName][$fieldName] = 1;
+                    $returnProperties['website'][$id][$fieldName] = 1;
                 }
             } else {
                 $returnProperties[$name] = 1;
@@ -1298,6 +1311,7 @@ AND    civicrm_contact.id = %1";
 
         $blocks = array( 'email', 'phone', 'im', 'openid' );
         
+        $multiplFields = array( 'url' );
         // prevent overwritten of formatted array, reset all block from
         // params if it is not in valid format (since import pass valid format) 
         foreach( $blocks as $blk ) {
@@ -1322,7 +1336,7 @@ AND    civicrm_contact.id = %1";
                     $locTypeId = $defaultLocationId;
                 }
             }
-            if ( is_numeric($locTypeId) ) {
+            if ( is_numeric($locTypeId) && !in_array( $fieldName, $multiplFields ) ) {
                 $index =  $locTypeId;
                 
                 if ( is_numeric( $typeId ) ) {
@@ -1412,7 +1426,14 @@ AND    civicrm_contact.id = %1";
                     }
                 }
             } else {
-                if ($key === 'individual_suffix') { 
+                if ( substr($key, 0, 4) === 'url-' ) {
+                    list( $url, $cnt, $websiteTypeId ) = explode( '-', $key );
+                    if ( $websiteTypeId ) {
+                        $data['website'][$cnt]['website_type_id'] = $value;     
+                    } else {
+                        $data['website'][$cnt]['url'] = $value;
+                    }
+                } else if ($key === 'individual_suffix') { 
                     $data['suffix_id'] = $value;
                 } else if ($key === 'individual_prefix') { 
                     $data['prefix_id'] = $value;
@@ -1460,25 +1481,6 @@ AND    civicrm_contact.id = %1";
                 }
             }
         }
-       
-        // FIX ME: need to check if we need this code
-        // //make sure primary location is at first position in location array
-        // if ( isset( $data['location'] ) && count( $data['location'] ) > 1 ) {
-        //     // if first location is primary skip manipulation
-        //     if ( !isset($data['location'][1]['is_primary']) ) {
-        //         //find the key for primary location
-        //         foreach ( $data['location'] as $primaryLocationKey => $value ) {
-        //             if ( isset( $value['is_primary'] ) ) {
-        //                 break;
-        //             }
-        //         }
-        //         
-        //         // swap first location with primary location
-        //         $tempLocation        = $data['location'][1];
-        //         $data['location'][1] = $data['location'][$primaryLocationKey];
-        //         $data['location'][$primaryLocationKey] = $tempLocation;
-        //     }
-        // }
 
         if ( ! isset( $data['contact_type'] ) ) {
             $data['contact_type'] = 'Individual';

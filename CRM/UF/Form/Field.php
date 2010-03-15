@@ -587,6 +587,11 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $ids['uf_field'] = $this->_id;
         }
         
+        // temporary hack to for website
+        if ( $params['field_name'][1] == 'url' ) {
+            $params['field_name'][1] = 'url-1';
+        }
+        
         //check for duplicate fields
         if (CRM_Core_BAO_UFField::duplicateField($params, $ids) ) {
             CRM_Core_Session::setStatus(ts('The selected field was not added. It already exists in this profile.'));
