@@ -53,8 +53,7 @@ class CRM_Event_Page_DashBoard extends CRM_Core_Page
         CRM_Utils_System::setTitle( ts('CiviEvent') );
 
         $admin = false;
-        if ( CRM_Core_Permission::check( 'access CiviEvent' ) &&
-             CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
+        if ( CRM_Core_Permission::check( 'edit all events' ) ) {
             $admin = true;
         }
         

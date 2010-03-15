@@ -32,16 +32,14 @@
 {capture assign=htmlFeed}{crmURL p='civicrm/event/ical' q="reset=1&page=1&html=1" fe=1 a=1}{/capture}
 
 {if $eventSummary.total_events}
-    {if $eventAdmin}
-	<div class="float-right">
-	    <table class="form-layout-compressed">
-		<tr>
-		    <td><a href="{$configPagesURL}" class="button"><span>&raquo; {ts}Manage Events{/ts}</span></a></td>
-		    <td><a href="{$newEventURL}" class="button"><span>&raquo; {ts}New Event{/ts}</span></a></td>
-		</tr>
-	    </table>
-	</div>
-    {/if}
+    <div class="float-right">
+	<table class="form-layout-compressed">
+	   <tr>
+		{if $eventAdmin}<td><a href="{$configPagesURL}" class="button"><span>&raquo; {ts}Manage Events{/ts}</span></a></td>{/if}
+		<td><a href="{$newEventURL}" class="button"><span>&raquo; {ts}New Event{/ts}</span></a></td>
+	   </tr>
+	</table>
+    </div>
     <h3>{ts}Event Summary{/ts}  {help id="id-event-intro"}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="{$htmlFeed}" title="{ts}HTML listing of current and future public events.{/ts}"><img src="{$config->resourceBase}i/applications-internet.png" alt="{ts}HTML listing of current and future public events.{/ts}" /></a>&nbsp;&nbsp;<a href="{$rssFeed}" title="{ts}Get RSS 2.0 feed for current and future public events.{/ts}"><img src="{$config->resourceBase}i/feed-icon.png" alt="{ts}Get RSS 2.0 feed for current and future public events.{/ts}" /></a>&nbsp;&nbsp;<a href="{$icalFile}" title="{ts}Download iCalendar file for current and future public events.{/ts}"><img src="{$config->resourceBase}i/office-calendar.png" alt="{ts}Download iCalendar file for current and future public events.{/ts}" /></a>&nbsp;&nbsp;<a href="{$icalFeed}" title="{ts}Get iCalendar feed for current and future public events.{/ts}"><img src="{$config->resourceBase}i/ical_feed.gif" alt="{ts}Get iCalendar feed for current and future public events.{/ts}" /></a></h3>
     {include file="CRM/common/jsortable.tpl"}
     <table id="options" class="display">
@@ -101,12 +99,12 @@
             {/foreach}
             {if $values.maxParticipants}{ts 1=$values.maxParticipants}(max %1){/ts}{/if}
         </td>
-        {if $eventAdmin or $eventMap}
+        {if $values.configure or $eventMap}
             <td>
                 {if $values.isMap}
                     <a href="{$values.isMap}" title="{ts}Map event location{/ts}">&raquo;&nbsp;{ts}Map{/ts}</a>&nbsp;|&nbsp;
                 {/if}
-                {if $eventAdmin}
+                {if $values.configure}
                     <a href="{$values.configure}" title="{ts}Configure event information, fees, discounts, online registration...{/ts}">&raquo;&nbsp;{ts}Configure{/ts}</a>
                 {/if}
             </td>
