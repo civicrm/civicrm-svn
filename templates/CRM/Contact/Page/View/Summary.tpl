@@ -136,7 +136,6 @@
                     <div class="clear"></div>
                 </div><!-- #contactTopBar -->
                 {/if}
-
                 <div class="contact_details ui-corner-all">
                     <div class="contact_panel">
                         <div class="contactCardLeft">
@@ -149,11 +148,15 @@
                                     </tr>
                                     {/if}
                                 {/foreach}
-                                {if $home_URL}
-                                <tr>
-                                    <td class="label">{ts}Website{/ts}</td>
-                                    <td><a href="{$home_URL}" target="_blank">{$home_URL}</a></td>
-                                </tr>
+                                {if $website}
+                                {foreach from=$website item=item}
+                                    {if $item.url}
+                                    <tr>
+                                        <td class="label">{$item.website_type}</td>
+                                        <td><a href="{$item.url}" target="_blank">{$item.url}</a></td>
+                                    </tr>
+                                    {/if}
+                                {/foreach}
                                 {/if}
                                 {if $user_unique_id}
                                     <tr>

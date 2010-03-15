@@ -142,6 +142,9 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                                     'im'      => array( 
                                                         'type' => 'IMProvider', 
                                                         'id'   => 'provider'  ),
+                                    'website' => array( 
+                                                        'type' => 'websiteType', 
+                                                        'id'   => 'website_type' ),                                                        
                                     'address' => array( 'skip' => true ),
 									'email'   => array( 'skip' => true ),
 									'openid'  => array( 'skip' => true )

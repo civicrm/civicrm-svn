@@ -122,7 +122,7 @@ class CRM_Core_BAO_Website extends CRM_Core_DAO_Website
             $values['website'][$count] = array( );
             CRM_Core_DAO::storeValues( $website, $values['website'][$count] );
             
-            $websites[] = $website;
+            $websites[$count] = $values['website'][$count];
             $count++;
         }
         
