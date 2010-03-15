@@ -57,6 +57,8 @@ class CRM_Contact_Form_Search_Custom_FullText
 
     protected $_limitClause = null;
     
+    protected $_limitRowClause = null;
+
     protected $_limitNumber = 10;
 
     protected $_foundRows   = array();
@@ -106,13 +108,24 @@ class CRM_Contact_Form_Search_Custom_FullText
         }
 
         if ( ! $this->_table ) {
-            $this->_limitClause = " LIMIT {$this->_limitNumber}";
+            $this->_limitClause    = " LIMIT {$this->_limitNumber}";
+            $this->_limitRowClause = $this->_limitClause;
+        } else {
+            // when there is table specified, we would like to use the pager. But since 
+            // 1. this custom search has slightly different structure , 
+            // 2. we are in constructor right now, 
+            // we 'll use a small hack -
+            $rowCount = CRM_Utils_Pager::ROWCOUNT;
+            $pageId   = CRM_Utils_Array::value( 'crmPID', $_REQUEST );
+            $pageId   = $pageId ? $pageId : 1;
+            $offset   = ( $pageId - 1 ) * $rowCount;
+            $this->_limitClause    = " LIMIT $offset, $rowCount";
+            $this->_limitRowClause = " LIMIT $rowCount";
         }
 
         $this->buildTempTable( );
-        
-        $this->fillTable( );
 
+        $this->fillTable( );
     }
 
     function __destruct( ) {
@@ -678,6 +691,9 @@ WHERE      c.display_name LIKE {$this->_text}
         
         // now iterate through the table and add entries to the relevant section
         $sql = "SELECT * FROM {$this->_tableName}";
+        if ( $this->_table ) {
+            $sql .= " {$this->_limitRowClause} ";
+        }
         $dao = CRM_Core_DAO::executeQuery( $sql );
         
         $activityTypes = CRM_Core_PseudoConstant::activityType( true, true );
@@ -707,7 +723,11 @@ WHERE      c.display_name LIKE {$this->_text}
     }
 
     function count( ) {
-        return CRM_Core_DAO::singleValueQuery( "SELECT count(id) FROM {$this->_tableName}" );
+        if ( $this->_table ) {
+            return $this->_foundRows[$this->_table];
+        } else {
+            return CRM_Core_DAO::singleValueQuery( "SELECT count(id) FROM {$this->_tableName}" );
+        }
     }
 
     function contactIDs( $offset = 0, $rowcount = 0, $sort = null) {
@@ -716,13 +736,15 @@ WHERE      c.display_name LIKE {$this->_text}
 
     function all( $offset = 0, $rowcount = 0, $sort = null,
                   $includeContactIDs = false ) {
-        return "
+        $sql = "
 SELECT 
   contact_a.contact_id   as contact_id  ,
   contact_a.display_name as display_name
 FROM
   {$this->_tableName} contact_a
+{$this->_limitRowClause}
 ";
+        return $sql;
     }
     
     function from( ) {
@@ -762,9 +784,9 @@ FROM
 INSERT INTO {$this->_tableName}
 ( contact_id, display_name, table_name )
 SELECT     c.id, c.display_name, 'Contact'
-  FROM     civicrm_contact c
-INNER JOIN {$this->_entityIDTableName} ct ON c.id = ct.entity_id
-{$this->_limitClause}
+  FROM     {$this->_entityIDTableName} ct
+INNER JOIN civicrm_contact c ON ct.entity_id = c.id
+{$this->_limitRowClause}
 ";
             break;
             
@@ -787,7 +809,7 @@ LEFT JOIN  civicrm_contact c2 ON caa.assignee_contact_id = c2.id
 LEFT JOIN  civicrm_activity_target cat ON cat.activity_id = ca.id
 LEFT JOIN  civicrm_contact c3 ON cat.target_contact_id = c3.id
 LEFT JOIN  civicrm_case_activity cca ON cca.activity_id = ca.id
-{$this->_limitClause}
+{$this->_limitRowClause}
 ";   
             break;
 
@@ -806,7 +828,7 @@ LEFT JOIN  civicrm_contribution_page ccp ON ccp.id = cc.contribution_page_id
 LEFT JOIN  civicrm_option_group option_group_contributionStatus ON option_group_contributionStatus.name = 'contribution_status'
 LEFT JOIN  civicrm_option_value contribution_status ON 
 ( contribution_status.option_group_id = option_group_contributionStatus.id AND contribution_status.value = cc.contribution_status_id )
-{$this->_limitClause}
+{$this->_limitRowClause}
 ";
             break;
                         
@@ -825,7 +847,7 @@ LEFT JOIN  civicrm_participant_status_type participantStatus ON participantStatu
 LEFT JOIN  civicrm_option_group option_group_participantRole ON option_group_participantRole.name = 'participant_role'
 LEFT JOIN  civicrm_option_value participant_role 
            ON ( participant_role.option_group_id = option_group_participantRole.id AND participant_role.value = cp.role_id )
-{$this->_limitClause}
+{$this->_limitRowClause}
 ";
             break;
 
@@ -842,7 +864,7 @@ LEFT JOIN  civicrm_membership_type cmt ON cmt.id = cm.membership_type_id
 LEFT JOIN  civicrm_membership_payment cmp ON cmp.membership_id = cm.id
 LEFT JOIN  civicrm_contribution cc ON cc.id = cmp.contribution_id
 LEFT JOIN  civicrm_membership_status cms ON cms.id = cm.status_id
-{$this->_limitClause}
+{$this->_limitRowClause}
 "; 
             break;
         }
