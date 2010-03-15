@@ -404,5 +404,31 @@ class CRM_Core_Permission {
 
         return $permissions;
     }
-
+    
+    /** 
+     * Validate user permission across 
+     * edit or view or with supportable acls.
+     *
+     * return boolean true/false.
+     **/
+    static function giveMeAllACLs( ) 
+    {
+        $hasPermission = false;
+        if ( CRM_Core_Permission::check( 'view all contacts' ) ||
+             CRM_Core_Permission::check( 'edit all contacts' ) ) {
+            $hasPermission = true;
+        }
+        
+        //check for acl.
+        if ( !$hasPermission ) { 
+            $aclPermission = self::getPermission( );
+            if ( in_array( $aclPermission, array( CRM_Core_Permission::EDIT, 
+                                                  CRM_Core_Permission::VIEW ) ) ) {
+                $hasPermission = true;
+            }
+        }
+        
+        return $hasPermission;
+    }
+    
 }

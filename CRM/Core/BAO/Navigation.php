@@ -288,6 +288,7 @@ ORDER BY parent_id, weight";
              
             // for each menu get their children
             $navigationTree[$navigation->id] = array( 'attributes' => array( 'label'      => $navigation->label,
+                                                                             'name'       => $navigation->name,
                                                                              'url'        => $navigation->url,
                                                                              'permission' => $navigation->permission,
                                                                              'operator'   => $navigation->permission_operator,
@@ -423,12 +424,22 @@ ORDER BY parent_id, weight";
         $parentID   = $value['attributes']['parentID'];
         $navID      = $value['attributes']['navID'];
         $active     = $value['attributes']['active'];
+        $menuName   = $value['attributes']['name'];
         
         if ( in_array( $parentID, $skipMenuItems ) || !$active ) {
             $skipMenuItems[] = $navID;
             return false;
         }
         
+        //we need to check core view/edit or supported acls.
+        if ( in_array( $menuName, array( 'Search...', 'Contacts' ) ) ) {
+            require_once 'CRM/Core/Permission.php';
+            if (!CRM_Core_Permission::giveMeAllACLs( ) ) {
+                $skipMenuItems[] = $navID;
+                return false;
+            }
+        }
+
         $makeLink = false;
         if ( isset( $url ) && $url) {
             if ( substr( $url, 0, 4 ) === 'http' ) {

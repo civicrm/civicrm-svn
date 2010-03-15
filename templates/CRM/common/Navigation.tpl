@@ -25,6 +25,7 @@
 *}
 <div id="menu-container" style="display:none;">
     <ul id="civicrm-menu">
+        {if call_user_func(array('CRM_Core_Permission','giveMeAllACLs'))}
         <li id="crm-qsearch" class="menumain">
             <form action="{crmURL p='civicrm/contact/search/basic' h=0 }" name="search_block" id="id_search_block" method="post" onsubmit="getSearchURLValue( );">
             	<div>
@@ -34,9 +35,11 @@
             	</div>
             </form>
         </li>
+	{/if}
         {$navigation}
     </ul>
 </div>
+
 {literal}
 <script type="text/javascript">
 function getSearchURLValue( )

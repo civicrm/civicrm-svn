@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Core/Menu.php';
+require_once 'CRM/Core/Permission.php';
 
 /**
  * defines a simple implemenation of a drupal block.
@@ -216,17 +217,23 @@ class CRM_Core_Block {
      * @access public
      */
     static function getInfo( ) {
-        require_once 'CRM/Core/Permission.php';
-
+                
         $block = array( );
         foreach ( self::properties() as $id => $value ) {
              if ( $value['active'] ) {
-                 if ( ( $id == self::ADD || $id == self::CREATE_NEW ) &&
-                      ( ! CRM_Core_Permission::check('add contacts') ) &&
-                      ( ! CRM_Core_Permission::check('edit groups') ) ) {
-                     continue;
+                 if ( in_array( $id, array( self::ADD, self::CREATE_NEW ) ) ) {
+                     $hasAccess = true;
+                     if ( !CRM_Core_Permission::check('add contacts') && 
+                          !CRM_Core_Permission::check('edit groups') ) {
+                         $hasAccess = false;
+                     }
+                     //validate across edit/view - CRM-5666
+                     if ( $hasAccess && ($id == self::ADD) ) {
+                         $hasAccess = CRM_Core_Permission::giveMeAllACLs( );
+                     }
+                     if ( !$hasAccess ) continue; 
                  }
-
+                 
                  if ( $id == self::EVENT &&
                       ( ! CRM_Core_Permission::access( 'CiviEvent', false ) ||
                         ! CRM_Core_Permission::check( 'view event info' ) ) ) {
@@ -245,6 +252,7 @@ class CRM_Core_Block {
                                      );
             }
         }
+        
         return $block;
     }
 
@@ -313,8 +321,10 @@ class CRM_Core_Block {
         
         if (!($shortCuts)) {
             if (CRM_Core_Permission::check('add contacts')) {
-                require_once 'CRM/Contact/BAO/ContactType.php';
-                $shortCuts = CRM_Contact_BAO_ContactType::getCreateNewList( );
+                if ( CRM_Core_Permission::giveMeAllACLs() ) {
+                    require_once 'CRM/Contact/BAO/ContactType.php';
+                    $shortCuts = CRM_Contact_BAO_ContactType::getCreateNewList( );
+                }
                 if ( CRM_Core_Permission::access( 'Quest' ) ) {
                     $shortCuts = array_merge($shortCuts, array( array( 'path'  => 'civicrm/quest/search',
                                                                        'query' => 'reset=1',
@@ -436,7 +446,7 @@ class CRM_Core_Block {
         // call shortcut hook
         require_once 'CRM/Utils/Hook.php';
         CRM_Utils_Hook::shortcuts( $values );
-            
+                    
         self::setProperty( self::CREATE_NEW, 'templateValues', array( 'shortCuts' => $values ) );
     }
 
@@ -448,7 +458,6 @@ class CRM_Core_Block {
      */
     private function setTemplateDashboardValues( ) {
         static $dashboardLinks = array( );
-        require_once 'CRM/Core/Permission.php';
         if ( CRM_Core_Permission::check('access Contact Dashboard')) {
             $dashboardLinks = array( array( 'path'  => 'civicrm/user',
                                             'query' => 'reset=1',
@@ -562,8 +571,7 @@ class CRM_Core_Block {
         if ( ! self::getProperty( $id, 'active' ) ) {
             return null;
         }
-
-        require_once 'CRM/Core/Permission.php';
+        
         if ( $id == self::EVENT &&
              CRM_Core_Permission::check( 'view event info' ) ) {
             // is CiviEvent enabled?
@@ -573,12 +581,19 @@ class CRM_Core_Block {
             // do nothing
         } else if ( ! CRM_Core_Permission::check( 'access CiviCRM' ) ) {
             return null;
-        } else if ( ( $id == self::ADD  ) &&
-                    ( ! CRM_Core_Permission::check( 'add contacts' ) ) &&
-                    ( ! CRM_Core_Permission::check('edit groups') ) ) {
-            return null;
+        } else if ( $id == self::ADD ) {
+            $hasAccess = true;
+            if ( !CRM_Core_Permission::check( 'add contacts' ) &&
+                 !CRM_Core_Permission::check('edit groups') ) {
+                $hasAccess = false;
+            }
+            //validate across edit/view - CRM-5666
+            if ( $hasAccess ) {
+                $hasAccess = CRM_Core_Permission::giveMeAllACLs( );
+            }
+            if ( !$hasAccess ) return null;
         }
-
+        
         self::setTemplateValues( $id );
 
         // Suppress Recent Items block if it's empty - CRM-5188
@@ -596,6 +611,7 @@ class CRM_Core_Block {
                                          array( 'subject' => self::getProperty( $id, 'subject' ) ) );
         $block['content'] = self::fetch( $id, self::getProperty( $id, 'template' ),
                                          self::getProperty( $id, 'templateValues' ) );
+        
         
         return $block;
     }

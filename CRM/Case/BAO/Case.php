@@ -1016,11 +1016,13 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         $contactViewUrl = CRM_Utils_System::url( "civicrm/contact/view",
                                                  "reset=1&cid=", false, null, false );
         require_once 'CRM/Activity/BAO/ActivityTarget.php';
+        $hasViewContact = CRM_Core_Permission::giveMeAllACLs( );
+        
         while ( $dao->fetch( ) ) {
             $allowView   = self::checkPermission( $dao->id, 'view',   $dao->activity_type_id, $contactID );
             $allowEdit   = self::checkPermission( $dao->id, 'edit',   $dao->activity_type_id, $contactID );
             $allowDelete = self::checkPermission( $dao->id, 'delete', $dao->activity_type_id, $contactID );
-            
+                        
             //do not have sufficient permission 
             //to access given case activity record.  
             if ( !$allowView && !$allowEdit && !$allowDelete ) {
@@ -1029,12 +1031,12 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             
             $values[$dao->id]['id']           = $dao->id;
             $values[$dao->id]['type']         = $activityTypes[$dao->type]['label'];
-            $values[$dao->id]['reporter']     = "<a href='{$contactViewUrl}{$dao->reporter_id}'>$dao->reporter</a>";
+            $values[$dao->id]['reporter']     = ($hasViewContact)?"<a href='{$contactViewUrl}{$dao->reporter_id}'>$dao->reporter</a>":$dao->reporter;
             $targetContactNames = CRM_Activity_BAO_ActivityTarget::getTargetNames( $dao->id );
             if ( is_array( $targetContactNames ) ) {
                 $targetContactUrls = array();
                 foreach ( $targetContactNames as $cid => $name ) {
-                    $targetContactUrls[] = "<a href='{$contactViewUrl}{$cid}'>$name</a>";
+                    $targetContactUrls[] = ($hasViewContact) ? "<a href='{$contactViewUrl}{$cid}'>$name</a>" : $name;
                 }
                 $values[$dao->id]['with_contacts'] = implode( ';', $targetContactUrls );
             }
@@ -1051,7 +1053,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             // add activity assignee to activity selector. CRM-4485.
             if ( isset($dao->assignee) ) {
                 if( $dao->ismultiple == 1 ) {
-                    $values[$dao->id]['reporter'] .= ' / '."<a href='{$contactViewUrl}{$dao->assignee_id}'>$dao->assignee</a>";
+                    $values[$dao->id]['reporter'] .= ($hasViewContact)? ' / '."<a href='{$contactViewUrl}{$dao->assignee_id}'>$dao->assignee</a>":$dao->assignee;
                     $values[$dao->id]['assignee']  = $dao->assignee;
                 } else {
                     $values[$dao->id]['reporter'] .= ' / ' .ts('(multiple)');
@@ -1108,7 +1110,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             }
         }
         $dao->free( );
-
+        
         return $values;
     }
     
@@ -2390,6 +2392,10 @@ SELECT id, subject, activity_date_time
                         $allow = (in_array($actTypeName, $doNotDeleteNames)) ? false : true;
                     }
                 }
+            }
+            if ( $allow && ($operation == 'delete') && 
+                 in_array( $actTypeName, $doNotDeleteNames ) ) {
+                $allow = false;
             }
             
             //check settings file for masking actions
