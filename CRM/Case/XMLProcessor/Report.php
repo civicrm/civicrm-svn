@@ -612,7 +612,12 @@ LIMIT  1
         $pageTitle = CRM_Utils_Array::value($activitySetName, $activitySetNames);
         $template->assign( 'pageTitle', $pageTitle );
 
-        $activityTypes = $form->getActivityTypes( $xml, $activitySetName );
+        if( $activitySetName ) {
+            $activityTypes = $form->getActivityTypes( $xml, $activitySetName );
+        } else {
+            $activityTypes = CRM_Case_XMLProcessor::allActivityTypes( );
+        }
+
         if ( ! $activityTypes ) {
             return false;
         }        

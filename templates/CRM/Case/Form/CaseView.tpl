@@ -90,6 +90,8 @@
     <table class="form-layout">
         <tr>
             <td colspan="2">{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>
+           <td> <br /><input type="button"  value="Print Case Report" name="case_report_all" onclick="printCaseReport( );"/></td> 
+
 		</tr>
 		<tr>
 	    {if $hasAccessToAllCases}	
@@ -728,6 +730,14 @@ function setSelectorClass( ) {
        cj(this).parent().attr( 'class', cj(this).text() );
     });
 }
+function printCaseReport( ){
+ 
+ 	var dataUrl = {/literal}"{crmURL p='civicrm/case/report/print'}"{literal};
+ 	dataUrl     = dataUrl+ '&cid={/literal}{$contactID}{literal}' 
+                      +'&caseID={/literal}{$caseID}{literal}';
+        window.location = dataUrl;
+}
+	
 </script>
 {/literal}
 
