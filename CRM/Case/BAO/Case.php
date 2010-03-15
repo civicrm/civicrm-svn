@@ -1053,7 +1053,9 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             // add activity assignee to activity selector. CRM-4485.
             if ( isset($dao->assignee) ) {
                 if( $dao->ismultiple == 1 ) {
-                    $values[$dao->id]['reporter'] .= ($hasViewContact)? ' / '."<a href='{$contactViewUrl}{$dao->assignee_id}'>$dao->assignee</a>":$dao->assignee;
+                    if ( $dao->reporter_id != $dao->assignee_id ) {
+                        $values[$dao->id]['reporter'] .= ($hasViewContact)? ' / '."<a href='{$contactViewUrl}{$dao->assignee_id}'>$dao->assignee</a>":$dao->assignee;
+                    }
                     $values[$dao->id]['assignee']  = $dao->assignee;
                 } else {
                     $values[$dao->id]['reporter'] .= ' / ' .ts('(multiple)');
@@ -2145,7 +2147,7 @@ SELECT  id
                         $mainAssigneeActivity->assignee_contact_id = $mainContactId;
                     }
                     //avoid duplicate object.
-                    if ( $mainAssigneeActivity->find( true ) ) {
+                    if ( !$mainAssigneeActivity->find( true ) ) {
                         $mainAssigneeActivity->save( );
                     }
                     $mainAssigneeActivity->free( );
@@ -2176,7 +2178,7 @@ SELECT  id
                     $mainRelationship->end_date   = CRM_Utils_Date::isoToMysql( $otherRelationship->end_date );
                     $mainRelationship->start_date = CRM_Utils_Date::isoToMysql( $otherRelationship->start_date );
                     //avoid duplicate object.
-                    if ( $mainRelationship->find( true ) ) {
+                    if ( !$mainRelationship->find( true ) ) {
                         $mainRelationship->save( );
                     }
                     $mainRelationship->free( );
