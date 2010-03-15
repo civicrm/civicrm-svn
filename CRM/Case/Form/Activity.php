@@ -124,12 +124,12 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
                 CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
             }
         }
+        
         //validate case activity id.
         if ( $this->_activityId &&
-             ($this->_action & CRM_Core_Action::UPDATE) &&
-             !CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+             ($this->_action & CRM_Core_Action::UPDATE) ) {
             $valid = CRM_Case_BAO_Case::checkPermission( $this->_activityId, 'edit', 
-                                                         $this->_activityTypeId, null, $this->_caseId );
+                                                         $this->_activityTypeId );
             if ( !$valid ) {
                 CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) ); 
             }

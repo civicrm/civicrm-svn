@@ -57,7 +57,7 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
 	SET val.grouping = 'Closed'  
 	WHERE gr.name = 'case_status' AND val.name = 'Closed';
 
-   SELECT @domain_id := min(id) FROM civicrm_domain; 
+   SELECT @domain_id := min(id) FROM civicrm_domain;
    SELECT @nav_case    := id FROM civicrm_navigation WHERE name = 'CiviCase';
    SELECT @nav_case_weight := MAX(ROUND(weight)) from civicrm_navigation WHERE parent_id = @nav_case;
 
