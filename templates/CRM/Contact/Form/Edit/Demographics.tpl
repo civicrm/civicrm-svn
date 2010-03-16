@@ -23,12 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<h3 class="head"> 
-    <span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">{$title}</a>
-</h3>
-
-<div id="demographics" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom">
-  <fieldset>
+<div class="crm-accordion-wrapper crm-demographics-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+	{$title} 
+  </div><!-- /.crm-accordion-header -->
+  <div id="demographics" class="crm-accordion-body">
   <div class="form-item">
         <span class="labels">{$form.gender_id.label}</span>
         
@@ -49,8 +49,8 @@
        <span class="labels">{$form.deceased_date.label}</span>
        <span class="fields">{include file="CRM/common/jcalendar.tpl" elementName=deceased_date}</span>
   </div> 
-  </fieldset>
-</div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 
 {literal}
 <script type="text/javascript">

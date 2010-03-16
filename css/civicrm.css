@@ -2059,7 +2059,9 @@ div.grippie {
 	background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png")
 	}
 
-
+.crm-accordion-hasContent .crm-accordion-header {
+	font-weight:bold;
+	}
 
 /* civicrm admin menu */
 

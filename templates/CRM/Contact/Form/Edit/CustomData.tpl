@@ -23,9 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<h3 class="head"> 
-    <span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">{$title}</a>
-</h3>
-<div id="customData" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom">
-    {include file="CRM/Custom/Form/CustomData.tpl"}
-</div>
+<div class="crm-accordion-wrapper crm-custom_data-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+	{$title} 
+  </div><!-- /.crm-accordion-header -->
+  <div id="customData" class="crm-accordion-body">
+	    {include file="CRM/Custom/Form/CustomData.tpl"}
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->

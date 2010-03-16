@@ -12,7 +12,7 @@
  |                                                                    |
  | CiviCRM is distributed in the hope that it will be useful, but     |
  | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               | 
  | See the GNU Affero General Public License for more details.        |
  |                                                                    |
  | You should have received a copy of the GNU Affero General Public   |
@@ -24,11 +24,12 @@
  +--------------------------------------------------------------------+
 *}
 {if $title}
-    <h3 class="head"> 
-	<span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">{$title}</a>
-    </h3>
-    <div id="tagGroup" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom">
-    <fieldset>
+<div class="crm-accordion-wrapper crm-tagGroup-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+	{$title} 
+  </div><!-- /.crm-accordion-header -->
+  <div class="crm-accordion-body" id="tagGroup">
 {/if}
     <table class="form-layout-compressed" style="width:98%">
 	<tr>
@@ -41,9 +42,9 @@
 			    {if $k|is_numeric}
 				<tr class={cycle values="'odd-row','even-row'" name=$key}>
 				    <td>
-					<strong>{$it.html}</strong><br/>
+					<strong>{$it.html}</strong><br />
 					{if $item.$k.description}
-					    <div style="font-size:10px;padding-left:20px;">
+					    <div class="description">
 						{$item.$k.description}
 					    </div>
 					{/if}
@@ -58,6 +59,7 @@
 	</tr>
     </table>   
 {if $title}
-    </fieldset>
-    </div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+
 {/if}
