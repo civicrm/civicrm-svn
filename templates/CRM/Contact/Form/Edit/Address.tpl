@@ -28,11 +28,12 @@
 {* @var $blockId Contains the current address block id, and assigned in the  CRM/Contact/Form/Location.php file *}
 
 {if $title and $className eq 'CRM_Contact_Form_Contact'}
-<h3 class="head"> 
-    <span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">{$title}</a>
-</h3>
-
-<div id="addressBlock" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom">
+<div class="crm-accordion-wrapper crm-address-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+	{$title}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body" id="addressBlock">
 {/if}
 
 {if $blockId gt 1}<div class="spacer"></div>{/if}
@@ -83,10 +84,11 @@
      </tr>
      {/if}
   </table>
- </div>
 
 {if $title and $className eq 'CRM_Contact_Form_Contact'}
 </div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 {/if}
 {literal}
 <script type="text/javascript">
@@ -163,3 +165,11 @@ function checkLocation( object, noAlert ) {
 }
 </script>
 {/literal}
+{literal}
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+{/literal}
+

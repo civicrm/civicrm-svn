@@ -70,9 +70,7 @@
 </div>
 {literal}
 <script type="text/javascript">
-cj(function() {
-	cj().crmaccordions(); 
-	});
+cj(function() { cj().crmaccordions(); });
 </script>
 {/literal}
 

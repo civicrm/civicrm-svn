@@ -26,11 +26,12 @@
 {* This file provides the plugin for the communication preferences in all the three types of contact *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
 
-<h3 class="head"> 
-    <span class="ui-icon ui-icon-triangle-1-e"></span><a href="#">{$title}</a>
-</h3>
-<div id="commPrefs" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom">
-    <fieldset>
+<div class="crm-accordion-wrapper crm-commPrefs-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+	{$title} 
+  </div><!-- /.crm-accordion-header -->
+<div id="commPrefs" class="crm-accordion-body">
     <table class="form-layout-compressed" >
         <tr>
             {if $form.email_greeting_id}
@@ -112,8 +113,10 @@
 
         </tr>
     </table>
-    </fieldset>
-</div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+
+
 {literal}
 <script type="text/javascript">
 cj( function( ) {
