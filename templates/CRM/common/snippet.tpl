@@ -38,10 +38,8 @@
     {* Check for Status message for the page (stored in session->getStatus). Status is cleared on retrieval. *}
     {if $session->getStatus(false)}
     <div class="messages status">
-      <dl>
-      <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
-      <dd>{$session->getStatus(true)}</dd>
-      </dl>
+      <div class="icon alert-icon"></div>
+      {$session->getStatus(true)}
     </div>
     {/if}
 

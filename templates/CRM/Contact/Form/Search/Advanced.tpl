@@ -27,22 +27,20 @@
 
 {include file="CRM/Contact/Form/Search/Intro.tpl"}
 
-{assign var="showBlock" value="'searchForm'"}
-{assign var="hideBlock" value="'searchForm_show','searchForm_hide'"}
 
-<div id="searchForm_show" class="form-item">
-  <a href="#" onclick="hide('searchForm_show'); show('searchForm'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}" /></a>
-  <label>
+<div class="crm-accordion-wrapper crm-advanced_search_form-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
   {if $savedSearch}
     {ts 1=$savedSearch.name}Edit %1 Smart Group Criteria{/ts}
   {else}
-    {ts}Edit Search Criteria{/ts}</label>
+    {ts}Edit Search Criteria{/ts}
   {/if}
-</div>
-
-<div id="searchForm">
-    {include file="CRM/Contact/Form/Search/AdvancedCriteria.tpl"}
-</div>
+ </div>
+ <div class="crm-accordion-body">
+  {include file="CRM/Contact/Form/Search/AdvancedCriteria.tpl"}
+ </div>
+</div>  
 
 {if $rowsEmpty}
     {include file="CRM/Contact/Form/Search/EmptyResults.tpl"}
@@ -72,11 +70,11 @@
 
 {/if}
 
+{literal}
 <script type="text/javascript">
-    var showBlock = new Array({$showBlock});
-    var hideBlock = new Array({$hideBlock});
-
-{* hide and display the appropriate blocks *}
-    on_load_init_blocks( showBlock, hideBlock );
+cj(function() {
+	cj().crmaccordions(); 
+	});
 </script>
+{/literal}
 

@@ -33,12 +33,8 @@
     {/foreach}
 {else}
     <div class="messages status">
-      <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
-        <dd>
-            {ts}There are currently no Custom Searches.{/ts}
-        </dd>
-      </dl>
+      <div class="icon alert-icon"></div>
+       {ts}There are currently no Custom Searches.{/ts}
     </div>
 {/if}
 </fieldset>

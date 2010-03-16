@@ -19,7 +19,6 @@
 
 #crm-container table {
   margin: .5em .1em .5em;
-  width: 99%;
   border-collapse: collapse;
   border: 1px solid #DDD;
 }
@@ -108,7 +107,6 @@
 */
 div#crm-container {
     line-height: 135%;
-    width      :98%;
 }
 
 /* Base #crm-container styles */
@@ -228,7 +226,6 @@ div.spacer,
   clear           : none;
   overflow        : auto; 
   height          : 100%;
-  width           : 98%;
 }
 
 #crm-container div.form-item dl, #crm-container .section-hidden dl{
@@ -326,7 +323,6 @@ div.spacer,
 #crm-container table.control-panel, 
 #crm-container table.no-border {
   margin: 0em;
-  width: 98%;	
   border-collapse: collapse;
   border: 0px none;
 }
@@ -440,15 +436,13 @@ div.spacer,
 }
 
 #crm-container div.status {
-  margin: 0.5em;
-  background-color: #ffff99;
-  padding: .25em .5em .25em .5em;
-  border: 1px solid #696969;
-  border-radius: 2px;
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  -khtml-border-radius: 2px;
-}
+	background-color:#FFFF99;
+	border:medium none;
+	color:#7A7A60;
+	font-weight:normal;
+	margin:5px 0;
+	padding:4px 8px;
+	}
 
 #crm-container div.view-data {
   padding: .25em .5em .25em .5em;
@@ -477,7 +471,7 @@ div.spacer,
   text-align: right;
 }
 #crm-container div.status ul {
-  margin: 0;
+  margin: 0 0 1em 16px;
 }
 
 #crm-container div.status dt {
@@ -491,8 +485,9 @@ div.spacer,
 }
 
 #crm-container .messages {
-  margin: 1.0em 0em 1.0em;
-  border: 1px solid #CCCCCC;
+  	margin: 1.0em 0em 1.0em;
+  	border: 1px solid #CCCCCC;
+	font-weight: normal;
 	}	
 	#crm-container .messages table, #crm-container-snippet .messages table {width: auto;}
 	#crm-container .messages table td, #crm-container-snippet .messages table td { 
@@ -704,9 +699,17 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
   color: #000080;
 }
 
-.upper {
-    text-transform: uppercase;
-}
+#crm-container .crm-marker {
+	color:#8A1F11;
+	font-weight: bold;
+	}
+#crm-container .crm-error {
+	background:#FBE3E4 none repeat scroll 0 0;
+	border:2px solid #FBC2C4;
+	padding:4px;
+	color:#8A1F11;
+	}
+
 
 /* 
 ** Styles for record browser and report tables, and pager bar
@@ -842,6 +845,15 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     float : right;
     margin-right: 35px;
 }
+
+
+/* search page styles */
+
+.crm-search-tasks,
+.crm-search-results {
+	margin-bottom:4px;
+	}
+
 /*
 #crm-container div.crm-pager .element-right {
     margin-top:-1.5em;
@@ -867,14 +879,13 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 }
 
 .crm-pager {
-  border: 1px solid #CCC; 
-  background-color: #E6E6E6;
-  color: #000000;
-  position: relative;
-  height: 25px;
-  padding-top: 5px;
-  width:99%;
-}
+  	border: 1px solid #CCC; 
+  	background-color: #E6E6E6;
+  	color: #000000;
+  	position: relative;
+  	height: 25px;
+  	padding-top: 5px;
+	}
 
 .crm-pager a {
   /*color: #FFFFFF;*/
@@ -1853,7 +1864,6 @@ div.grippie {
 
 #crm-container table.view-layout {
   margin: 0em;
-  width: 98%;	
   border-collapse: collapse;
   border: 0px none;
 }
@@ -1973,6 +1983,9 @@ div.grippie {
 
 .tip-icon { background-position: -128px -128px; }
 
+.alert-icon { background-position: 0 -144px; }
+
+
 #crm-container .geotag {
     padding: 2px 0 2px 20px !important;
     background: url('../i/geotag_16.png') left center no-repeat;
@@ -1982,7 +1995,8 @@ div.grippie {
 
 /* These .crm-icon classes use item_sprites.png */
 
-.block-civicrm #recently-viewed .crm-icon, .crm-icon {
+.block-civicrm #recently-viewed .crm-icon, 
+.crm-icon {
 	background-image: url('../i/item_sprites.png');
 	margin:2px 4px 0 0;
 	}
@@ -2005,6 +2019,39 @@ div.grippie {
 .Participant-icon { background-position: 0px -32px; }
 .Note-icon { background-position: -16px -32px; }
 .Relationship-icon { background-position: -32px -32px; }
+
+
+/* accordion styles */
+
+.crm-accordion-header {
+	background-color:#CCC; 
+	-moz-border-radius: 4px; 
+	padding:4px 8px;
+	cursor: pointer;
+	margin-bottom:4px;
+	}
+	.crm-accordion-header .crm-accordion-pointer {margin-right:4px;}
+
+.crm-accordion-body {
+	padding:4px 0px;
+	}	
+
+.crm-accordion-open .crm-accordion-body { display: block; }
+.crm-accordion-closed .crm-accordion-body { display: none; }
+
+.crm-accordion-open .crm-accordion-header .crm-accordion-pointer {
+	background-position: -64px -16px;
+	}
+
+.crm-accordion-closed .crm-accordion-header .crm-accordion-pointer {
+	background-position: -32px -16px;
+	}
+
+
+.crm-accordion-wrapper .crm-accordion-header-hover .crm-accordion-pointer {
+	background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png")
+	}
+
 
 
 /* civicrm admin menu */
@@ -2089,9 +2136,9 @@ div.helpicon {
 	background  : transparent url(../i/quiz.png) no-repeat;
 	display     : inline;
 	cursor      : pointer;
-	background-position:-48px -144px;
+	background-position:-16px -144px;
 	background-image:url(../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png);
-	background-color:#DDD;
+	background-color:transparent;
 	width:16px;
 	height:16px;
 	z-index:1;
@@ -2115,7 +2162,6 @@ div.statusicon {
 div#crm-toolTip {
 	padding   : 10px;
 	background: #eef4b8;
-	border    : 1px solid #f6c147;
 	font-size : 11px;
 	color     : black;
 	text-align: left;
@@ -2125,7 +2171,10 @@ div#crm-toolTip {
 	right:20px;
 	width:300px;
 	display:none;
-}
+	}
+	div#crm-toolTip a {
+		color: #000;
+		}
 	div#crm-toolTip #hide-tooltip {
 		float:right;
 		cursor: pointer;
@@ -2159,7 +2208,6 @@ div#crm-toolTip {
  #crm-container #premiums-listings,
  #crm-container #searchForm table {
   margin: 0em;
-  width: 98%;	
   border-collapse: collapse;
   border: 0px none;
 } 
@@ -2243,6 +2291,12 @@ th.sorting_desc {
 
 
 /* skin */
+/* rounded corners - we will call dd_roundies on all this */
+
+#crm-container div.form-item,
+#crm-container div.messages,
+div#crm-toolTip
+{-moz-border-radius: 4px; -webkit-border-radius: 4px;   -khtml-border-radius: 4px; border-radius:4px; }
 
 /* fix autocomplete colors/styles */
 
@@ -2267,17 +2321,4 @@ th.sorting_desc {
 .ac_results li strong {
 	color: #FFF;
 	font-weight: normal;
-	}
-
-div#toolTip {
-	position:fixed !important;
-	right:10px!important;
-	left:auto!important;
-	bottom:10px!important;
-	-moz-border-radius: 4px;
-	background-image: none;
-	background-color: #CCC;
-	border:none;
-	top:auto!important;
-	width:300px!important;
 	}

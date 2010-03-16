@@ -71,19 +71,25 @@ function loadPanes( id ) {
 }
 </script>
 {/literal}
-<fieldset>
-    <legend><span id="searchForm_hide"><a href="#" onclick="hide('searchForm','searchForm_hide'); show('searchForm_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}" /></a></span>
+
+        <h3>
         {if $context EQ 'smog'}{ts}Find Members within this Group{/ts}
         {elseif $context EQ 'amtg'}{ts}Find Contacts to Add to this Group{/ts}
         {elseif $savedSearch}{ts 1=$savedSearch.name}%1 Smart Group Criteria{/ts} &nbsp; {help id='id-advanced-smart'}
         {else}{ts}Search Criteria{/ts}{/if}
-    </legend>
+        </h3>
 
-<div class="form-item">
 {strip}
-    <div class="ui-widget">
+<div class="crm-accordion-wrapper crm-search_criteria_basic-accordion crm-accordion-open">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
+  {ts}Basic Criteria{/ts} 
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
         {include file="CRM/Contact/Form/Search/Criteria/Basic.tpl"}
-    </div>
+    </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+    
     <div class="accordion ui-accordion ui-widget ui-helper-reset">
       {foreach from=$allPanes key=paneName item=paneValue}
        <h3 class="head"><span class="ui-icon ui-icon-triangle-1-e" id="{$paneValue.id}"></span><a href="#">{$paneName}</a></h3>
@@ -101,5 +107,3 @@ function loadPanes( id ) {
         </tr>
     </table>
 {/strip}
-</div>
-</fieldset>

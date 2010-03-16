@@ -24,9 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {* Template for Full-text search component. *}
+<div class="crm-form-block crm-search-form-block">
 <div id="searchForm">
-    <fieldset>
-    <div class="form-item">
     <table class="form-layout-compressed">
         <tr>
             <td class="label">{$form.text.label}</td><td>{$form.text.html}</td>
@@ -34,18 +33,20 @@
             <td>{$form.buttons.html} {help id="id-fullText"}</td>
         </tr>
     </table>
-    </div>
-</fieldset>
 </div>
+</div>
+<div class="crm-content-block">
 {include file="CRM/common/jsortable.tpl"}
 {if $rowsEmpty}
+	<div class="crm-results-block crm-results-block-empty">
     {include file="CRM/Contact/Form/Search/Custom/EmptyResults.tpl"}
+    </div>
 {/if}
 
 {if !empty($summary.Contact) }
     {* Search request has returned 1 or more matching rows. Display results. *}
-    <fieldset>
-        <legend>{ts}Contacts{/ts}</legend>
+	<div class="crm-results-block">       
+	<h3>{ts}Contacts{/ts}</h3>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="contact_listing" class="display" class="selector" summary="{ts}Contact listings.{/ts}">
@@ -63,15 +64,15 @@
                 {/foreach}
             </table>
             {/strip}
-    </fieldset>
+    </div>
     {* END Actions/Results section *}
 {/if}
 
 {if !empty($summary.Activity) }
     {* Search request has returned 1 or more matching rows. Display results. *}
 
-    <fieldset>
-        <legend>{ts}Activities{/ts}</legend>
+    <div class="crm-results-block"> 
+        <h3>{ts}Activities{/ts}</h3>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="activity_listing" class="display" summary="{ts}Activity listings.{/ts}">
@@ -106,15 +107,15 @@
                 {/foreach}
             </table>
             {/strip}
-    </fieldset>
+    </div>
     {* END Actions/Results section *}
 {/if}
 
 {if !empty($summary.Case) }
     {* Search request has returned 1 or more matching rows. Display results. *}
 
-    <fieldset>
-        <legend>{ts}Cases{/ts}</legend>
+    <div class="crm-results-block"> 
+        <h3>{ts}Cases{/ts}</h3>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="case_listing" class="display" summary="{ts}Case listings.{/ts}">
@@ -140,15 +141,15 @@
                 {/foreach}
             </table>
             {/strip}
-    </fieldset>
+    </div>
     {* END Actions/Results section *}
 {/if}
 
 {if !empty($summary.Contribution) }
     {* Search request has returned 1 or more matching rows. Display results. *}
 
-    <fieldset>
-        <legend>{ts}Contributions{/ts}</legend>
+    <div class="crm-results-block"> 
+        <h3>{ts}Contributions{/ts}</h3>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="contribute_listing" class="display" summary="{ts}Contribution listings.{/ts}">
@@ -177,15 +178,15 @@
                 {/foreach}
             </table>
             {/strip}
-    </fieldset>
+    </div>
     {* END Actions/Results section *}
 {/if}
 
 {if !empty($summary.Participant) }
     {* Search request has returned 1 or more matching rows. *}
 
-    <fieldset>
-        <legend>{ts}Event Participants{/ts}</legend>
+    <div class="crm-results-block"> 
+        <h3>{ts}Event Participants{/ts}</h3>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="participant_listing" class="display" summary="{ts}Participant listings.{/ts}">
@@ -218,15 +219,15 @@
                 {/foreach}
             </table>
             {/strip}
-    </fieldset>
+    </div>
     {* END Actions/Results section *}
 {/if}
 
 {if !empty($summary.Membership) }
     {* Search request has returned 1 or more matching rows. *}
 
-    <fieldset>
-        <legend>{ts}Memberships{/ts}</legend>
+    <div class="crm-results-block"> 
+        <h3>{ts}Memberships{/ts}</h3>
         {* This section displays the rows along and includes the paging controls *}
             {strip}
             <table id="membership_listing" class="display" summary="{ts}Membership listings.{/ts}">
@@ -258,6 +259,7 @@
                 {/foreach}
             </table>
             {/strip}
-    </fieldset>
+    </div>
     {* END Actions/Results section *}
 {/if}
+</div>

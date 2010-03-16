@@ -32,8 +32,7 @@
 
 {* Welcome message appears when there are no active dashlets for the current user. *}
 <div id="empty-message" class='hiddenElement'>
-    <br />
-    <div class="status" style="padding: 1em;">
+    <div class="status">
         <div class="font-size12pt bold">{ts}Welcome to your Home Dashboard{/ts}</div>
         <div class="display-block">
             {ts}Your dashboard provides a one-screen view of the data that's most important to you. Graphical or tabular data is pulled from the reports you select,
