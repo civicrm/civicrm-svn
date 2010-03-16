@@ -77,6 +77,10 @@
 </div>
 {/if}
 
+<div class="crm-title">
+	<h2>{$pageTitle}</h2>
+</div>
+
 {*{include file="CRM/common/langSwitch.tpl"}*}
 
 <div class="spacer"></div>
