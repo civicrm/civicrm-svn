@@ -589,7 +589,14 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 	background-position:3px 0px;  
 	}
 #crm-container .tree-default li span.clicked { padding:0px 3px 0px 20px; }
-#crm-container .tree-default li a.loading { background-image:url("../packages/jquery/plugins/themes/default/throbber.gif"); }
+#crm-container .tree-default li a.loading,
+#crm-container .crm-loading-element { background-image:url("../packages/jquery/plugins/themes/default/throbber.gif"); }
+
+#crm-container .crm-loading-element  {
+	padding-left:30px;
+	height:30px;
+	background: transparent url("../packages/jquery/plugins/themes/default/throbber.gif") no-repeat 4px 0px;
+	}
 
 /* CONTEXT MENU */
 .tree-default-context { 

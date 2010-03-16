@@ -26,49 +26,25 @@
 {* Advanced Search Criteria Fieldset *}
 {literal}
 <script type="text/javascript">
-var showPane = "";
-cj(function() {
-  cj('.accordion .head').addClass( "ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ");
-  cj('.ui-accordion .ui-accordion-header').css( 'width', '98%' );
-  cj('div.custom').css( 'width', '98%' );
-  cj('.accordion .head').hover( function() { cj(this).addClass( "ui-state-hover");
-                             }, function() { cj(this).removeClass( "ui-state-hover");
-               }).bind('click', function() { 
-		                 var checkClass = cj(this).find('span').attr( 'class' );
-					     var len        = checkClass.length;
-					     if( checkClass.substring( len - 1, len ) == 's' ) {
-					       cj(this).find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-e');
-					     } else {
-					       cj(this).find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-s');
-					     }
-					     cj(this).next().toggle(); return false; }).next().hide();
-  if ( showPane.length > 1 ) {
-    eval("showPane =[ '" + showPane.substring( 0,showPane.length - 2 ) +"]");
-    cj.each( showPane, function( index, value ) {
-      cj('span#'+value).removeClass().addClass('ui-icon ui-icon-triangle-1-s');
-      loadPanes( value )  ;
-      cj("div."+value).show();
-    }); 
-  }
-});
-
+// bind first click of accordion header to load crm-accordion-body with snippet
+// everything else taken care of by cj().crm-accordions()
 cj(document).ready( function() {
-    cj('.head').one('click', function() { loadPanes(cj(this).children().attr('id') ); });
+    cj('.crm-ajax-accordion .crm-accordion-header').one('click', function() { 
+    	loadPanes(cj(this).attr('id')); 
+    	});
 });
-
+// load panes function calls for snippet based on id of crm-accordion-header
 function loadPanes( id ) {
     var url = "{/literal}{crmURL p='civicrm/contact/search/advanced' q='snippet=1&searchPane=' h=0}{literal}" + id;
    if ( ! cj('div.'+id).html() ) {
-    var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts}loading{/ts}{literal}" />&nbsp;{/literal}{ts}Loading{/ts}{literal}...';
-    cj('div.'+id).html(loading);
-    cj.ajax({
-        url    : url,
-        success: function(data) { 
-                    cj('div.'+id).html(data);
-                 }
-         });
-   }
-}
+	    var loading = '<div class="crm-loading-element"><span class="loading-text">{/literal}{ts}Loading{/ts}{literal}...</span></div>';
+	    cj('div.'+id).html(loading);
+	    cj.ajax({
+	        url    : url,
+	        success: function(data) { cj('div.'+id).html(data); }
+	        });
+    	}
+	}
 </script>
 {/literal}
 
@@ -90,15 +66,15 @@ function loadPanes( id ) {
     </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
     
-    <div class="accordion ui-accordion ui-widget ui-helper-reset">
-      {foreach from=$allPanes key=paneName item=paneValue}
-       <h3 class="head"><span class="ui-icon ui-icon-triangle-1-e" id="{$paneValue.id}"></span><a href="#">{$paneName}</a></h3>
-       <div class="{$paneValue.id}"></div>
-    {if $paneValue.open eq 'true'}
-        {literal}<script type="text/javascript"> showPane += "{/literal}{$paneValue.id}{literal}"+"','";</script>{/literal}
-    {/if}
+    {foreach from=$allPanes key=paneName item=paneValue}
+      <div class="crm-accordion-wrapper crm-ajax-accordion crm-{$paneValue.id}-accordion crm-accordion-closed">
+       <div class="crm-accordion-header" id="{$paneValue.id}">
+       	<div class="icon crm-accordion-pointer"></div>
+       	{$paneName}
+       </div>
+       <div class="crm-accordion-body {$paneValue.id}"></div>
+       </div>
     {/foreach}
-    </div>
     <div class="spacer"></div>
 
     <table class="form-layout">

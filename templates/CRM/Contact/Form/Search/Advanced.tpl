@@ -25,10 +25,11 @@
 *}
 {* Master tpl for Advanced Search *}
 
+<div class="crm-form-block crm-search-form-block">
+
 {include file="CRM/Contact/Form/Search/Intro.tpl"}
 
-
-<div class="crm-accordion-wrapper crm-advanced_search_form-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-advanced_search_form-accordion {if $ssID or $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div>
   {if $savedSearch}
@@ -42,34 +43,31 @@
  </div>
 </div>  
 
+<div class="crm-content-block">
 {if $rowsEmpty}
+	<div class="crm-results-block crm-results-block-empty">
     {include file="CRM/Contact/Form/Search/EmptyResults.tpl"}
+	</div>
 {/if}
 
 {if $rows}
+	<div class="crm-results-block">
     {* Search request has returned 1 or more matching rows. Display results and collapse the search criteria fieldset. *}
-
-    {if ! $ssID}
-        {* Don't collapse search criteria when we are editing smart group criteria. *}
-        {assign var="showBlock" value="'searchForm_show'"}
-        {assign var="hideBlock" value="'searchForm'"}
-    {/if}
-    
-    <fieldset>
     
        {* This section handles form elements for action task select and submit *}
+       <div class="crm-search-tasks">
        {include file="CRM/Contact/Form/Search/ResultTasks.tpl"}
-
+		</div>
        {* This section displays the rows along and includes the paging controls *}
-       <p>
+	   <div class="crm-search-results">
        {include file="CRM/Contact/Form/Selector.tpl"}
-       </p>
+       </div>
 
-    </fieldset>
     {* END Actions/Results section *}
-
+	</div>
 {/if}
-
+</div>
+</div>
 {literal}
 <script type="text/javascript">
 cj(function() {
