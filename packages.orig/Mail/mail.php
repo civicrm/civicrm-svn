@@ -91,19 +91,6 @@ class Mail_mail extends Mail {
     {
         $this->_sanitizeHeaders($headers);
 
-        $headerElements = $this->prepareHeaders($headers);
-        if (PEAR::isError($headerElements)) {
-            return $headerElements;
-        }
-
-        list($from, $text_headers) = $headerElements;
-
-        // use Return-Path for SMTP envelope’s FROM address (if set), CRM-5946
-        if (!empty($headers['Return-Path'])) {
-            $from = $headers['Return-Path'];
-        }
-        $this->_params = "-f".$from;
-
         // If we're passed an array of recipients, implode it.
         if (is_array($recipients)) {
             $recipients = implode(', ', $recipients);
@@ -138,7 +125,7 @@ class Mail_mail extends Mail {
             $result = mail($recipients, $subject, $body, $text_headers);
         } else {
             $result = mail($recipients, $subject, $body, $text_headers,
-                           $this->_params );
+                           $this->_params);
         }
 
         /*
