@@ -46,6 +46,7 @@
     <fieldset id="priceset"><legend>{$event.fee_label}</legend>
     <dl>
     {foreach from=$priceSet.fields item=element key=field_id}
+        {if $element.visibility_id eq 1 || $context == "standalone" }
         {if ($element.html_type eq 'CheckBox' || $element.html_type == 'Radio') && $element.options_per_line}
             {assign var="element_name" value=price_$field_id}
             <dt>{$form.$element_name.label}</dt>
@@ -78,6 +79,7 @@
             <dt>&nbsp;</dt>
             <dd class="description">{$element.help_post}</dd>
         {/if}
+	{/if}
     {/foreach}
     </dl>
     <div class="form-item">
