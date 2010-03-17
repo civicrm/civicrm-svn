@@ -53,7 +53,7 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
      */
     public function buildQuickForm( ) {
         
-        $outBoundOption = array( '0' => ts('SMTP'), '1' => ts('Sendmail'), '2' => ts('Disable Outbound Email') );        
+        $outBoundOption = array( '3' => ts('PHP native function'), '0' => ts('SMTP'), '1' => ts('Sendmail'), '2' => ts('Disable Outbound Email') );        
         $this->addRadio('outBound_option', ts('Select Mailer'),  $outBoundOption );
 
         CRM_Utils_System::setTitle(ts('Settings - Outbound Mail'));
@@ -136,7 +136,12 @@ class CRM_Admin_Form_Setting_Smtp extends CRM_Admin_Form_Setting
                     $params['sendmail_path'] = $formValues['sendmail_path'];
                     $params['sendmail_args'] = $formValues['sendmail_args'];
                     $mailerName = 'sendmail';
-                }
+                } elseif ($formValues['outBound_option'] == 3) {
+                    $subject = "Test for PHP mail settings";
+                    $message = "mail settings are correct.";
+                    $mailerName = 'mail';
+                    
+                } 
 
                 $headers = array(   
                                  'From'                      => $from,

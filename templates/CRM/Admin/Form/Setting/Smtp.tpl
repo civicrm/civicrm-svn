@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div id="help">
-    {ts}If you are sending emails to contacts using CiviCRM - then you need to enter settings for your SMTP/Sendmail server. You can send a test email to check your SMTP/Sendmail settings by clicking "Save and Send Test Email". If you're unsure of the correct values, check with your system administrator, ISP or hosting provider. If you do not want users to send outbound mail from CiviCRM, select "Disable Outbound Email". NOTE: If you disable outbound email, and you are using Online Contribution pages or online Event Registration - you will need to disable automated receipts and registration confirmations.{/ts}
+    {ts}CiviCRM offers several options to send emails. The default option should work fine on linux systems. If you are using windows, you probably need to enter settings for your SMTP/Sendmail server. You can send a test email to check your settings by clicking "Save and Send Test Email". If you're unsure of the correct values, check with your system administrator, ISP or hosting provider. If you do not want users to send outbound mail from CiviCRM, select "Disable Outbound Email". NOTE: If you disable outbound email, and you are using Online Contribution pages or online Event Registration - you will need to disable automated receipts and registration confirmations.{/ts}
 </div>
 <div class="form-item">
     <fieldset>
@@ -33,7 +33,7 @@
             <dt>{$form.outBound_option.label}</dt>
             <dd>{$form.outBound_option.html}</dd>
         </dl>
-        <div id="bySMTP">
+        <div id="bySMTP" class="mailoption">
             <fieldset>
                 <legend>{ts}SMTP Configuration{/ts}</legend>
                 <dl>
@@ -67,7 +67,7 @@
                 <div class="spacer"></div>
             </fieldset>
         </div>
-        <div id="bySendmail">
+        <div id="bySendmail" class="mailoption">
             <fieldset>
                 <legend>{ts}Sendmail Configuration{/ts}</legend>
                 <dl>
@@ -92,28 +92,31 @@
 
 {literal}
 <script type="text/javascript">
-    showHideMailOptions();
     cj( function( ) {
+        $('.mailoption').hide();
         cj("input[name='outBound_option']").click( function( ) {
-            showHideMailOptions();
-        });
-    });
-    
-    function showHideMailOptions()
-    {   
-        if (document.getElementsByName("outBound_option")[0].checked) {
+        switch(cj(this).val()) {
+          case "0":
             show("bySMTP");
             hide("bySendmail");
             cj("#_qf_Smtp_refresh_test").show( );
-        } else if (document.getElementsByName("outBound_option")[1].checked) {
+          break;
+          case "1":
             hide("bySMTP");
             show("bySendmail");
             cj("#_qf_Smtp_refresh_test").show( );
-        } else {
+          break;
+          case "3":
+            $('.mailoption').hide();
+            cj("#_qf_Smtp_refresh_test").show( );
+          break;
+          default:
             hide("bySMTP");
             hide("bySendmail");
             cj("#_qf_Smtp_refresh_test").hide( );
         }
-    }
+        });
+    });
+    
 </script>
 {/literal}
