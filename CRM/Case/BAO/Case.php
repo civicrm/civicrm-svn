@@ -438,13 +438,13 @@ INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_g
         
         $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $caseId, 'Integer' ) ) );
         while ( $dao->fetch() ) {
-            $contactNames['contact_id']   =  $dao->cid;
-            $contactNames['sort_name']    =  $dao->name;
-            $contactNames['display_name'] =  $dao->display_name;
-            $contactNames['email']        =  $dao->email;
-            $contactNames['phone']        =  $dao->phone;
-            $contactNames['birth_date']   =  $dao->birth_date;
-            $contactNames['role']         =  ts('Client');
+            $contactNames[$dao->cid]['contact_id']   =  $dao->cid;
+            $contactNames[$dao->cid]['sort_name']    =  $dao->name;
+            $contactNames[$dao->cid]['display_name'] =  $dao->display_name;
+            $contactNames[$dao->cid]['email']        =  $dao->email;
+            $contactNames[$dao->cid]['phone']        =  $dao->phone;
+            $contactNames[$dao->cid]['birth_date']   =  $dao->birth_date;
+            $contactNames[$dao->cid]['role']         =  ts('Client');
         }
         
         return $contactNames;

@@ -56,20 +56,22 @@
         <tr>
 	    {if not $multiClient}
             <td>
-		<table class="form-layout-compressed">
+		<table class="form-layout-compressed" border="1">
+		{foreach from=$caseRoles.client item=client}
       	       	   <tr>
-		     <td class="label-left" style="padding: 0px">{$displayName}</td>
+		     <td class="label-left" style="padding: 0px">{$client.displayName}</td>
 		   </tr>
-	       	   {if $caseRoles.client.phone}
+	       	   {if $client.phone}
 		       <tr>
-		       	   <td class="label-left description" style="padding: 0px">{$caseRoles.client.phone}</td>
+		       	   <td class="label-left description" style="padding: 0px">{$client.phone}</td>
 		       </tr>
 		   {/if}
-		   {if $caseRoles.client.birth_date}
+		   {if $client.birth_date}
 		       <tr>
-		       	   <td class="label-left description" style="padding: 0px">{ts}DOB{/ts}: {$caseRoles.client.birth_date|crmDate}</td>
+		       	   <td class="label-left description" style="padding: 0px">{ts}DOB{/ts}: {$client.birth_date|crmDate}</td>
 		       </tr>
 		   {/if}
+                {/foreach}
 	    	</table>
             </td>
 	    {/if}
@@ -188,12 +190,17 @@
            </tr>
          {else}
            <tr>
-               <td class="label">{$relName.role}</td>
-               <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$relName.contact_id`"}" title="view contact record">{$relName.sort_name}</a></td>
-               <td id="phone_{$rowNumber}">{$relName.phone}</td>
-               <td id="email_{$rowNumber}">{if $relName.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$relName.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><img src="{$config->resourceBase}i/EnvelopeIn.gif" alt="{ts}compose and send an email{/ts}"/></a>&nbsp;{/if}</td>
+               <td rowspan="{$relName|@count}" class="label">{ts}Client{/ts}</td>
+           {assign var=frst value=1}
+	   {foreach from=$relName item=client}
+               {if not $frst}</tr>{/if}
+               <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.sort_name}</a></td>
+               <td id="phone_{$rowNumber}">{$client.phone}</td>
+               <td id="email_{$rowNumber}">{if $client.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$client.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><img src="{$config->resourceBase}i/EnvelopeIn.gif" alt="{ts}compose and send an email{/ts}"/></a>&nbsp;{/if}</td>
                <td></td>
-           </tr> 
+           </tr>
+           {assign var=frst value=0}
+           {/foreach}
          {/if}
 		{assign var=rowNumber value = `$rowNumber+1`}
         {/foreach}
