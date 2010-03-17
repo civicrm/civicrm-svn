@@ -69,3 +69,7 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
 -- CRM-5766
    ALTER TABLE civicrm_price_field
    ADD `visibility_id` int(10) unsigned default 1 COMMENT 'Implicit FK to civicrm_option_group with name = visibility.';
+
+-- CRM-5612
+   ALTER TABLE civicrm_cache
+   MODIFY path varchar(255) COMMENT 'Unique path name for cache element';
