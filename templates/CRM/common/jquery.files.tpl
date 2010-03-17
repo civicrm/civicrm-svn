@@ -76,4 +76,6 @@ packages/jquery/css/dashboard.css
 packages/jquery/plugins/jquery.FormNavigate.js
 
 js/jquery/jquery.crmaccordions.js
+js/dd_roundies.js
+js/style.js
 
