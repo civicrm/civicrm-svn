@@ -320,7 +320,8 @@ class CRM_Utils_REST
 
         $config = CRM_Core_Config::singleton( );
         echo self::output( $config, $error );
-        exit( );
+
+        CRM_Utils_System::civiExit( );
     }
 
     static function ajax( ) {
@@ -340,7 +341,8 @@ class CRM_Utils_REST
 
         $config = CRM_Core_Config::singleton( );
         echo self::output( $config, $result );
-        exit( );
+
+        CRM_Utils_System::civiExit( );
     }
 
 }

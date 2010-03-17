@@ -66,7 +66,7 @@ class CRM_Event_Page_ManageEventEdit extends CRM_Core_Page
         }
 
         $this->_id  = CRM_Utils_Request::retrieve('id', 'Positive',
-                                                  $this, false, 0);
+                                                  $this, false, 0, 'REQUEST' );
 
         if ( $this->_id ) {
             $params = array( 'id' => $this->_id );

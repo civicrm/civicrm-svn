@@ -63,7 +63,7 @@ class CRM_Member_Page_AJAX
                           'total_amount'         => $totalAmount );                                         
         
         echo json_encode( $details );
-        exit();
+        CRM_Utils_System::civiExit( );
     }
     
 }

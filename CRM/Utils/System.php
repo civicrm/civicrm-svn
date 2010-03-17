@@ -322,7 +322,7 @@ class CRM_Utils_System {
         // this is kinda hackish but not sure how to do it right
         $url = str_replace( '&amp;', '&', $url );
         header( 'Location: ' . $url );
-        exit( );
+        self::civiExit( );
     }
 
     /**
@@ -417,7 +417,7 @@ class CRM_Utils_System {
     static function authenticateAbort( $message, $abort ) {
         if ( $abort ) {
             echo $message;
-            exit( 0 );
+            self::civiExit( 0 );
         } else {
             return false;
         }
@@ -630,7 +630,7 @@ class CRM_Utils_System {
 
         if ( $output ) {
             print $buffer;
-            exit( );
+            self::civiExit( );
         }
     }
 
@@ -1064,4 +1064,13 @@ class CRM_Utils_System {
 
         return true;
     }
+
+    static function civiExit( $status = 0 ) {
+        // move things to CiviCRM cache as needed
+        require_once 'CRM/Core/Session.php';
+        CRM_Core_Session::storeSessionObjects( );
+        
+        exit( $status );
+    }
+
 }

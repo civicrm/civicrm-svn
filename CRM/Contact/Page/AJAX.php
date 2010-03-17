@@ -155,7 +155,7 @@ LIMIT 0, {$limit}
                 echo "$name|$name\n";
             }
         }
-        exit();
+        CRM_Utils_System::civiExit( );
     } 
     
     /**
@@ -176,7 +176,7 @@ LIMIT 0, {$limit}
                 echo $completeList = "$value|$id\n";
             }
         }
-        exit();
+        CRM_Utils_System::civiExit( );
     }
     
     static function relationship( ) 
@@ -221,7 +221,7 @@ LIMIT 0, {$limit}
 		$relation           = $caseRelationship[$relationshipID];
 		$relation['rel_id'] = $relationshipID;
 		echo json_encode( $relation );
-		exit();
+        CRM_Utils_System::civiExit( );
     }
     
     
@@ -236,7 +236,7 @@ LIMIT 0, {$limit}
                                                  $fieldId,
                                                  'help_post' );
         echo $helpPost;
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
     
@@ -257,7 +257,7 @@ LIMIT 0, {$limit}
                 echo $element = $name['name']."|$cid\n";
             }
         }
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
 
@@ -403,7 +403,7 @@ ORDER BY sort_name ";
             if ( $shared ) {
                 while ( $dao->fetch( ) ) {
                     echo $dao->sort_name;
-                    exit();
+                    CRM_Utils_System::civiExit( );
                 }
             } else {  
                 while ( $dao->fetch( ) ) {
@@ -423,7 +423,7 @@ ORDER BY sort_name ";
 
         if ( isset($_GET['sh']) ) {
             echo "";
-            exit();
+            CRM_Utils_System::civiExit( );
         }
 
         if ( empty( $elements ) ) {
@@ -436,7 +436,7 @@ ORDER BY sort_name ";
           require_once "CRM/Utils/JSON.php";
           echo json_encode( $elements );
         } 
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
     /*                                                                                                                                                                                            
@@ -458,7 +458,7 @@ WHERE sort_name LIKE '%$name%'";
         if ( $dao->N == 1) {
             echo $dao->id;
         }
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
     /**
@@ -510,7 +510,7 @@ WHERE sort_name LIKE '%$name%'";
              
         }
         echo json_encode( $status );
-        exit( );
+        CRM_Utils_System::civiExit( );
      }
  
     /*
@@ -544,7 +544,7 @@ WHERE sort_name LIKE '%$name%'";
             $user =  array('name' => 'yes');
             echo json_encode( $user );
         }
-        exit();
+        CRM_Utils_System::civiExit( );
     }
    
    /**
@@ -616,7 +616,7 @@ WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$query
                 echo json_encode( $result );
             }
         }
-        exit();    
+        CRM_Utils_System::civiExit( );
     } 
    
     static function buildSubTypes( ) 
@@ -668,16 +668,16 @@ WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$query
             case 'save_columns':
                 require_once 'CRM/Core/BAO/Dashboard.php';
                 CRM_Core_BAO_Dashboard::saveDashletChanges( $_POST['columns'] );
-                exit();
+                CRM_Utils_System::civiExit( );
                 
             case 'delete_dashlet':
                 $dashletID = CRM_Utils_Type::escape( $_POST['dashlet_id'], 'Positive' );
                 require_once 'CRM/Core/BAO/Dashboard.php';
                 CRM_Core_BAO_Dashboard::deleteDashlet( $dashletID );
-                exit();
+                CRM_Utils_System::civiExit( );
         }
         
         echo json_encode( $dashlets ); 
-        exit();
+        CRM_Utils_System::civiExit( );
     }
  }

@@ -2185,13 +2185,13 @@ SELECT  $mailing.id as mailing_id
         $text = CRM_Utils_Request::retrieve( 'text', 'Boolean', $form );
         if ( $text ) {
             echo "<pre>{$textHeader}</br>{$report['mailing']['body_text']}</br>{$textFooter}</pre>";
-            exit( );
+            CRM_Utils_System::civiExit( );
         }
         
         $html = CRM_Utils_Request::retrieve( 'html', 'Boolean', $form );
         if ( $html ) {
             echo $htmlHeader . $report['mailing']['body_html'] . $htmlFooter;
-            exit( );
+            CRM_Utils_System::civiExit( );
         }
         
         if ( ! empty( $report['mailing']['body_text'] ) ) {

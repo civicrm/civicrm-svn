@@ -54,7 +54,7 @@ class CRM_Activity_Page_AJAX
         require_once "CRM/Utils/JSON.php";
         $selectorElements = array( 'display_date', 'subject', 'type', 'with_contacts', 'reporter', 'status', 'links', 'class' );
         echo CRM_Utils_JSON::encodeSelector( $activities, $page, $total, $selectorElements );
-        exit();
+        CRM_Utils_System::civiExit();
     }
     
     static function convertToCaseActivity()
@@ -66,7 +66,7 @@ class CRM_Activity_Page_AJAX
         
         if ( !$activityID || !$caseID ) {
             echo json_encode( array('error_msg' => 'required params missing.' ) );
-            exit( );
+            CRM_Utils_System::civiExit( );
         }
         
         require_once "CRM/Activity/DAO/Activity.php";
@@ -74,7 +74,7 @@ class CRM_Activity_Page_AJAX
         $otherActivity->id = $activityID;
         if ( !$otherActivity->find( true ) ) {
             echo json_encode( array('error_msg' => 'activity record is missing.' ) );
-            exit( );  
+            CRM_Utils_System::civiExit( );  
         }
         $actDateTime = CRM_Utils_Date::isoToMysql( $otherActivity->activity_date_time );
         
@@ -124,6 +124,6 @@ class CRM_Activity_Page_AJAX
 		$caseActivity->free( ); 
         
         echo json_encode(array('error_msg' => $error_msg));
-        exit( );
+        CRM_Utils_System::civiExit( );
     }
 }

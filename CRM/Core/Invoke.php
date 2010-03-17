@@ -167,19 +167,20 @@ class CRM_Core_Invoke
                                                                   $args ) );
             }
 
+            $result = null;
             if ( is_array( $item['page_callback'] ) ) {
                 $newArgs = explode( '/',
                                     $_GET[$config->userFrameworkURLVar] );
                 require_once( str_replace( '_',
                                            DIRECTORY_SEPARATOR,
                                            $item['page_callback'][0] ) . '.php' );
-                return call_user_func( $item['page_callback'], 
-                                       $newArgs );
+                $result = call_user_func( $item['page_callback'], 
+                                          $newArgs );
             } else if (strstr($item['page_callback'], '_Form')) {
                 $wrapper = new CRM_Utils_Wrapper( );
-                return $wrapper->run( CRM_Utils_Array::value('page_callback', $item),
-                                      CRM_Utils_Array::value('title', $item), 
-                                      isset($pageArgs) ? $pageArgs : null );
+                $result = $wrapper->run( CRM_Utils_Array::value('page_callback', $item),
+                                         CRM_Utils_Array::value('title', $item), 
+                                         isset($pageArgs) ? $pageArgs : null );
             } else {
                 $newArgs  = explode( '/',
                                      $_GET[$config->userFrameworkURLVar] );
@@ -207,8 +208,11 @@ class CRM_Core_Invoke
                 } else {
                     CRM_Core_Error::fatal( );
                 }
-                return $object->run( $newArgs, $pageArgs );
+                $result = $object->run( $newArgs, $pageArgs );
             }
+
+            CRM_Core_Session::storeSessionObjects( );
+            return $result;
         }
         
         CRM_Core_Menu::store( );

@@ -228,7 +228,7 @@ class CRM_Report_Form extends CRM_Core_Form {
                  (!(CRM_Core_Permission::check( $this->_instanceValues['permission'] ) ||
                     CRM_Core_Permission::check( 'administer Reports' ))) ) {
                 CRM_Utils_System::permissionDenied( );
-                exit();
+                CRM_Utils_System::civiExit( );
             }
             $this->_formValues = unserialize( $this->_instanceValues['form_values'] );
 
@@ -1558,7 +1558,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                     CRM_Core_Session::setStatus( ts("Report mail could not be sent.") );
                 }
                 if ( $this->get( 'instanceId' ) ) {
-                    exit();
+                    CRM_Utils_System::civiExit( );
                 } 
 
                 CRM_Utils_System::redirect( CRM_Utils_System::url( CRM_Utils_System::currentPath(), 
@@ -1588,7 +1588,7 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
                 require_once 'CRM/Utils/PDF/Utils.php';                     
                 CRM_Utils_PDF_Utils::html2pdf( $content, "CiviReport.pdf" );
             }
-            exit( );
+            CRM_Utils_System::civiExit( );
         } else if ( $this->_outputMode == 'csv' ) {
             CRM_Report_Utils_Report::export2csv( $this, $rows );
         } else if ( $this->_outputMode == 'group' ) {

@@ -580,7 +580,7 @@ class CRM_Export_BAO_Export
 
         require_once 'CRM/Core/Report/Excel.php';
         CRM_Core_Report_Excel::writeCSVFile( self::getExportFileName( 'csv', $exportMode ), $headerRows, $componentDetails );
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
     /**
@@ -687,7 +687,7 @@ class CRM_Export_BAO_Export
         
         readfile($fileName);
         
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
     function exportCustom( $customSearchClass, $formValues, $order ) 
@@ -728,7 +728,7 @@ class CRM_Export_BAO_Export
 
         require_once 'CRM/Core/Report/Excel.php';
         CRM_Core_Report_Excel::writeCSVFile( self::getExportFileName( ), $header, $rows );
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 }
 

@@ -33,6 +33,11 @@ require_once "CRM/Core/Error.php";
 class CRM_Core_Session {
 
     /**
+     * Cache of all the session names that we manage
+     */
+    static $_managedNames = null;
+
+    /**
      * key is used to allow the application to have multiple top
      * level scopes rather than a single scope. (avoids naming
      * conflicts). We also extend this idea further and have local
@@ -413,6 +418,31 @@ class CRM_Core_Session {
         }
     }
 
+    static function registerAndRetrieveSessionObjects( $names ) {
+        if ( ! is_array( $names ) ) {
+            $names = array( $names );
+        }
+
+        if ( ! self::$_managedNames ) {
+            self::$_managedNames = $names;
+        } else {
+            self::$_managedNames = array_merge( self::$_managedNames, $names );
+        }
+
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_BAO_Cache::restoreSessionFromCache( $names );
+    }
+
+    static function storeSessionObjects( $reset = true ) {
+        if ( empty( self::$_managedNames ) ) {
+            return;
+        }
+
+        self::$_managedNames = array_unique( self::$_managedNames );
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_BAO_Cache::storeSessionToCache( self::$_managedNames, $reset );
+
+        self::$_managedNames = null;
+    }
+
 }
-
-

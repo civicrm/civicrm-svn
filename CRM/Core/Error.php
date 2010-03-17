@@ -326,7 +326,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
      * @see CRM_Core_Error::debug_log_message()
      */
     static function debug_var($variable_name,
-                              &$variable,
+                              $variable,
                               $print = true,
                               $log   = true,
                               $comp  = '' )
@@ -535,7 +535,7 @@ class CRM_Core_Error extends PEAR_ErrorStack {
         // if we've come here, its because of some unexpected PEAR errors
         require_once 'CRM/Core/Transaction.php';
         CRM_Core_Transaction::forceRollbackIfEnabled( );
-        exit( $code );
+        CRM_Utils_System::civiExit( $code );
     }
 }
 

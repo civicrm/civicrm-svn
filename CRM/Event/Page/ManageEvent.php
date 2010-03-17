@@ -139,8 +139,8 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
         
         // assign vars to templates
         $this->assign('action', $action);
-        $id = CRM_Utils_Request::retrieve('id', 'Positive',
-                                          $this, false, 0);
+        $id = CRM_Utils_Request::retrieve( 'id', 'Positive',
+                                           $this, false, 0, 'REQUEST' );
 
         // figure out whether we’re handling an event or an event template
         if ($id) {
@@ -166,8 +166,6 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
             $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_ManageEvent_Delete',
                                                            'Delete Event',
                                                            $action );
-            $id = CRM_Utils_Request::retrieve('id', 'Positive',
-                                              $this, false, 0);
             $controller->set( 'id', $id );
             $controller->process( );
             return $controller->run( );

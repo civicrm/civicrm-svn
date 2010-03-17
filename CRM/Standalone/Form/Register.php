@@ -159,6 +159,6 @@ class CRM_Standalone_Form_Register extends CRM_Core_Form {
         $session->set('new_install', false);
         
         header( "Location: index.php" );
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 }

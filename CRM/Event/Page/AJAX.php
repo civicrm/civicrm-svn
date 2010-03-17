@@ -61,7 +61,7 @@ ORDER BY title
         while ( $dao->fetch( ) ) {
             echo $elements = "$dao->title|$dao->id\n";
         }
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
     /**
@@ -90,7 +90,7 @@ ORDER by v.weight";
             while ( $dao->fetch( ) ) {
                 echo $elements = "$dao->label|$dao->value\n";
             }
-            exit();
+            CRM_Utils_System::civiExit( );
     }
 
     /**
@@ -117,7 +117,7 @@ WHERE cg.name LIKE 'civicrm_event.amount%'
         while ( $dao->fetch( ) ) {
             echo $elements = "$dao->label|$dao->id\n";
         }
-        exit();
+        CRM_Utils_System::civiExit( );
     }
     
     function eventList(  ) {
@@ -133,6 +133,6 @@ WHERE cg.name LIKE 'civicrm_event.amount%'
 
         require_once "CRM/Utils/JSON.php";
         echo json_encode( $elements );
-        exit();
+        CRM_Utils_System::civiExit( );
     } 
 }

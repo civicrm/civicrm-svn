@@ -97,13 +97,13 @@ class CRM_Core_Page_AJAX_Location
         }
 
         echo json_encode( $elements );
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
     function jqState( &$config ) {
         if ( ! isset( $_GET['_value'] ) ||
         empty( $_GET['_value'] ) ) {
-            exit();
+            CRM_Utils_System::civiExit( );
         }
 
         require_once 'CRM/Core/PseudoConstant.php';
@@ -118,7 +118,7 @@ class CRM_Core_Page_AJAX_Location
 
         require_once "CRM/Utils/JSON.php";
         echo json_encode( $elements );
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
     function getLocBlock( ) {

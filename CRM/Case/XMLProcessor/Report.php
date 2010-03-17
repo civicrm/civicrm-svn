@@ -427,7 +427,7 @@ WHERE      a.id = %1
                                                           $activityDAO,
                                                           $activityTypeInfo );
         
-        //CRM_Core_Error::debug($activity); exit();
+        //CRM_Core_Error::debug($activity);
         return $activity;
     }
     
@@ -798,7 +798,7 @@ LIMIT  1
         require_once 'CRM/Case/Audit/Audit.php';
         $printReport = Audit::run( $contents, $clientID, $caseID, true );
         echo $printReport;
-        exit( );
+        CRM_Utils_System::civiExit( );
     }        
 }
 

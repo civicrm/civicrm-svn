@@ -106,7 +106,7 @@ class CRM_Mailing_Page_Preview extends CRM_Core_Page
             header('Content-Type: text/plain; charset=utf-8');
             print $mime->_txtbody;
         }
-        exit;
+        CRM_Utils_System::civiExit( );
     }
 
 }

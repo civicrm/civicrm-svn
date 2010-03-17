@@ -235,7 +235,7 @@ SELECT module
                                   'newContactSuccess' => true );
                     
             echo json_encode( $returnArray );
-            exit();
+            CRM_Utils_System::civiExit( );
         }
 
         CRM_Core_Session::setStatus(ts('Thank you. Your information has been saved.'));

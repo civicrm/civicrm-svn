@@ -216,7 +216,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         }
         require_once 'CRM/Utils/PDF/Utils.php';
         CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", 'portrait' ); 
-        exit(1);
+        CRM_Utils_System::civiExit( 1 );
     }//end of function
 }
 

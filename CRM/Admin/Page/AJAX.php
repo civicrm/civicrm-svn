@@ -45,7 +45,7 @@ class CRM_Admin_Page_AJAX
     static function getNavigationList( ) {
         require_once 'CRM/Core/BAO/Navigation.php';
         echo CRM_Core_BAO_Navigation::buildNavigation( true );           
-        exit();
+        CRM_Utils_System::civiExit();
     }
     
     /**
@@ -54,7 +54,7 @@ class CRM_Admin_Page_AJAX
     static function menuTree( ) {
         require_once 'CRM/Core/BAO/Navigation.php';
         echo CRM_Core_BAO_Navigation::processNavigation( $_GET );           
-        exit();
+        CRM_Utils_System::civiExit();
     }
 
     /**

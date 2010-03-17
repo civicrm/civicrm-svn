@@ -59,7 +59,7 @@ class CRM_Mailing_Page_AJAX
                            );
                             
         echo json_encode( $messages );
-        exit();
+        CRM_Utils_System::civiExit( );
     }
 
 }

@@ -180,7 +180,7 @@ class CRM_Core_Page {
             } else {
                 echo $content;
             }
-            exit( );
+            CRM_Utils_System::civiExit( );
         }
         $config = CRM_Core_Config::singleton();
         $content = self::$_template->fetch( 'CRM/common/'. strtolower($config->userFramework) .'.tpl' );

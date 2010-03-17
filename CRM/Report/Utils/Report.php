@@ -197,7 +197,7 @@ WHERE  inst.report_id = %1";
             //Output the data row.
             echo implode(',', $displayRows) . "\n";
         }
-        exit( );
+        CRM_Utils_System::civiExit( );
     }
 
     static function add2group( &$form , $groupID ) {

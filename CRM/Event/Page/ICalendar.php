@@ -94,7 +94,7 @@ class CRM_Event_Page_ICalendar extends CRM_Core_Page
         } else {
             CRM_Utils_ICalendar::send( $calendar, 'text/calendar', 'utf-8', 'civicrm_ical.ics', 'attachment' );
         }
-        exit( );
+        CRM_Utils_System::civiExit( );
     }
 }
 

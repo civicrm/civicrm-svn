@@ -174,7 +174,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     static function &singleton($loadFromDB = true, $force = false)
     {
         if ( self::$_singleton === null || $force ) {
-
             // first, attempt to get configuration object from cache
             require_once 'CRM/Utils/Cache.php';
             $cache =& CRM_Utils_Cache::singleton( );

@@ -105,8 +105,8 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         } else {
             $values = $this->controller->exportValues( 'Basic' );
         }
-        
-        //set the user context for redirection of task actions
+
+         //set the user context for redirection of task actions
         $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, 'force=1' );
         $session = CRM_Core_Session::singleton( );
         $session->replaceUserContext( $url );

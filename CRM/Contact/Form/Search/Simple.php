@@ -89,7 +89,7 @@ class CRM_Contact_Form_Search_Simple extends CRM_Core_Form {
     public function postProcess( ) {
         $this->_params = $this->controller->exportValues( $this->_name );
         CRM_Core_Error::debug( $this->_params );
-        exit( );
+        CRM_Utils_System::civiExit( );
     }
 }
 

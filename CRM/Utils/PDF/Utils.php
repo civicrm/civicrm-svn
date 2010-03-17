@@ -191,8 +191,8 @@ class CRM_Utils_PDF_Utils {
                 header("Content-Length: $len");
                 header("Content-Disposition: inline; filename={$output}.pdf");
                 echo $buf;
-                exit( );
-            } else {
+                CRM_Utils_System::civiExit( ); 
+           } else {
                 return $buf;
             }
         }

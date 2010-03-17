@@ -54,10 +54,10 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     /**
      * the title associated with this controller
      *
-     * @var object
+     * @var string
      */
     protected $_title;
-
+    
     /**
      * The key associated with this controller
      *
@@ -153,10 +153,12 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     function __construct( $title = null, $modal = true,
                           $mode = null, $scope = null,
                           $addSequence = false, $ignoreKey = false ) {
+
+        $addSequence = true;
+
         // add a unique validable key to the name
         $name = CRM_Utils_System::getClassName($this);
         $name = $name . '_' . $this->key( $name, $addSequence, $ignoreKey );
-        $this->HTML_QuickForm_Controller( $name, $modal );
         $this->_title = $title;
         if ( $scope ) {
             $this->_scope = $scope;
@@ -164,6 +166,12 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
             $this->_scope = CRM_Utils_System::getClassName($this);
         }
         $this->_scope = $this->_scope . '_' . $this->_key;
+
+        require_once 'CRM/Core/BAO/Cache.php';
+        CRM_Core_Session::registerAndRetrieveSessionObjects( array( "_{$name}_container",
+                                                                    array( 'CiviCRM', $this->_scope ) ) );
+        
+        $this->HTML_QuickForm_Controller( $name, $modal );
 
         // let the constructor initialize this, should happen only once
         if ( ! isset( self::$_template ) ) {
@@ -201,6 +209,12 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         // also retrieve and store destination in session
         $this->_destination = CRM_Utils_Request::retrieve( 'destination', 'String', $this,
                                                            false, null, $_REQUEST );
+    }
+
+    function fini( ) {
+        CRM_Core_BAO_Cache::storeSessionToCache( array( "_{$this->_name}_container",
+                                                        array( 'CiviCRM', $this->_scope ) ),
+                                                 true );
     }
 
     function key( $name, $addSequence = false, $ignoreKey = false ) {

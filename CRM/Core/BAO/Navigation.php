@@ -624,7 +624,7 @@ ORDER BY parent_id, weight";
          
          //reset navigation menus
          self::resetNavigation( );
-         exit();
+         CRM_Utils_System::civiExit( );
      }
      
      /**

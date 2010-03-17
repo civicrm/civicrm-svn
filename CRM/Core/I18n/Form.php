@@ -114,6 +114,6 @@ class CRM_Core_I18n_Form extends CRM_Core_Form
         $query = CRM_Core_DAO::composeQuery($query, $params, true);
         $dao->query($query, false);
 
-        exit;
+        CRM_Utils_System::civiExit( );
     }
 }

@@ -310,7 +310,7 @@ class CRM_Core_Selector_Controller {
                 CRM_Core_Report_Excel::writeCSVFile( $this->_object->getExportFileName( ),
                                                      $columnHeaders,
                                                      $rows );
-                exit(1);
+                CRM_Utils_System::civiExit( );
             } else {
                 // assign to template and display them.
                 self::$_template->assign_by_ref( 'rows'         , $rows          );
