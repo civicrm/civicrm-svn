@@ -5,7 +5,7 @@ UPDATE civicrm_state_province SET name = 'Guizhou' WHERE name = 'Gulzhou';
 {if $multilingual}
     UPDATE civicrm_option_value ov 
 INNER JOIN civicrm_option_group og ON ( og.id = ov.option_group_id )
-       SET ov.name = ov.{localize field='label'}label{/localize}
+       SET ov.name = ov.label_{$config->lcMessages}
      WHERE og.name = 'case_type' 
        AND ov.name IS NULL;
 {else}
