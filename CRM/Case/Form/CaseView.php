@@ -90,7 +90,12 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         
         $this->_contactID = $this->get('cid');
         $this->_caseID    = $this->get('id');
-            
+        
+        $fulltext = CRM_Utils_Request::retrieve( 'context', 'String', CRM_Core_DAO::$_nullObject );
+        if ($fulltext == 'fulltext') {
+            $this->assign( 'fulltext', $fulltext);
+        }
+        
         $this->assign( 'caseID', $this->_caseID );
         $this->assign( 'contactID', $this->_contactID );
 

@@ -624,8 +624,11 @@ curDate = (new Date()).getTime();
 cj(document).ready(function(){
 
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/activity' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
-
     dataUrl = dataUrl + '&cid={/literal}{$contactID}{literal}';
+
+    {/literal}{if $fulltext}{literal}
+    	dataUrl = dataUrl + '&context={/literal}{$fulltext}{literal}';
+    {/literal}{/if}{literal}
 
     cj("#activities-selector").flexigrid
     (

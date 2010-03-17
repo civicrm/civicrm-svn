@@ -860,10 +860,10 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
      *
      * @static
      */
-    static function getCaseActivity( $caseID, &$params, $contactID )
+    static function getCaseActivity( $caseID, &$params, $contactID, $context = null )
     {
         $values = array( );
-        
+                
         // CRM-5081 - formatting the dates to omit seconds.
         // Note the 00 in the date format string is needed otherwise later on it thinks scheduled ones are overdue.
         $select = "SELECT count(ca.id) as ismultiple, ca.id as id, 
@@ -981,9 +981,13 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         $url = CRM_Utils_System::url( "civicrm/case/activity",
                                       "reset=1&cid={$contactID}&caseid={$caseID}", false, null, false ); 
         
-        $editUrl    = "{$url}&action=update";
-        $deleteUrl  = "{$url}&action=delete";
-        $restoreUrl = "{$url}&action=renew";
+        $contextUrl = '';
+        if ($context == 'fulltext') {
+            $contextUrl = "&context={$context}";
+        } 
+        $editUrl    = "{$url}&action=update{$contextUrl}";
+        $deleteUrl  = "{$url}&action=delete{$contextUrl}";
+        $restoreUrl = "{$url}&action=renew{$contextUrl}";
         $viewTitle  = ts('View this activity.');
 
         require_once 'CRM/Core/OptionGroup.php';
