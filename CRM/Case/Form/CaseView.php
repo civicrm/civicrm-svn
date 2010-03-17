@@ -60,6 +60,12 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
     public function preProcess( ) 
     {
         $this->_showRelatedCases = CRM_Utils_Array::value( 'relatedCases', $_GET );
+
+
+        require_once 'CRM/Case/XMLProcessor/Process.php';
+        $xmlProcessorProcess = new CRM_Case_XMLProcessor_Process( );
+        $isMultiClient = $xmlProcessorProcess->getAllowMultipleCaseClients( );
+        $this->assign( 'multiClient', $isMultiClient );
         
         //pull the related cases.
         $this->assign( 'showRelatedCases', false );

@@ -444,4 +444,14 @@ AND        a.is_deleted = 0
         $xml = $this->retrieve( "Settings" );
         return ( string ) $xml->RedactActivityEmail ? 1 : 0;
     }
+
+    /**
+     * Retrieves AllowMultipleCaseClients setting
+     * 
+     * @return string 1 if allowed, 0 if not
+     */      
+    function getAllowMultipleCaseClients(  ) {
+        $xml = $this->retrieve( "Settings" );
+        return ( string ) $xml->AllowMultipleCaseClients ? 1 : 0;
+    }    
 }

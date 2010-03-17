@@ -36,9 +36,9 @@
       
       {foreach from=$relatedCases item=row key=caseId}
       <tr>
-      	 <td class="label">{$row.client_name}</td>	 
+      	 <td class="label">{$row.client_name}</td>
 	 <td class="label">{$row.case_type}</td>
-	 <td class="label">{$row.links}</td>	 
+	 <td class="label">{$row.links}</td>
       </tr>	
       {/foreach}
    </table>
@@ -48,7 +48,13 @@
 <div class="form-item">
 <fieldset><legend>{ts}Case Summary{/ts}</legend>
     <table class="report">
+	{if $multiClient}
+	<tr>
+		<td colspan="4">multiclient contact list</td>
+	</tr>
+	{/if}
         <tr>
+	    {if not $multiClient}
             <td>
 		<table class="form-layout-compressed">
       	       	   <tr>
@@ -66,6 +72,7 @@
 		   {/if}
 	    	</table>
             </td>
+	    {/if}
             <td>
                 <label>{ts}Case Type{/ts}:</label>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><img src="{$config->resourceBase}i/edit.png" border="0"></a>
             </td>
