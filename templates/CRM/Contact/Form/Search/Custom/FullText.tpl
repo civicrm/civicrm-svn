@@ -62,7 +62,7 @@
                 {foreach from=$summary.Contact item=row}
                     <tr class="{cycle values="odd-row,even-row"}">
                         <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}" title="{ts}View contact details{/ts}">{$row.display_name}</a></td>
-                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{ts}View{/ts}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&context=fulltext"}">{ts}View{/ts}</a></td>
                     </tr>
                 {/foreach}
             </table>
@@ -105,9 +105,9 @@
                         <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.assignee_contact_id`"}" title="{ts}View contact details{/ts}">{$row.assignee_display_name}</a></td>
                         <td>
                             {if $row.case_id }
-                                <a href="{crmURL p='civicrm/case/activity/view' q="reset=1&aid=`$row.activity_id`&cid=`$row.contact_id`&caseID=`$row.case_id`"}">
+                                <a href="{crmURL p='civicrm/case/activity/view' q="reset=1&aid=`$row.activity_id`&cid=`$row.contact_id`&caseID=`$row.case_id`&context=fulltext"}">
                             {else}
-                                <a href="{crmURL p='civicrm/contact/view/activity' q="atype=`$row.activity_type_id`&action=view&reset=1&id=`$row.activity_id`&cid=`$row.contact_id`"}">
+                                <a href="{crmURL p='civicrm/contact/view/activity' q="atype=`$row.activity_type_id`&action=view&reset=1&id=`$row.activity_id`&cid=`$row.contact_id`&context=fulltext"}">
                             {/if}
                             {ts}View{/ts}</a>
                         </td>
@@ -146,7 +146,7 @@
                         <td>{$row.case_start_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
                         <td>{$row.case_end_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
                         <td>{$row.case_id}</td>
-                        <td><a href="{crmURL p='civicrm/contact/view/case' q="reset=1&id=`$row.case_id`&cid=`$row.contact_id`&action=view"}">{ts}Manage Case{/ts}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view/case' q="reset=1&id=`$row.case_id`&cid=`$row.contact_id`&action=view&context=fulltext"}">{ts}Manage Case{/ts}</a></td>
                         <td class="start_date hiddenElement">{$row.case_start_date|crmDate}</td>
                         <td class="end_date hiddenElement">{$row.case_end_date|crmDate}</td>
                     </tr>
@@ -188,7 +188,7 @@
                         <td>{$row.contribution_source}</td>
                         <td>{$row.contribution_receive_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
                         <td>{$row.contribution_status}</td>
-                        <td><a href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=`$row.contribution_id`&cid=`$row.contact_id`&action=view"}">{ts}View{/ts}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=`$row.contribution_id`&cid=`$row.contact_id`&action=view&context=fulltext"}">{ts}View{/ts}</a></td>
                         <td class="received_date hiddenElement">{$row.contribution_receive_date|crmDate}</td>
                     </tr>
                 {/foreach}
@@ -233,7 +233,7 @@
                         <td>{$row.participant_source}</td>
                         <td>{$row.participant_status}</td>
                         <td>{$row.participant_role}</td>
-                        <td><a href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=`$row.participant_id`&cid=`$row.contact_id`&action=view"}">{ts}View{/ts}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=`$row.participant_id`&cid=`$row.contact_id`&action=view&context=fulltext"}">{ts}View{/ts}</a></td>
                         <td class="register_date hiddenElement">{$row.participant_register_date|crmDate}</td>
                     </tr>
                 {/foreach}
@@ -276,7 +276,7 @@
                         <td>{$row.membership_end_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
                         <td>{$row.membership_source}</td>
                         <td>{$row.membership_status}</td>
-                        <td><a href="{crmURL p='civicrm/contact/view/membership' q="reset=1&id=`$row.membership_id`&cid=`$row.contact_id`&action=view"}">{ts}View{/ts}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view/membership' q="reset=1&id=`$row.membership_id`&cid=`$row.contact_id`&action=view&context=fulltext"}">{ts}View{/ts}</a></td>
                         <td class="start_date hiddenElement">{$row.membership_start_date|crmDate}</td>
                         <td class="end_date hiddenElement">{$row.membership_end_date|crmDate}</td>
                     </tr>
