@@ -134,8 +134,8 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         } else {
             if ( $deletedContacts ) {
                 
-                $isAdvanced      = $session->get( 'isAdvanced' );
-                $isSearchBuilder = $session->get( 'isSearchBuilder' );
+                $isAdvanced      = $this->get( 'isAdvanced' );
+                $isSearchBuilder = $this->get( 'isSearchBuilder' );
                 
                 if ( $isAdvanced == 1 ) {
                     $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/contact/search/advanced', 'force=1' ) );

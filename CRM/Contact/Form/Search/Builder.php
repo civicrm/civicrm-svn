@@ -282,9 +282,8 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
      * @access public
      */
     public function postProcess( ) {
-        $session = CRM_Core_Session::singleton();
-        $session->set('isAdvanced', '2');
-        $session->set('isSearchBuilder', '1');
+        $this->set('isAdvanced', '2');
+        $this->set('isSearchBuilder', '1');
         $this->set('showSearchForm', false);
 
         $params = $this->controller->exportValues( $this->_name );

@@ -142,9 +142,8 @@ class CRM_Contact_Form_Task_SaveSearch extends CRM_Contact_Form_Task {
         // get form values of all the forms in this controller
         $formValues = $this->controller->exportValues( );
 
-        $session         = CRM_Core_Session::singleton( );
-        $isAdvanced      = $session->get('isAdvanced');
-        $isSearchBuilder = $session->get('isSearchBuilder');
+        $isAdvanced      = $this->get('isAdvanced');
+        $isSearchBuilder = $this->get('isSearchBuilder');
 
         // add mapping record only for search builder saved search
         $mappingId = null;

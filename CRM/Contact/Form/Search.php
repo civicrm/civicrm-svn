@@ -582,8 +582,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             
             // create the selector, controller and run - store results in session
             $searchChildGroups = true;
-            $session = CRM_Core_Session::singleton();
-            if ( $session->get( 'isAdvanced' ) ) {
+            if ( $this->get( 'isAdvanced' ) ) {
                 $searchChildGroups = false;
             }
             eval( '$selector = new ' . $this->_selectorName . 
