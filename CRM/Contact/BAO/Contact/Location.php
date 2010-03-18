@@ -166,15 +166,16 @@ AND civicrm_contact.id IN $idString ";
 
         while ( $dao->fetch( ) ) {
             $location = array( );
-            $location['contactID'  ] = $dao->contact_id;
-            $location['displayName'] = addslashes( $dao->display_name );
-            $location['city'       ] = $dao->city;
-            $location['state'      ] = $dao->state;
-            $location['postal_code'] = $dao->postal_code;
-            $location['lat'        ] = $dao->latitude;
-            $location['lng'        ] = $dao->longitude;
+            $location['contactID'   ] = $dao->contact_id;
+            $location['displayName' ] = addslashes( $dao->display_name );
+            $location['city'        ] = $dao->city;
+            $location['state'       ] = $dao->state;
+            $location['postal_code' ] = $dao->postal_code;
+            $location['lat'         ] = $dao->latitude;
+            $location['lng'         ] = $dao->longitude;
+            $location['marker_class'] = $dao->contact_type;
             $address = '';
-
+            
             CRM_Utils_String::append( $address, '<br />',
                                       array( $dao->street_address,
                                              $dao->supplemental_address_1,

@@ -638,9 +638,10 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
         while ( $dao->fetch( ) ) {
        
             $location = array( );
-            $location['displayName'] = addslashes( $dao->display_name );
-            $location['lat'        ] = $dao->latitude;
-            $location['lng'        ] = $dao->longitude;
+            $location['displayName' ] = addslashes( $dao->display_name );
+            $location['lat'         ] = $dao->latitude;
+            $location['marker_class'] = 'Event';
+            $location['lng'         ] = $dao->longitude;
             $address = '';
 
             CRM_Utils_String::append( $address, '<br />',

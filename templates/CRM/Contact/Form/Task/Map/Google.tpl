@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {if $showDirectly}
+  {assign var=defaultZoom value=14}  
   {assign var=height value="350px"}
   {assign var=width  value="425px"}
 {else}	
@@ -44,8 +45,13 @@
 	GEvent.addListener(map, 'resize', function() { map.setCenter(bounds.getCenter()); map.checkResize(); });
 	
 	// Creates a marker whose info window displays the given number
-	function createMarker(point, data) {
-	    var marker = new GMarker(point);
+	function createMarker(point, data, image) {
+	    var icon = new GIcon();
+ 	    icon.image = image;
+ 	    icon.iconSize = new GSize(24, 24);
+ 	    icon.iconAnchor = new GPoint(12, 24);
+ 	    icon.infoWindowAnchor = new GPoint(18, 1);
+	    var marker = new GMarker(point, icon);
 	    GEvent.addListener(marker, "click", function() {
 		marker.openInfoWindowHtml(data);
 	    });
@@ -67,12 +73,27 @@
 	    {/literal}
 	    {if $location.lat}
 		var point  = new GLatLng({$location.lat},{$location.lng});
-		var marker = createMarker(point, data);
+		{if $location.marker_class eq 'Individual'}
+ 			var image = "{$config->resourceBase}i/contact_ind.gif";
+ 		{/if}
+ 		{if $location.marker_class eq 'Household'}
+ 			var image = "{$config->resourceBase}i/contact_house.png";
+ 		{/if}
+ 		{if $location.marker_class eq 'Organization' || $location.marker_class eq 'Event'}
+ 			var image = "{$config->resourceBase}i/contact_org.gif";
+ 		{/if}
+               	var marker = createMarker(point, data, image);
 		map.addOverlay(marker);
 		bounds.extend(point);
 	    {/if}
 	{/foreach}
-	map.setZoom(map.getBoundsZoomLevel(bounds));
+	{if count($locations) gt 1}  
+ 	    map.setZoom(map.getBoundsZoomLevel(bounds));
+ 	    map.setMapType(G_PHYSICAL_MAP);
+ 	{else}
+ 	    map.setZoom({$defaultZoom}); 
+ 	    map.setMapType(G_NORMAL_MAP);
+ 	{/if}
 	map.setCenter(bounds.getCenter());
 	{literal}	
 	//]]>  
