@@ -50,7 +50,13 @@
     <table class="report">
 	{if $multiClient}
 	<tr>
-		<td colspan="4">multiclient contact list</td>
+		<td colspan="4">
+		{ts}Clients:{/ts} 
+		{foreach from=$caseRoles.client item=client name=clients}
+		  <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
+                {/foreach}
+
+                </td>
 	</tr>
 	{/if}
         <tr>
@@ -191,15 +197,13 @@
          {else}
            <tr>
                <td rowspan="{$relName|@count}" class="label">{ts}Client{/ts}</td>
-           {assign var=frst value=1}
-	   {foreach from=$relName item=client}
-               {if not $frst}</tr>{/if}
+	   {foreach from=$relName item=client name=clientsRoles}
+               {if not $smarty.foreach.clientsRoles.first}</tr>{/if}
                <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.sort_name}</a></td>
                <td id="phone_{$rowNumber}">{$client.phone}</td>
                <td id="email_{$rowNumber}">{if $client.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$client.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><img src="{$config->resourceBase}i/EnvelopeIn.gif" alt="{ts}compose and send an email{/ts}"/></a>&nbsp;{/if}</td>
                <td></td>
            </tr>
-           {assign var=frst value=0}
            {/foreach}
          {/if}
 		{assign var=rowNumber value = `$rowNumber+1`}
