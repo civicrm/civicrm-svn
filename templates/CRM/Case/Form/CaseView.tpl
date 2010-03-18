@@ -59,7 +59,7 @@
 		<table class="form-layout-compressed" border="1">
 		{foreach from=$caseRoles.client item=client}
       	       	   <tr>
-		     <td class="label-left" style="padding: 0px">{$client.displayName}</td>
+		     <td class="label-left" style="padding: 0px">{$client.display_name}</td>
 		   </tr>
 	       	   {if $client.phone}
 		       <tr>
