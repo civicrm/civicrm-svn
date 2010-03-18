@@ -56,8 +56,10 @@
     {/if}
 
     {if $pageTitle}
-        <h1 class="title">{$pageTitle}</h1>
-    {/if}
+		<div class="crm-title">
+			<h1 class="title">{$pageTitle}</h1>
+		</div>    
+	{/if}
   
 {if $browserPrint}
 {* Javascript window.print link. Used for public pages where we can't do printer-friendly view. *}

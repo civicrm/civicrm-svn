@@ -76,10 +76,12 @@
 </a>
 </div>
 {/if}
+{if $pageTitle}
+	<div class="crm-title">
+		<h1 class="title">{$pageTitle}</h1>
+	</div>
+{/if}
 
-<div class="crm-title">
-	<h2>{$pageTitle}</h2>
-</div>
 
 {*{include file="CRM/common/langSwitch.tpl"}*}
 

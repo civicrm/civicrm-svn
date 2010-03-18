@@ -50,15 +50,22 @@ class CRM_Utils_System_Drupal {
      */
     function setTitle( $title, $pageTitle = null ) {
         if ( $pageTitle ) {
+			$markupTitle = $pageTitle;
         	$cleanTitle = strip_tags($pageTitle);
             $title = $cleanTitle;
         }
         
-        $template =& CRM_Core_Smarty::singleton( );
-        $template->assign( 'pageTitle', $pageTitle );
-        
         drupal_set_title( $title );
-    }
+    	
+        $template =& CRM_Core_Smarty::singleton( );
+		if ($pageTitle != '') {
+        	$template->assign( 'pageTitle', $pageTitle );
+		} else {
+        	$template->assign( 'pageTitle', $title );			
+		}
+		
+
+	}
 
     /**
      * Append an additional breadcrumb tag to the existing breadcrumb
