@@ -283,7 +283,17 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             break;
             
         case 'fulltext':
-            $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+            $action = CRM_Utils_Request::retrieve('action', 'String', $this);
+            if ( $action == CRM_Core_Action::UPDATE ) {
+                $cid = null;
+                if ( $this->_contactId ) {
+                    $cid = '&cid=' . $this->_contactId;
+                }
+                $url = CRM_Utils_System::url( 'civicrm/contact/view/membership', 
+                                              'force=1&context=fulltext&action=view' . $cid ); 
+            } else {
+                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+            }
             break;
 
         default:

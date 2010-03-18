@@ -144,8 +144,11 @@ function fileOnCase( action, activityID, currentCaseId ) {
 						  return false;
                             		      } else {
 					          var destUrl = {/literal}"{crmURL p='civicrm/contact/view/case' q='reset=1&action=view&id=' h=0 }"{literal}; 
-						  window.location.href = destUrl + selectedCaseId + '&cid=' + contactId;    
-					      }
+						  {/literal}{if $fulltext}{literal}
+    						     var context= '&context={/literal}{$fulltext}{literal}';
+    						  {/literal}{/if}{literal}											     	 	                     
+						  window.location.href = destUrl + selectedCaseId + '&cid=' + contactId + context; 
+   					      }
                         	         }
                     		      );
 			},

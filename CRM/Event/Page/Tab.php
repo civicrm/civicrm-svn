@@ -202,7 +202,16 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
             break; 
 
         case 'fulltext':
-            $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+            if ( $this->_action == CRM_Core_Action::UPDATE ) {
+                $cid = null;
+                if ( $this->_contactId ) {
+                    $cid = '&cid=' . $this->_contactId;
+                }
+                $url = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
+                                              'force=1&context=fulltext&action=view' . $cid );
+            } else {
+                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+            }
             break;
             
         default:

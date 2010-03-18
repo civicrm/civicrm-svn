@@ -85,7 +85,10 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
     function preProcess( ) 
     { 
         $this->_caseId  = CRM_Utils_Request::retrieve( 'caseid', 'Positive', $this );
-        $this->_context = 'caseActivity';
+        $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+        if ( !$this->_context ) {
+            $this->_context = 'caseActivity';
+        } 
         $this->_crmDir  = 'Case';
         $this->assign( 'context', $this->_context );
         
@@ -142,9 +145,17 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         $clientName = $this->_getDisplayNameById( $this->_currentlyViewedContactId );
         $this->assign( 'client_name', $clientName );
         // set context for pushUserContext and for statusBounce
-        $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
-                                     "reset=1&action=view&cid={$this->_currentlyViewedContactId}&id={$this->_caseId}&show=1" );
-        
+        if ( $this->_context == 'fulltext' ) { 
+            if ( $this->_action == CRM_Core_Action::UPDATE || $this->_action == CRM_Core_Action::DELETE ) { 
+                $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
+                                              "reset=1&action=view&cid={$this->_currentlyViewedContactId}&id={$this->_caseId}&show=1&context={$this->_context}" );
+            } else {
+                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+            }
+        } else {
+            $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
+                                          "reset=1&action=view&cid={$this->_currentlyViewedContactId}&id={$this->_caseId}&show=1" );
+        }
         if ( !$this->_activityId ) { 
             // check if activity count is within the limit
             $xmlProcessor  = new CRM_Case_XMLProcessor_Process( );
