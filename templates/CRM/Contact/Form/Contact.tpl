@@ -64,7 +64,6 @@
         {$form._qf_Contact_refresh_dedupe.html}
         {if $isDuplicate}&nbsp;&nbsp;{$form._qf_Contact_upload_duplicate.html}{/if}
         <div class="spacer"></div>
-    </div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
     
