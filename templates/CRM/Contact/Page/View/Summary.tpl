@@ -150,7 +150,7 @@
                                     </tr>
                                     <tr id="Email_Block_{$blockId}_signature" class="hiddenElement">
                                         <td><strong>{ts}Signature HTML{/ts}</strong><br />{$item.signature_html}<br /><br />
-                                        <strong>{ts}Signature Text{/ts}</strong><br />{$item.signature_text}</td>
+                                        <strong>{ts}Signature Text{/ts}</strong><br />{$item.signature_text|nl2br}</td>
                                     </tr>
                                     {/if}
                                 {/foreach}

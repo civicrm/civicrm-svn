@@ -78,12 +78,8 @@ class CRM_Contact_Form_Edit_Email
             $form->add('textarea', "email[$blockId][signature_text]", ts('Signature Text'), 
                        CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'signature_text') );
             
-            //FIXME: fix for CKEditor 
-            //hacked to use textarea instead
-            // $form->addWysiwyg( "email[$blockId][signature_html]", ts('Signature HTML'), 
-            //                                CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'email') );
-            $form->add('textarea', "email[$blockId][signature_html]", ts('Signature HTML'), 
-                       CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'signature_html') );
+            $form->addWysiwyg( "email[$blockId][signature_html]", ts('Signature HTML'), 
+                                           CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'email') );
         }
     }
 }
