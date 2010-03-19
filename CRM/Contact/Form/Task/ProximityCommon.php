@@ -80,39 +80,56 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
      * @access public
      * @return void
      */
-    function buildQuickForm( $proxSearch ) {
+    function buildQuickForm( $form, $proxSearch ) {
         // is proximity search required (2) or optional (1)?
         $proxRequired  = ( $proxSearch == 2 ? true : false);
-        $this->assign('proximity_search', true);
+        $form->assign('proximity_search', true);
 
-        $this->add( 'text', 'prox_street_address', ts( 'Street Address' ), null, $proxRequired );
+        $form->add( 'text', 'prox_street_address', ts( 'Street Address' ), null, $proxRequired );
 
-        $this->add( 'text', 'prox_city', ts( 'City' ), null, $proxRequired );
+        $form->add( 'text', 'prox_city', ts( 'City' ), null, $proxRequired );
 
-        $this->add( 'text', 'prox_postal_code', ts( 'Postal Code' ), null, $proxRequired );
+        $form->add( 'text', 'prox_postal_code', ts( 'Postal Code' ), null, $proxRequired );
 
-        $this->setDefaultValues( );
+        self::setDefaultValues( $form );
         if ( $defaults['prox_country_id'] ) {
             $stateProvince = array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::stateProvinceForCountry( $defaults['prox_country_id'] );
         } else {
             $stateProvince = array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::stateProvince( );
         }
-        $this->add('select', 'prox_state_province_id', ts('State/Province'), $stateProvince, $proxRequired);        
+        $form->add('select', 'prox_state_province_id', ts('State/Province'), $stateProvince, $proxRequired);        
         
         $country = array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::country( );
-        $this->add( 'select', 'prox_country_id', ts('Country'), $country, $proxRequired );
+        $form->add( 'select', 'prox_country_id', ts('Country'), $country, $proxRequired );
         
-        $this->add( 'text', 'distance', ts( 'Distance (in km)' ), null, $proxRequired );
+        $form->add( 'text', 'distance', ts( 'Distance (in km)' ), null, $proxRequired );
 
         // state country js, CRM-5233
         require_once 'CRM/Core/BAO/Address.php';
         $stateCountryMap   = array( );
-        $stateCountryMap[] = array( 'state_province' => 'state_province_id',
-                                    'country'        => 'country_id' );
+        $stateCountryMap[] = array( 'state_province' => 'prox_state_province_id',
+                                    'country'        => 'prox_country_id' );
         CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap ); 
         CRM_Core_BAO_Address::fixAllStateSelects( $this, $defaults );   
-         
+        $form->addFormRule( array( 'CRM_Contact_Form_Task_ProximityCommon',  'formRule' ), $form );
     }
+    
+    /**
+     * global form rule
+     *
+     * @param array $fields  the input form values
+     * @param array $files   the uploaded files if any
+     * @param array $options additional user data
+     *
+     * @return true if no errors, else array of errors
+     * @access public
+     * @static
+     */
+     static function formRule( $fields, $files, $form ) 
+     {
+         $errors = array( );
+         return empty($errors) ? true : $errors;
+     }     
     
     /**
      * Set the default form values
@@ -120,7 +137,7 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
      * @access protected
      * @return array the default array reference
      */
-    function &setDefaultValues() {
+    function &setDefaultValues( $form ) {
         $defaults = array();
         require_once 'CRM/Core/Config.php';
     	$config = CRM_Core_Config::singleton( );
@@ -129,52 +146,8 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
     	if ($countryDefault) {
     		$defaults['prox_country_id'] = $countryDefault;
     	}
-        return $defaults;
+        $form->setDefaults( $defaults );
     }
-
-    /**
-     * Add local and global form rules
-     *
-     * @access protected
-     * @return void
-     */
-    function addRules( ) 
-    {
-        $this->addFormRule( array( 'CRM_Contact_Form_task_AddToGroup', 'formRule') );
-    }
-    
-    /**
-     * global validation rules for the form
-     *
-     * @param array $fields posted values of the form
-     *
-     * @return array list of errors to be posted back to the form
-     * @static
-     * @access public
-     */
-    static function formRule( $params ) 
-    {
-        $errors = array( );
-       
-        if ( $params['group_option'] && !$params['title'] ) {
-            $errors['title'] = "Group Name is a required field";
-        } else if ( !$params['group_option'] && !$params['group_id']) {
-            $errors['group_id'] = "Select Group is a required field.";
-        }
-        
-        return empty($errors) ? true : $errors;
-    }
-    /**
-     * process the form after the input has been submitted and validated
-     *
-     * @access public
-     * @return None
-     */
-    public function postProcess() {
-        $params = $this->controller->exportValues( );
-
-    }//end of function
-
 
 }
 
