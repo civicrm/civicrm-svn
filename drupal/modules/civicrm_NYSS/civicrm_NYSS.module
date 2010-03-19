@@ -1,0 +1,148 @@
+<?php
+
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.1                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2009                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007.                                       |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License along with this program; if not, contact CiviCRM LLC       |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
+
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2009
+ * $Id$
+ *
+ */
+
+  /**
+   * freeeze address fields of location type 'Board Of Election' on contact edit form
+   *
+   * @return void
+   * @access public
+   */
+function civicrm_NYSS_civicrm_buildForm( $formName, &$form ) {
+    
+    require_once 'CRM/Core/PseudoConstant.php';
+    require_once 'CRM/Utils/Request.php';
+    require_once 'CRM/Core/BAO/Preferences.php';
+    
+    if ( ( $formName == 'CRM_Contact_Form_Contact' ) && ( $form->_action & ( ( CRM_Core_Action::UPDATE || CRM_Core_Action::ADD ) ) ) ) {
+        $locationTypes = CRM_Core_PseudoConstant::locationType( );
+        $boardOfElectionId = CRM_Utils_Array::key( 'Board of Election', $locationTypes );
+        $block = CRM_Utils_Request::retrieve( 'block', 'String', $form );
+        $block = $block ? $block : 'Address';
+        
+        if ( $form->_values['address'] && ( $form->_action & CRM_Core_Action::UPDATE ) && ( $block == 'Address' ) ) {
+            $blockId = CRM_Utils_Request::retrieve( 'count', 'String', $form );
+            $blockId = $blockId ? $blockId : 1;
+            if ( $form->_values['address'][$blockId]['location_type_id'] == $boardOfElectionId ) {
+                //freeze all address elements of location type 'Board Of Election' in edit mode
+                $freeze = true;
+                $eName = "address[$blockId][location_type_id]";
+                _civicrm_processElement( &$form, $eName, $locationTypes, $freeze );
+                $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+                foreach ( $addressOptions as $key => $value ) {
+                    if ( empty( $value ) ) {
+                        continue;
+                    }  
+                    if ( in_array( $key, array( 'state_province', 'country' ) ) ) { 
+                        $key .= '_id';
+                        $elementInfo  = $form->getElement("address[$blockId][$key]");
+                        $elementLabel = $elementInfo->_label;
+                        $elementType  = $elementInfo->_type;
+                        $elementName  = $elementInfo->_attributes['name'];
+                        $form->removeElement( "address[$blockId][$key]" );
+                        if ( substr( $key, 0, 5 ) == 'state' ) {
+                            $key = 'stateProvince';
+                        } else {
+                            $key = 'country';
+                        }
+                        $freezeElement =& $form->addElement( $elementType, $elementName, $elementLabel, 
+                                                             array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::$key( ) );
+                        $freezeElement->freeze( );
+                    } else {
+                        $eName = "address[$blockId][$key]";
+                        _civicrm_processElement( &$form, $eName, $locationTypes, $freeze );
+                    }
+                }
+                //hide 'Use Household Address' if location type is 'Board Of Election'
+                if( $blockId == 1 ) {
+                    $form->removeElement( "use_household_address" );
+                }
+            } else {
+                //supress location type 'Board of Election' from location type dropdown
+                $eName = "address[$blockId][location_type_id]";
+                unset( $locationTypes[CRM_Utils_Array::key( 'Board of Election', $locationTypes )] );
+                 _civicrm_processElement( &$form, $eName, $locationTypes );
+            }
+        } else if ( ( $form->_action & CRM_Core_Action::ADD ) ) {
+            
+            $blockId = CRM_Utils_Request::retrieve( 'count', 'String', $form );
+            $blockId = $blockId ? $blockId : 1;
+            //supress 'Board of Election location type while adding new block
+            unset( $locationTypes[CRM_Utils_Array::key( 'Board of Election', $locationTypes )] );
+            if ( $block == 'Address' ) {
+                $eName = "address[$blockId][location_type_id]";
+                _civicrm_processElement( &$form, $eName, $locationTypes );
+            } else if ( $block == 'Phone' ) {
+                $eName = "phone[$blockId][location_type_id]";
+                _civicrm_processElement( &$form, $eName, $locationTypes );
+            } else if ( $block == 'Email' ) {
+                $eName = "email[$blockId][location_type_id]";
+                _civicrm_processElement( &$form, $eName, $locationTypes );
+            } else if ( $block == 'IM' ) {
+                $eName = "im[$blockId][location_type_id]";
+                _civicrm_processElement( &$form, $eName, $locationTypes );
+            } else if ( $block == 'OpenID' ) {
+                $eName = "openid[$blockId][location_type_id]";
+                _civicrm_processElement( &$form, $eName, $locationTypes );
+            }
+        }
+    }
+  }
+
+/**
+ * process the elements on the form
+ *
+ * @return void
+ * @access public
+ */
+function _civicrm_processElement( &$form, $elementName, $locationTypes, $freeze = false ) {
+    
+    $elementInfo = $form->getElement( $elementName );
+    $label = $elementInfo->_label;
+    $type  = $elementInfo->_type;
+    $name  = $elementInfo->_attributes['name'];
+    $form->removeElement( $elementName );
+    $js = array( 'onChange' => 'checkLocation( this.id );' );
+    $element =& $form->addElement( $type, $name, $label,
+                                   array( '' => ts( '- select -' ) ) + $locationTypes, $js );
+    if ( $freeze ) {
+        $element->freeze( );
+    }
+}
+
+
+
+
+
+
