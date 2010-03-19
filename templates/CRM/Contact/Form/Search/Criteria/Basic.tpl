@@ -99,15 +99,11 @@
             </td>
             <td colspan="2">
                 {$form.preferred_communication_method.label}<br />
-                {$form.preferred_communication_method.html}
+                {$form.preferred_communication_method.html}<br />
+                <div class="spacer"></div>
+                {$form.email_on_hold.html} {$form.email_on_hold.label}
             </td>
         </tr>
-	<tr>
-	     <td colspan = 4>
-	        {$form.email_on_hold.label}
-		{$form.email_on_hold.html}
-	    </td>
-	</tr>
         <tr>
             <td>{$form.contact_source.label}</td>
             <td>{$form.contact_source.html}</td>
