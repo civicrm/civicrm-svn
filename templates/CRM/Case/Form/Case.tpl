@@ -51,9 +51,13 @@
     <tr><td class="label font-size12pt">{ts}Client{/ts}</td><td class="font-size12pt bold view-value">{$clientName}</td></tr>
 {elseif !$clientName and $action eq 1} 
     <tr class="form-layout-compressed" border="0">			      
-        {if $context eq 'standalone'}
-            {include file="CRM/Contact/Form/NewContact.tpl"}
-        {/if}
+	{if $multiClient}
+	    <tr><td></td><td>TODO: Include multicontact selector here and add new contact widget.</td></tr>
+	{else}
+            {if $context eq 'standalone'}
+                {include file="CRM/Contact/Form/NewContact.tpl"}
+            {/if}
+	{/if}
     </tr>
 {/if}
 {* activity fields *}

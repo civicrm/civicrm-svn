@@ -175,6 +175,12 @@ class CRM_Case_Form_Case extends CRM_Core_Form
 
     public function buildQuickForm( ) 
     {
+
+        require_once 'CRM/Case/XMLProcessor/Process.php';
+        $xmlProcessorProcess = new CRM_Case_XMLProcessor_Process( );
+        $isMultiClient = $xmlProcessorProcess->getAllowMultipleCaseClients( );
+        $this->assign( 'multiClient', $isMultiClient );
+
         if ( $this->_action & CRM_Core_Action::DELETE || $this->_action & CRM_Core_Action::RENEW ) {
             $title = 'Delete';
             if ( $this->_action & CRM_Core_Action::RENEW ) {
