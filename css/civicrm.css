@@ -2251,3 +2251,7 @@ th.sorting_desc {
 #chartData {
     overflow:auto;
 }
+
+#crm-container .signature {
+    width: 495px;
+}

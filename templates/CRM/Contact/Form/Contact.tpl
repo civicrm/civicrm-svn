@@ -200,39 +200,7 @@ cj("input#current_employer").click( function( ) {
 });
 
 function showHideSignature( blockId ) {
-    cj('#Email_Signature_' + blockId ).show( );   
-
-    cj('#Email_Signature_' + blockId ).dialog({
-        title: "Signature",
-        modal: true,
-        bgiframe: true,
-        width: 900,
-        height: 500,
-        overlay: { 
-            opacity: 0.5, 
-            background: "black"
-        },
-
-        beforeclose: function(event, ui) {
-            cj("#email_" + blockId + "_signature_html").val( cj( "#email_" + blockId + "_signature_html_hidden" ).val( ) );
-            cj("#email_" + blockId + "_signature_text").val( cj( "#email_" + blockId + "_signature_text_hidden" ).val( ) );
-            cj(this).dialog("destroy");
-        },
-
-        buttons: { 
-            "Save Signature": function() { 
-                cj('#Email_Signature_' + blockId ).hide( );	    
-                cj(this).dialog('close');
-            },
-
-            "Cancel": function() { 
-                cj('#Email_Signature_' + blockId ).hide( );
-                cj(this).dialog("close"); 
-                cj(this).dialog("destroy"); 
-            } 
-        } 
-
-    });
+    cj('#Email_Signature_' + blockId ).toggle( );   
 }
 
  {/literal}

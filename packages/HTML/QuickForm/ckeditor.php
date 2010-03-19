@@ -71,11 +71,13 @@ class HTML_QuickForm_CKeditor extends HTML_QuickForm_textarea
                     }
                     CKEDITOR.replace( '{$name}' );
                     var editor = CKEDITOR.instances['{$name}'];
-                    editor.on( 'key', function( evt ){
-                        global_formNavigate = false;
-                    } );
-                    editor.config.width  = '".$this->width."';
-                    editor.config.height = '".$this->height."';
+                    if ( editor ) {
+                        editor.on( 'key', function( evt ){
+                            global_formNavigate = false;
+                        } );
+                        editor.config.width  = '".$this->width."';
+                        editor.config.height = '".$this->height."';
+                    }
                 }); 
             </script>";
             return $html;
