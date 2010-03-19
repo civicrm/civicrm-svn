@@ -561,10 +561,14 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $priceField->find( );
             
             $check = array( );
+            $participantCount = array( );
             
             while ( $priceField->fetch( ) ) {
                 if ( ! empty( $fields["price_{$priceField->id}"] ) ) {
                     $check[] = $priceField->id; 
+                }
+                if ( ! empty( $priceField->count ) ){
+                    $participantCount[] = $priceField->count;
                 }
             }
             
@@ -577,6 +581,21 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             CRM_Price_BAO_Set::processAmount( $self->_values['fee']['fields'], $fields, $lineItem );
             if ($fields['amount'] < 0) {
                 $errors['_qf_default'] = ts( "Event Fee(s) can not be less than zero. Please select the options accordingly" );
+            }
+            if ( !empty( $participantCount ) ) {
+                
+                // Check the remainig Participants if Priceset is used for for group Registrations     
+                require_once 'CRM/Event/BAO/Participant.php';
+                $remainingParticipants = CRM_Event_BAO_Participant::eventFull($self->_eventId  , true );
+                $totalParticipants = 0;
+                
+                foreach ( $lineItem as $values ) {
+                    $totalParticipants += $values['participant_count'];
+                }
+                
+                if ( $remainingParticipants <  $totalParticipants ) {
+                    $errors['_qf_default'] = ts("Only %1 Registrations available.", array( 1 => $remainingParticipants ) );
+                }
             }
         }
                 

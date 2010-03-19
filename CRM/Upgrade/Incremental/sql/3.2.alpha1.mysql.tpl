@@ -77,3 +77,13 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
 -- CRM-5874
    ALTER TABLE civicrm_uf_group
    ADD `is_proximity_search` tinyint(4) unsigned default 0 COMMENT 'Should proximity search be included in profile search form?';
+
+-- CRM-5724
+
+   ALTER TABLE civicrm_price_field
+   ADD `participants` int(10) unsigned default NULL COMMENT 'Participant count for field.';
+
+   ALTER TABLE civicrm_line_item
+   ADD `participant_count` int(10) unsigned default NULL COMMENT 'Number of Participants Per field.';
+
+   {include file='../CRM/Upgrade/3.2.alpha1.msg_template/civicrm_msg_template.tpl'}

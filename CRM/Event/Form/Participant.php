@@ -178,7 +178,7 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
      * @access public 
      */ 
     public function preProcess()  
-    {
+    { 
         $this->_showFeeBlock = CRM_Utils_Array::value( 'eventId', $_GET );
         $this->assign( 'showFeeBlock', false );
 
@@ -814,7 +814,7 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
                 $params['fee_amount' ] = $participantBAO->fee_amount;
                 if ( isset($params['priceSetId']) ) {
                     require_once 'CRM/Price/BAO/LineItem.php';
-                    $lineItem[0] = CRM_Price_BAO_LineItem::getLineItems( $this->_id );   
+                    $lineItem[0] = CRM_Price_BAO_LineItem::getLineItems( $this->_id );
                 }
                 //also add additional participant's fee level/priceset
                 if ( CRM_Event_BAO_Participant::isPrimaryParticipant($this->_id) ) {
@@ -855,12 +855,24 @@ WHERE      civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0";
                 $contributionParams['total_amount'] = $params['amount'];
                 //fix for CRM-3086
                 $params['fee_amount'] = $params['amount'];
-            }
+            } 
             
             if ( isset( $params['priceSetId'] ) ) {
                 $this->set( 'lineItem', $lineItem );
                 $this->_lineItem = $lineItem;
                 $lineItem = array_merge($lineItem, $additionalParticipantDetails);
+                $participantCount = array();
+                foreach ( $lineItem  as $k  ) {
+                    foreach ( $k as $v  ) {
+                        if ( CRM_Utils_Array::value( 'participant_count', $v ) > 0 ){
+                            $participantCount[] = $v['participant_count'];
+                            
+                        }
+                    }
+                } 
+                if ( $participantCount ) {
+                    $this->assign( 'participantCount', $participantCount );
+                }
                 $this->assign ( 'lineItem', empty($lineItem[0])?false:$lineItem );
             } else {
                 $this->assign( 'amount_level', $params['amount_level'] ); 

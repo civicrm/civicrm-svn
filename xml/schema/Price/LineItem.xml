@@ -80,6 +80,13 @@
       <comment>qty * unit_price</comment>
       <add>1.7</add>
   </field>
+  <field>
+      <name>participant_count</name>
+      <type>int unsigned</type>
+      <default>NULL</default>
+      <comment>Participant count for field</comment>
+      <add>3.2</add>
+  </field>
   <index>
       <name>index_entity</name>
       <fieldName>entity_table</fieldName>

@@ -156,6 +156,14 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         $sel = $this->add('select', 'html_type', ts('Input Field Type'), 
                           $htmlTypes, true, $javascript );
         
+        // Text box for Participant Count for a field
+        $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'extends', 'id' );
+        require_once 'CRM/Core/Component.php';
+        if( $extendComponentId == CRM_Core_Component::getComponentID( 'CiviEvent' ) ) {
+            $this->add('text', 'count', ts('Participant Count'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'count') );
+            $this->addRule('count', ts('Participant Count should be a positive number') , 'positiveInteger');
+        }
+        
         // price (for text inputs)
         $this->add( 'text', 'price', ts('Price') );
         $this->registerRule( 'price', 'callback', 'moneySigned', 'CRM_Utils_Rule' );
@@ -306,7 +314,11 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         if ( $dupeLabel ) {
             $errors['label'] = ts('Name already exists in Database.');
         }
-
+        
+        if ( ( is_numeric( CRM_Utils_Array::value( 'count', $fields ) ) && CRM_Utils_Array::value( 'count', $fields ) == 0 ) ) {
+            $errors['count'] = ts('Participant Count must be greater than zero.');
+        }
+        
         if ( $form->_action & CRM_Core_Action::ADD ) {
             
             if( $fields['html_type'] != 'Text' ) {
@@ -479,6 +491,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         $params['active_on']          = CRM_Utils_Date::format( CRM_Utils_Array::value( 'active_on', $params ) );
         $params['expire_on']          = CRM_Utils_Date::format( CRM_Utils_Array::value( 'expire_on', $params ) );
         $params['visibility_id']      = CRM_Utils_Array::value( 'visibility_id', $params, false );
+        $params['count']              = CRM_Utils_Array::value( 'count', $params, false );
         
         // need the FKEY - price set id
         $params['price_set_id'] = $this->_sid;

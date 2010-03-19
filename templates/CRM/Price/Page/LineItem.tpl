@@ -36,6 +36,7 @@
                 <th class="right">{ts}Qty{/ts}</th>
                 <th class="right">{ts}Unit Price{/ts}</th>
                 <th class="right">{ts}Total Price{/ts}</th>
+	 {if $participantCount }<th class="right">{ts}Total Participants{/ts}</th>{/if} 
             </tr>
                 {foreach from=$value item=line}
             <tr>
@@ -43,6 +44,7 @@
                 <td class="right">{$line.qty}</td>
                 <td class="right">{$line.unit_price|crmMoney}</td>
                 <td class="right">{$line.line_total|crmMoney}</td>
+         {if $participantCount }<td class="right">{$line.participant_count}</td> {/if}
             </tr>
             {/foreach}
     </table>
@@ -58,7 +60,17 @@
         {/if}
     {$totalAmount|crmMoney}
     </div>
-    <div class="clear"></div>
+    <div class="content bold">
+      {if $participantCount}
+      {ts}Total Participants{/ts}:
+      {foreach from=$lineItem item=pcount}
+      {foreach from=$pcount item=p_count}
+      {assign var="totalcount" value=$totalcount+$p_count.participant_count}
+      {/foreach}
+      {/foreach}
+      {$totalcount}
+      {/if}
+     </div>    
 </div>
 
 {if $hookDiscount.message}

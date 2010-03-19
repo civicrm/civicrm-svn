@@ -574,8 +574,10 @@ WHERE  id = %1";
         }
         
         $amount_level = array( );
+        $totalParticipant = 0;
         if ( is_array( $lineItem ) ) {
             foreach ( $lineItem as $values ) {
+                $totalParticipant += $values['participant_count'];
                 if ( $values['html_type'] == 'Text' ) {
                     $amount_level[] = $values['label'] . ' - ' . $values['qty'];
                     continue;
@@ -584,10 +586,15 @@ WHERE  id = %1";
             }
         }
         
+        $displayParticipantCount ='';
+        if ( $totalParticipant > 0 ) {
+            $displayParticipantCount = ' Participant Count -'.$totalParticipant;
+        }
+        
         require_once 'CRM/Core/BAO/CustomOption.php';
         $params['amount_level'] =
             CRM_Core_BAO_CustomOption::VALUE_SEPERATOR .
-            implode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $amount_level ) .
+            implode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $amount_level ) . $displayParticipantCount .
             CRM_Core_BAO_CustomOption::VALUE_SEPERATOR; 
         $params['amount']       = $totalPrice;
     }

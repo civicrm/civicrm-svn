@@ -359,7 +359,7 @@ Group By  waiting.event_id
                 }
             }
         }
-
+ 
         $roleSQL = '';
         if ( $countedRoles =
              implode( ',', array_keys( CRM_Event_PseudoConstant::participantRole( null, 'filter = 1' ) ) ) ) {
@@ -382,6 +382,25 @@ GROUP BY  counted.event_id
         $counted =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         
         if ( $counted->fetch( ) ) {
+            
+            // Add the Participant Total from Line Item. 
+            $lineItemTotalParticipants = "SELECT  count(DISTINCT lineitem.entity_id) as entityCount , sum(lineitem.participant_count) as counted_participants
+     FROM  civicrm_line_item lineitem, civicrm_participant counted, civicrm_event 
+     WHERE  counted.event_id = civicrm_event.id 
+      AND  counted.status_id IN ( {$countedStatusIds} )
+      AND  counted.is_test = 0
+      AND lineitem.entity_table = 'civicrm_participant'
+      AND lineitem.entity_id = counted.id
+      AND lineitem.participant_count != 0
+      AND  counted.event_id = {$eventId}
+      {$roleSQL}
+   GROUP BY  counted.event_id
+   ";  
+            $countedLineItemTotalParticipants =& CRM_Core_DAO::executeQuery( $lineItemTotalParticipants, CRM_Core_DAO::$_nullArray );
+            $countedLineItemTotalParticipants->fetch( );
+            
+            $counted->counted_participants += ( $countedLineItemTotalParticipants->counted_participants - $countedLineItemTotalParticipants->entityCount );
+            
             if ( $counted->max_participants == NULL ) {
                 return null;
             }

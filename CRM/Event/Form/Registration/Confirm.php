@@ -359,6 +359,23 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         //lets give meaningful status message, CRM-4320.
         $this->assign( 'isOnWaitlist', $this->_allowWaitlist );
         $this->assign( 'isRequireApproval', $this->_requireApproval );
+        
+        // Assign Participant Count to Lineitem Table
+        if ( $this->_priceSetId ) {
+            // Assign Participant Count to Lineitem Table
+            $query = "SELECT count from civicrm_price_field where price_set_id = %1 ";
+            $params = array( 1 => array( $this->_priceSetId, 'Integer' ));
+            $dao = CRM_Core_DAO::executeQuery( $query, $params );
+            $participantCount = array();
+            while ( $dao->fetch() ) {
+                if ( ! empty( $dao->count ) ){
+                    $participantCount[] = $dao->count;
+                } 
+            }
+            if ( !empty( $participantCount ) ) {
+                $this->assign( 'participantCount', $participantCount );
+            }
+        }
     }
     
     /**
