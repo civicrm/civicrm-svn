@@ -222,7 +222,9 @@ IFNULL( ACOS( $cosLat * COS( RADIANS( $latitude ) ) *
 ";
     }
 
-    static function where( $latitude, $longitude, $distance ) {
+    static function where( $latitude, $longitude, $distance, $tablePrefix = 'civicrm_address' ) {
+        self::initialize( );
+
         $params = array( );
         $clause = array( );
 
@@ -236,15 +238,13 @@ IFNULL( ACOS( $cosLat * COS( RADIANS( $latitude ) ) *
         $earthDistanceSQL = self::earthDistanceSQL( $longitude, $latitude );
 
         $where = "
-civicrm_address.geo_code_1  >= $minLatitude  AND
-civicrm_address.geo_code_1  <= $maxLatitude  AND
-civicrm_address.geo_code_2 >= $minLongitude AND
-civicrm_address.geo_code_2 <= $maxLongitude AND
+{$tablePrefix}.geo_code_1  >= $minLatitude  AND
+{$tablePrefix}.geo_code_1  <= $maxLatitude  AND
+{$tablePrefix}.geo_code_2 >= $minLongitude AND
+{$tablePrefix}.geo_code_2 <= $maxLongitude AND
 $earthDistanceSQL  <= $distance
 ";
 
-        // CRM_Core_Error::debug( $where );
-        // exit( );
         return $where;
     }
 
@@ -259,6 +259,10 @@ $earthDistanceSQL  <= $distance
             $proximityAddress[$var] = $proximityValues[2];
         }
 
+        if ( empty( $proximityAddress ) ) {
+            return;
+        }
+        
         if ( isset( $proximityAddress['state_province_id'] ) ) {
             $proximityAddress['state_province'] =
                 CRM_Core_PseudoConstant::stateProvince( $proximityAddress['state_province_id'] );
@@ -267,10 +271,6 @@ $earthDistanceSQL  <= $distance
         if ( isset( $proximityAddress['country_id'] ) ) {
             $proximityAddress['country'] =
                 CRM_Core_PseudoConstant::country( $proximityAddress['country_id'] );
-        }
-
-        if ( empty( $proximityAddress ) ) {
-            return;
         }
 
         $config =& CRM_Core_Config::singleton( );
@@ -285,13 +285,13 @@ $earthDistanceSQL  <= $distance
             return;
         }
 
-        self::initialize( );
 
         $query->_tables['civicrm_address'] = $query->_whereTables['civicrm_address'] = 1;
         $query->_where[$grouping][] = self::where( $proximityAddress['geo_code_1'],
                                                    $proximityAddress['geo_code_2'],
                                                    $distance * 1000 );
         $query->_qill[$grouping][]  = ts( 'Proximity Search Enabled' );
+        return;
     }
 
 }
