@@ -54,8 +54,9 @@
 		{ts}Clients:{/ts} 
 		{foreach from=$caseRoles.client item=client name=clients}
 		  <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
-                {/foreach}
 
+                {/foreach}
+		<img src="{$config->resourceBase}i/edit.png" title="edit case role" onclick="addClient( );">
                 </td>
 	</tr>
 	{/if}
@@ -232,6 +233,39 @@ show('caseRole_show');
 hide('caseRole');
 
 cj("#dialog").hide( );
+
+function addClient( ) {
+    cj("#dialog").show( );
+
+    cj("#dialog").dialog({
+        title: "Add Client to the Case",
+        modal: true,
+		bgiframe: true,
+		overlay: { opacity: 0.5, background: "black" },
+		beforeclose: function(event, ui) { cj(this).dialog("destroy"); },
+
+		open:function() {
+
+			var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=caseview' h=0 }"{literal};
+
+			cj("#rel_contact").autocomplete( contactUrl, {
+				width: 260,
+				selectFirst: false,
+	                        matchContains: true 
+			});
+			
+			cj("#rel_contact").focus();
+			cj("#rel_contact").result(function(event, data, formatted) {
+				cj("input[id=rel_contact_id]").val(data[1]);
+			});		    
+		
+		},
+
+		buttons: { "Done": function() { cj(this).dialog("close"); cj(this).dialog("destroy"); }}	
+	}
+	)
+}
+
 function createRelationship( relType, contactID, relID, rowNumber ) {
     cj("#dialog").show( );
 
