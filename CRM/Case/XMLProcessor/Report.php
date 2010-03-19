@@ -49,7 +49,6 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
     
     }
 
-
     function run( $clientID,
                   $caseID,
                   $activitySetName,
@@ -76,11 +75,13 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
         require_once "CRM/Case/PseudoConstant.php";
         foreach ( array('redactionStringRules', 'redactionRegexRules' ) as $key => $rule ) {
             $$rule = CRM_Case_PseudoConstant::redactionRule($key);
-            
+
             if (!empty($$rule)) {
                 foreach($$rule as &$val) {
                     //suffixed with a randomly generated 4-digit number
-                    $val.= rand(10000 ,100000);
+                    if ( $key == 'redactionStringRules' ) {
+                        $val.= rand(10000, 100000);
+                    }
                 }    
                 
                 if (!empty($this->{'_'. $rule})) {
@@ -569,9 +570,10 @@ LIMIT  1
 	{
         require_once 'CRM/Utils/String.php';
         if ( $printReport ) {
-            return CRM_Utils_String::redaction( $string, $replaceString, CRM_Core_DAO::$_nullArray );
+            return CRM_Utils_String::redaction( $string, $replaceString );
         } else if ( $this->_isRedact ) {
-            return CRM_Utils_String::redaction( $string, $this->_redactionStringRules, $this->_redactionRegexRules );
+            $regexToReplaceString = CRM_Utils_String::regex( $string, $this->_redactionRegexRules );
+            return CRM_Utils_String::redaction( $string, array_merge( $this->_redactionStringRules, $regexToReplaceString ) );
 		} 
 		return $string;
 	}
@@ -698,7 +700,7 @@ LIMIT  1
         if ( $isRedact ) {
             if (!array_key_exists($caseRoles['client']['sort_name'], $report->_redactionStringRules)) {
                 $report->_redactionStringRules = CRM_Utils_Array::crmArrayMerge($report->_redactionStringRules, 
-                                                                                array($caseRoles['client']['sort_name'] => 'name_'. rand(10000,100000)));
+                                                                                array($caseRoles['client']['sort_name'] => 'name_'. rand(10000, 100000)));
 
             }
              if (!array_key_exists($caseRoles['client']['display_name'], $report->_redactionStringRules)) {
@@ -708,14 +710,14 @@ LIMIT  1
             if (CRM_Utils_Array::value('email', $caseRoles['client']) &&
                 !array_key_exists($caseRoles['client']['email'], $report->_redactionStringRules)) {
                 $report->_redactionStringRules = CRM_Utils_Array::crmArrayMerge($report->_redactionStringRules, 
-                                                                                array($caseRoles['client']['email'] => 'email_'. rand(10000,100000)));
+                                                                                array($caseRoles['client']['email'] => 'email_'. rand(10000, 100000)));
             }
             $caseRoles['client']['email'] = self::redact( $caseRoles['client']['email'], true, $report->_redactionStringRules );
             
             if (CRM_Utils_Array::value('phone', $caseRoles['client']) &&
                 !array_key_exists($caseRoles['client']['phone'], $report->_redactionStringRules)) {
                 $report->_redactionStringRules = CRM_Utils_Array::crmArrayMerge($report->_redactionStringRules, 
-                                                                                array($caseRoles['client']['phone'] => 'phone_'. rand(10000,100000)));
+                                                                                array($caseRoles['client']['phone'] => 'phone_'. rand(10000, 100000)));
             }
             $caseRoles['client']['phone'] = self::redact( $caseRoles['client']['phone'], true, $report->_redactionStringRules );
         }
@@ -729,7 +731,7 @@ LIMIT  1
             if ( $isRedact ) {
                 if (!array_key_exists($r['name'], $report->_redactionStringRules)) {
                     $report->_redactionStringRules = CRM_Utils_Array::crmArrayMerge($report->_redactionStringRules, 
-                                                                                    array($r['name'] => 'name_'. rand(10000,100000)));
+                                                                                    array($r['name'] => 'name_'. rand(10000, 100000)));
                 }
                 if (!array_key_exists($r['display_name'], $report->_redactionStringRules)) {
                     $report->_redactionStringRules[$r['display_name']] = $report->_redactionStringRules[$r['name']];
@@ -739,14 +741,14 @@ LIMIT  1
                 if (CRM_Utils_Array::value('phone', $r) &&
                     !array_key_exists($r['phone'], $report->_redactionStringRules)) {
                     $report->_redactionStringRules = CRM_Utils_Array::crmArrayMerge($report->_redactionStringRules, 
-                                                                                    array($r['phone'] => 'phone_'. rand(10000,100000)));
+                                                                                    array($r['phone'] => 'phone_'. rand(10000, 100000)));
                 }
                 $r['phone'] = self::redact( $r['phone'], true, $report->_redactionStringRules );
                 
                 if (CRM_Utils_Array::value('email', $r) &&
                     !array_key_exists($r['email'], $report->_redactionStringRules)) {
                     $report->_redactionStringRules = CRM_Utils_Array::crmArrayMerge($report->_redactionStringRules, 
-                                                                                    array($r['email'] => 'email_'. rand(10000,100000)));
+                                                                                    array($r['email'] => 'email_'. rand(10000, 100000)));
                 }
                 $r['email'] = self::redact( $r['email'], true, $report->_redactionStringRules );
             }
@@ -761,7 +763,7 @@ LIMIT  1
             if ( $isRedact ) {
                 if (!array_key_exists($r['sort_name'], $report->_redactionStringRules)) {
                     $report->_redactionStringRules = CRM_Utils_Array::crmArrayMerge($report->_redactionStringRules, 
-                                                                                    array($r['sort_name'] => 'name_'. rand(10000,100000)));
+                                                                                    array($r['sort_name'] => 'name_'. rand(10000, 100000)));
                 }
                 if (!array_key_exists($r['display_name'], $report->_redactionStringRules)) {
                     $report->_redactionStringRules[$r['display_name']] = $report->_redactionStringRules[$r['sort_name']];
@@ -772,14 +774,14 @@ LIMIT  1
                 if (CRM_Utils_Array::value('phone', $r) &&
                     !array_key_exists($r['phone'], $report->_redactionStringRules)) {
                     $report->_redactionStringRules = CRM_Utils_Array::crmArrayMerge($report->_redactionStringRules, 
-                                                                                    array($r['phone'] => 'phone_'. rand(10000,100000)));
+                                                                                    array($r['phone'] => 'phone_'. rand(10000, 100000)));
                 }
                 $r['phone'] = self::redact( $r['phone'], true, $report->_redactionStringRules ); 
 
                 if (CRM_Utils_Array::value('email', $r) &&
                     !array_key_exists($r['email'], $report->_redactionStringRules)) {
                     $report->_redactionStringRules = CRM_Utils_Array::crmArrayMerge($report->_redactionStringRules, 
-                                                                                    array($r['email'] => 'email_'. rand(10000,100000)));
+                                                                                    array($r['email'] => 'email_'. rand(10000, 100000)));
                 }
                 $r['email'] = self::redact( $r['email'], true, $report->_redactionStringRules ); 
             }

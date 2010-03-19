@@ -198,20 +198,57 @@ class CRM_Utils_String {
         }
         return true;
     }
-
-    static function redaction( $str, $stringRules, $regexRules ) {
+    
+    /**
+     * determine the string replacements for redaction
+     * on the basis of the regular expressions
+     *
+     * @param string $str        input string
+     * @param array  $regexRules regular expression to be matched w/ replacements
+     *
+     * @return array $match      array of strings w/ corresponding redacted outputs 
+     * @access public
+     * @static
+     */
+    static function regex( $str, $regexRules ) {
+        //redact the regular expressions
+        if ( !empty( $regexRules ) && isset( $str ) ) {
+            static $matches, $totalMatches, $match = array();
+            foreach ( $regexRules as $pattern => $replacement ) {
+                preg_match_all( $pattern, $str, $matches );
+                if ( !empty( $matches[0] ) ) {
+                    if ( empty( $totalMatches ) ) {
+                        $totalMatches = $matches[0];
+                    } else { 
+                        $totalMatches = array_merge( $totalMatches, $matches[0] );
+                    }
+                     $match = array_flip( $totalMatches );
+                }
+            }
+        } 
+        
+        if ( !empty( $match ) ) {
+            foreach ( $match as $matchKey => &$dontCare ) {
+                foreach ( $regexRules as $pattern => $replacement ) {
+                    if ( preg_match( $pattern, $matchKey ) ) {
+                        $dontCare = $replacement .substr(md5($matchKey),0,5);
+                        break;
+                    }
+                }
+            }
+            return $match;
+        }
+        return CRM_Core_DAO::$_nullArray;
+    }
+    
+    static function redaction( $str, $stringRules ) {
         //redact the strings
         if (!empty($stringRules)){
             foreach ($stringRules as $match => $replace) {
-                $str = str_replace($match,$replace,$str);
+                $str = str_replace($match, $replace, $str);
             }
         }
-        //redact the regular expressions
-        if (!empty($regexRules)){
-            foreach ($regexRules as $pattern => $replacement) {
-                $str = preg_replace( $pattern, $replacement, $str );
-            }
-        } 
+        
         //return the redacted output
         return $str;
     }
