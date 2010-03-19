@@ -142,8 +142,18 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         $this->_caseType  = $caseType['name'];
         $this->assign('caseType', $this->_caseType);
 
-        $clientName = $this->_getDisplayNameById( $this->_currentlyViewedContactId );
-        $this->assign( 'client_name', $clientName );
+        require_once 'CRM/Case/XMLProcessor/Process.php';
+        $xmlProcessorProcess = new CRM_Case_XMLProcessor_Process( );
+        $isMultiClient = $xmlProcessorProcess->getAllowMultipleCaseClients( );
+        $this->assign( 'multiClient', $isMultiClient );
+
+        if ( $isMultiClient ) {
+            $clients = CRM_Case_BAO_Case::getContactNames( $this->_caseId );
+            $this->assign( 'client_names', $clients );
+        } else {
+            $clientName = $this->_getDisplayNameById( $this->_currentlyViewedContactId );
+            $this->assign( 'client_name', $clientName );
+        }
         // set context for pushUserContext and for statusBounce
         if ( $this->_context == 'fulltext' ) { 
             if ( $this->_action == CRM_Core_Action::UPDATE || $this->_action == CRM_Core_Action::DELETE ) { 
@@ -202,7 +212,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
     function setDefaultValues( ) 
     {
         $this->_defaults = parent::setDefaultValues( );
-                
+        
         $targetContactValues = array( );
         if ( isset( $this->_activityId ) && empty( $_POST ) ) {
             if ( !CRM_Utils_Array::crmIsEmptyArray( $this->_defaults['target_contact'] ) ) {
@@ -369,8 +379,18 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         // store the dates with proper format
         $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'], $params['activity_date_time_time'] );
         $params['activity_type_id']   = $this->_activityTypeId;
-                        
-        $targetContacts = array( $this->_currentlyViewedContactId );
+
+        require_once 'CRM/Case/XMLProcessor/Process.php';
+        $xmlProcessorProcess = new CRM_Case_XMLProcessor_Process( );
+        $isMultiClient = $xmlProcessorProcess->getAllowMultipleCaseClients( );
+        $this->assign( 'multiClient', $isMultiClient );
+
+        if ( $isMultiClient ) {
+            $targetContacts = array_keys( CRM_Case_BAO_Case::getContactNames( $this->_caseId ) );
+        } else {
+            $targetContacts = array( $this->_currentlyViewedContactId );
+        }
+        
         if ( CRM_Utils_Array::value( 'hidden_target_contact', $params ) && 
              CRM_Utils_Array::value( 'target_contact_id', $params ) ) {
             $targetContacts = array_merge( $targetContacts, explode( ',', $params['target_contact_id'] ) );

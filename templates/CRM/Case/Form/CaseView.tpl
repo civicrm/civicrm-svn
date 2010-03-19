@@ -54,9 +54,8 @@
 		{ts}Clients:{/ts} 
 		{foreach from=$caseRoles.client item=client name=clients}
 		  <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
-
                 {/foreach}
-		<img src="{$config->resourceBase}i/edit.png" title="edit case role" onclick="addClient( );">
+		<img src="{$config->resourceBase}i/edit.png" title="{ts}add new client to the case{/ts}" onclick="addClient( );">
                 </td>
 	</tr>
 	{/if}

@@ -285,7 +285,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         // store the submitted values in an array
         $params = $this->controller->exportValues( $this->_name );
         $params['now'] = date("Ymd");
-        
+
         require_once 'CRM/Case/XMLProcessor/Process.php';
 
         // 1. call begin post process

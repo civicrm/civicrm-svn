@@ -126,10 +126,19 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            </tr>
             {/if}
            <tr>
+	   {if not $multiClient}
               <td class="label font-size12pt">{ts}Client{/ts}</td>
               <td class="view-value font-size12pt">{$client_name|escape}&nbsp;&nbsp;&nbsp;&nbsp;
+	   {else}
+              <td class="label font-size12pt">{ts}Clients{/ts}</td>
+              <td class="view-value font-size12pt">
+		{foreach from=$client_names item=client name=clients}
+		    {$client.display_name}{if not $smarty.foreach.clients.last}; &nbsp; {/if}
+                {/foreach}
+
+	   {/if}
 	      {if $action eq 2}
-	      <a href="#" onClick="buildTargetContact(1); return false;">{ts}With other contact(s){/ts}</a>
+	      {if $multiClient}<p/>{/if}<a href="#" onClick="buildTargetContact(1); return false;">{ts}With other contact(s){/ts}</a>
 	      {/if}
 	      </td>
            </tr>
