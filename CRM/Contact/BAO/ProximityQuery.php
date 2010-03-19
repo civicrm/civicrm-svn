@@ -255,8 +255,11 @@ $earthDistanceSQL  <= $distance
         $proximityVars = array( 'street_address', 'city', 'postal_code', 'state_province_id', 'country_id' );
         $proximityAddress = array( );
         foreach ( $proximityVars as $var ) {
-            $proximityValues = $query->getWhereValues( "proximity_{$var}", $grouping );
-            $proximityAddress[$var] = $proximityValues[2];
+            $proximityValues = $query->getWhereValues( "prox_{$var}", $grouping );
+            if ( ! empty( $proximityValues ) &&
+                 ! empty( $proximityValues[2] ) ) {
+                $proximityAddress[$var] = $proximityValues[2];
+            }
         }
 
         if ( empty( $proximityAddress ) ) {

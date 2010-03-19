@@ -192,6 +192,19 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
             }
         }
 
+        // set the prox params
+        // need to ensure proximity searching is enabled
+        $proximityVars = array( 'street_address', 'city', 'postal_code', 'state_province_id', 'country_id', 'distance' );
+        foreach ( $proximityVars as $var ) {
+            $value = CRM_Utils_Request::retrieve( "prox_{$var}",
+                                                  'String',
+                                                  $this, false, null, 'REQUEST' );
+            if ( $value ) {
+                $this->_params["prox_{$var}"] = $value;
+            }
+        }                                     
+        
+        
         // set the params in session
         $session = CRM_Core_Session::singleton();
         $session->set('profileParams', $this->_params);

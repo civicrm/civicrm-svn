@@ -324,7 +324,7 @@ class CRM_Contact_BAO_Query
         require_once 'CRM/Contact/BAO/Contact.php';
 
         // CRM_Core_Error::backtrace( );
-        // CRM_Core_Error::debug( 'params', $params );
+        CRM_Core_Error::debug_var( 'params', $params );
          
         // CRM_Core_Error::debug( 'post', $_POST );
         // CRM_Core_Error::debug( 'r', $returnProperties );
@@ -972,7 +972,7 @@ class CRM_Contact_BAO_Query
     {
         $result = null;
         foreach ( $this->_params as $id => $values ) {
-            if ( $values[0] == $name && $values[4] == $grouping ) {
+            if ( $values[0] == $name && $values[3] == $grouping ) {
                 return $values;
             }
         }
@@ -1097,7 +1097,7 @@ class CRM_Contact_BAO_Query
             return;
             
         }
-       
+
         switch ( $values[0] ) {
             
         case 'contact_type':
@@ -1214,16 +1214,16 @@ class CRM_Contact_BAO_Query
             // since this case is handled with the above
             return;
 
-        case 'proximity_distance':
+        case 'prox_distance':
             require_once 'CRM/Contact/BAO/ProximityQuery.php';
             CRM_Contact_BAO_ProximityQuery::process( $this, $values );
             return;
 
-        case 'proximity_street_address':
-        case 'proximity_city':
-        case 'proximity_postal_code':
-        case 'proximity_state_province_id':
-        case 'proximity_country_id':
+        case 'prox_street_address':
+        case 'prox_city':
+        case 'prox_postal_code':
+        case 'prox_state_province_id':
+        case 'prox_country_id':
             // handled by the proximity_distance clause
             return;
 
