@@ -115,6 +115,7 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
                           'filters'  => array( 'sid' => 
                                                array( 'name'         => 'id',
                                                       'title'        => ts( 'Status' ),
+                                                      'type'         => CRM_Utils_Type::T_INT,
                                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
                                                       'options'      => CRM_Member_PseudoConstant::membershipStatus( ) ), ),
                           'grouping' => 'member-fields',		

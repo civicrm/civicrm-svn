@@ -482,10 +482,13 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                      $typeID = $row['civicrm_membership_membership_type_id'] ) {
                     $typeUrl = "&tid_op=in&tid_value={$typeID}";
                 }
-                     
+                $statusUrl = '';
+                if ( ! empty($this->_params['status_id_value']) ) {
+                    $statusUrl = "&sid_op=in&sid_value=" . implode( ",", $this->_params['status_id_value'] );
+                }
                 $url =
                     CRM_Report_Utils_Report::getNextUrl( 'member/detail',
-                                                         "reset=1&force=1&join_date_from={$dateStart}&join_date_to={$dateEnd}{$typeUrl}", 
+                                                         "reset=1&force=1&join_date_from={$dateStart}&join_date_to={$dateEnd}{$typeUrl}{$statusUrl}", 
                                                          $this->_absoluteUrl, $this->_id );
                 $row['civicrm_membership_join_date_start'] =  CRM_Utils_Date::format($row['civicrm_membership_join_date_start']);
                 $rows[$rowNum]['civicrm_membership_join_date_start_link' ] = $url;
