@@ -100,4 +100,29 @@ class CRM_Utils_JSON
         return $json;
     } 
 
+    static function encodeDataTableSelector( $params, $sEcho, $iTotal, $iFilteredTotal, $selectorElements )
+    {
+
+    $sOutput  = '{';
+	$sOutput .= '"sEcho": '.intval($sEcho).', ';
+	$sOutput .= '"iTotalRecords": '.$iTotal.', ';
+	$sOutput .= '"iTotalDisplayRecords": '.$iFilteredTotal.', ';
+	$sOutput .= '"aaData": [ ';
+    foreach( $params as $key => $value) {
+        $addcomma = false;
+        $sOutput .= "[";
+        foreach ( $selectorElements as $element ) {
+            if ( $addcomma )  $sOutput .= ",";
+            $sOutput .= '"'.addslashes($value[$element]).'"';
+            $addcomma = true;
+        }
+        $sOutput .= "],";
+    }
+    $sOutput  = substr_replace( $sOutput, "", -1 );
+	$sOutput .= '] }';
+
+    return $sOutput;
+
+    }  
+
 }

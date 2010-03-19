@@ -81,18 +81,22 @@
 
 .paginate_disabled_previous {
 	background-image: url('images/dataTable/back_disabled.gif');
+	background-repeat:no-repeat; 
 }
 
 .paginate_enabled_previous {
 	background-image: url('images/dataTable/back_enabled.gif');
+	background-repeat:no-repeat; 
 }
 
 .paginate_disabled_next {
 	background-image: url('images/dataTable/forward_disabled.gif');
+	background-repeat:no-repeat; 
 }
 
 .paginate_enabled_next {
 	background-image: url('images/dataTable/forward_enabled.gif');
+	background-repeat:no-repeat; 
 }
 
 
@@ -100,7 +104,7 @@
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * DataTables display
  */
-#crm-container table.display {
+#crm-container table.display, #crm-container table.pagerDisplay {
 	width: 100%;
 	clear: both;
 	border: 1px solid #DDD;

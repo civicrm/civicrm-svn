@@ -138,28 +138,43 @@
                   </dd>
                 </dl>
 
-              {if $searchDone } {* Search button clicked *}
-                {if $searchCount}
-                    {if $searchRows} {* we've got rows to display *}
+              {if $searchDone } {* Search button clicked *} 
+                {if $searchCount || $callAjax}
+                    {if $searchRows || $callAjax} {* we've got rows to display *}
                         <fieldset><legend>{ts}Mark Target Contact(s) for this Relationship{/ts}</legend>
                         <div class="description">
                             {ts}Mark the target contact(s) for this relationship if it appears below. Otherwise you may modify the search name above and click Search again.{/ts}
                         </div>
                         {strip}
-                        <table>
+				
+			{if $callAjax}
+			<div id="count_selected"> </div><br />
+			{$form.store_contacts.html}
+		
+			{if $isEmployeeOf || $isEmployerOf}
+			     {$form.store_employer.html}     	
+			{/if}
+			{include file="CRM/common/jsortable.tpl"  sourceUrl=$sourceUrl useAjax=1 callBack=1 }
+			{/if}
+                        <table id="rel-contacts" class="pagerDisplay">
+			<thead>
                         <tr class="columnheader">
-                        <th>&nbsp;</th>
+                        <th id="nosort" class="contact_select">&nbsp;</th>
                         <th>{ts}Name{/ts}</th>
-                        {if $isEmployeeOf}<th>{ts}Current Employer?{/ts}</th> 
-                        {elseif $isEmployerOf}<th>{ts}Current Employee?{/ts}</th>{/if}
+                        {if $isEmployeeOf}<th id="nosort" class="current_employer">{ts}Current Employer?{/ts}</th> 
+                        {elseif $isEmployerOf}<th id="nosort" class="current_employer">{ts}Current Employee?{/ts}</th>{/if}
                         <th>{ts}City{/ts}</th>
                         <th>{ts}State{/ts}</th>
                         <th>{ts}Email{/ts}</th>
                         <th>{ts}Phone{/ts}</th>
                         </tr>
+			</thead>
+ 			<tbody>
+
+			{if !$callAjax}
                         {foreach from=$searchRows item=row}
                         <tr class="{cycle values="odd-row,even-row"}">
-                            <td>{$form.contact_check[$row.id].html}</td>
+                            <td class="contact_select">{$form.contact_check[$row.id].html}</td>
                             <td>{$row.type} {$row.name}</td>
                             {if $isEmployeeOf}<td>{$form.employee_of[$row.id].html}</td>
                             {elseif $isEmployerOf}<td>{$form.employer_of[$row.id].html}</td>{/if}
@@ -169,6 +184,11 @@
                             <td>{$row.phone}</td>
                         </tr>
                         {/foreach}
+			{else}
+			<tr><td colspan="5" class="dataTables_empty">Loading data from server</td></tr>
+			{/if}
+
+			</tbody>
                         </table>
                         {/strip}
                         </fieldset>
@@ -192,7 +212,7 @@
         {/if} {* end action = add *}
 
         {* Only show start/end date and buttons if action=update, OR if we have $contacts (results)*}
-        {if $searchRows OR $action EQ 2}
+        {if ( $searchRows OR $callAjax ) OR $action EQ 2}
             <div class="form-item">
                 <dl class="html-adjust">
                     <dt>{$form.start_date.label}</dt>
@@ -237,11 +257,122 @@
   {/if}
 {/if} {* close of custom data else*}
 
+{if $callAjax}
+{literal}
+<script type="text/javascript">
+	var contact_checked  = new Array();
+	var employer_checked = new Array();
+	var employer_holdelement = new Array();
+	var countSelected = useEmployer = isRadio = 0;
+	
+	{/literal} {if $isEmployeeOf || $isEmployerOf} {literal}
+		   var storeElement  = 'store_employers';
+		   var employerClass = 'current_employer';
+		   useEmployer = 1;
+	{/literal} {/if} {if $isEmployeeOf} {literal}
+	           isRadio = 1;
+	{/literal} {/if} {literal}
+
+	cj(document).ready(function() {
+	
+	// clear old data if any
+	cj('#store_contacts').val('');
+	if ( useEmployer ) {
+	cj('#store_employers').val('');
+	} 
+
+	cj('.pagerDisplay tbody tr .contact_select input').live('click', function () {
+	    
+		var valueSelected = cj(this).val();	  
+		if ( cj(this).attr('checked') == true ) {   
+		  contact_checked[valueSelected] =  valueSelected;
+		  countSelected++;
+		} else if( contact_checked[valueSelected] ) {
+		  delete contact_checked[valueSelected];
+		  countSelected--;
+		  if ( useEmployer && employer_holdelement[valueSelected] ) {
+		       cj( employer_holdelement[valueSelected] ).attr('checked',false);
+		       delete employer_checked[valueSelected];
+		       delete employer_holdelement[valueSelected];
+		  } 
+	       }
+	     cj('#count_selected').html(countSelected +' Contacts selected.')  
+	} );
+	
+	if ( useEmployer ) {
+	   cj('.pagerDisplay tbody tr .'+ employerClass +' input').live('click', function () {
+	   	 var valueSelected = cj(this).val();	
+		 if ( isRadio ) {
+		       employer_checked = new Array();
+		 }
+	         if ( cj(this).attr('checked') == true ) {
+		      
+		      // add validation to match with selected contacts
+		      if( !contact_checked[valueSelected] ) {
+		          alert('Current employer / Current employee should be among the selected contacts.');
+			  cj(this).attr('checked',false); 
+		      } else {
+		          employer_checked[valueSelected] = valueSelected;
+			  employer_holdelement[valueSelected] = this;
+		      }
+
+		} else if ( employer_checked[valueSelected] ) {
+		   delete employer_checked[valueSelected]; 
+     		   delete employer_holdelement[valueSelected];
+		}
+	   } );
+	}
+
+	});
+
+	function checkSelected( ) {
+		 cj('.pagerDisplay tbody tr .contact_select input').each(
+		 function( ) {
+			   	if ( contact_checked[cj(this).val()] ) { 
+		  	  	cj(this).attr('checked',true);
+        		   	}
+			  });
+	
+		if ( useEmployer ) {
+		  // register new elements
+		  employer_holdelement = new Array();
+		  cj('.pagerDisplay tbody tr .'+ employerClass +' input').each(
+		  function( ) {
+			   	if ( employer_checked[cj(this).val()] ) { 
+				   cj(this).attr('checked',true);
+				   employer_holdelement[cj(this).val()] = this;
+        		   	}
+			  });  
+		}	  	  
+	}
+
+	function submitAjaxData() {
+		 cj('#store_contacts').val( contact_checked.toString() );
+		 if ( useEmployer )  {
+		    cj('#store_employers').val( employer_checked.toString() ); 
+		 }
+		 return true;	 
+	}
+
+</script>
+{/literal}
+{/if}
+
 {if $searchRows OR $action EQ 2}
 {*include custom data js file*}
 {include file="CRM/common/customData.tpl"}
 {literal}
 <script type="text/javascript">
+	
+	{/literal} {if $searchRows} {literal}
+	cj(".contact_select .form-checkbox").each(
+		function( ) {
+			  if (this) { 
+		  	  cj(this).attr('checked',true);
+        		  } }	  
+	);
+	{/literal} {/if} {literal}
+	
 	cj(document).ready(function() {
 		{/literal}
 		buildCustomData( '{$customDataType}' );
@@ -256,6 +387,7 @@
 {if $action EQ 2}
 {literal}
 <script type="text/javascript">
+
    currentEmployer( );
    function currentEmployer( ) 
    {

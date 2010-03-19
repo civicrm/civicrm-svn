@@ -3147,7 +3147,7 @@ WHERE  id IN ( $groupIDs )
                           $count = false, $includeContactIds = false,
                           $sortByChar = false, $groupContacts = false,
                           $returnQuery = false,
-                          $additionalWhereClause = null ) 
+                          $additionalWhereClause = null, $sortOrder = null ) 
     {
         require_once 'CRM/Core/Permission.php';
 
@@ -3207,6 +3207,10 @@ WHERE  id IN ( $groupIDs )
                         } 
 
                         $order = " ORDER BY $orderBy";
+                        
+                        if ( $sortOrder ) {
+                            $order .= " $sortOrder";
+                        }
                     }
                 } else if ($sortByChar) { 
                     $orderBy = " ORDER BY LEFT(contact_a.sort_name, 1) asc";
@@ -3292,7 +3296,6 @@ WHERE  id IN ( $groupIDs )
 		}	
 
         $query = "$select $from $where $groupBy $order $limit";
-        //CRM_Core_Error::debug('query', $query); exit(); 
 
         if ( $returnQuery ) {
             return $query;

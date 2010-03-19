@@ -24,7 +24,7 @@
 }
 
 #crm-container th,
-#crm-container table.display thead th {
+#crm-container table.display thead th, #crm-container table.pagerDisplay thead th {
   	font-weight: normal;
   	font-size: 1em;
   	padding: 4px;
@@ -58,7 +58,7 @@
 
 #crm-container tr.even-row td, 
 #crm-container tr.odd-row td,
-#crm-container table.display td {
+#crm-container table.display td, #crm-container table.pagerDisplay td {
   border-collapse: collapse;
   border-top: 1px solid #DDDDDD;
   border-right: 1px solid #DDDDDD;
