@@ -252,7 +252,8 @@ $earthDistanceSQL  <= $distance
         list( $name, $op, $distance, $grouping, $wildcard ) = $values;
              
         // also get values array for all address related info
-        $proximityVars = array( 'street_address', 'city', 'postal_code', 'state_province_id', 'country_id' );
+        $proximityVars = array( 'street_address', 'city', 'postal_code',
+                                'state_province_id', 'country_id', 'distance_unit' );
         $proximityAddress = array( );
         foreach ( $proximityVars as $var ) {
             $proximityValues = $query->getWhereValues( "prox_{$var}", $grouping );
@@ -288,11 +289,18 @@ $earthDistanceSQL  <= $distance
             return;
         }
 
+        if ( isset( $proximityAddress['distance_unit'] ) ) {
+            if ( $proximityAddress['distance_unit'] == 'miles' ) {
+                $distance = $distance * 1609.344;
+            } else {
+                $distance = $distance * 1000.00;
+            }
+        }
 
         $query->_tables['civicrm_address'] = $query->_whereTables['civicrm_address'] = 1;
         $query->_where[$grouping][] = self::where( $proximityAddress['geo_code_1'],
                                                    $proximityAddress['geo_code_2'],
-                                                   $distance * 1000 );
+                                                   $distance );
         $query->_qill[$grouping][]  = ts( 'Proximity Search Enabled' );
         return;
     }

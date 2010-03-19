@@ -194,7 +194,8 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
 
         // set the prox params
         // need to ensure proximity searching is enabled
-        $proximityVars = array( 'street_address', 'city', 'postal_code', 'state_province_id', 'country_id', 'distance' );
+        $proximityVars = array( 'street_address', 'city', 'postal_code', 'state_province_id',
+                                'country_id', 'distance', 'distance_unit' );
         foreach ( $proximityVars as $var ) {
             $value = CRM_Utils_Request::retrieve( "prox_{$var}",
                                                   'String',
