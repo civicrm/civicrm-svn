@@ -73,3 +73,7 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
 -- CRM-5612
    ALTER TABLE civicrm_cache
    MODIFY path varchar(255) COMMENT 'Unique path name for cache element';
+   
+-- CRM-5874
+   ALTER TABLE civicrm_uf_group
+   ADD `is_proximity_search` tinyint(4) unsigned default 0 COMMENT 'Should proximity search be included in profile search form?';

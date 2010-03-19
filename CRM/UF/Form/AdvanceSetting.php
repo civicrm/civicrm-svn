@@ -88,14 +88,20 @@ class CRM_UF_Form_AdvanceSetting extends CRM_UF_Form_Group {
         if ( $form->_cId = $session->get( 'userID' ) ){
             $form->_cmsId = true;
         }
-        //   require_once 'CRM/Member/Import/Parser/Membership.php';
+
         $options = array(); 
         $options[] = HTML_QuickForm::createElement('radio', null, null, ts('No account create option'), 0 );
         $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Give option, but not required'), 1 );
         $options[] = HTML_QuickForm::createElement('radio', null, null, ts('Account creation required'), 2 );
         
         $this->addGroup($options, 'is_cms_user', ts('%1 user account registration option?', array( 1=>$config->userFramework )));
-        //$form->add('checkbox', 'is_cms_user', ts('%1 user account registration option?', array( 1=>$config->userFramework )));
-        // CRM_UF_Form_Group::setDefaultValues();
+
+        // options for including Proximity Search in the profile search form
+        $proxOptions = array(); 
+        $proxOptions[] = HTML_QuickForm::createElement('radio', null, null, ts('None'), 0 );
+        $proxOptions[] = HTML_QuickForm::createElement('radio', null, null, ts('Optional'), 1 );
+        $proxOptions[] = HTML_QuickForm::createElement('radio', null, null, ts('Required'), 2 );
+        
+        $this->addGroup($proxOptions, 'is_proximity_search', ts('Proximity search'));
     }
 }

@@ -107,3 +107,8 @@ In addition, you must include a Primary Email Address field in the profile.{/ts}
 {htxt id='id-is_uf_link'}
 {ts 1=$config->userFramework}Check this box if you want to include a link in the listings to view contacts' %1 user account information (e.g. their 'My Account' page). This link will only be included for contacts who have a user account on your website.{/ts}
 {/htxt}
+
+{htxt id='id-is_proximity_search'}
+{ts}If you are using this profile as a search form, you can choose to include proximity searching. When enabled, a proximity search block will be added to the search criteria. This block will contain fields to set the proximity start address, and a field to set a 'Radius' (distance from that address).
+Set proximity search required is you want all searches using this profile to require the user to enter a start address and a radius.{/ts}
+{/htxt}

@@ -33,7 +33,7 @@
 
 <div id="accordion">
     <h3><a href="#">Advanced Settings</a></h3>
-    <div class ="form-item" style="background:#F7F7F7;">
+    <div style="background:#F7F7F7;">
         <dl>
             <dt>{$form.group.label}</dt>
             <dd>{$form.group.html} {help id='id-limit_group' file="CRM/UF/Form/Group.hlp"}</dd>
@@ -61,6 +61,9 @@
             <dt>{$form.is_update_dupe.label}</dt>
             <dd>{$form.is_update_dupe.html} {help id='id-is_update_dupe' file="CRM/UF/Form/Group.hlp"}</dd>
             
+            <dt>{$form.is_proximity_search.label}</dt>
+            <dd>{$form.is_proximity_search.html} {help id='id-is_proximity_search' file="CRM/UF/Form/Group.hlp"}</dd>
+
             <dt></dt>
             <dd>{$form.is_map.html} {$form.is_map.label} {help id='id-is_map' file="CRM/UF/Form/Group.hlp"}</dd>
             

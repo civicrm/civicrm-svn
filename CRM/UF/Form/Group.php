@@ -245,7 +245,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form
             $showAdvanced = 0;
             $advFields = array('group', 'post_URL', 'cancel_URL',
                                'add_captcha', 'is_map', 'is_uf_link', 'is_edit_link',
-                               'is_update_dupe', 'is_cms_user');
+                               'is_update_dupe', 'is_cms_user', 'is_proximity_search');
             foreach($advFields as $key) {
                 if ( !empty($defaults[$key]) ) {
                     $showAdvanced = 1;
@@ -258,6 +258,7 @@ class CRM_UF_Form_Group extends CRM_Core_Form
             $defaults['is_active'     ] = 1;
             $defaults['is_map'        ] = 0;
             $defaults['is_update_dupe'] = 0;
+            $defaults['is_proximity_search'] = 0;
             $defaults['uf_group_type[Profile]'] = 1;
             
         }
