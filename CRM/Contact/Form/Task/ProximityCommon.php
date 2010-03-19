@@ -102,7 +102,7 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
         $country = array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::country( );
         $form->add( 'select', 'prox_country_id', ts('Country'), $country, $proxRequired );
         
-        $form->add( 'text', 'distance', ts( 'Distance (in km)' ), null, $proxRequired );
+        $form->add( 'text', 'prox_distance', ts( 'Distance (in km)' ), null, $proxRequired );
 
         // state country js, CRM-5233
         require_once 'CRM/Core/BAO/Address.php';
@@ -128,6 +128,11 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
      static function formRule( $fields, $files, $form ) 
      {
          $errors = array( );
+         // if use_household_address option is checked, make sure 'valid household_name' is also present.
+         if ( CRM_Utils_Array::value('prox_distance',$fields ) && 
+              !CRM_Utils_Array::value( 'prox_postal_code', $fields ) ) {
+             $errors["prox_distance"] = ts("If you want to search by distance from an address, please enter a postal code.");
+         }
          return empty($errors) ? true : $errors;
      }     
     

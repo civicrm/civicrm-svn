@@ -31,6 +31,6 @@
        <tr><td class="label">{$form.prox_postal_code.label}</td><td>{$form.prox_postal_code.html}</td></tr>
        <tr><td class="label">{$form.prox_state_province_id.label}</td><td>{$form.prox_state_province_id.html}</td></tr>
        <tr><td class="label">{$form.prox_country_id.label}</td><td>{$form.prox_country_id.html}</td></tr>
-       <tr><td class="label">{$form.distance.label}</td><td>{$form.distance.html}</td></tr>
+       <tr><td class="label">{$form.prox_distance.label}</td><td>{$form.prox_distance.html}</td></tr>
     </table>
 </fieldset>
