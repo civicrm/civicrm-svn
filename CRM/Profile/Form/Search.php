@@ -59,7 +59,6 @@ class CRM_Profile_Form_Search extends CRM_Profile_Form
     function preProcess() 
     { 
         $this->_mode = CRM_Profile_Form::MODE_SEARCH; 
-      
         parent::preProcess( );
     } 
     
@@ -125,6 +124,7 @@ class CRM_Profile_Form_Search extends CRM_Profile_Form
                                 ) );
 
         parent::buildQuickForm( );
+
      }
 
        

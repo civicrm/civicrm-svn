@@ -85,11 +85,11 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
         $proxRequired  = ( $proxSearch == 2 ? true : false);
         $form->assign('proximity_search', true);
 
-        $form->add( 'text', 'prox_street_address', ts( 'Street Address' ), null, $proxRequired );
+        $form->add( 'text', 'prox_street_address', ts( 'Street Address' ), null, false );
 
-        $form->add( 'text', 'prox_city', ts( 'City' ), null, $proxRequired );
+        $form->add( 'text', 'prox_city', ts( 'City' ), null, false );
 
-        $form->add( 'text', 'prox_postal_code', ts( 'Postal Code' ), null, $proxRequired );
+        $form->add( 'text', 'prox_postal_code', ts( 'Postal Code' ), null, false );
 
         self::setDefaultValues( $form );
         if ( $defaults['prox_country_id'] ) {
@@ -102,7 +102,11 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
         $country = array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::country( );
         $form->add( 'select', 'prox_country_id', ts('Country'), $country, $proxRequired );
         
-        $form->add( 'text', 'prox_distance', ts( 'Distance (in km)' ), null, $proxRequired );
+        $form->add( 'text', 'prox_distance', ts( 'Distance' ), null, $proxRequired );
+        
+        $proxUnits = array( 'km' => ts('km'), 'miles' => ts('miles') ); 
+        $form->add( 'select', 'prox_distance_unit', ts( 'Units' ), $proxUnits, $proxRequired );
+        // prox_distance_unit
 
         // state country js, CRM-5233
         require_once 'CRM/Core/BAO/Address.php';
@@ -128,11 +132,18 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
      static function formRule( $fields, $files, $form ) 
      {
          $errors = array( );
-         // if use_household_address option is checked, make sure 'valid household_name' is also present.
-         if ( CRM_Utils_Array::value('prox_distance',$fields ) && 
-              !CRM_Utils_Array::value( 'prox_postal_code', $fields ) ) {
-             $errors["prox_distance"] = ts("If you want to search by distance from an address, please enter a postal code.");
+         // If Distance is present, make sure state, country and city or postal code are populated.
+         if ( CRM_Utils_Array::value('prox_distance',$fields ) ) {
+             if ( !CRM_Utils_Array::value( 'prox_state_province_id', $fields ) ||
+                  !CRM_Utils_Array::value( 'prox_country_id', $fields ) ) {
+                      $errors["prox_state_province_id"] = ts("Country AND State/Province are required to search by distance.");
+             }
+             if ( !CRM_Utils_Array::value( 'prox_postal_code', $fields ) AND
+                  !CRM_Utils_Array::value( 'prox_city', $fields )  ) {
+                      $errors["prox_distance"] = ts("City OR Postal Code are required to search by distance.");
+            }
          }
+
          return empty($errors) ? true : $errors;
      }     
     
@@ -150,6 +161,11 @@ class CRM_Contact_Form_Task_ProximityCommon extends CRM_Contact_Form_Task {
     	
     	if ($countryDefault) {
     		$defaults['prox_country_id'] = $countryDefault;
+    		if ( $countryDefault == '1228') {
+    		    $defaults['prox_distance_unit'] = 'miles';
+    		} else {
+    		    $defaults['prox_distance_unit'] = 'km';
+    		}
     	}
         $form->setDefaults( $defaults );
     }
