@@ -74,18 +74,12 @@ class CRM_Member_Form_Task_Email extends CRM_Member_Form_Task {
      */
     
     function preProcess( ) {
+        CRM_Contact_Form_Task_EmailCommon::preProcessFromAddress( $this );
+        parent::preProcess( );
 
-        $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive',
-                                            $this, false );
-
-        if ( $cid ) {
-            CRM_Contact_Form_Task_EmailCommon::preProcessSingle( $this, $cid );
-        } else {
-            parent::preProcess( );
-
-            // we have all the contribution ids, so now we get the contact ids
-            parent::setContactIDs( );
-        }
+        // we have all the membership ids, so now we get the contact ids
+        parent::setContactIDs( );
+        
         $this->assign( 'single', $this->_single );
     }
     

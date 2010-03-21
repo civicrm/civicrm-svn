@@ -82,11 +82,12 @@ class CRM_Contact_Form_Task_Email extends CRM_Contact_Form_Task {
 
         $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false );
 
-        if ( $cid || $this->_context == 'standalone' ) {
-            CRM_Contact_Form_Task_EmailCommon::preProcessSingle( $this, $cid );
-        } else {
+        CRM_Contact_Form_Task_EmailCommon::preProcessFromAddress( $this );
+
+        if ( !$cid && $this->_context != 'standalone' ) {
             parent::preProcess( );
         }
+
         $this->assign( 'single', $this->_single );
         require_once 'CRM/Core/Permission.php';
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
@@ -119,5 +120,3 @@ class CRM_Contact_Form_Task_Email extends CRM_Contact_Form_Task {
     }
 
 }
-
-
