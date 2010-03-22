@@ -29,7 +29,7 @@
 {else}
 <span style="float:right;"><a href="#expand" id="expand">{ts}Expand all tabs{/ts}</a></span>
 <div class="crm-submit-buttons">
-   {$form.buttons.html}
+   {include file="CRM/common/formButtons.tpl"}
 </div>
 <div class="crm-accordion-wrapper crm-contactDetails-accordion crm-accordion-open">
  <div class="crm-accordion-header">
@@ -61,8 +61,15 @@
         </table>
 
         {*  add dupe buttons *}
-        {$form._qf_Contact_refresh_dedupe.html}
-        {if $isDuplicate}&nbsp;&nbsp;{$form._qf_Contact_upload_duplicate.html}{/if}
+        <span class="crm-button crm-button_qf_Contact_refresh_dedupe">
+            {$form._qf_Contact_refresh_dedupe.html}
+        </span>
+        {if $isDuplicate}
+            &nbsp;&nbsp;
+            <span class="crm-button crm-button_qf_Contact_upload_duplicate">
+                {$form._qf_Contact_upload_duplicate.html}
+            </span>
+        {/if}
         <div class="spacer"></div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
@@ -72,7 +79,7 @@
     {/foreach}
 </div>
 <div class="crm-submit-buttons">
-   {$form.buttons.html}
+    {include file="CRM/common/formButtons.tpl"}
 </div>
 
 {literal}

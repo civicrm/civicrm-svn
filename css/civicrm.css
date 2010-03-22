@@ -2331,3 +2331,16 @@ div#crm-toolTip
 	color: #FFF;
 	font-weight: normal;
 	}
+	
+/* Special styling for specific form buttons */
+#crm-container span.crm-button_qf_Main_upload input {
+    font-size: 1.2em;
+}
+
+#crm-container span.crm-button_qf_Confirm_back input {
+    width: 80px;
+    height: 25px;
+    background-color: #eee;
+    color: gray;
+    font-size: .9em;
+}
