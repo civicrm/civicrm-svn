@@ -10,7 +10,7 @@
 {if $isPrimary}
 {ts}If space becomes available you will receive an email with
 a link to a web page where you can complete your registration.{/ts}
-
+{/if}
 ==========================================================={if $participantCount }===================={/if}
 
 {elseif $isRequireApproval}
