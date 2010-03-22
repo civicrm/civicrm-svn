@@ -47,6 +47,7 @@
             <th>{ts}Req?{/ts}</th>
             <th>{ts}Enabled?{/ts}</th>
             <th></th>
+	    <th class="hiddenElement"></th>
         </tr>
         </thead>
         <tbody>
