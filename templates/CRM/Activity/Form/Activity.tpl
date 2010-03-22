@@ -24,6 +24,8 @@
  +--------------------------------------------------------------------+
 *}
  {* this template is used for adding/editing other (custom) activities. *}
+<div class="crm-block crm-form-block crm-activity-form-block">
+
 {if $cdType }
    {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
@@ -206,6 +208,42 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
              <tr>
                 <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
              </tr>
+			<tr>
+                <td class="label">{$form.tag.label}</td><td class="view-value">
+					<div class="crm-select-container">
+					<select id="tags" multiple="multiple" name="tags[]" title="Click to Select a Tag">
+			                        <option class="option-Amsterdam" selected="selected">Amsterdam</option>      
+			                        <option class="option-Atlanta" selected="selected">Atlanta</option>
+			                        <option class="child child-1 parent-Atlanta option-Baltimore">Baltimore</option>
+			                        <option class="child child-2 parent-Baltimore option-Boston">Boston</option>
+			                        <option class="child child-1 parent-Atlanta option-Birmingham">Birmingham</option>
+			                        <option class="option-Buenos_Aires">Buenos Aires</option>
+			                        <option class="option-Calgary">Calgary</option>
+			                        <option class="option-Chicago" selected="selected">Chicago</option>
+			                        <option class="option-Denver">Denver</option>
+			                        <option class="child child-1 parent-Denver option-Dubai">Dubai</option>
+			                        <option class="child child-1 parent-Denver option-Frankfurt">Frankfurt</option>
+			                        <option class="option-Hong_Kong">Hong Kong</option>
+			                        <option class="option-Honolulu">Honolulu</option>
+
+					</select>
+					</div>
+					{literal}
+					<script type="text/javascript">
+
+								$("select[multiple]").crmasmSelect({
+									addItemTarget: 'bottom',
+									animate: true,
+									highlight: true,
+									sortable: true,
+									respectParents: true
+								});
+
+						</script>
+					{/literal}
+
+				</td>
+             </tr>
              <tr>
                 <td colspan="2">
 	            {if $action eq 4} 
@@ -225,12 +263,12 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
              {if $action neq 4} {* Don't include "Schedule Follow-up" section in View mode. *}
                  <tr>
                     <td colspan="2">
-                     <div id="follow-up_show" class="section-hidden section-hidden-border">
-                      <a href="#" onclick="hide('follow-up_show'); show('follow-up'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Schedule Follow-up{/ts}</label><br />
-                     </div>
-                          
-                     <div id="follow-up" class="section-shown">
-                       <fieldset><legend><a href="#" onclick="hide('follow-up'); show('follow-up_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Schedule Follow-up{/ts}</legend>
+                     	<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+						 <div class="crm-accordion-header">
+						  <div class="icon crm-accordion-pointer"></div>
+							{ts}Schedule Follow-up{/ts}                    
+						  </div><!-- /.crm-accordion-header -->
+					 	<div class="crm-accordion-body">
                         <table class="form-layout-compressed">
                            <tr><td class="label">{ts}Schedule Follow-up Activity{/ts}</td>
                                <td>{$form.followup_activity_type_id.html}&nbsp;{$form.interval.label}&nbsp;{$form.interval.html}&nbsp;{$form.interval_unit.html}                          </td>
@@ -240,9 +278,17 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
                               <td>{$form.followup_activity_subject.html}</td>
                            </tr>
                         </table>
-                       </fieldset>
-                     </div>
-                    </td>
+                       </div><!-- /.crm-accordion-body -->
+					 </div><!-- /.crm-accordion-wrapper -->
+					{literal} 
+					<script type="text/javascript">
+					cj(function() {
+					   cj().crmaccordions(); 
+					});
+					</script>
+					{/literal}
+					 
+					 </td>
                  </tr>
              {/if}
         {/if} {* End Delete vs. Add / Edit action *}
@@ -368,10 +414,9 @@ function fileOnCase() {
 		{literal}
 	});
 
-  hide('follow-up');
-  show('follow-up_show');
     </script>
     {/literal}
 {/if}
 {include file="CRM/common/formNavigate.tpl"}
 {/if} {* end of snippet if*}	
+</div>

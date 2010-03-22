@@ -120,6 +120,49 @@ div#crm-container {
   	border: 1px solid #999;
 	}
 
+/* crm sdvanced select styling */
+
+.crmasmContainer,
+.crmasmSelect {
+	width:200px;
+	}
+
+.crmasmSelect {
+	padding:2px;	
+	}
+
+.crmasmSelect .child-1 { padding-left:1em; }
+.crmasmSelect .child-2 { padding-left:2em; }
+
+.crmasmList {
+	margin:0px;
+	padding:0px;
+}
+
+.crmasmList li {
+	background-color:#3E3E3E;
+	padding:2px 4px;
+	list-style-type:none;
+	margin:1px 0px;
+	color:#F5F6F1;
+	}
+
+
+
+.crmasmListItem {
+	position:relative;
+	}
+.crmasmListItemRemove {
+	padding:5px;
+	position:absolute;
+	right:5px;
+	top:2px;
+	font-size:11px;
+	margin:0px;
+	padding:0px;
+	}
+
+
 #crm-container textarea {
     border: 1px solid #999;
 }
