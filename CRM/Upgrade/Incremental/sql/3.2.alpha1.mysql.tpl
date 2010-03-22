@@ -81,7 +81,7 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
 -- CRM-5724
 
    ALTER TABLE civicrm_price_field
-   ADD `participants` int(10) unsigned default NULL COMMENT 'Participant count for field.';
+   ADD `count` int(10) unsigned default NULL COMMENT 'Participant count for field.';
 
    ALTER TABLE civicrm_line_item
    ADD `participant_count` int(10) unsigned default NULL COMMENT 'Number of Participants Per field.';
