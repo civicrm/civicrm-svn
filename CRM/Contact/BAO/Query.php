@@ -1920,7 +1920,8 @@ class CRM_Contact_BAO_Query
                 continue;
 
             case 'civicrm_entity_tag':
-                $from .= " $side JOIN civicrm_entity_tag ON ( civicrm_entity_tag.contact_id = contact_a.id ) ";
+                $from .= " $side JOIN civicrm_entity_tag ON ( civicrm_entity_tag.entity_id = 'civicrm_contact' AND
+                                                              civicrm_entity_tag.entity_id = contact_a.id ) ";
                 continue;
 
             case 'civicrm_note':
@@ -1967,10 +1968,6 @@ class CRM_Contact_BAO_Query
                 $from .= " $side JOIN civicrm_log ON (civicrm_log.entity_id = contact_a.id AND civicrm_log.entity_table = 'civicrm_contact')";
                 $from .= " $side JOIN civicrm_contact contact_b ON (civicrm_log.modified_id = contact_b.id)";
                 continue;
-                
-            case 'civicrm_entity_tag':
-                $from .= " $side  JOIN  civicrm_entity_tag  ON ( civicrm_entity_tag.contact_id = contact_a.id ) ";
-                continue; 
                 
             case 'civicrm_tag':
                 $from .= " $side  JOIN civicrm_tag ON civicrm_entity_tag.tag_id = civicrm_tag.id ";
@@ -2261,7 +2258,8 @@ WHERE  id IN ( $groupIDs )
 
         $etTable = "`civicrm_entity_tag-" .implode( ',', array_keys($value) ) ."`";
         $this->_tables[$etTable] = $this->_whereTables[$etTable] =
-            " LEFT JOIN civicrm_entity_tag {$etTable} ON ( {$etTable}.contact_id = contact_a.id ) ";
+            " LEFT JOIN civicrm_entity_tag {$etTable} ON ( {$etTable}.entity_id = contact_a.id  AND 
+                        {$etTable}.entity_table = 'civicrm_contact' ) ";
        
         $names = array( );
         $tagNames =& CRM_Core_PseudoConstant::tag( );

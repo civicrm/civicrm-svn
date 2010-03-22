@@ -149,6 +149,8 @@
 
   <civicrm_openid />
 
+  <civicrm_website />
+
   <civicrm_acl_cache />
 
   <civicrm_dashboard_contact />
