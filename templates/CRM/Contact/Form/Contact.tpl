@@ -63,16 +63,7 @@
 			  {/if}
             </tr>            
         </table>
-	<table>
-	   <tr>
-	     <td>{$form.image_URL.label}</td>
-	     <td>{$form.image_URL.html}
-	     {if $imageURL}
-		   {include file="CRM/Contact/Page/ContactImage.tpl"}
-	     {/if}
-	    </td>
-	   </tr>
-        </table>
+
         {*  add dupe buttons *}
         {$form._qf_Contact_refresh_dedupe.html}
         {if $isDuplicate}&nbsp;&nbsp;{$form._qf_Contact_upload_duplicate.html}{/if}

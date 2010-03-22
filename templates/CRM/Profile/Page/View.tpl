@@ -41,10 +41,3 @@
     {/if}
 
 </div>
-{literal}
-    <script type='text/javascript'>
-        function contactImagePopUp (url, width, height) {
-      	    newWindow = window.open( url,'name', 'width='+width+', height='+height );
-      }
-    </script>
-{/literal}

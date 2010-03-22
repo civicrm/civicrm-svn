@@ -87,7 +87,3 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
    ADD `participant_count` int(10) unsigned default NULL COMMENT 'Number of Participants Per field.';
 
    {include file='../CRM/Upgrade/3.2.alpha1.msg_template/civicrm_msg_template.tpl'}
-
--- CRM-5467
-   ALTER TABLE civicrm_contact
-   MODIFY image_URL varchar(255) COMMENT 'Optional URL for preferred image (photo, logo, etc.) to display for this contact';
