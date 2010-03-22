@@ -58,6 +58,13 @@ function run( ) {
     processQueue( );
 }
 
-run( );
-
+// you can run this program either from an apache command, or from the cli
+if (isset($argv)) {
+  require_once ("tools/bin/scripts/cli.php");
+  $cli=new civicrm_cli ();
+  //if it doesn't die, it's authenticated 
+  processQueue( );
+} else  { //from the webserver
+  run( );
+}
 
