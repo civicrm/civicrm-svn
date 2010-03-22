@@ -205,7 +205,7 @@ class CRM_Utils_Mail
         $mailingInfo =& CRM_Core_BAO_Preferences::mailingPreferences();
         if ( $mailingInfo['outBound_option'] == 3 ) {
            return true;
-        else } if ( $mailingInfo['outBound_option'] == 0 ) {
+        } else  if ( $mailingInfo['outBound_option'] == 0 ) {
             if ( !isset( $mailingInfo['smtpServer'] ) || $mailingInfo['smtpServer'] == '' || 
                  $mailingInfo['smtpServer'] == 'YOUR SMTP SERVER'|| 
                  ( $mailingInfo['smtpAuth'] && ( $mailingInfo['smtpUsername'] == '' || $mailingInfo['smtpPassword'] == '' ) ) ) {
