@@ -53,7 +53,7 @@ class CRM_Contact_Form_Task_EmailCommon
     static function preProcessFromAddress( &$form ) 
     {
         $form->_single  = true;
-        $form->_emails  = array( );
+        $form->_emails  = $emails = array( );
         
         $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' );
@@ -74,11 +74,12 @@ class CRM_Contact_Form_Task_EmailCommon
                 $form->_noEmails = true;
             } else {
                 if ( $email ) {
-                    $emails[$emailId] = '"' . $fromDisplayName . '" <' . $email . '> ';
                     if ( in_array( $email, $emails ) ) {
                         // CRM-3624
                         continue;
                     }
+
+                    $emails[$emailId] = '"' . $fromDisplayName . '" <' . $email . '> ';
                     $form->_onHold[$emailId] = $item['on_hold'];
                 }
             }
