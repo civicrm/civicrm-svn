@@ -34,9 +34,10 @@
  *
  */
 
-require_once 'CRM/Contribute/DAO/FinancialTrxn.php';
+require_once 'CRM/Core/DAO/FinancialTrxn.php';
+require_once 'CRM/Core/DAO/EntityFinancialTrxn.php';
 
-class CRM_Contribute_BAO_FinancialTrxn extends CRM_Contribute_DAO_FinancialTrxn
+class CRM_Core_BAO_FinancialTrxn extends CRM_Core_DAO_FinancialTrxn
 {
     function __construct()
     {
@@ -48,12 +49,12 @@ class CRM_Contribute_BAO_FinancialTrxn extends CRM_Contribute_DAO_FinancialTrxn
      *
      * @param array  $params (reference ) an assoc array of name/value pairs
      *
-     * @return object CRM_Contribute_BAO_FinancialTrxn object
+     * @return object CRM_Core_BAO_FinancialTrxn object
      * @access public
      * @static
      */
     static function create(&$params) {
-        $trxn = new CRM_Contribute_DAO_FinancialTrxn();
+        $trxn = new CRM_Core_DAO_FinancialTrxn();
         $trxn->copyValues($params);
 
         require_once 'CRM/Utils/Rule.php';
@@ -62,17 +63,36 @@ class CRM_Contribute_BAO_FinancialTrxn extends CRM_Contribute_DAO_FinancialTrxn
             $config = CRM_Core_Config::singleton();
             $trxn->currency = $config->defaultCurrency;
         }
-
-        // if a transaction already exists for a contribution id, lets get the id
-        $id = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_FinancialTrxn',
-                                           $trxn->contribution_id,
-                                           'id',
-                                           'contribution_id' );
-        if ( $id ) {
-            $trxn->id = $id;
+        // if a transaction already exists for a contribution id, lets get the financial transaction id
+        $financial_trxn_id = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_EntityFinancialTrxn',
+                                                          $params['contribution_id'],
+                                                          'financial_trxn_id',
+                                                          'entity_id' );
+        if ( $financial_trxn_id ) {
+            $trxn->id = $financial_trxn_id;
+            //get the entity financial transaction id here
+            $entity_financial_trxn_id = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_EntityFinancialTrxn',
+                                                                     $financial_trxn_id,
+                                                                     'id',
+                                                                     'financial_trxn_id' );
         }
-                                           
-        return $trxn->save();
+                                          
+        $trxn->save();
+        // save to entity_financia_trxn table
+        $entity_financial_trxn_params=array(
+            'entity_type'      => "contribution",
+            'entity_id'      => $params['contribution_id'],
+            'financial_trxn_id'      => $trxn->id,
+            'amount'      => $params['net_amount'],//use net amount to include all received amount to the contribution
+        );
+        $entity_trxn =& new CRM_Core_DAO_EntityFinancialTrxn();
+        $entity_trxn->copyValues($entity_financial_trxn_params);
+        if ( $financial_trxn_id ) {
+            $entity_trxn->id = $entity_financial_trxn_id;
+        }
+        $entity_trxn->save();
+        return $trxn;
+        
     }
 
 }
