@@ -616,5 +616,23 @@ class CRM_Utils_Hook {
                   $config->userHookClass .
                   '::invoke( 1, $config, $null, $null, $null, $null, \'civicrm_config\' );' );
     }
+    /**
+     * This hooks allows to change option values
+     *
+     * @param $options associated array of option values / id
+     * @param $name    option group name
+     * 
+     * @access public
+     */
+    static function optionValues( &$options, $name ) {
+        $config =& CRM_Core_Config::singleton( );
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+        $null =& CRM_Core_DAO::$_nullObject;
 
+        return   
+            eval( 'return ' .
+                  $config->userHookClass .
+                  '::invoke( 2, $options, $name, $null, $null, $null, \'civicrm_optionValues\' );' );
+                                    
+    }
 }

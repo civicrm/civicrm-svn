@@ -891,3 +891,8 @@ ON received.case_id=sent.case_id";
                  );
 }
 
+function civitest_civicrm_optionValues( &$values, $name ) {
+    if ( $name == 'activity_status' ) {
+        unset( $values[5] );
+    }
+}

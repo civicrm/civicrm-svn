@@ -109,6 +109,10 @@ WHERE  v.option_group_id = g.id
         $var =& self::valuesCommon( $dao, $flip, $grouping, $localize, $valueColumnName );
         $cache->set( $cacheKey, $var );
 
+        // call option value hook
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::optionValues( $var, $name );
+
         return $var;
     }
 
