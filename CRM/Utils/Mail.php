@@ -72,6 +72,9 @@ class CRM_Utils_Mail
         $headers['Return-Path']               = CRM_Utils_Array::value( 'returnPath', $params );
         $headers['Reply-To']                  = CRM_Utils_Array::value( 'replyTo', $params, $from );
         $headers['Date']                      = date('r');
+        if (CRM_Utils_Array::value( 'autoSubmitted', $params )) {
+          $headers['Auto-Submitted']          = "Auto-Generated";
+        }
 
         // we need to wrap Mail_mime because PEAR is apparently unable to fix
         // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
@@ -200,7 +203,9 @@ class CRM_Utils_Mail
     static function validOutBoundMail() {
         require_once "CRM/Core/BAO/Preferences.php";
         $mailingInfo =& CRM_Core_BAO_Preferences::mailingPreferences();
-        if ( $mailingInfo['outBound_option'] == 0 ) {
+        if ( $mailingInfo['outBound_option'] == 3 ) {
+           return true;
+        else } if ( $mailingInfo['outBound_option'] == 0 ) {
             if ( !isset( $mailingInfo['smtpServer'] ) || $mailingInfo['smtpServer'] == '' || 
                  $mailingInfo['smtpServer'] == 'YOUR SMTP SERVER'|| 
                  ( $mailingInfo['smtpAuth'] && ( $mailingInfo['smtpUsername'] == '' || $mailingInfo['smtpPassword'] == '' ) ) ) {

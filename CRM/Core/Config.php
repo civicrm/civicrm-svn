@@ -174,6 +174,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     static function &singleton($loadFromDB = true, $force = false)
     {
         if ( self::$_singleton === null || $force ) {
+
             // first, attempt to get configuration object from cache
             require_once 'CRM/Utils/Cache.php';
             $cache =& CRM_Utils_Cache::singleton( );
@@ -496,6 +497,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 $params['sendmail_args'] = $mailingInfo['sendmail_args'];
                 
                 self::$_mail =& Mail::factory( 'sendmail', $params );
+            } elseif ($mailingInfo['outBound_option'] == 3) {
+                self::$_mail =& Mail::factory( 'mail', $params );
             } else {
                 CRM_Core_Session::setStatus( ts( 'There is no valid SMTP server Setting Or SendMail path setting. Click <a href=\'%1\'>Administer CiviCRM >> Global Settings</a> to set the OutBound Email.', array( 1 => CRM_Utils_System::url('civicrm/admin/setting', 'reset=1'))));
  
