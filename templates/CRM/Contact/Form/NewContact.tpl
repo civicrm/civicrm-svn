@@ -31,7 +31,7 @@
     </tr>
     <tr>
 	<td class="label">{$form.contact.label}</td>
-	<td>{$form.contact.html}
+	<td>{$form.contact.html}</td><td>
 	    {if $form.profiles}
 		&nbsp;&nbsp;{ts}OR{/ts}&nbsp;&nbsp;{$form.profiles.html}<div id="contact-dialog" style="display:none;"></div>
 	    {/if}
@@ -40,24 +40,14 @@
 {/if}
 {literal}
 <script type="text/javascript">
+  var allowMultiClient = Boolean({/literal}{$multiClient}{literal});
   cj( function( ) {
-      var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=newcontact' h=0 }"{literal};
-
-      cj('#contact').autocomplete( contactUrl, { 
-          selectFirst : false, matchContains: true, minChars: 2
-      }).result( function(event, data, formatted) { 
-          cj("input[name=contact_select_id]").val(data[1]);
-      }).focus( );
-
-      cj("#contact").click( function( ) {
-          cj("input[name=contact_select_id]").val('');
-      });
-                                  
-      cj("#contact").bind("keypress keyup", function(e) {
-          if ( e.keyCode == 13 ) {
-              return false;
-          }
-      });
+      // add multiple client option if configured
+      if ( allowMultiClient ) {
+      	 addMultiClientOption( );
+      } else {
+         addSingleClientOption( );
+      }
   });
 
   function newContact( gid ) {
@@ -83,6 +73,36 @@
       });
   }
         
+  function addMultiClientOption ( ) {
+  
+      eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
+
+      var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
+      var contactUrl = {/literal}"{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }"{literal};
+      cj('#contact').tokenInput( contactUrl, { classes: tokenClass, hintText: hintText });
+      cj('ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px');
+      
+  }
+  
+  function addSingleClientOption ( ) {
+      var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=newcontact' h=0 }"{literal};
+
+      cj('#contact').autocomplete( contactUrl, { 
+          selectFirst : false, matchContains: true, minChars: 2
+      }).result( function(event, data, formatted) { 
+          cj("input[name=contact_select_id]").val(data[1]);
+      }).focus( );
+
+      cj("#contact").click( function( ) {
+          cj("input[name=contact_select_id]").val('');
+      });
+                                  
+      cj("#contact").bind("keypress keyup", function(e) {
+          if ( e.keyCode == 13 ) {
+              return false;
+          }
+      });  
+  }
 </script>
 {/literal}
 

@@ -52,6 +52,11 @@ class CRM_Case_Form_Activity_OpenCase
     
     static function preProcess( &$form ) 
     {   
+        //get multi client case configuration
+        require_once 'CRM/Case/XMLProcessor/Process.php';
+        $xmlProcessorProcess = new CRM_Case_XMLProcessor_Process( );
+        $form->_allowMultiClient = (bool)$xmlProcessorProcess->getAllowMultipleCaseClients( );
+        
         if ( $form->_context == 'caseActivity' ) {
             return;
         }
@@ -199,8 +204,12 @@ class CRM_Case_Form_Activity_OpenCase
         }
 
         $errors = array( );
-        //check if contact is selected in standalone mode
-        if ( isset( $values[contact_select_id] ) && !$values[contact_select_id] ) {
+        //check if contact is selected in standalone mode for single client option
+        if ( isset( $values[contact_select_id] ) && !$values[contact_select_id]  && !$form->_allowMultiClient ) {
+            $errors['contact'] = ts('Please select a valid contact or create new contact');
+        }
+        //check selected contact for multi client option
+        if ( $form->_allowMultiClient && isset( $values[contact] ) && !$values[contact] ) {
             $errors['contact'] = ts('Please select a valid contact or create new contact');
         }
         
