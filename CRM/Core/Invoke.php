@@ -73,12 +73,14 @@ class CRM_Core_Invoke
             return CRM_Utils_System::redirect( );
         }
 
-        // first fire up IDS and check for bad stuff
-        require_once 'CRM/Core/IDS.php';
-        $ids = new CRM_Core_IDS( );
-        $ids->check( $args );
-
         $config = CRM_Core_Config::singleton( );
+
+        // first fire up IDS and check for bad stuff
+        if ($config->useIDS) {
+            require_once 'CRM/Core/IDS.php';
+            $ids = new CRM_Core_IDS( );
+            $ids->check( $args );
+        }
 
         // also initialize the i18n framework
         $i18n   =& CRM_Core_I18n::singleton( );

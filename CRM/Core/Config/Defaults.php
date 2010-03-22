@@ -96,6 +96,9 @@ class CRM_Core_Config_Defaults
         //email notifications to activity Assignees
         $this->activityAssigneeNotification = defined( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' ) ? (bool) CIVICRM_ACTIVITY_ASSIGNEE_MAIL : true;
 
+        // IDS enablement
+        $this->useIDS = defined( 'CIVICRM_IDS_ENABLE' ) ? (bool) CIVICRM_IDS_ENABLE : true;
+        
         // 
         $size = trim( ini_get( 'upload_max_filesize' ) );
         if ( $size ) {

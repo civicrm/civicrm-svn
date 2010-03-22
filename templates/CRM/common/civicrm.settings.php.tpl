@@ -163,6 +163,11 @@ define( 'CIVICRM_UF_BASEURL'      , '%%baseURL%%' );
  */
 define( 'CIVICRM_SITE_KEY', null );
 
+/*
+ * If you want to disable IDS, set this to 0.
+ */
+define( 'CIVICRM_IDS_ENABLE', 1);
+
 /**
  * Multi org / Multi site settings:
  *
