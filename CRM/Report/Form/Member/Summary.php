@@ -290,10 +290,9 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
         }
         
         if ( !empty($clauses) ) {
-            $this->_where = "WHERE  civicrm_membership_status.is_current_member = 1 AND {$this->_aliases['civicrm_membership']}.is_test = 0 AND " . implode( ' AND ', $clauses );
+            $this->_where = "WHERE {$this->_aliases['civicrm_membership']}.is_test = 0 AND " . implode( ' AND ', $clauses );
         } else { 
-            $this->_where = "WHERE {$this->_aliases['civicrm_membership']}.is_test = 0 AND
-                            civicrm_membership_status.is_current_member = 1";
+            $this->_where = "WHERE {$this->_aliases['civicrm_membership']}.is_test = 0";
         }
     }
     
