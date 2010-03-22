@@ -680,4 +680,23 @@ WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$query
         echo json_encode( $dashlets ); 
         CRM_Utils_System::civiExit( );
     }
+    
+    /**
+     * Function to retrieve signature based on email id
+     */
+     static function getSignature( ) {
+         $emailID = CRM_Utils_Type::escape( $_POST['emailID'], 'Positive' );
+         $query = "SELECT signature_text, signature_html FROM civicrm_email WHERE id = {$emailID}";
+         $dao = CRM_Core_DAO::executeQuery( $query );
+
+         $signatures = array( );
+         while( $dao->fetch( ) ) {
+             $signatures = array( 'signature_text' => $dao->signature_text,
+                                  'signature_html' => $dao->signature_html
+                                );
+         }
+         
+         echo json_encode( $signatures );
+         CRM_Utils_System::civiExit( );
+     }
  }
