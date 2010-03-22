@@ -270,6 +270,16 @@ class CRM_Profile_Form extends CRM_Core_Form
             $this->assign( 'customFiles', $customFiles ); 
         }
         
+         if ( CRM_Utils_Array::value( 'image_URL', $this->_defaults ) ) {
+            list( $imageWidth, $imageHeight ) = getimagesize( $this->_defaults['image_URL'] );
+            list( $imageThumbWidth, $imageThumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $imageWidth, $imageHeight );
+            $this->assign( "imageWidth", $imageWidth );
+            $this->assign( "imageHeight", $imageHeight );
+            $this->assign( "imageThumbWidth", $imageThumbWidth );
+            $this->assign( "imageThumbHeight", $imageThumbHeight );
+            $this->assign( "imageURL", $this->_defaults['image_URL'] );  
+        }
+
         $this->setDefaults( $this->_defaults );
     } 
     
@@ -409,7 +419,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                 $stateCountryMap[$index][$prefixName] = $name;
             }
             
-            CRM_Core_BAO_UFGroup::buildProfile($this, $field, $this->_mode );
+            CRM_Core_BAO_UFGroup::buildProfile( $this, $field, $this->_mode );
             
             if ($field['add_to_group_id']) {
                 $addToGroupId = $field['add_to_group_id'];
@@ -681,6 +691,10 @@ class CRM_Profile_Form extends CRM_Core_Form
     {
         $params = $this->controller->exportValues( $this->_name );        
                 
+        if ( CRM_Utils_Array::value( 'image_URL', $params ) ) {
+            CRM_Contact_BAO_Contact::processImageParams( $params ) ; 
+        }
+
         if ( $this->_mode == self::MODE_REGISTER ) {
             require_once 'CRM/Core/BAO/Address.php';
             CRM_Core_BAO_Address::setOverwrite( false );
