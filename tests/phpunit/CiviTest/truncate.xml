@@ -7,6 +7,10 @@
 
   <civicrm_file />
 
+  <civicrm_financial_account />
+
+  <civicrm_financial_trxn />
+
   <civicrm_location_type />
 
   <civicrm_mail_settings />
@@ -123,6 +127,8 @@
 
   <civicrm_entity_file />
 
+  <civicrm_entity_financial_trxn />
+
   <civicrm_entity_tag />
 
   <civicrm_im />
@@ -232,8 +238,6 @@
   <civicrm_contribution_product />
 
   <civicrm_contribution_soft />
-
-  <civicrm_financial_trxn />
 
   <civicrm_membership_payment />
 

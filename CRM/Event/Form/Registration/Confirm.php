@@ -861,8 +861,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                             'trxn_id'           => $result['trxn_id'],
                             );
         
-        require_once 'CRM/Contribute/BAO/FinancialTrxn.php';
-        $trxn =& CRM_Contribute_BAO_FinancialTrxn::create( $trxnParams );
+        require_once 'CRM/Core/BAO/FinancialTrxn.php';
+        $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
 
         $transaction->commit( );
         

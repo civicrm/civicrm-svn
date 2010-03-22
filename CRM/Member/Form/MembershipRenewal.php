@@ -494,8 +494,8 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
                                     'trxn_id'           => $result['trxn_id'],
                                     );
             
-                require_once 'CRM/Contribute/BAO/FinancialTrxn.php';
-                $trxn =& CRM_Contribute_BAO_FinancialTrxn::create( $trxnParams );
+                require_once 'CRM/Core/BAO/FinancialTrxn.php';
+                $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
             }
         }
 

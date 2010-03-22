@@ -461,8 +461,8 @@ class CRM_Core_Payment_BaseIPN {
                                 'trxn_id'           => $contribution->trxn_id,
                                 );
             
-            require_once 'CRM/Contribute/BAO/FinancialTrxn.php';
-            $trxn =& CRM_Contribute_BAO_FinancialTrxn::create( $trxnParams );
+            require_once 'CRM/Core/BAO/FinancialTrxn.php';
+            $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
         }
         
         //update corresponding pledge payment record

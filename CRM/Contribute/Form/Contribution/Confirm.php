@@ -942,8 +942,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                 'trxn_result_code'  => $result['trxn_result_code'],
                                 );
             
-            require_once 'CRM/Contribute/BAO/FinancialTrxn.php';
-            $trxn =& CRM_Contribute_BAO_FinancialTrxn::create( $trxnParams );
+            require_once 'CRM/Core/BAO/FinancialTrxn.php';
+            $trxn =& CRM_Core_BAO_FinancialTrxn::create( $trxnParams );
         }
         
         //create contribution activity w/ individual and target

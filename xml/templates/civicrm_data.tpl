@@ -183,7 +183,8 @@ VALUES
    ('email_greeting'                , '{ts escape="sql"}Email Greeting Type{/ts}'                , 0, 1),
    ('postal_greeting'               , '{ts escape="sql"}Postal Greeting Type{/ts}'               , 0, 1),
    ('addressee'                     , '{ts escape="sql"}Addressee Type{/ts}'                     , 0, 1),
-   ('contact_autocomplete_options'  , '{ts escape="sql"}Autocomplete Contact Search{/ts}'        , 0, 1);
+   ('contact_autocomplete_options'  , '{ts escape="sql"}Autocomplete Contact Search{/ts}'        , 0, 1),
+   ('account_type'                  , '{ts escape="sql"}Account type{/ts}'                       , 0, 1);
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -229,6 +230,7 @@ SELECT @option_group_id_postalGreeting := max(id) from civicrm_option_group wher
 SELECT @option_group_id_addressee      := max(id) from civicrm_option_group where name = 'addressee';
 SELECT @option_group_id_report         := max(id) from civicrm_option_group where name = 'report_template';
 SELECT @option_group_id_acsOpt         := max(id) from civicrm_option_group where name = 'contact_autocomplete_options';
+SELECT @option_group_id_accTp          := max(id) from civicrm_option_group where name = 'account_type';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -571,8 +573,13 @@ VALUES
   (@option_group_id_addressee, '{literal}{contact.individual_prefix}{ } {contact.first_name}{ }{contact.middle_name}{ }{contact.last_name}{ }{contact.individual_suffix}{/literal}',          '1', '{literal}}{contact.individual_prefix}{ } {contact.first_name}{ }{contact.middle_name}{ }{contact.last_name}{ }{contact.individual_suffix}{/literal}',         NULL ,   '1', '1', '1', NULL , '0', '0', '1', NULL , NULL),
   (@option_group_id_addressee, '{literal}{contact.household_name}{/literal}',    '2', '{literal}{contact.household_name}{/literal}',    NULL ,   '2', '1', '2', NULL , '0', '0', '1', NULL , NULL),
   (@option_group_id_addressee, '{literal}{contact.organization_name}{/literal}', '3', '{literal}{contact.organization_name}{/literal}', NULL ,   '3', '1', '3', NULL , '0', '0', '1', NULL , NULL),
-  (@option_group_id_addressee, '{literal}Customized{/literal}',                  '4', '{literal}Customized{/literal}',                  NULL ,    0 , '0', '4', NULL , '0', '1', '1', NULL , NULL);
+  (@option_group_id_addressee, '{literal}Customized{/literal}',                  '4', '{literal}Customized{/literal}',                  NULL ,    0 , '0', '4', NULL , '0', '1', '1', NULL , NULL),
 
+-- Account types
+   (@option_group_id_accTp, '{ts escape="sql"}Asset{/ts}', 1, 'Asset',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_accTp, '{ts escape="sql"}Liability{/ts}', 2, 'Liability',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_accTp, '{ts escape="sql"}Income{/ts}', 3, 'Income',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_accTp, '{ts escape="sql"}Expense{/ts}', 4, 'Expense',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL);
 --
 -- Now insert option values which require domainID
 --
