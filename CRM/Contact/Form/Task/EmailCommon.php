@@ -74,11 +74,11 @@ class CRM_Contact_Form_Task_EmailCommon
                 $form->_noEmails = true;
             } else {
                 if ( $email ) {
+                    $emails[$emailId] = '"' . $fromDisplayName . '" <' . $email . '> ';
                     if ( in_array( $email, $emails ) ) {
                         // CRM-3624
                         continue;
                     }
-                    $emails[$emailId] = '"' . $fromDisplayName . '" <' . $email . '> ';
                     $form->_onHold[$emailId] = $item['on_hold'];
                 }
             }
