@@ -197,13 +197,13 @@ class CRM_Contribute_BAO_Query
             return;
             
         case 'contribution_thankyou_date_isnull':
-            $query->_where[$grouping][] = "civicrm_contribution.thankyou_date is null";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.thankyou_date", "IS NULL" );
             $query->_qill[$grouping ][] = ts( 'Contribution Thank-you date is null' );
             $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
             return;
 
         case 'contribution_receipt_date_isnull':
-            $query->_where[$grouping][] = "civicrm_contribution.receipt_date is null";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.receipt_date", "IS NULL" );
             $query->_qill[$grouping ][] = ts( 'Contribution Receipt date is null' );
             $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
             return;

@@ -3567,14 +3567,18 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
      * @return where clause for the query
      * @access public
      */
-    function buildClause( $field, $op, $value, $dataType = null ) 
+    function buildClause( $field, $op, $value = null, $dataType = null ) 
     {
         $op = trim( $op );
         $clause = "$field $op";
-        if ( $op == 'IS NULL' ||
-             $op == 'IS NOT NULL' ) {
+        
+        switch ( $op ) {
+            
+        case 'IS NULL':
+        case 'IS NOT NULL':
             return $clause;
-        } elseif ( $op == 'IN' ) {
+
+        case 'IN':
             if ( isset($dataType) ) {
                 $value = CRM_Utils_Type::escape( $value, "String" );
                 $values = explode ( ',', CRM_Utils_Array::value( 0, explode(')',CRM_Utils_Array::value( 1, explode('(', $value ) ) ) ) );
@@ -3586,16 +3590,17 @@ SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
                 $value = "(" . implode( $val, "," ) . ")";
             }
             return "$clause $value";
-        } else {
+            
+        default:
             if ( isset($dataType) ) {
                 $value = CRM_Utils_Type::escape( $value, $dataType );
             }
             if ( $dataType == 'String' ) {
                 $value = "'" . strtolower( $value ) . "'";
             }
-            
             return "$clause $value";
         }
+        
     }
 
 }

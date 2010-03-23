@@ -274,7 +274,7 @@ class CRM_Case_BAO_Query
             if ( $value == 0 ) {
                 $session = CRM_Core_Session::singleton();
                 $userID  = $session->get('userID');
-                $query->_where[$grouping][] = "case_relationship.contact_id_b $op $userID";
+                $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "case_relationship.contact_id_b", $op, $userID, 'Int' );
                 $query->_qill[$grouping ][] = ts( 'Case %1 My Cases', array( 1 => $op ) );
                 $query->_tables['case_relationship'] = $query->_whereTables['case_relationship'] = 1;
             } else {
@@ -335,7 +335,6 @@ class CRM_Case_BAO_Query
             return;
 
         case 'case_recent_activity_type':
-
             $names = $value;
             require_once "CRM/Core/OptionGroup.php";
             if ( $activityType = CRM_Core_OptionGroup::getLabel( 'activity_type', $value, 'value' ) ) {
@@ -405,10 +404,11 @@ class CRM_Case_BAO_Query
             $query->_tables['civicrm_case']  = $query->_whereTables['civicrm_case']  = 1;
             $query->_tables['civicrm_case_contact'] = $query->_whereTables['civicrm_case_contact'] = 1;
             return;
+
             // adding where clause for case_role   
         case 'case_role':
-            $query->_where[$grouping][]             = CRM_Contact_BAO_Query::buildClause( "case_relation_type.label_b_a", $op, $value, 'String' );
-            $query->_qill[$grouping][]              = ts ( "Role in Case  %1 '%2'", array( 1 => $op, 2 => $value ) );
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "case_relation_type.label_b_a", $op, $value, 'String' );
+            $query->_qill[$grouping][]  = ts ( "Role in Case  %1 '%2'", array( 1 => $op, 2 => $value ) );
             $query->_tables['case_relation_type']   = $query->_whereTables['case_relationship_type'] = 1;
             $query->_tables['civicrm_case']         = $query->_whereTables['civicrm_case']           = 1;
             $query->_tables['civicrm_case_contact'] = $query->_whereTables['civicrm_case_contact']   = 1;
