@@ -360,8 +360,12 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
         
         // current contribution id
         if ( $this->_id ) {
-            $this->_online = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_FinancialTrxn',
-                                                          $this->_id, 'id', 'contribution_id' );
+
+            // check for entity_financial_trxn linked to this contribution to see if it's an online contribution
+            require_once 'CRM/Core/BAO/FinancialTrxn.php';
+            $fids = CRM_Core_BAO_FinancialTrxn::getFinancialTrxnIds( $this->_id, 'civicrm_contribution'); 
+            $this->_online = $fids['entityFinancialTrxnId'];
+
             if ( $this->_online ) {
                 $this->assign('isOnline', true );
             }

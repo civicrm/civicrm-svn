@@ -63,36 +63,64 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Core_DAO_FinancialTrxn
             $config = CRM_Core_Config::singleton();
             $trxn->currency = $config->defaultCurrency;
         }
-        // if a transaction already exists for a contribution id, lets get the financial transaction id
-        $financial_trxn_id = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_EntityFinancialTrxn',
-                                                          $params['contribution_id'],
-                                                          'financial_trxn_id',
-                                                          'entity_id' );
-        if ( $financial_trxn_id ) {
-            $trxn->id = $financial_trxn_id;
-            //get the entity financial transaction id here
-            $entity_financial_trxn_id = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_EntityFinancialTrxn',
-                                                                     $financial_trxn_id,
-                                                                     'id',
-                                                                     'financial_trxn_id' );
+        
+        // if a transaction already exists for a contribution id, lets get the finTrxnId and entityFinTrxId
+        $fids = self::getFinancialTrxnIds( $params['contribution_id'], 'civicrm_contribution');
+        if ( $fids['financialTrxnId'] ) {
+            $trxn->id = $fids['financialTrxnId'];
         }
                                           
         $trxn->save();
-        // save to entity_financia_trxn table
+        
+        // save to entity_financial_trxn table
         $entity_financial_trxn_params=array(
-            'entity_type'      => "contribution",
+            'entity_table'      => "civicrm_contribution",
             'entity_id'      => $params['contribution_id'],
             'financial_trxn_id'      => $trxn->id,
             'amount'      => $params['net_amount'],//use net amount to include all received amount to the contribution
         );
         $entity_trxn =& new CRM_Core_DAO_EntityFinancialTrxn();
         $entity_trxn->copyValues($entity_financial_trxn_params);
-        if ( $financial_trxn_id ) {
-            $entity_trxn->id = $entity_financial_trxn_id;
+        if ( $fids['entityFinancialTrxnId'] ) {
+            $entity_trxn->id = $fids['entityFinancialTrxnId'];
         }
         $entity_trxn->save();
         return $trxn;
         
     }
+    
+    /**
+     *
+     * Given an entity_id and entity_table, check for corresponding entity_financial_trxn and financial_trxn record.
+     * NOTE: This should be moved to separate BAO for EntityFinancialTrxn when we start adding more code for that object.
+     *
+     * @param string $entityTable name of the entity table usually 'civicrm_contact'
+     * @param int $entityID id of the entity usually the contactID.
+     * @return array() reference $tag array of catagory id's the contact belongs to.
+     *
+     * @access public
+     * @static
+     */
+    static function getFinancialTrxnIds($entity_id, $entity_table = 'civicrm_contribution') 
+    {
+        $ids = array( 'entityFinancialTrxnId' => null, 'financialTrxnId' => null);
+        
+        $query = "
+            SELECT id, financial_trxn_id
+            FROM civicrm_entity_financial_trxn
+            WHERE entity_id = %1
+            AND entity_table = %2
+        ";
+        
+        $sqlParams = array( 1 => array( $entity_id, 'Integer' ), 2 => array( $entity_table, 'String' ) );
+        $dao = CRM_Core_DAO::executeQuery( $query, $sqlParams );
+        if ( $dao->fetch( ) ) {
+            $ids['entityFinancialTrxnId'] = $dao->id;
+            $ids['financialTrxnId'] = $dao->financial_trxn_id;
+        }
+
+        return $ids;    
+    }
+
 
 }

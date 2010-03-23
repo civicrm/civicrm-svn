@@ -17,7 +17,7 @@
        <autoincrement>true</autoincrement>  
   </primaryKey>  
   <field>
-      <name>entity_type</name>
+      <name>entity_table</name>
       <type>varchar</type>
       <length>64</length>
       <required>true</required> 
