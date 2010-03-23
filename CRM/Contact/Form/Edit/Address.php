@@ -166,6 +166,7 @@ class CRM_Contact_Form_Edit_Address
         }
         
         require_once 'CRM/Core/BAO/Address.php';
+        require_once 'CRM/Core/BAO/CustomGroup.php';
         CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
 
         // Process any address custom data -
