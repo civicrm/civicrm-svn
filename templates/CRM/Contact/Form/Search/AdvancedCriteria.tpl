@@ -57,7 +57,7 @@ cj(document).ready( function() {
 });
 
 function loadPanes( id ) {
-    var url = "{/literal}{crmURL p='civicrm/contact/search/advanced' q='snippet=1&searchPane=' h=0}{literal}" + id;
+    var url = "{/literal}{crmURL p='civicrm/contact/search/advanced' q="snippet=1&qfKey=`$qfKey`&searchPane=" h=0}{literal}" + id;
    if ( ! cj('div.'+id).html() ) {
     var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts}loading{/ts}{literal}" />&nbsp;{/literal}{ts}Loading{/ts}{literal}...';
     cj('div.'+id).html(loading);

@@ -124,7 +124,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
             }
 
             $allPanes[$name] = array( 'url' => CRM_Utils_System::url( 'civicrm/contact/search/advanced',
-                                                                      "snippet=1&searchPane=$type" ),
+                                                                      "snippet=1&searchPane=$type&qfKey={$this->controller->_key}" ),
                                       'open' => 'false',
                                       'id'   => $type );
             
