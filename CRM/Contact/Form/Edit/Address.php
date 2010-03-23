@@ -167,6 +167,40 @@ class CRM_Contact_Form_Edit_Address
         
         require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
+
+        // Process any address custom data -
+        $groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Address',
+                                                        $form,
+                                                        $form->_values['address'][$blockId]['id'] );
+        if ( isset($groupTree) && is_array($groupTree) ) {
+            // use simplified formatted groupTree
+            $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, $form );
+
+            // make sure custom fields are added /w element-name in the format - 'address[$blockId][custom-X]'
+            foreach ( $groupTree as $id => $group ) { 
+                foreach ( $group['fields'] as $fldId => $field ) {
+                    $groupTree[$id]['fields']["{$fldId}_{$blockId}"] = $field;
+                    $groupTree[$id]['fields']["{$fldId}_{$blockId}"]['element_custom_name'] = $field['element_name'];
+                    $groupTree[$id]['fields']["{$fldId}_{$blockId}"]['element_name'] = 
+                        "address[$blockId][{$field['element_name']}]";
+                    unset($groupTree[$id]['fields'][$fldId]);
+                }
+                if ( $form->_addressGroupTree ) {
+                    $form->_addressGroupTree[$id]['fields'] = 
+                        array_merge($form->_addressGroupTree[$id]['fields'], $groupTree[$id]['fields']);
+                }
+            }
+            if ( ! $form->_addressGroupTree ) {
+                $form->_addressGroupTree = $groupTree;
+                unset($groupTree);
+            }
+            $defaults = array( );
+            CRM_Core_BAO_CustomGroup::setDefaults( $form->_addressGroupTree, $defaults);
+            $form->setDefaults( $defaults );
+
+            CRM_Core_BAO_CustomGroup::buildQuickForm( $form, $form->_addressGroupTree, false, 1, 'address_' );
+        }
+        // address custom data processing ends ..
     }
     
     /**

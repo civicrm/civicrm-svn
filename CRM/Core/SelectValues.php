@@ -258,6 +258,7 @@ class CRM_Core_SelectValues
                                         'ParticipantEventType' => ts('Participants (Event Type)'),
                                         'Pledge'       => ts('Pledges'),
                                         'Grant'        => ts('Grants'),
+                                        'Address'      => ts('Addresses'),
                                         );
             $contactTypes = self::contactType( );
             unset( $contactTypes[''] ); 
