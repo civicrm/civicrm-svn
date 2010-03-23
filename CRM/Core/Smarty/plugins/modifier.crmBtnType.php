@@ -1,4 +1,6 @@
-{*
+<?php
+
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
@@ -22,17 +24,35 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
+*/
 
-{* Loops through $form.buttons.html array and assigns separate spans with classes to allow theming
-   by button and name. crmBtnType grabs type keyword from button name (e.g. 'upload', 'next', 'back', 'cancel') so
-   types of buttons can be styled differently via css. *}
-   
-{counter start=0 assign='cnt'}   
-{foreach from=$form.buttons item=button key=key name=btns}
-    {if $key|substring:0:4 EQ '_qf_'}
-        <span class="crm-button crm-button-type-{$key|crmBtnType} crm-button{$key}">{$form.buttons.$key.html}</span>
-        {$form.buttons.separator.$cnt}
-        {counter}
-    {/if}
-{/foreach}
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2010
+ * $Id$
+ *
+ */
+
+/**
+ * Grab the button type from a passed button element 'name' by checking for reserved QF button type strings
+ *
+ * @param string $btnId
+ *
+ * @return string  button type, one of: 'upload', 'next', 'back', 'cancel', 'refresh')
+ * @access public
+ */
+function smarty_modifier_crmBtnType($btnName)
+{
+    // default button type is 'upload'
+    $btnType = 'upload';
+    
+    // check for _$btnType strings (listed above) in $btnName and assign type (should use regex since the btnType "keyword"
+    //may not be at the end of the string). EX: btnName = '_qf_Contact_refresh_dedupe' type='refresh'
+    if ( substr( $btnName, -7, 7 ) == '_cancel' ){
+        $btnType = 'cancel';
+    }
+    return $btnType;
+}
+
+

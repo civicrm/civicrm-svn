@@ -688,6 +688,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                          'isDefault' => true   ),
                                  array ( 'type'      => 'upload',
                                          'name'      => ts('Save and New'),
+                                         'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
                                          'subName'   => 'new' ),
                                  array ( 'type'       => 'cancel',
                                          'name'      => ts('Cancel') ) ) );
