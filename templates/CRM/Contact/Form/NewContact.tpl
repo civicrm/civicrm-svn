@@ -83,6 +83,8 @@
 
                  beforeclose: function(event, ui) {
                      cj(this).dialog("destroy");
+		     cj("#contact-success").fadeOut(5000);
+		     cj("#profiles").val('0');
                  }
              });
          }
