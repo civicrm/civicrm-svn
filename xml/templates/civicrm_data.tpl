@@ -184,7 +184,8 @@ VALUES
    ('postal_greeting'               , '{ts escape="sql"}Postal Greeting Type{/ts}'               , 0, 1),
    ('addressee'                     , '{ts escape="sql"}Addressee Type{/ts}'                     , 0, 1),
    ('contact_autocomplete_options'  , '{ts escape="sql"}Autocomplete Contact Search{/ts}'        , 0, 1),
-   ('website_type'                  , '{ts escape="sql"}Website Type{/ts}'                       , 0, 1);
+   ('website_type'                  , '{ts escape="sql"}Website Type{/ts}'                       , 0, 1),
+   ('tag_used_for'                  , '{ts escape="sql"}Tag Used For{/ts}'                       , 0, 1);
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -231,7 +232,7 @@ SELECT @option_group_id_addressee      := max(id) from civicrm_option_group wher
 SELECT @option_group_id_report         := max(id) from civicrm_option_group where name = 'report_template';
 SELECT @option_group_id_acsOpt         := max(id) from civicrm_option_group where name = 'contact_autocomplete_options';
 SELECT @option_group_id_website        := max(id) from civicrm_option_group where name = 'website_type';
-
+SELECT @option_group_id_tuf            := max(id) from civicrm_option_group where name = 'tag_used_for';
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
 SELECT @memberCompId     := max(id) FROM civicrm_component where name = 'CiviMember';
@@ -576,9 +577,12 @@ VALUES
     (@option_group_id_website, 'Image',    3, 'Image',    NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
     (@option_group_id_website, 'Facebook', 4, 'Facebook', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
     (@option_group_id_website, 'Twitter',  5, 'Twitter',  NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
-    (@option_group_id_website, 'Myspace',  6, 'Myspace',  NULL, 0, NULL, 6, NULL, 0, 0, 1, NULL, NULL);
-
---
+    (@option_group_id_website, 'Myspace',  6, 'Myspace',  NULL, 0, NULL, 6, NULL, 0, 0, 1, NULL, NULL),
+-- Tag used for
+       (@option_group_id_tuf, 'Contacts',   'civicrm_contact',  'Contacts',    NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+       (@option_group_id_tuf, 'Activities', 'civicrm_activity', 'Activities',  NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
+       (@option_group_id_tuf, 'Cases',      'civicrm_case',     'Cases',       NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL);
+    
 -- Now insert option values which require domainID
 --
 
