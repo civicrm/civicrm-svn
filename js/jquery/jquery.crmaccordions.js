@@ -24,6 +24,7 @@
 * +--------------------------------------------------------------------+
 */ 
 (function($){ $.fn.crmaccordions = function(){
+	if ($('.crm-accordion-processed').length == 0){
 	$('.crm-accordion-header').hover(
 		function() {$(this).addClass('crm-accordion-header-hover')},
 		function() {$(this).removeClass('crm-accordion-header-hover')}
@@ -32,5 +33,7 @@
 		$(this).parent().toggleClass('crm-accordion-open');
 		$(this).parent().toggleClass('crm-accordion-closed');
 		});
+	$('.crm-accordion-wrapper').addClass('crm-accordion-processed');
 	};
+};
 })(jQuery);
