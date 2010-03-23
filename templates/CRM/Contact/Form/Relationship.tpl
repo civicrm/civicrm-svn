@@ -106,6 +106,7 @@
                     cj( function( ) {
                         createRelation( ); 
                     	cj('#relationship_type_id').change( function() { 
+                            cj('#quick-save').hide();
                             cj('#rel_contact').val('');
                             cj("input[name=rel_contact_id]").val('');
                             createRelation( ); 
@@ -121,6 +122,7 @@
                              cj('#rel_contact').autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
                              cj('#rel_contact').result(function( event, data ) {
                                	cj("input[name=rel_contact_id]").val(data[1]);
+                                cj('#quick-save').show();
                              });
                         } else { 
                             cj('#rel_contact').unautocomplete( );
@@ -134,6 +136,7 @@
                 <dt> </dt>
                   <dd>
                     {$form._qf_Relationship_refresh.html}
+                    {$form._qf_Relationship_refresh_save.html}
                     {$form._qf_Relationship_cancel.html}
                   </dd>
                 </dl>

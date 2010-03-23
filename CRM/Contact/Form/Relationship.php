@@ -414,6 +414,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             $searchBtn = ts('Search');
         }
         $this->addElement( 'submit', $this->getButtonName('refresh'), $searchBtn, array( 'class' => 'form-submit' ) );
+        $this->addElement( 'submit', $this->getButtonName('refresh', 'save'), 'Quick save', array( 'class' => 'form-submit hiddenElement' , 'id' => 'quick-save') );
         $this->addElement( 'submit', $this->getButtonName('cancel' ), ts('Cancel'), array( 'class' => 'form-submit' ) );
 
         //need to assign custom data type and subtype to the template
@@ -451,19 +452,30 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
     {
         // store the submitted values in an array
         $params = $this->controller->exportValues( $this->_name );
-               
+        $quickSave = false;
+        if ( CRM_Utils_Array::value( '_qf_Relationship_refresh_save', $_POST ) ) {
+            $quickSave = true;
+        }      
         $this->set( 'searchDone', 0 );
         $this->set( 'callAjax', false );  
-        if ( CRM_Utils_Array::value( '_qf_Relationship_refresh', $_POST ) ) {
+        if ( CRM_Utils_Array::value( '_qf_Relationship_refresh', $_POST ) || $quickSave ) {
             if ( is_numeric( $params['rel_contact_id'] ) ) {
-                $this->search( $params );
+                if ( $quickSave ) {
+                    $params['contact_check'] = array( $params['rel_contact_id'] => 1 );
+                } else {
+                    $this->search( $params );
+                    $quickSave = false;
+                }
             } else {
                 $this->set( 'callAjax', true );  
                 $this->set( 'relType', $params['relationship_type_id'] );
                 $this->set( 'relContact', $params['rel_contact'] );
+                $quickSave = false;
             }
             $this->set( 'searchDone', 1 );
-            return;
+            if ( !$quickSave ) {
+                return;
+            }
         }
 
         // action is taken depending upon the mode
@@ -610,7 +622,12 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             }
         }
         
-        CRM_Core_Session::setStatus( $status );    
+        CRM_Core_Session::setStatus( $status );   
+        if ( $quickSave ) {
+            $session =& CRM_Core_Session::singleton( );
+            CRM_Utils_System::redirect( $session->popUserContext() );
+        }
+
     }//end of function
     
 
@@ -731,7 +748,8 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
     static function formRule( &$params, &$files, &$form ) {
         
         // hack, no error check for refresh
-        if ( CRM_Utils_Array::value( '_qf_Relationship_refresh', $_POST ) ) {
+        if ( ( CRM_Utils_Array::value( '_qf_Relationship_refresh', $_POST ) ) ||
+             ( CRM_Utils_Array::value( '_qf_Relationship_refresh_save', $_POST ) ) ) {
             return true;
         }
         
