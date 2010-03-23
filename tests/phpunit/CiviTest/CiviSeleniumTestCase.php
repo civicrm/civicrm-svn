@@ -64,7 +64,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     protected function setUp()
     {
 
-        $this->setBrowser('*safari');
+        $this->setBrowser('*firefox');
         // Make sure that below strings have path separator at the end
         $this->setBrowserUrl("http://tests.dev.civicrm.org/");
         $this->sboxPath = "/drupal/";        
