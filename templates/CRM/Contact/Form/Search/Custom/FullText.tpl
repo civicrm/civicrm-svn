@@ -126,6 +126,8 @@
                     <th id="end_date">{ts}End Date{/ts}</th>
                     <th>{ts}Case ID{/ts}</th>
                     <th></th>
+                    <th class="hiddenElement"></th>
+                    <th class="hiddenElement"></th>
                 </tr>
                 </thead>
                 {foreach from=$summary.Case item=row}
@@ -162,6 +164,7 @@
                     <th id="received_date">{ts}Received{/ts}</th>
                     <th>{ts}Status{/ts}</th>
                     <th></th>
+                    <th class="hiddenElement"></th>
                 </tr>
                 </thead>
                 {foreach from=$summary.Contribution item=row}
@@ -201,6 +204,7 @@
                     <th>{ts}Status{/ts}</th>
                     <th>{ts}Role{/ts}</th>
                     <th></th>
+		    <th class="hiddenElement"></th>
                 </tr>
                 </thead>
                 {foreach from=$summary.Participant item=row}
@@ -241,6 +245,8 @@
                     <th>{ts}Source{/ts}</th>
                     <th>{ts}Status{/ts}</th>
                     <th></th>
+                    <th class="hiddenElement"></th>
+                    <th class="hiddenElement"></th>
                 </tr>
                 </thead>
                 {foreach from=$summary.Membership item=row}

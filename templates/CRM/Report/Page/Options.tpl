@@ -52,6 +52,7 @@
 		    <th>{ts}Enabled?{/ts}</th>
 		    <th>{ts}Component{/ts}</th>
 		    <th></th>
+		    <th class="hiddenElement"></th>
 		</tr>
         </thead>
 		{foreach from=$rows item=row}

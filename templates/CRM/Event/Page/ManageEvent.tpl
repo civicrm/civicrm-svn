@@ -60,6 +60,8 @@
             <th id="end_date">{ts}Ends{/ts}</th>
 	        <th>{ts}Active?{/ts}</th>
 	        <th></th>
+		<th class="hiddenElement"></th>
+		<th class="hiddenElement"></th>	
          </tr>
          </thead>
         {foreach from=$rows item=row}
