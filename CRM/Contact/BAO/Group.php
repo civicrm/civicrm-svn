@@ -195,6 +195,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
 	        if ( isset( $status ) ) {
 	            $groupContact->status   = $status;
 	        }
+	        $groupContact->_query['condition'] = 'WHERE contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)';
 	        $count += $groupContact->count( );
 	    }
         return $count;

@@ -491,6 +491,7 @@ LIMIT      0, 10
     FROM  civicrm_participant p 
     JOIN  civicrm_participant_status_type pst ON ( p.status_id = pst.id )
           {$eventIdsClause}
+     AND  p.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
 GROUP BY  event_id, status_id";
         $st = CRM_Core_DAO::executeQuery( $query );
         
@@ -578,6 +579,7 @@ LEFT JOIN  civicrm_participant ON ( civicrm_event.id = civicrm_participant.event
     WHERE  civicrm_participant.is_test = 0 
       AND  civicrm_event.is_active = 1
            {$sqlClause}
+      AND  civicrm_participant.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
  GROUP BY  civicrm_event.id
  ORDER BY  civicrm_event.end_date DESC
   LIMIT 0, 10

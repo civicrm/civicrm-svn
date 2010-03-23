@@ -563,6 +563,10 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         if ( isset( $this->_ufGroupID ) && ! CRM_Utils_Array::value( 'uf_group_id', $this->_formValues ) ) { 
             $this->_formValues['uf_group_id'] = $this->_ufGroupID;
         }
+
+        if (!CRM_Core_Permission::check('access deleted contacts')) {
+            unset($this->_formValues['is_deleted']);
+        }
         
         $this->set( 'type'            , $this->_action );
         $this->set( 'formValues'      , $this->_formValues );

@@ -818,6 +818,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
   FROM   civicrm_membership left join civicrm_membership_status on ( civicrm_membership.status_id = civicrm_membership_status.id )
 WHERE  membership_type_id = %1 AND start_date >= '$startDate' AND start_date <= '$endDate' 
 AND civicrm_membership_status.is_current_member = 1
+AND civicrm_membership.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
 AND is_test = %2";
         $params = array(1 => array($membershipTypeId, 'Integer'),
                         2 => array($isTest, 'Boolean') );
@@ -856,6 +857,7 @@ AND is_test = %2";
         $query = "SELECT  count(civicrm_membership.id ) as member_count
 FROM   civicrm_membership left join civicrm_membership_status on ( civicrm_membership.status_id = civicrm_membership_status.id  )
 WHERE  civicrm_membership.membership_type_id = %1 
+AND civicrm_membership.contact_id NOT IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)
 AND civicrm_membership.is_test = %2";
         if ( ! $date ) {
             $query .= " AND civicrm_membership_status.is_current_member = 1";

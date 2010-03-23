@@ -83,6 +83,10 @@ class CRM_Contact_Form_Search_Criteria {
         $attributes['job_title']['size'] = 30;
         $form->addElement('text', 'job_title', ts('Job Title'), $attributes['job_title'], 'size="30"' );
 
+        if (CRM_Core_Permission::check('access deleted contacts')) {
+            $form->add('checkbox', 'is_deleted', ts('Search in Deleted Contacts Instead'));
+        }
+
         // add checkbox for cms users only
         if (CIVICRM_UF != 'Standalone'){
           $form->addYesNo( 'uf_user', ts( 'CMS User?' ) );

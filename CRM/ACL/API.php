@@ -82,16 +82,21 @@ class CRM_ACL_API {
      * @param  array $tables (reference ) add the tables that are needed for the select clause
      * @param  array $whereTables (reference ) add the tables that are needed for the where clause
      * @param int    $contactID the contactID for whom the check is made
+     * @param bool   $onlyDeleted  whether to include only deleted contacts
      *
      * @return string the group where clause for this user
      * @access public
      */
-    public static function whereClause( $type, &$tables, &$whereTables, $contactID = null ) {
+    public static function whereClause( $type, &$tables, &$whereTables, $contactID = null, $onlyDeleted = false ) {
         // first see if the contact has edit / view all contacts
         if ( CRM_Core_Permission::check( 'edit all contacts' ) ||
              ( $type == self::VIEW &&
                CRM_Core_Permission::check( 'view all contacts' ) ) ) {
-            return ' ( 1 ) ';
+            if (CRM_Core_Permission::check('access deleted contacts') and $onlyDeleted) {
+                return '(contact_a.is_deleted)';
+            } else {
+                return '(contact_a.is_deleted IS NULL OR contact_a.is_deleted = 0)';
+            }
         }
 
         if ( $contactID == null ) {

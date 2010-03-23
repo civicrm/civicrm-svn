@@ -640,10 +640,33 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             if ( $output != CRM_Core_Selector_Controller::EXPORT ) {
                 $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->contact_id;
 
-                if ( ( is_numeric( CRM_Utils_Array::value( 'geo_code_1', $row ) ) ) ||
+                if ($this->_formValues['is_deleted'] and CRM_Core_Permission::check('access deleted contacts')) {
+                    $links = array(
+                        array(
+                            'name'  => ts('View'),
+                            'url'   => 'civicrm/contact/view',
+                            'qs'    => 'reset=1&cid=%%id%%&view_deleted=1',
+                            'title' => ts('View Contact Details'),
+                        ),
+                        array(
+                            'name'  => ts('Restore'),
+                            'url'   => 'civicrm/contact/view/delete',
+                            'qs'    => 'reset=1&cid=%%id%%&restore=1',
+                            'title' => ts('Restore Contact'),
+                        ),
+                        array(
+                            'name'  => ts('Delete Permanently'),
+                            'url'   => 'civicrm/contact/view/delete',
+                            'qs'    => 'reset=1&cid=%%id%%&skip_undelete=1',
+                            'title' => ts('Permanently Delete Contact'),
+                        ),
+                    );
+                    $row['action'] = CRM_Core_Action::formLink($links, null, array('id' => $result->contact_id));
+                } elseif ( ( is_numeric( CRM_Utils_Array::value( 'geo_code_1', $row ) ) ) ||
                      ( $config->mapGeoCoding &&
                        CRM_Utils_Array::value('city',$row) && $row['state_province'] ) ) {
                     $row['action']   = CRM_Core_Action::formLink( $links, $mask   , array( 'id' => $result->contact_id ) );
+                // FIXME: guard with permission check
                 } else {
                     $row['action']   = CRM_Core_Action::formLink( $links, $mapMask, array( 'id' => $result->contact_id ) );
                 }

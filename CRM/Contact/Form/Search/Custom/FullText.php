@@ -245,6 +245,7 @@ CREATE TEMPORARY TABLE {$this->_entityIDTableName} (
 
     function filterACLContacts( ) {
         if ( CRM_Core_Permission::check( 'view all contacts' ) ) {
+            CRM_Core_DAO::executeQuery("DELETE FROM {$this->_tableName} WHERE contact_id IN (SELECT id FROM civicrm_contact WHERE is_deleted = 1)");
             return;
         }
 

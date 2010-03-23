@@ -49,11 +49,24 @@
 
                         {* CRM-4418 *}
                         {if call_user_func(array('CRM_Core_Permission','check'), 'delete contacts')}
+                        {if call_user_func(array('CRM_Core_Permission','check'), 'access deleted contacts') and $is_deleted}
+                        <li>
+                        <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&cid=$contactId&restore=1"}" class="delete button" title="{ts}Restore{/ts}">
+                        <span><div class="icon delete-icon"></div>{ts}Restore{/ts}</span>
+                        </a>
+                        </li>
+                        <li>
+                        <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&delete=1&cid=$contactId&skip_undelete=1"}" class="delete button" title="{ts}Delete Permanently{/ts}">
+                        <span><div class="icon delete-icon"></div>{ts}Delete Permanently{/ts}</span>
+                        </a>
+                        </li>
+                        {else}
                         <li>
                         <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&delete=1&cid=$contactId"}" class="delete button" title="{ts}Delete{/ts}">
                         <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
                         </a>
                         </li>
+                        {/if}
                         {/if}
 
                         {* Include links to enter Activities if session has 'edit' permission *}

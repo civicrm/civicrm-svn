@@ -602,12 +602,14 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
      * Delete a contact and all its associated records
      * 
      * @param  int  $id id of the contact to delete
+     * @param  bool $restore       whether to actually restore, not delete
+     * @param  bool $skipUndelete  whether to force contact delete or not
      *
      * @return boolean true if contact deleted, false otherwise
      * @access public
      * @static
      */
-    function deleteContact( $id )
+    function deleteContact( $id, $restore = false, $skipUndelete = false )
     {
         require_once 'CRM/Activity/BAO/Activity.php';
 
@@ -636,6 +638,13 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         if (! $contact->find(true)) {
             return false;
         }
+
+        if ($restore) {
+            $contact->is_deleted = false;
+            $contact->save();
+            return true;
+        }
+
         $contactType = $contact->contact_type;
         
         // currently we only clear employer cache.
@@ -652,22 +661,28 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
-        //delete billing address if exists.
-        require_once 'CRM/Contribute/BAO/Contribution.php';
-        CRM_Contribute_BAO_Contribution::deleteAddress( null, $id );
-        
-        // delete the log entries since we dont have triggers enabled as yet
-        require_once 'CRM/Core/DAO/Log.php';
-        $logDAO = new CRM_Core_DAO_Log(); 
-        $logDAO->entity_table = 'civicrm_contact';
-        $logDAO->entity_id    = $id;
-        $logDAO->delete();
+        // FIXME: add conditional (per-site) trigger here as an alternative
+        if ($skipUndelete) {
+            //delete billing address if exists.
+            require_once 'CRM/Contribute/BAO/Contribution.php';
+            CRM_Contribute_BAO_Contribution::deleteAddress( null, $id );
 
-        // do activity cleanup, CRM-5604  
-        require_once 'CRM/Activity/BAO/Activity.php';
-        CRM_Activity_BAO_activity::cleanupActivity( $id );
-        
-        $contact->delete( );
+            // delete the log entries since we dont have triggers enabled as yet
+            require_once 'CRM/Core/DAO/Log.php';
+            $logDAO =& new CRM_Core_DAO_Log();
+            $logDAO->entity_table = 'civicrm_contact';
+            $logDAO->entity_id    = $id;
+            $logDAO->delete();
+
+            // do activity cleanup, CRM-5604
+            require_once 'CRM/Activity/BAO/Activity.php';
+            CRM_Activity_BAO_activity::cleanupActivity( $id );
+
+            $contact->delete();
+        } else {
+            $contact->is_deleted = true;
+            $contact->save();
+        }
 
         //delete the contact id from recently view
         require_once 'CRM/Utils/Recent.php';

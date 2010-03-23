@@ -109,4 +109,9 @@
             <td>{$form.contact_source.html}</td>
             <td colspan="2">{$form.job_title.label}&nbsp;&nbsp;{$form.job_title.html}</td>
         </tr>
+        {if $form.is_deleted}
+          <tr>
+            <td colspan="4">{$form.is_deleted.html} {$form.is_deleted.label}</td>
+          </tr>
+        {/if}
     </table>

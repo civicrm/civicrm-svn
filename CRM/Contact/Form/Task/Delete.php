@@ -69,6 +69,12 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive',
                                             $this, false ); 
         
+        $this->_skipUndelete = CRM_Utils_Request::retrieve('skip_undelete', 'Boolean', $this);
+        $this->_restore      = CRM_Utils_Request::retrieve('restore',       'Boolean', $this);
+        $this->assign('restore', $this->_restore);
+
+        if ($this->_restore) CRM_Utils_System::setTitle(ts('Restore Contact'));
+
         if ( $cid ) { 
             $this->_contactIds = array( $cid ); 
             $this->_single     = true; 
@@ -85,14 +91,16 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
      * @return void
      */
     function buildQuickForm( ) {
+        $label = $this->_restore ? ts('Restore Contacts') : ts('Delete Contacts');
+
         if ( $this->_single ) {
             // also fix the user context stack in case the user hits cancel
             $session = CRM_Core_Session::singleton( );
             $session->replaceUserContext( CRM_Utils_System::url('civicrm/contact/view',
                                                                 'reset=1&cid=' . $this->_contactIds[0] ) );
-            $this->addDefaultButtons( ts('Delete Contacts'), 'done', 'cancel' );
+            $this->addDefaultButtons( $label, 'done', 'cancel' );
         } else {
-            $this->addDefaultButtons( ts('Delete Contacts'), 'done' );
+            $this->addDefaultButtons( $label, 'done' );
         }
     }
 
@@ -114,14 +122,14 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
                 continue;
             }
 
-            if ( CRM_Contact_BAO_Contact::deleteContact( $contactId ) ) {
+            if ( CRM_Contact_BAO_Contact::deleteContact( $contactId, $this->_restore, $this->_skipUndelete ) ) {
                 $deletedContacts++;
             }
         }
         if ( ! $this->_single ) {
-            $status = array( );
+            $label = $this->_restore ? ts('Restored Contact(s): %1') : ts('Deleted Contact(s): %1');
             $status = array(
-                            ts( 'Deleted Contact(s): %1', array(1 => $deletedContacts)),
+                            ts($label, array(1 => $deletedContacts)),
                             ts('Total Selected Contact(s): %1', array(1 => count($this->_contactIds))),
                             );
             
@@ -145,7 +153,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
                     $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/contact/search/basic', 'force=1' ) );
                 }
                 
-                $status = ts('Selected contact was deleted sucessfully.');
+                $status = $this->restore ? ts('Selected contact was restored sucessfully.') : ts('Selected contact was deleted sucessfully.');
             } else {
                 $status = array(
                                 ts('Selected contact cannot be deleted.')
