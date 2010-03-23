@@ -783,6 +783,10 @@ class CRM_Utils_Date
         case 'day':
             $date   =   mktime ($hour, $minute, $second, $month, $day+$interval, $year);
             break;
+         
+        case 'second':
+            $date   =   mktime ($hour, $minute, $second+$interval, $month, $day, $year);   
+            break;
         }
               
         $scheduleDate = explode ( "-", date("n-j-Y-H-i-s", $date ) );
@@ -888,6 +892,17 @@ class CRM_Utils_Date
                 $from['Y'] = $now['year'];
                 unset($to);
                 break;
+                
+            case 'ending':
+                $to['d'] = $now['mday'];
+                $to['M'] = $now['mon'];
+                $to['Y'] = $now['year'];
+                $to['H'] = 23;
+                $to['i'] = $to['s'] = 59;
+                $from = self::intervalAdd( 'year', -1, $to );
+                $from = self::intervalAdd( 'second', 1, $from );
+                break;
+                
             }
             break;
             
@@ -1016,6 +1031,16 @@ class CRM_Utils_Date
                 $from['Y'] = $now['year'];
                 unset($to);
                 break;
+
+            case 'ending':
+                $to['d'] = $now['mday'];
+                $to['M'] = $now['mon'];
+                $to['Y'] = $now['year'];
+                $to['H'] = 23;
+                $to['i'] = $to['s'] = 59;
+                $from = self::intervalAdd( 'month', -3, $to );
+                $from = self::intervalAdd( 'second', 1, $from );
+                break;
             }
             break;
             
@@ -1095,6 +1120,16 @@ class CRM_Utils_Date
                 $from['Y'] = $now['year'];
                 unset($to);
                 break;
+
+            case 'ending':
+                $to['d'] = $now['mday'];
+                $to['M'] = $now['mon'];
+                $to['Y'] = $now['year'];
+                $to['H'] = 23;
+                $to['i'] = $to['s'] = 59;
+                $from = self::intervalAdd( 'month', -1, $to );
+                $from = self::intervalAdd( 'second', 1, $from );
+                break;
             }
             break;
             
@@ -1146,6 +1181,16 @@ class CRM_Utils_Date
                 $from['Y'] = $now['year'];
                 $from = self::intervalAdd( 'day', -1*($now['wday']), $from );
                 unset($to);
+                break;
+
+            case 'ending':
+                $to['d'] = $now['mday'];
+                $to['M'] = $now['mon'];
+                $to['Y'] = $now['year'];
+                $to['H'] = 23;
+                $to['i'] = $to['s'] = 59;
+                $from = self::intervalAdd( 'day', -7, $to );
+                $from = self::intervalAdd( 'second', 1, $from );
                 break;
             }
             break;

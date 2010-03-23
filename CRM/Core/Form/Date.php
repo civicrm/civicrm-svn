@@ -125,7 +125,12 @@ Class CRM_Core_Form_Date
                            'greater.quarter' => ts('Greater Quarter'),
                            'greater.month'   => ts('Greater Month'),
                            'greater.week'    => ts('Greater Week'),
-                           'greater.day'     => ts('Greater Day')
+                           'greater.day'     => ts('Greater Day'),
+
+                           'ending.year'     => ts('Ending Year'),
+                           'ending.quarter'  => ts('Ending Quarter'),
+                           'ending.month'    => ts('Ending Month'),
+                           'ending.week'     => ts('Ending Week'),
                            );
         if( $addReportFilters ) {
             require_once 'CRM/Report/Form.php';
