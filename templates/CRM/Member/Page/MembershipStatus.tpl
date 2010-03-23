@@ -36,7 +36,7 @@
 {if $rows}
 <div id="ltype">
 <p></p>
-    <div class="form-item" id=membership_status_id>
+    <div id="membership_status_id">
         {strip}
         {* handle enable/disable actions*}
  	{include file="CRM/common/enableDisable.tpl"}
