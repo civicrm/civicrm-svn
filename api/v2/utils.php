@@ -682,10 +682,14 @@ function _civicrm_participant_formatted_param( &$params, &$values, $create=false
                 }
             } else if ( $type == 'Select' || $type == 'Radio' ) {
                 $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                foreach($customOption as $customValue => $customLabel) {
-                    if (( strtolower($customLabel) == strtolower(trim($v1)) ) ||
-                        ( strtolower($customValue) == strtolower(trim($v1)) )) { 
-                        $values[$key] = $customValue;
+                foreach( $customOption as $customFldID => $customValue ) {
+                    $val   = CRM_Utils_Array::value( 'value', $customValue );
+                    $label = CRM_Utils_Array::value( 'label', $customValue );
+                    $val   = strtolower( $val );
+                    $label = strtolower( $label );
+                    $value = strtolower( trim( $value ) );
+                    if ( ( $value == $label ) || ( $value == $val ) ) {
+                        $values[$key] = $val;
                     }
                 }
             }
@@ -821,10 +825,14 @@ function _civicrm_contribute_formatted_param( &$params, &$values, $create=false 
                 }
             } else if ( $type == 'Select' || $type == 'Radio' ) {
                 $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                foreach($customOption as $customValue => $customLabel) {
-                    if (( strtolower($customLabel) == strtolower(trim($v1)) ) ||
-                        ( strtolower($customValue) == strtolower(trim($v1)) )) { 
-                        $values[$key] = $customValue;
+                foreach( $customOption as $customFldID => $customValue ) {
+                    $val   = CRM_Utils_Array::value( 'value', $customValue );
+                    $label = CRM_Utils_Array::value( 'label', $customValue );
+                    $val   = strtolower( $val );
+                    $label = strtolower( $label );
+                    $value = strtolower( trim( $value ) );
+                    if ( ( $value == $label ) || ( $value == $val ) ) {
+                        $values[$key] = $val;
                     }
                 }
             }
@@ -1169,10 +1177,14 @@ function _civicrm_membership_formatted_param( &$params, &$values, $create=false)
                 }
             } else if ( $type == 'Select' || $type == 'Radio' ) {
                 $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                foreach($customOption as $customValue => $customLabel) {
-                    if (( strtolower($customLabel) == strtolower(trim($v1)) ) ||
-                        ( strtolower($customValue) == strtolower(trim($v1)) )) { 
-                        $values[$key] = $customValue;
+                foreach( $customOption as $customFldID => $customValue ) {
+                    $val   = CRM_Utils_Array::value( 'value', $customValue );
+                    $label = CRM_Utils_Array::value( 'label', $customValue );
+                    $val   = strtolower( $val );
+                    $label = strtolower( $label );
+                    $value = strtolower( trim( $value ) );
+                    if ( ( $value == $label ) || ( $value == $val ) ) {
+                        $values[$key] = $val;
                     }
                 }
             }
@@ -1289,10 +1301,14 @@ function _civicrm_activity_formatted_param( &$params, &$values, $create=false)
                 }
             } else if ( $type == 'Select' || $type == 'Radio' ) {
                 $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
-                foreach($customOption as $customValue => $customLabel) {
-                    if (( strtolower($customLabel) == strtolower(trim($v1)) ) ||
-                        ( strtolower($customValue) == strtolower(trim($v1)) )) { 
-                        $values[$key] = $customValue;
+                foreach( $customOption as $customFldID => $customValue ) {
+                    $val   = CRM_Utils_Array::value( 'value', $customValue );
+                    $label = CRM_Utils_Array::value( 'label', $customValue );
+                    $val   = strtolower( $val );
+                    $label = strtolower( $label );
+                    $value = strtolower( trim( $value ) );
+                    if ( ( $value == $label ) || ( $value == $val ) ) {
+                        $values[$key] = $val;
                     }
                 }
             }
