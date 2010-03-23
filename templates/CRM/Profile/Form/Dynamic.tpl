@@ -247,6 +247,13 @@ cj(document).ready(function(){
            success: function( response ) {
                if ( response.newContactSuccess ) {
                    cj("#contact").val( response.sortName ).focus( );
+		   if ( typeof(allowMultiClient) != "undefined" ) {
+		      if ( allowMultiClient ) {
+	              	 var newToken = '{"name":"'+response.sortName+'","id":"'+response.contactID+'"},';
+		      	 cj('ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).remove();
+		      	 addMultiClientOption(newToken);
+		      }
+		   }
                    cj("input[name=contact_select_id]").val( response.contactID );
                    cj("#contact-success").show( );
                    cj("#contact-dialog").dialog("close");

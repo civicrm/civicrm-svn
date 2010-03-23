@@ -41,16 +41,32 @@
 {literal}
 <script type="text/javascript">
   var allowMultiClient = Boolean({/literal}{$multiClient}{literal});
+  var newToken = '';
+  var existingTokens = '';
   cj( function( ) {
       // add multiple client option if configured
       if ( allowMultiClient ) {
-      	 addMultiClientOption( );
+      	 addMultiClientOption( newToken );
       } else {
          addSingleClientOption( );
       }
   });
 
   function newContact( gid ) {
+  
+      if ( allowMultiClient ) { 
+      	 existingTokens = '';
+      	 var cid = cj('#contact').val();
+      	 var cids = new Array(); 
+      	 cids = cid.split(',');
+      	 var i = 0;
+      	 cj('li.token-input-token-facebook').each(function(){
+		var displayName = cj(this).children('p').text();
+	 	existingTokens += '{"name":"'+displayName+'","id":"'+cids[i]+'"},';
+	  	i++;
+      	 });
+      }
+
       var dataURL = {/literal}"{crmURL p='civicrm/profile/create' q='reset=1&snippet=5&context=dialog' h=0 }"{literal};
       dataURL = dataURL + '&gid=' + gid;
       cj.ajax({
@@ -73,13 +89,15 @@
       });
   }
         
-  function addMultiClientOption ( ) {
+  function addMultiClientOption ( newToken ) {
   
+      existingTokens = existingTokens + newToken;
+      eval( 'existingTokens = [' + existingTokens + ']');
       eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
 
       var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
       var contactUrl = {/literal}"{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }"{literal};
-      cj('#contact').tokenInput( contactUrl, { classes: tokenClass, hintText: hintText });
+      cj('#contact').tokenInput( contactUrl, { prePopulate:existingTokens ,classes: tokenClass, hintText: hintText });
       cj('ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px');
       
   }
