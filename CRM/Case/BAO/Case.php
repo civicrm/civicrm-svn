@@ -723,6 +723,19 @@ AND civicrm_case.status_id != $closedId";
                 $casesList[$result->case_id]['casemanager_id'] = CRM_Utils_Array::value('casemanager_id', $caseManagerContact );
                 $casesList[$result->case_id]['casemanager'   ] = CRM_Utils_Array::value('casemanager'   , $caseManagerContact );              
             } 
+            
+            //do check user permissions for edit/view activity.
+            if ( ($actId = CRM_Utils_Array::value('case_scheduled_activity_id', $casesList[$result->case_id])) ||
+                 ($actId = CRM_Utils_Array::value('case_recent_activity_id', $casesList[$result->case_id])) ) {
+                $casesList[$result->case_id]["case_{$type}_activity_editable"] = 
+                    self::checkPermission( $actId, 
+                                           'edit',   
+                                           $casesList[$result->case_id]['activity_type_id'], $userID );
+                $casesList[$result->case_id]["case_{$type}_activity_viewable"] = 
+                    self::checkPermission( $actId,
+                                           'view',   
+                                           $casesList[$result->case_id]['activity_type_id'], $userID );
+            }
         }
         
         return $casesList;        

@@ -105,11 +105,9 @@
     <table class="form-layout">
         <tr>
             <td colspan="2">{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>
-           <td> <br /><input type="button"  value="Print Case Report" name="case_report_all" onclick="printCaseReport( );"/></td> 
-
-		</tr>
-		<tr>
 	    {if $hasAccessToAllCases}	
+            <td> <br /><input type="button"  value="Print Case Report" name="case_report_all" onclick="printCaseReport( );"/></td> 
+            </tr><tr>
             <td>{$form.timeline_id.label}<br />{$form.timeline_id.html}&nbsp;{$form._qf_CaseView_next.html}</td> 
             <td>{$form.report_id.label}<br />{$form.report_id.html}&nbsp;<input type="button" accesskey="R" value="Go" name="case_report" onclick="checkSelection( this );"/></td> 
 	    {/if}
