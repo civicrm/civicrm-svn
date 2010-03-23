@@ -14,25 +14,70 @@
     clear 	    : both;
 }
 
+#crm-container a,
+#crm-container a:link {
+	color:#2786c2;
+	text-decoration: none;
+	}
 
 /* TABLE STYLING */
 
 #crm-container table {
   margin: .5em .1em .5em;
   border-collapse: collapse;
-  border: 1px solid #DDD;
 }
 
-#crm-container th,
-#crm-container table.display thead th, #crm-container table.pagerDisplay thead th {
-  	font-weight: normal;
-  	font-size: 1em;
-  	padding: 4px;
-  	border:1px solid #CCC;	
-  	text-align: left;
-  	vertical-align: top;
-  	background-color: #E6E6E6;
-	}
+#crm-container th, 
+#crm-container table.display thead th, 
+#crm-container table thead.sticky th, 
+#crm-container table.caseSelector tr.columnheader th {
+	background-color:#FFFFFF;
+	border-color:#FFFFFF #FFFFFF #CFCEC3;
+	border-style:solid;
+	border-width:1px 1px 2px;
+	color:#A7A7A7;
+	font-size:12px;
+	font-weight:bold;
+	padding:4px;
+	text-align:left;
+	vertical-align:top;
+	}	
+	/* Styles for Sticky Header */
+	#crm-container table thead.sticky {background-color:#FFF;}
+	#crm-container thead div.sticky-header {
+	  	height: 15px;
+		border-bottom:2px solid #CFCEC3;
+		background-color:#FFF;
+		}
+
+	/* Styles for Sorting Header */
+	#crm-container table.display thead th.sorting_asc, 
+	#crm-container table.display thead th.sorting_desc,
+	#crm-container table .sticky th a.sort-ascending,
+	#crm-container table .sticky th a.sort-descending,
+	#crm-container table.caseSelector tr.columnheader th a.sort-ascending,
+	#crm-container table.caseSelector tr.columnheader th a.sort-descending {
+		color:#3e3e3e;
+		background-color: #FFF;
+		}
+	/*  DataTables sorting */
+	.sorting, 
+	.sorting_asc, 
+	.sorting_desc {
+			padding-left:16px !important;
+		    background: url('../i/dataTable/sort_sprites.png') no-repeat left 0px;
+			}
+		.sorting {
+			background-position:left -3px;
+			}
+		.sorting_desc {
+			background-position:left -67px;
+			}
+		.sorting_asc {
+			background-position:left -35px;
+			}
+
+	
     /* Set background back to normal gray for form labels which use <th>. Temporary fix until we standardize form layout markup. */
     #crm-container table.form-layout-compressed tbody th.label { background-color: #F7F7F7; }
 
@@ -49,35 +94,18 @@
   vertical-align: top;
 }
 
-#crm-container tr.even, 
-#crm-container tr.odd, 
-#crm-container tbody th {
-	border-color:#DDD;
-	}
-
-
 #crm-container tr.even-row td, 
 #crm-container tr.odd-row td,
-#crm-container table.display td, #crm-container table.pagerDisplay td {
+#crm-container table.display td,
+#crm-container table.pagerDisplay td {
   border-collapse: collapse;
-  border-top: 1px solid #DDDDDD;
-  border-right: 1px solid #DDDDDD;
 }
-	#crm-container .odd-row, 
-	tbody.scrollContent {
-	  background-color: #FAFAFA;
-	}
-	#crm-container .even-row, 
-	tbody.scrollContent tr.alternateRow {
-	  background-color: #F5F5F5;
-	}
 
 #crm-container .row-selected {
   margin: 0px;
   padding: 3px 0px 3px 0px;
   clear: none;
-  background-color: #FAFAD2;
-}
+  }
 
 
 /*
@@ -134,10 +162,16 @@ div#crm-container {
 .crmasmSelect .child-1 { padding-left:1em; }
 .crmasmSelect .child-2 { padding-left:2em; }
 
+.crmasmHighlight {
+	display:block;
+	padding:2px 4px;
+	background-color:#EEF4B8;
+	}
+
 .crmasmList {
 	margin:0px;
 	padding:0px;
-}
+	}
 
 .crmasmList li {
 	background-color:#3E3E3E;
@@ -146,8 +180,6 @@ div#crm-container {
 	margin:1px 0px;
 	color:#F5F6F1;
 	}
-
-
 
 .crmasmListItem {
 	position:relative;
@@ -902,20 +934,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 .crm-search-tasks,
 .crm-search-results {
 	margin-bottom:4px;
-	}
-
-/*
-#crm-container div.crm-pager .element-right {
-    margin-top:-1.5em;
-}
-*/
-#crm-container #search-status {
- 	padding: 0.25em;
- 	/*background-color: #ccc;*/
- 	background-color: #E6E6E6;
- 	font-size: .95em;
- 	font-weight: bold;
- 	border: 1px solid #CCC;
+	padding:4px;
 	}
 
 #crm-container #search-status ul {
@@ -1020,13 +1039,15 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
   	overflow: hidden;  
 	}
 
+#crm-container #recently-viewed a {
+	  font-weight: normal;
+	  /*color: #6e6e6e;*/
+	  color: #4A88DF;
+	  font-size: .95em
+	}
 
+/* alpha filter styles */
 
-#crm-container div#alpha-filter {
-  margin: 10px 0px 5px;
-  text-align: center;
-  width: 100%;
-}
 
 #crm-container #recently-viewed ul, #crm-container #alpha-filter ul {
   border-collapse: collapse;
@@ -1037,39 +1058,36 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
   width: auto;
 }
 
-#crm-container #alpha-filter li {
-  display: inline;
-  background-image: none;
-  background-color: #F5F5F5;
-  border: 1px solid #999999;
-  color: #aaa;
-  font-size: .95em;
-  font-weight: normal;
-  height: auto;
-  margin: 0px 1px 0px 1px;
-  padding: 2px 5px 2px 5px;
-}
+		#crm-container div#alpha-filter {
+			background-color:#CDE8FE;
+			margin:10px 0 5px;
+			padding:2px;
+			text-align:left;
+			}
 
-#crm-container #alpha-filter li.active {
-  background-color: #fff;
-}
+		#crm-container #alpha-filter li {
+			background-color:transparent;
+			background-image:none;
+			border:none;
+			color:#AAAAAA;
+			display:inline;
+			font-size:15px;
+			font-weight:normal;
+			height:auto;
+			margin:0 1px;
+			padding:2px 5px;
+			font-family: Helvetica;
+			}
 
-#crm-container #alpha-filter a {
-  font-weight: normal;
-  color: #000;
-}
+		#crm-container #alpha-filter a {
+			border-bottom:1px dotted #2A71B4;
+			color:#2A71B4;
+			font-weight:normal;
+			}
 
-#crm-container #alpha-filter a.active {
-  font-weight: bold;
-  color: #000;
-}
 
-#crm-container #recently-viewed a {
-  font-weight: normal;
-  /*color: #6e6e6e;*/
-  color: #4A88DF;
-  font-size: .95em
-}
+
+
 
 #crm-container div#lang-switch {
  float: right;
@@ -1401,7 +1419,6 @@ table.campaign td,
     vertical-align: top;
     border: 0px;
     margin: 0.5em 0.1em;
-    width: 99%;
 }
 
 #crm-container table.caseSelector tr.columnheader th, #crm-container table.caseSelector tr.columnheader th a {
@@ -1626,19 +1643,6 @@ table.campaign td,
   background-color : #999999;
 }
 
-/* Styles for Sticky Header */
-
-#crm-container thead div.sticky-header {
-  background-color : #E6E6E6;
-  font-size        : 1em;
-  height           : 15px;
-}
-
-#crm-container thead.sticky a {
-  color            : #000;
-  text-decoration  : none;
-  vertical-align   : top;
-}
 
 /*class for CMS user name check used in profile*/
 .cmsmessagebox {
@@ -2291,30 +2295,6 @@ margin-bottom:0em;
 #Tag .tree .expandable .hit { padding-left:16px; }
 
 
-/*  DataTables sorting */
-th.sorting,
-th.sorting_asc,
-th.sorting_desc {
-    padding-right:14px !important;
-}
-
-.sorting_asc { 
-    background: url('../i/dataTable/sort_sprites.png') no-repeat right -28px; 
-    padding-right:19px;
-    padding-top:2px;
-}
-
-.sorting_desc { 
-    background: url('../i/dataTable/sort_sprites.png') no-repeat right -60px; 
-    padding-right:19px;
-    padding-top:2px;
-}
-
-.sorting { 
-    background: url('../i/dataTable/sort_sprites.png') no-repeat right 4px;
-    padding-right:19px;
-    padding-top:2px;     
-}
 
 /*  DataTables fixes */
 
@@ -2343,8 +2323,60 @@ th.sorting_desc {
 
 
 /* skin */
-/* rounded corners - we will call dd_roundies on all this */
 
+/* basics */
+#crm-container a,
+#crm-container a:link {
+	color:#2786c2;
+	}
+
+/* tables */
+#crm-container table {
+	border:1px solid #efefef;
+	}
+
+#crm-container tr.even, 
+#crm-container tr.odd, 
+#crm-container tbody th {
+	border-color:#efefef;
+	}
+
+#crm-container tr.even-row td, 
+#crm-container tr.odd-row td,
+#crm-container table.display td,
+#crm-container table.pagerDisplay td {
+  border-color:#efefef;
+  border-right: 1px solid #efefef;
+}
+#crm-container .odd-row, 
+tbody.scrollContent {
+  background-color: #FAFAFA;
+  }
+#crm-container .even-row, 
+tbody.scrollContent tr.alternateRow {
+  background-color: #F5F5F5;
+  }
+#crm-container .row-selected {
+  background-color: #FAFAD2;
+ }
+
+#crm-container a.sorting,
+#crm-container a.sorting_asc,
+#crm-container a.sorting_desc {
+	color:#52534D;
+}
+
+
+/* search results */
+
+.crm-search-tasks {
+	background-color:#F5F6F1;
+	color:#52534D;
+}
+
+
+/* rounded corners - we will call dd_roundies on all this */
+#crm-container .crm-search-tasks,
 #crm-container div.form-item,
 #crm-container div.messages,
 div#crm-toolTip
