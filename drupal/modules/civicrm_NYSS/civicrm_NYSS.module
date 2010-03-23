@@ -88,7 +88,18 @@ function civicrm_NYSS_civicrm_buildForm( $formName, &$form )
                     }
                     if ( in_array( $key, array( 'country', 'state_province' ) ) ) {
                         $key .= '_id';
-                    } 
+                   
+                        //we might registered duplicate elements. 
+                        if ( $key == 'state_province_id' ) {
+                            if ( array_key_exists( "address[$blockId][$key]", $form->_duplicateIndex ) ) {
+                                $duplicateIndexes = $form->_duplicateIndex["address[$blockId][$key]"];
+                                foreach ( $duplicateIndexes as $index ) {
+                                    $element = $form->_elements[$index];
+                                    $element->freeze( );
+                                }
+                            }
+                        }
+                    }
                     
                     //process address data element.
                     _civicrm_processElement( $form, "address[$blockId][$key]", $freezeElement );
@@ -97,7 +108,7 @@ function civicrm_NYSS_civicrm_buildForm( $formName, &$form )
                 $dataElementName = "{$name}[$blockId][$name]";
                 if ( $name == 'im' ) {
                     $dataElementName = "{$name}[$blockId][name]";
-                    _civicrm_processElement( $form, "{$val}[$blockId][provider_id]", $freezeElement );
+                    _civicrm_processElement( $form, "{$name}[$blockId][provider_id]", $freezeElement );
                 } else if ( $name == 'phone' ) { 
                     _civicrm_processElement( $form, "{$name}[$blockId][phone_type_id]", $freezeElement );
                 }
@@ -122,8 +133,8 @@ function _civicrm_processElement( &$form, $elementName, $freezeElement = false, 
 {
     if ( ! $form->elementExists( $elementName ) ) {
         return false;
-        
     }
+    
     $element = $form->getElement( $elementName );
     if ( $freezeElement ) {
         $element->freeze( );
