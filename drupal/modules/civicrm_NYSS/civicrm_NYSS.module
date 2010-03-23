@@ -50,7 +50,6 @@ function civicrm_NYSS_civicrm_buildForm( $formName, &$form ) {
                      'OpenID'  => 'openid',
                      'Address' => 'address'
                      );
-    
     if ( ( $formName == 'CRM_Contact_Form_Contact' ) && 
          ( in_array( $form->_action, array( CRM_Core_Action::UPDATE, CRM_Core_Action::ADD ) ) ) ) {
         $locationTypes     = CRM_Core_PseudoConstant::locationType( );
@@ -58,43 +57,42 @@ function civicrm_NYSS_civicrm_buildForm( $formName, &$form ) {
         $block   = CRM_Utils_Request::retrieve( 'block', 'String', CRM_Core_DAO::$_nullObject );
         $blockId = CRM_Utils_Request::retrieve( 'count', 'Positive', CRM_Core_DAO::$_nullObject ); 
         $blockId = $blockId ? $blockId : 1;
-        if ( $form->_values['address'] && ( $form->_action & CRM_Core_Action::UPDATE ) ) {
-            $addressFlag = 0;
+        $addressFlag = 0;
             foreach ( $blocks as $blockName => $val ) {
-                     if( $blockName == 'Address' ) {
-                         $addressFlag = 1;
-                         continue;
-                     }
-                     //freeze elements if location type is 'Board of Election'
-                     if ( $form->_values[$val][$blockId]['location_type_id'] == $boardOfElectionId ) { 
-                         $freeze = true;
-                         //freeze location type element
-                         $eName = "{$val}[$blockId][location_type_id]";
-                         _civicrm_processElement( &$form, $eName, $freeze );
-                         //freeze value of email, phone, openid, IM and address
-                         if ( $blockName == 'IM' ) {
-                             $eName = "{$val}[$blockId][name]";
-                             _civicrm_processElement( &$form, $eName, $freeze );
-                         } else {
-                             $eName = "{$val}[$blockId][$val]";
-                         }
-                         _civicrm_processElement( &$form, $eName, $freeze );
-                         //freeze IM provider types/ phone types
-                         if ( $blockName == 'Phone' ) {
-                             $eName = "{$val}[$blockId][phone_type_id]";
-                             _civicrm_processElement( &$form, $eName, $freeze );
-                         } else if ( $blockName == 'IM' ) {
-                             $eName = "{$val}[$blockId][provider_id]";
-                             _civicrm_processElement( &$form, $eName, $freeze );
-                         }
-                     } else {
-                         //unset 'Board of Election' from location type options
-                         $eName = "{$val}[{$blockId}][location_type_id]";
-                         _civicrm_processElement( &$form, $eName ); 
-                     }
-                 }
+                if( $blockName == 'Address' ) {
+                    $addressFlag = 1;
+                    continue;
+                }
+                //freeze elements if location type is 'Board of Election'
+                if ( $form->_values[$val][$blockId]['location_type_id'] == $boardOfElectionId ) { 
+                    $freeze = true;
+                    //freeze location type element
+                    $eName = "{$val}[$blockId][location_type_id]";
+                    _civicrm_processElement( &$form, $eName, $freeze );
+                    //freeze value of email, phone, openid, IM and address
+                    if ( $blockName == 'IM' ) {
+                        $eName = "{$val}[$blockId][name]";
+                    } else {
+                        $eName = "{$val}[$blockId][$val]";
+                    }
+                    _civicrm_processElement( &$form, $eName, $freeze );
+                    //freeze IM provider types/ phone types
+                    if ( $blockName == 'Phone' ) {
+                        $eName = "{$val}[$blockId][phone_type_id]";
+                        _civicrm_processElement( &$form, $eName, $freeze );
+                    } else if ( $blockName == 'IM' ) {
+                        $eName = "{$val}[$blockId][provider_id]";
+                        _civicrm_processElement( &$form, $eName, $freeze );
+                    }
+                } else {
+                    //unset 'Board of Election' from location type options
+                    $eName = "{$val}[{$blockId}][location_type_id]";
+                    _civicrm_processElement( &$form, $eName ); 
+                }
+            }
+            
             //freeze address elements in address block if location type is 'Board Of Election'
-            if ( ( $block == 'Address' ) || ( ( $blockId == 1 ) && $addressFlag ) ) {
+            if ( $addressFlag ) {
                 if ( $form->_values['address'][$blockId]['location_type_id'] == $boardOfElectionId ) {
                     //freeze elements 
                     $freeze = true;
@@ -107,20 +105,8 @@ function civicrm_NYSS_civicrm_buildForm( $formName, &$form ) {
                         }  
                         if ( in_array( $key, array( 'country', 'state_province' ) ) ) {
                             $key .= '_id';
-                            $element = $form->getElement( "address[$blockId][$key]" );
-                            $elementInfo  = $form->getElement("address[$blockId][$key]");
-                            $elementLabel = $elementInfo->_label;
-                            $elementType  = $elementInfo->_type;
-                            $elementName  = $elementInfo->_attributes['name'];
-                            $form->removeElement( "address[$blockId][$key]" );
-                            if ( substr( $key, 0, 5 ) == 'state' ) {
-                                $key = 'stateProvince';
-                            } else {
-                                $key = 'country';
-                            }
-                            $freezeElement =& $form->addElement( $elementType, $elementName, $elementLabel, 
-                                                                 array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::$key( ) );
-                            $freezeElement->freeze( );
+                            $eName = "address[$blockId][$key]";
+                            _civicrm_processElement( &$form, $eName, $freeze );
                         } else {
                             $eName = "address[$blockId][$key]";
                             _civicrm_processElement( &$form, $eName, $freeze );
@@ -133,16 +119,9 @@ function civicrm_NYSS_civicrm_buildForm( $formName, &$form ) {
                 } else {
                     //supress location type 'Board of Election' from location type options
                     $eName = "address[$blockId][location_type_id]";
-                    _civicrm_processElement( &$form, $eName);
+                    _civicrm_processElement( &$form, $eName );
                 }
             }
-        } else if ( ( $form->_action && CRM_Core_Action::ADD ) ) {
-            //supress 'Board of Election' location type while adding new block
-            foreach ( $blocks as $blockTitle => $blockName ) {
-                    $elememtLocName = "{$blockName}[$blockId][location_type_id]";
-                    _civicrm_processElement( &$form, $elememtLocName );
-            }
-        }
     }
   }
 
