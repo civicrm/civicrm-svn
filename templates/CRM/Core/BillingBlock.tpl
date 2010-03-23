@@ -113,17 +113,17 @@
                         	  {/if}
                         	</div>
                         </div>
-                        <div class="section {$form.credit_card_exp_date.name}-section">	
+                        <div class="section {$form.billing_first_name.name}-section">	
 							<div class="label">{$form.billing_first_name.label}</div>
                             <div class="content">{$form.billing_first_name.html}</div>
                             <div class="clear"></div> 
                         </div>
-                        <div class="section {$form.credit_card_exp_date.name}-section">	
+                        <div class="section {$form.billing_middle_name.name}-section">	
 							<div class="label">{$form.billing_middle_name.label}</div>
                             <div class="content">{$form.billing_middle_name.html}</div>
                             <div class="clear"></div> 
                         </div>
-                        <div class="section {$form.credit_card_exp_date.name}-section">	
+                        <div class="section {$form.billing_last_name.name}-section">	
 							<div class="label">{$form.billing_last_name.label}</div>
                             <div class="content">{$form.billing_last_name.html}</div>
                             <div class="clear"></div> 
