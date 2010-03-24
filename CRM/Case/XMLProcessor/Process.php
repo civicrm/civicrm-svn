@@ -412,6 +412,10 @@ AND        a.is_deleted = 0
                 $result[$activitySetName] = $activitySetLabel;
             }
         }
+        
+        // call option value hook
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::optionValues( $result, 'case_activity_type' );
         return $result;
     }
     
