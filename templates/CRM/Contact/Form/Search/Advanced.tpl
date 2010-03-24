@@ -42,6 +42,7 @@
   {include file="CRM/Contact/Form/Search/AdvancedCriteria.tpl"}
  </div>
 </div>  
+</div>
 
 <div class="crm-content-block">
 {if $rowsEmpty}
@@ -66,7 +67,6 @@
     {* END Actions/Results section *}
 	</div>
 {/if}
-</div>
 </div>
 {literal}
 <script type="text/javascript">
