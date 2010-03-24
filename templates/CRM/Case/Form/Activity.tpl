@@ -217,6 +217,25 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 	   <tr>
               <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
            </tr>
+	   {if $form.tag.html}
+             <tr>
+                <td class="label">{$form.tag.label}</td>
+                <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
+                                        {literal}
+                                        <script type="text/javascript">
+                                                               $("select[multiple]").crmasmSelect({
+                                                                        addItemTarget: 'bottom',
+                                                                        animate: true,
+                                                                        highlight: true,
+                                                                        sortable: true,
+                                                                        respectParents: true
+                                                               });
+                                        </script>
+                                        {/literal}
+
+                </td>
+             </tr>
+             {/if}
            {/if}
            <tr>
               <td>&nbsp;</td><td class="buttons">{$form.buttons.html}</td>
