@@ -180,26 +180,24 @@ class CRM_Contact_Form_Edit_Address
             // make sure custom fields are added /w element-name in the format - 'address[$blockId][custom-X]'
             foreach ( $groupTree as $id => $group ) { 
                 foreach ( $group['fields'] as $fldId => $field ) {
-                    $groupTree[$id]['fields']["{$fldId}_{$blockId}"] = $field;
-                    $groupTree[$id]['fields']["{$fldId}_{$blockId}"]['element_custom_name'] = $field['element_name'];
-                    $groupTree[$id]['fields']["{$fldId}_{$blockId}"]['element_name'] = 
+                    $groupTree[$id]['fields'][$fldId]['element_custom_name'] = $field['element_name'];
+                    $groupTree[$id]['fields'][$fldId]['element_name'] = 
                         "address[$blockId][{$field['element_name']}]";
-                    unset($groupTree[$id]['fields'][$fldId]);
                 }
-                if ( $form->_addressGroupTree ) {
-                    $form->_addressGroupTree[$id]['fields'] = 
-                        array_merge($form->_addressGroupTree[$id]['fields'], $groupTree[$id]['fields']);
-                }
-            }
-            if ( ! $form->_addressGroupTree ) {
-                $form->_addressGroupTree = $groupTree;
-                unset($groupTree);
             }
             $defaults = array( );
-            CRM_Core_BAO_CustomGroup::setDefaults( $form->_addressGroupTree, $defaults);
+            CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $defaults );
             $form->setDefaults( $defaults );
 
-            CRM_Core_BAO_CustomGroup::buildQuickForm( $form, $form->_addressGroupTree, false, 1, 'address_' );
+            CRM_Core_BAO_CustomGroup::buildQuickForm( $form, $groupTree, false, 1, "dnc_" );
+
+            $template  =& CRM_Core_Smarty::singleton( );
+            $groupTree = array( $blockId => $groupTree );
+            $tplGroupTree = $template->get_template_vars( 'address_groupTree' );
+            $tplGroupTree = empty($tplGroupTree) ? array() : $tplGroupTree;
+
+            $form->assign( "address_groupTree", $tplGroupTree + $groupTree );
+            $form->assign( "dnc_groupTree", null ); // unset
         }
         // address custom data processing ends ..
     }

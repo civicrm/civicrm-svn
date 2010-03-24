@@ -76,8 +76,8 @@
          {/foreach}
          {include file=CRM/Contact/Form/Edit/Address/geo_code.tpl}
 	 
-	 {*FIXME: below needs better formatted better, CRM-5961 *}
-	 {foreach from=$address_groupTree item=cd_edit key=group_id}    
+	 {*FIXME: below needs to be formatted better, CRM-5961 *}
+	 {foreach from=$address_groupTree.$blockId item=cd_edit key=group_id}
              {foreach from=$cd_edit.fields item=element key=field_id}
                  {include file="CRM/Contact/Form/Edit/Address/CustomField.tpl"}
              {/foreach}
