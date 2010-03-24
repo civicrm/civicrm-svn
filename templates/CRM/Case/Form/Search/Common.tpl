@@ -47,6 +47,16 @@
         {$form.case_deleted.label}	
     {/if}
   </td>
-
+  {if $form.caseTags }
+  <td>
+  <label>{ts}Tag(s){/ts}</label>
+    <div id="Tag" class="listing-box">
+      {foreach from=$form.caseTags item="tag_val"} 
+        <div class="{cycle values="odd-row,even-row"}">
+                    {$tag_val.html} 
+        </div>
+      {/foreach}
+  </td>
+{/if}
 </tr>     
 {/if}

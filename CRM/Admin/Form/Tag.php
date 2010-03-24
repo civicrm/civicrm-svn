@@ -91,7 +91,6 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             require_once 'CRM/Core/OptionGroup.php';
             
             $usedFor = $this->add('select', 'used_for', ts('Used For'), 
-                                  array ('' => '- ' . ts('select') . ' -') +  
                                   CRM_Core_OptionGroup::values('tag_used_for') );
             $usedFor->setMultiple( true );
             $accessHidden = false;
@@ -100,9 +99,9 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
                 $accessHidden = true;
                 if ( $this->_id &&
                      CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'parent_id' ) ) {
-                        $is_hidden->freeze();
-                        $usedFor->freeze();
-                        
+                    $is_hidden->freeze();
+                    $usedFor->freeze();
+                    
                 }
             }
             $this->assign( 'accessHidden', $accessHidden );
@@ -111,7 +110,7 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
         }
     }
 
-       
+    
     /**
      * Function to process the form
      *
@@ -131,6 +130,10 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             $hidden = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $params['parent_id'] , 'is_hidden' ); 
             $usedFor =  CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $params['parent_id'] , 'used_for' );
             $params['used_for']  = $usedFor;
+            if( !$params['used_for'] ) {
+                $params['used_for']=" ";
+            }
+            
             $params['is_hidden'] = $hidden? 1 : 0;
         } else {
             $params['is_hidden'] = isset($params['is_hidden'])? 1 : 0;
