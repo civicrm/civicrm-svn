@@ -307,6 +307,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form
                 $tagParams[$tag] = 1;
             }
         }
+        require_once 'CRM/Core/BAO/EntityTag.php';
         CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_case', $caseObj->id );
 
         // user context
