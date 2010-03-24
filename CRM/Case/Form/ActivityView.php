@@ -76,7 +76,7 @@ class CRM_Case_Form_ActivityView extends CRM_Core_Form
         }  
         
         require_once 'CRM/Core/BAO/EntityTag.php';
-        $tags = CRM_Core_BAO_EntityTag::getTag( 'civicrm_activity', $activityID );
+        $tags = CRM_Core_BAO_EntityTag::getTag( $activityID, 'civicrm_activity' );
         if ( !empty($tags) ) {
             $allTag = CRM_Core_PseudoConstant::tag();
             foreach( $tags as $tid ) {

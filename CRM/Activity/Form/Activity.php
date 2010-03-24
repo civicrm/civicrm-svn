@@ -438,7 +438,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
             // set default tags if exists
             require_once 'CRM/Core/BAO/EntityTag.php';
-            $defaults['tag'] = CRM_Core_BAO_EntityTag::getTag( 'civicrm_activity', $this->_activityId );
+            $defaults['tag'] = CRM_Core_BAO_EntityTag::getTag( $this->_activityId, 'civicrm_activity' );
           
         } else {
             // if it's a new activity, we need to set default values for associated contact fields
