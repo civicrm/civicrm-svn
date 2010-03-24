@@ -34,6 +34,7 @@
 	{if $accessHidden}
 	    <dt>{$form.is_hidden.label}</dt><dd>{$form.is_hidden.html}</dd>
 	{/if}
+        <dt>{$form.is_reserved.label}</dt><dd>{$form.is_reserved.html}</dd>
         </dl>
         {if $parent_tags|@count > 0}
         <table class="form-layout-compressed">
