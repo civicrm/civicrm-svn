@@ -878,7 +878,11 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                     $url = CRM_Utils_System::fixURL( $details->$detailName );
                     $websiteTypeId  = "website-{$id}-website_type_id";
                     $websiteType    = $websiteTypes[$details->$websiteTypeId];
-                    $values[$index] = "<a href=\"$url\">{$details->$detailName} ( {$websiteType} )</a>";
+                    if ( $details->$detailName ) {
+                        $values[$index] = "<a href=\"$url\">{$details->$detailName} ( {$websiteType} )</a>";
+                    } else {
+                        $values[$index] = '';
+                    }
                 }
             }
             
@@ -1522,7 +1526,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->addRule($name, ts('Enter a valid Website.'), 'url');
             
             //Website type select
-            $form->addElement('select', $name .'-website_type_id', '', array('' => ts('- select -')) + CRM_Core_PseudoConstant::websiteType( ) );
+            $form->addElement('select', $name .'-website_type_id', null, CRM_Core_PseudoConstant::websiteType( ) );
         } else if (substr($fieldName, 0, 6) === 'custom') {
             $customFieldID = CRM_Core_BAO_CustomField::getKeyID($fieldName);
             if ( $customFieldID ) {
@@ -1793,9 +1797,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                     } else {
                         if ( is_array($details) ) {
                             if ( $fieldName === 'url' ) {
-                                foreach ( $details['website'] as $val ) {
-                                    $defaults[$fldName] = $val['url'];
-                                    $defaults[$fldName . '-website_type_id' ] = $val['website_type_id'];
+                                if ( !empty( $details['website'] ) ) {
+                                    foreach ( $details['website'] as $val ) {
+                                        $defaults[$fldName] = $val['url'];
+                                        $defaults[$fldName . '-website_type_id' ] = $val['website_type_id'];
+                                    }
                                 }
                             }
                         } 
