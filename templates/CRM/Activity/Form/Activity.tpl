@@ -208,41 +208,22 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
              <tr>
                 <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
              </tr>
-			<tr>
-                <td class="label">{$form.tag.label}</td><td class="view-value">
-					<div class="crm-select-container">
-					<select id="tags" multiple="multiple" name="tags[]" title="Click to Select a Tag">
-			                        <option class="option-Amsterdam" selected="selected">Amsterdam</option>      
-			                        <option class="option-Atlanta" selected="selected">Atlanta</option>
-			                        <option class="child child-1 parent-Atlanta option-Baltimore">Baltimore</option>
-			                        <option class="child child-2 parent-Baltimore option-Boston">Boston</option>
-			                        <option class="child child-1 parent-Atlanta option-Birmingham">Birmingham</option>
-			                        <option class="option-Buenos_Aires">Buenos Aires</option>
-			                        <option class="option-Calgary">Calgary</option>
-			                        <option class="option-Chicago" selected="selected">Chicago</option>
-			                        <option class="option-Denver">Denver</option>
-			                        <option class="child child-1 parent-Denver option-Dubai">Dubai</option>
-			                        <option class="child child-1 parent-Denver option-Frankfurt">Frankfurt</option>
-			                        <option class="option-Hong_Kong">Hong Kong</option>
-			                        <option class="option-Honolulu">Honolulu</option>
+	     <tr>
+                <td class="label">{$form.tag.label}</td>
+                <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
+                                        {literal}
+                                        <script type="text/javascript">
+                                                               $("select[multiple]").crmasmSelect({
+                                                                        addItemTarget: 'bottom',
+                                                                        animate: true,
+                                                                        highlight: true,
+                                                                        sortable: true,
+                                                                        respectParents: true
+                                                               });
+                                        </script>
+                                        {/literal}
 
-					</select>
-					</div>
-					{literal}
-					<script type="text/javascript">
-
-								$("select[multiple]").crmasmSelect({
-									addItemTarget: 'bottom',
-									animate: true,
-									highlight: true,
-									sortable: true,
-									respectParents: true
-								});
-
-						</script>
-					{/literal}
-
-				</td>
+                </td>
              </tr>
              <tr>
                 <td colspan="2">

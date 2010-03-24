@@ -52,12 +52,13 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
      * @access public
      * @static
      */
-    static function &getTag($contactID) 
+    static function &getTag($entityTable, $entityID) 
     {
         $tag = array();
         
         $entityTag =& new CRM_Core_BAO_EntityTag();
-        $entityTag->contact_id = $contactID;
+        $entityTag->entity_id    = $entityID;
+        $entityTag->entity_table = $entityTable;
         $entityTag->find();
         
         while ($entityTag->fetch()) {
@@ -212,10 +213,10 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
      * @access public
      * @static
      */
-    static function create( &$params, $contactId ) 
+    static function create( &$params, $entityTable, $entityID ) 
     {
         // get categories for the contact id
-        $entityTag =& CRM_Core_BAO_EntityTag::getTag($contactId);
+        $entityTag =& CRM_Core_BAO_EntityTag::getTag($entityTable, $entityID);
         
         // get the list of all the categories
         $allTag =& CRM_Core_PseudoConstant::tag();
@@ -232,8 +233,9 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
 
         // check which values has to be inserted/deleted for contact
         foreach ($allTag as $key => $varValue) {
-            $tagParams['contact_id'] = $contactId;            
-            $tagParams['tag_id'] = $key;
+            $tagParams['entity_table'] = $entityTable;
+            $tagParams['entity_id']    = $entityID;   
+            $tagParams['tag_id']       = $key;
             
             if (array_key_exists($key, $params) && !array_key_exists($key, $entityTag) ) {
                 // insert a new record
