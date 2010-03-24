@@ -39,20 +39,18 @@
  *
  * @param string $btnId
  *
- * @return string  button type, one of: 'upload', 'next', 'back', 'cancel', 'refresh')
+ * @return string  button type, one of: 'upload', 'next', 'back', 'cancel', 'refresh'
+ *                                      'submit', 'done', 'display', 'jump' 'process'
  * @access public
  */
-function smarty_modifier_crmBtnType($btnName)
+function smarty_modifier_crmBtnType( $btnName )
 {
-    // default button type is 'upload'
-    $btnType = 'upload';
-    
-    // check for _$btnType strings (listed above) in $btnName and assign type (should use regex since the btnType "keyword"
-    //may not be at the end of the string). EX: btnName = '_qf_Contact_refresh_dedupe' type='refresh'
-    if ( substr( $btnName, -7, 7 ) == '_cancel' ){
-        $btnType = 'cancel';
-    }
-    return $btnType;
+    // split the string into 5 or more
+    // button name are typically: '_qf_Contact_refresh' OR '_qf_Contact_refresh_dedupe'
+    // button type is always the 3rd element
+    // note the first _
+    $substr = CRM_Utils_System::explode( '_', $string, 5 );
+    return $substr[3];
 }
 
 
