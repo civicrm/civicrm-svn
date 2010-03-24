@@ -49,7 +49,8 @@ function smarty_modifier_crmBtnType( $btnName )
     // button name are typically: '_qf_Contact_refresh' OR '_qf_Contact_refresh_dedupe'
     // button type is always the 3rd element
     // note the first _
-    $substr = CRM_Utils_System::explode( '_', $string, 5 );
+    $substr = CRM_Utils_System::explode( '_', $btnName, 5 );
+    
     return $substr[3];
 }
 
