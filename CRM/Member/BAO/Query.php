@@ -171,7 +171,6 @@ class CRM_Member_BAO_Query
             return;
             
         case 'member_source':
-            
             $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
             $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
 
@@ -190,28 +189,36 @@ class CRM_Member_BAO_Query
             }     
             
             $names = array( );
-            $statusTypes  = CRM_Member_PseudoConstant::membershipStatus( );
+            $statusTypes = CRM_Member_PseudoConstant::membershipStatus( );
             foreach ( $value as $id => $dontCare ) {
                 $names[] = $statusTypes[$id];
             }
             $query->_qill[$grouping][]  = ts('Membership Status %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
-                
-            $query->_where[$grouping][] = "civicrm_membership.status_id {$op} {$status}";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_membership.status_id", 
+                                                                              $op,
+                                                                              $status,
+                                                                              "Integer" );
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
             
         case 'member_test':
-            $query->_where[$grouping][] = " civicrm_membership.is_test $op $value";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_membership.is_test", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
             if ( $value ) {
-                $query->_qill[$grouping][]  = "Find Test Memberships";
+                $query->_qill[$grouping][] = "Find Test Memberships";
             }
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
             
         case 'member_pay_later':
-            $query->_where[$grouping][] = " civicrm_membership.is_pay_later $op $value";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_membership.is_pay_later", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
             if ( $value ) {
-                $query->_qill[$grouping][]  = "Find Pay Later Memberships";
+                $query->_qill[$grouping][] = "Find Pay Later Memberships";
             }
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
@@ -230,8 +237,10 @@ class CRM_Member_BAO_Query
                 $names[] = $membershipTypes[$id];
             }
             $query->_qill[$grouping][]  = ts('Membership Type %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
-
-            $query->_where[$grouping][] = "civicrm_membership.membership_type_id {$op} {$mType}";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_membership.membership_type_id", 
+                                                                              $op,
+                                                                              $mType,
+                                                                              "Integer" );
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
             

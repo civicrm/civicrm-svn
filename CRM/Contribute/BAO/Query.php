@@ -280,6 +280,7 @@ class CRM_Contribute_BAO_Query
                     $status = "({$status})";
                 }     
             } else {
+                $op = '=';
                 $status = $value;
             }
 
@@ -295,8 +296,11 @@ class CRM_Contribute_BAO_Query
                 $names[] = $statusValues[ $value ];
             }
 
-            $query->_qill[$grouping][]  = ts('Contribution Status %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
-            $query->_where[$grouping][] = "civicrm_contribution.contribution_status_id {$op} {$status}";
+            $query->_qill[$grouping][] = ts('Contribution Status %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.contribution_status_id", 
+                                                                              $op,
+                                                                              $status,
+                                                                              "Integer" );
             $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
             return;
 
