@@ -94,7 +94,7 @@
     <page_callback>CRM_Admin_Page_Options</page_callback>
     <access_arguments>administer CiviCase</access_arguments>
     <adminGroup>CiviCase</adminGroup>
-    <icon>admin/small/case_status</icon>
+    <icon>admin/small/case_type.png</icon>
     <weight>400</weight>
   </item>
   <item>

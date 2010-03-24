@@ -1736,7 +1736,7 @@ WHERE civicrm_case.id = %2";
      * 
      * @return array of case and related data keyed on case id
      */
-    static function getUnclosedCases( $params = array( ), $excludeCaseIds =array( ) )
+    static function getUnclosedCases( $params = array( ), $excludeCaseIds =array( ), $excludeDeleted = true  )
     {
     	//params from ajax call.
         $where = array( '( ca.end_date is null )' );
@@ -1751,6 +1751,9 @@ WHERE civicrm_case.id = %2";
         if ( is_array( $excludeCaseIds ) && 
              !CRM_Utils_System::isNull( $excludeCaseIds ) ) {
             $where[] = ' ( ca.id NOT IN ( ' . implode( ',', $excludeCaseIds ) . ' ) ) ';
+        }
+        if ( $excludeDeleted ) {
+            $where[] =  ' ( ca.is_deleted = 0 OR ca.is_deleted IS NULL ) '; 
         }
         $whereClause = implode( ' AND ', $where );
         
@@ -1959,7 +1962,8 @@ INNER JOIN  civicrm_contact      client         ON ( client.id = relCaseContact.
      * @return void.
      * @static
      */  
-    function mergeCases( $mainContactId, $mainCaseId = null, $otherContactId = null, $otherCaseId = null, $changeClient = false ) 
+    function mergeCases( $mainContactId, $mainCaseId = null, 
+                         $otherContactId = null, $otherCaseId = null, $changeClient = false ) 
     {
         $moveToTrash = true;
         
