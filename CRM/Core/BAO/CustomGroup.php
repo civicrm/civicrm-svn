@@ -1503,9 +1503,10 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
 
 		if ( $returnCount ) {
 			return count( $details[$groupID]);
-		} else {
-			$form->assign_by_ref( "{$prefix}viewCustomData", $details );
-		}
+        } else {
+            $form->assign_by_ref( "{$prefix}viewCustomData", $details );
+            return $details;
+        }
     }
 
     /** 

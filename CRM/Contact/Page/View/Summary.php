@@ -145,7 +145,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                                     'website' => array( 
                                                         'type' => 'websiteType', 
                                                         'id'   => 'website_type' ),                                                        
-                                    'address' => array( 'skip' => true ),
+                                    'address' => array( 'skip' => true, 'customData' => 1 ),
 									'email'   => array( 'skip' => true ),
 									'openid'  => array( 'skip' => true )
                             ); 
@@ -158,6 +158,17 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
                         eval( '$pseudoConst = CRM_Core_PseudoConstant::'.$value['type'].'( );' );
                         CRM_Utils_Array::lookupValue( $val, $value['id'], $pseudoConst, false );
                     }
+                }
+                if ( isset($value['customData']) ) {
+                    foreach( $defaults[$key] as $blockId => $blockVal ) {
+                        $groupTree = CRM_Core_BAO_CustomGroup::getTree( ucfirst($key),
+                                                                        $this,
+                                                                        $blockVal['id'] );
+                        $defaults[$key][$blockId]['custom'] = 
+                            CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree, false, null, "{$key}_" );
+                    }
+                    // reset template variable since that won't be of any use, and could be misleading
+                    $this->assign( "{$key}_viewCustomData", null );
                 }
             }
         }

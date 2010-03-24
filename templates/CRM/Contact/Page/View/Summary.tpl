@@ -222,6 +222,23 @@
                                     </td>
                                 </tr>
                             </table>
+			    {foreach from=$add.custom item=customGroup key=cgId}
+			        {foreach from=$customGroup item=customValue key=cvId}
+			            <div class="crm-accordion-wrapper crm-{$customValue.title}-accordion crm-accordion-closed">
+			                <div class="crm-accordion-header">
+			                    <div class="icon crm-accordion-pointer"></div>
+				            {$customValue.title}
+			                </div>
+			                <div class="crm-accordion-body">
+				            <table>
+				                {foreach from=$customValue.fields item=customField key=cfId}
+					            <tr><td class="label">{$customField.field_title}</td><td>{$customField.field_value}</td></tr>
+	                  	                {/foreach}
+			                    </table>
+			                </div>
+			            </div> 
+                                {/foreach}
+                            {/foreach}
                         </div>
                         {/foreach}
 
