@@ -373,5 +373,7 @@ function fileOnCase() {
     </script>
     {/literal}
 {/if}
+{if ! $form.case_select}
 {include file="CRM/common/formNavigate.tpl"}
+{/if}
 {/if} {* end of snippet if*}	
