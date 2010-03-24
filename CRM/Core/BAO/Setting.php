@@ -314,6 +314,11 @@ class CRM_Core_BAO_Setting
         $config =& CRM_Core_Config::singleton( );
 
         $url = $config->userFrameworkBaseURL;
+        if ( $config->userFramework == 'Joomla' ) {
+            $url = preg_replace( '|/administrator|',
+                                 '',
+                                 $config->userFrameworkBaseURL );
+        }
         $dir = preg_replace( '|civicrm/templates_c/.*$|',
                              '',
                              $config->templateCompileDir );
