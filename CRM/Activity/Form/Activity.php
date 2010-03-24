@@ -604,7 +604,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         require_once 'CRM/Core/BAO/Tag.php';
         $tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_activity'), true );
         if ( !empty($tags) ) { 
-            $this->add('select', 'tag',  ts( 'Select Tags' ), $tags, true, 
+            $this->add('select', 'tag',  ts( 'Select Tags' ), $tags, false, 
                        array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
         }
             
@@ -860,15 +860,15 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $activity = CRM_Activity_BAO_Activity::create( $params );
         
         // add tags if exists
+        $tagParams = array( );
         if ( !empty($params['tag']) ) {
             require_once 'CRM/Core/BAO/EntityTag.php';
-            $tagParams = array( );
             foreach( $params['tag'] as $tag ) {
                 $tagParams[$tag] = 1;
             }
-            CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_activity',  $activity->id );
         }
-        
+        CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_activity',  $activity->id );
+ 
         // call end post process. Idea is to let injecting file do any
         // processing needed, after the activity has been added/updated.
         $this->endPostProcess( $params, $activity );

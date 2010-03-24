@@ -208,7 +208,8 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
              <tr>
                 <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
              </tr>
-	     <tr>
+             {if $form.tag.html}
+             <tr>
                 <td class="label">{$form.tag.label}</td>
                 <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
                                         {literal}
@@ -225,6 +226,7 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
 
                 </td>
              </tr>
+             {/if}	     
              <tr>
                 <td colspan="2">
 	            {if $action eq 4} 
