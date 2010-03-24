@@ -86,6 +86,20 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             }
 
             $this->add( 'select', 'parent_id', ts('Parent Tag'), $allTag );
+            
+            $accessHidden = false;
+            if ( CRM_Core_Permission::check('access hidden tags') ) {
+                $is_hidden =& $this->add( 'checkbox', 'is_hidden', ts('Hidden?') );
+                $accessHidden = true;
+                if ( $this->_id ) {
+                    $query     = "SELECT is_hidden FROM civicrm_tag WHERE id=( SELECT parent_id FROM civicrm_tag WHERE id = %1 )";
+                    $hidden    = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $this->_id, 'Integer') ) );
+                    if ( $hidden ) {
+                        $is_hidden->freeze();
+                    }
+                }
+            }
+            $this->assign( 'accessHidden', $accessHidden );
 
             parent::buildQuickForm( ); 
         }
@@ -105,6 +119,11 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
         // store the submitted values in an array
         $params = $this->exportValues();
         $ids['tag'] = $this->_id;
+        $params['is_hidden'] = isset($params['is_hidden'])? 1 : 0;
+        if ( !empty($params['parent_id']) && !$params['is_hidden'] ) {
+            $hidden = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $params['parent_id'] , 'is_hidden' ); 
+            $params['is_hidden'] = $hidden? 1 : 0;
+        }
         
         if ($this->_action == CRM_Core_Action::DELETE) {
             if ($this->_id  > 0 ) {

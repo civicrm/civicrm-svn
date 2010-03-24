@@ -44,17 +44,27 @@
             <th>{ts}ID{/ts}</th>
 	        <th id="nosort">{ts}Description{/ts}</th>
 	        <th>{ts}Parent ID{/ts}</th>
+                {if $accessHidden}
+		    <th>{ts}Hidden?{/ts}</th>
+		{/if}
+		<th>{ts}Reserved?{/ts}</th>
 	        <th></th>
         </tr>
         </thead>
         {foreach from=$rows item=row}
+	{if !$row.is_hidden or ( $row.is_hidden && $accessHidden )  }
         <tr class="{cycle values="odd-row,even-row"} {$row.class}">
             <td>{$row.name}</td>
             <td>{$row.id}</td>	
             <td>{$row.description} </td>
             <td>{$row.parent_id}</td>
+            {if $accessHidden}
+                <td>{if $row.is_hidden}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Hidden{/ts}" />{/if}</td>
+            {/if}
+            <td>{if $row.is_reserved}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
             <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
+	{/if}
         {/foreach}
         </table>
         {/strip}

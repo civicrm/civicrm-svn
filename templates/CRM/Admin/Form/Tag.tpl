@@ -31,6 +31,9 @@
         <dt>{$form.name.label}</dt><dd>{$form.name.html}</dd>
         <dt>{$form.description.label}</dt><dd>{$form.description.html}</dd>
 	<dt>{$form.parent_id.label}</dt><dd>{$form.parent_id.html}</dd>
+	{if $accessHidden}
+	    <dt>{$form.is_hidden.label}</dt><dd>{$form.is_hidden.html}</dd>
+	{/if}
         </dl>
         {if $parent_tags|@count > 0}
         <table class="form-layout-compressed">

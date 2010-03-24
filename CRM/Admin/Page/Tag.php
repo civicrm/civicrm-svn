@@ -136,6 +136,18 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
    {
         return 'CRM_Admin_Form_Tag';
    }
+
+   /**
+    * override function browse()
+    */
+   function browse( $action = null, $sort ) {
+       $accessHidden = false;
+       if ( CRM_Core_Permission::check('access hidden tags') ) {
+           $accessHidden = true;
+       }
+       $this->assign( 'accessHidden', $accessHidden );
+       parent::browse( $action, $sort );
+   }
 }
 
 
