@@ -148,7 +148,15 @@ div#crm-container {
   	border: 1px solid #999;
 	}
 
-/* crm sdvanced select styling */
+
+.crm-form-block {
+	padding:4px 4px 8px 4px ;
+	margin-bottom:4px;
+	font-size:14px;
+	}
+
+
+/* crm advanced select styling */
 
 .crmasmContainer,
 .crmasmSelect {
@@ -271,18 +279,12 @@ div.spacer,
 }
 
 #crm-container fieldset{
-    background-image   : none;
-    margin             : .5em 0em .5em 0em;
+    background:none;
+    padding:0px;
+    margin:0px;
+    border:none;
 }
 
-#crm-container .boxBlock, #crm-container fieldset{
-    background-color   : #F7F7F7;
-    border	           : 1px solid #CCCCCC;
-    border-radius      : 4px;	
-    -moz-border-radius : 4px;	
-    -webkit-border-radius : 4px;	
-    -khtml-border-radius : 4px;	
-}
 
 
 #crm-container fieldset.form-layout {
@@ -485,10 +487,12 @@ div.spacer,
 	width: 100%; /* fix ie7/ie8 bug where page goes bananas */
 }
 
+
 #crm-container .form-layout .buttons, 
 #crm-container .form-layout-compressed .buttons {
  padding-top: 10px;
 }
+
 
 #crm-container .form-layout-compressed td.describe-image {
     vertical-align: top;
@@ -510,14 +514,64 @@ div.spacer,
   padding-left: 3em;
 }
 
-#crm-container div.status {
-	background-color:#FFFF99;
-	border:medium none;
-	color:#7A7A60;
-	font-weight:normal;
-	margin:5px 0;
-	padding:4px 8px;
+
+#crm-container .separator {
+	border-bottom:2px solid #D7D7D0;
 	}
+
+/* messages and status */
+#crm-container .messages {
+  	margin: 1.0em 0em 1.0em;
+  	border: 1px solid #CCCCCC;
+	font-weight: normal;
+	}	
+	#crm-container .messages table, #crm-container-snippet .messages table {width: auto;}
+	#crm-container .messages table td, #crm-container-snippet .messages table td { 
+		background-color: #F7F7F7;
+		border-bottom: 1px solid #DDDDDD;
+		}
+
+#crm-container div.status {
+	-moz-border-radius:4px;
+	background-color:#FFFF99;
+	border:none;
+	margin:0.5em 0px;
+	padding:0.25em 0.5em;
+	color: #7a7a60;
+	font-weight: normal;
+	}
+	.status dl {margin:2px 5px;}
+	#crm-container div.status dt {
+		clear:none;
+		float:left;
+		width:20px;
+		}
+	#crm-container div.status dd {margin-left:0px;}
+
+#crm-container div.status ul {
+  margin: 0 0 1em 16px;
+}
+
+.status-pending {
+  color: green;
+}
+
+.status-completed {
+  color: #000080;
+}
+
+#crm-container .crm-marker {
+	color:#8A1F11;
+	font-weight: bold;
+	}
+#crm-container .crm-error {
+	background:#FBE3E4 none repeat scroll 0 0;
+	border:none;
+	padding:4px;
+	color:#8A1F11;
+	}
+
+
 
 #crm-container div.view-data {
   padding: .25em .5em .25em .5em;
@@ -545,30 +599,7 @@ div.spacer,
   padding: 0.8em 0.8em 0em 0em;
   text-align: right;
 }
-#crm-container div.status ul {
-  margin: 0 0 1em 16px;
-}
 
-#crm-container div.status dt {
-  float: left;
-  clear: none;
-  width: 30px;
-}
-
-#crm-container div.status dd {
-  margin-left: 45px;
-}
-
-#crm-container .messages {
-  	margin: 1.0em 0em 1.0em;
-  	border: 1px solid #CCCCCC;
-	font-weight: normal;
-	}	
-	#crm-container .messages table, #crm-container-snippet .messages table {width: auto;}
-	#crm-container .messages table td, #crm-container-snippet .messages table td { 
-		background-color: #F7F7F7;
-		border-bottom: 1px solid #DDDDDD;
-		}
 	
 #crm-container .action-link {
   margin: 0.25em 0em 0.25em;
@@ -773,24 +804,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
   line-height: 1.1em;
 }
 
-.status-pending {
-  color: green;
-}
-
-.status-completed {
-  color: #000080;
-}
-
-#crm-container .crm-marker {
-	color:#8A1F11;
-	font-weight: bold;
-	}
-#crm-container .crm-error {
-	background:#FBE3E4 none repeat scroll 0 0;
-	border:2px solid #FBC2C4;
-	padding:4px;
-	color:#8A1F11;
-	}
 
 
 /* 
@@ -885,14 +898,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
   text-align: center;
 }
 
-#crm-container .font-red, 
-#crm-container .status-removed, 
-#crm-container .disabled,
-#crm-container .status-overdue, 
-#crm-container .status-hold {
-  	color: #FF0105;
-}
-
 #crm-container .horizontal-position {
   margin-right: 30px;
   margin-left: 30px;
@@ -941,7 +946,8 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
  margin: 0em 0em 0em -2.0em;
 }
 
-#crm-container #search-status ul li, #crm-container ul.left-alignment li{
+#crm-container #search-status ul li, 
+#crm-container ul.left-alignment li{
  display: list-item;
  margin-left: 2.0em;
  list-style-position: inside;
@@ -1036,7 +1042,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
   	border: 1px solid #999999;
   	background-color: #fff;
   	white-space: nowrap;
-  	overflow: hidden;  
 	}
 
 #crm-container #recently-viewed a {
@@ -1227,40 +1232,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     overflow: hidden;
     width: 100%;
 }
-
-
-/* Buttons CSS */
-
-#crm-container a.button {
-    background: transparent url('bg_button_a.gif') no-repeat scroll top right;
-    color: #444;
-    display: block;
-    float: left;
-    font-size:12px;
-    font-weight:normal;
-    height: 24px;
-    margin-right: 6px;
-    padding: 0 14px 0 0; /* sliding doors padding */
-    text-decoration: none;
-}
-
-#crm-container a.button span {
-    background: transparent url('bg_button_span.gif') no-repeat;
-    display: block;
-    line-height: 14px;
-    padding: 5px 0 5px 12px;
-} 
-
-#crm-container a.button:active {
-    background-position: bottom right;
-    color: #000;
-    outline: none; /* hide dotted outline in Firefox */
-}
-
-#crm-container a.button:active span {
-    background-position: bottom left;
-    padding: 6px 0 4px 12px; /* push text down 1px */
-} 
 
 /* class for tinymce buttons display */
 #crm-container table.mceLayout td,#crm-container table.mceLayout table{ 
@@ -2000,6 +1971,84 @@ div.grippie {
 	padding:4px;
 	}
 
+/* crm button style */
+
+#crm-container .crm-submit-buttons {
+	height:25px;
+	margin-bottom: 4px;
+	}
+
+#crm-container .crm-button {
+	background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left top;
+	border:medium none;
+	cursor:pointer;
+	display:block;
+	float:left !important;
+	overflow:hidden;
+	text-shadow:0 1px 0 black;	
+	margin:0px 12px 0 0;
+	cursor: pointer;
+	}
+
+#crm-container .crm-button input  {
+	background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -25px;
+	border:medium none;
+	color:#5c5c59;
+	cursor:pointer;
+	font-size:12px;
+	height:25px;
+	font-weight:normal;
+	margin:0 0 0 12px;
+	padding:2px 17px 4px 5px;
+	}
+
+#crm-container .crm-button:hover {
+	background-position:transparent url(../i/crm-button.gif) no-repeat scroll left top;	
+	}
+
+#crm-container .crm-button:hover input {
+	background:transparent url(../i/crm-button.gif) no-repeat scroll right -75px;	
+	}
+
+#crm-container .crm-button-type-cancel input { color:#7a7a7a; }
+
+/* Buttons CSS */
+
+#crm-container a.button,
+#crm-container a.button:link {
+	background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left top;
+    color: #FFF;
+    display: block;
+    float: left;
+    font-size:12px;
+    font-weight:normal;
+    height: 24px;
+    margin-right: 6px;
+    padding: 0 14px 0 4px; /* sliding doors padding */
+    text-decoration: none;
+}
+
+#crm-container a.button span {
+	background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -25px;
+    display: block;
+    line-height: 14px;
+    padding: 5px 12px 5px 4px;    
+} 
+
+.button .icon {
+	background-image: url(../i/icons/jquery-ui-FFFFFF.png);
+	}
+
+#crm-container a.button:active {
+    background-position: bottom right;
+    color: #000;
+    outline: none; /* hide dotted outline in Firefox */
+}
+
+#crm-container a.button:active span {
+    background-position: bottom left;
+    padding: 6px 0 4px 12px; /* push text down 1px */
+} 
 
 /* setup for icons */
 
@@ -2022,16 +2071,16 @@ div.grippie {
 .blue-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_2e83ff_256x240.png")}
 
 .edit-icon { background-position: -66px -114px;}
-	.button:hover .edit-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png"); }
+	.button:hover .edit-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png"); }
 		
 .delete-icon { background-position: -179px -99px;}
 	.button:hover .delete-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_cd0a0a_256x240.png");}
 
 .dashboard-icon { background-position: -193px -130px; }
-	.button:hover .dashboard-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png");}
+	.button:hover .dashboard-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png");}
 
 .user-record-icon { background-position:-145px -99px; }
-    .button:hover .user-record-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png");}
+    .button:hover .user-record-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png");}
 
 .inform-icon { background-position: -16px -144px; }
 
@@ -2073,6 +2122,7 @@ div.grippie {
 .Participant-icon { background-position: 0px -32px; }
 .Note-icon { background-position: -16px -32px; }
 .Relationship-icon { background-position: -32px -32px; }
+
 
 
 /* accordion styles */
@@ -2236,6 +2286,22 @@ div#crm-toolTip {
 		cursor: pointer;
 		}
 
+.crm-summary-link {
+	position: relative;
+	z-index: 5;
+	}
+
+#crmToolTipWrapper {
+	position:absolute;
+	bottom:10px;
+	width:500px;
+	height:200px;
+	overflow:hidden;
+	border:4px solid black;
+	z-index:1000;
+	background-color: black;
+	}
+
 /* Class for tokens and helpicon */
 .helpIcon {
   float       : right;
@@ -2330,6 +2396,7 @@ margin-bottom:0em;
 	color:#2786c2;
 	}
 
+
 /* tables */
 #crm-container table {
 	border:1px solid #efefef;
@@ -2374,8 +2441,68 @@ tbody.scrollContent tr.alternateRow {
 	color:#52534D;
 }
 
+/* accordion-colors */
+
+.crm-form-block { background-color:#E0E0D4;}
+
+.crm-accordion-header {
+	background-color:#6D6D6D;
+	color:#FFFFFF;
+	}
+
+
+/* buttons */
+
+/* blue theme buttons */
+/*
+#crm-container .crm-button,
+#crm-container .crm-button input { color:#32414f; }
+#crm-container .crm-button { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll left 0px;}
+#crm-container .crm-button input { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll right -25px; }
+#crm-container .crm-button:hover { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll left -50px; }
+#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll right -75px;	}
+#crm-container .crm-button-type-cancel input { color:#357bb7; }
+*/
+
+/* black theme buttons */
+/*
+#crm-container .crm-button,
+#crm-container .crm-button input { color:#FFF; }
+#crm-container .crm-button { background:transparent url(../i/crm-button-black.gif) no-repeat scroll left 0px;		 }
+#crm-container .crm-button input { background:transparent url(../i/crm-button-black.gif) no-repeat scroll right -25px;	 }
+#crm-container .crm-button:hover { background:transparent url(../i/crm-button-black.gif) no-repeat scroll left -50px;		 }
+#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-black.gif) no-repeat scroll right -75px;	 }
+#crm-container .crm-button-type-cancel input { color:#e0e0d4; }
+*/
+
+/* brown theme buttons */
+#crm-container .crm-button,
+#crm-container .crm-button input { color:#FFF; }
+#crm-container .crm-button { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left 0px;		 }
+#crm-container .crm-button input { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -25px;	 }
+#crm-container .crm-button:hover { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left -50px;		 }
+#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -75px;	 }
+#crm-container .crm-button-type-cancel input { color:#e0e0d4; }
+
+
+/* warning labels and messages */
+#crm-container table.caseSelector td.status-urgent,
+#crm-container span.email-hold a:link, 
+#crm-container span.email-hold a:visited, 
+#crm-container span.do-not-email a:link, 
+#crm-container span.email-hold a:visited,
+#crm-container .font-red, 
+#crm-container .status-removed, 
+#crm-container .disabled, 
+#crm-container .status-overdue, 
+#crm-container .status-hold {
+	color:#E43D2B!important;
+	}
+
+
 
 /* rounded corners - we will call dd_roundies on all this */
+#crm-container .crm-form-block,
 #crm-container .crm-search-tasks,
 #crm-container div.form-item,
 #crm-container div.messages,
@@ -2386,6 +2513,7 @@ div#crm-toolTip
 
 .ac_results {
 	background: transparent url(../i/dropdown-pointer.gif) no-repeat 25px 1px;
+	text-align: left;
 	}
 
 .ac_results-inner {
