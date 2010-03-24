@@ -168,7 +168,10 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
     
     function setContext( ) 
     {
-        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'search' );
+        $context      = CRM_Utils_Request::retrieve( 'context'     ,
+                                                     'String', $this, false, 'search' );
+        $contextQFKey = CRM_Utils_Request::retrieve( 'contextQFKey',
+                                                     'String', $this, false, 'search' );
         switch ( $context ) {
             
         case 'dashboard':           
@@ -208,9 +211,9 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
                     $cid = '&cid=' . $this->_contactId;
                 }
                 $url = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
-                                              'force=1&context=fulltext&action=view' . $cid );
+                                              'force=1&context=fulltext&action=view&contextQFKey={$contextQFKey}' . $cid );
             } else {
-                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', "force=1&qfKey={$contextQFKey}" );
             }
             break;
             

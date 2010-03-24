@@ -82,6 +82,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
     protected $_single;
     
     public $_context;
+    public $_contextQFKey;
     public $_activityTypeFile;
 
     /**
@@ -230,6 +231,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
         $this->assign( 'context', $this->_context );
 
+        $this->_contextQFKey = CRM_Utils_Request::retrieve('contextQFKey', 'String', $this );
+
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this );
 
         if ( $this->_action & CRM_Core_Action::DELETE ) {
@@ -327,7 +330,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 $url = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
                                               'force=1&context=fulltext&action=view');
             } else { 
-                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 
+                                              "force=1&qfKey={$this->_contextQFKey}" );
             }
            
         } else if ( in_array( $this->_context, array( 'standalone', 'home', 'search') ) ) {
