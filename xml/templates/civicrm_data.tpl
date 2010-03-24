@@ -89,16 +89,13 @@ INSERT INTO civicrm_relationship_type( name_a_b,label_a_b, name_b_a,label_b_a, d
 
 
 -- Sample Tags
-INSERT INTO civicrm_tag( name, description, parent_id )
-    VALUES( '{ts escape="sql"}Non-profit{/ts}', '{ts escape="sql"}Any not-for-profit organization.{/ts}', NULL );
-INSERT INTO civicrm_tag( name, description, parent_id )
-    VALUES( '{ts escape="sql"}Company{/ts}', '{ts escape="sql"}For-profit organization.{/ts}', NULL );
-INSERT INTO civicrm_tag( name, description, parent_id )
-    VALUES( '{ts escape="sql"}Government Entity{/ts}', '{ts escape="sql"}Any governmental entity.{/ts}', NULL );
-INSERT INTO civicrm_tag( name, description, parent_id )
-    VALUES( '{ts escape="sql"}Major Donor{/ts}', '{ts escape="sql"}High-value supporter of our organization.{/ts}', NULL );
-INSERT INTO civicrm_tag( name, description, parent_id )
-    VALUES( '{ts escape="sql"}Volunteer{/ts}', '{ts escape="sql"}Active volunteers.{/ts}', NULL );
+INSERT INTO civicrm_tag( name, description, parent_id,is_reserved )
+    VALUES
+    ( '{ts escape="sql"}Non-profit{/ts}', '{ts escape="sql"}Any not-for-profit organization.{/ts}', NULL,1 ),
+    ( '{ts escape="sql"}Company{/ts}', '{ts escape="sql"}For-profit organization.{/ts}', NULL ,1),
+    ( '{ts escape="sql"}Government Entity{/ts}', '{ts escape="sql"}Any governmental entity.{/ts}', NULL ,1),
+    ( '{ts escape="sql"}Major Donor{/ts}', '{ts escape="sql"}High-value supporter of our organization.{/ts}', NULL ,1),
+    ( '{ts escape="sql"}Volunteer{/ts}', '{ts escape="sql"}Active volunteers.{/ts}', NULL ,1);
 
 {capture assign=subgroup}{ldelim}subscribe.group{rdelim}{/capture}
 {capture assign=suburl}{ldelim}subscribe.url{rdelim}{/capture}
