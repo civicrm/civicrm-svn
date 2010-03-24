@@ -104,6 +104,10 @@ function civicrm_NYSS_civicrm_buildForm( $formName, &$form )
                     //process address data element.
                     _civicrm_processElement( $form, "address[$blockId][$key]", $freezeElement );
                 }
+                //hide 'Use Household Address' if location type is 'Board Of Election'
+                if ( $blockId == 1 && $freezeElement ) {
+                    $form->removeElement( "use_household_address" );
+                }
             } else {
                 $dataElementName = "{$name}[$blockId][$name]";
                 if ( $name == 'im' ) {
