@@ -1155,11 +1155,11 @@ class CRM_Contact_BAO_Query
         case 'activity_date':
         case 'activity_date_low':
         case 'activity_date_high':
-        case 'activity_type_id':
         case 'activity_role':
         case 'activity_status':
         case 'activity_subject':
-        case 'test_activities':    
+        case 'test_activities':
+        case 'activity':    
             $this->activity( $values );
             return;
 
@@ -2688,10 +2688,20 @@ WHERE  id IN ( $groupIDs )
         $this->_tables['civicrm_activity'] = $this->_whereTables['civicrm_activity'] = 1;
             
         switch ( $name ) {
-        case 'activity_type_id':
+        case 'activity':
             $types  = CRM_Core_PseudoConstant::activityType( true, true );
-            $this->_where[$grouping][] = " civicrm_activity.activity_type_id = {$value}";
-            $this->_qill[$grouping][]  = ts( 'Activity Type') . " $op '$types[$value]'";
+            $clause = array( );
+            if ( is_array( $value ) ) {
+                foreach ( $value as $id => $dontCare ) {
+                    if ( array_key_exists( $id, $types ) && $dontCare ) {
+                        $clause[] = "'" . CRM_Utils_Type::escape( $types[$id], 'String' ) . "'";
+                    }
+                } 
+            } else {
+                $clause[] = "'" . CRM_Utils_Type::escape( $value, 'String' ) . "'";
+            }
+            $this->_where[$grouping][] = ' civicrm_activity.activity_type_id IN (' . implode( ',', array_keys( $value ) ) . ')';
+            $this->_qill [$grouping][]  = ts('Activity Type') . ' ' . implode( ' ' . ts('or') . ' ', $clause );
             break;
         case 'activity_role':
             self::$_activityRole = $values[2];

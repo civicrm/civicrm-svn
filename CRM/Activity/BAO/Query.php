@@ -202,30 +202,42 @@ class CRM_Activity_BAO_Query
      */  
     static function buildSearchForm( &$form ) 
     {
-       
-        require_once 'CRM/Core/OptionGroup.php';
-        $caseActivityType = CRM_Core_OptionGroup::values('case_activity_type');
-        $form->add('select', 'activity_activitytag1_id',  ts( 'Activity Type' ),  
-                   array( '' => ts( '- select -' ) ) + $caseActivityType );
+        $activityOptions = CRM_Core_PseudoConstant::activityType( true, true );
+        asort( $activityOptions );
+        foreach ( $activityOptions as $activityID => $activity ) {
+            $form->_activityElement =& $form->addElement( 'checkbox', "activity[$activityID]", null, $activity );
+        }
+        $form->addDate( 'activity_date_low', ts( 'Activity Dates - From' ), false, array( 'formatType' => 'searchDate') );
+        $form->addDate( 'activity_date_high', ts( 'To' ), false, array( 'formatType' => 'searchDate') );
         
-        $comunicationMedium = CRM_Core_OptionGroup::values('communication_medium'); 
-        $form->add('select', 'activity_activitytag2_id',  ts( 'Activity Medium' ),  
-                   array( '' => ts( '- select -' ) ) + $comunicationMedium );
+        $activityRoles  = array( ts( 'With' ), ts( 'Created by' ), ts( 'Assigned to' ) );
+        $form->addRadio( 'activity_role', ts( 'Contact Role and Name' ), $activityRoles, null, '<br />');
+        $form->setDefaults( array( 'activity_role' => 0 ) );
         
-        $caseViolation = CRM_Core_OptionGroup::values('f1_case_violation');
-        $form->addElement('select', 'activity_activitytag3_id',  ts( 'Violation Type'  ),  
-                          array( '' => ts( '- select -' ) ) + $caseViolation);
-
-        $form->addElement( 'text', 'activity_subject', ts( 'Subject' ) );
-        $form->addElement( 'text', 'activity_details', ts( 'Content' ) );
-    
-        $form->addElement('date', 'activity_start_date_low', ts('Start Date - From'), CRM_Core_SelectValues::date('relative')); 
-        $form->addRule('activity_start_date_low', ts('Select a valid date.'), 'qfDate'); 
+        $form->addElement( 'text', 'activity_target_name', ts( 'Contact Name' ), CRM_Core_DAO::getAttribute( 'CRM_Contact_DAO_Contact', 'sort_name' ) );
         
-        $form->addElement('date', 'activity_start_date_high', ts('To'), CRM_Core_SelectValues::date('relative')); 
-        $form->addRule('activity_start_date_high', ts('Select a valid date.'), 'qfDate'); 
-
-        $form->assign( 'validCaseActivity', true );
+        $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
+        foreach ( $activityStatus as $activityStatusID => $activityStatusName ) {
+            $activity_status[] = HTML_QuickForm::createElement( 'checkbox', $activityStatusID, null, $activityStatusName );
+        }
+        $form->addGroup( $activity_status, 'activity_status', ts( 'Activity Status' ) );
+        $form->setDefaults( array( 'activity_status[1]' => 1, 'activity_status[2]' => 1 ) );
+        $form->addElement( 'text', 'activity_subject', ts( 'Subject' ), CRM_Core_DAO::getAttribute( 'CRM_Contact_DAO_Contact', 'sort_name') );
+        $form->addElement( 'checkbox', 'activity_test', ts( 'Find Test Activities?' ) );
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $extends = array( 'Activity' );
+        $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( null, true, $extends );
+        if ( $groupDetails ) {
+            require_once 'CRM/Core/BAO/CustomField.php';
+            $form->assign( 'activityGroupTree', $groupDetails );
+            foreach ( $groupDetails as $group ) {
+                foreach ( $group['fields'] as $field ) {
+                    $fieldId = $field['id'];               
+                    $elementName = 'custom_' . $fieldId;
+                    CRM_Core_BAO_CustomField::addQuickFormElement( $form, $elementName, $fieldId, false, false, true );
+                }
+            }
+        }
     }
 
     static function addShowHide( &$showHide ) 

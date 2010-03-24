@@ -233,59 +233,8 @@ class CRM_Contact_Form_Search_Criteria {
     static function activity( &$form ) 
     {
         $form->add( 'hidden', 'hidden_activity', 1 );
-
-        $activityOptions = CRM_Core_PseudoConstant::activityType( true, true );
-        asort( $activityOptions );
-
-        // textbox for Activity Type
-        $form->_activityType =
-            array( ''   => ' - select activity - ' ) + $activityOptions;
-           
-        
-        $form->add('select', 'activity_type_id', ts('Activity Type'),
-                   $form->_activityType,
-                   false);
-
-        $config = CRM_Core_Config::singleton( );
-
-        $form->addDate( 'activity_date_low', ts('Activity Dates - From'), false, array( 'formatType' => 'searchDate') );
-        $form->addDate( 'activity_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
-        
-        $activityRoles  = array( ts('With'), ts('Created by'), ts('Assigned to') );
-        $form->addRadio( 'activity_role', ts( 'Contact Role and Name' ), $activityRoles, null, '<br />');
-        $form->setDefaults(array('activity_role' => 0));
-        
-        $form->addElement('text', 'activity_target_name', ts('Contact Name'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name') );
-       
-        $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
-        foreach ($activityStatus as $activityStatusID => $activityStatusName) {
-            $activity_status[] = HTML_QuickForm::createElement('checkbox', $activityStatusID, null, $activityStatusName);
-        }
-        $form->addGroup($activity_status, 'activity_status', ts('Activity Status'));
-        $form->setDefaults(array('activity_status[1]' => 1, 'activity_status[2]' => 1));
-
-        $form->addElement('text', 'activity_subject', ts('Subject'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name'));
-
-        $form->addElement('checkbox', 'activity_test', ts('Find Test Activities?'));
-
-        // add all the custom  searchable fields
-        require_once 'CRM/Core/BAO/CustomGroup.php';
-        $activity = array( 'Activity' );
-        $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( null, true, $activity );
-        if ( $groupDetails ) {
-            require_once 'CRM/Core/BAO/CustomField.php';
-            $form->assign('activityGroupTree', $groupDetails);
-            foreach ($groupDetails as $group) {
-                foreach ($group['fields'] as $field) {
-                    $fieldId = $field['id'];                
-                    $elementName = 'custom_' . $fieldId;
-                    CRM_Core_BAO_CustomField::addQuickFormElement( $form,
-                                                                   $elementName,
-                                                                   $fieldId,
-                                                                   false, false, true );
-                }
-            }
-        }
+        require_once 'CRM/Activity/BAO/Query.php';
+        CRM_Activity_BAO_Query::buildSearchForm( $form );
     }
 
     static function changeLog( &$form ) {
