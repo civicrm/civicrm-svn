@@ -146,6 +146,23 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
            $accessHidden = true;
        }
        $this->assign( 'accessHidden', $accessHidden );
+       require_once 'CRM/Core/BAO/Tag.php';
+       require_once 'CRM/Core/OptionGroup.php';
+       $tag = new CRM_Core_BAO_Tag();
+       $tag->find();
+       while( $tag->fetch( ) ) {
+           $used =array( );
+           if ( $tag->used_for ) {
+               $used = explode( ",", $tag->used_for );
+           }
+          foreach( $used as $key => $value ) {
+              $used[$key] =  CRM_Core_OptionGroup::optionLabel( 'tag_used_for' ,$value );
+          }
+          if( !empty( $used ) ){
+                $usedFor[$tag->id] = implode(",",$used );      
+            }
+       }
+       $this->assign( 'usefor' ,$usedFor);
        parent::browse( $action, $sort );
    }
 }

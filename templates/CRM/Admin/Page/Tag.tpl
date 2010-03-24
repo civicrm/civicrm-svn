@@ -41,9 +41,10 @@
 	    <thead>
         <tr>
 	        <th id="sortable">{ts}Tag{/ts}</th>
-            <th>{ts}ID{/ts}</th>
+                <th>{ts}ID{/ts}</th>
 	        <th id="nosort">{ts}Description{/ts}</th>
 	        <th>{ts}Parent ID{/ts}</th>
+		<th>{ts}Used For{/ts}</th>
                 {if $accessHidden}
 		    <th>{ts}Hidden?{/ts}</th>
 		{/if}
@@ -51,13 +52,14 @@
 	        <th></th>
         </tr>
         </thead>
-        {foreach from=$rows item=row}
+        {foreach from=$rows item=row key=id }
 	{if !$row.is_hidden or ( $row.is_hidden && $accessHidden )  }
         <tr class="{cycle values="odd-row,even-row"} {$row.class}">
             <td>{$row.name}</td>
             <td>{$row.id}</td>	
             <td>{$row.description} </td>
             <td>{$row.parent_id}</td>
+	    <td>{if $usefor[$id]}{$usefor[$id]}{else}&nbsp;{/if}</td>
             {if $accessHidden}
                 <td>{if $row.is_hidden}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Hidden{/ts}" />{/if}</td>
             {/if}

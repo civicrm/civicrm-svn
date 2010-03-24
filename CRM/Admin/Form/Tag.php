@@ -88,7 +88,12 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             $this->add( 'select', 'parent_id', ts('Parent Tag'), $allTag );
             
             $this->add( 'checkbox', 'is_reserved', ts('Reserved?') );
-
+            require_once 'CRM/Core/OptionGroup.php';
+            
+            $usedFor = $this->add('select', 'used_for', ts('Used For'), 
+                                  array ('' => '- ' . ts('select') . ' -') +  
+                                  CRM_Core_OptionGroup::values('tag_used_for') );
+            $usedFor->setMultiple( true );
             $accessHidden = false;
             if ( CRM_Core_Permission::check('access hidden tags') ) {
                 $is_hidden =& $this->add( 'checkbox', 'is_hidden', ts('Hidden?') );
@@ -96,6 +101,8 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
                 if ( $this->_id &&
                      CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'parent_id' ) ) {
                         $is_hidden->freeze();
+                        $usedFor->freeze();
+                        
                 }
             }
             $this->assign( 'accessHidden', $accessHidden );
@@ -118,19 +125,24 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
         // store the submitted values in an array
         $params = $this->exportValues();
         $ids['tag'] = $this->_id;
+        $params['used_for'] = implode( "," , $params['used_for'] );
         
         if ( !empty($params['parent_id']) ) {
             $hidden = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $params['parent_id'] , 'is_hidden' ); 
+            $usedFor =  CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $params['parent_id'] , 'used_for' );
+            $params['used_for']  = $usedFor;
             $params['is_hidden'] = $hidden? 1 : 0;
         } else {
             $params['is_hidden'] = isset($params['is_hidden'])? 1 : 0;
+            
         }
         
         // update all childs is_hidden field
         if ( $this->_id ) {
-            CRM_Core_DAO::executeQuery( "UPDATE civicrm_tag SET is_hidden= %1 WHERE parent_id = %2", 
+            CRM_Core_DAO::executeQuery( "UPDATE civicrm_tag SET is_hidden= %1,used_for=%2 WHERE parent_id = %3", 
                                         array( 1 => array( $params['is_hidden'], 'Integer' ),
-                                               2 => array( $this->_id , 'Integer' ) ) );
+                                               2 => array( $params['used_for'], 'String' ),
+                                               3 => array( $this->_id , 'Integer' ) ) );
         }
 
         if ($this->_action == CRM_Core_Action::DELETE) {
