@@ -28,11 +28,8 @@
    by button and name. crmBtnType grabs type keyword from button name (e.g. 'upload', 'next', 'back', 'cancel') so
    types of buttons can be styled differently via css. *}
    
-{counter start=0 assign='cnt'}   
 {foreach from=$form.buttons item=button key=key name=btns}
     {if $key|substring:0:4 EQ '_qf_'}
         <span class="crm-button crm-button-type-{$key|crmBtnType} crm-button{$key}">{$form.buttons.$key.html}</span>
-        {$form.buttons.separator.$cnt}
-        {counter}
     {/if}
 {/foreach}
