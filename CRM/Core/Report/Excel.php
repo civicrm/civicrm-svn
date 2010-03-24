@@ -95,7 +95,7 @@ class CRM_Core_Report_Excel {
                 } else if ($value == '0' || $value != '') {
                     // loic1 : always enclose fields
                     //$value = ereg_replace("\015(\012)?", "\012", $value);
-                    $value = preg_replace("/\015(\012)?", "\012", $value);
+                    $value = preg_replace("/\015(\012)?/", "\012", $value);
                     if ($enclosed == '') {
                         $schema_insert .= $value;
                     } else {
