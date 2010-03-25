@@ -192,6 +192,24 @@ class CRM_Contact_Form_Search_Criteria {
             $location_type[] = HTML_QuickForm::createElement('checkbox', $locationTypeID, null, $locationTypeName);
         }
         $form->addGroup($location_type, 'location_type', ts('Location Types'), '&nbsp;');
+
+        // custom data extending addresses -
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $extends = array( 'Address' );
+        $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( null, true, $extends );
+        if ( $groupDetails ) {
+            require_once 'CRM/Core/BAO/CustomField.php';
+            $form->assign('addressGroupTree', $groupDetails);
+            foreach ($groupDetails as $group) {
+                foreach ($group['fields'] as $field) {
+                    $elementName = 'custom_' . $field['id'];
+                    CRM_Core_BAO_CustomField::addQuickFormElement( $form,
+                                                                   $elementName,
+                                                                   $field['id'],
+                                                                   false, false, true );
+                }
+            }
+        }
     }
 
     static function activity( &$form ) 
