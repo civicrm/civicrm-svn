@@ -173,8 +173,13 @@ class CRM_Case_Form_Activity_OpenCase
         if ( CRM_Utils_Array::value( 'contact_select_id', $params ) ) {
             $params['contact_id'] = CRM_Utils_Array::value( 'contact_select_id', $params );
             $form->_currentlyViewedContactId = $params['contact_id'];
+        } else {
+            if( $form->_allowMultiClient ) {
+                $clients = explode( ',', $params['contact'] );
+                $form->_currentlyViewedContactId = $clients[0];
+            }
         }
-        
+
         // for open case start date should be set to current date
         $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'], date('Hi') );
         require_once 'CRM/Case/PseudoConstant.php';
