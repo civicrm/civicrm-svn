@@ -227,9 +227,17 @@ class CRM_Case_Form_Activity_OpenCase
         if ( $form->_context == 'caseActivity' ) {
             return;
         }
+
+
+        require_once 'CRM/Case/XMLProcessor/Process.php';
+        $xmlProcessorProcess = new CRM_Case_XMLProcessor_Process( );
+        $isMultiClient = $xmlProcessorProcess->getAllowMultipleCaseClients( );
+
+        if ( !$isMultiClient && !$form->_currentlyViewedContactId ) {
+            CRM_Core_Error::fatal('Required parameter missing for OpenCase - end post processing');
+        }
        
-        if (!$form->_currentlyViewedContactId   ||
-            !$form->_currentUserId        ||
+        if (!$form->_currentUserId        ||
             !$params['case_id'] ||
             !$params['case_type']
             ) {
@@ -237,14 +245,28 @@ class CRM_Case_Form_Activity_OpenCase
         }
 
         // 1. create case-contact
-        $contactParams = array('case_id'    => $params['case_id'],
-                               'contact_id' => $form->_currentlyViewedContactId
-                               );
-        CRM_Case_BAO_Case::addCaseToContact( $contactParams );
+        if( $isMultiClient ) {
+            $client = explode( ',', $params['contact'] );
+            foreach( $client as $key => $cliId ) {
+                $contactParams = array('case_id'    => $params['case_id'],
+                                       'contact_id' => $cliId
+                                       );
+                CRM_Case_BAO_Case::addCaseToContact( $contactParams );
+            }
+        } else {
+            $contactParams = array('case_id'    => $params['case_id'],
+                                   'contact_id' => $form->_currentlyViewedContactId
+                                   );
+            CRM_Case_BAO_Case::addCaseToContact( $contactParams );
+            $client = $form->_currentlyViewedContactId;
+        }
+
+
     
         // 2. initiate xml processor
         $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
-        $xmlProcessorParams = array( 'clientID'           => $form->_currentlyViewedContactId,
+
+        $xmlProcessorParams = array( 'clientID'           => $client,
                                      'creatorID'          => $form->_currentUserId,
                                      'standardTimeline'   => 1,
                                      'activityTypeName'   => 'Open Case',

@@ -51,6 +51,10 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
             return false;
         }
 
+        require_once 'CRM/Case/XMLProcessor/Process.php';
+        $xmlProcessorProcess = new CRM_Case_XMLProcessor_Process( );
+        $this->_isMultiClient = $xmlProcessorProcess->getAllowMultipleCaseClients( );
+
         $this->process( $xml, $params );
     }
 
@@ -77,6 +81,7 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
 
     function process( $xml,
                       &$params ) {
+                      
         $standardTimeline = CRM_Utils_Array::value( 'standardTimeline', $params );
         $activitySetName  = CRM_Utils_Array::value( 'activitySetName' , $params );
         $activityTypeName = CRM_Utils_Array::value( 'activityTypeName', $params );
@@ -180,16 +185,26 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
             return false;
         }
 
-        $relationshipParams = array( 'relationship_type_id' => $relationshipTypeID,
-                                     'contact_id_a'         => $params['clientID'],
-                                     'contact_id_b'         => $params['creatorID'],
-                                     'is_active'            => 1,
-                                     'case_id'              => $params['caseID'],
-                                     'start_date'           => date("Ymd") );
+//        CRM_Core_Error::debug( 'w', $params );
+
+        if( $this->_isMultiClient ) {
+            $client = $params['clientID'];
+        } else {
+            $client = array( 1 => $params['clientID'] );
+        }
+
+        foreach( $client as $key => $clientId ) {
+            $relationshipParams = array( 'relationship_type_id' => $relationshipTypeID,
+                                         'contact_id_a'         => $clientId,
+                                         'contact_id_b'         => $params['creatorID'],
+                                         'is_active'            => 1,
+                                         'case_id'              => $params['caseID'],
+                                         'start_date'           => date("Ymd") );
         
-        if ( ! $this->createRelationship( $relationshipParams ) ) {
-            CRM_Core_Error::fatal( );
-            return false;
+            if ( ! $this->createRelationship( $relationshipParams ) ) {
+                CRM_Core_Error::fatal( );
+                return false;
+            }
         }
         return true;
     }
@@ -267,7 +282,16 @@ AND        a.activity_type_id  = %2
 AND       ca.case_id = %3
 AND        a.is_deleted = 0
 ";
-        $sqlParams   = array( 1 => array( $params['clientID']      , 'Integer' ),
+
+        if( $this->_isMultiClient ) {
+            $client = $params['clientID'][0];
+        } else {
+            $client = $params['clientID'];
+        }
+
+
+
+        $sqlParams   = array( 1 => array( $client                  , 'Integer' ),
                               2 => array( $params['activityTypeID'], 'Integer' ),
                               3 => array( $params['caseID']        , 'Integer' ) );
         $count       = CRM_Core_DAO::singleValueQuery( $query, $sqlParams );
@@ -301,6 +325,12 @@ AND        a.is_deleted = 0
             $statusName = 'Scheduled';
         }
 
+        if( $this->_isMultiClient ) {
+            $client = $params['clientID'];
+        } else {
+            $client = array( 1 => $params['clientID'] );
+        }
+
         require_once 'CRM/Core/OptionGroup.php';
         if ( $activityTypeName == 'Open Case' ) {
             $activityParams = array( 'activity_type_id'    => $activityTypeID,
@@ -311,7 +341,7 @@ AND        a.is_deleted = 0
                                      'status_id'           => CRM_Core_OptionGroup::getValue( 'activity_status',
                                                                                               $statusName,
                                                                                               'name' ),
-                                     'target_contact_id'   => $params['clientID'],
+                                     'target_contact_id'   => $client,
                                      'medium_id'           => CRM_Utils_Array::value('medium_id', $params),
                                      'location'            => CRM_Utils_Array::value('location',  $params),
                                      'details'             => CRM_Utils_Array::value('details',   $params),
@@ -325,7 +355,7 @@ AND        a.is_deleted = 0
                                      'status_id'           => CRM_Core_OptionGroup::getValue( 'activity_status',
                                                                                             $statusName,
                                                                                             'name' ),
-                                     'target_contact_id'   => $params['clientID'],
+                                     'target_contact_id'   => $client
                                     );
         }
         
