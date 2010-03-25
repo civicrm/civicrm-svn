@@ -1948,7 +1948,7 @@ div.grippie {
 #crm-container div#printer-friendly {
  float: right;
  position:relative;
- margin: -24px 0px 0px 0px;
+ margin: 0px 0px 0px 0px;
 }
 
 #crm-container .order-icon {
@@ -2037,10 +2037,11 @@ div.grippie {
 
 .ac_results ul li {background-image:url('');}
 
+.ui-icon {background-image: url("../i/icons/jquery-ui-52534D.png")}
 .icon { 
 	height:16px;
 	width:16px;
-	background:transparent url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png") no-repeat top right;
+	background:transparent url("../i/icons/jquery-ui-52534D.png") no-repeat top right;
 	float:left;
 	}
 
@@ -2050,20 +2051,20 @@ div.grippie {
 
 .light-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png")}
 .dark-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png")}
-.red-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_cd0a0a_256x240.png")}
+.red-icon {background-image:url("../i/icons/jquery-ui-8A1F11.png")}
 .blue-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_2e83ff_256x240.png")}
 
 .edit-icon { background-position: -66px -114px;}
-	.button:hover .edit-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png"); }
+	.button:hover .edit-icon {background-image:url("../i/icons/jquery-ui-b0d730.png"); }
 		
 .delete-icon { background-position: -179px -99px;}
 	.button:hover .delete-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_cd0a0a_256x240.png");}
 
 .dashboard-icon { background-position: -193px -130px; }
-	.button:hover .dashboard-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png");}
+	.button:hover .dashboard-icon {background-image:url("../i/icons/jquery-ui-b0d730.png"); }
 
 .user-record-icon { background-position:-145px -99px; }
-    .button:hover .user-record-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_888888_256x240.png");}
+    .button:hover .user-record-icon {background-image:url("../i/icons/jquery-ui-b0d730.png"); }
 
 .inform-icon { background-position: -16px -144px; }
 
@@ -2134,9 +2135,13 @@ div.grippie {
 	background-position: -32px -16px;
 	}
 
+.crm-accordion-wrapper .crm-accordion-header .crm-accordion-pointer {
+	background-image:url("../i/icons/jquery-ui-F5F6F1.png")
+	}
 
 .crm-accordion-wrapper .crm-accordion-header-hover .crm-accordion-pointer {
-	background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png")
+	background-image:url("../i/icons/jquery-ui-FFFFFF.png");
+	color: #FFF;
 	}
 
 .crm-accordion-hasContent .crm-accordion-header {
@@ -2226,7 +2231,7 @@ div.helpicon {
 	display     : inline;
 	cursor      : pointer;
 	background-position:-16px -144px;
-	background-image:url(../packages/jquery/themes/smoothness/images/ui-icons_222222_256x240.png);
+	background-image:url(../i/icons/jquery-ui-52534D.png);
 	background-color:transparent;
 	width:16px;
 	height:16px;
@@ -2430,7 +2435,7 @@ tbody.scrollContent tr.alternateRow {
 
 .crm-accordion-header {
 	background-color:#6D6D6D;
-	color:#FFFFFF;
+	color:#F5F6F1;
 	}
 
 
