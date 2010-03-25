@@ -348,7 +348,7 @@ class CRM_Utils_Rule
             return true;
         }
 
-        return preg_match( '/(^\d+\.\d?\d?$)|(^\.\d\d?$)/', $value ) ? true : false;
+        return preg_match( '/(^-?\d+\.\d?\d?$)|(^-?\.\d\d?$)/', $value ) ? true : false;
     }
 
     static function moneySigned($value) 
