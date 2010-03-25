@@ -85,5 +85,64 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
 
    ALTER TABLE civicrm_line_item
    ADD `participant_count` int(10) unsigned default NULL COMMENT 'Number of Participants Per field.';
+   
+-- CRM-5970
+-- civicrm_entity_financial_trxn
+   CREATE TABLE `civicrm_entity_financial_trxn` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `entity_table` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
+  `entity_id` int(10) unsigned NOT NULL,
+  `financial_trxn_id` int(10) unsigned DEFAULT NULL,
+  `amount` decimal(20,2) NOT NULL COMMENT 'allocated amount of transaction to this entity',
+  PRIMARY KEY (`id`),
+  KEY `FK_civicrm_entity_financial_trxn_financial_trxn_id` (`financial_trxn_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- civicrm_financial_account
+   CREATE TABLE `civicrm_financial_account` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  `account_type_id` int(10) unsigned NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- Constraints for table `civicrm_entity_financial_trxn`
+   ALTER TABLE `civicrm_entity_financial_trxn`
+     ADD CONSTRAINT `FK_civicrm_entity_financial_trxn_financial_trxn_id` FOREIGN KEY (`financial_trxn_id`) REFERENCES `civicrm_financial_trxn` (`id`) ON DELETE SET NULL;
+  
+-- Insert financial_trxn_id.contribution_id values into new rows in civicrm_entity_financial_trxn to preserve existing linkages
+    INSERT INTO civicrm_entity_financial_trxn (financial_trxn_id, amount, entity_id, entity_table)
+    SELECT id, total_amount, contribution_id, 'civicrm_contribution'
+    FROM   civicrm_financial_trxn ft
+    ON DUPLICATE KEY UPDATE civicrm_entity_financial_trxn.entity_id = ft.contribution_id
+
+-- ALTER civicrm_financial_trxn
+   ALTER TABLE `civicrm_financial_trxn` 
+       DROP FOREIGN KEY `FK_civicrm_financial_trxn_contribution_id`  ;
+   ALTER TABLE `civicrm_financial_trxn` 
+       DROP `contribution_id`;
+   ALTER TABLE `civicrm_financial_trxn`
+       ADD `from_account_id` INT( 10 ) NULL,
+       ADD `to_account_id` INT( 10 ) NULL;
+   ALTER TABLE `civicrm_financial_trxn`
+       ADD FOREIGN KEY `FK_civicrm_financial_trxn_from_account_id` ( `from_account_id` ) REFERENCES `civicrm_financial_account`  (`id`) ,      
+       ADD FOREIGN KEY `FK_civicrm_financial_trxn_to_account_id` (`to_account_id`) REFERENCES `civicrm_financial_account`(`id`);
+   
+-- INSERT civicrm_option_group
+   INSERT INTO 
+   `civicrm_option_group` (`name`, `description`, `is_reserved`, `is_active`) 
+VALUES 
+    ('account_type', '{ts escape="sql"}Account type{/ts}', 0, 1);
+   
+-- INSERT Account types
+   SELECT @option_group_id_accTp          := max(id) from civicrm_option_group where name = 'account_type';
+   INSERT INTO 
+   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+   VALUES
+   (@option_group_id_accTp, '{ts escape="sql"}Asset{/ts}', 1, 'Asset',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_accTp, '{ts escape="sql"}Liability{/ts}', 2, 'Liability',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_accTp, '{ts escape="sql"}Income{/ts}', 3, 'Income',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_accTp, '{ts escape="sql"}Expense{/ts}', 4, 'Expense',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL);
+
 
    {include file='../CRM/Upgrade/3.2.alpha1.msg_template/civicrm_msg_template.tpl'}

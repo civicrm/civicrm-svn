@@ -560,6 +560,11 @@ GROUP BY currency
         // cleanup line items.
         require_once 'CRM/Price/BAO/LineItem.php';
         CRM_Price_BAO_LineItem::deleteLineItems( $id, 'civicrm_contribution' );
+
+        // delete any related entity_financial_trxn and financial_trxn records.
+        require_once 'CRM/Core/BAO/FinancialTrxn.php';
+        CRM_Core_BAO_FinancialTrxn::deleteFinancialTrxn($id, 'civicrm_contribution');
+        
         
         $dao     = new CRM_Contribute_DAO_Contribution( );
         $dao->id = $id;

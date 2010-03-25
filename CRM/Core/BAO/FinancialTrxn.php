@@ -122,5 +122,36 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Core_DAO_FinancialTrxn
         return $ids;    
     }
 
+    /**                                                           
+     * Delete financial transaction
+     * 
+     * @return true on success, false otherwise
+     * @access public 
+     * @static 
+     */ 
+     static function deleteFinancialTrxn($entity_id, $entity_table = 'civicrm_contribution') 
+     {
+        $fids = self::getFinancialTrxnIds( $entity_id, $entity_table);
+       
+        if ( $fids['financialTrxnId'] ) {
+             // delete enity financial transaction before financial transaction since financial_trxn_id will be set to null if financial transaction deleted first
+            $query = "
+                DELETE FROM civicrm_entity_financial_trxn
+	            WHERE financial_trxn_id = %1"
+            ;
+            CRM_Core_DAO::executeQuery( $query, array( 1 => array( $fids['financialTrxnId'], 'Integer' ) ) );
+            
+            // delete financial transaction
+	        $query = "
+	            DELETE FROM civicrm_financial_trxn
+                WHERE id = %1"
+	        ;
+	        CRM_Core_DAO::executeQuery( $query, array( 1 => array( $fids['financialTrxnId'], 'Integer') ) );
+	        
+	        return true;  
+	    } else {
+	        return false;	        
+	    }
+    }
 
 }
