@@ -439,7 +439,15 @@ ORDER BY parent_id, weight";
                 return false;
             }
         }
-
+        
+        $config = CRM_Core_Config::singleton( );
+        if ( $menuName == 'Other' && 
+             !in_array( 'CiviCase', $config->enableComponents ) &&
+             !in_array( 'CiviGrant', $config->enableComponents ) ) {
+            $skipMenuItems[] = $navID;
+            return false;
+        }
+        
         $makeLink = false;
         if ( isset( $url ) && $url) {
             if ( substr( $url, 0, 4 ) === 'http' ) {
@@ -457,7 +465,6 @@ ORDER BY parent_id, weight";
         
         if ( isset( $permission) && $permission ) {
             $permissions = explode(',', $permission ); 
-            $config  = CRM_Core_Config::singleton( );
             
             $hasPermission = false;    
             foreach ( $permissions as $key ) {
@@ -471,6 +478,7 @@ ORDER BY parent_id, weight";
                         $componentName = null;
                     }
                 }
+                if ( !$componentName && $menuName == 'Cases' ) $componentName = 'CiviCase';
                 
                 if ( $componentName ) {
                     if ( !in_array( $componentName, $config->enableComponents ) || 
