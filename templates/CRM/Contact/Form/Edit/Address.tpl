@@ -75,22 +75,18 @@
               {include file=CRM/Contact/Form/Edit/Address/$addressElement.tpl}
          {/foreach}
          {include file=CRM/Contact/Form/Edit/Address/geo_code.tpl}
-	 
-	 {*FIXME: below needs to be formatted better, CRM-5961 *}
-	 {foreach from=$address_groupTree.$blockId item=cd_edit key=group_id}
-             {foreach from=$cd_edit.fields item=element key=field_id}
-                 {include file="CRM/Contact/Form/Edit/Address/CustomField.tpl"}
-             {/foreach}
-         {/foreach}
      </table>
 
      </td></tr>
-     {if $className eq 'CRM_Contact_Form_Contact'}
-     <tr id="addMoreAddress{$blockId}" >
-        <td><a href="#" onclick="buildAdditionalBlocks( 'Address', '{$className}' );return false;">{ts}add address{/ts}</a></td>
-     </tr>
-     {/if}
   </table>
+
+  {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
+
+  {if $className eq 'CRM_Contact_Form_Contact'}
+      <div id="addMoreAddress{$blockId}" >
+          <a href="#" onclick="buildAdditionalBlocks( 'Address', '{$className}' );return false;">{ts}add address{/ts}</a>
+      </div>
+  {/if}
 
 {if $title and $className eq 'CRM_Contact_Form_Contact'}
 </div>
