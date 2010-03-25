@@ -223,8 +223,9 @@
                                 </tr>
                             </table>
 			    {foreach from=$add.custom item=customGroup key=cgId}
+                            {assign var="isAddressCustomPresent" value=1}
 			        {foreach from=$customGroup item=customValue key=cvId}
-			            <div class="crm-accordion-wrapper crm-{$customValue.title}-accordion crm-accordion-closed">
+			            <div id="address_custom_{$cgId}_{$locationIndex}" class="crm-accordion-wrapper crm-address-custom-{$cgId}-{$locationIndex}-accordion crm-accordion-closed">
 			                <div class="crm-accordion-header">
 			                    <div class="icon crm-accordion-pointer"></div>
 				            {$customValue.title}
@@ -236,7 +237,14 @@
 	                  	                {/foreach}
 			                    </table>
 			                </div>
-			            </div> 
+			            </div>
+                                    <script type="text/javascript">
+                                        {if $customValue.collapse_display eq 0 }
+                                            cj('#address_custom_{$cgId}_{$locationIndex}').removeClass('crm-accordion-open').addClass('crm-accordion-closed');
+                                        {else}
+                                            cj('#address_custom_{$cgId}_{$locationIndex}').removeClass('crm-accordion-closed').addClass('crm-accordion-open');
+                                        {/if}
+                                    </script>
                                 {/foreach}
                             {/foreach}
                         </div>
@@ -333,4 +341,14 @@
     });
     {/literal}
     </script>
+
+    {if $isAddressCustomPresent}
+        {literal}
+        <script type="text/javascript">
+            cj(function() {
+                cj().crmaccordions(); 
+            });
+        </script>
+        {/literal}
+    {/if}
 {/if}
