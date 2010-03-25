@@ -77,6 +77,7 @@ packages/jquery/plugins/jquery.FormNavigate.js
 
 js/jquery/jquery.crmaccordions.js
 js/jquery/jquery.crmasmselect.js
+js/jquery/jquery.crmtooltip.js
 js/dd_roundies.js
 js/style.js
 

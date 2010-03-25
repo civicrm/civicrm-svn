@@ -84,6 +84,8 @@
 
 <script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmaccordions.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmasmselect.js"></script>
+<script type="text/javascript" src="{$config->resourceBase}js/jquery/jquery.crmtooltip.js"></script>
+
 <script type="text/javascript" src="{$config->resourceBase}js/dd_roundies.js"></script>
 <script type="text/javascript" src="{$config->resourceBase}js/style.js"></script>
 

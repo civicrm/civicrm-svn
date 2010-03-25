@@ -522,7 +522,7 @@ div.spacer,
 /* messages and status */
 #crm-container .messages {
   	margin: 1.0em 0em 1.0em;
-  	border: 1px solid #CCCCCC;
+  	border: none;
 	font-weight: normal;
 	}	
 	#crm-container .messages table, #crm-container-snippet .messages table {width: auto;}
@@ -696,13 +696,23 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 	}
 #crm-container .tree-default li span.clicked { padding:0px 3px 0px 20px; }
 #crm-container .tree-default li a.loading,
-#crm-container .crm-loading-element { background-image:url("../packages/jquery/plugins/themes/default/throbber.gif"); }
+#crm-container .crm-loading-element { background-image:url("../i/loading.gif"); }
+
+
 
 #crm-container .crm-loading-element  {
 	padding-left:30px;
 	height:30px;
-	background: transparent url("../packages/jquery/plugins/themes/default/throbber.gif") no-repeat 4px 0px;
+	background: transparent url("../i/loading.gif") no-repeat 0px 0px;
 	}
+
+#crm-container .crm-tooltip .crm-loading-element { 
+	background-image: url("../i/loading-2f2f2e.gif");
+	height:16px;
+	width:16px;
+	padding: 0px;
+	}
+
 
 /* CONTEXT MENU */
 .tree-default-context { 
@@ -936,11 +946,30 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 
 /* search page styles */
 
-.crm-search-tasks,
-.crm-search-results {
+.crm-search-tasks {
 	margin-bottom:4px;
 	padding:4px;
 	}
+
+.crm-search-results {
+	margin-bottom:4px;
+	padding:0px;
+	}
+
+
+#crm-container #search-status {
+	border:none;
+	font-size:12px;
+	font-weight:normal;
+	}
+#crm-container .crm-pager {
+	border:none;
+	background-color:#F5F6F1;
+	position: relative;
+  	height: 25px;
+  	padding-top: 5px;
+	}
+	
 
 #crm-container #search-status ul {
  margin: 0em 0em 0em -2.0em;
@@ -953,14 +982,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
  list-style-position: inside;
 }
 
-.crm-pager {
-  	border: 1px solid #CCC; 
-  	background-color: #E6E6E6;
-  	color: #000000;
-  	position: relative;
-  	height: 25px;
-  	padding-top: 5px;
-	}
 
 .crm-pager a {
   /*color: #FFFFFF;*/
@@ -981,9 +1002,16 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
   padding: 5px;
   font-size: 0.95em;
 }
-#crm-container .section-hidden-border {
-  border-bottom: 1px solid #B0B0B0;  
-}
+#crm-container form .section-hidden-border {
+	background-color:#5c5c59;
+	border:medium none;
+	color:#FFFFFF;
+	margin-left:5px;
+	font-size: 12px;
+	font-family: Verdana;
+	padding:2px 0 0 0px;
+	}
+	
 #crm-container .section-shown { 
   padding: 0px 5px;
 }
@@ -1065,7 +1093,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 
 		#crm-container div#alpha-filter {
 			background-color:#CDE8FE;
-			margin:10px 0 5px;
+			margin:4px 0 5px;
 			padding:2px;
 			text-align:left;
 			}
@@ -1518,32 +1546,30 @@ table.campaign td,
 	}
 	#crm-container .action-item-first { border-left:none; /* last action item should not have right hand border */}
 
-#crm-container #panel, 
 #crm-container .panel {
   	display  : none;
   	z-index  : 1;
   	position : absolute;
-  	border   : 1px solid #CCCCCC;
   	border-bottom:0px;
-  	background-color: #EEEEEE;
-	
+  	background:transparent url(../i/dropdown-pointer.gif) no-repeat scroll 150px 1px;
+	text-align:left;
+	padding-top:5px;
+	margin: 0px;
+	width:180px;
 	}
 
 #crm-container td ul.panel {
-  margin  :0px;
-  padding : 0;
   top:15px;
   right:0px;
 }
 
 #crm-container td ul.panel li {
-  margin: 0px;
-  padding: 0px;
-  list-style: none;
-  background-image: none;
-  border-bottom: 1px solid #CCCCCC;
-  width:auto;
-}
+  	margin: 0px;
+  	padding: 2px;
+  	list-style: none;
+  	background-image: none;
+  	width:auto;
+	}
 
 .btn-slide {
   	text-align: left;
@@ -1553,15 +1579,14 @@ table.campaign td,
   	position: relative;
   	padding:0px 14px 0 5px;
   	background: url("../i/TreePlus.gif") no-repeat right 1px;
-	border-left:1px solid #CCC;
+	border-left:none;
 	}
 
 #crm-container .panel li a {
   text-decoration: none;
   padding: 4px;
-  color: #333333;
   display: block;
-  border-right:none;
+  border:none;
 }
 
 #crm-container .panel li a:hover { 
@@ -1577,12 +1602,12 @@ table.campaign td,
 #crm-container .contextMenu {
   position   : absolute;
   z-index    : 9999;
-  border     : solid 1px #CCC;
-  background : #EEE;
-  padding    : 0px;
+  border     : none;
+  padding    : 5px 0 0 0px;
   margin     : 0px;
   display    : none;
   width      : 132px;
+  background:transparent url(../i/dropdown-pointer.gif) no-repeat scroll 10px 1px;
 }
 
 #squeeze .contextMenu {
@@ -1592,13 +1617,11 @@ table.campaign td,
 #crm-container .contextMenu li {
   background-image: none;
   list-style : none;
-  padding    : 0px;
+  padding    : 2px;
   margin     : 0px;
-  border-bottom: 1px solid #CCCCCC;
-}
+  }
 
 #crm-container .contextMenu a {
-  color               : #333;
   text-decoration     : none;
   display             : block;
   line-height         : 20px;
@@ -2279,16 +2302,38 @@ div#crm-toolTip {
 	z-index: 5;
 	}
 
-#crmToolTipWrapper {
+.crm-tooltip-wrapper {
 	position:absolute;
-	left:16px;
-	width:500px;
-	height:200px;
+	bottom:0px;
+	left:-36px;
 	overflow:hidden;
-	border:4px solid black;
 	z-index:1000;
-	background-color: black;
+	padding-bottom: 10px;
+	background: transparent url('../i/overlay-pointer.png') no-repeat bottom left;
 	}
+
+.crm-tooltip {
+	padding:14px;
+	background-color: #2f2f2e;
+	color:#FFF;
+	}
+	#crm-container .crm-tooltip table,
+	#crm-container .crm-tooltip table tr td {border:none;}
+	.crm-tooltip .crm-summary-group {
+		width:700px;
+		}
+	
+	#crm-container .crm-summary-group .section .label {
+		text-align: left;
+		width:40%;
+		font-size:11px;
+		color:#A7A7A7;
+		}
+	#crm-container .crm-summary-group .section .content {
+		margin-left:41%;
+		}
+
+
 
 /* Class for tokens and helpicon */
 .helpIcon {
@@ -2501,6 +2546,10 @@ tbody.scrollContent tr.alternateRow {
 
 
 /* rounded corners - we will call dd_roundies on all this */
+.crm-tooltip,
+#crm-container .crm-pager,
+#crm-container form .section-hidden-border,
+#crm-container #search-status,
 #crm-container .crm-form-block,
 #crm-container .crm-search-tasks,
 #crm-container div.form-item,
@@ -2533,6 +2582,19 @@ div#crm-toolTip
 	color: #FFF;
 	font-weight: normal;
 	}
+
+/* theming for panel and context menus */
+#crm-container td ul.panel li,
+#crm-container .contextMenu li {
+	background-color:#2F2F2E;
+	}
+
+#crm-container .panel li a, 
+#crm-container .contextMenu a,
+#crm-container .contextMenu a:link {
+	color:#2786C2;
+	}
+
 	
 /* Special styling for specific form buttons */
 #crm-container span.crm-button_qf_Main_upload input {

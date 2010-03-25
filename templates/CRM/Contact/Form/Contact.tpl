@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* This form is for Contact Add/Edit interface *}
+<div class="crm-form-block crm-search-form-block">
 {if $addBlock}
 {include file="CRM/Contact/Form/Edit/$blockName.tpl"}
 {else}
@@ -175,3 +176,5 @@ cj("input#current_employer").click( function( ) {
 {include file="CRM/common/formNavigate.tpl"}
 
 {/if}
+
+</div>

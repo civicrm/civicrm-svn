@@ -104,6 +104,14 @@
 {include file="CRM/common/footer.tpl"}
 {/if}
 
+{literal}
+<script type="text/javascript">
+cj(function() {
+   cj().crmtooltip(); 
+});
+</script>
+{/literal}
 {* We need to set jquery $ object back to $*}
 <script type="text/javascript">jQuery.noConflict(true);</script>
 </div> {* end crm-container div *}
+

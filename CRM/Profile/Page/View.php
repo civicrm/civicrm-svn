@@ -116,6 +116,14 @@ class CRM_Profile_Page_View extends CRM_Core_Page
                                                   "force=1" ) );
         }
         
+        
+        
+        $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'name' );
+        
+        if($name == 'summary_overlay') {
+        	$this->assign( 'overlayProfile', true );
+        	}
+        
         $this->assign( 'groupID', $this->_gid );
 
         $this->assign('profileGroups', $profileGroups);

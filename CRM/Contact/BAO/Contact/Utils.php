@@ -45,7 +45,7 @@ class CRM_Contact_BAO_Contact_Utils
      * @access public
      * @static
      */
-    static function getImage( $contactType, $urlOnly = false ) 
+    static function getImage( $contactType, $urlOnly = false, $contactId = null ) 
     {
         static $imageInfo = array( );
         if ( ! array_key_exists( $contactType, $imageInfo ) ) {
@@ -74,12 +74,23 @@ class CRM_Contact_BAO_Contact_Utils
                 } else {
                     $type = $typeInfo['name'];
                 }
+           		
+
                 $imageInfo[$contactType]['image'] = 
-                    "<div class=\"icon crm-icon {$type}-icon\"></div>";
+                 	"<div class=\"icon crm-icon {$type}-icon\"></div>";
                 $imageInfo[$contactType]['url']   = null;
             }
+        	
+        	
+        	
+
         }
-        return $urlOnly ? $imageInfo[$contactType]['url'] : $imageInfo[$contactType]['image'];
+        
+        $profileURL = CRM_Utils_System::url('civicrm/profile/view', 'reset=1&gid=7&id='.$contactId.'&snippet=4');
+        
+        $imageInfo[$contactType]['summary-link'] = '<a href="'.$profileURL.'" class="crm-summary-link">'.$imageInfo[$contactType]["image"].'</a>';
+        
+        return $urlOnly ? $imageInfo[$contactType]['url'] : $imageInfo[$contactType]['summary-link'];
     }
     
     /**
