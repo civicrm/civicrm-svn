@@ -586,6 +586,31 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     }
 
     /**
+     * clear leftover temporary tables
+     */
+    function clearTempTables( ) {
+        // CRM-5645
+        require_once 'CRM/Contact/DAO/Contact.php';
+        $dao = new CRM_Contact_DAO_Contact( );
+        $query = "
+ SELECT TABLE_NAME as import_table
+   FROM INFORMATION_SCHEMA.TABLES
+  WHERE TABLE_SCHEMA = %1 AND TABLE_NAME LIKE 'civicrm_import_job_%'";
+        $params = array( 1 => array( $dao->database(), 'String' ) );
+        $tableDAO = CRM_Core_DAO::executeQuery( $query, $params );
+        $importTables = array();
+        while ( $tableDAO->fetch() ) {
+            $importTables[] = $tableDAO->import_table;
+        }
+        if ( !empty( $importTables ) ) {
+                $importTable = implode(',', $importTables);
+                // drop leftover import temporary tables
+                CRM_Core_DAO::executeQuery( "DROP TABLE $importTable" );
+        }
+
+    }
+    
+    /**
      * function to check if running in upgrade mode
      */
     function isUpgradeMode( $path = null ) {

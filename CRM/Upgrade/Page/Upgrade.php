@@ -152,6 +152,9 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                 // clear db caching
                 $config->clearDBCache( );
 
+                // clear temporary tables
+                $config->clearTempTables( );
+                
                 // clean the session. Note: In case of standalone this makes the user logout. 
                 // So skip this step for standalone. 
                 if ( $config->userFramework !== 'Standalone' ) {
