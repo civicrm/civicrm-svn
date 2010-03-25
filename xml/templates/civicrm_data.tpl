@@ -271,6 +271,8 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Bulk Email{/ts}',                         20, 'Bulk Email',         NULL, 1, NULL, 20, '{ts escape="sql"}Bulk Email Sent.{/ts}',                                                    0, 1, 1, NULL, NULL),
    (@option_group_id_act, '{ts escape="sql"}Assign Case Role{/ts}',                   21, 'Assign Case Role', NULL,0, 0, 21, '', 0, 0, 1, @caseCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}Remove Case Role{/ts}',                   22, 'Remove Case Role', NULL,0, 0, 22, '', 0, 0, 1, @caseCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Change Case Tags{/ts}',                   23, 'Change Case Tags', NULL,0, 0, 23, '', 0, 1, 1, @caseCompId, NULL),
+
    (@option_group_id_gender, '{ts escape="sql"}Female{/ts}',      1, 'Female',      NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Male{/ts}',        2, 'Male',        NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Transgender{/ts}', 3, 'Transgender', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
