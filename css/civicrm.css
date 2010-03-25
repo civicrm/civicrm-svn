@@ -1979,7 +1979,7 @@ div.grippie {
 	}
 
 #crm-container .crm-button {
-	background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left top;
+	background:transparent url(../i/crm-button-dark-blue.gif) repeat-x scroll left top;
 	border:medium none;
 	cursor:pointer;
 	display:block;
@@ -1987,52 +1987,41 @@ div.grippie {
 	overflow:hidden;
 	text-shadow:0 1px 0 black;	
 	margin:0px 12px 0 0;
+	padding:0px 4px;
 	cursor: pointer;
 	}
-
 #crm-container .crm-button input  {
-	background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -25px;
+	background:none;
 	border:medium none;
-	color:#5c5c59;
+	color:#FFF;
 	cursor:pointer;
 	font-size:12px;
 	height:25px;
 	font-weight:normal;
-	margin:0 0 0 12px;
-	padding:2px 17px 4px 5px;
+	margin:0 0 0 0px;
+	padding:2px 8px 4px 8px;
 	}
-
-#crm-container .crm-button:hover {
-	background-position:transparent url(../i/crm-button.gif) no-repeat scroll left top;	
-	}
-
-#crm-container .crm-button:hover input {
-	background:transparent url(../i/crm-button.gif) no-repeat scroll right -75px;	
-	}
-
-#crm-container .crm-button-type-cancel input { color:#7a7a7a; }
-
-/* Buttons CSS */
+#crm-container .crm-button:hover { background-position:0px -25px; }
+#crm-container .crm-button-type-cancel input { color:#7fcdfe; }
 
 #crm-container a.button,
 #crm-container a.button:link {
-	background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left top;
+	background:transparent url(../i/crm-button-dark-blue.gif) repeat-x scroll left top;
     color: #FFF;
     display: block;
     float: left;
     font-size:12px;
     font-weight:normal;
-    height: 24px;
+    height: 25px;
     margin-right: 6px;
-    padding: 0 14px 0 4px; /* sliding doors padding */
+    padding: 4px;
     text-decoration: none;
 }
 
 #crm-container a.button span {
-	background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -25px;
     display: block;
     line-height: 14px;
-    padding: 5px 12px 5px 4px;    
+    padding: 5px;    
 } 
 
 .button .icon {
@@ -2293,7 +2282,7 @@ div#crm-toolTip {
 
 #crmToolTipWrapper {
 	position:absolute;
-	bottom:10px;
+	left:16px;
 	width:500px;
 	height:200px;
 	overflow:hidden;
@@ -2451,38 +2440,7 @@ tbody.scrollContent tr.alternateRow {
 	}
 
 
-/* buttons */
 
-/* blue theme buttons */
-/*
-#crm-container .crm-button,
-#crm-container .crm-button input { color:#32414f; }
-#crm-container .crm-button { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll left 0px;}
-#crm-container .crm-button input { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll right -25px; }
-#crm-container .crm-button:hover { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll left -50px; }
-#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll right -75px;	}
-#crm-container .crm-button-type-cancel input { color:#357bb7; }
-*/
-
-/* black theme buttons */
-/*
-#crm-container .crm-button,
-#crm-container .crm-button input { color:#FFF; }
-#crm-container .crm-button { background:transparent url(../i/crm-button-black.gif) no-repeat scroll left 0px;		 }
-#crm-container .crm-button input { background:transparent url(../i/crm-button-black.gif) no-repeat scroll right -25px;	 }
-#crm-container .crm-button:hover { background:transparent url(../i/crm-button-black.gif) no-repeat scroll left -50px;		 }
-#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-black.gif) no-repeat scroll right -75px;	 }
-#crm-container .crm-button-type-cancel input { color:#e0e0d4; }
-*/
-
-/* brown theme buttons */
-#crm-container .crm-button,
-#crm-container .crm-button input { color:#FFF; }
-#crm-container .crm-button { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left 0px;		 }
-#crm-container .crm-button input { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -25px;	 }
-#crm-container .crm-button:hover { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left -50px;		 }
-#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -75px;	 }
-#crm-container .crm-button-type-cancel input { color:#e0e0d4; }
 
 
 /* warning labels and messages */
@@ -2502,6 +2460,7 @@ tbody.scrollContent tr.alternateRow {
 
 
 /* rounded corners - we will call dd_roundies on all this */
+#crm-container .crm-button,
 #crm-container .crm-form-block,
 #crm-container .crm-search-tasks,
 #crm-container div.form-item,
