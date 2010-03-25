@@ -641,6 +641,7 @@ AND civicrm_activity.is_deleted = 0
 AND civicrm_case.is_deleted     = 0";
         
         if ( $type == 'upcoming' ) {
+            require_once 'CRM/Core/OptionGroup.php';
             $closedId    = CRM_Core_OptionGroup::getValue( 'case_status', 'Closed', 'name' );
             $condition .= "
 AND civicrm_case.status_id != $closedId";
@@ -1755,6 +1756,15 @@ WHERE civicrm_case.id = %2";
         if ( $excludeDeleted ) {
             $where[] =  ' ( ca.is_deleted = 0 OR ca.is_deleted IS NULL ) '; 
         }
+
+        //filter for permissioned cases.
+        $filterCases = array( );
+        $doFilterCases = false;
+        if ( !CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+            $doFilterCases = true;
+            $session  = CRM_Core_Session::singleton( );
+            $filterCases = CRM_Case_BAO_Case::getCases( false, $session->get( 'userID' ) );
+        }
         $whereClause = implode( ' AND ', $where );
         
         $limitClause = '';
@@ -1779,6 +1789,10 @@ INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_g
         $dao = CRM_Core_DAO::executeQuery( $query );
         $unclosedCases = array();
         while ( $dao->fetch() ) {
+            if ( $doFilterCases && 
+                 !array_key_exists( $dao->id, $filterCases ) ) {
+                continue;
+            }
             $unclosedCases[$dao->id] = array( 'sort_name'  => $dao->sort_name,
                                               'case_type'  => $dao->case_type,
                                               'contact_id' => $dao->contact_id,
@@ -1916,6 +1930,16 @@ INNER JOIN  civicrm_activity relAct           ON (relCaseAct.activity_id = relAc
             $whereClause .= " AND ( relCase.is_deleted = 0 OR relCase.is_deleted IS NULL )";
         }
         
+
+        //filter for permissioned cases.
+        $filterCases = array( );
+        $doFilterCases = false;
+        if ( !CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+            $doFilterCases = true;
+            $session  = CRM_Core_Session::singleton( );
+            $filterCases = CRM_Case_BAO_Case::getCases( false, $session->get( 'userID' ) );
+        }
+        
         //2. fetch the details of related cases.
         $query = "
     SELECT  relCase.id as id, 
@@ -1932,12 +1956,19 @@ INNER JOIN  civicrm_contact      client         ON ( client.id = relCaseContact.
         
         $dao = CRM_Core_DAO::executeQuery( $query );
         $contactViewUrl = CRM_Utils_System::url( "civicrm/contact/view", "reset=1&cid=" );
+        $hasViewContact = CRM_Core_Permission::giveMeAllACLs( );
         
         while ( $dao->fetch( ) ) {
-            $caseViewStr = "reset=1&id={$dao->id}&cid={$dao->client_id}&action=view&context=case&selectedChild=case";
-            $caseViewUrl = CRM_Utils_System::url( "civicrm/contact/view/case", $caseViewStr );
-            $clientView  = "<a href='{$contactViewUrl}{$dao->client_id}'>$dao->client_name</a>";
-            $caseView    = "<a href='{$caseViewUrl}'>". ts( 'View Case' ). "</a>";
+            $caseView = null;
+            if ( !$doFilterCases || array_key_exists( $dao->id, $filterCases ) ) {
+                $caseViewStr = "reset=1&id={$dao->id}&cid={$dao->client_id}&action=view&context=case&selectedChild=case";
+                $caseViewUrl = CRM_Utils_System::url( "civicrm/contact/view/case", $caseViewStr );
+                $caseView    = "<a href='{$caseViewUrl}'>". ts( 'View Case' ). "</a>";
+            }
+            $clientView = $dao->client_name;
+            if ( $hasViewContact ) {
+                $clientView  = "<a href='{$contactViewUrl}{$dao->client_id}'>$dao->client_name</a>";
+            }
             
             $relatedCases[$dao->id] = array( 'case_id'      => $dao->id,
                                              'case_type'    => $dao->case_type,

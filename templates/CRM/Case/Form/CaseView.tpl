@@ -127,12 +127,14 @@
 	   </td>
 	</tr>
 	{/if}
+	{if call_user_func(array('CRM_Core_Permission','giveMeAllACLs'))}
 	<tr>
 	   <td colspan='2'><a href="#" onClick='cj("#change_client").toggle( ); return false;'>{ts}Assign to Another Client{/ts}</a>	
 	   <span id='change_client' class='hide-block'>
 	   {$form.change_client_id.html|crmReplace:class:twenty}&nbsp;{$form._qf_CaseView_next_edit_client.html}</span>
 	   </td>
 	</tr>
+	{/if}
     </table>
 </fieldset>
 

@@ -102,7 +102,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         //validate case id.
         if ( !$this->_hasAccessToAllCases ) {
             $session  = CRM_Core_Session::singleton( );
-            $allCases = CRM_Case_BAO_Case::getCases( true, $session->get( 'userID' ) );
+            $allCases = CRM_Case_BAO_Case::getCases( false, $session->get( 'userID' ) );
             if ( !array_key_exists( $this->_caseID, $allCases ) ) {
                 CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
             }
