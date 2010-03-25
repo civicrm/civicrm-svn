@@ -2001,8 +2001,6 @@ div.grippie {
 	margin:0 0 0 0px;
 	padding:2px 8px 4px 8px;
 	}
-#crm-container .crm-button:hover { background-position:0px -25px; }
-#crm-container .crm-button-type-cancel input { color:#7fcdfe; }
 
 #crm-container a.button,
 #crm-container a.button:link {
@@ -2012,7 +2010,6 @@ div.grippie {
     float: left;
     font-size:12px;
     font-weight:normal;
-    height: 25px;
     margin-right: 6px;
     padding: 4px;
     text-decoration: none;
@@ -2021,7 +2018,7 @@ div.grippie {
 #crm-container a.button span {
     display: block;
     line-height: 14px;
-    padding: 5px;    
+    padding: 1px;    
 } 
 
 .button .icon {
@@ -2030,14 +2027,18 @@ div.grippie {
 
 #crm-container a.button:active {
     background-position: bottom right;
-    color: #000;
     outline: none; /* hide dotted outline in Firefox */
-}
+	}
 
 #crm-container a.button:active span {
-    background-position: bottom left;
     padding: 6px 0 4px 12px; /* push text down 1px */
-} 
+	} 
+
+
+#crm-container a.button:hover,	
+#crm-container .crm-button:hover { background-position:0px -25px; }
+#crm-container .crm-button-type-cancel input { color:#7fcdfe; }
+
 
 /* setup for icons */
 
@@ -2460,6 +2461,7 @@ tbody.scrollContent tr.alternateRow {
 
 
 /* rounded corners - we will call dd_roundies on all this */
+#crm-container a.button,
 #crm-container .crm-button,
 #crm-container .crm-form-block,
 #crm-container .crm-search-tasks,
