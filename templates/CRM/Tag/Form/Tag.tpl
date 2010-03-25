@@ -37,7 +37,8 @@
 </style>
 <script type="text/javascript">
 civicrm_ajaxURL="{crmURL p='civicrm/ajax/rest' h=0}";
-contactID={$contactId};
+entityID={$entityID};
+entityTable='{$entityTable}';
 var image = '<img alt="Hide" src="{$config->resourceBase}i/close.png" />';
 {literal}
 function hideStatus( ) {
@@ -70,11 +71,11 @@ function initTagTree() {
         //get current tag label
         var currentTagLabel = cj("#tagLabel_" + tagid ).text( );
         if (this.checked) {
-            civiREST ('entity_tag','add',{contact_id:contactID,tag_id:tagid},image);
+            civiREST ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},image);
             // add check to tab label array
             tagsArray.push( currentTagLabel );
         } else {
-            civiREST ('entity_tag','remove',{contact_id:contactID,tag_id:tagid},image);
+            civiREST ('entity_tag','remove',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},image);
             // build array of tag labels
             tagsArray = cj.map(tagsArray, function (a) { 
                  if ( cj.trim( a ) != currentTagLabel ) {
@@ -104,7 +105,7 @@ function initTagTree() {
 
 <span id="restmsg"></span>
 <div id="Tag" class="view-content">
-<fieldset><legend>{ts}Tags{/ts}</legend>
+<fieldset><legend>{if !$hideContext}{ts}Tags{/ts}{/if}</legend>
     <p>
     {if $action eq 16}
         {if $permission EQ 'edit'}
@@ -114,7 +115,9 @@ function initTagTree() {
             {ts}Current tags are highlighted.{/ts}
         {/if}
     {else}
+        {if !$hideContext} 
         {ts}Mark or unmark the checkboxes, <span class="unobstructive">and click 'Update Tags' to modify tags.<span>{/ts}
+	{/if}
     {/if}
     </p>
     <ul id="tagtree" class="tree">

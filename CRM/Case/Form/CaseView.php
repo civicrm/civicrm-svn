@@ -244,6 +244,33 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             $this->assign('hookCaseSummary', $hookCaseSummary);
         }
 		
+        require_once 'CRM/Core/BAO/EntityTag.php';
+        require_once 'CRM/Core/BAO/Tag.php';
+        $entityTag =& CRM_Core_BAO_EntityTag::getTag($this->_caseID, 'civicrm_case');
+        $this->assign('tagged', $entityTag);
+        
+        // get the list of all the categories
+        $allTag = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_case' );
+        
+        // need to append the array with the " checked " if contact is tagged with the tag
+        foreach ($allTag as $tagID => $varValue) {
+            if( in_array($tagID, $entityTag)) {
+                $tagAttribute = array('onclick' => "return changeRowColor(\"rowidtag_$tagID\")", 'checked' => 'checked', 'id' => "tag_{$tagID}" );
+            } else {
+                $tagAttribute = array('onclick' => "return changeRowColor(\"rowidtag_$tagID\")", 'id' => "tag_{$tagID}" );
+            }
+            
+            $tagChk[$tagID] = $this->createElement('checkbox', $tagID, '', '', $tagAttribute );
+        }
+        
+        $this->addGroup($tagChk, 'tagList', null, null, true);
+        $tags = new CRM_Core_BAO_Tag ();
+        $tree = $tags->getTree( 'civicrm_case' , true );
+        $this->assign( 'tree'  , $tree );
+        $this->assign('tag', $allTag);
+        $this->assign( 'entityID', $this->_caseID );
+        $this->assign( 'entityTable', 'civicrm_case' );
+
         $this->addButtons(array(  
                                 array ( 'type'      => 'cancel',  
                                         'name'      => ts('Done'),  

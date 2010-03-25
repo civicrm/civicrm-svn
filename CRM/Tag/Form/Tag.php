@@ -51,11 +51,25 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
      *
      * @var int
      */
-    protected $_contactId;
-    
+    protected $_entityID;
+    protected $_entityTable;
+
     function preProcess( ) 
-    {
-        $this->_contactId   = $this->get('contactId');
+    {  
+        if ( $this->get('entityID') ) {
+            $this->_entityID    = $this->get('entityID');
+        } else {
+            $this->_entityID = $this->get('contactId');
+        }
+        
+        $this->_entityTable = $this->get('entityTable');
+        
+        if( empty($this->_entityTable) ) {
+            $this->_entityTable = 'civicrm_contact'; 
+        }
+
+        $this->assign( 'entityID', $this->_entityID );
+        $this->assign( 'entityTable', $this->_entityTable );
     }
 
     /**
@@ -67,11 +81,12 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
     public function buildQuickForm( ) 
     {
         // get categories for the contact id
-        $entityTag =& CRM_Core_BAO_EntityTag::getTag($this->_contactId);
+        $entityTag =& CRM_Core_BAO_EntityTag::getTag($this->_entityID, $this->_entityTable);
         $this->assign('tagged', $entityTag);
     
         // get the list of all the categories
-        $allTag =& CRM_Core_PseudoConstant::tag();
+        $allTag = CRM_Core_BAO_Tag::getTagsUsedFor( $this->_entityTable );
+        
         // need to append the array with the " checked " if contact is tagged with the tag
         foreach ($allTag as $tagID => $varValue) {
             if( in_array($tagID, $entityTag)) {
@@ -86,8 +101,8 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
         $this->addGroup($tagChk, 'tagList', null, null, true);
         
         $tags = new CRM_Core_BAO_Tag ();
-        $tree =$tags->getTree();
-        $this->assign       ( 'tree'  , $tags->getTree() );
+        $tree = $tags->getTree( $this->_entityTable, true );
+        $this->assign( 'tree'  , $tree );
       
         $this->assign('tag', $allTag);
 
@@ -116,9 +131,9 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
         // array contains the posted values
         // exportvalues is not used because its give value 1 of the checkbox which were checked by default, 
         // even after unchecking them before submitting them
-        $contactTag = $_POST['tagList'];
+        $entityTag = $_POST['tagList'];
         
-        CRM_Core_BAO_EntityTag::create($contactTag, $this->_contactId );
+        CRM_Core_BAO_EntityTag::create($entityTag, $this->_entityTable, $this->_entityID );
         
         CRM_Core_Session::setStatus( ts('Your update(s) have been saved.') );
         

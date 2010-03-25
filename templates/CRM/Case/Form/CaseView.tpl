@@ -439,6 +439,25 @@ curDate = (new Date()).getTime();
 </script>
 {/literal}
 
+{* display tags *}
+<div id="casetags_show" class="section-hidden section-hidden-border">
+  <a href="#" onclick="hide('casetags_show'); show('casetags'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Case Tags{/ts}</label><br />
+</div>
+
+<div id="casetags" class="section-shown">
+  <fieldset>
+  <legend><a href="#" onclick="hide('casetags'); show('casetags_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Case Tags{/ts}</legend>
+  <span id="restmsg"></span>
+  {include file="CRM/Tag/Form/Tag.tpl" hideContext=1 }
+  </fieldset>
+</div> 
+{literal}
+<script type="text/javascript">
+    show('casetags_show');
+    hide('casetags');
+</script>
+{/literal}
+
 {*include activity view js file*}
 {include file="CRM/common/activityView.tpl"}
 
