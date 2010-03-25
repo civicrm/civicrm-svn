@@ -933,6 +933,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
             if ( $data_type == 'ContactReference' &&
                  $value ) {
                 $display = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'display_name' );
+            } else {
+                $display = CRM_Utils_Array::value( $value, $option );
             }
             break;
 

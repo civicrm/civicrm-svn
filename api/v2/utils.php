@@ -822,7 +822,9 @@ function _civicrm_contribute_formatted_param( &$params, &$values, $create=false 
                         }
                     }
                 }
-            } else if ( $type == 'Select' || $type == 'Radio' ) {
+            } else if ( $type == 'Select' || $type == 'Radio' || 
+                        ( $type == 'Autocomplete-Select' && 
+                          $customFields[$customFieldID]['data_type'] == 'String' ) ) {
                 $customOption = CRM_Core_BAO_CustomOption::getCustomOption($customFieldID, true);
                 foreach( $customOption as $customFldID => $customValue ) {
                     $val   = CRM_Utils_Array::value( 'value', $customValue );
