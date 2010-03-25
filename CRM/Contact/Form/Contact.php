@@ -834,7 +834,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         if ( array_key_exists( 'TagsAndGroups', $this->_editOptions ) ) {
             //add contact to tags
             require_once 'CRM/Core/BAO/EntityTag.php';
-            CRM_Core_BAO_EntityTag::create( $params['tag'], $params['contact_id'] );
+            CRM_Core_BAO_EntityTag::create( $params['tag'],'civicrm_contact' ,
+                                            $params['contact_id'] );
         }
         
         $statusMsg = ts('Your %1 contact record has been saved.', array( 1 => $contact->contact_type_display ) );

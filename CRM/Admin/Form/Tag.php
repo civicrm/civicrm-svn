@@ -123,9 +123,12 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
 
         // store the submitted values in an array
         $params = $this->exportValues();
+       
         $ids['tag'] = $this->_id;
-        $params['used_for'] = implode( "," , $params['used_for'] );
-        
+        if( $this->_action == CRM_Core_Action::ADD || 
+            $this->_action == CRM_Core_Action::UPDATE ) {
+            $params['used_for'] = implode( "," , $params['used_for'] );
+        }
         if ( !empty($params['parent_id']) ) {
             $hidden = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $params['parent_id'] , 'is_hidden' ); 
             $usedFor =  CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $params['parent_id'] , 'used_for' );
@@ -141,7 +144,7 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
         }
         
         // update all childs is_hidden field
-        if ( $this->_id ) {
+        if ( $this->_id && !( $this->_action == CRM_Core_Action::DELETE ) ) {
             CRM_Core_DAO::executeQuery( "UPDATE civicrm_tag SET is_hidden= %1,used_for=%2 WHERE parent_id = %3", 
                                         array( 1 => array( $params['is_hidden'], 'Integer' ),
                                                2 => array( $params['used_for'], 'String' ),

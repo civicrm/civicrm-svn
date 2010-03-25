@@ -78,10 +78,10 @@
             <td>&nbsp;</td>
 {/if}
 
-{if $form.tag}
+{if $form.contact_tags}
             <td colspan="2"><label>{ts}Tag(s){/ts}</label>
                 <div id="Tag" class="listing-box">
-                    {foreach from=$form.tag item="tag_val"} 
+                    {foreach from=$form.contact_tags item="tag_val"} 
                       <div class="{cycle values="odd-row,even-row"}">
                       {$tag_val.html}
                       </div>

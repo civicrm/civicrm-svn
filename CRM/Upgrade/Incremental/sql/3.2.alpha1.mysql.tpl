@@ -26,7 +26,7 @@
         ('tag_used_for', {localize}'Tag Used For'{/localize}, 0, 1);
     SELECT @option_group_id_website := max(id) FROM civicrm_option_group WHERE name = 'website_type' ;
     SELECT @option_group_id_tuf := max(id) FROM civicrm_option_group WHERE name = 'tag_used_for' ;
-
+    
     INSERT INTO civicrm_option_value
     	(option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight, description, is_optgroup, is_reserved, is_active, component_id, visibility_id) 
     VALUES
@@ -39,6 +39,7 @@
        (@option_group_id_tuf, {localize}'Contacts'{/localize}, 'civicrm_contact', 'Contacts', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
        (@option_group_id_tuf, {localize}'Activities'{/localize}, 'civicrm_activity', 'Activities',  NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),	
        (@option_group_id_tuf, {localize}'Cases'{/localize}, 'civicrm_case', 'Cases', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL);
+       
 --  CRM-5962
 
 --  add columns entity_table , entity_id in civicrm_entity_tag
@@ -58,4 +59,12 @@
     ADD is_hidden tinyint DEFAULT 0, 
     ADD used_for varchar(64) NULL DEFAULT NULL;
 
-   
+-- Add new activity type Change Case Tag
+ SELECT @option_group_id_activity_type := max(id) from civicrm_option_group where name = 'activity_type';
+ SELECT @max_val    := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id  = @option_group_id_activity_type;
+ SELECT @max_wt     := max(weight) from civicrm_option_value where option_group_id=@option_group_id_activity_type;
+ SELECT @caseCompId := id FROM `civicrm_component` where `name` like 'CiviCase';
+ INSERT INTO civicrm_option_value
+    	(option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight,is_reserved, is_active, component_id )
+VALUES 
+       ( @option_group_id_activity_type,{localize}'Change Case Tags'{/localize},(SELECT @max_val := @max_val+1),'Change Case Tags','NULL',0,0,(SELECT @max_wt := @max_wt+1),1,1,@caseCompId);

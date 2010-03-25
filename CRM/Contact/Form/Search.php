@@ -41,6 +41,7 @@
 require_once 'CRM/Core/Form.php';
 require_once 'CRM/Core/Session.php';
 require_once 'CRM/Core/PseudoConstant.php';
+require_once 'CRM/Core/BAO/Tag.php'; 
 
 require_once 'CRM/Utils/PagerAToZ.php';
 
@@ -385,7 +386,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
          */
         $this->_group           =& CRM_Core_PseudoConstant::group( );
         $this->_groupIterator   =& CRM_Core_PseudoConstant::groupIterator( );
-        $this->_tag             =& CRM_Core_PseudoConstant::tag  ( );
+        $this->_tag             =  CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
         $this->_done            =  false;
 
         /**
