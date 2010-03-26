@@ -23,28 +23,29 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+
 <script type="text/javascript">var showTab = Array( );</script>
+
 {foreach from=$groupTree item=cd_edit key=group_id}    
-<h3 class="head"> 
-    <span id="custom{$group_id}" class="ui-icon ui-icon-triangle-1-e"></span><a href="#">{$cd_edit.title}</a>
-</h3>
-<div class="crm-accordion-wrapper crm-custom_data-accordion crm-accordion-closed">
- <div class="crm-accordion-header">
-     <div class="icon crm-accordion-pointer"></div> 
- </div><!-- /.crm-accordion-header -->
-     <div id="customData{$group_id}" class="crm-accordion-body">
-        <fieldset>{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}</fieldset>
-     </div>
-</div><!-- /.crm-accordion-wrapper -->
-<script type="text/javascript">
-{if $cd_edit.collapse_display eq 0 }
-    var eleSpan          = "span#custom{$group_id}";
-    var eleDiv           = "div#customData{$group_id}";
-    showTab[{$group_id}] = {literal}{"spanShow":eleSpan,"divShow":eleDiv}{/literal};
-{else}
-    showTab[{$group_id}] = {literal}{"spanShow":""}{/literal};
-{/if}
-</script>
+	<div class="crm-accordion-wrapper crm-address-accordion crm-accordion-closed">
+		<div class="crm-accordion-header">
+			<div id="custom{$group_id}" class="icon crm-accordion-pointer"></div> 
+			{$cd_edit.title}
+			</div><!-- /.crm-accordion-header -->
+			
+			<div id="customData{$group_id}" class="crm-accordion-body">
+			<fieldset>{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}</fieldset>
+		</div>
+		<script type="text/javascript">
+			{if $cd_edit.collapse_display eq 0 }
+				var eleSpan          = "span#custom{$group_id}";
+				var eleDiv           = "div#customData{$group_id}";
+				showTab[{$group_id}] = {literal}{"spanShow":eleSpan,"divShow":eleDiv}{/literal};
+			{else}
+				showTab[{$group_id}] = {literal}{"spanShow":""}{/literal};
+			{/if}
+		</script>
+	</div>
 {/foreach}
 
 {include file="CRM/common/customData.tpl"}

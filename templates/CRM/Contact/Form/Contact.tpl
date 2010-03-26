@@ -88,30 +88,14 @@
 var action = "{/literal}{$action}{literal}";
 showTab[0] = {"spanShow":"span#contact","divShow":"div#contactDetails"};
 cj(function( ) {
-    cj('.accordion .head').addClass( "ui-accordion-header ui-helper-reset ui-state-default ui-corner-all");
-
-    cj('.accordion .head').hover( function( ) { 
-        cj(this).addClass( "ui-state-hover");
-    }, function() { 
-        cj(this).removeClass( "ui-state-hover");
-    }).bind('click', function( ) { 
-        var checkClass = cj(this).find('span').attr( 'class' );
-        var len        = checkClass.length;
-        if ( checkClass.substring( len - 1, len ) == 's' ) {
-            cj(this).find('span').removeClass( ).addClass('ui-icon ui-icon-triangle-1-e');
-        } else {
-            cj(this).find('span').removeClass( ).addClass('ui-icon ui-icon-triangle-1-s');
-        }
-        cj(this).next( ).toggle(); return false; 
-    }).next( ).hide( );
-    
-    cj(showTab).each( function(){ 
+	cj(showTab).each( function(){ 
         if( this.spanShow ) {
-            cj(this.spanShow).removeClass( ).addClass('ui-icon ui-icon-triangle-1-s');
+            cj(this.spanShow).removeClass( ).addClass('crm-accordion-open');
             cj(this.divShow).show( );
         }
     });
-	cj('div.accordion div.ui-accordion-content').each( function() {
+
+	cj('.crm-accordion-body').each( function() {
 		//remove tab which doesn't have any element
 		if ( ! cj.trim( cj(this).text() ) ) { 
 			ele     = cj(this);
@@ -121,7 +105,7 @@ cj(function( ) {
 		}
 		//open tab if form rule throws error
 		if ( cj(this).children().find('span.error').text() ) {
-			cj(this).show().prev().children('span:first').removeClass( ).addClass('ui-icon ui-icon-triangle-1-s');
+			cj(this).show().prev().children('span:first').removeClass( 'crm-accordion-closed' ).addClass('crm-accordion-open');
 		}
 	});
 
