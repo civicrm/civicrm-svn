@@ -11,7 +11,17 @@
      </td>
   {else}
       <td colspan="2">&nbsp;</td>
-  {/if}    
+  {/if} 
+  {if $form.activity_tags }
+    <td width ="20%"> <label>{ts}Tag(s){/ts}</label>
+      <div id ="Tags" class="listing-box">
+         {foreach from=$form.activity_tags item="tag_val"} 
+              <div class="{cycle values="odd-row,even-row"}">
+                   {$tag_val.html}
+              </div>
+         {/foreach}
+     </td>
+{/if} 
 </tr>
 <tr>
    <td>

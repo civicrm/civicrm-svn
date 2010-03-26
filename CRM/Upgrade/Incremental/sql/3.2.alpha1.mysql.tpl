@@ -205,6 +205,9 @@ VALUES
     ADD is_hidden tinyint DEFAULT 0, 
     ADD used_for varchar(64) NULL DEFAULT NULL;
 
+   UPDATE civicrm_tag
+   SET used_for ='civicrm_contact';
+
 -- Add new activity type Change Case Tag
  SELECT @option_group_id_activity_type := max(id) from civicrm_option_group where name = 'activity_type';
  SELECT @max_val    := MAX(ROUND(op.value)) FROM civicrm_option_value op WHERE op.option_group_id  = @option_group_id_activity_type;
