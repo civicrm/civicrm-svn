@@ -1716,8 +1716,6 @@ div.grippie {
 	padding          : 4px;
 	LINE-HEIGHT      : 1.4em;
 	MARGIN           : 8px 0pt 0px;
-	/*FONT-SIZE: 1.1em;*/
-	background-color : #F7F7F7;
 	width: 100%;
 	clear:both;
 }
@@ -1749,10 +1747,8 @@ div.grippie {
 #crm-container div#contactTopBar .label, 
 #crm-container div.contactCardLeft .label, 
 #crm-container div.contactCardRight .label {
-	color          : DimGray; 
-	FONT-SIZE      : 0.95em; 
+	FONT-SIZE      : 11px; 
 	VERTICAL-ALIGN : top; 
-	FONT-WEIGHT    : bold; 
 	MARGIN-RIGHT   : 10px;
 }
 
@@ -1776,10 +1772,7 @@ div.grippie {
 	border-bottom: 1px solid #E2E2E2;
 }
 
-#crm-container div.contact_panel td.label, 
-#crm-container div#contactTopBar td.label {
-	background-color    : #EEEEEE;
-	}
+
 
 #crm-container div#contactTopBar td.label {
     width : 14%;
@@ -2039,7 +2032,7 @@ div.grippie {
 	height:25px;
 	font-weight:normal;
 	margin:0 0 0 0px;
-	padding:2px 8px 4px 4px;
+	padding:0px 8px 4px 4px;
 	}
 #crm-container .crm-button:hover { background-position:0px -25px; }
 #crm-container .crm-button-type-cancel input { color:#7a7a7a; }
@@ -2101,6 +2094,8 @@ div.grippie {
 		
 .delete-icon { background-position: -179px -99px;}
 	.button:hover .delete-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_cd0a0a_256x240.png");}
+
+.restore-icon { background-position: -66px -114px;}
 
 .dashboard-icon { background-position: -193px -130px; }
 
@@ -2515,6 +2510,74 @@ tbody.scrollContent tr.alternateRow {
 	color:#52534D;
 }
 
+/*contact summary page */
+
+#crm-container div.contact_details, 
+#crm-container div#contactTopBar,
+#crm-container #customFields .contact_panel .customFieldGroup {
+	background-color:transparent;
+	}
+
+#crm-container div.contact_panel td, 
+#crm-container div#contactTopBar td {
+	border-bottom:1px solid #FFF;
+	}
+
+#crm-container div#contactTopBar .label, 
+#crm-container div.contactCardLeft .label, 
+#crm-container div.contactCardRight .label {
+	color:#2f2f2f;
+	font-weight:normal;
+	}
+
+#crm-container table.selector td {
+	border-right:1px dotted #DDDDDD;
+	}
+#crm-container #customFields div.contact_panel td {
+	border-bottom:1px solid #FFFFFF;
+	padding:4px;
+	vertical-align:top;
+	}
+
+#crm-container div#contactTopBar td,
+#crm-container div.contact_panel td {
+	background-color: #f4f4ed; 
+	}
+
+#crm-container div#contactTopBar td.label,
+#crm-container div.contact_panel td.label {
+	background-color: #fafafa;
+	width:150px;
+	text-align: left;
+	color: #7a7a60;
+	}
+	#crm-container .form-layout td.label, 
+	#crm-container .form-layout-compressed td.label,
+	#crm-container #customFields div.contact_panel td.label {
+		width:150px;
+		text-align: left;
+		color: #7a7a60;
+		}
+
+#crm-container .form-layout td.label,
+#crm-container form table.report .label,
+#crm-container form table label,
+#crm-container form table.report label {
+	color: #3e3e3e;
+	}
+
+#crm-container div.contact_panel td.grouplabel {
+	background-color:#FFFFFF;
+	border-bottom:2px solid #D7D7D0 !important;
+	color:#2F2F2F;
+	font-size:15px;
+	font-weight:bold;
+	font-family: Helvetica;
+	}
+	
+#tagGroup table .label {color:#FFF;}
+#tagGroup table {color:#000;}
+
 
 /* search results */
 
@@ -2582,6 +2645,7 @@ tbody.scrollContent tr.alternateRow {
 #crm-container .crm-button-type-cancel input { color:#e0e0d4; }
 
 /* warning labels and messages */
+#crm-container .crm-is_deleted,
 #crm-container table.caseSelector td.status-urgent,
 #crm-container span.email-hold a:link, 
 #crm-container span.email-hold a:visited, 
