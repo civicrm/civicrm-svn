@@ -592,7 +592,7 @@ VALUES
    (@option_group_id_website, 'Image',    3, 'Image',    NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_website, 'Facebook', 4, 'Facebook', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_website, 'Twitter',  5, 'Twitter',  NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
-   (@option_group_id_website, 'Myspace',  6, 'Myspace',  NULL, 0, NULL, 6, NULL, 0, 0, 1, NULL, NULL),
+   (@option_group_id_website, 'MySpace',  6, 'MySpace',  NULL, 0, NULL, 6, NULL, 0, 0, 1, NULL, NULL),
 
 -- Tag used for
    (@option_group_id_tuf, 'Contacts',   'civicrm_contact',  'Contacts',    NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
