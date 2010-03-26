@@ -59,7 +59,8 @@ class CRM_Contact_BAO_Query
         MODE_PLEDGEBANK = 256,
         MODE_PLEDGE     = 512,
         MODE_CASE       = 2048,
-        MODE_ALL        = 1023;
+        MODE_ALL        = 1023,
+        MODE_ACTIVITY   = 4096;
     
     /**
      * the default set of return properties

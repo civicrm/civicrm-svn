@@ -369,8 +369,9 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
             }
             unset($row);
         }
-        
+         
         return $rows;
+       
     }
     
     /**
