@@ -257,7 +257,7 @@
 			                </div>
 			            </div>
                                     <script type="text/javascript">
-                                        {if $customValue.collapse_display eq 0 }
+                                        {if $customValue.collapse_display eq 1 }
                                             cj('#address_custom_{$cgId}_{$locationIndex}').removeClass('crm-accordion-open').addClass('crm-accordion-closed');
                                         {else}
                                             cj('#address_custom_{$cgId}_{$locationIndex}').removeClass('crm-accordion-closed').addClass('crm-accordion-open');

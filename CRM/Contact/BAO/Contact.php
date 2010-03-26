@@ -832,6 +832,9 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
 
                 $fields = array_merge($fields, $locationFields); 
      
+                $fields = array_merge($fields, 
+                                      CRM_Core_BAO_CustomField::getFieldsForImport( 'Address' ));
+
                 $fields = array_merge($fields,
                                       CRM_Contact_DAO_Contact::import( ) );
                 $fields = array_merge($fields,
@@ -1493,6 +1496,16 @@ AND    civicrm_contact.id = %1";
                     }
                     $data[$key] = $value;
                   
+                }
+            }
+        }
+
+        // at this point we expect address to have built in proper array format.
+        foreach ($params as $fieldName => $value) {
+            if (substr($fieldName, 0, 14) === 'address_custom' 
+                && array_key_exists('address', $data)) {
+                foreach ( $data['address'] as $locId => $locVal ) {
+                    $data['address'][$locId][substr($fieldName, 8)] = $value;
                 }
             }
         }

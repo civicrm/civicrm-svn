@@ -187,6 +187,13 @@ class CRM_Contact_Form_Edit_Address
             }
             $defaults = array( );
             CRM_Core_BAO_CustomGroup::setDefaults( $groupTree, $defaults );
+            // For some of the custom fields like checkboxes, the defaults doesn't populate 
+            // in proper format due to the different element-name format - 'address[$blockId][custom-X]'.
+            // Below eval() fixes this issue.
+            foreach ( $defaults as $key => $val ) {
+                eval("\${$key} = " . (!is_array($val) ? "'{$val}'" : var_export($val, true)) . ";");
+            }
+            $defaults = array( 'address' => $address );
             $form->setDefaults( $defaults );
 
             // we setting the prefix to 'dnc_' below, so that we don't overwrite smarty's grouptree var. 

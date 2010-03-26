@@ -335,7 +335,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             $importableFields['tag'  ]['title'] = ts('Tag(s)');
             $importableFields['tag'  ]['where'] = null;
             
-            $specialFields = array ( 'street_address',
+            $locationFields = array ('street_address',
                                      'supplemental_address_1',
                                      'supplemental_address_2',
                                      'city',
@@ -364,16 +364,23 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 $customFields = array_merge($customFields, CRM_Core_BAO_CustomField::getFieldsForImport($value));
             }
 
+            $addressCustomFields = CRM_Core_BAO_CustomField::getFieldsForImport('Address');
+            $customFields = array_merge( $customFields, $addressCustomFields );
+
             while ( $field->fetch( ) ) {
                 $name  = $title = $locType = $phoneType = '';
                 $name  = $field->field_name;
                 $title = $field->label;
                 
+                if ( in_array( $field->field_name, array_keys($addressCustomFields) ) )  {
+                    $name = "address_{$name}";
+                }
+
                 if ($field->location_type_id) {
                     $name    .= "-{$field->location_type_id}";
                     $locType  = " ( {$locationType[$field->location_type_id]} ) ";
                 } else {                                                           
-                    if ( in_array($field->field_name, $specialFields))  {
+                    if ( in_array($field->field_name, $locationFields) )  {
                         $name    .= '-Primary'; 
                         $locType  = ' ( Primary ) ';
                     }
@@ -411,15 +418,15 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                           );
                 
                 //adding custom field property 
-                if ( substr($name, 0, 6) == 'custom' ) {
+                if ( substr($field->field_name, 0, 6) == 'custom' ) {
                     // if field is not present in customFields, that means the user
                     // DOES NOT HAVE permission to access that field
-                    if ( array_key_exists( $name, $customFields ) ) {
-                        $fields[$name]['is_search_range' ] = $customFields[$name]['is_search_range'];
+                    if ( array_key_exists( $field->field_name, $customFields ) ) {
+                        $fields[$name]['is_search_range' ] = $customFields[$field->field_name]['is_search_range'];
                         // fix for CRM-1994
-                        $fields[$name]['options_per_line'] = $customFields[$name]['options_per_line']; 
-                        $fields[$name]['data_type']        = $customFields[$name]['data_type']; 
-                        $fields[$name]['html_type']        = $customFields[$name]['html_type']; 
+                        $fields[$name]['options_per_line'] = $customFields[$field->field_name]['options_per_line']; 
+                        $fields[$name]['data_type']        = $customFields[$field->field_name]['data_type']; 
+                        $fields[$name]['html_type']        = $customFields[$field->field_name]['html_type']; 
                     } else {
                         unset( $fields[$name] );
                     }
@@ -1529,6 +1536,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->addElement('select', $name .'-website_type_id', null, CRM_Core_PseudoConstant::websiteType( ) );
         } else if (substr($fieldName, 0, 6) === 'custom') {
             $customFieldID = CRM_Core_BAO_CustomField::getKeyID($fieldName);
+            if ( $customFieldID ) {
+                CRM_Core_BAO_CustomField::addQuickFormElement( $form, $name, $customFieldID, false, $required, $search, $title );
+            }
+        } else if (substr($fieldName, 0, 14) === 'address_custom') {
+            $customFieldID = CRM_Core_BAO_CustomField::getKeyID(substr($fieldName, 8));
             if ( $customFieldID ) {
                 CRM_Core_BAO_CustomField::addQuickFormElement( $form, $name, $customFieldID, false, $required, $search, $title );
             }
