@@ -7,7 +7,7 @@
   <add>3.2</add>  
   <field>  
       <name>id</name>  
-      <type>int</type>  
+      <type>int unsigned</type>  
       <required>true</required>  
       <comment>ID</comment>  
       <add>3.2</add>  
