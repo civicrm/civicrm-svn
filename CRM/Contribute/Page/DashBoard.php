@@ -104,6 +104,11 @@ class CRM_Contribute_Page_DashBoard extends CRM_Core_Page
             $this->assign( $aName, $$aName );
         }
         
+        //for contribution tabular View
+        $buildTabularView = CRM_Utils_Array::value( 'showtable', $_GET, false );
+        $this->assign( 'buildTabularView', $buildTabularView );
+        if( $buildTabularView ) return;
+        
         // Check for admin permission to see if we should include the Manage Contribution Pages action link
         $isAdmin = 0;
         require_once 'CRM/Core/Permission.php';

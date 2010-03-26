@@ -46,9 +46,6 @@
 <table >
       <td class="label">{$form.select_year.label}</td><td>{$form.select_year.html}</td> 
       <td class="label">{$form.chart_type.label}</td><td>{$form.chart_type.html}</td> 
-      <td class="html-adjust">
-      <a href="javascript:getChart( )">{ts}Reload Chart{/ts}</a>	
-      </td> 
 </table> 
 </div>
 {else}
