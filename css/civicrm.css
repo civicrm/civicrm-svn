@@ -160,7 +160,7 @@ div#crm-container {
 .crm-form-block {
 	padding:4px 4px 8px 4px ;
 	margin-bottom:4px;
-	font-size:14px;
+	font-size:12px;
 	}
 
 
@@ -1998,7 +1998,7 @@ div.grippie {
  padding-right: 4px;
 }
 
-/* autocomplet */
+/* autocomplete */
 
 .ac_results {
 	background: transparent url(../i/dropdown-pointer.gif) no-repeat 25px 1px;
@@ -2155,8 +2155,9 @@ div.grippie {
 
 /* accordion styles */
 
+
 .crm-accordion-header {
-	background-color:#CCC; 
+	background-color:#32414f; 
 	-moz-border-radius: 4px; 
 	padding:4px 8px;
 	cursor: pointer;
@@ -2186,6 +2187,15 @@ div.grippie {
 .crm-accordion-wrapper .crm-accordion-header-hover .crm-accordion-pointer {
 	background-image:url("../i/icons/jquery-ui-FFFFFF.png");
 	color: #FFF;
+	}
+
+.crm-accordion-wrapper .crm-master-accordion-header {
+	background-color: transparent;
+	font-size:16px;
+	color: #3e3e3e;
+	}
+.crm-accordion-wrapper .crm-master-accordion-header .crm-accordion-pointer {
+	background-image:url("../i/icons/jquery-ui-3E3E3E.png")
 	}
 
 .crm-accordion-hasContent .crm-accordion-header {
@@ -2509,16 +2519,19 @@ tbody.scrollContent tr.alternateRow {
 /* search results */
 
 .crm-search-tasks {
-	background-color:#F5F6F1;
+	background-color:#F0F0E8;
 	color:#52534D;
 }
 
 /* accordion-colors */
 
-.crm-form-block { background-color:#E0E0D4;}
+.crm-form-block { 
+	background-color:#E6E6DC;
+	color:#3E3E3E;
+	}
 
 .crm-accordion-header {
-	background-color:#6D6D6D;
+	background-color:#70716B;
 	color:#F5F6F1;
 	}
 
@@ -2547,6 +2560,18 @@ tbody.scrollContent tr.alternateRow {
 #crm-container .crm-button-type-cancel input { color:#e0e0d4; }
 */
 
+/* dark blue theme buttons */
+/*
+#crm-container .crm-button,
+#crm-container .crm-button input { color:#FFF; }
+#crm-container .crm-button { background:transparent url(../i/crm-button-dark-blue.gif) repeat-x scroll left 0px;}
+#crm-container .crm-button input { background:transparent url(../i/crm-button-dark-blue.gif) no-repeat scroll right -25px; }
+#crm-container .crm-button:hover { background:transparent url(../i/crm-button-dark-blue.gif) repeat-x scroll left -50px; }
+#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-dark-blue.gif) no-repeat scroll right -75px;	}
+#crm-container .crm-button-type-cancel input { color:#7fcdfe; }
+*/
+
+
 /* brown theme buttons */
 #crm-container .crm-button,
 #crm-container .crm-button input { color:#FFF; }
@@ -2555,18 +2580,6 @@ tbody.scrollContent tr.alternateRow {
 #crm-container .crm-button:hover { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left -50px;		 }
 #crm-container .crm-button:hover input { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -75px;	 }
 #crm-container .crm-button-type-cancel input { color:#e0e0d4; }
-
-
-/* dark blue theme buttons */
-#crm-container .crm-button,
-#crm-container .crm-button input { color:#FFF; }
-#crm-container .crm-button { background:transparent url(../i/crm-button-dark-blue.gif) repeat-x scroll left 0px;}
-#crm-container .crm-button input { background:transparent url(../i/crm-button-dark-blue.gif) no-repeat scroll right -25px; }
-#crm-container .crm-button:hover { background:transparent url(../i/crm-button-dark-blue.gif) repeat-x scroll left -50px; }
-#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-dark-blue.gif) no-repeat scroll right -75px;	}
-#crm-container .crm-button-type-cancel input { color:#7fcdfe; }
-
-
 
 /* warning labels and messages */
 #crm-container table.caseSelector td.status-urgent,

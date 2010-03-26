@@ -72,7 +72,7 @@
                          {/if}
                     {/foreach}  
 		    {if $element.html_type eq 'Radio'}
-	    	    <td>&nbsp;&nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}unselect{/ts}</a>&nbsp;)</td> 
+	    	    <td><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span></td> 
 	            {/if}
                 </tr>                  
             </table>
@@ -92,7 +92,7 @@
             {include file="CRM/common/jcalendar.tpl" elementName=$element_name}
         {/if}
 	    {if $element.html_type eq 'Radio'}
-	    	&nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}unselect{/ts}</a>&nbsp;)
+	    	<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span>
 	    {elseif $element.html_type eq 'Autocomplete-Select'}
 	        {include file="CRM/Custom/Form/AutoComplete.tpl"}
         {/if}

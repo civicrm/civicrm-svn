@@ -570,8 +570,12 @@ $.Autocompleter.Select = function (options, input, select, config) {
 		.addClass(options.resultsClass)
 		.css("position", "absolute")
 		.appendTo(document.body);
+		 
+		 $("<div/>")
+		.addClass('ac_results-inner')
+		.appendTo(element);
 	
-		list = $("<ul/>").appendTo(element).mouseover( function(event) {
+		list = $("<ul/>").appendTo('.ac_results-inner').mouseover( function(event) {
 			if(target(event).nodeName && target(event).nodeName.toUpperCase() == 'LI') {
 	            active = $("li", list).removeClass(CLASSES.ACTIVE).index(target(event));
 			    $(target(event)).addClass(CLASSES.ACTIVE);            

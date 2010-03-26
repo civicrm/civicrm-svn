@@ -52,7 +52,7 @@ function loadPanes( id ) {
         {if $context EQ 'smog'}{ts}Find Members within this Group{/ts}
         {elseif $context EQ 'amtg'}{ts}Find Contacts to Add to this Group{/ts}
         {elseif $savedSearch}{ts 1=$savedSearch.name}%1 Smart Group Criteria{/ts} &nbsp; {help id='id-advanced-smart'}
-        {else}{ts}Search Criteria{/ts}{/if}
+        {/if}
         </h3>
 
 {strip}

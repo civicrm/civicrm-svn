@@ -35,7 +35,7 @@
 </tr>
 <tr>
    <td>
-	  {$form.activity_role.label}&nbsp;(<a href="#" title="unselect" onclick="unselectRadio('activity_role', 'Advanced'); return false;" >unselect</a>)<br />
+	  {$form.activity_role.label}<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('activity_role', 'Advanced'); return false;" >{ts}clear{/ts}</a>)</span><br />
       {$form.activity_role.html}
    </td>
    <td colspan="2"><br />

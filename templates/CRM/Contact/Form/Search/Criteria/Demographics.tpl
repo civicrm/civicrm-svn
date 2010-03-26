@@ -44,7 +44,7 @@
       <tr>
          <td>
             {$form.gender.label}<br />
-            {$form.gender.html} &nbsp;<a href="#" title="unselect" onclick="unselectRadio('gender', 'Advanced'); return false;" >unselect</a>
+            {$form.gender.html}<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('gender', 'Advanced'); return false;" >{ts}clear{/ts}</a>)</span>
          </td>
       </tr>
     </table>            

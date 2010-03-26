@@ -42,7 +42,7 @@
     {$form.case_status_id.label}<br /> 
     {$form.case_status_id.html}<br /><br />	
     {if $accessAllCases}
-    {$form.case_owner.html} &nbsp;<a href="javascript:unselectRadio('case_owner', '{$form.formName}')">unselect</a><br />
+    {$form.case_owner.html} <span class="crm-clear-link">(<a href="javascript:unselectRadio('case_owner', '{$form.formName}')">{ts}clear{/ts}</a>)</span><br />
     {/if}
     {if $form.case_deleted}	
         {$form.case_deleted.html}	

@@ -106,13 +106,13 @@
    	    	 {else}
                {$form.$n.html}
                {if $n eq 'gender' && $form.$fieldName.frozen neq true}
-                  &nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}');return false;">{ts}unselect{/ts}</a>&nbsp;)
+                  <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}');return false;">{ts}clear{/ts}</a>)</span>
                {/if}
              {/if}
              {*CRM-4564*}
              {if $field.html_type eq 'Radio' && $form.$fieldName.frozen neq true}
                  <span style="line-height: .75em; margin-top: 1px;">
-                  &nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}');return false;">{ts}unselect{/ts}</a>&nbsp;)
+                  <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}');return false;">{ts}clear{/ts}</a>)</span>
                  </span>
              {elseif $field.html_type eq 'Autocomplete-Select'}
                  {include file="CRM/Custom/Form/AutoComplete.tpl" element_name = $n }

@@ -28,7 +28,6 @@
 	.addClass('crm-processed')
 	.hover(
 		function()  {
-			
 			if ($(this).children('.crm-tooltip-wrapper').length == '') {
 				$(this).append('<div class="crm-tooltip-wrapper"><div class="crm-tooltip"></div></div>');
 				$(this).children().children('.crm-tooltip')

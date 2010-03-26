@@ -55,7 +55,7 @@
                             {/if}
                         {/foreach}
                         {if $element.html_type eq 'Radio'}
-                            <td>&nbsp;&nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}unselect{/ts}</a>&nbsp;)</td>
+                            <td><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span></td>
                         {/if}
                     </tr>
                 </table>
@@ -79,7 +79,8 @@
                 {/if}
                 
                 {if $element.html_type eq 'Radio'}
-                    &nbsp;&nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('address[{$blockId}][{$element_name}]', '{$form.formName}'); return false;" >{ts}unselect{/ts}</a>&nbsp;) 
+                    <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('address[{$blockId}][{$element_name}]', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span> 
+
                 {elseif $element.data_type eq 'File'}
                     {if $element.element_value.data}
                         <span class="html-adjust"><br />

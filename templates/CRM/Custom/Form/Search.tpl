@@ -72,7 +72,7 @@
             </tr>
             {if $element.html_type eq 'Radio'}
                 <tr style="line-height: .75em; margin-top: 1px;">
-                    <td> &nbsp; <a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;">{ts}unselect{/ts}</a></td>
+                    <td> <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span></td>
                 </tr>
             {/if}
             </table>

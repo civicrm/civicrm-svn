@@ -72,13 +72,13 @@
             </span>
         {/if}
         <div class="spacer"></div>
+   </div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
     
     {foreach from = $editOptions item = "title" key="name"}
         {include file="CRM/Contact/Form/Edit/$name.tpl"}
     {/foreach}
-</div>
 <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl"}
 </div>
