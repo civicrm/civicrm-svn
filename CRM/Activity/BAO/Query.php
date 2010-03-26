@@ -101,6 +101,14 @@ class CRM_Activity_BAO_Query
 
         switch( $name ) {
             
+        case 'activity_type_id':
+            $names = array( );
+            $activityTypes  = CRM_Core_PseudoConstant::activityType( );
+            foreach ( $value as $id => $dontCare ) {
+                $names[] = $activityTypes[$id];
+            }
+            return;
+            
         case 'activity_activitytag1_id':
             $value = $strtolower(CRM_Core_DAO::escapeString(trim($value)));
             $query->_where[$grouping][] = "civicrm_activity.activity_tag1_id $op {$value}";
@@ -205,7 +213,7 @@ class CRM_Activity_BAO_Query
         $activityOptions = CRM_Core_PseudoConstant::activityType( true, true );
         asort( $activityOptions );
         foreach ( $activityOptions as $activityID => $activity ) {
-            $form->_activityElement =& $form->addElement( 'checkbox', "activity[$activityID]", null, $activity );
+            $form->_activityElement =& $form->addElement( 'checkbox', "activity_type_id[$activityID]", null, $activity );
         }
         $form->addDate( 'activity_date_low', ts( 'Activity Dates - From' ), false, array( 'formatType' => 'searchDate') );
         $form->addDate( 'activity_date_high', ts( 'To' ), false, array( 'formatType' => 'searchDate') );

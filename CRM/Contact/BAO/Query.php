@@ -1159,7 +1159,7 @@ class CRM_Contact_BAO_Query
         case 'activity_status':
         case 'activity_subject':
         case 'test_activities':
-        case 'activity':    
+        case 'activity_type_id':    
             $this->activity( $values );
             return;
 
@@ -2688,7 +2688,7 @@ WHERE  id IN ( $groupIDs )
         $this->_tables['civicrm_activity'] = $this->_whereTables['civicrm_activity'] = 1;
             
         switch ( $name ) {
-        case 'activity':
+        case 'activity_type_id':
             $types  = CRM_Core_PseudoConstant::activityType( true, true );
             $clause = array( );
             if ( is_array( $value ) ) {
