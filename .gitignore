@@ -29,8 +29,11 @@ CRM/Core/DAO/Discount.php
 CRM/Core/DAO/Domain.php
 CRM/Core/DAO/Email.php
 CRM/Core/DAO/EntityFile.php
+CRM/Core/DAO/EntityFinancialTrxn.php
 CRM/Core/DAO/EntityTag.php
 CRM/Core/DAO/File.php
+CRM/Core/DAO/FinancialAccount.php
+CRM/Core/DAO/FinancialTrxn.php
 CRM/Core/DAO/IM.php
 CRM/Core/DAO/LineItem.php
 CRM/Core/DAO/LocBlock.php
@@ -61,6 +64,7 @@ CRM/Core/DAO/UFField.php
 CRM/Core/DAO/UFGroup.php
 CRM/Core/DAO/UFJoin.php
 CRM/Core/DAO/UFMatch.php
+CRM/Core/DAO/Website.php
 CRM/Core/DAO/Worldregion.php
 CRM/Core/I18n/SchemaStructure.php
 CRM/Dedupe/DAO
