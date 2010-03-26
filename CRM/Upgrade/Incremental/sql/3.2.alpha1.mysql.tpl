@@ -100,7 +100,7 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
 
 -- civicrm_financial_account
    CREATE TABLE `civicrm_financial_account` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `account_type_id` int(10) unsigned NOT NULL,
   PRIMARY KEY (`id`)
@@ -114,7 +114,7 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
     INSERT INTO civicrm_entity_financial_trxn (financial_trxn_id, amount, entity_id, entity_table)
     SELECT id, total_amount, contribution_id, 'civicrm_contribution'
     FROM   civicrm_financial_trxn ft
-    ON DUPLICATE KEY UPDATE civicrm_entity_financial_trxn.entity_id = ft.contribution_id
+    ON DUPLICATE KEY UPDATE civicrm_entity_financial_trxn.entity_id = ft.contribution_id;
 
 -- ALTER civicrm_financial_trxn
    ALTER TABLE `civicrm_financial_trxn` 
