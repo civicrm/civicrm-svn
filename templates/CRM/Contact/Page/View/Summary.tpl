@@ -52,7 +52,7 @@
                         {if call_user_func(array('CRM_Core_Permission','check'), 'access deleted contacts') and $is_deleted}
                         <li>
                         <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&cid=$contactId&restore=1"}" class="delete button" title="{ts}Restore{/ts}">
-                        <span><div class="icon delete-icon"></div>{ts}Restore{/ts}</span>
+                        <span><div class="icon restore-icon"></div>{ts}Restore from Trash{/ts}</span>
                         </a>
                         </li>
                         <li>

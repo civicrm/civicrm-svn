@@ -27,7 +27,7 @@
 <div class="spacer"></div>
 <div class="messages status">
   <dl>
-    <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+    <dt><div class="icon inform-icon"></div>&nbsp;</dt>
     <dd>
       {if $restore}
         <p>{ts}Are you sure you want to restore the selected contact(s)? The contact(s) and all related data will be fully restored.{/ts}</p>

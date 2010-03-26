@@ -25,9 +25,6 @@
 *}
 <div class="form-item">
 <fieldset>
-<legend>
-{ts}Label Contact(s){/ts}
-</legend>
 <dl>
 <dt>{$form.label_id.label}</dt><dd>{$form.label_id.html}</dd>
 <dt>{$form.location_type_id.label}</dt><dd>{$form.location_type_id.html}</dd>
