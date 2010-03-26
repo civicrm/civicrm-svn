@@ -29,7 +29,7 @@
   <div id="help">{ts}Manage event participant statuses below. Enable selected statuses to allow event waitlisting and/or participant approval.{/ts} {help id="id-disabled_statuses" file="CRM/Admin/Page/ParticipantStatus.hlp"}</div>
 {/if}
 
-<div class="form-item">
+<div class="section participant-status">
   {strip}
     {* handle enable/disable actions*}
     {include file="CRM/common/enableDisable.tpl"}
