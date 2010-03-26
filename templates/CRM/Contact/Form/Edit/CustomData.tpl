@@ -34,8 +34,8 @@
 			</div><!-- /.crm-accordion-header -->
 			
 			<div id="customData{$group_id}" class="crm-accordion-body">
-			<fieldset>{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}</fieldset>
-		</div>
+				{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}
+			</div>
 		<script type="text/javascript">
 			{if $cd_edit.collapse_display eq 0 }
 				var eleSpan          = "span#custom{$group_id}";
