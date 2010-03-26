@@ -1670,8 +1670,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                     } else if ( ( $name == 'birth_date' ) || ( $name == 'deceased_date' ) ) {
                         list( $defaults[$fldName] ) = CRM_Utils_Date::setDateDefaults( $details[$name], 'birth' );
                     } else if ($name == 'email_greeting') {
-                         $defaults[$fldName] = $details['email_greeting_id'];
-                         $defaults['email_greeting_custom'] = $details['email_greeting_custom'];
+                        $defaults[$fldName] = $details['email_greeting_id'];
+                        $defaults['email_greeting_custom'] = $details['email_greeting_custom'];
                     } else if ($name == 'postal_greeting') {
                         $defaults[$fldName] = $details['postal_greeting_id'];
                         $defaults['postal_greeting_custom'] = $details['postal_greeting_custom'];
@@ -1740,7 +1740,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                         case 'Select Date':
                             list( $defaults[$fldName], $defaults[$fldName.'_time'] ) = CRM_Utils_Date::setDateDefaults( $details[$name] );
                             break;
-                        
+                            
                         default:                        
                             $defaults[$fldName] = $details[$name];
                             break;
@@ -1758,111 +1758,112 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                                 if ($locTypeId == 'Primary') {
                                     $locTypeId = CRM_Contact_BAO_Contact::getPrimaryLocationType( $contactId ); 
                                 }
-                            
-                            if (is_numeric($locTypeId)) {//fixed for CRM-665
-                                if ($locTypeId == CRM_Utils_Array::value('location_type_id',$value) ) {
-                                    if (CRM_Utils_Array::value($fieldName, $value )) {
-                                        //to handle stateprovince and country
-                                        if ( $fieldName == 'state_province' ) {
-                                            $defaults[$fldName] = $value['state_province_id'];
-                                        } else if ( $fieldName == 'county' ) {
-                                            $defaults[$fldName] = $value['county_id'];
-                                        } else if ( $fieldName == 'country' ) {
-                                            $defaults[$fldName] = $value['country_id'];
-                                            if ( ! isset($value['country_id']) || ! $value['country_id'] ) {
-                                                $config = CRM_Core_Config::singleton();
+                                
+                                if (is_numeric($locTypeId)) {//fixed for CRM-665
+                                    if ($locTypeId == CRM_Utils_Array::value('location_type_id',$value) ) {
+                                        if (CRM_Utils_Array::value($fieldName, $value )) {
+                                            //to handle stateprovince and country
+                                            if ( $fieldName == 'state_province' ) {
+                                                $defaults[$fldName] = $value['state_province_id'];
+                                            } else if ( $fieldName == 'county' ) {
+                                                $defaults[$fldName] = $value['county_id'];
+                                            } else if ( $fieldName == 'country' ) {
+                                                $defaults[$fldName] = $value['country_id'];
+                                                if ( ! isset($value['country_id']) || ! $value['country_id'] ) {
+                                                    $config = CRM_Core_Config::singleton();
                                                 if ( $config->defaultContactCountry ) {
                                                     $defaults[$fldName] = $config->defaultContactCountry;
                                                 }
-                                            } else if ( $fieldName == 'phone' ) {
-                                                if ($phoneTypeId) {
-                                                    if ( $value['phone'][$phoneTypeId] ) {
-                                                        $defaults[$fldName] = $value['phone'][$phoneTypeId];
+                                                } else if ( $fieldName == 'phone' ) {
+                                                    if ($phoneTypeId) {
+                                                        if ( $value['phone'][$phoneTypeId] ) {
+                                                            $defaults[$fldName] = $value['phone'][$phoneTypeId];
+                                                        }
+                                                    } else {
+                                                        $defaults[$fldName] = $value['phone'];
                                                     }
+                                                } else if ( $fieldName == 'email' ) {
+                                                    //adding the first email (currently we don't support multiple emails of same location type)
+                                                    $defaults[$fldName] = $value['email'];
+                                                } else if ( $fieldName == 'im' ) {
+                                                    //adding the first im (currently we don't support multiple ims of same location type)
+                                                    $defaults[$fldName] = $value['im'];
+                                                    $defaults[$fldName . "-provider_id"] = $value['im_provider_id'];
                                                 } else {
-                                                    $defaults[$fldName] = $value['phone'];
+                                                    $defaults[$fldName] = $value[$fieldName];
                                                 }
-                                            } else if ( $fieldName == 'email' ) {
-                                                //adding the first email (currently we don't support multiple emails of same location type)
-                                                $defaults[$fldName] = $value['email'];
-                                            } else if ( $fieldName == 'im' ) {
-                                                //adding the first im (currently we don't support multiple ims of same location type)
-                                                $defaults[$fldName] = $value['im'];
-                                                $defaults[$fldName . "-provider_id"] = $value['im_provider_id'];
-                                            } else {
-                                                $defaults[$fldName] = $value[$fieldName];
                                             }
                                         }
                                     }
                                 }
                             }
-                        }
-                    } else {
-                        if ( is_array($details) ) {
-                            if ( $fieldName === 'url' ) {
-                                if ( !empty( $details['website'] ) ) {
-                                    foreach ( $details['website'] as $val ) {
-                                        $defaults[$fldName] = $val['url'];
-                                        $defaults[$fldName . '-website_type_id' ] = $val['website_type_id'];
+                        } else {
+                            if ( is_array($details) ) {
+                                if ( $fieldName === 'url' ) {
+                                    if ( !empty( $details['website'] ) ) {
+                                        foreach ( $details['website'] as $val ) {
+                                            $defaults[$fldName] = $val['url'];
+                                            $defaults[$fldName . '-website_type_id' ] = $val['website_type_id'];
+                                        }
                                     }
                                 }
-                            }
-                        } 
+                            } 
+                        }
                     }
                 }
-            }
-            
-            if ( CRM_Core_Permission::access( 'Quest', false ) ) {
-                require_once 'CRM/Quest/BAO/Student.php';
-                // Checking whether the database contains quest_student table.
-                // Now there are two different schemas for core and quest.
-                // So if only core schema in use then withought following check gets the DB error.
-                $student      = new CRM_Quest_BAO_Student();
-                $tableStudent = $student->getTableName();
                 
-                if ($tableStudent) {
-                    //set student defaults
-                    CRM_Quest_BAO_Student::retrieve( $details, $studentDefaults, $ids);
-                    $studentFields = array( 'educational_interest','college_type','college_interest','test_tutoring');
-                    foreach( $studentFields as $fld ) {
-                        if ( $studentDefaults[$fld] ) {
-                            $values = explode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR , $studentDefaults[$fld] );
+                if ( CRM_Core_Permission::access( 'Quest', false ) ) {
+                    require_once 'CRM/Quest/BAO/Student.php';
+                    // Checking whether the database contains quest_student table.
+                    // Now there are two different schemas for core and quest.
+                    // So if only core schema in use then withought following check gets the DB error.
+                    $student      = new CRM_Quest_BAO_Student();
+                    $tableStudent = $student->getTableName();
+                    
+                    if ($tableStudent) {
+                        //set student defaults
+                        CRM_Quest_BAO_Student::retrieve( $details, $studentDefaults, $ids);
+                        $studentFields = array( 'educational_interest','college_type','college_interest','test_tutoring');
+                        foreach( $studentFields as $fld ) {
+                            if ( $studentDefaults[$fld] ) {
+                                $values = explode(CRM_Core_BAO_CustomOption::VALUE_SEPERATOR , $studentDefaults[$fld] );
+                            }
+                            
+                            $studentDefaults[$fld] = array();
+                            if ( is_array( $values ) ) {
+                                foreach( $values as $v ) {
+                                    $studentDefaults[$fld][$v] = 1;
+                                }
+                            }
                         }
                         
-                        $studentDefaults[$fld] = array();
-                        if ( is_array( $values ) ) {
-                            foreach( $values as $v ) {
-                                $studentDefaults[$fld][$v] = 1;
+                        foreach ($fields as $name => $field ) {
+                            $fldName = "field[$contactId][$name]";
+                            if ( array_key_exists($name,$studentDefaults) ) {
+                                $defaults[$fldName] = $studentDefaults[$name];
                             }
                         }
                     }
-
-                    foreach ($fields as $name => $field ) {
-                        $fldName = "field[$contactId][$name]";
-                        if ( array_key_exists($name,$studentDefaults) ) {
-                            $defaults[$fldName] = $studentDefaults[$name];
-                        }
-                    }
                 }
+            }  
+            
+            //Handling Contribution Part of the batch profile 
+            if ( CRM_Core_Permission::access( 'CiviContribute' ) && $component == 'Contribute' ) {
+                self::setComponentDefaults( $fields, $componentId, $component, $defaults );
             }
-        }  
-        
-        //Handling Contribution Part of the batch profile 
-        if ( CRM_Core_Permission::access( 'CiviContribute' ) && $component == 'Contribute' ) {
-            self::setComponentDefaults( $fields, $componentId, $component, $defaults );
-        }
-        
-        //Handling Event Participation Part of the batch profile 
-        if ( CRM_Core_Permission::access( 'CiviEvent' ) && $component == 'Event' ) {
-            self::setComponentDefaults( $fields, $componentId, $component, $defaults );
-        }
-        
-        //Handling membership Part of the batch profile 
-        if ( CRM_Core_Permission::access( 'CiviMember' ) && $component == 'Membership' ) {
-            self::setComponentDefaults( $fields, $componentId, $component, $defaults );
+            
+            //Handling Event Participation Part of the batch profile 
+            if ( CRM_Core_Permission::access( 'CiviEvent' ) && $component == 'Event' ) {
+                self::setComponentDefaults( $fields, $componentId, $component, $defaults );
+            }
+            
+            //Handling membership Part of the batch profile 
+            if ( CRM_Core_Permission::access( 'CiviMember' ) && $component == 'Membership' ) {
+                self::setComponentDefaults( $fields, $componentId, $component, $defaults );
+            }
         }
     }
-    
+
     /**
      * Function to get profiles by type  eg: pure Individual etc
      *
