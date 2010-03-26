@@ -68,6 +68,53 @@ class CRM_Case_Page_AJAX
             echo $details['sort_name'].' - '.$details['case_type']."|$caseId|".$details['contact_id'].'|'.$details['case_type'].'|'.$details['sort_name']."\n";
         }
         
-        exit( );
+        CRM_Utils_System::civiExit( );
+    }
+
+    function processCaseTags( ) {
+        require_once 'CRM/Core/BAO/EntityTag.php';
+        
+        $caseId    = CRM_Utils_Type::escape($_POST['case_id'], 'Integer');
+        $tags      = CRM_Utils_Type::escape($_POST['tag'], 'String');
+        if ( empty($tags) || empty($caseId) ) {
+            echo 'false';
+            CRM_Utils_System::civiExit( );
+        }
+        
+        $tagIds = explode( ',', $tags );
+        $params = array( 'entity_id'    => $caseId,
+                         'entity_table' => 'civicrm_case' );
+        
+        CRM_Core_BAO_EntityTag::del( $params );
+        
+        foreach( $tagIds as $tagid ) {
+            $params['tag_id'] = $tagid;
+            CRM_Core_BAO_EntityTag::add( $params );
+        }
+        
+        $session =& CRM_Core_Session::singleton( );
+
+        require_once "CRM/Activity/BAO/Activity.php";
+        require_once "CRM/Core/OptionGroup.php";
+        $activityParams = array( );
+        
+        $activityParams['source_contact_id']  = $session->get( 'userID' ); 
+        $activityParams['activity_type_id']   = CRM_Core_OptionGroup::getValue( 'activity_type', 'Change Case Tags', 'name' );
+        $activityParams['activity_date_time'] = date('YmdHis');
+        $activityParams['status_id']          = CRM_Core_OptionGroup::getValue( 'activity_status', 'Completed', 'name' );
+        $activityParams['case_id']            = $caseId;
+        $activityParams['is_auto']            = 0;
+        $activityParams['subject']            = 'Change Case Tags';
+ 
+        $activity = CRM_Activity_BAO_Activity::create( $activityParams );
+        
+        require_once "CRM/Case/BAO/Case.php";
+        $caseParams = array( 'activity_id' => $activity->id,
+                             'case_id'     => $caseId );
+        
+        CRM_Case_BAO_Case::processCaseActivity( $caseParams );
+
+        echo 'true';
+        CRM_Utils_System::civiExit( );
     }
 }

@@ -69,15 +69,30 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
         return null;
     }
 
-    function getTree () {
+    function getTree ( $usedFor = null, $excludeHidden = false  ) {
         if (!isset ($this->tree)) {
-            $this->buildTree();
+            $this->buildTree($usedFor, $excludeHidden);
         }
         return $this->tree;
     }
 	
-    function buildTree() {
-        $sql = "SELECT civicrm_tag.id, civicrm_tag.parent_id,civicrm_tag.name FROM civicrm_tag order by parent_id,name;";
+    function buildTree( $usedFor = null, $excludeHidden = false ) {
+        $sql = "SELECT civicrm_tag.id, civicrm_tag.parent_id,civicrm_tag.name FROM civicrm_tag ";
+        
+        $whereClause = array( );
+        if ( $usedFor ) {
+            $whereClause[] = "used_for like '%{$usedFor}%'";
+        }
+        if ( $excludeHidden ) {
+            $whereClause[] = "is_hidden = 0";
+        }
+        
+        if ( !empty( $whereClause ) ) {
+            $sql .= " WHERE ". implode( ' AND ', $whereClause );  
+        }
+
+        $sql .= " ORDER BY parent_id,name";
+
         $dao =& CRM_Core_DAO::executeQuery( $sql );
 
         $orphan = array();
@@ -115,6 +130,42 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
                 }
             }
         }
+    }
+
+    function getTagsUsedFor( $usedFor = array( 'civicrm_contact' ) , $buildSelect = true, $all = false ) {       
+        $tags = array( );
+
+        if ( empty($usedFor) ) {
+            return $tags;
+        } 
+        if ( !is_array($usedFor) ) {
+            $usedFor = array( $usedFor );  
+        }
+
+        foreach( $usedFor as $entityTable ) { 
+            $tag = new CRM_Core_DAO_Tag( );
+            $tag->fields( );
+            $tag->orderBy( 'parent_id' );
+            $tag->whereAdd( "used_for LIKE '%{$entityTable}%'");
+            if ( !$all ) {
+                $tag->is_hidden = 0; 
+            }
+            $tag->find( );
+            
+            while( $tag->fetch( ) ) {
+                if ( $buildSelect ) {
+                    $tags[$tag->id] = $tag->name;
+                } else {
+                    $tags[$tag->id]['name']      = $tag->name;
+                    $tags[$tag->id]['parent_id'] = $tag->parent_id;
+                    $tags[$tag->id]['is_hidden'] = $tag->is_hidden;
+                    $tags[$tag->id]['used_for']  = $tag->used_for;
+                }
+            }
+            $tag->free( );
+        }
+
+        return $tags;
     }
 
     /**

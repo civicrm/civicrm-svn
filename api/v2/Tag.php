@@ -67,6 +67,9 @@ function civicrm_tag_create( &$params )
     if ( $error['is_error'] ) {
         return civicrm_create_error( $error['error_message'] );
     }
+    if( ! CRM_Utils_Array::value( 'name',$params )  ) {
+        return civicrm_create_error( 'Missing required parameter' );
+    }
     
     require_once 'CRM/Core/BAO/Tag.php';
     $ids = array( 'tag' => CRM_Utils_Array::value( 'tag', $params ) );
@@ -135,7 +138,8 @@ function civicrm_tag_get($params)
         return civicrm_create_error('Required parameters missing.');
     }
     
-    $properties = array('id', 'name', 'description', 'parent_id');
+    $properties = array('id', 'name', 'description', 'parent_id','is_selectable','is_hidden',
+                        'is_reserved','used_for');
     foreach ( $properties as $name) {
         if (array_key_exists($name, $params)) {
             $tagBAO->$name = $params[$name];

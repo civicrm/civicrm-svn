@@ -38,7 +38,7 @@
         </div>
         <div class="clear"></div>
   {/if}
-  {include file="CRM/common/jsortable.tpl"}   
+  {include file="CRM/common/jsortable.tpl" useAjax=0}   
   {* start of code to show current relationships *}
   {if $currentRelationships}
     {* show browse table for any action *}

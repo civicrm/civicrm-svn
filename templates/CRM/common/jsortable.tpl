@@ -26,13 +26,25 @@
 {literal}
 <script type="text/javascript">
 cj( function( ) {
+var useAjax = {/literal}{if $useAjax}1{else}0{/if}{literal};
+
+var sourceUrl = '';
+var useClass  = 'display';
+
+var tcount =1;
+if ( useAjax ) {
+ sourceUrl = {/literal}"{$sourceUrl}"{literal};
+ useClass = 'pagerDisplay';
+ tcount =5;
+} 
+ 
 var tableId = '';
 var count   = 1;
 
 //rename id of table with sequence
 //and create the object for navigation
-cj('table.display').each(function(){
-    cj(this).attr('id','option' + count);
+cj('table.' + useClass).each(function(){
+    cj(this).attr('id','option' + tcount + count);
     tableId += count + ',';
     count++; 
 });
@@ -42,7 +54,7 @@ tableId = tableId.substring(0, tableId.length - 1 );
 eval('tableId =[' + tableId + ']');
  
   cj.each(tableId, function(i,n){
-    tabId = '#option' + n; 
+    tabId = '#option' + tcount + n; 
     //get the object of first tr data row.
     tdObject = cj(tabId + ' tr:nth(1) td');
     var id = -1; var count = 0; var columns=''; var sortColumn = '';
@@ -54,7 +66,7 @@ eval('tableId =[' + tableId + ']');
         switch( option ) { 
             case 'sortable':
                 sortColumn += '[' + count + ', "asc" ],'; 
-                columns += ' null,';
+                columns += '{"sClass": "'+ getElementClass( this ) +'"},';
             break;
             case 'date':
                 stype = 'date';
@@ -66,14 +78,14 @@ eval('tableId =[' + tableId + ']');
                 columns += '{ "sType": \'' + stype + '\', "fnRender": function (oObj) { return oObj.aData[' + sortId + ']; },"bUseRendered": false},';
             break;
             case 'nosort':           
-                columns += '{ "bSortable": false },';
+                columns += '{ "bSortable": false, "sClass": "'+ getElementClass( this ) +'"},';
             break;
             case 'currency':
                 columns += '{ "sType": "currency" },';
             break;
             default:
                 if ( cj(this).text() ) {
-                    columns += ' null,';
+                    columns += '{"sClass": "'+ getElementClass( this ) +'"},';
                 } else {
                     columns += '{ "bSortable": false },';
                 }
@@ -83,21 +95,48 @@ eval('tableId =[' + tableId + ']');
 	});
 	columns    = columns.substring(0, columns.length - 1 );
 	sortColumn = sortColumn.substring(0, sortColumn.length - 1 );
-    
 	eval('sortColumn =[' + sortColumn + ']');
 	eval('columns =[' + columns + ']');
-    
+    	
     var oTable = null;
-    oTable = cj(tabId).dataTable({
-                "aaSorting"    : sortColumn,
-                "bPaginate"    : false,
-                "bLengthChange": true,
-                "bFilter"      : false,
-                "bInfo"        : false,
-                "bAutoWidth"   : false,
-                "aoColumns"    : columns
-    }); 
+    if ( useAjax ) {
+      oTable = cj(tabId).dataTable({
+    	        "bFilter"    : false,
+		"bAutoWidth" : false,
+                "aaSorting"  : sortColumn,
+		"aoColumns"  : columns,
+	    	"bProcessing": true,
+		"sPaginationType": "full_numbers",
+	   	"bServerSide": true,
+	   	"sAjaxSource": sourceUrl,
+
+		{/literal}{if $callBack}{literal}
+		"fnDrawCallback": function() { checkSelected(); },
+		{/literal}{/if}{literal}
+
+		"fnServerData": function ( sSource, aoData, fnCallback ) {
+			$.ajax( {
+				"dataType": 'json', 
+				"type": "POST", 
+				"url": sSource, 
+				"data": aoData, 
+				"success": fnCallback
+			} ); }
+     		}); 
+    } else {
+      oTable = cj(tabId).dataTable({
+			"aaSorting"    : sortColumn,
+             	        "bPaginate"    : false,
+                	"bLengthChange": true,
+                	"bFilter"      : false,
+                	"bInfo"        : false,
+                	"bAutoWidth"   : false,
+               		"aoColumns"   : columns
+    			 }); 
+    }
     var object;
+
+    if ( !useAjax ) { 
     cj('a.action-item').click( function(){
         object = cj(this);
         cj('table.display').one( 'mouseover', function() {
@@ -118,9 +157,15 @@ eval('tableId =[' + tableId + ']');
             });
         });
     });
+    }
     
     });       
 });
+
+function getElementClass( element ) {
+if( cj(element).attr('class') )	 return cj(element).attr('class');
+return '';
+}
 
 //function to fetch the occurence of element
 function getRowId(row,str){

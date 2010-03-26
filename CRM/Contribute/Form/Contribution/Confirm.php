@@ -287,7 +287,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                                             'js'        => array( 'onclick' => "return submitOnce(this,'" . $this->_name . "','" . ts('Processing') ."');" )
                                             ),
                                     array ( 'type'      => 'back',
-                                            'name'      => ts('<< Go Back')
+                                            'name'      => ts('Go Back')
                                             )
                                     )
                               );

@@ -24,20 +24,22 @@
  +--------------------------------------------------------------------+
 *}
 {* This form is for Contact Add/Edit interface *}
+<div class="crm-form-block crm-search-form-block">
 {if $addBlock}
 {include file="CRM/Contact/Form/Edit/$blockName.tpl"}
 {else}
-<div class="crm-submit-buttons">
-   {$form.buttons.html}
-</div>
 <span style="float:right;"><a href="#expand" id="expand">{ts}Expand all tabs{/ts}</a></span>
-<br/>
-<div class="accordion ui-accordion ui-widget ui-helper-reset">
-    <h3 class="head"> 
-        <span class="ui-icon ui-icon-triangle-1-e" id='contact'></span><a href="#">{ts}Contact Details{/ts}</a>
-    </h3>
-    <div id="contactDetails" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom">
-        <fieldset>
+<div class="crm-submit-buttons">
+   {include file="CRM/common/formButtons.tpl"}
+</div>
+<div class="crm-accordion-wrapper crm-contactDetails-accordion crm-accordion-open">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+	{ts}Contact Details{/ts}
+	
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body" id="contactDetails">
+    <div id="contactDetails">
         {include file="CRM/Contact/Form/Edit/$contactType.tpl"}
         <br/>
         <table class="form-layout-compressed">
@@ -47,11 +49,6 @@
 		</table>
 		<table class="form-layout-compressed">
             <tr class="last-row">
-            {if $form.home_URL}
-              <td>{$form.home_URL.label}<br />
-                  {$form.home_URL.html}
-              </td>
-            {/if}
               <td>{$form.contact_source.label}<br />
                   {$form.contact_source.html}
               </td>
@@ -65,19 +62,25 @@
         </table>
 
         {*  add dupe buttons *}
-        {$form._qf_Contact_refresh_dedupe.html}
-        {if $isDuplicate}&nbsp;&nbsp;{$form._qf_Contact_upload_duplicate.html}{/if}
+        <span class="crm-button crm-button_qf_Contact_refresh_dedupe">
+            {$form._qf_Contact_refresh_dedupe.html}
+        </span>
+        {if $isDuplicate}
+            &nbsp;&nbsp;
+            <span class="crm-button crm-button_qf_Contact_upload_duplicate">
+                {$form._qf_Contact_upload_duplicate.html}
+            </span>
+        {/if}
         <div class="spacer"></div>
-        </fieldset>
-    </div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
     
     {foreach from = $editOptions item = "title" key="name"}
         {include file="CRM/Contact/Form/Edit/$name.tpl"}
     {/foreach}
 </div>
-<br />
 <div class="crm-submit-buttons">
-   {$form.buttons.html}
+    {include file="CRM/common/formButtons.tpl"}
 </div>
 
 {literal}
@@ -121,10 +124,12 @@ cj(function( ) {
 			cj(this).show().prev().children('span:first').removeClass( ).addClass('ui-icon ui-icon-triangle-1-s');
 		}
 	});
+
 	if ( action == 2 ) {
 		//highlight the tab having data inside.
-		cj('div.accordion div.ui-accordion-content :input').each( function() { 
-			var element = cj(this).closest("div.ui-accordion-content").attr("id");
+		cj('.crm-accordion-body :input').each( function() { 
+			var element = cj(this).closest(".crm-accordion-body").attr("id");
+			if (element) {
 			eval('var ' + element + ' = "";');
 			switch( cj(this).attr('type') ) {
 			case 'checkbox':
@@ -153,8 +158,9 @@ cj(function( ) {
 			  break;
 			}
 			if( eval( element + ';') ) { 
-			  cj(this).closest("div.ui-accordion-content").prev().children('a:first').css( 'font-weight', 'bold' );
+			  cj(this).closest(".crm-accordion-wrapper").addClass('crm-accordion-hasContent');
 			}
+		   }
 		});
 	}
 });
@@ -162,21 +168,14 @@ cj(function( ) {
 cj('a#expand').click( function( ){
     if( cj(this).attr('href') == '#expand') {   
         var message     = {/literal}"{ts}Collapse all tabs{/ts}"{literal};
-        var className   = 'ui-icon ui-icon-triangle-1-s';
-        var event       = 'show';
         cj(this).attr('href', '#collapse');
+        cj('.crm-accordion-closed').removeClass('crm-accordion-closed').addClass('crm-accordion-open');
     } else {
         var message     = {/literal}{ts}"Expand all tabs"{/ts}{literal};
-        var className   = 'ui-icon ui-icon-triangle-1-e';
-        var event       = 'hide';
+        cj('.crm-accordion-open').removeClass('crm-accordion-open').addClass('crm-accordion-closed');
         cj(this).attr('href', '#expand');
     }
-    
     cj(this).html(message);
-    cj('div.accordion div.ui-accordion-content').each(function() {
-        cj(this).parent().find('h3 span').removeClass( ).addClass(className);
-        eval( " var showHide = cj(this)." + event + "();" );
-    }); 
 });
 
 //current employer default setting
@@ -220,3 +219,5 @@ function showHideSignature( blockId ) {
 {include file="CRM/common/formNavigate.tpl"}
 
 {/if}
+
+</div>

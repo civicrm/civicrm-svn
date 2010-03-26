@@ -24,10 +24,16 @@
  +--------------------------------------------------------------------+
 *}
 {if $error}
-  <span class="error upper">{$label}</span>
+  <span class="crm-error crm-error-label">
+  	{$label} 
+  	{if $required}
+   		<span class="crm-marker" title="{ts}This field is required.{/ts}">*</span>
+	{/if}
+  </span>
 {else}
   {$label}
+  {if $required}
+   <span class="crm-marker" title="{ts}This field is required.{/ts}">*</span>
 {/if}
-{if $required}
-   <span class="marker" title="{ts}This field is required.{/ts}">*</span>
 {/if}
+

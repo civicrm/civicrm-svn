@@ -183,6 +183,12 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
             $template->assign_by_ref( 'row', $values );
             $template->assign_by_ref( 'profileFields_' . $this->_gid, $profileFields );
         }
+        
+        $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'name' );
+        
+        if($name == 'summary_overlay') {
+        	$template->assign( 'overlayProfile', true );
+        }
 
         // invoke the pagRun hook, CRM-3906
         require_once 'CRM/Utils/Hook.php';

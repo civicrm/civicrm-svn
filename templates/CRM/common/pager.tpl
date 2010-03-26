@@ -38,9 +38,9 @@
           <span class="crm-pager-nav">
           {$pager->_response.first}&nbsp;
           {$pager->_response.back}&nbsp;
-          <strong>{$pager->_response.status}</strong>&nbsp;
           {$pager->_response.next}&nbsp;
-          {$pager->_response.last}&nbsp;
+          {$pager->_response.last}&nbsp;          
+          {$pager->_response.status}          
           </span>
 
         </div>

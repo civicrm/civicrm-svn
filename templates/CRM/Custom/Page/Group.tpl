@@ -50,6 +50,7 @@
                 <th id="order" class="sortable">{ts}Order{/ts}</th>
                 <th>{ts}Style{/ts}</th>
                 <th></th>
+		<th class='hiddenElement'></th>
             </tr>
         </thead>
         <tbody>

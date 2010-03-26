@@ -205,6 +205,13 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         $this->add( 'text', 'activity_subject', ts('Subject'), 
                    array_merge( CRM_Core_DAO::getAttribute( 'CRM_Activity_DAO_Activity', 'subject' ), array('maxlength' => '128') ), true);
 
+        require_once 'CRM/Core/BAO/Tag.php';
+        $tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_case'), true );
+        if ( !empty($tags) ) { 
+            $this->add('select', 'tag',  ts( 'Select Tags' ), $tags, true, 
+                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
+        }
+        
         $this->addButtons(array( 
                                 array ( 'type'      => 'next',
                                         'name'      => ts('Save'), 
@@ -305,6 +312,18 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         $params['case_id'] = $caseObj->id;
         // unset any ids, custom data
         unset($params['id'], $params['custom']);
+
+        // add tags if exists
+        $tagParams = array( );
+        if ( !empty($params['tag']) ) {
+            require_once 'CRM/Core/BAO/EntityTag.php';
+            $tagParams = array( );
+            foreach( $params['tag'] as $tag ) {
+                $tagParams[$tag] = 1;
+            }
+        }
+        require_once 'CRM/Core/BAO/EntityTag.php';
+        CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_case', $caseObj->id );
 
         // user context
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case',

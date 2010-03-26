@@ -124,16 +124,15 @@ function enableDisable( recordID, recordBAO, op ) {
 		},
 	
 		buttons: { 
+			"Cancel": function() { 
+				cj(this).dialog("close"); 
+				cj(this).dialog("destroy"); 
+			},
 			"OK": function() { 	    
 			        saveEnableDisable( recordID, recordBAO, op );
 			        cj(this).dialog("close"); 
 			        cj(this).dialog("destroy");
-			},
-
-			"Cancel": function() { 
-				cj(this).dialog("close"); 
-				cj(this).dialog("destroy"); 
-			} 
+			}
 		} 
 	});
 }

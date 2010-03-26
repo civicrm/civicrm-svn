@@ -118,8 +118,10 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
         
         if ( CRM_Utils_Array::value( 'tags', $searchOptions ) ) {
             // tag criteria
+            if( !empty( $this->_tag ) ){
             $tag = array('' => ts('- any tag -')) + $this->_tag;
             $this->_tagElement =& $this->addElement('select', 'tag', ts('with'), $tag);
+            }
         }
 
         parent::buildQuickForm( );

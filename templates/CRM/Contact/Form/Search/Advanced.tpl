@@ -25,58 +25,52 @@
 *}
 {* Master tpl for Advanced Search *}
 
+<div class="crm-form-block crm-search-form-block">
+
 {include file="CRM/Contact/Form/Search/Intro.tpl"}
 
-{assign var="showBlock" value="'searchForm'"}
-{assign var="hideBlock" value="'searchForm_show','searchForm_hide'"}
-
-<div id="searchForm_show" class="form-item">
-  <a href="#" onclick="hide('searchForm_show'); show('searchForm'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}" /></a>
-  <label>
+<div class="crm-accordion-wrapper crm-advanced_search_form-accordion {if $ssID or $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
   {if $savedSearch}
     {ts 1=$savedSearch.name}Edit %1 Smart Group Criteria{/ts}
   {else}
-    {ts}Edit Search Criteria{/ts}</label>
+    {ts}Edit Search Criteria{/ts}
   {/if}
+ </div>
+ <div class="crm-accordion-body">
+  {include file="CRM/Contact/Form/Search/AdvancedCriteria.tpl"}
+ </div>
+</div>  
 </div>
 
-<div id="searchForm">
-    {include file="CRM/Contact/Form/Search/AdvancedCriteria.tpl"}
-</div>
-
+<div class="crm-content-block">
 {if $rowsEmpty}
+	<div class="crm-results-block crm-results-block-empty">
     {include file="CRM/Contact/Form/Search/EmptyResults.tpl"}
+	</div>
 {/if}
 
 {if $rows}
+	<div class="crm-results-block">
     {* Search request has returned 1 or more matching rows. Display results and collapse the search criteria fieldset. *}
-
-    {if ! $ssID}
-        {* Don't collapse search criteria when we are editing smart group criteria. *}
-        {assign var="showBlock" value="'searchForm_show'"}
-        {assign var="hideBlock" value="'searchForm'"}
-    {/if}
-    
-    <fieldset>
     
        {* This section handles form elements for action task select and submit *}
+       <div class="crm-search-tasks">
        {include file="CRM/Contact/Form/Search/ResultTasks.tpl"}
-
+		</div>
        {* This section displays the rows along and includes the paging controls *}
-       <p>
+	   <div class="crm-search-results">
        {include file="CRM/Contact/Form/Selector.tpl"}
-       </p>
+       </div>
 
-    </fieldset>
     {* END Actions/Results section *}
-
+	</div>
 {/if}
-
+</div>
+{literal}
 <script type="text/javascript">
-    var showBlock = new Array({$showBlock});
-    var hideBlock = new Array({$hideBlock});
-
-{* hide and display the appropriate blocks *}
-    on_load_init_blocks( showBlock, hideBlock );
+cj(function() { cj().crmaccordions(); });
 </script>
+{/literal}
 

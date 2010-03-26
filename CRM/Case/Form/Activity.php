@@ -346,6 +346,11 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             } else {
                 $statusMsg = ts("Selected Activity cannot be deleted.");
             }
+
+            require_once 'CRM/Core/BAO/EntityTag.php';
+            $tagParams = array( 'entity_table' => 'civicrm_activity',
+                                'entity_id'    => $this->_activityId );
+            CRM_Core_BAO_EntityTag::del( $tagParams );
             
             CRM_Core_Session::setStatus( $statusMsg );
             return;
@@ -474,7 +479,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             $activity->copyValues( $params );
             $activity->save( );        
         }
-
+       
         // create a new version of activity if activity was found to
         // have been modified/created by user
         if ( isset($newActParams) ) {
@@ -510,7 +515,18 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             // copy back params to original var
             $params = $newActParams;
         }
-
+        
+        if ( $activity->id ) {
+            $tagParams = array( );
+            if ( !empty($params['tag']) ) {
+                require_once 'CRM/Core/BAO/EntityTag.php';
+                foreach( $params['tag'] as $tag ) {
+                    $tagParams[$tag] = 1;
+                }
+            }
+            CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_activity',  $activity->id );
+        }
+ 
         $params['assignee_contact_id'] = $assineeContacts;
         // update existing case record if needed
         $caseParams       = $params;

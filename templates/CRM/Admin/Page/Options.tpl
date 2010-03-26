@@ -103,6 +103,7 @@
 	        {if $showIsDefault}<th>{ts}Default{/ts}</th>{/if}
             <th>{ts}Reserved{/ts}</th>
             <th>{ts}Enabled?{/ts}</th>
+            <th class="hiddenElement"></th>
             <th></th>
             </tr>
             </thead>

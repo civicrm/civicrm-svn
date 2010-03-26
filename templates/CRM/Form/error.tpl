@@ -25,6 +25,6 @@
 *}
 {$html}
 {if $error}
-    <span class="error">{$error}</span>
+    <span class="crm-error">{$error}</span>
 {/if}
 

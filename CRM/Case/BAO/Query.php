@@ -589,6 +589,18 @@ case_relation_type.id = case_relationship.relationship_type_id )";
         }
         $form->assign( 'accessAllCases', $accessAllCases );
         
+        $caseOwner = array( ts('My Cases'), ts('All Cases') );
+        $form->addRadio( 'case_owner', ts( 'Cases' ), $caseOwner );
+        $form->setDefaults(array('case_owner' => 1));
+        
+        require_once 'CRM/Core/BAO/Tag.php';
+        $caseTags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_case') );
+        if( $caseTags ) {
+            foreach ($caseTags as $tagID => $tagName) {
+                $form->_tagElement =& $form->addElement('checkbox', "caseTags[$tagID]", null, $tagName);         
+            }
+        }
+        
         require_once"CRM/Core/Permission.php";
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) { 
             $form->addElement( 'checkbox', 'case_deleted' , ts( 'Deleted Cases' ) );

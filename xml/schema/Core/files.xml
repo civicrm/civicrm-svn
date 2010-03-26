@@ -46,4 +46,5 @@
 <xi:include href="OpenID.xml"               parse="xml" />
 <xi:include href="Component.xml"            parse="xml" />
 <xi:include href="Discount.xml"             parse="xml" />
+<xi:include href="Website.xml"              parse="xml" />
 </tables>

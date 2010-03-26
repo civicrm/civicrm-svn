@@ -115,7 +115,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
             $value['contact_id'] = $contactId;
 
             $blocks[] = self::add( $value, $fixAddress );
-        }       
+        }
 
         return $blocks;
     }
@@ -133,6 +133,7 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
      */
     static function add( &$params, $fixAddress ) 
     {
+        static $customFields = null;
         $address = new CRM_Core_DAO_Address( );
 
         // fixAddress mode to be done
@@ -142,7 +143,28 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
 
         $address->copyValues($params);
 
-        return $address->save( );
+        $address->save( );
+
+        if ( $address->id ) {
+            if ( ! $customFields ) {
+                require_once 'CRM/Core/BAO/CustomField.php';
+                require_once 'CRM/Core/BAO/CustomValueTable.php';
+                $customFields = 
+                    CRM_Core_BAO_CustomField::getFields( 'Address', false, true );
+            }
+            if ( ! empty( $customFields ) ) {
+                $addressCustom = CRM_Core_BAO_CustomField::postProcess( $params, 
+                                                                        $customFields, 
+                                                                        $address->id,
+                                                                        'Address', 
+                                                                        true );
+            }
+            if ( ! empty( $addressCustom ) ) {
+                CRM_Core_BAO_CustomValueTable::store( $addressCustom, 'civicrm_address', $address->id );
+            }
+        }
+
+        return $address;
     }
 
     /**

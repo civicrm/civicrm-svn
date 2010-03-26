@@ -94,10 +94,7 @@
 	{else}
         <tr><td class="label">{$form.$n.label}</td>
 	<td>
-        {if $n|substr:0:3 eq 'im-'}
-           {assign var="provider" value=$n|cat:"-provider_id"}
-           {$form.$provider.html}&nbsp;
-        {elseif $n eq 'group' && $form.group || ( $n eq 'tag' && $form.tag )}
+        {if $n eq 'group' && $form.group || ( $n eq 'tag' && $form.tag )}
            {include file="CRM/Contact/Form/Edit/TagsAndGroups.tpl" type=$n}
         {elseif $n eq 'email_greeting' or  $n eq 'postal_greeting' or $n eq 'addressee'}
                {include file="CRM/Profile/Form/GreetingType.tpl"}  
@@ -105,6 +102,13 @@
                 ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) } 
                {include file="CRM/common/jcalendar.tpl" elementName=$form.$n.name}
         {else}
+            {if $n|substr:0:4 eq 'url-'}
+                 {assign var="websiteType" value=$n|cat:"-website_type_id"}
+                 {$form.$websiteType.html}&nbsp;
+            {elseif $n|substr:0:3 eq 'im-'}
+               {assign var="provider" value=$n|cat:"-provider_id"}
+               {$form.$provider.html}&nbsp;
+            {/if}
             {$form.$n.html}
             {if $field.is_view eq 0}
                {if ( $field.html_type eq 'Radio' or  $n eq 'gender') and $form.formName eq 'Preview'}

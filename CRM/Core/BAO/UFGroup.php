@@ -663,7 +663,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             require_once 'CRM/Quest/BAO/Student.php';
             $studentFields = CRM_Quest_BAO_Student::$multipleSelectFields;
         }
-                        
+
         // get the contact details (hier)
         $returnProperties =& CRM_Contact_BAO_Contact::makeHierReturnProperties( $fields );
    
@@ -688,9 +688,12 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
         $locationTypes = $imProviders = array( );
         $locationTypes = CRM_Core_PseudoConstant::locationType( );
         $imProviders   = CRM_Core_PseudoConstant::IMProvider( );
+        $websiteTypes  = CRM_Core_PseudoConstant::websiteType( );
+
+        $multipleFields = array( 'url' );
 
         //start of code to set the default values
-        foreach ($fields as $name => $field ) {    
+        foreach ($fields as $name => $field ) {            
             // fix for CRM-3962
             if ( $name == 'id' ) {
                 $name = 'contact_id';     
@@ -817,10 +820,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                         $customFieldName = "{$name}_from";
                                     }
                                 }
-                            } else if ( $name == 'home_URL' &&
-                                        ! empty( $details->$name ) ) {
-                                $url = CRM_Utils_System::fixURL( $details->$name );
-                                $values[$index] = "<a href=\"$url\">{$details->$name}</a>";
                             } else if ( in_array( $name, array('birth_date', 'deceased_date','membership_start_date','membership_end_date','join_date')) ) {
                                 require_once 'CRM/Utils/Date.php';
                                 $values[$index] = CRM_Utils_Date::customFormat($details->$name);
@@ -831,47 +830,59 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                         }
                     } 
                 }
-            } else if ( strpos( $name, '-' ) !== false ) {
+            } else if ( strpos( $name, '-' ) !== false) {
                 list( $fieldName, $id, $type ) = CRM_Utils_System::explode( '-', $name, 3 );
                 
-                if ($id == 'Primary') {
-                    // fix for CRM-1543
-                    // not sure why we'd every use Primary location type id
-                    // we need to fix the source if we are using it
-                    // $locationTypeName = CRM_Contact_BAO_Contact::getPrimaryLocationType( $cid ); 
-                    $locationTypeName = 1;
-                } else {
-                    $locationTypeName = CRM_Utils_Array::value( $id, $locationTypes );
-                }
-                
-                if ( ! $locationTypeName ) {
-                    continue;
-                }
-                
-                $detailName = "{$locationTypeName}-{$fieldName}";
-                $detailName = str_replace( ' ', '_', $detailName );
-
-                if ( in_array( $fieldName, array( 'phone', 'im', 'email', 'openid' ) ) ) {
-                    if ( $type ) {
-                        $detailName .= "-{$type}";
-                    }
-                }
-
-                if ( in_array( $fieldName, array( 'state_province', 'country', 'county' ) ) ) {
-                    $values[$index] = $details->$detailName;
-                    $idx = $detailName . '_id';
-                    $params[$index] = $details->$idx;
-                } else if ( $fieldName == 'im'){
-                    $providerId     = $detailName . '-provider_id';
-                    $providerName   = $imProviders[$details->$providerId];
-                    if ( $providerName ) {
-                        $values[$index] = $details->$detailName . " (" . $providerName .")";
+                if ( !in_array( $fieldName, $multipleFields ) ) {
+                    if ( $id == 'Primary' ) {
+                        // fix for CRM-1543
+                        // not sure why we'd every use Primary location type id
+                        // we need to fix the source if we are using it
+                        // $locationTypeName = CRM_Contact_BAO_Contact::getPrimaryLocationType( $cid ); 
+                        $locationTypeName = 1;
                     } else {
-                        $values[$index] = $details->$detailName;
+                        $locationTypeName = CRM_Utils_Array::value( $id, $locationTypes );
                     }
-                    $params[$index] = $details->$detailName ;        
+                
+                    if ( ! $locationTypeName ) {
+                        continue;
+                    }
+                
+                    $detailName = "{$locationTypeName}-{$fieldName}";
+                    $detailName = str_replace( ' ', '_', $detailName );
+
+                    if ( in_array( $fieldName, array( 'phone', 'im', 'email', 'openid' ) ) ) {
+                        if ( $type ) {
+                            $detailName .= "-{$type}";
+                        }
+                    }
+
+                    if ( in_array( $fieldName, array( 'state_province', 'country', 'county' ) ) ) {
+                        $values[$index] = $details->$detailName;
+                        $idx = $detailName . '_id';
+                        $params[$index] = $details->$idx;
+                    } else if ( $fieldName == 'im'){
+                        $providerId     = $detailName . '-provider_id';
+                        $providerName   = $imProviders[$details->$providerId];
+                        if ( $providerName ) {
+                            $values[$index] = $details->$detailName . " (" . $providerName .")";
+                        } else {
+                            $values[$index] = $details->$detailName;
+                        }
+                        $params[$index] = $details->$detailName ;        
+                    } else {
+                        $values[$index] = $params[$index] = $details->$detailName;
+                    }
                 } else {
-                    $values[$index] = $params[$index] = $details->$detailName;
+                    $detailName = "website-{$id}-{$fieldName}";
+                    $url = CRM_Utils_System::fixURL( $details->$detailName );
+                    $websiteTypeId  = "website-{$id}-website_type_id";
+                    $websiteType    = $websiteTypes[$details->$websiteTypeId];
+                    if ( $details->$detailName ) {
+                        $values[$index] = "<a href=\"$url\">{$details->$detailName} ( {$websiteType} )</a>";
+                    } else {
+                        $values[$index] = '';
+                    }
                 }
             }
             
@@ -1505,14 +1516,17 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
 																  CRM_Contact_Form_Edit_TagsAndGroups::TAG,
 																  false, $required,
 																  null, $title, $name );
-        } else if ( $fieldName === 'home_URL' ) {
+        } else if ( substr($fieldName, 0, 4) === 'url-' ) {
             $form->addElement('text', $name, $title,
-                              array_merge( CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'home_URL'),
+                              array_merge( CRM_Core_DAO::getAttribute('CRM_Core_DAO_Website', 'url'),
                                            array('onfocus' => "if (!this.value) this.value='http://'; else return false",
                                                  'onblur' => "if ( this.value == 'http://') this.value=''; else return false")
                                            ));
             
             $form->addRule($name, ts('Enter a valid Website.'), 'url');
+            
+            //Website type select
+            $form->addElement('select', $name .'-website_type_id', null, CRM_Core_PseudoConstant::websiteType( ) );
         } else if (substr($fieldName, 0, 6) === 'custom') {
             $customFieldID = CRM_Core_BAO_CustomField::getKeyID($fieldName);
             if ( $customFieldID ) {
@@ -1624,6 +1638,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             require_once 'CRM/Contact/BAO/Contact.php';
             list($contactDetails, $options) = CRM_Contact_BAO_Contact::getHierContactDetails( $contactId, $fields );
             $details = $contactDetails[$contactId];
+            
+            $multipleFields = array( 'website' => 'url' );
+            
             require_once 'CRM/Contact/Form/Edit/TagsAndGroups.php';
             //start of code to set the default values
             foreach ($fields as $name => $field ) {
@@ -1733,13 +1750,14 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                     }
                 } else {
                     list($fieldName, $locTypeId, $phoneTypeId) = CRM_Utils_System::explode( '-', $name, 3 );
-                    if ( is_array($details) ) {   
-                        foreach ($details as $key => $value) {
-                            // when we fixed CRM-5319 - get primary loc
-                            // type as per loc field and removed below code. 
-                            if ($locTypeId == 'Primary') {
-                                $locTypeId = CRM_Contact_BAO_Contact::getPrimaryLocationType( $contactId ); 
-                            }
+                    if ( !in_array( $fieldName, $multipleFields ) ) {
+                        if ( is_array($details) ) {   
+                            foreach ($details as $key => $value) {
+                                // when we fixed CRM-5319 - get primary loc
+                                // type as per loc field and removed below code. 
+                                if ($locTypeId == 'Primary') {
+                                    $locTypeId = CRM_Contact_BAO_Contact::getPrimaryLocationType( $contactId ); 
+                                }
                             
                             if (is_numeric($locTypeId)) {//fixed for CRM-665
                                 if ($locTypeId == CRM_Utils_Array::value('location_type_id',$value) ) {
@@ -1756,29 +1774,40 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                                                 if ( $config->defaultContactCountry ) {
                                                     $defaults[$fldName] = $config->defaultContactCountry;
                                                 }
-                                            }
-                                        } else if ( $fieldName == 'phone' ) {
-                                            if ($phoneTypeId) {
-                                                if ( $value['phone'][$phoneTypeId] ) {
-                                                    $defaults[$fldName] = $value['phone'][$phoneTypeId];
+                                            } else if ( $fieldName == 'phone' ) {
+                                                if ($phoneTypeId) {
+                                                    if ( $value['phone'][$phoneTypeId] ) {
+                                                        $defaults[$fldName] = $value['phone'][$phoneTypeId];
+                                                    }
+                                                } else {
+                                                    $defaults[$fldName] = $value['phone'];
                                                 }
+                                            } else if ( $fieldName == 'email' ) {
+                                                //adding the first email (currently we don't support multiple emails of same location type)
+                                                $defaults[$fldName] = $value['email'];
+                                            } else if ( $fieldName == 'im' ) {
+                                                //adding the first im (currently we don't support multiple ims of same location type)
+                                                $defaults[$fldName] = $value['im'];
+                                                $defaults[$fldName . "-provider_id"] = $value['im_provider_id'];
                                             } else {
-                                                $defaults[$fldName] = $value['phone'];
+                                                $defaults[$fldName] = $value[$fieldName];
                                             }
-                                        } else if ( $fieldName == 'email' ) {
-                                            //adding the first email (currently we don't support multiple emails of same location type)
-                                            $defaults[$fldName] = $value['email'];
-                                        } else if ( $fieldName == 'im' ) {
-                                            //adding the first im (currently we don't support multiple ims of same location type)
-                                            $defaults[$fldName] = $value['im'];
-                                            $defaults[$fldName . "-provider_id"] = $value['im_provider_id'];
-                                        } else {
-                                            $defaults[$fldName] = $value[$fieldName];
                                         }
                                     }
                                 }
                             }
                         }
+                    } else {
+                        if ( is_array($details) ) {
+                            if ( $fieldName === 'url' ) {
+                                if ( !empty( $details['website'] ) ) {
+                                    foreach ( $details['website'] as $val ) {
+                                        $defaults[$fldName] = $val['url'];
+                                        $defaults[$fldName . '-website_type_id' ] = $val['website_type_id'];
+                                    }
+                                }
+                            }
+                        } 
                     }
                 }
             }

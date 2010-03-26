@@ -24,8 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 {* Search criteria form elements *}
-<fieldset>
-    <div class="form-item">
     {if $rows}
         {if $context EQ 'smog'}
             <h3>{ts}Find Members within this Group{/ts}</h3>
@@ -173,5 +171,3 @@ dojo.addOnLoad( function( ) {
         </tr>
     </table>
     {/strip}
-    </div>
-</fieldset>

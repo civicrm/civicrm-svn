@@ -62,6 +62,7 @@ function civicrm_html_head()
         // add the final assignment
         drupal_add_js( 'var cj = jQuery.noConflict(); $ = cj;',
                        'inline' );
+   
     }
 
     require_once 'CRM/Core/Config.php';
@@ -838,9 +839,11 @@ function civicrm_theme_registry_alter(&$theme_registry) {
  * Based on the jquery_update module functions. 
  * 
  * Strips out JS and CSS for a path. 
- */
- 
-function civicrm_preprocess_page(&$variables) { 
+ */function civicrm_preprocess_page(&$variables) {
+
+	// unset Drupal $title, as we print it in #crm-container
+	unset($variables['title']);
+	
 	// to increase it's flexibility. 
   	if ( module_exists('date_popup') && (arg(0) == 'civicrm') ) { 
 		/** 

@@ -535,6 +535,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         // take the location blocks.
         $blocks = CRM_Core_BAO_Preferences::valueOptions( 'contact_edit_options', true, null, 
                                                           false, 'name', true, 'AND v.filter = 1' );
+                                                                  
         $otherEditOptions = CRM_Core_BAO_Preferences::valueOptions( 'contact_edit_options', true, null,
                                                                     false, 'name', true, 'AND v.filter = 0');
         //get address block inside.
@@ -550,11 +551,17 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             if ( CRM_Utils_Array::value( $name, $fields ) && is_array( $fields[$name] ) ) {
                 foreach ( $fields[$name] as $instance => $blockValues ) {
                     $dataExists = self::blockDataExists( $blockValues );
+                    
                     if ( !$dataExists && $name == 'address' &&  $instance == 1 ) {
                         $dataExists = CRM_Utils_Array::value( 'use_household_address', $fields );
                     }
                     
                     if ( $dataExists ) {
+                        // skip remaining checks for website
+                        if ( $name == 'website' ) {
+                            continue;
+                        }
+                        
                         $hasData[] = $instance;
                         if ( CRM_Utils_Array::value( 'is_primary', $blockValues ) ) {
                             $hasPrimary[] = $instance;
@@ -693,6 +700,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                          'isDefault' => true   ),
                                  array ( 'type'      => 'upload',
                                          'name'      => ts('Save and New'),
+                                         'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',
                                          'subName'   => 'new' ),
                                  array ( 'type'       => 'cancel',
                                          'name'      => ts('Cancel') ) ) );
@@ -818,7 +826,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         }
         
         require_once 'CRM/Contact/BAO/Contact.php';
-        $contact =& CRM_Contact_BAO_Contact::create( $params, true,false );
+        $contact =& CRM_Contact_BAO_Contact::create( $params, true, false, true );
 
         // set the contact ID
         $this->_contactId = $contact->id;
@@ -838,7 +846,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         if ( array_key_exists( 'TagsAndGroups', $this->_editOptions ) ) {
             //add contact to tags
             require_once 'CRM/Core/BAO/EntityTag.php';
-            CRM_Core_BAO_EntityTag::create( $params['tag'], $params['contact_id'] );
+            CRM_Core_BAO_EntityTag::create( $params['tag'],'civicrm_contact' ,
+                                            $params['contact_id'] );
         }
         
         $statusMsg = ts('Your %1 contact record has been saved.', array( 1 => $contact->contact_type_display ) );
@@ -889,12 +898,12 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     {
         if ( !is_array( $fields ) ) return false;
         
-        static $skipFields = array( 'location_type_id', 'is_primary', 'phone_type_id', 'provider_id', 'country_id' );
+        static $skipFields = array( 'location_type_id', 'is_primary', 'phone_type_id', 'provider_id', 'country_id', 'website_type_id' );
         foreach ( $fields as $name => $value ) {
             $skipField = false;
             foreach ( $skipFields as $skip ) {
                 if ( strpos( "[$skip]", $name ) !== false ) {
-                    if($name == 'phone') continue;
+                    if ($name == 'phone') continue;
                     $skipField = true;
                     break;
                 }

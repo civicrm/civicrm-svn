@@ -97,6 +97,26 @@
     </tr> 
 {/if}
 
+{if $form.tag.html}
+    <tr>
+      <td class="label">{$form.tag.label}</td>
+      <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
+                             {literal}
+                             <script type="text/javascript">
+                                                     $("select[multiple]").crmasmSelect({
+                                                              addItemTarget: 'bottom',
+                                                              animate: true,
+                                                              highlight: true,
+                                                              sortable: true,
+                                                              respectParents: true
+                                                     });
+                              </script>
+                              {/literal}
+      </td>
+    </tr>
+
+{/if}
+
 
 {/if}	
 
@@ -106,4 +126,3 @@
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}
-

@@ -56,15 +56,17 @@
     {/if}
 
     {if $pageTitle}
-        <h1 class="title">{$pageTitle}</h1>
-    {/if}
+		<div class="crm-title">
+			<h1 class="title">{$pageTitle}</h1>
+		</div>    
+	{/if}
   
 {if $browserPrint}
 {* Javascript window.print link. Used for public pages where we can't do printer-friendly view. *}
-<div id="printer-friendly"><a href="javascript:window.print()" title="{ts}Print this page.{/ts}"><img src="{$config->resourceBase}i/print-icon.png" alt="{ts}Print this page.{/ts}" /></a></div>
+<div id="printer-friendly"><a href="javascript:window.print()" title="{ts}Print this page.{/ts}"><div class="ui-icon ui-icon-print"></div></a></div>
 {else}
 {* Printer friendly link/icon. *}
-<div id="printer-friendly"><a href="{$printerFriendly}" title="{ts}Printer-friendly view of this page.{/ts}"><img src="{$config->resourceBase}i/print-icon.png" alt="{ts}Printer-friendly view of this page.{/ts}" /></a></div>
+<div id="printer-friendly"><a href="{$printerFriendly}" title="{ts}Printer-friendly view of this page.{/ts}"><div class="ui-icon ui-icon-print"></div></a></div>
 {/if}
 
 {*{include file="CRM/common/langSwitch.tpl"}*}
@@ -93,6 +95,13 @@
   </tr>
 </table>
 
+{literal}
+<script type="text/javascript">
+cj(function() {
+   cj().crmtooltip(); 
+});
+</script>
+{/literal}
 {* We need to set jquery $ object back to $*}
 <script type="text/javascript">jQuery.noConflict(true);</script>
 </div> {* end crm-container div *}

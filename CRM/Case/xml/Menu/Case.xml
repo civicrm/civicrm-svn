@@ -110,5 +110,9 @@
      <path>civicrm/case/ajax/relcases</path>
      <page_callback>CRM_Case_Page_AJAX::getRelatedCases</page_callback>
   </item>
-  
+  <item>
+    <path>civicrm/case/ajax/processtags</path>
+    <page_callback>CRM_Case_Page_AJAX::processCaseTags</page_callback>
+    <access_arguments>access CiviCase</access_arguments>
+  </item>  
 </menu>

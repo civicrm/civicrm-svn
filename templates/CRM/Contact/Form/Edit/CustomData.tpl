@@ -28,9 +28,14 @@
 <h3 class="head"> 
     <span id="custom{$group_id}" class="ui-icon ui-icon-triangle-1-e"></span><a href="#">{$cd_edit.title}</a>
 </h3>
-<div id="customData{$group_id}" class="ui-accordion-content ui-helper-reset ui-widget-content ui-corner-bottom">
-    <fieldset>{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}</fieldset>
-</div>
+<div class="crm-accordion-wrapper crm-custom_data-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+     <div class="icon crm-accordion-pointer"></div> 
+ </div><!-- /.crm-accordion-header -->
+     <div id="customData{$group_id}" class="crm-accordion-body">
+        <fieldset>{include file="CRM/Custom/Form/CustomData.tpl" formEdit=true}</fieldset>
+     </div>
+</div><!-- /.crm-accordion-wrapper -->
 <script type="text/javascript">
 {if $cd_edit.collapse_display eq 0 }
     var eleSpan          = "span#custom{$group_id}";

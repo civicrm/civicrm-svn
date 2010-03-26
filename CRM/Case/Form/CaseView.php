@@ -357,6 +357,24 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             $this->assign('hookCaseSummary', $hookCaseSummary);
         }
 		
+        require_once 'CRM/Core/BAO/EntityTag.php';
+        require_once 'CRM/Core/BAO/Tag.php';
+
+        $allTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_case' );
+        $tags    = CRM_Core_BAO_EntityTag::getTag($this->_caseID, 'civicrm_case');
+
+        if ( !empty($allTags) ) { 
+            $this->add('select', 'select_tag',  ts( 'Select Tags' ), $allTags, false, 
+                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
+           
+            $this->setDefaults( array( 'select_tag' => $tags ) ); 
+        }
+        foreach( $tags as $tid ) {
+            $tags[$tid] = $allTags[$tid];
+        }
+        $this->assign('tags', $tags);
+       
+          
         $this->addButtons(array(  
                                 array ( 'type'      => 'cancel',  
                                         'name'      => ts('Done'),  

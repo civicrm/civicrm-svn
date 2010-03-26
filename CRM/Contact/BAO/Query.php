@@ -624,6 +624,9 @@ class CRM_Contact_BAO_Query
         // add location as hierarchical elements
         $this->addHierarchicalElements( );
 
+        // add multiple field like website
+        $this->addMultipleElements( );
+        
         //fix for CRM-951
         require_once 'CRM/Core/Component.php';
         CRM_Core_Component::alterQuery( $this, 'select' );
@@ -891,6 +894,37 @@ class CRM_Contact_BAO_Query
         }
     }
 
+    /**
+     * If the return Properties are set in a hierarchy, traverse the hierarchy to get
+     * the return values
+     *
+     * @return void 
+     * @access public 
+     */
+    function addMultipleElements( ) {
+        if ( ! CRM_Utils_Array::value( 'website', $this->_returnProperties ) ) {
+            return;
+        }
+        if ( ! is_array( $this->_returnProperties['website'] ) ) {
+            return;
+        }
+
+        foreach ( $this->_returnProperties['website'] as $key => $elements ) {
+            foreach ( $elements as $elementFullName => $dontCare ) {
+                $tName = "website-{$key}-{$elementFullName}";
+                $this->_select["{$tName}_id" ]  = "`$tName`.id as `{$tName}_id`"; 
+                $this->_select["{$tName}"    ]  = "`$tName`.url as `{$tName}`";
+                $this->_element["{$tName}_id"]  = 1;
+                $this->_element["{$tName}"   ]  = 1;
+                
+                $type = "website-{$key}-website_type_id";
+                $this->_select[$type]    = "`$tName`.website_type_id as `{$type}`";
+                $this->_element[$type]   = 1;
+                $this->_tables[ $tName ] = "\nLEFT JOIN civicrm_website `$tName` ON (`$tName`.contact_id = contact_a.id )";
+            }
+        }
+    }
+    
     /** 
      * generate the query based on what type of query we need
      *
@@ -1903,7 +1937,8 @@ class CRM_Contact_BAO_Query
                 continue;
 
             case 'civicrm_entity_tag':
-                $from .= " $side JOIN civicrm_entity_tag ON ( civicrm_entity_tag.contact_id = contact_a.id ) ";
+                $from .= " $side JOIN civicrm_entity_tag ON ( civicrm_entity_tag.entity_id = 'civicrm_contact' AND
+                                                              civicrm_entity_tag.entity_id = contact_a.id ) ";
                 continue;
 
             case 'civicrm_note':
@@ -1950,10 +1985,6 @@ class CRM_Contact_BAO_Query
                 $from .= " $side JOIN civicrm_log ON (civicrm_log.entity_id = contact_a.id AND civicrm_log.entity_table = 'civicrm_contact')";
                 $from .= " $side JOIN civicrm_contact contact_b ON (civicrm_log.modified_id = contact_b.id)";
                 continue;
-                
-            case 'civicrm_entity_tag':
-                $from .= " $side  JOIN  civicrm_entity_tag  ON ( civicrm_entity_tag.contact_id = contact_a.id ) ";
-                continue; 
                 
             case 'civicrm_tag':
                 $from .= " $side  JOIN civicrm_tag ON civicrm_entity_tag.tag_id = civicrm_tag.id ";
@@ -2244,7 +2275,8 @@ WHERE  id IN ( $groupIDs )
 
         $etTable = "`civicrm_entity_tag-" .implode( ',', array_keys($value) ) ."`";
         $this->_tables[$etTable] = $this->_whereTables[$etTable] =
-            " LEFT JOIN civicrm_entity_tag {$etTable} ON ( {$etTable}.contact_id = contact_a.id ) ";
+            " LEFT JOIN civicrm_entity_tag {$etTable} ON ( {$etTable}.entity_id = contact_a.id  AND 
+                        {$etTable}.entity_table = 'civicrm_contact' ) ";
        
         $names = array( );
         $tagNames =& CRM_Core_PseudoConstant::tag( );
@@ -3141,7 +3173,7 @@ WHERE  id IN ( $groupIDs )
                           $count = false, $includeContactIds = false,
                           $sortByChar = false, $groupContacts = false,
                           $returnQuery = false,
-                          $additionalWhereClause = null ) 
+                          $additionalWhereClause = null, $sortOrder = null ) 
     {
         require_once 'CRM/Core/Permission.php';
 
@@ -3203,6 +3235,10 @@ WHERE  id IN ( $groupIDs )
                         } 
 
                         $order = " ORDER BY $orderBy";
+                        
+                        if ( $sortOrder ) {
+                            $order .= " $sortOrder";
+                        }
                     }
                 } else if ($sortByChar) { 
                     $orderBy = " ORDER BY LEFT(contact_a.sort_name, 1) asc";

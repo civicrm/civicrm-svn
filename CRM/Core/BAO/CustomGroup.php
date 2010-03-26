@@ -1357,6 +1357,9 @@ SELECT $select
         case 'Pledge':
             return 'civicrm_pledge';    
             
+        case 'Address':
+            return 'civicrm_address';    
+
         default:
             $query   = "
 SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 0 )";
@@ -1500,9 +1503,10 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
 
 		if ( $returnCount ) {
 			return count( $details[$groupID]);
-		} else {
-			$form->assign_by_ref( "{$prefix}viewCustomData", $details );
-		}
+        } else {
+            $form->assign_by_ref( "{$prefix}viewCustomData", $details );
+            return $details;
+        }
     }
 
     /** 

@@ -149,7 +149,6 @@
                     <div class="clear"></div>
                 </div><!-- #contactTopBar -->
                 {/if}
-
                 <div class="contact_details ui-corner-all">
                     <div class="contact_panel">
                         <div class="contactCardLeft">
@@ -167,11 +166,15 @@
                                     </tr>
                                     {/if}
                                 {/foreach}
-                                {if $home_URL}
-                                <tr>
-                                    <td class="label">{ts}Website{/ts}</td>
-                                    <td><a href="{$home_URL}" target="_blank">{$home_URL}</a></td>
-                                </tr>
+                                {if $website}
+                                {foreach from=$website item=item}
+                                    {if $item.url}
+                                    <tr>
+                                        <td class="label">{$item.website_type}</td>
+                                        <td><a href="{$item.url}" target="_blank">{$item.url}</a></td>
+                                    </tr>
+                                    {/if}
+                                {/foreach}
                                 {/if}
                                 {if $user_unique_id}
                                     <tr>
@@ -237,6 +240,31 @@
                                     </td>
                                 </tr>
                             </table>
+			    {foreach from=$add.custom item=customGroup key=cgId}
+                            {assign var="isAddressCustomPresent" value=1}
+			        {foreach from=$customGroup item=customValue key=cvId}
+			            <div id="address_custom_{$cgId}_{$locationIndex}" class="crm-accordion-wrapper crm-address-custom-{$cgId}-{$locationIndex}-accordion crm-accordion-closed">
+			                <div class="crm-accordion-header">
+			                    <div class="icon crm-accordion-pointer"></div>
+				            {$customValue.title}
+			                </div>
+			                <div class="crm-accordion-body">
+				            <table>
+				                {foreach from=$customValue.fields item=customField key=cfId}
+					            <tr><td class="label">{$customField.field_title}</td><td>{$customField.field_value}</td></tr>
+	                  	                {/foreach}
+			                    </table>
+			                </div>
+			            </div>
+                                    <script type="text/javascript">
+                                        {if $customValue.collapse_display eq 0 }
+                                            cj('#address_custom_{$cgId}_{$locationIndex}').removeClass('crm-accordion-open').addClass('crm-accordion-closed');
+                                        {else}
+                                            cj('#address_custom_{$cgId}_{$locationIndex}').removeClass('crm-accordion-closed').addClass('crm-accordion-open');
+                                        {/if}
+                                    </script>
+                                {/foreach}
+                            {/foreach}
                         </div>
                         {/foreach}
 
@@ -368,3 +396,13 @@ function showHideSignature( blockId ) {
 
 </script>
 {/literal}
+
+{if $isAddressCustomPresent}
+    {literal}
+        <script type="text/javascript">
+            cj(function() {
+                cj().crmaccordions(); 
+            });
+        </script>
+    {/literal}
+{/if}

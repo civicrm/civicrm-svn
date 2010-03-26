@@ -255,7 +255,11 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
                 }
             }
         }
-        
+
+        // call option value hook
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::optionValues( $result, 'case_activity_type' );
+
         return $result;
     }
 
@@ -450,6 +454,7 @@ AND        a.is_deleted = 0
                 $result[$activitySetName] = $activitySetLabel;
             }
         }
+        
         return $result;
     }
     

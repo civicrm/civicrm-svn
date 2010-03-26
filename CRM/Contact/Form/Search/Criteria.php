@@ -61,15 +61,16 @@ class CRM_Contact_Form_Search_Criteria {
 
         if ( $form->_searchOptions['tags'] ) {
             // checkboxes for categories
-   	    require_once 'CRM/Core/BAO/Tag.php';
-	    $tags = new CRM_Core_BAO_Tag ();
-	    $tree =$tags->getTree();
-            $form->assign       ( 'tree'  , $tags->getTree() );
-            foreach ($form->_tag as $tagID => $tagName) {
-                $form->_tagElement =& $form->addElement('checkbox', "tag[$tagID]", null, $tagName);
+            require_once 'CRM/Core/BAO/Tag.php';
+            $contact_tags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
+            if( $contact_tags ) {
+                foreach ( $contact_tags as $tagID => $tagName) {
+                    $form->_tagElement =& $form->addElement('checkbox', "contact_tags[$tagID]", 
+                                                            null, $tagName);         
+                }
             }
         }
-
+        
         // add text box for last name, first name, street name, city
         $form->addElement('text', 'sort_name', ts('Find...'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name') );
 
@@ -228,6 +229,24 @@ class CRM_Contact_Form_Search_Criteria {
             $location_type[] = HTML_QuickForm::createElement('checkbox', $locationTypeID, null, $locationTypeName);
         }
         $form->addGroup($location_type, 'location_type', ts('Location Types'), '&nbsp;');
+
+        // custom data extending addresses -
+        require_once 'CRM/Core/BAO/CustomGroup.php';
+        $extends = array( 'Address' );
+        $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( null, true, $extends );
+        if ( $groupDetails ) {
+            require_once 'CRM/Core/BAO/CustomField.php';
+            $form->assign('addressGroupTree', $groupDetails);
+            foreach ($groupDetails as $group) {
+                foreach ($group['fields'] as $field) {
+                    $elementName = 'custom_' . $field['id'];
+                    CRM_Core_BAO_CustomField::addQuickFormElement( $form,
+                                                                   $elementName,
+                                                                   $field['id'],
+                                                                   false, false, true );
+                }
+            }
+        }
     }
     
     static function activity( &$form ) 

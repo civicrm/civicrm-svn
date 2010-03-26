@@ -447,6 +447,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 $this->assign( 'source_contact_value'  , 
                                CRM_Utils_Array::value( 'source_contact', $defaults ) );
             }
+
+            // set default tags if exists
+            require_once 'CRM/Core/BAO/EntityTag.php';
+            $defaults['tag'] = CRM_Core_BAO_EntityTag::getTag( $this->_activityId, 'civicrm_activity' );
           
         } else {
             // if it's a new activity, we need to set default values for associated contact fields
@@ -609,6 +613,13 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $this->assign( 'target_contact_value', $defaultTargetContactName );
         }
         
+        require_once 'CRM/Core/BAO/Tag.php';
+        $tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_activity'), true );
+        if ( !empty($tags) ) { 
+            $this->add('select', 'tag',  ts( 'Select Tags' ), $tags, false, 
+                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
+        }
+            
         // if we're viewing, we're assigning different buttons than for adding/editing
         if ( $this->_action & CRM_Core_Action::VIEW ) { 
             if ( isset( $this->_groupTree ) ) {
@@ -747,6 +758,13 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         if ( $this->_action & CRM_Core_Action::DELETE ) { 
             $deleteParams = array( 'id' => $this->_activityId );
             CRM_Activity_BAO_Activity::deleteActivity( $deleteParams );
+
+            // delete tags for the entity
+            require_once 'CRM/Core/BAO/EntityTag.php';
+            $tagParams = array( 'entity_table' => 'civicrm_activity',
+                                'entity_id'    => $this->_activityId );
+            CRM_Core_BAO_EntityTag::del( $tagParams );
+            
             CRM_Core_Session::setStatus( ts("Selected Activity has been deleted sucessfully.") );
             return;
         }
@@ -755,12 +773,12 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         if ( ! $params ) {
             $params = $this->controller->exportValues( $this->_name );
         }
-        
+
         //set activity type id
         if ( ! CRM_Utils_Array::value( 'activity_type_id', $params ) ) {
             $params['activity_type_id']   = $this->_activityTypeId;
         }
-        
+   
         if ( CRM_Utils_Array::value( 'hidden_custom', $params ) &&
              !isset($params['custom']) ) {
             $customFields     = 
@@ -832,6 +850,16 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
         $activity = CRM_Activity_BAO_Activity::create( $params );
         
+        // add tags if exists
+        $tagParams = array( );
+        if ( !empty($params['tag']) ) {
+            require_once 'CRM/Core/BAO/EntityTag.php';
+            foreach( $params['tag'] as $tag ) {
+                $tagParams[$tag] = 1;
+            }
+        }
+        CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_activity',  $activity->id );
+ 
         // call end post process. Idea is to let injecting file do any
         // processing needed, after the activity has been added/updated.
         $this->endPostProcess( $params, $activity );

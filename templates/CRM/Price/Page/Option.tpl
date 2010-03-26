@@ -65,6 +65,7 @@
             <th id="order" class="sortable">{ts}Order{/ts}</th>
 	        <th>{ts}Enabled?{/ts}</th>
             <th></th>
+            <th class="hiddenElement"></th>
          </tr>
         </thead>
         {foreach from=$customOption item=row}

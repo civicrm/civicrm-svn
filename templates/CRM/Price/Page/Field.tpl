@@ -74,6 +74,7 @@
 *}
             <th id="nosort">{ts}Price{/ts}</th>
             <th></th>
+            <th class="hiddenElement"></th>
         </tr>
         </thead>
         {foreach from=$priceField key=fid item=row}
