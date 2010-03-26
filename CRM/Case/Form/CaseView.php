@@ -372,8 +372,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         foreach( $tags as $tid ) {
             $tags[$tid] = $allTags[$tid];
         }
-        $this->assign('tags', $tags);
-       
+        $this->assign('tags', implode( ', ', $tags ) );
           
         $this->addButtons(array(  
                                 array ( 'type'      => 'cancel',  

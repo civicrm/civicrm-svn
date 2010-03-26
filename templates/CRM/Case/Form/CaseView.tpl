@@ -616,12 +616,12 @@ curDate = (new Date()).getTime();
   <fieldset>
   <legend><a href="#" onclick="hide('casetags'); show('casetags_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Case Tags{/ts}</legend>
   {if $tags}
-      {foreach from=$tags item=tag}
-      {$tag} &nbsp;
-      {/foreach}
-      {/if}
+      {$tags}
+  {else}
+      {ts} There are tags related to this case. {/ts}
+  {/if}
   </fieldset>
-  <div><input type="button" class="form-submit" onClick="Javascript:addTags()" value="{ts}Add tags{/ts}" /></div>
+  <div><input type="button" class="form-submit" onClick="Javascript:addTags()" value={if $tags}"{ts}Change Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
 </div> 
 <div id="manageTags">
       <div class="label">{$form.select_tag.label}</div>
@@ -651,7 +651,7 @@ function addTags() {
     cj("#manageTags").show( );
 
 	cj("#manageTags").dialog({
-		title: "Add/Edit Tags",
+		title: "Change Case Tags",
 		modal: true,
 		bgiframe: true, 
 		overlay: { 

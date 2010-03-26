@@ -76,12 +76,17 @@ class CRM_Case_Page_AJAX
         
         $caseId    = CRM_Utils_Type::escape($_POST['case_id'], 'Integer');
         $tags      = CRM_Utils_Type::escape($_POST['tag'], 'String');
-        if ( empty($tags) || empty($caseId) ) {
+
+        if ( empty($caseId) ) {
             echo 'false';
             CRM_Utils_System::civiExit( );
         }
         
-        $tagIds = explode( ',', $tags );
+        $tagIds = array( );
+        if ( $tags ) {   
+            $tagIds = explode( ',', $tags );
+        }
+
         $params = array( 'entity_id'    => $caseId,
                          'entity_table' => 'civicrm_case' );
         
