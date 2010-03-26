@@ -122,8 +122,8 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
    ALTER TABLE `civicrm_financial_trxn` 
        DROP `contribution_id`;
    ALTER TABLE `civicrm_financial_trxn`
-       ADD `from_account_id` INT( 10 ) NULL,
-       ADD `to_account_id` INT( 10 ) NULL;
+       ADD `from_account_id` INT( 10 ) UNSIGNED NULL,
+       ADD `to_account_id` INT( 10 ) UNSIGNED NULL;
    ALTER TABLE `civicrm_financial_trxn`
        ADD FOREIGN KEY `FK_civicrm_financial_trxn_from_account_id` ( `from_account_id` ) REFERENCES `civicrm_financial_account`  (`id`) ,      
        ADD FOREIGN KEY `FK_civicrm_financial_trxn_to_account_id` (`to_account_id`) REFERENCES `civicrm_financial_account`(`id`);
