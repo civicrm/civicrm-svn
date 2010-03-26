@@ -618,7 +618,7 @@ curDate = (new Date()).getTime();
   {if $tags}
       {$tags}
   {else}
-      {ts} There are tags related to this case. {/ts}
+      {ts} There are no tags related to this case. {/ts}
   {/if}
   </fieldset>
   <div><input type="button" class="form-submit" onClick="Javascript:addTags()" value={if $tags}"{ts}Change Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
