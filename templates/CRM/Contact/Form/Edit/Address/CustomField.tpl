@@ -79,7 +79,7 @@
                 {/if}
                 
                 {if $element.html_type eq 'Radio'}
-                    &nbsp;&nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}unselect{/ts}</a>&nbsp;) 
+                    &nbsp;&nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('address[{$blockId}][{$element_name}]', '{$form.formName}'); return false;" >{ts}unselect{/ts}</a>&nbsp;) 
                 {elseif $element.data_type eq 'File'}
                     {if $element.element_value.data}
                         <span class="html-adjust"><br />
