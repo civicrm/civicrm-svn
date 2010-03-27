@@ -29,7 +29,7 @@
 {if $groupCount eq 0 }
   <div class="messages status">
     <dl>
-      <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+      <dt><div class="icon inform-icon"></div></dt>
       <dd>{ts}This contact does not currently belong to any groups.{/ts}</dd>
     </dl>
   </div>

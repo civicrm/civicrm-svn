@@ -55,7 +55,7 @@
     {else}
        <div class="messages status">
            <dl>
-             <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+             <dt><div class="icon inform-icon"></div></dt>
                <dd>
                    {ts}No event registrations have been recorded for this contact.{/ts}
                </dd>

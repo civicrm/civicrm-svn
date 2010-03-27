@@ -88,7 +88,7 @@
     {/if}
     <div class="status messages">
         <dl>
-            <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
+            <dt><div class="icon inform-icon"></div></dt>
             <dd>
                {ts}No Mailings match your search criteria. Suggestions:{/ts} 
                 <div class="spacer"></div>

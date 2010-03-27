@@ -55,7 +55,7 @@
     {if NOT ($activeMembers or $inActiveMembers) and $action ne 2 and $action ne 1 and $action ne 8 and $action ne 4 and $action ne 32768}
        	<div class="messages status">
            <dl>
-	     <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+	     <dt><div class="icon inform-icon"></div></dt>
                <dd>
                  {ts}No memberships have been recorded for this contact.{/ts}
                </dd>

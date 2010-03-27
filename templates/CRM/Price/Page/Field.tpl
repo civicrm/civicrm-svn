@@ -107,7 +107,7 @@
         {if $action eq 16}
         <div class="messages status">
         <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
+        <dt><div class="icon inform-icon"></div></dt>
         {capture assign=crmURL}{crmURL p='civicrm/admin/price/field q="action=add&reset=1&sid=$sid"}{/capture}
         <dd>{ts 1=$groupTitle 2=$crmURL}There are no fields for price set '%1', <a href='%2'>add one</a>.{/ts}</dd>
         </dl>

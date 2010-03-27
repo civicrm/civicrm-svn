@@ -53,7 +53,7 @@
     <div class="messages status">
         <dl>
             <dt>
-                <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
+                <div class="icon inform-icon"></div>
             </dt>
             <dd>
                 {ts}No report instances have been created for your site.{/ts} &nbsp;

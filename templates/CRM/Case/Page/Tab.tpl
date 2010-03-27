@@ -56,7 +56,7 @@
     {else}
        <div class="messages status">
            <dl>
-           <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+           <dt><div class="icon inform-icon"></div></dt>
            <dd>
                 {ts}There are no case records for this contact.{/ts}
                 {if $permission EQ 'edit'}{ts 1=$newCaseURL}You can <a href='%1'>open one now</a>.{/ts}{/if}

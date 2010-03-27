@@ -97,7 +97,7 @@
   {if $action NEQ 1} {* show 'no relationships' message - unless already in 'add' mode. *}
        <div class="messages status">
            <dl>
-           <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+           <dt><div class="icon inform-icon"></div></dt>
            {capture assign=crmURL}{crmURL p='civicrm/contact/view/rel' q="cid=`$contactId`&action=add&reset=1"}{/capture}
            <dd>
                 {if $permission EQ 'edit'}

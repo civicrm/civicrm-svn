@@ -39,7 +39,7 @@
        </table>
      {else}
      <div class="messages status">	
-     <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"> &nbsp;
+      <div class="icon inform-icon"></div> &nbsp;
       {ts}No modifications have been logged for this contact.{/ts}
      </div>	
      {/if}
