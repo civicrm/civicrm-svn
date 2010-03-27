@@ -41,14 +41,14 @@
         {capture assign=attachTitle}{ts}Attachment(s){/ts}{/capture}
     {/if}
     {if !$noexpand}
-    <div id="attachments_show" class="section-hidden section-hidden-border">
-      <a href="#" onclick="hide('attachments_show'); show('attachments'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{$attachTitle}</label><br />
-    </div>
-    {/if}
-    <div id="attachments" class="section-shown">
-    <fieldset {if $noexpand}style="width:92%"{/if}>
-    {if !$noexpand}<legend><a href="#" onclick="hide('attachments'); show('attachments_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{$attachTitle}</legend>
-    {/if}
+    <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ 		<div class="crm-accordion-header">
+  			<div class="icon crm-accordion-pointer"></div> 
+  			{$attachTitle}
+			</div><!-- /.crm-accordion-header -->
+ 		<div class="crm-accordion-body">    
+ 	{/if}
+    <div id="attachments">
         {if $context EQ 'pcpCampaign'}
             <div class="description">{ts}You can upload a picture or image to include on your page. Your file should be in .jpg, .gif, or .png format. Recommended image size is 250 x 250 pixels. Maximum size is 360 x 360 pixels.{/ts}</div>
         {/if}
@@ -80,19 +80,16 @@
         </tr>
     {/if}
         </table>
-    </fieldset>
     </div>
+	</div><!-- /.crm-accordion-body -->
+	</div><!-- /.crm-accordion-wrapper -->
 {if !$noexpand}
     {literal}
     <script type="text/javascript">
         var attachmentUrl = {/literal}'{$currentAttachmentURL}'{literal};
-        if ( attachmentUrl ) {
-            show( "attachments" );
-            hide( "attachments_show" );
-        } else {
-            hide( "attachments" );
-            show( "attachments_show" );
-        }
+		cj(function() {
+		   cj().crmaccordions(); 
+		});
     </script>
     {/literal}
 {/if}

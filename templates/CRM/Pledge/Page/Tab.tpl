@@ -33,13 +33,13 @@
     {ts 1=$displayName}Pledges received from %1 since inception.{/ts} 
     {if $permission EQ 'edit'}
      {capture assign=newContribURL}{crmURL p="civicrm/contact/view/pledge" q="reset=1&action=add&cid=`$contactId`&context=pledge"}{/capture}
-     {ts 1=$newContribURL}Click <a href='%1'>New Pledge</a> to record a new pledge received from this contact.{/ts}
+     {ts 1=$newContribURL}Click <a href='%1'>Add Pledge</a> to record a new pledge received from this contact.{/ts}
     {/if}
 </div>
 
 {if $action eq 16 and $permission EQ 'edit'}
     <div class="action-link">
-       <a accesskey="N" href="{$newContribURL}" class="button"><span>&raquo; {ts}New Pledge{/ts}</a></span>
+       <a accesskey="N" href="{$newContribURL}" class="button"><span><div class="icon add-icon"></div>{ts}Add Pledge{/ts}</a></span>
        <br/><br/>
     </div>
 {/if}

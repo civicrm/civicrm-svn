@@ -27,19 +27,37 @@
 {if $action eq 2}
     {include file="CRM/Contact/Form/Contact.tpl"}
 {else}
-    <div id="mainTabContainer" >
-        <ul>
-            <li id="tab_summary"><a href="#contact-summary" title="{ts}Summary{/ts}"><span>&nbsp;</span>&nbsp;{ts}Summary{/ts}</a></li>
-            {foreach from=$allTabs key=tabName item=tabValue}
-            <li id="tab_{$tabValue.id}"><a href="{$tabValue.url}" title="{$tabValue.title}"><span>&nbsp;</span>&nbsp;{$tabValue.title}&nbsp;({$tabValue.count})</a></li>
-            {/foreach}
-        </ul>
 
-        <div title="Summary" id="contact-summary" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
-            {if $hookContentPlacement neq 3}
-                <div class="buttons ui-corner-all">
+<div class="crm-actions-ribbon">
                     <ul id="actions">
+                    	{* CRM-4418 *}
+                        {if call_user_func(array('CRM_Core_Permission','check'), 'delete contacts')}
+                        {if call_user_func(array('CRM_Core_Permission','check'), 'access deleted contacts') and $is_deleted}
+                        <li class="crm-delete-action">
+                        <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&cid=$contactId&restore=1"}" class="delete button" title="{ts}Restore{/ts}">
+                        <span><div class="icon restore-icon"></div>{ts}Restore from Trash{/ts}</span>
+                        </a>
+                        </li>
+                        
+                        <li class="crm-delete-action">
+                        <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&delete=1&cid=$contactId&skip_undelete=1"}" class="delete button" title="{ts}Delete Permanently{/ts}">
+                        <span><div class="icon delete-icon"></div>{ts}Delete Permanently{/ts}</span>
+                        </a>
+                        </li>
+                        {else}
+                        <li class="crm-delete-action">
+                        <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&delete=1&cid=$contactId"}" class="delete button" title="{ts}Delete{/ts}">
+                        <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
+                        </a>
+                        </li>
+                        {/if}
+                        {/if}
+                    
+                    	{* Include links to enter Activities if session has 'edit' permission *}
                         {if $permission EQ 'edit'}
+                        <li>
+                            {include file="CRM/Activity/Form/ActivityLinks.tpl"}
+                        </li>
                         <li>
                         <a href="{crmURL p='civicrm/contact/add' q="reset=1&action=update&cid=$contactId"}" class="edit button" title="{ts}Edit{/ts}">
                         <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
@@ -47,39 +65,11 @@
                         </li>
                         {/if}
 
-                        {* CRM-4418 *}
-                        {if call_user_func(array('CRM_Core_Permission','check'), 'delete contacts')}
-                        {if call_user_func(array('CRM_Core_Permission','check'), 'access deleted contacts') and $is_deleted}
-                        <li>
-                        <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&cid=$contactId&restore=1"}" class="delete button" title="{ts}Restore{/ts}">
-                        <span><div class="icon restore-icon"></div>{ts}Restore from Trash{/ts}</span>
-                        </a>
-                        </li>
-                        <li>
-                        <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&delete=1&cid=$contactId&skip_undelete=1"}" class="delete button" title="{ts}Delete Permanently{/ts}">
-                        <span><div class="icon delete-icon"></div>{ts}Delete Permanently{/ts}</span>
-                        </a>
-                        </li>
-                        {else}
-                        <li>
-                        <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&delete=1&cid=$contactId"}" class="delete button" title="{ts}Delete{/ts}">
-                        <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
-                        </a>
-                        </li>
-                        {/if}
-                        {/if}
-
-                        {* Include links to enter Activities if session has 'edit' permission *}
-                        {if $permission EQ 'edit'}
-                        <li>
-                            {include file="CRM/Activity/Form/ActivityLinks.tpl"}
-                        </li>
-                        {/if}
-                        <li><span class="label">{ts}Go to:{/ts}</span></li>
+                        
                         {if $dashboardURL }
                         <li>
                         <a href="{$dashboardURL}" class="dashboard button" title="{ts}dashboard{/ts}">
-                        	<span><div class="icon dashboard-icon"></div>{ts}Dashboard{/ts}</span>
+                        	<span><div class="icon dashboard-icon"></div>{ts}Contact Dashboard{/ts}</span>
                         </a>
                         </li>
                         {/if}
@@ -90,6 +80,16 @@
                         </a>
                         </li>
                         {/if}
+                        <li>
+                        <a class="vcard button" title="{ts}vCard record for this contact.{/ts}" href="{crmURL p='civicrm/contact/view/vcard' q="reset=1&cid=$contactId"}">			<span><div class="icon vcard-icon"></div>{ts}vCard{/ts}</span>
+                        </a>
+                        </li>
+                 		<li>
+                 		<a class="print button" title="{ts}Printer-friendly view of this page.{/ts}" href='{crmURL p='civicrm/contact/view/print' q="reset=1&print=1&cid=$contactId"}'">
+                 		<span><div class="icon print-icon"></div>{ts}Print Summary{/ts}</span>
+                 		</a>
+                 		</li>
+                        
                         {if $groupOrganizationUrl}
                         <li>
                         <a href="{$groupOrganizationUrl}" class="associated-groups button" title="{ts}Associated Multi-Org Group{/ts}">
@@ -98,18 +98,29 @@
                         </li>
                         {/if}
                     </ul> 
-                    <span id="icons">
-                        <a title="{ts}vCard record for this contact.{/ts}" href='{crmURL p='civicrm/contact/view/vcard' q="reset=1&cid=$contactId"}'> <img src="{$config->resourceBase}i/vcard-icon.png" alt="vCard record for this contact." /></a>
-                        <a title="{ts}Printer-friendly view of this page.{/ts}" href='{crmURL p='civicrm/contact/view/print' q="reset=1&print=1&cid=$contactId"}'"> <img src="{$config->resourceBase}i/print-icon.png" alt="Printer-friendly view of this page." /></a>
-                    </span>
+                    <div class="clear"></div>
+                        
+                        
                 </div><!-- .buttons -->
+
+
+    <div id="mainTabContainer" >
+        <ul>
+            <li id="tab_summary"><a href="#contact-summary" title="{ts}Summary{/ts}"><span>&nbsp;</span>&nbsp;{ts}Summary{/ts}</a></li>
+            {foreach from=$allTabs key=tabName item=tabValue}
+            <li id="tab_{$tabValue.id}" class="crm-tab-button"><a href="{$tabValue.url}" title="{$tabValue.title}"><span>&nbsp;</span>&nbsp;{$tabValue.title}&nbsp;({$tabValue.count})</a></li>
+            {/foreach}
+        </ul>
+
+        <div title="Summary" id="contact-summary" class="ui-tabs-panel ui-widget-content ui-corner-bottom">
+            {if $hookContentPlacement neq 3}
                 
                 {if $hookContent and $hookContentPlacement eq 2}
                     {include file="CRM/Contact/Page/View/SummaryHook.tpl"}
                 {/if}
                 
                 {if $contact_type_label OR $current_employer_id OR $job_title OR $legal_name OR $sic_code OR $nick_name OR $contactTag OR $source}
-                <div id="contactTopBar" class="ui-corner-all">
+                <div id="contactTopBar">
                     <table>
                         {if $contact_type_label OR $current_employer_id OR $job_title OR $legal_name OR $sic_code OR $nick_name}
                         <tr>
@@ -149,7 +160,7 @@
                     <div class="clear"></div>
                 </div><!-- #contactTopBar -->
                 {/if}
-                <div class="contact_details ui-corner-all">
+                <div class="contact_details">
                     <div class="contact_panel">
                         <div class="contactCardLeft">
                             <table>

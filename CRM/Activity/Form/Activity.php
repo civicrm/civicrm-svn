@@ -271,6 +271,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 $this->assign( 'activityTName', $activityTName[$this->_activityTypeId] );
             }
         }
+        
+        // Assign pageTitle to be "Activity - "+ activity name
+        $pageTitle = 'Activity - '.$activityTName[$this->_activityTypeId];
+    	$this->assign( 'pageTitle', $pageTitle );
 
         //check the mode when this form is called either single or as
         //search task action

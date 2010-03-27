@@ -36,7 +36,7 @@
     {if $action ne 1 and $action ne 2 and $permission EQ 'edit'}
         <div id="help">
             {ts 1=$displayName}Current and inactive memberships for %1 are listed below.{/ts}
-            {if $permission EQ 'edit'}{ts 1=$newURL}Click <a href='%1'>New Membership</a> to record a new membership.{/ts}{/if}
+            {if $permission EQ 'edit'}{ts 1=$newURL}Click <a href='%1'>Add Membership</a> to record a new membership.{/ts}{/if}
 	    {if $newCredit}	
             {capture assign=newCreditURL}{crmURL p="civicrm/contact/view/membership" q="reset=1&action=add&cid=`$contactId`&context=membership&mode=live"}{/capture}
             {ts 1=$newCreditURL}Click <a href='%1'>Submit Credit Card Membership</a> to process a Membership on behalf of the member using their credit card.{/ts}
@@ -44,7 +44,7 @@
         </div>
 
         <div class="action-link">
-            <a accesskey="N" href="{$newURL}" class="button"><span>&raquo; {ts}New Membership{/ts}</span></a>
+            <a accesskey="N" href="{$newURL}" class="button"><span>c Membership{/ts}</span></a>
             {if $accessContribution and $newCredit}
                 <a accesskey="N" href="{$newCreditURL}" class="button"><span>&raquo; {ts}Submit Credit Card Membership{/ts}</span></a><br /><br />
             {else}

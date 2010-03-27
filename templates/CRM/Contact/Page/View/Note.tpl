@@ -37,16 +37,27 @@
         </fieldset>
         {/if}
 {elseif $action eq 1 or $action eq 2} {* action is add or update *}
-    <p></p>
-    <fieldset><legend>{if $action eq 1}{ts}New Note{/ts}{else}{ts}Edit Note{/ts}{/if}</legend>
-    <div class="form-item">
-        {$form.subject.label} {$form.subject.html} 
-        <br/><br/>
-        <label for="note">{$form.note.html}</label>
-        <br/>
-        {$form.buttons.html}
+	<div class="crm-form-block">
+	<div class="section note-subject-section no-label">
+
+	 	<div class="content">
+	 	   {$form.subject.label} {$form.subject.html} 
+	 	</div>
+	 	<div class="clear"></div> 
+	</div>
+	<div class="section note-body-section no-label">
+	 <div class="content">
+	    {$form.note.html}
+	 </div>
+	 <div class="clear"></div> 
+	</div>
+	<div class="section note-buttons-section no-label">
+	 <div class="content">
+	    {$form.buttons.html}
+	 </div>
+	 <div class="clear"></div> 
+	</div>
     </div>
-    </fieldset>
     {* include jscript to warn if unsaved form field changes *}
     {include file="CRM/common/formNavigate.tpl"}
 {/if}
@@ -60,12 +71,14 @@
 
 {if $permission EQ 'edit' AND ($action eq 16 or $action eq 4 or $action eq 8)}
    <div class="action-link">
-	 <a accesskey="N" href="{crmURL p='civicrm/contact/view/note' q="cid=`$contactId`&action=add"}" class="button"><span>&raquo; {ts}New Note{/ts}</span></a>
+	 <a accesskey="N" href="{crmURL p='civicrm/contact/view/note' q="cid=`$contactId`&action=add"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Note{/ts}</span></a>
    </div>
    <div class="clear"></div>
 {/if}
+<div class="crm-content-block">
 
 {if $notes}
+<div class="crm-results-block">
     {* show browse table for any action *}
 <div id="notes">
     {strip}
@@ -101,7 +114,7 @@
         </table>
     {/strip}
  </div>
-
+</div>
 {elseif ! ($action eq 1)}
    <div class="messages status">
     <dl>
@@ -111,4 +124,5 @@
     </dl>
    </div>
 {/if}
+</div>
 </div>

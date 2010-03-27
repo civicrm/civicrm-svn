@@ -71,6 +71,10 @@ class CRM_Note_Form_Note extends CRM_Core_Form
         $this->_entityTable = $this->get( 'entityTable' );
         $this->_entityId    = $this->get( 'entityId'   );
         $this->_id          = $this->get( 'id'    );
+		// set title to "Note - "+Contact Name    
+    	$displayName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $this->_entityId, 'display_name' );
+    	$pageTitle = 'Note - '.$displayName;
+    	$this->assign( 'pageTitle', $pageTitle );
     }
 
     /**

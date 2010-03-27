@@ -34,7 +34,7 @@
   {/if}
   {if $action NEQ 1 AND $action NEQ 2 AND $permission EQ 'edit'}
         <div class="action-link">
-            <a accesskey="N" href="{crmURL p='civicrm/contact/view/rel' q="cid=`$contactId`&action=add&reset=1"}" class="button"><span>&raquo; {ts}New Relationship{/ts}</span></a>
+            <a accesskey="N" href="{crmURL p='civicrm/contact/view/rel' q="cid=`$contactId`&action=add&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Relationship{/ts}</span></a>
         </div>
         <div class="clear"></div>
   {/if}
