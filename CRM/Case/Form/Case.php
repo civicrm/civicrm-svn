@@ -208,7 +208,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         require_once 'CRM/Core/BAO/Tag.php';
         $tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_case'), true );
         if ( !empty($tags) ) { 
-            $this->add('select', 'tag',  ts( 'Select Tags' ), $tags, true, 
+            $this->add('select', 'tag',  ts( 'Select Tags' ), $tags, false, 
                        array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
         }
         

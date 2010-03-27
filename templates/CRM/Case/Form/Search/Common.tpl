@@ -38,7 +38,7 @@
       </div><br />
   </td>
   
-  <td>
+  <td width="25%">
     {$form.case_status_id.label}<br /> 
     {$form.case_status_id.html}<br /><br />	
     {if $accessAllCases}
@@ -49,13 +49,13 @@
         {$form.case_deleted.label}	
     {/if}
   </td>
-  {if $form.caseTags }
+  {if $form.case_tags }
   <td>
-  <label>{ts}Tag(s){/ts}</label>
+  <label>{ts}Case Tag(s){/ts}</label>
     <div id="Tag" class="listing-box">
-      {foreach from=$form.caseTags item="tag_val"} 
+      {foreach from=$form.case_tags item="tag_val"} 
         <div class="{cycle values="odd-row,even-row"}">
-                    {$tag_val.html} 
+        	{$tag_val.html} 
         </div>
       {/foreach}
   </td>

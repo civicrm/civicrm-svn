@@ -413,6 +413,27 @@ class CRM_Case_BAO_Query
             $query->_tables['civicrm_case']         = $query->_whereTables['civicrm_case']           = 1;
             $query->_tables['civicrm_case_contact'] = $query->_whereTables['civicrm_case_contact']   = 1;
             return; 
+                
+        case 'case_tags':
+            require_once 'CRM/Core/BAO/Tag.php';
+        	$tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_case'), true );
+        	
+            $names = array( );
+            $val   = array( );
+            if ( is_array( $value ) ) {
+                foreach ($value as $k => $v) {
+                    if ($v) {
+                        $val[$k] = $k;
+                        $names[] = $tags[$k];
+                    }
+                } 
+            }
+            
+            $query->_where[$grouping][] = " civicrm_case_tag.tag_id IN (" . implode( ',', $val ). " )";
+            
+            $query->_qill[$grouping ][] = ts( 'Case Tags %1', array( 1 => $op))  . ' ' . implode( ' ' . ts('or') . ' ', $names );
+            $query->_tables['civicrm_case_tag'] = $query->_whereTables['civicrm_case_tag'] = 1;
+            return;    
         }
     }
 
@@ -474,8 +495,13 @@ case_relation_type.id = case_relationship.relationship_type_id )";
             $from .= " INNER JOIN civicrm_case_activity ON civicrm_case_activity.case_id = civicrm_case.id ";
 			$from .= " INNER JOIN civicrm_activity case_activity ON ( civicrm_case_activity.activity_id = case_activity.id
 				                                                        AND case_activity.is_current_revision = 1 )";
-            break;            
-
+            break;
+            
+        case 'civicrm_case_tag':            
+			$from .= " $side JOIN civicrm_entity_tag as civicrm_case_tag ON ( civicrm_case_tag.entity_table = 'civicrm_case' AND
+                                                          					  civicrm_case_tag.entity_id = civicrm_case.id ) ";
+			break;
+			
         }
         return $from;
         
@@ -597,7 +623,7 @@ case_relation_type.id = case_relationship.relationship_type_id )";
         $caseTags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_case') );
         if( $caseTags ) {
             foreach ($caseTags as $tagID => $tagName) {
-                $form->_tagElement =& $form->addElement('checkbox', "caseTags[$tagID]", null, $tagName);         
+                $form->_tagElement =& $form->addElement('checkbox', "case_tags[$tagID]", null, $tagName);         
             }
         }
         
