@@ -127,7 +127,7 @@
                         } else { 
                             cj('#rel_contact').unautocomplete( );
                             cj("input[name=rel_contact_id]").val('');
-                            cj('#rel_contact').click( function() { alert( '{/literal}{ts}First Select Relationship Type{/ts}{literal} ...' );});
+                            cj('#rel_contact').click( function() { alert( '{/literal}{ts}Please select a relationship type first.{/ts}{literal} ...' );});
                         }
                     }       
 				  </script>
@@ -135,11 +135,12 @@
                 <dd>{$form.rel_contact.html}</dd>
                 <dt> </dt>
                   <dd>
-                    {$form._qf_Relationship_refresh.html}
-                    {$form._qf_Relationship_refresh_save.html}
-                    {$form._qf_Relationship_cancel.html}
+                    <span class="crm-button crm-button-type-refresh crm-button_qf_Relationship_refresh.html">{$form._qf_Relationship_refresh.html}</span>
+                    <span class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_save">{$form._qf_Relationship_refresh_save.html}</span>
+                    <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
                   </dd>
                 </dl>
+                <div class="clear"></div>
 
               {if $searchDone } {* Search button clicked *} 
                 {if $searchCount || $callAjax}
@@ -240,7 +241,7 @@
         <div id="customData"></div>
         <div class="spacer"></div>
         <dl>
-      	  <dt></dt><dd>{$form.buttons.html}</dd>
+      	  <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
         </dl>
         </fieldset>
         {/if}
@@ -254,7 +255,7 @@
         {ts 1=$relationshipsString}Are you sure you want to delete the Relationship '%1'?{/ts}
         </div>
         <dt></dt>
-        <dd>{$form.buttons.html}</dd>
+        <dd>{include file="CRM/common/formButtons.tpl"}</dd>
       </dl>
     </fieldset>	
   {/if}

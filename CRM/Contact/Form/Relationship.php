@@ -414,7 +414,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             $searchBtn = ts('Search');
         }
         $this->addElement( 'submit', $this->getButtonName('refresh'), $searchBtn, array( 'class' => 'form-submit' ) );
-        $this->addElement( 'submit', $this->getButtonName('refresh', 'save'), 'Quick save', array( 'class' => 'form-submit hiddenElement' , 'id' => 'quick-save') );
+        $this->addElement( 'submit', $this->getButtonName('refresh', 'save'), 'Quick Save', array( 'class' => 'form-submit hiddenElement' , 'id' => 'quick-save') );
         $this->addElement( 'submit', $this->getButtonName('cancel' ), ts('Cancel'), array( 'class' => 'form-submit' ) );
 
         //need to assign custom data type and subtype to the template
@@ -483,7 +483,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         $ids['contact'] = $this->_contactId;
         
         // modify params for ajax call
-        $this->modifyParams( &$params );
+        $this->modifyParams( $params );
 
         if ($this->_action & CRM_Core_Action::DELETE ){
             CRM_Contact_BAO_Relationship::del($this->_relationshipId);
