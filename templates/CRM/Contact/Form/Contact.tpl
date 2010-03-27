@@ -104,7 +104,7 @@ cj(function( ) {
 			cj( prevEle).remove();
 		}
 		//open tab if form rule throws error
-		if ( cj(this).children().find('span.error').text() ) {
+		if ( cj(this).children().find('span.crm-error').text() ) {
 			cj(this).show().prev().children('span:first').removeClass( 'crm-accordion-closed' ).addClass('crm-accordion-open');
 		}
 	});
