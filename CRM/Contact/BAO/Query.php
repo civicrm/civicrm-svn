@@ -325,7 +325,7 @@ class CRM_Contact_BAO_Query
         require_once 'CRM/Contact/BAO/Contact.php';
 
         // CRM_Core_Error::backtrace( );
-        CRM_Core_Error::debug_var( 'params', $params );
+        // CRM_Core_Error::debug_var( 'params', $params );
          
         // CRM_Core_Error::debug( 'post', $_POST );
         // CRM_Core_Error::debug( 'r', $returnProperties );
@@ -355,7 +355,11 @@ class CRM_Contact_BAO_Query
             $fields =& CRM_Core_Component::getQueryFields( );
             unset( $fields['note'] );
             $this->_fields = array_merge( $this->_fields, $fields );
-           
+            
+            // add activity fields
+            require_once 'CRM/Activity/BAO/Activity.php';
+            $fields = CRM_Activity_BAO_Activity::exportableFields( );
+            $this->_fields = array_merge( $this->_fields, $fields );
         }
 
         // basically do all the work once, and then reuse it
@@ -461,9 +465,16 @@ class CRM_Contact_BAO_Query
         foreach ($this->_fields as $name => $field) {
 
             //skip component fields
-            if ( ( substr( $name, 0, 12  ) == 'participant_' ) || 
-                 ( (substr( $name, 0, 7  ) == 'pledge_' ) ) || 
-                 ( (substr( $name, 0, 5  ) == 'case_' ) )  ) {
+            if ( ( substr( $name, 0, 12 ) == 'participant_' ) || 
+                 ( substr( $name, 0, 7  ) == 'pledge_' ) || 
+                 ( substr( $name, 0, 5  ) == 'case_' ) ) {
+                continue;
+            }
+
+            // redirect to activity select clause
+            if ( substr( $name, 0, 9  ) == 'activity_' ) {
+                require_once 'CRM/Activity/BAO/Query.php';
+                CRM_Activity_BAO_Query::select( $this );
                 continue;
             }
 
@@ -1155,7 +1166,8 @@ class CRM_Contact_BAO_Query
              ( substr( $values[0], 0, 4  ) == 'tmf_' ) ||
              ( substr( $values[0], 0, 6  ) == 'grant_' ) ||
              ( substr( $values[0], 0, 7  ) == 'pledge_' ) ||
-			 ( substr( $values[0], 0, 5  ) == 'case_' )
+             ( substr( $values[0], 0, 5  ) == 'case_' ) ||
+             ( substr( $values[0], 0, 9  ) == 'activity_' )
              ) {
             return;
             
@@ -1949,21 +1961,8 @@ class CRM_Contact_BAO_Query
                 continue;
 
             case 'civicrm_activity':
-                // special condition to fetch case activities, may not be right place to put this condition ?
-                if ( $mode != CRM_Contact_BAO_Query::MODE_CASE ) {
-                    if (  self::$_activityRole == 0 ) {
-                        $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
-                        $from .= " $side JOIN civicrm_activity ON civicrm_activity.id = civicrm_activity_target.activity_id ";
-                    } else if (  self::$_activityRole == 1 ) {
-                        $from .= " $side JOIN civicrm_activity ON civicrm_activity.source_contact_id = contact_a.id ";
-                    } else {
-                        $from .= " $side JOIN civicrm_activity_assignment ON civicrm_activity_assignment.assignee_contact_id = contact_a.id ";
-                        $from .= " $side JOIN civicrm_activity ON civicrm_activity.id = civicrm_activity_assignment.activity_id ";
-                    }
-                } else {
-                    $from .= " $side JOIN civicrm_activity ON civicrm_activity.id = case_activity.id ";
-                }
-                continue;
+                $from .= CRM_Activity_BAO_Query::from( $name, $mode, $side );
+                continue; 
 
             case 'civicrm_entity_tag':
                 $from .= " $side JOIN civicrm_entity_tag ON ( civicrm_entity_tag.entity_id = 'civicrm_contact' AND
@@ -2674,36 +2673,6 @@ WHERE  id IN ( $groupIDs )
         }
     }
 
-    /**
-     * where / qill clause for activity types
-     *
-     * @return void
-     * @access public
-     */
-    function activityType( &$values ) 
-    {
-        // we need to remove this function
-        
-        $this->_useDistinct = true;
-        list( $name, $op, $value, $grouping, $wildcard ) = $values;
-        $name = trim( $value );
-
-        $v = strtolower(CRM_Core_DAO::escapeString(trim($name)));
-        $wc = ( $op != 'LIKE' ) ? "LOWER(civicrm_activity_history.activity_type)" : "civicrm_activity_history.activity_type";
-        $this->_where[$grouping][] = " $wc $op '$v'";
-        $this->_tables['civicrm_activity_history'] = $this->_whereTables['civicrm_activity_history'] = 1; 
-        $this->_qill[$grouping][]  = ts('Activity Type') . " $op '$name'";
-    }
-    
-
-    function activityDate( &$values ) 
-    {
-        // we need to remove this function
-        $this->_useDistinct = true;
-        $this->dateQueryBuilder( $values,
-                                 'civicrm_activity_history', 'activity_date', 'activity_date', 'Activity Date' );
-    }
-
      /**
      * where / qill clause for change log
      *
@@ -2742,6 +2711,8 @@ WHERE  id IN ( $groupIDs )
      */
     function activity( &$values ) 
     {
+    	CRM_Core_Error::fatal( 'We should move this code to Activity Query' );
+    	
         $this->_useDistinct = true;
        
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
@@ -3039,8 +3010,14 @@ WHERE  id IN ( $groupIDs )
         }
 
         if ( ! isset( self::$_defaultReturnProperties[$mode] ) ) {
-            require_once 'CRM/Core/Component.php';
-            self::$_defaultReturnProperties[$mode] = CRM_Core_Component::defaultReturnProperties( $mode );
+        	// add activity return properties
+        	if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
+        		require_once 'CRM/Activity/BAO/Query.php';
+        		self::$_defaultReturnProperties[$mode] = CRM_Activity_BAO_Query::defaultReturnProperties( $mode );
+        	} else {
+            	require_once 'CRM/Core/Component.php';
+            	self::$_defaultReturnProperties[$mode] = CRM_Core_Component::defaultReturnProperties( $mode );
+            }
 
             if ( empty( self::$_defaultReturnProperties[$mode] ) ) {
                 self::$_defaultReturnProperties[$mode] = array( 

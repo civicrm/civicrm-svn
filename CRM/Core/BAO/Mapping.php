@@ -426,7 +426,7 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
                 $compArray['Case'] = ts('Case');
                 
                 require_once 'CRM/Activity/BAO/Activity.php';
-                $fields['Activity']    =& CRM_Activity_BAO_Activity::exportableFields( );
+                $fields['Activity']    =& CRM_Activity_BAO_Activity::exportableFields( 'Case' );
                 $compArray['Activity'] = ts('Case Activity');
                 
                 unset($fields['Case']['case_contact_id']);

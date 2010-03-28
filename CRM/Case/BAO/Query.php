@@ -45,7 +45,7 @@ class CRM_Case_BAO_Query
         
         // add activity related fields
         require_once 'CRM/Activity/BAO/Activity.php';
-        $fields =  array_merge( $fields, CRM_Activity_BAO_Activity::exportableFields( ) );
+        $fields =  array_merge( $fields, CRM_Activity_BAO_Activity::exportableFields( 'Case' ) );
         
         return $fields;  
     }

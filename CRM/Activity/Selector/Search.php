@@ -75,14 +75,15 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                 'display_name',
                                 'activity_id',
                                 'activity_date_time',
-                                'status_id',
-                                'subject',
+                                'activity_status_id',
+                                'activity_status',
+                                'activity_subject',
                                 'source_contact_id',
                                 'source_record_id',
                                 'source_contact_name',
                                 'activity_type_id',
                                 'activity_type'
-                                  );
+                                );
     
     /** 
      * are we restricting ourselves to a single contact 
@@ -171,6 +172,8 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
         $this->_action = $action;
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                    CRM_Contact_BAO_Query::MODE_ACTIVITY );
+    
+    	//CRM_Core_Error::debug( $this->_query ); exit();
     }//end of constructor
     
     
@@ -262,22 +265,22 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                                false, 
                                                $this->_activityClause );
          while ( $result->fetch( ) ) {
-             $row = array( );
-             // the columns we are interested in
-             foreach ( self::$_properties as $property) {
-                 if ( isset( $result->$property ) ) {
-                     $row[$property] = $result->$property;
-                 }
-             }
-             if ( $row['activity_is_test'] ) {
-                 $row['activity_type'] = $row['activity_type'] . " (test)";
-             }
-             //fix status display
-             $row['activity_status'] = $row['activity_status_id'];
-             $row['activity_type']   = $row['activity_type_id'];
-             $rows[] = $row;
+         	$row = array( );
+            // the columns we are interested in
+            foreach ( self::$_properties as $property) {
+                if ( isset( $result->$property ) ) {
+                    $row[$property] = $result->$property;
+                }
+            }
+            
+            if ( $row['activity_is_test'] ) {
+                $row['activity_type'] = $row['activity_type'] . " (test)";
+            }
+            
+            $rows[] = $row;
          }
-           return $rows;
+         
+         return $rows;
      }
      
      /**

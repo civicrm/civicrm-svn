@@ -87,6 +87,7 @@
 
   <field>
        <name>subject</name>
+       <uniqueName>activity_subject</uniqueName>
        <type>varchar</type>
        <title>Subject</title>
        <length>255</length>
@@ -139,6 +140,7 @@
 
   <field>
       <name>duration</name>
+      <uniqueName>activity_duration</uniqueName>
       <title>Duration</title> 
       <import>true</import>
       <type>int unsigned</type>
@@ -149,6 +151,7 @@
 
   <field>
       <name>location</name>
+      <uniqueName>activity_location</uniqueName>
       <title>Location</title>
       <import>true</import>
       <type>varchar</type>
@@ -182,6 +185,7 @@
 
   <field>
       <name>details</name>
+      <uniqueName>activity_details</uniqueName>
       <title>Details</title>
       <import>true</import> 
       <type>text</type>
@@ -203,6 +207,7 @@
 
   <field>
       <name>status_id</name>
+      <uniqueName>activity_status_id</uniqueName>
       <title>Activity Status Label</title>
       <import>true</import>
       <headerPattern>/(activity.)?status(.label$)?/i</headerPattern>
@@ -241,6 +246,7 @@
   </field>
   <field>
        <name>medium_id</name>
+       <uniqueName>activity_medium_id</uniqueName>
        <title>Activity Medium</title>
        <type>int unsigned</type>
        <default>NULL</default>
