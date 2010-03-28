@@ -1,6 +1,6 @@
 <tr>
   {if $form.activity_type_id}
-     <td colspan="1"><label>{ts}Activity Type(s){/ts}</label>
+     <td><label>{ts}Activity Type(s){/ts}</label>
         <div id="Tag" class="listing-box">
           {foreach from=$form.activity_type_id item="activity_type_val"} 
              <div class="{cycle values="odd-row,even-row"}">
@@ -10,18 +10,20 @@
         </div>
      </td>
   {else}
-      <td colspan="2">&nbsp;</td>
+      <td>&nbsp;</td>
   {/if} 
   {if $form.activity_tags }
-    <td width ="20%"> <label>{ts}Tag(s){/ts}</label>
+    <td><label>{ts}Activity Tag(s){/ts}</label>
       <div id ="Tags" class="listing-box">
          {foreach from=$form.activity_tags item="tag_val"} 
               <div class="{cycle values="odd-row,even-row"}">
                    {$tag_val.html}
               </div>
          {/foreach}
-     </td>
-{/if} 
+    </td>
+  {else}
+  	 <td>&nbsp;</td>
+  {/if} 
 </tr>
 <tr>
    <td>
