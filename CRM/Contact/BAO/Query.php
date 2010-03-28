@@ -666,6 +666,8 @@ class CRM_Contact_BAO_Query
 
         // CRM_Core_Error::debug( 'd', $this->_fields );
         // CRM_Core_Error::debug( 'r', $this->_returnProperties );
+        $addressCustomFields = CRM_Core_BAO_CustomField::getFieldsForImport('Address');
+        $addressCustomFieldIds = array( );
 
         foreach ( $this->_returnProperties['location'] as $name => $elements ) {
             $lCond = self::getPrimaryCondition( $name );
@@ -716,6 +718,11 @@ class CRM_Contact_BAO_Query
                     $locationTypeJoin[$tName] = " ( $aName.location_type_id = $ltName.id ) ";
                     $processed[$aName] = 1;
                     $addAddress = true;
+                }
+                if ( in_array( $elementCmpName, array_keys( $addressCustomFields ) ) ) {
+                    if ( $cfID = CRM_Core_BAO_CustomField::getKeyID( $elementCmpName ) ) {
+                        $addressCustomFieldIds[$cfID][$name] = 1;
+                    }
                 }
 
                 $cond = $elementType = '';
@@ -893,6 +900,27 @@ class CRM_Contact_BAO_Query
                 }
             }
         }
+
+        if ( ! empty( $addressCustomFieldIds ) ) {
+            require_once 'CRM/Core/BAO/CustomQuery.php';
+            $cfIDs = $addressCustomFieldIds;
+            $customQuery = new CRM_Core_BAO_CustomQuery( $cfIDs );
+            foreach ( $addressCustomFieldIds as $cfID => $locTypeName ) {
+                foreach ( $locTypeName as $name => $dnc ) {
+                    $fieldName = "$name-custom_{$cfID}";
+                    $tName     = "$name-address-custom";
+                    $aName     = "`$name-address-custom`";
+                    $this->_select["{$tName}_id"]  = "`$tName`.id as `{$tName}_id`"; 
+                    $this->_element["{$tName}_id"] = 1; 
+                    $this->_select[$fieldName]     = 
+"`$tName`.{$customQuery->_fields[$cfID]['column_name']} as `{$fieldName}`";
+                    $this->_element[$fieldName]    = 1;
+                    $this->_tables[ $tName ]       = 
+"\nLEFT JOIN {$customQuery->_fields[$cfID]['table_name']} $aName ON ($aName.entity_id = `$name-address`.id)";
+                }
+            }
+        }
+
     }
 
     /**

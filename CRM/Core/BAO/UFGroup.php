@@ -350,7 +350,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                      'email',
                                      'im',
                                      'address_name' );
-            
+
             //get location type
             $locationType = array( );
             $locationType =& CRM_Core_PseudoConstant::locationType();
@@ -363,7 +363,6 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             foreach ( $components as $value) {
                 $customFields = array_merge($customFields, CRM_Core_BAO_CustomField::getFieldsForImport($value));
             }
-
             $addressCustomFields = CRM_Core_BAO_CustomField::getFieldsForImport('Address');
             $customFields = array_merge( $customFields, $addressCustomFields );
 
@@ -371,8 +370,12 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 $name  = $title = $locType = $phoneType = '';
                 $name  = $field->field_name;
                 $title = $field->label;
-                
-                if ( in_array( $field->field_name, array_keys($addressCustomFields) ) )  {
+
+                $addressCustom = false;
+                if ( in_array( $permissionType, array( CRM_Core_Permission::CREATE,
+                                                       CRM_Core_Permission::EDIT  ) ) && 
+                     in_array( $field->field_name, array_keys($addressCustomFields) ) )  {
+                    $addressCustom = true;
                     $name = "address_{$name}";
                 }
 
@@ -380,7 +383,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                     $name    .= "-{$field->location_type_id}";
                     $locType  = " ( {$locationType[$field->location_type_id]} ) ";
                 } else {                                                           
-                    if ( in_array($field->field_name, $locationFields) )  {
+                    if ( in_array($field->field_name, $locationFields) || $addressCustom )  {
                         $name    .= '-Primary'; 
                         $locType  = ' ( Primary ) ';
                     }
@@ -416,9 +419,10 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                           'field_type'       => $field->field_type,
                           'field_id'         => $field->id
                           );
-                
+
                 //adding custom field property 
-                if ( substr($field->field_name, 0, 6) == 'custom' ) {
+                if ( substr($field->field_name, 0, 6) == 'custom' || 
+                     substr($field->field_name, 0, 14) === 'address_custom' ) {
                     // if field is not present in customFields, that means the user
                     // DOES NOT HAVE permission to access that field
                     if ( array_key_exists( $field->field_name, $customFields ) ) {
@@ -1540,7 +1544,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 CRM_Core_BAO_CustomField::addQuickFormElement( $form, $name, $customFieldID, false, $required, $search, $title );
             }
         } else if (substr($fieldName, 0, 14) === 'address_custom') {
-            $customFieldID = CRM_Core_BAO_CustomField::getKeyID(substr($fieldName, 8));
+            list($fName, $locTypeId) = CRM_Utils_System::explode( '-', $fieldName, 2 );
+            $customFieldID = CRM_Core_BAO_CustomField::getKeyID(substr($fName, 8));
             if ( $customFieldID ) {
                 CRM_Core_BAO_CustomField::addQuickFormElement( $form, $name, $customFieldID, false, $required, $search, $title );
             }
@@ -1783,28 +1788,31 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                                                 $defaults[$fldName] = $value['country_id'];
                                                 if ( ! isset($value['country_id']) || ! $value['country_id'] ) {
                                                     $config = CRM_Core_Config::singleton();
-                                                if ( $config->defaultContactCountry ) {
-                                                    $defaults[$fldName] = $config->defaultContactCountry;
-                                                }
-                                                } else if ( $fieldName == 'phone' ) {
-                                                    if ($phoneTypeId) {
-                                                        if ( $value['phone'][$phoneTypeId] ) {
-                                                            $defaults[$fldName] = $value['phone'][$phoneTypeId];
-                                                        }
-                                                    } else {
-                                                        $defaults[$fldName] = $value['phone'];
+                                                    if ( $config->defaultContactCountry ) {
+                                                        $defaults[$fldName] = $config->defaultContactCountry;
                                                     }
-                                                } else if ( $fieldName == 'email' ) {
-                                                    //adding the first email (currently we don't support multiple emails of same location type)
-                                                    $defaults[$fldName] = $value['email'];
-                                                } else if ( $fieldName == 'im' ) {
-                                                    //adding the first im (currently we don't support multiple ims of same location type)
-                                                    $defaults[$fldName] = $value['im'];
-                                                    $defaults[$fldName . "-provider_id"] = $value['im_provider_id'];
-                                                } else {
-                                                    $defaults[$fldName] = $value[$fieldName];
                                                 }
+                                            } else if ( $fieldName == 'phone' ) {
+                                                if ($phoneTypeId) {
+                                                    if ( $value['phone'][$phoneTypeId] ) {
+                                                        $defaults[$fldName] = $value['phone'][$phoneTypeId];
+                                                    }
+                                                } else {
+                                                    $defaults[$fldName] = $value['phone'];
+                                                }
+                                            } else if ( $fieldName == 'email' ) {
+                                                //adding the first email (currently we don't support multiple emails of same location type)
+                                                $defaults[$fldName] = $value['email'];
+                                            } else if ( $fieldName == 'im' ) {
+                                                //adding the first im (currently we don't support multiple ims of same location type)
+                                                $defaults[$fldName] = $value['im'];
+                                                $defaults[$fldName . "-provider_id"] = $value['im_provider_id'];
+                                            } else {
+                                                $defaults[$fldName] = $value[$fieldName];
                                             }
+                                        } else if ( substr($fieldName, 0, 14) === 'address_custom' && 
+                                                    CRM_Utils_Array::value(substr($fieldName, 8), $value) ) {
+                                            $defaults[$fldName] = $value[substr($fieldName, 8)];
                                         }
                                     }
                                 }

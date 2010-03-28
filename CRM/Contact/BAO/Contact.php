@@ -826,15 +826,15 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
                                                CRM_Core_DAO_OpenID::import( )
                                                );
 
+                $locationFields = array_merge( $locationFields, 
+                                               CRM_Core_BAO_CustomField::getFieldsForImport( 'Address' ) );
+
                 foreach ($locationFields as $key => $field) {
                     $locationFields[$key]['hasLocationType'] = true;
                 }
 
                 $fields = array_merge($fields, $locationFields); 
      
-                $fields = array_merge($fields, 
-                                      CRM_Core_BAO_CustomField::getFieldsForImport( 'Address' ));
-
                 $fields = array_merge($fields,
                                       CRM_Contact_DAO_Contact::import( ) );
                 $fields = array_merge($fields,
@@ -969,7 +969,10 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
                                                 CRM_Core_DAO_IM::export( true ),
                                                 CRM_Core_DAO_OpenID::export( )
                                                 );
-            
+
+                $locationFields = array_merge( $locationFields, 
+                                               CRM_Core_BAO_CustomField::getFieldsForImport( 'Address' ) );
+
                 foreach ($locationFields as $key => $field) {
                     $locationFields[$key]['hasLocationType'] = true;
                 }
@@ -1074,7 +1077,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         // we dont know the contents of return properties, but we need the lower level ids of the contact
         // so add a few fields
         $returnProperties['first_name'] = $returnProperties['organization_name'] = $returnProperties['household_name'] = $returnProperties['contact_type'] = 1;         
-        return list($query, $options) = CRM_Contact_BAO_Query::apiQuery( $params, $returnProperties, $options );        
+        return list($query, $options) = CRM_Contact_BAO_Query::apiQuery( $params, $returnProperties, $options );
     }
 
     /**
@@ -1123,6 +1126,8 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
                         } else {
                             $returnProperties['location'][$locationTypeName][$fieldName] = 1;
                         }
+                    } else if ( substr($fieldName, 0, 14) === 'address_custom' ) {
+                        $returnProperties['location'][$locationTypeName][substr($fieldName, 8)] = 1;
                     } else {
                         $returnProperties['location'][$locationTypeName][$fieldName] = 1;
                     }
@@ -1435,12 +1440,12 @@ AND    civicrm_contact.id = %1";
                         }
                     } else if ($fieldName === 'county') {
                         $data['address'][$loc]['address']['county_id'] = $value;
+                    } else if ($fieldName == 'address_name') {
+                        $data['address'][$loc]['name'] = $value;
+                    } else if ( substr($fieldName, 0, 14) === 'address_custom' ) {
+                        $data['address'][$loc][substr($fieldName, 8)] = $value;
                     } else {
-                        if ($fieldName == 'address_name') {
-                            $data['address'][$loc]['name'] = $value;
-                        } else {
-                            $data['address'][$loc][$fieldName] = $value;
-                        }
+                        $data['address'][$loc][$fieldName] = $value;
                     }
                 }
             } else {
@@ -1496,16 +1501,6 @@ AND    civicrm_contact.id = %1";
                     }
                     $data[$key] = $value;
                   
-                }
-            }
-        }
-
-        // at this point we expect address to have built in proper array format.
-        foreach ($params as $fieldName => $value) {
-            if (substr($fieldName, 0, 14) === 'address_custom' 
-                && array_key_exists('address', $data)) {
-                foreach ( $data['address'] as $locId => $locVal ) {
-                    $data['address'][$locId][substr($fieldName, 8)] = $value;
                 }
             }
         }

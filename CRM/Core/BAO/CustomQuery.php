@@ -96,7 +96,7 @@ class CRM_Core_BAO_CustomQuery
      *    
      * @var array    
      */ 
-    protected $_fields;
+    public $_fields;
 
     /**
      * This stores custom data group types and tables that it extends

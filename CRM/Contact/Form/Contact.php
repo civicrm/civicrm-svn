@@ -255,12 +255,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         // location blocks.
         CRM_Contact_Form_Location::preProcess( $this );
-        
-        // call preProcess for all edit options.
-        foreach ( $this->_editOptions as $name => $label ) {
-            if ( $name != 'CustomData' ) continue;
-            require_once( str_replace('_', DIRECTORY_SEPARATOR, "CRM_Contact_Form_Edit_" . $name ) . ".php");
-            eval( 'CRM_Contact_Form_Edit_' . $name . '::preProcess( $this );' );
+
+        if ( array_key_exists( 'CustomData', $this->_editOptions ) ) {
+            //only custom data has preprocess hence directly call it
+            CRM_Custom_Form_CustomData::preProcess( $this, null, $this->_contactSubType, 
+                                                    1, $this->_contactType, $this->_contactId );
         }
         
     }
