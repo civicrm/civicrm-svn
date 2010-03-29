@@ -45,7 +45,7 @@
       <div id="current-relationships">
         <p></p>
         {if $relationshipTabContext} {*to show the title and links only when viewed from relationship tab, not from dashboard*}
-         <div><label>{ts}Current Relationships{/ts}</label></div>
+         <h3>{ts}Current Relationships{/ts}</h3>
         {/if}
         {strip}
         <table id="current_relationship" class="display">

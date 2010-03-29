@@ -474,7 +474,7 @@ div.spacer,
 #crm-container .selector td.label, 
 #crm-container .form-layout-compressed th.label {
   text-align: right;
-  padding: 0.5em 0.5em 0.5em 0.75em;
+  padding: 4px 4px 4px 6px;
   border: 0px none;
   vertical-align: top;
 }
@@ -491,7 +491,7 @@ div.spacer,
 #crm-container .form-layout td.label-left, 
 #crm-container .form-layout-compressed td.label-left {
   text-align: left;
-  padding: 0.5em 0.50em 0em 0.75em;
+  padding: 4px 4px 4px 6px;
   border: 0px none;
   vertical-align: top;
   width: 20%;
@@ -642,7 +642,7 @@ div.spacer,
 }
 	
 #crm-container .action-link {
-  margin: 0.25em 4px 0.25em 0px;
+  margin: 0 4px 0 0px;
   font-weight: bold;
 }
 
@@ -2190,7 +2190,9 @@ div.grippie {
 .add-icon { background-position: -2px -193px;}
 		
 .delete-icon { background-position: -179px -99px;}
-	.button:hover .delete-icon {background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_cd0a0a_256x240.png");}
+	.button:hover .delete-icon {
+		background-image:url("../packages/jquery/themes/smoothness/images/ui-icons_cd0a0a_256x240.png")!important;
+		}
 
 .restore-icon { background-position:0px -66px;background-image:url("../i/icons/jquery-ui-91CE00.png"); }
     .button:hover .restore-icon {background-image:url("../i/icons/jquery-ui-91CE00.png"); }
@@ -2750,9 +2752,14 @@ tbody.scrollContent tr.alternateRow {
 /* brown theme buttons */
 #crm-container .crm-button,
 #crm-container .crm-button input { color:#FFF; }
+#crm-container a.button,
+#crm-container a.button:link,
 #crm-container .crm-button { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left 0px;		 }
+#crm-container a.button span,
 #crm-container .crm-button input { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -25px;	 }
+#crm-container a.button:hover,
 #crm-container .crm-button:hover { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left -50px;		 }
+#crm-container a.button:hover span,
 #crm-container .crm-button:hover input { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -75px;	 }
 #crm-container .crm-button-type-cancel input { color:#e0e0d4; }
 

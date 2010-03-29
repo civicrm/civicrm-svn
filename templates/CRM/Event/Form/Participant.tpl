@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* This template is used for adding/editing/deleting offline Event Registrations *}
+<div class="crm-block crm-form-block">
 {if $showFeeBlock }
 {include file="CRM/Event/Form/EventFees.tpl"}
 {elseif $cdType }
@@ -43,7 +44,7 @@
     <div id="eventFullMsg" class="messages status" style="display:none;"></div>
 
     <div class="html-adjust disable-buttons">{$form.buttons.html}</div>
-    <fieldset><legend>{if $action eq 1}{ts}New Event Registration{/ts}{elseif $action eq 8}{ts}Delete Event Registration{/ts}{else}{ts}Edit Event Registration{/ts}{/if}</legend>
+    <h3>{if $action eq 1}{ts}New Event Registration{/ts}{elseif $action eq 8}{ts}Delete Event Registration{/ts}{else}{ts}Edit Event Registration{/ts}{/if}</h3>
     	{if $action eq 1 AND $paid}
     	<div id="help">
     		{ts}If you are accepting offline payment from this participant, check <strong>Record Payment</strong>. You will be able to fill in the payment information, and optionally send a receipt.{/ts}
@@ -73,7 +74,8 @@
         {else} {* If action is other than Delete *}
             <table class="form-layout-compressed">
             {if $single and $context neq 'standalone'}
-    			<tr><td class="font-size12pt right bold">{ts}Participant{/ts}</td><td class="font-size12pt bold">{$displayName}&nbsp;</td></tr>
+    			<tr><td class="label font-size12pt"><label>{ts}Participant{/ts}</label></td>
+    			<td class="font-size12pt view-value">{$displayName}&nbsp;</td></tr>
     	    {else}
                 {include file="CRM/Contact/Form/NewContact.tpl"}
             {/if}	
@@ -136,7 +138,6 @@
         {if $accessContribution and $action eq 2 and $rows.0.contribution_id}
             {include file="CRM/Contribute/Form/Selector.tpl" context="Search"}
         {/if}
-    </fieldset> 
 
     <div class="html-adjust disable-buttons">{$form.buttons.html}</div>
 </div>
@@ -282,4 +283,4 @@
         }
 {/literal}
 </script>
-
+</div>
