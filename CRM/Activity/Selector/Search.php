@@ -69,6 +69,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
      */
     
     static $_properties = array(  
+                                'contact_id',
                                 'contact_type', 
                                 'contact_sub_type', 
                                 'sort_name', 
@@ -279,7 +280,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             $row['activity_status'] = $row['status_id'] ? CRM_Core_OptionGroup::getLabel( 'activity_status', $row['status_id'] ) : null;
             $row['activity_type']   = $row['activity_type_id'] ? CRM_Core_OptionGroup::getLabel( 'activity_type', $row['activity_type_id'] ) : null;
             if ( $this->_context == 'search' ) {
-                $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->grant_id;
+                $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->activity_id;
             }
             require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
             $row['contact_type'] =
