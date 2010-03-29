@@ -98,6 +98,21 @@ eval('tableId =[' + tableId + ']');
 	eval('sortColumn =[' + sortColumn + ']');
 	eval('columns =[' + columns + ']');
     	
+        var currTable = cj(tabId);
+        if (currTable) {
+            // contains the dataTables master records
+            var s = cj(document).dataTableSettings;
+            if (s != 'undefined') {
+                var len = s.length;
+                for (var i=0; i < len; i++) {  
+                    // if already exists, remove from the array
+                    if (s[i].sInstance = tabId) {
+                        s.splice(i,1);
+	            }
+    	        }
+  	    }
+	}
+	
     var oTable = null;
     if ( useAjax ) {
       oTable = cj(tabId).dataTable({
