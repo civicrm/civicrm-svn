@@ -210,7 +210,7 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
 		  </td>
 		{else}
 	          <td class="view-value report">
-	    	    {$form.details.html|crmReplace:class:huge}
+	    	    {$form.details.html|crmStripAlternatives|crmReplace:class:huge}
 		  </td>
 		{/if}     
                </td>
