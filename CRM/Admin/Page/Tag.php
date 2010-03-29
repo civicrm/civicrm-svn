@@ -159,7 +159,7 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
               $used[$key] =  CRM_Core_OptionGroup::optionLabel( 'tag_used_for' ,$value );
           }
           if( !empty( $used ) ){
-                $usedFor[$tag->id] = implode(",",$used );      
+                $usedFor[$tag->id] = implode(", ",$used );      
             }
        }
        $this->assign( 'usefor' ,$usedFor);
