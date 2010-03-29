@@ -25,8 +25,15 @@
 *}
 {* this div is being used to apply special css *}
     {if !$section }
-        {include file="CRM/Report/Form/Fields.tpl"}
-        {*Statistics at the Top of the page*}
+    <div class="crm-block crm-form-block">         
+    {include file="CRM/Report/Form/Fields.tpl"}
+       </div>
+    {/if}    
+	
+<div class="crm-block crm-content-block">    
+{include file="CRM/Report/Form/ErrorMessage.tpl"}
+{*Statistics at the Top of the page*}
+    {if !$section }
         {include file="CRM/Report/Form/Statistics.tpl" top=true}    
     {/if}
     
@@ -35,10 +42,6 @@
             {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>
         {foreach from=$events item=eventID}
-            <br />
-            <table class="report-layout">
-                <tr>
-                    <td>    
                 	<table class="report-layout" >
                 	    {foreach from=$summary.$eventID item=values key=keys}
                 	        {if $keys == 'Title'}
@@ -75,13 +78,10 @@
                                 {/if}
                             </table>
                             {/if}
-                        {/foreach} 
-                    </td>
-                </tr>
-            </table>       
+                        {/foreach}  
         {/foreach}
          
-	<div class="report-pager">
+		<div class="report-pager">
             {include file="CRM/common/pager.tpl" noForm=0}
         </div>
         {if !$section }
@@ -90,4 +90,4 @@
         {/if}    
     {/if}
     
-{include file="CRM/Report/Form/ErrorMessage.tpl"}
+</div>

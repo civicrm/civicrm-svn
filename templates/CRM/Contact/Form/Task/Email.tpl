@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
+<div class="crm-block crm-form-block">
 <dl>{$form.buttons.html}</dl>
 <fieldset>
 {if $suppressedEmails > 0}

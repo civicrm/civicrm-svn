@@ -26,7 +26,7 @@
 {* Template for "Sample" custom search component. *}
 <div class="crm-form-block crm-search-form-block">
 <div class="crm-accordion-wrapper crm-activity_search-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
- <div class="crm-accordion-header">
+ <div class="crm-accordion-header crm-master-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
    {ts}Edit Search Criteria{/ts}
 </div><!-- /.crm-accordion-header -->
@@ -55,6 +55,9 @@
 </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 </div><!-- /.crm-form-block -->
+
+{if $rowsEmpty || $rows}
+
 <div class="crm-content-block">
     {if $rowsEmpty}
 	<div class="crm-results-block crm-results-block-empty">
@@ -145,6 +148,7 @@
 	</div>
 {/if}
 </div>
+{/if}
 {literal}
 <script type="text/javascript">
 cj(function() {

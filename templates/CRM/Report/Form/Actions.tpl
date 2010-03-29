@@ -24,51 +24,53 @@
  +--------------------------------------------------------------------+
 *}
 {if !$printOnly} {* NO print section starts *}
-<div {if !$criteriaForm}style="display: none;"{/if}> {* criteria section starts *}
-<div class="crm-accordion-wrapper crm-accordion_title-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
- <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
-  	{ts}Report Criteria{/ts}
-   </div><!-- /.crm-accordion-header -->
- <div class="crm-accordion-body">	
-        <div id="id_{$formTpl}"> {* search section starts *}
-                {include file="CRM/Report/Form/Criteria.tpl"}
-        </div> {* search div section ends *}
-  </div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->       
-</div> {* criteria section ends *}
 
-{if ($instanceForm and $rows) OR $instanceFormError} {* settings section starts *}
-<div class="crm-accordion-wrapper crm-accordion_title-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
- <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
-  	{if $mode eq 'template'}{ts}Create Report{/ts}{else}{ts}Report Settings{/ts}{/if}
-     </div><!-- /.crm-accordion-header -->
- <div class="crm-accordion-body">
-        <div id="id_{$instanceForm}">
-                <div id="instanceForm">
-                    {include file="CRM/Report/Form/Instance.tpl"}
-                    {assign var=save value="_qf_"|cat:$form.formName|cat:"_submit_save"}
-                        <div>
-                            {$form.$save.html}
-                        </div>
-                </div>
-        </div>
- </div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->    {/if} {* settings section ends *}
-    
     {if $updateReportButton}
         <div id="update-button" class="section-hidden-border" style="margin:-5px 0 5px 5px;">        
             &nbsp;&nbsp;{$form.$save.html}            
         </div>
     {/if}
 
-{literal}
-<script type="text/javascript">
-cj(function() {
-   cj().crmaccordions(); 
-});
-</script>
-{/literal}
+
+    {* build the print pdf buttons *}
+    {if $rows}
+        {assign var=print value="_qf_"|cat:$form.formName|cat:"_submit_print"}
+        {assign var=pdf   value="_qf_"|cat:$form.formName|cat:"_submit_pdf"}
+        {assign var=csv   value="_qf_"|cat:$form.formName|cat:"_submit_csv"}
+        {assign var=group value="_qf_"|cat:$form.formName|cat:"_submit_group"}
+        {assign var=chart value="_qf_"|cat:$form.formName|cat:"_submit_chart"}
+        <table style="border:0;">
+            <tr>
+                <td>
+                    <table class="form-layout-compressed">
+                        <tr>
+                            <td>{$form.$print.html}&nbsp;&nbsp;</td>
+                            <td>{$form.$pdf.html}&nbsp;&nbsp;</td>
+                            <td>{$form.$csv.html}&nbsp;&nbsp;</td>                        
+                            {if $instanceUrl}
+                                <td>&nbsp;&nbsp;&raquo;&nbsp;<a href="{$instanceUrl}">{ts}Existing report(s) from this template{/ts}</a></td>
+                            {/if}
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table class="form-layout-compressed" align="right">                        
+                        {if $chartSupported}
+                            <tr>
+                                <td>{$form.charts.html|crmReplace:class:big}</td>
+                                <td align="right">{$form.$chart.html}</td>
+                            </tr>
+                        {/if}
+                        {if $form.groups}
+                            <tr>
+                                <td>{$form.groups.html|crmReplace:class:big}</td>
+                                <td align="right">{$form.$group.html}</td>
+                            </tr>
+                        {/if}
+                    </table>
+                </td>
+            </tr>
+        </table>
+    {/if}
 
 {/if} {* NO print section ends *}

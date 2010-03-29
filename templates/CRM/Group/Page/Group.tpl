@@ -24,19 +24,23 @@
  +--------------------------------------------------------------------+
 *}
 {* Actions: 1=add, 2=edit, browse=16, delete=8 *}
+{if $action ne 1 and $action ne 2 and $action ne 8 and $groupPermission eq 1}
+<div class="crm-submit-buttons">
+        <a accesskey="N" href="{crmURL p='civicrm/group/add' q='reset=1'}" id="newGroup" class="button"><span>&raquo; {ts}New Group{/ts}</span></a><br/>
+</div>
+{/if} {* action ne add or edit *}
+{if $action ne 2 AND $action ne 8}	
+{include file="CRM/Group/Form/Search.tpl"}
+{/if}
+<div class="crm-block crm-content-block">
 {if $action eq 16}
 <div id="help">
     {ts}Use Groups to organize contacts (e.g. these contacts are members of our 'Steering Committee'). You can also create 'smart' groups whose membership is based on contact characteristics (e.g. this group consists of all people in our database who live in a specific locality).{/ts} {help id="manage_groups"}
 </div>
-{if $action ne 1 and $action ne 2 and $action ne 8 and $groupPermission eq 1}
-    <div class="action-link">
-        <a accesskey="N" href="{crmURL p='civicrm/group/add' q='reset=1'}" id="newGroup" class="button"><span>&raquo; {ts}New Group{/ts}</span></a><br/>
-    </div><br />
-{/if} {* action ne add or edit *}
+
 {/if}
-{if $action ne 2 AND $action ne 8}	
-{include file="CRM/Group/Form/Search.tpl"}
-{/if}
+
+<div class="crm-block crm-results-block">
 {if $rows}
 <div id="group">
 {if $action eq 16 or $action eq 32 or $action eq 64} {* browse *}  
@@ -85,11 +89,6 @@
    {include file="CRM/Group/Form/Delete.tpl"}
 {/if}
 
-{if $action ne 1 and $action ne 2 and $action ne 8 and $groupPermission eq 1}
-    <div class="action-link">
-        <a accesskey="N" href="{crmURL p='civicrm/group/add' q='reset=1'}" id="newGroup" class="button"><span>&raquo; {ts}New Group{/ts}</span></a><br/>
-    </div>
-{/if} {* action ne add or edit *}
 </div>
 {* No groups to list. Check isSearch flag to see if we're in a search or not. Display 'add group' prompt if user has 'edit groups' permission. *}
 {elseif $isSearch eq 1 OR $groupExists}
@@ -122,3 +121,10 @@
         </dl>
     </div>
 {/if}
+</div>
+{if $action ne 1 and $action ne 2 and $action ne 8 and $groupPermission eq 1}
+<div class="crm-submit-buttons">
+        <a accesskey="N" href="{crmURL p='civicrm/group/add' q='reset=1'}" id="newGroup" class="button"><span>&raquo; {ts}New Group{/ts}</span></a><br/>
+</div>
+{/if} {* action ne add or edit *}
+</div>

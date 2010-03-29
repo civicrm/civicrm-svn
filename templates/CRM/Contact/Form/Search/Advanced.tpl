@@ -52,14 +52,16 @@
 </div>  
 </div>
 
-<div class="crm-content-block">
 {if $rowsEmpty}
+<div class="crm-content-block">
 	<div class="crm-results-block crm-results-block-empty">
     {include file="CRM/Contact/Form/Search/EmptyResults.tpl"}
 	</div>
+</div>
 {/if}
 
 {if $rows}
+<div class="crm-content-block">
 	<div class="crm-results-block">
     {* Search request has returned 1 or more matching rows. Display results and collapse the search criteria fieldset. *}
     
@@ -74,8 +76,8 @@
 
     {* END Actions/Results section *}
 	</div>
-{/if}
 </div>
+{/if}
 {literal}
 <script type="text/javascript">
 cj(function() { cj().crmaccordions(); });

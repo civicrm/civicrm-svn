@@ -23,6 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-form-block">
+
 {* Import Wizard - Step 4 (summary of import results AFTER actual data loading) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
 
@@ -160,4 +162,6 @@
  <div id="crm-submit-buttons">
     {$form.buttons.html}
  </div>
+
+</div>
  

@@ -88,8 +88,7 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
 {if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
     <div class="crm-submit-buttons">{$form.buttons.html}</div>
 {/if}
-    <fieldset>
-    <legend>
+    <h3>
        {if $single eq false}
           {ts}New Activity{/ts}
        {elseif $action eq 1}
@@ -104,7 +103,7 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
           {ts}Detach{/ts}
        {/if}
        {$activityTypeName}
-    </legend>
+    </h3>
       
         {if $action eq 8} {* Delete action. *}
             <table class="form-layout">
@@ -302,10 +301,8 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
 		    </td>
         </tr> 
         </table>   
-      </fieldset> 
 
 {if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
-  <br />    
   <div class="crm-submit-buttons">{$form.buttons.html}</div>
 {/if}
 

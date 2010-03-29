@@ -25,11 +25,18 @@
 *}
 {include file="CRM/common/dashboard.tpl"}
 {include file="CRM/common/openFlashChart.tpl"}
-<a href="javascript:addDashlet( );" class="button show-add" style="margin-left: 6px;"><span>&raquo; {ts}Configure Your Dashboard{/ts}</span></a>
-<a style="display:none;" href="{crmURL p="civicrm/dashboard" q="reset=1"}" class="button show-done" style="margin-left: 6px;"><span>&raquo; {ts}Done{/ts}</span></a>
-<a style="float:right;" href="{crmURL p="civicrm/dashboard" q="reset=1&resetCache=1"}" class="button show-refresh" style="margin-left: 6px;"><span>&raquo; {ts}Refresh Dashboard Data{/ts}</span></a>
-<div class="spacer"></div>
+<div class="crm-submit-buttons">
+<a href="javascript:addDashlet( );" class="button show-add">
+	<span><div class="icon settings-icon"></div>{ts}Configure Your Dashboard{/ts}</span></a>
 
+<a style="display:none;" href="{crmURL p="civicrm/dashboard" q="reset=1"}" class="button show-done" style="margin-left: 6px;">
+	<span><div class="icon check-icon"></div>{ts}Done{/ts}</span></a>
+
+<a style="float:right;" href="{crmURL p="civicrm/dashboard" q="reset=1&resetCache=1"}" class="button show-refresh" style="margin-left: 6px;">
+	<span> <div class="icon refresh-icon"></div>{ts}Refresh Dashboard Data{/ts}</span></a>
+
+</div>
+<div class="crm-block crm-content-block">
 {* Welcome message appears when there are no active dashlets for the current user. *}
 <div id="empty-message" class='hiddenElement'>
     <div class="status">
@@ -68,3 +75,4 @@
         
 </script>
 {/literal}
+</div>

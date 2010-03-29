@@ -52,6 +52,7 @@
 </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 </div><!-- /.crm-form-block -->
+    {if $rowsEmpty || $rows}
 <div class="crm-content-block">
     {if $rowsEmpty}
 	<div class="crm-results-block crm-results-block-empty">
@@ -78,6 +79,7 @@
 	</div>
     {/if}
 </div>
+{/if}
 {literal}
 <script type="text/javascript">
 cj(function() {

@@ -23,12 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<table class="report-layout">
-    <tr>
-	<th>{ts}General Settings{/ts}</th>
-    </tr>
-</table>
-<table class="report-layout">
+<h3>{ts}General Settings{/ts}</h3>
+<table>
     <tr>
         <td class="report-label" width="20%">{$form.title.label} {help id="id-report_title" file="CRM/Report/Form/Settings.hlp"}</td>
         <td >{$form.title.html}</td>
@@ -48,12 +44,8 @@
 </table>
 <br/>
 
-<table class="report-layout">
-    <tr>
-	<th>{ts}Email Delivery Settings{/ts} {help id="id-email_settings" file="CRM/Report/Form/Settings.hlp"}</th>
-    </tr>
-</table>
-<table class="report-layout">
+<h3>{ts}Email Delivery Settings{/ts} {help id="id-email_settings" file="CRM/Report/Form/Settings.hlp"}</h3>
+<table>
     <tr>
         <td class="report-label" width="20%">{$form.email_subject.label}</td>
         <td>{$form.email_subject.html|crmReplace:class:huge}</td>
@@ -69,12 +61,8 @@
 </table>
 <br/>
 
-<table class="report-layout">
-    <tr>
-	<th>{ts}Other Settings{/ts}</th>
-    </tr>
-</table>
-<table class="report-layout">
+<h3>{ts}Other Settings{/ts}</h3>
+<table>
     <tr>
 	<td class="report-label">{$form.is_navigation.label}</td>
         <td>{$form.is_navigation.html}<br />

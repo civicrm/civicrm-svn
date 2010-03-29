@@ -23,18 +23,21 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="description">
+<div class="crm-block crm-form-block">
+<div class="help">
 {ts}Create reports for your users from any of the report templates listed below. Click on a template titles to get started. Click
 Existing Report(s) to see any reports that have already been created from that template.{/ts}
 </div>
-<div class="accordion ui-accordion ui-widget ui-helper-reset" style="width:99%">
 {strip}
 {if $list}
     {foreach from=$list item=rows key=report}		
-	<h3 class="head"><span class="ui-icon ui-icon-triangle-1-e"></span>
-		<a href="#">{if $report}{if $report EQ 'Contribute'}{ts}Contribution{/ts}{else}{$report}{/if}{else}Contact{/if} Report Templates</a>
-	</h3>
-	<div id="{$report}" class="ui-accordion-content boxBlock ui-corner-bottom">
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
+  {if $report}{if $report EQ 'Contribute'}{ts}Contribution{/ts}{else}{$report}{/if}{else}Contact{/if} Report Templates
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+	<div id="{$report}" class="boxBlock">
 	    <table class="report-layout">
 		{foreach from=$rows item=row}
 		    <tr>
@@ -53,8 +56,9 @@ Existing Report(s) to see any reports that have already been created from that t
 		{/foreach}
 	    </table>
 	</div>
-	<div class="spacer"> </div>
-    {/foreach}
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->    
+{/foreach}
 {else}
     <div class="messages status">
         <dl>
@@ -68,32 +72,12 @@ Existing Report(s) to see any reports that have already been created from that t
     </div>
 {/if}
 {/strip}
-</div>
+
 {literal}
 <script type="text/javascript">
-
 cj(function() {
-	cj('.accordion .head').addClass( "ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ");
-	cj('.accordion .head').hover( function() { cj(this).addClass( "ui-state-hover");
-	}, function() { cj(this).removeClass( "ui-state-hover");
-}).bind('click', function() { 
-	var checkClass = cj(this).find('span').attr( 'class' );
-	var len        = checkClass.length;
-	if ( checkClass.substring( len - 1, len ) == 's' ) {
-		cj(this).find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-e');
-		cj("span#help"+cj(this).find('span').attr('id')).hide();
-	} else {
-		cj(this).find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-s');
-		cj("span#help"+cj(this).find('span').attr('id')).show();
-	}
-	cj(this).next().toggle(); return false; }).next().hide();
-
-	cj('div.accordion div.ui-accordion-content').each(function() {
-		cj(this).parent().find('h3 span').removeClass( ).addClass('ui-icon ui-icon-triangle-1-s');
-		cj(this).show();
-	});
+   cj().crmaccordions(); 
 });
-
-
 </script>
 {/literal}
+</div>

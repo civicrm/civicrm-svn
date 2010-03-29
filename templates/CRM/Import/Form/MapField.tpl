@@ -25,6 +25,7 @@
 *}
 {* Import Wizard - Step 2 (map incoming data fields) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
+<div class="crm-block crm-form-block">
 
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
@@ -55,3 +56,5 @@ if ( document.getElementsByName("saveMapping")[0].checked ) {
     {$form.buttons.html}
  </div>
  {$initHideBoxes}
+
+</div>

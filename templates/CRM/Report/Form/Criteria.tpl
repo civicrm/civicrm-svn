@@ -25,14 +25,12 @@
 *}
 {* Report form criteria section *}
     {if $colGroups}
-        <table class="report-layout">
-            <tr>
-	           <th>Display Columns</th>
-            </tr>
-        </table>
+
+	           <h3>Display Columns</h3>
+ 
         {foreach from=$colGroups item=grpFields key=dnc}
             {assign  var="count" value="0"}
-            <table class="report-layout criteria-group">
+            <table class="criteria-group">
                 {if $grpFields.group_title}<tr><td colspan=4>&raquo;&nbsp;{$grpFields.group_title}:</td></tr>{/if}
                 <tr>
                     {foreach from=$grpFields.fields item=title key=field}
@@ -51,12 +49,7 @@
     {/if}
     
     {if $groupByElements}
-        <br/>
-        <table class="report-layout">
-            <tr>
-	          <th>Group by Columns</th>
-	        </tr>
-    	</table>
+        <h3>Group by Columns</h3>
         {assign  var="count" value="0"}
         <table class="report-layout">
             <tr>
@@ -80,13 +73,7 @@
     {/if}
 
     {if $form.options.html || $form.options.html}
-        <br/>
-        <table class="report-layout">
-            <tr>
-	        <th>Other Options</th>
-	    </tr>
-	</table>
-
+        <h3>Other Options</h3>
         <table class="report-layout">
             <tr>
 	        <td>{$form.options.html}</td>
@@ -98,12 +85,7 @@
     {/if}
   
     {if $filters}
-        <br/>
-        <table class="report-layout">
-            <tr>
-	        <th>Set Filters</th>
-	    </tr>
-	</table>
+        <h3>Set Filters</h3>
         <table class="report-layout">
             {foreach from=$filters     item=table key=tableName}
  	        {assign  var="filterCount" value=$table|@count}
@@ -176,4 +158,4 @@
     </script>
     {/literal}
 
-    <br/><div>{$form.buttons.html}</div>
+    <div>{$form.buttons.html}</div>

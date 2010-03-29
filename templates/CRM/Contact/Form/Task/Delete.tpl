@@ -24,21 +24,18 @@
  +--------------------------------------------------------------------+
 *}
 {* Confirmation of contact deletes  *}
-<div class="spacer"></div>
 <div class="messages status">
-  <dl>
-    <dt><div class="icon inform-icon"></div>&nbsp;</dt>
-    <dd>
+  <div class="icon inform-icon"></div>&nbsp;
       {if $restore}
-        <p>{ts}Are you sure you want to restore the selected contact(s)? The contact(s) and all related data will be fully restored.{/ts}</p>
+		{ts}Are you sure you want to restore the selected contact(s)? The contact(s) and all related data will be fully restored.{/ts}
       {else}
-        <p>{ts}Are you sure you want to delete the selected contact(s)? The contact(s) and all related data will be permanently removed.{/ts} {ts}This operation cannot be undone.{/ts}</p>
+        {ts}Are you sure you want to delete the selected contact(s)? The contact(s) and all related data will be permanently removed.{/ts} {ts}This operation cannot be undone.{/ts}
       {/if}
-        <p>{include file="CRM/Contact/Form/Task.tpl"}</p>
-    </dd>
-  </dl>
-</div>
+  </div>
 
-<div class="form-item">
- {$form.buttons.html}
+<div class="crm-block crm-form-block">
+ <h3>{include file="CRM/Contact/Form/Task.tpl"}</h3>
+	<div class="crm-submit-buttons">
+	{$form.buttons.html}
+	</div>
 </div>

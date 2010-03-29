@@ -23,15 +23,21 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+
 {capture assign=docLink}{docURL page="Tags Admin"}{/capture}
 
+
+
+{if $action eq 1 or $action eq 2 or $action eq 8}
+<div class="crm-block crm-form-block">
+    {include file="CRM/Admin/Form/Tag.tpl"}	
+</div>
+{/if}
+
+<div class="crm-content-block">
 <div id="help">
     {ts 1=$docLink}Tags can be assigned to any contact record, and are a convenient way to find contacts. You can create as many tags as needed to organize and segment your records.{/ts} {$docLink}
 </div>
-
-{if $action eq 1 or $action eq 2 or $action eq 8}
-    {include file="CRM/Admin/Form/Tag.tpl"}	
-{/if}
 
 {if $rows}
 {include file="CRM/common/jsortable.tpl"}
@@ -72,17 +78,18 @@
         {/strip}
         
         {if !($action eq 1 and $action eq 2)}
+        <div class="crm-submit-buttons">
 	    <div class="action-link">
         <a href="{crmURL q="action=add&reset=1"}" id="newTag" class="button"><span>&raquo; {ts}New Tag{/ts}</span></a>
+        </div>
         </div>
         {/if}
 </div>
 {else}
     <div class="messages status">
-    <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
+    <div class="icon inform-icon"></div>&nbsp;
         {capture assign=crmURL}{crmURL p='civicrm/admin/tag' q="action=add&reset=1"}{/capture}
-        <dd>{ts 1=$crmURL}There are no Tags present. You can <a href='%1'>add one</a>.{/ts}</dd>
-        </dl>
+        {ts 1=$crmURL}There are no Tags present. You can <a href='%1'>add one</a>.{/ts}
     </div>    
 {/if}
+</div>

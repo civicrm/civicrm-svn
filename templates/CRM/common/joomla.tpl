@@ -71,7 +71,7 @@
 
 {*{include file="CRM/common/langSwitch.tpl"}*}
 
-    <div class="spacer"></div>
+    <div class="clear"></div>
 
     {if $localTasks}
         {include file="CRM/common/localNav.tpl"}

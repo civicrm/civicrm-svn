@@ -25,7 +25,7 @@
 *}
 {* this template is used for adding/editing a tag (admin)  *}
 <div class="form-item">
-<fieldset><legend>{if $action eq 1}{ts}New Tag{/ts}{elseif $action eq 2}{ts}Edit Tag{/ts}{else}{ts}Delete Tag{/ts}{/if}</legend>
+<h3>{if $action eq 1}{ts}New Tag{/ts}{elseif $action eq 2}{ts}Edit Tag{/ts}{else}{ts}Delete Tag{/ts}{/if}</h3>
     {if $action eq 1 or $action eq 2 }
         <dl>
         <dt>{$form.name.label}</dt><dd>{$form.name.html}</dd>
@@ -53,5 +53,4 @@
     <dt></dt><dd>{$form.buttons.html}</dd>
     </dl>
     <div class="spacer"></div>
-</fieldset>
 </div>

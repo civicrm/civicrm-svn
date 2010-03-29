@@ -27,8 +27,7 @@
 
 <div>
   {if !$noFieldSet}	
-  <fieldset>
-  <legend>{ts}Activities{/ts}</legend>
+  <h3 class="crm-table-title">{ts}Activities{/ts}</h3>
   {/if}
 {if $rows}
   <form title="activity_pager" action="{crmURL}" method="post">
@@ -130,7 +129,6 @@
 
 {/if}
 {if !$noFieldSet}
-</fieldset>
 {/if}
 </div>
 

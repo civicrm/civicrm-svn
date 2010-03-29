@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-form-block">
 {if $showOnlyDataSourceFormPane}
   {include file=$dataSourceFormTemplateFile}
 {else}
@@ -146,3 +147,4 @@
     </script>
   {/literal}
 {/if}
+</div>

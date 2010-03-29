@@ -24,17 +24,16 @@
  +--------------------------------------------------------------------+
 *}
 {* Template for "Sample" custom search component. *}
-{assign var="showBlock" value="'searchForm'"}
-{assign var="hideBlock" value="'searchForm_show','searchForm_hide'"}
+<div class="crm-block crm-form-block crm-search-form-block">
 
-<div id="searchForm_show" class="form-item">
-    <a href="#" onclick="hide('searchForm_show'); show('searchForm'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}" /></a>
-    <label>{ts}Edit Search Criteria{/ts}</label>
-</div>
+<div class="crm-accordion-wrapper crm-advanced_search_form-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
+ <div class="crm-accordion-header crm-master-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
+  {ts}Edit Search Criteria{/ts}
+</div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
 
 <div id="searchForm" class="form-item">
-    <fieldset>
-        <legend><span id="searchForm_hide"><a href="#" onclick="hide('searchForm','searchForm_hide'); show('searchForm_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}" /></a></span>{ts}Search Criteria{/ts}</legend>
 
         <table class="form-layout-compressed">
             {* Loop through all defined search criteria fields (defined in the buildForm() function). *}
@@ -54,9 +53,12 @@
                 <td>&nbsp;</td><td>{$form.buttons.html}</td>
             </tr>
         </table>
-    </fieldset>
+  </div>
 </div>
-
+</div>
+</div>
+{if $rowsEmpty || $rows}
+<div class="crm-content-block">
 {if $rowsEmpty}
     {include file="CRM/Contact/Form/Search/Custom/EmptyResults.tpl"}
 {/if}
@@ -66,17 +68,14 @@
 {/if}
 
 {if $rows}
+	<div class="crm-results-block">
     {* Search request has returned 1 or more matching rows. Display results and collapse the search criteria fieldset. *}
-    {assign var="showBlock" value="'searchForm_show'"}
-    {assign var="hideBlock" value="'searchForm'"}
-
-    <fieldset>
-
         {* This section handles form elements for action task select and submit *}
+       <div class="crm-search-tasks">        
         {include file="CRM/Contact/Form/Search/ResultTasks.tpl"}
-
+		</div>
         {* This section displays the rows along and includes the paging controls *}
-        <p>
+	       <div class="crm-search-results">
 
         {include file="CRM/common/pager.tpl" location="top"}
 
@@ -127,15 +126,19 @@
         {include file="CRM/common/pager.tpl" location="bottom"}
 
         </p>
-    </fieldset>
     {* END Actions/Results section *}
+    </div>
+    </div>
 {/if}
 
+
+
+</div>
+{/if}
+{literal}
 <script type="text/javascript">
-    var showBlock = new Array({$showBlock});
-    var hideBlock = new Array({$hideBlock});
-
-    {* hide and display the appropriate blocks *}
-    on_load_init_blocks( showBlock, hideBlock );
+cj(function() {
+   cj().crmaccordions(); 
+});
 </script>
-
+{/literal}

@@ -47,13 +47,15 @@ function loadPanes( id ) {
 	}
 </script>
 {/literal}
-
-        <h3>
-        {if $context EQ 'smog'}{ts}Find Members within this Group{/ts}
-        {elseif $context EQ 'amtg'}{ts}Find Contacts to Add to this Group{/ts}
-        {elseif $savedSearch}{ts 1=$savedSearch.name}%1 Smart Group Criteria{/ts} &nbsp; {help id='id-advanced-smart'}
+		
+		{if $context EQ 'smog' || $context EQ 'amtg' || $savedSearch}
+        	<h3>
+        	{if $context EQ 'smog'}{ts}Find Members within this Group{/ts}
+        	{elseif $context EQ 'amtg'}{ts}Find Contacts to Add to this Group{/ts}
+        	{elseif $savedSearch}{ts 1=$savedSearch.name}%1 Smart Group Criteria{/ts} &nbsp; {help id='id-advanced-smart'}
+        	{/if}
+        	</h3>
         {/if}
-        </h3>
 
 {strip}
 <div class="crm-accordion-wrapper crm-search_criteria_basic-accordion crm-accordion-open">

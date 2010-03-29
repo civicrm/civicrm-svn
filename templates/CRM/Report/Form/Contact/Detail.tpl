@@ -25,19 +25,21 @@
 *}
 {* this div is being used to apply special css *}
     {if !$section }
+    <div class="crm-block crm-form-block">    
         {include file="CRM/Report/Form/Fields.tpl"}
-        {include file="CRM/Report/Form/Statistics.tpl" top=true}
-    {/if}
-
+    </div>
+    {/if}    
+	
+<div class="crm-block crm-content-block">
+{include file="CRM/Report/Form/ErrorMessage.tpl"}
+{if !$section }
+{include file="CRM/Report/Form/Statistics.tpl" top=true}
+{/if}
     {if $rows}
         <div class="report-pager">
             {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>
         {foreach from=$rows item=row}
-            <br />
-            <table class="report-layout">
-                <tr>
-                    <td>
                 	<table class="report-layout">
                             <tr>
                                 {foreach from=$columnHeaders item=header key=field}
@@ -92,7 +94,7 @@
                             {assign var=componentContactId value=$row.contactID}
                             {foreach from=$columnHeadersComponent item=pheader key=component}
                                 {if $componentRows.$componentContactId.$component}
-                                    <u><strong>{$component|replace:'_civireport':''|upper}</strong></u>
+                                    <h3>{$component|replace:'_civireport':''|upper}</h3>
                         	<table class="report-layout">
                         	    {*add space before headers*}
                         		<tr>
@@ -136,9 +138,6 @@
                             {/if}	
                             {/foreach}
                         {/if}
-                    </td>
-                </tr>
-            </table> 
         {/foreach}
 
 	<div class="report-pager">
@@ -168,4 +167,4 @@
             {include file="CRM/Report/Form/Statistics.tpl" bottom=true}
         {/if}
     {/if} 
-{include file="CRM/Report/Form/ErrorMessage.tpl"}
+</div>

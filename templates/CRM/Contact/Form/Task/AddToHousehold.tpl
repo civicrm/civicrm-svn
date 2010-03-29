@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class='spacer'></div>
+<div class="crm-block crm-form-block">
 <fieldset>
 <legend>
 {ts}Choose Relationship Type and Target Household{/ts}
@@ -103,6 +103,6 @@
 
             </div></fieldset>
 	{/if}
-
+</div>
 
 

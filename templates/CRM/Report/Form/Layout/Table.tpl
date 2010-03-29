@@ -25,7 +25,6 @@
 *}
 {if (!$chartEnabled || !$chartSupported )&& $rows}
     {if $pager and $pager->_response and $pager->_response.numPages > 1}
-        <br />
         <div class="report-pager">
             {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>

@@ -101,14 +101,24 @@
                     <div class="clear"></div>
                         
                         
-                </div><!-- .buttons -->
+                </div><!-- .crm-actions-ribbon -->
 
+<div class="crm-block crm-content-block crm-contact-page">
 
-    <div id="mainTabContainer" >
-        <ul>
-            <li id="tab_summary"><a href="#contact-summary" title="{ts}Summary{/ts}"><span>&nbsp;</span>&nbsp;{ts}Summary{/ts}</a></li>
+    <div id="mainTabContainer" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
+        <ul class="crm-contact-tabs-list">
+            <li id="tab_summary" class="crm-tab-button">
+            	<a href="#contact-summary" title="{ts}Summary{/ts}">
+            	<span> </span> {ts}Summary{/ts}
+            	</a>
+            </li>
             {foreach from=$allTabs key=tabName item=tabValue}
-            <li id="tab_{$tabValue.id}" class="crm-tab-button"><a href="{$tabValue.url}" title="{$tabValue.title}"><span>&nbsp;</span>&nbsp;{$tabValue.title}&nbsp;({$tabValue.count})</a></li>
+            <li id="tab_{$tabValue.id}" class="crm-tab-button">
+            	<a href="{$tabValue.url}" title="{$tabValue.title}">
+            		<span> </span> {$tabValue.title}
+            		<em>({$tabValue.count})</em>
+            	</a>
+            </li>
             {/foreach}
         </ul>
 
@@ -357,19 +367,20 @@
                 {include file="CRM/Contact/Page/View/SummaryHook.tpl"}
             {/if}
         </div>
-
+		<div class="clear"></div>
     </div>
-    <script type="text/javascript"> 
-    var selectedTab  = 'summary';
-    var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:8px;height:10px"/>';
-    {if $selectedChild}selectedTab = "{$selectedChild}";{/if}  
-    {literal}
-	cj( function() {
-        var tabIndex = cj('#tab_' + selectedTab).prevAll().length
-        cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage });        
-    });
-    {/literal}
-    </script>
+ <script type="text/javascript"> 
+ var selectedTab  = 'summary';
+ var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
+ {if $selectedChild}selectedTab = "{$selectedChild}";{/if}  
+ {literal}
+ cj( function() {
+     var tabIndex = cj('#tab_' + selectedTab).prevAll().length
+     cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage });
+     cj(".crm-tab-button").addClass("ui-corner-bottom");     
+ });
+ {/literal}
+ </script>
 
 {/if}
 {literal}
@@ -417,3 +428,5 @@ function showHideSignature( blockId ) {
         </script>
     {/literal}
 {/if}
+<div class="clear"></div>
+</div><!-- /.crm-content-block -->

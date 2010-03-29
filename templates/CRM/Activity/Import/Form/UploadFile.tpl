@@ -25,6 +25,7 @@
 *}
 {* Activity Import Wizard - Step 1 (upload data file) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
+<div class="crm-block crm-form-block">
 
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
@@ -37,7 +38,7 @@
  </div>    
 
  <div id="upload-file" class="form-item">
- <fieldset><legend>{ts}Upload Data File{/ts}</legend>
+ <h3>{ts}Upload Data File{/ts}</h3>
     <dl>
         <dt>{$form.uploadFile.label}</dt><dd>{$form.uploadFile.html}</dd>
         <dt>&nbsp;</dt>
@@ -58,8 +59,8 @@
 {/if}
       </dl>
  <div class="spacer"></div>
- </fieldset>
  </div>
  <div id="crm-submit-buttons">
     {$form.buttons.html}
  </div>
+</div>

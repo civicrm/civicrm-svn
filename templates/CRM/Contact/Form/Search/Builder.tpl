@@ -48,6 +48,7 @@
 </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 </div><!-- /.crm-form-block -->
+{if $rowsEmpty || $rows}
 <div class="crm-content-block">
 {if $rowsEmpty}
 	<div class="crm-results-block crm-results-block-empty">
@@ -72,6 +73,7 @@
 
 {/if}
 </div>
+{/if}
 {$initHideBoxes}
 <script type="text/javascript">
     var showBlock = new Array({$showBlock});

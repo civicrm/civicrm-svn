@@ -23,8 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<fieldset>
-<legend>Mapper - 4 Selectors</legend>
+<div class="crm-block crm-form-block">
+
+<h3>Mapper - 4 Selectors</h3>
 
 <div class="form-item">
    <dl>
@@ -53,7 +54,6 @@
 </dl>
 </div>
 
-</fieldset>
 
 {literal}
 <script type="text/javascript">
@@ -83,3 +83,4 @@
       }
 </script>
 {/literal}
+</div>

@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Activity Import Wizard - Data Mapping table used by MapFields.tpl and Preview.tpl *}
+<div class="crm-block crm-form-block">
 
  <div id="map-field">
     {strip}
@@ -111,3 +112,4 @@
     </div>
     {/if}
  </div>
+</div>

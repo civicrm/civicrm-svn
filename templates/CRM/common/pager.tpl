@@ -54,7 +54,7 @@
            {$pager->_response.fifty}&nbsp; | &nbsp;
            {$pager->_response.onehundred}&nbsp; 
      </div>
-     <div class="spacer"></div>
+     <div class="clear"></div>
     {/if}
 
 {/if}

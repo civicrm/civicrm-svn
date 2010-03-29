@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Template for Full-text search component. *}
+<div class="crm-block crm-form-block crm-search-form-block">
 <div id="searchForm">
     <fieldset>
     <div class="form-item">
@@ -35,8 +36,9 @@
         </tr>
     </table>
     </div>
-</fieldset>
 </div>
+</div>
+<div class="crm-block crm-content-block">
 {include file="CRM/common/jsortable.tpl"}
 {if $rowsEmpty}
     {include file="CRM/Contact/Form/Search/Custom/EmptyResults.tpl"}
@@ -45,10 +47,10 @@
 {assign var=table value=$form.table.value.0}
 {assign var=text  value=$form.text.value}
 {if !empty($summary.Contact) }
+<div class="section">
     {* Search request has returned 1 or more matching rows. Display results. *}
     {assign var=rowCount value=$summary.Contact|@count}
-    <fieldset>
-        <legend>{ts}Contacts{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Contact}{$summary.Count.Contact}{else}{$rowCount}{/if}{/if}</legend>
+    <h3>{ts}Contacts{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Contact}{$summary.Count.Contact}{else}{$rowCount}{/if}{/if}</h3>
         {if $table}{include file="CRM/common/pager.tpl" location="top"}{/if}
         {* This section displays the rows along and includes the paging controls *}
             {strip}
@@ -70,16 +72,16 @@
 	    {if !$table and $rowCount < $summary.Count.Contact}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&reset=1&force=1&table=Contact&text=$text"}" title="{ts}View all results for contacts{/ts}">&raquo;&nbsp;{ts}View all results for contacts{/ts}</a>{/if}
 	    {* note we using location="below" because we don't want to use rows per page for now. And therefore don't put location="bottom" for now. *}
 	    {if $table}{include file="CRM/common/pager.tpl" location="below"}{/if}
-    </fieldset>
     {* END Actions/Results section *}
+</div>
 {/if}
 
 {if !empty($summary.Activity) }
+<div class="section">
     {* Search request has returned 1 or more matching rows. Display results. *}
 
     {assign var=rowCount value=$summary.Activity|@count}
-    <fieldset>
-        <legend>{ts}Activities{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Activity}{$summary.Count.Activity}{else}{$rowCount}{/if}{/if}</legend>
+    <h3>{ts}Activities{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Activity}{$summary.Count.Activity}{else}{$rowCount}{/if}{/if}</h3>
         {if $table}{include file="CRM/common/pager.tpl" location="top"}{/if}
         {* This section displays the rows along and includes the paging controls *}
             {strip}
@@ -117,16 +119,17 @@
             {/strip}
 	    {if !$table and $rowCount < $summary.Count.Activity}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&reset=1&force=1&table=Activity&text=$text"}" title="{ts}View all results for activities{/ts}">&raquo;&nbsp;{ts}View all results for activities{/ts}</a>{/if}
             {if $table}{include file="CRM/common/pager.tpl" location="below"}{/if}
-    </fieldset>
     {* END Actions/Results section *}
+</div>
 {/if}
 
 {if !empty($summary.Case) }
+<div class="section">
+
     {* Search request has returned 1 or more matching rows. Display results. *}
 
     {assign var=rowCount value=$summary.Case|@count}
-    <fieldset>
-        <legend>{ts}Cases{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Case}{$summary.Count.Case}{else}{$rowCount}{/if}{/if}</legend>
+    <h3>{ts}Cases{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Case}{$summary.Count.Case}{else}{$rowCount}{/if}{/if}</h3>
         {if $table}{include file="CRM/common/pager.tpl" location="top"}{/if}
         {* This section displays the rows along and includes the paging controls *}
             {strip}
@@ -155,16 +158,16 @@
             {/strip}
 	    {if !$table and $rowCount < $summary.Count.Case}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&reset=1&force=1&table=Case&text=$text"}" title="{ts}View all results for cases{/ts}">&raquo;&nbsp;{ts}View all results for cases{/ts}</a>{/if}
             {if $table}{include file="CRM/common/pager.tpl" location="below"}{/if}
-    </fieldset>
     {* END Actions/Results section *}
+</div>
 {/if}
 
 {if !empty($summary.Contribution) }
+<div class="section">
     {* Search request has returned 1 or more matching rows. Display results. *}
 
     {assign var=rowCount value=$summary.Contribution|@count}
-    <fieldset>
-        <legend>{ts}Contributions{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Contribution}{$summary.Count.Contribution}{else}{$rowCount}{/if}{/if}</legend>
+    <h3>{ts}Contributions{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Contribution}{$summary.Count.Contribution}{else}{$rowCount}{/if}{/if}</h3>
         {if $table}{include file="CRM/common/pager.tpl" location="top"}{/if}
         {* This section displays the rows along and includes the paging controls *}
             {strip}
@@ -196,16 +199,16 @@
             {/strip}
 	    {if !$table and $rowCount < $summary.Count.Contribution}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&reset=1&force=1&table=Contribution&text=$text"}" title="{ts}View all results for contributions{/ts}">&raquo;&nbsp;{ts}View all results for contributions{/ts}</a>{/if}
             {if $table}{include file="CRM/common/pager.tpl" location="below"}{/if}
-    </fieldset>
     {* END Actions/Results section *}
+</div>
 {/if}
 
 {if !empty($summary.Participant) }
+<div class="section">
     {* Search request has returned 1 or more matching rows. *}
 
     {assign var=rowCount value=$summary.Participant|@count}
-    <fieldset>
-        <legend>{ts}Event Participants{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Participant}{$summary.Count.Participant}{else}{$rowCount}{/if}{/if}</legend>
+    <h3>{ts}Event Participants{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Participant}{$summary.Count.Participant}{else}{$rowCount}{/if}{/if}</h3>
         {if $table}{include file="CRM/common/pager.tpl" location="top"}{/if}
         {* This section displays the rows along and includes the paging controls *}
             {strip}
@@ -241,16 +244,16 @@
             {/strip}
 	    {if !$table and $rowCount < $summary.Count.Participant}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&reset=1&force=1&table=Participant&text=$text"}" title="{ts}View all results for participants{/ts}">&raquo;&nbsp;{ts}View all results for participants{/ts}</a>{/if}
             {if $table}{include file="CRM/common/pager.tpl" location="below"}{/if}
-    </fieldset>
     {* END Actions/Results section *}
+</div>
 {/if}
 
 {if !empty($summary.Membership) }
+<div class="section">
     {* Search request has returned 1 or more matching rows. *}
 
     {assign var=rowCount value=$summary.Membership|@count}
-    <fieldset>
-        <legend>{ts}Memberships{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Membership}{$summary.Count.Membership}{else}{$rowCount}{/if}{/if}</legend>
+    <h3>{ts}Memberships{/ts} {if !$table}1 - {$rowCount} {ts}of{/ts} {if $rowCount <= $summary.Count.Membership}{$summary.Count.Membership}{else}{$rowCount}{/if}{/if}</h3>
         {if $table}{include file="CRM/common/pager.tpl" location="top"}{/if}
         {* This section displays the rows along and includes the paging controls *}
             {strip}
@@ -285,6 +288,7 @@
             {/strip}
 	    {if !$table and $rowCount < $summary.Count.Membership}<a href="{crmURL p='civicrm/contact/search/custom' q="csid=`$csID`&reset=1&force=1&table=Membership&text=$text"}" title="{ts}View all results for memberships{/ts}">&raquo;&nbsp;{ts}View all results for memberships{/ts}</a>{/if}
             {if $table}{include file="CRM/common/pager.tpl" location="below"}{/if}
-    </fieldset>
     {* END Actions/Results section *}
+</div>
 {/if}
+</div>

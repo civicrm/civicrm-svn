@@ -23,9 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-form-block">
+
 <div class="form-item">
-<fieldset>
-    <legend>{ts}Add Contacts to a Group{/ts}</legend>
 <table class="form-layout">
     {if $group.id}
        <tr><td class="label">{ts}Group{/ts}</td><td>{$form.group_id.html}</td></tr>
@@ -55,9 +55,8 @@
         <tr><td>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>
         <tr><td>{$form.buttons.html}</td></tr>       
 </table>
-</fieldset>
 </div>
-
+</div>
 {include file="CRM/common/showHide.tpl"}
 
 {if !$group.id}

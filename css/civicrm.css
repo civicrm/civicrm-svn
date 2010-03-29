@@ -20,6 +20,8 @@
 	text-decoration: none;
 	}
 
+#crm-container .crm-content-block {padding: 4px;}
+
 /* TABLE STYLING */
 
 #crm-container table {
@@ -49,6 +51,7 @@
 	  	height: 15px;
 		border-bottom:2px solid #CFCEC3;
 		background-color:#FFF;
+		z-index: 10;
 		}
 
 	/* Styles for Sorting Header */
@@ -77,7 +80,15 @@
 		.sorting_asc {
 			background-position:0px -27px;
 			}
-
+		a.sorting {
+			background-position:0px 1px;
+			}
+		a.sorting_desc {
+			background-position:0px -64px;
+			}
+		a.sorting_asc {
+			background-position:0px -31px;
+			}
 	
     /* Set background back to normal gray for form labels which use <th>. Temporary fix until we standardize form layout markup. */
     #crm-container table.form-layout-compressed tbody th.label { background-color: #F7F7F7; }
@@ -159,7 +170,7 @@ div#crm-container {
 
 
 .crm-form-block {
-	padding:4px 4px 8px 4px ;
+	padding:4px;
 	margin-bottom:4px;
 	font-size:12px;
 	}
@@ -586,6 +597,21 @@ div.spacer,
 	color:#8A1F11;
 	}
 
+#restmsg {
+	z-index:10000;
+	padding:4px;
+	margin-bottom: 4px;
+	}
+#restmsg.msgok {
+	display:block;
+	background:#B0D730;
+	}
+#restmsg.msgnok {
+	display:block;
+	background:red;
+	color:white;
+	}
+
 
 
 #crm-container div.view-data {
@@ -616,7 +642,7 @@ div.spacer,
 }
 	
 #crm-container .action-link {
-  margin: 0.25em 0em 0.25em;
+  margin: 0.25em 4px 0.25em 0px;
   font-weight: bold;
 }
 
@@ -638,6 +664,19 @@ div.spacer,
 }
 
 /* Data display layouts */
+
+#crm-container h3 { /* h3 used as table header for civicrm */
+	background-color: #CDE8FE;
+	font-size: 15px;
+	font-family: Helvetica, Arial, Sans;
+	font-weight: bold;
+	color:#121A2D;
+	padding:4px 6px;
+	margin-bottom: 4px;
+	}
+
+#crm-container .crm-form-block h3 {background-color: transparent;}
+
 #crm-container .col1 {
   float: left;
   vertical-align: top;
@@ -793,8 +832,16 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 
 /* Page and form-level 'help' */
 #crm-container #help, #crm-container .help {
-  margin: 0.5em 0em 0.5em;
-}
+	background-color:#B0D730;
+	font-size:12px;
+	margin:0 0 8px;
+	padding:4px;
+	}
+
+#crm-container #help p, 
+#crm-container .help p {
+	margin:4px;
+	}
 
 /* Set display: inline to over-ride drupal.css which sets label tags to display:block */
 
@@ -962,7 +1009,8 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 
 /* search page styles */
 
-.crm-search-tasks {
+.crm-search-tasks,
+.crm-tasks {
 	margin-bottom:4px;
 	padding:4px;
 	}
@@ -982,8 +1030,9 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 	border:none;
 	background-color:#F5F6F1;
 	position: relative;
-  	height: 25px;
+  	height: 35px;
   	padding-top: 5px;
+  	margin-bottom: 4px
 	}
 	
 
@@ -1009,8 +1058,10 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 	}
 
 .crm-pager-nav {
+	display:block;
+	margin-top:7px;
 	padding-left:5px;
-}
+	}
 
 #crm-container .section-hidden {
   display: block;
@@ -1233,7 +1284,6 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 #crm-container div#searchForm table.form-layout td {
   padding: 4px;
   border: 1px solid #DDDDDD;
-  background: #F7F7F7;
 }
 
 #crm-container #main {
@@ -1556,17 +1606,20 @@ table.campaign td,
 }
 
 /* Styles for Actions Ribbon */
-#crm-container .crm-actions-ribbon {
-	margin-bottom: 8px;
-	}
+#crm-container .crm-actions-ribbon { margin:0 0 8px 0; }
+
+#crm-container .crm-actions-ribbon ul {margin: 0px}
+	
 #crm-container .crm-actions-ribbon li {
 	float:left;
 	margin:0 8px 0 0;
 	padding:0px;
+	list-style: none;
 	}
 
 #crm-container .crm-actions-ribbon li.crm-delete-action {
 	float:right;
+	margin:0px 0px 0px 8px;
 	}
 
 /* Styles for Action Items &  Action Link pop-up */
@@ -1704,13 +1757,12 @@ div.grippie {
 	position:relative;
 	top:1px;
 	white-space:nowrap;
-	background-color: #F0F0E8;
 	}
 
 .ui-tabs .ui-tabs-nav {
 	border:none;
 	background-image: none;
-	background-color: #F0F0E8;
+	padding:4px;
 	}
 
 .crm-tab-button a,
@@ -1720,10 +1772,20 @@ div.grippie {
    font-size: 0.9em;
 }
 
+#mainTabContainer li.crm-tab-button {margin:0 2px 2px 0;}
+
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected { padding-bottom:0px; border:none; }
+
 .crm-tab-button a,
 .ui-tabs .ui-tabs-nav li a {
    padding: 5px !important;
 }
+
+.crm-tab-button a em {
+	color: #3e3e3e;
+	font-size: 10px;
+	font-style: normal;
+	}
 
 #crm-container div.ui-accordion-content {
    padding: .5em 1em !important;
@@ -1736,6 +1798,7 @@ div.grippie {
 
 #crm-container .ui-tabs-panel {
     padding : 4px;
+    font-size: 12px;
 }
 
 #crm-container div.contactTopBar {
@@ -1744,21 +1807,18 @@ div.grippie {
 	MARGIN           : 8px 0pt 0px;
 	/*FONT-SIZE: 1.1em;*/
 	background-color : #eee;
-	width            : 100%;
 }
 #crm-container div.contact_details,
  #crm-container div#contactTopBar {
 	padding          : 4px;
 	LINE-HEIGHT      : 1.4em;
 	MARGIN           : 8px 0pt 0px;
-	width: 100%;
 	clear:both;
 }
 
 #crm-container div.contact_panel, 
 #crm-container div#contactTopBar {
 	display:block;
-	width:100%;
 	}
 
 
@@ -1892,7 +1952,6 @@ div.grippie {
 /* reports */
 
 #crm-container .report-layout {
-   background-color : #F7F7F7; 
    border           : none;
 }
 
@@ -1902,7 +1961,7 @@ div.grippie {
 
 #crm-container .report-contents {
    background-color : #F5F5F5;	       
-   border           : 1px groove #DDDDDD;
+   border           : 1px solid #CDCDC3;
    padding          : 4px;
    width            : 20%;
    white-space      : normal;
@@ -1910,15 +1969,15 @@ div.grippie {
 }
 
 #crm-container .report-contents-right {
-   border           : 1px groove #DDDDDD;
+   border           : 1px solid #CDCDC3;
    padding          : 4px;
    font-size        : 0.95em;
    text-align	    : right;
 }
 
 #crm-container table.report-layout td {
-   padding          : 4px;
-   border           : 1px groove #DDDDDD;
+   padding: 4px;
+   border-bottom: 1px solid #CDCDC3;
    vertical-align   : top;
 }
 
@@ -1942,8 +2001,6 @@ div.grippie {
 }
 
 /*override default pager for report*/
-.report-pager .crm-pager { width: 99%; }
-
 .report-pager .crm-pager-nav a {
     color: #000000;
 }
@@ -2101,7 +2158,9 @@ div.grippie {
 }
 
 #crm-container .crm-button:hover,
-#crm-container a.button:hover { background-position:0px -25px; }
+#crm-container a.button:hover { background-position:0px -50px; }
+
+#crm-container a.button:hover span { background-position:right -75px; }
 
 /* setup for icons */
 
@@ -2148,6 +2207,9 @@ div.grippie {
 .tip-icon { background-position: -128px -128px; }
 
 .alert-icon { background-position: 0 -144px; }
+.check-icon { background-position: -66px -146px; }
+.refresh-icon { background-position:-65px -81px; }
+.settings-icon { background-position:-178px -114px; }
 
 
 #crm-container .geotag {
@@ -2226,6 +2288,7 @@ div.grippie {
 	background-color: transparent;
 	font-size:16px;
 	color: #3e3e3e;
+	margin-bottom: 0px
 	}
 .crm-accordion-wrapper .crm-master-accordion-header .crm-accordion-pointer {
 	background-image:url("../i/icons/jquery-ui-3E3E3E.png")
@@ -2251,6 +2314,8 @@ div.grippie {
 #civicrm-menu #crm-qsearch input {
     background-color:#ffffff;
     border: 1px solid black;
+    margin:0px;
+    padding:2px 16px 3px 2px;
 	}
 
 #civicrm-menu #menu-logout {
@@ -2511,13 +2576,16 @@ margin-bottom:0em;
 #crm-container a:link {
 	color:#2786c2;
 	}
-
+#crm-container .crm-content-block { background-color: #FFF; }
 
 /* tables */
 #crm-container table {
 	border:1px solid #efefef;
 	}
 
+#crm-container .crm-form-block table {
+	border:none;
+	}
 #crm-container tr.even, 
 #crm-container tr.odd, 
 #crm-container tbody th {
@@ -2550,6 +2618,9 @@ tbody.scrollContent tr.alternateRow {
 }
 
 /*contact summary page */
+.ui-tabs .ui-tabs-nav { background-color: #e6e6dc; }
+#mainTabContainer li.crm-tab-button { background-color:#f5f6f1; }
+#mainTabContainer li.ui-state-active { background-color:#FFF; }
 
 #crm-container div.contact_details, 
 #crm-container div#contactTopBar,
@@ -2620,7 +2691,8 @@ tbody.scrollContent tr.alternateRow {
 
 /* search results */
 
-.crm-search-tasks {
+.crm-search-tasks,
+.crm-tasks {
 	background-color:#F0F0E8;
 	color:#52534D;
 }
@@ -2701,12 +2773,19 @@ tbody.scrollContent tr.alternateRow {
 
 
 /* rounded corners - we will call dd_roundies on all this */
+#crm-container #restmsg,
+#crm-container #help, 
+#crm-container .help,
+#crm-container .ui-tabs-panel,
+#crm-container .crm-content-block,
+#full-screen-header,
 .crm-tooltip,
 #crm-container .crm-pager,
 #crm-container form .section-hidden-border,
 #crm-container #search-status,
 #crm-container .crm-form-block,
 #crm-container .crm-search-tasks,
+#crm-container .crm-tasks,
 #crm-container div.form-item,
 #crm-container div.messages,
 div#crm-toolTip
@@ -2747,7 +2826,7 @@ div#crm-toolTip
 #crm-container .panel li a, 
 #crm-container .contextMenu a,
 #crm-container .contextMenu a:link {
-	color:#2786C2;
+	color:#DFDFDF;
 	}
 
 	

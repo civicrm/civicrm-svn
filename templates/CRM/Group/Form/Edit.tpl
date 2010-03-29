@@ -24,8 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing group (name and description only)  *}
-<fieldset>
-    <legend>{ts}Group Settings{/ts}</legend>
+<div class="crm-block crm-form-block">
     <div id="help">
 	{if $action eq 2}
 	    {capture assign=crmURL}{crmURL p="civicrm/group/search" q="reset=1&force=1&context=smog&gid=`$group.id`"}{/capture}
@@ -67,8 +66,7 @@
     </table>
 
     {if $parent_groups|@count > 0 or $form.parents.html}
-    <fieldset>
-	<legend>{ts}Parent Groups{/ts} {help id="id-group-parent" file="CRM/Group/Page/Group.hlp"}</legend>
+	<h3>{ts}Parent Groups{/ts} {help id="id-group-parent" file="CRM/Group/Page/Group.hlp"}</h3>
         {if $parent_groups|@count > 0}
 	    <table class="form-layout-compressed">
 		<tr>
@@ -89,12 +87,10 @@
 	        <td>{$form.parents.html|crmReplace:class:huge}</td>
 	    </tr>
 	</table>
-    </fieldset>
     {/if}
 
     {if $form.organization}
-	<fieldset>
-	    <legend>{ts}Associated Organization{/ts} {help id="id-group-organization" file="CRM/Group/Page/Group.hlp"}</legend>
+	<h3>{ts}Associated Organization{/ts} {help id="id-group-organization" file="CRM/Group/Page/Group.hlp"}</h3>
 	        <table class="form-layout-compressed">
 		    <tr>
 		        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$form.organization.label}</td>
@@ -103,7 +99,6 @@
 			</td>
 		    </tr>
 		</table>
-	</fieldset>
     {/if} 
 	
     <div class="form-item">
@@ -155,3 +150,4 @@ cj('#organization').autocomplete( dataUrl, {
 						      });
 </script>
 {/literal}
+</div>

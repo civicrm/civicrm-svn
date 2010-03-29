@@ -23,6 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-form-block">
+
 {* Import Wizard - Data Mapping table used by MapFields.tpl and Preview.tpl *}
  <div id="map-field">
     {strip}
@@ -149,3 +151,4 @@
     </div>
     {/if}
  </div>
+</div>

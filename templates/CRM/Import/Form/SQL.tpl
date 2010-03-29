@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-form-block">
 <div class="form-item">
   <fieldset><legend>{ts}SQL Import{/ts}</legend>
     <dl>
@@ -32,4 +33,4 @@
     </dl>
   </fieldset>
 </div>
-  
+ </div>
