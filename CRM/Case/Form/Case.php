@@ -201,9 +201,13 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         CRM_Custom_Form_Customdata::buildQuickForm( $this );
         // we don't want to show button on top of custom form
         $this->assign('noPreCustomButton', true);
-           
+
+        $s = CRM_Core_DAO::getAttribute( 'CRM_Activity_DAO_Activity', 'subject' );
+        if( ! is_array( $s ) ) {
+                $s = array();
+        }
         $this->add( 'text', 'activity_subject', ts('Subject'), 
-                   array_merge( CRM_Core_DAO::getAttribute( 'CRM_Activity_DAO_Activity', 'subject' ), array('maxlength' => '128') ), true);
+                   array_merge( $s, array('maxlength' => '128') ), true);
 
         require_once 'CRM/Core/BAO/Tag.php';
         $tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_case'), true );
