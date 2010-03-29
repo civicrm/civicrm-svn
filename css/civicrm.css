@@ -750,6 +750,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 #crm-container .tree-default li span.clicked { padding:0px 3px 0px 20px; }
 #crm-container .tree-default li a.loading,
 #crm-container .crm-loading-element { background-image:url("../i/loading.gif"); }
+#crm-container .crm-form-block .crm-loading-element { background-image:url("../i/loading-E6E6DC.gif"); }
 
 
 

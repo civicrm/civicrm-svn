@@ -597,7 +597,7 @@
     columns: 2,
     emptyPlaceholderInner: 'There are no dashlets in this column of your dashboard.',
     fullscreenHeaderInner: 'Back to dashboard mode',
-    throbberMarkup: '<div class="throbber"><p class="loadtext">Loading...</p></div>',
+    throbberMarkup: '<div class="crm-loading-element">Loading...</div>',
     animationSpeed: 200,
     callbacks: {},
     widgetCallbacks: {}
