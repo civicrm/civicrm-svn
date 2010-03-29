@@ -1233,7 +1233,8 @@ class CRM_Contact_BAO_Query
         case 'activity_status':
         case 'activity_subject':
         case 'test_activities':
-        case 'activity_type_id':    
+        case 'activity_type_id':
+        case 'activity_tags': 
             CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
             return;
 
@@ -1954,6 +1955,7 @@ class CRM_Contact_BAO_Query
                 continue;
 
             case 'civicrm_activity':
+            case 'civicrm_activity_tag':
                 $from .= CRM_Activity_BAO_Query::from( $name, $mode, $side );
                 continue; 
 

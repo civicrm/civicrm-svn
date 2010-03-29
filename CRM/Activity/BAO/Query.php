@@ -229,8 +229,26 @@ class CRM_Activity_BAO_Query
                                      'civicrm_activity', 'activity_date', 'activity_date_time', ts('Activity Date') );
 
             break;
+        case 'activity_tags':
+            require_once'CRM/Core/BAO/Tag.php';
+            $value = array_keys( $value );
+            $activityTags = CRM_Core_BAO_Tag::getTagsUsedFor('civicrm_activity');
+            
+            $names = array( );
+            $val   = array( );
+            if ( is_array( $value ) ) {
+                foreach ($value as $k => $v) {
+                    $names[] = $activityTags[$v];
+                    }
+            } 
+            $query->_where[$grouping][] = "civicrm_activity_tag.tag_id IN (". implode( ",",$value) .")";
+            $query->_qill[$grouping ][] = ts( 'Activity Tag %1', array( 1 => $op))  . ' ' . implode( ' ' . ts('OR') . ' ', $names);
+            $query->_tables['civicrm_activity_tag'] = $query->_whereTables['civicrm_activity_tag'] = 1;
+            
+            break;
+            
         }
-
+        
     }
     
     static function from( $name, $mode, $side ) {
@@ -269,11 +287,14 @@ class CRM_Activity_BAO_Query
 			
             break;
             
+        case 'civicrm_activity_tag':            
+            $from .= " $side JOIN civicrm_entity_tag as civicrm_activity_tag ON ( civicrm_activity_tag.entity_table = 'civicrm_activity' AND civicrm_activity_tag.entity_id = civicrm_activity.id ) ";
+			break;
         }
         
         return $from;
     }
-
+    
     
     /**
      * getter for the qill object
