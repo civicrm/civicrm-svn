@@ -182,7 +182,7 @@ class CRM_Contact_Form_Search_Criteria {
                         $selectElements = array( '' => ts('- select -') ) 
                             + CRM_Core_PseudoConstant::stateProvinceForCountry( $countryDefault );
                         
-                    } else if ( isset( $form->_submitValues['country'] ) ) {
+                    } else if ( $form->_submitValues['country'] ) {
                         $selectElements = array( '' => ts('- select -') ) 
                             + CRM_Core_PseudoConstant::stateProvinceForCountry( $form->_submitValues['country']   );
                     }

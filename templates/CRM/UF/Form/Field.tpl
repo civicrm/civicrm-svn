@@ -133,6 +133,9 @@ function showLabel( ) {
     if ( custom.substring( 0, 7 ) == 'custom_' ) {
         var customFieldLabel = labelValue.split(' :: ', 2);
         labelValue = customFieldLabel[0];
+        if ( document.forms.Field['field_name[2]'].value ) { 
+            labelValue = labelValue + ' (' + document.forms.Field['field_name[2]'].options[document.forms.Field['field_name[2]'].selectedIndex].text + ')'; 
+        }
     }
     
     var input = document.getElementById('label');
@@ -208,7 +211,8 @@ function showLabel( ) {
                show("in_selector_desDt");
                show("in_selector_desDd");
            }
-       }	
+       }
+       showLabel( );
    }
 
    cj("#field_name\\[1\\]").bind( 'change blur', function( ) {
