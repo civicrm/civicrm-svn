@@ -79,7 +79,7 @@
         </fieldset>
      </div>    
    {/if}
-   </div> 
+
    {if $action eq 2 | $action eq 1} {* add and update actions *}
     <fieldset><legend>{if $action eq 1}{ts}New Relationship{/ts}{else}{ts}Edit Relationship{/ts}{/if}</legend>
         <div class="form-item">
