@@ -125,6 +125,7 @@ class CRM_Activity_BAO_Query
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
         
         $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
+        $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
 
         switch ( $name ) {
         

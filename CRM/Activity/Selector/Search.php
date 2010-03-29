@@ -276,7 +276,15 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             if ( $row['activity_is_test'] ) {
                 $row['activity_type'] = $row['activity_type'] . " (test)";
             }
-            
+            $row['activity_status'] = $row['status_id'] ? CRM_Core_OptionGroup::getLabel( 'activity_status', $row['status_id'] ) : null;
+            $row['activity_type']   = $row['activity_type_id'] ? CRM_Core_OptionGroup::getLabel( 'activity_type', $row['activity_type_id'] ) : null;
+            if ( $this->_context == 'search' ) {
+                $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->grant_id;
+            }
+            require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
+            $row['contact_type'] =
+                CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ?
+                                                         $result->contact_sub_type : $result->contact_type );
             $rows[] = $row;
          }
          

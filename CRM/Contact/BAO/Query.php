@@ -1166,8 +1166,7 @@ class CRM_Contact_BAO_Query
              ( substr( $values[0], 0, 4  ) == 'tmf_' ) ||
              ( substr( $values[0], 0, 6  ) == 'grant_' ) ||
              ( substr( $values[0], 0, 7  ) == 'pledge_' ) ||
-             ( substr( $values[0], 0, 5  ) == 'case_' ) ||
-             ( substr( $values[0], 0, 9  ) == 'activity_' )
+             ( substr( $values[0], 0, 5  ) == 'case_' ) 
              ) {
             return;
             
@@ -1235,7 +1234,7 @@ class CRM_Contact_BAO_Query
         case 'activity_subject':
         case 'test_activities':
         case 'activity_type_id':    
-            $this->activity( $values );
+            CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
             return;
 
         case 'activity_target_name':
@@ -1348,12 +1347,6 @@ class CRM_Contact_BAO_Query
 
             require_once 'CRM/Core/Component.php';
             CRM_Core_Component::alterQuery( $this, 'where' );
-
-            if ( $activity ) {
-                require_once 'CRM/Activity/BAO/Query.php';
-                CRM_Activity_BAO_Query::where( $this );
-            }
-           
         }
         
         if ( $this->_customQuery ) {
