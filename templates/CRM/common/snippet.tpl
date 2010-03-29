@@ -23,6 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{if $config->debug}
+    {include file="CRM/common/debug.tpl"}
+{/if}
+
 {if $smarty.get.snippet eq 4}
     {if $isForm}
         {include file="CRM/Form/default.tpl"}
