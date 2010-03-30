@@ -535,6 +535,24 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             CRM_Utils_Hook::post( 'create', 'Activity', $activity->id, $activity );
         }
         
+        // if the subject contains a ‘[case #…]’ string, file that activity on the related case (CRM-5916)
+        $matches = array();
+        if (preg_match('/\[case #([0-9a-h]{7})\]/', $params['subject'], $matches)) {
+            $key   = CIVICRM_SITE_KEY;
+            $hash  = $matches[1];
+            $query = "SELECT id FROM civicrm_case WHERE SUBSTR(SHA1(CONCAT('$key', id)), 1, 7) = '$hash'";
+            $caseParams = array(
+                'activity_id' => $activity->id,
+                'case_id'     => CRM_Core_DAO::singleValueQuery($query),
+            );
+            if ($caseParams['case_id']) {
+                require_once 'CRM/Case/BAO/Case.php';
+                CRM_Case_BAO_Case::processCaseActivity($caseParams);
+            } else {
+                self::logActivityAction($activity, "unknown case hash encountered: $hash");
+            }
+        }
+
         return $result;
     }
         

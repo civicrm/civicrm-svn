@@ -1238,6 +1238,11 @@ WHERE cr.case_id =  %1 AND ce.is_primary= 1';
         
         $tplParams['activitySubject'] = $activitySubject;
 
+        // if it’s a case activity, add hashed id to the template (CRM-5916)
+        if ($caseId) {
+            $tplParams['idHash']  = substr(sha1(CIVICRM_SITE_KEY . $caseId), 0, 7);
+        }
+
         $result = array();
         list ($name, $address) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $session->get( 'userID' ) );
         
