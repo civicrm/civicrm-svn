@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/viewing relationships  *}
+<div class="crm-block crm-form-block">
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
@@ -413,3 +414,4 @@
 </script>
 {/literal}
 {/if}
+</div>

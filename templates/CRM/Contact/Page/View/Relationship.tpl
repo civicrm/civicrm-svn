@@ -30,20 +30,18 @@
  <div class="view-content">
    {if $action eq 1 or $action eq 2 or $action eq 4 or $action eq 8} {* add, update or view *}
     {include file="CRM/Contact/Form/Relationship.tpl"}
-    <div class="spacer"></div>
   {/if}
+<div class="crm-block crm-content-block">
   {if $action NEQ 1 AND $action NEQ 2 AND $permission EQ 'edit'}
         <div class="action-link">
             <a accesskey="N" href="{crmURL p='civicrm/contact/view/rel' q="cid=`$contactId`&action=add&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Relationship{/ts}</span></a>
         </div>
-        <div class="clear"></div>
   {/if}
   {include file="CRM/common/jsortable.tpl" useAjax=0}   
   {* start of code to show current relationships *}
   {if $currentRelationships}
     {* show browse table for any action *}
       <div id="current-relationships">
-        <p></p>
         {if $relationshipTabContext} {*to show the title and links only when viewed from relationship tab, not from dashboard*}
          <h3>{ts}Current Relationships{/ts}</h3>
         {/if}
@@ -165,3 +163,5 @@
  {*include custom data js file*}
  {include file="CRM/common/customData.tpl"}
 {/if}
+</div>
+</div>
