@@ -219,3 +219,8 @@ VALUES
        ( @option_group_id_activity_type,{localize}'Change Case Tags'{/localize},(SELECT @max_val := @max_val+1),'Change Case Tags','NULL',0,0,(SELECT @max_wt := @max_wt+1),1,1,@caseCompId);
 
    {include file='../CRM/Upgrade/3.2.alpha1.msg_template/civicrm_msg_template.tpl'}
+
+-- CRM-6024
+   UPDATE civicrm_participant_status_type
+   	  SET is_counted = 0
+   	  WHERE name = 'Pending from incomplete transaction';

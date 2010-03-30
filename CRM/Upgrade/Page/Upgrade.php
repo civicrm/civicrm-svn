@@ -116,6 +116,9 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
             $template->assign( 'upgraded', true );
         } else {
             $message   = ts('CiviCRM upgrade was successful.');
+            if ( $latestVer == '3.2.alpha1' ) {
+                $message .= '<br />' . ts("We have reset the COUNTED flag to false for the event participant status 'Pending from incomplete transaction'. This change ensures that people who have a problem during registration can try again.");
+            }
             $template->assign( 'currentVersion',  $currentVer);
             $template->assign( 'newVersion',      $latestVer );
             $template->assign( 'upgradeTitle',   ts('Upgrade CiviCRM from v %1 To v %2', 
