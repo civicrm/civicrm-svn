@@ -538,7 +538,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         // if the subject contains a ‘[case #…]’ string, file that activity on the related case (CRM-5916)
         $matches = array();
         if (preg_match('/\[case #([0-9a-h]{7})\]/', $params['subject'], $matches)) {
-            $key   = CIVICRM_SITE_KEY;
+            $key   = CRM_Core_DAO::escapeString(CIVICRM_SITE_KEY);
             $hash  = $matches[1];
             $query = "SELECT id FROM civicrm_case WHERE SUBSTR(SHA1(CONCAT('$key', id)), 1, 7) = '$hash'";
             $caseParams = array(
