@@ -30,12 +30,30 @@
         <dl>
         <dt>{$form.name.label}</dt><dd>{$form.name.html}</dd>
         <dt>{$form.description.label}</dt><dd>{$form.description.html}</dd>
-	<dt>{$form.parent_id.label}</dt><dd>{$form.parent_id.html}</dd>
-	<dt>{$form.used_for.label}</dt><dd>{$form.used_for.html}</dd>
+	    <dt>{$form.parent_id.label}</dt><dd>{$form.parent_id.html}</dd>
+	    <dt>{$form.used_for.label}</dt>
+	        <dd>{$form.used_for.html}
+	            <br />
+	            <span class="description">
+	                {if $is_parent}{ts}You can change the types of records which this tag can be used for by editing the 'Parent' tag.{/ts}
+	                {else}{ts}What types of record(s) can this tag be used for?{/ts}
+	                {/if}
+	            </span>
+	        </dd>
 	{if $accessHidden}
-	    <dt>{$form.is_hidden.label}</dt><dd>{$form.is_hidden.html}</dd>
+	    <dt>{$form.is_hidden.label}</dt>
+	        <dd>
+	            {$form.is_hidden.html}
+	            <br /><span class="description">
+	                {ts}Hidden tags are not displayed to users in the built-in Tag selection and display fields. They can only be assigned and displayed by custom extensions using the CiviCRM APIs.{/ts}
+                    {if $is_parent} {ts}You can change the 'Hidden' property of this tag by editing the 'Parent' tag.{/ts}{/if}
+                </span>
+	        </dd>
 	{/if}
-        <dt>{$form.is_reserved.label}</dt><dd>{$form.is_reserved.html}</dd>
+        <dt>{$form.is_reserved.label}</dt>
+            <dd>{$form.is_reserved.html}
+                <br /><span class="description">{ts}'Reserved' tags can be applied to records by any user with edit permission on that record. However only users with 'administer reserved tags' permission can modify the tags themselves, or delete them from the list of available tags.{/ts} 
+            </dd>
         </dl>
         {if $parent_tags|@count > 0}
         <table class="form-layout-compressed">
