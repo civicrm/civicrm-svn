@@ -239,9 +239,32 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
 
         $this->assign( 'isReset', true );
 
+
+        $formController = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Search',
+                                                           ts('Search Profile'),
+                                                           CRM_Core_Action::ADD );
+        $formController->setEmbedded( true );
+        $formController->set( 'gid', $this->_gid );
+        $formController->process( ); 
+        $formController->run( ); 
+        
+        $searchError = false;
+        // check if there is a POST
+        if ( ! empty( $_POST ) ) {
+            if ( $formController->validate( ) !== true ) {
+                $searchError = true;
+            }
+        }
+
+        // also get the search tpl name
+        $this->assign( 'searchTPL', $formController->getTemplateFileName( ) );
+        
+        $this->assign( 'search', $this->_search );
+
         // search if search returned a form error?
-        if ( ! CRM_Utils_Array::value( 'reset', $_GET ) ||
-             CRM_Utils_Array::value( 'force', $_GET ) ) {
+        if ( ( ! CRM_Utils_Array::value( 'reset', $_GET ) ||
+               CRM_Utils_Array::value( 'force', $_GET ) ) &&
+             ! $searchError ) {
             $this->assign( 'isReset', false );
                 
             $map      = 0;
@@ -287,20 +310,6 @@ class CRM_Profile_Page_Listings extends CRM_Core_Page {
             $controller->setEmbedded( true );
             $controller->run( );
         }
-
-        $formController = new CRM_Core_Controller_Simple( 'CRM_Profile_Form_Search',
-                                                           ts('Search Profile'),
-                                                           CRM_Core_Action::ADD );
-        $formController->setEmbedded( true );
-        $formController->set( 'gid', $this->_gid );
-        $formController->process( ); 
-        $formController->run( ); 
-        
-        // also get the search tpl name
-        $this->assign( 'searchTPL', $formController->getTemplateFileName( ) );
-        
-        $this->assign( 'search', $this->_search );
-
         
         return parent::run( );
     }
