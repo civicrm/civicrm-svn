@@ -126,29 +126,29 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            </tr>
             {/if}
            <tr>
-	   {if not $multiClient}
+	       {if not $multiClient}
               <td class="label font-size12pt">{ts}Client{/ts}</td>
               <td class="view-value font-size12pt">{$client_name|escape}&nbsp;&nbsp;&nbsp;&nbsp;
-	   {else}
+	       {else}
               <td class="label font-size12pt">{ts}Clients{/ts}</td>
               <td class="view-value font-size12pt">
-		{foreach from=$client_names item=client name=clients}
-		    {$client.display_name}{if not $smarty.foreach.clients.last}; &nbsp; {/if}
+		        {foreach from=$client_names item=client name=clients}
+		            {$client.display_name}{if not $smarty.foreach.clients.last}; &nbsp; {/if}
                 {/foreach}
 
-	   {/if}
-	      {if $action eq 2}
-	      {if $multiClient}<p/>{/if}<a href="#" onClick="buildTargetContact(1); return false;">{ts}With other contact(s){/ts}</a>
-	      {/if}
-	      </td>
+	       {/if}
+	       {if $action eq 2}
+	            {if $multiClient}<p/>{/if}<a href="#" onClick="buildTargetContact(1); return false;"><span class="add-remove-link">&raquo; {ts}With other contact(s){/ts}</span></a>
+	       {/if}
+	          </td>
            </tr>
-	   {if $action eq 2}
-	   <tr>
-	      <td class="label font-size10pt hide-block" id="withContactsLabel">{ts}With Contact{/ts}</td>
- 	      <td class="hide-block"  id="withContactsWidget">{$form.target_contact_id.html}</td>
-	      <td class="hide-block">{$form.hidden_target_contact.html}</td>
-	   </tr>
-	   {/if}
+    	   {if $action eq 2}
+        	   <tr>
+        	      <td class="label font-size10pt hide-block" id="withContactsLabel">{ts}With Contact{/ts}</td>
+         	      <td class="hide-block"  id="withContactsWidget">{$form.target_contact_id.html}</td>
+        	      <td class="hide-block">{$form.hidden_target_contact.html}</td>
+        	   </tr>
+    	   {/if}
            <tr>
               <td class="label">{ts}Activity Type{/ts}</td>
               <td class="view-value bold">{$activityTypeName|escape}</td>
