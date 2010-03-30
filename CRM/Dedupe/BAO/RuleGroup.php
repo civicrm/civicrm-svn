@@ -144,19 +144,32 @@ class CRM_Dedupe_BAO_RuleGroup extends CRM_Dedupe_DAO_RuleGroup
      * Return the SQL query for getting only the interesting results out of the dedupe table.
      */
     function thresholdQuery() {
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+
         if ( $this->params && !$this->noRules ) { 
-            return "SELECT id
-                FROM dedupe JOIN civicrm_contact USING (id)
-                WHERE contact_type = '{$this->contact_type}'
-                GROUP BY id HAVING SUM(weight) >= {$this->threshold}
+            list( $this->_aclFrom, $this->_aclWhere ) = 
+                CRM_Contact_BAO_Contact_Permission::cacheClause( 'civicrm_contact' );
+            $this->_aclWhere = $this->_aclWhere ? "AND {$this->_aclWhere}" : '';
+
+            $query = "SELECT dedupe.id
+                FROM dedupe JOIN civicrm_contact USING (id) {$this->_aclFrom}
+                WHERE contact_type = '{$this->contact_type}' {$this->_aclWhere}
+                GROUP BY dedupe.id HAVING SUM(weight) >= {$this->threshold}
                 ORDER BY SUM(weight) desc";
         } else {
-            return "SELECT id1, id2, SUM(weight) as weight
-                FROM dedupe JOIN civicrm_contact c1 ON id1 = c1.id JOIN civicrm_contact c2 ON id2 = c2.id
-                WHERE c1.contact_type = '{$this->contact_type}' AND c2.contact_type = '{$this->contact_type}'
-                GROUP BY id1, id2 HAVING SUM(weight) >= {$this->threshold}
+            list( $this->_aclFrom, $this->_aclWhere ) = 
+                CRM_Contact_BAO_Contact_Permission::cacheClause( array('c1', 'c2') );
+            $this->_aclWhere = $this->_aclWhere ? "AND {$this->_aclWhere}" : '';
+
+            $query = "SELECT dedupe.id1, dedupe.id2, SUM(weight) as weight
+                FROM dedupe JOIN civicrm_contact c1 ON dedupe.id1 = c1.id 
+                            JOIN civicrm_contact c2 ON dedupe.id2 = c2.id {$this->_aclFrom}
+                WHERE c1.contact_type = '{$this->contact_type}' AND 
+                      c2.contact_type = '{$this->contact_type}' {$this->_aclWhere}
+                GROUP BY dedupe.id1, dedupe.id2 HAVING SUM(weight) >= {$this->threshold}
                 ORDER BY SUM(weight) desc";
         }
+        return $query;
     }
     
     /**
