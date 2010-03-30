@@ -29,16 +29,20 @@
 {if $buildCaseActivityForm}
 <table class="form-layout">
      <tr>
-	<td>{$form.unclosed_cases.label}</td>
-     	<td>{$form.unclosed_cases.html}</td>
+	    <td class="label">{$form.unclosed_cases.label}</td>
+     	<td>{$form.unclosed_cases.html}<br />
+     	    <span class="description">{ts}Begin typing client name for a list of open cases.{/ts}</span>
+     	</td>
      </tr>
      <tr>
-	<td>{$form.target_contact_id.label}</td>
-	<td>{$form.target_contact_id.html}</td>
+	    <td class="label">{$form.target_contact_id.label}</td>
+	    <td>{$form.target_contact_id.html}</td>
      </tr>
-     <tr>	
-     	<td>{$form.case_activity_subject.label}</td>
-	<td>{$form.case_activity_subject.html}</td>
+     <tr>
+     	<td class="label">{$form.case_activity_subject.label}</td>
+	    <td>{$form.case_activity_subject.html}<br />
+	        <span class="description">{ts}You can modify the activity subject before filing.{/ts}</span>
+	    </td>
      </tr>
 </table>     	
 
