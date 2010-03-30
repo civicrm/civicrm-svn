@@ -37,8 +37,8 @@
       {foreach from=$relatedCases item=row key=caseId}
       <tr>
       	 <td class="label">{$row.client_name}</td>
-	 <td class="label">{$row.case_type}</td>
-	 <td class="label">{$row.links}</td>
+	     <td class="label">{$row.case_type}</td>
+	     <td class="label">{$row.links}</td>
       </tr>	
       {/foreach}
    </table>
@@ -54,46 +54,46 @@
 		{ts}Clients:{/ts} 
 		{foreach from=$caseRoles.client item=client name=clients}
 		  <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
-                {/foreach}
+        {/foreach}
 		<img src="{$config->resourceBase}i/edit.png" title="{ts}add new client to the case{/ts}" onclick="addClient( );">
-                </td>
+        </td>
 	</tr>
 	{/if}
-        <tr>
+    <tr>
 	    {if not $multiClient}
             <td>
-		<table class="form-layout-compressed" border="1">
-		{foreach from=$caseRoles.client item=client}
+		        <table class="form-layout-compressed" border="1">
+		        {foreach from=$caseRoles.client item=client}
       	       	   <tr>
-		     <td class="label-left" style="padding: 0px">{$client.display_name}</td>
-		   </tr>
-	       	   {if $client.phone}
-		       <tr>
-		       	   <td class="label-left description" style="padding: 0px">{$client.phone}</td>
-		       </tr>
-		   {/if}
-		   {if $client.birth_date}
-		       <tr>
-		       	   <td class="label-left description" style="padding: 0px">{ts}DOB{/ts}: {$client.birth_date|crmDate}</td>
-		       </tr>
-		   {/if}
+		               <td class="label-left" style="padding: 0px">{$client.display_name}</td>
+		           </tr>
+	       	       {if $client.phone}
+		              <tr>
+		       	        <td class="label-left description" style="padding: 0px">{$client.phone}</td>
+		              </tr>
+		           {/if}
+        		   {if $client.birth_date}
+        		       <tr>
+        		       	   <td class="label-left description" style="padding: 0px">{ts}DOB{/ts}: {$client.birth_date|crmDate}</td>
+        		       </tr>
+        		   {/if}
                 {/foreach}
-	    	</table>
+	    	    </table>
             </td>
 	    {/if}
-            <td>
-                <label>{ts}Case Type{/ts}:</label>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><img src="{$config->resourceBase}i/edit.png" border="0"></a>
-            </td>
-            <td>
-                <label>{ts}Status{/ts}:</label>&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title="Change case status (creates activity record)"><img src="{$config->resourceBase}i/edit.png" border="0"></a>
-            </td>
-            <td>
-                <label>{ts}Start Date{/ts}:</label>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="Change case start date (creates activity record)"><img src="{$config->resourceBase}i/edit.png" border="0"></a>
-            </td>
-            <td>
-                <label>{ts}Case ID{/ts}:</label>&nbsp;{$caseID}
-            </td>
-        </tr>
+        <td>
+            <label>{ts}Case Type{/ts}:</label>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><img src="{$config->resourceBase}i/edit.png" border="0"></a>
+        </td>
+        <td>
+            <label>{ts}Status{/ts}:</label>&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title="Change case status (creates activity record)"><img src="{$config->resourceBase}i/edit.png" border="0"></a>
+        </td>
+        <td>
+            <label>{ts}Start Date{/ts}:</label>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="Change case start date (creates activity record)"><img src="{$config->resourceBase}i/edit.png" border="0"></a>
+        </td>
+        <td>
+            <label>{ts}Case ID{/ts}:</label>&nbsp;{$caseID}
+        </td>
+    </tr>
     </table>
     {if $hookCaseSummary}
       <div id="caseSummary">
@@ -104,12 +104,17 @@
     {/if}
     <table class="form-layout">
         <tr>
-            <td colspan="2">{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>
+            <td>{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>
 	    {if $hasAccessToAllCases}	
-            <td> <br /><input type="button"  value="Print Case Report" name="case_report_all" onclick="printCaseReport( );"/></td> 
-            </tr><tr>
-            <td>{$form.timeline_id.label}<br />{$form.timeline_id.html}&nbsp;{$form._qf_CaseView_next.html}</td> 
-            <td>{$form.report_id.label}<br />{$form.report_id.html}&nbsp;<input type="button" accesskey="R" value="Go" name="case_report" onclick="checkSelection( this );"/></td> 
+                <td>
+                    <br /><input type="button"  value="Print Case Report" name="case_report_all" onclick="printCaseReport( );"/>
+                </td> 
+            </tr>
+            <tr>
+                <td>{$form.timeline_id.label}<br />{$form.timeline_id.html}&nbsp;{$form._qf_CaseView_next.html}</td> 
+                <td>{$form.report_id.label}<br />{$form.report_id.html}&nbsp;<input type="button" accesskey="R" value="Go" name="case_report" onclick="checkSelection( this );"/></td> 
+        {else}
+                <td></td>
 	    {/if}
         </tr>
 	{if $hasRelatedCases}
@@ -122,16 +127,18 @@
 	{if $mergeCases}
 	<tr>
 	   <td colspan='2'><a href="#" onClick='cj("#merge_cases").toggle( ); return false;'>{ts}Merge Case{/ts}</a>	
-	   <span id='merge_cases' class='hide-block'>
-	   {$form.merge_case_id.html}&nbsp;{$form._qf_CaseView_next_merge_case.html}</span>
+	        <span id='merge_cases' class='hide-block'>
+	            {$form.merge_case_id.html}&nbsp;{$form._qf_CaseView_next_merge_case.html}
+	        </span>
 	   </td>
 	</tr>
 	{/if}
 	{if call_user_func(array('CRM_Core_Permission','giveMeAllACLs'))}
 	<tr>
 	   <td colspan='2'><a href="#" onClick='cj("#change_client").toggle( ); return false;'>{ts}Assign to Another Client{/ts}</a>	
-	   <span id='change_client' class='hide-block'>
-	   {$form.change_client_id.html|crmReplace:class:twenty}&nbsp;{$form._qf_CaseView_next_edit_client.html}</span>
+	    <span id='change_client' class='hide-block'>
+	        {$form.change_client_id.html|crmReplace:class:twenty}&nbsp;{$form._qf_CaseView_next_edit_client.html}
+	    </span>
 	   </td>
 	</tr>
 	{/if}
