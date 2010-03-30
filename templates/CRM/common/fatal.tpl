@@ -41,9 +41,9 @@
 
 <div class="messages status">
   <dl>
-  <dt><img src="{$config->resourceBase}i/Error.gif" alt="{ts}unrecoverable error{/ts}" /></dt>
+  <dt><div class="icon red-icon alert-icon"></div></dt>
   <dd>
-      {ts}Sorry. A non-recoverable error has occurred.{/ts}
+      <span class="status-fatal">{ts}Sorry. A non-recoverable error has occurred.{/ts}</span>
       <p>{$message}</p>
 {if $error.message && $message != $error.message}
     <hr style="solid 1px" />

@@ -2149,7 +2149,7 @@ div.grippie {
     padding: 5px 12px 6px 4px;    
 } 
 
-.button .icon {
+.button .red {
 	background-image: url(../i/icons/jquery-ui-FFFFFF.png);
 	}
 
@@ -2773,7 +2773,8 @@ tbody.scrollContent tr.alternateRow {
 #crm-container .font-red, 
 #crm-container .status-removed, 
 #crm-container .disabled, 
-#crm-container .status-overdue, 
+#crm-container .status-overdue,
+#crm-container .status-fatal, 
 #crm-container .status-hold {
 	color:#E43D2B!important;
 	}
