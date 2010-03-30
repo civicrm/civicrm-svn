@@ -170,6 +170,15 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                                           )
                                     );
         
+        if ( $showUpdate ) {
+            self::$_actionLinks = self::$_actionLinks +  array ( CRM_Core_Action::UPDATE => 
+                                                                 array(
+                                                                       'name'     => ts('Edit'),
+                                                                       'url'      => $url,
+                                                                       'qs'       => $qsUpdate,
+                                                                       'title'    => ts('Update Activity') ) );
+        }
+
         require_once 'CRM/Case/BAO/Case.php';
         if ( CRM_Case_BAO_Case::checkPermission( $activityId, 'File On Case', $activityTypeId ) ) {
             self::$_actionLinks = self::$_actionLinks +  array ( CRM_Core_Action::ADD =>
@@ -178,14 +187,6 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                                                                        'url'      => CRM_Utils_System::currentPath( ),
                                                                        'extra'    => 'onClick="Javascript:fileOnCase( \'file\', \'%%id%%\' ); return false;"',
                                                                        'title'    => ts('File On Case') ) );
-        }
-        if ( $showUpdate ) {
-            self::$_actionLinks = self::$_actionLinks +  array ( CRM_Core_Action::UPDATE => 
-                                                                 array(
-                                                                       'name'     => ts('Edit'),
-                                                                       'url'      => $url,
-                                                                       'qs'       => $qsUpdate,
-                                                                       'title'    => ts('Update Activity') ) );
         }
 
         if ( $showDelete ) {
