@@ -224,3 +224,7 @@ VALUES
    UPDATE civicrm_participant_status_type
    	  SET is_counted = 0
    	  WHERE name = 'Pending from incomplete transaction';
+
+-- CRM-6004
+ALTER TABLE civicrm_uf_field
+  ADD help_pre text COLLATE utf8_unicode_ci COMMENT 'Description and/or help text to display before this field.';
