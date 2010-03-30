@@ -252,29 +252,40 @@ $earthDistanceSQL  <= $distance
         list( $name, $op, $distance, $grouping, $wildcard ) = $values;
              
         // also get values array for all address related info
-        $proximityVars = array( 'street_address', 'city', 'postal_code',
-                                'state_province_id', 'country_id', 'distance_unit' );
+        $proximityVars = array( 'street_address'    => 1,
+                                'city'              => 1,
+                                'postal_code'       => 1,
+                                'state_province_id' => 0,
+                                'country_id'        => 0,
+                                'distance_unit'     => 0 );
+
         $proximityAddress = array( );
-        foreach ( $proximityVars as $var ) {
+        $qill = array( );
+        foreach ( $proximityVars as $var => $recordQill ) {
             $proximityValues = $query->getWhereValues( "prox_{$var}", $grouping );
             if ( ! empty( $proximityValues ) &&
                  ! empty( $proximityValues[2] ) ) {
                 $proximityAddress[$var] = $proximityValues[2];
+                if ( $recordQill ) {
+                    $qill[] = $proximityValues[2];
+                }
             }
         }
 
         if ( empty( $proximityAddress ) ) {
             return;
         }
-        
+
         if ( isset( $proximityAddress['state_province_id'] ) ) {
             $proximityAddress['state_province'] =
                 CRM_Core_PseudoConstant::stateProvince( $proximityAddress['state_province_id'] );
+            $qill[] = $proximityAddress['state_province'];
         }
 
         if ( isset( $proximityAddress['country_id'] ) ) {
             $proximityAddress['country'] =
                 CRM_Core_PseudoConstant::country( $proximityAddress['country_id'] );
+            $qill[] = $proximityAddress['country'];
         }
 
         $config =& CRM_Core_Config::singleton( );
@@ -289,19 +300,25 @@ $earthDistanceSQL  <= $distance
             return;
         }
 
-        if ( isset( $proximityAddress['distance_unit'] ) ) {
-            if ( $proximityAddress['distance_unit'] == 'miles' ) {
-                $distance = $distance * 1609.344;
-            } else {
-                $distance = $distance * 1000.00;
-            }
+
+        if ( isset( $proximityAddress['distance_unit'] ) &&
+             $proximityAddress['distance_unit'] == 'miles' ) {
+            $qillUnits = " {$distance} " . ts( 'miles' );
+            $distance = $distance * 1609.344;
+        } else {
+            $qillUnits .= " {$distance} " . ts( 'km' );
+            $distance = $distance * 1000.00;
         }
+
+        $qill = ts( 'Proximity search to a distance of %1 from %2',
+                    array( 1 => $qillUnits,
+                           2 => implode( ', ', $qill ) ) );
 
         $query->_tables['civicrm_address'] = $query->_whereTables['civicrm_address'] = 1;
         $query->_where[$grouping][] = self::where( $proximityAddress['geo_code_1'],
                                                    $proximityAddress['geo_code_2'],
                                                    $distance );
-        $query->_qill[$grouping][]  = ts( 'Proximity Search Enabled' );
+        $query->_qill[$grouping][]  = $qill;
         return;
     }
 
