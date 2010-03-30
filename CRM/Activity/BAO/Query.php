@@ -45,19 +45,23 @@ class CRM_Activity_BAO_Query
      * @access public  
      */
     static function select( &$query ) {
-        // get activity type FIX ME
-        if ( CRM_Utils_Array::value( 'activity_type', $query->_returnProperties ) ) {
-/*
-            $query->_select['activity_type']  = "activity_type.label as activity_type";
-            $query->_element['activity_type'] = 1;
+        
+        if ( CRM_Utils_Array::value( 'activity_id', $query->_returnProperties ) ) {
+            $query->_select['activity_id']  = "civicrm_activity.id as activity_id";
+            $query->_element['activity_id'] = 1;
+            $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
+        }
+        
+        if ( CRM_Utils_Array::value( 'activity_type_id', $query->_returnProperties ) ) {
+            $query->_select['activity_type_id']  = "activity_type.label as activity_type_id";
+            $query->_element['activity_type_id'] = 1;
             $query->_tables['civicrm_activity'] = 1;
             $query->_tables['activity_type'] = 1;
             $query->_whereTables['civicrm_activity'] = 1;
             $query->_whereTables['activity_type'] = 1;
-*/
         }
-
-    	if ( CRM_Utils_Array::value( 'activity_subject', $query->_returnProperties ) ) {
+        
+        if ( CRM_Utils_Array::value( 'activity_subject', $query->_returnProperties ) ) {
             $query->_select['activity_subject']  = "civicrm_activity.subject as activity_subject";
             $query->_element['activity_subject'] = 1;
 			$query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
@@ -69,18 +73,32 @@ class CRM_Activity_BAO_Query
 			$query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
         }
         
-        // get activity status FIX ME
         if ( CRM_Utils_Array::value( 'activity_status_id', $query->_returnProperties ) ) {
-/*
-            $query->_select['activity_status']  = "activity_status.label as activity_status";
-            $query->_element['activity_status'] = 1;
+            $query->_select['activity_status_id']  = "activity_status.label as activity_status_id";
+            $query->_element['activity_status_id'] = 1;
             $query->_tables['civicrm_activity'] = 1;
             $query->_tables['activity_status'] = 1;
             $query->_whereTables['civicrm_activity'] = 1;
             $query->_whereTables['activity_status'] = 1;
-*/
-        }     
+        }  
 
+        if ( CRM_Utils_Array::value( 'activity_duration', $query->_returnProperties ) ) {
+            $query->_select['activity_duration']  = "civicrm_activity.duration as activity_duration";
+            $query->_element['activity_duration'] = 1;
+			$query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
+        }
+        
+        if ( CRM_Utils_Array::value( 'activity_location', $query->_returnProperties ) ) {
+            $query->_select['activity_location']  = "civicrm_activity.location as activity_location";
+            $query->_element['activity_location'] = 1;
+			$query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
+        }
+        
+        if ( CRM_Utils_Array::value( 'activity_details', $query->_returnProperties ) ) {
+            $query->_select['activity_details']  = "civicrm_activity.details as activity_details";
+            $query->_element['activity_details'] = 1;
+			$query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
+        }
     }
 
      /** 
@@ -253,12 +271,12 @@ class CRM_Activity_BAO_Query
     
     static function from( $name, $mode, $side ) {
         $from = null;
-        
         switch ( $name ) {
             
         case 'civicrm_activity': 
             if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
                 $side = ' INNER ';
+                
             }
 		    
             if ( CRM_Contact_BAO_Query::$_activityRole == 0 ) {
@@ -373,17 +391,18 @@ class CRM_Activity_BAO_Query
         $properties = null;
         if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
             $properties = array(  
+                                'activity_id'         => 1, 
                                 'contact_type'        => 1, 
                                 'contact_sub_type'    => 1, 
                                 'sort_name'           => 1, 
                                 'display_name'        => 1,
-                                'activity_type'	      => 1,
+                                'activity_type_id'	  => 1,
                                 'activity_subject'	  => 1,
                                 'activity_date_time'  => 1,
                                 'activity_duration'	  => 1,
                                 'activity_location'   => 1,
                                 'activity_details'    => 1,
-                                'activity_status'     => 1
+                                'activity_status_id'  => 1
                                 );
 
             // also get all the custom activity properties

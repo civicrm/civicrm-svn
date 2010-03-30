@@ -441,6 +441,12 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
             }
         }
 
+        if ( ( $mappingType == 'Search Builder' ) || ( $exportMode == CRM_Export_Form_Select::ACTIVITY_EXPORT ) ) {
+            require_once 'CRM/Activity/BAO/Activity.php';
+            $fields['Activity'] =& CRM_Activity_BAO_Activity::exportableFields( 'Activity' );
+            $compArray['Activity'] = ts('Activity');
+        }
+
         //Contact Sub Type For export
         $contactSubTypes = array( );
         $subTypes = CRM_Contact_BAO_ContactType::subTypeInfo( );

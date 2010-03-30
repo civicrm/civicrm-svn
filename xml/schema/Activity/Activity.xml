@@ -8,6 +8,7 @@
 
   <field>
       <name>id</name>
+      <uniqueName>activity_id</uniqueName>
       <title>Activity ID</title> 
       <import>true</import>
       <type>int unsigned</type>

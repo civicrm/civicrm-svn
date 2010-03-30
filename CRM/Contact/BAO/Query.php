@@ -1864,8 +1864,9 @@ class CRM_Contact_BAO_Query
             $tempTable[$k . ".$key"] = $key;
         }
 
-        ksort($tempTable);
-
+        if ( ! ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) { 
+           ksort( $tempTable );
+        }
         $newTables = array ();
         foreach ($tempTable as $key) {
             $newTables[$key] = $tables[$key];
@@ -1956,6 +1957,8 @@ class CRM_Contact_BAO_Query
 
             case 'civicrm_activity':
             case 'civicrm_activity_tag':
+            case 'activity_type':
+            case 'activity_status':
                 $from .= CRM_Activity_BAO_Query::from( $name, $mode, $side );
                 continue; 
 

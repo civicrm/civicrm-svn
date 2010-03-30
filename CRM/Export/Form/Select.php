@@ -59,7 +59,8 @@ class CRM_Export_Form_Select extends CRM_Core_Form
         EVENT_EXPORT       = 4,
         PLEDGE_EXPORT      = 5,
         CASE_EXPORT        = 6,
-        GRANT_EXPORT       = 7;
+        GRANT_EXPORT       = 7,
+        ACTIVITY_EXPORT    = 8;
 
     /**
      * current export mode
@@ -101,7 +102,7 @@ class CRM_Export_Form_Select extends CRM_Core_Form
             $stateMachine  =& $this->controller->getStateMachine( );
             $formName      = CRM_Utils_System::getClassName($stateMachine);
             $componentName = explode( '_', $formName );
-            $components    = array( 'Contribute', 'Member', 'Event', 'Pledge', 'Case', 'Grant' );
+            $components    = array( 'Contribute', 'Member', 'Event', 'Pledge', 'Case', 'Grant', 'Activity' );
             
             if ( in_array( $componentName[1], $components ) ) {
                 eval( '$this->_exportMode = self::' . strtoupper( $componentName[1] ) . '_EXPORT;');
@@ -249,7 +250,7 @@ class CRM_Export_Form_Select extends CRM_Core_Form
             break;
             
         case CRM_Export_Form_Select::PLEDGE_EXPORT : 
-            $exportType = 'Export Participant';
+            $exportType = 'Export Pledge';
             break;
             
         case CRM_Export_Form_Select::CASE_EXPORT : 
@@ -258,6 +259,10 @@ class CRM_Export_Form_Select extends CRM_Core_Form
             
         case CRM_Export_Form_Select::GRANT_EXPORT : 
             $exportType = 'Export Grant';
+            break;
+            
+        case CRM_Export_Form_Select::ACTIVITY_EXPORT : 
+            $exportType = 'Export Activity';
             break;
         }
         

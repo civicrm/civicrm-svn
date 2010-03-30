@@ -83,7 +83,7 @@
 
     <td>{$row.activity_date_time|crmDate}</td>
 
-    <td>{$row.status}</td>
+    <td>{$row.activity_status}</td>
 
     <td>{$row.action|replace:'xx':$row.id}</td>
   </tr>
