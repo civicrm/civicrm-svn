@@ -74,7 +74,7 @@
 	<td>{$form.contribution_pcp_made_through_id.label} <br />
 	{$form.contribution_pcp_made_through_id.html}</td>
 	<td>{$form.contribution_pcp_display_in_roll.label}
-	{$form.contribution_pcp_display_in_roll.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_pcp_display_in_roll','Search')">{ts}clear{/ts}</a>)</span></td>
+	{$form.contribution_pcp_display_in_roll.html}<span class="crm-clear-link">(<a href="javascript:unselectRadio('contribution_pcp_display_in_roll','{$form.formName}')">{ts}clear{/ts}</a>)</span></td>
 </tr>
 
 <tr>
