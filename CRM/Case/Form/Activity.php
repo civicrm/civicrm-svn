@@ -519,11 +519,11 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         if ( $activity->id ) {
             $tagParams = array( );
             if ( !empty($params['tag']) ) {
-                require_once 'CRM/Core/BAO/EntityTag.php';
                 foreach( $params['tag'] as $tag ) {
                     $tagParams[$tag] = 1;
                 }
             }
+            require_once 'CRM/Core/BAO/EntityTag.php';
             CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_activity',  $activity->id );
         }
  
