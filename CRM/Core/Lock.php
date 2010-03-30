@@ -44,7 +44,11 @@ class CRM_Core_Lock {
     protected $_name;
 
     function __construct( $name, $timeout = null ) {
-        $this->_name    = $name;
+        $config         = CRM_Core_Config::singleton( );
+        $dsnArray       = DB::parseDSN($config->dsn);
+        $database       = $dsnArray['database'];
+        $domainID       = CRM_Core_Config::domainID( );
+        $this->_name    = $database . '.' . $domainID . '.' . $name;
         $this->_timeout = $timeout ? $timeout : self::TIMEOUT;
 
         $this->acquire( );
