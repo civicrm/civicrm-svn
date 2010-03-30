@@ -857,7 +857,7 @@ AND civicrm_contact.is_opt_out =0";
                              'unsubscribe' => 'u' ,
                              'resubscribe' => 'e',
                              'optOut'      => 'o'  );
-
+        
         require_once 'CRM/Core/BAO/MailSettings.php';
         $localpart   = CRM_Core_BAO_MailSettings::defaultLocalpart();
         $emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();

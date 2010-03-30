@@ -51,6 +51,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
     protected $_mapperRelatedContactType;
     protected $_mapperRelatedContactDetails;
     protected $_mapperRelatedContactEmailType;
+    protected $_mapperRelatedContactImProvider;
     protected $_relationships;
 
     protected $_emailIndex;
