@@ -1053,18 +1053,14 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             
             $clientIds   = self::retrieveContactIdsByCaseId( $caseID );
             $targetNames = CRM_Activity_BAO_ActivityTarget::getTargetNames( $dao->id );
-            $hasWithContacts   = false;
-            $targetContactUrls = array( );
+            $targetContactUrls = $withContacts = array( );
             foreach ( $targetNames as $targetId => $targetName ) {
                 if ( !in_array( $targetId, $clientIds ) ) {
-                    $hasWithContacts = true;
-                    break;
+                    $withContacts[$targetId] = $targetName;
                 }
             }
-            if ( $hasWithContacts ) {
-                foreach ( $targetNames as $cid => $name ) {
-                    $targetContactUrls[] = ($hasViewContact) ? "<a href='{$contactViewUrl}{$cid}'>$name</a>" : $name;
-                }
+            foreach ( $withContacts as $cid => $name ) {
+                $targetContactUrls[] = ($hasViewContact) ? "<a href='{$contactViewUrl}{$cid}'>$name</a>" : $name;
             }
             $values[$dao->id]['with_contacts'] = implode( '; ', $targetContactUrls );
             

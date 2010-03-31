@@ -265,7 +265,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $this->add( 'hidden', 'contact_id', '', array( 'id' => 'contact_id') );
         $this->addElement( 'submit', 
                            $this->getButtonName( 'next', 'edit_client' ), 
-                           ts('Assign'), 
+                           ts('Reassign Case'), 
                            array( 'class'   => 'form-submit-inline',
                                   'onclick' => "return checkSelection( this );") );
         

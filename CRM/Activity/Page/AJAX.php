@@ -109,12 +109,10 @@ class CRM_Activity_Page_AJAX
         $otherActivity->free( ); 
         
         require_once "CRM/Activity/BAO/Activity.php";
-        $targetContacts = array( $contactID );
+        $targetContacts = array( );
         if ( !empty( $targetContactIds ) ) {
-            $targetContacts = array_merge( $targetContacts, explode( ',', $targetContactIds ) );
-            $targetContacts = array_unique( $targetContacts );
+            $targetContacts = array_unique( explode( ',', $targetContactIds ) );
         }
-        
         foreach ( $targetContacts as $key => $value ) { 
             $params = array( 'activity_id' => $mainActivityId, 
                              'target_contact_id' => $value );
