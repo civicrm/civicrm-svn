@@ -125,29 +125,42 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
               <div id="help">{$activityTypeDescription}</div>
            </tr>
             {/if}
-           <tr>
+           <tr id="with-clients">
 	       {if not $multiClient}
               <td class="label font-size12pt">{ts}Client{/ts}</td>
               <td class="view-value font-size12pt">{$client_name|escape}&nbsp;&nbsp;&nbsp;&nbsp;
 	       {else}
               <td class="label font-size12pt">{ts}Clients{/ts}</td>
               <td class="view-value font-size12pt">
-		        {foreach from=$client_names item=client name=clients}
+		  {foreach from=$client_names item=client name=clients}
 		            {$client.display_name}{if not $smarty.foreach.clients.last}; &nbsp; {/if}
-                {/foreach}
+                  {/foreach}
 
 	       {/if}
+
 	       {if $action eq 1 or $action eq 2}
-	            {if $multiClient}<p/>{/if}<a href="#" onClick="buildTargetContact(1); return false;"><span class="add-remove-link">&raquo; {ts}With other contact(s){/ts}</span></a>
+		    <br />
+		    <a href="#" onClick="buildTargetContact(1); return false;">
+		    <span id="with-other-contacts-link" class="add-remove-link hide-block">&raquo; 
+		    {ts}With other contact(s){/ts}</span>
+		    </a>
 	       {/if}
-	          </td>
+
+	       </td>
            </tr>
+
     	   {if $action eq 1 or $action eq 2}
-        	   <tr>
-        	      <td class="label font-size10pt hide-block" id="withContactsLabel">{ts}With Contact{/ts}</td>
-         	      <td class="hide-block"  id="withContactsWidget">{$form.target_contact_id.html}</td>
-        	      <td class="hide-block">{$form.hidden_target_contact.html}</td>
-        	   </tr>
+           <tr class="hide-block"  id="with-contacts-widget">
+               <td class="label font-size10pt">{ts}With Contact{/ts}</td>
+               <td>{$form.target_contact_id.html}
+                   <a href="#" onClick="buildTargetContact(1); return false;">
+		      <span id="with-clients-link" class="add-remove-link">&raquo; 
+		           {ts}With client(s){/ts}
+                      </span>
+		   </a>
+		</td>
+        	<td class="hide-block">{$form.hidden_target_contact.html}</td>
+             </tr>
     	   {/if}
            <tr>
               <td class="label">{ts}Activity Type{/ts}</td>
@@ -327,8 +340,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 
     {/literal}{if $action eq 2}{literal}
     cj(document).ready( function( ) {
-       var reset = {/literal}{if $targetContactValues}true{else}false{/if}{literal};	    
-       buildTargetContact( reset );
+       buildTargetContact( false );
     });{/literal}
     {/if}{literal}
     
@@ -353,12 +365,17 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 	 }
 	 
 	 if ( hideWidget ) {
-	    cj('#withContactsLabel').hide( );
-	    cj('#withContactsWidget').hide( );
+	    cj('#with-clients-link').hide( );
+	    cj('#with-contacts-widget').hide( );
+	    cj('#with-clients').show( );
+	    cj('#with-other-contacts-link').show( );
   	 }
 	 if ( showWidget ) {
-	     cj('#withContactsLabel').show( );
-	     cj('#withContactsWidget').show( ); 
+	    cj('#with-contacts-widget').show( );
+	    cj('#with-clients-link').show( );
+
+	    cj('#with-other-contacts-link').hide( );
+	    cj('#with-clients').hide( );
 	 }
 	 cj("#hidden_target_contact").attr( 'checked', value );
     }	

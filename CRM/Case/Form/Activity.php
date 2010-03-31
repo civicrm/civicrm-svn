@@ -391,12 +391,9 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         $this->assign( 'multiClient', $isMultiClient );
         
         $targetContacts = array( );
-        if ( $isMultiClient ) {
-            $targetContacts = array_keys( CRM_Case_BAO_Case::getContactNames( $this->_caseId ) );
-        }
         if ( CRM_Utils_Array::value( 'hidden_target_contact', $params ) && 
              CRM_Utils_Array::value( 'target_contact_id', $params ) ) {
-            $targetContacts = array_merge( $targetContacts, explode( ',', $params['target_contact_id'] ) );
+            $targetContacts = array_unique( explode( ',', $params['target_contact_id'] ) );
         }
         $params['target_contact_id'] = $targetContacts;
         

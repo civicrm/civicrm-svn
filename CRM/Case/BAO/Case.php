@@ -1035,6 +1035,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
                                                  "reset=1&cid=", false, null, false );
         require_once 'CRM/Activity/BAO/ActivityTarget.php';
         $hasViewContact = CRM_Core_Permission::giveMeAllACLs( );
+        $clientIds = self::retrieveContactIdsByCaseId( $caseID );
         
         while ( $dao->fetch( ) ) {
             $allowView   = self::checkPermission( $dao->id, 'view',   $dao->activity_type_id, $contactID );
@@ -1051,7 +1052,6 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             $values[$dao->id]['type']         = $activityTypes[$dao->type]['label'];
             $values[$dao->id]['reporter']     = ($hasViewContact)?"<a href='{$contactViewUrl}{$dao->reporter_id}'>$dao->reporter</a>":$dao->reporter;
             
-            $clientIds   = self::retrieveContactIdsByCaseId( $caseID );
             $targetNames = CRM_Activity_BAO_ActivityTarget::getTargetNames( $dao->id );
             $targetContactUrls = $withContacts = array( );
             foreach ( $targetNames as $targetId => $targetName ) {
