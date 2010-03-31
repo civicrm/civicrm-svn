@@ -620,7 +620,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         require_once 'CRM/Core/BAO/Tag.php';
         $tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_activity'), true );
         if ( !empty($tags) ) { 
-            $this->add('select', 'tag',  ts( 'Select Tags' ), $tags, false, 
+            $this->add('select', 'tag',  ts( 'Tags' ), $tags, false, 
                        array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
         }
             
