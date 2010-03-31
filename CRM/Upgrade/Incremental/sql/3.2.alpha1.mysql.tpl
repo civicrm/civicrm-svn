@@ -234,3 +234,10 @@ ALTER TABLE civicrm_uf_field
         (id, `name`, `abbreviation`, `country_id`)
     VALUES
         (10020, 'La Rioja', 'F', 1010 );
+
+-- CRM-6037
+SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Host';
+INSERT INTO civicrm_mailing_bounce_pattern
+        (bounce_type_id, pattern)
+        VALUES
+    (@bounceTypeID, 'not connected');

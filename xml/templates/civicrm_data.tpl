@@ -774,6 +774,7 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'all hosts have been failing'),
     (@bounceTypeID, 'allowed rcpthosts'),
     (@bounceTypeID, 'connection (refused|timed out)'),
+    (@bounceTypeID, 'not connected'),
     (@bounceTypeID, 'couldn\'t find any host named'),
     (@bounceTypeID, 'error involving remote host'),
     (@bounceTypeID, 'host unknown'),
