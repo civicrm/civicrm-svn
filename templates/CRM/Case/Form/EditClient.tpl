@@ -39,7 +39,9 @@
     </tr>
     <tr>
         <td></td>
-        <td><span class="crm-button crm-button-type-submit">&nbsp;{$form._qf_EditClient_next_edit_client.html}</span></td>
+        <td><span class="crm-button crm-button-type-submit">&nbsp;{$form._qf_EditClient_next_edit_client.html}</span>
+            <span class="crm-button crm-button-type-submit">&nbsp;{$form._qf_EditClient_cancel_edit_client.html}</span>
+	</td>
     </tr>
  </table>
 </div>

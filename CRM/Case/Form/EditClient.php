@@ -53,6 +53,10 @@ class CRM_Case_Form_EditClient extends CRM_Core_Form
     {
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         $this->_caseId    = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        
+        //get current client name.
+        require_once 'CRM/Contact/BAO/Contact.php';
+        $this->assign( 'currentClientName', CRM_Contact_BAO_Contact::displayName( $this->_contactId ) );
     }
     
     /**
@@ -70,7 +74,12 @@ class CRM_Case_Form_EditClient extends CRM_Core_Form
                            ts('Reassign Case'), 
                            array( 'class'   => 'form-submit-inline',
                                   'onclick' => "return checkSelection( this );") );
-
+        
+        $this->addElement( 'submit', 
+                           $this->getButtonName( 'cancel', 'edit_client' ), 
+                           ts('Cancel'), 
+                           array( 'class'   => 'form-submit-inline' ) );
+        
         $this->assign( 'contactId', $this->_contactId );
     }
     
