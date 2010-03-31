@@ -3759,4 +3759,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (10016, 1094, "AR", "Artibonite"),
 (10017, 1094, "CE", "Centre"),
 (10018, 1094, "NI", "Nippes"),
-(10019, 1094, "ND", "Nord");
+(10019, 1094, "ND", "Nord"),
+
+-- CRM-6002 - Argentinian provinces suplemented
+(10020, 1010, "F", "La Rioja");

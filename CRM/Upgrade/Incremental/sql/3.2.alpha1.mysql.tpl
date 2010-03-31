@@ -228,3 +228,9 @@ VALUES
 -- CRM-6004
 ALTER TABLE civicrm_uf_field
   ADD help_pre text COLLATE utf8_unicode_ci COMMENT 'Description and/or help text to display before this field.';
+
+-- CRM-6002
+    INSERT INTO `civicrm_state_province`
+        (id, `name`, `abbreviation`, `country_id`)
+    VALUES
+        (10020, 'La Rioja', 'F', 1010 );
