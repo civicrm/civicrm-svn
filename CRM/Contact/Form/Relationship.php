@@ -121,7 +121,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             $this->assign('cdType', true);
             return CRM_Custom_Form_CustomData::preProcess( $this );
         }
-        
+
         $this->_contactId      = $this->get('contactId');
         
         $this->_relationshipId = $this->get('id');
@@ -376,7 +376,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             $this->addGroup($checkBoxes, 'contact_check');
             $this->assign('searchRows', $searchRows );
         }
-        
+       
         if ( $isEmployeeOf ) {
             $this->assign('isEmployeeOf', $isEmployeeOf );
             if ( !$callAjax ) { 
@@ -413,10 +413,14 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         } else {
             $searchBtn = ts('Search');
         }
-        $this->addElement( 'submit', $this->getButtonName('refresh'), $searchBtn, array( 'class' => 'form-submit' ) );
+        $this->addElement( 'submit', $this->getButtonName('refresh'), $searchBtn, array( 'class' => 'form-submit', 'id' => 'search-button' ) );
         $this->addElement( 'submit', $this->getButtonName('refresh', 'save'), 'Quick Save', array( 'class' => 'form-submit hiddenElement' , 'id' => 'quick-save') );
         $this->addElement( 'submit', $this->getButtonName('cancel' ), ts('Cancel'), array( 'class' => 'form-submit' ) );
 
+        $this->addElement( 'submit', $this->getButtonName('refresh', 'savedetails'), 'Save Relationship', array( 'class' => 'form-submit hiddenElement' , 'id' => 'details-save') );
+        $this->addElement('checkbox', 'add_current_employer', ts('Current Employer'), null );
+        $this->addElement('checkbox', 'add_current_employee', ts('Current Employee'), null );
+       
         //need to assign custom data type and subtype to the template
         $this->assign('customDataType', 'Relationship');
         $this->assign('customDataSubType',  $this->_relationshipTypeId );
@@ -453,7 +457,8 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         // store the submitted values in an array
         $params = $this->controller->exportValues( $this->_name );
         $quickSave = false;
-        if ( CRM_Utils_Array::value( '_qf_Relationship_refresh_save', $_POST ) ) {
+        if ( CRM_Utils_Array::value( '_qf_Relationship_refresh_save', $_POST ) ||
+             CRM_Utils_Array::value( '_qf_Relationship_refresh_savedetails', $_POST ) ) {
             $quickSave = true;
         }      
         $this->set( 'searchDone', 0 );
@@ -484,7 +489,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         
         // modify params for ajax call
         $this->modifyParams( $params );
-
+       
         if ($this->_action & CRM_Core_Action::DELETE ){
             CRM_Contact_BAO_Relationship::del($this->_relationshipId);
             return;
@@ -505,7 +510,19 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                 require_once 'CRM/Contact/BAO/Contact/Utils.php';
                 CRM_Contact_BAO_Contact_Utils::clearCurrentEmployer( $this->_values['current_employee_id'] );
             }
+        } elseif ( $quickSave ) {
+            if ( $params['add_current_employee'] &&
+                 $this->_allRelationshipNames[$relationshipTypeId]["name_a_b"] == 'Employee of' ) {
+                $params['employee_of'] = $params['rel_contact_id'];
+            } elseif ( $params['add_current_employer'] &&
+                       $this->_allRelationshipNames[$relationshipTypeId]["name_b_a"] == 'Employer of' ) {
+                $params['employer_of'] = array( $params['rel_contact_id'] => 1 );
+            }
+            if ( !$this->_rtype ) {
+                $this->_rtype = str_replace( $relationshipTypeId. '_', '', $params['relationship_type_id'] );
+            }
         }
+
         $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'], null, true );
         $params['end_date']   = CRM_Utils_Date::processDate( $params['end_date'], null, true );
 
@@ -748,8 +765,9 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
     static function formRule( $params, $files, $form ) {
         
         // hack, no error check for refresh
-        if ( ( CRM_Utils_Array::value( '_qf_Relationship_refresh', $_POST ) ) ||
-             ( CRM_Utils_Array::value( '_qf_Relationship_refresh_save', $_POST ) ) ) {
+        if ( CRM_Utils_Array::value( '_qf_Relationship_refresh', $_POST ) ||
+             CRM_Utils_Array::value( '_qf_Relationship_refresh_save', $_POST ) ||
+             CRM_Utils_Array::value( '_qf_Relationship_refresh_savedetails', $_POST ) ) {
             return true;
         }
         

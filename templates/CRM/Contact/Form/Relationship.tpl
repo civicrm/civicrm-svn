@@ -91,6 +91,17 @@
             <dl>
             <dt>{$form.relationship_type_id.label}</dt><dd>{$form.relationship_type_id.html}
             {if $action EQ 2} {* action = update *}
+                {literal}
+                <script type="text/javascript">
+                    var relType = 0;
+                    cj( function( ) {
+                    	cj('#relationship_type_id').change( function() { 
+			    changeCustomData( 'Relationship' );
+			    currentEmployer( ); 
+                        });
+                    });
+                </script>
+                {/literal} 
                 <label>{$sort_name_b}</label></dd>
                 </dl>
         	    <div>
@@ -110,7 +121,8 @@
                             cj('#quick-save').hide();
                             cj('#rel_contact').val('');
                             cj("input[name=rel_contact_id]").val('');
-                            createRelation( ); 
+                            createRelation( );
+                            changeCustomData( 'Relationship' ); 
                         });
                     });
                     
@@ -124,6 +136,7 @@
                              cj('#rel_contact').result(function( event, data ) {
                                	cj("input[name=rel_contact_id]").val(data[1]);
                                 cj('#quick-save').show();
+                                buildRelationFields( relType );
                              });
                         } else { 
                             cj('#rel_contact').unautocomplete( );
@@ -146,7 +159,7 @@
               {if $searchDone } {* Search button clicked *} 
                 {if $searchCount || $callAjax}
                     {if $searchRows || $callAjax} {* we've got rows to display *}
-                        <fieldset><legend>{ts}Mark Target Contact(s) for this Relationship{/ts}</legend>
+                        <fieldset id="searchResult"><legend>{ts}Mark Target Contact(s) for this Relationship{/ts}</legend>
                         <div class="description">
                             {ts}Mark the target contact(s) for this relationship if it appears below. Otherwise you may modify the search name above and click Search again.{/ts}
                         </div>
@@ -197,6 +210,7 @@
                         </table>
                         {/strip}
                         </fieldset>
+                        <div class="spacer"></div>
                     {else} {* too many results - we're only displaying 50 *}
                         </div></fieldset>
                         {if $duplicateRelationship}  
@@ -215,11 +229,19 @@
                 </div></fieldset>
               {/if} {* end if searchDone *}
         {/if} {* end action = add *}
-
-        {* Only show start/end date and buttons if action=update, OR if we have $contacts (results)*}
-        {if ( $searchRows OR $callAjax ) OR $action EQ 2}
+        <fieldset id = 'saveElements'>
             <div class="form-item">
                 <dl class="html-adjust">
+
+                    {if $action EQ 1}
+                        <div id='addCurrentEmployer'>
+                        <dt>{$form.add_current_employer.label}</dt><dd>{$form.add_current_employer.html}</dd>
+                        </div>
+                        <div id='addCurrentEmployee'>
+                        <dt>{$form.add_current_employee.label}</dt><dd>{$form.add_current_employee.html}</dd>
+                        </div>
+                    {/if}
+		
                     <dt>{$form.start_date.label}</dt>
                     <dd>{include file="CRM/common/jcalendar.tpl" elementName=start_date}</dd>
                     <dt>{$form.end_date.label}</dt>
@@ -242,10 +264,17 @@
         <div id="customData"></div>
         <div class="spacer"></div>
         <dl>
-      	  <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
+        <dt></dt>
+        <dd><div id="saveButtons"> {include file="CRM/common/formButtons.tpl"} </div> 
+            {if $action EQ 1}
+                <div id="saveDetails">
+                <span class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_savedetails">{$form._qf_Relationship_refresh_savedetails.html}</span>
+                <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
+                </div>
+            {/if}
+        </dd>
         </dl>
         </fieldset>
-        {/if}
   {/if}
  
   {if $action eq 8}
@@ -363,7 +392,7 @@
 {/literal}
 {/if}
 
-{if $searchRows OR $action EQ 2}
+{if ($action EQ 1) OR ($action EQ 2) }
 {*include custom data js file*}
 {include file="CRM/common/customData.tpl"}
 {literal}
@@ -378,14 +407,83 @@
 	);
 	{/literal} {/if} {literal}
 	
-	cj(document).ready(function() {
-		{/literal}
-		buildCustomData( '{$customDataType}' );
-		{if $customDataSubType}
-			buildCustomData( '{$customDataType}', {$customDataSubType} );
-		{/if}
-		{literal}
+	{/literal} {if $action EQ 1}{literal} 
+	hide('saveDetails');
+	hide('addCurrentEmployer');
+	hide('addCurrentEmployee');
+
+	cj('#rel_contact').focus(function() {
+	show('search-button');
+	hide('quick-save');			      
 	});
+	 
+	{/literal}{if $searchRows || $callAjax}{literal} 
+        show('saveElements');
+	{/literal}{else}{literal}
+	hide('saveElements');
+	{/literal}{/if}{/if}{literal}	
+
+	cj(document).ready(function() {
+            var relType = cj('#relationship_type_id').val( );
+            if ( relType ) {
+                var relTypeId = relType.split("_");
+                if (relTypeId) {
+                    buildCustomData( 'Relationship', relTypeId[0]);
+                 }
+            } else {
+                buildCustomData('Relationship');
+            }
+	});
+
+        function buildRelationFields( relType ) {
+            {/literal} {if $action EQ 1} {literal} 
+            if ( relType ) {
+	        var relTypeId = relType.split("_");
+		if ( relTypeId[0] == 4 ) {
+		    if ( relTypeId[1] == 'a' ) {
+                        show('addCurrentEmployee');
+      		      	hide('addCurrentEmployer');
+                    } else {
+		        hide('addCurrentEmployee');
+		     	show('addCurrentEmployer');
+                    }
+                }
+                hide('search-button');
+                show('details-save');
+                show('saveElements');
+                show('saveDetails');
+                {/literal}{if $searchRows || $callAjax}{literal}
+                hide('searchResult');
+                {/literal}{/if}{literal}
+                hide('saveButtons');
+            } 
+            {/literal}{/if}{literal} 	 
+        }
+	
+        function changeCustomData( cType ) {
+            {/literal}{if $action EQ 1} {literal}
+            cj('#customData').html('');
+            show('search-button');
+            hide('saveElements');
+            hide('addCurrentEmployee');
+            hide('addCurrentEmployer');
+            hide('saveDetails');
+            {/literal}{if $searchRows || $callAjax}{literal}
+            hide('searchResult');
+            {/literal}{/if}{literal}
+            {/literal}{/if} {literal}
+
+            var relType = cj('#relationship_type_id').val( );
+            if ( relType ) {
+	        var relTypeId = relType.split("_");
+		if (relTypeId) {
+		    buildCustomData( cType, relTypeId[0]);
+		}
+            } else {
+                buildCustomData( cType );
+            }
+        }
+
 </script>
 {/literal}
 {/if}
