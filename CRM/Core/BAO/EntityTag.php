@@ -283,7 +283,8 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
                    FROM civicrm_tag ct 
                    INNER JOIN civicrm_entity_tag et ON ( ct.id = et.tag_id AND
                               et.entity_id    = {$contactID} AND
-                              et.entity_table = 'civicrm_contact' )";
+                              et.entity_table = 'civicrm_contact' AND
+                              ct.is_hidden = 0 )";
         
          $dao = CRM_Core_DAO::executeQuery( $query );
          
