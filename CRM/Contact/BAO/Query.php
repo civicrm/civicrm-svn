@@ -1395,15 +1395,20 @@ class CRM_Contact_BAO_Query
             $this->_where[$grouping] = array( );
         }
 
+        $multipleFields = array( 'url' );
+        
         //check if the location type exits for fields
         $lType = '';
         $locType = array( );
         $locType = explode('-', $name);
         
-        //add phone type if exists
-        if ( isset( $locType[2] ) && $locType[2] ) {
-            $locType[2] = CRM_Core_DAO::escapeString( $locType[2] );
+        if ( !in_array( $locType[0], $multipleFields ) ) {
+            //add phone type if exists
+            if ( isset( $locType[2] ) && $locType[2] ) {
+                $locType[2] = CRM_Core_DAO::escapeString( $locType[2] );
+            }
         }
+        
         $field = CRM_Utils_Array::value( $name, $this->_fields );
         
         if ( ! $field ) {
@@ -1610,6 +1615,18 @@ class CRM_Contact_BAO_Query
             $wc = ( $op != 'LIKE' ) ? "LOWER({$field['where']})" : "{$field['where']}";
             $this->_where[$grouping][] = self::buildClause( $wc, $op, $value, 'String' );
             $this->_qill[$grouping][] = ts('Addressee') . " $op '$value'";
+        } else if ( substr( $name, 0, 4) === 'url-' ) {
+            $tName = 'civicrm_website';
+            $this->_whereTables[$tName] = $this->_tables[ $tName ] = "\nLEFT JOIN civicrm_website ON ( civicrm_website.contact_id = contact_a.id )";
+            $value = $strtolower( CRM_Core_DAO::escapeString( $value ) );
+            if ( $wildcard ) {
+                $value = "%$value%"; 
+                $op    = 'LIKE';
+            }
+            
+            $wc = 'civicrm_website.url';
+            $this->_where[$grouping][] = self::buildClause( $wc, $op, "'$value'" );
+            $this->_qill[$grouping][]  = "$field[title] $op \"$value\"";
         } else {
             // sometime the value is an array, need to investigate and fix
             if ( is_array( $value ) ) {
