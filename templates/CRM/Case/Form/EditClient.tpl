@@ -24,15 +24,24 @@
  +--------------------------------------------------------------------+
 *}
 {* template for assigning the current case to another client*}
-<div class="form-item">
-<fieldset><legend>{ts}Change Client{/ts}</legend> 
-<table>
-   <tr>
-	<td id='client'>{$form.change_client_id.html|crmReplace:class:big}
-	&nbsp;{$form._qf_EditClient_next_edit_client.html}</td>
-   </tr>
-</table>
-</fieldset>
+<div class="messages status">
+    <div class="icon inform-icon"></div> {ts 1=$currentClientName}This is case is currently assigned to %1.{/ts}
+</div>
+<div class="crm-form-block">
+<table class="form-layout-compressed">
+    <tr>
+        <td>
+            {$form.change_client_id.label}
+        </td>
+	    <td id='client'>
+	        {$form.change_client_id.html|crmReplace:class:big}
+	    </td>
+    </tr>
+    <tr>
+        <td></td>
+        <td><span class="crm-button crm-button-type-submit">&nbsp;{$form._qf_EditClient_next_edit_client.html}</span></td>
+    </tr>
+ </table>
 </div>
 
 {literal}
@@ -51,7 +60,7 @@ function checkSelection( field ) {
     clientName = selectedContact.split('::');
     
     if ( selectedContactName == '' ) {
-        validationMessage = '{/literal}{ts}Please select a client for this case.{/ts}{literal}';
+        validationMessage = '{/literal}{ts}Please select another client for this case.{/ts}{literal}';
 	alert( validationMessage );
         return false;
     } else if ( cj('#contact_id').val( ) == {/literal}{$contactId}{literal} ) {
