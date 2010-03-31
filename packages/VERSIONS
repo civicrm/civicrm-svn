@@ -99,11 +99,11 @@ reCAPTCHA      1.10       X11         http://recaptcha.net/
 
 payment processors for CiviCRM
 ==============================
-IATS             by adixon, in Services/IATS
-Moneris          by adixon, in Services/mpgClasses.php
-PayJunction      by Phase2 Technology
-PaymentExpress   by Lucas Baker
-eWAY             by Dolphin Software
+IATS             AGPL 3   in Services/IATS
+Moneris                   by adixon, in Services/mpgClasses.php
+PayJunction      AGPL 3   by Phase2 Technology
+PaymentExpress   AGPL 3   by Lucas Baker
+eWAY             AGPL 3   by Dolphin Software
 
 
 Unknown status

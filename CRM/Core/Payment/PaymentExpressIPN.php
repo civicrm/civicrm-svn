@@ -339,7 +339,7 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 		
 		}elseif ($dps_method == "pxaccess"){
 		
-			require_once('PaymentExpress/pxaccess.php');
+			require_once('PaymentExpress/pxaccess.inc.php');
 			global $pxaccess;
 			$pxaccess = new PxAccess($dps_url, $dps_user, $dps_key, $mac_key);
 #getResponse method in PxAccess object returns PxPayResponse object 
