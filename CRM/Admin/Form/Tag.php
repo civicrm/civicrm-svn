@@ -87,21 +87,23 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
 
             $this->add( 'select', 'parent_id', ts('Parent Tag'), $allTag );
             
-            $this->add( 'checkbox', 'is_reserved', ts('Reserved?') );
-            require_once 'CRM/Core/OptionGroup.php';
+            $isReserved = $this->add( 'checkbox', 'is_reserved', ts('Reserved?') );
+            if ( !CRM_Core_Permission::check('administer hidden tags') ) {
+                $isReserved->freeze( );
+            }
             
+            require_once 'CRM/Core/OptionGroup.php';
             $usedFor = $this->add('select', 'used_for', ts('Used For'), 
                                   CRM_Core_OptionGroup::values('tag_used_for') );
             $usedFor->setMultiple( true );
             $accessHidden = false;
-            if ( CRM_Core_Permission::check('access hidden tags') ) {
-                $is_hidden =& $this->add( 'checkbox', 'is_hidden', ts('Hidden?') );
+            if ( CRM_Core_Permission::check('administer hidden tags') ) {
+                $isHidden = $this->add( 'checkbox', 'is_hidden', ts('Hidden?') );
                 $accessHidden = true;
                 if ( $this->_id &&
                      CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'parent_id' ) ) {
-                    $is_hidden->freeze();
-                    $usedFor->freeze();
-                    
+                    $isHidden->freeze( );
+                    $usedFor->freeze( );
                 }
             }
             $this->assign( 'accessHidden', $accessHidden );

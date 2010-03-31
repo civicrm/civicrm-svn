@@ -142,7 +142,7 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
     */
    function browse( $action = null, $sort ) {
        $accessHidden = false;
-       if ( CRM_Core_Permission::check('access hidden tags') ) {
+       if ( CRM_Core_Permission::check('administer hidden tags') ) {
            $accessHidden = true;
        }
        $this->assign( 'accessHidden', $accessHidden );
