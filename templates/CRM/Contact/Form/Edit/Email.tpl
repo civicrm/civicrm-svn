@@ -42,6 +42,10 @@
  
 <tr id="Email_Block_{$blockId}">
     <td>{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
+        <br />
+        <span class="add-remove-link">
+            <a href="#" title="{ts}Signature{/ts}" onClick="showHideSignature( '{$blockId}' ); return false;">{ts}Signature{/ts}</a>
+        </span>
         <div id="Email_Signature_{$blockId}" class="hiddenElement signature">
             <br />
             {$form.email.$blockId.signature_html.label}<br />{$form.email.$blockId.signature_html.html}<br />
@@ -51,7 +55,6 @@
     <td align="center">{$form.email.$blockId.on_hold.html}</td>
     <td align="center" id="Email-Bulkmail-html">{$form.email.$blockId.is_bulkmail.html}</td>
     <td align="center" id="Email-Primary-html" {if $blockId eq 1}class="hiddenElement"{/if}>{$form.email.$blockId.is_primary.1.html}</td>
-    <td><a href="#" title="{ts}Signature{/ts}" onClick="showHideSignature( '{$blockId}' ); return false;">{ts}Signature{/ts}</a></td> 
     {if $blockId gt 1}
 	<td><a href="#" title="{ts}Delete Email Block{/ts}" onClick="removeBlock( 'Email', '{$blockId}' ); return false;">{ts}delete{/ts}</a></td>
     {/if}

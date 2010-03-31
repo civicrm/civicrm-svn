@@ -24,10 +24,10 @@
  +--------------------------------------------------------------------+
 *}
 {* This form is for Contact Add/Edit interface *}
-<div class="crm-form-block crm-search-form-block">
 {if $addBlock}
 {include file="CRM/Contact/Form/Edit/$blockName.tpl"}
 {else}
+<div class="crm-form-block crm-search-form-block">
 <span style="float:right;"><a href="#expand" id="expand">{ts}Expand all tabs{/ts}</a></span>
 <div class="crm-submit-buttons">
    {include file="CRM/common/formButtons.tpl"}
@@ -83,6 +83,7 @@
     {include file="CRM/common/formButtons.tpl"}
 </div>
 
+</div>
 {literal}
 <script type="text/javascript" >
 var action = "{/literal}{$action}{literal}";
@@ -203,5 +204,3 @@ function showHideSignature( blockId ) {
 {include file="CRM/common/formNavigate.tpl"}
 
 {/if}
-
-</div>
