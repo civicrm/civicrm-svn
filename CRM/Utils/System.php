@@ -1073,4 +1073,15 @@ class CRM_Utils_System {
         exit( $status );
     }
 
+    /**
+     * Reset the memory cache, typically memcached
+     */
+    static function flushCache( $daoName = null ) {
+        // flush out all cache entries so we can reload new data
+        // a bit aggressive, but livable for now
+        require_once 'CRM/Utils/Cache.php';
+        $cache =& CRM_Utils_Cache::singleton( );
+        $cache->flush( );
+    }
+
 }
