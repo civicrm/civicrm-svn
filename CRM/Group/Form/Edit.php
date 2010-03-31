@@ -354,6 +354,8 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
      */
     public function postProcess( ) 
 	{
+        CRM_Utils_System::flushCache( 'CRM_Core_DAO_Group' );
+
         $updateNestingCache = false;
         if ($this->_action & CRM_Core_Action::DELETE ) {
             CRM_Contact_BAO_Group::discard( $this->_id );
