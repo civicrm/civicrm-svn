@@ -64,7 +64,7 @@ class CRM_Contact_Form_Task_RemoveFromTag extends CRM_Contact_Form_Task {
      */
     function buildQuickForm( ) {
         // add select for tag
-        $this->_tags =  CRM_Core_PseudoConstant::tag( );
+        $this->_tags =  CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact');
         foreach ($this->_tags as $tagID => $tagName) {
             $this->_tagElement =& $this->addElement('checkbox', "tag[$tagID]", null, $tagName);
         }
@@ -97,7 +97,7 @@ class CRM_Contact_Form_Task_RemoveFromTag extends CRM_Contact_Form_Task {
         foreach($tagId as $key=>$dnc) {
             $this->_name[]   = $this->_tags[$key];
             
-            list( $total, $removed, $notRemoved ) = CRM_Core_BAO_EntityTag::removeContactsFromTag( $this->_contactIds, $key );
+            list( $total, $removed, $notRemoved ) = CRM_Core_BAO_EntityTag::removeEntitiesFromTag( $this->_contactIds, $key );
             $status = array(
                             'Contact(s) tagged as: '       . implode(',', $this->_name),
                             'Total Selected Contact(s): '  . $total
