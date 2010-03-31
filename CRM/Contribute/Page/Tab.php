@@ -143,7 +143,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
        
         $softCreditList = CRM_Contribute_BAO_Contribution::getSoftContributionList( $this->_contactId, $isTest );
                
-        if( !empty( $softCreditList ) ) {
+        if ( !empty( $softCreditList ) ) {
             $softCreditTotals = array();
             
             list( $softCreditTotals['amount'],
@@ -156,6 +156,11 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             $this->assign('softCreditTotals', $softCreditTotals );
         }
 
+        if ( $this->_contactId ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+            $this->assign( 'displayName', $displayName );
+        }
     }
 
 

@@ -127,6 +127,12 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
         $this->assign('activeMembers',   $activeMembers);
         $this->assign('inActiveMembers', $inActiveMembers);
         $this->assign('membershipTypes', $membershipTypes);
+        
+        if ( $this->_contactId ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+            $this->assign( 'displayName', $displayName );
+        }        
     }
 
     /** 

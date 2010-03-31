@@ -134,6 +134,12 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
         $controller->set( 'context', 'case' ); 
         $controller->process( ); 
         $controller->run( ); 
+    
+        if ( $this->_contactId ) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+            $this->assign( 'displayName', $displayName );
+        }        
     }
 
     /**
