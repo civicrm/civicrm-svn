@@ -2056,6 +2056,10 @@ class CRM_Contact_BAO_Query
             case 'addressee':
                 $from .= " $side JOIN civicrm_option_group option_group_addressee ON (option_group_addressee.name = 'addressee')";
                 $from .= " $side JOIN civicrm_option_value addressee ON (contact_a.addressee_id = addressee.value AND option_group_addressee.id = addressee.option_group_id ) ";
+                continue;
+
+            case 'civicrm_website':
+                $from .= " $side JOIN civicrm_website ON contact_a.id = civicrm_website.contact_id ";
                 continue;   
 
             default:
