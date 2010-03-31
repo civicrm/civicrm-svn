@@ -99,6 +99,12 @@ class CRM_Activity_BAO_Query
             $query->_element['activity_details'] = 1;
 			$query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
         }
+
+        if ( CRM_Utils_Array::value( 'source_record_id', $query->_returnProperties ) ) {
+            $query->_select['source_record_id']  = "civicrm_activity.source_record_id as source_record_id";
+            $query->_element['source_record_id'] = 1;
+			$query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
+        }
     }
 
      /** 
@@ -402,7 +408,9 @@ class CRM_Activity_BAO_Query
                                 'activity_duration'	  => 1,
                                 'activity_location'   => 1,
                                 'activity_details'    => 1,
-                                'activity_status_id'  => 1
+                                'activity_status_id'  => 1,
+                                'source_contact_id'   => 1,
+                                'source_record_id'    => 1
                                 );
 
             // also get all the custom activity properties

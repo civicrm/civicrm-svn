@@ -273,12 +273,16 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                     $row[$property] = $result->$property;
                 }
             }
+            $row['target_contact_name'] = CRM_Activity_BAO_ActivityTarget::getTargetNames( $row['activity_id'] );
+            $row['assignee_contact_name'] = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $row['activity_id'] );
             $row['activity_type'] = $row['activity_type_id'];
             $row['activity_status'] = $row['activity_status_id'];
             if ( $row['activity_is_test'] ) {
                 $row['activity_type'] = $row['activity_type'] . " (test)";
             }
-           
+            if ( CRM_Utils_Array::value( 'source_contact_id', $row ) ) {
+                $row['source_contact_name'] = CRM_Contact_BAO_Contact::displayName( $row['source_contact_id'] );
+            }
             if ( $this->_context == 'search' ) {
                 $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->activity_id;
             }
@@ -286,6 +290,20 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             $row['contact_type'] =
                 CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ?
                                                          $result->contact_sub_type : $result->contact_type );
+            $accessMailingReport = false;
+            $activityType = CRM_Core_PseudoConstant::activityType( true, true );
+            $activityTypeId = CRM_Utils_Array::key( $row['activity_type'], $activityType );
+            
+            require_once 'CRM/Activity/Selector/Activity.php';
+            $activityActions = new CRM_Activity_Selector_Activity( $result->contact_id, null );
+            $actionLinks = $activityActions->actionLinks( $activityTypeId,
+                                                          CRM_Utils_Array::value( 'source_record_id', $row ),
+                                                          $accessMailingReport,
+                                                          CRM_Utils_Array::value( 'activity_id', $row ) );
+            $row['action'] = CRM_Core_Action::formLink( $actionLinks, null,
+                                                        array( 'id'  => $result->activity_id,
+                                                               'cid' => $result->contact_id,
+                                                               'cxt' => $this->_context ) );
             $rows[] = $row;
          }
          
