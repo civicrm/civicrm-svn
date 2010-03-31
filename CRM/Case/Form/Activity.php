@@ -389,13 +389,11 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         $xmlProcessorProcess = new CRM_Case_XMLProcessor_Process( );
         $isMultiClient = $xmlProcessorProcess->getAllowMultipleCaseClients( );
         $this->assign( 'multiClient', $isMultiClient );
-
+        
+        $targetContacts = array( );
         if ( $isMultiClient ) {
             $targetContacts = array_keys( CRM_Case_BAO_Case::getContactNames( $this->_caseId ) );
-        } else {
-            $targetContacts = array( $this->_currentlyViewedContactId );
         }
-        
         if ( CRM_Utils_Array::value( 'hidden_target_contact', $params ) && 
              CRM_Utils_Array::value( 'target_contact_id', $params ) ) {
             $targetContacts = array_merge( $targetContacts, explode( ',', $params['target_contact_id'] ) );

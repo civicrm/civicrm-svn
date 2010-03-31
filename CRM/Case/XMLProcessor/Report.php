@@ -227,6 +227,7 @@ AND    ac.case_id = %1
             $index = $index . '_' . $clientID;   
         }
         
+        
         if ( ! array_key_exists($index, $activityInfos) ) {
             $activityInfos[$index] = array( );
             $selectCaseActivity = "";
@@ -245,9 +246,10 @@ FROM       civicrm_activity a
 LEFT JOIN civicrm_activity_target at ON a.id = at.activity_id
 LEFT JOIN civicrm_activity_assignment aa ON a.id = aa.activity_id
 WHERE      a.id = %1 
-";
+    ";
             $params = array( 1 => array( $activityID, 'Integer' ) );
             $dao = CRM_Core_DAO::executeQuery( $query, $params );
+            
             if ( $dao->fetch( ) ) {
                 //if activity type is email get info of all activities.
                 if ( $dao->activity_type_id == CRM_Core_OptionGroup::getValue( 'activity_type', 'Email', 'name' ) ) {
@@ -264,17 +266,19 @@ WHERE      a.id = %1
                 }
             }
         }
+        
         return $activityInfos[$index];
     }
     
     function &getActivity( $clientID,
                            $activityDAO,
                            &$activityTypeInfo ) {
+        
         require_once 'CRM/Core/OptionGroup.php';
         if ( empty($this->_redactionStringRules)){
-           $this->_redactionStringRules = array();
+            $this->_redactionStringRules = array();
         }
-
+        
         $activity = array( );
         $activity['fields'] = array( );
         if ( $clientID ) {
@@ -299,6 +303,48 @@ WHERE      a.id = %1
             $activity['fields'][] = array( 'label' => 'Client',
                                            'value' => $this->redact( $client ),
                                            'type'  => 'String' );
+        }
+        
+        if ( $activityDAO->targetID ) {
+            // Re-lookup the target ID since the DAO only has the first recipient if there are multiple.
+        	// Maybe not the best solution.
+        	require_once 'CRM/Activity/BAO/ActivityTarget.php';
+            $targetNames = CRM_Activity_BAO_ActivityTarget::getTargetNames($activityDAO->id);
+        	$processTarget = false;
+            $label = ts('With Contact(s)');
+            if ( in_array( $activityTypeInfo['name'], array( 'Email', 'Inbound Email' ) ) ) {
+                $processTarget = true;
+                $label = ts('Recipient');
+            }
+            if ( !$processTarget ) {
+                foreach ( $targetNames as $targetID => $targetName ) {
+                    if ( $targetID != $clientID ) {
+                        $processTarget = true;
+                        break;
+                    }
+                }
+            }
+            
+            if ( $processTarget ) {
+                $targetRedacted = array( );
+                foreach( $targetNames as $targetID => $target ) {
+                    // add Recipient SortName as well as Display to the strings to be redacted across the case session 
+                    // suffixed with a randomly generated 4-digit number
+                    if (!array_key_exists($target, $this->_redactionStringRules)) {
+                        $this->_redactionStringRules = CRM_Utils_Array::crmArrayMerge( $this->_redactionStringRules, 
+                                                                                       array($target => 'name_' .rand(10000, 100000)));
+                        $targetSortName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $targetID, 'sort_name' );
+                        if (!array_key_exists($targetSortName, $this->_redactionStringRules)) {
+                            $this->_redactionStringRules[$targetSortName] = $this->_redactionStringRules[$target];
+                        } 
+                    }
+                    $targetRedacted[] = $this->redact($target);
+                }
+                
+                $activity['fields'][] = array( 'label' => $label,
+                                               'value' => implode('; ', $targetRedacted),
+                                               'type'  => 'String' );
+            }
         }
         
         // Activity Type info is a special field
@@ -342,35 +388,7 @@ WHERE      a.id = %1
                                        'value' => $this->redact( $reporter ),
                                        'type'  => 'String' );
         
-        // For Emails, include the recipient
-        $targetContactsLabel = ts('With Contacts');
-        if ( in_array( $activityTypeInfo['name'], array( 'Email', 'Inbound Email' ) ) ) {
-            $targetContactsLabel = ts('Recipient');
-        }
-        if ( $activityDAO->targetID ) {
-        	// Re-lookup the target ID since the DAO only has the first recipient if there are multiple.
-        	// Maybe not the best solution.
-        	require_once 'CRM/Activity/BAO/ActivityTarget.php';
-        	$targetNames = CRM_Activity_BAO_ActivityTarget::getTargetNames($activityDAO->id);
-        	$targetRedacted = array();
-        	foreach($targetNames as $targetID => $target) {
-                 // add Recipient SortName as well as Display to the strings to be redacted across the case session 
-                 // suffixed with a randomly generated 4-digit number
-                 if (!array_key_exists($target, $this->_redactionStringRules)) {
-                      $this->_redactionStringRules = CRM_Utils_Array::crmArrayMerge( $this->_redactionStringRules, 
-                                                                                     array($target => 'name_' .rand(10000, 100000)));
-                      $targetSortName = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $targetID, 'sort_name' );
-                      if (!array_key_exists($targetSortName, $this->_redactionStringRules)) {
-                           $this->_redactionStringRules[$targetSortName] = $this->_redactionStringRules[$target];
-                      } 
-                 }
-        		 $targetRedacted[] = $this->redact($target);
-        	}
-            $activity['fields'][] = array( 'label' => $targetContactsLabel,
-                                           'value' => implode('; ', $targetRedacted),
-                                           'type'  => 'String' );
-        }
-        
+       
         if ( $activityDAO->assigneeID ) {
             //allow multiple assignee contacts.CRM-4503.
             require_once 'CRM/Activity/BAO/ActivityAssignment.php';

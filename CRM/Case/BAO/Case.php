@@ -1050,14 +1050,24 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             $values[$dao->id]['id']           = $dao->id;
             $values[$dao->id]['type']         = $activityTypes[$dao->type]['label'];
             $values[$dao->id]['reporter']     = ($hasViewContact)?"<a href='{$contactViewUrl}{$dao->reporter_id}'>$dao->reporter</a>":$dao->reporter;
-            $targetContactNames = CRM_Activity_BAO_ActivityTarget::getTargetNames( $dao->id );
-            if ( is_array( $targetContactNames ) ) {
-                $targetContactUrls = array();
-                foreach ( $targetContactNames as $cid => $name ) {
+            
+            $clientIds   = self::retrieveContactIdsByCaseId( $caseID );
+            $targetNames = CRM_Activity_BAO_ActivityTarget::getTargetNames( $dao->id );
+            $hasWithContacts   = false;
+            $targetContactUrls = array( );
+            foreach ( $targetNames as $targetId => $targetName ) {
+                if ( !in_array( $targetId, $clientIds ) ) {
+                    $hasWithContacts = true;
+                    break;
+                }
+            }
+            if ( $hasWithContacts ) {
+                foreach ( $targetNames as $cid => $name ) {
                     $targetContactUrls[] = ($hasViewContact) ? "<a href='{$contactViewUrl}{$cid}'>$name</a>" : $name;
                 }
-                $values[$dao->id]['with_contacts'] = implode( '; ', $targetContactUrls );
             }
+            $values[$dao->id]['with_contacts'] = implode( '; ', $targetContactUrls );
+            
             $values[$dao->id]['display_date'] = CRM_Utils_Date::customFormat( $dao->display_date );
             $values[$dao->id]['status']       = $activityStatus[$dao->status];
             

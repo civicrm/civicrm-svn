@@ -137,12 +137,12 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                 {/foreach}
 
 	       {/if}
-	       {if $action eq 2}
+	       {if $action eq 1 or $action eq 2}
 	            {if $multiClient}<p/>{/if}<a href="#" onClick="buildTargetContact(1); return false;"><span class="add-remove-link">&raquo; {ts}With other contact(s){/ts}</span></a>
 	       {/if}
 	          </td>
            </tr>
-    	   {if $action eq 2}
+    	   {if $action eq 1 or $action eq 2}
         	   <tr>
         	      <td class="label font-size10pt hide-block" id="withContactsLabel">{ts}With Contact{/ts}</td>
          	      <td class="hide-block"  id="withContactsWidget">{$form.target_contact_id.html}</td>
