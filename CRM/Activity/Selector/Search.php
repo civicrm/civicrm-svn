@@ -273,7 +273,8 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                     $row[$property] = $result->$property;
                 }
             }
-            
+            $row['activity_type'] = $row['activity_type_id'];
+            $row['activity_status'] = $row['activity_status_id'];
             if ( $row['activity_is_test'] ) {
                 $row['activity_type'] = $row['activity_type'] . " (test)";
             }
