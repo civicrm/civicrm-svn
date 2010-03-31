@@ -1056,7 +1056,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
                 foreach ( $targetContactNames as $cid => $name ) {
                     $targetContactUrls[] = ($hasViewContact) ? "<a href='{$contactViewUrl}{$cid}'>$name</a>" : $name;
                 }
-                $values[$dao->id]['with_contacts'] = implode( ';', $targetContactUrls );
+                $values[$dao->id]['with_contacts'] = implode( '; ', $targetContactUrls );
             }
             $values[$dao->id]['display_date'] = CRM_Utils_Date::customFormat( $dao->display_date );
             $values[$dao->id]['status']       = $activityStatus[$dao->status];
