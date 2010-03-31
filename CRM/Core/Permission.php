@@ -59,7 +59,8 @@ class CRM_Core_Permission {
         DELETE = 3,
         CREATE = 4,
         SEARCH = 5,
-        ALL    = 6;
+        ALL    = 6,
+        ADMIN  = 7;
     
     /**
      * get the current permission of this user
