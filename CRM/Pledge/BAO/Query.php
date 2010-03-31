@@ -220,7 +220,6 @@ class CRM_Pledge_BAO_Query
             return;
             
         case 'pledge_status_id':
-           
             if ( is_array( $value ) ) {
                 foreach ($value as $k => $v) {
                     if ( $v ) {
@@ -235,6 +234,7 @@ class CRM_Pledge_BAO_Query
                     $status = "({$status})";
                 }     
             } else {
+                $op = '=';
                 $status = $value;
             }
 
@@ -251,12 +251,14 @@ class CRM_Pledge_BAO_Query
             }
            
             $query->_qill[$grouping][]  = ts('Pledge Status %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
-            $query->_where[$grouping][] = "civicrm_pledge.status_id {$op} {$status}";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_pledge.status_id", 
+                                                                              $op,
+                                                                              $status,
+                                                                              "Integer" );
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
             return;
 
         case 'pledge_payment_status_id':
-           
             if ( is_array( $value ) ) {
                 foreach ($value as $k => $v) {
                     if ( $v ) {
@@ -271,6 +273,7 @@ class CRM_Pledge_BAO_Query
                     $status = "({$status})";
                 }     
             } else {
+                $op = '=';
                 $status = $value;
             }
 
@@ -287,12 +290,18 @@ class CRM_Pledge_BAO_Query
             }
            
             $query->_qill[$grouping][]  = ts('Pledge Payment Status %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
-            $query->_where[$grouping][] = "civicrm_pledge_payment.status_id {$op} {$status}";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_pledge_payment.status_id", 
+                                                                              $op,
+                                                                              $status,
+                                                                              "Integer" );
             $query->_tables['civicrm_pledge_payment'] = $query->_whereTables['civicrm_pledge_payment'] = 1;
             return;
 
         case 'pledge_test':
-            $query->_where[$grouping][] = " civicrm_pledge.is_test $op '$value'";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_pledge.is_test", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
             if ( $value ) {
                 $query->_qill[$grouping][]  = "Find Test Pledges";
             }
@@ -301,19 +310,23 @@ class CRM_Pledge_BAO_Query
         
         case 'pledge_contribution_type_id':
             require_once 'CRM/Contribute/PseudoConstant.php';
-            $cType = $value;
-            $types = CRM_Contribute_PseudoConstant::contributionType( );
-            $query->_where[$grouping][] = "civicrm_pledge.contribution_type_id = $cType";
-            $query->_qill[$grouping ][] = ts( 'Contribution Type - %1', array( 1 => $types[$cType] ) );
+            $type = CRM_Contribute_PseudoConstant::contributionType( $value );
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_pledge.contribution_type_id", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
+            $query->_qill[$grouping][] = ts( 'Contribution Type - %1', array( 1 => $type ) );
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
             return;
             
         case 'pledge_contribution_page_id':
             require_once 'CRM/Contribute/PseudoConstant.php';
-            $cPage = $value;
-            $pages = CRM_Contribute_PseudoConstant::contributionPage( );
-            $query->_where[$grouping][] = "civicrm_pledge.contribution_page_id = $cPage";
-            $query->_qill[$grouping ][] = ts( 'Contribution Page - %1', array( 1 => $pages[$cPage] ) );
+            $page = CRM_Contribute_PseudoConstant::contributionPage( $value );
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_pledge.contribution_page_id", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
+            $query->_qill[$grouping][] = ts( 'Contribution Page - %1', array( 1 => $page ) );
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
             return;
           

@@ -249,7 +249,10 @@ class CRM_Event_BAO_Query
             return;
             
         case 'participant_test':
-            $query->_where[$grouping][] = "civicrm_participant.is_test $op $value";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_participant.is_test", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
             if ( $value ) {
                 $query->_qill[$grouping][]  = ts("Find Test Participants");
             }
@@ -257,7 +260,6 @@ class CRM_Event_BAO_Query
             return;
             
         case 'participant_fee_id':
-
             $feeLabel = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_OptionValue', $value, 'label');
             if ( $value ) {
                 $query->_where[$grouping][] = "civicrm_participant.fee_level $op '$feeLabel'";
@@ -267,9 +269,12 @@ class CRM_Event_BAO_Query
             return;
             
         case 'participant_fee_amount':
-            $query->_where[$grouping][] = "civicrm_participant.fee_amount $op $value";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_participant.fee_amount", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Money" );
             if ( $value ) {
-                $query->_qill[$grouping][]  = ts("Fee Amount" ) . " $op $value";
+                $query->_qill[$grouping][] = ts("Fee Amount" ) . " $op $value";
             }
             $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
             return;    
@@ -281,7 +286,10 @@ class CRM_Event_BAO_Query
             return;
 
         case 'participant_pay_later':
-            $query->_where[$grouping][] = "civicrm_participant.is_pay_later $op $value";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_participant.is_pay_later", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
             if ( $value ) {
                 $query->_qill[$grouping][]  = ts("Find Pay Later Participants");
             }
@@ -308,7 +316,6 @@ class CRM_Event_BAO_Query
 
             require_once 'CRM/Event/PseudoConstant.php';
             $statusTypes  = CRM_Event_PseudoConstant::participantStatus( );
-
             $names = array( );
 
             if ( !empty($val) ) {
@@ -321,12 +328,14 @@ class CRM_Event_BAO_Query
 
             $query->_qill[$grouping][]  = ts('Participant Status %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
             
-            $query->_where[$grouping][] = "civicrm_participant.status_id {$op} {$status}";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_participant.status_id", 
+                                                                              $op,
+                                                                              $status,
+                                                                              "Integer" );
             $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
             return;
 
         case 'participant_role_id':
-
             $val = array( );
             if ( is_array( $value ) ) {
                 foreach ($value as $k => $v) {
@@ -345,7 +354,7 @@ class CRM_Event_BAO_Query
             }     
 
             require_once 'CRM/Event/PseudoConstant.php';
-            $roleTypes  = CRM_Event_PseudoConstant::participantRole( );
+            $roleTypes = CRM_Event_PseudoConstant::participantRole( );
 
             $names = array( );
             if ( !empty($val) ) {
@@ -357,13 +366,19 @@ class CRM_Event_BAO_Query
             }
 
             $query->_qill[$grouping][]  = ts('Participant Role %1', array( 1 => $op ) ) . ' ' . implode( ' ' . ts('or') . ' ', $names );
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_participant.role_id", 
+                                                                              $op,
+                                                                              $role,
+                                                                              "Integer" );
             
-            $query->_where[$grouping][] = "civicrm_participant.role_id {$op} {$role}";
             $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
             return;
 
         case 'participant_source':
-            $query->_where[$grouping][] = "civicrm_participant.source $op '$value'";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_participant.source", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "String" );
             $query->_qill[$grouping][]  = ts("Participant Source" ) . " $op $value";
             $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
             return;
@@ -379,19 +394,28 @@ class CRM_Event_BAO_Query
             return;
 
         case 'event_id':
-            $query->_where[$grouping][] = "civicrm_event.id $op $value";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_event.id", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
             $query->_tables['civicrm_event'] = $query->_whereTables['civicrm_event'] = 1;
             $title = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $value, "title");
             $query->_qill[$grouping ][] = ts( 'Event' ) . " $op $value";
             return;
 
         case 'participant_contact_id':
-            $query->_where[$grouping][] = "civicrm_participant.contact_id $op $value";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_participant.contact_id", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
             $query->_tables['civicrm_participant'] = $query->_whereTables['civicrm_participant'] = 1;
             return;
 
         case 'event_is_public':
-            $query->_where[$grouping][] = "civicrm_event.is_public $op $value";
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_event.is_public", 
+                                                                              $op,
+                                                                              $value,
+                                                                              "Integer" );
             $query->_tables['civicrm_event'] = $query->_whereTables['civicrm_event'] = 1;
             return;
 
