@@ -1817,18 +1817,18 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                                     }
                                 }
                             }
-                        } else {
-                            if ( is_array($details) ) {
-                                if ( $fieldName === 'url' ) {
-                                    if ( !empty( $details['website'] ) ) {
-                                        foreach ( $details['website'] as $val ) {
-                                            $defaults[$fldName] = $val['url'];
-                                            $defaults[$fldName . '-website_type_id' ] = $val['website_type_id'];
-                                        }
+                        } 
+                    } else {
+                        if ( is_array($details) ) {
+                            if ( $fieldName === 'url' ) {
+                                if ( !empty( $details['website'] ) ) {
+                                    foreach ( $details['website'] as $val ) {
+                                        $defaults[$fldName] = $val['url'];
+                                        $defaults[$fldName . '-website_type_id' ] = $val['website_type_id'];
                                     }
                                 }
-                            } 
-                        }
+                            }
+                        } 
                     }
                 }
                 
