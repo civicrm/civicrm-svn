@@ -616,111 +616,109 @@ curDate = (new Date()).getTime();
 {/literal}
 {include file="CRM/Case/Form/ActivityToCase.tpl"}
 {* display tags *}
-<div id="casetags_show" class="section-hidden section-hidden-border">
-  <a href="#" onclick="hide('casetags_show'); show('casetags'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Case Tags{/ts}</label><br />
-</div>
-<div id="casetags" class="section-shown">
-  <fieldset>
-  <legend><a href="#" onclick="hide('casetags'); show('casetags_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Case Tags{/ts}</legend>
-  {if $tags}
-      {$tags}
-  {else}
-      {ts} There are no tags related to this case. {/ts}
-  {/if}
-  </fieldset>
-  <div><input type="button" class="form-submit" onClick="Javascript:addTags()" value={if $tags}"{ts}Change Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
-</div> 
-<div id="manageTags">
-      <div class="label">{$form.select_tag.label}</div>
-                <div class="view-value"><div class="crm-select-container">{$form.select_tag.html}</div>
-                                        {literal}
-                                        <script type="text/javascript">
-                                                               $("select[multiple]").crmasmSelect({
-                                                                        addItemTarget: 'bottom',
-                                                                        animate: true,
-                                                                        highlight: true,
-                                                                        sortable: true,
-                                                                        respectParents: true
-                                                               });
-                                        </script>
-                                        {/literal}
-
-                </div>
-</div>
+{if $showTags }
+    <div id="casetags_show" class="section-hidden section-hidden-border">
+        <a href="#" onclick="hide('casetags_show'); show('casetags'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Case Tags{/ts}</label><br />
+    </div>
+    <div id="casetags" class="section-shown">
+        <fieldset>
+            <legend><a href="#" onclick="hide('casetags'); show('casetags_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Case Tags{/ts}</legend>
+            {if $tags}
+            {$tags}
+            {else}
+            {ts} There are no tags related to this case. {/ts}
+            {/if}
+        </fieldset>
+        <div><input type="button" class="form-submit" onClick="Javascript:addTags()" value={if $tags}"{ts}Change Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
+    </div> 
+    <div id="manageTags">
+        <div class="label">{$form.select_tag.label}</div>
+        <div class="view-value"><div class="crm-select-container">{$form.select_tag.html}</div>
+    </div>
+    </div>
 
 {literal}
 <script type="text/javascript">
-    show('casetags_show');
-    hide('casetags');
+cj("select[multiple]").crmasmSelect({
+    addItemTarget: 'bottom',
+    animate: true,
+    highlight: true,
+    sortable: true,
+    respectParents: true
+});
+show('casetags_show');
+hide('casetags');
 
 cj("#manageTags").hide( );
 function addTags() {
     cj("#manageTags").show( );
 
-	cj("#manageTags").dialog({
-		title: "Change Case Tags",
-		modal: true,
-		bgiframe: true, 
-		overlay: { 
-			opacity: 0.5, 
-			background: "black" 
-		},
+    cj("#manageTags").dialog({
+        title: "Change Case Tags",
+        modal: true,
+        bgiframe: true, 
+        overlay: { 
+            opacity: 0.5, 
+            background: "black" 
+        },
 
         beforeclose: function(event, ui) {
             cj(this).dialog("destroy");
         },
 
-		open:function() {
-			/* set defaults if editing */
-		},
+        open:function() {
+            /* set defaults if editing */
+        },
 
-		buttons: { 
-			"Ok": function() { 
-			        var tagsChecked = '';	    
-				var caseID      = {/literal}{$caseID}{literal};	
+        buttons: { 
+            "Ok": function() { 
+                var tagsChecked = '';	    
+                var caseID      = {/literal}{$caseID}{literal};	
 
-				 cj("#manageTags #tags option").each( function() {
+                cj("#manageTags #tags option").each( function() {
 
-				     if ( cj(this).attr('selected') == true) {
- 				         if ( !tagsChecked ) {
-				             tagsChecked = cj(this).val() + '';
-				         } else {
-				         tagsChecked = tagsChecked + ',' + cj(this).val();
-				         }
-				     }
-				 
-				 });
-				 
-				 var postUrl = {/literal}"{crmURL p='civicrm/case/ajax/processtags' h=0 }"{literal}; 
-                		 var data = 'case_id='+ caseID + '&tag='+tagsChecked;
-				 
-                		 cj.ajax({ type: "POST", url: postUrl, data: data, async: false });
-			         cj(this).dialog("close"); 
-				 cj(this).dialog("destroy");
-				
-// Temporary workaround for problems with SSL connections being too
-// slow. The relationship doesn't get created because the page reload
-// happens before the ajax call.
-// In general this reload needs improvement, which is already on the list for phase 2.
-var sdate = (new Date()).getTime();
-var curDate = sdate;
-while(curDate-sdate < 2000) {
-curDate = (new Date()).getTime();
-}
-				window.location.reload(); 
-			},
+                    if ( cj(this).attr('selected') == true) {
+                        if ( !tagsChecked ) {
+                            tagsChecked = cj(this).val() + '';
+                        } else {
+                            tagsChecked = tagsChecked + ',' + cj(this).val();
+                        }
+                    }
 
-			"Cancel": function() { 
-				cj(this).dialog("close"); 
-				cj(this).dialog("destroy"); 
-			} 
-		} 
+                });
 
-	});
+                var postUrl = {/literal}"{crmURL p='civicrm/case/ajax/processtags' h=0 }"{literal}; 
+                var data = 'case_id='+ caseID + '&tag='+tagsChecked;
+
+                cj.ajax({ type: "POST", url: postUrl, data: data, async: false });
+                cj(this).dialog("close"); 
+                cj(this).dialog("destroy");
+
+                // Temporary workaround for problems with SSL connections being too
+                // slow. The relationship doesn't get created because the page reload
+                // happens before the ajax call.
+                // In general this reload needs improvement, which is already on the list for phase 2.
+                var sdate = (new Date()).getTime();
+                var curDate = sdate;
+                while(curDate-sdate < 2000) {
+                    curDate = (new Date()).getTime();
+                }
+                window.location.reload(); 
+            },
+
+            "Cancel": function() { 
+                cj(this).dialog("close"); 
+                cj(this).dialog("destroy"); 
+            } 
+        } 
+
+    });
 }
     
 </script>
 {/literal}
+
+{/if} {* end of tag block*}
 
 {*include activity view js file*}
 {include file="CRM/common/activityView.tpl"}
