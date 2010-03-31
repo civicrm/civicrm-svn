@@ -89,6 +89,11 @@ class CRM_Activity_Page_AJAX
         $mainActivity->copyValues( $mainActVals );
         $mainActivity->id = null;
         $mainActivity->activity_date_time = $actDateTime;
+        //make sure this is current revision.
+        $mainActivity->is_current_revision = true;
+        //drop all relations.
+        $mainActivity->parent_id = $mainActivity->original_id = null;
+        
         $mainActivity->save( );
         $mainActivityId = $mainActivity->id;
         $mainActivity->free( );
