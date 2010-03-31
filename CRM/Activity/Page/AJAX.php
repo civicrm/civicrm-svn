@@ -96,6 +96,8 @@ class CRM_Activity_Page_AJAX
         
         $mainActivity->save( );
         $mainActivityId = $mainActivity->id;
+        require_once 'CRM/Activity/BAO/Activity.php';
+        CRM_Activity_BAO_Activity::logActivityAction( $mainActivity );
         $mainActivity->free( );
         
         //mark previous activity as deleted.

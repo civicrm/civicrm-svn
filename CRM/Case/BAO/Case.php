@@ -2158,10 +2158,9 @@ SELECT  id
                 if ( !$mainActivityId ) continue;
                 
                 $activityMappingIds[$otherActivityId] = $mainActivityId ;
-                if ( $mainActivity->original_id || $mainActivity->parent_id ) {
-                    CRM_Activity_BAO_Activity::logActivityAction( $mainActivity );
-                }
-                
+                // insert log of all activites
+                CRM_Activity_BAO_Activity::logActivityAction( $mainActivity );
+                                
                 $otherActivity->free( );
                 $mainActivity->free( );
                 $copiedActivityIds[] = $otherActivityId;
