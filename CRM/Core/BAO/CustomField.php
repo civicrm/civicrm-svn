@@ -174,13 +174,14 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 foreach ($params['option_value'] as $k => $v) {
                     if (strlen(trim($v))) {
                         $optionValue                  =  new CRM_Core_DAO_OptionValue( );
+                        CRM_Core_Error::debug( '$v', $v );
                         $optionValue->option_group_id =  $optionGroup->id;
                         $optionValue->label           =  $params['option_label'][$k];
                         $optionValue->name            =  CRM_Utils_String::titleToVar( $params['option_label'][$k] );
                         switch ( $params['data_type'] ) {
                         case 'Money':
                             require_once 'CRM/Utils/Rule.php';
-                            $optionValue->value = number_format(CRM_Utils_Rule::cleanMoney( $v ));
+                            $optionValue->value = number_format(CRM_Utils_Rule::cleanMoney( $v,2 ));
                             break;
                         case 'Int':
                             $optionValue->value  = intval( $v );
