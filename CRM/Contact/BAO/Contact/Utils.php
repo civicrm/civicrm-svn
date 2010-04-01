@@ -672,7 +672,7 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
     {
         $contactDetails = array( );
         if ( empty( $componentIds ) || 
-             !in_array( $componentName, array( 'CiviContribute', 'CiviMember', 'CiviEvent' ) ) ) {
+             !in_array( $componentName, array( 'CiviContribute', 'CiviMember', 'CiviEvent', 'Activity' ) ) ) {
             return $contactDetails;
         }
         
@@ -688,6 +688,8 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
             $compTable = 'civicrm_contribution';
         } elseif ( $componentName == 'CiviMember' ) {
             $compTable = 'civicrm_membership';
+        } elseif ( $componentName == 'Activity' ) {
+            $compTable = 'civicrm_activity';
         } else {
             $compTable = 'civicrm_participant';
         }
@@ -698,7 +700,11 @@ LEFT JOIN  civicrm_email ce ON ( ce.contact_id=c.id AND ce.is_primary = 1 )
             switch ( $property ) {
             case 'sort_name' :
                 $select[] = "$property as $property";
-                $from[$value] = "INNER JOIN civicrm_contact contact ON ( contact.id = $compTable.contact_id )"; 
+                if ( $componentName == 'Activity' )  { 
+                    $from[$value] ="INNER JOIN civicrm_contact contact ON ( contact.id = $compTable.source_contact_id )";  
+                } else {
+                    $from[$value] = "INNER JOIN civicrm_contact contact ON ( contact.id = $compTable.contact_id )"; 
+                }
                 break;
                 
             case 'email' :

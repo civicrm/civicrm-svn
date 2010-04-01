@@ -316,7 +316,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                 }
             }
             
-            $query =  "SELECT * FROM civicrm_uf_field $where ORDER BY weight, field_name"; 
+            $query =  "SELECT * FROM civicrm_uf_field $where ORDER BY weight, field_name";
             
             $field =& CRM_Core_DAO::executeQuery( $query );
             require_once 'CRM/Contact/BAO/Contact.php';
@@ -327,8 +327,15 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             }
             
             require_once 'CRM/Core/Component.php';
-            $importableFields = array_merge($importableFields, 
-                                            CRM_Core_Component::getQueryFields( ));
+            require_once 'CRM/Core/BAO/UFField.php';
+            $profileType = CRM_Core_BAO_UFField::getProfileType( $group->id  );
+            
+            if ( $profileType == 'Activity' ) {
+                $componentFields = CRM_Activity_BAO_Activity::exportableFields( 'Activity' );
+            } else {
+                $componentFields = CRM_Core_Component::getQueryFields( ); 
+            }
+            $importableFields = array_merge( $importableFields, $componentFields );
             
             $importableFields['group']['title'] = ts('Group(s)');
             $importableFields['group']['where'] = null;
@@ -359,7 +366,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             $customFields = CRM_Core_BAO_CustomField::getFieldsForImport( $ctype );
             
             // hack to add custom data for components
-            $components = array("Contribution", "Participant","Membership");
+            $components = array( "Contribution", "Participant","Membership", "Activity" );
             foreach ( $components as $value) {
                 $customFields = array_merge($customFields, CRM_Core_BAO_CustomField::getFieldsForImport($value));
             }
@@ -440,7 +447,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             CRM_Core_Error::fatal( ts( 'The requested Profile (gid=%1) is disabled OR it is not configured to be used for \'Profile\' listings in its Settings OR there is no Profile with that ID OR you do not have permission to access this profile. Please contact the site administrator if you need assistance.',
                                                    array( 1 => $id )) );        
         }
-
+        
         return $fields;
     }
     
@@ -1422,7 +1429,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             require_once 'CRM/Member/PseudoConstant.php';
             $form->add('select', 'membership_type_id', $title,
                        array(''=>ts( '- select -' )) + CRM_Member_PseudoConstant::membershipType( ), $required );            
-        } else if ($field['name'] == 'status_id' ) { 
+        } else if ($field['name'] == 'status_id'  && ( $mode && CRM_Contact_BAO_Query::MODE_MEMBER ) ) { 
             require_once 'CRM/Member/PseudoConstant.php';
             $form->add('select', 'status_id', $title,
                        array(''=>ts( '- select -' )) + CRM_Member_PseudoConstant::membershipStatus( ), $required );
@@ -1564,6 +1571,12 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->add('select', $name, $title,
                        array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionStatus( ), $required);
         } else if ($fieldName == 'participant_register_date' ) {
+            $form->addDateTime( $name, $title, $required, array( 'formatType' => 'activityDateTime') );
+        } else if ($fieldName == 'activity_status_id') {
+            require_once 'CRM/Core/PseudoConstant.php';
+            $form->add('select', $name, $title,
+                       array(''=>ts( '- select -' )) + CRM_Core_PseudoConstant::activityStatus( ), $required );
+        } else if ($fieldName == 'activity_date_time') {
             $form->addDateTime( $name, $title, $required, array( 'formatType' => 'activityDateTime') );
         } else if ($fieldName == 'participant_status_id' ) {
             require_once "CRM/Event/PseudoConstant.php";
@@ -1709,7 +1722,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                         $customFields = CRM_Core_BAO_CustomField::getFields( CRM_Utils_Array::value( 'Individual', $values ) );
 
                         // hack to add custom data for components
-                        $components = array("Contribution", "Participant","Membership");
+                        $components = array( "Contribution", "Participant","Membership","Activity" );
                         foreach ( $components as $value) {
                             $customFields = CRM_Utils_Array::crmArrayMerge( $customFields, 
                                                                             CRM_Core_BAO_CustomField::getFieldsForImport($value));

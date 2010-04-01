@@ -89,7 +89,7 @@ class CRM_Activity_Task
                                   4 => array( 'title'  => ts( 'Batch Update Activities Via Profile' ),
                                               'class'  => array( 'CRM_Activity_Form_Task_PickProfile',
                                                                  'CRM_Activity_Form_Task_Batch' ),
-                                              'result' => true ),
+                                              'result' => false ),
                                   
                                   5 => array( 'title'  => ts( 'Send Email to Contacts' ),
                                               'class'  => 'CRM_Activity_Form_Task_Email',         
