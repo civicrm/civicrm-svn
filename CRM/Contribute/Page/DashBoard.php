@@ -75,17 +75,15 @@ class CRM_Contribute_Page_DashBoard extends CRM_Core_Page
         $yearDate = array_merge( $year, $yearDate);
         $yearDate = CRM_Utils_Date::format( $yearDate );
   
-        $monthDate = date('Ym') . '01000000';
+        $monthDate = date('Ym') . '01';
 
         $prefixes = array( 'start', 'month', 'year'  );
         $status   = array( 'Valid', 'Cancelled' );
        
         $yearNow = $yearDate + 10000;
-        $yearNow .= '000000';
-        $yearDate  = $yearDate  . '000000';
         
         // we are specific since we want all information till this second
-        $now       = date( 'YmdHis' );
+        $now       = date( 'Ymd' );
        
         require_once 'CRM/Contribute/BAO/Contribution.php';
         foreach ( $prefixes as $prefix ) {
