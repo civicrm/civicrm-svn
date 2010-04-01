@@ -135,10 +135,40 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                         $upgrade->setVersion( $rev . '.upgrade' );
 
                         $phpFunctionName = 'upgrade_' . str_replace( '.', '_', $rev );
-                        if ( is_callable(array($this, $phpFunctionName)) ) {
-                            eval("\$this->{$phpFunctionName}('$rev');");
+
+                        // follow old upgrade process for all version
+                        // below 3.2.alpha1 
+                        if ( version_compare( $rev , '3.2.alpha1' ) < 0 ) {
+                            if ( is_callable(array($this, $phpFunctionName)) ) {
+                                eval("\$this->{$phpFunctionName}('$rev');");
+                            } else {
+                                $upgrade->processSQL( $rev );
+                            }
                         } else {
-                            $upgrade->processSQL( $rev );
+                            // new upgrade process from version
+                            // 3.2.alpha1 
+                            $versionObject = $upgrade->incrementalPhpObject( $rev );
+                            
+                            // predb check for major release.
+                            if ( $upgrade->checkVersionRelease( $rev, 'alpha1' ) ) {
+                                if ( !(is_callable(array($versionObject, 'verifyPreDBstate'))) ) {
+                                    CRM_Core_Error::fatal("verifyPreDBstate method was not found for $rev");
+                                }
+                                
+                                $error = null;
+                                if ( !($versionObject->verifyPreDBstate($error)) ) {
+                                    if ( ! isset( $error ) ) {
+                                        $error = "post-condition failed for current upgrade for $rev";
+                                    }
+                                    CRM_Core_Error::fatal( $error );
+                                }
+                            }
+                            
+                            if ( is_callable(array($versionObject, $phpFunctionName)) ) {
+                                $versionObject->$phpFunctionName( $rev );
+                            } else {
+                                $upgrade->processSQL( $rev );
+                            }
                         }
 
                         // after an successful intermediate upgrade, set the complete version
@@ -407,43 +437,6 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
         require_once 'CRM/Upgrade/ThreeOne/ThreeOne.php';
         $threeOne = new CRM_Upgrade_ThreeOne_ThreeOne( );
         $threeOne->upgrade_3_1_3( );
-        
-        $upgrade =& new CRM_Upgrade_Form( );
-        $upgrade->processSQL( $rev );
-    }
-    
-    function upgrade_3_2_alpha1 ( $rev ) 
-    {     
-        //CRM-5666 -if user already have 'access CiviCase'
-        //give all new permissions and drop access CiviCase.
-        db_query( "UPDATE permission SET perm = REPLACE( perm, 'access CiviCase', 'access my cases and activities, access all cases and activities, administer CiviCase' )" );
-        
-        //insert core acls.
-        $casePermissions = array( 'delete in CiviCase',
-                                  'administer CiviCase', 
-                                  'access my cases and activities', 
-                                  'access all cases and activities', );
-        require_once 'CRM/ACL/DAO/ACL.php';
-        $aclParams = array( 'name'         => 'Core ACL',
-                            'deny'         => 0,
-                            'acl_id'       => NULL,
-                            'object_id'    => NULL,
-                            'acl_table'    => NULL,
-                            'entity_id'    => 1,
-                            'operation'    => 'All',
-                            'is_active'    => 1,
-                            'entity_table' => 'civicrm_acl_role' );
-        foreach ( $casePermissions as $per ) {
-            $aclParams['object_table'] = $per;
-            $acl = new CRM_ACL_DAO_ACL( );
-            $acl->object_table = $per;
-            if ( !$acl->find( true ) ) {
-                $acl->copyValues( $aclParams );
-                $acl->save( );
-            }
-        }
-        //drop 'access CiviCase' acl
-        CRM_Core_DAO::executeQuery( "DELETE FROM civicrm_acl WHERE object_table = 'access CiviCase'" );
         
         $upgrade =& new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );

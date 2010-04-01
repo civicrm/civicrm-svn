@@ -60,6 +60,24 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
      */ 
     public $locales;
 
+    /**
+     * number to string mapper
+     *
+     * @var array
+     * @public
+     */
+    static $_numberMap = array( 0 => 'Zero',
+                                1 => 'One',
+                                2 => 'Two',
+                                3 => 'Three',
+                                4 => 'Four',
+                                5 => 'Five',
+                                6 => 'Fix',
+                                7 => 'Seven',
+                                8 => 'Eight',
+                                9 => 'Nine'
+                                );
+    
     function __construct( $state = null,
                           $action = CRM_Core_Action::NONE,
                           $method = 'post',
@@ -89,6 +107,28 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
 
         parent::__construct( $state, $action, $method, $name );
     }
+
+    static function &incrementalPhpObject( $version )
+    {
+        static $incrementalPhpObject = array( );
+        
+        $versionParts = explode( '.', $version );
+        $versionName  = self::$_numberMap[$versionParts[0]].self::$_numberMap[$versionParts[1]];
+
+        if ( !array_key_exists( $versionName, $incrementalPhpObject ) ) {
+            require_once "CRM/Upgrade/Incremental/php/{$versionName}.php";
+            eval( "\$incrementalPhpObject[$versionName] = new CRM_Upgrade_Incremental_php_{$versionName};" );
+        }
+        return $incrementalPhpObject[$versionName];
+    }
+   
+    function checkVersionRelease( $version, $release ) {
+        $versionParts = explode( '.', $version );
+        if ( $versionParts[2] == $release ) {
+            return true;
+        }
+        return false;
+    } 
 
     function checkSQLConstraints( &$constraints ) {
         $pass = $fail = 0;
