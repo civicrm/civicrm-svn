@@ -491,11 +491,14 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         }
         $this->assign( 'id', CRM_Utils_Array::value( 'uf_group_id', $this->_formValues ) );
         
-        require_once 'CRM/Contact/BAO/Contact.php';
-        $menuItems = CRM_Contact_BAO_Contact::contextMenu( );
-        $primaryActions     = CRM_Utils_Array::value( 'primaryActions', $menuItems, array( ) ); 
-        $this->_contextMenu = CRM_Utils_Array::value( 'moreActions',    $menuItems, array( ) );
-        $this->assign( 'contextMenu', $primaryActions + $this->_contextMenu );
+        // show the context menu only when we’re not searching for deleted contacts; CRM-5673
+        if (!$this->_formValues['deleted_contacts']) {
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $menuItems = CRM_Contact_BAO_Contact::contextMenu( );
+            $primaryActions     = CRM_Utils_Array::value( 'primaryActions', $menuItems, array( ) ); 
+            $this->_contextMenu = CRM_Utils_Array::value( 'moreActions',    $menuItems, array( ) );
+            $this->assign( 'contextMenu', $primaryActions + $this->_contextMenu );
+        }
         
         // CRM_Core_Error::debug( 'f', $this->_formValues );
         // CRM_Core_Error::debug( 'p', $this->_params );
