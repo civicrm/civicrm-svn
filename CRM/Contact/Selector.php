@@ -641,6 +641,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                 $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->contact_id;
 
                 if ($this->_formValues['deleted_contacts'] and CRM_Core_Permission::check('access deleted contacts')) {
+                    $row['is_deleted'] = true;
                     $links = array(
                         array(
                             'name'  => ts('View'),
