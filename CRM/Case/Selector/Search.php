@@ -213,7 +213,7 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                                    CRM_Core_Action::UPDATE => array(
                                                                    'name'     => ts('Assign to Another Client'),
                                                                    'url'      => 'civicrm/contact/view/case/editClient',
-                                                                   'qs'       => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%&selectedChild=editClient',
+                                                                   'qs'       => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
                                                                    'title'    => ts('Assign to Another Client')
                                                                    )
                                   );
