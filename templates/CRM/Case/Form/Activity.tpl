@@ -340,7 +340,8 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 
     {/literal}{if $action eq 2}{literal}
     cj(document).ready( function( ) {
-       buildTargetContact( false );
+       var reset = {/literal}{if $targetContactValues}true{else}false{/if}{literal};	    
+       buildTargetContact( reset );
     });{/literal}
     {/if}{literal}
     
