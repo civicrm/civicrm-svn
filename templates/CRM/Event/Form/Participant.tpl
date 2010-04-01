@@ -176,12 +176,13 @@
 
 	function buildFeeBlock( eventId, discountId )
 	{
-		var dataUrl = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4'}"{literal};
-
-		{/literal}
+		var dataUrl = {/literal}"{crmURL p=$urlPath h=0 q='snippet=4'}";
+                dataUrl = dataUrl + '&qfKey=' + '{$qfKey}'
+ 
 		{if $urlPathVar}
 		dataUrl = dataUrl + '&' + '{$urlPathVar}'
 		{/if}
+
 		{literal}
 
 		if ( !eventId ) {
