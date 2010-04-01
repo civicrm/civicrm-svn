@@ -127,7 +127,9 @@ class CRM_Case_Form_Case extends CRM_Core_Form
             CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
         }
         
-        if ( $this->_activityTypeFile = CRM_Activity_BAO_Activity::getFileForActivityTypeId($this->_activityTypeId, 'Case') ) {
+        if ( $this->_activityTypeFile = 
+             CRM_Activity_BAO_Activity::getFileForActivityTypeId($this->_activityTypeId,
+                                                                 'Case') ) {
             require_once "CRM/Case/Form/Activity/{$this->_activityTypeFile}.php";
             $this->assign( 'activityTypeFile', $this->_activityTypeFile );
         }

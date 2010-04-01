@@ -69,6 +69,13 @@ class CRM_Core_Controller_Simple extends CRM_Core_Controller {
 
         $params = array($path => null);
 
+        $savedAction = CRM_Utils_Request::retrieve('action', 'String', $this, false, null );
+        if ( ! empty( $savedAction ) &&
+             $savedAction != $mode ) {
+            $mode = $savedAction;
+        }
+
+
         $this->_stateMachine->addSequentialPages($params, $mode);
 
         $this->addPages( $this->_stateMachine, $mode );

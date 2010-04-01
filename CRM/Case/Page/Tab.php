@@ -157,8 +157,6 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
                                                        $this->_action );
         
         $controller->setEmbedded( true );
-        $controller->set( 'id' , $this->_id ); 
-        $controller->set( 'cid', $this->_contactId ); 
         
         return $controller->run( );
     }
@@ -188,7 +186,10 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
 
         if ( $this->_action & CRM_Core_Action::VIEW ) {
             $this->view( );
-        } else if ( $this->_action & ( CRM_Core_Action::UPDATE | CRM_Core_Action::ADD | CRM_Core_Action::DELETE | CRM_Core_Action::RENEW ) ) {
+        } else if ( ( $this->_action & 
+                      ( CRM_Core_Action::UPDATE | CRM_Core_Action::ADD | 
+                        CRM_Core_Action::DELETE | CRM_Core_Action::RENEW ) ) ||
+                    ! empty( $_POST ) ) {
             $this->edit( );
         } else if ( $this->_contactId ) {
             $this->browse( );
