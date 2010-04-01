@@ -173,11 +173,9 @@ class CRM_Case_Form_Activity_OpenCase
         if ( CRM_Utils_Array::value( 'contact_select_id', $params ) ) {
             $params['contact_id'] = CRM_Utils_Array::value( 'contact_select_id', $params );
             $form->_currentlyViewedContactId = $params['contact_id'];
-        } else {
-            if( $form->_allowMultiClient ) {
-                $clients = explode( ',', $params['contact'] );
-                $form->_currentlyViewedContactId = $clients[0];
-            }
+        } elseif( $form->_allowMultiClient && $form->_context != 'case' ) {
+            $clients = explode( ',', $params['contact'] );
+            $form->_currentlyViewedContactId = $clients[0];
         }
 
         // for open case start date should be set to current date
@@ -250,7 +248,7 @@ class CRM_Case_Form_Activity_OpenCase
         }
 
         // 1. create case-contact
-        if( $isMultiClient ) {
+        if( $isMultiClient && $this->_context != 'case' ) {
             $client = explode( ',', $params['contact'] );
             foreach( $client as $key => $cliId ) {
                 if( $cliId == 0 ) {
@@ -259,6 +257,9 @@ class CRM_Case_Form_Activity_OpenCase
                 $contactParams = array('case_id'    => $params['case_id'],
                                        'contact_id' => $cliId
                                        );
+                if( empty($cliId) ) {
+                    CRM_Core_Error::fatal( 'contact_id cannot be empty' );
+                }
                 CRM_Case_BAO_Case::addCaseToContact( $contactParams );
             }
         } else {
