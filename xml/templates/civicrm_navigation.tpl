@@ -71,7 +71,7 @@ VALUES
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES     
-    ( @domainID, 'civicrm/contact/search/custom/list&reset=1',              '{ts escape="sql"}Custom Searches...{/ts}', 'Custom Searches...', NULL, '',                 @searchlastID, '1', NULL, 11 );
+    ( @domainID, 'civicrm/contact/search/custom/list&reset=1',              '{ts escape="sql"}Custom Searches...{/ts}', 'Custom Searches...', NULL, '',                 @searchlastID, '1', NULL, 12 );
 
 SET @customSearchlastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation

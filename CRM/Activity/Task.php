@@ -44,7 +44,8 @@ class CRM_Activity_Task
         DELETE_ACTIVITIES =  1,
         PRINT_ACTIVITIES  =  2,
         EXPORT_ACTIVITIES =  3,
-        BATCH_ACTIVITIES  =  4;
+        BATCH_ACTIVITIES  =  4,
+        EMAIL_CONTACTS    =  5;
         
 
     /**
@@ -89,6 +90,10 @@ class CRM_Activity_Task
                                               'class'  => array( 'CRM_Activity_Form_Task_PickProfile',
                                                                  'CRM_Activity_Form_Task_Batch' ),
                                               'result' => true ),
+                                  
+                                  5 => array( 'title'  => ts( 'Send Email to Contacts' ),
+                                              'class'  => 'CRM_Activity_Form_Task_Email',         
+                                              'result' => false ),
                                   );
             
             //CRM-4418, check for delete 
