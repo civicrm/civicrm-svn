@@ -566,7 +566,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         }
 
         if (!CRM_Core_Permission::check('access deleted contacts')) {
-            unset($this->_formValues['is_deleted']);
+            unset($this->_formValues['deleted_contacts']);
         }
         
         $this->set( 'type'            , $this->_action );

@@ -85,7 +85,7 @@ class CRM_Contact_Form_Search_Criteria {
         $form->addElement('text', 'job_title', ts('Job Title'), $attributes['job_title'], 'size="30"' );
 
         if (CRM_Core_Permission::check('access deleted contacts')) {
-            $form->add('checkbox', 'is_deleted', ts('Search in Trash (deleted contacts)'));
+            $form->add('checkbox', 'deleted_contacts', ts('Search in Trash (deleted contacts)'));
         }
 
         // add checkbox for cms users only
