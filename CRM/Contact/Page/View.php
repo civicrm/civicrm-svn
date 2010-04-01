@@ -142,14 +142,19 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
         
         // add to recently viewed block
+        $isDeleted = CRM_Utils_Request::retrieve('view_deleted', 'Boolean', $this);
+        $urlParams = "reset=1&cid={$this->_contactId}";
+        if ($isDeleted) $urlParams .= '&view_deleted=1';
         CRM_Utils_Recent::add( $displayName,
-                               CRM_Utils_System::url( 'civicrm/contact/view', 'reset=1&cid=' . $this->_contactId ),
+                               CRM_Utils_System::url('civicrm/contact/view', $urlParams),
                                $this->_contactId,
                                $contactType,
                                $this->_contactId,
                                $displayName,
                                $contactImageUrl,
-                               $contactSubtype );
+                               $contactSubtype,
+                               $isDeleted
+                             );
                 
         $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Core/BAO/UFMatch.php';

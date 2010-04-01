@@ -107,7 +107,8 @@ class CRM_Utils_Recent
                          $contactId, 
                          $contactName, 
                          $imageUrl = null,
-                         $subtype  = null ) 
+                         $subtype  = null,
+                         $isDeleted = false )
     {
         self::initialize( );
         $session = CRM_Core_Session::singleton( );
@@ -129,6 +130,7 @@ class CRM_Utils_Recent
                               'subtype'     => $subtype,
                               'contact_id'  => $contactId,
                               'contactName' => $contactName,
+                              'isDeleted'   => $isDeleted,
                               'image_url'   => $imageUrl ) );
         if ( count( self::$_recent ) > self::MAX_ITEMS ) {
             array_pop( self::$_recent );

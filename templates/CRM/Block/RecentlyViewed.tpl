@@ -33,7 +33,7 @@
          {else}
             <div class="icon crm-icon {$item.type}{if $item.subtype}-subtype{/if}-icon"></div>
          {/if}
-         {$item.title|truncate:28:"..":true}</a></li>
+         <span {if $item.isDeleted}class="crm-is_deleted"{/if}>{$item.title|truncate:28:"..":true}</span></a></li>
     {/foreach}
    </ul>
 </div>
