@@ -180,7 +180,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                         switch ( $params['data_type'] ) {
                         case 'Money':
                             require_once 'CRM/Utils/Rule.php';
-                            $optionValue->value = number_format(CRM_Utils_Rule::cleanMoney( $v,2 ));
+                            $optionValue->value = number_format(CRM_Utils_Rule::cleanMoney( $v ),2);
                             break;
                         case 'Int':
                             $optionValue->value  = intval( $v );
