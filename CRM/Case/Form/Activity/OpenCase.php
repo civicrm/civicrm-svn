@@ -250,16 +250,13 @@ class CRM_Case_Form_Activity_OpenCase
         // 1. create case-contact
         if( $isMultiClient && $this->_context != 'case' ) {
             $client = explode( ',', $params['contact'] );
-            foreach( $client as $key => $cliId ) {
-                if( $cliId == 0 ) {
-                    CRM_Core_Error::fatal( 'contact_id cannot be null' );
+            foreach ($client as $key => $cliId ) {
+                if ( empty($cliId) ) {
+                    CRM_Core_Error::fatal( 'contact_id cannot be empty' );
                 }
                 $contactParams = array('case_id'    => $params['case_id'],
                                        'contact_id' => $cliId
                                        );
-                if( empty($cliId) ) {
-                    CRM_Core_Error::fatal( 'contact_id cannot be empty' );
-                }
                 CRM_Case_BAO_Case::addCaseToContact( $contactParams );
             }
         } else {
