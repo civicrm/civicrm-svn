@@ -130,19 +130,19 @@ VALUES(@option_group_id_activity_type, {localize}'Merge Case'{/localize}, (SELEC
    
 -- INSERT civicrm_option_group
    INSERT INTO 
-   `civicrm_option_group` (`name`, `description`, `is_reserved`, `is_active`) 
-VALUES 
-    ('account_type', '{ts escape="sql"}Account type{/ts}', 0, 1);
+   `civicrm_option_group` (`name`, {localize field='description'}`description`{/localize} , `is_reserved`, `is_active`) 
+VALUES 			  
+    ('account_type',{localize}'{ts escape="sql"}Account type{/ts}'{/localize}, 0, 1);
    
 -- INSERT Account types
    SELECT @option_group_id_accTp          := max(id) from civicrm_option_group where name = 'account_type';
    INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, {localize field='description'}`description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
    VALUES
-   (@option_group_id_accTp, '{ts escape="sql"}Asset{/ts}', 1, 'Asset',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-   (@option_group_id_accTp, '{ts escape="sql"}Liability{/ts}', 2, 'Liability',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-   (@option_group_id_accTp, '{ts escape="sql"}Income{/ts}', 3, 'Income',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-   (@option_group_id_accTp, '{ts escape="sql"}Expense{/ts}', 4, 'Expense',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL);
+   (@option_group_id_accTp, {localize}'{ts escape="sql"}Asset{/ts}'{/localize}, 1, 'Asset',  NULL, 0, NULL, 1,{localize} NULL{/localize} , 0, 0, 1, NULL, NULL),
+   (@option_group_id_accTp,{localize}'{ts escape="sql"}Liability{/ts}'{/localize}, 2, 'Liability',  NULL, 0, NULL, 1,{localize} NULL{/localize}  , 0, 0, 1, NULL, NULL),
+   (@option_group_id_accTp,{localize}'{ts escape="sql"}Income{/ts}'{/localize}, 3, 'Income',  NULL, 0, NULL, 1,{localize} NULL {/localize}, 0, 0, 1, NULL, NULL),
+   (@option_group_id_accTp, {localize}'{ts escape="sql"}Expense{/ts}'{/localize}, 4, 'Expense',  NULL, 0, NULL, 1,{localize}  NULL {/localize}, 0, 0, 1, NULL, NULL);
 
 --  CRM-5883
 
@@ -174,17 +174,17 @@ VALUES
     SELECT @option_group_id_tuf := max(id) FROM civicrm_option_group WHERE name = 'tag_used_for' ;
     
     INSERT INTO civicrm_option_value
-    	(option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight, description, is_optgroup, is_reserved, is_active, component_id, visibility_id) 
+    	(option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight, {localize field='description'}description{/localize} , is_optgroup, is_reserved, is_active, component_id, visibility_id) 
     VALUES
-       (@option_group_id_website, 'Home',     1, 'Home',     NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-       (@option_group_id_website, 'Work',     2, 'Work',     NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
-       (@option_group_id_website, 'Image',    3, 'Image',    NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
-       (@option_group_id_website, 'Facebook', 4, 'Facebook', NULL, 0, NULL, 4, NULL, 0, 0, 1, NULL, NULL),
-       (@option_group_id_website, 'Twitter',  5, 'Twitter',  NULL, 0, NULL, 5, NULL, 0, 0, 1, NULL, NULL),
-       (@option_group_id_website, 'MySpace',  6, 'MySpace',  NULL, 0, NULL, 6, NULL, 0, 0, 1, NULL, NULL),
-       (@option_group_id_tuf, {localize}'Contacts'{/localize}, 'civicrm_contact', 'Contacts', NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-       (@option_group_id_tuf, {localize}'Activities'{/localize}, 'civicrm_activity', 'Activities',  NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),	
-       (@option_group_id_tuf, {localize}'Cases'{/localize}, 'civicrm_case', 'Cases', NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL);
+       (@option_group_id_website, {localize}'Home' {/localize},     1, 'Home',     NULL, 0, NULL, 1,{localize} NULL{/localize}, 0, 0, 1, NULL, NULL),
+       (@option_group_id_website, {localize}'Work'{/localize},     2, 'Work',     NULL, 0, NULL, 2, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+       (@option_group_id_website, {localize}'Image'{/localize},    3, 'Image',    NULL, 0, NULL, 3, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+       (@option_group_id_website, {localize}'Facebook'{/localize}, 4, 'Facebook', NULL, 0, NULL, 4, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+       (@option_group_id_website, {localize}'Twitter'{/localize},  5, 'Twitter',  NULL, 0, NULL, 5,{localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+       (@option_group_id_website, {localize}'MySpace'{/localize},  6, 'MySpace',  NULL, 0, NULL, 6, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+       (@option_group_id_tuf, {localize}'Contacts'{/localize}, 'civicrm_contact', 'Contacts', NULL, 0, NULL, 1,{localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+       (@option_group_id_tuf, {localize}'Activities'{/localize}, 'civicrm_activity', 'Activities',  NULL, 0, NULL, 2,{localize}NULL{/localize}, 0, 0, 1, NULL, NULL),	
+       (@option_group_id_tuf, {localize}'Cases'{/localize}, 'civicrm_case', 'Cases', NULL, 0, NULL, 3,{localize}NULL{/localize}, 0, 0, 1, NULL, NULL);
        
 --  CRM-5962
 
@@ -245,3 +245,28 @@ INSERT INTO civicrm_mailing_bounce_pattern
 -- CRM-6045
 UPDATE civicrm_payment_processor_type 
 SET url_site_test_default = 'https://www.payjunctionlabs.com/quick_link' WHERE name = 'PayJunction';
+
+-- CRM-5803
+   SELECT @domain_id := min(id) FROM civicrm_domain;
+   SELECT @nav_search    := id FROM civicrm_navigation WHERE name = 'Search...';
+   SELECT @nav_max_weight := MAX(ROUND(weight)) from civicrm_navigation WHERE parent_id = @nav_search;
+   SELECT @nav_find_pledge_weight := MAX(ROUND(weight)) from civicrm_navigation WHERE parent_id = @nav_search AND has_separator = 1;
+   SELECT @pledge_id := id from civicrm_navigation WHERE parent_id = @nav_search AND weight = @nav_find_pledge_weight;
+   
+   UPDATE civicrm_navigation SET has_separator = NULL WHERE id = @pledge_id LIMIT 1;
+   UPDATE civicrm_navigation SET weight =  @nav_max_weight+1 WHERE parent_id = @nav_search AND weight = @nav_max_weight;
+   
+   INSERT INTO civicrm_navigation
+        ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+   VALUES
+        ( @domain_id,  'civicrm/activity/search&reset=1', '{ts escape="sql"}Find Activities{/ts}','Find Activities', NULL, 
+'', @nav_search, '1', 1, @nav_find_pledge_weight );
+  
+  SELECT @option_group_id_mt := max(id) from civicrm_option_group where name = 'mapping_type';
+  SELECT @max_val            := MAX(ROUND(op.value))   FROM civicrm_option_value op  WHERE op.option_group_id  = @option_group_id_mt;
+  SELECT @max_wt             := MAX(ROUND(val.weight)) FROM civicrm_option_value val WHERE val.option_group_id = @option_group_id_mt;
+
+   INSERT INTO civicrm_option_value
+   (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `is_optgroup`, `is_reserved`, `is_active`) 
+VALUES
+   (@option_group_id_mt, {localize}'Export Activities'{/localize},  @max_val+1, 'Export Activity', NULL, 0, 0, @max_wt+1, 0, 1, 1);
