@@ -168,12 +168,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 $params['option_group_id'] = $optionGroup->id;
                 
                 require_once 'CRM/Core/BAO/OptionValue.php';
-                require_once 'CRM/Utils/Rule.php';
-                $moneyField = false;
-                if ( $params['data_type'] == 'Money' ) {
-                    $moneyField = true;
-                }
-
+                
+                
                 require_once 'CRM/Utils/String.php';
                 foreach ($params['option_value'] as $k => $v) {
                     if (strlen(trim($v))) {
@@ -181,7 +177,19 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                         $optionValue->option_group_id =  $optionGroup->id;
                         $optionValue->label           =  $params['option_label'][$k];
                         $optionValue->name            =  CRM_Utils_String::titleToVar( $params['option_label'][$k] );
-                        $optionValue->value           =  $moneyField ? number_format(CRM_Utils_Rule::cleanMoney( $v ),2) : $v;
+                        switch ( $params['data_type'] ) {
+                        case 'Money':
+                            require_once 'CRM/Utils/Rule.php';
+                            $optionValue->value = number_format(CRM_Utils_Rule::cleanMoney( $v ));
+                            break;
+                        case 'Int':
+                            $optionValue->value  = intval( $v );
+                            break;
+                        case 'Float':
+                            $optionValue->value = floatval( $v );
+                            break;
+                        }
+                        
                         $optionValue->weight          =  $params['option_weight'][$k];
                         $optionValue->is_active       =  CRM_Utils_Array::value( $k, $params['option_status'], false );
                         $optionValue->save( );
@@ -189,7 +197,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 }
             }
         }
-
+        
         // check for orphan option groups
         if ( CRM_Utils_Array::value( 'option_group_id', $params ) ) {
             if ( CRM_Utils_Array::value( 'id', $params ) ) {
