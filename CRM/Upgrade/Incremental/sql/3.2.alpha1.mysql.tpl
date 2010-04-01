@@ -241,3 +241,7 @@ INSERT INTO civicrm_mailing_bounce_pattern
         (bounce_type_id, pattern)
         VALUES
     (@bounceTypeID, 'not connected');
+
+-- CRM-6045
+UPDATE civicrm_payment_processor_type 
+SET url_site_test_default = 'https://www.payjunctionlabs.com/quick_link' WHERE name = 'PayJunction';
