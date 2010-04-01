@@ -253,12 +253,12 @@ class CRM_Case_Form_Activity_OpenCase
         if( $isMultiClient ) {
             $client = explode( ',', $params['contact'] );
             foreach( $client as $key => $cliId ) {
+                if( $cliId == 0 ) {
+                    CRM_Core_Error::fatal( 'contact_id cannot be null' );
+                }
                 $contactParams = array('case_id'    => $params['case_id'],
                                        'contact_id' => $cliId
                                        );
-                if( $cliId = 0 ) {
-                    CRM_Core_Error::fatal( 'contact_id cannot be 0' );
-                }
                 CRM_Case_BAO_Case::addCaseToContact( $contactParams );
             }
         } else {
