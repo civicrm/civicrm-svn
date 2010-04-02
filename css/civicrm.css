@@ -2168,8 +2168,10 @@ span.icon {
 	display:inline-block;
 	}
 
-.button .icon {background-image:url("../i/icons/jquery-ui-FFFFFF.png")}
-.button:hover .icon {background-image:url("../i/icons/jquery-ui-2786C2.png")}
+.button .icon,
+.crm-button .icon {background-image:url("../i/icons/jquery-ui-FFFFFF.png");}
+.button:hover .icon,
+.crm-button:hover .icon {background-image:url("../i/icons/jquery-ui-2786C2.png");}
 
 .button:hover {
     color:#333;
