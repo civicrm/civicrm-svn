@@ -288,9 +288,15 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             }
         }
 
-        // clear acl cache if any
-        require_once 'CRM/ACL/BAO/Cache.php';
-        CRM_ACL_BAO_Cache::resetCache( );
+        if ( ! array_key_exists('doNotResetCache', $params) ) {
+            // Note: doNotResetCache flag is currently set by import contact process, since resetting and 
+            // rebuilding cache could be expensive (for many contacts). We might come out with better 
+            // approach in future. 
+
+            // clear acl cache if any.
+            require_once 'CRM/ACL/BAO/Cache.php';
+            CRM_ACL_BAO_Cache::resetCache( );
+        }
 
         //add location Block data
         $blocks = CRM_Core_BAO_Location::create( $params, $fixAddress );
@@ -1447,7 +1453,6 @@ AND    civicrm_contact.id = %1";
                         }
                     }
                     $data[$key] = $value;
-                  
                 }
             }
         }
