@@ -32,7 +32,7 @@
 {if NOT ($action eq 1 or $action eq 2) }
     <table class="form-layout-compressed">
     <tr>
-        <td><a href="{$newPageURL}" class="button"><span>&raquo; {ts}New Contribution Page{/ts}</span></a></td>
+        <td><a href="{$newPageURL}" class="button"><span><div class="icon add-icon"></div>{ts}Add Contribution Page{/ts}</span></a></td>
         <td style="vertical-align: top"><a href="{crmURL p="civicrm/admin/pcp" q="reset=1"}">&raquo; {ts}Manage Personal Campaign Pages{/ts}</a></td>
     </tr>
     </table>

@@ -69,7 +69,7 @@
     {/strip}
     {if $action ne 1 and $action ne 2}
 	    <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1"}" id="newManagePremium" class="button"><span>&raquo; {ts}New Premium{/ts}</span></a>
+    	<a href="{crmURL q="action=add&reset=1"}" id="newManagePremium" class="button"><span><div class="icon add-icon"></div>{ts}Add Premium{/ts}</span></a>
         </div>
     {/if}
 </div>

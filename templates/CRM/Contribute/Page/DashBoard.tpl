@@ -71,7 +71,7 @@
      <a href="{$configPagesURL}" class="button"><span>&raquo; {ts}Manage Contribution Pages{/ts}
        </span></a>
     </td>
-    <td><a href="{$newPageURL}" class="button"><span>&raquo; {ts}New Contribution Page{/ts}
+    <td><a href="{$newPageURL}" class="button"><span><div class="icon add-icon"></div>{ts}Add Contribution Page{/ts}
         </span></a>
     </td>
 </tr>

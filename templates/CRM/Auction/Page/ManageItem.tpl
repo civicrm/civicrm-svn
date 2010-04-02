@@ -23,10 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<a accesskey="N" href="{$newItemURL}" id="newAddItem" class="button"><span>&raquo; {ts}New Item{/ts}</span></a>
-<a accesskey="P" href="{$previewItemURL}" id="previewItem" class="button"><span>&raquo; {ts}Preview Items{/ts}</span></a>
-<br/><br/>
-
+<div class="crm-suubmit-buttons">
+<a accesskey="N" href="{$newItemURL}" id="newAddItem" class="button"><span><div class="icon add-icon"></div>{ts}Add Item{/ts}</span></a>
+<a accesskey="P" href="{$previewItemURL}" id="previewItem" class="button"><span><div class="icon preview-icon"></div>{ts}Preview Items{/ts}</span></a>
+</div>
 {include file="CRM/Auction/Form/SearchItem.tpl"}
 
 {if $rows}

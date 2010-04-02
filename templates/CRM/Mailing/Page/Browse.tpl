@@ -30,7 +30,7 @@
 </fieldset>
 {/if}
 <div class="action-link">
-    <a accesskey="N" href="{crmURL p='civicrm/mailing/send' q='reset=1'}" class="button"><span>&raquo; {ts}New Mailing{/ts}</span></a><br/><br/>
+    <a accesskey="N" href="{crmURL p='civicrm/mailing/send' q='reset=1'}" class="button"><span><div class="icon email-icon"></div>{ts}New Mailing{/ts}</span></a><br/><br/>
 </div>
 {include file="CRM/Mailing/Form/Search.tpl"}
 
@@ -71,7 +71,7 @@
 
     {include file="CRM/common/pager.tpl" location="bottom"}
     <div class="action-link">
-        <a accesskey="N" href="{crmURL p='civicrm/mailing/send' q='reset=1'}" class="button"><span>&raquo; {ts}New Mailing{/ts}</span></a><br/>
+        <a accesskey="N" href="{crmURL p='civicrm/mailing/send' q='reset=1'}" class="button"><span><div class="icon email-icon"></div>{ts}New Mailing{/ts}</span></a><br/>
     </div>
 
 {* No mailings to list. Check isSearch flag to see if we're in a search or not. *}

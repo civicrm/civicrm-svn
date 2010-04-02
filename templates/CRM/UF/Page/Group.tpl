@@ -86,7 +86,7 @@
         
         {if NOT ($action eq 1 or $action eq 2)}
         <div class="action-link">
-        <a href="{crmURL p='civicrm/admin/uf/group' q="action=add&reset=1"}" id="newCiviCRMProfile" class="button"><span>&raquo; {ts}New CiviCRM Profile{/ts}</span></a>
+        <a href="{crmURL p='civicrm/admin/uf/group' q="action=add&reset=1"}" id="newCiviCRMProfile" class="button"><span><div class="icon add-icon"></div>{ts}Add CiviCRM Profile{/ts}</span></a>
         </div>
         {/if}
          {/strip}

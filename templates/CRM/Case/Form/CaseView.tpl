@@ -797,22 +797,23 @@ cj(document).ready(function(){
         {
             url: dataUrl,
             dataType: 'json',
+            resizable: false,
             colModel : [
 
-            {display: 'Date',               name : 'display_date',  width : 124,  sortable : true, align: 'left'},
+            {display: 'Date',               name : 'display_date',  width : 100,  sortable : true, align: 'left'},
             {display: 'Subject',            name : 'subject',       width : 105,  sortable : true, align: 'left'},
             {display: 'Type',               name : 'type',          width : 100,  sortable : true, align: 'left'},
 	        {display: 'With',               name : 'with_contacts', width : 100,  sortable : false,align: 'left'},
             {display: 'Reporter / Assignee',name : 'reporter',      width : 100,  sortable : true, align: 'left'},
             {display: 'Status',             name : 'status',        width : 65,   sortable : true, align: 'left'},
-            {display: '',                   name : 'links',         width : 70,  align: 'left'},
+            {display: '',                   name : 'links',         width : 110,  align: 'left'},
             {name : 'class', hide: true, width: 1}  // this col is use for applying css classes
             ],
             usepager: true,
             useRp: true,
             rp: 40,
+            width:810,
             showToggleBtn: false,
-            width: 680,
             height: 'auto',
             nowrap: false,
             onSuccess:setSelectorClass
@@ -899,7 +900,7 @@ function checkSelection( field ) {
 
 function setSelectorClass( ) {
     cj("#activities-selector td:last-child").each( function( ) {
-       cj(this).parent().attr( 'class', cj(this).text() );
+       cj(this).parent().addClass(cj(this).text() );
     });
 }
 function printCaseReport( ){

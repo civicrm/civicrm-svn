@@ -68,7 +68,7 @@
         {/strip}
         
         <div class="action-link">
-            <a href="{crmURL q="reset=1&action=add&gid=$gid"}" id="newCustomField" class="button"><span>&raquo; {ts}New Custom Field{/ts}</span></a>
+            <a href="{crmURL q="reset=1&action=add&gid=$gid"}" id="newCustomField" class="button"><span><div class="icon add-icon"></div>{ts}Add Custom Field{/ts}</span></a>
         </div>
      </div>
 
