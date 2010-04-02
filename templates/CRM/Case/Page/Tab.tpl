@@ -35,18 +35,19 @@
         {include file="CRM/Case/Form/CaseView.tpl"}
 
     {else}
+    <div class="crm-block crm-content-block">
     <div class="view-content">
     <div id="help">
          {ts 1=$displayName}This page lists all case records for %1.{/ts}
          {if $permission EQ 'edit' and 
              call_user_func(array('CRM_Core_Permission','check'), 'access all cases and activities')}
-             {ts 1=$newCaseURL}Click <a href='%1'>New Case</a> to add a case record for this contact.{/ts}{/if}
+             {ts 1=$newCaseURL}Click <a href='%1'>Add Case</a> to add a case record for this contact.{/ts}{/if}
     </div>
 
     {if $action eq 16 and $permission EQ 'edit' and 
         call_user_func(array('CRM_Core_Permission','check'), 'access all cases and activities')}
         <div class="action-link">
-        <a accesskey="N" href="{$newCaseURL}" class="button"><span>&raquo; {ts}New Case{/ts}</span></a>
+        <a accesskey="N" href="{$newCaseURL}" class="button"><span><div class="icon add-icon"></div> {ts}Add Case{/ts}</span></a>
         </div>
         <br /><br />
     {/if}
@@ -64,6 +65,7 @@
            </dl>
       </div>
     {/if}
+    </div>
     </div>
     {/if}
 {/if}

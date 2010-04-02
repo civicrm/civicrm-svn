@@ -24,21 +24,18 @@
  +--------------------------------------------------------------------+
 *}
 {* CiviCase DashBoard (launch page) *}
+
+<div class="crm-block crm-content-block">
 {if $notConfigured} {* Case types not present. Component is not configured for use. *}
     {include file="CRM/Case/Page/ConfigureError.tpl"}
 {else}
 
 {capture assign=newCaseURL}{crmURL p="civicrm/contact/view/case" q="action=add&context=standalone&reset=1"}{/capture}
 
+
+
 <div class="float-right">
   <table class="form-layout-compressed">
-   {if $newClient}	
-    <tr>
-      <td>
-        <a href="{$newCaseURL}" class="button"><span>&raquo; {ts}New Case{/ts}</span></a>
-      </td>
-    </tr>
-   {/if}
    {if $myCases}
     {* check for access all cases and activities *}
     {if call_user_func(array('CRM_Core_Permission','check'), 'access all cases and activities')}
@@ -62,6 +59,13 @@
    </tr>
   </table>
 </div>
+
+{if $newClient}	
+<div class="crm-submit-buttons">
+	<a href="{$newCaseURL}" class="button"><span><div class="icon add-icon"></div> {ts}Add Case{/ts}</span></a>
+</div>
+{/if}
+
 
 <h3>{ts}Summary of Case Involvement{/ts}</h3>
 <table class="report">
@@ -90,7 +94,7 @@
 {capture assign=findCasesURL}<a href="{crmURL p="civicrm/case/search" q="reset=1"}">{ts}Find Cases{/ts}</a>{/capture}
 
 <div class="spacer"></div>
-    <h2>{if $myCases}{ts}My Cases With Upcoming Activities{/ts}{else}{ts}All Cases With Upcoming Activities{/ts}{/if}</h2>
+    <h3>{if $myCases}{ts}My Cases With Upcoming Activities{/ts}{else}{ts}All Cases With Upcoming Activities{/ts}{/if}</h3>
     {if $upcomingCases}
     <div class="form-item">
         {include file="CRM/Case/Page/DashboardSelector.tpl" context="dashboard" list="upcoming" rows=$upcomingCases}
@@ -102,7 +106,7 @@
     {/if}
 
 <div class="spacer"></div>
-    <h2>{if $myCases}{ts}My Cases With Recently Performed Activities{/ts}{else}{ts}All Cases With Recently Performed Activities{/ts}{/if}</h2>
+    <h3>{if $myCases}{ts}My Cases With Recently Performed Activities{/ts}{else}{ts}All Cases With Recently Performed Activities{/ts}{/if}</h3>
     {if $recentCases}
     <div class="form-item">
         {include file="CRM/Case/Page/DashboardSelector.tpl" context="dashboard" list="recent" rows=$recentCases}
@@ -119,3 +123,4 @@
         <div id="activity-content"></div>
     </div>
 {/if}
+</div>

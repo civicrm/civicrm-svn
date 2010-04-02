@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* View Case Activities *} {* Uses inline styles since we have not figured out yet how to include our normal .css files. *}
+<div class="crm-block crm-content-block">
 {if $revs}
   <strong>{$subject}</strong> ({ts}all revisions{/ts})<br />
   {strip}
@@ -100,3 +101,4 @@ function listRevisions( activityId ) {
 }
 </script>
 {/literal}
+</div>

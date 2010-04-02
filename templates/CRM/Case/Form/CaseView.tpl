@@ -26,6 +26,7 @@
 {* CiviCase -  view case screen*}
 
 {* here we are showing related cases w/ jquery dialog *}
+<div class="crm-block crm-form-block">
 {if $showRelatedCases} 
     <table class="report">
       <tr class="columnheader">
@@ -44,9 +45,7 @@
    </table>
 
 {else}
-
-<div class="form-item">
-<fieldset><legend>{ts}Case Summary{/ts}</legend>
+<h3>{ts}Case Summary{/ts}</h3>
     <table class="report">
 	{if $multiClient}
 	<tr>
@@ -55,7 +54,9 @@
 		{foreach from=$caseRoles.client item=client name=clients}
 		  <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
         {/foreach}
-		<img src="{$config->resourceBase}i/edit.png" title="{ts}add new client to the case{/ts}" onclick="addClient( );">
+		<a href="#" title="{ts}add new client to the case{/ts}" onclick="addClient( );return false;">
+			<span class="icon edit-icon"></span>
+		</a>
         </td>
 	</tr>
 	{/if}
@@ -82,13 +83,13 @@
             </td>
 	    {/if}
         <td>
-            <label>{ts}Case Type{/ts}:</label>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><img src="{$config->resourceBase}i/edit.png" border="0"></a>
+            <label>{ts}Case Type{/ts}:</label>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
         <td>
-            <label>{ts}Status{/ts}:</label>&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title="Change case status (creates activity record)"><img src="{$config->resourceBase}i/edit.png" border="0"></a>
+            <label>{ts}Status{/ts}:</label>&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title="Change case status (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
         <td>
-            <label>{ts}Start Date{/ts}:</label>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="Change case start date (creates activity record)"><img src="{$config->resourceBase}i/edit.png" border="0"></a>
+            <label>{ts}Start Date{/ts}:</label>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="Change case start date (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
         <td>
             <label>{ts}Case ID{/ts}:</label>&nbsp;{$caseID}
@@ -107,7 +108,7 @@
             <td>{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>
 	    {if $hasAccessToAllCases}	
                 <td>
-                    <br /><input type="button"  value="Print Case Report" name="case_report_all" onclick="printCaseReport( );"/>
+                   <span class="crm-button"><input type="button"  value="Print Case Report" name="case_report_all" onclick="printCaseReport( );"/></span>
                 </td> 
             </tr>
             <tr>
@@ -143,27 +144,25 @@
 	</tr>
 	{/if}
     </table>
-</fieldset>
 
 <div id="view-related-cases">
      <div id="related-cases-content"></div>
 </div>
 
-<div id="caseRole_show" class="section-hidden section-hidden-border">
-  <a href="#" onclick="hide('caseRole_show'); show('caseRole'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Case Roles{/ts}</label><br />
-</div>
-
-<div id="caseRole" class="section-shown">
- <fieldset>
-  <legend><a href="#" onclick="hide('caseRole'); show('caseRole_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Case Roles{/ts}</legend>
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+	{ts}Case Roles{/ts}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
     
     {if $hasAccessToAllCases}
-    <div>
-      <input type="button" class="form-submit default" onClick="Javascript:addRole()" value="{ts}Add new role{/ts}" />
+    <div class="crm-submit-buttons">
+      <a class="button" href="#" onClick="Javascript:addRole();return false;"><span><div class="icon add-icon"></div>{ts}Add new role{/ts}</span></a>
     </div>
     {/if}
 
-    <table class="report">
+    <table class="report-layout">
     	<tr class="columnheader">
     		<th>{ts}Case Role{/ts}</th>
     		<th>{ts}Name{/ts}</th>
@@ -177,9 +176,22 @@
             <td class="label">{$row.relation}</td>
             <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
            
-            <td id="phone_{$rowNumber}">{$row.phone}</td><td id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><img src="{$config->resourceBase}i/EnvelopeIn.gif" alt="{ts}compose and send an email{/ts}"/></a>&nbsp;{/if}</td>
+            <td id="phone_{$rowNumber}">{$row.phone}</td>
+            <td id="email_{$rowNumber}">{if $row.email}
+            <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}">
+            	<div class="icon email-icon" title="{ts}compose and send an email{/ts}"></div>
+           	</a>{/if}
+            </td>
           {if $relId neq 'client' and $hasAccessToAllCases}
-            <td id ="edit_{$rowNumber}"><img src="{$config->resourceBase}i/edit.png" title="edit case role" onclick="createRelationship( {$row.relation_type}, {$row.cid}, {$relId}, {$rowNumber} );">&nbsp;&nbsp;<a href="{crmURL p='civicrm/contact/view/rel' q="action=delete&reset=1&cid=`$contactID`&id=`$relId`&caseID=`$caseID`"}" onclick = "if (confirm('{ts}Are you sure you want to remove this person from their case role{/ts}?') ) this.href+='&confirmed=1'; else return false;"><img title="remove contact from case role" src="{$config->resourceBase}i/delete.png"/></a></td>
+            <td id ="edit_{$rowNumber}">
+            	<a href="#" title="edit case role" onclick="createRelationship( {$row.relation_type}, {$row.cid}, {$relId}, {$rowNumber} );return false;">
+            	<div class="icon edit-icon" ></div>
+            	</a>&nbsp;&nbsp;
+            	<a href="{crmURL p='civicrm/contact/view/rel' q="action=delete&reset=1&cid=`$contactID`&id=`$relId`&caseID=`$caseID`"}" onclick = "if (confirm('{ts}Are you sure you want to remove this person from their case role{/ts}?') ) this.href+='&confirmed=1'; else return false;">
+            	<div class="icon delete-icon" title="remove contact from case role"></div>
+            	</a>
+            	
+            	</td>
           {else}
            <td></td>
           {/if}
@@ -195,7 +207,10 @@
                <td id="phone_{$rowNumber}"></td>
                <td id="email_{$rowNumber}"></td>
 	       {if $hasAccessToAllCases}               
-	       <td id ="edit_{$rowNumber}"><img title="assign contact to case role" src="{$config->resourceBase}i/edit.png" onclick="createRelationship( {$relTypeID}, null, null, {$rowNumber} );"> 
+	       <td id ="edit_{$rowNumber}">
+	       <a href="#" title="edit case role" onclick="createRelationship( {$relTypeID}, null, null, {$rowNumber} );return false;">
+	       	<div class="icon edit-icon"></div>
+	       </a> 
 	       </td>
 	       {else}
 	       <td></td>
@@ -208,7 +223,7 @@
                {if not $smarty.foreach.clientsRoles.first}</tr>{/if}
                <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.sort_name}</a></td>
                <td id="phone_{$rowNumber}">{$client.phone}</td>
-               <td id="email_{$rowNumber}">{if $client.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$client.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><img src="{$config->resourceBase}i/EnvelopeIn.gif" alt="{ts}compose and send an email{/ts}"/></a>&nbsp;{/if}</td>
+               <td id="email_{$rowNumber}">{if $client.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$client.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
                <td></td>
            </tr>
            {/foreach}
@@ -216,8 +231,9 @@
 		{assign var=rowNumber value = `$rowNumber+1`}
         {/foreach}
     </table>    
- </fieldset>
-</div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+
 
 <div id="dialog">
      {ts}Begin typing last name of contact.{/ts}<br/>
@@ -234,9 +250,6 @@ cj( "#change_client_id").autocomplete( contactUrl, { width : 250, selectFirst : 
                             }).result( function(event, data, formatted) { cj( "#contact_id" ).val( data[1] ); selectedContact = data[0];
                             }).bind( 'click', function( ) { cj( "#contact_id" ).val(''); });
 
-
-show('caseRole_show');
-hide('caseRole');
 
 cj("#dialog").hide( );
 
@@ -410,37 +423,27 @@ function viewRelatedCases( mainCaseID, contactID ) {
     });
 }
 
-function showHideSearch( ) {
-   cj("#searchOptions").toggle( );
-   if ( cj("#searchFilter").hasClass('collapsed') ) {
-       cj("#searchFilter").removeClass('collapsed');
-       cj("#searchFilter").addClass('expanded');
-   } else {
-       cj("#searchFilter").removeClass('expanded');
-       cj("#searchFilter").addClass('collapsed');
-   }
-}
-
 cj(document).ready(function(){
-   cj("#searchOptions").hide( );
    cj("#view-activity").hide( );
 });
 </script>
 {/literal}
 
 {if $hasAccessToAllCases}
-<div id="otherRel_show" class="section-hidden section-hidden-border">
-  <a href="#" onclick="hide('otherRel_show'); show('otherRel'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Other Relationships{/ts}</label><br />
-</div>
-
-<div id="otherRel" class="section-shown">
- <fieldset>
-  <legend><a href="#" onclick="hide('otherRel'); show('otherRel_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Other Relationships{/ts}</legend>
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+	{ts}Other Relationships{/ts}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
   
   {if $clientRelationships}
-    <div><input type="button" class="form-submit default" onClick="window.location='{crmURL p='civicrm/contact/view/rel' q="action=add&reset=1&cid=`$contactId`&caseID=`$caseID`"}'" value="{ts}Add client relationship{/ts}" /></div>
+    <div class="crm-submit-buttons">
+    <a class="button" href="#" onClick="window.location='{crmURL p='civicrm/contact/view/rel' q="action=add&reset=1&cid=`$contactId`&caseID=`$caseID`"}'">
+    <span><div class="icon add-icon"></div>{ts}Add client relationship{/ts}</a></span>
+    </div>
 	
-    <table class="report">
+    <table class="report-layout">
     	<tr class="columnheader">
     		<th>{ts}Client Relationship{/ts}</th>
     		<th>{ts}Name{/ts}</th>
@@ -451,7 +454,7 @@ cj(document).ready(function(){
         <tr>
             <td class="label">{$row.relation}</td>
             <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
-            <td id="phone_{$rowNumber}">{$row.phone}</td><td id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><img src="{$config->resourceBase}i/EnvelopeIn.gif" alt="{ts}compose and send an email{/ts}"/></a>&nbsp;{/if}</td>
+            <td id="phone_{$rowNumber}">{$row.phone}</td><td id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
         </tr>
 		{assign var=rowNumber value = `$rowNumber+1`}
         {/foreach}
@@ -489,26 +492,15 @@ cj(document).ready(function(){
     </table>
   {elseif $globalGroupInfo.id}
     <div class="messages status">
-      <dl>
-      <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
-        <dd>          
+      <div class="icon inform-icon"></div>&nbsp;        
           {capture assign=crmURL}{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}{/capture}
           {ts 1=$crmURL 2=$globalGroupInfo.title}The group %2 has no members. You can <a href='%1'>add one</a>.{/ts}
-        </dd>
-      </dl>
     </div>
   {/if}
 
- </fieldset>
-</div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 
-{literal}
-<script type="text/javascript">
-   	
-   show('otherRel_show');
-   hide('otherRel');
- </script>
-{/literal}
 {/if} {* other relationship section ends *} 
 
 <div id="addRoleDialog">
@@ -617,20 +609,22 @@ curDate = (new Date()).getTime();
 {include file="CRM/Case/Form/ActivityToCase.tpl"}
 {* display tags *}
 {if $showTags }
-    <div id="casetags_show" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('casetags_show'); show('casetags'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Case Tags{/ts}</label><br />
-    </div>
-    <div id="casetags" class="section-shown">
-        <fieldset>
-            <legend><a href="#" onclick="hide('casetags'); show('casetags_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Case Tags{/ts}</legend>
-            {if $tags}
+
+<div id="casetags" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+  {ts}Case Tags{/ts}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+  {if $tags}
             {$tags}
             {else}
             {ts} There are no tags related to this case. {/ts}
-            {/if}
-        </fieldset>
-        <div><input type="button" class="form-submit" onClick="Javascript:addTags()" value={if $tags}"{ts}Change Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
-    </div> 
+  {/if}
+  <div><input type="button" class="form-submit" onClick="Javascript:addTags()" value={if $tags}"{ts}Change Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+
     <div id="manageTags">
         <div class="label">{$form.select_tag.label}</div>
         <div class="view-value"><div class="crm-select-container">{$form.select_tag.html}</div>
@@ -723,18 +717,26 @@ function addTags() {
 {*include activity view js file*}
 {include file="CRM/common/activityView.tpl"}
 
-<div id="activities_show" class="section-hidden section-hidden-border">
-  <a href="#" onclick="hide('activities_show'); show('activities'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Case Activities{/ts}</label><br />
+<div class="crm-accordion-wrapper crm-case_activities-accordion crm-accordion-open">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+{ts}Case Activities{/ts}
+ </div><!-- /.crm-accordion-header -->
+ <div id="activities" class="crm-accordion-body">
 
 <div id="view-activity">
      <div id="activity-content"></div>
 </div>
-</div>
 
-<div id="activities" class="section-shown">
-<fieldset>
-<legend><a href="#" onclick="hide('activities'); show('activities_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Case Activities{/ts}</legend>
-  <div><a id="searchFilter" href="javascript:showHideSearch( );" class="collapsed">{ts}Search Filters{/ts}</a></div>
+
+  <div>
+<div class="crm-accordion-wrapper crm-accordion-inner crm-search_filters-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+	{ts}Search Filters{/ts}</a>
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+
   <table class="no-border form-layout-compressed" id="searchOptions">
     <tr>
         <td colspan="2"><label for="reporter_id">{ts}Reporter/Role{/ts}</label><br />
@@ -743,7 +745,9 @@ function addTags() {
         <td><label for="status_id">{$form.status_id.label}</label><br />
             {$form.status_id.html}
         </td>
-	<td style="vertical-align: bottom;"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="search()"; /></td>
+	<td style="vertical-align: bottom;">
+		<span class="crm-button"><input class="form-submit default" name="_qf_Basic_refresh" value="Search" type="button" onclick="search()"; /></span>
+	</td>
     </tr>
     <tr>
         <td>
@@ -767,12 +771,14 @@ function addTags() {
 	</tr>
 	{/if}
   </table>
-  <br />
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 
   <table id="activities-selector"  class="nestedActivitySelector" style="display:none"></table>
 
-</fieldset>
-</div> <!-- End Activities div -->
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+
 
 
 {literal}
@@ -907,13 +913,18 @@ function printCaseReport( ){
 </script>
 {/literal}
 
+{$form.buttons.html}
+
 {literal}
 <script type="text/javascript">
-    hide('activities_show');
+cj(function() {
+   cj().crmaccordions(); 
+});
 </script>
 {/literal}
 
-{$form.buttons.html}
+
 </div>
 
 {/if} {* view related cases if end *}
+</div>

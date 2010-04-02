@@ -22,6 +22,7 @@
 
 #crm-container .crm-content-block {padding: 4px;}
 
+#crm-container .crm-content-block .crm-content-block {padding:0px;}
 /* TABLE STYLING */
 
 #crm-container table {
@@ -1489,29 +1490,16 @@ table.campaign td,
     margin: 0.5em 0.1em;
 }
 
-#crm-container table.caseSelector tr.columnheader th, #crm-container table.caseSelector tr.columnheader th a {
-    color: #FFFFFF;
-    background-color: #999999;
-    border-top-color: #666666;
-    border-bottom-color: #666666;
-}
 
 #crm-container table.caseSelector tr {
-    border-top: 1px solid #999999;
-    color: #333333;
-    border-left-color: #FFFFFF;
-    border-right-color: #FFFFFF;
-}
+    border-bottom: 1px solid #999999;
+	}
 
-#crm-container table.caseSelector tr a {
-    color: #0066CC;
-}
 
 #crm-container table.caseSelector td.status-urgent {   
-    color: #FF0000;
     font-weight: bold;
     text-transform: uppercase;
-}
+	}
 
 #crm-container table.caseSelector td {
     border-right: 0px;
@@ -1676,14 +1664,6 @@ table.campaign td,
     border:none;
 }
 
-#crm-container .panel li a:hover { 
-    background-color: #999999;
-    color: #FFFFFF;
-}
-
-
-
-
 /*Styles for Context menu */
 
 #crm-container .contextMenu {
@@ -1719,10 +1699,6 @@ table.campaign td,
     padding             : 0px 0px 1px 5px;
 }
 
-#crm-container .contextMenu li.hover a {
-    color            : #FFF;
-    background-color : #999999;
-}
 
 
 /*class for CMS user name check used in profile*/
@@ -2175,6 +2151,12 @@ div.grippie {
     background:transparent url("../i/icons/jquery-ui-52534D.png") no-repeat top right;
     float:left;
 }
+span.icon {
+	float:none;
+	display:inline-block;
+	}
+
+.button .icon {background-image:url("../i/icons/jquery-ui-FFFFFF.png")}
 .button:hover .icon {background-image:url("../i/icons/jquery-ui-2786C2.png")}
 
 .button:hover {
@@ -2214,7 +2196,7 @@ div.grippie {
 .check-icon { background-position: -66px -146px; }
 .refresh-icon { background-position:-65px -81px; }
 .settings-icon { background-position:-178px -114px; }
-
+.email-icon { background-position:-79px -98px; }
 
 #crm-container .geotag {
     padding: 2px 0 2px 20px !important;
@@ -2294,13 +2276,23 @@ div.grippie {
     color: #3e3e3e;
     margin-bottom: 0px
 }
-.crm-accordion-wrapper .crm-master-accordion-header .crm-accordion-pointer {
+	.crm-accordion-inner .crm-accordion-header {
+		background-color: transparent;
+    	font-size:12px;
+    	color: #3e3e3e;
+		}
+
+.crm-accordion-wrapper .crm-master-accordion-header .crm-accordion-pointer,
+.crm-accordion-inner .crm-accordion-header .crm-accordion-pointer {
     background-image:url("../i/icons/jquery-ui-3E3E3E.png")
 }
 
 .crm-accordion-hasContent .crm-accordion-header {
     font-weight:bold;
 }
+
+
+
 
 /* civicrm admin menu */
 
@@ -2360,11 +2352,7 @@ div.m ul#civicrm-menu {
     left:0px;
     height:0px;
     padding: 5px 0px 20px 2px;
-    border-radius      : 4px;	
-    -moz-border-radius : 4px;	
-    -webkit-border-radius : 4px;	
-    -khtml-border-radius : 4px;
-}
+	}
 
 div.m ul#civicrm-menu {
     z-index: 1;
@@ -2375,11 +2363,7 @@ div.m ul#civicrm-menu {
     padding: 5px 0px 20px 2px;
     padding-bottom:20px !important; /*moz bottom */
     padding-bottom:2px; /*ie bottom */
-    border-radius      : 4px;  
-    -moz-border-radius : 4px;  
-    -webkit-border-radius : 4px; 
-    -khtml-border-radius : 4px;
-}
+	}
 
 
 div#toolbar-box div.m{ 
@@ -2580,7 +2564,11 @@ div#civicrm-dashboard form {
 #crm-container a:link {
     color:#2786c2;
 }
-#crm-container .crm-content-block { background-color: #FFF; }
+#crm-container .crm-content-block { background-color: #FFF;border:1px solid green; }
+
+#crm-container .crm-form-block {border:1px solid blue;}
+
+#crm-container .crm-title { margin-bottom: 8px; }
 
 /* tables */
 #crm-container table {
@@ -2763,6 +2751,8 @@ tbody.scrollContent tr.alternateRow {
 #crm-container .crm-button:hover { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left -50px;		 }
 #crm-container a.button:hover span,
 #crm-container .crm-button:hover input { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -75px;	 }
+#crm-container a.button:active span,
+#crm-container .crm-button input {color:#FFF;}
 #crm-container .crm-button-type-cancel input { color:#e0e0d4; }
 
 /* warning labels and messages */
@@ -2782,6 +2772,7 @@ tbody.scrollContent tr.alternateRow {
 }
 
 /* rounded corners - we will call dd_roundies on all this */
+div.m ul#civicrm-menu,
 #crm-container #restmsg,
 #crm-container #help, 
 #crm-container .help,
@@ -2807,24 +2798,16 @@ div#crm-toolTip
     text-align: left;
 }
 
-.ac_results-inner {
-    background-color:#2f2f2e;
-}
+.ac_results-inner { background-color:#2f2f2e; }
 
 .ac_even{ background-color:transparent; }
 .ac_odd { background-color:transparent; }
 
-.ac_over { 
-    background-color:#666;
-    color:white;
-}
-
 .ac_results li { color:#DFDFDF; }
+.ac_results li strong { color: #FFF; font-weight: normal; }
 
-.ac_results li strong {
-    color: #FFF;
-    font-weight: normal;
-}
+.ac_results li.ac_over {  background-color:#F5F6F1; color:#3e3e3e; }
+.ac_results li.ac_over strong { color:#000; }	
 
 /* theming for panel and context menus */
 #crm-container td ul.panel li,
@@ -2836,6 +2819,12 @@ div#crm-toolTip
 #crm-container .contextMenu a,
 #crm-container .contextMenu a:link {
     color:#DFDFDF;
+}
+
+#crm-container .panel li a:hover, 
+#crm-container .contextMenu li a:hover {
+    color: #3e3e3e;
+    background-color: #F5F6F1;
 }
 
 /* Special styling for specific form buttons */

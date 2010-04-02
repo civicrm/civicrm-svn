@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="Crm-block crm-form-block">
 {* this template is used for adding/editing activities for a case. *}
 {if $cdType }
    {include file="CRM/Custom/Form/CustomData.tpl"}
@@ -212,12 +213,12 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            {if $searchRows} {* We've got case role rows to display for "Send Copy To" feature *}
             <tr>
                 <td colspan="2">
-                    <div id="sendcopy_show" class="section-hidden section-hidden-border">
-                        <a href="#" onclick="hide('sendcopy_show'); show('sendcopy'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Send a Copy{/ts}</label><br />
-                    </div>
-
-                    <div id="sendcopy" class="section-shown">
-                    <fieldset><legend><a href="#" onclick="hide('sendcopy'); show('sendcopy_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Send a Copy{/ts}</legend>
+                    <div id="sendcopy" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> {ts}Send a Copy{/ts}
+   </div><!-- /.crm-accordion-header -->
+ <div id="sendcopy" class="crm-accordion-body">
+                   
                     <div class="description">{ts}Email a complete copy of this activity record to other people involved with the case. Click the top left box to select all.{/ts}</div>
                    {strip}
                    <table>
@@ -237,19 +238,23 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                        {/foreach}
                    </table>
                    {/strip}
-                  </fieldset>
                   </div>
                 </td>
             </tr>
+       </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+
             {/if}
            <tr>
               <td colspan="2">
-                <div id="follow-up_show" class="section-hidden section-hidden-border">
-                 <a href="#" onclick="hide('follow-up_show'); show('follow-up'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="open section"/></a><label>{ts}Schedule Follow-up{/ts}</label><br />
-                </div>
+              
+<div id="follow-up" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+ {ts}Schedule Follow-up{/ts}
+  </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
 
-                <div id="follow-up" class="section-shown">
-                <fieldset><legend><a href="#" onclick="hide('follow-up'); show('follow-up_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="close section"/></a>{ts}Schedule Follow-up{/ts}</legend>
                     <table class="form-layout-compressed">
                         <tr><td class="label">{ts}Schedule Follow-up Activity{/ts}</td>
                             <td>{$form.followup_activity_type_id.html}&nbsp;{$form.interval.label}&nbsp;{$form.interval.html}&nbsp;{$form.interval_unit.html}</td>
@@ -259,8 +264,8 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                            <td>{$form.followup_activity_subject.html}</td>
                         </tr>
                     </table>
-                </fieldset>
-                </div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
               </td>
            </tr>
            <tr>
@@ -322,12 +327,12 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
     {if $action neq 8 and $action neq 32768} 
         <script type="text/javascript">
             {if $searchRows}
-                hide('sendcopy');
-                show('sendcopy_show');
+                cj('sendcopy').toggleClass('crm-accordion-open');
+                cj('sendcopy').toggleClass('crm-accordion-closed');            
             {/if}
 
-            hide('follow-up');
-            show('follow-up_show');
+            cj('follow-up').toggleClass('crm-accordion-open');
+            cj('follow-up').toggleClass('crm-accordion-closed');  
 
         </script>
     {/if}
@@ -385,3 +390,4 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 
 {/if} {* end of main if block*}
 </script>
+</div>
