@@ -26,12 +26,12 @@
 {if ! empty( $fields )}
 
     {if $groupId }
-        <div id="id_{$groupId}_show" class="section-hidden section-hidden-border">
-            <a href="#" onclick="hide('id_{$groupId}_show'); show('id_{$groupId}'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Edit Search Criteria{/ts}</label><br />
-        </div>
-
-        <div id="id_{$groupId}">
-            <fieldset><legend><a href="#" onclick="hide('id_{$groupId}'); show('id_{$groupId}_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Search Criteria{/ts}</legend>
+<div class="crm-accordion-wrapper crm-group-{$groupId}-accordion crm-accordion-closed">
+ <div class="crm-accordion-header crm-master-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+	{ts}Edit Search Criteria{/ts}
+ </div>
+ <div class="crm-accordion-body">
     {else}
         <div>
     {/if}
@@ -130,20 +130,22 @@
     
     <tr><td></td><td>{$form.buttons.html}</td></tr>
     </table>
-</div>
+
+
 
 {if $groupId}
+
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+
+{literal}
 <script type="text/javascript">
-    {if empty($rows) }
-	var showBlocks = new Array("id_{$groupId}");
-        var hideBlocks = new Array("id_{$groupId}_show");
-    {else}
-	var showBlocks = new Array("id_{$groupId}_show");
-        var hideBlocks = new Array("id_{$groupId}");
-    {/if}
-    {* hide and display the appropriate blocks as directed by the php code *}
-    on_load_init_blocks( showBlocks, hideBlocks );
+cj(function() {
+   cj().crmaccordions(); 
+});
 </script>
+{/literal}
+
 {/if}
 
 {elseif $statusMessage}

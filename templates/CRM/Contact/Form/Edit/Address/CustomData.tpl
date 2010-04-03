@@ -25,14 +25,16 @@
 *}
 
     {foreach from=$address_groupTree.$blockId item=cd_edit key=group_id}
-        <div id="{$cd_edit.name}_show_{$group_id}_{$blockId}" class="section-hidden section-hidden-border">
-            <a href="#" onclick="cj('#{$cd_edit.name}_show_{$group_id}_{$blockId}').hide(); cj('#{$cd_edit.name}_{$group_id}_{$blockId}').show(); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a>
-            <label>{$cd_edit.title}</label><br />
-        </div>
 
-        <div id="{$cd_edit.name}_{$group_id}_{$blockId}" class="form-item">
-	    <fieldset>
-	        <legend><a href="#" onclick="cj('#{$cd_edit.name}_{$group_id}_{$blockId}').hide(); cj('#{$cd_edit.name}_show_{$group_id}_{$blockId}').show(); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{$cd_edit.title}</legend>
+<div id="{$cd_edit.name}_{$group_id}_{$blockId}" class="form-item">
+<div class="crm-accordion-wrapper crm-accordion-inner crm-{$cd_edit.name}_{$group_id}_{$blockId}-accordion {if $cd_edit.collapse_display eq 0 }crm-accordion-open{else}crm-accordion-closed{/if}">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+{$cd_edit.title}
+
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+
                 {if $cd_edit.help_pre}
                     <div class="messages help">{$cd_edit.help_pre}</div>
                 {/if}
@@ -43,15 +45,9 @@
                 </table>
                 <div class="spacer"></div>
                 {if $cd_edit.help_post}<div class="messages help">{$cd_edit.help_post}</div>{/if}
-            </fieldset>
-        </div>
-        <div id="custom_group_{$group_id}_{$blockId}"></div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 
-        <script type="text/javascript">
-            {if $cd_edit.collapse_display eq 0 }
-                cj('#{$cd_edit.name}_show_{$group_id}_{$blockId}').hide(); cj('#{$cd_edit.name}_{$group_id}_{$blockId}').show();
-            {else}
-                cj('#{$cd_edit.name}_show_{$group_id}_{$blockId}').show(); cj('#{$cd_edit.name}_{$group_id}_{$blockId}').hide();
-            {/if}
-        </script>
+        <div id="custom_group_{$group_id}_{$blockId}"></div>
+</div>
     {/foreach}

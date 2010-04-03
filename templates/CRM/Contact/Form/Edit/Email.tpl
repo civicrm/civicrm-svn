@@ -42,15 +42,18 @@
  
 <tr id="Email_Block_{$blockId}">
     <td>{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
-        <br />
-        <span class="add-remove-link">
-            <a href="#" title="{ts}Signature{/ts}" onClick="showHideSignature( '{$blockId}' ); return false;">{ts}Signature{/ts}</a>
-        </span>
-        <div id="Email_Signature_{$blockId}" class="hiddenElement signature">
-            <br />
+    <div class="clear"></div>
+<div class="crm-accordion-wrapper crm-accordion-email-signature crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+{ts}Signature{/ts} 
+  </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
             {$form.email.$blockId.signature_html.label}<br />{$form.email.$blockId.signature_html.html}<br />
             {$form.email.$blockId.signature_text.label}<br />{$form.email.$blockId.signature_text.html}
-        </div>
+  </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+
     </td>
     <td align="center">{$form.email.$blockId.on_hold.html}</td>
     <td align="center" id="Email-Bulkmail-html">{$form.email.$blockId.is_bulkmail.html}</td>

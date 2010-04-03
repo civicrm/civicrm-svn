@@ -27,22 +27,29 @@
 {if ! empty( $columnHeaders ) || $isReset }
 
 {if $search}
-{include file="$searchTPL"}
+<div class="crm-block crm-form-block">
+	{include file="$searchTPL"}
+</div>
 {/if}
-
+<div class="crm-block crm-content-block">
 {* show profile listings criteria ($qill) *}
 {if $rows}
-    {include file="CRM/common/pager.tpl" location="top"}
-    {* Search criteria are passed to tpl in the $qill array *}
+    
     {if $qill}
-     <p>
+    <div class="crm-search-tasks">
      <div id="search-status">
         {ts}Displaying contacts where:{/ts}
         {include file="CRM/common/displaySearchCriteria.tpl"}
         {if $mapURL}<a href="{$mapURL}">&raquo; {ts}Map these contacts{/ts}</a>{/if}
     </div>
-    </p>
+    </div>
     {/if}
+    
+    
+    <div class="crm-search-results">
+    {include file="CRM/common/pager.tpl" location="top"}
+    {* Search criteria are passed to tpl in the $qill array *}
+    
 
     {strip}
     <table>
@@ -70,6 +77,7 @@
     </table>
     {/strip}
     {include file="CRM/common/pager.tpl" location="bottom"}
+    </div>
 {elseif ! $isReset}
     {include file="CRM/Contact/Form/Search/EmptyResults.tpl" context="Profile"}
 {/if}
@@ -83,3 +91,4 @@
       </dl>
     </div>
 {/if}
+</div>
