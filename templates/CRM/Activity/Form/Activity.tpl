@@ -178,10 +178,10 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
             {/if}
 
              <tr>
-                <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html}</td>
+                <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html|crmReplace:class:huge}</td>
              </tr>
              <tr>
-                <td class="label">{$form.location.label}</td><td class="view-value">{$form.location.html}</td>
+                <td class="label">{$form.location.label}</td><td class="view-value">{$form.location.html|crmReplace:class:huge}</td>
              </tr> 
              <tr>
                 <td class="label">{$form.activity_date_time.label}</td>
