@@ -36,6 +36,13 @@
 <fieldset>
     <table class="form-layout">
         <tr>
+          <td class="label">{$form.contactUndelete.label}</td>
+          <td>
+            {$form.contactUndelete.html}<br />
+            <p class="description">{ts}If enabled, deleted contacts will be moved to trash (instead of being destroyed). Users with the proper permission are able to search for the deleted contacts and restore them (or delete permanently).{/ts}</p>
+          </td>
+        </tr>
+        <tr>
             <td class="label">{$form.versionCheck.label}</td>
             <td>{$form.versionCheck.html}<br />
                 <p class="description">{ts}If enabled, CiviCRM automatically checks availablity of a newer version of the software. New version alerts will be displayed on the main CiviCRM Administration page.{/ts}</p>
