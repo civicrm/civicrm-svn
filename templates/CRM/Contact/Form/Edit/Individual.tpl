@@ -26,8 +26,9 @@
 {* tpl for building Individual related fields *}
 <script type="text/javascript">
 var cid=parseFloat("{$contactId}");//parseInt is octal by default
-var contactIndividual = "{crmURL p='civicrm/ajax/rest?fnName=civicrm/contact/search&json=1&contact_type=Individual&return[sort_name]=1&return[email]=1&rowCount=50'}";
+var contactIndividual = "{crmURL p='civicrm/ajax/rest?fnName=civicrm/contact/search&json=1&contact_type=Individual&return[display_name]&return[sort_name]=1&return[email]=1&rowCount=50'}";
 var viewIndividual = "{crmURL p='civicrm/contact/view?reset=1&cid='}";
+var editIndividual = "{crmURL p='contact/add?reset=1&action=update&cid='}";
 
 {literal}
 
@@ -48,16 +49,21 @@ var viewIndividual = "{crmURL p='civicrm/contact/view?reset=1&cid='}";
            if (data.is_error== 0) {
              return;
            }
-           var msg="<tr id='lastname_msg' class='error'><td colspan='4'>";
+           var msg="<tr id='lastname_msg'><td colspan='5'><div class='messages status'><div class='icon inform-icon'></div>";
            //$('#lastname_msg').remove();
            if (data.length ==1) {
-             var msg = msg + "We found a contact with a similar name. Click on the name to modify it if it is the person you wanted to create <ul>";  
+             msg = msg + "{/literal}{ts}There is a contact with a similar last name. If the person you were trying to add is listed below, click on their name to view or edit their record{/ts}{literal}";  
            } else {
-             var msg = msg + "We found "+ data.length+ " contacts with a similar name. Click on the name to modify it if it is the person you wanted to create:<ul>";           }
+             // ideally, should use a merge with data.length
+             msg = msg + "{/literal}{ts}There are contacts with a similar last name. If the person you were trying to add is listed below, click on their name to view or edit their record{/ts}{literal}";
+           }
+           msg = msg+ '<table class="matching-contacts-actions">';
            $.each(data, function(i,contact){
-             msg = msg + '<li><a href="/'+viewIndividual+contact.contact_id+'">'+ contact.sort_name +' ('+contact.email+')</a></li>';
+             msg = msg + '<tr><td><a href="'+viewIndividual+contact.contact_id+'">'+ contact.display_name +'</a></td><td>'+contact.email+'</td><td class="action-items"><a class="action-item action-item-first" href="'+viewIndividual+contact.contact_id+'">{/literal}{ts}View{/ts}{literal}</a><a class="action-item" href="'+editIndividual+contact.contact_id+'">{/literal}{ts}Edit{/ts}{literal}</a></td></tr>';
            });
-           $('#last_name').parent().parent().after(msg+'</ul><td></tr>');
+           msg = msg+ '</table>';
+           $('#last_name').parent().parent().after(msg+'</div><td></tr>');
+           $('#lastname_msg a').click(function(){global_formNavigate =true; return true;});// No confirmation dialog on click
          });
 	    });
   });
