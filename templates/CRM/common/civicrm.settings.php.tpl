@@ -187,6 +187,12 @@ define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
  define( 'CIVICRM_ACTIVITY_ASSIGNEE_MAIL' , 1 ); 
 
 /**
+ * Setting to disable ajax check if similar contacts exist when creating a new contact
+ *
+ */
+ define( 'CIVICRM_CONTACT_AJAX_CHECK_SIMILAR' , 1 ); 
+
+/**
  * 
  * Do not change anything below this line. Keep as is
  *
