@@ -671,8 +671,8 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
 
-        // FIXME: add conditional (per-site) trigger here as an alternative
-        if ($skipUndelete) {
+        $config =& CRM_Core_Config::singleton();
+        if ($skipUndelete or !$config->contactUndelete) {
             //delete billing address if exists.
             require_once 'CRM/Contribute/BAO/Contribution.php';
             CRM_Contribute_BAO_Contribution::deleteAddress( null, $id );
