@@ -1174,6 +1174,10 @@ class CRM_Contact_BAO_Query
 
         switch ( $values[0] ) {
             
+        case 'deleted_contacts':
+            $this->deletedContacts($values);
+            return;
+
         case 'contact_type':
             $this->contactType( $values );
             return;
@@ -2069,6 +2073,20 @@ class CRM_Contact_BAO_Query
         }
         
         return $from;
+    }
+
+    /**
+     * WHERE / QILL clause for deleted_contacts
+     *
+     * @return void
+     */
+    function deletedContacts($values)
+    {
+        list($_, $_, $value, $grouping, $_) = $values;
+        if ($value) {
+            // *prepend* to the relevant grouping as this is quite an important factor
+            array_unshift($this->_qill[$grouping], ts('Search in Trash'));
+        }
     }
 
     /**
