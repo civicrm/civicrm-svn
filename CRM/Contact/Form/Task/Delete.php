@@ -69,8 +69,11 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive',
                                             $this, false ); 
         
+        // sort out whether it’s a delete-to-trash, delete-into-oblivion or restore (and let the template know)
+        $config =& CRM_Core_Config::singleton();
         $this->_skipUndelete = CRM_Utils_Request::retrieve('skip_undelete', 'Boolean', $this);
         $this->_restore      = CRM_Utils_Request::retrieve('restore',       'Boolean', $this);
+        $this->assign('trash',   $config->contactUndelete and !$this->_skipUndelete);
         $this->assign('restore', $this->_restore);
 
         if ($this->_restore) CRM_Utils_System::setTitle(ts('Restore Contact'));
