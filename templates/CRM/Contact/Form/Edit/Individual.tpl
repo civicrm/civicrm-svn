@@ -29,7 +29,7 @@ var cid=parseFloat("{$contactId}");//parseInt is octal by default
 var contactIndividual = "{crmURL p='civicrm/ajax/rest?fnName=civicrm/contact/search&json=1&contact_type=Individual&return[display_name]&return[sort_name]=1&return[email]=1&rowCount=50'}";
 var viewIndividual = "{crmURL p='civicrm/contact/view?reset=1&cid='}";
 var editIndividual = "{crmURL p='contact/add?reset=1&action=update&cid='}";
-
+var checkSimilar =  {$checkSimilar};
 {literal}
 
   jQuery(function($) {
@@ -38,8 +38,8 @@ var editIndividual = "{crmURL p='contact/add?reset=1&action=update&cid='}";
         $('#contact_sub_type').parent().hide();
      }
 
-     if (!isNaN(cid))
-       return;//no dupe check if this is a modif, only on edit
+     if (!isNaN(cid) || ! checkSimilar)
+       return;//no dupe check if this is a modif or if checkSimilar is disabled (CIVICRM_CONTACT_AJAX_CHECK_SIMILAR in civicrm_setting)
 
 	     $('#last_name').blur(function () {
          $('#lastname_msg').remove();

@@ -113,6 +113,10 @@ class CRM_Contact_Form_Edit_Individual {
         $form->addElement('hidden', 'current_employer_id', '', array( 'id' => 'current_employer_id') );
         $form->addElement('text', 'contact_source', ts('Source'));
 
+        $checkSimilar = defined( 'CIVICRM_CONTACT_AJAX_CHECK_SIMILAR' ) ? CIVICRM_CONTACT_AJAX_CHECK_SIMILAR : true;
+        $form->assign('checkSimilar',$checkSimilar );
+ 
+
         //External Identifier Element
         $form->add('text', 'external_identifier', ts('External Id'), 
                    CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'external_identifier'), false);
