@@ -41,7 +41,7 @@
 {/if}
  
 <tr id="Email_Block_{$blockId}">
-    <td width="50%">{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
+    <td style="width: 50%;">{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
     <div class="clear"></div>
 <div class="crm-accordion-wrapper crm-accordion-email-signature crm-accordion_title-accordion crm-accordion-closed">
  <div class="crm-accordion-header">
