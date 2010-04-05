@@ -432,9 +432,9 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
             require_once 'CRM/Utils/OpenFlashChart.php';
             if ( $isMembershipType ) { 
                 $graphRows['value'] = $display;
-                $chartInfo          = array( 'legend' => 'MemberShip Summary',
-                                             'xname'  => 'Amount',
-                                             'yname'  => 'Year' );                
+                $chartInfo          = array( 'legend' => 'Membership Summary',
+                                             'xname'  => 'Join Date / Member Type',
+                                             'yname'  => 'Fees' );                
                 CRM_Utils_OpenFlashChart::reportChart( $graphRows, $this->_params['charts'], $interval, $chartInfo );
             } else {                
                 CRM_Utils_OpenFlashChart::chart( $graphRows, $this->_params['charts'], $this->_interval );
