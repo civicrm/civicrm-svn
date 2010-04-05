@@ -41,14 +41,14 @@
 {/if}
  
 <tr id="Email_Block_{$blockId}">
-    <td>{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
+    <td width="50%">{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
     <div class="clear"></div>
 <div class="crm-accordion-wrapper crm-accordion-email-signature crm-accordion_title-accordion crm-accordion-closed">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
 {ts}Signature{/ts} 
   </div><!-- /.crm-accordion-header -->
- <div class="crm-accordion-body">
+  <div id="signatureBlock{$blockId}" class="crm-accordion-body">
             {$form.email.$blockId.signature_html.label}<br />{$form.email.$blockId.signature_html.html}<br />
             {$form.email.$blockId.signature_text.label}<br />{$form.email.$blockId.signature_text.html}
   </div><!-- /.crm-accordion-body -->

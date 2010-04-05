@@ -75,11 +75,11 @@ class CRM_Contact_Form_Edit_Email
             $js = array( 'id' => "Email_".$blockId."_IsPrimary", 'onClick' => 'singleSelect( this.id );');
             $form->addElement( 'radio', "email[$blockId][is_primary]", '', '', '1', $js );
             
-            $form->add('textarea', "email[$blockId][signature_text]", ts('Signature Text'), 
+            $form->add('textarea', "email[$blockId][signature_text]", ts('Signature (Text)'), 
                        array( 'rows' => 2, 'cols' => 40 ) );
             
-            $form->addWysiwyg( "email[$blockId][signature_html]", ts('Signature HTML'), 
-                                           CRM_Core_DAO::getAttribute('CRM_Core_DAO_Email', 'email') );
+            $form->addWysiwyg( "email[$blockId][signature_html]", ts('Signature (HTML)'), 
+                                           array( 'rows' => 2, 'cols' => 40 ) );
         }
     }
 }
