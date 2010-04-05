@@ -80,6 +80,7 @@
 {if $notes}
 <div class="crm-results-block">
     {* show browse table for any action *}
+<h3>Notes</h3>
 <div id="notes">
     {strip}
     {include file="CRM/common/jsortable.tpl"}
