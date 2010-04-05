@@ -57,7 +57,7 @@
 
     {if $pageTitle}
 		<div class="crm-title">
-			<h1 class="title">{$pageTitle}</h1>
+			<h1 class="title">{if $isDeleted}<del>{/if}{$pageTitle}{if $isDeleted}</del>{/if}</h1>
 		</div>    
 	{/if}
   

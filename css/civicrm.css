@@ -2803,6 +2803,7 @@ tbody.scrollContent tr.alternateRow {
 #crm-container .crm-button-type-cancel input { color:#e0e0d4; }
 
 /* warning labels and messages */
+del,
 #crm-container .crm-is_deleted,
 #crm-container table.caseSelector td.status-urgent,
 #crm-container span.email-hold a:link, 

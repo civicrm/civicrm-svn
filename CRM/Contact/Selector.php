@@ -646,7 +646,7 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                         array(
                             'name'  => ts('View'),
                             'url'   => 'civicrm/contact/view',
-                            'qs'    => 'reset=1&cid=%%id%%&view_deleted=1',
+                            'qs'    => 'reset=1&cid=%%id%%',
                             'title' => ts('View Contact Details'),
                         ),
                         array(

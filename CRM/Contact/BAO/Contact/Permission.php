@@ -55,7 +55,8 @@ class CRM_Contact_BAO_Contact_Permission {
         $whereTables       = array( );
        
         # FIXME: push this somewhere below, to not give this permission so many rights
-        if (CRM_Core_Permission::check('access deleted contacts') and CRM_Utils_Request::retrieve('view_deleted', 'Boolean', $this)) {
+        $isDeleted = (bool) CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $id, 'is_deleted');
+        if (CRM_Core_Permission::check('access deleted contacts') and $isDeleted) {
             return true;
         }
 
