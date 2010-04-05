@@ -25,15 +25,15 @@
 */ 
 (function($){ $.fn.crmaccordions = function(){
 	if ($('.crm-accordion-processed').length == 0){
-	$('.crm-accordion-header').hover(
-		function() {$(this).addClass('crm-accordion-header-hover')},
-		function() {$(this).removeClass('crm-accordion-header-hover')}
-		);
-	$('.crm-accordion-header').click(function () {
+	$('.crm-accordion-header').live('mouseover',
+		function() {$(this).addClass('crm-accordion-header-hover')});
+	$('.crm-accordion-header').live('mouseout',	
+		function() {$(this).removeClass('crm-accordion-header-hover')});
+	$('.crm-accordion-header').live('click', function () {
 		$(this).parent().toggleClass('crm-accordion-open');
 		$(this).parent().toggleClass('crm-accordion-closed');
 		});
-	$('.crm-accordion-wrapper').addClass('crm-accordion-processed');
+	$('.crm-accordion-wrapper').addClass('crm-accordion-processed'); // only attached to accordions processed during first run
 	};
 };
 })(jQuery);
