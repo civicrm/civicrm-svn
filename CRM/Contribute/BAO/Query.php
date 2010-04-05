@@ -178,7 +178,7 @@ class CRM_Contribute_BAO_Query
         case 'contribution_date_high':
             // process to / from date
             $query->dateQueryBuilder( $values,
-                                      'civicrm_contribution', 'contribution_date', 'receive_date', 'Contribution Date' );
+                                      'civicrm_contribution', 'contribution_date', 'receive_date', 'Contribution Date', false );
             return;
 
         case 'contribution_amount':
