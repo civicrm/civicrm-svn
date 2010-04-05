@@ -2550,9 +2550,11 @@ div#civicrm-dashboard form {
 
 .ui-state-default, 
 .ui-widget-content .ui-state-default,
-.ui-widget-content  {
-    border:none;
+.ui-widget-content,
+.ui-widget-header  {
     color: #3e3e3e;
+    border:0px solid transparent;
+    border-color:none;
 }	
 
 #Tag .tree .collapsable .hit,
