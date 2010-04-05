@@ -39,7 +39,16 @@
     {ts 1=$docLink}Tags can be assigned to any contact record, and are a convenient way to find contacts. You can create as many tags as needed to organize and segment your records.{/ts} {$docLink}
 </div>
 
+ {if !($action eq 1 and $action eq 2)}
+        <div class="crm-submit-buttons">
+	    <div class="action-link">
+        <a href="{crmURL q="action=add&reset=1"}" id="newTag" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag{/ts}</span></a>
+        </div>
+        </div>
+{/if}
+
 {if $rows}
+<h3>Tags</h3>
 {include file="CRM/common/jsortable.tpl"}
 <div id="cat">
         {strip}
@@ -77,13 +86,7 @@
         </table>
         {/strip}
         
-        {if !($action eq 1 and $action eq 2)}
-        <div class="crm-submit-buttons">
-	    <div class="action-link">
-        <a href="{crmURL q="action=add&reset=1"}" id="newTag" class="button"><span>&raquo; {ts}New Tag{/ts}</span></a>
-        </div>
-        </div>
-        {/if}
+       
 </div>
 {else}
     <div class="messages status">

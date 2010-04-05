@@ -158,7 +158,7 @@ function initTagTree() {
     {if $permission EQ 'edit' AND $action eq 16}
         </fieldset>
         <div class="action-link unobstructive">
-          <a accesskey="N" href="{crmURL p='civicrm/contact/view/tag' q='action=update'}" class="button"><span>&raquo; {ts}Edit Tags{/ts}</span></a>
+          <a accesskey="N" href="{crmURL p='civicrm/contact/view/tag' q='action=update'}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Tags{/ts}</span></a>
         </div>
     {else}
        <div class="form-item unobstructive">{$form.buttons.html}</div>

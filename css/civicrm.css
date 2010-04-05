@@ -654,11 +654,6 @@ div.spacer,
     text-align: right;
 }
 
-#crm-container .action-link {
-    margin: 0 4px 0 0px;
-    font-weight: bold;
-}
-
 #crm-container .header-dark {
     margin: 0.5em 0em 0.5em;
     padding: 0.5em;
@@ -2091,7 +2086,8 @@ div.grippie {
 
 /* crm button style */
 
-#crm-container .crm-submit-buttons {
+#crm-container .crm-submit-buttons,
+#crm-container .action-link {
     height:25px;
     margin-bottom: 4px;
 }
