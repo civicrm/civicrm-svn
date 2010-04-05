@@ -20,7 +20,7 @@
     text-decoration: none;
 }
 
-#crm-container .crm-content-block {padding: 4px;}
+#crm-container .crm-content-block {padding: 4px 0px;}
 
 #crm-container .crm-content-block .crm-content-block {padding:0px;}
 /* TABLE STYLING */
@@ -81,15 +81,16 @@
 .sorting_asc {
     background-position:0px -27px;
 }
-a.sorting {
+#crm-container a.sorting {
     background-position:0px 1px;
-}
-a.sorting_desc {
+	}
+#crm-container a.sorting_desc {
     background-position:0px -64px;
-}
-a.sorting_asc {
+	}
+#crm-container a.sorting_asc {
     background-position:0px -31px;
-}
+	}
+
 
 /* Set background back to normal gray for form labels which use <th>. Temporary fix until we standardize form layout markup. */
 #crm-container table.form-layout-compressed tbody th.label { background-color: #F7F7F7; }
@@ -2639,11 +2640,17 @@ tbody.scrollContent tr.alternateRow {
 	color:#a7a7a7;
 	}
 
+#crm-container a.sorting { color:#A7A7A7; }
+#crm-container a.sorting_desc, 
+#crm-container a.sorting_asc { color:#000; }
+
 #crm-container tr a.sorting,
 #crm-container tr a.sorting_asc,
 #crm-container tr a.sorting_desc {
     color:#52534D;
 }
+
+
 
 /*contact summary page */
 .ui-tabs .ui-tabs-nav { background-color: #e6e6dc; }
