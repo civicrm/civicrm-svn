@@ -1,6 +1,42 @@
 <?php
 
+
 function civitest_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
+    // only interested in the profile object and create operation for now
+    if ( $objectName != 'Profile' || ( $op != 'create' && $op != 'edit' ) ) {
+        // send it to custom hook
+        return false;
+    }
+
+    // send an email to the user and cc administrator
+    // with a welcome message
+    civicrm_initialize( true );
+
+    require_once 'CRM/Utils/Mail.php';
+
+    $params         = array( );
+    $fromName       = 'My Org Administrator';
+    $fromEmail      = 'info@example.org';
+    $params['from'] = '"' . $fromName . '" <' . $fromEmail . '>';
+
+    $params['toEmail']     = $objectRef['email-1'];
+    $params['toName']      = "{$objectRef['first_name']} {$objectRef['last_name']}";
+    $params['subject']     = "Thank you for supporting My Org";
+    $params['cc']          = 'myorg@example.org';
+    $objectValues          = print_r( $objectRef, true );
+    $params['text'] = "
+Dear $toName:
+
+Thank you for your show of support. The details u signed up with are:
+
+$objectValues
+
+Regards
+
+My Org Team
+";
+
+    CRM_Utils_Mail::send( $params );
 }
 
 function civitest_civicrm_custom( $op, $groupID, $entityID, &$params ) {

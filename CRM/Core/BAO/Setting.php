@@ -267,7 +267,7 @@ class CRM_Core_BAO_Setting
     static function getConfigSettings( ) {
         $config =& CRM_Core_Config::singleton( );
 
-        $url = $dir = $siteName = null;
+        $url = $dir = $siteName = $siteRoot = null;
         if ( $config->userFramework == 'Joomla' ) {
             $url = preg_replace( '|administrator/components/com_civicrm/civicrm/|',
                                  '',
@@ -276,9 +276,12 @@ class CRM_Core_BAO_Setting
             // lets use imageUploadDir since we dont mess around with its values
             // in the config object, lets kep it a bit generic since folks
             // might have different values etc
-            $dir =  preg_replace( '|/media/civicrm/.*$|',
-                                  '/files/',
-                                  $config->imageUploadDir );
+            $dir = preg_replace( '|civicrm/templates_c/.*$|',
+                                 '',
+                                 $config->templateCompileDir );
+            $siteRoot =  preg_replace( '|/media/civicrm/.*$|',
+                                       '',
+                                       $config->imageUploadDir );
         } else {
             $url = preg_replace( '|sites/[\w\.\-\_]+/modules/civicrm/|',
                                  '',
@@ -298,23 +301,35 @@ class CRM_Core_BAO_Setting
                 $siteName = $matches[1];
                 if ( $siteName ) {
                     $siteName = "/sites/$siteName/";
+                    $siteNamePos = strpos($dir, $siteName);
+                    if ( $siteNamePos !== false ) {
+                        $siteRoot = substr($dir, 0, $siteNamePos);
+                    }
                 }
             }
         }
 
 
-        return array( $url, $dir, $siteName );
+        return array( $url, $dir, $siteName, $siteRoot );
     }
 
     static function getBestGuessSettings( ) {
         $config =& CRM_Core_Config::singleton( );
 
         $url = $config->userFrameworkBaseURL;
+        $siteName = $siteRoot = null;
+        if ( $config->userFramework == 'Joomla' ) {
+            $url = preg_replace( '|/administrator|',
+                                 '',
+                                 $config->userFrameworkBaseURL );
+            $siteRoot =  preg_replace( '|/media/civicrm/.*$|',
+                                       '',
+                                       $config->imageUploadDir );
+        }
         $dir = preg_replace( '|civicrm/templates_c/.*$|',
                              '',
                              $config->templateCompileDir );
 
-        $siteName = null;
         if ( $config->userFramework != 'Joomla' ) {
             $matches = array( );
             if ( preg_match( '|/sites/([\w\.\-\_]+)/|',
@@ -323,29 +338,37 @@ class CRM_Core_BAO_Setting
                 $siteName = $matches[1];
                 if ( $siteName ) {
                     $siteName = "/sites/$siteName/";
+                    $siteNamePos = strpos($dir, $siteName);
+                    if ( $siteNamePos !== false ) {
+                        $siteRoot = substr($dir, 0, $siteNamePos);
+                    }
                 }
             }
         }
         
-        return array( $url, $dir, $siteName );
+        return array( $url, $dir, $siteName, $siteRoot );
     }
 
-    static function doSiteMove( ) {
+    static function doSiteMove( $defaultValues = array( ) ) {
         $moveStatus = ts('Beginning site move process...') . '<br />';
         // get the current and guessed values
-        list( $oldURL, $oldDir, $oldSiteName ) = self::getConfigSettings( );
-        list( $newURL, $newDir, $newSiteName ) = self::getBestGuessSettings( );
+        list( $oldURL, $oldDir, $oldSiteName, $oldSiteRoot ) = self::getConfigSettings( );
+        list( $newURL, $newDir, $newSiteName, $newSiteRoot ) = self::getBestGuessSettings( );
     
         require_once 'CRM/Utils/Request.php';
 
         // retrieve these values from the argument list 
-        $variables = array( 'URL', 'Dir', 'SiteName', 'Val_1', 'Val_2', 'Val_3' );
+        $variables = array( 'URL', 'Dir', 'SiteName', 'SiteRoot', 'Val_1', 'Val_2', 'Val_3' );
         $states     = array( 'old', 'new' );
         foreach ( $variables as $varSuffix ) {
             foreach ( $states as $state ) {
                 $var = "{$state}{$varSuffix}";
                 if ( ! isset( $$var ) ) {
-                    $$var = null;
+                    if ( isset( $defaultValues[$var] ) ) {
+                        $$var = $defaultValues[$var];
+                    } else {
+                        $$var = null;
+                    }
                 }
                 $$var = CRM_Utils_Request::retrieve( $var,
                                                      'String',
@@ -360,7 +383,10 @@ class CRM_Core_BAO_Setting
         foreach ( $variables as $varSuffix ) {
             $oldVar = "old{$varSuffix}";
             $newVar = "new{$varSuffix}";
-            if ( $$oldVar && $$newVar ) {
+            //skip it if either is empty or both are exactly the same
+            if ( $$oldVar &&
+                 $$newVar &&
+                 $$oldVar != $$newVar ) {
                 $from[]  = $$oldVar;
                 $to[]    = $$newVar;
             }

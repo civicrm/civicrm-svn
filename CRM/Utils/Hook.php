@@ -429,8 +429,12 @@ class CRM_Utils_Hook {
             // include external file
             $included = true;
 
-            // try to include civicrmHooks, suppress error messages if any
-            @include_once( "civicrmHooks.php" );
+            $config =& CRM_Core_Config::singleton( );
+            if ( !empty($config->customPHPPathDir) && 
+                 file_exists( "{$config->customPHPPathDir}/civicrmHooks.php" ) ) {
+                @include_once( "civicrmHooks.php" );
+            }
+
             if ( ! function_exists( $fnName ) ) {
                 return;
             }

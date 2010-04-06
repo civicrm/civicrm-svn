@@ -215,10 +215,8 @@ class CRM_Core_I18n
      */
     function localizeArray(&$array)
     {
-        if ($this->_phpgettext) {
-            foreach ($array as $key => $value) {
-                if ($value) $array[$key] = $this->_phpgettext->translate($value);
-            }
+        foreach ($array as $key => $value) {
+            if ($value) $array[$key] = ts($value);
         }
     }
 
@@ -230,14 +228,12 @@ class CRM_Core_I18n
      */
     function localizeTitles(&$array)
     {
-        if ($this->_phpgettext) {
-            foreach ($array as $key => $value) {
-                if (is_array($value)) {
-                    $this->localizeTitles($value);
-                    $array[$key] = $value;
-                } elseif ((string ) $key == 'title') {
-                    $array[$key] = $this->_phpgettext->translate($value);
-                }
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $this->localizeTitles($value);
+                $array[$key] = $value;
+            } elseif ((string ) $key == 'title') {
+                $array[$key] = ts($value);
             }
         }
     }

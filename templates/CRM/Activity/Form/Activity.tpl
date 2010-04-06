@@ -331,6 +331,8 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
     </script>
     {/literal}
 {/if}
+{if ! $form.case_select}
 {include file="CRM/common/formNavigate.tpl"}
+{/if}
 {/if} {* end of snippet if*}	
 </div>

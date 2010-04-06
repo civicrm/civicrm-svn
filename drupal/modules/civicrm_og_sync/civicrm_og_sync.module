@@ -179,14 +179,14 @@ function civicrm_og_sync_civicrm_post( $op, $objectName, $objectID, $objectRef )
             if ( ! _civicrm_og_sync_set_context( 'civicrm' ) ) {
                 return;
             }
-            CRM_Bridge_OG_Drupal::groupContact( $objectID, $objectRef, 'add' );
+            CRM_Bridge_OG_CiviCRM::groupContact( $objectID, $objectRef, 'add' );
             break;
 
         case 'delete':
             if ( ! _civicrm_og_sync_set_context( 'civicrm' ) ) {
                 return;
             }
-            CRM_Bridge_OG_Drupal::groupContact( $objectID, $objectRef, 'delete' );
+            CRM_Bridge_OG_CiviCRM::groupContact( $objectID, $objectRef, 'delete' );
             break;
 
         default:

@@ -103,7 +103,7 @@ class CRM_Contact_Task {
                                                   'result' => false ),
                                   6     => array( 'title'  => ts( 'Send Email to Contacts'        ),
                                                   'class'  => 'CRM_Contact_Form_Task_Email',
-                                                  'result' => false ),
+                                                  'result' => true ),
                                   7     => array( 'title'  => ts( 'Send SMS to Contacts'          ),
                                                   'class'  => 'CRM_Contact_Form_Task_SMS',
                                                   'result' => true ),

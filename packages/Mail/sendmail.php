@@ -123,6 +123,11 @@ class Mail_sendmail extends Mail {
         }
         list($from, $text_headers) = $headerElements;
 
+        // use Return-Path for SMTP envelope’s FROM address (if set), CRM-5946
+        if (!empty($headers['Return-Path'])) {
+            $from = $headers['Return-Path'];
+        }
+
         if (!isset($from)) {
             return PEAR::raiseError('No from address given.');
         } elseif (strpos($from, ' ') !== false ||

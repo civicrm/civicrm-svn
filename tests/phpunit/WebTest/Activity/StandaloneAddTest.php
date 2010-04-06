@@ -58,7 +58,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
       // class attributes.
-      $this->open("/drupal/");
+      $this->open( $this->sboxPath );
 
       // Logging in. Remember to wait for page to load. In most cases,
       // you can rely on 30000 as the value that allows your test to pass, however,
@@ -72,20 +72,20 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Adding Anderson, Anthony and Summerson, Samuel for testStandaloneActivityAdd test
       // We're using Quick Add block on the main page for this.
-      $this->open("/drupal/civicrm/dashboard?reset=1");
+      $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
       $this->type("qa_first_name", "Anthony");
       $this->type("qa_last_name", "Anderson");
       $this->click("_qf_Contact_next");
       $this->waitForPageToLoad("30000");
 
-      $this->open("/drupal/civicrm/dashboard?reset=1");
+      $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
       $this->type("qa_first_name", "Samuel");
       $this->type("qa_last_name", "Summerson");
       $this->click("_qf_Contact_next");
       $this->waitForPageToLoad("30000");
 
       // Go directly to the URL of the screen that you wiwll be testing.
-      $this->open("/drupal/civicrm/activity&reset=1&action=add&context=standalone");
+      $this->open($this->sboxPath . "civicrm/activity&reset=1&action=add&context=standalone");
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.

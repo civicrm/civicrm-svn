@@ -71,6 +71,13 @@
         {ts 1=$downloadDuplicateRecordsUrl}You can <a href='%1'>Download Duplicates</a>. You may then review these records to determine if they are actually duplicates, and correct the email address for those that are not.{/ts}
         </p>
     {/if}
+
+    {if $unparsedAddressCount}
+        <p class="error">{$unparsedStreetAddressString}</p>
+        <p class="error">
+        {ts 1=$downloadAddressRecordsUrl}You can <a href='%1'>Download Street Address Records </a>. You may then edit those contact records and update the street address accordingly.{/ts}
+        </p>
+    {/if}
  </div>
     
  {* Summary of Import Results (record counts) *}

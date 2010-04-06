@@ -106,7 +106,7 @@ class CRM_Core_BAO_CMSUser
             $status .= ' ' . ts('Found one matching contact record.', array('count' => $contactMatching, 'plural' => 'Found %count matching contact records.'));
         }
         $status .= ' ' . ts('Created one new contact record.', array('count' => $contactCreated, 'plural' => 'Created %count new contact records.'));
-        CRM_Core_Session::setStatus($status);
+        CRM_Core_Session::setStatus($status, true);
         CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin', 'reset=1' ) );
     }
 

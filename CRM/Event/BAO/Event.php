@@ -312,7 +312,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
      * @static
      * @return array Array of event summary values
      */
-    static function getEventSummary( $admin = false )
+    static function getEventSummary( )
     {
         $eventSummary = $eventIds = array( );
         require_once 'CRM/Core/Config.php';
@@ -413,7 +413,7 @@ LIMIT      0, 10
                         }
                         
                         $eventSummary['events'][$dao->id][$property] = $set;
-                        if ( $admin || in_array( $dao->id, $permissions[CRM_Core_Permission::EDIT] ) ) {
+                        if ( in_array( $dao->id, $permissions[CRM_Core_Permission::EDIT] ) ) {
                             $eventSummary['events'][$dao->id]['configure'] =
                                 CRM_Utils_System::url( "civicrm/admin/event", "action=update&id=$dao->id&reset=1" );
                         }

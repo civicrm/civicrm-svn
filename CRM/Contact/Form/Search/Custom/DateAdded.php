@@ -44,6 +44,9 @@ class CRM_Contact_Form_Search_Custom_DateAdded
 
     function __construct( &$formValues ) {
         parent::__construct( $formValues );
+        
+        $this->_includeGroups = CRM_Utils_Array::value( 'includeGroups', $formValues, array( ) );
+        $this->_excludeGroups = CRM_Utils_Array::value( 'excludeGroups', $formValues, array( ) );
 
         $this->_columns = array( ts('Contact Id')   => 'contact_id'  ,
                                  ts('Contact Type') => 'contact_type',
@@ -97,9 +100,9 @@ class CRM_Contact_Form_Search_Custom_DateAdded
     function all( $offset = 0, $rowcount = 0, $sort = null,
                   $includeContactIDs = false ) {
                       
-        $this->_includeGroups   = CRM_Utils_Array::value( 'includeGroups', $this->_formValues );
+        $this->_includeGroups = CRM_Utils_Array::value( 'includeGroups', $this->_formValues, array( ) );
 
-        $this->_excludeGroups   = CRM_Utils_Array::value( 'excludeGroups', $this->_formValues );
+        $this->_excludeGroups = CRM_Utils_Array::value( 'excludeGroups', $this->_formValues, array( ) );
         
         $this->_allSearch = false; 
         $this->_groups    = false;
@@ -362,12 +365,12 @@ class CRM_Contact_Form_Search_Custom_DateAdded
     function __destruct( ) {
         //drop the temp. tables if they exist
         if ( !empty ( $this->_includeGroups ) ) {
-            $sql = "DROP TEMPORARY TABLE Ig_{$this->_tableName}";
+            $sql = "DROP TEMPORARY TABLE IF EXISTS Ig_{$this->_tableName}";
             CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray ) ;
         }
         
         if ( !empty( $this->_excludeGroups ) ) {
-            $sql = "DROP TEMPORARY TABLE Xg_{$this->_tableName}";
+            $sql = "DROP TEMPORARY TABLE IF EXISTS  Xg_{$this->_tableName}";
             CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray ) ;
         }
     }

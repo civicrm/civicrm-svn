@@ -293,11 +293,12 @@ class CRM_Profile_Form extends CRM_Core_Form
             }
             
             $profileType = CRM_Core_BAO_UFField::getProfileType( $this->_gid );
+           
             
             if ( $this->_id ) {
                 list( $contactType, $contactSubType ) = 
                     CRM_Contact_BAO_Contact::getContactTypes( $this->_id );
-
+                         
                 $profileSubType = false;
                 if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
                     $profileSubType = $profileType;
@@ -680,7 +681,58 @@ class CRM_Profile_Form extends CRM_Core_Form
     public function postProcess( ) 
     {
         $params = $this->controller->exportValues( $this->_name );        
+        
+        $greetingTypes = array( 'addressee'       => 'addressee_id', 
+                                'email_greeting'  => 'email_greeting_id', 
+                                'postal_greeting' => 'postal_greeting_id'
+                                );
+        if( $this->_id ) {
+            $contactDetails = CRM_Contact_BAO_Contact::getHierContactDetails( $this->_id ,
+                                                                              $greetingTypes );
+            $details = $contactDetails[0][$this->_id];
+        }
+        if( !(CRM_Utils_Array::value( 'addressee_id',$details ) || 
+              CRM_Utils_Array::value( 'email_greeting_id',$details ) || 
+              CRM_Utils_Array::value( 'postal_greeting_id',$details ) )) {
+            
+            $profileType = CRM_Core_BAO_UFField::getProfileType( $this->_gid );
+            //Though Profile type is contact we need
+            //Individual/Household/Organization for setting Greetings.
+            if( $profileType == 'Contact' ) {
+                $profileType = 'Individual';
+                //if we editing Household/Organization.
+                if( $this->_id ) {
+                    $profileType = CRM_Contact_BAO_Contact::getContactType( $this->_id );
+                }
+            }
+            if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
+                $profileType = CRM_Contact_BAO_ContactType::getBasicType( $profileType );
+            }
+            
+            $contactTypeFilters = array( 1 => 'Individual', 2 => 'Household', 
+                                         3 => 'Organization' );
+            $filter = CRM_Utils_Array::key( $profileType, $contactTypeFilters );
+            if( $filter ) {
+                foreach( $greetingTypes  as $key => $value ) {
+                    if( !array_key_exists( $key, $params ) ) {
+                        $defaultGreetingTypeId = CRM_Core_OptionGroup::values( $key, null, 
+                                                                               null, null, 
+                                                                               "AND is_default =1
+                                                                               AND (filter = 
+                                                                               {$filter} OR 
+                                                                               filter = 0 )",
+                                                                               'value' 
+                                                                               );
+                        
+                        $params[$key] = key( $defaultGreetingTypeId );
+                    }
+                }
+            }
+            if( $profileType == 'Organization' ) {
+                unset( $params['email_greeting'], $params['postal_greeting'] );
                 
+            }
+        }  
         if ( $this->_mode == self::MODE_REGISTER ) {
             require_once 'CRM/Core/BAO/Address.php';
             CRM_Core_BAO_Address::setOverwrite( false );

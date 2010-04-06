@@ -37,6 +37,29 @@
 
 class CRM_Utils_Mail
 {
+    /**
+     * Wrapper function to send mail in CiviCRM. Hooks are called from this function. The input parameter
+     * is an associateive array which holds the values of field needed to send an email. These are:
+     *
+     * from    : complete from envelope
+     * toName  : name of person to send email
+     * toEmail : email address to send to
+     * cc      : email addresses to cc
+     * bcc     : email addresses to bcc
+     * subject : subject of the email
+     * text    : text of the message
+     * html    : html version of the message
+     * reply-to: reply-to header in the email
+     * attachments: an associative array of
+     *   fullPath : complete pathname to the file
+     *   mime_type: mime type of the attachment
+     *   cleanName: the user friendly name of the attachmment
+     *
+     * @param array $params (by reference)
+     * 
+     * @access public
+     * @return boolean true if a mail was sent, else false
+     */
     static function send( &$params ) {
         require_once 'CRM/Core/BAO/MailSettings.php';
         $returnPath = CRM_Core_BAO_MailSettings::defaultReturnPath();

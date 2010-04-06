@@ -60,6 +60,7 @@ class CRM_Import_Form_Summary extends CRM_Core_Form {
         $duplicateRowCount = $this->get('duplicateRowCount');
         $onDuplicate       = $this->get('onDuplicate');
         $mismatchCount     = $this->get('unMatchCount');
+        $unparsedAddressCount = $this->get('unparsedAddressCount');
         if ($duplicateRowCount > 0) {
             $this->set('downloadDuplicateRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=3'));
         }else if($mismatchCount) {
@@ -68,7 +69,11 @@ class CRM_Import_Form_Summary extends CRM_Core_Form {
             $duplicateRowCount = 0;
             $this->set('duplicateRowCount', $duplicateRowCount);
         }
-
+        if ( $unparsedAddressCount ) {
+            $this->assign( 'downloadAddressRecordsUrl', CRM_Utils_System::url( 'civicrm/export', 'type=1' ) );
+            $unparsedStreetAddressString = ts( 'Records imported successfully but unable to parse some of the street addresses' ); 
+            $this->assign('unparsedStreetAddressString', $unparsedStreetAddressString );
+        }
         $this->assign('dupeError', false);
         
         if ($onDuplicate == CRM_Import_Parser::DUPLICATE_UPDATE) {
@@ -93,7 +98,7 @@ class CRM_Import_Form_Summary extends CRM_Core_Form {
         
         $this->assign('dupeActionString', $dupeActionString);
         
-        $properties = array( 'totalRowCount', 'validRowCount', 'invalidRowCount', 'conflictRowCount', 'downloadConflictRecordsUrl', 'downloadErrorRecordsUrl', 'duplicateRowCount', 'downloadDuplicateRecordsUrl','downloadMismatchRecordsUrl', 'groupAdditions', 'tagAdditions', 'unMatchCount');
+        $properties = array( 'totalRowCount', 'validRowCount', 'invalidRowCount', 'conflictRowCount', 'downloadConflictRecordsUrl', 'downloadErrorRecordsUrl', 'duplicateRowCount', 'downloadDuplicateRecordsUrl','downloadMismatchRecordsUrl', 'groupAdditions', 'tagAdditions', 'unMatchCount', 'unparsedAddressCount' );
         foreach ( $properties as $property ) {
             $this->assign( $property, $this->get( $property ) );
         }

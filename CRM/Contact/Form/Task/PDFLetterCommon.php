@@ -216,6 +216,13 @@ class CRM_Contact_Form_Task_PDFLetterCommon
         }
         require_once 'CRM/Utils/PDF/Utils.php';
         CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", 'portrait' ); 
+
+        // we need to call the hook manually here since we redirect and never 
+        // go back to CRM/Core/Form.php
+        CRM_Utils_Hook::postProcess( get_class( $form ),
+                                     $form );
+
+
         CRM_Utils_System::civiExit( 1 );
     }//end of function
 }

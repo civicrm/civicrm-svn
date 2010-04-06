@@ -1768,7 +1768,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                             break;
                             
                         case 'Select Date':
-                            list( $defaults[$fldName], $defaults[$fldName.'_time'] ) = CRM_Utils_Date::setDateDefaults( $details[$name] );
+                            list($defaults[$fldName], $defaults[substr($fldName,0,-1).'_time]']) 
+                                = CRM_Utils_Date::setDateDefaults($details[$name]
+                                                                  );
                             break;
                             
                         default:                        
@@ -2351,6 +2353,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                                     break;
                                 } else if ( CRM_Utils_Array::value( 'data_type', $tree['fields'][$customFieldDetails[0]] ) == 'Date' ) {
                                 	$skipValue = true;
+                                       $customValue = $tree['fields'][$customFieldDetails[0]]['element_value'] ;
                                 	list( $defaults['field'][$componentId][$name], $defaults['field'][$componentId][$name . '_time'] ) = 
                             		CRM_Utils_Date::setDateDefaults( $customValue );	
 								}

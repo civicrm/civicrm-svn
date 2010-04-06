@@ -530,12 +530,7 @@ WHERE sort_name LIKE '%$name%'";
         require_once 'CRM/Core/BAO/CMSUser.php';
         CRM_Core_BAO_CMSUser::checkUserNameEmailExists( $params, $errors );
 	
-        if ( $isDrupal ) {
-            //unset the drupal errors, related to email field is required.
-            unset($errors['email']);
-            unset($errors['mail']);
-        }
-        if ( !empty($errors)) {
+        if ( isset( $errors['cms_name'] ) || isset( $errors['name'] ) ) {
             //user name is not availble
             $user =  array('name' => 'no');
             echo json_encode( $user );

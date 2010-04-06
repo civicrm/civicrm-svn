@@ -286,12 +286,8 @@ class CRM_Contact_Form_Search_Criteria {
 
         require_once 'CRM/Contact/BAO/Relationship.php';
         require_once 'CRM/Core/PseudoConstant.php';
-        $relTypeInd =  CRM_Contact_BAO_Relationship::getContactRelationshipType(null,'null',null,'Individual');
-        $relTypeOrg =  CRM_Contact_BAO_Relationship::getContactRelationshipType(null,'null',null,'Organization');
-        $relTypeHou =  CRM_Contact_BAO_Relationship::getContactRelationshipType(null,'null',null,'Household');
-        $allRelationshipType =array();
-        $allRelationshipType = array_merge(  $relTypeInd , $relTypeOrg);
-        $allRelationshipType = array_merge( $allRelationshipType, $relTypeHou);
+        $allRelationshipType = array( );
+        $allRelationshipType = CRM_Contact_BAO_Relationship::getContactRelationshipType( null, null, null, null, true );
         $form->addElement('select', 'relation_type_id', ts('Relationship Type'),  array('' => ts('- select -')) + $allRelationshipType);
         $form->addElement('text', 'relation_target_name', ts('Target Contact'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name') );
         $relStatusOption  = array( ts('Active '), ts('Inactive '), ts('All') );

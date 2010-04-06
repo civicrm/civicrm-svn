@@ -60,6 +60,11 @@ class bin_migrate_export {
                                                  'scope'    => 'RelationshipTypes',
                                                  'required' => false,
                                                  'map'      => array( ) ),
+                   'locationType'      => array( 'data'     => null           ,
+                                                 'name'     => 'LocationType'  ,
+                                                 'scope'    => 'LocationTypes',
+                                                 'required' => false,
+                                                 'map'      => array( ) ),
                    'optionValue'  => array( 'data'     => null           ,
                                             'name'     => 'OptionValue'  ,
                                             'scope'    => 'OptionValues',
@@ -80,17 +85,30 @@ class bin_migrate_export {
                                             'scope'    => 'ProfileJoins',
                                             'required' => false,
                                             'map'      => array( ) ),
+                   'mappingGroup' => array( 'data'     => null           ,
+                                            'name'     => 'MappingGroup'  ,
+                                            'scope'    => 'MappingGroups',
+                                            'required' => false,
+                                            'map'      => array( ) ),
+                   'mappingField' => array( 'data'     => null           ,
+                                            'name'     => 'MappingField'  ,
+                                            'scope'    => 'MappingFields',
+                                            'required' => false,
+                                            'map'      => array( ) ),
+
                    );
     }
 
     function run( ) {
         // fetch the option group / values for
         // activity type and event_type
-        
+
+        $optionGroups = "( 'activity_type', 'event_type', 'mapping_type' )";
+
         $sql = "
 SELECT distinct(g.id), g.*
 FROM   civicrm_option_group g
-WHERE  g.name IN ( 'activity_type', 'event_type' )
+WHERE  g.name IN $optionGroups
 ";
         $this->fetch( 'optionGroup',
                       'CRM_Core_DAO_OptionGroup',
@@ -116,7 +134,7 @@ SELECT v.*, g.name as prefix
 FROM   civicrm_option_value v,
        civicrm_option_group g
 WHERE  v.option_group_id = g.id
-AND    g.name IN ( 'activity_type', 'event_type' )
+AND    g.name IN $optionGroups
 ";
 
         $this->fetch( 'optionValue',
@@ -150,7 +168,20 @@ WHERE  rt.is_active = 1
 ";
         $this->fetch( 'relationshipType',
                       'CRM_Contact_DAO_RelationshipType',
-                      $sql );
+                      $sql,
+                      array( 'id', 'name_a_b' ) );
+
+
+        $sql = "
+SELECT lt.*
+FROM   civicrm_location_type lt
+WHERE  lt.is_active = 1
+";
+        $this->fetch( 'locationType',
+                      'CRM_Core_DAO_LocationType',
+                      $sql,
+                      array( 'id', 'name' ) );
+
 
         $sql = "
 SELECT cg.*
@@ -200,6 +231,20 @@ AND    entity_id    IS NULL
                       null,
                       array( array( 'profileGroup', 'uf_group_id', 'profile_group_name' ) ) );
 
+        $this->fetch( 'mappingGroup',
+                      'CRM_Core_DAO_Mapping',
+                      null,
+                      array( 'id', 'name'),
+                      array( array( 'optionValue', 'mapping_type_id', 'mapping_type_name', 'mapping_type' ) ) );
+
+        $this->fetch( 'mappingField',
+                      'CRM_Core_DAO_MappingField',
+                      null,
+                      null,
+                      array( array( 'mappingGroup', 'mapping_id'      , 'mapping_group_name' ),
+                             array( 'locationType', 'location_type_id', 'location_type_name' ),
+                             array( 'relationshipType', 'relationship_type_id', 'relationship_type_name' ) ) );
+
         $buffer  = '<?xml version="1.0" encoding="iso-8859-1" ?>';
         $buffer .= "\n\n<CustomData>\n";
         foreach ( array_keys( $this->_xml ) as $key ) {
@@ -229,7 +274,11 @@ AND    entity_id    IS NULL
             if ( $add ) {
                 foreach ( $add as $filter ) {
                     if ( isset( $dao->{$filter[1]} ) ) {
-                        $label = $this->_xml[$filter[0]]['map'][$dao->{$filter[1]}];
+                        if ( isset( $filter[3] ) ) {
+                            $label = $this->_xml[$filter[0]]['map']["{$filter[3]}." . $dao->{$filter[1]}];
+                        } else {
+                            $label = $this->_xml[$filter[0]]['map'][$dao->{$filter[1]}];
+                        }
                         $additional .= "\n      <{$filter[2]}>{$label}</{$filter[2]}>";
                     }
                 }

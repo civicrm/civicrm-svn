@@ -146,8 +146,9 @@ class CRM_Contact_BAO_GroupContact extends CRM_Contact_DAO_GroupContact {
         $date = date('YmdHis');
         $numContactsAdded    = 0;
         $numContactsNotAdded = 0;
+       
         foreach ( $contactIds as $contactId ) {
-           
+            
             $groupContact = new CRM_Contact_DAO_GroupContact( );
             $groupContact->group_id   = $groupId;
             $groupContact->contact_id = $contactId;

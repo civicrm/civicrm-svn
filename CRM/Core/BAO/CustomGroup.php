@@ -681,6 +681,13 @@ SELECT $select
             } 
         }
 
+        require_once 'CRM/Core/Permission.php';
+        // ensure that the user has access to these custom groups
+        $where .= 
+            " AND " .
+            CRM_Core_Permission::customGroupClause( CRM_Core_Permission::VIEW,
+                                                    'civicrm_custom_group.' );
+
         $orderBy = " ORDER BY civicrm_custom_group.weight, civicrm_custom_field.weight";
 
         // final query string

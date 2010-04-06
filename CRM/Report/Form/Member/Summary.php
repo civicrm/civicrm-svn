@@ -290,10 +290,9 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
         }
         
         if ( !empty($clauses) ) {
-            $this->_where = "WHERE  civicrm_membership_status.is_current_member = 1 AND {$this->_aliases['civicrm_membership']}.is_test = 0 AND " . implode( ' AND ', $clauses );
+            $this->_where = "WHERE {$this->_aliases['civicrm_membership']}.is_test = 0 AND " . implode( ' AND ', $clauses );
         } else { 
-            $this->_where = "WHERE {$this->_aliases['civicrm_membership']}.is_test = 0 AND
-                            civicrm_membership_status.is_current_member = 1";
+            $this->_where = "WHERE {$this->_aliases['civicrm_membership']}.is_test = 0";
         }
     }
     
@@ -482,10 +481,13 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                      $typeID = $row['civicrm_membership_membership_type_id'] ) {
                     $typeUrl = "&tid_op=in&tid_value={$typeID}";
                 }
-                     
+                $statusUrl = '';
+                if ( ! empty($this->_params['status_id_value']) ) {
+                    $statusUrl = "&sid_op=in&sid_value=" . implode( ",", $this->_params['status_id_value'] );
+                }
                 $url =
                     CRM_Report_Utils_Report::getNextUrl( 'member/detail',
-                                                         "reset=1&force=1&join_date_from={$dateStart}&join_date_to={$dateEnd}{$typeUrl}", 
+                                                         "reset=1&force=1&join_date_from={$dateStart}&join_date_to={$dateEnd}{$typeUrl}{$statusUrl}", 
                                                          $this->_absoluteUrl, $this->_id );
                 $row['civicrm_membership_join_date_start'] =  CRM_Utils_Date::format($row['civicrm_membership_join_date_start']);
                 $rows[$rowNum]['civicrm_membership_join_date_start_link' ] = $url;

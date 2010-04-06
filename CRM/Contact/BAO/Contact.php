@@ -1578,15 +1578,22 @@ AND    civicrm_contact.id = %1";
             CRM_Core_BAO_EntityTag::create( $params['tag'], $contactID );
         } 
         
+        // Set status = 'Pending' if profileDoubleOptIn = 1. CRM-5905
+        require_once 'CRM/Core/Config.php';
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->profileDoubleOptIn ) {
+            $groupStatus = 'Pending';
+        }
+        
         //to add profile in default group
         if ( is_array ($addToGroupID) ) {
             $contactIds = array($contactID);
             foreach ( $addToGroupID as $groupId ) {
-                CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $groupId );
+                CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $groupId, 'Admin' , $groupStatus );
             }
         } else if ( $addToGroupID ) {
             $contactIds = array($contactID);
-            CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $addToGroupID );
+            CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $addToGroupID , 'Admin' , $groupStatus );
         }
 
 
@@ -1998,7 +2005,7 @@ UNION
                  
                  $emailGreeting = CRM_Core_PseudoConstant::greeting( $filter );
                  $emailGreetingString = $emailGreeting[ $contact->email_greeting_id ];
-             } else {     
+             } else if( $contact->email_greeting_custom ) {     
                  $updateQueryString[] = " email_greeting_display = NULL ";
              }
                   
@@ -2036,7 +2043,7 @@ UNION
 
             $addressee = CRM_Core_PseudoConstant::greeting( $filter ); 
             $addresseeString = $addressee[ $contact->addressee_id ];
-         } else {
+         } else if( $contact->addressee_custom ){
             $updateQueryString[] = " addressee_display = NULL ";
          }
 

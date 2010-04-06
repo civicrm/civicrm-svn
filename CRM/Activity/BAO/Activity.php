@@ -633,25 +633,9 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         CRM_Core_DAO::executeQuery( $sql );
 
         $insertSQL = "INSERT INTO {$activityTempTable} (". implode( ',', $insertValueSQL ) ." ) ";
-        $select = " {$insertSQL} SELECT DISTINCT(civicrm_activity.id), 
-                     civicrm_activity.activity_date_time,
-                     civicrm_activity.status_id, civicrm_activity.subject,
-                     civicrm_activity.source_contact_id,civicrm_activity.source_record_id,
-                     sourceContact.sort_name as source_contact_name,
-                     civicrm_option_value.value as activity_type_id,
-                     civicrm_option_value.label as activity_type ";
-
-        if ( in_array( 'CiviCase', $config->enableComponents ) ) {             
-            $select .=  " ,civicrm_case_activity.case_id as case_id,
-                           civicrm_case.subject as case_subject ";
-        } else {
-            $select .= " , null, null ";
-        }
         
-        list( $sqlClause, $params ) = self::getActivitySQLClause( $data['contact_id'], $admin, $caseId, $context, true );
-
         $order = $limit = $groupBy = '';
-        $groupBy = " GROUP BY civicrm_activity.id";
+        $groupBy = " GROUP BY activity_id";
         if ($sort) {
             $orderBy = $sort->orderBy();
             if ( ! empty( $orderBy ) ) {
@@ -670,10 +654,15 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         if ( $rowCount > 0 ) {
             $limit = " LIMIT $offset, $rowCount ";
         }
-                    
-        $query = $select. $sqlClause . $groupBy. $order. $limit;
 
-        CRM_Core_DAO::executeQuery( $query, $params );
+        list( $sqlClause, $params ) = self::getActivitySQLClause( $data['contact_id'], $admin, $caseId, $context );
+        $query = "{$insertSQL}
+       SELECT DISTINCT *  from ( {$sqlClause} )
+as tbl ";
+
+        $query = $query . $groupBy. $order. $limit;
+
+        $dao = CRM_Core_DAO::executeQuery( $query, $params );
 
         // step 2: Get target and assignee contacts for above activities
         // create temp table for target contacts
@@ -784,23 +773,26 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
      */
     static function &getActivitiesCount( $contactID, $admin = false, $caseId = null, $context = null ) 
     {
-        list( $sqlClause, $params ) = self::getActivitySQLClause( $contactID, $admin, $caseId, $context, false );
-        $queryString = 
-            "SELECT COUNT(DISTINCT(civicrm_activity.id)) as count" .
-            $sqlClause;
-        return CRM_Core_DAO::singleValueQuery( $queryString, $params );
+        list( $sqlClause, $params ) = self::getActivitySQLClause( $contactID, $admin, $caseId, $context, true );
+
+        $query = "{$insertSQL}
+       SELECT COUNT(DISTINCT(activity_id)) as count  from ( {$sqlClause} )
+as tbl ";
+        
+        return CRM_Core_DAO::singleValueQuery( $query, $params );
     }
 
     static function getActivitySQLClause( $contactID, $admin = false, $caseId = null, $context = null, $count = false )
     {
         $params = array( );
-        $clause = 1 ;
+        $sourceWhere = $targetWhere = $assigneeWhere = $caseWhere = 1;
 
         $config = CRM_Core_Config::singleton( );
         if ( !$admin ) {
-            $clauseArray = array( 'source_contact_id = %1',
-                                  'at.target_contact_id = %1', 
-                                  'aa.assignee_contact_id = %1' ); 
+            $sourceWhere   = ' source_contact_id = %1 ' ;
+            $targetWhere   = ' at.target_contact_id = %1 '; 
+            $assigneeWhere = ' aa.assignee_contact_id = %1 ';
+            $caseWhere     = ' civicrm_case_contact.contact_id = %1 ';
             
             require_once 'CRM/Case/BAO/Case.php';
             if ( CRM_Case_BAO_Case::accessCiviCase( ) ) {
@@ -815,67 +807,180 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         if ( $context == 'home' ) {
             $statusClause = " civicrm_activity.status_id = 1 "; 
         }
-                
-        // Filter on case ID if looking at activities for a specific case
-        // or else exclude Inbound Emails that have been filed on a case.
-        $case = 1;
-        if ( in_array( 'CiviCase', $config->enableComponents ) ) {
-            if ( $caseId ) {
-                $case = " civicrm_case_activity.case_id = $caseId ";
-            } else {
-            	$case = " ((civicrm_case_activity.case_id Is Null) OR (civicrm_option_value.name <> 'Inbound Email' AND civicrm_option_value.name <> 'Email' AND civicrm_case_activity.case_id Is Not Null)) ";
-            }
-        }
-        
+
         // Filter on component IDs.
         // do not include activities of disabled components and also handle permission
         $componentClause = "civicrm_option_value.component_id IS NULL";
         $componentsIn    = null;
         $compInfo        = CRM_Core_Component::getEnabledComponents();
+        $includeCaseActivities = false;
         foreach ( $compInfo as $compObj ) {
             if ( $compObj->info['showActivitiesInCore'] ) {
                 $componentsIn = $componentsIn ? 
                     ($componentsIn . ', ' . $compObj->componentID) : $compObj->componentID;
+                    
+                if ( $compObj->info['name'] == 'CiviCase' ) {
+                    $includeCaseActivities = true;
+                }
             }
         }
+        
         if ( $componentsIn ) {
             $componentClause = "($componentClause OR civicrm_option_value.component_id IN ($componentsIn))";
         }
+ 
+        // build main activity table select clause
+        $sourceSelect = '';
+        $sourceJoin   = '';
         
-        $join   = "\n 
-                    left join civicrm_activity_target at on 
-                              civicrm_activity.id = at.activity_id 
-                    left join civicrm_activity_assignment aa on 
-                              civicrm_activity.id = aa.activity_id 
-                    left join civicrm_option_value on
-                              ( civicrm_activity.activity_type_id = civicrm_option_value.value )
-                    left join civicrm_option_group on  
-                              civicrm_option_group.id = civicrm_option_value.option_group_id ";
+        if ( !$count ) {
+            $sourceSelect = ',
+                civicrm_activity.activity_date_time,
+                civicrm_activity.status_id, 
+                civicrm_activity.subject,
+                civicrm_activity.source_contact_id, 
+                civicrm_activity.source_record_id,
+                sourceContact.sort_name as source_contact_name,
+                civicrm_option_value.value as activity_type_id,
+                civicrm_option_value.label as activity_type,
+                null as case_id, null as case_subject
+            ';
+            
+            $sourceJoin = ' 
+                left join civicrm_contact sourceContact on
+                      source_contact_id = sourceContact.id ';
+        }
+        
+        $sourceClause = "
+            SELECT civicrm_activity.id as activity_id
+            {$sourceSelect}    
+            from civicrm_activity                   
+            left join civicrm_option_value on
+                civicrm_activity.activity_type_id = civicrm_option_value.value
+            left join civicrm_option_group on                              
+                civicrm_option_group.id = civicrm_option_value.option_group_id
+            {$sourceJoin}                      
+            where   {$sourceWhere}
+                and civicrm_option_group.name = 'activity_type'                 
+                and {$componentClause}                 
+                and civicrm_activity.is_deleted = 0
+                and civicrm_activity.is_current_revision = 1                 
+                and is_test = 0
+                and {$statusClause}
+        ";
 
-        if ( $count ) {
-            $join .= "\n
-                      left join civicrm_contact sourceContact on
-                              source_contact_id = sourceContact.id";
+        // build target activity table select clause
+        $targetAssigneeSelect = '';
+        
+        if ( !$count ) {
+            $targetAssigneeSelect = ',
+                civicrm_activity.activity_date_time,
+                civicrm_activity.status_id, 
+                civicrm_activity.subject,
+                civicrm_activity.source_contact_id,
+                civicrm_activity.source_record_id, 
+                sourceContact.sort_name as source_contact_name,
+                civicrm_option_value.value as activity_type_id,
+                civicrm_option_value.label as activity_type,
+                null as case_id, null as case_subject
+            ';
+        }
+          
+        $targetClause = "
+            SELECT civicrm_activity.id as activity_id
+            {$targetAssigneeSelect}
+            from civicrm_activity                   
+            inner join civicrm_activity_target at on                             
+                civicrm_activity.id = at.activity_id and {$targetWhere}
+            left join civicrm_option_value on
+                civicrm_activity.activity_type_id = civicrm_option_value.value
+            left join civicrm_option_group on                              
+                civicrm_option_group.id = civicrm_option_value.option_group_id
+            {$sourceJoin}                      
+            where   {$targetWhere}
+                and civicrm_option_group.name = 'activity_type'                 
+                and {$componentClause}                 
+                and civicrm_activity.is_deleted = 0
+                and civicrm_activity.is_current_revision = 1                 
+                and is_test = 0
+                and {$statusClause}
+        ";
+   
+        // build assignee activity table select clause       
+        $assigneeClause = "
+            SELECT civicrm_activity.id as activity_id
+            {$targetAssigneeSelect}
+            from civicrm_activity                   
+            inner join civicrm_activity_assignment aa on
+                civicrm_activity.id = aa.activity_id and {$assigneeWhere}
+            left join civicrm_option_value on
+                civicrm_activity.activity_type_id = civicrm_option_value.value
+            left join civicrm_option_group on                              
+                civicrm_option_group.id = civicrm_option_value.option_group_id                      
+            {$sourceJoin}
+            where   {$assigneeWhere}
+                and civicrm_option_group.name = 'activity_type'                 
+                and {$componentClause}                 
+                and civicrm_activity.is_deleted = 0
+                and civicrm_activity.is_current_revision = 1                 
+                and is_test = 0
+                and {$statusClause}
+        ";
+
+        // Build case clause
+        // or else exclude Inbound Emails that have been filed on a case.
+        $caseClause = '';
+        
+        if ( $includeCaseActivities ) {
+            $caseSelect = '';
+            if ( !$count ) {
+                $caseSelect = ', 
+                civicrm_activity.activity_date_time,
+                civicrm_activity.status_id, 
+                civicrm_activity.subject,
+                civicrm_activity.source_contact_id,
+                civicrm_activity.source_record_id, 
+                sourceContact.sort_name as source_contact_name,
+                civicrm_option_value.value as activity_type_id,
+                civicrm_option_value.label as activity_type,
+                null as case_id, null as case_subject ';
+            }
+            
+            $caseClause = "
+                union all
+
+                SELECT civicrm_activity.id as activity_id
+                {$caseSelect}    
+                from civicrm_activity                   
+                inner join civicrm_case_activity on                               
+                    civicrm_case_activity.activity_id = civicrm_activity.id and {$caseWhere}                  
+                inner join civicrm_case on                               
+                    civicrm_case_activity.case_id = civicrm_case.id                     
+                inner join civicrm_case_contact on                               
+                    civicrm_case_contact.case_id = civicrm_case.id 
+                left join civicrm_option_value on 
+                    civicrm_activity.activity_type_id = civicrm_option_value.value
+                left join civicrm_option_group on                              
+                    civicrm_option_group.id = civicrm_option_value.option_group_id
+                {$sourceJoin}                                      
+                where   {$caseWhere}
+                    and civicrm_option_group.name = 'activity_type'                 
+                    and {$componentClause}                 
+                    and civicrm_activity.is_deleted = 0
+                    and civicrm_activity.is_current_revision = 1                 
+                    and is_test = 0
+                    and {$statusClause}
+                    and  ( ( civicrm_case_activity.case_id Is Null ) OR
+                           ( civicrm_option_value.name <> 'Inbound Email' AND
+                             civicrm_option_value.name <> 'Email' AND civicrm_case_activity.case_id
+                             Is Not Null ) 
+                         )             
+            ";
         }
 
-        if ( in_array( 'CiviCase', $config->enableComponents ) ) { 
-            $join .= "\n 
-                       left join civicrm_case_activity on
-                                 civicrm_case_activity.activity_id = civicrm_activity.id
-                       left join civicrm_case on
-                                 civicrm_case_activity.case_id = civicrm_case.id
-                       left join civicrm_case_contact on
-                                 civicrm_case_contact.case_id = civicrm_case.id ";
-        }
-                                               
-        $from  = " from civicrm_activity ";
-        $where = " where {$clause}
-                   and civicrm_option_group.name = 'activity_type'
-                   and {$componentClause}
-                   and civicrm_activity.is_deleted = 0 and civicrm_activity.is_current_revision = 1
-                   and is_test = 0 and {$case} and {$statusClause}";
+        $returnClause = " {$sourceClause}  union all {$targetClause} union all {$assigneeClause} {$caseClause} ";
 
-        return array( $from.  $join. $where, $params );
+        return array( $returnClause, $params );
     }
 
     /**
