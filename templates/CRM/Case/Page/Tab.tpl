@@ -49,7 +49,6 @@
         <div class="action-link">
         <a accesskey="N" href="{$newCaseURL}" class="button"><span><div class="icon add-icon"></div> {ts}Add Case{/ts}</span></a>
         </div>
-        <br /><br />
     {/if}
 
     {if $rows}
