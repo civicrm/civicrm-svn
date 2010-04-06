@@ -1526,9 +1526,6 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
         }
         
         if ( ! empty($relatedContacts) ) {
-            // delete all the related membership records before creating
-            CRM_Member_BAO_Membership::deleteRelatedMemberships( $membership->id );
-            
             // Edit the params array
             unset( $params['id'] );
             // Reminder should be sent only to the direct membership
@@ -1542,11 +1539,19 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
             if ( ! isset($params['membership_type_id']) ) {
                 $params['membership_type_id'] = $membership->membership_type_id;
             }
-
+            
             foreach ( $relatedContacts as $contactId => $relationshipStatus ) {
+                //use existing membership record.
+                $relMembership = new CRM_Member_DAO_Membership( );
+                $relMembership->contact_id = $contactId;
+                $relMembership->owner_membership_id = $membership->id;
+                $relMemIds = array( );
+                if ( $relMembership->find( true ) ) {
+                    $params['id'] = $relMemIds['membership'] = $relMembership->id;
+                }
                 $params['contact_id'         ] = $contactId;
                 $params['owner_membership_id'] = $membership->id;
-
+                
                 // set status_id as it might have been changed for
                 // past relationship
                 $params['status_id'          ] = $membership->status_id;
@@ -1564,17 +1569,22 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
                     // But this wont work exactly if there will be
                     // more than one status having is_current_member = 0.
                     require_once 'CRM/Member/DAO/MembershipStatus.php';
-                    $membership = new CRM_Member_DAO_MembershipStatus();
-                    $membership->is_current_member = 0;
-                    if ( $membership->find(true) ) {
-                        $params['status_id'] = $membership->id;
-                    } 
+                    $membershipStatus = new CRM_Member_DAO_MembershipStatus();
+                    $membershipStatus->is_current_member = 0;
+                    if ( $membershipStatus->find(true) ) {
+                        $params['status_id'] = $membershipStatus->id;
+                    }
                 }
-
+                
+                //do create activity if we changed status. 
+                if ( $params['status_id'] != $relMembership->status_id ) {
+                    $params['createActivity'] = true; 
+                }
+                
                 // we should not created contribution record for related contacts, CRM-3371
                 unset( $params['contribution_status_id'] );
 
-                CRM_Member_BAO_Membership::create( $params, CRM_Core_DAO::$_nullArray );
+                CRM_Member_BAO_Membership::create( $params, $relMemIds );
             }
         }
     }
