@@ -43,6 +43,7 @@
 <tr id="Email_Block_{$blockId}">
     <td style="width: 50%;">{$form.email.$blockId.email.html|crmReplace:class:twenty}&nbsp;{$form.email.$blockId.location_type_id.html}
     <div class="clear"></div>
+{if $className eq 'CRM_Contact_Form_Contact'}
 <div class="crm-accordion-wrapper crm-accordion-email-signature crm-accordion_title-accordion crm-accordion-closed">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
@@ -54,6 +55,7 @@
   </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 
+{/if}
     </td>
     <td align="center">{$form.email.$blockId.on_hold.html}</td>
     <td align="center" id="Email-Bulkmail-html">{$form.email.$blockId.is_bulkmail.html}</td>
