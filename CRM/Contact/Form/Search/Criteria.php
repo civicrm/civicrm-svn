@@ -44,30 +44,31 @@ class CRM_Contact_Form_Search_Criteria {
             $contact_type = array( );
             require_once 'CRM/Contact/BAO/ContactType.php';
             $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements( );
-            foreach ($contactTypes as $k => $v) {
-                if ( ! empty( $k ) ) {
-                    $contact_type[] = HTML_QuickForm::createElement('checkbox', $k, null, $v);
-                }
+            
+            if ( $contactTypes ) {
+		            $form->add('select', 'contact_type',  ts( 'Contact Type(s)' ), $contactTypes, false, 
+		                       array( 'id' => 'contact_type',  'multiple'=> 'multiple', 'title' => ts('Click to select Contact Types') ));
             }
-            $form->addGroup($contact_type, 'contact_type', ts('Contact Type(s)'), '<br />');
+            
         }
 
         if ( $form->_searchOptions['groups'] ) {
-            // checkboxes for groups
-            foreach ($form->_group as $groupID => $group) {
-                $form->_groupElement =& $form->addElement('checkbox', "group[$groupID]", null, $group);
+            // multiselect for groups
+            if ( $form->_group ) {
+		            $form->add('select', 'groups',  ts( 'Groups' ), $form->_group, false, 
+		                       array( 'id' => 'groups',  'multiple'=> 'multiple', 'title' => ts('Click to select Groups') ));
             }
         }
+        
+        
 
         if ( $form->_searchOptions['tags'] ) {
-            // checkboxes for categories
+            // multiselect for categories
             require_once 'CRM/Core/BAO/Tag.php';
-            $contact_tags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
-            if( $contact_tags ) {
-                foreach ( $contact_tags as $tagID => $tagName) {
-                    $form->_tagElement =& $form->addElement('checkbox', "contact_tags[$tagID]", 
-                                                            null, $tagName);         
-                }
+            $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
+            if( $contactTags ) {
+		            $form->add('select', 'contact_tags',  ts( 'Tags' ), $contactTags, false, 
+		                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
             }
         }
         

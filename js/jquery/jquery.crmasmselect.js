@@ -61,7 +61,6 @@
 
 				$select = $("<select></select>")
 					.addClass(options.selectClass)
-					.attr('name', options.selectClass + index)
 					.attr('id', options.selectClass + index); 
 
 				$selectRemoved = $("<select></select>"); 

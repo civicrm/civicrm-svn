@@ -54,25 +54,40 @@
 {if $form.contact_type}
             <td><label>{ts}Contact Type(s){/ts}</label><br />
                 {$form.contact_type.html}
+                 {literal}
+					<script type="text/javascript">
+
+								cj("select#contact_type").crmasmSelect({
+									addItemTarget: 'bottom',
+									animate: false,
+									highlight: true,
+									sortable: true,
+									respectParents: true
+								});
+
+						</script>
+					{/literal}
             </td>
 {else}
             <td>&nbsp;</td>
 {/if}
-{if $form.group}
-            {* Choose regular or 'tall' listing-box class for Group select box based on # of groups. *}
-            {if $form.group|@count GT 8}
-                {assign var="boxClass" value="listing-box-tall"}
-            {else}
-                {assign var="boxClass" value="listing-box"}
-            {/if}
+{if $form.groups}
             <td><label>{ts}Group(s){/ts}</label>
-                <div class="{$boxClass}">
-                    {foreach from=$form.group item="group_val"}
-                    <div class="{cycle values="even-row,odd-row"}">
-                    {$group_val.html}
-                    </div>
-                    {/foreach}
-                </div>
+                {$form.groups.html}
+                    {literal}
+					<script type="text/javascript">
+
+								cj("select#groups").crmasmSelect({
+									addItemTarget: 'bottom',
+									animate: false,
+									highlight: true,
+									sortable: true,
+									respectParents: true
+								});
+
+						</script>
+					{/literal}
+                
             </td>
 {else}
             <td>&nbsp;</td>
@@ -80,13 +95,20 @@
 
 {if $form.contact_tags}
             <td colspan="2"><label>{ts}Tag(s){/ts}</label>
-                <div id="Tag" class="listing-box">
-                    {foreach from=$form.contact_tags item="tag_val"} 
-                      <div class="{cycle values="odd-row,even-row"}">
-                      {$tag_val.html}
-                      </div>
-                    {/foreach}
-                </div>
+                    {$form.contact_tags.html}
+                    {literal}
+					<script type="text/javascript">
+
+								cj("select#tags").crmasmSelect({
+									addItemTarget: 'bottom',
+									animate: false,
+									highlight: true,
+									sortable: true,
+									respectParents: true
+								});
+
+						</script>
+					{/literal}   
             </td>
 {else}
             <td colspan="2">&nbsp;</td>
