@@ -158,6 +158,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
         
+        $result = null;
         if ( ! $moveToTrash ) { 
             if ( !isset( $params['id'] ) ) { 
                 if ( is_array( $params['activity_type_id'] ) ) {
