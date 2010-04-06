@@ -164,6 +164,11 @@ class CRM_Contact_Form_Task_EmailCommon
     	    }
     	}
 
+        //get the group of contacts as per selected by user in case of Find Activities
+        if ( !empty( $form->_activityHolderIds ) ) {
+            $contact = $form->get( 'contacts' );
+            $form->_contactIds = $contact;
+        }
     	if ( is_array ( $form->_contactIds ) ) {
             $returnProperties = array( 'sort_name' => 1, 'email' => 1, 'do_not_email' => 1,
                                        'on_hold' => 1, 'display_name' => 1, 'preferred_mail_format' => 1 );

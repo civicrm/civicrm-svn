@@ -75,7 +75,7 @@ class CRM_Activity_Form_Task extends CRM_Core_Form
      *
      * @var array
      */
-    protected $_activityHolderIds;
+    public $_activityHolderIds;
 
     /**
      * build all the data structures needed to build the form

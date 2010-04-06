@@ -92,7 +92,8 @@ class CRM_Activity_Task
                                               'result' => false ),
                                   
                                   5 => array( 'title'  => ts( 'Send Email to Contacts' ),
-                                              'class'  => 'CRM_Activity_Form_Task_Email',         
+                                              'class'  => array( 'CRM_Activity_Form_Task_PickOption',
+                                                                 'CRM_Activity_Form_Task_Email' ),
                                               'result' => false ),
                                   );
             
