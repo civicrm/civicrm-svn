@@ -110,6 +110,8 @@ class CRM_Grant_Form_GrantView extends CRM_Core_Form
         
         $groupTree =& CRM_Core_BAO_CustomGroup::getTree( "Grant", $this, $this->_id, 0 );
         CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $groupTree ); 
+
+        $this->assign( 'id', $this->_id );
     }
 
     /**

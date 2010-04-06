@@ -115,7 +115,10 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
             $this->_action = CRM_Core_Action::ADD;
         } else {
             $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
             $this->assign( 'contactId', $this->_contactId );
+            $this->assign( 'displayName', $displayName );
             
             // check logged in url permission
             require_once 'CRM/Contact/Page/View.php';
