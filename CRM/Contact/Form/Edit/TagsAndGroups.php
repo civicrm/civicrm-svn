@@ -72,7 +72,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
                                        $type = CRM_Contact_Form_Edit_TagsandGroups::ALL,
                                        $visibility = false,
                                        $isRequired = null,
-                                       $groupName = 'Groups(s)',
+                                       $groupName = 'Group(s)',
                                        $tagName   = 'Tag(s)',
                                        $fieldName = null ) 
     {

@@ -59,7 +59,7 @@
                   {$form.external_identifier.html}
               </td>
               {if $contactId}
-				<td><label for="internal_identifier">Internal Id</label><br />{$contactId}</td>
+				<td><label for="internal_identifier">{ts}Internal Id{/ts}</label><br />{$contactId}</td>
 			  {/if}
             </tr>            
         </table>
@@ -162,7 +162,7 @@ cj('a#expand').click( function( ){
         var event       = 'show';
         cj(this).attr('href', '#collapse');
     } else {
-        var message     = {/literal}{ts}"Expand all tabs"{/ts}{literal};
+        var message     = {/literal}"{ts}Expand all tabs{/ts}"{literal};
         var className   = 'ui-icon ui-icon-triangle-1-e';
         var event       = 'hide';
         cj(this).attr('href', '#expand');
