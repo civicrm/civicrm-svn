@@ -343,7 +343,7 @@ class CRM_Activity_BAO_Query
         $activityOptions = CRM_Core_PseudoConstant::activityType( true, true );
         asort( $activityOptions );
         foreach ( $activityOptions as $activityID => $activity ) {
-            $form->_activityElement =& $form->addElement( 'checkbox', "activity_type_id[$activityID]", null, $activity );
+            $form->_activityElement =& $form->addElement( 'checkbox', "activity_type_id[$activityID]", null, $activity,array('onClick' => 'showCustomData( this.id );'));
         }
         $form->addDate( 'activity_date_low', ts( 'Activity Dates - From' ), false, array( 'formatType' => 'searchDate') );
         $form->addDate( 'activity_date_high', ts( 'To' ), false, array( 'formatType' => 'searchDate') );
