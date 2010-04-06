@@ -117,7 +117,7 @@
             <li id="tab_{$tabValue.id}" class="crm-tab-button">
             	<a href="{$tabValue.url}" title="{$tabValue.title}">
             		<span> </span> {$tabValue.title}
-            		{if $tabValue.count}<em>({$tabValue.count})</em>{/if}
+            		<em class="crm-count-{$tabValue.count}">{$tabValue.count}</em>
             	</a>
             </li>
             {/foreach}
