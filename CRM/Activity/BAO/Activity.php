@@ -801,13 +801,7 @@ as tbl ";
             $targetWhere   = ' at.target_contact_id = %1 '; 
             $assigneeWhere = ' aa.assignee_contact_id = %1 ';
             $caseWhere     = ' civicrm_case_contact.contact_id = %1 ';
-            
-            require_once 'CRM/Case/BAO/Case.php';
-            if ( CRM_Case_BAO_Case::accessCiviCase( ) ) {
-                $clauseArray = array_merge( $clauseArray, array( 'civicrm_case_contact.contact_id = %1' ) );
-            }
-                        
-            $clause = " ( " . implode( ' OR ', $clauseArray ) ." ) ";
+
             $params = array( 1 => array( $contactID, 'Integer' ) );
         }
         
@@ -828,7 +822,12 @@ as tbl ";
                     ($componentsIn . ', ' . $compObj->componentID) : $compObj->componentID;
                     
                 if ( $compObj->info['name'] == 'CiviCase' ) {
-                    $includeCaseActivities = true;
+                    require_once 'CRM/Case/BAO/Case.php';
+                    if ( CRM_Case_BAO_Case::accessCiviCase( ) ) {
+                        $includeCaseActivities = true;
+                    } else {
+                        $includeCaseActivities = true;
+                    }
                 }
             }
         }
