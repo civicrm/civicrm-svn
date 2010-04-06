@@ -4,5 +4,5 @@
 		 Only one group name is supported for now.
 		 It needs to match the name column in the civicrm_group table (not the title), so avoid using space characters. -->
 	<group name="Case_Resources" />
-	<AllowMultipleCaseClients>1</AllowMultipleCaseClients>
+	<AllowMultipleCaseClients>0</AllowMultipleCaseClients>
 </Settings>
