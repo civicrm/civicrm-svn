@@ -184,15 +184,10 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
             CRM_Core_Error::fatal( );
             return false;
         }
-
-//        CRM_Core_Error::debug( 'w', $params );
-
-        if( $this->_isMultiClient ) {
-            $client = $params['clientID'];
-        } else {
-            $client = array( 1 => $params['clientID'] );
-        }
-
+        
+        $client = $params['clientID'];
+        if ( !is_array( $client ) ) $client = array( $client );
+        
         foreach( $client as $key => $clientId ) {
             $relationshipParams = array( 'relationship_type_id' => $relationshipTypeID,
                                          'contact_id_a'         => $clientId,
