@@ -122,7 +122,12 @@ class CRM_Contact_Form_Task_EmailCommon
     {
 		$toArray = $ccArray = $bccArray = array( );
 		$suppressedEmails = 0;
-
+        //here we are getting logged in user id as array but we need target contact id. CRM-5988
+        $cid = $form->get( 'cid' );
+        if( $cid ) {
+            $form->_contactIds = array( $cid );
+        }
+        
         $to  = $form->add( 'text', 'to', ts('To'), '', true );
         $cc  = $form->add( 'text', 'cc_id', ts('CC') );
         $bcc = $form->add( 'text', 'bcc_id', ts('BCC') );
