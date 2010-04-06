@@ -651,13 +651,12 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
                                                          
         $contact = new CRM_Contact_DAO_Contact();
         $contact->id = $id;
-        if (! $contact->find(true)) {
+        if ( !$contact->find(true) ) {
             return false;
         }
 
-        if ($restore) {
-            $contact->is_deleted = false;
-            $contact->save();
+        if ( $restore ) {
+            self::contactTrashRestore( $contact->id, true );
             return true;
         }
 
@@ -665,7 +664,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         
         // currently we only clear employer cache.
         // we are not deleting inherited membership if any. 
-        if( $contact->contact_type == 'Organization' ) {
+        if ( $contact->contact_type == 'Organization' ) {
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
             CRM_Contact_BAO_Contact_Utils::clearAllEmployee( $id );
         }
@@ -696,8 +695,7 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
 
             $contact->delete();
         } else {
-            $contact->is_deleted = true;
-            $contact->save();
+            self::contactTrashRestore( $contact->id );
         }
 
         //delete the contact id from recently view
@@ -719,6 +717,25 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
         return true;
     }
 
+    /**
+     *  Function to set is_delete true or restore deleted contact
+     *  
+     *  @param int     $contactId  contact id
+     *  @param boolean $restore true to set the is_delete = 1 else false to restore deleted contact,
+     *                                i.e. is_delete = 0    
+     *  
+     *  @return void
+     */
+    function contactTrashRestore( $contactId, $restore = false ) {
+        $isDelete = ' is_deleted = 1 ';
+        if ( $restore ) {
+            $isDelete = ' is_deleted = 0 ';
+        }
+        
+        $query = "UPDATE civicrm_contact SET {$isDelete} WHERE id = {$contactId}";
+        CRM_Core_DAO::executeQuery( $query );
+    }
+    
     /**
      * Get contact type for a contact.
      *
