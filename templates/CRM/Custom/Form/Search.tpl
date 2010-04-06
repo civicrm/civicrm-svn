@@ -32,7 +32,7 @@
 {/if}
 
   <div id="{$cd_edit.name}" class="form-item">
-  <fieldset><legend>
+  <fieldset id="{$cd_edit.extends_entity_column_value}"><legend>
 {if $showHideLinks or $form.formName eq 'Advanced'}
 <a href="#" onclick="hide('{$cd_edit.name}'); show('{$cd_edit.name}_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}" /></a>
 {/if}

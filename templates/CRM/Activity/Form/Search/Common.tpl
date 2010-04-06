@@ -57,9 +57,85 @@
    </td>
 </tr>
 {if $activityGroupTree}
-<tr>
-   <td colspan="2">
+<tr id="activityCustom">
+   <td id="activityCustomData" colspan="2">
 	  {include file="CRM/Custom/Form/Search.tpl" groupTree=$activityGroupTree showHideLinks=false}
    </td>
 </tr>
 {/if}
+
+{literal}
+<script type="text/javascript">
+    cj(document).ready(function() { 
+        cj('#activityCustom').children().each( function() {
+            cj( '#'+cj( this ).attr( 'id' )+' div' ).each( function() {
+                if ( cj( this ).children().attr( 'id' ) ) {
+                    cj( '#'+cj( this ).attr( 'id' ) ).hide();
+                }
+            });
+        });
+    });
+</script>
+
+
+<script type="text/javascript">
+function showCustomData( chkbox ) 
+{		 
+    if ( document.getElementById( chkbox ).checked ) {
+        var element = chkbox.split("[");
+        var splitElement = element[1].split("]");    
+        cj( '#activityCustom').children().each( function( ) {
+            cj( '#'+cj( this ).attr( 'id' )+' div' ).each( function( ) {
+                if ( cj( this ).children().attr( 'id' ) ) {
+                    if ( cj( '#'+cj( this ).attr( 'id' )+( ' fieldset' )).attr( 'id' ) ) {
+                        var fieldsetId = cj('#'+cj( this ).attr( 'id' )+( ' fieldset' )).attr( 'id' ).split( "" );
+                        var activityTypeId = jQuery.inArray( splitElement[0], fieldsetId );                                     
+                        if ( fieldsetId[activityTypeId] == splitElement[0] ) {
+                            cj( this ).show();
+                        }                            
+                    } 
+                }
+            });
+        });
+    } else {
+        var setcount = 0;
+        var element = chkbox.split( "[" );
+        var splitElement = element[1].split( "]" );
+            cj( '#activityCustom').children().each( function( ) {
+                cj( '#'+cj( this ).attr( 'id' )+' div' ).each(function() {
+                    if ( cj( this ).children().attr( 'id' ) ) {
+                        if ( cj( '#'+cj( this ).attr( 'id' )+( ' fieldset') ).attr( 'id' ) ) {
+                            var fieldsetId = cj( '#'+cj( this ).attr( 'id' )+( ' fieldset' ) ).attr( 'id' ).split( "" );
+                            var activityTypeId = jQuery.inArray( splitElement[0],fieldsetId );
+                                if ( fieldsetId[activityTypeId] ==  splitElement[0] ) {
+                                    cj( '#'+cj( this ).attr( 'id' ) ).each( function() {
+                                        if ( cj( this ).children().attr( 'id' ) ) {
+                                            cj( '#'+cj( this ).attr( 'id' )+( ' fieldset' ) ).each( function( ) {
+                                                var splitFieldsetId = cj( this ).attr( 'id' ).split( "" );
+                                                var splitFieldsetLength = splitFieldsetId.length;
+                                                for( var i=0;i<splitFieldsetLength;i++ ) {
+                                                    var setActivityTypeId = splitFieldsetId[i];
+                                                        if ( parseInt( setActivityTypeId ) ) {
+                                                            var activityTypeId = 'activity_type_id['+setActivityTypeId+']';
+                                                            if ( document.getElementById( activityTypeId ).checked ) {
+                                                                return false;
+                                                            } else {
+                                                                setcount++;
+                                                            }
+                                                        }                   
+                                                }                                  
+                                                if ( setcount > 0 ) {
+                                                    cj( '#'+cj( this ).parent().attr( 'id' ) ).hide();
+                                                }                                  
+                                            });
+                                        }
+                                    });
+                                }
+                        } 
+                    }
+                });
+            });
+    } 
+}
+{/literal}	     
+</script>
