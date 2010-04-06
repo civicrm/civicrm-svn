@@ -36,8 +36,6 @@
   </div>
 
 <div class="crm-block crm-form-block">
- <h3>{include file="CRM/Contact/Form/Task.tpl"}</h3>
-	<div class="crm-submit-buttons">
-	{$form.buttons.html}
-	</div>
+    <h3>{include file="CRM/Contact/Form/Task.tpl"}</h3>
+	<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>

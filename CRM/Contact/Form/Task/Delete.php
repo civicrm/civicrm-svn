@@ -94,7 +94,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
      * @return void
      */
     function buildQuickForm( ) {
-        $label = $this->_restore ? ts('Restore Contacts') : ts('Delete Contacts');
+        $label = $this->_restore ? ts('Restore Contact(s)') : ts('Delete Contact(s)');
 
         if ( $this->_single ) {
             // also fix the user context stack in case the user hits cancel

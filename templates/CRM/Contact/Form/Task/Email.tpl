@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div class="crm-block crm-form-block">
-<dl>{$form.buttons.html}</dl>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 <fieldset>
 {if $suppressedEmails > 0}
     <div class="status">
@@ -62,16 +62,14 @@
 
 <div class="spacer"> </div>
 
-<dl>
 {if $single eq false}
-    <dt></dt><dd>{include file="CRM/Contact/Form/Task.tpl"}</dd>
+    <dl><dt></dt><dd>{include file="CRM/Contact/Form/Task.tpl"}</dd></dl>
 {/if}
 {if $suppressedEmails > 0}
-    <dt></dt><dd>{ts count=$suppressedEmails plural='Email will NOT be sent to %count contacts.'}Email will NOT be sent to %count contact.{/ts}</dd>
+    <dl><dt></dt><dd>{ts count=$suppressedEmails plural='Email will NOT be sent to %count contacts.'}Email will NOT be sent to %count contact.{/ts}</dd></dl>
 {/if}
-</dl>
 </fieldset>
-<dl>{$form.buttons.html}</dl>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>
 <script type="text/javascript">
 var toContact = ccContact = bccContact = '';

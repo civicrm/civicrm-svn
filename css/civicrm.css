@@ -2089,7 +2089,7 @@ div.grippie {
 #crm-container .crm-submit-buttons,
 #crm-container .action-link {
     height:25px;
-    margin-bottom: 4px;
+    margin: 4px 0px 4px 2px;
 }
 
 #crm-container .crm-button {
