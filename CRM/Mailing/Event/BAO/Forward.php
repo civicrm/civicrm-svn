@@ -238,6 +238,8 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
             $query .= " GROUP BY $queue.id ";
         }
 
+        $dao->query($query);//query was missing
+        
         if ( $dao->fetch() ) {
             return $dao->forward;
         }
@@ -311,7 +313,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
 
         $query .= " ORDER BY $contact.sort_name, $forward.time_stamp DESC ";
 
-        if ($offset) {
+        if ($offset||$rowCount) {//Added "||$rowCount" to avoid displaying all records on first page
             $query .= ' LIMIT ' 
                     . CRM_Utils_Type::escape($offset, 'Integer') . ', ' 
                     . CRM_Utils_Type::escape($rowCount, 'Integer');

@@ -109,6 +109,7 @@ class CRM_Mailing_Event_BAO_Delivered extends CRM_Mailing_Event_DAO_Delivered {
                     ON  $delivered.event_queue_id = $bounce.event_queue_id
             INNER JOIN  $job
                     ON  $queue.job_id = $job.id
+                    AND $job.is_test = 0
             INNER JOIN  $mailing
                     ON  $job.mailing_id = $mailing.id
             WHERE       $bounce.id IS null
@@ -123,6 +124,8 @@ class CRM_Mailing_Event_BAO_Delivered extends CRM_Mailing_Event_DAO_Delivered {
         if ($is_distinct) {
             $query .= " GROUP BY $queue.id ";
         }
+        
+        $dao->query($query);//query was missing
 
         if ( $dao->fetch() ) {
             return $dao->delivered;
@@ -191,7 +194,7 @@ class CRM_Mailing_Event_BAO_Delivered extends CRM_Mailing_Event_DAO_Delivered {
 
         $query .= " ORDER BY $contact.sort_name, $delivered.time_stamp DESC ";
 
-        if ($offset) {
+        if ($offset||$rowCount) {//Added "||$rowCount" to avoid displaying all records on first page
             $query .= ' LIMIT ' 
                     . CRM_Utils_Type::escape($offset, 'Integer') . ', ' 
                     . CRM_Utils_Type::escape($rowCount, 'Integer');

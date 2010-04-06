@@ -578,6 +578,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                           'UPDATE civicrm_group SET cache_date = NULL',
                           'TRUNCATE TABLE civicrm_group_contact_cache',
                           'TRUNCATE TABLE civicrm_menu',
+                          'UPDATE civicrm_preferences SET navigation = NULL',
                           );
 
         foreach ( $queries as $query ) {

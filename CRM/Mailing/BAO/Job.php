@@ -377,46 +377,48 @@ ORDER BY j.scheduled_date,
                 CRM_Mailing_Event_BAO_Delivered::create($params);
             }
             
-            // add activity record for every mail that is send
-            $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
-                                                              'Email',
-                                                              'name' );
-            $session = & CRM_Core_Session::singleton();
             $targetParams[] = $field['contact_id'];
+
             unset( $result );
         }
 
-        // add activity record for every mail that is send
-        $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
-                                                          'Bulk Email',
-                                                          'name' );
+        if ( ! empty( $targetParams ) ) {
+            // add activity record for every mail that is send
+            $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
+                                                              'Bulk Email',
+                                                              'name' );
         
-        $activity = array('source_contact_id'    => $mailing->scheduled_id,
-                          'target_contact_id'    => $targetParams,
-                          'activity_type_id'     => $activityTypeID,
-                          'source_record_id'     => $this->mailing_id,
-                          'activity_date_time'   => $job_date,
-                          'subject'              => $mailing->subject,
-                          'status_id'            => 2
-                          );
+            $activity = array('source_contact_id'    => $mailing->scheduled_id,
+                              'target_contact_id'    => $targetParams,
+                              'activity_type_id'     => $activityTypeID,
+                              'source_record_id'     => $this->mailing_id,
+                              'activity_date_time'   => $job_date,
+                              'subject'              => $mailing->subject,
+                              'status_id'            => 2,
+                              'deleteActivityTarget' => false,
+                              );
 
-        //check whether activity is already created for this mailing.
-        //if yes then create only target contact record.   
-        $query  = "
-SELECT id FROM civicrm_activity
-WHERE civicrm_activity.activity_type_id = %1
-      AND civicrm_activity.source_record_id = %2";
+            //check whether activity is already created for this mailing.
+            //if yes then create only target contact record.   
+            $query  = "
+SELECT id 
+FROM   civicrm_activity
+WHERE  civicrm_activity.activity_type_id = %1
+AND    civicrm_activity.source_record_id = %2";
         
-        $queryParams = array( 1 => array( $activityTypeID, 'Integer' ), 2 => array( $this->mailing_id, 'Integer' ) );
-        $activityID  = CRM_Core_DAO::singleValueQuery( $query, $queryParams );    
+            $queryParams = array( 1 => array( $activityTypeID  , 'Integer' ),
+                                  2 => array( $this->mailing_id, 'Integer' ) );
+            $activityID  = CRM_Core_DAO::singleValueQuery( $query,
+                                                           $queryParams );    
         
-        if ( $activityID ) {
-            $activity['id'] = $activityID;  
-        }
+            if ( $activityID ) {
+                $activity['id'] = $activityID;  
+            }
         
-        require_once 'api/v2/Activity.php';
-        if ( is_a( civicrm_activity_create($activity, 'Email'), 'CRM_Core_Error' ) ) {
-            return false;
+            require_once 'api/v2/Activity.php';
+            if ( is_a( civicrm_activity_create($activity, 'Email'), 'CRM_Core_Error' ) ) {
+                return false;
+            }
         }
         
         return true;

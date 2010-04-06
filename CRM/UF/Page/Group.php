@@ -284,6 +284,10 @@ class CRM_UF_Page_Group extends CRM_Core_Page
             return;
         }
 
+        require_once 'CRM/Utils/Hook.php';
+        $ufGroups = CRM_Core_PseudoConstant::ufGroup( );
+        CRM_Utils_Hook::aclGroup( CRM_Core_Permission::ADMIN, null, 'civicrm_uf_group', $ufGroups, $allUFGroups );
+
         foreach ($allUFGroups as $id => $value) {
             $ufGroup[$id] = array();
             $ufGroup[$id]['id'        ] = $id;

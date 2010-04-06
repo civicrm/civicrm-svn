@@ -428,11 +428,19 @@ SELECT count(*)
                 $customField->save(); 
             }           
         } else {            
-            if ( $customField->data_type == 'Money' ) {  
+            switch ($customField->data_type) {
+            case 'Money':
                 require_once 'CRM/Utils/Rule.php';
                 $customOption->value = CRM_Utils_Rule::cleanMoney( $customOption->value );
+                break;
+            case 'Int':
+                $customOption->value = intval( $customOption->value );
+                break;
+            case 'Float':
+                $customOption->value = floatval( $customOption->value );
+                break;
             }
-
+            
             if ( CRM_Utils_Array::value( 'default_value', $params ) ) {
                 $customField->default_value = $customOption->value;
                 $customField->save();

@@ -365,8 +365,10 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             $assignmentParams = array( 'activity_id'         => $activityId );
 
             if ( is_array( $params['assignee_contact_id'] ) ) {
-                // first delete existing assignments if any
-                self::deleteActivityAssignment( $activityId );
+                if ( CRM_Utils_Array::value( 'deleteActivityAssignment', $params, true ) ) {
+                    // first delete existing assignments if any
+                    self::deleteActivityAssignment( $activityId );
+                }
 
                 foreach ( $params['assignee_contact_id'] as $acID ) {
                     if ( $acID ) {
@@ -395,7 +397,9 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                 }
             }
         } else {       
-            self::deleteActivityAssignment( $activityId );
+            if ( CRM_Utils_Array::value( 'deleteActivityAssignment', $params, true ) ) {
+                self::deleteActivityAssignment( $activityId );
+            }
         }
 
         if( is_a( $resultAssignment, 'CRM_Core_Error' ) ) {
@@ -410,8 +414,10 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             $targetParams = array( 'activity_id'       => $activityId );
             $resultTarget = array( );
             if ( is_array( $params['target_contact_id'] ) ) {
-                // first delete existing targets if any
-                self::deleteActivityTarget( $activityId );
+                if ( CRM_Utils_Array::value( 'deleteActivityTarget', $params, true ) ) {
+                    // first delete existing targets if any
+                    self::deleteActivityTarget( $activityId );
+                }
 
                 foreach ( $params['target_contact_id'] as $tid ) {
                     if ( $tid ) {
@@ -440,7 +446,9 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                 }
             }
         } else {
-            self::deleteActivityTarget( $activityId );
+            if ( CRM_Utils_Array::value( 'deleteActivityTarget', $params, true ) ) {
+                self::deleteActivityTarget( $activityId );
+            }
         }
 
         // write to changelog before transation is committed/rolled

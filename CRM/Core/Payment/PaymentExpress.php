@@ -193,7 +193,7 @@ class CRM_Core_Payment_PaymentExpress extends CRM_Core_Payment {
             }		     
         } else {
             $processortype   = "pxaccess";
-            require_once('PaymentExpress/pxaccess.php');
+            require_once('PaymentExpress/pxaccess.inc.php');
             $PxAccess_Url    = $this->_paymentProcessor['url_site'];    // URL
             $PxAccess_Userid = $this->_paymentProcessor['user_name'];   // User ID
             $PxAccess_Key    = $this->_paymentProcessor['password'];    // Your DES Key from DPS

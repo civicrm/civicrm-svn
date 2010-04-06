@@ -1914,6 +1914,10 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         require_once "CRM/Core/BAO/UFField.php";
         $profiles = array();
         $ufGroups = CRM_Core_PseudoConstant::ufgroup( );
+
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::aclGroup( CRM_Core_Permission::ADMIN, null, 'civicrm_uf_group', $ufGroups, $ufGroups );
+
         foreach ($ufGroups as $id => $title) {
             $ptype = CRM_Core_BAO_UFField::getProfileType($id, false, $onlyPure );
             if ( in_array ($ptype, $types) ) {

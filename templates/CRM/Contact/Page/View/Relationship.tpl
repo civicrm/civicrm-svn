@@ -110,6 +110,7 @@
       </div>
   {/if}
 {/if}
+</div>
 <div class="spacer"></div>
 
 {* start of code to show inactive relationships *}

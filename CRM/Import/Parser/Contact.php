@@ -51,6 +51,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
     protected $_mapperRelatedContactType;
     protected $_mapperRelatedContactDetails;
     protected $_mapperRelatedContactEmailType;
+    protected $_mapperRelatedContactImProvider;
     protected $_relationships;
 
     protected $_emailIndex;
@@ -1509,6 +1510,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 $this->formatParams( $formatted, $onDuplicate, (int)$contactId );
             }
             
+            // pass doNotResetCache flag since resetting and rebuilding cache could be expensive.
+            $formatted['doNotResetCache'] = 1;
             $cid = CRM_Contact_BAO_Contact::createProfileContact( $formatted, $contactFields, 
                                                                   $contactId, null, null, 
                                                                   $formatted['contact_type'] );
