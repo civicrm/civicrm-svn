@@ -143,7 +143,16 @@ class CRM_Utils_System {
                 drupal_set_breadcrumb( '' );
                 drupal_maintenance_theme();
             }
-            $out = theme( $type, $content, $args );
+            if ( !function_exists("drupal_set_page_content")) {
+              //drupal 6
+              $out = theme( $type, $content, $args );
+            }
+            else {
+              //drupal_set_page_content($content);
+              $out = $content;
+              //$ret = TRUE; //override this for Drupal 7
+            }
+            
         } else {
             $out = $content;
         }

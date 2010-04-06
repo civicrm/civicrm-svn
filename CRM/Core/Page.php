@@ -184,6 +184,11 @@ class CRM_Core_Page {
         }
         $config = CRM_Core_Config::singleton();
         $content = self::$_template->fetch( 'CRM/common/'. strtolower($config->userFramework) .'.tpl' );
+        if ( function_exists("drupal_set_page_content") ) {
+          //drupal 7 case -- we must pass the content
+          //up to the framework for embedding into its page
+          return $content; 
+        }
         echo CRM_Utils_System::theme( 'page', $content, true, $this->_print );
         return;
     }

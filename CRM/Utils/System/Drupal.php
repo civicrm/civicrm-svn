@@ -40,6 +40,20 @@
 class CRM_Utils_System_Drupal {
 
     /**
+     * Determine the major version of Drupal
+     * now running
+     *
+     * @return int  6 or 7
+     */
+    static function drupalVersion( ) {
+       static $version;
+       if (!isset($version)) {
+          $version = function_exists('db_select') ? 7 : 6;
+       }
+       return $version;
+    }
+
+    /**
      * sets the title of the page
      *
      * @param string $title
@@ -52,7 +66,10 @@ class CRM_Utils_System_Drupal {
         if ( $pageTitle ) {
             $title = $pageTitle;
         }
-        drupal_set_title( $title );
+        if ( self::drupalVersion() == 6 )   
+          drupal_set_title( $title );
+        else
+          drupal_set_title( $title, PASS_THROUGH );
     }
 
     /**
@@ -106,9 +123,13 @@ class CRM_Utils_System_Drupal {
      * @return void
      * @access public
      * @static
+     *
+     * @todo Not Drupal 7 compatible
      */
     static function addHTMLHead( $head ) {
-      drupal_set_html_head( $head );
+      if (function_exists('drupal_set_html_head')) {
+        drupal_set_html_head( $head );
+      }
     }
 
     /** 

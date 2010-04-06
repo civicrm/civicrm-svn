@@ -101,7 +101,8 @@ class CRM_Core_QuickForm_Action_Display extends CRM_Core_QuickForm_Action {
         if (isset($validate) && $validate) {
             $page->validate();
         }
-
+        //will this work generally as TRUE (i.e., return output)
+        //was default, i.e., FALSE
         return $this->renderForm($page);
     }
 
