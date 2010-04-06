@@ -460,8 +460,13 @@ $.TokenList = function (input, settings) {
 
     // Hide and clear the results dropdown
     function hide_dropdown () {
-        dropdown.hide().empty();
-        selected_dropdown_item = null;
+//         dropdown.hide().empty();
+//         selected_dropdown_item = null;
+      //here we need to sleep, fix for IE, CRM-6012 
+      setTimeout(function( ) { 
+	  dropdown.hide().empty(); 
+	  selected_dropdown_item = null; 
+	}, 300 );      
     }
 
     function show_dropdown_searching () {
