@@ -397,13 +397,12 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 			}
 
 			if ( $component == "event" ) {
-
                 $finalURL = CRM_Utils_System::url( 'civicrm/event/register',
-                                                   "_qf_ThankYou_display=1&qfKey={$params['qfKey']}", 
+                                                   "_qf_ThankYou_display=1&qfKey=$qfKey", 
                                                    false, null, false );
 			} elseif ( $component == "contribute" ) {
                 $finalURL = CRM_Utils_System::url( 'civicrm/contribute/transact',
-                                                   "_qf_ThankYou_display=1&qfKey={$params['qfKey']}",
+                                                   "_qf_ThankYou_display=1&qfKey=$qfKey",
                                                    false, null, false );
 			}
 				
@@ -412,12 +411,12 @@ class CRM_Core_Payment_PaymentExpressIPN extends CRM_Core_Payment_BaseIPN {
 		}else {
 		
             if ( $component == "event" ) {
-                $finalURL = CRM_Utils_System::url( 'civicrm/event/register',
-                                                   "_qf_Register_display=1&cancel=1&qfKey={$params['qfKey']}", 
+                $finalURL = CRM_Utils_System::url( 'civicrm/event/confirm',
+                                                   "reset=1&cc=fail&participantId=$privateData[participantID]",
                                                    false, null, false );
             } elseif ( $component == "contribute" ) {
                 $finalURL = CRM_Utils_System::url( 'civicrm/contribute/transact',
-                                                   "_qf_Main_display=1&cancel=1&qfKey={$params['qfKey']}",
+                                                   "_qf_Main_display=1&cancel=1&qfKey=$qfKey",
                                                    false, null, false );
             }
 				
