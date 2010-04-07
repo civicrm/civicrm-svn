@@ -491,10 +491,7 @@ div.spacer,
     border: 0px none;
     vertical-align: top;
 }
-#crm-container .form-layout td.label, 
-#crm-container .form-layout-compressed td.label {
-    width: 20%;
-}
+
 
 #crm-container td.op-checkbox label {
     font-weight: normal;
