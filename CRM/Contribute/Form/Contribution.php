@@ -41,7 +41,7 @@ require_once 'CRM/Contribute/Form/AdditionalInfo.php';
 require_once 'CRM/Custom/Form/CustomData.php';
 
 /**
- * This class generates form components for processing a ontribution 
+ * This class generates form components for processing a contribution 
  * 
  */
 class CRM_Contribute_Form_Contribution extends CRM_Core_Form

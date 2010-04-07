@@ -614,12 +614,18 @@ WHERE  id = %1";
         $priceSet = self::getSetDetail( $priceSetId, true );
         $form->_priceSet = CRM_Utils_Array::value( $priceSetId, $priceSet );
         $form->assign( 'priceSet',  $form->_priceSet );
+        require_once 'CRM/Core/PseudoConstant.php';
+        $visibility = CRM_Core_PseudoConstant::visibility( 'name' );
+        $visibilityId =  array_search( 'public', $visibility );
+        $className = CRM_Utils_System::getClassName( $form );
         foreach ( $form->_priceSet['fields'] as $field ) {
-            CRM_Price_BAO_Field::addQuickFormElement( $form, 'price_'.$field['id'], $field['id'], false, 
-                                                      CRM_Utils_Array::value( 'is_required', $field, false ) );
+            if ( $visibilityId == CRM_Utils_Array::value( 'visibility_id', $field ) || $className == 'CRM_Contribute_Form_Contribution' ) {
+                CRM_Price_BAO_Field::addQuickFormElement( $form, 'price_'.$field['id'], $field['id'], false, 
+                                                          CRM_Utils_Array::value( 'is_required', $field, false ) );
+            }
         }
     }
-
+    
     /**
      * Get field ids of a price set
      *

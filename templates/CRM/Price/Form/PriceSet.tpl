@@ -29,7 +29,6 @@
     {/if}
           
     {foreach from=$priceSet.fields item=element key=field_id}
-    {if $element.visibility_id eq 1 || $context == "standalone" }
     <div class="section {$element.name}-section">
     {if ($element.html_type eq 'CheckBox' || $element.html_type == 'Radio') && $element.options_per_line}
       {assign var="element_name" value=price_$field_id}
@@ -68,7 +67,6 @@
 
     {/if}
     </div>
-    {/if}   
     {/foreach}    
     {if $priceSet.help_post}
     <div class="description">{$priceSet.help_post}</div>

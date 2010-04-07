@@ -454,20 +454,25 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $form->addGroup( $elements, 'amount', ts('Event Fee(s)'), '<br />' );      
             $form->add( 'hidden', 'priceSetId', $form->_priceSetId );
             $form->assign( 'priceSet', $form->_priceSet );
+            $visibility = CRM_Core_PseudoConstant::visibility( 'name' );
+            $visibilityId =  array_search( 'public', $visibility );
+            $className = CRM_Utils_System::getClassName( $form );
             require_once 'CRM/Price/BAO/Field.php';                       
             foreach ( $form->_values['fee']['fields'] as $field ) {
-                $fieldId = $field['id'];
-                $elementName = 'price_' . $fieldId;
-                if ( $button == 'skip' ) {
-                    $isRequire = false;
-                } else {
-                    $isRequire = CRM_Utils_Array::value( 'is_required', $field );
+                if ( $visibilityId == CRM_Utils_Array::value( 'visibility_id', $field ) || $className == 'CRM_Event_Form_Participant' ) {
+                    $fieldId = $field['id'];
+                     $elementName = 'price_' . $fieldId;
+                    if ( $button == 'skip' ) {
+                        $isRequire = false;
+                    } else {
+                        $isRequire = CRM_Utils_Array::value( 'is_required', $field );
+                    }
+                    CRM_Price_BAO_Field::addQuickFormElement( $form, $elementName, $fieldId, false, $isRequire );
                 }
-                CRM_Price_BAO_Field::addQuickFormElement( $form, $elementName, $fieldId, false, $isRequire );
             }
         } else if ( ! empty( $form->_values['fee'] ) ) {
             $form->_feeBlock =& $form->_values['fee'];
-
+            
             if ( isset( $form->_values['discount'] ) ) {
                 if ( ! isset( $discountId ) &&
                      ( $form->_action != CRM_Core_Action::UPDATE )) {
