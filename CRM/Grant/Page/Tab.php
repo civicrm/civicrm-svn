@@ -163,7 +163,7 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
         switch ( $context ) {
             
         case 'search':
-            $url = CRM_Utils_System::url('civicrm/grant/search','reset=1&force=1');
+            $url = CRM_Utils_System::url('civicrm/grant/search','force=1');
             break;
             
         case 'dashboard':
