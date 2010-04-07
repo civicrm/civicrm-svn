@@ -120,8 +120,8 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
         $this->applyFilter('__ALL__', 'trim');
         $this->add('text', 'msg_title', ts('Message Title'), CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_MessageTemplates', 'msg_title' ),true );
         
-        $this->add('text', 'msg_subject', ts('Message Subject'), 
-
+        $this->add('text', 'msg_subject',
+                   ts('Message Subject'), 
                    CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_MessageTemplates', 'msg_subject' ) );
 
         //get the tokens.
@@ -160,8 +160,20 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
         
         $this->add('textarea', 'msg_text', ts('Text Message'), 
                    "cols=50 rows=6" );
-        $this->add('textarea', 'msg_html', ts('HTML Message'),
-                   "cols=50 rows=6" );
+
+        // if not a system message use a wysiwyg editor, CRM-5971
+        if ( $this->_id &&
+             CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_MessageTemplates',
+                                          $this->_id,
+                                          'workflow_id' ) ) {
+            $this->add('textarea', 'msg_html', ts('HTML Message'),
+                       "cols=50 rows=6" );
+        } else {
+            $this->addWysiwyg( 'msg_html', ts('HTML Message'),
+                               array('cols' => '80', 'rows' => '8',
+                                     'onkeyup' =>"return verify(this)" ) );
+        }
+
      
         $this->add('checkbox', 'is_active', ts('Enabled?'));
 
