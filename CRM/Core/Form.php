@@ -1003,7 +1003,8 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                 if( is_a($this, 'CRM_Contact_Form_Task_Batch') 
                 	|| is_a($this, 'CRM_Contribute_Form_Task_Batch') 
                 	|| is_a($this, 'CRM_Event_Form_Task_Batch') 
-                	|| is_a($this, 'CRM_Member_Form_Task_Batch')) { 
+                	|| is_a($this, 'CRM_Member_Form_Task_Batch')
+                    || is_a($this, 'CRM_Activity_Form_Task_Batch')) { 
                 	$elemetName  = substr( $name, 0, $name.length - 1);
                 	$elemetName .= '_time]' ;
 				}else {
