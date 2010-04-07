@@ -121,19 +121,19 @@ function initTagTree() {
         <li id="tag_{$id}">
             {if ! $node.children}<input name="tagList[{$id}]" id="check_{$id}" type="checkbox" {if $tagged[$id]}checked="checked"{/if}/>{/if}
             {if $node.children}<input name="tagList[{$id}]" id="check_{$id}" type="checkbox" {if $tagged[$id]}checked="checked"{/if}/>{/if}
-            <span {if $node.children}class="hit"{/if} id="tagLabel_{$id}">{$node.name}</span>
+            <label for="check_{$id}" {if $node.children}class="hit"{/if} id="tagLabel_{$id}">{$node.name}</label>
             {if $node.children}
             <ul>
                 {foreach from=$node.children item="subnode" key="subid"}
                     <li id="tag_{$subid}">
                         <input id="check_{$subid}" name="tagList[{$subid}]" type="checkbox" {if $tagged[$subid]}checked="checked"{/if}/>
-                        <span {if $subnode.children}class="hit"{/if} id="tagLabel_{$subid}">{$subnode.name}</span>
+                        <label for="check_{$subid}" {if $subnode.children}class="hit"{/if} id="tagLabel_{$subid}">{$subnode.name}</label>
                         {if $subnode.children}
                         <ul>
                             {foreach from=$subnode.children item="subsubnode" key="subsubid"}
                                 <li id="tag_{$subsubid}">
                                     <input id="check_{$subsubid}" name="tagList[{$subsubid}]" type="checkbox" {if $tagged[$subsubid]}checked="checked"{/if}/>
-                                    <span id="tagLabel_{$subsubid}">{$subsubnode.name}</span>
+                                    <label for="check_{$subsubid}" id="tagLabel_{$subsubid}">{$subsubnode.name}</label>
                                 </li>
                             {/foreach} 
                         </ul>
