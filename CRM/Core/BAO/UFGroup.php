@@ -328,6 +328,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             
             require_once 'CRM/Core/Component.php';
             require_once 'CRM/Core/BAO/UFField.php';
+            require_once 'CRM/Activity/BAO/Activity.php';
             $profileType = CRM_Core_BAO_UFField::getProfileType( $group->id  );
             
             if ( $profileType == 'Activity' ) {

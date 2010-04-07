@@ -67,9 +67,7 @@ class CRM_Activity_StateMachine_Search extends CRM_Core_StateMachine
         } else {
             $this->_pages[$task] = null;
         }
-        if ( $result ) {
-            $this->_pages['CRM_Activity_Form_Task_Result'] = null;
-        }
+       
         $this->addSequentialPages( $this->_pages, $action );
     }
 

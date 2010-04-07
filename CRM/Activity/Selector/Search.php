@@ -177,45 +177,6 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
     	//CRM_Core_Error::debug( $this->_query ); exit();
     }//end of constructor
     
-    
-    /**
-     * This method returns the links that are given for each search row.
-     * currently the links added for each row are 
-     * 
-     * - View
-     * - Edit
-     *
-     * @return array
-     * @access public
-     *
-     */
-    static function &links()
-    {
-        if (!(self::$_links)) {
-            self::$_links = array(
-                                  CRM_Core_Action::VIEW   => array(
-                                                                   'name'  => ts( 'View' ),
-                                                                   'url'   => 'civicrm/contact/view/activity',
-                                                                   'qs'    => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&atype=%%atype%%&selectedChild=activity',
-                                                                   'title' => ts( 'View Activity' ),
-                                                                   ),
-                                  CRM_Core_Action::UPDATE => array(
-                                                                   'name'  => ts( 'Edit' ),
-                                                                   'url'   => 'civicrm/contact/view/participant',
-                                                                   'qs'    => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
-                                                                   'title' => ts( 'Edit Activity' ),
-                                                                  ),
-                                  CRM_Core_Action::DELETE => array(
-                                                                   'name'  => ts( 'Delete' ),
-                                                                   'url'   => 'civicrm/contact/view/participant',
-                                                                   'qs'    => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
-                                                                   'title' => ts( 'Delete Activity' ),
-                                                                   ),
-                                  );
-        }
-        return self::$_links;
-    } //end of function
-    
     /**
      * getter for array of the parameters required for creating pager.
      *
@@ -347,7 +308,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                                  'direction' => CRM_Utils_Sort::DONTCARE,
                                                  ),
                                            array('name'      => ts('With') ),
-                                           array('name'      => ts('Assigned To') ),
+                                           array('name'      => ts('Assigned') ),
                                            array(
                                                  'name'      => ts('Date'),
                                                  'sort'      => 'activity_date_time',
