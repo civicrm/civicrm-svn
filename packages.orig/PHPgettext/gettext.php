@@ -239,30 +239,24 @@ class gettext_reader {
    * 
    * @access public
    * @param string string to be translated
-   * @param context gettext context for that string
    * @return string translated string (or original, if not found)
    */
-  function translate($string, $context = null) {
+  function translate($string) {
     if ($this->short_circuit)
       return $string;
     $this->load_tables();     
-
-    $original_string = $string;
-    if ($context) {
-      $string = $context . '|' . $string;
-    }
     
     if ($this->enable_cache) {
       // Caching enabled, get translated string from cache
       if (array_key_exists($string, $this->cache_translations))
         return $this->cache_translations[$string];
       else
-        return $original_string;
+        return $string;
     } else {
       // Caching not enabled, try to find string
       $num = $this->find_string($string);
       if ($num == -1)
-        return $original_string;
+        return $string;
       else
         return $this->get_translation_string($num);
     }

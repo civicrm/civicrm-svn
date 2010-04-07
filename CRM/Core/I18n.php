@@ -146,6 +146,7 @@ class CRM_Core_I18n
      *       - 'no'/'off'/0 - turns off escaping
      *   - plural - The plural version of the text (2nd parameter of ngettext())
      *   - count - The item count for plural mode (3rd parameter of ngettext())
+     *   - context - gettext context of that string (for homonym handling)
      *
      * @param $text   string  the original string
      * @param $params array   the params of the translation (if any)
@@ -166,6 +167,13 @@ class CRM_Core_I18n
             }
         }
 
+        if (isset($params['context'])) {
+            $context = $params['context'];
+            unset($params['context']);
+        } else {
+            $context = null;
+        }
+
         // use plural if required parameters are set
         if (isset($count) && isset($plural)) {
 
@@ -182,7 +190,7 @@ class CRM_Core_I18n
 
         // if not plural, but the locale's set, translate
         } elseif ($this->_phpgettext) {
-            $text = $this->_phpgettext->translate($text);
+            $text = $this->_phpgettext->translate($text, $context);
         }
 
         // replace the numbered %1, %2, etc. params if present
