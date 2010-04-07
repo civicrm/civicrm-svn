@@ -196,7 +196,7 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
                     list( $defaults['start_date'] ) = CRM_Utils_Date::setDateDefaults( $this->_values['start_date'] );
                 }
                 if ( $this->_values['end_date'] ) {
-                    list( $defaults['end_date'] ) = CRM_Utils_Date::setDateDefaults( $defaults['end_date'] );
+                    list( $defaults['end_date'] ) = CRM_Utils_Date::setDateDefaults( $this->_values['end_date'] );
                 }
                 $defaults['description'         ] = CRM_Utils_Array::value( 'description', $this->_values );
                 $defaults['is_active'           ] = CRM_Utils_Array::value( 'is_active', $this->_values );
