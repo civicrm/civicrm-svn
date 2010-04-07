@@ -290,7 +290,7 @@ class CRM_Import_ImportJob {
     }
     
     private function _addImportedContactsToNewGroup( $contactIds,
-        $newGroupName, $newGroupDesc ) {
+                                                     $newGroupName, $newGroupDesc ) {
         
         $newGroupId = null;
         
