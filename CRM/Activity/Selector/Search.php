@@ -83,7 +83,8 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                 'source_record_id',
                                 'source_contact_name',
                                 'activity_type_id',
-                                'activity_type'
+                                'activity_type',
+                                'is_test'
                                 );
     
     /** 
@@ -238,9 +239,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             $row['assignee_contact_name'] = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $row['activity_id'] );
             $row['activity_type'] = $row['activity_type_id'];
             $row['activity_status'] = $row['activity_status_id'];
-            if ( $row['activity_is_test'] ) {
-                $row['activity_type'] = $row['activity_type'] . " (test)";
-            }
+            
             if ( CRM_Utils_Array::value( 'source_contact_id', $row ) ) {
                 $row['source_contact_name'] = CRM_Contact_BAO_Contact::displayName( $row['source_contact_id'] );
             }
@@ -254,7 +253,9 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             $accessMailingReport = false;
             $activityType = CRM_Core_PseudoConstant::activityType( true, true );
             $activityTypeId = CRM_Utils_Array::key( $row['activity_type'], $activityType );
-            
+            if ( $row['is_test'] ) {
+                $row['activity_type'] = $row['activity_type'] . " (test)";
+            }
             require_once 'CRM/Activity/Selector/Activity.php';
             $activityActions = new CRM_Activity_Selector_Activity( $result->contact_id, null );
             $actionLinks = $activityActions->actionLinks( $activityTypeId,

@@ -240,9 +240,11 @@ class CRM_Activity_BAO_Query
             
             break;
                    
-        case 'test_activities':
-            $query->_where[$grouping][] = " civicrm_activity.is_test = {$value}";
-            $query->_qill[$grouping][]  = ts( 'Find Test Activities' );
+        case 'activity_test':
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_activity.is_test", $op, $value, "Integer" ) ;
+           if ( $value ) {
+               $query->_qill[$grouping][]  = ts( 'Find Test Activities' );
+           }
             
             break;
                 
@@ -410,7 +412,8 @@ class CRM_Activity_BAO_Query
                                 'activity_details'    => 1,
                                 'activity_status_id'  => 1,
                                 'source_contact_id'   => 1,
-                                'source_record_id'    => 1
+                                'source_record_id'    => 1,
+                                'is_test'             => 1
                                 );
 
             // also get all the custom activity properties
