@@ -48,7 +48,8 @@
                         {/if}
 
                         {* CRM-4418 *}
-                        {if call_user_func(array('CRM_Core_Permission','check'), 'delete contacts')}
+                        {* user should have edit permission to delete contact *}
+                        {if (call_user_func(array('CRM_Core_Permission','check'), 'delete contacts')) && ($permission EQ 'edit') }
                         <li>
                         <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&delete=1&cid=$contactId"}" class="delete button" title="{ts}Delete{/ts}">
                         <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>

@@ -70,6 +70,11 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
                                             $this, false ); 
         
         if ( $cid ) { 
+            require_once 'CRM/Contact/BAO/Contact/Permission.php';
+            if ( !CRM_Contact_BAO_Contact_Permission::allow( $cid, CRM_Core_Permission::EDIT ) ) {
+                CRM_Core_Error::fatal( ts( 'You do not have permission to delete this contact. Note: you can delete contacts if you can edit them.' ) );
+            }
+
             $this->_contactIds = array( $cid ); 
             $this->_single     = true; 
             $this->assign( 'totalSelectedContacts', 1 );
