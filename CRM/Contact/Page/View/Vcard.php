@@ -81,10 +81,24 @@ class CRM_Contact_Page_View_Vcard extends CRM_Contact_Page_View {
         $vcard->setFormattedName($defaults['display_name']);
         $vcard->setSortString($defaults['sort_name']);
 
-        if ( CRM_Utils_Array::value( 'nick_name' , $defaults )) $vcard->addNickname( $defaults['nick_name'] );
-        if ( CRM_Utils_Array::value( 'job_title' , $defaults )) $vcard->setTitle( $defaults['job_title'] );
-        if ( CRM_Utils_Array::value( 'birth_date', $defaults )) $vcard->setBirthday( $defaults['birth_date'] );
-        if ( CRM_Utils_Array::value( 'home_URL'  , $defaults )) $vcard->setURL($defaults['home_URL'] );
+        if ( CRM_Utils_Array::value( 'nick_name' , $defaults )) {
+            $vcard->addNickname( $defaults['nick_name'] );
+        }
+
+        if ( CRM_Utils_Array::value( 'job_title' , $defaults )) {
+            $vcard->setTitle( $defaults['job_title'] );
+        }
+        
+        if ( CRM_Utils_Array::value( 'birth_date', $defaults )) {
+            require_once 'CRM/Utils/Date.php';
+            $birthDate = CRM_Utils_Date::mysqlToIso( $defaults['birth_date'] );
+            $vcard->setBirthday( $birthDate );
+        }
+
+        if ( CRM_Utils_Array::value( 'home_URL'  , $defaults )) {
+            $vcard->setURL($defaults['home_URL'] );
+        }
+
         // TODO: $vcard->setGeo($lat, $lon);
         if ( CRM_Utils_Array::value( 'address', $defaults ) ) {
             require_once 'CRM/Core/PseudoConstant.php';
