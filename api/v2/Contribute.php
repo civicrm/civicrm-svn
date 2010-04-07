@@ -422,3 +422,96 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
     return array();
 }
 
+/**
+ * Process a transaction and record it against the contact.
+ * 
+ * @param  array   $params           (reference ) input parameters
+ *
+ * @return array (reference )        contribution of created or updated record (or a civicrm error)
+ * @static void
+ * @access public
+ * 
+ */
+function civicrm_contribute_transact($params) {
+  civicrm_initialize( );
+  require 'api/v2/Contribute.php' ;
+
+  if ( empty( $params ) ) {
+    return civicrm_create_error( ts( 'No input parameters present' ) );
+  }
+  
+  if ( ! is_array( $params ) ) {
+    return civicrm_create_error( ts( 'Input parameters is not an array' ) );
+  }
+  
+  $values  = array( );
+
+  require_once 'CRM/Contribute/BAO/Contribution.php';
+  $error = _civicrm_contribute_format_params( $params, $values );
+  if ( civicrm_error( $error ) ) {
+    return $error;
+  }
+
+  $required = array( 
+    'amount', 
+  ) ;
+  foreach ( $required as $key ) {
+    if ( !isset($params[$key]) ) {
+      return civicrm_create_error("Missing parameter $key: civicrm_contribute_transact() requires a parameter '$key'.");
+    }
+  }
+
+  // allow people to omit some values for convenience
+  $defaults = array(
+    // 'payment_processor_id' => NULL /* we could retrieve the default processor here, but only if it's missing to avoid an extra lookup */
+    'payment_processor_mode' => 'live',
+  ) ;
+  $params = array_merge($defaults, $params) ;
+
+  // clean up / adjust some values which 
+  if ( !isset($params['total_amount']) ) {
+    $params['total_amount'] = $params['amount'] ;
+  }
+  if ( !isset($params['net_amount']) ) {
+    $params['net_amount'] = $params['amount'] ;
+  }
+  if ( !isset($params['receive_date']) ) {
+    $params['receive_date'] = date('Y-m-d');
+  }
+  if ( !isset($params['invoiceID']) && isset($params['invoice_id']) ) {
+      $params['invoiceID'] = $params['invoice_id'] ;
+  }
+
+  require_once 'CRM/Core/BAO/PaymentProcessor.php';
+  $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $params['payment_processor_id'],
+                                                                 $params['payment_processor_mode'] );
+  if ( civicrm_error($paymentProcessor) ) {
+    return $paymentProcessor ;
+  }
+
+  require_once 'CRM/Core/Payment.php';
+  $payment =& CRM_Core_Payment::singleton( $params['payment_processor_mode'], 'Contribute', $paymentProcessor );
+  if ( civicrm_error($payment) ) {
+    return $payment ;
+  }
+
+  $transaction = $payment->doDirectPayment($params);
+  if ( civicrm_error($transaction) ) {
+    return $transaction ;
+  }
+
+  // but actually, $payment->doDirectPayment() doesn't return a
+  // CRM_Core_Error by itself
+  if ( get_class($transaction) == 'CRM_Core_Error' ) {
+      $errs = $transaction->getErrors() ;
+      if ( !empty($errs) ) {
+          $last_error = array_shift($errs) ;
+          return CRM_Core_Error::createApiError($last_error['message']);
+      }
+  }
+
+  require_once 'api/v2/Contribute.php' ;
+  $contribution = civicrm_contribution_add($params);
+  return $contribution ;
+}
+
