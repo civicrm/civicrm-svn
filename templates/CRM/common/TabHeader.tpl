@@ -50,7 +50,7 @@
             selected: tabIndex,
             select: function(event, ui) {
                 if ( !global_formNavigate ) {
-                    var message = '{/literal}{ts}Confirm\n\nAre you sure you want to navigate away from this tab?\n\nYou have unsaved changes.\n\nPress OK to continue, or Cancel to stay on the current tab.{/ts}{literal}';
+                    var message = '{/literal}{ts escape="js"}Confirm\n\nAre you sure you want to navigate away from this tab?\n\nYou have unsaved changes.\n\nPress OK to continue, or Cancel to stay on the current tab.{/ts}{literal}';
                     if ( !confirm( message ) ) {
                         return false;
                     } else {
