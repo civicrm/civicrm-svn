@@ -46,7 +46,7 @@
        </table>
      {else}
      <div class="messages status">	
-     <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /> &nbsp;
+     <div class="icon inform-icon"></div> &nbsp;
       {ts}This contact does not belong to any groups.{/ts}
      </div>	
      {/if}

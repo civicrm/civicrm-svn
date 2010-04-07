@@ -36,7 +36,7 @@
 {if !$emailExists and $action neq 8 and $context neq 'standalone'}
 <div class="messages status">
   <dl>
-    <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+    <dt><div class="icon inform-icon"></div></dt>
     <dd>
         <p>{ts}You will not be able to send an automatic email receipt for this Membership because there is no email address recorded for this contact. If you want a receipt to be sent when this Membership is recorded, click Cancel and then click Edit from the Summary tab to add an email address before recording the Membership.{/ts}</p>
     </dd>
@@ -55,7 +55,7 @@
     {if $action eq 8}
       <div class="messages status">
         <dl>
-          <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+          <dt><div class="icon inform-icon"></div></dt>
           <dd>    
           {ts}WARNING: Deleting this membership will also delete related membership log and payment records. This action cannot be undone. Consider modifying the membership status instead if you want to maintain a record of this membership.{/ts}
           {ts}Do you want to continue?{/ts}

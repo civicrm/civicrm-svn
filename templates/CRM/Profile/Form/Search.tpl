@@ -151,14 +151,14 @@ cj(function() {
 {elseif $statusMessage}
     <div class="messages status">
       <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+        <dt><div class="icon inform-icon"></div></dt>
         <dd>{$statusMessage}</dd>
       </dl>
     </div>
 {else} {* empty fields *}
     <div class="messages status">
       <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+        <dt><div class="icon inform-icon"></div></dt>
         <dd>{ts}No fields in this Profile have been configured as searchable. Ask the site administrator to check the Profile setup.{/ts}</dd>
       </dl>
     </div>

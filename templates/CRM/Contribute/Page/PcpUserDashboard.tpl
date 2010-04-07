@@ -53,7 +53,7 @@
 {else}
 <div class="messages status">
 <dl>
-	<dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+	<dt><div class="icon inform-icon"></div></dt>
 	<dd>{ts}You do not have any active Personal Campaign pages.{/ts}</dd>
 </dl>
 </div>

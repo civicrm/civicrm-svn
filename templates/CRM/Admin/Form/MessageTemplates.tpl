@@ -34,7 +34,7 @@
    {if $action eq 8}
       <div class="messages status">
         <dl>
-          <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+          <dt><div class="icon inform-icon"></div></dt>
           <dd>
           {ts}Do you want to delete this message template?{/ts}
           </dd>

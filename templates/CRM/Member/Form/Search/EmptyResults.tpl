@@ -26,7 +26,7 @@
 {* No matches for submitted search request. *}
 <div class="messages status">
   <dl>
-    <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+    <dt><div class="icon inform-icon"></div></dt>
     <dd>
         {if $qill}{ts}No matches found for:{/ts}
             {include file="CRM/common/displaySearchCriteria.tpl"}

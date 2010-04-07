@@ -86,7 +86,7 @@
    {if $isSearch eq 1}
     <div class="status messages">
         <dl>
-            <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+            <dt><div class="icon inform-icon"></div></dt>
             {capture assign=browseURL}{crmURL p='civicrm/event/manage' q="reset=1"}{/capture}
             <dd>
                 {ts}No available Events match your search criteria. Suggestions:{/ts}
@@ -103,7 +103,7 @@
    {else}
     <div class="messages status">
     <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+        <dt><div class="icon inform-icon"></div></dt>
         <dd>{ts 1=$newEventURL}There are no events scheduled for the date range. You can <a href='%1'>add one</a>.{/ts}</dd>
         </dl>
     </div>    

@@ -32,7 +32,7 @@
     {if $action eq 8}
       <div class="messages status">
         <dl>
-          <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+          <dt><div class="icon inform-icon"></div></dt>
           <dd>{ts}WARNING: Deleting this Participant Status will remove all of its settings.{/ts} {ts}Do you want to continue?{/ts}</dd>
         </dl>
       </div>

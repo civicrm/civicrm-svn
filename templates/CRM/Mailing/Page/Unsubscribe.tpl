@@ -26,7 +26,7 @@
 {if $confirm}
 <div class="messages status">
     <dl>
-      <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+      <dt><div class="icon inform-icon"></div></dt>
       <dd><label>{$display_name} ({$email})</label> {ts}has been successfully unsubscribed.{/ts}</dd>
     </dl>
 </div>

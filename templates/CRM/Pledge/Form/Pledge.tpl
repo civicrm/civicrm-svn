@@ -32,7 +32,7 @@
 {if !$email and $action neq 8 and $context neq 'standalone'}
 <div class="messages status">
   <dl>
-    <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+    <dt><div class="icon inform-icon"></div></dt>
     <dd>
         <p>{ts}You will not be able to send an acknowledgment for this pledge because there is no email address recorded for this contact. If you want a acknowledgment to be sent when this pledge is recorded, click Cancel and then click Edit from the Summary tab to add an email address before recording the pledge.{/ts}</p>
     </dd>
@@ -45,7 +45,7 @@
    {if $action eq 8} 
       <div class="messages status"> 
         <dl> 
-          <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt> 
+          <dt><div class="icon inform-icon"></div></dt> 
           <dd> 
           {ts}WARNING: Deleting this pledge will result in the loss of the associated financial transactions (if any).{/ts} {ts}Do you want to continue?{/ts} 
           </dd> 

@@ -26,7 +26,7 @@
 {* this template is used for confirmation of delete for event  *}
 <div class="messages status">
     <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>
+        <dt><div class="icon inform-icon"></div></dt>
         <dd>
           {if $isTemplate}
             {ts}Warning: Deleting this event template will also delete associated Event Registration Page and Event Fee configurations.{/ts} {ts}This operation cannot be undone.{/ts} {ts}Do you want to continue?{/ts}

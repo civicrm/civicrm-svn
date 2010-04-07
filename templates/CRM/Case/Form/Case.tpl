@@ -37,7 +37,7 @@
 {if $action eq 8 or $action eq 32768 } 
       <div class="messages status"> 
         <dl> 
-          <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt> 
+          <dt><div class="icon inform-icon"></div></dt> 
           <dd> 
           {if $action eq 8}
             {ts}Click Delete to move this case and all associated activities to the Trash.{/ts} 

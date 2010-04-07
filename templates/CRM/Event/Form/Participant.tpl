@@ -57,7 +57,7 @@
     			<td>
     				<div class="messages status">
     					<dl>
-    						<dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt> 
+    						<dt><div class="icon inform-icon"></div></dt> 
     						<dd> 
     							{ts}WARNING: Deleting this registration will result in the loss of related payment records (if any).{/ts} {ts}Do you want to continue?{/ts} 
     						</dd>

@@ -121,7 +121,7 @@
     <br />
     <div class="messages status">
         <dl>
-            <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}" /></dt>      
+            <dt><div class="icon inform-icon"></div></dt>      
             <dd>
                 {ts}There are no active Events to display.{/ts}
                 {ts 1=$newEventURL}You can <a href="%1">Create a New Event</a> now.{/ts}
