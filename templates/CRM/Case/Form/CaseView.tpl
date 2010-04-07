@@ -640,8 +640,6 @@ cj("select[multiple]").crmasmSelect({
     sortable: true,
     respectParents: true
 });
-show('casetags_show');
-hide('casetags');
 
 cj("#manageTags").hide( );
 function addTags() {
