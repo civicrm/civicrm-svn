@@ -255,10 +255,11 @@ class CRM_Contact_Task {
                 //absent, drop down shows blank space
                 unset( $tasks[12] );
             }
+            //user has to have edit permission to delete contact.
             //CRM-4418, lets keep delete for View and Edit so user can tweak ACL
-            if ( CRM_Core_Permission::check( 'delete contacts' ) ) {
-                $tasks[8] = self::$_tasks[8]['title']; 
-            }
+//             if ( CRM_Core_Permission::check( 'delete contacts' ) ) {
+//                 $tasks[8] = self::$_tasks[8]['title']; 
+//             }
         }
 
         return $tasks;

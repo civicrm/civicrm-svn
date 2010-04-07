@@ -2103,7 +2103,7 @@ UNION
                                                 ),
                        'delete'       => array( 'title'        =>  ts( 'Delete Contact' ), 
                                                 'ref'          =>  'delete-contact',
-                                                'permissions'  =>  array( 'delete contacts' ) 
+                                                'permissions'  =>  array( 'delete contacts', 'edit all contacts' ) 
                                                 ),
                        'contribution' => array( 'title'        =>  ts( 'Record Contribution' ), 
                                                 'ref'          =>  'new-contribution',
@@ -2152,7 +2152,7 @@ UNION
          
          require_once 'CRM/Core/Permission.php';
          $aclPermissionedTasks = array( 'view-contact', 'edit-contact', 'new-activity',
-                                        'new-email', 'group-add-contact', 'tag-contact' );
+                                        'new-email', 'group-add-contact', 'tag-contact', 'delete-contact' );
          $corePermission = CRM_Core_Permission::getPermission( );
          
          $config =& CRM_Core_Config::singleton( );
