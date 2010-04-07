@@ -52,7 +52,13 @@ class CRM_Contact_Form_Task_EmailCommon
 
     static function preProcessFromAddress( &$form ) 
     {
-        $form->_single  = true;
+        $form->_single  = false;
+        $className = CRM_Utils_System::getClassName( $form );
+        if ( $form->_context != 'search' &&
+             $className == 'CRM_Contact_Form_Task_Email' ) {
+            $form->_single = true;
+        }
+
         $form->_emails  = $emails = array( );
         
         $session   = CRM_Core_Session::singleton( );
