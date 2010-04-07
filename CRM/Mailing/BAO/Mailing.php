@@ -1027,6 +1027,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             $smarty->assign_by_ref( 'contact', $contact );
         }
 
+        $mailParams = $headers;
         if ($text && ( $test || $contact['preferred_mail_format'] == 'Text' ||
                        $contact['preferred_mail_format'] == 'Both' ||
                        ( $contact['preferred_mail_format'] == 'HTML' && !array_key_exists('html',$pEmails) ) ) ) {
@@ -1034,7 +1035,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
                 $textBody = $smarty->fetch( "string:$textBody" );
             }
-            $message->setTxtBody( $textBody );
+            $mailParams['text'] = $textBody;
         }
         
         if ( $html && ( $test ||  ( $contact['preferred_mail_format'] == 'HTML' ||
@@ -1043,18 +1044,36 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
                 $htmlBody = $smarty->fetch( "string:$htmlBody" );
             }
-            $message->setHTMLBody( $htmlBody );
+            $mailParams['html'] = $htmlBody;
         }
 
-        if ( ! empty( $attachments ) ) {
-            foreach ( $attachments as $fileID => $attach ) {
+        $mailParams['attachments'] = $attachments;
+        $mailParams['Subject'] = join( '', $pEmails['subject'] );
+        
+
+        $mailParams['toName' ] = $contact['display_name'];
+        $mailParams['toEmail'] = $email;
+
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::alterMailParams( $mailParams );
+
+        if ( ! empty( $mailParams['text'] ) ) {
+            $message->setTxtBody( $mailParams['text'] );
+        }
+
+        if ( ! empty( $mailParams['html'] ) ) {
+            $message->setHTMLBody( $mailParams['html'] );
+        }
+
+        if ( ! empty( $mailParams['attachments'] ) ) {
+            foreach ( $mailParams['attachments'] as $fileID => $attach ) {
                 $message->addAttachment( $attach['fullPath'],
                                          $attach['mime_type'],
                                          $attach['cleanName'] );
             }
         }
 
-        $recipient = "{$contact['display_name']} <$email>";
+        $recipient = "{$mailParams['toName' ]} <{$mailParams['toEmail']}>";
         $headers['To'] = $recipient;
         $headers['Precedence'] = 'bulk';
         //Will test in the mail processor if the X-VERP is set in the bounced email. (As an option to replace real VERP for those that can't set it up)
