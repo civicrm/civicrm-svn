@@ -30,10 +30,10 @@
 <div class="crm-block crm-form-block">
 
 {if $action neq 8 && $action neq 32768}
-<div class="html-adjust">{$form.buttons.html}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 {/if}
 
-<fieldset><legend>{if $action eq 8}{ts}Delete Case{/ts}{elseif $action eq 32768}{ts}Restore Case{/ts}{else}{$activityType}{/if}</legend>
+<h3>{if $action eq 8}{ts}Delete Case{/ts}{elseif $action eq 32768}{ts}Restore Case{/ts}{/if}</h3>
 {if $action eq 8 or $action eq 32768 } 
       <div class="messages status"> 
         <dl> 
@@ -122,8 +122,7 @@
 </table>
 {/if}	
 
-</fieldset>
-<div class="html-adjust">{$form.buttons.html}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}

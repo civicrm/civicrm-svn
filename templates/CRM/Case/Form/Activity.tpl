@@ -302,7 +302,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
              {/if}
            {/if}
            <tr>
-              <td>&nbsp;</td><td class="buttons">{$form.buttons.html}</td>
+              <td>&nbsp;</td><td class="buttons">{include file="CRM/common/formButtons.tpl"}</td>
             </tr>
         </table>
     </fieldset>
