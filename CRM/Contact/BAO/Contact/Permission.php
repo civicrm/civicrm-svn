@@ -159,7 +159,15 @@ WHERE $permission
 
     static function cacheClause( $contactAlias = 'contact_a', $contactID = null ) {
         if ( CRM_Core_Permission::check( 'view all contacts' ) ) {
-            return array( null, "($contactAlias.is_deleted IS NULL OR $contactAlias.is_deleted = 0)" );
+            if (is_array($contactAlias)) {
+                $wheres = array();
+                foreach ($contactAlias as $alias) {
+                    $wheres[] = "($alias.is_deleted IS NULL OR $alias.is_deleted = 0)";
+                }
+                return array(null, '(' . implode(' AND ', $wheres) . ')');
+            } else {
+                return array(null, "($contactAlias.is_deleted IS NULL OR $contactAlias.is_deleted = 0)");
+            }
         }
 
         $session = CRM_Core_Session::singleton( );
