@@ -45,17 +45,17 @@
              {/foreach}
             </tr>
           </thead>
-            {foreach from=$componentIds item=cid}
+            {foreach from=$componentIds item=activityId}
              <tr class="{cycle values="odd-row,even-row"}">
 	      {foreach from=$readOnlyFields item=fTitle key=fName}
-	         <td>{$contactDetails.$cid.$fName}</td>
+	         <td>{$contactDetails.$activityId.$fName}</td>
 	      {/foreach}
                 {foreach from=$fields item=field key=fieldName}
                 {assign var=n value=$field.name}
-                {if ( $fields.$n.data_type eq 'Date') or ( $n eq 'activity_date_time' )}
-                <td class="compressed">{include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$cid batchUpdate=1}</td>
+                {if ( $fields.$n.data_type eq 'Date') or (  $fields.$n.name eq 'activity_date_time' )}
+                <td class="compressed">{include file="CRM/common/jcalendar.tpl" elementName=$n}</td>
                 {else} 
-                   <td class="compressed">{$form.field.$cid.$n.html}</td> 
+                   <td class="compressed">{$form.field.$activityId.$n.html}</td> 
                 {/if}
               {/foreach}
              </tr>
