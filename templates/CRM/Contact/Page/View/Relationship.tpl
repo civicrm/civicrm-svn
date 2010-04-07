@@ -165,4 +165,3 @@
  {include file="CRM/common/customData.tpl"}
 {/if}
 </div>
-</div>
