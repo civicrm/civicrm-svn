@@ -294,6 +294,11 @@ function civicrm_contact_delete( &$params ) {
         return civicrm_create_error( ts( 'Could not find contact_id in input parameters' ) );
     }
 
+    $session =& CRM_Core_Session::singleton( );
+    if ( $contactID ==  $session->get( 'userID' ) ) {
+        return civicrm_create_error( ts( 'This contact record is linked to the currently logged in user account - and cannot be deleted.' ) );
+    }
+
     if ( CRM_Contact_BAO_Contact::deleteContact( $contactID ) ) {
         return civicrm_create_success( );
     } else {
