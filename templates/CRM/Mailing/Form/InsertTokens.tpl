@@ -314,7 +314,7 @@ function selectValue( val ) {
     }
 
     cj(function() {
-        setSignature( );
+        setTimeout( 'setSignature( );', 100 );
         cj("#fromEmailAddress").change( function( ) {
             setSignature( );
         });
@@ -382,7 +382,7 @@ function selectValue( val ) {
                     oEditor = CKEDITOR.instances[html_message];
 		    htmlMessage = oEditor.getData( ); 
                 } 
-			
+
 		//replace previous signature w/ current one.
 		textMessage = textMessage.replace( preTextSignature, curTextSignature );
 		htmlMessage = htmlMessage.replace( preHtmlSignature, curHtmlSignature );
@@ -391,9 +391,9 @@ function selectValue( val ) {
 		   textMessage = textMessage.replace( textSeparator, '' ); 
 		}
 		if ( !curHtmlSignature ) {
-		   replaceRegex = htmlSeparator;
+		   var replaceRegex = htmlSeparator;
 		   if ( editor == 'ckeditor' || editor == 'tinymce' ) {
-		      var replaceRegex = /<p>([\n]+)?((-+)?([\s]+)?<br[\s+]?.>([\s]+)?)+([\n]+)?([\s]+)?<.p>/gi;
+		       replaceRegex = /<p>([\n]+)?((-+)?([\s]+)?<br[\s+]?.>([\s]+)?)+([\n]+)?([\s]+)?<.p>/gi;
                    }
 		   htmlMessage = htmlMessage.replace( replaceRegex, '' );
    		}
