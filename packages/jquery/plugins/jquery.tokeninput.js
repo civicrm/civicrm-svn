@@ -23,6 +23,7 @@ $.fn.tokenInput = function (url, options) {
         method: "GET",
         contentType: "json",
         queryParam: "name",
+        ajaxCallbacks:true,
         onResult: null
     }, options);
 
@@ -355,6 +356,13 @@ $.TokenList = function (input, settings) {
 
         // Save this token id
         var id_string = li_data.id;
+        
+        		
+		if(settings.ajaxCallbacks == true) {
+			console.log('selected token');
+			console.log(id_string);
+			}
+		
 
         // IE fixes: Remove extra comma at the end
         if ( hidden_input.val( ) ) {
@@ -416,6 +424,11 @@ $.TokenList = function (input, settings) {
     function delete_token (token) {
         // Remove the id from the saved list
         var token_data = $.data(token.get(0), "tokeninput");
+        
+        if (settings.ajaxCallbacks == true){
+        	console.log('deleted token');
+        	console.log(token_data.id);
+        	}
 
         // Delete the token
         token.remove();
