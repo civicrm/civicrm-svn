@@ -350,9 +350,11 @@ function selectValue( val ) {
             var dataUrl = {/literal}"{crmURL p='civicrm/ajax/signature' h=0 }"{literal};
             cj.post( dataUrl, {emailID: emailID}, function( data ) {
 
-		//gross hack to diff main val from signature.
-		var htmlSeparator = '<br /><br />--<br />';
-		var textSeparator = '\n\n--\n';
+	    	//separator between signature and main message.     
+		var textSeparator = htmlSeparator = '\n\n--\n';
+		if ( editor == 'ckeditor' || editor == 'tinymce' ) {
+		   htmlSeparator = '<br /><br />--<br />';
+		}
 		
 		//get the html signature.
 		var curHtmlSignature = '';
@@ -389,8 +391,11 @@ function selectValue( val ) {
 		   textMessage = textMessage.replace( textSeparator, '' ); 
 		}
 		if ( !curHtmlSignature ) {
-		   htmlMessage = htmlMessage.replace(/<p>([\n]+)?((-+)?([\s]+)?<br[\s+]?.>([\s]+)?)+([\n]+)?([\s]+)?<.p>/gi,
-		   	       	 		     '' );
+		   replaceRegex = htmlSeparator;
+		   if ( editor == 'ckeditor' || editor == 'tinymce' ) {
+		      var replaceRegex = /<p>([\n]+)?((-+)?([\s]+)?<br[\s+]?.>([\s]+)?)+([\n]+)?([\s]+)?<.p>/gi;
+                   }
+		   htmlMessage = htmlMessage.replace( replaceRegex, '' );
    		}
 		
 		//append the signature.
