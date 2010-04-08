@@ -139,4 +139,4 @@ function {/literal}{$list}{literal}CaseDetails( caseId, contactId )
          });
 }
 </script>
-{/literal}	
+{/literal}
