@@ -188,6 +188,8 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                         case 'Float':
                             $optionValue->value = floatval( $v );
                             break;
+                        default:
+                            $optionValue->value = trim($v);
                         }
                         
                         $optionValue->weight          =  $params['option_weight'][$k];
