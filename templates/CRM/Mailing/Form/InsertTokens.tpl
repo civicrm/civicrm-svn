@@ -314,119 +314,39 @@ function selectValue( val ) {
     }
 
     cj(function() {
-        setTimeout( 'setSignature( );', 100 );
+        setSignature( );
         cj("#fromEmailAddress").change( function( ) {
             setSignature( );
         });
 
     });
-
-    //we need to remember previous signature.
-    var preTextSignature = preHtmlSignature = null;
-
     function setSignature( ) {
-
         var emailID = cj("#fromEmailAddress").val( );
-        var editor = {/literal}"{$editor}"{literal};	   
-		    
-	var textMessage = htmlMessage = '';
-
-	if ( isNaN( emailID ) ) {
-	   // reset html message value.
-	   if ( editor == "ckeditor" ) {
-                oEditor = CKEDITOR.instances[html_message];
-                oEditor.setData( htmlMessage  );
-           } else if ( editor == "tinymce" ) {
-                cj('#'+ html_message).tinymce().execCommand('mceSetContent',false, htmlMessage );
-           } else {	
-                cj("#"+ html_message).val( htmlMessage );
-           }
-
-	   //reset text message value.
-	   cj("#"+ text_message).val( textMessage ); 	 
-
-        } else {
-
+        if ( !isNaN( emailID ) ) {
             var dataUrl = {/literal}"{crmURL p='civicrm/ajax/signature' h=0 }"{literal};
             cj.post( dataUrl, {emailID: emailID}, function( data ) {
+                var editor     = {/literal}"{$editor}"{literal};
 
-	    	//separator between signature and main message.     
-		var textSeparator = htmlSeparator = '\n\n--\n';
-		if ( editor == 'ckeditor' || editor == 'tinymce' ) {
-		   htmlSeparator = '<br /><br />--<br />';
-		}
-		
-		//get the html signature.
-		var curHtmlSignature = '';
-		if ( data.signature_html ) {
-		   var curHtmlSignature = data.signature_html;
-		}
+                // get existing text & html and append signatue
+                var textMessage =  cj("#"+ text_message).val( ) + '\n\n--\n' + data.signature_text;
+                var htmlMessage =  cj("#"+ html_message).val( ) + '<br/><br/>--<br/>' + data.signature_html;
 
-		//get the text signature.
-		var curTextSignature = '';
-		if ( data.signature_text ) {
-		   curTextSignature = data.signature_text;
-		}
-	
-		if ( !preHtmlSignature ) {
-		     preHtmlSignature = curHtmlSignature;
-		}
-		if ( !preTextSignature ) {
-		     preTextSignature = curTextSignature;
-		}
+                // append signature
+                cj("#"+ text_message).val( textMessage ); 
 
-                // get the messages.
-                var textMessage =  cj("#"+ text_message).val( ) ;
-		var htmlMessage =  cj("#"+ html_message).val( ) ;
+                // set wysiwg editor
                 if ( editor == "ckeditor" ) {
                     oEditor = CKEDITOR.instances[html_message];
-		    htmlMessage = oEditor.getData( ); 
-                } 
-
-		//replace previous signature w/ current one.
-		textMessage = textMessage.replace( preTextSignature, curTextSignature );
-		htmlMessage = htmlMessage.replace( preHtmlSignature, curHtmlSignature );
-				
-		if ( !curTextSignature ) {
-		   textMessage = textMessage.replace( textSeparator, '' ); 
-		}
-		if ( !curHtmlSignature ) {
-		   var replaceRegex = htmlSeparator;
-		   if ( editor == 'ckeditor' || editor == 'tinymce' ) {
-		       replaceRegex = /<p>([\n]+)?((-+)?([\s]+)?<br[\s+]?.>([\s]+)?)+([\n]+)?([\s]+)?<.p>/gi;
-                   }
-		   htmlMessage = htmlMessage.replace( replaceRegex, '' );
-   		}
-		
-		//append the signature.
-		if ( !htmlMessage && curHtmlSignature ) {
-		   htmlMessage = htmlSeparator + curHtmlSignature;
-		}
-
-		if ( !textMessage && curTextSignature ) {
-		   textMessage = textSeparator + curTextSignature;
-		}
-
-	        // set text message value.
-		cj("#"+ text_message).val( textMessage ); 
-
-		// set html message value.
-		if ( editor == "ckeditor" ) {
-                     oEditor = CKEDITOR.instances[html_message];
-                     oEditor.setData( htmlMessage  );
+                    var htmlMessage = oEditor.getData( ) + '<br/><br/>--' + data.signature_html;
+                    oEditor.setData( htmlMessage  );
                 } else if ( editor == "tinymce" ) {
-                     cj('#'+ html_message).tinymce().execCommand('mceSetContent',false, htmlMessage );
+                    cj('#'+ html_message).tinymce().execCommand('mceSetContent',false, htmlMessage );
                 } else {	
-                     cj("#"+ html_message).val( htmlMessage );
+                    cj("#"+ html_message).val( htmlMessage );
                 }
 
-		//swap the current signature to previous.
-		preTextSignature = curTextSignature;
-		preHtmlSignature = curHtmlSignature;
-
             }, 'json'); 
-        }
- 
+        } 
     }
 </script>
 {/literal}
