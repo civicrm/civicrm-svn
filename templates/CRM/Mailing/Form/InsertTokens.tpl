@@ -351,44 +351,54 @@ function selectValue( val ) {
             cj.post( dataUrl, {emailID: emailID}, function( data ) {
 
 		//gross hack to diff main val from signature.
-		var htmlSeparator = '<br/><br/>--<br/>';
+		var htmlSeparator = '<br /><br />--<br />';
 		var textSeparator = '\n\n--\n';
 		
 		//get the html signature.
-		var curHtmlSignature = data.signature_html;
-		curHtmlSignature = curHtmlSignature.replace( '<p>',    '' );
-		curHtmlSignature = curHtmlSignature.replace( '\r\n\t', '' );
-		curHtmlSignature = curHtmlSignature.replace( '<\/p>',  '' );
+		var curHtmlSignature = '';
+		if ( data.signature_html ) {
+		   var curHtmlSignature = data.signature_html;
+		}
 
 		//get the text signature.
-		var curTextSignature = data.signature_text;
-		
-		if ( !preHtmlSignature ) {
-		     preHtmlSignature = data.signature_html;
+		var curTextSignature = '';
+		if ( data.signature_text ) {
+		   curTextSignature = data.signature_text;
 		}
-                preHtmlSignature = preHtmlSignature.replace( '<p>',    '' );
-		preHtmlSignature = preHtmlSignature.replace( '\r\n\t', '' );
-		preHtmlSignature = preHtmlSignature.replace( '<\/p>',  '' );
+	
+		if ( !preHtmlSignature ) {
+		     preHtmlSignature = curHtmlSignature;
+		}
+		if ( !preTextSignature ) {
+		     preTextSignature = curTextSignature;
+		}
 
-                // get text message.
+                // get the messages.
                 var textMessage =  cj("#"+ text_message).val( ) ;
-
-		// get html message.
 		var htmlMessage =  cj("#"+ html_message).val( ) ;
                 if ( editor == "ckeditor" ) {
                     oEditor = CKEDITOR.instances[html_message];
 		    htmlMessage = oEditor.getData( ); 
                 } 
-
+			
 		//replace previous signature w/ current one.
 		textMessage = textMessage.replace( preTextSignature, curTextSignature );
 		htmlMessage = htmlMessage.replace( preHtmlSignature, curHtmlSignature );
-
+				
+		if ( !curTextSignature ) {
+		   textMessage = textMessage.replace( textSeparator, '' ); 
+		}
+		if ( !curHtmlSignature ) {
+		   htmlMessage = htmlMessage.replace(/<p>([\n]+)?((-+)?([\s]+)?<br[\s+]?.>([\s]+)?)+([\n]+)?([\s]+)?<.p>/gi,
+		   	       	 		     '' );
+   		}
+		
 		//append the signature.
-		if ( !htmlMessage ) {
+		if ( !htmlMessage && curHtmlSignature ) {
 		   htmlMessage = htmlSeparator + curHtmlSignature;
 		}
-		if ( !textMessage ) {
+
+		if ( !textMessage && curTextSignature ) {
 		   textMessage = textSeparator + curTextSignature;
 		}
 
