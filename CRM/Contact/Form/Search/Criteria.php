@@ -46,8 +46,8 @@ class CRM_Contact_Form_Search_Criteria {
             $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements( );
             
             if ( $contactTypes ) {
-		            $form->add('select', 'contact_type',  ts( 'Contact Type(s)' ), $contactTypes, false, 
-		                       array( 'id' => 'contact_type',  'multiple'=> 'multiple', 'title' => ts('Click to select Contact Types') ));
+		        $form->add( 'select', 'contact_type',  ts( 'Contact Type(s)' ), $contactTypes, false, 
+		                    array( 'id' => 'contact_type',  'multiple'=> 'multiple', 'title' => ts('Click to select Contact Types') ));
             }
             
         }
@@ -55,20 +55,18 @@ class CRM_Contact_Form_Search_Criteria {
         if ( $form->_searchOptions['groups'] ) {
             // multiselect for groups
             if ( $form->_group ) {
-		            $form->add('select', 'groups',  ts( 'Groups' ), $form->_group, false, 
-		                       array( 'id' => 'groups',  'multiple'=> 'multiple', 'title' => ts('Click to select Groups') ));
+		        $form->add( 'select', 'groups',  ts( 'Groups' ), $form->_group, false, 
+		                    array( 'id' => 'groups',  'multiple'=> 'multiple', 'title' => ts('Click to select Groups') ));
             }
         }
-        
-        
 
         if ( $form->_searchOptions['tags'] ) {
             // multiselect for categories
             require_once 'CRM/Core/BAO/Tag.php';
             $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
-            if( $contactTags ) {
-		            $form->add('select', 'contact_tags',  ts( 'Tags' ), $contactTags, false, 
-		                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
+            if ( $contactTags ) {
+		        $form->add( 'select', 'contact_tags',  ts( 'Tags' ), $contactTags, false, 
+		                    array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
             }
         }
         

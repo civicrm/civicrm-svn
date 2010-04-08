@@ -210,5 +210,28 @@ class CRM_Admin_Page_AJAX
         echo json_encode( $statusMessage );
         
         exit;
-    } 
+    }
+    
+    static function getTagList( ) {
+        $name     = CRM_Utils_Type::escape( $_GET['name'], 'String' );
+        $parentID = CRM_Utils_Type::escape( $_GET['parentID'], 'Integer' );
+        
+        $tags = array( );
+        
+        $query = "SELECT id, name FROM civicrm_tag WHERE parent_id = {$parentID} and name LIKE '%{$name}%'";
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        
+        while( $dao->fetch( ) ) {
+            $tags[] = array( 'name' => $dao->name,
+                             'id'   => $dao->id );
+        }
+        
+        if ( empty( $tags ) ) {
+            $tags[] = array( 'name' => $name,
+                             'id'   => $name );            
+        }
+        
+        echo json_encode( $tags ); 
+        CRM_Utils_System::civiExit( );
+    }  
 }

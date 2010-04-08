@@ -164,6 +164,17 @@ function initTagTree() {
        <div class="form-item unobstructive">{$form.buttons.html}</div>
        </fieldset>
     {/if}
+    
+    <input type="text" name="taglist" id="taglist" />
+    <script type="text/javascript">
+    {literal}
+        eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
+        
+        var tokenDataUrl = {/literal}"{$tokenUrl}"{literal};
+        var hintText = "{/literal}{ts}Type in a partial or complete name of an existing tag.{/ts}{literal}";
+        cj( "#taglist"  ).tokenInput( tokenDataUrl, { classes: tokenClass, hintText: hintText });
+    {/literal}
+    </script>    
 </div>
 
 {if $action eq 1 or $action eq 2 }
