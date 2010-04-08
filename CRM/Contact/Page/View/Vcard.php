@@ -91,7 +91,7 @@ class CRM_Contact_Page_View_Vcard extends CRM_Contact_Page_View {
         
         if ( CRM_Utils_Array::value( 'birth_date', $defaults )) {
             require_once 'CRM/Utils/Date.php';
-            $birthDate = CRM_Utils_Date::mysqlToIso( $defaults['birth_date'] );
+            $birthDate = CRM_Utils_Date::customFormat( $defaults['birth_date'], "%Y-%m-%d" );
             $vcard->setBirthday( $birthDate );
         }
 
