@@ -3762,4 +3762,13 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (10019, 1094, "ND", "Nord"),
 
 -- CRM-6002 - Argentinian provinces suplemented
-(10020, 1010, "F", "La Rioja");
+(10020, 1010, "F", "La Rioja"),
+
+-- CRM-6063 - Added states for Andorra
+(10021, 1005, "07", "Andorra la Vella"),
+(10022, 1005, "02", "Canillo"),
+(10023, 1005, "03", "Encamp"),
+(10024, 1005, "08", "Escaldes-Engordany"),
+(10025, 1005, "04", "La Massana"),
+(10026, 1005, "05", "Ordino"),
+(10027, 1005, "06", "Sant Julia de Loria");

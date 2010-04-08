@@ -270,3 +270,15 @@ SET url_site_test_default = 'https://www.payjunctionlabs.com/quick_link' WHERE n
    (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `is_optgroup`, `is_reserved`, `is_active`) 
 VALUES
    (@option_group_id_mt, {localize}'Export Activities'{/localize},  @max_val+1, 'Export Activity', NULL, 0, 0, @max_wt+1, 0, 1, 1);
+
+-- CRM-6063
+   INSERT INTO civicrm_state_province
+        (id, `name`, `abbreviation`, `country_id` )
+   VALUES
+        ( 10021, 'Andorra la Vella', '07', 1005 ),
+        ( 10022, 'Canillo', '02', 1005 ),
+        ( 10023, 'Encamp', '03', 1005 ),
+        ( 10024, 'Escaldes-Engordany', '08', 1005 ),
+        ( 10025, 'La Massana', '04', 1005 ),
+        ( 10026, 'Ordino','05', 1005 ),
+        ( 10027, 'Sant Julia de Loria', '06', 1005 );
