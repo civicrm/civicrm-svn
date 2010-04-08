@@ -42,10 +42,8 @@
 
 {htxt id=id-is_multiple"}
     <p>{ts}Checking this box allows you to enter multiple sets of values for a given contact.{/ts}</p>
-    <p>{ts}<strong>EXAMPLE:</strong> When creating a group of custom fields used to collect <strong>Employment History</strong> - you might have fields
-    for Job Title, Start Date, End Date, and Reason for Leaving. Checking the "multiple records" box allows you to collect information for multiple jobs.{/ts}</p>
-    <p>{ts}You can also set the maximum number of records which can be recorded per contact. Using the previous example, you might only want data for the three most
-    recent jobs.{/ts}</p>
+    <p>{ts}<strong>EXAMPLE:</strong> When creating a group of custom fields used to collect <strong>Employment History</strong> - you might have fields for Job Title, Start Date, End Date, and Reason for Leaving. Checking the "multiple records" box allows you to collect information for multiple jobs.{/ts}</p>
+    <p>{ts}You can also set the maximum number of records which can be recorded per contact. Using the previous example, you might only want data for the three most recent jobs.{/ts}</p>
     <p>
     {ts}CAUTION: The following features are NOT available for custom fields in 'multiple record' custom groups:{/ts}
         <ul>
