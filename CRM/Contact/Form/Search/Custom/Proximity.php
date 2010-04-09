@@ -181,7 +181,7 @@ LEFT JOIN civicrm_country country               ON country.id        = address.c
 		// This prevents duplicate rows when contacts have more than one tag any you select "any tag"
 		if ($this->_tag) {
 			$f .= "
-LEFT JOIN civicrm_entity_tag t ON contact_a.id = t.contact_id
+LEFT JOIN civicrm_entity_tag t ON (t.entity_table='civicrm_contact' AND contact_a.id = t.entity_id)
 ";
 		}
 		
