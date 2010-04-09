@@ -227,8 +227,12 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                                false, false, 
                                                false, 
                                                $this->_activityClause );
+         $rows = array( );
+         require_once 'CRM/Mailing/BAO/Mailing.php';
+         $mailingIDs =& CRM_Mailing_BAO_Mailing::mailingACLIDs( );
+         $accessCiviMail = CRM_Core_Permission::check( 'access CiviMail' );
          while ( $result->fetch( ) ) {
-         	$row = array( );
+            $row = array( );
             // the columns we are interested in
             foreach ( self::$_properties as $property) {
                 if ( isset( $result->$property ) ) {
@@ -255,6 +259,16 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             $activityTypeId = CRM_Utils_Array::key( $row['activity_type'], $activityType );
             if ( $row['is_test'] ) {
                 $row['activity_type'] = $row['activity_type'] . " (test)";
+            }
+            $bulkActivityTypeID = CRM_Utils_Array::key( 'Bulk Email', $activityType );
+            $row['recipients'] = ts('(recipients)');
+            if ( $accessCiviMail && in_array( $result->source_record_id, $mailingIDs ) && ( $bulkActivityTypeID == $activityTypeId ) ) {
+                $row['mailingId'] = 
+                    CRM_Utils_System::url( 'civicrm/mailing/report', 
+                                           "mid={$result->source_record_id}&reset=1&cid={$result->source_contact_id}&context=activitySelector" ); 
+                $row['target_contact_name'] = '';
+                $row['assignee_contact_name'] = '';
+                $accessMailingReport = true;
             }
             require_once 'CRM/Activity/Selector/Activity.php';
             $activityActions = new CRM_Activity_Selector_Activity( $result->contact_id, null );
