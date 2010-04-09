@@ -100,21 +100,34 @@ class CRM_Activity_Form_Task_PickProfile extends CRM_Activity_Form_Task {
      */
     function buildQuickForm( ) 
     {
-
         require_once "CRM/Core/BAO/UFGroup.php";
         $types = array( 'Activity' );
         $profiles = CRM_Core_BAO_UFGroup::getProfiles( $types, true );
         
+        $activityTypeIds = array_flip( CRM_Core_PseudoConstant::activityType( true, false, false, 'name' ) );
+        $nonEditableActivityTypeIds = array ( $activityTypeIds['Event Registration'], $activityTypeIds['Contribution'], $activityTypeIds['Pledge Acknowledgment'], $activityTypeIds['Pledge Reminder'], $activityTypeIds['Inbound Email'], $activityTypeIds['Email'],$activityTypeIds['Bulk Email'], $activityTypeIds['Membership Renewal'],  $activityTypeIds['Membership Signup'], $activityTypeIds['Membership Signup'] );
+        
+        foreach ( $this->_activityHolderIds as $activityId ) {
+            $typeId = CRM_Core_DAO::getFieldValue( "CRM_Activity_DAO_Activity", $activityId, 'activity_type_id' );
+            if ( in_array ( $typeId, $nonEditableActivityTypeIds ) ) {
+                $notEditable = true;
+                break;
+            }
+        }
+        
         if ( empty( $profiles ) ) {
             CRM_Core_Session::setStatus( "You will need to create a Profile containing the {$types[0]} fields you want to edit before you can use Batch Update via Profile. Navigate to Administer Civicrm >> CiviCRM Profile to configure a Profile. Consult the online Administrator documentation for more information." );
             CRM_Utils_System::redirect( $this->_userContext );
+        } else if ( $notEditable ) {
+            CRM_Core_Session::setStatus( "Some of the selected activities are not editable." );
+            CRM_Utils_System::redirect( $this->_userContext );
         }
-
+        
         $ufGroupElement = $this->add( 'select', 'uf_group_id', ts('Select Profile' ), 
-                                     array( '' => ts( '- select profile -') ) + $profiles, true );
+                                      array( '' => ts( '- select profile -') ) + $profiles, true );
         $this->addDefaultButtons( ts( 'Continue >>' ) );
     }
-
+    
     /**
      * Add local and global form rules
      *
