@@ -125,7 +125,8 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         // check logged in url permission
         self::checkUserPermission( $this );
         
-        list( $displayName, $contactImage, $contactType, $contactSubtype, $contactImageUrl ) = $this->getContactDetails();
+        list( $displayName, $contactImage, 
+              $contactType, $contactSubtype, $contactImageUrl ) = self::getContactDetails( $this->_contactId );
         $this->assign( 'displayName', $displayName );
         
         $this->set( 'contactType',    $contactType );
@@ -139,7 +140,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         }
 
         // set page title
-        CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
+        self::setTitle( $this->_contactId ); 
         
         // add to recently viewed block
         CRM_Utils_Recent::add( $displayName,
@@ -193,12 +194,12 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
      * @return void
      * @access public
      */
-    function getContactDetails( ) {
+    function getContactDetails( $contactId ) {
         return list( $displayName, 
                      $contactImage, 
                      $contactType, 
                      $contactSubtype, 
-                     $contactImageUrl ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $this->_contactId,
+                     $contactImageUrl ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $contactId,
                                                                                        true,
                                                                                        true );
     }
@@ -240,4 +241,22 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
             CRM_Core_Error::statusBounce( ts('You do not have the necessary permission to view this contact.') );
         }
     }
+    
+    function setTitle( $contactId ) 
+    {
+        static $contactDetails;
+        $displayName = $contactImage = null;
+        if ( !isset( $contactDetails[$contactId] ) ) {
+            list( $displayName, $contactImage ) = self::getContactDetails( $contactId );
+            $contactDetails[$contactId] = array( 'displayName'  => $displayName,
+                                                 'contactImage' => $contactImage );
+        } else {
+            $displayName  = $contactDetails[$contactId]['displayName'];
+            $contactImage = $contactDetails[$contactId]['contactImage']; 
+        }
+        
+        // set page title
+        CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
+    }
+    
 }

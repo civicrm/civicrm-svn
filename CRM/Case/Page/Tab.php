@@ -71,6 +71,9 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
             // check logged in url permission
             require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::checkUserPermission( $this );
+            
+            // set page title
+            CRM_Contact_Page_View::setTitle( $this->_contactId );
         } else {
             if ( $this->_action & CRM_Core_Action::VIEW ) {
                 CRM_Core_Error::fatal('Contact Id is required for view action.');

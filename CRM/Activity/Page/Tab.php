@@ -136,6 +136,9 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
         require_once 'CRM/Contact/Page/View.php';
         CRM_Contact_Page_View::checkUserPermission( $this );
         
+        // set page title
+        CRM_Contact_Page_View::setTitle( $this->_contactId );
+        
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
         $this->assign( 'action', $this->_action);
 
