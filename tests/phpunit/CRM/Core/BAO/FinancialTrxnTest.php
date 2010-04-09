@@ -25,17 +25,17 @@
  +--------------------------------------------------------------------+
 */
 require_once 'CiviTest/CiviUnitTestCase.php';
-require_once 'CRM/Contribute/BAO/FinancialTrxn.php';
+require_once 'CRM/Core/BAO/FinancialTrxn.php';
 
 
-class CRM_Contribute_BAO_FinancialTrxnTest extends CiviUnitTestCase 
+class CRM_Core_BAO_FinancialTrxnTest extends CiviUnitTestCase 
 {
     
     function get_info( ) 
     {
         return array(
                      'name'        => 'FinancialTrxn BAOs',
-                     'description' => 'Test all Contribute_BAO_Contribution methods.',
+                     'description' => 'Test all CRM_Core_BAO_ContributionTrxn methods.',
                      'group'       => 'CiviCRM BAO Tests',
                      );
     }
@@ -63,9 +63,9 @@ class CRM_Contribute_BAO_FinancialTrxnTest extends CiviUnitTestCase
                          'payment_processor' => 'Dummy',
                          'trxn_id' => 'test_01014000'
                         );
-        $FinancialTrxn = CRM_Contribute_BAO_FinancialTrxn::create( $params );
+        $FinancialTrxn = CRM_Core_BAO_FinancialTrxn::create( $params );
 
-        $result = $this->assertDBNotNull( 'CRM_Contribute_BAO_FinancialTrxn', $FinancialTrxn->id,
+        $result = $this->assertDBNotNull( 'CRM_Core_BAO_FinancialTrxn', $FinancialTrxn->id,
                                            'total_amount', 'id',
                                            'Database check on updated financial trxn record.' );
         
