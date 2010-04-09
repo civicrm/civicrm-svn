@@ -105,7 +105,17 @@ class CRM_Activity_Form_Task_PickProfile extends CRM_Activity_Form_Task {
         $profiles = CRM_Core_BAO_UFGroup::getProfiles( $types, true );
         
         $activityTypeIds = array_flip( CRM_Core_PseudoConstant::activityType( true, false, false, 'name' ) );
-        $nonEditableActivityTypeIds = array ( $activityTypeIds['Event Registration'], $activityTypeIds['Contribution'], $activityTypeIds['Pledge Acknowledgment'], $activityTypeIds['Pledge Reminder'], $activityTypeIds['Inbound Email'], $activityTypeIds['Email'],$activityTypeIds['Bulk Email'], $activityTypeIds['Membership Renewal'],  $activityTypeIds['Membership Signup'], $activityTypeIds['Membership Signup'] );
+        $nonEditableActivityTypeIds =  array (                                         
+                                              $activityTypeIds['Email'],
+                                              $activityTypeIds['Bulk Email'],
+                                              $activityTypeIds['Contribution'],
+                                              $activityTypeIds['Inbound Email'],
+                                              $activityTypeIds['Pledge Reminder'],
+                                              $activityTypeIds['Membership Signup'], 
+                                              $activityTypeIds['Membership Renewal'],
+                                              $activityTypeIds['Event Registration'],
+                                              $activityTypeIds['Pledge Acknowledgment']
+                                             );
         
         foreach ( $this->_activityHolderIds as $activityId ) {
             $typeId = CRM_Core_DAO::getFieldValue( "CRM_Activity_DAO_Activity", $activityId, 'activity_type_id' );
