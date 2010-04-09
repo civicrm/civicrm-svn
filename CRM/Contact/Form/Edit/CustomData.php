@@ -58,7 +58,7 @@ class CRM_Contact_Form_Edit_CustomData
             $form->assign( "blockName", $form->_addBlockName );
         }
         
-        CRM_Custom_Form_CustomData::preProcess( $form, null, null, null, 
+        CRM_Custom_Form_CustomData::preProcess( $form, null, $form->_subType, null, 
                                                 ( $form->_type ) ? $form->_type : $form->_contactType );
         
         //assign group tree after build.

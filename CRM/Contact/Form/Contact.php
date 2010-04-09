@@ -256,10 +256,21 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         // location blocks.
         CRM_Contact_Form_Location::preProcess( $this );
 
+        // execute preProcess dynamically by js else execute normal preProcess
         if ( array_key_exists( 'CustomData', $this->_editOptions ) ) {
-            //only custom data has preprocess hence directly call it
-            CRM_Custom_Form_CustomData::preProcess( $this, null, $this->_contactSubType, 
-                                                    1, $this->_contactType, $this->_contactId );
+            if ( CRM_Utils_Request::retrieve( 'type', 'String', CRM_Core_DAO::$_nullObject ) ) {
+                require_once 'CRM/Contact/Form/Edit/CustomData.php';
+                CRM_Contact_Form_Edit_CustomData::preProcess( $this );
+            } else {
+                $contactSubType = $this->_contactSubType;
+                // need contact sub type to build related grouptree array during post process
+                if ( CRM_Utils_Array::value( 'contact_sub_type', $_POST ) ) {
+                    $contactSubType = $_POST['contact_sub_type'];
+                }
+                //only custom data has preprocess hence directly call it
+                CRM_Custom_Form_CustomData::preProcess( $this, null, $contactSubType, 
+                                                        1, $this->_contactType, $this->_contactId );
+            }
         }
         
     }
@@ -653,12 +664,18 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         require_once(str_replace('_', DIRECTORY_SEPARATOR, "CRM_Contact_Form_Edit_" . $this->_contactType) . ".php");
         eval( 'CRM_Contact_Form_Edit_' . $this->_contactType . '::buildQuickForm( $this, $this->_action );' );
         
+        // build Custom data if Custom data present in edit option
+        $buildCustomData = null ; 
+        if ( array_key_exists( 'CustomData', $this->_editOptions ) ) {
+            $buildCustomData = "removeDefaultCustomFields( ), buildCustomData('{$this->_contactType}',this.value), highlightTabs( );";
+        }
+
         // subtype is a common field. lets keep it here
         $typeLabel = CRM_Contact_BAO_ContactType::getLabel( $this->_contactType );
         $subtypes  = CRM_Contact_BAO_ContactType::subTypePairs( $this->_contactType );
         $subtypeElem =& $this->addElement( 'select', 'contact_sub_type', 
                                            ts('Contact Type'), array( '' => $typeLabel ) + $subtypes,
-                                           array('onchange' => "buildCustomData('{$this->_contactType}',this.value);") );
+                                           array('onchange' => $buildCustomData ) );
         
         $allowEditSubType = true;
         if ( $this->_contactId && $this->_contactSubType ) {
@@ -749,10 +766,6 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $params['deceased_date'] = null;
         }
         
-        if ( $this->_contactSubType && ($this->_action & CRM_Core_Action::ADD) ) {
-            $params['contact_sub_type'] = $this->_contactSubType;
-        }
-
         // action is taken depending upon the mode
         require_once 'CRM/Utils/Hook.php';
         if ( $this->_action & CRM_Core_Action::UPDATE ) {

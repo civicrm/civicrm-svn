@@ -75,7 +75,7 @@
    </div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
-    
+<div id='customData'></div>  
     {foreach from = $editOptions item = "title" key="name"}
         {include file="CRM/Contact/Form/Edit/$name.tpl"}
     {/foreach}
@@ -87,6 +87,7 @@
 {literal}
 <script type="text/javascript" >
 var action = "{/literal}{$action}{literal}";
+var removeCustomData = true;
 showTab[0] = {"spanShow":"span#contact","divShow":"div#contactDetails"};
 cj(function( ) {
 	cj(showTab).each( function(){ 
@@ -110,44 +111,7 @@ cj(function( ) {
 		}
 	});
 
-	if ( action == 2 ) {
-		//highlight the tab having data inside.
-		cj('.crm-accordion-body :input').each( function() { 
-			var element = cj(this).closest(".crm-accordion-body").attr("id");
-			if (element) {
-			eval('var ' + element + ' = "";');
-			switch( cj(this).attr('type') ) {
-			case 'checkbox':
-			case 'radio':
-			  if( cj(this).is(':checked') ) {
-			    eval( element + ' = true;'); 
-			  }
-			  break;
-			  
-			case 'text':
-			case 'textarea':
-			  if( cj(this).val() ) {
-			    eval( element + ' = true;');
-			  }
-			  break;
-			  
-			case 'select-one':
-			case 'select-multiple':
-			  if( cj('select option:selected' ) && cj(this).val() ) {
-			    eval( element + ' = true;');
-			  }
-			  break;		
-			  
-			case 'file':
-			  if( cj(this).next().html() ) eval( element + ' = true;');
-			  break;
-			}
-			if( eval( element + ';') ) { 
-			  cj(this).closest(".crm-accordion-wrapper").addClass('crm-accordion-hasContent');
-			}
-		   }
-		});
-	}
+	highlightTabs( );
 });
 
 cj('a#expand').click( function( ){
@@ -187,12 +151,57 @@ function showHideSignature( blockId ) {
     cj('#Email_Signature_' + blockId ).toggle( );   
 }
 
- {/literal}
-   buildCustomData( '{$contactType}' );
-   {if $contactSubType}
-   buildCustomData( '{$contactType}', '{$contactSubType}' );
-   {/if}
- {literal}
+function highlightTabs( ) {
+    if ( action == 2 ) {
+	//highlight the tab having data inside.
+	cj('.crm-accordion-body :input').each( function() { 
+		var element = cj(this).closest(".crm-accordion-body").attr("id");
+		if (element) {
+		eval('var ' + element + ' = "";');
+		switch( cj(this).attr('type') ) {
+		case 'checkbox':
+		case 'radio':
+		  if( cj(this).is(':checked') ) {
+		    eval( element + ' = true;'); 
+		  }
+		  break;
+		  
+		case 'text':
+		case 'textarea':
+		  if( cj(this).val() ) {
+		    eval( element + ' = true;');
+		  }
+		  break;
+		  
+		case 'select-one':
+		case 'select-multiple':
+		  if( cj('select option:selected' ) && cj(this).val() ) {
+		    eval( element + ' = true;');
+		  }
+		  break;		
+		  
+		case 'file':
+		  if( cj(this).next().html() ) eval( element + ' = true;');
+		  break;
+  		}
+		if( eval( element + ';') ) { 
+		  cj(this).closest(".crm-accordion-wrapper").addClass('crm-accordion-hasContent');
+		}
+	     }
+       });
+    }
+}
+
+function removeDefaultCustomFields( ) {
+     //execute only once
+     if (removeCustomData) {
+	 cj(".crm-accordion-wrapper").children().each( function() {
+	    var eleId = cj(this).attr("id");
+	    if ( eleId.substr(0,10) == "customData" ) { cj(this).parent("div").remove(); }
+	 });
+	 removeCustomData = false;
+     }
+}
  
 </script>
 {/literal}
