@@ -282,3 +282,7 @@ VALUES
         ( 10025, 'La Massana', '04', 1005 ),
         ( 10026, 'Ordino','05', 1005 ),
         ( 10027, 'Sant Julia de Loria', '06', 1005 );
+
+-- CRM-5673
+ALTER TABLE civicrm_contact ADD is_deleted TINYINT;
+ALTER TABLE civicrm_contact ADD INDEX index_is_deleted(is_deleted);
