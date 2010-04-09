@@ -26,7 +26,7 @@
 <tr>
   {if $form.activity_type_id}
      <td><label>{ts}Activity Type(s){/ts}</label>
-        <div id="Tag" class="listing-box">
+        <div id="Activity" class="listing-box">
           {foreach from=$form.activity_type_id item="activity_type_val"} 
              <div class="{cycle values="odd-row,even-row"}">
                {$activity_type_val.html}
@@ -92,11 +92,35 @@
 {literal}
 <script type="text/javascript">
     cj(document).ready(function() { 
-        //Searchable activity custom fields which extend ALL activity types are always displayed in the form hence hide remaining activity custom data
-        cj('#activityCustom').children().each( function() {
-            cj( '#'+cj( this ).attr( 'id' )+' div' ).each( function() {
-                if ( cj( this ).children().attr( 'id' ) ) {
-                    cj( '#'+cj( this ).attr( 'id' ) ).hide();
+        //Searchable activity custom fields which extend ALL activity types are always displayed in the form 
+        //hence hide remaining activity custom data
+        cj( '#activityCustom' ).children( ).each( function( ) {
+            cj( '#'+cj( this ).attr( 'id' )+' div' ).each( function( ) {
+                if ( cj( this ).children( ).attr( 'id' ) ) {
+                    var activityCustomdataGroup = cj( this ).attr( 'id' );  //div id
+                    var fieldsetId = cj( this ).children( ).attr( 'id' );  // fieldset id
+                    var splitFieldsetId = fieldsetId.split( "" );
+                    var splitFieldsetLength = splitFieldsetId.length;  //length of fieldset
+                    var show = 0;
+                    //setdefault activity custom data group if corresponding activity type is checked
+                    cj( '#Activity div' ).each( function( ) {
+                        var checkboxId = cj( this ).children( ).attr( 'id' );  //activity type element name
+                        if ( document.getElementById( checkboxId ).checked ) {
+                            var element = checkboxId.split( '[' );
+                            var splitElement = element[1].split( ']' );  // get activity type id
+                            for( var i=0;i<splitFieldsetLength;i++ ) {
+                                var singleFieldset = splitFieldsetId[i];
+                                if ( parseInt( singleFieldset ) ) {
+                                    if ( singleFieldset == splitElement[0] ) {
+                                        show++;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                    if ( show < 1 ) {
+			            cj( '#'+activityCustomdataGroup ).hide( );
+			        }
                 }
             });
         });
@@ -138,7 +162,8 @@ function showCustomData( chkbox )
                                 if ( fieldsetId[activityTypeId] ==  splitElement[0] ) {
                                     cj( '#'+cj( this ).attr( 'id' ) ).each( function() {
                                         if ( cj( this ).children().attr( 'id' ) ) {
-                                        //if activity custom data extends more than one activity types then hide that only when all the extended activity types are unchecked
+                                        //if activity custom data extends more than one activity types then 
+                                        //hide that only when all the extended activity types are unchecked
                                             cj( '#'+cj( this ).attr( 'id' )+( ' fieldset' ) ).each( function( ) {
                                                 var splitFieldsetId = cj( this ).attr( 'id' ).split( "" );
                                                 var splitFieldsetLength = splitFieldsetId.length;
