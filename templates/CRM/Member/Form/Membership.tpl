@@ -49,9 +49,11 @@
         {ts 1=$displayName 2=$registerMode}Use this form to submit Membership Record on behalf of %1. <strong>A %2 transaction will be submitted</strong> using the selected payment processor.{/ts}
     </div>
 {/if}
-<div class="html-adjust">{$form.buttons.html}</div>
-<fieldset><legend>{if $action eq 1}{ts}New Membership{/ts}{elseif $action eq 2}{ts}Edit Membership{/ts}{else}{ts}Delete Membership{/ts}{/if}</legend> 
-    <div class="form-item">
+<div class="crm-block crm-form-block">
+<div class="crm-submit-buttons">
+   {include file="CRM/common/formButtons.tpl"}
+</div>
+<h3>{if $action eq 1}{ts}New Membership{/ts}{elseif $action eq 2}{ts}Edit Membership{/ts}{else}{ts}Delete Membership{/ts}{/if}</h3>
     {if $action eq 8}
       <div class="messages status">
         <dl>
@@ -66,7 +68,7 @@
     <table class="form-layout-compressed">
         {if $context neq 'standalone'}
             <tr>
-                <td class="font-size12pt right"><strong>{ts}Member{/ts}</strong></td><td class="font-size12pt"><strong>{$displayName}</strong></td>
+                <td class="font-size12pt label"><strong>{ts}Member{/ts}</strong></td><td class="font-size12pt"><strong>{$displayName}</strong></td>
             </tr>
         {else}
             {include file="CRM/Contact/Form/NewContact.tpl"}
@@ -178,9 +180,11 @@
    {/if}
     
     <div class="spacer"></div>
+    <div class="crm-submit-buttons">
+        {include file="CRM/common/formButtons.tpl"}
     </div>
-</fieldset>
-<div class="html-adjust">{$form.buttons.html}</div>
+</div> <!-- end form-block -->
+
 {if $action neq 8} {* Jscript additions not need for Delete action *} 
 {if $accessContribution and !$membershipMode AND ($action neq 2 or !$rows.0.contribution_id or $onlinePendingContributionId)}
 {include file="CRM/common/showHideByFieldValue.tpl" 

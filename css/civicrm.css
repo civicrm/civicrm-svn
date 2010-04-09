@@ -338,7 +338,7 @@ div.spacer,
     height          : 100%;
 }
 
-#crm-container div.form-item dl, #crm-container .section-hidden dl{
+#crm-container div.form-item dl, #crm-container .section-hidden dl, #crm-container .crm-form-block dl{
     margin: 0;
 }
 
@@ -378,11 +378,12 @@ div.spacer,
 #crm-container #cvv2 {vertical-align: top; }
 
 /* Use definition lists for simple 2 col forms - <dt> for labels, <dd> for fields */
-#crm-container div.form-item dt {
+#crm-container div.form-item dt,
+#crm-container .crm-form-block dt {
     float: left;
     clear: left;
-    width: 22%;
-    text-align: right;
+    width: 150px;
+    text-align: left;
     vertical-align: top;
     padding: 5px 15px 5px 0px;
     font-size: .95em;
@@ -392,7 +393,7 @@ div.spacer,
 #crm-container .section-hidden dt {
     float: left;
     clear: left;
-    width: 22%;
+    width: 150px;
     text-align: left;
     font-weight: bold;
     white-space: nowrap;
@@ -401,29 +402,35 @@ div.spacer,
 
 
 #crm-container div.form-item dd, 
+#crm-container .crm-form-block dd,
 #crm-container .section-hidden dd {
-    padding: 5px;
-    margin-left:23%;
+    padding: 3px;
+    margin-left:160px;
 }
 
 #crm-container div.form-item dd.html-adjust, 
-#crm-container div.form-item dl.html-adjust dd{
+#crm-container div.form-item dl.html-adjust dd,
+#crm-container div.crm-form-block dl.html-adjust dd,
+#crm-container div.crm-form-block dd.html-adjust {
     width: 57%;
     /*clear: right;*/
 }
 
-#crm-container div.form-item dd.description {
+#crm-container div.form-item dd.description,
+#crm-container div.crm-form-block dd.description {
     padding: 0px 0px 5px;
     white-space: normal;
 }
 
-#crm-container div.form-item span.labels {
+#crm-container div.form-item span.labels,
+#crm-container div.crm-form-block span.labels {
     float: left;
     width: 25%;
     text-align: left;
 }
 
-#crm-container div.form-item span.fields {
+#crm-container div.form-item span.fields,
+#crm-container div.crm-form-block span.fields {
     float: right;
     width: 75%;
     text-align: left;

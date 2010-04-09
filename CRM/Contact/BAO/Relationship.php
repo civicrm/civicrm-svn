@@ -375,7 +375,7 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
         }
         
         $relationship->delete();
-        CRM_Core_Session::setStatus( ts('Selected Relationship has been Deleted Successfuly.') );
+        CRM_Core_Session::setStatus( ts('Selected relationship has been deleted successfully.') );
         
         CRM_Utils_Hook::post( 'delete', 'Relationship', $relationship->id, $relationship );
 

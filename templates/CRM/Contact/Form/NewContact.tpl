@@ -31,7 +31,7 @@
     </tr>
     <tr>
 	<td class="label">{$form.contact.label}</td>
-	<td>{$form.contact.html}</td><td>
+	<td>{$form.contact.html}
 	    {if $form.profiles}
 		&nbsp;&nbsp;{ts}OR{/ts}&nbsp;&nbsp;{$form.profiles.html}<div id="contact-dialog" style="display:none;"></div>
 	    {/if}

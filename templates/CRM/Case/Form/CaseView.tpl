@@ -186,7 +186,7 @@
             <td id ="edit_{$rowNumber}">
             	<a href="#" title="edit case role" onclick="createRelationship( {$row.relation_type}, {$row.cid}, {$relId}, {$rowNumber} );return false;">
             	<div class="icon edit-icon" ></div>
-            	</a>&nbsp;&nbsp;
+            	</a> &nbsp;&nbsp;
             	<a href="{crmURL p='civicrm/contact/view/rel' q="action=delete&reset=1&cid=`$contactID`&id=`$relId`&caseID=`$caseID`"}" onclick = "if (confirm('{ts}Are you sure you want to remove this person from their case role{/ts}?') ) this.href+='&confirmed=1'; else return false;">
             	<div class="icon delete-icon" title="remove contact from case role"></div>
             	</a>
@@ -350,7 +350,7 @@ function createRelationship( relType, contactID, relID, rowNumber ) {
                         cj('#relName_' + rowNumber ).html( html );
 
                         html = '';
-                        html = '<img src="' +resourceBase+'i/edit.png" title="edit case role" onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +' );">&nbsp;&nbsp; <a href=' + deleteUrl + data.rel_id +' onclick = "if (confirm(\'{/literal}{ts}Are you sure you want to delete this relationship{/ts}{literal}?\') ) this.href +=\'&confirmed=1\'; else return false;"><img title="remove contact from case role" src="' +resourceBase+'i/delete.png"/></a>';
+                        html = '<a onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +' ); return false" title="edit case role" href="#"><div class="icon edit-icon" ></div></a> &nbsp;&nbsp; <a href=' + deleteUrl + data.rel_id +' onclick = "if (confirm(\'{/literal}{ts}Are you sure you want to delete this relationship{/ts}{literal}?\') ) this.href +=\'&confirmed=1\'; else return false;"><div title="remove contact from case role" class="icon delete-icon"></div></a>';
                         cj('#edit_' + rowNumber ).html( html );
 
                         html = '';
@@ -362,7 +362,7 @@ function createRelationship( relType, contactID, relID, rowNumber ) {
                         html = '';
                         if ( data.email ) {
                             var activityUrl = {/literal}"{crmURL p='civicrm/contact/view/activity' q="atype=3&action=add&reset=1&caseid=`$caseID`&cid=" h=0 }"{literal};
-                            html = '<a href=' + activityUrl + data.cid + '><img src="'+resourceBase+'i/EnvelopeIn.gif" alt="Send Email"/></a>&nbsp;';
+                            html = '<a href=' + activityUrl + data.cid + '><div title="compose and send an email" class="icon email-icon"></div></a>&nbsp;';
                         } 
                         cj('#email_' + rowNumber ).html( html );
 
@@ -485,7 +485,7 @@ cj(document).ready(function(){
         {foreach from=$globalRelationships item=row key=relId}
         <tr>
             <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.contact_id`"}" title="view contact record">{$row.sort_name}</a></td>
-            <td id="phone_{$rowNumber}">{$row.phone}</td><td id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><img src="{$config->resourceBase}i/EnvelopeIn.gif" alt="{ts}compose and send an email{/ts}"/></a>&nbsp;{/if}</td>
+            <td id="phone_{$rowNumber}">{$row.phone}</td><td id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div title="compose and send an email" class="icon email-icon"></div></a>&nbsp;{/if}</td>
         </tr>
 		{assign var=rowNumber value = `$rowNumber+1`}
         {/foreach}
