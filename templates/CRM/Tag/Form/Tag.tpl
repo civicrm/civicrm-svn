@@ -173,6 +173,12 @@ function initTagTree() {
         var tokenDataUrl = {/literal}"{$tokenUrl}"{literal};
         var hintText = "{/literal}{ts}Type in a partial or complete name of an existing tag.{/ts}{literal}";
         cj( "#taglist"  ).tokenInput( tokenDataUrl, { classes: tokenClass, hintText: hintText });
+
+        cj( "#taglist"  ).change( function( ) {
+            // now save contact tags save if tag exits
+            // else create new tag and then save
+            
+        });
     {/literal}
     </script>    
 </div>
