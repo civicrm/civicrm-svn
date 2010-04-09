@@ -100,10 +100,11 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $this->assign( 'contactID', $this->_contactID );
 
         //validate case id.
+        $this->_userCases = array( );
         if ( !$this->_hasAccessToAllCases ) {
             $session  = CRM_Core_Session::singleton( );
-            $allCases = CRM_Case_BAO_Case::getCases( false, $session->get( 'userID' ) );
-            if ( !array_key_exists( $this->_caseID, $allCases ) ) {
+            $this->_userCases = CRM_Case_BAO_Case::getCases( false, $session->get( 'userID' ) );
+            if ( !array_key_exists( $this->_caseID, $this->_userCases ) ) {
                 CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
             }
         }
@@ -248,17 +249,28 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             $allCases = CRM_Case_BAO_Case::getContactCases( $this->_contactID );
             $otherCases = array( );
             foreach ( $allCases as $caseId => $details ) {
-                if ( $caseId == $this->_caseID ) continue;
+                //filter current and own cases.
+                if ( ( $caseId == $this->_caseID ) || 
+                     (!$this->_hasAccessToAllCases && 
+                      !array_key_exists( $caseId, $this->_userCases ) ) ) {
+                    continue;
+                }
+                
                 $otherCases[$caseId] = 'Case ID: '.$caseId.' Type: '.$details['case_type'].' Start: '.$details['case_start_date'];
             }
-            $this->add( 'select', 'merge_case_id',  
-                        ts( 'Select Case for Merge' ), 
-                        array( '' => ts( '- select case -' ) ) + $otherCases );
-            $this->addElement( 'submit', 
-                               $this->getButtonName( 'next', 'merge_case' ), 
-                               ts('Merge'), 
-                               array( 'class'   => 'form-submit-inline',
-                                      'onclick' => "return checkSelection( this );") ); 
+            if ( empty( $otherCases ) ) {
+                $this->_mergeCases = false;
+                $this->assign( 'mergeCases', $this->_mergeCases );
+            } else {
+                $this->add( 'select', 'merge_case_id',  
+                            ts( 'Select Case for Merge' ), 
+                            array( '' => ts( '- select case -' ) ) + $otherCases );
+                $this->addElement( 'submit', 
+                                   $this->getButtonName( 'next', 'merge_case' ), 
+                                   ts('Merge'), 
+                                   array( 'class'   => 'form-submit-inline',
+                                          'onclick' => "return checkSelection( this );") ); 
+            }
         }
         
         $this->add( 'text', 'change_client_id', ts( 'Assign to another Client' ) );
@@ -430,7 +442,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             
             $mainCaseId  = $params['merge_case_id'];
             $otherCaseId = $this->_caseID;
-            
+                           
             //merge two cases.
             CRM_Case_BAO_Case::mergeCases( $this->_contactID, $mainCaseId, null, $otherCaseId );
             

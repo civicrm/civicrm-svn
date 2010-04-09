@@ -59,7 +59,9 @@
            <dt><div class="icon inform-icon"></div></dt>
            <dd>
                 {ts}There are no case records for this contact.{/ts}
-                {if $permission EQ 'edit'}{ts 1=$newCaseURL}You can <a href='%1'>open one now</a>.{/ts}{/if}
+                {if $permission EQ 'edit' and 
+		    call_user_func(array('CRM_Core_Permission','check'), 'access all cases and activities')}
+		    {ts 1=$newCaseURL}You can <a href='%1'>open one now</a>.{/ts}{/if}
            </dd>
            </dl>
       </div>
