@@ -271,33 +271,53 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
     /** 
      * Function to get contact tags
      */
-     function getContactTags( $contactID, $count = false ) {
-         $contactTags = array( );
-         if ( !$count ) {
-             $select = "SELECT name ";
-         } else {
-             $select = "SELECT count(*) as cnt";
-         }
-         
-         $query = "{$select} 
-                   FROM civicrm_tag ct 
-                   INNER JOIN civicrm_entity_tag et ON ( ct.id = et.tag_id AND
-                              et.entity_id    = {$contactID} AND
-                              et.entity_table = 'civicrm_contact' AND
-                              ct.is_hidden = 0 )";
+    function getContactTags( $contactID, $count = false ) {
+        $contactTags = array( );
+        if ( !$count ) {
+            $select = "SELECT name ";
+        } else {
+            $select = "SELECT count(*) as cnt";
+        }
+
+        $query = "{$select} 
+        FROM civicrm_tag ct 
+        INNER JOIN civicrm_entity_tag et ON ( ct.id = et.tag_id AND
+            et.entity_id    = {$contactID} AND
+            et.entity_table = 'civicrm_contact' AND
+            ct.is_hidden = 0 )";
+
+        $dao = CRM_Core_DAO::executeQuery( $query );
+
+        if ( $count ) {
+            $dao->fetch();
+            return $dao->cnt;
+        }
+
+        while( $dao->fetch( ) ) {
+            $contactTags[] = $dao->name;
+        }
+
+        return $contactTags;
+    }
+
+    /**
+     * Function to get child contact tags given parentID
+     */
+    static function getChildContactTags( $parentID, $contactID ) {
+        $contactTags = array( );
+        $query = "SELECT ct.id as tag_id, name FROM civicrm_tag ct
+                    INNER JOIN civicrm_entity_tag et ON ( et.entity_id = {$contactID} AND
+                     et.entity_table = 'civicrm_contact' AND  et.tag_id = ct.id)
+                  WHERE ct.parent_id = {$parentID}";
+                  
+        $dao = CRM_Core_DAO::executeQuery( $query );
         
-         $dao = CRM_Core_DAO::executeQuery( $query );
-         
-         if ( $count ) {
-             $dao->fetch();
-             return $dao->cnt;
-         }
-         
          while( $dao->fetch( ) ) {
-             $contactTags[] = $dao->name;
+            $contactTags[] = array( 'id'   => $dao->tag_id,
+                                    'name' => $dao->name);
          }
          
          return $contactTags;
-     }
+    }  
 }
 
