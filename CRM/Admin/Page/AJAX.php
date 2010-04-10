@@ -236,22 +236,43 @@ class CRM_Admin_Page_AJAX
     }
     
     static function processTags( ) {
-        $action = CRM_Utils_Type::escape( $_POST['action'], 'String' );
-        $tagID  = $_POST['tagID' ] );
+        $action    = CRM_Utils_Type::escape( $_POST['action'], 'String' );
+        $keywordID = CRM_Utils_Type::escape( $_POST['keywordID'], 'Integer' );
+        $contactId = CRM_Utils_Type::escape( $_POST['contactId'], 'Integer' );
+        $tagID     = $_POST['tagID' ];
+        
+        require_once 'CRM/Core/BAO/EntityTag.php';
         
         // if action is select
+        if ( $action == 'select' ) {
+            // check the value of tagID
+            // if numeric that means existing tag
+            // else create new tag
+            if ( !is_numeric( $tagID ) ) {
+                $params = array( 'name'      => $tagID, 
+                                 'is_hidden' => true, 
+                                 'parent_id' => $keywordID );
+
+                require_once 'CRM/Core/BAO/Tag.php';
+                $tagObject = CRM_Core_BAO_Tag::add( $params, CRM_Core_DAO::$_nullArray );
+                $tagID     = $tagObject->id;
+            }
+            
+            // save this tag to contact
+            $params = array( 'entity_table' => 'civicrm_contact',
+                             'entity_id'    =>  $contactId,
+                             'tag_id'       =>  $tagID);
+                             
+            CRM_Core_BAO_EntityTag::add( $params );
+        } elseif ( $action == 'delete' ) {  // if action is delete
+            // delete this tag entry for the contact
+            $params = array( 'entity_table' => 'civicrm_contact',
+                             'entity_id'    =>  $contactId,
+                             'tag_id'       =>  $tagID);
+                             
+            CRM_Core_BAO_EntityTag::del( $params );
+        }
         
-        // check the value of tagID
-        
-        // if numeric that means existing tag
-        
-        // else create new tag
-        
-        // save this tag to contact
-        
-        // if action is delete
-        
-        // delete this tag entry for the contact
-        
+        CRM_Utils_System::civiExit( );
     } 
 }

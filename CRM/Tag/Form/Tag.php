@@ -108,6 +108,7 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
         
         // get the parent id for tag list input for keyword
         $keywordID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', 'Keyword', 'id',  'name' );
+        $this->assign( 'keywordID', $keywordID );
         
         //tokeninput url
         $tokenUrl = CRM_Utils_System::url( "civicrm/ajax/taglist",

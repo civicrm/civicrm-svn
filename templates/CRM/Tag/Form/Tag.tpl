@@ -164,7 +164,7 @@ function initTagTree() {
        <div class="form-item unobstructive">{$form.buttons.html}</div>
        </fieldset>
     {/if}
-    
+
     <input type="text" name="taglist" id="taglist" />
     <script type="text/javascript">
     {literal}
@@ -175,8 +175,11 @@ function initTagTree() {
         cj( "#taglist"  ).tokenInput( tokenDataUrl, { classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processTags' });
 
         function processTags( action, id ) {
-            var postUrl = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
-            cj.post( postUrl, { action: action, tagID: id } );
+            var postUrl   = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
+            var keywordID = "{/literal}{$keywordID}{literal}";
+            var contactId = "{/literal}{$contactId}{literal}";
+             
+            cj.post( postUrl, { action: action, tagID: id, keywordID: keywordID, contactId: contactId } );
         }
     {/literal}
     </script>    
