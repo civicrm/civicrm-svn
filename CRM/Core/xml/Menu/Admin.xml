@@ -509,4 +509,9 @@
        <page_callback>CRM_Admin_Page_AJAX::getTagList</page_callback>
        <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+       <path>civicrm/ajax/processTags</path>
+       <page_callback>CRM_Admin_Page_AJAX::processTags</page_callback>
+       <access_arguments>access CiviCRM</access_arguments>
+  </item>  
 </menu>

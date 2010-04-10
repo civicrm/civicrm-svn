@@ -172,13 +172,12 @@ function initTagTree() {
         
         var tokenDataUrl = {/literal}"{$tokenUrl}"{literal};
         var hintText = "{/literal}{ts}Type in a partial or complete name of an existing tag.{/ts}{literal}";
-        cj( "#taglist"  ).tokenInput( tokenDataUrl, { classes: tokenClass, hintText: hintText });
+        cj( "#taglist"  ).tokenInput( tokenDataUrl, { classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processTags' });
 
-        cj( "#taglist"  ).change( function( ) {
-            // now save contact tags save if tag exits
-            // else create new tag and then save
-            
-        });
+        function processTags( action, id ) {
+            var postUrl = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
+            cj.post( postUrl, { action: action, tagID: id } );
+        }
     {/literal}
     </script>    
 </div>

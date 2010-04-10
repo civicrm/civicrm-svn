@@ -233,5 +233,25 @@ class CRM_Admin_Page_AJAX
         
         echo json_encode( $tags ); 
         CRM_Utils_System::civiExit( );
-    }  
+    }
+    
+    static function processTags( ) {
+        $action = CRM_Utils_Type::escape( $_POST['action'], 'String' );
+        $tagID  = $_POST['tagID' ] );
+        
+        // if action is select
+        
+        // check the value of tagID
+        
+        // if numeric that means existing tag
+        
+        // else create new tag
+        
+        // save this tag to contact
+        
+        // if action is delete
+        
+        // delete this tag entry for the contact
+        
+    } 
 }
