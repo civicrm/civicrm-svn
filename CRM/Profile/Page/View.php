@@ -79,12 +79,16 @@ class CRM_Profile_Page_View extends CRM_Core_Page
         $this->_gid = CRM_Utils_Request::retrieve('gid', 'Positive',
                                                   $this);
         
+        $anyContent = true;
         if ($this->_gid) {
             require_once 'CRM/Profile/Page/Dynamic.php';
             $page =& new CRM_Profile_Page_Dynamic($this->_id, $this->_gid, 'Profile' );
             $profileGroup            = array( );
             $profileGroup['title']   = null;
             $profileGroup['content'] = $page->run();
+            if ( empty( $profileGroup['content'] ) ) {
+                $anyContent = false;
+            }
             $profileGroups[]         = $profileGroup;
             $map = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'is_map' );
             if ( $map ) {
@@ -109,6 +113,9 @@ class CRM_Profile_Page_View extends CRM_Core_Page
                 $profileGroup = array( );
                 $profileGroup['title'] = $group['title'];
                 $profileGroup['content'] = $page->run();
+                if ( empty( $profileGroup['content'] ) ) {
+                    $anyContent = false;
+                }
                 $profileGroups[] = $profileGroup;
             }
             $this->assign( 'listingURL',
@@ -120,6 +127,12 @@ class CRM_Profile_Page_View extends CRM_Core_Page
 
         $this->assign('profileGroups', $profileGroups);
         $this->assign('recentlyViewed', false);
+
+        // do not set title if there is no content
+        // CRM-6081
+        if ( ! $anyContent ) {
+            return;
+        }
 
         $title    = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'title' );
         
