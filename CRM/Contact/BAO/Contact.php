@@ -1663,6 +1663,8 @@ AND    civicrm_contact.id = %1";
 
     /**
      * Function to find the get contact details
+     * does not respect ACLs for now, which might need to be rectified at some
+     * stage based on how its used
      *
      * @param string $mail  primary email address of the contact
      * @param string $ctype contact type
