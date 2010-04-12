@@ -2510,6 +2510,7 @@ div#crm-toolTip #hide-tooltip {
     padding:4px;
     background-color: #2f2f2e;
     color:#FFF;
+    margin-left:11px;
 }
 #crm-container .crm-tooltip table,
 #crm-container .crm-tooltip table tr td {border:none;}
