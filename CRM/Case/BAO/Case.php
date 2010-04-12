@@ -1824,7 +1824,16 @@ INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_g
         if ( $contactId ) {
             $whereConditions[] = "civicrm_case_contact.contact_id = {$contactId}";
         }
-        
+        if ( !CRM_Core_Permission::check( 'access all cases and activities' ) ) {
+            static $accessibleCaseIds;
+            if ( !is_array( $accessibleCaseIds ) ) {
+                $session  = CRM_Core_Session::singleton( );
+                $accessibleCaseIds = array_keys( self::getCases( false, $session->get( 'userID' ) ) );
+            }
+            if ( empty( $accessibleCaseIds ) ) $accessibleCaseIds = array( 0 );
+            $whereConditions[] = "( civicrm_case.id in (". implode( ',', $accessibleCaseIds ). ") )";
+        }
+
         $whereClause = '';
         if ( !empty( $whereConditions ) ) {
             $whereClause = "WHERE " . implode( ' AND ', $whereConditions );
