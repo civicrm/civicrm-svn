@@ -27,7 +27,7 @@
 <div id="crm-create-new-wrapper">
 	<div id="crm-create-new-link"><span>Create New</span></div>
 		<div id="crm-create-new-list" class="ac_results">
-			<div class="ac_results-inner">
+			<div class="crm-create-new-list-inner">
 			<ul>
 			{foreach from=$shortCuts item=short}
 				    <li><a href="{$short.url}" class="crm-{$short.ref}">{$short.title}</a></li>

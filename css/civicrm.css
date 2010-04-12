@@ -433,15 +433,16 @@ div.spacer,
 #crm-container div.form-item span.labels,
 #crm-container div.crm-form-block span.labels {
     float: left;
-    width: 25%;
+    width: 15%;
     text-align: left;
 }
 
 #crm-container div.form-item span.fields,
 #crm-container div.crm-form-block span.fields {
-    float: right;
-    width: 75%;
+    width: 84%;
     text-align: left;
+    margin-left:16%;
+    display: block;
 } 
 
 #crm-container table.form-layout, 
@@ -2090,7 +2091,8 @@ div.grippie {
     border:none;
 }
 
-.ac_results-inner {
+.ac_results-inner,
+.crm-create-new-list-inner {
     background-color:#2f2f2e;
     padding:4px;
 }
@@ -2883,7 +2885,8 @@ div#crm-toolTip
     text-align: left;
 }
 
-.ac_results-inner { background-color:#2f2f2e; }
+.ac_results-inner,
+.crm-create-new-list-inner { background-color:#2f2f2e; }
 
 .ac_even{ background-color:transparent; }
 .ac_odd { background-color:transparent; }
@@ -2894,8 +2897,11 @@ div#crm-toolTip
 .ac_results li a:visited { color:#DFDFDF; text-decoration: none;}
 .ac_results li strong { color: #FFF; font-weight: normal; }
 
-.ac_results li.ac_over
-.ac_results li:hover {  background-color:#F5F6F1; color:#3e3e3e; }
+.ac_results li.ac_over,
+.ac_results li:hover,
+.ac_results li.ac_over a,
+.ac_results li.ac_over a:hover,
+.ac_results li.ac_over a:visited  {  background-color:#F5F6F1; color:#3e3e3e; }
 .ac_results li.ac_over strong { color:#000; }	
 
 /* theming for panel and context menus */
