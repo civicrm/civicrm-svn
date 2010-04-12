@@ -381,6 +381,11 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $dashboardCacheTimeout = 1440;    
     
     /**
+     * flag to indicate if acl cache is NOT to be reset 
+     */
+    public $doNotResetCache       = 0;    
+
+    /**
      * Optimization related variables
      */
     public $includeAlphabeticalPager = 1;

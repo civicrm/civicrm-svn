@@ -288,7 +288,8 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             }
         }
 
-        if ( ! array_key_exists('doNotResetCache', $params) ) {
+        $config = CRM_Core_Config::singleton( );
+        if ( ! $config->doNotResetCache ) {
             // Note: doNotResetCache flag is currently set by import contact process, since resetting and 
             // rebuilding cache could be expensive (for many contacts). We might come out with better 
             // approach in future. 
