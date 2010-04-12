@@ -1899,6 +1899,11 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         if ( CRM_Core_Permission::access( 'CiviMember' ) && $component == 'Membership' ) {
             self::setComponentDefaults( $fields, $componentId, $component, $defaults );
         }
+        
+        //Handling Activity Part of the batch profile 
+        if ( $component == 'Activity' ) {
+            self::setComponentDefaults( $fields, $componentId, $component, $defaults );
+        }
     }
     
     /**
@@ -2282,7 +2287,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
     function setComponentDefaults( &$fields, $componentId, $component, &$defaults ) 
     {
         if ( !$componentId || 
-             !in_array( $component, array( 'Contribute', 'Membership', 'Event' )) ) {
+             !in_array( $component, array( 'Contribute', 'Membership', 'Event', 'Activity' ) ) ) {
             return;
         }
         
@@ -2305,6 +2310,12 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $componentBAOName = 'Participant';
             $componentSubType = array( 'role_id', 'event_id' );
             break;
+
+        case 'Activity':
+            $componentBAO = 'CRM_Activity_BAO_Activity';
+            $componentBAOName = 'Activity';
+            $componentSubType = array( 'activity_type_id' );
+            break;    
         }
         
         $values = array( );
@@ -2316,7 +2327,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         $formattedGroupTree = array( );
         foreach ( $fields as $name => $field ) { 
             $fldName = "field[$componentId][$name]";
-            if ( $name == 'participant_register_date' ) { 
+            if ( $name == 'participant_register_date'  || $name == 'activity_date_time' ) { 
             	$timefldName = "field[$componentId][{$name}_time]";	
             	list( $defaults[$fldName], $defaults[$timefldName] ) = CRM_Utils_Date::setDateDefaults( $values[$name] );
             } else if ( array_key_exists( $name, $values ) ) { 

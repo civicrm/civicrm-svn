@@ -219,7 +219,7 @@ class CRM_Activity_Form_Task_Batch extends CRM_Activity_Form_Task {
                 $value['id'] = $key;
                 
                 if ( $value['activity_date_time'] ) {
-                    $value['activity_date_time'] = CRM_Utils_Date::processDate( $value['activity_date_time'] );
+                    $value['activity_date_time'] = CRM_Utils_Date::processDate( $value['activity_date_time'], $value['activity_date_time_time'] );
                 }
                 
                 if ( $value['activity_status_id'] ) {
