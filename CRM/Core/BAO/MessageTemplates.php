@@ -284,6 +284,8 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $result = $mailer->send($recipient, $headers, $body);
             CRM_Core_Error::setCallback();
         }
+
+        $messageTemplates->free( );
         
         return $result;
     }
@@ -366,6 +368,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         $subject = $dao->subject;
         $text    = $dao->text;
         $html    = $dao->html;
+        $dao->free( );
 
         // add the test banner (if requested)
         if ($params['isTest']) {
@@ -380,6 +383,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             $subject = $testDao->subject . $subject;
             $text    = $testDao->text    . $text;
             $html    = preg_replace('/<body(.*)$/im', "<body\\1\n{$testDao->html}", $html);
+            $testDao->free( );
         }
 
         // replace tokens in the three elements (in subject as if it was the text body)
