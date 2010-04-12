@@ -324,4 +324,17 @@ INNER JOIN ( SELECT id, contact_id FROM civicrm_openid WHERE is_primary = 1 GROU
             $template->assign( 'afterUpgradeMessage', $afterUpgradeMessage );
         }
     }
+
+    function upgrade_3_1_4( ) 
+    {
+        $query = "SELECT id FROM civicrm_payment_processor WHERE payment_processor_type = 'Moneris' LIMIT 1";
+        $isMoneris = CRM_Core_DAO::singleValueQuery( $query );
+
+        if ( $isMoneris ) {
+            $template =& CRM_Core_Smarty::singleton( );
+            $afterUpgradeMessage  = $template->get_template_vars('afterUpgradeMessage');
+            $afterUpgradeMessage .= "<br/>" . ts("Please download and install mpgClasses.php in packages/Services in order to continue using Moneris payment processor. That file is no longer included in the CiviCRM distribution." );
+            $template->assign('afterUpgradeMessage', $afterUpgradeMessage);
+        }
+    }
 }
