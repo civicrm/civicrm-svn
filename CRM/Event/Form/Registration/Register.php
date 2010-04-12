@@ -104,6 +104,11 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             require_once 'CRM/Event/Form/EventFees.php';
             CRM_Event_Form_EventFees::preProcess( $this );
         }
+        
+        // Assign pageTitle
+        $pageTitle = 'Event Registration';
+    	$this->assign( 'pageTitle', $pageTitle );
+        
     }
     
     /**

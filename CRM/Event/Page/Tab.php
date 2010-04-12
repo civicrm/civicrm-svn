@@ -125,6 +125,10 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
             CRM_Contact_Page_View::checkUserPermission( $this );
         }      
 
+        // Assign pageTitle
+        $pageTitle = 'Event Registration'.$this->userDisplayName;
+    	$this->assign( 'pageTitle', $pageTitle );
+        
         $this->assign('action', $this->_action );     
         
         if ( $this->_permission == CRM_Core_Permission::EDIT && ! CRM_Core_Permission::check( 'edit event participants' ) ) {

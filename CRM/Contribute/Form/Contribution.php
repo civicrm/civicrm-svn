@@ -255,6 +255,10 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
             $this->assign( 'displayName', $this->userDisplayName );
         }
         
+        // Assign pageTitle to be "Contribution - "+ Contributor name
+        $pageTitle = 'Contribution - '.$this->userDisplayName;
+    	$this->assign( 'pageTitle', $pageTitle );
+        
         // also check for billing information
         // get the billing location type
         $locationTypes =& CRM_Core_PseudoConstant::locationType( );

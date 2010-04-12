@@ -66,6 +66,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         $this->_contactID = CRM_Utils_Request::retrieve( 'cid', 'Positive',
                                                          $this );
         
+        
         // check for edit permission
         if ( !CRM_Core_Permission::checkActionPermission( 'CiviMember', $this->_action ) ) {
             CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
@@ -445,6 +446,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
             $this->assign( 'emailExists', $this->_memberEmail );
             $this->assign( 'displayName', $this->_memberDisplayName );
+            
         }
         
         $this->addFormRule(array('CRM_Member_Form_Membership', 'formRule'), $this );
