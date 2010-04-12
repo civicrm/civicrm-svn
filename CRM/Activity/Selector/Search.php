@@ -311,7 +311,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
          if ( ! isset( self::$_columnHeaders ) ) {
              self::$_columnHeaders = array(
                                            array('name'      => ts('Type'),
-                                                 'sort'      => 'activity_type',
+                                                 'sort'      => 'activity_type_id',
                                                  'direction' => CRM_Utils_Sort::DONTCARE,
                                                  ),
                                            array('name'      => ts('Subject'),
@@ -319,7 +319,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                                  'direction' => CRM_Utils_Sort::DONTCARE,
                                                  ),
                                            array('name'      => ts('Added By'),
-                                                 'sort'      => 'source_contact_name',
+                                                 'sort'      => 'source_contact_id',
                                                  'direction' => CRM_Utils_Sort::DONTCARE,
                                                  ),
                                            array('name'      => ts('With') ),
