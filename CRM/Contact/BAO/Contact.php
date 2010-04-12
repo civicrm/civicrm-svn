@@ -1639,7 +1639,7 @@ INNER JOIN civicrm_email    ON ( civicrm_contact.id = civicrm_email.contact_id )
             if ( ! empty( $groups ) ) {
                 $query .= "
 INNER JOIN civicrm_group_contact gc ON 
-(civicrm_contact.id = gc.contact_id AND gc.group_id IN (" . implode(',', $groups) . "))";
+(civicrm_contact.id = gc.contact_id AND gc.status = 'Added' AND gc.group_id IN (" . implode(',', $groups) . "))";
             }
         }
 

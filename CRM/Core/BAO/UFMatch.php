@@ -215,6 +215,17 @@ WHERE     openid = %1";
                 $dedupeParams = CRM_Dedupe_Finder::formatParams ( $params      , 'Individual' );
                 $ids          = CRM_Dedupe_Finder::dupesByParams( $dedupeParams, 'Individual' );
                 
+                if ( ! empty( $ids ) && defined( 'CIVICRM_UNIQ_EMAIL_PER_SITE' ) && CIVICRM_UNIQ_EMAIL_PER_SITE ) {
+                    // restrict dupeIds to ones that belong to current domain/site.
+                    require_once 'CRM/Core/BAO/Domain.php';
+                    $siteContacts = CRM_Core_BAO_Domain::getContactList();
+                    foreach ( $ids as $index => $dupeId ) {
+                        if ( ! in_array( $dupeId, $siteContacts ) ) {
+                            unset( $ids[$index] );
+                        }
+                    }
+                    $ids = array_values( $ids ); //re-index the array
+                }
                 if ( ! empty( $ids ) ) {
                     $dao = new CRM_Core_DAO( );
                     $dao->contact_id = $ids[0];
