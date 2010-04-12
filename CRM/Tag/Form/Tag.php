@@ -116,7 +116,9 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
                                            false, null, false );
         $this->assign( 'tokenUrl', $tokenUrl );
 
-        $contactTags = CRM_Core_BAO_EntityTag::getChildContactTags( $this->_keywordID, $this->_entityID );
+        if ( $this->_keywordID ) {
+            $contactTags = CRM_Core_BAO_EntityTag::getChildContactTags( $this->_keywordID, $this->_entityID );
+        }
         
         if ( !empty( $contactTags ) ) {
             $this->assign( 'contactTags', json_encode($contactTags) );
