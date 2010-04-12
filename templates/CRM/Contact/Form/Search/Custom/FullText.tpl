@@ -57,7 +57,7 @@
             <table id="contact_listing" class="display" class="selector" summary="{ts}Contact listings.{/ts}">
                 <thead>
                 <tr>
-                    <th>{ts}Name{/ts}</th>
+                    <th id='link'>{ts}Name{/ts}</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -91,9 +91,9 @@
                     <th>{ts}Type{/ts}</th>
                     <th>{ts}Subject{/ts}</th>
                     <th>{ts}Details{/ts}</th>
-                    <th>{ts}Added By{/ts}</th>
-                    <th>{ts}With{/ts}</th>
-                    <th>{ts}Assignee{/ts}</th>
+                    <th id='link'>{ts}Added By{/ts}</th>
+                    <th id='link'>{ts}With{/ts}</th>
+                    <th id='link'>{ts}Assignee{/ts}</th>
                     <th></th>
                 </tr>
                 </thead>
@@ -136,7 +136,7 @@
             <table id="case_listing" class="display" summary="{ts}Case listings.{/ts}">
                 <thead>
                 <tr>
-                    <th>{ts}Client Name{/ts}</th>
+                    <th id='link'>{ts}Client Name{/ts}</th>
                     <th id="start_date">{ts}Start Date{/ts}</th>
                     <th id="end_date">{ts}End Date{/ts}</th>
                     <th>{ts}Case ID{/ts}</th>
@@ -176,7 +176,7 @@
             <table id="contribute_listing" class="display" summary="{ts}Contribution listings.{/ts}">
                 <thead>
                 <tr>
-                    <th>{ts}Contributor's Name{/ts}</th>
+                    <th id='link'>{ts}Contributor's Name{/ts}</th>
                     <th id="currency">{ts}Amount{/ts}</th>
                     <th>{ts}Contribution Type{/ts}</th>
                     <th>{ts}Source{/ts}</th>
@@ -218,7 +218,7 @@
             <table id="participant_listing" class="display" summary="{ts}Participant listings.{/ts}">
                 <thead>
                 <tr>
-                    <th>{ts}Participant's Name{/ts}</th>
+                    <th id='link'>{ts}Participant's Name{/ts}</th>
                     <th>{ts}Event{/ts}</th>
                     <th>{ts}Fee Level{/ts}</th>
                     <th id="currency">{ts}Fee Amount{/ts}</th>
@@ -264,7 +264,7 @@
             <table id="membership_listing" class="display" summary="{ts}Membership listings.{/ts}">
                 <thead>
                 <tr>
-                    <th>{ts}Member's Name{/ts}</th>
+                    <th id='link'>{ts}Member's Name{/ts}</th>
                     <th>{ts}Membership Type{/ts}</th>
                     <th id="currency">{ts}Membership Fee{/ts}</th>      
                     <th id="start_date">{ts}Membership Start Date{/ts}</th>

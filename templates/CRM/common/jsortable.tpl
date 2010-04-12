@@ -83,6 +83,9 @@ eval('tableId =[' + tableId + ']');
             case 'currency':
                 columns += '{ "sType": "currency" },';
             break;
+            case 'link':
+                columns += '{"sType": "html"},';	    
+            break;   
             default:
                 if ( cj(this).text() ) {
                     columns += '{"sClass": "'+ getElementClass( this ) +'"},';
