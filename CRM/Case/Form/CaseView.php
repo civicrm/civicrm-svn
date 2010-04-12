@@ -232,8 +232,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
 		$baoRel =& new CRM_Contact_BAO_Relationship();
 		$relType = $baoRel->getRelationType('Individual');
 		$roleTypes = array();
-		foreach ($relType as $k => $v)
-		{
+		foreach ( $relType as $k => $v ) {
 			$roleTypes[substr($k,0,strpos($k,'_'))] = $v;
 		}
 		$this->add('select', 'role_type',  ts( 'Relationship Type' ), array( '' => ts( '- select type -' ) ) + $roleTypes );
