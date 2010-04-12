@@ -842,7 +842,7 @@ function civicrm_theme_registry_alter(&$theme_registry) {
  
 function civicrm_preprocess_page(&$variables) { 
 	// to increase it's flexibility. 
-  	if ( module_exists('date_popup') && (arg(0) == 'civicrm') ) { 
+  	if ( module_exists('date_popup') && ( in_array( arg(0), array('civicrm', 'user') ) ) ) { 
 		/** 
 		 * Have hidden this function as it is not needed,
 		 * but left as an example when we need to unset js
