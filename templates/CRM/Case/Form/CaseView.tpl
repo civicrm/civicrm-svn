@@ -200,7 +200,8 @@ function createRelationship( relType, contactID, relID, rowNumber ) {
                 cj.post( postUrl, { rel_contact: v1, rel_type: relType, contact_id: sourceContact, rel_id: relID, case_id: caseID },
                     function( data ) {
                         var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
-			
+
+			var html = '';			
 			if ( data.cid ) {
                             var contactViewUrl = {/literal}"{crmURL p='civicrm/contact/view' q='action=view&reset=1&cid=' h=0 }"{literal};	
                             var deleteUrl      = {/literal}"{crmURL p='civicrm/contact/view/rel' q="action=delete&reset=1&cid=`$contactID`&caseID=`$caseID`&id=" h=0 }"{literal};	
@@ -212,8 +213,11 @@ function createRelationship( relType, contactID, relID, rowNumber ) {
                            cj('#edit_' + rowNumber ).html( html );
 
 			} else {
-			   html = '<img src="' +resourceBase+'i/edit.png" title="edit case role" onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +' );">&nbsp;&nbsp; Please select valid contact.';
-			   cj('#edit_' + rowNumber ).html( html );
+			   html = '<img src="' +resourceBase+'i/edit.png" title="edit case role" onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +' );">&nbsp;&nbsp;';
+
+			   var errorMsg = '{/literal}{ts}Please select valid contact{/ts}{literal}.'; 
+
+			   cj('#edit_' + rowNumber ).html( html + errorMsg );
 			}
 
                         html = '';
