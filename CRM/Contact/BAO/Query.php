@@ -1983,7 +1983,7 @@ class CRM_Contact_BAO_Query
                 continue; 
 
             case 'civicrm_entity_tag':
-                $from .= " $side JOIN civicrm_entity_tag ON ( civicrm_entity_tag.entity_id = 'civicrm_contact' AND
+                $from .= " $side JOIN civicrm_entity_tag ON ( civicrm_entity_tag.entity_table = 'civicrm_contact' AND
                                                               civicrm_entity_tag.entity_id = contact_a.id ) ";
                 continue;
 
