@@ -45,12 +45,13 @@
 
 /* wodget header / title */
 #crm-container .widget-header {
-    color: black;
-    cursor: move;
-    background: #CDE8FE;
-    font-size: 1.2em;
-    margin: 0px;
-}
+	background:#CDE8FE none repeat scroll 0 0;
+	color:#000;
+	cursor:move;
+	display:inline;
+	font-size:1.2em;
+	margin:0;
+	}
 
 /* widget content / body*/
 #crm-container .widget-content {
@@ -60,15 +61,16 @@
 
 /* Standards-browsers do this anyway because all inner block elements are floated.  IE doesn't because it's crap. */
 #crm-container .widget-controls { 
-    display: inline; 
-    padding:0px;
-}
+	background-color:#CDE8FE;
+	display:block;
+	padding:5px 0px;
+	}
 
 #crm-container .widget-icon, #crm-container .full-screen-close-icon img {
     display: block;
     float: right;
     margin-left: 2px;
-    margin-top: 5px;
+    margin-top: 2px;
     cursor: pointer;
 }
 
