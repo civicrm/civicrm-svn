@@ -183,11 +183,13 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                             $optionValue->value = number_format(CRM_Utils_Rule::cleanMoney( $v ),2);
                             break;
                         case 'Int':
-                            $optionValue->value  = intval( $v );
+                            $optionValue->value = intval( $v );
                             break;
                         case 'Float':
                             $optionValue->value = floatval( $v );
                             break;
+                        default:
+                            $optionValue->value = $v;
                         }
                         
                         $optionValue->weight          =  $params['option_weight'][$k];
