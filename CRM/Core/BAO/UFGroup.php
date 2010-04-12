@@ -1662,7 +1662,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
      * @static
      * @access public
      */
-    static function setProfileDefaults( $contactId, &$fields, &$defaults, $singleProfile = true, $componentId = null, $component = null ) 
+    static function setProfileDefaults( $contactId, &$fields, &$defaults, 
+                                        $singleProfile = true, $componentId = null, $component = null ) 
     {
         if ( ! $componentId ) {
             //get the contact details
@@ -1882,24 +1883,24 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                     }
                 }
             }  
-            
-            //Handling Contribution Part of the batch profile 
-            if ( CRM_Core_Permission::access( 'CiviContribute' ) && $component == 'Contribute' ) {
-                self::setComponentDefaults( $fields, $componentId, $component, $defaults );
-            }
-            
-            //Handling Event Participation Part of the batch profile 
-            if ( CRM_Core_Permission::access( 'CiviEvent' ) && $component == 'Event' ) {
-                self::setComponentDefaults( $fields, $componentId, $component, $defaults );
-            }
-            
-            //Handling membership Part of the batch profile 
-            if ( CRM_Core_Permission::access( 'CiviMember' ) && $component == 'Membership' ) {
-                self::setComponentDefaults( $fields, $componentId, $component, $defaults );
-            }
+        }
+        
+        //Handling Contribution Part of the batch profile 
+        if ( CRM_Core_Permission::access( 'CiviContribute' ) && $component == 'Contribute' ) {
+            self::setComponentDefaults( $fields, $componentId, $component, $defaults );
+        }
+        
+        //Handling Event Participation Part of the batch profile 
+        if ( CRM_Core_Permission::access( 'CiviEvent' ) && $component == 'Event' ) {
+            self::setComponentDefaults( $fields, $componentId, $component, $defaults );
+        }
+        
+        //Handling membership Part of the batch profile 
+        if ( CRM_Core_Permission::access( 'CiviMember' ) && $component == 'Membership' ) {
+            self::setComponentDefaults( $fields, $componentId, $component, $defaults );
         }
     }
-
+    
     /**
      * Function to get profiles by type  eg: pure Individual etc
      *
