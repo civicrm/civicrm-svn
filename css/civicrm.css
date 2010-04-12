@@ -181,29 +181,35 @@ div#crm-container {
 /* crm advanced select styling */
 
 .crmasmContainer,
-.crmasmSelect {
+.crmasmSelect,
+.crmtagContainer,
+.crmtagSelect {
     width:200px;
 }
 
-.crmasmSelect {
+.crmasmSelect,
+.crmtagSelect {
     padding:2px;	
 }
 
 .crmasmSelect .child-1 { padding-left:1em; }
 .crmasmSelect .child-2 { padding-left:2em; }
 
-.crmasmHighlight {
+.crmasmHighlight,
+.crmtagHighlight {
     display:block;
     padding:2px 4px;
     background-color:#EEF4B8;
 }
 
-.crmasmList {
+.crmasmList,
+.crmtagList {
     margin:0px;
     padding:0px;
 }
 
-.crmasmList li {
+.crmasmList li,
+.crmtagList li {
     background-color:#3E3E3E;
     padding:2px 4px;
     list-style-type:none;
@@ -211,10 +217,12 @@ div#crm-container {
     color:#F5F6F1;
 }
 
-.crmasmListItem {
+.crmasmListItem,
+.crmtagListItem {
     position:relative;
 }
-.crmasmListItemRemove {
+.crmasmListItemRemove,
+.crmtagListItemRemove {
     padding:5px;
     position:absolute;
     right:5px;
@@ -511,7 +519,6 @@ div.spacer,
     padding: 4px 4px 4px 6px;
     border: 0px none;
     vertical-align: top;
-    width: 20%;
 }
 
 #crm-container table.selector td {
@@ -2123,6 +2130,7 @@ div.grippie {
 #crm-container .crm-button-type-cancel input { color:#7a7a7a; }
 
 #crm-container a.button,
+#crm-create-new-link,
 #crm-container a.button:link {
     background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left top;
     color: #FFF;
@@ -2133,8 +2141,10 @@ div.grippie {
     margin-right: 6px;
     padding: 0 0px 0 4px; /* sliding doors padding */
     text-decoration: none;
+    cursor: pointer;
 }
 
+#crm-create-new-link span,
 #crm-container a.button span {
     background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -25px;
     display: block;
@@ -2155,6 +2165,24 @@ div.grippie {
 #crm-container a.button:hover { background-position:0px -50px; }
 
 #crm-container a.button:hover span { background-position:right -75px; }
+
+
+/* create new XXX style (drupal block) */ 
+
+#crm-create-new-wrapper{
+	position:relative;
+	width: 160px;
+	z-index:5;
+	}
+
+#crm-create-new-list{
+	position:absolute;
+	display:none;
+	top:24px;
+	left:0px;
+	width:160px;
+	z-index: 100;
+	}
 
 /* setup for icons */
 
@@ -2417,7 +2445,7 @@ div.helpicon {
     background  : transparent url(../i/quiz.png) no-repeat;
     display     : inline;
     cursor      : pointer;
-    background-position:-16px -144px;
+    background-position:-128px -98px;
     background-image:url(../i/icons/jquery-ui-52534D.png);
     background-color:transparent;
     width:16px;
@@ -2860,10 +2888,14 @@ div#crm-toolTip
 .ac_even{ background-color:transparent; }
 .ac_odd { background-color:transparent; }
 
-.ac_results li { color:#DFDFDF; }
+.ac_results li,
+.ac_results li a,
+.ac_results li a:hover,
+.ac_results li a:visited { color:#DFDFDF; text-decoration: none;}
 .ac_results li strong { color: #FFF; font-weight: normal; }
 
-.ac_results li.ac_over {  background-color:#F5F6F1; color:#3e3e3e; }
+.ac_results li.ac_over
+.ac_results li:hover {  background-color:#F5F6F1; color:#3e3e3e; }
 .ac_results li.ac_over strong { color:#000; }	
 
 /* theming for panel and context menus */
