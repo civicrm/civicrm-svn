@@ -241,12 +241,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             }
         }
 
-        if ( $this->_context != 'search') {
-            // if we're not adding new one, there must be an id to
-            // an activity we're trying to work on.
-            if ( $this->_action != CRM_Core_Action::ADD ) {
-                $this->_activityId = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
-            }
+        // if we're not adding new one, there must be an id to
+        // an activity we're trying to work on.
+        if ( $this->_action != CRM_Core_Action::ADD ) {
+            $this->_activityId = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
         }
         
         $this->_currentlyViewedContactId = $this->get('contactId');
@@ -338,8 +336,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                                               "force=1&qfKey={$this->_contextQFKey}" );
             }
            
-        } else if ( in_array( $this->_context, array( 'standalone', 'home', 'search') ) ) {
+        } else if ( in_array( $this->_context, array( 'standalone', 'home' ) ) ) {
             $url = CRM_Utils_System::url('civicrm/dashboard', 'reset=1' );
+        } else if ( $this->_context == 'search' ) {
+            $url = CRM_Utils_System::url( 'civicrm/activity/search', 'force=1' );
         } else if ( $this->_context != 'caseActivity' ) {
             $url = CRM_Utils_System::url('civicrm/contact/view',
                                          "action=browse&reset=1&cid={$this->_currentlyViewedContactId}&selectedChild=activity" );
