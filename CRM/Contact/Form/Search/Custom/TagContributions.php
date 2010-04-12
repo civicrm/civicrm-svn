@@ -135,7 +135,8 @@ GROUP BY civicrm_contact.id
       return "
       civicrm_contribution,
       civicrm_contact
-      LEFT JOIN civicrm_entity_tag ON civicrm_entity_tag.contact_id = civicrm_contact.id
+      LEFT JOIN civicrm_entity_tag ON ( civicrm_entity_tag.entity_table = 'civicrm_contact' AND
+                                        civicrm_entity_tag.entity_id = civicrm_contact.id )
       LEFT JOIN civicrm_tag ON civicrm_tag.id = civicrm_entity_tag.tag_id
 ";
   }

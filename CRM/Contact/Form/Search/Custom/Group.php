@@ -376,10 +376,11 @@ class CRM_Contact_Form_Search_Custom_Group
             if( $xTags != 0 ) {
                 $excludeTag = 
                     "INSERT INTO  Xt_{$this->_tableName} ( contact_id )
-                  SELECT  DISTINCT civicrm_entity_tag.contact_id
+                  SELECT  DISTINCT civicrm_entity_tag.entity_id
                   FROM civicrm_entity_tag, civicrm_contact                    
                   WHERE 
-                     civicrm_contact.id = civicrm_entity_tag.contact_id AND 
+                     civicrm_entity_tag.entity_table = 'civicrm_contact' AND
+                     civicrm_contact.id = civicrm_entity_tag.entity_id AND 
                      civicrm_entity_tag.tag_id IN( {$xTags})";
             
                 CRM_Core_DAO::executeQuery( $excludeTag );
@@ -397,7 +398,8 @@ class CRM_Contact_Form_Search_Custom_Group
                  SELECT              civicrm_contact.id as contact_id, civicrm_tag.name as tag_name
                  FROM                civicrm_contact
                     INNER JOIN       civicrm_entity_tag
-                            ON       civicrm_entity_tag.contact_id = civicrm_contact.id
+                            ON       ( civicrm_entity_tag.entity_table = 'civicrm_contact' AND
+                                       civicrm_entity_tag.entity_id = civicrm_contact.id )
                     LEFT JOIN        civicrm_tag
                             ON       civicrm_entity_tag.tag_id = civicrm_tag.id";
             } else {
