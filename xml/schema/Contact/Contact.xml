@@ -199,7 +199,6 @@
        <import>true</import>
        <comment>optional URL for preferred image (photo, logo, etc.) to display for this contact.</comment>
        <add>1.1</add>
-       <drop>3.2</drop>
   </field>
   <field>
        <name>preferred_communication_method</name>

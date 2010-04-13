@@ -159,10 +159,9 @@ VALUES
     
 --  insert home_URL and image_URL for already exists contacts
     INSERT INTO civicrm_website ( contact_id, url, website_type_id ) SELECT cc.id, cc.home_URL, 1 FROM civicrm_contact cc WHERE cc.home_URL IS NOT NULL ;
-    INSERT INTO civicrm_website ( contact_id, url, website_type_id ) SELECT cc.id, cc.image_URL, 3 FROM civicrm_contact cc WHERE cc.image_URL IS NOT NULL ;
 
---  drop columns home_URL and image_URL
-    ALTER TABLE civicrm_contact DROP home_URL, DROP image_URL ;
+--  drop columns home_URL
+    ALTER TABLE civicrm_contact DROP home_URL;
 
 --  add option group website_type
     INSERT INTO civicrm_option_group
@@ -176,12 +175,11 @@ VALUES
     INSERT INTO civicrm_option_value
     	(option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight, {localize field='description'}description{/localize} , is_optgroup, is_reserved, is_active, component_id, visibility_id) 
     VALUES
-       (@option_group_id_website, {localize}'Home' {/localize},     1, 'Home',     NULL, 0, NULL, 1,{localize} NULL{/localize}, 0, 0, 1, NULL, NULL),
+       (@option_group_id_website, {localize}'Home' {/localize},    1, 'Home',     NULL, 0, NULL, 1,{localize} NULL{/localize}, 0, 0, 1, NULL, NULL),
        (@option_group_id_website, {localize}'Work'{/localize},     2, 'Work',     NULL, 0, NULL, 2, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
-       (@option_group_id_website, {localize}'Image'{/localize},    3, 'Image',    NULL, 0, NULL, 3, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
-       (@option_group_id_website, {localize}'Facebook'{/localize}, 4, 'Facebook', NULL, 0, NULL, 4, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
-       (@option_group_id_website, {localize}'Twitter'{/localize},  5, 'Twitter',  NULL, 0, NULL, 5,{localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
-       (@option_group_id_website, {localize}'MySpace'{/localize},  6, 'MySpace',  NULL, 0, NULL, 6, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+       (@option_group_id_website, {localize}'Facebook'{/localize}, 3, 'Facebook', NULL, 0, NULL, 3, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+       (@option_group_id_website, {localize}'Twitter'{/localize},  4, 'Twitter',  NULL, 0, NULL, 4,{localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
+       (@option_group_id_website, {localize}'MySpace'{/localize},  5, 'MySpace',  NULL, 0, NULL, 5, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
        (@option_group_id_tuf, {localize}'Contacts'{/localize}, 'civicrm_contact', 'Contacts', NULL, 0, NULL, 1,{localize}NULL{/localize}, 0, 0, 1, NULL, NULL),
        (@option_group_id_tuf, {localize}'Activities'{/localize}, 'civicrm_activity', 'Activities',  NULL, 0, NULL, 2,{localize}NULL{/localize}, 0, 0, 1, NULL, NULL),	
        (@option_group_id_tuf, {localize}'Cases'{/localize}, 'civicrm_case', 'Cases', NULL, 0, NULL, 3,{localize}NULL{/localize}, 0, 0, 1, NULL, NULL);
