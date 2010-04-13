@@ -24,6 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 {* Contact Summary template for new tabbed interface. Replaces Basic.tpl *}
+{if $imageURL }
+    <div>
+        {include file="CRM/Contact/Page/ContactImage.tpl"}
+    </div>
+{/if}
 {if $action eq 2}
     {include file="CRM/Contact/Form/Contact.tpl"}
 {else}

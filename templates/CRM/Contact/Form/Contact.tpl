@@ -60,6 +60,16 @@
 			  {/if}
             </tr>            
         </table>
+	<table>
+	    <tr>
+	      <td>{$form.image_URL.label}</td>
+	      <td>{$form.image_URL.html}
+ 	          {if $imageURL}
+ 	               {include file="CRM/Contact/Page/ContactImage.tpl"}
+ 	          {/if}
+ 	      </td>
+ 	    </tr>
+        </table>
 
         {*  add dupe buttons *}
         <span class="crm-button crm-button_qf_Contact_refresh_dedupe">

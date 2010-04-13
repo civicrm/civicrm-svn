@@ -284,3 +284,7 @@ VALUES
 -- CRM-5673
 ALTER TABLE civicrm_contact ADD is_deleted TINYINT;
 ALTER TABLE civicrm_contact ADD INDEX index_is_deleted(is_deleted);
+
+-- CRM-5467
+   ALTER TABLE civicrm_contact
+   MODIFY image_URL varchar(255) COMMENT 'Optional URL for preferred image (photo, logo, etc.) to display for this contact';

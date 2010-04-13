@@ -718,6 +718,141 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
     }
 
     /**
+     * function to delete the image of a contact
+     *
+     * @param  int $id id of the contact
+     * @return boolean true if contact image is deleted
+     */
+    public static function deleteContactImage( $id )
+    {
+        if ( !$id ) {
+            return false;
+        }
+        $query = "
+UPDATE civicrm_contact
+SET image_URL=NULL
+WHERE id={$id}; ";
+        CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        return true;
+    }
+ 	
+    /**
+     * function to return relative path
+     *
+     * @param String $absPath absolute path
+     * @return String $relativePath Relative url of uploaded image
+     */
+    public static function getRelativePath( $absolutePath )
+    {
+        $relativePath = null;
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Joomla' ) {
+            $userFrameworkBaseURL = trim( $config->userFrameworkBaseURL,'/administrator/' );
+            $customFileUploadDirectory = strstr( $absolutePath, '/media' );
+            $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;     
+        } else if ( $config->userFramework == 'Drupal' ) {   
+            $absolutePathStr = strstr( $absolutePath, 'sites');
+            $relativePath =  $config->userFrameworkBaseURL . $absolutePathStr;
+        } else if ( $config->userFramework == 'Standalone' ) {
+            $absolutePathStr = strstr( $absolutePath, 'files');
+            $relativePath = $config->userFrameworkBaseURL . $absolutePathStr;
+        }
+        return $relativePath;
+    }
+ 	
+    /**
+     * function to return proportional height and width of the image
+     *
+     * @param  Integer $imageWidth  width of image
+     *
+     * @param  Integer $imageHeight height of image
+     * @return Array thumb dimension of image
+     */
+    public static function getThumbSize( $imageWidth, $imageHeight )
+    {
+        $thumbWidth = 100;
+        if ( $imageWidth && $imageHeight ) {
+            $imageRatio = $imageWidth / $imageHeight ;
+        } else {
+            $imageRatio = 1;
+        }
+        if ( $imageRatio > 1 ) {
+            $imageThumbWidth = $thumbWidth;
+            $imageThumbHeight = round( $thumbWidth / $imageRatio );
+        } else {
+            $imageThumbHeight = $thumbWidth;
+            $imageThumbWidth = $thumbWidth * $imageRatio;     
+        }
+ 	 	
+        return array( $imageThumbWidth, $imageThumbHeight );  
+    }
+ 	
+    /**
+     * function to validate type of contact image
+     *
+     * @param  Array  $param      array of contact/profile field to be edited/added
+     *
+     * @param  String $imageIndex index of image field
+     *
+     * @param  String $statusMsg  status message to be set after operation
+     *
+     * @opType String $opType     type of operation like fatal, bounce etc
+     * @return boolean true if valid image extension
+     */
+    public static function processImageParams( &$params,
+                                               $imageIndex = 'image_URL',
+                                               $statusMsg  = null,
+                                               $opType     = 'status' )
+    {
+        $mimeType = array( 'image/jpeg',
+                           'image/jpg',
+                           'image/png',
+                           'image/bmp',
+                           'image/p-jpeg',
+                           'image/gif',
+                           'image/x-png' );
+        
+        if ( in_array( $params[$imageIndex]['type'], $mimeType ) ) {
+            $params[$imageIndex] = CRM_Contact_BAO_Contact::getRelativePath( $params[$imageIndex]['name'] );
+            return true;
+        } else {
+            unset( $params[$imageIndex] );
+            if ( !$statusMsg ) {
+                $statusMsg = ts( 'Image could not be uploaded due to invalid type extension.' );
+            }
+            if ( $opType == 'status' ) {
+                CRM_Core_Session::setStatus( $statusMsg );
+            }
+            // FIXME: additional support for fatal, bounce etc could be added.
+            return false;
+        }
+    }
+ 	
+    /**
+     * function to extract contact id from url for deleting contact image
+     */
+    public static function processImage( )
+    {
+        require_once 'CRM/Utils/Request.php';
+        require_once 'CRM/Core/DAO.php';
+ 	 	
+        $action = CRM_Utils_Request::retrieve( 'action', 'String', $this );
+        $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
+        // retrieve contact id in case of Profile context
+        $id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        $cid = $cid?$cid:$id;
+        if ( $action & CRM_Core_Action::DELETE ) {
+            if ( CRM_Utils_Request::retrieve( 'confirmed', 'Boolean', $this ) ) {
+                CRM_Contact_BAO_Contact::deleteContactImage( $cid );
+                CRM_Core_Session::setStatus( ts('Contact Image is deleted successfully') );
+                $session = CRM_Core_Session::singleton();  
+                $toUrl   = $session->popUserContext();
+                CRM_Utils_System::redirect($toUrl);
+            }
+        }
+    }
+    
+    /**
      *  Function to set is_delete true or restore deleted contact
      *  
      *  @param int     $contactId  contact id

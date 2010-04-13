@@ -839,6 +839,12 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                                         $customFieldName = "{$name}_from";
                                     }
                                 }
+                            } else if ( $name == 'image_URL' ) {
+                                list( $width, $height  ) = getimagesize( $details->$name );
+                                list( $thumbWidth, $thumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $width, $height );
+ 	 		                    
+                                $image_URL = '<img src="'.$details->$name . '" height= '.$thumbHeight. ' width= '.$thumbWidth.'  />';
+                                $values[$index] = "<a href='#' onclick='contactImagePopUp(\"{$details->$name}\", {$width}, {$height});'>{$image_URL}</a>";
                             } else if ( in_array( $name, array('birth_date', 'deceased_date','membership_start_date','membership_end_date','join_date')) ) {
                                 require_once 'CRM/Utils/Date.php';
                                 $values[$index] = CRM_Utils_Date::customFormat($details->$name);
@@ -1392,6 +1398,28 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         } else {
             $name = $fieldName;
         }
+        
+        if ( $fieldName  == 'image_URL' && $mode == CRM_Profile_Form::MODE_EDIT ) {
+            $deleteExtra = ts('Are you sure you want to delete contact image.');
+            $deleteURL =
+                array( CRM_Core_Action::DELETE  =>
+                       array(
+                             'name'  => ts('Delete Contact Image'),
+                             'url'   => 'civicrm/contact/image',
+                             'qs'    => 'reset=1&id=%%id%%&gid=%%gid%%&action=delete',
+                             'extra' =>
+                             'onclick = "if (confirm( \''. $deleteExtra .'\' ) ) this.href+=\'&amp;confirmed=1\'; else return false;"'
+                             )
+                       );
+            $deleteURL =
+                CRM_Core_Action::formLink( $deleteURL,
+                                           CRM_Core_Action::DELETE,
+                                           array( 'id'  => $form->get( 'id' ),
+                                                  'gid' => $form->get( 'gid' ),
+                                                  ) );
+            $form->assign('deleteURL', $deleteURL);
+            
+        }
         require_once 'CRM/Core/BAO/Preferences.php';
         $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
         
@@ -1421,7 +1449,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                     $form->freeze($name."-provider_id");
                 }
             }
-            $form->add('text', $name, $title, $attributes, $required );
+            $form->add('file', $name, $title, $attributes, $required );
+            $form->addUploadElement( $name );
         } else if ( ( $fieldName === 'birth_date' ) || ( $fieldName === 'deceased_date' ) ) { 
             $form->addDate( $name, $title, $required, array( 'formatType' => 'birth') );
         } else if ( in_array($fieldName, array( "membership_start_date","membership_end_date","join_date")) ) {  

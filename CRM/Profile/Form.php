@@ -270,6 +270,16 @@ class CRM_Profile_Form extends CRM_Core_Form
             $this->assign( 'customFiles', $customFiles ); 
         }
         
+        if ( CRM_Utils_Array::value( 'image_URL', $this->_defaults ) ) {
+            list( $imageWidth, $imageHeight ) = getimagesize( $this->_defaults['image_URL'] );
+            list( $imageThumbWidth, $imageThumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $imageWidth, $imageHeight );
+            $this->assign( "imageWidth", $imageWidth );
+            $this->assign( "imageHeight", $imageHeight );
+            $this->assign( "imageThumbWidth", $imageThumbWidth );
+            $this->assign( "imageThumbHeight", $imageThumbHeight );
+            $this->assign( "imageURL", $this->_defaults['image_URL'] ); 
+        }
+        
         $this->setDefaults( $this->_defaults );
     } 
     
@@ -681,6 +691,10 @@ class CRM_Profile_Form extends CRM_Core_Form
     public function postProcess( ) 
     {
         $params = $this->controller->exportValues( $this->_name );        
+        
+        if ( CRM_Utils_Array::value( 'image_URL', $params  ) ) {
+            CRM_Contact_BAO_Contact::processImageParams( $params ) ;
+        }
         
         $greetingTypes = array( 'addressee'       => 'addressee_id', 
                                 'email_greeting'  => 'email_greeting_id', 

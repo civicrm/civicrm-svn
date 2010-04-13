@@ -391,6 +391,16 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $this->assign( 'loadShowHideAddressFields', empty( $parsedAddress  ) ? false : true  );
         }
         
+        if ( CRM_Utils_Array::value( 'image_URL', $defaults  ) ) {
+            list( $imageWidth, $imageHeight ) = getimagesize( $defaults['image_URL'] );
+            list( $imageThumbWidth, $imageThumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $imageWidth, $imageHeight );
+            $this->assign( "imageWidth", $imageWidth );
+            $this->assign( "imageHeight", $imageHeight );
+            $this->assign( "imageThumbWidth", $imageThumbWidth );
+            $this->assign( "imageThumbHeight", $imageThumbHeight );
+            $this->assign( "imageURL", $defaults['image_URL'] );                                            
+        }
+        
         //set location type and country to default for each block
         $this->blockSetDefaults( $defaults );
         return $defaults;
@@ -660,6 +670,25 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             return eval( 'CRM_Contact_Form_Edit_' . $this->_addBlockName . '::buildQuickForm( $this );' );
         }
         
+        if ( $this->_action == CRM_Core_Action::UPDATE ) {
+            $deleteExtra = ts('Are you sure you want to delete contact image.');
+            $deleteURL =
+                array( CRM_Core_Action::DELETE  =>
+                       array(
+                             'name'  => ts('Delete Contact Image'),
+                             'url'   => 'civicrm/contact/image',
+                             'qs'    => 'reset=1&cid=%%id%%&action=delete',
+                             'extra' =>
+                             'onclick = "if (confirm( \''. $deleteExtra .'\' ) ) this.href+=\'&amp;confirmed=1\'; else return false;"'
+                             )
+                       );
+            $deleteURL = CRM_Core_Action::formLink( $deleteURL,
+                                                    CRM_Core_Action::DELETE,
+                                                    array( 'id'  => $this->_contactId,
+                                                           ) );
+            $this->assign( 'deleteURL', $deleteURL ); 
+        }
+        
         //build contact type specific fields
         require_once(str_replace('_', DIRECTORY_SEPARATOR, "CRM_Contact_Form_Edit_" . $this->_contactType) . ".php");
         eval( 'CRM_Contact_Form_Edit_' . $this->_contactType . '::buildQuickForm( $this, $this->_action );' );
@@ -697,6 +726,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         // build location blocks.
         CRM_Contact_Form_Location::buildQuickForm( $this );
+        
+        // add attachment
+        $this->addElement( 'file', 'image_URL', ts('Browse/Upload Image'), 'size=30 maxlength=60' );
+        $this->addUploadElement( 'image_URL' );
         
         // add the dedupe button
         $this->addElement('submit', 
@@ -738,6 +771,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         
         //get the submitted values in an array
         $params = $this->controller->exportValues( $this->_name );
+        
+        if ( CRM_Utils_Array::value( 'image_URL', $params  ) ){
+            CRM_Contact_BAO_Contact::processImageParams( $params ) ;
+        }
         
         //get the related id for shared / current employer
         if ( CRM_Utils_Array::value( 'shared_household_id',$params ) ) {
@@ -865,6 +902,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         $statusMsg = ts('Your %1 contact record has been saved.', array( 1 => $contact->contact_type_display ) );
         if ( $parseStatusMsg ) {
             $statusMsg =  "$statusMsg <br > $parseStatusMsg";
+        }
+        if ( $uploadFailMsg  ) {
+            $statusMsg = "$statusMsg <br > $uploadFailMsg";
         }
         $session = CRM_Core_Session::singleton( );
         CRM_Core_Session::setStatus( $statusMsg );

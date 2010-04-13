@@ -131,7 +131,13 @@
                 {include file="CRM/Profile/Form/GreetingType.tpl"}  
            {elseif ( $n eq 'group' && $form.group ) || ( $n eq 'tag' && $form.tag )}
 				{include file="CRM/Contact/Form/Edit/TagsAndGroups.tpl" type=$n}
-           {else}
+           {elseif ( $form.$n.name eq 'image_URL' )}
+	        {$form.$n.html}
+		{if $imageURL}
+ 	 	    <br>
+ 	 	    {include file="CRM/Contact/Page/ContactImage.tpl"}
+ 	        {/if}
+	   {else}
                {if ( $field.data_type eq 'Date' or
                           ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) ) ) ) }
                   {include file="CRM/common/jcalendar.tpl" elementName=$n}  
