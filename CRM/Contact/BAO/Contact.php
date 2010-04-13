@@ -2438,8 +2438,7 @@ UNION
              }
              
              // finally get menu item for -more- action widget.
-             echo $key;
-             $contextMenu['moreActions'][$values['weight']] = array( 	'title' => $values['title'],
+             $contextMenu['moreActions'][$key] = array( 	'title' => $values['title'],
                                                         	'ref'   => $values['ref'],
                                                          	'href' 	=> $values['href'] );
          }
