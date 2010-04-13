@@ -52,6 +52,8 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
      */
     public $_caseId = null;
     
+    public $_permission = null;
+ 
     /**
      * View details of a relationship
      *

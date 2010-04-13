@@ -38,6 +38,9 @@ require_once 'CRM/Core/Page.php';
 
 class CRM_Event_Page_Tab extends CRM_Core_Page 
 {
+
+    public $_permission = null;    
+    
     /**
      * This function is called when action is browse
      * 
