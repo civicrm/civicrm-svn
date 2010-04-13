@@ -764,9 +764,7 @@ as tbl ";
     {
         list( $sqlClause, $params ) = self::getActivitySQLClause( $contactID, $admin, $caseId, $context, true );
 
-        $query = "{$insertSQL}
-       SELECT COUNT(DISTINCT(activity_id)) as count  from ( {$sqlClause} )
-as tbl ";
+        $query = "SELECT COUNT(DISTINCT(activity_id)) as count  from ( {$sqlClause} ) as tbl";
         
         return CRM_Core_DAO::singleValueQuery( $query, $params );
     }
