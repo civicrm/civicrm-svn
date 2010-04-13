@@ -227,9 +227,19 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
         $importJob = new CRM_Import_ImportJob( $tableName );
         $importJob->setJobParams( $importJobParams );
                
+        // update cache before starting with runImport
+        $session =& CRM_Core_Session::singleton( );
+        $userID  = $session->get( 'userID' );
+        require_once 'CRM/ACL/BAO/Cache.php';
+        CRM_ACL_BAO_Cache::updateEntry( $userID );
+
         // run the import
         $importJob->runImport($this);
                
+        // update cache after we done with runImport
+        require_once 'CRM/ACL/BAO/Cache.php';
+        CRM_ACL_BAO_Cache::updateEntry( $userID );
+
         // add all the necessary variables to the form
         $importJob->setFormVariables( $this );
         
