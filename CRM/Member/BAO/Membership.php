@@ -1504,15 +1504,16 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
         if ( ! $membership->find( true ) ) {
             return;
         }
-            
+        require_once 'CRM/Member/PseudoConstant.php';
+        $deceasedStatusId = array_search( 'Deceased', CRM_Member_PseudoConstant::membershipStatus( ) );
+        
         $allRelatedContacts = array( );
         $relatedContacts = array( );
         if ( ! is_a( $membership, 'CRM_Core_Error') ) {
-            $allRelatedContacts = CRM_Member_BAO_Membership::checkMembershipRelationship( 
-                                                                                      $membership->id,
-                                                                                      $membership->contact_id,
-                                                                                      CRM_Utils_Array::value( 'action', $params )
-                                                                                      );
+            $allRelatedContacts = 
+                CRM_Member_BAO_Membership::checkMembershipRelationship( $membership->id,
+                                                                        $membership->contact_id,
+                                                                        CRM_Utils_Array::value( 'action', $params ) );
         }
 
         // check for loops. CRM-4213
@@ -1556,8 +1557,11 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
                 // past relationship
                 $params['status_id'          ] = $membership->status_id;
                 
-                if ( ( CRM_Utils_Array::value( 'action', $params ) & CRM_Core_Action::UPDATE ) && 
-                     ( $relationshipStatus == CRM_Contact_BAO_Relationship::PAST ) ) {
+                if ( $deceasedStatusId && 
+                     CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $contactId, 'is_deceased' ) ) {
+                    $params['status_id']  = $deceasedStatusId;
+                } else if ( ( CRM_Utils_Array::value( 'action', $params ) & CRM_Core_Action::UPDATE ) && 
+                            ( $relationshipStatus == CRM_Contact_BAO_Relationship::PAST ) ) {
                     // FIXME : While updating/ renewing the
                     // membership, if the relationship is PAST then
                     // the membership of the related contact must be
