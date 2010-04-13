@@ -89,10 +89,8 @@ class CRM_Contact_Page_View_Vcard extends CRM_Contact_Page_View {
             $vcard->setTitle( $defaults['job_title'] );
         }
         
-        if ( CRM_Utils_Array::value( 'birth_date', $defaults )) {
-            require_once 'CRM/Utils/Date.php';
-            $birthDate = CRM_Utils_Date::customFormat( $defaults['birth_date'], "%Y-%m-%d" );
-            $vcard->setBirthday( $birthDate );
+        if ( CRM_Utils_Array::value( 'birth_date_display', $defaults ) ) {
+            $vcard->setBirthday( CRM_Utils_Array::value( 'birth_date_display', $defaults ) );
         }
 
         if ( CRM_Utils_Array::value( 'home_URL'  , $defaults )) {
