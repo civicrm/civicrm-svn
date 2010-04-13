@@ -1830,7 +1830,10 @@ INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_g
                 $session  = CRM_Core_Session::singleton( );
                 $accessibleCaseIds = array_keys( self::getCases( false, $session->get( 'userID' ) ) );
             }
-            if ( empty( $accessibleCaseIds ) ) $accessibleCaseIds = array( 0 );
+            //no need of further processing.
+            if ( empty( $accessibleCaseIds ) ) {
+                return 0;
+            }
             $whereConditions[] = "( civicrm_case.id in (". implode( ',', $accessibleCaseIds ). ") )";
         }
 
