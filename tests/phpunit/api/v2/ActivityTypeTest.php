@@ -103,8 +103,8 @@ class api_v2_ActivityTypeTest extends CiviUnitTestCase
                         'weight'=> '2',
                         );
         $activitycreate = & civicrm_activity_type_create($params);
-        $activityId     = $activitycreate['id']; 
-        $activitydelete = & civicrm_activity_type_delete($activityId);
+        $params = array( 'activity_type_id' => $activitycreate['id'] );
+        $activitydelete = & civicrm_activity_type_delete($params);
         $this->assertEquals($activitydelete, 1 , 'In line ' . __LINE__);
     }
 }

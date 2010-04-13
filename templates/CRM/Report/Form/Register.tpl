@@ -55,8 +55,7 @@
         <dt class="label">{$form.name.label}</dt>
         <dd>{$form.name.html}</dd>
 	<dt></dt>
-        <dd class="description">{ts}Report Class must be present before adding the report here 
-	          E.g. "CRM_Report_Form_Contribute_Summary"{/ts} </dd>
+        <dd class="description">{ts}Report Class must be present before adding the report here, e.g. 'CRM_Report_Form_Contribute_Summary'{/ts}</dd>
        
         <dt class="label">{$form.weight.label}</dt>
         <dd>{$form.weight.html}</dd>

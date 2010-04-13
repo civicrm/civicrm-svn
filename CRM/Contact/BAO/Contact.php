@@ -289,7 +289,8 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
             }
         }
 
-        if ( ! array_key_exists('doNotResetCache', $params) ) {
+        $config = CRM_Core_Config::singleton( );
+        if ( ! $config->doNotResetCache ) {
             // Note: doNotResetCache flag is currently set by import contact process, since resetting and 
             // rebuilding cache could be expensive (for many contacts). We might come out with better 
             // approach in future. 
@@ -1826,7 +1827,7 @@ INNER JOIN civicrm_email    ON ( civicrm_contact.id = civicrm_email.contact_id )
             if ( ! empty( $groups ) ) {
                 $query .= "
 INNER JOIN civicrm_group_contact gc ON 
-(civicrm_contact.id = gc.contact_id AND gc.group_id IN (" . implode(',', $groups) . "))";
+(civicrm_contact.id = gc.contact_id AND gc.status = 'Added' AND gc.group_id IN (" . implode(',', $groups) . "))";
             }
         }
 
@@ -2291,7 +2292,7 @@ UNION
                                                 ),
                        'delete'       => array( 'title'        =>  ts( 'Delete Contact' ), 
                                                 'ref'          =>  'delete-contact',
-                                                'permissions'  =>  array( 'delete contacts' ) 
+                                                'permissions'  =>  array( 'delete contacts', 'edit all contacts' ) 
                                                 ),
                        'contribution' => array( 'title'        =>  ts( 'Record Contribution' ), 
                                                 'ref'          =>  'new-contribution',
@@ -2340,7 +2341,7 @@ UNION
          
          require_once 'CRM/Core/Permission.php';
          $aclPermissionedTasks = array( 'view-contact', 'edit-contact', 'new-activity',
-                                        'new-email', 'group-add-contact', 'tag-contact' );
+                                        'new-email', 'group-add-contact', 'tag-contact', 'delete-contact' );
          $corePermission = CRM_Core_Permission::getPermission( );
          
          $config = CRM_Core_Config::singleton( );

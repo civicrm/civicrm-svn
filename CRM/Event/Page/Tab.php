@@ -38,6 +38,10 @@ require_once 'CRM/Core/Page.php';
 
 class CRM_Event_Page_Tab extends CRM_Core_Page 
 {
+
+    public $_permission = null;    
+    public $_contactId  = null;    
+    
     /**
      * This function is called when action is browse
      * 
@@ -123,7 +127,10 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
             // check logged in url permission
             require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::checkUserPermission( $this );
-        }      
+            
+            // set page title
+            CRM_Contact_Page_View::setTitle( $this->_contactId );
+        }
 
         // Assign pageTitle
         $pageTitle = 'Event Registration'.$this->userDisplayName;

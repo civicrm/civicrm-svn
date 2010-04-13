@@ -3703,18 +3703,50 @@ function civicrm_views_data() {
 
 
     $data['civicrm_group']['table']['join']['civicrm_contact'] = array(
-                                                                                  'left_table' => 'civicrm_group_contact',
-                                                                                  'left_field' => 'group_id',
-                                                                                  'field' => 'id',
-                                                                                  );
+                                                                       'left_table' => 'civicrm_group_contact',
+                                                                       'left_field' => 'group_id',
+                                                                       'field' => 'id',
+                                                                       );
 
     $data['civicrm_group_contact']['table']['join']['civicrm_contact'] = array(
-                                                                  // Directly links to group table
-                                                                   'left_field' => 'id',
-                                                                   'field' => 'contact_id',
-                                                                   );
+                                                                               // Directly links to group table
+                                                                               'left_field' => 'id',
+                                                                               'field' => 'contact_id',
+                                                                               );
 
-      //CiviCRM Groups - FIELDS
+    $data['civicrm_group_contact']['table']['group'] = t('CiviCRM Groups');
+    $data['civicrm_group_status']['table']['group']  = t('Contact Group Status');
+
+    $data['civicrm_group_contact']['status'] = array(
+                                                     'title' => t('Contact Status'),
+                                                     'help' => t('The group status of the contact'),
+                                                     'field' => array(
+                                                                      'handler' => 'civicrm_handler_filter_group_status',
+                                                                      'click sortable' => TRUE
+                                                                      ),
+                                                     'filter' => array(
+                                                                       'handler' => 'civicrm_handler_filter_group_status',
+                                                                       'allow empty' => TRUE,
+                                                                       ),
+                                                     );
+
+    // CiviCRM Groups - FIELDS
+
+    // Numeric Group ID
+    $data['civicrm_group_contact']['status'] = array(
+                                                     'title' => t('Contact Status'),
+                                                     'help' => t('The group status of the contact'),
+                                                     'field' => array(
+                                                                      'handler' => 'civicrm_handler_filter_group_status',
+                                                                      'click sortable' => TRUE
+                                                                      ),
+                                                     'filter' => array(
+                                                                       'handler' => 'civicrm_handler_filter_group_status',
+                                                                       'allow empty' => TRUE,
+                                                                       ),
+                                                     );
+
+    //CiviCRM Groups - FIELDS
 
     //Numeric Group ID
     $data['civicrm_group']['id'] = array(
@@ -5110,12 +5142,15 @@ function civicrm_views_handlers() {
                        'civicrm_handler_filter_participant_status' => array(
                                                                             'parent' => 'views_handler_filter_in_operator',
                                                                             ),
+                       'civicrm_handler_filter_group_status'=> array(
+                                                                     'parent' => 'views_handler_filter_in_operator',
+                                                                     ),
                        'civicrm_handler_filter_group_title'=> array(
-                                                                            'parent' => 'views_handler_filter_in_operator',
-                                                                            ),
+                                                                    'parent' => 'views_handler_filter_in_operator',
+                                                                    ),
                        'civicrm_handler_filter_tag_title' => array(
-                                                                            'parent' => 'views_handler_filter_in_operator',
-                                                                            ),
+                                                                   'parent' => 'views_handler_filter_in_operator',
+                                                                   ),
                        'civicrm_handler_filter_participant_role' => array(
                                                                           'parent' => 'views_handler_filter_in_operator',
                                                                           ),

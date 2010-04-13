@@ -132,11 +132,8 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
                 
                 if ( !CRM_Contact_BAO_GroupContact::isContactInGroup( $this->_id, 
                                                                       $limitListingsGroupsID ) ) {
-                    return  CRM_Core_Session::setStatus( ts( 'You do not have permission to view 
-                                                             this contact record. Contact the 
-                                                             site  administrator if you need 
-                                                             assistance.'
-                                                             ) );       
+                    CRM_Utils_System::setTitle( ts( 'Profile View - Permission Denied' ) );
+                    return CRM_Core_Session::setStatus(ts('You do not have permission to view this contact record. Contact the site administrator if you need assistance.'));
                 }
             }
             

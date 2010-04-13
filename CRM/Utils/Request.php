@@ -77,7 +77,7 @@ class CRM_Utils_Request {
         // hack to detect stuff not yet converted to new style
         if ( ! is_string( $type ) ) {
             CRM_Core_Error::backtrace( );
-            CRM_Core_Error::fatal( "Please convert retrieve call to use new function signature" );
+            CRM_Core_Error::fatal( ts("Please convert retrieve call to use new function signature") );
         }
 
         $value = null;
@@ -106,7 +106,7 @@ class CRM_Utils_Request {
         }
 
         if ( ! isset( $value ) && $abort ) {
-            CRM_Core_Error::fatal( "Could not find valid value for $name" );
+            CRM_Core_Error::fatal( ts("Could not find valid value for %1", array( 1 => $name ) ) );
         }
 
         if ( ! isset( $value ) && $default ) {

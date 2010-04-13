@@ -136,7 +136,7 @@
             <div class="label">{$form.address.$index.supplemental_address_1.label}</div>
             <div class="content">{$form.address.$index.supplemental_address_1.html}    
                 <br class="spacer"/>
-                <span class="description">{ts} Supplemental address info, e.g. c/o, department name, building name, etc.{/ts}</span>
+                <span class="description">{ts}Supplemental address info, e.g. c/o, department name, building name, etc.{/ts}</span>
             </div>
             <div class="clear"></div>
         </div>

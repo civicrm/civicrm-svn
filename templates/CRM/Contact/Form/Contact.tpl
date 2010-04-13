@@ -56,7 +56,7 @@
                   {$form.external_identifier.html}
               </td>
               {if $contactId}
-				<td><label for="internal_identifier">Internal Id</label><br />{$contactId}</td>
+				<td><label for="internal_identifier">{ts}Internal Id{/ts}</label><br />{$contactId}</td>
 			  {/if}
             </tr>            
         </table>
@@ -130,7 +130,7 @@ cj('a#expand').click( function( ){
         cj(this).attr('href', '#collapse');
         cj('.crm-accordion-closed').removeClass('crm-accordion-closed').addClass('crm-accordion-open');
     } else {
-        var message     = {/literal}{ts}"Expand all tabs"{/ts}{literal};
+        var message     = {/literal}"{ts}Expand all tabs{/ts}"{literal};
         cj('.crm-accordion-open').removeClass('crm-accordion-open').addClass('crm-accordion-closed');
         cj(this).attr('href', '#expand');
     }

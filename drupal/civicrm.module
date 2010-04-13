@@ -381,7 +381,7 @@ function civicrm_user( $type, &$edit, &$user, $category = NULL )
     case 'login':
         require_once 'CRM/Core/BAO/UFMatch.php';
         return CRM_Core_BAO_UFMatch::synchronize( $user, false, 'Drupal',
-                                                  civicrm_get_ctype( 'Individual' ) );
+                                                  civicrm_get_ctype( 'Individual' ), true );
     case 'register':
         $config = CRM_Core_Config::singleton( );
         if ( $config->inCiviCRM ) {
@@ -845,7 +845,7 @@ function civicrm_theme_registry_alter(&$theme_registry) {
 	unset($variables['title']);
 	
 	// to increase it's flexibility. 
-  	if ( module_exists('date_popup') && (arg(0) == 'civicrm') ) { 
+  	if ( module_exists('date_popup') && ( in_array( arg(0), array('civicrm', 'user') ) ) ) { 
 		/** 
 		 * Have hidden this function as it is not needed,
 		 * but left as an example when we need to unset js

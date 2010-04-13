@@ -1511,10 +1511,13 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
             }
             
             // pass doNotResetCache flag since resetting and rebuilding cache could be expensive.
-            $formatted['doNotResetCache'] = 1;
+            $config =& CRM_Core_Config::singleton( );
+            $config->doNotResetCache = 1;
             $cid = CRM_Contact_BAO_Contact::createProfileContact( $formatted, $contactFields, 
                                                                   $contactId, null, null, 
                                                                   $formatted['contact_type'] );
+            $config->doNotResetCache = 0;
+
             $contact    = array( 'contact_id' => $cid );
             
             $defaults   = array( );

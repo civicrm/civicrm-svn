@@ -1279,7 +1279,7 @@ UPDATE  civicrm_participant
                 foreach ( $results['updatedParticipantIds'] as $processedId ) {
                     if ( is_array( $results['mailedParticipants'] ) && 
                          array_key_exists( $processedId,  $results['mailedParticipants']) ) {
-                        $statusMsg .= ts( "<br /> Participant status has been updated to '%1'. An email has been sent to %2.",
+                        $statusMsg .= '<br /> ' . ts("Participant status has been updated to '%1'. An email has been sent to %2.",
                                           array( 1 => $allStatuses[$statusChangeTo],
                                                  2 => $results['mailedParticipants'][$processedId] ) );
                     }
@@ -1318,9 +1318,7 @@ UPDATE  civicrm_participant
         $emptySeats = self::eventFull( $eventId, false, false );
         if ( is_string( $emptySeats ) && $emptySeats !== null ) {
             $maxParticipants = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $eventId, 'max_participants' ) ;
-            $eventfullMsg = ts( "This event currently has the maximum number of participants registered ( %1 ). 
-However, you can still override this limit and register additional participants using this form.<br >", 
-                                array( 1 =>  $maxParticipants ) ); 
+            $eventfullMsg = ts("This event currently has the maximum number of participants registered (%1). However, you can still override this limit and register additional participants using this form.", array(1 => $maxParticipants)) . '<br />';
         }
         
         $hasWaiting = false;
