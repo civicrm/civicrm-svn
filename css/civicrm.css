@@ -2892,6 +2892,9 @@ div#crm-toolTip
 .ac_even{ background-color:transparent; }
 .ac_odd { background-color:transparent; }
 
+
+.ac_results li a {display: block;}
+
 .ac_results li,
 .ac_results li a,
 .ac_results li a:hover,
