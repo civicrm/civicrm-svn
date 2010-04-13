@@ -1631,6 +1631,12 @@ table.campaign td,
     margin:0px 0px 0px 8px;
 }
 
+#crm-container #crm-contact-actions-list li { 
+	float:none; 
+	padding: 2px 4px;
+	margin:0px;
+	}
+
 /* Styles for Action Items &  Action Link pop-up */
 
 #crm-container .action-item {
@@ -2092,7 +2098,8 @@ div.grippie {
 }
 
 .ac_results-inner,
-.crm-create-new-list-inner {
+.crm-create-new-list-inner,
+.crm-contact-actions-list-inner  {
     background-color:#2f2f2e;
     padding:4px;
 }
@@ -2133,6 +2140,7 @@ div.grippie {
 
 #crm-container a.button,
 #crm-create-new-link,
+#crm-contact-actions-link,
 #crm-container a.button:link {
     background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left top;
     color: #FFF;
@@ -2147,6 +2155,7 @@ div.grippie {
 }
 
 #crm-create-new-link span,
+#crm-contact-actions-link span,
 #crm-container a.button span {
     background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -25px;
     display: block;
@@ -2171,19 +2180,29 @@ div.grippie {
 
 /* create new XXX style (drupal block) */ 
 
-#crm-create-new-wrapper{
+#crm-create-new-wrapper,
+#crm-contact-actions-wrapper{
 	position:relative;
-	width: 160px;
 	z-index:5;
 	}
 
-#crm-create-new-list{
+#crm-create-new-list,
+#crm-contact-actions-list{
 	position:absolute;
 	display:none;
 	top:24px;
 	left:0px;
-	width:160px;
 	z-index: 100;
+	width:180px;
+	}
+
+
+#crm-contact-actions-list .activities-block {
+	color:#FFF;
+	padding:4px;
+	}
+#crm-contact-actions-list .activities-block select {
+	margin-top:4px;
 	}
 
 /* setup for icons */
@@ -2505,6 +2524,14 @@ div#crm-toolTip #hide-tooltip {
     padding-bottom: 10px;
     background: transparent url('../i/overlay-pointer.png') no-repeat bottom left;
 }
+
+.crm-summary-group h2 {
+	padding:2px 4px 0 4px;
+	font-size: 14px;
+	color:#FFF;
+	margin-bottom:0px;
+	}
+
 
 .crm-tooltip {
     padding:4px;
@@ -2887,7 +2914,8 @@ div#crm-toolTip
 }
 
 .ac_results-inner,
-.crm-create-new-list-inner { background-color:#2f2f2e; }
+.crm-create-new-list-inner,
+.crm-contact-actions-list-inner { background-color:#2f2f2e; }
 
 .ac_even{ background-color:transparent; }
 .ac_odd { background-color:transparent; }
@@ -2898,15 +2926,24 @@ div#crm-toolTip
 .ac_results li,
 .ac_results li a,
 .ac_results li a:hover,
-.ac_results li a:visited { color:#DFDFDF; text-decoration: none;}
+.ac_results li a:visited,
+#crm-container .ac_results li,
+#crm-container .ac_results li a,
+#crm-container .ac_results li a:hover,
+#crm-container .ac_results li a:visited { color:#DFDFDF; text-decoration: none;}
 .ac_results li strong { color: #FFF; font-weight: normal; }
 
 .ac_results li.ac_over,
 .ac_results li:hover,
 .ac_results li.ac_over a,
 .ac_results li.ac_over a:hover,
-.ac_results li.ac_over a:visited  {  background-color:#F5F6F1; color:#3e3e3e; }
-.ac_results li.ac_over strong { color:#000; }	
+.ac_results li.ac_over a:visited,
+#crm-container .ac_results li.ac_over,
+#crm-container .ac_results li:hover,
+#crm-container .ac_results li.ac_over a,
+#crm-container .ac_results li.ac_over a:hover,
+#crm-container .ac_results li.ac_over a:visited   {  background-color:#F5F6F1; color:#3e3e3e; }
+#crm-container .ac_results li.ac_over strong { color:#000; }	
 
 /* theming for panel and context menus */
 #crm-container td ul.panel li,
