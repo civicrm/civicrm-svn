@@ -257,7 +257,7 @@ class CRM_Grant_Form_Search extends CRM_Core_Form
             $permission = CRM_Core_Permission::getPermission( );
 
             require_once 'CRM/Grant/Task.php';
-            $tasks = array( '' => ts('- more actions -') );
+            $tasks = array( '' => ts('- actions -') );
             $permissionedTask = CRM_Grant_Task::permissionedTaskTitles( $permission );
             if ( is_array( $permissionedTask ) && !CRM_Utils_System::isNull( $permissionedTask ) ) {
                 $tasks += $permissionedTask;

@@ -267,7 +267,7 @@ class CRM_Case_Form_Search extends CRM_Core_Form
             $permission = CRM_Core_Permission::getPermission( );
             
             require_once 'CRM/Case/Task.php';
-            $tasks = array( '' => ts('- more actions -') ) + CRM_Case_Task::permissionedTaskTitles( $permission );
+            $tasks = array( '' => ts('- actions -') ) + CRM_Case_Task::permissionedTaskTitles( $permission );
 
             if ( CRM_Utils_Array::value('case_deleted', $this->_formValues) ) {
                 unset( $tasks[1] );
