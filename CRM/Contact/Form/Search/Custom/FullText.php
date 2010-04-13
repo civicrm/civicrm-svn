@@ -140,16 +140,17 @@ class CRM_Contact_Form_Search_Custom_FullText
                   'id'                        => 'int unsigned NOT NULL AUTO_INCREMENT',
                   'table_name'                => 'varchar(16)',
                   'contact_id'                => 'int unsigned',
-                  'sort_name'              => 'varchar(128)',
+                  'sort_name'                 => 'varchar(128)',
                   'assignee_contact_id'       => 'int unsigned',
-                  'assignee_sort_name'     => 'varchar(128)',
+                  'assignee_sort_name'        => 'varchar(128)',
                   'target_contact_id'         => 'int unsigned',
-                  'target_sort_name'       => 'varchar(128)',
+                  'target_sort_name'          => 'varchar(128)',
                   'activity_id'               => 'int unsigned',
                   'activity_type_id'          => 'int unsigned',
                   'case_id'                   => 'int unsigned',
                   'case_start_date'           => 'datetime',
                   'case_end_date'             => 'datetime',
+                  'case_is_deleted'           => 'tinyint',
                   'subject'                   => 'varchar(255)',
                   'details'                   => 'varchar(255)',
                   'contribution_id'           => 'int unsigned',
@@ -478,8 +479,8 @@ AND        c.sort_name LIKE {$this->_text}  OR
         $maxRowCount = 0;
         $sql = "
 INSERT INTO {$this->_tableName}
-( table_name, contact_id, sort_name, case_id, case_start_date, case_end_date )
-SELECT SQL_CALC_FOUND_ROWS 'Case', c.id, c.sort_name, cc.id, DATE(cc.start_date), DATE(cc.end_date)
+( table_name, contact_id, sort_name, case_id, case_start_date, case_end_date, case_is_deleted )
+SELECT SQL_CALC_FOUND_ROWS 'Case', c.id, c.sort_name, cc.id, DATE(cc.start_date), DATE(cc.end_date), cc.is_deleted
 FROM      civicrm_case cc 
 LEFT JOIN civicrm_case_contact ccc ON cc.id = ccc.case_id
 LEFT JOIN civicrm_contact c ON ccc.contact_id = c.id
@@ -491,11 +492,11 @@ WHERE     c.sort_name LIKE {$this->_text}
         $totalRows   = CRM_Core_DAO::singleValueQuery( "SELECT FOUND_ROWS();" );
         $maxRowCount = ($totalRows > $maxRowCount) ? $totalRows : $maxRowCount;
 
-        if ( $this->_textID ) { 
+        if ( $this->_textID ) {
             $sql = "
 INSERT INTO {$this->_tableName}
-  ( table_name, contact_id, sort_name, case_id, case_start_date, case_end_date )
-SELECT SQL_CALC_FOUND_ROWS 'Case', c.id, c.sort_name, cc.id, DATE(cc.start_date), DATE(cc.end_date)
+  ( table_name, contact_id, sort_name, case_id, case_start_date, case_end_date, case_is_deleted )
+SELECT SQL_CALC_FOUND_ROWS 'Case', c.id, c.sort_name, cc.id, DATE(cc.start_date), DATE(cc.end_date), cc.is_deleted
 FROM      civicrm_case cc 
 LEFT JOIN civicrm_case_contact ccc ON cc.id = ccc.case_id
 LEFT JOIN civicrm_contact c ON ccc.contact_id = c.id
@@ -710,7 +711,7 @@ WHERE      c.sort_name LIKE {$this->_text}
             }
             $summary[$dao->table_name][] = $row;
         }
-        
+
         $summary['Count'] = array( );
         foreach ( array_keys($summary) as $table ) {
             $summary['Count'][$table] = $this->_foundRows[$table];
