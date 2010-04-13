@@ -122,8 +122,7 @@
             <dt><div class="icon inform-icon"></div></dt>
             {capture assign=crmURL}{crmURL p='civicrm/mailing/send' q='reset=1'}{/capture}
             {capture assign=archiveURL}{crmURL p='civicrm/mailing/browse/archived' q='reset=1'}{/capture}
-            <dd>{ts 1=$crmURL, 2=$archiveURL}There are no Scheduled or Sent Mailings. You can <a href='%1'>create and send one</a> 
-	            OR you can search the <a href='%2'>Archived Mailings</a>.{/ts}</dd>
+            <dd>{ts 1=$crmURL, 2=$archiveURL}There are no Scheduled or Sent Mailings. You can <a href='%1'>create and send one</a> OR you can search the <a href='%2'>Archived Mailings</a>.{/ts}</dd>
         </dl>
    </div>
 {/if}

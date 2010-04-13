@@ -140,6 +140,10 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
             $mailingFormatProperties = self::getReturnProperties( $mailingFormat );
             $returnProperties = array_merge( $returnProperties , $mailingFormatProperties );
         }
+        //we should not consider addressee for data exists, CRM-6025
+        if ( array_key_exists( 'addressee', $mailingFormatProperties ) ) {
+            unset( $mailingFormatProperties['addressee'] );
+        }  
         
         $customFormatProperties = array( );            
         if ( stristr( $mailingFormat ,'custom_' ) ) {

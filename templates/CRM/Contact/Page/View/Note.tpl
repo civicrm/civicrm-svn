@@ -31,7 +31,7 @@
           <table class="view-layout">
             <tr><td class="label">{ts}Subject{/ts}</td><td>{$note.subject}</td></tr>
             <tr><td class="label">{ts}Date:{/ts}</td><td>{$note.modified_date|crmDate}</td></tr>
-            <tr><td class="label"></td><td>{$note.note}</td></tr>
+            <tr><td class="label"></td><td>{$note.note|nl2br}</td></tr>
             <tr><td></td><td><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=note'}';"/></td></tr>        
           </table>
         </fieldset>
@@ -97,7 +97,7 @@
         {foreach from=$notes item=note}
         <tr id="cnote_{$note.id}" class="{cycle values="odd-row,even-row"}">
             <td>
-                {$note.note|mb_truncate:80:"...":true}
+                {$note.note|nl2br|mb_truncate:80:"...":true}
                 {* Include '(more)' link to view entire note if it has been truncated *}
                 {assign var="noteSize" value=$note.note|count_characters:true}
                 {if $noteSize GT 80}

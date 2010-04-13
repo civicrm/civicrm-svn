@@ -49,7 +49,9 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
      * @static
      */
     static $_links = null;
-   
+    public $_permission = null;
+    public $_contactId  = null;
+    
     /**
      * This function is called when action is browse
      *
@@ -121,12 +123,18 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
             $this->_action = CRM_Core_Action::ADD;
         } else {
             $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
             $this->assign( 'contactId', $this->_contactId );
+            $this->assign( 'displayName', $displayName );
             
             // check logged in url permission
             require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::checkUserPermission( $this );
-        }   
+            
+            // set page title
+            CRM_Contact_Page_View::setTitle( $this->_contactId );
+        }
         $this->assign( 'action', $this->_action );     
         
         if ( $this->_permission == CRM_Core_Permission::EDIT && !CRM_Core_Permission::check( 'edit grants' ) ) {
@@ -166,7 +174,7 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
         switch ( $context ) {
             
         case 'search':
-            $url = CRM_Utils_System::url('civicrm/grant/search','reset=1&force=1');
+            $url = CRM_Utils_System::url('civicrm/grant/search','force=1');
             break;
             
         case 'dashboard':

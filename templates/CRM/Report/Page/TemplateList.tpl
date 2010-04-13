@@ -25,8 +25,7 @@
 *}
 <div class="crm-block crm-form-block">
 <div class="help">
-{ts}Create reports for your users from any of the report templates listed below. Click on a template titles to get started. Click
-Existing Report(s) to see any reports that have already been created from that template.{/ts}
+{ts}Create reports for your users from any of the report templates listed below. Click on a template titles to get started. Click Existing Report(s) to see any reports that have already been created from that template.{/ts}
 </div>
 {strip}
 {if $list}

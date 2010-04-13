@@ -703,9 +703,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                      !in_array( $value, array( 'Participant', 'Contribution', 'Membership',
                                                'Individual', 'Contact' , 'Activity' ) ) ) {
                     $errors['field_name'] = 
-                        ts( 'Cannot add or update profile field "%1" with combination 
-                             of  Household or Organization or any subtypes of Household or 
-                             Organisation.', array( 1 => $fieldType ) );
+                        ts('Cannot add or update profile field "%1" with combination of Household or Organization or any subtypes of Household or Organisation.', array(1 => $fieldType));
                     break;
                 }
             }  
@@ -717,8 +715,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 }
                 if( !in_array( $fieldType , $basicType ) ) { 
                     $errors['field_name'] = 
-                        ts( 'Cannot add or update profile field type "%1" with combination 
-                         of subtype other than "%1".',array( 1=> $fieldType ) ); 
+                        ts('Cannot add or update profile field type "%1" with combination of subtype other than "%1".',array( 1=> $fieldType));
                 }
             }
         }  
@@ -881,8 +878,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 if ( CRM_Contact_BAO_ContactType::isaSubType( $profileType ) ) {
                     if ( $fieldType != $profileType ) {
                         $errors['field_name'] = 
-                            ts( 'Cannot add or update profile field type "%1" with combination 
-                                 of "%2".', array( 1 => $fieldType, 2 => $profileType ) );
+                            ts('Cannot add or update profile field type "%1" with combination of "%2".', array(1 => $fieldType, 2 => $profileType));
                     }
                 } else {
                     $basicType = CRM_Contact_BAO_ContactType::getBasicType( $fieldType );
@@ -890,8 +886,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                          $profileType != $basicType  &&
                          $profileType != 'Contact'   ) {
                         $errors['field_name'] = 
-                            ts( 'Cannot add or update profile field type "%1" with combination 
-                                 of "%2".', array( 1 => $fieldType, 2 => $profileType ) );    
+                            ts('Cannot add or update profile field type "%1" with combination of "%2".', array(1 => $fieldType, 2 => $profileType));
                     }
                 }        
             } elseif( $fields['field_name'][1] == 'contact_sub_type' && 

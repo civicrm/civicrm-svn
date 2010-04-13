@@ -31,9 +31,7 @@
 {if $isTemplate}
     {ts}You can select an existing Event Template as the basis for the new template you are creating, or you can create the template from scratch.{/ts}
 {else}
-    {ts}You can select a pre-configured Event Template to streamline setting up your new event. The information and configuration settings from the selected template will be
-    automatically copied to this new event. You can then add and modify as needed for this specific event instance. Event templates do NOT store the event date and time - so you will
-    definitely need to set those on this page.{/ts}
+    {ts}You can select a pre-configured Event Template to streamline setting up your new event. The information and configuration settings from the selected template will be automatically copied to this new event. You can then add and modify as needed for this specific event instance. Event templates do NOT store the event date and time - so you will definitely need to set those on this page.{/ts}
 {/if}
 {/htxt}
 

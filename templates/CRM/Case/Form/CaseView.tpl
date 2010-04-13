@@ -344,14 +344,24 @@ function createRelationship( relType, contactID, relID, rowNumber ) {
                 cj.post( postUrl, { rel_contact: v1, rel_type: relType, contact_id: sourceContact, rel_id: relID, case_id: caseID },
                     function( data ) {
                         var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
-                        var contactViewUrl = {/literal}"{crmURL p='civicrm/contact/view' q='action=view&reset=1&cid=' h=0 }"{literal};	
-                        var deleteUrl      = {/literal}"{crmURL p='civicrm/contact/view/rel' q="action=delete&reset=1&cid=`$contactID`&caseID=`$caseID`&id=" h=0 }"{literal};	
-                        var html = '<a href=' + contactViewUrl + data.cid +' title="view contact record">' +  data.name +'</a>';
-                        cj('#relName_' + rowNumber ).html( html );
 
-                        html = '';
-                        html = '<a onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +' ); return false" title="edit case role" href="#"><div class="icon edit-icon" ></div></a> &nbsp;&nbsp; <a href=' + deleteUrl + data.rel_id +' onclick = "if (confirm(\'{/literal}{ts}Are you sure you want to delete this relationship{/ts}{literal}?\') ) this.href +=\'&confirmed=1\'; else return false;"><div title="remove contact from case role" class="icon delete-icon"></div></a>';
-                        cj('#edit_' + rowNumber ).html( html );
+			var html = '';			
+			if ( data.cid ) {
+                            var contactViewUrl = {/literal}"{crmURL p='civicrm/contact/view' q='action=view&reset=1&cid=' h=0 }"{literal};	
+                            var deleteUrl      = {/literal}"{crmURL p='civicrm/contact/view/rel' q="action=delete&reset=1&cid=`$contactID`&caseID=`$caseID`&id=" h=0 }"{literal};	
+                            var html = '<a href=' + contactViewUrl + data.cid +' title="view contact record">' +  data.name +'</a>';
+                            cj('#relName_' + rowNumber ).html( html );
+                            html = '';
+                            html = '<a onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +' ); return false" title="edit case role" href="#"><div class="icon edit-icon" ></div></a> &nbsp;&nbsp; <a href=' + deleteUrl + data.rel_id +' onclick = "if (confirm(\'{/literal}{ts}Are you sure you want to delete this relationship{/ts}{literal}?\') ) this.href +=\'&confirmed=1\'; else return false;"><div title="remove contact from case role" class="icon delete-icon"></div></a>';
+                            cj('#edit_' + rowNumber ).html( html );
+
+			} else {
+			   html = '<img src="' +resourceBase+'i/edit.png" title="edit case role" onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +' );">&nbsp;&nbsp;';
+
+			   var errorMsg = '{/literal}{ts}Please select valid contact{/ts}{literal}.'; 
+
+			   cj('#edit_' + rowNumber ).html( html + errorMsg );
+			}
 
                         html = '';
                         if ( data.phone ) {

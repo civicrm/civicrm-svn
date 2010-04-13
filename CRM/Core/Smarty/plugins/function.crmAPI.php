@@ -45,6 +45,11 @@ function smarty_function_crmAPI( $params, &$smarty ) {
         $fnGroup[1] = ucfirst( $fnGroup[1] );
         $fnGroup    = implode( '', $fnGroup );
     }
+    
+    if ( $fnGroup == 'Contribution' ) {
+        $fnGroup = 'Contribute';
+    }
+    
     $apiFile = "api/v2/{$fnGroup}.php";
     require_once $apiFile;
     $fnName = "civicrm_{$params['entity']}_{$params['action']}";

@@ -47,7 +47,10 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
      */
     static $_links = null;
     static $_membershipTypesLinks = null;
-
+    
+    public $_permission = null; 
+    public $_contactId  = null;
+    
    /**
      * This function is called when action is browse
      * 
@@ -188,7 +191,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
         $context       = CRM_Utils_Request::retrieve('context', 'String', $this );
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
         $this->_id     = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
-        
+
         if ( $context == 'standalone' ) {
             $this->_action = CRM_Core_Action::ADD;
         } else {
@@ -198,6 +201,9 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             // check logged in url permission
             require_once 'CRM/Contact/Page/View.php';
             CRM_Contact_Page_View::checkUserPermission( $this );
+            
+            // set page title
+            CRM_Contact_Page_View::setTitle( $this->_contactId );
         }      
 
         $this->assign('action', $this->_action );     
