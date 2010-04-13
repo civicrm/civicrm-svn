@@ -110,7 +110,7 @@
                {/if}
              {/if}
              {*CRM-4564*}
-             {if $field.html_type eq 'Radio' && $form.$fieldName.frozen neq true}
+             {if $field.html_type eq 'Radio' && $form.$fieldName.frozen neq true && $field.is_required neq 1}
                  <span style="line-height: .75em; margin-top: 1px;">
                   &nbsp;(&nbsp;<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}');return false;">{ts}unselect{/ts}</a>&nbsp;)
                  </span>
