@@ -50,6 +50,7 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
      */
     static $_links = null;
     public $_permission = null;
+    public $_contactId  = null;
     
     /**
      * This function is called when action is browse

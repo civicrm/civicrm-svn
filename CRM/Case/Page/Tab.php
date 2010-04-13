@@ -51,7 +51,8 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
      */
     static $_links = null;
     public $_permission = null;
-
+    public $_contactId  = null;    
+    
     function preProcess( )
     {
         // Make sure case types have been configured for the component

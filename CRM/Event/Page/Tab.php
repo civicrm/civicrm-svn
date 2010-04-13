@@ -40,6 +40,7 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
 {
 
     public $_permission = null;    
+    public $_contactId  = null;    
     
     /**
      * This function is called when action is browse

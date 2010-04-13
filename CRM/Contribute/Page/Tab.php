@@ -46,6 +46,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
      */
     static $_links = null;
     public $_permission = null;    
+    public $_contactId  = null;
     
     /**
      * This method returns the links that are given for honor search row.
