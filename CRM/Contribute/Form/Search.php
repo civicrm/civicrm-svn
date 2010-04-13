@@ -272,7 +272,7 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
             $permission = CRM_Core_Permission::getPermission( );
             
             require_once 'CRM/Contribute/Task.php';
-            $tasks = array( '' => ts('- more actions -') ) + CRM_Contribute_Task::permissionedTaskTitles( $permission );
+            $tasks = array( '' => ts('- actions -') ) + CRM_Contribute_Task::permissionedTaskTitles( $permission );
             $this->add('select', 'task'   , ts('Actions:') . ' '    , $tasks    ); 
             $this->add('submit', $this->_actionButtonName, ts('Go'), 
                        array( 'class'   => 'form-submit',

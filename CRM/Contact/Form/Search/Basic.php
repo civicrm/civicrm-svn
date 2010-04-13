@@ -199,7 +199,7 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
             $this->_formValues = $this->controller->exportValues($this->_name);
             $this->normalizeFormValues( );
         }
-
+		
         if ( isset( $this->_groupID ) && ! CRM_Utils_Array::value( 'group', $this->_formValues ) ) {
             $this->_formValues['group'][$this->_groupID] = 1;
         } else if ( isset( $this->_ssID ) && empty( $_POST ) ) {

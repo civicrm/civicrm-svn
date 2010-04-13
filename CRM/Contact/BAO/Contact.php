@@ -2282,54 +2282,93 @@ UNION
      static function contextMenu( ) 
      {
          $menu = array( 
-                       'view'         => array( 'title'        =>  ts( 'View Contact' ), 
+                       'view'         => array( 'title'        =>  ts( 'View Contact' ),
+                       							'weight'	   => 0, 
                                                 'ref'          =>  'view-contact',
                                                 'permissions'  =>  array( 'view all contacts' ) 
                                                 ),
                        'add'          => array( 'title'        =>  ts( 'Edit Contact' ), 
+                       							'weight'	   => 0, 
                                                 'ref'          =>  'edit-contact', 
                                                 'permissions'  =>  array( 'edit all contacts' )
                                                 ),
                        'delete'       => array( 'title'        =>  ts( 'Delete Contact' ), 
+                       							'weight'	   => 0, 
                                                 'ref'          =>  'delete-contact',
                                                 'permissions'  =>  array( 'delete contacts', 'edit all contacts' ) 
                                                 ),
-                       'contribution' => array( 'title'        =>  ts( 'Record Contribution' ), 
+                       'contribution' => array( 'title'        =>  ts( 'Add Contribution' ), 
+                       							'weight'	   => 0, 
                                                 'ref'          =>  'new-contribution',
                                                 'component'    =>  'CiviContribute',
+                                                'href'		   =>  CRM_Utils_System::url('civicrm/contact/view/contribution', 
+                                                										'reset=1&action=add&context=contribution'),
+
                                                 'permissions'  =>  array( 'access CiviContribute',
                                                                           'edit contributions' ) 
                                                 ),
                        'participant'  => array( 'title'        =>  ts( 'Register for Event' ),
+                       							'weight'	   => 50, 
                                                 'ref'          =>  'new-participant',
                                                 'component'    =>  'CiviEvent',
+                                                'href'		   =>  CRM_Utils_System::url('civicrm/contact/view/pledge', 'reset=1&action=add&context=pledge'),
                                                 'permissions'  =>  array( 'access CiviEvent',
                                                                           'edit event participants' )
                                                 ),
                        'activity'     => array( 'title'        =>  ts( 'Record Activity' ),
+                       							'weight'	   => 0, 
                                                 'ref'          =>  'new-activity',
                                                 'permissions'  =>  array( 'edit all contacts' )
                                                 ),
                        'pledge'       => array( 'title'        =>  ts( 'Add Pledge' ),
+                       							'weight'	   => 80, 
                                                 'ref'          =>  'new-pledge',
                                                 'component'    =>  'CiviPledge',
                                                 'permissions'  =>  array( 'access CiviPledge',
                                                                           'edit pledges' ) ),
-                       'membership'   => array( 'title'        =>  ts( 'Enter Membership' ),
+                       'membership'   => array( 'title'        =>  ts( 'Add Membership' ),
+                       							'weight'	   => 10, 
                                                 'ref'          =>  'new-membership',
                                                 'component'    =>  'CiviMember',
+                                                'href'		   => CRM_Utils_System::url('civicrm/contact/view/membership',
+					 															'reset=1&action=add&context=membership'),
                                                 'permissions'  =>  array( 'access CiviMember',
                                                                           'edit memberships') 
                                                 ),
+                       'case'   	  => array( 'title'        =>  ts( 'Add Case' ),
+                       							'weight'	   => 20, 
+                                                'ref'          =>  'new-case',
+                                                'component'    =>  'CiviCase',
+                                                'href'		   => CRM_Utils_System::url('civicrm/contact/view/case',
+					 															'reset=1&action=add&context=case'),
+					 							'permissions'  =>  array( 'access CiviCase')
+					 							), 
+                       'relationship' => array( 'title'        =>  ts( 'Add Relationship' ),
+                       							'weight'	   => 30, 
+                                                'ref'          =>  'new-relationship',
+                                                'href'		   => CRM_Utils_System::url('civicrm/contact/view/rel',
+					 															'reset=1&action=add'),
+					 							'permissions'  =>  array( 'edit all contacts')
+					 							), 
+                       'note'        => array( 'title'        =>  ts( 'Add Note' ),
+                       							'weight'	   => 5, 
+                                                'ref'          =>  'new-note',
+                                                'href'		   => CRM_Utils_System::url('civicrm/contact/view/note',
+					 															'reset=1&action=add'),
+                                                'permissions'  =>  array( 'edit all contacts' ) 
+                                                ),
                        'email'        => array( 'title'        =>  ts( 'Send an Email' ),
+                       							'weight'	   => 0, 
                                                 'ref'          =>  'new-email',
                                                 'permissions'  =>  array( 'view all contacts' ) 
                                                 ),
                        'group'        => array( 'title'        =>  ts( 'Add to Group' ),
+                       							'weight'	   => 0, 
                                                 'ref'          =>  'group-add-contact',
                                                 'permissions'  =>  array( 'edit groups' )
                                                 ),
                        'tag'          => array( 'title'        =>  ts( 'Tag' ),
+                       							'weight'	   => 0, 
                                                 'ref'          =>  'tag-contact',
                                                 'permissions'  =>  array( 'edit all contacts' ) )
                        );
@@ -2399,8 +2438,9 @@ UNION
              }
              
              // finally get menu item for -more- action widget.
-             $contextMenu['moreActions'][$key] = array( 'title' => $values['title'],
-                                                        'ref'   => $values['ref'] );
+             $contextMenu['moreActions'][$key] = array( 	'title' => $values['title'],
+                                                        	'ref'   => $values['ref'],
+                                                         	'href' 	=> $values['href'] );
          }
          
          return $contextMenu;

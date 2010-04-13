@@ -252,7 +252,7 @@ class CRM_Pledge_Form_Search extends CRM_Core_Form
             $permission = CRM_Core_Permission::getPermission( );
             
             require_once 'CRM/Pledge/Task.php';
-            $tasks = array( '' => ts('- more actions -') ) + CRM_Pledge_Task::permissionedTaskTitles( $permission );
+            $tasks = array( '' => ts('- actions -') ) + CRM_Pledge_Task::permissionedTaskTitles( $permission );
  
             $this->add('select', 'task'   , ts('Actions:') . ' '    , $tasks    ); 
             $this->add('submit', $this->_actionButtonName, ts('Go'), 

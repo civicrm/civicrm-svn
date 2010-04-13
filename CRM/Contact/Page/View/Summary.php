@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Contact/Page/View.php';
+require_once 'CRM/Contact/BAO/Contact.php';
 
 /**
  * Main page for viewing contact.
@@ -53,7 +54,12 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
     function preProcess( ) 
     {
         parent::preProcess( );
-
+		
+		// actions buttom contextMenu
+		$menuItems = CRM_Contact_BAO_Contact::contextMenu( );
+		
+		$this->assign('actionsMenuList',$menuItems);
+		
         //retrieve inline custom data
         $entityType    = $this->get('contactType');
         $entitySubType = $this->get('contactSubtype');

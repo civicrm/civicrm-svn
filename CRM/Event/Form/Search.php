@@ -277,7 +277,7 @@ class CRM_Event_Form_Search extends CRM_Core_Form
             $permission = CRM_Core_Permission::getPermission( );
             
             require_once 'CRM/Event/Task.php';
-            $tasks = array( '' => ts('- more actions -') ) + CRM_Event_Task::permissionedTaskTitles( $permission );
+            $tasks = array( '' => ts('- actions -') ) + CRM_Event_Task::permissionedTaskTitles( $permission );
             if ( isset( $this->_ssID ) ) {
                 if ( $permission == CRM_Core_Permission::EDIT ) {
                     require_once "CRM/Contact/Task.php";
