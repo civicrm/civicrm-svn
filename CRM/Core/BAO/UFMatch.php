@@ -54,7 +54,7 @@ class CRM_Core_BAO_UFMatch extends CRM_Core_DAO_UFMatch {
      * @access public
      * @static
      */
-  static function synchronize( &$user, $update, $uf, $ctype ) {
+    static function synchronize( &$user, $update, $uf, $ctype, $isLogin = false ) {
         $session =& CRM_Core_Session::singleton( );
         if ( ! is_object( $session ) ) {
             CRM_Core_Error::fatal( 'wow, session is not an object?' );
@@ -128,7 +128,7 @@ WHERE     openid = %1";
         }
 
         //print "Calling synchronizeUFMatch...<br/>";
-        $ufmatch =& self::synchronizeUFMatch( $user, $user->$key, $uniqId, $uf, null, $ctype );
+        $ufmatch =& self::synchronizeUFMatch( $user, $user->$key, $uniqId, $uf, null, $ctype, $isLogin );
         if ( ! $ufmatch ) {
             return;
         }
@@ -178,7 +178,7 @@ WHERE     openid = %1";
      * @access public
      * @static
      */
-    static function &synchronizeUFMatch( &$user, $userKey, $uniqId, $uf, $status = null, $ctype = null ) 
+    static function &synchronizeUFMatch( &$user, $userKey, $uniqId, $uf, $status = null, $ctype = null, $isLogin = false ) 
     {
         // validate that uniqId is a valid url. it will either be
         // an OpenID (which should always be a valid url) or a
@@ -207,7 +207,7 @@ WHERE     openid = %1";
             require_once 'CRM/Core/Transaction.php';
             $transaction = new CRM_Core_Transaction( );
 
-            if ( ! empty( $_POST ) ) {
+            if ( ! empty( $_POST ) && ! $isLogin ) {
                 $params = $_POST;
                 $params['email'] = $uniqId;
 
