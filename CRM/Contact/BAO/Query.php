@@ -1021,7 +1021,9 @@ class CRM_Contact_BAO_Query
                 }
             }
             if ( $this->_useDistinct && !isset( $this->_distinctComponentClause) ) {
-                $this->_select['contact_id'] = 'DISTINCT(contact_a.id) as contact_id';
+                if ( !( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) {
+                    $this->_select['contact_id'] = 'DISTINCT(contact_a.id) as contact_id';
+                }
             } 
 
             $select = "SELECT ";
@@ -3364,7 +3366,9 @@ WHERE  id IN ( $groupIDs )
 				$groupBy = ' GROUP BY contact_a.id';
 			}
 		}	
-
+        if ( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
+            $groupBy = 'GROUP BY civicrm_activity.id ';
+        }
         $query = "$select $from $where $groupBy $order $limit";
         //CRM_Core_Error::debug('query', $query);
 

@@ -327,14 +327,17 @@ class CRM_Export_BAO_Export
         }
         
         $queryString = "$select $from $where";
-        
+        $groupBy = "";
         if ( CRM_Utils_Array::value( 'tags'  , $returnProperties ) || 
              CRM_Utils_Array::value( 'groups', $returnProperties ) ||
              CRM_Utils_Array::value( 'notes' , $returnProperties ) ||
              $query->_useGroupBy ) { 
-            $queryString .= " GROUP BY contact_a.id";
+            $groupBy = " GROUP BY contact_a.id";
         }
-        
+        if ( $queryMode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
+            $groupBy = " GROUP BY civicrm_activity.id ";  
+        }
+        $queryString .= $groupBy;
         if ( $order ) {
             list( $field, $dir ) = explode( ' ', $order, 2 );
             $field = trim( $field );
