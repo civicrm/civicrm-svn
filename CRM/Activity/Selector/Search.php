@@ -261,11 +261,11 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                 $row['activity_type'] = $row['activity_type'] . " (test)";
             }
             $bulkActivityTypeID = CRM_Utils_Array::key( 'Bulk Email', $activityType );
-            $row['recipients'] = ts('(recipients)');
             if ( $accessCiviMail && in_array( $result->source_record_id, $mailingIDs ) && ( $bulkActivityTypeID == $activityTypeId ) ) {
                 $row['mailingId'] = 
                     CRM_Utils_System::url( 'civicrm/mailing/report', 
                                            "mid={$result->source_record_id}&reset=1&cid={$result->source_contact_id}&context=activitySelector" ); 
+                $row['recipients'] = ts('(recipients)');
                 $row['target_contact_name'] = '';
                 $row['assignee_contact_name'] = '';
                 $accessMailingReport = true;
@@ -337,17 +337,6 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                            array('desc' => ts('Actions')),
                                            );
              
-             if ( ! $this->_single ) {
-                 $pre = array( 
-                              array('desc' => ts('Contact Type') ), 
-                              array( 
-                                    'name'      => ts('Name'), 
-                                    'sort'      => 'sort_name', 
-                                    'direction' => CRM_Utils_Sort::DONTCARE,
-                                     )
-                               );
-                 self::$_columnHeaders = array_merge( $pre, self::$_columnHeaders );
-             }
          }
          return self::$_columnHeaders;
      }
