@@ -68,7 +68,10 @@
 /*  DataTables sorting */
 th.sorting, 
 th.sorting_asc, 
-th.sorting_desc {
+th.sorting_desc,
+th a.sorting, 
+th a.sorting_asc, 
+th a.sorting_desc {
     padding-left:16px !important;
     background: url('../i/dataTable/sort_sprites.png') no-repeat left 0px;
 }
