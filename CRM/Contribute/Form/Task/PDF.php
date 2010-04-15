@@ -103,9 +103,12 @@ AND    {$this->_componentClause}";
      */
     public function buildQuickForm()
     {
+        
+        $this->addElement( 'radio', 'output', null, ts('PDF Receipts'), 'pdf_receipt' );
+        $this->addElement( 'radio', 'output', null, ts('Email Receipts'), 'email_receipt' ); 
         $this->addButtons( array(
                                  array ( 'type'      => 'next',
-                                         'name'      => ts('Download Receipt(s)'),
+                                         'name'      => ts('Process Receipt(s)'),
                                          'isDefault' => true   ),
                                  array ( 'type'      => 'back',
                                          'name'      => ts('Cancel') ),
@@ -132,6 +135,25 @@ AND    {$this->_componentClause}";
         $message  =  array( );
         $template = CRM_Core_Smarty::singleton( );
 
+        $params = $this->controller->exportValues( $this->_name );
+        $values = array( );
+        
+        $createPdf = false;
+        if ( $params['output'] == "pdf_receipt" ) {
+            $createPdf = true;
+        } else {
+            require_once 'CRM/Contribute/BAO/ContributionPage.php';
+            // set receipt from e-mail and name in value
+            require_once 'CRM/Contact/BAO/Contact/Location.php';
+            $session  = CRM_Core_Session::singleton( );
+            $userID   = $session->get( 'userID' );
+            list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
+            $values['receipt_from_email'] = $userEmail;
+            $values['receipt_from_name']  = $userName;
+            $values['title']              = 'Contribution';
+            $values['is_email_receipt']   = 1;
+        }
+        
         foreach ( $details as $contribID => $detail ) {
             $input = $ids = $objects = array( );
             
@@ -163,20 +185,27 @@ AND    {$this->_componentClause}";
 
             // CRM_Core_Error::debug('input',$input);
             
-            $values = array( );
-            $mail = $baseIPN->sendMail( $input, $ids, $objects, $values, false, true );
-            $mail = str_replace( "\n\n", "<p>", $mail );
-            $mail = str_replace( "\n", "<br/>", $mail );
+            $mail = $baseIPN->sendMail( $input, $ids, $objects, $values, false, $createPdf );
+            
+            if ( !$mail['html'] ) {
+                $mail = str_replace( "\n\n", "<p>", $mail );
+                $mail = str_replace( "\n", "<br/>", $mail );
+            }
 
             $message[] = $mail;
 
             // reset template values before processing next transactions
             $template->clearTemplateVars( );
         }
-        
-        require_once 'CRM/Utils/PDF/Utils.php';
-        CRM_Utils_PDF_Utils::domlib( $message, "civicrmContributionReceipt.pdf" );
-        CRM_Utils_System::civiExit( );
+        if ( $createPdf ) {
+            require_once 'CRM/Utils/PDF/Utils.php';
+            CRM_Utils_PDF_Utils::domlib( $message, 'civicrmContributionReceipt.pdf' );
+            CRM_Utils_System::civiExit( );
+        } else {
+            $status = array( '', ts('Your mail has been sent.') );
+            CRM_Core_Session::setStatus( $status );
+        }
+
     }
 
 }
