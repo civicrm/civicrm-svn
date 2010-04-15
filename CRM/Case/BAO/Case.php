@@ -2061,6 +2061,9 @@ INNER JOIN  civicrm_contact      client         ON ( client.id = relCaseContact.
         require_once 'CRM/Activity/DAO/ActivityAssignment.php';
         require_once 'CRM/Activity/BAO/Activity.php';
         
+        $session = CRM_Core_Session::singleton( );
+        $currentUserId = $session->get( 'userID' );
+        
         // copy all cases and connect to main contact id.
         foreach ( $processCaseIds as $otherCaseId ) {
             if ( $duplicateContacts ) {            
@@ -2235,8 +2238,10 @@ SELECT  id
                 $otherRelationship = new CRM_Contact_DAO_Relationship( );
                 $otherRelationship->case_id = $otherCaseId;
                 $otherRelationship->find( );
+                $otherRelationshipIds = array( );
                 while ( $otherRelationship->fetch( ) ) {
                     $otherRelVals = array( );
+                    $updateOtherRel = false;
                     CRM_Core_DAO::storeValues( $otherRelationship, $otherRelVals );
                     
                     $mainRelationship = new CRM_Contact_DAO_Relationship( );
@@ -2244,20 +2249,39 @@ SELECT  id
                     $mainRelationship->id = null;
                     $mainRelationship->case_id = $mainCaseId;
                     if ( $mainRelationship->contact_id_a == $otherContactId ) {
+                        $updateOtherRel = true;
                         $mainRelationship->contact_id_a = $mainContactId;
                     }
+                    
+                    //case creator change only when we merge user contact.
                     if ( $mainRelationship->contact_id_b == $otherContactId ) {
-                        $mainRelationship->contact_id_b = $mainContactId;
+                        //do not change creator for change client. 
+                        if ( !$changeClient ) {
+                            $updateOtherRel = true;
+                            $mainRelationship->contact_id_b = ( $currentUserId ) ? $currentUserId : $mainContactId;
+                        }
                     }
                     $mainRelationship->end_date   = CRM_Utils_Date::isoToMysql( $otherRelationship->end_date );
                     $mainRelationship->start_date = CRM_Utils_Date::isoToMysql( $otherRelationship->start_date );
+                    
                     //avoid duplicate object.
                     if ( !$mainRelationship->find( true ) ) {
                         $mainRelationship->save( );
                     }
                     $mainRelationship->free( );
+                    
+                    //get the other relationship ids to update end date.
+                    if ( $updateOtherRel ) $otherRelationshipIds[$otherRelationship->id] = $otherRelationship->id;
                 }
                 $otherRelationship->free( );
+                
+                //update other relationships end dates
+                if ( !empty( $otherRelationshipIds ) ) {
+                    $sql = 'UPDATE  civicrm_relationship 
+                               SET  end_date = CURDATE() 
+                             WHERE  id IN ( '. implode( ',', $otherRelationshipIds ) . ')';
+                    CRM_Core_DAO::executeQuery( $sql );
+                }
             }
             
             //move other case to trash.
@@ -2266,10 +2290,14 @@ SELECT  id
 
             $mergeActSubject = $mergeActSubjectDetails = $mergeActType = '';
             if ( $changeClient ) {
+                require_once 'CRM/Contact/BAO/Contact.php';
+                $mainContactDisplayName  = CRM_Contact_BAO_Contact::displayName( $mainContactId  );
+                $otherContactDisplayName = CRM_Contact_BAO_Contact::displayName( $otherContactId );
+                
                 $mergeActType = array_search( 'Reassigned Case', $activityTypes );
-                $mergeActSubject = ts( "Case %1 reassigned from contact id %2 to contact id %3. New Case ID is %4.", 
-                                       array( 1 => $otherCaseId,   2 => $otherContactId, 
-                                              3 => $mainContactId, 4 => $mainCaseId ) ); 
+                $mergeActSubject = ts( "Case %1 reassigned client from %2 to %3. New Case ID is %4.", 
+                                       array( 1 => $otherCaseId,            2 => $otherContactDisplayName, 
+                                              3 => $mainContactDisplayName, 4 => $mainCaseId ) ); 
             } else if ( $duplicateContacts ) {
                 $mergeActType = array_search( 'Merge Case', $activityTypes );
                 $mergeActSubject = ts( "Case %1 copied from contact id %2 to contact id %3 via merge. New Case ID is %4.", 
