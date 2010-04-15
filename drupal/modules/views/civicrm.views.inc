@@ -4799,11 +4799,12 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
                                       ),
                   );
         $currentgroupfields = $currentgroup['fields'];
-        $customHTMLTypes = array( 'Select', 'Multi-Select', 'AdvMulti-Select', 'Radio', 'CheckBox', 'Select Date', 'Select State/Province', 'Select Country', 'Multi-Select Country',
-                                  'Multi-Select State/Province' );
+        $customHTMLTypes = array( 'Select', 'Multi-Select', 'AdvMulti-Select', 'Radio', 'CheckBox', 
+                                  'Select Date', 'Select State/Province', 'Select Country', 'Multi-Select Country',
+                                  'Multi-Select State/Province', 'Autocomplete-Select' );
         foreach ($currentgroupfields as $key => $currentfield) {
             if ($currentfield['help_post'] == '' || $currentfield['help_post'] == null) { 
-                $currentfield['help_post'] = t('Custom Data Field'); 
+                $currentfield['help_post'] = t('Custom Data Field');
             } // Populates help text so there isn't miles of error: Missing Help
 
 
