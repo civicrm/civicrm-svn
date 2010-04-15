@@ -288,3 +288,11 @@ ALTER TABLE civicrm_contact ADD INDEX index_is_deleted(is_deleted);
 -- CRM-5467
    ALTER TABLE civicrm_contact
    MODIFY image_URL varchar(255) COMMENT 'Optional URL for preferred image (photo, logo, etc.) to display for this contact';
+
+-- CRM-6095
+   UPDATE civicrm_navigation SET permission ='access my cases and activities,access all cases and activities', permission_operator='OR' WHERE civicrm_navigation.name= 'Dashboard' AND url='civicrm/case&reset=1';
+   UPDATE civicrm_navigation SET permission ='access my cases and activities,access all cases and activities', permission_operator='OR' WHERE civicrm_navigation.name IN ( 'Find Cases','Cases');
+   UPDATE civicrm_navigation SET permission ='access all cases and activities' WHERE permission='access CiviCase';
+   UPDATE civicrm_navigation SET permission ='access CiviGrant,administer CiviCase,access my cases and activities,access all cases and activities' WHERE civicrm_navigation.name= 'Other';
+   UPDATE civicrm_navigation SET permission ='administer CiviCase', permission_operator= NULL WHERE civicrm_navigation.name IN ( 'CiviCase','Case Types', 'Redaction Rules');
+   UPDATE civicrm_report_instance SET permission ='access all cases and activities' WHERE permission='access CiviCase';
