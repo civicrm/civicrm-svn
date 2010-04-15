@@ -66,19 +66,19 @@
     background-color: #FFF;
 }
 /*  DataTables sorting */
-.sorting, 
-.sorting_asc, 
-.sorting_desc {
+th.sorting, 
+th.sorting_asc, 
+th.sorting_desc {
     padding-left:16px !important;
     background: url('../i/dataTable/sort_sprites.png') no-repeat left 0px;
 }
-.sorting {
+th.sorting {
     background-position:0px 5px;
 }
-.sorting_desc {
+th.sorting_desc {
     background-position:0px -59px;
 }
-.sorting_asc {
+th.sorting_asc {
     background-position:0px -27px;
 }
 #crm-container a.sorting {
