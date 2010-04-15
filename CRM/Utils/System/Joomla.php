@@ -335,6 +335,13 @@ class CRM_Utils_System_Joomla {
         return null;
     }
 
+    /* 
+     * load joomla bootstrap
+     */
+    static function loadBootStrap( $config ) {
+        return true;
+    }
+
 }
 
 

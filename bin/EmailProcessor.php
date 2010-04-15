@@ -260,6 +260,10 @@ session_start();
 //log the execution of script
 CRM_Core_Error::debug_log_message( 'EmailProcessor.php');
 
+// load bootstrap to call hooks
+require_once 'CRM/Utils/System.php';
+CRM_Utils_System::loadBootStrap(  );
+
 require_once 'CRM/Core/Lock.php';
 $lock = new CRM_Core_Lock('EmailProcessor');
 

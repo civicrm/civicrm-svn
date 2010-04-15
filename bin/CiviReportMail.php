@@ -74,6 +74,10 @@ $config = CRM_Core_Config::singleton();
 
 CRM_Utils_System::authenticateScript(true);
 
+// load bootstrap to call hooks
+require_once 'CRM/Utils/System.php';
+CRM_Utils_System::loadBootStrap(  );
+
 require_once 'CRM/Core/Lock.php';
 $lock = new CRM_Core_Lock('CiviReportMail');
 

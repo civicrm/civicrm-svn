@@ -54,6 +54,10 @@ function run( ) {
     //log the execution of script
     CRM_Core_Error::debug_log_message( 'civimail.cronjob.php');
     
+    // load bootstrap to call hooks
+    require_once 'CRM/Utils/System.php';
+    CRM_Utils_System::loadBootStrap(  );
+
     // we now use DB locks on a per job basis
     processQueue( );
 }
