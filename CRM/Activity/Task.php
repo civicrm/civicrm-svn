@@ -110,7 +110,7 @@ class CRM_Activity_Task
 
      /**
      * These tasks are the core set of task titles
-     * on contributors
+     * on activity
      *
      * @return array the set of task titles 
      * @static
@@ -121,7 +121,7 @@ class CRM_Activity_Task
         self::tasks( );
         $titles = array( );
         foreach ( self::$_tasks as $id => $value ) {
-            // skip Print Contribution task
+            // skip Print Activity task
             if ( $id != 2 ) {
                 $titles[$id] = $value['title'];
             }
@@ -158,11 +158,11 @@ class CRM_Activity_Task
     
     /**
      * These tasks are the core set of tasks that the user can perform
-     * on contributors
+     * on activity
      *
      * @param int $value
      *
-     * @return array the set of tasks for a group of contributors
+     * @return array the set of tasks for a group of activity
      * @static
      * @access public
      */

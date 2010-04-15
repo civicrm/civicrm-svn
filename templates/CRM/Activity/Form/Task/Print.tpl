@@ -43,28 +43,39 @@
     <th>{ts}Status{/ts}</th>
   </tr>
 
-
-
-<td>{$row.sort_name}</td>
-	<td>{$row.membership_type_id}</td>
-        <td>{$row.join_date|truncate:10:''|crmDate}</td>
-        <td>{$row.membership_start_date|truncate:10:''|crmDate}</td>
-        <td>{$row.membership_end_date|truncate:10:''|crmDate}</td>
-        <td>{$row.membership_source}</td>
-        <td>{$row.status_id}</td>
-
-
-
 {foreach from=$rows item=row}
     <tr class="{cycle values="odd-row,even-row"}">
-        <td>{$row.sort_name}</td>
         <td>{$row.activity_type}</td>
-        <td>{$row.subject}</td>  
-        <td>{$row.source_contact_name}</td> 
-        <td>{$row.target_contact_name}</td>
-        <td>{$row.assignee_contact_name}</td>
+        <td>{$row.activity_subject}</td>
+        <td>{$row.source_contact_name}</td>
+        <td>
+          {if !$row.target_contact_name}
+             <em>n/a</em>
+          {elseif $row.target_contact_name}
+             {assign var="showTarget" value=0}
+             {foreach from=$row.target_contact_name item=targetName key=targetID}
+                {if $showTarget < 5}
+                   {if $showTarget};&nbsp;{/if}<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$targetID`"}" title="{ts}View contact{/ts}">{$targetName}</a>
+                     {assign var="showTarget" value=$showTarget+1}
+                {/if}
+             {/foreach}
+          {/if}
+        </td>
+        <td>
+          {if !$row.assignee_contact_name}
+             <em>n/a</em>
+          {elseif $row.assignee_contact_name}
+             {assign var="showAssignee" value=0}
+             {foreach from=$row.assignee_contact_name item=assigneeName key=assigneeID}
+                {if $showAssignee < 5}
+                   {if $showAssignee};&nbsp;{/if}<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$assigneeID`"}" title="{ts}View contact{/ts}">{$assigneeName}</a>
+                     {assign var="showAssignee" value=$showAssignee+1}
+                {/if}
+             {/foreach}
+          {/if}
+        </td>
         <td>{$row.activity_date_time}</td>
-        <td>{$row.status}</td>
+        <td>{$row.activity_status}</td>
     </tr>
 {/foreach}
 </table>

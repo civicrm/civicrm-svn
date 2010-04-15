@@ -3366,7 +3366,7 @@ WHERE  id IN ( $groupIDs )
 				$groupBy = ' GROUP BY contact_a.id';
 			}
 		}	
-        if ( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
+        if ( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY && ( ! $count ) ) {
             $groupBy = 'GROUP BY civicrm_activity.id ';
         }
         $query = "$select $from $where $groupBy $order $limit";
