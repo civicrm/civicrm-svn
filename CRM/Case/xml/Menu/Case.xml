@@ -113,6 +113,6 @@
   <item>
     <path>civicrm/case/ajax/processtags</path>
     <page_callback>CRM_Case_Page_AJAX::processCaseTags</page_callback>
-    <access_arguments>access CiviCase</access_arguments>
+    <access_arguments>access CiviCRM</access_arguments>
   </item>  
 </menu>

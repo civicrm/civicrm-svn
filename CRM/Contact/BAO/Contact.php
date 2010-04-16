@@ -2342,8 +2342,8 @@ UNION
                                                 'ref'          =>  'new-case',
                                                 'component'    =>  'CiviCase',
                                                 'href'		   => CRM_Utils_System::url('civicrm/contact/view/case',
-					 															'reset=1&action=add&context=case'),
-					 							'permissions'  =>  array( 'access CiviCase')
+                                                                                        'reset=1&action=add&context=case'),
+					 							'permissions'  =>  array( 'access all cases and activities')
 					 							), 
                        'relationship' => array( 'title'        =>  ts( 'Add Relationship' ),
                                                 'weight'	   => 30, 
