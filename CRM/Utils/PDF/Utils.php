@@ -58,6 +58,15 @@ class CRM_Utils_PDF_Utils {
 </style>
 ";
 
+        $htmlElementstoStrip = array(
+                                     '@<head[^>]*?>.*?</head>@siu',
+                                     '@<body>@siu',
+                                     '@</body>@siu',
+                                     '@</html>@siu',
+                                     '@<!DOCTYPE[^>]*?>@siu',
+                                     );
+        $htmlElementsInstead = array("","","","","");                     
+        
         foreach ( $values as $value ) {
             if ( ! $first ) {
                 $html .= "<h2 class=\"page_break\">{$value['to']}: {$value['subject']}</h2><p>";
@@ -65,7 +74,14 @@ class CRM_Utils_PDF_Utils {
                 $html .= "<h2>{$value['to']}: {$value['subject']}</h2><p>";
                 $first = false;
             }
-            $html .= "{$value['body']}\n";
+            if ( $value['html'] ) {
+                $value['html'] = preg_replace( $htmlElementstoStrip,
+                                               $htmlElementsInstead,
+                                               $value['html'] );
+                $html .= "{$value['html']}\n";              
+            } else {
+                $html .= "{$value['body']}\n";
+            }
         }
         $dompdf->load_html( $html );
         $dompdf->render( );

@@ -33,8 +33,11 @@
   </dl>
 </div>
 <div id="help">
-    {ts}A PDF file containing one receipt per page will be downloaded to your local computer when you click <strong>Download Receipt(s)</strong>. Your browser may display the file for you automatically, or you may need to open it for printing using any PDF reader (such as Adobe&reg; Reader).{/ts}
+    {ts}You may choose to Email receipts to Contributers OR Download a PDF file containing one receipt per page to your computer when you click <strong>Process Receipt(s)</strong>. Your browser may display the file for you automatically, or you may need to open it for printing using any PDF reader (such as Adobe&reg; Reader).{/ts}
 </div>
+
+  {$form.output.pdf_receipt.html}
+  {$form.output.email_receipt.html}
 <div class="spacer"></div>
 <div class="form-item">
  {$form.buttons.html}
