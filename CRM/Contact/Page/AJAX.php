@@ -183,7 +183,7 @@ LIMIT 0, {$limit}
     {
         // CRM_Core_Error::debug_var( 'GET' , $_GET , true, true );
         // CRM_Core_Error::debug_var( 'POST', $_POST, true, true );
-        
+  
         $relType         = CRM_Utils_Array::value( 'rel_type', $_POST );
         $relContactID    = CRM_Utils_Array::value( 'rel_contact', $_POST );
         $sourceContactID = CRM_Utils_Array::value( 'contact_id', $_POST );
@@ -198,28 +198,34 @@ LIMIT 0, {$limit}
                                 'start_date'           => date("Ymd")
                                 );
         
-        if ( $relationshipID == 'null' ) {
-            $relationIds = array( 'contact'      => $sourceContactID);
-        } else {
-            $relationIds = array( 'contact'      => $sourceContactID, 
-                                  'relationship' => $relationshipID,
-                                  'contactTarget'=>  $relContactID );
+        $relationIds = array( 'contact' => $sourceContactID);
+        if ( $relationshipID && $relationshipID != 'null' ) {
+            $relationIds['relationship']  = $relationshipID;
+            $relationIds['contactTarget'] = $relContactID;
         }
 
         require_once "CRM/Contact/BAO/Relationship.php";
         $return = CRM_Contact_BAO_Relationship::create( $relationParams, $relationIds );
+        $status = 'process-relationship-fail';
+        if ( CRM_Utils_Array::value( 0, $return[4] ) ) {
+		    $relationshipID = $return[4][0];
+            $status         = 'process-relationship-success';
+        }
+        
+        $caseRelationship = array( );
+        if ( $relationshipID && $relationshipID != 'null' ) {
+		    // we should return phone and email
+		    require_once "CRM/Case/BAO/Case.php";
+            $caseRelationship = CRM_Case_BAO_Case::getCaseRoles( $sourceContactID, 
+                                                                 $caseID, $relationshipID );
 
-		$relationshipID = $return[4][0];
+            //create an activity for case role assignment.CRM-4480
+            CRM_Case_BAO_Case::createCaseRoleActivity( $caseID, $relationshipID, $relContactID );
+        }
+		$relation = CRM_Utils_Array::value( $relationshipID, $caseRelationship, array( ) );
 
-		// we should return phone and email
-		require_once "CRM/Case/BAO/Case.php";
-        $caseRelationship = CRM_Case_BAO_Case::getCaseRoles( $sourceContactID, $caseID, $relationshipID );
-
-        //create an activity for case role assignment.CRM-4480
-        CRM_Case_BAO_Case::createCaseRoleActivity( $caseID, $relationshipID, $relContactID );
-
-		$relation           = $caseRelationship[$relationshipID];
 		$relation['rel_id'] = $relationshipID;
+        $relation['status'] = $status;
 		echo json_encode( $relation );
         CRM_Utils_System::civiExit( );
     }
