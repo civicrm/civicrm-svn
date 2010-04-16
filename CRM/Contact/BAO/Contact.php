@@ -2311,7 +2311,7 @@ UNION
                                                 'weight'	   => 10, 
                                                 'ref'          =>  'new-participant',
                                                 'component'    =>  'CiviEvent',
-                                                'href'		   =>  CRM_Utils_System::url('civicrm/contact/view/pledge', 'reset=1&action=add&context=pledge'),
+                                                'href'		   =>  CRM_Utils_System::url('civicrm/contact/view/participant', 'reset=1&action=add&context=participant'),
                                                 'permissions'  =>  array( 'access CiviEvent',
                                                                           'edit event participants' )
                                                 ),
