@@ -41,7 +41,7 @@
 <script>
 
 cj('body').click(function() {
-	 	$('#crm-create-new-list').hide();
+	 	cj('#crm-create-new-list').hide();
 	 	});
 	
 	 cj('#crm-create-new-list').click(function(event){
