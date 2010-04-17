@@ -2728,13 +2728,15 @@ tbody.scrollContent tr.alternateRow {
 }
 
 #crm-container div.contact_panel td, 
-#crm-container div#contactTopBar td {
+#crm-container div#contactTopBar td,
+#crm-container table.crm-info-panel td {
     border-bottom:1px solid #FFF;
 }
 
 #crm-container div#contactTopBar .label, 
 #crm-container div.contactCardLeft .label, 
-#crm-container div.contactCardRight .label {
+#crm-container div.contactCardRight .label,
+#crm-container table.crm-info-panel .label  {
     color:#2f2f2f;
     font-weight:normal;
 }
@@ -2749,12 +2751,14 @@ tbody.scrollContent tr.alternateRow {
 }
 
 #crm-container div#contactTopBar td,
-#crm-container div.contact_panel td {
+#crm-container div.contact_panel td,
+#crm-container table.crm-info-panel td {
     background-color: #f4f4ed; 
 }
 
 #crm-container div#contactTopBar td.label,
-#crm-container div.contact_panel td.label {
+#crm-container div.contact_panel td.label,
+#crm-container table.crm-info-panel td.label {
     background-color: #fafafa;
     width:150px;
     text-align: left;
@@ -2763,7 +2767,8 @@ tbody.scrollContent tr.alternateRow {
 
 #crm-container .form-layout td.label, 
 #crm-container .form-layout-compressed td.label,
-#crm-container #customFields div.contact_panel td.label {
+#crm-container #customFields div.contact_panel td.label
+#crm-container table.crm-info-panel td.label {
     width:150px;
     text-align: left;
     color: #7a7a60;
