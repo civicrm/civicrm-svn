@@ -24,7 +24,7 @@
 */
 
 /**
- * Field handler to provide acess control for the activity type field (which is a lookup)
+ * Field handler to render a custom field with options
  *
  * @ingroup civicrm_field_handlers
  */

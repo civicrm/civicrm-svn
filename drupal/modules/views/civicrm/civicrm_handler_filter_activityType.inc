@@ -37,7 +37,7 @@ class civicrm_handler_filter_activityType extends civicrm_handler_filter_option 
     }
 
     function title( ) {
-        return t('State/Province');
+        return t('Activity Type');
     }
 }
 ?>
