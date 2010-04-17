@@ -238,7 +238,7 @@ class CRM_Admin_Page_AJAX
     static function processTags( ) {
         $action      = CRM_Utils_Type::escape( $_POST['action'], 'String' );
         $parentId    = CRM_Utils_Type::escape( $_POST['parentId'], 'Integer' );
-        $contactId   = CRM_Utils_Type::escape( $_POST['contactId'], 'Integer' );
+        $entityId    = CRM_Utils_Type::escape( $_POST['entityId'], 'Integer' );
         $entityTable = CRM_Utils_Type::escape( $_POST['entityTable'], 'String' );
         $tagID       = $_POST['tagID' ];
         
@@ -261,14 +261,14 @@ class CRM_Admin_Page_AJAX
             
             // save this tag to contact
             $params = array( 'entity_table' => $entityTable,
-                             'entity_id'    => $contactId,
+                             'entity_id'    => $entityId,
                              'tag_id'       => $tagID);
                              
             CRM_Core_BAO_EntityTag::add( $params );
         } elseif ( $action == 'delete' ) {  // if action is delete
-            // delete this tag entry for the contact
+            // delete this tag entry for the entity
             $params = array( 'entity_table' => $entityTable,
-                             'entity_id'    => $contactId,
+                             'entity_id'    => $entityId,
                              'tag_id'       => $tagID);
                              
             CRM_Core_BAO_EntityTag::del( $params );

@@ -57,21 +57,27 @@ class CRM_Core_Form_Tag
         $parentId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $parentName, 'id',  'name' );
         
         // check if parent exists
+        $entityTags = array( );
         if ( $parentId ) {
             $form->assign( 'parentId', $parentId );        
 
             //tokeninput url
-            $tokenUrl = CRM_Utils_System::url( 'civicrm/ajax/taglist',
+            $tagUrl = CRM_Utils_System::url( 'civicrm/ajax/taglist',
                                                "parentId={$parentId}",
                                                false, null, false );
                                                
-            $form->assign( 'tokenUrl', $tokenUrl );
+            $form->assign( 'tagUrl', $tagUrl );
             $form->assign( 'entityTable', $entityTable );
-            $contactTags = CRM_Core_BAO_EntityTag::getChildContactTags( $parentId, $entityId );
-        }
-        
-        if ( !empty( $contactTags ) ) {
-            $form->assign( 'contactTags', json_encode($contactTags) );
+            
+            if ( $entityId ) {
+                $form->assign( 'entityId', $entityId );
+                require_once 'CRM/Core/BAO/EntityTag.php';
+                $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags( $parentId, $entityId, $entityTable );
+            
+                if ( !empty( $entityTags ) ) {
+                    $form->assign( 'entityTags', json_encode( $entityTags ) );
+                }
+            }
         }
     }
 }
