@@ -59,7 +59,7 @@
                         {/if}
                         {/if}
                     
-                    	{* Include links to enter Activities if session has 'edit' permission *}
+                    	{* Include the Actions button with dropdown if session has 'edit' permission *}
                         {if $permission EQ 'edit'}
                         <li class="crm-contact-activity">
                             {include file="CRM/Contact/Form/ActionsButton.tpl"}

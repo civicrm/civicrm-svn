@@ -33,6 +33,7 @@
 	    {ts}Enter a unique name and a description for your new group here. Then click 'Continue' to find contacts to add to your new group.{/ts}
 	{/if}
     </div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
     <table class="form-layout">
         <tr>
 	    <td class="label">{$form.title.label}</td>
@@ -101,9 +102,7 @@
 		</table>
     {/if} 
 	
-    <div class="form-item">
-        {$form.buttons.html}
-    </div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
     {if $action neq 1}
 	<div class="action-link">
 	    <a href="{$crmURL}">&raquo; {ts}Show Group Members{/ts}</a>

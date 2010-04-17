@@ -40,19 +40,16 @@
 
 {if !$email and $action neq 8 and $context neq 'standalone'}
 <div class="messages status">
-  
-        <p><div class="icon inform-icon"></div>&nbsp;{ts}You will not be able to send an automatic email receipt for this contribution because there is no email address recorded for this contact. If you want a receipt to be sent when this contribution is recorded, click Cancel and then click Edit from the Summary tab to add an email address before recording the contribution.{/ts}</p>
+  <p><div class="icon inform-icon"></div>&nbsp;{ts}You will not be able to send an automatic email receipt for this contribution because there is no email address recorded for this contact. If you want a receipt to be sent when this contribution is recorded, click Cancel and then click Edit from the Summary tab to add an email address before recording the contribution.{/ts}</p>
 </div>
 {/if}
 {if $contributionMode}
-<div id="help">
-    {ts 1=$displayName 2=$contribMode}Use this form to submit a new contribution on behalf of %1. <strong>A %2 transaction will be submitted</strong> using the selected payment processor.{/ts}
-</div>
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-<fieldset><legend>{if $ppID}{ts}Credit Card Pledge Payment{/ts}{else}{ts}Credit Card Contribution{/ts}{/if}</legend>
+    <div id="help">
+        {ts 1=$displayName 2=$contribMode}Use this form to submit a new contribution on behalf of %1. <strong>A %2 transaction will be submitted</strong> using the selected payment processor.{/ts}
+    </div>
+    <h3>{if $ppID}{ts}Credit Card Pledge Payment{/ts}{else}{ts}Credit Card Contribution{/ts}{/if}</h3>
 {else}
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-<fieldset><legend>{if $action eq 1 or $action eq 1024}{if $ppID}{ts}Pledge Payment{/ts}{else}{ts}New Contribution{/ts}{/if}{elseif $action eq 8}{ts}Delete Contribution{/ts}{else}{ts}Edit Contribution{/ts}{/if}</legend> 
+    <h3>{if $action eq 1 or $action eq 1024}{if $ppID}{ts}Pledge Payment{/ts}{else}{ts}New Contribution{/ts}{/if}{elseif $action eq 8}{ts}Delete Contribution{/ts}{else}{ts}Edit Contribution{/ts}{/if}</h3> 
 {/if}
    {if $action eq 8} 
       <div class="messages status"> 
@@ -63,13 +60,13 @@
           </dd> 
        </dl> 
       </div> 
-      </fieldset>
    {else}
+      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
       {if $isOnline}{assign var=valueStyle value=" class='view-value'"}{else}{assign var=valueStyle value=""}{/if}
       <table class="form-layout-compressed">
         {if $context neq 'standalone'}
             <tr>
-                <td class="font-size12pt right"><strong>{ts}Contributor{/ts}</strong></td><td class="font-size12pt"><strong>{$displayName}</strong></td>
+                <td class="font-size12pt label"><strong><strong>{ts}Contributor{/ts}</strong></td><td class="font-size12pt"><strong>{$displayName}</strong></td>
             </tr>
         {else}
             {include file="CRM/Contact/Form/NewContact.tpl"}
@@ -199,7 +196,6 @@
 
     {*include custom data js file*}
     {include file="CRM/common/customData.tpl"}
-    </fieldset>
 
 {literal}
 <script type="text/javascript">

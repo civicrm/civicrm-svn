@@ -23,7 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<fieldset><legend>{ts}View Contribution{/ts}</legend>
+<div class="crm-block crm-form-block">
+<h3>{ts}View Contribution{/ts}</h3>
 <table class="view-layout">
     <tr>
         <td class="label">{ts}From{/ts}</td>
@@ -199,15 +200,15 @@
     <tr>
 	    <td>&nbsp;</td>
         <td>
-            {$form.buttons.html}
+            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}
             {if call_user_func(array('CRM_Core_Permission','check'), 'edit contributions')}
                 &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context"}" accesskey="e">Edit</a>
             {/if}
             {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviContribute')}
                 &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=$id&cid=$contact_id&action=delete&context=$context"}">Delete</a>
             {/if}
+            </div>
         </td>
     </tr>    
 </table>
-
-</fieldset>
+</div>

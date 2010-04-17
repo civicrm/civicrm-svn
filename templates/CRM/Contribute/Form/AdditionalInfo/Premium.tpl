@@ -25,26 +25,20 @@
 *}
 {* this template is used for adding/editing Premium Information *} 
  <div id="id-premium" class="section-shown form-item">
-     
-      <fieldset>
-           <dl>
-           <dt class="label">{$form.product_name.label}</dt><dd>{$form.product_name.html}</dd>
-           </dl>
+     <dl>
+        <dt class="label">{$form.product_name.label}</dt><dd>{$form.product_name.html}</dd>
+    </dl>
 
-           <div id="premium_contri">
-            <dl>
+    <div id="premium_contri">
+        <dl>
             <dt class="label">{$form.min_amount.label}</dt><dd>{$form.min_amount.html|crmReplace:class:texttolabel|crmMoney:$currency}</dd>
-            </dl>
-            <div class="spacer"></div>
-           </div>
+        </dl>
+        <div class="spacer"></div>
+    </div>
 
-           <dl>
-           <dt class="label">{$form.fulfilled_date.label}</dt><dd>{include file="CRM/common/jcalendar.tpl" elementName=fulfilled_date}      
-           </dd>
-           </dl>
-
-      </fieldset>
-      
+    <dl>
+        <dt class="label">{$form.fulfilled_date.label}</dt><dd>{include file="CRM/common/jcalendar.tpl" elementName=fulfilled_date}</dd>
+    </dl>      
 </div>
 
       {literal}

@@ -50,10 +50,10 @@
     </div>
 {/if}
 <div class="crm-block crm-form-block">
+<h3>{if $action eq 1}{ts}New Membership{/ts}{elseif $action eq 2}{ts}Edit Membership{/ts}{else}{ts}Delete Membership{/ts}{/if}</h3>
 <div class="crm-submit-buttons">
    {include file="CRM/common/formButtons.tpl"}
 </div>
-<h3>{if $action eq 1}{ts}New Membership{/ts}{elseif $action eq 2}{ts}Edit Membership{/ts}{else}{ts}Delete Membership{/ts}{/if}</h3>
     {if $action eq 8}
       <div class="messages status">
         <dl>
