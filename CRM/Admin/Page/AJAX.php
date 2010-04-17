@@ -214,11 +214,11 @@ class CRM_Admin_Page_AJAX
     
     static function getTagList( ) {
         $name     = CRM_Utils_Type::escape( $_GET['name'], 'String' );
-        $parentID = CRM_Utils_Type::escape( $_GET['parentID'], 'Integer' );
+        $parentId = CRM_Utils_Type::escape( $_GET['parentId'], 'Integer' );
         
         $tags = array( );
         
-        $query = "SELECT id, name FROM civicrm_tag WHERE parent_id = {$parentID} and name LIKE '%{$name}%'";
+        $query = "SELECT id, name FROM civicrm_tag WHERE parent_id = {$parentId} and name LIKE '%{$name}%'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         
         while( $dao->fetch( ) ) {
@@ -236,10 +236,11 @@ class CRM_Admin_Page_AJAX
     }
     
     static function processTags( ) {
-        $action    = CRM_Utils_Type::escape( $_POST['action'], 'String' );
-        $keywordID = CRM_Utils_Type::escape( $_POST['keywordID'], 'Integer' );
-        $contactId = CRM_Utils_Type::escape( $_POST['contactId'], 'Integer' );
-        $tagID     = $_POST['tagID' ];
+        $action      = CRM_Utils_Type::escape( $_POST['action'], 'String' );
+        $parentId    = CRM_Utils_Type::escape( $_POST['parentId'], 'Integer' );
+        $contactId   = CRM_Utils_Type::escape( $_POST['contactId'], 'Integer' );
+        $entityTable = CRM_Utils_Type::escape( $_POST['entityTable'], 'String' );
+        $tagID       = $_POST['tagID' ];
         
         require_once 'CRM/Core/BAO/EntityTag.php';
         
@@ -251,7 +252,7 @@ class CRM_Admin_Page_AJAX
             if ( !is_numeric( $tagID ) ) {
                 $params = array( 'name'      => $tagID, 
                                  'is_hidden' => true, 
-                                 'parent_id' => $keywordID );
+                                 'parent_id' => $parentId );
 
                 require_once 'CRM/Core/BAO/Tag.php';
                 $tagObject = CRM_Core_BAO_Tag::add( $params, CRM_Core_DAO::$_nullArray );
@@ -259,16 +260,16 @@ class CRM_Admin_Page_AJAX
             }
             
             // save this tag to contact
-            $params = array( 'entity_table' => 'civicrm_contact',
-                             'entity_id'    =>  $contactId,
-                             'tag_id'       =>  $tagID);
+            $params = array( 'entity_table' => $entityTable,
+                             'entity_id'    => $contactId,
+                             'tag_id'       => $tagID);
                              
             CRM_Core_BAO_EntityTag::add( $params );
         } elseif ( $action == 'delete' ) {  // if action is delete
             // delete this tag entry for the contact
-            $params = array( 'entity_table' => 'civicrm_contact',
-                             'entity_id'    =>  $contactId,
-                             'tag_id'       =>  $tagID);
+            $params = array( 'entity_table' => $entityTable,
+                             'entity_id'    => $contactId,
+                             'tag_id'       => $tagID);
                              
             CRM_Core_BAO_EntityTag::del( $params );
         }

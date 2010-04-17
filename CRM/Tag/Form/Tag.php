@@ -69,11 +69,7 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
         }
 
         $this->assign( 'entityID', $this->_entityID );
-        $this->assign( 'entityTable', $this->_entityTable );
-        
-        // get the parent id for tag list input for keyword
-        $this->_keywordID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', 'Keyword', 'id',  'name' );
-        $this->assign( 'keywordID', $this->_keywordID );        
+        $this->assign( 'entityTable', $this->_entityTable );        
     }
 
     /**
@@ -104,25 +100,15 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
 
         $this->addGroup($tagChk, 'tagList', null, null, true);
         
-        $tags = new CRM_Core_BAO_Tag ();
+        $tags = new CRM_Core_BAO_Tag( );
         $tree = $tags->getTree( $this->_entityTable, true );
         $this->assign( 'tree'  , $tree );
       
         $this->assign('tag', $allTag);
-                
-        //tokeninput url
-        $tokenUrl = CRM_Utils_System::url( "civicrm/ajax/taglist",
-                                           "parentID={$this->_keywordID}",
-                                           false, null, false );
-        $this->assign( 'tokenUrl', $tokenUrl );
-
-        if ( $this->_keywordID ) {
-            $contactTags = CRM_Core_BAO_EntityTag::getChildContactTags( $this->_keywordID, $this->_entityID );
-        }
         
-        if ( !empty( $contactTags ) ) {
-            $this->assign( 'contactTags', json_encode($contactTags) );
-        }
+        //build tag widget
+        require_once 'CRM/Core/Form/Tag.php';
+        CRM_Core_Form_Tag::buildQuickForm( $this, 'Keyword', $this->_entityTable, $this->_entityID );
         
         if ( $this->_action & CRM_Core_Action::BROWSE ) {
             $this->freeze();
