@@ -66,12 +66,7 @@ class CRM_Core_Form_Tag
         
             $tagsetItem = 'parentId_'.$parentId;
             
-        
-            $form->assign('parentName_'.$parentId, $parentNameItem);
-
             $tagset[$tagsetItem]['parentName'] = $parentNameItem;
-
-            $form->assign( 'parentId_'.$parentId, $parentId );        
 
             $tagset[$tagsetItem]['parentID'] =  $parentId;        
 
