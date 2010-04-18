@@ -90,9 +90,14 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
         // need to append the array with the " checked " if contact is tagged with the tag
         foreach ($allTag as $tagID => $varValue) {
             if( in_array($tagID, $entityTag)) {
-                $tagAttribute = array('onclick' => "return changeRowColor(\"rowidtag_$tagID\")", 'checked' => 'checked', 'id' => "tag_{$tagID}" );
+                $tagAttribute = array(  'onclick' => "return changeRowColor(\"rowidtag_$tagID\")", 
+                                        'checked' => 'checked', 
+                                        'id' => "tag_{$tagID}"
+                                        );
             } else {
-                $tagAttribute = array('onclick' => "return changeRowColor(\"rowidtag_$tagID\")", 'id' => "tag_{$tagID}" );
+                $tagAttribute = array(  'onclick' => "return changeRowColor(\"rowidtag_$tagID\")", 
+                                        'id' => "tag_{$tagID}" 
+                                        );
             }
             
             $tagChk[$tagID] = $this->createElement('checkbox', $tagID, '', '', $tagAttribute );
@@ -108,7 +113,9 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
         
         //build tag widget
         require_once 'CRM/Core/Form/Tag.php';
-        CRM_Core_Form_Tag::buildQuickForm( $this, 'Keyword', $this->_entityTable, $this->_entityID );
+        $parentNames = array('Keywords', 'Positions');
+        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, $this->_entityTable, $this->_entityID );
+                
         
         if ( $this->_action & CRM_Core_Action::BROWSE ) {
             $this->freeze();

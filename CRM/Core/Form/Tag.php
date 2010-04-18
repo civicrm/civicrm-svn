@@ -52,32 +52,50 @@ class CRM_Core_Form_Tag
      * @access public
      * @static
      */
-    static function buildQuickForm( &$form, $parentName, $entityTable, $entityId ) {
-        // get the parent id for tag list input for keyword
-        $parentId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $parentName, 'id',  'name' );
+    static function buildQuickForm( &$form, $parentNames, $entityTable, $entityId ) {        
         
+        $tagset= array();
+        
+        foreach($parentNames as &$parentNameItem){
+                
+        // get the parent id for tag list input for keyword
+        $parentId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $parentNameItem, 'id',  'name' );
         // check if parent exists
         $entityTags = array( );
         if ( $parentId ) {
-            $form->assign( 'parentId', $parentId );        
+        
+            $tagsetItem = 'parentId_'.$parentId;
+            
+        
+            $form->assign('parentName_'.$parentId, $parentNameItem);
+
+            $tagset[$tagsetItem]['parentName'] = $parentNameItem;
+
+            $form->assign( 'parentId_'.$parentId, $parentId );        
+
+            $tagset[$tagsetItem]['parentID'] =  $parentId;        
+
 
             //tokeninput url
             $tagUrl = CRM_Utils_System::url( 'civicrm/ajax/taglist',
                                                "parentId={$parentId}",
                                                false, null, false );
                                                
-            $form->assign( 'tagUrl', $tagUrl );
-            $form->assign( 'entityTable', $entityTable );
+            $tagset[$tagsetItem]['tagUrl'] = $tagUrl;
+            $tagset[$tagsetItem]['entityTable'] = $entityTable;
             
             if ( $entityId ) {
-                $form->assign( 'entityId', $entityId );
+                $tagset[$tagsetItem]['entityId'] = $entityId;
                 require_once 'CRM/Core/BAO/EntityTag.php';
                 $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags( $parentId, $entityId, $entityTable );
             
                 if ( !empty( $entityTags ) ) {
-                    $form->assign( 'entityTags', json_encode( $entityTags ) );
+                    $tagset[$tagsetItem]['entityTags'] =  json_encode( $entityTags );
+                    }
                 }
             }
         }
+        
+        $form->assign('tagset',$tagset);
     }
 }
