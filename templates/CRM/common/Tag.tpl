@@ -5,7 +5,9 @@
 <label>{$tagset.parentName}</label>
 </div>
 <div class="content">
-<input type="text" name="taglist_{$tagset.parentID}" id="taglist_{$tagset.parentID}" />
+{assign var=elemName  value = 'taglist'}
+{assign var=parID     value = $tagset.parentID}
+{$form.$elemName.$parID.html}
 
 <script type="text/javascript">
 {literal}

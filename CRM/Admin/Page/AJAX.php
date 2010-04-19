@@ -236,6 +236,7 @@ class CRM_Admin_Page_AJAX
     }
     
     static function processTags( ) {
+        $skipTagCreate = $skipEntityAction = $entityId = null;
         $action           = CRM_Utils_Type::escape( $_POST['action'], 'String' );
         $parentId         = CRM_Utils_Type::escape( $_POST['parentId'], 'Integer' );
         if ( $_POST['entityId'] ) {
@@ -243,6 +244,7 @@ class CRM_Admin_Page_AJAX
         }
         
         $entityTable       = CRM_Utils_Type::escape( $_POST['entityTable'], 'String' );
+
         if ( $_POST['skipTagCreate'] ) {
             $skipTagCreate = CRM_Utils_Type::escape( $_POST['skipTagCreate'], 'Integer' );
         }

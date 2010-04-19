@@ -75,6 +75,9 @@ class CRM_Core_Form_Tag
                 $tagset[$tagsetItem]['entityTable'     ] = $entityTable;
                 $tagset[$tagsetItem]['skipTagCreate'   ] = $skipTagCreate;
                 $tagset[$tagsetItem]['skipEntityAction'] = $skipEntityAction;
+                $tagset[$tagsetItem]['tagElementName'  ] = "taglist[{$parentId}]";
+                
+                $form->add( 'text', "taglist[{$parentId}]", null );
 
                 if ( $entityId ) {
                     $tagset[$tagsetItem]['entityId'] = $entityId;
