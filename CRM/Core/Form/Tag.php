@@ -53,44 +53,39 @@ class CRM_Core_Form_Tag
      * @static
      */
     static function buildQuickForm( &$form, $parentNames, $entityTable, $entityId ) {        
-        
-        $tagset= array();
-        
-        foreach($parentNames as &$parentNameItem){
-                
-        // get the parent id for tag list input for keyword
-        $parentId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $parentNameItem, 'id',  'name' );
-        // check if parent exists
-        $entityTags = array( );
-        if ( $parentId ) {
-        
-            $tagsetItem = 'parentId_'.$parentId;
-            
-            $tagset[$tagsetItem]['parentName'] = $parentNameItem;
+        $tagset = array( );
 
-            $tagset[$tagsetItem]['parentID'] =  $parentId;        
-
-
-            //tokeninput url
-            $tagUrl = CRM_Utils_System::url( 'civicrm/ajax/taglist',
-                                               "parentId={$parentId}",
-                                               false, null, false );
-                                               
-            $tagset[$tagsetItem]['tagUrl'] = $tagUrl;
-            $tagset[$tagsetItem]['entityTable'] = $entityTable;
+        foreach( $parentNames as &$parentNameItem ) {
+            // get the parent id for tag list input for keyword
+            $parentId = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $parentNameItem, 'id',  'name' );
             
-            if ( $entityId ) {
-                $tagset[$tagsetItem]['entityId'] = $entityId;
-                require_once 'CRM/Core/BAO/EntityTag.php';
-                $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags( $parentId, $entityId, $entityTable );
-            
-                if ( !empty( $entityTags ) ) {
-                    $tagset[$tagsetItem]['entityTags'] =  json_encode( $entityTags );
+            // check if parent exists
+            $entityTags = array( );
+            if ( $parentId ) {
+                $tagsetItem = 'parentId_'.$parentId;
+                $tagset[$tagsetItem]['parentName'] = $parentNameItem;
+                $tagset[$tagsetItem]['parentID'  ] =  $parentId;        
+
+                //tokeninput url
+                $tagUrl = CRM_Utils_System::url( 'civicrm/ajax/taglist',
+                                                 "parentId={$parentId}",
+                                                 false, null, false );
+
+                $tagset[$tagsetItem]['tagUrl'     ] = $tagUrl;
+                $tagset[$tagsetItem]['entityTable'] = $entityTable;
+
+                if ( $entityId ) {
+                    $tagset[$tagsetItem]['entityId'] = $entityId;
+                    require_once 'CRM/Core/BAO/EntityTag.php';
+                    $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags( $parentId, $entityId, $entityTable );
+
+                    if ( !empty( $entityTags ) ) {
+                        $tagset[$tagsetItem]['entityTags'] =  json_encode( $entityTags );
                     }
                 }
             }
         }
         
-        $form->assign('tagset',$tagset);
+        $form->assign( 'tagset', $tagset );
     }
 }
