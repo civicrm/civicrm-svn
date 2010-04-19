@@ -325,7 +325,7 @@ class CRM_Contact_BAO_Query
         require_once 'CRM/Contact/BAO/Contact.php';
 
         // CRM_Core_Error::backtrace( );
-        // CRM_Core_Error::debug_var( 'params', $params );
+        // CRM_Core_Error::debug( 'params', $params );
          
         // CRM_Core_Error::debug( 'post', $_POST );
         // CRM_Core_Error::debug( 'r', $returnProperties );
@@ -1310,6 +1310,7 @@ class CRM_Contact_BAO_Query
             return;
 
         default:
+            CRM_Core_Error::debug( $values );
             $this->restWhere( $values );
             return;
                 
@@ -2103,10 +2104,15 @@ class CRM_Contact_BAO_Query
         $subTypes = array( );
         $clause = array( );
         if ( is_array( $value ) ) {
-            foreach ( $value as $k => $v) { 
-                if ($k) { //fix for CRM-771
+            foreach ( $value as $k => $v) {
+                if ( ! is_numeric( $k ) ) {
                     list( $contactType, $subType ) = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                                               $k, 2 );
+                } else {
+                    list( $contactType, $subType ) = explode( CRM_Core_DAO::VALUE_SEPARATOR,
+                                                              $v, 2 );
+                }
+                if ( ! empty( $contactType ) ) {
                     if ( ! empty( $subType ) ) {
                         $subTypes[$subType] = 1;
                     }
@@ -2116,12 +2122,14 @@ class CRM_Contact_BAO_Query
         } else {
             list( $contactType, $subType ) = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                                       $value, 2 );
-            if ( ! empty( $subType ) ) {
-                $subTypes[$subType] = 1;
+            if ( ! empty( $contactType ) ) {
+                if ( ! empty( $subType ) ) {
+                    $subTypes[$subType] = 1;
+                }
+                $clause[$contactType] = "'" . CRM_Utils_Type::escape( $contactType, 'String' ) . "'";
             }
-            $clause[$contactType] = "'" . CRM_Utils_Type::escape( $contactType, 'String' ) . "'";
         }
-        
+
         if ( ! empty( $clause ) ) { //fix for CRM-771
             $this->_where[$grouping][] = 'contact_a.contact_type IN (' . implode( ',', $clause ) . ')';
             $this->_qill [$grouping][]  = ts('Contact Type') . ' - ' . implode( ' ' . ts('or') . ' ', $clause );
