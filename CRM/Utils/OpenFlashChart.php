@@ -84,7 +84,7 @@ class CRM_Utils_OpenFlashChart
         $yMin = 0;
         
         // calculate max scale for graph.
-        $yMax = max( $yValues );
+        $yMax = ceil( max( $yValues ) );
         if ( $mod = $yMax%(str_pad( 5, strlen($yMax)-1, 0))) { 
             $yMax += str_pad( 5, strlen($yMax)-1, 0)-$mod;
         }
