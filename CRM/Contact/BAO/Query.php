@@ -256,7 +256,7 @@ class CRM_Contact_BAO_Query
      * @var array
      * @static
      */
-    static $_activityRole;
+    static $_activityRole = null;
 
     /**
      * use distinct component clause for component searches
