@@ -296,11 +296,11 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
             }
         }
 
-        $tag = CRM_Utils_Array::value( 'tag', $this->_formValues );
+        $tag = CRM_Utils_Array::value( 'contact_tags', $this->_formValues );
         if ( $tag && is_array( $tag ) ) {
-            unset( $this->_formValues['tag'] );
+            unset( $this->_formValues['contact_tags'] );
             foreach( $tag as $key => $value ) {
-                $this->_formValues['tag'][$value] = 1;
+                $this->_formValues['contact_tags'][$value] = 1;
             }
         }
 
