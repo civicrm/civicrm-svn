@@ -44,19 +44,19 @@ class CRM_Contact_Form_Search_Criteria {
             $contact_type = array( );
             require_once 'CRM/Contact/BAO/ContactType.php';
             $contactTypes = CRM_Contact_BAO_ContactType::getSelectElements( );
-            
+
             if ( $contactTypes ) {
-		        $form->add( 'select', 'contact_type',  ts( 'Contact Type(s)' ), $contactTypes, false, 
-		                    array( 'id' => 'contact_type',  'multiple'=> 'multiple', 'title' => ts('Click to select Contact Types') ));
+                $form->add( 'select', 'contact_type',  ts( 'Contact Type(s)' ), $contactTypes, false, 
+                    array( 'id' => 'contact_type',  'multiple'=> 'multiple', 'title' => ts('Click to select Contact Types') ));
             }
-            
+
         }
 
         if ( $form->_searchOptions['groups'] ) {
             // multiselect for groups
             if ( $form->_group ) {
-		        $form->add( 'select', 'groups',  ts( 'Groups' ), $form->_group, false, 
-		                    array( 'id' => 'groups',  'multiple'=> 'multiple', 'title' => ts('Click to select Groups') ));
+                $form->add( 'select', 'group',  ts( 'Groups' ), $form->_group, false, 
+                    array( 'id' => 'group',  'multiple'=> 'multiple', 'title' => ts('Click to select Groups') ) );
             }
         }
 
@@ -65,11 +65,11 @@ class CRM_Contact_Form_Search_Criteria {
             require_once 'CRM/Core/BAO/Tag.php';
             $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
             if ( $contactTags ) {
-		        $form->add( 'select', 'contact_tags',  ts( 'Tags' ), $contactTags, false, 
-		                    array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
+                $form->add( 'select', 'contact_tags',  ts( 'Tags' ), $contactTags, false, 
+                    array( 'id' => 'contact_tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
             }
         }
-        
+
         // add text box for last name, first name, street name, city
         $form->addElement('text', 'sort_name', ts('Find...'), CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name') );
 

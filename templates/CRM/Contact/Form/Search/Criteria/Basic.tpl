@@ -71,23 +71,21 @@
 {else}
             <td>&nbsp;</td>
 {/if}
-{if $form.groups}
+{if $form.group}
             <td><label>{ts}Group(s){/ts}</label>
-                {$form.groups.html}
-                    {literal}
-					<script type="text/javascript">
+                {$form.group.html}
+                {literal}
+                <script type="text/javascript">
+                cj("select#group").crmasmSelect({
+                    addItemTarget: 'bottom',
+                    animate: false,
+                    highlight: true,
+                    sortable: true,
+                    respectParents: true
+                });
 
-								cj("select#groups").crmasmSelect({
-									addItemTarget: 'bottom',
-									animate: false,
-									highlight: true,
-									sortable: true,
-									respectParents: true
-								});
-
-						</script>
-					{/literal}
-                
+                </script>
+                {/literal}
             </td>
 {else}
             <td>&nbsp;</td>
@@ -95,20 +93,20 @@
 
 {if $form.contact_tags}
             <td colspan="2"><label>{ts}Tag(s){/ts}</label>
-                    {$form.contact_tags.html}
-                    {literal}
-					<script type="text/javascript">
+                {$form.contact_tags.html}
+                {literal}
+                <script type="text/javascript">
 
-								cj("select#tags").crmasmSelect({
-									addItemTarget: 'bottom',
-									animate: false,
-									highlight: true,
-									sortable: true,
-									respectParents: true
-								});
+                cj("select#contact_tags").crmasmSelect({
+                    addItemTarget: 'bottom',
+                    animate: false,
+                    highlight: true,
+                    sortable: true,
+                    respectParents: true
+                });
 
-						</script>
-					{/literal}   
+                </script>
+                {/literal}   
             </td>
 {else}
             <td colspan="2">&nbsp;</td>
