@@ -236,11 +236,22 @@ class CRM_Admin_Page_AJAX
     }
     
     static function processTags( ) {
-        $action      = CRM_Utils_Type::escape( $_POST['action'], 'String' );
-        $parentId    = CRM_Utils_Type::escape( $_POST['parentId'], 'Integer' );
-        $entityId    = CRM_Utils_Type::escape( $_POST['entityId'], 'Integer' );
-        $entityTable = CRM_Utils_Type::escape( $_POST['entityTable'], 'String' );
-        $tagID       = $_POST['tagID' ];
+        $action           = CRM_Utils_Type::escape( $_POST['action'], 'String' );
+        $parentId         = CRM_Utils_Type::escape( $_POST['parentId'], 'Integer' );
+        if ( $_POST['entityId'] ) {
+            $entityId     = CRM_Utils_Type::escape( $_POST['entityId'], 'Integer' );
+        }
+        
+        $entityTable       = CRM_Utils_Type::escape( $_POST['entityTable'], 'String' );
+        if ( $_POST['skipTagCreate'] ) {
+            $skipTagCreate = CRM_Utils_Type::escape( $_POST['skipTagCreate'], 'Integer' );
+        }
+        
+        if ( $_POST['skipEntityAction'] ) {
+            $skipEntityAction = CRM_Utils_Type::escape( $_POST['skipEntityAction'], 'Integer' );
+        }
+        
+        $tagID = $_POST['tagID' ];
         
         require_once 'CRM/Core/BAO/EntityTag.php';
         
@@ -259,19 +270,23 @@ class CRM_Admin_Page_AJAX
                 $tagID     = $tagObject->id;
             }
             
-            // save this tag to contact
-            $params = array( 'entity_table' => $entityTable,
-                             'entity_id'    => $entityId,
-                             'tag_id'       => $tagID);
+            if ( !$skipEntityAction && $entityId ) {
+                // save this tag to contact
+                $params = array( 'entity_table' => $entityTable,
+                                 'entity_id'    => $entityId,
+                                 'tag_id'       => $tagID);
                              
-            CRM_Core_BAO_EntityTag::add( $params );
+                CRM_Core_BAO_EntityTag::add( $params );
+            }
         } elseif ( $action == 'delete' ) {  // if action is delete
-            // delete this tag entry for the entity
-            $params = array( 'entity_table' => $entityTable,
-                             'entity_id'    => $entityId,
-                             'tag_id'       => $tagID);
+            if ( !$skipEntityAction && $entityId ) {
+                // delete this tag entry for the entity
+                $params = array( 'entity_table' => $entityTable,
+                                 'entity_id'    => $entityId,
+                                 'tag_id'       => $tagID);
                              
-            CRM_Core_BAO_EntityTag::del( $params );
+                CRM_Core_BAO_EntityTag::del( $params );
+            }
         }
         
         CRM_Utils_System::civiExit( );

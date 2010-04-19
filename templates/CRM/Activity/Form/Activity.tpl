@@ -221,21 +221,22 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
              <tr>
                 <td class="label">{$form.tag.label}</td>
                 <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
-                                        {literal}
-                                        <script type="text/javascript">
-                                                               $("select[multiple]").crmasmSelect({
-                                                                        addItemTarget: 'bottom',
-                                                                        animate: true,
-                                                                        highlight: true,
-                                                                        sortable: true,
-                                                                        respectParents: true
-                                                               });
-                                        </script>
-                                        {/literal}
+                    {literal}
+                    <script type="text/javascript">
+                        cj("select[multiple]").crmasmSelect({
+                            addItemTarget: 'bottom',
+                            animate: true,
+                            highlight: true,
+                            sortable: true,
+                            respectParents: true
+                        });
+                    </script>
+                    {/literal}
 
                 </td>
              </tr>
-             {/if}	     
+             {/if}
+             <tr><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>	     
              <tr>
                 <td colspan="2">
 	            {if $action eq 4} 

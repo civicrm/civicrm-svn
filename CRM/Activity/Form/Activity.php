@@ -619,10 +619,16 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         require_once 'CRM/Core/BAO/Tag.php';
         $tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_activity'), true );
+        
         if ( !empty($tags) ) { 
             $this->add('select', 'tag',  ts( 'Tags' ), $tags, false, 
                        array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
         }
+        
+        // build tag widget
+        require_once 'CRM/Core/Form/Tag.php';
+        $parentNames = array('activity1', 'activity2');
+        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_activity', $this->_activityId, true );
             
         // if we're viewing, we're assigning different buttons than for adding/editing
         if ( $this->_action & CRM_Core_Action::VIEW ) { 

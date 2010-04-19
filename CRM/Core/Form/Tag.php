@@ -52,7 +52,7 @@ class CRM_Core_Form_Tag
      * @access public
      * @static
      */
-    static function buildQuickForm( &$form, $parentNames, $entityTable, $entityId ) {        
+    static function buildQuickForm( &$form, $parentNames, $entityTable, $entityId = null, $skipTagCreate = false, $skipEntityAction = false ) {        
         $tagset = array( );
 
         foreach( $parentNames as &$parentNameItem ) {
@@ -71,8 +71,10 @@ class CRM_Core_Form_Tag
                                                  "parentId={$parentId}",
                                                  false, null, false );
 
-                $tagset[$tagsetItem]['tagUrl'     ] = $tagUrl;
-                $tagset[$tagsetItem]['entityTable'] = $entityTable;
+                $tagset[$tagsetItem]['tagUrl'          ] = $tagUrl;
+                $tagset[$tagsetItem]['entityTable'     ] = $entityTable;
+                $tagset[$tagsetItem]['skipTagCreate'   ] = $skipTagCreate;
+                $tagset[$tagsetItem]['skipEntityAction'] = $skipEntityAction;
 
                 if ( $entityId ) {
                     $tagset[$tagsetItem]['entityId'] = $entityId;

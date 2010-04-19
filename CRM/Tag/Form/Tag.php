@@ -114,8 +114,7 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
         //build tag widget
         require_once 'CRM/Core/Form/Tag.php';
         $parentNames = array('Keywords', 'Positions');
-        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, $this->_entityTable, $this->_entityID );
-                
+        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, $this->_entityTable, $this->_entityID );                
         
         if ( $this->_action & CRM_Core_Action::BROWSE ) {
             $this->freeze();

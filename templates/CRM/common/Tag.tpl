@@ -21,12 +21,15 @@
     cj( "#taglist_{/literal}{$tagset.parentID}{literal}"  ).tokenInput( tagUrl, { prePopulate: entityTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processTags_{/literal}{$tagset.parentID}{literal}'});
 
     function processTags_{/literal}{$tagset.parentID}{literal}( action, id ) {
-        var postUrl     = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
-        var parentId    = "{/literal}{$tagset.parentID}{literal}";
-        var entityId   = "{/literal}{$tagset.entityId}{literal}";
-        var entityTable = "{/literal}{$tagset.entityTable}{literal}";
+        var postUrl          = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
+        var parentId         = "{/literal}{$tagset.parentID}{literal}";
+        var entityId         = "{/literal}{$tagset.entityId}{literal}";
+        var entityTable      = "{/literal}{$tagset.entityTable}{literal}";
+        var skipTagCreate    = "{/literal}{$tagset.skipTagCreate}{literal}";
+        var skipEntityAction = "{/literal}{$tagset.skipEntityAction}{literal}";
          
-        cj.post( postUrl, { action: action, tagID: id, parentId: parentId, entityId: entityId, entityTable: entityTable } );
+        cj.post( postUrl, { action: action, tagID: id, parentId: parentId, entityId: entityId, entityTable: entityTable,
+                            skipTagCreate: skipTagCreate, skipEntityAction: skipEntityAction } );
     }
 {/literal}
 </script>
