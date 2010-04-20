@@ -162,10 +162,12 @@ class CRM_Activity_BAO_Query
                         $clause[] = "'" . CRM_Utils_Type::escape( $types[$id], 'String' ) . "'";
                     }
                 } 
+                $activityTypes = implode( ',', array_keys( $value ) );
             } else {
                 $clause[] = "'" . CRM_Utils_Type::escape( $value, 'String' ) . "'";
+                $activityTypes = $value;
             }
-            $query->_where[$grouping][] = ' civicrm_activity.activity_type_id IN (' . implode( ',', array_keys( $value ) ) . ')';
+            $query->_where[$grouping][] = ' civicrm_activity.activity_type_id IN (' . $activityTypes . ')';
             $query->_qill [$grouping][]  = ts('Activity Type') . ' ' . implode( ' ' . ts('or') . ' ', $clause );
             
             break;
