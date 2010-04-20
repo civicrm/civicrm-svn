@@ -213,11 +213,16 @@
 cj(document).ready( function() {
     cj('.crm-ajax-accordion .crm-accordion-header').one('click', function() { 
     	loadPanes(cj(this).attr('id')); 
-    	});
+    });
 });
 // load panes function calls for snippet based on id of crm-accordion-header
 function loadPanes( id ) {
     var url = "{/literal}{crmURL p='civicrm/contact/view/contribution' q='snippet=4&formType=' h=0}{literal}" + id;
+    {/literal}
+        {if $contributionMode}
+            url = url + "&mode={$contributionMode}";
+        {/if}
+    {literal}
    if ( ! cj('div.'+id).html() ) {
 	    var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts}loading{/ts}{literal}" />&nbsp;{/literal}{ts}Loading{/ts}{literal}...';
 	    cj('div.'+id).html(loading);
