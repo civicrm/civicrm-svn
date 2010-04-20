@@ -256,7 +256,7 @@ class CRM_Admin_Page_AJAX
         $tagID = $_POST['tagID' ];
         
         require_once 'CRM/Core/BAO/EntityTag.php';
-        
+        $tagInfo = array( );
         // if action is select
         if ( $action == 'select' ) {
             // check the value of tagID
@@ -269,7 +269,11 @@ class CRM_Admin_Page_AJAX
 
                 require_once 'CRM/Core/BAO/Tag.php';
                 $tagObject = CRM_Core_BAO_Tag::add( $params, CRM_Core_DAO::$_nullArray );
-                $tagID     = $tagObject->id;
+                
+                $tagInfo = array( 'name'   => $tagID,
+                                  'id'     => $tagObject->id,
+                                  'action' => $action );
+                $tagID = $tagObject->id;                         
             }
             
             if ( !$skipEntityAction && $entityId ) {
@@ -281,6 +285,9 @@ class CRM_Admin_Page_AJAX
                 CRM_Core_BAO_EntityTag::add( $params );
             }
         } elseif ( $action == 'delete' ) {  // if action is delete
+            if ( !is_numeric( $tagID ) ) {
+                $tagID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $tagID, 'id',  'name' );
+            }
             if ( !$skipEntityAction && $entityId ) {
                 // delete this tag entry for the entity
                 $params = array( 'entity_table' => $entityTable,
@@ -289,8 +296,11 @@ class CRM_Admin_Page_AJAX
                              
                 CRM_Core_BAO_EntityTag::del( $params );
             }
+            $tagInfo = array( 'id'     => $tagID,
+                              'action' => $action );
         }
         
+        echo json_encode( $tagInfo );
         CRM_Utils_System::civiExit( );
     } 
 }

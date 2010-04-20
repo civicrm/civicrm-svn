@@ -31,7 +31,28 @@
         var skipEntityAction = "{/literal}{$tagset.skipEntityAction}{literal}";
          
         cj.post( postUrl, { action: action, tagID: id, parentId: parentId, entityId: entityId, entityTable: entityTable,
-                            skipTagCreate: skipTagCreate, skipEntityAction: skipEntityAction } );
+                            skipTagCreate: skipTagCreate, skipEntityAction: skipEntityAction },
+            function ( response ) {
+                // update hidden element
+                if ( response.id ) {
+                    var curVal   = cj( "#taglist_{/literal}{$tagset.parentID}{literal}" ).val( );
+                    var valArray = curVal.split(',');
+                    var setVal   = Array( );
+                    if ( response.action == 'delete' ) {
+                        for ( x in valArray ) {
+                            if ( valArray[x] != response.id ) {
+                                setVal[x] = valArray[x];
+                            }
+                        }
+                    } else if ( response.action == 'select' ) {
+                        setVal    = valArray;
+                        setVal[ setVal.length ] = response.id;
+                    }
+                    
+                    var actualValue = setVal.join( ',' );
+                    cj( "#taglist_{/literal}{$tagset.parentID}{literal}" ).val( actualValue );
+                }
+            }, "json" );
     }
 {/literal}
 </script>

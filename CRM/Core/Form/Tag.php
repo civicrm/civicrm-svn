@@ -93,4 +93,26 @@ class CRM_Core_Form_Tag
         
         $form->assign( 'tagset', $tagset );
     }
+    
+    /**
+     * Function to save entity tags when it is not save used AJAX
+     *
+     */
+    static function postProcess( &$params, $entityId, $entityTable = 'civicrm_contact' ) {
+        foreach( $params as $value ) {
+            $tagsIDs = explode( ',', $value );
+            $insertValues = array( );
+            $insertSQL    = null;
+            if ( !empty( $tagsIDs ) ) {
+                foreach( $tagsIDs as $tagId ) {
+                    if ( is_numeric( $tagId ) ) {
+                        $insertValues[] = "( {$tagId}, {$entityId}, '{$entityTable}' ) ";
+                    }
+                }
+                
+                $insertSQL = 'INSERT INTO civicrm_entity_tag ( tag_id, entity_id, entity_table ) VALUES '. implode( ', ', $insertValues ) . ';';
+                CRM_Core_DAO::executeQuery( $insertSQL );
+            }
+        }
+    } 
 }
