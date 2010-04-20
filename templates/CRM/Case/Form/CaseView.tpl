@@ -155,7 +155,8 @@
 	{ts}Case Roles{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
-    <span id="restmsg" style="display:none"></span>
+    <span id="restmsg" class="msgok" style="display:none"></span>
+ 
     {if $hasAccessToAllCases}
     <div class="crm-submit-buttons">
       <a class="button" href="#" onClick="Javascript:addRole();return false;"><span><div class="icon add-icon"></div>{ts}Add new role{/ts}</span></a>
@@ -250,9 +251,6 @@ cj( "#change_client_id").autocomplete( contactUrl, { width : 250, selectFirst : 
                             }).result( function(event, data, formatted) { cj( "#contact_id" ).val( data[1] ); selectedContact = data[0];
                             }).bind( 'click', function( ) { cj( "#contact_id" ).val(''); });
 
-function hideStatus( ) {
- 	 cj( '#restmsg' ).hide( );
-}
 cj("#dialog").hide( );
 
 function addClient( ) {
@@ -362,9 +360,9 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
 			   var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
 			   var errorMsg = '{/literal}{ts}The relationship type definition for the  {literal}' + relTypeName + '{/literal} case role is not valid. Both sides of the relationship type must be an Individual or a subtype of Individual. You can review and edit relationship types at <a href="{literal}' + relTypeAdminLink + '{/literal}">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
 
-			   var image     = '<div class="icon close-icon"></div>';
-			   var imageIcon = '<a href="javascript:hideStatus( );">' + image + '</a>';
-			   cj( '#restmsg' ).addClass( 'msgok' ).html( imageIcon + errorMsg ).show( );
+			   //display error message.
+			   var imageIcon = "<a href='#'  onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="icon close-icon"></div>' + '</a>';
+			   cj( '#restmsg' ).html( imageIcon + errorMsg  ).show( );
 			}
 
                         html = '';
