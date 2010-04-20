@@ -368,7 +368,7 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                         $groupTitle = $v["groupTitle"];
                     }
                     // suppress all file fields from display
-                    if ( CRM_Utils_Array::value( 'data_type', $v, '' ) == 'File' ) {
+                    if ( CRM_Utils_Array::value( 'data_type', $v, '' ) == 'File' || CRM_Utils_Array::value( 'name', $v, '' ) == 'image_URL' ) {
                         unset( $fields[$k] );
                     }
                 }

@@ -27,7 +27,7 @@
     <div>
        <a href="#" onClick="contactImagePopUp('{$imageURL}',{$imageWidth},{$imageHeight});"><img src="{$imageURL}" height = {$imageThumbHeight} width={$imageThumbWidth}></a>
     </div>
-    {if $action eq 2}
+    {if $action eq 0 or $action eq 2}
        <div>
 	 {$deleteURL}
        </div>

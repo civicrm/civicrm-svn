@@ -739,6 +739,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         //set as Primary participant
         $params ['is_primary'] = 1;         
         
+        if ( CRM_Utils_Array::value( 'image_URL', $params  ) ) {
+            CRM_Contact_BAO_Contact::processImageParams( $params ) ;
+        }
+
         //hack to allow group to register w/ waiting
         if ( !$this->_allowConfirmation && 
              CRM_Utils_Array::value( 'bypass_payment', $params ) &&
