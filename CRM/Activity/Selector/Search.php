@@ -84,7 +84,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                 'source_contact_name',
                                 'activity_type_id',
                                 'activity_type',
-                                'is_test'
+                                'activity_is_test'
                                 );
     
     /** 
@@ -257,7 +257,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             $accessMailingReport = false;
             $activityType = CRM_Core_PseudoConstant::activityType( true, true );
             $activityTypeId = CRM_Utils_Array::key( $row['activity_type'], $activityType );
-            if ( $row['is_test'] ) {
+            if ( $row['activity_is_test'] ) {
                 $row['activity_type'] = $row['activity_type'] . " (test)";
             }
             $bulkActivityTypeID = CRM_Utils_Array::key( 'Bulk Email', $activityType );
