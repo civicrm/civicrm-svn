@@ -102,6 +102,17 @@
       </tr>
      {/if}
 
+      {if $receipt_date}
+      <tr>
+       <td {$labelStyle}>
+        {ts}Receipt Date{/ts}
+       </td>
+       <td {$valueStyle}>
+        {$receipt_date|truncate:10:''|crmDate}
+       </td>
+      </tr>
+     {/if}
+
      {if $formValues.paidBy and !$formValues.hidden_CreditCard}
       <tr>
        <td {$labelStyle}>
