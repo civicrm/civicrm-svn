@@ -765,32 +765,32 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         }
         
         if ( $self->_values['is_monetary'] ) {
-            if ( ( CRM_Utils_Array::value('amount',$fields) == 'amount_other_radio' )
-                 || isset( $fields['amount_other'] ) ) {
-
-                if ( empty( $fields['amount_other'] ) &&
-                     ! CRM_Utils_Array::value('amount_level',$fields) && ! ( CRM_Utils_Array::value('amount',$fields) == 'no_thanks' ) ) {
+            //validate other amount.
+            $checkOtherAmount = false;
+            if ( CRM_Utils_Array::value('amount', $fields ) == 'amount_other_radio' ) {
+                $checkOtherAmount = true;
+            }
+            $otherAmountVal = CRM_Utils_Array::value( 'amount_other', $fields );
+            if ( $checkOtherAmount || $otherAmountVal ) {
+                if ( !$otherAmountVal ) {
                     $errors['amount_other'] = ts('Amount is required field.');
                 }
-                
-                if ( CRM_Utils_Array::value('min_amount',$self->_values) ) {
-                    $min = $self->_values['min_amount'];
-                    if ( $fields['amount_other'] != '' && $fields['amount_other'] < $min ) {
+                //validate for min and max.
+                if ( $otherAmountVal ) {
+                    $min = CRM_Utils_Array::value( 'min_amount', $self->_values );
+                    $max = CRM_Utils_Array::value('max_amount',  $self->_values );
+                    if ( $min && $otherAmountVal < $min ) {
                         $errors['amount_other'] = ts( 'Contribution amount must be greater than %1', 
                                                       array ( 1 => $min ) );
                     }
-                }
-                    
-                if ( CRM_Utils_Array::value('max_amount',$self->_values) > 0 ) {
-                    $max = $self->_values['max_amount'];
-                    if ( $fields['amount_other'] > $max ) {
+                    if ( $max && $otherAmountVal > $max ) {
                         $errors['amount_other'] = ts( 'Contribution amount cannot be greater than %1.',
                                                       array ( 1 => $max ) );
                     }
                 }
             }
         }
-
+        
         // validate PCP fields - if not anonymous, we need a nick name value
         if ( $self->_pcpId && CRM_Utils_Array::value('pcp_display_in_roll',$fields) &&
              ( CRM_Utils_Array::value('pcp_is_anonymous',$fields) == 0 ) &&
