@@ -136,7 +136,9 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
         
         require_once 'CRM/Core/Component.php';
         $compomentFields =& CRM_Core_Component::getQueryFields( );
-        
+        require_once 'CRM/Activity/BAO/Activity.php';
+        $activityFields = CRM_Activity_BAO_Activity::exportableFields( );
+        $compomentFields = array_merge( $compomentFields, $activityFields );
         $fields = array_merge( $fields, $compomentFields );
 
         $fld = array ();
