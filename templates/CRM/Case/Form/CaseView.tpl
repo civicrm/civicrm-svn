@@ -589,23 +589,29 @@ function addRole() {
 				
                /* send synchronous request so that disabling any actions for slow servers*/
 				var postUrl = {/literal}"{crmURL p='civicrm/ajax/relation' h=0 }"{literal}; 
-                var data = 'rel_contact='+ v1 + '&rel_type='+ v2 + '&contact_id='+sourceContact + '&rel_id='+ relID + '&case_id=' + caseID;
-                cj.ajax({ type: "POST", url: postUrl, data: data, async: false });
- 
 				cj(this).dialog("close"); 
 				cj(this).dialog("destroy");
-				
-// Temporary workaround for problems with SSL connections being too
-// slow. The relationship doesn't get created because the page reload
-// happens before the ajax call.
-// In general this reload needs improvement, which is already on the list for phase 2.
-var sdate = (new Date()).getTime();
-var curDate = sdate;
-while(curDate-sdate < 2000) {
-curDate = (new Date()).getTime();
-}
-				window.location.reload(); 
-			},
+                		var data = 'rel_contact='+ v1 + '&rel_type='+ v2 + '&contact_id='+sourceContact + '&rel_id='+ relID + '&case_id=' + caseID;
+                		cj.ajax({ type     : "POST", 
+					  url      : postUrl, 
+					  data     : data, 
+					  async    : false,
+					  dataType : "json",
+					  success  : function( values ) {
+					  	    	if ( values.status == 'process-relationship-success' ) {
+               						     window.location.reload();
+							} else {
+							     var relTypeName = cj("#role_type :selected").text();  
+							     var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
+			  				     var errorMsg = '{/literal}{ts}The relationship type definition for the  {literal}' + relTypeName + '{/literal} case role is not valid. Both sides of the relationship type must be an Individual or a subtype of Individual. You can review and edit relationship types at <a href="{literal}' + relTypeAdminLink + '{/literal}">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
+
+			   				     //display error message.
+			   				     var imageIcon = "<a href='#'  onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="icon close-icon"></div>' + '</a>';
+			   				     cj( '#restmsg' ).html( imageIcon + errorMsg  ).show( );  
+							}
+					  	    }
+				       });
+ 			},
 
 			"Cancel": function() { 
 				cj(this).dialog("close"); 
