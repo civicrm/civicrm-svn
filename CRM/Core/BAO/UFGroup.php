@@ -1440,6 +1440,9 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 $form->add('select', $name, $title, 
                            array('' => ts('- select -')) + CRM_Core_PseudoConstant::county(), $required);
             }
+        } else if ( substr($fieldName,0,9) === 'image_URL' ) {
+            $form->add('file', $name, $title, $attributes, $required );
+            $form->addUploadElement( $name );
         } else if ( substr($fieldName, 0, 2) === 'im' ) {
             if ( !$contactId ) {
                 $form->add('select', $name . '-provider_id', $title, 
@@ -1449,8 +1452,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                     $form->freeze($name."-provider_id");
                 }
             }
-            $form->add('file', $name, $title, $attributes, $required );
-            $form->addUploadElement( $name );
+            $form->add('text', $name, $title, $attributes, $required );
         } else if ( ( $fieldName === 'birth_date' ) || ( $fieldName === 'deceased_date' ) ) { 
             $form->addDate( $name, $title, $required, array( 'formatType' => 'birth') );
         } else if ( in_array($fieldName, array( "membership_start_date","membership_end_date","join_date")) ) {  
