@@ -2281,6 +2281,7 @@ span.icon {
 .crm-icon {
     background-image: url('../i/item_sprites.png');
     margin:2px 4px 0 0;
+    text-indent:-10000px; /* for accessibility reason, put the name of the type/subtype in the icon div (it will be hidden and replaced by the icon) */
 }
 
 .Individual-icon { background-position: 0px 0px; }
