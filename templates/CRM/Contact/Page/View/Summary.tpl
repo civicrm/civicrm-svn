@@ -384,7 +384,6 @@
  {literal}
  function fixTabAbort(event,ui){
 	jQuery(ui.tab).data("cache.tabs",(jQuery(ui.panel).html() == "") ? false : true);
-	console.log('aborted');
 }
  cj( function() {
      var tabIndex = cj('#tab_' + selectedTab).prevAll().length;
