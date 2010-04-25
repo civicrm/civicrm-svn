@@ -43,6 +43,7 @@
         <div class="crm-submit-buttons">
 	    <div class="action-link">
         <a href="{crmURL q="action=add&reset=1"}" id="newTag" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag{/ts}</span></a>
+        <a href="{crmURL q="action=add&reset=1&tagset=1"}" id="newTagSet" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag Set{/ts}</span></a>
         </div>
         </div>
 {/if}

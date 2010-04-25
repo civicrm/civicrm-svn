@@ -246,6 +246,23 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
         
         return false;
     }
+    
+    /**
+     * Function to get the tag sets for a entity object
+     *
+     * @param string $entityTable entity_table
+     *
+     * @return array $tagSets array of tag sets
+     * @access public
+     * @static
+     */
+    static function getTagSet( $entityTable ) {
+        $tagSets = array( );
+        $query = "SELECT name FROM civicrm_tag WHERE is_hidden=1 AND parent_id IS NULL and used_for LIKE '%{$entityTable}%'";
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        while( $dao->fetch( ) ) {
+           $tagSets[] = $dao->name;
+        }
+        return $tagSets;
+    }
 }
-
-

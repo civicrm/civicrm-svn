@@ -113,7 +113,8 @@ class CRM_Tag_Form_Tag extends CRM_Core_Form
         
         //build tag widget
         require_once 'CRM/Core/Form/Tag.php';
-        $parentNames = array('Keywords', 'Positions');
+        require_once 'CRM/Core/BAO/Tag.php';
+        $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_contact' );
         CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, $this->_entityTable, $this->_entityID );                
         
         if ( $this->_action & CRM_Core_Action::BROWSE ) {
