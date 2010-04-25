@@ -293,7 +293,7 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             
             $contributionTypes = CRM_Contribute_PseudoConstant::contributionType();
             $title = CRM_Contact_BAO_Contact::displayName( $contribution->contact_id ) . 
-                ' - (' . CRM_Utils_Money::format( $contribution->total_amount ) . ' ' . 
+                ' - (' . CRM_Utils_Money::format( $contribution->total_amount, $contribution->currency ) . ' ' . 
                 ' - ' . $contributionTypes[$contribution->contribution_type_id] . ')';
             
             // add the recently created Contribution
