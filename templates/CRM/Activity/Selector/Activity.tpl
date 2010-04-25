@@ -50,7 +50,7 @@
 
       {counter start=0 skip=1 print=false}
       {foreach from=$rows item=row}
-      <tr class="{cycle values="odd-row,even-row"} {$row.class}">
+      <tr class="{cycle values="odd-row,even-row"} {$row.class}" id="activity_{$row.activity_id}">
 
         <td>{$row.activity_type}</td>
        
@@ -102,7 +102,7 @@
 
         <td>{$row.activity_date_time|crmDate}</td>
 
-        <td>{$row.status}</td>
+        <td class="status_{$row.status_id}">{$row.status}</td>
 
         <td>{$row.action|replace:'xx':$row.id}</td>
       </tr>
