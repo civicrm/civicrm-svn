@@ -2837,59 +2837,6 @@ tbody.scrollContent tr.alternateRow {
 	background-image:url(../i/icons/jquery-ui-3e3e3e.png);
 	}		
 
-/* buttons */
-
-/* blue theme buttons */
-
-#crm-container .crm-button,
-#crm-container .crm-button input { color:#32414f; }
-#crm-container .crm-button { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll left 0px;}
-#crm-container .crm-button input { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll right -25px; }
-#crm-container .crm-button:hover { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll left -50px; }
-#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll right -75px;	}
-#crm-container .crm-button-type-cancel input { color:#357bb7; }
-
-
-/* black theme buttons */
-/*
-#crm-container .crm-button,
-#crm-container .crm-button input { color:#FFF; }
-#crm-container .crm-button { background:transparent url(../i/crm-button-black.gif) no-repeat scroll left 0px;		 }
-#crm-container .crm-button input { background:transparent url(../i/crm-button-black.gif) no-repeat scroll right -25px;	 }
-#crm-container .crm-button:hover { background:transparent url(../i/crm-button-black.gif) no-repeat scroll left -50px;		 }
-#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-black.gif) no-repeat scroll right -75px;	 }
-#crm-container .crm-button-type-cancel input { color:#e0e0d4; }
-*/
-
-/* dark blue theme buttons */
-/*
-#crm-container .crm-button,
-#crm-container .crm-button input { color:#FFF; }
-#crm-container .crm-button { background:transparent url(../i/crm-button-dark-blue.gif) repeat-x scroll left 0px;}
-#crm-container .crm-button input { background:transparent url(../i/crm-button-dark-blue.gif) no-repeat scroll right -25px; }
-#crm-container .crm-button:hover { background:transparent url(../i/crm-button-dark-blue.gif) repeat-x scroll left -50px; }
-#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-dark-blue.gif) no-repeat scroll right -75px;	}
-#crm-container .crm-button-type-cancel input { color:#7fcdfe; }
-*/
-
-
-/* brown theme buttons 
-#crm-container .crm-button,
-#crm-container .crm-button input { color:#FFF; }
-#crm-container a.button,
-#crm-container a.button:link,
-#crm-container .crm-button { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left 0px;		 }
-#crm-container a.button span,
-#crm-container .crm-button input { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -25px;	 }
-#crm-container a.button:hover,
-#crm-container .crm-button:hover { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll left -50px;		 }
-#crm-container a.button:hover span,
-#crm-container .crm-button:hover input { background:transparent url(../i/crm-button-dark.gif) no-repeat scroll right -75px;	 }
-#crm-container a.button:active span,
-#crm-container .crm-button input {color:#FFF;}
-#crm-container .crm-button-type-cancel input { color:#e0e0d4; }
-*/
-
 
 /* warning labels and messages */
 del,
