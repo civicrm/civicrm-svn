@@ -2161,6 +2161,12 @@ div.grippie {
     border:1px solid #3e3e3e;
     }
     #crm-container input.form-submit { padding:0px 6px 2px;}
+    #crm-container .crm-button input.form-submit{
+        padding:0px;
+        margin:0px;
+        background: none;
+        border:none;
+        }
 
 #crm-container a.button,
 #crm-create-new-link,
