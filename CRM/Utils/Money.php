@@ -85,17 +85,21 @@ class CRM_Utils_Money {
             $format = $config->moneyformat;
         }
 
+        setlocale(LC_MONETARY, 'en_US.utf8');
         // money_format() exists only in certain PHP install (CRM-650)
         if (is_numeric($amount) and function_exists('money_format')) {
             $amount = money_format($config->moneyvalueformat, $amount);
         }
-
+        
+        $rep = array( ',' => $config->monetaryThousandSeparator,
+                      '.' => $config->monetaryDecimalPoint );
+        
+        $money = strtr($amount, $rep);
         $replacements = array(
-                              '%a' => $amount,
+                              '%a' => $money,
                               '%C' => $currency,
                               '%c' => CRM_Utils_Array::value($currency, self::$_currencySymbols, $currency),
                               );
-
         return strtr($format, $replacements);
     }
 

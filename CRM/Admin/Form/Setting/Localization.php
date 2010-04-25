@@ -100,7 +100,8 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         }
 
         $this->addElement('checkbox', 'inheritLocale', ts('Inherit CMS Language'));
-        $this->addElement('select', 'lcMonetary', ts('Monetary Locale'),  $locales);
+        $this->addElement('text', 'monetaryThousandSeparator', ts('Thousands Separator'), array('size' => 2));
+        $this->addElement('text', 'monetaryDecimalPoint', ts('Decimal Delimiter'), array('size' => 2));
         $this->addElement('text', 'moneyformat',      ts('Monetary Amount Display'));
         $this->addElement('text', 'moneyvalueformat', ts('Monetary Value Display'));
 
@@ -208,10 +209,7 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         
         // we do this only to initialize monetary decimal point and thousand separator
         $config = CRM_Core_Config::singleton();
-        if ( $monetaryPointSeparator = $config->defaultMonetaryPointSeparator( $values['lcMonetary'] ) ) {
-            $values['monetaryDecimalPoint'     ] = CRM_Utils_Array::value('decimal_point', $monetaryPointSeparator);
-            $values['monetaryThousandSeparator'] = CRM_Utils_Array::value('thousands_sep', $monetaryPointSeparator);
-        }
+
         // set default Currency Symbol
         $values['defaultCurrencySymbol'] = $config->defaultCurrencySymbol( $values['defaultCurrency']);
         

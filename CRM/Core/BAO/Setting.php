@@ -156,10 +156,7 @@ class CRM_Core_BAO_Setting
         $domain->id = CRM_Core_Config::domainID( );
         $domain->find(true);
         if ($domain->config_backend) {
-            $defaults   = unserialize($domain->config_backend);
-
-            // set proper monetary formatting, falling back to en_US and C (CRM-2782)
-            setlocale(LC_MONETARY, $defaults['lcMonetary'].'.utf8', $defaults['lcMonetary'], 'en_US.utf8', 'en_US', 'C');
+            $defaults = unserialize($domain->config_backend);
 
             $skipVars = array( 'dsn', 'templateCompileDir',
                                'userFrameworkDSN', 
