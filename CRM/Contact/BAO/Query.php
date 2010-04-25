@@ -2229,7 +2229,7 @@ class CRM_Contact_BAO_Query
                 " LEFT JOIN civicrm_group_contact {$gcTable} ON contact_a.id = {$gcTable}.contact_id ";
         }
        
-        $qill = ts( 'Member of Group %1', array( 1 => $op ) );
+        $qill = ts( 'Contacts %1', array( 1 => $op ) );
         $qill .= ' ' . implode( ' ' . ts('or') . ' ', $names );
         $this->_qill[$grouping][] = $qill;
         

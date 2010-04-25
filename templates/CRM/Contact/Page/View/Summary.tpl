@@ -191,6 +191,7 @@
                                     <tr id="Email_Block_{$blockId}_signature" class="hiddenElement">
                                         <td><strong>{ts}Signature HTML{/ts}</strong><br />{$item.signature_html}<br /><br />
                                         <strong>{ts}Signature Text{/ts}</strong><br />{$item.signature_text|nl2br}</td>
+                                        <td colspan="2"></td>
                                     </tr>
                                     {/if}
                                 {/foreach}
@@ -200,6 +201,7 @@
                                     <tr>
                                         <td class="label">{$item.website_type}</td>
                                         <td><a href="{$item.url}" target="_blank">{$item.url}</a></td>
+                                        <td></td>
                                     </tr>
                                     {/if}
                                 {/foreach}
@@ -208,6 +210,7 @@
                                     <tr>
                                         <td class="label">{ts}Unique Id{/ts}</td>
                                         <td>{$user_unique_id}</td>
+                                        <td></td>
                                     </tr>
                                 {/if}
                             </table>
@@ -247,9 +250,8 @@
 
                         <div class="clear"></div>
                     </div><!-- #contact_panel -->
-					{if $address}
-                    <div class="separator"></div>
 
+					{if $address}
                     <div class="contact_panel">
                         {foreach from=$address item=add key=locationIndex}
                         <div class="{cycle name=location values="contactCardLeft,contactCardRight"}">
@@ -298,9 +300,8 @@
 
                         <div class="clear"></div>
                     </div>
-
-                    <div class="separator"></div>
 					{/if}
+					
                     <div class="contact_panel">
                         <div class="contactCardLeft">
                             <table>

@@ -49,7 +49,7 @@ INSERT INTO `civicrm_dashboard`
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
-    (  @domainID, NULL, '{ts escape="sql"}Search...{/ts}',  'Search...',    NULL, '',  NULL, '1', NULL, 1 );
+    (  @domainID, NULL, '{ts escape="sql"}Search{/ts}',  'Search...',    NULL, '',  NULL, '1', NULL, 1 );
 
 SET @searchlastID:=LAST_INSERT_ID();
     
@@ -189,7 +189,7 @@ VALUES
     ( @domainID, 'civicrm/member&reset=1',                              '{ts escape="sql"}Dashboard{/ts}',           'Dashboard',       'access CiviMember', '', @memberlastID, '1', NULL, 1 ), 
     ( @domainID, 'civicrm/member/add&reset=1&action=add&context=standalone', '{ts escape="sql"}New Membership{/ts}', 'New Membership',  'access CiviMember,edit memberships', 'AND', @memberlastID, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/member/search&reset=1',                       '{ts escape="sql"}Find Members{/ts}',        'Find Members',    'access CiviMember', '', @memberlastID, '1', NULL, 3 ), 
-    ( @domainID, 'civicrm/member/import&reset=1',                       '{ts escape="sql"}Import Members{/ts}',      'Import Members',  'access CiviMember,edit memberships', 'AND', @memberlastID, '1', NULL, 4 );
+    ( @domainID, 'civicrm/member/import&reset=1',                       '{ts escape="sql"}Import Memberships{/ts}',      'Import Members',  'access CiviMember,edit memberships', 'AND', @memberlastID, '1', NULL, 4 );
 
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )

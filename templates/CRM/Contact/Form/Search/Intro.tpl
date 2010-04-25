@@ -29,7 +29,7 @@
     {if $permissionedForGroup}
     {capture assign=addMembersURL}{crmURL q="context=amtg&amtgID=`$group.id`&reset=1"}{/capture}
     <div class="action-link">
-        <a href="{$addMembersURL}">&raquo; {ts 1=$group.title}Add Members to %1{/ts}</a>
+        <a href="{$addMembersURL}">&raquo; {ts 1=$group.title}Add Contacts to %1{/ts}</a>
     </div>
     {/if}
     

@@ -568,11 +568,6 @@ div.spacer,
     padding-left: 3em;
 }
 
-
-#crm-container .separator {
-    border-bottom:2px solid #D7D7D0;
-}
-
 /* messages and status */
 #crm-container .messages {
     margin: 1.0em 0em 1.0em;

@@ -27,7 +27,7 @@
 <div class="messages status">
   <div class="icon inform-icon"></div>&nbsp;
         {if $context EQ 'smog'}
-            {capture assign=crmURL}{crmURL q="context=amtg&amtgID=`$group.id`&reset=1"}{/capture}{ts 1=$group.title 2=$crmURL}%1 has no members which match your search criteria. You can <a href='%2'>add members here.</a>{/ts}
+            {capture assign=crmURL}{crmURL q="context=amtg&amtgID=`$group.id`&reset=1"}{/capture}{ts 1=$group.title 2=$crmURL}%1 has no contacts which match your search criteria. You can <a href='%2'>add contacts here.</a>{/ts}
         {else}
             {if $qill}{ts}No matches found for:{/ts}
                 {include file="CRM/common/displaySearchCriteria.tpl"}
