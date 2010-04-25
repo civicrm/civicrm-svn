@@ -2858,6 +2858,7 @@ del,
 }
 
 /* rounded corners - we will call dd_roundies on all this */
+#crm-container .crm-button,
 #crm-container a.button,
 #crm-create-new-link,
 #crm-contact-actions-link,
