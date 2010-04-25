@@ -61,6 +61,17 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
         if ( $this->_config->editor_id ) {
             $defaults['wysiwyg_editor'] = $this->_config->editor_id ;
         }
+        if ( empty( $this->_config->display_name_format ) ) {
+            $defaults['display_name_format'] = "{contact.individual_prefix}{ }{contact.first_name}{ }{contact.last_name}{ }{contact.individual_suffix}";
+        } else {
+            $defaults['display_name_format'] = $this->_config->display_name_format;
+        }
+
+        if ( empty( $this->_config->sort_name_format ) ) {
+            $defaults['sort_name_format'] = "{contact.last_name}{, }{contact.first_name}";
+        } else {
+            $defaults['sort_name_format'] = $this->_config->sort_name_format;
+        }
         return $defaults;
     }
 
@@ -74,6 +85,8 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
     {
         $this->addElement( 'select', 'wysiwyg_editor', ts('WYSIWYG Editor'), 
                            array( '' => ts( 'Textarea' ) ) + CRM_Core_PseudoConstant::wysiwygEditor( ),null );
+        $this->addElement('textarea','display_name_format', ts('Individual Display Name Format'));  
+        $this->addElement('textarea','sort_name_format',    ts('Individual Sort Name Format'));  
         parent::buildQuickForm( );
     }
 
@@ -92,6 +105,8 @@ class CRM_Admin_Form_Preferences_Display extends CRM_Admin_Form_Preferences
 
         $this->_params = $this->controller->exportValues( $this->_name );
         $this->_config->editor_id = $this->_params['wysiwyg_editor'];
+        $this->_config->display_name_format = $this->_params['display_name_format'];
+        $this->_config->sort_name_format    = $this->_params['sort_name_format'];
 
         // set default editor to session if changed
         $session = CRM_Core_Session::singleton();

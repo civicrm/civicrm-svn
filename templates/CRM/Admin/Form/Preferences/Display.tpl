@@ -47,6 +47,14 @@
             <tr><td class="label">{$form.wysiwyg_editor.label}</td><td>{$form.wysiwyg_editor.html}</td></tr>
             <tr><td>&nbsp;</td><td class="description">{ts}Select the HTML WYSIWYG Editor provided for fields that allow HTML formatting. Select 'Textarea' if you don't want to provide a WYSIWYG Editor (users will type text and / or HTML code into plain text fields).{/ts}</td></tr>
 	{/if}
+	{if $form.display_name_format.html}
+            <tr><td class="label">{$form.display_name_format.label}</td><td>{$form.display_name_format.html}</td></tr>
+            <tr><td>&nbsp;</td><td class="description">{ts}Display name format for individual contact display names.{/ts}</td></tr>
+	{/if}
+	{if $form.sort_name_format.html}
+            <tr><td class="label">{$form.sort_name_format.label}</td><td>{$form.sort_name_format.html}</td></tr>
+            <tr><td>&nbsp;</td><td class="description">{ts}Sort name format for individual contact display names.{/ts}</td></tr>
+	{/if}
 	{if $action neq 4} {* action is not view *}
             <tr><td></td><td>{$form.buttons.html}</td></tr>
         {else}

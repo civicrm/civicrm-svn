@@ -78,9 +78,11 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         $prefix = $suffix = null;
         if ( $prefix_id ) {
             $prefix = $prefixes[$prefix_id];
+            $params['individual_prefix'] = $prefix;
         }
         if ( $suffix_id ) {
             $suffix = $suffixes[$suffix_id];
+            $params['individual_suffix'] = $suffix;
         }
 
         $params['is_deceased'] = CRM_Utils_Array::value( 'is_deceased', $params, false );
@@ -162,15 +164,24 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
         }
         
         if ( $lastName || $firstName || $middleName ) {
-            if ( $lastName && $firstName ) {
-                $contact->sort_name    = trim( "$lastName, $firstName" );
-            } else {
-                $contact->sort_name    = trim( "$lastName $firstName" );
+            $tokens = array( );
+            CRM_Utils_Hook::tokens( $tokens );
+            $tokenFields = array( );
+            foreach ( $tokens as $category => $catTokens ) {
+                foreach ( $catTokens as $token ) {
+                    $tokenFields[] = $token;
+                }
             }
+            require_once 'CRM/Utils/Address.php';
+            $format = CRM_Core_BAO_Preferences::value( 'sort_name_format' );
+            $format = str_replace( 'contact.', '', $format );
+            $contact->sort_name = CRM_Utils_Address::format( $params, $format,
+                                                             false, false, true, $tokenFields );
 
-            $display_name =
-                trim( "$prefix $firstName $middleName $lastName $suffix" );
-            $display_name = str_replace( '  ', ' ', $display_name );
+            $format = CRM_Core_BAO_Preferences::value( 'display_name_format' );
+            $format = str_replace( 'contact.', '', $format );
+            $display_name = CRM_Utils_Address::format( $params, $format,
+                                                       false, false, true, $tokenFields );
         }
 
         if (isset( $display_name ) &&
