@@ -153,9 +153,10 @@ class CRM_Utils_REST
             $result = self::error( 'Could not interpret return values from function.' );
         }
 
-        if ( CRM_Utils_Array::value( 'json', $_GET ) ) {
+        if ( CRM_Utils_Array::value( 'json', $_REQUEST ) ) {
             header( 'Content-Type: text/javascript' );
-            return json_encode(array_merge($result));
+            $json = json_encode(array_merge($result));
+            return str_replace (",{","\n,{",$json);
         }
         
         $xml = "<?xml version=\"1.0\"?>
@@ -178,7 +179,7 @@ class CRM_Utils_REST
     function handle( $config ) {
         
         // Get the function name being called from the q parameter in the query string
-        $q = CRM_Utils_array::value( 'q', $_GET );
+        $q = CRM_Utils_array::value( 'q', $_REQUEST );
         $args = explode( '/', $q );
         // If the function isn't in the civicrm namespace, reject the request.
         if ( $args[0] != 'civicrm' ) {
@@ -203,8 +204,8 @@ class CRM_Utils_REST
 
         $store = null;
         if ( $args[1] == 'login' ) {
-            $name = CRM_Utils_Request::retrieve( 'name', 'String', $store, false, 'GET' );
-            $pass = CRM_Utils_Request::retrieve( 'pass', 'String', $store, false, 'GET' );
+            $name = CRM_Utils_Request::retrieve( 'name', 'String', $store, false, 'REQUEST' );
+            $pass = CRM_Utils_Request::retrieve( 'pass', 'String', $store, false, 'REQUEST' );
             if ( empty( $name ) ||
                  empty( $pass ) ) {
                 return self::error( 'Invalid name / password.' );
@@ -237,7 +238,7 @@ class CRM_Utils_REST
         // secret key.
         if ( !$valid_user ) {
             require_once 'CRM/Core/DAO.php';
-            $api_key = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, 'GET' );
+            $api_key = CRM_Utils_Request::retrieve( 'api_key', 'String', $store, false, 'REQUEST' );
             $valid_user = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $api_key, 'id', 'api_key');
         }
 	
@@ -293,14 +294,14 @@ class CRM_Utils_REST
                            'json' => 1,
                            'return' => 1,
                            'key' => 1 );
-        foreach ( $_GET as $n => $v ) {
+        foreach ( $_REQUEST as $n => $v ) {
             if ( ! array_key_exists( $n, $skipVars ) ) {
                 $params[$n] = $v;
             }
 
         }
-        if (array_key_exists('return',$_GET)) {
-            foreach ( $_GET['return'] as $key => $v) 
+        if (array_key_exists('return',$_REQUEST)) {
+            foreach ( $_REQUEST['return'] as $key => $v) 
                 $params['return.'.$key]=1;
         }
         return $params;
