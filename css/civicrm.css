@@ -2866,6 +2866,7 @@ del,
 #crm-container input.form-submit
 {-moz-border-radius: 3px; -webkit-border-radius: 3px;   -khtml-border-radius: 3px; border-radius:3px; }
 
+#crm-container .crm-accordion-header,
 #crm-container div.status,
 div.m ul#civicrm-menu,
 #crm-container #restmsg,
