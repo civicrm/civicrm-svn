@@ -40,18 +40,23 @@
    * @access public
    */
 function civicrm_NYSS_civicrm_buildForm( $formName, &$form ) 
-{
-    require_once 'CRM/Core/PseudoConstant.php';
-    require_once 'CRM/Utils/Request.php';
-    require_once 'CRM/Core/BAO/Preferences.php';
-    $blocks = array( 'Email'   => 'email',
-                     'Phone'   => 'phone',
-                     'IM'      => 'im',
-                     'OpenID'  => 'openid',
-                     'Address' => 'address' );
-    
-    //do not allow to edit as well as set 'Board of Election' loc type.
-    if ( $formName == 'CRM_Contact_Form_Contact' ) {
+{    
+    if ( $formName == 'CRM_Contact_Form_Search_Advanced' ) {
+        require_once 'CRM/Core/Form/Tag.php';
+        require_once 'CRM/Core/BAO/Tag.php';
+        $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_contact' );
+        CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact' );                        
+    } else if ( $formName == 'CRM_Contact_Form_Contact' ) {
+        //do not allow to edit as well as set 'Board of Election' loc type.
+        require_once 'CRM/Core/PseudoConstant.php';
+        require_once 'CRM/Utils/Request.php';
+        require_once 'CRM/Core/BAO/Preferences.php';
+        $blocks = array( 'Email'   => 'email',
+                         'Phone'   => 'phone',
+                         'IM'      => 'im',
+                         'OpenID'  => 'openid',
+                         'Address' => 'address' );
+        
         $blockId   = CRM_Utils_Request::retrieve( 'count', 'Positive', CRM_Core_DAO::$_nullObject );
         $blockName = CRM_Utils_Request::retrieve( 'block', 'String', CRM_Core_DAO::$_nullObject );
         $values    = $form->_values;
