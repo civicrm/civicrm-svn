@@ -2141,13 +2141,14 @@ div.grippie {
     padding:0px 8px 4px 4px;
 }
 #crm-container .crm-button-type-cancel {margin-left:20px;}
-#crm-container .crm-button-type-cancel input { color:#7a7a7a; }
+#crm-container .crm-button-type-cancel input { color:#E6E6DC!important; }
 
 #crm-container a.button,
 #crm-create-new-link,
 #crm-contact-actions-link,
 #crm-container a.button:link,
-#crm-container input.form-submit {
+#crm-container input.form-submit,
+#crm-container .crm-button {
     text-shadow:0 1px 0 black;	
     background:transparent url(../i/crm-button-bg.gif) repeat-x top left;
     color: #FFF;
@@ -2159,7 +2160,7 @@ div.grippie {
     cursor: pointer;
     border:1px solid #3e3e3e;
     }
-    #crm-container input.form-submit { padding:0px 6px 4px;}
+    #crm-container input.form-submit { padding:0px 6px 2px;}
 
 #crm-container a.button,
 #crm-create-new-link,
