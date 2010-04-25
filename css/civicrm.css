@@ -581,12 +581,11 @@ div.spacer,
 }
 
 #crm-container div.status {
-    -moz-border-radius:4px;
-    background-color:#FFFF99;
-    border:none;
+    background-color:#FFFFCC;
+    border:1px solid #FFFF66;
     margin:0.5em 0px;
     padding:0.25em 0.5em;
-    color: #7a7a60;
+    color: #3e3e3e;
     font-weight: normal;
 }
 .status dl {margin:2px 5px;}
@@ -1693,6 +1692,7 @@ table.campaign td,
     padding: 4px;
     display: block;
     border:none;
+    cursor: pointer;
 }
 
 /*Styles for Context menu */
@@ -2863,7 +2863,7 @@ del,
 #crm-container input.form-submit
 {-moz-border-radius: 3px; -webkit-border-radius: 3px;   -khtml-border-radius: 3px; border-radius:3px; }
 
-
+#crm-container div.status,
 div.m ul#civicrm-menu,
 #crm-container #restmsg,
 #crm-container #help, 
