@@ -633,7 +633,13 @@ div.spacer,
 #restmsg.msgok {
     display:block;
     background:#B0D730;
-}
+    background-color:#F1F8EB;
+    border:1px solid #B0D730;
+    color:#3E3E3E;
+    font-size:12px;
+    margin:0 0 8px;
+    padding:4px;
+    }
 #restmsg.msgnok {
     display:block;
     background:red;
@@ -857,11 +863,13 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 /* Page and form-level 'help' */
 #crm-container #help, 
 #crm-container .help {
-    background-color:#B0D730;
+    background-color:#F1F8EB;
+    border:1px solid #B0D730;
+    color:#3E3E3E;
     font-size:12px;
     margin:0 0 8px;
     padding:4px;
-}
+    }
 
 #crm-container #help p, 
 #crm-container .help p {
@@ -2831,7 +2839,7 @@ tbody.scrollContent tr.alternateRow {
 /* buttons */
 
 /* blue theme buttons */
-/*
+
 #crm-container .crm-button,
 #crm-container .crm-button input { color:#32414f; }
 #crm-container .crm-button { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll left 0px;}
@@ -2839,7 +2847,7 @@ tbody.scrollContent tr.alternateRow {
 #crm-container .crm-button:hover { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll left -50px; }
 #crm-container .crm-button:hover input { background:transparent url(../i/crm-button-blue.gif) no-repeat scroll right -75px;	}
 #crm-container .crm-button-type-cancel input { color:#357bb7; }
-*/
+
 
 /* black theme buttons */
 /*
@@ -2864,7 +2872,7 @@ tbody.scrollContent tr.alternateRow {
 */
 
 
-/* brown theme buttons */
+/* brown theme buttons 
 #crm-container .crm-button,
 #crm-container .crm-button input { color:#FFF; }
 #crm-container a.button,
@@ -2879,6 +2887,8 @@ tbody.scrollContent tr.alternateRow {
 #crm-container a.button:active span,
 #crm-container .crm-button input {color:#FFF;}
 #crm-container .crm-button-type-cancel input { color:#e0e0d4; }
+*/
+
 
 /* warning labels and messages */
 del,
@@ -2953,7 +2963,8 @@ div#crm-toolTip
 #crm-container .ac_results li:hover,
 #crm-container .ac_results li.ac_over a,
 #crm-container .ac_results li.ac_over a:hover,
-#crm-container .ac_results li.ac_over a:visited   {  background-color:#F5F6F1; color:#3e3e3e; }
+#crm-container .ac_results li.ac_over a:visited   {  background-color:#F5F6F1; color:#666; }
+.ac_results li.ac_over strong,
 #crm-container .ac_results li.ac_over strong { color:#000; }	
 
 /* theming for panel and context menus */
