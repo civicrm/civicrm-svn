@@ -134,4 +134,5 @@
             <td colspan="4">{$form.deleted_contacts.html} {$form.deleted_contacts.label}</td>
           </tr>
         {/if}
+        <tr><td colspan="4">{include file="CRM/common/Tag.tpl"}</td></tr>
     </table>
