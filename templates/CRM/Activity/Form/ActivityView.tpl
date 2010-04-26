@@ -61,7 +61,7 @@
                           <tr>
                               <td class="label nowrap">{ts}Text Message{/ts}</td>
                               <td>
-                                  {$mailingReport.mailing.body_text|truncate:30|escape|nl2br}
+                                  {$mailingReport.mailing.body_text|mb_truncate:30|escape|nl2br}
                                   <br />
                                   <strong><a href='{$textViewURL}'>&raquo; {ts}View complete message{/ts}</a></strong>
                               </td>
@@ -72,7 +72,7 @@
                           <tr>
                               <td class="label nowrap">{ts}HTML Message{/ts}</td>
                               <td>
-                                  {$mailingReport.mailing.body_html|truncate:30|escape|nl2br}
+                                  {$mailingReport.mailing.body_html|mb_truncate:30|escape|nl2br}
                                   <br/>                         
                                   <strong><a href='{$htmlViewURL}'>&raquo; {ts}View complete message{/ts}</a></strong>
                               </td>

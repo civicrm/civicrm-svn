@@ -100,7 +100,7 @@
                 {foreach from=$summary.Activity item=row}
                     <tr class="{cycle values="odd-row,even-row"}">
                         <td>{$row.activity_type}</td>
-                        <td>{$row.subject|truncate:40}</td>
+                        <td>{$row.subject|mb_truncate:40}</td>
                         <td>{$row.details}</td>
                         <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
                         <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.target_contact_id`"}" title="{ts}View contact details{/ts}">{$row.target_sort_name}</a></td>
