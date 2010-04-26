@@ -2818,6 +2818,10 @@ tbody.scrollContent tr.alternateRow {
     color:#52534D;
 }
 
+#crm-container .crm-tasks table {
+    margin: 0;
+}
+
 /* accordion-colors */
 
 .crm-form-block { 
