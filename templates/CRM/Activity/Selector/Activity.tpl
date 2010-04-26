@@ -50,13 +50,11 @@
 
       {counter start=0 skip=1 print=false}
       {foreach from=$rows item=row}
-      <tr class="{cycle values="odd-row,even-row"} {$row.class}" id="activity_{$row.activity_id}">
+      <tr class="{cycle values="odd-row,even-row"} {$row.class} crm-activity" id="crm-activity_{$row.activity_id}">
 
-        <td>{$row.activity_type}</td>
-       
-    	<td>{$row.subject}</td>
-	
-        <td>
+        <td class="crm-activity-type crm-activity-type_{$row.activity_type_id}">{$row.activity_type}</td>
+      	<td class="crm-activity-subject">{$row.subject}</td>
+        <td class="crm-activity-source_contact_name crm-activity-source_contact_id_{$row.source_contact_id}">
         {if !$row.source_contact_id}
           <em>n/a</em>
         {elseif $contactId NEQ $row.source_contact_id}
@@ -66,7 +64,7 @@
         {/if}			
         </td>
 
-        <td>
+        <td class="crm-activity-target_contact_name">
         {if $row.mailingId}
           <a href="{$row.mailingId}" title="{ts}View Mailing Report{/ts}">{$row.recipients}</a>
         {elseif $row.recipients}
@@ -85,7 +83,7 @@
         {/if}
         </td>
 
-        <td>
+        <td class="crm-activity-assignee_contact_name">
         {if !$row.assignee_contact_name}
             <em>n/a</em>
         {elseif $row.assignee_contact_name}
@@ -100,9 +98,9 @@
         {/if}	
         </td>
 
-        <td>{$row.activity_date_time|crmDate}</td>
+        <td class="crm-activity-date_time">{$row.activity_date_time|crmDate}</td>
 
-        <td class="status_{$row.status_id}">{$row.status}</td>
+        <td class="crm-activity-status crm-activity-status_{$row.status_id}">{$row.status}</td>
 
         <td>{$row.action|replace:'xx':$row.id}</td>
       </tr>
