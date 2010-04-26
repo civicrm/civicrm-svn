@@ -342,7 +342,8 @@ class CRM_Import_ImportJob {
                                'name'          => $newTagName,
                                'title'         => $newTagName,
                                'description'   => $newTagDesc,
-                               'is_active'     => true,
+                               'is_selectable' => true,
+                               'used_for'      => 'civicrm_contact' 
                                );
             require_once 'CRM/Core/BAO/Tag.php';
             $id = array();
@@ -356,7 +357,7 @@ class CRM_Import_ImportJob {
             $tagAdditions = array();
             require_once "CRM/Core/BAO/EntityTag.php";
             foreach ($this->_tag as $tagId =>$val) {
-                $addTagCount = CRM_Core_BAO_EntityTag::addContactsToTag( $contactIds, $tagId );
+                $addTagCount = CRM_Core_BAO_EntityTag::addEntitiesToTag( $contactIds, $tagId );
                 $totalTagCount = $addTagCount[1];
                 if ($tagId == $addedTag->id) {
                     $tagName = $newTagName;
