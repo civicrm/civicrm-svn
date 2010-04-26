@@ -1018,7 +1018,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 #crm-container .float-right {
     float: right;
     width: auto;
-    padding: 0px 5px 10px 0px;
+    padding: 4px 0px;
     clear: none;
 }
 
@@ -2147,6 +2147,8 @@ div.grippie {
 #crm-contact-actions-link,
 #crm-container a.button:link,
 #crm-container input.form-submit,
+#crm-container input.button,
+#crm-container input.form-submit-inline,
 #crm-container .crm-button {
     text-shadow:0 1px 0 black;	
     background:transparent url(../i/crm-button-bg.gif) repeat-x top left;
@@ -2159,8 +2161,12 @@ div.grippie {
     cursor: pointer;
     border:1px solid #3e3e3e;
     }
-    #crm-container input.form-submit { padding:4px 6px;}
-    #crm-container .crm-button input.form-submit{
+    #crm-container input.form-submit,
+    #crm-container input.button,
+    #crm-container input.form-submit-inline { padding:4px 6px;}
+    #crm-container .crm-button input.button,
+    #crm-container .crm-button input.form-submit,
+    #crm-container .crm-button input.form-submit-inline{
         padding:0px;
         margin:0px;
         background: none;
@@ -2868,7 +2874,9 @@ del,
 #crm-create-new-link,
 #crm-contact-actions-link,
 #crm-container a.button:link,
-#crm-container input.form-submit
+#crm-container input.form-submit,
+#crm-container input.button,
+#crm-container input.form-submit-inline
 {-moz-border-radius: 3px; -webkit-border-radius: 3px;   -khtml-border-radius: 3px; border-radius:3px; }
 
 #crm-container .crm-accordion-header,
