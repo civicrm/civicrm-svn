@@ -36,21 +36,16 @@
 
 <div class="float-right">
   <table class="form-layout-compressed">
-   {if $myCases}
-    	
     <tr>
-      <td class="right">
-      {* check for access all cases and activities *}
+     <td class="right">
+        {if $myCases}
+        {* check for access all cases and activities *}
         {if call_user_func(array('CRM_Core_Permission','check'), 'access all cases and activities')}
             <a class="button" href="{crmURL p="civicrm/case" q="reset=1&all=1"}"><span>{ts}ALL Cases with Upcoming Activities{/ts}</span></a>
         {/if}
        {else}
         <a class="button" href="{crmURL p="civicrm/case" q="reset=1&all=0"}"><span>{ts}My Cases with Upcoming Activities{/ts}</span></a>
-      </td>
-    </tr>
-   {/if}
-   <tr>
-     <td class="right">
+       {/if}
        <a class="button" href="{crmURL p="civicrm/case/search" q="reset=1&case_owner=1&force=1"}"><span>{ts}My Cases{/ts}</span></a>
      </td>
    </tr>
