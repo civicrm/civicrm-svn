@@ -242,8 +242,12 @@ function civitest_civicrm_enableDisable( $recordBAO, $recordID, $isActive ) {
      }
  }
 
-function civitest_civicrm_tokens( &$tokens ) { 
-    $tokens['contribution'] = array( 'contribution.amount', 'contribution.date' );
+function civitest_civicrm_tokens( &$tokens ) {
+    $tokens['contribution'] = array( 'contribution.amount', 'contribution.date',
+        '{contribution.total_last_year}', '{contribution.date_of_first}',
+        '{contribution.largest_this_year}' => 'Largest this Year Contribution Amount',
+        '{contribution.date_of_largest_this_year}' => 'Largest this Year Contribution Date',
+        'contribution.average' => 'Average Contribution Amount', 'contribution.largest' => 'Largest Contribution' );
 }
 
 function civitest_civicrm_tokenValues( &$values, &$contactIDs ) {

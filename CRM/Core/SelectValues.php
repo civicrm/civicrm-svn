@@ -560,8 +560,17 @@ class CRM_Core_SelectValues
             $hookTokens = array( );
             CRM_Utils_Hook::tokens( $hookTokens );
             foreach ( $hookTokens as $category => $tokenValues ) {
-                foreach ( $tokenValues as $value ) {
-                    $tokens[ '{' . $value . '}' ] = '{' . $value . '}';
+                foreach ( $tokenValues as $key => $value ) {
+                    if (is_numeric( $key )) {
+                        $key = $value;
+                    }
+                    if (!preg_match('/^\{[^\}]+\}$/', $key)) {
+                        $key = '{' . $key . '}';
+                    }
+                    if (preg_match('/^\{([^\}]+)\}$/', $value, $matches)) {
+                        $value = $matches[1];
+                    }
+                    $tokens[$key] = $value;
                 }
             }
         }
