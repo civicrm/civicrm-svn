@@ -2125,19 +2125,6 @@ SELECT  id
                     }
                     $dao->free( );
                 }
-                
-                if ( $closeCaseType = array_search( 'Close Case', $activityTypes ) ) { 
-                    $sql = "
-SELECT  id
-  FROM  civicrm_activity 
- WHERE  activity_type_id = $closeCaseType 
-   AND  id IN ( ". implode( ',', array_values( $otherActivityIds ) ) . ');';
-                    $dao = CRM_Core_DAO::executeQuery( $sql );
-                    while ( $dao->fetch( ) ) {
-                        $singletonActivityIds[] = $dao->id;
-                    }
-                    $dao->free( );
-                }
             }
             
             // migrate all activities and connect to main contact.
@@ -2490,13 +2477,13 @@ SELECT id, subject, activity_date_time
             $actTypeName = CRM_Utils_Array::value( $actTypeId, $activityTypes );
             
             //do not allow multiple copy.
-            $singletonNames = array( 'Open Case', 'Close Case', 'Reassigned Case', 'Merge Case', 'Link Cases' );
+            $singletonNames = array( 'Open Case', 'Reassigned Case', 'Merge Case', 'Link Cases' );
             
             //do not allow to delete these activities, CRM-4543
             $doNotDeleteNames = array( 'Open Case', 'Change Case Type', 'Change Case Status', 'Change Case Start Date' );
             
             //allow edit operation.
-            $allowEditNames = array( 'Open Case', 'Close Case' );
+            $allowEditNames = array( 'Open Case' );
             
             if ( in_array( $actTypeName, $singletonNames ) ) {
                 $allow = false;
