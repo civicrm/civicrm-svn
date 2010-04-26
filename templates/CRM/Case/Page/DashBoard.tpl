@@ -41,7 +41,7 @@
         {if $myCases}
         {* check for access all cases and activities *}
         {if call_user_func(array('CRM_Core_Permission','check'), 'access all cases and activities')}
-            <a class="button" href="{crmURL p="civicrm/case" q="reset=1&all=1"}"><span>{ts}ALL Cases with Upcoming Activities{/ts}</span></a>
+            <a class="button" href="{crmURL p="civicrm/case" q="reset=1&all=1"}"><span>{ts}All Cases with Upcoming Activities{/ts}</span></a>
         {/if}
        {else}
         <a class="button" href="{crmURL p="civicrm/case" q="reset=1&all=0"}"><span>{ts}My Cases with Upcoming Activities{/ts}</span></a>
