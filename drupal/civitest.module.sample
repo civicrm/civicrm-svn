@@ -441,6 +441,11 @@ function civitest_civicrm_searchTasks( $objectType, &$tasks ) {
                              'class'  => 'CRM_Grant_Form_Task_SearchTaskHookSample',
                              'result' => false );
     }
+    if ( $objectType == 'activity' ) {
+        $tasks[108] = array( 'title'  => t( 'Activity Hook Action Task' ),
+                             'class'  => 'CRM_Activity_Form_Task_SearchTaskHookSample',
+                             'result' => false );
+    }
 }
 
 function civitest_civicrm_validate( $formName, &$fields, &$files, &$form ) {
