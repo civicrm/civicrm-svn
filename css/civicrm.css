@@ -2147,7 +2147,7 @@ div.grippie {
 #crm-contact-actions-link,
 #crm-container a.button:link,
 #crm-container input.form-submit,
-#crm-container input.button,
+#crm-container input[type=button],
 #crm-container input.form-submit-inline,
 #crm-container .crm-button {
     text-shadow:0 1px 0 black;	
@@ -2162,9 +2162,9 @@ div.grippie {
     border:1px solid #3e3e3e;
     }
     #crm-container input.form-submit,
-    #crm-container input.button,
+    #crm-container input[type=button],
     #crm-container input.form-submit-inline { padding:4px 6px;}
-    #crm-container .crm-button input.button,
+    #crm-container .crm-button input[type=button],
     #crm-container .crm-button input.form-submit,
     #crm-container .crm-button input.form-submit-inline{
         padding:0px;
@@ -2875,7 +2875,7 @@ del,
 #crm-contact-actions-link,
 #crm-container a.button:link,
 #crm-container input.form-submit,
-#crm-container input.button,
+#crm-container input[type=button],
 #crm-container input.form-submit-inline
 {-moz-border-radius: 3px; -webkit-border-radius: 3px;   -khtml-border-radius: 3px; border-radius:3px; }
 
