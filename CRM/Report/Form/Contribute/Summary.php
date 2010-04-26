@@ -343,7 +343,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             }
             if ( !empty( $grouping ) ) {
                 $temp = 'and '. implode(', ', $grouping );
-                $errors['fields'] = ts("Please Do not use combination of received date %1", array( 1 => $temp ));    
+                $errors['fields'] = ts("Please do not use combination of Receive Date %1", array( 1 => $temp ));    
             }
         }
          
@@ -351,7 +351,7 @@ class CRM_Report_Form_Contribute_Summary extends CRM_Report_Form {
             if ( CRM_Utils_Array::value( 'receive_date_relative', $fields ) || 
                  CRM_Utils_Date::isDate( $fields['receive_date_from'] ) || 
                  CRM_Utils_Date::isDate( $fields['receive_date_to'] ) ) {
-                $errors['receive_date_relative'] = ts("Do not use filter on Date if group by received date not used ");      
+                $errors['receive_date_relative'] = ts("Do not use filter on Date if group by Receive Date is not used ");      
             }
         }         
         if ( !CRM_Utils_Array::value( 'total_amount', $fields['fields'] ) ) {
