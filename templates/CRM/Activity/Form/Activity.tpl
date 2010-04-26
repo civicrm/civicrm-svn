@@ -83,7 +83,7 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
 });
 </script>
 {/literal}
-{if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
+{if !$action or ( $action eq 1 ) or ( $action eq 2 ) or ( $action eq 512 ) }
     <div class="crm-submit-buttons">{$form.buttons.html}</div>
 {/if}
     <fieldset>
@@ -262,7 +262,7 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
         </table>   
       </fieldset> 
 
-{if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
+{if !$action or ( $action eq 1 ) or ( $action eq 2 ) or ( $action eq 512 ) }
   <br />    
   <div class="crm-submit-buttons">{$form.buttons.html}</div>
 {/if}
