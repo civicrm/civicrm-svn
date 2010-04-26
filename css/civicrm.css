@@ -2160,7 +2160,7 @@ div.grippie {
     cursor: pointer;
     border:1px solid #3e3e3e;
     }
-    #crm-container input.form-submit { padding:0px 6px 2px;}
+    #crm-container input.form-submit { padding:4px 6px;}
     #crm-container .crm-button input.form-submit{
         padding:0px;
         margin:0px;
