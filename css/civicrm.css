@@ -2017,13 +2017,6 @@ div.grippie {
     color: #000000;
 }
 
-#crm-container .report-layout .sticky-header {
-    background-color  : #DCDCDC;
-    border            : 1px solid #DCDCDC;
-}
-
-
-
 #crm-container table.view-layout {
     margin: 0em;
     border-collapse: collapse;
