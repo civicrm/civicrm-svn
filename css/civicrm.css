@@ -20,7 +20,7 @@
     text-decoration: none;
 }
 
-#crm-container .crm-content-block {padding: 4px 0px;}
+#crm-container .crm-content-block {padding: 0px 0px;}
 
 #crm-container .crm-content-block .crm-content-block {padding:0px;}
 /* TABLE STYLING */
