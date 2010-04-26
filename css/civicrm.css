@@ -2135,10 +2135,9 @@ div.grippie {
     color:#FFF;
     cursor:pointer;
     font-size:12px;
-    height:25px;
     font-weight:normal;
     margin:0 0 0 0px;
-    padding:0px 8px 4px 4px;
+    padding:1px 8px 2px 4px;
 }
 #crm-container .crm-button-type-cancel {margin-left:20px;}
 #crm-container .crm-button-type-cancel input { color:#E6E6DC!important; }
