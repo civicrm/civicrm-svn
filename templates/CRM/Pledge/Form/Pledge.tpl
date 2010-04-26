@@ -71,7 +71,7 @@
             <td>{include file="CRM/common/jcalendar.tpl" elementName=create_date}<br />
         {/if}
         {if $create_date}
-            <tr><td class="label">Pledge Made</td><td class="view-value">{$create_date|truncate:10:''|crmDate}
+            <tr><td class="label">{ts}Pledge Made{/ts}</td><td class="view-value">{$create_date|truncate:10:''|crmDate}
         {/if}<br />
             <span class="description">{ts}Date when pledge was made by the contributor.{/ts}</span></td></tr>
        
@@ -81,7 +81,7 @@
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}<br />
         {/if}
         {if $start_date}
-            <tr><td class="label">Payments Start</td><td class="view-value">{$start_date|truncate:10:''|crmDate}
+            <tr><td class="label">{ts}Payments Start{/ts}</td><td class="view-value">{$start_date|truncate:10:''|crmDate}
         {/if}<br />
             <span class="description">{ts}Date of first pledge payment.{/ts}</span></td></tr>
        
