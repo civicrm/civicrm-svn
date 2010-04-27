@@ -23,6 +23,26 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div id="help">
+    <p>
+    {ts}The information below previews the results of importing your data in CiviCRM. Review the totals to ensure that they represent your expected results.{/ts}         
+    </p>
+    
+    {if $invalidRowCount}
+        <p class="error">
+        {ts 1=$invalidRowCount 2=$downloadErrorRecordsUrl}CiviCRM has detected invalid data or formatting errors in %1 records. If you continue, these records will be skipped. OR, you can download a file with just these problem records - <a href='%2'>Download Errors</a>. Then correct them in the original import file, cancel this import and begin again at step 1.{/ts}
+        </p>
+    {/if}
+
+    {if $conflictRowCount}
+        <p class="error">
+        {ts 1=$conflictRowCount 2=$downloadConflictRecordsUrl}CiviCRM has detected %1 records with conflicting email addresses within this data file. If you continue, these records will be skipped. OR, you can download a file with just these problem records - <a href='%2'>Download Conflicts</a>. Then correct them in the original import file, cancel this import and begin again at step 1.{/ts}
+        </p>
+    {/if}
+    
+    <p>{ts}Click 'Import Now' if you are ready to proceed.{/ts}</p>
+ </div>
+
 <div class="crm-block crm-form-block">
 {literal}
 <script type="text/javascript">
@@ -81,26 +101,7 @@ function verify( ) {
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
  
- <div id="help">
-    <p>
-    {ts}The information below previews the results of importing your data in CiviCRM. Review the totals to ensure that they represent your expected results.{/ts}         
-    </p>
-    
-    {if $invalidRowCount}
-        <p class="error">
-        {ts 1=$invalidRowCount 2=$downloadErrorRecordsUrl}CiviCRM has detected invalid data or formatting errors in %1 records. If you continue, these records will be skipped. OR, you can download a file with just these problem records - <a href='%2'>Download Errors</a>. Then correct them in the original import file, cancel this import and begin again at step 1.{/ts}
-        </p>
-    {/if}
-
-    {if $conflictRowCount}
-        <p class="error">
-        {ts 1=$conflictRowCount 2=$downloadConflictRecordsUrl}CiviCRM has detected %1 records with conflicting email addresses within this data file. If you continue, these records will be skipped. OR, you can download a file with just these problem records - <a href='%2'>Download Conflicts</a>. Then correct them in the original import file, cancel this import and begin again at step 1.{/ts}
-        </p>
-    {/if}
-    
-    <p>{ts}Click 'Import Now' if you are ready to proceed.{/ts}</p>
- </div>
-
+ 
 {* Import Progress Bar and Info *}
 <div id="id-processing" class="hiddenElement">
 	<h3>Importing records...</h3><br />
@@ -151,57 +152,63 @@ function verify( ) {
  
  {* Group options *}
  {* New Group *}
-    <div id="newGroup_show" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('newGroup_show'); show('newGroup'); return false;">&raquo; <label>{ts}Add imported records to a new group{/ts}</label>{*$form.newGroup.label*}</a>
-    </div>
-
-    <div id="newGroup" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('newGroup'); show('newGroup_show'); return false;">&raquo; <label>{ts}Add imported records to a new group{/ts}</label></a>
-        <div class="form-item">
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+    {ts}Add imported records to a new group{/ts}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
             <dl>
             <dt class="description">{$form.newGroupName.label}</dt><dd>{$form.newGroupName.html}</dd>
             <dt class="description">{$form.newGroupDesc.label}</dt><dd>{$form.newGroupDesc.html}</dd>
             </dl>
-        </div>
-    </div>
-      {* Existing Group *}
-    {if $form.groups}
-    <div id="existingGroup_show" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('existingGroup_show'); show('existingGroup'); return false;">&raquo; {$form.groups.label}</a>
-    </div>
-    {/if}
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 
-    <div id="existingGroup" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('existingGroup'); show('existingGroup_show'); return false;">&raquo; {$form.groups.label}</a>
+
+      {* Existing Group *}
+
+<div class="crm-accordion-wrapper crm-existing_group-accordion {if $form.groups}crm-accordion-open{else}crm-accordion-closed{/if}">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
+  {$form.groups.label}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+  
         <div class="form-item">
             <dl>
             <dt></dt><dd>{$form.groups.html}</dd>
             </dl>
         </div>
-    </div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 
     {* Tag options *}
     {* New Tag *}
-    <div id="newTag_show" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('newTag_show'); show('newTag'); return false;">&raquo; <label>{ts}Create a new tag and assign it to imported records{/ts}</label></a>
-    </div> 
-    <div id="newTag" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('newTag'); show('newTag_show'); return false;">&raquo; <label>{ts}Create a new tag and assign it to imported records{/ts}</label></a>
-            <div class="form-item">
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
+  {ts}Create a new tag and assign it to imported records{/ts}            
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+  
+  <div class="form-item">
 				<dl>
 				<dt class="description">{$form.newTagName.label}</dt><dd>{$form.newTagName.html}</dd>
 				<dt class="description">{$form.newTagDesc.label}</dt><dd>{$form.newTagDesc.html}</dd>
             </dl>
-        </div>
     </div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
     {* Existing Tag Imported Contact *}
 
-    <div id="tag_show" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('tag_show'); show('tag'); return false;">&raquo; <label>{ts}Tag imported records{/ts}</label></a>
-    </div>
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div>
+  {ts}Tag imported records{/ts}
+</div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
 
-    <div id="tag" class="section-hidden section-hidden-border">
-        <a href="#" onclick="hide('tag'); show('tag_show'); return false;">&raquo; <label>{ts}Tag imported records{/ts}</label></a>
         <dl>
             <dt></dt>
 			<dd class="listing-box" style="margin-bottom: 0em; width: 15em;">
@@ -210,16 +217,18 @@ function verify( ) {
 				{/foreach}
             </dd>
         </dl>
-    </div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 </div> {* End of preview-info div. We hide this on form submit. *}
 
 <div id="crm-submit-buttons">
    {$form.buttons.html}
 </div>
-<script type="text/javascript">
-hide('newGroup');
-hide('existingGroup');
-hide('newTag');
-hide('tag');
-</script>
 </div>
+{literal}
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+{/literal}
