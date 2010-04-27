@@ -150,11 +150,25 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         parent::buildQuickForm();
     }
 
-    static function formRule( $fields ) {
+    static function formRule( $fields )
+    {
         $errors = array( );
+        if ( CRM_Utils_Array::value( 'monetaryThousandSeparator', $fields ) == 
+             CRM_Utils_Array::value( 'monetaryDecimalPoint', $fields ) ) {
+            $errors['monetaryThousandSeparator'] = ts( 'Thousands Separator and Decimal Delimiter can not be the same.' );
+        }
+
+        if ( strlen($fields['monetaryThousandSeparator'] ) > 1 ) {
+            $errors['monetaryThousandSeparator'] = ts( 'Thousands Separator can not have more than 1 character.' );
+        }
+
+        if ( strlen($fields['monetaryDecimalPoint'] ) > 1 ) {
+            $errors['monetaryDecimalPoint'] = ts( 'Decimal Delimiter can not have more than 1 character.' );
+        }        
+
         if ( trim( $fields['customTranslateFunction'] ) &&
              ! function_exists( trim( $fields['customTranslateFunction'] ) ) ) {
-            $errors['customTranslateFunction'] = ts( 'Please define the custom translation function first' );
+            $errors['customTranslateFunction'] = ts( 'Please define the custom translation function first.' );
         }
         return empty( $errors ) ? true : $errors;
     }

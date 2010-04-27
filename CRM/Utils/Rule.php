@@ -319,19 +319,17 @@ class CRM_Utils_Rule
         $value = str_replace( array( ' ', "\t", "\n" ), '', $value );
 
         $config = CRM_Core_Config::singleton( );
-        setlocale( LC_ALL, $config->lcMessages );
-        $localeInfo = localeconv( );
 
-        if ( array_key_exists( 'mon_thousands_sep', $localeInfo ) ) {
-            $mon_thousands_sep = $localeInfo['mon_thousands_sep'];
+        if ( $config->monetaryThousandSeparator ) {
+            $mon_thousands_sep = $config->monetaryThousandSeparator;
         } else {
             $mon_thousands_sep = ',';
         }
 
         $value = str_replace( $mon_thousands_sep, '', $value );
 
-        if ( array_key_exists( 'mon_decimal_point', $localeInfo ) ) {
-            $mon_decimal_point = $localeInfo['mon_decimal_point'];
+        if ( $config->monetaryDecimalPoint ) {
+            $mon_decimal_point = $config->monetaryDecimalPoint;
         } else {
             $mon_decimal_point = '.';
         }
@@ -342,6 +340,16 @@ class CRM_Utils_Rule
 
     static function money($value) 
     {
+        $config = CRM_Core_Config::singleton( );
+        
+        //only edge case when we have a decimal point in the input money
+        //field and not defined in the decimal Point in config settings
+        if ($config->monetaryDecimalPoint && 
+            $config->monetaryDecimalPoint != '.' &&
+            substr_count( $value, '.' ) ) {
+            return false;
+        }
+
         $value = self::cleanMoney( $value );
 
         if ( self::integer( $value ) ) {
