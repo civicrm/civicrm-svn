@@ -740,9 +740,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
             }
 
             if (!$status) {
-                $fields = array( '' => array( 'title' => ts('- do not import -') ) );
+                $fields = array( '' => array( 'title' => '- ' . ts('do not import') . ' -' ) );
             } else {
-                $fields = array( '' => array( 'title' => ts('- Membership Fields -') ) );
+                $fields = array( '' => array( 'title' => '- ' . ts('Membership Fields') . ' -' ) );
             }
             
             $tmpFields     = CRM_Member_DAO_Membership::import( );
@@ -762,7 +762,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                 foreach ( $fieldsArray as $value) {
                     $tmpContactField[trim($value)] = CRM_Utils_Array::value(trim($value),$contactFields);
                     if (!$status) {
-                        $title = $tmpContactField[trim($value)]['title']." (match to contact)" ;
+                        $title = $tmpContactField[trim($value)]['title']." " . ts("(match to contact)") ;
                     } else {
                         $title = $tmpContactField[trim($value)]['title'];
                     }
@@ -770,9 +770,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                 }
             }
             $tmpContactField['external_identifier'] = $contactFields['external_identifier'];
-            $tmpContactField['external_identifier']['title'] = $contactFields['external_identifier']['title'] . " (match to contact)";
+            $tmpContactField['external_identifier']['title'] = $contactFields['external_identifier']['title'] . " " .  ts("(match to contact)");
                        
-            $tmpFields['membership_contact_id']['title'] = $tmpFields['membership_contact_id']['title'] . " (match to contact)";
+            $tmpFields['membership_contact_id']['title'] = $tmpFields['membership_contact_id']['title'] . " " .  ts("(match to contact)");;
            
             $fields = array_merge($fields, $tmpContactField);
             $fields = array_merge($fields, $tmpFields);
