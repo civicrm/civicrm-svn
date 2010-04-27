@@ -29,6 +29,8 @@
 {capture assign=infoMessage}<strong>{ts}Profile Preview{/ts}</strong>{/capture}
 {/if}
 {include file="CRM/common/info.tpl"}
+<div class="crm-form-block">
+
 {if ! empty( $fields )}
 {if $viewOnly }
 {* wrap in crm-container div so crm styles are used *}
@@ -50,7 +52,7 @@
            {/if}
         {/if}   
        {if $mode ne 8}
-            <fieldset><legend>{$field.groupTitle}</legend>
+            <h3>{$field.groupTitle}</h3>
        {/if}
         {assign var=fieldset  value=`$field.groupTitle`}
         {assign var=groupHelpPost  value=`$field.groupHelpPost`}
@@ -129,7 +131,7 @@
     {if $addCAPTCHA }
         {include file='CRM/common/ReCAPTCHA.tpl'}
     {/if}   
-    </table></fieldset>
+    </table>
     {if $field.groupHelpPost}
     <div class="messages help">{$field.groupHelpPost}</div>
     {/if}
@@ -142,7 +144,7 @@
 {/if} {* fields array is not empty *}
 
 
-<div class=" horizontal-center "> 
+<div class="crm-submit-buttons"> 
 	{$form.buttons.html}
 </div>
-
+</div>

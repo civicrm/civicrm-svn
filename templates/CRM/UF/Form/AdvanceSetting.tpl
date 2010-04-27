@@ -26,14 +26,17 @@
 {literal}
 <script type="text/javascript">
     cj(function() {
-        cj("#accordion").accordion({ active: false, header: "h3", collapsible: true, clearStyle: true });
+        cj().crmaccordions(); 
     });
 </script>
 {/literal}
 
-<div id="accordion">
-    <h3><a href="#">Advanced Settings</a></h3>
-    <div style="background:#F7F7F7;">
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+    Advanced Settings 
+  </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
         <dl>
             <dt>{$form.group.label}</dt>
             <dd>{$form.group.html} {help id='id-limit_group' file="CRM/UF/Form/Group.hlp"}</dd>

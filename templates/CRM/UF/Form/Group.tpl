@@ -23,25 +23,31 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* add/update/view CiviCRM Profile *}       
-<div class="form-item">   
+{* add/update/view CiviCRM Profile *} 
+{if $action eq 2 or $action eq 4 } {* Update or View*}
+    <div class="action-link">
+	<a href="{crmURL p='civicrm/admin/uf/group/field' q="action=browse&reset=1&gid=$gid"}" class="button"><span>{ts}View or Edit Fields for this Profile{/ts}</a></span>
+	<div class="clear"></div>
+    </div>
+{/if}      
+<div class="crm-form-block">   
     {if $action eq 8 or $action eq 64}
-        <fieldset>
-            {if $action eq 8}
-                <legend>{ts}Delete CiviCRM Profile{/ts}</legend>
-            {else}
-                <legend>{ts}Disable CiviCRM Profile{/ts}</legend>
-            {/if}
             <div class="messages status">
                 <dl>
                     <dt><div class="icon inform-icon"></div></dt>
                     <dd>{$message}</dd>
                 </dl>
-            </div>
-        </fieldset>
+            </div>            
+            <h3>
+            {if $action eq 8}
+                {ts}Delete CiviCRM Profile{/ts}
+            {else}
+                {ts}Disable CiviCRM Profile{/ts}
+            {/if}
+            </h3>
+
     {else}
-        <fieldset>
-            <legend>{ts}CiviCRM Profile{/ts}</legend>
+        <h3>{ts}CiviCRM Profile{/ts}</h3>
                 <table class="form-layout">
                     <tr>
                         <td class="label">{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_group' field='title' id=$gid}{/if}</td>
@@ -67,7 +73,6 @@
                         <td class="label"></td><td class="html-adjust">{$form.is_active.html} {$form.is_active.label}</td>
                     </tr>
                 </table>
-	</fieldset>
         {* adding advance setting tab *}
         {include file='CRM/UF/Form/AdvanceSetting.tpl'}        
     {/if}
@@ -80,18 +85,12 @@
             <dd></dd>
         </dl>
     {else}
-        <div id="crm-done-button">
+        <div id="crm-submit-buttons">
             <dt></dt>
             <dd>{$form.done.html}</dd>
         </div>
     {/if} {* $action ne view *}
 </div>
-  
-{if $action eq 2 or $action eq 4 } {* Update or View*}
-    <div class="action-link">
-	<a href="{crmURL p='civicrm/admin/uf/group/field' q="action=browse&reset=1&gid=$gid"}" class="button"><span>&raquo; {ts}View or Edit Fields for this Profile{/ts}</a></span>
-    </div>
-{/if}
 
 {include file="CRM/common/showHide.tpl"}
 
