@@ -687,16 +687,24 @@ WHERE  $whereCond
      */
     static function getContactPledges( $contactID )
     {
+        $pledgeDetails = array( );
         require_once 'CRM/Contribute/PseudoConstant.php';
         $pledgeStatuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
+        $status = array( );
+
         //get pending and in progress status
-        $status[] = array_search( 'Pending', $pledgeStatuses );
-        $status[] = array_search( 'In Progress', $pledgeStatuses );
-        $status[] = array_search( 'Overdue', $pledgeStatuses );
+        foreach ( array( 'Pending', 'In Progress', 'Overdue'  ) as $name ) {
+            if ( $statusId = array_search(  $name, $pledgeStatuses ) ) {
+                $status[] = $statusId;
+            }
+        }
+        if ( empty( $status ) ) {
+            return $pledgeDetails;
+        }
         
         $statusClause = " IN (" . implode( ',', $status ) .")";    
-
+        
         $query = "
 SELECT civicrm_pledge.id id
 FROM civicrm_pledge
@@ -706,12 +714,11 @@ WHERE civicrm_pledge.status_id  {$statusClause}
 
         $params[1] = array( $contactID, 'Integer' );
         $pledge = CRM_Core_DAO::executeQuery( $query, $params );
-
-        $pledgeDetails = array( );
+        
         while ( $pledge->fetch( ) ) {
             $pledgeDetails[] = $pledge->id;
         }
-
+        
         return $pledgeDetails;
     }
     
