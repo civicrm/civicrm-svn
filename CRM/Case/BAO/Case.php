@@ -2477,7 +2477,7 @@ SELECT id, subject, activity_date_time
             $actTypeName = CRM_Utils_Array::value( $actTypeId, $activityTypes );
             
             //do not allow multiple copy.
-            $singletonNames = array( 'Open Case', 'Reassigned Case', 'Merge Case', 'Link Cases' );
+            $singletonNames = array( 'Open Case', 'Reassigned Case', 'Merge Case', 'Link Cases', 'Assign Case Role' );
             
             //do not allow to delete these activities, CRM-4543
             $doNotDeleteNames = array( 'Open Case', 'Change Case Type', 'Change Case Status', 'Change Case Start Date' );
