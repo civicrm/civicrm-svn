@@ -31,10 +31,21 @@
         {ts 1=$docLink}You can update the features and content for this event from here. Refer to the %1 for more information.{/ts}
     {/if}
 </div>
-
+<div class="crm-content-block">
 {* Skip participant search links for event templates. *}
 {if ! $isTemplate}
-    {ts}Participants{/ts}: <a href="{$findParticipants.urlCounted}" title="{ts}Find participants with counted statuses{/ts}">{$findParticipants.statusCounted}</a>, <a href="{$findParticipants.urlNotCounted}" title="{ts}Find participants with NOT counted statuses{/ts}">{$findParticipants.statusNotCounted}</a>
+<div class="action-links">
+    <table class="form-layout">
+    <tr>
+    <td>
+    <a class="button" href="{$findParticipants.urlCounted}" title="{ts}Find participants with counted statuses{/ts}"><span>{ts}Find participants with counted statuses{/ts}</span></a>{$findParticipants.statusCounted}
+    </td></tr>
+    <tr><td>
+    <a class="button" href="{$findParticipants.urlNotCounted}" title="{ts}Find participants with NOT counted statuses{/ts}"><span>{ts}Find participants with NOT counted statuses{/ts}</span></a> {$findParticipants.statusNotCounted}
+    </td>
+    </tr>
+    </table>
+</div>    
 {/if}
 
 <table class="report"> 
@@ -94,3 +105,4 @@
     {/if}
 {/if}
 </table>
+</div>

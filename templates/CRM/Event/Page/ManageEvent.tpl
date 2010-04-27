@@ -28,21 +28,33 @@
 {capture assign=icalFeed}{crmURL p='civicrm/event/ical' q="reset=1&page=1"}{/capture}
 {capture assign=rssFeed}{crmURL p='civicrm/event/ical' q="reset=1&page=1&rss=1"}{/capture}
 {capture assign=htmlFeed}{crmURL p='civicrm/event/ical' q="reset=1&page=1&html=1"}{/capture}
-
+<div class="crm-form-block">
 {if $action eq 1 or $action eq 2 }
     {include file="CRM/Event/Page/ManageEventEdit.tpl"}
 {/if}
 
-<a accesskey="N" href="{$newEventURL}" id="newManageEvent" class="button"><span><div class="icon add-icon"></div>{ts}Add Event{/ts}</span></a>
-<div class="right">
-    <a href="{$htmlFeed}" title="{ts}HTML listing of current and future public events.{/ts}"><img src="{$config->resourceBase}i/applications-internet.png" alt="{ts}HTML listing of current and future public events.{/ts}" /></a>&nbsp;&nbsp;<a href="{$rssFeed}" title="{ts}Get RSS 2.0 feed for current and future public events.{/ts}"><img src="{$config->resourceBase}i/feed-icon.png" alt="{ts}Get RSS 2.0 feed for current and future public events.{/ts}" /></a>&nbsp;&nbsp;<a href="{$icalFile}" title="{ts}Download iCalendar file for current and future public events.{/ts}"><img src="{$config->resourceBase}i/office-calendar.png" alt="{ts}Download iCalendar file for current and future public events.{/ts}" /></a>&nbsp;&nbsp;<a href="{$icalFeed}" title="{ts}Get iCalendar feed for current and future public events.{/ts}"><img src="{$config->resourceBase}i/ical_feed.gif" alt="{ts}Get iCalendar feed for current and future public events.{/ts}" /></a>&nbsp;&nbsp;&nbsp;{help id='icalendar'}
+<div class="float-right">
+    <a href="{$htmlFeed}" title="{ts}HTML listing of current and future public events.{/ts}">
+    <img src="{$config->resourceBase}i/applications-internet.png" alt="{ts}HTML listing of current and future public events.{/ts}" /></a>&nbsp;&nbsp;
+    <a href="{$rssFeed}" title="{ts}Get RSS 2.0 feed for current and future public events.{/ts}">
+    <img src="{$config->resourceBase}i/feed-icon.png" alt="{ts}Get RSS 2.0 feed for current and future public events.{/ts}" /></a>&nbsp;&nbsp;
+    <a href="{$icalFile}" title="{ts}Download iCalendar file for current and future public events.{/ts}">
+    <img src="{$config->resourceBase}i/office-calendar.png" alt="{ts}Download iCalendar file for current and future public events.{/ts}" /></a>&nbsp;&nbsp;
+    <a href="{$icalFeed}" title="{ts}Get iCalendar feed for current and future public events.{/ts}">
+    <img src="{$config->resourceBase}i/ical_feed.gif" alt="{ts}Get iCalendar feed for current and future public events.{/ts}" /></a>&nbsp;&nbsp;&nbsp;{help id='icalendar'}
+</div>
+{include file="CRM/Event/Form/SearchEvent.tpl"}
 </div>
 
 
-{include file="CRM/Event/Form/SearchEvent.tpl"}
-
+<div class="crm-content-block">
+<div class="action-link">
+    <a accesskey="N" href="{$newEventURL}" id="newManageEvent" class="button"><span><div class="icon add-icon"></div>{ts}Add Event{/ts}</span></a>
+<div class="clear"></div>
+</div>
 {if $rows}
-    <div id=event_status_id>
+
+    <div id="event_status_id">
         {strip}
         {include file="CRM/common/pager.tpl" location="top"}
         {include file="CRM/common/pagerAToZ.tpl"}
@@ -109,3 +121,4 @@
     </div>    
    {/if}
 {/if}
+</div>

@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div class="form-item">
- <fieldset><legend>{ts}Find Events{/ts}</legend>
+ <h3>{ts}Find Events{/ts}</h3>
   <table class="form-layout">
     <tr>
         <td class="label">{$form.title.label}</td>
@@ -61,7 +61,6 @@
       </table> 
     </td></tr>  
   </table>
-</fieldset>
 </div>
 
 {include file="CRM/common/showHide.tpl"}

@@ -24,13 +24,15 @@
  +--------------------------------------------------------------------+
 *}
 {assign var=eventID value=$id}
+<div id="help">
+{ts}If you want to provide an Online Registration page for this event, check the first box below and then complete the fields on this form.{/ts} 
+{help id="id-event-reg"}
+</div>
+<div class="crm-form-block">
 <div class="crm-submit-buttons">
     {$form.buttons.html}
 </div>
-<fieldset>
-<div id="help">
-{ts}If you want to provide an Online Registration page for this event, check the first box below and then complete the fields on this form.{/ts} {help id="id-event-reg"}
-</div>
+
 <div class="form-item">
     <div id="register">
      <dl>
@@ -238,11 +240,10 @@
         </div>
     </div>
     </div> {*end of div registration_blocks*}
- </fieldset>
  <div class="crm-submit-buttons">
        {$form.buttons.html}
  </div>
-
+</div>
 {include file="CRM/common/showHide.tpl"}
 {include file="CRM/common/showHideByFieldValue.tpl" 
 trigger_field_id    ="is_online_registration"

@@ -25,12 +25,6 @@
 *}
 {* this template is used for adding event  *}
 {capture assign="adminPriceSets"}{crmURL p='civicrm/admin/price' q="reset=1"}{/capture}
-
-<div class="form-item">
-<div class="crm-submit-buttons">
-    {$form.buttons.html}
-</div>
-<fieldset>
     {if !$paymentProcessor}
         {capture assign=ppUrl}{crmURL p='civicrm/admin/paymentProcessor' q="reset=1"}{/capture}
         <div class="status message">
@@ -38,6 +32,11 @@
                 <p>{ts}NOTE: Alternatively, you can enable the <strong>Pay Later</strong> option below without setting up a payment processor. All users will then be asked to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts}</p>
         </div>
     {/if}
+<div class="crm-form-block">
+<div class="crm-submit-buttons">
+    {$form.buttons.html}
+</div>
+
     <dl>
     <dt>{$form.title.label}</dt><dd>{$form.title.html}</dd>
     <dt>{$form.is_monetary.label}</dt><dd>{$form.is_monetary.html}</dd>
@@ -171,7 +170,6 @@
     </div>
     </div>	
     </div>
-</fieldset>
 <div class="crm-submit-buttons">
     {$form.buttons.html}
 </div>

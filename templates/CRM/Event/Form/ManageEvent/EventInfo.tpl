@@ -32,6 +32,7 @@
 	        </dl>
         </div>
 {/if}
+<div class="crm-form-block">
 {if $cdType} 
 	{include file="CRM/Custom/Form/CustomData.tpl"} 
 {else} 
@@ -40,7 +41,6 @@
         <div class="crm-submit-buttons">
             {$form.buttons.html}
         </div>
-	<fieldset>
 	<table class="form-layout-compressed">
     	{if $form.template_id}
     		<tr>
@@ -162,7 +162,6 @@
 			});
 		</script>
 	{/literal}
-	</fieldset>     
         <div class="crm-submit-buttons">
             {$form.buttons.html}
         </div>
@@ -172,7 +171,7 @@
     {* include jscript to warn if unsaved form field changes *}
     {include file="CRM/common/formNavigate.tpl"}
 {/if}
-
+</div>
 {literal}
 <script type="text/javascript">
 

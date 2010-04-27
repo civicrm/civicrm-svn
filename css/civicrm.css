@@ -2107,7 +2107,6 @@ div.grippie {
 
 #crm-container .crm-submit-buttons,
 #crm-container .action-link {
-    height:25px;
     margin: 4px 0px 4px 2px;
 }
 
@@ -2156,7 +2155,7 @@ div.grippie {
     }
     #crm-container input.form-submit,
     #crm-container input[type=button],
-    #crm-container input.form-submit-inline { padding:4px 6px;}
+    #crm-container input.form-submit-inline { padding:2px 6px;}
     #crm-container .crm-button input[type=button],
     #crm-container .crm-button input.form-submit,
     #crm-container .crm-button input.form-submit-inline{
@@ -2286,7 +2285,7 @@ span.icon {
 .check-icon { background-position: -66px -146px; }
 .refresh-icon { background-position:-65px -81px; }
 .settings-icon { background-position:-178px -114px; }
-.email-icon { background-position:-79px -98px; }
+.email-icon { background-position:-81px -98px; }
 .preview-icon { background-position:-227px -129px; }
 
 #crm-container .geotag {
@@ -2670,6 +2669,11 @@ div#civicrm-dashboard form {
 #crm-container .signature {
     width: 495px;
 }
+
+/* editor skin tweaks */
+
+#crm-container span.cke_skin_kama {border:none;}
+#crm-container .cke_skin_kama .cke_wrapper {background-image: none;}
 
 /* skin */
 

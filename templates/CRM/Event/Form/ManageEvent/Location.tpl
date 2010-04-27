@@ -24,16 +24,18 @@
  +--------------------------------------------------------------------+
 *}
 {* this template used to build location block *}
+{if !$addBlock}
+   <div id="help">
+        {ts}Use this form to configure the location and optional contact information for the event. This information will be displayed on the Event Information page. It will also be included in online registration pages and confirmation emails if these features are enabled.{/ts}
+    </div>
+{/if}
+<div class="crm-form-block">
 {if $addBlock}
 {include file="CRM/Contact/Form/Edit/$blockName.tpl"}
 {else}
 <div class="crm-submit-buttons">
     {$form.buttons.html}
 </div>
-<fieldset>
-    <div id="help">
-        {ts}Use this form to configure the location and optional contact information for the event. This information will be displayed on the Event Information page. It will also be included in online registration pages and confirmation emails if these features are enabled.{/ts}
-    </div>
     {if $locEvents}
     	<table class="form-layout-compressed">
 			<tr id="optionType">
@@ -86,9 +88,9 @@
 		</td>
 	</tr>
 	</table>
-</fieldset>
 <div class="crm-submit-buttons">
     {$form.buttons.html}
+</div>
 </div>
     
 {* Include Javascript to hide and display the appropriate blocks as directed by the php code *} 
