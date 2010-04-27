@@ -25,23 +25,26 @@
 *}
 {* this template is used for adding/editing/deleting Message Templates *}
 {capture assign=tokenDocsRepeated}{docURL page="Mail-merge Tokens for Contact Data" text="token documentation"}{/capture}
+{if $action neq 8}
 <div id="help">
     {ts}Use this form to add or edit re-usable message templates.{/ts} {help id="id-msgTplIntro"}
 </div>
+{/if}
+<div class="crm-block crm-form-block"> 
 <div class="form-item" id="message_templates">
-<fieldset><legend>{if $action eq 1}{ts}New Message Template{/ts}{elseif $action eq 2}{ts}Edit Message Template{/ts}{else}{ts}Delete Message Template{/ts}{/if}</legend>
-  
-   {if $action eq 8}
-      <div class="messages status">
-        <dl>
-          <dt><div class="icon inform-icon"></div></dt>
-          <dd>
-          {ts}Do you want to delete this message template?{/ts}
-          </dd>
-       </dl>
-      </div>
-   {else}
-    <table class="form-layout-compressed">
+<h3>{if $action eq 1}{ts}New Message Template{/ts}{elseif $action eq 2}{ts}Edit Message Template{/ts}{else}{ts}Delete Message Template{/ts}{/if}</h3>
+{if $action eq 8}
+   <div class="messages status">
+     <dl>
+       <dt><div class="icon inform-icon"></div></dt>
+       <dd>
+       {ts}Do you want to delete this message template?{/ts}
+       </dd>
+    </dl>
+   </div>
+{else}
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+        <table class="form-layout-compressed">
         <tr>
             <td class="label">{$form.msg_title.label}</td>
             <td>{$form.msg_title.html}
@@ -114,10 +117,8 @@
         {/if}
     </table> 
   {/if}
-  <dl>   
-      <dt></dt><dd class="html-adjust">{$form.buttons.html}</dd>
-  </dl>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
   <br clear="all" />
-</fieldset>
 </div>
+</div> <!-- end of crm-form-block -->
 {include file="CRM/Mailing/Form/InsertTokens.tpl"}
