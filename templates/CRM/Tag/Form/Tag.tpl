@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing tags  *}
-<script type="text/javascript" src="{$config->resourceBase}js/rest.js"></script>
+{*<script type="text/javascript" src="{$config->resourceBase}js/rest.js"></script>*}
 <style>
 .hit {ldelim}padding-left:10px;{rdelim}
 .tree li {ldelim}padding-left:10px;{rdelim}
@@ -33,10 +33,14 @@
 #Tag #tagtree .highlighted {ldelim}background-color:lightgrey;{rdelim}
 </style>
 <script type="text/javascript">
-civicrm_ajaxURL="{crmURL p='civicrm/ajax/rest' h=0}";
+if (typeof cj.fn.crmAPI != "function") {ldelim}
+  cj().getScript("{$config->resourceBase}js/rest.js");
+{rdelim}
+options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
+       ,closetxt:'<div class="icon close-icon"></div>'
+      {rdelim} 
 entityID={$entityID};
 entityTable='{$entityTable}';
-var image = '<div class="icon close-icon"></div>';
 {literal}
 function hideStatus( ) {
     cj( '#restmsg' ).hide( );
@@ -68,11 +72,12 @@ function initTagTree() {
         //get current tag label
         var currentTagLabel = cj("#tagLabel_" + tagid ).text( );
         if (this.checked) {
-            civiREST ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},image);
+            //civiREST ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},image);
+            cj().crmAPI ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
             // add check to tab label array
             tagsArray.push( currentTagLabel );
         } else {
-            civiREST ('entity_tag','remove',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},image);
+            cj().crmAPI ('entity_tag','remove',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
             // build array of tag labels
             tagsArray = cj.map(tagsArray, function (a) { 
                  if ( cj.trim( a ) != currentTagLabel ) {
