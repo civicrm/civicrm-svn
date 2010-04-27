@@ -77,7 +77,6 @@ class CRM_Utils_Mail_FixedMailMIME extends Mail_mime
         }
         
         // encode the email-less headers
-        $params['ignore-iconv'] = true;
         $input = parent::_encodeHeaders( $input, $params );
         
         // add emails back to headers, quoting these headers along the way
