@@ -173,6 +173,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
                 }
             }
             require_once 'CRM/Utils/Address.php';
+            require_once 'CRM/Core/BAO/Preferences.php';
             $format = CRM_Core_BAO_Preferences::value( 'sort_name_format' );
             $format = str_replace( 'contact.', '', $format );
             $contact->sort_name = CRM_Utils_Address::format( $params, $format,
