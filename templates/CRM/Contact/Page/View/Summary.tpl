@@ -383,8 +383,8 @@
  {if $selectedChild}selectedTab = "{$selectedChild}";{/if}  
  {literal}
  function fixTabAbort(event,ui){
-	jQuery(ui.tab).data("cache.tabs",(jQuery(ui.panel).html() == "") ? false : true);
-}
+//	jQuery(ui.tab).data("cache.tabs",(jQuery(ui.panel).html() == "") ? false : true);
+    }
  cj( function() {
      var tabIndex = cj('#tab_' + selectedTab).prevAll().length;
      cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage,cache: true, select: fixTabAbort});
