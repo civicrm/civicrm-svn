@@ -28,7 +28,7 @@
     {if $value neq 'skip'}
     {if $lineItem|@count GT 1} {* Header for multi participant registration cases. *}
         {if $priceset GT 0}<br />{/if}
-        <strong>{ts}Participant {$priceset+1}{/ts}</strong>
+        <strong>{ts}Participant {$priceset+1}{/ts}</strong> {$part.$priceset.info}
     {/if}				 
     <table>
             <tr class="columnheader">
