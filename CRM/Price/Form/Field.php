@@ -160,7 +160,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'extends', 'id' );
         require_once 'CRM/Core/Component.php';
         if( $extendComponentId == CRM_Core_Component::getComponentID( 'CiviEvent' ) ) {
-            $this->add('text', 'count', ts('Participant Count'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'count') );
+            $this->add('text', 'count', ts('Number Available'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'count') );
             $this->addRule('count', ts('Participant Count should be a positive number') , 'positiveInteger');
         }
         
