@@ -23,11 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{include file="CRM/common/WizardHeader.tpl"}
-{include file="CRM/Mailing/Form/Count.tpl"}
 <div id="help">
 {ts}These settings control tracking and responses to recipient actions. The number of recipients selected to receive this mailing is shown in the box to the right. If this count doesn't match your expectations, click <strong>Previous</strong> to review your selection(s).{/ts} 
 </div>
+<div class="crm-form-block">
+{include file="CRM/common/WizardHeader.tpl"}
+{include file="CRM/Mailing/Form/Count.tpl"}
 <div class="form-item">
   <fieldset><legend>{ts}Tracking{/ts}</legend> 
     <dl>
@@ -72,5 +73,5 @@
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}
-
+</div>
 

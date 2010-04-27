@@ -41,7 +41,7 @@
     {/if}
     
     <p>{ts}Click 'Import Now' if you are ready to proceed.{/ts}</p>
- </div>
+</div>
 
 <div class="crm-block crm-form-block">
 {literal}
