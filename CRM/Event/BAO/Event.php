@@ -1031,12 +1031,23 @@ WHERE civicrm_event.is_active = 1
                     ),
                 );
 
+                // address required during receipt processing (pdf and email receipt)
+                if ( $displayAddress = CRM_Utils_Array::value('address', $values) ) {
+                    $sendTemplateParams['tplParams']['address'] = $displayAddress;
+                    $sendTemplateParams['tplParams']['contributeMode'] = null;
+                }
+                // set lineItem details
+                if ( $lineItem = CRM_Utils_Array::value( 'lineItem', $values ) ) {
+                    $sendTemplateParams['tplParams']['lineItem']   = $lineItem;
+                }
+
                 require_once 'CRM/Core/BAO/MessageTemplates.php';
                 if ( $returnMessageText ) {
                     list ($sent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
                     return array( 'subject' => $subject,
                                   'body'    => $message,
-                                  'to'      => $displayName );
+                                  'to'      => $displayName,
+                                  'html'    => $html );
                 } else {
                     $sendTemplateParams['from']    = "{$values['event']['confirm_from_name']} <{$values['event']['confirm_from_email']}>";
                     $sendTemplateParams['toName']  = $displayName;

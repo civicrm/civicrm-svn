@@ -1404,4 +1404,35 @@ UPDATE  civicrm_participant
          $query = "SELECT count(*) FROM civicrm_participant WHERE civicrm_participant.contact_id = {$contactID} AND civicrm_participant.is_test = 0";
          return CRM_Core_DAO::singleValueQuery( $query );
      }    
+
+    /**
+     * Function to get participant ids by contribution id
+     *
+     * @param int  $contributionId     Contribution Id
+     * @param bool $excludeCancelled   Exclude cancelled additional participant
+     * 
+     * @return int $participantsId 
+     * @access public
+     * @static
+     */
+     static function getParticipantIds( $contributionId, $excludeCancelled = false ) {
+         
+         $ids = array( );
+         if ( !$contributionId ) { 
+             return $ids;
+         }
+         
+         // get primary participant id
+         $query = "SELECT participant_id FROM civicrm_participant_payment WHERE contribution_id = {$contributionId}";
+         $participantId = CRM_Core_DAO::singleValueQuery( $query );
+         
+         // get additional participant ids (including cancelled)
+         if ( $participantId ) {
+             $ids = array_merge( array( $participantId ), self::getAdditionalParticipantIds( $participantId, 
+                                                                                              $excludeCancelled ) );
+         }
+         
+         return $ids;
+     }
+
 }

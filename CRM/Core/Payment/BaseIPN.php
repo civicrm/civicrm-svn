@@ -528,6 +528,7 @@ class CRM_Core_Payment_BaseIPN {
 
         if ( empty( $values ) ) {
             $values = array( );
+            $contribID = $ids['contribution'];
             if ( $input['component'] == 'contribute' ) {
                 require_once 'CRM/Contribute/BAO/ContributionPage.php';
                 if ( isset( $contribution->contribution_page_id ) ) {
@@ -537,14 +538,15 @@ class CRM_Core_Payment_BaseIPN {
                     $values['is_email_receipt'] = 1;
                     $values['title']            = 'Contribution';
                 }
+                // set lineItem for contribution
+                require_once 'CRM/Price/BAO/Set.php';
+                if ( $contribID && $pId = CRM_Price_BAO_Set::getFor( 'civicrm_contribution', $contribID ) ) {
+                    require_once 'CRM/Price/BAO/LineItem.php';
+                    $values['lineItem'][0] = CRM_Price_BAO_LineItem::getLineItems( $contribID, 'contribution' );
+                    $values['priceSetID']  = $pId;
+                }
             } else {
                 // event
-                $eventParams     = array( 'id' => $objects['event']->id );
-                $values['event'] = array( );
-                
-                require_once 'CRM/Event/BAO/Event.php';
-                CRM_Event_BAO_Event::retrieve( $eventParams, $values['event'] );
-                
                 $eventParams = array( 'id' => $objects['event']->id );
                 $values['event'] = array( );
                 
@@ -566,6 +568,41 @@ class CRM_Core_Payment_BaseIPN {
                 
                 $ufJoinParams['weight'] = 2;
                 $values['custom_post_id'] = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
+
+                // set lineItem for event contribution
+                if ( $contribID  ) {
+                    require_once 'CRM/Event/BAO/Participant.php';
+                    $participantIds = CRM_Event_BAO_Participant::getParticipantIds( $contribID );
+                    require_once 'CRM/Price/BAO/LineItem.php';
+                    if ( !empty ( $participantIds ) ) {
+                        foreach ( $participantIds as $pIDs ) {
+                            $lineItem = CRM_Price_BAO_LineItem::getLineItems( $pIDs );
+                            if ( !CRM_Utils_System::isNull( $lineItem ) ) {
+                                $values['lineItem'][] = $lineItem;
+                            }
+                        }
+                    }
+                }
+                
+            }
+            
+            // set receipt from e-mail and name in value
+            if ( !$returnMessageText ) {
+                require_once 'CRM/Contact/BAO/Contact/Location.php';
+                $session  = CRM_Core_Session::singleton( );
+                $userID   = $session->get( 'userID' );
+                list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
+                $values['receipt_from_email'] = $userEmail;
+                $values['receipt_from_name']  = $userName;
+            }
+            
+            // set display address of contributor
+            if ( $contribution->address_id ) {
+                require_once 'CRM/Core/BAO/Address.php';
+                $addressParams     = array( 'id' => $contribution->address_id );	
+                $addressDetails    = CRM_Core_BAO_Address::getValues( $addressParams, false, 'id' );
+                $addressDetails    = array_values( $addressDetails );
+                $values['address'] = $addressDetails[0]['display'];                
             }
         }
 

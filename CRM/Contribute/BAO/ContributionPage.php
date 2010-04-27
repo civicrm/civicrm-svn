@@ -225,6 +225,12 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 'priceSetID'       => CRM_Utils_Array::value('priceSetID',    $values), // CRM-5095
             );
 
+            // address required during receipt processing (pdf and email receipt)
+            if ( $displayAddress = CRM_Utils_Array::value('address', $values) ) {
+                $tplParams['address'] = $displayAddress;
+                $tplParams['contributeMode']= null;
+            }
+
             // cc to related contacts of contributor OR the one who
             // signs up. Is used for cases like - on behalf of
             // contribution / signup ..etc  
