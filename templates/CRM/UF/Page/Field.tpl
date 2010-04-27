@@ -42,7 +42,7 @@
         <table id="options" class="display">
             <thead>
             <tr>
-                <th>{ts}CiviCRM Field Name{/ts}</th>
+                <th>{ts}Field Name{/ts}</th>
                 <th>{ts}Visibility{/ts}</th>
                 <th>{ts}Searchable?{/ts}</th>
                 <th>{ts}In Selector?{/ts}</th>
@@ -77,8 +77,8 @@
             <table class="form-layout-compressed">
             <tr>
                 <td><a href="{crmURL p="civicrm/admin/uf/group/field" q="reset=1&action=add&gid=$gid"}" class="button"><span><div class="icon add-icon"></div>{ts}Add CiviCRM Profile Field{/ts}</span></a></td>
-                <td><a href="{crmURL p="civicrm/admin/uf/group" q="action=update&id=`$gid`&reset=1&context=field"}" class="button"><span>&raquo; {ts}Edit Profile Settings{/ts}</span></a></td>
-                <td><a href="{crmURL p="civicrm/admin/uf/group" q="action=preview&id=`$gid`&reset=1&field=0&context=field"}" class="button"><span>&raquo; {ts}Preview this profile (all fields){/ts}</span></a></td>
+                <td><a href="{crmURL p="civicrm/admin/uf/group" q="action=update&id=`$gid`&reset=1&context=field"}" class="button"><span><div class="icon add-icon"></div>{ts}Edit Profile Settings{/ts}</span></a></td>
+                <td><a href="{crmURL p="civicrm/admin/uf/group" q="action=preview&id=`$gid`&reset=1&field=0&context=field"}" class="button"><span><div class="icon preview-icon"></div>{ts}Preview this profile (all fields){/ts}</span></a></td>
             </tr>
             </table>
         {/if}
