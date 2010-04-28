@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{* The name "custom data group" is replaced by "custom data set"  *}
 {if $action eq 1 or $action eq 2 or $action eq 4}
     {include file="CRM/Custom/Form/Group.tpl"}
 {elseif $action eq 1024}
@@ -31,7 +32,7 @@
     {include file="CRM/Custom/Form/DeleteGroup.tpl"}
 {else}
     <div id="help">
-    {ts}Custom data is stored in custom fields. Custom fields are organized into logically related custom data groups (e.g. Volunteer Info). Use custom fields to collect and store custom data which is not included in the standard CiviCRM forms. You can create one or many groups of custom fields.{/ts} {docURL page="Custom Data Fields & Custom Data Groups Admin"}
+    {ts}Custom data is stored in custom fields. Custom fields are organized into logically related custom data sets (e.g. Volunteer Info). Use custom fields to collect and store custom data which are not included in the standard CiviCRM forms. You can create one or many sets of custom fields.{/ts} {docURL page="Custom Data Fields & Custom Data Sets Admin"}
     </div>
 
     {if $rows}
@@ -43,7 +44,7 @@
         <table id="options" class="display">
         <thead>
             <tr>
-                <th>{ts}Group Title{/ts}</th>
+                <th>{ts}Set{/ts}</th>
                 <th>{ts}Enabled?{/ts}</th>
                 <th>{ts}Used For{/ts}</th>
                 <th>{ts}Type{/ts}</th>
@@ -71,7 +72,7 @@
         
         {if NOT ($action eq 1 or $action eq 2) }
         <div class="action-link">
-        <a href="{crmURL p='civicrm/admin/custom/group' q="action=add&reset=1"}" id="newCustomDataGroup" class="button"><span><div class="icon add-icon"></div>{ts}Add Group of Custom Fields{/ts}</span></a>
+        <a href="{crmURL p='civicrm/admin/custom/group' q="action=add&reset=1"}" id="newCustomDataGroup" class="button"><span><div class="icon add-icon"></div>{ts}Add Set of Custom Fields{/ts}</span></a>
         </div>
         {/if}
 
