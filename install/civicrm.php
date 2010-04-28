@@ -77,10 +77,8 @@ function civicrm_write_file( $name, &$buffer ) {
 }
 
 function civicrm_main( &$config ) {
-    global $sqlPath, $crmPath
-
-
-    global $cmsPath;
+    global $sqlPath, $crmPath, $cmsPath;
+    
     $siteDir = isset( $config['site_dir'] ) ? $config['site_dir'] : getSiteDir( $cmsPath, $_SERVER['SCRIPT_FILENAME'] );
 
     civicrm_setup( $cmsPath . DIRECTORY_SEPARATOR . 'sites' . DIRECTORY_SEPARATOR . 
@@ -183,7 +181,7 @@ function civicrm_config( &$config ) {
                     );
     
     $params['cms']        = 'Drupal';
-    $params['baseURL']    = civicrm_cms_base( );
+    $params['baseURL']    = isset($config['base_url']) ? $config['base_url'] : civicrm_cms_base( );
     $params['CMSdbUser']  = $config['drupal']['username'];
     $params['CMSdbPass']  = $config['drupal']['password'];
     $params['CMSdbHost']  = $config['drupal']['server'];
