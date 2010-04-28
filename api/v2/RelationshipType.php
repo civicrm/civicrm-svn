@@ -64,8 +64,6 @@ function civicrm_relationship_type_add( $params ) {
     
     require_once 'CRM/Contact/BAO/RelationshipType.php';
     $relationType = CRM_Contact_BAO_RelationshipType::add( $params, $ids );
-    CRM_Core_Error::debug( '$relationType', $relationType );
-    exit;
     
     $relType = array( );
     _civicrm_object_to_array( $relationType, $relType );
