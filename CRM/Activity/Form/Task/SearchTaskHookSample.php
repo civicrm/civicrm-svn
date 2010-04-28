@@ -54,10 +54,10 @@ class CRM_Activity_Form_Task_SearchTaskHookSample extends CRM_Activity_Form_Task
         // display name and activity details of all selected contacts
         $activityIDs = implode( ',', $this->_activityHolderIds );      
         $query = "
-    SELECT ct.display_name as display_name
-           at.subject      as subject,
+    SELECT at.subject      as subject,
            ov.label        as activity_type,
-           at.activity_date_time as activity_date,             
+           at.activity_date_time as activity_date,  
+           ct.display_name as display_name
       FROM civicrm_activity at
 INNER JOIN civicrm_contact ct ON ( at.source_contact_id = ct.id )   
  LEFT JOIN civicrm_option_group og ON ( og.name = 'activity_type' )
