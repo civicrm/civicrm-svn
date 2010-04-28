@@ -1458,18 +1458,41 @@ function civicrm_views_data() {
    civicrm_views_add_date_arguments($data['civicrm_event'],array('title' =>'Registration End Date',
                                                                     'name' => 'registration_end_date'));
 
-      // CHILLING OUT AT THE CIVICRM_LOC_BLOCK TABLE
+   //EVENT LINK TEXT
+   $data['civicrm_event']['registration_link_text'] = array(
+                                                            'title' => t('Registration Link Text'),
+                                                            'help' => t('Text for the Registration Link'),
+                                                            'field' => array(
+                                                                             'handler' => 'civicrm_handler_field_event_link',
+                                                                             'click sortable' => TRUE,
+                                                                             ),
 
-    $data['civicrm_loc_block']['table']['group']  = t('CiviCRM Locations');
+                                                            'argument' => array(
+                                                                                'handler' => 'views_handler_argument',
+                                                                                ),
 
-    // Explain how this table joins to others.
-    $data['civicrm_loc_block']['table']['join'] = array(
-                                                        // Directly links to event table
-                                                        'civicrm_event' => array(
-                                                                                 'left_field' => 'loc_block_id',
-                                                                                 'field' => 'id',
-                                                                                 ),
-                                                        );
+                                                            'filter' => array(
+                                                                              'handler' => 'views_handler_filter_string',
+                                                                              'allow empty' => TRUE,
+                                                                              ),
+
+                                                            'sort' => array(
+                                                                            'handler' => 'views_handler_sort',
+                                                                            ),
+                                                            );
+
+   // CHILLING OUT AT THE CIVICRM_LOC_BLOCK TABLE
+
+   $data['civicrm_loc_block']['table']['group']  = t('CiviCRM Locations');
+
+   // Explain how this table joins to others.
+   $data['civicrm_loc_block']['table']['join'] = array(
+                                                       // Directly links to event table
+                                                       'civicrm_event' => array(
+                                                                                'left_field' => 'loc_block_id',
+                                                                                'field' => 'id',
+                                                                                ),
+                                                       );
 
 
     //----------------------------------------------------------------
