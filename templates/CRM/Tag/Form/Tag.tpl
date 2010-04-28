@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing tags  *}
-{*<script type="text/javascript" src="{$config->resourceBase}js/rest.js"></script>*}
+<script type="text/javascript" src="{$config->resourceBase}js/rest.js"></script>
 <style>
 .hit {ldelim}padding-left:10px;{rdelim}
 .tree li {ldelim}padding-left:10px;{rdelim}
@@ -33,9 +33,7 @@
 #Tag #tagtree .highlighted {ldelim}background-color:lightgrey;{rdelim}
 </style>
 <script type="text/javascript">
-if (typeof cj.fn.crmAPI != "function") {ldelim}
-  cj().getScript("{$config->resourceBase}js/rest.js");
-{rdelim}
+
 options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
        ,closetxt:'<div class="icon close-icon"></div>'
       {rdelim} 
