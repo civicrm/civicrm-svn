@@ -26,7 +26,7 @@
 {* this template is used for the dropdown menu of the "Actions" button on contacts. *}
 
 <div id="crm-contact-actions-wrapper">
-	<div id="crm-contact-actions-link"><span>Actions</span></div>
+	<div id="crm-contact-actions-link"><span><div class="icon dropdown-icon"></div>Actions</span></div>
 		<div class="ac_results" id="crm-contact-actions-list">
 			<div class="crm-contact-actions-list-inner">
 			  <ul>

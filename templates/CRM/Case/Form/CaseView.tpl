@@ -756,7 +756,7 @@ function addTags() {
   <table class="no-border form-layout-compressed" id="searchOptions">
     <tr>
         <td colspan="2"><label for="reporter_id">{ts}Reporter/Role{/ts}</label><br />
-            {$form.reporter_id.html}
+            {$form.reporter_id.html|crmReplace:class:twenty}
         </td>
         <td><label for="status_id">{$form.status_id.label}</label><br />
             {$form.status_id.html}
