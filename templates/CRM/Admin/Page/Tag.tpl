@@ -62,7 +62,7 @@
 	        <th>{ts}Parent ID{/ts}</th>
 		<th>{ts}Used For{/ts}</th>
                 {if $accessHidden}
-		    <th>{ts}Hidden?{/ts}</th>
+		    <th>{ts}Tag set?{/ts}</th>
 		{/if}
 		<th>{ts}Reserved?{/ts}</th>
 	        <th></th>
