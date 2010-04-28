@@ -37,11 +37,13 @@
 {elseif $action NEQ 4}
     {if $context EQ 'pcpCampaign'}
         {capture assign=attachTitle}{ts}Include a Picture or an Image{/ts}{/capture}
+        {assign var=openCloseStyle value='crm-accordion-open'}
     {else}
         {capture assign=attachTitle}{ts}Attachment(s){/ts}{/capture}
+        {assign var=openCloseStyle value='crm-accordion-closed'}
     {/if}
     {if !$noexpand}
-    <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+    <div class="crm-accordion-wrapper crm-accordion_title-accordion {$openCloseStyle}">
  		<div class="crm-accordion-header">
   			<div class="icon crm-accordion-pointer"></div> 
   			{$attachTitle}
