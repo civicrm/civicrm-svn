@@ -1,4 +1,7 @@
 <?
+
+require_once 'api/v2/utils.php';
+
 //require ("api/v2/Relationship.php");
 
 /**
@@ -45,12 +48,31 @@ function civicrm_relationship_type_add( $params ) {
     }
 
     if (! isset( $params['label_a_b']) ) 
-      $params['label_a_b'] = $params['name_a_b'];
-
+        $params['label_a_b'] = $params['name_a_b'];
+    
     if (! isset( $params['label_b_a']) ) 
-      $params['label_b_a'] = $params['name_b_a'];
-
+        $params['label_b_a'] = $params['name_b_a'];
+    
     require_once 'CRM/Utils/Rule.php';
+    
+    $ids = array( );
+    if( isset( $params['id'] ) && ! CRM_Utils_Rule::integer(  $params['id'] ) ) {
+        return civicrm_create_error( 'Invalid value for relationship type ID' );
+    } else {
+        $ids['relationshipType'] = CRM_Utils_Array::value( 'id', $params );
+    }
+    
+    require_once 'CRM/Contact/BAO/RelationshipType.php';
+    $relationType = CRM_Contact_BAO_RelationshipType::add( $params, $ids );
+    CRM_Core_Error::debug( '$relationType', $relationType );
+    exit;
+    
+    $relType = array( );
+    _civicrm_object_to_array( $relationType, $relType );
+    
+    return $relType;
+}
+
 /**
  * Function to get all relationship type
  * retruns  An array of Relationship_type
