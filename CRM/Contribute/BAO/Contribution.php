@@ -1564,4 +1564,69 @@ WHERE     c.id = $contributionId";
         
         return CRM_Core_DAO::singleValueQuery( $query );
     }
+
+    /**                                                           
+     * Function to get individual id for onbehalf contribution
+     * @param  int   $contributionId  contribution id 
+     * @param  int   $contributorId   contributer id
+     * @return array $ids             containing organization id and individual id
+     * @access public 
+     */
+    function getOnbehalfIds( $contributionId, $contributorId = null ) {
+        
+        $ids = array();
+        
+        if ( !$contributionId ) {
+            return $ids;
+        }
+        
+        // fetch contributor id if null
+        if ( !$contributorId ) {
+            require_once 'CRM/Core/DAO.php';
+            $contributorId = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution',
+                                                          $contributionId, 'contact_id' );
+        }
+        
+        require_once 'CRM/Core/PseudoConstant.php';
+        $activityTypeIds = CRM_Core_PseudoConstant::activityType( true, false, false, 'name' );
+        $activityTypeId  = array_search( "Contribution", $activityTypeIds );
+        
+        if ( $activityTypeId && $contributorId ) {
+            $activityQuery  = "
+SELECT source_contact_id 
+  FROM civicrm_activity 
+ WHERE activity_type_id   = %1 
+   AND source_record_id   = %2";
+            
+            $params = array( 1 => array( $activityTypeId, 'Integer' ),
+                             2 => array( $contributionId, 'Integer' ) );
+            
+            $sourceContactId = CRM_Core_DAO::singleValueQuery( $activityQuery , $params );
+            
+            // for on behalf contribution source is individual and contributor is organization
+            if ( $sourceContactId && $sourceContactId != $contributorId ) {
+                $relationshipTypeIds = CRM_Core_PseudoConstant::relationshipType( 'name' );
+                // get rel type id for employee of relation
+                foreach ( $relationshipTypeIds as $id => $typeVals ) {
+                    if (   $typeVals['name_a_b'] == 'Employee of'  ) {
+                        $relationshipTypeId = $id;
+                        break;
+                    }
+                }
+                
+                require_once 'CRM/Contact/DAO/Relationship.php';
+                $rel = new CRM_Contact_DAO_Relationship();
+                $rel->relationship_type_id = $relationshipTypeId;
+                $rel->contact_id_a         = $sourceContactId;
+                $rel->contact_id_b         = $contributorId;
+                if ( $rel->find(true) ) {
+                    $ids['individual_id']   = $rel->contact_id_a;
+                    $ids['organization_id'] = $rel->contact_id_b;
+                }
+            }
+        }
+        
+        return $ids;
+    }
+    
 }

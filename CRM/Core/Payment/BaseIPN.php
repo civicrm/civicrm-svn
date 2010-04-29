@@ -545,6 +545,14 @@ class CRM_Core_Payment_BaseIPN {
                     $values['lineItem'][0] = CRM_Price_BAO_LineItem::getLineItems( $contribID, 'contribution' );
                     $values['priceSetID']  = $pId;
                 }
+                require_once 'CRM/Contribute/BAO/Contribution.php';
+                $relatedContact = CRM_Contribute_BAO_Contribution::getOnbehalfIds( $contribID,
+                                                                                   $contribution->contact_id );
+                // if this is onbehalf of contribution then set related contact
+                if ( $relatedContactId = $relatedContact['individual_id'] ) {
+                    $values['related_contact'] = $ids['related_contact'] = $relatedContactId;
+                }
+                
             } else {
                 // event
                 $eventParams = array( 'id' => $objects['event']->id );
@@ -768,7 +776,16 @@ class CRM_Core_Payment_BaseIPN {
             $values['params']['additionalParticipant'] = false;
             $template->assign( 'isPrimary', 1 );
             $template->assign( 'amount', $primaryAmount );
-            
+            $template->assign( 'register_date', CRM_Utils_Date::isoToMysql($participant->register_date) );
+            if ( $contribution->contribution_type_id ) {
+                $template->assign( 'contributionTypeName',
+                                   CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
+                                                                $contribution->contribution_type_id ) );
+            }
+            if ( $contribution->payment_instrument_id ) {
+                $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
+                $template->assign( 'paidBy', $paymentInstrument[$contribution->payment_instrument_id] );
+            }
             // carry paylater, since we did not created billing,
             // so need to pull email from primary location, CRM-4395 
             $values['params']['is_pay_later'] = $participant->is_pay_later;
@@ -802,7 +819,7 @@ class CRM_Core_Payment_BaseIPN {
                 require_once 'CRM/Core/BAO/Address.php';
                 $entityBlock = array( 'contact_id'       => $ids['contact'], 
                                       'location_type_id' => CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_LocationType', 
-                                                                                         'Main', 'id', 'name' ) );
+                                                                                         'Home', 'id', 'name' ) );
                 $address = CRM_Core_BAO_Address::getValues( $entityBlock );
                 $template->assign('onBehalfAddress', $address[$entityBlock['location_type_id']]['display']);
             }
