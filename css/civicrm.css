@@ -29,6 +29,9 @@
     margin: 0em .1em 1em;
     border-collapse: collapse;
 }
+    #crm-container table.criteria-group {
+        margin-bottom: .1em;
+}
 
 
 #crm-container th, 
