@@ -185,8 +185,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         foreach ( $this->_fields['interval_unit']['attributes'] as $name => $label ) {
             $this->_fields['interval_unit']['attributes'][$name] = $label . '(s)';
         }
-
-        asort( $this->_fields['followup_activity_type_id']['attributes'] );
     }
 
     /**
