@@ -478,8 +478,9 @@ ORDER BY parent_id, weight";
                         $componentName = null;
                     }
                 }
-                if ( !$componentName && $menuName == 'Cases' ) $componentName = 'CiviCase';
-                
+                if ( !$componentName && in_array( $menuName, array( 'Cases', 'CiviCase' ) ) ) { 
+                    $componentName = 'CiviCase';
+                }
                 if ( $componentName ) {
                     if ( !in_array( $componentName, $config->enableComponents ) || 
                          !CRM_Core_Permission::check( $key ) ) {
