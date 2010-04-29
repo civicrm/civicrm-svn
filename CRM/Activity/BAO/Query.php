@@ -296,8 +296,7 @@ class CRM_Activity_BAO_Query
             }
 		    
             $activityRole = CRM_Contact_BAO_Query::$_activityRole;
-            if ( $activityRole == 1 ||
-                 ( !( $mode && ( CRM_Contact_BAO_Query::MODE_ACTIVITY || CRM_Contact_BAO_Query::MODE_CONTACTS ) ) ) ) { 
+            if ( $activityRole == 1 ) { 
                 $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
                 $from .= " $side JOIN civicrm_activity ON civicrm_activity.id = civicrm_activity_target.activity_id ";
             } else if ( in_array( $activityRole, array( 0, 2 ) ) ) {
