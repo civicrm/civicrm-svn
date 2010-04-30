@@ -85,8 +85,8 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
 });
 </script>
 {/literal}
-{if !$action or ( $action eq 1 ) or ( $action eq 2 ) or ( $action eq 512 ) }
-    <div class="crm-submit-buttons">{$form.buttons.html}</div>
+{if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 {/if}
     <h3>
        {if $single eq false}
@@ -286,7 +286,10 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
              {/if}
         {/if} {* End Delete vs. Add / Edit action *}
         <tr class="buttons">
-            <td>{if $action eq 4 or $action eq 8 or $action eq 32768}{$form.buttons.html}{/if}</td>
+            <td>{if $action eq 4 or $action eq 8 or $action eq 32768}
+	    	    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+		{/if}
+	    </td>
             <td>
             {if $action eq 4 && $activityTName neq 'Inbound Email'} 
 	      {if !$context }
@@ -299,12 +302,12 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
                 <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
                 </a>
 	        {/if}
-		    </td>
+	      </td>
         </tr> 
         </table>   
 
-{if !$action or ( $action eq 1 ) or ( $action eq 2 ) or ( $action eq 512 ) }
-  <div class="crm-submit-buttons">{$form.buttons.html}</div>
+{if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 {/if}
 
 {include file="CRM/Case/Form/ActivityToCase.tpl"}
