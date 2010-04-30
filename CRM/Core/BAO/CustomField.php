@@ -793,8 +793,7 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
 
             static $customUrls = array( );            
             if ( $field->data_type == 'ContactReference' )  {
-                $customUrls[$elementName] = CRM_Utils_System::url( "civicrm/ajax/contactlist",
-                                                                   "reset=1&context=customfield&id={$field->id}",
+                $customUrls[$elementName] = CRM_Utils_System::url( "civicrm/ajax/rest",                                                     "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1&context=customfield&id={$field->id}",
                                                                    false, null, false );                
                
                 $actualElementValue = $qf->_submitValues[ $elementName .'_id'];    

@@ -567,8 +567,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $this->addDateTime( 'activity_date_time', ts('Date'), true, array( 'formatType' => 'activityDateTime') );  
         
         //autocomplete url
-        $dataUrl = CRM_Utils_System::url( "civicrm/ajax/contactlist",
-                                          "reset=1",
+        $dataUrl = CRM_Utils_System::url( "civicrm/ajax/rest",
+                                          "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=activity&reset=1",
                                           false, null, false );
         $this->assign( 'dataUrl',$dataUrl );
 

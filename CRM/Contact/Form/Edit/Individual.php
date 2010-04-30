@@ -106,7 +106,7 @@ class CRM_Contact_Form_Edit_Individual {
         $form->add( 'hidden', 'shared_household_id', '', array( 'id' => 'shared_household_id' ));
                 
         //Current Employer Element
-        $employerDataURL =  CRM_Utils_System::url( 'civicrm/ajax/contactlist', 'org=1', false, null, false );
+        $employerDataURL =  CRM_Utils_System::url( 'civicrm/ajax/rest', 'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&org=1', false, null, false );
         $form->assign('employerDataURL',$employerDataURL );
         
         $form->addElement('text', 'current_employer', ts('Current Employer'), '' );
