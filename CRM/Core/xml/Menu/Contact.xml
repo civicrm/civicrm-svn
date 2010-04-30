@@ -243,11 +243,6 @@
      <access_arguments>access CiviCRM</access_arguments>
 </item>
 <item>
-     <path>civicrm/ajax/contactlist</path>
-     <page_callback>CRM_Contact_Page_AJAX::getContactList</page_callback>
-     <access_arguments>access CiviCRM</access_arguments>
-</item>
-<item>
      <path>civicrm/ajax/groupTree</path>
      <page_callback>CRM_Contact_Page_AJAX::groupTree</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
