@@ -256,6 +256,14 @@ class CRM_Utils_REST
         
         // incase of ajax functions className is passed in url
         if ( isset( $params['className'] ) ) {
+            // functions that are defined only in AJAX.php can be called via
+            // rest interface
+            $class = explode( '_', $params['className'] );
+            if ( $class[ count($class) - 1 ] != 'AJAX' ) {
+                return self::error( 'Unknown function invocation.' );
+            } 
+            
+            // evaluate and call the AJAX function
 	        require_once( str_replace('_', DIRECTORY_SEPARATOR, $params['className'] ) . ".php");
             return eval( $params['className'] . '::' . $params['fnName'] . '( $params );' );
 	    } else {
