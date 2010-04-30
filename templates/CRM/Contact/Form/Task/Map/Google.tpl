@@ -87,14 +87,16 @@
 		bounds.extend(point);
 	    {/if}
 	{/foreach}
+	map.setMapType(G_NORMAL_MAP);
+	map.setCenter(bounds.getCenter());
 	{if count($locations) gt 1}  
  	    map.setZoom(map.getBoundsZoomLevel(bounds));
  	    map.setMapType(G_PHYSICAL_MAP);
- 	{else}
- 	    map.setZoom({$defaultZoom}); 
- 	    map.setMapType(G_NORMAL_MAP);
+ 	{elseif $location.marker_class eq 'Event' }
+ 	    map.setZoom(map.getBoundsZoomLevel(bounds));
+	{else} 
+	    map.setZoom({$defaultZoom}); 
  	{/if}
-	map.setCenter(bounds.getCenter());
 	{literal}	
 	//]]>  
     }
