@@ -92,7 +92,7 @@
 	{if count($locations) gt 1}  
  	    map.setZoom(map.getBoundsZoomLevel(bounds));
  	    map.setMapType(G_PHYSICAL_MAP);
- 	{elseif $location.marker_class eq 'Event' }
+ 	{elseif $location.marker_class eq 'Event' || $location.marker_class eq 'Individual'|| $location.marker_class eq 'Household' || $location.marker_class eq 'Organization' }
  	    map.setZoom(map.getBoundsZoomLevel(bounds));
 	{else} 
 	    map.setZoom({$defaultZoom}); 
