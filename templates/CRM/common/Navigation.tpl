@@ -73,7 +73,7 @@ cj( function() {
         return false;
     });
 
-    var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=navigation' h=0 }"{literal};
+    var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1' h=0 }"{literal};
 
     cj( '#sort_name' ).autocomplete( contactUrl, {
         width: 200,
