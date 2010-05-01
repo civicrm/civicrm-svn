@@ -105,7 +105,8 @@ class CRM_Contact_Form_Task_Email extends CRM_Contact_Form_Task {
     {
         //enable form element
         $this->assign( 'suppressForm', false );
-
+        $this->assign( 'emailTask', true );
+         
         CRM_Contact_Form_Task_EmailCommon::buildQuickForm( $this );
     }
 

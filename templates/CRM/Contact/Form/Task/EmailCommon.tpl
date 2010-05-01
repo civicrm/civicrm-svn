@@ -24,14 +24,16 @@
  +--------------------------------------------------------------------+
 *}
 {*common template for compose mail*}
+{if !$emailTask}
 <table class="form-layout-compressed">
     <tr>
 	    <td class="label">{$form.template.label}</td>
 	    <td>{$form.template.html}</td>
     </tr>
 </table>
-   
-    <div class="messageHelp">{help id="id-message-text" file="CRM/Contact/Form/Task/Email.hlp"}</div>
+{/if}
+
+<div class="messageHelp">{help id="id-message-text" file="CRM/Contact/Form/Task/Email.hlp"}</div>
 
 <div class="crm-accordion-wrapper crm-html_email-accordion crm-accordion-open">
 <div class="crm-accordion-header">
