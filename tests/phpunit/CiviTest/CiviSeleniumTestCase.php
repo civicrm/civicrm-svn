@@ -59,6 +59,9 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
      */
     function __construct($name = NULL, array $data = array(), $dataName = '', array $browser = array() ) {
         parent::__construct($name, $data, $dataName, $browser);
+        
+        require_once 'CiviSeleniumSettings.php';
+        $this->settings = new CiviSeleniumSettings();
     }
 
     protected function setUp()
@@ -66,13 +69,13 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         $this->setBrowser('*firefox');
         // Make sure that below strings have path separator at the end
-        $this->setBrowserUrl("http://tests.dev.civicrm.org/");
-        $this->sboxPath = "/drupal/";        
+        $this->setBrowserUrl( $this->settings->sandboxURL);
+        $this->sboxPath = $this->settings->sandboxPATH;
     }
 
     protected function tearDown()
     {
-        $this->open( $this->sboxPath . "civicrm/logout?reset=1");
+//        $this->open( $this->settings->sandboxPATH . "civicrm/logout?reset=1");
     }
 
     /** 

@@ -65,8 +65,8 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // sometimes your test might fail because of this. In such cases, it's better to pick one element
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
-      $this->type("edit-name", "demo");
-      $this->type("edit-pass", "demo");
+      $this->type("edit-name", $this->settings->username);
+      $this->type("edit-pass", $this->settings->password);
       $this->click("edit-submit");
       $this->waitForPageToLoad("30000");
 
