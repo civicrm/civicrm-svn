@@ -76,9 +76,9 @@
     <tr>
         <td>&nbsp;</td>
         {if $action ne 4}
-            <td><span id="crm-submit-buttons">{$form.buttons.html}</span></td>
+            <td><span id="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</span></td>
         {else}
-            <td><span id="crm-done-button">{$form.done.html}</span></td>
+            <td><span id="crm-done-button">{include file="CRM/common/formButtons.tpl"}</span></td>
         {/if} {* $action ne view *}
     </tr>
     </table>
