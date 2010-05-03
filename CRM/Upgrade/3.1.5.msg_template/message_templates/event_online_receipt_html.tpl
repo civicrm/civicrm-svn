@@ -178,7 +178,6 @@ registration process.{/ts}</p>
              <th>{ts}Qty{/ts}</th>
              <th>{ts}Each{/ts}</th>
              <th>{ts}Total{/ts}</th>
-	     {if  $participantCount }<th>{ts}Total Participants{/ts}</th>{/if}
             </tr>
             {foreach from=$value item=line}
              <tr>
@@ -194,7 +193,6 @@ registration process.{/ts}</p>
               <td>
                {$line.line_total|crmMoney}
               </td>
-	      {if  $participantCount }<td>{$line.participant_count}</td> {/if}
              </tr>
             {/foreach}
            </table>
@@ -218,25 +216,12 @@ registration process.{/ts}</p>
        <tr>
         <td {$labelStyle}>
          {ts}Total Amount{/ts}
-        </td>  
+        </td>
         <td {$valueStyle}>
          {$totalAmount|crmMoney} {if $hookDiscount.message}({$hookDiscount.message}){/if}
         </td>
        </tr>
-       {if $participantCount }
-     <tr>
-       <td {$labelStyle}> 
-      {ts}Total Participants{/ts}</td>   
-       <td {$valueStyle}>
-      {assign var="count" value= 0}	 
-      {foreach from=$lineItem item=pcount}
-      {foreach from=$pcount item=p_count}
-      {assign var="count" value=$count+$p_count.participant_count}
-      {/foreach}
-      {/foreach}
-     {$count}
-     </td> </tr>
-      {/if}
+
        {if $is_pay_later}
         <tr>
          <td colspan="2" {$labelStyle}>

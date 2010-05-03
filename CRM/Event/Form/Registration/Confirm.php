@@ -215,10 +215,16 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
     { 
         $this->assignToTemplate( );
         if( $this->_params[0]['amount'] || $this->_params[0]['amount'] == 0 ) {
-            $this->_amount       = array();
+            $this->_amount = array();
                         
             foreach( $this->_params as $k => $v ) {
                 if ( is_array( $v ) ) {
+                    foreach (array ('first_name', 'last_name') as $name) {
+                        if(isset($v['billing_'.$name])) {
+                            $v[$name] = $v['billing_'.$name];
+                            
+                        }
+                    }
                     if ( CRM_Utils_Array::value( "email-{$this->_bltID}", $v ) ) {
                         $append = $v["email-{$this->_bltID}"];
                     } else {
@@ -230,13 +236,19 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     }
                         
                     $this->_amount[$k]['label'] = $v['amount_level'].'  -  '. $append;
+                    $this->_part[$k]['info'] = $v['first_name'] .' ' . $v['last_name'];
+                    if ( !CRM_Utils_Array::value( "first_name", $v ) ) {
+                        $this->_part[$k]['info'] = $append;
+                    }
                     $this->_totalAmount = $this->_totalAmount + $this->_amount[$k]['amount'];
                     if ( CRM_Utils_Array::value( 'is_primary', $v ) ) {
                         $this->set( 'primaryParticipantAmount', $this->_amount[$k]['amount'] );
                     }
                 }
             }
-
+            
+            $this->assign('part', $this->_part);
+            $this->set( 'part', $this->_part );
             $this->assign('amount', $this->_amount);
             $this->assign('totalAmount', $this->_totalAmount);
             $this->set( 'totalAmount', $this->_totalAmount );
