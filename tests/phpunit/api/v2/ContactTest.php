@@ -486,8 +486,8 @@ class api_v2_ContactTest extends CiviUnitTestCase
         $result =& civicrm_contact_update($params);
 
         //  Result should indicate successful update
-        $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
-                           . " error message: " . $result['error_message'] );
+        $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__ );
+
         $this->assertEquals( $expected, $result, "In line " . __LINE__ );
 
         //  Check updated civicrm_contact against expected

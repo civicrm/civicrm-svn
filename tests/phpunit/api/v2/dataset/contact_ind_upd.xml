@@ -19,6 +19,7 @@
     <column>legal_name</column>
     <column>image_URL</column>
     <column>preferred_communication_method</column>
+    <column>preferred_language</column>
     <column>preferred_mail_format</column>
     <column>hash</column>
     <column>api_key</column>
@@ -68,6 +69,7 @@
       <null /><!--  legal_name  -->
       <value>http://some.url.com/image.jpg</value><!--  image_URL  -->
       <null /><!--  preferred_communication_method  -->
+      <null /><!--  preferred_language  -->
       <value>HTML</value><!--  preferred_mail_format  -->
       <null /><!--  hash  -->
       <null /><!--  api_key  -->
