@@ -100,4 +100,26 @@ function civicrm_relationship_types_get( $params = null )
 }
 
 
+/**
+ * Delete a relationship type delete
+ *
+ * @param  id of relationship type  $id
+ *
+ * @return boolean  true if success, else false
+ * @static void
+ * @access public
+ */
+function civicrm_relationship_type_delete( &$params ) {
+
+    if( ! CRM_Utils_Array::value( 'id',$params )  ) {
+        return civicrm_create_error( 'Missing required parameter' );
+    }
+    require_once 'CRM/Utils/Rule.php';
+    if( $params['id'] != null && ! CRM_Utils_Rule::integer( $params['id'] ) ) {
+        return civicrm_create_error( 'Invalid value for relationship type ID' );
+    }
+    
+    $relationTypeBAO = new CRM_Contact_BAO_RelationshipType( );
+    return $relationTypeBAO->del( $params['id'] ) ? civicrm_create_success( ts( 'Deleted relationship type successfully' )  ):civicrm_create_error( ts( 'Could not delete relationship type' ) );
+}
 
