@@ -102,4 +102,4 @@ CREATE TABLE `civicrm_address_format` (
 
 -- CRM-6181
 UPDATE `civicrm_contact` SET `is_deleted` = 0 WHERE `is_deleted` IS NULL;
-ALTER TABLE `civicrm_contact` MODIFY COLUMN `is_deleted` NOT NULL boolean DEFAULT 0;
+ALTER TABLE `civicrm_contact` MODIFY COLUMN `is_deleted` boolean NOT NULL DEFAULT 0;
