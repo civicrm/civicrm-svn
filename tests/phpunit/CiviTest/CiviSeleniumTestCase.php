@@ -67,7 +67,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     protected function setUp()
     {
 
-        $this->setBrowser('*firefox');
+        $this->setBrowser( $this->settings->browser );
         // Make sure that below strings have path separator at the end
         $this->setBrowserUrl( $this->settings->sandboxURL);
         $this->sboxPath = $this->settings->sandboxPATH;
