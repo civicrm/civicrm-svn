@@ -18,6 +18,7 @@ CRM/Contact/DAO/SavedSearch.php
 CRM/Contact/DAO/SubscriptionHistory.php
 CRM/Contribute/DAO
 CRM/Core/DAO/Address.php
+CRM/Core/DAO/AddressFormat.php
 CRM/Core/DAO/Cache.php
 CRM/Core/DAO/Component.php
 CRM/Core/DAO/Country.php
