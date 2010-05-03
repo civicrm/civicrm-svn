@@ -24,70 +24,69 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing other (custom) activities. *}
-<div class="crm-block crm-form-block crm-activity-form-block">
-
 {if $cdType }
    {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
-{* added onload javascript for source contact*}
-{literal}
-<script type="text/javascript">
-var target_contact = assignee_contact = '';
+    <div class="crm-block crm-form-block crm-activity-form-block">
+    {* added onload javascript for source contact*}
+    {literal}
+    <script type="text/javascript">
+    var target_contact = assignee_contact = '';
 
-{/literal}
-{foreach from=$target_contact key=id item=name}
-     {literal} target_contact += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
-{/foreach}
-{literal} eval( 'target_contact = [' + target_contact + ']'); {/literal}
+    {/literal}
+    {foreach from=$target_contact key=id item=name}
+         {literal} target_contact += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
+    {/foreach}
+    {literal} eval( 'target_contact = [' + target_contact + ']'); {/literal}
 
-{if $assigneeContactCount}
-{foreach from=$assignee_contact key=id item=name}
-     {literal} assignee_contact += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
-{/foreach}
-{literal} eval( 'assignee_contact = [' + assignee_contact + ']'); {/literal}
-{/if}
-{literal}
+    {if $assigneeContactCount}
+    {foreach from=$assignee_contact key=id item=name}
+         {literal} assignee_contact += '{"name":"'+{/literal}"{$name}"{literal}+'","id":"'+{/literal}"{$id}"{literal}+'"},';{/literal}
+    {/foreach}
+    {literal} eval( 'assignee_contact = [' + assignee_contact + ']'); {/literal}
+    {/if}
+    {literal}
 
-var target_contact_id = assignee_contact_id = null;
-//loop to set the value of cc and bcc if form rule.
-var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}"; {/literal}
-{foreach from=","|explode:"target,assignee" key=key item=element}
-  {assign var=currentElement value=`$element`_contact_id}
-  {if $form.$currentElement.value }
-     {literal} var {/literal}{$currentElement}{literal} = cj.ajax({ url: toDataUrl + "&cid={/literal}{$form.$currentElement.value}{literal}", async: false }).responseText;{/literal}
-  {/if}
-{/foreach}
-{literal}
-if ( target_contact_id ) {
-  eval( 'target_contact = ' + target_contact_id );
-}
-if ( assignee_contact_id ) {
-  eval( 'assignee_contact = ' + assignee_contact_id );
-}
-cj(document).ready( function( ) {
-{/literal}
-{if $source_contact and $admin and $action neq 4} 
-{literal} cj( '#source_contact_id' ).val( "{/literal}{$source_contact}{literal}");{/literal}
-{/if}
-{literal}
+    var target_contact_id = assignee_contact_id = null;
+    //loop to set the value of cc and bcc if form rule.
+    var toDataUrl = "{/literal}{crmURL p='civicrm/ajax/checkemail' q='id=1&noemail=1' h=0 }{literal}"; {/literal}
+    {foreach from=","|explode:"target,assignee" key=key item=element}
+      {assign var=currentElement value=`$element`_contact_id}
+      {if $form.$currentElement.value }
+         {literal} var {/literal}{$currentElement}{literal} = cj.ajax({ url: toDataUrl + "&cid={/literal}{$form.$currentElement.value}{literal}", async: false }).responseText;{/literal}
+      {/if}
+    {/foreach}
+    {literal}
+    if ( target_contact_id ) {
+      eval( 'target_contact = ' + target_contact_id );
+    }
+    if ( assignee_contact_id ) {
+      eval( 'assignee_contact = ' + assignee_contact_id );
+    }
+    cj(document).ready( function( ) {
+    {/literal}
+    {if $source_contact and $admin and $action neq 4} 
+    {literal} cj( '#source_contact_id' ).val( "{/literal}{$source_contact}{literal}");{/literal}
+    {/if}
+    {literal}
 
-eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
+    eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
 
-var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
-var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
-var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
-cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   classes: tokenClass, hintText: hintText });
-cj( "#assignee_contact_id").tokenInput( tokenDataUrl, { prePopulate: assignee_contact, classes: tokenClass, hintText: hintText });
-cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
-cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst : false, hintText: hintText, matchContains: true, minChars: 2
-                            }).result( function(event, data, formatted) { cj( "#source_contact_qid" ).val( data[1] );
-                            }).bind( 'click', function( ) { cj( "#source_contact_qid" ).val(''); });
-});
-</script>
-{/literal}
-{if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-{/if}
+    var sourceDataUrl = "{/literal}{$dataUrl}{literal}";
+    var tokenDataUrl  = "{/literal}{$tokenUrl}{literal}";
+    var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
+    cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   classes: tokenClass, hintText: hintText });
+    cj( "#assignee_contact_id").tokenInput( tokenDataUrl, { prePopulate: assignee_contact, classes: tokenClass, hintText: hintText });
+    cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
+    cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst : false, hintText: hintText, matchContains: true, minChars: 2
+                                }).result( function(event, data, formatted) { cj( "#source_contact_qid" ).val( data[1] );
+                                }).bind( 'click', function( ) { cj( "#source_contact_qid" ).val(''); });
+    });
+    </script>
+    {/literal}
+    {if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    {/if}
     <h3>
        {if $single eq false}
           {ts}New Activity{/ts}
@@ -306,37 +305,38 @@ cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst
         </tr> 
         </table>   
 
-{if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-{/if}
+    {if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    {/if}
 
-{include file="CRM/Case/Form/ActivityToCase.tpl"}
+    {include file="CRM/Case/Form/ActivityToCase.tpl"}
 
-{if $action eq 1 or $action eq 2 or $context eq 'search' or $context eq 'smog'}
-   {*include custom data js file*}
-   {include file="CRM/common/customData.tpl"}
-    {literal}
-    <script type="text/javascript">
-   	cj(document).ready(function() {
-		{/literal}
-		buildCustomData( '{$customDataType}' );
-		{if $customDataSubType}
-			buildCustomData( '{$customDataType}', {$customDataSubType} );
-		{else}
-		    {literal}
-		    if ( cj("#activity_type_id").val( ) ) {
-		        buildCustomData( '{/literal}{$customDataType}{literal}', cj("#activity_type_id").val( ) );
-	        }
-	        {/literal}
-		{/if}
-		{literal}
-	});
+    {if $action eq 1 or $action eq 2 or $context eq 'search' or $context eq 'smog'}
+       {*include custom data js file*}
+       {include file="CRM/common/customData.tpl"}
+        {literal}
+        <script type="text/javascript">
+       	cj(document).ready(function() {
+    		{/literal}
+    		buildCustomData( '{$customDataType}' );
+    		{if $customDataSubType}
+    			buildCustomData( '{$customDataType}', {$customDataSubType} );
+    		{else}
+    		    {literal}
+    		    if ( cj("#activity_type_id").val( ) ) {
+    		        buildCustomData( '{/literal}{$customDataType}{literal}', cj("#activity_type_id").val( ) );
+    	        }
+    	        {/literal}
+    		{/if}
+    		{literal}
+    	});
 
-    </script>
-    {/literal}
-{/if}
-{if ! $form.case_select}
-{include file="CRM/common/formNavigate.tpl"}
-{/if}
+        </script>
+        {/literal}
+    {/if}
+    {if ! $form.case_select}
+        {include file="CRM/common/formNavigate.tpl"}
+    {/if}
+    </div>{* end of form block*}
 {/if} {* end of snippet if*}	
-</div>
+

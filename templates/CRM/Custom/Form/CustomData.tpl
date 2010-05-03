@@ -24,7 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 {* Custom Data form*}
-<div class="Crm-block crm-form-block">
 {if $formEdit}
     {if $cd_edit.help_pre}
         <div class="messages help">{$cd_edit.help_pre}</div>
@@ -66,4 +65,3 @@
     <div id="custom_group_{$group_id}_{$cgCount}"></div>
 {/foreach}
 {/if}
-</div>
