@@ -129,16 +129,18 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     private function _populateDB() {
 
-            $query = "DROP DATABASE IF EXISTS civicrm_tests_dev;"
-                   . "CREATE DATABASE civicrm_tests_dev DEFAULT"
-                   . " CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
-                   . "USE civicrm_tests_dev;"
-                   . "SET SQL_MODE='STRICT_ALL_TABLES';"
-                   . "SET foreign_key_checks = 0";
-            if ( self::$utils->do_query($query) === false ) {
+            $queries = array( "DROP DATABASE IF EXISTS civicrm_tests_dev;", 
+                              "CREATE DATABASE civicrm_tests_dev DEFAULT" . 
+                              " CHARACTER SET utf8 COLLATE utf8_unicode_ci;", 
+                              "USE civicrm_tests_dev;", 
+                              "SET SQL_MODE='STRICT_ALL_TABLES';", 
+                              "SET foreign_key_checks = 0" );
+            foreach( $queries as $query ) {
+                if ( self::$utils->do_query($query) === false ) {
 
-                //  failed to create test database
-                exit;
+                    //  failed to create test database
+                    exit;
+                }
             }
 
             //  initialize test database
