@@ -78,8 +78,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
                         );
 
         $contact =& civicrm_contact_add($params);
-        $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+        $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__ );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         // delete the contact
