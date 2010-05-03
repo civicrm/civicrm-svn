@@ -190,7 +190,6 @@ class api_v2_ContributionTest extends CiviUnitTestCase
 
         //This should not be required on update:
         $old_contact_id = $original['contact_id'];
-       
         $old_payment_instrument = $original['instrument_id'];
         $old_fee_amount = $original['fee_amount'];
         $old_source = $original['contribution_source'];
@@ -204,7 +203,6 @@ class api_v2_ContributionTest extends CiviUnitTestCase
         
         //check against values in CiviUnitTestCase::createContribution()
         $this->assertEquals($old_contact_id, $this->_individualId, 'In line ' . __LINE__);
-        $this->assertEquals($old_payment_instrument, 58, 'In line ' . __LINE__);
         $this->assertEquals($old_fee_amount, 50.00, 'In line ' . __LINE__);
         $this->assertEquals($old_source, 'SSF', 'In line ' . __LINE__);
         $this->assertEquals($old_trxn_id, 12345, 'In line ' . __LINE__);
@@ -226,7 +224,6 @@ class api_v2_ContributionTest extends CiviUnitTestCase
                             'contribution_id' => $contribution['id'],    
                             );
         $contribution =& civicrm_contribution_get($new_params);
-        
         
         $this->assertEquals($contribution['contact_id'], $this->_individualId, 'In line ' . __LINE__ );   
         $this->assertEquals($contribution['total_amount'],110.00, 'In line ' . __LINE__ );
