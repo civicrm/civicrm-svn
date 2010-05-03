@@ -299,7 +299,8 @@ foreach(glob($tempDir . '/templates_c/*') as $tempFile) {
 rmdir($tempDir . '/templates_c');
 
 function &parseInput( $file ) {
-    $dom = DomDocument::load( $file );
+    $dom = new DomDocument( );
+    $dom->load( $file );
     $dom->xinclude( );
     $dbXML = simplexml_import_dom( $dom );
     return $dbXML;

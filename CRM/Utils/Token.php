@@ -704,6 +704,37 @@ class CRM_Utils_Token
         preg_match_all('/\{(\w+\.\w+)\}/', $str, $match);
         return $match[1];
     }
+
+    /**
+     * Find and replace tokens for each component
+     *
+     * @param string $str       The string to search
+     * @param array   $contact  Associative array of contact properties
+     * @param array $components A list of tokens that are known to exist in the email body
+     * @return string           The processed string
+     * @access public
+     * @static
+     */
+    public static function &replaceComponentTokens( &$str, $contact, $components )
+    {
+        if ( !is_array($components) || empty($contact) ) {
+            return $str;
+        }
+        
+        foreach ( $components as $name => $tokens ) {
+            if ( !is_array($tokens) || empty($tokens) ) {
+                continue;
+            }
+            
+            foreach ( $tokens as $token ) {
+                if ( self::token_match( $name, $token, $str ) && isset( $contact[$name.'.'.$token] ) ) {
+                    self::token_replace( $name, $token, $contact[$name.'.'.$token], $str );    
+                }
+            }
+        }  
+        return $str;
+    }
+
 }
 
 

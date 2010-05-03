@@ -184,7 +184,11 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
             if ( !$contact || is_a( $contact, 'CRM_Core_Error' ) ) {
                 return null;
             }
-            
+
+            //CRM-5734
+            require_once 'CRM/Utils/Hook.php';
+            CRM_Utils_Hook::tokenValues( $contact, $contactId );
+
             $type = array('html', 'text');
             
             foreach( $type as $key => $value ) {
@@ -197,6 +201,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                 if ( $$bodyType ) {
                     $$bodyType = CRM_Utils_Token::replaceDomainTokens($$bodyType, $domain, true, $tokens[$value] );
                     $$bodyType = CRM_Utils_Token::replaceContactTokens($$bodyType, $contact, false, $tokens[$value] );
+                    $$bodyType = CRM_Utils_Token::replaceComponentTokens($$bodyType, $contact, $tokens[$value] );
                 }
             }
             $html = $body_html;

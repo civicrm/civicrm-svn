@@ -65,7 +65,7 @@ function smarty_function_help( $params, &$smarty ) {
         $file ='CRM/common/accesskeys.hlp';
     }
     require_once 'CRM/Core/Config.php';
-    $config = CRM_Core_Config::Singleton();
+    $config = CRM_Core_Config::singleton();
     $smarty->assign( 'id', $params['id'] );
     $help = $smarty->fetch( $file );
     return <<< EOT
