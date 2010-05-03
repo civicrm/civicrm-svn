@@ -69,7 +69,7 @@ class CRM_Contribute_BAO_ContributionRecur extends CRM_Contribute_DAO_Contributi
         $recurring->id        = CRM_Utils_Array::value( 'contribution', $ids );
 
 	// set currency for CRM-1496
-	if ( ! isset( $recurring-currency ) ) {
+	if ( ! isset( $recurring->currency ) ) {
 	  $config =& CRM_Core_Config::singleton( );
 	  $recurring->currency = $config->defaultCurrency;
 	}
