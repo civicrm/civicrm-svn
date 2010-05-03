@@ -1,4 +1,4 @@
-<?
+<?php
 
 require_once 'api/v2/utils.php';
 

@@ -74,6 +74,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     public static $utils;
 
+    public static $populateOnce = null;
+
     /**
      *  Constructor
      *
@@ -128,6 +130,12 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
     protected function getDataSet() { }
 
     private function _populateDB() {
+
+        if ( self::$populateOnce ) {
+            return;
+        }
+
+        self::$populateOnce = true;
 
             $queries = array( "DROP DATABASE IF EXISTS civicrm_tests_dev;", 
                               "CREATE DATABASE civicrm_tests_dev DEFAULT" . 
@@ -203,6 +211,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
 
     public function cleanDB() {
+        self::$populateOnce = null;
+
         $this->_dbconn = $this->getConnection();
         $this->_populateDB();
     }
@@ -538,7 +548,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     function relationshipTypeCreate( &$params ) 
     {  
-        require_once 'api/v2/Relationship.php';
+        require_once 'api/v2/RelationshipType.php';
         $result= civicrm_relationship_type_add($params);
         
         if ( civicrm_error( $params ) ) {
