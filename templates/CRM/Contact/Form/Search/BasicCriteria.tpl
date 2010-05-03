@@ -22,7 +22,25 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
+
+    var defaultsContact = {
+      returnParam: ['sort_name','email'],
+      params: {rowCount:35,
+        json:1,
+        fnName:'civicrm/contact/search'}
+
 *}
+{literal}
+<script>
+jQuery(document).ready(function($){
+  //$("#searchForm input[name=sort_name]").crmAutocomplete({params:{fnName:'civicrm/contact/simplesearch'}}).result(function(event, data, formatted) {
+  $("#searchForm input[name=sort_name]").crmAutocomplete({params:{fnName:'civicrm/contact/search'}}).result(function(event, data, formatted) {
+       document.location=$().crmURL("civicrm/contact/view?reset=1&cid="+data['contact_id']);
+       return false;
+    });
+});
+</script>
+{/literal}
 {* Search criteria form elements *}
     {if $rows}
         {if $context EQ 'smog'}

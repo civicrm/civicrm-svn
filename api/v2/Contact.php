@@ -189,6 +189,34 @@ function &civicrm_contact_add( &$params ) {
     return $result;
 }
 
+function civicrm_contact_simplesearch( &$params ) {
+  $q=$params['s'];
+  if (!$q) 
+    $q=$params['sort_name'];
+  $result=array();
+        $sql = "
+SELECT DISTINCT contact_id,contact_type,column_name,sort_name,email from (select 'sort_name' column_name, contact_id,contact_type,sort_name,email from civicrm_email,civicrm_contact WHERE contact_id = civicrm_contact.id and sort_name LIKE '$q%' limit 10
+UNION
+select 'first_name' column_name,contact_id,contact_type,sort_name,email from civicrm_email,civicrm_contact WHERE contact_id = civicrm_contact.id and first_name LIKE '$q%' limit 10
+UNION
+select 'email' column_name,contact_id,contact_type,sort_name,email from civicrm_email,civicrm_contact WHERE contact_id = civicrm_contact.id and email LIKE '$q%' limit 10
+) T  
+";
+
+        $dao = new CRM_Core_DAO( );
+        $dao->query( $sql );
+        
+        for ($i=0;$i<10;$i++) {
+          $r= $dao->fetch( );
+          $result[] = array ( 'contact_id'=> $dao->contact_id,
+              'match' => $dao->column_name,
+              'sort_name' => $dao->sort_name,
+              'email' => $dao->email,
+              'contact_type' => $dao->contact_type,
+              'data' => $dao->data);
+        }
+return $result;
+}
 /**
  * Retrieve one or more contacts, given a set of search params
  *

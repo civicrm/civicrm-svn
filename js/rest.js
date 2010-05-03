@@ -39,6 +39,14 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
 
 (function($)
 {
+	$.fn.crmURL = function(query,param) {
+    var p="";
+    if (typeof param != "undefined")
+      p='&'+p
+    
+    return "/"+query+p;
+  };
+
 	var defaults = {
 		success: function(result,settings){
       var successMsg = 'Saved &nbsp; <a href="#" id="closerestmsg">'+ settings.closetxt +'</a>'; 
@@ -54,7 +62,7 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
       return settings.success(result,settings);
 		},
     closetxt: "<div class='icon close-icon' title='Close'>[X]</div>",
-		ajaxURL: '/civicrm/ajax/rest',
+		ajaxURL: $().crmURL('civicrm/ajax/rest'),
 		msgbox: '#restmsg',
 	};
 
@@ -69,9 +77,9 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
   $.fn.crmAutocomplete = function (options) {
     var defaultsContact = {
       returnParam: ['sort_name','email'],
-      params: {rowCount:35,
+      params: {rowCount:10,
         json:1,
-        fnName:'civicrm/contact/search'}
+        fnName:'civicrm/contact/simplesearch'}
     };
 		settings = $.extend(true,{},defaultsContact, options);
     var contactUrl = defaults.ajaxURL + "?";
@@ -109,10 +117,12 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
            return acd;
          },
          width: 250,
+         matchCase:true,
          delay:100,
-         max:25,
-         minChars:0,
-         selectFirst: true
+         max:10,
+         cacheLength:1,
+         minChars:1,
+         selectFirst: false
      });
     });
   }
