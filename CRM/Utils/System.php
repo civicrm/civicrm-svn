@@ -1084,4 +1084,13 @@ class CRM_Utils_System {
         $cache->flush( );
     }
 
+    /**
+     * load cms bootstrap
+     */
+    static function loadBootStrap( ) {
+        $config = CRM_Core_Config::singleton();
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
+        return eval('return '. $config->userFrameworkClass . '::loadBootStrap($config);');
+    }
+
 }

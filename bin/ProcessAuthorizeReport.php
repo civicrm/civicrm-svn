@@ -101,7 +101,7 @@ define('_CRM_PROCESS_AUTHORIZE_REPORT_DEBUG', false);
 
 require_once '../civicrm.config.php';
 require_once 'CRM/Core/Config.php';
-require_once 'api/crm.php';
+require_once 'api/utils.php';
 require_once 'CRM/Core/Payment/AuthorizeNet.php';
 
 require_once 'CRM/Core/DAO.php';
@@ -153,6 +153,11 @@ class CRM_ProcessAuthorizeReport {
         _crm_initialize( );
 
         $config = CRM_Core_Config::singleton( );
+        
+        //load bootstrap to call hooks
+        require_once 'CRM/Utils/System.php';
+        CRM_Utils_System::loadBootStrap(  );
+        
         $config->userFramework          = 'Soap';
         $config->userFrameworkClass     = 'CRM_Utils_System_Soap';
         $config->userHookClass          = 'CRM_Utils_Hook_Soap';

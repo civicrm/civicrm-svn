@@ -324,4 +324,21 @@ class CRM_Utils_System_Drupal {
             return null;
         }
     }
+
+    /**
+     * load drupal bootstrap
+     */
+    static function loadBootStrap( $config ) {
+        $cmsPath = dirname( dirname( dirname (dirname ( dirname( $config->templateDir ) ) ) ) );
+        if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) {
+            return;
+        }
+        
+        $cur_dir = getcwd();
+        chdir($cmsPath);
+        require_once 'includes/bootstrap.inc';
+        @drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
+        //chdir( $cur_dir ); 
+    }
+
 }

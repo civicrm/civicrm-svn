@@ -84,6 +84,10 @@ function run( ) {
     //log the execution of script
     CRM_Core_Error::debug_log_message( 'UpdateAddress.php' );
     
+    // load bootstrap to call hooks
+    require_once 'CRM/Utils/System.php';
+    CRM_Utils_System::loadBootStrap(  );
+
     // do check for geocoding.
     $processGeocode = false;
     if ( empty( $config->geocodeMethod ) ) {
