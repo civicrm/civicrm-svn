@@ -17,7 +17,6 @@
     <column>display_name</column>
     <column>nick_name</column>
     <column>legal_name</column>
-    <column>home_URL</column>
     <column>image_URL</column>
     <column>preferred_communication_method</column>
     <column>preferred_mail_format</column>
@@ -66,7 +65,6 @@
       <value>abcd wxyz</value>  <!--  display_name  -->
       <value>This is nickname first</value><!--  nick_name  -->
       <null /><!--  legal_name  -->
-      <value>http://some.url.com</value><!--  home_URL  -->
       <value>http://some.url.com/image.jpg</value><!--  image_URL  -->
       <null /><!--  preferred_communication_method  -->
       <value>HTML</value><!--  preferred_mail_format  -->

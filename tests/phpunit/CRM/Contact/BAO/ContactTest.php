@@ -80,6 +80,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
      */
     function testAddWithAll( )
     {
+        $this->fail('This method needs to be updated for new way of passing home_URL (as website + website_type_id)');
         //take the common contact params
         $params = $this->contactParams( );
         unset( $params['location'] ); 
