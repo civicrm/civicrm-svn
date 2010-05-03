@@ -2198,8 +2198,11 @@ div.grippie {
 
 
 #crm-contact-actions-list .activities-block {
-	color:#FFF;
+	color:#a7a7a7;
+	font-size: 11px;
 	padding:4px;
+	margin-top:4px;
+	border-top: 1px solid #a7a7a7;
 	}
 #crm-contact-actions-list .activities-block select {
 	margin-top:4px;

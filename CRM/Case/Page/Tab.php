@@ -240,7 +240,8 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
     {
         $context = $this->get('context');
         $url     = null;
-
+        $contextQFKey = CRM_Utils_Request::retrieve( 'contextQFKey',
+                                                     'String', $this, false, 'search' );
         switch ( $context ) {
         case 'activity':
             if ( $this->_contactId ) {
@@ -266,7 +267,18 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
             break;
             
         case 'fulltext':
-            $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+            $action = CRM_Utils_Request::retrieve('action', 'String', $this);
+            if ( $action == CRM_Core_Action::RENEW ) {
+                $cid = null;
+                if ( $this->_contactId ) {
+                    $cid = '&cid=' . $this->_contactId;
+                }
+                $url = CRM_Utils_System::url( 'civicrm/contact/view/case', 
+                                              "force=1&context=fulltext&action=view&contextQFKey={$contextQFKey}" . $cid ); 
+            } else {
+                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom',
+                                              "force=1&qfKey={$contextQFKey}" );
+            }
             break;
 
         default:

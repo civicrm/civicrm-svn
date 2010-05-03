@@ -152,7 +152,7 @@
                         <td>{$row.case_end_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
                         <td>{$row.case_id}</td>
                         {if $row.case_is_deleted}
-			    <td><a href="{crmURL p='civicrm/contact/view/case' q="reset=1&id=`$row.case_id`&cid=`$row.contact_id`&action=renew&context=search"}">{ts}Restore Case{/ts}</a></td>
+			    <td><a href="{crmURL p='civicrm/contact/view/case' q="reset=1&id=`$row.case_id`&cid=`$row.contact_id`&action=renew&context=fulltext&contextQFKey=`$qfKey`"}">{ts}Restore Case{/ts}</a></td>
 			{else}
 			    <td><a href="{crmURL p='civicrm/contact/view/case' q="reset=1&id=`$row.case_id`&cid=`$row.contact_id`&action=view&context=fulltext&contextQFKey=`$qfKey`"}">{ts}Manage Case{/ts}</a></td>
 			{/if}

@@ -62,7 +62,7 @@
                     	{* Include links to enter Activities if session has 'edit' permission *}
                         {if $permission EQ 'edit'}
                         <li class="crm-contact-activity">
-                            {include file="CRM/Activity/Form/ActivityLinks.tpl"}
+                            {include file="CRM/Contact/Form/ActionsButton.tpl"}
                         </li>
                         <li>
                         <a href="{crmURL p='civicrm/contact/add' q="reset=1&action=update&cid=$contactId"}" class="edit button" title="{ts}Edit{/ts}">
