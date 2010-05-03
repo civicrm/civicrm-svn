@@ -721,7 +721,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
                 foreach($fields as $key => $field) {
                     if ( $viewOnly &&
                          isset( $field['data_type'] ) &&
-                         $field['data_type'] == 'File' ) {
+                         $field['data_type'] == 'File' || ( $viewOnly && $field['name'] == 'image_URL' ) ) {
                         // ignore file upload fields
                         continue;
                     }

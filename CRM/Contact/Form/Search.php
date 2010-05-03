@@ -302,7 +302,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
             */
 
             // Set dynamic page title for 'Show Members of Group'
-            CRM_Utils_System::setTitle( ts( 'Group Members: %1', array( 1 => $this->_group[$this->_groupID] ) ) );
+            CRM_Utils_System::setTitle( ts( 'Contacts in Group: %1', array( 1 => $this->_group[$this->_groupID] ) ) );
 
             // check if user has permission to edit members of this group
             require_once 'CRM/Contact/BAO/Group.php';
@@ -320,7 +320,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
          */
         if ( $this->_context === 'amtg' ) {
             // Set dynamic page title for 'Add Members Group'
-            CRM_Utils_System::setTitle( ts('Add Members: %1', array(1 => $this->_group[$this->_amtgID])) );
+            CRM_Utils_System::setTitle( ts('Add to Group: %1', array(1 => $this->_group[$this->_amtgID])) );
             // also set the group title and freeze the action task with Add Members to Group
             $groupValues = array( 'id' => $this->_amtgID, 'title' => $this->_group[$this->_amtgID] );
             $this->assign_by_ref( 'group', $groupValues );

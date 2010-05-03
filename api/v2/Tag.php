@@ -65,6 +65,9 @@ function civicrm_tag_create( &$params )
     if ( !array_key_exists ('used_for', $params)) {
       $params ['used_for'] = "civicrm_contact";
     }
+    if ( !array_key_exists ('used_for', $params)) {
+      $params ['used_for'] = "civicrm_contact";
+    }
     $error = _civicrm_check_required_fields($params, 'CRM_Core_DAO_Tag');
     
     if ( $error['is_error'] ) {

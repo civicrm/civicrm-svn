@@ -245,7 +245,7 @@ class CRM_Utils_String {
         //redact the strings
         if (!empty($stringRules)){
             foreach ($stringRules as $match => $replace) {
-                $str = str_replace($match, $replace, $str);
+                $str = str_ireplace($match, $replace, $str);
             }
         }
         

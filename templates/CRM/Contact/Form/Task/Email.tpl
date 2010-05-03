@@ -43,6 +43,13 @@
 </tr>
 <tr id="cc" {if ! $form.cc_id.value}style="display:none;"{/if}><td class="label">{$form.cc_id.label}</td><td>{$form.cc_id.html}</td></tr>
 <tr id="bcc" {if ! $form.bcc_id.value}style="display:none;"{/if}><td class="label">{$form.bcc_id.label}</td><td>{$form.bcc_id.html}</td></tr>
+
+{if $emailTask}
+    <tr>
+        <td class="label">{$form.template.label}</td>
+        <td>{$form.template.html}</td>
+    </tr>
+{/if}
 <tr>
     <td class="label">{$form.subject.label}</td>
     <td>

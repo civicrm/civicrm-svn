@@ -301,23 +301,23 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
     }
 
     /**
-     * Function to get child contact tags given parentID
+     * Function to get child contact tags given parentId
      */
-    static function getChildContactTags( $parentID, $contactID ) {
-        $contactTags = array( );
+    static function getChildEntityTags( $parentId, $entityId, $entityTable = 'civicrm_contact' ) {
+        $entityTags = array( );
         $query = "SELECT ct.id as tag_id, name FROM civicrm_tag ct
-                    INNER JOIN civicrm_entity_tag et ON ( et.entity_id = {$contactID} AND
-                     et.entity_table = 'civicrm_contact' AND  et.tag_id = ct.id)
-                  WHERE ct.parent_id = {$parentID}";
+                    INNER JOIN civicrm_entity_tag et ON ( et.entity_id = {$entityId} AND
+                     et.entity_table = '{$entityTable}' AND  et.tag_id = ct.id)
+                  WHERE ct.parent_id = {$parentId}";
                   
         $dao = CRM_Core_DAO::executeQuery( $query );
         
          while( $dao->fetch( ) ) {
-            $contactTags[] = array( 'id'   => $dao->tag_id,
+            $entityTags[] = array( 'id'   => $dao->tag_id,
                                     'name' => $dao->name);
          }
          
-         return $contactTags;
+         return $entityTags;
     }  
 }
 

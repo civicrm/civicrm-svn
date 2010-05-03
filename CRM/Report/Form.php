@@ -137,6 +137,12 @@ class CRM_Report_Form extends CRM_Core_Form {
     protected $_customGroupGroupBy = false;
 
     /**
+     * build tags filter
+     *
+     */
+    protected $_tagFilter = false;
+
+    /**
      * Navigation fields
      *
      * @var array
@@ -194,6 +200,11 @@ class CRM_Report_Form extends CRM_Core_Form {
      */
     function __construct( ) {
         parent::__construct( );
+        
+        // build tag filter
+        if ( $this->_tagFilter ) {
+            $this->buildTagFilter( );
+        }
 
         // merge custom data columns to _columns list, if any
         $this->addCustomDataToColumns( );
@@ -780,6 +791,25 @@ class CRM_Report_Form extends CRM_Core_Form {
         }
     }
 
+    function buildTagFilter( ) {
+        require_once 'CRM/Core/BAO/Tag.php';
+        $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor('civicrm_contact');
+        if ( !empty($contactTags) ) {
+            $this->_columns['civicrm_tag'] = 
+                array( 'dao'     => 'CRM_Core_DAO_Tag',
+                       'filters' =>             
+                       array( 'tagid' => 
+                              array( 'name'         => 'tag_id',
+                                     'title'        => ts( 'Tag' ),
+                                     'tag'          => true,
+                                     'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                     'options'      => $contactTags
+                                     ), 
+                              ), 
+                       );
+        }
+    }
+
     static function getSQLOperator( $operator = "like" ) {
         switch ( $operator ) {
         case 'eq':
@@ -861,7 +891,7 @@ class CRM_Report_Form extends CRM_Core_Form {
             break;
                 
         case 'in':
-            if ( $value !== null && count( $value ) > 0 ) {
+            if ( $value !== null && is_array( $value ) && count( $value ) > 0 ) {
                 $sqlOP  = self::getSQLOperator( $op );
                 if ( CRM_Utils_Array::value( 'type', $field ) == CRM_Utils_Type::T_STRING ) {
                     $clause = "( {$field['dbAlias']} $sqlOP ( '" . implode( "' , '", $value ) . "') )" ;
@@ -1703,9 +1733,9 @@ WHERE cg.extends IN ('" . implode( "','", $this->_customGroupExtends ) . "') AND
         // belongs to more than one tag, results duplicate
         // entries.
         return  " {$this->_aliases['civicrm_contact']}.id IN ( 
-                          SELECT DISTINCT {$this->_aliases['civicrm_tag']}.contact_id 
+                          SELECT DISTINCT {$this->_aliases['civicrm_tag']}.entity_id 
                           FROM civicrm_entity_tag {$this->_aliases['civicrm_tag']}
-                          WHERE {$clause} ) ";
+                          WHERE entity_table = 'civicrm_contact' AND {$clause} ) ";
     }
 
     function buildACLClause( $tableAlias = 'contact_a' ) {

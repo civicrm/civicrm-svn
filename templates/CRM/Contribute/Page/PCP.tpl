@@ -49,6 +49,8 @@
 		<th id="end_date">{ts}Ends{/ts}</th>
 		<th>{ts}Status{/ts}</th>
 		<th></th>
+		<th class="hiddenElement"></th>
+		<th class="hiddenElement"></th>
     </tr>
 	</thead>
 	<tbody>

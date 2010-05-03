@@ -23,8 +23,20 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<fieldset><legend>{ts}View Contribution{/ts}</legend>
-<table class="view-layout">
+<div class="crm-block crm-content-block">
+<h3>{ts}View Contribution{/ts}</h3>
+<div class="action-link">
+    <div class="crm-submit-buttons">
+    {if call_user_func(array('CRM_Core_Permission','check'), 'edit contributions')}
+       <a class="button" href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context"}" accesskey="e"><span><div class="icon edit-icon"></div> Edit</span></a>
+    {/if}
+    {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviContribute')}
+       <a class="button" href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=$id&cid=$contact_id&action=delete&context=$context"}"><span><div class="icon delete-icon"></div> Delete</span></a>
+    {/if}
+    {include file="CRM/common/formButtons.tpl"}
+    </div>
+</div>
+<table class="view-layout crm-info-panel">
     <tr>
         <td class="label">{ts}From{/ts}</td>
         <td class="bold">{$displayName}</td>
@@ -195,19 +207,15 @@
 </fieldset>
 {/if}
 
-<table class="form-layout buttons">
-    <tr>
-	    <td>&nbsp;</td>
-        <td>
-            {$form.buttons.html}
-            {if call_user_func(array('CRM_Core_Permission','check'), 'edit contributions')}
-                &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context"}" accesskey="e">Edit</a>
-            {/if}
-            {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviContribute')}
-                &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=$id&cid=$contact_id&action=delete&context=$context"}">Delete</a>
-            {/if}
-        </td>
-    </tr>    
-</table>
-
-</fieldset>
+<div class="action-link">
+    <div class="crm-submit-buttons">
+    {if call_user_func(array('CRM_Core_Permission','check'), 'edit contributions')}
+       <a class="button" href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context"}" accesskey="e"><span><div class="icon edit-icon"></div> Edit</span></a>
+    {/if}
+    {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviContribute')}
+       <a class="button" href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=$id&cid=$contact_id&action=delete&context=$context"}"><span><div class="icon delete-icon"></div> Delete</span></a>
+    {/if}
+    {include file="CRM/common/formButtons.tpl"}
+    </div>
+</div>
+</div>

@@ -71,6 +71,14 @@
        <add>2.1</add>
   </field>
   <field>
+      <name>currency</name>
+      <type>varchar</type>
+      <length>3</length>
+      <required>true</required>
+      <comment>3 character string, value from config setting or input via user.</comment>
+      <add>3.2</add>
+  </field>
+  <field>
        <name>frequency_unit</name>
        <type>enum</type> 
        <values>day,week,month,year</values>

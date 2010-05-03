@@ -25,12 +25,14 @@
 *}
 {* this template is used for adding/editing a tag (admin)  *}
 <div class="form-item">
-<h3>{if $action eq 1}{ts}New Tag{/ts}{elseif $action eq 2}{ts}Edit Tag{/ts}{else}{ts}Delete Tag{/ts}{/if}</h3>
+<h3>{if $action eq 1}{ts}New Tag {if $isTagSet}Set{/if}{/ts}{elseif $action eq 2}{ts}Edit Tag {if $isTagSet}Set{/if}{/ts}{else}{ts}Delete Tag {if $isTagSet}Set{/if}{/ts}{/if}</h3>
     {if $action eq 1 or $action eq 2 }
         <dl>
         <dt>{$form.name.label}</dt><dd>{$form.name.html}</dd>
         <dt>{$form.description.label}</dt><dd>{$form.description.html}</dd>
+        {if $form.parent_id.html}
 	    <dt>{$form.parent_id.label}</dt><dd>{$form.parent_id.html}</dd>
+	    {/if}
 	    <dt>{$form.used_for.label}</dt>
 	        <dd>{$form.used_for.html}
 	            <br />
@@ -40,7 +42,7 @@
 	                {/if}
 	            </span>
 	        </dd>
-	{if $accessHidden}
+	{*if $accessHidden}
 	    <dt>{$form.is_hidden.label}</dt>
 	        <dd>
 	            {$form.is_hidden.html}
@@ -49,7 +51,7 @@
                     {if $is_parent} {ts}You can change the 'Hidden' property of this tag by editing the 'Parent' tag.{/ts}{/if}
                 </span>
 	        </dd>
-	{/if}
+	{/if*}
         <dt>{$form.is_reserved.label}</dt>
             <dd>{$form.is_reserved.html}
                 <br /><span class="description">{ts}'Reserved' tags can be applied to records by any user with edit permission on that record. However only users with 'administer reserved tags' permission can modify the tags themselves, or delete them from the list of available tags.{/ts} 

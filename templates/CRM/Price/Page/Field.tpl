@@ -53,7 +53,12 @@
 
 
     {if $priceField}
-    
+    <table class="form-layout-compressed">
+            <tr>
+                <td><a href="{crmURL q="reset=1&action=add&sid=$sid"}" id="newPriceField" class="button"><span><div class="icon add-icon"></div>{ts}Add Price Field{/ts}</span></a></td>
+                <td style="vertical-align: top"><a class="button" href="{crmURL p="civicrm/admin/price" q="action=preview&sid=`$sid`&reset=1&context=field"}"><span>{ts}Preview this Price Set (all fields){/ts}</span></a></td>
+            </tr>
+        </table>
     <div id="field_page">
      <p></p>
         {strip}
@@ -95,12 +100,7 @@
         {/foreach}
         </table>
         {/strip}
-        <table class="form-layout-compressed">
-            <tr>
-                <td><a href="{crmURL q="reset=1&action=add&sid=$sid"}" id="newPriceField" class="button"><span><div class="icon add-icon"></div>{ts}Add Price Field{/ts}</span></a></td>
-                <td style="vertical-align: top"><a href="{crmURL p="civicrm/admin/price" q="action=preview&sid=`$sid`&reset=1&context=field"}">&raquo; {ts}Preview this Price Set (all fields){/ts}</a></td>
-            </tr>
-        </table>
+        
      </div>
 
     {else}

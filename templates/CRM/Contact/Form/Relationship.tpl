@@ -119,7 +119,7 @@
                     cj( function( ) {
                         createRelation( ); 
                     	cj('#relationship_type_id').change( function() { 
-                            cj('#quick-save').hide();
+                            cj('#relationship-refresh-save').hide();
                             cj('#rel_contact').val('');
                             cj("input[name=rel_contact_id]").val('');
                             createRelation( );
@@ -136,7 +136,7 @@
                              cj('#rel_contact').autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
                              cj('#rel_contact').result(function( event, data ) {
                                	cj("input[name=rel_contact_id]").val(data[1]);
-                                cj('#quick-save').show();
+                                cj('#relationship-refresh-save').show();
                                 buildRelationFields( relType );
                              });
                         } else { 
@@ -150,8 +150,8 @@
                 <dd>{$form.rel_contact.html}</dd>
                 <dt> </dt>
                   <dd>
-                    <span class="crm-button crm-button-type-refresh crm-button_qf_Relationship_refresh.html">{$form._qf_Relationship_refresh.html}</span>
-                    <span class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_save">{$form._qf_Relationship_refresh_save.html}</span>
+                    <span id="relationship-refresh" class="crm-button crm-button-type-refresh crm-button_qf_Relationship_refresh.html">{$form._qf_Relationship_refresh.html}</span>
+                    <span id="relationship-refresh-save" class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_save" style="display:none">{$form._qf_Relationship_refresh_save.html}</span>
                     <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
                   </dd>
                 </dl>
@@ -414,8 +414,8 @@
 	hide('addCurrentEmployee');
 
 	cj('#rel_contact').focus(function() {
-	show('search-button');
-	hide('quick-save');			      
+	show('relationship-refresh');
+	hide('relationship-refresh-save');			      
 	});
 	 
 	{/literal}{if $searchRows || $callAjax}{literal} 
@@ -449,7 +449,8 @@
 		     	show('addCurrentEmployer');
                     }
                 }
-                hide('search-button');
+                hide('relationship-refresh');
+		show('relationship-refresh-save');
                 show('details-save');
                 show('saveElements');
                 show('saveDetails');
@@ -464,7 +465,7 @@
         function changeCustomData( cType ) {
             {/literal}{if $action EQ 1} {literal}
             cj('#customData').html('');
-            show('search-button');
+            show('relationship-refresh');
             hide('saveElements');
             hide('addCurrentEmployee');
             hide('addCurrentEmployer');

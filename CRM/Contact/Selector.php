@@ -254,11 +254,11 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             if ( $contextMenu ) {
                 $counter = 7000;
                 foreach( $contextMenu as $key => $value ) {
-                    $url = "civicrm/contact/view/{$key}";
-                    $qs  = "reset=1&action=add&cid=%%id%%&context={$key}";
-                    if ( $key == 'activity' ) {
+                    $url = "civicrm/contact/view/{$value['key']}";
+                    $qs  = "reset=1&action=add&cid=%%id%%&context={$value['key']}";
+                    if ( $value['key'] == 'activity' ) {
                         $qs = "action=browse&selectedChild=activity&reset=1&cid=%%id%%";
-                    } else if ( $key == 'email' ) {
+                    } else if ( $value['key'] == 'email' ) {
                         $url = "civicrm/contact/view/activity";
                         $qs  = "atype=3&action=add&reset=1&cid=%%id%%";
                     }

@@ -410,9 +410,15 @@ AND    $mg.mailing_id = {$mailing_id}
 
         $eq = new CRM_Mailing_Event_BAO_Queue();
         
-        $eq->query("SELECT contact_id, email_id 
-                    FROM I_$job_id 
-                    ORDER BY contact_id, email_id");
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+        list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( );
+        $aclWhere = $aclWhere ? "WHERE {$aclWhere}" : '';
+        $eq->query("SELECT i.contact_id, i.email_id 
+                    FROM  civicrm_contact contact_a
+                    INNER JOIN I_$job_id i ON contact_a.id = i.contact_id
+                    {$aclFrom}
+                    {$aclWhere}
+                    ORDER BY i.contact_id, i.email_id");
 
         /* Delete the temp table */
         $mailingGroup->reset();

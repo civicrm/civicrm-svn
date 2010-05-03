@@ -43,6 +43,7 @@
         <div class="crm-submit-buttons">
 	    <div class="action-link">
         <a href="{crmURL q="action=add&reset=1"}" id="newTag" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag{/ts}</span></a>
+        <a href="{crmURL q="action=add&reset=1&tagset=1"}" id="newTagSet" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag Set{/ts}</span></a>
         </div>
         </div>
 {/if}
@@ -61,7 +62,7 @@
 	        <th>{ts}Parent ID{/ts}</th>
 		<th>{ts}Used For{/ts}</th>
                 {if $accessHidden}
-		    <th>{ts}Hidden?{/ts}</th>
+		    <th>{ts}Tag set?{/ts}</th>
 		{/if}
 		<th>{ts}Reserved?{/ts}</th>
 	        <th></th>

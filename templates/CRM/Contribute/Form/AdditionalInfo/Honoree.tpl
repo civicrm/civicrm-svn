@@ -25,7 +25,6 @@
 *}
 {* this template is used for adding/editing Honoree Information *}
 <div id="id-honoree" class="section-shown">
-   <fieldset>
       <table class="form-layout-compressed">
          {if $form.honor_type_id.html}
 	    <tr>
@@ -50,7 +49,6 @@
                 <span class="description">{$form.honor_email.label}</td>
          </tr>
       </table>
-   </fieldset>
 </div>
 {if $form.honor_type_id.html}
 {literal}

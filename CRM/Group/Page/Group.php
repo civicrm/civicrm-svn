@@ -72,10 +72,10 @@ class CRM_Group_Page_Group extends CRM_Core_Page_Basic
         if (!(self::$_links)) {
             self::$_links = array(
                                   CRM_Core_Action::VIEW => array(
-                                                                 'name'  => ts('Members'),
+                                                                 'name'  => ts('Contacts'),
                                                                  'url'   => 'civicrm/group/search',
                                                                  'qs'    => 'reset=1&force=1&context=smog&gid=%%id%%',
-                                                                 'title' => ts('Group Members')
+                                                                 'title' => ts('Group Contacts')
                                                                  ),
                                   CRM_Core_Action::UPDATE => array(
                                                                    'name'  => ts('Settings'),

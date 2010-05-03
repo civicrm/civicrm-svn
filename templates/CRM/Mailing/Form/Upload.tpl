@@ -23,11 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{include file="CRM/common/WizardHeader.tpl"}
-{include file="CRM/Mailing/Form/Count.tpl"}
 <div id="help">
 {ts}You can either <strong>upload</strong> the mailing content from your computer OR <strong>compose</strong> the content on this screen. Click the help (?) icon for more information on formats and requirements.{/ts} {help id="content-intro"} 
 </div>
+<div class="crm-form-block">
+{include file="CRM/common/WizardHeader.tpl"}
+{include file="CRM/Mailing/Form/Count.tpl"}
+
 <div class="form-item">
   <fieldset>
     <table class="form-layout-compressed">
@@ -95,7 +97,7 @@
     <dt>&nbsp;</dt><dd>{$form.buttons.html}</dd>
   </dl>
 </div>
-
+</div>
 {* -- Javascript for showing/hiding the upload/compose options -- *}
 {include file="CRM/common/showHide.tpl"}
 {literal}

@@ -402,9 +402,6 @@ class api_v2_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( 'Discussion on Apis for v2',
                              $result['result']['subject'],
                              'In line ' . __LINE__ );
-         $this->assertEquals( 'bite my test data',
-                              $result['result']['custom_11_1'],
-                             'In line ' . __LINE__ );
     }
 
     /**
@@ -639,9 +636,6 @@ class api_v2_ActivityTest extends CiviUnitTestCase
                              'In line ' . __LINE__ );
         $this->assertEquals( 'test activity type id',
                              $result['result']['subject'],
-                             'In line ' . __LINE__ );
-         $this->assertEquals( 'bite my test data',
-                              $result['result']['custom_11_1'],
                              'In line ' . __LINE__ );
     }
 

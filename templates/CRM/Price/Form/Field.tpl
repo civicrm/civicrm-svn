@@ -65,7 +65,8 @@
     }
 </script>
 {/literal}
-<fieldset><legend>{ts}Price Field{/ts}</legend>
+<div class="crm-form-block">
+<h3>{ts}Price Field{/ts}</h3>
 
     <div class="form-item">
         <dl class="html-adjust">
@@ -74,7 +75,8 @@
         {if $action neq 4 and $action neq 2}
             <dt>&nbsp;</dt><dd class="description">{ts}Select the html type used to offer options for this field{/ts}</dd>
         {/if}
-	<dt>{$form.count.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='count' id=$id}{/if}</dt><dd>{$form.count.html}</dd>
+	    <dt>{$form.count.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='count' id=$id}{/if}</dt><dd>{$form.count.html}<br />
+	        <span class="description">{ts}If there is a limit on how many participants can select this event item, enter that number here.{/ts}</span></dd>
         </dl>
         <div class="spacer"></div>
         <div id="price" {if $action eq 2 && $form.html_type.value.0 eq 'Text'} class="show-block" {else} class="hide-block" {/if}>
@@ -148,3 +150,4 @@
         <a href="{crmURL p="civicrm/admin/event/field/option" q="reset=1&action=browse&fid=`$id`"}">&raquo; {ts}View / Edit Multiple Choice Options{/ts}</a>
     </div>
 {/if}
+</div>

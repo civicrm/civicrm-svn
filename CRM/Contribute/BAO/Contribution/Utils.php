@@ -158,7 +158,14 @@ class CRM_Contribute_BAO_Contribution_Utils {
             }
         } elseif ( $form->_contributeMode == 'express' ) {
             if ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) {
+				
+				//LCD determine if express + recurring and direct accordingly
+				if ( $paymentParams['is_recur'] == 1 ) {
+					$result =& $payment->createRecurringPayments( $paymentParams );
+				} else {
                 $result =& $payment->doExpressCheckout( $paymentParams );
+				}
+				
             }
         } elseif ( $form->_values['is_monetary'] && $form->_amount > 0.0 ) {
            

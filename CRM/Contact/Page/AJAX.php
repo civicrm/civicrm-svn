@@ -125,14 +125,18 @@ class CRM_Contact_Page_AJAX
             )";
         }
         
+//CRM-5954
         $query = "
-SELECT DISTINCT(cc.id) as id, CONCAT_WS( ' :: ', {$select} ) as data
-FROM civicrm_contact cc {$from}
-{$aclFrom}
-{$additionalFrom}
-{$whereClause} 
+SELECT id, data 
+FROM (
+   SELECT cc.id as id, CONCAT_WS( ' :: ', {$select} ) as data, sort_name
+   FROM civicrm_contact cc {$from}
+   {$aclFrom}
+   {$additionalFrom}
+   {$whereClause} 
+   LIMIT 0, {$limit}
+     ) t
 ORDER BY sort_name
-LIMIT 0, {$limit}
 ";
 
         // send query to hook to be modified if needed
@@ -183,7 +187,7 @@ LIMIT 0, {$limit}
     {
         // CRM_Core_Error::debug_var( 'GET' , $_GET , true, true );
         // CRM_Core_Error::debug_var( 'POST', $_POST, true, true );
-        
+  
         $relType         = CRM_Utils_Array::value( 'rel_type', $_POST );
         $relContactID    = CRM_Utils_Array::value( 'rel_contact', $_POST );
         $sourceContactID = CRM_Utils_Array::value( 'contact_id', $_POST );
@@ -198,28 +202,34 @@ LIMIT 0, {$limit}
                                 'start_date'           => date("Ymd")
                                 );
         
-        if ( $relationshipID == 'null' ) {
-            $relationIds = array( 'contact'      => $sourceContactID);
-        } else {
-            $relationIds = array( 'contact'      => $sourceContactID, 
-                                  'relationship' => $relationshipID,
-                                  'contactTarget'=>  $relContactID );
+        $relationIds = array( 'contact' => $sourceContactID);
+        if ( $relationshipID && $relationshipID != 'null' ) {
+            $relationIds['relationship']  = $relationshipID;
+            $relationIds['contactTarget'] = $relContactID;
         }
 
         require_once "CRM/Contact/BAO/Relationship.php";
         $return = CRM_Contact_BAO_Relationship::create( $relationParams, $relationIds );
+        $status = 'process-relationship-fail';
+        if ( CRM_Utils_Array::value( 0, $return[4] ) ) {
+		    $relationshipID = $return[4][0];
+            $status         = 'process-relationship-success';
+        }
+        
+        $caseRelationship = array( );
+        if ( $relationshipID && $relationshipID != 'null' ) {
+		    // we should return phone and email
+		    require_once "CRM/Case/BAO/Case.php";
+            $caseRelationship = CRM_Case_BAO_Case::getCaseRoles( $sourceContactID, 
+                                                                 $caseID, $relationshipID );
 
-		$relationshipID = $return[4][0];
+            //create an activity for case role assignment.CRM-4480
+            CRM_Case_BAO_Case::createCaseRoleActivity( $caseID, $relationshipID, $relContactID );
+        }
+		$relation = CRM_Utils_Array::value( $relationshipID, $caseRelationship, array( ) );
 
-		// we should return phone and email
-		require_once "CRM/Case/BAO/Case.php";
-        $caseRelationship = CRM_Case_BAO_Case::getCaseRoles( $sourceContactID, $caseID, $relationshipID );
-
-        //create an activity for case role assignment.CRM-4480
-        CRM_Case_BAO_Case::createCaseRoleActivity( $caseID, $relationshipID, $relContactID );
-
-		$relation           = $caseRelationship[$relationshipID];
 		$relation['rel_id'] = $relationshipID;
+        $relation['status'] = $status;
 		echo json_encode( $relation );
         CRM_Utils_System::civiExit( );
     }

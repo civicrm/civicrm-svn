@@ -178,8 +178,7 @@ function civicrm_event_search( &$params )
         $returnProperties[]='id';
         $returnProperties[]='event_type_id';
     }
-    $returnProperties[] = 'is_template';
-
+    
     require_once 'CRM/Core/BAO/CustomGroup.php';
     require_once 'CRM/Event/BAO/Event.php';
     $eventDAO = new CRM_Event_BAO_Event( );
@@ -189,19 +188,12 @@ function civicrm_event_search( &$params )
         $eventDAO->selectAdd( );
         $eventDAO->selectAdd( implode( ',' , $returnProperties ) );
     }
+    $eventDAO->whereAdd( '( is_template IS NULL ) OR ( is_template = 0 )' );
     
     $eventDAO->orderBy( $sort );
     $eventDAO->limit( (int)$offset, (int)$rowCount );
     $eventDAO->find( );
     while ( $eventDAO->fetch( ) ) {
-        // ignore event templates
-        // ideally need to put this in the query, but not sure how to do this with the below
-        // ( ( is_template IS NULL ) OR ( is_template = 0 ) )
-        // hence doing this here for now, please fix on a future rewrite
-        if ( $eventDAO->is_template ) {
-            continue;
-        }
-
         $event[$eventDAO->id] = array( );
         CRM_Core_DAO::storeValues( $eventDAO, $event[$eventDAO->id] );
         $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Event', CRM_Core_DAO::$_nullObject, $eventDAO->id, false, $eventDAO->event_type_id );

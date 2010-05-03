@@ -25,7 +25,7 @@
 *}
 <div class="block-civicrm">
 <div id="crm-create-new-wrapper">
-	<div id="crm-create-new-link"><span>Create New</span></div>
+	<div id="crm-create-new-link"><span><div class="icon dropdown-icon"></div>Create New</span></div>
 		<div id="crm-create-new-list" class="ac_results">
 			<div class="crm-create-new-list-inner">
 			<ul>
@@ -41,7 +41,7 @@
 <script>
 
 cj('body').click(function() {
-	 	$('#crm-create-new-list').hide();
+	 	cj('#crm-create-new-list').hide();
 	 	});
 	
 	 cj('#crm-create-new-list').click(function(event){

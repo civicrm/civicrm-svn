@@ -165,7 +165,7 @@ registration process.{/ts}</p>
           {if $lineItem|@count GT 1} {* Header for multi participant registration cases. *}
            <tr>
             <td colspan="2" {$labelStyle}>
-             {ts 1=$priceset+1}Participant %1{/ts}
+             {ts 1=$priceset+1}Participant %1{/ts} {$part.$priceset.info}
             </td>
            </tr>
           {/if}

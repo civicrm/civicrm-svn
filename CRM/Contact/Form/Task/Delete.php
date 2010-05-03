@@ -135,9 +135,9 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
             }
         }
         if ( ! $this->_single ) {
-            $label = $this->_restore ? ts('Restored Contact(s): %1') : ts('Deleted Contact(s): %1');
+            $label = $this->_restore ? ts('Restored Contact(s): %1', array(1 => $deletedContacts)) : ts('Deleted Contact(s): %1', array(1 => $deletedContacts));
             $status = array(
-                            ts($label, array(1 => $deletedContacts)),
+                            $label,
                             ts('Total Selected Contact(s): %1', array(1 => count($this->_contactIds))),
                             );
             

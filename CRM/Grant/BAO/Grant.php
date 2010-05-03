@@ -227,6 +227,13 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
         $grant->id = CRM_Utils_Array::value( 'grant', $ids );
 
         $grant->copyValues( $params );
+
+	// set currency for CRM-1496
+	if ( ! isset( $grant->currency ) ) {
+	  $config =& CRM_Core_Config::singleton( );
+	  $grant->currency = $config->defaultCurrency;
+	}
+
         $result = $grant->save( );
 
         require_once 'CRM/Utils/Recent.php';

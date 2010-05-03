@@ -104,7 +104,7 @@ AND    ( civicrm_membership.owner_membership_id IS NULL OR civicrm_membership.ow
 
         require_once 'CRM/Core/Smarty.php';
         $smarty =& CRM_Core_Smarty::singleton();
-
+        
         while ( $dao->fetch( ) ) {
             echo ".";
             
@@ -146,18 +146,20 @@ AND    ( civicrm_membership.owner_membership_id IS NULL OR civicrm_membership.ow
                     CRM_Core_Error::fatal( ts( "Deceased Membership status is missing or not active. <a href='%1'>Click here to check</a>.", array( 1 => CRM_Utils_System::url( 'civicrm/admin/member/membershipStatus', 'reset=1' ) ) ) );
                 }
                 
-                //since we are calculating status here so no
-                //need to calculate again in BAO::create( );
-                $deceasedMembership =  $memberParams;
-                $deceasedMembership['status_id'] = $deceaseStatusId;
-                
-                //create activity when status changed. CRM-2521.
-                //as BAO::create( ) create activity so let BAO handle it.
-                if ( $dao->status_id !=  array_search( 'Deceased', $allStatus ) ) {
-                    $deceasedMembership['createActivity'] = true; 
+                //process only when status change.
+                if ( $dao->status_id != $deceaseStatusId ) {
+                    //take all params that need to save.
+                    $deceasedMembership =  $memberParams;
+                    $deceasedMembership['status_id'] = $deceaseStatusId; 
+                    $deceasedMembership['createActivity'] = true;
+                    
+                    //since there is change in status.
+                    $statusChange = array( 'status_id' => $deceaseStatusId );
+                    $smarty->append_by_ref('memberParams', $statusChange, true );
+                    
+                    //process membership record.
+                    civicrm_contact_membership_create( $deceasedMembership );
                 }
-                
-                civicrm_contact_membership_create( $deceasedMembership );
                 continue;
             }
             
@@ -171,22 +173,21 @@ AND    ( civicrm_membership.owner_membership_id IS NULL OR civicrm_membership.ow
                 
                 //get the membership status as per id.
                 $newStatus = civicrm_membership_status_calc( array( 'membership_id' => $dao->membership_id ) );
+                $statusId  = CRM_Utils_Array::value( 'id', $newStatus );
                 
-                if ( CRM_Utils_Array::value( 'id', $newStatus ) ) {
-                    
-                    //take all params that need to save for
-                    //related memberships records. since BAO::create( )
-                    //will delete existing and create new records. 
-                    //also we are calculating status here, so no
-                    //need to calculate again in BAO::create( )
+                //process only when status change.
+                if ( $statusId && 
+                     $statusId != $dao->status_id ) {
+                    //take all params that need to save.
                     $memParams = $memberParams;
-                    $memParams['status_id'] = $newStatus['id'];
+                    $memParams['status_id']      = $statusId;
+                    $memParams['createActivity'] = true; 
                     
-                    //create activity when status changed. CRM-2521.
-                    //as BAO::create create activity so let BAO handle it.
-                    if ( $newStatus['id'] != $dao->status_id ) {
-                        $memParams['createActivity'] = true; 
-                    }
+                    //since there is change in status.
+                    $statusChange = array( 'status_id' => $statusId );
+                    $smarty->append_by_ref('memberParams', $statusChange, true );
+                    
+                    //process member record.
                     civicrm_contact_membership_create( $memParams );
                 }
             }

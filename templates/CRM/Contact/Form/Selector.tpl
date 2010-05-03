@@ -118,7 +118,7 @@
 <!-- Context Menu populated as per component and permission-->
 <ul id="contactMenu" class="contextMenu">
 {foreach from=$contextMenu item=value key=key}
-  <li class="{$value.ref}"><a href="#{$key}">{$value.title}</a></li>
+  <li class="{$value.ref}"><a href="#{$value.key}">{$value.title}</a></li>
 {/foreach}
 </ul>
 <script type="text/javascript">
@@ -134,7 +134,7 @@ var contactUrl  = "{/literal}{crmURL p='civicrm/contact/changeaction' q="reset=1
 // Show menu when contact row is right clicked
 cj(".selector tr").contextMenu({
       menu: 'contactMenu'
-    }, function( action, el ){ 
+    }, function( action, el ) { 
         var contactId = el.attr('id').substr(5);
         switch (action) {
           case 'activity':

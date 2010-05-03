@@ -543,6 +543,12 @@ class CRM_Profile_Form extends CRM_Core_Form
                 $fields['email'] = CRM_Utils_Array::value( 'email-Primary', $fields );
             }
             
+            // fix for CRM-6141
+            if ( CRM_Utils_Array::value( 'phone-Primary-1', $fields ) &&
+                 ! CRM_Utils_Array::value( 'phone-Primary', $fields ) ) {
+                $fields['phone-Primary'] = $fields['phone-Primary-1'];
+            }
+
             $session = CRM_Core_Session::singleton();
 
             $ctype = CRM_Core_BAO_UFGroup::getContactType($form->_gid);

@@ -291,6 +291,23 @@
      <weight>370</weight>
   </item>
   <item>
+     <path>civicrm/admin/options/language</path>
+     <title>Preferred Languages</title>
+     <desc>Options for contact languages.</desc>
+     <path_arguments>group=languages</path_arguments>
+     <page_callback>CRM_Admin_Page_Options</page_callback>
+     <adminGroup>Option Lists</adminGroup>
+     <weight>375</weight>
+  </item>
+  <item>
+     <path>civicrm/admin/options/stringoverrides</path>
+     <title>String Overrides</title>
+     <desc>String Overrides.</desc>
+     <page_callback>CRM_Admin_Form_StringOverrides</page_callback>
+     <adminGroup>Option Lists</adminGroup>
+     <weight>378</weight>
+  </item>
+  <item>
      <path>civicrm/admin/locationType</path>
      <title>Location Types (Home, Work...)</title>
      <desc>Options for categorizing contact addresses and phone numbers (e.g. Home, Work, Billing, etc.).</desc>

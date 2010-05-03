@@ -26,11 +26,11 @@
 {* Search criteria form elements *}
     {if $rows}
         {if $context EQ 'smog'}
-            <h3>{ts}Find Members within this Group{/ts}</h3>
+            <h3>{ts}Find Contacts within this Group{/ts}</h3>
         {/if}
     {else}
         {if $context EQ 'smog'}
-            <h3>{ts}Find Members within this Group{/ts}</h3>
+            <h3>{ts}Find Contacts within this Group{/ts}</h3>
         {elseif $context EQ 'amtg'}
             <h3>{ts}Find Contacts to Add to this Group{/ts}</h3>
         {/if}

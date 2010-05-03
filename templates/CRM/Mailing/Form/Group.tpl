@@ -33,25 +33,25 @@
     </dl>
   </div>
 {else}
+<div class="crm-form-block">
 {include file="CRM/common/WizardHeader.tpl"}
 
 <div class="form-item">
-<fieldset>
   <dl>
     <dt>{$form.name.label}</dt><dd>{$form.name.html} {help id="mailing-name"}</dd>
     {if $context EQ 'search'}
     <dt>{$form.baseGroup.label}</dt><dd>{$form.baseGroup.html}</dd>
     {/if}	
   </dl>
-</fieldset>
 
- <div id="id-additional-show" class="section-hidden section-hidden-border" style="clear: both;">
-        <a href="#" onclick="hide('id-additional-show'); show('id-additional'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{if $context EQ 'search'}{ts}Additional Mailing Recipients{/ts}{else}{ts}Mailing Recipients{/ts}{/if}</label><br />
- </div>
 
  <div id="id-additional" class="form-item">
-  <fieldset>
-  <legend><a href="#" onclick="hide('id-additional'); show('id-additional-show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{if $context EQ 'search'}{ts}Additional Mailing Recipients{/ts}{else}{ts}Mailing Recipients{/ts}{/if}</legend>
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+ {if $context EQ 'search'}{ts}Additional Mailing Recipients{/ts}{else}{ts}Mailing Recipients{/ts}{/if}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
   {strip}
 
   <table>
@@ -70,16 +70,23 @@
   </table>
 
   {/strip}
-  </fieldset>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
  </div>
 
  <dl>
  <dt></dt><dd>{$form.buttons.html}</dd>
  </dl>
 </div>
-{include file="CRM/common/showHide.tpl"}
+{literal}
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+{/literal}
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}
-
+</div>
 {/if}

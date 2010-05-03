@@ -33,8 +33,15 @@
 {elseif $action eq 1024 }
     {include file="CRM/UF/Form/Preview.tpl"}
 {else}
+<div class="crm-content-block">
     {if $ufField}
         <div id="field_page">
+        {if not ($action eq 2 or $action eq 1)}
+            <div class="action-link">
+            <a href="{crmURL p="civicrm/admin/uf/group/field" q="reset=1&action=add&gid=$gid"}" class="button"><span><div class="icon add-icon"></div>{ts}Add CiviCRM Profile Field{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=update&id=`$gid`&reset=1&context=field"}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Profile Settings{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=preview&id=`$gid`&reset=1&field=0&context=field"}" class="button"><span><div class="icon preview-icon"></div>{ts}Preview this profile (all fields){/ts}</span></a>
+            <div class="clear"></div>
+            </div>
+        {/if}
         {strip}
         {* handle enable/disable actions*}
  	{include file="CRM/common/enableDisable.tpl"}
@@ -42,7 +49,7 @@
         <table id="options" class="display">
             <thead>
             <tr>
-                <th>{ts}CiviCRM Field Name{/ts}</th>
+                <th>{ts}Field Name{/ts}</th>
                 <th>{ts}Visibility{/ts}</th>
                 <th>{ts}Searchable?{/ts}</th>
                 <th>{ts}In Selector?{/ts}</th>
@@ -72,16 +79,13 @@
             {/foreach}
         </table>
         {/strip}
-            
         {if not ($action eq 2 or $action eq 1)}
-            <table class="form-layout-compressed">
-            <tr>
-                <td><a href="{crmURL p="civicrm/admin/uf/group/field" q="reset=1&action=add&gid=$gid"}" class="button"><span><div class="icon add-icon"></div>{ts}Add CiviCRM Profile Field{/ts}</span></a></td>
-                <td><a href="{crmURL p="civicrm/admin/uf/group" q="action=update&id=`$gid`&reset=1&context=field"}" class="button"><span>&raquo; {ts}Edit Profile Settings{/ts}</span></a></td>
-                <td><a href="{crmURL p="civicrm/admin/uf/group" q="action=preview&id=`$gid`&reset=1&field=0&context=field"}" class="button"><span>&raquo; {ts}Preview this profile (all fields){/ts}</span></a></td>
-            </tr>
-            </table>
-        {/if}
+            <div class="action-link">
+            <a href="{crmURL p="civicrm/admin/uf/group/field" q="reset=1&action=add&gid=$gid"}" class="button"><span><div class="icon add-icon"></div>{ts}Add CiviCRM Profile Field{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=update&id=`$gid`&reset=1&context=field"}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Profile Settings{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=preview&id=`$gid`&reset=1&field=0&context=field"}" class="button"><span><div class="icon preview-icon"></div>{ts}Preview this profile (all fields){/ts}</span></a>
+            <div class="clear"></div>
+            </div>
+        {/if}    
+        
         </div>
     {else}
         {if $action eq 16}
@@ -94,4 +98,5 @@
         </div>
         {/if}
     {/if}
+</div>
 {/if}

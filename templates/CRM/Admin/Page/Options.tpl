@@ -137,14 +137,14 @@
 
         {if $action ne 1 and $action ne 2}
             <div class="action-link">
-                <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span>&raquo; {ts 1=$GName}New %1{/ts}</span></a>
+                <a href="{crmURL q="group="|cat:$gName|cat:"&action=add&reset=1"}" id="new"|cat:$GName class="button"><span><div class="icon add-icon"></div>{ts 1=$GName}Add %1{/ts}</span></a>
             </div>
         {/if}
 </div>
 {else}
     <div class="messages status">
     <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
+        <dt><div class="icon inform-icon"></div></dt>
         {capture assign=crmURL}{crmURL  q="group="|cat:$gName|cat:"&action=add&reset=1"}{/capture}
         <dd>{ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}</dd>
         </dl>

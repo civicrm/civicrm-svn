@@ -194,6 +194,13 @@ WHERE pledge_id = %1
         require_once 'CRM/Pledge/DAO/Payment.php';
         $payment = new CRM_Pledge_DAO_Payment( );
         $payment->copyValues( $params );
+
+	// set currency for CRM-1496
+	if ( ! isset( $payment->currency ) ) {
+	  $config =& CRM_Core_Config::singleton( );
+	  $payment->currency = $config->defaultCurrency;
+	}
+
         $result = $payment->save( );
         
         return $result;
@@ -246,13 +253,15 @@ WHERE pledge_id = %1
         $payment = new CRM_Pledge_DAO_Payment( );
         $payment->pledge_id = $id;
         
-        if ( $payment->find( true ) ) {
-            //also delete associated contribution.
-            if ( $payment->contribution_id ) {
-                require_once 'CRM/Contribute/BAO/Contribution.php';
-                CRM_Contribute_BAO_Contribution::deleteContribution( $payment->contribution_id );
+        if ( $payment->find( ) ) {
+            while ( $payment->fetch( ) ) {
+                //also delete associated contribution.
+                if ( $payment->contribution_id ) {
+                    require_once 'CRM/Contribute/BAO/Contribution.php';
+                    CRM_Contribute_BAO_Contribution::deleteContribution( $payment->contribution_id );
+                }
+                $payment->delete( );
             }
-            $payment->delete( );
         }
         
         $transaction->commit( );

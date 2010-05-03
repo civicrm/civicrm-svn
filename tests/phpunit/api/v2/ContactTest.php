@@ -78,8 +78,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
                         );
 
         $contact =& civicrm_contact_add($params);
-        $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__
-                           . " error message: " . $contact['error_message'] );
+        $this->assertEquals( 0, $contact['is_error'], "In line " . __LINE__ );
         $this->assertEquals( 1, $contact['contact_id'], "In line " . __LINE__ );
 
         // delete the contact
@@ -477,8 +476,8 @@ class api_v2_ContactTest extends CiviUnitTestCase
                         'do_not_trade'          => '1',
                         'legal_identifier'      => 'ABC23853ZZ2235',
                         'external_identifier'   => '1928837465',
-                        'home_URL'              => 'http://some.url.com',
                         'image_URL'             => 'http://some.url.com/image.jpg',
+                        'home_URL'              => 'http://www.example.org',
                         'preferred_mail_format' => 'HTML',
                         );
         
@@ -487,8 +486,8 @@ class api_v2_ContactTest extends CiviUnitTestCase
         $result =& civicrm_contact_update($params);
 
         //  Result should indicate successful update
-        $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__
-                           . " error message: " . $result['error_message'] );
+        $this->assertEquals( 0, $result['is_error'], "In line " . __LINE__ );
+
         $this->assertEquals( $expected, $result, "In line " . __LINE__ );
 
         //  Check updated civicrm_contact against expected

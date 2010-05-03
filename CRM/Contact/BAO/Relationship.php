@@ -111,10 +111,21 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
                 return array( $valid, $invalid, $duplicate );
             }
             
-            // editing an existing relationship
-            $relationship = self::add( $params, $ids, $ids['contactTarget'] );
-            $relationshipIds[] = $relationship->id;
-            $saved++;
+            $validContacts = true;
+            //validate contacts in update mode also.
+            if ( CRM_Utils_Array::value( 'contact', $ids ) && 
+                 CRM_Utils_Array::value( 'contactTarget', $ids ) ) {
+                if ( self::checkValidRelationship( $params, $ids, $ids['contactTarget'] ) ) { 
+                    $validContacts = false;
+                    $invalid++;
+                }
+            }
+            if ( $validContacts ) {
+                // editing an existing relationship
+                $relationship = self::add( $params, $ids, $ids['contactTarget'] );
+                $relationshipIds[] = $relationship->id;
+                $saved++;
+            }
         }
         
         // do not add to recent items for import, CRM-4399
@@ -744,7 +755,8 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             $where .= ' OR civicrm_relationship.is_active = 0 )';
         }
 
-        $where .= ' AND (civicrm_contact.is_deleted IS NULL OR civicrm_contact.is_deleted = 0)';
+// CRM-6181
+        $where .= ' AND civicrm_contact.is_deleted = 0';
         
         if ( $direction == 'a_b' ) {
             $where .= ' ) UNION ';

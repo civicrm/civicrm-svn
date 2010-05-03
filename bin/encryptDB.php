@@ -44,7 +44,6 @@ function encryptDB( ) {
                                           'last_name' => CRM_ENCRYPT,
                                           'organization_name' => CRM_ENCRYPT,
                                           'household_name' => CRM_ENCRYPT,
-                                          'home_URL' => CRM_ENCRYPT,
                                           'sort_name' => CRM_ENCRYPT,
                                           'display_name' => CRM_ENCRYPT,
                                           'legal_name' => CRM_ENCRYPT, ),
@@ -56,6 +55,7 @@ function encryptDB( ) {
                                           'postal_code_suffix' => CRM_SETNULL,
                                           'geo_code_1' => CRM_SETNULL,
                                           'geo_code_2' => CRM_SETNULL, ),
+              'civicrm_website' => array( 'url' => CRM_ENCRYPT, ),
               'civicrm_email' => array( 'email' => CRM_ENCRYPT, ),
               'civicrm_phone' => array( 'phone' => CRM_ENCRYPT, ),
               );

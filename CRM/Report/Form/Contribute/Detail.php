@@ -162,19 +162,6 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                                         'group'        => true,
                                         'options'      => CRM_Core_PseudoConstant::group( ) ), ), ),
                    
-                   'civicrm_tag' => 
-                   array( 'dao'     => 'CRM_Core_DAO_Tag',
-                          'filters' =>             
-                          array( 'tid' => 
-                                 array( 'name'         => 'tag_id',
-                                        'title'        => ts( 'Tag' ),
-                                        'tag'          => true,
-                                        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                        'options'      => CRM_Core_PseudoConstant::tag( ) 
-                                        ), 
-                                 ), 
-                          ),
-
                    'civicrm_contribution_ordinality' =>                    
                    array( 'dao'    => 'CRM_Contribute_DAO_Contribution',
                           'alias'  => 'cordinality',
@@ -185,7 +172,8 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                                         'options'      => array( 0 => 'First by Contributor', 
                                                                  1 => 'Second or Later by Contributor') ), ), ),
                    );
-        
+
+        $this->_tagFilter = true;
         parent::__construct( );
     }
 

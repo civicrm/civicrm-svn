@@ -61,12 +61,8 @@
   <table class="form-layout-compressed">
   <tr>
     <td class="font-size12pt" style="width: 30%;">
-    {if $savedSearch.name}{$savedSearch.name} ({ts}smart group{/ts}) - {/if}
-    {if $context EQ 'smog' OR $ssID GT 0}
-        {ts count=$pager->_totalItems plural='%count Group Members'}%count Group Member{/ts}
-    {else}
-      {ts count=$pager->_totalItems plural='%count Results'}%count Result{/ts}
-    {/if}
+        {if $savedSearch.name}{$savedSearch.name} ({ts}smart group{/ts}) - {/if}
+        {ts count=$pager->_totalItems plural='%count Results'}%count Result{/ts}
     </td>
     
     {* Search criteria are passed to tpl in the $qill array *}

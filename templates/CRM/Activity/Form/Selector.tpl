@@ -48,7 +48,7 @@
 
   {counter start=0 skip=1 print=false}
   {foreach from=$rows item=row}
-  <tr class="{cycle values="odd-row,even-row"} {$row.class}">
+  <tr id='rowid{$row.activity_id}' class="{cycle values="odd-row,even-row"} {$row.class}">
 	{if !$single }
         {if $context eq 'Search' }       
     	    {assign var=cbName value=$row.checkbox}

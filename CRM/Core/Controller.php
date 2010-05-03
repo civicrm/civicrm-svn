@@ -153,7 +153,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     function __construct( $title = null, $modal = true,
                           $mode = null, $scope = null,
                           $addSequence = false, $ignoreKey = false ) {
-
+        // this has to true for multiple tab session fix                    
         $addSequence = true;
 
         // add a unique validable key to the name

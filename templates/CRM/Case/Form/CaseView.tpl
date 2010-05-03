@@ -155,7 +155,8 @@
 	{ts}Case Roles{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
-    
+    <span id="restmsg" class="msgok" style="display:none"></span>
+ 
     {if $hasAccessToAllCases}
     <div class="crm-submit-buttons">
       <a class="button" href="#" onClick="Javascript:addRole();return false;"><span><div class="icon add-icon"></div>{ts}Add new role{/ts}</span></a>
@@ -184,7 +185,7 @@
             </td>
           {if $relId neq 'client' and $hasAccessToAllCases}
             <td id ="edit_{$rowNumber}">
-            	<a href="#" title="edit case role" onclick="createRelationship( {$row.relation_type}, {$row.cid}, {$relId}, {$rowNumber} );return false;">
+            	<a href="#" title="edit case role" onclick="createRelationship( {$row.relation_type}, {$row.cid}, {$relId}, {$rowNumber}, '{$row.relation}' );return false;">
             	<div class="icon edit-icon" ></div>
             	</a> &nbsp;&nbsp;
             	<a href="{crmURL p='civicrm/contact/view/rel' q="action=delete&reset=1&cid=`$contactID`&id=`$relId`&caseID=`$caseID`"}" onclick = "if (confirm('{ts}Are you sure you want to remove this person from their case role{/ts}?') ) this.href+='&confirmed=1'; else return false;">
@@ -208,7 +209,7 @@
                <td id="email_{$rowNumber}"></td>
 	       {if $hasAccessToAllCases}               
 	       <td id ="edit_{$rowNumber}">
-	       <a href="#" title="edit case role" onclick="createRelationship( {$relTypeID}, null, null, {$rowNumber} );return false;">
+	       <a href="#" title="edit case role" onclick="createRelationship( {$relTypeID}, null, null, {$rowNumber}, '{$relName}' );return false;">
 	       	<div class="icon edit-icon"></div>
 	       </a> 
 	       </td>
@@ -250,7 +251,6 @@ cj( "#change_client_id").autocomplete( contactUrl, { width : 250, selectFirst : 
                             }).result( function(event, data, formatted) { cj( "#contact_id" ).val( data[1] ); selectedContact = data[0];
                             }).bind( 'click', function( ) { cj( "#contact_id" ).val(''); });
 
-
 cj("#dialog").hide( );
 
 function addClient( ) {
@@ -285,7 +285,7 @@ function addClient( ) {
 	)
 }
 
-function createRelationship( relType, contactID, relID, rowNumber ) {
+function createRelationship( relType, contactID, relID, rowNumber, relTypeName ) {
     cj("#dialog").show( );
 
 	cj("#dialog").dialog({
@@ -346,21 +346,23 @@ function createRelationship( relType, contactID, relID, rowNumber ) {
                         var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
 
 			var html = '';			
-			if ( data.cid ) {
+			if ( data.status == 'process-relationship-success' ) {
                             var contactViewUrl = {/literal}"{crmURL p='civicrm/contact/view' q='action=view&reset=1&cid=' h=0 }"{literal};	
                             var deleteUrl      = {/literal}"{crmURL p='civicrm/contact/view/rel' q="action=delete&reset=1&cid=`$contactID`&caseID=`$caseID`&id=" h=0 }"{literal};	
                             var html = '<a href=' + contactViewUrl + data.cid +' title="view contact record">' +  data.name +'</a>';
                             cj('#relName_' + rowNumber ).html( html );
                             html = '';
-                            html = '<a onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +' ); return false" title="edit case role" href="#"><div class="icon edit-icon" ></div></a> &nbsp;&nbsp; <a href=' + deleteUrl + data.rel_id +' onclick = "if (confirm(\'{/literal}{ts}Are you sure you want to delete this relationship{/ts}{literal}?\') ) this.href +=\'&confirmed=1\'; else return false;"><div title="remove contact from case role" class="icon delete-icon"></div></a>';
+                            html = '<a onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +', \''+ relTypeName +'\' ); return false" title="edit case role" href="#"><div class="icon edit-icon" ></div></a> &nbsp;&nbsp; <a href=' + deleteUrl + data.rel_id +' onclick = "if (confirm(\'{/literal}{ts}Are you sure you want to delete this relationship{/ts}{literal}?\') ) this.href +=\'&confirmed=1\'; else return false;"><div title="remove contact from case role" class="icon delete-icon"></div></a>';
                             cj('#edit_' + rowNumber ).html( html );
 
 			} else {
-			   html = '<img src="' +resourceBase+'i/edit.png" title="edit case role" onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +' );">&nbsp;&nbsp;';
+			   html = '<img src="' +resourceBase+'i/edit.png" title="edit case role" onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +', \''+ relTypeName +'\' );">&nbsp;&nbsp;';
+			   var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
+			   var errorMsg = '{/literal}{ts}The relationship type definition for the  {literal}' + relTypeName + '{/literal} case role is not valid. Both sides of the relationship type must be an Individual or a subtype of Individual. You can review and edit relationship types at <a href="{literal}' + relTypeAdminLink + '{/literal}">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
 
-			   var errorMsg = '{/literal}{ts}Please select valid contact{/ts}{literal}.'; 
-
-			   cj('#edit_' + rowNumber ).html( html + errorMsg );
+			   //display error message.
+			   var imageIcon = "<a href='#'  onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="icon close-icon"></div>' + '</a>';
+			   cj( '#restmsg' ).html( imageIcon + errorMsg  ).show( );
 			}
 
                         html = '';
@@ -587,23 +589,29 @@ function addRole() {
 				
                /* send synchronous request so that disabling any actions for slow servers*/
 				var postUrl = {/literal}"{crmURL p='civicrm/ajax/relation' h=0 }"{literal}; 
-                var data = 'rel_contact='+ v1 + '&rel_type='+ v2 + '&contact_id='+sourceContact + '&rel_id='+ relID + '&case_id=' + caseID;
-                cj.ajax({ type: "POST", url: postUrl, data: data, async: false });
- 
 				cj(this).dialog("close"); 
 				cj(this).dialog("destroy");
-				
-// Temporary workaround for problems with SSL connections being too
-// slow. The relationship doesn't get created because the page reload
-// happens before the ajax call.
-// In general this reload needs improvement, which is already on the list for phase 2.
-var sdate = (new Date()).getTime();
-var curDate = sdate;
-while(curDate-sdate < 2000) {
-curDate = (new Date()).getTime();
-}
-				window.location.reload(); 
-			},
+                		var data = 'rel_contact='+ v1 + '&rel_type='+ v2 + '&contact_id='+sourceContact + '&rel_id='+ relID + '&case_id=' + caseID;
+                		cj.ajax({ type     : "POST", 
+					  url      : postUrl, 
+					  data     : data, 
+					  async    : false,
+					  dataType : "json",
+					  success  : function( values ) {
+					  	    	if ( values.status == 'process-relationship-success' ) {
+               						     window.location.reload();
+							} else {
+							     var relTypeName = cj("#role_type :selected").text();  
+							     var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
+			  				     var errorMsg = '{/literal}{ts}The relationship type definition for the  {literal}' + relTypeName + '{/literal} case role is not valid. Both sides of the relationship type must be an Individual or a subtype of Individual. You can review and edit relationship types at <a href="{literal}' + relTypeAdminLink + '{/literal}">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
+
+			   				     //display error message.
+			   				     var imageIcon = "<a href='#'  onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="icon close-icon"></div>' + '</a>';
+			   				     cj( '#restmsg' ).html( imageIcon + errorMsg  ).show( );  
+							}
+					  	    }
+				       });
+ 			},
 
 			"Cancel": function() { 
 				cj(this).dialog("close"); 
@@ -748,7 +756,7 @@ function addTags() {
   <table class="no-border form-layout-compressed" id="searchOptions">
     <tr>
         <td colspan="2"><label for="reporter_id">{ts}Reporter/Role{/ts}</label><br />
-            {$form.reporter_id.html}
+            {$form.reporter_id.html|crmReplace:class:twenty}
         </td>
         <td><label for="status_id">{$form.status_id.label}</label><br />
             {$form.status_id.html}

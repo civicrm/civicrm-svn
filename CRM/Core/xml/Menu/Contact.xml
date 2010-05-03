@@ -38,7 +38,7 @@
   </item>
   <item>
     <path>civicrm/contact/image</path>
-    <title>Process Uploaded images</title>
+    <title>Process Uploaded Images</title>
     <page_callback>CRM_Contact_BAO_Contact::processImage</page_callback>
     <access_arguments>access uploaded files</access_arguments>
   </item>
@@ -240,11 +240,6 @@
 <item>
      <path>civicrm/ajax/relation</path>
      <page_callback>CRM_Contact_Page_AJAX::relationship</page_callback>
-     <access_arguments>access CiviCRM</access_arguments>
-</item>
-<item>
-     <path>civicrm/ajax/contactlist</path>
-     <page_callback>CRM_Contact_Page_AJAX::getContactList</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
 </item>
 <item>

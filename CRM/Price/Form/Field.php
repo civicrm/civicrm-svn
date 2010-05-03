@@ -40,13 +40,13 @@ require_once 'CRM/Core/ShowHideBlocks.php';
 /**
  * form to process actions on the field aspect of Price
  */
-class CRM_Price_Form_Field extends CRM_Core_Form {
+class CRM_Price_Form_Field extends CRM_Core_Form
+{
 
     /**
      * Constants for number of options for data types of multiple option.
      */
     const NUM_OPTION = 11;
-
 
     /**
      * the custom set id saved to the session for an update
@@ -78,7 +78,6 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         
         $this->_sid = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
         $this->_fid = CRM_Utils_Request::retrieve('fid' , 'Positive', $this);
-
     }
 
     /**
@@ -160,14 +159,14 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
         $extendComponentId = CRM_Core_DAO::getFieldValue( 'CRM_Price_DAO_Set', $this->_sid, 'extends', 'id' );
         require_once 'CRM/Core/Component.php';
         if( $extendComponentId == CRM_Core_Component::getComponentID( 'CiviEvent' ) ) {
-            $this->add('text', 'count', ts('Participant Count'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'count') );
+            $this->add('text', 'count', ts('Number Available'), CRM_Core_DAO::getAttribute('CRM_Price_DAO_Field', 'count') );
             $this->addRule('count', ts('Participant Count should be a positive number') , 'positiveInteger');
         }
         
         // price (for text inputs)
         $this->add( 'text', 'price', ts('Price') );
-        $this->registerRule( 'price', 'callback', 'moneySigned', 'CRM_Utils_Rule' );
-        $this->addRule( 'price', ts('must be a monetary value'), 'moneySigned' );
+        $this->registerRule( 'price', 'callback', 'money', 'CRM_Utils_Rule' );
+        $this->addRule( 'price', ts('must be a monetary value'), 'money' );
         
         if ($this->_action == CRM_Core_Action::UPDATE) {
             $this->freeze('html_type');
@@ -198,7 +197,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
             $this->add('text', 'option_name['.$i.']', ts('Name'), $nameAttribute);
             
             // Below rule is uncommented for CRM-1313
-            $this->addRule('option_name['.$i.']' , ts('Please enter a valid amount for this field.'), 'moneySigned');
+            $this->addRule('option_name['.$i.']' , ts('Please enter a valid amount for this field.'), 'money');
             
             // weight
             $this->add('text', 'option_weight['.$i.']', ts('Order'), $weightAttribute);
@@ -423,7 +422,7 @@ class CRM_Price_Form_Field extends CRM_Core_Form {
                         $errors['option_label]['.$idx.']'] = ts( 'Option label cannot be empty' );
                     }
                     // all fields are money fields
-                    if ( ! CRM_Utils_Rule::moneySigned( $fields['option_name'][$idx] ) ) {
+                    if ( ! CRM_Utils_Rule::money( $fields['option_name'][$idx] ) ) {
                         $_flagOption = 1;
                         $errors['option_name['.$idx.']'] = ts( 'Please enter a valid money value.' );
                         

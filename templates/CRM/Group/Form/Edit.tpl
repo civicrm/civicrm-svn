@@ -28,11 +28,12 @@
     <div id="help">
 	{if $action eq 2}
 	    {capture assign=crmURL}{crmURL p="civicrm/group/search" q="reset=1&force=1&context=smog&gid=`$group.id`"}{/capture}
-	    {ts 1=$crmURL}You can edit the Name and Description for this group here. Click <a href='%1'>Show Group Members</a> to view, add or remove contacts in this group.{/ts}
+	    {ts 1=$crmURL}You can edit the Name and Description for this group here. Click <a href='%1'>Contacts in this Group</a> to view, add or remove contacts in this group.{/ts}
 	{else}
 	    {ts}Enter a unique name and a description for your new group here. Then click 'Continue' to find contacts to add to your new group.{/ts}
 	{/if}
     </div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
     <table class="form-layout">
         <tr>
 	    <td class="label">{$form.title.label}</td>
@@ -101,12 +102,10 @@
 		</table>
     {/if} 
 	
-    <div class="form-item">
-        {$form.buttons.html}
-    </div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
     {if $action neq 1}
 	<div class="action-link">
-	    <a href="{$crmURL}">&raquo; {ts}Show Group Members{/ts}</a>
+	    <a href="{$crmURL}">&raquo; {ts}Contacts in this Group{/ts}</a>
 	    {if $group.saved_search_id} 
 	        <br />
 		{if $group.mapping_id}

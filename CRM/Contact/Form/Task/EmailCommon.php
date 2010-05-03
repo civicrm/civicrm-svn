@@ -403,5 +403,3 @@ class CRM_Contact_Form_Task_EmailCommon
         
     }//end of function
 }
-
-

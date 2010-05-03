@@ -39,7 +39,8 @@ require_once 'CRM/Core/Form.php';
 /**
  * form to process actions on the field aspect of Custom
  */
-class CRM_Price_Form_Option extends CRM_Core_Form {
+class CRM_Price_Form_Option extends CRM_Core_Form
+{
     /**
      * the price field id saved to the session for an update
      *
@@ -95,7 +96,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
      * @return array   array of default values
      * @access public
      */
-
     function setDefaultValues()
     {
         $defaults = array();
@@ -165,8 +165,8 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
                       
             // the above value is used directly by QF, so the value has to be have a rule
             // please check with Lobo before u comment this
-            $this->registerRule( 'value', 'callback', 'moneySigned', 'CRM_Utils_Rule' );
-            $this->addRule('value', ts('Please enter a monetary value for this field.'), 'moneySigned');
+            $this->registerRule( 'value', 'callback', 'money', 'CRM_Utils_Rule' );
+            $this->addRule('value', ts('Please enter a monetary value for this field.'), 'money');
             
             // weight
             $this->add('text', 'weight', ts('Order'), null, true);
@@ -195,7 +195,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
                                     )
                               );
             
-            
             // if view mode pls freeze it with the done button.
             if ($this->_action & CRM_Core_Action::VIEW) {
                 $this->freeze();
@@ -221,7 +220,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
      * @static
      * @access public
      */
-
     static function formRule( $fields, $files, $form ) 
     {
         $errors = array( );
@@ -237,7 +235,6 @@ class CRM_Price_Form_Option extends CRM_Core_Form {
      * @return void
      * @access public
      */
-
     public function postProcess()
     {
         require_once 'CRM/Core/OptionValue.php';

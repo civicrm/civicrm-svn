@@ -23,7 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<fieldset><legend>{if $action eq 8}{ts}Delete CiviCRM Profile Field{/ts}{else}{ts}CiviCRM Profile Field{/ts}{/if}</legend>
+<div class="crm-form-block">
+<h3>{if $action eq 8}{ts}Delete CiviCRM Profile Field{/ts}{else}{ts}CiviCRM Profile Field{/ts}{/if}</h3>
 {if $action ne 8} {* do not display stuff for delete function *}
     <div id="crm-submit-buttons-top" class="form-item"> 
     <dl> 
@@ -105,7 +106,7 @@
     {/if} {* $action ne view *}
     </dl>
     </div>
-</fieldset>
+</div>
 
  {$initHideBoxes}
 

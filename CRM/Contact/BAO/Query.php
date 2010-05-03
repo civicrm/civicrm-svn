@@ -256,7 +256,7 @@ class CRM_Contact_BAO_Query
      * @var array
      * @static
      */
-    static $_activityRole;
+    static $_activityRole = null;
 
     /**
      * use distinct component clause for component searches
@@ -991,9 +991,16 @@ class CRM_Contact_BAO_Query
             $select = 'SELECT DISTINCT UPPER(LEFT(contact_a.sort_name, 1)) as sort_name';
             $from = $this->_simpleFromClause;
         } else if ( $groupContacts ) { 
+//CRM-5954 - changing SELECT DISTINCT( contact_a.id ) -> SELECT ... GROUP BY contact_a.id
+// but need to measure performance
             $select = ( $this->_useDistinct ) ?
                 'SELECT DISTINCT(contact_a.id) as id' :
                 'SELECT contact_a.id as id'; 
+//            $select = 'SELECT contact_a.id as id';
+//            if ( $this->_useDistinct ) {
+//                $this->_useGroupBy = true;
+//            }
+
             $from = $this->_simpleFromClause;
         } else {
             if ( CRM_Utils_Array::value( 'group', $this->_paramLookup ) ) {
@@ -1022,7 +1029,10 @@ class CRM_Contact_BAO_Query
             }
             if ( $this->_useDistinct && !isset( $this->_distinctComponentClause) ) {
                 if ( !( $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) {
+//CRM-5954
                     $this->_select['contact_id'] = 'DISTINCT(contact_a.id) as contact_id';
+//                    $this->_useGroupBy = true;
+//                    $this->_select['contact_id'] ='contact_a.id as contact_id';
                 }
             } 
 
@@ -2229,7 +2239,7 @@ class CRM_Contact_BAO_Query
                 " LEFT JOIN civicrm_group_contact {$gcTable} ON contact_a.id = {$gcTable}.contact_id ";
         }
        
-        $qill = ts( 'Member of Group %1', array( 1 => $op ) );
+        $qill = ts( 'Contacts %1', array( 1 => $op ) );
         $qill .= ' ' . implode( ' ' . ts('or') . ' ', $names );
         $this->_qill[$grouping][] = $qill;
         
@@ -3296,9 +3306,14 @@ WHERE  id IN ( $groupIDs )
                 
                 // ok here is a first hack at an optimization, lets get all the contact ids
                 // that are restricted and we'll then do the final clause with it
+//CRM-5954
                 $limitSelect = ( $this->_useDistinct ) ?
                     'SELECT DISTINCT(contact_a.id) as id' :
                     'SELECT contact_a.id as id';
+//                $select = 'SELECT contact_a.id as id';
+//                if ( $this->_useDistinct ) {
+//                    $this->_useGroupBy = true;
+//                }
 
                 $doOpt = true;
                 // hack for order clause

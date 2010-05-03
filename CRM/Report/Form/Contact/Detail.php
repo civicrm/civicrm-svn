@@ -262,20 +262,9 @@ class CRM_Report_Form_Contact_Detail extends CRM_Report_Form {
                           array( 'phone'  => null),
                           'grouping'  => 'contact-fields',
                           ),
-
-                   'civicrm_tag' => 
-                   array( 'dao'     => 'CRM_Core_DAO_Tag',
-                          'filters' =>             
-                          array( 'tid' => 
-                                 array( 'name'         => 'tag_id',
-                                        'title'        => ts( 'Tag' ),
-                                        'tag'          => true,
-                                        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                        'options'      => CRM_Core_PseudoConstant::tag( ) 
-                                        ), 
-                                 ), 
-                          ),
                    );
+
+        $this->_tagFilter = true;
         parent::__construct( );
     }
     

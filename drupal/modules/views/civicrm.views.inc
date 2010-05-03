@@ -1458,18 +1458,41 @@ function civicrm_views_data() {
    civicrm_views_add_date_arguments($data['civicrm_event'],array('title' =>'Registration End Date',
                                                                     'name' => 'registration_end_date'));
 
-      // CHILLING OUT AT THE CIVICRM_LOC_BLOCK TABLE
+   //EVENT LINK TEXT
+   $data['civicrm_event']['registration_link_text'] = array(
+                                                            'title' => t('Registration Link Text'),
+                                                            'help' => t('Text for the Registration Link'),
+                                                            'field' => array(
+                                                                             'handler' => 'civicrm_handler_field_event_link',
+                                                                             'click sortable' => TRUE,
+                                                                             ),
 
-    $data['civicrm_loc_block']['table']['group']  = t('CiviCRM Locations');
+                                                            'argument' => array(
+                                                                                'handler' => 'views_handler_argument',
+                                                                                ),
 
-    // Explain how this table joins to others.
-    $data['civicrm_loc_block']['table']['join'] = array(
-                                                        // Directly links to event table
-                                                        'civicrm_event' => array(
-                                                                                 'left_field' => 'loc_block_id',
-                                                                                 'field' => 'id',
-                                                                                 ),
-                                                        );
+                                                            'filter' => array(
+                                                                              'handler' => 'views_handler_filter_string',
+                                                                              'allow empty' => TRUE,
+                                                                              ),
+
+                                                            'sort' => array(
+                                                                            'handler' => 'views_handler_sort',
+                                                                            ),
+                                                            );
+
+   // CHILLING OUT AT THE CIVICRM_LOC_BLOCK TABLE
+
+   $data['civicrm_loc_block']['table']['group']  = t('CiviCRM Locations');
+
+   // Explain how this table joins to others.
+   $data['civicrm_loc_block']['table']['join'] = array(
+                                                       // Directly links to event table
+                                                       'civicrm_event' => array(
+                                                                                'left_field' => 'loc_block_id',
+                                                                                'field' => 'id',
+                                                                                ),
+                                                       );
 
 
     //----------------------------------------------------------------
@@ -4799,12 +4822,12 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
                                       ),
                   );
         $currentgroupfields = $currentgroup['fields'];
-        $customHTMLTypes = array( 'Select', 'Multi-Select', 'AdvMulti-Select', 'Radio', 'CheckBox',
-                                  'Select State/Province', 'Select Country',
-                                  'Multi-Select Country', 'Multi-Select State/Province' );
+        $customHTMLTypes = array( 'Select', 'Multi-Select', 'AdvMulti-Select', 'Radio', 'CheckBox', 
+                                  'Select Date', 'Select State/Province', 'Select Country', 'Multi-Select Country',
+                                  'Multi-Select State/Province', 'Autocomplete-Select' );
         foreach ($currentgroupfields as $key => $currentfield) {
             if ($currentfield['help_post'] == '' || $currentfield['help_post'] == null) { 
-                $currentfield['help_post'] = t('Custom Data Field'); 
+                $currentfield['help_post'] = t('Custom Data Field');
             } // Populates help text so there isn't miles of error: Missing Help
 
 

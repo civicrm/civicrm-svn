@@ -185,8 +185,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         foreach ( $this->_fields['interval_unit']['attributes'] as $name => $label ) {
             $this->_fields['interval_unit']['attributes'][$name] = $label . '(s)';
         }
-
-        asort( $this->_fields['followup_activity_type_id']['attributes'] );
     }
 
     /**
@@ -569,8 +567,8 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $this->addDateTime( 'activity_date_time', ts('Date'), true, array( 'formatType' => 'activityDateTime') );  
         
         //autocomplete url
-        $dataUrl = CRM_Utils_System::url( "civicrm/ajax/contactlist",
-                                          "reset=1",
+        $dataUrl = CRM_Utils_System::url( "civicrm/ajax/rest",
+                                          "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=activity&reset=1",
                                           false, null, false );
         $this->assign( 'dataUrl',$dataUrl );
 
@@ -619,10 +617,17 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         require_once 'CRM/Core/BAO/Tag.php';
         $tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_activity'), true );
+        
         if ( !empty($tags) ) { 
             $this->add('select', 'tag',  ts( 'Tags' ), $tags, false, 
                        array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
         }
+        
+        // build tag widget
+        require_once 'CRM/Core/Form/Tag.php';
+        require_once 'CRM/Core/BAO/Tag.php';
+        $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_activity' );
+        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_activity', $this->_activityId, true );
             
         // if we're viewing, we're assigning different buttons than for adding/editing
         if ( $this->_action & CRM_Core_Action::VIEW ) { 
@@ -861,9 +866,17 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 $tagParams[$tag] = 1;
             }
         }
+        
+        //save static tags
         require_once 'CRM/Core/BAO/EntityTag.php';
         CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_activity',  $activity->id );
  
+        //save free tags
+        if ( isset( $params['taglist'] ) && !empty( $params['taglist'] ) ) {
+            require_once 'CRM/Core/Form/Tag.php';
+            CRM_Core_Form_Tag::postProcess( $params['taglist'], $activity->id, 'civicrm_activity' );
+        }
+        
         // call end post process. Idea is to let injecting file do any
         // processing needed, after the activity has been added/updated.
         $this->endPostProcess( $params, $activity );

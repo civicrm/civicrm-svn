@@ -136,22 +136,10 @@ AND    {$this->_componentClause}";
         $template = CRM_Core_Smarty::singleton( );
 
         $params = $this->controller->exportValues( $this->_name );
-        $values = array( );
         
         $createPdf = false;
         if ( $params['output'] == "pdf_receipt" ) {
             $createPdf = true;
-        } else {
-            require_once 'CRM/Contribute/BAO/ContributionPage.php';
-            // set receipt from e-mail and name in value
-            require_once 'CRM/Contact/BAO/Contact/Location.php';
-            $session  = CRM_Core_Session::singleton( );
-            $userID   = $session->get( 'userID' );
-            list( $userName, $userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $userID );
-            $values['receipt_from_email'] = $userEmail;
-            $values['receipt_from_name']  = $userName;
-            $values['title']              = 'Contribution';
-            $values['is_email_receipt']   = 1;
         }
         
         foreach ( $details as $contribID => $detail ) {
@@ -185,6 +173,7 @@ AND    {$this->_componentClause}";
 
             // CRM_Core_Error::debug('input',$input);
             
+            $values = array( );
             $mail = $baseIPN->sendMail( $input, $ids, $objects, $values, false, $createPdf );
             
             if ( !$mail['html'] ) {

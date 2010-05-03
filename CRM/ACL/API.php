@@ -95,7 +95,8 @@ class CRM_ACL_API {
             if (CRM_Core_Permission::check('access deleted contacts') and $onlyDeleted) {
                 return '(contact_a.is_deleted)';
             } else {
-                return '(contact_a.is_deleted IS NULL OR contact_a.is_deleted = 0)';
+// CRM-6181
+                return '(contact_a.is_deleted = 0)';
             }
         }
 

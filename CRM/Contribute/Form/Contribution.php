@@ -256,8 +256,8 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
         }
         
         // Assign pageTitle to be "Contribution - "+ Contributor name
-        $pageTitle = 'Contribution - '.$this->userDisplayName;
-    	$this->assign( 'pageTitle', $pageTitle );
+//      $pageTitle = 'Contribution - '.$this->userDisplayName;
+//    	$this->assign( 'pageTitle', $pageTitle );
         
         // also check for billing information
         // get the billing location type
@@ -352,7 +352,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
                                 $ppUrl = CRM_Utils_System::url( 'civicrm/contact/view/contribution',
                                                          "reset=1&action=add&cid={$this->_contactID}&ppid={$payments['id']}&context=pledge" );
                             }
-                            CRM_Core_Session::setStatus( ts('This contact has a pending or overdue pledge payment of %2 which is scheduled for %3. <a href="%1">Click here to apply this contribution as a pledge payment<a/>.', array( 1 => $ppUrl, 2 => $ppAmountDue, 3 => $ppSchedDate ) ) );
+                            CRM_Core_Session::setStatus( ts('This contact has a pending or overdue pledge payment of %2 which is scheduled for %3. <a href="%1">Click here to apply this contribution as a pledge payment</a>.', array( 1 => $ppUrl, 2 => $ppAmountDue, 3 => $ppSchedDate ) ) );
                         }                    
                     }
             
@@ -852,9 +852,10 @@ WHERE  contribution_id = {$this->_id}
                 if ( $this->_online ) $element->freeze( );
             }
             $this->assign( 'hasPriceSets', $hasPriceSets );
-            $element =& $this->add( 'text', 'total_amount', ts('Total Amount'),
-                                    $attributes['total_amount'], ($hasPriceSets)?false:true );
-            $this->addRule('total_amount', ts('Please enter a valid amount.'), 'money');
+            $element = $this->addMoney( 'total_amount',
+					ts('Total Amount'),
+					$attributes['total_amount'],
+					($hasPriceSets)?false:true );
             if ( $this->_online || $this->_ppID ) {
                 $element->freeze( );
             }
@@ -865,8 +866,7 @@ WHERE  contribution_id = {$this->_id}
             $element->freeze( );
         }
         
-        $dataUrl = CRM_Utils_System::url( "civicrm/ajax/contactlist",
-                                          "reset=1&context=softcredit&id={$this->_id}",
+        $dataUrl = CRM_Utils_System::url( "civicrm/ajax/rest", "className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=contact&reset=1&context=softcredit&id={$this->_id}",
                                           false, null, false );
         $this->assign('dataUrl',$dataUrl );                                          
         $this->addElement( 'text', 'soft_credit_to', ts('Soft Credit To') );
@@ -1085,7 +1085,9 @@ WHERE  contribution_id = {$this->_id}
             $this->_params['ip_address']     = CRM_Utils_System::ipAddress( );
             $this->_params['amount'        ] = $this->_params['total_amount'];
             $this->_params['amount_level'  ] = 0;
-            $this->_params['currencyID'    ] = $config->defaultCurrency;
+            $this->_params['currencyID'    ] = CRM_Utils_Array::value( 'currency',
+								       $this->_params,
+								       $config->defaultCurrency );
             $this->_params['payment_action'] = 'Sale';
                        
             if ( CRM_Utils_Array::value('soft_credit_to', $params) ) {
@@ -1258,11 +1260,15 @@ WHERE  contribution_id = {$this->_id}
             
             $params['contact_id'] = $this->_contactID;
 
-            $params['currency'  ] = $config->defaultCurrency;
-            
-            if ( $currency = CRM_Utils_Array::value( 'currency', $this->_values ) ) {
-                $params['currency'  ] = $currency;
-            }
+	    // get current currency from DB or use default currency
+	    $currentCurrency = CRM_Utils_Array::value( 'currency',
+						       $this->_values,
+						       $config->defaultCurrency );
+
+	    // use submitted currency if present else use current currency
+            $params['currency'  ] = CRM_Utils_Array::value( 'currency',
+							    $submittedValues,
+							    $currentCurrency );
             
             $fields = array( 'contribution_type_id',
                              'contribution_status_id',

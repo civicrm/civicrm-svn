@@ -23,11 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{include file="CRM/common/WizardHeader.tpl"}
-{include file="CRM/Mailing/Form/Count.tpl"}
 <div id="help">
 {ts}It's a good idea to test your mailing by sending it to yourself and/or a selected group of people in your organization. You can also view your content by clicking (+) Preview Mailing.{/ts} {help id="test-intro"}
 </div>
+<div class="crm-form-block">
+{include file="CRM/common/WizardHeader.tpl"}
+{include file="CRM/Mailing/Form/Count.tpl"}
+
 
 <div class="form-item">
 <fieldset>
@@ -67,5 +69,5 @@
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}
-
+</div>
 

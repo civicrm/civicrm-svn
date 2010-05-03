@@ -25,10 +25,6 @@
 *}
 {* Participant Import Wizard - Step 3 (preview import results prior to actual data loading) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
-
- {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
- {include file="CRM/common/WizardHeader.tpl"}
-
  <div id="help">
     <p>
     {ts}The information below previews the results of importing your data in CiviCRM. Review the totals to ensure that they represent your expected results.{/ts}         
@@ -50,6 +46,11 @@
     <p>{ts}Click 'Import Now' if you are ready to proceed.{/ts}</p>
  </div>
     
+<div class="crm-form-block">
+ {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
+ {include file="CRM/common/WizardHeader.tpl"}
+
+
  {* Summary Preview (record counts) *}
  <table id="preview-counts" class="report">
     <tr><td class="label">{ts}Total Rows{/ts}</td>
@@ -93,3 +94,4 @@
  <div id="crm-submit-buttons">
     {$form.buttons.html}
  </div>
+</div>

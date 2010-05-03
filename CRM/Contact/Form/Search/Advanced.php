@@ -209,6 +209,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
         // get it from controller only if form has been submitted, else preProcess has set this
         if ( ! empty( $_POST ) ) {
             $this->_formValues = $this->controller->exportValues( $this->_name );
+            $this->normalizeFormValues( );
             // FIXME: couldn't figure out a good place to do this,
             // FIXME: so leaving this as a dependency for now
             if ( array_key_exists(  'contribution_amount_low', $this->_formValues ) ) {
@@ -216,7 +217,9 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
                     $this->_formValues[$f] = CRM_Utils_Rule::cleanMoney( $this->_formValues[$f] );
                 }
             }
-          
+            if ( ! CRM_Utils_Array::value( 'activity_role', $this->_formValues ) ) {
+                $this->_formValues['activity_role'] = 0;
+            }
             // set the group if group is submitted
             if ($this->_formValues['uf_group_id']) {
                 $this->set( 'id', $this->_formValues['uf_group_id'] );
@@ -266,6 +269,58 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
         parent::postProcess( );
     }
     
+    /**
+     * normalize the form values to make it look similar to the advanced form values
+     * this prevents a ton of work downstream and allows us to use the same code for
+     * multiple purposes (queries, save/edit etc)
+     *
+     * @return void
+     * @access private
+     */
+    function normalizeFormValues( ) {
+        $contactType = CRM_Utils_Array::value( 'contact_type', $this->_formValues );
+        
+        if ( $contactType && is_array( $contactType ) ) {
+            unset( $this->_formValues['contact_type'] );
+            foreach( $contactType as $key => $value ) {
+                $this->_formValues['contact_type'][$value] = 1;
+            }
+        }
+
+        $config = CRM_Core_Config::singleton( );
+        if ( !$config->groupTree ) {
+            $group = CRM_Utils_Array::value( 'group', $this->_formValues );
+            if ( $group && is_array( $group ) ) {
+                unset( $this->_formValues['group'] );
+                foreach( $group as $key => $value ) {
+                    $this->_formValues['group'][$value] = 1;
+                }
+            }
+        }
+
+        $tag = CRM_Utils_Array::value( 'contact_tags', $this->_formValues );
+        if ( $tag && is_array( $tag ) ) {
+            unset( $this->_formValues['contact_tags'] );
+            foreach( $tag as $key => $value ) {
+                $this->_formValues['contact_tags'][$value] = 1;
+            }
+        }
+        
+        $taglist = CRM_Utils_Array::value( 'taglist', $this->_formValues );
+        if ( $taglist && is_array( $taglist ) ) {
+            unset( $this->_formValues['taglist'] );
+            foreach( $taglist as $value ) {
+                if ( $value ) {
+                    $value = explode(',', $value );
+                    foreach( $value as $tId ) {
+                        $this->_formValues['contact_tags'][$tId] = 1;
+                    }
+                }
+            }            
+        }
+
+        return;
+    }
 }
 
 

@@ -74,6 +74,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     public static $utils;
 
+    public static $populateOnce = null;
+
     /**
      *  Constructor
      *
@@ -129,16 +131,24 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     private function _populateDB() {
 
-            $query = "DROP DATABASE IF EXISTS civicrm_tests_dev;"
-                   . "CREATE DATABASE civicrm_tests_dev DEFAULT"
-                   . " CHARACTER SET utf8 COLLATE utf8_unicode_ci;"
-                   . "USE civicrm_tests_dev;"
-                   . "SET SQL_MODE='STRICT_ALL_TABLES';"
-                   . "SET foreign_key_checks = 0";
-            if ( self::$utils->do_query($query) === false ) {
+        if ( self::$populateOnce ) {
+            return;
+        }
 
-                //  failed to create test database
-                exit;
+        self::$populateOnce = true;
+
+            $queries = array( "DROP DATABASE IF EXISTS civicrm_tests_dev;", 
+                              "CREATE DATABASE civicrm_tests_dev DEFAULT" . 
+                              " CHARACTER SET utf8 COLLATE utf8_unicode_ci;", 
+                              "USE civicrm_tests_dev;", 
+                              "SET SQL_MODE='STRICT_ALL_TABLES';", 
+                              "SET foreign_key_checks = 0" );
+            foreach( $queries as $query ) {
+                if ( self::$utils->do_query($query) === false ) {
+
+                    //  failed to create test database
+                    exit;
+                }
             }
 
             //  initialize test database
@@ -201,6 +211,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
 
     public function cleanDB() {
+        self::$populateOnce = null;
+
         $this->_dbconn = $this->getConnection();
         $this->_populateDB();
     }
@@ -536,7 +548,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
 
     function relationshipTypeCreate( &$params ) 
     {  
-        require_once 'api/v2/Relationship.php';
+        require_once 'api/v2/RelationshipType.php';
         $result= civicrm_relationship_type_add($params);
         
         if ( civicrm_error( $params ) ) {

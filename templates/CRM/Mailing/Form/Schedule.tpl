@@ -23,11 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{include file="CRM/common/WizardHeader.tpl"}
-{include file="CRM/Mailing/Form/Count.tpl"}
 <div id="help">
     {ts}You can schedule this mailing to be sent starting at a specific date and time, OR you can request that it be sent as soon as possible by checking &quot;Send Immediately&quot;.{/ts} {help id="sending"}
 </div>
+<div class="crm-form-block">
+{include file="CRM/common/WizardHeader.tpl"}
+{include file="CRM/Mailing/Form/Count.tpl"}
+
 
 <fieldset>
  <table class="form-layout">
@@ -54,4 +56,4 @@
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}
 
-
+</div>

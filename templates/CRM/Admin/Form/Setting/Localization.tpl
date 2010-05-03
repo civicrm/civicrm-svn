@@ -39,6 +39,9 @@
             <dt>&nbsp;</dt><dd class="description">{ts}If checked, CiviCRM will follow CMS language changes.{/ts}</dd>
             <dt>{$form.defaultCurrency.label}</dt><dd>{$form.defaultCurrency.html}</dd>
             <dt>&nbsp;</dt><dd class="description">{ts}Default currency assigned to contributions and other monetary transactions.{/ts}</dd>
+	    <dt>{$form.monetaryThousandSeparator.label}</dt><dd>{$form.monetaryThousandSeparator.html}</dd>
+	    <dt>{$form.monetaryDecimalPoint.label}</dt><dd>{$form.monetaryDecimalPoint.html}</dd>
+            <dt>{$form.currencyLimit.label}</dt><dd>{$form.currencyLimit.html}</dd>
             <dt>{$form.lcMonetary.label}</dt><dd>{$form.lcMonetary.html}</dd>
             <dt>&nbsp;</dt><dd class="description">{ts}Locale for monetary display (affects formatting specifiers below).{/ts}</dd>
             <dt>{$form.moneyformat.label}</dt><dd>{$form.moneyformat.html}</dd>

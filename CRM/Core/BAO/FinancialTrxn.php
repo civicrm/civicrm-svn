@@ -58,7 +58,7 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Core_DAO_FinancialTrxn
         $trxn->copyValues($params);
 
         require_once 'CRM/Utils/Rule.php';
-        if (!CRM_Utils_Rule::currencyCode($trxn->currency)) {
+        if (! CRM_Utils_Rule::currencyCode($trxn->currency)) {
             require_once 'CRM/Core/Config.php';
             $config = CRM_Core_Config::singleton();
             $trxn->currency = $config->defaultCurrency;
@@ -73,12 +73,15 @@ class CRM_Core_BAO_FinancialTrxn extends CRM_Core_DAO_FinancialTrxn
         $trxn->save();
         
         // save to entity_financial_trxn table
-        $entity_financial_trxn_params=array(
-            'entity_table'      => "civicrm_contribution",
-            'entity_id'      => $params['contribution_id'],
-            'financial_trxn_id'      => $trxn->id,
-            'amount'      => $params['net_amount'],//use net amount to include all received amount to the contribution
-        );
+        $entity_financial_trxn_params =
+	  array(
+		'entity_table'      => "civicrm_contribution",
+		'entity_id'         => $params['contribution_id'],
+		'financial_trxn_id' => $trxn->id,
+		//use net amount to include all received amount to the contribution
+		'amount'            => $params['net_amount'],
+		'currency'          => $trxn->currency,
+		);
         $entity_trxn =& new CRM_Core_DAO_EntityFinancialTrxn();
         $entity_trxn->copyValues($entity_financial_trxn_params);
         if ( $fids['entityFinancialTrxnId'] ) {

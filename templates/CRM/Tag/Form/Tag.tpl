@@ -24,7 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing tags  *}
-<script type="text/javascript" src="{$config->resourceBase}js/rest.js"></script>
 <style>
 .hit {ldelim}padding-left:10px;{rdelim}
 .tree li {ldelim}padding-left:10px;{rdelim}
@@ -33,10 +32,12 @@
 #Tag #tagtree .highlighted {ldelim}background-color:lightgrey;{rdelim}
 </style>
 <script type="text/javascript">
-civicrm_ajaxURL="{crmURL p='civicrm/ajax/rest' h=0}";
+
+options = {ldelim} ajaxURL:"{crmURL p='civicrm/ajax/rest' h=0}"
+       ,closetxt:'<div class="icon close-icon"></div>'
+      {rdelim} 
 entityID={$entityID};
 entityTable='{$entityTable}';
-var image = '<div class="icon close-icon"></div>';
 {literal}
 function hideStatus( ) {
     cj( '#restmsg' ).hide( );
@@ -68,11 +69,12 @@ function initTagTree() {
         //get current tag label
         var currentTagLabel = cj("#tagLabel_" + tagid ).text( );
         if (this.checked) {
-            civiREST ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},image);
+            //civiREST ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},image);
+            cj().crmAPI ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
             // add check to tab label array
             tagsArray.push( currentTagLabel );
         } else {
-            civiREST ('entity_tag','remove',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},image);
+            cj().crmAPI ('entity_tag','remove',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
             // build array of tag labels
             tagsArray = cj.map(tagsArray, function (a) { 
                  if ( cj.trim( a ) != currentTagLabel ) {
@@ -165,28 +167,7 @@ function initTagTree() {
        </fieldset>
     {/if}
 
-    <input type="text" name="taglist" id="taglist" />
-    <script type="text/javascript">
-    {literal}
-        eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
-        
-        var tokenDataUrl = {/literal}"{$tokenUrl}"{literal};
-        var contactTags;
-        {/literal}{if $contactTags}{literal}
-            eval( 'contactTags = ' + {/literal}'{$contactTags}'{literal} );
-        {/literal}{/if}{literal}
-        var hintText = "{/literal}{ts}Type in a partial or complete name of an existing tag.{/ts}{literal}";
-        cj( "#taglist"  ).tokenInput( tokenDataUrl, { prePopulate: contactTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processTags' });
-
-        function processTags( action, id ) {
-            var postUrl   = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
-            var keywordID = "{/literal}{$keywordID}{literal}";
-            var contactId = "{/literal}{$contactId}{literal}";
-             
-            cj.post( postUrl, { action: action, tagID: id, keywordID: keywordID, contactId: contactId } );
-        }
-    {/literal}
-    </script>    
+    {include file="CRM/common/Tag.tpl"}
 </div>
 
 {if $action eq 1 or $action eq 2 }

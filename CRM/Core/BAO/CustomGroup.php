@@ -325,7 +325,8 @@ LEFT JOIN civicrm_custom_field ON (civicrm_custom_field.custom_group_id = civicr
         }
 
         if ( $subType ) {
-            $subType  = CRM_Core_DAO::VALUE_SEPARATOR . $subType . CRM_Core_DAO::VALUE_SEPARATOR;
+            $subType  = CRM_Core_DAO::VALUE_SEPARATOR . 
+                trim($subType, CRM_Core_DAO::VALUE_SEPARATOR) . CRM_Core_DAO::VALUE_SEPARATOR;
             $strWhere = "
 WHERE civicrm_custom_group.is_active = 1 
   AND civicrm_custom_field.is_active = 1 

@@ -78,6 +78,12 @@ class CRM_Contact_Form_Edit_CommunicationPreferences
             $commPreff[] = HTML_QuickForm::createElement('advcheckbox', $value, null, $title );
         }
         $form->addGroup($commPreff, 'preferred_communication_method', ts('Preferred Method(s)'));
+
+        $form->add( 'select', 'preferred_language',
+                    ts( 'Preferred Language' ),
+                    array('' => ts('- select -')) + 
+                    CRM_Core_PseudoConstant::languages( ) );
+
         if ( !empty($privacyOptions) ) {
             $commPreference['privacy'] = $privacyOptions;
         }

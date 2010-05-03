@@ -229,7 +229,7 @@ class EmailProcessor {
 // bootstrap the environment and run the processor
 // you can run this program either from an apache command, or from the cli
 if (isset($argv)) {
-  require_once ("tools/bin/scripts/cli.php");
+  require_once ("bin/cli.php");
   $cli=new civicrm_cli ();
   //if it doesn't die, it's authenticated 
   //log the execution of script

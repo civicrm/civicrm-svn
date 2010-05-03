@@ -238,10 +238,10 @@ function custom_option_html_type( ) {
         <dl>
 	    {if $action ne 4}
 		<dt>&nbsp;</dt>
-		<dd>{$form.buttons.html}</dd>
+		<dd><div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div></dd>
 	    {else}
 	        <dt>&nbsp;</dt>
-		<dd>{$form.done.html}</dd>
+		<dd><div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div></dd>
 	    {/if} {* $action ne view *}
 	</dl>    
     </div> 

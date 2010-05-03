@@ -23,9 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
-<fieldset><legend>{if $action eq 8 }{ts}Selection Options{/ts}{else}{ts}Selection Options{/ts}{/if}</legend>
-      {if $action eq 8}
+{if $action eq 8}
       <div class="messages status">
         <dl>
           <dt><div class="icon inform-icon"></div></dt>
@@ -34,7 +32,10 @@
           </dd>
        </dl>
       </div>
-     {else}
+     {/if}
+<div class="crm-form-block">
+<h3>{if $action eq 8 }{ts}Selection Options{/ts}{else}{ts}Selection Options{/ts}{/if}</h3>
+      {if $action neq 8}
 	<dl>
         <dt>{$form.label.label}</dt><dd>&nbsp;{$form.label.html}</dd>
         <dt>{$form.value.label}</dt><dd>&nbsp;{$form.value.html}</dd>
@@ -53,5 +54,4 @@
     </dl>
     </div>
 
-</fieldset>
 </div>

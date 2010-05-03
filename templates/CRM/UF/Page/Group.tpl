@@ -52,6 +52,7 @@
     </div>
 
     {if $rows}
+    <div class="crm-content-block">
     <div id="uf_profile">
         {strip}
         {* handle enable/disable actions*}
@@ -90,6 +91,7 @@
         </div>
         {/if}
          {/strip}
+    </div>
     </div>
     {else}
     {if $action ne 1} {* When we are adding an item, we should not display this message *}
