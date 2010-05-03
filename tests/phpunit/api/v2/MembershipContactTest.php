@@ -197,14 +197,6 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
                                );
         $relTypeID = $this->relationshipTypeCreate( $relTypeParams );
 
-//        $params = array( 'contact_id_a'         => $membershipOrgId,
-//                         'contact_id_b'         => $memberContactId,
-//                         'relationship_type_id' => $relTypeID,
-//                         'start_date'           => array('d'=>'10','M'=>'1','Y'=>'2008'),
-//                         'is_active'            => 1
-//                         );
-//        $result = & civicrm_relationship_create( $params );
-
         $params = array( 'name'                   => 'test General',
                          'duration_unit'          => 'year',
                          'duration_interval'      => 1,
@@ -237,15 +229,12 @@ class api_v2_MembershipContactTest extends CiviUnitTestCase {
         $this->assertArrayHasKey( $memberContactId, $result,
                                   "In line " . __LINE__ );
 
-        $this->assertEquals( 1, count( $result ),
+        // extra one for the record county key
+        $this->assertEquals( 2, count( $result ),
                              "In line " . __LINE__ );
-
-
 
         $membership = $result[$memberContactId][$membershipID];
         $this->assertEquals( $this->_membershipStatusID, $membership['status_id'], 
-                             "In line " . __LINE__);
-        $this->assertEquals( $membershipOrgId , $result['contact_id'], 
                              "In line " . __LINE__);
     }
 
