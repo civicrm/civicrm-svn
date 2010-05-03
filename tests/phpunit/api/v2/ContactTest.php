@@ -477,7 +477,7 @@ class api_v2_ContactTest extends CiviUnitTestCase
                         'legal_identifier'      => 'ABC23853ZZ2235',
                         'external_identifier'   => '1928837465',
                         'image_URL'             => 'http://some.url.com/image.jpg',
-                        'home_URL'             => 'http://www.example.org',
+                        'home_URL'              => 'http://www.example.org',
                         'preferred_mail_format' => 'HTML',
                         );
         
