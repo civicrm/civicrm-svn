@@ -23,7 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<script type="text/javascript" src="{$config->resourceBase}js/rest.js"></script>
 <div id="menu-container" style="display:none;">
     <ul id="civicrm-menu">
         {if call_user_func(array('CRM_Core_Permission','giveMeAllACLs'))}
@@ -74,11 +73,15 @@ cj( function() {
         return false;
     });
 
-//    var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=navigation' h=0 }"{literal};
+    var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=navigation' h=0 }"{literal};
 
-    cj( '#sort_name' ).crmAutocomplete()
-    .result(function(event, data, formatted) {
-       document.location={/literal}"{crmURL p='civicrm/contact/view' h=0 q='reset=1&cid='}"{literal}+data['contact_id'];
+    cj( '#sort_name' ).autocomplete( contactUrl, {
+        width: 200,
+        selectFirst: false,
+        minChars:2,
+        matchContains: true 	 
+    }).result(function(event, data, formatted) {
+       document.location={/literal}"{crmURL p='civicrm/contact/view' h=0 q='reset=1&cid='}"{literal}+data[1];
        return false;
     });    
 });
