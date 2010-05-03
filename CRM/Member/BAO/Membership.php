@@ -793,6 +793,8 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         $expFieldsMemType   = CRM_Member_DAO_MembershipType::export( );
         $fields = array_merge($expFieldMembership, $expFieldsMemType);
         $fields = array_merge($fields, $expFieldMembership );
+        //CRM-6161 fix for customdata export
+        $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport('Membership'));
         return $fields;
     }
 
