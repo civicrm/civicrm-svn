@@ -87,22 +87,6 @@
     {if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
     {/if}
-    <h3>
-       {if $single eq false}
-          {ts}New Activity{/ts}
-       {elseif $action eq 1}
-          {ts}New{/ts} 
-       {elseif $action eq 2}
-          {ts}Edit{/ts} 
-       {elseif $action eq 8}
-          {ts}Delete{/ts}
-       {elseif $action eq 4}
-          {ts}View{/ts}
-       {elseif $action eq 32768}
-          {ts}Detach{/ts}
-       {/if}
-       {$activityTypeName}
-    </h3>
       
         {if $action eq 8} {* Delete action. *}
             <table class="form-layout">
@@ -119,46 +103,41 @@
 
             <table class="{if $action eq 4}view-layout{else}form-layout{/if}">
              {if $context eq 'standalone' or $context eq 'smog'}
-                <tr>
+                <tr class="crm-activity-form-block-activity_type_id">
                    <td class="label">{$form.activity_type_id.label}</td><td class="view-value">{$form.activity_type_id.html}</td>
                 </tr>
              {/if}
-             <tr>
+             <tr class="crm-activity-form-block-source_contact_id">
                 <td class="label">{$form.source_contact_id.label}</td>
                 <td class="view-value">
                     {if $admin and $action neq 4}{$form.source_contact_id.html} {else} {$source_contact_value} {/if}
                 </td>
              </tr>
-             
+
+             <tr class="crm-activity-form-block-target_contact_id">
              {if $single eq false}
-             <tr>
                 <td class="label">{ts}With Contact(s){/ts}</td>
                 <td class="view-value" style="white-space: normal">{$with|escape}</td>
-             </tr>
              {elseif $action neq 4}
-             <tr>
                 <td class="label">{ts}With Contact{/ts}</td>
                 <td>{$form.target_contact_id.html}</td>
-             </tr>
 		     {else}
-             <tr>
                 <td class="label">{ts}With Contact{/ts}</td>
                 <td class="view-value" style="white-space: normal">
-			{foreach from=$target_contact key=id item=name}
-			  <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$id"}">{$name}</a>;&nbsp;
-			{/foreach}
-		</td>
-             </tr>
+        			{foreach from=$target_contact key=id item=name}
+        			  <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$id"}">{$name}</a>;&nbsp;
+        			{/foreach}
+		        </td>
              {/if}
+             </tr>
              
-             <tr>
+             <tr class="crm-activity-form-block-assignee_contact_id">
              {if $action eq 4}
                 <td class="label">{ts}Assigned To {/ts}</td><td class="view-value">
-			{foreach from=$assignee_contact key=id item=name}
-			  <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$id"}">{$name}</a>;&nbsp;
-			{/foreach}
-
-		</td>
+			    {foreach from=$assignee_contact key=id item=name}
+			        <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$id"}">{$name}</a>;&nbsp;
+			    {/foreach}
+                </td>
              {else}
                 <td class="label">{ts}Assigned To {/ts}</td>
                 <td>{$form.assignee_contact_id.html}
@@ -176,13 +155,13 @@
                 {include file="CRM/$crmDir/Form/Activity/$activityTypeFile.tpl"}
             {/if}
 
-             <tr>
+             <tr class="crm-activity-form-block-subject">
                 <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html|crmReplace:class:huge}</td>
              </tr>
-             <tr>
+             <tr class="crm-activity-form-block-location">
                 <td class="label">{$form.location.label}</td><td class="view-value">{$form.location.html|crmReplace:class:huge}</td>
              </tr> 
-             <tr>
+             <tr class="crm-activity-form-block-activity_date_time">
                 <td class="label">{$form.activity_date_time.label}</td>
                 {if $action neq 4}
                     <td class="view-value">{include file="CRM/common/jcalendar.tpl" elementName=activity_date_time}</td>
@@ -190,34 +169,34 @@
                     <td class="view-value">{$form.activity_date_time.html|crmDate}</td>
                 {/if}
              </tr>
-             <tr>
+             <tr class="crm-activity-form-block-duration">
                 <td class="label">{$form.duration.label}</td>
                 <td class="view-value">
                     {$form.duration.html}
                     {if $action neq 4}<span class="description">{ts}Total time spent on this activity (in minutes).{/ts}{/if}
                 </td>
              </tr> 
-             <tr>
+             <tr class="crm-activity-form-block-status_id">
                 <td class="label">{$form.status_id.label}</td><td class="view-value">{$form.status_id.html}</td>
              </tr> 
-             <tr>
+             <tr class="crm-activity-form-block-details">
                <td class="label">{$form.details.label}</td>
-	        {if $activityTypeName eq "Print PDF Letter"}
-		  <td class="view-value report">
-	    	    {$form.details.value|crmReplace:class:huge}
-		  </td>
-		{else}
-	          <td class="view-value report">
-	    	    {$form.details.html|crmStripAlternatives|crmReplace:class:huge}
-		  </td>
-		{/if}     
+        	        {if $activityTypeName eq "Print PDF Letter"}
+            		  <td class="view-value report">
+            	    	    {$form.details.value|crmReplace:class:huge}
+            		  </td>
+            		{else}
+            	      <td class="view-value report">
+            	    	    {$form.details.html|crmStripAlternatives|crmReplace:class:huge}
+            		  </td>
+            		{/if}     
                </td>
              </tr> 
-             <tr>
+             <tr class="crm-activity-form-block-priority_id">
                 <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
              </tr>
              {if $form.tag.html}
-             <tr>
+             <tr class="crm-activity-form-block-tag">
                 <td class="label">{$form.tag.label}</td>
                 <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
                     {literal}
@@ -231,12 +210,11 @@
                         });
                     </script>
                     {/literal}
-
                 </td>
              </tr>
              {/if}
-             <tr><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>	     
-             <tr>
+             <tr class="crm-activity-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>	     
+             <tr class="crm-activity-form-block-custom_data">
                 <td colspan="2">
 	            {if $action eq 4} 
                     {include file="CRM/Custom/Page/CustomDataView.tpl"}
@@ -245,15 +223,14 @@
                 {/if} 
                 </td>
              </tr> 
-
-             <tr>
+             <tr class="crm-activity-form-block-attachment">
                 <td colspan="2">
                     {include file="CRM/Form/attachment.tpl"}
                 </td>
              </tr>
 
              {if $action neq 4} {* Don't include "Schedule Follow-up" section in View mode. *}
-                 <tr>
+                 <tr class="crm-activity-form-block-schedule_followup">
                     <td colspan="2">
                      	<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
 						 <div class="crm-accordion-header">
@@ -285,15 +262,16 @@
              {/if}
         {/if} {* End Delete vs. Add / Edit action *}
         <tr class="buttons">
-            <td>{if $action eq 4 or $action eq 8 or $action eq 32768}
+            <td>
+                {if $action eq 4 or $action eq 8 or $action eq 32768}
 	    	    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-		{/if}
-	    </td>
+		        {/if}
+	        </td>
             <td>
             {if $action eq 4 && $activityTName neq 'Inbound Email'} 
-	      {if !$context }
-	        {assign var="context" value='activity'}
-	      {/if}
+	            {if !$context }
+	                {assign var="context" value='activity'}
+	            {/if}
                 <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=$context"}" class="edit button" title="{ts}Edit{/ts}">
                 <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
                 </a>
@@ -301,9 +279,9 @@
                 <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
                 </a>
 	        {/if}
-	      </td>
+	        </td>
         </tr> 
-        </table>   
+    </table>   
 
     {if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
@@ -338,5 +316,4 @@
         {include file="CRM/common/formNavigate.tpl"}
     {/if}
     </div>{* end of form block*}
-{/if} {* end of snippet if*}	
-
+{/if} {* end of snippet if*}
