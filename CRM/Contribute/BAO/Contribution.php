@@ -1013,6 +1013,13 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
         require_once 'CRM/Contribute/DAO/ContributionSoft.php';
         $softContribution = new CRM_Contribute_DAO_ContributionSoft();
         $softContribution->copyValues($params);
+
+	// set currency for CRM-1496
+	if ( ! isset( $softContribution->currency ) ) {
+	  $config =& CRM_Core_Config::singleton( );
+	  $softContribution->currency = $config->defaultCurrency;
+	}
+
         return $softContribution->save();
     } 
     

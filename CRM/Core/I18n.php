@@ -174,23 +174,51 @@ class CRM_Core_I18n
             $context = null;
         }
 
-        // use plural if required parameters are set
-        if (isset($count) && isset($plural)) {
+        // do all wildcard translations first
+        $config =& CRM_Core_Config::singleton( );
+        $stringTable = CRM_Utils_Array::value( $config->lcMessages,
+                                               $config->localeCustomStrings );
 
-            if ($this->_phpgettext) {
-                $text = $this->_phpgettext->ngettext($text, $plural, $count);
-            } else {
-                // if the locale's not set, we do ngettext work by hand
-                // if $count == 1 then $text = $text, else $text = $plural
-                if ($count != 1) $text = $plural;
+        $exactMatch = false;
+        if ( isset( $stringTable['exactMatch'] ) ) {
+            foreach ( $stringTable['exactMatch'] as $search => $replace ) {
+                if ( $search === $text ) {
+                    $exactMatch = true;
+                    $text = $replace;
+                    break;
+                }
             }
+        }
 
-            // expand %count in translated string to $count
-            $text = strtr($text, array('%count' => $count));
+        if ( ! $exactMatch &&
+             isset( $stringTable['wildcardMatch'] ) ) {
+            $search  = array_keys  ( $stringTable['wildcardMatch'] );
+            $replace = array_values( $stringTable['wildcardMatch'] );
+            $text = str_replace( $search,
+                                 $replace,
+                                 $text );
+        }
 
-        // if not plural, but the locale's set, translate
-        } elseif ($this->_phpgettext) {
-            $text = $this->_phpgettext->translate($text, $context);
+        // dont translate if we've done exactMatch already
+        if ( ! $exactMatch ) {
+            // use plural if required parameters are set
+            if (isset($count) && isset($plural)) {
+                
+                if ($this->_phpgettext) {
+                    $text = $this->_phpgettext->ngettext($text, $plural, $count);
+                } else {
+                    // if the locale's not set, we do ngettext work by hand
+                    // if $count == 1 then $text = $text, else $text = $plural
+                    if ($count != 1) $text = $plural;
+                }
+                
+                // expand %count in translated string to $count
+                $text = strtr($text, array('%count' => $count));
+                
+                // if not plural, but the locale's set, translate
+            } elseif ($this->_phpgettext) {
+                $text = $this->_phpgettext->translate($text, $context);
+            }
         }
 
         // replace the numbered %1, %2, etc. params if present

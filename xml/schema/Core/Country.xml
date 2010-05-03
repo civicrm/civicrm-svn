@@ -42,6 +42,18 @@
        <add>1.1</add>
   </field>
   <field>
+      <name>address_format_id</name>
+      <type>int unsigned</type>
+      <comment>Foreign key to civicrm_address_format.id.</comment>
+       <add>3.2</add>
+  </field>
+  <foreignKey>
+      <name>address_format_id</name>
+      <table>civicrm_address_format</table>
+      <key>id</key>
+      <add>3.2</add>
+  </foreignKey>
+  <field>
        <name>idd_prefix</name>
        <type>varchar</type>
        <length>4</length>

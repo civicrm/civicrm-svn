@@ -1670,9 +1670,9 @@ VALUES
     {
         $query = "
 INSERT INTO `civicrm_pcp`
-    (contact_id, status_id, title, intro_text, page_text, donate_link_text, contribution_page_id, is_thermometer, is_honor_roll, goal_amount, referer, is_active)
+    (contact_id, status_id, title, intro_text, page_text, donate_link_text, contribution_page_id, is_thermometer, is_honor_roll, goal_amount, currency, referer, is_active)
 VALUES
-    ({$this->individual[3]}, 2, 'My Personal Civi Fundraiser', 'I''m on a mission to get all my friends and family to help support my favorite open-source civic sector CRM.', '<p>Friends and family - please help build much needed infrastructure for the civic sector by supporting my personal campaign!</p>\r\n<p><a href=\"http://civicrm.org\">You can learn more about CiviCRM here</a>.</p>\r\n<p>Then click the <strong>Contribute Now</strong> button to go to our easy-to-use online contribution form.</p>', 'Contribute Now', 1, 1, 1, 5000.00, NULL, 1);
+    ({$this->individual[3]}, 2, 'My Personal Civi Fundraiser', 'I''m on a mission to get all my friends and family to help support my favorite open-source civic sector CRM.', '<p>Friends and family - please help build much needed infrastructure for the civic sector by supporting my personal campaign!</p>\r\n<p><a href=\"http://civicrm.org\">You can learn more about CiviCRM here</a>.</p>\r\n<p>Then click the <strong>Contribute Now</strong> button to go to our easy-to-use online contribution form.</p>', 'Contribute Now', 1, 1, 1, 5000.00, 'USD', NULL, 1);
 ";
         CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
     }
@@ -1731,10 +1731,10 @@ VALUES
         
         $query = "
 INSERT INTO `civicrm_contribution_soft`
-      ( contribution_id, contact_id ,amount ,pcp_id , pcp_display_in_roll ,pcp_roll_nickname,pcp_personal_note )
+      ( contribution_id, contact_id ,amount , currency, pcp_id , pcp_display_in_roll ,pcp_roll_nickname,pcp_personal_note )
 VALUES
-    ( $contriId1, {$this->individual[3]}, 10.00, 1, 1, 'Jones Family', 'Helping Hands'),
-    ( $contriId2, {$this->individual[3]}, 250.00, 1, 1, 'Annie and the kids', 'Annie Helps');
+    ( $contriId1, {$this->individual[3]}, 10.00, 'USD', 1, 1, 'Jones Family', 'Helping Hands'),
+    ( $contriId2, {$this->individual[3]}, 250.00, 'USD', 1, 1, 'Annie and the kids', 'Annie Helps');
  ";
         CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
     }
@@ -1742,11 +1742,11 @@ VALUES
     function addPledge( )
     {
         $pledge = "INSERT INTO civicrm_pledge
-        (contact_id, contribution_type_id, contribution_page_id, amount, frequency_unit, frequency_interval, frequency_day, installments, start_date, create_date, acknowledge_date, modified_date, cancel_date, end_date, honor_contact_id, honor_type_id, status_id, is_test) 
+        (contact_id, contribution_type_id, contribution_page_id, amount, currency,frequency_unit, frequency_interval, frequency_day, installments, start_date, create_date, acknowledge_date, modified_date, cancel_date, end_date, honor_contact_id, honor_type_id, status_id, is_test) 
         VALUES 
-       (71, 1, 1, 500.00, 'month', 1, 1, 1, '2009-07-01 00:00:00', '2009-06-26 00:00:00', NULL, NULL, NULL,'2009-07-01 00:00:00', NULL, NULL, 1, 0),
-       (43, 1, 1, 800.00, 'month', 3, 1, 4, '2009-07-01 00:00:00', '2009-06-23 00:00:00', '2009-06-23 00:00:00', NULL, NULL, '2009-04-01 10:11:40', NULL, NULL, 5, 0),
-       (32, 1, 1, 600.00, 'month', 1, 1, 3, '2009-10-01 00:00:00', '2009-09-14 00:00:00', '2009-09-14 00:00:00', NULL, NULL, '2009-12-01 00:00:00', NULL, NULL, 5, 0);
+       (71, 1, 1, 500.00, 'USD', 'month', 1, 1, 1, '2009-07-01 00:00:00', '2009-06-26 00:00:00', NULL, NULL, NULL,'2009-07-01 00:00:00', NULL, NULL, 1, 0),
+       (43, 1, 1, 800.00, 'USD', 'month', 3, 1, 4, '2009-07-01 00:00:00', '2009-06-23 00:00:00', '2009-06-23 00:00:00', NULL, NULL, '2009-04-01 10:11:40', NULL, NULL, 5, 0),
+       (32, 1, 1, 600.00, 'USD', 'month', 1, 1, 3, '2009-10-01 00:00:00', '2009-09-14 00:00:00', '2009-09-14 00:00:00', NULL, NULL, '2009-12-01 00:00:00', NULL, NULL, 5, 0);
 ";
         CRM_Core_DAO::executeQuery( $pledge, CRM_Core_DAO::$_nullArray );      
     }
@@ -1754,18 +1754,17 @@ VALUES
     function addPledgePayment( )
     {
         $pledgePayment = "INSERT INTO civicrm_pledge_payment 
-        ( pledge_id, contribution_id, scheduled_amount, scheduled_date, reminder_date, reminder_count, status_id) 
+        ( pledge_id, contribution_id, scheduled_amount, currency, scheduled_date, reminder_date, reminder_count, status_id) 
        VALUES 
-         (1, 10, 500.00, '2009-07-01 00:00:00', null, 0, 1 ),
+         (1, 10, 500.00,  'USD','2009-07-01 00:00:00', null, 0, 1 ),
+         (2, 11,   200.00, 'USD','2009-07-01 00:00:00', null, 0,  1 ),
+         (2, null, 200.00, 'USD', '2009-10-01 00:00:00', null, 0,  2 ),
+         (2, null, 200.00, 'USD', '2009-01-01 00:00:00', null, 0,  2 ),
+         (2, null, 200.00, 'USD', '2009-04-01 00:00:00', null, 0,  2 ),
 
-         (2, 11,   200.00, '2009-07-01 00:00:00', null, 0,  1 ),
-         (2, null, 200.00, '2009-10-01 00:00:00', null, 0,  2 ),
-         (2, null, 200.00, '2009-01-01 00:00:00', null, 0,  2 ),
-         (2, null, 200.00, '2009-04-01 00:00:00', null, 0,  2 ),
-
-         (3, 12,   200.00, '2009-10-01 00:00:00', null, 0, 1 ),
-         (3, 13,   200.00, '2009-11-01 00:0:00', '2009-10-28 00:00:00', 1, 1),
-         (3, null, 200.00, '2009-12-01 00:00:00', null, 0, 2 );
+         (3, 12,   200.00, 'USD', '2009-10-01 00:00:00', null, 0, 1 ),
+         (3, 13,   200.00, 'USD', '2009-11-01 00:0:00', '2009-10-28 00:00:00', 1, 1),
+         (3, null, 200.00, 'USD', '2009-12-01 00:00:00', null, 0, 2 );
         ";
         CRM_Core_DAO::executeQuery( $pledgePayment, CRM_Core_DAO::$_nullArray );
     }

@@ -60,7 +60,7 @@ class CRM_Utils_Money {
      *
      * @static
      */
-    static function format($amount, $currency = null, $format = null)
+    static function format($amount, $currency = null, $format = null, $onlyNumber = false )
     {
         if ( CRM_Utils_System::isNull( $amount ) ) {
             return '';
@@ -72,11 +72,24 @@ class CRM_Utils_Money {
 
         $config = CRM_Core_Config::singleton();
 
+        if (!$format) {
+            $format = $config->moneyformat;
+        }
+
+        // money_format() exists only in certain PHP install (CRM-650)
+        if (is_numeric($amount) and function_exists('money_format')) {
+            $amount = money_format($config->moneyvalueformat, $amount);
+        }
+
+        if ( $onlyNumber ) {
+            return $amount;
+        }
+        
         if ( !self::$_currencySymbols ) {
             require_once "CRM/Core/PseudoConstant.php";
             $currencySymbolName = CRM_Core_PseudoConstant::currencySymbols( 'name' );
             $currencySymbol     = CRM_Core_PseudoConstant::currencySymbols( );
-            
+           
             self::$_currencySymbols =
                 array_combine( $currencySymbolName, $currencySymbol );
         }
@@ -99,6 +112,7 @@ class CRM_Utils_Money {
                       '.' => $config->monetaryDecimalPoint );
         
         $money = strtr($amount, $rep);
+
         $replacements = array(
                               '%a' => $money,
                               '%C' => $currency,

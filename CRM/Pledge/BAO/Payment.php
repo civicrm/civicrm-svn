@@ -194,6 +194,13 @@ WHERE pledge_id = %1
         require_once 'CRM/Pledge/DAO/Payment.php';
         $payment = new CRM_Pledge_DAO_Payment( );
         $payment->copyValues( $params );
+
+	// set currency for CRM-1496
+	if ( ! isset( $payment->currency ) ) {
+	  $config =& CRM_Core_Config::singleton( );
+	  $payment->currency = $config->defaultCurrency;
+	}
+
         $result = $payment->save( );
         
         return $result;

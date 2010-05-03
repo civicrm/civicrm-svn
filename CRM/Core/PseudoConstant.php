@@ -1470,6 +1470,26 @@ ORDER BY name";
         return self::$greeting[$index];
     }
 
+    /**
+     * Get all the Languages from database.
+     *
+     * @access public
+     * @static
+     *
+     * @return array self::languages - array reference of all languages
+     *
+     */
+    public static function &languages( ) 
+    {
+        static $_languages = null;
+
+        if ( ! $_languages ) {
+            require_once 'CRM/Core/OptionGroup.php';
+            $_languages = CRM_Core_OptionGroup::values('languages');
+        }        
+        return $_languages;
+    }
+
 }
 
 

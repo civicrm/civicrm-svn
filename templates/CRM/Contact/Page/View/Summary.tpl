@@ -317,6 +317,9 @@
                                     <td class="label">{ts}Preferred Method(s){/ts}</td><td>{$preferred_communication_method_display}</td>
                                 </tr>
                                 <tr>
+                                    <td class="label">{ts}Preferred Language{/ts}</td><td>{$preferred_language}</td>
+                                </tr>
+                                <tr>
                                     <td class="label">{ts}Email Format{/ts}</td><td>{$preferred_mail_format}</td>
                                 </tr>
                             </table>

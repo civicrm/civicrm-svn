@@ -755,7 +755,8 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
             $where .= ' OR civicrm_relationship.is_active = 0 )';
         }
 
-        $where .= ' AND (civicrm_contact.is_deleted IS NULL OR civicrm_contact.is_deleted = 0)';
+// CRM-6181
+        $where .= ' AND civicrm_contact.is_deleted = 0';
         
         if ( $direction == 'a_b' ) {
             $where .= ' ) UNION ';

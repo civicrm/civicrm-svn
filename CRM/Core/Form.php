@@ -175,7 +175,7 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                                'domain','numberOfDigit',
                                'date', 'currentDate',
                                'asciiFile', 'htmlFile', 'utf8File',
-                               'objectExists', 'optionExists', 'postalCode', 'money', 'moneySigned', 'positiveInteger',
+                               'objectExists', 'optionExists', 'postalCode', 'money', 'positiveInteger',
                                'xssString', 'fileExists', 'autocomplete', 'validContact' );
 
         foreach ( $rules as $rule ) {
@@ -1034,6 +1034,37 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         }
         
         $this->addDate( $name, $label, $required, $attributes );
+    }
+
+    /**
+     * add a currency and money element to the form
+     */
+    function addMoney( $name,
+		       $label,
+		       $required = false,
+		       $attributes = null,
+		       $addCurrency = true,
+		       $currencyName = 'currency',
+		       $defaultCurrency = null ) {
+      $element = $this->add( 'text', $name, $label, $attributes, $required );
+      $this->addRule( $name, ts('Please enter a valid amount.'), 'money');
+
+      if ( $addCurrency ) {
+	$this->add( 'select',
+		    $currencyName,
+		    null,
+		    CRM_Core_OptionGroup::values( 'currencies_enabled' ),
+		    true );
+
+	if ( ! $defaultCurrency ) {
+	  $config =& CRM_Core_Config::singleton( );
+	  $defaultCurrency = $config->defaultCurrency;
+	}
+	
+	$this->setDefaults( array( 'currency' => $defaultCurrency ) );
+      }
+
+      return $element;
     }
 }
 

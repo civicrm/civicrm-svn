@@ -34,8 +34,6 @@
  *
  */
 
-
-
 require_once 'HTML/QuickForm/Rule/Email.php';
 
 class CRM_Utils_Rule 
@@ -108,10 +106,8 @@ class CRM_Utils_Rule
         return false;
     }
 
-
     static function query( $query ) 
     {
-
         // check length etc
         if ( empty( $query ) || strlen( $query ) < 3 || strlen( $query ) > 127 ) {
             return false;
@@ -134,7 +130,8 @@ class CRM_Utils_Rule
         return Validate::uri( $url, $options );
     }
 
-    static function wikiURL( $string ) {
+    static function wikiURL( $string )
+    {
         $items = explode( ' ', trim( $string ), 2 );
         return self::url( $items[0] );
     }
@@ -258,7 +255,8 @@ class CRM_Utils_Rule
      * @static
      * @access public
      */
-    static function mysqlDate($date) {
+    static function mysqlDate($date)
+    {
         // allow date to be null
         if ( $date == null ) {
             return true;
@@ -357,17 +355,6 @@ class CRM_Utils_Rule
         }
 
         return preg_match( '/(^-?\d+\.\d?\d?$)|(^-?\.\d\d?$)/', $value ) ? true : false;
-    }
-
-    static function moneySigned($value) 
-    {
-        $value = self::cleanMoney( $value );
-
-        if ( self::integer( $value ) ) {
-            return true;
-        }
-
-        return preg_match( '/(^-?\d+\.\d?\d?$)|(^\.\d\d?$)/', $value ) ? true : false;
     }
 
     static function string($value, $maxLength = 0) 
@@ -531,7 +518,8 @@ class CRM_Utils_Rule
         return false;
     }
 
-    static function xssString( $value ) {
+    static function xssString( $value )
+    {
         if ( is_string( $value ) ) {
             return preg_match( '!<(vb)?script[^>]*>.*</(vb)?script.*>!ims',
                                $value ) ? false : true;
@@ -544,7 +532,8 @@ class CRM_Utils_Rule
         return file_exists( $path );
     }
 
-    static function autocomplete( $value, $options ) {
+    static function autocomplete( $value, $options )
+    {
         if ( $value ) {            
             require_once 'CRM/Core/BAO/CustomOption.php';
             $selectOption =& CRM_Core_BAO_CustomOption::valuesByID( $options['fieldID'], $options['optionGroupID'] );
@@ -556,7 +545,8 @@ class CRM_Utils_Rule
         return true;
     }
     
-    static function validContact( $value, $actualElementValue = null ) {
+    static function validContact( $value, $actualElementValue = null )
+    {
         if ( $actualElementValue ) {
             $value = $actualElementValue;
         }

@@ -181,6 +181,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             $cache =& CRM_Utils_Cache::singleton( );
             self::$_singleton = $cache->get( 'CRM_Core_Config' );
 
+
             // if not in cache, fire off config construction
             if ( ! self::$_singleton ) {
                 self::$_singleton = new CRM_Core_Config;
@@ -202,7 +203,6 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
                 // add component specific settings
                 self::$_singleton->componentRegistry->addConfig( $this );
             }
-
             
             self::$_singleton->initialized = 1;
 
@@ -221,6 +221,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::config( self::$_singleton );
         }
+
 
         return self::$_singleton;
     }

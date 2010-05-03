@@ -65,7 +65,7 @@ class CRM_Contact_Form_Search_Criteria {
             require_once 'CRM/Core/BAO/Tag.php';
             $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
             if ( $contactTags ) {
-                $form->add( 'select', 'contact_tags',  ts( 'Tags' ), $contactTags, false, 
+                $form->add( 'select', 'contact_tags',  ts( 'Tags' ), $contactTag, false, 
                     array( 'id' => 'contact_tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
             }
             
@@ -146,6 +146,10 @@ class CRM_Contact_Form_Search_Criteria {
         $form->addGroup($onHold, 'email_on_hold', ts('Email On Hold'));
 
         $form->addGroup($commPreff, 'preferred_communication_method', ts('Preferred Communication Method'));
+
+        //CRM-6138 Preferred Language
+        $langPreff = CRM_Core_PseudoConstant::languages( );
+        $form->add( 'select', 'preferred_language', ts('Preferred Language'), array( '' => ts('- select language -')) + $langPreff );
         
     }
 

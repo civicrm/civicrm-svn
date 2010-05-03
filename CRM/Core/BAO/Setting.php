@@ -62,6 +62,12 @@ class CRM_Core_BAO_Setting
             CRM_Core_BAO_Setting::formatParams($params, $values);
         }
 
+        // CRM-6151
+        if ( isset( $params['localeCustomStrings'] ) &&
+             is_array( $params['localeCustomStrings'] ) ) {
+            $domain->locale_custom_strings = serialize( $params['localeCustomStrings'] );
+        }
+            
         // unset any of the variables we read from file that should not be stored in the database
         // the username and certpath are stored flat with _test and _live
         // check CRM-1470
@@ -70,7 +76,8 @@ class CRM_Core_BAO_Setting
                            'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
                            'userPermissionClass', 'userFrameworkURLVar',
                            'newBaseURL', 'newBaseDir', 'newSiteName',
-                           'qfKey', 'gettextResourceDir', 'cleanURL' );
+                           'qfKey', 'gettextResourceDir', 'cleanURL',
+                           'locale_custom_strings', 'localeCustomStrings' );
         foreach ( $skipVars as $var ) {
             unset( $params[$var] );
         }
@@ -150,7 +157,7 @@ class CRM_Core_BAO_Setting
         if ( CRM_Utils_Array::value( 'q', $_GET ) == 'civicrm/upgrade' ) {
             $domain->selectAdd( 'config_backend' );
         } else {
-            $domain->selectAdd( 'config_backend, locales' );
+            $domain->selectAdd( 'config_backend, locales, locale_custom_strings' );
         }
         
         $domain->id = CRM_Core_Config::domainID( );
@@ -162,7 +169,8 @@ class CRM_Core_BAO_Setting
                                'userFrameworkDSN', 
                                'userFrameworkBaseURL', 'userFrameworkClass', 'userHookClass',
                                'userPermissionClass', 'userFrameworkURLVar',
-                               'qfKey', 'gettextResourceDir', 'cleanURL' );
+                               'qfKey', 'gettextResourceDir', 'cleanURL',
+                               'locale_custom_strings', 'localeCustomStrings' );
             foreach ( $skipVars as $skip ) {
                 if ( array_key_exists( $skip, $defaults ) ) {
                     unset( $defaults[$skip] );
@@ -172,6 +180,14 @@ class CRM_Core_BAO_Setting
             // since language field won't be present before upgrade.
             if ( CRM_Utils_Array::value( 'q', $_GET ) == 'civicrm/upgrade' ) {
                 return;
+            }
+
+
+            // check if there are any locale strings
+            if ( $domain->locale_custom_strings ) {
+                $defaults['localeCustomStrings'] = unserialize($domain->locale_custom_strings);
+            } else {
+                $defaults['localeCustomStrings'] = null;
             }
 
             // are we in a multi-language setup?
@@ -255,7 +271,8 @@ class CRM_Core_BAO_Setting
             global $tsLocale;
             $tsLocale = $lcMessages;
 
-            // FIXME: as goo^W bad place as any to fix CRM-5428 (to be moved to a sane location along with the above)
+            // FIXME: as bad aplace as any to fix CRM-5428 
+            // (to be moved to a sane location along with the above)
             if (function_exists('mb_internal_encoding')) mb_internal_encoding('UTF-8');
         }
     }

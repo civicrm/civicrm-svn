@@ -260,6 +260,13 @@ class CRM_Core_Config_Variables extends CRM_Core_Config_Defaults
     public $civiHRD           = 0;
 
     /**
+     * The custom locale strings. Note that these locale strings are stored
+     * in a separate column in civicrm_domain
+     * @var array
+     */
+    public $localeCustomStrings = null;
+
+    /**
      * Map Provider 
      *
      * @var boolean

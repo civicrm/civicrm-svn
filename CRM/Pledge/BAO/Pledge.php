@@ -106,6 +106,13 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
         }
 
         $pledge->copyValues( $params );
+
+	// set currency for CRM-1496
+	if ( ! isset( $pledge->currency ) ) {
+	  $config =& CRM_Core_Config::singleton( );
+	  $pledge->currency = $config->defaultCurrency;
+	}
+
         $result = $pledge->save( );
         
         if ( CRM_Utils_Array::value( 'id', $params ) ) {

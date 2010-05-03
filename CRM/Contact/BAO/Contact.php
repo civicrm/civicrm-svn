@@ -2035,7 +2035,13 @@ UNION
                 CRM_Utils_Array::value( 'preferred_communication_method_display', $temp );
             
             CRM_Contact_DAO_Contact::addDisplayEnums($values);
-            
+
+            // get preferred languages
+            if ( ! empty( $contact->preferred_language ) ) {
+                $languages =& CRM_Core_PseudoConstant::languages( );
+                $values['preferred_language'] = $languages[$contact->preferred_language];
+            }
+
             // Calculating Year difference            
             if ( $contact->birth_date ) {
                 $birthDate = CRM_Utils_Date::customFormat( $contact->birth_date,'%Y%m%d' );  

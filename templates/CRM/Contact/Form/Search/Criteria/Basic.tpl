@@ -113,6 +113,12 @@
 {/if}
 	    </tr>
         <tr>
+            <td>
+                {$form.preferred_language.label}<br />
+                {$form.preferred_language.html}
+            </td> 
+        </tr>
+        <tr>
             <td colspan="2">
                 {$form.privacy.label}<br />
                 {$form.privacy.html} {help id="id-privacy"}

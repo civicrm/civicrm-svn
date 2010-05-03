@@ -42,6 +42,10 @@ require_once 'CRM/Admin/Form/Setting.php';
  */
 class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
 {
+  // use this variable to store mappings that we compute in buildForm and also
+  // use in postProcess (CRM-1496)
+  protected $_currencySymbols;
+
     /**
      * Function to build the form
      *
@@ -137,10 +141,23 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         
         $symbol = $config->currencySymbols;
         foreach($symbol as $key=>$value) {
-            $currencySymbols[$key] = "$key";
-            if ($value) $currencySymbols[$key] .= " ($value)";
+	      $this->_currencySymbols[$key] = "$key";
+            if ( $value ) {
+	      $this->_currencySymbols[$key] .= " ($value)";
+	    }
         } 
-        $this->addElement('select','defaultCurrency', ts('Default Currency'), $currencySymbols);
+        $this->addElement('select','defaultCurrency', ts('Default Currency'), $this->_currencySymbols);
+
+        $includeCurrency =& $this->addElement('advmultiselect', 'currencyLimit', 
+					       ts('Available Currencies') . ' ', $this->_currencySymbols,
+					       array('size' => 5,
+						     'style' => 'width:150px',
+						     'class' => 'advmultiselect')
+					       );
+
+        $includeCurrency->setButtonAttributes('add', array('value' => ts('Add >>')));
+        $includeCurrency->setButtonAttributes('remove', array('value' => ts('<< Remove')));
+
         $this->addElement('text','legacyEncoding', ts('Legacy Encoding'));  
         $this->addElement('text','customTranslateFunction', ts('Custom Translate Function'));  
         $this->addElement('text','fieldSeparator', ts('Import / Export Field Separator'), array('size' => 2)); 
@@ -176,6 +193,12 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
     function setDefaultValues()
     {
         parent::setDefaultValues();
+
+	// CRM-1496
+	// retrieve default values for currencyLimit
+	$this->_defaults['currencyLimit'] =
+	  array_keys( CRM_Core_OptionGroup::values( 'currencies_enabled' ) );
+
         // CRM-5111: unset these two unconditionally, we don’t want them to stick – ever
         unset($this->_defaults['makeMultilingual']);
         unset($this->_defaults['makeSinglelingual']);
@@ -226,7 +249,37 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
 
         // set default Currency Symbol
         $values['defaultCurrencySymbol'] = $config->defaultCurrencySymbol( $values['defaultCurrency']);
-        
+
+	// save enabled currencies and defaul currency in option group 'currencies_enabled'
+	// CRM-1496
+	if ( empty( $values['currencyLimit'] ) ) {
+	  $values['currencyLimit'] = $values['defaultCurrency'];
+	} else if ( ! in_array( $values['defaultCurrency'],
+				$values['currencyLimit'] ) ) {
+	  $values['currencyLimit'][] = $values['defaultCurrency'];
+	}
+
+	// sort so that when we display drop down, weights have right value
+	sort( $values['currencyLimit'] );
+
+	// get labels for all the currencies
+	$options = array( );
+	for ( $i = 0; $i < count($values['currencyLimit']); $i++ ) {
+	  $options[] = array( 'label'      => $this->_currencySymbols[$values['currencyLimit'][$i]],
+			      'value'      => $values['currencyLimit'][$i],
+			      'weight'     => $i + 1,
+			      'is_active'  => 1,
+			      'is_default' =>  $values['currencyLimit'][$i] == $values['defaultCurrency'] );
+	}
+
+	$dontCare = null;
+	CRM_Core_OptionGroup::createAssoc( "currencies_enabled",
+					   $options,
+					   $dontCare );
+
+	// unset currencyLimit so we dont store there
+	unset( $values['currencyLimit'] );
+
         // save all the settings
         parent::commonProcess($values);
 
