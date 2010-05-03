@@ -195,11 +195,11 @@ function civicrm_contact_simplesearch( &$params ) {
     $q=$params['sort_name'];
   $result=array();
         $sql = "
-SELECT DISTINCT contact_id,contact_type,column_name,sort_name,email from (select 'sort_name' column_name, contact_id,contact_type,sort_name,email from civicrm_email,civicrm_contact WHERE contact_id = civicrm_contact.id and sort_name LIKE '$q%' limit 10
+SELECT DISTINCT contact_id,contact_type,column_name,sort_name,email from (select 'sort_name' column_name, contact_id,contact_type,sort_name,email from civicrm_email,civicrm_contact WHERE contact_id = civicrm_contact.id and sort_name LIKE '$q%' AND is_deleted = 0 limit 10
 UNION
-select 'first_name' column_name,contact_id,contact_type,sort_name,email from civicrm_email,civicrm_contact WHERE contact_id = civicrm_contact.id and first_name LIKE '$q%' limit 10
+select 'first_name' column_name,contact_id,contact_type,sort_name,email from civicrm_email,civicrm_contact WHERE contact_id = civicrm_contact.id and first_name LIKE '$q%' AND is_deleted = 0 limit 10
 UNION
-select 'email' column_name,contact_id,contact_type,sort_name,email from civicrm_email,civicrm_contact WHERE contact_id = civicrm_contact.id and email LIKE '$q%' limit 10
+select 'email' column_name,contact_id,contact_type,sort_name,email from civicrm_email,civicrm_contact WHERE contact_id = civicrm_contact.id and email LIKE '$q%' AND is_deleted = 0 limit 10
 ) T  
 ";
 
