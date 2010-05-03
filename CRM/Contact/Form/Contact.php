@@ -178,7 +178,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 
                 // check for permissions
                 require_once 'CRM/Contact/BAO/Contact/Permission.php';
-                if ( ! CRM_Contact_BAO_Contact_Permission::allow( $this->_contactId, CRM_Core_Permission::EDIT ) ) {
+                $session =& CRM_Core_Session::singleton( );
+                if ( $session->get( 'userID' ) != $this->_contactId ||
+                     ! CRM_Contact_BAO_Contact_Permission::allow( $this->_contactId, CRM_Core_Permission::EDIT ) ) {
                     CRM_Core_Error::statusBounce( ts('You do not have the necessary permission to edit this contact.') );
                 }
                 

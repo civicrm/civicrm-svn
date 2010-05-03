@@ -342,16 +342,19 @@ class CRM_Contribute_BAO_Query
             
         case 'contribution_is_pay_later':
         case 'contribution_pay_later':
-            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.is_pay_later", $op, $value, "Boolean" ) ;
             if ( $value ) {
+                $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_contribution.is_pay_later", $op, $value, "Boolean" ) ;
                 $query->_qill[$grouping][]  = "Find Pay Later Contributions";
+                $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
             }
-            $query->_tables['civicrm_contribution'] = $query->_whereTables['civicrm_contribution'] = 1;
             return;
         
         case 'contribution_recurring':
-            $query->_qill[$grouping][]  = "Displaying Recurring Contributions";
-            $query->_tables['civicrm_contribution_recur'] = $query->_whereTables['civicrm_contribution_recur'] = 1;
+            if ( $value ) {
+                $query->_where[$grouping][] = "civicrm_contribution.contribution_recur_id IS NOT NULL";
+                $query->_qill[$grouping][]  = "Displaying Recurring Contributions";
+                $query->_tables['civicrm_contribution_recur'] = $query->_whereTables['civicrm_contribution_recur'] = 1;
+            }
             return;
 
         case 'contribution_recur_id':

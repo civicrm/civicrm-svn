@@ -352,7 +352,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
                                 $ppUrl = CRM_Utils_System::url( 'civicrm/contact/view/contribution',
                                                          "reset=1&action=add&cid={$this->_contactID}&ppid={$payments['id']}&context=pledge" );
                             }
-                            CRM_Core_Session::setStatus( ts('This contact has a pending or overdue pledge payment of %2 which is scheduled for %3. <a href="%1">Click here to apply this contribution as a pledge payment<a/>.', array( 1 => $ppUrl, 2 => $ppAmountDue, 3 => $ppSchedDate ) ) );
+                            CRM_Core_Session::setStatus( ts('This contact has a pending or overdue pledge payment of %2 which is scheduled for %3. <a href="%1">Click here to apply this contribution as a pledge payment</a>.', array( 1 => $ppUrl, 2 => $ppAmountDue, 3 => $ppSchedDate ) ) );
                         }                    
                     }
             
