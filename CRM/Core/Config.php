@@ -1,3 +1,4 @@
+
 <?php
 
 /*
@@ -629,8 +630,8 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
     /**
      * Wrapper function to allow unit tests to switch user framework on the fly
      */    
-    public function setUserFramework( $userFramework ) {
-        $this->userFramework       = $userFrameWork;
+    public function setUserFramework( $userFramework = null ) {
+        $this->userFramework       = $userFramework;
         $this->_setUserFrameworkConfig( $userFramework );
     }
     
