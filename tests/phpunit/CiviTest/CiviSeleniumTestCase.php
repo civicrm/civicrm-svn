@@ -72,6 +72,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     protected function tearDown()
     {
+        $this->open( $this->sboxPath . "civicrm/logout?reset=1");
     }
 
     /** 
