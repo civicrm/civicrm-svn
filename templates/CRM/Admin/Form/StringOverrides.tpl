@@ -26,22 +26,37 @@
 {* this template is used for adding/editing string overrides  *}
 <div class="form-item">
 <fieldset><legend>{ts}String Overrides{/ts}</legend>
+<table class="form-layout-compressed">
+	<tr>
+	    <td>
+	    <fieldset>
+    	    <table>
+		<tr class="columnheader">
+		    <td>{ts}Original{/ts}</td>
+    		    <td>{ts}Replacement{/ts}</td>
+    		    <td>{ts}Exact Match?{/ts}</td>
+    		</tr>
 
-  <dl>
-    <dt>{ts}Original{/ts}</dt><dd>{ts}Replacement{/ts}&nbsp;{ts}Exact Match?{/ts}</dd>
-    {section name="numStrings" start=1 step=1 loop=$numStrings}
-       {assign var='temp' value='old_'}
-       {assign var='oldName' value=$temp|cat:"`$smarty.section.numStrings.index`"}
-       {assign var='temp' value='new_'}
-       {assign var='newName' value=$temp|cat:"`$smarty.section.numStrings.index`"}
-       {assign var='temp' value='cb_'}
-       {assign var='cbName'  value=$temp|cat:"`$smarty.section.numStrings.index`"}
-       <dt>{$form.$oldName.html}</dt><dd>{$form.$newName.html}&nbsp;{$form.$cbName.html}</dd>
-    {/section}
-  </dl>
-
-  <dl> 
-    <dt></dt><dd>{$form.buttons.html}</dd>
-  </dl> 
+ 		{section name="numStrings" start=1 step=1 loop=$numStrings}
+			 {assign var='temp' value='old_'}
+			 {assign var='oldName' value=$temp|cat:"`$smarty.section.numStrings.index`"}
+       			 {assign var='temp' value='new_'}
+       			 {assign var='newName' value=$temp|cat:"`$smarty.section.numStrings.index`"}
+       			 {assign var='temp' value='cb_'}
+       			 {assign var='cbName'  value=$temp|cat:"`$smarty.section.numStrings.index`"}
+		<tr>
+		    <td class="even-row">{$form.$oldName.html}</td>
+    		    <td class="even-row">{$form.$newName.html}</td>
+ 		    <td class="even-row">{$form.$cbName.html}</td>
+    		</tr>
+    		{/section}
+    	    </table>
+	    </fieldset>
+	    </td>
+	</tr>
+	<tr>
+	    <td>{$form.buttons.html}</td>
+	</tr>
+</table>
 </fieldset>
 </div>
