@@ -51,9 +51,14 @@ class CRM_Contact_Form_Edit_Email
      * @access public
      * @static
      */
-    static function buildQuickForm( &$form ) 
+    static function buildQuickForm( &$form, $addressBlockCount = null ) 
     {        
-        $blockId = ( $form->get( 'Email_Block_Count' ) ) ? $form->get( 'Email_Block_Count' ) : 1;
+        // passing this via the session is AWFUL. we need to fix this
+        if ( ! $addressBlockCount ) {
+            $blockId = ( $form->get( 'Email_Block_Count' ) ) ? $form->get( 'Email_Block_Count' ) : 1;
+        } else {
+            $blockId = $addressBlockCount;
+        }
 
         $form->applyFilter('__ALL__','trim');
 
