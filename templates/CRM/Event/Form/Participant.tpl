@@ -283,9 +283,9 @@
    		 }
 	}
 
-        function buildEventTypeCustomData( eventID, eventTypeCustomDataTypeID, eventAndTypeMapping ) {
-                 var mapping = eval('(' + eventAndTypeMapping + ')');
-                 buildCustomData( 'Participant', mapping[eventID], eventTypeCustomDataTypeID );
-        }
+    function buildEventTypeCustomData( eventID, eventTypeCustomDataTypeID, eventAndTypeMapping ) {
+         var mapping = eval('(' + eventAndTypeMapping + ')');
+         buildCustomData( 'Participant', mapping[eventID], eventTypeCustomDataTypeID );
+    }
 {/literal}
 </script>

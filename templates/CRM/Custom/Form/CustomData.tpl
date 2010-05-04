@@ -63,5 +63,12 @@
         {/if}
     </div>
     <div id="custom_group_{$group_id}_{$cgCount}"></div>
-{/foreach}
+{/foreach
+    <script type="text/javascript">
+    {literal}
+        cj(function() {
+           cj().crmaccordions(); 
+        });        
+    {/literal}
+    </script>
 {/if}
