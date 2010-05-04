@@ -26,6 +26,7 @@
 */
 
 require_once 'api/v2/Relationship.php';
+require_once 'api/v2/RelationshipType.php';
 require_once 'CiviTest/CiviUnitTestCase.php';
 
 /**
@@ -98,7 +99,7 @@ class api_v2_RelationshipTypeTest extends CiviUnitTestCase
                                'contact_type_b' => 'Organization'
                                );
         $result =& civicrm_relationship_type_add( $relTypeParams );
-        
+            
         $this->assertEquals( $result['is_error'], 1 );
         $this->assertEquals( $result['error_message'], 'Missing required parameters' );
     }
