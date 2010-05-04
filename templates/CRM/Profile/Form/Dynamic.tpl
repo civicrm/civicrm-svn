@@ -185,7 +185,7 @@
 
 {if ($action eq 1 and $mode eq 4 ) or $action eq 2 }
 <div class="crm-submit-buttons"> 
-     {$form.buttons.html}{if $isDuplicate}&nbsp;&nbsp;{$form._qf_Edit_upload_duplicate.html}{/if}
+     {include file="CRM/common/formButtons.tpl"}{if $isDuplicate}<span class="crm-button">{$form._qf_Edit_upload_duplicate.html}</span>{/if}
 </div>
 {/if}
      {if $help_post && $action neq 4}<br /><div class="messages help">{$help_post}</div>{/if}
