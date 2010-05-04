@@ -40,18 +40,6 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       parent::setUp();
   }
 
-  /**
-   * Helper function for filling in date selector, 
-   * provides the number of last day in current month.
-   */
-  private function _lastDay() {
-      $y = date('Y');
-      $m = date('m');
-      $r = strtotime("{$y}-{$m}-01");
-      $r = strtotime('-1 second', strtotime('+1 month', $r));
-      return date('d', $r);
-  }
-
   function testStandaloneContributeAdd()
   {
 
@@ -84,92 +72,25 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       // select Individual profile
       $this->select("profiles", "value=4");
 
-      // ...waiting for drop down with results to show up...
+      // create new contact using dialog
       $this->waitForElementPresent("css=div#contact-dialog");
+      $this->waitForElementPresent("_qf_Edit_next");
       
-      $this->type("first_name", 'Anthony');
-      $this->type("last_name", 'Anderson');
+      $this->type("first_name", "Champak");
+      $this->type("last_name", "Chandu");
       $this->click("_qf_Edit_next");
-
-      // // We're filling in ajaxiefied  "With Contact" field:
-      // // We can not use id as selector for these input widgets. Use css selector, starting with the table row containing this field (which will have a unique class)
-      // // Typing contact's name into the field (using typeKeys(), not type()!)...
-      // $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input.token-input-box", 'Anthony');
-      // 
-      // // ...waiting for drop down with results to show up...
-      // $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td div ul li");
-      // 
-      // //token-input-dropdown-facebook
-      // // ...clicking first result...
-      // $this->click("css=tr.crm-activity-form-block-target_contact_id td div ul li");
-      // 
-      // // ...again, waiting for the box with contact name to show up (span with delete token class indicates that it's present)...
-      // $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td ul li span.token-input-delete-token-facebook");
-      // 
-      // // ...and verifying if the page contains properly formatted display name for chosen contact.
-      // $this->assertTrue($this->isTextPresent("Anderson, Anthony"), "Contact not found in line " . __LINE__ );
-      // 
-      // // Now we're doing the same for "Assigned To" field.
-      // // Typing contact's name into the field (using typeKeys(), not type()!)...
-      // $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", 'Summerson');
-      // 
-      // // ...waiting for drop down with results to show up...
-      // $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
-      // 
-      // // ...clicking first result (which is an li element), selenium picks first matching element so we don't need to specify that...
-      // $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
-      // 
-      // // ...again, waiting for the box with contact name to show up...
-      // $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
-      // 
-      // // ...and verifying if the page contains properly formatted display name for chosen contact.
-      // $this->assertTrue($this->isTextPresent("Summerson, Samuel"), "Contact not found in line " . __LINE__ );
-      // 
-      // // Since we're here, let's check of screen help is being displayed properly
-      // $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
-      // 
-      // // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
-      // $subject = "This is subject of test activity being added through standalone screen.";
-      // // For simple input fields we can use field id as selector
-      // $this->type("subject", $subject);
-      // $this->type("location", "Some location needs to be put in this field.");
-      // 
-      // // Choosing the Date.
-      // // Please note that we don't want to put in fixed date, since
-      // // we want this test to work in the future and not fail because
-      // // of date being set in the past. Therefore, using helper _lastDay function.
-      // $this->click("activity_date_time");
-      // $dayId = $this->_lastDay();
-      // $this->click("link=$dayId");
-      // 
-      // // Setting time.
-      // // TODO TBD
-      // 
-      // // Setting duration.
-      // $this->type("duration", "30");
-      // 
-      // // Putting in details.
-      // $this->type("details", "Really brief details information.");
-      // 
-      // // Making sure that status is set to Scheduled (using value, not label).
-      // $this->select("status_id", "value=1");
-      // 
-      // // Setting priority.
-      // $this->select("priority_id", "value=1");   
-      // 
-      // // Adding attachment
-      // // TODO TBD
-      // 
-      // // Scheduling follow-up.
-      // // TODO TBD
-      // 
-      // // Clicking save.
-      // $this->click("_qf_Activity_upload");
-      // $this->waitForPageToLoad("30000");
-      // 
-      // // Is status message correct?
-      // $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
-
+      
+      // select contribution type
+      $this->select("contribution_type_id", "value=1");
+      
+      // total amount
+      $this->type("total_amount", "100");
+          
+      // Clicking save.
+      $this->click("_qf_Contribution_upload");
+      $this->waitForPageToLoad("30000");
+      
+      // Is status message correct?
+      $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");
   }
-
 }
