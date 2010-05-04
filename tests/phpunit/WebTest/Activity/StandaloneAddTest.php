@@ -65,24 +65,12 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // sometimes your test might fail because of this. In such cases, it's better to pick one element
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
-      $this->type("edit-name", $this->settings->username);
-      $this->type("edit-pass", $this->settings->password);
-      $this->click("edit-submit");
-      $this->waitForPageToLoad("30000");
+      $this->webtestLogin();
 
       // Adding Anderson, Anthony and Summerson, Samuel for testStandaloneActivityAdd test
       // We're using Quick Add block on the main page for this.
-      $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
-      $this->type("qa_first_name", "Anthony");
-      $this->type("qa_last_name", "Anderson");
-      $this->click("_qf_Contact_next");
-      $this->waitForPageToLoad("30000");
-
-      $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
-      $this->type("qa_first_name", "Samuel");
-      $this->type("qa_last_name", "Summerson");
-      $this->click("_qf_Contact_next");
-      $this->waitForPageToLoad("30000");
+      $this->webtestAddContact( "Anthony", "Anderson" );
+      $this->webtestAddContact( "Samuel", "Summerson" );
 
       // Go directly to the URL of the screen that you wiwll be testing.
       $this->open($this->sboxPath . "civicrm/activity&reset=1&action=add&context=standalone");

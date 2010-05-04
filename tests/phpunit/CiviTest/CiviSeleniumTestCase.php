@@ -78,6 +78,22 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 //        $this->open( $this->settings->sandboxPATH . "logout?reset=1");
     }
 
+    function webtestLogin( ) {
+        $this->type("edit-name", $this->settings->username);
+        $this->type("edit-pass", $this->settings->password);
+        $this->click("edit-submit");
+        $this->waitForPageToLoad("30000");      
+    }
+
+    function webtestAddContact( $fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz' ) {
+        $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
+        $this->type("qa_first_name", $fname);
+        $this->type("qa_last_name", $lname);
+        $this->click("_qf_Contact_next");
+        $this->waitForPageToLoad("30000");        
+    }
+
+
     /** 
     * Generic function to compare expected values after an api call to retrieved
     * DB values.
