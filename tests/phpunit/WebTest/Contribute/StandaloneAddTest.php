@@ -42,7 +42,6 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
 
   function testStandaloneContributeAdd()
   {
-
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
       // class attributes.
@@ -55,11 +54,6 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin();
 
-      // // Adding Anderson, Anthony and Summerson, Samuel for testStandaloneActivityAdd test
-      // // We're using Quick Add block on the main page for this.
-      // $this->webtestAddContact( "Anthony", "Anderson" );
-      // $this->webtestAddContact( "Samuel", "Summerson" );
-
       // Go directly to the URL of the screen that you will be testing (New Contribution-standalone).
       $this->open($this->sboxPath . "civicrm/contribute/add&reset=1&context=standalone");
 
@@ -68,20 +62,9 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Contribution_upload");
 
       // Let's start filling the form with values.
-
-      // select Individual profile
-      $this->select("profiles", "value=4");
-
-      // create new contact using dialog
-      $this->waitForElementPresent("css=div#contact-dialog");
-      $this->waitForElementPresent("_qf_Edit_next");
       
-      $this->type("first_name", "Champak");
-      $this->type("last_name", "Chandu");
-      $this->click("_qf_Edit_next");
-
-      // Is new contact created?
-      $this->assertTrue($this->isTextPresent("New contact has been created."), "Status message didn't show up after saving!");
+      // create new contact using dialog
+      $this->webtestNewDialogContact( );
       
       // select contribution type
       $this->select("contribution_type_id", "value=1");

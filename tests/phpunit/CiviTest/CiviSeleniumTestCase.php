@@ -106,6 +106,26 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->assertEquals($sortName, $this->getValue("contact"));
    }
 
+   /**
+    */
+    function webtestNewDialogContact( $fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4 ) {
+        // 4 - Individual profile
+        // 5 - Organization profile
+        // 6 - Household profile
+        $this->select("profiles", "value={$type}");
+
+        // create new contact using dialog
+        $this->waitForElementPresent("css=div#contact-dialog");
+        $this->waitForElementPresent("_qf_Edit_next");
+
+        $this->type("first_name", $fname);
+        $this->type("last_name",  $lname);
+        $this->click("_qf_Edit_next");
+
+        // Is new contact created?
+        $this->assertTrue($this->isTextPresent("New contact has been created."), "Status message didn't show up after saving!");
+    }
+
   /**
    * Helper function for filling in date selector, 
    * provides the number of last day in current month.
