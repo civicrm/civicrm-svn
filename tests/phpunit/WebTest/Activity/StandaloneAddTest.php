@@ -75,7 +75,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // We're filling in ajaxiefied  "With Contact" field:
       // We can not use id as selector for these input widgets. Use css selector, starting with the table row containing this field (which will have a unique class)
       // Typing contact's name into the field (using typeKeys(), not type()!)...
-      $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input.token-input-box", 'Anthony');
+      $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input.token-input-box", 'Anthon');
       
       // ...waiting for drop down with results to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td div ul li");
