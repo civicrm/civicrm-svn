@@ -43,7 +43,7 @@
     {/if}
     <div id="eventFullMsg" class="messages status" style="display:none;"></div>
 
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         
     <h3>{if $action eq 1}{ts}New Event Registration{/ts}{elseif $action eq 8}{ts}Delete Event Registration{/ts}{else}{ts}Edit Event Registration{/ts}{/if}</h3>
     	{if $action eq 1 AND $paid}
@@ -143,7 +143,7 @@
             {include file="CRM/Contribute/Form/Selector.tpl" context="Search"}
         {/if}
 
-        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
 </div>
 {if $action eq 1 or $action eq 2}
