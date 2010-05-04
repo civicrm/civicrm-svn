@@ -101,15 +101,16 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input.token-input-box", 'Anthony');
       
       // ...waiting for drop down with results to show up...
-      $this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]");
-      //$this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td ul li:contains('Anderson, Anthony')");
+      //$this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]");
+      $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td div ul li");
       
       //token-input-dropdown-facebook
       // ...clicking first result...
-      $this->click("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]");
+      $this->click("css=tr.crm-activity-form-block-target_contact_id td div ul li");
       // ...again, waiting for the box with contact name to show up...
 
-      //$this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]/p");
+      $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td ul li span.token-input-delete-token-facebook");
+      
       // ...and verifying if the page contains properly formatted display name for chosen contact.
       $this->assertTrue($this->isTextPresent("Anderson, Anthony"), "Contact not found in line " . __LINE__ );
 
