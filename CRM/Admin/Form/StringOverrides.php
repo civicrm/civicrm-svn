@@ -82,14 +82,14 @@ class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
     public function buildQuickForm( )
     {
         for ( $i = 1 ; $i <= $this->_numStrings; $i++ ) {
-            $this->add( 'text',
+            $this->add( 'textarea',
                         "old_{$i}",
                         null,
-                        array( 'size=32 maxlen=255' ) );
-            $this->add( 'text',
+                        array( 'rows=1 cols=40' ) );
+            $this->add( 'textarea',
                         "new_{$i}",
                         null,
-                        array( 'size=32 maxlen=255' ) );
+                        array( 'rows=1 cols=40' ) );
             $this->addElement( 'checkbox',
                                "cb_{$i}",
                                null );
