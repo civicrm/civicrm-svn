@@ -79,6 +79,9 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->type("first_name", "Champak");
       $this->type("last_name", "Chandu");
       $this->click("_qf_Edit_next");
+
+      // Is new contact created?
+      $this->assertTrue($this->isTextPresent("New contact has been created."), "Status message didn't show up after saving!");
       
       // select contribution type
       $this->select("contribution_type_id", "value=1");
