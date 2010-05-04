@@ -83,7 +83,7 @@ $.TokenList = function (input, settings) {
     var timeout;
 
     // Create a new text input an attach keyup events
-    var input_box = $("<input type=\"text\">")
+    var input_box = $("<input type=\"text\" class='token-input-box'>")
         .css({
             outline: "none"
         })

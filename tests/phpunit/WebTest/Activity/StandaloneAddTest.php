@@ -98,14 +98,18 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // We're filling in ajaxiefied  "With Contact" field:
       // Typing contact's name into the field (using typeKeys(), not type()!)...
-      $this->typeKeys("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/ul/li/input", "Anthony");
-//      $this->typeKeys("test134", "Anthony");
+      $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input.token-input-box", 'Anthony');
+      
       // ...waiting for drop down with results to show up...
       $this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]");
+      //$this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td ul li:contains('Anderson, Anthony')");
+      
+      //token-input-dropdown-facebook
       // ...clicking first result...
       $this->click("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]");
       // ...again, waiting for the box with contact name to show up...
-//      $this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]/p");
+
+      //$this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]/p");
       // ...and verifying if the page contains properly formatted display name for chosen contact.
       $this->assertTrue($this->isTextPresent("Anderson, Anthony"), "Contact not found in line " . __LINE__ );
 
