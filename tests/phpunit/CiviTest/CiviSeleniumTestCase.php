@@ -100,7 +100,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   /**
    */
    function webtestFillAutocomplete( $sortName ) {
-      $this->typeKeys("contact", $contactName);
+      $this->typeKeys("contact", $sortName);
       $this->waitForElementPresent("css=div.ac_results-inner li");
       $this->click("css=div.ac_results-inner li");
       $this->assertEquals($sortName, $this->getValue("contact"));
