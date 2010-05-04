@@ -98,6 +98,15 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     }
 
   /**
+   */
+   function webtestFillAutocomplete( $sortName ) {
+      $this->typeKeys("contact", $contactName);
+      $this->waitForElementPresent("css=div.ac_results-inner li");
+      $this->click("css=div.ac_results-inner li");
+      $this->assertEquals($sortName, $this->getValue("contact"));
+   }
+
+  /**
    * Helper function for filling in date selector, 
    * provides the number of last day in current month.
    */

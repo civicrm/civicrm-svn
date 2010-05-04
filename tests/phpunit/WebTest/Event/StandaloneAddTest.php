@@ -64,18 +64,8 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Participant_upload-bottom");
 
       // Let's start filling the form with values.
-      // Type contact last name in contact auto-complete
-      $this->typeKeys("contact", $contactName);
-      
-      // ...waiting for drop down with results to show up...
-      $this->waitForElementPresent("css=div.ac_results-inner li");
-      
-      //autocomplete-dropdown
-      // ...clicking first result...
-      $this->click("css=div.ac_results-inner li");
-
-      // contact field value should now be our contact's name
-      $this->assertEquals($contactName, $this->getValue("contact"));
+      // Type contact last name in contact auto-complete, wait for dropdown and click first result
+      $this->webtestFillAutocomplete( $contactName );
 
       // Select first event. Use option value, not label - since labels can be translated and test would fail
       $this->select("event_id", "value=1");
