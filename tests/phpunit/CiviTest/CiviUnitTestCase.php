@@ -74,7 +74,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     public static $utils;
 
-    public static $populateOnce = null;
+    public static $populateOnce = false;
 
     /**
      *  Constructor
@@ -135,7 +135,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             return;
         }
 
-        self::$populateOnce = true;
+        self::$populateOnce = null;
 
             $queries = array( "DROP DATABASE IF EXISTS civicrm_tests_dev;", 
                               "CREATE DATABASE civicrm_tests_dev DEFAULT" . 
@@ -161,6 +161,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             $query1 = file_get_contents( $sql_file1 );
             $query2 = file_get_contents( $sql_file2 );
             $query3 = file_get_contents( $sql_file3 );
+            $query1 = str_replace( 'InnoDB', 'MyISAM', $query1 );
             if ( self::$utils->do_query($query1) === false ) {
                 echo "Loading schema in setUp crapped out. Aborting.";
                 exit;

@@ -853,9 +853,10 @@ WHERE  contribution_id = {$this->_id}
             }
             $this->assign( 'hasPriceSets', $hasPriceSets );
             $element = $this->addMoney( 'total_amount',
-					ts('Total Amount'),
-					$attributes['total_amount'],
-					($hasPriceSets)?false:true );
+                                        ts('Total Amount'),
+                                        ($hasPriceSets)?false:true,
+                                        $attributes['total_amount'],
+                                        true );
             if ( $this->_online || $this->_ppID ) {
                 $element->freeze( );
             }
