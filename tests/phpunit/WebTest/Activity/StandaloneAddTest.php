@@ -107,23 +107,30 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       //token-input-dropdown-facebook
       // ...clicking first result...
       $this->click("css=tr.crm-activity-form-block-target_contact_id td div ul li");
-      // ...again, waiting for the box with contact name to show up...
 
+      // ...again, waiting for the box with contact name to show up...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td ul li span.token-input-delete-token-facebook");
       
       // ...and verifying if the page contains properly formatted display name for chosen contact.
       $this->assertTrue($this->isTextPresent("Anderson, Anthony"), "Contact not found in line " . __LINE__ );
 
       // Now we're doing the same for "Assigned To" field.
-      // FIXME Which - unfortunately - doesn't work at the moment.
-//      $this->click("//form[@id='Activity']/fieldset/table/tbody/tr[4]/td[2]/ul/li/input");
-//      $this->type("//form[@id='Activity']/fieldset/table/tbody/tr[4]/td[2]/ul/li/input", "Samuel");
-//      $this->click("//form[@id='Activity']/fieldset/table/tbody/tr[4]/td[2]/ul/li/input");      
-//      $this->waitForElementPresent("//form[@id='Activity']/fieldset/table/tbody/tr[4]/td[2]/div");
-//      $this->click("//form[@id='Activity']/fieldset/table/tbody/tr[4]/td[2]/div/ul/li");
-//      $this->waitForElementPresent("//form[@id='Activity']/fieldset/table/tbody/tr[4]/td[2]/ul/li");
-//      $this->assertTrue($this->isTextPresent("Summerson, Samuel"), "Contact not found in line " . __LINE__ );  
+      // Typing contact's name into the field (using typeKeys(), not type()!)...
+      $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", 'Summerson');
+      
+      // ...waiting for drop down with results to show up...
+      //$this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]");
+      $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
+      
+      // ...clicking first result...
+      $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
 
+      // ...again, waiting for the box with contact name to show up...
+      $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td ul li span.token-input-delete-token-facebook");
+      
+      // ...and verifying if the page contains properly formatted display name for chosen contact.
+      $this->assertTrue($this->isTextPresent("Summerson, Samuel"), "Contact not found in line " . __LINE__ );
+      
       // Since we're here, let's check of screen help is being displayed properly
       $this->assertTrue($this->isTextPresent("A copy of this activity will be emailed to each Assignee"));
 
