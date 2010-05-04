@@ -78,6 +78,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 //        $this->open( $this->settings->sandboxPATH . "logout?reset=1");
     }
 
+  /**
+   */
     function webtestLogin( ) {
         $this->type("edit-name", $this->settings->username);
         $this->type("edit-pass", $this->settings->password);
@@ -85,6 +87,8 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->waitForPageToLoad("30000");      
     }
 
+  /**
+   */
     function webtestAddContact( $fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz' ) {
         $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
         $this->type("qa_first_name", $fname);
@@ -92,6 +96,18 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->click("_qf_Contact_next");
         $this->waitForPageToLoad("30000");        
     }
+
+  /**
+   * Helper function for filling in date selector, 
+   * provides the number of last day in current month.
+   */
+  protected function _lastDay() {
+      $y = date('Y');
+      $m = date('m');
+      $r = strtotime("{$y}-{$m}-01");
+      $r = strtotime('-1 second', strtotime('+1 month', $r));
+      return date('d', $r);
+  }
 
 
     /** 

@@ -40,18 +40,6 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       parent::setUp();
   }
 
-  /**
-   * Helper function for filling in date selector, 
-   * provides the number of last day in current month.
-   */
-  private function _lastDay() {
-      $y = date('Y');
-      $m = date('m');
-      $r = strtotime("{$y}-{$m}-01");
-      $r = strtotime('-1 second', strtotime('+1 month', $r));
-      return date('d', $r);
-  }
-
   function testStandaloneActivityAdd()
   {
 
