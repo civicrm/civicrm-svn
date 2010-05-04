@@ -75,7 +75,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     protected function tearDown()
     {
-//        $this->open( $this->settings->sandboxPATH . "civicrm/logout?reset=1");
+//        $this->open( $this->settings->sandboxPATH . "logout?reset=1");
     }
 
     /** 

@@ -94,17 +94,18 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // Let's start filling the form with values.
 
       // Select one of the options in Activity Type selector
-      $this->select("activity_type_id", "label=Meeting");
+      $this->select("activity_type_id", "value=1");
 
       // We're filling in ajaxiefied  "With Contact" field:
       // Typing contact's name into the field (using typeKeys(), not type()!)...
-      $this->typeKeys("//form[@id='Activity']/fieldset/table/tbody/tr[3]/td[2]/ul/li/input", "Anthony");
+      $this->typeKeys("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/ul/li/input", "Anthony");
+//      $this->typeKeys("test134", "Anthony");
       // ...waiting for drop down with results to show up...
-      $this->waitForElementPresent("//form[@id='Activity']/fieldset/table/tbody/tr[3]/td[2]/div/ul/li[1]");
+      $this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]");
       // ...clicking first result...
-      $this->click("//form[@id='Activity']/fieldset/table/tbody/tr[3]/td[2]/div/ul/li[1]");
+      $this->click("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]");
       // ...again, waiting for the box with contact name to show up...
-      $this->waitForElementPresent("//form[@id='Activity']/fieldset/table/tbody/tr[3]/td[2]/ul/li");
+//      $this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]/p");
       // ...and verifying if the page contains properly formatted display name for chosen contact.
       $this->assertTrue($this->isTextPresent("Anderson, Anthony"), "Contact not found in line " . __LINE__ );
 
