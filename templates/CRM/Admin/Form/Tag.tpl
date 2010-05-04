@@ -70,7 +70,7 @@
         <div class="status">{ts 1=$delName}Are you sure you want to delete <b>%1</b> Tag?{/ts}<br />{ts}This tag will be removed from any currently tagged contacts, and users will no longer be able to assign contacts to this tag.{/ts}</div>
     {/if}
     <dl>
-    <dt></dt><dd>{$form.buttons.html}</dd>
+    <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
     </dl>
     <div class="spacer"></div>
 </div>

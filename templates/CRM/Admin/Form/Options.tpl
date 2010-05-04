@@ -88,6 +88,6 @@
     </dl>
     {/if}
     <div class="spacer"></div>   
-	<dl><dt></dt><dd>{$form.buttons.html}</dd></dl>
+	<dl><dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd></dl>
 </fieldset>
 </div>

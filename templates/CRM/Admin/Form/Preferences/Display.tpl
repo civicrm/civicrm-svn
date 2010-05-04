@@ -56,9 +56,9 @@
             <tr><td>&nbsp;</td><td class="description">{ts}Sort name format for individual contact display names.{/ts}</td></tr>
 	{/if}
 	{if $action neq 4} {* action is not view *}
-            <tr><td></td><td>{$form.buttons.html}</td></tr>
+            <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
         {else}
-            <tr><td></td><td>{$form.done.html}</td></tr>
+            <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
         {/if}
     </table>
 </fieldset>

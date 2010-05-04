@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="html-adjust">{$form.buttons.html}</div>
+<div class="html-adjust">{include file="CRM/common/formButtons.tpl"}</div>
 <div class="form-item">
     <fieldset><legend>{ts}Mailing Labels{/ts}</legend>
         <table class="form-layout">
@@ -86,4 +86,4 @@
         </table>
     </fieldset>
 </div>
-<div class="html-adjust">{$form.buttons.html}</div>
+<div class="html-adjust">{include file="CRM/common/formButtons.tpl"}</div>

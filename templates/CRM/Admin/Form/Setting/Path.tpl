@@ -61,4 +61,4 @@
         </table>
     </fieldset>
 
-<div class="html-adjust">{$form.buttons.html}</div>
+<div class="html-adjust">{include file="CRM/common/formButtons.tpl"}</div>
