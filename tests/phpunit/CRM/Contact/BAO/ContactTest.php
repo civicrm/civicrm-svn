@@ -1177,7 +1177,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         //build display name
         $paramsDisplayName = $prefix[$params['prefix_id']] . ' ' . 
             $params['first_name']  . ' ' . 
-            $params['middle_name'] . ' ' . 
             $params['last_name']   . ' ' . 
             $suffix[$params['suffix_id']];
         
