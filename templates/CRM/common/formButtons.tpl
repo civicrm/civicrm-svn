@@ -30,6 +30,11 @@
    
 {foreach from=$form.buttons item=button key=key name=btns}
     {if $key|substring:0:4 EQ '_qf_'}
-        <span class="crm-button crm-button-type-{$key|crmBtnType} crm-button{$key}">{$form.buttons.$key.html}</span>
+        {if $location}
+          {assign var='html' value=$form.buttons.$key.html|crmReplace:id:"$key-$location"}
+        {else}
+          {assign var='html' value=$form.buttons.$key.html}
+        {/if}
+        <span class="crm-button crm-button-type-{$key|crmBtnType} crm-button{$key}">{$html}</span>
     {/if}
 {/foreach}
