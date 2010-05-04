@@ -24,26 +24,27 @@
  +--------------------------------------------------------------------+
 *}
 {* This template is used for adding/editing/deleting offline Event Registrations *}
-<div class="crm-block crm-form-block">
 {if $showFeeBlock }
-{include file="CRM/Event/Form/EventFees.tpl"}
+    {include file="CRM/Event/Form/EventFees.tpl"}
 {elseif $cdType }
-{include file="CRM/Custom/Form/CustomData.tpl"}
+    {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
-{if $participantMode == 'test' }
-{assign var=registerMode value="TEST"}
-{else if $participantMode == 'live'}
-{assign var=registerMode value="LIVE"}
-{/if}
-<div class="view-content">
+    {if $participantMode == 'test' }
+        {assign var=registerMode value="TEST"}
+        {else if $participantMode == 'live'}
+        {assign var=registerMode value="LIVE"}
+    {/if}
+    <div class="crm-block crm-form-block crm-participant-form-block">
+    <div class="view-content">
     {if $participantMode}
-    <div id="help">
-    	{ts 1=$displayName 2=$registerMode}Use this form to submit an event registration on behalf of %1. <strong>A %2 transaction will be submitted</strong> using the selected payment processor.{/ts}
-    </div>
+        <div id="help">
+        	{ts 1=$displayName 2=$registerMode}Use this form to submit an event registration on behalf of %1. <strong>A %2 transaction will be submitted</strong> using the selected payment processor.{/ts}
+        </div>
     {/if}
     <div id="eventFullMsg" class="messages status" style="display:none;"></div>
 
-    <div class="html-adjust disable-buttons">{$form.buttons.html}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+        
     <h3>{if $action eq 1}{ts}New Event Registration{/ts}{elseif $action eq 8}{ts}Delete Event Registration{/ts}{else}{ts}Edit Event Registration{/ts}{/if}</h3>
     	{if $action eq 1 AND $paid}
     	<div id="help">
@@ -53,7 +54,7 @@
 
         {if $action eq 8} {* If action is Delete *}
             <table class="form-layout">
-    		<tr>
+    		<tr class="crm-participant-form-block-delete">
     			<td>
     				<div class="messages status">
     					<dl>
@@ -74,23 +75,26 @@
         {else} {* If action is other than Delete *}
             <table class="form-layout-compressed">
             {if $single and $context neq 'standalone'}
-    			<tr><td class="label font-size12pt"><label>{ts}Participant{/ts}</label></td>
-    			<td class="font-size12pt view-value">{$displayName}&nbsp;</td></tr>
+    			<tr class="crm-participant-form-block-displayName">
+    			    <td class="label font-size12pt"><label>{ts}Participant{/ts}</label></td>
+    			    <td class="font-size12pt view-value">{$displayName}&nbsp;</td>
+    			</tr>
     	    {else}
                 {include file="CRM/Contact/Form/NewContact.tpl"}
             {/if}	
             {if $participantMode}
-                <tr><td class="label nowrap">{$form.payment_processor_id.label}</td><td>{$form.payment_processor_id.html}</td></tr>
+                <tr class="crm-participant-form-block-payment_processor_id"><td class="label nowrap">{$form.payment_processor_id.label}</td><td>{$form.payment_processor_id.html}</td></tr>
             {/if}
-            <tr><td class="label">{$form.event_id.label}</td><td class="view-value bold">{$form.event_id.html}&nbsp;        
-    					{if $action eq 1 && !$past }<br /><a href='javascript:buildSelect( "event_id" );' id='past-event'>&raquo; {ts}Include past event(s) in this select list.{/ts}</a>{/if}    
-    					{if $is_test}
+            <tr class="crm-participant-form-block-event_id">
+                <td class="label">{$form.event_id.label}</td><td class="view-value bold">{$form.event_id.html}&nbsp;        
+    				{if $action eq 1 && !$past }<br /><a href='javascript:buildSelect( "event_id" );' id='past-event'>&raquo; {ts}Include past event(s) in this select list.{/ts}</a>{/if}    
+    				{if $is_test}
     					{ts}(test){/ts}
-    					{/if}
+    				{/if}
                 </td>
             </tr> 
-            <tr><td class="label">{$form.role_id.label}</td><td>{$form.role_id.html}</td></tr>
-            <tr>
+            <tr class="crm-participant-form-block-role_id"><td class="label">{$form.role_id.label}</td><td>{$form.role_id.html}</td></tr>
+            <tr class="crm-participant-form-block-register_date">
                 <td class="label">{$form.register_date.label}</td>
                 <td>
                     {if $hideCalendar neq true}
@@ -100,16 +104,16 @@
                     {/if}
     			</td>
     		</tr>
-    		<tr>
+    		<tr class="crm-participant-form-block-status_id">
     			<td class="label">{$form.status_id.label}</td>
-			<td>{$form.status_id.html}{if $event_is_test} {ts}(test){/ts}{/if}
-			    <div id="notify">{$form.is_notify.html}{$form.is_notify.label}</div>
-			</td>
-			
+			    <td>{$form.status_id.html}{if $event_is_test} {ts}(test){/ts}{/if}
+			        <div id="notify">{$form.is_notify.html}{$form.is_notify.label}</div>
+			    </td>
     		</tr>
-
-    		<tr><td class="label">{$form.source.label}</td><td>{$form.source.html|crmReplace:class:huge}<br />
-                <span class="description">{ts}Source for this registration (if applicable).{/ts}</span></td></tr>
+    		<tr class="crm-participant-form-block-source">
+    		    <td class="label">{$form.source.label}</td><td>{$form.source.html|crmReplace:class:huge}<br />
+                <span class="description">{ts}Source for this registration (if applicable).{/ts}</span></td>
+            </tr>
             </table>
 
             {* Fee block (EventFees.tpl) is injected here when an event is selected. *}
@@ -117,14 +121,14 @@
 
             <fieldset>
             <table class="form-layout">
-                <tr>
+                <tr class="crm-participant-form-block-note">
                     <td class="label">{$form.note.label}</td><td>{$form.note.html}</td>
                 </tr>
             </table>
             </fieldset>
 
             <table class="form-layout">
-                <tr>
+                <tr class="crm-participant-form-block-customData">
                     <td colspan=2>
                         <div id="customData"></div>  {* Participant Custom data *}
                         <div id="customData{$eventNameCustomDataTypeID}"></div> {* Event Custom Data *}
@@ -139,7 +143,8 @@
             {include file="CRM/Contribute/Form/Selector.tpl" context="Search"}
         {/if}
 
-    <div class="html-adjust disable-buttons">{$form.buttons.html}</div>
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+</div>
 </div>
 {if $action eq 1 or $action eq 2}
 {literal}
@@ -284,4 +289,3 @@
         }
 {/literal}
 </script>
-</div>
