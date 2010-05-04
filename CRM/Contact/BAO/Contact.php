@@ -1376,9 +1376,9 @@ WHERE  civicrm_contact.id = %1 ";
         
        $sql = "
 SELECT $nameFields, civicrm_email.email, civicrm_contact.do_not_email, civicrm_email.on_hold, civicrm_contact.is_deceased
-FROM   civicrm_contact, civicrm_email 
-WHERE  civicrm_contact.id = civicrm_email.contact_id AND civicrm_email.is_primary = 1
-AND    civicrm_contact.id = %1";
+FROM   civicrm_contact LEFT JOIN civicrm_email ON (civicrm_contact.id = civicrm_email.contact_id)
+WHERE  civicrm_contact.id = %1
+ORDER BY civicrm_email.is_primary DESC";
        $params = array( 1 => array( $id, 'Integer' ) );
        $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
 
