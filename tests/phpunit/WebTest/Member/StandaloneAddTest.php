@@ -69,6 +69,9 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       // fill in Source
       // fill in Join Date
       // fill in Start Date
+      // fill in End Date
+      // fill in Status Override?
+      // fill in Record Membership Payment?
 
 
 
