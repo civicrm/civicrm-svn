@@ -49,7 +49,7 @@
 <dt>{$form.fiscalYearStart.label}</dt><dd>{$form.fiscalYearStart.html}</dd>
 </fieldset>
      <dl>
-      <dt></dt><dd>{$form.buttons.html}</dd>
+      <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
     </dl>
 <div class="spacer"></div>
 </div>

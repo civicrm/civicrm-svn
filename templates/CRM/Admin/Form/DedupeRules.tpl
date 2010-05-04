@@ -43,7 +43,7 @@
     {/section}
     <tr class="columnheader"><th colspan="2" style="text-align: right;">{$form.threshold.label}</th><td>{$form.threshold.html}</td></tr>
   </table>
-  <p>{$form.buttons.html}</p>
+  <p>{include file="CRM/common/formButtons.tpl"}</p>
   </dl>
 </fieldset>
 </div>

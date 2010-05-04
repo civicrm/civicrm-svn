@@ -43,7 +43,7 @@
             <dt>{$form.newSiteName.label}</dt><dd>{$form.newSiteName.html|crmReplace:class:'huge'}</dd>
             <dt>&nbsp;</dt><dd class="description">{ts}This is the your site name for a multisite install.{/ts}</dt>
 {/if}
-            <dt></dt><dd>{$form.buttons.html}</dd>
+            <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
         </dl>
    
 <div class="spacer"></div>
