@@ -72,7 +72,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->webtestAddContact( "Anthony", "Anderson" );
       $this->webtestAddContact( "Samuel", "Summerson" );
 
-      // Go directly to the URL of the screen that you wiwll be testing.
+      // Go directly to the URL of the screen that you will be testing (New Activity-standalone).
       $this->open($this->sboxPath . "civicrm/activity&reset=1&action=add&context=standalone");
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
@@ -81,22 +81,22 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Let's start filling the form with values.
 
-      // Select one of the options in Activity Type selector
+      // Select one of the options in Activity Type selector. Use option value, not label - since labels can be translated and test would fail
       $this->select("activity_type_id", "value=1");
 
       // We're filling in ajaxiefied  "With Contact" field:
+      // We can not use id as selector for these input widgets. Use css selector, starting with the table row containing this field (which will have a unique class)
       // Typing contact's name into the field (using typeKeys(), not type()!)...
       $this->typeKeys("css=tr.crm-activity-form-block-target_contact_id input.token-input-box", 'Anthony');
       
       // ...waiting for drop down with results to show up...
-      //$this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]");
       $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td div ul li");
       
       //token-input-dropdown-facebook
       // ...clicking first result...
       $this->click("css=tr.crm-activity-form-block-target_contact_id td div ul li");
 
-      // ...again, waiting for the box with contact name to show up...
+      // ...again, waiting for the box with contact name to show up (span with delete token class indicates that it's present)...
       $this->waitForElementPresent("css=tr.crm-activity-form-block-target_contact_id td ul li span.token-input-delete-token-facebook");
       
       // ...and verifying if the page contains properly formatted display name for chosen contact.
@@ -107,10 +107,9 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->typeKeys("css=tr.crm-activity-form-block-assignee_contact_id input.token-input-box", 'Summerson');
       
       // ...waiting for drop down with results to show up...
-      //$this->waitForElementPresent("//form[@id='Activity']/div[2]/table/tbody/tr[3]/td[2]/div/ul/li[1]");
       $this->waitForElementPresent("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
       
-      // ...clicking first result...
+      // ...clicking first result (which is an li element), selenium picks first matching element so we don't need to specify that...
       $this->click("css=tr.crm-activity-form-block-assignee_contact_id td div ul li");
 
       // ...again, waiting for the box with contact name to show up...
@@ -124,6 +123,7 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Putting the contents into subject field - assigning the text to variable, it'll come in handy later
       $subject = "This is subject of test activity being added through standalone screen.";
+      // For simple input fields we can use field id as selector
       $this->type("subject", $subject);
       $this->type("location", "Some location needs to be put in this field.");
 
@@ -144,11 +144,11 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // Putting in details.
       $this->type("details", "Really brief details information.");
 
-      // Making sure that status is set to Scheduled.
-      $this->select("status_id", "label=Scheduled");
+      // Making sure that status is set to Scheduled (using value, not label).
+      $this->select("status_id", "value=1");
 
       // Setting priority.
-      $this->select("priority_id", "label=Urgent");                
+      $this->select("priority_id", "value=1");   
 
       // Adding attachment
       // TODO TBD
