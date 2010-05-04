@@ -83,8 +83,8 @@ INSERT INTO civicrm_option_group
 SELECT @ogid := MAX(id) FROM civicrm_option_group;
 
 INSERT INTO civicrm_custom_group
- (name,                  title,                 extends,       extends_entity_column_id, extends_entity_column_value, style,    is_active, table_name) VALUES
- ('Fall_Fundraiser_Fix', 'Fall Fundraiser Fix', 'Participant', 2,                        '1',                     'Inline', 1,         'civicrm_value_fall_fundraiser_fix_2');
+ (name,              title,             extends,       extends_entity_column_id, extends_entity_column_value, style,    is_active, table_name) VALUES
+ ('Food_Preference', 'Food Preference', 'Participant', 2,                        '1',                     'Inline', 1,         'civicrm_value_food_preference_2');
 SELECT @cgid := MAX(id) FROM civicrm_custom_group;
 
 INSERT INTO civicrm_custom_field
@@ -97,7 +97,7 @@ INSERT INTO civicrm_option_value
   (@ogid,           'Chicken Combo', 'chicken', 'Chicken_Combo', 2),
   (@ogid,           'Salmon Stew',   'salmon',  'Salmon_Stew',   3);
 
-CREATE TABLE civicrm_value_fall_fundraiser_fix_2 (
+CREATE TABLE civicrm_value_food_preference_2 (
   id               INT(10)      UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Default MySQL primary key',
   entity_id        INT(10)      UNSIGNED NOT NULL                COMMENT 'Table that this extends',
   soup_selection_4 VARCHAR(255) DEFAULT NULL,
