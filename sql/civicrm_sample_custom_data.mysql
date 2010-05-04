@@ -72,3 +72,35 @@ INSERT INTO `civicrm_custom_field` (`custom_group_id`, `label`, `data_type`, `ht
 -- *
 -- *******************************************************/
 CREATE TABLE `civicrm_value_constituent_information_1` (`id` int(10) unsigned NOT NULL auto_increment, `entity_id` int(10) unsigned NOT NULL,  `most_important_issue_1` varchar(255) default NULL,  `marital_status_2` varchar(255) default NULL, `marriage_date_3` datetime default NULL, PRIMARY KEY  (`id`), UNIQUE KEY `unique_entity_id` (`entity_id`), INDEX `INDEX_most_important_issue_1` (`most_important_issue_1`), INDEX `INDEX_marital_status_2` (`marital_status_2`), INDEX `INDEX_marriage_date_3` (`marriage_date_3`), CONSTRAINT `FK_civicrm_value_constituent_information_1_entity_id` FOREIGN KEY (`entity_id`) REFERENCES `civicrm_contact` (`id`) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+
+-- Fall Fundraiser Dinner participants’ custom data
+
+INSERT INTO civicrm_option_group
+  (name,             label,            is_active) VALUES
+  ('soup_selection', 'Soup Selection', 1);
+SELECT @ogid := MAX(id) FROM civicrm_option_group;
+
+INSERT INTO civicrm_custom_group
+ (name,                  title,                 extends,       extends_entity_column_id, extends_entity_column_value, style,    is_active, table_name) VALUES
+ ('Fall_Fundraiser_Fix', 'Fall Fundraiser Fix', 'Participant', 2,                        '1',                     'Inline', 1,         'civicrm_value_fall_fundraiser_fix_2');
+SELECT @cgid := MAX(id) FROM civicrm_custom_group;
+
+INSERT INTO civicrm_custom_field
+  (custom_group_id, label,           data_type, html_type, is_active, text_length, note_columns, note_rows, column_name,        option_group_id) VALUES
+  (@cgid,           'Soup Selection','String',  'Radio',   1,         255,         60,           4,         'soup_selection_4', @ogid);
+
+INSERT INTO civicrm_option_value
+  (option_group_id, label,           value,     name,            weight) VALUES
+  (@ogid,           'Bean Broth',    'bean',    'Bean_Broth',    1),
+  (@ogid,           'Chicken Combo', 'chicken', 'Chicken_Combo', 2),
+  (@ogid,           'Salmon Stew',   'salmon',  'Salmon_Stew',   3);
+
+CREATE TABLE civicrm_value_fall_fundraiser_fix_2 (
+  id               INT(10)      UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Default MySQL primary key',
+  entity_id        INT(10)      UNSIGNED NOT NULL                COMMENT 'Table that this extends',
+  soup_selection_4 VARCHAR(255) DEFAULT NULL,
+  PRIMARY KEY (id),
+  UNIQUE KEY unique_entity_id (entity_id)
+);
