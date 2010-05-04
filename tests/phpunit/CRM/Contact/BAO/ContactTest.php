@@ -80,9 +80,9 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
      */
     function testAddWithAll( )
     {
-        $this->fail('This method needs to be updated for new way of passing home_URL (as website + website_type_id)');
         //take the common contact params
         $params = $this->contactParams( );
+        
         unset( $params['location'] ); 
         $prefComm = $params['preferred_communication_method'];
         require_once 'CRM/Contact/BAO/Contact.php';
@@ -106,9 +106,8 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $this->assertEquals( '1', $contact->is_opt_out, 'Check for is_opt_out creation.' );
         $this->assertEquals( $params['external_identifier'], $contact->external_identifier, 'Check for external_identifier creation.' );
         $this->assertEquals( $params['last_name']. ', ' .$params['first_name'], $contact->sort_name, 'Check for sort_name creation.' );
-        $this->assertEquals( $params['home_URL'], $contact->home_URL, 'Check for home_URL creation.' );
         $this->assertEquals( $params['preferred_mail_format'], $contact->preferred_mail_format, 
-                            'Check for preferred_mail_format creation.' );
+                             'Check for preferred_mail_format creation.' );
         $this->assertEquals( $params['contact_source'], $contact->source, 'Check for contact_source creation.' );
         $this->assertEquals( $params['prefix_id'], $contact->prefix_id, 'Check for prefix_id creation.' );
         $this->assertEquals( $params['suffix_id'], $contact->suffix_id, 'Check for suffix_id creation.' );
@@ -142,7 +141,11 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                    'job_title'             => 'software Developer',
                                    'gender_id'             => 1,
                                    'is_deceased'           => 1,
-                                   'home_URL'              => 'http://docs.civicrm.org',
+                                   'website'               => array( 1 => array (
+                                                                                 'website_type_id' => 1,
+                                                                                 'url' => 'http://docs.civicrm.org'
+                                                                                 )
+                                                                     ),
                                    'contact_source'        => 'test update contact',
                                    'external_identifier'   => 111111111,
                                    'preferred_mail_format' => 'Both',
@@ -168,7 +171,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         $updateParams['contact_id'] = $contactId;
         require_once 'CRM/Contact/BAO/Contact.php';
         //create the contact using add()
-        $contact = CRM_Contact_BAO_Contact::add( $updateParams );
+        $contact = CRM_Contact_BAO_Contact::create( $updateParams );
         $contactId = $contact->id;
         
         //Now check $contact is object of contact DAO..
@@ -188,7 +191,6 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                             'Check for external_identifier creation.' );
         $this->assertEquals( $updateParams['last_name'] . ', ' .$updateParams['first_name'], 
                             $contact->sort_name, 'Check for sort_name creation.' );
-        $this->assertEquals( $updateParams['home_URL'], $contact->home_URL, 'Check for home_URL creation.' );
         $this->assertEquals( $updateParams['preferred_mail_format'], $contact->preferred_mail_format, 
                             'Check for preferred_mail_format creation.' );
         $this->assertEquals( $updateParams['contact_source'], $contact->source, 'Check for contact_source creation.' );
@@ -824,7 +826,11 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                 'job_title'             => 'software Developer',
                                 'gender_id'             => 1,
                                 'is_deceased'           => 1,
-                                'home_URL'              => 'http://civicrmUpdate.org',
+                                'website'               => array ( 1 => array(
+                                                                              'website_type_id' => 1,
+                                                                              'url' => 'http://civicrmUpdate.org'
+                                                                              )
+                                                                 ),
                                 'contact_source'        => 'test contact',
                                 'external_identifier'   => 111222333,
                                 'preferred_mail_format' => 'Both',
@@ -1255,7 +1261,11 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                         'job_title'             => 'software engg',
                         'gender_id'             => 2,
                         'is_deceased'           => 1,
-                        'home_URL'              => 'http://civicrm.org',
+                        'website'               => array ( 1 => array(
+                                                                      'website_type_id' => 1,
+                                                                      'url' => 'http://civicrm.org'
+                                                                      )
+                                                           ),
                         'contact_source'        => 'test contact',
                         'external_identifier'   => 123456789,
                         'preferred_mail_format' => 'Both',
