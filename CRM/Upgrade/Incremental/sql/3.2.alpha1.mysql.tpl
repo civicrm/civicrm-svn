@@ -229,9 +229,9 @@ ALTER TABLE civicrm_uf_field
 
 -- CRM-6002
     INSERT INTO `civicrm_state_province`
-        (id, `name`, `abbreviation`, `country_id`)
+        (`name`, `abbreviation`, `country_id`)
     VALUES
-        (10020, 'La Rioja', 'F', 1010 );
+        ('La Rioja', 'F', 1010 );
 
 -- CRM-6037
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Host';
@@ -271,15 +271,15 @@ VALUES
 
 -- CRM-6063
    INSERT INTO civicrm_state_province
-        (id, `name`, `abbreviation`, `country_id` )
+        (`name`, `abbreviation`, `country_id` )
    VALUES
-        ( 10021, 'Andorra la Vella', '07', 1005 ),
-        ( 10022, 'Canillo', '02', 1005 ),
-        ( 10023, 'Encamp', '03', 1005 ),
-        ( 10024, 'Escaldes-Engordany', '08', 1005 ),
-        ( 10025, 'La Massana', '04', 1005 ),
-        ( 10026, 'Ordino','05', 1005 ),
-        ( 10027, 'Sant Julia de Loria', '06', 1005 );
+        ( 'Andorra la Vella', '07', 1005 ),
+        ( 'Canillo', '02', 1005 ),
+        ( 'Encamp', '03', 1005 ),
+        ( 'Escaldes-Engordany', '08', 1005 ),
+        ( 'La Massana', '04', 1005 ),
+        ( 'Ordino','05', 1005 ),
+        ( 'Sant Julia de Loria', '06', 1005 );
 
 -- CRM-5673
 ALTER TABLE civicrm_contact ADD is_deleted TINYINT;
