@@ -632,7 +632,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     $totalParticipants += $values['participant_count'];
                 }
                 
-                if ( $remainingParticipants <  $totalParticipants ) {
+                if ( $remainingParticipants && ( $remainingParticipants <  $totalParticipants ) ) {
                     $errors['_qf_default'] = ts("Only %1 Registrations available.", array( 1 => $remainingParticipants ) );
                 }
             }
