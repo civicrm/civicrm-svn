@@ -132,6 +132,18 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
        $this->click ("link=$day");
    }
 
+    /**
+     * Verify that given label/value pairs are in *sibling* td cells somewhere on the page.
+     *
+     * @param array $expected array of key/value pairs (like Status/Registered) to be checked
+     */
+    function webtestVerifyTabularData($expected)
+    {
+        foreach ($expected as $label => $value) {
+            $this->verifyText("xpath=//table//tr/td[text()=\"$label\"]/../td[2]", preg_quote($value));
+        }
+    }
+
    /**
     */
     function webtestNewDialogContact( $fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4 ) {
