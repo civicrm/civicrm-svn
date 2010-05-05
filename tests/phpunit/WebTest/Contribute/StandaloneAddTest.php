@@ -82,9 +82,20 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
 
       $this->type("trxn_id", "P20901X1" . rand(100, 10000));
 
-      //go for the 4 - 6 year option
+      //Custom Data
       $this->click('css=#CIVICRM_QFID_3_4_6_yea');
-       
+
+      //Additional Detail section
+      $this->click("AdditionalDetail");
+      $this->waitForElementPresent("thankyou_date");
+
+      $this->type("note", "This is a test note.");
+      $this->type("non_deductible_amount", "10");
+      $this->type("fee_amount", "0");
+      $this->type("net_amount", "0");
+      $this->type("invoice_id", time());
+
+      //Honoree section
       $this->click("Honoree");
       $this->waitForElementPresent("honor_email");
 
@@ -93,6 +104,12 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->type("honor_first_name", "Foo");
       $this->type("honor_last_name", "Bar");
       $this->type("honor_email", "foo@bar.com");
+
+      //Premium section
+      $this->click("Premium");
+      $this->waitForElementPresent("fulfilled_date");
+      $this->select("product_name[0]", "label=Coffee Mug ( MUG-101 )");
+      $this->select("product_name[1]", "label=Black");
 
       // Clicking save.
       $this->click("_qf_Contribution_upload");
