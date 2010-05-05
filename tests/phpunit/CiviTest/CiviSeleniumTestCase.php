@@ -87,15 +87,26 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->waitForPageToLoad("30000");      
     }
 
-  /**
-   */
+    /**
+     * Add a contact with the given first and last names and either a given email
+     * (when specified), a random email (when true) or no email (when unspecified or null).
+     *
+     * @param string $fname contact’s first name
+     * @param string $lname contact’s last name
+     * @param mixed  $email contact’s email (when string) or random email (when true) or no email (when null)
+     *
+     * @return mixed either a string with the (either generated or provided) email or null (if no email)
+     */
+
     function webtestAddContact( $fname = 'Anthony', $lname = 'Anderson', $email = null ) {
         $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
         $this->type("qa_first_name", $fname);
         $this->type("qa_last_name", $lname);
+        if ($email === true) $email = substr(sha1(rand()), 0, 7) . '@example.org';
         if ($email) $this->type("qa_email", $email);
         $this->click("_qf_Contact_next");
         $this->waitForPageToLoad("30000");        
+        return $email;
     }
 
   /**
