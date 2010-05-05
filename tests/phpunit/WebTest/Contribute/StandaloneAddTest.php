@@ -114,6 +114,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("fulfilled_date");
       $this->select("product_name[0]", "label=Coffee Mug ( MUG-101 )");
       $this->select("product_name[1]", "label=Black");
+      $this->webtestFillDate('fulfilled_date');
 
       // Clicking save.
       $this->click("_qf_Contribution_upload");
@@ -121,5 +122,21 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");
+
+      // click through to the contribution view screen
+      $this->waitForElementPresent("link=View");
+
+      $this->click('link=View');
+      $this->waitForPageToLoad('30000');
+      
+      $this->webtestVerifyTabularData(
+          array(
+              'Contribution Type'    => 'Donation',
+              'Contribution Status'  => 'Completed',
+              'Paid By'              => 'Check',
+              'How long have you been a donor?' => '4-6 years',
+              'Total Amount'         => '100.00'
+          )
+      );
   }
 }
