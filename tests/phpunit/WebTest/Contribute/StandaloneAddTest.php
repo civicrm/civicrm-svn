@@ -81,6 +81,9 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->type("check_number", "check #1041");
 
       $this->type("trxn_id", "P20901X1" . rand(100, 10000));
+
+      //go for the 4 - 6 year option
+      $this->click('css=#CIVICRM_QFID_3_4_6_yea');
        
       $this->click("Honoree");
       $this->waitForElementPresent("honor_email");
