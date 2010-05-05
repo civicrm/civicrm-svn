@@ -82,6 +82,15 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
 
       $this->type("trxn_id", "P20901X1" . rand(100, 10000));
        
+      $this->click("Honoree");
+      $this->waitForElementPresent("honor_email");
+
+      $this->click("CIVICRM_QFID_1_In_Hono");
+      $this->select("honor_prefix_id", "label=Ms.");
+      $this->type("honor_first_name", "Foo");
+      $this->type("honor_last_name", "Bar");
+      $this->type("honor_email", "foo@bar.com");
+
       // Clicking save.
       $this->click("_qf_Contribution_upload");
       $this->waitForPageToLoad("30000");
