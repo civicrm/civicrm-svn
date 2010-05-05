@@ -31,10 +31,6 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
  
 class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
 
-  protected $captureScreenshotOnFailure = TRUE;
-  protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-  protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
-    
   protected function setUp()
   {
       parent::setUp();
@@ -55,6 +51,7 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       // We're using Quick Add block on the main page for this.
       $this->webtestAddContact( "Adam", "Anderson", substr(md5(rand()), 0, 7) . '@example.com' );
       $contactName = "Anderson, Adam";
+      $displayName = "Adam Anderson";
 
       // Go directly to the URL of the screen that you will be testing (New Activity-standalone).
       $this->open($this->sboxPath . "civicrm/participant/add?reset=1&action=add&context=standalone");
@@ -69,6 +66,8 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Select first event. Use option value, not label - since labels can be translated and test would fail
       $this->select("event_id", "value=1");
+      
+      // Select role
       $this->select("role_id", "value=1");
 
       // Choosing the Date.
@@ -82,6 +81,7 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       // Setting time.
       // TODO TBD
       
+      // Select participant status
       $this->select("status_id", "value=1");
 
       // Setting registration source
@@ -90,12 +90,17 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       // Since we're here, let's check of screen help is being displayed properly
       $this->assertTrue($this->isTextPresent("Source for this registration (if applicable)."));
 
+      // Select an event fee
+      $eventFee = "$ 200.00 Family";
+      $this->waitForText($eventFee);
+      $this->click("link=$eventFee");
+      
       // Clicking save.
       $this->click("_qf_Participant_upload-bottom");
       $this->waitForPageToLoad("30000");
 
       // Is status message correct?
-      $this->assertTrue($this->isTextPresent("Event registration for has been added"), "Status message didn't show up after saving!");
+      $this->assertTrue($this->isTextPresent("Event registration for $displayName has been added"), "Status message didn't show up after saving!");
 
   }
 
