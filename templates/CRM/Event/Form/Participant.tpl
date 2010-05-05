@@ -289,3 +289,11 @@
     }
 {/literal}
 </script>
+{literal}
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+{/literal}
+
