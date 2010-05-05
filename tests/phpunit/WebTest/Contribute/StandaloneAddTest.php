@@ -65,10 +65,13 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       
       // create new contact using dialog
       $this->webtestNewDialogContact( );
-            
+      
       // select contribution type
       $this->select("contribution_type_id", "value=1");
       
+      // fill in Received Date
+      $this->webtestFillDate('receive_date');
+     
       // source
       $this->type("source", "Mailer 1");
       
@@ -81,7 +84,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->type("check_number", "check #1041");
 
       $this->type("trxn_id", "P20901X1" . rand(100, 10000));
-
+      
       //Custom Data
       $this->click('css=#CIVICRM_QFID_3_4_6_yea');
 
@@ -94,7 +97,8 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->type("fee_amount", "0");
       $this->type("net_amount", "0");
       $this->type("invoice_id", time());
-
+      $this->webtestFillDate('thankyou_date');
+     
       //Honoree section
       $this->click("Honoree");
       $this->waitForElementPresent("honor_email");
