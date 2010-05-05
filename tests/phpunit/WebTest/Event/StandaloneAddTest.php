@@ -47,7 +47,7 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       // Log in using webtestLogin() method
       $this->webtestLogin();
 
-      // Adding Anderson, Adam
+      // Adding contact with randomized first name (so we can then select that contact when creating event registration)
       // We're using Quick Add block on the main page for this.
       $firstName = substr(sha1(rand()), 0, 7);
       $this->webtestAddContact( $firstName, "Anderson", true );
@@ -106,7 +106,7 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->type("check_number", "1044");
       
       // go for the chicken combo (obviously)
-      $this->click('css=#CIVICRM_QFID_chicken_Chicken');
+      $this->click("CIVICRM_QFID_chicken_Chicken");
 
       // Clicking save.
       $this->click("_qf_Participant_upload-bottom");
@@ -115,12 +115,12 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Event registration for $displayName has been added"), "Status message didn't show up after saving!");
 
-      // click through to the event data screen
+      // click through to the Participant View screen
       $this->waitForElementPresent("link=View");
       $this->click('link=View');
       $this->waitForPageToLoad('30000');
 
-      // verify that the event’s contents were properly saved
+      // verify that the event registration values were properly saved by checking for label/value pairs on the view page 
       $this->webtestVerifyTabularData(
           array(
               'Participant Role' => 'Attendee',

@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* View existing event registration record. *}
+<div class="crm-block crm-content-block crm-content-block-view-participant">
 <fieldset>
     <legend>{ts}View Participant{/ts}</legend>
     <table class="view-layout">
@@ -71,3 +72,4 @@
         </tr>
     </table>
 </fieldset>  
+</div>
