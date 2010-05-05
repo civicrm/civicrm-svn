@@ -48,7 +48,7 @@
 
 {literal}
 <script type="text/javascript"> 
-var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=newcontact' h=0 }"{literal};
+var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=newcontact' h=0 }"{literal};
 var selectedContact = '';
 
 cj( "#change_client_id").autocomplete( contactUrl, { width : 250, selectFirst : false, matchContains:true

@@ -246,7 +246,7 @@
 <script type="text/javascript">
 var selectedContact = '';
 var caseID = {/literal}"{$caseID}"{literal};
-var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=newcontact' h=0 }"{literal};
+var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=newcontact' h=0 }"{literal};
 cj( "#change_client_id").autocomplete( contactUrl, { width : 250, selectFirst : false, matchContains:true
                             }).result( function(event, data, formatted) { cj( "#contact_id" ).val( data[1] ); selectedContact = data[0];
                             }).bind( 'click', function( ) { cj( "#contact_id" ).val(''); });
@@ -265,7 +265,7 @@ function addClient( ) {
 
 		open:function() {
 
-			var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=caseview' h=0 }"{literal};
+			var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=caseview' h=0 }"{literal};
 
 			cj("#rel_contact").autocomplete( contactUrl, {
 				width: 260,
@@ -309,7 +309,7 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
 				cj("#rel_contact").val( cj("#relName_" + rowNumber).text( ) );
 			}
 
-			var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=caseview' h=0 }"{literal};
+			var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=caseview' h=0 }"{literal};
 
 			cj("#rel_contact").autocomplete( contactUrl, {
 				width: 260,
@@ -549,7 +549,7 @@ function addRole() {
 			cj("#role_contact").val( "" );
 			cj("#role_contact_id").val( null );
 
-			var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=caseview' h=0 }"{literal};
+			var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=caseview' h=0 }"{literal};
 
 			cj("#role_contact").autocomplete( contactUrl, {
 				width: 260,
