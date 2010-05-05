@@ -118,18 +118,41 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->assertContains($sortName, $this->getValue("contact"), "autocomplete expected $sortName but didn’t find it in " . $this->getValue("contact"));
    }
 
-   // defaults to last day of current month
+   /*
+    * 1. By default, when no strtotime arg is specified, sets date to "now + 1 month"
+    * 2. Does not set time. For setting both date and time use webtestFillDateTime() method.
+    * 3. Examples of $strToTime arguments -
+    *        webtestFillDate('start_date',"now")
+    *        webtestFillDate('start_date',"10 September 2000")
+    *        webtestFillDate('start_date',"+1 day")
+    *        webtestFillDate('start_date',"+1 week")
+    *        webtestFillDate('start_date',"+1 week 2 days 4 hours 2 seconds")
+    *        webtestFillDate('start_date',"next Thursday")
+    *        webtestFillDate('start_date',"last Monday")
+    */
    function webtestFillDate( $dateElement, $strToTimeArgs = null ) {
-       $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : "now");
+       $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : "+1 month");
 
        $year = date('Y', $timeStamp);
        $mon  = date('n', $timeStamp) - 1; // -1 ensures month number is inline with calender widget's month
-       $day  = $strToTimeArgs ? date('j', $timeStamp) : $this->_lastDay();
+       $day  = date('j', $timeStamp);
 
        $this->click ($dateElement);
        $this->select("css=div#ui-datepicker-div div.ui-datepicker-title select.ui-datepicker-month", "value=$mon");
        $this->select("css=div#ui-datepicker-div div.ui-datepicker-title select.ui-datepicker-year", "value=$year");
        $this->click ("link=$day");
+   }
+
+   // 1. set both date and time.
+   function webtestFillDateTime( $dateElement, $strToTimeArgs = null ) {
+       $this->webtestFillDate( $dateElement, $strToTimeArgs );
+
+       $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : "+1 month");
+       $hour = date('h', $timeStamp);
+       $min  = date('i', $timeStamp);
+       $meri = date('A', $timeStamp);
+       
+       $this->type("{$dateElement}_time", "{$hour}:{$min}{$meri}");
    }
 
     /**
@@ -163,19 +186,6 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         // Is new contact created?
         $this->assertTrue($this->isTextPresent("New contact has been created."), "Status message didn't show up after saving!");
     }
-
-  /**
-   * Helper function for filling in date selector, 
-   * provides the number of last day in current month.
-   */
-  protected function _lastDay() {
-      $y = date('Y');
-      $m = date('m');
-      $r = strtotime("{$y}-{$m}-01");
-      $r = strtotime('-1 second', strtotime('+1 month', $r));
-      return date('j', $r);
-  }
-
 
     /** 
     * Generic function to compare expected values after an api call to retrieved
