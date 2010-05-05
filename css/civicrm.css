@@ -2213,31 +2213,49 @@ div.grippie {
 	display:none;
 	top:24px;
 	left:0px;
-	width:360px;
 	}
 
-#crm-container #crm-contact-actions-list li.double, #crm-container #crm-contact-actions-list ul.double{
-  width:168px;
-  float:left;
-? }
 
-#crm-container #crm-contact-actions-list .crm-contact-actions-list-inner:after,.clear, .activities-block:after {
-  content: "."; display: block; height: 0; clear: both; visibility: hidden;
-}
+.clear {
+    content: "."; 
+    display: block; 
+    height: 0; 
+    clear: both; 
+    visibility: hidden;
+    }
 
+#crm-contact-actions-list .icon { background-image:url("../i/icons/jquery-ui-FFFFFF.png"); }
 
-#crm-contact-actions-list .activities-block {
-	color:#a7a7a7;
-	font-size: 11px;
-	padding:4px;
-	margin-top:4px;
-	border-left: 1px solid #a7a7a7;
-  width:160px;
-  margin-left:170px;
-	}
-#crm-contact-actions-list .activities-block select {
+#crm-contact-actions-list .crm-contact_activities-list select {
 	margin-top:4px;
 	}
+	
+#crm-contact-actions-list .crm-contact_activities-list,
+#crm-contact-actions-list .crm-contact_print-list,
+#crm-contact-actions-list .crm-contact_actions-list {
+    width: 160px;
+    }
+    #crm-contact-actions-list .crm-contact_activities-list ul,
+    #crm-contact-actions-list .crm-contact_print-list ul,
+    #crm-contact-actions-list .crm-contact_actions-list ul { 
+        padding:0px 4px;
+        width: auto;
+        margin:0px;
+        }
+        #crm-contact-actions-list .crm-contact_activities-list ul { padding-left: 0px; }
+        #crm-contact-actions-list .crm-contact_print-list ul { padding: 0px; }
+
+#crm-contact-actions-list .crm-contact_activities-list { 
+    float:left;
+    }
+#crm-contact-actions-list .crm-contact_print-list { 
+    float:right;
+    }
+#crm-contact-actions-list .crm-contact_actions-list { 
+    margin-left: 160px;
+    margin-right: 161px;
+    border-left: 1px solid #a7a7a7;
+    }    
 
 /* setup for icons */
 
@@ -2948,6 +2966,16 @@ div#crm-toolTip
 #crm-container .ac_results li a:hover,
 #crm-container .ac_results li a:visited { color:#DFDFDF; text-decoration: none;}
 .ac_results li strong { color: #FFF; font-weight: normal; }
+.ac_results li .icon,
+.ac_results li a .icon,
+.ac_results li a:visited .icon,
+#crm-container .ac_results li .icon,
+#crm-container .ac_results li a .icon,
+#crm-container .ac_results li a:visited .icon { background-image:url(../i/icons/jquery-ui-FFFFFF.png); }
+
+.ac_results li a:hover .icon,
+#crm-container .ac_results li a:hover .icon { background-image:url(../i/icons/jquery-ui-3e3e3e.png); }
+
 
 .ac_results li.ac_over,
 .ac_results li:hover,
