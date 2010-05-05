@@ -23,11 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
-<fieldset>
-<legend>
+<div class="crm-form-block crm-block crm-add_to_tag-block">
+<h3>
 {ts}Tag Contact(s){/ts}
-</legend>
+</h3>
 
 <dl>
  <dt></dt>
@@ -47,5 +46,4 @@
 <dt></dt><dd>{include file="CRM/Contact/Form/Task.tpl"}</dd>
 <dt></dt><dd>{$form.buttons.html}</dd>
 </dl>
-</fieldset>
 </div>

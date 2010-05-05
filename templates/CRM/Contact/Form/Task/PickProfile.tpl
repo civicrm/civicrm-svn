@@ -23,14 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
-<fieldset>
-    <legend>{ts}Batch Update via Profile{/ts}</legend>
+<div class="crm-block crm-form-block crm-pick_profile-block">
+<h3>{ts}Batch Update via Profile{/ts}</h3>
     <dl>
         <dt>{$form.uf_group_id.label}</dt><dd>{$form.uf_group_id.html}</dd>
         <dt></dt><dd>{include file="CRM/Contact/Form/Task.tpl"}</dd>
         <dt></dt><dd>{$form.buttons.html}</dd>
     </dl>
-</fieldset>
 </div>
 

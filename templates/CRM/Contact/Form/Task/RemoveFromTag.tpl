@@ -24,11 +24,10 @@
  +--------------------------------------------------------------------+
 *}
 {* template to remove tags from contact  *}
-<div class="form-item">
-<fieldset>
-<legend>
+<div class="crm-form-block crm-block crm-remove_from_tag-block">
+<h3>
 {ts}Tag Contact(s) (Remove){/ts}
-</legend>
+</h3>
 <dl>
  <dt></dt>
   <dd>
@@ -46,5 +45,4 @@
 <dt></dt><dd>{include file="CRM/Contact/Form/Task.tpl"}</dd>
 <dt></dt><dd>{$form.buttons.html}</dd>
 </dl>
-</fieldset>
 </div>

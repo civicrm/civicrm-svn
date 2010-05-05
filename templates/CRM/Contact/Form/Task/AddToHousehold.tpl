@@ -23,12 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block">
-<fieldset>
-<legend>
+<div class="crm-block crm-form-block crm-add_to_household-block">
+<h3>
 {ts}Choose Relationship Type and Target Household{/ts}
-</legend>
-<br />
+</h3>
 <div class="form-item">
     <table class="form-layout-compressed"> 
         <tr><td></td><td>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>
