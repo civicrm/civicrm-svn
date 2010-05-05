@@ -108,25 +108,21 @@ CREATE TABLE civicrm_value_food_preference_2 (
 -- Donors’ custom data
 
 INSERT INTO `civicrm_custom_group` 
-(`name`, 		    `title`, 		      `extends`,      `extends_entity_column_id`, `extends_entity_column_value`, `style`,  `is_active`, `table_name`) VALUES
-('Donor_Information', 'Donor Information', 'Contribution', NULL,                                       NULL, 					     'Inline',   1,                'civicrm_value_donor_information_3');
+(`name`, `title`, `extends`, `extends_entity_column_id`, `extends_entity_column_value`, `style`, `is_active`, `table_name`) VALUES
+('Donor_Information', 'Donor Information', 'Contribution', NULL, NULL, 'Inline', 1, 'civicrm_value_donor_information_3');
 
 SELECT @cgid_contribution := MAX(id) FROM civicrm_custom_group;
 
-INSERT INTO `civicrm_custom_field` 
-(`custom_group_id`, `label`, `data_type`, `html_type`, `is_active`,  `text_length`, `note_columns`, `note_rows`, `column_name`) VALUES
-(@cgid_contribution, 'Known areas of interest', 'Memo', 'TextArea', 1, 255, 60, 4, 'known_areas_of_interest_5');
-
 INSERT INTO civicrm_option_group
-  (name,             label,            is_active) VALUES
+ (name, label, is_active) VALUES
  ('how_long_have_you_been_a_donor', 'How long have you been a donor?', 1);
 
 SELECT @ogid_contribution := MAX(id) FROM civicrm_option_group;
 
-
 INSERT INTO `civicrm_custom_field` 
 (`custom_group_id`, `label`, `data_type`, `html_type`, `is_active`,  `text_length`,`note_columns`, `note_rows`, `column_name`, `option_group_id`) VALUES
-(@cgid_contribution, 'How long have you been a donor?', 'String', 'Select', 1, 255, 60, 4, 'how_long_have_you_been_a_donor_6', @ogid_contribution);
+(@cgid_contribution, 'Known areas of interest', 'Memo', 'TextArea', 1, 255, 60, 4, 'known_areas_of_interest_5', NULL),
+(@cgid_contribution, 'How long have you been a donor?', 'String', 'Radio', 1, 255, 60, 4, 'how_long_have_you_been_a_donor_6', @ogid_contribution);
 
 INSERT INTO `civicrm_option_value`
 (`option_group_id`, `label`, `value`, `name`, `weight`) VALUES
