@@ -214,6 +214,12 @@ function removeDefaultCustomFields( ) {
 }
  
 </script>
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+
 {/literal}
 
 {* include common additional blocks tpl *}
