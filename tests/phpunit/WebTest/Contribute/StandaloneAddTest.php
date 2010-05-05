@@ -39,7 +39,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
   {
       parent::setUp();
   }
-
+  
   function testStandaloneContributeAdd()
   {
       // This is the path where our testing install resides. 
@@ -65,17 +65,27 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       
       // create new contact using dialog
       $this->webtestNewDialogContact( );
-      
+            
       // select contribution type
       $this->select("contribution_type_id", "value=1");
       
+      // source
+      $this->type("source", "Mailer 1");
+      
       // total amount
       $this->type("total_amount", "100");
-          
+
+      // select payment instrument type
+      $this->select("payment_instrument_id", "value=4");
+
+      $this->type("check_number", "check #1041");
+
+      $this->type("trxn_id", "P20901X1" . rand(100, 10000));
+       
       // Clicking save.
       $this->click("_qf_Contribution_upload");
       $this->waitForPageToLoad("30000");
-      
+
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("The contribution record has been saved."), "Status message didn't show up after saving!");
   }
