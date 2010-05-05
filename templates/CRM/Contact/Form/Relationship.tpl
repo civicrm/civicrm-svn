@@ -132,7 +132,7 @@
                         if ( relType ) {
                              cj('#rel_contact').unbind( 'click' );
                              cj("input[name=rel_contact_id]").val('');
-                             var dataUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&rel="}'{literal} + relType;
+                             var dataUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=relationship&rel="}'{literal} + relType;
                              cj('#rel_contact').autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
                              cj('#rel_contact').result(function( event, data ) {
                                	cj("input[name=rel_contact_id]").val(data[1]);
