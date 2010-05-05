@@ -2238,12 +2238,12 @@ div.grippie {
     #crm-contact-actions-list .crm-contact_activities-list ul,
     #crm-contact-actions-list .crm-contact_print-list ul,
     #crm-contact-actions-list .crm-contact_actions-list ul { 
-        padding:0px 4px;
         width: auto;
         margin:0px;
         }
-        #crm-contact-actions-list .crm-contact_activities-list ul { padding-left: 0px; }
-        #crm-contact-actions-list .crm-contact_print-list ul { padding: 0px; }
+        #crm-contact-actions-list .crm-contact_activities-list ul { padding-right: 4px; }
+        #crm-contact-actions-list .crm-contact_print-list ul { padding-left: 4px; }
+        #crm-contact-actions-list .crm-contact_actions-list ul { padding-left: 4px; }
 
 #crm-contact-actions-list .crm-contact_activities-list { 
     float:left;
