@@ -114,11 +114,19 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Event registration for $displayName has been added"), "Status message didn't show up after saving!");
 
-      // verify the food preference
+      // click through to the event data screen
       $this->waitForElementPresent("link=View");
       $this->click('link=View');
       $this->waitForPageToLoad('30000');
-      $this->isTextPresent('Chicken Combo');
+
+      // verify that the event’s contents were properly saved
+      $this->webtestVerifyTabularData(
+          array(
+              'Participant Role' => 'Attendee',
+              'Status'           => 'Registered',
+              'Soup Selection'   => 'Chicken Combo',
+          )
+      );
 
   }
 
