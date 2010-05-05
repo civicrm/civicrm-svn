@@ -127,16 +127,12 @@
             </table>
             </fieldset>
 
-            <table class="form-layout">
-                <tr class="crm-participant-form-block-customData">
-                    <td colspan=2>
-                        <div id="customData"></div>  {* Participant Custom data *}
-                        <div id="customData{$eventNameCustomDataTypeID}"></div> {* Event Custom Data *}
-                        <div id="customData{$roleCustomDataTypeID}"></div> {* Role Custom Data *}	
-                        <div id="customData{$eventTypeCustomDataTypeID}"></div> {* Role Custom Data *}	
-                    </td>
-                </tr>
-            </table>
+            <div class="crm-participant-form-block-customData">
+                <div id="customData" class="crm-customData-block"></div>  {* Participant Custom data *}
+                <div id="customData{$eventNameCustomDataTypeID}" class="crm-customData-block"></div> {* Event Custom Data *}
+                <div id="customData{$roleCustomDataTypeID}" class="crm-customData-block"></div> {* Role Custom Data *}	
+                <div id="customData{$eventTypeCustomDataTypeID}" class="crm-customData-block"></div> {* Role Custom Data *}	
+            </div>
     	{/if}
 		 
         {if $accessContribution and $action eq 2 and $rows.0.contribution_id}

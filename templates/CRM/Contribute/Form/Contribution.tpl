@@ -192,7 +192,7 @@
         {/if}	
       </table>
 
-    <div id="customData"></div>
+    <div id="customData" class="crm-contribution-form-block-customData"></div>
 
     {*include custom data js file*}
     {include file="CRM/common/customData.tpl"}

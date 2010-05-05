@@ -151,7 +151,7 @@ cj( function($) {
   $('#CIVICRM_QFID_ts_all_4').attr("selected","selected");//TO FIX. Needs to be selected by default
 
 	$('#crm-contact-actions-link').click(function(event){
-    $('#crm-contact-actions-list').slideToggle();
+    $('#crm-contact-actions-list').toggle();
     return false;
  	});
   $('#crm-contact-actions-list li').hover(
