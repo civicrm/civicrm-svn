@@ -1052,6 +1052,7 @@ WHERE civicrm_event.is_active = 1
                     $sendTemplateParams['from']    = "{$values['event']['confirm_from_name']} <{$values['event']['confirm_from_email']}>";
                     $sendTemplateParams['toName']  = $displayName;
                     $sendTemplateParams['toEmail'] = $email;
+                    $sendTemplateParams['autoSubmitted'] = true;
                     $sendTemplateParams['cc']      = CRM_Utils_Array::value('cc_confirm',  $values['event']);
                     $sendTemplateParams['bcc']     = CRM_Utils_Array::value('bcc_confirm', $values['event']);
                     CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
