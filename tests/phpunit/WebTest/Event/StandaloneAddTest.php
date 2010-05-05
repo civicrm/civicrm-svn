@@ -92,8 +92,8 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Select an event fee
       $eventFee = "$ 200.00 Family";
-      $this->waitForText($eventFee);
-      $this->click("link=$eventFee");
+      $this->waitForTextPresent($eventFee);
+      $this->click("css=tr.crm-participant-form-block-fee_amount input");
       
       // Clicking save.
       $this->click("_qf_Participant_upload-bottom");
