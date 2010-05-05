@@ -106,12 +106,21 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("check_number");
       $this->type("check_number", "1044");
       
+      // go for the chicken combo (obviously)
+      $this->click('css=#CIVICRM_QFID_chicken_Chicken');
+
       // Clicking save.
       $this->click("_qf_Participant_upload-bottom");
       $this->waitForPageToLoad("30000");
 
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Event registration for $displayName has been added"), "Status message didn't show up after saving!");
+
+      // verify the food preference
+      $this->waitForElementPresent("link=View");
+      $this->click('link=View');
+      $this->waitForPageToLoad('30000');
+      $this->isTextPresent('Chicken Combo');
 
   }
 
