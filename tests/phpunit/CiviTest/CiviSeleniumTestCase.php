@@ -118,6 +118,20 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $this->assertContains($sortName, $this->getValue("contact"), "autocomplete expected $sortName but didn’t find it in " . $this->getValue("contact"));
    }
 
+   // defaults to last day of current month
+   function webtestFillDate( $dateElement, $strToTimeArgs = null ) {
+       $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : "now");
+
+       $year = date('Y', $timeStamp);
+       $mon  = date('n', $timeStamp) - 1; // -1 ensures month number is inline with calender widget's month
+       $day  = $strToTimeArgs ? date('j', $timeStamp) : $this->_lastDay();
+
+       $this->click ($dateElement);
+       $this->select("css=div#ui-datepicker-div div.ui-datepicker-title select.ui-datepicker-month", "value=$mon");
+       $this->select("css=div#ui-datepicker-div div.ui-datepicker-title select.ui-datepicker-year", "value=$year");
+       $this->click ("link=$day");
+   }
+
    /**
     */
     function webtestNewDialogContact( $fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4 ) {
@@ -147,7 +161,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
       $m = date('m');
       $r = strtotime("{$y}-{$m}-01");
       $r = strtotime('-1 second', strtotime('+1 month', $r));
-      return date('d', $r);
+      return date('j', $r);
   }
 
 

@@ -64,15 +64,12 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
       // Let Join Date stay default
 
       // fill in Start Date
-      $this->click("start_date");
-      $dayId = date('j');
-      $this->click("link=$dayId");
+      $this->webtestFillDate('start_date');
 
       // Let End Date be auto computed
 
       // fill in Status Override?
       // fill in Record Membership Payment?
-
 
       //---      
 

@@ -118,10 +118,8 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // Choosing the Date.
       // Please note that we don't want to put in fixed date, since
       // we want this test to work in the future and not fail because
-      // of date being set in the past. Therefore, using helper _lastDay function.
-      $this->click("activity_date_time");
-      $dayId = $this->_lastDay();
-      $this->click("link=$dayId");
+      // of date being set in the past. Therefore, using helper webtestFillDate function.
+      $this->webtestFillDate('activity_date_time');
 
       // Setting time.
       // TODO TBD
