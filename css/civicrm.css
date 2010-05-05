@@ -2237,9 +2237,11 @@ div.grippie {
     }
     #crm-contact-actions-list .crm-contact_activities-list ul,
     #crm-contact-actions-list .crm-contact_print-list ul,
-    #crm-contact-actions-list .crm-contact_actions-list ul { 
+    #crm-contact-actions-list .crm-contact_actions-list ul,
+    #crm-create-new-list ul { 
         width: auto;
         margin:0px;
+        padding: 0px;
         }
         #crm-contact-actions-list .crm-contact_activities-list ul { padding-right: 4px; }
         #crm-contact-actions-list .crm-contact_print-list ul { padding-left: 4px; }
