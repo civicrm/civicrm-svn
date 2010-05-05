@@ -91,9 +91,20 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Source for this registration (if applicable)."));
 
       // Select an event fee
-      $eventFee = "$ 200.00 Family";
-      $this->waitForTextPresent($eventFee);
+      $feeHelp = "Event Fee Level (if applicable).";
+      $this->waitForTextPresent($feeHelp);
       $this->click("css=tr.crm-participant-form-block-fee_amount input");
+
+      // Select 'Record Payment'
+      $this->click("record_contribution");
+      
+      // Enter amount to be paid (note: this should default to selected fee level amount, s/b fixed during 3.2 cycle)
+      $this->type("total_amount", "50.00");
+      
+      // Select payment method = Check and enter chk number
+      $this->select("payment_instrument_id", "value=4");
+      $this->waitForElementPresent("check_number");
+      $this->type("check_number", "1044");
       
       // Clicking save.
       $this->click("_qf_Participant_upload-bottom");
