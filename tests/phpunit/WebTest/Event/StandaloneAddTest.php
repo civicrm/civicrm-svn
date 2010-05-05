@@ -49,7 +49,7 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Adding Anderson, Adam
       // We're using Quick Add block on the main page for this.
-      $this->webtestAddContact( "Adam", "Anderson", substr(md5(rand()), 0, 7) . '@example.com' );
+      $this->webtestAddContact( "Adam", "Anderson", true );
       $contactName = "Anderson, Adam";
       $displayName = "Adam Anderson";
 
