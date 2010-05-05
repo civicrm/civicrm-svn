@@ -2204,7 +2204,7 @@ div.grippie {
 #crm-create-new-wrapper,
 #crm-contact-actions-wrapper{
 	position:relative;
-	z-index:5;
+	z-index:15;
 	}
 
 #crm-create-new-list,
@@ -2213,9 +2213,17 @@ div.grippie {
 	display:none;
 	top:24px;
 	left:0px;
-	z-index: 100;
-	width:180px;
+	width:360px;
 	}
+
+#crm-container #crm-contact-actions-list li.double, #crm-container #crm-contact-actions-list ul.double{
+  width:168px;
+  float:left;
+? }
+
+#crm-container #crm-contact-actions-list .crm-contact-actions-list-inner:after,.clear, .activities-block:after {
+  content: "."; display: block; height: 0; clear: both; visibility: hidden;
+}
 
 
 #crm-contact-actions-list .activities-block {
@@ -2223,7 +2231,9 @@ div.grippie {
 	font-size: 11px;
 	padding:4px;
 	margin-top:4px;
-	border-top: 1px solid #a7a7a7;
+	border-left: 1px solid #a7a7a7;
+  width:160px;
+  margin-left:170px;
 	}
 #crm-contact-actions-list .activities-block select {
 	margin-top:4px;
@@ -2768,6 +2778,8 @@ tbody.scrollContent tr.alternateRow {
     color:#2f2f2f;
     font-weight:normal;
 }
+
+.disabled {text-decoration:line-through;}
 
 #crm-container table.selector td {
     border-right:1px dotted #DDDDDD;
