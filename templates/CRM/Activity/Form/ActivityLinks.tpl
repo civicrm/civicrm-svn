@@ -30,7 +30,12 @@
 {/if}
 
 {* Only display the activity drop-down if there are activity_type entries for this domain. *}
-{if $showOtherActivityLink}{$form.other_activity.html}{/if}
+
+<ul>
+{foreach from=$activityTypes key=k item=link}
+<li class="crm-activity-type_{$k}"><a href="{$url}{$k}">{ts}Add {/ts}{$link}</a></li>
+{/foreach}</ul>
+
 
 {* add hook links if any *}
 {if $hookLinks}

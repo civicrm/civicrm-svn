@@ -29,7 +29,7 @@
 	<div id="crm-contact-actions-link"><span><div class="icon dropdown-icon"></div>Actions</span></div>
 		<div class="ac_results" id="crm-contact-actions-list">
 			<div class="crm-contact-actions-list-inner">
-			  <ul>
+			  <ul class="double">
 			  	{foreach from=$actionsMenuList.moreActions item='row'}
 					{if $row.href}
 					<li class="crm-action-{$row.ref}">
@@ -37,11 +37,26 @@
 					</li>
 					{/if}
 				{/foreach}
+<li><hr></li>
+          <li><a class="vcard " title="{ts}vCard record for this contact.{/ts}" href="{crmURL p='civicrm/contact/view/vcard' q="reset=1&cid=$contactId"}"><span><div class="icon vcard-icon"></div>{ts}vCard{/ts}</span></li>
+         {if $dashboardURL }
+           <li class="crm-contact-dashboard">
+              <a href="{$dashboardURL}" class="dashboard " title="{ts}dashboard{/ts}">
+               	<span><div class="icon dashboard-icon"></div>{ts}Contact Dashboard{/ts}</span>
+               </a>
+           </li>
+         {/if}
+         {if $url }
+           <li class="crm-contact-user-record">
+              <a href="{$url}" class="user-record " title="{ts}User Record{/ts}">
+                 <span><div class="icon user-record-icon"></div>{ts}User Record{/ts}</span>
+              </a>
+           </li>
+         {/if}
 			
 				
 			  </ul>
 			  <div class="activities-block">
-			 	{ts}Add Activity:{/ts}
 			  {include file="CRM/Activity/Form/ActivityLinks.tpl"}
 			  </div>
 			  
@@ -67,7 +82,7 @@ cj('#crm-contact-actions-list li').hover(
 	);
 
 cj('#crm-contact-actions-link').click(function(event) {
-	cj('#crm-contact-actions-list').toggle();
+	cj('#crm-contact-actions-list').slideToggle();
 	event.stopPropagation();
 	});
 
