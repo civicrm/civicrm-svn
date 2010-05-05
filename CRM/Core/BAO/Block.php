@@ -247,7 +247,13 @@ class CRM_Core_BAO_Block
                     }
                 }
                 if ( $resetPrimaryId ) {
-                    CRM_Core_DAO::setFieldValue( "CRM_Core_DAO_{$name}", $resetPrimaryId, 'is_primary', false );
+                    eval('$block = new CRM_Core_BAO_' . $blockName .'( );');
+                    $block->id = $resetPrimaryId;
+                    if ( $block->find( true ) ) {
+                        $block->is_primary = false;
+                        $block->save( );
+                    }
+                    $block->free( );
                 }
             }
         }
