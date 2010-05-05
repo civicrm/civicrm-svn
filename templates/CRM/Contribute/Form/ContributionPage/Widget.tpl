@@ -115,7 +115,7 @@
     </div>
 
     <div id="crm-submit-buttons">
-        <dl><dt id="preview">{$form._qf_Widget_refresh.html}</dt><dd>&nbsp;&nbsp;&nbsp;&nbsp;{$form.buttons.html}</dd></dl>  
+        <dl><dt id="preview">{$form._qf_Widget_refresh.html}</dt><dd>&nbsp;&nbsp;&nbsp;&nbsp;{include file="CRM/common/formButtons.tpl"}</dd></dl>  
     </div>
     </fieldset>
 

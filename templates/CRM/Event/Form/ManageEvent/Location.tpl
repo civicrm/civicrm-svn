@@ -34,7 +34,7 @@
 {include file="CRM/Contact/Form/Edit/$blockName.tpl"}
 {else}
 <div class="crm-submit-buttons">
-    {$form.buttons.html}
+   {include file="CRM/common/formButtons.tpl"}
 </div>
     {if $locEvents}
     	<table class="form-layout-compressed">
@@ -89,7 +89,7 @@
 	</tr>
 	</table>
 <div class="crm-submit-buttons">
-    {$form.buttons.html}
+   {include file="CRM/common/formButtons.tpl"}
 </div>
 </div>
     
