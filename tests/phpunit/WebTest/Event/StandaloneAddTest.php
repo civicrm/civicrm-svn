@@ -49,9 +49,10 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Adding Anderson, Adam
       // We're using Quick Add block on the main page for this.
-      $this->webtestAddContact( "Adam", "Anderson", true );
-      $contactName = "Anderson, Adam";
-      $displayName = "Adam Anderson";
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName, "Anderson", true );
+      $contactName = "Anderson, $firstName";
+      $displayName = "$firstName Anderson";
 
       // Go directly to the URL of the screen that you will be testing (New Activity-standalone).
       $this->open($this->sboxPath . "civicrm/participant/add?reset=1&action=add&context=standalone");
