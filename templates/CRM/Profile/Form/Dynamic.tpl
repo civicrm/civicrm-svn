@@ -167,7 +167,6 @@
     {/if}
 
     {/if}
-    </div>
     {/foreach}
 
     {if $isCaptcha && ( $mode eq 8 || $mode eq 4 || $mode eq 1 ) }
