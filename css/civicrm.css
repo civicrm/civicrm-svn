@@ -327,9 +327,9 @@ div.spacer,
 #crm-container fieldset legend {
 	display:block;
 	font-family:helvetica;
-	font-size:12px;
+	font-size:14px;
 	font-weight:bold;
-	padding-right:4px;
+	padding:4px;
 	}
 
 
@@ -366,9 +366,6 @@ div.spacer,
 
 #crm-container .section {
     margin-bottom:1em;
-}
-#crm-container .section .section {
-    margin-bottom:0.5em; /* make subsections sit closer together */
 }
 
 #crm-container .section .label {
@@ -565,6 +562,7 @@ div.spacer,
     vertical-align: top;
     text-align: right;
     padding: 0.75em 0.5em 0em 0.75em;
+    color: #7a7a60;
 }
 
 #crm-container td.price_set_option-label {
@@ -2200,7 +2198,13 @@ div.grippie {
 #crm-container .crm-button:hover,
 #crm-container a.button:hover { background-position:0px -25px; }
 
-
+/* No button styling for PayPal Express button */
+#crm-container input#_qf_Register_upload_express {
+    background: none;
+    margin: 0px;
+    padding: 0px;
+    border: none;
+}
 
 /* create new XXX style (drupal block) */ 
 
