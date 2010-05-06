@@ -128,6 +128,8 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
               'Soup Selection'   => 'Chicken Combo',
           )
       );
+      
+      // check
 
   }
 
