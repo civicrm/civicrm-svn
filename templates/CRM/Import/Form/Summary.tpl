@@ -168,7 +168,7 @@
  </table>
  
  <div id="crm-submit-buttons">
-    {$form.buttons.html}
+    {include file="CRM/common/formButtons.tpl"}
  </div>
 
 </div>

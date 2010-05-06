@@ -222,7 +222,7 @@ function verify( ) {
 </div> {* End of preview-info div. We hide this on form submit. *}
 
 <div id="crm-submit-buttons">
-   {$form.buttons.html}
+   {include file="CRM/common/formButtons.tpl"}
 </div>
 </div>
 {literal}

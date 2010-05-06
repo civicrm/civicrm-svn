@@ -54,7 +54,7 @@ if ( document.getElementsByName("saveMapping")[0].checked ) {
 </script>
 
  <div id="crm-submit-buttons">
-    {$form.buttons.html}
+    {include file="CRM/common/formButtons.tpl"}
  </div>
  {$initHideBoxes}
 
