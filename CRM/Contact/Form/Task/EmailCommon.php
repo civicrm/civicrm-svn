@@ -270,7 +270,7 @@ class CRM_Contact_Form_Task_EmailCommon
         
         if ( isset( $fields['html_message'] ) ) {
             $htmlMessage = str_replace( array("\n","\r"), ' ', $fields['html_message']);
-            $htmlMessage = str_replace( "'", "\'", $htmlMessage);
+            $htmlMessage = str_replace( '"', '\"', $htmlMessage);
             $template->assign('htmlContent',$htmlMessage );
         }
 
