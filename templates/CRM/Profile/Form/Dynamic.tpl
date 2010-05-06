@@ -30,7 +30,6 @@
 {if ! empty( $fields )}
 {* wrap in crm-container div so crm styles are used *}
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
-
     {if $mode eq 1 || $activeComponent neq "CiviCRM"}
         {include file="CRM/Form/body.tpl"}
     {/if}
