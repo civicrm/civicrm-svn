@@ -238,7 +238,7 @@
 {include file="CRM/common/customData.tpl"}
 {literal}
 <script type="text/javascript">
-	cj(document).ready(function() {				
+	cj(function() {				
 		{/literal}
 		buildCustomData( '{$customDataType}', 'null', 'null' );
 		{if $roleID}
@@ -250,6 +250,9 @@
 		{if $eventTypeID}
 		    buildCustomData( '{$customDataType}', {$eventTypeID}, {$eventTypeCustomDataTypeID} );
 		{/if}
+		
+		//call pane js
+		cj().crmaccordions();
 		{literal}
 	});
 </script>
