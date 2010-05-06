@@ -473,19 +473,25 @@ class CRM_Event_Form_ManageEvent_Fee extends CRM_Event_Form_ManageEvent
             
             //check fee label and amount
             $check = 0;
+            $optionKeys = array( );
             foreach ( $values['label'] as $key => $val ) {
                 if ( trim($val) && trim($values['value'][$key]) ) {
+                    $optionKeys[$key] = $key;
                     $check++;
-                    break;
                 }
             }
             
+            $default = CRM_Utils_Array::value( 'default', $values );
+            if ( $default && !in_array( $default, $optionKeys ) ) {
+                $errors['default'] = ts( "Please select an appropriate option as default." );
+            }
+
             if ( !$check && !$values['price_set_id'] ) {
                 if ( !$values['label'][1] ) {
-                    $errors['label[1]'] = "Please enter a label for at least one fee level.";
+                    $errors['label[1]'] = ts( "Please enter a label for at least one fee level." );
                 }
                 if ( !$values['value'][1] ) {
-                    $errors['value[1]'] = "Please enter an amount for at least one fee level.";
+                    $errors['value[1]'] = ts( "Please enter an amount for at least one fee level." );
                 }
             }
             
