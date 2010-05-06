@@ -148,12 +148,8 @@ cj( function($) {
   $('#Go').remove();
   $('#task').remove();
 
-  $('#CIVICRM_QFID_ts_all_4').attr("selected","selected");//TO FIX. Needs to be selected by default
+  $('#CIVICRM_QFID_ts_all_4').attr("checked","true");
 
-	$('#crm-contact-actions-link').click(function(event){
-    $('#crm-contact-actions-list').toggle();
-    return false;
- 	});
   $('#crm-contact-actions-list li').hover(
   	function(){ cj(this).addClass('ac_over');},
   	function(){ cj(this).removeClass('ac_over');}
@@ -164,17 +160,13 @@ cj( function($) {
   });
 
 });
-/*
 cj('body').click(function() {
-alert ("toto");
 	 	$('#crm-contact-actions-list').hide();
 	 	});
-	*/
-/*cj('#crm-contact-actions-link').click(function(event) {
+cj('#crm-contact-actions-link').click(function(event) {
 	cj('#crm-contact-actions-list').toggle();
 	event.stopPropagation();
 	});
-*/
 
 </script>
 {/literal}

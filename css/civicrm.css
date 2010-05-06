@@ -2216,13 +2216,7 @@ div.grippie {
 	}
 
 
-.clear {
-    content: "."; 
-    display: block; 
-    height: 0; 
-    clear: both; 
-    visibility: hidden;
-    }
+.clear { clear: both; }
 
 #crm-contact-actions-list .icon { background-image:url("../i/icons/jquery-ui-FFFFFF.png"); }
 
