@@ -53,6 +53,17 @@ class CRM_Core_BAO_Setting
     {
         CRM_Core_BAO_Setting::fixParams($params);
 
+        // also set a template url so js files can use this
+        // CRM-6194
+        $params['civiRelativeURL'] = CRM_Utils_System::url( 'CIVI_BASE_TEMPLATE' );
+        $params['civiAbsoluteURL'] = CRM_Utils_System::url( 'CIVI_BASE_TEMPLATE', null, true );
+        $params['civiRelativeURL'] = str_replace( 'CIVI_BASE_TEMPLATE', 
+                                                  '',
+                                                  $params['civiRelativeURL'] );
+        $params['civiAbsoluteURL'] = str_replace( 'CIVI_BASE_TEMPLATE', 
+                                                  '',
+                                                  $params['civiAbsoluteURL'] );
+
         require_once "CRM/Core/DAO/Domain.php";
         $domain = new CRM_Core_DAO_Domain();
         $domain->id = CRM_Core_Config::domainID( );
