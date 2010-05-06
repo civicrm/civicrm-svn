@@ -357,7 +357,7 @@ class CRM_Core_Menu
                 // if a child or the parent is active, expand the menu
                 if ( $values[$index ]['active'] ||
                      $values[$parent]['active'] ) {
-                    $values[$parent]['class'] = 'expanded';
+                     $values[$parent]['class'] = 'expanded';
                 }
                     
                 // make the parent inactive if the child is active
