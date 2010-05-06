@@ -393,7 +393,7 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
             $requiredFields = array(
                 'target_contact_id'  => ts('Contact ID'),
                 'activity_date_time' => ts('Activity Date'),
-                'subject'            => ts('Subject'),   
+                'activity_subject'   => ts('Activity Subject'),   
                 'activity_type_id'   => ts('Activity Type Id')             
             );
             

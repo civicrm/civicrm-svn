@@ -294,7 +294,7 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     }
 
     // check for activity subject if add mode
-    if ( $addMode && ! isset( $params['subject'] ) ) {
+    if ( $addMode && ! isset( $params['activity_subject'] ) ) {
         return civicrm_create_error( ts( 'Missing Subject' ) );
     }
 
