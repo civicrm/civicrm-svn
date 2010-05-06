@@ -35,7 +35,7 @@
      <div class="content">
         {$value}
      </div>
-     <div class="clear"/>
+     <div class="clear"></div>
   </div>
 {/foreach}
 </div>
