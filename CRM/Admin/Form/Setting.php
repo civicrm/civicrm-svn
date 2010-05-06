@@ -113,6 +113,17 @@ class CRM_Admin_Form_Setting extends CRM_Core_Form
     }
 
     public function commonProcess( &$params ) {
+        // also set a template url so js files can use this
+        // CRM-6194
+        $params['civiRelativeURL'] = CRM_Utils_System::url( 'CIVI_BASE_TEMPLATE' );
+        $params['civiAbsoluteURL'] = CRM_Utils_System::url( 'CIVI_BASE_TEMPLATE', null, true );
+        $params['civiRelativeURL'] = str_replace( 'CIVI_BASE_TEMPLATE', 
+                                                  '',
+                                                  $params['civiRelativeURL'] );
+        $params['civiAbsoluteURL'] = str_replace( 'CIVI_BASE_TEMPLATE', 
+                                                  '',
+                                                  $params['civiAbsoluteURL'] );
+
         require_once "CRM/Core/BAO/Setting.php";
         CRM_Core_BAO_Setting::add($params);
 
