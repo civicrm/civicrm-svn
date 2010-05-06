@@ -323,7 +323,8 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
 
         foreach ($names as $name => $classPath) {
             require_once(str_replace('_', DIRECTORY_SEPARATOR, $classPath) . '.php');
-            $action = new $classPath( $this->_stateMachine );
+            $action =& new $classPath( $this->_stateMachine );
+            CRM_Core_Error::debug( $name );
             $this->addAction( $name, $action );
         }
         
@@ -568,24 +569,29 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
     }
     
 
-   function setWord ($fileName=null) {
+    function setWord ($fileName=null) {
         //Mark as a CSV file.
         header('Content-Type: application/vnd.ms-word');
-
+        
         //Force a download and name the file using the current timestamp.
-        if (!$fileName)
-          $fileName = 'Contacts_' . $_SERVER['REQUEST_TIME'] . '.doc';
+        if (!$fileName) {
+            $fileName = 'Contacts_' . $_SERVER['REQUEST_TIME'] . '.doc';
+        }
         header("Content-Disposition: attachment; filename=Contacts_$fileName");
-   }
-   function setExcel ($fileName=null) {
+    }
+    
+    function setExcel ($fileName=null) {
         //Mark as an excel file.
         header('Content-Type: application/vnd.ms-excel');
+        
         //Force a download and name the file using the current timestamp.
-        if (!$fileName)
-          $fileName = 'Contacts_' . $_SERVER['REQUEST_TIME'] . '.xls';
+        if (! $fileName) {
+            $fileName = 'Contacts_' . $_SERVER['REQUEST_TIME'] . '.xls';
+        }
+        
         header("Content-Disposition: attachment; filename=Contacts_$fileName");
-   }
-
+    }
+    
     /**
      * setter for print 
      *
@@ -595,10 +601,11 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
      * @access public
      */
     function setPrint( $print  ) {
-      if ($print == "xls")
-        $this->setExcel();
-      else if ($print == "doc")
-        $this->setWord();
+        if ($print == "xls") {
+            $this->setExcel();
+        } else if ($print == "doc") {
+            $this->setWord();
+        }
         $this->_print = $print;
     }
 
@@ -645,7 +652,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         }
 
         require_once 'CRM/Core/QuickForm/Action/Upload.php';
-        $action = new CRM_Core_QuickForm_Action_Upload ( $this->_stateMachine,
+        $action =& new CRM_Core_QuickForm_Action_Upload ( $this->_stateMachine,
                                                           $uploadDir,
                                                           $uploadNames );
         $this->addAction('upload' , $action );
