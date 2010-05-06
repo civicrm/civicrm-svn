@@ -1582,6 +1582,12 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
                     }
                 }
                 
+                //avoid extra processing.
+                if ( $relMembership->id && 
+                     $params['status_id'] == $relMembership->status_id ) {
+                    continue;
+                }
+                
                 //do create activity if we changed status. 
                 if ( $params['status_id'] != $relMembership->status_id ) {
                     $params['createActivity'] = true; 
