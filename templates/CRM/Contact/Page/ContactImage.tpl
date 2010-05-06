@@ -24,13 +24,15 @@
  +--------------------------------------------------------------------+
 *}
 {* This form is for displaying contact Image *}
-    <div>
-       <a href="#" onClick="contactImagePopUp('{$imageURL}',{$imageWidth},{$imageHeight});"><img src="{$imageURL}" height = {$imageThumbHeight} width={$imageThumbWidth}></a>
+    <div class="crm-contact_image crm-contact_image-block">
+        <a href="#" onClick="contactImagePopUp('{$imageURL}',{$imageWidth},{$imageHeight});">
+            <img src="{$imageURL}" height = {$imageThumbHeight} width={$imageThumbWidth}>
+        </a>
     </div>
     {if $action eq 0 or $action eq 2}
-       <div>
-	 {$deleteURL}
-       </div>
+    <div class="crm-contact_image-block  class="crm-contact_image crm-contact_image-delete"">
+        {$deleteURL}
+    </div>
     {/if}
     {literal}
     <script>
