@@ -116,7 +116,7 @@
         <div class="clear"></div>
     </div>
 	{else}
-        <div id="editrow-{$n}" class="section">
+        <div id="editrow-{$n}" class="section editrow_{$n}-section">
            <div class="label">{$form.$n.label}</div>
            <div class="edit-value content">
            {if $n|substr:0:3 eq 'im-'}
@@ -156,8 +156,8 @@
         <div class="clear"></div>
         </div>
         {if $form.$n.type eq 'file'}
-	      <div class="section"><div class="content">{$customFiles.$n.displayURL}</div></div>
-	      <div class="section"><div class="content">{$customFiles.$n.deleteURL}</div></div>
+	      <div class="section file_displayURL-section file_displayURL{$n}-section"><div class="content">{$customFiles.$n.displayURL}</div></div>
+	      <div class="section file_deleteURL-section file_deleteURL{$n}-section"><div class="content">{$customFiles.$n.deleteURL}</div></div>
         {/if} 
 	{/if}
 	{/if}
@@ -169,7 +169,6 @@
     {/if}
     </div>
     {/foreach}
-    </div>
 
     {if $isCaptcha && ( $mode eq 8 || $mode eq 4 || $mode eq 1 ) }
         {include file='CRM/common/ReCAPTCHA.tpl'}
