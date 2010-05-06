@@ -323,7 +323,7 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
 
         foreach ($names as $name => $classPath) {
             require_once(str_replace('_', DIRECTORY_SEPARATOR, $classPath) . '.php');
-            $action =& new $classPath( $this->_stateMachine );
+            $action = new $classPath( $this->_stateMachine );
             $this->addAction( $name, $action );
         }
         
@@ -567,6 +567,25 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         return $this->_skipRedirection;
     }
     
+
+   function setWord ($fileName=null) {
+        //Mark as a CSV file.
+        header('Content-Type: application/vnd.ms-word');
+
+        //Force a download and name the file using the current timestamp.
+        if (!$fileName)
+          $fileName = 'Contacts_' . $_SERVER['REQUEST_TIME'] . '.doc';
+        header("Content-Disposition: attachment; filename=Contacts_$fileName");
+   }
+   function setExcel ($fileName=null) {
+        //Mark as an excel file.
+        header('Content-Type: application/vnd.ms-excel');
+        //Force a download and name the file using the current timestamp.
+        if (!$fileName)
+          $fileName = 'Contacts_' . $_SERVER['REQUEST_TIME'] . '.xls';
+        header("Content-Disposition: attachment; filename=Contacts_$fileName");
+   }
+
     /**
      * setter for print 
      *
@@ -576,6 +595,10 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
      * @access public
      */
     function setPrint( $print  ) {
+      if ($print == "xls")
+        $this->setExcel();
+      else if ($print == "doc")
+        $this->setWord();
         $this->_print = $print;
     }
 
@@ -593,6 +616,8 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
         if ( $this->_print ) {
             if ( $this->_print == CRM_Core_Smarty::PRINT_PAGE ) {
                 return 'CRM/common/print.tpl';
+            } else if ($this->_print == 'xls' || $this->_print == 'doc') {
+                return 'CRM/Contact/Form/Task/Excel.tpl';
             } else {
                 return 'CRM/common/snippet.tpl';
             }
