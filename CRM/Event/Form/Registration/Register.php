@@ -115,7 +115,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     function getContactID () {
         $tempID    = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         // force to ignore the authenticated user
-        if ($tempID == 0) {
+        if ( $tempID === '0' ) {
           return;
         }
 
