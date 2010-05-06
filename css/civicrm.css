@@ -397,7 +397,7 @@ div.spacer,
     float: left;
     clear: left;
     width: 150px;
-    text-align: left;
+    text-align: right;
     vertical-align: top;
     padding: 5px 15px 5px 0px;
     font-size: .95em;
@@ -440,7 +440,7 @@ div.spacer,
 #crm-container div.crm-form-block span.labels {
     float: left;
     width: 15%;
-    text-align: left;
+    text-align: right;
 }
 
 #crm-container div.form-item span.fields,
@@ -2827,7 +2827,7 @@ tbody.scrollContent tr.alternateRow {
 #crm-container #customFields div.contact_panel td.label
 #crm-container table.crm-info-panel td.label {
     width:150px;
-    text-align: left;
+    text-align: right;
     color: #7a7a60;
 }
 
