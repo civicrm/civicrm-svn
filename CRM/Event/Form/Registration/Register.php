@@ -1126,8 +1126,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             while ( $participant->fetch( ) ) {
                 if ( array_key_exists ( $participant->status_id, $statusTypes ) ) {
                     if ( !$isAdditional ) {
-                        $status = ts("Oops. It looks like you are already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator.").ts("You can also <a href=''>register another participant</a>");
-//XD TODO FIX: how to set an url in the translation string ? Need to put the registration page + cid=0 to force a new registration
+                        $registerUrl = CRM_Utils_System::url( 'civicrm/event/register',
+                                                      "reset=1&id={$self->_values['event']['id']}&cid=0" );
+                        $status = ts("Oops. It looks like you are already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator.") 
+                                  . ' ' . ts('You can also <a href="%1">register another participant</a>.', array(1 => $registerUrl));
                         $session->setStatus( $status );
                         $url = CRM_Utils_System::url( 'civicrm/event/info',
                                                       "reset=1&id={$self->_values['event']['id']}&noFullMsg=true" );
@@ -1138,7 +1140,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     }
 
                     if ( $isAdditional ) {
-                        $status = ts("Oops. It looks like this participant is already registered for this event.If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator."); 
+                        $status = ts("Oops. It looks like this participant is already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator."); 
                         $session->setStatus( $status );
                         return $participant->id;
                     }

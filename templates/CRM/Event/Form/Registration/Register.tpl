@@ -43,8 +43,8 @@
 {/if}
 
 {if $contact_id}
-{* XD TODO : mix the url+translation *}
-<div class="messages status">Welcome {$display_name}. Not <a href="{crmURL p='civicrm/event/register' q="&cid=0&reset=1&id=`$event.id`"}" title="You can register another participant">{$display_name} you want to register</a>?</div>
+<div class="messages status">
+    Welcome {$display_name}. (<a href="{crmURL p='civicrm/event/register' q="&cid=0&reset=1&id=`$event.id`"}" title="{ts}Click here to register a different person for this event.{/ts}">{ts 1=$display_name}Not %1, or want to register a different person{/ts}</a>?)</div>
 {/if}
 {if $event.intro_text}
     <div id="intro_text" class="section intro_text-section">
