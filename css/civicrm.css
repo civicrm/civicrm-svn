@@ -1625,7 +1625,10 @@ table.campaign td,
 /* Styles for Actions Ribbon */
 #crm-container .crm-actions-ribbon { margin:0 0 8px 0; }
 
-#crm-container .crm-actions-ribbon ul {margin: 0px}
+#crm-container .crm-actions-ribbon ul {
+    margin: 0px;
+    padding: 0px;
+    }
 
 #crm-container .crm-actions-ribbon li {
     float:left;
