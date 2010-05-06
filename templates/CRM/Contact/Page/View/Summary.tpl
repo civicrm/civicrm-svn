@@ -70,13 +70,6 @@
                         </a>
                         </li>
                         {/if}
-
-                        
-                 		<li class="crm-contact-print">
-                 		<a class="print button" title="{ts}Printer-friendly view of this page.{/ts}" href='{crmURL p='civicrm/contact/view/print' q="reset=1&print=1&cid=$contactId"}'">
-                 		<span><div class="icon print-icon"></div>{ts}Print Summary{/ts}</span>
-                 		</a>
-                 		</li>
                         
                         {if $groupOrganizationUrl}
                         <li class="crm-contact-associated-groups">

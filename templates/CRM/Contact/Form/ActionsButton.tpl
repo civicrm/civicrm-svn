@@ -35,6 +35,11 @@
 			  
               <div class="crm-contact_print-list">
               <ul class="contact-print">
+                  <li class="crm-contact-print">
+                 		<a class="print" title="{ts}Printer-friendly view of this page.{/ts}" href='{crmURL p='civicrm/contact/view/print' q="reset=1&print=1&cid=$contactId"}'">
+                 		<span><div class="icon print-icon"></div>{ts}Print Summary{/ts}</span>
+                 		</a>
+                  </li>
                   <li><a class="vcard " title="{ts}vCard record for this contact.{/ts}" href="{crmURL p='civicrm/contact/view/vcard' q="reset=1&cid=$contactId"}"><span><div class="icon vcard-icon"></div>{ts}vCard{/ts}</span></li>
                  {if $dashboardURL }
                    <li class="crm-contact-dashboard">
