@@ -78,9 +78,9 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       // total amount
       $this->type("total_amount", "100");
 
-      // select payment instrument type
+      // select payment instrument type = Check and enter chk number
       $this->select("payment_instrument_id", "value=4");
-
+      $this->waitForElementPresent("check_number");
       $this->type("check_number", "check #1041");
 
       $this->type("trxn_id", "P20901X1" . rand(100, 10000));
@@ -131,11 +131,12 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       
       $this->webtestVerifyTabularData(
           array(
-              'Contribution Type'    => 'Donation',
-              'Contribution Status'  => 'Completed',
-              'Paid By'              => 'Check',
+              'Contribution Type'               => 'Donation',
+              'Contribution Status'             => 'Completed',
+              'Paid By'                         => 'Check',
               'How long have you been a donor?' => '4-6 years',
-              'Total Amount'         => '100.00'
+              'Total Amount'                    => '100.00',
+              'Check Number'      	            => 'check #1041'
           )
       );
   }
