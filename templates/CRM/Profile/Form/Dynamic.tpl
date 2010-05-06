@@ -54,14 +54,12 @@
            {if $groupHelpPost}
               <div class="messages help">{$groupHelpPost}</div>
            {/if}
-<!--
            {if $mode eq 8}
               </fieldset>
            {else}
               </fieldset>
               </div>
            {/if}
-           -->
         {/if}
 
         {if $mode eq 8}
@@ -167,6 +165,7 @@
     {/if}
 
     {/if}
+    </div>
     {/foreach}
 
     {if $isCaptcha && ( $mode eq 8 || $mode eq 4 || $mode eq 1 ) }
