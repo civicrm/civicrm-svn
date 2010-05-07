@@ -285,7 +285,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                 $mpDAO =& new CRM_Member_DAO_MembershipPayment();    
                 $mpDAO->membership_id   = $membership->id;
                 $mpDAO->contribution_id = $contribution->id;
+                CRM_Utils_Hook::pre( 'create', 'MembershipPayment', null, $mpDAO );
                 $mpDAO->save();
+                CRM_Utils_Hook::post( 'create', 'MembershipPayment', $mpDAO->id, $mpDAO );
             }
         }
         
@@ -1598,7 +1600,9 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
         while ( $membesrshipPayment->fetch() ) {
             require_once 'CRM/Contribute/BAO/Contribution.php';
             CRM_Contribute_BAO_Contribution::deleteContribution( $membesrshipPayment->contribution_id );
+            CRM_Utils_Hook::pre( 'delete', 'MembershipPayment', $membesrshipPayment->id, $membesrshipPayment );
             $membesrshipPayment->delete( ); 
+            CRM_Utils_Hook::post( 'delete', 'MembershipPayment', $membesrshipPayment->id, $membesrshipPayment );
         }
         return $membesrshipPayment;
     }
