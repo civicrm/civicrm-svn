@@ -71,15 +71,13 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       // Select role
       $this->select("role_id", "value=1");
 
-      // Choosing the Date.
-      // Please note that we don't want to put in fixed date, since
-      // we want this test to work in the future and not fail because
-      // of date being set in the past. Therefore, using helper webtestFillDate function.
-      $this->webtestFillDate('register_date');
+      // Choose Registration Date.
+      // Using helper webtestFillDate function.
+      $this->webtestFillDate('register_date', 'now');
+      $today = date('F jS, Y', strtotime('now'));
+      echo 'Today is ' . $today;
+      // May 5th, 2010
 
-      // Setting time.
-      // TODO TBD
-      
       // Select participant status
       $this->select("status_id", "value=1");
 
@@ -123,14 +121,30 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       // verify that the event registration values were properly saved by checking for label/value pairs on the view page 
       $this->webtestVerifyTabularData(
           array(
+              'Event'	         => 'Fall Fundraiser Dinner', 
               'Participant Role' => 'Attendee',
               'Status'           => 'Registered',
-              'Soup Selection'   => 'Chicken Combo',
+              'Event Source'	 => 'Event StandaloneAddTest Webtest', 
+              'Event Level' 	 => 'Single - $ 50.00',
+              'Soup Selection'   => 'Chicken Combo'
           )
       );
       
-      // check
+      // check contribution record as well
+      $this->click('link=View');
+      $this->waitForPageToLoad('30000');
 
+      $this->webtestVerifyTabularData(
+          array(
+              'From'                => $displayName,
+              'Contribution Type'   => 'Event Fee', 
+              'Total Amount' 	    => '$ 50.00',
+              'Received'            => $today, 
+              'Contribution Status' => 'Completed',
+              'Paid By'             => 'Check',
+              'Check Number' 	    => '1044',
+          )      
+      );
   }
 
 }
