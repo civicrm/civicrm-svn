@@ -111,7 +111,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("address_1_city", "Dumfries");
       $this->type("address_1_postal_code", "1234");
       $this->assertTrue($this->isTextPresent("- select - United States"));
-      $this->select("address_1_state_province_id", "label=Maryland");
+      $this->select("address_1_state_province_id", "value=1019");
       $this->type("address_1_geo_code_1", "1234");
       $this->type("address_1_geo_code_2", "5678");
       
@@ -121,7 +121,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("address_2_city", "Birmingham");
       $this->type("address_2_postal_code", "3456");
       $this->assertTrue($this->isTextPresent("- select - United States"));
-      $this->select("address_2_state_province_id", "label=Arizona");
+      $this->select("address_2_state_province_id", "value=1002");
       $this->type("address_2_geo_code_1", "2678");
       $this->type("address_2_geo_code_2", "1456");
       
@@ -130,8 +130,8 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("//form[@id='Contact']/div[2]/div[6]/div[1]/div");
       
       //select greeting/addressee options
-      $this->select("email_greeting_id", "label=Dear {contact.individual_prefix} {contact.first_name} {contact.last_name}");
-      $this->select("postal_greeting_id", "label=Dear {contact.individual_prefix} {contact.last_name}");
+      $this->select("email_greeting_id", "value=2");
+      $this->select("postal_greeting_id", "value=3");
       
       //Select preferred method for Privacy
       $this->click("privacy[do_not_trade]");
@@ -232,7 +232,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("address_1_city", "Birmingham");
       $this->type("address_1_postal_code", "35278");
       $this->assertTrue($this->isTextPresent("Country\n - select - United States"));
-      $this->select("address_1_state_province_id", "label=New Mexico");
+      $this->select("address_1_state_province_id", "value=1030");
       $this->type("address_1_geo_code_1", "5647");
       $this->type("address_1_geo_code_2", "2843");
       
@@ -241,7 +241,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("//form[@id='Contact']/div[2]/div[5]/div[1]/div");
       
       //select greeting/addressee options
-      $this->select("addressee_id", "label=Customized");
+      $this->select("addressee_id", "value=4");
       $this->type("addressee_custom", "Grant's home");
       
       //Select preferred method(s) of communication
@@ -253,7 +253,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("privacy[do_not_sms]");
       
       //select preferred language
-      $this->select("preferred_language", "label=French");
+      $this->select("preferred_language", "value=fr");
       
       
       //Notes section
@@ -273,5 +273,103 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Your Household contact record has been saved."));    
   }
   
+  function testOrganizationAdd( )
+  {
+      // This is the path where our testing install resides. 
+      // The rest of URL is defined in CiviSeleniumTestCase base class, in
+      // class attributes.
+      $this->open( $this->sboxPath );
+      
+      // Logging in. Remember to wait for page to load. In most cases,
+      // you can rely on 30000 as the value that allows your test to pass, however,
+      // sometimes your test might fail because of this. In such cases, it's better to pick one element
+      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
+      // page contents loaded and you can continue your test execution.
+      $this->webtestLogin( );
+      
+      // Go directly to the URL of the screen that you will be testing (New Household).
+      $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Organization");
+      
+      
+      //contact details section
+      //fill in Organization name
+      $this->click("organization_name");
+      $this->type("organization_name", "syntel tech");
+      
+      //fill in legal name
+      $this->type("legal_name", "syntel tech Ltd");
+      
+      //fill in nick name
+      $this->type("nick_name", "syntel");
+      
+      //fill in email
+      $this->type("email_1_email", "info@syntel.com");
+      
+      //fill in phone
+      $this->type("phone_1_phone", "222-7777");
+      $this->select("phone_1_phone_type_id", "value=2");
+      
+      //fill in IM
+      $this->type("im_1_name", "testGtalk");
+      $this->select("im_1_location_type_id", "value=4");
+      $this->select("im_1_provider_id", "value=4");
+      
+      //fill in openID
+      $this->select("openid_1_location_type_id", "value=5");
+      $this->type("openid_1_openid", "http://www.syntelOpenid.com");
+      
+      //fill in website url
+      $this->type("website_1_url", "http://syntelglobal.com");
+      
+      //fill in contact source
+      $this->type("contact_source", "syntel's source");
+      
+      //fill in external identifier
+      $this->type("external_identifier", "org_webtest");
+      
+      //check for duplicate contact
+      $this->click("_qf_Contact_refresh_dedupe");
+      $this->waitForPageToLoad("30000");
+      
+      //address section
+      $this->click("//form[@id='Contact']/div[2]/div[4]/div[1]");
+      $this->type("address_1_street_address", "928A Lincoln Way W");
+      $this->type("address_1_city", "Madison");
+      $this->type("address_1_postal_code", "68748");
+      $this->assertTrue($this->isTextPresent("Country\n - select - United States"));
+      $this->select("address_1_state_province_id", "value=1030");
+      $this->type("address_1_geo_code_1", "5644");
+      $this->type("address_1_geo_code_2", "3678");
+      
+      
+      //Communication Preferences section
+      $this->click("//form[@id='Contact']/div[2]/div[5]/div[1]/div");
+      
+      //Select preferred method(s) of communication
+      $this->click("preferred_communication_method[2]");
+      $this->click("preferred_communication_method[5]");
+      
+      //Select preferred method for Privacy
+      $this->click("privacy[do_not_sms]");
+      $this->click("privacy[do_not_mail]");
+      //select preferred language
+      $this->select("preferred_language", "value=de");
+      
+      //Notes section
+      $this->click("//form[@id='Contact']/div[2]/div[6]/div[1]");
+      $this->type("subject", "syntel global note");
+      $this->type("note", "This is a note for syntel global's contact webtest.");
+      
+      //Tags and Groups section
+      $this->click("//form[@id='Contact']/div[2]/div[7]/div[1]/div");
+      $this->click("group[3]");
+      $this->click("tag[1]");
+      
+      // Clicking save.
+      $this->click("_qf_Contact_upload_view");
+      $this->waitForPageToLoad("30000");
+      
+      $this->assertTrue($this->isTextPresent("Your Organization contact record has been saved."));    
+  }
 }
 ?>
