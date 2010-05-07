@@ -138,10 +138,14 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
 
       // Adding attachment
       // TODO TBD
-
+      
       // Scheduling follow-up.
-      // TODO TBD
-
+      $this->click( "css=.crm-activity-form-block-schedule_followup div.crm-accordion-header" );
+      $this->select( "followup_activity_type_id", "value=1" );
+      $this->type( "interval", "1" );
+      $this->select( "interval_unit","label=day(s)" ); 
+      $this->type( "followup_activity_subject","This is subject of schedule follow-up activity");
+      
       // Clicking save.
       $this->click("_qf_Activity_upload");
       $this->waitForPageToLoad("30000");
