@@ -83,6 +83,15 @@
      {* Hide export and print buttons in 'Add Members to Group' context. *}
      {if $context NEQ 'amtg'}
         {if $action eq 512}
+<div id="crm-contact-actions-wrapper">
+	<div id="crm-contact-actions-link"><span><div class="icon dropdown-icon"></div>Actions</span></div>
+		<div class="ac_results" id="crm-contact-actions-list">
+			<div class="crm-contact-actions-list-inner">
+			</div>
+		</div>
+	</div>
+<ul>
+   
           {$form._qf_Advanced_next_print.html}&nbsp; &nbsp;
         {elseif $action eq 8192}
           {$form._qf_Builder_next_print.html}&nbsp; &nbsp;
@@ -145,8 +154,8 @@ cj( function($) {
   });
 //  $('.crm-contact-actions-list-inner').append("<div></div>");
   $('#task').parents('form').prepend("<input type='hidden' name='task' id='jstask'/><input type='hidden' name='_qf_Basic_next_action' value='Go'");
-  $('#Go').remove();
-  $('#task').remove();
+//  $('#Go').remove();
+//  $('#task').remove();
 
   $('#CIVICRM_QFID_ts_all_4').attr("checked","true");
 
