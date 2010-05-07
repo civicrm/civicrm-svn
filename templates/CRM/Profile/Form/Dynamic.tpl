@@ -23,17 +23,16 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* Profile forms when embedded in CMS account create (mode=1) or edit (mode=8) pages *}
+{* Profile forms when embedded in CMS account create (mode=1) or cms account edit (mode=8) or civicrm/profile (mode=4) pages *}
 {if $context neq 'dialog'}
 <script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
 {/if}
 {if ! empty( $fields )}
-{* wrap in crm-container div so crm styles are used *}
+{* wrap in crm-container div so crm styles are used, except for CMS account create *}
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
     {if $mode eq 1 || $activeComponent neq "CiviCRM"}
         {include file="CRM/Form/body.tpl"}
     {/if}
-    
     {strip}
     {if $help_pre && $action neq 4}
     <div class="messages help">{$help_pre}</div>
@@ -53,17 +52,13 @@
            {if $groupHelpPost}
               <div class="messages help">{$groupHelpPost}</div>
            {/if}
-           {if $mode eq 8}
-              </fieldset>
-           {else}
+           {if $mode neq 8 && $mode neq 4}
               </fieldset>
               </div>
            {/if}
         {/if}
 
-        {if $mode eq 8}
-            <fieldset>
-        {else} 
+        {if $mode neq 8 && $mode neq 4}
               <div {if $context neq 'dialog'}id="profilewrap{$field.group_id}"{/if}>
               <fieldset><legend>{$field.groupTitle}</legend>
         {/if}
@@ -77,7 +72,7 @@
 
     {if $field.is_view eq 0}  
     {if $field.options_per_line}
-	<div class="section editrow_{$n}-section" id="editrow-{$n}">
+	<div class="section editrow_{$n}-section form-item" id="editrow-{$n}">
         <div class="label">{$form.$n.label}</div>
         <div class="content edit-value">
 	    {assign var="count" value="1"}
@@ -113,7 +108,7 @@
         <div class="clear"></div>
     </div>
 	{else}
-        <div id="editrow-{$n}" class="section editrow_{$n}-section">
+        <div id="editrow-{$n}" class="section editrow_{$n}-section form-item">
            <div class="label">{$form.$n.label}</div>
            <div class="edit-value content">
            {if $n|substr:0:3 eq 'im-'}
@@ -176,9 +171,7 @@
         <div class="messages help">{$field.groupHelpPost}</div>
     {/if}
 
-    {if $mode eq 8}
-        </fieldset>
-    {else}
+    {if $mode neq 8 && $mode neq 4}
         </fieldset>
         </div>
     {/if}
