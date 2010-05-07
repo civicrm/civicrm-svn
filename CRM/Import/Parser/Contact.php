@@ -724,7 +724,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $contactFields = CRM_Contact_DAO_Contact::import( );
                                         
                     //Relation on the basis of External Identifier.
-                    if ( !CRM_Utils_Array::value( 'id' , $params[$key] ) && isset ( $params[$key]['external_identifier'] ) ) {
+                    if ( !CRM_Utils_Array::value( 'id' , $params[$key] ) && !empty( $params[$key]['external_identifier'] ) ) {
                         $params[$key]['id'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
                                                                           $params[$key]['external_identifier'],'id',
                                                                           'external_identifier' );
