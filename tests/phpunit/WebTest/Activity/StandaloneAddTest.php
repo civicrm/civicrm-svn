@@ -119,11 +119,8 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // Please note that we don't want to put in fixed date, since
       // we want this test to work in the future and not fail because
       // of date being set in the past. Therefore, using helper webtestFillDate function.
-      $this->webtestFillDateTime('activity_date_time');
+      $this->webtestFillDateTime('activity_date_time','+1 month 11:10PM');
 
-      // Setting time.
-      // TODO TBD
-      
       // Setting duration.
       $this->type("duration", "30");
 
@@ -153,6 +150,20 @@ class WebTest_Activity_StandaloneAddTest extends CiviSeleniumTestCase {
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("Activity '$subject' has been saved."), "Status message didn't show up after saving!");
 
+      $this->click("css=#recently-viewed .Activity a");
+      $this->waitForPageToLoad("30000");
+
+      $expected =  array(
+                         'Subject'               => $subject,
+                         'Location'              => 'Some location needs to be put in this field.',
+                         'Status'                => 'Scheduled',
+                         'Duration'              => '30',
+                         'Details'               => 'Really brief details information.',
+                         'Priority'              => 'Urgent',
+                         );
+      foreach ($expected as $label => $value) {
+          $this->verifyText("xpath=//table//tr/td/label[text()=\"$label\"]/../../td[2]", preg_quote($value));
+      }
   }
 
 }
