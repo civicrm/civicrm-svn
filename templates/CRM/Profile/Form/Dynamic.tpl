@@ -28,8 +28,8 @@
 <script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
 {/if}
 {if ! empty( $fields )}
-{* wrap in crm-container div so crm styles are used, except for CMS account create *}
-<div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
+{* wrap in crm-container div so crm styles are used, except for CMS account create and CMS account edit *}
+<div id="{if $mode eq 4}crm-container{else}crm-profile-block{/if}" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
     {if $mode eq 1 || $activeComponent neq "CiviCRM"}
         {include file="CRM/Form/body.tpl"}
     {/if}
