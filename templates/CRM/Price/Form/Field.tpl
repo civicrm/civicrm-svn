@@ -132,7 +132,7 @@
     <div id="crm-submit-buttons" class="form-item">
     <dl class="html-adjust">
     {if $action ne 4}
-        <dt>&nbsp;</dt><dd>{$form.buttons.html}</dd>
+        <dt>&nbsp;</dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
     {else}
         <dt>&nbsp;</dt><dd>{$form.done.html}</dd>
     {/if} {* $action ne view *}

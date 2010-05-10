@@ -46,7 +46,7 @@
 {/if}
 <dl>
 	<dt></dt>
-	<dd class="html-adjust">{$form.buttons.html}</dd>
+	<dd class="html-adjust">{include file="CRM/common/formButtons.tpl"}</dd>
 </dl>
 </div>
 {/if}
