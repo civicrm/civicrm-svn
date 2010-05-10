@@ -71,6 +71,7 @@ html>body .innerbox
     z-index:9000;
     font-size: 12px;
     font-family: Tahoma, Verdana, Arial, Sans;
+    overflow: hidden;
 }
 
 li.menu-separator.active{
