@@ -138,7 +138,7 @@
                   {$form.$n.html}
                {/if}
                {if ($n eq 'gender') or ($field.html_type eq 'Radio' and $form.formName eq 'Edit' and $field.is_required neq 1)}
-                       <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
+                       &nbsp;<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
 		       {elseif $field.html_type eq 'Autocomplete-Select'}
                     {include file="CRM/Custom/Form/AutoComplete.tpl" element_name = $n }
 			   {/if}
