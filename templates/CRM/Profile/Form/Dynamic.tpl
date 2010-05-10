@@ -30,6 +30,7 @@
 {if ! empty( $fields )}
 {* wrap in crm-container div so crm styles are used, except for CMS account create and CMS account edit *}
 <div id="{if $mode eq 4}crm-container{else}crm-profile-block{/if}" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
+
     {if $mode eq 1 || $activeComponent neq "CiviCRM"}
         {include file="CRM/Form/body.tpl"}
     {/if}
@@ -97,9 +98,6 @@
           {/foreach}
         </tr>
         </table>
-        </div>
-        <div class="clear"></div>
-    </div>
 	{if $field.html_type eq 'Radio' and $form.formName eq 'Edit'}
            <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
 	{/if}
