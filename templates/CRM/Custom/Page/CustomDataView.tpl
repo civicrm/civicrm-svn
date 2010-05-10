@@ -88,15 +88,15 @@
 	    </tr>
 	</table>
 
+    {/foreach}
+{/foreach}
+    {literal}
 	<script type="text/javascript">
 	cj(function() {
         cj().crmaccordions(); 
         });
-
 	</script>
-    {/foreach}
-{/foreach}
-
+    {/literal}
 {*currently delete is available only for tab custom data*}
 {if $groupId}
 <script type="text/javascript">
