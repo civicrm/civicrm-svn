@@ -89,11 +89,10 @@
 	</table>
 
 	<script type="text/javascript">
-	{if $cd_edit.collapse_display eq 0 }
-		hide("{$cd_edit.name}_show_{$index}"); show("{$cd_edit.name}_{$index}");
-	{else}
-		show("{$cd_edit.name}_show_{$index}"); hide("{$cd_edit.name}_{$index}");
-	{/if}
+	cj(function() {
+        cj().crmaccordions(); 
+        });
+
 	</script>
     {/foreach}
 {/foreach}
