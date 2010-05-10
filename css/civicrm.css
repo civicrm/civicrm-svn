@@ -1065,7 +1065,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 
 
 #crm-container #search-status ul {
-    margin: 0em 0em 0em -2.0em;
+    margin: 0em;
 }
 
 #crm-container #search-status ul li, 
