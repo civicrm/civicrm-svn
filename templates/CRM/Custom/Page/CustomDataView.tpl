@@ -52,7 +52,7 @@
 	        {if $groupId and $cvID and $editCustomData}
 	        <div class="crm-submit-buttons">
 			<a href="javascript:showDelete( {$cvID}, '{$cd_edit.name}_{$index}', {$customGroupId}, {$contactId} );" class="button delete-button">
-			 <span><div class="icon delete-icon"></div> {ts}Delete{/ts}</span>
+			 <span><div class="icon delete-icon"></div> {ts}Delete Record{/ts}</span>
             </a>
             </div>
             {/if}
