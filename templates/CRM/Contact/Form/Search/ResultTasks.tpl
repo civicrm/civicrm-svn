@@ -83,13 +83,13 @@
      {* Hide export and print buttons in 'Add Members to Group' context. *}
      {if $context NEQ 'amtg'}
         {if $action eq 512}
-<div id="crm-contact-actions-wrapper">
+<!--<div id="crm-contact-actions-wrapper">
 	<div id="crm-contact-actions-link"><span><div class="icon dropdown-icon"></div>Actions</span></div>
 		<div class="ac_results" id="crm-contact-actions-list">
 			<div class="crm-contact-actions-list-inner">
 			</div>
 		</div>
-	</div>
+	</div>-->
 <ul>
    
           {$form._qf_Advanced_next_print.html}&nbsp; &nbsp;
@@ -100,13 +100,13 @@
           {$form._qf_Custom_next_print.html}&nbsp; &nbsp;
           *}
         {else}
-<div id="crm-contact-actions-wrapper">
+<!--<div id="crm-contact-actions-wrapper">
 	<div id="crm-contact-actions-link"><span><div class="icon dropdown-icon"></div>Actions</span></div>
 		<div class="ac_results" id="crm-contact-actions-list">
 			<div class="crm-contact-actions-list-inner">
 			</div>
 		</div>
-	</div>
+	</div>-->
 <ul>
    
 <li class="crm-contact-print crm-button">
