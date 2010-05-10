@@ -145,7 +145,7 @@ toggleTaskAction( );
 {/literal}
 
 {literal}
-<script>
+<!--<script>
 cj( function($) {
 //  var tasks=[];
   $('#task option').each(function(){
@@ -177,6 +177,6 @@ cj('#crm-contact-actions-link').click(function(event) {
 	event.stopPropagation();
 	});
 
-</script>
+</script>-->
 {/literal}
 
