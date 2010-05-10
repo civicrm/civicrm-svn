@@ -50,8 +50,8 @@
                 </div>
             <div class="crm-accordion-body">			   
 	        {if $groupId and $cvID and $editCustomData}
-			<a href="javascript:showDelete( {$cvID}, '{$cd_edit.name}_{$index}', {$customGroupId}, {$contactId} );">
-			 <div class="icon delete-icon"></div>
+			<a href="javascript:showDelete( {$cvID}, '{$cd_edit.name}_{$index}', {$customGroupId}, {$contactId} );" class="button delete-button">
+			 <span><div class="icon delete-icon"></div> {ts}Delete{/ts}</span>
             </a>
             {/if}
 			{foreach from=$cd_edit.fields item=element key=field_id}
