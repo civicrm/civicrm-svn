@@ -40,18 +40,20 @@
 	    {assign var="showEdit" value=0}
 	    <tr id="statusmessg_{$index}" class="hiddenElement">
 		<td><span class="success-status"></span></td>
-	    </tr>
-	    <tr>
-		<td id="{$cd_edit.name}_show_{$index}" class="section-hidden section-hidden-border">     
-		    <a href="#" onclick="hide('{$cd_edit.name}_show_{$index}'); show('{$cd_edit.name}_{$index}'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{$cd_edit.title}</label>{if $groupId and $cvID and $editCustomData}&nbsp; <a href="javascript:showDelete( {$cvID}, '{$cd_edit.name}_show_{$index}', {$customGroupId}, {$contactId} );"><img title="delete this record" src="{$config->resourceBase}i/delete.png" class="action-icon" alt="{ts}delete this record{/ts}" /></a>{/if}<br />
-		</td>
-	    </tr>
-	    
+	    </tr>	    
 	    <tr>
 		<td id="{$cd_edit.name}_{$index}" class="section-shown form-item">		    
-		    <fieldset>
-			<legend><a href="#" onclick="hide('{$cd_edit.name}_{$index}'); show('{$cd_edit.name}_show_{$index}'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{$cd_edit.title}{if $groupId and $cvID and $editCustomData}&nbsp;&nbsp;&nbsp;<a href="javascript:showDelete( {$cvID}, '{$cd_edit.name}_{$index}', {$customGroupId}, {$contactId} );"><img title="delete this record" src="{$config->resourceBase}i/delete.png" class="action-icon" alt="{ts}delete this record{/ts}" /></a>{/if}</legend>
-	
+		    <div class="crm-accordion-wrapper crm-accordion_title-accordion {if $cd_edit.collapse_display eq 0 }crm-accordion-open{else}crm-accordion-closed{/if}">
+             <div class="crm-accordion-header">
+              <div class="icon crm-accordion-pointer"></div> 
+		    {$cd_edit.title}
+                </div>
+            <div class="crm-accordion-body">			   
+	        {if $groupId and $cvID and $editCustomData}
+			<a href="javascript:showDelete( {$cvID}, '{$cd_edit.name}_{$index}', {$customGroupId}, {$contactId} );">
+			 <div class="icon delete-icon"></div>
+            </a>
+            {/if}
 			{foreach from=$cd_edit.fields item=element key=field_id}
 			    <table class="view-layout">
 				<tr>
@@ -78,7 +80,10 @@
 				</tr>
 			    </table>
 			{/foreach}
-		    </fieldset>
+			</div>
+			<div class="clear"></div>
+		    </div>
+		  </div>
 		</td>
 	    </tr>
 	</table>
