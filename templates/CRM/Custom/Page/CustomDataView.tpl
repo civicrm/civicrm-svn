@@ -25,7 +25,6 @@
 *}
 {* Custom Data view mode*}
 {assign var="showEdit" value=1}
-
 {foreach from=$viewCustomData item=customValues key=customGroupId}
     {foreach from=$customValues item=cd_edit key=cvID}
 	<table class="no-border">
@@ -51,8 +50,8 @@
             <div class="crm-accordion-body">			   
 	        {if $groupId and $cvID and $editCustomData}
 	        <div class="crm-submit-buttons">
-			<a href="javascript:showDelete( {$cvID}, '{$cd_edit.name}_{$index}', {$customGroupId}, {$contactId} );" class="button delete-button">
-			 <span><div class="icon delete-icon"></div> {ts}Delete Record{/ts}</span>
+			<a href="javascript:showDelete( {$cvID}, '{$cd_edit.name}_{$index}', {$customGroupId}, {$contactId} );" class="button delete-button" title="{ts 1=$cd_edit.title}Delete this %1 record{/ts}">
+			 <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
             </a>
             </div>
             {/if}
