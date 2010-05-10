@@ -56,7 +56,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       // Go directly to the URL of the screen that you will be testing (New Individual).
       $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Individual");
-      
+
       //contact details section
       //select prefix
       $this->click("prefix_id");
@@ -104,7 +104,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       
       //address section    
-      $this->click("//form[@id='Contact']/div[2]/div[5]/div[1]/div");
+      $this->click("addressBlock");
       
       //fill in address 1
       $this->type("address_1_street_address", "902C El Camino Way SW");
@@ -127,7 +127,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       
       //Communication Preferences section
-      $this->click("//form[@id='Contact']/div[2]/div[6]/div[1]/div");
+      $this->click("commPrefs");
       
       //select greeting/addressee options
       $this->select("email_greeting_id", "value=2");
@@ -146,19 +146,19 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       
       //Notes section
-      $this->click("//form[@id='Contact']/div[2]/div[7]/div[1]/div");
+      $this->click("notesBlock");
       $this->type("subject", "test note");
       $this->type("note", "this is a test note contact webtest");
       $this->assertTrue($this->isTextPresent("Subject\n Notes"));
       
       //Demographics section
-      $this->click("//form[@id='Contact']/div[2]/div[8]/div[1]/div");
+      $this->click("demographics");
       
       $this->click("CIVICRM_QFID_2_Male");
       $this->webtestFillDate('birth_date');
       
       //Tags and Groups section
-      $this->click("//form[@id='Contact']/div[2]/div[9]/div[1]/div");
+      $this->click("tagGroup");
       
       $this->click("group[2]");
       $this->click("tag[4]");
@@ -227,7 +227,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
       
       //address section
-      $this->click("//form[@id='Contact']/div[2]/div[4]/div[1]");
+      $this->click("addressBlock");
       $this->type("address_1_street_address", "938U Bay Rd E");
       $this->type("address_1_city", "Birmingham");
       $this->type("address_1_postal_code", "35278");
@@ -238,7 +238,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       
       //Communication Preferences section
-      $this->click("//form[@id='Contact']/div[2]/div[5]/div[1]/div");
+      $this->click("commPrefs");
       
       //select greeting/addressee options
       $this->select("addressee_id", "value=4");
@@ -257,12 +257,12 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       
       //Notes section
-      $this->click("//form[@id='Contact']/div[2]/div[6]/div[1]");
+      $this->click("notesBlock");
       $this->type("subject", "Grant's note");
       $this->type("note", "This is a household contact webtest note.");
       
       //Tags and Groups section
-      $this->click("//form[@id='Contact']/div[2]/div[7]/div[1]/div");
+      $this->click("tagGroup");
       $this->click("group[3]");
       $this->click("tag[1]");
       
@@ -287,7 +287,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
       
-      // Go directly to the URL of the screen that you will be testing (New Household).
+      // Go directly to the URL of the screen that you will be testing (New Organization).
       $this->open($this->sboxPath . "civicrm/contact/add&reset=1&ct=Organization");
       
       
@@ -332,7 +332,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
       
       //address section
-      $this->click("//form[@id='Contact']/div[2]/div[4]/div[1]");
+      $this->click("addressBlock");
       $this->type("address_1_street_address", "928A Lincoln Way W");
       $this->type("address_1_city", "Madison");
       $this->type("address_1_postal_code", "68748");
@@ -343,7 +343,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       
       //Communication Preferences section
-      $this->click("//form[@id='Contact']/div[2]/div[5]/div[1]/div");
+      $this->click("commPrefs");
       
       //Select preferred method(s) of communication
       $this->click("preferred_communication_method[2]");
@@ -356,12 +356,12 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->select("preferred_language", "value=de");
       
       //Notes section
-      $this->click("//form[@id='Contact']/div[2]/div[6]/div[1]");
+      $this->click("notesBlock");
       $this->type("subject", "syntel global note");
       $this->type("note", "This is a note for syntel global's contact webtest.");
       
       //Tags and Groups section
-      $this->click("//form[@id='Contact']/div[2]/div[7]/div[1]/div");
+      $this->click("tagGroup");
       $this->click("group[3]");
       $this->click("tag[1]");
       
