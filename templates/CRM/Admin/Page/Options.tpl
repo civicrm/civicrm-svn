@@ -65,6 +65,7 @@
    {include file="CRM/Admin/Form/Options.tpl"}
 {/if}	
 
+<div class="crm-content-block crm-block">
 {if $rows}
 <div id={$gName}>
         {strip}
@@ -150,3 +151,4 @@
         </dl>
     </div>    
 {/if}
+</div>
