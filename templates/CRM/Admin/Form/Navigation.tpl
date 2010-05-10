@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing CiviCRM Menu *}
-<div class="form-item">
+<div class="crm-block crm-form-block">
 <div class="crm-submit-buttons">
    {include file="CRM/common/formButtons.tpl"}
 </div>

@@ -29,7 +29,8 @@
     <div id="help">
         {ts}Customize the CiviCRM navigation menu bar for your users here.{/ts} {help id="id-navigation"}
     </div>
-    <div class="spacer"></div>
+
+<div class="crm-block crm-content-block">
     <div id="new-menu-item">
         <a href="{crmURL p="civicrm/admin/menu" q="action=add&reset=1"}" class="button" style="margin-left: 6px;"><span>&raquo; {ts}New Menu Item{/ts}</span></a>&nbsp;&nbsp;&nbsp;&nbsp;
         <span id="reset-menu" class="success-status" style="display:none">
@@ -40,6 +41,7 @@
     <div class="spacer"></div>
     <div id="navigation-tree" class="navigation-tree" style="height:auto; border-collapse:separate;"></div>
     <div class="spacer"></div>
+</div>
     {literal}
     <script type="text/javascript">
     cj(function () {
