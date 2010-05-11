@@ -25,24 +25,23 @@
 *}
 {if $groupCount == 0 and $mailingCount == 0}
   <div class="status">
-    <dl>
-      <dt><div class="icon inform-icon"></div></dt>
-      <dd>
+    <table class="form-layout">
+      <tr><div class="icon inform-icon"></div>
         {ts}To send a mailing, you must have a valid group of recipients - either at least one group that's a Mailing List or at least one previous mailing.{/ts}
-      </dd>
-    </dl>
+      </tr>
+    </table>
   </div>
 {else}
 <div class="crm-form-block">
 {include file="CRM/common/WizardHeader.tpl"}
 
 <div class="form-item">
-  <dl>
-    <dt>{$form.name.label}</dt><dd>{$form.name.html} {help id="mailing-name"}</dd>
+  <table class="form-layout">
+   <tr><td class="label">{$form.name.label}</td><td>{$form.name.html} {help id="mailing-name"}</td></tr>
     {if $context EQ 'search'}
     <dt>{$form.baseGroup.label}</dt><dd>{$form.baseGroup.html}</dd>
     {/if}	
-  </dl>
+  </table>
 
 
  <div id="id-additional" class="form-item">
@@ -74,9 +73,9 @@
 </div><!-- /.crm-accordion-wrapper -->
  </div>
 
- <dl>
- <dt></dt><dd>{$form.buttons.html}</dd>
- </dl>
+ <table>
+ <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
+ </table>
 </div>
 {literal}
 <script type="text/javascript">

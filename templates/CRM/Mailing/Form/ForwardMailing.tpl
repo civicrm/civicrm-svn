@@ -26,15 +26,16 @@
 <div class="form-item">
 <fieldset>
 <legend>{ts}Forward Mailing{/ts}</legend>
-<dt class="label">From</dt><dd>{$fromEmail}</dd>      
-<br />{ts}Please enter up to 5 email addresses to receive the mailing.{/ts}
-<dl>
-<dt class="label">{$form.email_0.label}</dt><dd>{$form.email_0.html}</dd>
-<dt class="label">{$form.email_1.label}</dt><dd>{$form.email_1.html}</dd>
-<dt class="label">{$form.email_2.label}</dt><dd>{$form.email_2.html}</dd>
-<dt class="label">{$form.email_3.label}</dt><dd>{$form.email_3.html}</dd>
-<dt class="label">{$form.email_4.label}</dt><dd>{$form.email_4.html}</dd>
-</dl>
+<table class="form-layout">
+<tr><td class="label" align="right">From</td><td>{$fromEmail}</td></tr>
+<tr><td colspan="2">{ts}Please enter up to 5 email addresses to receive the mailing.{/ts}</td></tr>
+<tr><td class="label" align="right">{$form.email_0.label}</td><td>{$form.email_0.html}</td></tr>
+<tr><td class="label" align="right">{$form.email_1.label}</td><td>{$form.email_1.html}</td></tr>
+<tr><td class="label" align="right">{$form.email_2.label}</td><td>{$form.email_2.html}</td></tr>
+<tr><td class="label" align="right">{$form.email_3.label}</td><td>{$form.email_3.html}</td></tr>
+<tr><td class="label" align="right">{$form.email_4.label}</td><td>{$form.email_4.html}</td></tr>
+
+</table>
 <div id="comment_show">
     <a href="#" class="button" onclick="hide('comment_show'); show('comment'); document.getElementById('forward_comment').focus(); return false;"><span>&raquo; {ts}Add Comment{/ts}</span></a>
 </div><div class="spacer"></div>
@@ -49,7 +50,9 @@
             </table>
         </div>
 </div> 
-<dt></dt><dd>{$form.buttons.html}</dd>
+<table class="form-layout">
+<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
+</table>
 </fieldset>
 </div>
 

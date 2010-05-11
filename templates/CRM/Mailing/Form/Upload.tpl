@@ -93,9 +93,9 @@
     </table> 
   </fieldset>
 
-  <dl>
-    <dt>&nbsp;</dt><dd>{$form.buttons.html}</dd>
-  </dl>
+  <table>
+    <tr><td></td><td>{$form.buttons.html}</td></tr>
+  </table>
 </div>
 </div>
 {* -- Javascript for showing/hiding the upload/compose options -- *}
