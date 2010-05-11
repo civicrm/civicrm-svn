@@ -141,3 +141,7 @@ INSERT INTO civicrm_state_province
 
 -- CRM-6159
 UPDATE civicrm_mailing_bounce_pattern SET pattern = 'over\\s?quota' WHERE pattern = 'overs?quota';
+
+-- CRM-6180
+UPDATE civicrm_state_province SET name = 'Durrës' WHERE name = 'Durrsës';
+UPDATE civicrm_state_province SET name = 'Korçë'  WHERE name = 'Korcë';
