@@ -22,10 +22,9 @@
     
     cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) input")
         .addClass("taglist_{/literal}{$tagset.parentID}{literal}")
-    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input)").addClass("crm-processed-input");
-    cj( ".taglist_{/literal}{$tagset.parentID}{literal}"  )
+    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) .taglist_{/literal}{$tagset.parentID}{literal}"  )
         .tokenInput( tagUrl, { prePopulate: entityTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processTags_{/literal}{$tagset.parentID}{literal}'});
-
+    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input)").addClass("crm-processed-input");    
     function processTags_{/literal}{$tagset.parentID}{literal}( action, id ) {
         var postUrl          = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
         var parentId         = "{/literal}{$tagset.parentID}{literal}";
