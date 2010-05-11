@@ -523,15 +523,21 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             CRM_Utils_Hook::buildAmount( 'event', $form, $form->_feeBlock );
             if ( $form->_action != CRM_Core_Action::UPDATE ) {
                 require_once 'CRM/Utils/Money.php';
+                $eventFeeBlockValues = array();
                 foreach ( $form->_feeBlock as $fee ) {
                     if ( is_array( $fee ) ) {
+                        $eventFeeBlockValues['amount_id_'.$fee['amount_id']] = $fee['value'];
                         $elements[] =& $form->createElement('radio', null, '',
                                                             CRM_Utils_Money::format( $fee['value'] ) . ' ' .
                                                             $fee['label'],
-                                                            $fee['amount_id'] );
+                                                            $fee['amount_id'],
+                                                            array( 'onClick' => "fillTotalAmount(".$fee['value'].")" ) 
+                                                            );
                     }
                 }
                 
+                $form->assign('eventFeeBlockValues', json_encode( $eventFeeBlockValues ) );
+ 
                 $form->_defaults['amount'] = CRM_Utils_Array::value('default_fee_id',$form->_values['event']);
                 $element =& $form->addGroup( $elements, 'amount', ts('Event Fee(s)'), '<br />' ); 
                 if ( isset( $form->_online ) && $form->_online ) {

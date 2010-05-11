@@ -304,5 +304,20 @@ function checkEmail( ) {
 {/literal}
 </script>
 {/if}
+{if $showFeeBlock && !$priceSet && $action neq 2}
+<script>
+{literal}
+     fillTotalAmount( );
+     
+     function fillTotalAmount( totalAmount ) {
+          if ( !totalAmount ) {
+     	      var eventFeeBlockValues = {/literal}{$eventFeeBlockValues}{literal};
+	      totalAmount = eval('eventFeeBlockValues.amount_id_'+{/literal}{$form.amount.value}{literal});
+	  }
+          cj('#total_amount').val( totalAmount );
+     }
+{/literal}
+</script>
+{/if}
 
 {* ADD mode if *}    
