@@ -244,6 +244,10 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         if ( $session->get( 'userID' ) == $page->_contactId ) {
             $page->assign( 'permission', 'edit' );
             $page->_permission = CRM_Core_Permission::EDIT;
+        // deleted contacts’ stuff should be (at best) only viewable
+        } elseif (CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $page->_contactId, 'is_deleted')) {
+            $page->assign('permission', 'view');
+            $page->_permission = CRM_Core_Permission::VIEW;
         } else if ( CRM_Contact_BAO_Contact_Permission::allow( $page->_contactId, CRM_Core_Permission::EDIT ) ) {
             $page->assign( 'permission', 'edit' );
             $page->_permission = CRM_Core_Permission::EDIT;            
