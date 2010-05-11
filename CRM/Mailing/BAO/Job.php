@@ -433,6 +433,8 @@ AND    civicrm_activity.source_record_id = %2";
     public static function cancel($mailingId) {
         $job = new CRM_Mailing_BAO_Job();
         $job->mailing_id = $mailingId;
+        // test mailing should not be included during Cancellation
+        $job->is_test    = 0;
         if ($job->find(true) and in_array($job->status, array('Scheduled', 'Running', 'Paused'))) {
             // fix MySQL dates...
             $job->scheduled_date = CRM_Utils_Date::isoToMysql($job->scheduled_date);
