@@ -382,6 +382,11 @@ INNER JOIN  civicrm_participant participant ON ( participant.id = payment.partic
             }
         }
 
+        // CRM-6184: if we’re moving relationships, update civicrm_contact.employer_id
+        if (is_array($tables) and in_array('civicrm_relationship', $tables)) {
+            $sqls[] = "UPDATE IGNORE civicrm_contact SET employer_id = $mainId WHERE employer_id = $otherId";
+        }
+
         // call the SQL queries in one transaction
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
