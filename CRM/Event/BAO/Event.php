@@ -182,7 +182,10 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         if ( !$id ) {
             return null;
         }
-        
+
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::pre( 'delete', 'Event', $id, CRM_Core_DAO::$_nullArray );
+
         require_once 'CRM/Core/BAO/CustomGroup.php';
         $extends   = array('event');
         $groupTree = CRM_Core_BAO_CustomGroup::getGroupDetail( null, null, $extends );
@@ -241,6 +244,8 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
             if ( ! is_null( $locBlockId ) ) {
                 self::deleteEventLocBlock( $locBlockId, $id );
             }
+
+            CRM_Utils_Hook::post( 'delete', 'Event', $id, $event );
             return $result;
         }
         
