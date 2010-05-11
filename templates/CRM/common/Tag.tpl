@@ -20,7 +20,11 @@
     {/literal}{/if}{literal}
     var hintText = "{/literal}{ts}Type in a partial or complete name of an existing tag.{/ts}{literal}";
     
-    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section input"  ).tokenInput( tagUrl, { prePopulate: entityTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processTags_{/literal}{$tagset.parentID}{literal}'});
+    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input) input")
+        .addClass("taglist_{/literal}{$tagset.parentID}{literal}")
+    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section:not(.crm-processed-input)").addClass("crm-processed-input");
+    cj( ".taglist_{/literal}{$tagset.parentID}{literal}"  )
+        .tokenInput( tagUrl, { prePopulate: entityTags, classes: tokenClass, hintText: hintText, ajaxCallbackFunction: 'processTags_{/literal}{$tagset.parentID}{literal}'});
 
     function processTags_{/literal}{$tagset.parentID}{literal}( action, id ) {
         var postUrl          = "{/literal}{crmURL p='civicrm/ajax/processTags' h=0}{literal}";
@@ -35,7 +39,7 @@
             function ( response ) {
                 // update hidden element
                 if ( response.id ) {
-                    var curVal   = cj( ".tag-{/literal}{$tagset.parentID}{literal}-section input" ).val( );
+                    var curVal   = cj( ".taglist_{/literal}{$tagset.parentID}{literal}" ).val( );
                     var valArray = curVal.split(',');
                     var setVal   = Array( );
                     if ( response.action == 'delete' ) {
@@ -50,7 +54,7 @@
                     }
                     
                     var actualValue = setVal.join( ',' );
-                    cj( ".tag-{/literal}{$tagset.parentID}{literal}-section input" ).val( actualValue );
+                    cj( ".taglist_{/literal}{$tagset.parentID}{literal}" ).val( actualValue );
                 }
             }, "json" );
     }
