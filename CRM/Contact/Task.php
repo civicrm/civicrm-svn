@@ -62,7 +62,9 @@ class CRM_Contact_Task {
         BATCH_UPDATE          =    17,
         ADD_EVENT             =    18,
         PRINT_FOR_CONTACTS    =    19,
-        EMAIL_UNHOLD          =    22;
+        EMAIL_UNHOLD          =    22,
+        RESTORE               =    23,
+        DELETE_PERMANENTLY    =    24;
 
 
 
@@ -139,6 +141,16 @@ class CRM_Contact_Task {
                                   22    => array( 'title'  => ts('Unhold Emails'),
                                                   'class'  => 'CRM_Contact_Form_Task_Unhold',
                                                   'result' => true ),
+                                  self::RESTORE => array(
+                                      'title'  => ts('Restore Contacts'),
+                                      'class'  => 'CRM_Contact_Form_Task_Delete',
+                                      'result' => false,
+                                  ),
+                                  self::DELETE_PERMANENTLY => array(
+                                      'title'  => ts('Delete Permanently'),
+                                      'class'  => 'CRM_Contact_Form_Task_Delete',
+                                      'result' => false,
+                                  ),
                                   );
             if( CRM_Contact_BAO_ContactType::isActive( 'Household' ) ) {
                 $label = CRM_Contact_BAO_ContactType::getLabel( 'Household' );
@@ -239,13 +251,22 @@ class CRM_Contact_Task {
      * of the user
      *
      * @param int $permission
+     * @param bool $deletedContacts  are these tasks for operating on deleted contacts?
      *
      * @return array set of tasks that are valid for the user
      * @access public
      */
-    static function &permissionedTaskTitles( $permission ) {
+    static function &permissionedTaskTitles($permission, $deletedContacts = false)
+    {
         $tasks = array( );
-        if ( $permission == CRM_Core_Permission::EDIT ) {
+        if ($deletedContacts) {
+            if (CRM_Core_Permission::check('access deleted contacts')) {
+                $tasks = array(
+                    self::RESTORE            => self::$_tasks[self::RESTORE           ]['title'],
+                    self::DELETE_PERMANENTLY => self::$_tasks[self::DELETE_PERMANENTLY]['title'],
+                );
+            }
+        } elseif ($permission == CRM_Core_Permission::EDIT) {
             $tasks = self::taskTitles( );
         } else {
             $tasks = array( 
