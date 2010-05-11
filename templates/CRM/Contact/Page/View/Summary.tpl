@@ -60,7 +60,7 @@
                         {/if}
                     
                     	{* Include the Actions button with dropdown if session has 'edit' permission *}
-                        {if $permission EQ 'edit'}
+                        {if $permission EQ 'edit' and !$isDeleted}
                         <li class="crm-contact-activity">
                             {include file="CRM/Contact/Form/ActionsButton.tpl"}
                         </li>
