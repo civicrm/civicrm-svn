@@ -138,3 +138,6 @@ INSERT INTO civicrm_state_province
 	( 'Lualaba', '18', 1050 ),
 	( 'Haut-Katanga', '19', 1050 ),
 	( 'Tanganyika', '20', 1050 );
+
+-- CRM-6159
+UPDATE civicrm_mailing_bounce_pattern SET pattern = 'over\\s?quota' WHERE pattern = 'overs?quota';

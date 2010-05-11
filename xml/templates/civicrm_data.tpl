@@ -895,7 +895,7 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'mailbox has exceeded the limit'),
     (@bounceTypeID, 'mailbox( exceeds allowed)? size'),
     (@bounceTypeID, 'no space left for this user'),
-    (@bounceTypeID, 'over\s?quota'),
+    (@bounceTypeID, 'over\\s?quota'),
     (@bounceTypeID, 'quota (for the mailbox )?has been exceeded'),
     (@bounceTypeID, 'quota (usage|violation|exceeded)'),
     (@bounceTypeID, 'recipient storage full'),
