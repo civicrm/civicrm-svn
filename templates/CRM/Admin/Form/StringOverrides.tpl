@@ -32,12 +32,15 @@
 	    <fieldset>
     	    <table>
 		<tr class="columnheader">
+		    <td>{ts}Enabled{/ts}</td>
 		    <td>{ts}Original{/ts}</td>
     		    <td>{ts}Replacement{/ts}</td>
     		    <td>{ts}Exact Match?{/ts}</td>
     		</tr>
 
  		{section name="numStrings" start=1 step=1 loop=$numStrings}
+			 {assign var='temp' value='enabled_'}
+       			 {assign var='enabledName'  value=$temp|cat:"`$smarty.section.numStrings.index`"}
 			 {assign var='temp' value='old_'}
 			 {assign var='oldName' value=$temp|cat:"`$smarty.section.numStrings.index`"}
        			 {assign var='temp' value='new_'}
@@ -45,6 +48,7 @@
        			 {assign var='temp' value='cb_'}
        			 {assign var='cbName'  value=$temp|cat:"`$smarty.section.numStrings.index`"}
 		<tr>
+		    <td class="even-row">{$form.$enabledName.html}</td>	
 		    <td class="even-row">{$form.$oldName.html}</td>
     		    <td class="even-row">{$form.$newName.html}</td>
  		    <td class="even-row">{$form.$cbName.html}</td>
