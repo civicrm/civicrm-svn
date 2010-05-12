@@ -29,7 +29,36 @@
 	<div id="crm-contact-actions-link"><span><div class="icon dropdown-icon"></div>Actions</span></div>
 		<div class="ac_results" id="crm-contact-actions-list">
 			<div class="crm-contact-actions-list-inner">
-			  <ul>
+			  <div class="crm-contact_activities-list">
+			  {include file="CRM/Activity/Form/ActivityLinks.tpl"}
+			  </div>
+			  
+              <div class="crm-contact_print-list">
+              <ul class="contact-print">
+                  <li class="crm-contact-print">
+                 		<a class="print" title="{ts}Printer-friendly view of this page.{/ts}" href='{crmURL p='civicrm/contact/view/print' q="reset=1&print=1&cid=$contactId"}'">
+                 		<span><div class="icon print-icon"></div>{ts}Print Summary{/ts}</span>
+                 		</a>
+                  </li>
+                  <li><a class="vcard " title="{ts}vCard record for this contact.{/ts}" href="{crmURL p='civicrm/contact/view/vcard' q="reset=1&cid=$contactId"}"><span><div class="icon vcard-icon"></div>{ts}vCard{/ts}</span></li>
+                 {if $dashboardURL }
+                   <li class="crm-contact-dashboard">
+                      <a href="{$dashboardURL}" class="dashboard " title="{ts}dashboard{/ts}">
+                       	<span><div class="icon dashboard-icon"></div>{ts}Contact Dashboard{/ts}</span>
+                       </a>
+                   </li>
+                 {/if}
+                 {if $userRecordUrl }
+                   <li class="crm-contact-user-record">
+                      <a href="{$userRecordUrl}" class="user-record " title="{ts}User Record{/ts}">
+                         <span><div class="icon user-record-icon"></div>{ts}User Record{/ts}</span>
+                      </a>
+                   </li>
+                 {/if}
+			  </ul>
+			  </div>
+			  <div class="crm-contact_actions-list">
+			  <ul class="contact-actions">
 			  	{foreach from=$actionsMenuList.moreActions item='row'}
 					{if $row.href}
 					<li class="crm-action-{$row.ref}">
@@ -37,16 +66,11 @@
 					</li>
 					{/if}
 				{/foreach}
-			
-				
-			  </ul>
-			  <div class="activities-block">
-			 	{ts}Add Activity:{/ts}
-			  {include file="CRM/Activity/Form/ActivityLinks.tpl"}
-			  </div>
+              </ul>
+              </div>
 			  
 			  
-			  
+			  <div class="clear"></div>
 			</div>
 		</div>
 	</div>

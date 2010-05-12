@@ -29,13 +29,13 @@
 	<td></td>
 	<td><span class="success-status">{ts}New contact has been created.{/ts}</span></td>
     </tr>
-    <tr>
-	<td class="label">{$form.contact.label}</td>
-	<td>{$form.contact.html}
-	    {if $form.profiles}
-		&nbsp;&nbsp;{ts}OR{/ts}&nbsp;&nbsp;{$form.profiles.html}<div id="contact-dialog" style="display:none;"></div>
-	    {/if}
-	</td>
+    <tr class="crm-new-contact-form-block-contact">
+    	<td class="label">{$form.contact.label}</td>
+    	<td>{$form.contact.html}
+    	    {if $form.profiles}
+    		&nbsp;&nbsp;{ts}OR{/ts}&nbsp;&nbsp;{$form.profiles.html}<div id="contact-dialog" style="display:none;"></div>
+    	    {/if}
+    	</td>
     </tr>
 {/if}
 {literal}
@@ -105,7 +105,7 @@
   }
   
   function addSingleClientOption ( ) {
-      var contactUrl = {/literal}"{crmURL p='civicrm/ajax/contactlist' q='context=newcontact' h=0 }"{literal};
+      var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=newcontact' h=0 }"{literal};
 
       cj('#contact').autocomplete( contactUrl, { 
           selectFirst : false, matchContains: true, minChars: 2

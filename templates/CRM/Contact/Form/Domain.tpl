@@ -25,7 +25,7 @@
 *}
 {* this template is used for viewing and editing Domain information (for system-generated emails CiviMail-related values) *}
 {if !($action eq 4)}
-   {$form.buttons.html}
+  {include file="CRM/common/formButtons.tpl"}
 {/if}
 <div class="form-item">
 <fieldset>
@@ -85,7 +85,7 @@
     {/if}
 </fieldset>
 {if !($action eq 4)}
-  {$form.buttons.html}
+  {include file="CRM/common/formButtons.tpl"}
 {/if}
 </div>
 

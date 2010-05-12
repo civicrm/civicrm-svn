@@ -170,14 +170,14 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         require_once 'CRM/Core/BAO/UFMatch.php';
         if ( $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ) ) {
             if ($config->userFramework == 'Drupal') {
-                $url = CRM_Utils_System::url( 'user/' . $uid );
+                $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
             } else if ( $config->userFramework == 'Joomla' ) {
-                $url = $config->userFrameworkBaseURL . 
+                $userRecordUrl = $config->userFrameworkBaseURL . 
                     'index2.php?option=com_users&view=user&task=edit&cid[]=' . $uid;
             } else {
-                $url = null;
+                $userRecordUrl = null;
             }
-            $this->assign( 'url', $url );
+            $this->assign( 'userRecordUrl', $userRecordUrl );
         }
     
         if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) ) {
@@ -244,6 +244,10 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         if ( $session->get( 'userID' ) == $page->_contactId ) {
             $page->assign( 'permission', 'edit' );
             $page->_permission = CRM_Core_Permission::EDIT;
+        // deleted contacts’ stuff should be (at best) only viewable
+        } elseif (CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $page->_contactId, 'is_deleted')) {
+            $page->assign('permission', 'view');
+            $page->_permission = CRM_Core_Permission::VIEW;
         } else if ( CRM_Contact_BAO_Contact_Permission::allow( $page->_contactId, CRM_Core_Permission::EDIT ) ) {
             $page->assign( 'permission', 'edit' );
             $page->_permission = CRM_Core_Permission::EDIT;            

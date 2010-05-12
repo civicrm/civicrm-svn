@@ -75,7 +75,116 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
     protected function tearDown()
     {
-//        $this->open( $this->settings->sandboxPATH . "civicrm/logout?reset=1");
+//        $this->open( $this->settings->sandboxPATH . "logout?reset=1");
+    }
+
+  /**
+   */
+    function webtestLogin( ) {
+        $this->type("edit-name", $this->settings->username);
+        $this->type("edit-pass", $this->settings->password);
+        $this->click("edit-submit");
+        $this->waitForPageToLoad("30000");      
+    }
+
+    /**
+     * Add a contact with the given first and last names and either a given email
+     * (when specified), a random email (when true) or no email (when unspecified or null).
+     *
+     * @param string $fname contact’s first name
+     * @param string $lname contact’s last name
+     * @param mixed  $email contact’s email (when string) or random email (when true) or no email (when null)
+     *
+     * @return mixed either a string with the (either generated or provided) email or null (if no email)
+     */
+
+    function webtestAddContact( $fname = 'Anthony', $lname = 'Anderson', $email = null ) {
+        $this->open($this->sboxPath . "civicrm/dashboard?reset=1");
+        $this->type("qa_first_name", $fname);
+        $this->type("qa_last_name", $lname);
+        if ($email === true) $email = substr(sha1(rand()), 0, 7) . '@example.org';
+        if ($email) $this->type("qa_email", $email);
+        $this->click("_qf_Contact_next");
+        $this->waitForPageToLoad("30000");        
+        return $email;
+    }
+
+  /**
+   */
+   function webtestFillAutocomplete( $sortName ) {
+      $this->typeKeys("contact", $sortName);
+      $this->waitForElementPresent("css=div.ac_results-inner li");
+      $this->click("css=div.ac_results-inner li");
+      $this->assertContains($sortName, $this->getValue("contact"), "autocomplete expected $sortName but didn’t find it in " . $this->getValue("contact"));
+   }
+
+   /*
+    * 1. By default, when no strtotime arg is specified, sets date to "now + 1 month"
+    * 2. Does not set time. For setting both date and time use webtestFillDateTime() method.
+    * 3. Examples of $strToTime arguments -
+    *        webtestFillDate('start_date',"now")
+    *        webtestFillDate('start_date',"10 September 2000")
+    *        webtestFillDate('start_date',"+1 day")
+    *        webtestFillDate('start_date',"+1 week")
+    *        webtestFillDate('start_date',"+1 week 2 days 4 hours 2 seconds")
+    *        webtestFillDate('start_date',"next Thursday")
+    *        webtestFillDate('start_date',"last Monday")
+    */
+   function webtestFillDate( $dateElement, $strToTimeArgs = null ) {
+       $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : "+1 month");
+
+       $year = date('Y', $timeStamp);
+       $mon  = date('n', $timeStamp) - 1; // -1 ensures month number is inline with calender widget's month
+       $day  = date('j', $timeStamp);
+
+       $this->click ($dateElement);
+       $this->select("css=div#ui-datepicker-div div.ui-datepicker-title select.ui-datepicker-month", "value=$mon");
+       $this->select("css=div#ui-datepicker-div div.ui-datepicker-title select.ui-datepicker-year", "value=$year");
+       $this->click ("link=$day");
+   }
+
+   // 1. set both date and time.
+   function webtestFillDateTime( $dateElement, $strToTimeArgs = null ) {
+       $this->webtestFillDate( $dateElement, $strToTimeArgs );
+
+       $timeStamp = strtotime($strToTimeArgs ? $strToTimeArgs : "+1 month");
+       $hour = date('h', $timeStamp);
+       $min  = date('i', $timeStamp);
+       $meri = date('A', $timeStamp);
+       
+       $this->type("{$dateElement}_time", "{$hour}:{$min}{$meri}");
+   }
+
+    /**
+     * Verify that given label/value pairs are in *sibling* td cells somewhere on the page.
+     *
+     * @param array $expected array of key/value pairs (like Status/Registered) to be checked
+     */
+    function webtestVerifyTabularData($expected)
+    {
+        foreach ($expected as $label => $value) {
+            $this->verifyText("xpath=//table//tr/td[text()=\"$label\"]/../td[2]", preg_quote($value));
+        }
+    }
+
+   /**
+    */
+    function webtestNewDialogContact( $fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4 ) {
+        // 4 - Individual profile
+        // 5 - Organization profile
+        // 6 - Household profile
+        $this->select("profiles", "value={$type}");
+
+        // create new contact using dialog
+        $this->waitForElementPresent("css=div#contact-dialog");
+        $this->waitForElementPresent("_qf_Edit_next");
+
+        $this->type("first_name", $fname);
+        $this->type("last_name",  $lname);
+        $this->click("_qf_Edit_next");
+
+        // Is new contact created?
+        $this->assertTrue($this->isTextPresent("New contact has been created."), "Status message didn't show up after saving!");
     }
 
     /** 

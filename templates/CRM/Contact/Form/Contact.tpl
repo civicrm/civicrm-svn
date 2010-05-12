@@ -40,14 +40,15 @@
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body" id="contactDetails">
     <div id="contactDetails">
-        {include file="CRM/Contact/Form/Edit/$contactType.tpl"}
-        <br/>
-        <table class="form-layout-compressed">
+        <div class="section contact_basic_information-section">
+            {include file="CRM/Contact/Form/Edit/$contactType.tpl"}
+        </div>
+        <table class="section contact_information-section form-layout-compressed">
             {foreach from=$blocks item="label" key="block"}
                {include file="CRM/Contact/Form/Edit/$block.tpl"}
             {/foreach}
 		</table>
-		<table class="form-layout-compressed">
+		<table class="section contact_source-section form-layout-compressed">
             <tr class="last-row">
               <td>{$form.contact_source.label}<br />
                   {$form.contact_source.html}
@@ -60,7 +61,7 @@
 			  {/if}
             </tr>            
         </table>
-	<table>
+	   <table class="image_URL-section">
 	    <tr>
 	      <td>{$form.image_URL.label}</td>
 	      <td>{$form.image_URL.html}
@@ -137,26 +138,6 @@ cj('a#expand').click( function( ){
     cj(this).html(message);
 });
 
-//current employer default setting
-var employerId = "{/literal}{$currentEmployer}{literal}";
-if ( employerId ) {
-    var dataUrl = "{/literal}{crmURL p='civicrm/ajax/contactlist' h=0 q="org=1&id=" }{literal}" + employerId ;
-    cj.ajax({ 
-        url     : dataUrl,   
-        async   : false,
-        success : function(html){
-            //fixme for showing address in div
-            htmlText = html.split( '|' , 2);
-            cj('input#current_employer').val(htmlText[0]);
-            cj('input#current_employer_id').val(htmlText[1]);
-        }
-    }); 
-}
-
-cj("input#current_employer").click( function( ) {
-    cj("input#current_employer_id").val('');
-});
-
 function showHideSignature( blockId ) {
     cj('#Email_Signature_' + blockId ).toggle( );   
 }
@@ -214,6 +195,12 @@ function removeDefaultCustomFields( ) {
 }
  
 </script>
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+
 {/literal}
 
 {* include common additional blocks tpl *}

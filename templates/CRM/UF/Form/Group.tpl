@@ -79,7 +79,7 @@
     {if $action ne 4}
         <dl>
             <dt></dt>
-            <dd><div id="crm-submit-buttons">{$form.buttons.html}</div></dd>
+            <dd><div id="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div></dd>
 
             <dt></dt>
             <dd></dd>
@@ -87,7 +87,7 @@
     {else}
         <div id="crm-submit-buttons">
             <dt></dt>
-            <dd>{$form.done.html}</dd>
+            <dd>{include file="CRM/common/formButtons.tpl"}</dd>
         </div>
     {/if} {* $action ne view *}
 </div>

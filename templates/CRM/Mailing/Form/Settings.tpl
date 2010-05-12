@@ -31,44 +31,49 @@
 {include file="CRM/Mailing/Form/Count.tpl"}
 <div class="form-item">
   <fieldset><legend>{ts}Tracking{/ts}</legend> 
-    <dl>
-    <dt class="label">{$form.url_tracking.label}</dt>
-        <dd>{$form.url_tracking.html}
+    <table class="form-layout"><tr>
+    <td class="label">{$form.url_tracking.label}</td>
+        <td>{$form.url_tracking.html}
             <span class="description">{ts}Track the number of times recipients click each link in this mailing. NOTE: When this feature is enabled, all links in the message body will be automaticallly re-written to route through your CiviCRM server prior to redirecting to the target page.{/ts}</span>
-        </dd>
-    <dt class="label">{$form.open_tracking.label}</dt>
-        <dd>{$form.open_tracking.html}
+        </td></tr><tr>
+    <td class="label">{$form.open_tracking.label}</td>
+        <td>{$form.open_tracking.html}
             <span class="description">{ts}Track the number of times recipients open this mailing in their email software.{/ts}</span>
-        </dd>
-    </dl>
+        </td></tr>
+    </table>
   </fieldset>
   <fieldset><legend>{ts}Responding{/ts}</legend> 
-    <dl>
-        <dt class="label ">{$form.forward_replies.label}</dt>
-            <dd>{$form.forward_replies.html}
+    <table class="form-layout">
+        <tr><td class="label ">{$form.forward_replies.label}</td>
+            <td>{$form.forward_replies.html}
                 <span class="description">{ts}If a recipient replies to this mailing, forward the reply to the FROM Email address specified for the mailing.{/ts}</span>
-            </dd>
-    <dt class="label">{$form.auto_responder.label}</dt>
-        <dd>{$form.auto_responder.html} &nbsp; {$form.reply_id.html}
+            </td>
+	</tr>
+    <tr><td class="label">{$form.auto_responder.label}</td>
+        <td>{$form.auto_responder.html} &nbsp; {$form.reply_id.html}
             <span class="description">{ts}If a recipient replies to this mailing, send an automated reply using the selected message.{/ts}</span>
-        </dd>
-    <dt class="label">{$form.unsubscribe_id.label}</dt>
-        <dd>{$form.unsubscribe_id.html}
+        </td>
+    </tr>
+    <tr><td class="label">{$form.unsubscribe_id.label}</td>
+        <td>{$form.unsubscribe_id.html}
             <span class="description">{ts}Select the automated message to be sent when a recipient unsubscribes from this mailing.{/ts}</span>
-        </dd>
-    <dt class="label">{$form.resubscribe_id.label}</dt>
-        <dd>{$form.resubscribe_id.html}
+        </td>
+    <tr>
+    <tr><td class="label">{$form.resubscribe_id.label}</td>
+        <td>{$form.resubscribe_id.html}
             <span class="description">{ts}Select the automated message to be sent when a recipient resubscribes to this mailing.{/ts}</span>
-        </dd>
-    <dt class="label ">{$form.optout_id.label}</dt>
-        <dd>{$form.optout_id.html}
+        </td>
+    </tr>
+    <tr><td class="label ">{$form.optout_id.label}</td>
+        <td>{$form.optout_id.html}
             <span class="description">{ts}Select the automated message to be sent when a recipient opts out of all mailings from your site.{/ts}</span>
-        </dd>
-   </dl>
+        </td>
+    </tr>
+   </table>
   </fieldset>
-  <dl>
-    <dt>&nbsp;</dt><dd>{$form.buttons.html}</dd>
-  </dl>
+  <table>
+    <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
+  </table>
 </div>
 
 {* include jscript to warn if unsaved form field changes *}

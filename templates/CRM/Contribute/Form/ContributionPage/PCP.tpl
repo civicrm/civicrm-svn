@@ -82,7 +82,7 @@
 <div id="crm-submit-buttons">
 <dl>
 	<dt>&nbsp;</dt>
-	<dd>{$form.buttons.html}</dd>
+	<dd>{include file="CRM/common/formButtons.tpl"}</dd>
 </dl>
 </div>
 </fieldset>

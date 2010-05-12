@@ -165,7 +165,7 @@ function loadPanes( id ) {
 {/if} {* not delete mode if*}   
 </div> 
 <br />
-<div class="crm-submit-buttons">{$form.buttons.html}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
      {literal}
      <script type="text/javascript">
 

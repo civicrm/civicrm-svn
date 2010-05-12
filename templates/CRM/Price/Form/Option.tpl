@@ -50,7 +50,7 @@
     
     <div id="crm-submit-buttons" class="form-item">
     <dl>
-        <dt>&nbsp;</dt><dd>{$form.buttons.html}</dd>
+        <dt>&nbsp;</dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
     </dl>
     </div>
 

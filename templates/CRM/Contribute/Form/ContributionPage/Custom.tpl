@@ -50,7 +50,7 @@
     </dl>
 {/if}
     <div id="crm-submit-buttons">
-        <dl><dt></dt><dd>{$form.buttons.html}</dd></dl>  
+        <dl><dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd></dl>  
     </div>
     </fieldset>
 </div>

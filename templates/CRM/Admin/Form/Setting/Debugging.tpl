@@ -39,7 +39,7 @@
             <dt>&nbsp;</dt><dd class="description">{ts}Enter the path and filename for a custom Smarty template if you want to define your own screen for displaying fatal errors.{/ts}</dd>
             <dt>{$form.fatalErrorHandler.label}</dt><dd>{$form.fatalErrorHandler.html}</dd>
             <dt>&nbsp;</dt><dd class="description">{ts}Enter the path and class for a custom PHP error-handling function if you want to override built-in CiviCRM error handling for your site.{/ts}</dd>
-            <dt></dt><dd>{$form.buttons.html}</dd>
+            <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
          </dl>
    
 <div class="spacer"></div>

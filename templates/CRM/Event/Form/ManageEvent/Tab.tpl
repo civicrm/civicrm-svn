@@ -23,4 +23,5 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{help id="id-configure-events"}
 {include file="CRM/common/TabHeader.tpl"}

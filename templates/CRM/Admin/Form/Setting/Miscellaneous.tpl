@@ -75,7 +75,7 @@
         </tr>
         <tr>
             <td></td>
-            <td>{$form.buttons.html}</td>
+            <td>{include file="CRM/common/formButtons.tpl"}</td>
         </tr>
     </table>
 </fieldset>

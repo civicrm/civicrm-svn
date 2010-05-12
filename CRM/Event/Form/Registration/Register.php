@@ -111,6 +111,29 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         
     }
     
+
+    function getContactID () {
+        $tempID    = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
+        // force to ignore the authenticated user
+        if ( $tempID === '0' ) {
+          return;
+        }
+
+        //check if this is a checksum authentication
+        $userChecksum = CRM_Utils_Request::retrieve( 'cs', 'String', $this );
+        if ($userChecksum) {
+          //check for anonymous user.
+          require_once 'CRM/Contact/BAO/Contact/Utils.php';
+          $validUser = CRM_Contact_BAO_Contact_Utils::validChecksum( $tempID, $userChecksum );
+          if ($validUser)
+            return  $tempID;
+        }
+
+        // check if the user is registered and we have a contact ID
+        $session = CRM_Core_Session::singleton( );
+        return $session->get( 'userID' ); 
+    }
+
     /**
      * This function sets the default values for the form. For edit/view mode
      * the default values are retrieved from the database
@@ -120,9 +143,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
      */
     function setDefaultValues( ) 
     {  
-        // check if the user is registered and we have a contact ID
-        $session = CRM_Core_Session::singleton( );
-        $contactID = $session->get( 'userID' ); 
+ 
+        $contactID = $this->getContactID();
         if ( $contactID ) {
             $options = array( );
             $fields = array( );
@@ -272,6 +294,14 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
 
     public function buildQuickForm( ) 
     {  
+        $contactID = $this->getContactID();
+        if ( $contactID ) {
+            require_once "CRM/Contact/BAO/Contact.php";
+            $name= CRM_Contact_BAO_Contact::displayName( $contactID  );
+            $this->assign( 'display_name', $name );
+            $this->assign( 'contact_id', $contactID );
+        }
+
         $config = CRM_Core_Config::singleton( );
         $this->add('hidden','scriptFee',null);
         $this->add('hidden','scriptArray',null);
@@ -389,9 +419,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         $this->assign( 'buildExpressPayBlock', $buildExpressPayBlock );
         $this->assign( 'showHidePaymentInformation', $showHidePaymentInformation );
         
-        $session = CRM_Core_Session::singleton( );
-        $userID = $session->get( 'userID' );
-        
+        $userID = $this->getContactID();
+       
         if ( ! $userID ) {
             $createCMSUser = false;
             if ( $this->_values['custom_pre_id'] ) {
@@ -494,15 +523,21 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             CRM_Utils_Hook::buildAmount( 'event', $form, $form->_feeBlock );
             if ( $form->_action != CRM_Core_Action::UPDATE ) {
                 require_once 'CRM/Utils/Money.php';
+                $eventFeeBlockValues = array();
                 foreach ( $form->_feeBlock as $fee ) {
                     if ( is_array( $fee ) ) {
+                        $eventFeeBlockValues['amount_id_'.$fee['amount_id']] = $fee['value'];
                         $elements[] =& $form->createElement('radio', null, '',
                                                             CRM_Utils_Money::format( $fee['value'] ) . ' ' .
                                                             $fee['label'],
-                                                            $fee['amount_id'] );
+                                                            $fee['amount_id'],
+                                                            array( 'onClick' => "fillTotalAmount(".$fee['value'].")" ) 
+                                                            );
                     }
                 }
                 
+                $form->assign('eventFeeBlockValues', json_encode( $eventFeeBlockValues ) );
+ 
                 $form->_defaults['amount'] = CRM_Utils_Array::value('default_fee_id',$form->_values['event']);
                 $element =& $form->addGroup( $elements, 'amount', ts('Event Fee(s)'), '<br />' ); 
                 if ( isset( $form->_online ) && $form->_online ) {
@@ -603,7 +638,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     $totalParticipants += $values['participant_count'];
                 }
                 
-                if ( $remainingParticipants <  $totalParticipants ) {
+                if ( $remainingParticipants && ( $remainingParticipants <  $totalParticipants ) ) {
                     $errors['_qf_default'] = ts("Only %1 Registrations available.", array( 1 => $remainingParticipants ) );
                 }
             }
@@ -886,7 +921,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             }
         } else {
             $session = CRM_Core_Session::singleton( );
-            $contactID = $session->get( 'userID' );
+            $contactID = $this->getContactID();
             $params['description'] = ts( 'Online Event Registration' ) . ' ' . $this->_values['event']['title'];
             
             $this->_params                = array();
@@ -920,7 +955,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     public function processRegistration( $params, $contactID = null ) 
     {
         $session = CRM_Core_Session::singleton( );
-        $contactID = $session->get( 'userID' );
+        $contactID = $this->getContactID( );
         $this->_participantInfo   = array();
         
         // CRM-4320, lets build array of cancelled additional participant ids 
@@ -959,7 +994,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 // we dont store in userID in case the user is doing multiple
                 // transactions etc
                 // for things like tell a friend
-                if ( ! $session->get( 'userID' ) && CRM_Utils_Array::value( 'is_primary', $value ) ) {
+                if ( ! $this->getContactID( ) && CRM_Utils_Array::value( 'is_primary', $value ) ) {
                     $session->set( 'transaction.userID', $contactID );
                 }
                 
@@ -1068,7 +1103,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         $contactID = null;
         $session = CRM_Core_Session::singleton( );
         if( ! $isAdditional ) {
-            $contactID = $session->get( 'userID' );
+            $contactID = CRM_Event_Form_Registration_Register::getContactID( );
         }
 
         if ( ! $contactID &&
@@ -1097,8 +1132,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             while ( $participant->fetch( ) ) {
                 if ( array_key_exists ( $participant->status_id, $statusTypes ) ) {
                     if ( !$isAdditional ) {
-                        $status = ts("Oops. It looks like you are already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator.");
-
+                        $registerUrl = CRM_Utils_System::url( 'civicrm/event/register',
+                                                      "reset=1&id={$self->_values['event']['id']}&cid=0" );
+                        $status = ts("Oops. It looks like you are already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator.") 
+                                  . ' ' . ts('You can also <a href="%1">register another participant</a>.', array(1 => $registerUrl));
                         $session->setStatus( $status );
                         $url = CRM_Utils_System::url( 'civicrm/event/info',
                                                       "reset=1&id={$self->_values['event']['id']}&noFullMsg=true" );
@@ -1109,7 +1146,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     }
 
                     if ( $isAdditional ) {
-                        $status = ts("Oops. It looks like this participant is already registered for this event.If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator."); 
+                        $status = ts("Oops. It looks like this participant is already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator."); 
                         $session->setStatus( $status );
                         return $participant->id;
                     }

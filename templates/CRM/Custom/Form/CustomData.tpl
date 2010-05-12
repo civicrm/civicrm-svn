@@ -40,7 +40,7 @@
     {/if}
 {else}
 {foreach from=$groupTree item=cd_edit key=group_id}    
- <div id="{$cd_edit.name}" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+ <div id="{$cd_edit.name}" class="crm-accordion-wrapper crm-accordion_title-accordion {if $cd_edit.collapse_display}crm-accordion-closed{else}crm-accordion-open{/if}">
   <div class="crm-accordion-header">
    <div class="icon crm-accordion-pointer"></div>
     {$cd_edit.title}
@@ -64,4 +64,11 @@
     </div>
     <div id="custom_group_{$group_id}_{$cgCount}"></div>
 {/foreach}
+    <script type="text/javascript">
+    {literal}
+        cj(function() {
+           cj().crmaccordions(); 
+        });        
+    {/literal}
+    </script>
 {/if}

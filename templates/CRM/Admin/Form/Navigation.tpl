@@ -24,9 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing CiviCRM Menu *}
-<div class="form-item">
+<div class="crm-block crm-form-block">
 <div class="crm-submit-buttons">
-    {$form.buttons.html}
+   {include file="CRM/common/formButtons.tpl"}
 </div>
 <fieldset><legend>{if $action eq 1}{ts}New Menu{/ts}{elseif $action eq 2}{ts}Edit Menu{/ts}{else}{ts}Delete Menu{/ts}{/if}</legend>
 <table class="form-layout-compressed">
@@ -40,6 +40,6 @@
 </table>   
 </fieldset>
 <div class="crm-submit-buttons">
-    {$form.buttons.html}
+   {include file="CRM/common/formButtons.tpl"}
 </div>
 </div>

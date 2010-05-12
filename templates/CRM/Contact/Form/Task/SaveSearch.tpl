@@ -23,9 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class='spacer'></div>
-<fieldset>
-    <legend>{ts}Smart Group{/ts}</legend>
+<div class="crm-form-block crm-block crm-create_smart_group-block">
+<h3>{ts}Smart Group{/ts}</h3>
     {if $qill[0]}
         <div id="search-status">
             <ul>
@@ -46,4 +45,4 @@
             <dt></dt><dd>{$form.buttons.html}</dd>
         </dl>
     </div>
-</fieldset>
+</div>

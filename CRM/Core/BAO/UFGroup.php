@@ -939,12 +939,11 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                         
                         foreach ( $selectedOptions as $key => $multiOption ) {
                             if ( $multiOption ) {
-                                $eachOption = $valSeperator.$multiOption.$valSeperator;
                                 $url[] =  CRM_Utils_System::url( 'civicrm/profile',
                                                                  'reset=1&force=1&gid=' . $field['group_id'] .'&'. 
                                                                  urlencode( $fieldName ) .
                                                                  '=' .
-                                                                 urlencode( $eachOption ) );
+                                                                 urlencode( $multiOption ) );
                             }
                         }
                     } else {

@@ -171,7 +171,7 @@
       </div>
 	
       <div id="crm-submit-buttons">
-        <dl><dt></dt><dd> {$form.buttons.html}<br></dd></dl>
+        <dl><dt></dt><dd> {include file="CRM/common/formButtons.tpl"}<br></dd></dl>
       </div>
     </fieldset>
 </div>

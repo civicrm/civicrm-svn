@@ -175,6 +175,7 @@ class CRM_Core_I18n
         }
 
         // do all wildcard translations first
+        require_once 'CRM/Utils/Array.php';
         $config =& CRM_Core_Config::singleton( );
         $stringTable = CRM_Utils_Array::value( $config->lcMessages,
                                                $config->localeCustomStrings );

@@ -90,11 +90,11 @@ SELECT civicrm_membership.id                 as membership_id,
        civicrm_membership.end_date           as end_date,
        civicrm_membership.source             as source,
        civicrm_contact.id                    as contact_id,
-       civicrm_contact.is_deceased           as is_deceased
+       civicrm_contact.is_deceased           as is_deceased,
+       civicrm_membership.owner_membership_id as owner_membership_id
 FROM   civicrm_membership, civicrm_contact
 WHERE  civicrm_membership.contact_id = civicrm_contact.id
 AND    civicrm_membership.is_test = 0
-AND    ( civicrm_membership.owner_membership_id IS NULL OR civicrm_membership.owner_membership_id = 0 )
 ";
         $params = array( );
         $dao =& CRM_Core_DAO::executeQuery( $query, $params );
@@ -162,6 +162,10 @@ AND    ( civicrm_membership.owner_membership_id IS NULL OR civicrm_membership.ow
                 }
                 continue;
             }
+            
+            //we fetch related, since we need to check for deceased 
+            //now further processing is handle w/ main membership record. 
+            if ( $dao->owner_membership_id ) continue;
             
             //update membership records where status is NOT - Pending OR Cancelled.
             //as well as membership is not override.

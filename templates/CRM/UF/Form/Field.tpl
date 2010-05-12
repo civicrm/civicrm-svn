@@ -29,9 +29,9 @@
     <div id="crm-submit-buttons-top" class="form-item"> 
     <dl> 
     {if $action ne 4} 
-        <dt>&nbsp;</dt><dd>&nbsp;{$form.buttons.html}</dd> 
+        <dt>&nbsp;</dt><dd>&nbsp;{include file="CRM/common/formButtons.tpl"}</dd> 
     {else} 
-        <dt>&nbsp;</dt><dd>&nbsp;{$form.done.html}</dd> 
+        <dt>&nbsp;</dt><dd>&nbsp;{include file="CRM/common/formButtons.tpl"}</dd> 
     {/if} {* $action ne view *} 
     </dl> 
     </div>
@@ -97,11 +97,11 @@
     <dl>
     {if $action ne 4}
     
-        <dt>&nbsp;</dt><dd>&nbsp;{$form.buttons.html}</dd>
+        <dt>&nbsp;</dt><dd>&nbsp;{include file="CRM/common/formButtons.tpl"}</dd>
     
     {else}
     
-        <dt>&nbsp;</dt><dd>&nbsp;{$form.done.html}</dd>
+        <dt>&nbsp;</dt><dd>&nbsp;{include file="CRM/common/formButtons.tpl"}</dd>
     
     {/if} {* $action ne view *}
     </dl>

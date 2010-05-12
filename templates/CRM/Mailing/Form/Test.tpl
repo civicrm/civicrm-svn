@@ -34,13 +34,16 @@
 <div class="form-item">
 <fieldset>
   <legend>Test Mailing</legend>
-  <dl>
-    <dt class="label">{$form.test_email.label}</dt><dd>{$form.test_email.html} {ts}(filled with your contact's token values){/ts}</dd>
-    <dt class="label">{$form.test_group.label}</dt><dd>{$form.test_group.html}</dd>
-    <dt></dt><dd>{$form.sendtest.html}</dd>  
-  </dl>
+  <table class="form-layout">
+    <tr><td class="label">{$form.test_email.label}</td><td>{$form.test_email.html} {ts}(filled with your contact's token values){/ts}</td></tr>
+    <tr><td class="label">{$form.test_group.label}</td><td>{$form.test_group.html}</td></tr>
+    <tr><td></td><td>{$form.sendtest.html}</td>  
+  </table>
 </fieldset>
-    <dt></dt><dd>{$form.buttons.html}</dd>
+
+<table>
+    <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
+</table>
 
 <div class="section-hidden section-hidden-border" id="previewMailing_show">
   <a href="#" onclick="hide('previewMailing_show'); show('previewMailing'); document.getElementById('previewMailing').style.visibility = 'visible'; return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Preview Mailing{/ts}</label><br />
@@ -49,20 +52,22 @@
 <div id="previewMailing" style="visibility: hidden;">
   <fieldset>
     <legend><a href="#" onclick="hide('previewMailing'); show('previewMailing_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Preview Mailing{/ts}</legend>
-    <dl>
-      <dt class="label">{ts}Subject:{/ts}</dt><dd>{$subject}</dd></dt>
+    <table class="form-layout">
+      <tr><td class="label">{ts}Subject:{/ts}</td><td>{$subject}</td></tr>
 {if $preview.attachment}
-      <dt class="label">{ts}Attachment(s):{/ts}</dt><dd>{$preview.attachment}</dd></dt>
+      <tr><td class="label">{ts}Attachment(s):{/ts}</td><td>{$preview.attachment}</td></tr>
 {/if}
       {if $preview.text_link}
-      <dt class="label">{ts}Text Version:{/ts}</dt><dd><iframe height="300" src="{$preview.text_link}" width="80%"><a href="{$preview.text_link}" onclick="window.open(this.href); return false;">{ts}Text Version{/ts}</a></iframe></dd></dt>
+      <tr><td class="label">{ts}Text Version:{/ts}</td><td><iframe height="300" src="{$preview.text_link}" width="80%"><a href="{$preview.text_link}" onclick="window.open(this.href); return false;">{ts}Text Version{/ts}</a></iframe></td></tr>
       {/if}
       {if $preview.html_link}
-      <dt class="label">{ts}HTML Version:{/ts}</dt><dd><iframe height="300" src="{$preview.html_link}" width="80%"><a href="{$preview.html_link}" onclick="window.open(this.href); return false;">{ts}HTML Version{/ts}</a></iframe></dd></dt>
+      <tr><td class="label">{ts}HTML Version:{/ts}</td><td><iframe height="300" src="{$preview.html_link}" width="80%"><a href="{$preview.html_link}" onclick="window.open(this.href); return false;">{ts}HTML Version{/ts}</a></iframe></td></tr>
       {/if}
-    </dl>
+    </table>
   </fieldset>
-    <dt></dt><dd>{$form.buttons.html}</dd>
+  <table>
+    <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
+  </table>
 </div>
     
 </div>

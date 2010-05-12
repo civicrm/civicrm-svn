@@ -23,9 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
-<fieldset>
-<legend>{ts}Create Printable PDF Letters{/ts}</legend>
+<div class="crm-form-block crm-block crm-create_printable_pdf-block">
+<h3>{ts}Create Printable PDF Letters{/ts}</h3>
 <table class="form-layout-compressed">
 </table>
 
@@ -41,5 +40,4 @@
 <dl>
 <dt></dt><dd>{$form.buttons.html}</dd>
 </dl>
-</fieldset>
 </div>

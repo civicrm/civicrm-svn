@@ -58,7 +58,7 @@
     </div>
     <div id="crm-submit-buttons">	
     <div class="spacer"></div>   
-        <dl><dt></dt><dd >{$form.buttons.html}</dd></dl>  
+        <dl><dt></dt><dd >{include file="CRM/common/formButtons.tpl"}</dd></dl>  
     </div>
     
     </fieldset>

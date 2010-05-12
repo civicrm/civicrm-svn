@@ -92,11 +92,11 @@
   {if $action ne 4}
       <div id="crm-submit-buttons">
       <div class="spacer"></div>
-          <dl><dt></dt><dd>{$form.buttons.html}</dd></dl>  
+          <dl><dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd></dl>  
       </div>
   {else}
       <div id="crm-done-button">
-           <dl><dt></dt><dd>{$form.buttons.html}<br></dd></dl>
+           <dl><dt></dt><dd>{include file="CRM/common/formButtons.tpl"}<br></dd></dl>
       </div>
   {/if} {* $action ne view *}
  </fieldset>

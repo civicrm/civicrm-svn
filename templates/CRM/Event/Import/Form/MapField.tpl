@@ -41,7 +41,7 @@
  {include file="CRM/Event/Import/Form/MapTable.tpl}
 
  <div id="crm-submit-buttons">
-    {$form.buttons.html}
+    {include file="CRM/common/formButtons.tpl"}
  </div>
  {$initHideBoxes}
 </div>

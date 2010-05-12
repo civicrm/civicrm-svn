@@ -78,13 +78,13 @@
           <dt>&nbsp;</dt><dd class="description">{ts}Check this box and click 'Save' to switch this installation from single- to multi-language, then add further languages.{/ts}</dd>
           <dd class="description"><span style="color:red">{$warning}</span>
         {else}
-          <dd class="description">{ts}In order to use this functionality, the installation's database user must have privileges to create triggers (in MySQL 5.0 this means the SUPER privilege). This install does not seem to have the required privilege enabled.{/ts}</dd>
+          <dd class="description">{ts}In order to use this functionality, the installation's database user must have privileges to create triggers (in MySQL 5.0 – and in MySQL 5.1 if binary logging is enabled – this means the SUPER privilege). This install does not seem to have the required privilege enabled.{/ts}</dd>
           <dd class="description"><span style="color:red">{$warning}</span>
         {/if}
       </dl>
     </fieldset>
     <dl>
-        <dt></dt><dd>{$form.buttons.html}</dd>
+        <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
     </dl>
 <div class="spacer"></div>
 </div>

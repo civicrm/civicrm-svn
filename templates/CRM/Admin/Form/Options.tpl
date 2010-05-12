@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing options *}
-<div class="form-item">
+<div class="crm-form-block crm-block">
 <fieldset><legend>{if $action eq 1}{ts 1=$GName}New %1 Option{/ts}{elseif $action eq 8}{ts 1=$GName}Delete %1 Option{/ts}{else}{ts 1=$GName}Edit %1 Option{/ts}{/if}</legend>
 	{if $action eq 8}
       <div class="messages status">
@@ -88,6 +88,6 @@
     </dl>
     {/if}
     <div class="spacer"></div>   
-	<dl><dt></dt><dd>{$form.buttons.html}</dd></dl>
+	<dl><dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd></dl>
 </fieldset>
 </div>

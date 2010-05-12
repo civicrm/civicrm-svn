@@ -83,6 +83,11 @@ class CRM_Utils_Mail
         $htmlMessage = CRM_Utils_Array::value( 'html'       , $params );
         $attachments = CRM_Utils_Array::value( 'attachments', $params );
 
+        // CRM-6224
+        if (trim(CRM_Utils_String::htmlToText($htmlMessage)) == '') {
+            $htmlMessage = false;
+        }
+
         $headers = array( );  
         $headers['From']                      = $params['from'];
         $headers['To']                        = "{$params['toName']} <{$params['toEmail']}>";

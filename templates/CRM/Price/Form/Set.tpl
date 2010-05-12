@@ -50,7 +50,8 @@
     {*if $action ne 4*}
         <dt></dt>
         <dd>
-        <div id="crm-submit-buttons">{$form.buttons.html}</div>
+        <div id="crm-submit-buttons">
+             {include file="CRM/common/formButtons.tpl"}</div>
         </dd>
     {*else}
         <dt></dt>

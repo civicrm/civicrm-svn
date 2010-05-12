@@ -68,7 +68,7 @@ class CRM_Admin_Form_DedupeRules extends CRM_Admin_Form
             $this->_contactType            = $rgDao->contact_type;
             $this->_defaults['level']      = $rgDao->level;
             $this->_defaults['name']       = $rgDao->name;
-            
+            $this->_defaults['is_default'] = $rgDao->is_default;
             $ruleDao = new CRM_Dedupe_DAO_Rule();
             $ruleDao->dedupe_rule_group_id = $this->_rgid;
             $ruleDao->find();
@@ -104,7 +104,13 @@ class CRM_Admin_Form_DedupeRules extends CRM_Admin_Form
                            'Fuzzy'  => ts('Fuzzy'),
                            'Strict' => ts('Strict')
                            );
-        $this->add('select', 'level', ts('Level'), $levelType);
+        $ruleLevel = $this->add('select', 'level', ts('Level'), $levelType);
+
+        $default = $this->add('checkbox', 'is_default', ts('Default?') );
+        if ( CRM_Utils_Array::value( 'is_default', $this->_defaults ) ) {
+            $default->freeze();
+            $ruleLevel->freeze();
+        }
         
         for ($count = 0; $count < self::RULES_COUNT; $count++) {
             $this->add('select', "where_$count", ts('Field'), array(null => ts('- none -')) + $this->_fields);
@@ -133,6 +139,19 @@ class CRM_Admin_Form_DedupeRules extends CRM_Admin_Form
     public function postProcess() 
     {
         $values = $this->exportValues();
+        $isDefault = CRM_Utils_Array::value( 'is_default', $values, false );
+        // reset defaults
+        if ( $isDefault ) {
+            $query = "
+UPDATE civicrm_dedupe_rule_group 
+   SET is_default = 0
+ WHERE contact_type = %1 
+   AND level = %2";
+            $queryParams = array( 1 => array( $this->_contactType, 'String' ),
+                                  2 => array( $values['level'], 'String' ) ); 
+            CRM_Core_DAO::executeQuery( $query, $queryParams );
+        }
+
         $rgDao            = new CRM_Dedupe_DAO_RuleGroup();
         if ($this->_action & CRM_Core_Action::UPDATE ) {
             $rgDao->id           = $this->_rgid;
@@ -141,7 +160,7 @@ class CRM_Admin_Form_DedupeRules extends CRM_Admin_Form
         $rgDao->name         = $values['name'];
         $rgDao->level        = $values['level'];
         $rgDao->contact_type = $this->_contactType;
-        
+        $rgDao->is_default   = $isDefault;
         $rgDao->save();
         
         $ruleDao = new CRM_Dedupe_DAO_Rule();

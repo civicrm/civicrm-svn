@@ -148,7 +148,7 @@
         
 	{if $allowRegistration}
         <div class="action-link section register_link-section">
-            <strong><a href="{$registerURL}" title="{$registerText}">&raquo; {$registerText}</a></strong>
+            <a href="{$registerURL}" title="{$registerText}" class="button crm-register-button"><span>{$registerText}</span></a>
         </div>
     {/if}
     { if $event.is_public }

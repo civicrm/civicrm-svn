@@ -23,18 +23,18 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* Profile forms when embedded in CMS account create (mode=1) or edit (mode=8) pages *}
+{* Profile forms when embedded in CMS account create (mode=1) or cms account edit (mode=8) or civicrm/profile (mode=4) pages *}
 {if $context neq 'dialog'}
 <script type="text/javascript" src="{$config->resourceBase}js/Common.js"></script>
 {/if}
 {if ! empty( $fields )}
-{* wrap in crm-container div so crm styles are used *}
+{* Wrap in crm-container div so crm styles are used.*}
+{* Replace div id with this logic if you want CMS account create and CMS edit to use CMS theme styles: id="{if $mode eq 4}crm-container{else}crm-profile-block{/if}" *}
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
 
     {if $mode eq 1 || $activeComponent neq "CiviCRM"}
         {include file="CRM/Form/body.tpl"}
     {/if}
-    
     {strip}
     {if $help_pre && $action neq 4}
     <div class="messages help">{$help_pre}</div>
@@ -51,43 +51,32 @@
 
     {if $field.groupTitle != $fieldset}
         {if $fieldset != $zeroField}
-           </table>
            {if $groupHelpPost}
               <div class="messages help">{$groupHelpPost}</div>
            {/if}
-
-           {if $mode eq 8}
-              </fieldset>
-           {else}
+           {if $mode neq 8 && $mode neq 4}
               </fieldset>
               </div>
            {/if}
         {/if}
 
-        {if $mode eq 8}
-            <fieldset>
-        {else} 
-	   {if $context neq 'dialog'}
-              <div id="profilewrap{$field.group_id}">
+        {if $mode neq 8 && $mode neq 4}
+              <div {if $context neq 'dialog'}id="profilewrap{$field.group_id}"{/if}>
               <fieldset><legend>{$field.groupTitle}</legend>
-           {else}
-              <div>
-	      <fieldset><legend>{$field.groupTitle}</legend>
-	   {/if}	
         {/if}
         {assign var=fieldset  value=`$field.groupTitle`}
         {assign var=groupHelpPost  value=`$field.groupHelpPost`}
         {if $field.groupHelpPre}
             <div class="messages help">{$field.groupHelpPre}</div>
         {/if}
-        <table class="form-layout-compressed">
+        <div class="form-layout-compressed">
      {/if}
 
     {if $field.is_view eq 0}  
     {if $field.options_per_line}
-	<tr id="editrow-{$n}">
-        <td class="option-label">{$form.$n.label}</td>
-        <td class="edit-value">
+	<div class="section editrow_{$n}-section form-item" id="editrow-{$n}">
+        <div class="label">{$form.$n.label}</div>
+        <div class="content edit-value">
 	    {assign var="count" value="1"}
         {strip}
         <table class="form-layout-compressed">
@@ -111,15 +100,16 @@
         </tr>
         </table>
 	{if $field.html_type eq 'Radio' and $form.formName eq 'Edit'}
-           <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
+           &nbsp;<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
 	{/if}
         {/strip}
-        </td>
-    </tr>
+        </div>
+        <div class="clear"></div>
+    </div>
 	{else}
-        <tr id="editrow-{$n}">
-           <td class="label">{$form.$n.label}</td>
-           <td class="edit-value">
+        <div id="editrow-{$n}" class="section editrow_{$n}-section form-item">
+           <div class="label">{$form.$n.label}</div>
+           <div class="edit-value content">
            {if $n|substr:0:3 eq 'im-'}
              {assign var="provider" value=$n|cat:"-provider_id"}
              {$form.$provider.html}&nbsp;
@@ -133,10 +123,14 @@
 				{include file="CRM/Contact/Form/Edit/TagsAndGroups.tpl" type=$n}
            {elseif ( $form.$n.name eq 'image_URL' )}
 	        {$form.$n.html}
-		{if $imageURL}
- 	 	    <br>
- 	 	    {include file="CRM/Contact/Page/ContactImage.tpl"}
- 	        {/if}
+		      {if $imageURL}
+ 	 	          <div class="section contact_image-section">
+ 	 	              <div class="content">
+ 	 	              {include file="CRM/Contact/Page/ContactImage.tpl"}
+ 	 	              </div>
+ 	 	          </div>
+ 	          {/if}
+ 	    
 	   {else}
                {if ( $field.data_type eq 'Date' or
                           ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) ) ) ) }
@@ -145,27 +139,27 @@
                   {$form.$n.html}
                {/if}
                {if ($n eq 'gender') or ($field.html_type eq 'Radio' and $form.formName eq 'Edit' and $field.is_required neq 1)}
-                       <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
+                       &nbsp;<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
 		       {elseif $field.html_type eq 'Autocomplete-Select'}
                     {include file="CRM/Custom/Form/AutoComplete.tpl" element_name = $n }
 			   {/if}
            {/if}
-           </td>
-        </tr>
+        <div class="clear"></div>
+        </div>
         {if $form.$n.type eq 'file'}
-	      <tr><td class="label"></td><td>{$customFiles.$n.displayURL}</td></tr>
-	      <tr><td class="label"></td><td>{$customFiles.$n.deleteURL}</td></tr>
+	      <div class="section file_displayURL-section file_displayURL{$n}-section"><div class="content">{$customFiles.$n.displayURL}</div></div>
+	      <div class="section file_deleteURL-section file_deleteURL{$n}-section"><div class="content">{$customFiles.$n.deleteURL}</div></div>
         {/if} 
 	{/if}
 	{/if}
     {* Show explanatory text for field if not in 'view' mode *}
     {if $field.help_post && $action neq 4 && $form.$n.html}
-        <tr id="helprow-{$n}"><td>&nbsp;</td><td class="description">{$field.help_post}</td></tr>
+        <div class="section helprow-{$n}-section" id="helprow-{$n}"><div class="content description">{$field.help_post}</div></div>
     {/if}
 
     {/if}
+    </div>
     {/foreach}
-    </table>
 
     {if $isCaptcha && ( $mode eq 8 || $mode eq 4 || $mode eq 1 ) }
         {include file='CRM/common/ReCAPTCHA.tpl'}
@@ -176,16 +170,14 @@
         <div class="messages help">{$field.groupHelpPost}</div>
     {/if}
 
-    {if $mode eq 8}
-        </fieldset>
-    {else}
+    {if $mode neq 8 && $mode neq 4}
         </fieldset>
         </div>
     {/if}
 
 {if ($action eq 1 and $mode eq 4 ) or $action eq 2 }
 <div class="crm-submit-buttons"> 
-     {$form.buttons.html}{if $isDuplicate}&nbsp;&nbsp;{$form._qf_Edit_upload_duplicate.html}{/if}
+     {include file="CRM/common/formButtons.tpl"}{if $isDuplicate}<span class="crm-button">{$form._qf_Edit_upload_duplicate.html}</span>{/if}
 </div>
 {/if}
      {if $help_post && $action neq 4}<br /><div class="messages help">{$help_post}</div>{/if}

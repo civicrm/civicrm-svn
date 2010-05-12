@@ -43,7 +43,7 @@
     {* Add set of submit buttons on top for Events to match new UI. Do this for contrib and pledge when we move to tabs. dgg*}
     {if $context EQ 'Event'}
         <div class="crm-submit-buttons">
-            {$form.buttons.html}
+           {include file="CRM/common/formButtons.tpl"}
         </div>
     {/if}
     
@@ -67,7 +67,7 @@
     </div>
 
     <div class="{if $action eq 4}crm-done-button{else}crm-submit-buttons{/if}">
-        {$form.buttons.html}
+     {include file="CRM/common/formButtons.tpl"}
     </div>
 </div>      
 

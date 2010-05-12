@@ -71,7 +71,12 @@ class CRM_Contact_Form_Task_AddToTag extends CRM_Contact_Form_Task {
         foreach ($this->_tags as $tagID => $tagName) {
             $this->_tagElement =& $this->addElement('checkbox', "tag[$tagID]", null, $tagName);
         }
-     
+        
+        require_once 'CRM/Core/Form/Tag.php';
+        require_once 'CRM/Core/BAO/Tag.php';
+        $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_contact' );
+        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_contact' );
+        
         $this->addDefaultButtons( ts('Tag Contacts') );
     }
 
@@ -96,6 +101,7 @@ class CRM_Contact_Form_Task_AddToTag extends CRM_Contact_Form_Task {
     public function postProcess() {
     
         $tagId    = $this->controller->exportValue('AddToTag','tag' );
+        
         $this->_name = array();
         foreach($tagId as $key=>$dnc) {
             $this->_name[]   = $this->_tags[$key];

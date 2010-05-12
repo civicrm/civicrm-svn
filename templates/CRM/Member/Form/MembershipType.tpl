@@ -172,7 +172,7 @@
     </fieldset>
     <dl>
         <dt>&nbsp;</dt>
-        <dd>{$form.buttons.html}</dd>
+        <dd>{include file="CRM/common/formButtons.tpl"}</dd>
     </dl>
     {/if}
     <div class="spacer"></div>

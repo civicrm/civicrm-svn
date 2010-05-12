@@ -38,7 +38,7 @@ require_once 'api/v2/UFJoin.php';
 class api_v2_UFGroupTest extends CiviUnitTestCase
 {
     // ids from the uf_group_test.xml fixture
-    protected $_ufGroupId = 7;
+    protected $_ufGroupId = 11;
     protected $_ufFieldId;
     protected $_contactId = 69;
 
@@ -518,7 +518,7 @@ class api_v2_UFGroupTest extends CiviUnitTestCase
     public function testGetUFProfileGroups()
     {
         $ufProfileGroup = civicrm_uf_profile_groups_get();
-        $this->assertEquals(7, count($ufProfileGroup));
+        $this->assertEquals(8, count($ufProfileGroup));
     }
 
     function testGroupCreate()

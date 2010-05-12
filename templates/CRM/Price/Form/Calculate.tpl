@@ -184,6 +184,7 @@ function display( totalfee ) {
     document.getElementById('pricevalue').innerHTML = "<b>"+symbol+"</b> "+totalEventFee;
     scriptfee   = totalfee;
     scriptarray = price;
+    cj('#total_amount').val( totalfee );
     
     ( totalfee < 0 ) ? cj('table#pricelabel').addClass('disabled') : cj('table#pricelabel').removeClass('disabled');
     

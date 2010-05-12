@@ -66,10 +66,6 @@ class CRM_Utils_Money {
             return '';
         }
 
-        if ( !is_numeric( $amount ) ) {
-            return $amount;
-        }        
-
         $config = CRM_Core_Config::singleton();
 
         if (!$format) {
@@ -104,7 +100,8 @@ class CRM_Utils_Money {
 
         setlocale(LC_MONETARY, 'en_US.utf8');
         // money_format() exists only in certain PHP install (CRM-650)
-        if ( function_exists('money_format') ) {
+        if ( is_numeric($amount) &&
+             function_exists('money_format') ) {
             $amount = money_format($config->moneyvalueformat, $amount);
         }
         

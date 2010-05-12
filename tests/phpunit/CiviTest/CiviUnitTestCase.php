@@ -74,7 +74,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     public static $utils;
 
-    public static $populateOnce = null;
+    public static $populateOnce = false;
 
     /**
      *  Constructor
@@ -135,7 +135,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
             return;
         }
 
-        self::$populateOnce = true;
+        self::$populateOnce = null;
 
             $queries = array( "DROP DATABASE IF EXISTS civicrm_tests_dev;", 
                               "CREATE DATABASE civicrm_tests_dev DEFAULT" . 

@@ -23,13 +23,11 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
-<fieldset>
-    <legend>{ts}Remove Members{/ts}</legend>
+<div class="crm-form-block crm-block crm-remove_from_group-block">
+<h3>{ts}Remove Members{/ts}</h3>
     <dl>
         <dt>{if $group.id}{ts}Group{/ts}{else}{$form.group_id.label}{/if}</dt><dd>{$form.group_id.html}</dd>
         <dt></dt><dd>{include file="CRM/Contact/Form/Task.tpl"}</dd>
         <dt></dt><dd>{$form.buttons.html}</dd>
     </dl>
-</fieldset>
 </div>

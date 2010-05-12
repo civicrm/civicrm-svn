@@ -82,14 +82,17 @@ class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
     public function buildQuickForm( )
     {
         for ( $i = 1 ; $i <= $this->_numStrings; $i++ ) {
-            $this->add( 'text',
+            $this->addElement( 'checkbox',
+                               "enabled_{$i}",
+                               null );
+            $this->add( 'textarea',
                         "old_{$i}",
                         null,
-                        array( 'size=32 maxlen=255' ) );
-            $this->add( 'text',
+                        array( 'rows=1 cols=40' ) );
+            $this->add( 'textarea',
                         "new_{$i}",
                         null,
-                        array( 'size=32 maxlen=255' ) );
+                        array( 'rows=1 cols=40' ) );
             $this->addElement( 'checkbox',
                                "cb_{$i}",
                                null );
@@ -116,6 +119,7 @@ class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
         $params = $this->exportValues();
         $overrides['wildcardMatch'] = $overrides['exactMatch'] = array();
 
+
         for ( $i = 1 ; $i <= $this->_numStrings; $i++ ) {
             if ( CRM_Utils_Array::value( 'old_'.$i, $params ) && 
                  CRM_Utils_Array::value( 'new_'.$i, $params ) ) {
@@ -126,7 +130,7 @@ class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
                 }
             }
         }
-        
+
         $config = CRM_Core_Config::singleton();
         $stringOverride = array( $config->lcMessages => $overrides );
         $locale_custom_strings = serialize( $stringOverride );

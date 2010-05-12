@@ -78,7 +78,7 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
         if ( !in_array($params['currencyID'], explode(',',self::CURRENCIES ) ) ) {
             return self::error( 'Invalid currency selection, must be one of '.self::CURRENCIES );
         }
-        $isRecur   = ($params['is_recur'] && $params['installments'] > 1);
+        $isRecur   = $params['is_recur'];
         // AgentCode = $this->_paymentProcessor['signature'];
         // Password  = $this->_paymentProcessor['password' ];
         // beginning of modified sample code from IATS php api include IATS supplied api library
@@ -91,7 +91,7 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
             $iatslink1 = new iatslink;
         }
         
-        $iatslink1->setTestMode( $this->_profile['mode'] == 'live' );
+        $iatslink1->setTestMode( $this->_profile['mode'] != 'live' );
         $iatslink1->setWebServer( $this->_profile['webserver'] );
         
         // return self::error($this->_profile['webserver']);
@@ -118,7 +118,7 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
         $iatslink1->setInvoiceNumber($params['invoiceID']);
         
         // Set billing fields
-        $iatslink1->setFirstName($parames['billing_first_name']);
+        $iatslink1->setFirstName($params['billing_first_name']);
         $iatslink1->setLastName($params['billing_last_name']);
         $iatslink1->setStreetAddress($params['street_address']);
         $iatslink1->setCity($params['city']);
@@ -138,7 +138,19 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
         } else { // extra fields for recurring donations
             // implicit - test?: 1 == $params['frequency_interval'];
             $scheduleType  = NULL;
-            $paymentsRecur = $params['installments'] - 1;
+            if ($params['installments']) {
+              $paymentsRecur = $params['installments'] - 1;
+            }
+            else { // handle unspecified installments by setting to 10 years, IATS doesn't allow indefinitely recurring contributions
+              switch($params['frequency_unit']) {
+                case 'week':
+                  $paymentsRecur = 520;
+                case 'month': 
+                  $paymentsRecur = 120;
+              }
+            }
+            // IATS requires end date, calculated here
+
             $startTime     = time(); // to be converted to date format later
             $date          = getdate($startTime);
             
@@ -185,9 +197,16 @@ class CRM_Core_Payment_IATS extends CRM_Core_Payment {
             $trxn_id     = trim($result[1]);
             if ($trxn_result == 'OK') {
                 $params['trxn_id']        = $trxn_id.':'.time();
-                $params['gross_amount'  ] = $amount;
+                $params['gross_amount'] = $amount;
                 return $params;
-            } else {
+            } 
+            // createReoccCustomer() may return other, valid result codes...
+            else if (preg_match('/A\d+/', $trxn_result)) {
+              $params['trxn_id'] = $trxn_result;
+              $params['gross_amount'] = $amount;
+              return $params;
+            }
+            else {
                 return self::error($trxn_id);
             }
         } else {

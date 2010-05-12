@@ -285,7 +285,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                 $mpDAO = new CRM_Member_DAO_MembershipPayment();    
                 $mpDAO->membership_id   = $membership->id;
                 $mpDAO->contribution_id = $contribution->id;
+                CRM_Utils_Hook::pre( 'create', 'MembershipPayment', null, $mpDAO );
                 $mpDAO->save();
+                CRM_Utils_Hook::post( 'create', 'MembershipPayment', $mpDAO->id, $mpDAO );
             }
         }
         
@@ -1043,7 +1045,9 @@ AND civicrm_membership.is_test = %2";
                 //Fixed for avoiding duplicate entry error when user goes
                 //back and forward during payment mode is notify
                 if ( !$dao->find(true) ) {
+                    CRM_Utils_Hook::pre( 'create', 'MembershipPayment', null, $dao );
                     $dao->save();
+                    CRM_Utils_Hook::post( 'create', 'MembershipPayment', $dao->id, $dao );
                 }
             }
         }
@@ -1582,6 +1586,12 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
                     }
                 }
                 
+                //avoid extra processing.
+                if ( $relMembership->id && 
+                     $params['status_id'] == $relMembership->status_id ) {
+                    continue;
+                }
+                
                 //do create activity if we changed status. 
                 if ( $params['status_id'] != $relMembership->status_id ) {
                     $params['createActivity'] = true; 
@@ -1614,7 +1624,9 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
         while ( $membesrshipPayment->fetch() ) {
             require_once 'CRM/Contribute/BAO/Contribution.php';
             CRM_Contribute_BAO_Contribution::deleteContribution( $membesrshipPayment->contribution_id );
+            CRM_Utils_Hook::pre( 'delete', 'MembershipPayment', $membesrshipPayment->id, $membesrshipPayment );
             $membesrshipPayment->delete( ); 
+            CRM_Utils_Hook::post( 'delete', 'MembershipPayment', $membesrshipPayment->id, $membesrshipPayment );
         }
         return $membesrshipPayment;
     }

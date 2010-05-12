@@ -61,11 +61,11 @@
 
 {if $action ne 4}
 <div id="crm-submit-buttons">
-    {$form.buttons.html}
+  {include file="CRM/common/formButtons.tpl"}
 </div>
 {else}
     <div id="crm-done-button">
-        {$form.done.html}
+        {include file="CRM/common/formButtons.tpl"}
     </div>
 {/if} {* $action ne view *}
 

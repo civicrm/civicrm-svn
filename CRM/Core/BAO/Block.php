@@ -223,13 +223,49 @@ class CRM_Core_BAO_Block
         //get existsing block ids.
         $blockIds  = self::getBlockIds( $blockName, $contactId, $entityElements );
         
+        //lets allow user to update block w/ the help of id, CRM-6170
+        $resetPrimaryId  = null;
+        foreach ( $params[$blockName] as  $count => $value ) {
+            $blockId = CRM_Utils_Array::value( 'id', $value );
+            if ( $blockId  ) {
+                if ( is_array( $blockIds ) 
+                     && array_key_exists( $blockId, $blockIds ) ) {
+                    unset( $blockIds[$blockId] );
+                } else {
+                    unset( $value['id'] ); 
+                }
+            }
+            //lets allow to update primary w/ more cleanly.
+            if ( !$resetPrimaryId && 
+                 CRM_Utils_Array::value( 'is_primary', $value ) ) {
+                if ( is_array( $blockIds ) ) {
+                    foreach ( $blockIds as $blockId => $blockValue ) {
+                        if ( CRM_Utils_Array::value( 'is_primary', $blockValue ) ) {
+                            $resetPrimaryId = $blockId;   
+                            break;
+                        }
+                    }
+                }
+                if ( $resetPrimaryId ) {
+                    eval('$block = new CRM_Core_BAO_' . $blockName .'( );');
+                    $block->id = $resetPrimaryId;
+                    if ( $block->find( true ) ) {
+                        $block->is_primary = false;
+                        $block->save( );
+                    }
+                    $block->free( );
+                }
+            }
+        }
+        
         foreach ( $params[$blockName] as  $count => $value ) {
             if ( !is_array( $value ) ) continue;
             $contactFields = array( 'contact_id'       => $contactId,
                                     'location_type_id' => $value['location_type_id'] );
             
             //check for update 
-            if ( is_array( $blockIds ) && !empty( $blockIds ) ) {
+            if ( !CRM_Utils_Array::value( 'id', $value ) && 
+                 is_array( $blockIds ) && !empty( $blockIds ) ) {
                 foreach ( $blockIds as $blockId => $blockValue ) {
                     if ( $blockValue['locationTypeId'] == $value['location_type_id'] ) {
                         //assigned id as first come first serve basis 

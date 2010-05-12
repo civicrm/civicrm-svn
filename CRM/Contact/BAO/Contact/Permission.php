@@ -162,12 +162,12 @@ WHERE $permission
             if (is_array($contactAlias)) {
                 $wheres = array();
                 foreach ($contactAlias as $alias) {
-// CRM-6181
+                    // CRM-6181
                     $wheres[] = "$alias.is_deleted = 0";
                 }
                 return array(null, '(' . implode(' AND ', $wheres) . ')');
             } else {
-// CRM-6181
+                // CRM-6181
                 return array(null, "$contactAlias.is_deleted = 0");
             }
         }

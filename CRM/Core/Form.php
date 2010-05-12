@@ -730,10 +730,11 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
         }
         if ( $nextType != null ) {
             $nextButton = array ( 'type'      => $nextType,
-                                 'name'      => $title,
-                                 'isDefault' => true   );
+                                  'name'      => $title,
+                                  'isDefault' => true   );
             if ( $submitOnce ) {
-	      $nextButton['js'] = array( 'onclick' => "return submitOnce(this,'{$this->_name}','" . ts('Processing') ."');" );
+                $nextButton['js'] = 
+                    array( 'onclick' => "return submitOnce(this,'{$this->_name}','" . ts('Processing') ."');" );
             }
             $buttons[] = $nextButton;
         }

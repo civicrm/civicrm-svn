@@ -23,12 +23,11 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="batch-update form-item">
-<fieldset>
 <div id="help">
     {ts}Update field values for each contact as needed. Click <strong>Update Contacts</strong> below to save all your changes. To set a field to the same value for ALL rows, enter that value for the first contact and then click the <strong>Copy icon</strong> (next to the column title).{/ts}
 </div>
-    <legend>{$profileTitle}</legend>
+<div class="batch-update crm-form-block crm-batch_update-block">
+    <h3>{$profileTitle}</h3>
          <table>
 	  <thead class="sticky">
             <tr class="columnheader">
@@ -87,7 +86,6 @@
         <dl>
             <dt></dt><dd>{if $fields}{$form._qf_BatchUpdateProfile_refresh.html}{/if} &nbsp; {$form.buttons.html}</dd>
         </dl>
-</fieldset>
 </div>
 
 {*include batch copy js js file*}

@@ -34,7 +34,7 @@
     {/if}
 <div class="crm-form-block">
 <div class="crm-submit-buttons">
-    {$form.buttons.html}
+   {include file="CRM/common/formButtons.tpl"}
 </div>
 
     <dl>
@@ -171,7 +171,7 @@
     </div>	
     </div>
 <div class="crm-submit-buttons">
-    {$form.buttons.html}
+   {include file="CRM/common/formButtons.tpl"}
 </div>
 </div>
 

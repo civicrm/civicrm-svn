@@ -114,11 +114,11 @@
  	
     	{if $action ne 4}
         <tr id="crm-submit-buttons">
-            <td></td><td>{$form.buttons.html}</td></tr>  
+            <td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>  
         
    	 {else}
         <tr id="crm-done-button">
-            <td></td><td>{$form.done.html}</td></tr>  
+            <td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>  
 	 {/if}
 
 	</table>

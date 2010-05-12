@@ -126,19 +126,24 @@ function civicrm_membership_contact_get(&$params)
 {
     _civicrm_initialize();
 
-    $activeOnly = false;
-    if ( is_array($params) ) {
-        $contactID = CRM_Utils_Array::value('contact_id', $params);
-        $activeOnly = CRM_Utils_Array::value('active_only', $params, false);
-        if ($activeOnly == 1) {
-            $activeOnly = true;
-        } else {
-            $activeOnly = false;
+    $contactID = $activeOnly = $membershipTypeId = $membershipType = null;
+    if ( is_array( $params ) ) {
+        $contactID        = CRM_Utils_Array::value( 'contact_id', $params );
+        $activeOnly       = CRM_Utils_Array::value( 'active_only', $params, false );
+        $membershipTypeId = CRM_Utils_Array::value( 'membership_type_id', $params );
+        if ( !$membershipTypeId ) {
+            $membershipType = CRM_Utils_Array::value( 'membership_type', $params );
+            if ( $membershipType ) {
+                require_once 'CRM/Member/DAO/MembershipType.php';
+                $membershipTypeId = 
+                    CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType',
+                                                 $membershipType, 'id', 'name' );
+            } 
         }
     } elseif( CRM_Utils_Rule::integer($params) ) {
         $contactID = $params;
     } else {
-        return civicrm_create_error( 'Paramers can be only of type array or integer' );
+        return civicrm_create_error( 'Parameters can be only of type array or integer' );
     }
     
     if ( empty($contactID) ) {
@@ -147,9 +152,12 @@ function civicrm_membership_contact_get(&$params)
     
     // get the membership for the given contact ID
     require_once 'CRM/Member/BAO/Membership.php';
-    $membership       = array('contact_id' => $contactID);
+    $membershipParams = array( 'contact_id' => $contactID );
+    if ( $membershipTypeId ) {
+        $membershipParams['membership_type_id'] = $membershipTypeId;
+    }
     $membershipValues = array();
-    CRM_Member_BAO_Membership::getValues($membership, $membershipValues, $activeOnly);
+    CRM_Member_BAO_Membership::getValues( $membershipParams, $membershipValues, $activeOnly );
 
     $recordCount = 0;
 

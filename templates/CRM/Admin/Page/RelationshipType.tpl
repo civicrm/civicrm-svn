@@ -35,6 +35,11 @@
 {/if}
 
 {if $rows}
+{if !($action eq 1 and $action eq 2)}
+    <div class="action-link">
+	    <a href="{crmURL q="action=add&reset=1"}" id="newRelationshipType" class="button"><span><div class="icon add-icon"></div>{ts}Add Relationship Type{/ts}</span></a>
+    </div>
+{/if}
 
 <div id="ltype">
 
@@ -65,9 +70,9 @@
         {/strip}
 
         {if !($action eq 1 and $action eq 2)}
-        <div class="action-link">
-    	<a href="{crmURL q="action=add&reset=1"}" id="newRelationshipType" class="button"><span>&raquo; {ts}New Relationship Type{/ts}</span></a>
-        </div>
+            <div class="action-link">
+        	    <a href="{crmURL q="action=add&reset=1"}" id="newRelationshipType" class="button"><span><div class="icon add-icon"></div>{ts}Add Relationship Type{/ts}</span></a>
+            </div>
         {/if}
 </div>
 {else}

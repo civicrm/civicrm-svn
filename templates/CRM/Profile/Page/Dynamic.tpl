@@ -26,13 +26,18 @@
 {if ! empty( $row )} 
 {* wrap in crm-container div so crm styles are used *}
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
-<fieldset>
-<table class="view-layout">                               
+
 {foreach from=$row item=value key=rowName name=profile}
-  <tr id="row-{$smarty.foreach.profile.iteration}"><td class="label">{$rowName}</td><td class="view-value">{$value}</td></tr>
+  <div id="row-{$smarty.foreach.profile.iteration}" class="section {$smarty.foreach.profile.iteration}-section">
+    <div class="label">
+        {$rowName}
+    </div>
+     <div class="content">
+        {$value}
+     </div>
+     <div class="clear"></div>
+  </div>
 {/foreach}
-</table>
-</fieldset>
 </div>
 {/if} 
 {* fields array is not empty *}

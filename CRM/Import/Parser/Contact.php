@@ -724,7 +724,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $contactFields = CRM_Contact_DAO_Contact::import( );
                                         
                     //Relation on the basis of External Identifier.
-                    if ( !CRM_Utils_Array::value( 'id' , $params[$key] ) && isset ( $params[$key]['external_identifier'] ) ) {
+                    if ( !CRM_Utils_Array::value( 'id' , $params[$key] ) && !empty( $params[$key]['external_identifier'] ) ) {
                         $params[$key]['id'] = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact',
                                                                           $params[$key]['external_identifier'],'id',
                                                                           'external_identifier' );
@@ -765,6 +765,15 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     //format common data, CRM-4062
                     $this->formatCommonData( $field, $formatting, $contactFields );
 
+                    //do we have enough fields to create related contact.
+                    $allowToCreate = $this->checkRelatedContactFields( $key, $formatting );
+                    
+                    if ( !$allowToCreate ) {
+                        $errorMessage = ts( 'Related contact required fields are missing.' );
+                        array_unshift($values, $errorMessage);
+                        return CRM_Import_Parser::NO_MATCH;
+                    }
+                    
                     //fixed for CRM-4148
                     if ( $params[$key]['id'] ) {
                         $contact           = array( 'contact_id' => $params[$key]['id'] );
@@ -1930,6 +1939,41 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
         return $returnCode;        
     }
+    
+    
+    function checkRelatedContactFields( $relKey, $params ) 
+    {
+        //avoid blank contact creation.
+        $allowToCreate = false;
+        
+        //build the mapper field array.
+        static $relatedContactFields = array( );
+        if ( !isset( $relatedContactFields[$relKey] ) ) {
+            foreach ( $this->_mapperRelated as $key => $name ) {
+                if ( !$name ) continue; 
+                if ( !is_array( $relatedContactFields[$name] ) ) {
+                    $relatedContactFields[$name] = array( );
+                }
+                $fldName = CRM_Utils_Array::value( $key, $this->_mapperRelatedContactDetails );
+                if ( $fldName ) {
+                    $relatedContactFields[$name][] = $fldName;
+                }
+            }
+        }
+        
+        //validate for passed data.
+        if ( is_array( $relatedContactFields[$relKey] ) ) {
+            foreach ( $relatedContactFields[$relKey] as $fld ) {
+                if ( CRM_Utils_Array::value( $fld, $params ) ) {
+                    $allowToCreate = true;
+                    break;
+                }
+            }
+        }
+        
+        return $allowToCreate;
+    }
+    
 }
 
 

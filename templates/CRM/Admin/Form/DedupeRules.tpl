@@ -32,6 +32,7 @@
   <dl>
     <dt>{$form.name.label}</dt><dd>{$form.name.html}</dd>
     <dt>{$form.level.label}</dt><dd>{$form.level.html}</dd>
+    <dt>{$form.is_default.label}</dt><dd>{$form.is_default.html}</dd>
     <table style="width: auto;">
       <tr class="columnheader"><th>{ts}Field{/ts}</th><th>{ts}Length{/ts}</th><th>{ts}Weight{/ts}</th></tr>
          {section name=count loop=5}
@@ -42,7 +43,7 @@
     {/section}
     <tr class="columnheader"><th colspan="2" style="text-align: right;">{$form.threshold.label}</th><td>{$form.threshold.html}</td></tr>
   </table>
-  <p>{$form.buttons.html}</p>
+  <p>{include file="CRM/common/formButtons.tpl"}</p>
   </dl>
 </fieldset>
 </div>

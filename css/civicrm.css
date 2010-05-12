@@ -327,9 +327,9 @@ div.spacer,
 #crm-container fieldset legend {
 	display:block;
 	font-family:helvetica;
-	font-size:12px;
+	font-size:14px;
 	font-weight:bold;
-	padding-right:4px;
+	padding:4px;
 	}
 
 
@@ -367,9 +367,6 @@ div.spacer,
 #crm-container .section {
     margin-bottom:1em;
 }
-#crm-container .section .section {
-    margin-bottom:0.5em; /* make subsections sit closer together */
-}
 
 #crm-container .section .label {
     float:left;
@@ -397,7 +394,7 @@ div.spacer,
     float: left;
     clear: left;
     width: 150px;
-    text-align: left;
+    text-align: right;
     vertical-align: top;
     padding: 5px 15px 5px 0px;
     font-size: .95em;
@@ -440,7 +437,7 @@ div.spacer,
 #crm-container div.crm-form-block span.labels {
     float: left;
     width: 15%;
-    text-align: left;
+    text-align: right;
 }
 
 #crm-container div.form-item span.fields,
@@ -565,6 +562,7 @@ div.spacer,
     vertical-align: top;
     text-align: right;
     padding: 0.75em 0.5em 0em 0.75em;
+    color: #7a7a60;
 }
 
 #crm-container td.price_set_option-label {
@@ -1067,7 +1065,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 
 
 #crm-container #search-status ul {
-    margin: 0em 0em 0em -2.0em;
+    margin: 0em;
 }
 
 #crm-container #search-status ul li, 
@@ -1625,7 +1623,10 @@ table.campaign td,
 /* Styles for Actions Ribbon */
 #crm-container .crm-actions-ribbon { margin:0 0 8px 0; }
 
-#crm-container .crm-actions-ribbon ul {margin: 0px}
+#crm-container .crm-actions-ribbon ul {
+    margin: 0px;
+    padding: 0px;
+    }
 
 #crm-container .crm-actions-ribbon li {
     float:left;
@@ -2197,14 +2198,20 @@ div.grippie {
 #crm-container .crm-button:hover,
 #crm-container a.button:hover { background-position:0px -25px; }
 
-
+/* No button styling for PayPal Express button */
+#crm-container input#_qf_Register_upload_express {
+    background: none;
+    margin: 0px;
+    padding: 0px;
+    border: none;
+}
 
 /* create new XXX style (drupal block) */ 
 
 #crm-create-new-wrapper,
 #crm-contact-actions-wrapper{
 	position:relative;
-	z-index:5;
+	z-index:15;
 	}
 
 #crm-create-new-list,
@@ -2213,21 +2220,46 @@ div.grippie {
 	display:none;
 	top:24px;
 	left:0px;
-	z-index: 100;
-	width:180px;
 	}
 
 
-#crm-contact-actions-list .activities-block {
-	color:#a7a7a7;
-	font-size: 11px;
-	padding:4px;
-	margin-top:4px;
-	border-top: 1px solid #a7a7a7;
-	}
-#crm-contact-actions-list .activities-block select {
+.clear { clear: both; }
+
+#crm-contact-actions-list .icon { background-image:url("../i/icons/jquery-ui-FFFFFF.png"); }
+
+#crm-contact-actions-list .crm-contact_activities-list select {
 	margin-top:4px;
 	}
+	
+#crm-contact-actions-list .crm-contact_activities-list,
+#crm-contact-actions-list .crm-contact_print-list,
+#crm-contact-actions-list .crm-contact_actions-list {
+    width: 160px;
+    }
+    #crm-contact-actions-list .crm-contact_activities-list ul,
+    #crm-contact-actions-list .crm-contact_print-list ul,
+    #crm-contact-actions-list .crm-contact_actions-list ul,
+    #crm-create-new-list ul { 
+        width: auto;
+        margin:0px;
+        padding: 0px;
+        }
+        #crm-contact-actions-list .crm-contact_activities-list ul { padding-right: 4px; }
+        #crm-contact-actions-list .crm-contact_print-list ul { padding-left: 4px; }
+        #crm-contact-actions-list .crm-contact_actions-list ul { padding-left: 4px; }
+
+#crm-contact-actions-list .crm-contact_activities-list { 
+    float:left;
+    }
+#crm-contact-actions-list .crm-contact_print-list { 
+    float:right;
+    }
+#crm-contact-actions-list .crm-contact_actions-list { 
+    margin-left: 160px;
+    margin-right: 161px;
+    border-left: 1px solid #a7a7a7;
+    border-right: 1px solid #a7a7a7;
+    }    
 
 /* setup for icons */
 
@@ -2530,9 +2562,15 @@ div#crm-toolTip {
     position: fixed;
     bottom:20px;
     right:20px;
-    width:300px;
+    width:500px;
     display:none;
 }
+
+div#crm-toolTip td {
+    vertical-align: top;
+    padding: 2px 4px 2px 2px;
+}
+
 div#crm-toolTip a {
     color: #000;
 }
@@ -2592,7 +2630,6 @@ div#crm-toolTip #hide-tooltip {
 /* Class for tokens and helpicon */
 .helpIcon {
     float       : right;
-    padding     : 5px;
     position    : relative;
     z-index     : 1;
     margin-right : 45px;
@@ -2770,6 +2807,8 @@ tbody.scrollContent tr.alternateRow {
     font-weight:normal;
 }
 
+.disabled {text-decoration:line-through;}
+
 #crm-container table.selector td {
     border-right:1px dotted #DDDDDD;
 }
@@ -2799,7 +2838,7 @@ tbody.scrollContent tr.alternateRow {
 #crm-container #customFields div.contact_panel td.label
 #crm-container table.crm-info-panel td.label {
     width:150px;
-    text-align: left;
+    text-align: right;
     color: #7a7a60;
 }
 
@@ -2937,6 +2976,16 @@ div#crm-toolTip
 #crm-container .ac_results li a:hover,
 #crm-container .ac_results li a:visited { color:#DFDFDF; text-decoration: none;}
 .ac_results li strong { color: #FFF; font-weight: normal; }
+.ac_results li .icon,
+.ac_results li a .icon,
+.ac_results li a:visited .icon,
+#crm-container .ac_results li .icon,
+#crm-container .ac_results li a .icon,
+#crm-container .ac_results li a:visited .icon { background-image:url(../i/icons/jquery-ui-FFFFFF.png); }
+
+.ac_results li a:hover .icon,
+#crm-container .ac_results li a:hover .icon { background-image:url(../i/icons/jquery-ui-3e3e3e.png); }
+
 
 .ac_results li.ac_over,
 .ac_results li:hover,

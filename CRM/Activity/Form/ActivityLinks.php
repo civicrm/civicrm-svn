@@ -59,15 +59,8 @@ class CRM_Activity_Form_ActivityLinks extends CRM_Core_Form
                 $activityTypes += array( '3' => ts('Send an Email') );
             }
         }
-
-        $this->assign( 'showOtherActivityLink', false );
-        if ( !empty( $activityTypes ) ) {
-            $this->assign( 'showOtherActivityLink', true );
-        }
-        
-        $this->add('select', 'other_activity', ts('Other Activities'),
-                   array('' => ts('- new activity -')) + $activityTypes,
-                   false, array('onchange' => "if (this.value) window.location='{$url}'+ this.value; else return false"));
+        $this->assign( 'activityTypes', $activityTypes );
+        $this->assign( 'url', $url );
 
         $this->assign( 'suppressForm', true );
     }

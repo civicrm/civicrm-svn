@@ -60,7 +60,7 @@
                         {/if}
                     
                     	{* Include the Actions button with dropdown if session has 'edit' permission *}
-                        {if $permission EQ 'edit'}
+                        {if $permission EQ 'edit' and !$isDeleted}
                         <li class="crm-contact-activity">
                             {include file="CRM/Contact/Form/ActionsButton.tpl"}
                         </li>
@@ -70,31 +70,6 @@
                         </a>
                         </li>
                         {/if}
-
-                        
-                        {if $dashboardURL }
-                        <li class="crm-contact-dashboard">
-                        <a href="{$dashboardURL}" class="dashboard button" title="{ts}dashboard{/ts}">
-                        	<span><div class="icon dashboard-icon"></div>{ts}Contact Dashboard{/ts}</span>
-                        </a>
-                        </li>
-                        {/if}
-                        {if $url }
-                        <li class="crm-contact-user-record">
-                        <a href="{$url}" class="user-record button" title="{ts}User Record{/ts}">
-                        <span><div class="icon user-record-icon"></div>{ts}User Record{/ts}</span>
-                        </a>
-                        </li>
-                        {/if}
-                        <li class="crm-contact-vcard">
-                        <a class="vcard button" title="{ts}vCard record for this contact.{/ts}" href="{crmURL p='civicrm/contact/view/vcard' q="reset=1&cid=$contactId"}">			<span><div class="icon vcard-icon"></div>{ts}vCard{/ts}</span>
-                        </a>
-                        </li>
-                 		<li class="crm-contact-print">
-                 		<a class="print button" title="{ts}Printer-friendly view of this page.{/ts}" href='{crmURL p='civicrm/contact/view/print' q="reset=1&print=1&cid=$contactId"}'">
-                 		<span><div class="icon print-icon"></div>{ts}Print Summary{/ts}</span>
-                 		</a>
-                 		</li>
                         
                         {if $groupOrganizationUrl}
                         <li class="crm-contact-associated-groups">

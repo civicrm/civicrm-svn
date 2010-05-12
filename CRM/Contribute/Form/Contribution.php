@@ -853,9 +853,10 @@ WHERE  contribution_id = {$this->_id}
             }
             $this->assign( 'hasPriceSets', $hasPriceSets );
             $element = $this->addMoney( 'total_amount',
-					ts('Total Amount'),
-					$attributes['total_amount'],
-					($hasPriceSets)?false:true );
+                                        ts('Total Amount'),
+                                        ($hasPriceSets)?false:true,
+                                        $attributes['total_amount'],
+                                        true );
             if ( $this->_online || $this->_ppID ) {
                 $element->freeze( );
             }
@@ -954,8 +955,6 @@ WHERE  contribution_id = {$this->_id}
             if ( $priceSetId = CRM_Utils_Array::value( 'price_set_id', $fields ) ) {
                 require_once 'CRM/Price/BAO/Field.php';
                 CRM_Price_BAO_Field::priceSetValidation( $priceSetId, $fields, $errors );
-            } else { 
-                $errors['total_amount'] = ts('Please enter a valid amount.');
             }
         }
         

@@ -150,6 +150,8 @@ function civicrm_location_update( $params ) {
     
     if ( !empty( $locationTypes ) ) {
         $params['location_type'] = $locationTypes;
+    } else {
+        return civicrm_create_error( ts('missing or invalid location_type_id') );
     }
     
     //get location filter by loc type.
