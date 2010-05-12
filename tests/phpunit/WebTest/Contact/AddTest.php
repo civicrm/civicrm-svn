@@ -96,7 +96,8 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("contact_source", "johnSource");
 
       //fill in external identifier
-      $this->type("external_identifier", "4000");
+      $indExternalId = substr( sha1( rand() ), 0, 4 );
+      $this->type( "external_identifier", $indExternalId );
       
       //check for matching contact
       $this->click("_qf_Contact_refresh_dedupe");
@@ -105,7 +106,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //address section    
       $this->click("addressBlock");
-      
+      $this->waitForElementPresent("address_1_street_address");
       //fill in address 1
       $this->type("address_1_street_address", "902C El Camino Way SW");
       $this->type("address_1_city", "Dumfries");
@@ -117,6 +118,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //fill in address 2
       $this->click("link=add address");
+      $this->waitForElementPresent("address_2_street_address");
       $this->type("address_2_street_address", "2782Y Dowlen Path W");
       $this->type("address_2_city", "Birmingham");
       $this->type("address_2_postal_code", "3456");
@@ -130,6 +132,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("commPrefs");
       
       //select greeting/addressee options
+      $this->waitForElementPresent("email_greeting_id");
       $this->select("email_greeting_id", "value=2");
       $this->select("postal_greeting_id", "value=3");
       
@@ -142,11 +145,13 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("preferred_communication_method[2]");
       
       //select preferred language
+      $this->waitForElementPresent("preferred_language");
       $this->select("preferred_language", "value=en");
       
       
       //Notes section
       $this->click("notesBlock");
+      $this->waitForElementPresent("subject");
       $this->type("subject", "test note");
       $this->type("note", "this is a test note contact webtest");
       $this->assertTrue($this->isTextPresent("Subject\n Notes"));
@@ -220,7 +225,8 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("contact_source", "Grant's home source");
       
       //fill in external identifier
-      $this->type("external_identifier", "household_webtest");
+      $houExternalId = substr( sha1( rand() ), 0, 4 );
+      $this->type( "external_identifier", $houExternalId );
 
       //check for duplicate contact
       $this->click("_qf_Contact_refresh_dedupe");
@@ -228,6 +234,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //address section
       $this->click("addressBlock");
+      $this->waitForElementPresent("address_1_street_address");
       $this->type("address_1_street_address", "938U Bay Rd E");
       $this->type("address_1_city", "Birmingham");
       $this->type("address_1_postal_code", "35278");
@@ -241,6 +248,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("commPrefs");
       
       //select greeting/addressee options
+      $this->waitForElementPresent("addressee_id");
       $this->select("addressee_id", "value=4");
       $this->type("addressee_custom", "Grant's home");
       
@@ -253,11 +261,13 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("privacy[do_not_sms]");
       
       //select preferred language
+      $this->waitForElementPresent("preferred_language");
       $this->select("preferred_language", "value=fr");
       
       
       //Notes section
       $this->click("notesBlock");
+      $this->waitForElementPresent("subject");
       $this->type("subject", "Grant's note");
       $this->type("note", "This is a household contact webtest note.");
       
@@ -325,7 +335,8 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("contact_source", "syntel's source");
       
       //fill in external identifier
-      $this->type("external_identifier", "org_webtest");
+      $orgExternalId = substr( sha1( rand() ), 0, 4 );
+      $this->type( "external_identifier", $orgExternalId );
       
       //check for duplicate contact
       $this->click("_qf_Contact_refresh_dedupe");
@@ -333,6 +344,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //address section
       $this->click("addressBlock");
+      $this->waitForElementPresent("address_1_street_address");
       $this->type("address_1_street_address", "928A Lincoln Way W");
       $this->type("address_1_city", "Madison");
       $this->type("address_1_postal_code", "68748");
@@ -353,10 +365,12 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->click("privacy[do_not_sms]");
       $this->click("privacy[do_not_mail]");
       //select preferred language
+      $this->waitForElementPresent("preferred_language");
       $this->select("preferred_language", "value=de");
       
       //Notes section
       $this->click("notesBlock");
+      $this->waitForElementPresent("subject");
       $this->type("subject", "syntel global note");
       $this->type("note", "This is a note for syntel global's contact webtest.");
       
