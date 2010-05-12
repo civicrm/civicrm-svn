@@ -87,7 +87,12 @@ class CRM_Contact_Form_Task_Email extends CRM_Contact_Form_Task {
         if ( !$cid && $this->_context != 'standalone' ) {
             parent::preProcess( );
         }
-
+        
+        //early prevent, CRM-6209
+        if ( count( $this->_contactIds ) > CRM_Contact_Form_Task_EmailCommon::MAX_EMAILS_KILL_SWITCH ) {
+            CRM_Core_Error::statusBounce( ts( 'Please do not use this task to send a lot of emails (greater than %1). We recommend using CiviMail instead.', array( 1 => CRM_Contact_Form_Task_EmailCommon::MAX_EMAILS_KILL_SWITCH ) ) );
+        }
+        
         $this->assign( 'single', $this->_single );
         require_once 'CRM/Core/Permission.php';
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
