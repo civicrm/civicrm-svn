@@ -2252,13 +2252,13 @@ div.grippie {
     float:left;
     }
 #crm-contact-actions-list .crm-contact_print-list { 
-    border-left: 1px solid #a7a7a7;
     float:right;
     }
 #crm-contact-actions-list .crm-contact_actions-list { 
     margin-left: 160px;
     margin-right: 161px;
     border-left: 1px solid #a7a7a7;
+    border-right: 1px solid #a7a7a7;
     }    
 
 /* setup for icons */
