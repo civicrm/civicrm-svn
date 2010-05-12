@@ -170,14 +170,14 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         require_once 'CRM/Core/BAO/UFMatch.php';
         if ( $uid = CRM_Core_BAO_UFMatch::getUFId( $this->_contactId ) ) {
             if ($config->userFramework == 'Drupal') {
-                $url = CRM_Utils_System::url( 'user/' . $uid );
+                $userRecordUrl = CRM_Utils_System::url( 'user/' . $uid );
             } else if ( $config->userFramework == 'Joomla' ) {
-                $url = $config->userFrameworkBaseURL . 
+                $userRecordUrl = $config->userFrameworkBaseURL . 
                     'index2.php?option=com_users&view=user&task=edit&cid[]=' . $uid;
             } else {
-                $url = null;
+                $userRecordUrl = null;
             }
-            $this->assign( 'url', $url );
+            $this->assign( 'userRecordUrl', $userRecordUrl );
         }
     
         if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) ) {
