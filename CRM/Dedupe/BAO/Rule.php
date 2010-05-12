@@ -127,6 +127,7 @@ class CRM_Dedupe_BAO_Rule extends CRM_Dedupe_DAO_Rule
             }
             if ($this->rule_length) {
                 $where[] = "SUBSTR({$this->rule_field}, 1, {$this->rule_length}) = SUBSTR('$str', 1, {$this->rule_length})";
+                $where[] = "{$this->rule_field} IS NOT NULL";
             } else {
                 $where[] = "{$this->rule_field} = '$str'";
             }
@@ -141,6 +142,7 @@ class CRM_Dedupe_BAO_Rule extends CRM_Dedupe_DAO_Rule
         // finish building WHERE, also limit the results if requested
         if (!$this->params) {
             $where[] = "t1.$id < t2.$id";
+            $where[] = "t1.{$this->rule_field} IS NOT NULL";
         }
         if ($this->contactIds) {
             $cids = array();
