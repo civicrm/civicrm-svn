@@ -64,13 +64,18 @@ class CRM_Core_Invoke
 
         if ( isset($args[1]) and $args[1] == 'menu' and 
              isset($args[2]) and $args[2] == 'rebuild' ) {
-            CRM_Core_Menu::store( );
-            CRM_Core_Session::setStatus( ts( 'Menu has been rebuilt' ) );
-            // also reset navigation
-            require_once 'CRM/Core/BAO/Navigation.php';
-            CRM_Core_BAO_Navigation::resetNavigation( );
+            // ensure that the user has a good privilege level
+            if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
+                CRM_Core_Menu::store( );
+                CRM_Core_Session::setStatus( ts( 'Menu has been rebuilt' ) );
+                // also reset navigation
+                require_once 'CRM/Core/BAO/Navigation.php';
+                CRM_Core_BAO_Navigation::resetNavigation( );
             
-            return CRM_Utils_System::redirect( );
+                return CRM_Utils_System::redirect( );
+            } else {
+                CRM_Core_Error::fatal( 'You do not have permission to execute this url' );
+            }
         }
 
         $config = CRM_Core_Config::singleton( );

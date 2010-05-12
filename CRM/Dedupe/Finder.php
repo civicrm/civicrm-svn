@@ -77,6 +77,11 @@ class CRM_Dedupe_Finder
      * params, using the default rule group for the given contact type and 
      * level.
      *
+     * check_permission is a boolean flag to indicate if permission should be considered.
+     * default is to always check permissioning but public pages for example might not want 
+     * permission to be checked for anonymous users. Refer CRM-6211. We might be beaking 
+     * Multi-Site dedupe for public pages.
+     *
      * @param array  $params  array of params of the form $params[$table][$field] == $value
      * @param string $ctype   contact type to match against
      * @param string $level   dedupe rule group level ('Fuzzy' or 'Strict')
@@ -93,9 +98,11 @@ class CRM_Dedupe_Finder
         if (!$rgBao->find(true)) {
             CRM_Core_Error::fatal("$level rule for $ctype does not exist");
         }
+        $params['check_permission'] = CRM_Utils_Array::value( 'check_permission', $params, true );
+
         $dao = new CRM_Core_DAO();
         $dao->query($rgBao->tableQuery());
-        $dao->query($rgBao->thresholdQuery());
+        $dao->query($rgBao->thresholdQuery($params['check_permission']));
         $dupes = array();
         while ($dao->fetch()) {
             if ( isset( $dao->id ) && $dao->id ) $dupes[] = $dao->id;
