@@ -45,15 +45,17 @@ class WebTest_Member_StandaloneAddTest extends CiviSeleniumTestCase {
 
       $this->open( $this->sboxPath );
       $this->webtestLogin();
-      $this->webtestAddContact( "Memberino", "Memberson", "memberino@memberson.name" );
-      $contactName = "Memberson, Memberino";
+
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName, "Memberson", "memberino@memberson.name" );
+      $contactName = "Memberson, $firstName";
 
       $this->open($this->sboxPath . "civicrm/member/add&reset=1&action=add&context=standalone");
 
       $this->waitForElementPresent("_qf_Membership_upload");
 
       // select contact
-      $this->webtestFillAutocomplete( $contactName );
+      $this->webtestFillAutocomplete( $firstName );
 
       // fill in Membership Organization and Type
       $this->select("membership_type_id[1]", "value=1");
