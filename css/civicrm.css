@@ -2560,9 +2560,15 @@ div#crm-toolTip {
     position: fixed;
     bottom:20px;
     right:20px;
-    width:300px;
+    width:500px;
     display:none;
 }
+
+div#crm-toolTip td {
+    vertical-align: top;
+    padding: 2px 4px 2px 2px;
+}
+
 div#crm-toolTip a {
     color: #000;
 }
