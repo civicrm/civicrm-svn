@@ -541,6 +541,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                 $ruleType = 'Fuzzy';
             }    
 
+            $dedupeParams['check_permission'] = false;
             $ids = CRM_Dedupe_Finder::dupesByParams( $dedupeParams,
                                                      $ctype, 
                                                      $ruleType, 

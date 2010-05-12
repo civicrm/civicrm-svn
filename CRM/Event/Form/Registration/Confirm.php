@@ -966,6 +966,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                 unset($params['email-Primary']);
             }
             $dedupeParams = CRM_Dedupe_Finder::formatParams($params, 'Individual');
+            // disable permission based on cache since event registration is public page/feature.
+            $dedupeParams['check_permission'] = false;
             $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual');
             
             // if we find more than one contact, use the first one
