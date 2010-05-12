@@ -1733,7 +1733,7 @@ ORDER BY civicrm_email.is_primary DESC";
         
         if ( CRM_Utils_Array::value('tag', $fields )) {
             require_once 'CRM/Core/BAO/EntityTag.php';
-            CRM_Core_BAO_EntityTag::create( $params['tag'], $contactID );
+            CRM_Core_BAO_EntityTag::create( $params['tag'], 'civicrm_contact', $contactID );
         } 
         
         // Set status = 'Pending' if profileDoubleOptIn = 1. CRM-5905

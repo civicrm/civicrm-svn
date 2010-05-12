@@ -608,26 +608,26 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         
         //Now check DB for location elements.
         //Now check DB for Address
-
-        $this->assertDBNull( 'CRM_Core_DAO_Address', CRM_Utils_Array::value( 'street_address', $contactParams['address'][1]), 
+        
+        $this->assertDBNull( 'CRM_Core_DAO_Address',$contactId , 
                              'id', 'street_address', 'Database check, Address deleted successfully.' );
         
         //Now check DB for Email
-        $this->assertDBNull( 'CRM_Core_DAO_Email', CRM_Utils_Array::value( 'email', $contactParams['email'][1] ),
+        $this->assertDBNull( 'CRM_Core_DAO_Email',$contactId ,
                              'id', 'email', 'Database check, Email deleted successfully.' );
         //Now check DB for Phone
-        $this->assertDBNull( 'CRM_Core_DAO_Phone', CRM_Utils_Array::value( 'phone', $contactParams['phone'][1] ),
+        $this->assertDBNull( 'CRM_Core_DAO_Phone',$contactId ,
                              'id', 'phone', 'Database check, Phone deleted successfully.' );
         //Now check DB for Mobile
-        $this->assertDBNull( 'CRM_Core_DAO_Phone', CRM_Utils_Array::value( 'phone', $contactParams['phone'][2] ),
+        $this->assertDBNull( 'CRM_Core_DAO_Phone',$contactId ,
                              'id', 'phone', 'Database check, Mobile deleted successfully.' );
         //Now check DB for IM
-        $this->assertDBNull( 'CRM_Core_DAO_IM', CRM_Utils_Array::value( 'name', $contactParams['im'][1] ),
+        $this->assertDBNull( 'CRM_Core_DAO_IM', $contactId,
                              'id', 'name', 'Database check, IM deleted successfully.' );
         //Now check DB for openId
-        $this->assertDBNull( 'CRM_Core_DAO_OpenID', CRM_Utils_Array::value( 'openid', $contactParams['openid'][1] ),
-                             'id', 'name', 'Database check, openId deleted successfully.' );
-
+        $this->assertDBNull( 'CRM_Core_DAO_OpenID',$contactId ,
+                             'id', 'openid', 'Database check, openId deleted successfully.' );
+        
         require_once 'CRM/Core/BAO/CustomValueTable.php';
 
         // Check that the custom field value is no longer present
@@ -635,11 +635,11 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                          'custom_' . $fieldID => 1);
         $values = CRM_Core_BAO_CustomValueTable::getValues( $params );
         $this->assertEquals( CRM_Utils_Array::value( "custom_{$fieldID}", $values ), '', 
-                            'Verify that the data value is empty for contact ' . $contactId);
+                             'Verify that the data value is empty for contact ' . $contactId);
         $this->assertEquals( $values['is_error'], 1, 'Verify that is_error = 0 (success).');
         
         //Now check DB for contact.
-        $this->assertDBNull( 'CRM_Contact_DAO_Contact', $contactParams['last_name'] . ', ' . $contactParams['first_name'], 
+        $this->assertDBNull( 'CRM_Contact_DAO_Contact',$contactId , 
                              'id', 'sort_name', 'Database check, contact deleted successfully.' );
     }
     
