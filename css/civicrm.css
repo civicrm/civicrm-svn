@@ -457,7 +457,7 @@ div.spacer,
 }
 
 #crm-container table.form-layout-compressed {
-    margin: 0em;
+    margin: 0em 0em .5em;
     width: auto;
     border-collapse: collapse;
     border: 1px none;
@@ -2115,6 +2115,10 @@ div.grippie {
     margin: 4px 0px 4px 2px;
 }
 
+.crm-clear-link {
+    margin-left: .5em;
+}
+
 #crm-container .crm-button {
     border:medium none;
     cursor:pointer;
@@ -2536,6 +2540,10 @@ div.helpicon {
     z-index:1;
     position:absolute;
 }
+    div.crm-accordion-header div.helpicon {
+        background-image:url(../i/icons/jquery-ui-F5F6F1.png);
+        float: right;
+    }
 
 div.statusicon {
     background  : transparent url(../i/quiz.png) no-repeat;

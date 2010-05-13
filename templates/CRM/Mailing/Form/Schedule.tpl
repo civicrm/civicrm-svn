@@ -23,35 +23,32 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-form-block">
+{include file="CRM/common/WizardHeader.tpl"}
 <div id="help">
     {ts}You can schedule this mailing to be sent starting at a specific date and time, OR you can request that it be sent as soon as possible by checking &quot;Send Immediately&quot;.{/ts} {help id="sending"}
 </div>
-<div class="crm-form-block">
-{include file="CRM/common/WizardHeader.tpl"}
 {include file="CRM/Mailing/Form/Count.tpl"}
 
-
-<fieldset>
- <table class="form-layout">
+<table class="form-layout">
   <tbody>
     <tr>
-        <td>{$form.now.label}</td>
+        <td class="label">{$form.now.label}</td>
         <td>{$form.now.html}</td>
     </tr>
     <tr>
-        <td>{ts}OR{/ts}</td>
+        <td class="label">{ts}OR{/ts}</td>
         <td>&nbsp;</td>
     </tr>
     <tr>
-        <td>{$form.start_date.label}</td>
+        <td class="label">{$form.start_date.label}</td>
         <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}
-            <span class="description">{ts}Set a date and time when you want CiviMail to start sending this mailing.{/ts}</span>
+            <div class="description">{ts}Set a date and time when you want CiviMail to start sending this mailing.{/ts}</div>
         </td>
     </tr>
-    <tr><td colspan="2">{include file="CRM/common/formButtons.tpl"}</td></tr>
+    <tr><td></td><td>{$form.buttons.html}</td></tr>
   </tbody>
 </table>
-</fieldset>
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}
