@@ -66,7 +66,7 @@ class CRM_Contact_Form_Task_AddToTag extends CRM_Contact_Form_Task {
      */
     function buildQuickForm( ) {
         // add select for tag
-        $this->_tags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact');
+        $this->_tags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact', true, true);
         
         foreach ($this->_tags as $tagID => $tagName) {
             $this->_tagElement =& $this->addElement('checkbox', "tag[$tagID]", null, $tagName);
@@ -87,8 +87,8 @@ class CRM_Contact_Form_Task_AddToTag extends CRM_Contact_Form_Task {
     
     static function formRule( $form, $rule) {
         $errors =array();
-        if(empty($form['tag'])) {
-            $errors['_qf_default'] = "Please Check atleast one checkbox";
+        if ( empty( $form['tag'] ) && empty( $form['taglist'] ) ) {
+            $errors['_qf_default'] = "Please select atleast one tag.";
         }
         return $errors;
     }
@@ -99,11 +99,30 @@ class CRM_Contact_Form_Task_AddToTag extends CRM_Contact_Form_Task {
      * @return None
      */
     public function postProcess() {
-    
-        $tagId    = $this->controller->exportValue('AddToTag','tag' );
+        //get the submitted values in an array
+        $params = $this->controller->exportValues( $this->_name );
+
+        $contactTags = $tagList = array( );
+
+        // check if contact tags exists
+        if ( CRM_Utils_Array::value( 'tag', $params ) ) {
+            $contactTags = $params['tag'];
+        }
+        
+        // check if tags are selected from taglists
+        if ( CRM_Utils_Array::value( 'taglist', $params ) ) {
+            foreach( $params['taglist'] as $val ) {
+                if ( $val ) {
+                    $tagList[ $val ] = 1;
+                }
+            }
+        }
+        
+        // merge contact and taglist tags
+        $allTags = CRM_Utils_Array::crmArrayMerge( $contactTags, $tagList );        
         
         $this->_name = array();
-        foreach($tagId as $key=>$dnc) {
+        foreach( $allTags as $key => $dnc ) {
             $this->_name[]   = $this->_tags[$key];
             
             list( $total, $added, $notAdded ) = CRM_Core_BAO_EntityTag::addEntitiesToTag( $this->_contactIds, $key );
