@@ -70,6 +70,17 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             }
         } else {
             $this->_isTagSet = CRM_Utils_Request::retrieve( 'tagset', 'Positive', $this );
+            
+            if ( !$this->_isTagSet && 
+                 $this->_id &&
+                 CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'is_hidden' ) ) {
+                $this->_isTagSet = true;
+            }
+            
+            if ( !$this->_isTagSet ) {
+                $this->add( 'select', 'parent_id', ts('Parent Tag'), $allTag );
+            }
+            
             $this->assign( 'isTagSet', $this->_isTagSet );
             
             $this->applyFilter('__ALL__', 'trim');
@@ -89,32 +100,27 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             if ( $this->_id ) {
                 unset( $allTag[$this->_id] );
             }
-            
-            if ( !$this->_isTagSet ) {
-                $this->add( 'select', 'parent_id', ts('Parent Tag'), $allTag );
-            }
-            
+                        
             $isReserved = $this->add( 'checkbox', 'is_reserved', ts('Reserved?') );
             if ( !CRM_Core_Permission::check('administer hidden tags') ) {
                 $isReserved->freeze( );
             }
-            
+    
             require_once 'CRM/Core/OptionGroup.php';
             $usedFor = $this->add('select', 'used_for', ts('Used For'), 
                                   CRM_Core_OptionGroup::values('tag_used_for') );
             $usedFor->setMultiple( true );
-            // $accessHidden = false;
-            // if ( $isTagSet && CRM_Core_Permission::check('administer hidden tags') ) {
-            //     $isHidden = $this->add( 'checkbox', 'is_hidden', ts('Is Tag Set?') );
-            //     $accessHidden = true;
-            //     if ( $this->_id &&
-            //          CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'parent_id' ) ) {
-            //         $isHidden->freeze( );
-            //         $usedFor->freeze( );
-            //     }
-            // }
-            // $this->assign( 'accessHidden', $accessHidden );
-
+            $accessHidden = false;
+            if ( CRM_Core_Permission::check('administer hidden tags') ) {
+                $accessHidden = true;
+                if ( $this->_id &&
+                     CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'parent_id' ) ) {
+                    $usedFor->freeze( );
+                }
+            }
+            
+            $this->assign( 'accessHidden', $accessHidden );
+            
             parent::buildQuickForm( ); 
         }
     }
