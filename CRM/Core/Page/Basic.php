@@ -251,9 +251,9 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
                         $values[$object->id]['mapping_type'] = $mappintTypes[$object->mapping_type_id];
                     }
                 }
-                $this->assign( 'rows', $values );
             }
         }
+        $this->assign( 'rows', $values );
     }
     
     /**

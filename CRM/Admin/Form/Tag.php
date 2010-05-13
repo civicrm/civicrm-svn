@@ -146,6 +146,10 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
         if ( $this->_isTagSet ) {
             $params['is_hidden'] = 1;
         }
+        
+        if ( ! isset($params['is_reserved'])) {
+            $params['is_reserved'] = 0;
+        }
 
         if ($this->_action == CRM_Core_Action::DELETE) {
             if ($this->_id  > 0 ) {
