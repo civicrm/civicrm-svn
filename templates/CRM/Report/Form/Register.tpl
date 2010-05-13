@@ -71,7 +71,7 @@
 {/if} 
  <dl>
     <dt></dt>
-    <dd>{$form.buttons.html}<dd/>
+    <dd>{include file="CRM/common/formButtons.tpl"}<dd/>
  </dl>
 </fieldset>
  </div>

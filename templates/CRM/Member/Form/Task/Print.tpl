@@ -26,7 +26,7 @@
 <p>
 {if $rows } 
 <div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
+     <span class="element-right">{include file="CRM/common/formButtons.tpl"}</span>
 </div>
 <div class="spacer"></div>
 <br />
@@ -55,7 +55,7 @@
 </table>
 
 <div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
+     <span class="element-right">{include file="CRM/common/formButtons.tpl"}</span>
 </div>
 
 {else}

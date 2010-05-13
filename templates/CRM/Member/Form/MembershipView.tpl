@@ -43,7 +43,7 @@
        <tr>   
          <td>&nbsp;</td>
             <td>
-                {$form.buttons.html}
+                {include file="CRM/common/formButtons.tpl"}
                 {* Check permissions and make sure this is not an inherited membership (edit and delete not allowed for inherited memberships) *}
                 {if ! $owner_contact_id AND call_user_func(array('CRM_Core_Permission','check'), 'edit memberships') }
                     &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/membership' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context"}" accesskey="e">Edit</a>

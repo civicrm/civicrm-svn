@@ -37,7 +37,7 @@
         </dl>
       </div>
       <dl>
-        <dt></dt><dd>{$form.buttons.html}</dd>
+        <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
       </dl>
     {else}
       <table class="form-layout-compressed">
@@ -65,7 +65,7 @@
             <span class="description">{ts}If you allow users to select a Participant Status by including that field on a profile - only statuses with 'Public' visibility are listed.{/ts}</td>
         </tr>
 
-        <tr><td class="label">&nbsp;</td><td>{$form.buttons.html}</td></tr>
+        <tr><td class="label">&nbsp;</td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
       </table>
     {/if}
     <div class="spacer"></div>

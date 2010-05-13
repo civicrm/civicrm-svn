@@ -40,7 +40,7 @@
 </div>
 {/if}
 <div class="form-item">
-<div class=""crm-submit-buttons">{$form.buttons.html}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 <fieldset><legend>{if $action eq 1 or $action eq 1024}{ts}New Pledge{/ts}{elseif $action eq 8}{ts}Delete Pledge{/ts}{else}{ts}Edit Pledge{/ts}{/if}</legend> 
    {if $action eq 8} 
       <div class="messages status"> 

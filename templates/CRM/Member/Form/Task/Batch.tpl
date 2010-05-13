@@ -66,7 +66,7 @@
            </tr>
          </table>
         <dl>
-            <dt></dt><dd>{if $fields}{$form._qf_Batch_refresh.html}{/if} &nbsp; {$form.buttons.html}</dd>
+            <dt></dt><dd>{if $fields}{$form._qf_Batch_refresh.html}{/if} &nbsp;{include file="CRM/common/formButtons.tpl"}</dd>
         </dl>
 </fieldset>
 </div>

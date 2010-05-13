@@ -38,7 +38,7 @@
         {ts 1=$mappingName}WARNING: Are you sure you want to delete mapping '<b>%1</b>'? This action cannot be undone.{/ts}</div>
     {/if}
     <dl>
-    <dt></dt><dd>{$form.buttons.html}</dd>
+    <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
     </dl>
     <div class="spacer"></div>
 </fieldset>

@@ -48,7 +48,7 @@
           </dl>
     {/if}
 	{if $action neq 4} {* action is not view *}
-           <dl><dt></dt><dd>{$form.buttons.html}</dd></dl>
+           <dl><dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd></dl>
         {else}
             <dl><dt></dt><dd>{$form.done.html}</dd></dl>
         {/if}

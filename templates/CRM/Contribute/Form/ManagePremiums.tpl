@@ -109,7 +109,7 @@
 </div>
 </fieldset>
 <div id="crm-submit-buttons">
-    {$form.buttons.html}
+    {include file="CRM/common/formButtons.tpl"}
 </div>
 
 {if $action eq 1 or $action eq 2 }		 

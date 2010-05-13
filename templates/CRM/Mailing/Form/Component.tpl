@@ -34,7 +34,7 @@
     <dt>{$form.body_html.label}</dt><dd>{$form.body_html.html}</dd>
     <dt>{$form.is_default.label}</dt><dd>{$form.is_default.html}</dd>
     <dt>{$form.is_active.label}</dt><dd>{$form.is_active.html}</dd>
-    <dt></dt><dd>{$form.buttons.html}</dd>
+    <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
   </dl>
 </fieldset>
 </div>
