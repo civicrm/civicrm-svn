@@ -155,7 +155,7 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
                 CRM_Core_BAO_Tag::del( $this->_id );
             }
         } else {
-            CRM_Core_BAO_Tag::add($params, $ids);
+            $tag = CRM_Core_BAO_Tag::add($params, $ids);
             CRM_Core_Session::setStatus( ts('The tag \'%1\' has been saved.', array(1 => $tag->name)) );
         }        
     }//end of function
