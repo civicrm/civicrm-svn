@@ -132,7 +132,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
         }
     }
 
-    function getTagsUsedFor( $usedFor = array( 'civicrm_contact' ) , $buildSelect = true, $all = false ) {       
+    function getTagsUsedFor( $usedFor = array( 'civicrm_contact' ), $buildSelect = true, $all = false ) {       
         $tags = array( );
 
         if ( empty($usedFor) ) {
@@ -146,7 +146,11 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
             $tag = new CRM_Core_DAO_Tag( );
             $tag->fields( );
             $tag->orderBy( 'parent_id' );
-            $tag->whereAdd( "used_for LIKE '%{$entityTable}%'");
+            if ( $buildSelect ) {
+                $tag->whereAdd( "is_hidden = 0 AND parent_id IS NULL AND used_for LIKE '%{$entityTable}%'");
+            } else {
+                $tag->whereAdd( "used_for LIKE '%{$entityTable}%'");
+            }
             if ( !$all ) {
                 $tag->is_hidden = 0; 
             }
