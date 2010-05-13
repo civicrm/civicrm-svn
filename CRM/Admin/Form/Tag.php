@@ -110,13 +110,10 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             $usedFor = $this->add('select', 'used_for', ts('Used For'), 
                                   CRM_Core_OptionGroup::values('tag_used_for') );
             $usedFor->setMultiple( true );
-            $accessHidden = false;
-            if ( CRM_Core_Permission::check('administer hidden tags') ) {
-                $accessHidden = true;
-                if ( $this->_id &&
-                     CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'parent_id' ) ) {
-                    $usedFor->freeze( );
-                }
+
+            if ( $this->_id &&
+                 CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'parent_id' ) ) {
+                $usedFor->freeze( );
             }
             
             $this->assign( 'accessHidden', $accessHidden );
