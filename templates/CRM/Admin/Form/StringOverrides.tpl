@@ -23,6 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{if $addRow}
+<div id="addRow"></div>
+{else} 
 {* this template is used for adding/editing string overrides  *}
 <div class="form-item">
 <fieldset><legend>{ts}String Overrides{/ts}</legend>
@@ -47,20 +50,38 @@
        			 {assign var='newName' value=$temp|cat:"`$smarty.section.numStrings.index`"}
        			 {assign var='temp' value='cb_'}
        			 {assign var='cbName'  value=$temp|cat:"`$smarty.section.numStrings.index`"}
+                <div id="addRow"> 
 		<tr>
 		    <td class="even-row">{$form.$enabledName.html}</td>	
 		    <td class="even-row">{$form.$oldName.html}</td>
     		    <td class="even-row">{$form.$newName.html}</td>
  		    <td class="even-row">{$form.$cbName.html}</td>
     		</tr>
+                </div> 
     		{/section}
     	    </table>
 	    </fieldset>
 	    </td>
 	</tr>
 	<tr>
-	    <td>{$form.buttons.html}</td>
+	    <td> <a class="button" onClick="Javascript:addRow();return false;"><span><div class="icon add-icon"></div>{ts}Add new Row{/ts}</span></a> {$form.buttons.html}</td>
 	</tr>
 </table>
 </fieldset>
 </div>
+{/if}
+{literal}
+<script type="text/javascript">
+function addRow( ) {
+   var dataUrl  = {/literal}"{crmURL q='snippet=4'}"{literal} ;
+   dataUrl     += "?addrow=1";
+    cj.ajax({ 
+              url     : dataUrl,   
+              async   : false,
+              success : function(html){
+                           cj('#addRow').after(html);
+        }
+     });
+}   
+</script>
+{/literal} 
