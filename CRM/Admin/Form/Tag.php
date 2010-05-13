@@ -76,7 +76,13 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
                  CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'is_hidden' ) ) {
                 $this->_isTagSet = true;
             }
-            
+
+            $allTag = array ('' => '- ' . ts('select') . ' -') + CRM_Core_PseudoConstant::tag();
+
+            if ( $this->_id ) {
+                unset( $allTag[$this->_id] );
+            }
+                        
             if ( !$this->_isTagSet ) {
                 $this->add( 'select', 'parent_id', ts('Parent Tag'), $allTag );
             }
@@ -94,12 +100,6 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
 
             //@lobo haven't a clue why the checkbox isn't displayed (it should be checked by default
             $this->add( 'checkbox', 'is_selectable', ts("If it's a tag or a category"));
-
-            $allTag = array ('' => '- ' . ts('select') . ' -') + CRM_Core_PseudoConstant::tag();
-
-            if ( $this->_id ) {
-                unset( $allTag[$this->_id] );
-            }
                         
             $isReserved = $this->add( 'checkbox', 'is_reserved', ts('Reserved?') );
             if ( !CRM_Core_Permission::check('administer hidden tags') ) {
