@@ -218,13 +218,24 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
             return null;
         }
 
-        $tag               = new CRM_Core_DAO_Tag( );
+        $tag = new CRM_Core_DAO_Tag( );
+        
+        // if parent id is set then inherit used for and is hidden properties
+        if ( CRM_Utils_Array::value( 'parent_id', $params ) ) {
+            // get parent details
+            $params['used_for' ] = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $params['parent_id'] , 'used_for' );
+        }
+
         $tag->copyValues( $params );
         $tag->id = CRM_Utils_Array::value( 'tag', $ids );
-
         $tag->save( );
-        
-        CRM_Core_Session::setStatus( ts('The tag \'%1\' has been saved.', array(1 => $tag->name)) );
+
+        // if we modify parent tag, then we need to update all children
+        if ( $tag->parent_id === 'null' ) {
+            CRM_Core_DAO::executeQuery( "UPDATE civicrm_tag SET used_for=%1 WHERE parent_id = %2", 
+                                                   array( 1 => array( $params['used_for'], 'String' ),
+                                                          2 => array( $tag->id , 'Integer' ) ) );
+        } 
         
         return $tag;
     }

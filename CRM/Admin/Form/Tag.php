@@ -134,30 +134,14 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
         $params = $this->exportValues();
        
         $ids['tag'] = $this->_id;
-        if( $this->_action == CRM_Core_Action::ADD || 
+        if ( $this->_action == CRM_Core_Action::ADD || 
             $this->_action == CRM_Core_Action::UPDATE ) {
             $params['used_for'] = implode( "," , $params['used_for'] );
-        }
-
-        if ( !empty($params['parent_id']) ) {
-            $usedFor =  CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $params['parent_id'] , 'used_for' );
-            $params['used_for']  = $usedFor;
-            if( !$params['used_for'] ) {
-                $params['used_for']=" ";
-            }
         }
         
         $params['is_hidden'] = 0;
         if ( $this->_isTagSet ) {
             $params['is_hidden'] = 1;
-        }
-        
-        // update all childs is_hidden field
-        if ( $this->_id && !( $this->_action == CRM_Core_Action::DELETE ) ) {
-            CRM_Core_DAO::executeQuery( "UPDATE civicrm_tag SET is_hidden= %1,used_for=%2 WHERE parent_id = %3", 
-                                        array( 1 => array( $params['is_hidden'], 'Integer' ),
-                                               2 => array( $params['used_for'], 'String' ),
-                                               3 => array( $this->_id , 'Integer' ) ) );
         }
 
         if ($this->_action == CRM_Core_Action::DELETE) {
@@ -166,9 +150,7 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             }
         } else {
             CRM_Core_BAO_Tag::add($params, $ids);
+            CRM_Core_Session::setStatus( ts('The tag \'%1\' has been saved.', array(1 => $tag->name)) );
         }        
-        
     }//end of function
 }
-
-

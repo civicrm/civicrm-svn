@@ -264,7 +264,6 @@ class CRM_Admin_Page_AJAX
             // else create new tag
             if ( !is_numeric( $tagID ) ) {
                 $params = array( 'name'      => $tagID, 
-                                 'is_hidden' => true, 
                                  'parent_id' => $parentId );
 
                 require_once 'CRM/Core/BAO/Tag.php';
