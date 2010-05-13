@@ -1093,7 +1093,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             $dedupeParams = CRM_Dedupe_Finder::formatParams($behalfOrganization, 'Organization');
             $dedupeParams['check_permission'] = false;
             $dupeIDs      = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Organization', 'Strict');
-            if ( count($dupeIDs) == 1 ) {
+
+            // CRM-6243 says to pick the first org even if more than one match
+            if ( count($dupeIDs) >= 1 ) {
                 $behalfOrganization['contact_id'] = $dupeIDs[0];
                 // don't allow name edit
                 unset($behalfOrganization['organization_name']);
