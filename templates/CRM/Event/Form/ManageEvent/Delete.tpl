@@ -25,16 +25,14 @@
 *}
 {* this template is used for confirmation of delete for event  *}
 <div class="messages status">
-    <dl>
-        <dt><div class="icon inform-icon"></div></dt>
-        <dd>
-          {if $isTemplate}
-            {ts}Warning: Deleting this event template will also delete associated Event Registration Page and Event Fee configurations.{/ts} {ts}This operation cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
-          {else}
+   <div class="icon inform-icon"></div>
+   <div>
+       {if $isTemplate}
+         {ts}Warning: Deleting this event template will also delete associated Event Registration Page and Event Fee configurations.{/ts} {ts}This operation cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
+       {else}
             {ts}Warning: Deleting this event will also delete associated Event Registration Page and Event Fee configurations.{/ts} {ts}This operation cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
-          {/if}
-        </dd>
-    </dl>
+       {/if}
+   </div>
 </div>
 
 <div class="form-item">

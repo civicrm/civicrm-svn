@@ -35,10 +35,12 @@
 {* moved to tpl since need to show only for primary participant page *}
 {if $requireApprovalMsg || $waitlistMsg}
   <div id = "id-waitlist-approval-msg" class="messages status">
-    <dl>
-	{if $requireApprovalMsg}<dd id="id-req-approval-msg">{$requireApprovalMsg}</dd>{/if}
-        {if $waitlistMsg}<dd id="id-waitlist-msg">{$waitlistMsg}</dd>{/if} 
-    </dl>
+    	{if $requireApprovalMsg}
+	    <div id="id-req-approval-msg">{$requireApprovalMsg}</div>
+	{/if}
+        {if $waitlistMsg}
+	    <div id="id-waitlist-msg">{$waitlistMsg}</div>
+	{/if} 
   </div>
 {/if}
 
