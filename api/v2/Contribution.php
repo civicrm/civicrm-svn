@@ -434,7 +434,6 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
  */
 function civicrm_contribute_transact($params) {
   civicrm_initialize( );
-  require 'api/v2/Contribute.php' ;
 
   if ( empty( $params ) ) {
     return civicrm_create_error( ts( 'No input parameters present' ) );
@@ -510,7 +509,6 @@ function civicrm_contribute_transact($params) {
       }
   }
 
-  require_once 'api/v2/Contribute.php' ;
   $contribution = civicrm_contribution_add($params);
   return $contribution ;
 }
