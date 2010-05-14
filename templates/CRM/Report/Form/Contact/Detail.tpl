@@ -40,7 +40,7 @@
             {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>
         {foreach from=$rows item=row}
-                	<table class="report-layout">
+                	<table class="report-layout crm-report_contact_civireport">
                             <tr>
                                 {foreach from=$columnHeaders item=header key=field}
                                     {if !$skip}
@@ -59,11 +59,11 @@
                                     {/if}
                                 {/foreach}
                             </tr>               
-                            <tr class="group-row">
+                            <tr class="group-row crm-report">
                                 {foreach from=$columnHeaders item=header key=field}
                                     {assign var=fieldLink value=$field|cat:"_link"}
                                     {assign var=fieldHover value=$field|cat:"_hover"}
-                                    <td  class="report-contents">
+                                    <td  class="report-contents crm-report_{$field}">
                                         {if $row.$fieldLink}<a title="{$row.$fieldHover}" href="{$row.$fieldLink}">{/if}
                         
                                         {if $row.$field eq 'Subtotal'}
@@ -95,7 +95,7 @@
                             {foreach from=$columnHeadersComponent item=pheader key=component}
                                 {if $componentRows.$componentContactId.$component}
                                     <h3>{$component|replace:'_civireport':''|upper}</h3>
-                        	<table class="report-layout">
+                        	<table class="report-layout crm-report_{$component}">
                         	    {*add space before headers*}
                         		<tr>
                         		    {foreach from=$pheader item=header}
@@ -103,12 +103,12 @@
                         		    {/foreach}
                         		</tr>
                              
-                        	    {foreach from=$componentRows.$componentContactId.$component item=row}
-                        		<tr>
+                        	    {foreach from=$componentRows.$componentContactId.$component item=row key=rowid}
+                        		<tr class="{cycle values="odd-row,even-row"} crm-report" id="crm-report_{$rowid}">
                         		    {foreach from=$columnHeadersComponent.$component item=header key=field}
                         			{assign var=fieldLink value=$field|cat:"_link"}
                                                 {assign var=fieldHover value=$field|cat:"_hover"}
-                        			<td class="report-contents">
+                        			<td class="report-contents crm-report_{$field}">
                         			    {if $row.$fieldLink}
                         				<a title="{$row.$fieldHover} "href="{$row.$fieldLink}">
                         			    {/if}

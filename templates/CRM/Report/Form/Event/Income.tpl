@@ -42,7 +42,7 @@
             {include file="CRM/common/pager.tpl" location="top" noForm=0}
         </div>
         {foreach from=$events item=eventID}
-                	<table class="report-layout" >
+                	<table class="report-layout">
                 	    {foreach from=$summary.$eventID item=values key=keys}
                 	        {if $keys == 'Title'}
                         	    <tr>
@@ -50,9 +50,9 @@
                                         <th colspan="3">{$values}</th>
                                     </tr>
                                 {else}  
-                                    <tr>
-                                        <td class="report-contents">{$keys}</td>
-                                        <td class="report-contents" colspan="3">{$values}</td>
+                                    <tr class="{cycle values="odd-row,even-row"} crm-report crm-report_event_summary" id="crm-report_{$eventID}_summary_{$keys}">
+                                        <td class="report-contents crm-report_summary_title">{$keys}</td>
+                                        <td class="report-contents crm-report_summary_details" colspan="3">{$values}</td>
                                     </tr>
                                 {/if}
                             {/foreach}
@@ -68,11 +68,11 @@
                                         <th class="reports-header-right">{ts}Revenue{/ts}</th>
                                     </tr>
                                     {foreach from=$row.$eventID item=row key=role}
-                                        <tr>
-                                            <td class="report-contents" width="34%">{$role}</td>
-                                            <td class="report-contents-right">{$row.0}</td>
-                                            <td class="report-contents-right">{$row.1}</td>
-                                            <td class="report-contents-right">{$row.2|crmMoney}</td>	        
+                                        <tr class="{cycle values="odd-row,even-row"} crm-report crm-report_{$keys}_{$role}" id="crm-report_{$eventID}_{$keys}_{$role}">
+                                            <td class="report-contents crm-report_{$keys}_breakdown" width="34%">{$role}</td>
+                                            <td class="report-contents-right crm-report_{$keys}_total">{$row.0}</td>
+                                            <td class="report-contents-right crm-report_{$keys}_percentage">{$row.1}</td>
+                                            <td class="report-contents-right crm-report_{$keys}_revenue">{$row.2|crmMoney}</td>	        
                                         </tr>
                                     {/foreach}
                                 {/if}
