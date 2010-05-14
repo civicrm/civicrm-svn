@@ -72,25 +72,23 @@
         {strip}
         <table id="active_membership" class="display">
             <thead>
-            <tr>
                 <th>{ts}Membership{/ts}</th>
                 <th>{ts}Start Date{/ts}</th>
                 <th>{ts}End Date{/ts}</th>
                 <th>{ts}Status{/ts}</th>
                 <th>{ts}Source{/ts}</th>
                 <th></th>
-            </tr>
             </thead>
             {foreach from=$activeMembers item=activeMember}
-            <tr id="mem_{$activeMember.id}" class="{cycle values="odd-row,even-row"} {$activeMember.class}">
-                <td>
+            <tr id="crm-membership_{$activeMember.id}" class="{cycle values="odd-row,even-row"} {$activeMember.class} crm-membership">
+                <td class="crm-membership-membership_type">
                     {$activeMember.membership_type}
                     {if $activeMember.owner_membership_id}<br />({ts}by relationship{/ts}){/if}
                 </td>
-                <td>{$activeMember.start_date|crmDate}</td>
-                <td>{$activeMember.end_date|crmDate}</td>
-                <td>{$activeMember.status}</td>
-                <td>{$activeMember.source}</td>
+                <td class="crm-membership-start_date">{$activeMember.start_date|crmDate}</td>
+                <td class="crm-membership-end_date">{$activeMember.end_date|crmDate}</td>
+                <td class="crm-membership-status">{$activeMember.status}</td>
+                <td class="crm-membership-source">{$activeMember.source}</td>
                 <td>
                     {$activeMember.action|replace:'xx':$activeMember.id}
                     {if $activeMember.owner_membership_id}
@@ -111,22 +109,20 @@
         {strip}
         <table id="pending_membership" class="display">
            <thead>
-            <tr>
                 <th>{ts}Membership{/ts}</th>
                 <th>{ts}Start Date{/ts}</th>
                 <th>{ts}End Date{/ts}</th>
                 <th>{ts}Status{/ts}</th>
                 <th>{ts}Source{/ts}</th>
                 <th></th>
-            </tr>
             </thead>
             {foreach from=$inActiveMembers item=inActiveMember}
-            <tr id="mem_{$inActiveMember.id}" class="{cycle values="odd-row,even-row"} {$inActiveMember.class}">
-                <td>{$inActiveMember.membership_type}</td>
-                <td>{$inActiveMember.start_date|crmDate}</td>
-                <td>{$inActiveMember.end_date|crmDate}</td>
-                <td>{$inActiveMember.status}</td>
-                <td>{$inActiveMember.source}</td>
+            <tr id="crm-membership_{$inActiveMember.id}" class="{cycle values="odd-row,even-row"} {$inActiveMember.class} crm-membership">
+                <td class="crm-membership-membership_type">{$inActiveMember.membership_type}</td>
+                <td class="crm-membership-start_date">{$inActiveMember.start_date|crmDate}</td>
+                <td class="crm-membership-end_date">{$inActiveMember.end_date|crmDate}</td>
+                <td class="crm-membership-status">{$inActiveMember.status}</td>
+                <td class="crm-membership-source">{$inActiveMember.source}</td>
                 <td>{$inActiveMember.action|replace:'xx':$inActiveMember.id}</td>
             </tr>
             {/foreach}
@@ -145,24 +141,22 @@
             {strip}
             <table id="membership_type" class="display">
             <thead>
-            <tr>
                 <th>{ts}Name{/ts}</th>
                 <th>{ts}Period{/ts}</th>
                 <th>{ts}Fixed Start{/ts}</th>		
                 <th>{ts}Minimum Fee{/ts}</th>
                 <th>{ts}Duration{/ts}</th>            
                 <th>{ts}Visibility{/ts}</th>
-                <th></th>
-            </tr>
+                <th></th>   
             </thead>
             {foreach from=$membershipTypes item=membershipType}
-            <tr class="{cycle values="odd-row,even-row"} {$membershipType.class}">
-                <td>{$membershipType.name}</td>
-            <td>{$membershipType.period_type}</td>
-            <td>{$membershipType.fixed_period_start_day}</td>
-                <td>{$membershipType.minimum_fee}</td>
-                <td>{$membershipType.duration_unit}</td>	        
-                <td>{$membershipType.visibility}</td>
+            <tr class="{cycle values="odd-row,even-row"} {$membershipType.class} crm-membership">
+                <td class="crm-membership-name">{$membershipType.name}</td>
+                <td class="crm-membership-period_type">{$membershipType.period_type}</td>
+                <td class="crm-membership-fixed_period_start_day">{$membershipType.fixed_period_start_day}</td>
+                <td class="crm-membership-minimum_fee">{$membershipType.minimum_fee}</td>
+                <td class="crm-membership-duration_unit">{$membershipType.duration_unit}</td>	        
+                <td class="crm-membership-visibility">{$membershipType.visibility}</td>
                 <td>{$membershipType.action|replace:xx:$membershipType.id}</td>
             </tr>
             {/foreach}

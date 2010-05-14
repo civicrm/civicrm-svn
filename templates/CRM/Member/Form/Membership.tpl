@@ -56,13 +56,9 @@
 </div>
     {if $action eq 8}
       <div class="messages status">
-        <dl>
-          <dt><div class="icon inform-icon"></div></dt>
-          <dd>    
+          <div class="icon inform-icon"></div>       
           {ts}WARNING: Deleting this membership will also delete related membership log and payment records. This action cannot be undone. Consider modifying the membership status instead if you want to maintain a record of this membership.{/ts}
-          {ts}Do you want to continue?{/ts}
-          </dd>
-       </dl>
+          {ts}Do you want to continue?{/ts}    
       </div>
     {else}
     <table class="form-layout-compressed">
