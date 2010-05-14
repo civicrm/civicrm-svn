@@ -624,7 +624,7 @@ WHERE  civicrm_participant.id = {$participantId}
         require_once 'CRM/Event/PseudoConstant.php';
 
         self::lookupValue($defaults, 'event', CRM_Event_PseudoConstant::event(), $reverse);
-        self::lookupValue($defaults, 'status', CRM_Event_PseudoConstant::participantStatus(), $reverse);
+        self::lookupValue($defaults, 'status', CRM_Event_PseudoConstant::participantStatus( null ,null, 'label' ), $reverse);
         self::lookupValue($defaults, 'role', CRM_Event_PseudoConstant::participantRole(), $reverse);
     }
 
