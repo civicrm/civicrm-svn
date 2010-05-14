@@ -31,12 +31,8 @@
 {/if}
 {if !$email}
 <div class="messages status">
-  <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
+    <div class="icon inform-icon"></div> 
         <p>{ts}You will not be able to send an automatic email receipt for this Renew Membership because there is no email address recorded for this contact. If you want a receipt to be sent when this Membership is recorded, click Cancel and then click Edit from the Summary tab to add an email address before Renewal the Membership.{/ts}</p>
-    </dd>
-  </dl>
 </div>
 {/if}
 {if $membershipMode}
@@ -49,69 +45,102 @@
     <div id="help" class="description">
         {ts}Renewing will add the normal membership period to the End Date of the previous period for members whose status is Current or Grace. For Expired memberships, renewing will create a membership period commencing from the 'Date Renewal Entered'. This date can be adjusted including being set to the day after the previous End Date - if continuous membership is required.{/ts}
     </div>
-    <dl>
-        <dt>{$form.payment_processor_id.label}</dt>
-        <dd class="html-adjust">{$form.payment_processor_id.html}</dd><br />
-        
-        <dt>{ts}Membership Organization and Type{/ts}</dt>
-        <dd class="html-adjust">{$orgName}&nbsp;&nbsp;-&nbsp;&nbsp;{$memType}
-            {if $member_is_test} {ts}(test){/ts}{/if}</dd>
-        
-        <dt>{ts}Membership Status{/ts}</dt>
-        <dd class="html-adjust">&nbsp;{$membershipStatus}<br />
-            <span class="description">{ts}Status of this membership.{/ts}</span></dd>
-
-        <dt>{ts}Membership End Date{/ts}</dt>
-        <dd class="html-adjust">&nbsp;{$endDate}</dd>
-        
-        <dt>{$form.renewal_date.label}</dt>
-        <dd>{include file="CRM/common/jcalendar.tpl" elementName=renewal_date}</dd>
-    </dl>
-
+    <table class="form-layout-compressed">
+        <tr class="crm-membership-form-block-payment_processor_id">
+            <td>{$form.payment_processor_id.label}</td>
+            <td class="html-adjust">{$form.payment_processor_id.html}</td><br />
+        </tr> 
+        <tr class="crm-membership-form-block-org_name">  
+            <td>{ts}Membership Organization and Type{/ts}</td>
+            <td class="html-adjust">{$orgName}&nbsp;&nbsp;-&nbsp;&nbsp;{$memType}
+                {if $member_is_test} {ts}(test){/ts}{/if}</td>
+        </tr> 
+        <tr class="crm-membership-form-block-membership_status">  
+            <td>{ts}Membership Status{/ts}</td>
+            <td class="html-adjust">&nbsp;{$membershipStatus}<br />
+            <span class="description">{ts}Status of this membership.{/ts}</span></td>
+        </tr>
+        <tr class="crm-membership-form-block-end_date">
+            <td>{ts}Membership End Date{/ts}</td>
+            <td class="html-adjust">&nbsp;{$endDate}</td>
+        </tr> 
+        <tr class="crm-membership-form-block-renewal_date">  
+            <td>{$form.renewal_date.label}</td>
+            <td>{include file="CRM/common/jcalendar.tpl" elementName=renewal_date}</td>
+        </tr>
+   
     {if $accessContribution and ! $membershipMode}
         <div id="contri">
-            <dl>
-            <dt>{$form.record_contribution.label}</dt><dd class="html-adjust">{$form.record_contribution.html}<br />
-            <span class="description">{ts}Check this box to enter payment information. You will also be able to generate a customized receipt.{/ts}</span></dd>
-            </dl>
+           <table class="form-layout-compressed">
+               <tr class="crm-membership-form-block-record_contribution">
+                   <td>{$form.record_contribution.label}</td>
+                   <td class="html-adjust">{$form.record_contribution.html}<br />
+                   <span class="description">{ts}Check this box to enter payment information. You will also be able to generate a customized receipt.{/ts}</span></td>
+               </tr>
+           </table>
         <div>
         <div class="spacer"></div>
-        <fieldset id="recordContribution"><legend>{ts}Renewal Payment and Receipt{/ts}</legend>
-        <dl>	
-            <dt class="label">{$form.contribution_type_id.label}</dt><dd>{$form.contribution_type_id.html}<br />
-                <span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></dd>
-            <dt class="label">{$form.total_amount.label}</dt><dd>{$form.total_amount.html}<br />
-                <span class="description">{ts}Membership payment amount. A contribution record will be created for this amount.{/ts}</span></dd>
-            <dt class="label">{$form.payment_instrument_id.label}</dt><dd>{$form.payment_instrument_id.html}</dd>
-            <div id="checkNumber"><dt class="label">{$form.check_number.label}</dt><dd>{$form.check_number.html|crmReplace:class:six}</dd></div>
-	    <dt class="label">{$form.trxn_id.label}</dt><dd>{$form.trxn_id.html}</dd>
-            <dt class="label">{$form.contribution_status_id.label}</dt><dd>{$form.contribution_status_id.html}</dd>
-	</dl>
-        </fieldset>
+       
+        <div id="recordContribution">
+            <table>
+                <tr class="crm-membership-form-block-renewal_payment_receipt">
+                    <fieldset><legend>{ts}Renewal Payment and Receipt{/ts}</legend>
+                </tr>
+                <tr class="crm-membership-form-block-contribution_type_id">	
+                    <td class="label">{$form.contribution_type_id.label}</td>
+                    <td>{$form.contribution_type_id.html}<br />
+                    <span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></td>
+                </tr>
+                <tr class="crm-membership-form-block-total_amount">
+                    <td class="label">{$form.total_amount.label}</td>
+                    <td>{$form.total_amount.html}<br />
+                    <span class="description">{ts}Membership payment amount. A contribution record will be created for this amount.{/ts}</span></td>
+                </tr>
+                <tr class="crm-membership-form-block-payment_instrument_id">
+                    <td class="label">{$form.payment_instrument_id.label}</td>
+                    <td>{$form.payment_instrument_id.html}</td>
+                </tr>
+                <tr class="crm-membership-form-block-check_number">
+                    <div id="checkNumber"><td class="label">{$form.check_number.label}</td>
+                    <td>{$form.check_number.html|crmReplace:class:six}</td></div>
+                </tr>
+                <tr class="crm-membership-form-block-trxn_id">
+	                <td class="label">{$form.trxn_id.label}</td>
+                    <td>{$form.trxn_id.html}</td>
+                </tr>
+                <tr class="crm-membership-form-block-contribution_status_id">
+                    <td class="label">{$form.contribution_status_id.label}</td>
+                    <td>{$form.contribution_status_id.html}</td>
+                </tr>
+            </table>
+            </fieldset>
+        </div>
     {/if}
     {if $membershipMode}
      	<div class="spacer"></div>
      	{include file='CRM/Core/BillingBlock.tpl'}
      {/if}
      {if $email and $outBound_option != 2}	
-	 <dl>
-	    <dt>{$form.send_receipt.label}</dt><dd class="html-adjust">{$form.send_receipt.html}<br />
-	    <span class="description">{ts 1=$email}Automatically email a membership confirmation and receipt to %1?{/ts}</span></dd>
-	 </dl> 
+	 <tr class="crm-membership-form-block-send_receipt">
+	    <td>{$form.send_receipt.label}</td>
+        <td>{$form.send_receipt.html}<br />
+	    <span class="description">{ts 1=$email}Automatically email a membership confirmation and receipt to %1?{/ts}</span></td>
+	 </tr> 
+    
 	 <div id='notice'>
-	    <dl>		
-    	    <dt>{$form.receipt_text_renewal.label}</dt>
-            <dd class="html-adjust"><span class="description">{ts}Enter a message you want included at the beginning of the emailed receipt. EXAMPLE: 'Thanks for supporting our organization with your membership.'{/ts}</span>
-            {$form.receipt_text_renewal.html|crmReplace:class:huge}</dd> 
-	    </dl>
+	    <tr class="crm-membership-form-block-receipt_text_renewal">		
+    	    <td>{$form.receipt_text_renewal.label}</td>
+            <td><span class="description">{ts}Enter a message you want included at the beginning of the emailed receipt. EXAMPLE: 'Thanks for supporting our organization with your membership.'{/ts}</span>
+            {$form.receipt_text_renewal.html|crmReplace:class:huge}</td> 
+	    </tr>
 	 </div>
      {/if}
          
-   <dl>
-     <dt></dt><dd class="html-adjust">{include file="CRM/common/formButtons.tpl"}</dd>
-   </dl>
+     <div>{include file="CRM/common/formButtons.tpl"}</div>
+   
    <div class="spacer"></div>
    </div>
+   </table>
 </fieldset>
 {if $accessContribution and ! $membershipMode}
 {include file="CRM/common/showHideByFieldValue.tpl" 
