@@ -52,14 +52,14 @@
 	        <th></th>
         </thead>
         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td>{$row.name}</td>	
-	        <td>{$row.start_event}</td>
-	        <td>{$row.end_event}</td>
-	        <td>{if $row.is_current_member eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td>{if $row.is_admin eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td class="nowrap">{$row.weight}</td>
-	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+        <tr id="crm-membership_{$row.id}" id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class} crm-membership {if NOT $row.is_active} disabled{/if}">
+	        <td class="crm-membership-status_name">{$row.name}</td>	
+	        <td class="crm-memberhip-start_event">{$row.start_event}</td>
+	        <td class="crm-memberhip-end_event">{$row.end_event}</td>
+	        <td class="crm-memberhip-current_member>{if $row.is_current_member eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="crm-memberhip-is_admin>{if $row.is_admin eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="nowrap crm-memberhip-weight">{$row.weight}</td>
+	        <td class="crm-memberhip-status_{$row.id}" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
           </tr>
         {/foreach}
@@ -76,10 +76,7 @@
 {else}
   {if $action ne 1}
     <div class="messages status">
-    <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
-        <dd>{ts 1=$crmURL}There are no custom membership status entered. You can <a href='%1'>add one</a>.{/ts}</dd>
-        </dl>
+         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>{ts 1=$crmURL}There are no custom membership status entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
   {/if}
 {/if}
