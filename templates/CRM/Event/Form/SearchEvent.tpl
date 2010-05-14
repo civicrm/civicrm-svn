@@ -26,7 +26,7 @@
 <div class="form-item">
  <h3>{ts}Find Events{/ts}</h3>
   <table class="form-layout">
-    <tr>
+    <tr class="crm-event-form-block-title">
         <td class="label">{$form.title.label}</td>
         <td>{$form.title.html|crmReplace:class:twenty}
              <div class="description font-italic">
@@ -50,12 +50,12 @@
        <td></td>
        <td colspan="2">
        <table class="form-layout-compressed" id="id_fromToDates">
-        <tr>
-            <td>{$form.start_date.label}</td>
+        <tr class="crm-eventform-block-start_date">
+            <td class="label">{$form.start_date.label}</td>
             <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}</td>
         </tr>
-        <tr>
-            <td>{$form.end_date.label}</td>
+        <tr class="crm-eventfor-block-end_date">
+            <td class="label">{$form.end_date.label}</td>
             <td>{include file="CRM/common/jcalendar.tpl" elementName=end_date}</td>             
         </tr>
       </table> 

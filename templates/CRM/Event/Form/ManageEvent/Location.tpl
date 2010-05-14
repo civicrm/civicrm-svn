@@ -38,7 +38,7 @@
 </div>
     {if $locEvents}
     	<table class="form-layout-compressed">
-			<tr id="optionType">
+			<tr id="optionType" class="crm-event-form-block-location_option">
 				<td class="labels">
 					{$form.location_option.label}
 				</td>
@@ -48,7 +48,7 @@
 				    {/if}
                 {/foreach} 
 			 </tr>
-			<tr id="existingLoc">
+			<tr id="existingLoc" class="crm-event-form-block-loc_event_id">
 				<td class="labels">
 					{$form.loc_event_id.label}
 				</td>
@@ -80,7 +80,7 @@
     {include file="CRM/Contact/Form/Edit/Phone.tpl"} 
     </table>
 	 <table class="form-layout-compressed">
-	 <tr>
+	 <tr class="crm-event-is_show_location">
 		<td colspan="2">{$form.is_show_location.label}</td>
 		<td colspan="2">
 			{$form.is_show_location.html}<br />
