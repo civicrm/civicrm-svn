@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-form-block">
+<div class="crm-block crm-form-block crm-mailing-form-block">
 {include file="CRM/common/WizardHeader.tpl"}
 <div id="help">
     {ts}It's a good idea to test your mailing by sending it to yourself and/or a selected group of people in your organization. You can also view your content by clicking (+) Preview Mailing.{/ts} {help id="test-intro"}
@@ -34,8 +34,8 @@
 <fieldset>
   <legend>Test Mailing</legend>
   <table class="form-layout">
-    <tr><td class="label">{$form.test_email.label}</td><td>{$form.test_email.html} {ts}(filled with your contact's token values){/ts}</td></tr>
-    <tr><td class="label">{$form.test_group.label}</td><td>{$form.test_group.html}</td></tr>
+    <tr class="crm-mailing-form-block-test_email"><td class="label">{$form.test_email.label}</td><td>{$form.test_email.html} {ts}(filled with your contact's token values){/ts}</td></tr>
+    <tr class="crm-mailing-form-block-test_group"><td class="label">{$form.test_group.label}</td><td>{$form.test_group.html}</td></tr>
     <tr><td></td><td>{$form.sendtest.html}</td>  
   </table>
 </fieldset>

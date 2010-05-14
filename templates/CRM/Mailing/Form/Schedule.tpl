@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-form-block">
+<div class="crm-block crm-form-block crm-mailing-form-block">
 {include file="CRM/common/WizardHeader.tpl"}
 <div id="help">
     {ts}You can schedule this mailing to be sent starting at a specific date and time, OR you can request that it be sent as soon as possible by checking &quot;Send Immediately&quot;.{/ts} {help id="sending"}
@@ -32,7 +32,7 @@
 
 <table class="form-layout">
   <tbody>
-    <tr>
+    <tr class="crm-mailing-form-block-now">
         <td class="label">{$form.now.label}</td>
         <td>{$form.now.html}</td>
     </tr>
@@ -40,7 +40,7 @@
         <td class="label">{ts}OR{/ts}</td>
         <td>&nbsp;</td>
     </tr>
-    <tr>
+    <tr class="crm-mailing-form-block-start_date">
         <td class="label">{$form.start_date.label}</td>
         <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}
             <div class="description">{ts}Set a date and time when you want CiviMail to start sending this mailing.{/ts}</div>

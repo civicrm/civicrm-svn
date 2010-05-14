@@ -25,10 +25,8 @@
 *}
 {if $confirm}
 <div class="messages status">
-    <table class="form-layout">
-      <tr><div class="icon inform-icon"></div>
-      <label>{$display_name} ({$email})</label> {ts}has been successfully resubscribed.{/ts}</tr>
-    </table>
+      <div class="icon inform-icon"></div>&nbsp;
+      <label>{$display_name} ({$email})</label> {ts}has been successfully resubscribed.{/ts}
 </div>
 {else}
 <div>
