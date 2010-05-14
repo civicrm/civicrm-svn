@@ -1256,7 +1256,8 @@ WHERE cr.case_id =  %1 AND ce.is_primary= 1';
         
         foreach ( $contacts as $mail => $info ) {
             $tplParams['contact'] = $info;
-            
+            self::buildPermissionLinks( $tplParams, $activityParams );
+
             if ( !CRM_Utils_Array::value('sort_name', $info) ) {
                 $info['sort_name'] = $info['display_name'];   
             }
@@ -2327,6 +2328,36 @@ SELECT id, subject, activity_date_time
         return $mainCaseIds;
     }
     
+    /**
+     * Validate contact permission for 
+     * edit/view on activity record and build links.
+     *
+     * @param array   $tplParams       params to be sent to template for sending email.
+     * @param array   $activityParams  info of the activity.
+     *
+     * @return void
+     * @static
+     */
+    function buildPermissionLinks( &$tplParams, $activityParams ) 
+    {
+        $activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $activityParams['source_record_id'], 
+                                                       'activity_type_id', 'id' );
+        
+        if ( CRM_Utils_Array::value( 'isCaseActivity', $tplParams ) ) {
+            $tplParams['editActURL'] = CRM_Utils_System::url( 'civicrm/case/activity', 
+                                                              "reset=1&cid={$activityParams['source_contact_id']}&caseid={$activityParams['case_id']}&action=update&id={$activityParams['source_record_id']}", true );
+            
+            $tplParams['viewActURL'] = CRM_Utils_System::url( 'civicrm/case/activity/view', 
+                                                              "reset=1&aid={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&caseID={$activityParams['case_id']}", true );
+        } else {   
+            $tplParams['editActURL'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
+                                                              "atype=$activityTypeId&action=update&reset=1&id={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&context=activity", true );
+            
+            $tplParams['viewActURL'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
+                                                              "atype=$activityTypeId&action=view&reset=1&id={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&context=activity", true );
+        }
+    }
+
     /**
      * Validate contact permission for 
      * given operation on activity record.
