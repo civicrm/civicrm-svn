@@ -63,11 +63,7 @@
 
 {else}
    <div class="messages status">
-    <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
+    <div class="icon inform-icon"></div>&nbsp;
         {ts}There are no records selected for Print.{/ts}
-    </dd>
-    </dl>
    </div>
 {/if}
