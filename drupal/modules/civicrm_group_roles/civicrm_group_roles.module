@@ -147,6 +147,51 @@ function civicrm_group_roles_user($op, $edit, &$user, $category = NULL)
     } //endif $op
 }
 
+/**
+ * Implementation of hook_form_alter().
+ * The updates CiviCRM when Drupal roles are changed
+ */
+function civicrm_group_roles_form_alter(&$form, &$form_state, $form_id) {
+  // append this to change user edit submit function
+  if ($form['#id'] == 'user-profile-form' && isset($form['#uid'])) {
+    // make sure there is a civicrm record
+    civicrm_initialize(true);
+    require_once 'api/v2/UFGroup.php';
+    $contact_id = civicrm_uf_match_id_get($form['#uid']);
+    if (!$contact_id) {
+      return;
+    }
+    $form['#submit'][] = '_civicrm_group_update';
+    $form['#civicrm_contact_id'] = $contact_id;
+    //change the order of the submits so we catch the changes before the form submits them
+    $form['#submit'] = array_reverse($form['#submit']);
+  }
+}
+
+/*
+ * Helper function to remove Groups when Drupal user form is saved, if a role is removed in Drupal
+ */
+function _civicrm_group_update ($form_id, $form_values) {
+  $user = user_load($form_id['#uid']);
+  //load the currently saved roles
+  $roles = $user->roles;
+  //get the roles as submitted on the user form
+  $new_roles = array_filter($form_values['values']['roles']);
+  //if there is a difference then something was removed
+  $removed_roles = array_diff_key($roles,$new_roles);
+  //now delete the cooresponding group from the record in CiviCRM (if there is a cooresponding group)
+  foreach ($removed_roles as $rid => $role) {
+    //find the group(s) for the role
+    $query = db_query("SELECT group_id FROM {civicrm_group_roles_rules} WHERE role_id=%d", $rid);
+    while ($gid = db_result($query)) {
+      civicrm_initialize(true);
+      require_once 'api/v2/GroupContact.php';
+      $contacts = array($contact);
+      $gparams = array('group_id' => $gid, 'contact_id' => $form_id['#civicrm_contact_id']);
+      $result = civicrm_group_contact_remove($gparams);
+    }
+  }
+}
 
 /**
  * Implementation of hook_civicrm_post().
