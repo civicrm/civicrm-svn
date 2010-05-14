@@ -76,18 +76,18 @@
     {if $membershipMode}
 	    <tr><td class="label">{$form.payment_processor_id.label}</td><td>{$form.payment_processor_id.html}</td></tr>
 	{/if}
- 	<tr><td class="label">{$form.membership_type_id.label}</td><td>{$form.membership_type_id.html}
+ 	<tr class="crm-membership-form-block-membership_type_id"><td class="label">{$form.membership_type_id.label}</td><td>{$form.membership_type_id.html}
     {if $member_is_test} {ts}(test){/ts}{/if}<br />
         <span class="description">{ts}Select Membership Organization and then Membership Type.{/ts}</span></td></tr>	
-    <tr><td class="label">{$form.source.label}</td><td>&nbsp;{$form.source.html}<br />
+    <tr class="crm-membership-form-block-source"><td class="label">{$form.source.label}</td><td>&nbsp;{$form.source.html}<br />
         <span class="description">{ts}Source of this membership. This value is searchable.{/ts}</span></td></tr>
-	<tr><td class="label">{$form.join_date.label}</td><td>{include file="CRM/common/jcalendar.tpl" elementName=join_date}
+	<tr class="crm-membership-form-block-join_date"><td class="label">{$form.join_date.label}</td><td>{include file="CRM/common/jcalendar.tpl" elementName=join_date}
 		<br />
         <span class="description">{ts}When did this contact first become a member?{/ts}</span></td></tr>
- 	<tr><td class="label">{$form.start_date.label}</td><td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}
+ 	<tr class="crm-membership-form-block-start_date"><td class="label">{$form.start_date.label}</td><td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}
 		<br />
         <span class="description">{ts}First day of current continuous membership period. Start Date will be automatically set based on Membership Type if you don't select a date.{/ts}</span></td></tr>
- 	<tr><td class="label">{$form.end_date.label}</td><td>{include file="CRM/common/jcalendar.tpl" elementName=end_date}
+ 	<tr class="crm-membership-form-block-end_date"><td class="label">{$form.end_date.label}</td><td>{include file="CRM/common/jcalendar.tpl" elementName=end_date}
 		<br />
         <span class="description">{ts}Latest membership period expiration date. End Date will be automatically set based on Membership Type if you don't select a date.{/ts}</span></td></tr>
     {if ! $membershipMode}
@@ -97,16 +97,16 @@
     {if ! $membershipMode}
     {* Show read-only Status block - when action is UPDATE and is_override is FALSE *}
         <tr id="memberStatus_show">
-        {if $action eq 2}
-        <td class="label">{$form.status_id.label}</td><td class="view-value">{$membershipStatus}</td>
-        {/if}
+          {if $action eq 2}
+             <td class="label">{$form.status_id.label}</td><td class="view-value">{$membershipStatus}</td>
+          {/if}
         </tr>
 
     {* Show editable status field when is_override is TRUE *}
         <tr id="memberStatus"><td class="label">{$form.status_id.label}</td><td>{$form.status_id.html}<br />
             <span class="description">{ts}If <strong>Status Override</strong> is checked, the selected status will remain in force (it will NOT be modified by the automated status update script).{/ts}</span></td></tr>
 	{elseif $membershipMode}
-        <tr><td colspan="2">
+        <tr class="crm-membership-form-block-billing"><td colspan="2">
         {include file='CRM/Core/BillingBlock.tpl'}
         </td></tr>
  	{/if}
@@ -117,30 +117,50 @@
             <td>{$form.record_contribution.html}<br />
                 <span class="description">{ts}Check this box to enter or update payment information. You will also be able to generate a customized receipt.{/ts}</span></td>
             </tr>
-        <tr><td colspan="2">    
-        <fieldset id="recordContribution"><legend>{ts}Membership Payment and Receipt{/ts}</legend>
-        <dl>
-		<dt class="label">{$form.contribution_type_id.label}</dt><dd>{$form.contribution_type_id.html}<br />
-                	<span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></dd>
-		<dt class="label">{$form.total_amount.label}</dt><dd>{$form.total_amount.html}<br />
-                	<span class="description">{ts}Membership payment amount. A contribution record will be created for this amount.{/ts}</span></dd>
-        <dt class="label" >{$form.receive_date.label}</dt><dd>{include file="CRM/common/jcalendar.tpl" elementName=receive_date}</dd>  
-          
-        <dt class="label">{$form.payment_instrument_id.label}</dt><dd>{$form.payment_instrument_id.html}</dd>
-		<div id="checkNumber"><dt class="label">{$form.check_number.label}</dt><dd>{$form.check_number.html|crmReplace:class:six}</dd></div>
-	   	{if $action neq 2 }	
-	    	<dt class="label">{$form.trxn_id.label}</dt><dd>{$form.trxn_id.html}</dd>
-	   	{/if}		
-		<dt class="label">{$form.contribution_status_id.label}</dt><dd>{$form.contribution_status_id.html}</dd>
-	
-       	</fieldset>
-       	</td></tr>
+        <tr class="crm-membership-form-block-record_contribution"><td colspan="2">    
+          <fieldset id="recordContribution"><legend>{ts}Membership Payment and Receipt{/ts}</legend>
+              <table>
+                  <tr class="crm-membership-form-block-contribution_type_id">
+                      <td class="label">{$form.contribution_type_id.label}</td>
+                      <td>{$form.contribution_type_id.html}<br />
+                      <span class="description">{ts}Select the appropriate contribution type for this payment.{/ts}</span></td>
+                  </tr>
+                  <tr class="crm-membership-form-block-total_amount">
+                      <td class="label">{$form.total_amount.label}</td>
+                      <td>{$form.total_amount.html}<br />
+                	  <span class="description">{ts}Membership payment amount. A contribution record will be created for this amount.{/ts}</span></td>
+                  </tr>
+                  <tr class="crm-membership-form-block-receive_date">
+                      <td class="label">{$form.receive_date.label}</td>
+                      <td>{include file="CRM/common/jcalendar.tpl" elementName=receive_date}</td>  
+                  </tr>
+                  <tr class="crm-membership-form-block-payment_instrument_id">
+                      <td class="label">{$form.payment_instrument_id.label}</td>
+                      <td>{$form.payment_instrument_id.html}</td>
+                  </tr>
+		          <tr id="checkNumber" class="crm-membership-form-block-check_number">
+                      <td class="label">{$form.check_number.label}</td>
+                      <td>{$form.check_number.html|crmReplace:class:six}</td>
+                  </tr>
+	   	       {if $action neq 2 }	
+                  <tr class="crm-membership-form-block-trxn_id">
+	    	          <td class="label">{$form.trxn_id.label}</td>
+                      <td>{$form.trxn_id.html}</td>
+                  </tr>
+	   	       {/if}
+                  <tr class="crm-membership-form-block-contribution_status_id">		
+		              <td class="label">{$form.contribution_status_id.label}</td>
+                      <td>{$form.contribution_status_id.html}</td>
+                  </tr>
+              </table>
+          </fieldset>
+        </td></tr>
     {else}
         <div class="spacer"></div>
 	{/if}
 
     {if $emailExists and $outBound_option != 2 }
-        <tr>
+        <tr class="crm-membership-form-block-send_receipt">
             <td class="label">{$form.send_receipt.label}</td><td>{$form.send_receipt.html}<br />
             <span class="description">{ts 1=$emailExists}Automatically email a membership confirmation and receipt to %1?{/ts}</span></td>
         </tr>
