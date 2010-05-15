@@ -158,7 +158,12 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
                 $numEntitiesNotAdded++;
             }
         }
-        
+
+        //invoke post hook on entityTag
+        require_once 'CRM/Utils/Hook.php';
+        $object = array( $entityIds, $entityTable );
+        CRM_Utils_Hook::post('create', 'EntityTag', $tagId, $object );
+
         // reset the group contact cache for all groups
         // if tags are being used in a smart group
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
@@ -195,6 +200,11 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
                 $numEntitiesNotRemoved++;
             }
         }
+        
+        //invoke post hook on entityTag
+        require_once 'CRM/Utils/Hook.php';
+        $object = array( $entityIds, $entityTable );
+        CRM_Utils_Hook::post( 'delete', 'EntityTag', $tagId, $object );
         
         // reset the group contact cache for all groups
         // if tags are being used in a smart group
