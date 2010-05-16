@@ -63,7 +63,7 @@
 
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Admin/Form/Options.tpl"}
-{/if}	
+{else}	
 
 <div class="crm-content-block crm-block">
 {if $rows}
@@ -157,3 +157,4 @@
     </div>    
 {/if}
 </div>
+{/if}

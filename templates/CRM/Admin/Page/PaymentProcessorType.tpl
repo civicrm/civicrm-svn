@@ -29,7 +29,7 @@
 
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Admin/Form/PaymentProcessorType.tpl"}
-{/if}
+{else}
 
 {if $rows}
 <div id="ltype">
@@ -74,4 +74,5 @@
         <dd>{ts 1=$crmURL}There are no Payment Processors entered. You can <a href='%1'>add one</a>.{/ts}</dd>
         </dl>
     </div>    
+{/if}
 {/if}

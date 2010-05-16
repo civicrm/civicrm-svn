@@ -32,7 +32,7 @@
 
 {if $action eq 1 or $action eq 2 or $action eq 4 or $action eq 8}
    {include file="CRM/Admin/Form/RelationshipType.tpl"}	
-{/if}
+{else}
 
 {if $rows}
 {if !($action eq 1 and $action eq 2)}
@@ -83,4 +83,5 @@
         <dd>{ts 1=$crmURL}There are no relationship types present. You can <a href='%1'>add one</a>.{/ts}</dd>
     </dl>
     </div>    
+{/if}
 {/if}

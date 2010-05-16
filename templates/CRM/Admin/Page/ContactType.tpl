@@ -29,7 +29,7 @@
 
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Admin/Form/ContactType.tpl"}
-{/if}
+{else}
 
 {if $rows}
 <div>
@@ -70,4 +70,5 @@
         <dd>{ts 1=$crmURL}There are currently no Contact Types entered. You can <a href='%1'>add one</a>.{/ts}</dd>
      </dl>
     </div>    
+{/if}
 {/if}

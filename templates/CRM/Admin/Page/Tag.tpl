@@ -34,8 +34,7 @@
     <div class="crm-block crm-form-block">
         {include file="CRM/Admin/Form/Tag.tpl"}	
     </div>
-{/if}
-
+{else}
 <div class="crm-content-block">
     {if $rows}
         {if !($action eq 1 and $action eq 2)}
@@ -98,3 +97,4 @@
         </div>    
     {/if}
 </div>
+{/if}

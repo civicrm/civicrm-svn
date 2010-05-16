@@ -169,9 +169,10 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
                CRM_Core_Action::UPDATE |
                CRM_Core_Action::DELETE ) ) {
             $this->edit($this->_action, $id);                               // use edit form for view, add or update or delete
-        } 
-        // finally browse (list) the page
-        $this->browse(null, $sort);
+        } else {
+            // if no action or browse 
+            $this->browse(null, $sort);
+        }
 
         return parent::run();
     }
