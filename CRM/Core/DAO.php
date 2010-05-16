@@ -1190,7 +1190,7 @@ SELECT contact_id
                         $depObject = CRM_Core_DAO::createTestObject( $FKClassName,
                                                                      CRM_Utils_Array::value( $dbName, $params, 1 ) );
                         $object->$dbName = $depObject->id;
-			unset($depObject);
+			            unset($depObject);
 
                         continue;
                     }

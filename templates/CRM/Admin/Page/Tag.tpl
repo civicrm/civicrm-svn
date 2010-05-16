@@ -57,7 +57,7 @@
         <table id="options" class="display">
 	    <thead>
         <tr>
-	        <th id="sortable">{ts}Tag{/ts}</th>
+	        <th>{ts}Tag{/ts}</th>
             <th>{ts}ID{/ts}</th>
 	        <th id="nosort">{ts}Description{/ts}</th>
 	        <th>{ts}Parent ID{/ts}</th>
@@ -75,7 +75,7 @@
             <td>{$row.name}</td>
             <td>{$row.id}</td>	
             <td>{$row.description} </td>
-            <td>{$row.parent_id}</td>
+            <td>{$row.parent} {if $row.parent_id}({$row.parent_id}){/if}</td>
 	        <td>{if $usefor[$id]}{$usefor[$id]}{else}&nbsp;{/if}</td>
             {if $accessHidden}
                 <td>{if $row.is_hidden}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Hidden{/ts}" />{/if}</td>

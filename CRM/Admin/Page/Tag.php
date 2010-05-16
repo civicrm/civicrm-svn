@@ -146,25 +146,33 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
            $accessHidden = true;
        }
        $this->assign( 'accessHidden', $accessHidden );
-       require_once 'CRM/Core/BAO/Tag.php';
+       
        require_once 'CRM/Core/OptionGroup.php';
-       $tag = new CRM_Core_BAO_Tag();
-       $tag->find();
+       $usedFor = CRM_Core_OptionGroup::values('tag_used_for');
+       
+       $query = "SELECT t1.name, t1.id, t2.name as parent, t1.description, t1.used_for, t1.is_hidden,
+                        t1.is_reserved, t1.parent_id
+                 FROM civicrm_tag t1 LEFT JOIN civicrm_tag t2 ON t1.parent_id = t2.id
+                 GROUP BY t1.parent_id, t1.id";
+                 
+       $tag = CRM_Core_DAO::executeQuery( $query );
+       $values = array( );
        while( $tag->fetch( ) ) {
-           $used =array( );
-           if ( $tag->used_for ) {
-               $used = explode( ",", $tag->used_for );
+           $values[$tag->id] = (array) $tag;
+           
+           $used = array( );
+           if ( $values['used_for'] ) {
+               $used = explode( ",", $values['used_for'] );
            }
-          foreach( $used as $key => $value ) {
-              $used[$key] =  CRM_Core_OptionGroup::optionLabel( 'tag_used_for' ,$value );
-          }
-          if( !empty( $used ) ){
-                $usedFor[$tag->id] = implode(", ",$used );      
-            }
+           foreach( $used as $key => $value ) {
+               $used[$key] =  $usedFor[$value];
+           }
+           
+           if ( !empty( $used ) ) {
+               $values['used_for'] = implode( ", ", $used );      
+           }
        }
-       $this->assign( 'usefor' ,$usedFor);
-       parent::browse( $action, $sort );
+       
+       $this->assign( 'rows', $values );
    }
 }
-
-
