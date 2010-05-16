@@ -44,7 +44,7 @@
         <div class="crm-submit-buttons">
 	    <div class="action-link">
         <a href="{crmURL q="action=add&reset=1"}" id="newTag" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag{/ts}</span></a>
-        {if $accessHidden}
+        {if $adminTagSet}
             <a href="{crmURL q="action=add&reset=1&tagset=1"}" id="newTagSet" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag Set{/ts}</span></a>
         {/if}
         </div>
@@ -62,7 +62,7 @@
 	        <th id="nosort">{ts}Description{/ts}</th>
 	        <th>{ts}Parent ID{/ts}</th>
 		    <th>{ts}Used For{/ts}</th>
-            {if $accessHidden}
+            {if $adminTagSet}
 		        <th>{ts}Tag set?{/ts}</th>
 		    {/if}
 		    <th>{ts}Reserved?{/ts}</th>
@@ -70,20 +70,20 @@
         </tr>
         </thead>
         {foreach from=$rows item=row key=id }
-	{if !$row.is_hidden or ( $row.is_hidden && $accessHidden )  }
+	    {if !$row.is_hidden or ( $row.is_hidden && $adminTagSet )  }
         <tr class="{cycle values="odd-row,even-row"} {$row.class}">
             <td>{$row.name}</td>
             <td>{$row.id}</td>	
             <td>{$row.description} </td>
             <td>{$row.parent} {if $row.parent_id}({$row.parent_id}){/if}</td>
 	        <td>{if $usefor[$id]}{$usefor[$id]}{else}&nbsp;{/if}</td>
-            {if $accessHidden}
+            {if $adminTagSet}
                 <td>{if $row.is_hidden}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Hidden{/ts}" />{/if}</td>
             {/if}
             <td>{if $row.is_reserved}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
             <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
-	{/if}
+	    {/if}
         {/foreach}
         </table>
         {/strip}
@@ -94,7 +94,7 @@
         <div class="crm-submit-buttons">
 	        <div class="action-link">
                 <a href="{crmURL q="action=add&reset=1"}" id="newTag" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag{/ts}</span></a>
-                {if $accessHidden}
+                {if $adminTagSet}
                     <a href="{crmURL q="action=add&reset=1&tagset=1"}" id="newTagSet" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag Set{/ts}</span></a>
                 {/if}
             </div>

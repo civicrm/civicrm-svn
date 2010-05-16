@@ -141,11 +141,11 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
     * override function browse()
     */
    function browse( $action = null, $sort ) {
-       $accessHidden = false;
-       if ( CRM_Core_Permission::check('administer hidden tags') ) {
-           $accessHidden = true;
+       $adminTagSet = false;
+       if ( CRM_Core_Permission::check('administer Tagsets') ) {
+           $adminTagSet = true;
        }
-       $this->assign( 'accessHidden', $accessHidden );
+       $this->assign( 'adminTagSet', $adminTagSet );
        
        require_once 'CRM/Core/OptionGroup.php';
        $usedFor = CRM_Core_OptionGroup::values('tag_used_for');
@@ -157,7 +157,11 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
                  
        $tag = CRM_Core_DAO::executeQuery( $query );
        $values = array( );
-       while( $tag->fetch( ) ) {
+       
+       $action     = CRM_Core_Action::UPDATE + CRM_Core_Action::DELETE;
+       $permission = CRM_Core_Permission::EDIT;
+
+       while( $tag->fetch( ) ) {           
            $values[$tag->id] = (array) $tag;
            
            $used = array( );
@@ -171,8 +175,11 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
            if ( !empty( $used ) ) {
                $values['used_for'] = implode( ", ", $used );      
            }
+
+           // populate action links           
+           $this->action( $tag, $newAction, $values[$tag->id], self::links( ), $permission );
        }
-       
+              
        $this->assign( 'rows', $values );
    }
 }

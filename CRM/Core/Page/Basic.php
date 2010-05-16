@@ -279,7 +279,7 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
             // check if object is relationship type
             if ( get_class( $object ) == 'CRM_Contact_BAO_RelationshipType' ) {
                 $newAction = CRM_Core_Action::VIEW + CRM_Core_Action::UPDATE;
-            } else if ( get_class( $object ) == 'CRM_Core_BAO_Tag' ) {
+            } else if ( get_class( $object ) == 'CRM_Core_DAO' ) {
                 $newAction = CRM_Core_Action::UPDATE;
             } else {
                 $newAction = 0;

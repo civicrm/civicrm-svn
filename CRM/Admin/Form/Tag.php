@@ -102,9 +102,6 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             $this->add( 'checkbox', 'is_selectable', ts("If it's a tag or a category"));
                         
             $isReserved = $this->add( 'checkbox', 'is_reserved', ts('Reserved?') );
-            if ( !CRM_Core_Permission::check('administer hidden tags') ) {
-                $isReserved->freeze( );
-            }
     
             require_once 'CRM/Core/OptionGroup.php';
             $usedFor = $this->add('select', 'used_for', ts('Used For'), 
@@ -116,8 +113,13 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
                 $usedFor->freeze( );
             }
             
-            $this->assign( 'accessHidden', $accessHidden );
-            
+            $adminTagset = true;
+            if ( !CRM_Core_Permission::check( 'administer Tagsets' ) ) {
+                $isReserved->freeze( );
+                $adminTagset = false;
+            }
+
+            $this->assign( 'adminTagset', $adminTagset );
             parent::buildQuickForm( ); 
         }
     }
