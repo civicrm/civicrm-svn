@@ -30,83 +30,71 @@
     {ts 1=$docLink}Tags can be assigned to any contact record, and are a convenient way to find contacts. You can create as many tags as needed to organize and segment your records.{/ts} {$docLink}
 </div>
 
-
 {if $action eq 1 or $action eq 2 or $action eq 8}
-<div class="crm-block crm-form-block">
-    {include file="CRM/Admin/Form/Tag.tpl"}	
-</div>
+    <div class="crm-block crm-form-block">
+        {include file="CRM/Admin/Form/Tag.tpl"}	
+    </div>
 {/if}
 
 <div class="crm-content-block">
-
-{if $rows}
-{if !($action eq 1 and $action eq 2)}
-        <div class="crm-submit-buttons">
-	    <div class="action-link">
-        <a href="{crmURL q="action=add&reset=1"}" id="newTag" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag{/ts}</span></a>
-        {if $adminTagSet}
-            <a href="{crmURL q="action=add&reset=1&tagset=1"}" id="newTagSet" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag Set{/ts}</span></a>
-        {/if}
-        </div>
-        </div>
-{/if}
-
-{include file="CRM/common/jsortable.tpl"}
-<div id="cat">
-        {strip}
-        <table id="options" class="display">
-	    <thead>
-        <tr>
-	        <th>{ts}Tag{/ts}</th>
-            <th>{ts}ID{/ts}</th>
-	        <th id="nosort">{ts}Description{/ts}</th>
-	        <th>{ts}Parent ID{/ts}</th>
-		    <th>{ts}Used For{/ts}</th>
-            {if $adminTagSet}
-		        <th>{ts}Tag set?{/ts}</th>
-		    {/if}
-		    <th>{ts}Reserved?{/ts}</th>
-	        <th></th>
-        </tr>
-        </thead>
-        {foreach from=$rows item=row key=id }
-	    {if !$row.is_hidden or ( $row.is_hidden && $adminTagSet )  }
-        <tr class="{cycle values="odd-row,even-row"} {$row.class}">
-            <td>{$row.name}</td>
-            <td>{$row.id}</td>	
-            <td>{$row.description} </td>
-            <td>{$row.parent} {if $row.parent_id}({$row.parent_id}){/if}</td>
-	        <td>{if $usefor[$id]}{$usefor[$id]}{else}&nbsp;{/if}</td>
-            {if $adminTagSet}
-                <td>{if $row.is_hidden}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Hidden{/ts}" />{/if}</td>
-            {/if}
-            <td>{if $row.is_reserved}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
-            <td>{$row.action|replace:'xx':$row.id}</td>
-        </tr>
-	    {/if}
-        {/foreach}
-        </table>
-        {/strip}
-        
-       
-</div>
-{if !($action eq 1 and $action eq 2)}
-        <div class="crm-submit-buttons">
-	        <div class="action-link">
-                <a href="{crmURL q="action=add&reset=1"}" id="newTag" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag{/ts}</span></a>
-                {if $adminTagSet}
-                    <a href="{crmURL q="action=add&reset=1&tagset=1"}" id="newTagSet" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag Set{/ts}</span></a>
-                {/if}
+    {if $rows}
+        {if !($action eq 1 and $action eq 2)}
+            <div class="crm-submit-buttons">
+        	    <div class="action-link">
+                    <a href="{crmURL q="action=add&reset=1"}" id="newTag" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag{/ts}</span></a>
+                    {if $adminTagSet}
+                        <a href="{crmURL q="action=add&reset=1&tagset=1"}" id="newTagSet" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag Set{/ts}</span></a>
+                    {/if}
+                </div>
             </div>
+        {/if}
+
+        {include file="CRM/common/jsortable.tpl"}
+        <div id="cat">
+            {strip}
+            <table id="options" class="display">
+        	    <thead>
+                    <tr>
+            	        <th>{ts}Tag{/ts}</th>
+                        <th>{ts}ID{/ts}</th>
+            	        <th id="nosort">{ts}Description{/ts}</th>
+            	        <th>{ts}Parent ID{/ts}</th>
+            		    <th>{ts}Used For{/ts}</th>
+            		    <th>{ts}Tag set?{/ts}</th>
+            		    <th>{ts}Reserved?{/ts}</th>
+            	        <th></th>
+                    </tr>
+                </thead>
+                {foreach from=$rows item=row key=id }
+                <tr class="{cycle values="odd-row,even-row"} {$row.class}">
+                    <td>{$row.name}</td>
+                    <td>{$row.id}</td>	
+                    <td>{$row.description} </td>
+                    <td>{$row.parent} {if $row.parent_id}({$row.parent_id}){/if}</td>
+        	        <td>{if $usefor[$id]}{$usefor[$id]}{else}&nbsp;{/if}</td>
+                    <td>{if $row.is_hidden}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Tag Set{/ts}" />{/if}</td>
+                    <td>{if $row.is_reserved}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
+                    <td>{$row.action|replace:'xx':$row.id}</td>
+                </tr>
+                {/foreach}
+            </table>
+            {/strip}
         </div>
-{/if}
-
-
-{else}
-    <div class="messages status">
-    <div class="icon inform-icon"></div>&nbsp;
-        {capture assign=crmURL}{crmURL p='civicrm/admin/tag' q="action=add&reset=1"}{/capture}
-        {ts 1=$crmURL}There are no Tags present. You can <a href='%1'>add one</a>.{/ts}
-    </div>    
-{/if}
+        {if !($action eq 1 and $action eq 2)}
+            <div class="crm-submit-buttons">
+                <div class="action-link">
+                    <a href="{crmURL q="action=add&reset=1"}" id="newTag" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag{/ts}</span></a>
+                    {if $adminTagSet}
+                        <a href="{crmURL q="action=add&reset=1&tagset=1"}" id="newTagSet" class="button"><span><div class="icon add-icon"></div>{ts}Add Tag Set{/ts}</span></a>
+                    {/if}
+                </div>
+            </div>
+        {/if}
+    {else}
+        <div class="messages status">
+        <div class="icon inform-icon"></div>&nbsp;
+            {capture assign=crmURL}{crmURL p='civicrm/admin/tag' q="action=add&reset=1"}{/capture}
+            {ts 1=$crmURL}There are no Tags present. You can <a href='%1'>add one</a>.{/ts}
+        </div>    
+    {/if}
 </div>
