@@ -177,16 +177,20 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
            }
            
            $newAction = $action;
+           if ( $values[$tag->id]['is_reserved'] ) {
+               $newAction = CRM_Core_Action::UPDATE;
+           }
            
-           if ( CRM_Core_Permission::check('administer Tagsets') ) {
-               if ( $values[$tag->id]['is_reserved'] ) {
-                   $newAction = CRM_Core_Action::UPDATE;
-               }
-               // populate action links           
+           if ( $values[$tag->id]['is_hidden'] && !CRM_Core_Permission::check('administer Tagsets') ) {
+               $newAction = 0;
+           }
+
+           // populate action links
+           if ( $newAction ) {           
                $this->action( $tag, $newAction, $values[$tag->id], self::links( ), $permission, true );
            } else {
                $values[$tag->id]['action'] = '';
-           }           
+           }   
        }
               
        $this->assign( 'rows', $values );
