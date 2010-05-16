@@ -71,7 +71,7 @@
                     <td>{$row.description} </td>
                     <td>{$row.parent} {if $row.parent_id}({$row.parent_id}){/if}</td>
         	        <td>{$row.used_for}</td>
-                    <td>{if $row.is_hidden}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Tag Set{/ts}" />{/if}</td>
+                    <td>{if $row.is_tagset}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Tag Set{/ts}" />{/if}</td>
                     <td>{if $row.is_reserved}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
                     <td>{$row.action|replace:'xx':$row.id}</td>
                 </tr>

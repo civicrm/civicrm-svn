@@ -150,7 +150,7 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
        require_once 'CRM/Core/OptionGroup.php';
        $usedFor = CRM_Core_OptionGroup::values('tag_used_for');
        
-       $query = "SELECT t1.name, t1.id, t2.name as parent, t1.description, t1.used_for, t1.is_hidden,
+       $query = "SELECT t1.name, t1.id, t2.name as parent, t1.description, t1.used_for, t1.is_tagset,
                         t1.is_reserved, t1.parent_id, t1.used_for
                  FROM civicrm_tag t1 LEFT JOIN civicrm_tag t2 ON t1.parent_id = t2.id
                  GROUP BY t1.parent_id, t1.id";
@@ -181,7 +181,7 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
                $newAction = CRM_Core_Action::UPDATE;
            }
            
-           if ( $values[$tag->id]['is_hidden'] && !CRM_Core_Permission::check('administer Tagsets') ) {
+           if ( $values[$tag->id]['is_tagset'] && !CRM_Core_Permission::check('administer Tagsets') ) {
                $newAction = 0;
            }
 

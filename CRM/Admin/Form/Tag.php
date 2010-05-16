@@ -73,7 +73,7 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             
             if ( !$this->_isTagSet && 
                  $this->_id &&
-                 CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'is_hidden' ) ) {
+                 CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'is_tagset' ) ) {
                 $this->_isTagSet = true;
             }
 
@@ -144,9 +144,9 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             $params['used_for'] = implode( "," , $params['used_for'] );
         }
         
-        $params['is_hidden'] = 0;
+        $params['is_tagset'] = 0;
         if ( $this->_isTagSet ) {
-            $params['is_hidden'] = 1;
+            $params['is_tagset'] = 1;
         }
         
         if ( ! isset($params['is_reserved'])) {

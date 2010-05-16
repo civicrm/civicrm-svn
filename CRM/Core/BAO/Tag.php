@@ -84,7 +84,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
             $whereClause[] = "used_for like '%{$usedFor}%'";
         }
         if ( $excludeHidden ) {
-            $whereClause[] = "is_hidden = 0";
+            $whereClause[] = "is_tagset = 0";
         }
         
         if ( !empty( $whereClause ) ) {
@@ -147,12 +147,12 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
             $tag->fields( );
             $tag->orderBy( 'parent_id' );
             if ( $buildSelect ) {
-                $tag->whereAdd( "is_hidden = 0 AND parent_id IS NULL AND used_for LIKE '%{$entityTable}%'");
+                $tag->whereAdd( "is_tagset = 0 AND parent_id IS NULL AND used_for LIKE '%{$entityTable}%'");
             } else {
                 $tag->whereAdd( "used_for LIKE '%{$entityTable}%'");
             }
             if ( !$all ) {
-                $tag->is_hidden = 0; 
+                $tag->is_tagset = 0; 
             }
             $tag->find( );
             
@@ -162,7 +162,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
                 } else {
                     $tags[$tag->id]['name']      = $tag->name;
                     $tags[$tag->id]['parent_id'] = $tag->parent_id;
-                    $tags[$tag->id]['is_hidden'] = $tag->is_hidden;
+                    $tags[$tag->id]['is_tagset'] = $tag->is_tagset;
                     $tags[$tag->id]['used_for']  = $tag->used_for;
                 }
             }
@@ -273,7 +273,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
      */
     static function getTagSet( $entityTable ) {
         $tagSets = array( );
-        $query = "SELECT name FROM civicrm_tag WHERE is_hidden=1 AND parent_id IS NULL and used_for LIKE '%{$entityTable}%'";
+        $query = "SELECT name FROM civicrm_tag WHERE is_tagset=1 AND parent_id IS NULL and used_for LIKE '%{$entityTable}%'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         while( $dao->fetch( ) ) {
            $tagSets[] = $dao->name;
