@@ -151,7 +151,7 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
        $usedFor = CRM_Core_OptionGroup::values('tag_used_for');
        
        $query = "SELECT t1.name, t1.id, t2.name as parent, t1.description, t1.used_for, t1.is_hidden,
-                        t1.is_reserved, t1.parent_id
+                        t1.is_reserved, t1.parent_id, t1.used_for
                  FROM civicrm_tag t1 LEFT JOIN civicrm_tag t2 ON t1.parent_id = t2.id
                  GROUP BY t1.parent_id, t1.id";
                  
@@ -165,19 +165,28 @@ class CRM_Admin_Page_Tag extends CRM_Core_Page_Basic
            $values[$tag->id] = (array) $tag;
            
            $used = array( );
-           if ( $values['used_for'] ) {
-               $used = explode( ",", $values['used_for'] );
-           }
-           foreach( $used as $key => $value ) {
-               $used[$key] =  $usedFor[$value];
+           if ( $values[$tag->id]['used_for'] ) {
+               $usedArray = explode( ",", $values[$tag->id]['used_for'] );
+               foreach( $usedArray as $key => $value ) {
+                   $used[$key] =  $usedFor[$value];
+               }
            }
            
            if ( !empty( $used ) ) {
-               $values['used_for'] = implode( ", ", $used );      
+               $values[$tag->id]['used_for'] = implode( ", ", $used );      
            }
-
-           // populate action links           
-           $this->action( $tag, $newAction, $values[$tag->id], self::links( ), $permission );
+           
+           $newAction = $action;
+           
+           if ( CRM_Core_Permission::check('administer Tagsets') ) {
+               if ( $values[$tag->id]['is_reserved'] ) {
+                   $newAction = CRM_Core_Action::UPDATE;
+               }
+               // populate action links           
+               $this->action( $tag, $newAction, $values[$tag->id], self::links( ), $permission, true );
+           } else {
+               $values[$tag->id]['action'] = '';
+           }           
        }
               
        $this->assign( 'rows', $values );

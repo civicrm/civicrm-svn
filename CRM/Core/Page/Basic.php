@@ -270,28 +270,28 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
      * @return void
      * @access private
      */
-    function action( &$object, $action, &$values, &$links, $permission ) {
+    function action( &$object, $action, &$values, &$links, $permission, $forceAction = false ) {
         $values['class'] = '';
         $newAction = $action;
         
-        if ( array_key_exists( 'is_reserved', $object ) && $object->is_reserved ) {
-            $values['class'] = 'reserved';
-            // check if object is relationship type
-            if ( get_class( $object ) == 'CRM_Contact_BAO_RelationshipType' ) {
-                $newAction = CRM_Core_Action::VIEW + CRM_Core_Action::UPDATE;
-            } else if ( get_class( $object ) == 'CRM_Core_DAO' ) {
-                $newAction = CRM_Core_Action::UPDATE;
-            } else {
-                $newAction = 0;
-                $values['action'] = '';
-                return;
-            }
-        } else {
-            if ( array_key_exists( 'is_active', $object ) ) {
-                if ( $object->is_active ) {
-                    $newAction += CRM_Core_Action::DISABLE;
+        if ( !$forceAction ) {
+            if ( array_key_exists( 'is_reserved', $object ) && $object->is_reserved ) {
+                $values['class'] = 'reserved';
+                // check if object is relationship type
+                if ( get_class( $object ) == 'CRM_Contact_BAO_RelationshipType' ) {
+                    $newAction = CRM_Core_Action::VIEW + CRM_Core_Action::UPDATE;
                 } else {
-                    $newAction += CRM_Core_Action::ENABLE;
+                    $newAction = 0;
+                    $values['action'] = '';
+                    return;
+                }
+            } else {
+                if ( array_key_exists( 'is_active', $object ) ) {
+                    if ( $object->is_active ) {
+                        $newAction += CRM_Core_Action::DISABLE;
+                    } else {
+                        $newAction += CRM_Core_Action::ENABLE;
+                    }
                 }
             }
         }
