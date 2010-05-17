@@ -77,17 +77,17 @@
          </tr>
          </thead>
         {foreach from=$rows item=row}
-          <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+          <tr id="crm-event_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td><a href="{crmURL p='civicrm/event/info' q="id=`$row.id`&reset=1"}" title="{ts}View event info page{/ts}" class="bold">{$row.title}</a>&nbsp;&nbsp;({ts}ID:{/ts} {$row.id})<br /><a href="{crmURL p='civicrm/event/search' q="reset=1&force=1&event=`$row.id`"}" title="{ts}List participants for this event (all statuses){/ts}">({ts}participants{/ts})</a></td> 
-            <td>{$row.city}</td>  
-            <td>{$row.state_province}</td>	
-            <td>{if $row.is_public eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>    
-    	    <td>{$row.start_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
-            <td>{$row.end_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
-	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-    	    <td>{$row.action|replace:'xx':$row.id}</td>
-            <td class="start_date hiddenElement">{$row.start_date|crmDate}</td>
-            <td class="end_date hiddenElement">{$row.end_date|crmDate}</td>
+            <td class="crm-event-city">{$row.city}</td>  
+            <td class="crm-event-state_province">{$row.state_province}</td>	
+            <td class="crm-event-is_public>{if $row.is_public eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>    
+            <td class="crm-event-start_date">{$row.start_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
+            <td class="crm-event-end_date">{$row.end_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
+            <td class="crm-event_status" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+            <td class="crm-event-action">{$row.action|replace:'xx':$row.id}</td>
+            <td class="crm-event-start_date hiddenElement">{$row.start_date|crmDate}</td>
+            <td class="crm-event-end_date hiddenElement">{$row.end_date|crmDate}</td>
           </tr>
         {/foreach}    
         </table>
@@ -97,27 +97,25 @@
 {else}
    {if $isSearch eq 1}
     <div class="status messages">
-        <dl>
-            <dt><div class="icon inform-icon"></div></dt>
-            {capture assign=browseURL}{crmURL p='civicrm/event/manage' q="reset=1"}{/capture}
-            <dd>
-                {ts}No available Events match your search criteria. Suggestions:{/ts}
-                <div class="spacer"></div>
-                <ul>
+        <div class="icon inform-icon"></div></td>
+             {capture assign=browseURL}{crmURL p='civicrm/event/manage' q="reset=1"}{/capture}
+        <div class="status messages">
+	     {ts}No available Events match your search criteria. Suggestions:{/ts}
+             <div class="spacer"></div>
+             <ul>
                 <li>{ts}Check your spelling.{/ts}</li>
                 <li>{ts}Try a different spelling or use fewer letters.{/ts}</li>
                 <li>{ts}Make sure you have enough privileges in the access control system.{/ts}</li>
-                </ul>
-                {ts 1=$browseURL}Or you can <a href='%1'>browse all available Current Events</a>.{/ts}
-            </dd>
-        </dl>
+              </ul>
+              {ts 1=$browseURL}Or you can <a href='%1'>browse all available Current Events</a>.{/ts}
+	</div>	
     </div>
    {else}
     <div class="messages status">
-    <dl>
-        <dt><div class="icon inform-icon"></div></dt>
-        <dd>{ts 1=$newEventURL}There are no events scheduled for the date range. You can <a href='%1'>add one</a>.{/ts}</dd>
-        </dl>
+    <table class="form-layout">
+        <tr><div class="icon inform-icon"></div></tr>
+        <tr>{ts 1=$newEventURL}There are no events scheduled for the date range. You can <a href='%1'>add one</a>.{/ts}</tr>
+    </table>
     </div>    
    {/if}
 {/if}
