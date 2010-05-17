@@ -64,10 +64,8 @@
             {/foreach}
            </tr>
          </table>
-        <dl>
-            <dt></dt><dd>{if $fields}{$form._qf_Batch_refresh.html}{/if} &nbsp; {$form.buttons.html}</dd>
-        </dl>
-</fieldset>
+         <div class="crm-submit-buttons">{if $fields}{$form._qf_Batch_refresh.html}{/if} &nbsp; {$form.buttons.html}</div>
+        </fieldset>
 </div>
 
 {*include batch copy js js file*}

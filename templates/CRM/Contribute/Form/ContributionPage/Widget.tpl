@@ -45,19 +45,19 @@
         {ts}CiviContribute widgets allow you and your supporters to easily promote this fund-raising campaign. Widget code can be added to any web page - and will provide a real-time display of current contribution results, and a direct link to this contribution page.{/ts} {help id="id-intro"}
     </div>
     <table class="form-layout-compressed">
-    	<tr><td style="width: 12em;">&nbsp;</td><td class="font-size11pt">{$form.is_active.html}&nbsp;{$form.is_active.label}</dd>
+    	<tr class="crm-contribution-form-block-is_active"><td style="width: 12em;">&nbsp;</td><td class="font-size11pt">{$form.is_active.html}&nbsp;{$form.is_active.label}</td></tr>
     </table>
     <div class="spacer"></div>
     
     <div id="widgetFields">
         <table class="form-layout-compressed">
-         <tr><td class="label">{$form.title.label}<span class="marker"> *</span></td><td>{$form.title.html}</td></tr>
-   	 <tr><td class="label">{$form.url_logo.label}</span></td><td>{$form.url_logo.html}</td></tr>  
- 	 <tr><td class="label">{$form.button_title.label}</td><td>{$form.button_title.html}</td></tr>  
-	 <tr><td class="label">{$form.about.label}<span class="marker"> *</span></td><td>{$form.about.html}
+         <tr class="crm-contribution-form-block-title"><td class="label">{$form.title.label}<span class="marker"> *</span></td><td>{$form.title.html}</td></tr>
+   	 <tr class="crm-contribution-form-block-url_logo"><td class="label">{$form.url_logo.label}</span></td><td>{$form.url_logo.html}</td></tr>  
+ 	 <tr class="crm-contribution-form-block-button_title"><td class="label">{$form.button_title.label}</td><td>{$form.button_title.html}</td></tr>  
+	 <tr class="crm-contribution-form-block-about"><td class="label">{$form.about.label}<span class="marker"> *</span></td><td>{$form.about.html}
 <br /><span class="description">{ts}Enter content for the about message. You may include HTML formatting tags. You can also include images, as long as they are already uploaded to a server - reference them using complete URLs.{/ts}</span>
 </td></tr>  
-	 <tr><td class="label">{$form.url_homepage.label}<span class="marker"> *</span></td><td>{$form.url_homepage.html}</td></tr>  
+	 <tr class="crm-contribution-form-block-url_homepage"><td class="label">{$form.url_homepage.label}<span class="marker"> *</span></td><td>{$form.url_homepage.html}</td></tr>  
         </table>
         
         <div id="id-get_code">
@@ -106,7 +106,7 @@
         </div>
         <table class="form-layout-compressed">
         {foreach from=$colorFields item=field key=fieldName}
-          <tr><td class="label">{$form.$fieldName.label}<span class="marker"> *</span></td><td>{$form.$fieldName.html}</td></tr>   
+          <tr class="crm-contribution-form-block-{$fieldName} ><td class="label">{$form.$fieldName.label}<span class="marker"> *</span></td><td>{$form.$fieldName.html}</td></tr>   
         {/foreach}
         </table>
         </fieldset>
@@ -115,7 +115,13 @@
     </div>
 
     <div id="crm-submit-buttons">
-        <dl><dt id="preview">{$form._qf_Widget_refresh.html}</dt><dd>&nbsp;&nbsp;&nbsp;&nbsp;{include file="CRM/common/formButtons.tpl"}</dd></dl>  
+        <table id="preview" class"form-layout-compressed">
+	   <tr>
+	      <td>{$form._qf_Widget_refresh.html}</td>
+	      <td>{include file="CRM/common/formButtons.tpl"}
+	      </td>
+	   </tr>
+	</table>  
     </div>
     </fieldset>
 
