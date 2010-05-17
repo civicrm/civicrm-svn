@@ -96,7 +96,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             $title = CRM_Core_BAO_CustomGroup::getTitle($this->_id);
             CRM_Utils_System::setTitle(ts('Preview %1', array(1 => $title)));
         } else {
-            CRM_Utils_System::setTitle(ts('New Custom Data Group'));
+            CRM_Utils_System::setTitle(ts('New Custom Field Set'));
         }
 
         if ( isset($this->_id) ) {
@@ -342,7 +342,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         // does this set have multiple record?
         $multiple = $this->addElement('checkbox', 
                                       'is_multiple', 
-                                      ts('Does this Custom Data Set allow multiple records?'),
+                                      ts('Does this Custom Field Set allow multiple records?'),
                                       null,
                                       array( 'onclick' => "showRange();"));
 
@@ -471,10 +471,10 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
       
         if ($this->_action & CRM_Core_Action::UPDATE) {
-            CRM_Core_Session::setStatus(ts('Your custom data set \'%1 \' has been saved.', array(1 => $group->title)));
+            CRM_Core_Session::setStatus(ts('Your custom field set \'%1 \' has been saved.', array(1 => $group->title)));
         } else {
             $url = CRM_Utils_System::url( 'civicrm/admin/custom/group/field', 'reset=1&action=add&gid=' . $group->id);
-            CRM_Core_Session::setStatus(ts('Your custom data set \'%1\' has been added. You can add it custom fields now.',
+            CRM_Core_Session::setStatus(ts('Your custom field set \'%1\' has been added. You can add it custom fields now.',
                                            array(1 => $group->title)));
             $session = CRM_Core_Session::singleton( );
             $session->replaceUserContext($url);
