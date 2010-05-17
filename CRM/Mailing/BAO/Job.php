@@ -59,7 +59,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
     public static function runJobs($testParams = null) {
         $job =& new CRM_Mailing_BAO_Job();
         
-        $mailing =& new CRM_Mailing_DAO_Mailing();
+        $mailing =& new CRM_Mailing_BAO_Mailing();
         
         $config =& CRM_Core_Config::singleton();
         $jobTable     = CRM_Mailing_DAO_Job::getTableName();
@@ -73,7 +73,8 @@ SELECT *
             $job->query($query);
         } else {
             $currentTime = date( 'YmdHis' );
-            
+            $mailingACL  = CRM_Mailing_BAO_Mailing::mailingACL( 'm' );
+
             /* FIXME: we might want to go to a progress table.. */
             $query = "
 SELECT   j.*
@@ -86,6 +87,7 @@ SELECT   j.*
    AND       j.status = 'Scheduled' )
     OR     ( j.status = 'Running'
    AND       j.end_date IS null ) )
+   AND   {$mailingACL}
 ORDER BY j.scheduled_date,
          j.start_date";
 
