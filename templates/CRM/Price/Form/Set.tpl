@@ -28,38 +28,78 @@
         <p>
         {ts}Use this form to setup the title and group-level help of each set of Price fields.{/ts}
         </p>
-    </div>
+</div>
 {capture assign="enableComponents"}{crmURL p='civicrm/admin/setting/component' q="reset=1"}{/capture}
 <div class="crm-form-block">
     <h3>{ts}Price Set{/ts}</h3>
     
-    <dl class="html-adjust">
-    <dt>{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_set' field='title' id=$sid}{/if}</dt><dd>{$form.title.html}</dd>
-    <dt>&nbsp;</dt><dd class="description">{ts}The name of this Price Set{/ts}</dd>
-    <dt>{$form.extends.label} </dt><dd>
-    {if $extends eq false}
-	<div class="status message">{ts 1=$enableComponents}No Components have been enabled for your site that can be configured with the price sets. Click <a href='%1'>here</a> if you want to enable CiviEvent/CiviContribute for your site.{/ts}</div>
-    {else}
-	{$form.extends.html}
-    {/if}</dd>
-    <dt>{$form.help_pre.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_set' field='help_pre' id=$sid}{/if}</dt><dd>{$form.help_pre.html}</dd>
-    <dt>&nbsp;</dt><dd class="description">{ts}Explanatory text displayed at the beginning of this group of fields.{/ts}</dd>
-    <dt>{$form.help_post.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_set' field='help_post' id=$sid}{/if}</dt><dd>{$form.help_post.html}</dd>
-    <dt>&nbsp;</dt><dd class="description">{ts}Explanatory text displayed below this group of fields.{/ts}</dd>
-    <dt>{$form.is_active.label}</dt><dd>{$form.is_active.html}</dd>
-    {*if $action ne 4*}
-        <dt></dt>
-        <dd>
-        <div id="crm-submit-buttons">
+    <table class="form-layout">
+        <tr class="crm-price-set-form-block-title">
+           <td class="label">{$form.title.label}</td>
+           <td>
+	   {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_set' field='title' id=$sid}{/if}{$form.title.html}
+           </td>
+        </tr>
+        <tr>
+           <td>&nbsp;</td>
+           <td class="description">{ts}The name of this Price Set{/ts}
+           </td>
+        <tr class="crm-price-set-form-block-extends">
+           <td class="label">{$form.extends.label}</td>
+           <td>
+           {if $extends eq false}
+	   <div class="status message">{ts 1=$enableComponents}No Components have been enabled for your site that can be configured with the price sets. Click <a href='%1'>here</a> if you want to enable CiviEvent/CiviContribute for your site.{/ts}</div>
+          {else}
+	  {$form.extends.html}
+          {/if}
+          </td>
+        </tr>
+        <tr class="crm-price-set-form-block-help_pre">
+	   <td class="label">{$form.help_pre.label}</td>
+           <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_set' field='help_pre' id=$sid}{/if}{$form.help_pre.html}
+           </td>
+           <td>&nbsp;</td>
+        </tr>
+        <tr>
+          <td>&nbsp;</td>
+          <td class="description">{ts}Explanatory text displayed at the beginning of this group of fields.{/ts}
+          </td>
+        </tr>
+        <tr class="crm-price-set-form-block-help_post">
+           <td class="label">{$form.help_post.label}</td> 
+           <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_set' field='help_post' id=$sid}{/if}{$form.help_post.html}
+           </td>
+        </tr>
+        <tr>
+           <td>&nbsp;</td>
+           <td class="description">{ts}Explanatory text displayed below this group of fields.{/ts}
+           </td>
+        </tr>
+        <tr class="crm-price-set-form-block-is_active">
+           <td class="label">{$form.is_active.label}</td>
+           <td>{$form.is_active.html}</td>
+        </tr>
+          {*if $action ne 4*}
+        <tr>
+        </tr>
+        <tr>
+           <td>
+           <div id="crm-submit-buttons">
              {include file="CRM/common/formButtons.tpl"}</div>
-        </dd>
+           </td>
+        </tr>
+     </table>
     {*else}
-        <dt></dt>
-        <dd>
-        <div id="crm-done-button">{$form.done.html}</div>
-        </dd>
+        <tr>
+        </tr>
+        <tr>
+           <td>
+           <div id="crm-done-button">{$form.done.html}</div>
+           </td>
+        </tr>
+    </table>
     {/if*} {* $action ne view *}
-    </dl>
+    
 </div>
 {if $action eq 2 or $action eq 4} {* Update or View*}
     <p></p>

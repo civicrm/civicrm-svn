@@ -37,77 +37,124 @@
    {include file="CRM/common/formButtons.tpl"}
 </div>
 
-    <dl>
-    <dt>{$form.title.label}</dt><dd>{$form.title.html}</dd>
-    <dt>{$form.is_monetary.label}</dt><dd>{$form.is_monetary.html}</dd>
-    </dl>
+    <table class="form-layout">
+       <tr class="crm-event-form-block-title">
+	  <td class="label">{$form.title.label}</td>
+	  <td>{$form.title.html}</td>
+       </tr>	
+       <tr class="crm-event-form-block-is_monetary">
+          <td class="label">{$form.is_monetary.label}</td>
+          <td>{$form.is_monetary.html}</td>
+       </tr>	 
+    </table>
 
     <div id="event-fees">
+    <table class="form-layout"> 
         {if $paymentProcessor}
-        <div id="paymentProcessor">
-            <dl>
-              <dt>{$form.payment_processor_id.label}</dt><dd>{$form.payment_processor_id.html}</dd>
-              <dt class="">&nbsp;</dt>
-              <dd class="description">
-                {ts}If this is a paid event and you want users to be able to register and pay online, select a payment processor to use.{/ts}
-                {ts}NOTE: Alternatively, you can enable the <strong>Pay Later</strong> feature below without setting up a payment processor. All users will then be asked to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts} {docURL page="CiviContribute Payment Processor Configuration"}
-              </dd>
-            </dl>
+         <div id="paymentProcessor">
+             <tr class="crm-event-form-block-payment_processor_id">            
+                <td class="label">{$form.payment_processor_id.label}</td>
+	        <td>{$form.payment_processor_id.html}</td>
+             </tr>
+	     <tr>
+                <td class="">&nbsp;</td>
+                <td class="description">
+                 {ts}If this is a paid event and you want users to be able to register and pay online, select a payment processor to use.{/ts}
+                 {ts}NOTE: Alternatively, you can enable the <strong>Pay Later</strong> feature below without setting up a payment processor. All users will then be asked to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts} {docURL page="CiviContribute Payment Processor Configuration"}<td>
+             </tr>
         </div>
         {/if}
            
         <div id="contributionType">
-            <dl>
-            <dt>{$form.contribution_type_id.label}<span class="marker"> *</span></dt><dd>{$form.contribution_type_id.html}</dd>
-            <dt>&nbsp;</dt><dd class="description">{ts}This contribution type will be assigned to payments made by participants when they register online.{/ts}
-            <dt>{$form.fee_label.label}<span class="marker"> *</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='fee_label' id=$id}{/if}</dt><dd>{$form.fee_label.html}</dd>
-            <dt>&nbsp;</dt><dd class="description">{ts}This label is displayed with the list of event fees.{/ts}
-            </dl>
-        </div>
+            <tr class="crm-event-form-block-contribution_type_id">
+               <td class="label">{$form.contribution_type_id.label}<span class="marker"> *</span>
+               </td>{$form.contribution_type_id.html}
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td class="description">{ts}This contribution type will be assigned to payments made by participants when they register online.{/ts}
+               </td>
+            </tr>
+            <tr class="crm-event-form-block-fee_label">
+               <td class="label">{$form.fee_label.label}<span class="marker"> *</span>
+               </td>
+               <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='fee_label' id=$id}{/if}{$form.fee_label.html}
+               </td>
+            </tr>
+            <tr>
+               <td>&nbsp;</td>
+               <td class="description">{ts}This label is displayed with the list of event fees.{/ts}
+               </td>
+            </tr>
+         </div>
 
         <div id="payLater">
-          <dl>
-             <dt class="extra-long-fourty">&nbsp;</dt><dd>{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}<br />
-                <span class="description">{ts}Check this box if you want to give users the option to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts}</span></dd>
-          </dl>
+          <tr class="crm-event-form-block-is_pay_later">
+             <td class="extra-long-fourty label">{$form.is_pay_later.html}</td>
+             <td>{$form.is_pay_later.label}<br />
+                <span class="description">{ts}Check this box if you want to give users the option to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts}</span>
+            </td>
+          </tr>
         </div>
 
         <div id="payLaterOptions">
-          <dl>
-             <dt>{$form.pay_later_text.label}<span class="marker"> *</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_text' id=$id}{/if}</dt><dd>{$form.pay_later_text.html|crmReplace:class:big}</dd>
-             <dt>&nbsp;</dt><dd class="description">{ts}Text displayed next to the checkbox for the 'pay later' option on the contribution form.{/ts}</dd>
-             <dt>{$form.pay_later_receipt.label}<span class="marker"> *</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_receipt' id=$id}{/if}</dt><dd>{$form.pay_later_receipt.html|crmReplace:class:big}</dd>
-             <dt>&nbsp;</dt><dd class="description">{ts}Instructions added to Confirmation and Thank-you pages when the user selects the 'pay later' option (e.g. 'Mail your check to ... within 3 business days.').{/ts}</dd>
-          </dl>
+          <tr class="crm-event-form-block-pay_later_text">
+             <td class="label">{$form.pay_later_text.label}<span class="marker"> *</span> </td>
+             <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_text' id=$id}{/if}{$form.pay_later_text.html|crmReplace:class:big}
+             </td>
+          </tr>
+          <tr>
+             <td>&nbsp;</td>
+             <td class="description">{ts}Text displayed next to the checkbox for the 'pay later' option on the contribution form.{/ts}</td>
+          </tr>
+          <tr class="crm-event-form-block-pay_later_receipt">
+             <td class="label">{$form.pay_later_receipt.label}<span class="marker"> *</span> </td>
+             <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_event' field='pay_later_receipt' id=$id}{/if}{$form.pay_later_receipt.html|crmReplace:class:big}
+             </td>
+          </tr>
+              <td>&nbsp;</td>
+              <td class="description">{ts}Instructions added to Confirmation and Thank-you pages when the user selects the 'pay later' option (e.g. 'Mail your check to ... within 3 business days.').{/ts}
+              </td>
+          </tr>
         </div>
 
         <div id="priceSet">
-            <dl>
-            <dt>{$form.price_set_id.label}</dt>
-	    <dd>{if $price eq false}
+            <tr class="crm-event-form-block-price_set_id">
+               <td class="label">{$form.price_set_id.label}</td>
+	       <td>{if $price eq false}
 	    	    <div class="status message">{ts 1=$adminPriceSets}No Price Set has been configured / enabled for your site. Price sets allow you to meet the complex demands of your event registration structure.(e.g. "Pay $15 more for lunch."). Click <a href='%1'>here</a> if you want to configure price sets for your site.{/ts}</div>
 	    	{else}
-		    {$form.price_set_id.html}</dd><dt>&nbsp;</dt><dd class="description">{ts 1=$adminPriceSets}Select a pre-configured Price Set to offer multiple individually priced options for event registrants. Otherwise, select &quot;-none-&quot; and enter one or more fee levels in the table below. Create or edit Price Sets <a href='%1'>here</a>.{/ts}
+		{$form.price_set_id.html}
+		</td>
+              </tr>
+              <tr>
+                <td>&nbsp;</td>
+                <td class="description">{ts 1=$adminPriceSets}Select a pre-configured Price Set to offer multiple individually priced options for event registrants. Otherwise, select &quot;-none-&quot; and enter one or more fee levels in the table below. Create or edit Price Sets <a href='%1'>here</a>.{/ts}
 	    	{/if}
-	    </dd>
-            </dl>
+	       </td>
+            </tr>
         </div>
+      </table>
         <div id="map-field" >
         <fieldset id="map-field"><legend>{ts}Regular Fees{/ts}</legend>
-        <p>{ts}Use the table below to enter descriptive labels and amounts for up to ten event fee levels. These will be presented as a list of radio button options. Both the label and dollar amount will be displayed. You can also configure one or more sets of discounted fees by checking "Discounts by Signup Date" below.{/ts}</p>
+        {ts}Use the table below to enter descriptive labels and amounts for up to ten event fee levels. These will be presented as a list of radio button options. Both the label and dollar amount will be displayed. You can also configure one or more sets of discounted fees by checking "Discounts by Signup Date" below.{/ts}
         <table id="map-field-table">
         <tr class="columnheader"><th scope="column">{ts}Fee Label{/ts}</th><th scope="column">{ts}Amount{/ts}</th><th scope="column">{ts}Default?{/ts}</th></tr>
         {section name=loop start=1 loop=11}
            {assign var=idx value=$smarty.section.loop.index}
-           <tr><td class="even-row">{$form.label.$idx.html}</td><td>{$form.value.$idx.html|crmMoney}</td><td class="even-row">{$form.default.$idx.html}</td></tr>
+           <tr><td class="even-row crm-event-form-block-label_{$idx}">{$form.label.$idx.html}</td><td class="crm-event-form-block-value_{$idx}">{$form.value.$idx.html|crmMoney}</td><td class="even-row crm-event-form-block-default_{$idx}">{$form.default.$idx.html}</td></tr>
         {/section}
         </table>
         </fieldset>
     
     <div id="isDiscount">
-         <dl>
-         <dt class="extra-long-fourty">&nbsp;</dt><dd>{$form.is_discount.html}&nbsp;{$form.is_discount.label}<br /><span class="description">{ts}Check this box if you want to offer discounted fees based on registration date (e.g. 'early-registration discounts').{/ts}</span></dd>
-         </dl>
+         <table class="form-layout">
+             <tr class="crm-event-form-block-is_discount">
+                <td class="extra-long-fourty label">{$form.is_discount.html}</td>
+                <td>{$form.is_discount.label}<br /><span class="description">{ts}Check this box if you want to offer discounted fees based on registration date (e.g. 'early-registration discounts').{/ts}</span>
+                </td>
+             </tr>
+         </table>
     </div>
     <div class="spacer"></div>
     <div class="form-item">
@@ -122,12 +169,12 @@
 	
 	{section name=rowLoop start=1 loop=6}
 	   {assign var=index value=$smarty.section.rowLoop.index}
-	   <tr id="discount_{$index}" class="{if $index GT 1 AND empty( $form.discount_name[$index].value) } hiddenElement {/if} form-item {cycle values="odd-row,even-row"}">
+	   <tr id="discount_{$index}" class=" crm-event-form-block-discount_{$index} {if $index GT 1 AND empty( $form.discount_name[$index].value) } hiddenElement {/if} form-item {cycle values="odd-row,even-row"}">
            <td>{if $index GT 1} <a onclick="showHideDiscountRow('discount_{$index}', false, {$index}); return false;" name="discount_{$index}" href="javascript:" class="form-link"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}hide field or section{/ts}"/></a>{/if}
            </td>
-           <td> {$form.discount_name.$index.html}</td>
-           <td> {include file="CRM/common/jcalendar.tpl" elementName='discount_start_date' elementIndex=$index} </td>
-           <td> {include file="CRM/common/jcalendar.tpl" elementName='discount_end_date' elementIndex=$index} </td>
+           <td class="crm-event-form-block-discount_name"> {$form.discount_name.$index.html}</td>
+           <td class="crm-event-form-block-discount_start_date"> {include file="CRM/common/jcalendar.tpl" elementName='discount_start_date' elementIndex=$index} </td>
+           <td class="crm-event-form-block-discount_end_date"> {include file="CRM/common/jcalendar.tpl" elementName='discount_end_date' elementIndex=$index} </td>
 	   </tr>
     {/section}
     </table>

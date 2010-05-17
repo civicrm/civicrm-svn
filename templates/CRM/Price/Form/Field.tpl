@@ -39,8 +39,8 @@
         }
 
         if (html_type_name == 'Radio' || html_type_name == 'CheckBox') {
-			      document.getElementById("optionsPerLine").style.display="block";
-			      document.getElementById("optionsPerLineDef").style.display="block";
+			      document.getElementById("optionsPerLine").style.display="inline";
+			      document.getElementById("optionsPerLineDef").style.display="inline";
         } else {
 			      document.getElementById("optionsPerLine").style.display="none";
 			      document.getElementById("optionsPerLineDef").style.display="none";
@@ -69,74 +69,142 @@
 <h3>{ts}Price Field{/ts}</h3>
 
     <div class="form-item">
-        <dl class="html-adjust">
-        <dt>{$form.label.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='label' id=$id}{/if}</dt><dd>{$form.label.html}</dd>
-        <dt>{$form.html_type.label}</dt><dd>{$form.html_type.html} {help id="id-negative"}</dd>
-        {if $action neq 4 and $action neq 2}
-            <dt>&nbsp;</dt><dd class="description">{ts}Select the html type used to offer options for this field{/ts}</dd>
-        {/if}
-	    <dt>{$form.count.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='count' id=$id}{/if}</dt><dd>{$form.count.html}<br />
-	        <span class="description">{ts}If there is a limit on how many participants can select this event item, enter that number here.{/ts}</span></dd>
-        </dl>
+        <table class="form-layout">
+            <tr class="crm-price-field-form-block-label">
+               <td class="label">{$form.label.label}</td>
+               <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='label' id=$id}{/if}{$form.label.html}
+               </td>
+            </tr>
+            <tr class="crm-price-field-form-block-html_type">
+               <td class="label">{$form.html_type.label}</td>
+               <td>{$form.html_type.html} {help id="id-negative"}
+              </td>
+            </tr>
+            {if $action neq 4 and $action neq 2}
+            <tr>
+               <td>&nbsp;</td>
+               <td class="description">{ts}Select the html type used to offer options for this field{/ts}
+               </td>
+            </tr>
+            {/if}
+	    <tr class="crm-price-field-form-block-count">
+               <td class="label">{$form.count.label}</td>
+               <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='count' id=$id}{/if}{$form.count.html}<br />
+	        <span class="description">{ts}If there is a limit on how many participants can select this event item, enter that number here.{/ts}</span>
+                </td>
+            </tr>
+        </table>
         <div class="spacer"></div>
         <div id="price" {if $action eq 2 && $form.html_type.value.0 eq 'Text'} class="show-block" {else} class="hide-block" {/if}>
-        <dl class="html-adjust">
-        <dt>{$form.price.label}</dt><dd>{$form.price.html}</dd>
+        <table class="form-layout">
+        <tr class="crm-price-field-form-block-price">
+           <td class="label">{$form.price.label}</td>
+           <td>{$form.price.html}</td>
+        </tr>
         {if $action neq 4}
-        <dt>&nbsp;</dt><dd class="description">{ts}Unit price{/ts}
+        <tr>
+           <td>&nbsp;</td>
+           <td class="description">{ts}Unit price{/ts}
+           </td>
+        </tr>
         {/if}
-        </dl>
+        </table>
         </div>
 
     {if $action eq 1}
         {* Conditionally show table for setting up selection options - for field types = radio, checkbox or select *}
         <div id='showoption' class="hide-block">{ include file="CRM/Price/Form/OptionFields.tpl"}</div>
     {/if}
-        <dl class="html-adjust">
-	    <dt id="optionsPerLine" {if $action eq 2 && ($form.html_type.value.0 eq 'CheckBox' || $form.html_type.value.0 eq 'Radio')}class="show-block"{else} class="hide-block" {/if}>{$form.options_per_line.label}</dt>	
-	    <dd id="optionsPerLineDef" {if $action eq 2 && ($form.html_type.value.0 eq 'CheckBox' || $form.html_type.value.0 eq 'Radio')}class="show-block"{else} class="hide-block"{/if}>{$form.options_per_line.html|crmReplace:class:two}</dd>
+        <table class="form-layout">
+            <tr class="crm-price-field-form-block-options_per_line">
+	       <td id="optionsPerLine" {if $action eq 2 && ($form.html_type.value.0 eq 'CheckBox' || $form.html_type.value.0 eq 'Radio')}class="show-block"{else} class="hide-block" {/if}>{$form.options_per_line.label}</td>	
+	       <td id="optionsPerLineDef" {if $action eq 2 && ($form.html_type.value.0 eq 'CheckBox' || $form.html_type.value.0 eq 'Radio')}class="show-block"{else} class="hide-block"{/if}>{$form.options_per_line.html|crmReplace:class:two}</td>
+            </tr>
+            <tr class="crm-price-field-form-block-is_display_amounts">
+               <td class="label">{$form.is_display_amounts.label}</td>
+               <td>{$form.is_display_amounts.html}</td>
+            </tr>
+            {if $action neq 4}
+            <tr>
+               <td>&nbsp;</td>
+               <td class="description">{ts}Display amount next to each option? If no, then the amount should be in the option description.{/ts}
+               </td>
+            </tr>
+            {/if}
 
-        <dt>{$form.is_display_amounts.label}</dt><dd>{$form.is_display_amounts.html}</dd>
-        {if $action neq 4}
-        <dt>&nbsp;</dt><dd class="description">{ts}Display amount next to each option? If no, then the amount should be in the option description.{/ts}</dd>
-        {/if}
+            <tr class="crm-price-field-form-block-weight">
+               <td class="label">{$form.weight.label}</td>
+               <td>{$form.weight.html|crmReplace:class:two}</td>
+            </tr>
+            <tr>
+            {if $action neq 4}
+               <td>&nbsp;</td>
+               <td class="description">{ts}Weight controls the order in which fields are displayed in a group. Enter a positive or negative integer - lower numbers are displayed ahead of higher numbers.{/ts}</td>
+           {/if}
 
-        <dt>{$form.weight.label}</dt><dd>{$form.weight.html|crmReplace:class:two}</dd>
-        {if $action neq 4}
-        <dt>&nbsp;</dt><dd class="description">{ts}Weight controls the order in which fields are displayed in a group. Enter a positive or negative integer - lower numbers are displayed ahead of higher numbers.{/ts}</dd>
-        {/if}
-
-        <dt>{$form.help_post.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='help_post' id=$id}{/if}</dt><dd>&nbsp;{$form.help_post.html|crmReplace:class:huge}&nbsp;</dd>
-        {if $action neq 4}
-        <dt>&nbsp;</dt><dd class="description">{ts}Explanatory text displayed to users for this field.{/ts}</dd>
+           <tr class="crm-price-field-form-block-help_post">
+              <td class="label">{$form.help_post.label}</td>
+              <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='help_post' id=$id}{/if}{$form.help_post.html|crmReplace:class:huge}&nbsp;</td>
+           </tr>
+           {if $action neq 4}
+           <tr>
+              <td>&nbsp;</td>
+              <td class="description">{ts}Explanatory text displayed to users for this field.{/ts}
+              </td>
+           </tr>
         {/if}
 <!--
-        <dt>{$form.active_on.label}</dt><dd>{$form.active_on.html}</dd>
+        <tr class="crm-price-field-form-block-active_on">
+           <td class="label">{$form.active_on.label}</td>
+           <td>{$form.active_on.html}</td>
+        </tr>
         {if $action neq 4}
-        <dt>&nbsp;</dt><dd class="description">{ts}Date this field becomes effective (optional){/ts}</dd>
+        <tr>
+           <td>&nbsp;</td>
+           <td class="description">{ts}Date this field becomes effective (optional){/ts}</td>
+        </tr>
         {/if}
 
-        <dt>{$form.expire_on.label}</dt><dd>{$form.expire_on.html}</dd>
+        <tr class="crm-price-field-form-block-expire_on">
+           <td class="label">{$form.expire_on.label}</td>
+           <td>{$form.expire_on.html}</td>
+        </tr>
         {if $action neq 4}
-        <dt>&nbsp;</dt><dd class="description">{ts}Date this field expires (optional){/ts}</dd>
+        <tr>
+           <td>&nbsp;</td>
+           <td class="description">{ts}Date this field expires (optional){/ts}</td>
+        </td>
         {/if}
 -->
-        <dt>{$form.is_required.label}</dt><dd>&nbsp;{$form.is_required.html}</dd>
-	<dt>{$form.visibility_id.label}</dt><dd>&nbsp;{$form.visibility_id.html}</dd>
-        </dl>
-        <dl class="html-adjust">
-        <dt>{$form.is_active.label}</dt><dd>&nbsp;{$form.is_active.html}</dd>
-        </dl>    
-   </div>
+        <tr class="crm-price-field-form-block-is_required">
+           <td class="label">{$form.is_required.label}</td>
+           <td>&nbsp;{$form.is_required.html}</td>
+        </tr>
+	<tr class="crm-price-field-form-block-visibility_id">
+           <td class="label">{$form.visibility_id.label}</td>
+           <td>&nbsp;{$form.visibility_id.html}</td>
+        </tr>
+        <tr class="crm-price-field-form-block-is_active">
+            <td class="label">{$form.is_active.label}</td>
+            <td>{$form.is_active.html}</td>
+        </tr>
+    </tabel>    
+    </div>
     
     <div id="crm-submit-buttons" class="form-item">
-    <dl class="html-adjust">
+    <table class="form-layout">
     {if $action ne 4}
-        <dt>&nbsp;</dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
+        <tr>
+           <td>&nbsp;</td>
+           <td>{include file="CRM/common/formButtons.tpl"}</td>
+        </tr>
     {else}
-        <dt>&nbsp;</dt><dd>{$form.done.html}</dd>
+        <tr>
+           <td>&nbsp;</td>
+           <td>{$form.done.html}</td>
+        </tr>
     {/if} {* $action ne view *}
-    </dl>    
+    </table>    
     </div> 
 </fieldset>
 

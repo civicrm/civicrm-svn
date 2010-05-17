@@ -37,19 +37,15 @@
     {if $usedBy}
     <div class='spacer'></div>
     <div id="price_set_used_by" class="messages status">
-      <dl>
-      <dt><div class="icon inform-icon"></div></dt>      
-      <dd>
-        {if $action eq 8}
+       <div class="icon inform-icon"></div> 
+       {if $action eq 8}
             {ts 1=$usedPriceSetTitle}Unable to delete the '%1' price set - it is currently in use by one or more active events or contribution pages or contributions.{/ts}
         {/if}<br />
         
 	{if $usedBy.civicrm_event or $usedBy.civicrm_contribution_page} 
             {include file="CRM/Price/Page/table.tpl"} 
         {/if}
-	
-      </dd>
-      </dl>
+
     </div>
     {/if}
 
@@ -70,10 +66,10 @@
         </tr>
         </thead>
         {foreach from=$rows item=row}
-	<tr id="row_{$row.id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-            <td>{$row.title}</td>
-	    <td>{$row.extends}</td>
-	    <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	<tr id="row_{$row.id}"class=" crm-price-set crm-price-set_{$row.id} {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+            <td class="crm-price-set-title">{$row.title}</td>
+	    <td class="crm-price-set-extends">{$row.extends}</td>
+	    <td id="row_{$row.id}_status" class="crm-price-set-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
             <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}

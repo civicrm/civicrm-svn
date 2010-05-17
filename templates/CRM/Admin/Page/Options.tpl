@@ -115,26 +115,26 @@
             </thead>
             <tbody>
         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class="{if NOT $row.is_active} disabled{/if}">
+        <tr id="row_{$row.id}" class=" crm-event crm-event_{$row.id} {if NOT $row.is_active} disabled{/if}">
             {if $showComponent}
-                <td>{$row.component_name}</td>
+                <td class="crm-event-component_name">{$row.component_name}</td>
             {/if}
-	        <td>{$row.label}</td>
+	        <td class="crm-event-label">{$row.label}</td>
 	    {if $gName eq "case_status"}				
-		<td>{$row.grouping}</td>
+		<td class="crm-event-grouping">{$row.grouping}</td>
             {/if}	
-	        <td>{$row.value}</td>
+	        <td class="crm-event-value">{$row.value}</td>
 		{if $showCounted}
-		<td class="yes-no">{if $row.filter eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
+		<td class="yes-no crm-event-filter">{if $row.filter eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
 		{/if}
-            {if $showVisibility}<td>{$row.visibility_label}</td>{/if}
-	        <td>{$row.description}</td>	
-	        <td class="nowrap">{$row.order}</td>
+            {if $showVisibility}<td class="crm-event-visibility_label">{$row.visibility_label}</td>{/if}
+	        <td class="crm-event-description">{$row.description}</td>	
+	        <td class="nowrap crm-participant-order">{$row.order}</td>
             {if $showIsDefault}<td align="center">{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>{/if}
-	        <td>{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="crm-event-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="crm-event-status" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
-	        <td class="order hiddenElement">{$row.weight}</td>
+	        <td class="order hiddenElement crm-participant-weight">{$row.weight}</td>
         </tr>
         {/foreach}
         </tbody>
@@ -149,11 +149,9 @@
 </div>
 {else}
     <div class="messages status">
-    <dl>
-        <dt><div class="icon inform-icon"></div></dt>
+         <div class="icon inform-icon"></div></dt>
         {capture assign=crmURL}{crmURL  q="group="|cat:$gName|cat:"&action=add&reset=1"}{/capture}
-        <dd>{ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}</dd>
-        </dl>
+        {ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}</dd>
     </div>    
 {/if}
 </div>
