@@ -15,7 +15,8 @@
 <xi:include href="Contribute/files.xml"        parse="xml" />  
 <xi:include href="SMS/files.xml"               parse="xml" />
 <xi:include href="Project/files.xml"           parse="xml" />
-<xi:include href="Member/files.xml"            parse="xml" />  
+<xi:include href="Member/files.xml"            parse="xml" />
+<xi:include href="Campaign/files.xml"          parse="xml" />
 <xi:include href="Activity/files.xml"          parse="xml" />  
 <xi:include href="Event/files.xml"             parse="xml" />  
 <xi:include href="Dedupe/files.xml"            parse="xml" />  
@@ -25,5 +26,5 @@
 <xi:include href="Standalone/OpenID/files.xml" parse="xml" />
 <xi:include href="Pledge/files.xml"            parse="xml" />  
 <xi:include href="Report/files.xml"            parse="xml" />  
-<xi:include href="Price/files.xml"            parse="xml" />  
+<xi:include href="Price/files.xml"             parse="xml" /> 
 </database>
