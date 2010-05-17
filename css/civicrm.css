@@ -2101,6 +2101,8 @@ div.grippie {
 }
 
 .ac_results-inner,
+.crm-participant-inner,
+.crm-event-links-list-inner,
 .crm-create-new-list-inner,
 .crm-contact-actions-list-inner  {
     background-color:#2f2f2e;
@@ -2145,6 +2147,8 @@ div.grippie {
 
 #crm-container a.button,
 #crm-create-new-link,
+#crm-participant-link,
+#crm-event-links-link,
 #crm-contact-actions-link,
 #crm-container a.button:link,
 #crm-container input.form-submit,
@@ -2176,6 +2180,8 @@ div.grippie {
 
 #crm-container a.button,
 #crm-create-new-link,
+#crm-participant-link,
+#crm-event-links-link,
 #crm-contact-actions-link,
 #crm-container a.button:link{
     display: block;
@@ -2184,6 +2190,8 @@ div.grippie {
 
 #crm-create-new-link span,
 #crm-contact-actions-link span,
+#crm-participant-link span,
+#crm-event-links-link span,
 #crm-container a.button span {
     display: block;
     line-height: 14px;
@@ -2212,12 +2220,15 @@ div.grippie {
 
 /* create new XXX style (drupal block) */ 
 
+#crm-participant-wrapper,
+#crm-event-links-wrapper,
 #crm-create-new-wrapper,
 #crm-contact-actions-wrapper{
 	position:relative;
 	z-index:15;
 	}
 
+#crm-event-links-list,
 #crm-create-new-list,
 #crm-contact-actions-list{
 	position:absolute;
@@ -2226,6 +2237,12 @@ div.grippie {
 	left:0px;
 	}
 
+#crm-participant-list{
+	position:absolute;
+	display:none;
+	top:24px;
+	left:124px;
+	}
 
 .clear { clear: both; }
 
@@ -2243,6 +2260,12 @@ div.grippie {
     #crm-contact-actions-list .crm-contact_activities-list ul,
     #crm-contact-actions-list .crm-contact_print-list ul,
     #crm-contact-actions-list .crm-contact_actions-list ul,
+    #crm-event-links-list .crm-event-info ul,
+    #crm-event-links-list .crm-event-test ul,
+    #crm-event-links-list .crm-event-live ul,
+    #crm-participant-list .crm-participant-counted ul,
+    #crm-participant-list .crm-participant-not-counted ul,
+    #crm-participant-list .crm-participant-listing ul,
     #crm-create-new-list ul { 
         width: auto;
         margin:0px;
@@ -2284,6 +2307,8 @@ span.icon {
 	}
 
 #crm-contact-actions-link .icon,
+#crm-participant-link .icon,
+#crm-event-links-link .icon,
 #crm-create-new-link .icon,
 .button .icon,
 .crm-button .icon {background-image:url("../i/icons/jquery-ui-FFFFFF.png");}
@@ -2929,6 +2954,8 @@ del,
 #crm-container .crm-button,
 #crm-container a.button,
 #crm-create-new-link,
+#crm-participant-link,
+#crm-event-links-link,
 #crm-contact-actions-link,
 #crm-container a.button:link,
 #crm-container input.form-submit,
@@ -2965,6 +2992,8 @@ div#crm-toolTip
 }
 
 .ac_results-inner,
+.crm-participant-list-inner,
+.crm-event-links-list-inner,
 .crm-create-new-list-inner,
 .crm-contact-actions-list-inner { background-color:#2f2f2e; }
 
