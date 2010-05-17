@@ -26,10 +26,16 @@
 <div class="form-item">
 <fieldset>
     <legend>{ts}Batch Update Members via Profile{/ts}</legend>
-    <dl>
-        <dt>{$form.uf_group_id.label}</dt><dd>{$form.uf_group_id.html}</dd>
-        <dt></dt><dd>{include file="CRM/Member/Form/Task.tpl"}</dd>
-        <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
-    </dl>
+ <table>
+     <tr class="crm-membership-form-block-uf_group_id">
+       <td>{$form.uf_group_id.label}</td><td>{$form.uf_group_id.html}</td>
+     </tr>
+     <tr>	
+       <td></td><td>{include file="CRM/Member/Form/Task.tpl"}</td>
+     </tr>
+     <tr>
+       <td></td><td>{include file="CRM/common/formButtons.tpl"}</td>
+     </tr>
+ </table>
 </fieldset>
 </div>
