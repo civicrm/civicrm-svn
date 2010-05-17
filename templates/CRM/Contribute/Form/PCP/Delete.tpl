@@ -26,11 +26,9 @@
 {* this template is used for confirmation of delete for a group *}
 <fieldset><legend>{ts}Delete Campaign Page {/ts}</legend>
 <div class="messages status">
-<dl>
-	<dt><div class="icon inform-icon"></div></dt>
-	<dd>{ts 1=$title}Are you sure you want to delete Campaign Page '%1'?{/ts}<br />
-	{ts}This operation cannot be undone.{/ts}</dd>
-</dl>
+   <div class="icon inform-icon"></div>
+	{ts 1=$title}Are you sure you want to delete Campaign Page '%1'?{/ts}<br />
+	{ts}This operation cannot be undone.{/ts}
 </div>
 
 <div class="form-item">{$form.buttons.html}</div>
