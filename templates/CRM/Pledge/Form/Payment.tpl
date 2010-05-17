@@ -33,9 +33,8 @@
             <span class="description">{ts}Scheduled Date for Pledge payment.{/ts}</span></td></tr>
         </td></tr>
       </table>
-
-    <dl>    
-       <dt></dt><dd class="html-adjust">{include file="CRM/common/formButtons.tpl"}</dd>   
-    </dl> 
+     <div class="form-item">   
+       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>   
+     </div> 
 </fieldset>
 </div> 
