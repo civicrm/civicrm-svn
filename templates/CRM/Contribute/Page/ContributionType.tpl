@@ -70,11 +70,9 @@
 </div>
 {else}
     <div class="messages status">
-    <dl>
-        <dt><div class="icon inform-icon"></div></dt>
+        <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}
-        <dd>{ts 1=$crmURL}There are no Contribution Types entered. You can <a href='%1'>add one</a>.{/ts}</dd>
-        </dl>
+        {ts 1=$crmURL}There are no Contribution Types entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
 {/if}
 {/if}

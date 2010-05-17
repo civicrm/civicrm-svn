@@ -56,12 +56,8 @@
         {/if}
     {else}
         <div class="messages status">
-            <dl>
-                <dt><div class="icon inform-icon"></div></dt>
-                <dd>
+           <div class="icon inform-icon"></div>
                     {ts}There are no contributions on record for you.{/ts}
-                </dd>
-            </dl>
         </div>
     {/if}
      

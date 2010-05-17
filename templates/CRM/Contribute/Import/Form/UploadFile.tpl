@@ -36,37 +36,26 @@
 
  <div id="upload-file" class="form-item">
  <fieldset>
-    <dl>
-        <dt>{$form.uploadFile.label}</dt>
-            <dd>{$form.uploadFile.html}<br />
-                <span class="description">{ts}File format must be comma-separated-values (CSV).{/ts}</span>
-            </dd>
-        <dt>&nbsp;</dt>
-	    <dd>{ts 1=$uploadSize}Maximum Upload File Size: %1 MB{/ts}</dd>
-        <dt> </dt>
-            <dd>{$form.skipColumnHeader.html} {$form.skipColumnHeader.label}<br />
+  <table class="form-layout-compressed">
+  	<tr><td class="label">{$form.uploadFile.label}</td><td class="html-adjust"> {$form.uploadFile.html}<br />
+       	   <span class="description">{ts}File format must be comma-separated-values (CSV).{/ts}</span></td></tr> 
+        <tr><td class="label"></td><td>{ts 1=$uploadSize}Maximum Upload File Size: %1 MB{/ts}</td></tr>
+        <tr><td class="label"></td><td>{$form.skipColumnHeader.html}{$form.skipColumnHeader.label}<br />
                 <span class="description">
-                    {ts}Check this box if the first row of your file consists of field names (Example: 'Contact ID', 'Amount').{/ts}
-                </span>
-            </dd>
-        <dt class="{$form.contactType.name}">{$form.contactType.label}</dt><dd class="{$form.contactType.name}">{$form.contactType.html}<br />
+                    {ts}Check this box if the first row of your file consists of field names (Example: 'Contact ID', 'Amount').{/ts} </span></td></tr>
+        <tr><td class="{$form.contactType.name} label">{$form.contactType.label}</td><td class="{$form.contactType.name}">{$form.contactType.html}<br />
             <span class="description">
                 {ts}Select 'Individual' if you are importing contributions made by individual persons.{/ts}
-                {ts}Select 'Organization' or 'Household' if you are importing contributions made by contacts of that type. (NOTE: Some built-in contact types may not be enabled for your site.){/ts}
-            </span>
-        </dd> 
-        <dt>{$form.onDuplicate.label}</dt><dd>{$form.onDuplicate.html}{help id="id-onDuplicate"}</dd>
-        {include file="CRM/Core/Date.tpl"}  
+                {ts}Select 'Organization' or 'Household' if you are importing contributions made by contacts of that type. (NOTE: Some built-in contact types may not be enabled for your site.){/ts}</span></td></tr> 
+        <tr><td class="label">{$form.onDuplicate.label}</td><td>{$form.onDuplicate.html}{help id="id-onDuplicate"}</td></tr>
+        <tr>{include file="CRM/Core/Date.tpl"}</tr>
 {if $savedMapping}
-      <dt>{if $loadedMapping}{ts}Select a Different Field Mapping{/ts}{else}{ts}Load Saved Field Mapping{/ts}{/if}</dt>
-       <dd> <span>{$form.savedMapping.html}</span> </dd>
-      <dt>&nbsp;</dt>
-       <dd class="description">{ts}Select a saved field mapping if this file format matches a previous import.{/ts}</dd>
-{/if}
-    </dl>
+      <tr> <td class="label">{if $loadedMapping}{ts}Select a Different Field Mapping{/ts}{else}{ts}Load Saved Field Mapping{/ts}{/if}</td><td>{$form.savedMapping.html}<br /> <span class="description">{ts}Select a saved field mapping if this file format matches a previous import.{/ts}</span></tr>
+{/if} 
     <div class="spacer"></div>
+    </table>
  </fieldset>
  </div>
- <div id="crm-submit-buttons">
+ <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl"}
  </div>
