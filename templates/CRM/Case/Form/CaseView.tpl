@@ -881,7 +881,11 @@ function checkSelection( field ) {
         case 'new_activity' :
             validationMessage = '{/literal}{ts}Please select an activity type from the list.{/ts}{literal}';
             validationField   = 'activity_type_id';
-            successAction     = "window.location='{/literal}{$newActivityUrl}{literal}' + document.getElementById('activity_type_id').value";
+            if ( document.getElementById('activity_type_id').value == 3 ) {
+                successAction     = "window.location='{/literal}{$newActivityEmailUrl}{literal}' + document.getElementById('activity_type_id').value";            
+            } else {
+                successAction     = "window.location='{/literal}{$newActivityUrl}{literal}' + document.getElementById('activity_type_id').value";                
+            }
             break;
 
         case 'case_report' :
