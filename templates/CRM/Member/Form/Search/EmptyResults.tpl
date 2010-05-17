@@ -25,9 +25,7 @@
 *}
 {* No matches for submitted search request. *}
 <div class="messages status">
-  <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
+    <div class="icon inform-icon"></div>
         {if $qill}{ts}No matches found for:{/ts}
             {include file="CRM/common/displaySearchCriteria.tpl"}
         {else}
@@ -41,6 +39,4 @@
         <li>{ts}if you are searching within a date range, try a wider range of values{/ts}</li>
         <li>{ts}make sure you have enough privileges in the access control system{/ts}</li>
         </ul>
-    </dd>
-  </dl>
 </div>

@@ -35,12 +35,8 @@
 {/if}
 {if !$emailExists and $action neq 8 and $context neq 'standalone'}
 <div class="messages status">
-  <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
+    <div class="icon inform-icon"></div>
         <p>{ts}You will not be able to send an automatic email receipt for this Membership because there is no email address recorded for this contact. If you want a receipt to be sent when this Membership is recorded, click Cancel and then click Edit from the Summary tab to add an email address before recording the Membership.{/ts}</p>
-    </dd>
-  </dl>
 </div>
 {/if}
 
