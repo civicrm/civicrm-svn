@@ -83,22 +83,24 @@
         <tr>
         </tr>
         <tr>
+           <td>&nbsp;</td>
            <td>
            <div id="crm-submit-buttons">
              {include file="CRM/common/formButtons.tpl"}</div>
            </td>
         </tr>
      </table>
-    {*else}
+     {*else}
         <tr>
         </tr>
         <tr>
+           <td>&nbsp;</td>
            <td>
            <div id="crm-done-button">{$form.done.html}</div>
            </td>
         </tr>
     </table>
-    {/if*} {* $action ne view *}
+     {/if*} {* $action ne view *}
     
 </div>
 {if $action eq 2 or $action eq 4} {* Update or View*}

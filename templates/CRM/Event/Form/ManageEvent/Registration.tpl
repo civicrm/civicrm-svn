@@ -35,10 +35,14 @@
 
 <div class="form-item">
     <div id="register">
-     <dl>
-       <dt>{$form.is_online_registration.label}</dt><dd>{$form.is_online_registration.html}
-            <span class="description">{ts}Enable or disable online registration for this event.{/ts}</span></dd>
-     </dl>
+     <table class="form-layout">
+         <tr class="crm-event-form-block-is_online_registration">
+            <td class="label">{$form.is_online_registration.label}</td>
+            <td>{$form.is_online_registration.html}
+            <span class="description">{ts}Enable or disable online registration for this event.{/ts}</span>
+            </td>
+         </tr>
+     </table>
     </div>
     <div class="spacer"></div>
     <div id="registration_blocks">

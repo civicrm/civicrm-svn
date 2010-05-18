@@ -45,7 +45,7 @@
         {include file="CRM/Event/Form/Search/Common.tpl"}
      
         <tr>
-           <td colspan="2">{$form.buttons.html}</td>
+           <td colspan="2">{include file="CRM/common/formButtons.tpl"}</td>
         </tr>
         </table>
     {/strip}

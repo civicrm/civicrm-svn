@@ -78,7 +78,7 @@
         <tr>
             <td>&nbsp;</td>
             <td>
-                {$form.buttons.html}
+                {include file="CRM/common/formButtons.tpl"}
                 {if call_user_func(array('CRM_Core_Permission','check'), 'edit event participants')}
                     &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context&selectedChild=event"}" accesskey="e">Edit</a>
                 {/if}

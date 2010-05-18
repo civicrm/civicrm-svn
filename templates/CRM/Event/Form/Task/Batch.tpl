@@ -64,7 +64,7 @@
 	         <td>{$contactDetails.$pid.$fName}</td>
 	      {/foreach}
 
-              <td>{$details.$pid.title}</td>   
+              <td class="crm-event-title">{$details.$pid.title}</td>   
               {foreach from=$fields item=field key=fieldName}
                 {assign var=n value=$field.name}
                 {if ( $fields.$n.data_type eq 'Date') or ( $n eq 'participant_register_date' ) }
@@ -76,10 +76,14 @@
              </tr>
             {/foreach}
            </tr>
+           <tr>
+              <td>&nbsp;</td>
+              <td>&nbsp;</td>
+              <td> {if $fields}{$form._qf_Batch_refresh.html}{/if}{include file="CRM/common/formButtons.tpl"}
+              </td>
+           </tr>
          </table>
-        <dl>
-            <dt></dt><dd>{if $fields}{$form._qf_Batch_refresh.html}{/if} &nbsp; {$form.buttons.html}</dd>
-        </dl>
+        
 </fieldset>
 </div>
 

@@ -87,7 +87,7 @@
                </td>
             </tr>
             {/if}
-	    <tr class="crm-price-field-form-block-count">
+            <tr class="crm-price-field-form-block-count">
                <td class="label">{$form.count.label}</td>
                <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='count' id=$id}{/if}{$form.count.html}<br />
 	        <span class="description">{ts}If there is a limit on how many participants can select this event item, enter that number here.{/ts}</span>
@@ -188,24 +188,21 @@
             <td class="label">{$form.is_active.label}</td>
             <td>{$form.is_active.html}</td>
         </tr>
-    </tabel>    
-    </div>
-    
-    <div id="crm-submit-buttons" class="form-item">
-    <table class="form-layout">
-    {if $action ne 4}
+   
+        <div id="crm-submit-buttons" class="form-item">
+        {if $action ne 4}
         <tr>
            <td>&nbsp;</td>
            <td>{include file="CRM/common/formButtons.tpl"}</td>
         </tr>
-    {else}
+       {else}
         <tr>
            <td>&nbsp;</td>
            <td>{$form.done.html}</td>
         </tr>
-    {/if} {* $action ne view *}
+       {/if} {* $action ne view *}
     </table>    
-    </div> 
+  </div> 
 </fieldset>
 
 <script type="text/javascript">

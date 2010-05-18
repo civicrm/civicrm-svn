@@ -43,7 +43,7 @@
                 {/foreach}
             </div>
         </td>
-        <td class="right" rowspan="2">&nbsp;{$form.buttons.html}</td>  
+        <td class="right" rowspan="2">&nbsp;{include file="CRM/common/formButtons.tpl"}</td>  
     </tr>
   
     <tr>

@@ -26,11 +26,20 @@
 <div class="form-item">
 <fieldset>
     <legend>{ts}Batch Update Event via Profile{/ts}</legend>
-    <dl>
-        <dt>{$form.uf_group_id.label}</dt><dd>{$form.uf_group_id.html}</dd>
-        <dt></dt><dd>{include file="CRM/Event/Form/Task.tpl"}</dd>
-        <dt></dt><dd>{$form.buttons.html}</dd>
-    </dl>
+    <table class="form-layout">
+        <tr>
+           <td class="label">{$form.uf_group_id.label}</td>
+           <td>{$form.uf_group_id.html}</td>
+        </tr>
+        <tr>
+           <td>&nbsp;</td>
+           <td>{include file="CRM/Event/Form/Task.tpl"}</td>
+        </tr>
+        <tr>
+           <td>&nbsp;</td>
+           <td>{include file="CRM/common/formButtons.tpl"}</td>
+        </tr>
+    </table>
 </fieldset>
 </div>
 
