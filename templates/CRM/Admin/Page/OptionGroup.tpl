@@ -27,6 +27,7 @@
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Admin/Form/OptionGroup.tpl"}
 {else}
+<div class="form-item crm-block crm-form-block">
 <div id="help">
     {ts}CiviCRM stores configurable choices for various drop-down fields as 'option groups'. Choices used by core fields are reserved and cannot be modified. If a group is editable, you can click <strong>Multiple Choice Options</strong> to view and modify the available choices.{/ts}
 </div>
@@ -73,3 +74,4 @@
         {ts 1=$crmURL}There are no Option Group entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
 {/if}
+</div>

@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {capture assign=docLink}{docURL page="CiviContribute Payment Processor Configuration"}{/capture}
+<div class="form-item crm-block crm-form-block">
 <div id="help">
     {ts}You can configure one or more Payment Processors for your CiviCRM installation. You must then assign an active Payment Processor to each <strong>Online Contribution Page</strong> and each paid <strong>Event</strong>.{/ts} {$docLink}
 </div>
@@ -75,3 +76,4 @@
     </div>    
 {/if}
 {/if}
+</div>
