@@ -152,10 +152,14 @@ function fileOnCase( action, activityID, currentCaseId ) {
     						    context = '&context={/literal}{$fulltext}{literal}';
     						  {/literal}{/if}{literal}											     	 	                     
 						      var caseUrl = destUrl + selectedCaseId + '&cid=' + contactId + context;
-						      var activitySubject = cj("#case_activity_subject").val( );
-						      var statusMsg = '<a id="closeFileOnCaseStatusMsg" href="#"><div class="icon close-icon"></div></a> "' + activitySubject + '" has been filed to selected case: ' + cj("#unclosed_cases").val( ) + '. Click <a href="' + caseUrl + '">here</a> to view that case.';
-						      cj('#fileOnCaseStatusMsg').addClass('msgok').html( statusMsg ).show( );
-                              cj("#closeFileOnCaseStatusMsg").click(function(){ cj('#fileOnCaseStatusMsg').fadeOut("slow");return false;}).focus( );
+						      if ( action == "move" ) {
+						          window.location.href = caseUrl + selectedCaseId + '&cid=' + contactId + context;
+						      } else {
+						          var activitySubject = cj("#case_activity_subject").val( );
+						          var statusMsg = '<a id="closeFileOnCaseStatusMsg" href="#"><div class="icon close-icon"></div></a> "' + activitySubject + '" has been filed to selected case: ' + cj("#unclosed_cases").val( ) + '. Click <a href="' + caseUrl + '">here</a> to view that case.';
+						          cj('#fileOnCaseStatusMsg').addClass('msgok').html( statusMsg ).show( );
+                                  cj("#closeFileOnCaseStatusMsg").click(function(){ cj('#fileOnCaseStatusMsg').fadeOut("slow");return false;}).focus( );
+                             }
    					      }
                     }
     		      );
