@@ -26,7 +26,7 @@
 {ts 1=$totalSelectedPledges}Number of selected pledges: %1{/ts}
 
 {if $rows } 
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-pledge-form-block">
 <table width="30%">
   <tr class="columnheader">
     <th>{ts}Name{/ts}</th>

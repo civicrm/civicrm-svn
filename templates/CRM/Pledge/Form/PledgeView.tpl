@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">  
+<div class="form-item crm-block crm-form-block crm-pledge-form-block">  
 <fieldset>
       <legend>{ts}View Pledge{/ts}</legend>
 <table class="view-layout">
