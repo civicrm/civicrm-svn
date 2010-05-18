@@ -737,7 +737,7 @@ function addTags() {
 {ts}Case Activities{/ts}
  </div><!-- /.crm-accordion-header -->
  <div id="activities" class="crm-accordion-body">
-
+    <span id='fileOnCaseStatusMsg' style="display:none;"></span><!-- Displays status from copy to case -->
 <div id="view-activity">
      <div id="activity-content"></div>
 </div>
