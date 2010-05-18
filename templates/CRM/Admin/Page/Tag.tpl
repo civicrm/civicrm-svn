@@ -65,7 +65,7 @@
                     </tr>
                 </thead>
                 {foreach from=$rows item=row key=id }
-                <tr class="{cycle values="odd-row,even-row"} {$row.class}">
+                <tr class="{cycle values="odd-row,even-row"} {$row.class} crm-tag">
                     <td class="crm-tag-name">{$row.name}</td>
                     <td class="crm-tag-id">{$row.id}</td>	
                     <td class="crm-tag-description">{$row.description} </td>
