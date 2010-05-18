@@ -40,9 +40,9 @@
     </div>
     
     <div class="crm-block crm-content-block crm-report-form-block">
-    	<div class="crm-tasks">
+        {*include actions*}
         {include file="CRM/Report/Form/Actions.tpl"}
-        </div>
+
         {*Statistics at the Top of the page*}
         {include file="CRM/Report/Form/Statistics.tpl" top=true}
     

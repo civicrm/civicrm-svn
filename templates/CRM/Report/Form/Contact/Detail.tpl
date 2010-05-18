@@ -25,13 +25,13 @@
 *}
 {* this div is being used to apply special css *}
     {if !$section }
-    <div class="crm-block crm-form-block">    
+    <div class="crm-block crm-form-block crm-report-form-block">    
         {include file="CRM/Report/Form/Fields.tpl"}
     </div>
     {/if}    
 	
-<div class="crm-block crm-content-block">
-{include file="CRM/Report/Form/ErrorMessage.tpl"}
+<div class="crm-block crm-content-block crm-report-form-block">
+{include file="CRM/Report/Form/Actions.tpl"}
 {if !$section }
 {include file="CRM/Report/Form/Statistics.tpl" top=true}
 {/if}
@@ -167,4 +167,5 @@
             {include file="CRM/Report/Form/Statistics.tpl" bottom=true}
         {/if}
     {/if} 
+    {include file="CRM/Report/Form/ErrorMessage.tpl"}
 </div>

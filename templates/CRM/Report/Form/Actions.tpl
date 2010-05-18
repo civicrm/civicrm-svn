@@ -25,15 +25,9 @@
 *}
 {if !$printOnly} {* NO print section starts *}
 
-    {if $updateReportButton}
-        <div id="update-button" class="section-hidden-border crm-submit-buttons" style="margin:-5px 0 5px 5px;">        
-            &nbsp;&nbsp;{$form.$save.html}            
-        </div>
-    {/if}
-
-
     {* build the print pdf buttons *}
     {if $rows}
+        <div class="crm-tasks">
         {assign var=print value="_qf_"|cat:$form.formName|cat:"_submit_print"}
         {assign var=pdf   value="_qf_"|cat:$form.formName|cat:"_submit_pdf"}
         {assign var=csv   value="_qf_"|cat:$form.formName|cat:"_submit_csv"}
@@ -71,6 +65,7 @@
                 </td>
             </tr>
         </table>
+        </div>
     {/if}
 
 {/if} {* NO print section ends *}

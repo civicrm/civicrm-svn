@@ -30,8 +30,8 @@
        </div>
     {/if}    
 	
-<div class="crm-block crm-content-block">    
-{include file="CRM/Report/Form/ErrorMessage.tpl"}
+<div class="crm-block crm-content-block crm-report-form-block">  
+{include file="CRM/Report/Form/Actions.tpl"}
 {*Statistics at the Top of the page*}
     {if !$section }
         {include file="CRM/Report/Form/Statistics.tpl" top=true}    
@@ -89,5 +89,5 @@
             {include file="CRM/Report/Form/Statistics.tpl" bottom=true}
         {/if}    
     {/if}
-    
+    {include file="CRM/Report/Form/ErrorMessage.tpl"}
 </div>

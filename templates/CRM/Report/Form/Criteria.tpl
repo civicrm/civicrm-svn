@@ -97,12 +97,12 @@
                     {assign var=filterMax   value=$fieldName|cat:"_max"}
                     {if $field.operatorType & 4}
                         <tr class="report-contents crm-report crm-report-filter crm-report-filter_{$tableName}">
-                            <th class="report-contents">{$field.title}</td>
+                            <td class="label report-contents">{$field.title}</td>
                             {include file="CRM/Core/DateRange.tpl" fieldName=$fieldName}
                         </tr>
                     {elseif $form.$fieldOp.html}
                         <tr class="report-contents crm-report crm-report-filter crm-report-filter_{$tableName}" {if $field.no_display} style="display: none;"{/if}>
-                            <th class="report-contents">{$field.title}</th>
+                            <td class="label report-contents">{$field.title}</td>
                             <td class="report-contents">{$form.$fieldOp.html}</td>
                             <td>
                                <span id="{$filterVal}_cell">{$form.$filterVal.label}&nbsp;{$form.$filterVal.html}</span>
