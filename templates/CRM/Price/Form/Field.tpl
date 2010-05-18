@@ -39,11 +39,11 @@
         }
 
         if (html_type_name == 'Radio' || html_type_name == 'CheckBox') {
-			      document.getElementById("optionsPerLine").style.display="inline";
-			      document.getElementById("optionsPerLineDef").style.display="inline";
+	    cj("#optionsPerLine").show( );
+	    cj("#optionsPerLineDef").show( );
         } else {
-			      document.getElementById("optionsPerLine").style.display="none";
-			      document.getElementById("optionsPerLineDef").style.display="none";
+	    cj("#optionsPerLine").hide( );
+	    cj("#optionsPerLineDef").hide( );
         }
 
         var radioOption, checkBoxOption;
@@ -117,7 +117,7 @@
     {/if}
         <table class="form-layout">
             <tr class="crm-price-field-form-block-options_per_line">
-	       <td id="optionsPerLine" {if $action eq 2 && ($form.html_type.value.0 eq 'CheckBox' || $form.html_type.value.0 eq 'Radio')}class="show-block"{else} class="hide-block" {/if}>{$form.options_per_line.label}</td>	
+	       <td id="optionsPerLine" {if $action eq 2 && ($form.html_type.value.0 eq 'CheckBox' || $form.html_type.value.0 eq 'Radio')}class="show-block label"{else} class="hide-block label" {/if}>{$form.options_per_line.label}</td>	
 	       <td id="optionsPerLineDef" {if $action eq 2 && ($form.html_type.value.0 eq 'CheckBox' || $form.html_type.value.0 eq 'Radio')}class="show-block"{else} class="hide-block"{/if}>{$form.options_per_line.html|crmReplace:class:two}</td>
             </tr>
             <tr class="crm-price-field-form-block-is_display_amounts">
