@@ -253,10 +253,10 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
      *@static
      *
      */
-    static function contactTypeInfo( $all = false ) {
+    static function contactTypeInfo( $all = false, $ignoreCache = false ) {
         static $_cache = null;
         
-        if ( $_cache === null ) {
+        if ( $_cache === null || $ignoreCache ) {
             $_cache = array( );
         }
 
@@ -264,7 +264,7 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
         if ( ! array_key_exists( $argString, $_cache ) ) {
             $cache =& CRM_Utils_Cache::singleton( );
             $_cache[$argString] = $cache->get( $argString );
-            if ( ! $_cache[$argString] ) {
+            if ( ! $_cache[$argString] || $ignoreCache ) {
                 $_cache[$argString] = array( );
 
                 $sql = "
@@ -600,6 +600,7 @@ WHERE name = %1";
         CRM_Core_BAO_Navigation::resetNavigation( );
         return $contactType;
     }
+
     /**
      * update the is_active flag in the db
      *
