@@ -73,7 +73,8 @@ SELECT *
             $job->query($query);
         } else {
             $currentTime = date( 'YmdHis' );
-            
+            $mailingACL  = CRM_Mailing_BAO_Mailing::mailingACL( 'm' );
+
             /* FIXME: we might want to go to a progress table.. */
             $query = "
 SELECT   j.*
@@ -86,6 +87,7 @@ SELECT   j.*
    AND       j.status = 'Scheduled' )
     OR     ( j.status = 'Running'
    AND       j.end_date IS null ) )
+   AND   {$mailingACL}
 ORDER BY j.scheduled_date,
          j.start_date";
 

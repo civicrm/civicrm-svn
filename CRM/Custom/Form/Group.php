@@ -300,8 +300,18 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             $sel->_elements[1]->setMultiple(true);
             $sel->_elements[1]->setSize(5);
         }
-
         if ($this->_action == CRM_Core_Action::UPDATE) {
+            $subName = CRM_Utils_Array::value( 'extends_entity_column_id', $this->_defaults );
+            if ( $this->_defaults['extends'] == 'Participant') {
+                if ( $subName == 1 ) {
+                    $this->_defaults['extends'] = 'ParticipantRole';
+                } elseif ( $subName == 2 ) {
+                    $this->_defaults['extends'] = 'ParticipantEventName';
+                } elseif ( $subName == 3 ) {
+                    $this->_defaults['extends'] = 'ParticipantEventType';
+                }
+            }
+
             //allow to edit settings if custom set is empty CRM-5258
             $this->_isGroupEmpty = CRM_Core_BAO_CustomGroup::isGroupEmpty( $this->_id );
             if ( !$this->_isGroupEmpty ) {
@@ -417,15 +427,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             
             $subName = CRM_Utils_Array::value( 'extends_entity_column_id', $defaults );
 			
-			if ( $extends == 'Participant') {
-				if ( $subName == 1 ) {
-					$defaults['extends'][0] = 'ParticipantRole';
-				} elseif ( $subName == 2 ) {
-					$defaults['extends'][0] = 'ParticipantEventName';
-				} elseif ( $subName == 3 ) {
-					$defaults['extends'][0] = 'ParticipantEventType';
-				}
-			} else if ( $extends == 'Relationship' && !empty($this->_subtypes) ) {
+			if ( $extends == 'Relationship' && !empty($this->_subtypes) ) {
                 $relationshipDefaults = array ( );
                 foreach ( $defaults['extends'][1] as $donCare => $rel_type_id ) {
                     $relationshipDefaults[] = $rel_type_id.'_a_b';
