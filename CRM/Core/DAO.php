@@ -1021,14 +1021,18 @@ FROM   civicrm_domain
             
             $fields =& $object->fields( );
             if ( ! is_array( $fieldsFix ) ) {
-                $fieldsToPrefix = array( );
-                $fieldsToSuffix = array( );
+                $fieldsToPrefix  = array( );
+                $fieldsToSuffix  = array( );
+                $fieldsToReplace = array( );
             }
             if ($fieldsFix['prefix']) {
                 $fieldsToPrefix = $fieldsFix['prefix'];
             }
             if ($fieldsFix['suffix']) {
                 $fieldsToSuffix = $fieldsFix['suffix'];
+            }
+            if ($fieldsFix['replace']) {
+                $fieldsToReplace = $fieldsFix['replace'];
             }
 
             foreach ( $fields as $name => $value ) {
@@ -1045,10 +1049,13 @@ FROM   civicrm_domain
                 if ( isset( $fieldsToSuffix[$dbName] ) ) {
                     $newObject->$dbName .= $fieldsToSuffix[$dbName];
                 } 
+                if ( isset( $fieldsToReplace[$dbName] ) ) {
+                    $newObject->$dbName = $fieldsToReplace[$dbName];
+                } 
                 
                 if ( substr($name , -5)  == '_date' ||
                      substr($name , -10) == '_date_time' ) {
-                    $newObject->$dbName = CRM_Utils_Date::isoToMysql($object->$dbName);
+                    $newObject->$dbName = CRM_Utils_Date::isoToMysql($newObject->$dbName);
                 }
                 
                 if ( $newData ) {
