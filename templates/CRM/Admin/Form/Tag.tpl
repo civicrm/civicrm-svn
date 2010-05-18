@@ -24,10 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing a tag (admin)  *}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-tag-form-block">
 <h3>{if $action eq 1}{ts}New Tag {if $isTagSet}Set{/if}{/ts}{elseif $action eq 2}{ts}Edit Tag {if $isTagSet}Set{/if}{/ts}{else}{ts}Delete Tag {if $isTagSet}Set{/if}{/ts}{/if}</h3>
     {if $action eq 1 or $action eq 2 }
-        <dl>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+    <dl>
         <dt>{$form.name.label}</dt><dd>{$form.name.html}</dd>
         <dt>{$form.description.label}</dt><dd>{$form.description.html}</dd>
         {if $form.parent_id.html}
@@ -59,8 +60,5 @@
     {else}
         <div class="status">{ts 1=$delName}Are you sure you want to delete <b>%1</b> Tag?{/ts}<br />{ts}This tag will be removed from any currently tagged contacts, and users will no longer be able to assign contacts to this tag.{/ts}</div>
     {/if}
-    <dl>
-    <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
-    </dl>
-    <div class="spacer"></div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

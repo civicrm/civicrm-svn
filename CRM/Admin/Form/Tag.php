@@ -115,11 +115,17 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             
             $adminTagset = true;
             if ( !CRM_Core_Permission::check( 'administer Tagsets' ) ) {
-                $isReserved->freeze( );
                 $adminTagset = false;
             }
-
             $this->assign( 'adminTagset', $adminTagset );
+
+            $adminReservedTags = true;
+            if ( !CRM_Core_Permission::check( 'administer reserved tags' ) ) {
+                $isReserved->freeze( );
+                $adminReservedTags = false;
+            }
+            $this->assign( 'adminReservedTags', $adminReservedTags );
+
             parent::buildQuickForm( ); 
         }
     }
