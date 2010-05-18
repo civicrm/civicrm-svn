@@ -115,7 +115,7 @@
 
 </table>
 {/strip}
-
+{include file="CRM/Case/Form/ActivityToCase.tpl"}
 
 
 {if $context EQ 'Search'}
