@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting membership status  *}
-<div class="form-item" id=membership_status>
+<div class="form-item crm-block crm-form-block crm-membership-form-block" id=membership_status>
 <fieldset><legend>{if $action eq 1}{ts}New Membership Status{/ts}{elseif $action eq 2}{ts}Edit Membership Status{/ts}{else}{ts}Delete Membership Status{/ts}{/if}</legend>
   
    {if $action eq 8}
@@ -95,11 +95,7 @@
       </tr>     
     </table>
     {/if}
-  <table class="form-layout-compressed">
-      <tr>
-	<td class="html-adjust">{include file="CRM/common/formButtons.tpl"}</td>
-      </tr>
-  </table>
+  <div class="crm-form-buttons">{include file="CRM/common/formButtons.tpl"}</div>
   <br clear="all" />
 </fieldset>
 </div>

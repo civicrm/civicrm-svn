@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-dedupefind-form-block">
 <div id="help">
     {ts}You can search all contacts for duplicates or limit the search to a specific group.{/ts} 
 </div>

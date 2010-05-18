@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 
-<div class="form-item crm-block crm-form-block">
+<div class="form-item crm-block crm-form-block crm-deduperules-form-block">
   <h2>{ts 1=$contact_type}Matching Rules for %1 Contacts{/ts}</h2>
     <div id="help">
         {ts}Configure up to five fields to evaluate when searching for 'suspected' duplicate contact records.{/ts} {help id="id-rules"}

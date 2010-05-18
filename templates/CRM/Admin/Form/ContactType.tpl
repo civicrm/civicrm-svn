@@ -25,7 +25,7 @@
 *}
 {* this template is used for adding/editing Contact Type  *}
 
-<div class="form-item crm-block crm-form-block">
+<div class="form-item crm-block crm-form-block crm-contactType-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Contact Type{/ts}{elseif $action eq 2}{ts}Edit Contact Type{/ts}{else}{ts}Delete Contact Type{/ts}{/if}</legend>
 {if $action eq 8}
   <div class="messages status">

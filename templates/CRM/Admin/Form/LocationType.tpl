@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing location type  *}
-<div class="form-item crm-block crm-form-block">
+<div class="form-item crm-block crm-form-block crm-locationType-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Location Type{/ts}{elseif $action eq 2}{ts}Edit Location Type{/ts}{else}{ts}Delete Location Type{/ts}{/if}</legend>
 
 {if $action eq 8}
