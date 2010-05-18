@@ -141,6 +141,13 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                                    false, null, false ); 
         $this->assign ( 'newActivityUrl', $newActivityUrl );
 
+        // Send Email activity requires a different URL format from all other activities
+        $newActivityEmailUrl = 
+            CRM_Utils_System::url( 'civicrm/activity/add', 
+                                   "action=add&context=standalone&reset=1&caseid={$this->_caseID}&atype=", 
+                                   false, null, false ); 
+        $this->assign ( 'newActivityEmailUrl', $newActivityEmailUrl );
+
         $reportUrl = 
             CRM_Utils_System::url( 'civicrm/case/report', 
                                    "reset=1&cid={$this->_contactID}&caseid={$this->_caseID}&asn=", 

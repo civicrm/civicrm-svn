@@ -57,17 +57,19 @@
     		<tr class="crm-participant-form-block-delete">
     			<td>
     				<div class="messages status">
-    					<dl>
-    						<dt><div class="icon inform-icon"></div></dt> 
-    						<dd> 
-    							{ts}WARNING: Deleting this registration will result in the loss of related payment records (if any).{/ts} {ts}Do you want to continue?{/ts} 
-    						</dd>
+    					<table class="form-layout">
+    						<tr>
+						  <td><div class="icon inform-icon"></div></td>
+    						  <td><div class="status">{ts}WARNING: Deleting this registration will result in the loss of related payment records (if any).{/ts} {ts}Do you want to continue?{/ts}</div>
+						  </td>
+    						
     						{if $additionalParticipant}  
-    						<dd> 
-    							{ts 1=$additionalParticipant} There are %1 more Participant(s) registered by this participant. Deleting this registration will also result in deletion of these additional participant(s).{/ts}  
-    						</dd> 
+    						
+    						  <td><div class="status">{ts 1=$additionalParticipant} There are %1 more Participant(s) registered by this participant. Deleting this registration will also result in deletion of these additional participant(s).{/ts}</div> 
+						  </td>
+    						</tr> 
     						{/if}
-    					</dl>
+    					</table>
     				</div> 
     			</td>
     		</tr>
@@ -106,9 +108,9 @@
     		</tr>
     		<tr class="crm-participant-form-block-status_id">
     			<td class="label">{$form.status_id.label}</td>
-			    <td>{$form.status_id.html}{if $event_is_test} {ts}(test){/ts}{/if}
+			<td>{$form.status_id.html}{if $event_is_test} {ts}(test){/ts}{/if}
 			        <div id="notify">{$form.is_notify.html}{$form.is_notify.label}</div>
-			    </td>
+			</td>
     		</tr>
     		<tr class="crm-participant-form-block-source">
     		    <td class="label">{$form.source.label}</td><td>{$form.source.html|crmReplace:class:huge}<br />

@@ -32,12 +32,12 @@
             {assign  var="count" value="0"}
             <table class="criteria-group">
                 {if $grpFields.group_title}<tr><td colspan=4>&raquo;&nbsp;{$grpFields.group_title}:</td></tr>{/if}
-                <tr>
+                <tr class="crm-report crm-report-field crm-report-field_{$dnc}">
                     {foreach from=$grpFields.fields item=title key=field}
                         {assign var="count" value=`$count+1`}
                         <td width="25%">{$form.fields.$field.html}</td>
                         {if $count is div by 4}
-                            </tr><tr>
+                            </tr><tr class="crm-report crm-report-field crm-report-field_{$dnc}">
                         {/if}
                     {/foreach}
                     {if $count is not div by 4}
@@ -52,7 +52,7 @@
         <h3>Group by Columns</h3>
         {assign  var="count" value="0"}
         <table class="report-layout">
-            <tr>
+            <tr class="crm-report crm-report-groupby">
                 {foreach from=$groupByElements item=gbElem key=dnc}
                     {assign var="count" value=`$count+1`}
                     <td width="25%" {if $form.fields.$gbElem} onClick="selectGroupByFields('{$gbElem}');"{/if}>
@@ -62,7 +62,7 @@
                         {/if}
                     </td>
                     {if $count is div by 4}
-                        </tr><tr>
+                        </tr><tr class="crm-report crm-report-groupby">
                     {/if}
                 {/foreach}
                 {if $count is not div by 4}
@@ -75,7 +75,7 @@
     {if $form.options.html || $form.options.html}
         <h3>Other Options</h3>
         <table class="report-layout">
-            <tr>
+            <tr class="crm-report crm-report-groupby">
 	        <td>{$form.options.html}</td>
 	        {if $form.blank_column_end}
 	            <td>{$form.blank_column_end.label}&nbsp;&nbsp;{$form.blank_column_end.html}</td>
@@ -89,20 +89,20 @@
         <table class="report-layout">
             {foreach from=$filters     item=table key=tableName}
  	        {assign  var="filterCount" value=$table|@count}
-	        {if $colGroups.$tableName.group_title and $filterCount gte 1}</table><table class="report-layout"><tr><td colspan=3>&raquo;&nbsp;{$colGroups.$tableName.group_title}:</td></tr>{/if} 
+	        {if $colGroups.$tableName.group_title and $filterCount gte 1}</table><table class="report-layout"><tr class="crm-report crm-report-filter crm-report-filter_{$tableName}"><td colspan=3>&raquo;&nbsp;{$colGroups.$tableName.group_title}:</td></tr>{/if} 
                 {foreach from=$table       item=field key=fieldName}
                     {assign var=fieldOp     value=$fieldName|cat:"_op"}
                     {assign var=filterVal   value=$fieldName|cat:"_value"}
                     {assign var=filterMin   value=$fieldName|cat:"_min"}
                     {assign var=filterMax   value=$fieldName|cat:"_max"}
                     {if $field.operatorType & 4}
-                        <tr class="report-contents">
-                            <th class="report-contents">{$field.title}</td>
+                        <tr class="report-contents crm-report crm-report-filter crm-report-filter_{$tableName}">
+                            <td class="label report-contents">{$field.title}</td>
                             {include file="CRM/Core/DateRange.tpl" fieldName=$fieldName}
                         </tr>
                     {elseif $form.$fieldOp.html}
-                        <tr {if $field.no_display} style="display: none;"{/if}>
-                            <th class="report-contents">{$field.title}</th>
+                        <tr class="report-contents crm-report crm-report-filter crm-report-filter_{$tableName}" {if $field.no_display} style="display: none;"{/if}>
+                            <td class="label report-contents">{$field.title}</td>
                             <td class="report-contents">{$form.$fieldOp.html}</td>
                             <td>
                                <span id="{$filterVal}_cell">{$form.$filterVal.label}&nbsp;{$form.$filterVal.html}</span>

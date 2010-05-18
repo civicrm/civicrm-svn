@@ -48,10 +48,8 @@
 {/strip}
 {else}
    <div class="messages status">
-    <table class="form-layout">
-        <tr><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
-        {ts 1=$title}There are currently no %1.{/ts}</tr>
-        </table>
+        <div class="icon inform-icon"></div>&nbsp;
+        {ts 1=$title}There are currently no %1.{/ts}
     </div>    
 {/if}  
 

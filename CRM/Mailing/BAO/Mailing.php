@@ -1712,13 +1712,13 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         return;
     }
 
-    static function mailingACL( ) {
+    static function mailingACL( $alias = null ) {
         $mailingACL = " ( 0 ) ";
 
         $mailingIDs =& self::mailingACLIDs( );
         if ( ! empty( $mailingIDs ) ) {
             $mailingIDs = implode( ',', $mailingIDs );
-            $tableName  = self::getTableName( );
+            $tableName  = !$alias ? self::getTableName( ) : $alias;
             $mailingACL = " $tableName.id IN ( $mailingIDs ) ";
         }
         return $mailingACL;

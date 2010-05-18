@@ -47,7 +47,7 @@ class CRM_Contact_Form_Search_Criteria {
 
             if ( $contactTypes ) {
                 $form->add( 'select', 'contact_type',  ts( 'Contact Type(s)' ), $contactTypes, false, 
-                    array( 'id' => 'contact_type',  'multiple'=> 'multiple', 'title' => ts('Click to select Contact Types') ));
+                    array( 'id' => 'contact_type',  'multiple'=> 'multiple', 'title' => ts('- select -') ));
             }
 
         }
@@ -56,7 +56,7 @@ class CRM_Contact_Form_Search_Criteria {
             // multiselect for groups
             if ( $form->_group ) {
                 $form->add( 'select', 'group',  ts( 'Groups' ), $form->_group, false, 
-                    array( 'id' => 'group',  'multiple'=> 'multiple', 'title' => ts('Click to select Groups') ) );
+                    array( 'id' => 'group',  'multiple'=> 'multiple', 'title' => ts('- select -') ) );
             }
         }
 
@@ -64,9 +64,10 @@ class CRM_Contact_Form_Search_Criteria {
             // multiselect for categories
             require_once 'CRM/Core/BAO/Tag.php';
             $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
+            
             if ( $contactTags ) {
-                $form->add( 'select', 'contact_tags',  ts( 'Tags' ), $contactTag, false, 
-                    array( 'id' => 'contact_tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
+                $form->add( 'select', 'contact_tags',  ts( 'Tags' ), $contactTags, false, 
+                    array( 'id' => 'contact_tags',  'multiple'=> 'multiple', 'title' => ts('- select -') ));
             }
             
             require_once 'CRM/Core/Form/Tag.php';

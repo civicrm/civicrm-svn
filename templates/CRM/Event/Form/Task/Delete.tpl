@@ -25,13 +25,11 @@
 *}
 {* Confirmation of participation deletes  *}
 <div class="messages status">
-  <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
-        <p>{ts}Are you sure you want to delete the selected participations? This delete operation cannot be undone and will delete all transactions and activity associated with these participations.{/ts}</p>
+  <div class="icon inform-icon"></div>
+  <div> 
+  	<p>{ts}Are you sure you want to delete the selected participations? This delete operation cannot be undone and will delete all transactions and activity associated with these participations.{/ts}</p>
         <p>{include file="CRM/Event/Form/Task.tpl"}</p>
-    </dd>
-  </dl>
+  </div>
 </div>
 <p>
 <div class="form-item">

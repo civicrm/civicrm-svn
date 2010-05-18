@@ -43,7 +43,14 @@ class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
     protected $_stringName = null;
 
     protected $_defaults = null;
-
+    
+    function preProcess( ) {
+        $this->_addRow = CRM_Utils_Array::value( 'addrow', $_GET );
+        if ( $this->_addRow ) {
+            $this->assign('addRow', true);
+        }
+    }
+    
     public function setDefaultValues( )
     {
         if ( $this->_defaults !== null ) {

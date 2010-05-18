@@ -44,13 +44,13 @@
 
 {foreach from=$rows item=row}
     <tr class="{cycle values="odd-row,even-row"}">
-        <td>{$row.sort_name}<br /><span class="description">{ts}Case ID{/ts}: {$row.case_id}</span></td>
-        <td>{$row.case_status_id}</td>
-        <td>{$row.case_type_id}</td>
-        <td>{if $row.case_role}{$row.case_role}{else}---{/if}</td>
-        <td>{if $row.case_recent_activity_type}
+        <td class="crm-case-sort_name">{$row.sort_name}<br /><span class="description">{ts}Case ID{/ts}: {$row.case_id}</span></td>
+        <td class="crm-case-case_status_id">{$row.case_status_id}</td>
+        <td class="crm-case-case_type_id">{$row.case_type_id}</td>
+        <td class="crm-case-case_role">{if $row.case_role}{$row.case_role}{else}---{/if}</td>
+        <td class="crm-case-case_recent_activity_type">{if $row.case_recent_activity_type}
     	{$row.case_recent_activity_type}<br />{$row.case_recent_activity_date|crmDate}{else}---{/if}</td>
-        <td>{if $row.case_scheduled_activity_type}
+        <td class="crm-case-case_scheduled_activity_type">{if $row.case_scheduled_activity_type}
     	{$row.case_scheduled_activity_type}<br />{$row.case_scheduled_activity_date|crmDate}{else}---{/if}</td>
     </tr>
 {/foreach}
@@ -62,11 +62,7 @@
 
 {else}
    <div class="messages status">
-    <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
+    <div class="icon inform-icon"></div>
         {ts}There are no records selected for Print.{/ts}
-    </dd>
-    </dl>
-   </div>
+    </div>
 {/if}

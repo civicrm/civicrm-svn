@@ -50,7 +50,7 @@
                 </tr>
             {/foreach}
             <tr>
-                <td>&nbsp;</td><td>{$form.buttons.html}</td>
+                <td>&nbsp;</td><td>{include file="CRM/common/formButtons.tpl"}</td>
             </tr>
         </table>
   </div>

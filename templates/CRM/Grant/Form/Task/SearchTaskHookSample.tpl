@@ -16,11 +16,11 @@
   </tr>
 
   {foreach from=$rows item=row}
-    <tr class="{cycle values="odd-row,even-row"}">
-        <td>{$row.display_name}</td>
-        <td>{$row.decision_date}</td>
-        <td>{$row.amount_requested}</td>
-        <td>{$row.amount_granted}</td>
+    <tr class="{cycle values="odd-row,even-row"} crm-grant">
+        <td class="crm-grant-display_name">{$row.display_name}</td>
+        <td class="crm-grant-decision_date">{$row.decision_date}</td>
+        <td class="crm-grant-amount_requested">{$row.amount_requested}</td>
+        <td class="crm-grant-amount_granted">{$row.amount_granted}</td>
     </tr>
   {/foreach}
 </table>
@@ -32,11 +32,7 @@
 
 {else}
    <div class="messages status">
-      <dl>
-          <dt><div class="icon inform-icon"></div></dt>
-          <dd>
+          <div class="icon inform-icon"></div>
             {ts}There are no records selected.{/ts}
-          </dd>
-      </dl>
    </div>
 {/if}

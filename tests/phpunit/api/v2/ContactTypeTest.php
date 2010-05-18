@@ -34,7 +34,13 @@ class api_v2_ContactTypeTest extends CiviUnitTestCase
                          );
         $result = CRM_Contact_BAO_ContactType::add( $params );
         $this->subTypeHousehold = $params['name'];
-        
+
+        // explicitly clean up caches
+        // since they might have been set by prior tests
+        // add should basically destroy all caches in ContactType, but lets get
+        // this working first
+        CRM_Contact_BAO_ContactType::basicTypeInfo( );
+        CRM_Contact_BAO_ContactType::subTypeInfo( );
     }
    
     /*

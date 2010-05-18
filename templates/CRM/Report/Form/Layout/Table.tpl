@@ -57,12 +57,12 @@
         </tr>          
         </thead>
        
-        {foreach from=$rows item=row}
-            <tr>
+        {foreach from=$rows item=row key=rowid}
+            <tr  class="{cycle values="odd-row,even-row"} crm-report" id="crm-report_{$rowid}">
                 {foreach from=$columnHeaders item=header key=field}
                     {assign var=fieldLink value=$field|cat:"_link"}
                     {assign var=fieldHover value=$field|cat:"_hover"}
-                    <td {if $header.type eq 1024 OR $header.type eq 1} class="report-contents-right"{elseif $row.$field eq 'Subtotal'} class="report-label"{/if}>
+                    <td class="crm-report-{$field}{if $header.type eq 1024 OR $header.type eq 1} report-contents-right{elseif $row.$field eq 'Subtotal'} report-label{/if}">
                         {if $row.$fieldLink}
                             <a title="{$row.$fieldHover}" href="{$row.$fieldLink}">
                         {/if}

@@ -41,12 +41,13 @@
     <p></p>
     <fieldset>{if $preview_type eq 'group'}<legend>{$smarty.capture.legend}</legend>{/if}
     {if $cd_edit.help_pre}<div class="messages help">{$cd_edit.help_pre}</div><br />{/if}
-    <dl>
+    <table class="form-layout">
     {foreach from=$cd_edit.fields item=element key=field_id}
     {if ($element.html_type eq 'CheckBox' || $element.html_type eq 'Radio') && $element.options_per_line }
         {assign var="element_name" value=price_$field_id}
-        <dt>{$form.$element_name.label} </dt>
-        <dd>
+        <tr class="crm-price-set-element_name">
+           <td class="label">{$form.$element_name.label} </td>
+        <td>
             {assign var="count" value="1"}
                 <table class="form-layout-compressed">
                     <tr>
@@ -68,27 +69,37 @@
                     {/foreach}                    
                     </tr>
             </table>
-        </dd>
+        </td>
         {if $element.help_post}
-            <dt>&nbsp;</dt><dd class="description">{$element.help_post}</dd>
+            <tr>
+               <td>&nbsp;</td>
+               <td class="description">{$element.help_post}</td>
+            </tr>
         {/if}
     {else}
         {assign var="name" value=`$element.name`} 
         {assign var="element_name" value="price_"|cat:$field_id}  
-        <dt>{$form.$element_name.label}</dt><dd>&nbsp;{$form.$element_name.html}</dd>
-        		
+        <tr class="crm-price-set-element_name">
+           <td class="label">{$form.$element_name.label}</td>
+           <td>&nbsp;{$form.$element_name.html}</td>
+        </tr>		
         {if $element.help_post}
-            <dt>&nbsp;</dt><dd class="description">{$element.help_post}</dd>
+        <tr class="crm-price-set-help_post">
+           <td>&nbsp;</td>
+           <td class="description">{$element.help_post}</td>
+        </tr>
         {/if}
 	{/if}
     {/foreach}
-    </dl>
+    </table>
     {if $cd_edit.help_post}<br /><div class="messages help">{$cd_edit.help_post}</div>{/if}
     </fieldset>
 {/foreach}
 {/strip}
 
-<dl>
-  <dt></dt><dd>{$form.buttons.html}</dd>
-</dl>
+<table class="form-layout"">
+    <tr>
+       <td>{include file="CRM/common/formButtons.tpl"}</td>
+    </tr>
+</table>
 </div>

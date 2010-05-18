@@ -26,7 +26,6 @@
 {* Template for Full-text search component. *}
 <div class="crm-block crm-form-block crm-search-form-block">
 <div id="searchForm">
-    <fieldset>
     <div class="form-item">
     <table class="form-layout-compressed">
         <tr>

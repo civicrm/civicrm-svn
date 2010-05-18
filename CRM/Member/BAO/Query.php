@@ -207,7 +207,7 @@ class CRM_Member_BAO_Query
                                                                               $value,
                                                                               "Integer" );
             if ( $value ) {
-                $query->_qill[$grouping][] = "Find Test Memberships";
+                $query->_qill[$grouping][] = ts( "Find Test Memberships" );
             }
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
@@ -218,7 +218,7 @@ class CRM_Member_BAO_Query
                                                                               $value,
                                                                               "Integer" );
             if ( $value ) {
-                $query->_qill[$grouping][] = "Find Pay Later Memberships";
+                $query->_qill[$grouping][] = ts( "Find Pay Later Memberships" );
             }
             $query->_tables['civicrm_membership'] = $query->_whereTables['civicrm_membership'] = 1;
             return;
@@ -252,17 +252,17 @@ class CRM_Member_BAO_Query
         case 'member_is_primary':
             switch( $value ) {
                 case 1:
-                $query->_qill[$grouping][]  = "Primary AND Related Members";
+                $query->_qill[$grouping][]  = ts( "Primary AND Related Members" );
                 break;
 
                 case 2:
                 $query->_where[$grouping][] = " civicrm_membership.owner_membership_id IS NULL";
-                $query->_qill[$grouping][]  = "Primary Members Only";
+                $query->_qill[$grouping][]  = ts( "Primary Members Only" );
                 break;
 
                 case 3:
                 $query->_where[$grouping][] = " civicrm_membership.owner_membership_id IS NOT NULL";
-                $query->_qill[$grouping][]  = "Related Members Only";
+                $query->_qill[$grouping][]  = ts( "Related Members Only" );
                 break;
 
             }

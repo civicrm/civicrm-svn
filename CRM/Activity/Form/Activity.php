@@ -146,7 +146,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                                                          'required'   => true, 
                                                          ),
                   'priority_id'               =>  array( 'type'       => 'select',
-                                                         'label'      => 'Priority',
+                                                         'label'      => ts('Priority'),
                                                          'attributes' => 
                                                          CRM_Core_PseudoConstant::priority( ),
                                                          'required'   => true,

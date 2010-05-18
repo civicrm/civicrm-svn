@@ -27,7 +27,7 @@
 
 {if $rows } 
 <div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
+     <span class="element-right">{include file="CRM/common/formButtons.tpl"}</span>
 </div>
 <div class="spacer"></div>
 <br />
@@ -70,16 +70,11 @@
 </table>
 
 <div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
+     <span class="element-right">{include file="CRM/common/formButtons.tpl"}</span>
 </div>
 
 {else}
-   <div class="messages status">
-    <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
-        {ts}There are no records selected for Print.{/ts}
-    </dd>
-    </dl>
-   </div>
+<div class="messages status">
+    <div class="icon inform-icon"></div>&nbsp;{ts}There are no records selected for Print.{/ts}
+</div>
 {/if}

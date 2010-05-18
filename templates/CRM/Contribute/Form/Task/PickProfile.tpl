@@ -26,11 +26,17 @@
 <div class="form-item">
 <fieldset>
     <legend>{ts}Batch Update Contribution via Profile{/ts}</legend>
-    <dl>
-        <dt>{$form.uf_group_id.label}</dt><dd>{$form.uf_group_id.html}</dd>
-        <dt></dt><dd>{include file="CRM/Contribute/Form/Task.tpl"}</dd>
-        <dt></dt><dd>{$form.buttons.html}</dd>
-    </dl>
+     <table class="form-layout-compressed">		      
+       <tr class="crm-contribution-form-block-uf_group_id">
+          <td class="label">{$form.uf_group_id.label}</td>
+	  <td class="html-adjust">{$form.uf_group_id.html}</td>
+       </tr>
+       <tr>
+         <td class="label"></td>
+	 <td> {include file="CRM/Contribute/Form/Task.tpl"}</td>
+       </tr>
+    </table>
+    <div class="crm-submit-buttons">{$form.buttons.html}</td></div>
 </fieldset>
 </div>
 

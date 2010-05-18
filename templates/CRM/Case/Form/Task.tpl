@@ -32,7 +32,7 @@
     <th>{ts}Name{/ts}</th>
   </tr>
 {foreach from=$rows item=row}
-<tr class="{cycle values="odd-row,even-row"}">
+<tr class="{cycle values="odd-row,even-row"} crm-case-displayName">
 <td>{$row.displayName}</td>
 </tr>
 {/foreach}

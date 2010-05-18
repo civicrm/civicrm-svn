@@ -32,7 +32,7 @@
 
 {if $action eq 1 or $action eq 2 or $action eq 4 or $action eq 8}
    {include file="CRM/Admin/Form/RelationshipType.tpl"}	
-{/if}
+{else}
 
 {if $rows}
 {if !($action eq 1 and $action eq 2)}
@@ -58,11 +58,15 @@
         </tr>
         </thead>
         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-            <td> {$row.label_a_b} </td>	
-            <td> {$row.label_b_a} </td>	
-            <td> {if $row.contact_type_a_display} {$row.contact_type_a_display}{if $row.contact_sub_type_a} - {$row.contact_sub_type_a}{/if}{else}  {ts}All Contacts{/ts} {/if} </td>	
-            <td> {if $row.contact_type_b_display} {$row.contact_type_b_display}{if $row.contact_sub_type_b} - {$row.contact_sub_type_b}{/if} {else}  {ts}All Contacts{/ts} {/if} </td>	
+        <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if} crm-relationship">
+            <td class="crm-relationship-label_a_b">{$row.label_a_b}</td>	
+            <td class="crm-relationship-label_b_a">{$row.label_b_a}</td>	
+            <td class="crm-relationship-contact_type_a_display"> 
+                {if $row.contact_type_a_display} {$row.contact_type_a_display}
+                {if $row.contact_sub_type_a} - {$row.contact_sub_type_a} {/if}{else} {ts}All Contacts{/ts} {/if} </td>	
+            <td class="crm-relationship-contact_type_b_display"> 
+                {if $row.contact_type_b_display} {$row.contact_type_b_display}
+                {if $row.contact_sub_type_b} - {$row.contact_sub_type_b}{/if} {else} {ts}All Contacts{/ts} {/if} </td>	
             <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
@@ -77,10 +81,9 @@
 </div>
 {else}
     <div class="messages status">
-    <dl>
-        <dt><div class="icon inform-icon"></div></dt>
+        <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL p='civicrm/admin/reltype' q="action=add&reset=1"}{/capture}
-        <dd>{ts 1=$crmURL}There are no relationship types present. You can <a href='%1'>add one</a>.{/ts}</dd>
-    </dl>
+        {ts 1=$crmURL}There are no relationship types present. You can <a href='%1'>add one</a>.{/ts}
     </div>    
+{/if}
 {/if}

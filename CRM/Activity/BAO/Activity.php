@@ -811,27 +811,26 @@ as tbl ";
         // Filter on component IDs.
         // do not include activities of disabled components and also handle permission
         $componentClause = "civicrm_option_value.component_id IS NULL";
-        $componentsIn    = null;
+        $componentsIn    = array( );
         $compInfo        = CRM_Core_Component::getEnabledComponents();
         $includeCaseActivities = false;
-        foreach ( $compInfo as $compObj ) {
+        foreach ( $compInfo as $compObj ) {            
             if ( $compObj->info['showActivitiesInCore'] ) {
-                $componentsIn = $componentsIn ? 
-                    ($componentsIn . ', ' . $compObj->componentID) : $compObj->componentID;
-                    
+                $componentPermission = "access {$compObj->name}";
                 if ( $compObj->info['name'] == 'CiviCase' ) {
                     require_once 'CRM/Case/BAO/Case.php';
                     if ( CRM_Case_BAO_Case::accessCiviCase( ) ) {
-                        $includeCaseActivities = true;
-                    } else {
+                        $componentsIn[] = $compObj->componentID;
                         $includeCaseActivities = true;
                     }
-                }
+                } else if ( CRM_Core_Permission::check( $componentPermission ) ) {
+                    $componentsIn[] = $compObj->componentID;
+                }                
             }
         }
         
-        if ( $componentsIn ) {
-            $componentClause = "($componentClause OR civicrm_option_value.component_id IN ($componentsIn))";
+        if ( !empty( $componentsIn ) ) {        
+            $componentClause = "($componentClause OR civicrm_option_value.component_id IN ( " . implode( ',', $componentsIn ) . "))";
         }
  
         // build main activity table select clause

@@ -29,22 +29,17 @@
   
    {if $action eq 8}
       <div class="messages status">
-        <dl>
-          <dt><div class="icon inform-icon"></div></dt>
-          <dd>    
+          <div class="icon inform-icon"></div>
           {ts}WARNING: Deleting this option gruop will result in the loss of all records which use the option.{/ts} {ts}This may mean the loss of a substantial amount of data, and the action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
-          </dd>
-       </dl>
       </div>
      {else}
-      <dl>
- 	    <dt>{$form.name.label}</dt><dd>{$form.name.html}</dd>
-    	<dt>{$form.description.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_group' field='description' id=$id}{/if}</dt><dd>{$form.description.html}</dd>
-        <dt>{$form.is_active.label}</dt><dd>{$form.is_active.html}</dd>
-      </dl> 
-     {/if}
-    <dl>   
-      <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
-    </dl>
+      <table class="form-layout-compressed">
+          <tr class="crm-optionGroup-form-block-name"><td class="label">{$form.name.label}</td><td>{$form.name.html}</td></tr>
+          <tr class="crm-optionGroup-form-block-description"><td class="label">{$form.description.label} 
+            {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_group' field='description' id=$id}{/if}</td><td>{$form.description.html}</td></tr>
+          <tr class="crm-optionGroup-form-block-is_active"><td class="label">{$form.is_active.label}</td><td>{$form.is_active.html}</td></tr>
+     {/if}   
+          <tr class="crm-submit-buttons"><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
+      </table> 
 </fieldset>
 </div>

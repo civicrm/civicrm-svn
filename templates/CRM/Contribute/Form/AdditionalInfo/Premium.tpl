@@ -25,20 +25,28 @@
 *}
 {* this template is used for adding/editing Premium Information *} 
  <div id="id-premium" class="section-shown form-item">
-     <dl>
-        <dt class="label">{$form.product_name.label}</dt><dd>{$form.product_name.html}</dd>
-    </dl>
+     <table class="form-layout-compressed">
+        <tr class="crm-contribution-form-block-product_name">
+           <td class="label">{$form.product_name.label}</td>
+	   <td class="html-adjust">{$form.product_name.html}</td>
+        </tr>
+     </table>
 
     <div id="premium_contri">
-        <dl>
-            <dt class="label">{$form.min_amount.label}</dt><dd>{$form.min_amount.html|crmReplace:class:texttolabel|crmMoney:$currency}</dd>
-        </dl>
+        <table class="form-layout-compressed"> 
+	  <tr class="crm-contribution-form-block-min_amount">
+             <td class="label">{$form.min_amount.label}</td>
+	     <td class="html-adjust">{$form.min_amount.html|crmReplace:class:texttolabel|crmMoney:$currency}</td>
+          </tr>
+        </table>
         <div class="spacer"></div>
     </div>
-
-    <dl>
-        <dt class="label">{$form.fulfilled_date.label}</dt><dd>{include file="CRM/common/jcalendar.tpl" elementName=fulfilled_date}</dd>
-    </dl>      
+    <table class="form-layout-compressed"> 
+	  <tr class="crm-contribution-form-block-fulfilled_date">
+             <td class="label">{$form.fulfilled_date.label}</td>
+	     <td class="html-adjust">{include file="CRM/common/jcalendar.tpl" elementName=fulfilled_date}</td>
+          </tr>
+        </table>    
 </div>
 
       {literal}

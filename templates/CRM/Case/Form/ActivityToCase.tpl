@@ -28,21 +28,21 @@
 
 {if $buildCaseActivityForm}
 <table class="form-layout">
-     <tr>
-	    <td class="label">{$form.unclosed_cases.label}</td>
+     <tr class="crm-case-form-block-unclosed_cases">
+	<td class="label">{$form.unclosed_cases.label}</td>
      	<td>{$form.unclosed_cases.html}<br />
-     	    <span class="description">{ts}Begin typing client name for a list of open cases.{/ts}</span>
+     	  <span class="description">{ts}Begin typing client name for a list of open cases.{/ts}</span>
      	</td>
      </tr>
-     <tr>
-	    <td class="label">{$form.target_contact_id.label}</td>
-	    <td>{$form.target_contact_id.html}</td>
+     <tr class="crm-case-form-block-target_contact_id">
+	<td class="label">{$form.target_contact_id.label}</td>
+	<td>{$form.target_contact_id.html}</td>
      </tr>
-     <tr>
+     <tr class="crm-case-form-block-case_activity_subject">
      	<td class="label">{$form.case_activity_subject.label}</td>
-	    <td>{$form.case_activity_subject.html}<br />
-	        <span class="description">{ts}You can modify the activity subject before filing.{/ts}</span>
-	    </td>
+	<td>{$form.case_activity_subject.html}<br />
+	  <span class="description">{ts}You can modify the activity subject before filing.{/ts}</span>
+	</td>
      </tr>
 </table>     	
 

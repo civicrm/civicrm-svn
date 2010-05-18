@@ -29,7 +29,6 @@
     <div id="help">
         <p>{ts}Contribution types are used to categorize contributions for reporting and accounting purposes. These are also referred to as <strong>Funds</strong>. You may set up as many types as needed. Each type can carry an accounting code which can be used to map contributions to codes in your accounting system. Commonly used contribution types are: Donation, Campaign Contribution, Membership Dues...{/ts}</p>
     </div>
-{/if}
 
 {if $rows}
 <div id="ltype">
@@ -71,10 +70,9 @@
 </div>
 {else}
     <div class="messages status">
-    <dl>
-        <dt><div class="icon inform-icon"></div></dt>
+        <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}
-        <dd>{ts 1=$crmURL}There are no Contribution Types entered. You can <a href='%1'>add one</a>.{/ts}</dd>
-        </dl>
+        {ts 1=$crmURL}There are no Contribution Types entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
+{/if}
 {/if}

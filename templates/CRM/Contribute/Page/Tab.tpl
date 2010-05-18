@@ -59,11 +59,9 @@
             {include file="CRM/Contribute/Form/Selector.tpl"}            
         {else}
             <div class="messages status">
-                <dl>
-                    <dt><div class="icon inform-icon"></div></dt>
-                    <dd>{ts}No contributions have been recorded from this contact.{/ts}</dd>
-               </dl>
-          </div>
+                    <div class="icon inform-icon"></div>
+                    {ts}No contributions have been recorded from this contact.{/ts}
+            </div>
         {/if}
 
         {if $honor}	

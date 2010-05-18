@@ -128,7 +128,7 @@
         <tr><td colspan="2">{include file="CRM/Contact/Form/Task/ProximityCommon.tpl"}</td></tr>
     {/if}
     
-    <tr><td></td><td>{$form.buttons.html}</td></tr>
+    <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
     </table>
 
 

@@ -38,12 +38,22 @@
 </div>
 {/if}
  <div class="form-item">
- <dl>
-   <dt>{$form.title.label}</dt><dd>{$form.title.html}</dd>
-   <dt>{$form.description.label}</dt><dd>{$form.description.html}</dd>
-   <dt></dt><dd>{include file="CRM/Event/Form/Task.tpl"}</dd>
-   <dt></dt><dd>{$form.buttons.html}</dd>
- </dl>
+ <table class="form-layout-compressed">
+   <tr>
+      <td class="label">{$form.title.label}</td>
+      <td>{$form.title.html}</td>
+   </tr>
+   <tr>
+      <td class="label">{$form.description.label}</td>
+      <td>{$form.description.html}</td>
+   </tr>
+   <tr>
+      <td colspan="2" class="label">{include file="CRM/Event/Form/Task.tpl"}</td>
+   </tr>
+   <tr>
+      <td colspan="2">{$form.buttons.html}</td>
+   </tr>
+</table>
  </div>
 </fieldset>
 </div>

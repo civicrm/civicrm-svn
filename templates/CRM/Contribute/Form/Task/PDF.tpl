@@ -25,12 +25,8 @@
 *}
 {* Confirmation of contribution deletes  *}
 <div class="messages status">
-  <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
-        <p>{include file="CRM/Contribute/Form/Task.tpl"}</p>
-    </dd>
-  </dl>
+  <div class="icon inform-icon"></div>
+      {include file="CRM/Contribute/Form/Task.tpl"}
 </div>
 <div id="help">
     {ts}You may choose to Email receipts to Contributers OR Download a PDF file containing one receipt per page to your local computer by clicking <strong>Process Receipt(s)</strong>. Your browser may display the file for you automatically, or you may need to open it for printing using any PDF reader (such as Adobe&reg; Reader).{/ts}

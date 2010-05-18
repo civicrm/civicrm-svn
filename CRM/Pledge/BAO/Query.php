@@ -303,7 +303,7 @@ class CRM_Pledge_BAO_Query
                                                                               $value,
                                                                               "Integer" );
             if ( $value ) {
-                $query->_qill[$grouping][]  = "Find Test Pledges";
+                $query->_qill[$grouping][] = ts( "Find Test Pledges" );
             }
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
             return;

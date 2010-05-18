@@ -1,3 +1,7 @@
+-- CRM-6228
+
+{include file='../CRM/Upgrade/3.2.alpha3.msg_template/civicrm_msg_template.tpl'}
+
 -- CRM-6144
    DELETE civicrm_activity.* FROM civicrm_activity 
        LEFT JOIN civicrm_option_value ON ( civicrm_option_value.value = civicrm_activity.activity_type_id )

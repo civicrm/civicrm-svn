@@ -22,12 +22,9 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{if $outputMode eq 'html' && !$rows}
-    <div class="messages status">
-        <dl>
-            <dt><div class="icon inform-icon"></div></dt>
-            <dd>{ts}Sorry. No results found.{/ts}</dd>
-        </dl>
+*}	
+{if $outputMode eq 'html' && !$rows}	
+    <div class="messages status">	
+        <div class="icon inform-icon"></div>&nbsp; {ts}Sorry. No results found.{/ts}		
     </div>
 {/if}

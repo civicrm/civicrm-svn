@@ -39,7 +39,7 @@
         <dt>&nbsp;</dt><dd class="description">{ts}Set the limit of emails sent via smtp mailer, for more than limit send them in Spool table.{/ts}</dd>
         <dt>{$form.verpSeparator.label}</dt><dd>{$form.verpSeparator.html}</dd>
         <dt>&nbsp;</dt><dd class="description">{ts}Separator character used when CiviMail generates VERP (variable envelope return path) Mail-From addresses.{/ts}</dd>
-        <dt></dt><dd>{$form.buttons.html}</dd>
+        <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
        </dl>
 <div class="spacer"></div>
 </fieldset>

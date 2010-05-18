@@ -40,7 +40,7 @@
 
 {if ($instanceForm and $rows) OR $instanceFormError} {* settings section starts *}
 <div class="crm-accordion-wrapper crm-accordion_title-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
- <div class="crm-accordion-header">
+ <div class="crm-accordion-header" {if $updateReportButton} onclick="hide('update-button'); return false;" {/if} >
   <div class="icon crm-accordion-pointer"></div> 
   	{if $mode eq 'template'}{ts}Create Report{/ts}{else}{ts}Report Settings{/ts}{/if}
      </div><!-- /.crm-accordion-header -->
@@ -49,7 +49,7 @@
                 <div id="instanceForm">
                     {include file="CRM/Report/Form/Instance.tpl"}
                     {assign var=save value="_qf_"|cat:$form.formName|cat:"_submit_save"}
-                        <div>
+                        <div class="crm-submit-buttons">
                             {$form.$save.html}
                         </div>
                 </div>
@@ -58,9 +58,9 @@
 </div><!-- /.crm-accordion-wrapper -->    {/if} {* settings section ends *}
     
     {if $updateReportButton}
-        <div id="update-button" class="section-hidden-border" style="margin:-5px 0 5px 5px;">        
-            &nbsp;&nbsp;{$form.$save.html}            
-        </div>
+    <div id="update-button" class="crm-submit-buttons">
+        &nbsp;&nbsp;{$form.$save.html} 
+    </div>           
     {/if}
 
 {literal}

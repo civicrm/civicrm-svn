@@ -24,9 +24,15 @@
  +--------------------------------------------------------------------+
 *}
 {* Template for "Change Case Type" activities *}
-    <tr><td class="label">{$form.case_type_id.label}</td><td>{$form.case_type_id.html}</td></tr>        
-    <tr><td class="label">{$form.is_reset_timeline.label}</td><td>{$form.is_reset_timeline.html}</td></tr>  
-    <tr id="resetTimeline">
+    <tr class="crm-case-form-block-case_type_id">
+    	<td class="label">{$form.case_type_id.label}</td>
+	<td>{$form.case_type_id.html}</td>
+    </tr>        
+    <tr class="crm-case-form-block-is_reset_timeline">
+	<td class="label">{$form.is_reset_timeline.label}</td>
+	<td>{$form.is_reset_timeline.html}</td>
+    </tr>  
+    <tr class="crm-case-form-block-reset_date_time" id="resetTimeline">
         <td class="label">{$form.reset_date_time.label}</td>
         <td>{include file="CRM/common/jcalendar.tpl" elementName=reset_date_time}</td>
     </tr>

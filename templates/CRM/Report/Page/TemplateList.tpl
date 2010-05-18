@@ -60,14 +60,7 @@
 {/foreach}
 {else}
     <div class="messages status">
-        <dl>
-            <dt>
-                <div class="icon inform-icon"></div>
-            </dt>
-            <dd>
-                {ts}There are currently no Report Templates.{/ts}
-            </dd>
-        </dl>
+        <div class="icon inform-icon"></div>&nbsp; {ts}There are currently no Report Templates.{/ts}
     </div>
 {/if}
 {/strip}

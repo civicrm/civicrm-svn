@@ -49,17 +49,17 @@
 
   {counter start=0 skip=1 print=false}
   {foreach from=$rows item=row}
-  <tr id='rowid{$row.participant_id}' class="{cycle values="odd-row,even-row"}">
+  <tr id='crm-participant_{$row.participant_id}' class="{cycle values="odd-row,even-row"} crm-event crm-event_{$row.event_id}">
      {if ! $single }
         {if $context eq 'Search' }       
             {assign var=cbName value=$row.checkbox}
             <td>{$form.$cbName.html}</td> 
         {/if}	
-	<td>{$row.contact_type}</td>
-    	<td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}" title="{ts}View contact record{/ts}">{$row.sort_name}</a></td>
+	<td class="crm-participant-contact_type">{$row.contact_type}</td>
+    	<td class="crm-participant-sort_name"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}" title="{ts}View contact record{/ts}">{$row.sort_name}</a></td>
     {/if}
 
-    <td><a href="{crmURL p='civicrm/event/info' q="id=`$row.event_id`&reset=1"}" title="{ts}View event info page{/ts}">{$row.event_title}</a>
+    <td class="crm-participant-event_title"><a href="{crmURL p='civicrm/event/info' q="id=`$row.event_id`&reset=1"}" title="{ts}View event info page{/ts}">{$row.event_title}</a>
         {if $contactId}<br /><a href="{crmURL p='civicrm/event/search' q="reset=1&force=1&event=`$row.event_id`"}" title="{ts}List participants for this event (all statuses){/ts}">({ts}participants{/ts})</a>{/if}
     </td> 
     {assign var="participant_id" value=$row.participant_id}
@@ -71,17 +71,17 @@
         {/foreach}
         </td>
     {else}
-        <td>{if !$row.paid && !$row.participant_fee_level} {ts}(no fee){/ts}{else} {$row.participant_fee_level}{/if}</td>
+        <td class="crm-participant-participant_fee_level">{if !$row.paid && !$row.participant_fee_level} {ts}(no fee){/ts}{else} {$row.participant_fee_level}{/if}</td>
     {/if}
-    <td class="right nowrap">{$row.participant_fee_amount|crmMoney:$row.participant_fee_currency}</td>
-    <td>{$row.event_start_date|truncate:10:''|crmDate}
+    <td class="right nowrap crm-paticipant-participant_fee_amount">{$row.participant_fee_amount|crmMoney:$row.participant_fee_currency}</td>
+    <td class="crm-participant-event_start_date">{$row.event_start_date|truncate:10:''|crmDate}
         {if $row.event_end_date && $row.event_end_date|date_format:"%Y%m%d" NEQ $row.event_start_date|date_format:"%Y%m%d"}
             <br/>- {$row.event_end_date|truncate:10:''|crmDate}
         {/if}
    </td>
-    <td>{$row.participant_register_date|truncate:10:''|crmDate}</td>	
-    <td>{$row.participant_status_id}</td>
-    <td>{$row.participant_role_id}</td>
+    <td class="crm-participant-participant_register_date">{$row.participant_register_date|truncate:10:''|crmDate}</td>	
+    <td class="crm-participant-participant_status_id">{$row.participant_status_id}</td>
+    <td class="crm-participant-participant_role_id">{$row.participant_role_id}</td>
     <td>{$row.action|replace:'xx':$participant_id}</td>
    </tr>
   {/foreach}

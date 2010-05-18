@@ -38,12 +38,22 @@
 </div>
 {/if}
  <div class="form-item">
- <dl>
-   <dt>{$form.title.label}</dt><dd>{$form.title.html}</dd>
-   <dt>{$form.description.label}</dt><dd>{$form.description.html}</dd>
-   <dt></dt><dd>{include file="CRM/Event/Form/Task.tpl"}</dd>
-   <dt></dt><dd>{$form.buttons.html}</dd>
- </dl>
+ <table class="form-layout-compressed">
+   <tr class="crm-pledge-form-block-title">
+      <td class="label">{$form.title.label}</td>
+      <td class="html-adjust">{$form.title.html}</td>
+   </tr>
+   <tr class="crm-pledge-form-block-description">
+      <td class="label">{$form.description.label}</td>
+      <td class="html-adjust">{$form.description.html}</td>
+   </tr>
+</table>    
+ <div>
+     {include file="CRM/Event/Form/Task.tpl"}
+ </div>
+ <div class="crm-submit-buttons">
+     {$form.buttons.html}
+ </div>
  </div>
 </fieldset>
 </div>

@@ -31,15 +31,15 @@
 <fieldset><legend>{ts}Report Parameters{/ts}</legend>
     {strip} 
         <table class="form-layout">
-        <tr>
-           <td>
+        <tr class="crm-case-form-block-include_activities">
+           <td class="label">
                {$form.include_activities.label}
            </td>       
            <td>
                {$form.include_activities.html}
            </td>       
         </tr>
-        <tr>
+        <tr class="crm-case-form-block-is_redact">
            <td>
 	       &nbsp;
            </td>       

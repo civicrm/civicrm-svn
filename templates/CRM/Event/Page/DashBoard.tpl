@@ -56,13 +56,13 @@
     </thead>
     <tbody>
     {foreach from=$eventSummary.events item=values key=id}
-    <tr>
-        <td><a href="{crmURL p="civicrm/event/info" q="reset=1&id=`$id`"}" title="{ts}View event info page"{/ts}>{$values.eventTitle}</a></td>
-        <td>{$id}</td>
-        <td>{$values.eventType}</td>
-        <td>{$values.isPublic}</td>
-        <td class="nowrap">{$values.startDate}&nbsp;{if $values.endDate}to{/if}&nbsp;{$values.endDate}</td>
-        <td class="right">
+    <tr class="crm-event_{$id}">
+        <td class="crm-event-eventTitle"><a href="{crmURL p="civicrm/event/info" q="reset=1&id=`$id`"}" title="{ts}View event info page"{/ts}>{$values.eventTitle}</a></td>
+        <td class="crm-event-id">{$id}</td>
+        <td class="crm-event-eventType">{$values.eventType}</td>
+        <td class="crm-event-isPublic">{$values.isPublic}</td>
+        <td class="nowrap crm-event-startDate">{$values.startDate}&nbsp;{if $values.endDate}to{/if}&nbsp;{$values.endDate}</td>
+        <td class="right crm-event-participants_url">
             {if $values.participants and $values.participants_url}
 		<a href="{$values.participants_url}" title="{ts 1=$eventSummary.countedStatusANDRoles}List %1 participants{/ts}">{ts}Counted{/ts}:&nbsp;{$values.participants}</a>
 	    {else}
@@ -98,7 +98,7 @@
             {if $values.maxParticipants}{ts 1=$values.maxParticipants}(max %1){/ts}{/if}
         </td>
 	{if $actionColumn}
-        <td>
+        <td class="crm-event-isMap">
             {if $values.isMap}
                 <a href="{$values.isMap}" title="{ts}Map event location{/ts}">&raquo;&nbsp;{ts}Map{/ts}</a>&nbsp;|&nbsp;
             {/if}
@@ -120,13 +120,13 @@
 {else}
     <br />
     <div class="messages status">
-        <dl>
-            <dt><div class="icon inform-icon"></div></dt>      
-            <dd>
+        <table>
+            <tr><div class="icon inform-icon"></div></tr>      
+            <tr>
                 {ts}There are no active Events to display.{/ts}
                 {ts 1=$newEventURL}You can <a href="%1">Create a New Event</a> now.{/ts}
-            </dd>
-        </dl>
+            </tr>
+        </table>
     </div>
 {/if}
 

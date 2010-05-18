@@ -50,12 +50,8 @@
         {include file="CRM/Grant/Form/Selector.tpl"}
     {else}
         <div class="messages status">
-           <dl>
-             <dt><div class="icon inform-icon"></div></dt>
-               <dd>
-                   {ts}No grants have been recorded for this contact.{/ts}
-                </dd>
-           </dl>
+             <div class="icon inform-icon"></div>&nbsp;
+             {ts}No grants have been recorded for this contact.{/ts}
        </div>
     {/if}
     </div>

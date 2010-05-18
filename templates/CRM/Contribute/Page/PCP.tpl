@@ -73,13 +73,11 @@
 </div>
 {else}
 <div class="messages status">
-<dl>
-	<dt><div class="icon inform-icon"></div></dt>
+<div class="icon inform-icon"></div>
     {if $isSearch}
-        <dd>{ts}There are no Personal Campaign Pages which match your search criteria.{/ts}</dd>
+        {ts}There are no Personal Campaign Pages which match your search criteria.{/ts}
     {else}
-	<dd>{ts}There are currently no Personal Campaign Pages.{/ts}</dd>
+        {ts}There are currently no Personal Campaign Pages.{/ts}
     {/if}
-</dl>
 </div>
 {/if}

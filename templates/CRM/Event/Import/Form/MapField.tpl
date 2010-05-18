@@ -34,15 +34,25 @@
 </div>
 
 <div class="crm-form-block">
- {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
- {include file="CRM/common/WizardHeader.tpl"}
-
-  {* Table for mapping data to CRM fields *}
- {include file="CRM/Event/Import/Form/MapTable.tpl}
-
- <div id="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
- </div>
+ <table class="form-layout">
+   <tr>
+     <td>{* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
+         {include file="CRM/common/WizardHeader.tpl"}
+     </td>
+   </tr>
+   <tr>
+     <td>{* Table for mapping data to CRM fields *}
+         {include file="CRM/Event/Import/Form/MapTable.tpl}
+     </td>
+   </tr>
+   <tr>
+     <td>
+	<div id="crm-submit-buttons">
+         {include file="CRM/common/formButtons.tpl"}
+	</div> 
+     </td>
+   </tr>
+ </table>
  {$initHideBoxes}
 </div>
 {literal}

@@ -36,9 +36,9 @@
       </tr>
        {foreach from=$result item=row}
       <tr {if $row.id EQ $latestRevisionID}style="font-weight: bold;"{/if}>
-         <td>{$row.name}</td>
-         <td>{$row.date|crmDate}</td>
-         <td><a href="javascript:viewRevision( {$row.id} );" title="{ts}View this revision of the activity record.{/ts}">{if $row.id != $latestRevisionID}View Prior Revision{else}View Current Revision{/if}</a></td>
+         <td class="crm-case-form-block-name">{$row.name}</td>
+         <td class="crm-case-form-block-date">{$row.date|crmDate}</td>
+         <td class="crm-case-form-block-{$row.id}"><a href="javascript:viewRevision( {$row.id} );" title="{ts}View this revision of the activity record.{/ts}">{if $row.id != $latestRevisionID}View Prior Revision{else}View Current Revision{/if}</a></td>
       </tr>
        {/foreach}
   </table>
@@ -50,7 +50,7 @@
 {/if}        
 <table style="width: 95%">
 {foreach from=$report.fields item=row name=report}
-<tr{if ! $smarty.foreach.report.last} style="border-bottom: 1px solid #F6F6F6;"{/if}>
+<tr{if ! $smarty.foreach.report.last} style="border-bottom: 1px solid #F6F6F6;"{/if} class="crm-case-form-block-{$row.label}">
     <td class="label">{$row.label}</td>
     {if $smarty.foreach.report.first AND ( $activityID OR $parentID OR $latestRevisionID )} {* Add a cell to first row with links to prior revision listing and Prompted by (parent) as appropriate *}
         <td class="label">{$row.value}</td>
@@ -67,11 +67,14 @@
 {* Display custom field data for the activity. *}
 {if $report.customGroups}
     {foreach from=$report.customGroups item=customGroup key=groupTitle name=custom}
-        <tr style="background-color: #F6F6F6; color: #000000; border: 1px solid #CCCCCC; font-weight: bold">
+        <tr style="background-color: #F6F6F6; color: #000000; border: 1px solid #CCCCCC; font-weight: bold" class="crm-case-form-block-groupTitle">
             <td colspan="3">{$groupTitle}</td>
         </tr>
         {foreach from=$customGroup item=customField name=fields}
-            <tr{if ! $smarty.foreach.fields.last} style="border-bottom: 1px solid #F6F6F6;"{/if}><td class="label">{$customField.label}</td><td>{$customField.value}</td></tr>
+            <tr{if ! $smarty.foreach.fields.last} style="border-bottom: 1px solid #F6F6F6;"{/if}>
+	       <td class="label">{$customField.label}</td>
+	       <td>{$customField.value}</td>
+            </tr>
         {/foreach}
     {/foreach}
 {/if}

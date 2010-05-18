@@ -248,6 +248,8 @@ class CRM_Core_BAO_Block
                 }
                 if ( $resetPrimaryId ) {
                     eval('$block = new CRM_Core_BAO_' . $blockName .'( );');
+                    $block->selectAdd( );
+                    $block->selectAdd( "id, is_primary" );
                     $block->id = $resetPrimaryId;
                     if ( $block->find( true ) ) {
                         $block->is_primary = false;

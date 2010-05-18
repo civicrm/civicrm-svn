@@ -24,39 +24,41 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing a tag (admin)  *}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-tag-form-block">
 <h3>{if $action eq 1}{ts}New Tag {if $isTagSet}Set{/if}{/ts}{elseif $action eq 2}{ts}Edit Tag {if $isTagSet}Set{/if}{/ts}{else}{ts}Delete Tag {if $isTagSet}Set{/if}{/ts}{/if}</h3>
     {if $action eq 1 or $action eq 2 }
-        <dl>
-        <dt>{$form.name.label}</dt><dd>{$form.name.html}</dd>
-        <dt>{$form.description.label}</dt><dd>{$form.description.html}</dd>
-        {if $form.parent_id.html}
-	    <dt>{$form.parent_id.label}</dt><dd>{$form.parent_id.html}</dd>
-	    {/if}
-	    <dt>{$form.used_for.label}</dt>
-	        <dd>{$form.used_for.html}
-	            <br />
-	            <span class="description">
-	                {if $is_parent}{ts}You can change the types of records which this tag can be used for by editing the 'Parent' tag.{/ts}
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+    <table class="form-layout-compressed">
+       <tr class="crm-tag-form-block-label">
+          <td class="label">{$form.name.label}</td>
+          <td>{$form.name.html}</td>
+       </tr>
+       <tr class="crm-tag-form-block-description">
+          <td class="label">{$form.description.label}</td>
+          <td>{$form.description.html}</td>
+       </tr>
+         {if $form.parent_id.html}
+       <tr class="crm-tag-form-block-parent_id">
+ 	  <td class="label">{$form.parent_id.label}</td>
+          <td>{$form.parent_id.html}</td>
+       </tr>
+	 {/if}
+       <tr class="crm-tag-form-block-used_for">	  
+          <td class="label">{$form.used_for.label}</td>
+	  <td>{$form.used_for.html} <br />
+	        <span class="description">
+	               {if $is_parent}{ts}You can change the types of records which this tag can be used for by editing the 'Parent' tag.{/ts}
 	                {else}{ts}What types of record(s) can this tag be used for?{/ts}
 	                {/if}
 	            </span>
-	        </dd>
-	{*if $accessHidden}
-	    <dt>{$form.is_hidden.label}</dt>
-	        <dd>
-	            {$form.is_hidden.html}
-	            <br /><span class="description">
-	                {ts}Hidden tags are not displayed to users in the built-in Tag selection and display fields. They can only be assigned and displayed by custom extensions using the CiviCRM APIs.{/ts}
-                    {if $is_parent} {ts}You can change the 'Hidden' property of this tag by editing the 'Parent' tag.{/ts}{/if}
-                </span>
-	        </dd>
-	{/if*}
-        <dt>{$form.is_reserved.label}</dt>
-            <dd>{$form.is_reserved.html}
-                <br /><span class="description">{ts}'Reserved' tags can be applied to records by any user with edit permission on that record. However only users with 'administer reserved tags' permission can modify the tags themselves, or delete them from the list of available tags.{/ts} 
-            </dd>
-        </dl>
+	        </td>
+        </tr>
+        <tr class="crm-tag-form-block-is_reserved">
+           <td class="label">{$form.is_reserved.label}</td>
+           <td>{$form.is_reserved.html} <br /><span class="description">{ts}Reserved tags can not be deleted. Users with 'administer reserved tags' permission can set or unset the reserved flag. You must uncheck 'Reserved' (and delete any child tags) before you can delete a tag.{/ts} 
+           </td>
+        </tr>
+    </table>
         {if $parent_tags|@count > 0}
         <table class="form-layout-compressed">
             <tr><td><label>{ts}Remove Parent?{/ts}</label></td></tr>
@@ -69,8 +71,5 @@
     {else}
         <div class="status">{ts 1=$delName}Are you sure you want to delete <b>%1</b> Tag?{/ts}<br />{ts}This tag will be removed from any currently tagged contacts, and users will no longer be able to assign contacts to this tag.{/ts}</div>
     {/if}
-    <dl>
-    <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
-    </dl>
-    <div class="spacer"></div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

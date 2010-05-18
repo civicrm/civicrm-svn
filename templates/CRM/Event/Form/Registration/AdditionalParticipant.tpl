@@ -44,12 +44,13 @@
 <div class="form-item">
 {if $priceSet}
     <fieldset id="priceset"><legend>{$event.fee_label}</legend>
-    <dl>
+    <table class="form-layout">
     {foreach from=$priceSet.fields item=element key=field_id}
         {if ($element.html_type eq 'CheckBox' || $element.html_type == 'Radio') && $element.options_per_line}
             {assign var="element_name" value=price_$field_id}
-            <dt>{$form.$element_name.label}</dt>
-            <dd>
+         <tr>
+            <td class="label">{$form.$element_name.label}</td>
+            <td>
             {assign var="count" value="1"}
             <table class="form-layout-compressed">
                 <tr>
@@ -67,22 +68,30 @@
                     {/foreach}
                 </tr>
             </table>
-            </dd>
+            </td>
+         </tr>
         {else}
             {assign var="name" value=`$element.name`}
             {assign var="element_name" value="price_"|cat:$field_id}
-            <dt>{$form.$element_name.label}</dt>
-            <dd>&nbsp;{$form.$element_name.html}</dd>
+            <td class="label">{$form.$element_name.label}</td>
+            <td>&nbsp;{$form.$element_name.html}</td>
+        </tr>
         {/if}
         {if $element.help_post}
-            <dt>&nbsp;</dt>
-            <dd class="description">{$element.help_post}</dd>
+        <tr>
+           <td>&nbsp;</td>
+           <td class="description">{$element.help_post}</td>
+        </tr>
         {/if}
     {/foreach}
-    </dl>
+    </table>
     <div class="form-item">
-        <dt></dt>
-        <dd>{include file="CRM/Price/Form/Calculate.tpl"}</dd>
+     <table class="form-layout">
+         <tr></tr>
+         <tr>
+            <td>{include file="CRM/Price/Form/Calculate.tpl"}</td>
+         </tr>
+     </table>
     </div> 
     </fieldset>
 {else}
@@ -108,6 +117,6 @@
 {include file="CRM/UF/Form/Block.tpl" fields=$additionalCustomPost} 
 
 <div id="crm-submit-buttons">
-    {$form.buttons.html}
+    {include file="CRM/common/formButtons.tpl"}
 </div>
 </div>

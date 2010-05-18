@@ -95,27 +95,21 @@
     </div>
 {elseif $unscheduled}
     <div class="messages status">
-        <table class="form-layout">
-            <tr><div class="icon inform-icon"></div>
+            <div class="icon inform-icon"></div>&nbsp;
             {capture assign=crmURL}{crmURL p='civicrm/mailing/send' q='reset=1'}{/capture}
-            {ts 1=$crmURL}There are no Unscheduled Mailings. You can <a href='%1'>create and send one</a>.{/ts}</tr>
-        </table>
+            {ts 1=$crmURL}There are no Unscheduled Mailings. You can <a href='%1'>create and send one</a>.{/ts}
    </div>
 {elseif $archived}
     <div class="messages status">
-        <table class="form-layout">
-            <tr><div class="icon inform-icon"></div>
+            <div class="icon inform-icon"></div>&nbsp
             {capture assign=crmURL}{crmURL p='civicrm/mailing/browse/scheduled' q='scheduled=true&reset=1'}{/capture}
-            {ts 1=$crmURL}There are no Archived Mailings. You can archive mailings from <a href='%1'>Scheduled or Sent Mailings</a>.{/ts}</tr>
-        </table>		
+            {ts 1=$crmURL}There are no Archived Mailings. You can archive mailings from <a href='%1'>Scheduled or Sent Mailings</a>.{/ts}
    </div>
 {else}
     <div class="messages status">
-        <table class="form-layout">
-            <tr><div class="icon inform-icon"></div>
+            <div class="icon inform-icon"></div>&nbsp;
             {capture assign=crmURL}{crmURL p='civicrm/mailing/send' q='reset=1'}{/capture}
             {capture assign=archiveURL}{crmURL p='civicrm/mailing/browse/archived' q='reset=1'}{/capture}
-            {ts 1=$crmURL, 2=$archiveURL}There are no Scheduled or Sent Mailings. You can <a href='%1'>create and send one</a> OR you can search the <a href='%2'>Archived Mailings</a>.{/ts}</tr>
-        </table>
+            {ts 1=$crmURL, 2=$archiveURL}There are no Scheduled or Sent Mailings. You can <a href='%1'>create and send one</a> OR you can search the <a href='%2'>Archived Mailings</a>.{/ts}
    </div>
 {/if}

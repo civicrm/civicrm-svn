@@ -68,7 +68,7 @@
     {/foreach}
   </tr>
   {foreach from=$casesSummary.rows item=row key=caseType}
-   <tr>
+   <tr class="crm-case-caseStatus">
    <th><strong>{$caseType}</strong></th>
    {foreach from=$casesSummary.headers item=header}
     {assign var="caseStatus" value=$header.status}

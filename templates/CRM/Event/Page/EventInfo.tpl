@@ -28,13 +28,9 @@
 {if $registerClosed }
 <div class="spacer"></div>
 <div class="messages status">
-  <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
-        <p>{ts}Registration is closed for this event{/ts}</p>
-    </dd>
-  </dl>
-</div>
+  <div class="icon inform-icon"></div>
+     &nbsp;{ts}Registration is closed for this event{/ts}
+  </div>
 {/if}
 <div class="vevent">
 	<div class="event-info">
@@ -133,7 +129,7 @@
 	                        {assign var="lClass" value="fee_level-label"}
 	                    {/if}
 	                    <tr>
-	                        <td class="{$lClass}">{$feeBlock.label.$idx}</td>
+	                        <td class="{$lClass} crm-event-label">{$feeBlock.label.$idx}</td>
 	                        <td{if $feeBlock.value.$idx} class="fee_amount-value right"{/if}>{$feeBlock.value.$idx|crmMoney}</td>
 	                    </tr>
 	                {/foreach}

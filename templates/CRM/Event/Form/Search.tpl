@@ -36,7 +36,7 @@
 <div id="searchForm" class="form-item">
     {strip} 
         <table class="form-layout">
-        <tr>
+        <tr class="crm-participant-form-block-sort_name">
            <td class="font-size12pt" colspan="2">
                {$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmReplace:class:'twenty'}&nbsp;&nbsp;&nbsp;{$form.buttons.html}
            </td>       
@@ -45,7 +45,7 @@
         {include file="CRM/Event/Form/Search/Common.tpl"}
      
         <tr>
-           <td colspan="2">{$form.buttons.html}</td>
+           <td colspan="2">{include file="CRM/common/formButtons.tpl"}</td>
         </tr>
         </table>
     {/strip}

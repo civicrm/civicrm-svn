@@ -25,24 +25,24 @@
 *}
 {* this div is being used to apply special css *}
     {if $section eq 1}
-    <div class="crm-block crm-content-block">
+    <div class="crm-block crm-content-block crm-report-form-block">
         {*include the graph*}
         {include file="CRM/Report/Form/Layout/Graph.tpl"}
     </div>
     {elseif $section eq 2}
-    <div class="crm-block crm-content-block">
+    <div class="crm-block crm-content-block crm-report-form-block">
         {*include the table layout*}
         {include file="CRM/Report/Form/Layout/Table.tpl"}
 	</div>
     {else}
-    <div class="crm-block crm-form-block">
+    <div class="crm-block crm-form-block crm-report-form-block">
         {include file="CRM/Report/Form/Fields.tpl"}
     </div>
     
-    <div class="crm-block crm-content-block">
-    	<div class="crm-tasks">
+    <div class="crm-block crm-content-block crm-report-form-block">
+        {*include actions*}
         {include file="CRM/Report/Form/Actions.tpl"}
-        </div>
+
         {*Statistics at the Top of the page*}
         {include file="CRM/Report/Form/Statistics.tpl" top=true}
     

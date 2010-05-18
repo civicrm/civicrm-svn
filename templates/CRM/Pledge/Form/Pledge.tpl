@@ -31,77 +31,69 @@
 {else}
 {if !$email and $action neq 8 and $context neq 'standalone'}
 <div class="messages status">
-  <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
+  <div class="icon inform-icon"></div>
         <p>{ts}You will not be able to send an acknowledgment for this pledge because there is no email address recorded for this contact. If you want a acknowledgment to be sent when this pledge is recorded, click Cancel and then click Edit from the Summary tab to add an email address before recording the pledge.{/ts}</p>
-    </dd>
-  </dl>
 </div>
 {/if}
 <div class="form-item">
-<div class=""crm-submit-buttons">{$form.buttons.html}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 <fieldset><legend>{if $action eq 1 or $action eq 1024}{ts}New Pledge{/ts}{elseif $action eq 8}{ts}Delete Pledge{/ts}{else}{ts}Edit Pledge{/ts}{/if}</legend> 
    {if $action eq 8} 
       <div class="messages status"> 
-        <dl> 
-          <dt><div class="icon inform-icon"></div></dt> 
-          <dd> 
-          {ts}WARNING: Deleting this pledge will result in the loss of the associated financial transactions (if any).{/ts} {ts}Do you want to continue?{/ts} 
-          </dd> 
-       </dl> 
+          <div class="icon inform-icon"></div>
+          {ts}WARNING: Deleting this pledge will result in the loss of the associated financial transactions (if any).{/ts} {ts}Do you want to continue?{/ts}
       </div> 
    {else}
       <table class="form-layout-compressed">
         {if $context eq 'standalone'}
             {include file="CRM/Contact/Form/NewContact.tpl"}
         {else}
-          <tr>
+          <tr class="crm-pledge-form-block-displayName">
               <td class="font-size12pt right"><strong>{ts}Pledge by{/ts}</strong></td>
               <td class="font-size12pt"><strong>{$displayName}</strong></td>
           </tr>
         {/if}
-	<tr><td class="font-size12pt right">{$form.amount.label}</td><td class="font-size12pt">{$form.amount.html|crmMoney}</td></tr>
-        <tr><td class="label">{$form.installments.label}</td><td>{$form.installments.html} {ts}installments of{/ts} {if $action eq 1 or $isPending}{$form.eachPaymentAmount.html|crmMoney}{elseif $action eq 2 and !$isPending}{$eachPaymentAmount|crmMoney}{/if}&nbsp;{ts}every{/ts}&nbsp;{$form.frequency_interval.html}&nbsp;{$form.frequency_unit.html}</td></tr>
-        <tr><td class="label nowrap">{$form.frequency_day.label}</td><td>{$form.frequency_day.html} {ts}day of the period{/ts}<br />
+	<tr class="crm-pledge-form-block-amount"><td class="font-size12pt right">{$form.amount.label}</td><td class="font-size12pt">{$form.amount.html|crmMoney}</td></tr>
+        <tr class="crm-pledge-form-block-installments"><td class="label">{$form.installments.label}</td><td>{$form.installments.html} {ts}installments of{/ts} {if $action eq 1 or $isPending}{$form.eachPaymentAmount.html|crmMoney}{elseif $action eq 2 and !$isPending}{$eachPaymentAmount|crmMoney}{/if}&nbsp;{ts}every{/ts}&nbsp;{$form.frequency_interval.html}&nbsp;{$form.frequency_unit.html}</td></tr>
+        <tr class="crm-pledge-form-block-frequency_day"><td class="label nowrap">{$form.frequency_day.label}</td><td>{$form.frequency_day.html} {ts}day of the period{/ts}<br />
             <span class="description">{ts}This applies to weekly, monthly and yearly payments.{/ts}</td></tr>
         {if $form.create_date}	
-        <tr>
+        <tr class="crm-pledge-form-block-create_date">
             <td class="label">{$form.create_date.label}</td>
             <td>{include file="CRM/common/jcalendar.tpl" elementName=create_date}<br />
         {/if}
         {if $create_date}
-            <tr><td class="label">{ts}Pledge Made{/ts}</td><td class="view-value">{$create_date|truncate:10:''|crmDate}
+            <tr class="crm-pledge-form-block-create_date"><td class="label">{ts}Pledge Made{/ts}</td><td class="view-value">{$create_date|truncate:10:''|crmDate}
         {/if}<br />
             <span class="description">{ts}Date when pledge was made by the contributor.{/ts}</span></td></tr>
        
         {if $form.start_date}	
-            <tr>
+            <tr class="crm-pledge-form-block-start_date">
                 <td class="label">{$form.start_date.label}</td>
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}<br />
         {/if}
         {if $start_date}
-            <tr><td class="label">{ts}Payments Start{/ts}</td><td class="view-value">{$start_date|truncate:10:''|crmDate}
+            <tr class="crm-pledge-form-block-start_date"><td class="label">{ts}Payments Start{/ts}</td><td class="view-value">{$start_date|truncate:10:''|crmDate}
         {/if}<br />
             <span class="description">{ts}Date of first pledge payment.{/ts}</span></td></tr>
        
         {if $email and $outBound_option != 2}
             {if $form.is_acknowledge }
-                <tr><td class="label">{$form.is_acknowledge.label}</td><td>{$form.is_acknowledge.html}<br />
+                <tr class="crm-pledge-form-block-is_acknowledge"><td class="label">{$form.is_acknowledge.label}</td><td>{$form.is_acknowledge.html}<br />
                 <span class="description">{ts 1=$email}Automatically email an acknowledgment of this pledge to %1?{/ts}</span></td></tr>
             {/if}
 	    {elseif $context eq 'standalone' and $outBound_option != 2 }
                 <tr id="acknowledgment-receipt" style="display:none;"><td class="label">{$form.is_acknowledge.label}</td><td>{$form.is_acknowledge.html} <span class="description">{ts}Automatically email an acknowledgment of this pledge to {/ts}<span id="email-address"></span>?</span></td></tr>
         {/if}
-        <tr id="acknowledgeDate"><td class="label">{$form.acknowledge_date.label}</td>
+        <tr id="acknowledgeDate"><td class="label" class="crm-pledge-form-block-acknowledge_date">{$form.acknowledge_date.label}</td>
             <td>{include file="CRM/common/jcalendar.tpl" elementName=acknowledge_date}<br />
             <span class="description">{ts}Date when an acknowledgment of the pledge was sent.{/ts}</span></td></tr>
-            <tr><td class="label">{$form.contribution_type_id.label}</td><td>{$form.contribution_type_id.html}<br />
+            <tr class="crm-pledge-form-block-contribution_type_id"><td class="label">{$form.contribution_type_id.label}</td><td>{$form.contribution_type_id.html}<br />
             <span class="description">{ts}Sets the default contribution type for payments against this pledge.{/ts}</span></td></tr>
-	    <tr><td class="label">{$form.contribution_page_id.label}</td><td>{$form.contribution_page_id.html}<br />
+	    <tr class="crm-pledge-form-block-contribution_page_id"><td class="label">{$form.contribution_page_id.label}</td><td>{$form.contribution_page_id.html}<br />
             <span class="description">{ts}Select an Online Contribution page that the user can access to make self-service pledge payments. (Only Online Contribution pages configured to include the Pledge option are listed.){/ts}</span></td></tr>
         
-	    <tr><td class="label">{ts}Pledge Status{/ts}</td><td class="view-value">{$status}<br />
+	    <tr class="crm-pledge-form-block-status"><td class="label">{ts}Pledge Status{/ts}</td><td class="view-value">{$status}<br />
             <span class="description">{ts}Pledges are "Pending" until the first payment is received. Once a payment is received, status is "In Progress" until all scheduled payments are completed. Overdue pledges are ones with payment(s) past due.{/ts}</span></td></tr>
 		<tr><td colspan=2>{include file="CRM/Custom/Form/CustomData.tpl"}</td></tr>
        </table>

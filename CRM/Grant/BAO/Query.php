@@ -110,7 +110,7 @@ class CRM_Grant_BAO_Query
         
         case 'grant_money_transfer_date_notset' :
             $query->_where[$grouping][] = "civicrm_grant.money_transfer_date IS NULL";
-            $query->_qill[$grouping][]  = "Grant Money Transfer Date is NULL";
+            $query->_qill[$grouping][]  = ts( "Grant Money Transfer Date is NULL" );
             $query->_tables['civicrm_grant'] = $query->_whereTables['civicrm_grant'] = 1;
             return;
 
@@ -124,7 +124,7 @@ class CRM_Grant_BAO_Query
 
         case 'grant_application_received_notset' :
             $query->_where[$grouping][] = "civicrm_grant.application_received_date IS NULL";
-            $query->_qill[$grouping][]  = "Grant Application Received Date is NULL";
+            $query->_qill[$grouping][]  = ts( "Grant Application Received Date is NULL" );
             $query->_tables['civicrm_grant'] = $query->_whereTables['civicrm_grant'] = 1;
             return ;
         
@@ -137,7 +137,7 @@ class CRM_Grant_BAO_Query
 
         case 'grant_due_date_notset':
            $query->_where[$grouping][] =   "civicrm_grant.grant_due_date IS NULL";
-           $query->_qill[$grouping][]  = "Grant Due Date is NULL";
+           $query->_qill[$grouping][]  = ts( "Grant Due Date is NULL" );
            $query->_tables['civicrm_grant'] = $query->_whereTables['civicrm_grant'] = 1;
            return ;
 
@@ -150,7 +150,7 @@ class CRM_Grant_BAO_Query
             return;
         case 'grant_decision_date_notset':
           $query->_where[$grouping][] = "civicrm_grant.decision_date IS NULL";
-          $query->_qill[$grouping][]  = "Grant Decision Date is NULL";
+          $query->_qill[$grouping][]  = ts( "Grant Decision Date is NULL" );
           $query->_tables['civicrm_grant'] = $query->_whereTables['civicrm_grant'] = 1;
           return ;
 

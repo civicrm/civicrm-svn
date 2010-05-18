@@ -36,21 +36,20 @@
 <h3>{if $action eq 8}{ts}Delete Case{/ts}{elseif $action eq 32768}{ts}Restore Case{/ts}{/if}</h3>
 {if $action eq 8 or $action eq 32768 } 
       <div class="messages status"> 
-        <dl> 
-          <dt><div class="icon inform-icon"></div></dt> 
-          <dd> 
+        <div class="icon inform-icon"></div> 
           {if $action eq 8}
             {ts}Click Delete to move this case and all associated activities to the Trash.{/ts} 
           {else}
             {ts}Click Restore to retrieve this case and all associated activities from the Trash.{/ts} 
           {/if}
-          </dd> 
-       </dl> 
       </div> 
 {else}
 <table class="form-layout">
 {if $clientName}
-    <tr><td class="label font-size12pt">{ts}Client{/ts}</td><td class="font-size12pt bold view-value">{$clientName}</td></tr>
+    <tr class="crm-case-form-block-clientName">
+	<td class="label font-size12pt">{ts}Client{/ts}</td>
+	<td class="font-size12pt bold view-value">{$clientName}</td>
+    </tr>
 {elseif !$clientName and $action eq 1} 
     <tr class="form-layout-compressed" border="0">			      
             {if $context eq 'standalone'}
@@ -60,14 +59,14 @@
 {/if}
 {* activity fields *}
 {if $form.medium_id.html and $form.activity_location.html}
-    <tr>
+    <tr class="crm-case-form-block-medium_id">
         <td class="label">{$form.medium_id.label}</td>
         <td class="view-value">{$form.medium_id.html}&nbsp;&nbsp;&nbsp;{$form.activity_location.label} &nbsp;{$form.activity_location.html}</td>
     </tr> 
 {/if}
 
 {if $form.activity_details.html}
-    <tr>
+    <tr class="crm-case-form-block-activity_details">
         <td class="label">{$form.activity_details.label}{help id="id-details" file="CRM/Case/Form/Case.hlp"}</td>
         <td class="view-value">{$form.activity_details.html|crmReplace:class:huge40}</td>
     </tr>
@@ -81,7 +80,10 @@
 {/if}
 
 {if $form.activity_subject.html}
-    <tr><td class="label">{$form.activity_subject.label}{help id="id-activity_subject" file="CRM/Case/Form/Case.hlp"}</td><td>{$form.activity_subject.html}</td></tr>
+    <tr class="crm-case-form-block-activity_subject">
+       <td class="label">{$form.activity_subject.label}{help id="id-activity_subject" file="CRM/Case/Form/Case.hlp"}</td>
+       <td>{$form.activity_subject.html}</td>
+    </tr>
 {/if}
 
 {* inject activity type-specific form fields *}
@@ -90,7 +92,7 @@
 {/if}
 
 {if $form.duration.html}
-    <tr>
+    <tr class="crm-case-form-block-duration">
       <td class="label">{$form.duration.label}</td>
       <td class="view-value">
         {$form.duration.html}
@@ -100,7 +102,7 @@
 {/if}
 
 {if $form.tag.html}
-    <tr>
+    <tr class="crm-case-form-block-tag">
       <td class="label">{$form.tag.label}</td>
       <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
                              {literal}

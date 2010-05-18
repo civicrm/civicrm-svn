@@ -3082,8 +3082,8 @@ WHERE  id IN ( $groupIDs )
                                                                'first_name'             => 1, 
                                                                'middle_name'            => 1, 
                                                                'last_name'              => 1, 
-                                                               'prefix'                 => 1, 
-                                                               'suffix'                 => 1,
+                                                               'individual_prefix'      => 1, 
+                                                               'individual_suffix'      => 1,
                                                                'birth_date'             => 1,
                                                                'gender'                 => 1,
                                                                'street_address'         => 1, 
@@ -3240,6 +3240,19 @@ WHERE  id IN ( $groupIDs )
         // FIXME: we should actually filter out deleted contacts (unless requested to do the opposite)
         $permission = ' ( 1 ) ';
         $onlyDeleted = in_array(array('deleted_contacts', '=', '1', '0', '0'), $this->_params);
+
+        // if we’re explicitely looking for a certain contact’s contribs, events, etc.
+        // and that contact happens to be deleted, set $onlyDeleted to true
+        foreach ($this->_params as $values) {
+            list($name, $op, $value, $_, $_) = $values;
+            if ($name == 'contact_id' and $op == '=') {
+                if (CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $value, 'is_deleted')) {
+                    $onlyDeleted = true;
+                }
+                break;
+            }
+        }
+
         if ( ! $this->_skipPermission ) {
             require_once 'CRM/ACL/API.php';
             $permission = CRM_ACL_API::whereClause( CRM_Core_Permission::VIEW, $this->_tables, $this->_whereTables, null, $onlyDeleted );

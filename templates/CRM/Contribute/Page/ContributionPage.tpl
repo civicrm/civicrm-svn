@@ -73,10 +73,8 @@
 {else}
     {if $isSearch eq 1}
     <div class="status messages">
-        <dl>
-            <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
+            <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
             {capture assign=browseURL}{crmURL p='civicrm/contribute/manage' q="reset=1"}{/capture}
-            <dd>
                 {ts}No available Contribution Pages match your search criteria. Suggestions:{/ts}
                 <div class="spacer"></div>
                 <ul>
@@ -85,8 +83,6 @@
                 <li>{ts}Make sure you have enough privileges in the access control system.{/ts}</li>
                 </ul>
                 {ts 1=$browseURL}Or you can <a href='%1'>browse all available Contribution Pages</a>.{/ts}
-            </dd>
-        </dl>
     </div>
     {else}
     <div class="messages status">

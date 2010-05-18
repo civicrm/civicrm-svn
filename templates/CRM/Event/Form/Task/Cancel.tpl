@@ -26,15 +26,13 @@
 {* Confirmation of Cancel Registration *}
 <div class="spacer"></div>
 <div class="messages status">
-  <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
-        <p>{ts}Are you sure you want to set status to Cancelled for the selected participants?{/ts}</p>
-        <p>{include file="CRM/Event/Form/Task.tpl"}</p>
-    </dd>
-  </dl>
+  <div class="icon inform-icon"></div>
+  <div>
+      <p>{ts}Are you sure you want to set status to Cancelled for the selected participants?{/ts}</p>
+      <p>{include file="CRM/Event/Form/Task.tpl"}</p>
+  </div>
 </div>
 
 <div class="form-item">
- {$form.buttons.html}
+  {include file="CRM/common/formButtons.tpl"} 
 </div>

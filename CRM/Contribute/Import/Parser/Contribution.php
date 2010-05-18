@@ -35,7 +35,7 @@
  */
 
 require_once 'CRM/Contribute/Import/Parser.php';
-require_once 'api/v2/Contribute.php';
+require_once 'api/v2/Contribution.php';
 
 /**
  * class to parse contribution csv files

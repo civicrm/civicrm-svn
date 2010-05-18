@@ -1616,7 +1616,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 $cond = "visibility_id = 1";
             }            
             $form->add('select', $name, $title,
-                       array(''=>ts( '- select -' )) + CRM_Event_PseudoConstant::participantStatus( null, $cond ), $required);
+                       array(''=>ts( '- select -' )) + CRM_Event_PseudoConstant::participantStatus( null, $cond, 'label' ), $required);
         } else if ($fieldName == 'participant_role_id' ) {
             require_once "CRM/Event/PseudoConstant.php";
             $form->add('select', $name, $title,

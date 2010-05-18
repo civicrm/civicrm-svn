@@ -74,7 +74,8 @@ class CRM_Contact_Form_Search_Custom_Proximity
             $this->_longitude = $this->_formValues['geo_code_2'];
             $this->_distance  = $this->_formValues['distance'] * 1000;
         }
-
+        $this->_group = CRM_Utils_Array::value( 'group', $this->_formValues );
+        
         $this->_tag = CRM_Utils_Array::value( 'tag', $this->_formValues );
 
         $this->_columns = array( ts('Name')           => 'sort_name'      ,
@@ -109,7 +110,11 @@ class CRM_Contact_Form_Search_Custom_Proximity
         $form->add( 'text',
                     'postal_code',
                     ts( 'Postal Code' ) );
-
+        $group =
+            array('' => ts('- any group -')) +
+            CRM_Core_PseudoConstant::group( );
+        $form->addElement('select', 'group', ts('Group'), $group );
+        
         $stateCountryMap   = array( );
         $stateCountryMap[] = array( 'state_province' => 'state_province_id',
                                     'country'        => 'country_id' );
@@ -147,7 +152,7 @@ class CRM_Contact_Form_Search_Custom_Proximity
                                           'postal_code',
                                           'country_id',
                                           'state_province_id',
-                                          'distance' ) );
+                                          'distance','group' ) );
     }
 
     function all( $offset = 0, $rowcount = 0, $sort = null,
@@ -184,10 +189,15 @@ LEFT JOIN civicrm_country country               ON country.id        = address.c
 LEFT JOIN civicrm_entity_tag t ON (t.entity_table='civicrm_contact' AND contact_a.id = t.entity_id)
 ";
 		}
-		
+		if ( $this->_group ) {
+			$f .= "
+LEFT JOIN civicrm_group_contact cgc ON ( cgc.contact_id = contact_a.id )
+";
+		}
+        
 		return $f;
     }
-
+    
     function where( $includeContactIDs = false ) {
         $params = array( );
         $clause = array( );
@@ -203,10 +213,15 @@ LEFT JOIN civicrm_entity_tag t ON (t.entity_table='civicrm_contact' AND contact_
 AND t.tag_id = {$this->_tag}
 ";
 		}
-		
+		if ($this->_group) {
+			$where .= "
+AND cgc.group_id = {$this->_group}
+ ";
+ 		}
+        
         return $this->whereClause( $where, $params );
     }
-
+    
     function templateFile( ) {
         return 'CRM/Contact/Form/Search/Custom/Sample.tpl';
     }

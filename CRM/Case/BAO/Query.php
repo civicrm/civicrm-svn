@@ -288,7 +288,7 @@ class CRM_Case_BAO_Query
         case 'case_deleted':
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( "civicrm_case.is_deleted", $op, $value, 'Boolean' );
             if ( $value ) {
-                $query->_qill[$grouping][]  = "Find Deleted Cases";
+                $query->_qill[$grouping][]  = ts( "Find Deleted Cases" );
             }
             $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;
             return;

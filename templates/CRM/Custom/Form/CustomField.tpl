@@ -26,13 +26,13 @@
 {assign var="element_name" value=$element.element_name}
 {if $element.is_view eq 0}{* fix for CRM-3510 *}
     {if $element.help_pre}
-        <tr>
+        <tr class="custom_field-help-pre-row {$element.element_name}-row-help-pre">
             <td>&nbsp;</td>
             <td class="html-adjust description">{$element.help_pre}</td>
         </tr>
     {/if}
      {if $element.options_per_line != 0 }
-        <tr>
+        <tr class="custom_field-row {$element.element_name}-row">
             <td class="label">{$form.$element_name.label}</td>
             <td class="html-adjust">
                 {assign var="count" value="1"}
@@ -63,13 +63,13 @@
         </tr>
             
         {if $element.help_post}
-            <tr>
+            <tr class="custom_field-help-post-row {$element.element_name}-row-help-post">
                 <td>&nbsp;</td>
                 <td class="description">{$element.help_post}<br />&nbsp;</td>
             </tr>
              {/if}
     {else}
-        <tr>
+        <tr class="custom_field-row {$element.element_name}-row">
             <td class="label">{$form.$element_name.label}</td>                                
             <td class="html-adjust">
                 {if $element.data_type neq 'Date'}
