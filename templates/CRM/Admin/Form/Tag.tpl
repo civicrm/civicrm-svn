@@ -44,7 +44,7 @@
 	        </dd>
         <dt>{$form.is_reserved.label}</dt>
             <dd>{$form.is_reserved.html}
-                <br /><span class="description">{ts}'Reserved' tags can be applied to records by any user with edit permission on that record. However only users with 'administer reserved tags' permission can modify the tags themselves. You must uncheck 'Reserved' (and delete any child tags) before you can delete a tag.{/ts} 
+                <br /><span class="description">{ts}Reserved tags can not be deleted. Users with 'administer reserved tags' permission can set or unset the reserved flag. You must uncheck 'Reserved' (and delete any child tags) before you can delete a tag.{/ts} 
             </dd>
         </dl>
         {if $parent_tags|@count > 0}
