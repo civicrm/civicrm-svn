@@ -23,6 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+
+<span id='fileOnCaseStatusMsg' style="display:none;"></span>
 {if $context EQ 'Search'}
     {include file="CRM/common/pager.tpl" location="top"}
 {/if}

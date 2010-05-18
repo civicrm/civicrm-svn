@@ -625,7 +625,7 @@ div.spacer,
     padding:4px;
     margin-bottom: 4px;
 }
-#restmsg.msgok {
+#restmsg.msgok, span.msgok {
     display:block;
     background:#B0D730;
     background-color:#F1F8EB;
@@ -634,14 +634,7 @@ div.spacer,
     font-size:12px;
     margin:0 0 8px;
     padding:4px;
-    }
-#restmsg.msgnok {
-    display:block;
-    background:red;
-    color:white;
 }
-
-
 
 #crm-container div.view-data {
     padding: .25em .5em .25em .5em;

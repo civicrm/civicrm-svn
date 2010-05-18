@@ -30,6 +30,7 @@
   <h3 class="crm-table-title">{ts}Activities{/ts}</h3>
   {/if}
 {if $rows}
+  <span id='fileOnCaseStatusMsg' style="display:none;"></span>
   <form title="activity_pager" action="{crmURL}" method="post">
   {include file="CRM/common/pager.tpl" location="top"}
 
