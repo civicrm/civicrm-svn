@@ -28,21 +28,24 @@
 <h3>
 {ts}Tag Contact(s) (Remove){/ts}
 </h3>
-<dl>
- <dt></dt>
-  <dd>
-   <div class="listing-box">
-    {foreach from=$form.tag item="tag_val"}
-      <div class="{cycle values="odd-row,even-row"}">
-       {$tag_val.html}
-      </div>
-    {/foreach}
-   </div>
-    </dd>
-</dl>
- 
-<dl>
-<dt></dt><dd>{include file="CRM/Contact/Form/Task.tpl"}</dd>
-<dt></dt><dd>{$form.buttons.html}</dd>
-</dl>
+<table class="form-layout">
+    <tr>
+        <td>
+            <div class="listing-box">
+            {foreach from=$form.tag item="tag_val"}
+                <div class="{cycle values="odd-row,even-row"}">
+                {$tag_val.html}
+            {/foreach}
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            {include file="CRM/common/Tag.tpl"}
+        </td>
+    </tr>
+
+    <tr><td>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>
+    <tr><td>{$form.buttons.html}</td></tr>
+</table>
 </div>
