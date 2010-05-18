@@ -113,7 +113,12 @@ class CRM_Contact_Form_Task_AddToTag extends CRM_Contact_Form_Task {
         if ( CRM_Utils_Array::value( 'taglist', $params ) ) {
             foreach( $params['taglist'] as $val ) {
                 if ( $val ) {
-                    $tagList[ $val ] = 1;
+                    if ( is_numeric( $val ) ) {
+                        $tagList[ $val ] = 1;
+                    } else {
+                        list( $label, $tagID ) = explode( ',', $val );
+                        $tagList[ $tagID ] = 1;
+                    }
                 }
             }
         }
