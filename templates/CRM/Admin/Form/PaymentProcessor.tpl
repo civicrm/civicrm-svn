@@ -34,48 +34,58 @@
   </div>
 {else}
   <table class="form-layout-compressed">
-    <tr><td class="label">{$form.payment_processor_type.label}</td><td>{$form.payment_processor_type.html} {help id='proc-type'}</td></tr>
-    <tr><td class="label">{$form.name.label}</td><td>{$form.name.html}</td></tr>
-    <tr><td class="label">{$form.description.label}</td><td>{$form.description.html}</td></tr>
-    <tr><td></td><td>{$form.is_active.html}&nbsp;{$form.is_active.label}</td>
-    <tr><td></td><td>{$form.is_default.html}&nbsp;{$form.is_default.label}</td>
+    <tr class="crm-paymentProcessor-form-block-payment_processor_type">
+        <td class="label">{$form.payment_processor_type.label}</td><td>{$form.payment_processor_type.html} {help id='proc-type'}</td>
+    </tr>
+    <tr class="crm-paymentProcessor-form-block-name">
+        <td class="label">{$form.name.label}</td><td>{$form.name.html}</td>
+    </tr>
+    <tr class="crm-paymentProcessor-form-block-description">
+        <td class="label">{$form.description.label}</td><td>{$form.description.html}</td>
+    </tr>
+    <tr class="crm-paymentProcessor-form-block-is_active">
+        <td></td><td>{$form.is_active.html}&nbsp;{$form.is_active.label}</td>
+    </tr>
+    <tr class="crm-paymentProcessor-form-block-is_default">
+        <td></td><td>{$form.is_default.html}&nbsp;{$form.is_default.label}</td>
+    </tr>
   </table>
 <fieldset>
 <legend>{ts}Processor Details for Live Payments{/ts}</legend>
     <table class="form-layout-compressed">
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-user_name">
             <td class="label">{$form.user_name.label}</td><td>{$form.user_name.html} {help id=$ppType|cat:'-live-user-name'}</td>
         </tr>
 {if $form.password}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-password">
             <td class="label">{$form.password.label}</td><td>{$form.password.html} {help id=$ppType|cat:'-live-password'}</td>
         </tr>
 {/if}
 {if $form.signature}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-signature">
             <td class="label">{$form.signature.label}</td><td>{$form.signature.html} {help id=$ppType|cat:'-live-signature'}</td>
         </tr>
 {/if}
 {if $form.subject}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-subject">
             <td class="label">{$form.subject.label}</td><td>{$form.subject.html}</td>
         </tr>
 {/if}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-url_site">
             <td class="label">{$form.url_site.label}</td><td>{$form.url_site.html|crmReplace:class:huge} {help id=$ppType|cat:'-live-url-site'}</td>
         </tr>
 {if $form.url_api}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-url_api">
             <td class="label">{$form.url_api.label}</td><td>{$form.url_api.html|crmReplace:class:huge} {help id=$ppType|cat:'-live-url-api'}</td>
         </tr>
 {/if}
 {if $is_recur}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-url_recur">
             <td class="label">{$form.url_recur.label}</td><td>{$form.url_recur.html|crmReplace:class:huge} {help id=$ppType|cat:'-live-url-recur'}</td>
         </tr>
 {/if}
 {if $form.url_button}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-url_button">
             <td class="label">{$form.url_button.label}</td><td>{$form.url_button.html|crmReplace:class:huge} {help id=$ppType|cat:'-live-url-button'}</td>
         </tr>
 {/if}
@@ -85,47 +95,45 @@
 <fieldset>
 <legend>{ts}Processor Details for Test Payments{/ts}</legend>
     <table class="form-layout-compressed">                      
-        <tr><td class="label">{$form.test_user_name.label}</td><td>{$form.test_user_name.html} {help id=$ppType|cat:'-test-user-name'}</td></tr>
+        <tr class="crm-paymentProcessor-form-block-test_user_name">
+            <td class="label">{$form.test_user_name.label}</td><td>{$form.test_user_name.html} {help id=$ppType|cat:'-test-user-name'}</td></tr>
 {if $form.test_password}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-test_password">
             <td class="label">{$form.test_password.label}</td><td>{$form.test_password.html} {help id=$ppType|cat:'-test-password'}</td>
         </tr>
 {/if}
 {if $form.test_signature}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-test_signature">
             <td class="label">{$form.test_signature.label}</td><td>{$form.test_signature.html} {help id=$ppType|cat:'-test-signature'}</td>
         </tr>
 {/if}
 {if $form.test_subject}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-test_subject">
             <td class="label">{$form.test_subject.label}</td><td>{$form.test_subject.html}</td>
         </tr>
 {/if}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-test_url_site">
             <td class="label">{$form.test_url_site.label}</td><td>{$form.test_url_site.html|crmReplace:class:huge} {help id=$ppType|cat:'-test-url-site'}</td>
         </tr>
 {if $form.test_url_api}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-test_url_api">
             <td class="label">{$form.test_url_api.label}</td><td>{$form.test_url_api.html|crmReplace:class:huge} {help id=$ppType|cat:'-test-url-api'}</td>
         </tr>
 {/if}
 {if $is_recur}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-test_url_recur">
             <td class="label">{$form.test_url_recur.label}</td><td>{$form.test_url_recur.html|crmReplace:class:huge} {help id=$ppType|cat:'-test-url-recur'}</td>
         </tr>
 {/if}
 {if $form.test_url_button}
-        <tr>
+        <tr class="crm-paymentProcessor-form-block-test_url_button">
             <td class="label">{$form.test_url_button.label}</td><td>{$form.test_url_button.html|crmReplace:class:huge} {help id=$ppType|cat:'-test-url-button'}</td>
         </tr>
-{/if}
-    </table>
+{/if}  
 </fieldset>
-
 {/if} 
-
-   <div>{include file="CRM/common/formButtons.tpl"}</div>
-
+        <tr class="crm-submit-buttons"><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
+    </table>
 </fieldset>
 </div>
 

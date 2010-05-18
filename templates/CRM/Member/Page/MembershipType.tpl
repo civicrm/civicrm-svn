@@ -52,7 +52,7 @@
             <th class="hiddenElement"></th>
         </thead>
         {foreach from=$rows item=row}
-           <tr id="crm-membership_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class} crm-membership  {if NOT $row.is_active} disabled{/if}">
+           <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class} crm-membership  {if NOT $row.is_active} disabled{/if}">
     	        <td class="crm-membership-type_name" >{$row.name}</td>	
 	        <td class="crm-memberhip-period_type">{$row.period_type}</td>
 	        <td class="crm-membership-fixed_period_start_day">{$row.fixed_period_start_day}</td>
@@ -61,7 +61,7 @@
                 <td class="crm-membership-relationship_type_name">{$row.relationshipTypeName}</td> 
                 <td class="crm-membership-visibility">{$row.visibility}</td>
                 <td class="nowrap crm-membership-order">{$row.order}</td>
-    	        <td class="crm-membership-status_{$row.id} id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+    	        <td class="crm-membership-status_{$row.id}" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
     	        <td>{$row.action|replace:'xx':$row.id}</td>
                 <td class="order hiddenElement">{$row.weight}</td>
            </tr>

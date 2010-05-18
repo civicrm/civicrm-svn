@@ -58,7 +58,7 @@
         </tr>
         </thead>
         {foreach from=$rows item=row}
-        <tr id="crm-relationship_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if} crm-relationship">
+        <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if} crm-relationship">
             <td class="crm-relationship-label_a_b">{$row.label_a_b}</td>	
             <td class="crm-relationship-label_b_a">{$row.label_b_a}</td>	
             <td class="crm-relationship-contact_type_a_display"> 
