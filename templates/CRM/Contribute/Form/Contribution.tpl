@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting contribution *}
-<div class="crm-block crm-form-block"> 
+<div class="crm-block crm-form-block crm-contribution-form-block"> 
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {elseif $priceSetId}

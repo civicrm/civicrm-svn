@@ -24,7 +24,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-contribution-form-block">
     <fieldset><legend>{ts}Contribution Page{/ts}</legend>
     <table class="form-layout-compressed">
     <tr class="crm-contribution-form-block-intro_text">

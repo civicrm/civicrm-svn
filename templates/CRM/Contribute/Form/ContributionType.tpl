@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting contribution type  *}
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-contribution-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Contribution Type{/ts}{elseif $action eq 2}{ts}Edit Contribution Type{/ts}{else}{ts}Delete Contribution Type{/ts}{/if}</legend>
   
    {if $action eq 8}

@@ -27,7 +27,7 @@
   {include file="CRM/Contribute/Form/PCP/Delete.tpl"}
 {else}
   <fieldset><legend>{ts}Filter the list below by:{/ts}</legend>
-     <div id="pcp" class="form-item">
+     <div id="pcp" class="form-item crm-block crm-form-block crm-contribution-form-block">
          <table class="form-layout">
 	    <tr>
 		<td>{$form.status_id.label}<br />{$form.status_id.html}</td>

@@ -57,7 +57,7 @@ function clearAmountOther() {
 {include file="CRM/common/TrackingFields.tpl"}
 
 {capture assign='reqMark'}<span class="marker" title="{ts}This field is required.{/ts}">*</span>{/capture}
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-contribution-form-block">
     <div id="intro_text" class="section intro_text-section">
         {$intro_text}
     </div>

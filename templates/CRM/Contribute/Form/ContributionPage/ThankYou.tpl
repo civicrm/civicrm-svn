@@ -30,7 +30,7 @@
     <p>{ts}Use this form to configure the thank-you message and receipting options. Contributors will see a confirmation and thank-you page after whenever an online contribution is successfully processed. You provide the content and layout of the thank-you section below. You also control whether an electronic receipt is automatically emailed to each contributor - and can add a custom message to that receipt.{/ts}</p>
 </div>
  
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-contribution-form-block">
     <fieldset><legend>{ts}Thank-you Message and Receipting{/ts}</legend>
     <table class="form-layout-compressed">
     <tr class="crm-contribution-form-block-thankyou_title">

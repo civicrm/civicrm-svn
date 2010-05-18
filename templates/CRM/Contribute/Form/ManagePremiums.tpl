@@ -25,7 +25,7 @@
 *}
 {* this template is used for adding/editing/deleting premium  *}
 <fieldset><legend>{if $action eq 1}{ts}New Premium{/ts}{elseif $action eq 2}{ts}Edit Premium{/ts}{elseif $action eq 1024}{ts}Preview a Premium{/ts}{else}{ts}Delete Premium Product{/ts}{/if}</legend>
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-contribution-form-block">
    {if $action eq 8}
       <div class="messages status">
           <div class="icon inform-icon"></div>

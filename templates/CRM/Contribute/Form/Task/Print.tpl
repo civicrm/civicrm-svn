@@ -26,7 +26,7 @@
 <p>
 
 {if $rows } 
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-contribution-form-block">
      <span class="element-right">{$form.buttons.html}</span>
 </div>
 <div class="spacer"></div>
