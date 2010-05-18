@@ -822,8 +822,6 @@ as tbl ";
                     if ( CRM_Case_BAO_Case::accessCiviCase( ) ) {
                         $componentsIn[] = $compObj->componentID;
                         $includeCaseActivities = true;
-                    } else {
-                        $includeCaseActivities = false;
                     }
                 } else if ( CRM_Core_Permission::check( $componentPermission ) ) {
                     $componentsIn[] = $compObj->componentID;
