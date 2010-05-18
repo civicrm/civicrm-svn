@@ -34,28 +34,28 @@
     {else}
     <table class="form-layout-compressed">
         {if $gName eq 'custom_search'} 
-           <tr>
-             <td>{ts}Custom Search Path{/ts}</td>
+           <tr class="crm-admin-form-block-custom_search_path">
+             <td class="label">{ts}Custom Search Path{/ts}</td>
              <td>{$form.label.html}<br />
                 <span class="description">{ts}Enter the "class path" for this custom search here.{/ts} {docURL page="Custom Search Components"}
              </td>
            </tr>
         {elseif $gName eq 'from_email_address'} 
-           <tr>
-             <td>{ts}FROM Email Address{/ts} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_value' field='label' id=$id}{/if}</td>
+           <tr class="crm-admin-form-block-from_email_address">
+             <td class="label">{ts}FROM Email Address{/ts} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_value' field='label' id=$id}{/if}</td>
              <td>{$form.label.html}<br />
                 <span class="description">{ts}Include double-quotes (&quot;) around the name and angle-brackets (&lt; &gt;) around the email address.<br />EXAMPLE: <em>&quot;Client Services&quot; &lt;clientservices@example.org&gt;</em>{/ts}<span>
              </td>
            </tr>
         {elseif $gName eq 'redaction_rule'} 
-           <tr>
-             <td>{ts}Match Value or Expression{/ts} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_value' field='label' id=$id}{/if}</td>
+           <tr class="crm-admin-form-block-expression">
+             <td class="label">{ts}Match Value or Expression{/ts} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_value' field='label' id=$id}{/if}</td>
              <td>{$form.label.html}<br />
                 <span class="description">{ts}A "string value" or regular expression to be redacted (replaced).{/ts}</span>
              </td>
            </tr>
         {else} 
-           <tr>
+           <tr class="crm-admin-form-block-label"">
              <td class="label">{$form.label.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_value' field='label' id=$id}{/if}</td>
              <td class="html-adjust">{$form.label.html}<br />
                <span class="description">{ts}The option label is displayed to users.{/ts}</span>
@@ -63,13 +63,13 @@
            </tr>
         {/if}
     	{if $gName eq 'case_status'} 
-           <tr>
-	     <td>{$form.grouping.label}</td>
+           <tr class="crm-admin-form-block-grouping">
+	     <td class="label">{$form.grouping.label}</td>
              <td>{$form.grouping.html}</td>
 	{/if}
            </tr>
         {if $gName eq 'custom_search'}
-           <tr>
+           <tr class="crm-admin-form-block-search_title">
              <td class="label">{ts}Search Title{/ts}</td>
              <td>{$form.description.html}<br />
                <span class="description">{ts}This title is displayed to users in the Custom Search listings.{/ts}</span>
@@ -77,25 +77,25 @@
            </tr>
         {else}
            {if $gName eq 'redaction_rule'}
-              <tr>
-                 <td>{ts}Replacement (prefix){/ts}</td>
+              <tr class="crm-admin-form-block-replacement">
+                 <td class="label">{ts}Replacement (prefix){/ts}</td>
                  <td>{$form.value.html}<br />
                    <span class="description">{ts}Matched values are replaced with this prefix plus a unique code. EX: If replacement prefix for &quot;Vancouver&quot; is <em>city_</em>, occurrences will be replaced with <em>city_39121</em>.{/ts}</span>
                  </td>
               </tr>
             {else}
-              <tr>
-                <td>{$form.value.label}</td>
+              <tr class="crm-admin-form-block-value">
+                <td class="label">{$form.value.label}</td>
                 <td>{$form.value.html}</td>
               </tr>
             {/if}
             {if $form.filter.html} {* Filter property is only exposed for some option groups. *}
-              <tr>
-                <td>{$form.filter.label}</td>
+              <tr class="crm-admin-form-block-filter">
+                <td class="label">{$form.filter.label}</td>
                 <td>{$form.filter.html}</td>
               </tr>
             {/if} 
-              <tr>
+              <tr class="crm-admin-form-block-desciption">
                 <td class="label">{$form.description.label}</td>
                 <td>{$form.description.html}<br />
             {if $gName eq 'activity_type'}
@@ -105,40 +105,42 @@
             {/if}
         {/if}
         {if $gName eq 'participant_status'}
-              <tr>
-                <td>{$form.visibility_id.label}</td>
+              <tr class="crm-admin-form-block-visibility_id">
+                <td class="label">{$form.visibility_id.label}</td>
                 <td>{$form.visibility_id.html}</td>
               </tr>	
         {/if}
-              <tr>
+              <tr class="crm-admin-form-block-weight">
                 <td class="label">{$form.weight.label}</td>
                 <td>{$form.weight.html}</td>
               </tr>
         {if $form.component_id.html} {* Component ID is exposed for activity types if CiviCase is enabled. *}
-              <tr> 
-                <td>{$form.component_id.label}</td>
+              <tr class="crm-admin-form-block-component_id"> 
+                <td class="label">{$form.component_id.label}</td>
                 <td>{$form.component_id.html}</td>
               </tr>
         {/if}
-              <tr>
+              <tr class="crm-admin-form-block-is_active">
                 <td class="label">{$form.is_active.label}</td>
                 <td>{$form.is_active.html}</td>
               </tr>
         {if $showDefault}
-              <tr>
+              <tr class="crm-admin-form-block-is_default">
                 <td class="label">{$form.is_default.label}</td>
                 <td>{$form.is_default.html}</td>
               </tr>
         {/if}
         {if $showContactFilter}{* contactOptions is exposed for email/postal greeting and addressee types to set filter for contact types *}
-           <tr> 
+           <tr class="crm-admin-form-block-contactOptions"> 
              <td class="label">{$form.contactOptions.label}</td>
              <td>{$form.contactOptions.html}</td>
            </tr>
-        {/if}    
-   </table>
+        {/if}
+	  <tr>
+	     <td>&nbsp;</td>
+	     <td class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</td>
+	  </tr>     
+      </table>
     {/if}
-   <div class="spacer"></div>   
-   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-</fieldset>
+ </fieldset>
 </div>
