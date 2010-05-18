@@ -106,21 +106,17 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            {/if}
            {$activityTypeName}
         </legend>
-        <table class="form-layout">
-           {if $action eq 8 or $action eq 32768 }
+        {if $action eq 8 or $action eq 32768 }
             <div class="messages status"> 
-              <tr> 
-                 <td><div class="icon inform-icon"></div></td> 
-                 <td> 
-                 {if $action eq 8}
-                    {ts 1=$activityTypeName}Click Delete to move this &quot;%1&quot; activity to the Trash.{/ts}
-                 {else}
-                    {ts 1=$activityTypeName}Click Restore to retrieve this &quot;%1&quot; activity from the Trash.{/ts}
-                 {/if}  
-                 </td> 
-              </tr> 
-            </div> 
-           {else}
+              <div class="icon inform-icon"></div> &nbsp;
+              {if $action eq 8}
+                 {ts 1=$activityTypeName}Click Delete to move this &quot;%1&quot; activity to the Trash.{/ts}
+              {else}
+                 {ts 1=$activityTypeName}Click Restore to retrieve this &quot;%1&quot; activity from the Trash.{/ts}
+              {/if}  
+            </div><br /> 
+        {else}
+        <table class="form-layout">
             {if $activityTypeDescription }
            <tr>
               <div id="help">{$activityTypeDescription}</div>
