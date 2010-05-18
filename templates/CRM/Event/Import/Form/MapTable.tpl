@@ -79,10 +79,14 @@
     	{/if}
     	<span>{$form.saveMapping.html} &nbsp;&nbsp; {$form.saveMapping.label}</span>
     	<div id="saveDetails" class="form-item">
-    	      <dl>
-    		   <dt>{$form.saveMappingName.label}</dt><dd>{$form.saveMappingName.html}</dd>
-    		   <dt>{$form.saveMappingDesc.label}</dt><dd>{$form.saveMappingDesc.html}</dd>
-    	      </dl>
+	   <table class="form-layout">
+    	      <tr class="crm-participant-saveMappingName">
+    		   <td class="label">{$form.saveMappingName.label}</td><td>{$form.saveMappingName.html}</td>
+	      </tr>
+	      <tr class="crm-participant-saveMappingDesc">	   
+    		   <td class="label">{$form.saveMappingDesc.label}</td><td>{$form.saveMappingDesc.html}</td>
+    	      </tr>
+	   </table>
     	</div>
     	<script type="text/javascript">
              {if $mappingDetailsError }
