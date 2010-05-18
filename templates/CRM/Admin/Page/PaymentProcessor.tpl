@@ -48,12 +48,12 @@
             <th ></th>
         </tr>
         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td>{$row.name}</td>	
-	        <td>{$row.payment_processor_type}</td>	
-            	<td>{$row.description}</td>
-	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-            	<td>{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
+        <tr id="row_{$row.id}" class="crm-paymentProcessor {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+	        <td class="crm-paymentProcessor-name">{$row.name}</td>	
+	        <td class="crm-paymentProcessor-payment_processor_type">{$row.payment_processor_type}</td>	
+            <td class="crm-paymentProcessor-description">{$row.description}</td>
+	        <td id="row_{$row.id}_status" class="crm-paymentProcessor-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+            <td class="crm-paymentProcessor-is_default">{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
