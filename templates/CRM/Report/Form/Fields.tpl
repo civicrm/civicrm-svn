@@ -49,7 +49,7 @@
                 <div id="instanceForm">
                     {include file="CRM/Report/Form/Instance.tpl"}
                     {assign var=save value="_qf_"|cat:$form.formName|cat:"_submit_save"}
-                        <div>
+                        <div class="crm-submit-buttons">
                             {$form.$save.html}
                         </div>
                 </div>

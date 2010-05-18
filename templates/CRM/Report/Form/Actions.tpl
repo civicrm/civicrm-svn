@@ -26,7 +26,7 @@
 {if !$printOnly} {* NO print section starts *}
 
     {if $updateReportButton}
-        <div id="update-button" class="section-hidden-border" style="margin:-5px 0 5px 5px;">        
+        <div id="update-button" class="section-hidden-border crm-submit-buttons" style="margin:-5px 0 5px 5px;">        
             &nbsp;&nbsp;{$form.$save.html}            
         </div>
     {/if}
