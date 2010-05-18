@@ -28,26 +28,37 @@
 <h3>{if $action eq 1}{ts}New Tag {if $isTagSet}Set{/if}{/ts}{elseif $action eq 2}{ts}Edit Tag {if $isTagSet}Set{/if}{/ts}{else}{ts}Delete Tag {if $isTagSet}Set{/if}{/ts}{/if}</h3>
     {if $action eq 1 or $action eq 2 }
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-    <dl>
-        <dt>{$form.name.label}</dt><dd>{$form.name.html}</dd>
-        <dt>{$form.description.label}</dt><dd>{$form.description.html}</dd>
-        {if $form.parent_id.html}
-	    <dt>{$form.parent_id.label}</dt><dd>{$form.parent_id.html}</dd>
-	    {/if}
-	    <dt>{$form.used_for.label}</dt>
-	        <dd>{$form.used_for.html}
-	            <br />
-	            <span class="description">
-	                {if $is_parent}{ts}You can change the types of records which this tag can be used for by editing the 'Parent' tag.{/ts}
+    <table class="form-layout-compressed">
+       <tr class="crm-tag-form-block-label">
+          <td class="label">{$form.name.label}</td>
+          <td>{$form.name.html}</td>
+       </tr>
+       <tr class="crm-tag-form-block-description">
+          <td class="label">{$form.description.label}</td>
+          <td>{$form.description.html}</td>
+       </tr>
+         {if $form.parent_id.html}
+       <tr class="crm-tag-form-block-parent_id">
+ 	  <td class="label">{$form.parent_id.label}</td>
+          <td>{$form.parent_id.html}</td>
+       </tr>
+	 {/if}
+       <tr class="crm-tag-form-block-used_for">	  
+          <td class="label">{$form.used_for.label}</td>
+	  <td>{$form.used_for.html} <br />
+	        <span class="description">
+	               {if $is_parent}{ts}You can change the types of records which this tag can be used for by editing the 'Parent' tag.{/ts}
 	                {else}{ts}What types of record(s) can this tag be used for?{/ts}
 	                {/if}
 	            </span>
-	        </dd>
-        <dt>{$form.is_reserved.label}</dt>
-            <dd>{$form.is_reserved.html}
-                <br /><span class="description">{ts}Reserved tags can not be deleted. Users with 'administer reserved tags' permission can set or unset the reserved flag. You must uncheck 'Reserved' (and delete any child tags) before you can delete a tag.{/ts} 
-            </dd>
-        </dl>
+	        </td>
+        </tr>
+        <tr class="crm-tag-form-block-is_reserved">
+           <td class="label">{$form.is_reserved.label}</td>
+           <td>{$form.is_reserved.html} <br /><span class="description">{ts}Reserved tags can not be deleted. Users with 'administer reserved tags' permission can set or unset the reserved flag. You must uncheck 'Reserved' (and delete any child tags) before you can delete a tag.{/ts} 
+           </td>
+        </tr>
+    </table>
         {if $parent_tags|@count > 0}
         <table class="form-layout-compressed">
             <tr><td><label>{ts}Remove Parent?{/ts}</label></td></tr>

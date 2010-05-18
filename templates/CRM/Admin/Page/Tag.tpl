@@ -66,13 +66,13 @@
                 </thead>
                 {foreach from=$rows item=row key=id }
                 <tr class="{cycle values="odd-row,even-row"} {$row.class}">
-                    <td>{$row.name}</td>
-                    <td>{$row.id}</td>	
-                    <td>{$row.description} </td>
-                    <td>{$row.parent} {if $row.parent_id}({$row.parent_id}){/if}</td>
+                    <td class="crm-tag-name">{$row.name}</td>
+                    <td class="crm-tag-id">{$row.id}</td>	
+                    <td class="crm-tag-description">{$row.description} </td>
+                    <td class="crm-tag-parent">{$row.parent} {if $row.parent_id}({$row.parent_id}){/if}</td>
         	        <td>{$row.used_for}</td>
-                    <td>{if $row.is_tagset}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Tag Set{/ts}" />{/if}</td>
-                    <td>{if $row.is_reserved}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
+                    <td class="crm-tag-is_tagset">{if $row.is_tagset}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Tag Set{/ts}" />{/if}</td>
+                    <td class="crm-tag-is_reserved">{if $row.is_reserved}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
                     <td>{$row.action|replace:'xx':$row.id}</td>
                 </tr>
                 {/foreach}
