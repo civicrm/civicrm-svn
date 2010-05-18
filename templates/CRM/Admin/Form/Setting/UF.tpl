@@ -23,23 +23,26 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="form-item crm-block crm-form-block crm-uf-form-block">
 <div id="help">
     {ts}These settings define the CMS variables that are used with CiviCRM.{/ts}
 </div>
 <div class="form-item">
 <fieldset><legend>{ts}CMS Settings{/ts}</legend>
-
-        <dl>
-            <dt>{$form.userFrameworkVersion.label}</dt><dd>{$form.userFrameworkVersion.html}</dd>
-            <dt>{$form.userFrameworkUsersTableName.label}</dt><dd>{$form.userFrameworkUsersTableName.html}</dd>
-        </dl>
-        <dl>
-            <dt></dt><dd>{include file="CRM/common/formButtons.tpl"}</dd>
-        </dl>
+      <table class="form-layout-compressed">
+         <tr class="crm-uf-form-block-userFrameworkVersion">
+            <td class="label">{$form.userFrameworkVersion.label}</td>
+            <td>{$form.userFrameworkVersion.html}</td>
+         </tr>
+         <tr class="crm-uf-form-block-userFrameworkUsersTableName">
+            <td class="label">{$form.userFrameworkUsersTableName.label}</td>
+            <td>{$form.userFrameworkUsersTableName.html}</td>
+        </tr>
+        </table>
+            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 <div class="spacer"></div>
 </fieldset>
 </div>
-
 {if $tablePrefixes}
 <div class="form-item">
 <fieldset>
@@ -49,3 +52,4 @@
 </fieldset>
 </div>
 {/if}
+</div>

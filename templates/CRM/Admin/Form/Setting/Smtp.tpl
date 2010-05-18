@@ -23,70 +23,76 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="form-item crm-block crm-form-block crm-smtp-form-block">
 <div id="help">
     {ts}CiviCRM offers several options to send emails. The default option should work fine on linux systems. If you are using windows, you probably need to enter settings for your SMTP/Sendmail server. You can send a test email to check your settings by clicking "Save and Send Test Email". If you're unsure of the correct values, check with your system administrator, ISP or hosting provider. If you do not want users to send outbound mail from CiviCRM, select "Disable Outbound Email". NOTE: If you disable outbound email, and you are using Online Contribution pages or online Event Registration - you will need to disable automated receipts and registration confirmations.{/ts}
 </div>
 <div class="form-item">
     <fieldset>
         <legend>{ts}Settings - Outbound Email{/ts}</legend>
-        <dl>
-            <dt>{$form.outBound_option.label}</dt>
-            <dd>{$form.outBound_option.html}</dd>
-        </dl>
-        <div id="bySMTP" class="mailoption">
+        <table class="form-layout-compressed">
+           <tr class="crm-smtp-form-block-outBound_option">
+              <td class="label">{$form.outBound_option.label}</td>
+              <td>{$form.outBound_option.html}</td>
+           </tr>
+        </table>
+            <div id="bySMTP" class="mailoption">
             <fieldset>
                 <legend>{ts}SMTP Configuration{/ts}</legend>
-                <dl>
-                    <dt>{$form.smtpServer.label}</dt>
-                    <dd>{$form.smtpServer.html}</dd>
-                    
-                    <dt>&nbsp;</dt>
-                    <dd class="description">{ts}Enter the SMTP server (machine) name. EXAMPLE: smtp.example.com{/ts}</dd>
-                    
-                    <dt>{$form.smtpPort.label}</dt>
-                    <dd>{$form.smtpPort.html}</dd>
-                    
-                    <dt>&nbsp;</dt>
-                    <dd class="description">{ts}The standard SMTP port is 25. You should only change that value if your SMTP server is running on a non-standard port.{/ts}</dd>
-                    
-                    <dt>{$form.smtpAuth.label}</dt>
-                    <dd>{$form.smtpAuth.html}</dd>
-                    
-                    <dt>&nbsp;</dt>
-                    <dd class="description">{ts}Does your SMTP server require authentication (user name + password)?{/ts}</dd>
-                    
-                    <dt>{$form.smtpUsername.label}</dt>
-                    <dd>{$form.smtpUsername.html}</dd>
-                    
-                    <dt>{$form.smtpPassword.label}</dt>
-                    <dd>{$form.smtpPassword.html}</dd>
-                    
-                    <dt>&nbsp;</dt>
-                    <dd class="description">{ts}If your SMTP server requires authentication, enter your Username and Password here.{/ts}</dd>
-                </dl>
-                <div class="spacer"></div>
-            </fieldset>
+                <table class="form-layout-compressed">
+                    <tr class="crm-smtp-form-block-smtpServer">
+                       <td class="label">{$form.smtpServer.label}</td>
+                       <td>{$form.smtpServer.html}<br  />
+                            <span class="description">{ts}Enter the SMTP server (machine) name. EXAMPLE: smtp.example.com{/ts}</span>
+                       </td>
+                    <tr class="crm-smtp-form-block-smtpPort">
+                       <td class="label">{$form.smtpPort.label}</td>
+                       <td>{$form.smtpPort.html}<br />
+                           <span class="description">{ts}The standard SMTP port is 25. You should only change that value if your SMTP server is running on a non-standard port.{/ts}</span>
+                       </td>
+                    </tr>
+                    <tr class="crm-smtp-form-block-smtpAuth">
+                       <td class="label">{$form.smtpAuth.label}</td>
+                       <td>{$form.smtpAuth.html}<br />
+                         <span class="description">{ts}Does your SMTP server require authentication (user name + password)?{/ts}</span>
+                       </td>
+                    </tr>
+                    <tr class="crm-smtp-form-block-smtpUsername"> 
+                       <td class="label">{$form.smtpUsername.label}</td>
+                       <td>{$form.smtpUsername.html}</td>
+                    </tr>
+                    <tr class="crm-smtp-form-block-smtpPassword"> 
+                       <td class="label">{$form.smtpPassword.label}</td>
+                       <td>{$form.smtpPassword.html}<br />                  
+                           <span class="description">{ts}If your SMTP server requires authentication, enter your Username and Password here.{/ts}</span>
+                       </td>
+                    </tr>
+                    <div class="spacer"></div>
+              </fieldset> 
+           </table>
         </div>
         <div id="bySendmail" class="mailoption">
             <fieldset>
                 <legend>{ts}Sendmail Configuration{/ts}</legend>
-                <dl>
-                    <dt>{$form.sendmail_path.label}</dt>
-                    <dd>{$form.sendmail_path.html}</dd>
-                    
-                    <dt>&nbsp;</dt>
-                    <dd class="description">{ts}Enter the Sendmail Path. EXAMPLE: /usr/sbin/sendmail{/ts}</dd>
-                    
-                    <dt>{$form.sendmail_args.label}</dt>
-                    <dd>{$form.sendmail_args.html}</dd>
-                </dl>
-            <div class="spacer"></div>
+                   <table class="form-layout-compressed">
+                     <tr class="crm-smtp-form-block-sendmail_path">           
+                        <td class="label">{$form.sendmail_path.label}</td>
+                        <td>{$form.sendmail_path.html}<br />
+                            <span class="description">{ts}Enter the Sendmail Path. EXAMPLE: /usr/sbin/sendmail{/ts}</span>
+                        </td>
+                     </tr>
+                     <tr class="crm-smtp-form-block-sendmail_args"> 
+                        <td class="label">{$form.sendmail_args.label}</td>
+                        <td>{$form.sendmail_args.html}</td>
+                     </tr>
+                    </table>
+                     <div class="spacer"></div>
             </fieldset>
+          
         </div>
-        <dl>
-            <dt></dt>
-            <dd>{$form.buttons.html}&nbsp;&nbsp;&nbsp;&nbsp;{$form._qf_Smtp_refresh_test.html}</dd>
-        </dl>    
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}
+         &nbsp;&nbsp;&nbsp;{$form._qf_Smtp_refresh_test.html}</div>
+       
     </fieldset>
 </div>    
 
