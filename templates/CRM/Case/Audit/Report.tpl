@@ -45,11 +45,11 @@
     	<th class="reports-header">{ts}Case ID{/ts}</th>
     </tr>
     <tr>
-        <td>{$case.clientName}</td>
-        <td>{$case.caseType}</td>
-        <td>{$case.status}</td>
-        <td>{$case.start_date}</td>
-        <td>{$caseId}</td> 
+        <td class="crm-case-form-block-clientName">{$case.clientName}</td>
+        <td class="crm-case-form-block-caseType">{$case.caseType}</td>
+        <td class="crm-case-form-block-status">{$case.status}</td>
+        <td class="crm-case-form-block-start_date">{$case.start_date}</td>
+        <td class="crm-case-form-block-{$caseId}">{$caseId}</td> 
     </tr>
 </table>
 <h2>{ts}Case Roles{/ts}</h2>
@@ -63,10 +63,10 @@
 
     {foreach from=$caseRelationships item=row key=relId}
        <tr>
-          <td>{$row.relation}</td>
-          <td>{$row.name}</td>
-          <td>{$row.phone}</td>
-          <td>{$row.email}</td> 
+          <td class="crm-case-form-block-relation">{$row.relation}</td>
+          <td class="crm-case-form-block-name">{$row.name}</td>
+          <td class="crm-case-form-block-phone">{$row.phone}</td>
+          <td class="crm-case-form-block-email">{$row.email}</td> 
        </tr>
     {/foreach}
     {foreach from=$caseRoles item=relName key=relTypeID}
@@ -79,10 +79,10 @@
            </tr>
          {else}
            <tr>
-               <td>{$relName.role}</td>
-               <td>{$relName.sort_name}</td>
-               <td>{$relName.phone}</td>
-               <td>{$relName.email}</td>
+               <td class="crm-case-form-block-role">{$relName.role}</td>
+               <td class="crm-case-form-block-sort_name">{$relName.sort_name}</td>
+               <td class="crm-case-form-block-phone">{$relName.phone}</td>
+               <td class="crm-case-form-block-email">{$relName.email}</td>
            </tr> 
          {/if}
 	{/foreach}
@@ -99,10 +99,10 @@
     	</tr>
         {foreach from=$otherRelationships item=row key=relId}
         <tr>
-            <td>{$row.relation}</td>
-            <td>{$row.name}</td>
-            <td>{$row.phone}</td>
-            <td>{$row.email}</td>
+            <td class="crm-case-form-block-relation">{$row.relation}</td>
+            <td class="crm-case-form-block-name">{$row.name}</td>
+            <td class="crm-case-form-block-phone">{$row.phone}</td>
+            <td class="crm-case-form-block-email">{$row.email}</td>
         </tr>
         {/foreach}
     </table>
@@ -118,9 +118,9 @@
     	</tr>
         {foreach from=$globalRelationships item=row key=relId}
         <tr>
-            <td>{$row.sort_name}</td>
-            <td>{$row.phone}</td>
-            <td>{$row.email}</td>
+            <td class="crm-case-form-block-sort_name">{$row.sort_name}</td>
+            <td class="crm-case-form-block-phone">{$row.phone}</td>
+            <td class="crm-case-form-block-email">{$row.email}</td>
         </tr>
 	    {/foreach}
     </table>
@@ -130,7 +130,7 @@
 {foreach from=$activities item=activity key=key}
   <table  class ="report-layout">
        {foreach from=$activity item=field name=fieldloop}
-           <tr>
+           <tr class="crm-case-form-block-{$field.label}">
              <th scope="row" class="label">{$field.label|escape}</th>
              {if $field.label eq 'Activity Type' or $field.label eq 'Status'}
                 <td class="bold">{$field.value|escape}</th> 

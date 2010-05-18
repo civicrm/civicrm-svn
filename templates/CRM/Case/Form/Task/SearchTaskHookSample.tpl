@@ -16,9 +16,9 @@
 
   {foreach from=$rows item=row}
     <tr class="{cycle values="odd-row,even-row"}">
-        <td>{$row.display_name}</td>
-        <td>{$row.start_date}</td>
-        <td>{$row.status}</td>
+        <td class="crm-case-display_name">{$row.display_name}</td>
+        <td class="crm-case-start_date">{$row.start_date}</td>
+        <td class="crm-case-status">{$row.status}</td>
     </tr>
   {/foreach}
 </table>
@@ -30,11 +30,7 @@
 
 {else}
    <div class="messages status">
-      <dl>
-          <dt><div class="icon inform-icon"></div></dt>
-          <dd>
-            {ts}There are no records selected.{/ts}
-          </dd>
-      </dl>
-   </div>
+      <div class="icon inform-icon"></div>
+          {ts}There are no records selected.{/ts}
+      </div>
 {/if}

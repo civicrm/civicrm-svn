@@ -29,13 +29,13 @@
 </div>
 <div class="crm-form-block">
 <table class="form-layout-compressed">
-    <tr>
-        <td>
+    <tr class="crm-case-form-block-change_client_id">
+        <td class="label">
             {$form.change_client_id.label}
         </td>
-	    <td id='client'>
-	        {$form.change_client_id.html|crmReplace:class:big}
-	    </td>
+	<td id='client'>
+	    {$form.change_client_id.html|crmReplace:class:big}
+	</td>
     </tr>
     <tr>
         <td></td>
@@ -43,7 +43,7 @@
             <span class="crm-button crm-button-type-submit">&nbsp;{$form._qf_EditClient_cancel_edit_client.html}</span>
 	</td>
     </tr>
- </table>
+</table>
 </div>
 
 {literal}
