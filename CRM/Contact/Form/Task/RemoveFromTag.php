@@ -119,7 +119,11 @@ class CRM_Contact_Form_Task_RemoveFromTag extends CRM_Contact_Form_Task {
                 }
             }
         }
+        $tagSets = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact', false, true);
         
+        foreach ( $tagSets as $key => $value ) {
+            $this->_tags[$key] = $value['name'];
+        }
         // merge contact and taglist tags
         $allTags = CRM_Utils_Array::crmArrayMerge( $contactTags, $tagList );
 
