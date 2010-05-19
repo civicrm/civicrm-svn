@@ -72,6 +72,9 @@
             <th id="end_date">{ts}Ends{/ts}</th>
 	        <th>{ts}Active?{/ts}</th>
 	        <th></th>
+		<th></th>
+		<th></th>
+		<th></th>
 		<th class="hiddenElement"></th>
 		<th class="hiddenElement"></th>	
          </tr>
@@ -85,7 +88,33 @@
             <td class="crm-event-start_date">{$row.start_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
             <td class="crm-event-end_date">{$row.end_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
             <td class="crm-event_status" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-            <td class="crm-event-action">{$row.action|replace:'xx':$row.id}</td>
+	    <td class="crm-event-action">
+	    <span id="{$row.id}" class="btn-slide">{ts}Configure{/ts}
+	    	<ul class="panel" id="panel_{$row.id}">
+		    <li><a title="Info and Settings" class="action-item" href="/civicrm/event/manage?reset=1&amp;action=update&amp;id={$row.id}&subPage=EventInfo">{ts}Info and Settings{/ts}</a></li>
+		    <li><a title="Location" class="action-item {if NOT $row.is_show_location} disabled{/if}" href="/civicrm/event/manage?reset=1&amp;action=update&amp;id={$row.id}&subPage=Location">{ts}Location{/ts}</a></li>
+		    <li><a title="Fees" class="action-item {if NOT $row.is_monetary} disabled{/if}" href="/civicrm/event/manage?reset=1&amp;action=update&amp;id={$row.id}&subPage=Fee">{ts}Fees{/ts}</a></li>
+		    <li><a title="Online Registration" class="action-item {if NOT $row.is_online_registration} disabled{/if}" href="/civicrm/event/manage?reset=1&amp;action=update&amp;id={$row.id}&subPage=Registration">{ts}Online Registration{/ts}</a></li>
+		    <li><a title="Tell a Friend" class="action-item" href="/civicrm/event/manage?reset=1&amp;action=update&amp;id={$row.id}&subPage=Friend">{ts}Tell a Friend{/ts}</a></li>
+	    </span>
+	    </td>
+	    <td class="crm-event-action">
+	    <span id="{$row.id}" class="btn-slide">{ts}Event Links{/ts}
+	    	<ul class="panel" id="panel_{$row.id}">
+		    <li><a title="Event Info" class="action-item" href="/civicrm/event/info?reset=1&amp;id={$row.id}">{ts}Event Info{/ts}</a></li>
+		    <li><a title="Registration (Test-drive)" class="action-item" href="/civicrm/event/register?reset=1&amp;action=preview&amp;id={$row.id}">{ts}Registration (Test-drive){/ts}</a></li>
+		    <li><a title="Registration (Live)" class="action-item" href="/civicrm/event/register?reset=1&amp;id={$row.id}">{ts}Registration (Live){/ts}</a></li>
+	    </span>
+	    </td>
+	    <td class="crm-event-action">
+	    <span id="{$row.id}" class="btn-slide">{ts}Participants{/ts}
+	    	<ul class="panel" id="panel_{$row.id}">
+		    <li><a title="Counted" class="action-item" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$row.id}&amp;status=true">{ts}Counted{/ts}</a></li>
+		    <li><a title="Not Counted" class="action-item" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$row.id}&amp;status=false">{ts}Not Counted{/ts}</a></li>
+		    <li><a title="Public Participant Listing" class="action-item" href="/civicrm/event/participant?reset=1&amp;id={$row.id}">{ts}Public Participant Listing{/ts}</a></li>
+	    </span>
+	    </td>
+	    <td class="crm-event-action">{$row.action|replace:'xx':$row.id}</td>
             <td class="crm-event-start_date hiddenElement">{$row.start_date|crmDate}</td>
             <td class="crm-event-end_date hiddenElement">{$row.end_date|crmDate}</td>
           </tr>

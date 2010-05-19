@@ -83,12 +83,6 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
                                                                           'qs'    => 'reset=1&action=preview&id=%%id%%',
                                                                           'title' => ts('Preview') 
                                                                           ),
-                                        CRM_Core_Action::FOLLOWUP => array(
-                                                                           'name'  => ts('Live Page'),
-                                                                           'url'   => 'civicrm/event/info',
-                                                                           'qs'    => 'reset=1&id=%%id%%',
-                                                                           'title' => ts('FollowUp'),
-                                                                           ),
                                         CRM_Core_Action::DISABLE => array(
                                                                           'name'  => ts('Disable'),
                                                                           'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Event_BAO_Event' . '\',\'' . 'enable-disable' . '\' );"',
@@ -109,7 +103,7 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
                                                                           'title' => ts('Delete Event') 
                                                                           ),
                                         CRM_Core_Action::COPY     => array(
-                                                                           'name'  => ts('Copy Event'),
+                                                                           'name'  => ts('Copy'),
                                                                            'url'   => CRM_Utils_System::currentPath( ), 
                                                                            'qs'    => 'reset=1&action=copy&id=%%id%%',
                                                                            'extra' => 'onclick = "return confirm(\'' . $copyExtra . '\');"',
@@ -255,7 +249,8 @@ ORDER BY start_date desc
                 }
             
                 $manageEvent[$dao->id]['action'] = CRM_Core_Action::formLink(self::links(), $action, 
-                                                                             array('id' => $dao->id));
+                                                                             array('id' => $dao->id),
+                                                                             true);
 
                 $params = array( 'entity_id' => $dao->id, 'entity_table' => 'civicrm_event');
                 require_once 'CRM/Core/BAO/Location.php';
