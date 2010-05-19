@@ -50,13 +50,13 @@
       {counter start=0 skip=1 print=false}
       {foreach from=$rows item=row}
       <tr id="crm-mailing_{$row.id}" class="{cycle values="odd-row,even-row"} crm-mailing crm-mailing_status-{$row.status}">
-        <td class="crm-mailing_name">{$row.name}</td>
-        <td class="crm-mailing_status crm-mailing_status-{$row.status}">{$row.status}</td>
-        <td class="crm-mailing_created_by"><a href ={crmURL p='civicrm/contact/view' q="reset=1&cid="}{$row.created_id}>{$row.created_by}</a></td>
-        <td class="crm-mailing_scheduled_by"><a href ={crmURL p='civicrm/contact/view' q="reset=1&cid="}{$row.scheduled_id}>{$row.scheduled_by}</a></td>	
-        <td class="crm-mailing_scheduled">{$row.scheduled}</td>
-        <td class="crm-mailing_start">{$row.start}</td>
-        <td class="crm-mailing_end">{$row.end}</td>
+        <td class="crm-mailing-name">{$row.name}</td>
+        <td class="crm-mailing-status crm-mailing_status-{$row.status}">{$row.status}</td>
+        <td class="crm-mailing-created_by"><a href ={crmURL p='civicrm/contact/view' q="reset=1&cid="}{$row.created_id}>{$row.created_by}</a></td>
+        <td class="crm-mailing-scheduled_by"><a href ={crmURL p='civicrm/contact/view' q="reset=1&cid="}{$row.scheduled_id}>{$row.scheduled_by}</a></td>	
+        <td class="crm-mailing-scheduled">{$row.scheduled}</td>
+        <td class="crm-mailing-start">{$row.start}</td>
+        <td class="crm-mailing-end">{$row.end}</td>
         <td>{$row.action|replace:'xx':$row.id}</td>
       </tr>
       {/foreach}
