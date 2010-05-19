@@ -45,8 +45,8 @@
   <fieldset><legend>{ts}Responding{/ts}</legend> 
     <table class="form-layout">
         <tr class="crm-mailing-form-block-override_verp"><td class="label">{$form.override_verp.label}</td>
-            <td>{$form.override_verp.html} {help id="id-verp-override"}
-                <span class="description">{ts}...{/ts}</span>
+            <td>{$form.override_verp.html}
+                <span class="description">{ts}Automatically generate VERP address for the Reply-To header (making replies to this mailing go through CiviMail).{/ts}</span>
             </td>
         </tr>
         <tr class="crm-mailing-form-block-forward_replies"><td class="label ">{$form.forward_replies.label}</td>

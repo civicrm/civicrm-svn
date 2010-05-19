@@ -278,7 +278,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
     public function postProcess() 
     {
         $params = $ids = array( );
-        $uploadParams  = array( 'header_id', 'footer_id', 'subject', 'from_name', 'from_email', 'override_verp' );
+        $uploadParams  = array( 'header_id', 'footer_id', 'subject', 'from_name', 'from_email' );
         $fileType      = array( 'textFile', 'htmlFile' );
 
         $formValues    = $this->controller->exportValues( $this->_name );
