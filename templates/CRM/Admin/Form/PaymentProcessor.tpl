@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* This template is used for adding/configuring Payment Processors used by a particular site/domain.  *}
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-paymentProcessor-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Payment Processor{/ts}{elseif $action eq 2}{ts}Edit Payment Processor{/ts}{else}{ts}Delete Payment Processor{/ts}{/if}</legend>
 
 {if $action eq 8}

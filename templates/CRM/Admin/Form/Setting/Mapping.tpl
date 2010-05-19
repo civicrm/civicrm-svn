@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-mapping-form-block">
+<div class="crm-block crm-form-block crm-map-form-block">
 <div id="help">
     {ts}CiviCRM includes plugins for Google and Yahoo mapping services which allow your users to display contact addresses on a map. To enable this feature, select your mapping provider and obtain a 'key' for your site from that provider.{/ts} {help id='map-key'}
 </div>

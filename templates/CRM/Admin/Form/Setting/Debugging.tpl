@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item crm-block crm-form-block">
+<div class="form-item crm-block crm-form-block crm-debugging-form-block">
 <fieldset><legend>{ts}Debugging and Error Handling{/ts}</legend>
     
         <table>

@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting activity type  *}
-<div class="form-item crm-block crm-form-block">
+<div class="form-item crm-block crm-form-block crm-optionGroup-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Option Group{/ts}{elseif $action eq 2}{ts}Edit Option Group{/ts}{else}{ts}Delete Option Group{/ts}{/if}</legend>
   
    {if $action eq 8}
