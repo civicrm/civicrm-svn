@@ -64,7 +64,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             return;
         }
 
-        $sortName = "";
+        $sortName   = $displayName = "";
         $firstName  = CRM_Utils_Array::value('first_name'   , $params, '');
         $middleName = CRM_Utils_Array::value('middle_name'  , $params, '');
         $lastName   = CRM_Utils_Array::value('last_name'    , $params, '');
@@ -174,23 +174,30 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
             }
             require_once 'CRM/Utils/Address.php';
             require_once 'CRM/Core/BAO/Preferences.php';
+            
+            //build the sort name.
             $format = CRM_Core_BAO_Preferences::value( 'sort_name_format' );
             $format = str_replace( 'contact.', '', $format );
-            $contact->sort_name = CRM_Utils_Address::format( $params, $format,
-                                                             false, false, true, $tokenFields );
-            $contact->sort_name = trim( $contact->sort_name );
-
+            $sortName = CRM_Utils_Address::format( $params, $format,
+                                                   false, false, true, $tokenFields );
+            $sortName = trim( $sortName );
+            
+            //build the display name.
             $format = CRM_Core_BAO_Preferences::value( 'display_name_format' );
             $format = str_replace( 'contact.', '', $format );
-            $display_name = CRM_Utils_Address::format( $params, $format,
-                                                       false, false, true, $tokenFields );
+            $displayName = CRM_Utils_Address::format( $params, $format,
+                                                      false, false, true, $tokenFields );
+            $displayName = trim( $displayName );
         }
-
-        if (isset( $display_name ) &&
-            trim( $display_name ) ) {
-            $contact->display_name = trim( $display_name );
+        
+        if ( $sortName ) {
+            $contact->sort_name = $sortName;
         }
-
+        
+        if ( $displayName ) {
+            $contact->display_name = $displayName;
+        }
+        
         if ( CRM_Utils_Array::value( 'email', $params ) && is_array( $params['email'] ) ) {
             foreach ($params['email'] as $emailBlock) {
                 if ( isset( $emailBlock['is_primary'] ) ) {
