@@ -181,7 +181,6 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
      */
     function browse()
     {
-
         $this->_sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter',
                                                                'String',
                                                                $this );
@@ -211,6 +210,7 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
         $whereClause .= ' AND (is_template = 0 OR is_template IS NULL)'; // because is_template != 1 would be to simple
 
         $this->pager( $whereClause, $params );
+
         list( $offset, $rowCount ) = $this->_pager->getOffsetAndRowCount( );
 
         // get all custom groups sorted by weight
@@ -247,13 +247,20 @@ ORDER BY start_date desc
                     $action -= CRM_Core_Action::UPDATE; 
                 }
             
-                $manageEvent[$dao->id]['action'] = CRM_Core_Action::formLink(self::links(), $action, 
-                                                                             array('id' => $dao->id),
-                                                                             true);
+                $manageEvent[$dao->id]['action'] = CRM_Core_Action::formLink( self::links(), 
+                                                                              $action, 
+                                                                              array( 'id' => $dao->id ),
+                                                                              true );
 
-                $params = array( 'entity_id' => $dao->id, 'entity_table' => 'civicrm_event');
+                $params = array( 'entity_id'    => $dao->id, 
+                                 'entity_table' => 'civicrm_event');
+                
                 require_once 'CRM/Core/BAO/Location.php';
                 $defaults['location'] = CRM_Core_BAO_Location::getValues( $params, true );
+
+                require_once 'CRM/Friend/BAO/Friend.php';
+                $manageEvent[$dao->id]['friend'] = CRM_Friend_BAO_Friend::getValues( $params );
+
                 if ( isset ( $defaults['location']['address'][1]['city'] ) ) {
                     $manageEvent[$dao->id]['city'] = $defaults['location']['address'][1]['city'];
                 }

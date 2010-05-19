@@ -95,7 +95,7 @@
 		    <li><a title="Location" class="action-item {if NOT $row.is_show_location} disabled{/if}" href="/civicrm/event/manage?reset=1&amp;action=update&amp;id={$row.id}&subPage=Location">{ts}Location{/ts}</a></li>
 		    <li><a title="Fees" class="action-item {if NOT $row.is_monetary} disabled{/if}" href="/civicrm/event/manage?reset=1&amp;action=update&amp;id={$row.id}&subPage=Fee">{ts}Fees{/ts}</a></li>
 		    <li><a title="Online Registration" class="action-item {if NOT $row.is_online_registration} disabled{/if}" href="/civicrm/event/manage?reset=1&amp;action=update&amp;id={$row.id}&subPage=Registration">{ts}Online Registration{/ts}</a></li>
-		    <li><a title="Tell a Friend" class="action-item" href="/civicrm/event/manage?reset=1&amp;action=update&amp;id={$row.id}&subPage=Friend">{ts}Tell a Friend{/ts}</a></li>
+		    <li><a title="Tell a Friend" class="action-item {if NOT $row.friend} disabled{/if}" href="/civicrm/event/manage?reset=1&amp;action=update&amp;id={$row.id}&subPage=Friend">{ts}Tell a Friend{/ts}</a></li>
 	    </span>
 	    </td>
 	    <td class="crm-event-action">
