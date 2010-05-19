@@ -109,8 +109,8 @@
 	    <td class="crm-event-action">
 	    <span id="{$row.id}" class="btn-slide">{ts}Participants{/ts}
 	    	<ul class="panel" id="panel_{$row.id}">
-		    <li><a title="Counted" class="action-item" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$row.id}&amp;status=true">{ts}Counted{/ts}</a></li>
-		    <li><a title="Not Counted" class="action-item" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$row.id}&amp;status=false">{ts}Not Counted{/ts}</a></li>
+		    <li><a title="Counted" class="action-item" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$row.id}&amp;status=true">{$findParticipants.statusCounted}</a></li>
+		    <li><a title="Not Counted" class="action-item" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$row.id}&amp;status=false">{$findParticipants.statusNotCounted}</a></li>
 		    <li><a title="Public Participant Listing" class="action-item" href="/civicrm/event/participant?reset=1&amp;id={$row.id}">{ts}Public Participant Listing{/ts}</a></li>
 	    </span>
 	    </td>

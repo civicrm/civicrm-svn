@@ -37,7 +37,6 @@
 require_once 'CRM/Core/Page.php';
 require_once 'CRM/Event/DAO/Event.php';
 
-
 class CRM_Event_Page_ManageEventEdit extends CRM_Core_Page
 {
 

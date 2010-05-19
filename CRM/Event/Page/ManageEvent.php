@@ -192,8 +192,7 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
             $this->set( 'sortByCharacter', '' );
         }
 
-        $this->_force = null;
-        $this->_searchResult = null;
+        $this->_force = $this->_searchResult = null;
       
         $this->search( );
 
@@ -264,6 +263,13 @@ ORDER BY start_date desc
             }
         }
         $this->assign('rows', $manageEvent);
+        
+        require_once 'CRM/Event/PseudoConstant.php';
+        $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1');
+        $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0');
+        $findParticipants['statusCounted'] = implode( '<br/>', array_values( $statusTypes ) );
+        $findParticipants['statusNotCounted'] = implode( '<br/>', array_values( $statusTypesPending ) );
+        $this->assign('findParticipants', $findParticipants);
     }
     
     /**
@@ -288,7 +294,8 @@ ORDER BY start_date desc
         return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', $urlParams ) );
     }
     
-    function search( ) {
+    function search( )
+    {
         if ( isset($this->_action) &
              ( CRM_Core_Action::ADD    |
                CRM_Core_Action::UPDATE |
@@ -303,7 +310,8 @@ ORDER BY start_date desc
         $form->run( );
     }
     
-    function whereClause( &$params, $sortBy = true, $force ) {
+    function whereClause( &$params, $sortBy = true, $force )
+    {
         $values  =  array( );
         $clauses = array( );
         $title   = $this->get( 'title' );
@@ -381,11 +389,11 @@ ORDER BY start_date desc
 
         return !empty($clauses) ? implode( ' AND ', $clauses ) : '(1)';
     }
-
-
-     function pager( $whereClause, $whereParams ) {
+    
+    function pager( $whereClause, $whereParams )
+    {
         require_once 'CRM/Utils/Pager.php';
-
+        
         $params['status']       = ts('Event %%StatusMessage%%');
         $params['csvString']    = null;
         $params['buttonTop']    = 'PagerTopButton';
@@ -406,7 +414,8 @@ SELECT count(id)
         $this->assign_by_ref( 'pager', $this->_pager );
     }
 
-    function pagerAtoZ( $whereClause, $whereParams ) {
+    function pagerAtoZ( $whereClause, $whereParams )
+    {
         require_once 'CRM/Utils/PagerAToZ.php';
         
         $query = "
