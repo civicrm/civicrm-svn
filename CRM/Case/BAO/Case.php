@@ -2577,6 +2577,25 @@ SELECT id, subject, activity_date_time
         
         return false;
     }
+
+    /**
+     * Function to check whether activity is caseActivity
+     *
+     * @param  int      $activityID   activity id
+     *
+     * @return boolean  $moveToTrash  true/false
+     */
+    static function isCaseActivity( $activityID )
+    {
+        $id = null;
+        $moveToTrash = false;
+        $query = "SELECT id FROM civicrm_case_activity WHERE activity_id = $activityID"; 
+        $id = CRM_Core_DAO::singleValueQuery( $query );
+        if ( $id ) {
+          $moveToTrash = true; 
+        }
+        return $moveToTrash;
+    }
     
 }
 
