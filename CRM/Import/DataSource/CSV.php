@@ -73,8 +73,8 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
     {
         $file = $params['uploadFile']['name'];
         
-        $result = self::_CsvToTable( $db, $file, $params['skipColumnHeader'],
-                                     CRM_Utils_Array::value( 'import_table_name', $params ) );
+        $result = self::CSVToTable( $db, $file, $params['skipColumnHeader'],
+                                    CRM_Utils_Array::value( 'import_table_name', $params ) );
         
         $this->set('originalColHeader', CRM_Utils_Array::value( 'original_col_header', $result ) );
         
@@ -94,7 +94,7 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
      *
      * @return string  name of the created table
      */
-    private static function _CsvToTable(&$db, $file, $headers = false, $table = null )
+    public static function CSVToTable(&$db, $file, $headers = false, $table = null )
     {
         $result = array( );
         $fd = fopen($file, 'r');
@@ -193,8 +193,9 @@ class CRM_Import_DataSource_CSV extends CRM_Import_DataSource
 
         fclose($fd);
         
-        //get the import tmp table name.
-        $result['import_table_name'] = $table;
+        // get the import tmp table name.
+        // CRM-6273
+        $result['import_table_name'] = $result['tableName'] = $table;
         
         return $result;
     }

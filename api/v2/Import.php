@@ -47,6 +47,7 @@
  *
  * @param array $params assoc array of name/value pairs
  *                      key: fileName value: path to file on local file system
+ *                      key: skipColumnHeader value: should the first row be skipped?
  *
  * @return array $result assoc array of name/value pairs
  *                      key: tableName value: name of table created in CiviCRM DB
@@ -71,8 +72,15 @@ function civicrm_import_table_create( $params )
     // call the real function here
     // and get the tableName
 
-    $result = array( 'tableName' => 'civicrm_import_job_Fake',
-                     'is_error' => 0 );
+    // Get the PEAR::DB object
+    $dao = new CRM_Core_DAO();
+    $db = $dao->getDatabaseConnection();
+    
+    require_once 'CRM/Import/DataSource/CSV.php';
+    $result = CRM_Import_DataSource_CSV::CSVToTable( $db,
+                                                     $params['fileName'],
+                                                     $params['skipColumnHeader'] );
+    $result['is_error'] = 0;
     return $result;
 }
 
@@ -104,7 +112,10 @@ function civicrm_import_table_drop( $params )
     }
 
     // call the real function here
-    // and drop the tabl
+    // and drop the table
+    $query = "DROP TABLE IF EXISTS %1";
+    $params = array( 1 => array( $params['tableName'], 'String' ) );
+    CRM_Core_DAO::executeQuery( $query, $params );
 
     $result = array( 'is_error' => 0 );
     return $result;

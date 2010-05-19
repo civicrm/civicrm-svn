@@ -839,7 +839,8 @@ function civicrm_theme_registry_alter(&$theme_registry) {
  * Based on the jquery_update module functions. 
  * 
  * Strips out JS and CSS for a path. 
- */function civicrm_preprocess_page(&$variables) {
+ */
+function civicrm_preprocess_page(&$variables) {
 
 	// unset Drupal $title, as we print it in #crm-container
 	unset($variables['title']);
