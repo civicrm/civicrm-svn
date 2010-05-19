@@ -63,42 +63,21 @@
 <script>
 
 cj('body').click(function() {
-	 	cj('#crm-event-links-list').hide();
-	 	});
-	
-	 cj('#crm-event-links-list').click(function(event){
-	     event.stopPropagation();
-	 	});
-
-cj('#crm-event-links-list li').hover(
-	function(){ cj(this).addClass('ac_over');},
-	function(){ cj(this).removeClass('ac_over');}
-	);
+	cj('#crm-event-links-list').hide();
+	cj('#crm-participant-list').hide();
+	});
 
 cj('#crm-event-links-link').click(function(event) {
 	cj('#crm-event-links-list').toggle();
+	cj('#crm-participant-list').hide();
 	event.stopPropagation();
 	});
 
-
-cj('body').click(function() {
-	 	cj('#crm-participant-list').hide();
-	 	});
-	
-	 cj('#crm-participant-list').click(function(event){
-	     event.stopPropagation();
-	 	});
-
-cj('#crm-participant-list li').hover(
-	function(){ cj(this).addClass('ac_over');},
-	function(){ cj(this).removeClass('ac_over');}
-	);
-
 cj('#crm-participant-link').click(function(event) {
 	cj('#crm-participant-list').toggle();
+        cj('#crm-event-links-list').hide();						  
 	event.stopPropagation();
 	});
 
 </script>
-
 {/literal}
