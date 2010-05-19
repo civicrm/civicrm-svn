@@ -199,9 +199,9 @@ define( 'CIVICRM_EVENT_PRICE_SET_DOMAIN_ID', 0 );
  define( 'CIVICRM_PROFILE_DOUBLE_OPTIN', 1 );
 
 /**
- * If set, makes CiviMail default to *not* track replies (i.e., not use VERP-ed Reply-To:)
+ * If set, makes CiviMail default to tracking replies (i.e., using VERP-ed Reply-To:)
  */
-define('CIVICRM_DONT_TRACK_CIVIMAIL_REPLIES', false);
+define('CIVICRM_TRACK_CIVIMAIL_REPLIES', false);
 
 /**
  * 
