@@ -54,7 +54,7 @@
  * @access public
  * 
  */
-function civicrm_import_create_table( $params )
+function civicrm_import_table_create( $params )
 {
     if ( ! is_array( $params ) ) {
         return civicrm_create_error("params is not an array");
@@ -89,7 +89,7 @@ function civicrm_import_create_table( $params )
  * @access public
  * 
  */
-function civicrm_import_drop_table( $params )
+function civicrm_import_table_drop( $params )
 {
     if ( ! is_array( $params ) ) {
         return civicrm_create_error("params is not an array");
@@ -110,7 +110,6 @@ function civicrm_import_drop_table( $params )
     return $result;
 }
 
-
 /**
  * takes a mapping array and creates an import mapping record in DB
  *
@@ -123,7 +122,7 @@ function civicrm_import_drop_table( $params )
  * @access public
  * 
  */
-function civicrm_import_create_mapping( $params )
+function civicrm_import_mapping_create( $params )
 {
     if ( ! is_array( $params ) ) {
         return civicrm_create_error("params is not an array");
@@ -143,5 +142,94 @@ function civicrm_import_create_mapping( $params )
 
     $result = array( 'mapping_id' => 1,
                      'is_error' => 0 );
+    return $result;
+}
+/**
+ * takes a mapping id and deletes it from the database
+ *
+ * @param array $params assoc array of name/value pairs
+ *                      key: mapping_id 
+ *
+ * @return array $result assoc array of name/value pairs
+ *
+ * @access public
+ * 
+ */
+function civicrm_import_mapping_delete( $params )
+{
+    if ( ! is_array( $params ) ) {
+        return civicrm_create_error("params is not an array");
+    }
+    
+    if ( empty( $params ) ) {
+        return civicrm_create_error("params is an empty array");
+    }
+    
+    if ( ! isset( $params['mapping_id'] ) ) {
+        return civicrm_create_error("mapping_id is not set in input params");
+    }
+
+    // call the real function here
+    // and drop the mapping
+
+    $result = array( 'mapping_id' => 1,
+                     'is_error' => 0 );
+    return $result;
+}
+
+
+/**
+ * takes a set of input params and imports the rows from the table with a given mapping
+ *
+ * @param array $params assoc array of name/value pairs
+ *                      key: tableName (required)
+ *                      key: mapping_id (required)
+ *                      key: mode (create)
+ *                      key: date_format
+ *                      key: dupe_check
+ *                      key: groups (array)
+ *                      key: tags (array)
+ *                      key: geocode (false)
+ *                      key: 
+ *                      key: 
+ *
+ * @return array $result assoc array of name/value pairs
+ *                      key: errors      value: list of errors
+ *                      key: warnings    value: list of warnings
+ *                      key: total_count value: total number of contacts created
+ *                      key: value:
+ *                      key: value:
+ *                      key: value:
+ *
+ * @access public
+ * 
+ */
+function civicrm_import_rows( $params )
+{
+    if ( ! is_array( $params ) ) {
+        return civicrm_create_error("params is not an array");
+    }
+    
+    if ( empty( $params ) ) {
+        return civicrm_create_error("params is an empty array");
+    }
+    
+    if ( ! isset( $params['tableName'] ) ) {
+        return civicrm_create_error("tableName is not set in input params");
+    }
+
+    if ( ! isset( $params['mapping_id'] ) ||
+         ! is_numeric( $params['mapping_id'] ) ) {
+        return civicrm_create_error("mapping_id is not set in input params or is not a valid number");
+    }
+
+    // check that the tableName exists and is populated
+
+    // check that the mapping_id exists and is populated
+
+    // call the real function here
+    // and get the various stats
+
+    $result = array( 'is_error' => 0 );
     return $result;
 }
