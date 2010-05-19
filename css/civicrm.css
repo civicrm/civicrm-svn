@@ -2618,6 +2618,7 @@ div#crm-toolTip #hide-tooltip {
     z-index:1000;
     padding-bottom: 10px;
     background: transparent url('../i/overlay-pointer.png') no-repeat bottom left;
+    font-size:12px;
 }
 
 .crm-summary-group h2 {
