@@ -110,7 +110,7 @@ class CRM_Contact_Form_Task_PickProfile extends CRM_Contact_Form_Task {
      */
     function buildQuickForm( ) 
     {
-        CRM_Utils_System::setTitle( ts('Batch Profile Update') );
+        CRM_Utils_System::setTitle( ts('Batch Profile Update for Contact') );
         
         if ( CRM_Core_Permission::access( 'Quest' ) ) {
             $this->_contactTypes['Student'] = 'Student';            
