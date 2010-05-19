@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting grant *}
+<div class="crm-block crm-form-block crm-grant-form-block">
 <div class="html-adjust">{$form.buttons.html}</div> 
 <fieldset>
   {if $action eq 8} 
@@ -118,3 +119,4 @@
    {/if}
 </fieldset>
 <div class="html-adjust">{$form.buttons.html}</div>
+</div>

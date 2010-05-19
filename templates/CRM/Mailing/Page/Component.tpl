@@ -25,7 +25,7 @@
 *}
 {if $action eq 1 or $action eq 2}
    {include file="CRM/Mailing/Form/Component.tpl"}
-{/if}
+{else}
 
 <div id="ltype">
  <p></p>
@@ -67,3 +67,4 @@
        {/if}
     </div>
 </div>
+{/if}
