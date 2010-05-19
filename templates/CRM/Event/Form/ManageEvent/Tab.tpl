@@ -25,24 +25,30 @@
 *}
 <div>
 	<div id="crm-event-links-wrapper">
-	      <div id="crm-event-links-link"><span><div class="icon dropdown-icon"></div>Event Links</span></div>
+	      <div id="crm-event-links-link"><span><div class="icon dropdown-icon"></div>{ts}Event Links{/ts}</span></div>
 	      <div class="ac_results" id="crm-event-links-list">
 	      	   <div class="crm-event-links-list-inner">
-	      	   	<ul><li><a class="crm-event-info" href="/civicrm/event/info?reset=1&amp;id={$id}">Event Info</a></li>
-		            <li><a class="crm-event-test" href="/civicrm/event/register?reset=1&amp;action=preview&amp;id={$id}">Registration (Test-drive)</a></li>
-		            <li><a class="crm-event-live" href="/civicrm/event/register?reset=1&amp;id={$id}">Registration (Live)</a></li>
+	      	   	<ul><li><a class="crm-event-info" href="/civicrm/event/info?reset=1&amp;id={$id}">{ts}Event Info{/ts}</a></li>
+		            <li><a class="crm-event-test" href="/civicrm/event/register?reset=1&amp;action=preview&amp;id={$id}">{ts}Registration (Test-drive){/ts}</a></li>
+		            <li><a class="crm-event-live" href="/civicrm/event/register?reset=1&amp;id={$id}">{ts}Registration (Live){/ts}</a></li>
 		        </ul>
 	           </div>
 	      </div>
         </div>
 
 	<div id="crm-participant-wrapper">
-	      <div id="crm-participant-link"><span><div class="icon dropdown-icon"></div>Participants</span></div>
+	      <div id="crm-participant-link"><span><div class="icon dropdown-icon"></div>{ts}Participants{/ts}</span></div>
 	      <div class="ac_results" id="crm-participant-list">
 	      	   <div class="crm-participant-list-inner">
-	      	   	<ul><li><a class="crm-participant-counted" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$id}&amp;status=true">{$findParticipants.statusCounted|replace:'/':', '}</a></li>
-		            <li><a class="crm-participant-not-counted" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$id}&amp;status=false">{$findParticipants.statusNotCounted|replace:'/':', '}</a></li>
-		            <li><a class="crm-participant-listing" href="/civicrm/event/participant?reset=1&amp;id={$id}">Public Participant Listing</a></li>
+	      	   	<ul>
+			    {if $findParticipants.statusCounted}
+			    	<li><a class="crm-participant-counted" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$id}&amp;status=true">{$findParticipants.statusCounted|replace:'/':', '}</a></li>
+			    {/if}
+		            {if $findParticipants.statusNotCounted}
+			    	<li><a class="crm-participant-not-counted" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$id}&amp;status=false">{$findParticipants.statusNotCounted|replace:'/':', '}</a>
+				</li>
+			    {/if}
+		            <li><a class="crm-participant-listing" href="/civicrm/event/participant?reset=1&amp;id={$id}">{ts}Public Participant Listing{/ts}</a></li>
 		        </ul>
 	           </div>
 	      </div>
@@ -52,7 +58,6 @@
 
 {help id="id-configure-events"}
 {include file="CRM/common/TabHeader.tpl"}
-
 
 {literal}
 <script>
