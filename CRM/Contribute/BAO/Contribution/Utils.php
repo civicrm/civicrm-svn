@@ -508,7 +508,13 @@ class CRM_Contribute_BAO_Contribution_Utils {
                     if ( CRM_Utils_Array::value( $field, $mapper['location'] ) ) {
                         $params['address'][1][$mapper['location'][$field]] = $info['VALUE'];
                     } else if ( CRM_Utils_Array::value( $field, $mapper['contact'] ) ) {
-                        $params[$mapper['contact'][$field]] = $info['VALUE'];
+                        if ( $newOrder && CRM_Utils_Array::value('structured-name', $newOrder['buyer-billing-address']) ) {
+                            foreach ( $newOrder['buyer-billing-address']['structured-name'] as $namePart => $nameValue ) {
+                                $params[$mapper['contact'][$namePart]] = $nameValue['VALUE'];  
+                            }
+                        } else {
+                            $params[$mapper['contact'][$field]] = $info['VALUE'];
+                        }
                     } else if ( CRM_Utils_Array::value( $field, $mapper['transaction'] ) ) {
                         $transaction[$mapper['transaction'][$field]] = $info['VALUE'];
                     }
