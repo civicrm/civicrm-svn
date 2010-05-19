@@ -42,39 +42,30 @@
         </div>
     {/if}
     <div id="eventFullMsg" class="messages status" style="display:none;"></div>
-
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         
     <h3>{if $action eq 1}{ts}New Event Registration{/ts}{elseif $action eq 8}{ts}Delete Event Registration{/ts}{else}{ts}Edit Event Registration{/ts}{/if}</h3>
-    	{if $action eq 1 AND $paid}
+
+
+    {if $action eq 1 AND $paid}
     	<div id="help">
     		{ts}If you are accepting offline payment from this participant, check <strong>Record Payment</strong>. You will be able to fill in the payment information, and optionally send a receipt.{/ts}
     	</div>  
-    	{/if}
+    {/if}
 
         {if $action eq 8} {* If action is Delete *}
-            <table class="form-layout">
-    		<tr class="crm-participant-form-block-delete">
-    			<td>
-    				<div class="messages status">
-    					<table class="form-layout">
-    						<tr>
-						  <td><div class="icon inform-icon"></div></td>
-    						  <td><div class="status">{ts}WARNING: Deleting this registration will result in the loss of related payment records (if any).{/ts} {ts}Do you want to continue?{/ts}</div>
-						  </td>
-    						
-    						{if $additionalParticipant}  
-    						
-    						  <td><div class="status">{ts 1=$additionalParticipant} There are %1 more Participant(s) registered by this participant. Deleting this registration will also result in deletion of these additional participant(s).{/ts}</div> 
-						  </td>
-    						</tr> 
-    						{/if}
-    					</table>
-    				</div> 
-    			</td>
-    		</tr>
-            </table>
+    		<div class="crm-participant-form-block-delete messages status">
+                <div class="crm-content">
+                    <div class="icon inform-icon"></div> &nbsp;
+                    {ts}WARNING: Deleting this registration will result in the loss of related payment records (if any).{/ts} {ts}Do you want to continue?{/ts}
+                </div>
+    			{if $additionalParticipant}
+                    <div class="crm-content">
+                        {ts 1=$additionalParticipant} There are %1 more Participant(s) registered by this participant. Deleting this registration will also result in deletion of these additional participant(s).{/ts}
+                    </div>
+    			{/if}
+            </div>
         {else} {* If action is other than Delete *}
+            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
             <table class="form-layout-compressed">
             {if $single and $context neq 'standalone'}
     			<tr class="crm-participant-form-block-displayName">
