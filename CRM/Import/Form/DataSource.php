@@ -287,7 +287,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
             
             // We should have the data in the DB now, parse it
             $importTableName = $this->get( 'importTableName' );
-            $fieldNames = $this->_prepareImportTable( $db, $importTableName );
+            $fieldNames = $this->prepareImportTable( $db, $importTableName );
             $mapper = array( );
 
             $parser = new CRM_Import_Parser_Contact( $mapper );
@@ -311,7 +311,7 @@ class CRM_Import_Form_DataSource extends CRM_Core_Form {
      * @return array
      * @access private
      */
-    private function _prepareImportTable( $db, $importTableName ) {
+    public function prepareImportTable( $db, $importTableName ) {
         /* TODO: Add a check for an existing _status field;
          *  if it exists, create __status instead and return that
          */

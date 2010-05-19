@@ -80,6 +80,10 @@ function civicrm_import_table_create( $params )
     $result = CRM_Import_DataSource_CSV::CSVToTable( $db,
                                                      $params['fileName'],
                                                      $params['skipColumnHeader'] );
+    $statusFields = CRM_Import_DataSource_CSV::prepareImportTable( $db,
+                                                                   $result['tableName'] );
+    $result = array_merge( $result, $statusFields );
+
     $result['is_error'] = 0;
     return $result;
 }
@@ -195,9 +199,10 @@ function civicrm_import_mapping_delete( $params )
  * @param array $params assoc array of name/value pairs
  *                      key: tableName (required)
  *                      key: mapping_id (required)
- *                      key: mode (create)
- *                      key: date_format
- *                      key: dupe_check
+ *                      key: onDuplicate
+ *                      key: contactType
+ *                      key: contactSubType
+ *                      key: dateFormats
  *                      key: groups (array)
  *                      key: tags (array)
  *                      key: geocode (false)
