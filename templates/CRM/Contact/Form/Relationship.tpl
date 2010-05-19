@@ -295,99 +295,97 @@
 {if $callAjax}
 {literal}
 <script type="text/javascript">
-	var contact_checked  = new Array();
-	var employer_checked = new Array();
-	var employer_holdelement = new Array();
-	var countSelected = useEmployer = isRadio = 0;
-	
-	{/literal} {if $isEmployeeOf || $isEmployerOf} {literal}
-		   var storeElement  = 'store_employers';
-		   var employerClass = 'current_employer';
-		   useEmployer = 1;
-	{/literal} {/if} {if $isEmployeeOf} {literal}
-	           isRadio = 1;
-	{/literal} {/if} {literal}
+var contact_checked  = new Array();
+var employer_checked = new Array();
+var employer_holdelement = new Array();
+var countSelected = useEmployer = isRadio = 0;
 
-	cj(document).ready(function() {
-	
-	// clear old data if any
-	cj('#store_contacts').val('');
-	if ( useEmployer ) {
-	cj('#store_employers').val('');
-	} 
+{/literal} {if $isEmployeeOf || $isEmployerOf} {literal}
+var storeElement  = 'store_employers';
+var employerClass = 'current_employer';
+useEmployer = 1;
+{/literal} {/if} {if $isEmployeeOf} {literal}
+isRadio = 1;
+{/literal} {/if} {literal}
 
-	cj('.pagerDisplay tbody tr .contact_select input').live('click', function () {
-	    
-		var valueSelected = cj(this).val();	  
-		if ( cj(this).attr('checked') == true ) {   
-		  contact_checked[valueSelected] =  valueSelected;
-		  countSelected++;
-		} else if( contact_checked[valueSelected] ) {
-		  delete contact_checked[valueSelected];
-		  countSelected--;
-		  if ( useEmployer && employer_holdelement[valueSelected] ) {
-		       cj( employer_holdelement[valueSelected] ).attr('checked',false);
-		       delete employer_checked[valueSelected];
-		       delete employer_holdelement[valueSelected];
-		  } 
-	       }
-	     cj('#count_selected').html(countSelected +' Contacts selected.')  
-	} );
-	
-	if ( useEmployer ) {
-	   cj('.pagerDisplay tbody tr .'+ employerClass +' input').live('click', function () {
-	   	 var valueSelected = cj(this).val();	
-		 if ( isRadio ) {
-		       employer_checked = new Array();
-		 }
-	         if ( cj(this).attr('checked') == true ) {
-		      
-		      // add validation to match with selected contacts
-		      if( !contact_checked[valueSelected] ) {
-		          alert('Current employer / Current employee should be among the selected contacts.');
-			  cj(this).attr('checked',false); 
-		      } else {
-		          employer_checked[valueSelected] = valueSelected;
-			  employer_holdelement[valueSelected] = this;
-		      }
+cj( function( ) {
+    // clear old data if any
+    cj('#store_contacts').val('');
+    if ( useEmployer ) {
+        cj('#store_employers').val('');
+    } 
 
-		} else if ( employer_checked[valueSelected] ) {
-		   delete employer_checked[valueSelected]; 
-     		   delete employer_holdelement[valueSelected];
-		}
-	   } );
-	}
+    cj('.pagerDisplay tbody tr .contact_select input').live('click', function () {
+        var valueSelected = cj(this).val();	  
+        if ( cj(this).attr('checked') == true ) {   
+            contact_checked[valueSelected] =  valueSelected;
+            countSelected++;
+        } else if( contact_checked[valueSelected] ) {
+            delete contact_checked[valueSelected];
+            countSelected--;
+            if ( useEmployer && employer_holdelement[valueSelected] ) {
+                cj( employer_holdelement[valueSelected] ).attr('checked',false);
+                delete employer_checked[valueSelected];
+                delete employer_holdelement[valueSelected];
+            } 
+        }
+        cj('#count_selected').html(countSelected +' Contacts selected.')  
+    } );
 
-	});
+    if ( useEmployer ) {
+        cj('.pagerDisplay tbody tr .'+ employerClass +' input').live('click', function () {
+            var valueSelected = cj(this).val();	
+            if ( isRadio ) {
+                employer_checked = new Array();
+            }
+            if ( cj(this).attr('checked') == true ) {
 
-	function checkSelected( ) {
-		 cj('.pagerDisplay tbody tr .contact_select input').each(
-		 function( ) {
-			   	if ( contact_checked[cj(this).val()] ) { 
-		  	  	cj(this).attr('checked',true);
-        		   	}
-			  });
-	
-		if ( useEmployer ) {
-		  // register new elements
-		  employer_holdelement = new Array();
-		  cj('.pagerDisplay tbody tr .'+ employerClass +' input').each(
-		  function( ) {
-			   	if ( employer_checked[cj(this).val()] ) { 
-				   cj(this).attr('checked',true);
-				   employer_holdelement[cj(this).val()] = this;
-        		   	}
-			  });  
-		}	  	  
-	}
+                // add validation to match with selected contacts
+                if( !contact_checked[valueSelected] ) {
+                    alert('Current employer / Current employee should be among the selected contacts.');
+                    cj(this).attr('checked',false); 
+                } else {
+                    employer_checked[valueSelected] = valueSelected;
+                    employer_holdelement[valueSelected] = this;
+                }
 
-	function submitAjaxData() {
-		 cj('#store_contacts').val( contact_checked.toString() );
-		 if ( useEmployer )  {
-		    cj('#store_employers').val( employer_checked.toString() ); 
-		 }
-		 return true;	 
-	}
+            } else if ( employer_checked[valueSelected] ) {
+                delete employer_checked[valueSelected]; 
+                delete employer_holdelement[valueSelected];
+            }
+        } );
+    }
+
+});
+
+function checkSelected( ) {
+    cj('.pagerDisplay tbody tr .contact_select input').each(
+        function( ) {
+            if ( contact_checked[cj(this).val()] ) { 
+                cj(this).attr('checked',true);
+            }
+        });
+
+        if ( useEmployer ) {
+            // register new elements
+            employer_holdelement = new Array();
+            cj('.pagerDisplay tbody tr .'+ employerClass +' input').each(
+                function( ) {
+                    if ( employer_checked[cj(this).val()] ) { 
+                        cj(this).attr('checked',true);
+                        employer_holdelement[cj(this).val()] = this;
+                    }
+                });  
+            }	  	  
+        }
+
+        function submitAjaxData() {
+            cj('#store_contacts').val( contact_checked.toString() );
+            if ( useEmployer )  {
+                cj('#store_employers').val( employer_checked.toString() ); 
+            }
+            return true;	 
+        }
 
 </script>
 {/literal}
@@ -398,93 +396,95 @@
 {include file="CRM/common/customData.tpl"}
 {literal}
 <script type="text/javascript">
-	
-	{/literal} {if $searchRows} {literal}
-	cj(".contact_select .form-checkbox").each(
-		function( ) {
-			  if (this) { 
-		  	  cj(this).attr('checked',true);
-        		  } }	  
-	);
-	{/literal} {/if} {literal}
-	
-	{/literal} {if $action EQ 1}{literal} 
-	hide('saveDetails');
-	hide('addCurrentEmployer');
-	hide('addCurrentEmployee');
 
-	cj('#rel_contact').focus(function() {
-	show('relationship-refresh');
-	hide('relationship-refresh-save');			      
-	});
-	 
-	{/literal}{if $searchRows || $callAjax}{literal} 
+{/literal} {if $searchRows} {literal}
+cj(".contact_select .form-checkbox").each(
+    function( ) {
+        if (this) { 
+            cj(this).attr('checked',true);
+        } 
+    }	  
+);
+{/literal} {/if} {literal}
+
+{/literal} {if $action EQ 1}{literal} 
+hide('saveDetails');
+hide('addCurrentEmployer');
+hide('addCurrentEmployee');
+
+cj('#rel_contact').bind( "focus change" ,function() {
+    show('relationship-refresh');
+    hide('relationship-refresh-save');
+    cj("input[name=rel_contact_id]").val('');    			      
+});
+
+{/literal}{if $searchRows || $callAjax}{literal} 
+show('saveElements');
+{/literal}{else}{literal}
+hide('saveElements');
+{/literal}{/if}{/if}{literal}	
+
+cj(document).ready(function() {
+    var relType = cj('#relationship_type_id').val( );
+    if ( relType ) {
+        var relTypeId = relType.split("_");
+        if (relTypeId) {
+            buildCustomData( 'Relationship', relTypeId[0]);
+        }
+    } else {
+        buildCustomData('Relationship');
+    }
+});
+
+function buildRelationFields( relType ) {
+    {/literal} {if $action EQ 1} {literal} 
+    if ( relType ) {
+        var relTypeId = relType.split("_");
+        if ( relTypeId[0] == 4 ) {
+            if ( relTypeId[1] == 'a' ) {
+                show('addCurrentEmployee');
+                hide('addCurrentEmployer');
+            } else {
+                hide('addCurrentEmployee');
+                show('addCurrentEmployer');
+            }
+        }
+        hide('relationship-refresh');
+        show('relationship-refresh-save');
+        show('details-save');
         show('saveElements');
-	{/literal}{else}{literal}
-	hide('saveElements');
-	{/literal}{/if}{/if}{literal}	
+        show('saveDetails');
+        {/literal}{if $searchRows || $callAjax}{literal}
+        hide('searchResult');
+        {/literal}{/if}{literal}
+        hide('saveButtons');
+    } 
+    {/literal}{/if}{literal} 	 
+}
 
-	cj(document).ready(function() {
-            var relType = cj('#relationship_type_id').val( );
-            if ( relType ) {
-                var relTypeId = relType.split("_");
-                if (relTypeId) {
-                    buildCustomData( 'Relationship', relTypeId[0]);
-                 }
-            } else {
-                buildCustomData('Relationship');
-            }
-	});
+function changeCustomData( cType ) {
+    {/literal}{if $action EQ 1} {literal}
+    cj('#customData').html('');
+    show('relationship-refresh');
+    hide('saveElements');
+    hide('addCurrentEmployee');
+    hide('addCurrentEmployer');
+    hide('saveDetails');
+    {/literal}{if $searchRows || $callAjax}{literal}
+    hide('searchResult');
+    {/literal}{/if}{literal}
+    {/literal}{/if} {literal}
 
-        function buildRelationFields( relType ) {
-            {/literal} {if $action EQ 1} {literal} 
-            if ( relType ) {
-	        var relTypeId = relType.split("_");
-		if ( relTypeId[0] == 4 ) {
-		    if ( relTypeId[1] == 'a' ) {
-                        show('addCurrentEmployee');
-      		      	hide('addCurrentEmployer');
-                    } else {
-		        hide('addCurrentEmployee');
-		     	show('addCurrentEmployer');
-                    }
-                }
-                hide('relationship-refresh');
-		show('relationship-refresh-save');
-                show('details-save');
-                show('saveElements');
-                show('saveDetails');
-                {/literal}{if $searchRows || $callAjax}{literal}
-                hide('searchResult');
-                {/literal}{/if}{literal}
-                hide('saveButtons');
-            } 
-            {/literal}{/if}{literal} 	 
+    var relType = cj('#relationship_type_id').val( );
+    if ( relType ) {
+        var relTypeId = relType.split("_");
+        if (relTypeId) {
+            buildCustomData( cType, relTypeId[0]);
         }
-	
-        function changeCustomData( cType ) {
-            {/literal}{if $action EQ 1} {literal}
-            cj('#customData').html('');
-            show('relationship-refresh');
-            hide('saveElements');
-            hide('addCurrentEmployee');
-            hide('addCurrentEmployer');
-            hide('saveDetails');
-            {/literal}{if $searchRows || $callAjax}{literal}
-            hide('searchResult');
-            {/literal}{/if}{literal}
-            {/literal}{/if} {literal}
-
-            var relType = cj('#relationship_type_id').val( );
-            if ( relType ) {
-	        var relTypeId = relType.split("_");
-		if (relTypeId) {
-		    buildCustomData( cType, relTypeId[0]);
-		}
-            } else {
-                buildCustomData( cType );
-            }
-        }
+    } else {
+        buildCustomData( cType );
+    }
+}
 
 </script>
 {/literal}
