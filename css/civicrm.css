@@ -2203,8 +2203,9 @@ div.grippie {
 #crm-container .crm-button:hover,
 #crm-container a.button:hover { background-position:0px -25px; }
 
-/* No button styling for PayPal Express button */
-#crm-container input#_qf_Register_upload_express {
+/* No button styling for PayPal Express buttons */
+#crm-container input#_qf_Register_upload_express,
+#crm-container input#_qf_Main_upload_express {
     background: none;
     margin: 0px;
     padding: 0px;

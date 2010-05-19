@@ -29,7 +29,7 @@
 
 {include file="CRM/common/TrackingFields.tpl"}
 
-<div class="contribution_thankyou-page">
+<div class="crm-block crm-contribution-thankyou-form-block">
     {if $thankyou_text}
         <div id="thankyou_text" class="section thankyou_text-section">
             {$thankyou_text}
