@@ -85,6 +85,7 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
     {
         require_once 'CRM/Mailing/PseudoConstant.php';
 
+        $this->addElement('checkbox', 'override_verp', ts('Override VERP address?'));
         $this->add('checkbox', 'forward_replies', ts('Forward Replies?'));
         $defaults['forward_replies'] = true;
         
