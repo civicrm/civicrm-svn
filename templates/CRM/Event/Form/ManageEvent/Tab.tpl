@@ -40,8 +40,8 @@
 	      <div id="crm-participant-link"><span><div class="icon dropdown-icon"></div>Participants</span></div>
 	      <div class="ac_results" id="crm-participant-list">
 	      	   <div class="crm-participant-list-inner">
-	      	   	<ul><li><a class="crm-participant-counted" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$id}&amp;status=true">{$findParticipants.statusCounted}</a></li>
-		            <li><a class="crm-participant-not-counted" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$id}&amp;status=false">{$findParticipants.statusNotCounted}</a></li>
+	      	   	<ul><li><a class="crm-participant-counted" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$id}&amp;status=true">{$findParticipants.statusCounted|replace:'/':', '}</a></li>
+		            <li><a class="crm-participant-not-counted" href="/civicrm/event/search?reset=1&amp;force=1&amp;event={$id}&amp;status=false">{$findParticipants.statusNotCounted|replace:'/':', '}</a></li>
 		            <li><a class="crm-participant-listing" href="/civicrm/event/participant?reset=1&amp;id={$id}">Public Participant Listing</a></li>
 		        </ul>
 	           </div>
