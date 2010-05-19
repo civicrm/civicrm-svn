@@ -423,10 +423,10 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
             $image     = 
                 CRM_Contact_BAO_Contact_Utils::getImage( $dao->contact_sub_type ? 
-                                                         $dao->contact_sub_type : $dao->contact_type );
+                                                         $dao->contact_sub_type : $dao->contact_type, false, $id );
             $imageUrl  = 
                 CRM_Contact_BAO_Contact_Utils::getImage( $dao->contact_sub_type ? 
-                                                         $dao->contact_sub_type : $dao->contact_type, true );
+                                                         $dao->contact_sub_type : $dao->contact_type, true, $id );
 
             // use email if display_name is empty
             if ( empty( $dao->display_name ) ) {
