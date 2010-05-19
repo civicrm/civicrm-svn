@@ -47,49 +47,37 @@
             </h3>
 
     {else}
-        <h3>{ts}CiviCRM Profile{/ts}</h3>
-                <table class="form-layout">
-                    <tr>
-                        <td class="label">{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_group' field='title' id=$gid}{/if}</td>
-                        <td class="html-adjust">{$form.title.html}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">{$form.uf_group_type.label} {help id='id-used_for' file="CRM/UF/Form/Group.hlp"}</td>
-                        <td class="html-adjust">{$form.uf_group_type.html}&nbsp;{$otherModuleString}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">{$form.weight.label}{if $config->userFramework EQ 'Drupal'} {help id='id-profile_weight' file="CRM/UF/Form/Group.hlp"}{/if}</td>
-                        <td class="html-adjust">{$form.weight.html}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">{$form.help_pre.label} {help id='id-help_pre' file="CRM/UF/Form/Group.hlp"}</td>
-                        <td class="html-adjust">{$form.help_pre.html}</td>
-                    </tr>
-                    <tr>
-                        <td class="label">{$form.help_post.label} {help id='id-help_post' file="CRM/UF/Form/Group.hlp"}</td>
-                        <td class="html-adjust">{$form.help_post.html}</td>
-                    </tr>
-                    <tr>
-                        <td class="label"></td><td class="html-adjust">{$form.is_active.html} {$form.is_active.label}</td>
-                    </tr>
-                </table>
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+        <table class="form-layout">
+            <tr>
+                <td class="label">{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_group' field='title' id=$gid}{/if}</td>
+                <td class="html-adjust">{$form.title.html}</td>
+            </tr>
+            <tr>
+                <td class="label">{$form.uf_group_type.label} {help id='id-used_for' file="CRM/UF/Form/Group.hlp"}</td>
+                <td class="html-adjust">{$form.uf_group_type.html}&nbsp;{$otherModuleString}</td>
+            </tr>
+            <tr>
+                <td class="label">{$form.weight.label}{if $config->userFramework EQ 'Drupal'} {help id='id-profile_weight' file="CRM/UF/Form/Group.hlp"}{/if}</td>
+                <td class="html-adjust">{$form.weight.html}</td>
+            </tr>
+            <tr>
+                <td class="label">{$form.help_pre.label} {help id='id-help_pre' file="CRM/UF/Form/Group.hlp"}</td>
+                <td class="html-adjust">{$form.help_pre.html}</td>
+            </tr>
+            <tr>
+                <td class="label">{$form.help_post.label} {help id='id-help_post' file="CRM/UF/Form/Group.hlp"}</td>
+                <td class="html-adjust">{$form.help_post.html}</td>
+            </tr>
+            <tr>
+                <td class="label"></td><td class="html-adjust">{$form.is_active.html} {$form.is_active.label}</td>
+            </tr>
+        </table>
         {* adding advance setting tab *}
         {include file='CRM/UF/Form/AdvanceSetting.tpl'}        
     {/if}
-    {if $action ne 4}
-        <dl>
-            <dt></dt>
-            <dd><div id="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div></dd>
 
-            <dt></dt>
-            <dd></dd>
-        </dl>
-    {else}
-        <div id="crm-submit-buttons">
-            <dt></dt>
-            <dd>{include file="CRM/common/formButtons.tpl"}</dd>
-        </div>
-    {/if} {* $action ne view *}
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>
 
 {include file="CRM/common/showHide.tpl"}

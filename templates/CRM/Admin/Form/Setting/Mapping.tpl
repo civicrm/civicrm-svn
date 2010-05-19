@@ -23,13 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class ="form-item crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-mapping-form-block">
 <div id="help">
     {ts}CiviCRM includes plugins for Google and Yahoo mapping services which allow your users to display contact addresses on a map. To enable this feature, select your mapping provider and obtain a 'key' for your site from that provider.{/ts} {help id='map-key'}
 </div>
-<div class="form-item">
-<fieldset><legend>{ts}Mapping and Geocoding{/ts}</legend>
-        <table>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    <table class="form-layout">
          <tr class="crm-map-form-block-mapProvider">
              <td>{$form.mapProvider.label}</td>
              <td>{$form.mapProvider.html}<br />
@@ -40,9 +39,6 @@
              <td>{$form.mapAPIKey.html|crmReplace:class:huge}<br />
              <span class="description">{ts}Enter your Google API Key OR your Yahoo Application ID.{/ts} {help id='map-key2'}</span></td>
          </tr>
-        </table>
-         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
- <div class="spacer"></div>
-</fieldset>
-</div>
+    </table>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>
