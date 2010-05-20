@@ -28,7 +28,15 @@
 {literal}
 
 cj( function($) {
-  $('.crm-mailing-form-block-forward_replies,.crm-mailing-form-block-auto_responder').hide();//by default don't track replies
+  // hide all the selects that contains only one option
+  $('.crm-message-select select').each(function (){
+    if ($(this).find('option').size() == 1) { 
+      $(this).parent().parent().hide();
+    }
+  });
+  if (!$('#override_verp').attr('checked')){
+    $('.crm-mailing-form-block-forward_replies,.crm-mailing-form-block-auto_responder').hide();
+  }
   $('#override_verp').click(function(){
       $('.crm-mailing-form-block-forward_replies,.crm-mailing-form-block-auto_responder').toggle();
     });
@@ -73,17 +81,17 @@ cj( function($) {
             <span class="description">{ts}If a recipient replies to this mailing, send an automated reply using the selected message.{/ts}</span>
         </td>
     </tr>
-    <tr class="crm-mailing-form-block-unsubscribe_id"><td class="label">{$form.unsubscribe_id.label}</td>
+    <tr class="crm-mailing-form-block-unsubscribe_id crm-message-select"><td class="label">{$form.unsubscribe_id.label}</td>
         <td>{$form.unsubscribe_id.html}
             <span class="description">{ts}Select the automated message to be sent when a recipient unsubscribes from this mailing.{/ts}</span>
         </td>
     <tr>
-    <tr class="crm-mailing-form-block-resubscribe_id"><td class="label">{$form.resubscribe_id.label}</td>
+    <tr class="crm-mailing-form-block-resubscribe_id crm-message-select"><td class="label">{$form.resubscribe_id.label}</td>
         <td>{$form.resubscribe_id.html}
             <span class="description">{ts}Select the automated message to be sent when a recipient resubscribes to this mailing.{/ts}</span>
         </td>
     </tr>
-    <tr class="crm-mailing-form-block-optout_id"><td class="label ">{$form.optout_id.label}</td>
+    <tr class="crm-mailing-form-block-optout_id crm-message-select"><td class="label ">{$form.optout_id.label}</td>
         <td>{$form.optout_id.html}
             <span class="description">{ts}Select the automated message to be sent when a recipient opts out of all mailings from your site.{/ts}</span>
         </td>
