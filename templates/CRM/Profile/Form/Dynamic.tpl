@@ -83,7 +83,6 @@
         <table class="form-layout-compressed">
      {/if}
 
-    {if $field.is_view eq 0}  
     {if $field.options_per_line}
 	<tr id="editrow-{$n}">
         <td class="option-label">{$form.$n.label}</td>
@@ -148,7 +147,7 @@
 	      <tr><td class="label"></td><td>{$customFiles.$n.deleteURL}</td></tr>
         {/if} 
 	{/if}
-	{/if}
+
     {* Show explanatory text for field if not in 'view' mode *}
     {if $field.help_post && $action neq 4 && $form.$n.html}
         <tr id="helprow-{$n}"><td>&nbsp;</td><td class="description">{$field.help_post}</td></tr>

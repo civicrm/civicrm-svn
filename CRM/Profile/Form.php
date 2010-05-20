@@ -388,8 +388,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         // add the form elements
         foreach ($this->_fields as $name => $field ) {
             // make sure that there is enough permission to expose this field
-            if ( ( ! $admin && $field['visibility'] == 'User and User Admin Only' ) ||
-                 CRM_Utils_Array::value( 'is_view', $field ) ) {
+            if ( ! $admin && $field['visibility'] == 'User and User Admin Only' ) {
                 unset( $this->_fields[$name] );
                 continue;
             }
