@@ -217,6 +217,7 @@ div#crm-container {
 .crmasmList li,
 .crmtagList li {
     background-color:#3E3E3E;
+    background-image:none;
     padding:2px 4px;
     list-style-type:none;
     margin:1px 0px;
