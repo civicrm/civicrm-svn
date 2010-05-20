@@ -174,6 +174,15 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
         $action     = CRM_Utils_Request::retrieve('action', 'String', $this );
         $this->_id  = CRM_Utils_Request::retrieve('id', 'Positive', $this );
         
+        //do check for view/edit operation.
+        if ( $this->_id &&
+             in_array( $action, array( CRM_Core_Action::UPDATE, CRM_Core_Action::VIEW ) ) ) {
+            require_once 'CRM/Activity/BAO/Activity.php';
+            if ( !CRM_Activity_BAO_Activity::checkPermission( $this->_id, $action ) ) {
+                CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+            }
+        }
+        
         if ( $context == 'standalone' || ( ! $contactId && ( $action != CRM_Core_Action::DELETE ) && !$this->_id ) ) {
             $this->_action = CRM_Core_Action::ADD;
             $this->assign('action', $this->_action );

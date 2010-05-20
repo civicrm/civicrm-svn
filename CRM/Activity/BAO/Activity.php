@@ -1892,4 +1892,119 @@ AND cl.modified_id  = c.id
         return $result;
     }
     
+    /**
+     * Does user has sufficient permission for view/edit activity record.
+     *
+     * @param  int   $activityId activity record id.
+     * @param  int   $action     edit/view
+     *
+     * @return boolean $allow true/false
+     * @access public
+     */
+    public function checkPermission( $activityId, $action ) 
+    {
+        $allow = false;
+        if ( !$activityId || 
+             !in_array( $action, array( CRM_Core_Action::UPDATE, CRM_Core_Action::VIEW ) ) ) {
+            return $allow;
+        }
+        
+        $activity = new CRM_Activity_DAO_Activity( );
+        $activity->id = $activityId;
+        if ( !$activity->find( true ) ) return $allow;
+        
+        require_once 'CRM/Core/Permission.php';
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+        
+        //first check the component permission.
+        $sql = "
+    SELECT  component_id
+      FROM  civicrm_option_value val
+INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.name = %1 )
+     WHERE  val.value = %2";    
+        $params = array( 1 => array( 'activity_type', 'String' ),
+                         2 => array( $activity->activity_type_id, 'Integer' ) );
+        $componentId = CRM_Core_DAO::singleValueQuery( $sql, $params );
+        
+        //component related permissions.
+        $compPermissions = array( 'CiviCase'       => array( 'administer CiviCase',
+                                                             'access my cases and activities',
+                                                             'access all cases and activities' ),
+                                  'CiviMail'       => array( 'access CiviMail'       ),
+                                  'CiviEvent'      => array( 'access CiviEvent'      ),
+                                  'CiviGrant'      => array( 'access CiviGrant'      ),
+                                  'CiviPledge'     => array( 'access CiviPledge'     ),
+                                  'CiviMember'     => array( 'access CiviMember'     ),
+                                  'CiviReport'     => array( 'access CiviReport'     ),
+                                  'CiviContribute' => array( 'access CiviContribute' ),
+                                  );
+        
+        if ( $componentId ) {
+            require_once 'CRM/Core/Component.php';
+            $componentName  = CRM_Core_Component::getComponentName( $componentId );
+            $compPermission = CRM_Utils_Array::value( $componentName, $compPermissions );
+            
+            //here we are interesting in any single permission.
+            if ( is_array( $compPermission ) ) {
+                foreach ( $compPermission as $per ) {
+                    if ( CRM_Core_Permission::check( $per ) ) {
+                        $allow = true;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        //check for this permission related to contact.
+        $permission = CRM_Core_Permission::VIEW; 
+        if ( $action == CRM_Core_Action::UPDATE ) {
+            $permission = CRM_Core_Permission::EDIT; 
+        }
+        
+        //check for source contact.
+        if ( !$componentId || $allow ) {
+            $allow = false;
+            $allow = CRM_Contact_BAO_Contact_Permission::allow( $activity->source_contact_id, $permission );
+        }
+        
+        require_once 'CRM/Case/BAO/Case.php';
+        $isCaseActivity = CRM_Case_BAO_Case::isCaseActivity( $activityId );
+        
+        //check for civicase related permission.
+        if ( $isCaseActivity ) { 
+            $allow = false;
+            foreach ( $compPermissions['CiviCase'] as $per  ) {
+                if ( CRM_Core_Permission::check( $per ) ) {
+                    $allow = true;
+                    break;
+                }
+            }
+        }
+        
+        //check for target and assignee contacts.
+        if ( $allow ) { 
+            //get the target contacts. 
+            $targetContacts = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activity->id );
+            foreach ( $targetContacts as $cnt => $contactId ) {
+                if ( !CRM_Contact_BAO_Contact_Permission::allow( $contactId, $permission ) ) {
+                    $allow = false;
+                    break;
+                }
+            }
+            
+            //get the assignee contacts.
+            if ( $allow ) {
+                $assigneeContacts = CRM_Activity_BAO_ActivityAssignment::retrieveAssigneeIdsByActivityId( $activity->id );
+                foreach ( $assigneeContacts as $cnt => $contactId ) {
+                    if ( !CRM_Contact_BAO_Contact_Permission::allow( $contactId, $permission ) ) {
+                        $allow = false;
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return $allow;
+    }
+    
 }
