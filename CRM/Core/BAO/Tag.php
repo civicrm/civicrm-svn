@@ -196,7 +196,12 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
         // delete from tag table
         $tag = new CRM_Core_DAO_Tag( );
         $tag->id = $id;
+
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::pre( 'delete', 'Tag', $id, $tag);
+
         if ( $tag->delete( ) ) {
+            CRM_Utils_Hook::post( 'delete', 'Tag', $id, $tag);
             CRM_Core_Session::setStatus( ts('Selected Tag has been Deleted Successfuly.') );
             return true;
         }
@@ -232,14 +237,29 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
 
         $tag->copyValues( $params );
         $tag->id = CRM_Utils_Array::value( 'tag', $ids );
-        $tag->save( );
 
+        require_once 'CRM/Utils/Hook.php';
+        $edit = ($tag->id) ? true : false;
+        if ($edit) {
+            CRM_Utils_Hook::pre( 'edit', 'Tag', $tag->id, $tag );
+        } else {
+            CRM_Utils_Hook::pre( 'create', 'Tag', null, $tag );
+        }
+
+        tag->save( );
+        
+        if ($edit) {
+            CRM_Utils_Hook::post( 'edit', 'Tag', $tag->id, $tag );
+        } else {
+            CRM_Utils_Hook::post( 'create', 'Tag', null, $tag );
+        }
+        
         // if we modify parent tag, then we need to update all children
         if ( $tag->parent_id === 'null' ) {
             CRM_Core_DAO::executeQuery( "UPDATE civicrm_tag SET used_for=%1 WHERE parent_id = %2", 
-                                                   array( 1 => array( $params['used_for'], 'String' ),
-                                                          2 => array( $tag->id , 'Integer' ) ) );
-        } 
+                                        array( 1 => array( $params['used_for'], 'String' ),
+                                               2 => array( $tag->id , 'Integer' ) ) );
+        }
         
         return $tag;
     }
