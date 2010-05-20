@@ -35,13 +35,12 @@
 
 {else}
 {* this template is used for adding/editing string overrides  *}
-<div class="form-item">
-<fieldset><legend>{ts}String Overrides{/ts}</legend>
+<div class="crm-form crm-form-block crm-string_override-form-block">
+<div class="crm-submit-buttons" ><a class="button" onClick="Javascript:buildStringOverrideRow( false );return false;"><span><div class="icon add-icon"></div>{ts}Add new Row{/ts}</span></a>{include file="CRM/common/formButtons.tpl"} </div>
 <table class="form-layout-compressed">
 	<tr>
 	    <td>
-	    <fieldset>
-    	    <table>
+      	    <table>
 		<tr class="columnheader">
 		    <td>{ts}Enabled{/ts}</td>
 		    <td>{ts}Original{/ts}</td>
@@ -62,14 +61,11 @@
                 </div> 
     		{/section}
     	    </table>
-	    </fieldset>
-	    </td>
+       	    </td>
 	</tr>
-	<tr>
-	    <td> <a class="button" onClick="Javascript:buildStringOverrideRow( false );return false;"><span><div class="icon add-icon"></div>{ts}Add new Row{/ts}</span></a> {$form.buttons.html}</td>
-	</tr>
-</table>
-</fieldset>
+    </table>
+ <div class="crm-submit-buttons" ><a class="button" onClick="Javascript:buildStringOverrideRow( false );return false;"><span><div class="icon add-icon"></div>{ts}Add new Row{/ts}</span></a>{include file="CRM/common/formButtons.tpl"} </div>
+	
 </div>
 {/if}
 
@@ -92,7 +88,7 @@ function buildStringOverrideRow( curInstance )
    dataUrl     += "&instance="+currentInstance;
    
    var prevInstRowId = '#string_override_row_' + previousInstance;
-   
+  
    cj.ajax({ url     : dataUrl,   
              async   : false,
              success : function( html ) { cj( prevInstRowId ).after( html ); }

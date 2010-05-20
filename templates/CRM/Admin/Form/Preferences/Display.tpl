@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for editing Site Preferences  *}
-<div class="form-item crm-block crm-form-block crm-preferences-form-block">
+<div class="crm-block crm-form-block crm-preferences-form-block">
 <fieldset><legend>{if $action eq 2 or $action eq 1}{ts}Site Preferences{/ts}{elseif $action eq 4}{ts}View Site Preferences{/ts}{/if}</legend>
       <table class="form-layout">
         {if $form.contact_view_options.html}
