@@ -246,9 +246,6 @@ function civicrm_import_rows( $params )
     // call the real function here
     // and get the various stats
 
-    $mapper = array( );
-    $parser = new CRM_Import_Parser_Contact( $mapper );
-    
     $result = array( 'is_error' => 0 );
     return $result;
 }
