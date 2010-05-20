@@ -620,7 +620,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         if ( !empty($tags) ) { 
             $this->add('select', 'tag',  ts( 'Tags' ), $tags, false, 
-                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
+                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('- select -') ));
         }
         
         // build tag widget
