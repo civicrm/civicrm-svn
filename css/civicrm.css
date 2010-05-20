@@ -2352,6 +2352,7 @@ span.icon {
 .settings-icon { background-position:-178px -114px; }
 .email-icon { background-position:-81px -98px; }
 .preview-icon { background-position:-227px -129px; }
+.play-icon { background-position: -3px -161px; }
 
 #crm-container .geotag {
     padding: 2px 0 2px 20px !important;
