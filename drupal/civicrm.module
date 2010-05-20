@@ -869,3 +869,31 @@ function civicrm_preprocess_page(&$variables) {
   		} 
   	}
 }
+
+function civicrm_civicrm_tokens( &$tokens ) {
+    $tokens['contribution'] = array( 'contribution.amount', 
+                                     'contribution.date' );
+}
+
+function civicrm_civicrm_tokenValues( &$values, &$contactIDs ) {
+    if ( is_array( $contactIDs ) ) {
+        $ids = $contactIDs;
+        $single = false;
+    } else {
+        $ids = array( $contactIDs );
+        $single = true;
+    }
+
+    foreach ( $ids as $contactIDs ) {
+        if ( $single ) {
+            $value =& $values;
+        } else {
+            if ( ! array_key_exists( $contactIDs, $values ) ) {
+                $values[$contactIDs] = array( );
+            }
+            $value =& $values[$contactIDs];
+        }
+        $value['contribution.amount'] = 'foo';
+        $value['contribution.date'] = 'bar';
+    }    	 
+}
