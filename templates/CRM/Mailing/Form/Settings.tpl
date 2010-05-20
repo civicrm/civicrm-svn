@@ -60,7 +60,7 @@ cj( function($) {
     <table class="form-layout">
         <tr class="crm-mailing-form-block-override_verp"><td class="label">{$form.override_verp.label}</td>
             <td>{$form.override_verp.html}
-                <span class="description">{ts}The recipients reply to a civimail specific address so their replies is stored within civiCRM instead of using the sender's address (from).{/ts}</span>
+                <span class="description">{ts}Recipients' replies are sent to a CiviMail specific address instead of the sender's address so they can be stored within CiviCRM.{/ts}</span>
             </td>
         </tr>
         <tr class="crm-mailing-form-block-forward_replies"><td class="label ">{$form.forward_replies.label}</td>
