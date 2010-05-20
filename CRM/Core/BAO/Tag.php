@@ -246,7 +246,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
             CRM_Utils_Hook::pre( 'create', 'Tag', null, $tag );
         }
 
-        tag->save( );
+        $tag->save( );
         
         if ($edit) {
             CRM_Utils_Hook::post( 'edit', 'Tag', $tag->id, $tag );
