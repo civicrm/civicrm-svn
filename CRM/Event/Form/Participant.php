@@ -137,6 +137,11 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
     protected $_statusId = null;
 
     /**
+     * cache all the participant statuses
+     */
+    protected $_participantStatuses;
+
+    /**
      * participant mode
      */
     public  $_mode = null;
@@ -429,7 +434,9 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
         }
 
         //setting default register date
-        if ( $this->_action == CRM_Core_Action::ADD ) {            
+        if ( $this->_action == CRM_Core_Action::ADD ) {
+            $statuses = array_flip( $this->_participantStatuses );
+            $defaults[$this->_id]['status_id'] = CRM_Utils_Array::value( ts( 'Registered' ), $statuses );
             if ( CRM_Utils_Array::value( 'event_id' , $defaults[$this->_id] ) ) {
                 $contributionTypeId =  CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event',
                                                                     $defaults[$this->_id]['event_id'], 
@@ -688,9 +695,10 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                                                   CRM_Contribute_PseudoConstant::contributionStatus(null, 'name') ); 
             $confirmJS = array( 'onclick' => "return confirmStatus( {$participantStatusId}, {$contributionStatusId} );" );
         }
-        
+
+        $this->_participantStatuses = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
         $this->add( 'select', 'status_id' , ts( 'Participant Status' ),
-                    array( '' => ts( '- select -' ) ) + CRM_Event_PseudoConstant::participantStatus( null, null, 'label' ),
+                    array( '' => ts( '- select -' ) ) + $this->_participantStatuses,
                     true, 
                     $checkCancelledJs );
         
@@ -1137,7 +1145,10 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                 $contributionParams['non_deductible_amount'] = 'null';
                 $contributionParams['receipt_date'         ] = CRM_Utils_Array::value( 'send_receipt', $params ) ? CRM_Utils_Array::value( 'receive_date', $params ) : 'null';
                 
-                $recordContribution = array( 'contact_id', 'contribution_type_id', 'payment_instrument_id', 'trxn_id', 'contribution_status_id', 'receive_date', 'check_number' );
+                $recordContribution = array( 'contact_id', 'contribution_type_id',
+                                             'payment_instrument_id', 'trxn_id', 
+                                             'contribution_status_id', 'receive_date', 
+                                             'check_number' );
                 
                 foreach ( $recordContribution as $f ) {
                     $contributionParams[$f] = CRM_Utils_Array::value( $f, $params );
