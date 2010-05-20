@@ -524,9 +524,9 @@ SELECT  id, label, name, option_group_id
         
         // Retrieve the name and email of the contact - form will be the TO for receipt email ( only if context is not standalone)        
         if ( $form->_context != 'standalone' ) {    
-            if ( $form->_contactID ) {
+            if ( $form->_contactId ) {
                 list( $form->_contributorDisplayName, 
-                     $form->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $form->_contactID );
+                     $form->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $form->_contactId );
                 $form->assign( 'email', $form->_contributorEmail );
             } else {
                 //show email block for batch update for event
