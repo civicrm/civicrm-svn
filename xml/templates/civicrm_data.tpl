@@ -1011,7 +1011,7 @@ INSERT INTO civicrm_uf_field
 	   (28 	,7 		    ,'birth_date' 			 ,1  	      ,0 			,10 	,'User and User Admin Only' ,0 		 	 ,0 			,NULL 			  ,'{ts escape="sql"}Date of Birth{/ts}' 			    ,'Individual' ,NULL),
 	   (29 	,7 		    ,'phone' 				 ,1  	      ,0 			,11 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'{ts escape="sql"}Home Phone{/ts}' 					,'Contact' 	  ,NULL),
 	   (30 	,7 		    ,'phone' 				 ,1  	      ,0 			,12 	,'User and User Admin Only' ,0 		 	 ,0 			,2 				  ,'{ts escape="sql"}Home Mobile{/ts}' 					,'Contact' 	  ,NULL),
-	   (31 	,7 		    ,'website' 				 ,1  	      ,0 			,13 	,'User and User Admin Only' ,0 		 	 ,0 			,NULL			  ,'{ts escape="sql"}Website{/ts}' 						,'Contact' 	  ,NULL);
+	   (31 	,7 		    ,'url-1' 				 ,1  	      ,0 			,13 	,'User and User Admin Only' ,0 		 	 ,0 			,NULL			  ,'{ts escape="sql"}Website{/ts}' 						,'Contact' 	  ,NULL);
 
 
 INSERT INTO civicrm_participant_status_type
