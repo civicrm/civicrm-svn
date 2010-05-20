@@ -24,12 +24,16 @@
  +--------------------------------------------------------------------+
 *}
 {* Confirmation of membership deletes  *}
+<div class="crm-block crm-form-block crm-member_task_delete-form-block">
+<div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl" location="top"}
+  </div>
   <div class="messages status">
      <div class="icon inform-icon"></div>
-          <p>{ts}Are you sure you want to delete the selected memberships? This delete operation cannot be undone and will delete all transactions and activity associated with these members.{/ts}</p>
+        <span>{ts}Are you sure you want to delete the selected memberships? This delete operation cannot be undone and will delete all transactions and activity associated with these members.{/ts}</span>
         <p>{include file="CRM/Member/Form/Task.tpl"}</p>
   </div>
-        <p>
-  <div class="form-item">
-    {include file="CRM/common/formButtons.tpl"}
+  <div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl" location="bottom"}
   </div>
+</div>
