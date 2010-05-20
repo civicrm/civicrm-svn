@@ -155,18 +155,24 @@
             }
         );
     }
+    {/literal}
 
-	//build fee block
-	buildFeeBlock( );
-	
-	//build discount block
-	if ( document.getElementById('discount_id') ) {
-		var discountId  = document.getElementById('discount_id').value;
-		if ( discountId ) {
-			var eventId  = document.getElementById('event_id').value;
-			buildFeeBlock( eventId, discountId );    
-		}
-	}
+    {if $preloadJSSnippet}
+       {$preloadJSSnippet}
+    {else}
+      //build fee block
+      buildFeeBlock( );
+   {/if}
+
+   {literal}	
+    //build discount block
+    if ( document.getElementById('discount_id') ) {
+      var discountId  = document.getElementById('discount_id').value;
+      if ( discountId ) {
+	var eventId  = document.getElementById('event_id').value;
+	buildFeeBlock( eventId, discountId );    
+      }
+    }
 
 	function buildFeeBlock( eventId, discountId )
 	{
