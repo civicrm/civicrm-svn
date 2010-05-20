@@ -117,9 +117,11 @@
 		    	<li><a title="Not Counted" class="action-item" href="{crmURL p='civicrm/event/search' q="reset=1&force=1&status=false&event=`$row.id`"}">{$findParticipants.statusNotCounted}</a>
 			</li>
 		    {/if}
-		    <li><a title="Public Participant Listing" class="action-item" href="{crmURL p='civicrm/event/participant' q="reset=1&id=`$row.id`"}">{ts}Public Participant Listing{/ts}</a>
-		    </li>
-	    </span>
+		    {if $row.participant_listing_id}
+		    	<li><a title="Public Participant Listing" class="action-item" href="{crmURL p='civicrm/event/participant' q="reset=1&id=`$row.id`"}">{ts}Public Participant Listing{/ts}</a>
+		    	</li>
+		    {/if}
+	    </span> 
 	    </td>
 	    <td class="crm-event-action">{$row.action|replace:'xx':$row.id}</td>
             <td class="crm-event-start_date hiddenElement">{$row.start_date|crmDate}</td>
