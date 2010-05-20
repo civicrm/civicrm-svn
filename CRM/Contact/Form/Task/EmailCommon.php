@@ -309,6 +309,12 @@ class CRM_Contact_Form_Task_EmailCommon
         $cc         = CRM_Utils_Array::value( 'cc_id' , $formValues );
         $bcc        = CRM_Utils_Array::value( 'bcc_id', $formValues );
         $subject    = $formValues['subject'];
+
+        // CRM-5916: prepend case id hash to CiviCase-originating emails’ subjects
+        if ($form->_caseId) {
+            $hash = substr(sha1(CIVICRM_SITE_KEY . $form->_caseId), 0, 7);
+            $subject = "[case #$hash] $subject";
+        }
         
         // process message template
         require_once 'CRM/Core/BAO/MessageTemplates.php';
