@@ -46,7 +46,7 @@
             <div class="description">{ts}Set a date and time when you want CiviMail to start sending this mailing.{/ts}</div>
         </td>
     </tr>
-    <tr><td></td><td>{$form.buttons.html}</td></tr>
+    <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
   </tbody>
 </table>
 

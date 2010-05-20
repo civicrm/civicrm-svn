@@ -71,7 +71,7 @@
 </div>
 
  <table>
-   <tr><td></td><td>{$form.buttons.html}</td></tr>
+   <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
  </table>
 </div>
 
