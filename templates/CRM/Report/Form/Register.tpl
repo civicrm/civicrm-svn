@@ -24,10 +24,16 @@
  +--------------------------------------------------------------------+
 *}
 <div class="crm-block crm-form-block crm-report-form-block">	
-<fieldset>
 {if $action eq 8} 
-    <legend>{ts}Delete Report Template{/ts}</legend>
     <table class="form-layout">
+    <tr>
+        <td colspan=2 class="crm-report-form-block-title"><strong>{ts}Delete Report Template{/ts}</strong></td>
+    </tr>
+    <tr class="buttons">
+        <td><div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+        </td>
+        <td></td>
+    </tr>
     <tr>
         <td colspan=2>
         <div class="messages status"> 
@@ -38,8 +44,15 @@
     </tr>
 {else}
   	
-    <legend>{if $action eq 2}{ts}Edit Report Template{/ts}{else}{ts}New Report Template{/ts}{/if}</legend>
     <table class="form-layout">
+        <tr>
+            <td colspan=2 class="crm-report-form-block-title"><strong>{if $action eq 2}{ts}Edit Report Template{/ts}{else}{ts}New Report Template{/ts}{/if}</strong></td>
+        </tr>
+        <tr class="buttons">
+            <td><div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+            </td>
+            <td></td>
+        </tr>
         <tr class="crm-report-form-block-title">
             <td class="label">{$form.label.label}</td>
             <td class="view-value">{$form.label.html} <br /><span class="description">{ts}Report title appear in the display screen.{/ts}</span>
@@ -75,10 +88,9 @@
         </tr>  
 {/if} 
     <tr class="buttons">
-        <td><div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+        <td><div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
         </td>
         <td></td>
     </tr>
     </table>  
-</fieldset>
 </div>
