@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div class=" crm-block crm-form-block crm-searchSetting-form-block">
-<fieldset><legend>{ts}Contact Search{/ts}</legend>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout">
         <tr class="crm-searchSetting-form-block-includeWildCardInName">
             <td class="label">{$form.includeWildCardInName.label}</td>
@@ -67,6 +67,6 @@
             <span class="description">{ts}Selected fields will be displayed in autocomplete dropdown lists. Contact Name is always included.{/ts}</span></td>
         </tr>
        </table>
-            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-         </fieldset>
+            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+        
 </div>

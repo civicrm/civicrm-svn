@@ -24,9 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 <div class="form-item crm-block crm-form-block crm-debugging-form-block">
-<fieldset><legend>{ts}Debugging and Error Handling{/ts}</legend>
-    
-        <table>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+         <table>
             <tr class="crm-debugging-form-block-debug">
                 <td class="label">{$form.debug.label}</td>
                 <td>{$form.debug.html}<br />
@@ -55,7 +54,6 @@
                 <span class="description">{ts}Enter the path and class for a custom PHP error-handling function if you want to override built-in CiviCRM error handling for your site.{/ts}</span></td>
             </tr>
         </table>
-        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 <div class="spacer"></div>
-</fieldset>
 </div>

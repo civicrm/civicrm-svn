@@ -24,9 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for editing Site Preferences  *}
-<div class="crm-block crm-form-block crm-preferences-form-block">
-<fieldset><legend>{if $action eq 2 or $action eq 1}{ts}Site Preferences{/ts}{elseif $action eq 4}{ts}View Site Preferences{/ts}{/if}</legend>
-      <table class="form-layout">
+<div class="crm-block crm-form-block crm-preferences-form-block"> 
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+     <table class="form-layout">
         {if $form.contact_view_options.html}
 	    <tr class="crm-preferences-form-block-contact_view_options">
                <td class="label">{$form.contact_view_options.label}</td>
@@ -102,9 +102,8 @@
           </table>
 	{/if}
 	{if $action neq 4} {* action is not view *}
-            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
         {else}
-            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
         {/if}
-    </fieldset>
-</div>
+   </div>
