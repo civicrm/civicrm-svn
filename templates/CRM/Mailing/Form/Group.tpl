@@ -32,7 +32,6 @@
 <div class="crm-block crm-form-block crm-mailing-form-block">
 {include file="CRM/common/WizardHeader.tpl"}
 
-<div class="form-item">
   <table class="form-layout">
    <tr class="crm-mailing-form-block-name"><td class="label">{$form.name.label}</td><td>{$form.name.html} {help id="mailing-name"}</td></tr>
     {if $context EQ 'search'}
@@ -68,11 +67,8 @@
   {/strip}
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
-</div>
 
- <table>
-   <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
- </table>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>
 
 {literal}

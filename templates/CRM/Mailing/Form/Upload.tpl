@@ -91,9 +91,7 @@
     </table> 
   </fieldset>
 
-  <table>
-    <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
-  </table>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div><!-- / .crm-form-block -->
 
 {* -- Javascript for showing/hiding the upload/compose options -- *}

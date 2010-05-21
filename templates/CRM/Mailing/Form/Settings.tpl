@@ -51,7 +51,7 @@ cj( function($) {
     {ts}These settings control tracking and responses to recipient actions. The number of recipients selected to receive this mailing is shown in the box to the right. If this count doesn't match your expectations, click <strong>Previous</strong> to review your selection(s).{/ts} 
 </div>
 {include file="CRM/Mailing/Form/Count.tpl"}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-mailing-form-block">
   <fieldset><legend>{ts}Tracking{/ts}</legend> 
     <table class="form-layout"><tr class="crm-mailing-form-block-url_tracking">
     <td class="label">{$form.url_tracking.label}</td>
@@ -98,9 +98,7 @@ cj( function($) {
     </tr>
    </table>
   </fieldset>
-  <table>
-    <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
-  </table>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>
 
 {* include jscript to warn if unsaved form field changes *}

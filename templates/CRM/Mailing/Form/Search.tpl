@@ -24,7 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 <div class="crm-block crm-form-block crm-search-form-block">
-<div class="form-item">
 <table class="form-layout">
     <tr>
         <td>{$form.mailing_name.label}<br />
@@ -46,5 +45,4 @@
         <td>{$form.buttons.html}</td><td colspan="2"></td>
     </tr>
 </table>
-</div>
 </div>

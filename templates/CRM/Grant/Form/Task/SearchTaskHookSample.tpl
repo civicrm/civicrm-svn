@@ -1,7 +1,5 @@
 {if $rows}
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons element-right">{include file="CRM/common/formButtons.tpl"}</div>
 
 <div class="spacer"></div>
 
@@ -26,9 +24,7 @@
 </table>
 </div>
 
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons element-right">{include file="CRM/common/formButtons.tpl"}</div>
 
 {else}
    <div class="messages status">

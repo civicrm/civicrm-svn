@@ -26,7 +26,7 @@
 
 {assign var="showBlock" value="'searchForm'"}
 {assign var="hideBlock" value="'searchForm_show'"}
-<div class="crm-block crm-form-block crm-grant-form-block">
+<div class="crm-block crm-form-block crm-search-form-block">
 <div id="searchForm_show" class="form-item">
   <a href="#" onclick="hide('searchForm_show'); show('searchForm'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}" /></a>
   <label>

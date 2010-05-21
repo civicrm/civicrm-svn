@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing a mailing component  *}
-<div class="form-item crm-block crm-form-block crm-mailing-form-block">
+<div class="crm-block crm-form-block crm-mailing-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Mailing Component{/ts}{else}{ts}Edit Mailing Component{/ts}{/if}</legend>
   <table class="form-layout">
     <tr class="crm-mailing-form-block-name"><td class="label">{$form.name.label}</td><td>{$form.name.html}</td>
@@ -34,7 +34,7 @@
     <tr class="crm-mailing-form-block-body_html"><td class="label">{$form.body_html.label}</td><td>{$form.body_html.html}</td>
     <tr class="crm-mailing-form-block-is_default"><td class="label">{$form.is_default.label}</td><td>{$form.is_default.html}</td>
     <tr class="crm-mailing-form-block-is_active"><td class="label">{$form.is_active.label}</td><td>{$form.is_active.html}</td>
-    <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td>
   </table>
 </fieldset>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>
