@@ -1050,12 +1050,19 @@ as tbl ";
         $activityTypeID = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                           'Email',
                                                           'name' );
+
+        // CRM-6265: save both text and HTML parts in details (if present)
+        if ($html and $text) {
+            $details = "-ALTERNATIVE ITEM 0-\n$html\n-ALTERNATIVE ITEM 1-\n$text\n-ALTERNATIVE END-\n";
+        } else {
+            $details = $html ? $html : $text;
+        }
         
         $activityParams = array('source_contact_id'    => $userID,
                                 'activity_type_id'     => $activityTypeID,
                                 'activity_date_time'   => date('YmdHis'),
                                 'subject'              => $subject,
-                                'details'              => ($html) ? $html : $text,
+                                'details'              => $details,
                                 // FIXME: check for name Completed and get ID from that lookup
                                 'status_id'            => 2
                                 );
