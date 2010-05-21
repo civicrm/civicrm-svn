@@ -29,16 +29,16 @@
 
 cj( function($) {
   // hide all the selects that contains only one option
-  $('.crm-message-select select').each(function (){
-    if ($(this).find('option').size() == 1) { 
-      $(this).parent().parent().hide();
+  cj('.crm-message-select select').each(function (){
+    if (cj(this).find('option').size() == 1) { 
+      cj(this).parent().parent().hide();
     }
   });
-  if (!$('#override_verp').attr('checked')){
-    $('.crm-mailing-form-block-forward_replies,.crm-mailing-form-block-auto_responder').hide();
+  if (!cj('#override_verp').attr('checked')){
+    cj('.crm-mailing-form-block-forward_replies,.crm-mailing-form-block-auto_responder').hide();
   }
-  $('#override_verp').click(function(){
-      $('.crm-mailing-form-block-forward_replies,.crm-mailing-form-block-auto_responder').toggle();
+  cj('#override_verp').click(function(){
+      cj('.crm-mailing-form-block-forward_replies,.crm-mailing-form-block-auto_responder').toggle();
     });
 
 });
