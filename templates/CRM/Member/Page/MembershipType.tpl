@@ -61,7 +61,7 @@
                 <td class="crm-membership_type-relationship_type_name">{$row.relationshipTypeName}</td> 
                 <td class="crm-membership_type-visibility">{$row.visibility}</td>
                 <td class="nowrap crm-membership_type-order">{$row.order}</td>
-    	        <td class="crm-membership-_typestatus_{$row.id}" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+    	        <td class="crm-membership_type-status_{$row.id}" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
     	        <td>{$row.action|replace:'xx':$row.id}</td>
                 <td class="order hiddenElement">{$row.weight}</td>
            </tr>
