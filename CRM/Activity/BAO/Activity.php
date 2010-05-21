@@ -1055,7 +1055,7 @@ as tbl ";
                                 'activity_type_id'     => $activityTypeID,
                                 'activity_date_time'   => date('YmdHis'),
                                 'subject'              => $subject,
-                                'details'              => ($text) ? $text : $html,
+                                'details'              => ($html) ? $html : $text,
                                 // FIXME: check for name Completed and get ID from that lookup
                                 'status_id'            => 2
                                 );
