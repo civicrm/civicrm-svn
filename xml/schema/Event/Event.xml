@@ -472,6 +472,7 @@
   <field>
       <name>is_template</name>
       <type>boolean</type>
+      <default>0</default>
       <comment>whether the event has template</comment>
       <add>3.0</add>
   </field>
