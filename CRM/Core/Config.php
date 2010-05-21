@@ -219,6 +219,10 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             // again doing this at the very very end
             require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::config( self::$_singleton );
+
+            // make sure session is always initialised            
+            $session = CRM_Core_Session::singleton();
+            
         }
 
 
