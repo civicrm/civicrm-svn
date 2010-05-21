@@ -325,7 +325,11 @@ class CRM_Event_Form_ManageEvent_EventInfo extends CRM_Event_Form_ManageEvent
                 if (!isset($params[$key])) $params[$key] = $value;
             }
         }
-
+        
+        if ( empty( $params['is_template'] ) ) {
+            $params['is_template'] = 0;
+        }
+        
         $event =  CRM_Event_BAO_Event::create( $params );
 
         // now that we have the event’s id, do some more template-based stuff
