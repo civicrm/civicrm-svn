@@ -564,6 +564,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
         // add contact using dedupe rule
         require_once 'CRM/Dedupe/Finder.php';
         $dedupeParams = CRM_Dedupe_Finder::formatParams ($params      , 'Individual');
+        $dedupeParams['check_permission'] = false;
         $dupeIds      = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual');
         // if we find more than one contact, use the first one
         if ( CRM_Utils_Array::value( 0, $dupeIds ) ) {
