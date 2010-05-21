@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="Crm-block crm-form-block">
+<div class="crm-block crm-form-block">
 {* this template is used for adding/editing activities for a case. *}
 {if $cdType }
    {include file="CRM/Custom/Form/CustomData.tpl"}
@@ -95,7 +95,6 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 
     {/if}
 
-    <fieldset>
         <legend>
            {if $action eq 8}
               {ts}Delete{/ts}
@@ -104,7 +103,6 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            {elseif $action eq 32768}
               {ts}Restore{/ts}
            {/if}
-           {$activityTypeName}
         </legend>
         {if $action eq 8 or $action eq 32768 }
             <div class="messages status"> 
@@ -299,11 +297,11 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
              {/if}
            {/if}
            <tr>
-              <td>&nbsp;</td><td class="buttons">{include file="CRM/common/formButtons.tpl"}</td>
+              <td>&nbsp;</td>
+	      <td class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</td>
             </tr>
         </table>
-    </fieldset>
-
+    
     {if $action eq 1 or $action eq 2}
         {*include custom data js file*}
         {include file="CRM/common/customData.tpl"}

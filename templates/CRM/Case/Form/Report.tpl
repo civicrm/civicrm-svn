@@ -27,8 +27,8 @@
 {if $report}
 {$report}
 {else}
-<div id="reportForm" class="form-item">
-<fieldset><legend>{ts}Report Parameters{/ts}</legend>
+<div id="reportForm" class="form-item crm-form-block">
+<h3>{ts}Report Parameters{/ts}</h3>
     {strip} 
         <table class="form-layout">
         <tr class="crm-case-form-block-include_activities">
@@ -48,10 +48,10 @@
            </td>       
         </tr>
         <tr>
-           <td colspan="2">{$form.buttons.html}</td>
+	   <td>&nbsp;</td> 	
+           <td class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</td>
         </tr>
         </table>
     {/strip}
-</fieldset>
 </div>
 {/if}

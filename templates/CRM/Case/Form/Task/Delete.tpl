@@ -31,6 +31,6 @@
     
 </div>
 
-<div class="form-item">
- {$form.buttons.html}
+<div class="form-item crm-submit-buttons">
+  {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>

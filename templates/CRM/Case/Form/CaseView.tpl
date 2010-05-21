@@ -37,9 +37,9 @@
       
       {foreach from=$relatedCases item=row key=caseId}
       <tr>
-      	 <td class="label">{$row.client_name}</td>
-	     <td class="crm-case-form-block-case_type label">{$row.case_type}</td>
-	     <td class="label">{$row.links}</td>
+      	 <td class="crm-case-client_name label">{$row.client_name}</td>
+	 <td class="crm-case-case_type label">{$row.case_type}</td>
+	 <td class="label">{$row.links}</td>
       </tr>	
       {/foreach}
    </table>
@@ -48,7 +48,7 @@
 <h3>{ts}Case Summary{/ts}</h3>
     <table class="report">
 	{if $multiClient}
-	<tr class="crm-case-form-block-client">
+	<tr class="crm-case-client">
 		<td colspan="4" class="label">
 		{ts}Clients:{/ts} 
 		{foreach from=$caseRoles.client item=client name=clients}
@@ -65,16 +65,16 @@
             <td>
 		 <table class="form-layout-compressed" border="1">
 		 {foreach from=$caseRoles.client item=client}
-      	       	   <tr class="crm-case-form-block-display_name">
+      	       	   <tr class="crm-case-display_name">
 		     <td class="label-left" style="padding: 0px">{$client.display_name}</td>
 		   </tr>
 	       	   {if $client.phone}
-		   <tr class="crm-case-form-block-phone">
+		   <tr class="crm-case-phone">
 		     <td class="label-left description" style="padding: 0px">{$client.phone}</td>
 		   </tr>
 		   {/if}
                    {if $client.birth_date}
-        	   <tr class="crm-case-form-block-birth_date">
+        	   <tr class="crm-case-birth_date">
                      <td class="label-left description" style="padding: 0px">{ts}DOB{/ts}: {$client.birth_date|crmDate}</td>
                    </tr>
                    {/if}
@@ -82,16 +82,16 @@
 	    	 </table>
             </td>
 	    {/if}
-        <td class="crm-case-form-block-case_type label">
+        <td class="crm-case-case_type label">
             {ts}Case Type{/ts}:&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
-        <td class="crm-case-form-block-case_status label">
+        <td class="crm-case-case_status label">
             {ts}Status{/ts}:&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title="Change case status (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
-        <td class="crm-case-form-block-case_start_date label">
+        <td class="crm-case-case_start_date label">
             {ts}Start Date{/ts}:&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="Change case start date (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
-        <td class="crm-case-form-block-case_id label">
+        <td class="crm-case-{$caseID} label">
             {ts}Case ID{/ts}:&nbsp;{$caseID}
         </td>
     </tr>
@@ -174,11 +174,11 @@
 		{assign var=rowNumber value = 1}
         {foreach from=$caseRelationships item=row key=relId}
         <tr>
-            <td class="crm-case-form-block-relation label">{$row.relation}</td>
-            <td class="crm-case-form-block-name" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
+            <td class="crm-case-relation label">{$row.relation}</td>
+            <td class="crm-case-name" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
            
-            <td class="crm-case-form-block-phone" id="phone_{$rowNumber}">{$row.phone}</td>
-            <td class="crm-case-form-block-email" id="email_{$rowNumber}">{if $row.email}
+            <td class="crm-case-phone" id="phone_{$rowNumber}">{$row.phone}</td>
+            <td class="crm-case-email" id="email_{$rowNumber}">{if $row.email}
             <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}">
             	<div class="icon email-icon" title="{ts}compose and send an email{/ts}"></div>
            	</a>{/if}
@@ -203,10 +203,10 @@
         {foreach from=$caseRoles item=relName key=relTypeID}
          {if $relTypeID neq 'client'} 
            <tr>
-               <td class="crm-case-form-block-relName label">{$relName}</td>
-               <td class="crm-case-form-block-relName_{$rowNumber}" id="relName_{$rowNumber}">(not assigned)</td>
-               <td class="crm-case-form-block-phone" id="phone_{$rowNumber}"></td>
-               <td class="crm-case-form-block-email" id="email_{$rowNumber}"></td>
+               <td class="crm-case-relName label">{$relName}</td>
+               <td class="crm-case-relName_{$rowNumber}" id="relName_{$rowNumber}">(not assigned)</td>
+               <td class="crm-case-phone" id="phone_{$rowNumber}"></td>
+               <td class="crm-case-email" id="email_{$rowNumber}"></td>
 	       {if $hasAccessToAllCases}               
 	       <td id ="edit_{$rowNumber}">
 	       <a href="#" title="edit case role" onclick="createRelationship( {$relTypeID}, null, null, {$rowNumber}, '{$relName}' );return false;">
@@ -222,9 +222,9 @@
                <td rowspan="{$relName|@count}" class="crm-case-label label">{ts}Client{/ts}</td>
 	   {foreach from=$relName item=client name=clientsRoles}
                {if not $smarty.foreach.clientsRoles.first}</tr>{/if}
-               <td class="crm-case-form-block-sort_name" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.sort_name}</a></td>
-               <td class="crm-case-form-block-phone" id="phone_{$rowNumber}">{$client.phone}</td>
-               <td class="crm-case-form-block-email" id="email_{$rowNumber}">{if $client.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$client.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
+               <td class="crm-case-sort_name" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.sort_name}</a></td>
+               <td class="crm-case-phone" id="phone_{$rowNumber}">{$client.phone}</td>
+               <td class="crm-case-email" id="email_{$rowNumber}">{if $client.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$client.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
                <td></td>
            </tr>
            {/foreach}
@@ -464,10 +464,10 @@ cj(document).ready(function(){
     	</tr>
         {foreach from=$clientRelationships item=row key=relId}
         <tr>
-            <td class="crm-case-form-block-relation label">{$row.relation}</td>
-            <td class="crm-case-form-block-name" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
-            <td class="crm-case-form-block-phone" id="phone_{$rowNumber}">{$row.phone}</td>
-	    <td class="crm-case-form-block-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
+            <td class="crm-case-relation label">{$row.relation}</td>
+            <td class="crm-case-name" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
+            <td class="crm-case-phone" id="phone_{$rowNumber}">{$row.phone}</td>
+	    <td class="crm-case-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
         </tr>
 		{assign var=rowNumber value = `$rowNumber+1`}
         {/foreach}
@@ -493,9 +493,9 @@ cj(document).ready(function(){
     	</tr>
         {foreach from=$globalRelationships item=row key=relId}
         <tr>
-            <td class="crm-case-form-block-sort_name label" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.contact_id`"}" title="view contact record">{$row.sort_name}</a></td>
-            <td class="crm-case-form-block-phone" id="phone_{$rowNumber}">{$row.phone}</td>
-	    <td class="crm-case-form-block-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div title="compose and send an email" class="icon email-icon"></div></a>&nbsp;{/if}</td>
+            <td class="crm-case-sort_name label" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.contact_id`"}" title="view contact record">{$row.sort_name}</a></td>
+            <td class="crm-case-phone" id="phone_{$rowNumber}">{$row.phone}</td>
+	    <td class="crm-case-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div title="compose and send an email" class="icon email-icon"></div></a>&nbsp;{/if}</td>
         </tr>
 		{assign var=rowNumber value = `$rowNumber+1`}
         {/foreach}
@@ -932,7 +932,7 @@ function printCaseReport( ){
 </script>
 {/literal}
 
-{$form.buttons.html}
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 
 {literal}
 <script type="text/javascript">
