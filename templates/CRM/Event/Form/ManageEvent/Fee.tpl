@@ -34,7 +34,7 @@
     {/if}
 <div class="crm-form-block">
 <div class="crm-submit-buttons">
-   {include file="CRM/common/formButtons.tpl"}
+   {include file="CRM/common/formButtons.tpl" location="top"}
 </div>
 
     <table class="form-layout">
@@ -139,7 +139,7 @@
         <fieldset id="map-field"><legend>{ts}Regular Fees{/ts}</legend>
         {ts}Use the table below to enter descriptive labels and amounts for up to ten event fee levels. These will be presented as a list of radio button options. Both the label and dollar amount will be displayed. You can also configure one or more sets of discounted fees by checking "Discounts by Signup Date" below.{/ts}
         <table id="map-field-table">
-        <tr class="columnheader"><th scope="column">{ts}Fee Label{/ts}</th><th scope="column">{ts}Amount{/ts}</th><th scope="column">{ts}Default?{/ts}</th></tr>
+        <tr class="columnheader"><td scope="column">{ts}Fee Label{/ts}</td><td scope="column">{ts}Amount{/ts}</td><td scope="column">{ts}Default?{/ts}</td></tr>
         {section name=loop start=1 loop=11}
            {assign var=idx value=$smarty.section.loop.index}
            <tr><td class="even-row crm-event-form-block-label_{$idx}">{$form.label.$idx.html}</td><td class="crm-event-form-block-value_{$idx}">{$form.value.$idx.html|crmMoney}</td><td class="even-row crm-event-form-block-default_{$idx}">{$form.default.$idx.html}</td></tr>
@@ -161,10 +161,10 @@
         <fieldset id="discount">
 	<table>
 	<tr class="columnheader">
-        <th>&nbsp;</th>
-        <th>{ts}Discount Set{/ts}</th>
-        <th>{ts}Start Date{/ts}</th>
-        <th>{ts}End Date{/ts}</th>
+        <td>&nbsp;</th>
+        <td>{ts}Discount Set{/ts}</td>
+        <td>{ts}Start Date{/ts}</td>
+        <td>{ts}End Date{/ts}</td>
     </tr>
 	
 	{section name=rowLoop start=1 loop=6}
@@ -188,14 +188,14 @@
             <p>{ts}Use the table below to enter descriptive labels and amounts for up to ten discounted event fees for each discount set. <strong>Don't forget to click 'Save' when you are finished.</strong>{/ts}</p>
 	    <table id="map-field-table">
             <tr class="columnheader">
-	       <th scope="column">{ts}Fee Label{/ts}</th>
+	       <td scope="column">{ts}Fee Label{/ts}</td>
 	       {section name=dloop start=1 loop=6}
 	          {assign var=i value=$smarty.section.dloop.index}
 		  {if $form.discount_name.$i.value}
-	          <th scope="column">{$form.discount_name.$i.value}</th>
+	          <td scope="column">{$form.discount_name.$i.value}</td>
 		  {/if}
 	       {/section}
-	       <th scope="column">{ts}Default?{/ts}</th>
+	       <td scope="column">{ts}Default?{/ts}</td>
 	    </tr>
             
             {section name=loop start=1 loop=11}
@@ -218,7 +218,7 @@
     </div>	
     </div>
 <div class="crm-submit-buttons">
-   {include file="CRM/common/formButtons.tpl"}
+   {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
 </div>
 

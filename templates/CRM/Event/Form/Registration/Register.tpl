@@ -30,7 +30,7 @@
 {include file="CRM/common/TrackingFields.tpl"}
 
 {capture assign='reqMark'}<span class="marker"  title="{ts}This field is required.{/ts}">*</span>{/capture}
-<div class="form-item">
+<div class="crm-block crm-event-register-form-block">
 
 {* moved to tpl since need to show only for primary participant page *}
 {if $requireApprovalMsg || $waitlistMsg}
@@ -130,7 +130,7 @@
 </div>
 
 <div id="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
+    {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
 
 {if $event.footer_text}

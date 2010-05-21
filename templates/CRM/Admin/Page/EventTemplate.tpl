@@ -54,7 +54,7 @@
         </tr>
         </thead>
         {foreach from=$rows item=row}
-          <tr id='rowid{$row.id}' class="{cycle values="odd-row,even-row"} crm-event erm-event_{$row.id}">
+          <tr id='rowid{$row.id}' class="{cycle values="odd-row,even-row"} crm-event crm-event_{$row.id}">
               <td class="crm-event-template_title">{$row.template_title}</td>	
               <td class="crm-event-event_type">{$row.event_type}</td>	
               <td class="crm-event-participant_role">{$row.participant_role}</td>	
