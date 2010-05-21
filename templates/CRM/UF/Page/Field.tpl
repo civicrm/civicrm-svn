@@ -38,8 +38,8 @@
         <div id="field_page">
         {if not ($action eq 2 or $action eq 1)}
             <div class="action-link">
-            <a href="{crmURL p="civicrm/admin/uf/group/field" q="reset=1&action=add&gid=$gid"}" class="button"><span><div class="icon add-icon"></div>{ts}Add CiviCRM Profile Field{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=update&id=`$gid`&reset=1&context=field"}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Profile Settings{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=preview&id=`$gid`&reset=1&field=0&context=field"}" class="button"><span><div class="icon preview-icon"></div>{ts}Preview this profile (all fields){/ts}</span></a><a href="{crmURL p="civicrm/profile/create" q="gid=$gid&reset=1"}" class="button"><span><div class="icon play-icon"></div>{ts}Use this profile in Create Mode{/ts}</span></a>
-            <div class="clear"></div>
+                <a href="{crmURL p="civicrm/admin/uf/group/field" q="reset=1&action=add&gid=$gid"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Field{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=update&id=`$gid`&reset=1&context=field"}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Settings{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=preview&id=`$gid`&reset=1&field=0&context=field"}" class="button"><span><div class="icon preview-icon"></div>{ts}Preview (all fields){/ts}</span></a><a href="{crmURL p="civicrm/profile/create" q="gid=$gid&reset=1"}" class="button"><span><div class="icon play-icon"></div>{ts}Use (create mode){/ts}</span></a>
+                <div class="clear"></div>
             </div>
         {/if}
         {strip}
@@ -81,8 +81,8 @@
         {/strip}
         {if not ($action eq 2 or $action eq 1)}
             <div class="action-link">
-            <a href="{crmURL p="civicrm/admin/uf/group/field" q="reset=1&action=add&gid=$gid"}" class="button"><span><div class="icon add-icon"></div>{ts}Add CiviCRM Profile Field{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=update&id=`$gid`&reset=1&context=field"}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Profile Settings{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=preview&id=`$gid`&reset=1&field=0&context=field"}" class="button"><span><div class="icon preview-icon"></div>{ts}Preview this profile (all fields){/ts}</span></a><a href="{crmURL p="civicrm/profile/create" q="gid=$gid&reset=1"}" class="button"><span><div class="icon play-icon"></div>{ts}Use this profile in Create Mode{/ts}</span></a>
-            <div class="clear"></div>
+                <a href="{crmURL p="civicrm/admin/uf/group/field" q="reset=1&action=add&gid=$gid"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Field{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=update&id=`$gid`&reset=1&context=field"}" class="button"><span><div class="icon edit-icon"></div>{ts}Edit Settings{/ts}</span></a><a href="{crmURL p="civicrm/admin/uf/group" q="action=preview&id=`$gid`&reset=1&field=0&context=field"}" class="button"><span><div class="icon preview-icon"></div>{ts}Preview (all fields){/ts}</span></a><a href="{crmURL p="civicrm/profile/create" q="gid=$gid&reset=1"}" class="button"><span><div class="icon play-icon"></div>{ts}Use (create mode){/ts}</span></a>
+                <div class="clear"></div>
             </div>
         {/if}    
         

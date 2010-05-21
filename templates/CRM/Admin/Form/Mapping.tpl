@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing a tag (admin)  *}
-<div class="form-item crm-block crm-form-block crm-mapping-form-block">
+<div class="crm-block crm-form-block crm-mapping-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Tag{/ts}{elseif $action eq 2}{ts}Edit Mapping{/ts}{else}{ts}Delete Mapping{/ts}{/if}</legend>
     {if $action eq 1 or $action eq 2 }
       <table class="form-layout-compressed">
