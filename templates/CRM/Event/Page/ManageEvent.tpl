@@ -91,11 +91,11 @@
 	    <td class="crm-event-action">
 	    <span id="{$row.id}" class="btn-slide">{ts}Configure{/ts}
 	    	<ul class="panel" id="panel_info_{$row.id}">
-		    <li><a title="Info and Settings" class="action-item" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=EventInfo"}">{ts}Info and Settings{/ts}</a></li>
-		    <li><a title="Location" class="action-item {if NOT $row.is_show_location} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Location"}">{ts}Location{/ts}</a></li>
+		    <li><a title="Info and Settings" class="action-item-wrap" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=EventInfo"}">{ts}Info and Settings{/ts}</a></li>
+		    <li><a title="Location" class="action-item-wrap {if NOT $row.is_show_location} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Location"}">{ts}Location{/ts}</a></li>
 		    <li><a title="Fees" class="action-item {if NOT $row.is_monetary} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Fee"}">{ts}Fees{/ts}</a></li>
-		    <li><a title="Online Registration" class="action-item {if NOT $row.is_online_registration} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Registration"}">{ts}Online Registration{/ts}</a></li>
-		    <li><a title="Tell a Friend" class="action-item {if NOT $row.friend} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Friend"}">{ts}Tell a Friend{/ts}</a></li>
+		    <li><a title="Online Registration" class="action-item-wrap {if NOT $row.is_online_registration} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Registration"}">{ts}Online Registration{/ts}</a></li>
+		    <li><a title="Tell a Friend" class="action-item-wrap {if NOT $row.friend} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Friend"}">{ts}Tell a Friend{/ts}</a></li>
 	    </span>
 	    </td>
 	    <td class="crm-event-action">
@@ -111,15 +111,15 @@
 	    <span id="{$row.id}" class="btn-slide">{ts}Participants{/ts}
 	    	<ul class="panel" id="panel_participants_{$row.id}">
 		    {if $findParticipants.statusCounted}
-		    	<li><a title="Counted" class="action-item" href="{crmURL p='civicrm/event/search' q="reset=1&force=1&status=true&event=`$row.id`"}">{$findParticipants.statusCounted}</a>
+		    	<li><a title="Counted" class="action-item-wrap" href="{crmURL p='civicrm/event/search' q="reset=1&force=1&status=true&event=`$row.id`"}">{$findParticipants.statusCounted}</a>
 			</li>
 		    {/if}
 		    {if $findParticipants.statusNotCounted}
-		    	<li><a title="Not Counted" class="action-item" href="{crmURL p='civicrm/event/search' q="reset=1&force=1&status=false&event=`$row.id`"}">{$findParticipants.statusNotCounted}</a>
+		    	<li><a title="Not Counted" class="action-item-wrap" href="{crmURL p='civicrm/event/search' q="reset=1&force=1&status=false&event=`$row.id`"}">{$findParticipants.statusNotCounted}</a>
 			</li>
 		    {/if}
 		    {if $row.participant_listing_id}
-		    	<li><a title="Public Participant Listing" class="action-item" href="{crmURL p='civicrm/event/participant' q="reset=1&id=`$row.id`"}">{ts}Public Participant Listing{/ts}</a>
+		    	<li><a title="Public Participant Listing" class="action-item-wrap" href="{crmURL p='civicrm/event/participant' q="reset=1&id=`$row.id`"}">{ts}Public Participant Listing{/ts}</a>
 		    	</li>
 		    {/if}
 	    </span> 
