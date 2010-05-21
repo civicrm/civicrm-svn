@@ -106,15 +106,15 @@
 			     <td class="label">{$form.note.label}</td>
 			     <td>{$form.note.html}</td>
 			</tr>
-			<tr class="crm-grant-form-block-custom_data">
-			     <td colspan=2>{include file="CRM/Custom/Form/CustomData.tpl"}</td>
-			</tr>
-            <tr class="crm-grant-form-block-attachment">
-                <td colspan="2">
-                    {include file="CRM/Form/attachment.tpl"}
-                </td>
-            </tr>
+
 		</table>
+		
+		<div class="crm-grant-form-block-custom_data">
+		     {include file="CRM/Custom/Form/CustomData.tpl"}
+		</div>
+		<div class="crm-grant-form-block-attachment">
+		     {include file="CRM/Form/attachment.tpl"}
+		</div>
 	</div>
    {/if}
 </fieldset>
