@@ -307,6 +307,8 @@ class CRM_Utils_System_Drupal {
         // and en_US will trump other English entries, but works in our case)
         static $prefixes = null;
         if ($prefixes === null) {
+            // seed with Chinese mappings for CRM-6281
+            $prefixes = array('zh-hans' => 'zh_CN', 'zh-hant' => 'zh_TW');
             foreach ($locales as $locale) {
                 $prefixes[substr($locale, 0, 2)] = $locale;
             }
