@@ -296,12 +296,10 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
              </tr>
              {/if}
            {/if}
-           <tr>
-              <td>&nbsp;</td>
-	      <td class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</td>
-            </tr>
-        </table>
-    
+       </table>
+     
+     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+
     {if $action eq 1 or $action eq 2}
         {*include custom data js file*}
         {include file="CRM/common/customData.tpl"}

@@ -30,6 +30,6 @@
         <p>{include file="CRM/Case/Form/Task.tpl"}</p>
   </div>
 <p>
-<div class="form-item crm-submit-buttons">
+<div class="crm-submit-buttons">
   {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>

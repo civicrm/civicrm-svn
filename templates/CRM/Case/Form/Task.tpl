@@ -26,7 +26,7 @@
 {ts 1=$totalSelectedCases}Number of selected cases: %1{/ts}
 
 {if $rows } 
-<div class="form-item">
+<div>
 <table width="30%">
   <tr class="columnheader">
     <th>{ts}Name{/ts}</th>
