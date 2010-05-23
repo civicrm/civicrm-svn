@@ -137,6 +137,8 @@ class CRM_Contact_Form_CustomData extends CRM_Core_Form
 		$this->_contactSubType = CRM_Contact_BAO_Contact::getContactSubType($this->_tableID);
 		$this->assign( 'contact_type', $this->_contactType);
 		$this->assign( 'contact_subtype', $this->_contactSubType);
+        list( $displayName, $contactImage ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $this->_tableID );        
+        CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
 	
         // when custom data is included in this page
         if ( CRM_Utils_Array::value( "hidden_custom", $_POST ) ) {
