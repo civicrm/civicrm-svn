@@ -43,10 +43,10 @@
      <tr>
 	 {if $className eq 'CRM_Contact_Form_Contact'}
         <td id='Address-Primary-html' colspan="2">
-           {$form.address.$blockId.location_type_id.label}
-           {$form.address.$blockId.location_type_id.html}
-           {$form.address.$blockId.is_primary.html}
-           {$form.address.$blockId.is_billing.html}
+           <span class="crm-address-element location_type_id-address-element">{$form.address.$blockId.location_type_id.label}
+           {$form.address.$blockId.location_type_id.html}</span>
+           <span class="crm-address-element is_primary-address-element">{$form.address.$blockId.is_primary.html}</span>
+           <span class="crm-address-element is_billing-address-element">{$form.address.$blockId.is_billing.html}</span>
         </td>
 	 {/if}
         {if $blockId gt 1}
