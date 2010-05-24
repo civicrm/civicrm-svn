@@ -191,10 +191,11 @@ class CRM_Member_BAO_MembershipStatus extends CRM_Member_DAO_MembershipStatus
      * @return 
      * @static
      */
-    static function getMembershipStatusByDate( $startDate, $endDate, $joinDate, $statusDate = 'today', $excludeIsAdmin = false ) 
+    static function getMembershipStatusByDate( $startDate, $endDate, $joinDate, 
+                                               $statusDate = 'today', $excludeIsAdmin = false ) 
     {
         $membershipDetails = array();
-        if ( $statusDate == 'today' ) {
+        if ( !$statusDate || $statusDate == 'today' ) {
             $statusDate = getDate();
             $statusDate = date( 'Ymd',
                                 mktime( $statusDate['hours'],
