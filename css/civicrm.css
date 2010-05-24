@@ -2416,7 +2416,7 @@ span.icon {
 }	
 
 .crm-accordion-open .crm-accordion-body { display: block; }
-.crm-accordion-closed .crm-accordion-body { display: none; }
+.crm-accordion-closed .crm-accordion-body { display: none!important; }
 
 .crm-accordion-open .crm-accordion-header .crm-accordion-pointer {
     background-position: -64px -16px;
