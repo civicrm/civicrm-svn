@@ -111,7 +111,7 @@ class CRM_Event_Task
                                    15 => array( 'title' => ts( 'Change Participant Status' ),
                                                 'class'  => 'CRM_Event_Form_Task_ParticipantStatus',       
                                                 'result' => true ),
-                                   16 => array( 'title'  => ts( 'Print Event Badges' ),
+                                   16 => array( 'title' => ts( 'Print Event Name Badges' ),
                                                 'class'  => 'CRM_Event_Form_Task_Badge',
                                                 'result' => false )
                                    );

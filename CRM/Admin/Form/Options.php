@@ -175,7 +175,8 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
                         'filter', 
                         ts('Regular Expression?'));
         }
-        if ( $this->_gName == 'participant_listing' ) {
+        if ( $this->_gName == 'participant_listing' ||
+             $this->_gName == 'event_badge' ) {
             $this->add('text', 
                        'description', 
                        ts('Description'), 

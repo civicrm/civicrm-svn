@@ -54,17 +54,13 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
         CRM_Utils_System::setTitle( ts('Make Event Badges') );
 
         //add select for label
-        $label = array("5160" => "5160",
-                       "5161" => "5161",
-                       "5162" => "5162", 
-                       "5163" => "5163", 
-                       "5164" => "5164", 
-                       "8600" => "8600",
-                       "L7160" => "L7160",
-                       "L7161" => "L7161",
-                       "L7163" => "L7163");
+        require_once 'CRM/Core/OptionGroup.php';
+        $label = CRM_Core_OptionGroup::values('event_badge');
         
-        $this->add('select', 'label_id', ts('Select Badge format'), array( '' => ts('- select label -')) + $label, true);
+        $this->add('select',
+                   'badge_id',
+                   ts('Select Name Badge format'),
+                   array( '' => ts('- select -')) + $label, true);
 
         $this->addDefaultButtons( ts('Make Event Badges'));
        
@@ -78,7 +74,7 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
      */
     public function postProcess ( )
     {
-        $fv = $this->controller->exportValues('Search');
+        $params = $this->controller->exportValues($this->_name);
         $config = CRM_Core_Config::singleton();
 
         $values = $this->controller->exportValues( 'Search' ); 
@@ -116,9 +112,26 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
 
         }
 
-        require_once 'CRM/Event/Badge/Chevalet.php';
-        $badge = new CRM_Event_Badge_Chevalet( );
-        $badge->run( $rows );
+        // get the class name from the participantListingID
+        require_once 'CRM/Core/OptionGroup.php';
+        $className = CRM_Core_OptionGroup::getValue( 'event_badge',
+                                                     $params['badge_id'],
+                                                     'value',
+                                                     'Integer',
+                                                     'description' );
+
+        $classFile = str_replace( '_',
+                                  DIRECTORY_SEPARATOR,
+                                  $className ) . '.php';
+        $error = include_once( $classFile );
+        if ( $error == false ) {
+            CRM_Core_Error::fatal( 'Event Badge code file: ' . $classFile . ' does not exist. Please verify your custom event badge settings in CiviCRM administrative panel.' );
+        }
+
+        eval( "\$eventBadgeClass = new $className( );" );
+        
+
+        $eventBadgeClass->run( $rows );
     }
     
 }

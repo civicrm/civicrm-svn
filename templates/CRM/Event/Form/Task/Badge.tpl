@@ -26,8 +26,8 @@
 <div class="crm-block crm-form-block crm-event_badge-form-block">
 <table class="form-layout-compressed"> 
      <tr class="crm-mailing_label-form-block-label_id">
-        <td class="label">{$form.label_id.label}</td>
-        <td>{$form.label_id.html}</td>
+        <td class="label">{$form.badge_id.label}</td>
+        <td>{$form.badge_id.html}</td>
      </tr>
      <tr>{include file="CRM/Event/Form/Task.tpl"}</tr>
 </table>

@@ -385,6 +385,15 @@
      <weight>398</weight>
   </item>
   <item>
+     <path>civicrm/admin/options/event_badge</path>
+     <title>Event Name Badge Templates</title>
+     <desc>Template to control event name badge format.</desc>
+     <path_arguments>group=event_badge</path_arguments>
+     <page_callback>CRM_Admin_Page_Options</page_callback>
+     <adminGroup>Option Lists</adminGroup>
+     <weight>399</weight>
+  </item>
+  <item>
      <path>civicrm/admin/deduperules</path>
      <title>Find and Merge Duplicate Contacts</title>
      <desc>Manage the rules used to identify potentially duplicate contact records. Scan for duplicates using a selected rule and merge duplicate contact data as needed.</desc>

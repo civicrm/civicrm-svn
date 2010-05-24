@@ -185,7 +185,9 @@ VALUES
    ('account_type'                  , '{ts escape="sql"}Account type{/ts}'                       , 0, 1),
    ('website_type'                  , '{ts escape="sql"}Website Type{/ts}'                       , 0, 1),
    ('tag_used_for'                  , '{ts escape="sql"}Tag Used For{/ts}'                       , 0, 1),
-   ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 0, 1);
+   ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 0, 1),
+   ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 0, 1);
+
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -235,6 +237,7 @@ SELECT @option_group_id_accTp          := max(id) from civicrm_option_group wher
 SELECT @option_group_id_website        := max(id) from civicrm_option_group where name = 'website_type';
 SELECT @option_group_id_tuf            := max(id) from civicrm_option_group where name = 'tag_used_for';
 SELECT @option_group_id_currency       := max(id) from civicrm_option_group where name = 'currencies_enabled';
+SELECT @option_group_id_eventBadge     := max(id) from civicrm_option_group where name = 'event_badge';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -600,7 +603,12 @@ VALUES
    (@option_group_id_tuf, 'Activities', 'civicrm_activity', 'Activities',  NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_tuf, 'Cases',      'civicrm_case',     'Cases',       NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
 
-   (@option_group_id_currency, 'USD ($)',      'USD',     'USD',       NULL, 0, 1, 1, NULL, 0, 0, 1, NULL, NULL);
+   (@option_group_id_currency, 'USD ($)',      'USD',     'USD',       NULL, 0, 1, 1, NULL, 0, 0, 1, NULL, NULL),
+
+-- event name badges
+  (@option_group_id_eventBadge, '{ts escape="sql"}Name Only{/ts}'     , 1, 'Name Only'      ,  NULL, 0, 0, 1, 'CRM_Event_Badge_Simple', 0, 1, 1, NULL, NULL),
+  (@option_group_id_eventBadge, '{ts escape="sql"}Name Tent{/ts}', 2, 'Name Tent' ,  NULL, 0, 0, 2, 'CRM_Event_Badge_NameTent', 0, 1, 1, NULL, NULL);
+
     
 -- Now insert option values which require domainID
 --

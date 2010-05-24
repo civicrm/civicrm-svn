@@ -2,7 +2,7 @@
 
 require_once 'CRM/Event/Badge.php';
 
-class CRM_Event_Badge_Chevalet extends CRM_Event_Badge {
+class CRM_Event_Badge_NameTent extends CRM_Event_Badge {
 
    function __construct() {
        parent::__construct();
