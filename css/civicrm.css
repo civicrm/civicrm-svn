@@ -2156,7 +2156,7 @@ div.grippie {
 #crm-container input.form-submit-inline,
 #crm-container .crm-button {
     text-shadow:0 1px 0 black;	
-    background:transparent url(../i/crm-button-bg.gif) repeat-x top left;
+    background:#70716B url(../i/crm-button-bg.gif) repeat-x top left;
     color: #FFF;
     font-size:12px;
     font-weight:normal;
