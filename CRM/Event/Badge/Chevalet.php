@@ -1,4 +1,6 @@
-<?
+<?php
+
+require_once 'CRM/Event/Badge.php';
 
 class CRM_Event_Badge_Chevalet extends CRM_Event_Badge {
 
@@ -16,4 +18,3 @@ class CRM_Event_Badge_Chevalet extends CRM_Event_Badge {
 
 }
 
-?>
