@@ -642,8 +642,8 @@ function addRole() {
 </div><!-- /.crm-accordion-wrapper -->
 
     <div id="manageTags">
-        <div class="label">{$form.select_tag.label}</div>
-        <div class="view-value"><div class="crm-select-container">{$form.select_tag.html}</div>
+        <div class="label">{$form.case_tag.label}</div>
+        <div class="view-value"><div class="crm-select-container">{$form.case_tag.html}</div>
     </div>
     </div>
 
@@ -692,7 +692,6 @@ function addTags() {
                             tagsChecked = tagsChecked + ',' + cj(this).val();
                         }
                     }
-
                 });
 
                 var postUrl = {/literal}"{crmURL p='civicrm/case/ajax/processtags' h=0 }"{literal}; 
