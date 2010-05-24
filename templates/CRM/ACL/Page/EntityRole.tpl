@@ -33,9 +33,7 @@
 </div>
 
 {if $action eq 1 or $action eq 2 or $action eq 8}
-<div class="crm-block crm-form-block">
    {include file="CRM/ACL/Form/EntityRole.tpl"}
-</div>
 {/if}
 
 <div class="crm-block crm-content-block">
@@ -56,10 +54,10 @@
         </thead>
         <tbody>
         {foreach from=$rows item=row}
-	    <tr id="row_{$row.entity_id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td>{$row.acl_role}</td>	
-	        <td>{$row.entity}</td>	
-	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	    <tr id="row_{$row.entity_id}"class="{cycle values="odd-row,even-row"} {$row.class} crm-acl_entity_role {if NOT $row.is_active} disabled{/if}">
+	        <td class="crm-acl_entity_role-acl_role">{$row.acl_role}</td>	
+	        <td class="crm-acl_entity_role-entity">{$row.entity}</td>	
+	        <td class="crm-acl_entity_role-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action}</td>
         </tr>
         {/foreach}
@@ -75,11 +73,9 @@
 </div>
 {elseif $action ne 1 and $action ne 2 and $action ne 8}
     <div class="messages status">
-    <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
+         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
         {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}
-        <dd>{ts 1=$crmURL}There are no Role Assignments. You can <a href='%1'>add one</a> now.{/ts}</dd>
-        </dl>
+        {ts 1=$crmURL}There are no Role Assignments. You can <a href='%1'>add one</a> now.{/ts}
     </div>    
 {/if}
 </div>
