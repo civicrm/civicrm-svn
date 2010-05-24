@@ -90,6 +90,10 @@ class CRM_Dedupe_Finder
      * @return array  matching contact ids
      */
     function dupesByParams($params, $ctype, $level = 'Strict', $except = array()) {
+        // If $params is empty there is zero reason to proceed.
+        if ( ! $params ) {
+            return array();
+        }
         $rgBao =& new CRM_Dedupe_BAO_RuleGroup();
         $rgBao->contact_type = $ctype;
         $rgBao->params = $params;
