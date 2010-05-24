@@ -100,6 +100,9 @@ class CRM_Core_Form_Tag
      */
     static function postProcess( &$params, $entityId, $entityTable = 'civicrm_contact' ) {
         foreach( $params as $value ) {
+            if ( !$value ) {
+                continue;
+            }
             $tagsIDs = explode( ',', $value );
             $insertValues = array( );
             $insertSQL    = null;
