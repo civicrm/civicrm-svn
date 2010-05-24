@@ -32,7 +32,7 @@
      &nbsp;{ts}Registration is closed for this event{/ts}
   </div>
 {/if}
-<div class="vevent">
+<div class="vevent crm-block crm-event-info-form-block">
 	<div class="event-info">
 	
 	{if $event.summary}

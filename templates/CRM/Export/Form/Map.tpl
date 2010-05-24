@@ -44,8 +44,7 @@
 {* Table for mapping data to CRM fields *}
 {include file="CRM/Export/Form/table.tpl"}
 
-
-<div id="crm-submit-buttons">
+<div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl"}
 </div>
 {$initHideBoxes}

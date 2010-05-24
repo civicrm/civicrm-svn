@@ -72,7 +72,6 @@
         <div class="form-layout-compressed">
      {/if}
 
-    {if $field.is_view eq 0}  
     {if $field.options_per_line}
 	<div class="section editrow_{$n}-section form-item" id="editrow-{$n}">
         <div class="label">{$form.$n.label}</div>
@@ -151,7 +150,7 @@
 	      <div class="section file_deleteURL-section file_deleteURL{$n}-section"><div class="content">{$customFiles.$n.deleteURL}</div></div>
         {/if} 
 	{/if}
-	{/if}
+
     {* Show explanatory text for field if not in 'view' mode *}
     {if $field.help_post && $action neq 4 && $form.$n.html}
         <div class="section helprow-{$n}-section" id="helprow-{$n}"><div class="content description">{$field.help_post}</div></div>
@@ -175,7 +174,7 @@
         </div>
     {/if}
 
-{if ($action eq 1 and $mode eq 4 ) or $action eq 2 }
+{if ($action eq 1 and $mode eq 4 ) or ($action eq 2) or ($action eq 8192)}
 <div class="crm-submit-buttons"> 
      {include file="CRM/common/formButtons.tpl"}{if $isDuplicate}<span class="crm-button">{$form._qf_Edit_upload_duplicate.html}</span>{/if}
 </div>

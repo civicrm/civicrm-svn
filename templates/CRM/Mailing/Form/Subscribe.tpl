@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for web-based subscriptions to mailing list type groups  *}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-mailing-subscribe-form-block">
 <fieldset>
 {if $single}
     <div id="help">
@@ -37,7 +37,7 @@
 {/if}
 
 <table class="form-layout-compressed">
-    <tr><td style="width: 10%;">{$form.email.label}</td><td>{$form.email.html}</td></tr>
+    <tr class="crm-mailing-form-block-email"><td style="width: 10%;">{$form.email.label}</td><td>{$form.email.html}</td></tr>
     <tr><td colspan="2">
         <div class="spacer"></div>
 
@@ -47,9 +47,9 @@
             {foreach from=$rows item=row}
             <tr id='rowid{$row.id}' class="{cycle values="odd-row,even-row"}">
                 {assign var=cbName value=$row.checkbox}
-                <td>{$form.$cbName.html}</td>
-                <td><strong>{$row.title}</strong></td>
-                <td>&nbsp;&nbsp;{$row.description}&nbsp;</td>
+                <td class="crm-mailing-form-block-{$cbName}">{$form.$cbName.html}</td>
+                <td class="crm-mailing-form-block-title"><strong>{$row.title}</strong></td>
+                <td class="crm-mailing-form-block-description">&nbsp;&nbsp;{$row.description}&nbsp;</td>
             </tr>
             {/foreach}  
             </table>

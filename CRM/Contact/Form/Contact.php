@@ -876,6 +876,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $parseStatusMsg = $this->parseAddressStatusMsg( $parseResult );
         }
         
+        // Allow un-setting of location info, CRM-5969
+        $params['updateBlankLocInfo'] = true;
+
         require_once 'CRM/Contact/BAO/Contact.php';
         $contact =& CRM_Contact_BAO_Contact::create( $params, true, false, true );
 

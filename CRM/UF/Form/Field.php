@@ -571,6 +571,10 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $this->addElement('button', 'done', ts('Done'), array('onclick' => "location.href='civicrm/admin/uf/group/field?reset=1&action=browse&gid=" . $this->_gid . "'"));
         }
 
+        if ( $defaults['field_name'][1] == 'url-1' ) {
+            $defaults['field_name'][1] = 'url' ; 
+        }
+        
         $this->setDefaults($defaults);
 
     }

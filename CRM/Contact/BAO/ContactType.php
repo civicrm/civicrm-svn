@@ -144,8 +144,12 @@ WHERE  parent_id IS NULL
      *@static
      *
      */
-    static function &subTypeInfo( $contactType = null, $all = false,  $ignoreCache = false ) {
+    static function &subTypeInfo( $contactType = null, $all = false,  $ignoreCache = false, $reset = false ) {
         static $_cache = null;
+
+        if( $reset === true ) {
+            $_cache = null;
+        }
         
         if ( $_cache === null ) {
             $_cache = array( );
@@ -253,10 +257,14 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
      *@static
      *
      */
-    static function contactTypeInfo( $all = false, $ignoreCache = false ) {
+    static function contactTypeInfo( $all = false, $reset = false ) {
         static $_cache = null;
         
-        if ( $_cache === null || $ignoreCache ) {
+        if( $reset === true ) {
+            $_cache = null;
+        }
+        
+        if ( $_cache === null ) {
             $_cache = array( );
         }
 
@@ -264,7 +272,7 @@ WHERE  subtype.name IS NOT NULL AND subtype.parent_id IS NOT NULL {$ctWHERE}
         if ( ! array_key_exists( $argString, $_cache ) ) {
             $cache =& CRM_Utils_Cache::singleton( );
             $_cache[$argString] = $cache->get( $argString );
-            if ( ! $_cache[$argString] || $ignoreCache ) {
+            if ( ! $_cache[$argString] ) {
                 $_cache[$argString] = array( );
 
                 $sql = "
@@ -598,6 +606,10 @@ WHERE name = %1";
             CRM_Core_BAO_Navigation::add( $navigation );
         }
         CRM_Core_BAO_Navigation::resetNavigation( );
+
+        // reset the cache after adding
+        self::subTypeInfo( null, false, false, true );
+        
         return $contactType;
     }
 

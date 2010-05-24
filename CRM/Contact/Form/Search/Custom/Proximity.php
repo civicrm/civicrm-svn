@@ -191,7 +191,7 @@ LEFT JOIN civicrm_entity_tag t ON (t.entity_table='civicrm_contact' AND contact_
 		}
 		if ( $this->_group ) {
 			$f .= "
-LEFT JOIN civicrm_group_contact cgc ON ( cgc.contact_id = contact_a.id )
+LEFT JOIN civicrm_group_contact cgc ON ( cgc.contact_id = contact_a.id AND cgc.status = 'Added')
 ";
 		}
         

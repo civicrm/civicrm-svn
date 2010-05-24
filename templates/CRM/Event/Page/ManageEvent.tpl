@@ -72,12 +72,15 @@
             <th id="end_date">{ts}Ends{/ts}</th>
 	        <th>{ts}Active?{/ts}</th>
 	        <th></th>
+		<th></th>
+		<th></th>
+		<th></th>
 		<th class="hiddenElement"></th>
 		<th class="hiddenElement"></th>	
          </tr>
          </thead>
         {foreach from=$rows item=row}
-          <tr id="crm-event_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+          <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td class="crm-event_{$row.id}"><a href="{crmURL p='civicrm/event/info' q="id=`$row.id`&reset=1"}" title="{ts}View event info page{/ts}" class="bold">{$row.title}</a>&nbsp;&nbsp;({ts}ID:{/ts} {$row.id})<br /><a href="{crmURL p='civicrm/event/search' q="reset=1&force=1&event=`$row.id`"}" title="{ts}List participants for this event (all statuses){/ts}">({ts}participants{/ts})</a></td> 
             <td class="crm-event-city">{$row.city}</td>  
             <td class="crm-event-state_province">{$row.state_province}</td>	
@@ -85,7 +88,43 @@
             <td class="crm-event-start_date">{$row.start_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
             <td class="crm-event-end_date">{$row.end_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
             <td class="crm-event_status" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-            <td class="crm-event-action">{$row.action|replace:'xx':$row.id}</td>
+	    <td class="crm-event-action">
+	    <span id="{$row.id}" class="btn-slide">{ts}Configure{/ts}
+	    	<ul class="panel" id="panel_info_{$row.id}">
+		    <li><a title="Info and Settings" class="action-item-wrap" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=EventInfo"}">{ts}Info and Settings{/ts}</a></li>
+		    <li><a title="Location" class="action-item-wrap {if NOT $row.is_show_location} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Location"}">{ts}Location{/ts}</a></li>
+		    <li><a title="Fees" class="action-item {if NOT $row.is_monetary} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Fee"}">{ts}Fees{/ts}</a></li>
+		    <li><a title="Online Registration" class="action-item-wrap {if NOT $row.is_online_registration} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Registration"}">{ts}Online Registration{/ts}</a></li>
+		    <li><a title="Tell a Friend" class="action-item-wrap {if NOT $row.friend} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Friend"}">{ts}Tell a Friend{/ts}</a></li>
+	    </span>
+	    </td>
+	    <td class="crm-event-action">
+	    <span id="{$row.id}" class="btn-slide">{ts}Event Links{/ts}
+	    	<ul class="panel" id="panel_links_{$row.id}">
+		    <li><a title="Event Info" class="action-item" href="{crmURL p='civicrm/event/info' q="reset=1&id=`$row.id`"}">{ts}Event Info{/ts}</a></li>
+		    <li><a title="Register Participant" class="action-item" href="{crmURL p='civicrm/participant/add' q="reset=1&action=add&context=standalone&eid=`$row.id`"}">{ts}Register Participant{/ts}</a></li>
+		    <li><a title="Registration (Test-drive)" class="action-item" href="{crmURL p='civicrm/event/register' q="reset=1&action=preview&id=`$row.id`"}">{ts}Registration (Test-drive){/ts}</a></li>
+		    <li><a title="Registration (Live)" class="action-item" href="{crmURL p='civicrm/event/register' q="reset=1&id=`$row.id`"}">{ts}Registration (Live){/ts}</a></li>
+	    </span>
+	    </td>
+	    <td class="crm-event-action">
+	    <span id="{$row.id}" class="btn-slide">{ts}Participants{/ts}
+	    	<ul class="panel" id="panel_participants_{$row.id}">
+		    {if $findParticipants.statusCounted}
+		    	<li><a title="Counted" class="action-item-wrap" href="{crmURL p='civicrm/event/search' q="reset=1&force=1&status=true&event=`$row.id`"}">{$findParticipants.statusCounted}</a>
+			</li>
+		    {/if}
+		    {if $findParticipants.statusNotCounted}
+		    	<li><a title="Not Counted" class="action-item-wrap" href="{crmURL p='civicrm/event/search' q="reset=1&force=1&status=false&event=`$row.id`"}">{$findParticipants.statusNotCounted}</a>
+			</li>
+		    {/if}
+		    {if $row.participant_listing_id}
+		    	<li><a title="Public Participant Listing" class="action-item-wrap" href="{crmURL p='civicrm/event/participant' q="reset=1&id=`$row.id`"}">{ts}Public Participant Listing{/ts}</a>
+		    	</li>
+		    {/if}
+	    </span> 
+	    </td>
+	    <td class="crm-event-action">{$row.action|replace:'xx':$row.id}</td>
             <td class="crm-event-start_date hiddenElement">{$row.start_date|crmDate}</td>
             <td class="crm-event-end_date hiddenElement">{$row.end_date|crmDate}</td>
           </tr>

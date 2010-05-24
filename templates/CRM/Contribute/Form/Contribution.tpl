@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting contribution *}
-<div class="crm-block crm-form-block"> 
+<div class="crm-block crm-form-block crm-contribution-form-block"> 
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {elseif $priceSetId}
@@ -105,7 +105,7 @@
             {elseif $context eq 'standalone' and $outBound_option != 2 }
                 <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
             {/if}
-            <tr id="receiptDate" class="crm-contribution-form-block-receiptDate">
+            <tr id="receiptDate" class="crm-contribution-form-block-receipt_date">
                 <td class="label">{$form.receipt_date.label}</td>
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=receipt_date}<br />
                 <span class="description">{ts}Date that a receipt was sent to the contributor.{/ts}</span></td></tr>
@@ -145,7 +145,7 @@
                 <td>&nbsp;</td> 
                 <td><fieldset><legend>{ts}Cancellation Information{/ts}</legend>
                 <table class="form-layout-compressed">
-                  <tr id="cancelDate" class="crm-contribution-form-block-ancel_date">
+                  <tr id="cancelDate" class="crm-contribution-form-block-cancel_date">
                     <td class="label">{$form.cancel_date.label}</td>
                     <td>
                         {if $hideCalendar neq true}

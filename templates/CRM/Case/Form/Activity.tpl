@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="Crm-block crm-form-block">
+<div class="crm-block crm-form-block">
 {* this template is used for adding/editing activities for a case. *}
 {if $cdType }
    {include file="CRM/Custom/Form/CustomData.tpl"}
@@ -95,7 +95,6 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 
     {/if}
 
-    <fieldset>
         <legend>
            {if $action eq 8}
               {ts}Delete{/ts}
@@ -104,23 +103,18 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            {elseif $action eq 32768}
               {ts}Restore{/ts}
            {/if}
-           {$activityTypeName}
         </legend>
-        <table class="form-layout">
-           {if $action eq 8 or $action eq 32768 }
+        {if $action eq 8 or $action eq 32768 }
             <div class="messages status"> 
-              <tr> 
-                 <td><div class="icon inform-icon"></div></td> 
-                 <td> 
-                 {if $action eq 8}
-                    {ts 1=$activityTypeName}Click Delete to move this &quot;%1&quot; activity to the Trash.{/ts}
-                 {else}
-                    {ts 1=$activityTypeName}Click Restore to retrieve this &quot;%1&quot; activity from the Trash.{/ts}
-                 {/if}  
-                 </td> 
-              </tr> 
-            </div> 
-           {else}
+              <div class="icon inform-icon"></div> &nbsp;
+              {if $action eq 8}
+                 {ts 1=$activityTypeName}Click Delete to move this &quot;%1&quot; activity to the Trash.{/ts}
+              {else}
+                 {ts 1=$activityTypeName}Click Restore to retrieve this &quot;%1&quot; activity from the Trash.{/ts}
+              {/if}  
+            </div><br /> 
+        {else}
+        <table class="form-layout">
             {if $activityTypeDescription }
            <tr>
               <div id="help">{$activityTypeDescription}</div>
@@ -302,11 +296,9 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
              </tr>
              {/if}
            {/if}
-           <tr>
-              <td>&nbsp;</td><td class="buttons">{include file="CRM/common/formButtons.tpl"}</td>
-            </tr>
-        </table>
-    </fieldset>
+       </table>
+     
+     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 
     {if $action eq 1 or $action eq 2}
         {*include custom data js file*}

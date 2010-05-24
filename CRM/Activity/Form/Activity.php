@@ -620,7 +620,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         if ( !empty($tags) ) { 
             $this->add('select', 'tag',  ts( 'Tags' ), $tags, false, 
-                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
+                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('- select -') ));
         }
         
         // build tag widget
@@ -766,7 +766,9 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
     {
         if ( $this->_action & CRM_Core_Action::DELETE ) { 
             $deleteParams = array( 'id' => $this->_activityId );
-            CRM_Activity_BAO_Activity::deleteActivity( $deleteParams );
+            require_once 'CRM/Case/BAO/Case.php';
+            $moveToTrash = CRM_Case_BAO_Case::isCaseActivity( $this->_activityId );
+            CRM_Activity_BAO_Activity::deleteActivity( $deleteParams, $moveToTrash);
 
             // delete tags for the entity
             require_once 'CRM/Core/BAO/EntityTag.php';

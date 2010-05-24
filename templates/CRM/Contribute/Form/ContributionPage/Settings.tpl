@@ -34,7 +34,7 @@
     {/if}
 </div>
  
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-contribution-form-block">
     <fieldset><legend>{ts}Title and Settings{/ts}</legend>
 	<table class="form-layout-compressed">
 

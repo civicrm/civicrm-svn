@@ -54,7 +54,7 @@
 		</div>
 	    </td>
 	    <td> {$form.option_label.$index.html}</td>
-	    <td> {$form.option_name.$index.html}</td>
+	    <td> {$form.option_name.$index.html|crmReplace:class:eight}</td>
 	    <td> {$form.option_weight.$index.html}</td>
  	    <td> {$form.option_status.$index.html}</td>
 	</tr>

@@ -23,12 +23,17 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-pick_profile-block">
-<h3>{ts}Batch Update via Profile{/ts}</h3>
-    <dl>
-        <dt>{$form.uf_group_id.label}</dt><dd>{$form.uf_group_id.html}</dd>
-        <dt></dt><dd>{include file="CRM/Contact/Form/Task.tpl"}</dd>
-        <dt></dt><dd>{$form.buttons.html}</dd>
-    </dl>
+{*Batch update for contact via profile*}
+<div class="crm-block crm-form-block crm-contactPickProfile-form-block">
+ <table class="form-layout-compressed">
+    <tr class="crm-contactPickProfile-form-block-uf_group_id">
+       <td class="label">{$form.uf_group_id.label}</td>
+       <td>{$form.uf_group_id.html}</td>
+    </tr>
+    <tr> 
+        {include file="CRM/Contact/Form/Task.tpl"}
+    </tr>
+</table>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>
 

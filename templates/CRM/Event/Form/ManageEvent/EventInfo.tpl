@@ -41,7 +41,7 @@
 	{assign var=eventID value=$id}
 	<div class="form-item">
         <div class="crm-submit-buttons">
-        {include file="CRM/common/formButtons.tpl"}
+        {include file="CRM/common/formButtons.tpl" location="top"}
         </div>
 	<table class="form-layout-compressed">
     	{if $form.template_id}
@@ -165,7 +165,7 @@
 		</script>
 	{/literal}
         <div class="crm-submit-buttons">
-           {include file="CRM/common/formButtons.tpl"}
+           {include file="CRM/common/formButtons.tpl" location="bottom"}
         </div>
 	</div>
     {include file="CRM/common/showHide.tpl" elemType="table-row"}

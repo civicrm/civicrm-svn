@@ -26,22 +26,20 @@
 <p>
 
 {if $rows } 
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons element-right">{$form.buttons.html}</div>
 <div class="spacer"></div>
 <br />
 <p>
 <table>
   <tr class="columnheader">
-    <th>{ts}Name{/ts}</th>
-    <th>{ts}Status{/ts}</th>
-    <th>{ts}Type{/ts}</th>
-    <th>{ts}Amount Requested{/ts}</th>
-    <th>{ts}Amount Requested(orig. currency){/ts}</th>
-    <th>{ts}Amount Granted{/ts}</th>
-    <th>{ts}Application Recieved{/ts}</th>
-    <th>{ts}Money Transferred{/ts}</th>
+    <td>{ts}Name{/ts}</td>
+    <td>{ts}Status{/ts}</td>
+    <td>{ts}Type{/ts}</td>
+    <td>{ts}Amount Requested{/ts}</td>
+    <td>{ts}Amount Requested(orig. currency){/ts}</td>
+    <td>{ts}Amount Granted{/ts}</td>
+    <td>{ts}Application Recieved{/ts}</td>
+    <td>{ts}Money Transferred{/ts}</td>
   </tr>
 {foreach from=$rows item=row}
     <tr class="{cycle values="odd-row,even-row"}">
@@ -57,9 +55,7 @@
 {/foreach}
 </table>
 
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons element-right">{$form.buttons.html}</div>
 
 {else}
    <div class="messages status">

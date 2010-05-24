@@ -217,8 +217,8 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
                     $this->_formValues[$f] = CRM_Utils_Rule::cleanMoney( $this->_formValues[$f] );
                 }
             }
-            if ( ! CRM_Utils_Array::value( 'activity_role', $this->_formValues ) ) {
-                $this->_formValues['activity_role'] = 0;
+            if ( ! CRM_Utils_Array::value( 'activity_target_name', $this->_formValues ) ) {
+                $this->_formValues['activity_role'] = null;
             }
             // set the group if group is submitted
             if ($this->_formValues['uf_group_id']) {

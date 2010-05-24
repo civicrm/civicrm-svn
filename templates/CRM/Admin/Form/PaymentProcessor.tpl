@@ -24,7 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {* This template is used for adding/configuring Payment Processors used by a particular site/domain.  *}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-paymentProcessor-form-block">
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <fieldset><legend>{if $action eq 1}{ts}New Payment Processor{/ts}{elseif $action eq 2}{ts}Edit Payment Processor{/ts}{else}{ts}Delete Payment Processor{/ts}{/if}</legend>
 
 {if $action eq 8}
@@ -132,9 +133,9 @@
 {/if}  
 </fieldset>
 {/if} 
-        <tr class="crm-submit-buttons"><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
-    </table>
-</fieldset>
+</table>
+       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+  </fieldset>
 </div>
 
 {if $action eq 1  or $action eq 2}

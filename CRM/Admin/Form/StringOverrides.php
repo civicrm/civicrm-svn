@@ -45,10 +45,8 @@ class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
     protected $_defaults = null;
     
     function preProcess( ) {
-        $this->_addRow = CRM_Utils_Array::value( 'addrow', $_GET );
-        if ( $this->_addRow ) {
-            $this->assign('addRow', true);
-        }
+        $this->_soInstance = CRM_Utils_Array::value( 'instance', $_GET );
+        $this->assign( 'soInstance', $this->_soInstance );
     }
     
     public function setDefaultValues( )
@@ -56,7 +54,7 @@ class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
         if ( $this->_defaults !== null ) {
             return $this->_defaults;
         }
-
+        
         $this->_defaults = array( );
         
         $config = CRM_Core_Config::singleton( );
@@ -75,11 +73,11 @@ class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
         } else {
             $this->_numStrings = 10;
         }
-
+        
         $this->assign( 'numStrings', $this->_numStrings );
         return $this->_defaults;
     }
-
+    
     /**
      * Function to actually build the form
      *
@@ -88,22 +86,27 @@ class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
      */
     public function buildQuickForm( )
     {
-        for ( $i = 1 ; $i <= $this->_numStrings; $i++ ) {
-            $this->addElement( 'checkbox',
-                               "enabled_{$i}",
-                               null );
-            $this->add( 'textarea',
-                        "old_{$i}",
-                        null,
-                        array( 'rows=1 cols=40' ) );
-            $this->add( 'textarea',
-                        "new_{$i}",
-                        null,
-                        array( 'rows=1 cols=40' ) );
-            $this->addElement( 'checkbox',
-                               "cb_{$i}",
-                               null );
+        $soInstances = range( 1, $this->_numStrings, 1 );
+        $stringOverrideInstances = array( );
+        if ( $this->_soInstance ) {
+            $soInstances = array( $this->_soInstance );
+        } else if ( CRM_Utils_Array::value( 'old', $_POST ) ) {
+            $soInstances = $stringOverrideInstances = array_keys( $_POST['old'] );
+        } else if ( !empty( $this->_defaults ) && is_array( $this->_defaults ) )  {
+            $stringOverrideInstances = array_keys( $this->_defaults['new'] );
+            if ( count( $this->_defaults['old'] ) > count( $this->_defaults['new'] ) ) {
+                $stringOverrideInstances = array_keys( $this->_defaults['old'] );
+            }
         }
+        foreach ( $soInstances as $instance ) {
+            $this->addElement( 'checkbox', "enabled[$instance]" );
+            $this->add( 'textarea', "old[$instance]", null, array( 'rows=1 cols=40' ) );
+            $this->add( 'textarea', "new[$instance]", null, array( 'rows=1 cols=40' ) );
+            $this->addElement( 'checkbox', "cb[$instance]" );
+        }
+        if ( $this->_soInstance ) return; 
+        
+        $this->assign( 'stringOverrideInstances', empty($stringOverrideInstances)?false:$stringOverrideInstances );
         
         $this->addButtons( array(
                                  array ( 'type'      => 'next',
@@ -113,8 +116,9 @@ class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
                                          'name'      => ts('Cancel') ),
                                  )
                            );
-    }
 
+    }
+    
     /**
      * Function to process the form
      *
@@ -123,10 +127,13 @@ class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
      */
     public function postProcess() 
     {
-        $params = $this->exportValues();
+        $params = $this->controller->exportValues( $this->_name );
+        
+        CRM_Core_Error::debug( '$params', $params );
+        exit;
+        
         $overrides['wildcardMatch'] = $overrides['exactMatch'] = array();
-
-
+        
         for ( $i = 1 ; $i <= $this->_numStrings; $i++ ) {
             if ( CRM_Utils_Array::value( 'old_'.$i, $params ) && 
                  CRM_Utils_Array::value( 'new_'.$i, $params ) ) {

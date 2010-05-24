@@ -30,7 +30,7 @@
 <div class="form-item">
 <table width="30%">
   <tr class="columnheader">
-    <th>{ts}Name{/ts}</th>
+    <td>{ts}Name{/ts}</td>
   </tr>
 {foreach from=$rows item=row}
 <tr class="{cycle values="odd-row,even-row"}">

@@ -29,7 +29,7 @@
 
 {include file="CRM/common/TrackingFields.tpl"}
 
-<div class="event_confirmation-page">
+<div class="crm-block crm-contribution-confirm-form-block">
     {if $isOnWaitlist}
         <div class="help">
             {ts}Please verify the information below. <span class="bold">Then click 'Continue' to be added to the WAIT LIST for this event</span>. If space becomes available you will receive an email with a link to a web page where you can complete your registration.{/ts}
@@ -248,7 +248,7 @@
     {/if}
 
     <div id="crm-submit-buttons">
-	    {$form.buttons.html}
+	    {include file="CRM/common/formButtons.tpl" location="bottom"}
     </div>
 
     {if $event.confirm_footer_text}

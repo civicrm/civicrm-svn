@@ -83,12 +83,6 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
                                                                           'qs'    => 'reset=1&action=preview&id=%%id%%',
                                                                           'title' => ts('Preview') 
                                                                           ),
-                                        CRM_Core_Action::FOLLOWUP => array(
-                                                                           'name'  => ts('Live Page'),
-                                                                           'url'   => 'civicrm/event/info',
-                                                                           'qs'    => 'reset=1&id=%%id%%',
-                                                                           'title' => ts('FollowUp'),
-                                                                           ),
                                         CRM_Core_Action::DISABLE => array(
                                                                           'name'  => ts('Disable'),
                                                                           'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Event_BAO_Event' . '\',\'' . 'enable-disable' . '\' );"',
@@ -109,7 +103,7 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
                                                                           'title' => ts('Delete Event') 
                                                                           ),
                                         CRM_Core_Action::COPY     => array(
-                                                                           'name'  => ts('Copy Event'),
+                                                                           'name'  => ts('Copy'),
                                                                            'url'   => CRM_Utils_System::currentPath( ), 
                                                                            'qs'    => 'reset=1&action=copy&id=%%id%%',
                                                                            'extra' => 'onclick = "return confirm(\'' . $copyExtra . '\');"',
@@ -187,7 +181,6 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
      */
     function browse()
     {
-
         $this->_sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter',
                                                                'String',
                                                                $this );
@@ -198,8 +191,7 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
             $this->set( 'sortByCharacter', '' );
         }
 
-        $this->_force = null;
-        $this->_searchResult = null;
+        $this->_force = $this->_searchResult = null;
       
         $this->search( );
 
@@ -218,6 +210,7 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
         $whereClause .= ' AND (is_template = 0 OR is_template IS NULL)'; // because is_template != 1 would be to simple
 
         $this->pager( $whereClause, $params );
+
         list( $offset, $rowCount ) = $this->_pager->getOffsetAndRowCount( );
 
         // get all custom groups sorted by weight
@@ -254,12 +247,20 @@ ORDER BY start_date desc
                     $action -= CRM_Core_Action::UPDATE; 
                 }
             
-                $manageEvent[$dao->id]['action'] = CRM_Core_Action::formLink(self::links(), $action, 
-                                                                             array('id' => $dao->id));
+                $manageEvent[$dao->id]['action'] = CRM_Core_Action::formLink( self::links(), 
+                                                                              $action, 
+                                                                              array( 'id' => $dao->id ),
+                                                                              true );
 
-                $params = array( 'entity_id' => $dao->id, 'entity_table' => 'civicrm_event');
+                $params = array( 'entity_id'    => $dao->id, 
+                                 'entity_table' => 'civicrm_event');
+                
                 require_once 'CRM/Core/BAO/Location.php';
                 $defaults['location'] = CRM_Core_BAO_Location::getValues( $params, true );
+
+                require_once 'CRM/Friend/BAO/Friend.php';
+                $manageEvent[$dao->id]['friend'] = CRM_Friend_BAO_Friend::getValues( $params );
+
                 if ( isset ( $defaults['location']['address'][1]['city'] ) ) {
                     $manageEvent[$dao->id]['city'] = $defaults['location']['address'][1]['city'];
                 }
@@ -269,6 +270,13 @@ ORDER BY start_date desc
             }
         }
         $this->assign('rows', $manageEvent);
+        
+        require_once 'CRM/Event/PseudoConstant.php';
+        $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1');
+        $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0');
+        $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
+        $findParticipants['statusNotCounted'] = implode( ', ', array_values( $statusTypesPending ) );
+        $this->assign('findParticipants', $findParticipants);
     }
     
     /**
@@ -293,7 +301,8 @@ ORDER BY start_date desc
         return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', $urlParams ) );
     }
     
-    function search( ) {
+    function search( )
+    {
         if ( isset($this->_action) &
              ( CRM_Core_Action::ADD    |
                CRM_Core_Action::UPDATE |
@@ -308,7 +317,8 @@ ORDER BY start_date desc
         $form->run( );
     }
     
-    function whereClause( &$params, $sortBy = true, $force ) {
+    function whereClause( &$params, $sortBy = true, $force )
+    {
         $values  =  array( );
         $clauses = array( );
         $title   = $this->get( 'title' );
@@ -386,11 +396,11 @@ ORDER BY start_date desc
 
         return !empty($clauses) ? implode( ' AND ', $clauses ) : '(1)';
     }
-
-
-     function pager( $whereClause, $whereParams ) {
+    
+    function pager( $whereClause, $whereParams )
+    {
         require_once 'CRM/Utils/Pager.php';
-
+        
         $params['status']       = ts('Event %%StatusMessage%%');
         $params['csvString']    = null;
         $params['buttonTop']    = 'PagerTopButton';
@@ -411,7 +421,8 @@ SELECT count(id)
         $this->assign_by_ref( 'pager', $this->_pager );
     }
 
-    function pagerAtoZ( $whereClause, $whereParams ) {
+    function pagerAtoZ( $whereClause, $whereParams )
+    {
         require_once 'CRM/Utils/PagerAToZ.php';
         
         $query = "

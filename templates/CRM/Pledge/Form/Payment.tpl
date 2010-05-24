@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for updating pledge payment*} 
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-pledge-form-block">
 <fieldset><legend>{ts}Edit Pledge Payment{/ts}</legend> 
       <table class="form-layout-compressed">
         <tr><td class="label">{ts}Status{/ts}</td><td class="form-layout">{$status}</td></tr>

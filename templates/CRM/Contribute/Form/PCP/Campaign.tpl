@@ -27,7 +27,7 @@
     {ts}Personalize the contents and appearance of your fundraising page here. You will be able to return to this page and make changes at any time.{/ts}
 </div>
 <fieldset>
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-contribution-form-block">
 <table class="form-layout-compressed" width="100%">
 	<tr class="crm-contribution-form-block-title">
 		<td class="label">{$form.title.label}</td>

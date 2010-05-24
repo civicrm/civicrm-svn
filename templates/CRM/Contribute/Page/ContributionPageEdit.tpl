@@ -27,7 +27,7 @@
 <div class="messages status">
     {if $is_active}
         <img src="{$config->resourceBase}i/traffic_green.gif" alt="{ts}status{/ts}"/>
-        <p><a href="{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$id`"}">&raquo; {ts}Go to this LIVE Online Contribution page{/ts}</a></p>
+        <a href="{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$id`"}">&raquo; {ts}Go to this LIVE Online Contribution page{/ts}</a>
         {if $config->userFramework EQ 'Drupal'}
             <p>{ts}Create links to this contribution page by copying and pasting the following URL into any web page.{/ts}:<br />
             <a href="{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$id`"}">{crmURL a=true p='civicrm/contribute/transact' q="reset=1&id=`$id`"}</a>

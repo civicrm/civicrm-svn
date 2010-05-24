@@ -61,9 +61,7 @@
     </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->    
 
-<table>
-  <tr><td></td><td>{$form.buttons.html}</td></tr>
-</table>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
     
 </div><!-- / .crm-form-block -->
 

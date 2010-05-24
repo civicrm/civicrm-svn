@@ -78,8 +78,9 @@ class CiviContributeProcessor {
         array(
               //category    => array(google_param    => civicrm_field);
               'contact'     => array(
+                                     'first-name'    => 'first_name',
+                                     'last-name'     => 'last_name',
                                      'contact-name'  => 'display_name',
-                                     'contact-name'  => 'sort_name',
                                      'email'         => 'email',
                                      ),
               'location'    => array(

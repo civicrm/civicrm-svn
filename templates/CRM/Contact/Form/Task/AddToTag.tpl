@@ -48,3 +48,4 @@
     <tr><td>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>
     <tr><td>{$form.buttons.html}</td></tr>
 </table>
+</div>

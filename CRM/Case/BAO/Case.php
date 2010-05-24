@@ -2578,5 +2578,26 @@ SELECT id, subject, activity_date_time
         return false;
     }
     
+    /**
+     * Function to check whether activity is a case Activity
+     *
+     * @param  int      $activityID   activity id
+     *
+     * @return boolean  $isCaseActivity true/false
+     */
+    static function isCaseActivity( $activityID )
+    {
+        $isCaseActivity = false;
+        if ( $activityID ) {
+            $params = array( 1 => array( $activityID, 'Integer' ) ); 
+            $query = "SELECT id FROM civicrm_case_activity WHERE activity_id = %1";
+            if ( CRM_Core_DAO::singleValueQuery( $query, $params ) ) {
+                $isCaseActivity = true;
+            }
+        }
+        
+        return $isCaseActivity;
+    }
+    
 }
 

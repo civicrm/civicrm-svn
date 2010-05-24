@@ -80,10 +80,6 @@ class CRM_Contact_BAO_Contact_Utils
                  	"<div class=\"icon crm-icon {$type}-icon\">$type</div>";
                 $imageInfo[$contactType]['url']   = null;
             }
-        	
-        	
-        	
-
         }
         
         $profileURL = CRM_Utils_System::url('civicrm/profile/view', 'reset=1&gid=7&id='.$contactId.'&snippet=4');

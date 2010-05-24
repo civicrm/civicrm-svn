@@ -222,7 +222,9 @@ class CRM_Core_BAO_Block
         
         //get existsing block ids.
         $blockIds  = self::getBlockIds( $blockName, $contactId, $entityElements );
-        
+
+        $updateBlankLocInfo = CRM_Utils_Array::value( 'updateBlankLocInfo', $params, false );
+
         //lets allow user to update block w/ the help of id, CRM-6170
         $resetPrimaryId  = null;
         foreach ( $params[$blockName] as  $count => $value ) {
@@ -280,7 +282,10 @@ class CRM_Core_BAO_Block
             
             $dataExits = self::dataExists( self::$requiredBlockFields[$blockName], $value );
             
-            if ( CRM_Utils_Array::value( 'id', $value ) && !$dataExits ) {
+            // Note there could be cases when block info already exist ($value[id] is set) for a contact/entity 
+            // BUT info is not present at this time, and therefore we should be really careful when deleting the block. 
+            // $updateBlankLocInfo will help take appropriate decision. CRM-5969
+            if ( CRM_Utils_Array::value( 'id', $value ) && !$dataExits && $updateBlankLocInfo ) {
                 //delete the existing record
                 self::blockDelete( $name, array( 'id' => $value['id'] ) );
                 continue;

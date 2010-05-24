@@ -39,7 +39,7 @@
 </div>{/capture}
 {/if}
 
-<div id="form" class="form-item">
+<div id="form" class="form-item crm-block crm-form-block crm-contribution-form-block">
     <fieldset><legend>{ts}Configure Widget{/ts}</legend>
     <div id="help">
         {ts}CiviContribute widgets allow you and your supporters to easily promote this fund-raising campaign. Widget code can be added to any web page - and will provide a real-time display of current contribution results, and a direct link to this contribution page.{/ts} {help id="id-intro"}

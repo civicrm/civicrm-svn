@@ -217,6 +217,7 @@ div#crm-container {
 .crmasmList li,
 .crmtagList li {
     background-color:#3E3E3E;
+    background-image:none;
     padding:2px 4px;
     list-style-type:none;
     margin:1px 0px;
@@ -625,7 +626,7 @@ div.spacer,
     padding:4px;
     margin-bottom: 4px;
 }
-#restmsg.msgok {
+#restmsg.msgok, span.msgok {
     display:block;
     background:#B0D730;
     background-color:#F1F8EB;
@@ -634,14 +635,7 @@ div.spacer,
     font-size:12px;
     margin:0 0 8px;
     padding:4px;
-    }
-#restmsg.msgnok {
-    display:block;
-    background:red;
-    color:white;
 }
-
-
 
 #crm-container div.view-data {
     padding: .25em .5em .25em .5em;
@@ -1653,6 +1647,11 @@ table.campaign td,
     border-left:1px solid #CCC;
     white-space:nowrap;
 }
+#crm-container .action-item-wrap {
+    padding:0px 5px;
+    border-left:1px solid #CCC;
+    white-space:normal;
+}
 #crm-container .action-item-first { border-left:none; /* last action item should not have right hand border */}
 
 #crm-container .panel {
@@ -2210,8 +2209,9 @@ div.grippie {
 #crm-container .crm-button:hover,
 #crm-container a.button:hover { background-position:0px -25px; }
 
-/* No button styling for PayPal Express button */
-#crm-container input#_qf_Register_upload_express {
+/* No button styling for PayPal Express buttons */
+#crm-container input#_qf_Register_upload_express,
+#crm-container input#_qf_Main_upload_express {
     background: none;
     margin: 0px;
     padding: 0px;
@@ -2358,6 +2358,7 @@ span.icon {
 .settings-icon { background-position:-178px -114px; }
 .email-icon { background-position:-81px -98px; }
 .preview-icon { background-position:-227px -129px; }
+.play-icon { background-position: -3px -161px; }
 
 #crm-container .geotag {
     padding: 2px 0 2px 20px !important;
@@ -2625,6 +2626,7 @@ div#crm-toolTip #hide-tooltip {
     z-index:1000;
     padding-bottom: 10px;
     background: transparent url('../i/overlay-pointer.png') no-repeat bottom left;
+    font-size:12px;
 }
 
 .crm-summary-group h2 {

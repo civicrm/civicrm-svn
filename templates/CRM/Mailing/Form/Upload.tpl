@@ -47,7 +47,6 @@
                         </div>
         </td>
     </tr>
-    <tr class="crm-mailing-form-block-override_verp"><td></td><td colspan="2">{$form.override_verp.label}{$form.override_verp.html} {help id="id-verp-override"}</td></tr>  
     <tr class="crm-mailing-form-block-upload_type"><td></td><td colspan="2">{$form.upload_type.label} {$form.upload_type.html} {help id="upload-compose"}</td></tr>
 </table>
 
@@ -92,9 +91,7 @@
     </table> 
   </fieldset>
 
-  <table>
-    <tr><td></td><td>{$form.buttons.html}</td></tr>
-  </table>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div><!-- / .crm-form-block -->
 
 {* -- Javascript for showing/hiding the upload/compose options -- *}

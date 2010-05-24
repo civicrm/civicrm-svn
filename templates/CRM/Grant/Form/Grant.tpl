@@ -24,7 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting grant *}
-<div class="html-adjust">{$form.buttons.html}</div> 
+<div class="crm-block crm-form-block crm-grant-form-block">
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div> 
 <fieldset>
   {if $action eq 8} 
       <div class="messages status">
@@ -105,16 +106,17 @@
 			     <td class="label">{$form.note.label}</td>
 			     <td>{$form.note.html}</td>
 			</tr>
-			<tr class="crm-grant-form-block-custom_data">
-			     <td colspan=2>{include file="CRM/Custom/Form/CustomData.tpl"}</td>
-			</tr>
-            <tr class="crm-grant-form-block-attachment">
-                <td colspan="2">
-                    {include file="CRM/Form/attachment.tpl"}
-                </td>
-            </tr>
+
 		</table>
+		
+		<div class="crm-grant-form-block-custom_data">
+		     {include file="CRM/Custom/Form/CustomData.tpl"}
+		</div>
+		<div class="crm-grant-form-block-attachment">
+		     {include file="CRM/Form/attachment.tpl"}
+		</div>
 	</div>
    {/if}
 </fieldset>
-<div class="html-adjust">{$form.buttons.html}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+</div>

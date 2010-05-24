@@ -23,10 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-add_to_group-block">
+<div class="crm-block crm-form-block crm-add_to_group-form-block">
 <table class="form-layout">
     {if $group.id}
-       <tr><td class="label">{ts}Group{/ts}</td><td>{$form.group_id.html}</td></tr>
+       <tr class="crm-add_to_group-form-block-group_id">
+          <td class="label">{ts}Group{/ts}</td>
+          <td>{$form.group_id.html}</td>
+       </tr>
     {else}
         <tr><td>{$form.group_option.html}</td></tr>
         <tr id="id_existing_group">

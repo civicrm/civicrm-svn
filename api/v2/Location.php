@@ -68,6 +68,8 @@ function civicrm_location_add( &$params ) {
         $locationTypeDAO->find(true);
         $locationTypeId = $locationTypeDAO->id;
         
+        CRM_Core_PseudoConstant::flush( 'locationType' );
+        
         if ( !isset($locationTypeId) ) {
             return civicrm_create_error( ts( '$location_type is not valid one' ) );
         }

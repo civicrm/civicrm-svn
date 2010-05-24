@@ -1,7 +1,5 @@
 {if $rows}
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons element-right">{include file="CRM/common/formButtons.tpl"}</div>
 
 <div class="spacer"></div>
 
@@ -9,10 +7,10 @@
 <br />
 <table>
   <tr class="columnheader">
-    <th>{ts}Display Name{/ts}</th>
-    <th>{ts}Decision Date{/ts}</th>
-    <th>{ts}Amount Requested{/ts}</th>
-    <th>{ts}Amount Granted{/ts}</th>
+    <td>{ts}Display Name{/ts}</td>
+    <td>{ts}Decision Date{/ts}</td>
+    <td>{ts}Amount Requested{/ts}</td>
+    <td>{ts}Amount Granted{/ts}</td>
   </tr>
 
   {foreach from=$rows item=row}
@@ -26,9 +24,7 @@
 </table>
 </div>
 
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons element-right">{include file="CRM/common/formButtons.tpl"}</div>
 
 {else}
    <div class="messages status">

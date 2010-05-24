@@ -93,7 +93,7 @@
 	   <td class="crm-pledge-amount">{$row.amount|crmMoney}</td>
            <td class="crm-pledge-type">{$row.type}</td>
            <td class="crm-pledge-create_date">{$row.create_date|truncate:10:''|crmDate}</td>
-           <td align="center">{if $row.acknowledge_date"}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
+           <td align="center">{if $row.acknowledge_date}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
            <td class="crm-pledge-acknowledge_date">{$row.acknowledge_date|truncate:10:''|crmDate}</td>
            <td class="crm-pledge-status">{$row.status}</td>
 	  </tr>
