@@ -56,7 +56,7 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
         //add select for label
         require_once 'CRM/Core/OptionGroup.php';
         $label = CRM_Core_OptionGroup::values('event_badge');
-        
+
         $this->add('select',
                    'badge_id',
                    ts('Select Name Badge format'),
@@ -118,7 +118,7 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
                                                      $params['badge_id'],
                                                      'value',
                                                      'Integer',
-                                                     'description' );
+                                                     'name' );
 
         $classFile = str_replace( '_',
                                   DIRECTORY_SEPARATOR,

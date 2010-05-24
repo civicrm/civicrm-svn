@@ -89,6 +89,14 @@
                 <td>{$form.value.html}</td>
               </tr>
             {/if}
+            {if $form.name.html} {* Get the name value also *}
+              <tr class="crm-admin-form-block-name">
+                <td class="label">{$form.name.label}</td>
+                <td>{$form.name.html}<br />
+                   <span class="description">{ts}The class name which implements this functionality.{/ts}</span>
+                </td>
+              </tr>
+            {/if}
             {if $form.filter.html} {* Filter property is only exposed for some option groups. *}
               <tr class="crm-admin-form-block-filter">
                 <td class="label">{$form.filter.label}</td>

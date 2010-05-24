@@ -175,8 +175,7 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
                         'filter', 
                         ts('Regular Expression?'));
         }
-        if ( $this->_gName == 'participant_listing' ||
-             $this->_gName == 'event_badge' ) {
+        if ( $this->_gName == 'participant_listing' ) {
             $this->add('text', 
                        'description', 
                        ts('Description'), 
@@ -189,6 +188,14 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
                                array( 'rows' => 4, 'cols' => 80),
                                $required );
         }
+
+        if ( $this->_gName == 'event_badge' ) {
+            $this->add('text', 
+                       'name', 
+                       ts('Class Name'), 
+                       CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue', 'name' ) );
+        }
+
         $this->add('text',
                    'weight',
                    ts('Weight'),
