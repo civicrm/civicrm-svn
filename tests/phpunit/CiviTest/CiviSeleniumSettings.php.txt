@@ -4,13 +4,13 @@ class CiviSeleniumSettings {
 
 	var $browser = '*firefox';
 
-	var $sandboxURL = 'http://localhost';
+	var $sandboxURL = 'http://tests.dev.civicrm.org';
 
-	var $sandboxPATH = '/~priya/Drupalcivicrm_v3.2/';
+	var $sandboxPATH = '/drupal/';
 	
-	var $username = 'priya';
+	var $username = 'demo';
 
-	var $password = 'priya';
+	var $password = 'demo';
 
 
 	function __construct() {
