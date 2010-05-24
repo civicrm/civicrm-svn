@@ -58,7 +58,7 @@
 			<span class="icon edit-icon"></span>
 		</a>
 	     {if $hasRelatedCases}
-        	<div class="crm-block hasRelatedCases"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
+        	<div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
         {/if}
         </td>
 	</tr>
@@ -84,7 +84,7 @@
              {/foreach}
     	     </table>
     	     {if $hasRelatedCases}
-             	<div class="crm-block hasRelatedCases"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
+             	<div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
              {/if}
              </td>
 	    {/if}
