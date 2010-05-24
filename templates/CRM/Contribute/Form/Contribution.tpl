@@ -287,7 +287,7 @@ function loadPanes( id ) {
 
 {/if}
 <br />
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {literal}
     <script type="text/javascript">
      function verify( ) {

@@ -24,8 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {include file="CRM/common/WizardHeader.tpl"}
-<div id="pcp-form" class="form-item">
+<div id="pcp-form" class="crm-block crm-form-block crm-contribution-pcp-form-block">
 <fieldset>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {if !$profile}
 	{capture assign=pUrl}{crmURL p='civicrm/admin/uf/group' q="reset=1"}{/capture}
 	<div class="status message">
@@ -74,9 +75,7 @@
 </table>
 </div>
 <div class="spacer"></div>
-<div class="crm-submit-buttons">
-	{include file="CRM/common/formButtons.tpl"}
-</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>
 </div>
 {include file="CRM/common/showHideByFieldValue.tpl" 

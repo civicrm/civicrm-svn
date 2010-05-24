@@ -38,9 +38,9 @@
     {/if}
 </div>
 
-<div class="crm-block crm-form-block crm-contribution-form-block">
+<div class="crm-block crm-form-block crm-contribution-custom-form-block">
 {if ! $noProfile} 
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout-compressed">
     <tr class="crm-contribution-form-block-custom_pre_id">
        <td class="label">{$form.custom_pre_id.label}
@@ -58,7 +58,7 @@
     </tr>
     </table>
 {/if}
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
 
 {* include jscript to warn if unsaved form field changes *}

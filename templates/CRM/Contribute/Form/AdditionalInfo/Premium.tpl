@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing Premium Information *} 
- <div id="id-premium" class="section-shown form-item">
+ <div id="id-premium" class="section-shown crm-contribution-additionalinfo-premium-form-block">
      <table class="form-layout-compressed">
         <tr class="crm-contribution-form-block-product_name">
            <td class="label">{$form.product_name.label}</td>

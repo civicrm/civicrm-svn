@@ -34,8 +34,9 @@
 <div id="id_form_show" class="section-hidden section-hidden-border">
     <a href="#" onclick="hide('id_form_show'); show('id_form'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Premiums Settings{/ts}</label><br />
 </div>
-  <div id="id_form" class="form-item crm-block crm-form-block crm-contribution-form-block">
+  <div id="id_form" class="crm-block crm-form-block crm-contribution-premium-form-block">
     <fieldset><legend><a href="#" onclick="hide('id_form'); show('id_form_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Premiums Settings{/ts}</legend>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
      <table class="form-layout-compressed">
      <tr class="crm-contribution-form-block-premiums_active">
         <td class="label">{$form.premiums_active.label}</td>
@@ -100,9 +101,7 @@
 
      {if $showForm }   
      {if $action ne 4}
-            <div id="crm-submit-buttons">
-            {$form.buttons.html}
-    </div>
+            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {else}
             <div id="crm-done-button">
                 {$form.done.html}

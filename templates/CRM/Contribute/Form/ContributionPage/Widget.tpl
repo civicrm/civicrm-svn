@@ -39,8 +39,9 @@
 </div>{/capture}
 {/if}
 
-<div id="form" class="form-item crm-block crm-form-block crm-contribution-form-block">
+<div id="form" class="crm-block crm-form-block crm-contribution_page-widget-form-block">
     <fieldset><legend>{ts}Configure Widget{/ts}</legend>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <div id="help">
         {ts}CiviContribute widgets allow you and your supporters to easily promote this fund-raising campaign. Widget code can be added to any web page - and will provide a real-time display of current contribution results, and a direct link to this contribution page.{/ts} {help id="id-intro"}
     </div>
@@ -118,7 +119,7 @@
         <table id="preview" class"form-layout-compressed">
 	   <tr>
 	      <td>{$form._qf_Widget_refresh.html}</td>
-	      <td>{include file="CRM/common/formButtons.tpl"}
+	      <td>{include file="CRM/common/formButtons.tpl" location="bottom"}
 	      </td>
 	   </tr>
 	</table>  
