@@ -109,7 +109,8 @@ th.sorting_asc {
     font-size: .95em;
 }
 
-#crm-container td {
+#crm-container td,
+#activity-content td {
     padding: 4px;
     vertical-align: top;
 }

@@ -48,7 +48,7 @@
 {if $caseID}
 <div id="activity-content">
 {/if}        
-<table style="width: 95%">
+<table>
 {foreach from=$report.fields item=row name=report}
 <tr{if ! $smarty.foreach.report.last} style="border-bottom: 1px solid #F6F6F6;"{/if} class="crm-case-form-block-{$row.label}">
     <td class="label">{$row.label}</td>
