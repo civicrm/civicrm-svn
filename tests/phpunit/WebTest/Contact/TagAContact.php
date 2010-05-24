@@ -29,7 +29,7 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
  
-class WebTest_Contact_AddTag extends CiviSeleniumTestCase {
+class WebTest_Contact_TagAContact extends CiviSeleniumTestCase {
 
   protected $captureScreenshotOnFailure = TRUE;
   protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
@@ -53,7 +53,7 @@ class WebTest_Contact_AddTag extends CiviSeleniumTestCase {
       // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
-      
+
       // Go directly to the URL of the screen that you will be testing (New Tag).
       $this->open($this->sboxPath . "civicrm/admin/tag?action=add&reset=1");
 
@@ -82,17 +82,22 @@ class WebTest_Contact_AddTag extends CiviSeleniumTestCase {
 
       // Is status message correct?
       $this->assertTrue($this->isTextPresent("The tag '$tagName' has been saved."));
+      
+      // Adding contact
+      // We're using Quick Add block on the main page for this.
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $firstName, "Anderson", "$firstName@anderson.name" );
+      
+      // visit tag tab
+      $this->click("css=li#tab_tag a");
+      $this->waitForElementPresent("css=ul#tagtree");
+      
+      // check tag we have created
+      $this->click("xpath=//ul/li/label[text()=\"$tagName\"]");
+      $this->waitForElementPresent("css=.msgok");
 
-      // sort by ID desc
-      $this->click("xpath=//table//tr/th[text()=\"ID\"]");
-      $this->waitForElementPresent("css=table.display tbody tr td");
-      $this->click("xpath=//table//tr/th[text()=\"ID\"]");
-      $this->waitForElementPresent("css=table.display tbody tr td");
-
-      // verify text in first row.
-      $this->verifyText("xpath=//table//tbody/tr/td[1]", $tagName);
-      $this->verifyText("xpath=//table//tbody/tr/td[3]", "Adding new tag.");
-      $this->verifyText("xpath=//table//tbody/tr/td[5]", "Contacts");
+      // Is status message correct?
+      $this->assertTrue($this->isTextPresent("Saved"));
 
   }  
 
