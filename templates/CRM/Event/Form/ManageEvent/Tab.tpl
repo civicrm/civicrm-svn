@@ -53,10 +53,13 @@
 	           </div>
 	      </div>
         </div>
+	<div>
+	     {help id="id-configure-events"}
+	</div>
+
 	&nbsp;
 </div>
 
-{help id="id-configure-events"}
 {include file="CRM/common/TabHeader.tpl"}
 
 {literal}
