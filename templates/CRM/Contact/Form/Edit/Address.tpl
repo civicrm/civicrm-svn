@@ -38,8 +38,8 @@
 
 {if $blockId gt 1}<div class="spacer"></div>{/if}
 
- <div id="Address_Block_{$blockId}" {if $className eq 'CRM_Contact_Form_Contact'} class="boxBlock" {/if}>
-  <table class="form-layout-compressed">
+ <div id="Address_Block_{$blockId}" {if $className eq 'CRM_Contact_Form_Contact'} class="boxBlock crm-edit-addres-block" {/if}>
+  <table class="form-layout-compressed crm-edit-address-form">
      <tr>
 	 {if $className eq 'CRM_Contact_Form_Contact'}
         <td id='Address-Primary-html' colspan="2">
@@ -79,8 +79,9 @@
 
      </td></tr>
   </table>
-
+  <div class="crm-edit-address-custom_data"> 
   {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
+  </div> 
 
   {if $className eq 'CRM_Contact_Form_Contact'}
       <div id="addMoreAddress{$blockId}" class="crm-add-address-wrapper">
