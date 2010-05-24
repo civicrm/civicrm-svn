@@ -83,8 +83,8 @@
   {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
 
   {if $className eq 'CRM_Contact_Form_Contact'}
-      <div id="addMoreAddress{$blockId}" >
-          <a href="#" onclick="buildAdditionalBlocks( 'Address', '{$className}' );return false;">{ts}add address{/ts}</a>
+      <div id="addMoreAddress{$blockId}" class="crm-add-address-wrapper">
+          <a href="#" class="button" onclick="buildAdditionalBlocks( 'Address', '{$className}' );return false;"><span><div class="icon add-icon"></div>{ts}add address{/ts}</span></a>
       </div>
   {/if}
 

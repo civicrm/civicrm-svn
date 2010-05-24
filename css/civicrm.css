@@ -1924,6 +1924,9 @@ div.grippie {
     border:1px solid #D7D7D0;
     margin-bottom:1em;
     }
+#crm-container .crm-add-address-wrapper {
+    height:25px;
+    }
 
 #crm-container span.email-hold a:link, 
 #crm-container span.email-hold a:visited, 		
