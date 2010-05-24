@@ -100,11 +100,6 @@ ORDER BY j.scheduled_date,
 
         /* TODO We should parallelize or prioritize this */
         while ($job->fetch()) {
-            // fix for cancel job at run time which is in queue, CRM-4246
-            if ( CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Job', $job->id, 'status' ) == 'Canceled' ) {
-                continue;
-            }
-            
             $lockName = "civimail.job.{$job->id}";
 
             // get a lock on this job id
@@ -113,19 +108,35 @@ ORDER BY j.scheduled_date,
                 continue;
             }
 
+            // we've got the lock, but while we were waiting and processing
+            // other emails, this job might have changed under us
+            // lets get the job again and check
+            $newJob = new CRM_Mailing_DAO_Job( );
+            $newJob = $job->id;
+            if ( ! $newJob->find( true ) ) {
+                CRM_Core_Error::fatal( );
+            }
+
+            if ( $newJob->status != 'Running' &&
+                 $newJob->status != 'Scheduled' ) {
+                // this includes Cancelled and other statuses, CRM-4246
+                $lock->release( );
+                continue;
+            }
+          
             /* Queue up recipients for all jobs being launched */
-            if ($job->status != 'Running') {
+            if ($newJob->status != 'Running') {
                 require_once 'CRM/Core/Transaction.php';
                 $transaction = new CRM_Core_Transaction( );
 
-                $job->queue($testParams);
+                $newJob->queue($testParams);
 
                 /* Start the job */
                 // use a seperate DAO object to protect the loop
                 // integrity. I think transactions messes it up
                 // check CRM-2469
                 $saveJob = new CRM_Mailing_DAO_Job( );
-                $saveJob->id         = $job->id;
+                $saveJob->id         = $newJob->id;
                 $saveJob->start_date = date('YmdHis');
                 $saveJob->status     = 'Running';
                 $saveJob->save();
@@ -136,10 +147,10 @@ ORDER BY j.scheduled_date,
             $mailer =& $config->getMailer();
 
             /* Compose and deliver */
-            $isComplete = $job->deliver($mailer, $testParams);
+            $isComplete = $newJob->deliver($mailer, $testParams);
 
             require_once 'CRM/Utils/Hook.php';
-            CRM_Utils_Hook::post( 'create', 'CRM_Mailing_DAO_Spool', $job->id, $isComplete);
+            CRM_Utils_Hook::post( 'create', 'CRM_Mailing_DAO_Spool', $newJob->id, $isComplete);
             
             if ( $isComplete ) {
                 /* Finish the job */
@@ -150,13 +161,13 @@ ORDER BY j.scheduled_date,
                 // integrity. I think transactions messes it up
                 // check CRM-2469
                 $saveJob = new CRM_Mailing_DAO_Job( );
-                $saveJob->id   = $job->id;
+                $saveJob->id   = $newJob->id;
                 $saveJob->end_date = date('YmdHis');
                 $saveJob->status   = 'Complete';
                 $saveJob->save();
 
                 $mailing->reset();
-                $mailing->id = $job->mailing_id;
+                $mailing->id = $newJob->mailing_id;
                 $mailing->is_completed = true;
                 $mailing->save();
                 $transaction->commit( );

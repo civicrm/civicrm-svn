@@ -1039,7 +1039,9 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                        ( $contact['preferred_mail_format'] == 'HTML' && !array_key_exists('html',$pEmails) ) ) ) {
             $textBody = join( '', $text );
             if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+                $smarty->security = true;
                 $textBody = $smarty->fetch( "string:$textBody" );
+                $smarty->security = false;
             }
             $mailParams['text'] = $textBody;
         }
@@ -1048,7 +1050,9 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                                     $contact['preferred_mail_format'] == 'Both') ) ) {
             $htmlBody = join( '', $html );
             if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+                $smarty->security = true;
                 $htmlBody = $smarty->fetch( "string:$htmlBody" );
+                $smarty->security = false;
             }
             $mailParams['html'] = $htmlBody;
         }
