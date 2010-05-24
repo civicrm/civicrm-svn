@@ -2296,12 +2296,16 @@ SELECT  id
                 $mergeActSubject = ts( "Case %1 merged into case %2", array( 1 => $otherCaseId, 2 => $mainCaseId ) );
                 if ( !empty( $copiedActivityIds ) ) {
                     $sql = '
-SELECT id, subject, activity_date_time
-  FROM civicrm_activity
- WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
+SELECT id, subject, activity_date_time, activity_type_id
+FROM civicrm_activity
+WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
                     $dao = CRM_Core_DAO::executeQuery( $sql );
                     while ( $dao->fetch( ) ) {
-                        $mergeActSubjectDetails .= "$dao->activity_date_time $dao->subject <br />";
+                        $mergeActSubjectDetails .= "{$dao->activity_date_time} :: {$activityTypes[$dao->activity_type_id]}";
+                        if ( $dao->subject ) {
+                           $mergeActSubjectDetails .= " :: {$dao->subject}";
+                        }
+                        $mergeActSubjectDetails .= "<br />";
                     }
                 }
             }
