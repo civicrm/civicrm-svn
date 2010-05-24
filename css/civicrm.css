@@ -26,7 +26,7 @@
 /* TABLE STYLING */
 
 #crm-container table {
-    margin: 0em .1em 1em;
+    margin: 0em 0em 1em;
     border-collapse: collapse;
 }
     #crm-container table.criteria-group {
@@ -1920,7 +1920,10 @@ div.grippie {
     width            : 100%;
 }
 
-
+#crm-container div.contact_panel .crm-address-block {
+    border:1px solid #D7D7D0;
+    margin-bottom:1em;
+    }
 
 #crm-container span.email-hold a:link, 
 #crm-container span.email-hold a:visited, 		

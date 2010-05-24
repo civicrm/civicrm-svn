@@ -229,7 +229,7 @@
 					{if $address}
                     <div class="contact_panel">
                         {foreach from=$address item=add key=locationIndex}
-                        <div class="{cycle name=location values="contactCardLeft,contactCardRight"}">
+                        <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
                             <table>
                                 <tr>
                                     <td class="label">{ts 1=$add.location_type}%1&nbsp;Address{/ts}
