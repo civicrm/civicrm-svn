@@ -45,34 +45,53 @@ class CRM_Utils_Mail_FixedMailMIME extends Mail_mime
     function _encodeHeaders($input, $params = array())
     {
         require_once 'CRM/Utils/Rule.php';
+        $nullName  = 'FIXME_HACK_FOR_NO_NAME';
+        $separator = 'FIXME_HACK_FOR_SEPARATOR';
+        
         $emailValues = array( );
         foreach ( $input as $fieldName => $fieldValue ) {
-            $fieldNames = $emails = array( );
+            $fieldValue = trim( $fieldValue );
+            if ( empty( $fieldValue ) ) continue; 
+            
+            $fieldNames = $fieldValues = $emails = array( );
             $hasValue = false;
             
-            //multiple email w/ comma separate. 
-            $fieldValues = explode( ',', $fieldValue );
+            $matches = preg_split( "/>(\s+)?,?/", $fieldValue );
+            foreach ( $matches as $match ) {
+                $match = trim( $match );
+                if ( $match ) {
+                    $emails = array( $match );
+                    if ( substr_count( $match, '@' ) > 1 ) {
+                        $emails = explode( ',', $match );
+                    }
+                    foreach ( $emails as $email ) {
+                        $fieldValues[] = (strpos($email, '<') !== false) ? "$email>" : $email;
+                    }
+                }
+            }
+            
             foreach ( $fieldValues as $index => $value ) {
                 $value = trim( $value );
                 //might be case we have only email address.
                 if ( CRM_Utils_Rule::email( $value ) ) {
                     $hasValue = true;
                     $emails[$index]     = $value;
-                    $fieldNames[$index] = 'FIXME_HACK_FOR_NO_NAME';
+                    $fieldNames[$index] = $nullName;
                 } else {
                     $matches = array( );
                     if ( preg_match('/^(.*)<([^<]*)>$/', $value, $matches ) ) {
                         $hasValue = true;
+                        $fName = trim($matches[1]);
+                        $fieldNames[$index] = ($fName)?$fName:$nullName;
                         $emails[$index]     = $matches[2];
-                        $fieldNames[$index] = trim($matches[1]);
                     }
                 }
             }
             
             //get formatted values back in input
             if ( $hasValue ) {
-                $input[$fieldName]       = implode( ',', $fieldNames );
-                $emailValues[$fieldName] = implode( ',', $emails );
+                $input[$fieldName]       = implode( $separator, $fieldNames );
+                $emailValues[$fieldName] = implode( $separator, $emails );
             }
         }
         
@@ -81,8 +100,8 @@ class CRM_Utils_Mail_FixedMailMIME extends Mail_mime
         
         // add emails back to headers, quoting these headers along the way
         foreach ( $emailValues as $fieldName => $value ) {
-            $emails     = explode( ',', $value );
-            $fieldNames = explode( ',', $input[$fieldName] );
+            $emails     = explode( $separator, $value );
+            $fieldNames = explode( $separator, $input[$fieldName] );
             
             foreach ( $fieldNames as $index => &$name ) {
                 $name = str_replace( '\\', '\\\\', $name );
@@ -98,10 +117,11 @@ class CRM_Utils_Mail_FixedMailMIME extends Mail_mime
             //combine fieldNames and emails.
             $mergeValues = array( );
             foreach ( $emails as $index => $email ) {
-                if ( $fieldNames[$index] == 'FIXME_HACK_FOR_NO_NAME' ) {
-                    $mergeValues[] = $email;   
-                } else {
+                $fName = CRM_Utils_Array::value( $index,$fieldNames );
+                if ( $fName && $fName != $nullName ) {
                     $mergeValues[] = "\"$fieldNames[$index]\" <$email>"; 
+                } else {
+                    $mergeValues[] = $email;
                 }
             }
             

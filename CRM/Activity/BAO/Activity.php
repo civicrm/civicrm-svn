@@ -960,11 +960,11 @@ as tbl ";
                 {$caseSelect}    
                 from civicrm_activity                   
                 inner join civicrm_case_activity on                               
-                    civicrm_case_activity.activity_id = civicrm_activity.id and {$caseWhere}                  
+                    civicrm_case_activity.activity_id = civicrm_activity.id                   
                 inner join civicrm_case on                               
                     civicrm_case_activity.case_id = civicrm_case.id                     
                 inner join civicrm_case_contact on                               
-                    civicrm_case_contact.case_id = civicrm_case.id 
+                    civicrm_case_contact.case_id = civicrm_case.id and {$caseWhere} 
                 left join civicrm_option_value on 
                     civicrm_activity.activity_type_id = civicrm_option_value.value
                 left join civicrm_option_group on                              
