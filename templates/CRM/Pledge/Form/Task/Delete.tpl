@@ -30,6 +30,4 @@
         <p>{include file="CRM/Pledge/Form/Task.tpl"}</p>
 </div>
 <p>
-<div class="form-item">
- {$form.buttons.html}
-</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>

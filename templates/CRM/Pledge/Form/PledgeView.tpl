@@ -23,9 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item crm-block crm-form-block crm-pledge-form-block">  
+<div class="crm-block crm-form-block crm-pledge-view-form-block">  
 <fieldset>
       <legend>{ts}View Pledge{/ts}</legend>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}
 <table class="view-layout">
      <tr><td class="label">{ts}Pledge By{/ts}</td><td class="bold">{$displayName}&nbsp;</td></tr>
      <tr><td class="label">{ts}Total Amount{/ts}</td><td class="bold">{$amount|crmMoney}&nbsp;</td></tr>
@@ -63,11 +64,7 @@
     
     {include file="CRM/Custom/Page/CustomDataView.tpl"}
 </table>
-<table class="form-layout">
-    <tr>
-        <td>&nbsp;</td><td>{$form.buttons.html}</td>
-    </tr>
-</table>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}
 </fieldset>  
 </div>  
  
