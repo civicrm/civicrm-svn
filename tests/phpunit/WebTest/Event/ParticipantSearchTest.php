@@ -159,6 +159,7 @@ class WebTest_Contact_ParticipantSearchTest extends CiviSeleniumTestCase {
 
       $stringsToCheck = 
           array( "Start Date - greater than or equal to",
+                 '...AND...',
                  "End Date - less than or equal to",
                  'Select Records:',
                  'Edit Search Criteria' );
@@ -168,6 +169,41 @@ class WebTest_Contact_ParticipantSearchTest extends CiviSeleniumTestCase {
           $this->assertTrue($this->isTextPresent($string), "Could not find '$string' in search results!");
       }
   }
+
+  function testParticipantSearchEventDateAndType( ) {
+      $this->open( $this->sboxPath );
+      
+      $this->webtestLogin( );
+
+      // visit event search page
+      $this->open($this->sboxPath . "civicrm/event/search&reset=1");
+      $this->waitForPageToLoad("30000");
+
+      $this->webtestFillDate('event_start_date_low' , '-2 year' );
+      $this->webtestFillDate('event_end_date_high', '+1 year' );
+
+      $eventTypeName = 'Fundraiser';
+      $this->type( "event_type", $eventTypeName );
+      $this->type( "event_type_id", 3 );
+
+      
+      $this->click( "_qf_Search_refresh" );
+      $this->waitForPageToLoad("30000");
+
+      $stringsToCheck = 
+          array( "Start Date - greater than or equal to",
+                 '...AND...',
+                 "End Date - less than or equal to",
+                 "Event Type - $eventTypeName",
+                 'Select Records:',
+                 'Edit Search Criteria' );
+
+      // search for elements
+      foreach ( $stringsToCheck as $string) {
+          $this->assertTrue($this->isTextPresent($string), "Could not find '$string' in search results!");
+      }
+  }
+
 }
 
 ?>
