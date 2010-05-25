@@ -324,8 +324,9 @@ class CRM_Core_BAO_EntityTag extends CRM_Core_DAO_EntityTag
         $dao = CRM_Core_DAO::executeQuery( $query );
         
          while( $dao->fetch( ) ) {
-            $entityTags[] = array( 'id'   => $dao->tag_id,
-                                    'name' => $dao->name);
+            $entityTags[$dao->tag_id] = array( 'id'   => $dao->tag_id,
+                                               'name' => $dao->name
+                                             );
          }
          
          return $entityTags;

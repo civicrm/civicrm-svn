@@ -40,6 +40,8 @@
  */
 class CRM_Core_Form_Tag
 {
+    public $_entityTagValues;
+    
     /**
      * Function to build tag widget if correct parent is passed
      * 
@@ -82,14 +84,19 @@ class CRM_Core_Form_Tag
                 if ( $entityId ) {
                     $tagset[$tagsetItem]['entityId'] = $entityId;
                     require_once 'CRM/Core/BAO/EntityTag.php';
-                    $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags( $parentId, $entityId, $entityTable );
-
+                    $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags( $parentId, $entityId, $entityTable );                    
                     if ( !empty( $entityTags ) ) {
                         if ( isset( $form->_action ) && $form->_action == CRM_Core_Action::VIEW ) {
                             $tagset[$tagsetItem]['entityTags'] =  $entityTags;
                         } else {
-                            $tagset[$tagsetItem]['entityTags'] =  json_encode( $entityTags );
+                            $tagset[$tagsetItem]['entityTags'] =  json_encode( array_values( $entityTags ) );
                         }
+                        
+                        if ( !empty( $form->_entityTagValues ) ) {
+                            $form->_entityTagValues = CRM_Utils_Array::crmArrayMerge( $entityTags, $form->_entityTagValues );
+                        } else {
+                            $form->_entityTagValues = $entityTags;
+                        }                        
                     }
                 }
             }
@@ -102,7 +109,7 @@ class CRM_Core_Form_Tag
      * Function to save entity tags when it is not save used AJAX
      *
      */
-    static function postProcess( &$params, $entityId, $entityTable = 'civicrm_contact' ) {
+    static function postProcess( &$params, $entityId, $entityTable = 'civicrm_contact', &$form ) {
         foreach( $params as $value ) {
             if ( !$value ) {
                 continue;
@@ -112,13 +119,15 @@ class CRM_Core_Form_Tag
             $insertSQL    = null;
             if ( !empty( $tagsIDs ) ) {
                 foreach( $tagsIDs as $tagId ) {
-                    if ( is_numeric( $tagId ) ) {
+                    if ( is_numeric( $tagId ) && !array_key_exists( $tagId, $form->_entityTagValues ) ) {
                         $insertValues[] = "( {$tagId}, {$entityId}, '{$entityTable}' ) ";
                     }
                 }
                 
-                $insertSQL = 'INSERT INTO civicrm_entity_tag ( tag_id, entity_id, entity_table ) VALUES '. implode( ', ', $insertValues ) . ';';
-                CRM_Core_DAO::executeQuery( $insertSQL );
+                if ( !empty( $insertValues ) ) {
+                    $insertSQL = 'INSERT INTO civicrm_entity_tag ( tag_id, entity_id, entity_table ) VALUES '. implode( ', ', $insertValues ) . ';';
+                    CRM_Core_DAO::executeQuery( $insertSQL );
+                }
             }
         }
     } 

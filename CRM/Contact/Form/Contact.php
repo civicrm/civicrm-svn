@@ -906,7 +906,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             //save free tags
             if ( isset( $params['taglist'] ) && !empty( $params['taglist'] ) ) {
                 require_once 'CRM/Core/Form/Tag.php';
-                CRM_Core_Form_Tag::postProcess( $params['taglist'], $params['contact_id'], 'civicrm_contact' );
+                CRM_Core_Form_Tag::postProcess( $params['taglist'], $params['contact_id'], 'civicrm_contact', $this );
             }
         }
         

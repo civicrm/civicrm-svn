@@ -877,7 +877,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         //save free tags
         if ( isset( $params['taglist'] ) && !empty( $params['taglist'] ) ) {
             require_once 'CRM/Core/Form/Tag.php';
-            CRM_Core_Form_Tag::postProcess( $params['taglist'], $activity->id, 'civicrm_activity' );
+            CRM_Core_Form_Tag::postProcess( $params['taglist'], $activity->id, 'civicrm_activity', $this );
         }
         
         // call end post process. Idea is to let injecting file do any
