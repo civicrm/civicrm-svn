@@ -82,6 +82,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
     protected $_single;
     
     public $_context;
+    public $_action;
     public $_contextQFKey;
     public $_activityTypeFile;
 

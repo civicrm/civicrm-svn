@@ -78,14 +78,18 @@ class CRM_Core_Form_Tag
                 $tagset[$tagsetItem]['tagElementName'  ] = "taglist[{$parentId}]";
                 
                 $form->add( 'text', "taglist[{$parentId}]", null );
-
+                
                 if ( $entityId ) {
                     $tagset[$tagsetItem]['entityId'] = $entityId;
                     require_once 'CRM/Core/BAO/EntityTag.php';
                     $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags( $parentId, $entityId, $entityTable );
 
                     if ( !empty( $entityTags ) ) {
-                        $tagset[$tagsetItem]['entityTags'] =  json_encode( $entityTags );
+                        if ( $form->_action == CRM_Core_Action::VIEW ) {
+                            $tagset[$tagsetItem]['entityTags'] =  $entityTags;
+                        } else {
+                            $tagset[$tagsetItem]['entityTags'] =  json_encode( $entityTags );
+                        }
                     }
                 }
             }
