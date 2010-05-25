@@ -49,7 +49,9 @@
 			    	<li><a class="crm-participant-not-counted" href="{crmURL p='civicrm/event/search' q="reset=1&force=1&event=`$id`&status=false"}">{$findParticipants.statusNotCounted|replace:'/':', '}</a>
 				</li>
 			    {/if}
-		            <li><a class="crm-participant-listing" href="{crmURL p='civicrm/event/participant' q="reset=1&id=`$id`"}">{ts}Public Participant Listing{/ts}</a></li>
+		            {if $participantListingURL}
+			    	<li><a class="crm-participant-listing" href="{$participantListingURL}">{ts}Public Participant Listing{/ts}</a></li>
+			    {/if}
 		        </ul>
 	           </div>
 	      </div>
