@@ -1832,7 +1832,7 @@ INNER JOIN civicrm_group_contact gc ON
         }
 
         $query .= " 
-WHERE      civicrm_email.email = %1";
+WHERE      civicrm_email.email = %1 AND civicrm_contact.is_deleted=0";
         $p = array( 1 => array( $mail, 'String' ) );
 
        if ( $ctype ) {
