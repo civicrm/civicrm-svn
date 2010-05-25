@@ -262,7 +262,7 @@ class CRM_Admin_Page_AJAX
             // check the value of tagID
             // if numeric that means existing tag
             // else create new tag
-            if ( !is_numeric( $tagID ) ) {
+            if ( !$skipTagCreate && !is_numeric( $tagID ) ) {
                 $params = array( 'name'      => $tagID, 
                                  'parent_id' => $parentId );
 

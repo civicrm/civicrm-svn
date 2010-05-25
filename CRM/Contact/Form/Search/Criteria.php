@@ -73,7 +73,7 @@ class CRM_Contact_Form_Search_Criteria {
             require_once 'CRM/Core/Form/Tag.php';
             require_once 'CRM/Core/BAO/Tag.php';
             $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_contact' );
-            CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact' );
+            CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact', null, true );
         }
 
         // add text box for last name, first name, street name, city
