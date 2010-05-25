@@ -57,10 +57,7 @@ class WebTest_Contact_AddCustomData extends CiviSeleniumTestCase {
       // Go directly to the URL of the screen that you will be testing (New Custom Group).
       $this->open($this->sboxPath . "civicrm/admin/custom/group&reset=1 ");
 
-      //click on custom data menu of CiviCRM
-      $this->click("//ul[@id='civicrm-menu']/li[10]");
-      $this->click("//div[@id='root-menu-div']/div[12]/ul/li[1]/div/a");
-      $this->waitForPageToLoad("30000");
+      //add new custom data
       $this->click("//a[@id='newCustomDataGroup']/span");
       $this->waitForPageToLoad("30000");
       
@@ -71,7 +68,7 @@ class WebTest_Contact_AddCustomData extends CiviSeleniumTestCase {
 
       //custom group extends 
       $this->click("extends[0]");
-      $this->select("extends[0]", "label=Contacts");
+      $this->select("extends[0]", "value=Contact");
       $this->click("//option[@value='Contact']");
       $this->click("//form[@id='Group']/div[2]/div[3]/span[1]/input");
       $this->waitForPageToLoad("30000");
@@ -84,7 +81,7 @@ class WebTest_Contact_AddCustomData extends CiviSeleniumTestCase {
       $this->click("label");
       $this->type("label", $checkboxFieldLabel);
       $this->click("data_type[1]");
-      $this->select("data_type[1]", "label=CheckBox");
+      $this->select("data_type[1]", "value=CheckBox");
       $this->click("//option[@value='CheckBox']");
       $checkboxOptionLabel1 = 'optionLabel_'.substr(sha1(rand()), 0, 5);
       $this->type("option_label_1", $checkboxOptionLabel1);
@@ -121,10 +118,10 @@ class WebTest_Contact_AddCustomData extends CiviSeleniumTestCase {
       $this->click("//a[@id='newCustomField']/span");
       $this->waitForPageToLoad("30000");
       $this->click("data_type[0]");
-      $this->select("data_type[0]", "label=Integer");
+      $this->select("data_type[0]", "value=1");
       $this->click("//option[@value='1']");
       $this->click("data_type[1]");
-      $this->select("data_type[1]", "label=Radio");
+      $this->select("data_type[1]", "value=Radio");
       $this->click("//option[@value='Radio']");
       
       $radioFieldLabel = 'custom_field'.substr(sha1(rand()), 0, 4);
