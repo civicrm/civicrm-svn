@@ -3057,7 +3057,9 @@ div#crm-toolTip
     color:#DFDFDF;
 }
 
-#crm-container .panel li a:hover, 
+#crm-container .panel li a:hover,
+#crm-container .crm-participant-list-inner li a:hover,
+#crm-container .crm-event-links-list-inner li a:hover,
 #crm-container .contextMenu li a:hover {
     color: #3e3e3e;
     background-color: #F5F6F1;
