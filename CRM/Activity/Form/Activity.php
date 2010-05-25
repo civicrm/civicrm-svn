@@ -233,13 +233,13 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $this->_contextQFKey = CRM_Utils_Request::retrieve('contextQFKey', 'String', $this );
 
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this );
-
+        
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             if ( !CRM_Core_Permission::check( 'delete activities' ) ) {
                 CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
             }
         }
-
+        
         // if we're not adding new one, there must be an id to
         // an activity we're trying to work on.
         if ( $this->_action != CRM_Core_Action::ADD ) {
@@ -253,7 +253,15 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         $this->_activityTypeId = CRM_Utils_Request::retrieve( 'atype', 'Positive', $this );
         $this->assign( 'atype', $this->_activityTypeId );
-
+        
+        //check for required permissions, CRM-6264 
+        require_once 'CRM/Case/BAO/Case.php';
+        if ( $this->_activityId &&
+             in_array( $this->_action, array( CRM_Core_Action::UPDATE, CRM_Core_Action::VIEW ) ) && 
+             !CRM_Activity_BAO_Activity::checkPermission( $this->_activityId, $this->_action ) ) {
+            CRM_Core_Error::fatal( ts( 'You do not have permission to access this page.' ) );
+        }
+        
         if ( !$this->_activityTypeId && $this->_activityId ) {
             $this->_activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity',
                                                                   $this->_activityId,
