@@ -29,14 +29,14 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
  
-class WebTest_Event_AddPaidFromTemplateTest extends CiviSeleniumTestCase {
+class WebTest_Event_AddPaidEventFromTemplateTest extends CiviSeleniumTestCase {
 
   protected function setUp()
   {
       parent::setUp();
   }
 
-  function testAddPaidFromTemplate()
+  function testAddPaidEventFromTemplate()
   {
 
       // This is the path where our testing install resides. 
@@ -136,10 +136,13 @@ class WebTest_Event_AddPaidFromTemplateTest extends CiviSeleniumTestCase {
       $this->verifyTextPresent($streetAddress);
       $this->verifyTextPresent("250.00");
 
+      // Go to Register page and check for intro text and fee levels
       $this->click("link=Register Now");
+      $this->waitForElementPresent("_qf_Register_upload-bottom");
       // $this->verifyTextPresent($registerIntro);
+      $this->verifyTextPresent("250.00 Member");
+      $this->verifyTextPresent("325.00 Non-member");
       
   }
 
 }
-?>

@@ -148,4 +148,3 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
   }
 
 }
-?>
