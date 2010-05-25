@@ -1315,8 +1315,8 @@ INSERT INTO civicrm_custom_group
 SELECT @cgid := MAX(id) FROM civicrm_custom_group;
 
 INSERT INTO civicrm_custom_field
-  (custom_group_id, label,           data_type, html_type, is_active, text_length, note_columns, note_rows, column_name,        option_group_id) VALUES
-  (@cgid,           'Soup Selection','String',  'Radio',   1,         255,         60,           4,         'soup_selection_4', @ogid);
+  (custom_group_id, label,           data_type, html_type, is_active, text_length, note_columns, note_rows, column_name,        option_group_id, is_searchable) VALUES
+  (@cgid,           'Soup Selection','String',  'Radio',   1,         255,         60,           4,         'soup_selection_4', @ogid, 1);
 
 INSERT INTO civicrm_option_value
   (option_group_id, label,           value,     name,            weight) VALUES
