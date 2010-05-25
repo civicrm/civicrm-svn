@@ -256,7 +256,7 @@ class CRM_Contact_BAO_Query
      * @var array
      * @static
      */
-    static $_activityRole = null;
+    static $_activityRole;
 
     /**
      * use distinct component clause for component searches
@@ -387,7 +387,10 @@ class CRM_Contact_BAO_Query
         $this->_paramLookup = array( );
 
         $this->_customQuery = null; 
- 
+        
+        //reset cache, CRM-5803
+        self::$_activityRole = null;
+        
         $this->_select['contact_id']      = 'contact_a.id as contact_id';
         $this->_element['contact_id']     = 1; 
         $this->_tables['civicrm_contact'] = 1;
