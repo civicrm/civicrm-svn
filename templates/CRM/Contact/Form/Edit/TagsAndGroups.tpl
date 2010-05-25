@@ -57,6 +57,7 @@
 		{/if}
 	    {/foreach}
 	</tr>
+	<tr><td>{include file="CRM/common/Tag.tpl"}</td></tr>
     </table>   
 {if $title}
  </div><!-- /.crm-accordion-body -->

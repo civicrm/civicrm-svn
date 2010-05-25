@@ -85,7 +85,7 @@ class CRM_Core_Form_Tag
                     $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags( $parentId, $entityId, $entityTable );
 
                     if ( !empty( $entityTags ) ) {
-                        if ( $form->_action == CRM_Core_Action::VIEW ) {
+                        if ( isset( $form->_action ) && $form->_action == CRM_Core_Action::VIEW ) {
                             $tagset[$tagsetItem]['entityTags'] =  $entityTags;
                         } else {
                             $tagset[$tagsetItem]['entityTags'] =  json_encode( $entityTags );

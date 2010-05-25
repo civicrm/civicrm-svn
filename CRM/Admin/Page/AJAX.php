@@ -287,7 +287,7 @@ class CRM_Admin_Page_AJAX
             if ( !is_numeric( $tagID ) ) {
                 $tagID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $tagID, 'id',  'name' );
             }
-            if ( !$skipEntityAction && $entityId ) {
+            if ( $entityId ) {
                 // delete this tag entry for the entity
                 $params = array( 'entity_table' => $entityTable,
                                  'entity_id'    => $entityId,
