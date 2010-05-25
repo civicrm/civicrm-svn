@@ -115,6 +115,33 @@ class WebTest_Contact_ParticipantSearchTest extends CiviSeleniumTestCase {
       }
   }
 
+  function testParticipantSearchEventName( ) {
+      $this->open( $this->sboxPath );
+      
+      $this->webtestLogin( );
+
+      // visit event search page
+      $this->open($this->sboxPath . "civicrm/event/search&reset=1");
+      $this->waitForPageToLoad("30000");
+
+      $eventName = "Fall Fundraiser Dinner";
+      $this->type( "event_name", $eventName );
+      $this->type( "event_id", 1 );
+
+      $this->click( "_qf_Search_refresh" );
+      $this->waitForPageToLoad("30000");
+
+      $stringsToCheck = 
+          array( "Event = $eventName",
+                 'Select Records:',
+                 'Edit Search Criteria' );
+
+      // search for elements
+      foreach ( $stringsToCheck as $string) {
+          $this->assertTrue($this->isTextPresent($string), "Could not find '$string' in search results!");
+      }
+  }
+
 
 }
 
