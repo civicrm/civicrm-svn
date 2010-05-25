@@ -36,7 +36,7 @@
 
 require_once 'CRM/Core/Form.php';
 
-class CRM_Admin_Form_StringOverrides extends CRM_Core_Form
+class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
 {
     protected $_numStrings = 10;
     

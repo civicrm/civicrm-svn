@@ -36,7 +36,6 @@
 {else}
 {* this template is used for adding/editing string overrides  *}
 <div class="crm-form crm-form-block crm-string_override-form-block">
-<div class="crm-submit-buttons" ><a class="button" onClick="Javascript:buildStringOverrideRow( false );return false;"><span><div class="icon add-icon"></div>{ts}Add new Row{/ts}</span></a>{include file="CRM/common/formButtons.tpl"} </div>
 <table class="form-layout-compressed">
 	<tr>
 	    <td>
@@ -52,10 +51,10 @@
 		{assign var='soInstance' value=$smarty.section.numStrings.index}
 
 		<tr id="string_override_row_{$soInstance}">
-  		<td class="even-row">{$form.enabled.$soInstance.html}</td>	
-  		<td class="even-row">{$form.old.$soInstance.html}</td>
-  		<td class="even-row">{$form.new.$soInstance.html}</td>
-  		<td class="even-row">{$form.cb.$soInstance.html}</td>
+  		    <td class="even-row">{$form.enabled.$soInstance.html}</td>	
+  		    <td class="even-row">{$form.old.$soInstance.html}</td>
+  		    <td class="even-row">{$form.new.$soInstance.html}</td>
+  		    <td class="even-row">{$form.cb.$soInstance.html}</td>
 		</tr>
 
                 </div> 

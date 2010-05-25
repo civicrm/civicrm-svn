@@ -300,10 +300,10 @@
      <weight>375</weight>
   </item>
   <item>
-     <path>civicrm/admin/options/stringoverrides</path>
-     <title>String Overrides</title>
-     <desc>String Overrides.</desc>
-     <page_callback>CRM_Admin_Form_StringOverrides</page_callback>
+     <path>civicrm/admin/options/wordreplacements</path>
+     <title>Word Replacements</title>
+     <desc>Word Replacements.</desc>
+     <page_callback>CRM_Admin_Form_WordReplacements</page_callback>
      <adminGroup>Option Lists</adminGroup>
      <weight>378</weight>
   </item>
