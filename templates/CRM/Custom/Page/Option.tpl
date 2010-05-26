@@ -50,12 +50,12 @@
         <th>&nbsp;</th>
         </tr>
         {foreach from=$customOption item=row key=id}
-	<tr id="row_{$id}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-            <td>{$row.label}</td>
-            <td>{$row.value}</td>
-            <td>{$row.default_value}</td>
-            <td class="nowrap">{$row.weight}</td>
-	    <td id="row_{$id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	<tr id="row_{$id}"class="{cycle values="odd-row,even-row"} {$row.class} crm-custom_option {if NOT $row.is_active} disabled{/if}">
+            <td class="crm-custom_option-label">{$row.label}</td>
+            <td class="crm-custom_option-value">{$row.value}</td>
+            <td class="crm-custom_option-default_value">{$row.default_value}</td>
+            <td class="nowrap crm-custom_option-weight">{$row.weight}</td>
+	        <td id="row_{$id}_status" class="crm-custom_option-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
             <td>{$row.action|replace:'xx':$id}</td>
         </tr>
         {/foreach}
@@ -72,10 +72,8 @@
 {else}
     {if $action eq 16}
         <div class="messages status">
-        <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
-        <dd>{capture assign=crmURL}{crmURL p='civicrm/admin/custom/group/field/option' q="action=add&fid=$fid&gid=$gid"}{/capture}{ts 1=$fieldTitle 2=$crmURL}There are no multiple choice options for the custom field '%1', <a href='%2'>add one</a>.{/ts}</dd>
-        </dl>
+           <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
+           {capture assign=crmURL}{crmURL p='civicrm/admin/custom/group/field/option' q="action=add&fid=$fid&gid=$gid"}{/capture}{ts 1=$fieldTitle 2=$crmURL}There are no multiple choice options for the custom field '%1', <a href='%2'>add one</a>.{/ts}
         </div>
     {/if}
 {/if}
