@@ -33,10 +33,10 @@
         {ts}Edit Search Criteria{/ts}
   </div>
  <div class="crm-accordion-body">
-<div id="searchForm" class="form-item">
+<div id="searchForm">
     {strip} 
         <table class="form-layout">
-        <tr class="crm-participant-form-block-sort_name">
+        <tr class="crm-search-form-block-sort_name">
            <td class="font-size12pt" colspan="2">
                {$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmReplace:class:'twenty'}&nbsp;&nbsp;&nbsp;{$form.buttons.html}
            </td>       

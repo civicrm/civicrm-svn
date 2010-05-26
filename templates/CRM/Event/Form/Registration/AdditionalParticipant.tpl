@@ -41,7 +41,7 @@
     </div>
 {/if}
 
-<div class="form-item">
+<div class="crm-block crm-event-additional_participant-form-block">
 {if $priceSet}
     <fieldset id="priceset"><legend>{$event.fee_label}</legend>
     <table class="form-layout">
@@ -85,7 +85,7 @@
         {/if}
     {/foreach}
     </table>
-    <div class="form-item">
+    <div>
      <table class="form-layout">
          <tr></tr>
          <tr>

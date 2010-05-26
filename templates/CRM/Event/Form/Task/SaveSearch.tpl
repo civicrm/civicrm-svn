@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-event_task_save_search-form-block">
 <fieldset>
     <legend>{ts}Smart Group{/ts}</legend>
 
@@ -37,13 +37,13 @@
     <br />
 </div>
 {/if}
- <div class="form-item">
+
  <table class="form-layout-compressed">
-   <tr>
+   <tr class="crm-event_task_save_search-form-block-title">
       <td class="label">{$form.title.label}</td>
       <td>{$form.title.html}</td>
    </tr>
-   <tr>
+   <tr class="crm-event_task_save_search-form-block-description">
       <td class="label">{$form.description.label}</td>
       <td>{$form.description.html}</td>
    </tr>
@@ -51,10 +51,10 @@
       <td colspan="2" class="label">{include file="CRM/Event/Form/Task.tpl"}</td>
    </tr>
    <tr>
-      <td colspan="2">{$form.buttons.html}</td>
+      <td colspan="2">{include file="CRM/common/formButtons.tpl" location="bottom"}</td>
    </tr>
 </table>
- </div>
+
 </fieldset>
 </div>
 

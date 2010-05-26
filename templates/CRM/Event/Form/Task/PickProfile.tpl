@@ -23,11 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
-<fieldset>
+<div class="crm-block crm-form-block crm-event_task_pick_profile-form-block">
     <legend>{ts}Batch Update Event via Profile{/ts}</legend>
     <table class="form-layout">
-        <tr>
+        <tr class="crm-event_task_pick_profile-form-block-uf_group_id">
            <td class="label">{$form.uf_group_id.label}</td>
            <td>{$form.uf_group_id.html}</td>
         </tr>
@@ -37,9 +36,8 @@
         </tr>
         <tr>
            <td>&nbsp;</td>
-           <td>{include file="CRM/common/formButtons.tpl"}</td>
+           <td>{include file="CRM/common/formButtons.tpl" location="bottom"}</td>
         </tr>
     </table>
-</fieldset>
 </div>
 

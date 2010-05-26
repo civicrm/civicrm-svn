@@ -23,7 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-event_badge-form-block">
+<div class="crm-block crm-form-block crm-event_task_badge-form-block">
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <table class="form-layout-compressed"> 
      <tr class="crm-mailing_label-form-block-label_id">
         <td class="label">{$form.badge_id.label}</td>
@@ -31,5 +32,5 @@
      </tr>
      <tr>{include file="CRM/Event/Form/Task.tpl"}</tr>
 </table>
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

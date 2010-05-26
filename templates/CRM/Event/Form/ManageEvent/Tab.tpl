@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div>
+<div class="crm-block crm-form-block crm-manage_event_tab-form-block">
 	<div id="crm-event-links-wrapper">
 	      <div id="crm-event-links-link"><span><div class="icon dropdown-icon"></div>{ts}Event Links{/ts}</span></div>
 	      <div class="ac_results" id="crm-event-links-list">

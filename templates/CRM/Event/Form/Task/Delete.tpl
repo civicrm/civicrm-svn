@@ -24,6 +24,10 @@
  +--------------------------------------------------------------------+
 *}
 {* Confirmation of participation deletes  *}
+<div class="crm-block crm-form-block crm-event_task_delete-form-block">
+<div class="crm-submit-buttons">
+ include file="CRM/common/formButtons.tpl" location="top"}
+</div>
 <div class="messages status">
   <div class="icon inform-icon"></div>
   <div> 
@@ -32,6 +36,7 @@
   </div>
 </div>
 <p>
-<div class="form-item">
- {$form.buttons.html}
+<div class="crm-submit-buttons">
+ include file="CRM/common/formButtons.tpl" location="bottom"}
+</div>
 </div>
