@@ -182,12 +182,14 @@
              <tr class="crm-activity-form-block-details">
                <td class="label">{$form.details.label}</td>
         	        {if $activityTypeName eq "Print PDF Letter"}
-            		  <td class="view-value report">
-            	    	    {$form.details.value|crmReplace:class:huge}
+            		  <td class="view-value">
+                          {* If using plain textarea, assign class=huge to make input large enough. *}
+                          {if $defaultWysiwygEditor eq 0}{$form.details.html|crmReplace:class:huge}{else}{$form.details.html}{/if}
             		  </td>
             		{else}
-            	      <td class="view-value report">
-            	    	    {$form.details.html|crmStripAlternatives|crmReplace:class:huge}
+            	      <td class="view-value">
+                          {* If using plain textarea, assign class=huge to make input large enough. *}
+                          {if $defaultWysiwygEditor eq 0}{$form.details.html|crmStripAlternatives|crmReplace:class:huge}{else}{$form.details.html|crmStripAlternatives}{/if}
             		  </td>
             		{/if}     
                </td>

@@ -201,7 +201,11 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
               <td colspan="2"><div id="customData"></div></td>
            </tr>
            <tr class="crm-case-form-block-details">
-              <td class="label">{$form.details.label}</td><td class="view-value">{$form.details.html|crmReplace:class:huge}</td>
+              <td class="label">{$form.details.label}</td>
+              <td class="view-value">
+                {* If using plain textarea, assign class=huge to make input large enough. *}
+                {if $defaultWysiwygEditor eq 0}{$form.details.html|crmReplace:class:huge}{else}{$form.details.html}{/if}
+              </td>
            </tr>
            <tr>
               <td colspan="2">{include file="CRM/Form/attachment.tpl"}</td>

@@ -133,11 +133,9 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                                                                                    'location' ),
                                                         'required'   => false,
                                                         ),
-                  'details'                  => array(  'type'       => 'textarea',
+                  'details'                  => array(  'type'       => 'wysiwyg',
                                                         'label'      => ts('Details'),
-                                                        'attributes' => 
-                                                        CRM_Core_DAO::getAttribute('CRM_Activity_DAO_Activity', 
-                                                                                   'details' ),
+                                                        'attributes' => array( 'rows' => 4, 'cols' => 60 ), // forces a smaller edit window
                                                         'required'   => false, 
                                                         ),
                   'status_id'                 =>  array( 'type'       => 'select',
@@ -563,7 +561,11 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 if ( CRM_Utils_Array::value( 'required', $values ) ) {
                     $required = true;
                 }
-                $this->add($values['type'], $field, $values['label'], $attribute, $required );
+                if ( $values['type'] == 'wysiwyg' ) {
+                    $this->addWysiwyg( $field, $values['label'], $attribute, $required );
+                } else {
+                    $this->add($values['type'], $field, $values['label'], $attribute, $required );
+                }
             }
         }
 
