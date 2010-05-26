@@ -143,10 +143,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                                                $this, true, null, 'REQUEST' );
             if ( ! in_array( $this->_contactType,
                              array( 'Individual', 'Household', 'Organization' ) ) ) {
-                CRM_Core_Error::statusBounce( ts('Could not get a contact_id and/or contact_type') );
+                CRM_Core_Error::statusBounce( ts('Could not get a contact id and/or contact type') );
             }
             
             $this->_contactSubType = CRM_Utils_Request::retrieve( 'cst','String', $this );
+            
+            if ( $this->_contactSubType && !(CRM_Contact_BAO_ContactType::isExtendsContactType($this->_contactSubType, $this->_contactType, true)) ) { 
+                CRM_Core_Error::statusBounce( ts("Could not get a valid contact subtype for contact type '%1'", array( '1' =>  $this->_contactType)) );   
+            }
 
             $this->_gid = CRM_Utils_Request::retrieve( 'gid', 'Integer',
                                                        CRM_Core_DAO::$_nullObject,
