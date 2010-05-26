@@ -212,7 +212,7 @@ class CRM_Case_Form_Case extends CRM_Core_Form
                    array_merge( $s, array('maxlength' => '128') ), true);
 
         require_once 'CRM/Core/BAO/Tag.php';
-        $tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_case'), true );
+        $tags = CRM_Core_BAO_Tag::getTags( 'civicrm_case' );
         if ( !empty($tags) ) { 
             $this->add('select', 'tag',  ts( 'Select Tags' ), $tags, false, 
                        array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('- select -') ));

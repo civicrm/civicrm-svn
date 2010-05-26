@@ -379,7 +379,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         require_once 'CRM/Core/BAO/EntityTag.php';
         require_once 'CRM/Core/BAO/Tag.php';
 
-        $allTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_case' );
+        $allTags = CRM_Core_BAO_Tag::getTags( 'civicrm_case' );
         if ( !empty($allTags) ) { 
             $this->add('select', 'case_tag',  ts( 'Tags' ), $allTags, false, 
                        array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('- select -') ));

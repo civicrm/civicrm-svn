@@ -172,7 +172,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
         return $tags;
     }
 
-    static function getTags( &$tags = array( ), $usedFor = 'civicrm_contact', $parentId = null, $separator = '&nbsp;&nbsp;', $flatlist = true ) {
+    static function getTags( $usedFor = 'civicrm_contact', &$tags = array( ), $parentId = null, $separator = '&nbsp;&nbsp;', $flatlist = true ) {
         $parentClause = '';
         if ( $parentId ) {
             $separator .= '&nbsp;&nbsp;';
@@ -190,7 +190,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
         
         while( $dao->fetch( ) ) {
             $tags[$dao->id] = $separator . $dao->name;
-            self::getTags( $tags, $usedFor, $dao->id, $separator );
+            self::getTags( $usedFor, $tags, $dao->id, $separator );
         }
         
         return $tags;        
