@@ -123,14 +123,15 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            <tr id="with-clients" class="crm-case-form-block-client_name">
 	       {if not $multiClient}
               <td class="label font-size12pt">{ts}Client{/ts}</td>
-              <td class="view-value font-size12pt">{$client_name|escape}&nbsp;&nbsp;&nbsp;&nbsp;
+              <td class="view-value"><span class="font-size12pt">{$client_name|escape}&nbsp;&nbsp;&nbsp;&nbsp;</span>
 	       {else}
               <td class="label font-size12pt">{ts}Clients{/ts}</td>
-              <td class="view-value font-size12pt">
-		  {foreach from=$client_names item=client name=clients}
+              <td class="view-value">
+		        <span class="font-size12pt">
+		        {foreach from=$client_names item=client name=clients}
 		            {$client.display_name}{if not $smarty.foreach.clients.last}; &nbsp; {/if}
-                  {/foreach}
-
+                {/foreach}
+                </span>
 	       {/if}
 
 	       {if $action eq 1 or $action eq 2}
@@ -146,17 +147,18 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 
     	   {if $action eq 1 or $action eq 2}
            <tr class="crm-case-form-block-target_contact_id hide-block"  id="with-contacts-widget">
-               <td class="label font-size10pt">{ts}With Contact{/ts}</td>
-               <td>{$form.target_contact_id.html}
+                <td class="label font-size10pt">{ts}With Contact{/ts}</td>
+                <td>{$form.target_contact_id.html}
                    <a href="#" onClick="buildTargetContact(1); return false;">
-		      <span id="with-clients-link" class="add-remove-link">&raquo; 
-		           {ts}With client(s){/ts}
-                      </span>
-		   </a>
-		</td>
-        	<td>{$form.hidden_target_contact.html}</td>
+		           <span id="with-clients-link" class="add-remove-link">&raquo; 
+		            {if not $multiClient}{ts}With client{/ts}{else}{ts}With client(s){/ts}{/if}
+                   </span>
+		           </a>
+    		    </td>
+            	<td>{$form.hidden_target_contact.html}</td>
            </tr>
     	   {/if}
+    	   
            <tr class="crm-case-form-block-activityTypeName">
               <td class="label">{ts}Activity Type{/ts}</td>
               <td class="view-value bold">{$activityTypeName|escape}</td>
