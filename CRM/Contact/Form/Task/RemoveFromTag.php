@@ -64,7 +64,7 @@ class CRM_Contact_Form_Task_RemoveFromTag extends CRM_Contact_Form_Task {
      */
     function buildQuickForm( ) {
         // add select for tag
-        $this->_tags =  CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact');
+        $this->_tags =  CRM_Core_BAO_Tag::getTags( );
         foreach ($this->_tags as $tagID => $tagName) {
             $this->_tagElement =& $this->addElement('checkbox', "tag[$tagID]", null, $tagName);
         }

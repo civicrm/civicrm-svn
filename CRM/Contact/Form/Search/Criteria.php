@@ -63,7 +63,7 @@ class CRM_Contact_Form_Search_Criteria {
         if ( $form->_searchOptions['tags'] ) {
             // multiselect for categories
             require_once 'CRM/Core/BAO/Tag.php';
-            $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
+            $contactTags = CRM_Core_BAO_Tag::getTags( );
             
             if ( $contactTags ) {
                 $form->add( 'select', 'contact_tags',  ts( 'Tags' ), $contactTags, false, 

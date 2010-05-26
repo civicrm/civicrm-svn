@@ -135,8 +135,8 @@ class CRM_Contact_Form_Edit_TagsandGroups
             }
             $form->_tagGroup[$fName] = 1;
             $elements = array( );
-            require_once 'CRM/Core/BAO/Tag.php';
-            $tag = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
+            require_once 'CRM/Core/BAO/Tag.php';            
+            $tag = CRM_Core_BAO_Tag::getTags( );
             
             foreach ($tag as $id => $name) {
                 $elements[] =& HTML_QuickForm::createElement('checkbox', $id, null, $name);
