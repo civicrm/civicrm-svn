@@ -75,7 +75,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
 
       //---- create mailing contact and add to mailing Group
       $firstName = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $firstName, "Mailson", "mailino@mailson.co.in" );
+      $this->webtestAddContact( $firstName, "Mailson", "mailino$firstName@mailson.co.in" );
       
       // go to group tab and add to mailing group
       $this->click("css=li#tab_group a");
@@ -121,7 +121,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       // let from email address be default
       
       // fill subject for mailing
-      $this->type("subject", "Test subject for Webtest");
+      $this->type("subject", "Test subject $mailingName for Webtest");
       
       // check for default option enabled
       $this->assertChecked("CIVICRM_QFID_1_Compose");
@@ -174,7 +174,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       
       // uncheck now option and schedule with date and time 
       $this->uncheck("now");
-      $this->webtestFillDateTime("start_date");
+      $this->webtestFillDateTime("start_date", "+0 month");
 
       // do check count for Recipient
       $this->assertTrue($this->isTextPresent("Total Recipients: 1"));
@@ -189,6 +189,63 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       $this->assertTrue($this->isTextPresent("Scheduled and Sent Mailings"));
       $this->assertTrue($this->isTextPresent("Mailing $mailingName Webtest"));
 
+
+      //--------- mail delivery verification---------
+
+      // test undelivered report
+
+      // click report link of created mailing
+      $this->click("xpath=//table//tbody/tr[td[1]/text()='Mailing $mailingName Webtest']/descendant::a[text()='Report']");
+      $this->waitForPageToLoad("30000");
+      
+      // verify undelivered status message
+      $this->assertTrue($this->isTextPresent("Delivery has not yet begun for this mailing. If the scheduled delivery date and time is past, ask the system administrator or technical support contact for your site to verify that the automated mailer task ('cron job') is running - and how frequently."));
+      
+      // do check for recipient group
+      $this->assertTrue($this->isTextPresent("Members of $groupName"));
+      
+      // directly send schedule mailing -- not working right now
+      $this->open($this->sboxPath . "civicrm/mailing/queue&reset=1");
+      $this->waitForPageToLoad("300000");
+      
+      //click report link of created mailing
+      $this->click("xpath=//table//tbody/tr[td[1]/text()='Mailing $mailingName Webtest']/descendant::a[text()='Report']");
+      $this->waitForPageToLoad("30000");
+      
+      // do check again for recipient group
+      $this->assertTrue($this->isTextPresent("Members of $groupName"));
+
+      // check for 100% delivery
+      $this->assertTrue($this->isTextPresent("1 (100.00%)"));
+
+      // verify intended recipients
+      $this->verifyText("xpath=//table//tr[td/a[text()='Intended Recipients']]/descendant::td[2]", preg_quote("1"));
+      
+      // verify succesful deliveries
+      $this->verifyText("xpath=//table//tr[td/a[text()='Succesful Deliveries']]/descendant::td[2]", preg_quote("1 (100.00%)"));
+      
+      // verify status
+      $this->verifyText("xpath=//table//tr[td[1]/text()='Status']/descendant::td[2]", preg_quote("Complete"));
+      
+      // verify mailing name
+      $this->verifyText("xpath=//table//tr[td[1]/text()='Mailing Name']/descendant::td[2]", preg_quote("Mailing $mailingName Webtest"));
+      
+      // verify mailing subject
+      $this->verifyText("xpath=//table//tr[td[1]/text()='Subject']/descendant::td[2]", preg_quote("Test subject $mailingName for Webtest"));
+
+      //---- check for delivery detail--
+      
+      $this->click("link=Succesful Deliveries");
+      $this->waitForPageToLoad("30000");
+      
+      // check for open page
+      $this->assertTrue($this->isTextPresent("Succesful Deliveries"));
+      
+      // verify email
+      $this->assertTrue($this->isTextPresent("mailino$firstName@mailson.co.in"));
+
+      //------end delivery verification---------
+      
   }
   
   
