@@ -29,7 +29,7 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
  
-class WebTest_Contact_ParticipantSearchTest extends CiviSeleniumTestCase {
+class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
 
     protected function setUp()
     {
