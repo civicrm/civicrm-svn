@@ -87,6 +87,13 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad();
 
         // fill in step 3 (Memberships)
+        $this->click('is_active');
+        $this->type('new_title', "Title - New Membership $hash");
+        $this->type('new_title', "Title - Renewals $hash");
+        // FIXME: handle Introductory Message - New Memberships/Renewals
+        $this->click('membership_type[2]');
+        $this->click('is_required');
+        $this->click('is_separate_payment');
 
         // go to step 4
         $this->click('_qf_MembershipBlock_next');
@@ -94,37 +101,68 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
         // fill in step 4 (Thanks and Receipt)
         $this->type('thankyou_title',     "Thank-you Page Title $hash");
+        // FIXME: handle Thank-you Message/Page Footer
+        $this->type('receipt_from_name',  "Receipt From Name $hash");
         $this->type('receipt_from_email', "$hash@example.org");
+        $this->type('receipt_text',       "Receipt Message $hash");
+        $this->type('cc_receipt',         "$hash@example.net");
+        $this->type('bcc_receipt',        "$hash@example.com");
 
         // go to step 5
         $this->click('_qf_ThankYou_next');
         $this->waitForPageToLoad();
 
         // fill in step 5 (Tell a Friend)
+        $this->click('tf_is_active');
+        $this->type('tf_title',          "TaF Title $hash");
+        $this->type('intro',             "TaF Introduction $hash");
+        $this->type('suggested_message', "TaF Suggested Message $hash");
+        $this->type('general_link',      "TaF Info Page Link $hash");
+        $this->type('thankyou_title',    "TaF Thank-you Title $hash");
+        $this->type('thankyou_text',     "TaF Thank-you Message $hash");
 
         // go to step 6
         $this->click('_qf_Contribute_next');
         $this->waitForPageToLoad();
 
         // fill in step 6 (Include Profiles)
+        $this->select('custom_pre_id',  'value=1');
+        $this->select('custom_post_id', 'value=2');
 
         // go to step 7
         $this->click('_qf_Custom_next');
         $this->waitForPageToLoad();
 
         // fill in step 7 (Premiums)
+        $this->click('premiums_active');
+        $this->type('premiums_intro_title',   "Prem Title $hash");
+        $this->type('premiums_intro_text',    "Prem Introductory Message $hash");
+        $this->type('premiums_contact_email', "$hash@example.info");
+        $this->type('premiums_contact_phone', rand(100000000, 999999999));
+        $this->click('premiums_display_min_contribution');
 
         // go to step 8
         $this->click('_qf_Premium_next');
         $this->waitForPageToLoad();
 
         // fill in step 8 (Widget Settings)
+        $this->click('is_active');
+        $this->type('url_logo',     "URL to Logo Image $hash");
+        $this->type('button_title', "Button Title $hash");
+        $this->type('about',        "About $hash");
+        $this->type('url_homepage', "URL to Home Page $hash");
 
         // go to step 9
         $this->click('_qf_Widget_next');
         $this->waitForPageToLoad();
 
         // fill in step 9 (Enable Personal Campaign Pages)
+        $this->click('is_active');
+        $this->click('is_approval_needed');
+        $this->type('notify_email', "$hash@example.name");
+        $this->select('supporter_profile_id', 'value=2');
+        $this->type('tellfriend_limit', 7);
+        $this->type('link_text', "'Create Personal Campaign Page' link text $hash");
 
         // submit new contribution page
         $this->click('_qf_PCP_next');
