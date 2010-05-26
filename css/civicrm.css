@@ -771,7 +771,15 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 #crm-container .crm-loading-element { background-image:url("../i/loading.gif"); }
 #crm-container .crm-form-block .crm-loading-element { background-image:url("../i/loading-E6E6DC.gif"); }
 
-
+#crm-container .tree li {position: relative;}
+#crm-container .tree .hitarea {
+    width: 12px;
+    height:12px;
+    position: absolute;
+    left:30px;
+    top:4px;
+    cursor:pointer;
+    }
 
 #crm-container .crm-loading-element  {
     padding-left:30px;
