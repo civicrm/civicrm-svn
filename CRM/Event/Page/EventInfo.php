@@ -205,8 +205,10 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         if ( $eventFullMessage AND ( $noFullMsg == 'false' ) ) {
             if ( CRM_Utils_Array::value( 'has_waitlist', $values['event'] ) ) {
                 $eventFullMessage = null;
-                $statusMessage = CRM_Utils_Array::value( 'waitlist_text', $values['event'], 
-                                                         'Event is currently full, but you can register and be a part of waiting list.');
+                $statusMessage = CRM_Utils_Array::value( 'waitlist_text', $values['event'] );
+                if ( !$statusMessage ) {
+                    $statusMessage = ts( 'Event is currently full, but you can register and be a part of waiting list.');
+                }
             } else {
                 $statusMessage =  $eventFullMessage;
             }
