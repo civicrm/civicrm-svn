@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div id="templateList" class="crm-block crm-content-block">
 <div id="help">
     {ts 1=$GName}The existing option choices for %1 group are listed below. You can add, edit or delete them from this screen.{/ts}
 </div>
@@ -33,7 +34,6 @@
     <div class="spacer"></div>
 {/if}
 {if $rows}
-    <div id={$gName}>
 	{strip}
 	{* handle enable/disable actions*}
  	{include file="CRM/common/enableDisable.tpl"}
@@ -56,7 +56,7 @@
 		</tr>
         </thead>
 		{foreach from=$rows item=row}
-		    <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"}{$row.class}{if NOT $row.is_active} disabled{/if}">
+		    <tr id="row_{$row.id}" class="crm-report {cycle values="odd-row,even-row"}{$row.class}{if NOT $row.is_active} crm-report-status_disable disabled{else} crm-report-status_enable{/if}">
  		        <td>{$row.label}</td>	
 		        <td>{$row.value}</td>
 		        <td>{$row.description}</td>	
@@ -79,9 +79,9 @@
 		<a href="{$newReport}"  id="new"|cat:$GName class="button"><span>&raquo; {ts 1=$GName}Register New %1{/ts}</span></a>
             </div>
         {/if}
-    </div>
 {else}
     <div class="messages status">
         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>&nbsp; {ts 1=$newReport}There are no option values entered. You can <a href="%1">add one</a>.{/ts}
     </div>    
-{/if}
+{/if}    
+</div>

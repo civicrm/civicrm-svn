@@ -27,7 +27,7 @@
 {if $list}
 <div class="crm-block crm-form-block">
 {foreach from=$list item=rows key=report}		
-<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion_{$report}-accordion crm-accordion-open">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
   	{if $title}{$title}{elseif $report EQ 'Contribute'}{ts}Contribution Reports{/ts}{else}{$report} {ts}Reports{/ts}{/if}</a>
@@ -36,7 +36,7 @@
 	<div id="{$report}" class="boxBlock">
 	    <table class="report-layout">
 		{foreach from=$rows item=row}
-		    <tr>
+		    <tr class="crm-report">
 			<td style="width:35%"><a href="{$row.url}" title="{ts}Run this report{/ts}">&raquo; <strong>{$row.title}</strong></a></td>
 			<td>{$row.description}</td>
 			{if $row.deleteUrl}
@@ -49,12 +49,14 @@
 </div>
 </div>
 {/foreach}
-
+</div>
 
     {if $reportUrl}
+    <div class="action-link">
 	<a href="{$reportUrl}" class="button"><span>&raquo; {ts}View All Reports{/ts}</span></a>
+    </div>
     {/if}
-</div>    
+
 {else}
 <div class="crm-content-block">    
 <div class="messages status">
