@@ -91,7 +91,7 @@
 				<td class="label">{$form.start_date.label}</td>
 				<td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}</td>
 			</tr>
-			<tr class="crm-manage_event-info-form-block-end_date">
+			<tr class="crm-manage_event_info-form-block-end_date">
 				<td class="label">{$form.end_date.label}</td>
 				<td>{include file="CRM/common/jcalendar.tpl" elementName=end_date}</td>
 			</tr>
