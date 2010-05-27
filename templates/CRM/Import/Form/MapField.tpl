@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-form-block crm-import_map_field-form-block">
 {* Import Wizard - Step 2 (map incoming data fields) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
 <div id="help">
@@ -32,9 +33,6 @@
     {/if}
     <p>{ts}If you think you may be importing additional data from the same data source, check 'Save this field mapping' at the bottom of the page before continuing. The saved mapping can then be easily reused the next time data is imported.{/ts}</p>
 </div>
-
-<div class="crm-block crm-form-block">
-
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
 
@@ -53,8 +51,8 @@ if ( document.getElementsByName("saveMapping")[0].checked ) {
 {/if}
 </script>
 
- <div id="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
+ <div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl" location="bottom"}
  </div>
  {$initHideBoxes}
 

@@ -23,14 +23,14 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block">
-<div class="form-item">
+<div class="crm-block crm-form-block crm-import_sql-form-block">
   <fieldset><legend>{ts}SQL Import{/ts}</legend>
-    <dl>
-      <dt>{$form.sqlQuery.label}</dt><dd>{$form.sqlQuery.html}</dd>
-      <dt>&nbsp;</dt>
-      <dd class="description">{ts}SQL Query must be a SELECT query that returns one or more rows of data to be imported. Specify the database name(s) AND table name(s) in the query (e.g. "SELECT * FROM my_database.my_table WHERE date_entered BETWEEN '1999-01-01' AND '2000-07-31'").{/ts}</dd>
-    </dl>
+    <table class="form-layout-compressed">
+      <tr class ="crm-import_sql-form-block-sqlQuery">
+         <td class="label">{$form.sqlQuery.label}</td>
+         <td>{$form.sqlQuery.html}<br />
+         <span class="description">{ts}SQL Query must be a SELECT query that returns one or more rows of data to be imported. Specify the database name(s) AND table name(s) in the query (e.g. "SELECT * FROM my_database.my_table WHERE date_entered BETWEEN '1999-01-01' AND '2000-07-31'").{/ts}</span></td>
+    </tr>
+   <tabble>
   </fieldset>
-</div>
  </div>

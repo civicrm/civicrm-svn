@@ -23,17 +23,17 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+ <div class="crm-block crm-form-block crm-member_import_uploadfile-form-block">
+<div id="help">
+    {ts}The Membership Import Wizard allows you to easily upload memberships from other applications into CiviCRM.{/ts}
+    {ts}Files to be imported must be in the 'comma-separated-values' format (CSV) and must contain data needed to match the membership data to an existing contact in your CiviCRM database.{/ts} {help id='upload'}
+ </div> 
 {* Membership Import Wizard - Step 1 (upload data file) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
 
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
- <div class="crm-block crm-form-block crm-member_import_uploadfile-form-block">
-
- <div id="help">
-    {ts}The Membership Import Wizard allows you to easily upload memberships from other applications into CiviCRM.{/ts}
-    {ts}Files to be imported must be in the 'comma-separated-values' format (CSV) and must contain data needed to match the membership data to an existing contact in your CiviCRM database.{/ts} {help id='upload'}
- </div> 
+ 
 <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="top"}
 </div>   

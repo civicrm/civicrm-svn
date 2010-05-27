@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-form-block crm-import_summary-form-block">
 <div id="help">
     <p>
     {ts}<strong>Import has completed successfully.</strong> The information below summarizes the results.{/ts}
@@ -71,9 +72,6 @@
         </p>
     {/if}
  </div>
-
-<div class="crm-block crm-form-block">
-
 {* Import Wizard - Step 4 (summary of import results AFTER actual data loading) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
 
@@ -167,8 +165,8 @@
 
  </table>
  
- <div id="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
+ <div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl" location="bottom"}
  </div>
 
 </div>

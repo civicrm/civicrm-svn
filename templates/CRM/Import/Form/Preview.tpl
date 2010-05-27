@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-form-block crm-import_preview-form-block">
 <div id="help">
     <p>
     {ts}The information below previews the results of importing your data in CiviCRM. Review the totals to ensure that they represent your expected results.{/ts}         
@@ -42,8 +43,6 @@
     
     <p>{ts}Click 'Import Now' if you are ready to proceed.{/ts}</p>
 </div>
-
-<div class="crm-block crm-form-block">
 {literal}
 <script type="text/javascript">
 function setIntermediate( ) {
@@ -158,10 +157,16 @@ function verify( ) {
     {ts}Add imported records to a new group{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
-            <dl>
-            <dt class="description">{$form.newGroupName.label}</dt><dd>{$form.newGroupName.html}</dd>
-            <dt class="description">{$form.newGroupDesc.label}</dt><dd>{$form.newGroupDesc.html}</dd>
-            </dl>
+            <table class="form-layout-compressed">
+             <tr>
+               <td class="description label">{$form.newGroupName.label}</td>
+               <td>{$form.newGroupName.html}</td>
+             </tr>
+             <tr>
+               <td class="description label">{$form.newGroupDesc.label}</td>
+               <td>{$form.newGroupDesc.html}</td>
+             </tr>
+            </table>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 
@@ -176,9 +181,7 @@ function verify( ) {
  <div class="crm-accordion-body">
   
         <div class="form-item">
-            <dl>
-            <dt></dt><dd>{$form.groups.html}</dd>
-            </dl>
+        <table><tr><td style="width: 14em;"></td><td>{$form.groups.html}</td></tr></table>
         </div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
@@ -193,10 +196,16 @@ function verify( ) {
  <div class="crm-accordion-body">
   
   <div class="form-item">
-				<dl>
-				<dt class="description">{$form.newTagName.label}</dt><dd>{$form.newTagName.html}</dd>
-				<dt class="description">{$form.newTagDesc.label}</dt><dd>{$form.newTagDesc.html}</dd>
-            </dl>
+	<table class="form-layout-compressed">
+           <tr>
+       	      <td class="description label">{$form.newTagName.label}</td>
+              <td>{$form.newTagName.html}</td>
+           </tr>
+           <tr>
+	      <td class="description label">{$form.newTagDesc.label}</td>
+              <td>{$form.newTagDesc.html}</td>
+           </tr>
+        </table>
     </div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
@@ -209,20 +218,21 @@ function verify( ) {
 </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
 
-        <dl>
-            <dt></dt>
-			<dd class="listing-box" style="margin-bottom: 0em; width: 15em;">
+        <table class="form-layout-compressed">
+            <tr><td style="width: 14em;"></td>
+             <td class="listing-box" style="margin-bottom: 0em; width: 15em;">
 				{foreach from=$form.tag item="tag_val"} 
 					<div>{$tag_val.html}</div>
 				{/foreach}
-            </dd>
-        </dl>
+            </td>
+          </tr>
+        </table>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 </div> {* End of preview-info div. We hide this on form submit. *}
 
-<div id="crm-submit-buttons">
-   {include file="CRM/common/formButtons.tpl"}
+<div class="crm-submit-buttons">
+   {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
 </div>
 {literal}
