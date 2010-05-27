@@ -86,7 +86,9 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
      */ 
     function preProcess( ) 
     {
-        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false);
+        if ( !$this->_action ) {
+            $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false);
+        }
 
         $this->_id     = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false, 0, 'REQUEST' );
         if ( $this->_id ) {
@@ -216,6 +218,17 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             $subPage = CRM_Utils_Request::retrieve( 'subPage', 'String', $this );
             if ( $subPage ) {
                 $title = CRM_Event_Form_ManageEvent_TabHeader::getSubPageInfo( $this, $subPage );
+            } else {
+                $className = CRM_Utils_System::getClassName( $this );
+                if ( $className == "CRM_Event_Form_ManageEvent_Fee" ) {
+                    $subPage = 'Fee';
+                } elseif ( $className == "CRM_Event_Form_ManageEvent_Registration" ) {    
+                    $subPage = 'Registration';
+                } elseif ( $className ==  "CRM_Friend_Form_Event" ) {   
+                    $subPage = 'Friend';
+                } else {
+                    $subPage = 'EventInfo';
+                }
             }
             CRM_Core_Session::setStatus( ts("'%1' information has been saved.", array(1 => $title)) );
 
