@@ -240,8 +240,6 @@ function custom_option_html_type( ) {
 	       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 	    {/if} {* $action ne view *}
     </div> 
-</div>
-
 {literal}
 <script type="text/javascript">
     //when page is reload, build show hide boxes
