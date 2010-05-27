@@ -636,7 +636,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         // build tag widget
         require_once 'CRM/Core/Form/Tag.php';
-        require_once 'CRM/Core/BAO/Tag.php';
         $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_activity' );
         CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_activity', $this->_activityId, false, true );
             
