@@ -107,7 +107,7 @@
         </div>
         <table class="form-layout-compressed">
         {foreach from=$colorFields item=field key=fieldName}
-          <tr class="crm-contribution-form-block-{$fieldName} ><td class="label">{$form.$fieldName.label}<span class="marker"> *</span></td><td>{$form.$fieldName.html}</td></tr>   
+          <tr><td class="label">{$form.$fieldName.label}<span class="marker"> *</span></td><td>{$form.$fieldName.html}</td></tr>
         {/foreach}
         </table>
         </fieldset>
@@ -119,11 +119,11 @@
         <table id="preview" class"form-layout-compressed">
 	   <tr>
 	      <td>{$form._qf_Widget_refresh.html}</td>
-	      <td>{include file="CRM/common/formButtons.tpl" location="bottom"}
 	      </td>
 	   </tr>
 	</table>  
     </div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     </fieldset>
 
 </div>      
