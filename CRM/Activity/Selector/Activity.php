@@ -410,7 +410,7 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
                                                 'direction' => CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array('name'      => ts('With') ),
-                                          array('name'      => ts('Assigned To') ),
+                                          array('name'      => ts('Assigned') ),
                                           array(
                                                 'name'      => ts('Date'),
                                                 'sort'      => 'activity_date_time',
