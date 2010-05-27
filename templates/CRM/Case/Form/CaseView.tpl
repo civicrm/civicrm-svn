@@ -635,11 +635,13 @@ function addRole() {
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
   {if $tags}
-            {$tags}
-            {else}
-            {ts} There are no tags related to this case. {/ts}
+    {$tags}
+  {else}
+     {ts}There are no tags related to this case. {/ts}
   {/if}
   <div><input type="button" class="form-submit" onClick="Javascript:addTags()" value={if $tags}"{ts}Change Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
+  <br />
+  <div style="text-align:left;">{include file="CRM/common/Tag.tpl"}</div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 
