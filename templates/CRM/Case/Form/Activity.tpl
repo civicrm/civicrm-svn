@@ -155,7 +155,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                    </span>
 		           </a>
     		    </td>
-            	<td>{$form.hidden_target_contact.html}</td>
+            	<td class="hide-block">{$form.hidden_target_contact.html}</td>
            </tr>
     	   {/if}
     	   
