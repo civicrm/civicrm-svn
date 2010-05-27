@@ -25,7 +25,7 @@
 *}
 {strip}
 {if $list}
-<div class="crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-report_instance_list-form-block">
 {foreach from=$list item=rows key=report}		
 <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion_{$report}-accordion crm-accordion-open">
  <div class="crm-accordion-header">

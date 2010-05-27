@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-report_template_list-form-block">
 <div class="help">
 {ts}Create reports for your users from any of the report templates listed below. Click on a template titles to get started. Click Existing Report(s) to see any reports that have already been created from that template.{/ts}
 </div>
