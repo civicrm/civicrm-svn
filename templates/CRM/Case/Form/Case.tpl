@@ -121,6 +121,8 @@
 
 {/if}
 
+<tr class="crm-case-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>	     
+
 </table>
 {/if}	
 

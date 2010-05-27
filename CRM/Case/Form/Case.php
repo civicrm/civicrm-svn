@@ -218,6 +218,11 @@ class CRM_Case_Form_Case extends CRM_Core_Form
                        array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('- select -') ));
         }
         
+        // build tag widget
+        require_once 'CRM/Core/Form/Tag.php';
+        $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_case' );
+        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_case', null, false, true );
+        
         $this->addButtons(array( 
                                 array ( 'type'      => 'next',
                                         'name'      => ts('Save'), 
@@ -330,7 +335,13 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         }
         require_once 'CRM/Core/BAO/EntityTag.php';
         CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_case', $caseObj->id );
-
+        
+        //save free tags
+        if ( isset( $params['taglist'] ) && !empty( $params['taglist'] ) ) {
+            require_once 'CRM/Core/Form/Tag.php';
+            CRM_Core_Form_Tag::postProcess( $params['taglist'], $caseObj->id, 'civicrm_case', $this );
+        }
+        
         // user context
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
                                       "reset=1&action=view&cid={$this->_currentlyViewedContactId}&id={$caseObj->id}" );
