@@ -60,8 +60,8 @@
 {/literal}
 </script>
 {else}
-    {if $tagset.entityTags}
-        {foreach from=$tagset.entityTags item=val}
+    {if $tagset.entityTagsArray}
+        {foreach from=$tagset.entityTagsArray item=val}
             {$val.name}
         {/foreach}
     {/if}

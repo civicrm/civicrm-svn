@@ -86,11 +86,10 @@ class CRM_Core_Form_Tag
                     require_once 'CRM/Core/BAO/EntityTag.php';
                     $entityTags = CRM_Core_BAO_EntityTag::getChildEntityTags( $parentId, $entityId, $entityTable );                    
                     if ( !empty( $entityTags ) ) {
-                        if ( isset( $form->_action ) && $form->_action == CRM_Core_Action::VIEW ) {
-                            $tagset[$tagsetItem]['entityTags'] =  $entityTags;
-                        } else {
-                            $tagset[$tagsetItem]['entityTags'] =  json_encode( array_values( $entityTags ) );
-                        }
+                        // assign as simple array for display in smarty
+                        $tagset[$tagsetItem]['entityTagsArray'] =  $entityTags;
+                        // assign as json for js widget
+                        $tagset[$tagsetItem]['entityTags'] =  json_encode( array_values( $entityTags ) );
                         
                         if ( !empty( $form->_entityTagValues ) ) {
                             $form->_entityTagValues = CRM_Utils_Array::crmArrayMerge( $entityTags, $form->_entityTagValues );

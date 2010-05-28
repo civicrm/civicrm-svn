@@ -402,7 +402,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         // build tag widget
         require_once 'CRM/Core/Form/Tag.php';
         $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_case' );
-        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_case', $this->_caseID );        
+        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_case', $this->_caseID, false, true );        
           
         $this->addButtons(array(  
                                 array ( 'type'      => 'cancel',  

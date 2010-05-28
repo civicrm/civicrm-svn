@@ -639,15 +639,23 @@ function addRole() {
   {else}
      {ts}There are no tags related to this case. {/ts}
   {/if}
-  <div><input type="button" class="form-submit" onClick="Javascript:addTags()" value={if $tags}"{ts}Change Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
-  <br />
-  <div style="text-align:left;">{include file="CRM/common/Tag.tpl"}</div>
+  <br /><br />
+  {foreach from=$tagset item=displayTagset}
+      {if $displayTagset.entityTagsArray}
+          {$displayTagset.parentName}:
+          {foreach from=$displayTagset.entityTagsArray item=val}
+              {$val.name}
+          {/foreach}
+      {/if}
+  {/foreach}
+  <div><input type="button" class="form-submit" onClick="javascript:addTags()" value={if $tags}"{ts}Edit Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 
     <div id="manageTags">
         <div class="label">{$form.case_tag.label}</div>
         <div class="view-value"><div class="crm-select-container">{$form.case_tag.html}</div>
+        <div style="text-align:left;">{include file="CRM/common/Tag.tpl"}</div>
     </div>
     </div>
 
@@ -668,7 +676,8 @@ function addTags() {
     cj("#manageTags").dialog({
         title: "Change Case Tags",
         modal: true,
-        bgiframe: true, 
+        bgiframe: true,
+        width : 450,
         overlay: { 
             opacity: 0.5, 
             background: "black" 
@@ -683,12 +692,11 @@ function addTags() {
         },
 
         buttons: { 
-            "Ok": function() { 
+            "Save": function() { 
                 var tagsChecked = '';	    
                 var caseID      = {/literal}{$caseID}{literal};	
 
                 cj("#manageTags #tags option").each( function() {
-
                     if ( cj(this).attr('selected') == true) {
                         if ( !tagsChecked ) {
                             tagsChecked = cj(this).val() + '';
@@ -697,9 +705,18 @@ function addTags() {
                         }
                     }
                 });
-
+                
+                var tagList = '';
+                cj("#manageTags input[name^=taglist]").each( function( ) {
+                    if ( !tagsChecked ) {
+                        tagsChecked = cj(this).val() + '';
+                    } else {
+                        tagsChecked = tagsChecked + ',' + cj(this).val();
+                    }
+                });
+                
                 var postUrl = {/literal}"{crmURL p='civicrm/case/ajax/processtags' h=0 }"{literal}; 
-                var data = 'case_id='+ caseID + '&tag='+tagsChecked;
+                var data = 'case_id=' + caseID + '&tag=' + tagsChecked;
 
                 cj.ajax({ type: "POST", url: postUrl, data: data, async: false });
                 cj(this).dialog("close"); 
