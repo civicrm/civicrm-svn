@@ -51,7 +51,7 @@ class CiviContributeProcessor {
                                      'shiptostreet'  => 'street_address',
                                      'shiptostreet2' => 'supplemental_address_1',
                                      'shiptocity'    => 'city',
-                                     'shiptostate'   => 'state',
+                                     'shiptostate'   => 'state_province',
                                      'shiptozip'     => 'postal_code',
                                      'countrycode'   => 'country',
                                      ),
