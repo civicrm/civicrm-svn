@@ -1528,27 +1528,22 @@ WHERE  ce.loc_block_id = $locBlockId";
      * @return boolean true if allow registration otherwise false
      * @access public
      */
-    static function ShowHideRegistrationLink( $values ) {
+    static function showHideRegistrationLink( $values ) {
 
         $session   = CRM_Core_Session::singleton( );
         $contactID = $session->get( 'userID' );
         $alreadyRegistered = false;
         
         if ( $contactID ) {
-            require_once 'CRM/Event/PseudoConstant.php';
-            require_once 'CRM/Event/DAO/Participant.php';
-            $statusTypes = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
+            $params = array( 'contact_id' => $contactID );
             
-            $participant = new CRM_Event_DAO_Participant();
-            $participant->contact_id = $contactID;
-            $participant->event_id   = $values['event']['id'];
-            $participant->role_id    = $values['event']['default_role_id'];
-            $participant->is_test    = 0;
-            $participant->selectAdd();
-            $participant->selectAdd('status_id');
-            if ( $participant->find( true ) && array_key_exists ( $participant->status_id, $statusTypes ) ) {
-                $alreadyRegistered = true;
+            if ( $eventId = CRM_Utils_Array::value( 'id', $values['event'] ) ) {
+                $params['event_id'] = $eventId;
             }
+            if ( $roleId = CRM_Utils_Array::value( 'default_role_id', $values['event'] ) ) {
+                $params['role_id'] = $roleId;
+            }
+            $alreadyRegistered = self::checkRegistration( $params );
         }
         
         if ( CRM_Utils_Array::value( 'allow_same_participant_emails', $values['event'] ) ||
@@ -1556,6 +1551,36 @@ WHERE  ce.loc_block_id = $locBlockId";
             return true;
         }
         return false;
+    }
+
+    /* Function to check if given contact is already registered.
+     *
+     * @param  array   $params key/value participant info     
+     * @return boolean $alreadyRegistered true/false
+     * @access public
+     */
+    function checkRegistration( $params ) 
+    {
+        $alreadyRegistered = false;
+        if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) {
+            return $alreadyRegistered;
+        }
+
+        require_once 'CRM/Event/PseudoConstant.php';
+        require_once 'CRM/Event/DAO/Participant.php';
+        $statusTypes = CRM_Event_PseudoConstant::participantStatus( null, "is_counted = 1" );
+
+        $participant = new CRM_Event_DAO_Participant( );
+        $participant->copyValues( $params );
+        
+        $participant->is_test = CRM_Utils_Array::value( 'is_test', $params, 0 );
+        $participant->selectAdd( );
+        $participant->selectAdd( 'status_id' );
+        if ( $participant->find( true ) && array_key_exists ( $participant->status_id, $statusTypes ) ) {
+            $alreadyRegistered = true;
+        }
+
+        return $alreadyRegistered;
     }
 
     /**

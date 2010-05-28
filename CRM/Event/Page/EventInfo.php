@@ -202,19 +202,8 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         }
         require_once 'CRM/Event/BAO/Participant.php';
         $eventFullMessage = CRM_Event_BAO_Participant::eventFull( $this->_id );
-        if ( $eventFullMessage AND ( $noFullMsg == 'false' ) ) {
-            if ( CRM_Utils_Array::value( 'has_waitlist', $values['event'] ) ) {
-                $eventFullMessage = null;
-                $statusMessage = CRM_Utils_Array::value( 'waitlist_text', $values['event'] );
-                if ( !$statusMessage ) {
-                    $statusMessage = ts( 'Event is currently full, but you can register and be a part of waiting list.');
-                }
-            } else {
-                $statusMessage =  $eventFullMessage;
-            }
-            CRM_Core_Session::setStatus( $statusMessage );
-        }
-        
+
+        $allowRegistration = false;
         if ( CRM_Utils_Array::value( 'is_online_registration', $values['event'] ) ) {
             if ( CRM_Event_BAO_Event::validRegistrationDate( $values['event'], $this->_id ) ) {
                 if ( ! $eventFullMessage ) {
@@ -223,9 +212,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                         $registerText = $values['event']['registration_link_text'];
                     }
                     //Fixed for CRM-4855
-                    if ( CRM_Event_BAO_Event::showHideRegistrationLink( $values ) ) {
-                        $this->assign( 'allowRegistration', true );
-                    }
+                    $allowRegistration = CRM_Event_BAO_Event::showHideRegistrationLink( $values );
                     
                     $this->assign( 'registerText', $registerText );
                 }
@@ -250,6 +237,28 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
             }
         }
         
+        $this->assign( 'allowRegistration', $allowRegistration );
+        
+        if ( $eventFullMessage && ( $noFullMsg == 'false' ) ) {
+            $statusMessage =  $eventFullMessage;
+            
+            $session = CRM_Core_Session::singleton( );
+            $params  = array( 'contact_id' => $session->get( 'userID' ),
+                              'event_id'   => CRM_Utils_Array::value( 'id', $values['event'] ),
+                              'role_id'    => CRM_Utils_Array::value( 'default_role_id', $values['event'] ) );
+            
+            if ( CRM_Event_BAO_Event::checkRegistration( $params ) ) {
+                $statusMessage = ts( "Oops. It looks like you are already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator." );
+            } else if ( CRM_Utils_Array::value( 'has_waitlist', $values['event'] ) ) {
+                $eventFullMessage = null;
+                $statusMessage = CRM_Utils_Array::value( 'waitlist_text', $values['event'] );
+                if ( !$statusMessage ) {
+                    $statusMessage = ts( 'Event is currently full, but you can register and be a part of waiting list.');
+                }
+            }             
+            
+            CRM_Core_Session::setStatus( $statusMessage );
+        }
         // we do not want to display recently viewed items, so turn off
         $this->assign('displayRecent' , false );
         
