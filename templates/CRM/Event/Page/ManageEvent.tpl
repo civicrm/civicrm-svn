@@ -29,10 +29,6 @@
 {capture assign=rssFeed}{crmURL p='civicrm/event/ical' q="reset=1&page=1&rss=1"}{/capture}
 {capture assign=htmlFeed}{crmURL p='civicrm/event/ical' q="reset=1&page=1&html=1"}{/capture}
 <div class="crm-form-block">
-{if $action eq 1 or $action eq 2 }
-    {include file="CRM/Event/Page/ManageEventEdit.tpl"}
-{/if}
-
 <div class="float-right">
     <a href="{$htmlFeed}" title="{ts}HTML listing of current and future public events.{/ts}">
     <img src="{$config->resourceBase}i/applications-internet.png" alt="{ts}HTML listing of current and future public events.{/ts}" /></a>&nbsp;&nbsp;
