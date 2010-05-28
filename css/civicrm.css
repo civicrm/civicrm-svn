@@ -1974,6 +1974,9 @@ div.grippie {
     margin:0 5px 0 0;
 }
 
+#crm-container div.crm-case-dashboard-switch-view-buttons {
+    float: right;
+}
 
 #crm-container .separator {
     border-bottom  : solid 2px #ccc;
