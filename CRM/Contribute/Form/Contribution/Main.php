@@ -767,11 +767,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( $self->_values['is_monetary'] ) {
             //validate other amount.
             $checkOtherAmount = false;
-            if ( CRM_Utils_Array::value('amount', $fields ) == 'amount_other_radio' || CRM_Utils_Array::value( 'amount_other', $fields ) == 0 ) {
+            if ( CRM_Utils_Array::value('amount', $fields ) == 'amount_other_radio' ) {
                 $checkOtherAmount = true;
             }
             $otherAmountVal = CRM_Utils_Array::value( 'amount_other', $fields );
-            if ( $checkOtherAmount || $otherAmountVal ) {
+            if ( $checkOtherAmount || !isset( $fields['amount'] ) ) {
                 if ( !$otherAmountVal ) {
                     $errors['amount_other'] = ts('Amount is required field.');
                 }
