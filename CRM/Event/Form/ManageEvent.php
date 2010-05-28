@@ -113,19 +113,10 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         CRM_Event_Form_ManageEvent_TabHeader::build( $this );
 
         // Set Done button URL and breadcrumb. Templates go back to Manage Templates, 
-        // otherwise go to Manage Event for new event or ManageEventEdit if event if exists.        
+        // otherwise go to Manage Events.
         if ( !$this->_isTemplate ) {
-            if ( $this->_id ) {
-                $this->_doneUrl = CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 
-                                                         "action=update&reset=1&id={$this->_id}" );
-                $breadCrumb     = array( array('title' => ts('Configure Event'),
-                                               'url'   => $this->_doneUrl) );
-            } else {
-                $this->_doneUrl = CRM_Utils_System::url( 'civicrm/event/manage', 
-                                                         'reset=1' );
-                $breadCrumb     = array( array('title' => ts('Manage Events'),
-                                               'url'   => $this->_doneUrl) );
-            }
+            $this->_doneUrl = CRM_Utils_System::url( 'civicrm/event/manage', 
+                                                     'reset=1' );
         } else {
             $this->_doneUrl = CRM_Utils_System::url( 'civicrm/admin/eventTemplate', 'reset=1' );
             $breadCrumb     = array( array('title' => ts('Manage Event Templates'),
@@ -216,9 +207,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         // make submit buttons keep the current working tab opened.
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $subPage = CRM_Utils_Request::retrieve( 'subPage', 'String', $this );
-            if ( $subPage ) {
-                $title = CRM_Event_Form_ManageEvent_TabHeader::getSubPageInfo( $this, $subPage );
-            } else {
+            if ( !$subPage ) {
                 $className = CRM_Utils_System::getClassName( $this );
                 if ( $className == "CRM_Event_Form_ManageEvent_Fee" ) {
                     $subPage = 'Fee';
@@ -230,6 +219,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
                     $subPage = 'EventInfo';
                 }
             }
+            $title = CRM_Event_Form_ManageEvent_TabHeader::getSubPageInfo( $this, $subPage );
             CRM_Core_Session::setStatus( ts("'%1' information has been saved.", array(1 => $title)) );
 
 

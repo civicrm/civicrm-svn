@@ -295,7 +295,7 @@ ORDER BY start_date desc
         $urlParams = 'reset=1';
         // Redirect to Copied Event Configuration
         if ( $copyEvent->id ) {
-            $urlParams .=  '&action=update&id='.$copyEvent->id ;
+            $urlParams .=  '&action=update&id='.$copyEvent->id.'&subPage=EventInfo';
         }
 
         return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', $urlParams ) );

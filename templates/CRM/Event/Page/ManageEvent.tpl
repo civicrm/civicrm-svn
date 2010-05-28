@@ -67,8 +67,8 @@
             <th>{ts}City{/ts}</th>
             <th>{ts}State/Province{/ts}</th>
             <th>{ts}Public?{/ts}</th>
-            <th id="start_date">{ts}Starts{/ts}</th>
-            <th id="end_date">{ts}Ends{/ts}</th>
+            <th>{ts}Starts{/ts}</th>
+            <th>{ts}Ends{/ts}</th>
 	        <th>{ts}Active?{/ts}</th>
     		<th></th>
     		<th class="hiddenElement"></th>
