@@ -72,7 +72,7 @@
        width: 500,
        delay:200,
        max:25,
-       minChars:2,
+       minChars:1,
        selectFirst: true,
        matchContains: true	
      }).result(function(event, data, formatted) {

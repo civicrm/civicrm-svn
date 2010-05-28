@@ -78,7 +78,7 @@ cj( function() {
     cj( '#sort_name_navigation' ).autocomplete( contactUrl, {
         width: 200,
         selectFirst: false,
-        minChars:2,
+        minChars:1,
         matchContains: true 	 
     }).result(function(event, data, formatted) {
        document.location={/literal}"{crmURL p='civicrm/contact/view' h=0 q='reset=1&cid='}"{literal}+data[1];
