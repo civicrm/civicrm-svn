@@ -95,7 +95,7 @@ $.TokenList = function (input, settings) {
         .blur(function () {
             hide_dropdown();
         })
-        .keydown(function (event) {
+        .bind("keydown text", function (event) {
             var previous_token;
             var next_token;
 
