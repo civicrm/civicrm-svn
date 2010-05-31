@@ -172,6 +172,30 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
         return $tags;
     }
 
+    static function getTags( $usedFor = 'civicrm_contact', &$tags = array( ), $parentId = null, $separator = '&nbsp;&nbsp;', $flatlist = true ) {
+        $parentClause = '';
+        if ( $parentId ) {
+            $separator .= '&nbsp;&nbsp;';
+            $parentClause = " parent_id = {$parentId}";
+        } else {
+            $separator = '';
+            $parentClause = ' is_tagset = 0 AND parent_id IS NULL';
+        }
+        
+        $query = "SELECT id, name, parent_id 
+                  FROM civicrm_tag 
+                  WHERE {$parentClause} AND used_for LIKE '%{$usedFor}%' ORDER BY name";
+        
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        
+        while( $dao->fetch( ) ) {
+            $tags[$dao->id] = $separator . $dao->name;
+            self::getTags( $usedFor, $tags, $dao->id, $separator );
+        }
+        
+        return $tags;        
+    }
+    
     /**
      * Function to delete the tag 
      *

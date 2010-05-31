@@ -23,14 +23,14 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-report_template_list-form-block">
 <div class="help">
 {ts}Create reports for your users from any of the report templates listed below. Click on a template titles to get started. Click Existing Report(s) to see any reports that have already been created from that template.{/ts}
 </div>
 {strip}
 {if $list}
     {foreach from=$list item=rows key=report}		
-<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
+<div class="crm-accordion-wrapper crm-accordion_{$report}-accordion crm-accordion_title-accordion crm-accordion-open">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div>
   {if $report}{if $report EQ 'Contribute'}{ts}Contribution{/ts}{else}{$report}{/if}{else}Contact{/if} Report Templates

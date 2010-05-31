@@ -35,9 +35,9 @@
         <p>{ts}You will not be able to send an acknowledgment for this pledge because there is no email address recorded for this contact. If you want a acknowledgment to be sent when this pledge is recorded, click Cancel and then click Edit from the Summary tab to add an email address before recording the pledge.{/ts}</p>
 </div>
 {/if}
-<div class="form-item crm-block crm-form-block crm-pledge-form-block">
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-block crm-form-block crm-pledge-form-block">
 <fieldset><legend>{if $action eq 1 or $action eq 1024}{ts}New Pledge{/ts}{elseif $action eq 8}{ts}Delete Pledge{/ts}{else}{ts}Edit Pledge{/ts}{/if}</legend> 
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div> 
    {if $action eq 8} 
       <div class="messages status"> 
           <div class="icon inform-icon"></div>
@@ -157,7 +157,7 @@ function loadPanes( id ) {
 {/if} {* not delete mode if*}   
 </div> 
 <br />
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
      {literal}
      <script type="text/javascript">
 

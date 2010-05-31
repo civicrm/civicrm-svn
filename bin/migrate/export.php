@@ -312,8 +312,15 @@ AND    entity_id    IS NULL
                 // hack for extends_entity_column_value
                 if ( $name == 'extends_entity_column_value' ) {
                     if ( $object->extends == 'Event' ||
-                         $object->extends == 'Activity' ) {
-                        $key = ( $object->extends == 'Event' ) ? 'event_type' : 'activity_type';
+                         $object->extends == 'Activity' ||
+                         $object->extends == 'Relationship' ) {
+                        if ( $object->extends == 'Event' ) {
+                            $key = 'event_type';
+                        } else if ( $object->extends == 'Activity' ) {
+                            $key = 'activity_type';
+                        } else if ( $object->extends == 'Relationship' ) {
+                            $key = 'relationship_type';
+                        }
                         $xml .= "\n      <extends_entity_column_value_option_group>$key</extends_entity_column_value_option_group>";
                         $types = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                           substr( $object->$name, 1, -1 ) );

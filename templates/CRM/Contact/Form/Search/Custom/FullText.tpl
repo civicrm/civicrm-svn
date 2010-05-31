@@ -106,7 +106,7 @@
                         <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.assignee_contact_id`"}" title="{ts}View contact details{/ts}">{$row.assignee_sort_name}</a></td>
                         <td>
                             {if $row.case_id }
-                                <a href="{crmURL p='civicrm/case/activity/view' q="reset=1&aid=`$row.activity_id`&cid=`$row.contact_id`&caseID=`$row.case_id`&context=fulltext&contextQFKey=`$qfKey`"}">
+                                <a href="{crmURL p='civicrm/case/activity/view' q="reset=1&aid=`$row.activity_id`&cid=`$row.client_id`&caseID=`$row.case_id`&context=fulltext&contextQFKey=`$qfKey`"}">
                             {else}
                                 <a href="{crmURL p='civicrm/contact/view/activity' q="atype=`$row.activity_type_id`&action=view&reset=1&id=`$row.activity_id`&cid=`$row.contact_id`&context=fulltext&contextQFKey=`$qfKey`"}">
                             {/if}

@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {if $validCiviPledge}
-    <div id="pledgeForm" class="form-item">
+    <div id="pledgeForm" class="crm-pledge-advanced_search-form-block">
     <table class="form-layout"> 
        {include file="CRM/Pledge/Form/Search/Common.tpl"}
     </table>

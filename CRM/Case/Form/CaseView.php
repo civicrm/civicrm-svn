@@ -379,25 +379,30 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         require_once 'CRM/Core/BAO/EntityTag.php';
         require_once 'CRM/Core/BAO/Tag.php';
 
-        $allTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_case' );
+        $allTags = CRM_Core_BAO_Tag::getTags( 'civicrm_case' );
+        
         if ( !empty($allTags) ) { 
-            $this->add('select', 'select_tag',  ts( 'Tags' ), $allTags, false, 
+            $this->add('select', 'case_tag',  ts( 'Tags' ), $allTags, false, 
                        array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('- select -') ));
 
-            $tags = CRM_Core_BAO_EntityTag::getTag( $this->_caseID, 'civicrm_case' );
+            $tags = CRM_Core_BAO_EntityTag::getTag( $this->_caseID, 'civicrm_case' );            
            
-            $this->setDefaults( array( 'select_tag' => $tags ) ); 
+            $this->setDefaults( array( 'case_tag' => $tags ) ); 
 
             foreach( $tags as $tid ) {
                 $tags[$tid] = $allTags[$tid];
             }
-
-            $this->assign('tags', implode( ', ', $tags ) );
+                        
+            $this->assign('tags', implode( ', ', array_filter( $tags ) ) );
             $this->assign( 'showTags', true );
         } else {
             $this->assign( 'showTags', false );
         }
-        
+
+        // build tag widget
+        require_once 'CRM/Core/Form/Tag.php';
+        $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_case' );
+        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_case', $this->_caseID, false, true );        
           
         $this->addButtons(array(  
                                 array ( 'type'      => 'cancel',  

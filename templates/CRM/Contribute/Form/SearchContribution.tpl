@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item crm-block crm-form-block crm-contribution-form-block">
+<div class="crm-block crm-form-block crm-contribution-search_contribution-form-block">
 <fieldset><legend>{ts}Find Contribution Pages{/ts}</legend>
 <table class="form-layout">
     <tr>

@@ -33,7 +33,7 @@
     <div class="spacer"></div>
 {/if}
 {if $rows}
-    <div id={$gName}>
+    <div id="templateList">
 	{strip}
 	{* handle enable/disable actions*}
  	{include file="CRM/common/enableDisable.tpl"}
@@ -56,7 +56,7 @@
 		</tr>
         </thead>
 		{foreach from=$rows item=row}
-		    <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"}{$row.class}{if NOT $row.is_active} disabled{/if}">
+		    <tr id="row_{$row.id}" class="crm-report {cycle values="odd-row,even-row"}{$row.class}{if NOT $row.is_active} crm-report-status_disable disabled{else} crm-report-status_enable{/if}">
  		        <td>{$row.label}</td>	
 		        <td>{$row.value}</td>
 		        <td>{$row.description}</td>	
@@ -84,4 +84,4 @@
     <div class="messages status">
         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>&nbsp; {ts 1=$newReport}There are no option values entered. You can <a href="%1">add one</a>.{/ts}
     </div>    
-{/if}
+{/if}    

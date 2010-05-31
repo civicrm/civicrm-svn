@@ -147,6 +147,7 @@ class CRM_Contact_Form_Search_Custom_FullText
                   'target_sort_name'          => 'varchar(128)',
                   'activity_id'               => 'int unsigned',
                   'activity_type_id'          => 'int unsigned',
+                  'client_id'                 => 'int unsigned',
                   'case_id'                   => 'int unsigned',
                   'case_start_date'           => 'datetime',
                   'case_end_date'             => 'datetime',
@@ -796,13 +797,14 @@ INNER JOIN civicrm_contact c ON ct.entity_id = c.id
             $sql = "
 INSERT INTO {$this->_tableName}
 ( table_name, activity_id, subject, details, contact_id, sort_name, assignee_contact_id, assignee_sort_name, target_contact_id, 
-target_sort_name, activity_type_id, case_id )
+  target_sort_name, activity_type_id, case_id, client_id )
 SELECT    'Activity', ca.id, substr(ca.subject, 1, 50), substr(ca.details, 1, 250),
            c1.id, c1.sort_name,
            c2.id, c2.sort_name,
            c3.id, c3.sort_name,
            ca.activity_type_id,
-           cca.case_id
+           cca.case_id,
+           ccc.contact_id as client_id
 FROM       {$this->_entityIDTableName} eid
 INNER JOIN civicrm_activity ca ON ca.id = eid.entity_id
 LEFT JOIN  civicrm_contact c1 ON ca.source_contact_id = c1.id
@@ -811,6 +813,7 @@ LEFT JOIN  civicrm_contact c2 ON caa.assignee_contact_id = c2.id
 LEFT JOIN  civicrm_activity_target cat ON cat.activity_id = ca.id
 LEFT JOIN  civicrm_contact c3 ON cat.target_contact_id = c3.id
 LEFT JOIN  civicrm_case_activity cca ON cca.activity_id = ca.id
+LEFT JOIN  civicrm_case_contact ccc ON ccc.case_id = cca.case_id
 {$this->_limitRowClause}
 ";   
             break;

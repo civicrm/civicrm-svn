@@ -793,7 +793,7 @@ class CRM_Report_Form extends CRM_Core_Form {
 
     function buildTagFilter( ) {
         require_once 'CRM/Core/BAO/Tag.php';
-        $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor('civicrm_contact');
+        $contactTags = CRM_Core_BAO_Tag::getTags( );
         if ( !empty($contactTags) ) {
             $this->_columns['civicrm_tag'] = 
                 array( 'dao'     => 'CRM_Core_DAO_Tag',

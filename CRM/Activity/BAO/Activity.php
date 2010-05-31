@@ -726,6 +726,14 @@ as tbl ";
             LEFT JOIN {$activityAssigneetContactTempTable} on {$activityTempTable}.activity_id = {$activityAssigneetContactTempTable}.activity_id                  
         ";
         
+        //filter case activities - CRM-5761
+        $components = self::activityComponents( );
+        if ( !in_array( 'CiviCase', $components ) ) {
+            $query .=  "
+LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$activityTempTable}.activity_id )
+    WHERE  civicrm_case_activity.id IS NULL";
+        }
+
         $dao = CRM_Core_DAO::executeQuery( $query );
                 
         //CRM-3553, need to check user has access to target groups.
@@ -768,7 +776,35 @@ as tbl ";
         
         return $values;
     }
-
+    
+    /**
+     * Get the component id and name those are enabled and logged in
+     * user has permission. To decide whether we are going to include 
+     * component related activities w/ core activity retrieve process. 
+     *
+     * return an array of component id and name.
+     **/
+    function activityComponents( ) 
+    {
+        $components = array( );
+        $compInfo = CRM_Core_Component::getEnabledComponents( );
+        foreach ( $compInfo as $compObj ) {
+            if ( CRM_Utils_Array::value( 'showActivitiesInCore', $compObj->info ) ) {
+                $componentPermission = "access {$compObj->name}";
+                if ( $compObj->info['name'] == 'CiviCase' ) {
+                    require_once 'CRM/Case/BAO/Case.php';
+                    if ( CRM_Case_BAO_Case::accessCiviCase( ) ) {
+                        $components[$compObj->componentID] = $compObj->info['name'];
+                    }
+                } else if ( CRM_Core_Permission::check( $componentPermission ) ) {
+                    $components[$compObj->componentID] = $compObj->info['name'];
+                }
+            }
+        }
+        
+        return $components;
+    }
+    
     /**
      * function to get the actvity count
      *
@@ -785,8 +821,18 @@ as tbl ";
     static function &getActivitiesCount( $contactID, $admin = false, $caseId = null, $context = null ) 
     {
         list( $sqlClause, $params ) = self::getActivitySQLClause( $contactID, $admin, $caseId, $context, true );
-
+        
         $query = "SELECT COUNT(DISTINCT(activity_id)) as count  from ( {$sqlClause} ) as tbl";
+        
+        //filter case activities - CRM-5761
+        $components = self::activityComponents( );
+        if ( !in_array( 'CiviCase', $components ) ) {
+            $query = "
+   SELECT   COUNT(DISTINCT(tbl.activity_id)) as count  
+     FROM   ( {$sqlClause} ) as tbl
+LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.activity_id )
+    WHERE   civicrm_case_activity.id IS NULL";
+        }
         
         return CRM_Core_DAO::singleValueQuery( $query, $params );
     }
@@ -810,32 +856,20 @@ as tbl ";
         if ( $context == 'home' ) {
             $statusClause = " civicrm_activity.status_id = 1 "; 
         }
-
-        // Filter on component IDs.
-        // do not include activities of disabled components and also handle permission
-        $componentClause = "civicrm_option_value.component_id IS NULL";
-        $componentsIn    = array( );
-        $compInfo        = CRM_Core_Component::getEnabledComponents();
+        
+        //Filter on component IDs.
+        $components = self::activityComponents( );
+        $componentClause = 'civicrm_option_value.component_id IS NULL';
+        if ( !empty( $components ) ) {
+            $componentsIn = implode( ',',  array_keys( $components ) );
+            $componentClause  = "( $componentClause OR civicrm_option_value.component_id IN ( $componentsIn ) )";
+        }
         $includeCaseActivities = false;
-        foreach ( $compInfo as $compObj ) {            
-            if ( $compObj->info['showActivitiesInCore'] ) {
-                $componentPermission = "access {$compObj->name}";
-                if ( $compObj->info['name'] == 'CiviCase' ) {
-                    require_once 'CRM/Case/BAO/Case.php';
-                    if ( CRM_Case_BAO_Case::accessCiviCase( ) ) {
-                        $componentsIn[] = $compObj->componentID;
-                        $includeCaseActivities = true;
-                    }
-                } else if ( CRM_Core_Permission::check( $componentPermission ) ) {
-                    $componentsIn[] = $compObj->componentID;
-                }                
-            }
+        if ( in_array( 'CiviCase', $components ) ) {
+            $includeCaseActivities = true;
         }
         
-        if ( !empty( $componentsIn ) ) {        
-            $componentClause = "($componentClause OR civicrm_option_value.component_id IN ( " . implode( ',', $componentsIn ) . "))";
-        }
- 
+
         // build main activity table select clause
         $sourceSelect = '';
         $sourceJoin   = '';
@@ -1970,7 +2004,6 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         
         //check for source contact.
         if ( !$componentId || $allow ) {
-            $allow = false;
             $allow = CRM_Contact_BAO_Contact_Permission::allow( $activity->source_contact_id, $permission );
         }
         
@@ -1978,13 +2011,22 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         $isCaseActivity = CRM_Case_BAO_Case::isCaseActivity( $activityId );
         
         //check for civicase related permission.
-        if ( $isCaseActivity ) { 
+        if ( $allow && $isCaseActivity ) { 
             $allow = false;
             foreach ( $compPermissions['CiviCase'] as $per  ) {
                 if ( CRM_Core_Permission::check( $per ) ) {
                     $allow = true;
                     break;
                 }
+            }
+            
+            //check for case specific permissions.
+            if ( $allow ) {
+                $oper = 'view';
+                if ( $action == CRM_Core_Action::UPDATE ) $oper = 'edit'; 
+                $allow = CRM_Case_BAO_Case::checkPermission( $activityId, 
+                                                             $oper,
+                                                             $activity->activity_type_id );
             }
         }
         

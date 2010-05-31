@@ -26,6 +26,7 @@
 {* this template is used for adding/editing options *}
 <div class="crm-form-block crm-block">
 <fieldset><legend>{if $action eq 1}{ts 1=$GName}New %1 Option{/ts}{elseif $action eq 8}{ts 1=$GName}Delete %1 Option{/ts}{else}{ts 1=$GName}Edit %1 Option{/ts}{/if}</legend>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>		      
 	{if $action eq 8}
       <div class="messages status">
         <div class="icon inform-icon"></div>
@@ -89,6 +90,14 @@
                 <td>{$form.value.html}</td>
               </tr>
             {/if}
+            {if $form.name.html} {* Get the name value also *}
+              <tr class="crm-admin-form-block-name">
+                <td class="label">{$form.name.label}</td>
+                <td>{$form.name.html}<br />
+                   <span class="description">{ts}The class name which implements this functionality.{/ts}</span>
+                </td>
+              </tr>
+            {/if}
             {if $form.filter.html} {* Filter property is only exposed for some option groups. *}
               <tr class="crm-admin-form-block-filter">
                 <td class="label">{$form.filter.label}</td>
@@ -136,11 +145,8 @@
              <td>{$form.contactOptions.html}</td>
            </tr>
         {/if}
-	  <tr>
-	     <td>&nbsp;</td>
-	     <td class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</td>
-	  </tr>     
-      </table>
+	  </table>
     {/if}
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
  </fieldset>
 </div>

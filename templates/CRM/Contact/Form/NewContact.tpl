@@ -108,7 +108,7 @@
       var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=newcontact' h=0 }"{literal};
 
       cj('#contact').autocomplete( contactUrl, { 
-          selectFirst : false, matchContains: true, minChars: 2
+          selectFirst : false, matchContains: true, minChars: 1
       }).result( function(event, data, formatted) { 
           cj("input[name=contact_select_id]").val(data[1]);
       }).focus( );

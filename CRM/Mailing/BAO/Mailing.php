@@ -1039,7 +1039,9 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                        ( $contact['preferred_mail_format'] == 'HTML' && !array_key_exists('html',$pEmails) ) ) ) {
             $textBody = join( '', $text );
             if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+                $smarty->security = true;
                 $textBody = $smarty->fetch( "string:$textBody" );
+                $smarty->security = false;
             }
             $mailParams['text'] = $textBody;
         }
@@ -1048,7 +1050,9 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                                     $contact['preferred_mail_format'] == 'Both') ) ) {
             $htmlBody = join( '', $html );
             if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+                $smarty->security = true;
                 $htmlBody = $smarty->fetch( "string:$htmlBody" );
+                $smarty->security = false;
             }
             $mailParams['html'] = $htmlBody;
         }
@@ -1081,7 +1085,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
 
         $headers['To'] = "{$mailParams['toName']} <{$mailParams['toEmail']}>";
         $headers['Precedence'] = 'bulk';
-        //Will test in the mail processor if the X-VERP is set in the bounced email. (As an option to replace real VERP for those that can't set it up)
+        // Will test in the mail processor if the X-VERP is set in the bounced email.
+        // (As an option to replace real VERP for those that can't set it up)
         $headers['X-CiviMail-Bounce'] = $verp['bounce'];
 
         //CRM-5058

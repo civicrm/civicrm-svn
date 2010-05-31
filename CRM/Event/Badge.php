@@ -61,23 +61,31 @@ class CRM_Event_Badge {
       */
     public function run ( &$participants )
     {
-        $eventid=$participants[0]['eventid'];
-        $this->event= self::retrieveEvent ($eventid);
+        $eventID = $participants[0]['event_id'];
+        $this->event= self::retrieveEvent ($eventID);
         //call function to create labels
         self::createLabels($participants);
         CRM_Utils_System::civiExit( 1 );
     }
     
-   protected function retrieveEvent($eventid) {
-      $bao = CRM_Event_BAO_Event ();
-      $event = $bao->get($eventid);
-      return  $event;
-      //return  array ('name'=>'xxx','date'=>now());
+   protected function retrieveEvent($eventID) {
+       require_once 'CRM/Event/BAO/Event.php';
+       $bao = new CRM_Event_BAO_Event ();
+       if ($bao->get(array('id'=>$eventID))) {
+          return $bao;
+       }
+       return false;
    }
 
    public function generateLabel($participant) {
-     $txt = $this->event['name']."\n".$participant['first_name']. " ".$participant['last_name'] ."\n". $participant['current_employer'];
+     $txt = "{$this->event['title']}
+{$participant['first_name']} {$participant['last_name']}
+{$participant['current_employer']}";
+
      $this->pdf->MultiCell ($this->pdf->width, $this->pdf->lineHeight, $txt);
+   }
+
+   function pdfExtraFormat() {
    }
 
      /**
@@ -94,6 +102,7 @@ class CRM_Event_Badge {
         require_once 'CRM/Utils/String.php';
         
         $this->pdf = new CRM_Utils_PDF_Label($this->format,'mm');
+        $this->pdfExtraFormat();
         $this->pdf->Open();
         $this->pdf->AddPage();
         $this->pdf->AddFont('DejaVu Sans', '', 'DejaVuSans.php');
@@ -103,10 +112,7 @@ class CRM_Event_Badge {
         foreach ($participants as $participant) {
           $this->pdf->AddPdfLabel($participant);
         }
-        $this->pdf->Output( $this->event['name'].'.pdf', 'D' );
+        $this->pdf->Output( $this->event->title.'.pdf', 'D' );
     }
     
 }
-
-
-

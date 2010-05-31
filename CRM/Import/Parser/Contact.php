@@ -672,6 +672,15 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 $this->_retCode = CRM_Import_Parser::VALID;
             }
         } else if ( civicrm_duplicate( $newContact ) ) {
+            // if duplicate, no need of further processing
+            if ( $onDuplicate == CRM_Import_Parser::DUPLICATE_SKIP ) {
+                $errorMessage = "Skipping duplicate record";
+                array_unshift( $values, $errorMessage );
+                $importRecordParams = array( $statusFieldName => 'DUPLICATE', "${statusFieldName}Msg" => $errorMessage );
+                $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
+                return CRM_Import_Parser::DUPLICATE; 
+            }
+            
             $relationship = true;
             $contactID = $newContact['error_message']['params'][0];
             if ( !in_array( $contactID, $this->_newContacts ) ) {

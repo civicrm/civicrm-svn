@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-report-form-block">	
+<div class="crm-block crm-form-block crm-report-form-block crm-report_register-form-block">	
 {if $action eq 8} 
     <table class="form-layout">
     <tr>

@@ -32,8 +32,9 @@
     {ts}Use this form to configure Contribution Amount options. You can give contributors the ability to enter their own contribution amounts - and/or provide a fixed list of amounts. For fixed amounts, you can enter a label for each 'level' of contribution (e.g. Friend, Sustainer, etc.). If you allow people to enter their own dollar amounts, you can also set minimum and maximum values. Depending on your choice of Payment Processor, you may be able to offer a recurring contribution option.{/ts} {docURL page="PayPal Website Payments Standard and Recurring Contributions"}
 </div>
  
-<div class="form-item crm-block crm-form-block crm-contribution-form-block">
+<div class="crm-block crm-form-block crm-contribution_page-amount-form-block">
     <fieldset><legend>{ts}Contribution Amounts{/ts}</legend>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     {if !$paymentProcessor}
         {capture assign=ppUrl}{crmURL p='civicrm/admin/paymentProcessor' q="reset=1"}{/capture}
         <div class="status message">
@@ -169,11 +170,8 @@
             </td></tr>
         </table>
       </div>
-	
-      <div id="crm-submit-buttons">
-        {include file="CRM/common/formButtons.tpl"}
-      </div>
-    </fieldset>
+      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+   </fieldset>
 </div>
 
 {literal}

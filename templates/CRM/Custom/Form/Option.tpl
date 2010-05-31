@@ -23,38 +23,47 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-custom_option-form-block">
 <fieldset><legend>{if $action eq 8 }{ts}Selection Options{/ts}{else}{ts}Selection Options{/ts}{/if}</legend>
+{if $action ne 4}
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+    {else}
+        <div class="crm-submit-buttons">{$form.done.html}</div>
+    {/if} {* $action ne view *}
       {if $action eq 8}
       <div class="messages status">
-        <dl>
-          <dt><div class="icon inform-icon"></div></dt>
-          <dd>    
+          <div class="icon inform-icon"></div> 
           {ts}WARNING: Deleting this custom option will result in the loss of all data.{/ts} {ts}This action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
-          </dd>
-       </dl>
       </div>
      {else}
-	<dl>
-        <dt>{$form.label.label}</dt><dd>&nbsp;{$form.label.html}</dd>
-        <dt>{$form.value.label}</dt><dd>&nbsp;{$form.value.html}</dd>
-        <dt>{$form.weight.label}</dt><dd>&nbsp;{$form.weight.html}</dd>
-        <dt>{$form.is_active.label}</dt><dd>&nbsp;{$form.is_active.html}</dd>
-	    <dt>{$form.default_value.label}</dt><dd>&nbsp;{$form.default_value.html}</dd>
-        <dt>&nbsp;</dt><dd class="description"><span>{ts}Make this option value 'selected' by default?{/ts}</span></dd>
-	</dl>
-      {/if}
+	<table>
+        <tr class="crm-custom_option-form-block-label">
+            <td>{$form.label.label}</td>
+            <td>{$form.label.html}</td>
+        </tr>
+        <tr class="crm-custom_option-form-block-value">
+            <td>{$form.value.label}</td>
+            <td>{$form.value.html}</td>
+        <tr class="crm-custom_option-form-block-weight">
+            <td>{$form.weight.label}</td>
+            <td>{$form.weight.html}</td>
+        </tr>
+        <tr class="crm-custom_option-form-block-is_active">
+            <td>{$form.is_active.label}</td>
+            <td>{$form.is_active.html}</td>
+        </tr>
+	    <tr class="crm-custom_option-form-block-default_value">
+            <td>{$form.default_value.label}</td>
+            <td>{$form.default_value.html}<br />
+            <span class="description">{ts}Make this option value 'selected' by default?{/ts}</span></td>
+        </tr>
+	</table>
+      {/if} 
     
-    
-    <div id="crm-submit-buttons" class="form-item">
-    <dl>
     {if $action ne 4}
-        <dt>&nbsp;</dt><dd>{$form.buttons.html}</dd>
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {else}
-        <dt>&nbsp;</dt><dd>{$form.done.html}</dd>
+        <div class="crm-submit-buttons">{$form.done.html}</div>
     {/if} {* $action ne view *}
-    </dl>
-    </div>
-
 </fieldset>
 </div>

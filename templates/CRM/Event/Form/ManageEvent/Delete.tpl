@@ -24,6 +24,10 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for confirmation of delete for event  *}
+<div class="crm-block crm-form-block crm-manage_event_delete-form-block">
+<div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl" location="top"}
+</div>
 <div class="messages status">
    <div class="icon inform-icon"></div>
    <div>
@@ -35,6 +39,7 @@
    </div>
 </div>
 
-<div class="form-item">
+<div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="bottom"}
+</div>
 </div>

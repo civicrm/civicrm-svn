@@ -26,7 +26,7 @@
 <div class="form-item">
 <fieldset>
     <legend>{ts}Smart Group{/ts}</legend>
-
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {if $qill[0]}
 <div id="search-status">
     <ul>
@@ -51,9 +51,7 @@
  <div>
      {include file="CRM/Event/Form/Task.tpl"}
  </div>
- <div class="crm-submit-buttons">
-     {$form.buttons.html}
- </div>
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
  </div>
 </fieldset>
 </div>

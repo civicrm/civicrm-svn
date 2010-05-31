@@ -43,7 +43,7 @@
     {/if}
     <div id="eventFullMsg" class="messages status" style="display:none;"></div>
         
-    <h3>{if $action eq 1}{ts}New Event Registration{/ts}{elseif $action eq 8}{ts}Delete Event Registration{/ts}{else}{ts}Edit Event Registration{/ts}{/if}</h3>
+    <fieldset><legend>{if $action eq 1}{ts}New Event Registration{/ts}{elseif $action eq 8}{ts}Delete Event Registration{/ts}{else}{ts}Edit Event Registration{/ts}{/if}</legend>
 
 
     {if $action eq 1 AND $paid}
@@ -135,6 +135,7 @@
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
 </div>
+</fieldset>
 {if $action eq 1 or $action eq 2}
 {literal}
 <script type="text/javascript">

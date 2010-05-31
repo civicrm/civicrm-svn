@@ -54,7 +54,7 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
       $contactName = "Anderson, $firstName";
       $displayName = "$firstName Anderson";
 
-      // Go directly to the URL of the screen that you will be testing (New Activity-standalone).
+      // Go directly to the URL of the screen that you will be testing (Register Participant for Event-standalone).
       $this->open($this->sboxPath . "civicrm/participant/add?reset=1&action=add&context=standalone");
 
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
@@ -148,4 +148,3 @@ class WebTest_Event_StandaloneAddTest extends CiviSeleniumTestCase {
   }
 
 }
-?>

@@ -110,15 +110,12 @@
     </div>
 {else}
     <div class="status messages">
-        <dl>
-            <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
+            <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
             {capture assign=crmURL}{crmURL p='civicrm/group/add' q="reset=1"}{/capture}
-             <dd>{ts}No Groups have been created for this site.{/ts}
+            {ts}No Groups have been created for this site.{/ts}
                 {if $groupPermission eq 1}
                     {ts 1=$crmURL}You can <a href='%1'>add one</a> now.{/ts}
-                {/if}
-            </dd>
-        </dl>
+                {/if} 
     </div>
 {/if}
 </div>

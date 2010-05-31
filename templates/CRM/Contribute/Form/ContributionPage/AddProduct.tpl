@@ -34,7 +34,7 @@
     {/if}
 </div>
  
-<div class="form-item">
+<div class="crm-block crm-form-block crm-contribution-add_product-form-block">
     <fieldset><legend>{if $action eq 2 }{ts}Add Products to This Page{/ts} {elseif $action eq 1024}{ts}Preview{/ts}{else} {ts}Remove Products from this Page{/ts}{/if}</legend>
    {if $action eq 8}
       <div class="messages status">
@@ -56,7 +56,7 @@
 
 {if $action ne 4}
 <div id="crm-submit-buttons">
-  {include file="CRM/common/formButtons.tpl"}
+  {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
 {else}
     <div id="crm-done-button">

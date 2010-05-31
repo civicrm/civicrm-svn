@@ -78,7 +78,7 @@
     cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   classes: tokenClass, hintText: hintText });
     cj( "#assignee_contact_id").tokenInput( tokenDataUrl, { prePopulate: assignee_contact, classes: tokenClass, hintText: hintText });
     cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
-    cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst : false, hintText: hintText, matchContains: true, minChars: 2
+    cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst : false, hintText: hintText, matchContains: true, minChars: 1
                                 }).result( function(event, data, formatted) { cj( "#source_contact_qid" ).val( data[1] );
                                 }).bind( 'click', function( ) { cj( "#source_contact_qid" ).val(''); });
     });
@@ -182,12 +182,14 @@
              <tr class="crm-activity-form-block-details">
                <td class="label">{$form.details.label}</td>
         	        {if $activityTypeName eq "Print PDF Letter"}
-            		  <td class="view-value report">
-            	    	    {$form.details.value|crmReplace:class:huge}
+            		  <td class="view-value">
+                          {* If using plain textarea, assign class=huge to make input large enough. *}
+                          {if $defaultWysiwygEditor eq 0}{$form.details.html|crmReplace:class:huge}{else}{$form.details.html}{/if}
             		  </td>
             		{else}
-            	      <td class="view-value report">
-            	    	    {$form.details.html|crmStripAlternatives|crmReplace:class:huge}
+            	      <td class="view-value">
+                          {* If using plain textarea, assign class=huge to make input large enough. *}
+                          {if $defaultWysiwygEditor eq 0}{$form.details.html|crmStripAlternatives|crmReplace:class:huge}{else}{$form.details.html|crmStripAlternatives}{/if}
             		  </td>
             		{/if}     
                </td>

@@ -24,8 +24,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item crm-block crm-form-block crm-contribution-form-block">
+<div class="crm-block crm-form-block crm-contribution-preview-form-block">
     <fieldset><legend>{ts}Contribution Page{/ts}</legend>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout-compressed">
     <tr class="crm-contribution-form-block-intro_text">
        <td class="label">{$form.intro_text.label}</td>
@@ -98,8 +99,6 @@
     </tr>
 {include file="CRM/UF/Form/Block.tpl" fields=$customPost}
     </table>
-    <div id="crm-submit-buttons">
-      {$form.buttons.html}
-    </div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     </fieldset>
 </div>

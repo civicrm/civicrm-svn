@@ -24,37 +24,37 @@
  +--------------------------------------------------------------------+
 *}
 {* View existing event registration record. *}
-<div class="crm-block crm-content-block crm-content-block-view-participant">
+<div class="crm-block crm-form-block crm-participant_view-form-block">
 <fieldset>
     <legend>{ts}View Participant{/ts}</legend>
     <table class="view-layout">
-        <tr class="crm-participant-form-block-displayName">
+        <tr class="crm-participant_view-form-block-displayName">
 	    <td class="label">{ts}Name{/ts}</td><td class="bold">
 	    	<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contact_id"}">{$displayName}</a>&nbsp;
 	    </td>
 	</tr>
-        <tr class="crm-participant-form-block-event">
+        <tr class="crm-participant_view-form-block-event">
 	    <td class="label">{ts}Event{/ts}</td><td>
 	    	<a href="{crmURL p='civicrm/admin/event' q="action=update&reset=1&id=$event_id"}" title="{ts}Configure this event{/ts}">{$event}</a>&nbsp;
 	    </td>
 	</tr>
-        <tr class="crm-participant-form-block-role">
+        <tr class="crm-participant_view-form-block-role">
 	    <td class="label">{ts}Participant Role{/ts}</td>
 	    <td>{$role}&nbsp;</td></tr>
-        <tr class="crm-participant-form-block-register_date">
+        <tr class="crm-participant_view-form-block-register_date">
 	    <td class="label">{ts}Registration Date and Time{/ts}</td>
 	    <td>{$register_date|crmDate}&nbsp;</td>
 	</tr>
-        <tr class="crm-participant-form-block-status">
+        <tr class="crm-participant_view-form-block-status">
 	    <td class="label">{ts}Status{/ts}</td><td>{$status}&nbsp;</td>
 	</tr>
         {if $source}
-            <tr class="crm-participant-form-block-event_source">
+            <tr class="crm-participant_view-form-block-event_source">
 	    	<td class="label">{ts}Event Source{/ts}</td><td>{$source}&nbsp;</td>
 	    </tr>
         {/if}
         {if $fee_level}
-        <tr class="crm-participant-form-block-fee_amount">
+        <tr class="crm-participant_view-form-block-fee_amount">
             {if $lineItem}
                 <td class="label">{ts}Event Fees{/ts}</td>
                 <td>{include file="CRM/Price/Page/LineItem.tpl" context="Event"}</td> 

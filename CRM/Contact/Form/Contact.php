@@ -143,10 +143,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                                                $this, true, null, 'REQUEST' );
             if ( ! in_array( $this->_contactType,
                              array( 'Individual', 'Household', 'Organization' ) ) ) {
-                CRM_Core_Error::statusBounce( ts('Could not get a contact_id and/or contact_type') );
+                CRM_Core_Error::statusBounce( ts('Could not get a contact id and/or contact type') );
             }
             
             $this->_contactSubType = CRM_Utils_Request::retrieve( 'cst','String', $this );
+            
+            if ( $this->_contactSubType && !(CRM_Contact_BAO_ContactType::isExtendsContactType($this->_contactSubType, $this->_contactType, true)) ) { 
+                CRM_Core_Error::statusBounce( ts("Could not get a valid contact subtype for contact type '%1'", array( '1' =>  $this->_contactType)) );   
+            }
 
             $this->_gid = CRM_Utils_Request::retrieve( 'gid', 'Integer',
                                                        CRM_Core_DAO::$_nullObject,
@@ -902,6 +906,12 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             require_once 'CRM/Core/BAO/EntityTag.php';
             CRM_Core_BAO_EntityTag::create( $params['tag'],'civicrm_contact' ,
                                             $params['contact_id'] );
+        
+            //save free tags
+            if ( isset( $params['taglist'] ) && !empty( $params['taglist'] ) ) {
+                require_once 'CRM/Core/Form/Tag.php';
+                CRM_Core_Form_Tag::postProcess( $params['taglist'], $params['contact_id'], 'civicrm_contact', $this );
+            }
         }
         
         $statusMsg = ts('Your %1 contact record has been saved.', array( 1 => $contact->contact_type_display ) );

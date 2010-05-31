@@ -68,6 +68,7 @@ class CRM_Core_Invoke
             if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
                 CRM_Core_Menu::store( );
                 CRM_Core_Session::setStatus( ts( 'Menu has been rebuilt' ) );
+
                 // also reset navigation
                 require_once 'CRM/Core/BAO/Navigation.php';
                 CRM_Core_BAO_Navigation::resetNavigation( );

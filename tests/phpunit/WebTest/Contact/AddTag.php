@@ -40,7 +40,7 @@ class WebTest_Contact_AddTag extends CiviSeleniumTestCase {
       parent::setUp();
   }
 
-  function testIndividualAdd( )
+  function testAddTag( )
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in
@@ -61,10 +61,10 @@ class WebTest_Contact_AddTag extends CiviSeleniumTestCase {
       // button at the end of this page to show up, to make sure it's fully loaded.
       $this->waitForElementPresent("_qf_Tag_next");
 
-      // take group name
+      // take a tag name
       $tagName = 'tag_'.substr(sha1(rand()), 0, 7);
 
-      // fill group name
+      // fill tag name
       $this->type("name", $tagName);
       
       // fill description
