@@ -2824,7 +2824,7 @@ WHERE  id IN ( $groupIDs )
             $sqlValue[] = "( $sql like '%" . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $val . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . "%' ) ";
             $showValue[] =  $commPref[$val];
         }
-        $this->_where[$grouping][] = implode( ' OR ', $sqlValue ); 
+        $this->_where[$grouping][] = "( ". implode( ' OR ', $sqlValue ). " )"; 
         $this->_qill[$grouping][]  = ts('Preferred Communication Method') . " $op " . implode(' ' . ts('or') . ' ', $showValue);
     }
 
