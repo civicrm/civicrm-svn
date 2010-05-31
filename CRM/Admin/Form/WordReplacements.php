@@ -116,7 +116,39 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
                                          'name'      => ts('Cancel') ),
                                  )
                            );
-
+        $this->addFormRule( array( 'CRM_Admin_Form_WordReplacements', 'formRule' ), $this );
+    }
+    
+    /**
+     * global validation rules for the form
+     *
+     * @param array $values posted values of the form
+     *
+     * @return array list of errors to be posted back to the form
+     * @static
+     * @access public
+     */
+    static function formRule( $values ) 
+    {
+        $errors = array( );
+        
+        $oldValues  = CRM_Utils_Array::value( 'old', $values );
+        $newValues  = CRM_Utils_Array::value( 'new', $values );
+        $enabled    = CRM_Utils_Array::value( 'enabled', $values );
+        $exactMatch = CRM_Utils_Array::value( 'cb', $values );
+        
+        foreach ( $oldValues as $k => $v ) { 
+            if ( $v && !$newValues[$k] ) {
+                $errors['new['.$k.']'] = ts( 'Please Enter the value for Replacement Word' ); 
+            } elseif ( !$v && $newValues[$k] ) {
+                $errors['old['.$k.']'] = ts( 'Please Enter the value for Original Word' );       
+            } elseif ( ( !$newValues[$k] && !$oldValues[$k] ) && ( $enabled[$k] || $exactMatch[$k] ) ) {
+                $errors['old['.$k.']'] = ts( 'Please Enter the value for Original Word' );       
+                $errors['new['.$k.']'] = ts( 'Please Enter the value for Replacement Word' );       
+            } 
+        }
+        
+        return $errors;
     }
     
     /**
@@ -129,22 +161,30 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
     {
         $params = $this->controller->exportValues( $this->_name );
         
-        CRM_Core_Error::debug( '$params', $params );
-        exit;
-        
-        $overrides['wildcardMatch'] = $overrides['exactMatch'] = array();
-        
+        $enabled['exactMatch'] = $enabled['wildcardMatch']  = $disabled['exactMatch']  = $disabled['wildcardMatch'] =  array();
         for ( $i = 1 ; $i <= $this->_numStrings; $i++ ) {
-            if ( CRM_Utils_Array::value( 'old_'.$i, $params ) && 
-                 CRM_Utils_Array::value( 'new_'.$i, $params ) ) {
-                if ( array_key_exists( 'cb_'.$i, $params) ) {
-                    $overrides['wildcardMatch'] += array($params['old_'.$i]=>$params['new_'.$i]);
+            if ( CRM_Utils_Array::value( $i, $params['new'] ) && 
+                 CRM_Utils_Array::value( $i, $params['old'] ) ) {
+                if ( CRM_Utils_Array::value( $i, $params['enabled'] ) )  { 
+                    if ( array_key_exists( $i, $params['cb']) ) {
+                        $enabled['exactMatch'] += array($params['old'][$i]=>$params['new'][$i]);
+                    } else {
+                        $enabled['wildcardMatch'] += array($params['old'][$i]=>$params['new'][$i]);
+                    }
                 } else {
-                    $overrides['exactMatch'] += array($params['old_'.$i]=>$params['new_'.$i]);
+                    if ( array_key_exists( $i, $params['cb']) ) {
+                        $disabled['exactMatch'] += array($params['old'][$i]=>$params['new'][$i]);
+                    } else {
+                        $disabled['wildcardMatch'] += array($params['old'][$i]=>$params['new'][$i]);
+                    }  
                 }
             }
         }
 
+        $overrides = array ( 'enabled' => $enabled , 'disabled' => $disabled );
+        CRM_Core_Error::debug( '$overrides', $overrides );
+        exit;
+ 
         $config = CRM_Core_Config::singleton();
         $stringOverride = array( $config->lcMessages => $overrides );
         $locale_custom_strings = serialize( $stringOverride );
