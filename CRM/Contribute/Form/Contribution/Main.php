@@ -771,7 +771,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                 $checkOtherAmount = true;
             }
             $otherAmountVal = CRM_Utils_Array::value( 'amount_other', $fields );
-            if ( $checkOtherAmount || $otherAmountVal ) {
+            if ( $checkOtherAmount || !isset( $fields['amount'] ) ) {
                 if ( !$otherAmountVal ) {
                     $errors['amount_other'] = ts('Amount is required field.');
                 }
