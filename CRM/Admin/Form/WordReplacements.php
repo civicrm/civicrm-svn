@@ -44,7 +44,8 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
 
     protected $_defaults = null;
     
-    function preProcess( ) {
+    function preProcess( )
+    {
         $this->_soInstance = CRM_Utils_Array::value( 'instance', $_GET );
         $this->assign( 'soInstance', $this->_soInstance );
     }
@@ -60,35 +61,24 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
         $config = CRM_Core_Config::singleton( );
         
         $values = $config->localeCustomStrings[$config->lcMessages];
-        $enableDisable = array( 'enabled'  => 'enabled', 
-                                'disabled' => 'disabled' ); 
         $i = 1;
-        foreach ( $enableDisable as  $l ) {
-            if ( !empty( $values[$l]['wildcardMatch'] ) ) {
-                foreach ( $values[$l]['wildcardMatch'] as $k => $v ) {
-                    if ( $l  == 'enabled' ) {
-                        $this->_defaults["enabled"][$i] = 1;
-                    } elseif ( $l == 'disabled' ) {
-                        $this->_defaults["enabled"][$i] = 0;
+
+        $enableDisable = array( 1 => 'enabled',
+                                0 => 'disabled' );
+
+        $cardMatch = array( 'wildcardMatch', 'exactMatch' );
+        
+        foreach ( $enableDisable as $key => $val ) {
+            foreach ( $cardMatch as $kc => $vc ) {
+                if ( !empty( $values[$val][$vc] ) ) {
+                    foreach ( $values[$val][$vc] as $k => $v ) {
+                        $this->_defaults["enabled"][$i] = $key;
+                        $this->_defaults["cb"][$i] = $kc;
+                        $this->_defaults["old"][$i] = $k;
+                        $this->_defaults["new"][$i] = $v;
+                        $i++;
                     }
-                    $this->_defaults["cb"][$i] = 0;
-                    $this->_defaults["old"][$i] = $k;
-                    $this->_defaults["new"][$i] = $v;
-                    $i++;
-                }
-            }
-            if ( !empty( $values[$l]['exactMatch'] ) ) {
-                foreach ( $values[$l]['exactMatch'] as $m => $n ) {
-                    if ( $l  == 'enabled' ) {
-                        $this->_defaults["enabled"][$i] = 1;
-                    } elseif ( $l == 'disabled' ) {
-                        $this->_defaults["enabled"][$i] = 0;  
-                    }
-                    $this->_defaults["cb"][$i] = 1;
-                    $this->_defaults["old"][$i] = $m;
-                    $this->_defaults["new"][$i] = $n;
-                    $i++;
-                }
+                }   
             }
         }
        
