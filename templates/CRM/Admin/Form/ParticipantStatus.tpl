@@ -23,17 +23,17 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-participant_status-form-block">
   <fieldset>
     <legend>
       {if $action eq 1}{ts}New Participant Status{/ts}{elseif $action eq 2}{ts}Edit Participant Status{/ts}{else}{ts}Delete Participant Status{/ts}{/if}
     </legend>
-
+   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     {if $action eq 8}
       <div class="messages status">
        <div class="icon inform-icon"></div>
              {ts}WARNING: Deleting this Participant Status will remove all of its settings.{/ts} {ts}Do you want to continue?{/ts}
-      </div>
+       </div>
       <div>{include file="CRM/common/formButtons.tpl"}
       </div>
     {else}
@@ -80,12 +80,8 @@
            <td>{$form.visibility_id.html}<br />
            <span class="description">{ts}If you allow users to select a Participant Status by including that field on a profile - only statuses with 'Public' visibility are listed.{/ts}</td>
         </tr>
-
-        <tr>
-           <td class="label">&nbsp;</td>
-           <td>{include file="CRM/common/formButtons.tpl"}</td>
-        </tr>
       </table>
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {/if}
     <div class="spacer"></div>
   </fieldset>

@@ -28,7 +28,6 @@
     {ts}These settings define the CMS variables that are used with CiviCRM.{/ts}
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-<div class="form-item">
       <table class="form-layout-compressed">
          <tr class="crm-uf-form-block-userFrameworkVersion">
             <td class="label">{$form.userFrameworkVersion.label}</td>
@@ -41,8 +40,6 @@
         </table>
             <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 <div class="spacer"></div>
-</fieldset>
-</div>
 {if $tablePrefixes}
 <div class="form-item">
 <fieldset>

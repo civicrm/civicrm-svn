@@ -23,19 +23,16 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-dedupefind-form-block">
+<div class="crm-block crm-form-block crm-dedupe_find-form-block">
 <div id="help">
     {ts}You can search all contacts for duplicates or limit the search to a specific group.{/ts} 
 </div>
-<div class="form-item">
- <fieldset>
+   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 
    <table class="form-layout-compressed">
-     <tr class="crm-dedupefind-form-block-group_id">
+     <tr class="crm-dedupe_find-form-block-group_id">
        <td class="label">{$form.group_id.label}</td>
        <td>{$form.group_id.html}</td>
      </tr>
    </table>
-  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
- </fieldset>
-</div>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

@@ -25,7 +25,6 @@
 *}
 <div class="crm-block crm-form-block crm-address-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-<div class="form-item">
     <br /><fieldset><legend>{ts}Mailing Labels{/ts}</legend>
         <table class="form-layout">
     		<tr class="crm-address-form-block-mailing_format">
@@ -86,6 +85,5 @@
             </tr>
         </table>
     </fieldset>
-</div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>

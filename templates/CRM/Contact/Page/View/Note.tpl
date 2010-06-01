@@ -37,7 +37,8 @@
         </fieldset>
         {/if}
 {elseif $action eq 1 or $action eq 2} {* action is add or update *}
-	<div class="crm-form-block">
+	<div class="crm-block crm-form-block crm-note-form-block">
+    <div class="content crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 	<div class="section note-subject-section no-label">
 
 	 	<div class="content">
@@ -52,9 +53,7 @@
 	 <div class="clear"></div> 
 	</div>
 	<div class="section note-buttons-section no-label">
-	 <div class="content">
-	    {$form.buttons.html}
-	 </div>
+	 <div class="content crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 	 <div class="clear"></div> 
 	</div>
     </div>
@@ -64,7 +63,7 @@
 {if ($action eq 8)}
 <fieldset><legend>{ts}Delete Note{/ts}</legend>
 <div class=status>{ts 1=$notes.$id.note}Are you sure you want to delete the note '%1'?{/ts}</div>
-<dl><dt></dt><dd>{$form.buttons.html}</dd></dl>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </fieldset>
 
 {/if}
@@ -95,8 +94,8 @@
         </tr>
         </thead>
         {foreach from=$notes item=note}
-        <tr id="cnote_{$note.id}" class="{cycle values="odd-row,even-row"}">
-            <td>
+        <tr id="cnote_{$note.id}" class="{cycle values="odd-row,even-row"} crm-note">
+            <td class="crm-note-note">
                 {$note.note|nl2br|mb_truncate:80:"...":true}
                 {* Include '(more)' link to view entire note if it has been truncated *}
                 {assign var="noteSize" value=$note.note|count_characters:true}
@@ -104,9 +103,9 @@
 		        <a href="{crmURL p='civicrm/contact/view/note' q="action=view&selectedChild=note&reset=1&cid=`$contactId`&id=`$note.id`"}">{ts}(more){/ts}</a>
                 {/if}
             </td>
-            <td>{$note.subject}</td>
-            <td>{$note.modified_date|crmDate}</td>
-            <td>
+            <td class="crm-note-subject">{$note.subject}</td>
+            <td class="crm-note-modified_date">{$note.modified_date|crmDate}</td>
+            <td class="crm-note-createdBy">
                 <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$note.contact_id`"}">{$note.createdBy}</a>
             </td>
             <td class="nowrap">{$note.action}</td>
@@ -118,11 +117,9 @@
 </div>
 {elseif ! ($action eq 1)}
    <div class="messages status">
-    <dl>
-        <dt><div class="icon inform-icon"></div></dt>
+        <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL p='civicrm/contact/view/note' q="cid=`$contactId`&action=add"}{/capture}
-        <dd>{ts 1=$crmURL}There are no Notes for this contact. You can <a accesskey="N" href='%1'>add one</a>.{/ts}</dd>
-    </dl>
+        {ts 1=$crmURL}There are no Notes for this contact. You can <a accesskey="N" href='%1'>add one</a>.{/ts}
    </div>
 {/if}
 </div>

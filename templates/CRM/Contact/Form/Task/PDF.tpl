@@ -32,12 +32,10 @@
 
 <div class="spacer"> </div>
 
-<dl>
+<div>
 {if $single eq false}
-    <dt></dt><dd>{include file="CRM/Contact/Form/Task.tpl"}</dd>
+    <div>{include file="CRM/Contact/Form/Task.tpl"}</div><br />
 {/if}
-</dl>
-<dl>
-<dt></dt><dd>{$form.buttons.html}</dd>
-</dl>
+</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
