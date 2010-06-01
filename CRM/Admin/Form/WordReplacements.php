@@ -91,8 +91,19 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
                 }
             }
         }
+       
+        $name = $this->_stringName = "custom_string_override_{$config->lcMessages}";
+        if ( isset( $config->$name ) &&
+             is_array( $config->$name ) ) {
+            $this->_numStrings = 1;
+            foreach ( $config->$name as $old => $newValues ) {
+                $this->_numStrings++;
+                $this->_numStrings += 9;
+            }
+        } else { 
+            $this->_numStrings = 10;
+        }
         
-        $this->_numStrings = $i;
         $this->assign( 'numStrings', $this->_numStrings );
         return $this->_defaults;
     }
