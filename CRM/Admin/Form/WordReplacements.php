@@ -187,13 +187,13 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
             if ( CRM_Utils_Array::value( $i, $params['new'] ) && 
                  CRM_Utils_Array::value( $i, $params['old'] ) ) {
                 if ( CRM_Utils_Array::value( $i, $params['enabled'] ) )  { 
-                    if ( array_key_exists( $i, $params['cb']) ) {
+                    if ( is_array( $params['cb'] ) && array_key_exists( $i, $params['cb']) ) {
                         $enabled['exactMatch'] += array($params['old'][$i]=>$params['new'][$i]);
                     } else {
                         $enabled['wildcardMatch'] += array($params['old'][$i]=>$params['new'][$i]);
                     }
                 } else {
-                    if ( array_key_exists( $i, $params['cb']) ) {
+                    if ( is_array( $params['cb'] ) && array_key_exists( $i, $params['cb']) ) {
                         $disabled['exactMatch'] += array($params['old'][$i]=>$params['new'][$i]);
                     } else {
                         $disabled['wildcardMatch'] += array($params['old'][$i]=>$params['new'][$i]);
