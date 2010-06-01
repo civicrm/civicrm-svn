@@ -152,7 +152,27 @@ function fileOnCase( action, activityID, currentCaseId ) {
     						    context = '&context={/literal}{$fulltext}{literal}';
     						  {/literal}{/if}{literal}											     	 	                     
 						      var caseUrl = destUrl + selectedCaseId + '&cid=' + contactId + context;
-						      if ( action == "move" ) {
+						      var redirectToCase = false;
+						      if ( action == 'move' ) redirectToCase = true;
+						      if ( action == 'file' ) {
+						      	 var curPath = document.location.href;
+						       	 if ( curPath.indexOf( 'civicrm/contact/view' ) != -1 ) { 
+							     //hide current activity row.
+ 							     cj( "#crm-activity_" + activityID ).hide( );
+							     var visibleRowCount = 0;
+							     cj('[id^="'+ 'crm-activity' +'"]::visible').each(function() {
+  							        visibleRowCount++;
+							     } );
+							     if ( visibleRowCount < 1 ) {
+							     	window.location.reload( );
+							     }  
+							 } 
+							 if ( curPath.indexOf( 'civicrm/contact/view/activity' ) != -1 ) {
+							    redirectToCase = true; 
+							 }
+						      }  
+						     
+						      if ( redirectToCase ) {
 						          window.location.href = caseUrl + selectedCaseId + '&cid=' + contactId + context;
 						      } else {
 						          var activitySubject = cj("#case_activity_subject").val( );
