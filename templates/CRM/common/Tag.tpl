@@ -61,8 +61,8 @@
 </script>
 {else}
     {if $tagset.entityTagsArray}
-        {foreach from=$tagset.entityTagsArray item=val}
-            {$val.name}
+        {foreach from=$tagset.entityTagsArray item=val name="tagsetList"}
+            &nbsp;{$val.name}{if !$smarty.foreach.tagsetList.last},{/if}
         {/foreach}
     {/if}
 {/if}

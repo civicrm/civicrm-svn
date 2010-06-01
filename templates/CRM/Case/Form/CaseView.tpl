@@ -625,8 +625,9 @@ function addRole() {
 </script>
 {/literal}
 {include file="CRM/Case/Form/ActivityToCase.tpl"}
-{* display tags *}
-{if $showTags }
+
+{* pane to display / edit regular tags or tagsets for cases *}
+{if $showTags OR $showTagsets }
 
 <div id="casetags" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
  <div class="crm-accordion-header">
@@ -635,20 +636,28 @@ function addRole() {
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
   {if $tags}
-    {$tags}
-  {else}
-     {ts}There are no tags related to this case. {/ts}
+    <div class="crm-block crm-content-block crm-case-display-tags">{$tags}</div>
   {/if}
-  <br /><br />
+
   {foreach from=$tagset item=displayTagset}
       {if $displayTagset.entityTagsArray}
-          {$displayTagset.parentName}:
-          {foreach from=$displayTagset.entityTagsArray item=val}
-              {$val.name}
-          {/foreach}
+          <div class="crm-block crm-content-block crm-case-display-tagset">
+              {$displayTagset.parentName}:
+              {foreach from=$displayTagset.entityTagsArray item=val name="tagsetList"}
+                  &nbsp;{$val.name}{if !$smarty.foreach.tagsetList.last},{/if}
+              {/foreach}
+          </div>
       {/if}
   {/foreach}
-  <div><input type="button" class="form-submit" onClick="javascript:addTags()" value={if $tags}"{ts}Edit Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
+
+  {if !tags and !$displayTagset.entityTagsArray }
+    <div class="status">
+        {ts}There are no tags currently assigend to this case.{/ts}
+    </div>
+  {/if}
+
+  <div class="crm-submit-buttons"><input type="button" class="form-submit" onClick="javascript:addTags()" value={if $tags || $displayTagset.entityTagsArray}"{ts}Edit Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
+
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 
