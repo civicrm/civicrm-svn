@@ -90,7 +90,7 @@ function buildStringOverrideRow( curInstance )
   
    cj.ajax({ url     : dataUrl,   
              async   : false,
-             success : function( html ) { cj( prevInstRowId ).after( html ); }
+             success : function( html ) { cj(prevInstRowId).clone(true).insertAfter(prevInstRowId); }
    });
 }
 
