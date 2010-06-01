@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item crm-block crm-form-block crm-uf-form-block">
+<div class="crm-block crm-form-block crm-uf-form-block">
 <div id="help">
     {ts}These settings define the CMS variables that are used with CiviCRM.{/ts}
 </div>

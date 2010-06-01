@@ -25,8 +25,9 @@
 *}
 {* this template is used for adding/editing Contact Type  *}
 
-<div class="form-item crm-block crm-form-block crm-contactType-form-block">
+<div class="crm-block crm-form-block crm-contact_type-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Contact Type{/ts}{elseif $action eq 2}{ts}Edit Contact Type{/ts}{else}{ts}Delete Contact Type{/ts}{/if}</legend>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {if $action eq 8}
   <div class="messages status">
     <div class="icon inform-icon"></div>
@@ -34,7 +35,7 @@
     </div>
 {else}
  <table class="form-layout-compressed">
-   <tr class="crm-contactType-form-block-label">
+   <tr class="crm-contact_type-form-block-label">
       <td class="label">{$form.label.label}</td>
            {if $action eq 2}
             {include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contact_type' field='label' 
@@ -42,7 +43,7 @@
             {/if}
       <td>{$form.label.html}</td>
    </tr>
-   <tr class="crm-contactType-form-block-parent_id">
+   <tr class="crm-contact_type-form-block-parent_id">
       <td class="label">{$form.parent_id.label}</td>
            {if $is_parent OR $action EQ 1}
              <td>{$form.parent_id.html}</td>
@@ -50,11 +51,11 @@
              <td>{ts}{$contactTypeName} (built-in){/ts}</td>
            {/if}
    </tr>
-   <tr class="crm-contactType-form-block-image_URL">
+   <tr class="crm-contact_type-form-block-image_URL">
       <td class="label">{$form.image_URL.label}</td>
       <td>{$form.image_URL.html|crmReplace:class:'huge40'}{help id="id-image_URL"}</td>
    </tr> 
-   <tr class="crm-contactType-form-block-description">
+   <tr class="crm-contact_type-form-block-description">
      <td class="label">{$form.description.label}</td>
           {if $action eq 2}
 	    {include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contact_type' field='description' 
@@ -63,14 +64,12 @@
      <td>{$form.description.html}</td>
    </tr>
          {if $is_parent OR $action eq 1}
-   <tr class="crm-contactType-form-block-is_active">
+   <tr class="crm-contact_type-form-block-is_active">
      <td class="label">{$form.is_active.label}</td><td>{$form.is_active.html}</td>
    </tr>
         {/if}
+ </table>
     {/if}
-   <tr class="crm-submit-buttons">
-      <td colspan="3">{include file="CRM/common/formButtons.tpl"}</td>
-   </tr> 
-</table>
+   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>
 </div>

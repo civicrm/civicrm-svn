@@ -24,22 +24,22 @@
  +--------------------------------------------------------------------+
 *}
 
-<div class="form-item crm-block crm-form-block crm-deduperules-form-block">
+<div class="crm-block crm-form-block crm-dedupe_rules-form-block">
   <h2>{ts 1=$contact_type}Matching Rules for %1 Contacts{/ts}</h2>
     <div id="help">
         {ts}Configure up to five fields to evaluate when searching for 'suspected' duplicate contact records.{/ts} {help id="id-rules"}
     </div>
-<fieldset>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
   <table class="form-layout-compressed">
-     <tr class="crm-deduperules-form-block-label">
+     <tr class="crm-dedupe_rules-form-block-label">
         <td class="label">{$form.name.label}</td>
         <td>{$form.name.html}</td>
      </tr>
-     <tr class="crm-deduperules-form-block-level">
+     <tr class="crm-dedupe_rules-form-block-level">
         <td class="label">{$form.level.label}</td>
         <td>{$form.level.html}</td>
      </tr>
-     <tr class="crm-deduperules-form-block-is_default">
+     <tr class="crm-dedupe_rules-form-block-is_default">
         <td class="label">{$form.is_default.label}</td>
         <td>{$form.is_default.html}</td>
      </tr>
@@ -60,6 +60,5 @@
         <td>{$form.threshold.html}</td>
     </tr>
  </table>
-  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-</fieldset>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
