@@ -59,21 +59,40 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
         
         $config = CRM_Core_Config::singleton( );
         
-        $name = $this->_stringName = "custom_string_override_{$config->lcMessages}";
-        if ( isset( $config->$name ) &&
-             is_array( $config->$name ) ) {
-            $this->_numStrings = 1;
-            foreach ( $config->$name as $old => $newValues ) {
-                $this->_defaults["old_{$this->_numStrings}"] = $old;
-                $this->_defaults["new_{$this->_numStrings}"] = $newValues['str'];
-                $this->_defaults["cb_{$this->_numStrings}"]  = $newValues['cb' ];
-                $this->_numStrings++;
+        $values = $config->localeCustomStrings[$config->lcMessages];
+        $enableDisable = array( 'enabled'  => 'enabled', 
+                                'disabled' => 'disabled' ); 
+        $i = 1;
+        foreach ( $enableDisable as  $l ) {
+            if ( !empty( $values[$l]['wildcardMatch'] ) ) {
+                foreach ( $values[$l]['wildcardMatch'] as $k => $v ) {
+                    if ( $l  == 'enabled' ) {
+                        $this->_defaults["enabled"][$i] = 1;
+                    } elseif ( $l == 'disabled' ) {
+                        $this->_defaults["enabled"][$i] = 0;
+                    }
+                    $this->_defaults["cb"][$i] = 0;
+                    $this->_defaults["old"][$i] = $k;
+                    $this->_defaults["new"][$i] = $v;
+                    $i++;
+                }
             }
-            $this->_numStrings += 9;
-        } else {
-            $this->_numStrings = 10;
+            if ( !empty( $values[$l]['exactMatch'] ) ) {
+                foreach ( $values[$l]['exactMatch'] as $m => $n ) {
+                    if ( $l  == 'enabled' ) {
+                        $this->_defaults["enabled"][$i] = 1;
+                    } elseif ( $l == 'disabled' ) {
+                        $this->_defaults["enabled"][$i] = 0;  
+                    }
+                    $this->_defaults["cb"][$i] = 1;
+                    $this->_defaults["old"][$i] = $m;
+                    $this->_defaults["new"][$i] = $n;
+                    $i++;
+                }
+            }
         }
         
+        $this->_numStrings = $i;
         $this->assign( 'numStrings', $this->_numStrings );
         return $this->_defaults;
     }
@@ -118,7 +137,7 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
                            );
         $this->addFormRule( array( 'CRM_Admin_Form_WordReplacements', 'formRule' ), $this );
     }
-    
+   
     /**
      * global validation rules for the form
      *
@@ -160,6 +179,7 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
     public function postProcess() 
     {
         $params = $this->controller->exportValues( $this->_name );
+        $this->_numStrings = sizeof($params['old']);
         
         $enabled['exactMatch'] = $enabled['wildcardMatch']  = $disabled['exactMatch']  = $disabled['wildcardMatch'] =  array();
         for ( $i = 1 ; $i <= $this->_numStrings; $i++ ) {
