@@ -181,16 +181,17 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
             }
         }
 
-        $overrides = array ( 'enabled' => $enabled , 'disabled' => $disabled );
-        CRM_Core_Error::debug( '$overrides', $overrides );
-        exit;
- 
-        $config = CRM_Core_Config::singleton();
-        $stringOverride = array( $config->lcMessages => $overrides );
-        $locale_custom_strings = serialize( $stringOverride );
-        CRM_Core_Error::debug( '$locale_custom_strings', $locale_custom_strings );
-        exit;
+        $overrides = array( 'enabled'  => $enabled, 
+                            'disabled' => $disabled );
         
+        $config = CRM_Core_Config::singleton();
+        $stringOverride = serialize( array( $config->lcMessages => $overrides ) );
+        
+        $params = array( 'locale_custom_strings' => $stringOverride );
+        $id = CRM_Core_Config::domainID( );
+        
+        require_once 'CRM/Core/BAO/Domain.php';
+        CRM_Core_BAO_Domain::edit( $params, $id );
     }
 
 }
