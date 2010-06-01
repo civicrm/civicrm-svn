@@ -96,6 +96,7 @@ class WebTest_Event_AddPaidEventFromTemplateTest extends CiviSeleniumTestCase {
       $this->click("_qf_Location_upload-bottom");      
 
       // Wait for "saved" status msg
+      $this->waitForPageToLoad('30000');
       $this->waitForTextPresent("'Event Location' information has been saved.");
 
       // Go to Fees tab
@@ -109,8 +110,9 @@ class WebTest_Event_AddPaidEventFromTemplateTest extends CiviSeleniumTestCase {
 
       $this->click("_qf_Fee_upload-bottom");      
 
-/*
+
       // Wait for "saved" status msg ... this is broken right now
+      $this->waitForPageToLoad('30000');
       $this->waitForTextPresent("'Fees' information has been saved.");
       
       // Go to Online Registration tab
@@ -118,11 +120,12 @@ class WebTest_Event_AddPaidEventFromTemplateTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Registration_upload-bottom");
 
       // Enter intro text for registration page
-      $registerIntro = "Fill in all the fields below and click Continue."
+      $registerIntro = "Fill in all the fields below and click Continue.";
       $this->type("intro_text", $registerIntro);
-      $this->click("_qf_Registration_upload-bottom");      
+      $this->click("_qf_Registration_upload-bottom");
+      $this->waitForPageToLoad('30000');
       $this->waitForTextPresent("'Online Registration' information has been saved.");
-*/       
+       
       // verify event input on info page
       // start at Manage Events listing
       $this->open($this->sboxPath . "civicrm/event/manage&reset=1");

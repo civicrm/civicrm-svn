@@ -130,15 +130,18 @@ class WebTest_Event_AddFreeEventFromTemplateTest extends CiviSeleniumTestCase {
       $this->click("_qf_Location_upload-bottom");      
 
       // Wait for "saved" status msg
+      $this->waitForPageToLoad('30000');
       $this->waitForTextPresent("'Event Location' information has been saved.");
 
       // Go to Fees tab and check that Paid Event is false (No)
       $this->click("link=Fees");
       $this->waitForElementPresent("_qf_Fee_upload-bottom");
       $this->verifyChecked("CIVICRM_QFID_0_No");
+      $this->click("_qf_Fee_upload-bottom");      
 
-/*
-      // Wait for "saved" status msg ... this is broken right now
+
+      // Wait for "saved" status msg
+      $this->waitForPageToLoad('30000');
       $this->waitForTextPresent("'Fees' information has been saved.");
       
       // Go to Online Registration tab
@@ -146,11 +149,12 @@ class WebTest_Event_AddFreeEventFromTemplateTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Registration_upload-bottom");
 
       // Enter intro text for registration page
-      $registerIntro = "Fill in all the fields below and click Continue."
+      $registerIntro = "Fill in all the fields below and click Continue.";
       $this->type("intro_text", $registerIntro);
-      $this->click("_qf_Registration_upload-bottom");      
+      $this->click("_qf_Registration_upload-bottom");
+      $this->waitForPageToLoad('30000');
       $this->waitForTextPresent("'Online Registration' information has been saved.");
-*/       
+
       // verify event input on info page
       // start at Manage Events listing
       $this->open($this->sboxPath . "civicrm/event/manage&reset=1");
@@ -166,7 +170,7 @@ class WebTest_Event_AddFreeEventFromTemplateTest extends CiviSeleniumTestCase {
       // Go to Register page and check for intro text and NO fee section
       $this->click("link=Register Now");
       $this->waitForElementPresent("_qf_Register_upload-bottom");
-      // $this->verifyTextPresent($registerIntro);
+      $this->verifyTextPresent($registerIntro);
       $this->verifyElementNotPresent("css=div.paid_event-section");
       
   }
