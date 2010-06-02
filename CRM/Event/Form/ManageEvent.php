@@ -228,28 +228,20 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
     {
         // make submit buttons keep the current working tab opened.
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
-            $className = CRM_Utils_System::getClassName( $this );
-
-            if ( $className == "CRM_Event_Form_ManageEvent_Fee" ) {
-                $subPage = 'fee';
-            } elseif ( $className == "CRM_Event_Form_ManageEvent_Location" ) {    
-                $subPage = 'location';
-            } elseif ( $className == "CRM_Event_Form_ManageEvent_Registration" ) {    
-                $subPage = 'registration';
-            } elseif ( $className ==  "CRM_Friend_Form_Event" ) {   
-                $subPage = 'friend';
-            } else {
-                $subPage = 'eventInfo';
-            }
             $className = CRM_Utils_String::getClassName( $this->_name );
+            if ( $className == 'EventInfo' ) {
+                $subPage = 'eventInfo';
+            } else {
+                $subPage = strtolower( $className );
+            }
+            
             CRM_Core_Session::setStatus( ts("'%1' information has been saved.", array(1 => $className)) );
-
+            
             // we need to call the hook manually here since we redirect and never 
             // go back to CRM/Core/Form.php
             // A better way might have been to setUserContext so the framework does the rediret
             CRM_Utils_Hook::postProcess( get_class( $this ),
                                          $this );
-
             
             if ( $this->controller->getButtonName('submit') == "_qf_{$className}_upload_done" ) {
                 CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', 
