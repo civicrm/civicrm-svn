@@ -90,26 +90,65 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false);
         }
 
+        $this->assign( 'action', $this->_action );
+
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false, 0, 'REQUEST' );
         if ( $this->_id ) {
             $this->add( 'hidden', 'id', $this->_id );
             $this->_single = true;
-            $participantListingID = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $this->_id, 'participant_listing_id' );
+            
+            $params = array( 'id' => $this->_id );
+            require_once 'CRM/Event/BAO/Event.php';
+            CRM_Event_BAO_Event::retrieve( $params, $eventInfo );
+
+            // its an update mode, do a permission check
+            require_once 'CRM/Event/BAO/Event.php';
+            if ( ! CRM_Event_BAO_Event::checkPermission( $this->_id, CRM_Core_Permission::EDIT ) ) {
+                CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
+            }
+            
+            $participantListingID = CRM_Utils_Array::value( 'participant_listing_id', $eventInfo );
+            //CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $this->_id, 'participant_listing_id' );
             if ( $participantListingID ) {
                 $participantListingURL = CRM_Utils_System::url( 'civicrm/event/participant',
                                                                 "reset=1&id={$this->_id}",
                                                                 true, null, true, true );
                 $this->assign( 'participantListingURL', $participantListingURL );
             }
-            $this->assign( 'eventId', $this->_id );
+            
+            $this->assign( 'isOnlineRegistration', CRM_Utils_Array::value( 'is_online_registration', $eventInfo ));
+            
+            $this->assign( 'id',     $this->_id );
         }
-
-        $this->_isTemplate = CRM_Utils_Request::retrieve('is_template', 'Boolean', $this);
-        if ( !$this->_isTemplate && $this->_id ) {
-            $this->_isTemplate = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $this->_id, 'is_template');
+        
+        // figure out whether we’re handling an event or an event template
+        if ( $this->_id ) {
+            $this->_isTemplate = CRM_Utils_Array::value( 'is_template', $eventInfo );
+        } elseif ( $this->_action & CRM_Core_Action::ADD) {
+            $this->_isTemplate = CRM_Utils_Request::retrieve('is_template', 'Boolean', $this);
         }
         
         $this->assign('isTemplate', $this->_isTemplate);
+        
+        if ( $this->_id ) {
+            if ( $this->_isTemplate ) {
+                $title = CRM_Utils_Array::value( 'template_title', $eventInfo );
+                CRM_Utils_System::setTitle(ts('Edit Event Template') . " - $title");
+            } else {
+                $title = CRM_Utils_Array::value( 'title', $eventInfo );
+                CRM_Utils_System::setTitle(ts('Configure Event') . " - $title");
+            }
+            $this->assign( 'title', $title );
+        } else if ( $action & CRM_Core_Action::ADD ) {
+            if ( $this->_isTemplate ) {
+                $title = ts('New Event Template');
+                CRM_Utils_System::setTitle( $title );
+            } else {
+                $title = ts('New Event');
+                CRM_Utils_System::setTitle( $title );
+            }
+            $this->assign( 'title', $title );
+        }
         
         require_once 'CRM/Event/PseudoConstant.php';
         $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1');
