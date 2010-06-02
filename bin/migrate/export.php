@@ -210,7 +210,7 @@ AND    cg.is_active = 1
         $this->fetch( 'profileGroup',
                       'CRM_Core_DAO_UFGroup',
                       null,
-                      array( 'id', 'name'),
+                      array( 'id', 'title'),
                       null );
 
         $this->fetch( 'profileField',
