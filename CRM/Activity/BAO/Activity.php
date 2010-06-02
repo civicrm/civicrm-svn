@@ -2033,9 +2033,9 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         //check for target and assignee contacts.
         if ( $allow ) { 
             //first check for supper permission.
-            $permission = 'view all contacts';
-            if ( $action == CRM_Core_Action::UPDATE ) $permission = 'edit all contacts';
-            $allow = CRM_Core_Permission::check( $permission );
+            $supPermission = 'view all contacts';
+            if ( $action == CRM_Core_Action::UPDATE ) $supPermission = 'edit all contacts';
+            $allow = CRM_Core_Permission::check( $supPermission );
             
             //user might have sufficient permission, through acls. 
             if ( !$allow ) {
