@@ -131,7 +131,6 @@
      <title>Event Info and Settings</title>
      <page_callback>CRM_Event_Form_ManageEvent_EventInfo</page_callback>
      <access_arguments>access CiviEvent</access_arguments>
-     <page_type>1</page_type>
      <is_ssl>true</is_ssl>
      <weight>910</weight>
   </item>
@@ -140,7 +139,6 @@
      <title>Event Location</title>
      <page_callback>CRM_Event_Form_ManageEvent_Location</page_callback>
      <access_arguments>access CiviEvent</access_arguments>
-     <page_type>1</page_type>
      <is_ssl>true</is_ssl>
      <weight>930</weight>
   </item>
@@ -149,7 +147,6 @@
      <title>Event Fees</title>
      <page_callback>CRM_Event_Form_ManageEvent_Fee</page_callback>
      <access_arguments>access CiviEvent</access_arguments>
-     <page_type>1</page_type>
      <is_ssl>true</is_ssl>
      <weight>920</weight>
   </item>
@@ -158,7 +155,6 @@
      <title>Event Online Registration</title>
      <page_callback>CRM_Event_Form_ManageEvent_Registration</page_callback>
      <access_arguments>access CiviEvent</access_arguments>
-     <page_type>1</page_type>
      <is_ssl>true</is_ssl>
      <weight>930</weight>
   </item>
@@ -167,7 +163,6 @@
      <title>Tell a Friend</title>
      <page_callback>CRM_Friend_Form_Event</page_callback>
      <access_arguments>access CiviEvent</access_arguments>
-     <page_type>1</page_type>
      <is_ssl>true</is_ssl>
      <weight>940</weight>
   </item>
@@ -175,9 +170,8 @@
      <path>civicrm/event/add</path>
      <path_arguments>action=add</path_arguments>
      <title>New Event</title>
-     <page_callback>CRM_Event_Page_ManageEvent</page_callback>
+     <page_callback>CRM_Event_Form_ManageEvent_EventInfo</page_callback>
      <access_arguments>access CiviEvent</access_arguments>
-     <page_type>1</page_type>
      <weight>830</weight>
   </item>
   <item>

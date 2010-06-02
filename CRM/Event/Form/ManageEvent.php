@@ -66,6 +66,8 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
      */ 
     protected $_single;
     
+    protected $_action;
+    
     /**
      * are we actually managing an event template?
      * @var boolean
@@ -86,13 +88,17 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
      */ 
     function preProcess( ) 
     {
-        if ( !$this->_action ) {
-            $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false);
+        $config = CRM_Core_Config::singleton( );
+        if ( in_array("CiviEvent", $config->enableComponents) ) {
+            $this->assign('CiviEvent', true );
         }
-
+        
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'add', 'REQUEST' );
+        
         $this->assign( 'action', $this->_action );
 
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false, 0, 'REQUEST' );
+        
         if ( $this->_id ) {
             $this->add( 'hidden', 'id', $this->_id );
             $this->_single = true;
