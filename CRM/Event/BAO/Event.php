@@ -353,12 +353,13 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         $query = "
 SELECT     civicrm_event.id as id, civicrm_event.title as event_title, civicrm_event.is_public as is_public,
            civicrm_event.max_participants as max_participants, civicrm_event.start_date as start_date,
-           civicrm_event.end_date as end_date, civicrm_event.is_map as is_map, civicrm_option_value.label as event_type,
+           civicrm_event.end_date as end_date, civicrm_event.is_online_registration, civicrm_event.is_monetary, civicrm_event.is_show_location,civicrm_event.is_map as is_map, civicrm_option_value.label as event_type, civicrm_tell_friend.is_active as is_friend_active,
            civicrm_event.summary as summary
 FROM       civicrm_event
 LEFT JOIN  civicrm_option_value ON (
            civicrm_event.event_type_id = civicrm_option_value.value AND
            civicrm_option_value.option_group_id = %1 )
+LEFT JOIN  civicrm_tell_friend ON ( civicrm_tell_friend.entity_id = civicrm_event.id  AND civicrm_tell_friend.entity_table = 'civicrm_event' )
 WHERE      civicrm_event.is_active = 1 AND
            ( civicrm_event.is_template IS NULL OR civicrm_event.is_template = 0) AND
            civicrm_event.start_date >= DATE_SUB( NOW(), INTERVAL 7 day )
@@ -471,6 +472,11 @@ LIMIT      0, 10
             } else {
                 $eventSummary['total_events']--;
             }
+            
+            $eventSummary['events'][$dao->id]['friend'] = $dao->is_friend_active;
+            $eventSummary['events'][$dao->id]['is_monetary'] = $dao->is_monetary;
+            $eventSummary['events'][$dao->id]['is_online_registration'] = $dao->is_online_registration;
+            $eventSummary['events'][$dao->id]['is_show_location'] = $dao->is_show_location;
         }
         
         require_once 'CRM/Event/PseudoConstant.php';
