@@ -50,23 +50,23 @@
 
 <table class="report"> 
 <tr>
-    <td class="nowrap"><a href="{crmURL q="reset=1&action=update&id=`$id`&subPage=EventInfo"}" id="idEventInformationandSettings">&raquo; {ts}Event Information and Settings{/ts}</a></td>
+    <td class="nowrap"><a href="{crmURL p='civicrm/event/manage/eventInfo' q="reset=1&action=update&id=`$id`"}" id="idEventInformationandSettings">&raquo; {ts}Event Information and Settings{/ts}</a></td>
     <td>{ts}Set event title, type (conference, performance etc.), description, start and end dates, maximum number of participants, and activate the event. Enable the public participant listing feature.{/ts}</td>
 </tr>
 <tr>
-    <td class="nowrap"><a href="{crmURL q="reset=1&action=update&id=`$id`&subPage=Location"}" id="idLocation">&raquo; {ts}Event Location{/ts}</a></td>
+    <td class="nowrap"><a href="{crmURL p='civicrm/event/manage/location' q="reset=1&action=update&id=`$id`"}" id="idLocation">&raquo; {ts}Event Location{/ts}</a></td>
     <td>{ts}Set event location and event contact information (email and phone).{/ts}</td>
 </tr>
 <tr>
-    <td class="nowrap"><a href="{crmURL q="reset=1&action=update&id=`$id`&subPage=Fee"}" id="idFee">&raquo; {ts}Event Fees{/ts}</a></td>
+    <td class="nowrap"><a href="{crmURL p='civicrm/event/manage/fee' q="reset=1&action=update&id=`$id`"}" id="idFee">&raquo; {ts}Event Fees{/ts}</a></td>
      <td>{ts}Determine if the event is free or paid. For paid events, set the payment processor, fee level(s) and discounts. Give online registrants the option to 'pay later' (e.g. mail in a check, call in a credit card, etc.).{/ts}</td>
 </tr>
 <tr>
-    <td class="nowrap"><a href="{crmURL q="reset=1&action=update&id=`$id`&subPage=Registration"}" id="idRegistration">&raquo; {ts}Online Registration{/ts}</a></td>
+    <td class="nowrap"><a href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$id`"}" id="idRegistration">&raquo; {ts}Online Registration{/ts}</a></td>
     <td>{ts}Determine whether an online registration page is available. If so, configure registration, confirmation and thank you page elements and confirmation email details.{/ts}</td>
 </tr>
 <tr>
-    <td class="nowrap"><a href="{crmURL q="reset=1&action=update&id=`$id`&subPage=Friend"}" id="idFriend">&raquo; {ts}Tell a Friend{/ts}</a></td>
+    <td class="nowrap"><a href="{crmURL p='civicrm/event/manage/friend' q="reset=1&action=update&id=`$id`"}" id="idFriend">&raquo; {ts}Tell a Friend{/ts}</a></td>
     <td>{ts}Make it easy for participants to spread the word about this event to friends and colleagues.{/ts}</td>
 </tr>
 
@@ -81,7 +81,7 @@
         {/if}
     {else}
         <td class="nowrap">&raquo; {ts}Public Participant Listing{/ts}</td>
-        <td>{ts}Participant Listing is not enabled for this event. You can enable it from{/ts} <a href="{crmURL q="reset=1&action=update&id=`$id`&subPage=EventInfo"}">{ts}Event Information and Settings{/ts}</a>.
+        <td>{ts}Participant Listing is not enabled for this event. You can enable it from{/ts} <a href="{crmURL p='civicrm/event/manage/eventInfo' q="reset=1&action=update&id=`$id`"}">{ts}Event Information and Settings{/ts}</a>.
     {/if}
     </tr>
 

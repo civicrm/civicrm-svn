@@ -212,6 +212,15 @@
             {/section}
             </table>
             </fieldset>
+            {if $discountSection eq 2}
+                <script type="text/javascript">
+                {literal}
+                    cj( function() {
+                        cj('#discounted_label_1').focus( );
+                    });
+                {/literal}
+                </script>
+            {/if}
         {/if}
         </fieldset>
     </div>

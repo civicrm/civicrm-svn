@@ -84,11 +84,11 @@
         	    <div class="crm-configure-actions">
         	    <span id="{$row.id}" class="btn-slide">{ts}Configure{/ts}
         	    	<ul class="panel" id="panel_info_{$row.id}">
-        		    <li><a title="Info and Settings" class="action-item-wrap" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=EventInfo"}">{ts}Info and Settings{/ts}</a></li>
-        		    <li><a title="Location" class="action-item-wrap {if NOT $row.is_show_location} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Location"}">{ts}Location{/ts}</a></li>
-        		    <li><a title="Fees" class="action-item {if NOT $row.is_monetary} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Fee"}">{ts}Fees{/ts}</a></li>
-        		    <li><a title="Online Registration" class="action-item-wrap {if NOT $row.is_online_registration} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Registration"}">{ts}Online Registration{/ts}</a></li>
-        		    <li><a title="Tell a Friend" class="action-item-wrap {if NOT $row.friend} disabled{/if}" href="{crmURL p='civicrm/event/manage' q="reset=1&action=update&id=`$row.id`&subPage=Friend"}">{ts}Tell a Friend{/ts}</a></li>
+        		    <li><a title="Info and Settings" class="action-item-wrap" href="{crmURL p='civicrm/event/manage/eventInfo' q="reset=1&action=update&id=`$row.id`"}">{ts}Info and Settings{/ts}</a></li>
+        		    <li><a title="Location" class="action-item-wrap {if NOT $row.is_show_location} disabled{/if}" href="{crmURL p='civicrm/event/manage/location' q="reset=1&action=update&id=`$row.id`"}">{ts}Location{/ts}</a></li>
+        		    <li><a title="Fees" class="action-item {if NOT $row.is_monetary} disabled{/if}" href="{crmURL p='civicrm/event/manage/fee' q="reset=1&action=update&id=`$row.id`"}">{ts}Fees{/ts}</a></li>
+        		    <li><a title="Online Registration" class="action-item-wrap {if NOT $row.is_online_registration} disabled{/if}" href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$row.id`"}">{ts}Online Registration{/ts}</a></li>
+        		    <li><a title="Tell a Friend" class="action-item-wrap {if NOT $row.friend} disabled{/if}" href="{crmURL p='civicrm/event/manage/friend' q="reset=1&action=update&id=`$row.id`"}">{ts}Tell a Friend{/ts}</a></li>
         	    </span>
         	    </div>
         	    <div class=crm-event-participants>

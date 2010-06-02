@@ -60,7 +60,7 @@
   <item>
      <path>civicrm/admin/event</path>
      <title>Manage Events</title>
-     <page_callback>CRM_Event_Page_ManageEvent</page_callback>
+     <page_callback>CRM_Event_Form_ManageEvent</page_callback>
      <desc>Create and edit event configuration including times, locations, online registration forms, and fees. Links for iCal and RSS syndication.</desc>
      <access_arguments>access CiviEvent</access_arguments>
      <adminGroup>CiviEvent</adminGroup>
@@ -125,6 +125,51 @@
      <page_type>1</page_type>
      <is_ssl>true</is_ssl>
      <weight>820</weight>
+  </item>
+  <item>
+     <path>civicrm/event/manage/eventInfo</path>
+     <title>Event Info and Settings</title>
+     <page_callback>CRM_Event_Form_ManageEvent_EventInfo</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+     <page_type>1</page_type>
+     <is_ssl>true</is_ssl>
+     <weight>910</weight>
+  </item>
+  <item>
+     <path>civicrm/event/manage/location</path>
+     <title>Event Location</title>
+     <page_callback>CRM_Event_Form_ManageEvent_Location</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+     <page_type>1</page_type>
+     <is_ssl>true</is_ssl>
+     <weight>930</weight>
+  </item>
+  <item>
+     <path>civicrm/event/manage/fee</path>
+     <title>Event Fees</title>
+     <page_callback>CRM_Event_Form_ManageEvent_Fee</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+     <page_type>1</page_type>
+     <is_ssl>true</is_ssl>
+     <weight>920</weight>
+  </item>
+  <item>
+     <path>civicrm/event/manage/registration</path>
+     <title>Event Online Registration</title>
+     <page_callback>CRM_Event_Form_ManageEvent_Registration</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+     <page_type>1</page_type>
+     <is_ssl>true</is_ssl>
+     <weight>930</weight>
+  </item>
+  <item>
+     <path>civicrm/event/manage/friend</path>
+     <title>Tell a Friend</title>
+     <page_callback>CRM_Friend_Form_Event</page_callback>
+     <access_arguments>access CiviEvent</access_arguments>
+     <page_type>1</page_type>
+     <is_ssl>true</is_ssl>
+     <weight>940</weight>
   </item>
   <item>
      <path>civicrm/event/add</path>

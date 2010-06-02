@@ -57,7 +57,8 @@ class CRM_Event_Page_ManageEventEdit extends CRM_Core_Page
     {
         // get the requested action
         $action = CRM_Utils_Request::retrieve('action', 'String',
-                                              $this, false, 'browse'); // default to 'browse'
+                                              $this, false, 'browse');
+        // default to 'browse'
         
         $config = CRM_Core_Config::singleton( );
         if ( in_array("CiviEvent", $config->enableComponents) ) {
@@ -92,12 +93,6 @@ class CRM_Event_Page_ManageEventEdit extends CRM_Core_Page
         $this->assign( 'isTemplate', $this->_isTemplate);
         $this->assign( 'isOnlineRegistration', CRM_Utils_Array::value( 'is_online_registration', $eventInfo ));
         
-        $subPage = CRM_Utils_Request::retrieve( 'subPage', 'String', $this );
-        
-        if ( !$subPage && ($action & CRM_Core_Action::ADD) ) {
-            $subPage = 'EventInfo';
-        }
-
         if ( $this->_id ) {
             if ( $this->_isTemplate ) {
                 $title = CRM_Utils_Array::value( 'template_title', $eventInfo );
@@ -141,29 +136,32 @@ class CRM_Event_Page_ManageEventEdit extends CRM_Core_Page
         }
 
         $form = null;
-        switch ( $subPage ) {
-      
-        case 'EventInfo':
+        $path = CRM_Utils_System::currentPath();
+
+        switch ( $path ) {
+        case 'civicrm/event/add':
+        case 'civicrm/event/manage/eventInfo':
             $form = 'CRM_Event_Form_ManageEvent_EventInfo';
             break;
 
-        case 'Location':
+        case 'civicrm/event/manage/location':
             $form = 'CRM_Event_Form_ManageEvent_Location';
             break;
 
-        case 'Fee':
+        case 'civicrm/event/manage/fee':
             $form = 'CRM_Event_Form_ManageEvent_Fee';
             break;
 
-        case 'Registration':
+        case 'civicrm/event/manage/registration':
             $form = 'CRM_Event_Form_ManageEvent_Registration';
             break;
 
-        case 'Friend':
+        case 'civicrm/event/manage/friend':
             $form = 'CRM_Friend_Form_Event';
             break;
         }
-
+        $str = explode ('/', $path);
+        $subPage = $str[3];
         if ( $form ) {
             require_once 'CRM/Core/Controller/Simple.php'; 
             $controller = new CRM_Core_Controller_Simple($form, $subPage, $action); 
@@ -175,8 +173,8 @@ class CRM_Event_Page_ManageEventEdit extends CRM_Core_Page
 
         if ( $this->_id ) {
             $session = CRM_Core_Session::singleton(); 
-            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/event/manage', 
-                                                              'reset=1' ) );
+            $session->pushUserContext( CRM_Utils_System::url( $path,
+                                                              "action=update&reset=1&id={$this->_id}" ) );
         }
         return parent::run();
     }
