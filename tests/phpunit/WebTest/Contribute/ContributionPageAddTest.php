@@ -87,14 +87,12 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->waitForPageToLoad();
 
         // fill in step 3 (Memberships)
-        // FIXME: split off to a separate test, as it currenlty conflicts with contribs
-        // $this->click('is_active');
-        // $this->type('new_title',     "Title - New Membership $hash");
-        // $this->type('renewal_title', "Title - Renewals $hash");
+        $this->click('is_active');
+        $this->type('new_title',     "Title - New Membership $hash");
+        $this->type('renewal_title', "Title - Renewals $hash");
         // FIXME: handle Introductory Message - New Memberships/Renewals
-        // $this->click('membership_type[2]');
-        // $this->click('is_required');
-        // $this->click('is_separate_payment');
+        $this->click('membership_type[2]');
+        $this->click('is_required');
 
         // go to step 4
         $this->click('_qf_MembershipBlock_next');
@@ -179,7 +177,8 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         // verify whatever’s possible to verify
         // FIXME: ideally should be expanded
         $texts = array(
-            "Title $hash",
+            "Title - New Membership $hash",
+            "Student  (contribute at least $ 50.00 to be eligible for this membership)",
             "$ $rand.00 Label $hash",
             "Pay later label $hash",
             "Organization Details",
