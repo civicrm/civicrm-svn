@@ -90,10 +90,18 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false);
         }
 
-        $this->_id     = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false, 0, 'REQUEST' );
+        $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false, 0, 'REQUEST' );
         if ( $this->_id ) {
             $this->add( 'hidden', 'id', $this->_id );
             $this->_single = true;
+            $participantListingID = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $this->_id, 'participant_listing_id' );
+            if ( $participantListingID ) {
+                $participantListingURL = CRM_Utils_System::url( 'civicrm/event/participant',
+                                                                "reset=1&id={$this->_id}",
+                                                                true, null, true, true );
+                $this->assign( 'participantListingURL', $participantListingURL );
+            }
+            $this->assign( 'eventId', $this->_id );
         }
 
         $this->_isTemplate = CRM_Utils_Request::retrieve('is_template', 'Boolean', $this);
@@ -102,7 +110,14 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         }
         
         $this->assign('isTemplate', $this->_isTemplate);
-
+        
+        require_once 'CRM/Event/PseudoConstant.php';
+        $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1');
+        $statusTypesPending = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 0');
+        $findParticipants['statusCounted'] = implode( ', ', array_values( $statusTypes ) );
+        $findParticipants['statusNotCounted'] = implode( ', ', array_values( $statusTypesPending ) );
+        $this->assign('findParticipants', $findParticipants);
+                
         $this->_templateId = (int) CRM_Utils_Request::retrieve('template_id', 'Integer', $this);
 
         // also set up tabs
@@ -209,7 +224,8 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         $this->add('hidden', 'is_template', $this->_isTemplate);
     }
 
-    function endPostProcess( ) {
+    function endPostProcess( )
+    {
         // make submit buttons keep the current working tab opened.
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             
@@ -242,7 +258,8 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         }
     }
 
-    function getTemplateFileName( ) {
+    function getTemplateFileName( )
+    {
         if ( $this->controller->getPrint( ) == CRM_Core_Smarty::PRINT_NOFORM ||
              $this->getVar( '_id' ) <= 0 ||
              ( $this->_action & CRM_Core_Action::DELETE ) ) {
