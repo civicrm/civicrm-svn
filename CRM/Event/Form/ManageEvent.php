@@ -145,7 +145,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
                 CRM_Utils_System::setTitle(ts('Configure Event') . " - $title");
             }
             $this->assign( 'title', $title );
-        } else if ( $action & CRM_Core_Action::ADD ) {
+        } else if ( $this->_action & CRM_Core_Action::ADD ) {
             if ( $this->_isTemplate ) {
                 $title = ts('New Event Template');
                 CRM_Utils_System::setTitle( $title );
