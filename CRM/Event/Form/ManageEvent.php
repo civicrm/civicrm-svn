@@ -80,6 +80,8 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
      */
     protected $_templateId;
     
+    protected $_cancelURL = null;
+    
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -232,6 +234,17 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         $className = CRM_Utils_System::getClassName($this);
         $session = & CRM_Core_Session::singleton( );
         
+        $this->_cancelURL = CRM_Utils_Array::value( 'cancelURL', $_POST );
+        
+        if ( !$this->_cancelURL ) {
+            $this->_cancelURL = CRM_Utils_System::url('civicrm/event/manage', 
+                                                  'reset=1');
+        }
+        
+        if ( $this->_cancelURL ) {
+            $this->addElement( 'hidden', 'cancelURL', $this->_cancelURL );
+        }
+        
         $buttons = array( );
         if ( $this->_single ) {
             // make this form an upload since we dont know if the custom data injected dynamically
@@ -266,7 +279,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             $this->addButtons( $buttons );
 
         }
-
+        $session->replaceUserContext( $this->_cancelURL );
         $this->add('hidden', 'is_template', $this->_isTemplate);
     }
 
