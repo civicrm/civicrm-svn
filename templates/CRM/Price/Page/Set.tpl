@@ -56,7 +56,7 @@
 	{* handle enable/disable actions*}
  	{include file="CRM/common/enableDisable.tpl"}
 	{include file="CRM/common/jsortable.tpl"}
-        <table id="price_set" class="display">
+        <table id="price_set" class="display crm-price-set-listing">
         <thead>
         <tr>
             <th id="sortable">{ts}Set Title{/ts}</th>
@@ -66,10 +66,10 @@
         </tr>
         </thead>
         {foreach from=$rows item=row}
-	<tr id="row_{$row.id}"class=" crm-price-set crm-price-set_{$row.id} {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+	    <tr id="row_{$row.id}"class=" crm-price-set crm-price-set_{$row.id} {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td class="crm-price-set-title">{$row.title}</td>
-	    <td class="crm-price-set-extends">{$row.extends}</td>
-	    <td id="row_{$row.id}_status" class="crm-price-set-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="crm-price-set-extends">{$row.extends}</td>
+	        <td id="row_{$row.id}_status" class="crm-price-set-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
             <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
