@@ -39,41 +39,43 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
         return true;
     }
     
-    function upgrade_3_2_alpha1 ( $rev ) {
-        
+    function upgrade_3_2_alpha1( $rev ) 
+    {
         //CRM-5666 -if user already have 'access CiviCase'
         //give all new permissions and drop access CiviCase.
-        db_query( "UPDATE permission SET perm = REPLACE( perm, 'access CiviCase', 'access my cases and activities, access all cases and activities, administer CiviCase' )" );
-        
-        //insert core acls.
-        $casePermissions = array( 'delete in CiviCase',
-                                  'administer CiviCase', 
-                                  'access my cases and activities', 
-                                  'access all cases and activities', );
-        require_once 'CRM/ACL/DAO/ACL.php';
-        $aclParams = array( 'name'         => 'Core ACL',
-                            'deny'         => 0,
-                            'acl_id'       => NULL,
-                            'object_id'    => NULL,
-                            'acl_table'    => NULL,
-                            'entity_id'    => 1,
-                            'operation'    => 'All',
-                            'is_active'    => 1,
-                            'entity_table' => 'civicrm_acl_role' );
-        foreach ( $casePermissions as $per ) {
-            $aclParams['object_table'] = $per;
-            $acl = new CRM_ACL_DAO_ACL( );
-            $acl->object_table = $per;
-            if ( !$acl->find( true ) ) {
-                $acl->copyValues( $aclParams );
-                $acl->save( );
+        $config = CRM_Core_Config::singleton( );
+        if ( $config->userFramework == 'Drupal' ) {
+            db_query( "UPDATE permission SET perm = REPLACE( perm, 'access CiviCase', 'access my cases and activities, access all cases and activities, administer CiviCase' )" );
+            //insert core acls.
+            $casePermissions = array( 'delete in CiviCase',
+                                      'administer CiviCase', 
+                                      'access my cases and activities', 
+                                      'access all cases and activities', );
+            require_once 'CRM/ACL/DAO/ACL.php';
+            $aclParams = array( 'name'         => 'Core ACL',
+                                'deny'         => 0,
+                                'acl_id'       => NULL,
+                                'object_id'    => NULL,
+                                'acl_table'    => NULL,
+                                'entity_id'    => 1,
+                                'operation'    => 'All',
+                                'is_active'    => 1,
+                                'entity_table' => 'civicrm_acl_role' );
+            foreach ( $casePermissions as $per ) {
+                $aclParams['object_table'] = $per;
+                $acl = new CRM_ACL_DAO_ACL( );
+                $acl->object_table = $per;
+                if ( !$acl->find( true ) ) {
+                    $acl->copyValues( $aclParams );
+                    $acl->save( );
+                }
             }
+            //drop 'access CiviCase' acl
+            CRM_Core_DAO::executeQuery( "DELETE FROM civicrm_acl WHERE object_table = 'access CiviCase'" );
         }
-        //drop 'access CiviCase' acl
-        CRM_Core_DAO::executeQuery( "DELETE FROM civicrm_acl WHERE object_table = 'access CiviCase'" );
         
         $upgrade =& new CRM_Upgrade_Form( );
         $upgrade->processSQL( $rev );
-
     }
-}
+    
+  }
