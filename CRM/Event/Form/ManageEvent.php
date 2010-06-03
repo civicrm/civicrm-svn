@@ -235,8 +235,13 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         $this->_cancelURL = CRM_Utils_Array::value( 'cancelURL', $_POST );
         
         if ( !$this->_cancelURL ) {
-            $this->_cancelURL = CRM_Utils_System::url('civicrm/event/manage', 
-                                                  'reset=1');
+            if ( $this->_isTemplate ) {
+                $this->_cancelURL = CRM_Utils_System::url('civicrm/admin/eventTemplate', 
+                                                          'reset=1');
+            } else {
+                $this->_cancelURL = CRM_Utils_System::url('civicrm/event/manage', 
+                                                          'reset=1');
+            }
         }
         
         if ( $this->_cancelURL ) {
