@@ -38,8 +38,9 @@
     <table class="form-layout">
     {foreach from=$cd_edit.fields item=element key=field_id}
     {if ($element.html_type eq 'CheckBox' || $element.html_type eq 'Radio') && $element.options_per_line }
+        {assign var="name" value=`$element.name`} 
         {assign var="element_name" value=price_$field_id}
-        <tr class="crm-price-set-element_name">
+        <tr class="crm-price-field-{$name}">
            <td class="label">{$form.$element_name.label} </td>
         <td>
             {assign var="count" value="1"}
@@ -73,7 +74,7 @@
     {else}
         {assign var="name" value=`$element.name`} 
         {assign var="element_name" value="price_"|cat:$field_id}  
-        <tr class="crm-price-set-element_name">
+        <tr class="crm-price-field-{$name|escape}">
            <td class="label">{$form.$element_name.label}</td>
            <td>&nbsp;{$form.$element_name.html}</td>
         </tr>		
@@ -90,5 +91,5 @@
     </fieldset>
 {/foreach}
 {/strip}
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
