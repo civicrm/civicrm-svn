@@ -31,10 +31,10 @@
         var html_type_name = html_type.options[html_type.selectedIndex].value;
 
         if (html_type_name == "Text") {
-            document.getElementById("price").style.display="block";
+            document.getElementById("price-block").style.display="block";
             document.getElementById("showoption").style.display="none";
         } else {
-            document.getElementById("price").style.display="none";
+            document.getElementById("price-block").style.display="none";
             document.getElementById("showoption").style.display="block";
         }
 
@@ -66,7 +66,7 @@
 </script>
 {/literal}
   <div class="crm-block crm-form-block crm-price-field-form-block">
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout">
         <tr class="crm-price-field-form-block-label">
            <td class="label">{$form.label.label}</td>
@@ -93,7 +93,7 @@
         </tr>
     </table>
     <div class="spacer"></div>
-    <div id="price" {if $action eq 2 && $form.html_type.value.0 eq 'Text'} class="show-block" {else} class="hide-block" {/if}>
+    <div id="price-block" {if $action eq 2 && $form.html_type.value.0 eq 'Text'} class="show-block" {else} class="hide-block" {/if}>
         <table class="form-layout">
             <tr class="crm-price-field-form-block-price">
                <td class="label">{$form.price.label}</td>
@@ -187,7 +187,7 @@
             <td>{$form.is_active.html}</td>
         </tr>
      </table>
-     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
   </div>
  
 

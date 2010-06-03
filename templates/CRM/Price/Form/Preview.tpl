@@ -25,21 +25,15 @@
 *}
 {if $preview_type eq 'group'}
     {capture assign=infoMessage}{ts}Preview of the price set as it will be displayed within an edit form.{/ts}{/capture}
-    {capture name=legend}
-        {foreach from=$groupTree item=fieldName}
-          {$fieldName.title}
-        {/foreach}
-    {/capture}
 {else}
     {capture assign=infoMessage}{ts}Preview of this field as it will be displayed in an edit form.{/ts}{/capture}
 {/if}
 {include file="CRM/common/info.tpl"}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-price-set-preview-block">
 {strip}
 
 {foreach from=$groupTree item=cd_edit key=group_id}
-    <p></p>
-    <fieldset>{if $preview_type eq 'group'}<legend>{$smarty.capture.legend}</legend>{/if}
+    <fieldset>{if $preview_type eq 'group'}<legend>{$setTitle}</legend>{/if}
     {if $cd_edit.help_pre}<div class="messages help">{$cd_edit.help_pre}</div><br />{/if}
     <table class="form-layout">
     {foreach from=$cd_edit.fields item=element key=field_id}
@@ -96,10 +90,5 @@
     </fieldset>
 {/foreach}
 {/strip}
-
-<table class="form-layout"">
-    <tr>
-       <td>{include file="CRM/common/formButtons.tpl"}</td>
-    </tr>
-</table>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 </div>
