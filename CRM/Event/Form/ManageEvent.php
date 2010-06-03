@@ -276,6 +276,8 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             $className = CRM_Utils_String::getClassName( $this->_name );
             if ( $className == 'EventInfo' ) {
                 $subPage = 'eventInfo';
+            } elseif ( $className == 'Event' ) {
+                $subPage = 'friend';
             } else {
                 $subPage = strtolower( $className );
             }
