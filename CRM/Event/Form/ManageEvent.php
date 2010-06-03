@@ -100,6 +100,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false, 0, 'REQUEST' );
         
         if ( $this->_id ) {
+            $this->assign( 'eventId', $this->_id );
             $this->add( 'hidden', 'id', $this->_id );
             $this->_single = true;
             
