@@ -172,7 +172,7 @@ class WebTest_Contact_ContactAdvanceSearch extends CiviSeleniumTestCase {
           switch ( $block ) {
               
           case 'basic' : 
-              $this->$blockValues[1]( $firstName );
+              $this->$blockValues[1]( $firstName, $groupName, $tagName );
               break;
               
           case 'notes' : 
@@ -236,19 +236,16 @@ class WebTest_Contact_ContactAdvanceSearch extends CiviSeleniumTestCase {
   
 
   // function to fill basic search detail
-  function addBasicSearchDetail( $firstName ) {
+  function addBasicSearchDetail( $firstName, $groupName, $tagName ) {
       
       // fill partial sort name
       $this->type("sort_name", "$firstName");
-
-      // fixme: unable to select for asmselect
       // select subtype
-      //$this->select("crmasmSelect0", "- Student");
+      $this->select("crmasmSelect0", "value=IndividualStudent");
       // select group
-      //$this->select("crmasmSelect1", "$groupName");
+      $this->select("crmasmSelect1", "label=$groupName");
       // select tag
-      //$this->select("crmasmSelect2", "$tagName");
-
+      $this->select("crmasmSelect2", "label=$tagName");
       // select prefered language
       $this->select("preferred_language", "English");
       // select privacy
