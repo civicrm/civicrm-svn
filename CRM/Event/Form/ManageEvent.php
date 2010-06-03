@@ -178,8 +178,6 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             if ( $this->_id ) {
                 $this->_doneUrl = CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 
                                                          "action=update&reset=1&id={$this->_id}" );
-                $breadCrumb     = array( array('title' => ts('Configure Event'),
-                                               'url'   => $this->_doneUrl) );
             } else {
                 $this->_doneUrl = CRM_Utils_System::url( 'civicrm/event/manage', 
                                                          'reset=1' );
