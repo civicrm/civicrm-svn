@@ -62,7 +62,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
                      );
       $this->_testAddPriceFields( $fields );
       
-//      $this->_testVerifyPriceSet( $fields );      
+      $this->_testVerifyPriceSet( $fields );      
   }
 
  
@@ -92,7 +92,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->click("_qf_Set_next-bottom");      
   }
   
-  function _testAddPriceFields( $fields ) {
+  function _testAddPriceFields( &$fields ) {
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent("_qf_Field_next-bottom");
       foreach ($fields as $label => $type ){
@@ -117,6 +117,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
                 $this->click("link=another choice");
                 $this->type("option_label_2", "No");
                 $this->type("option_name_2", "0");
+                $this->check("is_required");
                 break;
              case 'CheckBox':
                 $this->type("option_label_1", "First Night");
@@ -135,18 +136,23 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
   }
 
   
-  function _testVerifyPriceSet( $fields ){
+  function _testVerifyPriceSet( &$fields ){
       // verify Price Set at Preview page
       // start at Manage Price Sets listing
-      $this->open($this->sboxPath . "civicrm/event/manage&reset=1");
-      $this->click("link=$eventTitle");
+      $this->open($this->sboxPath . "civicrm/admin/price?reset=1");
+      $this->waitForPageToLoad('30000');
+
+      // Fixme: need to figure out a way to address the correct row
+      $this->click("css=tr#row_6 a[title='Preview Price Set']");
       
       $this->waitForPageToLoad('30000');
       // Look for Register button
-      $this->waitForElementPresent("link=Register Now");
+      $this->waitForElementPresent("_qf_Preview_cancel-bottom");
       
       // Check for correct event info strings
-      $this->_checkStrings( $eventInfoStrings );
+      foreach ($fields as $label => $type ){
+          $this->_checkStrings( $label );
+      }
   }
 
 }
