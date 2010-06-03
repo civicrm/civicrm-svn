@@ -289,15 +289,20 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
                                          $this );
             
             if ( $this->controller->getButtonName('submit') == "_qf_{$className}_upload_done" ) {
-                CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', 
-                                                                   'reset=1' ) );
+                if ( $this->_isTemplate ) {
+                    CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/eventTemplate', 
+                                                                       'reset=1' ) );
+                } else {
+                    CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', 
+                                                                       'reset=1' ) );
+                }
             } else {
                 CRM_Utils_System::redirect( CRM_Utils_System::url( "civicrm/event/manage/{$subPage}",
                                                                    "action=update&reset=1&id={$this->_id}" ) );
             }
         }
     }
-
+    
     function getTemplateFileName( )
     {
         if ( $this->controller->getPrint( ) == CRM_Core_Smarty::PRINT_NOFORM ||
