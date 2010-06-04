@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Confirmation of participation deletes  *}
-<div class="crm-block crm-form-block crm-event_task_delete-form-block">
+<div class="crm-block crm-form-block crm-event-delete-form-block">
 <div class="crm-submit-buttons">
  {include file="CRM/common/formButtons.tpl" location="top"}
 </div>

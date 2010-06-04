@@ -41,19 +41,19 @@
     </div>
 {/if}
 
-<div class="crm-block crm-event-additional_participant-form-block">
+<div class="crm-block crm-event-additionalparticipant-form-block">
 {if $priceSet}
     <fieldset id="priceset"><legend>{$event.fee_label}</legend>
     <table class="form-layout">
     {foreach from=$priceSet.fields item=element key=field_id}
         {if ($element.html_type eq 'CheckBox' || $element.html_type == 'Radio') && $element.options_per_line}
             {assign var="element_name" value=price_$field_id}
-         <tr>
+         <tr class="crm-event-additionalparticipant-form-block-element_name">
             <td class="label">{$form.$element_name.label}</td>
             <td>
             {assign var="count" value="1"}
             <table class="form-layout-compressed">
-                <tr>
+                <tr class="crm-event-additionalparticipant-form-block-element_name">
                     {foreach name=outer key=key item=item from=$form.$element_name}
                         {if is_numeric($key) }
                             <td class="labels font-light">{$form.$element_name.$key.html}</td>
@@ -97,7 +97,7 @@
 {else}
     {if $paidEvent}
         <table class="form-layout-compressed">
-            <tr>
+            <tr class="crm-event-additionalparticipant-form-block-amount">
                 <td class="label nowrap">{$event.fee_label} <span class="marker">*</span></td>
                 <td>&nbsp;</td>
                 <td>{$form.amount.html}</td>
