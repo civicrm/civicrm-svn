@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-case-activity-form-block">
 {* this template is used for adding/editing activities for a case. *}
 {if $cdType }
    {include file="CRM/Custom/Form/CustomData.tpl"}
@@ -120,7 +120,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
               <div id="help">{$activityTypeDescription}</div>
            </tr>
             {/if}
-           <tr id="with-clients" class="crm-case-form-block-client_name">
+           <tr id="with-clients" class="crm-case-activity-form-block-client_name">
 	       {if not $multiClient}
               <td class="label font-size12pt">{ts}Client{/ts}</td>
               <td class="view-value"><span class="font-size12pt">{$client_name|escape}&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -146,7 +146,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            </tr>
 
     	   {if $action eq 1 or $action eq 2}
-           <tr class="crm-case-form-block-target_contact_id hide-block"  id="with-contacts-widget">
+           <tr class="crm-case-activity-form-block-target_contact_id hide-block" id="with-contacts-widget">
                 <td class="label font-size10pt">{ts}With Contact{/ts}</td>
                 <td>{$form.target_contact_id.html}
                    <a href="#" onClick="buildTargetContact(1); return false;">
@@ -159,15 +159,15 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            </tr>
     	   {/if}
     	   
-           <tr class="crm-case-form-block-activityTypeName">
+           <tr class="crm-case-activity-form-block-activityTypeName">
               <td class="label">{ts}Activity Type{/ts}</td>
               <td class="view-value bold">{$activityTypeName|escape}</td>
            </tr>
-           <tr class="crm-case-form-block-source_contact_id">
+           <tr class="crm-case-activity-form-block-source_contact_id">
               <td class="label">{$form.source_contact_id.label}</td>
               <td class="view-value"> {if $admin}{$form.source_contact_id.html}{/if}</td>
             </tr>
-           <tr class="crm-case-form-block-assignee_contact_id">
+           <tr class="crm-case-activity-form-block-assignee_contact_id">
               <td class="label">{ts}Assigned To {/ts}</td>
               <td>{$form.assignee_contact_id.html}                   
                   {edit}<span class="description">
@@ -185,22 +185,22 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                 {include file="CRM/Case/Form/Activity/$activityTypeFile.tpl"}
             {/if}
 	    {if $activityTypeFile neq 'ChangeCaseStartDate'}
-            <tr class="crm-case-form-block-subject">
+            <tr class="crm-case-activity-form-block-subject">
               <td class="label">{$form.subject.label}</td><td class="view-value">{$form.subject.html|crmReplace:class:huge}</td>
             </tr>
 	    {/if}
-           <tr class="crm-case-form-block-medium_id">
+           <tr class="crm-case-activity-form-block-medium_id">
               <td class="label">{$form.medium_id.label}</td>
               <td class="view-value">{$form.medium_id.html}&nbsp;&nbsp;&nbsp;{$form.location.label} &nbsp;{$form.location.html|crmReplace:class:huge}</td>
            </tr> 
-           <tr class="crm-case-form-block-activity_date_time">
+           <tr class="crm-case-activity-form-block-activity_date_time">
               <td class="label">{$form.activity_date_time.label}</td>
               <td class="view-value">{include file="CRM/common/jcalendar.tpl" elementName=activity_date_time}</td>
            </tr>
            <tr>
               <td colspan="2"><div id="customData"></div></td>
            </tr>
-           <tr class="crm-case-form-block-details">
+           <tr class="crm-case-activity-form-block-details">
               <td class="label">{$form.details.label}</td>
               <td class="view-value">
                 {* If using plain textarea, assign class=huge to make input large enough. *}
@@ -230,10 +230,10 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                        </tr>
                        {foreach from=$searchRows item=row key=id}
                        <tr class="{cycle values="odd-row,even-row"}">
-                           <td class="crm-case-form-block-contact_{$id}">{$form.contact_check[$id].html}</td>
-                           <td class="crm-case-form-block-role">{$row.role}</td>
-                           <td class="crm-case-form-block-display_name">{$row.display_name}</td>
-                           <td class="crm-case-form-block-email">{$row.email}</td>
+                           <td class="crm-case-activity-form-block-contact_{$id}">{$form.contact_check[$id].html}</td>
+                           <td class="crm-case-activity-form-block-role">{$row.role}</td>
+                           <td class="crm-case-activity-form-block-display_name">{$row.display_name}</td>
+                           <td class="crm-case-activity-form-block-email">{$row.email}</td>
                        </tr>
                        {/foreach}
                    </table>
@@ -256,11 +256,11 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
  <div class="crm-accordion-body">
 
                     <table class="form-layout-compressed">
-                        <tr class="crm-case-form-block-followup_activity_type_id">
+                        <tr class="crm-case-activity-form-block-followup_activity_type_id">
 			    <td class="label">{ts}Schedule Follow-up Activity{/ts}</td>
                             <td>{$form.followup_activity_type_id.html}&nbsp;{$form.interval.label}&nbsp;{$form.interval.html}&nbsp;{$form.interval_unit.html}</td>
                         </tr>
-                        <tr class="crm-case-form-block-followup_activity_subject">
+                        <tr class="crm-case-activity-form-block-followup_activity_subject">
                            <td class="label">{$form.followup_activity_subject.label}</td>
                            <td>{$form.followup_activity_subject.html}</td>
                         </tr>
@@ -269,21 +269,21 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
 </div><!-- /.crm-accordion-wrapper -->
               </td>
            </tr>
-           <tr class="crm-case-form-block-duration">
+           <tr class="crm-case-activity-form-block-duration">
               <td class="label">{$form.duration.label}</td>
               <td class="view-value">
                 {$form.duration.html}
                  <span class="description">{ts}Total time spent on this activity (in minutes).{/ts}
               </td>
            </tr> 
-           <tr class="crm-case-form-block-status_id">
+           <tr class="crm-case-activity-form-block-status_id">
               <td class="label">{$form.status_id.label}</td><td class="view-value">{$form.status_id.html}</td>
            </tr>
-	   <tr class="crm-case-form-block-priority_id">
+	   <tr class="crm-case-activity-form-block-priority_id">
               <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
            </tr>
 	   {if $form.tag.html}
-             <tr class="crm-case-form-block-tag">
+             <tr class="crm-case-activity-form-block-tag">
                 <td class="label">{$form.tag.label}</td>
                 <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
                                         {literal}

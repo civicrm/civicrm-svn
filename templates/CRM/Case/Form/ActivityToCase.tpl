@@ -24,28 +24,29 @@
  +--------------------------------------------------------------------+
 *}
 {* CiviCase -  build activity to a case*}
+<div class="crm-block crm-form-block crm-case-activitytocase-form-block">
 <div id="fileOnCaseDialog"></div>
 
 {if $buildCaseActivityForm}
 <table class="form-layout">
-     <tr class="crm-case-form-block-unclosed_cases">
+     <tr class="crm-case-activitytocase-form-block-unclosed_cases">
 	<td class="label">{$form.unclosed_cases.label}</td>
      	<td>{$form.unclosed_cases.html}<br />
      	  <span class="description">{ts}Begin typing client name for a list of open cases.{/ts}</span>
      	</td>
      </tr>
-     <tr class="crm-case-form-block-target_contact_id">
+     <tr class="crm-case-activitytocase-form-block-target_contact_id">
 	<td class="label">{$form.target_contact_id.label}</td>
 	<td>{$form.target_contact_id.html}</td>
      </tr>
-     <tr class="crm-case-form-block-case_activity_subject">
+     <tr class="crm-case-activitytocase-form-block-case_activity_subject">
      	<td class="label">{$form.case_activity_subject.label}</td>
 	<td>{$form.case_activity_subject.html}<br />
 	  <span class="description">{ts}You can modify the activity subject before filing.{/ts}</span>
 	</td>
      </tr>
 </table>     	
-
+</div>
 {literal}
 <script type="text/javascript">
 var target_contact = target_contact_id = selectedCaseId = contactId = '';

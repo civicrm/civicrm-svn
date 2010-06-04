@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* View Case Activities *} {* Uses inline styles since we have not figured out yet how to include our normal .css files. *}
-<div class="crm-block crm-content-block">
+<div class="crm-block crm-form-block crm-case-activityview-form-block">
 {if $revs}
   <strong>{$subject}</strong> ({ts}all revisions{/ts})<br />
   {strip}
@@ -36,9 +36,9 @@
       </tr>
        {foreach from=$result item=row}
       <tr {if $row.id EQ $latestRevisionID}style="font-weight: bold;"{/if}>
-         <td class="crm-case-form-block-name">{$row.name}</td>
-         <td class="crm-case-form-block-date">{$row.date|crmDate}</td>
-         <td class="crm-case-form-block-{$row.id}"><a href="javascript:viewRevision( {$row.id} );" title="{ts}View this revision of the activity record.{/ts}">{if $row.id != $latestRevisionID}View Prior Revision{else}View Current Revision{/if}</a></td>
+         <td class="crm-case-activityview-form-block-name">{$row.name}</td>
+         <td class="crm-case-activityview-form-block-date">{$row.date|crmDate}</td>
+         <td class="crm-case-activityview-form-block-{$row.id}"><a href="javascript:viewRevision( {$row.id} );" title="{ts}View this revision of the activity record.{/ts}">{if $row.id != $latestRevisionID}View Prior Revision{else}View Current Revision{/if}</a></td>
       </tr>
        {/foreach}
   </table>
@@ -50,7 +50,7 @@
 {/if}        
 <table>
 {foreach from=$report.fields item=row name=report}
-<tr{if ! $smarty.foreach.report.last} style="border-bottom: 1px solid #F6F6F6;"{/if} class="crm-case-form-block-{$row.label}">
+<tr{if ! $smarty.foreach.report.last} style="border-bottom: 1px solid #F6F6F6;"{/if} class="crm-case-activityview-form-block-{$row.label}">
     <td class="label">{$row.label}</td>
     {if $smarty.foreach.report.first AND ( $activityID OR $parentID OR $latestRevisionID )} {* Add a cell to first row with links to prior revision listing and Prompted by (parent) as appropriate *}
         <td class="label">{$row.value}</td>
@@ -67,7 +67,7 @@
 {* Display custom field data for the activity. *}
 {if $report.customGroups}
     {foreach from=$report.customGroups item=customGroup key=groupTitle name=custom}
-        <tr style="background-color: #F6F6F6; color: #000000; border: 1px solid #CCCCCC; font-weight: bold" class="crm-case-form-block-groupTitle">
+        <tr style="background-color: #F6F6F6; color: #000000; border: 1px solid #CCCCCC; font-weight: bold" class="crm-case-activityview-form-block-groupTitle">
             <td colspan="3">{$groupTitle}</td>
         </tr>
         {foreach from=$customGroup item=customField name=fields}
