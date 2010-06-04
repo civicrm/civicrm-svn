@@ -42,6 +42,7 @@
                        <td>{$form.smtpServer.html}<br  />
                             <span class="description">{ts}Enter the SMTP server (machine) name. EXAMPLE: smtp.example.com{/ts}</span>
                        </td>
+                    </tr>
                     <tr class="crm-smtp-form-block-smtpPort">
                        <td class="label">{$form.smtpPort.label}</td>
                        <td>{$form.smtpPort.html}<br />

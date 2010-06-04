@@ -28,7 +28,7 @@
     {ts}CiviCRM includes plugins for Google and Yahoo mapping services which allow your users to display contact addresses on a map. To enable this feature, select your mapping provider and obtain a 'key' for your site from that provider.{/ts} {help id='map-key'}
 </div>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-    <table class="form-layout">
+    <table class="form-layout-compressed">
          <tr class="crm-map-form-block-mapProvider">
              <td>{$form.mapProvider.label}</td>
              <td>{$form.mapProvider.html}<br />
