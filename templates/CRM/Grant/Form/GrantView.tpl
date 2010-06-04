@@ -24,26 +24,26 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for viewing grants *} 
-<div class="crm-block crm-form-block crm-grant-form-block">
+<div class="crm-block crm-form-block crm-grant-view-form-block">
 <fieldset>
     <legend>{ts}View Grant{/ts}</legend>
     <table class="view-layout">
-        <tr><td class="label">{ts}Name{/ts}</td><td class="bold">{$displayName}</td></tr>    
-        <tr class="crm-grant-form-block-status_id"><td class="label">{ts}Grant Status{/ts}          </td> <td>{$grantStatus}</td></tr>
-        <tr class="crm-grant-form-block-grant_type_id"><td class="label">{ts}Grant Type{/ts}            </td> <td>{$grantType}</td></tr>
-        <tr class="crm-grant-form-block-application_received_date"><td class="label">{ts}Application Received{/ts}  </td> <td>{$application_received_date|crmDate}</td></tr>
-        <tr class="crm-grant-form-block-decision_date"><td class="label">{ts}Grant Decision{/ts}        </td> <td>{$decision_date|crmDate}</td></tr>
-        <tr class="crm-grant-form-block-money_transfer_date"><td class="label">{ts}Money Transferred{/ts}     </td> <td>{$money_transfer_date|crmDate}</td></tr>
-        <tr class="crm-grant-form-block-grant_due_date"><td class="label">{ts}Grant Report Due{/ts}      </td> <td>{$grant_due_date|crmDate}</td></tr>
-        <tr class="crm-grant-form-block-amount_total"><td class="label">{ts}Amount Requested{/ts}      </td> <td>{$amount_total|crmMoney}</td></tr>
-        <tr class="crm-grant-form-block-amount_requested"><td class="label">{ts}Amount Requested{/ts}<br />
+        <tr class="crm-grant-view-form-block-name"><td class="label">{ts}Name{/ts}</td><td class="bold">{$displayName}</td></tr>    
+        <tr class="crm-grant-view-form-block-status_id"><td class="label">{ts}Grant Status{/ts}          </td> <td>{$grantStatus}</td></tr>
+        <tr class="crm-grant-view-form-block-grant_type_id"><td class="label">{ts}Grant Type{/ts}            </td> <td>{$grantType}</td></tr>
+        <tr class="crm-grant-view-form-block-application_received_date"><td class="label">{ts}Application Received{/ts}  </td> <td>{$application_received_date|crmDate}</td></tr>
+        <tr class="crm-grant-view-form-block-decision_date"><td class="label">{ts}Grant Decision{/ts}        </td> <td>{$decision_date|crmDate}</td></tr>
+        <tr class="crm-grant-view-form-block-money_transfer_date"><td class="label">{ts}Money Transferred{/ts}     </td> <td>{$money_transfer_date|crmDate}</td></tr>
+        <tr class="crm-grant-view-form-block-grant_due_date"><td class="label">{ts}Grant Report Due{/ts}      </td> <td>{$grant_due_date|crmDate}</td></tr>
+        <tr class="crm-grant-view-form-block-amount_total"><td class="label">{ts}Amount Requested{/ts}      </td> <td>{$amount_total|crmMoney}</td></tr>
+        <tr class="crm-grant-view-form-block-amount_requested"><td class="label">{ts}Amount Requested{/ts}<br />
                               {ts}(original currency){/ts}   </td> <td>{$amount_requested|crmMoney}</td></tr>
-        <tr class="crm-grant-form-block-amount_granted"><td class="label">{ts}Amount Granted{/ts}        </td> <td>{$amount_granted|crmMoney}</td></tr>
-        <tr class="crm-grant-form-block-grant_report_received"><td class="label">{ts}Grant Report Received?{/ts}</td> <td>{if $grant_report_received}{ts}Yes{/ts} {else}{ts}No{/ts}{/if}</td></tr>
-        <tr class="crm-grant-form-block-rationale"><td class="label">{ts}Rationale{/ts}             </td> <td>{$rationale}</td></tr>
-        <tr class="crm-grant-form-block-note"><td class="label">{ts}Notes{/ts}                 </td> <td>{$note}</td></tr>
+        <tr class="crm-grant-view-form-block-amount_granted"><td class="label">{ts}Amount Granted{/ts}        </td> <td>{$amount_granted|crmMoney}</td></tr>
+        <tr class="crm-grant-view-form-block-grant_report_received"><td class="label">{ts}Grant Report Received?{/ts}</td> <td>{if $grant_report_received}{ts}Yes{/ts} {else}{ts}No{/ts}{/if}</td></tr>
+        <tr class="crm-grant-view-form-block-rationale"><td class="label">{ts}Rationale{/ts}             </td> <td>{$rationale}</td></tr>
+        <tr class="crm-grant-view-form-block-note"><td class="label">{ts}Notes{/ts}                 </td> <td>{$note}</td></tr>
         {if $attachment}
-            <tr class="crm-grant-form-block-attachment"><td class="label">{ts}Attachment(s){/ts}</td><td>{$attachment}</td></tr>
+            <tr class="crm-grant-view-form-block-attachment"><td class="label">{ts}Attachment(s){/ts}</td><td>{$attachment}</td></tr>
         {/if}
     </table>
 	<div class="spacer"></div>

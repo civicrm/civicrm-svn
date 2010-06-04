@@ -38,7 +38,6 @@
     {ts}Use this form to find Grant(s) by Contact name, Grant Status, Grant Type, Total Amount , etc .{/ts}
 </div>
 <div id="searchForm" class="form-item">
-<fieldset><legend>{ts}Find Grants{/ts}</legend>
 <div class="form-item">
 {strip} 
         <table class="form-layout">
@@ -53,7 +52,6 @@
         </table>
     {/strip}
 </div> 
-</fieldset>
 </div>
 </div>
 {if $rowsEmpty}
