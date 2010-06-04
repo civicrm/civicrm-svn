@@ -58,12 +58,14 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $elements = $this->parseURL( );
       $this->assertType( "numeric", $elements['queryString']['sid'] );
 
+      $validStrings = array( );
+
       $fields = array( "Full Conference" => "Text",
                        "Meal Choice" => "Select",
                        "Pre-conference Meetup?" => "Radio",
                        "Evening Sessions" => "CheckBox",
                      );
-      $this->_testAddPriceFields( $fields );
+      $this->_testAddPriceFields( $fields, $validateStrings );
       
       $this->_testVerifyPriceSet( $fields, $elements['queryString']['sid'] );      
   }
@@ -90,22 +92,32 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->waitForElementPresent("_qf_Field_next-bottom");
   }
   
-  function _testAddPriceFields( &$fields ) {
+  function _testAddPriceFields( &$fields, &$validateStrings ) {
       foreach ($fields as $label => $type ){
-         $this->type("label", $label);
-         $this->select("html_type", "value={$type}");
+          $validateStrings[] = $label;
+          
+          $this->type("label", $label);
+          $this->select("html_type", "value={$type}");
 
          switch ($type) {
              case 'Text':
+                 $validateStrings[] = "525.00";
                 $this->type("price", "525.00");
                 $this->check("is_required");
                 break;
              case 'Select':
-                $this->type("option_label_1", "Chicken");
-                $this->type("option_name_1", "30.00");
-                $this->click("link=another choice");
-                $this->type("option_label_2", "Vegetarian");
-                $this->type("option_name_2", "25.00");
+                
+                $options = array( 1 => array( 'label' => "Chicken",
+                                              'name'  => "30.00" ),
+                                  2 => array( 'label' => "Vegetarian", 
+                                              'name'  => "25.00" ) );
+                foreach ( $options as $oIndex => $oValue ) {
+                    $validateStrings[] = $oValue['label'];
+                    $validateStrings[] = $oValue['name'];
+                    $this->type("option_label_{$oIndex}", $oValue['label'] ); 
+                    $this->type("option_name_{$oIndex}" , $oValue['name']  ); 
+                    $this->click("link=another choice");
+                }
                 break;
              case 'Radio':
                 $this->type("option_label_1", "Yes");
