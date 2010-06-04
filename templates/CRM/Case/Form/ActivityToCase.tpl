@@ -153,6 +153,7 @@ function fileOnCase( action, activityID, currentCaseId ) {
     						  {/literal}{/if}{literal}											     	 	                     
 						      var caseUrl = destUrl + selectedCaseId + '&cid=' + contactId + context;
 						      var redirectToCase = false;
+						      var reloadWindow = false;
 						      if ( action == 'move' ) redirectToCase = true;
 						      if ( action == 'file' ) {
 						      	 var curPath = document.location.href;
@@ -164,7 +165,7 @@ function fileOnCase( action, activityID, currentCaseId ) {
   							        visibleRowCount++;
 							     } );
 							     if ( visibleRowCount < 1 ) {
-							     	window.location.reload( );
+							     	reloadWindow = true;
 							     }  
 							 } 
 							 if ( curPath.indexOf( 'civicrm/contact/view/activity' ) != -1 ) {
@@ -174,6 +175,8 @@ function fileOnCase( action, activityID, currentCaseId ) {
 						     
 						      if ( redirectToCase ) {
 						          window.location.href = caseUrl + selectedCaseId + '&cid=' + contactId + context;
+						      } else if ( reloadWindow ) { 
+						      	  window.location.reload( ); 
 						      } else {
 						          var activitySubject = cj("#case_activity_subject").val( );
 						          var statusMsg = '<a id="closeFileOnCaseStatusMsg" href="#"><div class="icon close-icon"></div></a> "' + activitySubject + '" has been filed to selected case: ' + cj("#unclosed_cases").val( ) + '. Click <a href="' + caseUrl + '">here</a> to view that case.';
