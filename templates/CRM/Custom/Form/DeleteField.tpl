@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for confirmation of delete for a Fields  *}
-<div class="crm-block crm-form-block crm-custom_delete_field-form-block">
+<div class="crm-block crm-form-block crm-custom-deletefield-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <div class="messages status">
          <div class="icon inform-icon"></div>

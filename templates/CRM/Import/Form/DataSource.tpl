@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
   
-<div class="crm-block crm-form-block crm-import_data_source-form-block">
+<div class="crm-block crm-form-block crm-import-datasource-form-block">
 {if $showOnlyDataSourceFormPane}
   {include file=$dataSourceFormTemplateFile}
 {else}
@@ -41,7 +41,7 @@
     <fieldset>
       <legend>{ts}Choose Data Source{/ts}</legend>
       <table class="form-layout">
-        <tr class="crm-import_data_source-form-block-dataSource">
+        <tr class="crm-import-datasource-form-block-dataSource">
             <td class="label">{$form.dataSource.label}</td>
             <td>{$form.dataSource.html} {help id='data-source-selection'}</td>
         </tr>
@@ -60,12 +60,12 @@
     <fieldset>
       <legend>{ts}Import Options{/ts}</legend>
       <table class="form-layout-compressed">
-         <tr class="crm-import_data_source-form-block-contactType">
+         <tr class="crm-import-datasource-form-block-contactType">
 	     <td class="label">{$form.contactType.label}</td>
              <td>{$form.contactType.html} {help id='contact-type'}&nbsp;&nbsp;&nbsp;
                <span id="contact-subtype">{$form.subType.label}&nbsp;&nbsp;&nbsp;{$form.subType.html} {help id='contact-sub-type'}</span></td>
          </tr>
-         <tr class="crm-import_data_source-form-block-onDuplicate">
+         <tr class="crm-import-datasource-form-block-onDuplicate">
              <td class="label">{$form.onDuplicate.label}</td>
              <td>{$form.onDuplicate.html} {help id='dupes'}</td>
          </tr>
@@ -75,7 +75,7 @@
          </tr>
          
         {if $geoCode}
-         <tr class="crm-import_data_source-form-block-doGeocodeAddress">
+         <tr class="crm-import-datasource-form-block-doGeocodeAddress">
              <td>{$form.doGeocodeAddress.html} {$form.doGeocodeAddress.label}<br />
                <span class="description">
                 {ts}This option is not recommended for large imports. Use the command-line geocoding script instead.{/ts} {docURL page="Batch Geocoding Script"}
@@ -83,7 +83,7 @@
         {/if}
 
         {if $savedMapping}
-         <tr  class="crm-import_data_source-form-block-savedMapping">
+         <tr  class="crm-import-datasource-form-block-savedMapping">
               <td class="lable">{if $loadedMapping}{ts}Select a Different Field Mapping{/ts}{else}{ts}Load Saved Field Mapping{/ts}{/if}</td>
               <td>{$form.savedMapping.html}<br />
 	    &nbsp;&nbsp;&nbsp;<span class="description">{ts}Select Saved Mapping or Leave blank to create a new One.{/ts}</span></td>
@@ -93,9 +93,7 @@
     </fieldset>
   </div>
 
-  <div class="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl" location="bottom"}
-  </div>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"} </div>
 
   {literal}
     <script type="text/javascript">
