@@ -84,7 +84,8 @@ class WebTest_Event_AddPaidEventTest extends CiviSeleniumTestCase {
       $eventDescription = "Here is a description for this conference.";
       // Select paid online registration template.
       $templateID = 6;
-      $this->_testAddEventInfoFromTemplate( $eventTitle, $eventDescription, $templateID );
+      $eventTypeID = 1;
+      $this->_testAddEventInfoFromTemplate( $eventTitle, $eventDescription, $templateID, $eventTypeID );
 
       $streetAddress = "100 Main Street";
       $this->_testAddLocation( $streetAddress );
@@ -118,7 +119,8 @@ class WebTest_Event_AddPaidEventTest extends CiviSeleniumTestCase {
       $eventDescription = "Here is a description for this free meeting.";
       // Select "Free Meeting with Online Registration" template (id = 5).
       $templateID = 5;
-      $this->_testAddEventInfoFromTemplate( $eventTitle, $eventDescription, $templateID );
+      $eventTypeID = 4;
+      $this->_testAddEventInfoFromTemplate( $eventTitle, $eventDescription, $templateID, $eventTypeID );
 
       $streetAddress = "100 Main Street";
       $this->_testAddLocation( $streetAddress );
@@ -171,7 +173,7 @@ class WebTest_Event_AddPaidEventTest extends CiviSeleniumTestCase {
       $this->click("_qf_EventInfo_upload-bottom");      
   }
   
-  function _testAddEventInfoFromTemplate( $eventTitle, $eventDescription, $templateID ) {
+  function _testAddEventInfoFromTemplate( $eventTitle, $eventDescription, $templateID, $eventTypeID ) {
       // As mentioned before, waitForPageToLoad is not always reliable. Below, we're waiting for the submit
       // button at the end of this page to show up, to make sure it's fully loaded.
       $this->waitForElementPresent("_qf_EventInfo_upload-bottom");
@@ -182,7 +184,7 @@ class WebTest_Event_AddPaidEventTest extends CiviSeleniumTestCase {
       
       // Wait for event type to be filled in (since page reloads)
       $this->waitForPageToLoad('30000');
-      $this->verifySelectedValue("event_type_id", "1");
+      $this->verifySelectedValue("event_type_id", $eventTypeID);
 
       // Attendee role s/b selected now.
       $this->verifySelectedValue("default_role_id", "1");
