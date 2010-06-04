@@ -167,6 +167,30 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         }
     }
 
+    /**
+     * Types text into a ckEditor rich text field in a form
+     *
+     * @param string $fieldName form field name (as assigned by PHP buildForm class)
+     * @param string $text      text to type into the field
+     * @param string $editor    which text editor (valid values are 'CKEditor', 'TinyMCE')
+     *
+     * @return void
+     */
+
+    function fillRichTextField( $fieldName, $text = 'Typing this text into editor.', $editor = 'CKEditor' ) {
+        if ( $editor == 'CKEditor') {
+            $this->selectFrame("css=td#cke_contents_{$fieldName} iframe");                        
+        } else if ( $editor == 'TinyMCE') {
+            $this->selectFrame("{$fieldName}_text_ifr");
+        } else {
+            echo "Unknown editor value: $editor, exiting ...";
+            exit( );
+        }
+        $this->type("//html/body", $text);
+        $this->selectFrame("relative=top");
+    }
+
+
    /**
     */
     function webtestNewDialogContact( $fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4 ) {
@@ -248,7 +272,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     *
     * @return   void
     */
-  function _checkStrings( $strings ) {
+  function assertStringsPresent( $strings ) {
       if ( is_array( $strings ) ) {
           // search for elements
           foreach ( $strings as $string ) {
