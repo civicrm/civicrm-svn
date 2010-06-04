@@ -143,7 +143,7 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad('30000');
 
       // Fixme: need to figure out a way to address the correct row
-      $this->click("css=tr#row_6 a[title='Preview Price Set']");
+      $this->click("css=tr#row_1 a[title='Preview Price Set']");
       
       $this->waitForPageToLoad('30000');
       // Look for Register button
