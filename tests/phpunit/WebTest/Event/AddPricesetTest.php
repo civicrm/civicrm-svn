@@ -55,6 +55,9 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       $setHelp = "Select your conference options.";
       $this->_testAddSet( $setTitle, $usedFor, $setHelp );
 
+      $elements = $this->parseURL( );
+      $this->assertType( "numeric", $elements['queryString']['sid'] );
+
       $fields = array( "Full Conference" => "Text",
                        "Meal Choice" => "Select",
                        "Pre-conference Meetup?" => "Radio",
@@ -62,18 +65,10 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
                      );
       $this->_testAddPriceFields( $fields );
       
-      $this->_testVerifyPriceSet( $fields );      
+      $this->_testVerifyPriceSet( $fields, $elements['queryString']['sid'] );      
   }
 
  
-  function _checkStrings( &$strings ) {
-      // search for elements
-      foreach ( $strings as $string ) {
-          $this->assertTrue($this->isTextPresent($string), "Could not find $string on page");
-      }
-
-  }
-  
   function _testAddSet( $setTitle, $usedFor, $setHelp ) {
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent("_qf_Set_next-bottom");
@@ -90,11 +85,12 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
 
       $this->assertChecked("is_active", "Verify that Is Active checkbox is set.");
       $this->click("_qf_Set_next-bottom");      
+
+      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("_qf_Field_next-bottom");
   }
   
   function _testAddPriceFields( &$fields ) {
-      $this->waitForPageToLoad('30000');
-      $this->waitForElementPresent("_qf_Field_next-bottom");
       foreach ($fields as $label => $type ){
          $this->type("label", $label);
          $this->select("html_type", "value={$type}");
@@ -136,23 +132,21 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
   }
 
   
-  function _testVerifyPriceSet( &$fields ){
+  function _testVerifyPriceSet( &$fields, $sid ){
       // verify Price Set at Preview page
       // start at Manage Price Sets listing
       $this->open($this->sboxPath . "civicrm/admin/price?reset=1");
       $this->waitForPageToLoad('30000');
 
       // Fixme: need to figure out a way to address the correct row
-      $this->click("css=tr#row_1 a[title='Preview Price Set']");
+      $this->click("css=tr#row_{$sid} a[title='Preview Price Set']");
       
       $this->waitForPageToLoad('30000');
       // Look for Register button
       $this->waitForElementPresent("_qf_Preview_cancel-bottom");
       
       // Check for correct event info strings
-      foreach ($fields as $label => $type ){
-          $this->_checkStrings( $label );
-      }
+      $this->_checkStrings( array_keys( $fields ) );
   }
 
 }

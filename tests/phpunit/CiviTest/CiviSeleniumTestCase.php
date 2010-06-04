@@ -241,4 +241,47 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         }
     }
 
+    /** 
+    * Generic function to check that strings are present in the page
+    * 
+    * @strings  array    array of strings or a single string
+    *
+    * @return   void
+    */
+  function _checkStrings( $strings ) {
+      if ( is_array( $strings ) ) {
+          // search for elements
+          foreach ( $strings as $string ) {
+              $this->assertTrue($this->isTextPresent($string), "Could not find $string on page");
+          }
+      } else {
+          $this->assertTrue($this->isTextPresent($strings), "Could not find $strings on page");
+      }
+  }
+
+  /** 
+   * Generic function to extract a variable value from a string (url)
+   * 
+   * @url      string url to parse or retrieve current url if null
+   *
+   * @return   array  returns an associative array containing any of the various components 
+   *                  of the URL that are present.
+   *                  http://php.net/manual/en/function.parse-url.php
+   *
+   */
+  function parseURL( $url = null ) {
+      if ( ! $url ) {
+          $url = $this->getLocation( );
+      }
+
+      $elements = parse_url( $url );
+      if ( ! empty( $elements['query'] ) ) {
+          $elements['queryString'] = array( );
+          parse_str( $elements['query'], $elements['queryString'] );
+      }
+      return $elements;
+  }
+
+  
+
 }
