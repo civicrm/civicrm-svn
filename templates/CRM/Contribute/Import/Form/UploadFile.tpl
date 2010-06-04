@@ -25,17 +25,15 @@
 *}
 {* Contribution Import Wizard - Step 1 (upload data file) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
-
+ <div class="crm-block crm-form-block  crm-contribution-import-uploadfile-form-block id="upload-file">
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
- {include file="CRM/common/WizardHeader.tpl"}
- 
- <div id="help">
+{include file="CRM/common/WizardHeader.tpl"} 
+<div id="help">
     {ts}The Contribution Import Wizard allows you to easily upload contributions from other applications into CiviCRM.{/ts}
     {ts}Files to be imported must be in the 'comma-separated-values' format (CSV) and must contain data needed to match the contribution to an existing contact in your CiviCRM database.{/ts} {help id='upload'}
- </div>    
-
- <div id="upload-file" class="form-item">
+ </div> 
  <fieldset>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
   <table class="form-layout-compressed">
   	<tr><td class="label">{$form.uploadFile.label}</td><td class="html-adjust"> {$form.uploadFile.html}<br />
        	   <span class="description">{ts}File format must be comma-separated-values (CSV).{/ts}</span></td></tr> 
@@ -52,10 +50,7 @@
 {if $savedMapping}
       <tr> <td class="label">{if $loadedMapping}{ts}Select a Different Field Mapping{/ts}{else}{ts}Load Saved Field Mapping{/ts}{/if}</td><td>{$form.savedMapping.html}<br /> <span class="description">{ts}Select a saved field mapping if this file format matches a previous import.{/ts}</span></tr>
 {/if} 
-    <div class="spacer"></div>
     </table>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
  </fieldset>
- </div>
- <div class="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
  </div>

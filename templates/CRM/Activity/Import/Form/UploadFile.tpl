@@ -47,8 +47,8 @@
            </td>
         </tr>
         <tr class="crm-activity-import-uploadfile-form-block-skipColumnHeader"> 
-           <td class="label">{$form.skipColumnHeader.html}</td>
-           <td>{$form.skipColumnHeader.label}<br />
+           <td class="label"></td>
+           <td>{$form.skipColumnHeader.html}{$form.skipColumnHeader.label}<br />
                <span class="description">{ts}Check this box if the first row of your file consists of field names (Example: 'Contact ID', 'Activity Type', 'Activity Date').{/ts}</span>
            </td>
         </tr>
