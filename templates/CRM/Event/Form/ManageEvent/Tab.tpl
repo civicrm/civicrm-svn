@@ -25,7 +25,7 @@
 *}
 {* Don't show action buttons for event templates *}
 {if ! $isTemplate}
-    <div class="crm-block crm-content-block crm-manage_event_tab-block">
+    <div class="crm-block crm-form-block crm-event-manage-tab-form-block">
     	<div id="crm-event-links-wrapper">
     	      <div id="crm-event-links-link"><span><div class="icon dropdown-icon"></div>{ts}Event Links{/ts}</span></div>
     	      <div class="ac_results" id="crm-event-links-list">
