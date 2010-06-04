@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Confirmation of contact deletes  *}
+<div class="crm-block crm-form-block crm-contact-task-delete-form-block">
 <div class="messages status">
   <div class="icon inform-icon"></div>&nbsp;
       {if $restore}
@@ -35,7 +36,7 @@
       {/if}
   </div>
 
-<div class="crm-block crm-form-block crm-delete-block">
+
     <h3>{include file="CRM/Contact/Form/Task.tpl"}</h3>
 	<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>
