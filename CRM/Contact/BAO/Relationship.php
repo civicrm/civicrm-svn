@@ -789,8 +789,12 @@ class CRM_Contact_BAO_Relationship extends CRM_Contact_DAO_Relationship
                                      $links = null, $permissionMask = null,
                                      $permissionedContact = false )
     {
-        list( $select1, $from1, $where1 ) = self::makeURLClause( $contactId, $status, $numRelationship, $count, $relationshipId, 'a_b');
-        list( $select2, $from2, $where2 ) = self::makeURLClause( $contactId, $status, $numRelationship, $count, $relationshipId, 'b_a');
+        list( $select1, $from1, $where1 ) = 
+            self::makeURLClause( $contactId, $status, $numRelationship,
+                                 $count, $relationshipId, 'a_b');
+        list( $select2, $from2, $where2 ) = 
+            self::makeURLClause( $contactId, $status, $numRelationship,
+                                 $count, $relationshipId, 'b_a');
 
         $order = $limit = '';
         if (! $count ) {
