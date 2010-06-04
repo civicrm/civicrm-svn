@@ -44,7 +44,7 @@
 
 {foreach from=$rows item=row}
     <tr class="{cycle values="odd-row,even-row"}">
-        <td class="crm-case-sort_name">{$row.sort_name}<br /><span class="description">{ts}Case ID{/ts}: {$row.case_id}</span></td>
+        <td class="crm-case-print-sort_name">{$row.sort_name}<br /><span class="description">{ts}Case ID{/ts}: {$row.case_id}</span></td>
         <td class="crm-case-print-case_status_id">{$row.case_status_id}</td>
         <td class="crm-case-print-case_type_id">{$row.case_type_id}</td>
         <td class="crm-case-print-case_role">{if $row.case_role}{$row.case_role}{else}---{/if}</td>
