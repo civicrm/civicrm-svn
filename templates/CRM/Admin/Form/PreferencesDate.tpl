@@ -24,28 +24,28 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing location type  *}
-<div class="crm-block crm-form-block crm-preferences_date-form-block">
+<div class="crm-block crm-form-block crm-preferences-date-form-block">
     <fieldset><legend>{ts}Edit Date Settings{/ts}</legend>
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         <table class='form-layout-compressed'>
-            <tr class="crm-preferences_date-form-block-name">
+            <tr class="crm-preferences-date-form-block-name">
                 <td class="label">{$form.name.label}</td><td>{$form.name.html}</td>
             </tr>
-            <tr class="crm-preferences_date-form-block-description">
+            <tr class="crm-preferences-date-form-block-description">
                 <td class="label">{$form.description.label}</td><td>{$form.description.html}</td>
             </tr>
-            <tr class="crm-preferences_date-form-block-date_format">    
+            <tr class="crm-preferences-date-form-block-date_format">    
                 <td class="label">{$form.date_format.label}</td><td>{$form.date_format.html}</td>
             </tr>
             {if $form.time_format.label}
-            <tr class="crm-preferences_date-form-block-time_format">    
+            <tr class="crm-preferences-date-form-block-time_format">    
                 <td class="label">{$form.time_format.label}</td><td>{$form.time_format.html}</td>
             </tr>
             {/if}
-            <tr class="crm-preferences_date-form-block-start">    
+            <tr class="crm-preferences-date-form-block-start">    
                 <td class="label">{$form.start.label}</td><td>{$form.start.html}</td>
             </tr>
-            <tr class="crm-preferences_date-form-block-end">    
+            <tr class="crm-preferences-date-form-block-end">    
                 <td class="label">{$form.end.label}</td><td>{$form.end.html}</td>
             </tr>
         </table>
