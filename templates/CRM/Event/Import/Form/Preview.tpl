@@ -46,11 +46,14 @@
     <p>{ts}Click 'Import Now' if you are ready to proceed.{/ts}</p>
  </div>
     
-<div class="crm-form-block">
+<div class="crm-block crm-form-block crm-event-import-preview-form-block">
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
 
 
+<div class="crm-submit-buttons">
+     {include file="CRM/common/formButtons.tpl" location="top"}
+</div>
  {* Summary Preview (record counts) *}
  <table id="preview-counts" class="report">
     <tr><td class="label">{ts}Total Rows{/ts}</td>
@@ -92,6 +95,6 @@
  
  
  <div id="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
+    {include file="CRM/common/formButtons.tpl" location="bottom"}
  </div>
 </div>

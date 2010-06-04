@@ -33,7 +33,7 @@
     <p>{ts}If you think you may be importing additional data from the same data source, check 'Save this field mapping' at the bottom of the page before continuing. The saved mapping can then be easily reused the next time data is imported.{/ts}</p>
 </div>
 
-<div class="crm-form-block">
+<div class="crm-block crm-form-block crm-event-import-mapfield-form-block">
  <table class="form-layout">
    <tr>
      <td>{* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
@@ -48,7 +48,7 @@
    <tr>
      <td>
 	<div id="crm-submit-buttons">
-         {include file="CRM/common/formButtons.tpl"}
+         {include file="CRM/common/formButtons.tpl" location="bottom"}
 	</div> 
      </td>
    </tr>

@@ -67,12 +67,14 @@
     {/if}
  </div>
 
-<div class="crm-form-block">
+<div class="crm-block crm-form-block crm-event-import-summary-form-block">
 
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
  
-     
+ <div class="crm-submit-buttons">
+    {include file="CRM/common/formButtons.tpl" location="top"}
+</div> 
  {* Summary of Import Results (record counts) *}
  <table id="summary-counts" class="report">
     <tr><td class="label">{ts}Total Rows{/ts}</td>
@@ -132,6 +134,6 @@
  </table>
  
  <div id="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
+    {include file="CRM/common/formButtons.tpl" location="bottom"}
  </div>
 </div>
