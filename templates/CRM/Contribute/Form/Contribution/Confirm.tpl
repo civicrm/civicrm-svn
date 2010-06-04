@@ -168,11 +168,11 @@
                 <div class="header-dark">
                     {ts}Billing Name and Address{/ts}
                 </div>
-            	<div class="section no-label billing_name-section">
+            	<div class="crm-section no-label billing_name-section">
             		<div class="content">{$billingName}</div>
             		<div class="clear"></div>
             	</div>
-            	<div class="section no-label billing_address-section">
+            	<div class="crm-section no-label billing_address-section">
             		<div class="content">{$address|nl2br}</div>
             		<div class="clear"></div>
             	</div>
@@ -183,7 +183,7 @@
                 <div class="header-dark">
                     {ts}Your Email{/ts}
                 </div>
-                <div class="section no-label contributor_email-section">
+                <div class="crm-section no-label contributor_email-section">
                 	<div class="content">{$email}</div>
                 	<div class="clear"></div>
                 </div>
@@ -208,7 +208,7 @@
                     {ts}Bank Name{/ts}: {$bank_name}<br />
                 </div>
             {else}
-                <div class="section no-label credit_card_details-section">
+                <div class="crm-section no-label credit_card_details-section">
                     <div class="content">{$credit_card_type}</div>
                 	<div class="content">{$credit_card_number}</div>
                 	<div class="content">{ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}</div>

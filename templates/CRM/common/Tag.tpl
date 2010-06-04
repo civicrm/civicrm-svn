@@ -1,6 +1,6 @@
 {foreach from=$tagset item=tagset}
 
-<div class="section tag-section tag-{$tagset.parentID}-section">
+<div class="crm-section tag-section tag-{$tagset.parentID}-section">
 <div class="label">
 <label>{$tagset.parentName}</label>
 </div>

@@ -366,11 +366,11 @@ div.spacer,
     border:none;
 }
 
-#crm-container .section {
+#crm-container .crm-section {
     margin-bottom:1em;
 }
 
-#crm-container .section .label {
+#crm-container .crm-section .label {
     float:left;
     width:15%;
     text-align: right;
@@ -380,7 +380,7 @@ div.spacer,
     text-align: left;
 }
 
-#crm-container .section .content {
+#crm-container .crm-section .content {
     margin-left:16%;
 }
 
@@ -2667,13 +2667,13 @@ div#crm-toolTip #hide-tooltip {
     margin-bottom: 0px;
 }
 
-#crm-container .crm-summary-group .section .label {
+#crm-container .crm-summary-group .crm-section .label {
     text-align: left;
     width:40%;
     font-size:11px;
     color:#A7A7A7;
 }
-#crm-container .crm-summary-group .section .content {
+#crm-container .crm-summary-group .crm-section .content {
     margin-left:41%;
 }
 

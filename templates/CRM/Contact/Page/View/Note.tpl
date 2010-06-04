@@ -39,20 +39,20 @@
 {elseif $action eq 1 or $action eq 2} {* action is add or update *}
 	<div class="crm-block crm-form-block crm-note-form-block">
     <div class="content crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-	<div class="section note-subject-section no-label">
+	<div class="crm-section note-subject-section no-label">
 
 	 	<div class="content">
 	 	   {$form.subject.label} {$form.subject.html} 
 	 	</div>
 	 	<div class="clear"></div> 
 	</div>
-	<div class="section note-body-section no-label">
+	<div class="crm-section note-body-section no-label">
 	 <div class="content">
 	    {$form.note.html}
 	 </div>
 	 <div class="clear"></div> 
 	</div>
-	<div class="section note-buttons-section no-label">
+	<div class="crm-section note-buttons-section no-label">
 	 <div class="content crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 	 <div class="clear"></div> 
 	</div>
