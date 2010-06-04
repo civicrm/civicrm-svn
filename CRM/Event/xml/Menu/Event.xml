@@ -60,7 +60,7 @@
   <item>
      <path>civicrm/admin/event</path>
      <title>Manage Events</title>
-     <page_callback>CRM_Event_Form_ManageEvent</page_callback>
+     <page_callback>CRM_Event_Page_ManageEvent</page_callback>
      <desc>Create and edit event configuration including times, locations, online registration forms, and fees. Links for iCal and RSS syndication.</desc>
      <access_arguments>access CiviEvent</access_arguments>
      <adminGroup>CiviEvent</adminGroup>

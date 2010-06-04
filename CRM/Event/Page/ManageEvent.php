@@ -249,7 +249,9 @@ ORDER BY start_date desc
                                                                               true );
 
                 $params = array( 'entity_id'    => $dao->id, 
-                                 'entity_table' => 'civicrm_event');
+                                 'entity_table' => 'civicrm_event',
+                                 'is_active'    => 1
+                                 );
                 
                 require_once 'CRM/Core/BAO/Location.php';
                 $defaults['location'] = CRM_Core_BAO_Location::getValues( $params, true );
