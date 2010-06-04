@@ -15,10 +15,10 @@
 
   {foreach from=$rows item=row}
     <tr class="{cycle values="odd-row,even-row"} crm-grant">
-        <td class="crm-grant-task-display_name">{$row.display_name}</td>
-        <td class="crm-grant-task-decision_date">{$row.decision_date}</td>
-        <td class="crm-grant-task-amount_requested">{$row.amount_requested}</td>
-        <td class="crm-grant-task-amount_granted">{$row.amount_granted}</td>
+        <td class="crm-grant-task-SearchTaskHookSample-form-block-display_name">{$row.display_name}</td>
+        <td class="crm-grant-task-SearchTaskHookSample-form-block-decision_date">{$row.decision_date}</td>
+        <td class="crm-grant-task-SearchTaskHookSample-form-block-amount_requested">{$row.amount_requested}</td>
+        <td class="crm-grant-task-SearchTaskHookSample-form-block-amount_granted">{$row.amount_granted}</td>
     </tr>
   {/foreach}
 </table>
