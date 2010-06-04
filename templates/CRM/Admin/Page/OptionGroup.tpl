@@ -48,11 +48,11 @@
             <th></th>
             </tr>
         {foreach from=$rows item=row}
-	<tr id="row_{$row.id}"class="crm-optionGroup {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td class="crm-optionGroup-name">{$row.name}</td>	
-	        <td class="crm-optionGroup-description">{$row.description}</td>
-	        <td class="crm-optionGroup-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td id="row_{$row.id}_status" class="crm-optionGroup-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	<tr id="row_{$row.id}"class="crm-admin-optionGroup {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+	        <td class="crm-admin-optionGroup-name">{$row.name}</td>	
+	        <td class="crm-admin-optionGroup-description">{$row.description}</td>
+	        <td class="crm-admin-optionGroup-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td id="row_{$row.id}_status" class="crm-admin-optionGroup-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}

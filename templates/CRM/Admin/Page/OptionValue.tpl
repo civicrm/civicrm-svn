@@ -55,16 +55,16 @@
         </tr>
         </thead>
         {foreach from=$rows item=row}
-	    <tr id="row_{$row.id}"class="crm-optionValue {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-            <td class="crm-optionValue-label">{$row.label}</td>
-            <td class="crm-optionValue-value">{$row.value}</td>	
-            <td class="crm-optionValue-description">{$row.description}</td>
-            <td class="nowrap crm-optionValue-weight">{$row.weight}</td>
+	    <tr id="row_{$row.id}"class="crm-admin-optionValue {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+            <td class="crm-admin-optionValue-label">{$row.label}</td>
+            <td class="crm-admin-optionValue-value">{$row.value}</td>	
+            <td class="crm-admin-optionValue-description">{$row.description}</td>
+            <td class="nowrap crm-admin-optionValue-weight">{$row.weight}</td>
            {if $showIsDefault} 
-            <td class="crm-optionValue-default_value">{$row.default_value}</td> 
+            <td class="crm-admin-optionValue-default_value">{$row.default_value}</td> 
            {/if}
-            <td class="crm-optionValue-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td id="row_{$row.id}_status" class="crm-optionValue-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+            <td class="crm-admin-optionValue-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td id="row_{$row.id}_status" class="crm-admin-optionValue-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
             <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}

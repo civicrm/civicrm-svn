@@ -99,7 +99,7 @@
               </tr>
             {/if}
             {if $form.filter.html} {* Filter property is only exposed for some option groups. *}
-              <tr class="crm-options-form-block-filter">
+              <tr class="crm-admin-options-form-block-filter">
                 <td class="label">{$form.filter.label}</td>
                 <td>{$form.filter.html}</td>
               </tr>
