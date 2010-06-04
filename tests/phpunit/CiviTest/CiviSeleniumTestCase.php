@@ -190,6 +190,26 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         $this->selectFrame("relative=top");
     }
 
+    /**
+     * Types option label and name into a table of multiple choice options
+     * (for price set fields of type select, radio, or checkbox)
+     * TODO: extend for custom field multiple choice table input
+     *
+     * @param array  $options           form field name (as assigned by PHP buildForm class)
+     * @param array  $validateStrings   appends label and name strings to this array so they can be validated later
+     *
+     * @return void
+     */
+     
+     function addMultipleChoiceOptions( $options, &$validateStrings ){
+         foreach ( $options as $oIndex => $oValue ) {
+             $validateStrings[] = $oValue['label'];
+             $validateStrings[] = $oValue['name'];
+             $this->type("option_label_{$oIndex}", $oValue['label'] ); 
+             $this->type("option_name_{$oIndex}" , $oValue['name']  ); 
+             $this->click("link=another choice");
+         }         
+     }
 
    /**
     */
@@ -284,12 +304,12 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
   }
 
   /** 
-   * Generic function to extract a variable value from a string (url)
+   * Generic function to parse a URL string into it's elements.extract a variable value from a string (url)
    * 
    * @url      string url to parse or retrieve current url if null
    *
    * @return   array  returns an associative array containing any of the various components 
-   *                  of the URL that are present.
+   *                  of the URL that are present. Querystring elements are returned in sub-array (elements.queryString) 
    *                  http://php.net/manual/en/function.parse-url.php
    *
    */

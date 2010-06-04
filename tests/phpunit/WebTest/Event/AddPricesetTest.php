@@ -47,16 +47,16 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
       // Log in using webtestLogin() method
       $this->webtestLogin();
 
-      // Go directly to the URL of the screen that you will be testing (New Event).
-      $this->open($this->sboxPath . "civicrm/admin/price&reset=1&action=add");
-
       $setTitle = 'Conference Fees - '.substr(sha1(rand()), 0, 7);
       $usedFor = 'Event';
       $setHelp = "Select your conference options.";
       $this->_testAddSet( $setTitle, $usedFor, $setHelp );
 
+      // Get the price set id ($sid) by retrieving and parsing the URL of the New Price Field form
+      // which is where we are after adding Price Set.
       $elements = $this->parseURL( );
-      $this->assertType( "numeric", $elements['queryString']['sid'] );
+      $sid = $elements['queryString']['sid'];
+      $this->assertType( "numeric", $sid );
 
       $validStrings = array( );
 
@@ -66,12 +66,15 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
                        "Evening Sessions" => "CheckBox",
                      );
       $this->_testAddPriceFields( $fields, $validateStrings );
+      // var_dump($validateStrings);
       
-      $this->_testVerifyPriceSet( $fields, $elements['queryString']['sid'] );      
+      // load the Price Set Preview and check for expected values
+      $this->_testVerifyPriceSet( $validateStrings, $sid );      
   }
 
  
   function _testAddSet( $setTitle, $usedFor, $setHelp ) {
+      $this->open($this->sboxPath . "civicrm/admin/price&reset=1&action=add");
       $this->waitForPageToLoad('30000');
       $this->waitForElementPresent("_qf_Set_next-bottom");
 
@@ -99,40 +102,33 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
           $this->type("label", $label);
           $this->select("html_type", "value={$type}");
 
-         switch ($type) {
+          switch ($type) {
              case 'Text':
-                 $validateStrings[] = "525.00";
+                $validateStrings[] = "525.00";
                 $this->type("price", "525.00");
                 $this->check("is_required");
                 break;
              case 'Select':
-                
                 $options = array( 1 => array( 'label' => "Chicken",
                                               'name'  => "30.00" ),
                                   2 => array( 'label' => "Vegetarian", 
                                               'name'  => "25.00" ) );
-                foreach ( $options as $oIndex => $oValue ) {
-                    $validateStrings[] = $oValue['label'];
-                    $validateStrings[] = $oValue['name'];
-                    $this->type("option_label_{$oIndex}", $oValue['label'] ); 
-                    $this->type("option_name_{$oIndex}" , $oValue['name']  ); 
-                    $this->click("link=another choice");
-                }
+                $this->addMultipleChoiceOptions( $options, $validateStrings );
                 break;
              case 'Radio':
-                $this->type("option_label_1", "Yes");
-                $this->type("option_name_1", "50.00");
-                $this->click("link=another choice");
-                $this->type("option_label_2", "No");
-                $this->type("option_name_2", "0");
+                $options = array( 1 => array( 'label' => "Yes",
+                                              'name'  => "50.00" ),
+                                  2 => array( 'label' => "No", 
+                                              'name'  => "0" ) );
+                $this->addMultipleChoiceOptions( $options, $validateStrings );
                 $this->check("is_required");
                 break;
              case 'CheckBox':
-                $this->type("option_label_1", "First Night");
-                $this->type("option_name_1", "15.00");
-                $this->click("link=another choice");
-                $this->type("option_label_2", "Second Night");
-                $this->type("option_name_2", "15.00");
+                $options = array( 1 => array( 'label' => "First Night",
+                                              'name'  => "15.00" ),
+                                  2 => array( 'label' => "Second Night", 
+                                              'name'  => "15.00" ) );
+                $this->addMultipleChoiceOptions( $options, $validateStrings );
                 break;
              default:
                 break;
@@ -144,21 +140,21 @@ class WebTest_Event_AddPricesetTest extends CiviSeleniumTestCase {
   }
 
   
-  function _testVerifyPriceSet( &$fields, $sid ){
+  function _testVerifyPriceSet( $validateStrings, $sid ){
       // verify Price Set at Preview page
       // start at Manage Price Sets listing
       $this->open($this->sboxPath . "civicrm/admin/price?reset=1");
       $this->waitForPageToLoad('30000');
 
-      // Fixme: need to figure out a way to address the correct row
+      // Use the price set id ($sid) to pick the correct row
       $this->click("css=tr#row_{$sid} a[title='Preview Price Set']");
       
       $this->waitForPageToLoad('30000');
       // Look for Register button
       $this->waitForElementPresent("_qf_Preview_cancel-bottom");
       
-      // Check for correct event info strings
-      $this->_checkStrings( array_keys( $fields ) );
+      // Check for expected price set field strings
+      $this->assertStringsPresent( $validateStrings );
   }
 
 }
