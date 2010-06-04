@@ -273,6 +273,6 @@
     {/if}
 
     <div id="crm-submit-buttons">
-        {include file="CRM/common/formButtons.tpl"}
+        {include file="CRM/common/formButtons.tpl" location="bottom"}
     </div>
 </div>

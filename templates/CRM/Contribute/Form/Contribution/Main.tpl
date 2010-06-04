@@ -283,7 +283,7 @@ function clearAmountOther() {
     {/if}
     </div>
     <div id="crm-submit-buttons">
-        {include file="CRM/common/formButtons.tpl"}
+        {include file="CRM/common/formButtons.tpl" location="bottom"}
     </div>
     {if $footer_text}
     	<div id="footer_text" class="crm-section contribution_footer_text-section">
