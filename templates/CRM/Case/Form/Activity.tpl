@@ -210,7 +210,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
            <tr>
               <td colspan="2">{include file="CRM/Form/attachment.tpl"}</td>
            </tr>
-           {if $searchRows} {* We've got case role rows to display for "Send Copy To" feature *}
+           {if $searchRows} {* We have got case role rows to display for "Send Copy To" feature *}
             <tr>
                 <td colspan="2">
                     <div id="sendcopy" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
@@ -288,7 +288,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                 <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
                                         {literal}
                                         <script type="text/javascript">
-                                                               $("select[multiple]").crmasmSelect({
+                                                               cj("select[multiple]").crmasmSelect({
                                                                         addItemTarget: 'bottom',
                                                                         animate: true,
                                                                         highlight: true,
@@ -302,6 +302,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
              </tr>
              {/if}
            {/if}
+           <tr class="crm-case-activity-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>
        </table>
      
      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
