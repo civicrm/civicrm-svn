@@ -642,7 +642,7 @@ function addRole() {
   {foreach from=$tagset item=displayTagset}
       {if $displayTagset.entityTagsArray}
           <div class="crm-block crm-content-block crm-case-caseview-display-tagset">
-              {$displayTagset.parentName}:
+              &nbsp;&nbsp;{$displayTagset.parentName}:
               {foreach from=$displayTagset.entityTagsArray item=val name="tagsetList"}
                   &nbsp;{$val.name}{if !$smarty.foreach.tagsetList.last},{/if}
               {/foreach}
