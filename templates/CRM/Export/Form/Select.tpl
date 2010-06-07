@@ -36,7 +36,7 @@
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
  <div id="export-type">
   <table class="form-layout-compressed">
-      <tr class="crm-export-form-block-exportOption">
+      <tr class="crm-export-form-block-records">
          <td class="label"></td><td>{ts count=$totalSelectedRecords plural='%count records selected for export.'}One record selected for export.{/ts}</td>
       </tr> 
       <tr class="crm-export-form-block-exportOption">
