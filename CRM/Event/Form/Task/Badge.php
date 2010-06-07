@@ -61,10 +61,18 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
     {
         $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
         if ( $this->_context == 'view' ) {
-            $participantID = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, true );
+            $this->_single = true;
+
+            $participantID = CRM_Utils_Request::retrieve( 'id' , 'Positive', $this, true );
+            $contactID     = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true );
             $this->_participantIds  = array( $participantID );
             $this->_componentClause = " civicrm_participant.id = $participantID ";
-            $this->assign( 'totalSelectedParticipants', 1 );             
+            $this->assign( 'totalSelectedParticipants', 1 );
+
+            // also set the user context to send back to view page
+            $session =& CRM_Core_Session::singleton( );
+            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/contact/view/participant',
+                                                              "reset=1&action=view&id={$participantID}&cid={$contactID}" ) );
         } else {
             parent::preProcess( );
         }
@@ -90,7 +98,9 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
                    ts('Select Name Badge format'),
                    array( '' => ts('- select -')) + $label, true);
 
-        $this->addDefaultButtons( ts('Make Event Badges'));
+        $next = 'next';
+        $back = $this->_single ? 'cancel' : 'back';
+        $this->addDefaultButtons( ts('Make Event Badges'), $next, $back );
        
     }
     
