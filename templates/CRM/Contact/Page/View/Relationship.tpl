@@ -94,20 +94,16 @@
 
   {if $action NEQ 1} {* show 'no relationships' message - unless already in 'add' mode. *}
        <div class="messages status">
-           <dl>
-           <dt><div class="icon inform-icon"></div></dt>
+            <div class="icon inform-icon"></div>
            {capture assign=crmURL}{crmURL p='civicrm/contact/view/rel' q="cid=`$contactId`&action=add&reset=1"}{/capture}
-           <dd>
-                {if $permission EQ 'edit'}
+           {if $permission EQ 'edit'}
                     {ts 1=$crmURL}There are no Relationships entered for this contact. You can <a accesskey="N" href='%1'>add one</a>.{/ts}
                 {elseif ! $relationshipTabContext}
                     {ts}There are no related contacts / organizations on record for you.{/ts}
                 {else}
                     {ts}There are no Relationships entered for this contact.{/ts}
                 {/if}
-           </dd>
-           </dl>
-      </div>
+        </div>
   {/if}
 {/if}
 </div>

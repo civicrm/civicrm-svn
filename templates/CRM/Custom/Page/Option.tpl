@@ -30,7 +30,7 @@
 {if $customOption}
     {if $reusedNames}
         <div class="message status">
-            <dl><dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt><dd>{ts 1=$reusedNames}These Multiple Choice Options are shared by the following custom fields: %1{/ts}</dd></dl>
+            <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt><dd>{ts 1=$reusedNames}These Multiple Choice Options are shared by the following custom fields: %1{/ts}
         </div>
     {/if}
     

@@ -209,10 +209,8 @@ invert              = 0
 }
 {elseif $statusMessage}
     <div class="messages status">
-      <dl>
-        <dt><div class="icon inform-icon"></div></dt>
-        <dd>{$statusMessage}</dd>
-      </dl>
+    <div class="icon inform-icon"></div>
+       {$statusMessage}
     </div>
 {/if}
 {literal}

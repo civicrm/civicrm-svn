@@ -93,24 +93,20 @@
 {* No groups to list. Check isSearch flag to see if we're in a search or not. Display 'add group' prompt if user has 'edit groups' permission. *}
 {elseif $isSearch eq 1 OR $groupExists}
     <div class="status messages">
-        <dl>
-            <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
-            {capture assign=browseURL}{crmURL p='civicrm/group' q="reset=1"}{/capture}
-            <dd>
-                {ts}No matching Groups found for your search criteria. Suggestions:{/ts}
-                <div class="spacer"></div>
-                <ul>
+             <div class="icon inform-icon"></div>
+             {capture assign=browseURL}{crmURL p='civicrm/group' q="reset=1"}{/capture}
+             {ts}No matching Groups found for your search criteria. Suggestions:{/ts}
+             <div class="spacer"></div>
+              <ul>
                 <li>{ts}Check your spelling.{/ts}</li>
                 <li>{ts}Try a different spelling or use fewer letters.{/ts}</li>
                 <li>{ts}Make sure you have enough privileges in the access control system.{/ts}</li>
-                </ul>
-                {ts 1=$browseURL}Or you can <a href='%1'>browse all available Groups</a>.{/ts}
-            </dd>
-        </dl>
-    </div>
+              </ul>
+             {ts 1=$browseURL}Or you can <a href='%1'>browse all available Groups</a>.{/ts}
+     </div>
 {else}
     <div class="status messages">
-            <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
+            <div class="icon inform-icon"></div>
             {capture assign=crmURL}{crmURL p='civicrm/group/add' q="reset=1"}{/capture}
             {ts}No Groups have been created for this site.{/ts}
                 {if $groupPermission eq 1}
