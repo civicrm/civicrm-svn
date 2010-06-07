@@ -602,6 +602,10 @@ class CRM_Utils_Rule
         }
         return false;
     }
+
+    static function qfKey( $key ) {
+        
+    }
 }
 
 

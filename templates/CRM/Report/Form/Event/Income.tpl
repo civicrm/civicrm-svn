@@ -25,7 +25,7 @@
 *}
 {* this div is being used to apply special css *}
     {if !$section }
-    <div class="crm-block crm-form-block">         
+    <div class="crm-block crm-form-block crm-report-field-form-block">         
     {include file="CRM/Report/Form/Fields.tpl"}
        </div>
     {/if}    

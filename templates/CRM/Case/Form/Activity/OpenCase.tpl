@@ -24,18 +24,20 @@
  +--------------------------------------------------------------------+
 *}
 {if $context ne 'caseActivity'}
-    <tr class="crm-case-form-block-case_type_id">
+    <div class="crm-block crm-form-block crm-case-opencase-form-block"
+    <tr class="crm-case-opencase-form-block-case_type_id">
 	<td class="label">{$form.case_type_id.label}{help id="id-case_type" file="CRM/Case/Form/Case.hlp"}</td>
 	<td>{$form.case_type_id.html}</td>
     </tr>
-    <tr class="crm-case-form-block-status_id">
+    <tr class="crm-case-opencase-form-block-status_id">
 	<td class="label">{$form.status_id.label}</td>
 	<td>{$form.status_id.html}</td>
     </tr>
-    <tr class="crm-case-form-block-start_date">
+    <tr class="crm-case-opencase-form-block-start_date">
         <td class="label">{$form.start_date.label}</td>
         <td>
             {include file="CRM/common/jcalendar.tpl" elementName=start_date}       
         </td>
     </tr>
+    </div>
 {/if}

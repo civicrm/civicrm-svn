@@ -24,7 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 {capture assign=docLink}{docURL page="CiviContribute Payment Processor Configuration"}{/capture}
-<div class="crm-block crm-form-block crm-payment_processor-form-block">
 <div id="help">
     {ts}You can configure one or more Payment Processors for your CiviCRM installation. You must then assign an active Payment Processor to each <strong>Online Contribution Page</strong> and each paid <strong>Event</strong>.{/ts} {$docLink}
 </div>
@@ -51,7 +50,7 @@
         <tr id="row_{$row.id}" class="crm-payment_processor {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
             <td class="crm-payment_processor-name">{$row.name}</td>
             <td class="crm-payment_processor-payment_processor_type">{$row.payment_processor_type}</td>
-            <td class="crm-payment_processor-description">{$row.description}</td><
+            <td class="crm-payment_processor-description">{$row.description}</td>
             <td id="row_{$row.id}_status" class="crm-payment_processor-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
             <td class="crm-payment_processor-is_default">{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
@@ -74,4 +73,3 @@
      </div>    
 {/if}
 {/if}
-</div>

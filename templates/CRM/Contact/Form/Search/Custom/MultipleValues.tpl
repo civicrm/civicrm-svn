@@ -27,17 +27,17 @@
 {assign var="showBlock" value="'searchForm'"}
 {assign var="hideBlock" value="'searchForm_show','searchForm_hide'"}
 
-<div class="crm-block crm-form-block crm-search-form-block">
 <div id="searchForm_show" class="form-item">
     <a href="#" onclick="hide('searchForm_show'); show('searchForm'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}" /></a>
     <label>{ts}Edit Search Criteria{/ts}</label>
 </div>
 
-<div id="searchForm" class="form-item">
+<div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-multipleValues-form-block">
     <fieldset>
-        <legend><span id="searchForm_hide"><a href="#" onclick="hide('searchForm','searchForm_hide'); show('searchForm_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}" /></a></span>{ts}Search Criteria{/ts}</legend>    
+        <legend><span id="searchForm_hide"><a href="#" onclick="hide('searchForm','searchForm_hide'); show('searchForm_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}" /></a></span>{ts}Search Criteria{/ts}</legend>  
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>  
         <table class="form-layout-compressed">
-            <tr>
+            <tr class="crm-contact-custom-search-multipleValues-form-block-sort_name">
                 <td><label>{$form.sort_name.label}</label></td>
                 <td>{$form.sort_name.html}</td>
             </tr>
@@ -47,7 +47,7 @@
             {else}
                 {assign var="boxClass" value="listing-box"}
             {/if}
-            <tr>
+            <tr class="crm-contact-custom-search-multipleValues-form-block-custom_group">
                 <td><label>{ts}Group(s){/ts}</label></td>
                 <td>
                     <div class="{$boxClass}">
@@ -59,11 +59,8 @@
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>{$form.buttons.html}</td>
-            </tr>
         </table>
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     </fieldset>
 </div>
 
@@ -149,4 +146,3 @@
     on_load_init_blocks( showBlock, hideBlock );
 </script>
 
-</div>

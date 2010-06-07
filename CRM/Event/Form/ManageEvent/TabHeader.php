@@ -109,10 +109,11 @@ class CRM_Event_Form_ManageEvent_TabHeader {
             
             //add qf key
             $qfKey = $form->get( 'qfKey' );
+            $form->assign( 'qfKey', $qfKey );
             
             foreach ( $tabs as $key => $value ) {
                 $tabs[$key]['link'] = CRM_Utils_System::url( "civicrm/event/manage/{$key}",
-                                                             "{$reset}action=update&snippet=5&id={$eventID}&qfKey={$qfKey}" );
+                                                             "{$reset}action=update&snippet=4&id={$eventID}&qfKey={$qfKey}" );
                 $tabs[$key]['active'] = $tabs[$key]['valid'] = true;
             }
             

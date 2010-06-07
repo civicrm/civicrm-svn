@@ -115,25 +115,25 @@
             </thead>
             <tbody>
         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class=" crm-admin crm-admin_{$row.id} {if NOT $row.is_active} disabled{/if}">
+        <tr id="row_{$row.id}" class=" crm-admin-options crm-admin-options_{$row.id} {if NOT $row.is_active} disabled{/if}">
             {if $showComponent}
-                <td class="crm-admin-component_name">{$row.component_name}</td>
+                <td class="crm-admin-options-component_name">{$row.component_name}</td>
             {/if}
-	        <td class="crm-admin-label">{$row.label}</td>
+	        <td class="crm-admin-options-label">{$row.label}</td>
 	    {if $gName eq "case_status"}				
-		<td class="crm-admin-grouping">{$row.grouping}</td>
+		<td class="crm-admin-options-grouping">{$row.grouping}</td>
             {/if}	
-	        <td class="crm-admin-value">{$row.value}</td>
+	        <td class="crm-admin-options-value">{$row.value}</td>
 		{if $showCounted}
-		<td class="yes-no crm-admin-filter">{if $row.filter eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
+		<td class="yes-no crm-admin-options-filter">{if $row.filter eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
 		{/if}
             {if $showVisibility}<td class="crm-admin-visibility_label">{$row.visibility_label}</td>{/if}
-	        <td class="crm-admin-description">{$row.description}</td>	
-	        <td class="nowrap crm-admin-order">{$row.order}</td>
+	        <td class="crm-admin-options-description">{$row.description}</td>	
+	        <td class="nowrap crm-admin-options-order">{$row.order}</td>
             {if $showIsDefault}
-	    	<td class="crm-admin-is_default" align="center">{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>{/if}
-	        <td class="crm-admin-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td class="crm-admin-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	    	<td class="crm-admin-options-is_default" align="center">{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>{/if}
+	        <td class="crm-admin-options-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
 	        <td class="order hiddenElement crm-participant-weight">{$row.weight}</td>
         </tr>

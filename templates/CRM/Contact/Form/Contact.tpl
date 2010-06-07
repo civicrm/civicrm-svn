@@ -40,15 +40,15 @@
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body" id="contactDetails">
     <div id="contactDetails">
-        <div class="section contact_basic_information-section">
+        <div class="crm-section contact_basic_information-section">
             {include file="CRM/Contact/Form/Edit/$contactType.tpl"}
         </div>
-        <table class="section contact_information-section form-layout-compressed">
+        <table class="crm-section contact_information-section form-layout-compressed">
             {foreach from=$blocks item="label" key="block"}
                {include file="CRM/Contact/Form/Edit/$block.tpl"}
             {/foreach}
 		</table>
-		<table class="section contact_source-section form-layout-compressed">
+		<table class="crm-section contact_source-section form-layout-compressed">
             <tr class="last-row">
               <td>{$form.contact_source.label}<br />
                   {$form.contact_source.html|crmReplace:class:twenty}

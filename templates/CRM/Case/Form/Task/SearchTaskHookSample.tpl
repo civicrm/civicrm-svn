@@ -16,9 +16,9 @@
 
   {foreach from=$rows item=row}
     <tr class="{cycle values="odd-row,even-row"}">
-        <td class="crm-case-display_name">{$row.display_name}</td>
-        <td class="crm-case-start_date">{$row.start_date}</td>
-        <td class="crm-case-status">{$row.status}</td>
+        <td class="crm-case-searchtaskhooksample-display_name">{$row.display_name}</td>
+        <td class="crm-case-searchtaskhooksample-start_date">{$row.start_date}</td>
+        <td class="crm-case-searchtaskhooksample-status">{$row.status}</td>
     </tr>
   {/foreach}
 </table>

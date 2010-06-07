@@ -66,6 +66,8 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
      */ 
     protected $_single;
     
+    protected $_action;
+    
     /**
      * are we actually managing an event template?
      * @var boolean
@@ -78,6 +80,8 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
      */
     protected $_templateId;
     
+    protected $_cancelURL = null;
+    
     /** 
      * Function to set variables up before form is built 
      *                                                           
@@ -86,30 +90,74 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
      */ 
     function preProcess( ) 
     {
-        if ( !$this->_action ) {
-            $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false);
+        $config = CRM_Core_Config::singleton( );
+        if ( in_array("CiviEvent", $config->enableComponents) ) {
+            $this->assign('CiviEvent', true );
         }
+        
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'add', 'REQUEST' );
+        
+        $this->assign( 'action', $this->_action );
 
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false, 0, 'REQUEST' );
+        
         if ( $this->_id ) {
+            $this->assign( 'eventId', $this->_id );
             $this->add( 'hidden', 'id', $this->_id );
             $this->_single = true;
-            $participantListingID = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $this->_id, 'participant_listing_id' );
+            
+            $params = array( 'id' => $this->_id );
+            require_once 'CRM/Event/BAO/Event.php';
+            CRM_Event_BAO_Event::retrieve( $params, $eventInfo );
+
+            // its an update mode, do a permission check
+            require_once 'CRM/Event/BAO/Event.php';
+            if ( ! CRM_Event_BAO_Event::checkPermission( $this->_id, CRM_Core_Permission::EDIT ) ) {
+                CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );
+            }
+            
+            $participantListingID = CRM_Utils_Array::value( 'participant_listing_id', $eventInfo );
+            //CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Event', $this->_id, 'participant_listing_id' );
             if ( $participantListingID ) {
                 $participantListingURL = CRM_Utils_System::url( 'civicrm/event/participant',
                                                                 "reset=1&id={$this->_id}",
                                                                 true, null, true, true );
                 $this->assign( 'participantListingURL', $participantListingURL );
             }
-            $this->assign( 'eventId', $this->_id );
+            
+            $this->assign( 'isOnlineRegistration', CRM_Utils_Array::value( 'is_online_registration', $eventInfo ));
+            
+            $this->assign( 'id',     $this->_id );
         }
-
-        $this->_isTemplate = CRM_Utils_Request::retrieve('is_template', 'Boolean', $this);
-        if ( !$this->_isTemplate && $this->_id ) {
-            $this->_isTemplate = CRM_Core_DAO::getFieldValue('CRM_Event_DAO_Event', $this->_id, 'is_template');
+        
+        // figure out whether we’re handling an event or an event template
+        if ( $this->_id ) {
+            $this->_isTemplate = CRM_Utils_Array::value( 'is_template', $eventInfo );
+        } elseif ( $this->_action & CRM_Core_Action::ADD) {
+            $this->_isTemplate = CRM_Utils_Request::retrieve('is_template', 'Boolean', $this);
         }
         
         $this->assign('isTemplate', $this->_isTemplate);
+        
+        if ( $this->_id ) {
+            if ( $this->_isTemplate ) {
+                $title = CRM_Utils_Array::value( 'template_title', $eventInfo );
+                CRM_Utils_System::setTitle(ts('Edit Event Template') . " - $title");
+            } else {
+                $title = CRM_Utils_Array::value( 'title', $eventInfo );
+                CRM_Utils_System::setTitle(ts('Configure Event') . " - $title");
+            }
+            $this->assign( 'title', $title );
+        } else if ( $this->_action & CRM_Core_Action::ADD ) {
+            if ( $this->_isTemplate ) {
+                $title = ts('New Event Template');
+                CRM_Utils_System::setTitle( $title );
+            } else {
+                $title = ts('New Event');
+                CRM_Utils_System::setTitle( $title );
+            }
+            $this->assign( 'title', $title );
+        }
         
         require_once 'CRM/Event/PseudoConstant.php';
         $statusTypes        = CRM_Event_PseudoConstant::participantStatus(null, 'is_counted = 1');
@@ -130,8 +178,6 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             if ( $this->_id ) {
                 $this->_doneUrl = CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 
                                                          "action=update&reset=1&id={$this->_id}" );
-                $breadCrumb     = array( array('title' => ts('Configure Event'),
-                                               'url'   => $this->_doneUrl) );
             } else {
                 $this->_doneUrl = CRM_Utils_System::url( 'civicrm/event/manage', 
                                                          'reset=1' );
@@ -186,6 +232,22 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
         $className = CRM_Utils_System::getClassName($this);
         $session = & CRM_Core_Session::singleton( );
         
+        $this->_cancelURL = CRM_Utils_Array::value( 'cancelURL', $_POST );
+        
+        if ( !$this->_cancelURL ) {
+            if ( $this->_isTemplate ) {
+                $this->_cancelURL = CRM_Utils_System::url('civicrm/admin/eventTemplate', 
+                                                          'reset=1');
+            } else {
+                $this->_cancelURL = CRM_Utils_System::url('civicrm/event/manage', 
+                                                          'reset=1');
+            }
+        }
+        
+        if ( $this->_cancelURL ) {
+            $this->addElement( 'hidden', 'cancelURL', $this->_cancelURL );
+        }
+        
         $buttons = array( );
         if ( $this->_single ) {
             // make this form an upload since we dont know if the custom data injected dynamically
@@ -220,7 +282,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             $this->addButtons( $buttons );
 
         }
-
+        $session->replaceUserContext( $this->_cancelURL );
         $this->add('hidden', 'is_template', $this->_isTemplate);
     }
 
@@ -231,11 +293,13 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
             $className = CRM_Utils_String::getClassName( $this->_name );
             if ( $className == 'EventInfo' ) {
                 $subPage = 'eventInfo';
+            } elseif ( $className == 'Event' ) {
+                $subPage = 'friend';
             } else {
                 $subPage = strtolower( $className );
             }
             
-            CRM_Core_Session::setStatus( ts("'%1' information has been saved.", array(1 => $className)) );
+            CRM_Core_Session::setStatus( ts("'%1' information has been saved.", array(1 => ( $subPage == 'friend' )?'Friend':$className ) ) );
             
             // we need to call the hook manually here since we redirect and never 
             // go back to CRM/Core/Form.php
@@ -244,15 +308,20 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
                                          $this );
             
             if ( $this->controller->getButtonName('submit') == "_qf_{$className}_upload_done" ) {
-                CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', 
-                                                                   'reset=1' ) );
+                if ( $this->_isTemplate ) {
+                    CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/eventTemplate', 
+                                                                       'reset=1' ) );
+                } else {
+                    CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', 
+                                                                       'reset=1' ) );
+                }
             } else {
                 CRM_Utils_System::redirect( CRM_Utils_System::url( "civicrm/event/manage/{$subPage}",
                                                                    "action=update&reset=1&id={$this->_id}" ) );
             }
         }
     }
-
+    
     function getTemplateFileName( )
     {
         if ( $this->controller->getPrint( ) == CRM_Core_Smarty::PRINT_NOFORM ||

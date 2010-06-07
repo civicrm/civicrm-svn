@@ -29,16 +29,15 @@
 <div id="help">
     {ts}Edit <strong>Premiums Settings</strong> to enable the Premiums section for this Online Contribution Page, and customize the title and introductory message (e.g ...in appreciation of your support, you will be able to select from a number of exciting thank-you gifts...). You can optionally provide a contact email address and/or phone number for inquiries.{/ts}
     {ts}Then select and review the premiums that you want to offer on this contribution page.{/ts}
-</div>
- 
+</div> 
 <div id="id_form_show" class="section-hidden section-hidden-border">
     <a href="#" onclick="hide('id_form_show'); show('id_form'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a><label>{ts}Premiums Settings{/ts}</label><br />
 </div>
-  <div id="id_form" class="crm-block crm-form-block crm-contribution-premium-form-block">
-    <fieldset><legend><a href="#" onclick="hide('id_form'); show('id_form_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Premiums Settings{/ts}</legend>
+  <div id="id_form" class="crm-block crm-form-block crm-contribution-contributionpage-premium-form-block">
+   <a href="#" onclick="hide('id_form'); show('id_form_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}"/></a>{ts}Premiums Settings{/ts}</legend>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
      <table class="form-layout-compressed">
-     <tr class="crm-contribution-form-block-premiums_active">
+     <tr class="crm-contribution-contributionpage-premium-form-block-premiums_active">
         <td class="label">{$form.premiums_active.label}</td>
         <td class="html-adjust">{$form.premiums_active.html}<br />
      	   <span class="description">{ts}Is the Premiums section enabled for this Online Contributions page?{/ts}</span>
@@ -46,35 +45,35 @@
     </tr>
     </table>
     <table id= "premiumFields" class="form-layout-compressed">
-    <tr class="crm-contribution-form-block-premiums_intro_title">
+    <tr class="crm-contribution-contributionpage-premium-form-block-premiums_intro_title">
        <td class="label">{$form.premiums_intro_title.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_premiums' field='premiums_intro_title' id=$id}{/if}
        </td>
        <td class="html-adjust">{$form.premiums_intro_title.html}<br />
      	   <span class="description">{ts}Title to appear at the top of the Premiums section.{/ts}</span>
        </td>
     </tr>
-    <tr class="crm-contribution-form-block-premiums_intro_text">
+    <tr class="crm-contribution-contributionpage-premium-form-block-premiums_intro_text">
        <td class="label">{$form.premiums_intro_text.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_premiums' field='premiums_intro_text' id=$id}{/if}
        </td>
        <td class="html-adjust">{$form.premiums_intro_text.html}<br />
        	   <span class="description">{ts}Enter content for the introductory message. This will be displayed below the Premiums section title. You may include HTML formatting tags. You can also include images, as long as they are already uploaded to a server - reference them using complete URLs.{/ts}</span>
       </td>
     </tr>
-    <tr class="crm-contribution-form-block-premiums_contact_email">    
+    <tr class="crm-contribution-contributionpage-premium-form-block-premiums_contact_email">    
        <td class="label">{$form.premiums_contact_email.label}
        </td>
        <td class="html-adjust">{$form.premiums_contact_email.html}<br />
        	   <span class="description">{ts}This email address is included in automated contribution receipts if the contributor has selected a premium. It should be an appropriate contact mailbox for inquiries about premium fulfillment/shipping.{/ts}</span>
       </td>
     </tr>	
-    <tr class="crm-contribution-form-block-premiums_contact_phone">
+    <tr class="crm-contribution-contributionpage-premium-form-block-premiums_contact_phone">
        <td class="label">{$form.premiums_contact_phone.label}
        </td>
        <td class="html-adjust">{$form.premiums_contact_phone.html}<br />
        	   <span class="description">{ts}This phone number is included in automated contribution receipts if the contributor has selected a premium. It should be an appropriate phone number for inquiries about premium fulfillment/shipping.{/ts}</span>
       </td>
     </tr>
-    <tr class="crm-contribution-form-block-premiums_display_min_contribution">
+    <tr class="crm-contribution-contributionpage-premium-form-block-premiums_display_min_contribution">
        <td class="label">{$form.premiums_display_min_contribution.label}
        </td>
        <td class="html-adjust">{$form.premiums_display_min_contribution.html}<br />
@@ -83,31 +82,13 @@
     </tr>
     </table>
     {if  ! $showForm }   
-     {if $action ne 4}
-             <div id="crm-submit-buttons">	
-    <div class="spacer"></div>   
-         {$form.buttons.html}  
-    </div>
-    
-    {else}
-            <div id="crm-done-button">
-                {$form.done.html}
-         </div>
-    {/if} {* $action ne view *}
+     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {/if}   
-   
-  </fieldset>
 </div>
 
      {if $showForm }   
-     {if $action ne 4}
             <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-    {else}
-            <div id="crm-done-button">
-                {$form.done.html}
-         </div>
-    {/if} {* $action ne view *}
-    {/if}
+     {/if}
 
 <script type="text/javascript">
     var myElement1 = document.getElementById('id_form');

@@ -81,7 +81,9 @@ class CRM_Price_Form_Preview extends CRM_Core_Form
             require_once 'CRM/Price/BAO/Set.php';
             $this->_groupTree  = CRM_Price_BAO_Set::getSetDetail($groupId);
             $this->assign('preview_type', 'group');
+            $this->assign('setTitle', CRM_Price_BAO_Set::getTitle($groupId));
         }
+        
     }
     
     /**

@@ -117,7 +117,7 @@ class CRM_Upgrade_Form extends CRM_Core_Form {
 
         if ( !array_key_exists( $versionName, $incrementalPhpObject ) ) {
             require_once "CRM/Upgrade/Incremental/php/{$versionName}.php";
-            eval( "\$incrementalPhpObject[$versionName] = new CRM_Upgrade_Incremental_php_{$versionName};" );
+            eval( "\$incrementalPhpObject['$versionName'] = new CRM_Upgrade_Incremental_php_{$versionName};" );
         }
         return $incrementalPhpObject[$versionName];
     }

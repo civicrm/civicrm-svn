@@ -37,7 +37,7 @@
 {/if}
 <div class="crm-block crm-form-block crm-pledge-form-block">
 <fieldset><legend>{if $action eq 1 or $action eq 1024}{ts}New Pledge{/ts}{elseif $action eq 8}{ts}Delete Pledge{/ts}{else}{ts}Edit Pledge{/ts}{/if}</legend> 
- <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div> 
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 
    {if $action eq 8} 
       <div class="messages status"> 
           <div class="icon inform-icon"></div>

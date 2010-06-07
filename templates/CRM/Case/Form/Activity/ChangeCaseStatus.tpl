@@ -24,7 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {* Template for "Change Case Status" activities. *}
-    <tr class="crm-case-form-block-case_status_id">
+   <div class="crm-block crm-form-block crm-case-changecasestatus-form-block">
+    <tr class="crm-case-changecasestatus-form-block-case_status_id">
     	<td class="label">{$form.case_status_id.label}</td>
 	<td>{$form.case_status_id.html}</td>
     </tr>     
@@ -33,3 +34,4 @@
             <td colspan="2">{include file="CRM/Custom/Form/CustomData.tpl" noPostCustomButton=1}</td>
         </tr>
     {/if}
+   </div>

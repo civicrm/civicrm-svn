@@ -24,8 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {literal}
-
-<script>
+<script type="text/javascript">
  cj({/literal}{if $isSnippet }document{else}'#crm-container'{/if}{literal})
  	.bind('click', function(event) {
     if (cj(event.target).is('.btn-slide')) {
@@ -35,8 +34,4 @@
 	} 
   });
 </script>
-
-
-
-
 {/literal}

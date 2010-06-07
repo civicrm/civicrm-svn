@@ -28,7 +28,6 @@
     {ts}These settings define the URLs used to access CiviCRM resources (CSS files, Javascript files, images, etc.). Default values will be inserted the first time you access CiviCRM - based on the CIVICRM_UF_BASEURL specified in your installation's settings file (civicrm.settings.php).{/ts}
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-<div class="form-item">
 <table class="form-layout">
     <tr class="crm-url-form-block-userFrameworkResourceURL">
         <td class="label">
@@ -63,6 +62,5 @@
         </td>
     </tr>
 </table>
-</div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

@@ -25,13 +25,13 @@
 *}
 {* Enduser Tell-a-Friend form. *} 
 {if $status eq 'thankyou' } {* Form has been submitted. *}
-    <div class="section tell_friend_thankyou-section">
+    <div class="crm-section tell_friend_thankyou-section">
         {$thankYouText}
     </div>
     
     {* Add button for donor to create their own Personal Campaign page *}
     {if $linkText}
- 	<div class="section create_pcp_link-section">
+ 	<div class="crm-section create_pcp_link-section">
         <a href="{$linkTextUrl}" title="{$linkText}" class="button"><span>&raquo; {$linkText}</span></a>
     </div><br /><br />
     {/if}

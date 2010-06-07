@@ -16,10 +16,10 @@
 
   {foreach from=$rows item=row}
     <tr class="{cycle values="odd-row,even-row"}">
-        <td>{$row.display_name}</td>
-        <td>{$row.amount}</td>
-        <td>{$row.register_date}</td>
-        <td>{$row.source}</td>
+        <td class="crm-event-searchtaskhooksample-display_name">{$row.display_name}</td>
+        <td class="crm-event-searchtaskhooksample-amount">{$row.amount}</td>
+        <td class="crm-event-searchtaskhooksample-register_date>{$row.register_date}</td>
+        <td class="crm-event-searchtaskhooksample-source">{$row.source}</td>
     </tr>
   {/foreach}
 </table>

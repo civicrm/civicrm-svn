@@ -68,7 +68,7 @@
 <table class="form-layout-compressed">
 <tr>
     <td>
-     <a href="{$configPagesURL}" class="button"><span>&raquo; {ts}Manage Contribution Pages{/ts}
+     <a href="{$configPagesURL}" class="button"><span>{ts}Manage Contribution Pages{/ts}
        </span></a>
     </td>
     <td><a href="{$newPageURL}" class="button"><span><div class="icon add-icon"></div>{ts}Add Contribution Page{/ts}

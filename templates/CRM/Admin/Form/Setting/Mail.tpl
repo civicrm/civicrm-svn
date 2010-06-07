@@ -30,7 +30,7 @@
 </div>
 <fieldset><legend>{ts}CiviMail Configuration{/ts}</legend>
       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>                         
-      <table>
+      <table class="form-layout-compressed">
         <tr class="crm-mail-form-block-mailerPeriod">
             <td class="label">{$form.mailerPeriod.label}</td><td>{$form.mailerPeriod.html}<br />      
             <span class="description">{ts}Number of seconds between delivery attempts for new outgoing mailings.{/ts}</span></td>

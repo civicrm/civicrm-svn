@@ -191,7 +191,7 @@ class CRM_Activity_Import_Form_MapField extends CRM_Core_Form
             $this->assign( 'rowDisplayCount', 2 );
         }
         $highlightedFields = array();
-        $requiredFields    = array( 'activity_date_time', 'activity_type_id', 'activity_name', 'target_contact_id' );
+        $requiredFields    = array( 'activity_date_time', 'activity_type_id', 'activity_name', 'target_contact_id','activity_subject' );
         foreach ( $requiredFields as $val ) {
             $highlightedFields[] = $val;
         }

@@ -26,13 +26,13 @@
 {ts 1=$totalSelectedCases}Number of selected cases: %1{/ts}
 
 {if $rows } 
-<div>
+<div class="crm-block-crm-form-block crm-case-task-form-block">
 <table width="30%">
   <tr class="columnheader">
     <th>{ts}Name{/ts}</th>
   </tr>
 {foreach from=$rows item=row}
-<tr class="{cycle values="odd-row,even-row"} crm-case-displayName">
+<tr class="{cycle values="odd-row,even-row"} crm-case-task-displayName">
 <td>{$row.displayName}</td>
 </tr>
 {/foreach}

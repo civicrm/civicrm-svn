@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="batch-update crm-block crm-form-block crm-event_task_batch-form-block">
+<div class="batch-update crm-block crm-form-block crm-event-batch-form-block">
 <fieldset>
 <div id="help">
     {if $context EQ 'statusChange'} {* Update Participant Status task *}

@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-import_map_table-form-block">
+<div class="crm-block crm-form-block crm-import-maptable-form-block">
 
 {* Import Wizard - Data Mapping table used by MapFields.tpl and Preview.tpl *}
  <div id="map-field">
@@ -121,11 +121,11 @@
     	<span>{$form.saveMapping.html} &nbsp;&nbsp; {$form.saveMapping.label}</span>
     	<div id="saveDetails" class="form-item">
     	      <table class="form-layout-compressed">
-    		    <tr class="crm-import_map_table-form-block-saveMappingName">
+    		    <tr class="crm-import-maptable-form-block-saveMappingName">
                         <td class="label">{$form.saveMappingName.label}</td>
                         <td>{$form.saveMappingName.html}</td>
                     </tr>
-    		    <tr class="crm-import_map_table-form-block-saveMappingName">
+    		    <tr class="crm-import-maptable-form-block-saveMappingName">
                         <td class="label">{$form.saveMappingDesc.label}</td>
                         <td>{$form.saveMappingDesc.html}</td>
                     </tr>

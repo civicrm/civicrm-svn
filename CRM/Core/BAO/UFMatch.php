@@ -411,6 +411,7 @@ AND    domain_id    = %4
                 $dao =& CRM_Core_DAO::executeQuery( $query, $p );
             } else {
                 //else insert a new email record
+                require_once 'CRM/Core/DAO/Email.php';
                 $email = new CRM_Core_DAO_Email();
                 $email->contact_id  = $contactId;
                 $email->is_primary  = 1;

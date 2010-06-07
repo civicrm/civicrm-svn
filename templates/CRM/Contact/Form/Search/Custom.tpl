@@ -32,20 +32,18 @@
     <label>{ts}Edit Search Criteria{/ts}</label>
 </div>
 
-<div id="searchForm" class="form-item">
+<div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-form-block">
     <fieldset>
         <legend><span id="searchForm_hide"><a href="#" onclick="hide('searchForm','searchForm_hide'); show('searchForm_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}" /></a></span>{ts}Search Criteria{/ts}</legend>
-
-        <table class="form-layout">
+      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+        <table class="form-layout-compressed">
             {foreach from=$elements item=element}
-                <tr>
-                    <td class="font-size12pt">{$form.$element.label}</td><td>{$form.$element.html}</td>
+                <tr class="crm-contact-custom-search-form-block-{$element}">
+                    <td class="font-size12pt label">{$form.$element.label}</td><td>{$form.$element.html}</td>
                 </tr>
             {/foreach}
-            <tr>
-                <td colspan=2 class="label">{$form.buttons.html}</td>
-            </tr>
         </table>
+      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     </fieldset>
 </div>
 

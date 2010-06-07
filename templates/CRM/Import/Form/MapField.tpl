@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-import_map_field-form-block">
+<div class="crm-block crm-form-block crm-import-mapfield-form-block">
 {* Import Wizard - Step 2 (map incoming data fields) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
 
@@ -52,9 +52,7 @@ if ( document.getElementsByName("saveMapping")[0].checked ) {
 {/if}
 </script>
 
- <div class="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl" location="bottom"}
- </div>
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
  {$initHideBoxes}
 
 </div>

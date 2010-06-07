@@ -294,7 +294,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
                 unset( $fields['Individual'][$value], $fields['Household'][$value], $fields['Organization'][$value] );
                 continue;
             }
-            if ( is_array( $defaults['field_name'] ) 
+            if ( CRM_Utils_Array::value( 'field_name',$defaults ) 
                 && $defaults['field_name']['0'] == $value['field_type'] 
                 && $defaults['field_name']['1'] == $key ) {
                 continue;
@@ -571,7 +571,7 @@ class CRM_UF_Form_Field extends CRM_Core_Form
             $this->addElement('button', 'done', ts('Done'), array('onclick' => "location.href='civicrm/admin/uf/group/field?reset=1&action=browse&gid=" . $this->_gid . "'"));
         }
 
-        if ( $defaults['field_name'][1] == 'url-1' ) {
+        if ( CRM_Utils_Array::value( 1, $defaults['field_name'] ) == 'url-1' ) {
             $defaults['field_name'][1] = 'url' ; 
         }
         

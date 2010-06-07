@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Confirmation of membership deletes  *}
-<div class="crm-block crm-form-block crm-member_task_delete-form-block">
+<div class="crm-block crm-form-block crm-member-task-delete-form-block">
 <div class="crm-submit-buttons">
     {include file="CRM/common/formButtons.tpl" location="top"}
   </div>

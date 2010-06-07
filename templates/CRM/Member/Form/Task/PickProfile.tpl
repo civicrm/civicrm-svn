@@ -23,10 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-form crm-form-block crm-memberPickProfile-form-block">
+<div class="crm-form crm-form-block crm-member-task-pickprofile-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
    <table class="form-layout-compressed">
-     <tr class="crm-memberPickProfile-form-block-uf_group_id">
+     <tr class="crm-member-task-pickprofile-form-block-uf_group_id">
        <td class="label">{$form.uf_group_id.label}</td><td>{$form.uf_group_id.html}</td>
      </tr>
      <tr>	

@@ -50,7 +50,7 @@ function selectPremium(optionField) {
             <legend>{$premiumBlock.premiums_intro_title}</legend>
         {/if}
         {if $premiumBlock.premiums_intro_text}
-            <div id="premiums-intro" class="section premiums_intro-section">
+            <div id="premiums-intro" class="crm-section premiums_intro-section">
                 {$premiumBlock.premiums_intro_text}
             </div> 
         {/if}
