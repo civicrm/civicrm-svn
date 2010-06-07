@@ -450,7 +450,8 @@ div.spacer,
     display: block;
 } 
 
-#crm-container table.form-layout, 
+#crm-container table.form-layout,
+.ui-dialog-content table.form-layout, 
 #crm-container table.control-panel, 
 #crm-container table.no-border {
     margin: 0em;
@@ -503,7 +504,8 @@ div.spacer,
     text-align: center;
 }
 
-#crm-container .form-layout td.label, 
+#crm-container .form-layout td.label,
+.ui-dialog-content .form-layout td.label,
 #crm-container .form-layout-compressed td.label, 
 #crm-container .selector td.label, 
 #crm-container .form-layout-compressed th.label {

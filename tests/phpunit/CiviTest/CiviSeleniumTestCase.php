@@ -225,6 +225,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         $this->type("first_name", $fname);
         $this->type("last_name",  $lname);
+        $this->type("email-Primary", $email);
         $this->click("_qf_Edit_next");
 
         // Is new contact created?
