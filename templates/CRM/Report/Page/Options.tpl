@@ -33,7 +33,7 @@
     <div class="spacer"></div>
 {/if}
 {if $rows}
-    <div id="templateList">
+    <div id="optionList">
 	{strip}
 	{* handle enable/disable actions*}
  	{include file="CRM/common/enableDisable.tpl"}
@@ -56,19 +56,19 @@
 		</tr>
         </thead>
 		{foreach from=$rows item=row}
-		    <tr id="row_{$row.id}" class="crm-report {cycle values="odd-row,even-row"}{$row.class}{if NOT $row.is_active} crm-report-status_disable disabled{else} crm-report-status_enable{/if}">
- 		        <td>{$row.label}</td>	
-		        <td>{$row.value}</td>
-		        <td>{$row.description}</td>	
-		        <td class="nowrap">{$row.order}</td>
+		    <tr id="row_{$row.id}" class="crm-report {cycle values="odd-row,even-row"}{$row.class}{if NOT $row.is_active} crm-report-optionList crm-report-optionList-status_disable disabled{else} crm-report-optionList crm-report-optionList-status_enable{/if}">
+ 		        <td class="crm-report-optionList-label">{$row.label}</td>	
+		        <td class="crm-report-optionList-value">{$row.value}</td>
+		        <td class="crm-report-optionList-description">{$row.description}</td>	
+		        <td class="nowrap crm-report-optionList-order">{$row.order}</td>
 		        {if $showIsDefault}
-		            <td>{$row.default_value}</td>
+		            <td class="crm-report-optionList-default_value">{$row.default_value}</td>
 		        {/if}
-		        <td>{if $row.is_reserved eq 1}{ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-    			<td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	    		<td>{$row.component_name}</td>	
-		        <td>{$row.action}</td>
-                <td class="order hiddenElement">{$row.weight}</td>
+		        <td class="crm-report-optionList-is_reserved">{if $row.is_reserved eq 1}{ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+    			<td class="crm-report-optionList-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	    		<td class="crm-report-optionList-component_name">{$row.component_name}</td>	
+		        <td class="crm-report-optionList-action">{$row.action}</td>
+                        <td class="order hiddenElement">{$row.weight}</td>
 		    </tr>
 		{/foreach}
 	    </table>

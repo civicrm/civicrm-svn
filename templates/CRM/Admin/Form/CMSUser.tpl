@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is for synchronizing CMS user*}
-<div class="crm-block crm-form-block crm-cms_user-form-block">
+<div class="crm-block crm-form-block crm-cms-user-form-block">
 <div id="help">
     <p>{ts 1=$config->userFramework}Synchronize %1 Users{/ts}</p>
 </div>

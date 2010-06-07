@@ -52,14 +52,14 @@
 	        <th></th>
         </thead>
         {foreach from=$rows item=row}
-        <tr id="crm-membership_{$row.id}" id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class} crm-membership_status {if NOT $row.is_active} disabled{/if}">
-	        <td class="crm-membership_status-status_name">{$row.name}</td>	
-	        <td class="crm-memberhip_status-start_event">{$row.start_event}</td>
-	        <td class="crm-memberhip_status-end_event">{$row.end_event}</td>
-	        <td class="crm-memberhip_status-current_member>{if $row.is_current_member eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td class="crm-memberhip_status-is_admin>{if $row.is_admin eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-	        <td class="nowrap crm-memberhip-weight">{$row.weight}</td>
-	        <td class="crm-memberhip_status-status_{$row.id}" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+        <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class} {if NOT $row.is_active} disabled{/if} crm-membership-status">
+	        <td class="crm-membership-status-name">{$row.name}</td>	
+	        <td class="crm-membership-status-start_event">{$row.start_event}</td>
+	        <td class="crm-membership-status-end_event">{$row.end_event}</td>
+	        <td class="crm-membership-status-is_current_member">{if $row.is_current_member eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="crm-membership-status-is_admin">{if $row.is_admin eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	        <td class="nowrap crm-membership-status-weight">{$row.weight}</td>
+	        <td id="row_{$row.id}_status" class="crm-membership-status-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
           </tr>
         {/foreach}

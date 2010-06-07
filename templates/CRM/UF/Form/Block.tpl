@@ -53,7 +53,7 @@
     {assign var=n value=$field.name} 
 
     {if $field.options_per_line != 0} 
-        <div class="section {$form.$n.id}-section"> 
+        <div class="crm-section {$form.$n.id}-section"> 
         <div class="label option-label">{$form.$n.label}</div> 
         <div class="content 3"> 
              {assign var="count" value="1"} 
@@ -87,7 +87,7 @@
         <div class="clear"></div> 
         </div> 
     {else} 
-        <div class="section {$form.$n.id}-section"> 
+        <div class="crm-section {$form.$n.id}-section"> 
            <div class="label">{$form.$n.label}</div>
            <div class="content">
              {if $n|substr:0:3 eq 'im-'}

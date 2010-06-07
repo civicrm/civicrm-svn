@@ -88,12 +88,11 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
         // fill in step 3 (Memberships)
         $this->click('is_active');
-        $this->type('new_title', "Title - New Membership $hash");
-        $this->type('new_title', "Title - Renewals $hash");
+        $this->type('new_title',     "Title - New Membership $hash");
+        $this->type('renewal_title', "Title - Renewals $hash");
         // FIXME: handle Introductory Message - New Memberships/Renewals
         $this->click('membership_type[2]');
         $this->click('is_required');
-        $this->click('is_separate_payment');
 
         // go to step 4
         $this->click('_qf_MembershipBlock_next');
@@ -168,6 +167,28 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
         $this->click('_qf_PCP_next');
         $this->waitForPageToLoad();
 
-        $this->assertTrue($this->isTextPresent("Title $hash"));
+        // search for the new contrib page and go to its test version
+        $this->type('title', "Title $hash");
+        $this->click('_qf_SearchContribution_refresh');
+        $this->waitForPageToLoad();
+        $this->click('link=Test-drive');
+        $this->waitForPageToLoad();
+
+        // verify whatever’s possible to verify
+        // FIXME: ideally should be expanded
+        $texts = array(
+            "Title - New Membership $hash",
+            "Student  (contribute at least $ 50.00 to be eligible for this membership)",
+            "$ $rand.00 Label $hash",
+            "Pay later label $hash",
+            "Organization Details",
+            "Honoree Section Title $hash",
+            "Honoree Introductory Message $hash",
+            "Name and Address",
+            "Supporter Profile",
+        );
+        foreach ($texts as $text) {
+            $this->verifyTextPresent($text);
+        }
     }
 }

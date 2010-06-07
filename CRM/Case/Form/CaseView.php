@@ -399,9 +399,16 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
             $this->assign( 'showTags', false );
         }
 
-        // build tag widget
+        // build tagset widget
         require_once 'CRM/Core/Form/Tag.php';
+        
+        // see if we have any tagsets which can be assigned to cases
         $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_case' );
+        if ($parentNames){
+            $this->assign( 'showTagsets', true );
+        } else {
+            $this->assign( 'showTagsets', false );
+        }
         CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_case', $this->_caseID, false, true );        
           
         $this->addButtons(array(  

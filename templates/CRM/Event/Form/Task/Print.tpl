@@ -44,8 +44,8 @@
   </tr>
 {foreach from=$rows item=row}
     <tr class="{cycle values="odd-row,even-row"}">
-        <td>{$row.sort_name}</td>
-	<td>{$row.event_title}</td>
+        <td class="crm-event-print-sort_name">{$row.sort_name}</td>
+        <td class="crm-event-print-event_title">{$row.event_title}</td>
         {assign var="participant_id" value=$row.participant_id}
         {if $lineItems.$participant_id}
             <td>
@@ -57,14 +57,14 @@
         {else}
             <td>{if !$row.paid && !$row.participant_fee_level} {ts}(no fee){/ts}{else} {$row.participant_fee_level}{/if}</td>
         {/if}
-        <td>{$row.participant_fee_amount|crmMoney}</td>
-        <td>{$row.event_start_date|truncate:10:''|crmDate}
+        <td class="crm-event-print-event_participant_fee_amount">{$row.participant_fee_amount|crmMoney}</td>
+        <td class="crm-event-print-event_date">{$row.event_start_date|truncate:10:''|crmDate}
           {if $row.event_end_date && $row.event_end_date|date_format:"%Y%m%d" NEQ $row.event_start_date|date_format:"%Y%m%d"}
               <br/>- {$row.event_end_date|truncate:10:''|crmDate}
           {/if}
         </td>
-        <td>{$row.participant_status_id}</td>
-        <td>{$row.participant_role_id}</td>
+        <td class="crm-event-print-participant_status_id">{$row.participant_status_id}</td>
+        <td class="crm-event-print-participant_role_id">{$row.participant_role_id}</td>
     </tr>
 {/foreach}
 </table>

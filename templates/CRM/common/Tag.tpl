@@ -1,6 +1,6 @@
 {foreach from=$tagset item=tagset}
 
-<div class="section tag-section tag-{$tagset.parentID}-section">
+<div class="crm-section tag-section tag-{$tagset.parentID}-section">
 <div class="label">
 <label>{$tagset.parentName}</label>
 </div>
@@ -61,8 +61,8 @@
 </script>
 {else}
     {if $tagset.entityTagsArray}
-        {foreach from=$tagset.entityTagsArray item=val}
-            {$val.name}
+        {foreach from=$tagset.entityTagsArray item=val name="tagsetList"}
+            &nbsp;{$val.name}{if !$smarty.foreach.tagsetList.last},{/if}
         {/foreach}
     {/if}
 {/if}

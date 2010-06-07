@@ -517,14 +517,23 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         }
         
         if ( $activity->id ) {
+            // add tags if exists
             $tagParams = array( );
             if ( !empty($params['tag']) ) {
                 foreach( $params['tag'] as $tag ) {
                     $tagParams[$tag] = 1;
                 }
             }
+
+            //save static tags
             require_once 'CRM/Core/BAO/EntityTag.php';
             CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_activity',  $activity->id );
+
+            //save free tags
+            if ( isset( $params['taglist'] ) && !empty( $params['taglist'] ) ) {
+                require_once 'CRM/Core/Form/Tag.php';
+                CRM_Core_Form_Tag::postProcess( $params['taglist'], $activity->id, 'civicrm_activity', $this );
+            }
         }
  
         $params['assignee_contact_id'] = $assineeContacts;

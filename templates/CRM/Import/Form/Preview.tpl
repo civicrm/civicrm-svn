@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-import_preview-form-block">
+<div class="crm-block crm-form-block crm-import-preview-form-block">
 
 {literal}
 <script type="text/javascript">

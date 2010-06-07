@@ -67,7 +67,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
         $jobTable     = CRM_Mailing_DAO_Job::getTableName();
         $mailingTable = CRM_Mailing_DAO_Mailing::getTableName();
 
-        if (!empty($testParams)) {
+        if ( ! empty( $testParams ) ) {
             $query = "
 SELECT *
   FROM $jobTable
@@ -108,35 +108,36 @@ ORDER BY j.scheduled_date,
                 continue;
             }
 
-            // we've got the lock, but while we were waiting and processing
-            // other emails, this job might have changed under us
-            // lets get the job again and check
-            $newJob = new CRM_Mailing_DAO_Job( );
-            $newJob = $job->id;
-            if ( ! $newJob->find( true ) ) {
-                CRM_Core_Error::fatal( );
-            }
+            // for test jobs we do not change anything, since its on a short-circuit path
+            if ( empty( $testParams ) ) {
+                // we've got the lock, but while we were waiting and processing
+                // other emails, this job might have changed under us
+                // lets get the job status again and check
+                $job->status = CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Job', 
+                                                            $job->id,
+                                                            'status' );
 
-            if ( $newJob->status != 'Running' &&
-                 $newJob->status != 'Scheduled' ) {
-                // this includes Cancelled and other statuses, CRM-4246
-                $lock->release( );
-                continue;
+                if ( $job->status != 'Running' &&
+                     $job->status != 'Scheduled' ) {
+                    // this includes Cancelled and other statuses, CRM-4246
+                    $lock->release( );
+                    continue;
+                }
             }
           
             /* Queue up recipients for all jobs being launched */
-            if ($newJob->status != 'Running') {
+            if ($job->status != 'Running') {
                 require_once 'CRM/Core/Transaction.php';
                 $transaction = new CRM_Core_Transaction( );
 
-                $newJob->queue($testParams);
+                $job->queue($testParams);
 
                 /* Start the job */
                 // use a seperate DAO object to protect the loop
                 // integrity. I think transactions messes it up
                 // check CRM-2469
                 $saveJob = new CRM_Mailing_DAO_Job( );
-                $saveJob->id         = $newJob->id;
+                $saveJob->id         = $job->id;
                 $saveJob->start_date = date('YmdHis');
                 $saveJob->status     = 'Running';
                 $saveJob->save();
@@ -147,10 +148,10 @@ ORDER BY j.scheduled_date,
             $mailer =& $config->getMailer();
 
             /* Compose and deliver */
-            $isComplete = $newJob->deliver($mailer, $testParams);
-
+            $isComplete = $job->deliver($mailer, $testParams);
+            
             require_once 'CRM/Utils/Hook.php';
-            CRM_Utils_Hook::post( 'create', 'CRM_Mailing_DAO_Spool', $newJob->id, $isComplete);
+            CRM_Utils_Hook::post( 'create', 'CRM_Mailing_DAO_Spool', $job->id, $isComplete);
             
             if ( $isComplete ) {
                 /* Finish the job */
@@ -161,13 +162,13 @@ ORDER BY j.scheduled_date,
                 // integrity. I think transactions messes it up
                 // check CRM-2469
                 $saveJob = new CRM_Mailing_DAO_Job( );
-                $saveJob->id   = $newJob->id;
+                $saveJob->id   = $job->id;
                 $saveJob->end_date = date('YmdHis');
                 $saveJob->status   = 'Complete';
                 $saveJob->save();
 
                 $mailing->reset();
-                $mailing->id = $newJob->mailing_id;
+                $mailing->id = $job->mailing_id;
                 $mailing->is_completed = true;
                 $mailing->save();
                 $transaction->commit( );
@@ -321,7 +322,7 @@ ORDER BY j.scheduled_date,
                 $fields = array( );
             }
         }
-        
+
         $isDelivered = $this->deliverGroup( $fields, $mailing, $mailer, $job_date, $attachments );
         return $isDelivered;
     }

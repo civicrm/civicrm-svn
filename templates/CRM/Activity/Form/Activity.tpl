@@ -264,28 +264,28 @@
              {/if}
         {/if} {* End Delete vs. Add / Edit action *}
         <tr class="buttons">
-            <td>
-                {if $action eq 4 or $action eq 8 or $action eq 32768}
-	    	    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-		        {/if}
-	        </td>
-            <td>
-            {if $action eq 4 && $activityTName neq 'Inbound Email'} 
-	            {if !$context }
+           <td>
+             {if $action eq 4 && $activityTName neq 'Inbound Email'} 
+	         {if !$context }
 	                {assign var="context" value='activity'}
-	            {/if}
-	            {if $permission EQ 'edit'}
+	         {/if}
+	         {if $permission EQ 'edit'}
                     <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=$context"}" class="edit button" title="{ts}Edit{/ts}">
                     <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
                     </a>
-                {/if}
-                {if call_user_func(array('CRM_Core_Permission','check'), 'delete activities')}
+                 {/if}
+                 {if call_user_func(array('CRM_Core_Permission','check'), 'delete activities')}
                     <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=delete&reset=1&id=$entityID&cid=$contactId&context=$context"}" class="delete button" title="{ts}Delete{/ts}">
                     <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
                     </a>
-                {/if}
-	        {/if}
-	        </td>
+                 {/if}
+	      {/if}
+	   </td>
+	   <td>
+              {if $action eq 4 or $action eq 8 or $action eq 32768}
+	    	  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+	      {/if}
+	   </td>
         </tr> 
     </table>   
 

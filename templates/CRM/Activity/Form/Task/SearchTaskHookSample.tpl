@@ -24,9 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {if $rows}
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 
 <div class="spacer"></div>
 
@@ -34,10 +32,10 @@
 <br />
 <table>
   <tr class="columnheader">
-    <th>{ts}Display Name{/ts}</th>
-    <th>{ts}Subject{/ts}</th>
-    <th>{ts}Activity Type{/ts}</th>
-    <th>{ts}Activity Date{/ts}</th>
+    <td>{ts}Display Name{/ts}</td>
+    <td>{ts}Subject{/ts}</th>
+    <td>{ts}Activity Type{/ts}</td>
+    <td>{ts}Activity Date{/ts}</td>
   </tr>
 
   {foreach from=$rows item=row}
@@ -51,17 +49,11 @@
 </table>
 </div>
 
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 
 {else}
    <div class="messages status">
-      <dl>
-          <dt><div class="icon inform-icon"></div></dt>
-          <dd>
+          <div class="icon inform-icon"></div>
             {ts}There are no records selected.{/ts}
-          </dd>
-      </dl>
    </div>
 {/if}

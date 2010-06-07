@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-add_to_org-form-block">
+<div class="crm-block crm-form-block crm-contact-task-addtoOrganization-form-block">
 <div id="help">
     {ts}Choose Relationship Type and Target Organization{/ts}
 </div>
@@ -32,11 +32,11 @@
      {if $action EQ 2} {* action = update *}    
         <tr><td></td><td><label>{$sort_name}</label></td></tr>
      {else} {* action = add *}  
-        <tr class="crm-add_to_org-form-block-relationship_type_id">
+        <tr class="crm-contact-task-addtoOrganization-form-block-relationship_type_id">
           <td>{$form.relationship_type_id.label}</td>
           <td>{$form.relationship_type_id.html}</td>
         </tr>    
-        <tr class="crm-add_to_org-form-block-name">
+        <tr class="crm-contact-task-addtoOrganization-form-block-name">
           <td>{$form.name.label}</td><td>{$form.name.html}</td>
         </tr>    
         <tr><td></td><td>{$form._qf_AddToOrganization_refresh.html}&nbsp;&nbsp;{$form._qf_AddToOrganization_cancel.html}</td></tr>   
@@ -51,12 +51,12 @@
                         {strip}
                         <table>
                         <tr class="columnheader">
-                        <th>&nbsp;</th>
-                        <th>{ts}Name{/ts}</th>
-                        <th>{ts}City{/ts}</th>
-                        <th>{ts}State{/ts}</th>
-                        <th>{ts}Email{/ts}</th>
-                        <th>{ts}Phone{/ts}</th>
+                        <td>&nbsp;</td>
+                        <td>{ts}Name{/ts}</td>
+                        <td>{ts}City{/ts}</td>
+                        <td>{ts}State{/ts}</td>
+                        <td>{ts}Email{/ts}</td>
+                        <td>{ts}Phone{/ts}</td>
                         </tr>
                         {foreach from=$searchRows item=row}
                         <tr class="{cycle values="odd-row,even-row"}">
@@ -93,7 +93,7 @@
                     <div class="description">
 
                     </div>
-                   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+                   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
             </div>
 	<div class="form-item">
 	{$form.status.label} {$form.status.html}

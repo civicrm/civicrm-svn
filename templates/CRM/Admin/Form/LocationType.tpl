@@ -24,9 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing location type  *}
-<div class="form-item crm-block crm-form-block crm-locationType-form-block">
+<div class="crm-block crm-form-block crm-location-type-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Location Type{/ts}{elseif $action eq 2}{ts}Edit Location Type{/ts}{else}{ts}Delete Location Type{/ts}{/if}</legend>
-
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {if $action eq 8}
   <div class="messages status">
      <div class="icon inform-icon"></div>
@@ -34,30 +34,30 @@
       </div>
 {else}
   <table class="form-layout-compressed">
-      <tr class="crm-locationType-form-block-label">
+      <tr class="crm-location-type-form-block-label">
           <td class="label">{$form.name.label}</td>
           <td>{$form.name.html}<br />
                <span class="description">{ts}WARNING: Do NOT use spaces in the Location Name.{/ts}</span>
           </td>
       </tr>
-      <tr class="crm-locationType-form-block-vcard_name">
+      <tr class="crm-location-type-form-block-vcard_name">
           <td class="label">{$form.vcard_name.label}</td>
           <td>{$form.vcard_name.html}</td>
       </tr>
-      <tr class="crm-locationType-form-block-description">
+      <tr class="crm-location-type-form-block-description">
           <td class="label">{$form.description.label}</td>
-	  <td>{$form.description.html}</td>
+          <td>{$form.description.html}</td>
       </tr>
-      <tr class="crm-locationType-form-block-is_active">
+      <tr class="crm-location-type-form-block-is_active">
           <td class="label">{$form.is_active.label}</td>
           <td>{$form.is_active.html}</td>
       </tr>
-      <tr  class="crm-locationType-form-block-is_default">
+      <tr  class="crm-location-type-form-block-is_default">
            <td class="label">{$form.is_default.label}</td>
            <td>{$form.is_default.html}</td>
       </tr>
   </table>
 {/if}
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
  </fieldset>
 </div>

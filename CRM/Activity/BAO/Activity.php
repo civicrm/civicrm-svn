@@ -2032,22 +2032,32 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         
         //check for target and assignee contacts.
         if ( $allow ) { 
-            //get the target contacts. 
-            $targetContacts = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activity->id );
-            foreach ( $targetContacts as $cnt => $contactId ) {
-                if ( !CRM_Contact_BAO_Contact_Permission::allow( $contactId, $permission ) ) {
-                    $allow = false;
-                    break;
-                }
-            }
+            //first check for supper permission.
+            $supPermission = 'view all contacts';
+            if ( $action == CRM_Core_Action::UPDATE ) $supPermission = 'edit all contacts';
+            $allow = CRM_Core_Permission::check( $supPermission );
             
-            //get the assignee contacts.
-            if ( $allow ) {
-                $assigneeContacts = CRM_Activity_BAO_ActivityAssignment::retrieveAssigneeIdsByActivityId( $activity->id );
-                foreach ( $assigneeContacts as $cnt => $contactId ) {
+            //user might have sufficient permission, through acls. 
+            if ( !$allow ) {
+                $allow = true;
+                //get the target contacts. 
+                $targetContacts = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activity->id );
+                foreach ( $targetContacts as $cnt => $contactId ) {
                     if ( !CRM_Contact_BAO_Contact_Permission::allow( $contactId, $permission ) ) {
                         $allow = false;
                         break;
+                    }
+                }
+                
+                //get the assignee contacts.
+                if ( $allow ) {
+                    $assigneeContacts = 
+                        CRM_Activity_BAO_ActivityAssignment::retrieveAssigneeIdsByActivityId( $activity->id );
+                    foreach ( $assigneeContacts as $cnt => $contactId ) {
+                        if ( !CRM_Contact_BAO_Contact_Permission::allow( $contactId, $permission ) ) {
+                            $allow = false;
+                            break;
+                        }
                     }
                 }
             }

@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Confirmation of Cancel Registration *}
-<div class="crm-block crm-form-block crm-event_task_cancel-form-block">
+<div class="crm-block crm-form-block crm-event-cancel-form-block">
 <div class="crm-submit-buttons">
   {include file="CRM/common/formButtons.tpl" location="top"} 
 </div>

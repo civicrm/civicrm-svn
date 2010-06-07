@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* Event Import Wizard - Data Mapping table used by MapFields.tpl and Preview.tpl *}
-<div class="crm-block crm-form-block crm-event_map_table-form-block"> 
+<div class="crm-block crm-form-block crm-event-import-maptable-form-block"> 
 <div id="map-field">
     {strip}
     <table>

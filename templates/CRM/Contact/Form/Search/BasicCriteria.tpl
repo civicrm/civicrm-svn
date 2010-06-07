@@ -136,7 +136,7 @@ dojo.addOnLoad( function( ) {
 
 {strip}
 <div class="crm-block crm-form-block crm-basic-criteria-form-block">
-<div class="section sort_name-section">	
+<div class="crm-section sort_name-section">	
 	<div class="label">
 		{$form.sort_name.label}
 	</div>
@@ -147,7 +147,7 @@ dojo.addOnLoad( function( ) {
 </div>
 
 {if $form.contact_type}    
-	<div class="section contact_type-section">	
+	<div class="crm-section contact_type-section">	
 		<div class="label">
 			{$form.contact_type.label}
 		</div>
@@ -159,7 +159,7 @@ dojo.addOnLoad( function( ) {
 {/if}
 
 {if $form.group}
-<div class="section group_selection-section">	
+<div class="crm-section group_selection-section">	
 	<div class="label">
 		{if $context EQ 'smog'}
             {$form.group_contact_status.label}
@@ -186,7 +186,7 @@ dojo.addOnLoad( function( ) {
 {/if}
 
 {if $form.tag}
-    <div class="section tag-section">	
+    <div class="crm-section tag-section">	
     	<div class="label">
     		{$form.tag.label}
     	</div>

@@ -28,7 +28,7 @@
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
 
 {foreach from=$row item=value key=rowName name=profile}
-  <div id="row-{$smarty.foreach.profile.iteration}" class="section {$smarty.foreach.profile.iteration}-section">
+  <div id="row-{$smarty.foreach.profile.iteration}" class="crm-section {$smarty.foreach.profile.iteration}-section">
     <div class="label">
         {$rowName}
     </div>

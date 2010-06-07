@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing group (name and description only)  *}
-<div class="crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-group-form-block">
     <div id="help">
 	{if $action eq 2}
 	    {capture assign=crmURL}{crmURL p="civicrm/group/search" q="reset=1&force=1&context=smog&gid=`$group.id`"}{/capture}
@@ -33,16 +33,16 @@
 	    {ts}Enter a unique name and a description for your new group here. Then click 'Continue' to find contacts to add to your new group.{/ts}
 	{/if}
     </div>
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     <table class="form-layout">
-        <tr>
+        <tr class="crm-group-form-block-title">
 	    <td class="label">{$form.title.label}</td>
             <td>{$form.title.html|crmReplace:class:huge}
                 {if $group.saved_search_id}&nbsp;({ts}Smart Group{/ts}){/if}
             </td>
         </tr>
 	
-        <tr>
+        <tr class="crm-group-form-block-description">
 	    <td class="label">{$form.description.label}</td>
 	    <td>{$form.description.html}<br />
 		<span class="description">{ts}Group description is displayed when groups are listed in Profiles and Mailing List Subscribe forms.{/ts}</span>
@@ -50,13 +50,13 @@
         </tr>
 
 	{if $form.group_type}
-	    <tr>
+	    <tr class="crm-group-form-block-group_type">
 		<td class="label">{$form.group_type.label}</td>
 		<td>{$form.group_type.html} {help id="id-group-type" file="CRM/Group/Page/Group.hlp"}</td>
 	    </tr>
 	{/if}
     
-        <tr>
+        <tr class="crm-group-form-block-visibility">
 	    <td class="label">{$form.visibility.label}</td>
 	    <td>{$form.visibility.html|crmReplace:class:huge} {help id="id-group-visibility" file="CRM/Group/Page/Group.hlp"}</td>
 	</tr>
@@ -83,8 +83,8 @@
 	    <br />
         {/if}
         <table class="form-layout-compressed">
-	    <tr>
-	        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$form.parents.label}</td>
+	    <tr class="crm-group-form-block-parents">
+	        <td class="label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$form.parents.label}</td>
 	        <td>{$form.parents.html|crmReplace:class:huge}</td>
 	    </tr>
 	</table>
@@ -93,8 +93,8 @@
     {if $form.organization}
 	<h3>{ts}Associated Organization{/ts} {help id="id-group-organization" file="CRM/Group/Page/Group.hlp"}</h3>
 	        <table class="form-layout-compressed">
-		    <tr>
-		        <td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$form.organization.label}</td>
+		    <tr class="crm-group-form-block-organization">
+		        <td class="label">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{$form.organization.label}</td>
 			<td>{$form.organization.html|crmReplace:class:huge}
 			    <div id="organization_address" style="font-size:10px"></div>
 			</td>
@@ -102,7 +102,7 @@
 		</table>
     {/if} 
 	
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {if $action neq 1}
 	<div class="action-link">
 	    <a href="{$crmURL}">&raquo; {ts}Contacts in this Group{/ts}</a>

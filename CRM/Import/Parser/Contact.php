@@ -876,9 +876,15 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                             list( $valid, $invalid, $duplicate, $saved, $relationshipIds ) =
                                 CRM_Contact_BAO_Relationship::create( $relationParams, $relationIds );
                             
-                            CRM_Contact_BAO_Relationship::relatedMemberships( $primaryContactId, 
-                                                                              $relationParams,
-                                                                              $relationIds );
+                            if ( $valid || $duplicate ) {
+                                $relationIds['contactTarget'] = $relContactId;
+                                $action = ( $duplicate ) ? CRM_Core_Action::UPDATE : CRM_Core_Action::ADD;
+                                CRM_Contact_BAO_Relationship::relatedMemberships( $primaryContactId, 
+                                                                                  $relationParams,
+                                                                                  $relationIds,
+                                                                                  $action );
+                            }
+                            
                             //handle current employer, CRM-3532
                             if ( $valid ) {
                                 require_once 'CRM/Core/PseudoConstant.php';

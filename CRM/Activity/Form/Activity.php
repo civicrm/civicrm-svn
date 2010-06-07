@@ -651,6 +651,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             if ( CRM_Case_BAO_Case::checkPermission( $this->_activityId, 'File On Case', $this->_activityTypeId ) ) {
                 $buttons[] = array ( 'type'      => 'cancel',
                                      'name'      => ts('File on case'),
+                                     'subName'   => 'file_on_case',
                                      'js'        => array ('onClick' => "Javascript:fileOnCase( \"file\", $this->_activityId ); return false;" ),
                                      );
             }

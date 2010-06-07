@@ -202,13 +202,14 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
         }
         require_once 'CRM/Event/BAO/Participant.php';
         $eventFullMessage = CRM_Event_BAO_Participant::eventFull( $this->_id );
-
+        $hasWaitingList   = CRM_Utils_Array::value( 'has_waitlist', $values['event'] );
+        
         $allowRegistration = false;
         if ( CRM_Utils_Array::value( 'is_online_registration', $values['event'] ) ) {
             if ( CRM_Event_BAO_Event::validRegistrationDate( $values['event'], $this->_id ) ) {
-                if ( ! $eventFullMessage ) {
+                if ( !$eventFullMessage || $hasWaitingList ) {
                     $registerText = ts('Register Now');
-                    if ( CRM_Utils_Array::value('registration_link_text',$values['event']) ) {
+                    if ( CRM_Utils_Array::value('registration_link_text', $values['event'] ) ) {
                         $registerText = $values['event']['registration_link_text'];
                     }
                     //Fixed for CRM-4855
@@ -229,7 +230,7 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
                                                   true, null, true,
                                                   true );
                 }
-                if ( ! $eventFullMessage ) {
+                if ( !$eventFullMessage || $hasWaitingList ) {
                     $this->assign( 'registerURL', $url    );
                 }
             } else if ( CRM_Core_Permission::check( 'register for events' ) ) {
@@ -249,13 +250,12 @@ class CRM_Event_Page_EventInfo extends CRM_Core_Page
             
             if ( CRM_Event_BAO_Event::checkRegistration( $params ) ) {
                 $statusMessage = ts( "Oops. It looks like you are already registered for this event. If you want to change your registration, or you feel that you've gotten this message in error, please contact the site administrator." );
-            } else if ( CRM_Utils_Array::value( 'has_waitlist', $values['event'] ) ) {
-                $eventFullMessage = null;
+            } else if ( $hasWaitingList ) {
                 $statusMessage = CRM_Utils_Array::value( 'waitlist_text', $values['event'] );
                 if ( !$statusMessage ) {
                     $statusMessage = ts( 'Event is currently full, but you can register and be a part of waiting list.');
                 }
-            }             
+            }
             
             CRM_Core_Session::setStatus( $statusMessage );
         }

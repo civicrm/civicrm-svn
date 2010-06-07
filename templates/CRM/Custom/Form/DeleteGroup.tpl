@@ -25,7 +25,7 @@
 *}
 
 {* this template is used for confirmation of delete for a custom field set  *}
-<div class="crm-block crm-form-block crm-custom_delete_group-form-block">
+<div class="crm-block crm-form-block crm-custom-deletegroup-form-block">
 <div class="crm-submit-buttons">
    {include file="CRM/common/formButtons.tpl" location="top"}
 </div>

@@ -25,21 +25,19 @@
 *}
 {* Event Import Wizard - Step 1 (upload data file) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
-  
- <div id="help">
-    {ts}The Event Import Wizard allows you to easily upload event participation data such as event registrations from other applications into CiviCRM.{/ts}
-    {ts}Files to be imported must be in the 'comma-separated-values' format (CSV) and must contain data needed to match the participant data to an existing contact in your CiviCRM database.{/ts} {help id='upload'}
- </div>    
 
-<div class="crm-block crm-form-block crm-event_import_uploadfile-form-block">
+<div class="crm-block crm-form-block crm-event-import-uploadfile-form-block">
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
 
-
+ <div id="help">
+    {ts}The Event Import Wizard allows you to easily upload event participation data such as event registrations from other applications into CiviCRM.{/ts}
+    {ts}Files to be imported must be in the 'comma-separated-values' format (CSV) and must contain data needed to match the participant data to an existing contact in your CiviCRM database.{/ts} {help id='upload'}
+ </div>
  <div id="upload-file" class="form-item">
- 
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
    <table class="form-layout">	
-        <tr class="crm-event_import_uploadfile-form-block-uploadFile">
+        <tr class="crm-event-import-uploadfile-form-block-uploadFile">
             <td class="label">{$form.uploadFile.label}</td>
             <td>{$form.uploadFile.html}<br />
                 <span class="description">
@@ -59,7 +57,7 @@
                 </span>
             </td>
 	</tr>    
-	<tr class="crm-event_import_uploadfile-form-block-contactType">
+	<tr class="crm-event-import-uploadfile-form-block-contactType">
             <td class="label">{$form.contactType.label}</td>
             <td>{$form.contactType.html}<br />
                 <span class="description">
@@ -68,15 +66,15 @@
                 </span>
             </td>
 	</tr>
-	<tr class="crm-event_import_uploadfile-form-block-onDuplicate">    
+	<tr class="crm-event-import-uploadfile-form-block-onDuplicate">    
             <td class="label">{$form.onDuplicate.label}</td>
 	    <td>{$form.onDuplicate.html} {help id="id-onDuplicate"}</td> 
         </tr>
-	<tr class="crm-event_import_uploadfile-form-block-date_format">
+	<tr class="crm-event-import-uploadfile-form-block-date_format">
             {include file="CRM/Core/Date.tpl"}
 	</tr>
 	{if $savedMapping}
-	<tr class="crm-event_import_uploadfile-form-block-savedMapping">    
+	<tr class="crm-event-import-uploadfile-form-block-savedMapping">    
               <td class="label">{if $loadedMapping}{ts}Select a Different Field Mapping{/ts}{else}{ts}Load Saved Field Mapping{/ts}{/if}</dt>
               <td><span>{$form.savedMapping.html}</span> </td>
 	</tr>
@@ -85,11 +83,7 @@
             <td class="description">{ts}Select Saved Mapping, or leave blank to create a new mapping.{/ts}</td>
         {/if}
         </tr>
-        <tr>
-	   <td>&nbsp;</td>
-	   <td>{include file="CRM/common/formButtons.tpl" location="bottom"}</td>
-	</tr>
-     </table>
-    
+    </table>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
   </div>
  </div>

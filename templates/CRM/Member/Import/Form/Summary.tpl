@@ -26,7 +26,7 @@
 {* Membership Import Wizard - Step 4 (summary of import results AFTER actual data loading) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
 
-<div class="crm-block crm-form-block crm-member_import_summary-form-block">
+<div class="crm-block crm-form-block crm-member-import-summary-form-block">
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
  

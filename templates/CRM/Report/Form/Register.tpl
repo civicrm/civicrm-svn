@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-report-form-block crm-report_register-form-block">	
+<div class="crm-block crm-form-block crm-report-register-form-block">	
 {if $action eq 8} 
     <table class="form-layout">
     <tr>
@@ -45,49 +45,49 @@
 {else}
   	
     <table class="form-layout">
-        <tr>
-            <td colspan=2 class="crm-report-form-block-title"><strong>{if $action eq 2}{ts}Edit Report Template{/ts}{else}{ts}New Report Template{/ts}{/if}</strong></td>
+        <tr class="crm-report-register-form-block-title">
+            <td colspan=2><strong>{if $action eq 2}{ts}Edit Report Template{/ts}{else}{ts}New Report Template{/ts}{/if}</strong></td>
         </tr>
-        <tr class="buttons">
+        <tr class="buttons crm-report-register-form-block-buttons">
             <td><div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
             </td>
             <td></td>
         </tr>
-        <tr class="crm-report-form-block-title">
+        <tr class="crm-report-register-form-block-label">
             <td class="label">{$form.label.label}</td>
             <td class="view-value">{$form.label.html} <br /><span class="description">{ts}Report title appear in the display screen.{/ts}</span>
             </td>
         </tr>	   
-        <tr class="crm-report-form-block-description">
+        <tr class="crm-report-register-form-block-description">
             <td class="label">{$form.description.label}</td>
             <td class="view-value">{$form.description.html} <br /><span class="description">{ts}Report description appear in the display screen.{/ts}</span>
             </td>
         </tr>	   
-        <tr class="crm-report-form-block-url">
+        <tr class="crm-report-register-form-block-url">
             <td class="label">{$form.value.label}</td>
             <td class="view-value">{$form.value.html} <br /><span class="description">{ts}Report Url must be like "contribute/summary"{/ts}</span>
             </td>
         </tr>
-        <tr class="crm-report-form-block-class">
+        <tr class="crm-report-register-form-block-class">
             <td class="label">{$form.name.label}</td>
             <td class="view-value">{$form.name.html} <br /><span class="description">{ts}Report Class must be present before adding the report here, e.g. 'CRM_Report_Form_Contribute_Summary'{/ts}</span>
             </td>
         </tr>
-        <tr class="crm-report-form-block-weight">
+        <tr class="crm-report-register-form-block-weight">
             <td class="label">{$form.weight.label}</td>
             <td class="view-value">{$form.weight.html}</td>
         </tr>
-        <tr class="crm-report-form-block-component">
+        <tr class="crm-report-register-form-block-component">
             <td class="label">{$form.component_id.label}</td>
             <td class="view-value">{$form.component_id.html} <br /><span class="description">{ts}Specify the Report if it is belongs to any component like "CiviContribute"{/ts}</span>
             </td>
         </tr>
-        <tr class="crm-report-form-block-is_active">
+        <tr class="crm-report-register-form-block-is_active">
             <td class="label">{$form.is_active.label}</td>
             <td class="view-value">{$form.is_active.html}</td>
         </tr>  
 {/if} 
-    <tr class="buttons">
+    <tr class="buttons crm-report-register-form-block-buttons">
         <td><div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
         </td>
         <td></td>

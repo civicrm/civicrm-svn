@@ -44,7 +44,8 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
 
     protected $_defaults = null;
     
-    function preProcess( ) {
+    function preProcess( )
+    {
         $this->_soInstance = CRM_Utils_Array::value( 'instance', $_GET );
         $this->assign( 'soInstance', $this->_soInstance );
     }
@@ -59,18 +60,37 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
         
         $config = CRM_Core_Config::singleton( );
         
+        $values = $config->localeCustomStrings[$config->lcMessages];
+        $i = 1;
+
+        $enableDisable = array( 1 => 'enabled',
+                                0 => 'disabled' );
+
+        $cardMatch = array( 'wildcardMatch', 'exactMatch' );
+        
+        foreach ( $enableDisable as $key => $val ) {
+            foreach ( $cardMatch as $kc => $vc ) {
+                if ( !empty( $values[$val][$vc] ) ) {
+                    foreach ( $values[$val][$vc] as $k => $v ) {
+                        $this->_defaults["enabled"][$i] = $key;
+                        $this->_defaults["cb"][$i] = $kc;
+                        $this->_defaults["old"][$i] = $k;
+                        $this->_defaults["new"][$i] = $v;
+                        $i++;
+                    }
+                }   
+            }
+        }
+       
         $name = $this->_stringName = "custom_string_override_{$config->lcMessages}";
         if ( isset( $config->$name ) &&
              is_array( $config->$name ) ) {
             $this->_numStrings = 1;
             foreach ( $config->$name as $old => $newValues ) {
-                $this->_defaults["old_{$this->_numStrings}"] = $old;
-                $this->_defaults["new_{$this->_numStrings}"] = $newValues['str'];
-                $this->_defaults["cb_{$this->_numStrings}"]  = $newValues['cb' ];
                 $this->_numStrings++;
+                $this->_numStrings += 9;
             }
-            $this->_numStrings += 9;
-        } else {
+        } else { 
             $this->_numStrings = 10;
         }
         
@@ -118,7 +138,7 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
                            );
         $this->addFormRule( array( 'CRM_Admin_Form_WordReplacements', 'formRule' ), $this );
     }
-    
+   
     /**
      * global validation rules for the form
      *
@@ -160,19 +180,20 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
     public function postProcess() 
     {
         $params = $this->controller->exportValues( $this->_name );
+        $this->_numStrings = sizeof($params['old']);
         
         $enabled['exactMatch'] = $enabled['wildcardMatch']  = $disabled['exactMatch']  = $disabled['wildcardMatch'] =  array();
         for ( $i = 1 ; $i <= $this->_numStrings; $i++ ) {
             if ( CRM_Utils_Array::value( $i, $params['new'] ) && 
                  CRM_Utils_Array::value( $i, $params['old'] ) ) {
                 if ( CRM_Utils_Array::value( $i, $params['enabled'] ) )  { 
-                    if ( array_key_exists( $i, $params['cb']) ) {
+                    if ( is_array( $params['cb'] ) && array_key_exists( $i, $params['cb']) ) {
                         $enabled['exactMatch'] += array($params['old'][$i]=>$params['new'][$i]);
                     } else {
                         $enabled['wildcardMatch'] += array($params['old'][$i]=>$params['new'][$i]);
                     }
                 } else {
-                    if ( array_key_exists( $i, $params['cb']) ) {
+                    if ( is_array( $params['cb'] ) && array_key_exists( $i, $params['cb']) ) {
                         $disabled['exactMatch'] += array($params['old'][$i]=>$params['new'][$i]);
                     } else {
                         $disabled['wildcardMatch'] += array($params['old'][$i]=>$params['new'][$i]);
@@ -181,16 +202,23 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
             }
         }
 
-        $overrides = array ( 'enabled' => $enabled , 'disabled' => $disabled );
-        CRM_Core_Error::debug( '$overrides', $overrides );
-        exit;
- 
-        $config = CRM_Core_Config::singleton();
-        $stringOverride = array( $config->lcMessages => $overrides );
-        $locale_custom_strings = serialize( $stringOverride );
-        CRM_Core_Error::debug( '$locale_custom_strings', $locale_custom_strings );
-        exit;
+        $overrides = array( 'enabled'  => $enabled, 
+                            'disabled' => $disabled );
         
+        $config = CRM_Core_Config::singleton();
+        $stringOverride = serialize( array( $config->lcMessages => $overrides ) );
+        
+        $params = array( 'locale_custom_strings' => $stringOverride );
+        $id = CRM_Core_Config::domainID( );
+        
+        require_once 'CRM/Core/BAO/Domain.php';
+        $wordReplacementSettings = CRM_Core_BAO_Domain::edit( $params, $id );
+        
+        if ( $wordReplacementSettings ) {
+            CRM_Core_Session::setStatus( "Your Settings have been saved" );
+            CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/options/wordreplacements',
+                                                               "reset=1") );
+        }
     }
 
 }

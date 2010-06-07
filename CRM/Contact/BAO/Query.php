@@ -1206,6 +1206,8 @@ class CRM_Contact_BAO_Query
             $this->group( $values );
             return;
 
+            // case tag comes from find contacts
+        case 'tag':
         case 'contact_tags':
             $this->tag( $values );
             return;

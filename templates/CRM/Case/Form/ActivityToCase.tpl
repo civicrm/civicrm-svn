@@ -24,28 +24,29 @@
  +--------------------------------------------------------------------+
 *}
 {* CiviCase -  build activity to a case*}
+<div class="crm-block crm-form-block crm-case-activitytocase-form-block">
 <div id="fileOnCaseDialog"></div>
 
 {if $buildCaseActivityForm}
 <table class="form-layout">
-     <tr class="crm-case-form-block-unclosed_cases">
+     <tr class="crm-case-activitytocase-form-block-unclosed_cases">
 	<td class="label">{$form.unclosed_cases.label}</td>
      	<td>{$form.unclosed_cases.html}<br />
      	  <span class="description">{ts}Begin typing client name for a list of open cases.{/ts}</span>
      	</td>
      </tr>
-     <tr class="crm-case-form-block-target_contact_id">
+     <tr class="crm-case-activitytocase-form-block-target_contact_id">
 	<td class="label">{$form.target_contact_id.label}</td>
 	<td>{$form.target_contact_id.html}</td>
      </tr>
-     <tr class="crm-case-form-block-case_activity_subject">
+     <tr class="crm-case-activitytocase-form-block-case_activity_subject">
      	<td class="label">{$form.case_activity_subject.label}</td>
 	<td>{$form.case_activity_subject.html}<br />
 	  <span class="description">{ts}You can modify the activity subject before filing.{/ts}</span>
 	</td>
      </tr>
 </table>     	
-
+</div>
 {literal}
 <script type="text/javascript">
 var target_contact = target_contact_id = selectedCaseId = contactId = '';
@@ -152,8 +153,31 @@ function fileOnCase( action, activityID, currentCaseId ) {
     						    context = '&context={/literal}{$fulltext}{literal}';
     						  {/literal}{/if}{literal}											     	 	                     
 						      var caseUrl = destUrl + selectedCaseId + '&cid=' + contactId + context;
-						      if ( action == "move" ) {
+						      var redirectToCase = false;
+						      var reloadWindow = false;
+						      if ( action == 'move' ) redirectToCase = true;
+						      if ( action == 'file' ) {
+						      	 var curPath = document.location.href;
+						       	 if ( curPath.indexOf( 'civicrm/contact/view' ) != -1 ) { 
+							     //hide current activity row.
+ 							     cj( "#crm-activity_" + activityID ).hide( );
+							     var visibleRowCount = 0;
+							     cj('[id^="'+ 'crm-activity' +'"]::visible').each(function() {
+  							        visibleRowCount++;
+							     } );
+							     if ( visibleRowCount < 1 ) {
+							     	reloadWindow = true;
+							     }  
+							 } 
+							 if ( curPath.indexOf( 'civicrm/contact/view/activity' ) != -1 ) {
+							    redirectToCase = true; 
+							 }
+						      }  
+						     
+						      if ( redirectToCase ) {
 						          window.location.href = caseUrl + selectedCaseId + '&cid=' + contactId + context;
+						      } else if ( reloadWindow ) { 
+						      	  window.location.reload( ); 
 						      } else {
 						          var activitySubject = cj("#case_activity_subject").val( );
 						          var statusMsg = '<a id="closeFileOnCaseStatusMsg" href="#"><div class="icon close-icon"></div></a> "' + activitySubject + '" has been filed to selected case: ' + cj("#unclosed_cases").val( ) + '. Click <a href="' + caseUrl + '">here</a> to view that case.';

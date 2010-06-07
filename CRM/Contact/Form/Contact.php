@@ -149,7 +149,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $this->_contactSubType = CRM_Utils_Request::retrieve( 'cst','String', $this );
             
             if ( $this->_contactSubType && !(CRM_Contact_BAO_ContactType::isExtendsContactType($this->_contactSubType, $this->_contactType, true)) ) { 
-                CRM_Core_Error::statusBounce( ts("Could not get a valid contact subtype for contact type '%1'", array( '1' =>  $this->_contactType)) );   
+                CRM_Core_Error::statusBounce(ts("Could not get a valid contact subtype for contact type '%1'", array(1 => $this->_contactType)));
             }
 
             $this->_gid = CRM_Utils_Request::retrieve( 'gid', 'Integer',

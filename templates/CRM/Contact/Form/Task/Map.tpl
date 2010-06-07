@@ -32,6 +32,4 @@
 {/if}
 
 <p></p>
-<div class="form-item">                     
-{$form.buttons.html}                                                                                      
-</div>                            
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>                            

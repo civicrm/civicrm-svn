@@ -29,7 +29,7 @@
 </div>
 {capture assign="enableComponents"}{crmURL p='civicrm/admin/setting/component' q="reset=1"}{/capture}
 <div class="crm-form-block">
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     
     <table class="form-layout">
         <tr class="crm-price-set-form-block-title">
@@ -78,7 +78,7 @@
            <td>{$form.is_active.html}</td>
         </tr>
      </table>
-     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     
 </div>
 {if $action eq 2 or $action eq 4} {* Update or View*}

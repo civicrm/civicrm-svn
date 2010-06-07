@@ -63,7 +63,7 @@
        	    </td>
 	</tr>
     </table>
- <div class="crm-submit-buttons" ><a class="button" onClick="Javascript:buildStringOverrideRow( false );return false;"><span><div class="icon add-icon"></div>{ts}Add new Row{/ts}</span></a>{include file="CRM/common/formButtons.tpl"} </div>
+ <div class="crm-submit-buttons" ><a class="button" onClick="Javascript:buildStringOverrideRow( false );return false;"><span><div class="icon add-icon"></div>{ts}Add row{/ts}</span></a>{include file="CRM/common/formButtons.tpl"} </div>
 	
 </div>
 {/if}
@@ -90,7 +90,7 @@ function buildStringOverrideRow( curInstance )
   
    cj.ajax({ url     : dataUrl,   
              async   : false,
-             success : function( html ) { cj( prevInstRowId ).after( html ); }
+             success : function( html ) { cj(prevInstRowId).clone(true).insertAfter(prevInstRowId); }
    });
 }
 
