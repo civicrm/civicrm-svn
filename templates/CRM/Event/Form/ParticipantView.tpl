@@ -24,13 +24,27 @@
  +--------------------------------------------------------------------+
 *}
 {* View existing event registration record. *}
-<div class="crm-block crm-form-block crm-event-participantview-form-block">
-<fieldset>
-    <legend>{ts}View Participant{/ts}</legend>
-    <table class="view-layout">
+<div class="crm-block crm-content-block crm-event-participant-view-form-block">
+    <h2>{ts}View Participant{/ts}</h2>
+    <div class="action-link">
+        <div class="crm-submit-buttons">
+            {if call_user_func(array('CRM_Core_Permission','check'), 'edit event participants')}
+               <a class="button" href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context&selectedChild=event"}" accesskey="e"><span><div class="icon edit-icon"></div> {ts}Edit{/ts}</span></a>
+            {/if}
+            {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviEvent')}
+                <a class="button" href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$id&cid=$contact_id&action=delete&context=$context&selectedChild=event"}"><span><div class="icon delete-icon"></div> {ts}Delete{/ts}</span></a>
+            {/if}
+            {include file="CRM/common/formButtons.tpl" location="top"}
+        </div>
+    </div>
+    <table class="view-layout crm-info-panel">
         <tr class="crm-event-participantview-form-block-displayName">
-	    <td class="label">{ts}Name{/ts}</td><td class="bold">
-	    	<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contact_id"}">{$displayName}</a>&nbsp;--&nbsp;<a href="{crmURL p='civicrm/event/badge' q="reset=1&context=view&id=$id&cid=$contact_id"}" title="{ts}Print Event Name Badge{/ts}">{ts}Print Event Name Badge{/ts}</a>
+	    <td class="label">{ts}Name{/ts}</td>
+	    <td class="bold">
+	    	<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contact_id"}">{$displayName}</a>
+	    	<div class="crm-submit-buttons">
+	    	    <a class="button" href="{crmURL p='civicrm/event/badge' q="reset=1&context=view&id=$id&cid=$contact_id"}" title="{ts}Print Event Name Badge{/ts}"><span><div class="icon print-icon"></div> {ts}Print Name Badge{/ts}</span></a>
+	    	</div>
 	    </td>
 	</tr>
         <tr class="crm-event-participantview-form-block-event">
@@ -70,23 +84,20 @@
 	    {/if}
         {/foreach}
     </table>         
-        {include file="CRM/Custom/Page/CustomDataView.tpl"}
-        {if $accessContribution and $rows.0.contribution_id}
-            {include file="CRM/Contribute/Form/Selector.tpl" context="Search"} 
-        {/if}
-    <table class="form-layout buttons">
-        <tr>
-            <td>&nbsp;</td>
-            <td>
-                {include file="CRM/common/formButtons.tpl"}
-                {if call_user_func(array('CRM_Core_Permission','check'), 'edit event participants')}
-                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context&selectedChild=event"}" accesskey="e">Edit</a>
-                {/if}
-                {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviEvent')}
-                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$id&cid=$contact_id&action=delete&context=$context&selectedChild=event"}">Delete</a>
-                {/if}
-            </td>
-        </tr>
+    {include file="CRM/Custom/Page/CustomDataView.tpl"}
+    {if $accessContribution and $rows.0.contribution_id}
+        {include file="CRM/Contribute/Form/Selector.tpl" context="Search"} 
+    {/if}
     </table>
-</fieldset>  
+    <div class="action-link">
+        <div class="crm-submit-buttons">
+            {if call_user_func(array('CRM_Core_Permission','check'), 'edit event participants')}
+               <a class="button" href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context&selectedChild=event"}" accesskey="e"><span><div class="icon edit-icon"></div> {ts}Edit{/ts}</span></a>
+            {/if}
+            {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviEvent')}
+                <a class="button" href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$id&cid=$contact_id&action=delete&context=$context&selectedChild=event"}"><span><div class="icon delete-icon"></div> {ts}Delete{/ts}</span></a>
+            {/if}
+            {include file="CRM/common/formButtons.tpl" location="bottom"}
+        </div>
+    </div>
 </div>
