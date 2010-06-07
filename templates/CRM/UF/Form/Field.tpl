@@ -213,7 +213,6 @@ function showLabel( ) {
                show("in_selector_desDd");
            }
        }
-       showLabel( );
    }
 
    cj("#field_name\\[1\\]").bind( 'change blur', function( ) {
