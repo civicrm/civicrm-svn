@@ -3743,6 +3743,8 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (10013, 1226, "CWD", "Clwyd"),
 (10014, 1226, "DFD", "Dyfed"),
 (10015, 1226, "SGM", "South Glamorgan"),
+
+-- Haiti (CRM-5628)
 (10016, 1094, "AR", "Artibonite"),
 (10017, 1094, "CE", "Centre"),
 (10018, 1094, "NI", "Nippes"),
