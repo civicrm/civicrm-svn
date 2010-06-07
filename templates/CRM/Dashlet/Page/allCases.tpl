@@ -27,8 +27,8 @@
    <div class="form-item">
        {include file="CRM/Case/Page/DashboardSelector.tpl" context="dashboard" list="all cases" rows=$allCases}
    </div>
-   {else}
-       <div class="messages status">
-	    {ts 1=$findCasesURL}There are no Cases. Use %1 to expand your search.{/ts}
-       </div>
-   {/if}
+{else}
+    <div class="messages status">
+     {ts 1=$findCasesURL}There are no Cases. Use %1 to expand your search.{/ts}
+    </div>
+{/if}
