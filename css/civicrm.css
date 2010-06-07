@@ -2859,7 +2859,10 @@ tbody.scrollContent tr.alternateRow {
     font-weight:normal;
 }
 
-.disabled {text-decoration:line-through;}
+.disabled {
+    #commenting since it is not working in FF / Chrome / Safari
+    #text-decoration:line-through;
+}
 
 #crm-container table.selector td {
     border-right:1px dotted #DDDDDD;
