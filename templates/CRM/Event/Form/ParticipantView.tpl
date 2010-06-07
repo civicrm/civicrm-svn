@@ -30,7 +30,7 @@
     <table class="view-layout">
         <tr class="crm-event-participantview-form-block-displayName">
 	    <td class="label">{ts}Name{/ts}</td><td class="bold">
-	    	<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contact_id"}">{$displayName}</a>&nbsp;
+	    	<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contact_id"}">{$displayName}</a>&nbsp;--&nbsp;<a href="{crmURL p='civicrm/event/badge' q="reset=1&&context=view&id=$id"}" title="{ts}Print Event Name Badge{/ts}">{ts}Print Event Name Badge{/ts}</a>
 	    </td>
 	</tr>
         <tr class="crm-event-participantview-form-block-event">
