@@ -139,6 +139,10 @@ class CRM_Activity_Selector_Activity extends CRM_Core_Selector_Base implements C
             $url      = 'civicrm/activity/view';
             $delUrl   = 'civicrm/activity';
             $qsView   = "atype={$activityTypeId}&action=view&reset=1&id=%%id%%&cid=%%cid%%&context=%%cxt%%";
+            // allow delete of regular outbound emails (CRM-)
+            if ( $activityTypeId == $activityTypeIds['Email'] ) {
+                $showDelete = true;
+            }
         } elseif ( $activityTypeId == $activityTypeIds['Inbound Email'] ) {
             $url      = 'civicrm/contact/view/activity';
             $qsView   = "atype={$activityTypeId}&action=view&reset=1&id=%%id%%&cid=%%cid%%&context=%%cxt%%";
