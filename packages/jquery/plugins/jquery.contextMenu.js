@@ -25,7 +25,7 @@
 			// 0 needs to be -1 for expected results (no fade)
 			if( o.inSpeed == 0 ) o.inSpeed = -1;
 			if( o.outSpeed == 0 ) o.outSpeed = -1;
-            // move contextmenu elments to end of dom so that they get positioned correctly
+            // move contextmenu elements to end of DOM so that they get positioned correctly
         	$(".contextMenu").addClass('crm-contextmenu').remove().appendTo('body');
 			// Loop each context menu
 			$(this).each( function() {
@@ -36,6 +36,7 @@
 				// Simulate a true right click
 				$(this).mousedown( function(e) {
 					var evt = e;
+					console.log(evt);
 					$(this).mouseup( function(e) {
 						var srcElement = $(this);
 						$(this).unbind('mouseup');
@@ -54,20 +55,17 @@
 								d.pageXOffset = self.pageXOffset;
 								d.innerHeight = self.innerHeight;
 								d.innerWidth = self.innerWidth;
-								console.log('self \n'+ d.innerHeight+'=innerheight \n'+d.innerWidth+'= innerwidth');
 							} else if( document.documentElement &&
 								document.documentElement.clientHeight ) {
 								d.pageYOffset = document.documentElement.scrollTop;
 								d.pageXOffset = document.documentElement.scrollLeft;
 								d.innerHeight = document.documentElement.clientHeight;
 								d.innerWidth = document.documentElement.clientWidth;
-								console.log( d.innerHeight+'=innerheight \n'+d.innerWidth+'= innerwidth');
 							} else if( document.body ) {
 								d.pageYOffset = document.body.scrollTop;
 								d.pageXOffset = document.body.scrollLeft;
 								d.innerHeight = document.body.clientHeight;
 								d.innerWidth = document.body.clientWidth;
-								console.log('bottom!\n'+ d.innerHeight+'=innerheight \n'+d.innerWidth+'= innerwidth');
 							}
 							(e.pageX) ? x = e.pageX : x = e.clientX + d.scrollLeft;
 							(e.pageY) ? y = e.pageY : x = e.clientY + d.scrollTop;
