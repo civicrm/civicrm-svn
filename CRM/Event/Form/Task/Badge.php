@@ -42,6 +42,34 @@ require_once 'CRM/Event/Form/Task.php';
  */
 class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task 
 {
+    /**
+     * Are we operating in "single mode", i.e. sending email to one
+     * specific contact?
+     *
+     * @var boolean
+     */
+    public $_single = false;
+
+    /**
+     * build all the data structures needed to build the form
+     *
+     * @param
+     * @return void
+     * @access public
+     */
+    function preProcess( ) 
+    {
+        $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+        if ( $this->_context == 'view' ) {
+            $participantID = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, true );
+            $this->_participantIds  = array( $participantID );
+            $this->_componentClause = " civicrm_participant.id = $participantID ";
+            $this->assign( 'totalSelectedParticipants', 1 );             
+        } else {
+            parent::preProcess( );
+        }
+    }
+        
 
     /**
      * Build the form 
@@ -77,10 +105,6 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
         $params = $this->controller->exportValues($this->_name);
         $config = CRM_Core_Config::singleton();
 
-        $values = $this->controller->exportValues( 'Search' ); 
-
-        $queryParams = $this->get( 'queryParams' );
-
         require_once 'CRM/Event/BAO/Query.php';
         require_once 'CRM/Contact/BAO/Query.php';
         
@@ -88,6 +112,12 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
         $additionalFields = array( 'first_name', 'last_name', 'middle_name', 'current_employer' );
         foreach ( $additionalFields as $field ) {
             $returnProperties[$field] = 1;
+        }
+
+        if ( $this->_single ) {
+            $queryParams = null;
+        } else {
+            $queryParams = $this->get( 'queryParams' );
         }
 
         $query = new CRM_Contact_BAO_Query( $queryParams, $returnProperties, null, false, false,
