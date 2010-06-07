@@ -131,10 +131,6 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
             // set page title
             CRM_Contact_Page_View::setTitle( $this->_contactId );
         }
-
-        // Assign pageTitle
-        $pageTitle = 'Event Registration'.$this->userDisplayName;
-    	$this->assign( 'pageTitle', $pageTitle );
         
         $this->assign('action', $this->_action );     
         
