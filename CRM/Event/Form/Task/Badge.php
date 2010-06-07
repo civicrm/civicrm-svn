@@ -87,7 +87,7 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
      */
     function buildQuickForm()
     {
-        CRM_Utils_System::setTitle( ts('Make Event Badges') );
+        CRM_Utils_System::setTitle( ts('Make Name Badges') );
 
         //add select for label
         require_once 'CRM/Core/OptionGroup.php';
@@ -95,12 +95,12 @@ class CRM_Event_Form_Task_Badge extends CRM_Event_Form_Task
 
         $this->add('select',
                    'badge_id',
-                   ts('Select Name Badge format'),
+                   ts('Name Badge Format'),
                    array( '' => ts('- select -')) + $label, true);
 
         $next = 'next';
         $back = $this->_single ? 'cancel' : 'back';
-        $this->addDefaultButtons( ts('Make Event Badges'), $next, $back );
+        $this->addDefaultButtons( ts('Make Name Badges'), $next, $back );
        
     }
     
