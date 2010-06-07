@@ -97,8 +97,8 @@
                     var relType = 0;
                     cj( function( ) {
                     	cj('#relationship_type_id').change( function() { 
-			    changeCustomData( 'Relationship' );
-			    currentEmployer( ); 
+			                changeCustomData( 'Relationship' );
+			                currentEmployer( ); 
                         });
                     });
                 </script>
@@ -136,7 +136,7 @@
                              cj('#rel_contact').autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
                              cj('#rel_contact').result(function( event, data ) {
                                	cj("input[name=rel_contact_id]").val(data[1]);
-                                cj('#relationship-refresh-save').show();
+                                cj('#relationship-refresh-save').show( );
                                 buildRelationFields( relType );
                              });
                         } else { 
@@ -159,7 +159,7 @@
 
               {if $searchDone } {* Search button clicked *} 
                 {if $searchCount || $callAjax}
-                    {if $searchRows || $callAjax} {* we've got rows to display *}
+                    {if $searchRows || $callAjax} {* we got rows to display *}
                         <fieldset id="searchResult"><legend>{ts}Mark Target Contact(s) for this Relationship{/ts}</legend>
                         <div class="description">
                             {ts}Mark the target contact(s) for this relationship if it appears below. Otherwise you may modify the search name above and click Search again.{/ts}
@@ -408,14 +408,19 @@ cj(".contact_select .form-checkbox").each(
 {/literal} {/if} {literal}
 
 {/literal} {if $action EQ 1}{literal} 
-hide('saveDetails');
-hide('addCurrentEmployer');
-hide('addCurrentEmployee');
+cj('#saveDetails').hide( );
+cj('#addCurrentEmployer').hide( );
+cj('#addCurrentEmployee').hide( );
 
-cj('#rel_contact').bind( "focus change" ,function() {
-    show('relationship-refresh');
-    hide('relationship-refresh-save');
-    cj("input[name=rel_contact_id]").val('');    			      
+cj('#rel_contact').focus( function() {
+    cj('#relationship-refresh').show( );
+    cj('#relationship-refresh-save').hide( );	      
+});
+
+cj('#rel_contact').change( function() {    
+    if ( cj("input[name=rel_contact]").val( ).length > 0 ) {
+        cj("input[name=rel_contact_id]").val('');
+    }	      
 });
 
 {/literal}{if $searchRows || $callAjax}{literal} 
