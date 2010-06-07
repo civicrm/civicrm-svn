@@ -740,7 +740,9 @@ function addTags() {
                 while(curDate-sdate < 2000) {
                     curDate = (new Date()).getTime();
                 }
-                window.location.reload(); 
+                
+                //due to caching issues we use redirection rather than reload
+                document.location = {/literal}'{crmURL q="action=view&reset=1&id=$caseID&cid=$contactID&context=$context" h=0 }'{literal};
             },
 
             "Cancel": function() { 
