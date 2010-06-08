@@ -625,8 +625,33 @@ class CRM_Export_BAO_Export
             return ts('CiviCRM Activity Search');
         }
     }
-
-
+    
+    /**
+     * Function to handle import error file creation.
+     *
+     **/
+    function invoke( ) 
+    {
+        $type       = CRM_Utils_Request::retrieve( 'type',   'Positive', CRM_Core_DAO::$_nullObject );
+        $parserName = CRM_Utils_Request::retrieve( 'parser', 'String',   CRM_Core_DAO::$_nullObject );
+        if ( empty( $parserName ) || empty( $type ) ) return;
+        
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $parserName ) . ".php");
+        eval( '$errorFileName =' . $parserName . '::errorFileName( $type );' );
+        eval( '$saveFileName =' . $parserName . '::saveFileName( $type );' );
+        if ( empty( $errorFileName ) || empty( $saveFileName ) ) return; 
+        
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Content-Description: File Transfer');
+        header('Content-Type: text/csv');
+        header('Content-Length: ' . filesize( $errorFileName ) );
+        header('Content-Disposition: attachment; filename=' . $saveFileName );
+        
+        readfile( $errorFileName );
+        
+        CRM_Utils_System::civiExit( );
+    }
+    
     /**
      * handle the export case. this is a hack, so please fix soon
      *
@@ -635,7 +660,7 @@ class CRM_Export_BAO_Export
      * @static
      * @access public
      */
-    static function invoke( $args ) 
+    static function invoke_old( $args ) 
     {
         // FIXME:  2005-06-22 15:17:33 by Brian McFee <brmcfee@gmail.com>
         // This function is a dirty, dirty hack.  It should live in its own
