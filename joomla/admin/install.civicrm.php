@@ -26,6 +26,12 @@
 defined('_JEXEC') or die('No direct access allowed'); 
 
 function com_install() {
+    // lets ensure we set E_DEPRECATED to minimize errors
+    // CRM-6327
+    if ( defined( 'E_DEPRECATED' ) ) {
+        error_reporting( error_reporting( ) & ~E_DEPRECATED );
+    }
+
     require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'configure.php';
     require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'civicrm'. DIRECTORY_SEPARATOR .'CRM' . DIRECTORY_SEPARATOR . 'Utils' . DIRECTORY_SEPARATOR . 'System.php';
 
