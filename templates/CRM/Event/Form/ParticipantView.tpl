@@ -25,7 +25,7 @@
 *}
 {* View existing event registration record. *}
 <div class="crm-block crm-content-block crm-event-participant-view-form-block">
-    <h2>{ts}View Participant{/ts}</h2>
+    <h3>{ts}View Participant{/ts}</h3>
     <div class="action-link">
         <div class="crm-submit-buttons">
             {if call_user_func(array('CRM_Core_Permission','check'), 'edit event participants')}
@@ -89,15 +89,13 @@
         {include file="CRM/Contribute/Form/Selector.tpl" context="Search"} 
     {/if}
     </table>
-    <div class="action-link">
-        <div class="crm-submit-buttons">
-            {if call_user_func(array('CRM_Core_Permission','check'), 'edit event participants')}
-               <a class="button" href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context&selectedChild=event"}" accesskey="e"><span><div class="icon edit-icon"></div> {ts}Edit{/ts}</span></a>
-            {/if}
-            {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviEvent')}
-                <a class="button" href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$id&cid=$contact_id&action=delete&context=$context&selectedChild=event"}"><span><div class="icon delete-icon"></div> {ts}Delete{/ts}</span></a>
-            {/if}
-            {include file="CRM/common/formButtons.tpl" location="bottom"}
-        </div>
+    <div class="crm-submit-buttons">
+        {if call_user_func(array('CRM_Core_Permission','check'), 'edit event participants')}
+           <a class="button" href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context&selectedChild=event"}" accesskey="e"><span><div class="icon edit-icon"></div> {ts}Edit{/ts}</span></a>
+        {/if}
+        {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviEvent')}
+            <a class="button" href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$id&cid=$contact_id&action=delete&context=$context&selectedChild=event"}"><span><div class="icon delete-icon"></div> {ts}Delete{/ts}</span></a>
+        {/if}
+        {include file="CRM/common/formButtons.tpl" location="bottom"}
     </div>
 </div>

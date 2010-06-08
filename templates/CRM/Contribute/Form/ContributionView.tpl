@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div class="crm-block crm-content-block crm-contribution-view-form-block">
-<h2>{ts}View Contribution{/ts}</h2>
+<h3>{ts}View Contribution{/ts}</h3>
 <div class="action-link">
     <div class="crm-submit-buttons">
     {if call_user_func(array('CRM_Core_Permission','check'), 'edit contributions')}
@@ -169,7 +169,7 @@
 
 {if $premium}
 <fieldset><legend>{ts}Premium Information{/ts}</legend>
-<table class="view-layout">
+<table class="crm-info-panel">
 	<td class="label">{ts}Premium{/ts}</td><td>{$premium}</td>
 	<td class="label">{ts}Option{/ts}</td><td>{$option}</td>
 	<td class="label">{ts}Fulfilled{/ts}</td><td>{$fulfilled|truncate:10:''|crmDate}</td>
@@ -179,7 +179,7 @@
 
 {if $pcp_id}
 <fieldset><legend>{ts}Personal Campaign Page Contribution Information{/ts}</legend>
-<table class="view-layout">
+<table class="crm-info-panel">
     <tr>
 	    <td class="label">{ts}Campaign Page{/ts}</td>
         <td><a href="{crmURL p="civicrm/contribute/pcp/info" q="reset=1&id=`$pcp_id`"}">{$pcp}</a><br />
@@ -207,8 +207,7 @@
 </fieldset>
 {/if}
 
-<div class="action-link">
-    <div class="crm-submit-buttons">
+<div class="crm-submit-buttons">
     {if call_user_func(array('CRM_Core_Permission','check'), 'edit contributions')}
        <a class="button" href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=$id&cid=$contact_id&action=update&context=$context"}" accesskey="e"><span><div class="icon edit-icon"></div> Edit</span></a>
     {/if}
@@ -216,6 +215,5 @@
        <a class="button" href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=$id&cid=$contact_id&action=delete&context=$context"}"><span><div class="icon delete-icon"></div> Delete</span></a>
     {/if}
     {include file="CRM/common/formButtons.tpl" location="bottom"}
-    </div>
 </div>
 </div>
