@@ -94,7 +94,6 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
             $this->_numStrings = 10;
         }
         
-        $this->assign( 'numStrings', $this->_numStrings );
         return $this->_defaults;
     }
     
@@ -106,6 +105,13 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
      */
     public function buildQuickForm( )
     {
+        $config = CRM_Core_Config::singleton( );
+        $values = $config->localeCustomStrings[$config->lcMessages];
+        $instances = ( count( $values, COUNT_RECURSIVE) - 6 );
+        if ( $instances > 10 ) {
+            $this->_numStrings = $instances;
+        }
+        
         $soInstances = range( 1, $this->_numStrings, 1 );
         $stringOverrideInstances = array( );
         if ( $this->_soInstance ) {
@@ -124,6 +130,7 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
             $this->add( 'textarea', "new[$instance]", null, array( 'rows' => 1, 'cols' => 40 ) );
             $this->addElement( 'checkbox', "cb[$instance]" );
         }
+        $this->assign( 'numStrings', $this->_numStrings );
         if ( $this->_soInstance ) return; 
         
         $this->assign( 'stringOverrideInstances', empty($stringOverrideInstances)?false:$stringOverrideInstances );
