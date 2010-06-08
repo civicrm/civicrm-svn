@@ -120,8 +120,8 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
         }
         foreach ( $soInstances as $instance ) {
             $this->addElement( 'checkbox', "enabled[$instance]" );
-            $this->add( 'textarea', "old[$instance]", null, array( 'rows=1 cols=40' ) );
-            $this->add( 'textarea', "new[$instance]", null, array( 'rows=1 cols=40' ) );
+            $this->add( 'textarea', "old[$instance]", null, array( 'rows' => 1, 'cols' => 40 ) );
+            $this->add( 'textarea', "new[$instance]", null, array( 'rows' => 1, 'cols' => 40 ) );
             $this->addElement( 'checkbox', "cb[$instance]" );
         }
         if ( $this->_soInstance ) return; 
