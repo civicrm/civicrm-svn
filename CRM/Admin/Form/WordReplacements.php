@@ -48,6 +48,11 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
     {
         $this->_soInstance = CRM_Utils_Array::value( 'instance', $_GET );
         $this->assign( 'soInstance', $this->_soInstance );
+        $breadCrumbUrl = CRM_Utils_System::url( 'civicrm/admin/options/wordreplacements',
+                                             "reset=1");
+        $breadCrumb     = array( array('title' => ts('Word Replacements'),
+                                       'url'   => $breadCrumbUrl ) );
+        CRM_Utils_System::appendBreadCrumb( $breadCrumb );     
     }
     
     public function setDefaultValues( )
@@ -223,7 +228,7 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
         
         if ( $wordReplacementSettings ) {
             //reset navigation
-            require_once 'CRM/Core/BAO/Navigation.php'
+            require_once 'CRM/Core/BAO/Navigation.php';
             CRM_Core_BAO_Navigation::resetNavigation( );
             
             CRM_Core_Session::setStatus( "Your Settings have been saved" );
