@@ -621,11 +621,16 @@ class CRM_Utils_Date
         return true;
     }
 
+    static function currentDBDate( $timeStamp = null ) {
+        return $timeStamp ?
+            date( 'YmdHis', $timeStamp ) : date( 'YmdHis' );
+    }
+
     static function overdue( $date, $now = null ) 
     {
         $mysqlDate = self::isoToMysql( $date );
         if ( ! $now ) {
-            $now = date( 'YmdHis' );
+            $now = self::currentDBDate( );
         } else {
             $now = self::isoToMysql( $now );
         }
