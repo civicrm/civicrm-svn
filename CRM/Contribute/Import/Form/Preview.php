@@ -86,7 +86,7 @@ class CRM_Contribute_Import_Form_Preview extends CRM_Core_Form {
         
         if ($conflictRowCount) {
             $urlParams = 'type='.CRM_Contribute_Import_Parser::CONFLICT . '&parser=CRM_Contribute_Import_Parser';
-            $this->set('downloadConflictRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlparams ) );
+            $this->set('downloadConflictRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams ) );
         }
         
         if ($mismatchCount) {
