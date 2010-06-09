@@ -179,10 +179,10 @@ class CRM_Core_I18n
         $config =& CRM_Core_Config::singleton( );
         $stringTable = CRM_Utils_Array::value( $config->lcMessages,
                                                $config->localeCustomStrings );
-
+        
         $exactMatch = false;
-        if ( isset( $stringTable['exactMatch'] ) ) {
-            foreach ( $stringTable['exactMatch'] as $search => $replace ) {
+        if ( isset( $stringTable['enabled']['exactMatch'] ) ) {
+            foreach ( $stringTable['enabled']['exactMatch'] as $search => $replace ) {
                 if ( $search === $text ) {
                     $exactMatch = true;
                     $text = $replace;
@@ -190,11 +190,11 @@ class CRM_Core_I18n
                 }
             }
         }
-
+        
         if ( ! $exactMatch &&
-             isset( $stringTable['wildcardMatch'] ) ) {
-            $search  = array_keys  ( $stringTable['wildcardMatch'] );
-            $replace = array_values( $stringTable['wildcardMatch'] );
+             isset( $stringTable['enabled']['wildcardMatch'] ) ) {
+            $search  = array_keys  ( $stringTable['enabled']['wildcardMatch'] );
+            $replace = array_values( $stringTable['enabled']['wildcardMatch'] );
             $text = str_replace( $search,
                                  $replace,
                                  $text );
