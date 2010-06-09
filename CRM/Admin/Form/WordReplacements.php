@@ -218,7 +218,17 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
                             'disabled' => $disabled );
         
         $config = CRM_Core_Config::singleton();
-        $stringOverride = serialize( array( $config->lcMessages => $overrides ) );
+        $domain = new CRM_Core_DAO_Domain();
+        $domain->find(true);
+        if ( $domain->locales && $config->localeCustomStrings ) {
+            // for multilingual
+            $addReplacements = $config->localeCustomStrings;
+            $addReplacements[$config->lcMessages] = $overrides;
+            $stringOverride = serialize( $addReplacements );
+        } else {
+            // for single language
+            $stringOverride = serialize( array( $config->lcMessages => $overrides ) );
+        }
         
         $params = array( 'locale_custom_strings' => $stringOverride );
         $id = CRM_Core_Config::domainID( );
