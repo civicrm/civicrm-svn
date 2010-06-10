@@ -107,20 +107,14 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             $defaults['assignee_contact'] = CRM_Activity_BAO_ActivityAssignment::retrieveAssigneeIdsByActivityId( $activity->id );
             $assignee_contact_names = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $activity->id );
       
-            $defaults['assignee_contact_value'] = null;
-            foreach( $assignee_contact_names as $key => $name ) {
-                $defaults['assignee_contact_value'] .= $defaults['assignee_contact_value']?"; $name":"$name";
-            } 
+            $defaults['assignee_contact_value'] = implode('; ', $assignee_contact_names);
             
             if ($activity->activity_type_id != CRM_Core_OptionGroup::getValue( 'activity_type', 'Bulk Email', 'name' ) ) {  
                 require_once 'CRM/Activity/BAO/ActivityTarget.php';
                 $defaults['target_contact'] = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activity->id );
                 $target_contact_names = CRM_Activity_BAO_ActivityTarget::getTargetNames( $activity->id );
                 
-                $defaults['target_contact_value'] = null;
-                foreach ( $target_contact_names as $key => $name ) {
-                    $defaults['target_contact_value'] .= $defaults['target_contact_value']?"; $name":"$name";
-                }
+                $defaults['target_contact_value'] = implode('; ', $target_contact_names);
             } else if ( CRM_Core_Permission::check('access CiviMail') ) {
                 $defaults['mailingId'] = CRM_Utils_System::url( 'civicrm/mailing/report', 
                                                                 "mid={$activity->source_record_id}&reset=1&atype={$activity->activity_type_id}&aid={$activity->id}&cid={$activity->source_contact_id}&context=activity" );
