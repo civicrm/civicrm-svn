@@ -330,33 +330,36 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $this->assign( 'activityTypeName',        $this->_activityTypeName );
             $this->assign( 'activityTypeDescription', $activityTypeDescription );
         }
-        $url = null;
-        // set user context
-        if ( $this->_context == 'fulltext' ) {
-            if ( $this->_action == CRM_Core_Action::UPDATE ) { 
-                $url = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
-                                              'force=1&context=fulltext&action=view');
-            } else { 
-                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 
-                                              "force=1&qfKey={$this->_contextQFKey}" );
-            }
-           
-        } else if ( in_array( $this->_context, array( 'standalone', 'home' ) ) ) {
-            $url = CRM_Utils_System::url('civicrm/dashboard', 'reset=1' );
-        } else if ( $this->_context == 'search' ) {
-            $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
-            //validate the qfKey
-            require_once 'CRM/Utils/Rule.php';
-            $urlParams = 'force=1';
-            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
-            $url = CRM_Utils_System::url( 'civicrm/activity/search', $urlParams );
-        } else if ( $this->_context != 'caseActivity' ) {
-            $url = CRM_Utils_System::url('civicrm/contact/view',
-                                         "action=browse&reset=1&cid={$this->_currentlyViewedContactId}&selectedChild=activity" );
-        }
         
-        if ( $url ) {
-            $session->pushUserContext( $url );
+        // set user context
+        $urlParams = $urlString = null;
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
+        
+        if ( $this->_context == 'fulltext' ) {
+            $urlParams = 'force=1';
+            $urlString = 'civicrm/contact/search/custom';
+            if ( $this->_action == CRM_Core_Action::UPDATE ) { 
+                $urlParams .= '&context=fulltext&action=view';
+                $urlString  = 'civicrm/contact/view/activity';
+            }
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+        } else if ( in_array( $this->_context, array( 'standalone', 'home' ) ) ) {
+            $urlParams = 'reset=1';
+            $urlString = 'civicrm/dashboard';
+        } else if ( $this->_context == 'search' ) {
+            $urlParams = 'force=1';
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey"; 
+            $urlString = 'civicrm/activity/search';
+        } else if ( $this->_context != 'caseActivity' ) {
+            $urlParams = "action=browse&reset=1&cid={$this->_currentlyViewedContactId}&selectedChild=activity";
+            $urlString = 'civicrm/contact/view';
+        }
+        if ( $urlString ) {
+            $session->pushUserContext( CRM_Utils_System::url( $urlString, $urlParams ) );
         }
         
         // hack to retrieve activity type id from post variables

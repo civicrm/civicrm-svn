@@ -183,8 +183,6 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
     {
         $context      = CRM_Utils_Request::retrieve( 'context'     ,
                                                      'String', $this, false, 'search' );
-        $contextQFKey = CRM_Utils_Request::retrieve( 'contextQFKey',
-                                                     'String', $this, false, 'search' );
         
         $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
         //validate the qfKey
@@ -227,16 +225,16 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
             break; 
 
         case 'fulltext':
+            $urlParams = 'force=1';
+            $urlString = 'civicrm/contact/search/custom';
             if ( $this->_action == CRM_Core_Action::UPDATE ) {
-                $cid = null;
-                if ( $this->_contactId ) {
-                    $cid = '&cid=' . $this->_contactId;
-                }
-                $url = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
-                                              'force=1&context=fulltext&action=view&contextQFKey={$contextQFKey}' . $cid );
-            } else {
-                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', "force=1&qfKey={$contextQFKey}" );
+                $urlParams .= '&context=fulltext&action=view';
+                if ( $this->_contactId ) $urlParams .= '&cid=' . $this->_contactId;
+                $urlString = 'civicrm/contact/view/participant';
             }
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            
+            $url = CRM_Utils_System::url( $urlString, $urlParams ); 
             break;
             
         default:

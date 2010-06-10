@@ -106,9 +106,9 @@
                         <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.assignee_contact_id`"}" title="{ts}View contact details{/ts}">{$row.assignee_sort_name}</a></td>
                         <td>
                             {if $row.case_id }
-                                <a href="{crmURL p='civicrm/case/activity/view' q="reset=1&aid=`$row.activity_id`&cid=`$row.client_id`&caseID=`$row.case_id`&context=fulltext&contextQFKey=`$qfKey`"}">
+                                <a href="{crmURL p='civicrm/case/activity/view' q="reset=1&aid=`$row.activity_id`&cid=`$row.client_id`&caseID=`$row.case_id`&context=fulltext&key=`$qfKey`"}">
                             {else}
-                                <a href="{crmURL p='civicrm/contact/view/activity' q="atype=`$row.activity_type_id`&action=view&reset=1&id=`$row.activity_id`&cid=`$row.contact_id`&context=fulltext&contextQFKey=`$qfKey`"}">
+                                <a href="{crmURL p='civicrm/contact/view/activity' q="atype=`$row.activity_type_id`&action=view&reset=1&id=`$row.activity_id`&cid=`$row.contact_id`&context=fulltext&key=`$qfKey`"}">
                             {/if}
                             {ts}View{/ts}</a>
                         </td>
@@ -151,9 +151,9 @@
                         <td>{$row.case_end_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
                         <td>{$row.case_id}</td>
                         {if $row.case_is_deleted}
-			    <td><a href="{crmURL p='civicrm/contact/view/case' q="reset=1&id=`$row.case_id`&cid=`$row.contact_id`&action=renew&context=fulltext&contextQFKey=`$qfKey`"}">{ts}Restore Case{/ts}</a></td>
+			    <td><a href="{crmURL p='civicrm/contact/view/case' q="reset=1&id=`$row.case_id`&cid=`$row.contact_id`&action=renew&context=fulltext&key=`$qfKey`"}">{ts}Restore Case{/ts}</a></td>
 			{else}
-			    <td><a href="{crmURL p='civicrm/contact/view/case' q="reset=1&id=`$row.case_id`&cid=`$row.contact_id`&action=view&context=fulltext&contextQFKey=`$qfKey`"}">{ts}Manage Case{/ts}</a></td>
+			    <td><a href="{crmURL p='civicrm/contact/view/case' q="reset=1&id=`$row.case_id`&cid=`$row.contact_id`&action=view&context=fulltext&key=`$qfKey`"}">{ts}Manage Case{/ts}</a></td>
 			{/if}
                         <td class="start_date hiddenElement">{$row.case_start_date|crmDate}</td>
                         <td class="end_date hiddenElement">{$row.case_end_date|crmDate}</td>
@@ -197,7 +197,7 @@
                         <td>{$row.contribution_source}</td>
                         <td>{$row.contribution_receive_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
                         <td>{$row.contribution_status}</td>
-                        <td><a href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=`$row.contribution_id`&cid=`$row.contact_id`&action=view&context=fulltext&contextQFKey=`$qfKey`"}">{ts}View{/ts}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view/contribution' q="reset=1&id=`$row.contribution_id`&cid=`$row.contact_id`&action=view&context=fulltext&key=`$qfKey`"}">{ts}View{/ts}</a></td>
                         <td class="received_date hiddenElement">{$row.contribution_receive_date|crmDate}</td>
                     </tr>
                 {/foreach}
@@ -243,7 +243,7 @@
                         <td>{$row.participant_source}</td>
                         <td>{$row.participant_status}</td>
                         <td>{$row.participant_role}</td>
-                        <td><a href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=`$row.participant_id`&cid=`$row.contact_id`&action=view&context=fulltext&contextQFKey=`$qfKey`"}">{ts}View{/ts}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=`$row.participant_id`&cid=`$row.contact_id`&action=view&context=fulltext&key=`$qfKey`"}">{ts}View{/ts}</a></td>
                         <td class="register_date hiddenElement">{$row.participant_register_date|crmDate}</td>
                     </tr>
                 {/foreach}
@@ -288,7 +288,7 @@
                         <td>{$row.membership_end_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
                         <td>{$row.membership_source}</td>
                         <td>{$row.membership_status}</td>
-                        <td><a href="{crmURL p='civicrm/contact/view/membership' q="reset=1&id=`$row.membership_id`&cid=`$row.contact_id`&action=view&context=fulltext&contextQFKey=`$qfKey`"}">{ts}View{/ts}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view/membership' q="reset=1&id=`$row.membership_id`&cid=`$row.contact_id`&action=view&context=fulltext&key=`$qfKey`"}">{ts}View{/ts}</a></td>
                         <td class="start_date hiddenElement">{$row.membership_start_date|crmDate}</td>
                         <td class="end_date hiddenElement">{$row.membership_end_date|crmDate}</td>
                     </tr>
