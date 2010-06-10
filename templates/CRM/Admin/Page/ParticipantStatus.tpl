@@ -27,9 +27,8 @@
   {include file="CRM/Admin/Form/ParticipantStatus.tpl"}
 {else}
   <div id="help">{ts}Manage event participant statuses below. Enable selected statuses to allow event waitlisting and/or participant approval.{/ts} {help id="id-disabled_statuses" file="CRM/Admin/Page/ParticipantStatus.hlp"}</div>
-{/if}
 
-<div class="section participant-status">
+<div class="crm-section participant-status">
   {strip}
     {* handle enable/disable actions*}
     {include file="CRM/common/enableDisable.tpl"}
@@ -46,15 +45,15 @@
         <th></th>
       </thead>
       {foreach from=$rows item=row}
-       <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-          <td>{$row.label}</td>
-          <td>{$row.name}</td>
-          <td>{$row.class}</td>
-          <td class="yes-no">{if $row.is_reserved}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
-	  <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-          <td class="yes-no">{if $row.is_counted} <img src="{$config->resourceBase}/i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
-          <td>{$row.weight}</td>
-          <td>{$row.visibility}</td>
+       <tr id="row_{$row.id}" class=" crm-particpant crm-participant_{$row.id} {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+          <td class="crm-particpant-label">{$row.label}</td>
+          <td class="crm-particpant-name">{$row.name}</td>
+          <td class="crm-particpant-class">{$row.class}</td>
+          <td class="yes-no crm-participant-is_reserved">{if $row.is_reserved}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Reserved{/ts}" />{/if}</td>
+	  <td id="row_{$row.id}_status" class="crm-participant-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+          <td class="yes-no crm-participant-is_counted">{if $row.is_counted} <img src="{$config->resourceBase}/i/check.gif" alt="{ts}Counted{/ts}" />{/if}</td>
+          <td class="crm-particpant-weight">{$row.weight}</td>
+          <td class="crm-particpant-visibility">{$row.visibility}</td>
           <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
       {/foreach}
@@ -67,3 +66,4 @@
     </div>
   {/if}
 </div>
+{/if}

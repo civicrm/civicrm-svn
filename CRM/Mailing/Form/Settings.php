@@ -69,6 +69,10 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
             $dao =&new  CRM_Mailing_DAO_Mailing();
             $dao->id = $mailingID; 
             $dao->find(true);
+            // override_verp must be flipped, as in 3.2 we reverted
+            // its meaning to ‘should CiviMail manage replies?’ – i.e.,
+            // ‘should it *not* override Reply-To: with VERP-ed address?’
+            $dao->override_verp = !$dao->override_verp;
             $dao->storeValues($dao, $defaults);
         }
         return $defaults;
@@ -84,6 +88,9 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
     public function buildQuickForm( ) 
     {
         require_once 'CRM/Mailing/PseudoConstant.php';
+
+        $this->addElement('checkbox', 'override_verp', ts('Track Replies?'));
+        $defaults['override_verp'] = defined('CIVICRM_TRACK_CIVIMAIL_REPLIES') ? CIVICRM_TRACK_CIVIMAIL_REPLIES : false;
 
         $this->add('checkbox', 'forward_replies', ts('Forward Replies?'));
         $defaults['forward_replies'] = true;
@@ -143,7 +150,7 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
         $params = $ids       = array( );
         
         $uploadParams        = array('reply_id', 'unsubscribe_id', 'optout_id', 'resubscribe_id');
-        $uploadParamsBoolean = array('forward_replies', 'url_tracking', 'open_tracking', 'auto_responder');
+        $uploadParamsBoolean = array('override_verp', 'forward_replies', 'url_tracking', 'open_tracking', 'auto_responder');
        
         $qf_Settings_submit = $this->controller->exportValue($this->_name, '_qf_Settings_submit');
         
@@ -160,6 +167,11 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
             }
             $this->set($key, $this->controller->exportvalue($this->_name, $key));
         }
+
+        // override_verp must be flipped, as in 3.2 we reverted
+        // its meaning to ‘should CiviMail manage replies?’ – i.e.,
+        // ‘should it *not* override Reply-To: with VERP-ed address?’
+        $params['override_verp'] = !$params['override_verp'];
         
         $ids['mailing_id']    = $this->get('mailing_id');
         

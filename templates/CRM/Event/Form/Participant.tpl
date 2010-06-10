@@ -42,37 +42,30 @@
         </div>
     {/if}
     <div id="eventFullMsg" class="messages status" style="display:none;"></div>
-
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         
     <h3>{if $action eq 1}{ts}New Event Registration{/ts}{elseif $action eq 8}{ts}Delete Event Registration{/ts}{else}{ts}Edit Event Registration{/ts}{/if}</h3>
-    	{if $action eq 1 AND $paid}
+
+
+    {if $action eq 1 AND $paid}
     	<div id="help">
     		{ts}If you are accepting offline payment from this participant, check <strong>Record Payment</strong>. You will be able to fill in the payment information, and optionally send a receipt.{/ts}
     	</div>  
-    	{/if}
+    {/if}
 
         {if $action eq 8} {* If action is Delete *}
-            <table class="form-layout">
-    		<tr class="crm-participant-form-block-delete">
-    			<td>
-    				<div class="messages status">
-    					<dl>
-    						<dt><div class="icon inform-icon"></div></dt> 
-    						<dd> 
-    							{ts}WARNING: Deleting this registration will result in the loss of related payment records (if any).{/ts} {ts}Do you want to continue?{/ts} 
-    						</dd>
-    						{if $additionalParticipant}  
-    						<dd> 
-    							{ts 1=$additionalParticipant} There are %1 more Participant(s) registered by this participant. Deleting this registration will also result in deletion of these additional participant(s).{/ts}  
-    						</dd> 
-    						{/if}
-    					</dl>
-    				</div> 
-    			</td>
-    		</tr>
-            </table>
+    		<div class="crm-participant-form-block-delete messages status">
+                <div class="crm-content">
+                    <div class="icon inform-icon"></div> &nbsp;
+                    {ts}WARNING: Deleting this registration will result in the loss of related payment records (if any).{/ts} {ts}Do you want to continue?{/ts}
+                </div>
+    			{if $additionalParticipant}
+                    <div class="crm-content">
+                        {ts 1=$additionalParticipant} There are %1 more Participant(s) registered by this participant. Deleting this registration will also result in deletion of these additional participant(s).{/ts}
+                    </div>
+    			{/if}
+            </div>
         {else} {* If action is other than Delete *}
+            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
             <table class="form-layout-compressed">
             {if $single and $context neq 'standalone'}
     			<tr class="crm-participant-form-block-displayName">
@@ -106,9 +99,9 @@
     		</tr>
     		<tr class="crm-participant-form-block-status_id">
     			<td class="label">{$form.status_id.label}</td>
-			    <td>{$form.status_id.html}{if $event_is_test} {ts}(test){/ts}{/if}
+			<td>{$form.status_id.html}{if $event_is_test} {ts}(test){/ts}{/if}
 			        <div id="notify">{$form.is_notify.html}{$form.is_notify.label}</div>
-			    </td>
+			</td>
     		</tr>
     		<tr class="crm-participant-form-block-source">
     		    <td class="label">{$form.source.label}</td><td>{$form.source.html|crmReplace:class:huge}<br />
@@ -162,18 +155,24 @@
             }
         );
     }
+    {/literal}
 
-	//build fee block
-	buildFeeBlock( );
-	
-	//build discount block
-	if ( document.getElementById('discount_id') ) {
-		var discountId  = document.getElementById('discount_id').value;
-		if ( discountId ) {
-			var eventId  = document.getElementById('event_id').value;
-			buildFeeBlock( eventId, discountId );    
-		}
-	}
+    {if $preloadJSSnippet}
+       {$preloadJSSnippet}
+    {else}
+      //build fee block
+      buildFeeBlock( );
+   {/if}
+
+   {literal}	
+    //build discount block
+    if ( document.getElementById('discount_id') ) {
+      var discountId  = document.getElementById('discount_id').value;
+      if ( discountId ) {
+	var eventId  = document.getElementById('event_id').value;
+	buildFeeBlock( eventId, discountId );    
+      }
+    }
 
 	function buildFeeBlock( eventId, discountId )
 	{

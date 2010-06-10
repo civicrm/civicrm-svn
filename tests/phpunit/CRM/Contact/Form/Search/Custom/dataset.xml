@@ -162,67 +162,83 @@
         last_name="Contact 24"
     />
     <civicrm_entity_tag
-        contact_id="10"
+        entity_id="10"
+        entity_table="civicrm_contact"
         tag_id="9"
     />
     <civicrm_entity_tag
-        contact_id="12"
+        entity_id="12"
+        entity_table="civicrm_contact"
         tag_id="9"
     />
     <civicrm_entity_tag
-        contact_id="14"
+        entity_id="14"
+        entity_table="civicrm_contact" 
         tag_id="9"
     />
     <civicrm_entity_tag
-        contact_id="16"
+        entity_id="16"
+        entity_table="civicrm_contact" 
         tag_id="9"
     />
     <civicrm_entity_tag
-        contact_id="18"
+        entity_id="18"
+        entity_table="civicrm_contact"
         tag_id="9"
     />
     <civicrm_entity_tag
-        contact_id="20"
+        entity_id="20"
+        entity_table="civicrm_contact"
         tag_id="9"
     />
     <civicrm_entity_tag
-        contact_id="22"
+        entity_id="22"
+        entity_table="civicrm_contact"
         tag_id="9"
     />
     <civicrm_entity_tag
-        contact_id="24"
+        entity_id="24"
+        entity_table="civicrm_contact"
         tag_id="9"
     />
     <civicrm_entity_tag
-        contact_id="11"
+        entity_id="11"
+        entity_table="civicrm_contact"
         tag_id="7"
     />
     <civicrm_entity_tag
-        contact_id="12"
+        entity_id="12"
+        entity_table="civicrm_contact"
         tag_id="7"
     />
     <civicrm_entity_tag
-        contact_id="15"
+        entity_id="15"
+        entity_table="civicrm_contact"
         tag_id="7"
     />
     <civicrm_entity_tag
-        contact_id="16"
+        entity_id="16"
+        entity_table="civicrm_contact"
         tag_id="7"
     />
     <civicrm_entity_tag
-        contact_id="19"
+        entity_id="19"
+        entity_table="civicrm_contact"
         tag_id="7"
     />
     <civicrm_entity_tag
-        contact_id="20"
+        entity_id="20"
+        entity_table="civicrm_contact"
         tag_id="7"
     />
     <civicrm_entity_tag
-        contact_id="23"
+        entity_id="23"
+        entity_table="civicrm_contact"
         tag_id="7"
     />
     <civicrm_entity_tag
-        contact_id="24"
+        entity_id="24"
+        entity_table="civicrm_contact"
         tag_id="7"
     />
     <civicrm_group

@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting contribution *}
-<div class="crm-block crm-form-block"> 
+<div class="crm-block crm-form-block crm-contribution-form-block"> 
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {elseif $priceSetId}
@@ -53,12 +53,8 @@
 {/if}
    {if $action eq 8} 
       <div class="messages status"> 
-        <dl> 
-          <dt><div class="icon inform-icon"></div></dt> 
-          <dd> 
-          {ts}WARNING: Deleting this contribution will result in the loss of the associated financial transactions (if any).{/ts} {ts}Do you want to continue?{/ts} 
-          </dd> 
-       </dl> 
+          <div class="icon inform-icon"></div> 
+          {ts}WARNING: Deleting this contribution will result in the loss of the associated financial transactions (if any).{/ts} {ts}Do you want to continue?{/ts}
       </div> 
    {else}
       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
@@ -72,9 +68,9 @@
             {include file="CRM/Contact/Form/NewContact.tpl"}
         {/if}
         {if $contributionMode}
-           <tr><td class="label nowrap">{$form.payment_processor_id.label}<span class="marker"> * </span></td><td>{$form.payment_processor_id.html}</td></tr>
+           <tr class="crm-contribution-form-block-payment_processor_id"><td class="label nowrap">{$form.payment_processor_id.label}<span class="marker"> * </span></td><td>{$form.payment_processor_id.html}</td></tr>
         {/if}
-        <tr><td class="label">{$form.contribution_type_id.label}</td><td{$valueStyle}>{$form.contribution_type_id.html}&nbsp;
+        <tr class="crm-contribution-form-block-contribution_type_id"><td class="label">{$form.contribution_type_id.label}</td><td{$valueStyle}>{$form.contribution_type_id.html}&nbsp;
         {if $is_test}
         {ts}(test){/ts}
         {/if} {help id="id-contribution_type"}
@@ -86,7 +82,7 @@
             <td>{include file="CRM/Price/Page/LineItem.tpl" context="Contribution"}</td>
         </tr>
 	{else}
-        <tr>
+        <tr  class="crm-contribution-form-block-total_amount">
             <td class="label">{$form.total_amount.label}</td>
     	    <td {$valueStyle}>
         	    <span id='totalAmount'>{$form.total_amount.html|crmMoney:$form.currency.html|crmReplace:class:eight}</span> 
@@ -100,56 +96,56 @@
         </tr>
     {/if}
 
-        <tr><td class="label">{$form.source.label}</td><td{$valueStyle}>{$form.source.html} {help id="id-contrib_source"}</td></tr>
+        <tr  class="crm-contribution-form-block-source"><td class="label">{$form.source.label}</td><td{$valueStyle}>{$form.source.html} {help id="id-contrib_source"}</td></tr>
 
         {if $contributionMode}
             {if $email and $outBound_option != 2}
-                <tr><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}</td></tr>
+                <tr class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html}</td></tr>
                 <tr><td class="label">&nbsp;</td><td class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</td></tr>
             {elseif $context eq 'standalone' and $outBound_option != 2 }
-                <tr id="email-receipt" style="display:none;"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
+                <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
             {/if}
-            <tr id="receiptDate">
+            <tr id="receiptDate" class="crm-contribution-form-block-receipt_date">
                 <td class="label">{$form.receipt_date.label}</td>
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=receipt_date}<br />
                 <span class="description">{ts}Date that a receipt was sent to the contributor.{/ts}</span></td></tr>
         {/if}
         {if !$contributionMode}
-            <tr>
+            <tr class="crm-contribution-form-block-receive_date">
                 <td class="label">{$form.receive_date.label}</td>
                 <td{$valueStyle}>{if $hideCalender neq true}{include file="CRM/common/jcalendar.tpl" elementName=receive_date}{else}{$receive_date|truncate:10:''|crmDate}{/if}<br />
                     <span class="description">{ts}The date this contribution was received.{/ts}</span>
                 </td>
             </tr>
-            <tr>
+            <tr class="crm-contribution-form-block-payment_instrument_id">
                 <td class="label">{$form.payment_instrument_id.label}</td><td{$valueStyle}>{$form.payment_instrument_id.html}<br />
                     <span class="description">{ts}Leave blank for non-monetary contributions.{/ts}</span>
                 </td>
             </tr>
             {if $showCheckNumber || !$isOnline}  
-                <tr id="checkNumber"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmReplace:class:six}</td></tr>
+                <tr id="checkNumber" class="crm-contribution-form-block-check_number"><td class="label">{$form.check_number.label}</td><td>{$form.check_number.html|crmReplace:class:six}</td></tr>
             {/if}
-            <tr><td class="label">{$form.trxn_id.label}</td><td{$valueStyle}>{$form.trxn_id.html|crmReplace:class:twelve} {help id="id-trans_id"}</td></tr>
+            <tr class="crm-contribution-form-block-trxn_id"><td class="label">{$form.trxn_id.label}</td><td{$valueStyle}>{$form.trxn_id.html|crmReplace:class:twelve} {help id="id-trans_id"}</td></tr>
             {if $email and $outBound_option != 2}
-                <tr><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</span></td></tr>
+                <tr class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts 1=$email}Automatically email a receipt for this contribution to %1?{/ts}</span></td></tr>
             {elseif $context eq 'standalone' and $outBound_option != 2 }
-                <tr id="email-receipt" style="display:none;"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
+                <tr id="email-receipt" style="display:none;" class="crm-contribution-form-block-is_email_receipt"><td class="label">{$form.is_email_receipt.label}</td><td>{$form.is_email_receipt.html} <span class="description">{ts}Automatically email a receipt for this contribution to {/ts}<span id="email-address"></span>?</span></td></tr>
             {/if}
-            <tr id="receiptDate">
+            <tr id="receiptDate" class="crm-contribution-form-block-receipt_date">
                 <td class="label">{$form.receipt_date.label}</td>
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=receipt_date}<br />
                     <span class="description">{ts}Date that a receipt was sent to the contributor.{/ts}</span>
                 </td>
             </tr>
-            <tr><td class="label">{$form.contribution_status_id.label}</td><td>{$form.contribution_status_id.html}
+            <tr class="crm-contribution-form-block-contribution_status_id"><td class="label">{$form.contribution_status_id.label}</td><td>{$form.contribution_status_id.html}
             {if $contribution_status_id eq 2}{if $is_pay_later }: {ts}Pay Later{/ts} {else}: {ts}Incomplete Transaction{/ts}{/if}{/if}</td></tr>
 
             {* Cancellation fields are hidden unless contribution status is set to Cancelled *}
-            <tr id="cancelInfo"> 
+            <tr id="cancelInfo" class="crm-contribution-form-block-cancelInfo"> 
                 <td>&nbsp;</td> 
                 <td><fieldset><legend>{ts}Cancellation Information{/ts}</legend>
                 <table class="form-layout-compressed">
-                  <tr id="cancelDate">
+                  <tr id="cancelDate" class="crm-contribution-form-block-cancel_date">
                     <td class="label">{$form.cancel_date.label}</td>
                     <td>
                         {if $hideCalendar neq true}
@@ -159,7 +155,7 @@
                         {/if}
                    </td>
                   </tr>
-                  <tr id="cancelDescription"><td class="label">&nbsp;</td><td class="description">{ts}Enter the cancellation date, or you can skip this field and the cancellation date will be automatically set to TODAY.{/ts}</td></tr>
+                  <tr id="cancelDescription" class="crm-contribution-form-block-cancel_reason"><td class="label">&nbsp;</td><td class="description">{ts}Enter the cancellation date, or you can skip this field and the cancellation date will be automatically set to TODAY.{/ts}</td></tr>
                   <tr id="cancelReason"><td class="label" style="vertical-align: top;">{$form.cancel_reason.label}</td><td>{$form.cancel_reason.html|crmReplace:class:huge}</td></tr>
                </table>
                </fieldset>
@@ -167,23 +163,23 @@
             </tr>
         {/if}
 
-        <tr><td class="label">{$form.soft_credit_to.label}</td>
+        <tr class="crm-contribution-form-block-soft_credit_to"><td class="label">{$form.soft_credit_to.label}</td>
             <td>{$form.soft_credit_to.html} {help id="id-soft_credit"}</td>
         </tr>
 	    {if $action eq 2 and $form.pcp_made_through_id.value[0]} {* Include PCP honor roll fields if contrib came from PCP page *}
-    	    <tr><td class="label">{$form.pcp_display_in_roll.label}</td>
+    	    <tr class="crm-contribution-form-block-pcp_display_in_roll"><td class="label">{$form.pcp_display_in_roll.label}</td>
     	        <td>{$form.pcp_display_in_roll.html}</td>
     	    </tr>
-    	    <tr id="nameID">
+    	    <tr id="nameID" class="crm-contribution-form-block-pcp_is_anonymous">
     	        <td></td>
     	        <td>{$form.pcp_is_anonymous.html}</td>
     	    </tr>
-    	    <tr id="nickID">
+    	    <tr id="nickID" class="crm-contribution-form-block-pcp_roll_nickname">
     	        <td class="label">{$form.pcp_roll_nickname.label}</td>
     	        <td>{$form.pcp_roll_nickname.html}<br />
     		    <span class="description">{ts}Name displayed in the Honor Roll.{/ts}</span></td>
     	    </tr>
-    	    <tr id="personalNoteID">
+    	    <tr id="personalNoteID" class="crm-contribution-form-block-pcp_personal_note">
     	        <td class="label" style="vertical-align: top">{$form.pcp_personal_note.label}</td>
     	        <td>{$form.pcp_personal_note.html}
                     <span class="description">{ts}Personal message submitted by contributor for display in the Honor Roll.{/ts}</span>
@@ -291,7 +287,7 @@ function loadPanes( id ) {
 
 {/if}
 <br />
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {literal}
     <script type="text/javascript">
      function verify( ) {

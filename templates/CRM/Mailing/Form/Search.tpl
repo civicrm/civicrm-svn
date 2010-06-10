@@ -24,17 +24,15 @@
  +--------------------------------------------------------------------+
 *}
 <div class="crm-block crm-form-block crm-search-form-block">
-<h3>{ts}Find Mailings{/ts}</h3>
-<div class="form-item">
 <table class="form-layout">
     <tr>
         <td>{$form.mailing_name.label}<br />
             {$form.mailing_name.html|crmReplace:class:big} {help id="id-mailing_name"}
         </td>
-        <td class="nowrap">{$form.mailing_from.label}
+        <td class="nowrap">{$form.mailing_from.label}<br />
             {include file="CRM/common/jcalendar.tpl" elementName=mailing_from}
         </td>
-        <td class="nowrap">{$form.mailing_to.label}
+        <td class="nowrap">{$form.mailing_to.label}<br />
             {include file="CRM/common/jcalendar.tpl" elementName=mailing_to}
         </td> 
     </tr>
@@ -47,5 +45,4 @@
         <td>{$form.buttons.html}</td><td colspan="2"></td>
     </tr>
 </table>
-</div>
 </div>

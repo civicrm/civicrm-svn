@@ -216,7 +216,7 @@ class CRM_Utils_File {
     }
 
 
-    function sourceSQLFile( $dsn, $fileName, $prefix = null, $isQueryString = false ) {
+    function sourceSQLFile( $dsn, $fileName, $prefix = null, $isQueryString = false, $dieOnErrors = true ) {
         require_once 'DB.php';
 
         $db  =& DB::connect( $dsn );
@@ -242,7 +242,11 @@ class CRM_Utils_File {
             if ( ! empty( $query ) ) {
                 $res =& $db->query( $query );
                 if ( PEAR::isError( $res ) ) {
-                    die( "Cannot execute $query: " . $res->getMessage( ) );
+                    if ( $dieOnErrors ) {
+                        die( "Cannot execute $query: " . $res->getMessage( ) );
+                    } else {
+                        echo "Cannot execute $query: " . $res->getMessage( ) . "<p>";
+                    }
                 }
             }
         }

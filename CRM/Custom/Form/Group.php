@@ -96,7 +96,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             $title = CRM_Core_BAO_CustomGroup::getTitle($this->_id);
             CRM_Utils_System::setTitle(ts('Preview %1', array(1 => $title)));
         } else {
-            CRM_Utils_System::setTitle(ts('New Custom Data Group'));
+            CRM_Utils_System::setTitle(ts('New Custom Field Set'));
         }
 
         if ( isset($this->_id) ) {
@@ -300,8 +300,18 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             $sel->_elements[1]->setMultiple(true);
             $sel->_elements[1]->setSize(5);
         }
-
         if ($this->_action == CRM_Core_Action::UPDATE) {
+            $subName = CRM_Utils_Array::value( 'extends_entity_column_id', $this->_defaults );
+            if ( $this->_defaults['extends'] == 'Participant') {
+                if ( $subName == 1 ) {
+                    $this->_defaults['extends'] = 'ParticipantRole';
+                } elseif ( $subName == 2 ) {
+                    $this->_defaults['extends'] = 'ParticipantEventName';
+                } elseif ( $subName == 3 ) {
+                    $this->_defaults['extends'] = 'ParticipantEventType';
+                }
+            }
+
             //allow to edit settings if custom set is empty CRM-5258
             $this->_isGroupEmpty = CRM_Core_BAO_CustomGroup::isGroupEmpty( $this->_id );
             if ( !$this->_isGroupEmpty ) {
@@ -342,7 +352,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         // does this set have multiple record?
         $multiple = $this->addElement('checkbox', 
                                       'is_multiple', 
-                                      ts('Does this Custom Data Set allow multiple records?'),
+                                      ts('Does this Custom Field Set allow multiple records?'),
                                       null,
                                       array( 'onclick' => "showRange();"));
 
@@ -417,15 +427,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             
             $subName = CRM_Utils_Array::value( 'extends_entity_column_id', $defaults );
 			
-			if ( $extends == 'Participant') {
-				if ( $subName == 1 ) {
-					$defaults['extends'][0] = 'ParticipantRole';
-				} elseif ( $subName == 2 ) {
-					$defaults['extends'][0] = 'ParticipantEventName';
-				} elseif ( $subName == 3 ) {
-					$defaults['extends'][0] = 'ParticipantEventType';
-				}
-			} else if ( $extends == 'Relationship' && !empty($this->_subtypes) ) {
+			if ( $extends == 'Relationship' && !empty($this->_subtypes) ) {
                 $relationshipDefaults = array ( );
                 foreach ( $defaults['extends'][1] as $donCare => $rel_type_id ) {
                     $relationshipDefaults[] = $rel_type_id.'_a_b';
@@ -471,10 +473,10 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
         CRM_Core_BAO_Cache::deleteGroup( 'contact fields' );
       
         if ($this->_action & CRM_Core_Action::UPDATE) {
-            CRM_Core_Session::setStatus(ts('Your custom data set \'%1 \' has been saved.', array(1 => $group->title)));
+            CRM_Core_Session::setStatus(ts('Your custom field set \'%1 \' has been saved.', array(1 => $group->title)));
         } else {
             $url = CRM_Utils_System::url( 'civicrm/admin/custom/group/field', 'reset=1&action=add&gid=' . $group->id);
-            CRM_Core_Session::setStatus(ts('Your custom data set \'%1\' has been added. You can add it custom fields now.',
+            CRM_Core_Session::setStatus(ts('Your custom field set \'%1\' has been added. You can add it custom fields now.',
                                            array(1 => $group->title)));
             $session = CRM_Core_Session::singleton( );
             $session->replaceUserContext($url);

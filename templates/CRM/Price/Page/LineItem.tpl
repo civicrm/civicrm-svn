@@ -51,7 +51,7 @@
     {/if}
 {/foreach}
 
-<div class="section no-label total_amount-section">
+<div class="crm-section no-label total_amount-section">
     <div class="content bold">
         {if $context EQ "Contribution"}
             {ts}Contribution Total{/ts}:
@@ -74,7 +74,7 @@
 </div>
 
 {if $hookDiscount.message}
-    <div class="section hookDiscount-section">
+    <div class="crm-section hookDiscount-section">
         <em>({$hookDiscount.message})</em>
     </div>
 {/if}

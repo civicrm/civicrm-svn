@@ -23,16 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
+<div class="crm-block crm-event-participant_confirm-form-block">
   <div class="messages status">
-    <dl>
-	<dd>
-	   {$statusMsg}
-    </dd>
-    </dl>
+        {$statusMsg}
   </div>
 
   <div id="crm-submit-buttons">
-	{$form.buttons.html}
+	{include file="CRM/common/formButtons.tpl" location="bottom"}
   </div>
 </div>

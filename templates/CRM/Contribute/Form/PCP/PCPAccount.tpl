@@ -32,10 +32,8 @@
 
 {if $profileDisplay}
 <div class="messages status">
-<dl>
-  	<dt><img src="{$config->resourceBase}i/Eyeball.gif" alt="{ts}Profile{/ts}"/></dt>
-    	<dd><p><strong>{ts}Profile is not configured with Email address.{/ts}</strong></p></dd>
-</dl>
+  	<img src="{$config->resourceBase}i/Eyeball.gif" alt="{ts}Profile{/ts}"/>
+    	<p><strong>{ts}Profile is not configured with Email address.{/ts}</strong></p>
 </div>
 {else}
 <div class="form-item">
@@ -44,9 +42,8 @@
 {if $isCaptcha} 
 {include file='CRM/common/ReCAPTCHA.tpl'} 
 {/if}
-<dl>
-	<dt></dt>
-	<dd class="html-adjust">{include file="CRM/common/formButtons.tpl"}</dd>
-</dl>
+</div>
+<div class="crm-submit-buttons">
+{include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
 {/if}

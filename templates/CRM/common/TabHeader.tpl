@@ -49,6 +49,11 @@
         cj("#mainTabContainer").tabs( {
             selected: tabIndex,
             select: function(event, ui) {
+                // we need to change the action of parent form, so that form submits to correct page
+                var url = cj.data(ui.tab, 'load.tabs');
+                var actionUrl = url.split( '?' );
+                cj(this).parents("form").attr("action", actionUrl[0] )                
+                
                 if ( !global_formNavigate ) {
                     var message = '{/literal}{ts escape="js"}Confirm\n\nAre you sure you want to navigate away from this tab?\n\nYou have unsaved changes.\n\nPress OK to continue, or Cancel to stay on the current tab.{/ts}{literal}';
                     if ( !confirm( message ) ) {

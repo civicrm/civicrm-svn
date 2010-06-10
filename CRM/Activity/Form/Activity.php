@@ -82,6 +82,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
     protected $_single;
     
     public $_context;
+    public $_action;
     public $_contextQFKey;
     public $_activityTypeFile;
 
@@ -132,11 +133,9 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                                                                                    'location' ),
                                                         'required'   => false,
                                                         ),
-                  'details'                  => array(  'type'       => 'textarea',
+                  'details'                  => array(  'type'       => 'wysiwyg',
                                                         'label'      => ts('Details'),
-                                                        'attributes' => 
-                                                        CRM_Core_DAO::getAttribute('CRM_Activity_DAO_Activity', 
-                                                                                   'details' ),
+                                                        'attributes' => array( 'rows' => 4, 'cols' => 60 ), // forces a smaller edit window
                                                         'required'   => false, 
                                                         ),
                   'status_id'                 =>  array( 'type'       => 'select',
@@ -146,7 +145,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                                                          'required'   => true, 
                                                          ),
                   'priority_id'               =>  array( 'type'       => 'select',
-                                                         'label'      => 'Priority',
+                                                         'label'      => ts('Priority'),
                                                          'attributes' => 
                                                          CRM_Core_PseudoConstant::priority( ),
                                                          'required'   => true,
@@ -232,13 +231,13 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $this->_contextQFKey = CRM_Utils_Request::retrieve('contextQFKey', 'String', $this );
 
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this );
-
+        
         if ( $this->_action & CRM_Core_Action::DELETE ) {
             if ( !CRM_Core_Permission::check( 'delete activities' ) ) {
                 CRM_Core_Error::fatal( ts( 'You do not have permission to access this page' ) );  
             }
         }
-
+        
         // if we're not adding new one, there must be an id to
         // an activity we're trying to work on.
         if ( $this->_action != CRM_Core_Action::ADD ) {
@@ -252,7 +251,15 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         
         $this->_activityTypeId = CRM_Utils_Request::retrieve( 'atype', 'Positive', $this );
         $this->assign( 'atype', $this->_activityTypeId );
-
+        
+        //check for required permissions, CRM-6264 
+        require_once 'CRM/Case/BAO/Case.php';
+        if ( $this->_activityId &&
+             in_array( $this->_action, array( CRM_Core_Action::UPDATE, CRM_Core_Action::VIEW ) ) && 
+             !CRM_Activity_BAO_Activity::checkPermission( $this->_activityId, $this->_action ) ) {
+            CRM_Core_Error::fatal( ts( 'You do not have permission to access this page.' ) );
+        }
+        
         if ( !$this->_activityTypeId && $this->_activityId ) {
             $this->_activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity',
                                                                   $this->_activityId,
@@ -337,11 +344,17 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         } else if ( in_array( $this->_context, array( 'standalone', 'home' ) ) ) {
             $url = CRM_Utils_System::url('civicrm/dashboard', 'reset=1' );
         } else if ( $this->_context == 'search' ) {
-            $url = CRM_Utils_System::url( 'civicrm/activity/search', 'force=1' );
+            $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+            //validate the qfKey
+            require_once 'CRM/Utils/Rule.php';
+            $urlParams = 'force=1';
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+            $url = CRM_Utils_System::url( 'civicrm/activity/search', $urlParams );
         } else if ( $this->_context != 'caseActivity' ) {
             $url = CRM_Utils_System::url('civicrm/contact/view',
                                          "action=browse&reset=1&cid={$this->_currentlyViewedContactId}&selectedChild=activity" );
         }
+        
         if ( $url ) {
             $session->pushUserContext( $url );
         }
@@ -554,7 +567,11 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 if ( CRM_Utils_Array::value( 'required', $values ) ) {
                     $required = true;
                 }
-                $this->add($values['type'], $field, $values['label'], $attribute, $required );
+                if ( $values['type'] == 'wysiwyg' ) {
+                    $this->addWysiwyg( $field, $values['label'], $attribute, $required );
+                } else {
+                    $this->add($values['type'], $field, $values['label'], $attribute, $required );
+                }
             }
         }
 
@@ -616,18 +633,17 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
         
         require_once 'CRM/Core/BAO/Tag.php';
-        $tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_activity'), true );
+        $tags = CRM_Core_BAO_Tag::getTags( 'civicrm_activity' );
         
         if ( !empty($tags) ) { 
             $this->add('select', 'tag',  ts( 'Tags' ), $tags, false, 
-                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('Click to select Tag') ));
+                       array( 'id' => 'tags',  'multiple'=> 'multiple', 'title' => ts('- select -') ));
         }
         
         // build tag widget
         require_once 'CRM/Core/Form/Tag.php';
-        require_once 'CRM/Core/BAO/Tag.php';
         $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_activity' );
-        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_activity', $this->_activityId, true );
+        CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_activity', $this->_activityId, false, true );
             
         // if we're viewing, we're assigning different buttons than for adding/editing
         if ( $this->_action & CRM_Core_Action::VIEW ) { 
@@ -641,6 +657,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             if ( CRM_Case_BAO_Case::checkPermission( $this->_activityId, 'File On Case', $this->_activityTypeId ) ) {
                 $buttons[] = array ( 'type'      => 'cancel',
                                      'name'      => ts('File on case'),
+                                     'subName'   => 'file_on_case',
                                      'js'        => array ('onClick' => "Javascript:fileOnCase( \"file\", $this->_activityId ); return false;" ),
                                      );
             }
@@ -766,7 +783,9 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
     {
         if ( $this->_action & CRM_Core_Action::DELETE ) { 
             $deleteParams = array( 'id' => $this->_activityId );
-            CRM_Activity_BAO_Activity::deleteActivity( $deleteParams );
+            require_once 'CRM/Case/BAO/Case.php';
+            $moveToTrash = CRM_Case_BAO_Case::isCaseActivity( $this->_activityId );
+            CRM_Activity_BAO_Activity::deleteActivity( $deleteParams, $moveToTrash);
 
             // delete tags for the entity
             require_once 'CRM/Core/BAO/EntityTag.php';
@@ -874,7 +893,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         //save free tags
         if ( isset( $params['taglist'] ) && !empty( $params['taglist'] ) ) {
             require_once 'CRM/Core/Form/Tag.php';
-            CRM_Core_Form_Tag::postProcess( $params['taglist'], $activity->id, 'civicrm_activity' );
+            CRM_Core_Form_Tag::postProcess( $params['taglist'], $activity->id, 'civicrm_activity', $this );
         }
         
         // call end post process. Idea is to let injecting file do any

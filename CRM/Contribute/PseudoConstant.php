@@ -144,15 +144,16 @@ class CRM_Contribute_PseudoConstant extends CRM_Core_PseudoConstant
      * @return array - array reference of all payment instruments if any
      * @static
      */
-    public static function &paymentInstrument( )
+    public static function &paymentInstrument( $columnName = 'label' )
     {
-        $paymentInstrument = CRM_Core_OptionGroup::values('payment_instrument');
-        if ( ! $paymentInstrument ) {
-            $paymentInstrument = array( );
+        if ( !isset( self::$paymentInstrument[$columnName] ) ) {
+            self::$paymentInstrument[$columnName] = CRM_Core_OptionGroup::values( 'payment_instrument', 
+                                                                                  false, false, false, null, $columnName );
         }
-        return $paymentInstrument;
+        
+        return self::$paymentInstrument[$columnName];
     }
-
+    
     /**
      * Get all the valid accepted credit cards
      *               

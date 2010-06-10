@@ -23,11 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-form-block crm-case-common-form-block">
 {if $notConfigured} {* Case types not present. Component is not configured for use. *}
     {include file="CRM/Case/Page/ConfigureError.tpl"}
 {else}
 <tr>
-  <td width="25%"><label>{ts}Case Type{/ts}</label>
+  <td class="crm-case-common-form-block-case_type" width="25%"><label>{ts}Case Type{/ts}</label>
     <br />
       <div class="listing-box" style="width: auto; height: 120px">
        {foreach from=$form.case_type_id item="case_type_id_val"}
@@ -38,7 +39,7 @@
       </div><br />
   </td>
   
-  <td width="25%">
+  <td class="crm-case-common-form-block-case_status_id" width="25%">
     {$form.case_status_id.label}<br /> 
     {$form.case_status_id.html}<br /><br />	
     {if $accessAllCases}
@@ -50,7 +51,7 @@
     {/if}
   </td>
   {if $form.case_tags }
-  <td>
+  <td class="crm-case-common-form-block-case_tags">
   <label>{ts}Case Tag(s){/ts}</label>
     <div id="Tag" class="listing-box">
       {foreach from=$form.case_tags item="tag_val"} 
@@ -62,3 +63,4 @@
 {/if}
 </tr>     
 {/if}
+</div>

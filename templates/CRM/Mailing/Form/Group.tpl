@@ -25,27 +25,22 @@
 *}
 {if $groupCount == 0 and $mailingCount == 0}
   <div class="status">
-    <dl>
-      <dt><div class="icon inform-icon"></div></dt>
-      <dd>
+	<div class="icon inform-icon"></div>
         {ts}To send a mailing, you must have a valid group of recipients - either at least one group that's a Mailing List or at least one previous mailing.{/ts}
-      </dd>
-    </dl>
   </div>
 {else}
-<div class="crm-form-block">
+<div class="crm-block crm-form-block crm-mailing-group-form-block">
 {include file="CRM/common/WizardHeader.tpl"}
 
-<div class="form-item">
-  <dl>
-    <dt>{$form.name.label}</dt><dd>{$form.name.html} {help id="mailing-name"}</dd>
+  <table class="form-layout">
+   <tr class="crm-mailing-group-form-block-name"><td class="label">{$form.name.label}</td><td>{$form.name.html} {help id="mailing-name"}</td></tr>
     {if $context EQ 'search'}
-    <dt>{$form.baseGroup.label}</dt><dd>{$form.baseGroup.html}</dd>
+    <tr class="crm-mailing-group-form-block-baseGroup"><td class="label">{$form.baseGroup.label}</td><td>{$form.baseGroup.html}</td>
     {/if}	
-  </dl>
+  </table>
 
 
- <div id="id-additional" class="form-item">
+<div id="id-additional" class="form-item">
 <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
@@ -56,28 +51,26 @@
 
   <table>
   {if $groupCount > 0}
-    <tr><th class="label">{$form.includeGroups.label} {help id="include-groups"}</th></tr>
-    <tr><td>{$form.includeGroups.html}</td></tr>
-    <tr><th class="label">{$form.excludeGroups.label} {help id="exclude-groups"}</th></tr>
-    <tr><td>{$form.excludeGroups.html}</td></tr>
+    <tr class="crm-mailing-group-form-block-includeGroups"><td class="label">{$form.includeGroups.label} {help id="include-groups"}</th></tr>
+    <tr class="crm-mailing-group-form-block-includeGroups"><td>{$form.includeGroups.html}</td></tr>
+    <tr class="crm-mailing-group-form-block-excludeGroups"><td class="label">{$form.excludeGroups.label} {help id="exclude-groups"}</th></tr>
+    <tr class="crm-mailing-group-form-block-excludeGroups"><td>{$form.excludeGroups.html}</td></tr>
   {/if}
   {if $mailingCount > 0}
-  <tr><th class="label">{$form.includeMailings.label} {help id="include-mailings"}</th></tr>
-  <tr><td>{$form.includeMailings.html}</td></tr>
-  <tr><th class="label">{$form.excludeMailings.label} {help id="exclude-mailings"}</th></tr>
-  <tr><td>{$form.excludeMailings.html}</td></tr>
+  <tr class="crm-mailing-group-form-block-includeMailings"><td class="label">{$form.includeMailings.label} {help id="include-mailings"}</th></tr>
+  <tr class="crm-mailing-group-form-block-includeMailings"><td>{$form.includeMailings.html}</td></tr>
+  <tr class="crm-mailing-group-form-block-excludeMailings"><td class="label">{$form.excludeMailings.label} {help id="exclude-mailings"}</th></tr>
+  <tr class="crm-mailing-group-form-block-excludeMailings"><td>{$form.excludeMailings.html}</td></tr>
   {/if}
   </table>
 
   {/strip}
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
- </div>
 
- <dl>
- <dt></dt><dd>{$form.buttons.html}</dd>
- </dl>
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>
+
 {literal}
 <script type="text/javascript">
 cj(function() {

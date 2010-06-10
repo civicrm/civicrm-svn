@@ -52,9 +52,8 @@
 </div>
 {else}
 <div class="messages status">
-<dl>
-	<dt><div class="icon inform-icon"></div></dt>
-	<dd>{ts}You do not have any active Personal Campaign pages.{/ts}</dd>
+	<div class="icon inform-icon"></div>
+	{ts}You do not have any active Personal Campaign pages.{/ts}
 </dl>
 </div>
 {/if}

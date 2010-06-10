@@ -23,14 +23,15 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-report-templateList-form-block">
 <div class="help">
 {ts}Create reports for your users from any of the report templates listed below. Click on a template titles to get started. Click Existing Report(s) to see any reports that have already been created from that template.{/ts}
 </div>
 {strip}
 {if $list}
+{counter start=0 skip=1 print=false}
     {foreach from=$list item=rows key=report}		
-<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
+<div class="crm-accordion-wrapper crm-accordion_{$report}-accordion crm-accordion_title-accordion crm-accordion-open">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div>
   {if $report}{if $report EQ 'Contribute'}{ts}Contribution{/ts}{else}{$report}{/if}{else}Contact{/if} Report Templates
@@ -39,8 +40,8 @@
 	<div id="{$report}" class="boxBlock">
 	    <table class="report-layout">
 		{foreach from=$rows item=row}
-		    <tr>
-			<td style="width:35%;">
+		    <tr id="row_{counter}" class="crm-report-templateList">
+			<td class="crm-report-templateList-title" style="width:35%;">
 			    <a href="{$row.url}" title="{ts}Create report from this template{/ts}">&raquo; <strong>{$row.title}</strong></a>
 			    {if $row.instanceUrl}
 				<div style="font-size:10px;text-align:right;margin-top:3px;">
@@ -48,7 +49,7 @@
 				</div>
 			    {/if}
 			</td>
-			<td style="cursor:help;">
+			<td style="cursor:help;" class="crm-report-templateList-description">
 			    {$row.description}
 			</td>
 		    </tr>
@@ -60,14 +61,7 @@
 {/foreach}
 {else}
     <div class="messages status">
-        <dl>
-            <dt>
-                <div class="icon inform-icon"></div>
-            </dt>
-            <dd>
-                {ts}There are currently no Report Templates.{/ts}
-            </dd>
-        </dl>
+        <div class="icon inform-icon"></div>&nbsp; {ts}There are currently no Report Templates.{/ts}
     </div>
 {/if}
 {/strip}

@@ -270,6 +270,15 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
     {
         $context = CRM_Utils_Request::retrieve( 'context', 'String',
                                                 $this, false, 'search' );
+        $qfKey     = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+
+        // make sure we dont get tricked with a bad key
+        // so check format
+        require_once 'CRM/Core/Key.php';
+        if ( ! CRM_Core_Key::valid( $qfKey ) ) {
+            $qfKey = null;
+        }
+                                                
         $session = CRM_Core_Session::singleton( ); 
        
         switch ( $context ) {
@@ -302,7 +311,11 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             break;
             
         case 'search':
-            $url = CRM_Utils_System::url( 'civicrm/contribute/search', 'force=1' );
+            $extraParams = "force=1";
+            if ( $qfKey ) {
+                $extraParams .= "&qfKey=$qfKey";
+            }
+            $url = CRM_Utils_System::url( 'civicrm/contribute/search', $extraParams );
             break;
 
         case 'home':

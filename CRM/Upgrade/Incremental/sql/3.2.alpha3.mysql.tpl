@@ -1,3 +1,7 @@
+-- CRM-6228
+
+{include file='../CRM/Upgrade/3.2.alpha3.msg_template/civicrm_msg_template.tpl'}
+
 -- CRM-6144
    DELETE civicrm_activity.* FROM civicrm_activity 
        LEFT JOIN civicrm_option_value ON ( civicrm_option_value.value = civicrm_activity.activity_type_id )
@@ -103,3 +107,45 @@ CREATE TABLE `civicrm_address_format` (
 -- CRM-6181
 UPDATE `civicrm_contact` SET `is_deleted` = 0 WHERE `is_deleted` IS NULL;
 ALTER TABLE `civicrm_contact` MODIFY COLUMN `is_deleted` boolean NOT NULL DEFAULT 0;
+
+-- CRM-6198
+
+DELETE FROM `civicrm_state_province` WHERE `name` IN ('Freeport', 'Fresh Creek', 'Governor\'s Harbour' , 'Green Turtle Cay', 'Harbour Island', 'High Rock', 'Kemps Bay', 'Marsh Harbour','Nicholls Town and Berry Islands' ,'Rock Sound','Sandy Point','San Salvador and Rum Cay','Bandundu', 'Bas-Congo' ,'Haut-Congo', 'Kasai-Occidental','Katanga', 'Orientale' );
+
+INSERT INTO civicrm_state_province
+        (`name`, `abbreviation`, `country_id` )
+   VALUES
+        ( 'Abaco Islands', 'AB',1212),
+        ( 'Andros Island', 'AN',1212 ),
+        ( 'Berry Islands', 'BR',1212 ),
+        ( 'Eleuthera', 'EL', 1212 ),
+        ( 'Grand Bahama', 'GB', 1212 ),
+        ( 'Rum Cay','RC', 1212 ),
+        ( 'San Salvador Island', 'SS', 1212 ),
+        ( 'Kongo central', '01', 1050 ),
+	( 'Kwango', '02', 1050 ),
+	( 'Kwilu', '03', 1050 ),
+	( 'Mai-Ndombe', '04', 1050 ),
+	( 'Kasai', '05', 1050 ),
+	( 'Lulua', '06', 1050 ),
+	( 'Lomami', '07', 1050 ),
+	( 'Sankuru', '08', 1050 ),
+	( 'Ituri', '09', 1050 ),
+	( 'Haut-Uele', '10', 1050 ),
+	( 'Tshopo', '11', 1050 ),
+	( 'Bas-Uele', '12', 1050 ),
+	( 'Nord-Ubangi', '13', 1050 ),
+	( 'Mongala', '14', 1050 ),
+	( 'Sud-Ubangi', '15', 1050 ),
+	( 'Tshuapa', '16', 1050 ),	
+	( 'Haut-Lomami', '17', 1050 ),
+	( 'Lualaba', '18', 1050 ),
+	( 'Haut-Katanga', '19', 1050 ),
+	( 'Tanganyika', '20', 1050 );
+
+-- CRM-6159
+UPDATE civicrm_mailing_bounce_pattern SET pattern = 'over\\s?quota' WHERE pattern = 'overs?quota';
+
+-- CRM-6180
+UPDATE civicrm_state_province SET name = 'Durrës' WHERE name = 'Durrsës';
+UPDATE civicrm_state_province SET name = 'Korçë'  WHERE name = 'Korcë';

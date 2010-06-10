@@ -85,8 +85,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         if ( $eventFull && !$this->_allowConfirmation &&
              CRM_Utils_Array::value( 'has_waitlist', $this->_values['event'] ) ) { 
             $this->_allowWaitlist = true;
-            $this->_waitlistMsg = CRM_Utils_Array::value( 'waitlist_text', $this->_values['event'], 
-                                                          ts('This event is currently full. However you can register now and get added to a waiting list. You will be notified if spaces become available.') );
+            $this->_waitlistMsg = CRM_Utils_Array::value( 'waitlist_text', $this->_values['event'] );
+            if ( !$this->_waitlistMsg ) {
+                $this->_waitlistMsg = ts('This event is currently full. However you can register now and get added to a waiting list. You will be notified if spaces become available.' );
+            }
         }
         $this->set( 'allowWaitlist', $this->_allowWaitlist );
         
@@ -317,7 +319,8 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             if ( !$this->_allowConfirmation || $this->_additionalParticipantIds ) {
                 // Hardcode maximum number of additional participants here for now. May need to make this configurable per event.
                 // Label is value + 1, since the code sees this is ADDITIONAL participants (in addition to "self")
-                $additionalOptions = array( '' => ts('1'),1 => ts('2'),2 => ts('3'),3 => ts('4'),4 => ts('5'),5 => ts('6'),6 => ts('7'),7 => ts('8'),8 => ts('9'),9 => ts('10') );
+                $additionalOptions = array( '' => ts('1'),1 => ts('2'),2 => ts('3'),3 => ts('4'),4 => ts('5' ),
+                                            5  => ts('6'),6 => ts('7'),7 => ts('8'),8 => ts('9'),9 => ts('10') );
                 $element = $this->add( 'select', 'additional_participants',
                                         ts('How many people are you registering?'),
                                         $additionalOptions,
@@ -523,15 +526,21 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             CRM_Utils_Hook::buildAmount( 'event', $form, $form->_feeBlock );
             if ( $form->_action != CRM_Core_Action::UPDATE ) {
                 require_once 'CRM/Utils/Money.php';
+                $eventFeeBlockValues = array();
                 foreach ( $form->_feeBlock as $fee ) {
                     if ( is_array( $fee ) ) {
+                        $eventFeeBlockValues['amount_id_'.$fee['amount_id']] = $fee['value'];
                         $elements[] =& $form->createElement('radio', null, '',
                                                             CRM_Utils_Money::format( $fee['value'] ) . ' ' .
                                                             $fee['label'],
-                                                            $fee['amount_id'] );
+                                                            $fee['amount_id'],
+                                                            array( 'onClick' => "fillTotalAmount(".$fee['value'].")" ) 
+                                                            );
                     }
                 }
                 
+                $form->assign('eventFeeBlockValues', json_encode( $eventFeeBlockValues ) );
+ 
                 $form->_defaults['amount'] = CRM_Utils_Array::value('default_fee_id',$form->_values['event']);
                 $element =& $form->addGroup( $elements, 'amount', ts('Event Fee(s)'), '<br />' ); 
                 if ( isset( $form->_online ) && $form->_online ) {

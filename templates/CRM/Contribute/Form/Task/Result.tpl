@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div class='spacer'></div>
-<div class="form-item">
+<div class="form-item crm-block crm-form-block crm-contribution-form-block">
     <p>
     {$form.buttons.html}
     </p>

@@ -939,12 +939,11 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                         
                         foreach ( $selectedOptions as $key => $multiOption ) {
                             if ( $multiOption ) {
-                                $eachOption = $valSeperator.$multiOption.$valSeperator;
                                 $url[] =  CRM_Utils_System::url( 'civicrm/profile',
                                                                  'reset=1&force=1&gid=' . $field['group_id'] .'&'. 
                                                                  urlencode( $fieldName ) .
                                                                  '=' .
-                                                                 urlencode( $eachOption ) );
+                                                                 urlencode( $multiOption ) );
                             }
                         }
                     } else {
@@ -1617,7 +1616,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                 $cond = "visibility_id = 1";
             }            
             $form->add('select', $name, $title,
-                       array(''=>ts( '- select -' )) + CRM_Event_PseudoConstant::participantStatus( null, $cond ), $required);
+                       array(''=>ts( '- select -' )) + CRM_Event_PseudoConstant::participantStatus( null, $cond, 'label' ), $required);
         } else if ($fieldName == 'participant_role_id' ) {
             require_once "CRM/Event/PseudoConstant.php";
             $form->add('select', $name, $title,

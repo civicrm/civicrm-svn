@@ -625,80 +625,34 @@ class CRM_Export_BAO_Export
             return ts('CiviCRM Activity Search');
         }
     }
-
-
+    
     /**
-     * handle the export case. this is a hack, so please fix soon
+     * Function to handle import error file creation.
      *
-     * @param $args array this array contains the arguments of the url
-     *
-     * @static
-     * @access public
-     */
-    static function invoke( $args ) 
+     **/
+    function invoke( ) 
     {
-        // FIXME:  2005-06-22 15:17:33 by Brian McFee <brmcfee@gmail.com>
-        // This function is a dirty, dirty hack.  It should live in its own
-        // file.
-        $session = CRM_Core_Session::singleton();
-        $type = $_GET['type'];
+        $type       = CRM_Utils_Request::retrieve( 'type',   'Positive', CRM_Core_DAO::$_nullObject );
+        $parserName = CRM_Utils_Request::retrieve( 'parser', 'String',   CRM_Core_DAO::$_nullObject );
+        if ( empty( $parserName ) || empty( $type ) ) return;
         
-        if ($type == 1) {
-            $varName = 'errors';
-            $saveFileName = 'Import_Errors.csv';
-        } else if ($type == 2) {
-            $varName = 'conflicts';
-            $saveFileName = 'Import_Conflicts.csv';
-        } else if ($type == 3) {
-            $varName = 'duplicates';
-            $saveFileName = 'Import_Duplicates.csv';
-        } else if ($type == 4) {
-            $varName = 'mismatch';
-            $saveFileName = 'Import_Mismatch.csv';
-        } else if ($type == 5) {
-            $varName = 'pledgePaymentErrors';
-            $saveFileName = 'Import_Pledge_Payment_Errors.csv';
-        } else if ($type == 6) {
-            $varName = 'softCreditErrors';
-            $saveFileName = 'Import_Soft_Credit_Errors.csv';
-        } else {
-            /* FIXME we should have an error here */
-            return;
-        }
-        
-        // FIXME: a hack until we have common import
-        // mechanisms for contacts and contributions
-        $realm = CRM_Utils_Array::value('realm',$_GET);
-        if ($realm == 'contribution') {
-            $controller = 'CRM_Contribute_Import_Controller';
-        } else if ( $realm == 'membership' ) {
-            $controller = 'CRM_Member_Import_Controller';
-        } else if ( $realm == 'event' ) {
-            $controller = 'CRM_Event_Import_Controller';
-        } else if ( $realm == 'activity' ) {
-            $controller = 'CRM_Activity_Import_Controller';
-        } else {
-            $controller = 'CRM_Import_Controller';
-        }
-        
-        require_once 'CRM/Core/Key.php';
-        $qfKey = CRM_Core_Key::get( $controller );
-        
-        $fileName = $session->get($varName . 'FileName', "{$controller}_{$qfKey}");
-        
-        $config = CRM_Core_Config::singleton( ); 
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $parserName ) . ".php");
+        eval( '$errorFileName =' . $parserName . '::errorFileName( $type );' );
+        eval( '$saveFileName =' . $parserName . '::saveFileName( $type );' );
+        if ( empty( $errorFileName ) || empty( $saveFileName ) ) return; 
         
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Content-Description: File Transfer');
         header('Content-Type: text/csv');
-        header('Content-Length: ' . filesize($fileName) );
-        header('Content-Disposition: attachment; filename=' . $saveFileName);
+        header('Content-Length: ' . filesize( $errorFileName ) );
+        header('Content-Disposition: attachment; filename=' . $saveFileName );
         
-        readfile($fileName);
+        readfile( $errorFileName );
         
         CRM_Utils_System::civiExit( );
     }
-
+    
+    
     function exportCustom( $customSearchClass, $formValues, $order ) 
     {
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $customSearchClass ) . '.php' );

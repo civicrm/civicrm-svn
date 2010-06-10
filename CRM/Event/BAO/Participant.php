@@ -189,6 +189,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
 
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
+        $status      = null;
         
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
             $status = CRM_Core_DAO::getFieldValue( 'CRM_Event_DAO_Participant', $params['id'], 'status_id' );
@@ -209,7 +210,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
         
         //CRM-5403
         //for update mode
-        if ( self::isPrimaryParticipant($participant->id) ) {
+        if ( self::isPrimaryParticipant($participant->id) && $status ) {
             self::updateParticipantStatus( $participant->id, $status, $participant->status_id );
         }
         
@@ -643,7 +644,7 @@ WHERE  civicrm_participant.id = {$participantId}
         require_once 'CRM/Event/PseudoConstant.php';
 
         self::lookupValue($defaults, 'event', CRM_Event_PseudoConstant::event(), $reverse);
-        self::lookupValue($defaults, 'status', CRM_Event_PseudoConstant::participantStatus(), $reverse);
+        self::lookupValue($defaults, 'status', CRM_Event_PseudoConstant::participantStatus( null ,null, 'label' ), $reverse);
         self::lookupValue($defaults, 'role', CRM_Event_PseudoConstant::participantRole(), $reverse);
     }
 
@@ -823,6 +824,7 @@ WHERE  civicrm_participant.id = {$participantId}
         $where = "participant.registered_by_id={$primaryParticipantId}";
         if ( $excludeCancel ) {
             $cancelStatusId = 0;
+            require_once 'CRM/Event/PseudoConstant.php';
             $negativeStatuses = CRM_Event_PseudoConstant::participantStatus( null, "class = 'Negative'"  ); 
             $cancelStatusId = array_search( 'Cancelled', $negativeStatuses );
             $where .= " AND participant.status_id != {$cancelStatusId}";

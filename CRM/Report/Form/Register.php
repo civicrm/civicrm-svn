@@ -46,14 +46,17 @@ class CRM_Report_Form_Register extends CRM_Core_Form {
     {  
         $this->_action = CRM_Utils_Request::retrieve( 'action','String',$this, false );
         $this->_id = CRM_Utils_Request::retrieve( 'id','String',$this, false );        
-         if ( $this->_action & CRM_Core_Action::DELETE ) {
+     
+        CRM_Utils_System::setTitle(ts('Report Template'));
+
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
             return;
-         }    
+        }    
         
         //   crm_core_error::debug("$this->_actions", $this->_action);
         $this->_opID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup',
                                                     'report_template', 'id', 'name' );
-        CRM_Utils_System::setTitle(ts('Report Template'));
+
         $instanceInfo = array( );      
     }
 

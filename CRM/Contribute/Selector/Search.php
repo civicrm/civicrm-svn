@@ -192,11 +192,15 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
      * @access public
      *
      */
-    static function &links( $componentId = null, $componentAction = null )
+    static function &links( $componentId = null, $componentAction = null, $key = null )
     {
-        $compId = null;
+        $extraParams = null;
         if ( $componentId ) {
-            $compId = "&compId={$componentId}&compAction={$componentAction}";
+            $extraParams = "&compId={$componentId}&compAction={$componentAction}";
+        }
+
+        if ( $key ) {
+            $extraParams = "&key={$key}";
         }
         
         if (!(self::$_links)) {
@@ -204,19 +208,19 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                                   CRM_Core_Action::VIEW   => array(
                                                                    'name'     => ts('View'),
                                                                    'url'      => 'civicrm/contact/view/contribution',
-                                                                   'qs'       => "reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=contribute{$compId}",
+                                                                   'qs'       => "reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=contribute{$extraParams}",
                                                                    'title'    => ts('View Contribution'),
                                                                   ),
                                   CRM_Core_Action::UPDATE => array(
                                                                    'name'     => ts('Edit'),
                                                                    'url'      => 'civicrm/contact/view/contribution',
-                                                                   'qs'       => "reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%{$compId}",
+                                                                   'qs'       => "reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%{$extraParams}",
                                                                    'title'    => ts('Edit Contribution'),
                                                                   ),
                                   CRM_Core_Action::DELETE => array(
                                                                    'name'     => ts('Delete'),
                                                                    'url'      => 'civicrm/contact/view/contribution',
-                                                                   'qs'       => "reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%{$compId}",
+                                                                   'qs'       => "reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%{$extraParams}",
                                                                    'title'    => ts('Delete Contribution'),
                                                                   ),
                                   );
@@ -326,8 +330,9 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                                'cid'              => $result->contact_id,
                                'cxt'              => $this->_context
                                );
-            
-            $row['action']       = CRM_Core_Action::formLink( self::links( $componentId, $componentAction ), $mask, $actions );
+
+            $row['action']       = CRM_Core_Action::formLink( self::links( $componentId, $componentAction, $this->_key ),
+                                                              $mask, $actions );
 
             $row['contact_type'] = 
                 CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 

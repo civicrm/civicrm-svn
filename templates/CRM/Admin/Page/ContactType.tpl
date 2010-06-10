@@ -29,7 +29,7 @@
 
 {if $action eq 1 or $action eq 2 or $action eq 8}
    {include file="CRM/Admin/Form/ContactType.tpl"}
-{/if}
+{else}
 
 {if $rows}
 <div>
@@ -47,10 +47,10 @@
     </tr>
     </thead>
     {foreach from=$rows item=row}
-    	<tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-        <td>{$row.label}</td>
-        <td>{if $row.parent}{$row.parent_label}{else}{ts}(built-in){/ts}{/if}</td>
-        <td>{$row.description}</td>
+    	<tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class} crm-contactType {if NOT $row.is_active} disabled{/if}">
+        <td class="crm-contactType-label">{$row.label}</td>
+        <td class="crm-contactType-parent">{if $row.parent}{$row.parent_label}{else}{ts}(built-in){/ts}{/if}</td>
+        <td class="crm-contactType-description">{$row.description}</td>
         <td>{$row.action|replace:'xx':$row.id}</td>
     </tr>
     {/foreach}
@@ -64,10 +64,9 @@
 </div>
 {else}
     <div class="messages status">
-     <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
+          <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
         {capture assign=crmURL}{crmURL p='civicrm/admin/ContactType' q="action=add&reset=1"}{/capture}
-        <dd>{ts 1=$crmURL}There are currently no Contact Types entered. You can <a href='%1'>add one</a>.{/ts}</dd>
-     </dl>
+        {ts 1=$crmURL}There are currently no Contact Types entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
+{/if}
 {/if}

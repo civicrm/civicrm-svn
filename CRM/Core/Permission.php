@@ -376,7 +376,7 @@ class CRM_Core_Permission {
                       'access CiviCRM'                    => ts( 'access CiviCRM' ),
                       'access Contact Dashboard'          => ts( 'access Contact Dashboard' ),
                       'translate CiviCRM'                 => ts( 'translate CiviCRM' ),
-                      'administer hidden tags'            => ts( 'administer hidden tags' ),
+                      'administer Tagsets'                => ts( 'administer Tagsets' ),
                       'administer reserved tags'          => ts( 'administer reserved tags' )
                       );
 

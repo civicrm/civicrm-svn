@@ -1039,7 +1039,9 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                        ( $contact['preferred_mail_format'] == 'HTML' && !array_key_exists('html',$pEmails) ) ) ) {
             $textBody = join( '', $text );
             if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+                $smarty->security = true;
                 $textBody = $smarty->fetch( "string:$textBody" );
+                $smarty->security = false;
             }
             $mailParams['text'] = $textBody;
         }
@@ -1048,14 +1050,20 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                                     $contact['preferred_mail_format'] == 'Both') ) ) {
             $htmlBody = join( '', $html );
             if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+                $smarty->security = true;
                 $htmlBody = $smarty->fetch( "string:$htmlBody" );
+                $smarty->security = false;
             }
             $mailParams['html'] = $htmlBody;
         }
 
         $mailParams['attachments'] = $attachments;
-        $mailParams['Subject'] = join( '', $pEmails['subject'] );
         
+        $mailingSubject = CRM_Utils_Array::value( 'subject', $pEmails );
+        if ( is_array( $mailingSubject ) ) {
+            $mailingSubject  = join( '', $mailingSubject );
+        }
+        $mailParams['Subject'] = $mailingSubject;
 
         $mailParams['toName' ] = $contact['display_name'];
         $mailParams['toEmail'] = $email;
@@ -1081,12 +1089,13 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
 
         $headers['To'] = "{$mailParams['toName']} <{$mailParams['toEmail']}>";
         $headers['Precedence'] = 'bulk';
-        //Will test in the mail processor if the X-VERP is set in the bounced email. (As an option to replace real VERP for those that can't set it up)
+        // Will test in the mail processor if the X-VERP is set in the bounced email.
+        // (As an option to replace real VERP for those that can't set it up)
         $headers['X-CiviMail-Bounce'] = $verp['bounce'];
 
         //CRM-5058
         //token replacement of subject
-        $headers['Subject'] = join( '', $pEmails['subject'] );
+        $headers['Subject'] = $mailingSubject;
         
         CRM_Utils_Mail::setMimeParams( $message );
         $headers = $message->headers( $headers );
@@ -1712,13 +1721,13 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         return;
     }
 
-    static function mailingACL( ) {
+    static function mailingACL( $alias = null ) {
         $mailingACL = " ( 0 ) ";
 
         $mailingIDs =& self::mailingACLIDs( );
         if ( ! empty( $mailingIDs ) ) {
             $mailingIDs = implode( ',', $mailingIDs );
-            $tableName  = self::getTableName( );
+            $tableName  = !$alias ? self::getTableName( ) : $alias;
             $mailingACL = " $tableName.id IN ( $mailingIDs ) ";
         }
         return $mailingACL;

@@ -24,7 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 {* Template for to create a link between two cases. *}
-    <tr><td class="label">{$form.link_to_case.label}</td><td>{$form.link_to_case.html}</td></tr>     
+   <div class="crm-block crm-form-block crm-case-linkcases-form-block">
+    <tr class="crm-case-linkcases-form-block-link_to_case">
+	<td class="label">{$form.link_to_case.label}</td>
+	<td>{$form.link_to_case.html}</td>
+    </tr>     
  
 {literal}
 <script type="text/javascript"> 
@@ -40,3 +44,4 @@ cj( "#link_to_case").autocomplete( unclosedCaseUrl, { width : 250, selectFirst :
 			    });
 </script>
 {/literal}
+  </div>

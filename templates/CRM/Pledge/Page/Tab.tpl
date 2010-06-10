@@ -51,13 +51,9 @@
     
 {else}
    <div class="messages status">
-       <dl>
-       <dt><div class="icon inform-icon"></div></dt>
-       <dd>
+       <div class="icon inform-icon"></div>
             {ts}No pledges have been recorded from this contact.{/ts}
-       </dd>
-       </dl>
-  </div>
+       </div>
 {/if}
 
 {if $honor}	

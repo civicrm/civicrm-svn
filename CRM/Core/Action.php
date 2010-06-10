@@ -200,7 +200,7 @@ class CRM_Core_Action {
      * @access public
      * @static
      */
-    static function formLink( &$links, $mask, $values ) {
+    static function formLink( &$links, $mask, $values, $more = false ) {
         $config = CRM_Core_Config::singleton();
         if ( empty( $links ) ) {
             return null;
@@ -259,13 +259,18 @@ class CRM_Core_Action {
         }
         require_once 'CRM/Utils/String.php';
         CRM_Utils_String::append( $resultLink, '', $actionLink );
+        
         if ( $showDiv ) {
             CRM_Utils_String::append( $resultDiv, '</li><li>', $actionDiv );
-            $resultDiv = ts('more')."<ul id='panel_xx' class='panel'><li>{$resultDiv}</li></ul>";
+            $resultDiv  = ts('more')."<ul id='panel_xx' class='panel'><li>{$resultDiv}</li></ul>";
         }
         
         if ($resultDiv) {
-        	$result = "<span>{$resultLink}</span><span class='btn-slide' id=xx>{$resultDiv}</span>";
+            if ($more == true) {
+                $result = "<span class='btn-slide' id=xx>{$resultDiv}</span>";
+            } else {
+                $result = "<span>{$resultLink}</span><span class='btn-slide' id=xx>{$resultDiv}</span>";
+            }
         } else {
         	$result = "<span>{$resultLink}</span>";
         }

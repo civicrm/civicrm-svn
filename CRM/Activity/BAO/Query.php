@@ -156,6 +156,9 @@ class CRM_Activity_BAO_Query
         
         $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
         $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
+        
+        // Always exclude activities where is_deleted is true, and where is_current_revision is false
+        $query->_where[$grouping][] = ' civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1';
 
         switch ( $name ) {
         
@@ -273,7 +276,7 @@ class CRM_Activity_BAO_Query
             if ( is_array( $value ) ) {
                 foreach ($value as $k => $v) {
                     $names[] = $activityTags[$v];
-                    }
+                }
             } 
             $query->_where[$grouping][] = "civicrm_activity_tag.tag_id IN (". implode( ",",$value) .")";
             $query->_qill[$grouping ][] = ts( 'Activity Tag %1', array( 1 => $op))  . ' ' . implode( ' ' . ts('OR') . ' ', $names);
@@ -374,8 +377,8 @@ class CRM_Activity_BAO_Query
         $form->addElement( 'text', 'activity_subject', ts( 'Subject' ), CRM_Core_DAO::getAttribute( 'CRM_Contact_DAO_Contact', 'sort_name') );
         $form->addElement( 'checkbox', 'activity_test', ts( 'Find Test Activities?' ) );
         require_once 'CRM/Core/BAO/Tag.php';
-        $activity_tags = CRM_Core_BAO_Tag::getTagsUsedFor( array('civicrm_activity') );
-        if( $activity_tags ) {
+        $activity_tags = CRM_Core_BAO_Tag::getTags( 'civicrm_activity' );
+        if ( $activity_tags ) {
             foreach ($activity_tags as $tagID => $tagName) {
                 $form->_tagElement =& $form->addElement('checkbox', "activity_tags[$tagID]", 
                                                         null, $tagName);         

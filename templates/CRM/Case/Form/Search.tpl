@@ -28,7 +28,7 @@
     {include file="CRM/Case/Page/ConfigureError.tpl"}
 {else}
 
-<div class="crm-form-block crm-search-form-block">
+<div class="crm-block crm-form-block crm-case-search-form-block">
 <div class="crm-accordion-wrapper crm-case_search-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
@@ -37,7 +37,7 @@
  <div class="crm-accordion-body">
         {strip} 
             <table class="form-layout">
-            <tr>
+            <tr class="crm-case-search-form-block-sort_name">
                <td class="font-size12pt" colspan="3">
                    {$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmReplace:class:'twenty'}&nbsp;&nbsp;&nbsp;{$form.buttons.html}
                </td>       
@@ -45,7 +45,7 @@
             {include file="CRM/Case/Form/Search/Common.tpl"}
          
             <tr>
-               <td colspan="2">{$form.buttons.html}</td>
+               <td colspan="2" class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</td>
             </tr>
             </table>
         {/strip}

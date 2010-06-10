@@ -29,22 +29,22 @@
 
 {include file="CRM/common/TrackingFields.tpl"}
 
-<div class="contribution_thankyou-page">
+<div class="crm-block crm-contribution-thankyou-form-block">
     {if $thankyou_text}
-        <div id="thankyou_text" class="section thankyou_text-section">
+        <div id="thankyou_text" class="crm-section thankyou_text-section">
             {$thankyou_text}
         </div>
     {/if}
     
     {* Show link to Tell a Friend (CRM-2153) *}
     {if $friendText}
-        <div id="tell-a-friend" class="section friend_link-section">
+        <div id="tell-a-friend" class="crm-section friend_link-section">
             <a href="{$friendURL}" title="{$friendText}" class="button"><span>&raquo; {$friendText}</span></a>
        </div>{if !$linkText}<br /><br />{/if}
     {/if}  
     {* Add button for donor to create their own Personal Campaign page *}
     {if $linkText}
- 	<div class="section create_pcp_link-section">
+ 	<div class="crm-section create_pcp_link-section">
         <a href="{$linkTextUrl}" title="{$linkText}" class="button"><span>&raquo; {$linkText}</span></a>
     </div><br /><br />
     {/if}  
@@ -231,15 +231,15 @@
         <div class="header-dark">
             {ts}Billing Name and Address{/ts}
         </div>
-    	<div class="section no-label billing_name-section">
+    	<div class="crm-section no-label billing_name-section">
     		<div class="content">{$billingName}</div>
     		<div class="clear"></div>
     	</div>
-    	<div class="section no-label billing_address-section">
+    	<div class="crm-section no-label billing_address-section">
     		<div class="content">{$address|nl2br}</div>
     		<div class="clear"></div>
     	</div>
-        <div class="section no-label contributor_email-section">
+        <div class="crm-section no-label contributor_email-section">
         	<div class="content">{$email}</div>
         	<div class="clear"></div>
         </div>
@@ -263,7 +263,7 @@
                 {ts}Bank Account Number{/ts}: {$bank_account_number}<br />
             </div>
          {else}
-             <div class="section no-label credit_card_details-section">
+             <div class="crm-section no-label credit_card_details-section">
                  <div class="content">{$credit_card_type}</div>
              	<div class="content">{$credit_card_number}</div>
              	<div class="content">{ts}Expires{/ts}: {$credit_card_exp_date|truncate:7:''|crmDate}</div>

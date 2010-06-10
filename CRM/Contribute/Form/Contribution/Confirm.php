@@ -470,6 +470,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
         if ( ! isset( $contactID ) ) {
             require_once 'CRM/Dedupe/Finder.php';
             $dedupeParams = CRM_Dedupe_Finder::formatParams($params, 'Individual');
+            $dedupeParams['check_permission'] = false;
             $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual');
 
             // if we find more than one contact, use the first one
@@ -1094,8 +1095,11 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
             // check if matching organization contact exists
             require_once 'CRM/Dedupe/Finder.php';
             $dedupeParams = CRM_Dedupe_Finder::formatParams($behalfOrganization, 'Organization');
+            $dedupeParams['check_permission'] = false;
             $dupeIDs      = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Organization', 'Strict');
-            if ( count($dupeIDs) == 1 ) {
+
+            // CRM-6243 says to pick the first org even if more than one match
+            if ( count($dupeIDs) >= 1 ) {
                 $behalfOrganization['contact_id'] = $dupeIDs[0];
                 // don't allow name edit
                 unset($behalfOrganization['organization_name']);

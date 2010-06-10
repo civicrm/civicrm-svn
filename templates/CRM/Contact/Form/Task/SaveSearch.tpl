@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-form-block crm-block crm-create_smart_group-block">
+<div class="crm-form-block crm-block crm-contact-task-createsmartgroup-form-block">
 <h3>{ts}Smart Group{/ts}</h3>
     {if $qill[0]}
         <div id="search-status">
@@ -35,14 +35,21 @@
             <br />
         </div>
     {/if}
-    <div class="form-item">
-        <dl class="html-adjust">
-            <dt>{$form.title.label}</dt><dd>{$form.title.html}</dd>
-            <dt>{$form.description.label}</dt><dd>{$form.description.html}</dd>
-            {if $form.group_type}
-                <dt>{$form.group_type.label}</dt><dd>{$form.group_type.html}</dd>
-            {/if}
-            <dt></dt><dd>{$form.buttons.html}</dd>
-        </dl>
-    </div>
+  <table class="form-layout-compressed">
+        <tr class="crm-contact-task-createsmartgroup-form-block-title">
+            <td class="label">{$form.title.label}</td>
+            <td>{$form.title.html}</td>
+        </tr>
+	<tr class="crm-contact-task-createsmartgroup-form-block-description">
+            <td class="label">{$form.description.label}</td>
+            <td>{$form.description.html}</td>
+        </tr>
+          {if $form.group_type}
+        <tr class="crm-contact-task-createsmartgroup-form-block-group_type"> 
+            <td class="label">{$form.group_type.label}</td>
+            <td>{$form.group_type.html}</td>
+        </tr>
+          {/if}
+  </table>
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

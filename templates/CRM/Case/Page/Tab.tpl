@@ -55,16 +55,12 @@
         {include file="CRM/Case/Form/Selector.tpl"}
     {else}
        <div class="messages status">
-           <dl>
-           <dt><div class="icon inform-icon"></div></dt>
-           <dd>
+          <div class="icon inform-icon"></div>
                 {ts}There are no case records for this contact.{/ts}
                 {if $permission EQ 'edit' and 
 		    call_user_func(array('CRM_Core_Permission','check'), 'access all cases and activities')}
 		    {ts 1=$newCaseURL}You can <a href='%1'>open one now</a>.{/ts}{/if}
-           </dd>
-           </dl>
-      </div>
+          </div>
     {/if}
     </div>
     </div>

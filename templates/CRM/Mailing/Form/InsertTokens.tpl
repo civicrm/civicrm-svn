@@ -314,11 +314,13 @@ function selectValue( val ) {
     }
 
     cj(function() {
-        setSignature( );
+        if ( !cj().find('div.crm-error').text() ) {            
+            setSignature( );
+        }
+
         cj("#fromEmailAddress").change( function( ) {
             setSignature( );
         });
-
     });
     function setSignature( ) {
         var emailID = cj("#fromEmailAddress").val( );
@@ -326,23 +328,28 @@ function selectValue( val ) {
             var dataUrl = {/literal}"{crmURL p='civicrm/ajax/signature' h=0 }"{literal};
             cj.post( dataUrl, {emailID: emailID}, function( data ) {
                 var editor     = {/literal}"{$editor}"{literal};
+                
+                if ( data.signature_text ) {
+                    // get existing text & html and append signatue
+                    var textMessage =  cj("#"+ text_message).val( ) + '\n\n--\n' + data.signature_text;
 
-                // get existing text & html and append signatue
-                var textMessage =  cj("#"+ text_message).val( ) + '\n\n--\n' + data.signature_text;
-                var htmlMessage =  cj("#"+ html_message).val( ) + '<br/><br/>--<br/>' + data.signature_html;
+                    // append signature
+                    cj("#"+ text_message).val( textMessage ); 
+                }
+                
+                if ( data.signature_html ) {
+                    var htmlMessage =  cj("#"+ html_message).val( ) + '<br/><br/>--<br/>' + data.signature_html;
 
-                // append signature
-                cj("#"+ text_message).val( textMessage ); 
-
-                // set wysiwg editor
-                if ( editor == "ckeditor" ) {
-                    oEditor = CKEDITOR.instances[html_message];
-                    var htmlMessage = oEditor.getData( ) + '<br/><br/>--' + data.signature_html;
-                    oEditor.setData( htmlMessage  );
-                } else if ( editor == "tinymce" ) {
-                    cj('#'+ html_message).tinymce().execCommand('mceSetContent',false, htmlMessage );
-                } else {	
-                    cj("#"+ html_message).val( htmlMessage );
+                    // set wysiwg editor
+                    if ( editor == "ckeditor" ) {
+                        oEditor = CKEDITOR.instances[html_message];
+                        var htmlMessage = oEditor.getData( ) + '<br/><br/>--' + data.signature_html;
+                        oEditor.setData( htmlMessage  );
+                    } else if ( editor == "tinymce" ) {
+                        cj('#'+ html_message).tinymce().execCommand('mceSetContent',false, htmlMessage );
+                    } else {	
+                        cj("#"+ html_message).val( htmlMessage );
+                    }
                 }
 
             }, 'json'); 

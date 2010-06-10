@@ -56,7 +56,7 @@
             </div>
             {/if}
 			{foreach from=$cd_edit.fields item=element key=field_id}
-			    <table class="view-layout">
+			    <table class="view-layout crm-info-panel">
 				<tr>
 				    {if $element.options_per_line != 0}
 					<td class="label">{$element.field_title}</td>

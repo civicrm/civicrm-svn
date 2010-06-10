@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for updating pledge payment*} 
-<div class="form-item">
+<div class="crm-block crm-form-block crm-pledge-payment-form-block">
 <fieldset><legend>{ts}Edit Pledge Payment{/ts}</legend> 
       <table class="form-layout-compressed">
         <tr><td class="label">{ts}Status{/ts}</td><td class="form-layout">{$status}</td></tr>
@@ -32,10 +32,7 @@
             <td>{include file="CRM/common/jcalendar.tpl" elementName=scheduled_date}
             <span class="description">{ts}Scheduled Date for Pledge payment.{/ts}</span></td></tr>
         </td></tr>
-      </table>
-
-    <dl>    
-       <dt></dt><dd class="html-adjust">{$form.buttons.html}</dd>   
-    </dl> 
+      </table> 
+       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>
 </div> 

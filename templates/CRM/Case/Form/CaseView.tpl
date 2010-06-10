@@ -26,7 +26,7 @@
 {* CiviCase -  view case screen*}
 
 {* here we are showing related cases w/ jquery dialog *}
-<div class="crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-case-caseview-form-block">
 {if $showRelatedCases} 
     <table class="report">
       <tr class="columnheader">
@@ -37,9 +37,9 @@
       
       {foreach from=$relatedCases item=row key=caseId}
       <tr>
-      	 <td class="label">{$row.client_name}</td>
-	     <td class="label">{$row.case_type}</td>
-	     <td class="label">{$row.links}</td>
+      	 <td class="crm-case-caseview-client_name label">{$row.client_name}</td>
+	 <td class="crm-case-caseview-case_type label">{$row.case_type}</td>
+	 <td class="label">{$row.links}</td>
       </tr>	
       {/foreach}
    </table>
@@ -48,8 +48,8 @@
 <h3>{ts}Case Summary{/ts}</h3>
     <table class="report">
 	{if $multiClient}
-	<tr>
-		<td colspan="4">
+	<tr class="crm-case-caseview-client">
+		<td colspan="4" class="label">
 		{ts}Clients:{/ts} 
 		{foreach from=$caseRoles.client item=client name=clients}
 		  <a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.display_name}</a>{if not $smarty.foreach.clients.last}, &nbsp; {/if}
@@ -57,42 +57,48 @@
 		<a href="#" title="{ts}add new client to the case{/ts}" onclick="addClient( );return false;">
 			<span class="icon edit-icon"></span>
 		</a>
+	     {if $hasRelatedCases}
+        	<div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
+        {/if}
         </td>
 	</tr>
 	{/if}
-    <tr>
+        <tr>
 	    {if not $multiClient}
-            <td>
-		        <table class="form-layout-compressed" border="1">
-		        {foreach from=$caseRoles.client item=client}
-      	       	   <tr>
-		               <td class="label-left" style="padding: 0px">{$client.display_name}</td>
-		           </tr>
-	       	       {if $client.phone}
-		              <tr>
-		       	        <td class="label-left description" style="padding: 0px">{$client.phone}</td>
-		              </tr>
-		           {/if}
-        		   {if $client.birth_date}
-        		       <tr>
-        		       	   <td class="label-left description" style="padding: 0px">{ts}DOB{/ts}: {$client.birth_date|crmDate}</td>
-        		       </tr>
-        		   {/if}
-                {/foreach}
-	    	    </table>
-            </td>
+             <td>
+    		 <table class="form-layout-compressed" border="1">
+    		 {foreach from=$caseRoles.client item=client}
+          	   <tr class="crm-case-caseview-display_name">
+    		     <td class="label-left" style="padding: 0px">{$client.display_name}</td>
+    		   </tr>
+    	       {if $client.phone}
+        		   <tr class="crm-case-caseview-phone">
+        		     <td class="label-left description" style="padding: 0px">{$client.phone}</td>
+        		   </tr>
+    		   {/if}
+               {if $client.birth_date}
+            	   <tr class="crm-case-caseview-birth_date">
+                         <td class="label-left description" style="padding: 0px">{ts}DOB{/ts}: {$client.birth_date|crmDate}</td>
+                    </tr>
+               {/if}
+             {/foreach}
+    	     </table>
+    	     {if $hasRelatedCases}
+             	<div class="crm-block relatedCases-link"><a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a></div>
+             {/if}
+             </td>
 	    {/if}
-        <td>
-            <label>{ts}Case Type{/ts}:</label>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><span class="icon edit-icon"></span></a>
+        <td class="crm-case-caseview-case_type label">
+            {ts}Case Type{/ts}:&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
-        <td>
-            <label>{ts}Status{/ts}:</label>&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title="Change case status (creates activity record)"><span class="icon edit-icon"></span></a>
+        <td class="crm-case-caseview-case_status label">
+            {ts}Status{/ts}:&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title="Change case status (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
-        <td>
-            <label>{ts}Start Date{/ts}:</label>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="Change case start date (creates activity record)"><span class="icon edit-icon"></span></a>
+        <td class="crm-case-caseview-case_start_date label">
+            {ts}Start Date{/ts}:&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="Change case start date (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
-        <td>
-            <label>{ts}Case ID{/ts}:</label>&nbsp;{$caseID}
+        <td class="crm-case-caseview-{$caseID} label">
+            {ts}Case ID{/ts}:&nbsp;{$caseID}
         </td>
     </tr>
     </table>
@@ -103,45 +109,41 @@
       {/foreach}
       </div>
     {/if}
+
     <table class="form-layout">
-        <tr>
+        <tr class="crm-case-caseview-form-block-activity_type_id">
             <td>{$form.activity_type_id.label}<br />{$form.activity_type_id.html}&nbsp;<input type="button" accesskey="N" value="Go" name="new_activity" onclick="checkSelection( this );"/></td>
 	    {if $hasAccessToAllCases}	
-                <td>
-                   <span class="crm-button"><div class="icon print-icon"></div><input type="button"  value="Print Case Report" name="case_report_all" onclick="printCaseReport( );"/></span>
-                </td> 
-            </tr>
-            <tr>
-                <td>{$form.timeline_id.label}<br />{$form.timeline_id.html}&nbsp;{$form._qf_CaseView_next.html}</td> 
-                <td>{$form.report_id.label}<br />{$form.report_id.html}&nbsp;<input type="button" accesskey="R" value="Go" name="case_report" onclick="checkSelection( this );"/></td> 
+            <td>
+                <span class="crm-button"><div class="icon print-icon"></div><input type="button"  value="Print Case Report" name="case_report_all" onclick="printCaseReport( );"/></span>
+            </td> 
+        </tr>
+        <tr>
+            <td class="crm-case-caseview-form-block-timeline_id">{$form.timeline_id.label}<br />{$form.timeline_id.html}&nbsp;{$form._qf_CaseView_next.html}</td> 
+            <td class="crm-case-caseview-form-block-report_id">{$form.report_id.label}<br />{$form.report_id.html}&nbsp;<input type="button" accesskey="R" value="Go" name="case_report" onclick="checkSelection( this );"/></td> 
         {else}
-                <td></td>
+            <td></td>
 	    {/if}
         </tr>
-	{if $hasRelatedCases}
-	<tr>
-	   <td> 
-	      <a href='#' onClick='viewRelatedCases( {$caseID}, {$contactID} ); return false;'>{ts}Related Cases{/ts}</a>
-	    </td>	
-	</tr>	
-	{/if}
+
 	{if $mergeCases}
-	<tr>
-	   <td colspan='2'><a href="#" onClick='cj("#merge_cases").toggle( ); return false;'>{ts}Merge Case{/ts}</a>	
-	        <span id='merge_cases' class='hide-block'>
-	            {$form.merge_case_id.html}&nbsp;{$form._qf_CaseView_next_merge_case.html}
-	        </span>
-	   </td>
-	</tr>
+    	<tr class="crm-case-caseview-form-block-merge_case_id">
+    	   <td colspan='2'><a href="#" onClick='cj("#merge_cases").toggle( ); return false;'>{ts}Merge Case{/ts}</a>	
+    	        <span id='merge_cases' class='hide-block'>
+    	            {$form.merge_case_id.html}&nbsp;{$form._qf_CaseView_next_merge_case.html}
+    	        </span>
+    	   </td>
+    	</tr>
 	{/if}
+
 	{if call_user_func(array('CRM_Core_Permission','giveMeAllACLs'))}
-	<tr>
-	   <td colspan='2'><a href="#" onClick='cj("#change_client").toggle( ); return false;'>{ts}Assign to Another Client{/ts}</a>	
-	    <span id='change_client' class='hide-block'>
-	        {$form.change_client_id.html|crmReplace:class:twenty}&nbsp;{$form._qf_CaseView_next_edit_client.html}
-	    </span>
-	   </td>
-	</tr>
+    	<tr class="crm-case-caseview-form-block-change_client_id">
+    	   <td colspan='2'><a href="#" onClick='cj("#change_client").toggle( ); return false;'>{ts}Assign to Another Client{/ts}</a>	
+    	    <span id='change_client' class='hide-block'>
+    	        {$form.change_client_id.html|crmReplace:class:twenty}&nbsp;{$form._qf_CaseView_next_edit_client.html}
+    	    </span>
+    	   </td>
+    	</tr>
 	{/if}
     </table>
 
@@ -149,7 +151,7 @@
      <div id="related-cases-content"></div>
 </div>
 
-<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed crm-case-roles-block">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
 	{ts}Case Roles{/ts}
@@ -174,11 +176,11 @@
 		{assign var=rowNumber value = 1}
         {foreach from=$caseRelationships item=row key=relId}
         <tr>
-            <td class="label">{$row.relation}</td>
-            <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
+            <td class="crm-case-caseview-role-relation label">{$row.relation}</td>
+            <td class="crm-case-caseview-role-name" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
            
-            <td id="phone_{$rowNumber}">{$row.phone}</td>
-            <td id="email_{$rowNumber}">{if $row.email}
+            <td class="crm-case-caseview-role-phone" id="phone_{$rowNumber}">{$row.phone}</td>
+            <td class="crm-case-caseview-role-email" id="email_{$rowNumber}">{if $row.email}
             <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}">
             	<div class="icon email-icon" title="{ts}compose and send an email{/ts}"></div>
            	</a>{/if}
@@ -203,10 +205,10 @@
         {foreach from=$caseRoles item=relName key=relTypeID}
          {if $relTypeID neq 'client'} 
            <tr>
-               <td class="label">{$relName}</td>
-               <td id="relName_{$rowNumber}">(not assigned)</td>
-               <td id="phone_{$rowNumber}"></td>
-               <td id="email_{$rowNumber}"></td>
+               <td class="crm-case-caseview-role-relName label">{$relName}</td>
+               <td class="crm-case-caseview-role-relName_{$rowNumber}" id="relName_{$rowNumber}">(not assigned)</td>
+               <td class="crm-case-caseview-role-phone" id="phone_{$rowNumber}"></td>
+               <td class="crm-case-caseview-role-email" id="email_{$rowNumber}"></td>
 	       {if $hasAccessToAllCases}               
 	       <td id ="edit_{$rowNumber}">
 	       <a href="#" title="edit case role" onclick="createRelationship( {$relTypeID}, null, null, {$rowNumber}, '{$relName}' );return false;">
@@ -219,12 +221,12 @@
            </tr>
          {else}
            <tr>
-               <td rowspan="{$relName|@count}" class="label">{ts}Client{/ts}</td>
+               <td rowspan="{$relName|@count}" class="crm-case-caseview-role-label label">{ts}Client{/ts}</td>
 	   {foreach from=$relName item=client name=clientsRoles}
                {if not $smarty.foreach.clientsRoles.first}</tr>{/if}
-               <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.sort_name}</a></td>
-               <td id="phone_{$rowNumber}">{$client.phone}</td>
-               <td id="email_{$rowNumber}">{if $client.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$client.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
+               <td class="crm-case-caseview-role-sort_name" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$client.contact_id`"}" title="view contact record">{$client.sort_name}</a></td>
+               <td class="crm-case-caseview-role-phone" id="phone_{$rowNumber}">{$client.phone}</td>
+               <td class="crm-case-caseview-role-email" id="email_{$rowNumber}">{if $client.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$client.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
                <td></td>
            </tr>
            {/foreach}
@@ -442,7 +444,7 @@ cj(document).ready(function(){
 {/literal}
 
 {if $hasAccessToAllCases}
-<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-closed crm-case-other-relationships-block">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
 	{ts}Other Relationships{/ts}
@@ -464,22 +466,19 @@ cj(document).ready(function(){
     	</tr>
         {foreach from=$clientRelationships item=row key=relId}
         <tr>
-            <td class="label">{$row.relation}</td>
-            <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
-            <td id="phone_{$rowNumber}">{$row.phone}</td><td id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
+            <td class="crm-case-caseview-otherrelationship-relation label">{$row.relation}</td>
+            <td class="crm-case-caseview-otherrelationship-name" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
+            <td class="crm-case-caseview-otherrelationship-phone" id="phone_{$rowNumber}">{$row.phone}</td>
+	    <td class="crm-case-caseview-otherrelationship-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
         </tr>
 		{assign var=rowNumber value = `$rowNumber+1`}
         {/foreach}
     </table>
   {else}
     <div class="messages status">
-      <dl>
-      <dt><div class="icon inform-icon"></div></dt>
-        <dd>
+      <div class="icon inform-icon"></div>
           {capture assign=crmURL}{crmURL p='civicrm/contact/view/rel' q="action=add&reset=1&cid=`$contactId`&caseID=`$caseID`"}{/capture}
           {ts 1=$crmURL}There are no Relationships entered for this client. You can <a accesskey="N" href='%1'>add one</a>.{/ts}
-        </dd>
-      </dl>
     </div>
   {/if}
 
@@ -496,8 +495,9 @@ cj(document).ready(function(){
     	</tr>
         {foreach from=$globalRelationships item=row key=relId}
         <tr>
-            <td id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.contact_id`"}" title="view contact record">{$row.sort_name}</a></td>
-            <td id="phone_{$rowNumber}">{$row.phone}</td><td id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div title="compose and send an email" class="icon email-icon"></div></a>&nbsp;{/if}</td>
+            <td class="crm-case-caseview-globalrelationship-sort_name label" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.contact_id`"}" title="view contact record">{$row.sort_name}</a></td>
+            <td class="crm-case-caseview-globalrelationship-phone" id="phone_{$rowNumber}">{$row.phone}</td>
+	    <td class="crm-case-caseview-globalrelationship-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div title="compose and send an email" class="icon email-icon"></div></a>&nbsp;{/if}</td>
         </tr>
 		{assign var=rowNumber value = `$rowNumber+1`}
         {/foreach}
@@ -625,27 +625,46 @@ function addRole() {
 </script>
 {/literal}
 {include file="CRM/Case/Form/ActivityToCase.tpl"}
-{* display tags *}
-{if $showTags }
 
-<div id="casetags" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
+{* pane to display / edit regular tags or tagsets for cases *}
+{if $showTags OR $showTagsets }
+
+<div id="casetags" class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open crm-case-tags-block">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
   {ts}Case Tags{/ts}
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
   {if $tags}
-            {$tags}
-            {else}
-            {ts} There are no tags related to this case. {/ts}
+    <div class="crm-block crm-content-block crm-case-caseview-display-tags">{$tags}</div>
   {/if}
-  <div><input type="button" class="form-submit" onClick="Javascript:addTags()" value={if $tags}"{ts}Change Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
+
+  {foreach from=$tagset item=displayTagset}
+      {if $displayTagset.entityTagsArray}
+          <div class="crm-block crm-content-block crm-case-caseview-display-tagset">
+              &nbsp;&nbsp;{$displayTagset.parentName}:
+              {foreach from=$displayTagset.entityTagsArray item=val name="tagsetList"}
+                  &nbsp;{$val.name}{if !$smarty.foreach.tagsetList.last},{/if}
+              {/foreach}
+          </div>
+      {/if}
+  {/foreach}
+
+  {if !tags and !$displayTagset.entityTagsArray }
+    <div class="status">
+        {ts}There are no tags currently assigend to this case.{/ts}
+    </div>
+  {/if}
+
+  <div class="crm-submit-buttons"><input type="button" class="form-submit" onClick="javascript:addTags()" value={if $tags || $displayTagset.entityTagsArray}"{ts}Edit Tags{/ts}"{else}"{ts}Add Tags{/ts}"{/if} /></div>
+
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 
     <div id="manageTags">
-        <div class="label">{$form.select_tag.label}</div>
-        <div class="view-value"><div class="crm-select-container">{$form.select_tag.html}</div>
+        <div class="label">{$form.case_tag.label}</div>
+        <div class="view-value"><div class="crm-select-container">{$form.case_tag.html}</div>
+        <div style="text-align:left;">{include file="CRM/common/Tag.tpl"}</div>
     </div>
     </div>
 
@@ -666,7 +685,8 @@ function addTags() {
     cj("#manageTags").dialog({
         title: "Change Case Tags",
         modal: true,
-        bgiframe: true, 
+        bgiframe: true,
+        width : 450,
         overlay: { 
             opacity: 0.5, 
             background: "black" 
@@ -681,12 +701,11 @@ function addTags() {
         },
 
         buttons: { 
-            "Ok": function() { 
+            "Save": function() { 
                 var tagsChecked = '';	    
                 var caseID      = {/literal}{$caseID}{literal};	
 
                 cj("#manageTags #tags option").each( function() {
-
                     if ( cj(this).attr('selected') == true) {
                         if ( !tagsChecked ) {
                             tagsChecked = cj(this).val() + '';
@@ -694,11 +713,19 @@ function addTags() {
                             tagsChecked = tagsChecked + ',' + cj(this).val();
                         }
                     }
-
                 });
-
+                
+                var tagList = '';
+                cj("#manageTags input[name^=taglist]").each( function( ) {
+                    if ( !tagsChecked ) {
+                        tagsChecked = cj(this).val() + '';
+                    } else {
+                        tagsChecked = tagsChecked + ',' + cj(this).val();
+                    }
+                });
+                
                 var postUrl = {/literal}"{crmURL p='civicrm/case/ajax/processtags' h=0 }"{literal}; 
-                var data = 'case_id='+ caseID + '&tag='+tagsChecked;
+                var data = 'case_id=' + caseID + '&tag=' + tagsChecked;
 
                 cj.ajax({ type: "POST", url: postUrl, data: data, async: false });
                 cj(this).dialog("close"); 
@@ -713,7 +740,9 @@ function addTags() {
                 while(curDate-sdate < 2000) {
                     curDate = (new Date()).getTime();
                 }
-                window.location.reload(); 
+                
+                //due to caching issues we use redirection rather than reload
+                document.location = {/literal}'{crmURL q="action=view&reset=1&id=$caseID&cid=$contactID&context=$context" h=0 }'{literal};
             },
 
             "Cancel": function() { 
@@ -733,13 +762,13 @@ function addTags() {
 {*include activity view js file*}
 {include file="CRM/common/activityView.tpl"}
 
-<div class="crm-accordion-wrapper crm-case_activities-accordion crm-accordion-open">
+<div class="crm-accordion-wrapper crm-case_activities-accordion crm-accordion-open crm-case-activities-block">
  <div class="crm-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
 {ts}Case Activities{/ts}
  </div><!-- /.crm-accordion-header -->
  <div id="activities" class="crm-accordion-body">
-
+    <span id='fileOnCaseStatusMsg' style="display:none;"></span><!-- Displays status from copy to case -->
 <div id="view-activity">
      <div id="activity-content"></div>
 </div>
@@ -755,10 +784,10 @@ function addTags() {
 
   <table class="no-border form-layout-compressed" id="searchOptions">
     <tr>
-        <td colspan="2"><label for="reporter_id">{ts}Reporter/Role{/ts}</label><br />
+        <td class="crm-case-caseview-form-block-repoter_id"colspan="2"><label for="reporter_id">{ts}Reporter/Role{/ts}</label><br />
             {$form.reporter_id.html|crmReplace:class:twenty}
         </td>
-        <td><label for="status_id">{$form.status_id.label}</label><br />
+        <td class="crm-case-caseview-form-block-status_id"><label for="status_id">{$form.status_id.label}</label><br />
             {$form.status_id.html}
         </td>
 	<td style="vertical-align: bottom;">
@@ -766,21 +795,21 @@ function addTags() {
 	</td>
     </tr>
     <tr>
-        <td>
-	        {$form.activity_date_low.label}<br />
+        <td class="crm-case-caseview-form-block-activity_date_low">
+	    {$form.activity_date_low.label}<br />
             {include file="CRM/common/jcalendar.tpl" elementName=activity_date_low}
         </td>
-        <td> 
+        <td class="crm-case-caseview-form-block-activity_date_high"> 
             {$form.activity_date_high.label}<br /> 
             {include file="CRM/common/jcalendar.tpl" elementName=activity_date_high}
         </td>
-        <td>
+        <td class="crm-case-caseview-form-block-activity_type_filter_id">
             {$form.activity_type_filter_id.label}<br />
             {$form.activity_type_filter_id.html}
         </td>
     </tr>
     {if $form.activity_deleted}    
-    	<tr>
+    	<tr class="crm-case-caseview-form-block-activity_deleted">
 	     <td>
 		 {$form.activity_deleted.html}{$form.activity_deleted.label}
 	     </td>
@@ -819,7 +848,7 @@ cj(document).ready(function(){
             {display: 'Date',               name : 'display_date',  width : 100,  sortable : true, align: 'left'},
             {display: 'Subject',            name : 'subject',       width : 105,  sortable : true, align: 'left'},
             {display: 'Type',               name : 'type',          width : 100,  sortable : true, align: 'left'},
-	        {display: 'With',               name : 'with_contacts', width : 100,  sortable : false,align: 'left'},
+            {display: 'With',               name : 'with_contacts', width : 100,  sortable : false,align: 'left'},
             {display: 'Reporter / Assignee',name : 'reporter',      width : 100,  sortable : true, align: 'left'},
             {display: 'Status',             name : 'status',        width : 65,   sortable : true, align: 'left'},
             {display: '',                   name : 'links',         width : 110,  align: 'left'},
@@ -881,7 +910,11 @@ function checkSelection( field ) {
         case 'new_activity' :
             validationMessage = '{/literal}{ts}Please select an activity type from the list.{/ts}{literal}';
             validationField   = 'activity_type_id';
-            successAction     = "window.location='{/literal}{$newActivityUrl}{literal}' + document.getElementById('activity_type_id').value";
+            if ( document.getElementById('activity_type_id').value == 3 ) {
+                successAction     = "window.location='{/literal}{$newActivityEmailUrl}{literal}' + document.getElementById('activity_type_id').value";            
+            } else {
+                successAction     = "window.location='{/literal}{$newActivityUrl}{literal}' + document.getElementById('activity_type_id').value";                
+            }
             break;
 
         case 'case_report' :
@@ -930,7 +963,7 @@ function printCaseReport( ){
 </script>
 {/literal}
 
-{$form.buttons.html}
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 
 {literal}
 <script type="text/javascript">

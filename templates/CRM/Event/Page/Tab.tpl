@@ -54,12 +54,11 @@
         {include file="CRM/Event/Form/Selector.tpl"}
     {else}
        <div class="messages status">
-           <dl>
-             <dt><div class="icon inform-icon"></div></dt>
-               <dd>
+           <table class="form-layout">
+             <tr><div class="icon inform-icon"></div>
                    {ts}No event registrations have been recorded for this contact.{/ts}
-               </dd>
-           </dl>
+             </tr>
+           </table>
        </div>
     {/if}
 {/if}

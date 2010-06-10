@@ -1,7 +1,5 @@
 {if $rows}
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons element-right">{include file="CRM/common/formButtons.tpl"}</div>
 
 <div class="spacer"></div>
 
@@ -9,34 +7,28 @@
 <br />
 <table>
   <tr class="columnheader">
-    <th>{ts}Display Name{/ts}</th>
-    <th>{ts}Decision Date{/ts}</th>
-    <th>{ts}Amount Requested{/ts}</th>
-    <th>{ts}Amount Granted{/ts}</th>
+    <td>{ts}Display Name{/ts}</td>
+    <td>{ts}Decision Date{/ts}</td>
+    <td>{ts}Amount Requested{/ts}</td>
+    <td>{ts}Amount Granted{/ts}</td>
   </tr>
 
   {foreach from=$rows item=row}
-    <tr class="{cycle values="odd-row,even-row"}">
-        <td>{$row.display_name}</td>
-        <td>{$row.decision_date}</td>
-        <td>{$row.amount_requested}</td>
-        <td>{$row.amount_granted}</td>
+    <tr class="{cycle values="odd-row,even-row"} crm-grant">
+        <td class="crm-grant-task-SearchTaskHookSample-form-block-display_name">{$row.display_name}</td>
+        <td class="crm-grant-task-SearchTaskHookSample-form-block-decision_date">{$row.decision_date}</td>
+        <td class="crm-grant-task-SearchTaskHookSample-form-block-amount_requested">{$row.amount_requested}</td>
+        <td class="crm-grant-task-SearchTaskHookSample-form-block-amount_granted">{$row.amount_granted}</td>
     </tr>
   {/foreach}
 </table>
 </div>
 
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons element-right">{include file="CRM/common/formButtons.tpl"}</div>
 
 {else}
    <div class="messages status">
-      <dl>
-          <dt><div class="icon inform-icon"></div></dt>
-          <dd>
+          <div class="icon inform-icon"></div>
             {ts}There are no records selected.{/ts}
-          </dd>
-      </dl>
    </div>
 {/if}

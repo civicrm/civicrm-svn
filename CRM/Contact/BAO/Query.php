@@ -256,7 +256,7 @@ class CRM_Contact_BAO_Query
      * @var array
      * @static
      */
-    static $_activityRole = null;
+    static $_activityRole;
 
     /**
      * use distinct component clause for component searches
@@ -387,7 +387,10 @@ class CRM_Contact_BAO_Query
         $this->_paramLookup = array( );
 
         $this->_customQuery = null; 
- 
+        
+        //reset cache, CRM-5803
+        self::$_activityRole = null;
+        
         $this->_select['contact_id']      = 'contact_a.id as contact_id';
         $this->_element['contact_id']     = 1; 
         $this->_tables['civicrm_contact'] = 1;
@@ -1203,6 +1206,8 @@ class CRM_Contact_BAO_Query
             $this->group( $values );
             return;
 
+            // case tag comes from find contacts
+        case 'tag':
         case 'contact_tags':
             $this->tag( $values );
             return;
@@ -2751,116 +2756,6 @@ WHERE  id IN ( $groupIDs )
                                  'civicrm_log', 'modified_date', 'modified_date', 'Modified Date' );
     }
 
-     /**
-     * where / qill clause for open activity types
-     *
-     * @return void
-     * @access public
-     */
-    function activity( &$values ) 
-    {
-    	CRM_Core_Error::fatal( 'We should move this code to Activity Query' );
-    	
-        $this->_useDistinct = true;
-       
-        list( $name, $op, $value, $grouping, $wildcard ) = $values;
-       
-        $this->_tables['civicrm_activity'] = $this->_whereTables['civicrm_activity'] = 1;
-            
-        switch ( $name ) {
-        case 'activity_type_id':
-            $types  = CRM_Core_PseudoConstant::activityType( true, true );
-            $clause = array( );
-            if ( is_array( $value ) ) {
-                foreach ( $value as $id => $dontCare ) {
-                    if ( array_key_exists( $id, $types ) && $dontCare ) {
-                        $clause[] = "'" . CRM_Utils_Type::escape( $types[$id], 'String' ) . "'";
-                    }
-                } 
-            } else {
-                $clause[] = "'" . CRM_Utils_Type::escape( $value, 'String' ) . "'";
-            }
-            $this->_where[$grouping][] = ' civicrm_activity.activity_type_id IN (' . implode( ',', array_keys( $value ) ) . ')';
-            $this->_qill [$grouping][]  = ts('Activity Type') . ' ' . implode( ' ' . ts('or') . ' ', $clause );
-            break;
-        case 'activity_role':
-            self::$_activityRole = $values[2];
-             
-            //for activity target name
-            $activityTargetName = $this->getWhereValues( 'activity_target_name', $grouping );
-            if ( ! $activityTargetName[2] ) {
-                $name = null;
-            } else {
-                $name = trim( $activityTargetName[2] );
-                $name = strtolower( CRM_Core_DAO::escapeString( $name ) );
-            }
-            $this->_where[$grouping][] = " contact_a.sort_name LIKE '%{$name}%'";
-           
-            if ( $values[2] == 0) {
-                $this->_where[$grouping][] = " civicrm_activity_target.activity_id = civicrm_activity.id AND civicrm_activity_target.target_contact_id = contact_a.id";
-                $query->_tables['civicrm_activity_target']   = $query->_whereTables['civicrm_activity_target'] = 1;
-                $this->_qill[$grouping][]  = ts( 'Activity with').  " '$name'";
-                
-            } else if ( $values[2] == 1) {
-                $this->_where[$grouping][] = " civicrm_activity.source_contact_id = contact_a.id";
-                $this->_qill[$grouping][]  = ts( 'Activity created by').  " '$name'";
-                
-            }else {
-                $this->_where[$grouping][] = " civicrm_activity_assignment.activity_id = civicrm_activity.id AND civicrm_activity_assignment.assignee_contact_id = contact_a.id";
-                $query->_tables['civicrm_activity_assignment']   = $query->_whereTables['civicrm_activity_assignment'] = 1;
-                $this->_qill[$grouping][]  = ts( 'Activity assigned to').  " '$name'";
-            }
-            
-            break;
-       
-        case 'activity_status':
-            $status = CRM_Core_PseudoConstant::activityStatus( );
-            $clause = array( );
-            if ( is_array( $value ) ) {
-                foreach ( $value as $k => $v) { 
-                    if ($k) { 
-                        $clause[] = "'" . CRM_Utils_Type::escape( $status[$k], 'String' ) . "'";
-                    }
-                }
-            } else {
-                $clause[] = "'" . CRM_Utils_Type::escape( $value, 'String' ) . "'";
-            }
-            $this->_where[$grouping][] = ' civicrm_activity.status_id IN (' .
-                implode( ',', array_keys( $value ) ) .
-                ')';
-            $this->_qill [$grouping][]  = ts('Activity Status') . ' - ' . implode( ' ' . ts('or') . ' ',  $clause);
-            break;   
-        case 'activity_subject':
-            $n = trim( $value );
-            $value = strtolower(CRM_Core_DAO::escapeString($n));
-            if ( $wildcard ) {
-                if ( strpos( $value, '%' ) !== false ) {
-                    // only add wild card if not there
-                    $value = "'$value'";
-                } else {
-                    $value = "'%$value%'";
-                }
-                $op    = 'LIKE';
-            } else {
-                $value = "'$value'";
-            }
-            $wc = ( $op != 'LIKE' ) ? "LOWER(civicrm_activity.subject)" : "civicrm_activity.subject";
-            $this->_where[$grouping][] = " $wc $op $value";
-            $this->_qill[$grouping][]  = ts( 'Subject' ) . " $op - '$n'";
-            break;       
-        case 'test_activities':
-            $this->_where[$grouping][] = " civicrm_activity.is_test = {$value}";
-            $this->_qill[$grouping][]  = ts( 'Find Test Activities' );
-            break;    
-        case 'activity_date':
-        case 'activity_date_low':
-        case 'activity_date_high':
-            $this->dateQueryBuilder( $values,
-                                     'civicrm_activity', 'activity_date', 'activity_date_time', ts('Activity Date') );
-
-            break;
-        }
-    }
     
     function demographics( &$values ) 
     {
@@ -2931,7 +2826,7 @@ WHERE  id IN ( $groupIDs )
             $sqlValue[] = "( $sql like '%" . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $val . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . "%' ) ";
             $showValue[] =  $commPref[$val];
         }
-        $this->_where[$grouping][] = implode( ' OR ', $sqlValue ); 
+        $this->_where[$grouping][] = "( ". implode( ' OR ', $sqlValue ). " )"; 
         $this->_qill[$grouping][]  = ts('Preferred Communication Method') . " $op " . implode(' ' . ts('or') . ' ', $showValue);
     }
 
@@ -3082,8 +2977,8 @@ WHERE  id IN ( $groupIDs )
                                                                'first_name'             => 1, 
                                                                'middle_name'            => 1, 
                                                                'last_name'              => 1, 
-                                                               'prefix'                 => 1, 
-                                                               'suffix'                 => 1,
+                                                               'individual_prefix'      => 1, 
+                                                               'individual_suffix'      => 1,
                                                                'birth_date'             => 1,
                                                                'gender'                 => 1,
                                                                'street_address'         => 1, 
@@ -3240,6 +3135,19 @@ WHERE  id IN ( $groupIDs )
         // FIXME: we should actually filter out deleted contacts (unless requested to do the opposite)
         $permission = ' ( 1 ) ';
         $onlyDeleted = in_array(array('deleted_contacts', '=', '1', '0', '0'), $this->_params);
+
+        // if we’re explicitely looking for a certain contact’s contribs, events, etc.
+        // and that contact happens to be deleted, set $onlyDeleted to true
+        foreach ($this->_params as $values) {
+            list($name, $op, $value, $_, $_) = $values;
+            if ($name == 'contact_id' and $op == '=') {
+                if (CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $value, 'is_deleted')) {
+                    $onlyDeleted = true;
+                }
+                break;
+            }
+        }
+
         if ( ! $this->_skipPermission ) {
             require_once 'CRM/ACL/API.php';
             $permission = CRM_ACL_API::whereClause( CRM_Core_Permission::VIEW, $this->_tables, $this->_whereTables, null, $onlyDeleted );

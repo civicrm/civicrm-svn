@@ -25,7 +25,7 @@
 *}
 {* Contribution Import Wizard - Step 4 (summary of import results AFTER actual data loading) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
-
+<div class="crm-block crm-form-block  crm-contribution-import-summary-form-block id="upload-file">
  {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
  {include file="CRM/common/WizardHeader.tpl"}
  
@@ -70,7 +70,7 @@
         </p>
     {/if}
  </div>
-    
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>   
  {* Summary of Import Results (record counts) *}
  <table id="summary-counts" class="report">
     <tr><td class="label">{ts}Total Rows{/ts}</td>
@@ -163,8 +163,5 @@
     </tr>
 
  </table>
- 
- <div id="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
  </div>
- 

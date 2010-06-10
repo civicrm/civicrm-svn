@@ -40,7 +40,7 @@
       {/foreach}
          </tr>
       {foreach from=$rows item=row}
-         <tr class="{cycle values="odd-row,even-row"}">
+         <tr class="{cycle values="odd-row,even-row"} crm-participant-name">
             <td>{$row.name}</td>	
          </tr>
       {/foreach}
@@ -49,9 +49,7 @@
 {else}
     <div class='spacer'></div>
     <div class="messages status">
-      <dl>
-        <dt><div class="icon inform-icon"></div></dt>      
-        <dd>{ts}There are currently no participants registered for this event.{/ts}</dd>
-      </dl>
+    <div class="icon inform-icon"></div>
+        {ts}There are currently no participants registered for this event.{/ts}
     </div>
 {/if}

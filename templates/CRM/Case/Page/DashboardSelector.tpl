@@ -41,7 +41,7 @@
   {counter start=0 skip=1 print=false}
   {foreach from=$rows item=row}
  
-  <tr id='{$list}Rowid{$row.case_id}'>
+  <tr id='{$list}Rowid{$row.case_id}' class="crm-case crm-case_{$row.case_id}">
 	<td>
         {* &nbsp;{$row.contact_type_icon}<br /> *}
         <span id="{$list}{$row.case_id}_show">
@@ -60,13 +60,13 @@
                              return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}open section{/ts}"/></a>
 	</td>
 
-    <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{$row.sort_name}</a>{if $row.phone}<br /><span class="description">{$row.phone}</span>{/if}<br /><span class="description">{ts}Case ID{/ts}: {$row.case_id}</span></td>
-    <td class="{$row.class}">{$row.case_status}</td>
-    <td>{$row.case_type}</td>
-    <td>{if $row.case_role}{$row.case_role}{else}---{/if}</td>
-    <td>{if $row.casemanager_id}<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.casemanager_id`"}">{$row.casemanager}</a>{else}---{/if}</td>
+    <td class="crm-case-phone"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{$row.sort_name}</a>{if $row.phone}<br /><span class="description">{$row.phone}</span>{/if}<br /><span class="description">{ts}Case ID{/ts}: {$row.case_id}</span></td>
+    <td class="{$row.class} crm-case-case_status">{$row.case_status}</td>
+    <td class="crm-case-case_type">{$row.case_type}</td>
+    <td class="crm-case-case_role">{if $row.case_role}{$row.case_role}{else}---{/if}</td>
+    <td class="crm-case-casemanager">{if $row.casemanager_id}<a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.casemanager_id`"}">{$row.casemanager}</a>{else}---{/if}</td>
     {if $list eq 'upcoming'}
-    	 <td>
+    	 <td class="crm-case-case_scheduled_activity">
 	   {if $row.case_upcoming_activity_viewable}
 	      <a href="javascript:viewActivity({$row.case_scheduled_activity_id}, {$row.contact_id});" title="{ts}View this activity.{/ts}">{$row.case_scheduled_activity_type}</a>
 	   {else}
@@ -81,7 +81,7 @@
          </td>
         
     {elseif $list eq 'recent'}
-    	 <td>
+    	 <td class="crm-case-case_recent_activity">
 	 {if $row.case_recent_activity_viewable}	
 	     <a href="javascript:viewActivity({$row.case_recent_activity_id}, {$row.contact_id});" title="{ts}View this activity.{/ts}">{$row.case_recent_activity_type}</a>
 	  {else}
@@ -95,10 +95,10 @@
 
     <td>{$row.action}</td>
    </tr>
-   <tr id="{$list}{$row.case_id}_hide">
+   <tr id="{$list}{$row.case_id}_hide" class="crm-case_{$row.case_id}">
      <td>
      </td>
-     <td colspan="7" width="99%" class="enclosingNested">
+     <td colspan="7" width="99%" class="enclosingNested crm-case_{$row.case_id}">
         <div id="{$list}CaseDetails{$row.case_id}"></div>
      </td>
    </tr>

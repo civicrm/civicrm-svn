@@ -23,10 +23,10 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-event-searchevent-form-block">
  <h3>{ts}Find Events{/ts}</h3>
   <table class="form-layout">
-    <tr>
+    <tr class="crm-event-searchevent-form-block-title">
         <td class="label">{$form.title.label}</td>
         <td>{$form.title.html|crmReplace:class:twenty}
              <div class="description font-italic">
@@ -43,19 +43,19 @@
                 {/foreach}
             </div>
         </td>
-        <td class="right" rowspan="2">&nbsp;{$form.buttons.html}</td>  
+        <td class="right" rowspan="2">&nbsp;{include file="CRM/common/formButtons.tpl"}</td>  
     </tr>
   
     <tr>
        <td></td>
        <td colspan="2">
        <table class="form-layout-compressed" id="id_fromToDates">
-        <tr>
-            <td>{$form.start_date.label}</td>
+        <tr class="crm-event-searchevent-form-block-start_date">
+            <td class="label">{$form.start_date.label}</td>
             <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}</td>
         </tr>
-        <tr>
-            <td>{$form.end_date.label}</td>
+        <tr class="crm-event-searchevent-form-block-end_date" >
+            <td class="label">{$form.end_date.label}</td>
             <td>{include file="CRM/common/jcalendar.tpl" elementName=end_date}</td>             
         </tr>
       </table> 

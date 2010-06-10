@@ -48,9 +48,9 @@
                        </a>
                    </li>
                  {/if}
-                 {if $url }
+                 {if $userRecordUrl }
                    <li class="crm-contact-user-record">
-                      <a href="{$url}" class="user-record " title="{ts}User Record{/ts}">
+                      <a href="{$userRecordUrl}" class="user-record " title="{ts}User Record{/ts}">
                          <span><div class="icon user-record-icon"></div>{ts}User Record{/ts}</span>
                       </a>
                    </li>
@@ -70,7 +70,7 @@
               </div>
 			  
 			  
-			  
+			  <div class="clear"></div>
 			</div>
 		</div>
 	</div>

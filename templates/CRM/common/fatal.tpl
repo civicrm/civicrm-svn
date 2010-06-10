@@ -34,16 +34,10 @@
   <style type="text/css" media="screen">@import url({$config->resourceBase}css/civicrm.css);</style>
   <style type="text/css" media="screen">@import url({$config->resourceBase}css/extras.css);</style>
 </head>
-
 <body>
-
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
-
-<div class="messages status">
-  <dl>
-  <dt><div class="icon red-icon alert-icon"></div></dt>
-  <dd>
-      <span class="status-fatal">{ts}Sorry. A non-recoverable error has occurred.{/ts}</span>
+<div class="messages status">  <div class="icon red-icon alert-icon"></div>
+ <span class="status-fatal">{ts}Sorry. A non-recoverable error has occurred.{/ts}</span>
       <p>{$message}</p>
 {if $error.message && $message != $error.message}
     <hr style="solid 1px" />
@@ -56,11 +50,7 @@
       <p>{ts}Database Error Code:{/ts} {$mysql_code}</p>
 {/if}
       <p><a href="{$config->userFrameworkBaseURL}" title="{ts}Main Menu{/ts}">{ts}Return to home page.{/ts}</a></p>
-  </dd>
-  </dl>
 </div>
-
 </div> {* end crm-container div *}
-
 </body>
 </html>

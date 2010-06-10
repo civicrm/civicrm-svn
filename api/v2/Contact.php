@@ -96,17 +96,16 @@ function civicrm_contact_update( &$params, $create_new = false ) {
                                                   ),
                                       );
         }
-        
-        if ( $homeUrl = CRM_Utils_Array::value( 'home_url', $params ) ) {  
-            require_once 'CRM/Core/PseudoConstant.php';
-            $websiteTypes = CRM_Core_PseudoConstant::websiteType( );
-            $params['website'] = array( 1 => array( 'website_type_id' => key( $websiteTypes ),
-                                                    'url'             => $homeUrl 
-                                                    )
-                                        );  
-        }
     }
-    
+
+    if ( $homeUrl = CRM_Utils_Array::value( 'home_url', $params ) ) {  
+        require_once 'CRM/Core/PseudoConstant.php';
+        $websiteTypes = CRM_Core_PseudoConstant::websiteType( );
+        $params['website'] = array( 1 => array( 'website_type_id' => key( $websiteTypes ),
+                                                'url'             => $homeUrl 
+                                                )
+                                    );  
+    }
     // FIXME: Some legacy support cruft, should get rid of this in 3.1
     $change = array( 'individual_prefix' => 'prefix',
                      'prefix'            => 'prefix_id',

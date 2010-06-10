@@ -81,6 +81,8 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
         $isPrimary = $isBilling = true;
         $blocks    = array( );
 
+        $updateBlankLocInfo = CRM_Utils_Array::value( 'updateBlankLocInfo', $params, false );
+
         require_once "CRM/Core/BAO/Block.php";
         foreach ( $params['address'] as $key => $value ) {
             if ( !is_array( $value ) ) {
@@ -93,7 +95,10 @@ class CRM_Core_BAO_Address extends CRM_Core_DAO_Address
             
             $addressExists = self::dataExists( $value );
 
-            if ( isset( $value['id'] ) && !$addressExists ) {
+            // Note there could be cases when address info already exist ($value[id] is set) for a contact/entity 
+            // BUT info is not present at this time, and therefore we should be really careful when deleting the block. 
+            // $updateBlankLocInfo will help take appropriate decision. CRM-5969
+            if ( isset( $value['id'] ) && !$addressExists && $updateBlankLocInfo ) {
                 //delete the existing record
                 CRM_Core_BAO_Block::blockDelete( 'Address', array( 'id' => $value['id'] ) );
                 continue;

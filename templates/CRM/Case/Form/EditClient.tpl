@@ -24,18 +24,19 @@
  +--------------------------------------------------------------------+
 *}
 {* template for assigning the current case to another client*}
+<div class="crm-block crm-form-block crm-case-editclient-form-block">
 <div class="messages status">
     <div class="icon inform-icon"></div> {ts 1=$currentClientName}This is case is currently assigned to %1.{/ts}
 </div>
 <div class="crm-form-block">
 <table class="form-layout-compressed">
-    <tr>
-        <td>
+    <tr class="crm-case-editclient-form-block-change_client_id">
+        <td class="label">
             {$form.change_client_id.label}
         </td>
-	    <td id='client'>
-	        {$form.change_client_id.html|crmReplace:class:big}
-	    </td>
+	<td id='client'>
+	    {$form.change_client_id.html|crmReplace:class:big}
+	</td>
     </tr>
     <tr>
         <td></td>
@@ -43,9 +44,9 @@
             <span class="crm-button crm-button-type-submit">&nbsp;{$form._qf_EditClient_cancel_edit_client.html}</span>
 	</td>
     </tr>
- </table>
+</table>
 </div>
-
+</div>
 {literal}
 <script type="text/javascript"> 
 var contactUrl = {/literal}"{crmURL p='civicrm/ajax/rest' q='className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=newcontact' h=0 }"{literal};

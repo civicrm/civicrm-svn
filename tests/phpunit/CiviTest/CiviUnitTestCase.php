@@ -691,7 +691,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function contributionCreate($cID,$cTypeID)
     {
-        require_once 'api/v2/Contribute.php';
+        require_once 'api/v2/Contribution.php';
         $params = array(
                         'domain_id'              => 1,
                         'contact_id'             => $cID,
@@ -722,7 +722,7 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
      */
     function contributionDelete($contributionId)
     {
-        require_once 'api/v2/Contribute.php';
+        require_once 'api/v2/Contribution.php';
         $params = array( 'contribution_id' => $contributionId );
         $val =& civicrm_contribution_delete( $params );
     }

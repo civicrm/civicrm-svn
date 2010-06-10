@@ -23,14 +23,17 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
-<fieldset>
-    <legend>{ts}Batch Update Activities via Profile{/ts}</legend>
-    <dl>
-        <dt>{$form.uf_group_id.label}</dt><dd>{$form.uf_group_id.html}</dd>
-        <dt></dt><dd>{include file="CRM/Activity/Form/Task.tpl"}</dd>
-        <dt></dt><dd>{$form.buttons.html}</dd>
-    </dl>
-</fieldset>
-</div>
+<div class="crm-block crm-form-block crm-activityPickProfile-form-block">
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+<table class="form-layout-compressed">
+   <tr class="crm-activityPickProfile-form-block-uf_group_id">
+     <td>{$form.uf_group_id.label}</td>
+     <td>{$form.uf_group_id.html}</td>
+   </tr>
+   <tr>
+      {include file="CRM/Activity/Form/Task.tpl"}
+   </tr>
+  </table>
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"  location="bottom"}</div>
+        </div>
 

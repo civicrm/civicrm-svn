@@ -161,6 +161,7 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
         
         $params = array( 
                         'source_contact_id'  => $contactId,
+                        'source_record_id'   => $contactId,
                         'subject'            => 'Scheduling Meeting',
                         'activity_type_id'   => 2,
                         'target_contact_id'  => array( $targetContactId ),
@@ -178,6 +179,7 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                                                     'Database check for created activity target.' );
         $params = array( 
                         'source_contact_id'  => $contactId,
+                        'source_record_id'   => $contactId,
                         'subject'            => 'Scheduling Meeting',
                         'activity_type_id'   => 2,
                         );

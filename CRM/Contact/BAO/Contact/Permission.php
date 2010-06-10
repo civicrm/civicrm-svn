@@ -63,10 +63,11 @@ class CRM_Contact_BAO_Contact_Permission {
         //check permission based on relationship, CRM-2963
         if ( self::relationship( $id ) ) {
             return true;
-        } else {
-            require_once 'CRM/ACL/API.php';
-            $permission = CRM_ACL_API::whereClause( $type, $tables, $whereTables );
         }
+
+        require_once 'CRM/ACL/API.php';
+        $permission = CRM_ACL_API::whereClause( $type, $tables, $whereTables );
+
         require_once "CRM/Contact/BAO/Query.php";
         $from       = CRM_Contact_BAO_Query::fromClause( $whereTables );
 
@@ -210,7 +211,7 @@ WHERE $permission
       * selected contact record else false
       * @static
       */
-    static function relationship ( $selectedContactID, $contactID = null ) 
+    static function relationship( $selectedContactID, $contactID = null ) 
     {
         $session   = CRM_Core_Session::singleton( );
         if ( ! $contactID ) {

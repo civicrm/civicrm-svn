@@ -793,7 +793,7 @@ class CRM_Report_Form extends CRM_Core_Form {
 
     function buildTagFilter( ) {
         require_once 'CRM/Core/BAO/Tag.php';
-        $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor('civicrm_contact');
+        $contactTags = CRM_Core_BAO_Tag::getTags( );
         if ( !empty($contactTags) ) {
             $this->_columns['civicrm_tag'] = 
                 array( 'dao'     => 'CRM_Core_DAO_Tag',
@@ -1927,7 +1927,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
         }
         require_once 'CRM/Core/BAO/CustomField.php';
         
-        if ( !empty($this->_params['fields'] ) ) {
+        if ( !empty( $this->_params['fields'] ) ) {
             foreach( array_keys($prop['fields']) as $fieldAlias ) {
                 if ( array_key_exists( $fieldAlias, $this->_params['fields'] ) && CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
                     return true;
@@ -1935,7 +1935,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
             }
         }
         
-        if ( !$fieldFound && !empty($this->_params['group_bys'] ) && $this->_customGroupGroupBy ) {
+        if ( !empty( $this->_params['group_bys'] ) && $this->_customGroupGroupBy ) {
             foreach( array_keys($prop['group_bys']) as $fieldAlias ) {
                 if ( array_key_exists( $fieldAlias, $this->_params['group_bys'] ) && CRM_Core_BAO_CustomField::getKeyID($fieldAlias) ) {
                     return true;
@@ -1943,7 +1943,7 @@ LEFT JOIN civicrm_contact {$field['alias']} ON {$field['alias']}.id = {$this->_a
             }
         }
         
-        if ( !$fieldFound && !empty( $prop['filters'] ) && $this->_customGroupFilters ) {
+        if ( !empty( $prop['filters'] ) && $this->_customGroupFilters ) {
             foreach( $prop['filters'] as $fieldAlias => $val ) {
                 foreach( array( 'value', 'min', 'max', 'relative' ,'from', 'to' ) as $attach ) {
                     if ( isset( $this->_params[$fieldAlias.'_'.$attach ] ) &&

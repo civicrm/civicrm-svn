@@ -39,7 +39,6 @@
     {include file="CRM/common/jsortable.tpl"}
  	<table id="options" class="display">
         <thead>
-        <tr>
             <th>{ts}Membership{/ts}</th>
             <th>{ts}Period{/ts}</th>
             <th>{ts}Fixed Start{/ts}</th>
@@ -48,23 +47,22 @@
             <th>{ts}Relationship Type{/ts}</th>   
             <th>{ts}Visibility{/ts}</th>
             <th id="order" class="sortable">{ts}Order{/ts}</th>
- 	        <th>{ts}Enabled?{/ts}</th>
+ 	    <th>{ts}Enabled?{/ts}</th>
             <th></th>
             <th class="hiddenElement"></th>
-        </tr>
         </thead>
         {foreach from=$rows item=row}
-           <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-    	        <td>{$row.name}</td>	
-	            <td>{$row.period_type}</td>
-	            <td>{$row.fixed_period_start_day}</td>
-    	        <td align="right">{$row.minimum_fee|crmMoney}</td>
-    		    <td>{$row.duration_interval} {$row.duration_unit}</td>
-                <td>{$row.relationshipTypeName}</td> 
-                <td>{$row.visibility}</td>
-                <td class="nowrap">{$row.order}</td>
-    	        <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-    	        <td>{$row.action|replace:'xx':$row.id}</td>
+           <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class} crm-membership-type {if NOT $row.is_active} disabled{/if}">
+                <td class="crm-membership-type-type_name" >{$row.name}</td>
+                <td class="crm-memberhip-type-period_type">{$row.period_type}</td>
+                <td class="crm-membership-type-fixed_period_start_day">{$row.fixed_period_start_day}</td>
+                <td class="crm-membership-type-minimum_fee" align="right">{$row.minimum_fee|crmMoney}</td>
+                <td class="crm-membership-type-duration_interval_unit">{$row.duration_interval} {$row.duration_unit}</td>
+                <td class="crm-membership-type-relationship_type_name">{$row.relationshipTypeName}</td>
+                <td class="crm-membership-type-visibility">{$row.visibility}</td>
+                <td class="nowrap crm-membership_type-order">{$row.order}</td>
+                <td class="crm-membership-type-status_{$row.id}" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+                <td>{$row.action|replace:'xx':$row.id}</td>
                 <td class="order hiddenElement">{$row.weight}</td>
            </tr>
         {/foreach}
@@ -80,11 +78,8 @@
 {else}
   {if $action ne 1}
     <div class="messages status">
-    <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
-        {capture assign=crmURL}{crmURL p='civicrm/admin/member/membershipType' q="action=add&reset=1"}{/capture}
-        <dd>{ts 1=$crmURL}There are no membership types entered. You can <a href='%1'>add one</a>.{/ts}</dd>
-        </dl>
+   	<img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
+        {capture assign=crmURL}{crmURL p='civicrm/admin/member/membershipType' q="action=add&reset=1"}{/capture}{ts 1=$crmURL}There are no membership types entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
   {/if}
 {/if}

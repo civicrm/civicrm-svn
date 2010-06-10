@@ -83,7 +83,6 @@ function civicrm_relationship_create( &$params ) {
     require_once 'CRM/Utils/Array.php';
     
     if( CRM_Utils_Array::value( 'id', $params ) ) {
-        
         $ids['relationship']  = $params['id'];
         $ids['contactTarget'] = $params['contact_id_b'];
     }

@@ -285,7 +285,9 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
                 $mpDAO = new CRM_Member_DAO_MembershipPayment();    
                 $mpDAO->membership_id   = $membership->id;
                 $mpDAO->contribution_id = $contribution->id;
+                CRM_Utils_Hook::pre( 'create', 'MembershipPayment', null, $mpDAO );
                 $mpDAO->save();
+                CRM_Utils_Hook::post( 'create', 'MembershipPayment', $mpDAO->id, $mpDAO );
             }
         }
         
@@ -1043,7 +1045,9 @@ AND civicrm_membership.is_test = %2";
                 //Fixed for avoiding duplicate entry error when user goes
                 //back and forward during payment mode is notify
                 if ( !$dao->find(true) ) {
+                    CRM_Utils_Hook::pre( 'create', 'MembershipPayment', null, $dao );
                     $dao->save();
+                    CRM_Utils_Hook::post( 'create', 'MembershipPayment', $dao->id, $dao );
                 }
             }
         }
@@ -1110,7 +1114,7 @@ AND civicrm_membership.is_test = %2";
      **/
     static function renewMembership( $contactID, $membershipTypeID, $is_test,
                                      &$form, $changeToday = null, $modifiedID = null )
-    {                     
+    {
         require_once 'CRM/Utils/Hook.php';
         $statusFormat = '%Y-%m-%d';
         $format       = '%Y%m%d';
@@ -1146,16 +1150,21 @@ AND civicrm_membership.is_test = %2";
                 return $membership;
             }
             
+            //we might renew expired membership, CRM-6277
+            if ( !$changeToday ) {
+                if ( $form->get( 'renewDate' ) ) {
+                    $changeToday = $form->get( 'renewDate' );
+                } else if ( get_class( $form ) == 'CRM_Contribute_Form_Contribution_Confirm' ) {
+                    $changeToday = date( 'YmdHis' );
+                }
+            }
+            
             // Check and fix the membership if it is STALE
             self::fixMembershipStatusBeforeRenew( $currentMembership, $changeToday );
                         
             // Now Renew the membership
             if ( ! $currentMembership['is_current_member'] ) {
                 // membership is not CURRENT
-                
-                if ( $form->get( 'renewDate' ) ) {
-                    $changeToday = $form->get( 'renewDate' );
-                }
                 
                 $dates =
                     CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType( $currentMembership['id'],
@@ -1316,7 +1325,11 @@ AND civicrm_membership.is_test = %2";
      */
     static function fixMembershipStatusBeforeRenew( &$currentMembership, $changeToday )
     {
-        $today = CRM_Utils_Date::getToday( $changeToday );
+        $today = null;
+        if ( $changeToday ) {
+            $today = CRM_Utils_Date::processDate( $changeToday, null, false, 'Y-m-d' );
+        }
+        
         require_once 'CRM/Member/BAO/MembershipStatus.php';
         $status = CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate( 
                                                                              $currentMembership['start_date'],
@@ -1620,7 +1633,9 @@ WHERE  civicrm_membership.contact_id = civicrm_contact.id
         while ( $membesrshipPayment->fetch() ) {
             require_once 'CRM/Contribute/BAO/Contribution.php';
             CRM_Contribute_BAO_Contribution::deleteContribution( $membesrshipPayment->contribution_id );
+            CRM_Utils_Hook::pre( 'delete', 'MembershipPayment', $membesrshipPayment->id, $membesrshipPayment );
             $membesrshipPayment->delete( ); 
+            CRM_Utils_Hook::post( 'delete', 'MembershipPayment', $membesrshipPayment->id, $membesrshipPayment );
         }
         return $membesrshipPayment;
     }

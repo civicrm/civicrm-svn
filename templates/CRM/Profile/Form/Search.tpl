@@ -128,7 +128,7 @@
         <tr><td colspan="2">{include file="CRM/Contact/Form/Task/ProximityCommon.tpl"}</td></tr>
     {/if}
     
-    <tr><td></td><td>{$form.buttons.html}</td></tr>
+    <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td></tr>
     </table>
 
 
@@ -150,17 +150,13 @@ cj(function() {
 
 {elseif $statusMessage}
     <div class="messages status">
-      <dl>
-        <dt><div class="icon inform-icon"></div></dt>
-        <dd>{$statusMessage}</dd>
-      </dl>
+        <div class="icon inform-icon"></div>
+        {$statusMessage}
     </div>
 {else} {* empty fields *}
     <div class="messages status">
-      <dl>
-        <dt><div class="icon inform-icon"></div></dt>
-        <dd>{ts}No fields in this Profile have been configured as searchable. Ask the site administrator to check the Profile setup.{/ts}</dd>
-      </dl>
+        <div class="icon inform-icon"></div>
+        {ts}No fields in this Profile have been configured as searchable. Ask the site administrator to check the Profile setup.{/ts}
     </div>
 {/if}
 {literal}

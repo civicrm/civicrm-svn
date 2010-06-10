@@ -41,9 +41,9 @@
          </tr>
       {foreach from=$rows item=row}
          <tr class="{cycle values="odd-row,even-row"}">
-            <td>{$row.name}</td>	
-            <td>{$row.status}</td>
-            <td>{$row.date}</td>
+            <td class="crm-participant-name">{$row.name}</td>	
+            <td class="crm-participant-status">{$row.status}</td>
+            <td class="crm-participant-date">{$row.date}</td>
          </tr>
       {/foreach}
       </table>
@@ -51,9 +51,7 @@
 {else}
     <div class='spacer'></div>
     <div class="messages status">
-      <dl>
-        <dt><div class="icon inform-icon"></div></dt>      
-        <dd>{ts}There are currently no participants registered for this event.{/ts}</dd>
-      </dl>
-    </div>
+      <div class="icon inform-icon"></div>
+        {ts}There are currently no participants registered for this event.{/ts}
+      </div>
 {/if}

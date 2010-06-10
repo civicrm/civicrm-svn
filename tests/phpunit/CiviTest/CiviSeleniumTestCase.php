@@ -167,6 +167,50 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
         }
     }
 
+    /**
+     * Types text into a ckEditor rich text field in a form
+     *
+     * @param string $fieldName form field name (as assigned by PHP buildForm class)
+     * @param string $text      text to type into the field
+     * @param string $editor    which text editor (valid values are 'CKEditor', 'TinyMCE')
+     *
+     * @return void
+     */
+
+    function fillRichTextField( $fieldName, $text = 'Typing this text into editor.', $editor = 'CKEditor' ) {
+        if ( $editor == 'CKEditor') {
+            $this->selectFrame("css=td#cke_contents_{$fieldName} iframe");                        
+        } else if ( $editor == 'TinyMCE') {
+            $this->selectFrame("{$fieldName}_text_ifr");
+        } else {
+            echo "Unknown editor value: $editor, exiting ...";
+            exit( );
+        }
+        $this->type("//html/body", $text);
+        $this->selectFrame("relative=top");
+    }
+
+    /**
+     * Types option label and name into a table of multiple choice options
+     * (for price set fields of type select, radio, or checkbox)
+     * TODO: extend for custom field multiple choice table input
+     *
+     * @param array  $options           form field name (as assigned by PHP buildForm class)
+     * @param array  $validateStrings   appends label and name strings to this array so they can be validated later
+     *
+     * @return void
+     */
+     
+     function addMultipleChoiceOptions( $options, &$validateStrings ){
+         foreach ( $options as $oIndex => $oValue ) {
+             $validateStrings[] = $oValue['label'];
+             $validateStrings[] = $oValue['name'];
+             $this->type("option_label_{$oIndex}", $oValue['label'] ); 
+             $this->type("option_name_{$oIndex}" , $oValue['name']  ); 
+             $this->click("link=another choice");
+         }         
+     }
+
    /**
     */
     function webtestNewDialogContact( $fname = 'Anthony', $lname = 'Anderson', $email = 'anthony@anderson.biz', $type = 4 ) {
@@ -181,6 +225,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         $this->type("first_name", $fname);
         $this->type("last_name",  $lname);
+        $this->type("email-Primary", $email);
         $this->click("_qf_Edit_next");
 
         // Is new contact created?
@@ -240,5 +285,48 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
             $this->fail("Did not verify all fields in match array: $daoName, $id. Verified count = $verifiedCount. Match array size = $matchSize");
         }
     }
+
+    /** 
+    * Generic function to check that strings are present in the page
+    * 
+    * @strings  array    array of strings or a single string
+    *
+    * @return   void
+    */
+  function assertStringsPresent( $strings ) {
+      if ( is_array( $strings ) ) {
+          // search for elements
+          foreach ( $strings as $string ) {
+              $this->assertTrue($this->isTextPresent($string), "Could not find $string on page");
+          }
+      } else {
+          $this->assertTrue($this->isTextPresent($strings), "Could not find $strings on page");
+      }
+  }
+
+  /** 
+   * Generic function to parse a URL string into it's elements.extract a variable value from a string (url)
+   * 
+   * @url      string url to parse or retrieve current url if null
+   *
+   * @return   array  returns an associative array containing any of the various components 
+   *                  of the URL that are present. Querystring elements are returned in sub-array (elements.queryString) 
+   *                  http://php.net/manual/en/function.parse-url.php
+   *
+   */
+  function parseURL( $url = null ) {
+      if ( ! $url ) {
+          $url = $this->getLocation( );
+      }
+
+      $elements = parse_url( $url );
+      if ( ! empty( $elements['query'] ) ) {
+          $elements['queryString'] = array( );
+          parse_str( $elements['query'], $elements['queryString'] );
+      }
+      return $elements;
+  }
+
+  
 
 }

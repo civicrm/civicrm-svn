@@ -27,7 +27,7 @@
 {if $hasContributions}
 <div id="chartData">
 <table class="chart">
-  <tr>
+  <tr crm-contribution-form-block-open_flash_chart">
      <td>
          {if $hasByMonthChart}
       	     {* display monthly chart *}
@@ -50,9 +50,7 @@
 </div>
 {else}
  <div class="messages status"> 
-      <dl> 
-        <dd>{ts}There are no live contribution records to display.{/ts}</dd> 
-      </dl> 
+    {ts}There are no live contribution records to display.{/ts}  
  </div>
 {/if}
 

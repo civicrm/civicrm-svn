@@ -17,7 +17,7 @@ $.fn.tokenInput = function (url, options) {
         noResultsText: "No results",
         searchingText: "Searching...",
         searchDelay: 600,
-        minChars: 2,
+        minChars: 1,
         tokenLimit: null,
         jsonContainer: null,
         method: "GET",
@@ -95,7 +95,7 @@ $.TokenList = function (input, settings) {
         .blur(function () {
             hide_dropdown();
         })
-        .keydown(function (event) {
+        .bind("keydown text", function (event) {
             var previous_token;
             var next_token;
 

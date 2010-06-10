@@ -477,10 +477,15 @@ class CRM_Member_Form_MembershipRenewal extends CRM_Member_Form
             $contribution =& CRM_Contribute_BAO_Contribution::create( $contributionParams, $ids );
            
             require_once 'CRM/Member/DAO/MembershipPayment.php';
+            require_once 'CRM/Utils/Hook.php';
             $mpDAO = new CRM_Member_DAO_MembershipPayment();    
             $mpDAO->membership_id   = $renewMembership->id;
             $mpDAO->contribution_id = $contribution->id;
+            
+            CRM_Utils_Hook::pre( 'create', 'MembershipPayment', null, $mpDAO );
             $mpDAO->save();
+            CRM_Utils_Hook::post( 'create', 'MembershipPayment', $mpDAO->id, $mpDAO );
+
             if ($this->_mode ) {
                 $trxnParams = array(
                                     'contribution_id'   => $contribution->id,

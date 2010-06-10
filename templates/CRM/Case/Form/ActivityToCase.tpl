@@ -27,25 +27,26 @@
 <div id="fileOnCaseDialog"></div>
 
 {if $buildCaseActivityForm}
+<div class="crm-block crm-form-block crm-case-activitytocase-form-block">
 <table class="form-layout">
-     <tr>
+     <tr class="crm-case-activitytocase-form-block-unclosed_cases">
 	    <td class="label">{$form.unclosed_cases.label}</td>
      	<td>{$form.unclosed_cases.html}<br />
      	    <span class="description">{ts}Begin typing client name for a list of open cases.{/ts}</span>
      	</td>
      </tr>
-     <tr>
+     <tr class="crm-case-activitytocase-form-block-target_contact_id">
 	    <td class="label">{$form.target_contact_id.label}</td>
 	    <td>{$form.target_contact_id.html}</td>
      </tr>
-     <tr>
+     <tr class="crm-case-activitytocase-form-block-case_activity_subject">
      	<td class="label">{$form.case_activity_subject.label}</td>
 	    <td>{$form.case_activity_subject.html}<br />
 	        <span class="description">{ts}You can modify the activity subject before filing.{/ts}</span>
 	    </td>
      </tr>
 </table>     	
-
+</div>
 {literal}
 <script type="text/javascript">
 var target_contact = target_contact_id = selectedCaseId = contactId = '';
@@ -114,17 +115,16 @@ function fileOnCase( action, activityID, currentCaseId ) {
     cj.ajax({
               url     : dataUrl,
 	      success : function ( content ) { 		
-    	                   cj("#fileOnCaseDialog").show( ).html( content ).dialog({
+    	             cj("#fileOnCaseDialog").show( ).html( content ).dialog({
 		             title       : dialogTitle,
 		             modal       : true,
-			     bgiframe    : true,
-	    	             width       : 600,
-		             height      : 300,
+			         bgiframe    : true,
+	    	         width       : 600,
+		             height      : 270,
 		             overlay     : { opacity: 0.5, background: "black" },
 		             beforeclose : function( event, ui ) {
-                                              cj(this).dialog("destroy");
-                                           },
-
+                                     cj(this).dialog("destroy");
+                                   },
   		             open        : function() {  },
 
 	      buttons : { 
@@ -132,8 +132,8 @@ function fileOnCase( action, activityID, currentCaseId ) {
 				var subject         = cj("#case_activity_subject").val( );
 				var targetContactId = cj("#target_contact_id").val( );
 				
-			        if ( !cj("#unclosed_cases").val( )  ) {
-			           alert('{/literal}{ts}Please select a case from the list{/ts}{literal}.');
+			    if ( !cj("#unclosed_cases").val( )  ) {
+			       alert('{/literal}{ts}Please select a case from the list{/ts}{literal}.');
 				   return false;
 				}
 						
@@ -144,18 +144,49 @@ function fileOnCase( action, activityID, currentCaseId ) {
 			        cj.post( postUrl, { activityID: activityID, caseID: selectedCaseId, contactID: contactId, newSubject: subject, targetContactIds: targetContactId, mode: action },
 					 function( values ) {
 					      if ( values.error_msg ) {
-                            		          alert( "{/literal}{ts}Unable to file on case{/ts}{literal}.\n\n" + values.error_msg );
-						  return false;
-                            		      } else {
+                             alert( "{/literal}{ts}Unable to file on case{/ts}{literal}.\n\n" + values.error_msg );
+						     return false;
+                          } else {
 					          var destUrl = {/literal}"{crmURL p='civicrm/contact/view/case' q='reset=1&action=view&id=' h=0 }"{literal}; 
-						  var context = '';
-						  {/literal}{if $fulltext}{literal}
+						      var context = '';
+						      {/literal}{if $fulltext}{literal}
     						    context = '&context={/literal}{$fulltext}{literal}';
     						  {/literal}{/if}{literal}											     	 	                     
-						  window.location.href = destUrl + selectedCaseId + '&cid=' + contactId + context; 
+						      var caseUrl = destUrl + selectedCaseId + '&cid=' + contactId + context;
+						      var redirectToCase = false;
+						      var reloadWindow = false;
+						      if ( action == 'move' ) redirectToCase = true;
+						      if ( action == 'file' ) {
+						      	 var curPath = document.location.href;
+						       	 if ( curPath.indexOf( 'civicrm/contact/view' ) != -1 ) { 
+							     //hide current activity row.
+ 							     cj( "#crm-activity_" + activityID ).hide( );
+							     var visibleRowCount = 0;
+							     cj('[id^="'+ 'crm-activity' +'"]::visible').each(function() {
+  							        visibleRowCount++;
+							     } );
+							     if ( visibleRowCount < 1 ) {
+							     	reloadWindow = true;
+							     }  
+							 } 
+							 if ( curPath.indexOf( 'civicrm/contact/view/activity' ) != -1 ) {
+							    redirectToCase = true; 
+							 }
+						      }  
+						     
+						      if ( redirectToCase ) {
+						          window.location.href = caseUrl + selectedCaseId + '&cid=' + contactId + context;
+						      } else if ( reloadWindow ) { 
+						      	  window.location.reload( ); 
+						      } else {
+						          var activitySubject = cj("#case_activity_subject").val( );
+						          var statusMsg = '<a id="closeFileOnCaseStatusMsg" href="#"><div class="icon close-icon"></div></a> "' + activitySubject + '" has been filed to selected case: ' + cj("#unclosed_cases").val( ) + '. Click <a href="' + caseUrl + '">here</a> to view that case.';
+						          cj('#fileOnCaseStatusMsg').addClass('msgok').html( statusMsg ).show( );
+                                  cj("#closeFileOnCaseStatusMsg").click(function(){ cj('#fileOnCaseStatusMsg').fadeOut("slow");return false;}).focus( );
+                             }
    					      }
-                        	         }
-                    		      );
+                    }
+    		      );
 			},
 
 			"Cancel": function() { 

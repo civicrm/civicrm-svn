@@ -76,16 +76,31 @@ class CRM_Core_BAO_Website extends CRM_Core_DAO_Website
          $ids = self::allWebsites( $contactID );
          
          foreach ( $params as $key => $values ) {
-             if ( !empty( $ids ) ) {
-                 $values['id'] = $ids[$key];
-                 unset($ids[$key]);
+             $websiteId = CRM_Utils_Array::value( 'id', $values );
+             if ( $websiteId ) {
+                 if ( array_key_exists( $websiteId, $ids ) ) {
+                     unset( $ids[$websiteId] );
+                 } else {
+                     unset( $values['id'] );
+                 }
+             } 
+             
+             if ( !CRM_Utils_Array::value( 'id', $values ) &&
+                  is_array( $ids ) && !empty( $ids ) ) { 
+                 foreach ( $ids as $id => $value ) { 
+                     if ( $value['website_type_id'] == $values['website_type_id'] ) {
+                         $values['id'] = $id;
+                         unset($ids[$id]);
+                         break;
+                     }
+                 }
              }
              $values['contact_id'] = $contactID;
              self::add( $values );
          }
          
          if ( $skipDelete && !empty( $ids ) ) {
-             self::del( $ids );
+             self::del( array_keys( $ids ) );
          }
      }
 
@@ -145,18 +160,16 @@ class CRM_Core_BAO_Website extends CRM_Core_DAO_Website
         }
 
         $query = '
-SELECT id
-FROM  civicrm_website
-WHERE
-  civicrm_website.contact_id = %1';
+SELECT  id, website_type_id
+  FROM  civicrm_website
+ WHERE  civicrm_website.contact_id = %1';
         $params = array( 1 => array( $id, 'Integer' ) );
 
         $websites = array( );
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
-        $count = 1;
         while ( $dao->fetch( ) ) {
-            $websites[$count] = $dao->id;
-            $count++;
+            $websites[$dao->id] = array( 'id'              => $dao->id,
+                                         'website_type_id' => $dao->website_type_id );
         }
         return $websites;
     }

@@ -24,10 +24,10 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing Honoree Information *}
-<div id="id-honoree" class="section-shown">
+<div id="id-honoree" class="section-shown crm-contribution-additionalinfo-honoree-form-block">
       <table class="form-layout-compressed">
          {if $form.honor_type_id.html}
-	    <tr>
+	    <tr class="crm-contribution-form-block-honor_type_id">
 	       <td colspan="3">
 		  {$form.honor_type_id.html}
 		  <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('honor_type_id', '{$form.formName}'); enableHonorType(); return false;">{ts}clear{/ts}</a>)</span><br />

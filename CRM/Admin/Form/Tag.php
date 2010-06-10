@@ -70,6 +70,23 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             }
         } else {
             $this->_isTagSet = CRM_Utils_Request::retrieve( 'tagset', 'Positive', $this );
+            
+            if ( !$this->_isTagSet && 
+                 $this->_id &&
+                 CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'is_tagset' ) ) {
+                $this->_isTagSet = true;
+            }
+
+            $allTag = array ('' => '- ' . ts('select') . ' -') + CRM_Core_PseudoConstant::tag();
+
+            if ( $this->_id ) {
+                unset( $allTag[$this->_id] );
+            }
+                        
+            if ( !$this->_isTagSet ) {
+                $this->add( 'select', 'parent_id', ts('Parent Tag'), $allTag );
+            }
+            
             $this->assign( 'isTagSet', $this->_isTagSet );
             
             $this->applyFilter('__ALL__', 'trim');
@@ -83,37 +100,31 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
 
             //@lobo haven't a clue why the checkbox isn't displayed (it should be checked by default
             $this->add( 'checkbox', 'is_selectable', ts("If it's a tag or a category"));
-
-            $allTag = array ('' => '- ' . ts('select') . ' -') + CRM_Core_PseudoConstant::tag();
-
-            if ( $this->_id ) {
-                unset( $allTag[$this->_id] );
-            }
-            
-            if ( !$this->_isTagSet ) {
-                $this->add( 'select', 'parent_id', ts('Parent Tag'), $allTag );
-            }
-            
+                        
             $isReserved = $this->add( 'checkbox', 'is_reserved', ts('Reserved?') );
-            if ( !CRM_Core_Permission::check('administer hidden tags') ) {
-                $isReserved->freeze( );
-            }
-            
+    
             require_once 'CRM/Core/OptionGroup.php';
             $usedFor = $this->add('select', 'used_for', ts('Used For'), 
                                   CRM_Core_OptionGroup::values('tag_used_for') );
             $usedFor->setMultiple( true );
-            // $accessHidden = false;
-            // if ( $isTagSet && CRM_Core_Permission::check('administer hidden tags') ) {
-            //     $isHidden = $this->add( 'checkbox', 'is_hidden', ts('Is Tag Set?') );
-            //     $accessHidden = true;
-            //     if ( $this->_id &&
-            //          CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'parent_id' ) ) {
-            //         $isHidden->freeze( );
-            //         $usedFor->freeze( );
-            //     }
-            // }
-            // $this->assign( 'accessHidden', $accessHidden );
+
+            if ( $this->_id &&
+                 CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $this->_id, 'parent_id' ) ) {
+                $usedFor->freeze( );
+            }
+            
+            $adminTagset = true;
+            if ( !CRM_Core_Permission::check( 'administer Tagsets' ) ) {
+                $adminTagset = false;
+            }
+            $this->assign( 'adminTagset', $adminTagset );
+
+            $adminReservedTags = true;
+            if ( !CRM_Core_Permission::check( 'administer reserved tags' ) ) {
+                $isReserved->freeze( );
+                $adminReservedTags = false;
+            }
+            $this->assign( 'adminReservedTags', $adminReservedTags );
 
             parent::buildQuickForm( ); 
         }
@@ -134,30 +145,18 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
         $params = $this->exportValues();
        
         $ids['tag'] = $this->_id;
-        if( $this->_action == CRM_Core_Action::ADD || 
+        if ( $this->_action == CRM_Core_Action::ADD || 
             $this->_action == CRM_Core_Action::UPDATE ) {
             $params['used_for'] = implode( "," , $params['used_for'] );
         }
-
-        if ( !empty($params['parent_id']) ) {
-            $usedFor =  CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $params['parent_id'] , 'used_for' );
-            $params['used_for']  = $usedFor;
-            if( !$params['used_for'] ) {
-                $params['used_for']=" ";
-            }
-        }
         
-        $params['is_hidden'] = 0;
+        $params['is_tagset'] = 0;
         if ( $this->_isTagSet ) {
-            $params['is_hidden'] = 1;
+            $params['is_tagset'] = 1;
         }
         
-        // update all childs is_hidden field
-        if ( $this->_id && !( $this->_action == CRM_Core_Action::DELETE ) ) {
-            CRM_Core_DAO::executeQuery( "UPDATE civicrm_tag SET is_hidden= %1,used_for=%2 WHERE parent_id = %3", 
-                                        array( 1 => array( $params['is_hidden'], 'Integer' ),
-                                               2 => array( $params['used_for'], 'String' ),
-                                               3 => array( $this->_id , 'Integer' ) ) );
+        if ( ! isset($params['is_reserved'])) {
+            $params['is_reserved'] = 0;
         }
 
         if ($this->_action == CRM_Core_Action::DELETE) {
@@ -165,10 +164,8 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
                 CRM_Core_BAO_Tag::del( $this->_id );
             }
         } else {
-            CRM_Core_BAO_Tag::add($params, $ids);
+            $tag = CRM_Core_BAO_Tag::add($params, $ids);
+            CRM_Core_Session::setStatus( ts('The tag \'%1\' has been saved.', array(1 => $tag->name)) );
         }        
-        
     }//end of function
 }
-
-

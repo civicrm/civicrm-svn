@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="pricesetTotal" class="section section-pricesetTotal">
+<div id="pricesetTotal" class="crm-section section-pricesetTotal">
 	<div class="label" id="pricelabel"><label>Total Fee(s)</label></div>
 	<div class="content view-value" id="pricevalue" ></div>
 </div>
@@ -184,6 +184,7 @@ function display( totalfee ) {
     document.getElementById('pricevalue').innerHTML = "<b>"+symbol+"</b> "+totalEventFee;
     scriptfee   = totalfee;
     scriptarray = price;
+    cj('#total_amount').val( totalfee );
     
     ( totalfee < 0 ) ? cj('table#pricelabel').addClass('disabled') : cj('table#pricelabel').removeClass('disabled');
     

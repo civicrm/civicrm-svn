@@ -159,7 +159,7 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
         require_once 'CRM/Utils/Recent.php';
         require_once 'CRM/Case/PseudoConstant.php';
         require_once 'CRM/Contact/BAO/Contact.php';
-        $caseType = CRM_Case_PseudoConstant::caseTypeName( $caseContact->case_id );
+        $caseType = CRM_Case_PseudoConstant::caseTypeName( $caseContact->case_id, 'label' );
         $url = CRM_Utils_System::url( 'civicrm/contact/view/case', 
                                       "action=view&reset=1&id={$caseContact->case_id}&cid={$caseContact->contact_id}&context=home" );
         
@@ -1256,7 +1256,8 @@ WHERE cr.case_id =  %1 AND ce.is_primary= 1';
         
         foreach ( $contacts as $mail => $info ) {
             $tplParams['contact'] = $info;
-            
+            self::buildPermissionLinks( $tplParams, $activityParams );
+
             if ( !CRM_Utils_Array::value('sort_name', $info) ) {
                 $info['sort_name'] = $info['display_name'];   
             }
@@ -2295,12 +2296,16 @@ SELECT  id
                 $mergeActSubject = ts( "Case %1 merged into case %2", array( 1 => $otherCaseId, 2 => $mainCaseId ) );
                 if ( !empty( $copiedActivityIds ) ) {
                     $sql = '
-SELECT id, subject, activity_date_time
-  FROM civicrm_activity
- WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
+SELECT id, subject, activity_date_time, activity_type_id
+FROM civicrm_activity
+WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
                     $dao = CRM_Core_DAO::executeQuery( $sql );
                     while ( $dao->fetch( ) ) {
-                        $mergeActSubjectDetails .= "$dao->activity_date_time $dao->subject <br />";
+                        $mergeActSubjectDetails .= "{$dao->activity_date_time} :: {$activityTypes[$dao->activity_type_id]}";
+                        if ( $dao->subject ) {
+                           $mergeActSubjectDetails .= " :: {$dao->subject}";
+                        }
+                        $mergeActSubjectDetails .= "<br />";
                     }
                 }
             }
@@ -2327,6 +2332,36 @@ SELECT id, subject, activity_date_time
         return $mainCaseIds;
     }
     
+    /**
+     * Validate contact permission for 
+     * edit/view on activity record and build links.
+     *
+     * @param array   $tplParams       params to be sent to template for sending email.
+     * @param array   $activityParams  info of the activity.
+     *
+     * @return void
+     * @static
+     */
+    function buildPermissionLinks( &$tplParams, $activityParams ) 
+    {
+        $activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $activityParams['source_record_id'], 
+                                                       'activity_type_id', 'id' );
+        
+        if ( CRM_Utils_Array::value( 'isCaseActivity', $tplParams ) ) {
+            $tplParams['editActURL'] = CRM_Utils_System::url( 'civicrm/case/activity', 
+                                                              "reset=1&cid={$activityParams['source_contact_id']}&caseid={$activityParams['case_id']}&action=update&id={$activityParams['source_record_id']}", true );
+            
+            $tplParams['viewActURL'] = CRM_Utils_System::url( 'civicrm/case/activity/view', 
+                                                              "reset=1&aid={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&caseID={$activityParams['case_id']}", true );
+        } else {   
+            $tplParams['editActURL'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
+                                                              "atype=$activityTypeId&action=update&reset=1&id={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&context=activity", true );
+            
+            $tplParams['viewActURL'] = CRM_Utils_System::url( 'civicrm/contact/view/activity', 
+                                                              "atype=$activityTypeId&action=view&reset=1&id={$activityParams['source_record_id']}&cid={$activityParams['source_contact_id']}&context=activity", true );
+        }
+    }
+
     /**
      * Validate contact permission for 
      * given operation on activity record.
@@ -2545,6 +2580,27 @@ SELECT id, subject, activity_date_time
         }
         
         return false;
+    }
+    
+    /**
+     * Function to check whether activity is a case Activity
+     *
+     * @param  int      $activityID   activity id
+     *
+     * @return boolean  $isCaseActivity true/false
+     */
+    static function isCaseActivity( $activityID )
+    {
+        $isCaseActivity = false;
+        if ( $activityID ) {
+            $params = array( 1 => array( $activityID, 'Integer' ) ); 
+            $query = "SELECT id FROM civicrm_case_activity WHERE activity_id = %1";
+            if ( CRM_Core_DAO::singleValueQuery( $query, $params ) ) {
+                $isCaseActivity = true;
+            }
+        }
+        
+        return $isCaseActivity;
     }
     
 }

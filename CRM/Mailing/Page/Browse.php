@@ -226,10 +226,12 @@ class CRM_Mailing_Page_Browse extends CRM_Core_Page {
             $urlString .= '/archived';
             $this->assign('archived', true );
             CRM_Utils_System::setTitle(ts('Archived Mailings'));
-        } else {
+        } else if ( CRM_Utils_Array::value( 3,  $newArgs)  == 'scheduled' ) {
             $urlString .= '/scheduled';
             $urlParams .= '&scheduled=true';
             CRM_Utils_System::setTitle(ts('Scheduled and Sent Mailings'));
+        } else {
+            CRM_Utils_System::setTitle(ts('Find Mailings'));
         }
         
         $crmRowCount = CRM_Utils_Request::retrieve( 'crmRowCount', 'Integer', CRM_Core_DAO::$_nullObject );

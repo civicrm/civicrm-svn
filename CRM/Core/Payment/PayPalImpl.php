@@ -275,6 +275,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
         $args['state']          = $params['state_province'];
         $args['countryCode']    = $params['country'];
         $args['zip']            = $params['postal_code'];
+        $args['desc']           = $params['description'];
         $args['custom']         = CRM_Utils_Array::value( 'accountingCode',
                                                           $params );
         if ( $params['is_recur'] == 1 ) {
@@ -286,7 +287,7 @@ class CRM_Core_Payment_PayPalImpl extends CRM_Core_Payment {
             $args['billingfrequency']   = $params['frequency_interval'] ;
             $args['method']             = "CreateRecurringPaymentsProfile" ; 
             $args['profilestartdate']   = $start_date;
-            $args['desc']               = $params['amount']." Per ".$params['frequency_interval']. " " . $params['frequency_unit'];
+            $args['desc']               = $params['description'] .": ".$params['amount']." Per ".$params['frequency_interval']. " " . $params['frequency_unit'];
             $args['amt']                = $params['amount'];
             $args['totalbillingcycles'] = $params['installments'];
             $args['version']            = 56.0 ;

@@ -71,8 +71,10 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         
         // sort out whether it’s a delete-to-trash, delete-into-oblivion or restore (and let the template know)
         $config =& CRM_Core_Config::singleton();
-        $this->_skipUndelete = CRM_Utils_Request::retrieve('skip_undelete', 'Boolean', $this);
-        $this->_restore      = CRM_Utils_Request::retrieve('restore',       'Boolean', $this);
+        $values = $this->controller->exportValues();
+        require_once 'CRM/Contact/Task.php';
+        $this->_skipUndelete = (CRM_Utils_Request::retrieve('skip_undelete', 'Boolean', $this) or $values['task'] == CRM_Contact_Task::DELETE_PERMANENTLY);
+        $this->_restore      = (CRM_Utils_Request::retrieve('restore',       'Boolean', $this) or $values['task'] == CRM_Contact_Task::RESTORE);
         $this->assign('trash',   $config->contactUndelete and !$this->_skipUndelete);
         $this->assign('restore', $this->_restore);
 

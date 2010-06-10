@@ -26,6 +26,7 @@
 
 {assign var="showBlock" value="'searchForm'"}
 {assign var="hideBlock" value="'searchForm_show'"}
+<div class="crm-block crm-form-block crm-search-form-block">
 <div id="searchForm_show" class="form-item">
   <a href="#" onclick="hide('searchForm_show'); show('searchForm'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}" /></a>
   <label>
@@ -37,7 +38,6 @@
     {ts}Use this form to find Grant(s) by Contact name, Grant Status, Grant Type, Total Amount , etc .{/ts}
 </div>
 <div id="searchForm" class="form-item">
-<fieldset><legend>{ts}Find Grants{/ts}</legend>
 <div class="form-item">
 {strip} 
         <table class="form-layout">
@@ -52,7 +52,7 @@
         </table>
     {/strip}
 </div> 
-</fieldset>
+</div>
 </div>
 {if $rowsEmpty}
     {include file="CRM/Grant/Form/Search/EmptyResults.tpl"}

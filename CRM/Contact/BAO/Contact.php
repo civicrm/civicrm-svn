@@ -423,10 +423,10 @@ WHERE     civicrm_contact.id = " . CRM_Utils_Type::escape($id, 'Integer');
             require_once 'CRM/Contact/BAO/Contact/Utils.php';
             $image     = 
                 CRM_Contact_BAO_Contact_Utils::getImage( $dao->contact_sub_type ? 
-                                                         $dao->contact_sub_type : $dao->contact_type );
+                                                         $dao->contact_sub_type : $dao->contact_type, false, $id );
             $imageUrl  = 
                 CRM_Contact_BAO_Contact_Utils::getImage( $dao->contact_sub_type ? 
-                                                         $dao->contact_sub_type : $dao->contact_type, true );
+                                                         $dao->contact_sub_type : $dao->contact_type, true, $id );
 
             // use email if display_name is empty
             if ( empty( $dao->display_name ) ) {
@@ -1733,7 +1733,7 @@ ORDER BY civicrm_email.is_primary DESC";
         
         if ( CRM_Utils_Array::value('tag', $fields )) {
             require_once 'CRM/Core/BAO/EntityTag.php';
-            CRM_Core_BAO_EntityTag::create( $params['tag'], $contactID );
+            CRM_Core_BAO_EntityTag::create( $params['tag'], 'civicrm_contact', $contactID );
         } 
         
         // Set status = 'Pending' if profileDoubleOptIn = 1. CRM-5905
@@ -1832,7 +1832,7 @@ INNER JOIN civicrm_group_contact gc ON
         }
 
         $query .= " 
-WHERE      civicrm_email.email = %1";
+WHERE      civicrm_email.email = %1 AND civicrm_contact.is_deleted=0";
         $p = array( 1 => array( $mail, 'String' ) );
 
        if ( $ctype ) {

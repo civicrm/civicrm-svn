@@ -249,7 +249,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $permission = CRM_Core_Permission::getPermission( );
 
         // some tasks.. what do we want to do with the selected contacts ?
-        $tasks = array( '' => ts('- actions -') ) + CRM_Contact_Task::permissionedTaskTitles( $permission );
+        $tasks = array( '' => ts('- actions -') ) + CRM_Contact_Task::permissionedTaskTitles($permission, $this->_formValues['deleted_contacts']);
         if ( isset( $this->_ssID ) ) {
             if ( $permission == CRM_Core_Permission::EDIT ) {
                 $tasks = $tasks + CRM_Contact_Task::optionalTaskTitle();
@@ -386,7 +386,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
          */
         $this->_group           =& CRM_Core_PseudoConstant::group( );
         $this->_groupIterator   =& CRM_Core_PseudoConstant::groupIterator( );
-        $this->_tag             =  CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
+        $this->_tag             =  CRM_Core_BAO_Tag::getTags( );
         $this->_done            =  false;
 
         /**

@@ -230,8 +230,8 @@ class CRM_Utils_Token
                 }
                 $addressCache[$cache_key] = $value;
             }
-        } else if ( $token == 'name') {
-            $value = $domain->name;
+        } else if ( $token == 'name' || $token == 'id' ) {
+            $value = $domain->$token;
         } else if($token == 'phone' || $token == 'email'){
             /* Construct the phone and email tokens */
             $value = null;

@@ -169,9 +169,10 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
                CRM_Core_Action::UPDATE |
                CRM_Core_Action::DELETE ) ) {
             $this->edit($this->_action, $id);                               // use edit form for view, add or update or delete
-        } 
-        // finally browse (list) the page
-        $this->browse(null, $sort);
+        } else {
+            // if no action or browse 
+            $this->browse(null, $sort);
+        }
 
         return parent::run();
     }
@@ -251,9 +252,9 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
                         $values[$object->id]['mapping_type'] = $mappintTypes[$object->mapping_type_id];
                     }
                 }
-                $this->assign( 'rows', $values );
             }
         }
+        $this->assign( 'rows', $values );
     }
     
     /**
@@ -270,25 +271,28 @@ abstract class CRM_Core_Page_Basic extends CRM_Core_Page {
      * @return void
      * @access private
      */
-    function action( &$object, $action, &$values, &$links, $permission ) {
+    function action( &$object, $action, &$values, &$links, $permission, $forceAction = false ) {
         $values['class'] = '';
         $newAction = $action;
-        if ( array_key_exists( 'is_reserved', $object ) && $object->is_reserved ) {
-            $values['class'] = 'reserved';
-            // check if object is relationship type
-            if ( get_class( $object ) == 'CRM_Contact_BAO_RelationshipType' ) {
-                $newAction = CRM_Core_Action::VIEW + CRM_Core_Action::UPDATE;
-            } else {
-                $newAction = 0;
-                $values['action'] = '';
-                return;
-            }
-        } else {
-            if ( array_key_exists( 'is_active', $object ) ) {
-                if ( $object->is_active ) {
-                    $newAction += CRM_Core_Action::DISABLE;
+        
+        if ( !$forceAction ) {
+            if ( array_key_exists( 'is_reserved', $object ) && $object->is_reserved ) {
+                $values['class'] = 'reserved';
+                // check if object is relationship type
+                if ( get_class( $object ) == 'CRM_Contact_BAO_RelationshipType' ) {
+                    $newAction = CRM_Core_Action::VIEW + CRM_Core_Action::UPDATE;
                 } else {
-                    $newAction += CRM_Core_Action::ENABLE;
+                    $newAction = 0;
+                    $values['action'] = '';
+                    return;
+                }
+            } else {
+                if ( array_key_exists( 'is_active', $object ) ) {
+                    if ( $object->is_active ) {
+                        $newAction += CRM_Core_Action::DISABLE;
+                    } else {
+                        $newAction += CRM_Core_Action::ENABLE;
+                    }
                 }
             }
         }

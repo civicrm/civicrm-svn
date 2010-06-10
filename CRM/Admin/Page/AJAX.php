@@ -262,9 +262,8 @@ class CRM_Admin_Page_AJAX
             // check the value of tagID
             // if numeric that means existing tag
             // else create new tag
-            if ( !is_numeric( $tagID ) ) {
+            if ( !$skipTagCreate && !is_numeric( $tagID ) ) {
                 $params = array( 'name'      => $tagID, 
-                                 'is_hidden' => true, 
                                  'parent_id' => $parentId );
 
                 require_once 'CRM/Core/BAO/Tag.php';
@@ -288,7 +287,7 @@ class CRM_Admin_Page_AJAX
             if ( !is_numeric( $tagID ) ) {
                 $tagID = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag', $tagID, 'id',  'name' );
             }
-            if ( !$skipEntityAction && $entityId ) {
+            if ( $entityId ) {
                 // delete this tag entry for the entity
                 $params = array( 'entity_table' => $entityTable,
                                  'entity_id'    => $entityId,
