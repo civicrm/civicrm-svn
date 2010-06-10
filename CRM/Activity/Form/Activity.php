@@ -83,7 +83,6 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
     
     public $_context;
     public $_action;
-    public $_contextQFKey;
     public $_activityTypeFile;
 
     /**
@@ -227,9 +226,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this );
         }
         $this->assign( 'context', $this->_context );
-
-        $this->_contextQFKey = CRM_Utils_Request::retrieve('contextQFKey', 'String', $this );
-
+        
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this );
         
         if ( $this->_action & CRM_Core_Action::DELETE ) {
