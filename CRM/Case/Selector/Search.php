@@ -185,13 +185,15 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
      * @access public
      *
      */
-    static function &links( $isDeleted = false )
+    static function &links( $isDeleted = false, $key = null )
     {
+        $extraParams = ( $key ) ? "&key={$key}" : null;
+        
         if ( $isDeleted ) {
             self::$_links = array( CRM_Core_Action::RENEW  => array(
                                                                     'name'     => ts('Restore'),
                                                                     'url'      => 'civicrm/contact/view/case',
-                                                                    'qs'       => 'reset=1&action=renew&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                                    'qs'       => 'reset=1&action=renew&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                     'title'    => ts('Restore Case'),
                                                                     ),                                  
                                    
@@ -201,19 +203,19 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
                                   CRM_Core_Action::VIEW   => array(
                                                                    'name'     => ts('Manage Case'),
                                                                    'url'      => 'civicrm/contact/view/case',
-                                                                   'qs'       => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=case',
+                                                                   'qs'       => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=case'.$extraParams,
                                                                    'title'    => ts('Manage Case'),
                                                                    ),
                                   CRM_Core_Action::DELETE => array(
                                                                    'name'     => ts('Delete'),
                                                                    'url'      => 'civicrm/contact/view/case',
-                                                                   'qs'       => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                                   'qs'       => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                    'title'    => ts('Delete Case')
                                                                    ),
                                    CRM_Core_Action::UPDATE => array(
                                                                    'name'     => ts('Assign to Another Client'),
                                                                    'url'      => 'civicrm/contact/view/case/editClient',
-                                                                   'qs'       => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                                   'qs'       => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                    'title'    => ts('Assign to Another Client')
                                                                    )
                                   );
@@ -318,7 +320,8 @@ class CRM_Case_Selector_Search extends CRM_Core_Selector_Base
              $scheduledInfo['case_deleted'] = $result->case_deleted; 
              $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->case_id;
              
-             $row['action']   = CRM_Core_Action::formLink( self::links( $isDeleted ), $mask ,
+             $row['action']   = CRM_Core_Action::formLink( self::links( $isDeleted, $this->_key ), 
+                                                           $mask,
                                                            array( 'id'  => $result->case_id,
                                                                   'cid' => $result->contact_id,
                                                                   'cxt' => $this->_context ) );
