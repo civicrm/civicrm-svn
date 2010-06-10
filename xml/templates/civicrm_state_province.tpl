@@ -1268,6 +1268,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (2699, 1226, "KEN", "Kent"),
 (2705, 1226, "LAN", "Lancashire"),
 (2709, 1226, "LEC", "Leicestershire"),
+(2712, 1226, "LIN", "Lincolnshire"),
 (2723, 1226, "MLN", "Midlothian"),
 (2726, 1226, "MRY", "Moray"),
 (2734, 1226, "NFK", "Norfolk"),
@@ -3792,7 +3793,4 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (NULL, 1050, "17", "Haut-Lomami"),
 (NULL, 1050, "18", "Lualaba"),
 (NULL, 1050, "19", "Haut-Katanga"),
-(NULL, 1050, "20", "Tanganyika"),
-
--- United Kingdom (CRM-5224)
-(NULL, 1226, "LIN", "Lincolnshire");
+(NULL, 1050, "20", "Tanganyika");
