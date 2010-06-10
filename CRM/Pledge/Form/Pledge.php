@@ -119,14 +119,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             list( $this->userDisplayName, 
                   $this->userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
             $this->assign( 'displayName', $this->userDisplayName );
-            
-            //set the post url
-            $postURL = CRM_Utils_System::url( 'civicrm/contact/view',
-                                              "reset=1&force=1&cid={$this->_contactID}&selectedChild=pledge" );
-            $session = CRM_Core_Session::singleton( ); 
-            $session->pushUserContext( $postURL );
         }
-        
         
         // set title to "Pledge - "+Contact Name    
     	$displayName = $this->userDisplayName;
@@ -180,13 +173,6 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         //get the pledge frequency units.
         require_once 'CRM/Core/OptionGroup.php';
         $this->_freqUnits = CRM_Core_OptionGroup::values("recur_frequency_units");
-        if ( $this->_contactID ) {
-            // also set the post url
-            $postURL = CRM_Utils_System::url( 'civicrm/contact/view',
-                                              "reset=1&force=1&cid={$this->_contactID}&selectedChild=pledge" );
-            $session = CRM_Core_Session::singleton( ); 
-            $session->pushUserContext( $postURL );
-        }
     }
     
     /**
