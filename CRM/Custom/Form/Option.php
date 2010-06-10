@@ -205,6 +205,7 @@ class CRM_Custom_Form_Option extends CRM_Core_Form
                                   array('onclick' => "location.href='$url'", 'class' => 'form-submit'));
             }
         }
+        $this->assign('id', $this->_id);
     }
         
     /**

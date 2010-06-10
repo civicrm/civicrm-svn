@@ -36,7 +36,7 @@
     {else}
 	<table class="{if $action eq 4}crm-info-panel{else}form-layout{/if}">
         <tr class="crm-custom_option-form-block-label">
-            <td class="label">{$form.label.label}</td>
+            <td class="label">{$form.label.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_value' field='label' id=$id}{/if}</td>
             <td>{$form.label.html}</td>
         </tr>
         <tr class="crm-custom_option-form-block-value">
