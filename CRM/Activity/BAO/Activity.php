@@ -796,16 +796,20 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
                     if ($delAccess) $value['source_contact_name'] = "<del>{$value['source_contact_name']}</del>";
                     else            unset($value['source_contact_id'], $value['source_contact_name']);
                 }
-                foreach ($value['target_contact_name'] as $cid => &$name) {
-                    if (in_array($cid, $dels)) {
-                        if ($delAccess) $name = "<del>$name</del>";
-                        else            unset($value['target_contact_name'][$cid]);
+                if (is_array($value['target_contact_name'])) {
+                    foreach ($value['target_contact_name'] as $cid => &$name) {
+                        if (in_array($cid, $dels)) {
+                            if ($delAccess) $name = "<del>$name</del>";
+                            else            unset($value['target_contact_name'][$cid]);
+                        }
                     }
                 }
-                foreach ($value['assignee_contact_name'] as $cid => &$name) {
-                    if (in_array($cid, $dels)) {
-                        if ($delAccess) $name = "<del>$name</del>";
-                        else            unset($value['assignee_contact_name'][$cid]);
+                if (is_array($value['assignee_contact_name'])) {
+                    foreach ($value['assignee_contact_name'] as $cid => &$name) {
+                        if (in_array($cid, $dels)) {
+                            if ($delAccess) $name = "<del>$name</del>";
+                            else            unset($value['assignee_contact_name'][$cid]);
+                        }
                     }
                 }
             }
