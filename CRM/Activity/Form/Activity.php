@@ -337,13 +337,16 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
         
         if ( $this->_context == 'fulltext' ) {
+            $keyName   = '&qfKey';
             $urlParams = 'force=1';
             $urlString = 'civicrm/contact/search/custom';
             if ( $this->_action == CRM_Core_Action::UPDATE ) { 
+                $keyName   = '&key';
                 $urlParams .= '&context=fulltext&action=view';
                 $urlString  = 'civicrm/contact/view/activity';
             }
-            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
+            $this->assign( 'fullTextSearchKey',  $qfKey );
         } else if ( in_array( $this->_context, array( 'standalone', 'home' ) ) ) {
             $urlParams = 'reset=1';
             $urlString = 'civicrm/dashboard';

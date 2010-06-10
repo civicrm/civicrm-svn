@@ -363,16 +363,19 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             break;
             
         case 'fulltext':
+            $keyName   = '&qfKey';
             $urlParams = 'force=1';
             $urlString = 'civicrm/contact/search/custom';
             if ( $this->_action == CRM_Core_Action::UPDATE ) {
                 if ( $this->_contactId ) {
                     $urlParams .= '&cid=' . $this->_contactId;
                 }
+                $keyName    = '&key';
                 $urlParams .= '&context=fulltext&action=view';
                 $urlString  = 'civicrm/contact/view/contribution';
             }
-            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
+            $this->assign( 'fullTextSearchKey',  $qfKey );
             $url = CRM_Utils_System::url( $urlString, $urlParams );
             break;
             
