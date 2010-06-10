@@ -390,11 +390,14 @@ class CRM_Event_Form_Search extends CRM_Core_Form
         $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         
         $selector = new CRM_Event_Selector_Search( $this->_queryParams,
-                                                    $this->_action,
-                                                    null,
-                                                    $this->_single,
-                                                    $this->_limit,
-                                                    $this->_context ); 
+                                                   $this->_action,
+                                                   null,
+                                                   $this->_single,
+                                                   $this->_limit,
+                                                   $this->_context ); 
+        
+        $selector->setKey( $this->controller->_key );
+        
         $prefix = null;
         if ( $this->_context == 'user') {
             $prefix = $this->_prefix;

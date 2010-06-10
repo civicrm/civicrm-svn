@@ -191,26 +191,28 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
      * @access public
      *
      */
-    static function &links()
+    static function &links( $key = null )
     {
+        $extraParams = ($key ) ? "&key={$key}" : null;
+        
         if (!(self::$_links)) {
             self::$_links = array(
                                   CRM_Core_Action::VIEW   => array(
                                                                    'name'     => ts('View'),
                                                                    'url'      => 'civicrm/contact/view/participant',
-                                                                   'qs'       => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=event',
+                                                                   'qs'       => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=event'.$extraParams,
                                                                    'title'    => ts('View Participation'),
                                                                    ),
                                   CRM_Core_Action::UPDATE => array(
                                                                    'name'     => ts('Edit'),
                                                                    'url'      => 'civicrm/contact/view/participant',
-                                                                   'qs'       => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                                   'qs'       => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                    'title'    => ts('Edit Participation'),
                                                                   ),
                                   CRM_Core_Action::DELETE => array(
                                                                    'name'     => ts('Delete'),
                                                                    'url'      => 'civicrm/contact/view/participant',
-                                                                   'qs'       => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                                   'qs'       => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                    'title'    => ts('Delete Participation'),
                                                                   ),
                                   );
@@ -318,7 +320,7 @@ class CRM_Event_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
 
              $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->participant_id;
              
-             $row['action']   = CRM_Core_Action::formLink( self::links(), $mask,
+             $row['action']   = CRM_Core_Action::formLink( self::links( $this->_key ), $mask,
                                                            array( 'id'  => $result->participant_id,
                                                                   'cid' => $result->contact_id,
                                                                   'cxt' => $this->_context ) );

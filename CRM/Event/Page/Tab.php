@@ -185,6 +185,12 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
                                                      'String', $this, false, 'search' );
         $contextQFKey = CRM_Utils_Request::retrieve( 'contextQFKey',
                                                      'String', $this, false, 'search' );
+        
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
+        
         switch ( $context ) {
             
         case 'dashboard':           
@@ -192,7 +198,10 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
             break;
             
         case 'search':
-            $url = CRM_Utils_System::url( 'civicrm/event/search', 'force=1' );
+            $urlParams = 'force=1';
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            
+            $url = CRM_Utils_System::url( 'civicrm/event/search', $urlParams );
             break;
             
         case 'user':
