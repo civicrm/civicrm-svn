@@ -344,11 +344,17 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         } else if ( in_array( $this->_context, array( 'standalone', 'home' ) ) ) {
             $url = CRM_Utils_System::url('civicrm/dashboard', 'reset=1' );
         } else if ( $this->_context == 'search' ) {
-            $url = CRM_Utils_System::url( 'civicrm/activity/search', 'force=1' );
+            $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+            //validate the qfKey
+            require_once 'CRM/Utils/Rule.php';
+            $urlParams = 'force=1';
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+            $url = CRM_Utils_System::url( 'civicrm/activity/search', $urlParams );
         } else if ( $this->_context != 'caseActivity' ) {
             $url = CRM_Utils_System::url('civicrm/contact/view',
                                          "action=browse&reset=1&cid={$this->_currentlyViewedContactId}&selectedChild=activity" );
         }
+        
         if ( $url ) {
             $session->pushUserContext( $url );
         }
