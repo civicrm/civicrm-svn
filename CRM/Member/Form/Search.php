@@ -341,11 +341,13 @@ class CRM_Member_Form_Search extends CRM_Core_Form
         
         require_once "CRM/Member/Selector/Search.php";
         $selector = new CRM_Member_Selector_Search( $this->_queryParams,
-                                                     $this->_action,
-                                                     null,
-                                                     $this->_single,
-                                                     $this->_limit,
-                                                     $this->_context ); 
+                                                    $this->_action,
+                                                    null,
+                                                    $this->_single,
+                                                    $this->_limit,
+                                                    $this->_context ); 
+        $selector->setKey( $this->controller->_key );
+        
         $prefix = null;
         if ( $this->_context == 'basic' ) {
             $prefix = $this->_prefix;

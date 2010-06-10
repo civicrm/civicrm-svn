@@ -262,7 +262,12 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
                                                      'String', $this, false, 'search' );
         $contextQFKey = CRM_Utils_Request::retrieve( 'contextQFKey',
                                                      'String', $this, false, 'search' );
-
+        
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
+        
         if ( ! $contactId ) {
             $contactId = $this->_contactId;
         }
@@ -280,9 +285,12 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
             break;
 
         case 'search':
-            $url = CRM_Utils_System::url( 'civicrm/member/search', 'force=1' );
+            $urlParams = 'force=1';
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            
+            $url = CRM_Utils_System::url( 'civicrm/member/search', $urlParams );
             break;
-
+            
         case 'home':
             $url = CRM_Utils_System::url( 'civicrm/dashboard', 'reset=1' );
             break;
