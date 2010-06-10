@@ -774,13 +774,12 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
         // grab all the related contact ids
         $cids = array();
         foreach ($values as $value) {
-            $cids[] = $value['source_contact_id'];
-            $cids += array_keys($value['target_contact_name']);
-            $cids += array_keys($value['assignee_contact_name']);
+            $cids = array_merge($cids, array($value['source_contact_id']), array_keys($value['target_contact_name']), array_keys($value['assignee_contact_name']));
         }
+        $cids = array_filter(array_unique($cids));
 
         // see which of the cids are of deleted contacts
-        if ( !empty($cids) ) {            
+        if ($cids) {
             $sql = 'SELECT id FROM civicrm_contact WHERE id IN (' . implode(', ', $cids) . ') AND is_deleted = 1';
             $dao =& CRM_Core_DAO::executeQuery($sql);
             $dels = array();
