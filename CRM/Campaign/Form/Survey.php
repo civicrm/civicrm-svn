@@ -1,0 +1,227 @@
+<?php
+
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
+
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2010
+ * $Id$
+ *
+ */
+
+require_once 'CRM/Core/Form.php';
+require_once 'CRM/Campaign/BAO/Survey.php';
+
+/**
+ * This class generates form components for processing a survey 
+ * 
+ */
+
+class CRM_Campaign_Form_Survey extends CRM_Core_Form
+{
+    
+    /**
+     * The id of the object being edited / created
+     *
+     * @var int
+     */
+    public $_surveyId;
+    
+    /**
+     * The id of survey type 
+     *
+     * @var int
+     */
+    public $_surveyTypeId;
+    
+    /**
+     * The id of campaign type 
+     *
+     * @var int
+     */
+    public $_campaignTypeId;
+
+    /**
+     * The id of activity type 
+     *
+     * @var int
+     */
+    public $_activityTypeId;
+    
+    /**
+     * Function to set variables up before form is built
+     * 
+     * @param null
+     * 
+     * @return void
+     * @access public
+     */
+    public function preProcess()
+    {
+        $this->_surveyId = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
+        
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this );
+    }
+    
+    /**
+     * This function sets the default values for the form. Note that in edit/view mode
+     * the default values are retrieved from the database
+     * 
+     * @param null
+     * 
+     * @return array    array of default values
+     * @access public
+     */
+    function setDefaultValues()
+    {
+        $defaults = array();
+        
+        return $defaults;
+    }
+
+    /**
+     * Function to actually build the form
+     *
+     * @param null
+     * 
+     * @return void
+     * @access public
+     */
+    public function buildQuickForm()
+    {
+        // add buttons
+        $this->addButtons(array(
+                                array ('type'      => 'next',
+                                       'name'      => ts('Save'),
+                                       'isDefault' => true),
+                                array ('type'      => 'next',
+                                       'name'      => ts('Save and New'),
+                                       'subName'   => 'new'),
+                                array ('type'      => 'cancel',
+                                       'name'      => ts('Cancel')),
+                                )
+                          ); 
+        
+        require_once 'CRM/Core/OptionGroup.php';
+        require_once 'CRM/Event/PseudoConstant.php';
+        
+        // FIX ME : Add Survey Type Id
+        // Survey Type id
+        $this->add('select', 'surveyTypeId', ts('Select Survey Type'), array( '1' => 'Mumbai' , '1' => 'Pune', '3' => 'Chennai', '4' => 'Goa'), 'surveyTypeId' );
+        
+        // FIX ME : Add Activity Type Id for Survey
+        //$activityTName = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, 'AND v.value = '.$this->_activityTypeId , 'name' );
+        $activityTName = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, false , 'name' );
+        // Activity Type id
+        $this->add('select', 'activityTypeId', ts('Select Activity Type'), $activityTName, 'activityTypeId' );
+        
+        // FIX ME : Add list of Campaign
+        // Campaign id
+        $this->add('select', 'campaignId', ts('Select Campaign'), array( '' => ts( '- select -' ) ) + CRM_Event_PseudoConstant::participantRole( ), 'campaign_id' );
+        
+        // FIX ME : Add Custom Group Id for Survey
+        // custom group id
+        $this->add('select', 'customGroupId', ts('Select Custom Group'), array( '1' => 'Mumbai' , '1' => 'Pune', '3' => 'Chennai', '4' => 'Goa'), 'customGroupId' );
+        
+        // script / instructions
+        $this->add( 'textarea', 'instructions', ts('Instructions for volunteers'), array( 'rows' => 5, 'cols' => 40 ) );
+        
+        // release frequency unit
+        $this->add('select', 'release_frequency_unit', ts('Release Frequency Unit'), array( 'day' => 'Day' , 'week' => 'Week', 'month' => 'Month', 'year' => 'Year'), 'release_frequency_unit' );
+        
+        // release frequency interval
+        $this->add('text', 'release_frequency_interval', ts('Release Frequency Interval'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency_interval') );
+        $this->addRule('release_frequency_interval', ts('Frequenct interval should be a positive number') , 'positiveInteger');
+        // max number of contacts
+        $this->add('text', 'max_number_of_contacts', ts('Maximum number of contacts '), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'max_number_of_contacts') );
+        $this->addRule('max_number_of_contacts', ts('Maximum number of contacts should be a positive number') , 'positiveInteger');
+        
+        // default number of contacts
+        $this->add('text', 'default_number_of_contacts', ts('Default number of contacts'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'default_number_of_contacts') );
+        $this->addRule('default_number_of_contacts', ts('Default number of contacts should be a positive number') , 'positiveInteger');    
+        
+        // is active ?
+        $this->add('checkbox', 'is_active', ts('Is Active?'));
+        
+        // is default ?
+        $this->add('checkbox', 'is_default', ts('Is Default?'));
+        
+        // add a form rule to check default value
+        $this->addFormRule( array( 'CRM_Campaign_Form_Survey', 'formRule' ),$this );
+    }
+    
+    /**
+     * global validation rules for the form
+     *
+     */
+    static function formRule( $fields, $files, $form ) {
+        
+        $errors = array( );
+        
+        return empty($errors) ? true : $errors;
+    }   
+    
+    /**
+     * Process the form
+     * 
+     * @param null
+     * 
+     * @return void
+     * @access public
+     */
+    public function postProcess()
+    {
+        // store the submitted values in an array
+        $params = $this->controller->exportValues( $this->_name );
+        
+        $params['survey_type_id']   = CRM_Utils_String::titleToVar($params['surveyTypeId']);
+        $params['activity_type_id'] = CRM_Utils_Array::value( 'activityTypeId', $params, false );
+        $params['custom_group_id']  = CRM_Utils_Array::value( 'customGroupId', $params, false );
+        $params['campaign_id']      = CRM_Utils_Array::value( 'campaignId', $params, false );
+        
+        if ( $this->_fid ) {
+            $params['id'] = $this->_surveyId;
+        }
+        
+        $surveyId = CRM_Campaign_BAO_Survey::create( $params  );
+        
+        if( ! is_a( $surveyId, 'CRM_Core_Error' ) ) {
+            CRM_Core_Session::setStatus(ts('Survey has been saved.'));
+        }
+        
+        $buttonName = $this->controller->getButtonName( );
+        $session = CRM_Core_Session::singleton( );
+        if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
+            CRM_Core_Session::setStatus(ts(' You can add another Survey.'));
+            $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/add', 'reset=1&action=add' ) );
+        }
+    }
+ }
+
+
+?>

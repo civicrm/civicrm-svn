@@ -7,4 +7,10 @@
     <page_callback>CRM_Campaign_Form_Campaign</page_callback>
     <path_arguments>action=add</path_arguments>
   </item>
+  <item>
+    <path>civicrm/survey/add</path>
+    <title>New Survey</title>
+    <page_callback>CRM_Campaign_Form_Survey</page_callback>
+    <path_arguments>action=add</path_arguments>
+  </item>
 </menu>
