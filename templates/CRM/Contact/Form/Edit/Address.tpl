@@ -36,9 +36,8 @@
  <div class="crm-accordion-body" id="addressBlock">
 {/if}
 
-{if $blockId gt 1}<div class="spacer"></div>{/if}
-
- <div id="Address_Block_{$blockId}" {if $className eq 'CRM_Contact_Form_Contact'} class="boxBlock crm-edit-addres-block" {/if}>
+ <div id="Address_Block_{$blockId}" {if $className eq 'CRM_Contact_Form_Contact'} class="boxBlock crm-edit-address-block" {/if}>
+  {if $blockId gt 1}<fieldset><legend>Additional Address</legend>{/if}
   <table class="form-layout-compressed crm-edit-address-form">
      <tr>
 	 {if $className eq 'CRM_Contact_Form_Contact'}
@@ -51,7 +50,7 @@
 	 {/if}
         {if $blockId gt 1}
             <td>
-                <a href="#" title="{ts}Delete Address Block{/ts}" onClick="removeBlock( 'Address', '{$blockId}' ); return false;">{ts}delete{/ts}</a>
+                <a href="#" title="{ts}Delete Address Block{/ts}" onClick="removeBlock( 'Address', '{$blockId}' ); return false;">{ts}Delete this address{/ts}</a>
             </td>
         {/if}
      </tr>
@@ -85,12 +84,12 @@
 
   {if $className eq 'CRM_Contact_Form_Contact'}
       <div id="addMoreAddress{$blockId}" class="crm-add-address-wrapper">
-          <a href="#" class="button" onclick="buildAdditionalBlocks( 'Address', '{$className}' );return false;"><span><div class="icon add-icon"></div>{ts}add address{/ts}</span></a>
+          <a href="#" class="button" onclick="buildAdditionalBlocks( 'Address', '{$className}' );return false;"><span><div class="icon add-icon"></div>{ts}Another Address{/ts}</span></a>
       </div>
   {/if}
 
 {if $title and $className eq 'CRM_Contact_Form_Contact'}
-</div>
+</fieldset></div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 {/if}

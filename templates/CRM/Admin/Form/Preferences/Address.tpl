@@ -25,7 +25,7 @@
 *}
 <div class="crm-block crm-form-block crm-preferences-address-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-    <br /><fieldset><legend>{ts}Mailing Labels{/ts}</legend>
+    <fieldset><legend>{ts}Mailing Labels{/ts}</legend>
         <table class="form-layout">
     		<tr class="crm-preferences-address-form-block-mailing_format">
     		    <td class="label">{$form.mailing_format.label}</td>
