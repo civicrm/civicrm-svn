@@ -48,10 +48,20 @@ require_once ('CRM/Utils/PDF/Label.php');
 class CRM_Event_Badge {
     
      function __construct() {
+        $this->style=array('width' => 0.1, 'cap' => 'round', 'join' => 'round', 'dash' => '2,2', 'color' => array(0, 0, 200));
+        $this->setDebug(false); 
         $this->format = '5160';
-        //$this->format = CRM_Utils_PDF_Label::getFormat('5160');
      }
-
+     
+     function setDebug($debug=true) {
+       if (!$debug){
+         $this->debug=false; 
+         $this->border = 0;
+       } else {
+         $this->debug=true; 
+         $this->border = "LTRB";
+       }
+     }
      /**
       * function to create the labels (pdf)
       *
@@ -77,6 +87,35 @@ class CRM_Event_Badge {
        return false;
    }
 
+  function getImageFileName ($eventID,$img=false) {
+    global $civicrm_root;
+    $path = "templates/CRM/Event/Badge";
+    if ($img == true)  {
+      $img = get_class($this).".png";
+    }
+    //missing: check in the custom template folder
+    $imgFile = "$civicrm_root/$path/$eventID/$img"; 
+    if (file_exists($imgFile)) return $imgFile;
+    $imgFile = "$civicrm_root/$path/$img";
+    return $imgFile; // not sure it exists, but at least will display a meaniful fatal error
+  }
+
+  function printBackground ($img=false) {
+    $x = $this->pdf->GetAbsX();
+    $y = $this->pdf->GetY();
+    if ($this->debug) {
+      $this->pdf->Rect( $x, $y, $this->pdf->width, $this->pdf->height, 'D', array ('all'=>array('width' => 1, 'cap' => 'round', 'join' => 'round', 'dash' => '2,10', 'color' => array(255, 0, 0))));
+    }
+    if ($img) {
+      $img = $this->getImageFileName($this->event->id,$img);
+      $this->pdf->Image($img,  $this->pdf->GetAbsX(), $this->pdf->GetY(), $this->pdf->width,$this->pdf->height, 'PNG', '', '', true, 300, '', false, false, 0, true, false, false);
+    }
+    $this->pdf->SetXY($x,$y);
+  }
+
+   /**
+   * this is supposed to be overrided 
+   **/
    public function generateLabel($participant) {
      $txt = "{$this->event['title']}
 {$participant['first_name']} {$participant['last_name']}
