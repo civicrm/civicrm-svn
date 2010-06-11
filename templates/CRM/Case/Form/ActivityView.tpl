@@ -48,7 +48,7 @@
 {if $caseID}
 <div id="activity-content">
 {/if}        
-<table class="crm-info-panel">
+<table class="crm-info-panel" id="crm-activity-view-table">
 {foreach from=$report.fields item=row name=report}
 <tr class="crm-case-activity-view-{$row.label}">
     <td class="label">{$row.label}</td>
