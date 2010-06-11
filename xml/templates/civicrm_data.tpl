@@ -187,7 +187,10 @@ VALUES
    ('website_type'                  , '{ts escape="sql"}Website Type{/ts}'                       , 0, 1),
    ('tag_used_for'                  , '{ts escape="sql"}Tag Used For{/ts}'                       , 0, 1),
    ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 0, 1),
-   ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 0, 1);
+   ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 0, 1),
+   ('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 0, 1),
+   ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1),
+   ('survey_type'                   , '{ts escape="sql"}Survey Type{/ts}'                        , 0, 1);
 
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
@@ -239,6 +242,9 @@ SELECT @option_group_id_website        := max(id) from civicrm_option_group wher
 SELECT @option_group_id_tuf            := max(id) from civicrm_option_group where name = 'tag_used_for';
 SELECT @option_group_id_currency       := max(id) from civicrm_option_group where name = 'currencies_enabled';
 SELECT @option_group_id_eventBadge     := max(id) from civicrm_option_group where name = 'event_badge';
+SELECT @option_group_id_campaignType   := max(id) from civicrm_option_group where name = 'campaign_type';
+SELECT @option_group_id_campaignStatus := max(id) from civicrm_option_group where name = 'campaign_status';
+SELECT @option_group_id_SurveyType     := max(id) from civicrm_option_group where name = 'survey_type';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -608,10 +614,25 @@ VALUES
 
 -- event name badges
   (@option_group_id_eventBadge, '{ts escape="sql"}Name Only{/ts}'     , 1, 'CRM_Event_Badge_Simple',  NULL, 0, 0, 1, '{ts escape="sql"}Simple Event Name Badge{/ts}', 0, 1, 1, NULL, NULL),
-  (@option_group_id_eventBadge, '{ts escape="sql"}Name Tent{/ts}'     , 2, 'CRM_Event_Badge_NameTent',  NULL, 0, 0, 2, '{ts escape="sql"}Name Tent{/ts}', 0, 1, 1, NULL, NULL);
+  (@option_group_id_eventBadge, '{ts escape="sql"}Name Tent{/ts}'     , 2, 'CRM_Event_Badge_NameTent',  NULL, 0, 0, 2, '{ts escape="sql"}Name Tent{/ts}', 0, 1, 1, NULL, NULL),
 
+-- Compaign Types
+  (@option_group_id_campaignType, '{ts escape="sql"}Direct Mail{/ts}', 1, 'Direct Mail',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_campaignType, '{ts escape="sql"}Referral Program{/ts}', 2, 'Referral Program',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_campaignType, '{ts escape="sql"}Voter Engagement{/ts}', 3, 'Voter Engagement',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
 
-    
+-- Campaign Status
+  (@option_group_id_campaignStatus, '{ts escape="sql"}Planned{/ts}', 1, 'Planned',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL), 
+  (@option_group_id_campaignStatus, '{ts escape="sql"}In Progress{/ts}', 2, 'In Progress',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_campaignStatus, '{ts escape="sql"}Completed{/ts}', 3, 'Completed',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_campaignStatus, '{ts escape="sql"}Cancelled{/ts}', 4, 'Cancelled',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+
+-- Survey Type
+  (@option_group_id_SurveyType, '{ts escape="sql"}Canvass{/ts}', 1, 'Canvass',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_SurveyType, '{ts escape="sql"}PhoneBank{/ts}', 2, 'PhoneBank',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
+  (@option_group_id_SurveyType, '{ts escape="sql"}WalkList{/ts}', 3, 'WalkList',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL);
+
+   
 -- Now insert option values which require domainID
 --
 

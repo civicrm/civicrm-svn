@@ -128,6 +128,13 @@
        <import>true</import>
        <add>3.2</add>
   </field>
+  <foreignKey>
+       <name>parent_id</name>
+       <table>civicrm_campaign</table>
+       <key>id</key>
+       <add>3.2</add>
+       <onDelete>SET NULL</onDelete>
+  </foreignKey>
 
   <field> 
       <name>is_active</name> 
