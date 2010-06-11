@@ -62,6 +62,10 @@
 	    <td class="label">{$form.external_identifier.label}</td>
 	    <td class="view-value">{$form.external_identifier.html}</td>
 	</tr>
+	<tr class="crm-campaign-form-block-campaign_id">
+	    <td class="label">{$form.campaign_id.label}</td>
+	    <td class="view-value">{$form.campaign_id.html}</td>
+	</tr>
 	<tr class="crm-campaign-form-block-is_active">
 	    <td class="label">{$form.is_active.label}</td>
 	    <td class="view-value">{$form.is_active.html}</td>

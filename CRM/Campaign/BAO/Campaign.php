@@ -56,10 +56,6 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
         if ( empty( $params ) ) {
             return;
         }
-        
-        $session = CRM_Core_Session::singleton();
-        $params['created_id'] = $session->get( 'userID' );
-        $params['created_date'] = implode( ' ', CRM_Utils_Date::setDateDefaults( ) );
        
         $campaign = new CRM_Campaign_DAO_Campaign();
         $campaign->copyValues( $params );
@@ -67,7 +63,52 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
 
         return $dao;
     }
-    
+   
+    /**
+     * Takes a bunch of params that are needed to match certain criteria and
+     * retrieves the relevant objects. Typically the valid params are only
+     * campaign_id. 
+     *
+     * @param array  $params   (reference ) an assoc array of name/value pairs
+     * @param array  $defaults (reference ) an assoc array to hold the flattened values
+     *
+     * @access public
+     */
+    public function retrieve ( &$params, &$defaults ) 
+    {
+        $campaign = new CRM_Campaign_DAO_Campaign( );
+        
+        $campaign->copy($params);
+        
+        if( $campaign->find( true ) ) {
+            CRM_Core_DAO::storeValues( $campaign, $defaults );
+            return $campaign;
+        }
+        return null;  
+    }
+
+    public function getAllCampaign( $id=null ) 
+    {
+        $campaigns = array( );
+        $whereClause = null;
+        if ( $id ) {
+            $whereClause = " AND c.id != ".$id;
+        }
+        $campaignParent = array();
+        $sql = "
+SELECT c.id as id, c.title as title
+FROM  civicrm_campaign c
+WHERE c.title IS NOT NULL" . $whereClause;
+        
+        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        while ( $dao->fetch() ) {
+           $campaigns[$dao->id] = $dao->title;
+           
+        }
+        
+        return  $campaigns ;
+
+    }
 }
 
 ?>
