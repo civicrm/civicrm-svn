@@ -122,7 +122,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                 $defaults['target_contact_value'] = ts('(recipients)');   
             }
             
-            if ( $activity->source_contact_id ) {
+            if ($activity->source_contact_id and !CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $activity->source_contact_id, 'is_deleted')) {
                 $defaults['source_contact'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                                                            $activity->source_contact_id,
                                                                            'sort_name' );
