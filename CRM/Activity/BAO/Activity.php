@@ -686,7 +686,8 @@ as tbl ";
                   FROM civicrm_activity_target at
                   INNER JOIN {$activityTempTable} ON ( at.activity_id = {$activityTempTable}.activity_id 
                     AND {$activityTempTable}.activity_type_id <> {$bulkActivityTypeID} )
-                  INNER JOIN civicrm_contact c ON c.id = at.target_contact_id";
+                  INNER JOIN civicrm_contact c ON c.id = at.target_contact_id
+                  WHERE c.is_deleted = 0";
         
         CRM_Core_DAO::executeQuery( $query );
         
@@ -706,7 +707,8 @@ as tbl ";
                   FROM civicrm_activity_assignment aa
                   INNER JOIN {$activityTempTable} ON ( aa.activity_id = {$activityTempTable}.activity_id
                       AND {$activityTempTable}.activity_type_id <> {$bulkActivityTypeID} )
-                  INNER JOIN civicrm_contact c ON c.id = aa.assignee_contact_id";
+                  INNER JOIN civicrm_contact c ON c.id = aa.assignee_contact_id
+                  WHERE c.is_deleted = 0";
         
         CRM_Core_DAO::executeQuery( $query );
         
@@ -775,8 +777,6 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
         $cids = array();
         foreach ($values as $value) {
             $cids[] = $value['source_contact_id'];
-            if (is_array($value['target_contact_name']))   $cids = array_merge($cids, array_keys($value['target_contact_name']));
-            if (is_array($value['assignee_contact_name'])) $cids = array_merge($cids, array_keys($value['assignee_contact_name']));
         }
         $cids = array_filter(array_unique($cids));
 
@@ -789,28 +789,10 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
                 $dels[] = $dao->id;
             }
 
-            // depending on access rights, either dress the names in <del> tags or hide the deleted contacts
-            $delAccess = CRM_Core_Permission::check('access deleted contacts');
+            // hide the deleted contacts
             foreach ($values as &$value) {
                 if (in_array($value['source_contact_id'], $dels)) {
-                    if ($delAccess) $value['source_contact_name'] = "<del>{$value['source_contact_name']}</del>";
-                    else            unset($value['source_contact_id'], $value['source_contact_name']);
-                }
-                if (is_array($value['target_contact_name'])) {
-                    foreach ($value['target_contact_name'] as $cid => &$name) {
-                        if (in_array($cid, $dels)) {
-                            if ($delAccess) $name = "<del>$name</del>";
-                            else            unset($value['target_contact_name'][$cid]);
-                        }
-                    }
-                }
-                if (is_array($value['assignee_contact_name'])) {
-                    foreach ($value['assignee_contact_name'] as $cid => &$name) {
-                        if (in_array($cid, $dels)) {
-                            if ($delAccess) $name = "<del>$name</del>";
-                            else            unset($value['assignee_contact_name'][$cid]);
-                        }
-                    }
+                    unset($value['source_contact_id'], $value['source_contact_name']);
                 }
             }
         }
