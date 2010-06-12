@@ -43,6 +43,19 @@ class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
 
       // Log in using webtestLogin() method
       $this->webtestLogin();
+      
+      // Enable CiviCase module if necessary
+      $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
+      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("_qf_Component_next-bottom");
+      $enabledComponents = $this->getSelectOptions("enableComponents-t");
+      if (! array_search( "CiviCase", $enabledComponents ) ) {
+          $this->addSelection("enableComponents-f", "label=CiviCase");
+          $this->click("//option[@value='CiviCase']");
+          $this->click("add");
+          $this->click("_qf_Component_next-bottom");
+          $this->waitForPageToLoad("30000");          
+      }
 
       // Go directly to the URL of the screen that you will be testing (New Case-standalone).
       $this->open($this->sboxPath . "civicrm/case/add&reset=1&action=add&atype=13&context=standalone");
