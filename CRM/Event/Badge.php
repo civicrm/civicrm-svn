@@ -91,17 +91,24 @@ class CRM_Event_Badge {
 
   function getImageFileName ($eventID,$img=false) {
     global $civicrm_root;
-    $path = "templates/CRM/Event/Badge";
+    $path = "CRM/Event/Badge";
     if ($img == false) {
       return false;
     }
     if ($img == true)  {
       $img = get_class($this).".".$this->imgExtension ;
     }
-    //missing: check in the custom template folder
-    $imgFile = "$civicrm_root/$path/$eventID/$img"; 
+
+    require_once 'CRM/Core/Config.php';
+    $config = CRM_Core_Config::singleton( );
+    $imgFile = $config->customTemplateDir."/$path/$eventID/$img"; 
     if (file_exists($imgFile)) return $imgFile;
-    $imgFile = "$civicrm_root/$path/$img";
+    $imgFile = $config->customTemplateDir."/$path/$img"; 
+    if (file_exists($imgFile)) return $imgFile;
+
+    $imgFile = "$civicrm_root/templates/$path/$eventID/$img"; 
+    if (file_exists($imgFile)) return $imgFile;
+    $imgFile = "$civicrm_root/templates/$path/$img";
     if (!file_exists($imgFile) && !$this->debug) return false;
      
     return $imgFile; // not sure it exists, but at least will display a meaniful fatal error in debug mode
@@ -119,7 +126,7 @@ class CRM_Event_Badge {
      $f = $this->imgRes / 25.4;//mm
      $w= $imgsize[0] / $f;
      $h= $imgsize[1] / $f;
-      $this->pdf->Image($img,  $this->pdf->GetAbsX(), $this->pdf->GetY(), $w,$h, 'PNG', '', '', false, 72, '', false, false, $this->debug, false, false, false);
+      $this->pdf->Image($img,  $this->pdf->GetAbsX(), $this->pdf->GetY(), $w,$h, strtoupper($this->imgExtension), '', '', false, 72, '', false, false, $this->debug, false, false, false);
     }
     $this->pdf->SetXY($x,$y);
   }
