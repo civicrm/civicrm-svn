@@ -89,6 +89,10 @@
 
   <civicrm_membership_status />
 
+  <civicrm_campaign />
+
+  <civicrm_campaign_group />
+
   <civicrm_participant_status_type />
 
   <civicrm_dedupe_rule_group />
@@ -206,6 +210,8 @@
   <civicrm_membership_block />
 
   <civicrm_membership_log />
+
+  <civicrm_survey />
 
   <civicrm_activity />
 
