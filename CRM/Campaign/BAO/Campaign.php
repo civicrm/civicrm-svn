@@ -109,6 +109,31 @@ WHERE c.title IS NOT NULL" . $whereClause;
         return  $campaigns ;
 
     }
+
+     /**
+     * Function to get Campaigns 
+     *
+     * @param $all boolean true if campaign is active else returns camapign 
+     *
+     * @static
+     */
+    static function getCampaign( $all = false, $id = false) 
+    {
+       $campaign = array( );
+       $dao = new CRM_Campaign_DAO_Campaign( );
+       if ( !$all ) {
+           $dao->is_active = 1;
+       } 
+       if ( $id ) {
+           $dao->id = $id;  
+       }
+       $dao->find( );
+       while ( $dao->fetch() ) {
+           CRM_Core_DAO::storeValues($dao, $campaign[$dao->id]);
+       }
+       
+       return $campaign;
+    }
 }
 
 ?>

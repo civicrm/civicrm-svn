@@ -18,4 +18,9 @@
     <title>Survey</title>
     <page_callback>CRM_Campaign_Page_Survey</page_callback>
   </item>
+  <item>
+    <path>civicrm/campaign</path>
+    <title>Campaign</title>
+    <page_callback>CRM_Campaign_Page_Campaign</page_callback>
+  </item>
 </menu>
