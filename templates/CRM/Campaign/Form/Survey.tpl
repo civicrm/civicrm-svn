@@ -30,24 +30,24 @@
 </div>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
       <table class="form-layout"> 
-      	<tr class="crm-campaign-survey-form-block-surveyTypeId">
-           <td class="label">{$form.surveyTypeId.label}</td>
-           <td>{$form.surveyTypeId.html}
+      	<tr class="crm-campaign-survey-form-block-survey_type_id">
+           <td class="label">{$form.survey_type_id.label}</td>
+           <td>{$form.survey_type_id.html}
 	   <div class="description">{ts}Select the Survey Type.{/ts}</div></td>
         </tr> 
        <tr class="crm-campaign-survey-form-block-campaign_id">
-           <td class="label">{$form.campaignId.label}</td>
-           <td>{$form.campaignId.html}
+           <td class="label">{$form.campaign_id.label}</td>
+           <td>{$form.campaign_id.html}
 	   <div class="description">{ts}Select the campaign for which survey is created.{/ts}</div></td>
        </tr> 
-       <tr class="crm-campaign-survey-form-block-activityTypeId">
-           <td class="label">{$form.activityTypeId.label}</td>
-           <td>{$form.activityTypeId.html}
+       <tr class="crm-campaign-survey-form-block-activity_type_id">
+           <td class="label">{$form.activity_type_id.label}</td>
+           <td>{$form.activity_type_id.html}
 	   <div class="description">{ts}Select the Activity Type.{/ts}</div></td>
        </tr>
-       <tr class="crm-campaign-survey-form-block-customGroupId">
-           <td class="label">{$form.customGroupId.label}</td>
-           <td>{$form.customGroupId.html}
+       <tr class="crm-campaign-survey-form-block-custom_group_id">
+           <td class="label">{$form.custom_group_id.label}</td>
+           <td>{$form.custom_group_id.html}
 	   <div class="description">{ts}Select the Custom Group.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-instructions">

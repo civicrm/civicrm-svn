@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.2                                                |
@@ -25,6 +24,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 */
+
 /**
  *
  * @package CRM
@@ -33,53 +33,39 @@
  *
  */
 
-require_once 'CRM/Campaign/DAO/Survey.php';
+require_once 'CRM/Core/Page.php';
+require_once 'CRM/Campaign/BAO/Survey.php';
 
-Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
+/**
+ * Page for displaying Surveys
+ */
+class CRM_Campaign_Page_Survey extends CRM_Core_Page 
 {
-    /**
-     * takes an associative array and creates a Survey object
-     *
-     * the function extract all the params it needs to initialize the create a
-     * survey object.
-     *
-     * 
-     * @return object CRM_Survey_DAO_Survey object
-     * @access public
-     * @static
-     */
-    static function create( &$params ) 
-    {
-        if ( empty( $params ) ) {
-            return;
-        }
-        
-        $session = CRM_Core_Session::singleton();         
-        $survey  = new CRM_Campaign_DAO_Survey();
-        $survey->copyValues( $params );
-        $survey->save();
 
-        return $dao;
-    }
-    
-    static function getSurvey( $all = false, $id = false ) {
-        $survey = array( );
-        $dao = new CRM_Campaign_DAO_Survey( );
+    function browse( ) {
+        $surveys = CRM_Campaign_BAO_Survey::getSurvey( );
+        if ( !empty($surveys) ) {
+            require_once 'CRM/Campaign/BAO/Campaign.php';
+            $surveyType = CRM_Core_PseudoConstant::surveyType();
+            $campaigns  = CRM_Campaign_BAO_Campaign::getAllCampaign();
+            foreach( $surveys as $sid => $survey ) {
+                $surveys[$sid]['campaign_id']    = $campaigns[$survey['campaign_id']];
+                $surveys[$sid]['survey_type_id'] = $surveyType[$survey['survey_type_id']];
+                $surveys[$sid]['release_frequency'] = $survey['release_frequency_interval'].' '.$survey['release_frequency_unit'];
+            }
+        }
 
-        if ( !$all ) {
-            $dao->is_active = 1;
-        } 
-        if ( $id ) {
-            $dao->id = $id;  
-        }
-        $dao->find( );
-        while ( $dao->fetch() ) {
-            CRM_Core_DAO::storeValues($dao, $survey[$dao->id]);
-        }
+        $this->assign('surveys', $surveys);
         
-        return $survey;
     }
-    
+
+    function run( ) {
+        $action = CRM_Utils_Request::retrieve('action', 'String',
+                                              $this, false, 0 ); 
+        $this->assign('action', $action);
+        $this->browse();
+
+        parent::run();
+    }
+
 }
-
-?>

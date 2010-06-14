@@ -84,8 +84,8 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
     public function preProcess()
     {
         $this->_surveyId = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
-        
-        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this );
+        $this->_action   = CRM_Utils_Request::retrieve('action', 'String', $this );
+
     }
     
     /**
@@ -133,31 +133,31 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         // Survey Type id
         require_once 'CRM/Core/PseudoConstant.php';
         $surveyType = CRM_Core_PseudoConstant::surveyType();
-        $this->add('select', 'surveyTypeId', ts('Select Survey Type'),  array( '' => ts( '- select -' ) ) +$surveyType, 'surveyTypeId' );
+        $this->add('select', 'survey_type_id', ts('Select Survey Type'),  array( '' => ts( '- select -' ) ) +$surveyType, true );
         
         // FIX ME : Add Activity Type Id for Survey
         //$activityTName = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, 'AND v.value = '.$this->_activityTypeId , 'name' );
-        $activityTName = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, false , 'name' );
+        $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, false , 'name' );
         // Activity Type id
-        $this->add('select', 'activityTypeId', ts('Select Activity Type'), $activityTName, 'activityTypeId' );
+        $this->add('select', 'activity_type_id', ts('Select Activity Type'), $activityTypes, true );
         
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign();
-        $this->add('select', 'campaignId', ts('Select Campaign'), array( '' => ts( '- select -' ) ) +$campaigns , 'campaign_id' );
+        $this->add('select', 'campaign_id', ts('Select Campaign'), array( '' => ts( '- select -' ) ) +$campaigns, true );
         
         // FIX ME : Add Custom Group Id for Survey
         // custom group id
-        $this->add('select', 'customGroupId', ts('Select Custom Group'), array( '1' => 'Mumbai' , '1' => 'Pune', '3' => 'Chennai', '4' => 'Goa'), 'customGroupId' );
+        $this->add('select', 'custom_group_id', ts('Select Custom Group'), array( '1' => 'Mumbai' , '1' => 'Pune', '3' => 'Chennai', '4' => 'Goa'), true );
         
         // script / instructions
         $this->add( 'textarea', 'instructions', ts('Instructions for volunteers'), array( 'rows' => 5, 'cols' => 40 ) );
         
         // release frequency unit
-        $this->add('select', 'release_frequency_unit', ts('Release Frequency Unit'), array( 'day' => 'Day' , 'week' => 'Week', 'month' => 'Month', 'year' => 'Year'), 'release_frequency_unit' );
+        $this->add('select', 'release_frequency_unit', ts('Release Frequency Unit'), array( 'day' => 'Day' , 'week' => 'Week', 'month' => 'Month', 'year' => 'Year'), true );
         
         // release frequency interval
-        $this->add('text', 'release_frequency_interval', ts('Release Frequency Interval'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency_interval') );
+        $this->add('text', 'release_frequency_interval', ts('Release Frequency Interval'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency_interval'), true );
         $this->addRule('release_frequency_interval', ts('Frequenct interval should be a positive number') , 'positiveInteger');
         // max number of contacts
         $this->add('text', 'max_number_of_contacts', ts('Maximum number of contacts '), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'max_number_of_contacts') );
@@ -202,17 +202,17 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $params = $this->controller->exportValues( $this->_name );
         
         $session = CRM_Core_Session::singleton( );
-        $params['survey_type_id']   = CRM_Utils_String::titleToVar($params['surveyTypeId']);
-        $params['activity_type_id'] = CRM_Utils_Array::value( 'activityTypeId', $params, false );
-        $params['custom_group_id']  = CRM_Utils_Array::value( 'customGroupId', $params, false );
-        $params['campaign_id']      = CRM_Utils_Array::value( 'campaignId', $params, false );
+
         $params['last_modified_id'] = $session->get( 'userID' );
         $params['last_modified_date'] = date('YmdHis');
         
-        if ( $this->_fid ) {
+        if ( $this->_surveyId ) {
             $params['id'] = $this->_surveyId;
-        }
-        
+        } else { 
+            $params['created_id']   = $session->get( 'userID' );
+            $params['created_date'] = date('YmdHis');
+        } 
+
         $surveyId = CRM_Campaign_BAO_Survey::create( $params  );
         
         if( ! is_a( $surveyId, 'CRM_Core_Error' ) ) {

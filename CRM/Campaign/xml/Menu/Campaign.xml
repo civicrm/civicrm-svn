@@ -13,4 +13,9 @@
     <page_callback>CRM_Campaign_Form_Survey</page_callback>
     <path_arguments>action=add</path_arguments>
   </item>
+  <item>
+    <path>civicrm/survey</path>
+    <title>Survey</title>
+    <page_callback>CRM_Campaign_Page_Survey</page_callback>
+  </item>
 </menu>

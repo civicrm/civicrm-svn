@@ -1,6 +1,4 @@
-<?php
-
-/*
+{*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
@@ -24,62 +22,38 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*/
-/**
- *
- * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
- * $Id$
- *
- */
+*}
+{* this template is used for displaying survey information *}
+{if $surveys} 
+  <div id="surveyList">
+    <table id="options" class="display">
+      <thead>
+        <tr>      
+          <th>{ts}Campaign{/ts}</th>
+          <th>{ts}Survey Type{/ts}</th>   
+	  <th>{ts}Activity Type{/ts}</th>
+          <th>{ts}Release Frequency{/ts}</th>
+	  <th>{ts}Max Number Of Contacts{/ts}</th>
+	  <th>{ts}Default Number Of Contacts{/ts}</th>
+	  <th>{ts}Default?{/ts}</th>
+	  <th>{ts}Active?{/ts}</th>
+        </tr>
+      </thead>
+      {foreach from=$surveys item=survey}
+        <tr>
+          <td>{$survey.campaign_id}</td>
+          <td>{$survey.survey_type_id}</td>
+          <td>{$survey.activity_type_id}</td>
+          <td>{$survey.release_frequency}</td>
+          <td>{$survey.max_number_of_contacts}</td>
+          <td>{$survey.default_number_of_contacts}</td>
+          <td>{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
+          <td>{if $survey.is_active}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Active{/ts}" />  {/if}</td>
+        </tr>
+      {/foreach}
+    </table>
+  </div>
 
-require_once 'CRM/Campaign/DAO/Survey.php';
-
-Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
-{
-    /**
-     * takes an associative array and creates a Survey object
-     *
-     * the function extract all the params it needs to initialize the create a
-     * survey object.
-     *
-     * 
-     * @return object CRM_Survey_DAO_Survey object
-     * @access public
-     * @static
-     */
-    static function create( &$params ) 
-    {
-        if ( empty( $params ) ) {
-            return;
-        }
-        
-        $session = CRM_Core_Session::singleton();         
-        $survey  = new CRM_Campaign_DAO_Survey();
-        $survey->copyValues( $params );
-        $survey->save();
-
-        return $dao;
-    }
-    
-    static function getSurvey( $all = false, $id = false ) {
-        $survey = array( );
-        $dao = new CRM_Campaign_DAO_Survey( );
-
-        if ( !$all ) {
-            $dao->is_active = 1;
-        } 
-        if ( $id ) {
-            $dao->id = $id;  
-        }
-        $dao->find( );
-        while ( $dao->fetch() ) {
-            CRM_Core_DAO::storeValues($dao, $survey[$dao->id]);
-        }
-        
-        return $survey;
-    }
-    
-}
-
-?>
+{else} 
+  {ts} No survey found!    {/ts} 
+{/if}
