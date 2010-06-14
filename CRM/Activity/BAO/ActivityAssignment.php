@@ -89,13 +89,15 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
             return $assigneeArray;
         }
 
-        $assignment = new CRM_Activity_BAO_ActivityAssignment( );
-        $assignment->activity_id = $activity_id;
-        $assignment->find();
-        $count = 1;
+        $sql = '
+            SELECT assignee_contact_id
+            FROM civicrm_activity_assignment
+            JOIN civicrm_contact ON assignee_contact_id = civicrm_contact.id
+            WHERE activity_id = %1 AND civicrm_contact.is_deleted = 0
+        ';
+        $assignment =& CRM_Core_DAO::executeQuery($sql, array(1 => array($activity_id, 'Integer')));
         while ( $assignment->fetch( ) ) {
-            $assigneeArray[$count] = $assignment->assignee_contact_id;
-            $count++;
+            $assigneeArray[] = $assignment->assignee_contact_id;
         }
 
         return $assigneeArray;
@@ -128,6 +130,7 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
                   LEFT JOIN civicrm_email ce 
                          ON ce.contact_id = contact_a.id
                   WHERE civicrm_activity_assignment.activity_id = {$activity_id} 
+                        AND contact_a.is_deleted = 0
                         {$whereClause}";
 
         $dao = CRM_Core_DAO::executeQuery($query,$queryParam);
