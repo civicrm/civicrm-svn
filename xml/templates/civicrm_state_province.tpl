@@ -1268,6 +1268,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (2699, 1226, "KEN", "Kent"),
 (2705, 1226, "LAN", "Lancashire"),
 (2709, 1226, "LEC", "Leicestershire"),
+(2712, 1226, "LIN", "Lincolnshire"),
 (2723, 1226, "MLN", "Midlothian"),
 (2726, 1226, "MRY", "Moray"),
 (2734, 1226, "NFK", "Norfolk"),
@@ -3743,6 +3744,8 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (10013, 1226, "CWD", "Clwyd"),
 (10014, 1226, "DFD", "Dyfed"),
 (10015, 1226, "SGM", "South Glamorgan"),
+
+-- Haiti (CRM-5628)
 (10016, 1094, "AR", "Artibonite"),
 (10017, 1094, "CE", "Centre"),
 (10018, 1094, "NI", "Nippes"),

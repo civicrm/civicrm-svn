@@ -131,9 +131,9 @@ class CRM_Report_Form_Contribute_Lybunt extends CRM_Report_Form {
                                           'options' => $optionYear,
                                           'default' => date('Y') ,
                                           'clause'  => "contribution_civireport.contact_id NOT IN
-((SELECT distinct contri.contact_id FROM civicrm_contribution contri 
- WHERE   YEAR(contri.receive_date) =  \$value AND contri.is_test = 0) ) AND contribution_civireport.contact_id IN ((SELECT distinct contri.contact_id FROM civicrm_contribution contri 
- WHERE   YEAR(contri.receive_date) =  (\$value-1) AND contri.is_test = 0) ) "
+(SELECT distinct contri.contact_id FROM civicrm_contribution contri 
+ WHERE   YEAR(contri.receive_date) =  \$value AND contri.is_test = 0) AND contribution_civireport.contact_id IN (SELECT distinct contri.contact_id FROM civicrm_contribution contri 
+ WHERE   YEAR(contri.receive_date) =  (\$value-1) AND contri.is_test = 0) "
                                           ), 
                                    'contribution_status_id'         => 
                                    array( 'operatorType' => CRM_Report_Form::OP_MULTISELECT,

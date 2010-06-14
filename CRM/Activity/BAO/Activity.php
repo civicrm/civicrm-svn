@@ -107,20 +107,14 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             $defaults['assignee_contact'] = CRM_Activity_BAO_ActivityAssignment::retrieveAssigneeIdsByActivityId( $activity->id );
             $assignee_contact_names = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $activity->id );
       
-            $defaults['assignee_contact_value'] = null;
-            foreach( $assignee_contact_names as $key => $name ) {
-                $defaults['assignee_contact_value'] .= $defaults['assignee_contact_value']?"; $name":"$name";
-            } 
+            $defaults['assignee_contact_value'] = implode('; ', $assignee_contact_names);
             
             if ($activity->activity_type_id != CRM_Core_OptionGroup::getValue( 'activity_type', 'Bulk Email', 'name' ) ) {  
                 require_once 'CRM/Activity/BAO/ActivityTarget.php';
                 $defaults['target_contact'] = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activity->id );
                 $target_contact_names = CRM_Activity_BAO_ActivityTarget::getTargetNames( $activity->id );
                 
-                $defaults['target_contact_value'] = null;
-                foreach ( $target_contact_names as $key => $name ) {
-                    $defaults['target_contact_value'] .= $defaults['target_contact_value']?"; $name":"$name";
-                }
+                $defaults['target_contact_value'] = implode('; ', $target_contact_names);
             } else if ( CRM_Core_Permission::check('access CiviMail') ) {
                 $defaults['mailingId'] = CRM_Utils_System::url( 'civicrm/mailing/report', 
                                                                 "mid={$activity->source_record_id}&reset=1&atype={$activity->activity_type_id}&aid={$activity->id}&cid={$activity->source_contact_id}&context=activity" );
@@ -128,7 +122,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                 $defaults['target_contact_value'] = ts('(recipients)');   
             }
             
-            if ( $activity->source_contact_id ) {
+            if ($activity->source_contact_id and !CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $activity->source_contact_id, 'is_deleted')) {
                 $defaults['source_contact'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                                                            $activity->source_contact_id,
                                                                            'sort_name' );
@@ -692,7 +686,8 @@ as tbl ";
                   FROM civicrm_activity_target at
                   INNER JOIN {$activityTempTable} ON ( at.activity_id = {$activityTempTable}.activity_id 
                     AND {$activityTempTable}.activity_type_id <> {$bulkActivityTypeID} )
-                  INNER JOIN civicrm_contact c ON c.id = at.target_contact_id";
+                  INNER JOIN civicrm_contact c ON c.id = at.target_contact_id
+                  WHERE c.is_deleted = 0";
         
         CRM_Core_DAO::executeQuery( $query );
         
@@ -712,7 +707,8 @@ as tbl ";
                   FROM civicrm_activity_assignment aa
                   INNER JOIN {$activityTempTable} ON ( aa.activity_id = {$activityTempTable}.activity_id
                       AND {$activityTempTable}.activity_type_id <> {$bulkActivityTypeID} )
-                  INNER JOIN civicrm_contact c ON c.id = aa.assignee_contact_id";
+                  INNER JOIN civicrm_contact c ON c.id = aa.assignee_contact_id
+                  WHERE c.is_deleted = 0";
         
         CRM_Core_DAO::executeQuery( $query );
         
@@ -773,7 +769,34 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
                 }
             }
         }
-        
+
+        // add info on whether the related contacts are deleted (CRM-5673)
+        // FIXME: ideally this should be tied to ACLs
+
+        // grab all the related contact ids
+        $cids = array();
+        foreach ($values as $value) {
+            $cids[] = $value['source_contact_id'];
+        }
+        $cids = array_filter(array_unique($cids));
+
+        // see which of the cids are of deleted contacts
+        if ($cids) {
+            $sql = 'SELECT id FROM civicrm_contact WHERE id IN (' . implode(', ', $cids) . ') AND is_deleted = 1';
+            $dao =& CRM_Core_DAO::executeQuery($sql);
+            $dels = array();
+            while ($dao->fetch()) {
+                $dels[] = $dao->id;
+            }
+
+            // hide the deleted contacts
+            foreach ($values as &$value) {
+                if (in_array($value['source_contact_id'], $dels)) {
+                    unset($value['source_contact_id'], $value['source_contact_name']);
+                }
+            }
+        }
+
         return $values;
     }
     

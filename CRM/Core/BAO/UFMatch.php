@@ -213,6 +213,7 @@ WHERE     openid = %1";
 
                 require_once 'CRM/Dedupe/Finder.php';
                 $dedupeParams = CRM_Dedupe_Finder::formatParams ( $params      , 'Individual' );
+                $dedupeParams['check_permission'] = false;
                 $ids          = CRM_Dedupe_Finder::dupesByParams( $dedupeParams, 'Individual' );
                 
                 if ( ! empty( $ids ) && defined( 'CIVICRM_UNIQ_EMAIL_PER_SITE' ) && CIVICRM_UNIQ_EMAIL_PER_SITE ) {

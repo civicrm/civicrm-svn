@@ -188,15 +188,17 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
      * @access public
      *
      */
-    static function &links( $status = 'all', $isPaymentProcessor = null, $accessContribution = null )
+    static function &links( $status = 'all', $isPaymentProcessor = null, $accessContribution = null, $key = null  )
     {
+        
+        $extraParams = ($key ) ? "&key={$key}" : null;
         
         if ( !self::$_links['view'] ) {
             self::$_links['view'] = array(
                                           CRM_Core_Action::VIEW   => array(
                                                                    'name'     => ts('View'),
                                                                    'url'      => 'civicrm/contact/view/membership',
-                                                                   'qs'       => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=member',
+                                                                   'qs'       => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=member'.$extraParams,
                                                                    'title'    => ts('View Membership'),
                                                                    )
                                   );
@@ -206,26 +208,26 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
                                 CRM_Core_Action::UPDATE => array(
                                                                  'name'  => ts('Edit'),
                                                                  'url'   => 'civicrm/contact/view/membership',
-                                                                 'qs'    => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                                 'qs'    => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                  'title' => ts('Edit Membership'),
                                                                  ),
                                 CRM_Core_Action::DELETE => array(
                                                                  'name'  => ts('Delete'),
                                                                  'url'   => 'civicrm/contact/view/membership',
-                                                                 'qs'    => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                                 'qs'    => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                  'title' => ts('Delete Membership'),
                                                                  ),
                                 
                                 CRM_Core_Action::RENEW => array(
                                                                 'name'  => ts('Renew'),
                                                                 'url'   => 'civicrm/contact/view/membership',
-                                                                'qs'    => 'reset=1&action=renew&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                                'qs'    => 'reset=1&action=renew&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                 'title' => ts('Renew Membership')
                                                                 ),
                                 CRM_Core_Action::FOLLOWUP => array(
                                                                    'name'  => ts('Renew-Credit Card'),
                                                                    'url'   => 'civicrm/contact/view/membership',
-                                                                   'qs'    => 'action=renew&reset=1&cid=%%cid%%&id=%%id%%&context=%%cxt%%&mode=live',
+                                                                   'qs'    => 'action=renew&reset=1&cid=%%cid%%&id=%%id%%&context=%%cxt%%&mode=live'.$extraParams,
                                                                    'title' => ts('Renew Membership Using Credit Card')
                                                                    ),
                                 );
@@ -343,7 +345,11 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
              $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->membership_id;
             
              if ( ! isset( $result->owner_membership_id ) ) {
-                 $row['action']   = CRM_Core_Action::formLink( self::links( 'all', $this->_isPaymentProcessor, $this->_accessContribution ), $mask,
+                 $row['action']   = CRM_Core_Action::formLink( self::links( 'all', 
+                                                                            $this->_isPaymentProcessor, 
+                                                                            $this->_accessContribution, 
+                                                                            $this->_key ), 
+                                                               $mask,
                                                                array( 'id'  => $result->membership_id,
                                                                       'cid' => $result->contact_id,
                                                                       'cxt' => $this->_context ) );

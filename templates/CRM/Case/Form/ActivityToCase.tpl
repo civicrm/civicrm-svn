@@ -24,26 +24,26 @@
  +--------------------------------------------------------------------+
 *}
 {* CiviCase -  build activity to a case*}
-<div class="crm-block crm-form-block crm-case-activitytocase-form-block">
 <div id="fileOnCaseDialog"></div>
 
 {if $buildCaseActivityForm}
+<div class="crm-block crm-form-block crm-case-activitytocase-form-block">
 <table class="form-layout">
      <tr class="crm-case-activitytocase-form-block-unclosed_cases">
-	<td class="label">{$form.unclosed_cases.label}</td>
+	    <td class="label">{$form.unclosed_cases.label}</td>
      	<td>{$form.unclosed_cases.html}<br />
-     	  <span class="description">{ts}Begin typing client name for a list of open cases.{/ts}</span>
+     	    <span class="description">{ts}Begin typing client name for a list of open cases.{/ts}</span>
      	</td>
      </tr>
      <tr class="crm-case-activitytocase-form-block-target_contact_id">
-	<td class="label">{$form.target_contact_id.label}</td>
-	<td>{$form.target_contact_id.html}</td>
+	    <td class="label">{$form.target_contact_id.label}</td>
+	    <td>{$form.target_contact_id.html}</td>
      </tr>
      <tr class="crm-case-activitytocase-form-block-case_activity_subject">
      	<td class="label">{$form.case_activity_subject.label}</td>
-	<td>{$form.case_activity_subject.html}<br />
-	  <span class="description">{ts}You can modify the activity subject before filing.{/ts}</span>
-	</td>
+	    <td>{$form.case_activity_subject.html}<br />
+	        <span class="description">{ts}You can modify the activity subject before filing.{/ts}</span>
+	    </td>
      </tr>
 </table>     	
 </div>
@@ -120,7 +120,7 @@ function fileOnCase( action, activityID, currentCaseId ) {
 		             modal       : true,
 			         bgiframe    : true,
 	    	         width       : 600,
-		             height      : 300,
+		             height      : 270,
 		             overlay     : { opacity: 0.5, background: "black" },
 		             beforeclose : function( event, ui ) {
                                      cj(this).dialog("destroy");

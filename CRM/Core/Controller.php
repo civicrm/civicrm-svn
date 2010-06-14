@@ -387,6 +387,10 @@ class CRM_Core_Controller extends HTML_QuickForm_Controller {
             }
             $this->addPage( $$stateName );
             $this->addAction( $stateName, new HTML_QuickForm_Action_Direct( ) );
+            
+            //CRM-6342 -we need kill the reference here,
+            //as we have deprecated reference object creation.
+            unset( $$stateName );
         }
     }
 

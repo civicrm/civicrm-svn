@@ -29,8 +29,7 @@
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
   {if $action eq 4 } {* action = view *}
-    <div class="form-item">
-      <fieldset><legend>{ts}View Relationship{/ts}</legend>
+      <h3>{ts}View Relationship{/ts}</h3>
 
         <table class="view-layout">
 	    {foreach from=$viewRelationship item="row"}
@@ -70,20 +69,13 @@
             <tr><td class="label">{ts}Status{/ts}</td><td>{if $row.is_active}{ts}Enabled{/ts} {else} {ts}Disabled{/ts}{/if}</td></tr>
 
             {include file="CRM/Custom/Page/CustomDataView.tpl"}
-            <tr>
-            <td></td>
-            <td><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=rel'}';"/></td>
-            </tr>
-            {/foreach}
-		
+        {/foreach}
         </table>
-        </fieldset>
-     </div>    
+        <div class="crm-submit-buttons"><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=rel'}';"/></div>
    {/if}
 
    {if $action eq 2 | $action eq 1} {* add and update actions *}
-    <fieldset><legend>{if $action eq 1}{ts}New Relationship{/ts}{else}{ts}Edit Relationship{/ts}{/if}</legend>
-        <div class="form-item">
+    <h3>{if $action eq 1}{ts}New Relationship{/ts}{else}{ts}Edit Relationship{/ts}{/if}</h3>
             {if $action eq 1}
                 <div class="description">
                 {ts}Select the relationship type. Then locate target contact(s) for this relationship by entering a complete or partial name and clicking 'Search'.{/ts}
@@ -153,9 +145,11 @@
                 <td>{$form.rel_contact.html}</td>
               </tr>
               </table>
+                <div class="crm-submit-buttons">
                     <span id="relationship-refresh" class="crm-button crm-button-type-refresh crm-button_qf_Relationship_refresh.html">{$form._qf_Relationship_refresh.html}</span>
                     <span id="relationship-refresh-save" class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_save" style="display:none">{$form._qf_Relationship_refresh_save.html}</span>
                     <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
+                </div>
                 <div class="clear"></div>
 
               {if $searchDone } {* Search button clicked *} 
@@ -285,14 +279,13 @@
             </div>
         <div id="customData"></div>
         <div class="spacer"></div>
-        <div id="saveButtons"> {include file="CRM/common/formButtons.tpl"}</div> 
+        <div class="crm-submit-buttons" id="saveButtons"> {include file="CRM/common/formButtons.tpl"}</div> 
             {if $action EQ 1}
-                <div id="saveDetails">
+                <div class="crm-submit-buttons" id="saveDetails">
                 <span class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_savedetails">{$form._qf_Relationship_refresh_savedetails.html}</span>
                 <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
                 </div>
             {/if}
-        </fieldset>
   {/if}
  
   {if $action eq 8}

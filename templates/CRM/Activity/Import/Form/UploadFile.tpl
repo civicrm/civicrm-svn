@@ -43,7 +43,7 @@
         <tr class="crm-activity-import-uploadfile-form-block-uploadFile">
            <td class="label">{$form.uploadFile.label}</td>
            <td>{$form.uploadFile.html}<br />
-                <span class="description">{ts}File format must be comma-separated-values (CSV).</span><br /><span>{/ts}{ts 1=$uploadSize}Maximum Upload File Size: %1 MB{/ts}</span>
+                <span class="description">{ts}File format must be comma-separated-values (CSV).{/ts}</span><br /><span>{ts 1=$uploadSize}Maximum Upload File Size: %1 MB{/ts}</span>
            </td>
         </tr>
         <tr class="crm-activity-import-uploadfile-form-block-skipColumnHeader"> 

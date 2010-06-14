@@ -51,10 +51,10 @@
 		{assign var='soInstance' value=$smarty.section.numStrings.index}
 
 		<tr id="string_override_row_{$soInstance}">
-  		    <td class="even-row">{$form.enabled.$soInstance.html}</td>	
+		    <td class="even-row" style="text-align: center; vertical-align: middle;">{$form.enabled.$soInstance.html}</td>	
   		    <td class="even-row">{$form.old.$soInstance.html}</td>
   		    <td class="even-row">{$form.new.$soInstance.html}</td>
-  		    <td class="even-row">{$form.cb.$soInstance.html}</td>
+		    <td class="even-row" style="text-align: center; vertical-align: middle;">{$form.cb.$soInstance.html}</td>
 		</tr>
 
                 </div> 
@@ -90,7 +90,11 @@ function buildStringOverrideRow( curInstance )
   
    cj.ajax({ url     : dataUrl,   
              async   : false,
-             success : function( html ) { cj(prevInstRowId).clone(true).insertAfter(prevInstRowId); }
+             success : function( html ) { 
+	     cj( prevInstRowId ).after( html ); 
+	     cj('#old_'+currentInstance).TextAreaResizer();
+	     cj('#new_'+currentInstance).TextAreaResizer();
+	     }	     
    });
 }
 

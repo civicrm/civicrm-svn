@@ -31,11 +31,12 @@
    {ts}Edit Search Criteria{/ts}
 </div><!-- /.crm-accordion-header -->
 <div class="crm-accordion-body">
-<div id="searchForm" class="form-item">
+<div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-activity-search-form-block">
+      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         <table class="form-layout-compressed">
             {* Loop through all defined search criteria fields (defined in the buildForm() function). *}
             {foreach from=$elements item=element}
-                <tr>
+                <tr class="crm-contact-custom-search-activity-search-form-block-{$element}">
                     <td class="label">{$form.$element.label}</td>
                     <td>
                         {if $element eq 'start_date' OR $element eq 'end_date'}
@@ -46,10 +47,8 @@
                     </td>
                 </tr>
             {/foreach}
-            <tr>
-                <td>&nbsp;</td>
-                <td>{$form.buttons.html}</td>
-            </tr>
+        </table>
+      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
         </table>
 </div>
 </div><!-- /.crm-accordion-body -->

@@ -32,42 +32,42 @@
     <label>{ts}Edit Search Criteria{/ts}</label>
 </div>
 
-<div id="searchForm" class="crm-block crm-form-block crm-custom_search_contribSYBNT-form-block">
+<div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-contribSYBNT-form-block">
     <fieldset>
         <legend><span id="searchForm_hide"><a href="#" onclick="hide('searchForm','searchForm_hide'); show('searchForm_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}" /></a></span>{ts}Search Criteria{/ts}</legend>
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         <table class="form-layout-compressed">
-            <tr class="crm-custom_search_contribSYBNT-form-block-min_amount_1">
+            <tr class="crm-contact-custom-search-contribSYBNT-form-block-min_amount_1">
                 <td><label>{ts}Amount One: Min/Max{/ts}</label></td>
                 <td>{$form.min_amount_1.html}</td>
                 <td>{$form.max_amount_1.html}</td>
                 <td>&nbsp;</td>
             </tr>
-            <tr class="crm-custom_search_contribSYBNT-form-block-inclusion_date_one">
+            <tr class="crm-contact-custom-search-contribSYBNT-form-block-inclusion_date_one">
                 <td><label>Inclusion Date One: Start/End</label></td>
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date_1}</td>
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=end_date_1}</td>
                 <td>{$form.is_first_amount.html}&nbsp;{ts}First time donor only?{/ts}</td>
             </tr>
-            <tr class="crm-custom_search_contribSYBNT-form-block-min_amount_2">
+            <tr class="crm-contact-custom-search-contribSYBNT-form-block-min_amount_2">
                 <td><label>{ts}Amount Two: Min/Max{/ts}</label></td>
                 <td>{$form.min_amount_2.html}</td>
                 <td>{$form.max_amount_2.html}</td>
                 <td>&nbsp;</td>
             </tr>
-            <tr class="crm-custom_search_contribSYBNT-form-block-inclusion_date_two">
+            <tr class="crm-contact-custom-search-contribSYBNT-form-block-inclusion_date_two">
                 <td><label>Inclusion Date Two: Start/End</label></td>
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date_2}</td>
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=end_date_2}</td>
                 <td>&nbsp;</td>
             </tr>
-            <tr class="crm-custom_search_contribSYBNT-form-block-exclude_min_amount">
+            <tr class="crm-contact-custom-search-contribSYBNT-form-block-exclude_min_amount">
                 <td><label>Exclusion Amount: Min/Max</label></td>
                 <td>{$form.exclude_min_amount.html}</td>
                 <td>{$form.exclude_max_amount.html}</td>
                 <td>&nbsp;</td>
             </tr>
-            <tr class="crm-custom_search_contribSYBNT-form-block-exclusion_date">
+            <tr class="crm-contact-custom-search-contribSYBNT-form-block-exclusion_date">
                 <td><label>Exclusion Date: Start/End</label></td>
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=exclude_start_date}</td>
                 <td>{include file="CRM/common/jcalendar.tpl" elementName=exclude_end_date}</td>

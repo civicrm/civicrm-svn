@@ -55,12 +55,12 @@
         <td class="crm-activity-type crm-activity-type_{$row.activity_type_id}">{$row.activity_type}</td>
       	<td class="crm-activity-subject">{$row.subject}</td>
         <td class="crm-activity-source_contact_name">
-        {if !$row.source_contact_id}
-          <em>n/a</em>
-        {elseif $contactId NEQ $row.source_contact_id}
+        {if $contactId == $row.source_contact_id}
+          {$row.source_contact_name}
+        {elseif $row.source_contact_id}
           <a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.source_contact_id`"}" title="{ts}View contact{/ts}">{$row.source_contact_name}</a>
         {else}
-          {$row.source_contact_name}	
+          <em>n/a</em>
         {/if}			
         </td>
 

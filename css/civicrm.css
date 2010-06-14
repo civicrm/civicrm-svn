@@ -450,7 +450,8 @@ div.spacer,
     display: block;
 } 
 
-#crm-container table.form-layout, 
+#crm-container table.form-layout,
+.ui-dialog-content table.form-layout, 
 #crm-container table.control-panel, 
 #crm-container table.no-border {
     margin: 0em;
@@ -503,7 +504,8 @@ div.spacer,
     text-align: center;
 }
 
-#crm-container .form-layout td.label, 
+#crm-container .form-layout td.label,
+.ui-dialog-content .form-layout td.label,
 #crm-container .form-layout-compressed td.label, 
 #crm-container .selector td.label, 
 #crm-container .form-layout-compressed th.label {
@@ -1709,12 +1711,13 @@ table.campaign td,
 
 /*Styles for Context menu */
 
-#crm-container .contextMenu {
+#crm-container .contextMenu,
+.crm-contextmenu {
     position   : absolute;
     z-index    : 9999;
     border     : none;
     padding    : 5px 0 0 0px;
-    margin     : 0px;
+    margin     : 0px 0px 0px -20px;
     display    : none;
     width      : 132px;
     background:transparent url(../i/dropdown-pointer.gif) no-repeat scroll 10px 1px;
@@ -1724,14 +1727,16 @@ table.campaign td,
     margin     : -95px 0px 0px -275px;
 }
 
-#crm-container .contextMenu li {
+#crm-container .contextMenu li,
+.crm-contextmenu li {
     background-image: none;
     list-style : none;
     padding    : 2px;
     margin     : 0px;
 }
 
-#crm-container .contextMenu a {
+#crm-container .contextMenu a,
+.crm-contextmenu a {
     text-decoration     : none;
     display             : block;
     line-height         : 20px;
@@ -2848,22 +2853,19 @@ tbody.scrollContent tr.alternateRow {
 
 #crm-container div.contact_panel td, 
 #crm-container div#contactTopBar td,
-#crm-container table.crm-info-panel td {
+table.crm-info-panel td {
     border-bottom:1px solid #FFF;
 }
 
 #crm-container div#contactTopBar .label, 
 #crm-container div.contactCardLeft .label, 
 #crm-container div.contactCardRight .label,
-#crm-container table.crm-info-panel .label  {
+table.crm-info-panel .label  {
     color:#2f2f2f;
     font-weight:normal;
 }
 
-.disabled {
-    #commenting since it is not working in FF / Chrome / Safari
-    #text-decoration:line-through;
-}
+.disabled { text-decoration:line-through; }
 
 #crm-container table.selector td {
     border-right:1px dotted #DDDDDD;
@@ -2876,13 +2878,13 @@ tbody.scrollContent tr.alternateRow {
 
 #crm-container div#contactTopBar td,
 #crm-container div.contact_panel td,
-#crm-container table.crm-info-panel td {
+table.crm-info-panel td {
     background-color: #f4f4ed; 
 }
 
 #crm-container div#contactTopBar td.label,
 #crm-container div.contact_panel td.label,
-#crm-container table.crm-info-panel td.label {
+table.crm-info-panel td.label {
     background-color: #fafafa;
     width:150px;
     text-align: left;
@@ -2892,7 +2894,7 @@ tbody.scrollContent tr.alternateRow {
 #crm-container .form-layout td.label, 
 #crm-container .form-layout-compressed td.label,
 #crm-container #customFields div.contact_panel td.label
-#crm-container table.crm-info-panel td.label {
+table.crm-info-panel td.label {
     width:150px;
     text-align: right;
     color: #7a7a60;
@@ -3062,22 +3064,27 @@ div#crm-toolTip
 
 /* theming for panel and context menus */
 #crm-container td ul.panel li,
-#crm-container .contextMenu li {
+#crm-container .contextMenu li,
+.crm-contextmenu li {
     background-color:#2F2F2E;
 }
 
 #crm-container .panel li a, 
 #crm-container .contextMenu a,
-#crm-container .contextMenu a:link {
+.crm-contextmenu a,
+#crm-container .contextMenu a:link,
+.crm-contextmenu a:link {
     color:#DFDFDF;
 }
 
 #crm-container .panel li a:hover,
 #crm-container .crm-participant-list-inner li a:hover,
 #crm-container .crm-event-links-list-inner li a:hover,
-#crm-container .contextMenu li a:hover {
+#crm-container .contextMenu li a:hover,
+.crm-contextmenu li a:hover {
     color: #3e3e3e;
     background-color: #F5F6F1;
+    text-decoration: none;
 }
 
 /* Special styling for specific form buttons */
