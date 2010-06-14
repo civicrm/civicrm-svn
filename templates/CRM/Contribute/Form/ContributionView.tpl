@@ -44,7 +44,7 @@
     {include file="CRM/common/formButtons.tpl" location="top"}
     </div>
 </div>
-<table class="view-layout crm-info-panel">
+<table class="crm-info-panel">
     <tr>
         <td class="label">{ts}From{/ts}</td>
         <td class="bold">{$displayName}</td>
@@ -176,33 +176,45 @@
 </table>
 
 {if $premium}
-<fieldset><legend>{ts}Premium Information{/ts}</legend>
-<table class="crm-info-panel">
-	<td class="label">{ts}Premium{/ts}</td><td>{$premium}</td>
-	<td class="label">{ts}Option{/ts}</td><td>{$option}</td>
-	<td class="label">{ts}Fulfilled{/ts}</td><td>{$fulfilled|truncate:10:''|crmDate}</td>
-</table>
-</fieldset>
+    <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
+        <div class="crm-accordion-header">
+            <div class="icon crm-accordion-pointer"></div> 
+            {ts}Premium Information{/ts}
+        </div>
+        <div class="crm-accordion-body">			   
+        <table class="crm-info-panel">
+        	<td class="label">{ts}Premium{/ts}</td><td>{$premium}</td>
+        	<td class="label">{ts}Option{/ts}</td><td>{$option}</td>
+        	<td class="label">{ts}Fulfilled{/ts}</td><td>{$fulfilled|truncate:10:''|crmDate}</td>
+        </table>
+        </div>
+    </div>
 {/if}
 
 {if $pcp_id}
-<fieldset><legend>{ts}Personal Campaign Page Contribution Information{/ts}</legend>
-<table class="crm-info-panel">
-    <tr>
-	    <td class="label">{ts}Campaign Page{/ts}</td>
-        <td><a href="{crmURL p="civicrm/contribute/pcp/info" q="reset=1&id=`$pcp_id`"}">{$pcp}</a><br />
-            <span class="description">{ts}Contribution was made through this personal campaign page.{/ts}</span>
-        </td>
-    </tr>
-    <tr><td class="label">{ts}In Public Honor Roll?{/ts}</td><td>{if $pcp_display_in_roll}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td></tr>
-    {if $pcp_roll_nickname}
-        <tr><td class="label">{ts}Honor Roll Name{/ts}</td><td>{$pcp_roll_nickname}</td></tr>
-    {/if}
-    {if $pcp_personal_note}
-        <tr><td class="label">{ts}Personal Note{/ts}</td><td>{$pcp_personal_note}</td></tr>
-    {/if}
-</table>
-</fieldset>
+    <div class="crm-accordion-wrapper crm-accordion_title-accordion crm-accordion-open">
+         <div class="crm-accordion-header">
+              <div class="icon crm-accordion-pointer"></div> 
+              {ts}Personal Campaign Page Contribution Information{/ts}
+         </div>
+         <div class="crm-accordion-body">			   
+            <table class="crm-info-panel">
+                <tr>
+            	    <td class="label">{ts}Campaign Page{/ts}</td>
+                    <td><a href="{crmURL p="civicrm/contribute/pcp/info" q="reset=1&id=`$pcp_id`"}">{$pcp}</a><br />
+                        <span class="description">{ts}Contribution was made through this personal campaign page.{/ts}</span>
+                    </td>
+                </tr>
+                <tr><td class="label">{ts}In Public Honor Roll?{/ts}</td><td>{if $pcp_display_in_roll}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td></tr>
+                {if $pcp_roll_nickname}
+                    <tr><td class="label">{ts}Honor Roll Name{/ts}</td><td>{$pcp_roll_nickname}</td></tr>
+                {/if}
+                {if $pcp_personal_note}
+                    <tr><td class="label">{ts}Personal Note{/ts}</td><td>{$pcp_personal_note}</td></tr>
+                {/if}
+            </table>
+         </div>
+    </div>
 {/if}
 
 {include file="CRM/Custom/Page/CustomDataView.tpl"}
