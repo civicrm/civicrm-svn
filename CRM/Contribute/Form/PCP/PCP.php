@@ -140,11 +140,11 @@ class CRM_Contribute_Form_PCP_PCP extends CRM_Core_Form
                                              array( ts('- select -') ),
                                              CRM_Contribute_PseudoConstant::contributionPage( ));
             
-            $this->addElement('select', 'status_id', ts('Personal Campaign Pages Status'), $status );
+            $this->addElement('select', 'status_id', ts('Status'), $status );
             $this->addElement('select', 'contibution_page_id', ts('Contribution Page'), $contribution_page );
             $this->addButtons( array( 
                                      array ( 'type'      => 'refresh',
-                                             'name'      => ts('Show'), 
+                                             'name'      => ts('Search'), 
                                              'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', 
                                              'isDefault' => true
                                              ))

@@ -115,7 +115,7 @@
             </thead>
             <tbody>
         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class=" crm-admin-options crm-admin-options_{$row.id} {if NOT $row.is_active} disabled{/if}">
+        <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values="odd-row,even-row"}{if NOT $row.is_active} disabled{/if}">
             {if $showComponent}
                 <td class="crm-admin-options-component_name">{$row.component_name}</td>
             {/if}
