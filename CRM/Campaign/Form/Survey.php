@@ -130,9 +130,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         require_once 'CRM/Core/OptionGroup.php';
         require_once 'CRM/Event/PseudoConstant.php';
         
-        // FIX ME : Add Survey Type Id
         // Survey Type id
-        $this->add('select', 'surveyTypeId', ts('Select Survey Type'), array( '1' => 'Mumbai' , '1' => 'Pune', '3' => 'Chennai', '4' => 'Goa'), 'surveyTypeId' );
+        require_once 'CRM/Core/PseudoConstant.php';
+        $surveyType = CRM_Core_PseudoConstant::surveyType();
+        $this->add('select', 'surveyTypeId', ts('Select Survey Type'),  array( '' => ts( '- select -' ) ) +$surveyType, 'surveyTypeId' );
         
         // FIX ME : Add Activity Type Id for Survey
         //$activityTName = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, 'AND v.value = '.$this->_activityTypeId , 'name' );
@@ -140,9 +141,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         // Activity Type id
         $this->add('select', 'activityTypeId', ts('Select Activity Type'), $activityTName, 'activityTypeId' );
         
-        // FIX ME : Add list of Campaign
         // Campaign id
-        $this->add('select', 'campaignId', ts('Select Campaign'), array( '' => ts( '- select -' ) ) + CRM_Event_PseudoConstant::participantRole( ), 'campaign_id' );
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign();
+        $this->add('select', 'campaignId', ts('Select Campaign'), array( '' => ts( '- select -' ) ) +$campaigns , 'campaign_id' );
         
         // FIX ME : Add Custom Group Id for Survey
         // custom group id
@@ -199,10 +201,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         // store the submitted values in an array
         $params = $this->controller->exportValues( $this->_name );
         
+        $session = CRM_Core_Session::singleton( );
         $params['survey_type_id']   = CRM_Utils_String::titleToVar($params['surveyTypeId']);
         $params['activity_type_id'] = CRM_Utils_Array::value( 'activityTypeId', $params, false );
         $params['custom_group_id']  = CRM_Utils_Array::value( 'customGroupId', $params, false );
         $params['campaign_id']      = CRM_Utils_Array::value( 'campaignId', $params, false );
+        $params['last_modified_id'] = $session->get( 'userID' );
+        $params['last_modified_date'] = date('YmdHis');
         
         if ( $this->_fid ) {
             $params['id'] = $this->_surveyId;

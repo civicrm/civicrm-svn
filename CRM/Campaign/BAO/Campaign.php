@@ -61,7 +61,7 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
         $campaign->copyValues( $params );
         $campaign->save();
 
-        return $dao;
+        return $campaign;
     }
    
     /**
@@ -78,7 +78,7 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
     {
         $campaign = new CRM_Campaign_DAO_Campaign( );
         
-        $campaign->copy($params);
+        $campaign->copyValues($params);
         
         if( $campaign->find( true ) ) {
             CRM_Core_DAO::storeValues( $campaign, $defaults );

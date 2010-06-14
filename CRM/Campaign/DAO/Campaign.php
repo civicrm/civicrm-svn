@@ -190,6 +190,7 @@ class CRM_Campaign_DAO_Campaign extends CRM_Core_DAO
     {
         if (!(self::$_links)) {
             self::$_links = array(
+                'parent_id' => 'civicrm_campaign:id',
                 'created_id' => 'civicrm_contact:id',
                 'last_modified_id' => 'civicrm_contact:id',
             );
@@ -312,6 +313,7 @@ class CRM_Campaign_DAO_Campaign extends CRM_Core_DAO
                     'dataPattern' => '',
                     'export' => true,
                     'default' => 'UL',
+                    'FKClassName' => 'CRM_Campaign_DAO_Campaign',
                 ) ,
                 'is_active' => array(
                     'name' => 'is_active',
