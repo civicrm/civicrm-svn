@@ -63,9 +63,11 @@ class CRM_Event_Import_Form_Summary extends CRM_Core_Form {
         $onDuplicate = $this->get('onDuplicate');
         $mismatchCount      = $this->get('unMatchCount');
         if ($duplicateRowCount > 0) {
-            $this->set('downloadDuplicateRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=3&realm=event'));
+            $urlParams = 'type='.CRM_Event_Import_Parser::DUPLICATE . '&parser=CRM_Event_Import_Parser';
+            $this->set('downloadDuplicateRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams));
         }else if($mismatchCount) {
-            $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', 'type=4&realm=event'));
+            $urlParams = 'type='.CRM_Event_Import_Parser::NO_MATCH . '&parser=CRM_Event_Import_Parser';
+            $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams));
         } else {
             $duplicateRowCount = 0;
             $this->set('duplicateRowCount', $duplicateRowCount);

@@ -50,6 +50,10 @@ class CRM_Core_Invoke
      */    
     static function invoke( $args ) 
     {
+        if ( $args[0] !== 'civicrm' ) {
+            return;
+        }
+
         require_once 'CRM/Core/I18n.php';
         require_once 'CRM/Utils/Wrapper.php';
         require_once 'CRM/Core/Action.php';
@@ -57,10 +61,6 @@ class CRM_Core_Invoke
         require_once 'CRM/Core/Menu.php';
         require_once 'CRM/Core/Component.php';
         require_once 'CRM/Core/Permission.php';
-
-        if ( $args[0] !== 'civicrm' ) {
-            return;
-        }
 
         if ( isset($args[1]) and $args[1] == 'menu' and 
              isset($args[2]) and $args[2] == 'rebuild' ) {

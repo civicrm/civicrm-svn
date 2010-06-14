@@ -51,6 +51,11 @@
         {ts}CiviCRM Profile(s) allow you to aggregate groups of fields and include them in your site as input forms, contact display pages, and search and listings features. They provide a powerful set of tools for you to collect information from constituents and selectively share contact information.{/ts} {help id='profile_overview'}
     </div>
 
+    {if NOT ($action eq 1 or $action eq 2)}
+    <div class="crm-submit-buttons">
+        <a href="{crmURL p='civicrm/admin/uf/group' q="action=add&reset=1"}" id="newCiviCRMProfile-top" class="button"><span><div class="icon add-icon"></div>{ts}Add Profile{/ts}</span></a>
+    </div>
+    {/if}
     {if $rows}
     <div class="crm-content-block">
     <div id="uf_profile">
@@ -86,11 +91,11 @@
         </table>
         
         {if NOT ($action eq 1 or $action eq 2)}
-        <div class="action-link">
-        <a href="{crmURL p='civicrm/admin/uf/group' q="action=add&reset=1"}" id="newCiviCRMProfile" class="button"><span><div class="icon add-icon"></div>{ts}Add CiviCRM Profile{/ts}</span></a>
+        <div class="crm-submit-buttons">
+            <a href="{crmURL p='civicrm/admin/uf/group' q="action=add&reset=1"}" id="newCiviCRMProfile-bottom" class="button"><span><div class="icon add-icon"></div>{ts}Add Profile{/ts}</span></a>
         </div>
         {/if}
-         {/strip}
+        {/strip}
     </div>
     </div>
     {else}

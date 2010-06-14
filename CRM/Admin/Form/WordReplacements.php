@@ -48,6 +48,11 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
     {
         $this->_soInstance = CRM_Utils_Array::value( 'instance', $_GET );
         $this->assign( 'soInstance', $this->_soInstance );
+        $breadCrumbUrl = CRM_Utils_System::url( 'civicrm/admin/options/wordreplacements',
+                                             "reset=1");
+        $breadCrumb     = array( array('title' => ts('Word Replacements'),
+                                       'url'   => $breadCrumbUrl ) );
+        CRM_Utils_System::appendBreadCrumb( $breadCrumb );     
     }
     
     public function setDefaultValues( )
@@ -94,7 +99,6 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
             $this->_numStrings = 10;
         }
         
-        $this->assign( 'numStrings', $this->_numStrings );
         return $this->_defaults;
     }
     
@@ -106,6 +110,13 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
      */
     public function buildQuickForm( )
     {
+        $config = CRM_Core_Config::singleton( );
+        $values = $config->localeCustomStrings[$config->lcMessages];
+        $instances = ( count( $values, COUNT_RECURSIVE) - 6 );
+        if ( $instances > 10 ) {
+            $this->_numStrings = $instances;
+        }
+        
         $soInstances = range( 1, $this->_numStrings, 1 );
         $stringOverrideInstances = array( );
         if ( $this->_soInstance ) {
@@ -120,10 +131,11 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
         }
         foreach ( $soInstances as $instance ) {
             $this->addElement( 'checkbox', "enabled[$instance]" );
-            $this->add( 'textarea', "old[$instance]", null, array( 'rows=1 cols=40' ) );
-            $this->add( 'textarea', "new[$instance]", null, array( 'rows=1 cols=40' ) );
+            $this->add( 'textarea', "old[$instance]", null, array( 'rows' => 1, 'cols' => 40 ) );
+            $this->add( 'textarea', "new[$instance]", null, array( 'rows' => 1, 'cols' => 40 ) );
             $this->addElement( 'checkbox', "cb[$instance]" );
         }
+        $this->assign( 'numStrings', $this->_numStrings );
         if ( $this->_soInstance ) return; 
         
         $this->assign( 'stringOverrideInstances', empty($stringOverrideInstances)?false:$stringOverrideInstances );
@@ -206,7 +218,17 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
                             'disabled' => $disabled );
         
         $config = CRM_Core_Config::singleton();
-        $stringOverride = serialize( array( $config->lcMessages => $overrides ) );
+        $domain = new CRM_Core_DAO_Domain();
+        $domain->find(true);
+        if ( $domain->locales && $config->localeCustomStrings ) {
+            // for multilingual
+            $addReplacements = $config->localeCustomStrings;
+            $addReplacements[$config->lcMessages] = $overrides;
+            $stringOverride = serialize( $addReplacements );
+        } else {
+            // for single language
+            $stringOverride = serialize( array( $config->lcMessages => $overrides ) );
+        }
         
         $params = array( 'locale_custom_strings' => $stringOverride );
         $id = CRM_Core_Config::domainID( );
@@ -215,6 +237,10 @@ class CRM_Admin_Form_WordReplacements extends CRM_Core_Form
         $wordReplacementSettings = CRM_Core_BAO_Domain::edit( $params, $id );
         
         if ( $wordReplacementSettings ) {
+            //reset navigation
+            require_once 'CRM/Core/BAO/Navigation.php';
+            CRM_Core_BAO_Navigation::resetNavigation( );
+            
             CRM_Core_Session::setStatus( "Your Settings have been saved" );
             CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/options/wordreplacements',
                                                                "reset=1") );

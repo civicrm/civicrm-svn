@@ -23,47 +23,44 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-custom_option-form-block">
-<fieldset><legend>{if $action eq 8 }{ts}Selection Options{/ts}{else}{ts}Selection Options{/ts}{/if}</legend>
-{if $action ne 4}
+<div class="crm-block {if $action eq 4}crm-content-block {else}crm-form-block {/if}crm-custom_option-form-block">
+<h3>{if $action eq 4 }{ts}View Option{/ts}{elseif $action eq 2}{ts}Edit Option{/ts}{elseif $action eq 8}{ts}Delete Option{/ts}{else}{ts}Add Option{/ts}{/if}</h3>
+    {if $action ne 4 AND $action ne 8}
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-    {else}
-        <div class="crm-submit-buttons">{$form.done.html}</div>
     {/if} {* $action ne view *}
-      {if $action eq 8}
+    {if $action eq 8}
       <div class="messages status">
           <div class="icon inform-icon"></div> 
-          {ts}WARNING: Deleting this custom option will result in the loss of all data.{/ts} {ts}This action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
+          {ts}WARNING: Deleting this custom field option will result in the loss of all related data.{/ts} {ts}This action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}
       </div>
-     {else}
-	<table>
+    {else}
+	<table class="{if $action eq 4}crm-info-panel{else}form-layout{/if}">
         <tr class="crm-custom_option-form-block-label">
-            <td>{$form.label.label}</td>
+            <td class="label">{$form.label.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_option_value' field='label' id=$id}{/if}</td>
             <td>{$form.label.html}</td>
         </tr>
         <tr class="crm-custom_option-form-block-value">
-            <td>{$form.value.label}</td>
+            <td class="label">{$form.value.label}</td>
             <td>{$form.value.html}</td>
         <tr class="crm-custom_option-form-block-weight">
-            <td>{$form.weight.label}</td>
+            <td class="label">{$form.weight.label}</td>
             <td>{$form.weight.html}</td>
         </tr>
         <tr class="crm-custom_option-form-block-is_active">
-            <td>{$form.is_active.label}</td>
+            <td class="label">{$form.is_active.label}</td>
             <td>{$form.is_active.html}</td>
         </tr>
 	    <tr class="crm-custom_option-form-block-default_value">
-            <td>{$form.default_value.label}</td>
+            <td class="label">{$form.default_value.label}</td>
             <td>{$form.default_value.html}<br />
             <span class="description">{ts}Make this option value 'selected' by default?{/ts}</span></td>
         </tr>
 	</table>
-      {/if} 
+    {/if} 
     
     {if $action ne 4}
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {else}
         <div class="crm-submit-buttons">{$form.done.html}</div>
     {/if} {* $action ne view *}
-</fieldset>
 </div>

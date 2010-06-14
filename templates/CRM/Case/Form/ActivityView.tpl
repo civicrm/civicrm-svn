@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* View Case Activities *} {* Uses inline styles since we have not figured out yet how to include our normal .css files. *}
-<div class="crm-block crm-form-block crm-case-activityview-form-block">
+<div class="crm-block crm-content-block crm-case-activity-view-block">
 {if $revs}
   <strong>{$subject}</strong> ({ts}all revisions{/ts})<br />
   {strip}
@@ -48,19 +48,19 @@
 {if $caseID}
 <div id="activity-content">
 {/if}        
-<table>
+<table class="crm-info-panel" id="crm-activity-view-table">
 {foreach from=$report.fields item=row name=report}
-<tr{if ! $smarty.foreach.report.last} style="border-bottom: 1px solid #F6F6F6;"{/if} class="crm-case-activityview-form-block-{$row.label}">
+<tr class="crm-case-activity-view-{$row.label}">
     <td class="label">{$row.label}</td>
     {if $smarty.foreach.report.first AND ( $activityID OR $parentID OR $latestRevisionID )} {* Add a cell to first row with links to prior revision listing and Prompted by (parent) as appropriate *}
-        <td class="label">{$row.value}</td>
+        <td>{$row.value}</td>
         <td style="padding-right: 50px; text-align: right; font-size: .9em;">
             {if $activityID}<a href="javascript:listRevisions({$activityID});">&raquo; {ts}List all revisions{/ts}</a>{if !$latestRevisionID}<br />{ts}(this is the current revision){/ts}{/if}<br />{/if}
             {if $latestRevisionID}<a href="javascript:viewRevision({$latestRevisionID});">&raquo; {ts}View current revision{/ts}</a><br /><span style="color: red;">{ts}(this is not the current revision){/ts}</span><br />{/if}                   
             {if $parentID}<a href="javascript:viewRevision({$parentID});">&raquo; {ts}Prompted by{/ts}</a>{/if}
         </td>
     {else}
-        <td colspan="2"{if $smarty.foreach.report.first} class="label"{/if}>{if $row.label eq 'Details'}{$row.value|crmStripAlternatives|nl2br}{elseif $row.type eq 'Date'}{$row.value|crmDate}{else}{$row.value}{/if}</td>
+        <td colspan="2">{if $row.label eq 'Details'}{$row.value|crmStripAlternatives|nl2br}{elseif $row.type eq 'Date'}{$row.value|crmDate}{else}{$row.value}{/if}</td>
     {/if}
 </tr>
 {/foreach}
@@ -80,7 +80,8 @@
 {/if}
 </table>
 {if $caseID}
-    <div><a href="{crmURL p='civicrm/contact/view/case' q="reset=1&id=`$caseID`&cid=`$contactID`&action=view"}">{ts}&raquo; Manage Case{/ts}</a></div>
+    <div class="crm-submit-buttons">
+        <a class="button" href="{crmURL p='civicrm/contact/view/case' q="reset=1&id=`$caseID`&cid=`$contactID`&action=view"}"><span>{ts}Manage Case{/ts}</span></a>
     </div>
 {/if}
 {else}

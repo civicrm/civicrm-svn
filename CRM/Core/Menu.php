@@ -126,7 +126,7 @@ class CRM_Core_Menu
                             $elements = explode( ',', $value );
                             $op = 'and';
                         } else {
-                            $elements = explode( ';', $element );
+                            $elements = explode( ';', $value );
                             $op = 'or';
                         }
                         $items = array( );

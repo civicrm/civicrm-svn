@@ -158,12 +158,20 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
     /**
      * Verify that given label/value pairs are in *sibling* td cells somewhere on the page.
      *
-     * @param array $expected array of key/value pairs (like Status/Registered) to be checked
+     * @param array $expected       Array of key/value pairs (like Status/Registered) to be checked
+     * @param string $xpathPrefix   Pass in an xpath locator to "get to" the desired table or tables. Will be prefixed to xpath
+     *                              table path. Include leading forward slashes (e.g. "//div[@id='activity-content']").
+     * @param string $tableId       Pass in the id attribute of a table to be verified if you want to only check a specific table
+     *                              on the web page.
      */
-    function webtestVerifyTabularData($expected)
+    function webtestVerifyTabularData($expected,  $xpathPrefix = null, $tableId = null )
     {
+        $tableLocator = "";
+        if ( $tableId ) {
+            $tableLocator = "[@id='$tableId']";
+        }
         foreach ($expected as $label => $value) {
-            $this->verifyText("xpath=//table//tr/td[text()=\"$label\"]/../td[2]", preg_quote($value));
+            $this->verifyText("xpath={$xpathPrefix}//table{$tableLocator}//tr/td[text()=\"$label\"]/../td[2]", preg_quote($value));
         }
     }
 
@@ -225,6 +233,7 @@ class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
         $this->type("first_name", $fname);
         $this->type("last_name",  $lname);
+        $this->type("email-Primary", $email);
         $this->click("_qf_Edit_next");
 
         // Is new contact created?

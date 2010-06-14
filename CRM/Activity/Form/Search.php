@@ -364,6 +364,8 @@ class CRM_Activity_Form_Search extends CRM_Core_Form
                                                       $this->_single,
                                                       $this->_limit,
                                                       $this->_context );
+        $selector->setKey( $this->controller->_key );
+        
         $prefix = null;
         if ( $this->_context == 'basic' || $this->_context == 'user' ) {
             $prefix = $this->_prefix;

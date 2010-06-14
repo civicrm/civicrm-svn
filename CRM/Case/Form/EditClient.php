@@ -62,7 +62,12 @@ class CRM_Case_Form_EditClient extends CRM_Core_Form
         //set the context.
         $url = CRM_Utils_System::url('civicrm/contact/view',"reset=1&force=1&cid={$this->_contactId}&selectedChild=case");
         if ( $context == 'search' ) {
-            $url = CRM_Utils_System::url( 'civicrm/case/search', "force=1" );
+            $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+            //validate the qfKey
+            require_once 'CRM/Utils/Rule.php';
+            $urlParams = 'force=1';
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+            $url = CRM_Utils_System::url( 'civicrm/case/search', $urlParams );
         } else if ( $context == 'dashboard' ) {
             $url = CRM_Utils_System::url( 'civicrm/case', 'reset=1' );
         }

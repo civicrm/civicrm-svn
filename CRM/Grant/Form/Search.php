@@ -345,11 +345,13 @@ class CRM_Grant_Form_Search extends CRM_Core_Form
         require_once 'CRM/Contact/BAO/Query.php';
 
         $selector = new CRM_Grant_Selector_Search( $this->_queryParams,
-                                                    $this->_action,
-                                                    null,
-                                                    $this->_single,
-                                                    $this->_limit,
-                                                    $this->_context ); 
+                                                   $this->_action,
+                                                   null,
+                                                   $this->_single,
+                                                   $this->_limit,
+                                                   $this->_context ); 
+        $selector->setKey( $this->controller->_key );
+        
         $prefix = null;
         if ( $this->_context == 'basic' || $this->_context == 'user') {
             $prefix = $this->_prefix;

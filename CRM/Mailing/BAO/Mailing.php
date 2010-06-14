@@ -1058,8 +1058,12 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         }
 
         $mailParams['attachments'] = $attachments;
-        $mailParams['Subject'] = join( '', $pEmails['subject'] );
         
+        $mailingSubject = CRM_Utils_Array::value( 'subject', $pEmails );
+        if ( is_array( $mailingSubject ) ) {
+            $mailingSubject  = join( '', $mailingSubject );
+        }
+        $mailParams['Subject'] = $mailingSubject;
 
         $mailParams['toName' ] = $contact['display_name'];
         $mailParams['toEmail'] = $email;
@@ -1091,7 +1095,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
 
         //CRM-5058
         //token replacement of subject
-        $headers['Subject'] = join( '', $pEmails['subject'] );
+        $headers['Subject'] = $mailingSubject;
         
         CRM_Utils_Mail::setMimeParams( $message );
         $headers = $message->headers( $headers );

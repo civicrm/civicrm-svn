@@ -226,7 +226,7 @@ class CRM_Contribute_Import_Parser_Contribution extends CRM_Contribute_Import_Pa
             $tempMsg = "Invalid value for field(s) : $errorMessage";
             array_unshift($values, $tempMsg);
             $errorMessage = null;
-            return CRM_Import_Parser::ERROR;
+            return CRM_Contribute_Import_Parser::ERROR;
         }
 
         return CRM_Contribute_Import_Parser::VALID;
