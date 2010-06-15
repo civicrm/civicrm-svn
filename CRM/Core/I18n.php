@@ -252,12 +252,13 @@ class CRM_Core_I18n
      * Localize (destructively) array values.
      *
      * @param  $array array  the array for localization (in place)
+     * @param  $params array an array of additional parameters
      * @return        void
      */
-    function localizeArray(&$array)
+    function localizeArray(&$array, $params = array())
     {
-        foreach ($array as $key => $value) {
-            if ($value) $array[$key] = ts($value);
+        foreach ($array as &$value) {
+            if ($value) $value = ts($value, $params);
         }
     }
 
