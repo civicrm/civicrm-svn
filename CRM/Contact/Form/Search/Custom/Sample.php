@@ -147,7 +147,7 @@ LEFT JOIN civicrm_state_province state_province ON state_province.id = address.s
     }
 
     function templateFile( ) {
-        return 'CRM/Contact/Form/Search/Custom/Sample.tpl';
+        return 'CRM/Contact/Form/Search/Custom.tpl';
     }
 
     function setDefaultValues( ) {
