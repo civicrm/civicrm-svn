@@ -363,8 +363,10 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
     		CRM_Custom_Form_Customdata::setDefaultValues( $this );
 
     		// custom data of type participant event type
-            $eventTypeId = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $_POST['event_id'], 
-                                                        'event_type_id', 'id' );
+            $eventTypeId = null;
+            if ( $eventId = CRM_Utils_Array::value( 'event_id', $_POST ) ) {
+                $eventTypeId = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $eventId, 'event_type_id', 'id' );
+            }
     		CRM_Custom_Form_Customdata::preProcess( $this, $this->_eventTypeCustomDataTypeID, $eventTypeId, 
                                                     1, 'Participant', $this->_id );
     		CRM_Custom_Form_Customdata::buildQuickForm( $this );
@@ -500,12 +502,14 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
 		if ( isset( $roleID ) ) {
 		    $this->assign( 'roleID',  $roleID );
 		}
-
+        
 		if ( isset( $_POST['event_id'] ) ) {
 		    $eventID = $_POST['event_id'];
-			$this->_eventTypeId = 
-                CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $eventID, 'event_type_id', 'id' );
-		}
+			if ( $eventID ) {
+                $this->_eventTypeId = 
+                    CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Event", $eventID, 'event_type_id', 'id' );
+            }
+        }
 
 		if (  isset( $eventID ) ) {
 		    $this->assign( 'eventID', $eventID );
