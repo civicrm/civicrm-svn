@@ -20,7 +20,7 @@ INSERT INTO `civicrm_dashboard`
     INSERT INTO civicrm_option_value
 	(option_group_id, label, description, value, name, weight, is_active, component_id )
     VALUES
-        (@option_group_id_eventBadge , '{ts escape="sql"}With Logo{/ts}', '{ts escape="sql"}You can set your own background image/ts}', '3', 'CRM_Event_Badge_Logo', 1,   1, NULL );
+        (@option_group_id_eventBadge , '{ts escape="sql"}With Logo{/ts}', '{ts escape="sql"}You can set your own background image{/ts}', '3', 'CRM_Event_Badge_Logo', 1,   1, NULL );
 {/if}
 
 
