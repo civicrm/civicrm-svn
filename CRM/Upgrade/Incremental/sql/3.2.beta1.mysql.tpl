@@ -8,8 +8,8 @@ SELECT  @domainID := min(id) FROM civicrm_domain;
 INSERT INTO `civicrm_dashboard` 
     ( `domain_id`, `label`, `url`, `content`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `created_date`, `is_fullscreen`, `is_reserved`) 
     VALUES 
-    ( @domainID, '{ts escape="sql"}My Cases{/ts}', 'civicrm/dashlet/myCases&reset=1&snippet=4', NULL, 'access CiviCase', NULL , '0', '0', '1', '1', '1', '1', NULL),
-    ( @domainID, '{ts escape="sql"}All Cases{/ts}', 'civicrm/dashlet/allCases&reset=1&snippet=4', NULL, 'access CiviCase', NULL , '0', '0', '1', '1', '1', '1', NULL);
+    ( @domainID, '{ts escape="sql"}My Cases{/ts}', 'civicrm/dashlet/myCases&reset=1&snippet=4', NULL, 'access my cases and activities', NULL , 0, 0, 1, 2, NULL, 1, 1),
+    ( @domainID, '{ts escape="sql"}All Cases{/ts}', 'civicrm/dashlet/allCases&reset=1&snippet=4', NULL, 'access all cases and activities', NULL , 0, 0, 1, 3, NULL, 1, 1);
 
 -- CRM-6294
 SELECT @option_group_id_eventBadge := max(id) from civicrm_option_group where name = 'event_badge';
