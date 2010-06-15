@@ -145,9 +145,12 @@ class CRM_Contact_Form_Search_Custom_DateAdded
         CRM_Core_DAO::executeQuery( $sql );
         
         $startDate  = CRM_Utils_Date::mysqlToIso( CRM_Utils_Date::processDate( $this->_formValues['start_date'] ) );
-        $endDate    = CRM_Utils_Date::mysqlToIso( CRM_Utils_Date::processDate( $this->_formValues['end_date'] ) );
-        # tack 11:59pm on to make search inclusive of the end date
-        $endDateFix = substr($endDate,0,10) . " 23:59:00";
+        $endDateFix = NULL;
+        if ( !empty($this->_formValues['end_date']) ){
+            $endDate    = CRM_Utils_Date::mysqlToIso( CRM_Utils_Date::processDate( $this->_formValues['end_date'] ) );
+            # tack 11:59pm on to make search inclusive of the end date
+            $endDateFix = "AND date_added <= '" . substr($endDate,0,10) . " 23:59:00'";            
+        }
         
         $dateRange =
          "INSERT INTO dates_{$this->_tableName} ( id, date_added )
@@ -161,8 +164,8 @@ class CRM_Contact_Form_Search_Custom_DateAdded
           GROUP BY
               civicrm_contact.id
           HAVING
-              date_added >= '$startDate' AND
-              date_added <= '$endDateFix'";
+              date_added >= '$startDate' 
+              $endDateFix";
 
         if ($this->_debug > 0) {
             print "-- Date range query: <pre>";
