@@ -377,7 +377,8 @@ class CRM_Core_Permission {
                       'access Contact Dashboard'          => ts( 'access Contact Dashboard' ),
                       'translate CiviCRM'                 => ts( 'translate CiviCRM' ),
                       'administer Tagsets'                => ts( 'administer Tagsets' ),
-                      'administer reserved tags'          => ts( 'administer reserved tags' )
+                      'administer reserved tags'          => ts( 'administer reserved tags' ),
+                      'administer Campaign'               => ts( 'administer Campaign' ),
                       );
 
             if ( defined( 'CIVICRM_MULTISITE' ) && CIVICRM_MULTISITE ) {

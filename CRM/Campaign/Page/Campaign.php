@@ -89,37 +89,52 @@ class CRM_Campaign_Page_Campaign extends CRM_Core_Page
     }
 
     function browse( ) {
+        require_once 'CRM/Core/Permission.php';
+
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaign( true );
-       
+
+        $manageCampaign = false;
+        if ( CRM_Core_Permission::check( 'administer Campaign' ) ) {
+            $manageCampaign = true;
+        }
+
         if ( !empty($campaigns) ) {
             require_once 'CRM/Campaign/BAO/Campaign.php';
             $campaignType = CRM_Core_PseudoConstant::campaignType();
             $campaignStatus  = CRM_Core_PseudoConstant::campaignStatus();
                        
             foreach( $campaigns as $cmpid => $campaign ) { 
-                $action = array_sum(array_keys($this->actionLinks()));
-                if ( $campaign['is_active'] ) {
-                    $action -= CRM_Core_Action::DISABLE;
-                } else {
-                    $action -= CRM_Core_Action::ENABLE;
-                }
+               
                 $campaigns[$cmpid]['campaign_id']    = $campaign['id'];
                 $campaigns[$cmpid]['title'] = $campaign['title'];
                 $campaigns[$cmpid]['name'] = $campaign['name'];
                 $campaigns[$cmpid]['description'] = $campaign['description'];
                 $campaigns[$cmpid]['campaign_type_id'] = $campaignType[$campaign['campaign_type_id']];
                 $campaigns[$cmpid]['status_id'] = $campaignStatus[$campaign['status_id']];
-                $campaigns[$cmpid]['action'] = CRM_Core_Action::formLink(self::actionLinks(), $action, 
-                                                                          array('id' => $campaign['id']));
-               
+                
+                if ( $manageCampaign ) {
+                    $action = array_sum(array_keys($this->actionLinks()));
+                    if ( $campaign['is_active'] ) {
+                        $action -= CRM_Core_Action::ENABLE;
+                    } else {
+                        $action -= CRM_Core_Action::DISABLE;
+                    }
+                    $campaigns[$cmpid]['action'] = CRM_Core_Action::formLink(self::actionLinks(), $action, 
+                                                                             array('id' => $campaign['id']));
+                }
             }
         }
         
         $this->assign('campaigns', $campaigns);
-    
-        $addCampaignUrl = CRM_Utils_System::url( "civicrm/campaign/manage",
-                                               'reset=1&action=add' );
-        $this->assign('addCampaign', $addCampaignUrl);
+
+        if ( $manageCampaign ) {
+            $addCampaignUrl = CRM_Utils_System::url( "civicrm/campaign/manage",
+                                                     'reset=1&action=add' );
+            $this->assign('addCampaign', $addCampaignUrl);
+        }
+
+        $this->assign('manageCampaign', $manageCampaign);
+        
     }
     
     function run( ) {

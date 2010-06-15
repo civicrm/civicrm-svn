@@ -25,9 +25,11 @@
 *}
 {* this template is used for displaying survey information *}
 {if $campaigns} 
-  <div class="action-link">
-       <a href="{$addCampaign}" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
-  </div>
+  {if $manageCampaign}
+    <div class="action-link">
+      <a href="{$addCampaign}" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
+    </div>
+  {/if}
   {include file="CRM/common/enableDisable.tpl"}
   <div id="campaignType">
     <table id="options" class="display">
@@ -41,11 +43,13 @@
           <th>{ts}Campaign Type{/ts}</th>
           <th>{ts}Status{/ts}</th>
           <th>{ts}Active?{/ts}</th>
-          <th>{ts}Action{/ts}</th>
+          {if $manageCampaign}
+            <th>{ts}Action{/ts}</th>
+          {/if}
 	</tr>
       </thead>
       {foreach from=$campaigns item=campaign}
-        <tr id="row_{$campaign.campaign_id}">
+        <tr id="row_{$campaign.campaign_id}" {if $campaign.is_active neq 1}class="disabled"{/if}>
           <td>{$campaign.name}</td>
           <td>{$campaign.title}</td>
           <td>{$campaign.description}</td>
@@ -54,7 +58,9 @@
           <td>{$campaign.campaign_type_id}</td>
           <td>{$campaign.status_id}</td>
           <td id="row_{$campaign.id}_status">{if $campaign.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-          <td>{$campaign.action}</td>
+          {if $manageCampaign}
+            <td>{$campaign.action}</td>
+          {/if}
 	</tr>
       {/foreach}
     </table>
@@ -66,6 +72,8 @@
         {ts}No Campaigns found.{/ts}
     </div>
 {/if}
-<div class="action-link">
-  <a href="{$addCampaign}" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
-</div>
+{if $manageCampaign}
+  <div class="action-link">
+    <a href="{$addCampaign}" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
+  </div>
+{/if}

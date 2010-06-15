@@ -26,9 +26,11 @@
 {* this template is used for displaying survey information *}
 
 {if $surveys} 
-<div class="action-link">
-  <a href="{$addSurvey}" class="button"><span>&raquo; {ts}Add Survey{/ts}</span></a>
-</div>
+{if $manageCampaign}
+  <div class="action-link">
+    <a href="{$addSurvey}" class="button"><span>&raquo; {ts}Add Survey{/ts}</span></a>
+  </div>
+{/if}
  {include file="CRM/common/enableDisable.tpl"}
  {include file="CRM/common/jsortable.tpl"}
   <div id="surveyList">
@@ -43,11 +45,13 @@
 	  <th>{ts}Default Number Of Contacts{/ts}</th>
 	  <th>{ts}Default?{/ts}</th>
 	  <th>{ts}Active?{/ts}</th>
-	  <th id="nosort"></th>
+	  {if $manageCampaign}
+	    <th id="nosort"></th>
+          {/if}
         </tr>
       </thead>
       {foreach from=$surveys item=survey}
-        <tr id="row_{$survey.id}">
+        <tr id="row_{$survey.id}" {if $survey.is_active neq 1}class="disabled"{/if}>
           <td>{$survey.campaign_id}</td>
           <td>{$survey.survey_type_id}</td>
           <td>{$survey.activity_type_id}</td>
@@ -56,7 +60,9 @@
           <td>{$survey.default_number_of_contacts}</td>
           <td>{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
           <td id="row_{$survey.id}_status">{if $survey.is_active}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
- 	  <td class="crm-report-optionList-action">{$survey.action}</td>
+	  {if $manageCampaign}
+ 	    <td class="crm-report-optionList-action">{$survey.action}</td>
+          {/if}
         </tr>
       {/foreach}
     </table>
@@ -65,6 +71,8 @@
 {else} 
   {ts} No survey found!    {/ts} 
 {/if}
-<div class="action-link">
-  <a href="{$addSurvey}" class="button"><span>&raquo; {ts}Add Survey{/ts}</span></a>
-</div>
+{if $manageCampaign}
+  <div class="action-link">
+    <a href="{$addSurvey}" class="button"><span>&raquo; {ts}Add Survey{/ts}</span></a>
+  </div>
+{/if}
