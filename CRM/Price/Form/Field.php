@@ -78,6 +78,11 @@ class CRM_Price_Form_Field extends CRM_Core_Form
         
         $this->_sid = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
         $this->_fid = CRM_Utils_Request::retrieve('fid' , 'Positive', $this);
+        $url = CRM_Utils_System::url( 'civicrm/admin/price/field', "reset=1&action=browse&sid={$this->_sid}");
+        $breadCrumb     = array( array('title' => ts('Price Set Fields'),
+                                       'url'   => $url) );
+        CRM_Utils_System::appendBreadCrumb( $breadCrumb );        
+        
     }
 
     /**

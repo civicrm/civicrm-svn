@@ -160,6 +160,12 @@ class CRM_UF_Form_Field extends CRM_Core_Form
         $this->_hasSearchableORInSelector = CRM_Core_BAO_UFField::checkSearchableORInSelector( $this->_gid );
 
         $this->assign('fieldId', $this->_id);
+        if ( $this->_id ){
+            require_once 'CRM/Core/DAO.php';
+            $fieldTitle = CRM_Core_DAO::getFieldValue('CRM_Core_DAO_UFField', $this->_id, 'label');
+            $this->assign('fieldTitle', $fieldTitle);
+        }
+        
     }
     
     /**
