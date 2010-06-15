@@ -4,6 +4,7 @@ INSERT IGNORE INTO civicrm_state_province (id, country_id,  abbreviation, name) 
 
 -- CRM-5938
 
+SELECT  @domainID := min(id) FROM civicrm_domain;
 INSERT INTO `civicrm_dashboard` 
     ( `domain_id`, `label`, `url`, `content`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `created_date`, `is_fullscreen`, `is_reserved`) 
     VALUES 
@@ -11,6 +12,7 @@ INSERT INTO `civicrm_dashboard`
     ( @domainID, '{ts escape="sql"}All Cases{/ts}', 'civicrm/dashlet/allCases&reset=1&snippet=4', NULL, 'access CiviCase', NULL , '0', '0', '1', '1', '1', '1', NULL);
 
 -- CRM-6294
+SELECT @option_group_id_eventBadge := max(id) from civicrm_option_group where name = 'event_badge';
 {if $multilingual}
     INSERT INTO civicrm_option_value
 	(option_group_id, {foreach from=$locales item=locale}label_{$locale}, description_{$locale}, {/foreach} value, name, weight, is_active, component_id )
