@@ -63,20 +63,19 @@
 
 {if $rows}
 <div class="crm-results-block">
-    
     {* Search request has returned 1 or more matching rows. *}
-    
-       {* This section handles form elements for action task select and submit *}
-       <div class="crm-event-search-tasks">
-       {include file="CRM/common/searchResultTasks.tpl"}
-	 	</div>
-       {* This section displays the rows along and includes the paging controls *}
+        {* This section handles form elements for action task select and submit *}
+        <div class="crm-search-tasks crm-event-search-tasks">
+           {include file="CRM/common/searchResultTasks.tpl"}
+	    </div>
+        {* This section displays the rows along and includes the paging controls *}
     	<div class="crm-event-search-results">
-	   {include file="CRM/Event/Form/Selector.tpl" context="Search"}
-       </div>
+	        {include file="CRM/Event/Form/Selector.tpl" context="Search"}
+        </div>
     {* END Actions/Results section *}
 </div>
 {/if}
+
 </div>
 {/if}
 {literal}
