@@ -603,6 +603,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                      $searchChildGroups,
                      $this->_context,
                      $this->_contextMenu );' );
+
+            $selector->setKey( $this->controller->_key );
             
             // added the sorting  character to the form array
             // lets recompute the aToZ bar without the sortByCharacter

@@ -95,6 +95,12 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
         $this->assign( 'id', $this->_id );
         
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
+        $this->assign( 'searchKey', $qfKey );
+        
         // retrieve the group contact id, so that we can get contact id
         $gcid = CRM_Utils_Request::retrieve( 'gcid', 'Positive', $this );
         
@@ -222,16 +228,23 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $session = CRM_Core_Session::singleton();
         $isAdvanced = $session->get('isAdvanced');
         
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
+        $urlParams = 'force=1';
+        if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+        
         if ( $isAdvanced == '1' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/advanced', 'force=1' );
+            return CRM_Utils_System::url( 'civicrm/contact/search/advanced', $urlParams );
         } else if ( $isAdvanced == '2' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/builder', 'force=1' );
+            return CRM_Utils_System::url( 'civicrm/contact/search/builder', $urlParams );
         } else if ( $isAdvanced == '3' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+            return CRM_Utils_System::url( 'civicrm/contact/search/custom', $urlParams );
         }
-        return CRM_Utils_System::url( 'civicrm/contact/search/basic', 'force=1' );
+        return CRM_Utils_System::url( 'civicrm/contact/search/basic', $urlParams );
     }
-
+    
     static function checkUserPermission( $page ) {
         // check for permissions
         $page->_permission = null;
