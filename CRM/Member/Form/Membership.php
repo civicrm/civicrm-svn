@@ -362,7 +362,12 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         if ( count($selMemTypeOrg) == 2 ) {
             unset($selMemTypeOrg[0], $selOrgMemType[0][0]);
         }
-        
+        //sort membership organization and type, CRM-6099
+        natcasesort( $selMemTypeOrg );
+        foreach( $selOrgMemType as $index => $orgMembershipType ) {
+            natcasesort( $orgMembershipType );
+            $selOrgMemType[$index] = $orgMembershipType;
+        }
         $sel =& $this->addElement('hierselect', 
                                   'membership_type_id', 
                                   ts('Membership Organization and Type'), 
