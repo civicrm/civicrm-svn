@@ -168,7 +168,12 @@ class CRM_Core_BAO_Dashboard extends CRM_Core_DAO_Dashboard
                         $componentName = null;
                     }
                 }
-                
+
+                // hack to handle case permissions
+                if ( !$componentName && in_array( $key, array( 'access my cases and activities', 'access all cases and activities' ) ) ) { 
+                    $componentName = 'CiviCase';
+                }
+                                
                 //hack to determine if it's a component related permission
                 if ( $componentName ) {
                     if ( !in_array( $componentName, $config->enableComponents ) || 

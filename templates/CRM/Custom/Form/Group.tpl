@@ -79,7 +79,7 @@
 {if $action eq 2 or $action eq 4} {* Update or View*}
     <p></p>
     <div class="action-link">
-    <a href="{crmURL p='civicrm/admin/custom/group/field' q="action=browse&reset=1&gid=$gid"}">{ts}Custom Fields for this Group{/ts}</a>
+    <a href="{crmURL p='civicrm/admin/custom/group/field' q="action=browse&reset=1&gid=$gid"}" class="button"><span>{ts}Custom Fields for this Set{/ts}</span></a>
     </div>
 {/if}
 {$initHideBlocks}

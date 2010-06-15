@@ -23,21 +23,18 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-form-block crm-block crm-create_printable_pdf-block">
+<div class="crm-form-block crm-block crm-contact-task-pdf-form-block">
 <h3>{ts}Create Printable PDF Letters{/ts}</h3>
 <table class="form-layout-compressed">
-</table>
+
 
 {include file="CRM/Contact/Form/Task/PDFLetterCommon.tpl"}
-
+</table>
 <div class="spacer"> </div>
-
-<dl>
+<div>
 {if $single eq false}
-    <dt></dt><dd>{include file="CRM/Contact/Form/Task.tpl"}</dd>
+    <div>{include file="CRM/Contact/Form/Task.tpl"}</div><br />
 {/if}
-</dl>
-<dl>
-<dt></dt><dd>{$form.buttons.html}</dd>
-</dl>
+</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

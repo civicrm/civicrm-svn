@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* CiviEvent DashBoard (launch page) *}
-{capture assign=newEventURL}{crmURL p="civicrm/event/manage" q="action=add&reset=1"}{/capture}
+{capture assign=newEventURL}{crmURL p="civicrm/event/add" q="action=add&reset=1"}{/capture}
 {capture assign=configPagesURL}{crmURL p="civicrm/event/manage" q="reset=1"}{/capture}
 {capture assign=icalFile}{crmURL p='civicrm/event/ical' q="reset=1" fe=1 a=1}{/capture}
 {capture assign=icalFeed}{crmURL p='civicrm/event/ical' q="reset=1&page=1" fe=1 a=1}{/capture}
@@ -35,8 +35,8 @@
     <div class="float-right">
 	<table class="form-layout-compressed">
 	   <tr>
-		<td><a href="{$configPagesURL}" class="button"><span>&raquo; {ts}Manage Events{/ts}</span></a></td>
-		<td><a href="{$newEventURL}" class="button"><span>&raquo; {ts}New Event{/ts}</span></a></td>
+		<td><a href="{$configPagesURL}" class="button"><span>{ts}Manage Events{/ts}</span></a></td>
+		<td><a href="{$newEventURL}" class="button"><span><div class="icon add-icon"></div>{ts}New Event{/ts}</span></a></td>
 	   </tr>
 	</table>
     </div>
@@ -103,7 +103,16 @@
                 <a href="{$values.isMap}" title="{ts}Map event location{/ts}">&raquo;&nbsp;{ts}Map{/ts}</a>&nbsp;|&nbsp;
             {/if}
             {if $values.configure}
-                <a href="{$values.configure}" title="{ts}Configure event information, fees, discounts, online registration...{/ts}">&raquo;&nbsp;{ts}Configure{/ts}</a>
+              <div class="crm-configure-actions">
+		 <span id="{$id}" class="btn-slide">{ts}Configure{/ts}
+        	    	<ul class="panel" id="panel_info_{$id}">
+        		    <li><a title="Info and Settings" class="action-item-wrap" href="{crmURL p='civicrm/event/manage/eventInfo' q="reset=1&action=update&id=`$id`"}">{ts}Info and Settings{/ts}</a></li>
+        		    <li><a title="Location" class="action-item-wrap {if NOT $values.is_show_location} disabled{/if}" href="{crmURL p='civicrm/event/manage/location' q="reset=1&action=update&id=`$id`"}">{ts}Location{/ts}</a></li>
+        		    <li><a title="Fees" class="action-item {if NOT $values.is_monetary} disabled{/if}" href="{crmURL p='civicrm/event/manage/fee' q="reset=1&action=update&id=`$id`"}">{ts}Fees{/ts}</a></li>
+        		    <li><a title="Online Registration" class="action-item-wrap {if NOT $values.is_online_registration} disabled{/if}" href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$id`"}">{ts}Online Registration{/ts}</a></li>
+        		    <li><a title="Tell a Friend" class="action-item-wrap {if NOT $values.friend} disabled{/if}" href="{crmURL p='civicrm/event/manage/friend' q="reset=1&action=update&id=`$id`"}">{ts}Tell a Friend{/ts}</a></li>
+        	 </span>
+        	 </div>
             {/if}
         </td>
 	{/if}

@@ -35,10 +35,10 @@
   </div>
 
   <fieldset>
-  <div class="section msg_title-section">
+  <div class="crm-section msg_title-section">
     <div class="bold">{$form.msg_title.value}</div>
   </div>
-  <div class="section msg_subject-section">
+  <div class="crm-section msg_subject-section">
   <h3 class="header-dark">{$form.msg_subject.label}</h3>
     <div class="text">
       <textarea name="msg-subject" id="msg_subject" style="height: 6em; width: 45em;">{$form.msg_subject.value}</textarea>
@@ -50,7 +50,7 @@
     </div>
   </div>
   
-  <div class="section msg_txt-section">
+  <div class="crm-section msg_txt-section">
   <h3 class="header-dark">{$form.msg_text.label}</h3>
     <div class="text">
       <textarea class="huge" name='msg_text' id='msg_text'>{$form.msg_text.value|htmlentities}</textarea>
@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <div class="section msg_html-section">
+  <div class="crm-section msg_html-section">
   <h3 class="header-dark">{$form.msg_html.label}</h3>
     <div class='text'>
       <textarea class="huge" name='msg_html' id='msg_html'>{$form.msg_html.value|htmlentities}</textarea>
@@ -158,9 +158,7 @@
 
 {elseif $action ne 1 and $action ne 2 and $action ne 4}
   <div class="messages status">
-    <dl>
-      <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
-      <dd>{ts 1=$crmURL}There are no Message Templates entered. You can <a href='%1'>add one</a>.{/ts}</dd>
-    </dl>
+      <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
+      {ts 1=$crmURL}There are no Message Templates entered. You can <a href='%1'>add one</a>.{/ts}
   </div>
 {/if}

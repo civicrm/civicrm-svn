@@ -23,13 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="priceset_{$priceSetId}" class="section price_set-section">
+<div id="priceset_{$priceSetId}" class="crm-section price_set-section">
     {if $priceSet.help_pre}
         <div class="description">{$priceSet.help_pre}</div>
     {/if}
           
     {foreach from=$priceSet.fields item=element key=field_id}
-    <div class="section {$element.name}-section">
+    <div class="crm-section {$element.name}-section">
     {if ($element.html_type eq 'CheckBox' || $element.html_type == 'Radio') && $element.options_per_line}
       {assign var="element_name" value=price_$field_id}
         <div class="label">{$form.$element_name.label}</div>

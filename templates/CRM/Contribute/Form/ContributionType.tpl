@@ -24,9 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting contribution type  *}
-<div class="form-item crm-block crm-form-block crm-contribution-form-block">
+<div class="crm-block crm-form-block crm-contribution_type-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Contribution Type{/ts}{elseif $action eq 2}{ts}Edit Contribution Type{/ts}{else}{ts}Delete Contribution Type{/ts}{/if}</legend>
-  
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
    {if $action eq 8}
       <div class="messages status">
           <div class="icon inform-icon"></div>    
@@ -60,6 +60,6 @@
        </tr>
       </table> 
      {/if}
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="botttom"}</div>
 </fieldset>
 </div>

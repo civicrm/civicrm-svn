@@ -27,8 +27,8 @@
 <div id="help">
     {ts}Default values will be supplied for these upload directories the first time you access CiviCRM - based on the CIVICRM_TEMPLATE_COMPILEDIR specified in civicrm.settings.php. If you need to modify the defaults, make sure that your web server has write access to the directories.{/ts}
 </div>
-    <fieldset><legend>{ts}Upload Directories{/ts}</legend>
-        <table class="form-layout">
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+           <table class="form-layout">
             <tr class="crm-path-form-block-uploadDir">
                 <td class="label">{$form.uploadDir.label}</td>
                 <td>{$form.uploadDir.html|crmReplace:class:'huge40'}<br />
@@ -60,7 +60,5 @@
                 </td>    
             </tr>
         </table>
-    </fieldset>
-
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

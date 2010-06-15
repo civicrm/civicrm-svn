@@ -57,8 +57,8 @@ function clearAmountOther() {
 {include file="CRM/common/TrackingFields.tpl"}
 
 {capture assign='reqMark'}<span class="marker" title="{ts}This field is required.{/ts}">*</span>{/capture}
-<div class="form-item crm-block crm-form-block crm-contribution-form-block">
-    <div id="intro_text" class="section intro_text-section">
+<div class="crm-block crm-contribution-main-form-block">
+    <div id="intro_text" class="crm-section intro_text-section">
         {$intro_text}
     </div>
 
@@ -73,14 +73,14 @@ function clearAmountOther() {
     {include file="CRM/Contribute/Form/Contribution/MembershipBlock.tpl" context="makeContribution"}
 
 	{if $form.amount}
-	    <div class="section {$form.amount.name}-section">
+	    <div class="crm-section {$form.amount.name}-section">
 			<div class="label">{$form.amount.label}</div>
 			<div class="content">{$form.amount.html}</div>
 			<div class="clear"></div> 
 	    </div>
 	{/if} 
 	{if $is_allow_other_amount}
-	    <div class="section {$form.amount_other.name}-section">
+	    <div class="crm-section {$form.amount_other.name}-section">
 			<div class="label">{$form.amount_other.label}</div>
 			<div class="content">{$form.amount_other.html|crmMoney}</div>
 			<div class="clear"></div> 
@@ -88,13 +88,13 @@ function clearAmountOther() {
 	{/if} 
 	{if $pledgeBlock} 
 	    {if $is_pledge_payment}
-	    <div class="section {$form.pledge_amount.name}-section">
+	    <div class="crm-section {$form.pledge_amount.name}-section">
 			<div class="label">{$form.pledge_amount.label}&nbsp;<span class="marker">*</span></div>
 			<div class="content">{$form.pledge_amount.html}</div>
 			<div class="clear"></div> 
 	    </div>
 	    {else}
-	    <div class="section {$form.is_pledge.name}-section">
+	    <div class="crm-section {$form.is_pledge.name}-section">
 			<div class="content">
 				{$form.is_pledge.html}&nbsp;
 				{if $is_pledge_interval}
@@ -107,12 +107,12 @@ function clearAmountOther() {
 	{/if} 
 {/if}
 	{if $form.is_pay_later}
-	    <div class="section {$form.is_pay_later.name}-section">
+	    <div class="crm-section {$form.is_pay_later.name}-section">
 			<div class="content">{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}</div>
 	    </div>
 	{/if} 
 	{if $form.is_recur}
-	    <div class="section {$form.is_recur.name}-section">
+	    <div class="crm-section {$form.is_recur.name}-section">
 			<div div class="content">
 				<p><strong>{$form.is_recur.html} {ts}every{/ts} &nbsp;{$form.frequency_interval.html} &nbsp; {$form.frequency_unit.html}&nbsp; {ts}for{/ts} &nbsp; {$form.installments.html} &nbsp;{$form.installments.label}</strong>
 				</p>
@@ -124,12 +124,12 @@ function clearAmountOther() {
 	    </div>
 	{/if} 
 	{if $pcpSupporterText}
-	    <div class="section pcpSupporterText-section">
+	    <div class="crm-section pcpSupporterText-section">
 			<div class="content">{$pcpSupporterText}</div>
 	    </div>
 	{/if}
 	    {assign var=n value=email-$bltID}
-	    <div class="section {$form.$n.name}-section">
+	    <div class="crm-section {$form.$n.name}-section">
 	    	<div class="label">{$form.$n.label}</div>
 	    	<div class="content">
 	    		{$form.$n.html}
@@ -138,7 +138,7 @@ function clearAmountOther() {
 	    </div>
 	
 	{if $form.is_for_organization}
-		<div class="section {$form.is_for_organization.name}-section">
+		<div class="crm-section {$form.is_for_organization.name}-section">
 	    	<div class="content">
 	    		{$form.is_for_organization.html}&nbsp;{$form.is_for_organization.label}
 	    	</div>
@@ -157,11 +157,11 @@ function clearAmountOther() {
     {if $honor_block_is_active}
 	<fieldset class="crm-group honor_block-group">
 		<legend>{$honor_block_title}</legend>
-	    	<div class="section honor_block_text-section">
+	    	<div class="crm-section honor_block_text-section">
 	    		{$honor_block_text}
 	    	</div>
 		{if $form.honor_type_id.html}
-		    <div class="section {$form.honor_type_id.name}-section">
+		    <div class="crm-section {$form.honor_type_id.name}-section">
 				<div class="content" >
 					{$form.honor_type_id.html}
 					<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('honor_type_id', '{$form.formName}');enableHonorType(); return false;">{ts}clear{/ts}</a>)</span>
@@ -170,24 +170,24 @@ function clearAmountOther() {
 		    </div>
 		{/if}
 		<div id="honorType" class="honoree-name-email-section">
-			<div class="section {$form.honor_prefix_id.name}-section">	
+			<div class="crm-section {$form.honor_prefix_id.name}-section">	
 			    <div class="content">{$form.honor_prefix_id.html}</div>
 			</div>
-			<div class="section {$form.honor_first_name.name}-section">	
+			<div class="crm-section {$form.honor_first_name.name}-section">	
 				<div class="label">{$form.honor_first_name.label}</div>
 			    <div class="content">
 			        {$form.honor_first_name.html}
 				</div>
 				<div class="clear"></div> 
 			</div>
-			<div class="section {$form.honor_last_name.name}-section">	
+			<div class="crm-section {$form.honor_last_name.name}-section">	
 			    <div class="label">{$form.honor_last_name.label}</div>
 			    <div class="content">
 			        {$form.honor_last_name.html}
 				</div>
 				<div class="clear"></div> 
 			</div>
-			<div id="honorTypeEmail" class="section {$form.honor_email.name}-section">
+			<div id="honorTypeEmail" class="crm-section {$form.honor_email.name}-section">
 				<div class="label">{$form.honor_email.label}</div>
 			    <div class="content">
 				    {$form.honor_email.html}
@@ -204,28 +204,28 @@ function clearAmountOther() {
 
     {if $pcp}
     <fieldset class="crm-group pcp-group">
-    	<div class="section pcp-section">
-			<div class="section display_in_roll-section">
+    	<div class="crm-section pcp-section">
+			<div class="crm-section display_in_roll-section">
 				<div class="content">
 			        {$form.pcp_display_in_roll.html} &nbsp;
 			        {$form.pcp_display_in_roll.label}
 			    </div>
 			    <div class="clear"></div> 
 			</div>
-			<div id="nameID" class="section is_anonymous-section">
+			<div id="nameID" class="crm-section is_anonymous-section">
 			    <div class="content">
 			        {$form.pcp_is_anonymous.html}
 			    </div>
 			    <div class="clear"></div> 
 			</div>
-			<div id="nickID" class="section pcp_roll_nickname-section">
+			<div id="nickID" class="crm-section pcp_roll_nickname-section">
 			    <div class="label">{$form.pcp_roll_nickname.label}</div>
 			    <div class="content">{$form.pcp_roll_nickname.html}
 				<div class="description">{ts}Enter the name you want listed with this contribution. You can use a nick name like 'The Jones Family' or 'Sarah and Sam'.{/ts}</div>
 			    </div>
 			    <div class="clear"></div> 
 			</div>
-			<div id="personalNoteID" class="section pcp_personal_note-section">
+			<div id="personalNoteID" class="crm-section pcp_personal_note-section">
 			    <div class="label">{$form.pcp_personal_note.label}</div>
 			    <div class="content">
 			    	{$form.pcp_personal_note.html}
@@ -265,13 +265,13 @@ function clearAmountOther() {
 	    <fieldset class="crm-group paypal_checkout-group">
 	    	<legend>{ts}Checkout with PayPal{/ts}</legend>
 	    	<div class="section">
-				<div class="section paypalButtonInfo-section">
+				<div class="crm-section paypalButtonInfo-section">
 					<div class="content">
 					    <span class="description">{ts}Click the PayPal button to continue.{/ts}</span>
 					</div>
 					<div class="clear"></div> 
 				</div>	
-				<div class="section {$expressButtonName}-section">
+				<div class="crm-section {$expressButtonName}-section">
 				    <div class="content">
 				    	{$form.$expressButtonName.html} <span class="description">Checkout securely. Pay without sharing your financial information. </span>
 				    </div>
@@ -283,10 +283,10 @@ function clearAmountOther() {
     {/if}
     </div>
     <div id="crm-submit-buttons">
-        {include file="CRM/common/formButtons.tpl"}
+        {include file="CRM/common/formButtons.tpl" location="bottom"}
     </div>
     {if $footer_text}
-    	<div id="footer_text" class="section contribution_footer_text-section">
+    	<div id="footer_text" class="crm-section contribution_footer_text-section">
 			<p>{$footer_text}</p>
     	</div>
     {/if}

@@ -26,7 +26,7 @@
 {if ! empty( $fields )}
 
     {if $groupId }
-<div class="crm-accordion-wrapper crm-group-{$groupId}-accordion crm-accordion-closed">
+<div class="crm-accordion-wrapper crm-group-{$groupId}-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
  <div class="crm-accordion-header crm-master-accordion-header">
   <div class="icon crm-accordion-pointer"></div> 
 	{ts}Edit Search Criteria{/ts}
@@ -150,17 +150,13 @@ cj(function() {
 
 {elseif $statusMessage}
     <div class="messages status">
-      <dl>
-        <dt><div class="icon inform-icon"></div></dt>
-        <dd>{$statusMessage}</dd>
-      </dl>
+        <div class="icon inform-icon"></div>
+        {$statusMessage}
     </div>
 {else} {* empty fields *}
     <div class="messages status">
-      <dl>
-        <dt><div class="icon inform-icon"></div></dt>
-        <dd>{ts}No fields in this Profile have been configured as searchable. Ask the site administrator to check the Profile setup.{/ts}</dd>
-      </dl>
+        <div class="icon inform-icon"></div>
+        {ts}No fields in this Profile have been configured as searchable. Ask the site administrator to check the Profile setup.{/ts}
     </div>
 {/if}
 {literal}

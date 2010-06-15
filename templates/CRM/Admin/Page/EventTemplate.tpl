@@ -30,7 +30,7 @@
 <div class="crm-content-block">
 {if $action ne 1 and $action ne 2}
       <div class="action-link">
-        <a href="{crmURL p="civicrm/event/manage" q="action=add&is_template=1&reset=1"}" id="newEventTemplate" class="button">
+        <a href="{crmURL p="civicrm/event/add" q="action=add&is_template=1&reset=1"}" id="newEventTemplate" class="button">
         <span><div class="icon add-icon"></div>{ts}Add Event Template{/ts}</span></a>
         <div class="clear"></div>
       </div>
@@ -54,7 +54,7 @@
         </tr>
         </thead>
         {foreach from=$rows item=row}
-          <tr id='rowid{$row.id}' class="{cycle values="odd-row,even-row"} crm-event erm-event_{$row.id}">
+          <tr id='rowid{$row.id}' class="{cycle values="odd-row,even-row"} crm-event crm-event_{$row.id}">
               <td class="crm-event-template_title">{$row.template_title}</td>	
               <td class="crm-event-event_type">{$row.event_type}</td>	
               <td class="crm-event-participant_role">{$row.participant_role}</td>	
@@ -74,7 +74,7 @@
 {else}
     <div class="messages status">
     <div class="icon inform-icon"></div>
-    {capture assign=crmURL}{crmURL p='civicrm/event/manage' q="action=add&is_template=1&reset=1"}{/capture}
+    {capture assign=crmURL}{crmURL p='civicrm/event/add' q="action=add&is_template=1&reset=1"}{/capture}
         {ts 1=$crmURL}There are no Event Templates present. You can <a href='%1'>add one</a>.{/ts}    
     </div>    
 {/if}

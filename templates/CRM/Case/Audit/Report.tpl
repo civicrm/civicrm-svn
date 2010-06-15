@@ -45,11 +45,11 @@
     	<th class="reports-header">{ts}Case ID{/ts}</th>
     </tr>
     <tr>
-        <td class="crm-case-form-block-clientName">{$case.clientName}</td>
-        <td class="crm-case-form-block-caseType">{$case.caseType}</td>
-        <td class="crm-case-form-block-status">{$case.status}</td>
-        <td class="crm-case-form-block-start_date">{$case.start_date}</td>
-        <td class="crm-case-form-block-{$caseId}">{$caseId}</td> 
+        <td class="crm-case-report-clientName">{$case.clientName}</td>
+        <td class="crm-case-report-caseType">{$case.caseType}</td>
+        <td class="crm-case-report-status">{$case.status}</td>
+        <td class="crm-case-report-start_date">{$case.start_date}</td>
+        <td class="crm-case-report-{$caseId}">{$caseId}</td> 
     </tr>
 </table>
 <h2>{ts}Case Roles{/ts}</h2>
@@ -63,10 +63,10 @@
 
     {foreach from=$caseRelationships item=row key=relId}
        <tr>
-          <td class="crm-case-form-block-relation">{$row.relation}</td>
-          <td class="crm-case-form-block-name">{$row.name}</td>
-          <td class="crm-case-form-block-phone">{$row.phone}</td>
-          <td class="crm-case-form-block-email">{$row.email}</td> 
+          <td class="crm-case-report-caserelationships-relation">{$row.relation}</td>
+          <td class="crm-case-report-caserelationships-name">{$row.name}</td>
+          <td class="crm-case-report-caserelationships-phone">{$row.phone}</td>
+          <td class="crm-case-report-caserelationships-email">{$row.email}</td> 
        </tr>
     {/foreach}
     {foreach from=$caseRoles item=relName key=relTypeID}
@@ -79,10 +79,10 @@
            </tr>
          {else}
            <tr>
-               <td class="crm-case-form-block-role">{$relName.role}</td>
-               <td class="crm-case-form-block-sort_name">{$relName.sort_name}</td>
-               <td class="crm-case-form-block-phone">{$relName.phone}</td>
-               <td class="crm-case-form-block-email">{$relName.email}</td>
+               <td class="crm-case-report-caseroles-role">{$relName.role}</td>
+               <td class="crm-case-report-caseroles-sort_name">{$relName.sort_name}</td>
+               <td class="crm-case-report-caseroles-phone">{$relName.phone}</td>
+               <td class="crm-case-report-caseroles-email">{$relName.email}</td>
            </tr> 
          {/if}
 	{/foreach}
@@ -99,10 +99,10 @@
     	</tr>
         {foreach from=$otherRelationships item=row key=relId}
         <tr>
-            <td class="crm-case-form-block-relation">{$row.relation}</td>
-            <td class="crm-case-form-block-name">{$row.name}</td>
-            <td class="crm-case-form-block-phone">{$row.phone}</td>
-            <td class="crm-case-form-block-email">{$row.email}</td>
+            <td class="crm-case-report-otherrelationships-relation">{$row.relation}</td>
+            <td class="crm-case-report-otherrelationships-name">{$row.name}</td>
+            <td class="crm-case-report-otherrelationships-phone">{$row.phone}</td>
+            <td class="crm-case-report-otherrelationships-email">{$row.email}</td>
         </tr>
         {/foreach}
     </table>
@@ -118,9 +118,9 @@
     	</tr>
         {foreach from=$globalRelationships item=row key=relId}
         <tr>
-            <td class="crm-case-form-block-sort_name">{$row.sort_name}</td>
-            <td class="crm-case-form-block-phone">{$row.phone}</td>
-            <td class="crm-case-form-block-email">{$row.email}</td>
+            <td class="crm-case-report-globalrelationships-sort_name">{$row.sort_name}</td>
+            <td class="crm-case-report-globalrelationships-phone">{$row.phone}</td>
+            <td class="crm-case-report-globalrelationships-email">{$row.email}</td>
         </tr>
 	    {/foreach}
     </table>
@@ -130,7 +130,7 @@
 {foreach from=$activities item=activity key=key}
   <table  class ="report-layout">
        {foreach from=$activity item=field name=fieldloop}
-           <tr class="crm-case-form-block-{$field.label}">
+           <tr class="crm-case-report-activity-{$field.label}">
              <th scope="row" class="label">{$field.label|escape}</th>
              {if $field.label eq 'Activity Type' or $field.label eq 'Status'}
                 <td class="bold">{$field.value|escape}</th> 

@@ -32,16 +32,16 @@
      &nbsp;{ts}Registration is closed for this event{/ts}
   </div>
 {/if}
-<div class="vevent">
+<div class="vevent crm-block crm-event-info-form-block">
 	<div class="event-info">
 	
 	{if $event.summary}
-	    <div class="section event_summary-section">{$event.summary}</div>
+	    <div class="crm-section event_summary-section">{$event.summary}</div>
 	{/if}
 	{if $event.description}
-	    <div class="section event_description-section summary">{$event.description}</div>
+	    <div class="crm-section event_description-section summary">{$event.description}</div>
 	{/if}
-	<div class="section event_date_time-section">
+	<div class="crm-section event_date_time-section">
 	    <div class="label"><label>{ts}When{/ts}</label></div>
 	    <div class="content">
             <abbr class="dtstart" title="{$event.event_start_date|crmDate}">
@@ -66,7 +66,7 @@
 	{if $isShowLocation}
 
         {if $location.address.1}
-            <div class="section event_address-section">
+            <div class="crm-section event_address-section">
                 <div class="label"><label>{ts}Location{/ts}</label></div>
                 <div class="content">{$location.address.1.display|nl2br}</div>
                 <div class="clear"></div>
@@ -76,7 +76,7 @@
 	    {if ( $event.is_map && $config->mapAPIKey && 
 	        ( is_numeric($location.address.1.geo_code_1)  || 
 	        ( $config->mapGeoCoding && $location.address.1.city AND $location.address.1.state_province ) ) ) }
-	        <div class="section event_map-section">
+	        <div class="crm-section event_map-section">
 	            <div class="content">
                     {assign var=showDirectly value="1"}
                     {if $mapProvider eq 'Google'}
@@ -94,7 +94,7 @@
 
 
 	{if $location.phone.1.phone || $location.email.1.email}
-	    <div class="section event_contact-section">
+	    <div class="crm-section event_contact-section">
 	        <div class="label"><label>{ts}Contact{/ts}</label></div>
 	        <div class="content">
 	            {* loop on any phones and emails for this event *}
@@ -117,7 +117,7 @@
 
     
 	{if $event.is_monetary eq 1 && $feeBlock.value}
-	    <div class="section event_fees-section">
+	    <div class="crm-section event_fees-section">
 	        <div class="label"><label>{$event.fee_label}</label></div>
 	        <div class="content">
 	            <table class="form-layout-compressed fee_block-table">

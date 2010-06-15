@@ -24,9 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting membership type  *}
-<div class="crm-block crm-form-block crm-membership-form-block">
+<div class="crm-block crm-form-block crm-membership-type-form-block">
+
 <fieldset>
 <legend>{if $action eq 1}{ts}New Membership Type{/ts}{elseif $action eq 2}{ts}Edit Membership Type{/ts}{else}{ts}Delete Membership Type{/ts}{/if}</legend>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <div class="form-item" id="membership_type_form">
     {if $action eq 8}   
      <div class="messages status">
@@ -35,14 +37,14 @@
      <div> {include file="CRM/common/formButtons.tpl"}</div>
      {else}
    <table class="form-layout-compressed">
-      <tr class="crm-membership-form-block-name">
+      <tr class="crm-membership-type-form-block-name">
 	  <td class="label">{$form.name.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_membership_type' field='name' id=$membershipTypeId}{/if}
           </td>
           <td>{$form.name.html}<br />
               <span class="description">{ts}e.g. 'Student', 'Senior', 'Honor Society'...{/ts}</span>
           </td>
       </tr>
-      <tr class="crm-membership-form-block-description">
+      <tr class="crm-membership-type-form-block-description">
           <td class="label">{$form.description.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_membership_type' field='description' id=$membershipTypeId}{/if}
           </td>
           <td>{$form.description.html}<br />
@@ -50,7 +52,7 @@
           </td>
       </tr>
         {if !$searchDone or !$searchCount or !$searchRows}
-      <tr class="crm-membership-form-block-member_org">
+      <tr class="crm-membership-type-form-block-member_org">
           <td class="label">{$form.member_org.label}<span class="marker"> *</span></td>
           <td><label>{$form.member_org.html}</label>&nbsp;&nbsp;{$form._qf_MembershipType_refresh.html}<br />
               <span class="description">{ts}Members assigned this membership type belong to which organization (e.g. this is for membership in 'Save the Whales - Northwest Chapter'). NOTE: This organization/group/chapter must exist as a CiviCRM Organization type contact.{/ts}
@@ -62,7 +64,7 @@
               {if $searchCount}
                 {if $searchRows} {* we've got rows to display *}
                   <table class="form-layout-compressed"> 
-                     <tr class="crm-membership-form-block-member_org" >
+                     <tr class="crm-membership-type-form-block-member_org" >
                       <fieldset> <legend>{ts}Select Target Contact for the Membership-Organization{/ts}</legend>
                         <td class="label">{$form.member_org.label}</td>
                         <td>{$form.member_org.html}&nbsp;&nbsp;{$form._qf_MembershipType_refresh.html}<br />
@@ -79,12 +81,12 @@
              <table>
                 {*Column Headers*}
                  <tr class="columnheader">
-                    <th>&nbsp;</th>
-                    <th>{ts}Name{/ts}</th>
-                    <th>{ts}City{/ts}</th>
-                    <th>{ts}State{/ts}</th>
-                    <th>{ts}Email{/ts}</th>
-                    <th>{ts}Phone{/ts}</th>
+                    <td>&nbsp;</td>
+                    <td>{ts}Name{/ts}</td>
+                    <td>{ts}City{/ts}</td>
+                    <td>{ts}State{/ts}</td>
+                    <td>{ts}Email{/ts}</td>
+                    <td>{ts}Phone{/ts}</td>
                     </tr>
                 {*Data to be displyed*}
                 {foreach from=$searchRows item=row}
@@ -120,38 +122,38 @@
                </tr>
              </table>
       <table class="form-layout-compressed">
-         <tr class="crm-membership-form-block-minimum_fee">
+         <tr class="crm-membership-type-form-block-minimum_fee">
              <td class="label">{$form.minimum_fee.label}</td>
              <td>{$form.minimum_fee.html|crmMoney}<br />
                 <span  class="description">{ts}Minimum fee required for this membership type. For free/complimentary memberships - set minimum fee to zero (0).{/ts}</span>
              </td>
          </tr>
-         <tr class="crm-membership-form-block-contribution_type_id">
+         <tr class="crm-membership-type-form-block-contribution_type_id">
        	     <td class="label">{$form.contribution_type_id.label}<span class="marker"> *</span></td>
              <td>{$form.contribution_type_id.html}<br />
                 <span class="description">{ts}Select the contribution type assigned to fees for this membership type (for example 'Membership Fees'). This is required for all membership types - including free or complimentary memberships.{/ts}</span>
              </td>
          </tr>
-         <tr class="crm-membership-form-block-duration_unit_interval">        
+         <tr class="crm-membership-type-form-block-duration_unit_interval">        
              <td class="label">{$form.duration_unit.label}<span class="marker">*</span></td>
              <td>{$form.duration_interval.html}&nbsp;&nbsp;{$form.duration_unit.html}<br />
                  <span class="description">{ts}Duration of this membership (e.g. 30 days, 2 months, 5 years, 1 lifetime){/ts}</span>
              </td>
          </tr>
-         <tr class="crm-membership-form-block-period_type"> 
+         <tr class="crm-membership-type-form-block-period_type"> 
              <td class="label">{$form.period_type.label}<span class="marker"> *</span></td>
              <td>{$form.period_type.html}<br />
                   <span class="description">{ts}Select 'rolling' if membership periods begin at date of signup. Select 'fixed' if membership periods begin on a set calendar date.{/ts} {help id="period-type"}</span>
              </td>
          </tr>   
          <div id="fixed_period">
-         <tr class="crm-membership-form-block-fixed_period_start_day">
+         <tr class="crm-membership-type-form-block-fixed_period_start_day">
              <td class="label">{$form.fixed_period_start_day.label}</td>
              <td>{$form.fixed_period_start_day.html}<br />
                  <span class="description">{ts}Month and day on which a <strong>fixed</strong> period membership or subscription begins. Example: A fixed period membership with Start Day set to Jan 01 means that membership periods would be 1/1/06 - 12/31/06 for anyone signing up during 2006.{/ts}</span>
              </td>
          </tr>
-         <tr class="crm-membership-form-block-fixed_period_rollover_day">
+         <tr class="crm-membership-type-form-block-fixed_period_rollover_day">
              <td class="label">{$form.fixed_period_rollover_day.label}</td>
              <td>{$form.fixed_period_rollover_day.html}<br />
                  <span class="description">{ts}Membership signups after this date cover the following calendar year as well. Example: If the rollover day is November 31, membership period for signups during December will cover the following year.{/ts}</span>
@@ -159,23 +161,23 @@
          </tr>
        </div>
        <div class="spacer"></div>	    
-         <tr class="crm-membership-form-block-relationship_type_id"> 	
+         <tr class="crm-membership-type-form-block-relationship_type_id"> 	
              <td class="label">{$form.relationship_type_id.label}</td>
              <td>{$form.relationship_type_id.html}<br />
                  <span class="description">{ts}Memberships can be automatically granted to related contacts by selecting a Relationship Type.{/ts} {help id="rel-type"}</span>
              </td>
          </tr>
-         <tr class="crm-membership-form-block-visibility">
+         <tr class="crm-membership-type-form-block-visibility">
              <td class="label">{$form.visibility.label}</td>
              <td>{$form.visibility.html}<br />
                  <span class="description">{ts}Is this membership type available for self-service signups ('Public') or assigned by CiviCRM 'staff' users only ('Admin'){/ts}</span>
              </td>
          </tr>
-         <tr class="crm-membership-form-block-weight">
+         <tr class="crm-membership-type-form-block-weight">
              <td class="label">{$form.weight.label}</td>
              <td>{$form.weight.html}</td>
          </tr>
-         <tr class="crm-membership-form-block-is_active">
+         <tr class="crm-membership-type-form-block-is_active">
              <td class="label">{$form.is_active.label}</td>
              <td>{$form.is_active.html}</td>
          </tr>
@@ -192,13 +194,13 @@
             </div>
         {else}
             <table class="form-layout-compressed">
-                <tr class="crm-membership-form-block-renewal_msg_id" >
+                <tr class="crm-membership-type-form-block-renewal_msg_id" >
                     <td class="label">{$form.renewal_msg_id.label}</td>
                     <td>{$form.renewal_msg_id.html}<br />        
                         <span class="description">{ts}Select the renewal reminder message to be sent to the members of this membership type.{/ts}</span>
                     </td>
                 </tr>
-                <tr class="crm-membership-form-block-renewal_reminder_day">              
+                <tr class="crm-membership-type-form-block-renewal_reminder_day">              
                     <td class="label">{$form.renewal_reminder_day.label}</td>
                     <td>{$form.renewal_reminder_day.html}<br />
                         <span class="description">{ts}Send Reminder these many days prior to membership expiration.{/ts}</span>
@@ -207,7 +209,7 @@
         {/if}
     </fieldset>
      </table>
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {/if}
     <div class="spacer"></div>
 </div>

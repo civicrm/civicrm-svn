@@ -199,6 +199,20 @@ $handler->override_option('filters', array(
     'field' => 'is_public',
     'relationship' => 'none',
   ),
+  'is_template' => array(
+    'operator' => '=',
+    'value' => '0',
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => '',
+    ),
+    'id' => 'is_template',
+    'table' => 'civicrm_event',
+    'field' => 'is_template',
+    'relationship' => 'none',
+  ),
 ));
 $handler->override_option('access', array(
   'type' => 'none',
@@ -405,6 +419,20 @@ $handler->override_option('filters', array(
     'id' => 'is_public',
     'table' => 'civicrm_event',
     'field' => 'is_public',
+    'relationship' => 'none',
+  ),
+ 'is_template' => array(
+    'operator' => '=',
+    'value' => '0',
+    'group' => '0',
+    'exposed' => FALSE,
+    'expose' => array(
+      'operator' => FALSE,
+      'label' => '',
+    ),
+    'id' => 'is_template',
+    'table' => 'civicrm_event',
+    'field' => 'is_template',
     'relationship' => 'none',
   ),
 ));

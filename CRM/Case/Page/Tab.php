@@ -240,8 +240,12 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
     {
         $context = $this->get('context');
         $url     = null;
-        $contextQFKey = CRM_Utils_Request::retrieve( 'contextQFKey',
-                                                     'String', $this, false, 'search' );
+        
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;   
+        
         switch ( $context ) {
         case 'activity':
             if ( $this->_contactId ) {
@@ -254,8 +258,11 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
             $url = CRM_Utils_System::url( 'civicrm/case', "reset=1" );
             break;
 
-        case 'search':        
-            $url = CRM_Utils_System::url( 'civicrm/case/search', "force=1" );
+        case 'search':
+            $urlParams = 'force=1';
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            
+            $url = CRM_Utils_System::url( 'civicrm/case/search', $urlParams );
             break;
             
         case 'home':
@@ -268,19 +275,19 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
             
         case 'fulltext':
             $action = CRM_Utils_Request::retrieve('action', 'String', $this);
+            $urlParams = 'force=1';
+            $urlString = 'civicrm/contact/search/custom';
             if ( $action == CRM_Core_Action::RENEW ) {
-                $cid = null;
                 if ( $this->_contactId ) {
-                    $cid = '&cid=' . $this->_contactId;
+                    $urlParams .= '&cid=' . $this->_contactId;
                 }
-                $url = CRM_Utils_System::url( 'civicrm/contact/view/case', 
-                                              "force=1&context=fulltext&action=view&contextQFKey={$contextQFKey}" . $cid ); 
-            } else {
-                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom',
-                                              "force=1&qfKey={$contextQFKey}" );
+                $urlParams .= '&context=fulltext&action=view';
+                $urlString  = 'civicrm/contact/view/case';
             }
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            $url = CRM_Utils_System::url( $urlString, $urlParams );
             break;
-
+            
         default:
             if ( $this->_contactId ) {
                 $url = CRM_Utils_System::url( 'civicrm/contact/view',

@@ -24,9 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {*Batch update for contact via profile*}
-<div class="crm-block crm-form-block crm-contactPickProfile-form-block">
+<div class="crm-block crm-form-block crm-contact-task-pickprofile-form-block">
  <table class="form-layout-compressed">
-    <tr class="crm-contactPickProfile-form-block-uf_group_id">
+    <tr class="crm-contact-task-pickprofile-form-block-uf_group_id">
        <td class="label">{$form.uf_group_id.label}</td>
        <td>{$form.uf_group_id.html}</td>
     </tr>

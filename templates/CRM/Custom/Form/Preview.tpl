@@ -34,24 +34,25 @@
     {capture assign=infoMessage}{ts}Preview of this field as it will be displayed in an edit form.{/ts}{/capture}
 {/if}
 {include file="CRM/common/info.tpl"}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-custom-preview-form-block">
 {strip}
 
 {foreach from=$groupTree item=cd_edit key=group_id}
     <p></p>
     <fieldset>{if $preview_type eq 'group'}<legend>{$smarty.capture.legend}</legend>{/if}
     {if $cd_edit.help_pre}<div class="messages help">{$cd_edit.help_pre}</div><br />{/if}
-    <dl class="html-adjust">
+    <table class="form-layout-compressed">
     {foreach from=$cd_edit.fields item=element key=field_id}
       {if $element.is_view eq 0}{* fix for CRM-2699 *}
         {if $element.help_pre}
-            <dt>&nbsp;</dt><dd class="description">{$element.help_pre}</dd>
+            <tr><td class="label"></td><td class="description">{$element.help_pre}</td></tr>
         {/if}
 	{if $element.options_per_line }
         {*assign var="element_name" value=$element.custom_group_id|cat:_|cat:$field_id|cat:_|cat:$element.name*}
-        {assign var="element_name" value=$element.element_name}      
-        <dt>{$form.$element_name.label}</dt>
-        <dd>
+        {assign var="element_name" value=$element.element_name}     
+        <tr> 
+         <td class="label">{$form.$element_name.label}</td>
+         <td>
             {assign var="count" value="1"}
                 <table class="form-layout-compressed">
                  <tr>
@@ -65,27 +66,31 @@
                               {if $count == $element.options_per_line}
                                 {assign var="count" value="1"}
                            </tr>
-                           <tr>
                             {else}
                                 {assign var="count" value=`$count+1`}
                             {/if}
                          {/if}
                     {/foreach}  
 		    {if $element.html_type eq 'Radio'}
-	    	    <td><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span></td> 
-	            {/if}
-                </tr>                  
-            </table>
-        </dd>
+                 <tr>
+	               <td><span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$element_name}', '{$form.formName}'); return false;" >{ts}clear{/ts}</a>)</span></td> 
+	             {/if}
+                 </tr>                  
+                </table>
+         </td>
+        </tr>
         {if $element.help_post}
-            <dt>&nbsp;</dt><dd class="description">{$element.help_post}</dd>
+        <tr>
+           <td class="label"></td><td class="description">{$element.help_post}</td>
+        </tr>
         {/if}
 	{else}
         {assign var="name" value=`$element.name`} 
         {*assign var="element_name" value=$group_id|cat:_|cat:$field_id|cat:_|cat:$element.name*}
         {assign var="element_name" value=$element.element_name}  
-        <dt>{$form.$element_name.label}</dt>
-	    <dd>
+        <tr>
+          <td class="label">{$form.$element_name.label}</td>
+	      <td>
 	    {if $element.data_type neq 'Date'}
             {$form.$element_name.html}&nbsp;
         {elseif $element.skip_calendar NEQ true }
@@ -96,21 +101,21 @@
 	    {elseif $element.html_type eq 'Autocomplete-Select'}
 	        {include file="CRM/Custom/Form/AutoComplete.tpl"}
         {/if}
-        </dd>
+          </td>
+        </tr>
         {if $element.help_post}
-            <dt>&nbsp;</dt><dd class="description">{$element.help_post}</dd>
+        <tr>
+            <td class="label"></td><td class="description">{$element.help_post}</td>
+        </tr>
         {/if}
 	{/if}
      {/if}
     {/foreach}
-    </dl>
+    </table>
     {if $cd_edit.help_post}<br /><div class="messages help">{$cd_edit.help_post}</div>{/if}
     </fieldset>
 {/foreach}
 {/strip}
-
-<dl>
-  <dt></dt><dd>{$form.buttons.html}</dd>
-</dl>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
 

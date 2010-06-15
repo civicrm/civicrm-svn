@@ -23,15 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* add/update/view price set *}
+{* add/update price set *}
 <div id="help">
-        <p>
-        {ts}Use this form to setup the title and group-level help of each set of Price fields.{/ts}
-        </p>
+    {ts}Use this form to edit the title and group-level help for a set of Price fields.{/ts}
 </div>
 {capture assign="enableComponents"}{crmURL p='civicrm/admin/setting/component' q="reset=1"}{/capture}
 <div class="crm-form-block">
-    <h3>{ts}Price Set{/ts}</h3>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     
     <table class="form-layout">
         <tr class="crm-price-set-form-block-title">
@@ -48,9 +46,9 @@
            <td class="label">{$form.extends.label}</td>
            <td>
            {if $extends eq false}
-	   <div class="status message">{ts 1=$enableComponents}No Components have been enabled for your site that can be configured with the price sets. Click <a href='%1'>here</a> if you want to enable CiviEvent/CiviContribute for your site.{/ts}</div>
+	            <div class="status message">{ts 1=$enableComponents}No Components have been enabled for your site that can be configured with the price sets. Click <a href='%1'>here</a> if you want to enable CiviEvent/CiviContribute for your site.{/ts}</div>
           {else}
-	  {$form.extends.html}
+	            {$form.extends.html}
           {/if}
           </td>
         </tr>
@@ -79,33 +77,13 @@
            <td class="label">{$form.is_active.label}</td>
            <td>{$form.is_active.html}</td>
         </tr>
-          {*if $action ne 4*}
-        <tr>
-        </tr>
-        <tr>
-           <td>&nbsp;</td>
-           <td>
-           <div id="crm-submit-buttons">
-             {include file="CRM/common/formButtons.tpl"}</div>
-           </td>
-        </tr>
      </table>
-     {*else}
-        <tr>
-        </tr>
-        <tr>
-           <td>&nbsp;</td>
-           <td>
-           <div id="crm-done-button">{$form.done.html}</div>
-           </td>
-        </tr>
-    </table>
-     {/if*} {* $action ne view *}
+     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     
 </div>
 {if $action eq 2 or $action eq 4} {* Update or View*}
     <p></p>
     <div class="action-link">
-    <a href="{crmURL p='civicrm/admin/price/field' q="action=browse&reset=1&sid=$sid"}">&raquo;  {ts}Fields for this Set{/ts}</a>
+    <a href="{crmURL p='civicrm/admin/price/field' q="action=browse&reset=1&sid=$sid"}" class="button"><span>{ts}Fields for this Set{/ts}</span></a>
     </div>
 {/if}

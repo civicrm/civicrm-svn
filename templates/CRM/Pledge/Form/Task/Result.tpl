@@ -24,9 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div class='spacer'></div>
-<div class="form-item">
-    <p>
-    {$form.buttons.html}
-    </p>
+<div class="crm-block crm-form-block crm-pledge-result-form-block">
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
 

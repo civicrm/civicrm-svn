@@ -23,6 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-form-block crm-member-import-preview-form-block">
 {* Membership Import Wizard - Step 3 (preview import results prior to actual data loading) *}
 {* @var $form Contains the array for the form elements and other form associated information assigned to the template by the controller *}
 
@@ -49,7 +50,7 @@
 
     <p>{ts}Click 'Import Now' if you are ready to proceed.{/ts}</p>
  </div>
-    
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>   
  {* Summary Preview (record counts) *}
  <table id="preview-counts" class="report">
     <tr><td class="label">{ts}Total Rows{/ts}</td>
@@ -90,7 +91,5 @@
  {include file="CRM/Member/Import/Form/MapTable.tpl}
  
  
- <div id="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
  </div>
- 

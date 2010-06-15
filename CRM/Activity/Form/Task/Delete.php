@@ -84,7 +84,9 @@ class CRM_Activity_Form_Task_Delete extends CRM_Activity_Form_Task {
     {
         $deletedActivities = 0;
         foreach ( $this->_activityHolderIds as $activityId['id'] ) {
-            if ( CRM_Activity_BAO_Activity::deleteActivity( $activityId ) ) {
+            require_once 'CRM/Case/BAO/Case.php';
+            $moveToTrash = CRM_Case_BAO_Case::isCaseActivity( $activityId['id'] );
+            if ( CRM_Activity_BAO_Activity::deleteActivity( $activityId, $moveToTrash ) ) {
                 $deletedActivities++;
             }
         }

@@ -42,7 +42,7 @@ class CRM_Event_Page_AJAX
     /**
      * Function for building Event combo box
      */
-    function event( &$config ) 
+    function event( )
     {
         require_once 'CRM/Utils/Type.php';
         $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
@@ -67,7 +67,7 @@ ORDER BY title
     /**
      * Function for building Event Type combo box
      */
-    function eventType( &$config ) 
+    function eventType( )
     {
         require_once 'CRM/Utils/Type.php';
         $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );
@@ -96,7 +96,7 @@ ORDER by v.weight";
     /**
      * Function for building EventFee combo box
      */
-    function eventFee( &$config ) 
+    function eventFee( )
     {
         require_once 'CRM/Utils/Type.php';
         $name = trim( CRM_Utils_Type::escape( $_GET['s'], 'String' ) );

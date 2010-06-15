@@ -27,7 +27,7 @@
     {ts}Personalize the contents and appearance of your fundraising page here. You will be able to return to this page and make changes at any time.{/ts}
 </div>
 <fieldset>
-<div class="form-item crm-block crm-form-block crm-contribution-form-block">
+<div class="crm-block crm-contribution-campaign-form-block">
 <table class="form-layout-compressed" width="100%">
 	<tr class="crm-contribution-form-block-title">
 		<td class="label">{$form.title.label}</td>
@@ -78,14 +78,10 @@
 		<td class="label">{$form.is_active.label}</td>
 		<td>{$form.is_active.html}
             <span class="description">{ts}Is your Personal Campaign Page active? You can activate/de-activate it any time during it's lifecycle.{/ts}</span></td>
-	</tr>
-	<tr class="buttons">
-        <td><div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-        </td>
-        <td></td>
-    </tr>	
+	</tr>	
 </table>
 </div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>
 <script type="text/javascript">
     // Always open attachment div by default for this form

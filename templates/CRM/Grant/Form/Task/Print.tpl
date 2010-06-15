@@ -26,9 +26,7 @@
 <p>
 
 {if $rows } 
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons element-right">{$form.buttons.html}</div>
 <div class="spacer"></div>
 <br />
 <p>
@@ -57,9 +55,7 @@
 {/foreach}
 </table>
 
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
+<div class="crm-submit-buttons element-right">{$form.buttons.html}</div>
 
 {else}
    <div class="messages status">

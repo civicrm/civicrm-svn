@@ -1,6 +1,6 @@
 {foreach from=$tagset item=tagset}
 
-<div class="section tag-section tag-{$tagset.parentID}-section">
+<div class="crm-section tag-section tag-{$tagset.parentID}-section">
 <div class="label">
 <label>{$tagset.parentName}</label>
 </div>
@@ -8,7 +8,7 @@
 {assign var=elemName  value = 'taglist'}
 {assign var=parID     value = $tagset.parentID}
 {$form.$elemName.$parID.html}
-
+{if $action ne 4 or $form.formName eq 'CaseView' }
 <script type="text/javascript">
 {literal}
     eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
@@ -59,10 +59,14 @@
     }
 {/literal}
 </script>
+{else}
+    {if $tagset.entityTagsArray}
+        {foreach from=$tagset.entityTagsArray item=val name="tagsetList"}
+            &nbsp;{$val.name}{if !$smarty.foreach.tagsetList.last},{/if}
+        {/foreach}
+    {/if}
+{/if}
 </div>
 <div class="clear"></div> 
-
 </div>
-
 {/foreach}
-

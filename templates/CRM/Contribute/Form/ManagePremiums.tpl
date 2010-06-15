@@ -24,8 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting premium  *}
+<div class="crm-block crm-form-block crm-contribution-manage_premium-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Premium{/ts}{elseif $action eq 2}{ts}Edit Premium{/ts}{elseif $action eq 1024}{ts}Preview a Premium{/ts}{else}{ts}Delete Premium Product{/ts}{/if}</legend>
-<div class="form-item crm-block crm-form-block crm-contribution-form-block">
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
    {if $action eq 8}
       <div class="messages status">
           <div class="icon inform-icon"></div>
@@ -142,12 +143,9 @@
     </fieldset>
 	</div>
  {/if}
-</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>
-<div id="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
-</div>
-
+<div>
 {if $action eq 1 or $action eq 2 }		 
 
 <script type="text/javascript">

@@ -327,8 +327,8 @@ class CRM_Activity_Form_Search extends CRM_Core_Form
         if ( ! CRM_Utils_Array::value( 'activity_test', $this->_formValues ) ) {
             $this->_formValues["activity_test"] = 0;
         }
-        if ( ! CRM_Utils_Array::value( 'activity_role', $this->_formValues ) ) {
-            $this->_formValues['activity_role'] = 0;
+        if ( ! CRM_Utils_Array::value( 'activity_target_name', $this->_formValues ) ) {
+            $this->_formValues['activity_role'] = null;
         }
         require_once 'CRM/Core/BAO/CustomValue.php';
         CRM_Core_BAO_CustomValue::fixFieldValueOfTypeMemo( $this->_formValues );
@@ -364,6 +364,8 @@ class CRM_Activity_Form_Search extends CRM_Core_Form
                                                       $this->_single,
                                                       $this->_limit,
                                                       $this->_context );
+        $selector->setKey( $this->controller->_key );
+        
         $prefix = null;
         if ( $this->_context == 'basic' || $this->_context == 'user' ) {
             $prefix = $this->_prefix;

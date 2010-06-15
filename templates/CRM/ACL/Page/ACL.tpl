@@ -61,13 +61,13 @@
         </thead>
         <tbody>
         {foreach from=$rows item=row key=aclID}
-	    <tr id="row_{$aclID}"class="{cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td>{$row.entity}</td>	
-	        <td>{$row.operation}</td>	
-	        <td>{$row.object_name}</td>	
-	        <td>{$row.object}</td>	
-	        <td>{$row.name}</td>	
-	        <td id="row_{$aclID}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+	    <tr id="row_{$aclID}"class="{cycle values="odd-row,even-row"} {$row.class} crm-acl {if NOT $row.is_active} disabled{/if}">
+	        <td class="crm-acl-entity">{$row.entity}</td>	
+	        <td class="crm-acl-operation" >{$row.operation}</td>	
+	        <td class="crm-acl-object_name">{$row.object_name}</td>	
+	        <td class="crm-acl-object" >{$row.object}</td>	
+	        <td class="crm-acl-name">{$row.name}</td>	
+	        <td class="crm-acl-is_active" id="row_{$aclID}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$aclID}</td>
         </tr>
         {/foreach}
@@ -83,11 +83,9 @@
 </div>
 {elseif $action ne 1 and $action ne 2 and $action ne 8}
     <div class="messages status">
-    <dl>
-        <dt><img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/></dt>
+        <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
         {capture assign=crmURL}{crmURL q="action=add&reset=1"}{/capture}
-        <dd>{ts 1=$crmURL}There are no ACLs entered. You can <a href='%1'>add one</a>.{/ts}</dd>
-        </dl>
+        {ts 1=$crmURL}There are no ACLs entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
 {/if}
 </div>

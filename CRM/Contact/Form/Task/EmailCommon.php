@@ -156,6 +156,10 @@ class CRM_Contact_Form_Task_EmailCommon
             }
         }
 		
+        $toSetDefault = true;
+        if ( $form->_context == 'standalone' ) {
+            $toSetDefault = false;
+        }
     	// when form is submitted recompute contactIds
     	$allToEmails = array( );
     	if ( $to->getValue( ) ) {
@@ -168,6 +172,7 @@ class CRM_Contact_Form_Task_EmailCommon
     	            $form->_toContactEmails[] = $email;
 	            }
     	    }
+    	    $toSetDefault = true;
     	}
 
         //get the group of contacts as per selected by user in case of Find Activities
@@ -175,7 +180,8 @@ class CRM_Contact_Form_Task_EmailCommon
             $contact = $form->get( 'contacts' );
             $form->_contactIds = $contact;
         }
-    	if ( is_array ( $form->_contactIds ) ) {
+        
+    	if ( is_array ( $form->_contactIds ) && $toSetDefault ) {
             $returnProperties = array( 'sort_name' => 1, 'email' => 1, 'do_not_email' => 1,
                                        'on_hold' => 1, 'display_name' => 1, 'preferred_mail_format' => 1 );
         
@@ -303,6 +309,12 @@ class CRM_Contact_Form_Task_EmailCommon
         $cc         = CRM_Utils_Array::value( 'cc_id' , $formValues );
         $bcc        = CRM_Utils_Array::value( 'bcc_id', $formValues );
         $subject    = $formValues['subject'];
+
+        // CRM-5916: prepend case id hash to CiviCase-originating emails’ subjects
+        if ($form->_caseId) {
+            $hash = substr(sha1(CIVICRM_SITE_KEY . $form->_caseId), 0, 7);
+            $subject = "[case #$hash] $subject";
+        }
         
         // process message template
         require_once 'CRM/Core/BAO/MessageTemplates.php';

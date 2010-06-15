@@ -213,6 +213,7 @@ WHERE     openid = %1";
 
                 require_once 'CRM/Dedupe/Finder.php';
                 $dedupeParams = CRM_Dedupe_Finder::formatParams ( $params      , 'Individual' );
+                $dedupeParams['check_permission'] = false;
                 $ids          = CRM_Dedupe_Finder::dupesByParams( $dedupeParams, 'Individual' );
                 
                 if ( ! empty( $ids ) && defined( 'CIVICRM_UNIQ_EMAIL_PER_SITE' ) && CIVICRM_UNIQ_EMAIL_PER_SITE ) {
@@ -411,6 +412,7 @@ AND    domain_id    = %4
                 $dao =& CRM_Core_DAO::executeQuery( $query, $p );
             } else {
                 //else insert a new email record
+                require_once 'CRM/Core/DAO/Email.php';
                 $email = new CRM_Core_DAO_Email();
                 $email->contact_id  = $contactId;
                 $email->is_primary  = 1;

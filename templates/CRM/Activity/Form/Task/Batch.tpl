@@ -23,13 +23,14 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="batch-update form-item">
+<div class="crm-block crm-form-block crm-activity-task-batch-form-block">
 <fieldset>
 <div id="help">
     {ts}Update field values for each Activities as needed. Click <strong>Update Activities</strong> below to save all your changes. To set a field to the same value for ALL rows, enter that value for the first Activity and then click the <strong>Copy icon</strong> (next to the column title).{/ts}
 </div>	       
     <legend>{$profileTitle}</legend>
-         <table	>
+    <div class="crm-submit-buttons">{if $fields}{$form._qf_Batch_refresh.html}{/if}{include file="CRM/common/formButtons.tpl" location="bottom"}</div> 
+         <table>
 	  <thead class="sticky">
             <tr class="columnheader">
              {foreach from=$readOnlyFields item=fTitle key=fName}
@@ -62,9 +63,7 @@
               {/foreach}
            </tr>
          </table>
-         <dl>
-            <dt></dt><dd>{if $fields}{$form._qf_Batch_refresh.html}{/if} &nbsp; {$form.buttons.html}</dd>
-         </dl>
+         <div class="crm-submit-buttons">{if $fields}{$form._qf_Batch_refresh.html}{/if}{include file="CRM/common/formButtons.tpl" location="bottom"}</div>    
 </fieldset>
 </div>
 

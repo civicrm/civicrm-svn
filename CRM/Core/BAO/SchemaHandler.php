@@ -322,7 +322,7 @@ ADD UNIQUE INDEX `unique_entity_id` ( `entity_id` )";
             $dao =& CRM_Core_DAO::executeQuery( $sql );
     }
 
-    static function createIndexes(&$tables, $createIndexPrefix = 'index')
+    static function createIndexes(&$tables, $createIndexPrefix = 'index', $substrLenghts = array())
     {
         $queries = array();
 
@@ -349,7 +349,12 @@ ADD UNIQUE INDEX `unique_entity_id` ( `entity_id` )";
 
             // now check for all fields if the index exists
             foreach ( $fields as $field ) {
-                $names = array("index_{$field}", "FK_{$table}_{$field}", "UI_{$field}", "{$createIndexPrefix}_{$field}");
+                // handle indices over substrings, CRM-6245
+                // $lengthName is appended to index name, $lengthSize is the field size modifier
+                $lengthName = isset($substrLenghts[$table][$field]) ? "_{$substrLenghts[$table][$field]}"  : '';
+                $lengthSize = isset($substrLenghts[$table][$field]) ? "({$substrLenghts[$table][$field]})" : '';
+
+                $names = array("index_{$field}{$lengthName}", "FK_{$table}_{$field}{$lengthName}", "UI_{$field}{$lengthName}", "{$createIndexPrefix}_{$field}{$lengthName}");
 
                 // skip to the next $field if one of the above $names exists; handle multilingual for CRM-4126
                 foreach ($names as $name) {
@@ -363,10 +368,10 @@ ADD UNIQUE INDEX `unique_entity_id` ( `entity_id` )";
                 // if we're multilingual and the field is internationalised, do it for every locale
                 if ( !CRM_Utils_System::isNull( $locales ) and isset( $columns[$table][$field] ) ) {
                     foreach ($locales as $locale) {
-                        $queries[] = "CREATE INDEX {$createIndexPrefix}_{$field}_{$locale} ON {$table} ({$field}_{$locale})";
+                        $queries[] = "CREATE INDEX {$createIndexPrefix}_{$field}{$lengthName}_{$locale} ON {$table} ({$field}_{$locale}{$lengthSize})";
                     }
                 } else {
-                    $queries[] = "CREATE INDEX {$createIndexPrefix}_{$field} ON {$table} ({$field})";
+                    $queries[] = "CREATE INDEX {$createIndexPrefix}_{$field}{$lengthName} ON {$table} ({$field}{$lengthSize})";
                 }
             }
         }

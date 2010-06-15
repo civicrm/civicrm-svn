@@ -275,7 +275,8 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             $actionLinks = $activityActions->actionLinks( $activityTypeId,
                                                           CRM_Utils_Array::value( 'source_record_id', $row ),
                                                           $accessMailingReport,
-                                                          CRM_Utils_Array::value( 'activity_id', $row ) );
+                                                          CRM_Utils_Array::value( 'activity_id', $row ),
+                                                          $this->_key );
             $row['action'] = CRM_Core_Action::formLink( $actionLinks, null,
                                                         array( 'id'  => $result->activity_id,
                                                                'cid' => $result->contact_id,

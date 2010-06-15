@@ -24,7 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 {capture assign=docLink}{docURL page="CiviContribute Payment Processor Configuration"}{/capture}
-<div class="form-item crm-block crm-form-block">
 <div id="help">
     {ts}You can configure one or more Payment Processors for your CiviCRM installation. You must then assign an active Payment Processor to each <strong>Online Contribution Page</strong> and each paid <strong>Event</strong>.{/ts} {$docLink}
 </div>
@@ -48,12 +47,12 @@
             <th ></th>
         </tr>
         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class="crm-paymentProcessor {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
-	        <td class="crm-paymentProcessor-name">{$row.name}</td>	
-	        <td class="crm-paymentProcessor-payment_processor_type">{$row.payment_processor_type}</td>	
-            <td class="crm-paymentProcessor-description">{$row.description}</td>
-	        <td id="row_{$row.id}_status" class="crm-paymentProcessor-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-            <td class="crm-paymentProcessor-is_default">{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
+        <tr id="row_{$row.id}" class="crm-payment_processor {cycle values="odd-row,even-row"} {$row.class}{if NOT $row.is_active} disabled{/if}">
+            <td class="crm-payment_processor-name">{$row.name}</td>
+            <td class="crm-payment_processor-payment_processor_type">{$row.payment_processor_type}</td>
+            <td class="crm-payment_processor-description">{$row.description}</td>
+            <td id="row_{$row.id}_status" class="crm-payment_processor-is_active">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+            <td class="crm-payment_processor-is_default">{if $row.is_default eq 1}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" />{/if}&nbsp;</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
         </tr>
         {/foreach}
@@ -68,12 +67,9 @@
 </div>
 {elseif $action ne 1}
     <div class="messages status">
-    <dl>
-        <dt><div class="icon inform-icon"></div></dt>
+      <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL p='civicrm/admin/paymentProcessor' q="action=add&reset=1&pp=PayPal"}{/capture}
-        <dd>{ts 1=$crmURL}There are no Payment Processors entered. You can <a href='%1'>add one</a>.{/ts}</dd>
-        </dl>
-    </div>    
+      {ts 1=$crmURL}There are no Payment Processors entered. You can <a href='%1'>add one</a>.{/ts}
+     </div>    
 {/if}
 {/if}
-</div>

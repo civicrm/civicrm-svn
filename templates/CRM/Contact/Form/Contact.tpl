@@ -40,35 +40,36 @@
  </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body" id="contactDetails">
     <div id="contactDetails">
-        <div class="section contact_basic_information-section">
+        <div class="crm-section contact_basic_information-section">
             {include file="CRM/Contact/Form/Edit/$contactType.tpl"}
         </div>
-        <table class="section contact_information-section form-layout-compressed">
+        <table class="crm-section contact_information-section form-layout-compressed">
             {foreach from=$blocks item="label" key="block"}
                {include file="CRM/Contact/Form/Edit/$block.tpl"}
             {/foreach}
 		</table>
-		<table class="section contact_source-section form-layout-compressed">
+		<table class="crm-section contact_source-section form-layout-compressed">
             <tr class="last-row">
               <td>{$form.contact_source.label}<br />
-                  {$form.contact_source.html}
+                  {$form.contact_source.html|crmReplace:class:twenty}
               </td>
               <td>{$form.external_identifier.label}<br />
-                  {$form.external_identifier.html}
+                  {$form.external_identifier.html|crmReplace:class:six}
               </td>
               {if $contactId}
 				<td><label for="internal_identifier">{ts}Internal Id{/ts}</label><br />{$contactId}</td>
 			  {/if}
             </tr>            
         </table>
-	   <table class="image_URL-section">
+	   <table class="image_URL-section form-layout-compressed">
 	    <tr>
-	      <td>{$form.image_URL.label}</td>
-	      <td>{$form.image_URL.html}
- 	          {if $imageURL}
- 	               {include file="CRM/Contact/Page/ContactImage.tpl"}
- 	          {/if}
- 	      </td>
+	        <td>
+    	        {$form.image_URL.label}<br />
+    	        {$form.image_URL.html|crmReplace:class:twenty}
+     	        {if $imageURL}
+     	            {include file="CRM/Contact/Page/ContactImage.tpl"}
+     	        {/if}
+ 	        </td>
  	    </tr>
         </table>
 

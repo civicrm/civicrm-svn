@@ -25,17 +25,17 @@
 *}
 {* this div is being used to apply special css *}
     {if $section eq 1}
-    <div class="crm-block crm-content-block crm-report-form-block">
+    <div class="crm-block crm-content-block crm-report-layoutGraph-form-block">
         {*include the graph*}
         {include file="CRM/Report/Form/Layout/Graph.tpl"}
     </div>
     {elseif $section eq 2}
-    <div class="crm-block crm-content-block crm-report-form-block">
+    <div class="crm-block crm-content-block crm-report-layoutTable-form-block">
         {*include the table layout*}
         {include file="CRM/Report/Form/Layout/Table.tpl"}
 	</div>
     {else}
-    <div class="crm-block crm-form-block crm-report-form-block">
+    <div class="crm-block crm-form-block crm-report-field-form-block">
         {include file="CRM/Report/Form/Fields.tpl"}
     </div>
     

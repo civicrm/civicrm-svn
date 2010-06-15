@@ -23,12 +23,11 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item crm-block crm-form-block crm-uf-form-block">
+<div class="crm-block crm-form-block crm-uf-form-block">
 <div id="help">
     {ts}These settings define the CMS variables that are used with CiviCRM.{/ts}
 </div>
-<div class="form-item">
-<fieldset><legend>{ts}CMS Settings{/ts}</legend>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
       <table class="form-layout-compressed">
          <tr class="crm-uf-form-block-userFrameworkVersion">
             <td class="label">{$form.userFrameworkVersion.label}</td>
@@ -39,10 +38,8 @@
             <td>{$form.userFrameworkUsersTableName.html}</td>
         </tr>
         </table>
-            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 <div class="spacer"></div>
-</fieldset>
-</div>
 {if $tablePrefixes}
 <div class="form-item">
 <fieldset>

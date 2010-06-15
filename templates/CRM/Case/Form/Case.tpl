@@ -27,10 +27,10 @@
    Note: 1. We will include all the activity fields here however each activity type file may build (via php) only those required by them. 
          2. Each activity type file can include its case fields in its own template, so that they will be included during activity edit.
 *}
-<div class="crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-case-form-block">
 
 {if $action neq 8 && $action neq 32768}
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {/if}
 
 <h3>{if $action eq 8}{ts}Delete Case{/ts}{elseif $action eq 32768}{ts}Restore Case{/ts}{/if}</h3>
@@ -121,10 +121,12 @@
 
 {/if}
 
+<tr class="crm-case-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>	     
+
 </table>
 {/if}	
 
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 
 {* include jscript to warn if unsaved form field changes *}
 {include file="CRM/common/formNavigate.tpl"}

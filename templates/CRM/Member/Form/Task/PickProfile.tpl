@@ -23,19 +23,15 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
-<fieldset>
-    <legend>{ts}Batch Update Members via Profile{/ts}</legend>
- <table>
-     <tr class="crm-membership-form-block-uf_group_id">
-       <td>{$form.uf_group_id.label}</td><td>{$form.uf_group_id.html}</td>
+<div class="crm-form crm-form-block crm-member-task-pickprofile-form-block">
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+   <table class="form-layout-compressed">
+     <tr class="crm-member-task-pickprofile-form-block-uf_group_id">
+       <td class="label">{$form.uf_group_id.label}</td><td>{$form.uf_group_id.html}</td>
      </tr>
      <tr>	
        <td></td><td>{include file="CRM/Member/Form/Task.tpl"}</td>
      </tr>
-     <tr>
-       <td></td><td>{include file="CRM/common/formButtons.tpl"}</td>
-     </tr>
- </table>
-</fieldset>
+ </table>   
+   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

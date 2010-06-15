@@ -24,8 +24,13 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing relationship types  *}
-<div class="form-item">
+<div class="crm-block crm-form-block crm-relationship-type-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Relationship Type{/ts}{elseif $action eq 2}{ts}Edit Relationship Type{/ts}{elseif $action eq 8}{ts}Delete Relationship Type{/ts}{else}{ts}View Relationship Type{/ts}{/if}</legend>
+    {if $action neq 4} {* action is not view *}
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+    {else}
+        <div class="crm-submit-buttons">{$form.done.html}</div>
+    {/if}
 	{if $action eq 8}
       <div class="messages status">
           <div class="icon inform-icon"></div>     
@@ -35,39 +40,39 @@
       </div>
      {else}
 	    <table class="form-layout-compressed">
-            <tr class="crm-relationship-form-block-label_a_b">
+            <tr class="crm-relationship-type-form-block-label_a_b">
                 <td class="label">{$form.label_a_b.label}</td>
                 <td>{$form.label_a_b.html}<br />
                 <span class="description">{ts}Label for the relationship from Contact A to Contact B. EXAMPLE: Contact A is 'Parent of' Contact B.{/ts}</span></td>
             </tr>
-            <tr class="crm-relationship-form-block-label_b_a">
+            <tr class="crm-relationship-type-form-block-label_b_a">
                 <td class="label">{$form.label_b_a.label}</td>
                 <td>{$form.label_b_a.html}<br />
                 <span class="description">{ts}Label for the relationship from Contact B to Contact A. EXAMPLE: Contact B is 'Child of' Contact A. You may leave this blank for relationships where the name is the same in both directions (e.g. Spouse).{/ts}</span></td>
             </tr>
-            <tr class="crm-relationship-form-block-contact_types_a">
+            <tr class="crm-relationship-type-form-block-contact_types_a">
                 <td class="label">{$form.contact_types_a.label}</td>
                 <td>{$form.contact_types_a.html}</td>
             </tr>
-            <tr class="crm-relationship-form-block-contact_types_b">
+            <tr class="crm-relationship-type-form-block-contact_types_b">
                 <td class="label">{$form.contact_types_b.label}</td>
                 <td>{$form.contact_types_b.html}</td>
             </tr>
-            <tr class="crm-relationship-form-block-description">
+            <tr class="crm-relationship-type-form-block-description">
                 <td class="label">{$form.description.label}</td>
                 <td>{$form.description.html}</td>
             </tr>
-            <tr class="crm-relationship-form-block-is_active">
+            <tr class="crm-relationship-type-form-block-is_active">
                 <td class="label">{$form.is_active.label}</td>
                 <td>{$form.is_active.html}</td>
             </tr>
-        
+        </table>
     {/if}
 	{if $action neq 4} {* action is not view *}
-            <tr><td></td><td>{include file="CRM/common/formButtons.tpl"}</td>
+            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
         {else}
-            <td></td><td>{$form.done.html}</td></tr>
+            <div class="crm-submit-buttons">{$form.done.html}</div>
         {/if}
-        </table>
+        
 </fieldset>
 </div>

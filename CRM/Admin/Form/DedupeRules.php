@@ -168,6 +168,8 @@ UPDATE civicrm_dedupe_rule_group
         $ruleDao->delete();
         $ruleDao->free();
 
+        $substrLenghts = array();
+
         $tables = array( );
         for ($count = 0; $count < self::RULES_COUNT; $count++) {
             if ( ! CRM_Utils_Array::value( "where_$count", $values ) ) {
@@ -191,12 +193,18 @@ UPDATE civicrm_dedupe_rule_group
                 }
                 $tables[$table][] = $field;
             }
+
+            // CRM-6245: we must pass table/field/length triples to the createIndexes() call below
+            if ($length) {
+                if (!isset($substrLenghts[$table])) $substrLenghts[$table] = array();
+                $substrLenghts[$table][$field] = $length;
+            }
         }
 
         // also create an index for this dedupe rule
         // CRM-3837
         require_once 'CRM/Core/BAO/SchemaHandler.php';
-        CRM_Core_BAO_SchemaHandler::createIndexes( $tables, 'dedupe_index' );
+        CRM_Core_BAO_SchemaHandler::createIndexes( $tables, 'dedupe_index', $substrLenghts );
                 
     }
     

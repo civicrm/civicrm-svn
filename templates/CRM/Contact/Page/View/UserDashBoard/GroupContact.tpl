@@ -27,10 +27,8 @@
     <div class="view-content"> 
         {if $groupCount eq 0 }
             <div class="messages status">
-                <dl>
-                    <dt><div class="icon inform-icon"></div></dt>
-                    <dd>{ts}You are not currently subscribed to any Groups.{/ts}</dd>
-                </dl>
+                    <div class="icon inform-icon"></div>
+                    {ts}You are not currently subscribed to any Groups.{/ts}
             </div>
         {/if}
     

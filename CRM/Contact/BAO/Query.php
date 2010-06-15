@@ -256,7 +256,7 @@ class CRM_Contact_BAO_Query
      * @var array
      * @static
      */
-    static $_activityRole = null;
+    static $_activityRole;
 
     /**
      * use distinct component clause for component searches
@@ -387,7 +387,10 @@ class CRM_Contact_BAO_Query
         $this->_paramLookup = array( );
 
         $this->_customQuery = null; 
- 
+        
+        //reset cache, CRM-5803
+        self::$_activityRole = null;
+        
         $this->_select['contact_id']      = 'contact_a.id as contact_id';
         $this->_element['contact_id']     = 1; 
         $this->_tables['civicrm_contact'] = 1;
@@ -1203,6 +1206,8 @@ class CRM_Contact_BAO_Query
             $this->group( $values );
             return;
 
+            // case tag comes from find contacts
+        case 'tag':
         case 'contact_tags':
             $this->tag( $values );
             return;
@@ -2821,7 +2826,7 @@ WHERE  id IN ( $groupIDs )
             $sqlValue[] = "( $sql like '%" . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $val . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . "%' ) ";
             $showValue[] =  $commPref[$val];
         }
-        $this->_where[$grouping][] = implode( ' OR ', $sqlValue ); 
+        $this->_where[$grouping][] = "( ". implode( ' OR ', $sqlValue ). " )"; 
         $this->_qill[$grouping][]  = ts('Preferred Communication Method') . " $op " . implode(' ' . ts('or') . ' ', $showValue);
     }
 

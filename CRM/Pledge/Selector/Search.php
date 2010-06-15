@@ -188,33 +188,35 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
      * @access public
      *
      */
-    static function &links( $hideOption )
+    static function &links( $hideOption, $key = null )
     {
+        $extraParams = ( $key ) ? "&key={$key}" : null;
+        
         $cancelExtra = ts('Cancelling this pledge will also cancel any scheduled (and not completed) pledge payments. This action cannot be undone. Do you want to continue?');
         self::$_links = array(
                               CRM_Core_Action::VIEW   => array(
                                                                'name'     => ts('View'),
                                                                'url'      => 'civicrm/contact/view/pledge',
-                                                               'qs'       => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=pledge',
+                                                               'qs'       => 'reset=1&id=%%id%%&cid=%%cid%%&action=view&context=%%cxt%%&selectedChild=pledge'.$extraParams,
                                                                'title'    => ts('View Pledge'),
                                                                ),
                               CRM_Core_Action::UPDATE => array(
                                                                'name'     => ts('Edit'),
                                                                'url'      => 'civicrm/contact/view/pledge',
-                                                               'qs'       => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                               'qs'       => 'reset=1&action=update&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                'title'    => ts('Edit Pledge'),
                                                                ),
                               CRM_Core_Action::DETACH => array(
                                                                'name'     => ts('Cancel'),
                                                                'url'      => 'civicrm/contact/view/pledge',
-                                                               'qs'       => 'reset=1&action=detach&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                               'qs'       => 'reset=1&action=detach&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                'extra'    => 'onclick = "return confirm(\'' . $cancelExtra . '\');"',
                                                                'title'    => ts('Cancel Pledge'),
                                                                ),
                               CRM_Core_Action::DELETE => array(
                                                                'name'     => ts('Delete'),
                                                                'url'      => 'civicrm/contact/view/pledge',
-                                                               'qs'       => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%',
+                                                               'qs'       => 'reset=1&action=delete&id=%%id%%&cid=%%cid%%&context=%%cxt%%'.$extraParams,
                                                                'title'    => ts('Delete Pledge'),
                                                                ),
                               ); 
@@ -318,7 +320,8 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
              
              $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->pledge_id;
              
-             $row['action']   = CRM_Core_Action::formLink( self::links( $hideOption ), $mask,
+             $row['action']   = CRM_Core_Action::formLink( self::links( $hideOption, $this->_key ), 
+                                                           $mask,
                                                            array( 'id'  => $result->pledge_id,
                                                                   'cid' => $result->contact_id,
                                                                   'cxt' => $this->_context ) );

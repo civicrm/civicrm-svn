@@ -602,6 +602,11 @@ class CRM_Utils_Rule
         }
         return false;
     }
+
+    static function qfKey( $key ) {
+        require_once 'CRM/Core/Key.php';
+        return ( $key ) ? CRM_Core_Key::valid( $key ) : false;
+    }
 }
 
 

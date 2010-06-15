@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-mailing-form-block">
+<div class="crm-block crm-form-block crm-mailing-test-form-block">
 {include file="CRM/common/WizardHeader.tpl"}
 <div id="help">
     {ts}It's a good idea to test your mailing by sending it to yourself and/or a selected group of people in your organization. You can also view your content by clicking (+) Preview Mailing.{/ts} {help id="test-intro"}
@@ -34,8 +34,8 @@
 <fieldset>
   <legend>Test Mailing</legend>
   <table class="form-layout">
-    <tr class="crm-mailing-form-block-test_email"><td class="label">{$form.test_email.label}</td><td>{$form.test_email.html} {ts}(filled with your contact's token values){/ts}</td></tr>
-    <tr class="crm-mailing-form-block-test_group"><td class="label">{$form.test_group.label}</td><td>{$form.test_group.html}</td></tr>
+    <tr class="crm-mailing-test-form-block-test_email"><td class="label">{$form.test_email.label}</td><td>{$form.test_email.html} {ts}(filled with your contact's token values){/ts}</td></tr>
+    <tr class="crm-mailing-test-form-block-test_group"><td class="label">{$form.test_group.label}</td><td>{$form.test_group.html}</td></tr>
     <tr><td></td><td>{$form.sendtest.html}</td>  
   </table>
 </fieldset>
@@ -47,9 +47,9 @@
     </div><!-- /.crm-accordion-header -->
     <div class="crm-accordion-body">
         <table class="form-layout">
-          <tr><td class="label">{ts}Subject:{/ts}</td><td>{$subject}</td></tr>
+          <tr class="crm-mailing-test-form-block-subject"><td class="label">{ts}Subject:{/ts}</td><td>{$subject}</td></tr>
     {if $preview.attachment}
-          <tr><td class="label">{ts}Attachment(s):{/ts}</td><td>{$preview.attachment}</td></tr>
+          <tr class="crm-mailing-test-form-block-attachment"><td class="label">{ts}Attachment(s):{/ts}</td><td>{$preview.attachment}</td></tr>
     {/if}
           {if $preview.text_link}
           <tr><td class="label">{ts}Text Version:{/ts}</td><td><iframe height="300" src="{$preview.text_link}" width="80%"><a href="{$preview.text_link}" onclick="window.open(this.href); return false;">{ts}Text Version{/ts}</a></iframe></td></tr>
@@ -61,9 +61,7 @@
     </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->    
 
-<table>
-  <tr><td></td><td>{$form.buttons.html}</td></tr>
-</table>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
     
 </div><!-- / .crm-form-block -->
 

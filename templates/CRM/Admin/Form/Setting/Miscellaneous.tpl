@@ -24,6 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div class="crm-block crm-form-block crm-miscellaneous-form-block">
+  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <fieldset>
     <table class="form-layout">
         <tr class="crm-miscellaneous-form-block-dashboardCacheTimeout">
@@ -75,6 +76,6 @@
             <td>{$form.recaptchaPrivateKey.html}</td>
         </tr>
         </table>
-           <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+           <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     </fieldset>
 </div>

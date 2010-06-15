@@ -27,7 +27,7 @@
 <div id="help">
     {ts}Use this screen to configure formats for date display and date input fields. Defaults are provided for standard United States formats. Settings use standard POSIX specifiers.{/ts} {help id='date-format'}
 </div>
-<div class="form-item">
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <fieldset><legend>{ts}Date Display{/ts}</legend>
    <table class="form-layout-compressed">
        <tr class="crm-date-form-block-dateformatDatetime">
@@ -75,7 +75,6 @@
        </tr>
    </table>
 </fieldset>
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 <div class="spacer"></div>
-</div>
 </div>

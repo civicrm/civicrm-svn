@@ -23,8 +23,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item form-item crm-block crm-form-block crm-localization-form-block">
-
+<div class="crm-block crm-form-block crm-localization-form-block">
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"} </div>
     <fieldset><legend>{ts}Language and Currency{/ts}</legend>    
         <table class="form-layout-compressed">
             <tr class="crm-localization-form-block-lcMessages">
@@ -146,7 +146,7 @@
       </table>
     </fieldset>
     <div class="crm-submit-buttons">
-        {include file="CRM/common/formButtons.tpl"}
+        {include file="CRM/common/formButtons.tpl" location="bottom"}
     </div>
 <div class="spacer"></div>
 </div>
