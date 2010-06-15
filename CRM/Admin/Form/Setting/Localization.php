@@ -111,7 +111,7 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
 
         $country = array( ) ;
         CRM_Core_PseudoConstant::populate( $country, 'CRM_Core_DAO_Country', true, 'name', 'is_active' );
-        $i18n->localizeArray($country);
+        $i18n->localizeArray($country, array('context' => 'country'));
         asort($country);
         
         $includeCountry =& $this->addElement('advmultiselect', 'countryLimit', 

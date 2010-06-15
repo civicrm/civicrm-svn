@@ -419,7 +419,7 @@ ORDER BY parent_id, weight";
         // want to use ts() as it would throw the ts-extractor off
         $i18n =& CRM_Core_I18n::singleton();
 
-        $name       = $i18n->crm_translate($value['attributes']['label']);
+        $name       = $i18n->crm_translate($value['attributes']['label'], array('context' => 'menu'));
         $url        = str_replace('&', '&amp;', $value['attributes']['url']);
         $permission = $value['attributes']['permission'];
         $operator   = $value['attributes']['operator'];
