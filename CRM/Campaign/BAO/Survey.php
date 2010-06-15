@@ -38,6 +38,29 @@ require_once 'CRM/Campaign/DAO/Survey.php';
 Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
 {
     /**
+     * Takes a bunch of params that are needed to match certain criteria and
+     * retrieves the relevant objects. Typically the valid params are only
+     * campaign_id. 
+     *
+     * @param array  $params   (reference ) an assoc array of name/value pairs
+     * @param array  $defaults (reference ) an assoc array to hold the flattened values
+     *
+     * @access public
+     */
+    static function retrieve ( &$params, &$defaults ) 
+    {
+        $dao = new CRM_Campaign_DAO_Survey( );
+        
+        $dao->copyValues($params);
+        
+        if( $dao->find( true ) ) {
+            CRM_Core_DAO::storeValues( $dao, $defaults );
+            return $dao;
+        }
+        return null;  
+    }
+
+    /**
      * takes an associative array and creates a Survey object
      *
      * the function extract all the params it needs to initialize the create a
@@ -54,14 +77,20 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
             return;
         }
         
-        $session = CRM_Core_Session::singleton();         
-        $survey  = new CRM_Campaign_DAO_Survey();
-        $survey->copyValues( $params );
-        $survey->save();
+        $dao = new CRM_Campaign_DAO_Survey();
+        $dao->copyValues( $params );
+        $dao->save();
 
         return $dao;
     }
-    
+
+     /**
+     * Function to get Survey Details 
+     * 
+     * @param boolean $all
+     * @param int $id
+     * @static
+     */
     static function getSurvey( $all = false, $id = false ) {
         $survey = array( );
         $dao = new CRM_Campaign_DAO_Survey( );
@@ -79,7 +108,39 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         
         return $survey;
     }
-    
-}
 
-?>
+    /**
+     * update the is_active flag in the db
+     *
+     * @param int      $id        id of the database record
+     * @param boolean  $is_active value we want to set the is_active field
+     *
+     * @return Object             DAO object on sucess, null otherwise
+     * @static
+     */ 
+    static function setIsActive( $id, $is_active ) 
+    {
+        return CRM_Core_DAO::setFieldValue( 'CRM_Campaign_DAO_Survey', $id, 'is_active', $is_active );
+    }
+
+    /**
+     * Function to delete the survey
+     *
+     * @param int $id survey id
+     *
+     * @access public
+     * @static
+     *
+     */
+    static function del( $id )
+    { 
+        if ( !$id ) {
+            return null;
+        }
+
+        $dao     = new CRM_Campaign_DAO_Survey( );
+        $dao->id = $id;
+        return $dao->delete( );
+    }
+
+}

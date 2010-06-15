@@ -44,34 +44,19 @@ require_once 'CRM/Campaign/BAO/Survey.php';
 
 class CRM_Campaign_Form_Survey extends CRM_Core_Form
 {
+    /**
+     * The id of the object being edited
+     *
+     * @var int
+     */
+    protected $_surveyId;
     
     /**
-     * The id of the object being edited / created
+     * action
      *
      * @var int
      */
-    public $_surveyId;
-    
-    /**
-     * The id of survey type 
-     *
-     * @var int
-     */
-    public $_surveyTypeId;
-    
-    /**
-     * The id of campaign type 
-     *
-     * @var int
-     */
-    public $_campaignTypeId;
-
-    /**
-     * The id of activity type 
-     *
-     * @var int
-     */
-    public $_activityTypeId;
+    protected $_action;
     
     /**
      * Function to set variables up before form is built
@@ -83,9 +68,12 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
      */
     public function preProcess()
     {
-        $this->_surveyId = CRM_Utils_Request::retrieve('sid', 'Positive', $this);
         $this->_action   = CRM_Utils_Request::retrieve('action', 'String', $this );
-
+        
+        if ( $this->_action & ( CRM_Core_Action::UPDATE | CRM_Core_Action::DELETE ) ) {
+            $this->_surveyId = CRM_Utils_Request::retrieve('id', 'Positive', $this, true);
+        }
+        $this->assign( 'action', $this->_action );
     }
     
     /**
@@ -100,7 +88,12 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
     function setDefaultValues()
     {
         $defaults = array();
-        
+
+        if ( $this->_surveyId ) {
+            $params = array( 'id' => $this->_surveyId );
+            CRM_Campaign_BAO_Survey::retrieve( $params, $defaults );
+        }
+
         return $defaults;
     }
 
@@ -114,19 +107,20 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
      */
     public function buildQuickForm()
     {
-        // add buttons
-        $this->addButtons(array(
-                                array ('type'      => 'next',
-                                       'name'      => ts('Save'),
-                                       'isDefault' => true),
-                                array ('type'      => 'next',
-                                       'name'      => ts('Save and New'),
-                                       'subName'   => 'new'),
-                                array ('type'      => 'cancel',
-                                       'name'      => ts('Cancel')),
-                                )
-                          ); 
-        
+
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
+            
+            $this->addButtons( array(
+                                     array ( 'type'      => 'next',
+                                             'name'      => ts('Delete'),
+                                             'isDefault' => true   ),
+                                     array ( 'type'      => 'cancel',
+                                             'name'      => ts('Cancel') ),
+                                     )
+                               );
+            return;
+        }
+
         require_once 'CRM/Core/OptionGroup.php';
         require_once 'CRM/Event/PseudoConstant.php';
         
@@ -158,9 +152,12 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         
         // release frequency interval
         $this->add('text', 'release_frequency_interval', ts('Release Frequency Interval'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency_interval'), true );
+
         $this->addRule('release_frequency_interval', ts('Frequenct interval should be a positive number') , 'positiveInteger');
+
         // max number of contacts
         $this->add('text', 'max_number_of_contacts', ts('Maximum number of contacts '), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'max_number_of_contacts') );
+
         $this->addRule('max_number_of_contacts', ts('Maximum number of contacts should be a positive number') , 'positiveInteger');
         
         // default number of contacts
@@ -172,9 +169,23 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         
         // is default ?
         $this->add('checkbox', 'is_default', ts('Is Default?'));
+
+        // add buttons
+        $this->addButtons(array(
+                                array ('type'      => 'next',
+                                       'name'      => ts('Save'),
+                                       'isDefault' => true),
+                                array ('type'      => 'next',
+                                       'name'      => ts('Save and New'),
+                                       'subName'   => 'new'),
+                                array ('type'      => 'cancel',
+                                       'name'      => ts('Cancel')),
+                                )
+                          ); 
         
         // add a form rule to check default value
         $this->addFormRule( array( 'CRM_Campaign_Form_Survey', 'formRule' ),$this );
+
     }
     
     /**
@@ -207,6 +218,14 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $params['last_modified_date'] = date('YmdHis');
         
         if ( $this->_surveyId ) {
+
+            if ( $this->_action & CRM_Core_Action::DELETE ) {
+                CRM_Campaign_BAO_Survey::del( $this->_surveyId );
+                CRM_Core_Session::setStatus(ts(' Survey has been deleted.'));
+                $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/browse', 'reset=1' ) ); 
+                return;
+            }
+
             $params['id'] = $this->_surveyId;
         } else { 
             $params['created_id']   = $session->get( 'userID' );
@@ -223,7 +242,9 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $session = CRM_Core_Session::singleton( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another Survey.'));
-            $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/add', 'reset=1&action=add' ) );
+            $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/manage', 'reset=1&action=add' ) );
+        } else {
+            $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/browse', 'reset=1' ) ); 
         }
     }
  }
