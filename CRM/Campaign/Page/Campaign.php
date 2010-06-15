@@ -36,30 +36,90 @@ require_once 'CRM/Core/Page.php';
 require_once 'CRM/Campaign/BAO/Campaign.php';
 
 /**
- * Page for displaying Surveys
+ * Page for displaying Campaigns
  */
 class CRM_Campaign_Page_Campaign extends CRM_Core_Page 
 {
     
+    /**
+     * The action links that we need to display for the browse screen
+     *
+     * @var array
+     */
+    private static $_actionLinks;
+     /**
+     * Get the action links for this page.
+     *
+     * @return array $_actionLinks
+     *
+     */
+    function &actionLinks()
+    {
+        // check if variable _actionsLinks is populated
+        if (!isset(self::$_actionLinks)) {
+           $deleteExtra = ts('Are you sure you want to delete this Campaign?');
+            self::$_actionLinks = array(
+                                        CRM_Core_Action::UPDATE  => array(
+                                                                          'name'  => ts('Edit'),
+                                                                          'url'   => 'civicrm/campaign/manage',
+                                                                          'qs'    => 'reset=1&action=update&id=%%id%%',
+                                                                          'title' => ts('Update Campaign') 
+                                                                          ),
+                                        CRM_Core_Action::DISABLE => array(
+                                                                          'name'  => ts('Disable'),
+                                                                          'title' => ts('Disable Campaign'),
+                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Campaign' . '\',\'' . 'enable-disable' . '\' );"',
+                                                                          'ref'   => 'disable-action'
+                                                                          ),
+                                        CRM_Core_Action::ENABLE  => array(
+                                                                          'name'  => ts('Enable'),
+                                                                          'title' => ts('Enable Campaign'),
+                                                                          'extra' => 'onclick = "enableDisable( %%id%%,\''. 'CRM_Campaign_BAO_Campaign' . '\',\'' . 'disable-enable' . '\' );"',
+                                                                          'ref'   => 'enable-action',
+                                                                          ),
+                                        CRM_Core_Action::DELETE  => array(
+                                                                          'name'  => ts('Delete'),
+                                                                          'url'   => 'civicrm/campaign/manage',
+                                                                          'qs'    => 'action=delete&reset=1&id=%%id%%',
+                                                                          'title' => ts('Delete Campaign'),
+                                                                          ),
+                                        );
+        }
+        return self::$_actionLinks;
+    }
+
     function browse( ) {
-        $campaigns = CRM_Campaign_BAO_Campaign::getCampaign( );
+        $campaigns = CRM_Campaign_BAO_Campaign::getCampaign( true );
        
         if ( !empty($campaigns) ) {
             require_once 'CRM/Campaign/BAO/Campaign.php';
             $campaignType = CRM_Core_PseudoConstant::campaignType();
             $campaignStatus  = CRM_Core_PseudoConstant::campaignStatus();
-            foreach( $campaigns as $cmpid => $campaign ) {
-                $campaigns[$cmpid]['campaign_id']    = $campaign[$survey['campaign_id']];
+                       
+            foreach( $campaigns as $cmpid => $campaign ) { 
+                $action = array_sum(array_keys($this->actionLinks()));
+                if ( $campaign['is_active'] ) {
+                    $action -= CRM_Core_Action::DISABLE;
+                } else {
+                    $action -= CRM_Core_Action::ENABLE;
+                }
+                $campaigns[$cmpid]['campaign_id']    = $campaign['id'];
                 $campaigns[$cmpid]['title'] = $campaign['title'];
                 $campaigns[$cmpid]['name'] = $campaign['name'];
                 $campaigns[$cmpid]['description'] = $campaign['description'];
                 $campaigns[$cmpid]['campaign_type_id'] = $campaignType[$campaign['campaign_type_id']];
                 $campaigns[$cmpid]['status_id'] = $campaignStatus[$campaign['status_id']];
+                $campaigns[$cmpid]['action'] = CRM_Core_Action::formLink(self::actionLinks(), $action, 
+                                                                          array('id' => $campaign['id']));
                
             }
         }
-       
+        
         $this->assign('campaigns', $campaigns);
+    
+        $addCampaignUrl = CRM_Utils_System::url( "civicrm/campaign/manage",
+                                               'reset=1&action=add' );
+        $this->assign('addCampaign', $addCampaignUrl);
     }
     
     function run( ) {

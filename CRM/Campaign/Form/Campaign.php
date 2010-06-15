@@ -45,8 +45,12 @@ require_once 'CRM/Core/PseudoConstant.php';
 
 class CRM_Campaign_Form_Campaign extends CRM_Core_Form
 {
-    
-    public $_action;
+    /**
+     * action
+     *
+     * @var int
+     */
+    protected $_action;
     
     /**
      * the id of the campaign we are proceessing
@@ -54,12 +58,17 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
      * @var int
      * @protected
      */
-    public $_campaignId;
+    protected $_campaignId;
     
     public function preProcess()
     {
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this );
-        $this->_campaignId = CRM_Utils_Request::retrieve('cmpid', 'Positive', $this );
+               
+        if ( $this->_action & ( CRM_Core_Action::UPDATE | $this->_action & CRM_Core_Action::DELETE ) ) {
+            $this->_campaignId = CRM_Utils_Request::retrieve('id', 'Positive', $this , true);
+        }
+        
+        $this->assign( 'action', $this->_action );
     }
     
     /**
@@ -72,6 +81,8 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
     function setDefaultValues( ) 
     {
         $defaults = array();
+        
+        
         // if we are editing....
         if ( isset( $this->_campaignId ) ) {
             $params = array( 'id' => $this->_campaignId );
@@ -95,12 +106,25 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         if ( !isset( $defaults['is_active'] ) ) {
             $defaults['is_active'] = 1;
         }
-       
         return $defaults;
+       
     }
     
     public function buildQuickForm()
     {
+        if ( $this->_action & CRM_Core_Action::DELETE ) {
+            
+            $this->addButtons( array(
+                                     array ( 'type'      => 'next',
+                                             'name'      => ts('Delete'),
+                                             'isDefault' => true   ),
+                                     array ( 'type'      => 'cancel',
+                                             'name'      => ts('Cancel') ),
+                                     )
+                               );
+            return;
+        }
+
         $this->applyFilter('__ALL__','trim');
         $attributes = CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Campaign');
        
@@ -153,7 +177,9 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         // is this Campaign active
         $this->addElement('checkbox', 'is_active', ts('Is this Campaign Active?') );
 
-       $this->addButtons(array(
+       
+
+        $this->addButtons(array(
                                 array ('type'      => 'next',
                                        'name'      => ts('Save'),
                                        'isDefault' => true),
@@ -196,6 +222,19 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         // store the submitted values in an array
         $params = $this->controller->exportValues( $this->_name );
         $session = CRM_Core_Session::singleton( );
+        
+         if ( isset( $this->_campaignId ) ) {
+             if ( $this->_action & CRM_Core_Action::DELETE ) {
+                CRM_Campaign_BAO_Campaign::del( $this->_campaignId );
+                CRM_Core_Session::setStatus(ts(' Campaign has been deleted.'));
+                $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/browse', 'reset=1' ) ); 
+                return;
+            }
+            $params['id'] = $this->_campaignId;
+        } else {
+            $params['created_id']   = $session->get( 'userID' );
+            $params['created_date'] = date('YmdHis');
+        }
         // format params
         $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'], $params['start_date_time'] );
         $params['end_date'  ] = CRM_Utils_Date::processDate( $params['end_date'], $params['end_date_time'], true );
@@ -203,14 +242,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         $params['last_modified_id'] = $session->get( 'userID' );
         $params['last_modified_date'] = date('YmdHis');
         
-        if ( $this->_action & CRM_Core_Action::ADD ) { 
-            $params['created_id']   = $session->get( 'userID' );
-            $params['created_date'] = date('YmdHis');
-        } 
-        
-        if ( isset( $this->_campaignId ) ) {
-            $params['id'] = $this->_campaignId;
-        }
+       
         
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $result = CRM_Campaign_BAO_Campaign::create( $params );
@@ -219,15 +251,17 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
             $statusMsg = ts( 'Campaign '.$result->name.' has been saved. ' );
             $session = CRM_Core_Session::singleton();
             CRM_Core_Session::setStatus( $statusMsg );
-            $session->pushUserContext(CRM_Utils_System::url('civicrm/dashboard', 'reset=1'));
+            $session->pushUserContext(CRM_Utils_System::url('civicrm/campaign/browse', 'reset=1'));
         }
         
         $buttonName = $this->controller->getButtonName( );
         $session = CRM_Core_Session::singleton( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another Campaign.'));
-            $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/add', 'reset=1&action=add' ) );
+            $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/manage', 'reset=1&action=add' ) );
             
+        } else {
+            $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/browse', 'reset=1' ) ); 
         }
     }    
 }

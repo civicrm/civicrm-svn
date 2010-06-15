@@ -24,9 +24,18 @@
  +--------------------------------------------------------------------+
 *}
 <div class="crm-block crm-form-block crm-campaign-form-block">
-    <div class="crm-submit-buttons">
+<div class="crm-submit-buttons">
         {include file="CRM/common/formButtons.tpl" location="top"}
-    </div>
+</div>
+{if $action eq 8}
+  <table class="form-layout">
+    <tr>
+      <td colspan="2">
+        <div class="status"><div class="icon inform-icon"></div>&nbsp;{ts}Are you sure you want to delete this Campaign?{/ts}</div>
+      </td>
+    </tr>
+  </table>
+{else}
 
     <table class="form-layout-compressed">
     	<tr class="crm-campaign-form-block-name">
@@ -72,7 +81,8 @@
 	</tr>
     </table>
 
-    <div class="crm-submit-buttons">
+{/if}
+<div class="crm-submit-buttons">
         {include file="CRM/common/formButtons.tpl" location="top"}
-    </div>
+</div>
 </div>

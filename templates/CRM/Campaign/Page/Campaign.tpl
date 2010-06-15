@@ -25,6 +25,10 @@
 *}
 {* this template is used for displaying survey information *}
 {if $campaigns} 
+  <div class="action-link">
+       <a href="{$addCampaign}" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
+  </div>
+  {include file="CRM/common/enableDisable.tpl"}
   <div id="campaignType">
     <table id="options" class="display">
       <thead>
@@ -37,10 +41,11 @@
           <th>{ts}Campaign Type{/ts}</th>
           <th>{ts}Status{/ts}</th>
           <th>{ts}Active?{/ts}</th>
-        </tr>
+          <th>{ts}Action{/ts}</th>
+	</tr>
       </thead>
       {foreach from=$campaigns item=campaign}
-        <tr>
+        <tr id="row_{$campaign.campaign_id}">
           <td>{$campaign.name}</td>
           <td>{$campaign.title}</td>
           <td>{$campaign.description}</td>
@@ -48,12 +53,19 @@
           <td>{$campaign.end_date}</td>
           <td>{$campaign.campaign_type_id}</td>
           <td>{$campaign.status_id}</td>
-          <td>{if $campaign.is_active}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Active{/ts}" />  {/if}</td>
-        </tr>
+          <td id="row_{$campaign.id}_status">{if $campaign.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+          <td>{$campaign.action}</td>
+	</tr>
       {/foreach}
     </table>
   </div>
 
 {else} 
-  {ts} No survey found!    {/ts} 
+    <div class="messages status">
+        <div class="icon inform-icon"></div> &nbsp;
+        {ts}No Campaigns found.{/ts}
+    </div>
 {/if}
+<div class="action-link">
+  <a href="{$addCampaign}" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
+</div>

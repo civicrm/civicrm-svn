@@ -65,6 +65,21 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
     }
    
     /**
+     * function to delete the campaign
+     *
+     * @param  int $id id of the campaign
+     */
+    public static function del( $id )
+    {
+        if ( !$id ) {
+            return false;
+        }
+        $dao     = new CRM_Campaign_DAO_Campaign( );
+        $dao->id = $id;
+        return $dao->delete( );
+    }
+
+    /**
      * Takes a bunch of params that are needed to match certain criteria and
      * retrieves the relevant objects. Typically the valid params are only
      * campaign_id. 
@@ -123,7 +138,8 @@ WHERE c.title IS NOT NULL" . $whereClause;
        $dao = new CRM_Campaign_DAO_Campaign( );
        if ( !$all ) {
            $dao->is_active = 1;
-       } 
+       }
+       
        if ( $id ) {
            $dao->id = $id;  
        }
@@ -133,6 +149,20 @@ WHERE c.title IS NOT NULL" . $whereClause;
        }
        
        return $campaign;
+    }
+
+    /**
+     * update the is_active flag in the db
+     *
+     * @param int      $id        id of the database record
+     * @param boolean  $is_active value we want to set the is_active field
+     *
+     * @return Object             DAO object on sucess, null otherwise
+     * @static
+     */ 
+    static function setIsActive( $id, $is_active ) 
+    {  
+        return CRM_Core_DAO::setFieldValue( 'CRM_Campaign_DAO_Campaign', $id, 'is_active', $is_active );
     }
 }
 
