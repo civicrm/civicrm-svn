@@ -115,8 +115,13 @@ class CRM_Case_Form_Task extends CRM_Core_Form
         $this->_caseIds = $this->_componentIds = $ids;
 
         //set the context for redirection for any task actions
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        require_once 'CRM/Utils/Rule.php';
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+        
         $session = CRM_Core_Session::singleton( );
-        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/case/search', 'force=1' ) );
+        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/case/search', $urlParams ) );
     }
 
     /**

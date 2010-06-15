@@ -125,7 +125,13 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
 
         //set the context for redirection for any task actions
         $session = CRM_Core_Session::singleton( );
-        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/contribute/search', 'force=1' ) );
+        
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        require_once 'CRM/Utils/Rule.php';
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+        
+        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/contribute/search', $urlParams ) );
     }
 
     /**
