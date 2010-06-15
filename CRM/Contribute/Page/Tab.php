@@ -315,6 +315,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             if ( $qfKey ) {
                 $extraParams .= "&qfKey=$qfKey";
             }
+            $this->assign( 'searchKey',  $qfKey );
             $url = CRM_Utils_System::url( 'civicrm/contribute/search', $extraParams );
             break;
 
@@ -375,7 +376,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
                 $urlString  = 'civicrm/contact/view/contribution';
             }
             if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
-            $this->assign( 'fullTextSearchKey',  $qfKey );
+            $this->assign( 'searchKey',  $qfKey );
             $url = CRM_Utils_System::url( $urlString, $urlParams );
             break;
             

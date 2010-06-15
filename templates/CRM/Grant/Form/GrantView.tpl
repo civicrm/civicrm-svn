@@ -55,10 +55,18 @@
             <td>
                 {$form.buttons.html}
                 {if call_user_func(array('CRM_Core_Permission','check'), 'edit grants')}
-                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/grant' q="reset=1&id=$id&cid=$contactId&action=update&context=grant"}" accesskey="e">Edit</a>
+                {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context"}
+	        {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
+	        {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context&key=$searchKey"}
+	        {/if}
+                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}" accesskey="e">Edit</a>
                 {/if}
                 {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviGrant')}
-                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/grant' q="reset=1&id=$id&cid=$contactId&action=delete&context=grant"}">Delete</a>
+		{assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context"}
+	        {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
+	        {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context&key=$searchKey"}
+	        {/if}
+                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}">Delete</a>
                 {/if}
             </td>
         </tr>    

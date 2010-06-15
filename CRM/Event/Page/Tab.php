@@ -198,6 +198,7 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
         case 'search':
             $urlParams = 'force=1';
             if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            $this->assign( 'searchKey',  $qfKey );
             
             $url = CRM_Utils_System::url( 'civicrm/event/search', $urlParams );
             break;
@@ -235,7 +236,7 @@ class CRM_Event_Page_Tab extends CRM_Core_Page
                 $urlString = 'civicrm/contact/view/participant';
             }
             if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
-            $this->assign( 'fullTextSearchKey',  $qfKey );
+            $this->assign( 'searchKey',  $qfKey );
             $url = CRM_Utils_System::url( $urlString, $urlParams ); 
             break;
             

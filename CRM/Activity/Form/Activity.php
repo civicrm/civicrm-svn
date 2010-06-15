@@ -346,7 +346,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 $urlString  = 'civicrm/contact/view/activity';
             }
             if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
-            $this->assign( 'fullTextSearchKey',  $qfKey );
+            $this->assign( 'searchKey',  $qfKey );
         } else if ( in_array( $this->_context, array( 'standalone', 'home' ) ) ) {
             $urlParams = 'reset=1';
             $urlString = 'civicrm/dashboard';
@@ -354,6 +354,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $urlParams = 'force=1';
             if ( $qfKey ) $urlParams .= "&qfKey=$qfKey"; 
             $urlString = 'civicrm/activity/search';
+            $this->assign( 'searchKey',  $qfKey );
         } else if ( $this->_context != 'caseActivity' ) {
             $urlParams = "action=browse&reset=1&cid={$this->_currentlyViewedContactId}&selectedChild=activity";
             $urlString = 'civicrm/contact/view';
