@@ -105,9 +105,14 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         } else {
             $values = $this->controller->exportValues( 'Basic' );
         }
-
-         //set the user context for redirection of task actions
-        $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, 'force=1' );
+        
+        //set the user context for redirection of task actions
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        require_once 'CRM/Utils/Rule.php';
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+        
+        $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
         $session = CRM_Core_Session::singleton( );
         $session->replaceUserContext( $url );
         

@@ -192,11 +192,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 
                 CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
                 $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
-                //validate the qfKey
                 require_once 'CRM/Utils/Rule.php';
-                if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
                 $urlParams = 'reset=1&cid='. $this->_contactId;
-                if ( $qfKey ) $urlParams .= "&key=$qfKey";
+                if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&key=$qfKey"; 
                 
                 $session->pushUserContext(CRM_Utils_System::url('civicrm/contact/view', $urlParams ));
                 
@@ -951,9 +949,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
             //validate the qfKey
             require_once 'CRM/Utils/Rule.php';
-            if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
             $urlParams = 'reset=1&cid='. $contact->id;
-            if ( $qfKey ) $urlParams .= "&key=$qfKey";
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&key=$qfKey"; 
             
             $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/contact/view', $urlParams ));
         }

@@ -231,9 +231,8 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
         //validate the qfKey
         require_once 'CRM/Utils/Rule.php';
-        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
         $urlParams = 'force=1';
-        if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
         
         if ( $isAdvanced == '1' ) {
             return CRM_Utils_System::url( 'civicrm/contact/search/advanced', $urlParams );
