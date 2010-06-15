@@ -24,8 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing options *}
+<h3>{if $action eq 1}{ts 1=$GName}New %1 Option{/ts}{elseif $action eq 8}{ts 1=$GName}Delete %1 Option{/ts}{else}{ts 1=$GName}Edit %1 Option{/ts}{/if}</h3>
 <div class="crm-block crm-form-block crm-admin-options-form-block">
-<fieldset><legend>{if $action eq 1}{ts 1=$GName}New %1 Option{/ts}{elseif $action eq 8}{ts 1=$GName}Delete %1 Option{/ts}{else}{ts 1=$GName}Edit %1 Option{/ts}{/if}</legend>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>		      
 	{if $action eq 8}
       <div class="messages status">
@@ -64,11 +64,11 @@
            </tr>
         {/if}
     	{if $gName eq 'case_status'} 
-           <tr class="crm-admin-options-form-block-grouping">
-	     <td class="label">{$form.grouping.label}</td>
-             <td>{$form.grouping.html}</td>
-	{/if}
-           </tr>
+            <tr class="crm-admin-options-form-block-grouping">
+	            <td class="label">{$form.grouping.label}</td>
+                <td>{$form.grouping.html}</td>
+            </tr>
+	    {/if}
         {if $gName eq 'custom_search'}
            <tr class="crm-admin-options-form-block-search_title">
              <td class="label">{ts}Search Title{/ts}</td>
