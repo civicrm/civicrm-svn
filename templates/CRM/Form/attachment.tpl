@@ -25,15 +25,10 @@
 *}
 {if $form.attachFile_1}
 {if $action EQ 4 AND $currentAttachmentURL} {* For View action we exclude the form fields and just show any current attachments. *}
-    <fieldset><legend>{ts}Attachment(s){/ts}</legend>
-    <table class="form-layout-compressed">
     <tr>
-        <td class="label">{ts}Current Attachment(s){/ts}</td>
+        <td class="label"><label>{ts}Current Attachment(s){/ts}</label></td>
         <td class="view-value"><strong>{$currentAttachmentURL}</strong></td>
     </tr>
-    </table>
-    </fieldset>
-
 {elseif $action NEQ 4}
     {if $context EQ 'pcpCampaign'}
         {capture assign=attachTitle}{ts}Include a Picture or an Image{/ts}{/capture}

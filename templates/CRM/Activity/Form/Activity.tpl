@@ -225,20 +225,27 @@
                 <tr class="crm-activity-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>
              {/if}
              
-             <tr class="crm-activity-form-block-custom_data">
-                <td colspan="2">
-	            {if $action eq 4} 
-                    {include file="CRM/Custom/Page/CustomDataView.tpl"}
-                {else}
-                    <div id="customData"></div>
-                {/if} 
-                </td>
-             </tr> 
-             <tr class="crm-activity-form-block-attachment">
-                <td colspan="2">
-                    {include file="CRM/Form/attachment.tpl"}
-                </td>
-             </tr>
+             {if $action neq 4 OR $viewCustomData} 
+                 <tr class="crm-activity-form-block-custom_data">
+                    <td colspan="2">
+    	            {if $action eq 4} 
+                        {include file="CRM/Custom/Page/CustomDataView.tpl"}
+                    {else}
+                        <div id="customData"></div>
+                    {/if} 
+                    </td>
+                 </tr>
+             {/if}
+             
+             {if $action eq 4 AND $currentAttachmentURL}
+                {include file="CRM/Form/attachment.tpl"}{* For view action the include provides the row and cells. *}
+             {else if $action eq 1 OR $action eq 2}
+                 <tr class="crm-activity-form-block-attachment">
+                    <td colspan="2">
+                        {include file="CRM/Form/attachment.tpl"}
+                    </td>
+                 </tr>
+             {/if}
 
              {if $action neq 4} {* Don't include "Schedule Follow-up" section in View mode. *}
                  <tr class="crm-activity-form-block-schedule_followup">
