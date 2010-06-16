@@ -24,10 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for viewing grants *} 
+<h3>{ts}View Grant{/ts}</h3>
 <div class="crm-block crm-form-block crm-grant-view-form-block">
-<fieldset>
-    <legend>{ts}View Grant{/ts}</legend>
-    <table class="view-layout">
+    <table class="crm-info-panel">
         <tr class="crm-grant-view-form-block-name"><td class="label">{ts}Name{/ts}</td><td class="bold">{$displayName}</td></tr>    
         <tr class="crm-grant-view-form-block-status_id"><td class="label">{ts}Grant Status{/ts}          </td> <td>{$grantStatus}</td></tr>
         <tr class="crm-grant-view-form-block-grant_type_id"><td class="label">{ts}Grant Type{/ts}            </td> <td>{$grantType}</td></tr>
@@ -71,5 +70,4 @@
             </td>
         </tr>    
     </table>
-</fieldset>
 </div>
