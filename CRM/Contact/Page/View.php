@@ -237,6 +237,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $urlParams = 'force=1';
         
         switch ( $context ) {
+        case 'custom' :
         case 'fulltext' :
             $urlString = 'civicrm/contact/search/custom';
             break;

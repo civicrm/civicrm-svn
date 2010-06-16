@@ -50,7 +50,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         
         $context = $this->get( 'context' );
         $this->_searchBasedMailing = false;
-        if ( in_array( $context, array( 'search', 'basic', 'builder', 'advanced' ) ) ) {
+        if ( in_array( $context, array( 'search', 'basic', 'builder', 'advanced', 'custom' ) ) ) {
             $this->_searchBasedMailing = true;
         }
     }

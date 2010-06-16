@@ -234,7 +234,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                                           'basic'    => 'Basic Search',
                                           'search'   => 'Search',
                                           'builder'  => 'Search Builder',
-                                          'advanced' => 'Advanced Search' );
+                                          'advanced' => 'Advanced Search',
+                                          'custom'   => 'Custom Search' );
         }
         return self::$_validContext;
     }
@@ -434,8 +435,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         /*
          * assign context to drive the template display, make sure context is valid
          */
-        $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
-        if ( !$this->_context ) {
+        if ( $this->_action ) {
             switch ( $this->_action ) {
             case CRM_Core_Action::ADVANCED:
                 $this->_context = 'advanced';
@@ -447,11 +447,17 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                 
             case CRM_Core_Action::BASIC:
                 $this->_context = 'basic';
+                break;
+                
+            case CRM_Core_Action::COPY:
+                $this->_context = 'custom';
+                break;
             }
-            if ( !$this->_context ) $this->_context = 'search';
         }
-        
-        if ( ! CRM_Utils_Array::value( $this->_context, self::validContext() ) ) {
+        if ( !$this->_context ) { 
+            $this->_context = $this->get('isCustom' ) ? 'custom' : 'search';
+        }
+        if ( ! CRM_Utils_Array::value( $this->_context, self::validContext( ) ) ) {
             $this->_context = 'search';
         }
         $this->set( 'context', $this->_context );

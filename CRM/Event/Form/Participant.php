@@ -294,31 +294,37 @@ class CRM_Event_Form_Participant extends CRM_Contact_Form_Task
             }
         } else {
             //set the appropriate action
-            $advanced = null;
-            $builder  = null;
-
-            $session = CRM_Core_Session::singleton();
-            $advanced = $session->get('isAdvanced');
-            $builder  = $session->get('isSearchBuilder');
-            
-            $searchType = "basic";
-            if ( $advanced == 1 ) {
+            $context = $this->get( 'context' );
+            $urlString = 'civicrm/contact/search';
+            $this->_action = CRM_Core_Action::BASIC;
+            switch ( $context ) {
+            case 'advanced' :
+                $urlString = 'civicrm/contact/search/advanced';
                 $this->_action = CRM_Core_Action::ADVANCED;
-                $searchType = "advanced";
-            } else if ( $advanced == 2 && $builder = 1) {
+                break;
+                
+            case 'builder' :
+                $urlString = 'civicrm/contact/search/builder';
                 $this->_action = CRM_Core_Action::PROFILE;
-                $searchType = "builder";
-            } else if ( $advanced == 3 ) {
-                $searchType = "custom";
+                break;
+                
+            case 'basic' :
+                $urlString = 'civicrm/contact/search/basic';
+                $this->_action = CRM_Core_Action::BASIC;
+                break;
+                
+            case 'custom' :
+                $urlString = 'civicrm/contact/search/custom';
+                $this->_action = CRM_Core_Action::COPY;
+                break;
             }
-            
             parent::preProcess( );
-
+            
             $this->_single    = false;
             $this->_contactId = null;
-
+            
             //set ajax path, this used for custom data building
-            $this->assign( 'urlPath'   , "civicrm/contact/search/$searchType" );
+            $this->assign( 'urlPath'   , $urlString );
             $this->assign( 'urlPathVar', "_qf_Participant_display=true&qfKey={$this->controller->_key}" ); 
         }
         

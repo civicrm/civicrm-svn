@@ -55,7 +55,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
         //when user come from search context. 
         $context = $this->get( 'context' );
         $this->_searchBasedMailing = false;
-        if ( in_array( $context, array( 'search', 'basic', 'builder', 'advanced' ) ) ) {
+        if ( in_array( $context, array( 'search', 'basic', 'builder', 'advanced', 'custom' ) ) ) {
             $this->_searchBasedMailing = true;
         }
         
