@@ -223,25 +223,44 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
                                                                                        true,
                                                                                        true );
     }
-
+    
     function getSearchURL( ) {
-        $session = CRM_Core_Session::singleton();
-        $isAdvanced = $session->get('isAdvanced');
+        $qfKey   = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'search' );
+        $this->assign( 'context',  $context );
         
-        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
         //validate the qfKey
         require_once 'CRM/Utils/Rule.php';
-        $urlParams = 'force=1';
-        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
         
-        if ( $isAdvanced == '1' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/advanced', $urlParams );
-        } else if ( $isAdvanced == '2' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/builder', $urlParams );
-        } else if ( $isAdvanced == '3' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/custom', $urlParams );
+        $urlString = null;
+        $urlParams = 'force=1';
+        
+        switch ( $context ) {
+        case 'fulltext' :
+            $urlString = 'civicrm/contact/search/custom';
+            break;
+            
+        case 'advanced' :
+            $urlString = 'civicrm/contact/search/advanced';
+            break;
+            
+        case 'builder' :
+            $urlString = 'civicrm/contact/search/builder';
+            break;
+            
+        case 'basic' :
+            $urlString = 'civicrm/contact/search/basic';
+            break;
+            
+        case 'search':
+            $urlString = 'civicrm/contact/search';
+            break;
         }
-        return CRM_Utils_System::url( 'civicrm/contact/search/basic', $urlParams );
+        if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+        if ( !$urlString ) $urlString = 'civicrm/contact/search/basic';
+        
+        return CRM_Utils_System::url( $urlString, $urlParams );
     }
     
     static function checkUserPermission( $page ) {

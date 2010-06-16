@@ -62,8 +62,8 @@
                 </thead>
                 {foreach from=$summary.Contact item=row}
                     <tr class="{cycle values="odd-row,even-row"}">
-                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
-                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}">{ts}View{/ts}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&context=fulltext&key=`$qfKey`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&context=fulltext&key=`$qfKey`"}">{ts}View{/ts}</a></td>
                     </tr>
                 {/foreach}
             </table>
@@ -101,9 +101,9 @@
                         <td>{$row.activity_type}</td>
                         <td>{$row.subject|mb_truncate:40}</td>
                         <td>{$row.details}</td>
-                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
-                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.target_contact_id`"}" title="{ts}View contact details{/ts}">{$row.target_sort_name}</a></td>
-                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.assignee_contact_id`"}" title="{ts}View contact details{/ts}">{$row.assignee_sort_name}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&context=fulltext&key=`$qfKey`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.target_contact_id`&context=fulltext&key=`$qfKey`"}" title="{ts}View contact details{/ts}">{$row.target_sort_name}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.assignee_contact_id`&context=fulltext&key=`$qfKey`"}" title="{ts}View contact details{/ts}">{$row.assignee_sort_name}</a></td>
                         <td>
                             {if $row.case_id }
                                 <a href="{crmURL p='civicrm/case/activity/view' q="reset=1&aid=`$row.activity_id`&cid=`$row.client_id`&caseID=`$row.case_id`&context=fulltext&key=`$qfKey`"}">
@@ -146,7 +146,7 @@
                 </thead>
                 {foreach from=$summary.Case item=row}
                     <tr class="{cycle values="odd-row,even-row"}">
-                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&context=fulltext&key=`$qfKey`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
                         <td>{$row.case_start_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
                         <td>{$row.case_end_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
                         <td>{$row.case_id}</td>
@@ -191,7 +191,7 @@
                 </thead>
                 {foreach from=$summary.Contribution item=row}
                     <tr class="{cycle values="odd-row,even-row"}">
-                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&context=fulltext&key=`$qfKey`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
                         <td>{$row.contribution_total_amount|crmMoney}</td>
                         <td>{$row.contribution_type}</td>
                         <td>{$row.contribution_source}</td>
@@ -235,7 +235,7 @@
                 </thead>
                 {foreach from=$summary.Participant item=row}
                     <tr class="{cycle values="odd-row,even-row"}">
-                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&context=fulltext&key=`$qfKey`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
                         <td>{$row.event_title}</td>
                         <td>{$row.participant_fee_level}</td>
                         <td>{$row.participant_fee_amount|crmMoney}</td>
@@ -281,7 +281,7 @@
                 </thead>
                 {foreach from=$summary.Membership item=row}
                     <tr class="{cycle values="odd-row,even-row"}">
-                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
+                        <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.contact_id`&context=fulltext&key=`$qfKey`"}" title="{ts}View contact details{/ts}">{$row.sort_name}</a></td>
                         <td>{$row.membership_type}</td>
                         <td>{$row.membership_fee|crmMoney}</td>
                         <td>{$row.membership_start_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
