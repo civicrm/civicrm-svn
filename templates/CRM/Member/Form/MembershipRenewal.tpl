@@ -40,8 +40,8 @@
     {ts 1=$displayName 2=$registerMode}Use this form to Renew Membership Record on behalf of %1. <strong>A %2 transaction will be submitted</strong> using the selected payment processor.{/ts}
 </div>
 {/if}
+<h3>{if $action eq 32768}{ts}Renew Membership{/ts}{/if}</h3>
 <div class="crm-block crm-form-block crm-member-membershiprenew-form-block">
-<fieldset><legend>{if $action eq 32768}{ts}Renew Membership{/ts}{/if}</legend>
     <div id="help" class="description">
         {ts}Renewing will add the normal membership period to the End Date of the previous period for members whose status is Current or Grace. For Expired memberships, renewing will create a membership period commencing from the 'Date Renewal Entered'. This date can be adjusted including being set to the day after the previous End Date - if continuous membership is required.{/ts}
     </div>
@@ -136,7 +136,6 @@
    
    <div class="spacer"></div>
    </div>
-</fieldset>
 {if $accessContribution and ! $membershipMode}
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    ="record_contribution"
