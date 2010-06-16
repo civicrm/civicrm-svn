@@ -221,9 +221,13 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $session = CRM_Core_Session::singleton( );
         $this->_currentUserId = $session->get( 'userID' );
 
-        // this is used for setting jQuery tabs
+        //give the context.
         if ( ! $this->_context ) {
-            $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this );
+            $context = CRM_Utils_Request::retrieve('context', 'String', $this );
+            if ( in_array( $context, array( 'search', 'basic', 'builder', 'advanced', 'custom' ) ) ) {
+                $this->_context = 'search';
+                $this->set( 'context', $this->_context );
+            }
         }
         $this->assign( 'context', $this->_context );
         
@@ -285,22 +289,30 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $this->assign( 'urlPath', 'civicrm/activity' );
         } else {
             //set the appropriate action
-            $advanced = null;
-            $builder  = null;
-            
-            $session = CRM_Core_Session::singleton();
-            $advanced = $session->get('isAdvanced');
-            $builder  = $session->get('isSearchBuilder');
-
-            $searchType = "basic";
-            if ( $advanced == 1 ) {
+            $url = CRM_Utils_System::currentPath( );
+            $seachPath = array_pop( explode( '/', $url ) );
+            $searchType = 'basic';
+            $this->_action = CRM_Core_Action::BASIC;
+            switch ( $seachPath ) {
+            case 'basic' :
+                $searchType = $seachPath;
+                $this->_action = CRM_Core_Action::BASIC;
+                break;
+                
+            case 'advanced' :
+                $searchType = $seachPath;
                 $this->_action = CRM_Core_Action::ADVANCED;
-                $searchType = "advanced";
-            } else if ( $advanced == 2 && $builder = 1) {
+                break;
+                
+            case 'builder':
+                $searchType = $seachPath;
                 $this->_action = CRM_Core_Action::PROFILE;
-                $searchType = "builder";
-            } else if ( $advanced == 3 ) {
-                $searchType = "custom";
+                break;
+                
+            case 'custom':
+                $this->_action = CRM_Core_Action::COPY;
+                $searchType = $seachPath;
+                break;
             }
             
             parent::preProcess( );
