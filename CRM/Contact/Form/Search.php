@@ -229,11 +229,12 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     static function &validContext()
     {
         if (!(self::$_validContext)) {
-            self::$_validContext = array(
-                'search' => 'Search',
-                'smog'   => 'Show members of group',
-                'amtg'   => 'Add members to group'
-            );
+            self::$_validContext = array( 'smog'     => 'Show members of group',
+                                          'amtg'     => 'Add members to group',
+                                          'basic'    => 'Basic Search',
+                                          'search'   => 'Search',
+                                          'builder'  => 'Search Builder',
+                                          'advanced' => 'Advanced Search' );
         }
         return self::$_validContext;
     }
@@ -433,8 +434,23 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         /*
          * assign context to drive the template display, make sure context is valid
          */
-        $this->_context = CRM_Utils_Request::retrieve( 'context', 'String',
-                                                       $this, false, 'search' );
+        $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+        if ( !$this->_context ) {
+            switch ( $this->_action ) {
+            case CRM_Core_Action::ADVANCED:
+                $this->_context = 'advanced';
+                break;
+                
+            case CRM_Core_Action::PROFILE:
+                $this->_context = 'builder';
+                break;
+                
+            case CRM_Core_Action::BASIC:
+                $this->_context = 'basic';
+            }
+            if ( !$this->_context ) $this->_context = 'search';
+        }
+        
         if ( ! CRM_Utils_Array::value( $this->_context, self::validContext() ) ) {
             $this->_context = 'search';
             $this->set( 'context', $this->_context );

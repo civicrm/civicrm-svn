@@ -171,7 +171,8 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
         $this->_params           =& $params;
         $this->_returnProperties =& $returnProperties;
         $this->_contextMenu      =& $contextMenu;
-
+        $this->_context          = $searchContext;
+        
         // type of selector
         $this->_action = $action;
         
@@ -216,23 +217,24 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
      * @access public
      *
      */
-    static function &links( $searchType = null, $contextMenu = null, $key = null )
+    static function &links( $context = null, $contextMenu = null, $key = null )
     {
-        $extraParams = ($key ) ? "&key={$key}" : null;
+        $extraParams   = ( $key ) ? "&key={$key}" : null;
+        $searchContext = ( $context ) ? "&context=$context" : null;
         
         if (!(self::$_links)) {
             self::$_links = array(
                                   CRM_Core_Action::VIEW   => array(
                                                                    'name'     => ts('View'),
                                                                    'url'      => 'civicrm/contact/view',
-                                                                   'qs'       => 'reset=1&cid=%%id%%'.$extraParams,
+                                                                   'qs'       => "reset=1&cid=%%id%%{$searchContext}{$extraParams}",
                                                                    'title'    => ts('View Contact Details'),
                                                                    'ref'      => 'view-contact'
                                                                   ),
                                   CRM_Core_Action::UPDATE => array(
                                                                    'name'     => ts('Edit'),
                                                                    'url'      => 'civicrm/contact/add',
-                                                                   'qs'       => 'reset=1&action=update&cid=%%id%%'.$extraParams,
+                                                                   'qs'       => "reset=1&action=update&cid=%%id%%{$searchContext}{$extraParams}",
                                                                    'title'    => ts('Edit Contact Details'),
                                                                    'ref'      => 'edit-contact'
                                                                   ),
@@ -240,14 +242,10 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             
             $config = CRM_Core_Config::singleton( );
             if ( $config->mapAPIKey && $config->mapProvider) {
-                $mapSearch = null;
-                if ( $searchType ) {
-                    $mapSearch = "&searchType={$searchType}";
-                }
                 self::$_links[CRM_Core_Action::MAP] = array(
                                                             'name'     => ts('Map'),
                                                             'url'      => 'civicrm/contact/map',
-                                                            'qs'       => "reset=1&cid=%%id%%{$mapSearch}{$extraParams}",
+                                                            'qs'       => "reset=1&cid=%%id%%{$searchContext}{$extraParams}",
                                                             'title'    => ts('Map Contact'),
                                                             );
             }
@@ -256,15 +254,18 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             if ( $contextMenu ) {
                 $counter = 7000;
                 foreach( $contextMenu as $key => $value ) {
+                    $contextVal = '&context='.$value['key'];
+                    if ( $value['key'] == 'delete' ) $contextVal = $searchContext;
+                    
                     $url = "civicrm/contact/view/{$value['key']}";
-                    $qs  = "reset=1&action=add&cid=%%id%%&context={$value['key']}{$extraParams}";
+                    $qs  = "reset=1&action=add&cid=%%id%%{$contextVal}{$extraParams}";
                     if ( $value['key'] == 'activity' ) {
                         $qs = "action=browse&selectedChild=activity&reset=1&cid=%%id%%{$extraParams}";
                     } else if ( $value['key'] == 'email' ) {
                         $url = "civicrm/contact/view/activity";
                         $qs  = "atype=3&action=add&reset=1&cid=%%id%%{$extraParams}";
                     }
-
+                    
                     self::$_links[$counter++]  = array(
                                                        'name'     => $value['title'],
                                                        'url'      => $url,
@@ -541,14 +542,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
             require_once 'CRM/Quest/BAO/Student.php';
             $multipleSelectFields = CRM_Quest_BAO_Student::$multipleSelectFields;
         }
-        $searchType = null;
-        if ( $this->_action == CRM_Core_Action::BASIC ) {
-            $searchType = 'basic';
-        } elseif ( $this->_action == CRM_Core_Action::ADVANCED ) {
-            $searchType = 'advance';
-        }
+        
         require_once 'CRM/Core/OptionGroup.php';
-        $links =& self::links( $searchType, $this->_contextMenu, $this->_key );
+        $links =& self::links( $this->_context, $this->_contextMenu, $this->_key );
         
         //check explicitly added contact to a Smart Group.
         $groupID   = CRM_Utils_Array::key( '1', $this->_formValues['group'] );  
