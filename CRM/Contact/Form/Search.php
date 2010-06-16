@@ -453,8 +453,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         
         if ( ! CRM_Utils_Array::value( $this->_context, self::validContext() ) ) {
             $this->_context = 'search';
-            $this->set( 'context', $this->_context );
         }
+        $this->set( 'context', $this->_context );
         $this->assign( 'context', $this->_context );
 
         $this->set( 'selectorName', $this->_selectorName );

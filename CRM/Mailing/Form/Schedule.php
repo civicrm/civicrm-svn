@@ -39,7 +39,22 @@
   */
  class CRM_Mailing_Form_Schedule extends CRM_Core_Form 
  {
-
+     /** 
+      * Function to set variables up before form is built 
+      *                                                           
+      * @return void 
+      * @access public 
+      */ 
+     public function preProcess()  
+     {
+         //when user come from search context. 
+         $context = $this->get( 'context' );
+         $this->_searchBasedMailing = false;
+         if ( in_array( $context, array( 'search', 'basic', 'builder', 'advanced' ) ) ) {
+             $this->_searchBasedMailing = true;
+         }
+     }
+     
      /**
       * This function sets the default values for the form.
       * 
@@ -81,7 +96,7 @@
                            array(  'type'  => 'cancel',
                                    'name'  => ts('Continue Later')),
                            );
-         if ( $this->get( 'context' ) == 'search' && $this->get( 'ssID' ) ) {
+         if ( $this->_searchBasedMailing && $this->get( 'ssID' ) ) {
              $buttons = array( array(  'type'  => 'back',
                                        'name'  => ts('<< Previous')),
                                array(  'type'  => 'next',
@@ -111,8 +126,7 @@
              //when user perform mailing from search context 
              //redirect it to search result CRM-3711.
              $ssID    = $self->get( 'ssID' );
-             $context = $self->get( 'context' );
-             if ( $ssID && $context == 'search' ) {
+             if ( $ssID && $self->_searchBasedMailing ) {
                  if ( $self->_action == CRM_Core_Action::BASIC ) {
                      $fragment = 'search';
                  } else if ( $self->_action == CRM_Core_Action::PROFILE ) {
@@ -195,8 +209,7 @@
         //when user perform mailing from search context 
         //redirect it to search result CRM-3711.
         $ssID    = $this->get( 'ssID' );
-        $context = $this->get( 'context' );
-        if ( $ssID && $context == 'search' ) {
+        if ( $ssID && $this->_searchBasedMailing ) {
             if ( $this->_action == CRM_Core_Action::BASIC ) {
                 $fragment = 'search';
             } else if ( $this->_action == CRM_Core_Action::PROFILE ) {
@@ -206,7 +219,11 @@
             } else {
                 $fragment = 'search/custom';
             }
-            $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, "force=1&reset=1&ssID={$ssID}" );
+            $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+            $urlParams = "force=1&reset=1&ssID={$ssID}";
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+            
+            $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
             CRM_Utils_System::redirect( $url );
         }
         
