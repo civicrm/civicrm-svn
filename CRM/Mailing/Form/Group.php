@@ -285,8 +285,8 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
                                         'form_values'      => $this->get( 'formValues' ),
                                         'saved_search_id'  => $ssId, 
                                         'search_custom_id' => $this->get( 'customSearchID' ),
-                                        'is_advanced'      => $session->get('isAdvanced'),
-                                        'is_searchBuilder' => $session->get('isSearchBuilder'));
+                                        'search_context'   => $this->get( 'context' ),
+                                        );
             
             require_once 'CRM/Contact/BAO/Group.php';
             list( $smartGroupId, $savedSearchId ) = CRM_Contact_BAO_Group::createHiddenSmartGroup( $hiddenSmartParams );
