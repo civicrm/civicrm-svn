@@ -110,6 +110,37 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
     }
 
     /**
+     * Function to get Surveys
+     * 
+     * @param boolean $all
+     * @param int $id
+     * @static
+     */
+    static function getSurveyList( $all = false ) {
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        require_once 'CRM/Core/PseudoConstant.php';
+
+        $surveyTypes = CRM_Core_PseudoConstant::surveyType();
+        $campaigns   = CRM_Campaign_BAO_Campaign::getAllCampaign( );
+
+        $survey = array( );
+        $dao = new CRM_Campaign_DAO_Survey( );
+        
+        if ( !$all ) {
+            $dao->is_active = 1;
+        }   
+        
+        $dao->find( );
+        while ( $dao->fetch() ) {
+            $survey[$dao->id] = $campaigns[$dao->campaign_id].'::'.$surveyTypes[$dao->survey_type_id];
+        }
+        
+        return $survey;
+
+
+    }
+
+    /**
      * update the is_active flag in the db
      *
      * @param int      $id        id of the database record

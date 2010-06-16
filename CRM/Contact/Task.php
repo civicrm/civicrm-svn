@@ -64,7 +64,8 @@ class CRM_Contact_Task {
         PRINT_FOR_CONTACTS    =    19,
         EMAIL_UNHOLD          =    22,
         RESTORE               =    23,
-        DELETE_PERMANENTLY    =    24;
+        DELETE_PERMANENTLY    =    24,
+        RESERVE_VOTERS        =    25;
 
 
 
@@ -201,6 +202,13 @@ class CRM_Contact_Task {
                                            );
             }
             
+            // FIX ME: action should be visible only there is one or
+            // more survey present.
+            // Voter Reservation
+            self::$_tasks[25] = array( 'title'  => ts('Voter Reservation'),
+                                       'class'  => 'CRM_Contact_Form_Task_VoterReservation',
+                                       'result' => true );
+
             self::$_tasks += CRM_Core_Component::taskList( );
 
             require_once 'CRM/Utils/Hook.php';
