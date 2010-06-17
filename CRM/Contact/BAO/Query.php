@@ -1229,6 +1229,10 @@ class CRM_Contact_BAO_Query
             $this->email( $values );
             return;
 
+        case 'street_address':
+            $this->street_address( $values );
+            return;
+
         case 'sortByCharacter':
             $this->sortByCharacter( $values );
             return;
@@ -2542,7 +2546,6 @@ WHERE  id IN ( $groupIDs )
         }
     }
 
-
     /**
      * where / qill clause for email
      *
@@ -2581,6 +2584,32 @@ WHERE  id IN ( $groupIDs )
         $this->_tables['civicrm_email'] = $this->_whereTables['civicrm_email'] = 1; 
         $this->_where[$grouping][] = " ( civicrm_email.email $op $value )";
         $this->_qill[$grouping][]  = ts( 'Email' ) . " $op '$n'";
+    }
+
+    /**
+     * where / qill clause for street_address
+     *
+     * @return void
+     * @access public
+     */
+    function street_address( &$values ) 
+    {
+        list( $name, $op, $value, $grouping, $wildcard ) = $values;
+        $op = 'LIKE';
+        
+        $n = trim( $value ); 
+
+        $value = strtolower(CRM_Core_DAO::escapeString($n));
+        if ( strpos( $value, '%' ) !== false ) {
+            $value = "'$value'";
+            // only add wild card if not there
+        } else {
+            $value = "'$value%'";
+        }
+
+        $this->_tables['civicrm_address'] = $this->_whereTables['civicrm_address'] = 1; 
+        $this->_where[$grouping][] = " ( LOWER(civicrm_address.street_address) LIKE $value )";
+        $this->_qill[$grouping][]  = ts( 'Street' ) . " ILIKE '$n'";
     }
 
     /**
