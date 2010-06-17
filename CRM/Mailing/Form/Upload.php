@@ -48,7 +48,8 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
             $this->assign( 'isAdmin', 1 );
         }
         
-        //when user come from search context. 
+        //when user come from search context.
+        require_once 'CRM/Contact/Form/Search.php';
         $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
     }
 
@@ -410,8 +411,10 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
                     $fragment = 'search/custom';
                 }
                 
+                $context = $this->get( 'context' );
+                if ( !CRM_Contact_Form_Search::isSearchContext( $context ) ) $context = 'search';
+                $urlParams = "force=1&reset=1&ssID={$ssID}&context={$context}";
                 $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
-                $urlParams = "force=1&reset=1&ssID={$ssID}";
                 if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
                 
                 $session = CRM_Core_Session::singleton( );

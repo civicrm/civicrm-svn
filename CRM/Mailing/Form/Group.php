@@ -52,7 +52,8 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
      */ 
     public function preProcess()  
     {
-        //when user come from search context. 
+        //when user come from search context.
+        require_once 'CRM/Contact/Form/Search.php';
         $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
         if ( $this->_searchBasedMailing ) {
             $searchParams = $this->controller->exportValues( );
@@ -404,8 +405,12 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
                 } else {
                     $fragment = 'search/custom';
                 }
+                
+                $context = $this->get( 'context' );
+                if ( !CRM_Contact_Form_Search::isSearchContext( $context ) ) $context = 'search';
+                $urlParams = "force=1&reset=1&ssID={$ssID}&context={$context}";
+                
                 $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
-                $urlParams = "force=1&reset=1&ssID={$ssID}";
                 if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
                 
                 $draftURL = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1' );

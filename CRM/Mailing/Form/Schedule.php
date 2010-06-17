@@ -47,7 +47,8 @@
       */ 
      public function preProcess()  
      {
-         //when user come from search context. 
+         //when user come from search context.
+         require_once 'CRM/Contact/Form/Search.php';
          $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
      }
      
@@ -136,8 +137,14 @@
                  $draftURL = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1' );
                  $status = ts("Your mailing has been saved. You can continue later by clicking the 'Continue' action to resume working on it.<br /> From <a href='%1'>Draft and Unscheduled Mailings</a>.", array( 1 => $draftURL ) );
                  CRM_Core_Session::setStatus( $status );
-
+                 
                  //replace user context to search.
+                 $context = $self->get( 'context' );
+                 if ( !CRM_Contact_Form_Search::isSearchContext( $context ) ) $context = 'search';
+                 $urlParams = "force=1&reset=1&ssID={$ssID}&context={$context}";
+                 $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+                 if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+                 
                  $url = CRM_Utils_System::url( "civicrm/contact/" . $fragment, "force=1&reset=1&ssID={$ssID}" );
                  CRM_Utils_System::redirect( $url );
              } else {
@@ -215,8 +222,10 @@
             } else {
                 $fragment = 'search/custom';
             }
+            $context = $this->get( 'context' );
+            if ( !CRM_Contact_Form_Search::isSearchContext( $context ) ) $context = 'search';
+            $urlParams = "force=1&reset=1&ssID={$ssID}&context={$context}";
             $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
-            $urlParams = "force=1&reset=1&ssID={$ssID}";
             if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
             
             $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
