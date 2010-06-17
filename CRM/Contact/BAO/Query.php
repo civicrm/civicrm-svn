@@ -3358,7 +3358,7 @@ WHERE  id IN ( $groupIDs )
 SELECT COUNT( civicrm_contribution.total_amount ) as total_count,
        SUM(   civicrm_contribution.total_amount ) as total_amount,
        AVG(   civicrm_contribution.total_amount ) as total_avg,
-       currency                                   as currency";
+       civicrm_contribution.currency              as currency";
 
         // make sure contribution is completed - CRM-4989
         $additionalWhere = "civicrm_contribution.contribution_status_id = 1";
@@ -3398,7 +3398,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as total_count,
 SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
        SUM(   civicrm_contribution.total_amount ) as cancel_amount,
        AVG(   civicrm_contribution.total_amount ) as cancel_avg,
-       currency                                   as currency";
+       civicrm_contribution.currency              as currency";
 
         $additionalWhere = "civicrm_contribution.cancel_date IS NOT NULL";
         if ( ! empty( $where ) ) {
