@@ -190,6 +190,7 @@ class CRM_Contact_Form_Search_Basic extends CRM_Contact_Form_Search {
      * @access public
      */
     function postProcess( ) {
+        $this->set('context', 'basic' );
         $this->set('isAdvanced','0');
         $this->set('isSearchBuilder','0');
 

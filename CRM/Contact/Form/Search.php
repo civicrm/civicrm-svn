@@ -435,34 +435,13 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         /*
          * assign context to drive the template display, make sure context is valid
          */
-        if ( $this->_action ) {
-            switch ( $this->_action ) {
-            case CRM_Core_Action::ADVANCED:
-                $this->_context = 'advanced';
-                break;
-                
-            case CRM_Core_Action::PROFILE:
-                $this->_context = 'builder';
-                break;
-                
-            case CRM_Core_Action::BASIC:
-                $this->_context = 'basic';
-                break;
-                
-            case CRM_Core_Action::COPY:
-                $this->_context = 'custom';
-                break;
-            }
-        }
-        if ( !$this->_context ) { 
-            $this->_context = $this->get('isCustom' ) ? 'custom' : 'search';
-        }
+        $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'search' );
         if ( ! CRM_Utils_Array::value( $this->_context, self::validContext( ) ) ) {
             $this->_context = 'search';
         }
         $this->set( 'context', $this->_context );
         $this->assign( 'context', $this->_context );
-
+        
         $this->set( 'selectorName', $this->_selectorName );
 
         // get user submitted values 
