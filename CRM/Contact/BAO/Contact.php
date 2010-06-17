@@ -2464,7 +2464,7 @@ UNION
              // finally get menu item for -more- action widget.
              $contextMenu['moreActions'][$values['weight']] = array( 'title' => $values['title'],
                                                                      'ref'   => $values['ref'],
-                                                                     'href'  => $values['href'],
+                                                                     'href'  => CRM_Utils_Array::value( 'href', $values ),
                                                                      'key'   => $values['key']);                         
          }
          

@@ -257,7 +257,10 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $permission = CRM_Core_Permission::getPermission( );
 
         // some tasks.. what do we want to do with the selected contacts ?
-        $tasks = array( '' => ts('- actions -') ) + CRM_Contact_Task::permissionedTaskTitles($permission, $this->_formValues['deleted_contacts']);
+        $tasks = array( '' => ts('- actions -') ) + 
+            CRM_Contact_Task::permissionedTaskTitles( $permission, 
+                                                      CRM_Utils_Array::value( 'deleted_contacts', $this->_formValues ) );
+        
         if ( isset( $this->_ssID ) ) {
             if ( $permission == CRM_Core_Permission::EDIT ) {
                 $tasks = $tasks + CRM_Contact_Task::optionalTaskTitle();
@@ -499,7 +502,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $this->assign( 'id', CRM_Utils_Array::value( 'uf_group_id', $this->_formValues ) );
         
         // show the context menu only when we’re not searching for deleted contacts; CRM-5673
-        if (!$this->_formValues['deleted_contacts']) {
+        if ( !CRM_Utils_Array::value( 'deleted_contacts', $this->_formValues ) ) {
             require_once 'CRM/Contact/BAO/Contact.php';
             $menuItems = CRM_Contact_BAO_Contact::contextMenu( );
             $primaryActions     = CRM_Utils_Array::value( 'primaryActions', $menuItems, array( ) ); 
