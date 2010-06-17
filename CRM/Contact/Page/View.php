@@ -257,6 +257,11 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         case 'search':
             $urlString = 'civicrm/contact/search';
             break;
+            
+        case 'smog' :
+        case 'amtg' :    
+            $urlString = 'civicrm/group/search';
+            break;
         }
         if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
         if ( !$urlString ) $urlString = 'civicrm/contact/search/basic';

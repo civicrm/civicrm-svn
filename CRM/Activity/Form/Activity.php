@@ -224,7 +224,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         //give the context.
         if ( ! $this->_context ) {
             $context = CRM_Utils_Request::retrieve('context', 'String', $this );
-            if ( in_array( $context, array( 'search', 'basic', 'builder', 'advanced', 'custom' ) ) ) {
+            if ( CRM_Contact_Form_Search::isSearchContext( $context ) ) {
                 $this->_context = 'search';
             }
         }

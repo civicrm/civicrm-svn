@@ -48,11 +48,7 @@
      public function preProcess()  
      {
          //when user come from search context. 
-         $context = $this->get( 'context' );
-         $this->_searchBasedMailing = false;
-         if ( in_array( $context, array( 'search', 'basic', 'builder', 'advanced', 'custom' ) ) ) {
-             $this->_searchBasedMailing = true;
-         }
+         $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
      }
      
      /**

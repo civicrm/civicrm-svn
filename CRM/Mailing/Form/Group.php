@@ -53,12 +53,7 @@ class CRM_Mailing_Form_Group extends CRM_Contact_Form_Task
     public function preProcess()  
     {
         //when user come from search context. 
-        $context = $this->get( 'context' );
-        $this->_searchBasedMailing = false;
-        if ( in_array( $context, array( 'search', 'basic', 'builder', 'advanced', 'custom' ) ) ) {
-            $this->_searchBasedMailing = true;
-        }
-        
+        $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
         if ( $this->_searchBasedMailing ) {
             $searchParams = $this->controller->exportValues( );
             if ( CRM_Utils_Array::value( 'task', $searchParams ) == 20 ) {

@@ -240,6 +240,12 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         return self::$_validContext;
     }
     
+    static function isSearchContext( $context ) 
+    {
+        $searchContext = CRM_Utils_Array::value( $context, self::validContext( ) );
+        return $searchContext ? true : false;
+    }
+    
     /**
      * Build the common elements between the search/advanced form
      *

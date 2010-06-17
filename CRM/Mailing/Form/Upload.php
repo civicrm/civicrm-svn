@@ -48,11 +48,8 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
             $this->assign( 'isAdmin', 1 );
         }
         
-        $context = $this->get( 'context' );
-        $this->_searchBasedMailing = false;
-        if ( in_array( $context, array( 'search', 'basic', 'builder', 'advanced', 'custom' ) ) ) {
-            $this->_searchBasedMailing = true;
-        }
+        //when user come from search context. 
+        $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
     }
 
     /**
