@@ -40,6 +40,8 @@ class CRM_Contact_Form_Search_Custom_FindVoters
    extends    CRM_Contact_Form_Search_Custom_Base
    implements CRM_Contact_Form_Search_Interface {
 
+    protected $_query;
+
     function __construct( &$formValues ) {
         parent::__construct( $formValues );
 
@@ -75,19 +77,12 @@ class CRM_Contact_Form_Search_Custom_FindVoters
         $form->assign( 'elements', array( 'sort_name', 'street_number', 'street_address', 'city' ) );
         $this->setTitle('Find Voters');
     }
-
-    // function summary( ) {
-    //     $summary = array( 'summary' => 'This is a summary',
-    //                       'total' => 50.0 );
-    //     return $summary;
-    // }
-
-
+    
     function count( ) {
         return $this->_query->searchQuery( 0, 0, null, true );
     } 
 
-    function all( $offset = 0, $rowcount = 0, $sort = null,
+    function all( $offset = 0, $rowCount = 0, $sort = null,
                   $includeContactIDs = false ) {
 
         return $this->_query->searchQuery( $offset, $rowCount, $sort,

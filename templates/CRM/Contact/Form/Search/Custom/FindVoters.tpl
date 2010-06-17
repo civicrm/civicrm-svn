@@ -23,20 +23,20 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* Template for "Sample" custom search component. *}
-<div class="crm-accordion-wrapper crm-advanced_search_form-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
+{* Template for Find Voters custom search. *}
+<div class="crm-accordion-wrapper crm-custom_search_form-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
  <div class="crm-accordion-header crm-master-accordion-header">
   <div class="icon crm-accordion-pointer"></div>
   {ts}Edit Search Criteria{/ts}
 </div><!-- /.crm-accordion-header -->
  <div class="crm-accordion-body">
 
-<div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-sample-form-block">
+<div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-findvoters-form-block">
       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         <table class="form-layout-compressed">
             {* Loop through all defined search criteria fields (defined in the buildForm() function). *}
             {foreach from=$elements item=element}
-                <tr class="crm-contact-custom-search-sample-form-block-{$element}">
+                <tr class="crm-contact-custom-search-findvoters-form-block-{$element}">
                     <td class="label">{$form.$element.label}</td>
                     {if $element eq 'start_date'}
                         <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}</td>
@@ -52,7 +52,7 @@
   </div>
 </div>
 </div>
-{if $rowsEmpty || $rows}BasicCriteria
+{if $rowsEmpty || $rows}
 <div class="crm-content-block">
 {if $rowsEmpty}
     {include file="CRM/Contact/Form/Search/Custom/EmptyResults.tpl"}

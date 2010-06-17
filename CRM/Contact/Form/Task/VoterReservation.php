@@ -51,17 +51,31 @@ class CRM_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
         ACTIVITY_SURVEY_DETAIL_TABLE = 'civicrm_value_survey_activity_details';
     
     /**
+     * build all the data structures needed to build the form
+     *
+     * @return void
+     * @access public
+     */
+    function preProcess( ) {
+        parent::preProcess( );
+        $session = CRM_Core_Session::singleton( );
+        
+        if ( empty($this->_contactIds) || !($session->get('userID')) ) {
+            CRM_Core_Error::statusBounce( ts( "Could not find contacts for voter reservation Or Missing Interviewer contact.") );
+        }
+    }
+
+    /**
      * Build the form
      *
      * @access public
      * @return void
      */
     function buildQuickForm( ) {
-
+        // survey list
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
-        
         $this->add('select', 'survey_id', ts('Select Survey'), array( '' => ts('- select -') ) + $surveys , true );
- 
+
         $this->addDefaultButtons( ts('Add Voter Reservation') );
     }
 
@@ -84,11 +98,6 @@ class CRM_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
         //get the submitted values in an array
         $params  = $this->controller->exportValues( $this->_name );
         $session = CRM_Core_Session::singleton( );
-
-        if ( empty($this->_contactIds) || !($session->get('userID')) ) {
-            CRM_Core_Session::setStatus( ts('Voter Reservation can done!') );
-            return;
-        }
         
         require_once 'CRM/Activity/BAO/Activity.php';
         require_once 'CRM/Contact/BAO/Contact.php';
@@ -153,8 +162,6 @@ class CRM_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
         
         CRM_Core_Session::setStatus( ts('Voter Reservation has been added for %1 Contacts.', array( 1 => count($this->_contactIds) ) ) );
     }
-
-
 }
 
 
