@@ -36,8 +36,12 @@
 define( 'CIVICRM_ENGAGE_DEMOGRAPHICS_ID'    , 2 );
 define( 'CIVICRM_ENGAGE_DEMOGRAPHICS_PREFIX', 'demographics_' );
 define( 'CIVICRM_ENGAGE_DEMOGRAPHICS_TITLE' , 'Demographic Data' );
+define( 'CIVICRM_ENGAGE_TASK_VOTER_RESERVE' , 30 );
 
 function civicrm_engage_civicrm_buildForm( $formName, &$form ) {
+    
+    civicrm_engage_manageTasks( $formName, $form );
+
     if ( $formName == 'CRM_Contact_Form_Contact' ) {
         $groupTree =& CRM_Core_BAO_CustomGroup::getTree( 'Contact',
                                                          $form,
@@ -102,5 +106,47 @@ function civicrm_engage_civicrm_tabs( &$tabs, $contactID ) {
         if ( $tabValue['title'] == CIVICRM_ENGAGE_DEMOGRAPHICS_TITLE ) {
             unset( $tabs[$tabID] );
         }
+    }
+}
+
+function civicrm_engage_civicrm_searchTasks( $objectType, &$tasks ) {
+    if ( $objectType == 'contact' ) {
+        $tasks[CIVICRM_ENGAGE_TASK_VOTER_RESERVE] = array( 'title'  => ts('Voter Reservation'),
+                            'class'  => 'Engage_Contact_Form_Task_VoterReservation',
+                            'result' => true );
+    }
+}
+
+function civicrm_engage_manageTasks( $formName, &$form ) {
+
+    if ( (substr_count( $formName , '_Search_' ) > 0) && 
+         $form->elementExists( 'task' ) ) {
+        $element =& $form->getElement('task');
+        
+        $isFindVoter = false;
+        if ( ($form->getVar('_name') == 'Custom') &&
+             ($form->getVar('_customSearchClass') == 'Engage_Contact_Form_Search_Custom_FindVoters' ) ) {
+            $isFindVoter = true;
+        }
+
+        if ( $element->getType() == 'select' ) {
+            if ( $isFindVoter ) {
+                $form->removeElement('task');
+                $element =& $form->add( 'hidden', 'task' );
+                $element->setValue(CIVICRM_ENGAGE_TASK_VOTER_RESERVE);
+               
+                $elementSubmit =& $form->getElement('_qf_Custom_next_action');
+                $form->updateElementAttr( '_qf_Custom_next_action' , array( 'onClick' => 'return true;'));
+                $elementSubmit->setValue(ts('Reserve Voters'));
+                return true;
+            }
+            foreach ( $element->_options as $index => $options ) {
+                if ( $options['attr']['value'] == CIVICRM_ENGAGE_TASK_VOTER_RESERVE ) {
+                    unset( $element->_options[$index]  );
+                    return false;
+                }
+            }
+        }
+        return false;
     }
 }
