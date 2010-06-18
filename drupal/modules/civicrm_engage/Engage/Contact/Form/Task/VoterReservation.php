@@ -81,11 +81,21 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
 
     function addRules( )
     {
-        $this->addFormRule( array( 'Engage_Contact_Form_Task_VoterReservation', 'formRule' ) );
+        $this->addFormRule( array( 'Engage_Contact_Form_Task_VoterReservation', 'formRule'), $this );
     }
     
-    static function formRule( $form, $rule) {
+    static function formRule( $params, $rules, &$form ) {
         $errors = array();
+        if ( $params['survey_id'] ) {
+            $surveyParams  = array( 'id' => $params['survey_id'] );
+            $default       = array( );
+            $form->surveyDeatils = CRM_Campaign_BAO_Survey::retrieve( $surveyParams, $default );
+            if ( $form->surveyDeatils->default_number_of_contacts &&
+                 ($form->surveyDeatils->default_number_of_contacts < count($form->_contactIds)) ) {
+                $errors['survey_id'] = ts( "You can add maximum %1 contact(s) at a time for this survey.", array( 1 => $form->surveyDeatils->default_number_of_contacts) );
+            }
+        }
+
         return $errors;
     }
     /**
@@ -122,9 +132,11 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
         
         $customFields = CRM_Core_BAO_CustomField::getFields( 'Activity' );
        
-        $surveyParams  = array( 'id' => $params['survey_id'] );
-        $default       = array( );
-        $surveyDeatils = CRM_Campaign_BAO_Survey::retrieve( $surveyParams, $default );
+        $surveyDeatils = $this->surveyDeatils;
+        $maxVoters     = $surveyDeatils->max_number_of_contacts;
+        $numVoters     = CRM_Core_DAO::singleValueQuery( "SELECT COUNT(*) FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." WHERE status_id = 'H' AND survey_id = %1 ", array( 1 => array( $params['survey_id'], 'Integer') ) );
+        $numVoters     = isset($numVoters)? $numVoters : 0;
+
         $contactId     = $session->get( 'userID' );
 
         list( $cName, $cEmail, $doNotEmail, $onHold, $isDeceased ) = CRM_Contact_BAO_Contact::getContactDetails( $contactId );
@@ -136,7 +148,13 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
         $fieldParams[$fieldMapper['interviewer_email']]        = $cEmail;
         $fieldParams[$fieldMapper['interviewer_ip']]           = $_SERVER['REMOTE_ADDR'];
 
+        $countVoters = 0;
         foreach ( $this->_contactIds as $cid ) {
+            if ($maxVoters && ($maxVoters <= ($numVoters + $countVoters) ) ) {
+                break;
+            }
+
+            $countVoters++;
             $activityParams = array( );  
 
             $activityParams['source_contact_id']   = $contactId;
@@ -159,8 +177,17 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
                 
             }
         }
-        
-        CRM_Core_Session::setStatus( ts('Voter Reservation has been added for %1 Contacts.', array( 1 => count($this->_contactIds) ) ) );
+
+        $status = array();
+        if ( $countVoters > 0 ) {
+            $status[] = ts('Voter Reservation has been added for %1 Contact(s).', array( 1 => $countVoters ));
+        }
+        if ( $maxVoters && (count($this->_contactIds) > $countVoters ) ) {
+            $status[] = ts('Voter Reservation did not add for %1 Contact(s).', array( 1 => ( count($this->_contactIds) - $countVoters) ) );
+        }
+        if ( !empty($status) ) {
+            CRM_Core_Session::setStatus( implode('&nbsp;', $status) );
+        }
     }
 }
 
