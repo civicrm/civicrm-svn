@@ -1224,7 +1224,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
         }
         
         if ( CRM_Utils_Array::value( 'send_receipt', $params ) ) {
-            $receiptFrom = "$userName <$userEmail>";
+            $receiptFrom = CRM_Utils_Array::value( $params['from_email_address'], $this->_fromEmails['name'] );
                         
             $this->assign( 'module', 'Event Registration' );          
             //use of the message template below requires variables in different format
