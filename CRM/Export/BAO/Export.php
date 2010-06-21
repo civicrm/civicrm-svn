@@ -811,9 +811,12 @@ class CRM_Export_BAO_Export
         if ( isset( $query->_fields[$field]['type'] ) ) {
             switch ( $query->_fields[$field]['type'] ) {
             case CRM_Utils_Type::T_INT:
+                $sqlColumns[$fieldName] = "$fieldName int(10)";
+                break;
+
             case CRM_Utils_Type::T_BOOL:
             case CRM_Utils_Type::T_BOOLEAN:
-                $sqlColumns[$fieldName] = "$fieldName varchar(16)";
+                $sqlColumns[$fieldName] = "$fieldName tinyint(4)";
                 break;
 
             case CRM_Utils_Type::T_STRING:
