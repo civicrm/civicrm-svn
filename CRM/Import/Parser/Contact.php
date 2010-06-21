@@ -1080,7 +1080,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     // need not check for label filed import
                     $htmlType = array('CheckBox','Multi-Select','AdvMulti-Select','Select','Radio','Multi-Select State/Province' ,'Multi-Select Country' );
                     if ( ! in_array( $customFields[$customFieldID]['html_type'], $htmlType ) ||
-                         $customFields[$customFieldID]['data_type'] =='Boolean' ) {
+                         $customFields[$customFieldID]['data_type'] =='Boolean' || 
+                         $customFields[$customFieldID]['data_type'] == 'ContactReference' ) {
                         $valid = 
                             CRM_Core_BAO_CustomValue::typecheck($customFields[$customFieldID]['data_type'], $value);
                         if (! $valid) {
