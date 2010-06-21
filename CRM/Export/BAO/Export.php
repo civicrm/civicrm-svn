@@ -871,6 +871,10 @@ class CRM_Export_BAO_Export
 
     static function writeDetailsToTable( $tableName, &$details, &$sqlColumns )
     {
+        if ( empty( $details ) ) {
+            return;
+        }
+        
         $sql = "
 SELECT max(id)
 FROM   $tableName
@@ -899,12 +903,12 @@ FROM   $tableName
         $sqlColumnString = '(id, ' . implode( ',', array_keys( $sqlColumns ) ) . ')';
 
         $sqlValueString  = implode( ",\n", $sqlClause );
-
+        
         $sql = "
 INSERT INTO $tableName $sqlColumnString
 VALUES $sqlValueString
 ";
-
+        
         CRM_Core_DAO::executeQuery( $sql );
     }
 
