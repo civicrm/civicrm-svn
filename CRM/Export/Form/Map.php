@@ -213,7 +213,10 @@ class CRM_Export_Form_Map extends CRM_Core_Form
                                                  $mapperKeys,
                                                  $this->get( 'returnProperties' ),
                                                  $this->get( 'exportMode' ),
-                                                 $this->get( 'componentClause' )
+                                                 $this->get( 'componentClause' ),
+                                                 $this->get( 'componentTable' ),
+                                                 $this->get( 'mergeSameAddress' ),
+                                                 $this->get( 'mergeSameHousehold' )
                                                  );
     }
     

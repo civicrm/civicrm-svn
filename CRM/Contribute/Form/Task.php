@@ -87,13 +87,18 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
      */
     function preProcess( ) 
     {
-        $this->_contributionIds = array();
+        self::preProcessCommon( $this );
+    }
 
-        $values = $this->controller->exportValues( 'Search' );
+    static function preProcessCommon( &$form, $useTable = false )
+    {
+        $form->_contributionIds = array();
 
-        $this->_task = $values['task'];
+        $values = $form->controller->exportValues( 'Search' );
+
+        $form->_task = $values['task'];
         $contributeTasks = CRM_Contribute_Task::tasks();
-        $this->assign( 'taskName', $contributeTasks[$this->_task] );
+        $form->assign( 'taskName', $contributeTasks[$form->_task] );
 
         $ids = array();
         if ( $values['radio_ts'] == 'ts_sel' ) {
@@ -103,25 +108,25 @@ class CRM_Contribute_Form_Task extends CRM_Core_Form
                 }
             }
         } else {
-            $queryParams =  $this->get( 'queryParams' );
+            $queryParams =  $form->get( 'queryParams' );
             $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
                                                        CRM_Contact_BAO_Query::MODE_CONTRIBUTE);
             $result = $query->searchQuery(0, 0, null);
             while ($result->fetch()) {
                 $ids[] = $result->contribution_id;
             }
-            $this->assign( 'totalSelectedContributions', $this->get( 'rowCount' ) );
+            $form->assign( 'totalSelectedContributions', $form->get( 'rowCount' ) );
         }
 
         if ( ! empty( $ids ) ) {
-            $this->_componentClause =
+            $form->_componentClause =
                 ' civicrm_contribution.id IN ( ' .
                 implode( ',', $ids ) . ' ) ';
             
-            $this->assign( 'totalSelectedContributions', count( $ids ) );
+            $form->assign( 'totalSelectedContributions', count( $ids ) );
         }
 
-        $this->_contributionIds = $this->_componentIds = $ids;
+        $form->_contributionIds = $form->_componentIds = $ids;
 
         //set the context for redirection for any task actions
         $session = CRM_Core_Session::singleton( );

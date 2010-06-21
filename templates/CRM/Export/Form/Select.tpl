@@ -42,8 +42,14 @@
       <tr class="crm-export-form-block-exportOption">
          <td class="label"></td><td>{$form.exportOption.html}</td>
       </tr>
+      <tr class="crm-export-form-block-mergeSameAddress">
+         <td class="label"></td><td>{$form.merge_same_address.html}</td>
+      </tr>
+       <tr class="crm-export-form-block-mergeSameHousehold">
+         <td class="label"></td><td>{$form.merge_same_household.html}</td>
+      </tr>
   </table>
-         <div id="map">
+      <div id="map">
        {if $form.mapping }
             <table class="form-layout-compressed">
             <tr class="crm-export-form-block-mapping"><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>{$form.mapping.label} &nbsp; {$form.mapping.html}</td></tr></table>

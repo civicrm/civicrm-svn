@@ -46,7 +46,7 @@ class CRM_Core_Report_Excel {
      *
      * @access  public
      */
-    function makeCSVTable( &$header, &$rows, $titleHeader = null, $print = true )
+    function makeCSVTable( &$header, &$rows, $titleHeader = null, $print = true, $outputHeader = true )
     {
         if ( $titleHeader ) {
             echo $titleHeader;
@@ -73,13 +73,15 @@ class CRM_Core_Report_Excel {
             $schema_insert     .= $seperator;
         } // end while
 
-        // need to add PMA_exportOutputHandler functionality out here, rather than
-        // doing it the moronic way of assembling a buffer
-        $out = trim(substr($schema_insert, 0, -1)) . $add_character;
-        if ( $print ) {
-            echo $out;
-        } else {
-            $result .= $out;
+        if ( $outputHeader ) {
+            // need to add PMA_exportOutputHandler functionality out here, rather than
+            // doing it the moronic way of assembling a buffer
+            $out = trim(substr($schema_insert, 0, -1)) . $add_character;
+            if ( $print ) {
+                echo $out;
+            } else {
+                $result .= $out;
+            }
         }
 
         $i = 0;
@@ -146,19 +148,18 @@ class CRM_Core_Report_Excel {
         }
     } // end of the 'getTableCsv()' function
 
-    function writeCSVFile( $fileName, &$header, &$rows, $titleHeader = null ) {
-        
-        require_once 'CRM/Utils/System.php';
-        CRM_Utils_System::download( CRM_Utils_String::munge( $fileName ),
-                                    'text/x-csv',
-                                    CRM_Core_DAO::$_nullObject,
-                                    'csv',
-                                    false );
+    function writeCSVFile( $fileName, &$header, &$rows, $titleHeader = null, $outputHeader = true ) {
+        if ( $outputHeader ) {
+            require_once 'CRM/Utils/System.php';
+            CRM_Utils_System::download( CRM_Utils_String::munge( $fileName ),
+                                        'text/x-csv',
+                                        CRM_Core_DAO::$_nullObject,
+                                        'csv',
+                                        false );
+        }
 
-        self::makeCSVTable( $header, $rows, $titleHeader, true );
-
-        
+        if ( ! empty( $rows ) ) {
+            self::makeCSVTable( $header, $rows, $titleHeader, true, $outputHeader );
+        }
     }
 }
-
-

@@ -866,8 +866,10 @@ FROM   civicrm_domain
         }
         $dao->query( $queryStr, $i18nRewrite );
 
-        if ( $freeDAO ) {
-            // we typically do this for insert/update/delete stataments
+        if ( $freeDAO ||
+             preg_match( '/^(insert|update|delete|create|drop)/i', $queryStr ) ) {
+            // we typically do this for insert/update/delete stataments OR if explicitly asked to
+            // free the dao
             $dao->free( );
         }
         return $dao;
@@ -1293,4 +1295,14 @@ SELECT contact_id
 
         $object->delete();
     }
+
+    static function createTempTableName( $prefix = 'civicrm', $addRandomString = true ) {
+        $tableName = $prefix . "_temp";
+
+        if ( $addRandomString ) {
+            $tableName .="_" . md5( uniqid( '', true ) );
+        }
+        return $tableName;
+    }
+
 }

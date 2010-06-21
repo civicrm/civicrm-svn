@@ -560,7 +560,7 @@ class CRM_Contact_BAO_Query
                             } else if ( $tName == 'contact' ) {
                                 // special case, when current employer is set for Individual contact
                                 if ( $fieldName == 'organization_name' ) {
-                                    $this->_select[$name   ] = "IF ( contact_a.contact_type = 'Individual', NULL, contact_a.organization_name ) AS organization_name";
+                                    $this->_select[$name   ] = "IF ( contact_a.contact_type = 'Individual', NULL, contact_a.organization_name ) as organization_name";
                                 } else if ( $fieldName != 'id' ) {
                                     $this->_select [$name]          = "contact_a.{$fieldName}  as `$name`";
                                 } 
@@ -572,22 +572,22 @@ class CRM_Contact_BAO_Query
                     }
                 } else if ($name === 'tags') {
                     $this->_useGroupBy  = true;
-                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_tag.name)) AS tags";
+                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_tag.name)) as tags";
                     $this->_element[$name              ] = 1;
                     $this->_tables['civicrm_tag'       ] = 1;
                     $this->_tables['civicrm_entity_tag'] = 1;
                 } else if ($name === 'groups') {
                     $this->_useGroupBy  = true;
-                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_group.title)) AS groups";
+                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_group.title)) as groups";
                     $this->_element[$name              ] = 1;
                     $this->_tables['civicrm_group'     ] = 1;
                 } else if ($name === 'notes') {
                     $this->_useGroupBy  = true;
-                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_note.note)) AS notes";
+                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_note.note)) as notes";
                     $this->_element[$name              ] = 1;
                     $this->_tables['civicrm_note'      ] = 1;
                 } else if ($name === 'current_employer') {
-                    $this->_select[$name   ] = "IF ( contact_a.contact_type = 'Individual', contact_a.organization_name, NULL ) AS current_employer";
+                    $this->_select[$name   ] = "IF ( contact_a.contact_type = 'Individual', contact_a.organization_name, NULL ) as current_employer";
                     $this->_element[$name]   = 1;
                 }
             } 
@@ -3243,14 +3243,10 @@ WHERE  id IN ( $groupIDs )
                 
                 // ok here is a first hack at an optimization, lets get all the contact ids
                 // that are restricted and we'll then do the final clause with it
-//CRM-5954
+                // CRM-5954
                 $limitSelect = ( $this->_useDistinct ) ?
                     'SELECT DISTINCT(contact_a.id) as id' :
                     'SELECT contact_a.id as id';
-//                $select = 'SELECT contact_a.id as id';
-//                if ( $this->_useDistinct ) {
-//                    $this->_useGroupBy = true;
-//                }
 
                 $doOpt = true;
                 // hack for order clause
@@ -3322,7 +3318,7 @@ WHERE  id IN ( $groupIDs )
             $groupBy = 'GROUP BY civicrm_activity.id ';
         }
         $query = "$select $from $where $groupBy $order $limit";
-        //CRM_Core_Error::debug('query', $query);
+        // CRM_Core_Error::debug('query', $query);
 
         if ( $returnQuery ) {
             return $query;
