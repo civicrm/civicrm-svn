@@ -1063,9 +1063,9 @@ WHERE  contribution_id = {$this->_id}
                                                                         $ctype );
             
             // add all the additioanl payment params we need
-            $this->_params["state_province-{$this->_bltID}"] =
+            $this->_params["state_province-{$this->_bltID}"] = $this->_params["billing_state_province-{$this->_bltID}"] = 
                 CRM_Core_PseudoConstant::stateProvinceAbbreviation( $this->_params["billing_state_province_id-{$this->_bltID}"] );
-            $this->_params["country-{$this->_bltID}"] =
+            $this->_params["country-{$this->_bltID}"] = $this->_params["billing_country-{$this->_bltID}"] =
                 CRM_Core_PseudoConstant::countryIsoCode( $this->_params["billing_country_id-{$this->_bltID}"] );
             
             if ( $this->_paymentProcessor['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_CREDIT_CARD ) {
