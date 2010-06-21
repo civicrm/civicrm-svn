@@ -53,12 +53,19 @@ class CRM_Export_BAO_Export
      * @param array  $moreReturnProperties additional return fields
      * @param int    $exportMode export mode
      * @param string $componentClause component clause
+     * @param string $componentTable component table 
+     * @param bool   $mergeSameAddress merge records if they have same address 
+     * @param bool   $mergeSameHousehold merge records if they belong to the same household
      *
      * @static
      * @access public
      */
-    static function exportComponents( $selectAll, $ids, $params, $order = null, 
-                                      $fields = null, $moreReturnProperties = null, 
+    static function exportComponents( $selectAll,
+                                      $ids,
+                                      $params,
+                                      $order = null, 
+                                      $fields = null,
+                                      $moreReturnProperties = null, 
                                       $exportMode = CRM_Export_Form_Select::CONTACT_EXPORT,
                                       $componentClause = null,
                                       $componentTable  = null,
@@ -74,7 +81,14 @@ class CRM_Export_BAO_Export
 
         $phoneTypes = CRM_Core_PseudoConstant::phoneType();
         $imProviders = CRM_Core_PseudoConstant::IMProvider();
-        $contactRelationshipTypes = CRM_Contact_BAO_Relationship::getContactRelationshipType( null, null, null, null, true, 'label', false );
+        $contactRelationshipTypes = CRM_Contact_BAO_Relationship::getContactRelationshipType( 
+                                                                                             null, 
+                                                                                             null, 
+                                                                                             null, 
+                                                                                             null, 
+                                                                                             true, 
+                                                                                             'label', 
+                                                                                             false );
         $queryMode = CRM_Contact_BAO_Query::MODE_CONTACTS;
         
         switch ( $exportMode )  {
@@ -147,7 +161,6 @@ class CRM_Export_BAO_Export
                 $contactType       = CRM_Utils_Array::value( 0, $value );
                 $locTypeId         = CRM_Utils_Array::value( 2, $value );
                 $phoneTypeId       = CRM_Utils_Array::value( 3, $value );
-
                 
                 if ( $relationField ) {
                     if ( in_array ( $relationField, $locationTypeFields ) ) {
@@ -801,7 +814,7 @@ class CRM_Export_BAO_Export
         // we should normalize the field name so its a valid column name
         // removed 32 limit since the long columns over-wrote each other
         // need a better naming convention here 
-        $fieldName = CRM_Utils_String::munge( strtolower($field), '_');
+        $fieldName = CRM_Utils_String::munge( strtolower($field), '_', 64 );
 
         if ( $fieldName == 'id' ) {
             $fieldName = 'civicrm_primary_id';
@@ -1015,9 +1028,9 @@ WHERE  id IN ( $deleteIDString )
         //figure out which columns are to be replaced by which ones
         foreach ( $sqlColumns as $columnNames => $dontCare ) {
             if ( $columnNames == 'civicrm_primary_id' ) {
-                $replaced[$columnNames] = CRM_Utils_String::munge( 'household member of internal contact id', '_' );
+                $replaced[$columnNames] = CRM_Utils_String::munge( 'household member of internal contact id', '_', 64 );
             } else {
-                $householdColName = CRM_Utils_String::munge( 'household member of '. $columnNames, '_' );
+                $householdColName = CRM_Utils_String::munge( 'household member of '. $columnNames, '_', 64 );
                 if ( CRM_Utils_Array::value( $householdColName, $sqlColumns ) ) {
                     $replaced[$columnNames] = $householdColName;
                 }
