@@ -565,7 +565,8 @@ ORDER BY parent_id, weight";
 
             if ( ( $config->userFramework == 'Drupal' ) && 
                  function_exists( 'module_exists' ) &&
-                 module_exists('admin_menu') ) {
+                 module_exists('admin_menu') &&
+                 user_access('access administration menu') ) {
                 $prepandString = "<li class=\"menumain crm-link-home\">" . ts('Home') . "<ul id=\"civicrm-home\"><li><a href=\"{$homeURL}\">" . ts('CiviCRM Home') . "</a></li><li><a href=\"#\" onclick=\"cj.Menu.closeAll( );cj('#civicrm-menu').toggle( );\">" . ts('Drupal Menu') . "</a></li></ul></li>";
             } else {
                 $prepandString = "<li class=\"menumain crm-link-home\"><a href=\"{$homeURL}\" title=\"" . ts('CiviCRM Home') . "\">" . ts('Home') . "</a></li>";
