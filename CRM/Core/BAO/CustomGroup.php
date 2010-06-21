@@ -1566,7 +1566,8 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
 
             $supportableFormats = array(
                                         'mm/dd'   => "%B %E%f $customTimeFormat",
-                                        'dd-mm'   => "%E%f %B $customTimeFormat"
+                                        'dd-mm'   => "%E%f %B $customTimeFormat",
+                                        'yy'      => "%Y $customTimeFormat"
                                         );
             if ( $format = CRM_Utils_Array::value( 'date_format', $field ) ) {
                 if ( array_key_exists( $format, $supportableFormats ) ) {

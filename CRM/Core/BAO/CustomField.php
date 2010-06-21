@@ -1317,6 +1317,7 @@ SELECT id
         if ( $customFields[$customFieldId]['data_type'] == 'Date' ) {
             if ( ! CRM_Utils_System::isNull( $value ) ) {
                 $format = $customFields[$customFieldId]['date_format'];
+                
                 if ( in_array( $format, array('dd-mm', 'mm/dd' ) ) ) {
                     $dateTimeArray = explode(' ', $value);
 
@@ -1329,7 +1330,10 @@ SELECT id
                     if ( array_key_exists( 1, $dateTimeArray) ) {
                         $value .= ' ' . $dateTimeArray[1];
                     }
+                } else if ( $format == 'yy' ) {
+                    $value = "01-01-{$value}";
                 }
+                
                 $date = CRM_Utils_Date::processDate( $value );
             }
             $value = $date;
