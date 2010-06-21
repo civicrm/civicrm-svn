@@ -522,7 +522,8 @@ SELECT  id, label, name, option_group_id
         $form->addElement('checkbox', 
                           'send_receipt', 
                           ts('Send Confirmation?'), null, 
-                          array('onclick' =>"return showHideByValue('send_receipt','','notice','table-row','radio',false);") );
+                          array('onclick' =>"showHideByValue('send_receipt','','notice','table-row','radio',false); showHideByValue('send_receipt','','from-email','table-row','radio',false);") );
+
         $form->add( 'select', 'from_email_address', ts('From'), $form->_fromEmails['label'] );
         $form->add('textarea', 'receipt_text', ts('Confirmation Message') );
         

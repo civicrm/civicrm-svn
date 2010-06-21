@@ -233,6 +233,14 @@
     field_type          ="radio"
     invert              = 0
 }
+{include file="CRM/common/showHideByFieldValue.tpl" 
+    trigger_field_id    ="send_receipt"
+    trigger_value       =""
+    target_element_id   ="from-email" 
+    target_element_type ="table-row"
+    field_type          ="radio"
+    invert              = 0
+}
 {/if}
 
 {if $action eq 1 and !$participantMode} 
