@@ -61,7 +61,7 @@
     {/if}
     
     {if $groupPending }
-        <div class="label status-pending">{ts}Pending{/ts}</div> 
+        <h3 class="status-pending">{ts}Pending{/ts}</h3> 
         <div class="description">{ts}Joining these group(s) is pending confirmation by this contact.{/ts}</div>	
 	{strip}
     <table id="pending_group" class="display">
@@ -86,7 +86,7 @@
 	{/if}
 
 	{if $groupOut }
-	<div class="label status-removed">{ts}Past Groups{/ts}</div>
+	<h3 class="status-removed">{ts}Past Groups{/ts}</h3>
     <div class="description">{ts 1=$displayName}%1 is no longer part of these group(s).{/ts}</div>
     {strip}
     <table id="past_group" class="display">

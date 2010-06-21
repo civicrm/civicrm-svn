@@ -23,12 +23,11 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-pledge-view-form-block">  
-<fieldset>
-      <legend>{ts}View Pledge{/ts}</legend>
+<h3>{ts}View Pledge{/ts}</h3>
+<div class="crm-block crm-content-block crm-pledge-view-block">  
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-<table class="view-layout">
-     <tr class="crm-pledge-form-block-displapName"><td class="label">{ts}Pledge By{/ts}</td><td class="bold">{$displayName}&nbsp;</td></tr>
+<table class="crm-info-panel">
+     <tr class="crm-pledge-form-block-displayName"><td class="label">{ts}Pledge By{/ts}</td><td class="bold"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId"}">{$displayName}</a></td></tr>
      <tr class="crm-pledge-form-block-amount"><td class="label">{ts}Total Amount{/ts}</td><td class="bold">{$amount|crmMoney}&nbsp;</td></tr>
      <tr class="crm-pledge-form-block-installments"><td class="label">{ts}To be paid in{/ts}</td><td>{$installments}&nbsp;&nbsp;{ts}installments of{/ts} {$eachPaymentAmount|crmMoney}&nbsp;&nbsp;{ts}every{/ts}&nbsp;&nbsp;{$frequency_interval}&nbsp;{$frequencyUnit}</td></tr>
  	 <tr><td class="label">{ts}Payments are due on the{/ts}</td><td>{$frequency_day}&nbsp;day of the period</td></tr>
@@ -65,6 +64,5 @@
     {include file="CRM/Custom/Page/CustomDataView.tpl"}
 </table>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-</fieldset>  
 </div>  
  

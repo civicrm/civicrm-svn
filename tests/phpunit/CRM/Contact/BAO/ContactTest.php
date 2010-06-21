@@ -1204,7 +1204,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         list( $displayName, $image ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $contactId );
         
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
-        $checkImage = CRM_Contact_BAO_Contact_Utils::getImage( $params['contact_type'] );
+        $checkImage = CRM_Contact_BAO_Contact_Utils::getImage( $params['contact_type'], false, $contactId );
         
         require_once 'CRM/Core/PseudoConstant.php';
         $prefix = CRM_Core_PseudoConstant::individualPrefix( );

@@ -24,6 +24,10 @@
  +--------------------------------------------------------------------+
 *}
 
+{if $action eq 1 or $action eq 2 or $action eq 8}
+   {include file="CRM/Admin/Form/Options.tpl"}
+{else}	
+
 <div id="help">
   {if $gName eq "gender"}
     {ts}CiviCRM is pre-configured with standard options for individual gender (e.g. Male, Female, Transgender). You can use this page to customize these options and add new options as needed for your installation.{/ts}
@@ -60,10 +64,6 @@
     {ts 1=$GName}The existing option choices for %1 group are listed below. You can add, edit or delete them from this screen.{/ts}
   {/if}
 </div>
-
-{if $action eq 1 or $action eq 2 or $action eq 8}
-   {include file="CRM/Admin/Form/Options.tpl"}
-{else}	
 
 <div class="crm-content-block crm-block">
 {if $rows}
@@ -115,7 +115,7 @@
             </thead>
             <tbody>
         {foreach from=$rows item=row}
-        <tr id="row_{$row.id}" class=" crm-admin-options crm-admin-options_{$row.id} {if NOT $row.is_active} disabled{/if}">
+        <tr id="row_{$row.id}" class="crm-admin-options crm-admin-options_{$row.id} {cycle values="odd-row,even-row"}{if NOT $row.is_active} disabled{/if}">
             {if $showComponent}
                 <td class="crm-admin-options-component_name">{$row.component_name}</td>
             {/if}

@@ -72,6 +72,6 @@ class CRM_Activity_BAO_ActivityTargetTest extends CiviUnitTestCase
 
         // assert that we have at least one targetID
         $this->assertEquals( count( $targetIDs ), 1, 'One target ID match for activity' );
-        $this->assertEquals( $targetIDs[1], $activity['target_contact_id'], 'The returned target contacts ids match' );
+        $this->assertEquals( $targetIDs[0], $activity['target_contact_id'], 'The returned target contacts ids match' );
     }
 }

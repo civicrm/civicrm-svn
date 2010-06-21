@@ -49,22 +49,21 @@ class CRM_Dashlet_Page_AllCases extends CRM_Core_Page
      *
      * @access public
      */
- function run( ) {
-     require_once 'CRM/Case/BAO/Case.php';
-     //check for civicase access.
-   //  if ( !CRM_Case_BAO_Case::accessCiviCase( ) ) {
-         //CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
-   //  }
+    function run( ) {
+        require_once 'CRM/Case/BAO/Case.php';
+        //check for civicase access.
+        if ( !CRM_Case_BAO_Case::accessCiviCase( ) ) {
+            CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
+        }
 
-     require_once 'CRM/Core/OptionGroup.php';
-     $session = & CRM_Core_Session::singleton();
-     $userID  = $session->get('userID');        
-     $upcoming = CRM_Case_BAO_Case::getCases( true, $userID, 'upcoming');
-     
-     if ( !empty( $upcoming ) ) {
-         $this->assign('AllCases', $upcoming);
-     }
+        require_once 'CRM/Core/OptionGroup.php';
+        $session  = CRM_Core_Session::singleton();
+        $userID   = $session->get('userID');        
+        $upcoming = CRM_Case_BAO_Case::getCases( true, $userID, 'upcoming');
 
-     return parent::run( );
- }
+        if ( !empty( $upcoming ) ) {
+            $this->assign('AllCases', $upcoming);
+        }
+        return parent::run( );
+    }
 }

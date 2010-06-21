@@ -80,13 +80,18 @@ class CRM_Event_Form_Task extends CRM_Core_Form
      */
     function preProcess( ) 
     {
-        $this->_participantIds = array( );
-        
-        $values = $this->controller->exportValues( 'Search' );
+        self::preProcessCommon( $this );
+    }
 
-        $this->_task = $values['task'];
+    static function preProcessCommon( &$form, $useTable = false )
+    {
+        $form->_participantIds = array( );
+        
+        $values = $form->controller->exportValues( 'Search' );
+
+        $form->_task = $values['task'];
         $eventTasks = CRM_Event_Task::tasks();
-        $this->assign( 'taskName', $eventTasks[$this->_task] );
+        $form->assign( 'taskName', $eventTasks[$form->_task] );
         
         $ids = array();
         if ( $values['radio_ts'] == 'ts_sel' ) {
@@ -96,7 +101,7 @@ class CRM_Event_Form_Task extends CRM_Core_Form
                 }
             }
         } else {
-            $queryParams =  $this->get( 'queryParams' );
+            $queryParams =  $form->get( 'queryParams' );
             $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
                                                        CRM_Contact_BAO_Query::MODE_EVENT);
             $result = $query->searchQuery(0, 0, null);
@@ -106,17 +111,23 @@ class CRM_Event_Form_Task extends CRM_Core_Form
         }
         
         if ( ! empty( $ids ) ) {
-            $this->_componentClause =
+            $form->_componentClause =
                 ' civicrm_participant.id IN ( ' .
                 implode( ',', $ids ) . ' ) ';
-            $this->assign( 'totalSelectedParticipants', count( $ids ) );             
+            $form->assign( 'totalSelectedParticipants', count( $ids ) );             
         }
         
-        $this->_participantIds = $this->_componentIds = $ids;
+        $form->_participantIds = $form->_componentIds = $ids;
 
         //set the context for redirection for any task actions
         $session = CRM_Core_Session::singleton( );
-        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/event/search', 'force=1' ) );
+        
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        require_once 'CRM/Utils/Rule.php';
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+        
+        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/event/search', $urlParams ) );
     }
 
     /**

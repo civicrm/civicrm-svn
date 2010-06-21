@@ -24,10 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for viewing grants *} 
+<h3>{ts}View Grant{/ts}</h3>
 <div class="crm-block crm-form-block crm-grant-view-form-block">
-<fieldset>
-    <legend>{ts}View Grant{/ts}</legend>
-    <table class="view-layout">
+    <table class="crm-info-panel">
         <tr class="crm-grant-view-form-block-name"><td class="label">{ts}Name{/ts}</td><td class="bold">{$displayName}</td></tr>    
         <tr class="crm-grant-view-form-block-status_id"><td class="label">{ts}Grant Status{/ts}          </td> <td>{$grantStatus}</td></tr>
         <tr class="crm-grant-view-form-block-grant_type_id"><td class="label">{ts}Grant Type{/ts}            </td> <td>{$grantType}</td></tr>
@@ -55,13 +54,20 @@
             <td>
                 {$form.buttons.html}
                 {if call_user_func(array('CRM_Core_Permission','check'), 'edit grants')}
-                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/grant' q="reset=1&id=$id&cid=$contactId&action=update&context=grant"}" accesskey="e">Edit</a>
+                {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context"}
+	        {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
+	        {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context&key=$searchKey"}
+	        {/if}
+                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}" accesskey="e">Edit</a>
                 {/if}
                 {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviGrant')}
-                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/grant' q="reset=1&id=$id&cid=$contactId&action=delete&context=grant"}">Delete</a>
+		{assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context"}
+	        {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
+	        {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context&key=$searchKey"}
+	        {/if}
+                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}">Delete</a>
                 {/if}
             </td>
         </tr>    
     </table>
-</fieldset>
 </div>

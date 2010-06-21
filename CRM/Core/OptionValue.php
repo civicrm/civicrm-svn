@@ -167,6 +167,7 @@ class CRM_Core_OptionValue
      */
     static function addOptionValue( &$params, &$groupParams, &$action, &$optionValueID ) 
     {
+        require_once 'CRM/Utils/Weight.php';        
         $params['is_active'] =  CRM_Utils_Array::value( 'is_active', $params, false );
         // checking if the group name with the given id or name (in $groupParams) exists
         if (! empty($groupParams)) {
@@ -189,7 +190,6 @@ class CRM_Core_OptionValue
                 $oldWeight = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', $optionValueID, 'weight', 'id' );
             }
             $fieldValues = array('option_group_id' => $optionGroupID);
-            require_once 'CRM/Utils/Weight.php';        
             $params['weight'] =
                 CRM_Utils_Weight::updateOtherWeights('CRM_Core_DAO_OptionValue', $oldWeight, $params['weight'], $fieldValues);
         }

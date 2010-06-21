@@ -377,7 +377,8 @@ class CRM_Contact_BAO_Contact extends CRM_Contact_DAO_Contact
         
         $transaction->commit( );
         
-        $contact->contact_type_display = $contact->contact_type;
+        // CRM-6367: fetch the right label for contact type’s display
+        $contact->contact_type_display = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType', $contact->contact_type, 'label', 'name');
 
         // reset the group contact cache for this group
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
@@ -2464,7 +2465,7 @@ UNION
              // finally get menu item for -more- action widget.
              $contextMenu['moreActions'][$values['weight']] = array( 'title' => $values['title'],
                                                                      'ref'   => $values['ref'],
-                                                                     'href'  => $values['href'],
+                                                                     'href'  => CRM_Utils_Array::value( 'href', $values ),
                                                                      'key'   => $values['key']);                         
          }
          

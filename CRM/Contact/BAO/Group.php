@@ -548,7 +548,7 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         
         //add mapping record only for search builder saved search
         $mappingId = null;
-        if ( $params['is_advanced'] == '2' && $params['is_searchBuilder'] == '1' ) {
+        if ( $params['search_context'] == 'builder' ) {
             //save the mapping for search builder
             require_once "CRM/Core/BAO/Mapping.php";
             if ( !$ssId ) {

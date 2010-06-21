@@ -23,12 +23,16 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{if $action eq 8}
+  <h3>{ts}Delete Report Template{/ts}</h3>
+{elseif $action eq 2}
+  <h3>{ts}Edit Report Template{/ts}</h3>
+{else}
+  <h3>{ts}New Report Template{/ts}</h3>
+{/if}
 <div class="crm-block crm-form-block crm-report-register-form-block">	
 {if $action eq 8} 
     <table class="form-layout">
-    <tr>
-        <td colspan=2 class="crm-report-form-block-title"><strong>{ts}Delete Report Template{/ts}</strong></td>
-    </tr>
     <tr class="buttons">
         <td><div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         </td>
@@ -45,9 +49,6 @@
 {else}
   	
     <table class="form-layout">
-        <tr class="crm-report-register-form-block-title">
-            <td colspan=2><strong>{if $action eq 2}{ts}Edit Report Template{/ts}{else}{ts}New Report Template{/ts}{/if}</strong></td>
-        </tr>
         <tr class="buttons crm-report-register-form-block-buttons">
             <td><div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
             </td>

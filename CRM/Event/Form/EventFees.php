@@ -525,6 +525,7 @@ SELECT  id, label, name, option_group_id
                           array('onclick' =>"showHideByValue('send_receipt','','notice','table-row','radio',false); showHideByValue('send_receipt','','from-email','table-row','radio',false);") );
 
         $form->add( 'select', 'from_email_address', ts('From'), $form->_fromEmails['label'] );
+
         $form->add('textarea', 'receipt_text', ts('Confirmation Message') );
         
         // Retrieve the name and email of the contact - form will be the TO for receipt email ( only if context is not standalone)        

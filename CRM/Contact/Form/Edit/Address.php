@@ -175,10 +175,14 @@ class CRM_Contact_Form_Edit_Address
         require_once 'CRM/Core/BAO/CustomGroup.php';
         CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap );
 
+        $entityId = null;
+        if ( !empty( $form->_values['address'] ) ) {
+            $entityId = $form->_values['address'][$blockId]['id'];
+        }
         // Process any address custom data -
         $groupTree = CRM_Core_BAO_CustomGroup::getTree( 'Address',
                                                         $form,
-                                                        $form->_values['address'][$blockId]['id'] );
+                                                        $entityId );
         if ( isset($groupTree) && is_array($groupTree) ) {
             // use simplified formatted groupTree
             $groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, $form );
@@ -196,6 +200,7 @@ class CRM_Contact_Form_Edit_Address
             // For some of the custom fields like checkboxes, the defaults doesn't populate 
             // in proper format due to the different element-name format - 'address[$blockId][custom-X]'.
             // Below eval() fixes this issue.
+            $address = array();
             foreach ( $defaults as $key => $val ) {
                 eval("\${$key} = " . (!is_array($val) ? "'{$val}'" : var_export($val, true)) . ";");
             }
