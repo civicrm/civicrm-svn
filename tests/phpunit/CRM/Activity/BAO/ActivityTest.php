@@ -140,7 +140,7 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( $defaults['source_contact_id'], $contactId, 'Verify source contact id is correct.');
         $this->assertEquals( $defaults['activity_type_id'], 2, 'Verify activity type id is correct.');
         
-        $this->assertEquals( $defaults['target_contact'][1], $targetContactId, 'Verify target contact id is correct.');
+        $this->assertEquals( $defaults['target_contact'][0], $targetContactId, 'Verify target contact id is correct.');
         
         Contact::delete( $contactId );
         Contact::delete( $targetContactId );
