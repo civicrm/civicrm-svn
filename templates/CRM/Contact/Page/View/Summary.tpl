@@ -65,7 +65,15 @@
                             {include file="CRM/Contact/Form/ActionsButton.tpl"}
                         </li>
                         <li>
-                        <a href="{crmURL p='civicrm/contact/add' q="reset=1&action=update&cid=$contactId"}" class="edit button" title="{ts}Edit{/ts}">
+			{assign var='urlParams' value="reset=1&action=update&cid=$contactId"}
+		        {if $searchKey}
+		            {assign var='urlParams' value="reset=1&action=update&cid=$contactId&key=$searchKey"}
+ 		        {/if}
+			{if $context}
+			    {assign var='urlParams' value=$urlParams|cat:"&context=$context"}
+			{/if}
+			
+                        <a href="{crmURL p='civicrm/contact/add' q=$urlParams}" class="edit button" title="{ts}Edit{/ts}">
                         <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
                         </a>
                         </li>

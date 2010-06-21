@@ -1654,5 +1654,5 @@ WHERE  ce.loc_block_id = $locBlockId";
 
         return $permissions;
     }
-}
 
+}

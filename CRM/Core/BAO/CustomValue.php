@@ -76,6 +76,9 @@ class CRM_Core_BAO_CustomValue extends CRM_Core_DAO
         case 'Boolean':
             return CRM_Utils_Rule::boolean($value);
             
+        case 'ContactReference':
+            return CRM_Utils_Rule::validContact($value);
+            
         case 'StateProvince':
             
             //fix for multi select state, CRM-3437

@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <h3>{ts}General Settings{/ts}</h3>
-<table>
+<table class="form-layout">
     <tr class="crm-report-instanceForm-form-block-title">
         <td class="report-label" width="20%">{$form.title.label} {help id="id-report_title" file="CRM/Report/Form/Settings.hlp"}</td>
         <td >{$form.title.html}</td>
@@ -45,7 +45,7 @@
 <br/>
 
 <h3>{ts}Email Delivery Settings{/ts} {help id="id-email_settings" file="CRM/Report/Form/Settings.hlp"}</h3>
-<table>
+<table class="form-layout">
     <tr class="crm-report-instanceForm-form-block-email_subject">
         <td class="report-label" width="20%">{$form.email_subject.label}</td>
         <td>{$form.email_subject.html|crmReplace:class:huge}</td>
@@ -62,7 +62,7 @@
 <br/>
 
 <h3>{ts}Other Settings{/ts}</h3>
-<table>
+<table class="form-layout">
     <tr class="crm-report-instanceForm-form-block-is_navigation">
 	<td class="report-label">{$form.is_navigation.label}</td>
         <td>{$form.is_navigation.html}<br />

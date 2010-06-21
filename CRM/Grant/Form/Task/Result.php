@@ -55,7 +55,12 @@ class CRM_Grant_Form_Task_Result extends CRM_Grant_Form_Task {
 
         $ssID = $this->get( 'ssID' );
         if ( isset( $ssID ) ) {
-            $url = CRM_Utils_System::url( 'civicrm/grant/search', 'reset=1&force=1&ssID=' . $ssID );
+            $urlParams = 'reset=1&force=1&ssID=' . $ssID;
+            $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+            require_once 'CRM/Utils/Rule.php';
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+            
+            $url = CRM_Utils_System::url( 'civicrm/grant/search', $urlParams );
             $session->replaceUserContext( $url );
             return;
         }

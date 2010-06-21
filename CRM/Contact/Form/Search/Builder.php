@@ -66,8 +66,9 @@ class CRM_Contact_Form_Search_Builder extends CRM_Contact_Form_Search
      * @access public
      */
     public function preProcess() {
+        $this->set('context', 'builder' );
         parent::preProcess( );
-
+        
         //get the block count
         $this->_blockCount = $this->get('blockCount');
         if ( !$this->_blockCount ) {

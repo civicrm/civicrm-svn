@@ -27,7 +27,6 @@
  <h3>{ts}Find Events{/ts}</h3>
   <table class="form-layout">
     <tr class="crm-event-searchevent-form-block-title">
-        <td class="label">{$form.title.label}</td>
         <td>{$form.title.html|crmReplace:class:twenty}
              <div class="description font-italic">
                     {ts}Complete OR partial Event name.{/ts}
@@ -47,7 +46,6 @@
     </tr>
   
     <tr>
-       <td></td>
        <td colspan="2">
        <table class="form-layout-compressed" id="id_fromToDates">
         <tr class="crm-event-searchevent-form-block-start_date">

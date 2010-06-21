@@ -634,7 +634,7 @@ function civicrm_view_data( &$user )
 
             // CRM-3537: profile edit link
             if ( user_edit_access($user) ) {
-                $editURL = '&raquo; ' . l( "Edit '{$title['title']}'", 
+                $editURL = '&raquo; ' . l( t("Edit '!1'", array('!1' => $title['title'])),
                                            "user/{$user->uid}/edit/{$title['title']}");
             }
 

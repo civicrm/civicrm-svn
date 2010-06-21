@@ -174,6 +174,7 @@ class CRM_Event_Form_ManageEvent extends CRM_Core_Form
 
         // Set Done button URL and breadcrumb. Templates go back to Manage Templates, 
         // otherwise go to Manage Event for new event or ManageEventEdit if event if exists.        
+        $breadCrumb = array( );
         if ( !$this->_isTemplate ) {
             if ( $this->_id ) {
                 $this->_doneUrl = CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 

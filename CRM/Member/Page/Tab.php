@@ -285,6 +285,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
         case 'search':
             $urlParams = 'force=1';
             if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            $this->assign( 'searchKey',  $qfKey );
             
             $url = CRM_Utils_System::url( 'civicrm/member/search', $urlParams );
             break;
@@ -316,7 +317,7 @@ class CRM_Member_Page_Tab extends CRM_Core_Page {
                 $urlString  = 'civicrm/contact/view/membership';
             }
             if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
-            $this->assign( 'fullTextSearchKey',  $qfKey );
+            $this->assign( 'searchKey',  $qfKey );
             $url = CRM_Utils_System::url( $urlString, $urlParams );
             break;
             

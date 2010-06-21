@@ -560,7 +560,7 @@ class CRM_Contact_BAO_Query
                             } else if ( $tName == 'contact' ) {
                                 // special case, when current employer is set for Individual contact
                                 if ( $fieldName == 'organization_name' ) {
-                                    $this->_select[$name   ] = "IF ( contact_a.contact_type = 'Individual', NULL, contact_a.organization_name ) AS organization_name";
+                                    $this->_select[$name   ] = "IF ( contact_a.contact_type = 'Individual', NULL, contact_a.organization_name ) as organization_name";
                                 } else if ( $fieldName != 'id' ) {
                                     $this->_select [$name]          = "contact_a.{$fieldName}  as `$name`";
                                 } 
@@ -572,22 +572,22 @@ class CRM_Contact_BAO_Query
                     }
                 } else if ($name === 'tags') {
                     $this->_useGroupBy  = true;
-                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_tag.name)) AS tags";
+                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_tag.name)) as tags";
                     $this->_element[$name              ] = 1;
                     $this->_tables['civicrm_tag'       ] = 1;
                     $this->_tables['civicrm_entity_tag'] = 1;
                 } else if ($name === 'groups') {
                     $this->_useGroupBy  = true;
-                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_group.title)) AS groups";
+                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_group.title)) as groups";
                     $this->_element[$name              ] = 1;
                     $this->_tables['civicrm_group'     ] = 1;
                 } else if ($name === 'notes') {
                     $this->_useGroupBy  = true;
-                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_note.note)) AS notes";
+                    $this->_select[$name               ] = "GROUP_CONCAT(DISTINCT(civicrm_note.note)) as notes";
                     $this->_element[$name              ] = 1;
                     $this->_tables['civicrm_note'      ] = 1;
                 } else if ($name === 'current_employer') {
-                    $this->_select[$name   ] = "IF ( contact_a.contact_type = 'Individual', contact_a.organization_name, NULL ) AS current_employer";
+                    $this->_select[$name   ] = "IF ( contact_a.contact_type = 'Individual', contact_a.organization_name, NULL ) as current_employer";
                     $this->_element[$name]   = 1;
                 }
             } 
@@ -1227,6 +1227,10 @@ class CRM_Contact_BAO_Query
 
         case 'email':
             $this->email( $values );
+            return;
+
+        case 'street_address':
+            $this->street_address( $values );
             return;
 
         case 'sortByCharacter':
@@ -2542,7 +2546,6 @@ WHERE  id IN ( $groupIDs )
         }
     }
 
-
     /**
      * where / qill clause for email
      *
@@ -2581,6 +2584,32 @@ WHERE  id IN ( $groupIDs )
         $this->_tables['civicrm_email'] = $this->_whereTables['civicrm_email'] = 1; 
         $this->_where[$grouping][] = " ( civicrm_email.email $op $value )";
         $this->_qill[$grouping][]  = ts( 'Email' ) . " $op '$n'";
+    }
+
+    /**
+     * where / qill clause for street_address
+     *
+     * @return void
+     * @access public
+     */
+    function street_address( &$values ) 
+    {
+        list( $name, $op, $value, $grouping, $wildcard ) = $values;
+        $op = 'LIKE';
+        
+        $n = trim( $value ); 
+
+        $value = strtolower(CRM_Core_DAO::escapeString($n));
+        if ( strpos( $value, '%' ) !== false ) {
+            $value = "'$value'";
+            // only add wild card if not there
+        } else {
+            $value = "'$value%'";
+        }
+
+        $this->_tables['civicrm_address'] = $this->_whereTables['civicrm_address'] = 1; 
+        $this->_where[$grouping][] = " ( LOWER(civicrm_address.street_address) LIKE $value )";
+        $this->_qill[$grouping][]  = ts( 'Street' ) . " ILIKE '$n'";
     }
 
     /**
@@ -3214,14 +3243,10 @@ WHERE  id IN ( $groupIDs )
                 
                 // ok here is a first hack at an optimization, lets get all the contact ids
                 // that are restricted and we'll then do the final clause with it
-//CRM-5954
+                // CRM-5954
                 $limitSelect = ( $this->_useDistinct ) ?
                     'SELECT DISTINCT(contact_a.id) as id' :
                     'SELECT contact_a.id as id';
-//                $select = 'SELECT contact_a.id as id';
-//                if ( $this->_useDistinct ) {
-//                    $this->_useGroupBy = true;
-//                }
 
                 $doOpt = true;
                 // hack for order clause
@@ -3293,7 +3318,7 @@ WHERE  id IN ( $groupIDs )
             $groupBy = 'GROUP BY civicrm_activity.id ';
         }
         $query = "$select $from $where $groupBy $order $limit";
-        //CRM_Core_Error::debug('query', $query);
+        // CRM_Core_Error::debug('query', $query);
 
         if ( $returnQuery ) {
             return $query;
@@ -3329,7 +3354,7 @@ WHERE  id IN ( $groupIDs )
 SELECT COUNT( civicrm_contribution.total_amount ) as total_count,
        SUM(   civicrm_contribution.total_amount ) as total_amount,
        AVG(   civicrm_contribution.total_amount ) as total_avg,
-       currency                                   as currency";
+       civicrm_contribution.currency              as currency";
 
         // make sure contribution is completed - CRM-4989
         $additionalWhere = "civicrm_contribution.contribution_status_id = 1";
@@ -3369,7 +3394,7 @@ SELECT COUNT( civicrm_contribution.total_amount ) as total_count,
 SELECT COUNT( civicrm_contribution.total_amount ) as cancel_count,
        SUM(   civicrm_contribution.total_amount ) as cancel_amount,
        AVG(   civicrm_contribution.total_amount ) as cancel_avg,
-       currency                                   as currency";
+       civicrm_contribution.currency              as currency";
 
         $additionalWhere = "civicrm_contribution.cancel_date IS NOT NULL";
         if ( ! empty( $where ) ) {

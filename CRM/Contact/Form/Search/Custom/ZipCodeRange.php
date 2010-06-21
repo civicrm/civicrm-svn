@@ -126,6 +126,10 @@ LEFT JOIN civicrm_email   email   ON ( email.contact_id = contact_a.id AND
         return array( );
     }
 
+    function templateFile( ) {
+        return 'CRM/Contact/Form/Search/Custom.tpl';
+    }
+    
     function setTitle( $title ) {
         if ( $title ) {
             CRM_Utils_System::setTitle( $title );
