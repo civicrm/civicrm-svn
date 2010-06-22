@@ -170,11 +170,11 @@
         for (var id in widgets[c]) {
           var widgetID = id.split('-');
           // Build a new widget object and save it to various publicly accessible places.
-          col.initialWidgets[id] = dashboard.widgets[id] = widget({
+          col.initialWidgets[id] = dashboard.widgets[widgetID[1]] = widget({
             id: widgetID[1],
             element: $('<li class="widget"></li>').appendTo(col.element),
             initialColumn: col,
-            minimized: ( widgets[c][id] > 0  ? true : false )
+            minimized: ( widgets[c][widgetID[1]] > 0  ? true : false )
           });
           
           //set empty Dashboard to false
