@@ -298,9 +298,6 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
                 $colValue = null;
                 foreach ( $subValue as $sub ) {
                     if ( $sub ) {
-                        if ( $type == 'Relationship') {
-                            $sub = $sub . '_a_b';
-                        } 
                         if ( $type == 'Participant') {
                             if ( $subName == 1 ) {
                                 $colValue = $colValue ? $colValue . ', ' . 
@@ -312,10 +309,17 @@ class CRM_Custom_Page_Group extends CRM_Core_Page {
                                 $colValue = $colValue ? $colValue . ', ' .  
                                     $subTypes['ParticipantEventType'][$sub] : $subTypes['ParticipantEventType'][$sub];
                             }
+                        } else if ( $type == 'Relationship' ) {
+                            $colValue = $colValue ? $colValue . ', ' . 
+                                $subTypes[$type][$sub.'_a_b'] : $subTypes[$type][$sub.'_a_b'];
+                            if ( isset( $subTypes[$type][$sub.'_b_a'] ) ) {
+                                $colValue = $colValue ? $colValue . ', ' . 
+                                    $subTypes[$type][$sub.'_b_a'] : $subTypes[$type][$sub.'_b_a'];
+                            }
                         } else {
                             $colValue = $colValue ? $colValue . ', ' . 
                                 $subTypes[$type][$sub] : $subTypes[$type][$sub];
-                        }
+                        } 
                     }
                 }
                 $customGroup[$key]["extends_entity_column_value"] = $colValue;
