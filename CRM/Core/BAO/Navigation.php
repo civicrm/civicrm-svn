@@ -445,7 +445,8 @@ ORDER BY parent_id, weight";
         $config = CRM_Core_Config::singleton( );
         if ( $menuName == 'Other' && 
              !in_array( 'CiviCase', $config->enableComponents ) &&
-             !in_array( 'CiviGrant', $config->enableComponents ) ) {
+             !in_array( 'CiviGrant', $config->enableComponents ) &&
+             !in_array( 'CiviCampaign', $config->enableComponents ) ) {
             $skipMenuItems[] = $navID;
             return false;
         }
