@@ -297,10 +297,9 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                                                 $this->_submitValues, $this->_submitFiles, $this );
         if ( $hookErrors !== true && is_array($hookErrors) && !empty($hookErrors) ) {
             $this->_errors += $hookErrors;
-            $error = false;
         }
 
-        return $error;
+        return (0 == count($this->_errors));
     }
 
     /**
