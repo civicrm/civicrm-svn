@@ -224,6 +224,21 @@ VALUES
     ( @domainID, 'civicrm/grant&reset=1',           '{ts escape="sql"}Dashboard{/ts}', 'Dashboard', 'access CiviGrant', '',       @grantlastID, '1', NULL, 1 ), 
     ( @domainID, 'civicrm/grant/add&reset=1&action=add&context=standalone', '{ts escape="sql"}New Grant{/ts}', 'New Grant', 'access CiviGrant,edit grants', 'AND', @grantlastID, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/grant/search&reset=1',    '{ts escape="sql"}Find Grants{/ts}', 'Find Grants', 'access CiviGrant', '',   @grantlastID, '1', 1, 3 );
+
+
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES
+    ( @domainID, NULL, '{ts escape="sql"}Campaigns{/ts}', 'Campaigns', 'access CiviCampaign,administer CiviCampaign', 'OR', @otherlastID, '1', NULL, 3 );
+SET @campaignlastID:=LAST_INSERT_ID();
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES    
+    ( @domainID, 'civicrm/campaign/browse&reset=1',        '{ts escape="sql"}Campaign{/ts}', 'Campaign', 'access CiviCampaign', '', @campaignlastID, '1', NULL, 1 ), 
+    ( @domainID, 'civicrm/campaign/add&reset=1',        '{ts escape="sql"}Manage Campaign{/ts}', 'Manage Campaign', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 2 ), 
+    ( @domainID, 'civicrm/survey/browse&reset=1',        '{ts escape="sql"}Survey{/ts}', 'Survey', 'access CiviCampaign', '', @campaignlastID, '1', NULL, 3 ), 
+    ( @domainID, 'civicrm/survey/add&reset=1',        '{ts escape="sql"}Manage Survey{/ts}', 'Manage Survey', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 4 ); 
+
     
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )

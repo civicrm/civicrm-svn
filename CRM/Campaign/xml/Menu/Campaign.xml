@@ -5,22 +5,24 @@
     <path>civicrm/campaign/add</path>
     <title>Manage Campaign</title>
     <page_callback>CRM_Campaign_Form_Campaign</page_callback>
-    <access_arguments>administer Campaign</access_arguments>
+    <access_arguments>administer CiviCampaign</access_arguments>
   </item>
   <item>
     <path>civicrm/survey/add</path>
     <title>Manage Survey</title>
     <page_callback>CRM_Campaign_Form_Survey</page_callback>
-    <access_arguments>administer Campaign</access_arguments>
+    <access_arguments>administer CiviCampaign</access_arguments>
   </item>
   <item>
     <path>civicrm/survey/browse</path>
     <title>Survey</title>
     <page_callback>CRM_Campaign_Page_Survey</page_callback>
+    <access_arguments>access CiviCampaign</access_arguments>
   </item>
   <item>
     <path>civicrm/campaign/browse</path>
     <title>Campaign</title>
     <page_callback>CRM_Campaign_Page_Campaign</page_callback>
+    <access_arguments>access CiviCampaign</access_arguments>
   </item>
 </menu>
