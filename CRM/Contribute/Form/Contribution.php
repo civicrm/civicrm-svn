@@ -274,7 +274,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
         require_once 'CRM/Core/Payment.php';
         require_once 'CRM/Core/Payment/Form.php';
         // payment fields are depending on payment type
-        if ( $this->_processors['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) {
+        if ( CRM_Utils_Array::value( 'payment_type', $this->_processors ) & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ) {
             CRM_Core_Payment_Form::setDirectDebitFields( $this );
         } else {
             CRM_Core_Payment_Form::setCreditCardFields( $this );
@@ -672,7 +672,8 @@ WHERE  contribution_id = {$this->_id}
 
         $ccPane = null;
         if ( $this->_mode ) { 
-            if (  $this->_processors['payment_type'] & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT){
+            if ( CRM_Utils_Array::value( 'payment_type', $this->_processors )
+                  & CRM_Core_Payment::PAYMENT_TYPE_DIRECT_DEBIT ){
                 $ccPane = array( ts('Direct Debit Information') => 'DirectDebit' );
             } else {         
                 $ccPane = array( 'Credit Card Information' => 'CreditCard' );

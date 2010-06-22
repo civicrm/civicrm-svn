@@ -1207,7 +1207,7 @@ SELECT $select
                     continue;
                 }
                 
-                $required = $field['is_required'];
+                $required = CRM_Utils_Array::value( 'is_required', $field );
                 //fix for CRM-1620
                 if ( $field['data_type']  == 'File') {
                     if ( isset($field['customValue']['data']) ) {
