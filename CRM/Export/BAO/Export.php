@@ -472,7 +472,7 @@ class CRM_Export_BAO_Export
                                 $headerRows[] = $query->_fields['activity'][$field]['title'];
                             }
                         } else if ( array_key_exists( $field, $contactRelationshipTypes ) ) {
-                            $relName = CRM_Utils_Array::value($field, $contactRelationshipTypes);
+                            $relName = $field;//CRM_Utils_Array::value($field, $contactRelationshipTypes);
                             foreach ( $value as $relationField => $relationValue ) {
                                 // below block is same as primary block (duplicate)
                                 if ( isset( $relationQuery[$field]->_fields[$relationField]['title'] ) ) {
@@ -692,7 +692,7 @@ class CRM_Export_BAO_Export
         }
 
         if ( $mergeSameHousehold ) {
-            self::mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns );
+            self::mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns, $relationKey );
         }
 
         // now write the CSV file
@@ -1025,8 +1025,12 @@ WHERE  id IN ( $deleteIDString )
         }
     }
 
-    static function mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns )
+    static function mergeSameHousehold( $exportTempTable, &$headerRows, &$sqlColumns, $prefix )
     {
+
+        $prefixColumn = $prefix .'_';
+        $allKeys = array_keys( $sqlColumns );
+        
         $replaced = array( );
         $mappingFields = array (
                                 'civicrm_primary_id'  => 'internal contact id',
@@ -1050,9 +1054,9 @@ WHERE  id IN ( $deleteIDString )
         //figure out which columns are to be replaced by which ones
         foreach ( $sqlColumns as $columnNames => $dontCare ) {
             if ( $rep = CRM_Utils_Array::value( $columnNames, $mappingFields ) ) {
-                $replaced[$columnNames] = CRM_Utils_String::munge( 'household member of '. $rep, '_', 64 );
+                $replaced[$columnNames] = CRM_Utils_String::munge( $prefixColumn . $rep, '_', 64 );
             } else {
-                $householdColName = CRM_Utils_String::munge( 'household member of '. $columnNames, '_', 64 );
+                $householdColName = CRM_Utils_String::munge( $prefixColumn . $columnNames, '_', 64 );
 
                 if ( CRM_Utils_Array::value( $householdColName, $sqlColumns ) ) {
                     $replaced[$columnNames] = $householdColName;
@@ -1063,12 +1067,16 @@ WHERE  id IN ( $deleteIDString )
        
         foreach( $replaced as $from => $to ) {
             $clause[] = "$from = $to ";
+            unset($sqlColumns[$to]);
+            if ($key =  CRM_Utils_Array::key( $to, $allKeys ) ) {
+                unset($headerRows[$key]);
+            }
         }
         $query .= implode( ",\n", $clause);
         $query .= " WHERE {$replaced['civicrm_primary_id']} != ''" ;
                 
         CRM_Core_DAO::executeQuery( $query );
-        
+
         //drop the table columns that store redundant household info
         $dropQuery = "ALTER TABLE $exportTempTable ";
         foreach ($replaced as $householdColumns) {
