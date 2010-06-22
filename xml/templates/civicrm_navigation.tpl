@@ -234,10 +234,10 @@ SET @campaignlastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
-    ( @domainID, 'civicrm/campaign/browse&reset=1',        '{ts escape="sql"}Campaign{/ts}', 'Campaign', 'access CiviCampaign', '', @campaignlastID, '1', NULL, 1 ), 
-    ( @domainID, 'civicrm/campaign/add&reset=1',        '{ts escape="sql"}Manage Campaign{/ts}', 'Manage Campaign', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 2 ), 
-    ( @domainID, 'civicrm/survey/browse&reset=1',        '{ts escape="sql"}Survey{/ts}', 'Survey', 'access CiviCampaign', '', @campaignlastID, '1', NULL, 3 ), 
-    ( @domainID, 'civicrm/survey/add&reset=1',        '{ts escape="sql"}Manage Survey{/ts}', 'Manage Survey', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 4 ); 
+    ( @domainID, 'civicrm/campaign/browse&reset=1',        '{ts escape="sql"}Campaign Dashboard{/ts}', 'Campaign Dashboard', 'access CiviCampaign', '', @campaignlastID, '1', NULL, 1 ), 
+    ( @domainID, 'civicrm/campaign/add&reset=1',        '{ts escape="sql"}New Campaign{/ts}', 'New Campaign', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 2 ), 
+    ( @domainID, 'civicrm/survey/browse&reset=1',        '{ts escape="sql"}Survey Dashboard{/ts}', 'Survey Dashboard', 'access CiviCampaign', '', @campaignlastID, '1', NULL, 3 ), 
+    ( @domainID, 'civicrm/survey/add&reset=1',        '{ts escape="sql"}New Survey{/ts}', 'New Survey', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 4 ); 
 
     
 INSERT INTO civicrm_navigation
