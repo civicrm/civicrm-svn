@@ -243,7 +243,8 @@ UNION
             
             require_once 'CRM/Dedupe/Finder.php';
             $dedupeParams = CRM_Dedupe_Finder::formatParams($organizationParams, 'Organization');
-            
+
+            $dedupeParams['check_permission'] = false;            
             $dupeIDs = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Organization', 'Fuzzy');
             
             if ( is_array( $dupeIDs ) && !empty( $dupeIDs ) ) {
