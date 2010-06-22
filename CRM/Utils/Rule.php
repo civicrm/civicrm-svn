@@ -316,7 +316,10 @@ class CRM_Utils_Rule
         // first remove all white space
         $value = str_replace( array( ' ', "\t", "\n" ), '', $value );
 
-        $config = CRM_Core_Config::singleton( );
+        $config =& CRM_Core_Config::singleton( );
+
+        setlocale(LC_MONETARY, $config->lcMonetary);
+        $localeInfo = localeconv( );
 
         if ( $config->monetaryThousandSeparator ) {
             $mon_thousands_sep = $config->monetaryThousandSeparator;
@@ -324,7 +327,12 @@ class CRM_Utils_Rule
             $mon_thousands_sep = ',';
         }
 
-        $value = str_replace( $mon_thousands_sep, '', $value );
+        // ugly fix for CRM-6391: do not drop the thousand separator if
+        // it looks like it’s separating decimal part (because a given
+        // value undergoes a second cleanMoney() call, for example)
+        if (substr($value, -3, 1) != '.') {
+            $value = str_replace($mon_thousands_sep, '', $value);
+        }
 
         if ( $config->monetaryDecimalPoint ) {
             $mon_decimal_point = $config->monetaryDecimalPoint;
