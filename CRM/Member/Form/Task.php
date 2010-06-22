@@ -86,7 +86,7 @@ class CRM_Member_Form_Task extends CRM_Core_Form
      */
     function preProcess( ) 
     {
-        self::preProcessCommon( $form );
+        self::preProcessCommon( $this );
     }
 
     static function preProcessCommon( &$form, $useTable = false )
