@@ -38,7 +38,7 @@
     <title>Survey Type ID</title>  
     <type>int unsigned</type> 
     <default>NULL</default>                
-    <comment>Survey Type ID.Implicit FK to civicrm_option_value where option_group = survey_type</comment> 
+    <comment>Survey Type ID.Implicit FK to civicrm_option_value where option_group = activity_type</comment> 
     <import>true</import>
     <add>3.2</add> 
   </field>
@@ -47,22 +47,7 @@
     <fieldName>survey_type_id</fieldName>
     <add>3.2</add>
   </index>
-
-  <field>
-    <name>activity_type_id</name>
-    <title>Activity Type ID</title>  
-    <type>int unsigned</type> 
-    <default>NULL</default>                
-    <comment>Activity Type ID.Implicit FK to civicrm_option_value where option_group = activity_type</comment> 
-    <import>true</import>
-    <add>3.2</add> 
-  </field>
-  <index>
-      <name>UI_activity_type_id</name>
-      <fieldName>activity_type_id</fieldName>
-      <add>3.2</add>
-  </index>
-
+  
   <field>
     <name>custom_group_id</name>
     <type>int unsigned</type>

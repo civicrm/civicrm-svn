@@ -39,8 +39,7 @@ CREATE TABLE `civicrm_campaign_group` (
 CREATE TABLE `civicrm_survey` ( 
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Campaign Group id.',
   `campaign_id` int unsigned NOT NULL COMMENT 'Foreign key to the activity Campaign.',
-  `survey_type_id` int unsigned DEFAULT NULL COMMENT 'Survey Type ID.Implicit FK to civicrm_option_value where option_group = survey_type',
-  `activity_type_id` int unsigned DEFAULT NULL COMMENT 'Activity Type ID.Implicit FK to civicrm_option_value where option_group = activity_type',
+  `survey_type_id` int unsigned DEFAULT NULL COMMENT 'Survey Type ID.Implicit FK to civicrm_option_value where option_group = activity_type',
   `custom_group_id` int unsigned DEFAULT NULL COMMENT 'FK to civicrm_custom_group',
   `recontact_interval` text collate utf8_unicode_ci DEFAULT NULL COMMENT 'Recontact intervals for each status.',
   `instructions` text collate utf8_unicode_ci DEFAULT NULL COMMENT 'Script instructions for volunteers to use for the campaign.',
@@ -57,7 +56,6 @@ CREATE TABLE `civicrm_survey` (
  PRIMARY KEY ( id ),
   CONSTRAINT FK_civicrm_survey_campaign_id FOREIGN KEY (campaign_id) REFERENCES civicrm_campaign(id) ON DELETE CASCADE,
   INDEX UI_survey_type_id (survey_type_id),
-  INDEX UI_activity_type_id (activity_type_id),
   CONSTRAINT FK_civicrm_survey_custom_group_id FOREIGN KEY (custom_group_id) REFERENCES civicrm_custom_group(id) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_survey_created_id FOREIGN KEY (created_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL,
   CONSTRAINT FK_civicrm_survey_last_modified_id FOREIGN KEY (last_modified_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL
@@ -72,12 +70,13 @@ INSERT INTO civicrm_option_group
        	(`name`, `description`, `is_reserved`, `is_active`)
 VALUES
 	('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 0, 1),
-   	('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1),
-   	('survey_type'                   , '{ts escape="sql"}Survey Type{/ts}'                        , 0, 1);
-
+   	('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1);
+   
 SELECT @option_group_id_campaignType   := max(id) from civicrm_option_group where name = 'campaign_type';
 SELECT @option_group_id_campaignStatus := max(id) from civicrm_option_group where name = 'campaign_status';
-SELECT @option_group_id_SurveyType     := max(id) from civicrm_option_group where name = 'survey_type';
+SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
+
+SELECT @campaignCompId                 := max(id) FROM civicrm_component where name    = 'CiviCampaign';
 
 INSERT INTO 
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
@@ -93,7 +92,8 @@ VALUES
   (@option_group_id_campaignStatus, '{ts escape="sql"}Completed{/ts}', 3, 'Completed',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_campaignStatus, '{ts escape="sql"}Cancelled{/ts}', 4, 'Cancelled',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
 
---Survey Type
-  (@option_group_id_SurveyType, '{ts escape="sql"}Canvass{/ts}', 1, 'Canvass',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_SurveyType, '{ts escape="sql"}PhoneBank{/ts}', 2, 'PhoneBank',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_SurveyType, '{ts escape="sql"}WalkList{/ts}', 3, 'WalkList',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL);
+   (@option_group_id_act, '{ts escape="sql"}Survey{/ts}', 27, 'Survey', NULL,0, 0, 27, '', 0, 1, 1, @campaignCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Canvass{/ts}', 28, 'Canvass', NULL,0, 0, 28, '', 0, 1, 1, @campaignCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}PhoneBank{/ts}', 29, 'PhoneBank', NULL,0, 0, 29, '', 0, 1, 1, @campaignCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}WalkList{/ts}', 30, 'WalkList', NULL,0, 0, 30, '', 0, 1, 1, @campaignCompId, NULL);
+
