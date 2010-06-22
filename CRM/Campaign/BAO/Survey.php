@@ -77,6 +77,23 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
             return;
         }
         
+        if ($params['is_default']) {
+            $query = "UPDATE civicrm_survey SET is_default = 0";
+            CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
+        }
+        
+        if ( !(CRM_Utils_Array::value('id', $params)) )  {
+
+            if ( !(CRM_Utils_Array::value('created_id', $params)) ) {
+                $session = CRM_Core_Session::singleton( );
+                $params['created_id'] = $session->get( 'userID' );
+            }
+            if ( !(CRM_Utils_Array::value('created_date', $params)) ) {
+                $params['created_date'] = date('YmdHis');
+            }
+            
+        }
+        
         $dao = new CRM_Campaign_DAO_Survey();
         $dao->copyValues( $params );
         $dao->save();
@@ -91,7 +108,7 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
      * @param int $id
      * @static
      */
-    static function getSurvey( $all = false, $id = false ) {
+    static function getSurvey( $all = false, $id = false, $defaultOnly = false ) {
         $survey = array( );
         $dao = new CRM_Campaign_DAO_Survey( );
 
@@ -101,6 +118,10 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         if ( $id ) {
             $dao->id = $id;  
         }
+        if ( $defaultOnly ) {
+            $dao->is_default = 1;   
+        }
+        
         $dao->find( );
         while ( $dao->fetch() ) {
             CRM_Core_DAO::storeValues($dao, $survey[$dao->id]);
@@ -136,8 +157,56 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         }
         
         return $survey;
+    }
+    
+    /**
+     * Function to get Surveys activity types
+     *
+     *
+     * @static
+     */
+    static function getSurveyActivityType( ) {
+        require_once 'CRM/Core/OptionGroup.php';
 
+        $campaingCompId = CRM_Core_Component::getComponentID('CiviCampaign');
+        if ( !$campaingCompId ) {
+            CRM_Core_Error::fatal( ts( 'CiviCampaign component is not enabled.' ) );
+        }
 
+        $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, " AND v.component_id={$campaingCompId}" , 'name' );
+        return $activityTypes;
+    }
+    
+
+    /**
+     * Function to get Surveys custom groups
+     *  
+     * @param $buildSelect boolean
+     *
+     * @static
+     */
+    static function getSurveyCustomGroups( $buildSelect = false ) {
+        $customGroups  = array( );
+        $activityTypes = self::getSurveyActivityType( );
+
+        if ( !empty($activityTypes) ) {
+            $extendSubType = implode( '[[:>:]]|[[:<:]]', array_keys($activityTypes) );
+            
+            $query = "SELECT cg.id, cg.name, cg.title, cg.extends_entity_column_value
+                      FROM civicrm_custom_group cg
+                      WHERE cg.is_active = 1 AND cg.extends_entity_column_value REGEXP '[[:<:]]{$extendSubType}[[:>:]]'";
+          
+            $dao =  CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
+            
+            while( $dao->fetch() ) {
+                if ( $buildSelect ) {
+                    $customGroups[$dao->id] = $dao->title; 
+                } else {
+                    CRM_Core_DAO::storeValues($dao, $customGroups[$dao->id]);
+                }
+            }
+        }
+        return $customGroups;
     }
 
     /**

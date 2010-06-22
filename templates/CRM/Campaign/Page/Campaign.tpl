@@ -35,7 +35,6 @@
     <table id="options" class="display">
       <thead>
         <tr>      
-          <th>{ts}Campaign Name{/ts}</th>
           <th>{ts}Campaign Title{/ts}</th>
           <th>{ts}Description{/ts}</th>
           <th>{ts}Start Date{/ts}</th> 
@@ -44,13 +43,12 @@
           <th>{ts}Status{/ts}</th>
           <th>{ts}Active?{/ts}</th>
           {if $manageCampaign}
-            <th>{ts}Action{/ts}</th>
+            <th id="nosort"></th>
           {/if}
 	</tr>
       </thead>
       {foreach from=$campaigns item=campaign}
         <tr id="row_{$campaign.campaign_id}" {if $campaign.is_active neq 1}class="disabled"{/if}>
-          <td>{$campaign.name}</td>
           <td>{$campaign.title}</td>
           <td>{$campaign.description}</td>
           <td>{$campaign.start_date}</td>

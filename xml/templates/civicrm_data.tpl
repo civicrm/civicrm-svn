@@ -189,8 +189,7 @@ VALUES
    ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 0, 1),
    ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 0, 1),
    ('campaign_type'                 , '{ts escape="sql"}Campaign Type{/ts}'                      , 0, 1),
-   ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1),
-   ('survey_type'                   , '{ts escape="sql"}Survey Type{/ts}'                        , 0, 1);
+   ('campaign_status'               , '{ts escape="sql"}Campaign Status{/ts}'                    , 0, 1);
 
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
@@ -244,14 +243,13 @@ SELECT @option_group_id_currency       := max(id) from civicrm_option_group wher
 SELECT @option_group_id_eventBadge     := max(id) from civicrm_option_group where name = 'event_badge';
 SELECT @option_group_id_campaignType   := max(id) from civicrm_option_group where name = 'campaign_type';
 SELECT @option_group_id_campaignStatus := max(id) from civicrm_option_group where name = 'campaign_status';
-SELECT @option_group_id_SurveyType     := max(id) from civicrm_option_group where name = 'survey_type';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
 SELECT @memberCompId     := max(id) FROM civicrm_component where name = 'CiviMember';
 SELECT @pledgeCompId     := max(id) FROM civicrm_component where name = 'CiviPledge';
 SELECT @caseCompId       := max(id) FROM civicrm_component where name = 'CiviCase';
-
+SELECT @campaignCompId   := max(id) FROM civicrm_component where name = 'CiviCampaign';
 
 INSERT INTO 
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
@@ -291,6 +289,10 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Reassigned Case{/ts}',                    24, 'Reassigned Case', NULL, 0,  NULL, 24, '', 0, 1, 1, @caseCompId, NULL ),
    (@option_group_id_act, '{ts escape="sql"}Link Cases{/ts}',                         25, 'Link Cases', NULL, 0,  NULL, 25, '', 0, 1, 1, @caseCompId, NULL ),
    (@option_group_id_act, '{ts escape="sql"}Change Case Tags{/ts}',                   26, 'Change Case Tags', NULL,0, 0, 26, '', 0, 1, 1, @caseCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Survey{/ts}',                             27, 'Survey', NULL,0, 0, 27, '', 0, 1, 1, @campaignCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}Canvass{/ts}',                            28, 'Canvass', NULL,0, 0, 28, '', 0, 1, 1, @campaignCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}PhoneBank{/ts}',                          29, 'PhoneBank', NULL,0, 0, 29, '', 0, 1, 1, @campaignCompId, NULL),
+   (@option_group_id_act, '{ts escape="sql"}WalkList{/ts}',                           30, 'WalkList', NULL,0, 0, 30, '', 0, 1, 1, @campaignCompId, NULL),
 
    (@option_group_id_gender, '{ts escape="sql"}Female{/ts}',      1, 'Female',      NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_gender, '{ts escape="sql"}Male{/ts}',        2, 'Male',        NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
@@ -627,12 +629,6 @@ VALUES
   (@option_group_id_campaignStatus, '{ts escape="sql"}Completed{/ts}', 3, 'Completed',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
   (@option_group_id_campaignStatus, '{ts escape="sql"}Cancelled{/ts}', 4, 'Cancelled',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
 
--- Survey Type
-  (@option_group_id_SurveyType, '{ts escape="sql"}Canvass{/ts}', 1, 'Canvass',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_SurveyType, '{ts escape="sql"}PhoneBank{/ts}', 2, 'PhoneBank',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL),
-  (@option_group_id_SurveyType, '{ts escape="sql"}WalkList{/ts}', 3, 'WalkList',  NULL, 0, NULL, 1, NULL, 0, 0, 1, NULL, NULL);
-
-   
 -- Now insert option values which require domainID
 --
 

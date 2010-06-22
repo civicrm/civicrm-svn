@@ -93,7 +93,14 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             $params = array( 'id' => $this->_surveyId );
             CRM_Campaign_BAO_Survey::retrieve( $params, $defaults );
         }
+        if ( !isset($defaults['is_active']) ) {
+            $defaults['is_active'] = 1;
+        }
 
+        $defaultSurveys = CRM_Campaign_BAO_Survey::getSurvey(false, false, true);
+        if ( !isset($defaults['is_default'] ) && empty($defaultSurveys) ) {
+            $defaults['is_default'] = 1;  
+        }
         return $defaults;
     }
 
@@ -121,28 +128,23 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             return;
         }
 
-        require_once 'CRM/Core/OptionGroup.php';
         require_once 'CRM/Event/PseudoConstant.php';
+       
         
-        // Survey Type id
-        require_once 'CRM/Core/PseudoConstant.php';
-        $surveyType = CRM_Core_PseudoConstant::surveyType();
-        $this->add('select', 'survey_type_id', ts('Select Survey Type'),  array( '' => ts( '- select -' ) ) +$surveyType, true );
-        
-        // FIX ME : Add Activity Type Id for Survey
-        //$activityTName = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, 'AND v.value = '.$this->_activityTypeId , 'name' );
-        $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, false , 'name' );
+        $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
         // Activity Type id
-        $this->add('select', 'activity_type_id', ts('Select Activity Type'), $activityTypes, true );
+        $this->add('select', 'survey_type_id', ts('Select Survey Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
         
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign();
-        $this->add('select', 'campaign_id', ts('Select Campaign'), array( '' => ts( '- select -' ) ) +$campaigns, true );
+        $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( true);
+        $this->add('select', 'campaign_id', ts('Select Campaign'), array( '' => ts('- select -') ) + $campaigns, true );
         
-        // FIX ME : Add Custom Group Id for Survey
+       
+        $surveyCustomGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( true );
+        // FIX ME : change Custom groups according to survey_type_id
         // custom group id
-        $this->add('select', 'custom_group_id', ts('Select Custom Group'), array( '1' => 'Mumbai' , '1' => 'Pune', '3' => 'Chennai', '4' => 'Goa'), true );
+        $this->add('select', 'custom_group_id', ts('Select Custom Group'), array( '' => ts('- select -')) + $surveyCustomGroups, true );
         
         // script / instructions
         $this->add( 'textarea', 'instructions', ts('Instructions for volunteers'), array( 'rows' => 5, 'cols' => 40 ) );
@@ -231,6 +233,8 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             $params['created_id']   = $session->get( 'userID' );
             $params['created_date'] = date('YmdHis');
         } 
+        $params['is_active' ] = CRM_Utils_Array::value('is_active', $params, 0);
+        $params['is_default'] = CRM_Utils_Array::value('is_active', $params, 0);
 
         $surveyId = CRM_Campaign_BAO_Survey::create( $params  );
         
@@ -239,7 +243,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         }
         
         $buttonName = $this->controller->getButtonName( );
-        $session = CRM_Core_Session::singleton( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another Survey.'));
             $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/manage', 'reset=1&action=add' ) );

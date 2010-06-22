@@ -61,7 +61,7 @@ class CRM_Campaign_Page_Campaign extends CRM_Core_Page
             self::$_actionLinks = array(
                                         CRM_Core_Action::UPDATE  => array(
                                                                           'name'  => ts('Edit'),
-                                                                          'url'   => 'civicrm/campaign/manage',
+                                                                          'url'   => 'civicrm/campaign/add',
                                                                           'qs'    => 'reset=1&action=update&id=%%id%%',
                                                                           'title' => ts('Update Campaign') 
                                                                           ),
@@ -79,7 +79,7 @@ class CRM_Campaign_Page_Campaign extends CRM_Core_Page
                                                                           ),
                                         CRM_Core_Action::DELETE  => array(
                                                                           'name'  => ts('Delete'),
-                                                                          'url'   => 'civicrm/campaign/manage',
+                                                                          'url'   => 'civicrm/campaign/add',
                                                                           'qs'    => 'action=delete&reset=1&id=%%id%%',
                                                                           'title' => ts('Delete Campaign'),
                                                                           ),
@@ -128,7 +128,7 @@ class CRM_Campaign_Page_Campaign extends CRM_Core_Page
         $this->assign('campaigns', $campaigns);
 
         if ( $manageCampaign ) {
-            $addCampaignUrl = CRM_Utils_System::url( "civicrm/campaign/manage",
+            $addCampaignUrl = CRM_Utils_System::url( "civicrm/campaign/add",
                                                      'reset=1&action=add' );
             $this->assign('addCampaign', $addCampaignUrl);
         }

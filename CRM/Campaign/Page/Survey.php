@@ -52,7 +52,7 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page
             self::$_actionLinks = array(
                                         CRM_Core_Action::UPDATE  => array(
                                                                           'name'  => ts('Edit'),
-                                                                          'url'   => 'civicrm/survey/manage',
+                                                                          'url'   => 'civicrm/survey/add',
                                                                           'qs'    => 'action=update&id=%%id%%&reset=1',
                                                                           'title' => ts('Update Survey') 
                                                                           ),
@@ -73,7 +73,7 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page
                                         
                                         CRM_Core_Action::DELETE  => array(
                                                                           'name'  => ts('Delete'),
-                                                                          'url'   => 'civicrm/survey/manage',
+                                                                          'url'   => 'civicrm/survey/add',
                                                                           'qs'    => 'action=delete&id=%%id%%&reset=1',
                                                                           'title' => ts('Delete Survey'),
                                                                           ), 
@@ -119,7 +119,7 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page
         $this->assign('surveys', $surveys);
 
         if ( $manageCampaign ) {
-            $addSurveyUrl = CRM_Utils_System::url( "civicrm/survey/manage",
+            $addSurveyUrl = CRM_Utils_System::url( "civicrm/survey/add",
                                                    'reset=1&action=add' );
             $this->assign('addSurvey', $addSurveyUrl);
         }

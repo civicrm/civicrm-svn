@@ -41,20 +41,15 @@
     </div>
   {/if}   
       <table class="form-layout"> 
-      	<tr class="crm-campaign-survey-form-block-survey_type_id">
-           <td class="label">{$form.survey_type_id.label}</td>
-           <td>{$form.survey_type_id.html}
-	   <div class="description">{ts}Select the Survey Type.{/ts}</div></td>
-        </tr> 
        <tr class="crm-campaign-survey-form-block-campaign_id">
            <td class="label">{$form.campaign_id.label}</td>
            <td>{$form.campaign_id.html}
 	   <div class="description">{ts}Select the campaign for which survey is created.{/ts}</div></td>
        </tr> 
-       <tr class="crm-campaign-survey-form-block-activity_type_id">
-           <td class="label">{$form.activity_type_id.label}</td>
-           <td>{$form.activity_type_id.html}
-	   <div class="description">{ts}Select the Activity Type.{/ts}</div></td>
+       <tr class="crm-campaign-survey-form-block-survey_type_id">
+           <td class="label">{$form.survey_type_id.label}</td>
+           <td>{$form.survey_type_id.html}
+	   <div class="description">{ts}Select the Survey Type.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-custom_group_id">
            <td class="label">{$form.custom_group_id.label}</td>
@@ -64,22 +59,21 @@
        <tr class="crm-campaign-survey-form-block-instructions">
            <td class="label">{$form.instructions.label}</td>
            <td>{$form.instructions.html}
-	   <div class="description">{ts}Release frequency unit for Survey.{/ts}</div></td>
+	   <div class="description">{ts}Instruction for volunteers.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-release_frequency_unit">
            <td class="label">{$form.release_frequency_unit.label}</td>
            <td>{$form.release_frequency_unit.html}
-	   <div class="description">{ts}Release frequency unit for Survey.{/ts}</div></td>
-       </tr>
-       <tr class="crm-campaign-survey-form-block-release_frequency_interval">
-           <td class="label">{$form.release_frequency_interval.label}</td>
-           <td>{$form.release_frequency_interval.html}
-	   <div class="description">{ts}Release frequency interval for survey.{/ts}</div></td>
+           &nbsp;&nbsp; 
+           <span class='label'>{$form.release_frequency_interval.label}</span>
+           <span>{$form.release_frequency_interval.html}</span>
+	   <div class="description">{ts}Release frequency unit and interval for Survey.{/ts}</div> 
+
        </tr>
        <tr class="crm-campaign-survey-form-block-max_number_of_contacts">
            <td class="label">{$form.max_number_of_contacts.label}</td>
            <td>{$form.max_number_of_contacts.html}
-	   <div class="description">{ts}Maximum number of contacts for survey.{/ts}</div></td>
+	   <div class="description">{ts}Maximum number of contacts can have for a survey.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-default_number_of_contacts">
            <td class="label">{$form.default_number_of_contacts.label}</td>

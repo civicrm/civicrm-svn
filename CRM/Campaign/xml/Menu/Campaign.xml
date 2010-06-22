@@ -2,13 +2,13 @@
 
 <menu>
   <item>
-    <path>civicrm/campaign/manage</path>
+    <path>civicrm/campaign/add</path>
     <title>Manage Campaign</title>
     <page_callback>CRM_Campaign_Form_Campaign</page_callback>
     <access_arguments>administer Campaign</access_arguments>
   </item>
   <item>
-    <path>civicrm/survey/manage</path>
+    <path>civicrm/survey/add</path>
     <title>Manage Survey</title>
     <page_callback>CRM_Campaign_Form_Survey</page_callback>
     <access_arguments>administer Campaign</access_arguments>

@@ -55,12 +55,28 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
     {
         if ( empty( $params ) ) {
             return;
+        } 
+        
+        if ( !(CRM_Utils_Array::value('id', $params)) )  {
+            
+            if ( !(CRM_Utils_Array::value('created_id', $params)) ) {
+                $session = CRM_Core_Session::singleton( );
+                $params['created_id'] = $session->get( 'userID' );
+            }
+            
+            if ( !(CRM_Utils_Array::value('created_date', $params)) ) {
+                $params['created_date'] = date('YmdHis');
+            }
+            
+            if ( !(CRM_Utils_Array::value('name', $params)) ) {
+                $params['name'] =  CRM_Utils_String::titleToVar($params['title'], 64 );
+            }
         }
-       
+        
         $campaign = new CRM_Campaign_DAO_Campaign();
         $campaign->copyValues( $params );
         $campaign->save();
-
+        
         return $campaign;
     }
    
