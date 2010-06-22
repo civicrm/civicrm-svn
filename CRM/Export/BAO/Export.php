@@ -1028,13 +1028,32 @@ WHERE  id IN ( $deleteIDString )
     static function mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns )
     {
         $replaced = array( );
-        
+        $mappingFields = array (
+                                'civicrm_primary_id'  => 'internal contact id',
+                                'url'                 => 'website',
+                                'contact_sub_type'    => 'contact_subtype',
+                                'is_opt_out'          => 'no_bulk_emails__user_opt_out_',
+                                'external_identifier' => 'external_identifier__match_to_contact_',
+                                'contact_source'      => 'source_of_contact_data',
+                                'user_unique_id'      => 'unique_id__openid_',
+                                'contact_source'      => 'source_of_contact_data',
+                                'state_province'      => 'state',
+                                'is_bulkmail'         => 'use_for_bulk_mail',
+                                'im'                  => 'im_screen_name',
+                                'groups'              => 'group_s_',
+                                'tags'                => 'tag_s_',
+                                'notes'               => 'note_s_',
+                                'provider_id'         => 'im_service_provider',
+                                'phone_type_id'       => 'phone_type'
+                                );
+
         //figure out which columns are to be replaced by which ones
         foreach ( $sqlColumns as $columnNames => $dontCare ) {
-            if ( $columnNames == 'civicrm_primary_id' ) {
-                $replaced[$columnNames] = CRM_Utils_String::munge( 'household member of internal contact id', '_', 64 );
+            if ( $rep = CRM_Utils_Array::value( $columnNames, $mappingFields ) ) {
+                $replaced[$columnNames] = CRM_Utils_String::munge( 'household member of '. $rep, '_', 64 );
             } else {
                 $householdColName = CRM_Utils_String::munge( 'household member of '. $columnNames, '_', 64 );
+
                 if ( CRM_Utils_Array::value( $householdColName, $sqlColumns ) ) {
                     $replaced[$columnNames] = $householdColName;
                 }
