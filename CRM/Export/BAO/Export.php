@@ -122,7 +122,7 @@ class CRM_Export_BAO_Export
             foreach ( $fields as $key => $value) {
                 $phoneTypeId  = null;
                 $imProviderId = null;
-                $relationshipTypes = $fieldName   = CRM_Utils_Array::value( 1, $value );
+                $relationshipTypes = $fieldName = CRM_Utils_Array::value( 1, $value );
                 if ( ! $fieldName ) {
                     continue;
                 }
@@ -694,6 +694,9 @@ class CRM_Export_BAO_Export
         if ( $mergeSameHousehold ) {
             self::mergeSameHousehold( $exportTempTable, $headerRows, $sqlColumns, $relationKey );
         }
+        
+        //fix the headers for rows with relationship type
+        self::manipulateHeaderRows( $headerRows, $contactRelationshipTypes );
 
         // now write the CSV file
         self::writeCSVFromTable( $exportTempTable, $headerRows, $sqlColumns, $exportMode );
@@ -1067,9 +1070,9 @@ WHERE  id IN ( $deleteIDString )
        
         foreach( $replaced as $from => $to ) {
             $clause[] = "$from = $to ";
-            unset($sqlColumns[$to]);
-            if ($key =  CRM_Utils_Array::key( $to, $allKeys ) ) {
-                unset($headerRows[$key]);
+            unset( $sqlColumns[$to] );
+            if ( $key = CRM_Utils_Array::key( $to, $allKeys ) ) {
+                unset( $headerRows[$key] );
             }
         }
         $query .= implode( ",\n", $clause);
@@ -1144,4 +1147,14 @@ LIMIT $offset, $limit
         }
     }
 
+    function manipulateHeaderRows( &$headerRows, $contactRelationshipTypes )
+    {
+        foreach ( $headerRows as &$header ) {
+            $split = explode( '-', $header );
+            if ( $relationTypeName = CRM_Utils_Array::value( $split[0], $contactRelationshipTypes ) ) {
+                $split[0] = $relationTypeName;
+                $header = implode( '-', $split );
+            }
+        }
+    }
 }
