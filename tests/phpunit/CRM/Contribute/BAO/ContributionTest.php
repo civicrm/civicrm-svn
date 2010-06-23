@@ -149,6 +149,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                           'honor_last_name'  => 'Smith',
                           'honor_email'      => 'john.smith@example.org'
                           );
+        require_once 'CRM/Contribute/BAO/Contribution.php';
         $contact = CRM_Contribute_BAO_Contribution::createHonorContact( $params, $honorId );
         
         $this->assertDBCompareValue( 'CRM_Contact_DAO_Contact', $contact , 'first_name', 'id','John',
