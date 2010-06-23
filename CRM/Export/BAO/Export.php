@@ -34,7 +34,6 @@
  *
  */
 
-
 /**
  * This class contains the funtions for Component export
  *
@@ -42,6 +41,7 @@
 class CRM_Export_BAO_Export
 {
     const EXPORT_ROW_COUNT = 100;
+
     /**
      * Function to get the list the export fields
      *
@@ -49,7 +49,7 @@ class CRM_Export_BAO_Export
      * @param array  $ids  contact ids
      * @param array  $params associated array of fields
      * @param string $order order by clause
-     * @param array  $associated array of fields
+     * @param array  $fields associated array of fields
      * @param array  $moreReturnProperties additional return fields
      * @param int    $exportMode export mode
      * @param string $componentClause component clause
@@ -146,7 +146,7 @@ class CRM_Export_BAO_Export
                     $imProviderId = CRM_Utils_Array::value( 3, $value );
                 }
                 
-                if ( array_key_exists ( $relationshipTypes, $contactRelationshipTypes )  ) {
+                if ( array_key_exists ( $relationshipTypes, $contactRelationshipTypes ) ) {
                     if ( CRM_Utils_Array::value( 2, $value ) ) {
                         $relationField = CRM_Utils_Array::value( 2, $value );
                         if ( trim ( CRM_Utils_Array::value( 3, $value ) ) ) {
@@ -318,8 +318,8 @@ class CRM_Export_BAO_Export
             unset($returnProperties[$relationKey]['im_provider']);
         }
         
-       $allRelContactArray = $relationQuery = array();
-
+        $allRelContactArray = $relationQuery = array();
+        
         foreach ( $contactRelationshipTypes as $rel => $dnt ) {
             if (  $relationReturnProperties = CRM_Utils_Array::value( $rel, $returnProperties ) ) {
                 $allRelContactArray[$rel] = array();
@@ -496,7 +496,7 @@ class CRM_Export_BAO_Export
                                 $headerRows[] = $query->_fields['activity'][$field]['title'];
                             }
                         } else if ( array_key_exists( $field, $contactRelationshipTypes ) ) {
-                            $relName = $field;//CRM_Utils_Array::value($field, $contactRelationshipTypes);
+                            $relName = $field;
                             foreach ( $value as $relationField => $relationValue ) {
                                 // below block is same as primary block (duplicate)
                                 if ( isset( $relationQuery[$field]->_fields[$relationField]['title'] ) ) {
@@ -731,8 +731,8 @@ class CRM_Export_BAO_Export
     /**
      * name of the export file based on mode
      *
-     * @param string $output type of output
-     * @param int    $mode export mode
+     * @param string  $output type of output
+     * @param int     $mode export mode
      * @return string name of the file
      */
     function getExportFileName( $output = 'csv', $mode = CRM_Export_Form_Select::CONTACT_EXPORT ) 
@@ -790,7 +790,6 @@ class CRM_Export_BAO_Export
         CRM_Utils_System::civiExit( );
     }
     
-    
     function exportCustom( $customSearchClass, $formValues, $order ) 
     {
         require_once( str_replace( '_', DIRECTORY_SEPARATOR, $customSearchClass ) . '.php' );
@@ -833,20 +832,17 @@ class CRM_Export_BAO_Export
 
     static function sqlColumnDefn( &$query, &$sqlColumns, $field )
     {
-        if (  substr($field, -4) == '_a_b' ||
-              substr($field, -4) == '_b_a' ) {
+        if ( substr($field, -4) == '_a_b' ||
+             substr($field, -4) == '_b_a' ) {
             return;
         }
         
-        // we should normalize the field name so its a valid column name
-        // removed 32 limit since the long columns over-wrote each other
-        // need a better naming convention here 
-        $fieldName = CRM_Utils_String::munge( strtolower($field), '_', 64 );
-
+        $fieldName = CRM_Utils_String::munge( strtolower( $field ), '_', 64 );
+        
         if ( $fieldName == 'id' ) {
             $fieldName = 'civicrm_primary_id';
         }
-
+        
         // set the sql columns
         if ( isset( $query->_fields[$field]['type'] ) ) {
             switch ( $query->_fields[$field]['type'] ) {
@@ -888,7 +884,7 @@ class CRM_Export_BAO_Export
                 break;
             }
         } else {
-            if (substr($fieldName, -3, 3) == '_id' ) {
+            if ( substr( $fieldName, -3, 3 ) == '_id' ) {
                 $sqlColumns[$fieldName]= "$fieldName varchar(16)";
             } else {
                 $sqlColumns[$fieldName]= "$fieldName varchar(64)";
@@ -979,11 +975,15 @@ CREATE TABLE {$exportTempTable} (
     {
         // find all the records that have the same street address BUT not in a household
         $sql = "
-SELECT    r1.id as master_id, r1.addressee as master_addressee, r2.id as copy_id, r2.addressee as copy_addressee
+SELECT    r1.id as master_id, 
+          r1.addressee as master_addressee,
+          r2.id as copy_id,
+          r2.addressee as copy_addressee
 FROM      $tableName r1
 LEFT JOIN $tableName r2 ON r1.street_address = r2.street_address
 WHERE     ( r1.household_name IS NULL OR r1.household_name = '' )
 AND       ( r2.household_name IS NULL OR r2.household_name = '' )
+AND       ( r1.street_address != '' )
 AND       r2.id > r1.id
 ORDER BY  r1.id
 ";
@@ -1031,8 +1031,9 @@ ORDER BY  r1.id
                 $masterAddressee[] = $copyAddressee;
                 $deleteIDs[] = $copyID;
             }
-
+            
             $addresseeString = implode( ',', $masterAddressee );
+
             $sql = "
 UPDATE $tableName
 SET    addressee = %1
@@ -1051,14 +1052,23 @@ WHERE  id IN ( $deleteIDString )
             CRM_Core_DAO::executeQuery( $sql );
         }
     }
-
+    
+    /**
+     * Function to merge household record into the individual record
+     * if exists
+     *
+     * @param string $exportTempTable temporary temp table that stores the records
+     * @param array  $headerRows array of headers for the export file
+     * @param array  $sqlColumns array of names of the table columns of the temp table
+     * @param string $prefix name of the relationship type that is prefixed to the table columns
+     */
     static function mergeSameHousehold( $exportTempTable, &$headerRows, &$sqlColumns, $prefix )
     {
-
         $prefixColumn = $prefix .'_';
         $allKeys = array_keys( $sqlColumns );
-        
         $replaced = array( );
+
+        // name map of the non standard fields in header rows & sql columns
         $mappingFields = array (
                                 'civicrm_primary_id'  => 'internal contact id',
                                 'url'                 => 'website',
@@ -1170,7 +1180,11 @@ LIMIT $offset, $limit
             $offset += $limit;
         }
     }
-
+    
+    /**
+     * Function to manipulate header rows for relationship fields
+     * 
+     */
     function manipulateHeaderRows( &$headerRows, $contactRelationshipTypes )
     {
         foreach ( $headerRows as &$header ) {
