@@ -73,6 +73,11 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         if ( $this->_action & ( CRM_Core_Action::UPDATE | CRM_Core_Action::DELETE ) ) {
             $this->_surveyId = CRM_Utils_Request::retrieve('id', 'Positive', $this, true);
         }
+
+        $session = CRM_Core_Session::singleton();
+        $url     = CRM_Utils_System::url('civicrm/survey/browse', 'reset=1'); 
+        $session->pushUserContext( $url );
+
         $this->assign( 'action', $this->_action );
     }
     
@@ -245,7 +250,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $buttonName = $this->controller->getButtonName( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another Survey.'));
-            $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/manage', 'reset=1&action=add' ) );
+            $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/add', 'reset=1&action=add' ) );
         } else {
             $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/browse', 'reset=1' ) ); 
         }

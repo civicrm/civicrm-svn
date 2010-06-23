@@ -68,6 +68,10 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
             $this->_campaignId = CRM_Utils_Request::retrieve('id', 'Positive', $this , true);
         }
         
+        $session = CRM_Core_Session::singleton();
+        $url     = CRM_Utils_System::url('civicrm/campaign/browse', 'reset=1'); 
+        $session->pushUserContext( $url );
+
         $this->assign( 'action', $this->_action );
     }
     
@@ -82,8 +86,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
     {
         $defaults = array();
         
-        
-        // if we are editing....
+        // if we are editing
         if ( isset( $this->_campaignId ) ) {
             $params = array( 'id' => $this->_campaignId );
             require_once 'CRM/Campaign/BAO/Campaign.php';
@@ -236,7 +239,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         $buttonName = $this->controller->getButtonName( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another Campaign.'));
-            $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/manage', 'reset=1&action=add' ) );
+            $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/add', 'reset=1&action=add' ) );
             
         } else {
             $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/browse', 'reset=1' ) ); 

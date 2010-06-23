@@ -69,7 +69,9 @@
   </div>
 
 {else} 
-  {ts} No survey found!    {/ts} 
+  <div class="status">
+    <div class="icon inform-icon"></div>&nbsp;{ts}No survey found.{/ts}
+  </div> 
 {/if}
 {if $manageCampaign}
   <div class="action-link">
