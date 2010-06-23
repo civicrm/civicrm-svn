@@ -119,7 +119,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         }
         
         //set the user context for redirection of task actions
-        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
         require_once 'CRM/Utils/Rule.php';
         $urlParams = 'force=1';
         if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
