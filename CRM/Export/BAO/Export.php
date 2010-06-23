@@ -158,9 +158,9 @@ class CRM_Export_BAO_Export
                     }                    
                 }
 
-                $contactType       = CRM_Utils_Array::value( 0, $value );
-                $locTypeId         = CRM_Utils_Array::value( 2, $value );
-                $phoneTypeId       = CRM_Utils_Array::value( 3, $value );
+                $contactType = CRM_Utils_Array::value( 0, $value );
+                $locTypeId   = CRM_Utils_Array::value( 2, $value );
+                $phoneTypeId = CRM_Utils_Array::value( 3, $value );
                 
                 if ( $relationField ) {
                     if ( in_array ( $relationField, $locationTypeFields ) ) {
@@ -320,6 +320,7 @@ class CRM_Export_BAO_Export
                            WHERE  relationship_type_id = $id AND
                                   {$contactA} IN ({$relIDs})
                            GROUP BY {$contactA}";
+
                 // Get the related contacts
                 $relContactDAO   = CRM_Core_DAO::executeQuery( $relSQL );
                 $relContactArray = array();
@@ -330,9 +331,10 @@ class CRM_Export_BAO_Export
 
                 $uniqueContacts      = array_unique($relContactArray);
                 if ( !empty ($uniqueContacts ) ) {
-                    $relationWhere       = " WHERE contact_a.id IN (". implode(',', $uniqueContacts ) .") GROUP BY contact_id";
-                    
-                    $relationQueryString = "$relationSelect $relationFrom $relationWhere";
+                    $relationWhere       = " WHERE contact_a.id IN (". implode(',', $uniqueContacts ) .") 
+                                             AND contact_a.is_deleted = 0 ";
+                    $relationGroupBy     = " GROUP BY contact_id";
+                    $relationQueryString = "$relationSelect $relationFrom $relationWhere $relationGroupBy";
                     
                     $allRelContactDAO    = CRM_Core_DAO::executeQuery( $relationQueryString );
                     while ( $allRelContactDAO->fetch() ) {
