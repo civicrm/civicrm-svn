@@ -68,7 +68,10 @@ class Engage_Contact_Form_Search_Custom_FindVoters
         
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
         $form->add('select', 'survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
-        $form->add('checkbox', 'status_id', ts('Is Held') );
+        
+        $form->add('select', 'filter_survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
+        $form->add('checkbox', 'status_id', ts('Is Held'), null, false, 
+                   array('onChange' => 'cj("#filter_survey").toggle( );') );
         
         $form->assign( 'elements', array( 'sort_name', 'street_number', 'street_address', 'city', 'status_id') );
         $this->setTitle('Find Voters');
@@ -107,10 +110,11 @@ class Engage_Contact_Form_Search_Custom_FindVoters
                 } else if ( $column == 'status_id' ) { 
                     $clause[ ] = "survery_details.status_id = %{$count}";
                     $params[$count] = array( 'H', 'String' );
-                    if ( CRM_Utils_Array::value( 'survey_id' , $this->_formValues ) ) {
+                    $filterSurveyId = CRM_Utils_Array::value( 'filter_survey_id' , $this->_formValues );
+                    if ( $value && $filterSurveyId  ) {
                         $count++;
                         $clause[ ] = "survery_details.survey_id = %{$count}";
-                        $params[$count] = array( $this->_formValues['survey_id'], 'Integer');
+                        $params[$count] = array( $filterSurveyId, 'Integer');
                     }
                 } else {
                     $clause[ ] = "{$column} = %{$count}";
