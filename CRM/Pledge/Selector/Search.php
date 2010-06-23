@@ -192,7 +192,7 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
     {
         $extraParams = ( $key ) ? "&key={$key}" : null;
         
-        $cancelExtra = ts('Cancelling this pledge will also cancel any scheduled (and not completed) pledge payments. This action cannot be undone. Do you want to continue?');
+        $cancelExtra = ts('Cancelling this pledge will also cancel any scheduled (and not completed) pledge payments.') . ' ' . ts('This action cannot be undone.') . ' ' . ts('Do you want to continue?');
         self::$_links = array(
                               CRM_Core_Action::VIEW   => array(
                                                                'name'     => ts('View'),

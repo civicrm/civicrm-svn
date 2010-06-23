@@ -41,7 +41,7 @@
 			<td class="crm-report-instanceList-title" style="width:35%"><a href="{$row.url}" title="{ts}Run this report{/ts}">&raquo; <strong>{$row.title}</strong></a></td>
 			<td class="crm-report-instanceList-description">{$row.description}</td>
 			{if $row.deleteUrl}
-			    <td class="crm-report-instanceList-deleteUrl" style = "width:5%"><a href="{$row.deleteUrl}" onclick="return window.confirm('{ts}Are you sure you want delete this report? This action can not be undone.{/ts}');">{ts}Delete{/ts}</a></td>
+			    <td class="crm-report-instanceList-deleteUrl" style = "width:5%"><a href="{$row.deleteUrl}" onclick="return window.confirm('{ts}Are you sure you want delete this report?{/ts} {ts}This action cannot be undone.{/ts}');">{ts}Delete{/ts}</a></td>
 			{/if}
 		    </tr>
 		{/foreach}
