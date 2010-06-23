@@ -43,11 +43,7 @@
                     {elseif $element eq 'end_date'}
                         <td colspan=2>{include file="CRM/common/jcalendar.tpl" elementName=end_date}</td>
                     {else}
-                        {if $element eq 'status_id' }
-                          <td>{$form.$element.html}</td><td><div id='survey_filter'> &nbsp;&nbsp; {$form.survey_id.label} &nbsp;{$form.survey_id.html}</div> </td>
-			{else}
-                          <td colspan=2>{$form.$element.html}</td>
-                        {/if}
+			<td colspan=2>{$form.$element.html}</td>
                     {/if}
                 </tr>
             {/foreach}
@@ -107,7 +103,7 @@
         {else}
             {$form._qf_Basic_next_print.html}&nbsp; &nbsp;
         {/if}
-        {$form.survey_task.html} {$form.task.html}
+        {$form.survey_id.html}
 	
      {/if}
      {if $action eq 512}
@@ -201,18 +197,9 @@ function checkSurveyTask( ) {
  return true;	 
 }
 
-function toggleSurvey( ) {
-  if ( cj('#status_id').attr('checked') == true ) {
-    show('survey_filter'); 
-  } else {
-    hide('survey_filter');
- }
-}
-
 cj(function() {
    cj().crmaccordions(); 
 });
 
-toggleSurvey( );
 </script>
 {/literal}

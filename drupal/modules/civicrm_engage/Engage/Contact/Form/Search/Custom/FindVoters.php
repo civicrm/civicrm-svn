@@ -47,11 +47,6 @@ class Engage_Contact_Form_Search_Custom_FindVoters
     function __construct( &$formValues ) {
         parent::__construct( $formValues );
         
-        // FIX ME: select survey for add reservation process, 
-        // field  name 'survey_task'. 
-        $session = CRM_Core_Session::singleton( );
-        $session->set( 'surveyId', 1 );
-            
         $this->_columns = array(
                                  ts('Contact Name')   => 'display_name',
                                  ts('Street Number')  => 'street_number',
@@ -70,14 +65,10 @@ class Engage_Contact_Form_Search_Custom_FindVoters
         $form->add( 'text', 'street_number', ts( 'Street Number' ), true );
         $form->add( 'text', 'street_address', ts( 'Street Address' ), true );
         $form->add( 'text', 'city', ts( 'City' ), true );
-
-
+        
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
         $form->add('select', 'survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
-
-        $form->add('select', 'survey_task', ts('Survey'), array('' => ts('- select -') ) + $surveys );
-
-        $form->add('checkbox', 'status_id', ts('Is Held'), false, false, array('onChange' => 'toggleSurvey();') );
+        $form->add('checkbox', 'status_id', ts('Is Held') );
         
         $form->assign( 'elements', array( 'sort_name', 'street_number', 'street_address', 'city', 'status_id') );
         $this->setTitle('Find Voters');

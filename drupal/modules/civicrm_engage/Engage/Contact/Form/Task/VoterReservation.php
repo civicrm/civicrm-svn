@@ -79,17 +79,18 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
      */
     function preProcess( ) {
         parent::preProcess( );
-
-        $session = CRM_Core_Session::singleton( );
-        $this->_surveyId = $session->get('surveyId');
+        
+        //get the survey id from user submitted values.
+        $this->_surveyId = CRM_Utils_Array::value( 'survey_id',$this->get( 'formValues' ) );
         if ( !$this->_surveyId ) {
             CRM_Core_Error::statusBounce( ts( "Could not find Survey Id.") );
         }
         
+        $session = CRM_Core_Session::singleton( );
         if ( empty($this->_contactIds) || !($session->get('userID')) ) {
             CRM_Core_Error::statusBounce( ts( "Could not find contacts for voter reservation Or Missing Interviewer contact.") );
         }
-
+        
         $surveyDetails = array( );
         $params        = array( 'id' => $this->_surveyId );
         $this->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve($params, $surveyDetails);
