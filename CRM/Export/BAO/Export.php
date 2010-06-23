@@ -79,7 +79,7 @@ class CRM_Export_BAO_Export
         $queryMode        = null; 
         $paymentFields    = false;
 
-        $phoneTypes = CRM_Core_PseudoConstant::phoneType();
+        $phoneTypes  = CRM_Core_PseudoConstant::phoneType();
         $imProviders = CRM_Core_PseudoConstant::IMProvider();
         $contactRelationshipTypes = CRM_Contact_BAO_Relationship::getContactRelationshipType( 
                                                                                              null, 
@@ -118,7 +118,20 @@ class CRM_Export_BAO_Export
         if ( $fields ) {
             //construct return properties 
             $locationTypes =& CRM_Core_PseudoConstant::locationType();
-            $locationTypeFields = array ('street_address','supplemental_address_1', 'supplemental_address_2', 'city', 'postal_code', 'postal_code_suffix', 'geo_code_1', 'geo_code_2', 'state_province', 'country', 'phone', 'email', 'im' );
+            $locationTypeFields = array ( 'street_address',
+                                          'supplemental_address_1',
+                                          'supplemental_address_2',
+                                          'city',
+                                          'postal_code',
+                                          'postal_code_suffix',
+                                          'geo_code_1',
+                                          'geo_code_2',
+                                          'state_province',
+                                          'country',
+                                          'phone',
+                                          'email',
+                                          'im' );
+
             foreach ( $fields as $key => $value) {
                 $phoneTypeId  = null;
                 $imProviderId = null;
@@ -175,7 +188,7 @@ class CRM_Export_BAO_Export
                     } else {
                         $returnProperties[$relationshipTypes][$relationField]  = 1;
                     }                    
-                } else if ( is_numeric($locTypeId) ) {
+                } else if ( is_numeric( $locTypeId ) ) {
                     if ($phoneTypeId) {
                         $returnProperties['location'][$locationTypes[$locTypeId]]['phone-' .$phoneTypeId] = 1;
                     } else if ( isset($imProviderId) ) { 
@@ -266,6 +279,15 @@ class CRM_Export_BAO_Export
                     unset( $returnProperties[$value] );
                 }
             }
+        }
+        
+        if ( $mergeSameAddress ) {
+            //make sure the addressee fields are selected
+            //while using merge same address feature
+            $returnProperties['addressee'     ] = 1;
+            $returnProperties['street_name'   ] = 1;
+            $returnProperties['household_name'] = 1;
+            $returnProperties['street_address'] = 1;
         }
         
         if ( $moreReturnProperties ) {
