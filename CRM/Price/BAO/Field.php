@@ -69,7 +69,8 @@ class CRM_Price_BAO_Field extends CRM_Price_DAO_Field
             $priceFieldBAO->id = $id;
         }
         
-        return $priceFieldBAO->save( );
+        $priceFieldBAO->save( );
+        return $priceFieldBAO;
     }
     
     /**
