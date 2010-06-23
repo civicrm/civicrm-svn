@@ -69,6 +69,8 @@ class CRM_Export_Form_Select extends CRM_Core_Form
      */
     public $_exportMode;
     
+    public $_componentTable;
+    
     /**
      * build all the data structures needed to build the form
      *
