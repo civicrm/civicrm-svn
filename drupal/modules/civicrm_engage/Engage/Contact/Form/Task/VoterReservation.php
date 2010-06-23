@@ -44,6 +44,27 @@ require_once 'CRM/Campaign/BAO/Survey.php';
 class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
 
     /**
+     * survet id
+     *
+     * @var int
+     */
+    protected $_surveyId;
+    
+    /**
+     * survey details
+     *
+     * @var object
+     */
+    protected $_surveyDetails;
+
+    /**
+     * number of voters
+     *
+     * @var int
+     */
+    protected $_numVoters;
+
+    /**
      * custom data table
      *
      */
@@ -58,11 +79,39 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
      */
     function preProcess( ) {
         parent::preProcess( );
+
         $session = CRM_Core_Session::singleton( );
+        $this->_surveyId = $session->get('surveyId');
+        if ( !$this->_surveyId ) {
+            CRM_Core_Error::statusBounce( ts( "Could not find Survey Id.") );
+        }
         
         if ( empty($this->_contactIds) || !($session->get('userID')) ) {
             CRM_Core_Error::statusBounce( ts( "Could not find contacts for voter reservation Or Missing Interviewer contact.") );
         }
+
+        $surveyDetails = array( );
+        $params        = array( 'id' => $this->_surveyId );
+        $this->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve($params, $surveyDetails);
+
+        $numVoters = CRM_Core_DAO::singleValueQuery( "SELECT COUNT(*) FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." WHERE status_id = 'H' AND survey_id = %1 ", array( 1 => array( $this->_surveyId, 'Integer') ) );
+        $this->_numVoters = isset($numVoters)? $numVoters : 0;
+
+        if ( CRM_Utils_Array::value('max_number_of_contacts', $surveyDetails) &&
+             $this->_numVoters &&
+             ( $surveyDetails['max_number_of_contacts'] <= $this->_numVoters ) ) {
+            CRM_Core_Error::statusBounce( ts( "Voter Reservation is full for this survey.") );
+        }
+        
+        if ( CRM_Utils_Array::value('default_number_of_contacts',$surveyDetails) ) {
+            if ( count($this->_contactIds) > $surveyDetails['default_number_of_contacts'] ) {
+                CRM_Core_Error::statusBounce( ts( "You can select maximum %1 contact(s) at a time for voter reservation of this survey.", array( 1 => $surveyDetails['default_number_of_contacts']) ) );
+            }
+        }
+
+        // FIX ME : there will be title for survey
+        $this->assign( 'surveyTitle', $surveyDetails['title'] );
+        
     }
 
     /**
@@ -72,10 +121,7 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
      * @return void
      */
     function buildQuickForm( ) {
-        // survey list
-        $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
-        $this->add('select', 'survey_id', ts('Select Survey'), array( '' => ts('- select -') ) + $surveys , true );
-
+       
         $this->addDefaultButtons( ts('Add Voter Reservation') );
     }
 
@@ -86,16 +132,6 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
     
     static function formRule( $params, $rules, &$form ) {
         $errors = array();
-        if ( $params['survey_id'] ) {
-            $surveyParams  = array( 'id' => $params['survey_id'] );
-            $default       = array( );
-            $form->surveyDeatils = CRM_Campaign_BAO_Survey::retrieve( $surveyParams, $default );
-            if ( $form->surveyDeatils->default_number_of_contacts &&
-                 ($form->surveyDeatils->default_number_of_contacts < count($form->_contactIds)) ) {
-                $errors['survey_id'] = ts( "You can add maximum %1 contact(s) at a time for this survey.", array( 1 => $form->surveyDeatils->default_number_of_contacts) );
-            }
-        }
-
         return $errors;
     }
     /**
@@ -108,7 +144,7 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
         //get the submitted values in an array
         $params  = $this->controller->exportValues( $this->_name );
         $session = CRM_Core_Session::singleton( );
-        
+
         require_once 'CRM/Activity/BAO/Activity.php';
         require_once 'CRM/Contact/BAO/Contact.php';
         require_once 'CRM/Core/BAO/CustomField.php';
@@ -129,29 +165,37 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
         foreach( $activityGroupTree[$this->_groupId]['fields'] as $fieldId => $field ) {
             $fieldMapper[$field['column_name']] = $field['element_name'];
         }
-        
-        $customFields = CRM_Core_BAO_CustomField::getFields( 'Activity' );
-       
-        $surveyDeatils = $this->surveyDeatils;
-        $maxVoters     = $surveyDeatils->max_number_of_contacts;
-        $numVoters     = CRM_Core_DAO::singleValueQuery( "SELECT COUNT(*) FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." WHERE status_id = 'H' AND survey_id = %1 ", array( 1 => array( $params['survey_id'], 'Integer') ) );
-        $numVoters     = isset($numVoters)? $numVoters : 0;
 
+        $duplicateContacts = array( );
+
+        $query = "SELECT DISTINCT(target.target_contact_id) as contact_id FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." survey INNER JOIN civicrm_activity_target target ON ( target.activity_id = survey.entity_id ) WHERE survey.status_id = 'H' AND survey.survey_id = %1  AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
+        $findDuplicate = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer') ) );
+        
+        while( $findDuplicate->fetch() ) {
+            $duplicateContacts[$findDuplicate->contact_id] = $findDuplicate->contact_id; 
+        }
+
+        $customFields  = CRM_Core_BAO_CustomField::getFields( 'Activity' );
+        $surveyDetails = $this->_surveyDetails;
+        $maxVoters     = $surveyDetails->max_number_of_contacts;
         $contactId     = $session->get( 'userID' );
 
         list( $cName, $cEmail, $doNotEmail, $onHold, $isDeceased ) = CRM_Contact_BAO_Contact::getContactDetails( $contactId );
 
-        $fieldParams[$fieldMapper['survey_id']]                = $params['survey_id'];
+        $fieldParams[$fieldMapper['survey_id']]                = $this->_surveyId;
         $fieldParams[$fieldMapper['status_id']]                = 'H';
         $fieldParams[$fieldMapper['interviewer_id']]           = $contactId;
-        $fieldParams[$fieldMapper['interviewer_display_name']] = $cName;
-        $fieldParams[$fieldMapper['interviewer_email']]        = $cEmail;
-        $fieldParams[$fieldMapper['interviewer_ip']]           = $_SERVER['REMOTE_ADDR'];
+        $fieldParams[$fieldMapper['interviewer_display_name']] = CRM_Utils_Type::escape($cName, 'String');
+        $fieldParams[$fieldMapper['interviewer_email']]        = CRM_Utils_Type::escape($cEmail, 'String');
+        $fieldParams[$fieldMapper['interviewer_ip']]           = CRM_Utils_Type::escape($_SERVER['REMOTE_ADDR'], 'String');
 
         $countVoters = 0;
         foreach ( $this->_contactIds as $cid ) {
-            if ($maxVoters && ($maxVoters <= ($numVoters + $countVoters) ) ) {
+            if ($maxVoters && ($maxVoters <= ($this->_numVoters + $countVoters) ) ) {
                 break;
+            }
+            if ( in_array($cid ,$duplicateContacts) ) {
+                continue;
             }
 
             $countVoters++;
@@ -160,25 +204,24 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
             $activityParams['source_contact_id']   = $contactId;
             $activityParams['assignee_contact_id'] = array( $contactId );
             $activityParams['target_contact_id']   = array( $cid );
-            $activityParams['activity_type_id' ]   = $surveyDeatils->activity_type_id;
+            $activityParams['activity_type_id' ]   = $surveyDetails->survey_type_id;
             $activityParams['subject']             = ts('Voter Reservation');
             $activityParams['status_id']           = 1;        
-            $activityParams['campaign_id']         = $surveyDeatils->campaign_id;
+            $activityParams['campaign_id']         = $surveyDetails->campaign_id;
             $result = CRM_Activity_BAO_Activity::create( $activityParams );
 
             $fieldParams[$fieldMapper['subject_display_name']] = CRM_Contact_BAO_Contact::displayName( $cid );
-            
+
             if ( $result ) {
                 CRM_Core_BAO_CustomValueTable::postProcess( $fieldParams,
                                                             $customFields,
                                                             'civicrm_activity',
                                                             $result->id,
                                                             'Activity' );
-                
             }
         }
 
-        $status = array();
+        $status = array( );
         if ( $countVoters > 0 ) {
             $status[] = ts('Voter Reservation has been added for %1 Contact(s).', array( 1 => $countVoters ));
         }

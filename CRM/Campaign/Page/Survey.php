@@ -95,14 +95,13 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page
         if ( !empty($surveys) ) {
             require_once 'CRM/Campaign/BAO/Campaign.php';
 
-            $surveyType = CRM_Core_PseudoConstant::surveyType();
-            $campaigns  = CRM_Campaign_BAO_Campaign::getAllCampaign();
+            $surveyType = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
+            $campaigns  = CRM_Campaign_BAO_Campaign::getAllCampaign( );
             $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, false , 'name' );
             foreach( $surveys as $sid => $survey ) {
                 $surveys[$sid]['campaign_id']    = $campaigns[$survey['campaign_id']];
                 $surveys[$sid]['survey_type_id'] = $surveyType[$survey['survey_type_id']];
                 $surveys[$sid]['release_frequency'] = $survey['release_frequency_interval'].' '.$survey['release_frequency_unit'];
-                $surveys[$sid]['activity_type_id']  = $activityTypes[$survey['activity_type_id']];
                 
                 if ( $manageCampaign ) {
                     $action = array_sum( array_keys($this->actionLinks()) );

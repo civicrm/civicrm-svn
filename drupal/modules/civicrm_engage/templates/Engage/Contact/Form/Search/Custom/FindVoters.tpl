@@ -37,13 +37,17 @@
             {* Loop through all defined search criteria fields (defined in the buildForm() function). *}
             {foreach from=$elements item=element}
                 <tr class="crm-contact-custom-search-findvoters-form-block-{$element}">
-                    <td class="label">{$form.$element.label}</td>
+                    <td colspan=2 class="label">{$form.$element.label}</td>
                     {if $element eq 'start_date'}
-                        <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}</td>
+                        <td colspan=2>{include file="CRM/common/jcalendar.tpl" elementName=start_date}</td>
                     {elseif $element eq 'end_date'}
-                        <td>{include file="CRM/common/jcalendar.tpl" elementName=end_date}</td>
+                        <td colspan=2>{include file="CRM/common/jcalendar.tpl" elementName=end_date}</td>
                     {else}
-                        <td>{$form.$element.html}</td>
+                        {if $element eq 'status_id' }
+                          <td>{$form.$element.html}</td><td><div id='survey_filter'> &nbsp;&nbsp; {$form.survey_id.label} &nbsp;{$form.survey_id.html}</div> </td>
+			{else}
+                          <td colspan=2>{$form.$element.html}</td>
+                        {/if}
                     {/if}
                 </tr>
             {/foreach}
@@ -66,8 +70,67 @@
 	<div class="crm-results-block">
     {* Search request has returned 1 or more matching rows. Display results and collapse the search criteria fieldset. *}
         {* This section handles form elements for action task select and submit *}
-       <div class="crm-search-tasks">        
-        {include file="CRM/Contact/Form/Search/ResultTasks.tpl"}
+       <div class="crm-search-tasks"> 
+       <table class="form-layout-compressed">
+       <tr>
+    <td class="font-size12pt" style="width: 30%;">
+        {if $savedSearch.name}{$savedSearch.name} ({ts}smart group{/ts}) - {/if}
+        {ts count=$pager->_totalItems plural='%count Results'}%count Result{/ts}
+    </td>
+    
+    {* Search criteria are passed to tpl in the $qill array *}
+    <td class="nowrap">
+    {if $qill}
+      {include file="CRM/common/displaySearchCriteria.tpl"}
+    {/if}
+    </td>
+  </tr>
+  <tr>
+    <td class="font-size11pt"> {ts}Select Records{/ts}:</td>
+    <td class="nowrap">
+        {$form.radio_ts.ts_all.html} {ts count=$pager->_totalItems plural='All %count records'}The found record{/ts} &nbsp; {if $pager->_totalItems > 1} {$form.radio_ts.ts_sel.html} {ts}Selected records only{/ts}{/if}
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+     {* Hide export and print buttons in 'Add Members to Group' context. *}
+     {if $context NEQ 'amtg'}
+        {if $action eq 512}
+          <ul>   
+          {$form._qf_Advanced_next_print.html}&nbsp; &nbsp;
+        {elseif $action eq 8192}
+          {$form._qf_Builder_next_print.html}&nbsp; &nbsp;
+        {elseif $action eq 16384}
+          {* since this does not really work for a non standard search
+          {$form._qf_Custom_next_print.html}&nbsp; &nbsp;
+          *}
+        {else}
+            {$form._qf_Basic_next_print.html}&nbsp; &nbsp;
+        {/if}
+        {$form.survey_task.html} {$form.task.html}
+	
+     {/if}
+     {if $action eq 512}
+       {$form._qf_Advanced_next_action.html}
+     {elseif $action eq 8192}
+       {$form._qf_Builder_next_action.html}&nbsp;&nbsp;
+     {elseif $action eq 16384}
+       {$form._qf_Custom_next_action.html}&nbsp;&nbsp;
+     {else}
+       {$form._qf_Basic_next_action.html}
+     {/if}
+     </td>
+  </tr>
+  </table>
+ </div>
+
+{literal}
+<script type="text/javascript">
+toggleTaskAction( );
+</script>
+{/literal}
+
+       
 		</div>
         {* This section displays the rows along and includes the paging controls *}
 	       <div class="crm-search-results">
@@ -126,14 +189,30 @@
     </div>
 {/if}
 
-
-
 </div>
 {/if}
 {literal}
 <script type="text/javascript">
+function checkSurveyTask( ) {
+ if ( cj("#survey_task").val() == '') {
+  alert('{/literal}{ts}Please select survey to perform this action.{/ts}{literal}');
+  return false;
+ }	
+ return true;	 
+}
+
+function toggleSurvey( ) {
+  if ( cj('#status_id').attr('checked') == true ) {
+    show('survey_filter'); 
+  } else {
+    hide('survey_filter');
+ }
+}
+
 cj(function() {
    cj().crmaccordions(); 
 });
+
+toggleSurvey( );
 </script>
 {/literal}

@@ -41,6 +41,11 @@
     </div>
   {/if}   
       <table class="form-layout"> 
+       <tr class="crm-campaign-survey-form-block-title">
+           <td class="label">{$form.title.label}</td>
+           <td>{$form.title.html}
+	   <div class="description">{ts}Title of the survey.{/ts}</div></td>
+       </tr> 
        <tr class="crm-campaign-survey-form-block-campaign_id">
            <td class="label">{$form.campaign_id.label}</td>
            <td>{$form.campaign_id.html}

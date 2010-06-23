@@ -135,14 +135,15 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
 
         require_once 'CRM/Event/PseudoConstant.php';
        
-        
+        $this->add('text', 'title', ts('Survey Title'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'title'), true );
+
         $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
         // Activity Type id
         $this->add('select', 'survey_type_id', ts('Select Survey Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
         
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( true);
+        $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( );
         $this->add('select', 'campaign_id', ts('Select Campaign'), array( '' => ts('- select -') ) + $campaigns, true );
         
        

@@ -36,10 +36,10 @@
   <div id="surveyList">
     <table id="options" class="display">
       <thead>
-        <tr>      
+        <tr>  
+          <th>{ts}Survey{/ts}</th>
           <th>{ts}Campaign{/ts}</th>
           <th>{ts}Survey Type{/ts}</th>   
-	  <th>{ts}Activity Type{/ts}</th>
           <th>{ts}Release Frequency{/ts}</th>
 	  <th>{ts}Max Number Of Contacts{/ts}</th>
 	  <th>{ts}Default Number Of Contacts{/ts}</th>
@@ -52,9 +52,9 @@
       </thead>
       {foreach from=$surveys item=survey}
         <tr id="row_{$survey.id}" {if $survey.is_active neq 1}class="disabled"{/if}>
+	  <td>{$survey.title}</td>
           <td>{$survey.campaign_id}</td>
           <td>{$survey.survey_type_id}</td>
-          <td>{$survey.activity_type_id}</td>
           <td>{$survey.release_frequency}</td>
           <td>{$survey.max_number_of_contacts}</td>
           <td>{$survey.default_number_of_contacts}</td>

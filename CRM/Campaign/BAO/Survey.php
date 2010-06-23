@@ -139,10 +139,6 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
      */
     static function getSurveyList( $all = false ) {
         require_once 'CRM/Campaign/BAO/Campaign.php';
-        require_once 'CRM/Core/PseudoConstant.php';
-
-        $surveyTypes = CRM_Core_PseudoConstant::surveyType();
-        $campaigns   = CRM_Campaign_BAO_Campaign::getAllCampaign( );
 
         $survey = array( );
         $dao = new CRM_Campaign_DAO_Survey( );
@@ -153,7 +149,7 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         
         $dao->find( );
         while ( $dao->fetch() ) {
-            $survey[$dao->id] = $campaigns[$dao->campaign_id].'::'.$surveyTypes[$dao->survey_type_id];
+            $survey[$dao->id] = $dao->title;
         }
         
         return $survey;

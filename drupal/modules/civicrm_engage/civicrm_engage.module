@@ -136,7 +136,7 @@ function civicrm_engage_manageTasks( $formName, &$form ) {
                 $element->setValue(CIVICRM_ENGAGE_TASK_VOTER_RESERVE);
                
                 $elementSubmit =& $form->getElement('_qf_Custom_next_action');
-                $form->updateElementAttr( '_qf_Custom_next_action' , array( 'onClick' => 'return true;'));
+                $form->updateElementAttr( '_qf_Custom_next_action' , array( 'onClick' => 'return checkSurveyTask( );'));
                 $elementSubmit->setValue(ts('Reserve Voters'));
                 return true;
             }

@@ -17,7 +17,18 @@
     <name>id</name>
     <autoincrement>true</autoincrement>
   </primaryKey>
-  
+
+  <field>
+      <name>title</name>
+      <title>Survey Title</title> 
+      <type>varchar</type>
+      <length>255</length>
+      <required>true</required>
+      <comment>Title of the Survey.</comment>
+      <import>true</import>
+      <add>3.2</add>
+  </field>
+
   <field>
     <name>campaign_id</name>
     <type>int unsigned</type>

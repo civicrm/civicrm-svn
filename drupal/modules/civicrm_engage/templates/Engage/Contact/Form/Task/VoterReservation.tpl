@@ -30,8 +30,11 @@
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <table class="form-layout-compressed">
   <tr class="crm-contact-task-voterreservation-form-block-survey_id">
-    <td class="label">{$form.survey_id.label}</td>
-    <td>{$form.survey_id.html}</td>      
+    <td colspan=2> 
+      <div class="status">
+        <div class="icon inform-icon"></div>&nbsp;{ts 1=$surveyTitle}Do you want to reserve voters for '%1' ?{/ts}
+      </div> 
+    </td>      
   </tr>
 
     <tr><td colspan=2>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>

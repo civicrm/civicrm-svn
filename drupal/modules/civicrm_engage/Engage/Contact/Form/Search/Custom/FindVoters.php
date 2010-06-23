@@ -35,6 +35,7 @@
  */
 
 require_once 'CRM/Contact/Form/Search/Custom/Base.php';
+require_once 'CRM/Campaign/BAO/Survey.php';
 
 class Engage_Contact_Form_Search_Custom_FindVoters
    extends    CRM_Contact_Form_Search_Custom_Base
@@ -45,7 +46,12 @@ class Engage_Contact_Form_Search_Custom_FindVoters
 
     function __construct( &$formValues ) {
         parent::__construct( $formValues );
-
+        
+        // FIX ME: select survey for add reservation process, 
+        // field  name 'survey_task'. 
+        $session = CRM_Core_Session::singleton( );
+        $session->set( 'surveyId', 1 );
+            
         $this->_columns = array(
                                  ts('Contact Name')   => 'display_name',
                                  ts('Street Number')  => 'street_number',
@@ -65,13 +71,21 @@ class Engage_Contact_Form_Search_Custom_FindVoters
         $form->add( 'text', 'street_address', ts( 'Street Address' ), true );
         $form->add( 'text', 'city', ts( 'City' ), true );
 
-        $form->assign( 'elements', array( 'sort_name', 'street_number', 'street_address', 'city' ) );
+
+        $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
+        $form->add('select', 'survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
+
+        $form->add('select', 'survey_task', ts('Survey'), array('' => ts('- select -') ) + $surveys );
+
+        $form->add('checkbox', 'status_id', ts('Is Held'), false, false, array('onChange' => 'toggleSurvey();') );
+        
+        $form->assign( 'elements', array( 'sort_name', 'street_number', 'street_address', 'city', 'status_id') );
         $this->setTitle('Find Voters');
     }
 
     function all( $offset = 0, $rowcount = 0, $sort = null,
                   $includeContactIDs = false ) {
-
+        
         $selectClause =  "DISTINCT(contact_a.id) as contact_id, contact_a.display_name as display_name, 
                           civicrm_address.id as address_id, civicrm_address.street_address as street_address, civicrm_address.street_number as street_number, civicrm_address.city as city, civicrm_address.postal_code as postal_code, civicrm_state_province.id as state_province_id, civicrm_state_province.abbreviation as state_province, civicrm_state_province.name as state_province_name, civicrm_country.id as country_id, civicrm_country.name as country, civicrm_phone.id as phone_id, civicrm_phone.phone_type_id as phone_type_id, civicrm_phone.phone as phone, civicrm_email.id as email_id, civicrm_email.email as email";
 
@@ -84,7 +98,7 @@ class Engage_Contact_Form_Search_Custom_FindVoters
     
     function from( ) {
         return "
-               FROM civicrm_contact contact_a LEFT JOIN civicrm_address ON ( contact_a.id = civicrm_address.contact_id AND civicrm_address.is_primary = 1 ) LEFT JOIN civicrm_state_province ON civicrm_address.state_province_id = civicrm_state_province.id  LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id  LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_email.is_primary = 1)  LEFT JOIN civicrm_phone ON (contact_a.id = civicrm_phone.contact_id AND civicrm_phone.is_primary = 1) ";
+               FROM civicrm_contact contact_a LEFT JOIN civicrm_address ON ( contact_a.id = civicrm_address.contact_id AND civicrm_address.is_primary = 1 ) LEFT JOIN civicrm_state_province ON civicrm_address.state_province_id = civicrm_state_province.id  LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id  LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_email.is_primary = 1) LEFT JOIN civicrm_phone ON (contact_a.id = civicrm_phone.contact_id AND civicrm_phone.is_primary = 1) LEFT JOIN civicrm_activity_target activity_target ON ( activity_target.target_contact_id = contact_a.id ) LEFT JOIN ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." survery_details ON ( activity_target.activity_id = survery_details.entity_id )";
        
     }
 
@@ -92,23 +106,29 @@ class Engage_Contact_Form_Search_Custom_FindVoters
         $params = $clause = array( );
         $count  = 1;
         $where  = "(contact_a.is_deleted = 0 AND contact_a.contact_type = 'Individual') ";
-        $where .= " AND contact_a.id NOT IN ( SELECT DISTINCT(activity_target.target_contact_id) FROM civicrm_activity_target activity_target INNER JOIN ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." survery_details ON ( activity_target.activity_id = survery_details.entity_id AND survery_details.status_id = 'H' ) )";
 
-        $columns = array( 'sort_name', 'street_number', 'street_address', 'city' );
+        $columns = array( 'sort_name', 'street_number', 'street_address', 'city', 'status_id' );
         foreach( $columns as $column ) {
             if ( $value = CRM_Utils_Array::value( $column , $this->_formValues ) ) {
-                if ( $column == 'sort_name') {
+                if ( $column == 'sort_name' ) {
                     $clause[ ] = "{$column} LIKE %{$count}";
                     $params[$count] = array( '%'.$value.'%', 'String' );
+                } else if ( $column == 'status_id' ) { 
+                    $clause[ ] = "survery_details.status_id = %{$count}";
+                    $params[$count] = array( 'H', 'String' );
+                    if ( CRM_Utils_Array::value( 'survey_id' , $this->_formValues ) ) {
+                        $count++;
+                        $clause[ ] = "survery_details.survey_id = %{$count}";
+                        $params[$count] = array( $this->_formValues['survey_id'], 'Integer');
+                    }
                 } else {
                     $clause[ ] = "{$column} = %{$count}";
                     $params[$count] = array( $value, 'String' );
                 }
-
             }
             $count++;
         }
-
+                   
         if ( !empty($clause) ) {  
             $where .=  ' AND '. implode( ' AND ', $clause );
         }

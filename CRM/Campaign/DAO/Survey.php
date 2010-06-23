@@ -87,23 +87,23 @@ class CRM_Campaign_DAO_Survey extends CRM_Core_DAO
      */
     public $id;
     /**
+     * Title of the Survey.
+     *
+     * @var string
+     */
+    public $title;
+    /**
      * Foreign key to the Campaign.
      *
      * @var int unsigned
      */
     public $campaign_id;
     /**
-     * Survey Type ID.Implicit FK to civicrm_option_value where option_group = survey_type
+     * Survey Type ID.Implicit FK to civicrm_option_value where option_group = activity_type
      *
      * @var int unsigned
      */
     public $survey_type_id;
-    /**
-     * Activity Type ID.Implicit FK to civicrm_option_value where option_group = activity_type
-     *
-     * @var int unsigned
-     */
-    public $activity_type_id;
     /**
      * FK to civicrm_custom_group
      *
@@ -225,6 +225,19 @@ class CRM_Campaign_DAO_Survey extends CRM_Core_DAO
                     'type' => CRM_Utils_Type::T_INT,
                     'required' => true,
                 ) ,
+                'title' => array(
+                    'name' => 'title',
+                    'type' => CRM_Utils_Type::T_STRING,
+                    'title' => ts('Survey Title') ,
+                    'required' => true,
+                    'maxlength' => 255,
+                    'size' => CRM_Utils_Type::HUGE,
+                    'import' => true,
+                    'where' => 'civicrm_survey.title',
+                    'headerPattern' => '',
+                    'dataPattern' => '',
+                    'export' => true,
+                ) ,
                 'campaign_id' => array(
                     'name' => 'campaign_id',
                     'type' => CRM_Utils_Type::T_INT,
@@ -237,17 +250,6 @@ class CRM_Campaign_DAO_Survey extends CRM_Core_DAO
                     'title' => ts('Survey Type ID') ,
                     'import' => true,
                     'where' => 'civicrm_survey.survey_type_id',
-                    'headerPattern' => '',
-                    'dataPattern' => '',
-                    'export' => true,
-                    'default' => 'UL',
-                ) ,
-                'activity_type_id' => array(
-                    'name' => 'activity_type_id',
-                    'type' => CRM_Utils_Type::T_INT,
-                    'title' => ts('Activity Type ID') ,
-                    'import' => true,
-                    'where' => 'civicrm_survey.activity_type_id',
                     'headerPattern' => '',
                     'dataPattern' => '',
                     'export' => true,
