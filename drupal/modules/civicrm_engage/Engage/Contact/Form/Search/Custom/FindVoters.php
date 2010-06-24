@@ -46,7 +46,13 @@ class Engage_Contact_Form_Search_Custom_FindVoters
 
     function __construct( &$formValues ) {
         parent::__construct( $formValues );
-        
+
+        $session = CRM_Core_Session::singleton( );
+        if ( !($session->get('userID') ) ) {
+            CRM_Core_Error::fatal( ts( 'Could not find Interviewer Id.' ) );  
+        }
+        $this->_interviewerId = $session->get('userID');
+
         $this->_columns = array(
                                  ts('Contact Name')   => 'display_name',
                                  ts('Street Number')  => 'street_number',
@@ -110,6 +116,12 @@ class Engage_Contact_Form_Search_Custom_FindVoters
                 } else if ( $column == 'status_id' ) { 
                     $clause[ ] = "survery_details.status_id = %{$count}";
                     $params[$count] = array( 'H', 'String' );
+                    
+                    // show voters contacts held by current interviewer
+                    $count++;
+                    $clause[ ] = "survery_details.interviewer_id = %{$count}";
+                    $params[$count] = array( $this->_interviewerId , 'Integer' );
+
                     $filterSurveyId = CRM_Utils_Array::value( 'filter_survey_id' , $this->_formValues );
                     if ( $value && $filterSurveyId  ) {
                         $count++;

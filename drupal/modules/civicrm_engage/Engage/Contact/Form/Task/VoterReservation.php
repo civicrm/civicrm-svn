@@ -51,6 +51,13 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
     protected $_surveyId;
     
     /**
+     * interviewer id
+     *
+     * @var int
+     */
+    protected $_interviewerId;
+
+    /**
      * survey details
      *
      * @var object
@@ -90,7 +97,8 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
         if ( empty($this->_contactIds) || !($session->get('userID')) ) {
             CRM_Core_Error::statusBounce( ts( "Could not find contacts for voter reservation Or Missing Interviewer contact.") );
         }
-        
+        $this->_interviewerId = $session->get('userID');
+
         $surveyDetails = array( );
         $params        = array( 'id' => $this->_surveyId );
         $this->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve($params, $surveyDetails);
@@ -144,7 +152,6 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
     public function postProcess( ) {
         //get the submitted values in an array
         $params  = $this->controller->exportValues( $this->_name );
-        $session = CRM_Core_Session::singleton( );
 
         require_once 'CRM/Activity/BAO/Activity.php';
         require_once 'CRM/Contact/BAO/Contact.php';
@@ -179,13 +186,12 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
         $customFields  = CRM_Core_BAO_CustomField::getFields( 'Activity' );
         $surveyDetails = $this->_surveyDetails;
         $maxVoters     = $surveyDetails->max_number_of_contacts;
-        $contactId     = $session->get( 'userID' );
 
-        list( $cName, $cEmail, $doNotEmail, $onHold, $isDeceased ) = CRM_Contact_BAO_Contact::getContactDetails( $contactId );
+        list( $cName, $cEmail, $doNotEmail, $onHold, $isDeceased ) = CRM_Contact_BAO_Contact::getContactDetails( $this->_interviewerId );
 
         $fieldParams[$fieldMapper['survey_id']]                = $this->_surveyId;
         $fieldParams[$fieldMapper['status_id']]                = 'H';
-        $fieldParams[$fieldMapper['interviewer_id']]           = $contactId;
+        $fieldParams[$fieldMapper['interviewer_id']]           = $this->_interviewerId;
         $fieldParams[$fieldMapper['interviewer_display_name']] = CRM_Utils_Type::escape($cName, 'String');
         $fieldParams[$fieldMapper['interviewer_email']]        = CRM_Utils_Type::escape($cEmail, 'String');
         $fieldParams[$fieldMapper['interviewer_ip']]           = CRM_Utils_Type::escape($_SERVER['REMOTE_ADDR'], 'String');
@@ -202,8 +208,8 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
             $countVoters++;
             $activityParams = array( );  
 
-            $activityParams['source_contact_id']   = $contactId;
-            $activityParams['assignee_contact_id'] = array( $contactId );
+            $activityParams['source_contact_id']   = $this->_interviewerId;
+            $activityParams['assignee_contact_id'] = array( $this->_interviewerId );
             $activityParams['target_contact_id']   = array( $cid );
             $activityParams['activity_type_id' ]   = $surveyDetails->survey_type_id;
             $activityParams['subject']             = ts('Voter Reservation');
