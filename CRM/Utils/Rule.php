@@ -329,7 +329,12 @@ class CRM_Utils_Rule
             $mon_thousands_sep = ',';
         }
 
-        $value = str_replace( $mon_thousands_sep, '', $value );
+        // ugly fix for CRM-6391: do not drop the thousand separator if
+        // it looks like it’s separating decimal part (because a given
+        // value undergoes a second cleanMoney() call, for example)
+        if ($mon_thousands_sep != '.' or substr($value, -3, 1) != '.') {
+            $value = str_replace($mon_thousands_sep, '', $value);
+        }
 
         if ( array_key_exists( 'mon_decimal_point', $localeInfo ) ) {
             $mon_decimal_point = $localeInfo['mon_decimal_point'];
