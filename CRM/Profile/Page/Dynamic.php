@@ -178,7 +178,7 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
             }
             foreach ( $values as $title => $value ) {
                 $profileFields[$labels[$title]] = array( 'label' => $title,
-                                                    'value' => $value );
+                                                         'value' => $value );
             }
             
             $template->assign_by_ref( 'row', $values );
@@ -187,9 +187,31 @@ class CRM_Profile_Page_Dynamic extends CRM_Core_Page {
         
         $name = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'name' );
         
-        if($name == 'summary_overlay') {
+        if ( $name == 'summary_overlay' ) {
         	$template->assign( 'overlayProfile', true );
         }
+
+        $title    = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $this->_gid, 'title' );
+        
+        //CRM-4131.
+        $displayName    = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $this->_id, 'display_name' );
+        if ( $displayName ) {
+            require_once 'CRM/Core/Permission.php';
+            require_once 'CRM/Contact/BAO/Contact/Permission.php';
+            $session   = CRM_Core_Session::singleton( );
+            $config    = CRM_Core_Config::singleton( );
+            if ( $session->get( 'userID' ) && 
+                 CRM_Core_Permission::check('access CiviCRM') &&
+                 CRM_Contact_BAO_Contact_Permission::allow( $session->get( 'userID' ), CRM_Core_Permission::VIEW ) &&
+                 !$config->userFrameworkFrontend ) {
+                $contactViewUrl = CRM_Utils_System::url('civicrm/contact/view', "action=view&reset=1&cid={$this->_id}", true);
+                $this->assign( 'displayName', $displayName);
+                $displayName = "<a href=\"$contactViewUrl\">{$displayName}</a>";
+            } 
+            $title .= ' - ' . $displayName;
+        }
+        
+        CRM_Utils_System::setTitle( $title );
 
         // invoke the pagRun hook, CRM-3906
         require_once 'CRM/Utils/Hook.php';
