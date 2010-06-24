@@ -38,6 +38,7 @@ CREATE TABLE `civicrm_campaign_group` (
 
 CREATE TABLE `civicrm_survey` ( 
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Campaign Group id.',
+  `title` varchar(255) NOT NULL COMMENT 'Title of the Survey.',
   `campaign_id` int unsigned NOT NULL COMMENT 'Foreign key to the activity Campaign.',
   `survey_type_id` int unsigned DEFAULT NULL COMMENT 'Survey Type ID.Implicit FK to civicrm_option_value where option_group = activity_type',
   `custom_group_id` int unsigned DEFAULT NULL COMMENT 'FK to civicrm_custom_group',
