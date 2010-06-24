@@ -45,7 +45,7 @@ class CRM_Campaign_Page_AJAX
         //$customGroups  = array( );
         require_once 'CRM/Campaign/BAO/Survey.php';
         require_once 'CRM/Core/OptionGroup.php';
-        $sid      = $_REQUEST['sid'];
+        $sid      = CRM_Utils_Array::value('sid', $_REQUEST);
         $surveyId = CRM_Core_OptionGroup::getValue('activity_type','Survey','name');
         $params[] = $surveyId;
         if ( $sid ) {

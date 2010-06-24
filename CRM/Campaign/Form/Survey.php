@@ -146,8 +146,18 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( );
         $this->add('select', 'campaign_id', ts('Select Campaign'), array( '' => ts('- select -') ) + $campaigns, true );
         
-       
-        $surveyCustomGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( true );
+        $params = array( );
+        require_once 'CRM/Core/OptionGroup.php';
+
+        if ( $surveyTypeId = CRM_Core_OptionGroup::getValue('activity_type','Survey','name') ) {
+            $params[] = $surveyTypeId;
+        }
+
+        if ( $this->_surveyId && ( $sid = CRM_Core_DAO::getFieldValue('CRM_Campaign_DAO_Survey', $this->_surveyId, 'custom_group_id' ) ) ) {
+            $params[] = $sid;
+        }
+
+        $surveyCustomGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( true, $params );
         // FIX ME : change Custom groups according to survey_type_id
         // custom group id
         $this->add('select', 'custom_group_id', ts('Select Custom Group'), array( '' => ts('- select -')) + $surveyCustomGroups, true );

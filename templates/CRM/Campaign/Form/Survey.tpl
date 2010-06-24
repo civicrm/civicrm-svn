@@ -104,7 +104,7 @@
 {literal}
 <script language="JavaScript" type="text/javascript">
 
-if ( cj("#survey_type_id").val() == '' ) {
+if ( cj("#custom_group_id").val() == '' ) {
  surveyCustomGroup();		 
 }
 
