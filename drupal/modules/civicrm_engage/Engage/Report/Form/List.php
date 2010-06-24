@@ -56,6 +56,16 @@ class Engage_Report_Form_List extends CRM_Report_Form {
         CF_PRIMARY_LANG_LABEL     = 'Primary Language',
         CF_OTHER_NAME_LABEL       = 'Other Name';
 
+    /*
+     * custom groups
+     *
+     */
+    
+    const
+        CG_VOTER_INFO               = 'Voter_Info',
+        CG_CONSTITUENT_INFO_INDIVI  = 'Constituent_Info__Individuals',
+        CG_DEMOGRAPHICS             = 'Demographics';
+        
     /**
      *  Address information needed in output
      *  @var boolean
@@ -161,7 +171,7 @@ class Engage_Report_Form_List extends CRM_Report_Form {
     function __construct( ) {
         //  Find the Voter Info custom data group
         $query = "SELECT id, table_name FROM civicrm_custom_group"
-               . " WHERE name='Voter_Info'";
+                 . " WHERE name='". self::CG_VOTER_INFO ."'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );
         $voterInfoID = $dao->id;
@@ -202,7 +212,7 @@ SELECT ov.label, ov.value FROM civicrm_option_value ov
 WHERE ov.option_group_id = (
     SELECT cf.option_group_id FROM civicrm_custom_field cf
     WHERE  cf.custom_group_id = (
-        SELECT cg.id FROM civicrm_custom_group cg WHERE cg.name='Core_Info' ) AND cf.label like '%" . self::CF_CONSTITUENT_TYPE_LABEL . "%'
+        SELECT cg.id FROM civicrm_custom_group cg WHERE cg.name='". self::CG_CONSTITUENT_INFO_INDIVI ."' ) AND cf.label like '%" . self::CF_CONSTITUENT_TYPE_LABEL . "%'
 )";
         $dao = CRM_Core_DAO::executeQuery( $query );
         while ( $dao->fetch() ) {
@@ -211,7 +221,7 @@ WHERE ov.option_group_id = (
 
 
         // ** demographics ** //
-        $query = "SELECT id, table_name FROM civicrm_custom_group WHERE name='Demographics'";
+        $query = "SELECT id, table_name FROM civicrm_custom_group WHERE name='". self::CG_DEMOGRAPHICS ."'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );
         $demoTableID = $dao->id;
@@ -226,7 +236,7 @@ WHERE custom_group_id={$demoTableID} AND label like '%" . self::CF_PRIMARY_LANG_
         $this->_demoLangCol = $dao->column_name;
 
         // ** Core Info ** //
-        $query = "SELECT id, table_name FROM civicrm_custom_group WHERE name='Core_Info'";
+        $query = "SELECT id, table_name FROM civicrm_custom_group WHERE name='". self::CG_CONSTITUENT_INFO_INDIVI ."'";
         $dao = CRM_Core_DAO::executeQuery( $query );
         $dao->fetch( );
         $coreInfoTableID = $dao->id;
