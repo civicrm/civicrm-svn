@@ -362,8 +362,8 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             }
         }
         
+        $employers = $checkBoxes = $employees = array( );
         if ( $searchRows ) {
-            $employers = $checkBoxes = $employees = array( );
             foreach ( $searchRows as $id => $row ) {
                 $checkBoxes[$id] = $this->createElement('checkbox', $id, null, '' );
                 if ( $isEmployeeOf ) {
