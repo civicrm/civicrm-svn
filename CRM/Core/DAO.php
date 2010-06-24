@@ -1246,7 +1246,8 @@ SELECT contact_id
                             else $object->$dbName=$value['enumValues'][0];
                         } else {
                             $object->$dbName=$dbName.'_'.$counter;
-			    if ($value['maxlength']>0 && strlen($object->$dbName)>$value['maxlength']) { 
+                            $maxlength = CRM_Utils_Array::value( 'maxlength', $value );
+                            if ( $maxlength > 0 && strlen($object->$dbName) > $maxlength ) {
                             	$object->$dbName=substr($object->$dbName,0,$value['maxlength']);
 			    }
                         }
