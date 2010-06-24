@@ -37,4 +37,10 @@
     <page_callback>CRM_Campaign_Form_SurveyType</page_callback>
     <access_arguments>administer CiviCampaign</access_arguments>
   </item>
+  <item>
+    <path>civicrm/survey/search</path>
+    <title>Record Voters Interview</title>
+    <page_callback>CRM_Campaign_Controller_Search</page_callback>
+    <access_arguments>administer CiviCampaign, access CiviCampaign</access_arguments>
+  </item>
 </menu>
