@@ -100,3 +100,33 @@
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 
 </div>
+
+{literal}
+<script language="JavaScript" type="text/javascript">
+
+if ( cj("#survey_type_id").val() == '' ) {
+ surveyCustomGroup();		 
+}
+
+function surveyCustomGroup( ) {
+	$('#custom_group_id').html("");
+		
+        var surveyTypeId = cj("#survey_type_id").val();
+ 	var dataUrl = "{/literal}{crmURL p='civicrm/ajax/surveygroups' h=0 q="sid="}{literal}"+surveyTypeId;
+	cj.ajax({ 
+            url     : dataUrl,   
+            async   : false,
+            success : function(data){
+	                data = eval(data);
+			if ( data != null ) {
+			    for (i = 0; i < data.length; i++) {
+				$('#custom_group_id').get(0).add(new Option(data[i].name, data[i].value), document.all ? i : null);
+			    }
+			} else {
+				$('#custom_group_id').get(0).add(new Option('- select -', 0), document.all ? i : null);
+			}
+                    }
+                });
+}
+</script>
+{/literal}

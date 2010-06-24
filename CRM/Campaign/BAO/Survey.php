@@ -181,9 +181,18 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
      *
      * @static
      */
-    static function getSurveyCustomGroups( $buildSelect = false ) {
+    static function getSurveyCustomGroups( $buildSelect = false, $surveyTypes = array( ) ) {
         $customGroups  = array( );
-        $activityTypes = self::getSurveyActivityType( );
+
+        if( !is_array($surveyTypes) ) {
+            $surveyTypes = array( $surveyTypes );
+        }
+
+        if ( !empty($surveyTypes) ) {
+            $activityTypes = array_flip($surveyTypes);
+        } else {
+            $activityTypes = self::getSurveyActivityType( );
+        }
 
         if ( !empty($activityTypes) ) {
             $extendSubType = implode( '[[:>:]]|[[:<:]]', array_keys($activityTypes) );
@@ -198,7 +207,9 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
                 if ( $buildSelect ) {
                     $customGroups[$dao->id] = $dao->title; 
                 } else {
-                    CRM_Core_DAO::storeValues($dao, $customGroups[$dao->id]);
+                    $customGroups[$dao->id]['name']    = $dao->name;
+                    $customGroups[$dao->id]['title']   = $dao->title;
+                    $customGroups[$dao->id]['extends'] = $dao->extends_entity_column_value;
                 }
             }
         }

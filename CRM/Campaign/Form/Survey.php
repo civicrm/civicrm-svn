@@ -139,7 +139,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
 
         $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
         // Activity Type id
-        $this->add('select', 'survey_type_id', ts('Select Survey Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
+        $this->add('select', 'survey_type_id', ts('Select Survey Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true, array( 'onChange' => 'surveyCustomGroup();') );
         
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
