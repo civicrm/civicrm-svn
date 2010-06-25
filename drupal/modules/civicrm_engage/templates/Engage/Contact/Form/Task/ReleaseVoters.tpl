@@ -26,10 +26,10 @@
 <h3>
 {ts}Release Voter Reservation(s){/ts}
 </h3>
-<div class="crm-form-block crm-block crm-contact-task-voterreservation-form-block">
+<div class="crm-form-block crm-block crm-contact-task-releasevoters-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <table class="form-layout-compressed">
-  <tr class="crm-contact-task-voterreservation-form-block-survey_id">
+  <tr class="crm-contact-task-releasevoters-form-block-surveytitle">
     <td colspan=2> 
       <div class="status">
         <div class="icon inform-icon"></div>&nbsp;{ts 1=$surveyTitle}Do you want to release voters reservation for '%1' ?{/ts}

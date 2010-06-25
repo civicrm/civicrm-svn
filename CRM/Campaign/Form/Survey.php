@@ -158,7 +158,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         }
 
         $surveyCustomGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( true, $params );
-        // FIX ME : change Custom groups according to survey_type_id
+
         // custom group id
         $this->add('select', 'custom_group_id', ts('Select Custom Group'), array( '' => ts('- select -')) + $surveyCustomGroups, true );
         

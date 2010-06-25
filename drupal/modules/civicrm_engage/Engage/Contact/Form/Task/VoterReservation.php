@@ -227,12 +227,12 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
                                                             'Activity' );
             }
         }
-
+ 
         $status = array( );
         if ( $countVoters > 0 ) {
             $status[] = ts('Voter Reservation has been added for %1 Contact(s).', array( 1 => $countVoters ));
         }
-        if ( $maxVoters && (count($this->_contactIds) > $countVoters ) ) {
+        if ( count($this->_contactIds) > $countVoters ) {
             $status[] = ts('Voter Reservation did not add for %1 Contact(s).', array( 1 => ( count($this->_contactIds) - $countVoters) ) );
         }
         if ( !empty($status) ) {
