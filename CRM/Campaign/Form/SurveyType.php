@@ -103,6 +103,27 @@ class CRM_Campaign_Form_SurveyType extends CRM_Admin_Form
     }
 
     /**
+     * This function sets the default values for the form. 
+     * the default values are retrieved from the database.
+     * 
+     * @param null
+     *
+     * @return array    array of default values
+     * @access public
+     */
+    function setDefaultValues( ) 
+    {
+        $defaults = array( );
+       
+        if (! isset( $defaults['weight']) || ! $defaults['weight'] ) {
+            $fieldValues = array('option_group_id' => $this->_gid);
+            $defaults['weight'] = CRM_Utils_Weight::getDefaultWeight('CRM_Core_DAO_OptionValue', $fieldValues);
+        }
+        
+        return $defaults;
+    }
+
+    /**
      * Function to build the form
      *
      * @return None
