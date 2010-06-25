@@ -81,14 +81,11 @@
       </td>
     </tr>
     </table>
-    {if  ! $showForm }   
-     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-    {/if}   
+
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+    
 </div>
 
-     {if $showForm }   
-            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-     {/if}
 
 <script type="text/javascript">
     var myElement1 = document.getElementById('id_form');

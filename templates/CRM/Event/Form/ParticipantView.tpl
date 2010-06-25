@@ -45,7 +45,7 @@
             {include file="CRM/common/formButtons.tpl" location="top"}
         </div>
     </div>
-    <table class="view-layout crm-info-panel">
+    <table class="crm-info-panel">
         <tr class="crm-event-participantview-form-block-displayName">
 	    <td class="label">{ts}Name{/ts}</td>
 	    <td class="bold">
