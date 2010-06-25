@@ -331,14 +331,45 @@ class CRM_Export_BAO_Export
                     $contactA = 'contact_id_b';
                     $contactB = 'contact_id_a';
                 }
+                if ( $exportMode == CRM_Export_Form_Select::CONTACT_EXPORT ) {
+                    $relIDs = $ids;
+                }else if( $exportMode == CRM_Export_Form_Select::ACTIVITY_EXPORT )  {
+                    $query = "SELECT source_contact_id FROM civicrm_activity
+                              WHERE id IN ( ".implode(',', $ids).")";
+                    $dao =& CRM_Core_DAO::executeQuery( $query );
+                    while ( $dao->fetch( ) ) {
+                        $relIDs[] = $dao->source_contact_id;
+                    } 
+                } else {
+                    switch ( $exportMode )  {
+                    case CRM_Export_Form_Select::CONTRIBUTE_EXPORT :
+                        $component ='civicrm_contribution';
+                        break;
+                    case CRM_Export_Form_Select::EVENT_EXPORT :
+                        $component ='civicrm_participant';
+                        break;
+                    case CRM_Export_Form_Select::MEMBER_EXPORT :
+                        $component ='civicrm_membership';
+                        break;
+                    case CRM_Export_Form_Select::PLEDGE_EXPORT :
+                        $component ='civicrm_pledge';
+                        break;
+                    case CRM_Export_Form_Select::CASE_EXPORT :
+                        $component ='civicrm_case';
+                        break;
+                    case CRM_Export_Form_Select::GRANT_EXPORT :
+                        $component ='civicrm_grant';
+                        break;
+                    }
+                    $relIDs = CRM_Core_DAO::getContactIDsFromComponent( $ids,$component );
+                }
                 
-                $relIDs = implode( ',', $ids );
                 $relSQL = "
 SELECT          {$contactB} as relContact, {$contactA} as refContact
 FROM            civicrm_relationship 
 LEFT JOIN       civicrm_contact contact ON (civicrm_relationship.{$contactB} = contact.id ) 
 WHERE           relationship_type_id = $id 
-AND             {$contactA} IN ({$relIDs})
+AND             {$contactA} IN (". implode(',', $relIDs ) .")
 AND             contact.is_deleted = 0
 GROUP BY        {$contactA}";
 
