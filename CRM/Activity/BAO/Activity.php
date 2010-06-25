@@ -1491,7 +1491,7 @@ SELECT  display_name
                 $subject .= ' - ' . $status[$activity->status_id]; 
             }
             $date = date( 'YmdHis' );
-            $activityType = 'Event Registration';
+            if ( $activityType != 'Email' ) $activityType = 'Event Registration';
             $component = 'Event';
             
         } else if ( $activity->__table == 'civicrm_contribution' ) {

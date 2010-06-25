@@ -1373,13 +1373,18 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                     $sendTemplateParams['from']    = $receiptFrom;
                     $sendTemplateParams['toName']  = $this->_contributorDisplayName;
                     $sendTemplateParams['toEmail'] = $this->_contributorEmail;
+                    $sendTemplateParams['cc']      = CRM_Utils_Array::value( 'cc', $this->_fromEmails );
+                    $sendTemplateParams['bcc']     = CRM_Utils_Array::value( 'bcc', $this->_fromEmails );
                 }
 
                 require_once 'CRM/Core/BAO/MessageTemplates.php';
                 list ($mailSent, $subject, $message, $html) = CRM_Core_BAO_MessageTemplates::sendTemplate($sendTemplateParams);
-
                 if ($mailSent) {
                     $sent[] = $contactID;
+                    require_once 'CRM/Activity/BAO/Activity.php';
+                    foreach ( $participants as $ids => $values ) { 
+                        CRM_Activity_BAO_Activity::addActivity( $values, 'Email' );
+                    } 
                 } else {
                     $notSent[] = $contactID;
                 }
