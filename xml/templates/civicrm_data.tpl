@@ -753,7 +753,7 @@ INSERT INTO civicrm_mailing_bounce_pattern
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
-        VALUES ('Away', '{ts escape="sql"}Recipient is on vacation{/ts}', 3);
+        VALUES ('Away', '{ts escape="sql"}Recipient is on vacation{/ts}', 30);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Away';
 INSERT INTO civicrm_mailing_bounce_pattern 
