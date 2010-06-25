@@ -136,8 +136,7 @@
     <div class="status messages">
         <div class="icon inform-icon"></div></td>
              {capture assign=browseURL}{crmURL p='civicrm/event/manage' q="reset=1"}{/capture}
-        <div class="status messages">
-	     {ts}No available Events match your search criteria. Suggestions:{/ts}
+             {ts}No available Events match your search criteria. Suggestions:{/ts}
              <div class="spacer"></div>
              <ul>
                 <li>{ts}Check your spelling.{/ts}</li>
@@ -145,7 +144,6 @@
                 <li>{ts}Make sure you have enough privileges in the access control system.{/ts}</li>
               </ul>
               {ts 1=$browseURL}Or you can <a href='%1'>browse all available Current Events</a>.{/ts}
-	</div>	
     </div>
    {else}
     <div class="messages status">

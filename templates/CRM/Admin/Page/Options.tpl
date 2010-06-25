@@ -135,7 +135,7 @@
 	        <td class="crm-admin-options-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
-	        <td class="order hiddenElement crm-participant-weight">{$row.weight}</td>
+	        <td class="order hiddenElement">{$row.weight}</td>
         </tr>
         {/foreach}
         </tbody>
