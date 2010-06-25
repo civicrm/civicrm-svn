@@ -27,67 +27,27 @@
 <table>
 <tr><td>{$displayName}</td></tr>
 <tr><td>
+{assign var="count" value="0"}
+{assign var="totalRows" value=$row|@count}
 <div class="crm-summary-col-0">
-  <div class="crm-section phone_1-section">
-  	<div class="label">{$profileFields_7.phone_1.label}</div>
-  	<div class="content">{$profileFields_7.phone_1.value}</div>
-  	<div class="clear"></div>
+{foreach from=$profileFields item=field key=rowName}
+  {if $count gt $totalRows/2}
+    </div>
+    </td><td>
+    <div class="crm-summary-col-1">
+    {assign var="count" value="1"}
+  {/if}
+  <div class="crm-section {$rowName}-section">
+    <div class="label">
+        {$field.label}
+    </div>
+     <div class="content">
+        {$field.value}
+     </div>
+     <div class="clear"></div>
   </div>
-
-  <div class="crm-section phone_2-section">
-  	<div class="label">{$profileFields_7.phone_2.label}</div>
-  	<div class="content">{$profileFields_7.phone_2.value}</div>
-  	<div class="clear"></div>
-  </div>
-  
-  <div class="crm-section street_address_Primary-section">
-  	<div class="label">{$profileFields_7.street_address_Primary.label}</div>
-  	<div class="content">{$profileFields_7.street_address_Primary.value}<br />
-  						{$profileFields_7.city_Primary.value} {$profileFields_7.state_province_Primary.value} {$profileFields_7.postal_code_Primary.value}
-  	</div>
-  	<div class="clear"></div>
-  </div>
-  <div class="crm-section email_Primary-section">
-  	<div class="label">{$profileFields_7.email_Primary.label}</div>
-  	<div class="content">{$profileFields_7.email_Primary.value}</div>
-  	<div class="clear"></div>
-  </div>
-  <div class="crm-section website-section">
-  	<div class="label">{$profileFields_7.website.label}</div>
-  	<div class="content">{$profileFields_7.website.value}</div>
-  	<div class="clear"></div>
-  </div>
-
-</div>
-</td><td>
-<div class="crm-summary-col-1">
-
-  <div class="crm-section group-section">
-  	<div class="label">{$profileFields_7.group.label}</div>
-  	<div class="content">{$profileFields_7.group.value}</div>
-  	<div class="clear"></div>
-  </div>
-
-
-  <div class="crm-section tag-section">
-  	<div class="label">{$profileFields_7.tag.label}</div>
-  	<div class="content">{$profileFields_7.tag.value}</div>
-  	<div class="clear"></div>
-  </div>
-
-
-  <div class="crm-section gender-section">
-  	<div class="label">{$profileFields_7.gender.label}</div>
-  	<div class="content">{$profileFields_7.gender.value}</div>
-  	<div class="clear"></div>
-  </div>
-
-
-  <div class="crm-section birth_date-section">
-  	<div class="label">{$profileFields_7.birth_date.label}</div>
-  	<div class="content">{$profileFields_7.birth_date.value}</div>
-  	<div class="clear"></div>
-  </div>
+  {assign var="count" value=`$count+1`}
+{/foreach}
 </div>
 </td></tr>
 </table>
