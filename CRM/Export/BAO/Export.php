@@ -975,7 +975,7 @@ VALUES $sqlValueString
         CRM_Core_DAO::executeQuery( $sql );
                     
         $sql = "
-CREATE TABLE {$exportTempTable} ( 
+CREATE TEMPORARY TABLE {$exportTempTable} ( 
      id int unsigned NOT NULL AUTO_INCREMENT,
 ";
         $sql .= implode( ",\n", array_values( $sqlColumns ) );
@@ -1158,7 +1158,7 @@ WHERE  id IN ( $deleteIDString )
 
         // clean up duplicate records
         $query = "
-CREATE TABLE {$exportTempTable}_temp SELECT *
+CREATE TEMPORARY TABLE {$exportTempTable}_temp SELECT *
 FROM {$exportTempTable}
 GROUP BY civicrm_primary_id ";
 
