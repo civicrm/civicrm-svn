@@ -363,13 +363,13 @@ class CRM_Export_BAO_Export
                     }
                     $relIDs = CRM_Core_DAO::getContactIDsFromComponent( $ids,$component );
                 }
-                
+                $relID  = implode( ',', $relIDs );
                 $relSQL = "
 SELECT          {$contactB} as relContact, {$contactA} as refContact
 FROM            civicrm_relationship 
 LEFT JOIN       civicrm_contact contact ON (civicrm_relationship.{$contactB} = contact.id ) 
 WHERE           relationship_type_id = $id 
-AND             {$contactA} IN (". implode(',', $relIDs ) .")
+AND             {$contactA} IN ( {$relID} )
 AND             contact.is_deleted = 0
 GROUP BY        {$contactA}";
 
