@@ -105,6 +105,10 @@ AND    civicrm_membership.is_test = 0
         require_once 'CRM/Core/Smarty.php';
         $smarty =& CRM_Core_Smarty::singleton();
         
+        require_once 'CRM/Core/BAO/Domain.php';
+        $domainValues     = CRM_Core_BAO_Domain::getNameAndEmail( );
+        $fromEmailAddress = "$domainValues[0] <$domainValues[1]>";
+
         while ( $dao->fetch( ) ) {
             echo ".";
             
@@ -212,13 +216,10 @@ AND    civicrm_membership.is_test = 0
                     $toEmail  = CRM_Contact_BAO_Contact::getPrimaryEmail( $dao->contact_id );
                     
                     if ( $toEmail ) {
-                        // Set the FROM email address for reminder emails here.
-                        // This must be a valid account for your SMTP service.
-                        $from = "EMAIL@FIXME.ORG";
                         $result = CRM_Core_BAO_MessageTemplates::sendReminder( $dao->contact_id,
                                                                                $toEmail,
                                                                                $memType->renewal_msg_id,
-                                                                               $from );
+                                                                               $fromEmailAddress );
                         if ( ! $result ||
                              is_a( $result, 'PEAR_Error' ) ) {
                             // we could not send an email, for now we ignore
