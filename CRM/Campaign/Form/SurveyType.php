@@ -113,7 +113,7 @@ class CRM_Campaign_Form_SurveyType extends CRM_Admin_Form
      */
     function setDefaultValues( ) 
     {
-        $defaults = array( );
+        $defaults = parent::setDefaultValues( );
        
         if (! isset( $defaults['weight']) || ! $defaults['weight'] ) {
             $fieldValues = array('option_group_id' => $this->_gid);

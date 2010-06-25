@@ -167,13 +167,13 @@ class CRM_Campaign_Page_SurveyType extends CRM_Core_Page_Basic
     function browse()
     {
         require_once 'CRM/Core/OptionValue.php';
-        require_once 'CRM/Campaign/BAO/Survey.php';
 
-        $surveyActivity = CRM_Campaign_BAO_Survey::getSurveyActivityType();
+        $campaingCompId = CRM_Core_Component::getComponentID('CiviCampaign');
         $groupParams    = array( 'name' => $this->_gName );
         $optionValues   = CRM_Core_OptionValue::getRows($groupParams, $this->links(), 'component_id,weight');
+
         foreach( $optionValues as $key => $optionValue ) {
-            if ( !in_array( $optionValue['value'], array_keys($surveyActivity) ) ) {
+            if ( CRM_Utils_Array::value('component_id', $optionValue) != $campaingCompId ) {
                 unset( $optionValues[$key] );
             }
         }
