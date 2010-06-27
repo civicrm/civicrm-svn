@@ -35,7 +35,6 @@
 </div>
 
 <div id="searchForm" class="form-item">
-
     {strip} 
         <table class="form-layout">
         <tr>
@@ -44,9 +43,12 @@
 		{$form.buttons.html}
             </td>       
         </tr>
+	<tr>
             <td class="font-size12pt" colspan="2">
-                {$form.survey_id.label}&nbsp;&nbsp;{$form.survey_id.html}
+                {$form.filter_survey_id.label}&nbsp;&nbsp;{$form.filter_survey_id.html}
             </td>
+	</tr>
+
         <tr>
            <td colspan="2">{$form.buttons.html}</td>
         </tr>

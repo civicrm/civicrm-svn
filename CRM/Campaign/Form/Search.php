@@ -231,7 +231,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         
         require_once 'CRM/Campaign/BAO/Survey.php';
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
-        $this->add( 'select', 'survey_id', ts('Survey'), 
+        $this->add( 'select', 'filter_survey_id', ts('Survey'), 
                     array('' => ts('- select survey -') ) + $surveys );
         
         /* 
@@ -252,7 +252,14 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             }
             
             $total = $cancel = 0;
-            $this->add('submit', $this->_actionButtonName, ts('Go'), 
+
+            require_once "CRM/Core/Permission.php";
+            $permission = CRM_Core_Permission::getPermission( );
+            require_once 'CRM/Campaign/Task.php';
+            $tasks = array( '' => ts('- actions -') ) + CRM_Campaign_Task::permissionedTaskTitles( $permission );
+            $this->add('select', 'task'   , ts('Actions:') . ' '    , $tasks    ); 
+            
+            $this->add('submit', $this->_actionButtonName, ts('Go'),
                        array( 'class'   => 'form-submit',
                               'id'      => 'Go',
                               'onclick' => "return checkPerformAction('mark_x', '".$this->getName()."', 0);" ) ); 
@@ -317,8 +324,9 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             // check actionName and if next, then do not repeat a search, since we are going to the next page 
             
             // hack, make sure we reset the task values 
-            $stateMachine =& $this->controller->getStateMachine( ); 
-            $formName     =  $stateMachine->getTaskFormName( ); 
+            $stateMachine = $this->controller->getStateMachine( ); 
+            $formName     =  $stateMachine->getTaskFormName( );
+            
             $this->controller->resetPage( $formName ); 
             return; 
         }
@@ -332,11 +340,11 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         $selector = new CRM_Campaign_Selector_Search( $this->_queryParams,
-                                                        $this->_action,
-                                                        null,
-                                                        $this->_single,
-                                                        $this->_limit,
-                                                        $this->_context ); 
+                                                      $this->_action,
+                                                      null,
+                                                      $this->_single,
+                                                      $this->_limit,
+                                                      $this->_context ); 
         $selector->setKey( $this->controller->_key );
         
         $prefix = null;
