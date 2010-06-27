@@ -127,6 +127,37 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             }
         }
         $this->assign( 'groupTree', $this->_groupTree );
+        
+        //get the fields.
+        $surveyFields = array( );
+        foreach ( $this->_groupTree as $grpId => $grpVals ) {
+            if ( !is_array( $grpVals['fields'] ) ) continue;
+            foreach ( $grpVals['fields'] as $fId => $fVals )  { 
+                $surveyFields[$fId] = $fVals;
+                
+            }
+        }
+        
+        require_once "CRM/Core/BAO/CustomField.php";
+        foreach ( $this->_contactIds as $contactId ) {
+            foreach ( $surveyFields as $fldId => &$field ) {
+                $fieldId       = $field['id'];                 
+                $elementName   = $field['element_name'];
+                $fieldName     = "field[$contactId][$elementName]";
+                CRM_Core_BAO_CustomField::addQuickFormElement( $this, $fieldName, $fieldId );
+            }
+        }
+        $this->assign( 'surveyFields', $surveyFields );
+        
+        $this->addButtons( array(
+                                 array ( 'type'      => 'submit',
+                                         'name'      => ts('Record Voters Interview'),
+                                         'isDefault' => true   ),
+                                 array ( 'type'      => 'cancel',
+                                         'name'      => ts('Cancel') ),
+                                 )
+                           );
+        
     }
     
     /**
@@ -140,7 +171,6 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         return $defaults = array( );
     }
     
-    
     /**
      * process the form after the input has been submitted and validated
      *
@@ -149,6 +179,9 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      */
     public function postProcess() 
     {
+        $params = $this->controller->exportValues( $this->_name );
+        
+        CRM_Core_Error::debug( '$params', $params );
         exit( );
     }
 }

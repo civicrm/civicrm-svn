@@ -26,36 +26,59 @@
 <div class="form-item">
 <fieldset>
 <div id="help">
-    {ts}Update field values for each voter as needed. Click <strong>Record Interviews</strong> below to save all your changes. To set a field to the same value for ALL rows.{/ts}
+    {ts}Update field values for each voter as needed. Click <strong>Record Voters Interview</strong> below to save all your changes. To set a field to the same value for ALL rows.{/ts}
 </div>
 
 {if $voterDetails}
-<table id="voter_added" class="display">
+<table id="voterRecords" class="display">
     <thead>
        <tr class="columnheader">
              {foreach from=$readOnlyFields item=fTitle key=fName}
 	        <th>{$fTitle}</th>
 	     {/foreach}
-	     
+
 	     {* display headers for survey fields *}
+	     {foreach from=$surveyFields item=fVal key=fId}
+	        <th>{$fVal.label}</th>
+	     {/foreach}
        </tr>
     </thead>
 
     <tbody>
 	{foreach from=$voterIds item=voterId}
 	<tr class="{cycle values="odd-row,even-row"}">
-	
 	    {foreach from=$readOnlyFields item=fTitle key=fName}
 	       <td>{$voterDetails.$voterId.$fName}</td>
 	    {/foreach}
-	    
-	    {* here build the survey fields *}
-	
-	{/tr}
-	{/foreach}	
 
+	    {* here build the survey fields *}
+	    {foreach from=$surveyFields item=field key=fId}
+	        {assign var=name value=$field.element_name}	     
+	        <td>{$form.field.$voterId.$name.html}</td>
+	    {/foreach}
+
+	</tr>
+	{/foreach}	
     </tbody>
+
 </table>
+<div class="crm-submit-buttons">{$form.buttons.html}</div>
+</fieldset>
 {/if}
 
+{literal}
+<script type="text/javascript">
+
+    cj( function( ) {
+
+	//load jQuery data table.
+        cj('#voterRecords').dataTable( {
+            "bPaginate": false,
+            "bInfo": false,
+        } );        
+
+    });
+    
+</script>
+{/literal}
 
