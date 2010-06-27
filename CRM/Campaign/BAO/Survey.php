@@ -173,46 +173,41 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         return $activityTypes;
     }
     
-
     /**
      * Function to get Surveys custom groups
-     *  
-     * @param $buildSelect boolean
+     * @param  $surveyTypes an array of survey type id.
      *
      * @static
      */
-    static function getSurveyCustomGroups( $buildSelect = false, $surveyTypes = array( ) ) {
+    static function getSurveyCustomGroups( $surveyTypes = array( ) ) 
+    {
         $customGroups  = array( );
-
         if( !is_array($surveyTypes) ) {
             $surveyTypes = array( $surveyTypes );
         }
-
+        
         if ( !empty($surveyTypes) ) {
             $activityTypes = array_flip($surveyTypes);
         } else {
             $activityTypes = self::getSurveyActivityType( );
         }
-
+        
         if ( !empty($activityTypes) ) {
             $extendSubType = implode( '[[:>:]]|[[:<:]]', array_keys($activityTypes) );
             
             $query = "SELECT cg.id, cg.name, cg.title, cg.extends_entity_column_value
                       FROM civicrm_custom_group cg
                       WHERE cg.is_active = 1 AND cg.extends_entity_column_value REGEXP '[[:<:]]{$extendSubType}[[:>:]]'";
-          
-            $dao =  CRM_Core_DAO::executeQuery($query, CRM_Core_DAO::$_nullArray);
             
-            while( $dao->fetch() ) {
-                if ( $buildSelect ) {
-                    $customGroups[$dao->id] = $dao->title; 
-                } else {
-                    $customGroups[$dao->id]['name']    = $dao->name;
-                    $customGroups[$dao->id]['title']   = $dao->title;
-                    $customGroups[$dao->id]['extends'] = $dao->extends_entity_column_value;
-                }
+            $dao =  CRM_Core_DAO::executeQuery( $query );
+            while( $dao->fetch( ) ) {
+                $customGroups[$dao->id]['id']      = $dao->id;
+                $customGroups[$dao->id]['name']    = $dao->name;
+                $customGroups[$dao->id]['title']   = $dao->title;
+                $customGroups[$dao->id]['extends'] = $dao->extends_entity_column_value;
             }
         }
+        
         return $customGroups;
     }
 
@@ -249,5 +244,81 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
         $dao->id = $id;
         return $dao->delete( );
     }
-
+    
+    
+    /**
+     * This function retrieve contact information.
+     *
+     * @param array  $voter            an array of contact Ids.
+     * @param array  $returnProperties an array of return elements.
+     *
+     * @return $voterDetails array of contact info.
+     * @static
+     */
+    static function voterDetails( $voterIds, $returnProperties = array( ) ) 
+    {
+        $voterDetails = array( );
+        if ( !is_array( $voterIds ) || empty( $voterIds ) ) {
+            return $voterDetails;
+        }
+        
+        if ( empty( $returnProperties ) ) {
+            require_once 'CRM/Core/BAO/Preferences.php';
+            $autocompleteContactSearch = CRM_Core_BAO_Preferences::valueOptions( 'contact_autocomplete_options' );
+            $returnProperties = array_fill_keys( array_merge( array( 'sort_name'), 
+                                                              array_keys( $autocompleteContactSearch ) ), 1 );
+        }
+        
+        $select = $from = array( );
+        foreach ( $returnProperties as $property => $ignore ) {
+            $value = ( in_array( $property, array( 'city', 'street_address' ) ) ) ? 'address' : $property;
+            switch ( $property ) {
+            case 'sort_name' :
+                $select[] = "$property as $property";
+                $from[$value] = 'civicrm_contact contact';
+                break;
+                
+            case 'email' :
+            case 'phone' :
+            case 'city' :
+            case 'street_address' :
+                $select[] = "$property as $property";
+                $from[$value] = "LEFT JOIN civicrm_{$value} {$value} ON ( contact.id = {$value}.contact_id AND {$value}.is_primary = 1 ) ";
+                break;
+                
+            case 'country':
+            case 'state_province':
+                $select[] = "{$property}.name as $property";
+                if ( !in_array( 'address', $from ) ) {
+                    $from['address'] = 'LEFT JOIN civicrm_address address ON ( contact.id = address.contact_id AND address.is_primary = 1) ';
+                }
+                $from[$value] = " LEFT JOIN civicrm_{$value} {$value} ON ( address.{$value}_id = {$value}.id  ) ";
+                break;
+            }
+        }
+        
+        //finally retrieve contact details.
+        if ( !empty( $select ) && !empty( $from ) ) {
+            $fromClause   = implode( ' ' , $from   );
+            $selectClause = implode( ', ', $select );
+            $whereClause  = "contact.id IN (" . implode( ',',  $voterIds ) . ')';  
+            
+            $query = "
+  SELECT  contact.id as contactId, $selectClause 
+    FROM  $fromClause
+   WHERE  $whereClause
+Group By  contact.id";
+            
+            $contact = CRM_Core_DAO::executeQuery( $query );
+            while ( $contact->fetch( ) ) {
+                $voterDetails[$contact->contactId]['contact_id'] = $contact->contactId;
+                foreach ( $returnProperties as $property => $ignore ) {
+                    $voterDetails[$contact->contactId][$property] = $contact->$property;
+                }
+            }
+            $contact->free( );
+        }
+        
+        return $voterDetails; 
+    }
 }

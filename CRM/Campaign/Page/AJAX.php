@@ -53,8 +53,8 @@ class CRM_Campaign_Page_AJAX
         }
        
         // get survey custom groups
-        $customGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( false, $params);
-
+        $customGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( $params );
+        
         $elements[] = array( 'name'  => ts('- select -'),
                              'value' => '');
         $selectGroups = array( );
@@ -83,4 +83,4 @@ class CRM_Campaign_Page_AJAX
         CRM_Utils_System::civiExit( );
         
     }
-}
+} 

@@ -157,10 +157,14 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             $params[] = $sid;
         }
 
-        $surveyCustomGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( true, $params );
-
+        $customGroups = array( );
+        $surveyCustomGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( $params );
+        foreach ( $surveyCustomGroups as $grpId => $grpVals ) {
+            $customGroups[$grpId] = $grpVals['title'];
+        }
         // custom group id
-        $this->add('select', 'custom_group_id', ts('Select Custom Group'), array( '' => ts('- select -')) + $surveyCustomGroups, true );
+        $this->add('select', 'custom_group_id', ts('Select Custom Group'), 
+                   array( '' => ts('- select -')) + $customGroups, true );
         
         // script / instructions
         $this->add( 'textarea', 'instructions', ts('Instructions for volunteers'), array( 'rows' => 5, 'cols' => 40 ) );

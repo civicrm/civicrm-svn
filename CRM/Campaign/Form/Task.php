@@ -119,9 +119,8 @@ class CRM_Campaign_Form_Task extends CRM_Core_Form
             
             $this->assign( 'totalSelectedVoters', count( $ids ) );
         }
+        $this->_voterIds = $this->_contactIds = $this->_componentIds = $ids;
         
-        $this->_voterIds = $this->_componentIds = $ids;
-
         //set the context for redirection for any task actions
         $session = CRM_Core_Session::singleton( );
         $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/survey/search', 'force=1' ) );
