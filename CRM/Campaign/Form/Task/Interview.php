@@ -52,9 +52,15 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      * variable to store redirect path
      *
      */
-    protected $_userContext;
+    private $_userContext;
 
-    protected $_groupTree;
+    private $_groupTree;
+    
+    private $_surveyFields;
+    
+    private $_surveyTypeId;
+    
+    private $_interviewerId;
     
     /**
      * build all the data structures needed to build the form
@@ -73,6 +79,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         if ( !$this->_surveyId ) {
             CRM_Core_Error::statusBounce( ts( "Could not find Survey Id.") );
         }
+        $session = CRM_Core_Session::singleton( );
+        $this->_interviewerId = $session->get('userID');
         
         //get the contact read only fields to display.
         require_once 'CRM/Core/BAO/Preferences.php';
@@ -89,6 +97,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->assign( 'voterIds',       $this->_contactIds );
         $this->assign( 'voterDetails',   $voterDetails );
         $this->assign( 'readOnlyFields', $readOnlyFields );
+        $this->assign( 'interviewerId',  $this->_interviewerId );
     }
     
     /**
@@ -100,11 +109,14 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     function buildQuickForm( ) 
     {
         //get the survey type id.
-        $surveyTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
-                                                     $this->_surveyId, 
-                                                     'survey_type_id' );
+        $this->_surveyTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
+                                                            $this->_surveyId, 
+                                                            'survey_type_id' );
+        
+        $this->assign( 'surveyTypeId', $this->_surveyTypeId );
+        
         //get custom group ids.
-        $surveyCustomGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( array( $surveyTypeId ) );
+        $surveyCustomGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( array( $this->_surveyTypeId ) );
         $customGrpIds = array_keys( $surveyCustomGroups );
         
         //build the group tree for given survey.
@@ -116,7 +128,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                                        CRM_Core_DAO::$_nullObject,
                                                        null,
                                                        $customGrpId,
-                                                       $surveyTypeId );
+                                                       $this->_surveyTypeId );
             //simplified formatted groupTree
             $tree = CRM_Core_BAO_CustomGroup::formatGroupTree( $tree, 
                                                                1, 
@@ -129,25 +141,24 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->assign( 'groupTree', $this->_groupTree );
         
         //get the fields.
-        $surveyFields = array( );
+        $this->_surveyFields = array( );
         foreach ( $this->_groupTree as $grpId => $grpVals ) {
             if ( !is_array( $grpVals['fields'] ) ) continue;
             foreach ( $grpVals['fields'] as $fId => $fVals )  { 
-                $surveyFields[$fId] = $fVals;
-                
+                $this->_surveyFields[$fId] = $fVals;
             }
         }
         
         require_once "CRM/Core/BAO/CustomField.php";
         foreach ( $this->_contactIds as $contactId ) {
-            foreach ( $surveyFields as $fldId => &$field ) {
+            foreach ( $this->_surveyFields as $fldId => &$field ) {
                 $fieldId       = $field['id'];                 
                 $elementName   = $field['element_name'];
                 $fieldName     = "field[$contactId][$elementName]";
-                CRM_Core_BAO_CustomField::addQuickFormElement( $this, $fieldName, $fieldId );
+                CRM_Core_BAO_CustomField::addQuickFormElement( $this, $fieldName, $fieldId, false, false );
             }
         }
-        $this->assign( 'surveyFields', $surveyFields );
+        $this->assign( 'surveyFields', $this->_surveyFields );
         
         $this->addButtons( array(
                                  array ( 'type'      => 'submit',
@@ -177,12 +188,68 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      * @access public
      * @return None
      */
-    public function postProcess() 
+    public function postProcess( ) 
     {
         $params = $this->controller->exportValues( $this->_name );
         
-        CRM_Core_Error::debug( '$params', $params );
-        exit( );
+        //process survey.
+        //1. create an activity w/ each contact
+        //2. store custom data as activity custom data.
+        
+        require_once 'CRM/Activity/BAO/Activity.php';
+        foreach ( $params['field'] as $voterId => &$values ) {
+            $values['voter_id']       = $voterId;
+            $values['survey_type_id'] = $this->_surveyTypeId;
+            $values['interviewer_id'] = $this->_interviewerId;
+            self::registerInterview( $values );
+        }
+        
     }
+
+    static function registerInterview( $params )
+    {
+        $surveyTypeId = CRM_Utils_Array::value( 'survey_type_id', $params );
+        if ( !is_array( $params ) || !$surveyTypeId ) {
+            return;
+        }
+        
+        static $surveyFields;
+        if ( !is_array( $surveyFields ) ) {
+            require_once 'CRM/Core/BAO/CustomField.php';
+            $surveyFields = CRM_Core_BAO_CustomField::getFields( 'Activity', 
+                                                                 false, 
+                                                                 false,
+                                                                 $surveyTypeId,
+                                                                 null,
+                                                                 false, 
+                                                                 true );
+        }
+        
+        static $actTypeId;
+        if ( !$actTypeId ) { 
+            require_once 'CRM/Core/PseudoConstant.php';
+            $actTypeId = array_search( 'Interview', CRM_Core_PseudoConstant::activityType( true, false, false, 'name') );
+        }
+        
+        //create a activity record for given survey interview.
+        $actParams = array( 'subject' => ts( 'Interview' ) );
+        
+        //format custom fields.
+        $actParams['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
+                                                                      $surveyFields,
+                                                                      null,
+                                                                      'Activity' );
+        
+        //create an activity record.
+        $actParams['source_contact_id']  = $params['interviewer_id'];
+        $actParams['target_contact_id']  = $params['voter_id'];
+        $actParams['activity_type_id']   = $actTypeId;
+        $actParams['activity_date_time'] = date( 'Ymdhis' );
+        
+        //create an activity record.
+        require_once 'CRM/Activity/BAO/Activity.php';
+        $activity = CRM_Activity_BAO_Activity::create( $actParams );
+    }
+    
 }
 

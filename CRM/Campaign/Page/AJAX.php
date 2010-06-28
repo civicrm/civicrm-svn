@@ -83,4 +83,17 @@ class CRM_Campaign_Page_AJAX
         CRM_Utils_System::civiExit( );
         
     }
-} 
+    
+    static function registerInterview( )
+    {
+        $params = array( 'voter_id'       => CRM_Utils_Array::value( 'voter_id', $_POST ),
+                         'interviewer_id' => CRM_Utils_Array::value( 'interviewer_id', $_POST ),
+                         'survey_type_id' => CRM_Utils_Array::value( 'survey_type_id', $_POST ) );
+        
+        require_once 'CRM/Campaign/Form/Task/Interview.php';
+        CRM_Campaign_Form_Task_Interview::registerInterview( $params );
+        
+        CRM_Utils_System::civiExit( );
+    }
+    
+}

@@ -63,4 +63,9 @@
     <title>View Petition Signatures</title>
     <page_callback>CRM_Campaign_Page_Petition</page_callback>
   </item>
+  <item>
+    <path>civicrm/survey/interview</path>
+    <page_callback>CRM_Campaign_Page_AJAX::registerInterview</page_callback>
+    <access_arguments>administer CiviCampaign, access CiviCampaign</access_arguments>
+  </item>
 </menu>

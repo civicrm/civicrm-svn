@@ -41,6 +41,7 @@
 	     {foreach from=$surveyFields item=fVal key=fId}
 	        <th>{$fVal.label}</th>
 	     {/foreach}
+	     <th></th>
        </tr>
     </thead>
 
@@ -53,22 +54,24 @@
 
 	    {* here build the survey fields *}
 	    {foreach from=$surveyFields item=field key=fId}
-	        {assign var=name value=$field.element_name}	     
+		{assign var=name value=$field.element_name}
 	        <td>{$form.field.$voterId.$name.html}</td>
 	    {/foreach}
-
+		<td> 
+		&nbsp;&nbsp;<a id='saveVoter' href="#" title={ts}Save{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}save{/ts}</a>
+		</td>
 	</tr>
-	{/foreach}	
+	{/foreach}
     </tbody>
-
 </table>
+
 <div class="crm-submit-buttons">{$form.buttons.html}</div>
 </fieldset>
 {/if}
 
 {literal}
 <script type="text/javascript">
-
+	
     cj( function( ) {
 
 	//load jQuery data table.
@@ -78,6 +81,24 @@
         } );        
 
     });
+
+    function registerInterview( voterId )
+    {
+    	var data = new Object;
+    	var fieldName = 'field_' + voterId + '_custom_';
+	cj( '[id^="'+ fieldName +'"]' ).each( function( ) {
+	    data[cj(this).attr( 'id' )] = cj( this ).val( );
+        });
+
+	data['voter_id']       = voterId;
+	data['interviewer_id'] = {/literal}{$interviewerId}{literal};
+	data['survey_type_id'] = {/literal}{$surveyTypeId}{literal};	
+				     
+	var dataUrl = {/literal}"{crmURL p='civicrm/survey/interview' h=0 }"{literal}	          
+	
+	//post data to create interview.
+	cj.post( dataUrl, data );
+    }
     
 </script>
 {/literal}
