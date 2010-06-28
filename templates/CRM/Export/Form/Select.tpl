@@ -42,12 +42,14 @@
       <tr class="crm-export-form-block-exportOption">
          <td class="label"></td><td>{$form.exportOption.html}</td>
       </tr>
-      <tr class="crm-export-form-block-mergeSameAddress">
-         <td class="label"></td><td>{$form.merge_same_address.html}</td>
-      </tr>
-       <tr class="crm-export-form-block-mergeSameHousehold">
-         <td class="label"></td><td>{$form.merge_same_household.html}</td>
-      </tr>
+      {if $taskName eq 'Export Contacts'}
+      	  <tr class="crm-export-form-block-mergeSameAddress">
+             <td class="label"></td><td>{$form.merge_same_address.html}</td>
+      	  </tr>
+       	  <tr class="crm-export-form-block-mergeSameHousehold">
+             <td class="label"></td><td>{$form.merge_same_household.html}</td>
+      	  </tr>
+      {/if}
   </table>
       <div id="map">
        {if $form.mapping }

@@ -125,7 +125,17 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
     public function postProcess() {
         $session = CRM_Core_Session::singleton( );
         $currentUserId = $session->get( 'userID' );
-
+        
+        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'basic' );
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $this->_searchKey ) ) {
+            $urlParams .= "&qfKey=$this->_searchKey";
+        } else{
+            $urlParams .= "&qfKey={$this->controller->_key}";
+        }
+        $urlString = "civicrm/contact/search/$context";
+        if ( $context == 'search' ) $urlString = 'civicrm/contact/search';  
+        
         $selfDelete = false;
         $deletedContacts = 0;
         foreach ( $this->_contactIds as $contactId ) {
@@ -154,11 +164,6 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         } else {
             if ( $deletedContacts ) {
                 
-                $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'basic' );
-                $urlParams = 'force=1';
-                if ( CRM_Utils_Rule::qfKey( $this->_searchKey ) ) $urlParams .= "&qfKey=$this->_searchKey";
-                $urlString = "civicrm/contact/search/$context";
-                if ( $context == 'search' ) $urlString = 'civicrm/contact/search';  
                 $session->replaceUserContext( CRM_Utils_System::url( $urlString, $urlParams ) );
                 
                 if ($this->_restore) {
@@ -183,6 +188,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         }
 
         CRM_Core_Session::setStatus( $status );
+        $session->replaceUserContext( CRM_Utils_System::url( $urlString, $urlParams ) );
     }//end of function
 
 

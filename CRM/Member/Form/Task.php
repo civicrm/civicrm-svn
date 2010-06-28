@@ -86,7 +86,7 @@ class CRM_Member_Form_Task extends CRM_Core_Form
      */
     function preProcess( ) 
     {
-        self::preProcessCommon( $form );
+        self::preProcessCommon( $this );
     }
 
     static function preProcessCommon( &$form, $useTable = false )
@@ -129,7 +129,7 @@ class CRM_Member_Form_Task extends CRM_Core_Form
         //set the context for redirection for any task actions
         $session = CRM_Core_Session::singleton( );
         
-        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
         require_once 'CRM/Utils/Rule.php';
         $urlParams = 'force=1';
         if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";

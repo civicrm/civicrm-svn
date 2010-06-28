@@ -277,7 +277,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
         
         // Assign pageTitle to be "Activity - "+ activity name
-        $pageTitle = 'Activity - '.$activityTName[$this->_activityTypeId];
+        $pageTitle = 'Activity - '.CRM_Utils_Array::value( $this->_activityTypeId, $activityTName );
     	$this->assign( 'pageTitle', $pageTitle );
 
         //check the mode when this form is called either single or as

@@ -117,6 +117,9 @@ class CRM_Activity_BAO_ActivityAssignment extends CRM_Activity_DAO_ActivityAssig
      */
     static function getAssigneeNames( $activity_id, $isDisplayName = false, $skipDetails = true ) 
     {
+        if ( empty( $activity_id ) ) {
+            return;
+        }
         $queryParam  = array();
         $whereClause = "";
         if ( !$skipDetails ) {

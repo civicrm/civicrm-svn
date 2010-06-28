@@ -1027,16 +1027,16 @@ FROM   civicrm_domain
                 $fieldsToSuffix  = array( );
                 $fieldsToReplace = array( );
             }
-            if ($fieldsFix['prefix']) {
+            if ( CRM_Utils_Array::value( 'prefix', $fieldsFix ) ) {
                 $fieldsToPrefix = $fieldsFix['prefix'];
             }
-            if ($fieldsFix['suffix']) {
+            if ( CRM_Utils_Array::value( 'suffix', $fieldsFix ) ) {
                 $fieldsToSuffix = $fieldsFix['suffix'];
             }
-            if ($fieldsFix['replace']) {
+            if ( CRM_Utils_Array::value( 'replace', $fieldsFix ) ) {
                 $fieldsToReplace = $fieldsFix['replace'];
             }
-
+            
             foreach ( $fields as $name => $value ) {
                 if ( $name == 'id' || $value['name'] == 'id' ) {
                     // copy everything but the id!
@@ -1246,7 +1246,8 @@ SELECT contact_id
                             else $object->$dbName=$value['enumValues'][0];
                         } else {
                             $object->$dbName=$dbName.'_'.$counter;
-			    if ($value['maxlength']>0 && strlen($object->$dbName)>$value['maxlength']) { 
+                            $maxlength = CRM_Utils_Array::value( 'maxlength', $value );
+                            if ( $maxlength > 0 && strlen($object->$dbName) > $maxlength ) {
                             	$object->$dbName=substr($object->$dbName,0,$value['maxlength']);
 			    }
                         }

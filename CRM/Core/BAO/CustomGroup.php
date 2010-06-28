@@ -70,6 +70,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
         // create custom group dao, populate fields and then save.           
         $group = new CRM_Core_DAO_CustomGroup();
         $group->title = $params['title'];
+        require_once 'CRM/Utils/String.php';
         $group->name  = CRM_Utils_String::titleToVar($params['title'], $fieldLength['maxlength'] );
         if ( in_array( $params['extends'][0],
                        array( 'ParticipantRole',
@@ -1207,7 +1208,7 @@ SELECT $select
                     continue;
                 }
                 
-                $required = $field['is_required'];
+                $required = CRM_Utils_Array::value( 'is_required', $field );
                 //fix for CRM-1620
                 if ( $field['data_type']  == 'File') {
                     if ( isset($field['customValue']['data']) ) {

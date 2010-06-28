@@ -132,8 +132,8 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form
                             'money_transfer_date',
                             'grant_due_date' );
             
-            foreach( $dates as $key ) {
-                if ( $defaults[$key] ) {
+            foreach( $dates as $key ) { 
+                if ( CRM_Utils_Array::value( $key, $defaults ) ) {
                     list( $defaults[$key] ) = CRM_Utils_Date::setDateDefaults( $defaults[$key] );
                 }
             }
