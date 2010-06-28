@@ -45,6 +45,7 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase
         
         $params = array( 'id'               => $openId,
                          'contact_id'       => $contactId,
+                         'openid'           => $openIdURL,
                          'is_bulkmail'      => 1,
                          'allowed_to_login' => 1 );
         
@@ -86,6 +87,7 @@ class CRM_Core_BAO_OpenIDTest extends CiviUnitTestCase
         
         $params = array( 'id'               => $openId,
                          'contact_id'       => $contactId,
+                         'openid'           => $openIdURL,
                          'is_bulkmail'      => 1,
                          'allowed_to_login' => 1 );
         

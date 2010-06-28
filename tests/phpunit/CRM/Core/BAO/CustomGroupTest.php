@@ -443,7 +443,7 @@ class CRM_Core_BAO_CustomGroupTest extends CiviUnitTestCase
     {        
         $params = array( 'title'            => 'Test_Group_1',
                          'name'             => 'test_group_1',
-                         'extends'          => array('Individual'),
+                         'extends'          => array( 0 => 'Individual', 1 => array()),
                          'weight'           => 4,
                          'collapse_display' => 1,
                          'style'            => 'Inline',

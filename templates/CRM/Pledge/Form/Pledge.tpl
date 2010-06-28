@@ -36,7 +36,6 @@
 </div>
 {/if}
 <div class="crm-block crm-form-block crm-pledge-form-block">
-<fieldset><legend>{if $action eq 1 or $action eq 1024}{ts}New Pledge{/ts}{elseif $action eq 8}{ts}Delete Pledge{/ts}{else}{ts}Edit Pledge{/ts}{/if}</legend> 
  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 
    {if $action eq 8} 
       <div class="messages status"> 
@@ -97,68 +96,67 @@
             <span class="description">{ts}Pledges are "Pending" until the first payment is received. Once a payment is received, status is "In Progress" until all scheduled payments are completed. Overdue pledges are ones with payment(s) past due.{/ts}</span></td></tr>
 		<tr><td colspan=2>{include file="CRM/Custom/Form/CustomData.tpl"}</td></tr>
        </table>
-</fieldset>
 {literal}
 <script type="text/javascript">
-var showPane = "";
-cj(function() {
-  cj('.accordion .head').addClass( "ui-accordion-header ui-helper-reset ui-state-default ui-corner-all ");
-
-  cj('.accordion .head').hover( function() { cj(this).addClass( "ui-state-hover");
-                             }, function() { cj(this).removeClass( "ui-state-hover");
-               }).bind('click', function() { 
-		                             var checkClass = cj(this).find('span').attr( 'class' );
-					     var len        = checkClass.length;
-					     if( checkClass.substring( len - 1, len ) == 's' ) {
-					       cj(this).find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-e');
-					     } else {
-					       cj(this).find('span').removeClass().addClass('ui-icon ui-icon-triangle-1-s');
-					     }
-					     cj(this).next().toggle(); return false; }).next().hide();
-  if( showPane.length > 1 ) {
-    eval("showPane =[ '" + showPane.substring( 0,showPane.length - 2 ) +"]");
-    cj.each( showPane, function( index, value ) {
-       cj('span#'+value).removeClass().addClass('ui-icon ui-icon-triangle-1-s');
-       loadPanes( value )  ;
-       cj("div."+value).show();
-    });
-  }
-});
-
-
+// bind first click of accordion header to load crm-accordion-body with snippet
+// everything else taken care of by cj().crm-accordions()
 cj(document).ready( function() {
-    cj('.head').one( 'click', function() { loadPanes( cj(this).children().attr('id') );  });
+    cj('.crm-ajax-accordion .crm-accordion-header').one('click', function() { 
+    	loadPanes(cj(this).attr('id')); 
+    });
+    cj('.crm-ajax-accordion.crm-accordion-open .crm-accordion-header').each(function(index) { 
+    	loadPanes(cj(this).attr('id')); 
+    	});
 });
-
-function loadPanes( id ) {
+// load panes function calls for snippet based on id of crm-accordion-header
+function loadPanes( id ) {   
     var url = "{/literal}{crmURL p='civicrm/contact/view/pledge' q='snippet=4&formType=' h=0}{literal}" + id;
-    if ( ! cj('div.'+id).html() ) {
-  var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts}loading{/ts}{literal}" />&nbsp;{/literal}{ts}Loading{/ts}{literal}...';
-    cj('div.'+id).html(loading);
-    }
-    cj.ajax({
-        url    : url,
-        success: function(data) { 
-                    cj('div.'+id).html(data);
-                 }
-         });
-}
+    {/literal}
+        {if $contributionMode}
+            url = url + "&mode={$contributionMode}";
+        {/if}
+    {literal}
+   if ( ! cj('div.'+id).html() ) {
+	    var loading = '<img src="{/literal}{$config->resourceBase}i/loading.gif{literal}" alt="{/literal}{ts}loading{/ts}{literal}" />&nbsp;{/literal}{ts}Loading{/ts}{literal}...';
+	    cj('div.'+id).html(loading);
+	    cj.ajax({
+	        url    : url,
+	        success: function(data) { cj('div.'+id).html(data); }
+	        });
+    	}
+	}
 </script>
 {/literal}
-{* jQuery pane *}
+
+
 <div class="accordion ui-accordion ui-widget ui-helper-reset">
 {foreach from=$allPanes key=paneName item=paneValue}
-<h3 class="head"><span class="ui-icon ui-icon-triangle-1-e" id="{$paneValue.id}"></span><a href="#">{$paneName}</a></h3>
-<div class={$paneValue.id}></div>
-{if $paneValue.open eq 'true'}
-{literal}<script type="text/javascript"> showPane += "{/literal}{$paneValue.id}{literal}"+"','";</script>{/literal}
-{/if}
+<div class="crm-accordion-wrapper crm-ajax-accordion crm-{$paneValue.id}-accordion {if $paneValue.open eq 'true'}crm-accordion-open{else}crm-accordion-closed{/if}">
+<div class="crm-accordion-header" id="{$paneValue.id}">
+  <div class="icon crm-accordion-pointer"></div> 
+
+        {$paneName}
+  </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+       <div class="{$paneValue.id}"></div>
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+
 {/foreach}
+</div>
 {/if} {* not delete mode if*}   
-</div> 
+
 <br />
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-     {literal}
+</div>
+{literal}   
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+{/literal}
+{literal}
      <script type="text/javascript">
 
      function verify( ) {

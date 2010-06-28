@@ -119,7 +119,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         }
         
         //set the user context for redirection of task actions
-        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
         require_once 'CRM/Utils/Rule.php';
         $urlParams = 'force=1';
         if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
@@ -223,7 +223,9 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         //contact type for pick up profiles as per selected contact types with subtypes
         //CRM-5521
         if ( $selectedTypes = CRM_Utils_Array::value( 'contact_type' , $values ) ) {
-            $selectedTypes  = explode( " ", $selectedTypes );
+            if( !is_array( $selectedTypes ) ) {
+                $selectedTypes  = explode( " ", $selectedTypes );
+            }
             foreach( $selectedTypes as $ct => $dontcare ) {
                 if ( strpos($ct, CRM_Core_DAO::VALUE_SEPARATOR) === false ) {
                     $form->_contactTypes[] = $ct;  

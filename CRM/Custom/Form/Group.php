@@ -263,7 +263,12 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
 
         foreach ( $sel2 as $main => $sub ) {
             if ( !empty($sel2[$main]) ) {
-                $sel2[$main] = array( '' => ts("- Any -") ) + $sel2[$main]; 
+                if ( $main == 'Relationship' ) {
+                    $relName = self::getFormattedList( $sel2[$main] );
+                    $sel2[$main] = array( '' => ts("- Any -") ) + $relName;
+                } else {
+                    $sel2[$main] = array( '' => ts("- Any -") ) + $sel2[$main]; 
+                }
             }
         }
         
@@ -430,7 +435,7 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
 			if ( $extends == 'Relationship' && !empty($this->_subtypes) ) {
                 $relationshipDefaults = array ( );
                 foreach ( $defaults['extends'][1] as $donCare => $rel_type_id ) {
-                    $relationshipDefaults[] = $rel_type_id.'_a_b';
+                    $relationshipDefaults[] = $rel_type_id;
                 }
                 
                 $defaults['extends'][1] = $relationshipDefaults;
@@ -482,5 +487,29 @@ class CRM_Custom_Form_Group extends CRM_Core_Form
             $session->replaceUserContext($url);
         }
     }
+
+    /*
+     * Function to return a formatted list of relationship name.
+     * @param $list array array of relationship name.
+     * @static 
+     * return array array of relationship name.
+     */
+    static function getFormattedList( &$list ) {
+        $relName = array();
+        
+        foreach ( $list as $k => $v ) {
+            $key = substr( $k, 0, strpos( $k, '_' ) );
+            if ( isset($list["{$key}_b_a"] ) ) {
+                if ( $list["{$key}_a_b"] !=  $list["{$key}_b_a"] ) {  
+                    $relName["$key"] = $list["{$key}_a_b"] . ' / ' . $list["{$key}_b_a"];
+                } 
+                unset( $list["{$key}_b_a"] );
+            } else {
+                $relName["{$key}"] = $list["{$key}_a_b"];
+            }
+        }
+        return $relName;
+    }
+    
 }
 

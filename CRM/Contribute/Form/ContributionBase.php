@@ -359,10 +359,10 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
             $pledgeBlock = CRM_Pledge_BAO_PledgeBlock::getPledgeBlock( $this->_id );
 
             if ( $pledgeBlock ) {
-                $this->_values['pledge_block_id'        ] = $pledgeBlock['id'];
-                $this->_values['max_reminders'          ] = $pledgeBlock['max_reminders'];
-                $this->_values['initial_reminder_day'   ] = $pledgeBlock['initial_reminder_day'];
-                $this->_values['additional_reminder_day'] = $pledgeBlock['additional_reminder_day'];
+                $this->_values['pledge_block_id'        ] = CRM_Utils_Array::value( 'id', $pledgeBlock );
+                $this->_values['max_reminders'          ] = CRM_Utils_Array::value( 'max_reminders', $pledgeBlock );
+                $this->_values['initial_reminder_day'   ] = CRM_Utils_Array::value( 'initial_reminder_day', $pledgeBlock );
+                $this->_values['additional_reminder_day'] = CRM_Utils_Array::value( 'additional_reminder_day', $pledgeBlock );
 
                 //set pledge id in values
                 $pledgeId = CRM_Utils_Request::retrieve( 'pledgeId', 'Positive', $this );

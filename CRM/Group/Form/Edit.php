@@ -365,7 +365,7 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
             // store the submitted values in an array
             $params = $this->controller->exportValues( $this->_name );
 
-            $params['is_active'] = 1;
+            $params['is_active'] = CRM_Utils_Array::value( 'is_active', $this->_groupValues, 1 );
 
             if ($this->_action & CRM_Core_Action::UPDATE ) {
                 $params['id'] = $this->_id;

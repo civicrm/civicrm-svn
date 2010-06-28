@@ -124,6 +124,11 @@ class CiviMailProcessor {
                     list($match, $action, $job, $queue, $hash) = $matches;
                 }
 
+                // if all else fails, check Delivered-To for possible pattern
+                if (!$matches and preg_match($regex, $mail->getHeader('Delivered-To'), $matches)) {
+                    list($match, $action, $job, $queue, $hash) = $matches;
+                }
+
                 // if $matches is empty, this email is not CiviMail-bound
                 if (!$matches) {
                     $store->markIgnored($key);

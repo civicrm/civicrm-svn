@@ -135,7 +135,7 @@
 	        <td class="crm-admin-options-is_reserved">{if $row.is_reserved eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td class="crm-admin-options-is_active" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
 	        <td>{$row.action|replace:'xx':$row.id}</td>
-	        <td class="order hiddenElement crm-participant-weight">{$row.weight}</td>
+	        <td class="order hiddenElement">{$row.weight}</td>
         </tr>
         {/foreach}
         </tbody>
@@ -150,9 +150,9 @@
 </div>
 {else}
     <div class="messages status">
-         <div class="icon inform-icon"></div></dt>
+         <div class="icon inform-icon"></div>
         {capture assign=crmURL}{crmURL  q="group="|cat:$gName|cat:"&action=add&reset=1"}{/capture}
-        {ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}</dd>
+        {ts 1=$crmURL}There are no option values entered. You can <a href='%1'>add one</a>.{/ts}
     </div>    
 {/if}
 </div>

@@ -69,6 +69,8 @@ class CRM_Export_Form_Select extends CRM_Core_Form
      */
     public $_exportMode;
     
+    public $_componentTable;
+    
     /**
      * build all the data structures needed to build the form
      *
@@ -185,8 +187,11 @@ FROM   {$this->_componentTable}
                                                            ts('Merge Same Household Address'));
         
         $this->addGroup( $exportOptions, 'exportOption', ts('Export Type'), '<br/>' );
-        $this->addGroup( $mergeAddress, 'merge_same_address', ts('Merge Same Address'), '<br/>');
-        $this->addGroup( $mergeHousehold, 'merge_same_household', ts('Merge Same Household'), '<br/>');
+
+        if ( $this->_exportMode == self::CONTACT_EXPORT ) {
+            $this->addGroup( $mergeAddress, 'merge_same_address', ts('Merge Same Address'), '<br/>');
+            $this->addGroup( $mergeHousehold, 'merge_same_household', ts('Merge Same Household'), '<br/>');
+        }
         
         $this->buildMapping( );
 

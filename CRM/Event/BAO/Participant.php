@@ -108,6 +108,10 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
             $params['participant_fee_amount'] = CRM_Utils_Rule::cleanMoney( $params['participant_fee_amount'] );
         }
 
+        if ( CRM_Utils_Array::value( 'participant_fee_amount', $params ) ) {
+            $params['fee_amount'] = CRM_Utils_Rule::cleanMoney( $params['fee_amount'] );
+        }
+
         $participantBAO = new CRM_Event_BAO_Participant;
         if (CRM_Utils_Array::value('id', $params)) {
             $participantBAO->id = CRM_Utils_Array::value('id', $params);
@@ -346,7 +350,7 @@ class CRM_Event_BAO_Participant extends CRM_Event_DAO_Participant
      AND  waiting.event_id = {$eventId}
 Group By  waiting.event_id
 ";
-            $waiting =& CRM_Core_DAO::executeQuery( $waitingQuery, CRM_Core_DAO::$_nullArray );
+            $waiting = CRM_Core_DAO::executeQuery( $waitingQuery, CRM_Core_DAO::$_nullArray );
             while ( $waiting->fetch( ) && $waiting->waiting_participant_count ) {
                 if ( $returnWaitingCount ) {
                     return $waiting->waiting_participant_count;
@@ -380,7 +384,7 @@ Group By  waiting.event_id
      {$roleSQL}
 GROUP BY  counted.event_id
 ";
-        $counted =& CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        $counted = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
         
         if ( $counted->fetch( ) ) {
             
@@ -397,11 +401,11 @@ GROUP BY  counted.event_id
       {$roleSQL}
    GROUP BY  counted.event_id
    ";  
-            $countedLineItemTotalParticipants =& CRM_Core_DAO::executeQuery( $lineItemTotalParticipants, CRM_Core_DAO::$_nullArray );
-            $countedLineItemTotalParticipants->fetch( );
-            
-            $counted->counted_participants += ( $countedLineItemTotalParticipants->counted_participants - $countedLineItemTotalParticipants->entityCount );
-            
+            $countedLineItemTotalParticipants = CRM_Core_DAO::executeQuery( $lineItemTotalParticipants, CRM_Core_DAO::$_nullArray );
+            while( $countedLineItemTotalParticipants->fetch( ) ) {
+                $counted->counted_participants += ( $countedLineItemTotalParticipants->counted_participants - $countedLineItemTotalParticipants->entityCount );
+            }
+
             if ( $counted->max_participants == NULL ) {
                 return null;
             }

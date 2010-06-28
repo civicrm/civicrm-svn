@@ -99,8 +99,8 @@ class CRM_Event_Form_EventFees
                     $form->assign( 'discount', $discounts[$defaults[$form->_pId]['discount_id']] );
                 }
                 
-                $form->assign( 'fee_amount', $defaults[$form->_pId]['fee_amount'] );
-                $form->assign( 'fee_level', $defaults[$form->_pId]['fee_level'] );
+                $form->assign( 'fee_amount', CRM_Utils_Array::value( 'fee_amount', $defaults[$form->_pId] ) );
+                $form->assign( 'fee_level', CRM_Utils_Array::value( 'fee_level', $defaults[$form->_pId] ) );
             }
             $defaults[$form->_pId]['send_receipt'] = 0;
         } else {
