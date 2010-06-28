@@ -1055,6 +1055,14 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 }
             }
             break;
+        
+        case 'TextArea':
+            if ( empty( $value ) ) {
+                $display='';
+            } else {
+                $display = nl2br($value);
+            }
+            break;
             
         case 'Link':
             if ( empty( $value ) ) {
