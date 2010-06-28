@@ -42,12 +42,6 @@
                         <td colspan=2>{include file="CRM/common/jcalendar.tpl" elementName=start_date}</td>
                     {elseif $element eq 'end_date'}
                         <td colspan=2>{include file="CRM/common/jcalendar.tpl" elementName=end_date}</td>
-                    {elseif $element eq 'status_id'}
-                        <td>{$form.$element.html}</td>
-			<td><div id='filter_survey' class='hiddenElement'> &nbsp;&nbsp;
-			    {$form.filter_survey_id.label}&nbsp;{$form.filter_survey_id.html}
-			    </div>
-                        </td>
 	            {else}
                         <td colspan=2>{$form.$element.html}</td>
                     {/if}
@@ -109,7 +103,7 @@
         {else}
             {$form._qf_Basic_next_print.html}&nbsp; &nbsp;
         {/if}
-        {$form.survey_id.html}
+        {$form.task.html}
 	
      {/if}
      {if $action eq 512}
@@ -186,17 +180,9 @@ toggleTaskAction( );
 {/if}
 {literal}
 <script type="text/javascript">
-function checkSurveyTask( ) {
- if ( cj("#survey_task").val() == '') {
-  alert('{/literal}{ts}Please select survey to perform this action.{/ts}{literal}');
-  return false;
- }	
- return true;	 
-}
 
 cj(function() {
    cj().crmaccordions(); 
-   if ( cj('#status_id').attr('checked') == true ) show('filter_survey');
 });
 
 </script>

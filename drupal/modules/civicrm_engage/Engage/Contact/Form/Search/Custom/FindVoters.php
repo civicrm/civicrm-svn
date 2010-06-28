@@ -75,11 +75,9 @@ class Engage_Contact_Form_Search_Custom_FindVoters
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
         $form->add('select', 'survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
         
-        $form->add('select', 'filter_survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
-        $form->add('checkbox', 'status_id', ts('Is Held'), null, false, 
-                   array('onChange' => 'cj("#filter_survey").toggle( );') );
+        $form->add('checkbox', 'status_id', ts('Is Held'), null, false );
         
-        $form->assign( 'elements', array( 'sort_name', 'street_number', 'street_address', 'city', 'status_id') );
+        $form->assign( 'elements', array( 'sort_name', 'street_number', 'street_address', 'city', 'status_id', 'survey_id' ) );
         $this->setTitle('Find Voters');
     }
 
@@ -107,7 +105,7 @@ class Engage_Contact_Form_Search_Custom_FindVoters
         $count  = 1;
         $where  = "(contact_a.is_deleted = 0 AND contact_a.contact_type = 'Individual') ";
 
-        $columns = array( 'sort_name', 'street_number', 'street_address', 'city', 'status_id' );
+        $columns = array( 'sort_name', 'street_number', 'street_address', 'city', 'status_id', 'survey_id' );
         foreach( $columns as $column ) {
             if ( $value = CRM_Utils_Array::value( $column , $this->_formValues ) ) {
                 if ( $column == 'sort_name' ) {
@@ -121,19 +119,17 @@ class Engage_Contact_Form_Search_Custom_FindVoters
                     $count++;
                     $clause[ ] = "survery_details.interviewer_id = %{$count}";
                     $params[$count] = array( $this->_interviewerId , 'Integer' );
-
-                    $filterSurveyId = CRM_Utils_Array::value( 'filter_survey_id' , $this->_formValues );
-                    if ( $value && $filterSurveyId  ) {
-                        $count++;
-                        $clause[ ] = "survery_details.survey_id = %{$count}";
-                        $params[$count] = array( $filterSurveyId, 'Integer');
-                    }
+                    
+                } else if ($column == 'survey_id' ) {
+                    $clause[ ] = "survery_details.survey_id = %{$count}";
+                    $params[$count] = array( $value, 'Integer' );
                 } else {
                     $clause[ ] = "{$column} = %{$count}";
                     $params[$count] = array( $value, 'String' );
                 }
+
+                $count++;
             }
-            $count++;
         }
                    
         if ( !empty($clause) ) {  

@@ -135,27 +135,17 @@ function civicrm_engage_manageTasks( $formName, &$form ) {
         }
       
         if ( $element->getType() == 'select' ) {
-            if ( $isFindVoter ) {
-                $form->removeElement('task');
-                $element =& $form->add( 'hidden', 'task' );
-                $submittedValue = $form->getVar('_formValues' );
-
-                $elementSubmit =& $form->getElement('_qf_Custom_next_action');
-                $form->updateElementAttr( '_qf_Custom_next_action' , array( 'onClick' => 'return checkSurveyTask( );'));
-
-                if ( $submittedValue['status_id'] ) {
-                    $element->setValue(CIVICRM_ENGAGE_TASK_RELEASE_VOTERS);
-                    $elementSubmit->setValue(ts('Release Voters'));
-                } else {
-                    $element->setValue(CIVICRM_ENGAGE_TASK_VOTER_RESERVE);
-                    $elementSubmit->setValue(ts('Reserve Voters'));
-                }
-
-                return true;
-            }
             foreach ( $element->_options as $index => $options ) {
+                if ( empty($options['attr']['value']) ) {
+                    continue;
+                }
                 if ( $options['attr']['value'] == CIVICRM_ENGAGE_TASK_VOTER_RESERVE || 
                      $options['attr']['value'] == CIVICRM_ENGAGE_TASK_RELEASE_VOTERS ) {
+                    if ( $isFindVoter ) {
+                        continue;  
+                    }
+                    unset( $element->_options[$index]  );
+                } elseif ( $isFindVoter ) {
                     unset( $element->_options[$index]  );
                 }
             }

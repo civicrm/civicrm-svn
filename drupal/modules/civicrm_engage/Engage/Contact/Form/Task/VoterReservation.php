@@ -87,40 +87,12 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
     function preProcess( ) {
         parent::preProcess( );
         
-        //get the survey id from user submitted values.
-        $this->_surveyId = CRM_Utils_Array::value( 'survey_id',$this->get( 'formValues' ) );
-        if ( !$this->_surveyId ) {
-            CRM_Core_Error::statusBounce( ts( "Could not find Survey Id.") );
-        }
-        
         $session = CRM_Core_Session::singleton( );
         if ( empty($this->_contactIds) || !($session->get('userID')) ) {
             CRM_Core_Error::statusBounce( ts( "Could not find contacts for voter reservation Or Missing Interviewer contact.") );
         }
         $this->_interviewerId = $session->get('userID');
 
-        $surveyDetails = array( );
-        $params        = array( 'id' => $this->_surveyId );
-        $this->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve($params, $surveyDetails);
-
-        $numVoters = CRM_Core_DAO::singleValueQuery( "SELECT COUNT(*) FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." WHERE status_id = 'H' AND survey_id = %1 ", array( 1 => array( $this->_surveyId, 'Integer') ) );
-        $this->_numVoters = isset($numVoters)? $numVoters : 0;
-
-        if ( CRM_Utils_Array::value('max_number_of_contacts', $surveyDetails) &&
-             $this->_numVoters &&
-             ( $surveyDetails['max_number_of_contacts'] <= $this->_numVoters ) ) {
-            CRM_Core_Error::statusBounce( ts( "Voter Reservation is full for this survey.") );
-        }
-        
-        if ( CRM_Utils_Array::value('default_number_of_contacts',$surveyDetails) ) {
-            if ( count($this->_contactIds) > $surveyDetails['default_number_of_contacts'] ) {
-                CRM_Core_Error::statusBounce( ts( "You can select maximum %1 contact(s) at a time for voter reservation of this survey.", array( 1 => $surveyDetails['default_number_of_contacts']) ) );
-            }
-        }
-
-        // FIX ME : there will be title for survey
-        $this->assign( 'surveyTitle', $surveyDetails['title'] );
-        
     }
 
     /**
@@ -131,6 +103,8 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
      */
     function buildQuickForm( ) {
        
+        $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
+        $this->add('select', 'survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys, true );
         $this->addDefaultButtons( ts('Add Voter Reservation') );
     }
 
@@ -141,8 +115,30 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
     
     static function formRule( $params, $rules, &$form ) {
         $errors = array();
+        $surveyDetails = array( );
+
+        if ( CRM_Utils_Array::value('survey_id', $params) )  {
+            $form->_surveyId = $params['survey_id'];
+            
+            $params        = array( 'id' => $form->_surveyId );
+            $form->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve($params, $surveyDetails);
+            
+            $numVoters = CRM_Core_DAO::singleValueQuery( "SELECT COUNT(*) FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." WHERE status_id = 'H' AND survey_id = %1 ", array( 1 => array( $form->_surveyId, 'Integer') ) );
+            $form->_numVoters = isset($numVoters)? $numVoters : 0;
+            
+            if ( CRM_Utils_Array::value('max_number_of_contacts', $surveyDetails) &&
+                 $form->_numVoters &&
+                 ( $surveyDetails['max_number_of_contacts'] <= $form->_numVoters ) ) {
+                $errors['survey_id'] = ts( "Voter Reservation is full for this survey." );
+            } else if ( CRM_Utils_Array::value('default_number_of_contacts',$surveyDetails) ) {
+                if ( count($form->_contactIds) > $surveyDetails['default_number_of_contacts'] ) {
+                    $errors['survey_id'] = ts( "You can select maximum %1 contact(s) at a time for voter reservation of this survey.", array( 1 => $surveyDetails['default_number_of_contacts']) );
+                }
+            }
+        }
         return $errors;
     }
+
     /**
      * process the form after the input has been submitted and validated
      *
@@ -166,6 +162,8 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
                                                         $this,
                                                         null,
                                                         $this->_groupId );
+
+        $this->_surveyId = CRM_Utils_Array::value( 'survey_id', $params);
         
         $activityGroupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, $this );
 

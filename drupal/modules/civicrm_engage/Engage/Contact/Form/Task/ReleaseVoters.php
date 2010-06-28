@@ -81,9 +81,10 @@ class Engage_Contact_Form_Task_ReleaseVoters extends CRM_Contact_Form_Task {
         parent::preProcess( );
 
         //get the survey id from user submitted values.
-        $this->_surveyId = CRM_Utils_Array::value( 'survey_id',$this->get( 'formValues' ) );
-        if ( !$this->_surveyId ) {
-            CRM_Core_Error::statusBounce( ts( "Could not find Survey Id.") );
+        $this->_surveyId = CRM_Utils_Array::value( 'survey_id', $this->get( 'formValues' ) );
+        $isHeld          = CRM_Utils_Array::value( 'status_id', $this->get( 'formValues' ) );
+        if ( !$this->_surveyId || !$isHeld ) {
+            CRM_Core_Error::statusBounce( ts( "Please search with 'Is Held' and 'Survey Id' filters to apply this action.") );
         }
         
         $session = CRM_Core_Session::singleton( );
