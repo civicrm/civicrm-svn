@@ -1021,11 +1021,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                        "extern/open.php?q=$event_queue_id\" width='1' height='1' alt='' border='0'>");
         }
         
-        // we need to wrap Mail_mime because PEAR is apparently unable to fix
-        // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
-        // this fixes CRM-5466
-        require_once 'CRM/Utils/Mail/FixedMailMIME.php';
-        $message = new CRM_Utils_Mail_FixedMailMIME("\n");
+        $message = new Mail_mime("\n");
         
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
             $smarty = CRM_Core_Smarty::singleton( );

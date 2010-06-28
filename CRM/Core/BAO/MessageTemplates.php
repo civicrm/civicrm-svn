@@ -214,11 +214,7 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                 $$elem = $smarty->fetch("string:{$$elem}");
             }
             
-            // we need to wrap Mail_mime because PEAR is apparently unable to fix
-            // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
-            // this fixes CRM-5466
-            require_once 'CRM/Utils/Mail/FixedMailMIME.php';
-            $message = new CRM_Utils_Mail_FixedMailMIME("\n");
+            $message = new Mail_mime("\n");
             
             /* Do contact-specific token replacement in text mode, and add to the
              * message if necessary */
