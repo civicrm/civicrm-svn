@@ -704,7 +704,7 @@ GROUP BY        {$contactA}";
                 }
 
                 //remove organization name for individuals if it is set for current employer
-                if ( CRM_Utils_Array::value('contact_type', $row ) && $row['contact_type'] == 'Individual' ) {
+                if ( CRM_Utils_Array::value('contact_type', $row ) && $row['contact_type'] == 'Individual' && array_key_exists('organization_name', $row ) ) {
                     $row['organization_name'] = '';
                 }
 
