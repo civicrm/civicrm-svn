@@ -325,6 +325,13 @@ class Net_SMTP
 
         $this->_pipelined_commands = 0;
 
+        /* Server response code 553 => Requested action not taken-Mailbox name invalid.
+         * Server response code 503 => Bad sequence of commands.
+         */
+        if ($this->_code == 553 || $this->_code == 503 || $this->_code == 501) {
+            return PEAR::raiseError('recipient is not recognized');
+        }
+
         /* Compare the server's response code with the valid code/codes. */
         if (is_int($valid) && ($this->_code === $valid)) {
             return true;
@@ -332,8 +339,14 @@ class Net_SMTP
             return true;
         }
 
-        return PEAR::raiseError('Invalid response code received from server',
-                                $this->_code);
+        /* 535: Authentication failed */
+        if ($this->_code == 535) {
+            $this->disconnect();
+            return PEAR::raiseError('Authentication failed.');
+        }
+
+        $errorMessage = 'Invalid response code received from SMTP (outbound mail) server while attempting to send email.  This is often caused by a misconfiguration in the CiviCRM Outbound Email settings. Please verify the settings at Administer CiviCRM >> Global Settings >> Outbound Email (SMTP).';
+        return PEAR::raiseError( $errorMessage );
     }
 
     /**
@@ -863,8 +876,12 @@ class Net_SMTP
         if (PEAR::isError($error = $this->_put('RCPT', $args))) {
             return $error;
         }
-        if (PEAR::isError($error = $this->_parseResponse(array(250, 251), $this->pipelining))) {
-            return $error;
+        $response = $this->_parseResponse(array(250, 251), $this->pipelining);
+        if (PEAR::isError($response)) {
+            return $response;
+        }
+        if (!$response) {
+            return PEAR::raiseError('recipient is not recognized');
         }
 
         return true;
