@@ -254,6 +254,10 @@ class Mail_mime
                 $this->_txtbody .= $cont;
             }
         }
+
+        // wordwrap the txtbody to be 750 characters to comply with RFC 2821
+        // CRM-3133
+        $this->_txtbody = wordwrap( $this->_txtbody, 750 );
         return true;
     }
 
@@ -292,6 +296,9 @@ class Mail_mime
             $this->_htmlbody = $cont;
         }
 
+        // wordwrap the htmlbody to be 750 characters to comply with RFC 2821
+        // CRM-3133
+        $this->_htmlbody = wordwrap( $this->_htmlbody, 750 );
         return true;
     }
 
