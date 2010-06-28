@@ -70,6 +70,7 @@ class CRM_Core_BAO_CustomGroup extends CRM_Core_DAO_CustomGroup
         // create custom group dao, populate fields and then save.           
         $group = new CRM_Core_DAO_CustomGroup();
         $group->title = $params['title'];
+        require_once 'CRM/Utils/String.php';
         $group->name  = CRM_Utils_String::titleToVar($params['title'], $fieldLength['maxlength'] );
         if ( in_array( $params['extends'][0],
                        array( 'ParticipantRole',
@@ -1207,7 +1208,7 @@ SELECT $select
                     continue;
                 }
                 
-                $required = $field['is_required'];
+                $required = CRM_Utils_Array::value( 'is_required', $field );
                 //fix for CRM-1620
                 if ( $field['data_type']  == 'File') {
                     if ( isset($field['customValue']['data']) ) {
@@ -1446,7 +1447,7 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
             // add field information
             foreach ( $value['fields'] as $k => $properties ) {
                 $properties['element_name']  = "custom_{$k}_-{$groupCount}";
-                if ( !CRM_Utils_system::isNull( $properties['customValue'] ) ) {
+                if ( isset( $properties['customValue'] ) && !CRM_Utils_system::isNull( $properties['customValue'] ) ) {
                     if ( isset( $properties['customValue'][$groupCount] ) ) {
                         $properties['element_name'] = "custom_{$k}_{$properties['customValue'][$groupCount]['id']}";
                         if ( $properties['data_type'] == 'File' ) {
@@ -1566,7 +1567,8 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
 
             $supportableFormats = array(
                                         'mm/dd'   => "%B %E%f $customTimeFormat",
-                                        'dd-mm'   => "%E%f %B $customTimeFormat"
+                                        'dd-mm'   => "%E%f %B $customTimeFormat",
+                                        'yy'      => "%Y $customTimeFormat"
                                         );
             if ( $format = CRM_Utils_Array::value( 'date_format', $field ) ) {
                 if ( array_key_exists( $format, $supportableFormats ) ) {

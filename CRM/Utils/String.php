@@ -129,10 +129,12 @@ class CRM_Utils_String {
      * @static
      */
     static function getClassName( $string, $char = '_' ) {
-        $names = explode( $char, $string );
-        return array_pop( $names );
+        if( !is_array( $string ) ) {
+            $names = explode( $char, $string );
+        }
+        if( is_array( $names ) )  return array_pop( $names ); 
     }
-
+    
     /**
      * appends a name to a string and seperated by delimiter.
      * does the right thing for an empty string

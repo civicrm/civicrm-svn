@@ -210,8 +210,9 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         }
         
         $transaction->commit( );
-
-        CRM_Utils_Hook::post( 'delete','Activity', $activity->id, $activity );
+        if ( isset( $activity ) ) {
+            CRM_Utils_Hook::post( 'delete','Activity', $activity->id, $activity );
+        }
 
         return $result;
     }
@@ -809,6 +810,7 @@ LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$acti
      **/
     function activityComponents( ) 
     {
+        require_once 'CRM/Core/Permission.php';
         $components = array( );
         $compInfo = CRM_Core_Component::getEnabledComponents( );
         foreach ( $compInfo as $compObj ) {

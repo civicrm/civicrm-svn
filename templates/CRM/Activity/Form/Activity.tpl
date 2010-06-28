@@ -106,11 +106,15 @@
             {/if}
 
             <table class="{if $action eq 4}crm-info-panel{else}form-layout{/if}">
-             {if $context eq 'standalone' or $context eq 'smog'}
+
+	     {* don't show in activity view mode, since act type is present as a part if title. *}	     	    
+	     {if $action neq 4}	   
+             {if $context eq 'standalone' or $context eq 'search' or $context eq 'smog'}
                 <tr class="crm-activity-form-block-activity_type_id">
                    <td class="label">{$form.activity_type_id.label}</td><td class="view-value">{$form.activity_type_id.html}</td>
                 </tr>
              {/if}
+	     {/if}
              <tr class="crm-activity-form-block-source_contact_id">
                 <td class="label">{$form.source_contact_id.label}</td>
                 <td class="view-value">
@@ -225,20 +229,27 @@
                 <tr class="crm-activity-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>
              {/if}
              
-             <tr class="crm-activity-form-block-custom_data">
-                <td colspan="2">
-	            {if $action eq 4} 
-                    {include file="CRM/Custom/Page/CustomDataView.tpl"}
-                {else}
-                    <div id="customData"></div>
-                {/if} 
-                </td>
-             </tr> 
-             <tr class="crm-activity-form-block-attachment">
-                <td colspan="2">
-                    {include file="CRM/Form/attachment.tpl"}
-                </td>
-             </tr>
+             {if $action neq 4 OR $viewCustomData} 
+                 <tr class="crm-activity-form-block-custom_data">
+                    <td colspan="2">
+    	            {if $action eq 4} 
+                        {include file="CRM/Custom/Page/CustomDataView.tpl"}
+                    {else}
+                        <div id="customData"></div>
+                    {/if} 
+                    </td>
+                 </tr>
+             {/if}
+             
+             {if $action eq 4 AND $currentAttachmentURL}
+                {include file="CRM/Form/attachment.tpl"}{* For view action the include provides the row and cells. *}
+             {else if $action eq 1 OR $action eq 2}
+                 <tr class="crm-activity-form-block-attachment">
+                    <td colspan="2">
+                        {include file="CRM/Form/attachment.tpl"}
+                    </td>
+                 </tr>
+             {/if}
 
              {if $action neq 4} {* Don't include "Schedule Follow-up" section in View mode. *}
                  <tr class="crm-activity-form-block-schedule_followup">
@@ -280,16 +291,16 @@
 	            {/if}
 	            {if $permission EQ 'edit'}
 		            {assign var='urlParams' value="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=$context"}
-		            {if $context eq 'fulltext' && $fullTextSearchKey}
-		                {assign var='urlParams' value="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=$context&key=$fullTextSearchKey"}
+		            {if ($context eq 'fulltext' || $context eq 'search') && $searchKey}
+		                {assign var='urlParams' value="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=$context&key=$searchKey"}
 		            {/if}
                     <a href="{crmURL p='civicrm/contact/view/activity' q=$urlParams}" class="edit button" title="{ts}Edit{/ts}"><span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span></a>
                  {/if}
                  
                  {if call_user_func(array('CRM_Core_Permission','check'), 'delete activities')}
 		            {assign var='urlParams' value="reset=1&atype=$atype&action=delete&reset=1&id=$entityID&cid=$contactId&context=$context"}
-		            {if $context eq 'fulltext' && $fullTextSearchKey}
-		                {assign var='urlParams' value="reset=1&atype=$atype&action=delete&reset=1&id=$entityID&cid=$contactId&context=$context&key=$fullTextSearchKey"}	
+		            {if ($context eq 'fulltext' || $context eq 'search') && $searchKey}
+		                {assign var='urlParams' value="reset=1&atype=$atype&action=delete&reset=1&id=$entityID&cid=$contactId&context=$context&key=$searchKey"}	
 		            {/if}
                     <a href="{crmURL p='civicrm/contact/view/activity' q=$urlParams}" class="delete button" title="{ts}Delete{/ts}"><span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span></a>
                  {/if}

@@ -223,7 +223,7 @@ AND cgc.group_id = {$this->_group}
     }
     
     function templateFile( ) {
-        return 'CRM/Contact/Form/Search/Custom/Sample.tpl';
+        return 'CRM/Contact/Form/Search/Custom.tpl';
     }
 
     function setDefaultValues( ) {

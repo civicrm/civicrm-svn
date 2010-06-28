@@ -26,15 +26,15 @@
 <div class="view-content">
 {if $action eq 4}{* when action is view  *}
     {if $notes}
-        <fieldset>
-          <legend>{ts}View Note{/ts}</legend>
-          <table class="view-layout">
+        <h3>{ts}View Note{/ts}</h3>
+        <div class="crm-block crm-content-block crm-note-view-block">
+          <table class="crm-info-panel">
             <tr><td class="label">{ts}Subject{/ts}</td><td>{$note.subject}</td></tr>
             <tr><td class="label">{ts}Date:{/ts}</td><td>{$note.modified_date|crmDate}</td></tr>
             <tr><td class="label"></td><td>{$note.note|nl2br}</td></tr>
-            <tr><td></td><td><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=note'}';"/></td></tr>        
           </table>
-        </fieldset>
+          <div class="crm-submit-buttons"><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=note'}';"/></div>
+        </div>
         {/if}
 {elseif $action eq 1 or $action eq 2} {* action is add or update *}
 	<div class="crm-block crm-form-block crm-note-form-block">

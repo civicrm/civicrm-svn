@@ -53,20 +53,26 @@ class CRM_Member_BAO_MembershipLogTest extends CiviUnitTestCase
     {
         parent::setUp();
         
+        $params = array( 'contact_types_a' => 'Individual',
+                         'contact_types_b' => 'Organization',
+                         'name_a_b'        => 'Test Employee of',
+                         'name_b_a'        => 'Test Employer of'
+                         );
         $this->_relationshipTypeId  = $this->relationshipTypeCreate( $params ); 
         $this->_orgContactID        = $this->organizationCreate( ) ;
         $this->_contributionTypeId  = $this->contributionTypeCreate();
         
         $ids    = array( 'memberOfContact' => $this->_orgContactID );
-        $params = array( 'name' => 'test type',
-                         'description' => null,
-                         'minimum_fee' => 10,
-                         'duration_unit' => 'year',
-                         'period_type' => 'fixed',
-                         'duration_interval' => 1,
+        $params = array( 'name'                 => 'test type',
+                         'description'          => null,
+                         'minimum_fee'          => 10,
+                         'duration_unit'        => 'year',
+                         'period_type'          => 'fixed',
+                         'duration_interval'    => 1,
                          'contribution_type_id' => $this->_contributionTypeId,
                          'relationship_type_id' => $this->_relationshipTypeId,
-                         'visibility' => 'Public'
+                         'visibility'           => 'Public',
+                         'is_active'            => 1,
                          );
         $membershipType = CRM_Member_BAO_MembershipType::add( $params, $ids );
         $this->_membershipTypeID    = $membershipType->id;

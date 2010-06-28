@@ -557,7 +557,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                 }
                                 
                                 if ( !empty($contactSubType) && 
-                                     ( !CRM_Contact_BAO_ContactType::isAllowEdit($params['id'], $contactSubType) || 
+                                     ( !CRM_Contact_BAO_ContactType::isAllowEdit($params['id'], $contactSubType) && 
                                         $contactSubType != CRM_Utils_Array::value('contact_sub_type', $formatted)  ) ) {
                                     
                                     $message = "Mismatched contact SubTypes :";
@@ -603,7 +603,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                             }
                             
                             if ( !empty($contactSubType) && 
-                                 (!CRM_Contact_BAO_ContactType::isAllowEdit($params['id'], $contactSubType) ||
+                                 (!CRM_Contact_BAO_ContactType::isAllowEdit($params['id'], $contactSubType) &&
                                    $contactSubType != CRM_Utils_Array::value('contact_sub_type', $formatted)  ) ) {
                                 
                                 $message = "Mismatched contact SubTypes :";
@@ -758,7 +758,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                             }
                             
                             if ( !empty($relatedCsType) && 
-                                 (!CRM_Contact_BAO_ContactType::isAllowEdit($params[$key]['id'], $relatedCsType) ||
+                                 (!CRM_Contact_BAO_ContactType::isAllowEdit($params[$key]['id'], $relatedCsType) &&
                                    $relatedCsType != CRM_Utils_Array::value( 'contact_sub_type', $formatting )     ) ) {
                                 $errorMessage = ts( "Mismatched or Invalid contact subtype found for this related contact ID: %1", array( 1 => $params[$key]['id'] ) );
                                 array_unshift($values, $errorMessage);
@@ -825,7 +825,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         }
                         
                         if ( !empty($relatedCsType) && 
-                             (!CRM_Contact_BAO_ContactType::isAllowEdit($matchedIDs[0], $relatedCsType) || 
+                             (!CRM_Contact_BAO_ContactType::isAllowEdit($matchedIDs[0], $relatedCsType) && 
                               $relatedCsType != CRM_Utils_Array::value('contact_sub_type', $formatting)   ) ) {
                             $errorMessage = ts( "Mismatched or Invalid contact subtype found for this related contact." );
                             array_unshift($values, $errorMessage);
@@ -1080,7 +1080,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     // need not check for label filed import
                     $htmlType = array('CheckBox','Multi-Select','AdvMulti-Select','Select','Radio','Multi-Select State/Province' ,'Multi-Select Country' );
                     if ( ! in_array( $customFields[$customFieldID]['html_type'], $htmlType ) ||
-                         $customFields[$customFieldID]['data_type'] =='Boolean' ) {
+                         $customFields[$customFieldID]['data_type'] =='Boolean' || 
+                         $customFields[$customFieldID]['data_type'] == 'ContactReference' ) {
                         $valid = 
                             CRM_Core_BAO_CustomValue::typecheck($customFields[$customFieldID]['data_type'], $value);
                         if (! $valid) {

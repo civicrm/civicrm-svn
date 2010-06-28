@@ -634,11 +634,17 @@ class CRM_Utils_System {
         }
     }
 
-    static function xMemory( $title = null ) {
-        $mem = (float ) xdebug_memory_usage( ) / (float ) ( 1024 * 1024 );
+    static function xMemory( $title = null, $log = false ) {
+        $mem = (float ) xdebug_memory_usage( ) / (float ) ( 1024 );
         $mem = number_format( $mem, 5 ) . ", " . time( );
-        echo "$title: $mem<p>";
-        flush( );
+        if ( $log ) {
+            echo "<p>$title: $mem<p>";
+            flush( );
+            CRM_Core_Error::debug_var( $title, $mem );
+        } else {
+            echo "<p>$title: $mem<p>";
+            flush( );
+        }
     }
 
     static function fixURL( $url ) {

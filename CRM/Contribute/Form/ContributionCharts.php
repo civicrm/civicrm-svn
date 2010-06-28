@@ -155,7 +155,7 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
             
             // handle onclick event.
             $chartData['by_year']['on_click_fun_name'] = 'byYearOnClick';
-            $chartData['by_year']['yname'] = ts( 'Contribution' );
+            $chartData['by_year']['yname'] = ts( 'Total Amount' );
         }
         $this->assign( 'hasContributions', $hasContributions );
         
@@ -206,6 +206,10 @@ class CRM_Contribute_Form_ContributionCharts extends CRM_Core_Form
             if ( $chartType == 'bvg' ) {
                 $ySize = 250;
                 $xSize = 60*count( $chartValues );
+                
+                // reduce x size by 100 for by_month
+                if ( $chartKey == 'by_month' ) $xSize -= 100;
+
                 //hack to show tooltip.
                 if ( $xSize < 150 ) $xSize = 150;
             }

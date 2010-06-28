@@ -23,7 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-case-common-form-block">
 {if $notConfigured} {* Case types not present. Component is not configured for use. *}
     {include file="CRM/Case/Page/ConfigureError.tpl"}
 {else}
@@ -63,4 +62,3 @@
 {/if}
 </tr>     
 {/if}
-</div>

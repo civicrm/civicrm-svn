@@ -85,9 +85,9 @@ class CRM_Custom_Form_Preview extends CRM_Core_Form
             }
             
             $groupTree = array();
-            $groupTree[$groupId]['id']     = 0;
-            $groupTree[$groupId]['fields'] = array();
-            $groupTree[$groupId]['fields'][$fieldId] = $defaults;
+            $groupTree[$this->_groupId]['id']     = 0;
+            $groupTree[$this->_groupId]['fields'] = array();
+            $groupTree[$this->_groupId]['fields'][$this->_fieldId] = $defaults;
             $this->_groupTree = CRM_Core_BAO_CustomGroup::formatGroupTree( $groupTree, 1, $this );
             $this->assign('preview_type', 'field');
         } else {

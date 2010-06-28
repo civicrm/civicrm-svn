@@ -73,6 +73,12 @@ class CRM_Price_Form_Set extends CRM_Core_Form
         } else {
             CRM_Utils_System::setTitle( ts('New Price Set') );
         }
+
+        $url = CRM_Utils_System::url( 'civicrm/admin/price', 'reset=1' );
+        $breadCrumb     = array( array('title' => ts('Price Sets'),
+                                       'url'   => $url) );
+        CRM_Utils_System::appendBreadCrumb( $breadCrumb );
+
     }
      
     /**

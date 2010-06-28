@@ -53,6 +53,7 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
         if ( $dao->find( true ) ) {
             $data = unserialize( $dao->data );
         }
+        $dao->free( );
         return $data;
     }
 
@@ -70,6 +71,8 @@ class CRM_Core_BAO_Cache extends CRM_Core_DAO_Cache
 
         // CRM_Core_Error::debug_var( "Saving $group, $path on {$dao->created_date}", $data );
         $dao->save( );
+        
+        $dao->free( );
     }
 
     static function deleteGroup( $group = null ) {

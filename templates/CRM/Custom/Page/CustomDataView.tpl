@@ -45,8 +45,8 @@
 		    <div class="crm-accordion-wrapper crm-accordion_title-accordion {if $cd_edit.collapse_display eq 0 }crm-accordion-open{else}crm-accordion-closed{/if}">
              <div class="crm-accordion-header">
               <div class="icon crm-accordion-pointer"></div> 
-		    {$cd_edit.title}
-                </div>
+		      {$cd_edit.title}
+             </div>
             <div class="crm-accordion-body">			   
 	        {if $groupId and $cvID and $editCustomData}
 	        <div class="crm-submit-buttons">

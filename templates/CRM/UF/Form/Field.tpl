@@ -23,15 +23,15 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<h3>{if $action eq 8}{ts}Delete Field{/ts} - {$fieldTitle}{elseif $action eq 1}{ts}Add Field{/ts}{elseif $action eq 2}{ts}Edit Field{/ts} - {$fieldTitle}{/if}</h3>
 <div class="crm-block crm-form-block crm-uf-field-form-block">
-<h3>{if $action eq 8}{ts}Delete CiviCRM Profile Field{/ts}{else}{ts}CiviCRM Profile Field{/ts}{/if}</h3>
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 
     {if $action eq 8}
       	<div class="messages status">
           <div class="icon inform-icon"></div>
             {ts}WARNING: Deleting this profile field will remove it from Profile forms and listings. If this field is used in any 'stand-alone' Profile forms, you will need to update those forms to remove this field.{/ts} {ts}Do you want to continue?{/ts}
       </div>
     {else}
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 
         <table class="form-layout-compressed">
         <tr class="crm-uf-field-form-block-field_name">
             <td class="label">{$form.field_name.label}</td>

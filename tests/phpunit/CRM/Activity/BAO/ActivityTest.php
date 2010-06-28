@@ -140,7 +140,7 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
         $this->assertEquals( $defaults['source_contact_id'], $contactId, 'Verify source contact id is correct.');
         $this->assertEquals( $defaults['activity_type_id'], 2, 'Verify activity type id is correct.');
         
-        $this->assertEquals( $defaults['target_contact'][1], $targetContactId, 'Verify target contact id is correct.');
+        $this->assertEquals( $defaults['target_contact'][0], $targetContactId, 'Verify target contact id is correct.');
         
         Contact::delete( $contactId );
         Contact::delete( $targetContactId );
@@ -362,7 +362,8 @@ class CRM_Activity_BAO_ActivityTest extends CiviUnitTestCase
                             . '/activities_for_dashboard_count.xml') );
 
         require_once 'CRM/Activity/BAO/Activity.php';
-        $data = array( );
+        $contactID = 5;
+        $data = array( 'contact_id' => $contactID );
         $activities = CRM_Activity_BAO_Activity::getActivities( $data, null, null, null, true, null, 'home' );
 
         //since we are loading activities from dataset, we know total number of activities

@@ -68,7 +68,9 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         
         $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive',
                                             $this, false ); 
-        
+
+        $this->_searchKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+                
         // sort out whether it’s a delete-to-trash, delete-into-oblivion or restore (and let the template know)
         $config =& CRM_Core_Config::singleton();
         $values = $this->controller->exportValues();
@@ -124,6 +126,16 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         $session = CRM_Core_Session::singleton( );
         $currentUserId = $session->get( 'userID' );
         
+        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'basic' );
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $this->_searchKey ) ) {
+            $urlParams .= "&qfKey=$this->_searchKey";
+        } else{
+            $urlParams .= "&qfKey={$this->controller->_key}";
+        }
+        $urlString = "civicrm/contact/search/$context";
+        if ( $context == 'search' ) $urlString = 'civicrm/contact/search';  
+        
         $selfDelete = false;
         $deletedContacts = 0;
         foreach ( $this->_contactIds as $contactId ) {
@@ -131,7 +143,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
                 $selfDelete = true;
                 continue;
             }
-
+            
             if ( CRM_Contact_BAO_Contact::deleteContact( $contactId, $this->_restore, $this->_skipUndelete ) ) {
                 $deletedContacts++;
             }
@@ -152,16 +164,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         } else {
             if ( $deletedContacts ) {
                 
-                $isAdvanced      = $this->get( 'isAdvanced' );
-                $isSearchBuilder = $this->get( 'isSearchBuilder' );
-                
-                if ( $isAdvanced == 1 ) {
-                    $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/contact/search/advanced', 'force=1' ) );
-                } else if ( ( $isAdvanced == 2 ) && ( $isSearchBuilder == 1 ) ) {
-                    $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/contact/search/builder', 'force=1' ) );
-                } else {
-                    $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/contact/search/basic', 'force=1' ) );
-                }
+                $session->replaceUserContext( CRM_Utils_System::url( $urlString, $urlParams ) );
                 
                 if ($this->_restore) {
                     $status = ts('Selected contact was restored sucessfully.');
@@ -185,6 +188,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         }
 
         CRM_Core_Session::setStatus( $status );
+        $session->replaceUserContext( CRM_Utils_System::url( $urlString, $urlParams ) );
     }//end of function
 
 
