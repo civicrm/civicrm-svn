@@ -114,6 +114,12 @@ class Mail_mail extends Mail {
      */
     function send($recipients, $headers, $body)
     {
+        if (defined('CIVICRM_MAIL_LOG')) {
+            require_once 'CRM/Utils/Mail.php';
+            CRM_Utils_Mail::logger($recipients, $headers, $body);
+            return true;
+        }
+
         if (!is_array($headers)) {
             return PEAR::raiseError('$headers must be an array');
         }
@@ -145,7 +151,13 @@ class Mail_mail extends Mail {
         if (is_a($headerElements, 'PEAR_Error')) {
             return $headerElements;
         }
-        list(, $text_headers) = $headerElements;
+        list($from, $text_headers) = $headerElements;
+
+        // use Return-Path for SMTP envelope’s FROM address (if set), CRM-5946
+        if (!empty($headers['Return-Path'])) {
+            $from = $headers['Return-Path'];
+        }
+        $this->_params = "-f".$from;
 
         // We only use mail()'s optional fifth parameter if the additional
         // parameters have been provided and we're not running in safe mode.
