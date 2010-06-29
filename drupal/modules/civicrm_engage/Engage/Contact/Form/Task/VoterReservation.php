@@ -88,6 +88,10 @@ class Engage_Contact_Form_Task_VoterReservation extends CRM_Contact_Form_Task {
         parent::preProcess( );
         
         $session = CRM_Core_Session::singleton( );
+        $qfKey   = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this, true, 0, 'REQUEST' );
+        $url     = CRM_Utils_System::url('civicrm/contact/search/custom', '_qf_Custom_display=true&qfKey='.$qfKey ); 
+        $session->replaceUserContext( $url );
+        
         if ( empty($this->_contactIds) || !($session->get('userID')) ) {
             CRM_Core_Error::statusBounce( ts( "Could not find contacts for voter reservation Or Missing Interviewer contact.") );
         }
