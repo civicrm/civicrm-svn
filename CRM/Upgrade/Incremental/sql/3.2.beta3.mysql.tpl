@@ -32,4 +32,4 @@ INSERT INTO
        civicrm_option_value (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `domain_id`, `visibility_id`) 
        VALUES( @option_group_id_ceOpt, {localize}'Website'{/localize}, @option_value_ceOpt+1, 'Website', NULL, 1, NULL, @option_weight_ceOpt+1, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL, NULL );
 
-UPDATE civicrm_preferences SET contact_edit_options  = CONCAT(contact_edit_options, '@option_value_ceOpt+1');
+UPDATE civicrm_preferences SET contact_edit_options  = CONCAT(contact_edit_options, @option_value_ceOpt+1, '');
