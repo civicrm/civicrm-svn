@@ -80,9 +80,13 @@ class Engage_Contact_Form_Task_ReleaseVoters extends CRM_Contact_Form_Task {
     function preProcess( ) {
         parent::preProcess( );
         
+        require_once 'CRM/Utils/Rule.php';
+        $qfKey     = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= '&qfKey='.$qfKey;
+
         $session = CRM_Core_Session::singleton( );
-        $qfKey   = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this, true, 0, 'REQUEST' );
-        $url     = CRM_Utils_System::url('civicrm/contact/search/custom', '_qf_Custom_display=true&qfKey='.$qfKey ); 
+        $url     = CRM_Utils_System::url('civicrm/contact/search/custom', $urlParams ); 
         $session->replaceUserContext( $url );
 
         //get the survey id from user submitted values.
