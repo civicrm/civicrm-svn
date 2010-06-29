@@ -575,13 +575,10 @@ WHERE name = %1";
         $contactType = new CRM_Contact_DAO_ContactType( );
         $contactType->copyValues( $params );
         $contactType->id        = CRM_Utils_Array::value( 'id', $params );
-        if ( CRM_Utils_Array::value('parent_id', $params) && CRM_Utils_Array::value('name', $params ) ) { 
-            $contactType->is_active = CRM_Utils_Array::value( 'is_active', $params, 0 );
-            $contactTypeParams = array( 'id'=> CRM_Utils_Array::value( 'parent_id' , $params ) );
-            if( ! self::retrieve( $contactTypeParams, $typeInfo ) ) {
-                return;
-            }
-        } else {
+        $contactType->is_active = CRM_Utils_Array::value( 'is_active', $params, 0 );
+
+        if ( CRM_Utils_Array::value( 'parent_id', $params ) &&
+             !CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_ContactType', $params['parent_id'] ) ) {
             return;
         }
         
