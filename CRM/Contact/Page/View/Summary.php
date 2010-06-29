@@ -378,7 +378,7 @@ class CRM_Contact_Page_View_Summary extends CRM_Contact_Page_View {
             $csType = $this->get('contactSubtype');
             if ( $csType ) {
                 $templateFile = "CRM/Contact/Page/View/SubType/{$csType}.tpl";
-                $template     =& CRM_Core_Page::getTemplate( );
+                $template     = CRM_Core_Page::getTemplate( );
                 if ( $template->template_exists( $templateFile ) ) {
                     return $templateFile;
                 }
