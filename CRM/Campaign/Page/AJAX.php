@@ -98,9 +98,17 @@ class CRM_Campaign_Page_AJAX
                 $params[$customFieldKey] = $value;
             }
         }
+        $interviewId = CRM_Utils_Array::value( "field_{$voterId}_interview_id", $_POST );
+        if ( $interviewId ) $params['interview_id'] = $interviewId; 
         
         require_once 'CRM/Campaign/Form/Task/Interview.php';
-        CRM_Campaign_Form_Task_Interview::registerInterview( $params );
+        $interviewId = CRM_Campaign_Form_Task_Interview::registerInterview( $params );
+        $result = array( 'status'       => ( $interviewId ) ? 'success' : 'fail',
+                         'voter_id'     => $voterId,
+                         'interview_id' => $interviewId );
+        
+        require_once "CRM/Utils/JSON.php";
+        echo json_encode( $result );
         
         CRM_Utils_System::civiExit( );
     }

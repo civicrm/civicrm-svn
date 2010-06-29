@@ -157,6 +157,9 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                 $fieldName     = "field[$contactId][$elementName]";
                 CRM_Core_BAO_CustomField::addQuickFormElement( $this, $fieldName, $fieldId, false, false );
             }
+            
+            //hack to get control for interview ids during ajax calls.
+            $this->add( 'text', "field[$contactId][interview_id]" );
         }
         $this->assign( 'surveyFields', $this->_surveyFields );
         
@@ -208,9 +211,10 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
 
     static function registerInterview( $params )
     {
+        $interviewId  = CRM_Utils_Array::value( 'interview_id', $params );
         $surveyTypeId = CRM_Utils_Array::value( 'survey_type_id', $params );
         if ( !is_array( $params ) || !$surveyTypeId ) {
-            return;
+            return $interviewId;
         }
         
         static $surveyFields;
@@ -234,10 +238,13 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         //create a activity record for given survey interview.
         $actParams = array( 'subject' => ts( 'Interview' ) );
         
+        //carry id for update.
+        if ( $interviewId ) $actParams['id'] = $interviewId;
+        
         //format custom fields.
         $actParams['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
                                                                       $surveyFields,
-                                                                      null,
+                                                                      $interviewId,
                                                                       'Activity' );
         
         //create an activity record.
@@ -249,6 +256,9 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         //create an activity record.
         require_once 'CRM/Activity/BAO/Activity.php';
         $activity = CRM_Activity_BAO_Activity::create( $actParams );
+        $interviewId = $activity->id; 
+        
+        return $interviewId; 
     }
     
 }

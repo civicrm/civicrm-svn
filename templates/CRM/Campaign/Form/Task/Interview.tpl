@@ -59,6 +59,9 @@
 	    {/foreach}
 		<td> 
 		&nbsp;&nbsp;<a id='saveVoter' href="#" title={ts}Save{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}save{/ts}</a>
+		
+		{* hack to get control for interview ids during ajax calls. *}
+		<span style="display:none;">{$form.field.$voterId.interview_id.html}</span>
 		</td>
 	</tr>
 	{/foreach}
@@ -89,15 +92,20 @@
 	cj( '[id^="'+ fieldName +'"]' ).each( function( ) {
 	    data[cj(this).attr( 'id' )] = cj( this ).val( );
         });
-
+	
 	data['voter_id']       = voterId;
 	data['interviewer_id'] = {/literal}{$interviewerId}{literal};
 	data['survey_type_id'] = {/literal}{$surveyTypeId}{literal};	
-				     
+	data['field_'+ voterId + '_interview_id'] = cj( '#field_' + voterId + '_interview_id' ).val( );
+		
 	var dataUrl = {/literal}"{crmURL p='civicrm/survey/interview' h=0 }"{literal}	          
 	
 	//post data to create interview.
-	cj.post( dataUrl, data );
+	cj.post( dataUrl, data, function( interview ) {
+	       if ( interview.status == 'success' ) {
+	       	   cj( '#field_' + voterId + '_interview_id' ).val( interview.interview_id );
+	       }		 
+	}, "json" );
     }
     
 </script>
