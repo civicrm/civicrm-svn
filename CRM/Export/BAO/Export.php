@@ -279,10 +279,16 @@ class CRM_Export_BAO_Export
         }
         
         if ( $mergeSameAddress ) {
+            $dropLastName = false;
+            
             //make sure the addressee fields are selected
             //while using merge same address feature
             $returnProperties['addressee'     ] = 1;
             $returnProperties['street_name'   ] = 1;
+            if (!in_array('last_name', $returnProperties)) {
+                $returnProperties['last_name'   ] = 1;
+                $dropLastName = true;
+            }
             $returnProperties['household_name'] = 1;
             $returnProperties['street_address'] = 1;
         }
@@ -743,7 +749,7 @@ GROUP BY        {$contactA}";
 
         // do merge same address and merge same household processing
         if ( $mergeSameAddress ) {
-            self::mergeSameAddress( $exportTempTable );
+            self::mergeSameAddress( $exportTempTable, $headerRows, $sqlColumns, $dropLastName );
         }
         
         // merge the records if they have corresponding households
@@ -1004,11 +1010,12 @@ CREATE TABLE {$exportTempTable} (
         return $exportTempTable;
     }
 
-    static function mergeSameAddress( $tableName )
+    static function mergeSameAddress( $tableName, &$headerRows, &$sqlColumns, $dropLastName = false)
     {
         // find all the records that have the same street address BUT not in a household
         $sql = "
-SELECT    r1.id as master_id, 
+SELECT    r1.id as master_id,
+          r1.last_name as last_name,
           r1.addressee as master_addressee,
           r2.id as copy_id,
           r2.addressee as copy_addressee
@@ -1027,6 +1034,7 @@ ORDER BY  r1.id
         while ( $dao->fetch( ) ) {
             $masterID = $dao->master_id;
             $copyID   = $dao->copy_id;
+            $last     = $dao->last_name;
 
             if ( ! isset( $merge[$masterID] ) ) {
                 // check if this is an intermediate child
@@ -1051,27 +1059,31 @@ ORDER BY  r1.id
                 CRM_Core_Error::fatal( );
             }
             $processed[$masterID] = 1;
-
-            $masterAddressee = array( $values['addressee'] );
+            if ( $values['addressee'] ) {
+                $masterAddressee = array( $values['addressee'] );
+            }
             $deleteIDs = array( );
             foreach ( $values['copy'] as $copyID => $copyAddressee ) {
                 if ( isset( $processed[$copyID] ) ) {
                     CRM_Core_Error::fatal( );
                 }
                 $processed[$copyID] = 1;
-
-                $masterAddressee[] = $copyAddressee;
+                if ( $copyAddressee ) {
+                    $masterAddressee[] = $copyAddressee;
+                }
                 $deleteIDs[] = $copyID;
             }
             
             $addresseeString = implode( ',', $masterAddressee );
+            
+            $finalAddresseeString = str_replace( $last . " ,", ",", $addresseeString );
 
             $sql = "
 UPDATE $tableName
 SET    addressee = %1
 WHERE  id = %2
 ";
-            $params = array( 1 => array( $addresseeString, 'String'  ),
+            $params = array( 1 => array( $finalAddresseeString, 'String'  ),
                              2 => array( $masterID       , 'Integer' ) );
             CRM_Core_DAO::executeQuery( $sql, $params );
             
@@ -1082,6 +1094,20 @@ DELETE FROM $tableName
 WHERE  id IN ( $deleteIDString )
 ";
             CRM_Core_DAO::executeQuery( $sql );
+        }
+
+        // drop the table columns for last name
+        // if added for addressee calculation
+        if ( $dropLastName ) {
+            $dropQuery = "
+ALTER TABLE $tableName
+DROP  last_name";
+            
+            CRM_Core_DAO::executeQuery( $dropQuery );
+
+            unset($sqlColumns['last_name']);
+            $lastNameKey = CRM_Utils_Array::key( 'Last Name', $headerRows);
+            unset($headerRows[$lastNameKey]);
         }
     }
     
