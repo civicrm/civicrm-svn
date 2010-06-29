@@ -146,7 +146,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                                         
                     if ( !empty( $subTypeTemplates ) ) {
                         $subTypeTemplates = implode( ',', $subTypeTemplates );
-                        $message .= '<br />' . ts("It seems you are using Custom templates for contact subtypes : {$subTypeTemplates}.") . '<br />' . ts("You need to migrate these subtype templates to the SubType directory in CRM/Contact/Form/Edit/ and CRM/Contact/Page/View respectively.");
+                        $message .= '<br />' . ts("You are using custom template for contact subtypes: {$subTypeTemplates}.") . '<br />' . ts("You need to move these subtype templates to the SubType directory in CRM/Contact/Form/Edit/ and CRM/Contact/Page/View respectively.");
                     }
                 }
             }
