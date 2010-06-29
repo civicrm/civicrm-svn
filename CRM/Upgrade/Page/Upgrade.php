@@ -118,6 +118,37 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
             $message   = ts('CiviCRM upgrade was successful.');
             if ( $latestVer == '3.2.alpha1' ) {
                 $message .= '<br />' . ts("We have reset the COUNTED flag to false for the event participant status 'Pending from incomplete transaction'. This change ensures that people who have a problem during registration can try again.");
+            } else if ( $latestVer == '3.2.beta3' ) {
+                require_once 'CRM/Contact/BAO/ContactType.php';
+                $subTypes = CRM_Contact_BAO_ContactType::subTypes( );
+                                
+                if ( is_array( $subTypes ) && !empty( $subTypes ) ) {
+                    $config = CRM_Core_Config::singleton( );
+                    $subTypeTemplates = array( );
+                    
+                    if ( isset( $config->customTemplateDir ) ) {
+                        foreach( $subTypes as $key => $subTypeName ) {
+                            $customContactSubTypeEdit = $config->customTemplateDir . "CRM/Contact/Form/Edit/" . $subTypeName . ".tpl";
+                            $customContactSubTypeView = $config->customTemplateDir . "CRM/Contact/Page/View/" . $subTypeName . ".tpl";
+                            if ( file_exists( $customContactSubTypeEdit ) || file_exists( $customContactSubTypeView ) ) {
+                                $subTypeTemplates[$subTypeName] = $subTypeName;
+                            }
+                        }
+                    } 
+                    
+                    foreach( $subTypes as $key => $subTypeName ) {
+                        $customContactSubTypeEdit = $config->templateDir . "CRM/Contact/Form/Edit/" . $subTypeName . ".tpl";
+                        $customContactSubTypeView = $config->templateDir . "CRM/Contact/Page/View/" . $subTypeName . ".tpl";
+                            if ( file_exists( $customContactSubTypeEdit ) || file_exists( $customContactSubTypeView ) ) {
+                                $subTypeTemplates[$subTypeName] = $subTypeName;
+                            }
+                    }
+                                        
+                    if ( !empty( $subTypeTemplates ) ) {
+                        $subTypeTemplates = implode( ',', $subTypeTemplates );
+                        $message .= '<br />' . ts("It seems you are using Custom templates for contact subtypes : {$subTypeTemplates}.") . '<br />' . ts("You need to migrate these subtype templates to the SubType directory in CRM/Contact/Form/Edit/ and CRM/Contact/Page/View respectively.");
+                    }
+                }
             }
             $template->assign( 'currentVersion',  $currentVer);
             $template->assign( 'newVersion',      $latestVer );
