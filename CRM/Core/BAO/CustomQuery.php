@@ -357,6 +357,7 @@ SELECT label, value
                                     $sqlOPlabel = ts('match ANY');
                                     continue;
                                 }
+                                $v = CRM_Core_DAO::escapeString($v);
                                 $sqlValue[] = "( $sql like '%" . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $v . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . "%' ) ";
                             }
                             //if user select only 'CiviCRM_OP_OR' value
