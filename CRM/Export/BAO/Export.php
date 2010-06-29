@@ -1018,6 +1018,7 @@ SELECT    r1.id as master_id,
           r1.last_name as last_name,
           r1.addressee as master_addressee,
           r2.id as copy_id,
+          r2.last_name as copy_last_name,
           r2.addressee as copy_addressee
 FROM      $tableName r1
 LEFT JOIN $tableName r2 ON r1.street_address = r2.street_address
@@ -1029,12 +1030,18 @@ ORDER BY  r1.id
 ";
 
         $dao = CRM_Core_DAO::executeQuery( $sql );
-        
+        $mergeLastName = true;
         $merge = $parents = array( );
         while ( $dao->fetch( ) ) {
             $masterID = $dao->master_id;
             $copyID   = $dao->copy_id;
-            $last     = $dao->last_name;
+            $lastName = $dao->last_name;
+            $copyLastName = $dao->copy_last_name;
+
+            // merge last names only when same
+            if ( $lastName != $copyLastName ) {
+                $mergeLastName = false;
+            }
 
             if ( ! isset( $merge[$masterID] ) ) {
                 // check if this is an intermediate child
@@ -1075,15 +1082,16 @@ ORDER BY  r1.id
             }
             
             $addresseeString = implode( ',', $masterAddressee );
+            if ( $mergeLastName ) {
+                $addresseeString = str_replace( $lastName . " ,", ",", $addresseeString );
+            }
             
-            $finalAddresseeString = str_replace( $last . " ,", ",", $addresseeString );
-
             $sql = "
 UPDATE $tableName
 SET    addressee = %1
 WHERE  id = %2
 ";
-            $params = array( 1 => array( $finalAddresseeString, 'String'  ),
+            $params = array( 1 => array( $addresseeString, 'String'  ),
                              2 => array( $masterID       , 'Integer' ) );
             CRM_Core_DAO::executeQuery( $sql, $params );
             
