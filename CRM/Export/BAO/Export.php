@@ -279,7 +279,7 @@ class CRM_Export_BAO_Export
         }
         
         if ( $mergeSameAddress ) {
-            $dropLastName = false;
+            $drop = false;
             
             //make sure the addressee fields are selected
             //while using merge same address feature
@@ -287,7 +287,7 @@ class CRM_Export_BAO_Export
             $returnProperties['street_name'   ] = 1;
             if (!in_array('last_name', $returnProperties)) {
                 $returnProperties['last_name'   ] = 1;
-                $dropLastName = true;
+                $drop = 'last_name';
             }
             $returnProperties['household_name'] = 1;
             $returnProperties['street_address'] = 1;
@@ -749,7 +749,7 @@ GROUP BY        {$contactA}";
 
         // do merge same address and merge same household processing
         if ( $mergeSameAddress ) {
-            self::mergeSameAddress( $exportTempTable, $headerRows, $sqlColumns, $dropLastName );
+            self::mergeSameAddress( $exportTempTable, $headerRows, $sqlColumns, $drop );
         }
         
         // merge the records if they have corresponding households
@@ -1010,7 +1010,7 @@ CREATE TABLE {$exportTempTable} (
         return $exportTempTable;
     }
 
-    static function mergeSameAddress( $tableName, &$headerRows, &$sqlColumns, $dropLastName = false)
+    static function mergeSameAddress( $tableName, &$headerRows, &$sqlColumns, $drop = false)
     {
         // find all the records that have the same street address BUT not in a household
         $sql = "
@@ -1106,16 +1106,18 @@ WHERE  id IN ( $deleteIDString )
 
         // drop the table columns for last name
         // if added for addressee calculation
-        if ( $dropLastName ) {
+        if ( $drop ) {
             $dropQuery = "
 ALTER TABLE $tableName
-DROP  last_name";
+DROP  $drop";
             
             CRM_Core_DAO::executeQuery( $dropQuery );
 
-            unset($sqlColumns['last_name']);
-            $lastNameKey = CRM_Utils_Array::key( 'Last Name', $headerRows);
-            unset($headerRows[$lastNameKey]);
+            unset($sqlColumns[$drop]);
+            $allKeys = array_keys( $sqlColumns );
+            if ( $key = CRM_Utils_Array::key( $drop, $allKeys ) ) {
+                unset( $headerRows[$key] );
+            }
         }
     }
     
