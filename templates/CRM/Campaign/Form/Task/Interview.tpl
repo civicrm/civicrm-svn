@@ -41,7 +41,6 @@
 	     {foreach from=$surveyFields item=fVal key=fId}
 	        <th>{$fVal.label}</th>
 	     {/foreach}
-	     <th></th>
        </tr>
     </thead>
 
@@ -53,16 +52,20 @@
 	    {/foreach}
 
 	    {* here build the survey fields *}
+	    {assign var=surveyFieldCount value=$surveyFields|@count}
+	    {assign var=currentCount value='1'}
 	    {foreach from=$surveyFields item=field key=fId}
 		{assign var=name value=$field.element_name}
-	        <td>{$form.field.$voterId.$name.html}</td>
+	        <td>{$form.field.$voterId.$name.html}
+		{* display save button *}
+		{if $currentCount eq $surveyFieldCount}
+		    &nbsp;&nbsp;&nbsp;<a id='saveVoter' href="#" title={ts}Save{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}save{/ts}</a>
+		   {* hack to get control for interview ids during ajax calls. *}
+		   <span style="display:none;">{$form.field.$voterId.interview_id.html}</span>
+ 		{/if}
+		</td>		
+		{assign var=currentCount value=$currentCount+1}
 	    {/foreach}
-		<td> 
-		&nbsp;&nbsp;<a id='saveVoter' href="#" title={ts}Save{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}save{/ts}</a>
-		
-		{* hack to get control for interview ids during ajax calls. *}
-		<span style="display:none;">{$form.field.$voterId.interview_id.html}</span>
-		</td>
 	</tr>
 	{/foreach}
     </tbody>
@@ -79,9 +82,9 @@
 
 	//load jQuery data table.
         cj('#voterRecords').dataTable( {
-            "bPaginate": false,
-            "bInfo": false,
-        } );        
+		"bJQueryUI": true,
+		"sPaginationType": "full_numbers"
+        });        
 
     });
 

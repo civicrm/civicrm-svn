@@ -123,7 +123,11 @@ class CRM_Campaign_Form_Task extends CRM_Core_Form
         
         //set the context for redirection for any task actions
         $session = CRM_Core_Session::singleton( );
-        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/survey/search', 'force=1' ) );
+        require_once 'CRM/Utils/Rule.php';
+        $qfKey     = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= '&qfKey='.$qfKey;
+        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/survey/search', $urlParams ) );
     }
     
     /**

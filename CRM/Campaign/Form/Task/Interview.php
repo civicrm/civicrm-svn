@@ -164,7 +164,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->assign( 'surveyFields', $this->_surveyFields );
         
         $this->addButtons( array(
-                                 array ( 'type'      => 'submit',
+                                 array ( 'type'      => 'next',
                                          'name'      => ts('Record Voters Interview'),
                                          'isDefault' => true   ),
                                  array ( 'type'      => 'cancel',
