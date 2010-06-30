@@ -53,7 +53,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      *
      */
     private $_userContext;
-
+    
     private $_groupTree;
     
     private $_surveyFields;
@@ -61,6 +61,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     private $_surveyTypeId;
     
     private $_interviewerId;
+    
+    private $_campaignId;
     
     /**
      * build all the data structures needed to build the form
@@ -79,6 +81,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         if ( !$this->_surveyId ) {
             CRM_Core_Error::statusBounce( ts( "Could not find Survey Id.") );
         }
+        $this->_campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $this->_surveyId, 'campaign_id' );
+        
         $session = CRM_Core_Session::singleton( );
         $this->_interviewerId = $session->get('userID');
         
@@ -98,6 +102,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->assign( 'voterDetails',   $voterDetails );
         $this->assign( 'readOnlyFields', $readOnlyFields );
         $this->assign( 'interviewerId',  $this->_interviewerId );
+        $this->assign( 'campaignId',     $this->_campaignId );
     }
     
     /**
@@ -204,6 +209,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             $values['voter_id']       = $voterId;
             $values['survey_type_id'] = $this->_surveyTypeId;
             $values['interviewer_id'] = $this->_interviewerId;
+            $values['campaign_id']    = $this->_campaignId;
             self::registerInterview( $values );
         }
         
@@ -252,6 +258,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $actParams['target_contact_id']  = $params['voter_id'];
         $actParams['activity_type_id']   = $actTypeId;
         $actParams['activity_date_time'] = date( 'Ymdhis' );
+        $actParams['campaign_id']        = $params['campaign_id'];
         
         //create an activity record.
         require_once 'CRM/Activity/BAO/Activity.php';
