@@ -96,8 +96,8 @@ class CRM_Event_Form_EventFees
                     $form->assign( 'discount', $discounts[$defaults[$form->_pId]['discount_id']] );
                 }
                 
-                $form->assign( 'fee_amount', $defaults[$form->_pId]['fee_amount'] );
-                $form->assign( 'fee_level', $defaults[$form->_pId]['fee_level'] );
+                $form->assign( 'fee_amount', CRM_Utils_Array::value( 'fee_amount', $defaults[$form->_pId] ) );
+                $form->assign( 'fee_level', CRM_Utils_Array::value( 'fee_level', $defaults[$form->_pId] ) );
             }
             $defaults[$form->_pId]['send_receipt'] = 0;
         } else {
@@ -520,6 +520,7 @@ SELECT  id, label, name, option_group_id
                           'send_receipt', 
                           ts('Send Confirmation?'), null, 
                           array('onclick' =>"return showHideByValue('send_receipt','','notice','table-row','radio',false);") );
+
         $form->add('textarea', 'receipt_text', ts('Confirmation Message') );
         
         // Retrieve the name and email of the contact - form will be the TO for receipt email ( only if context is not standalone)        

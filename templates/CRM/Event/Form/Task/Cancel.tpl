@@ -24,7 +24,10 @@
  +--------------------------------------------------------------------+
 *}
 {* Confirmation of Cancel Registration *}
-<div class="spacer"></div>
+<div class="crm-block crm-form-block crm-event-cancel-form-block">
+<div class="crm-submit-buttons">
+  {include file="CRM/common/formButtons.tpl" location="top"} 
+</div>
 <div class="messages status">
   <div class="icon inform-icon"></div>
   <div>
@@ -33,6 +36,7 @@
   </div>
 </div>
 
-<div class="form-item">
-  {include file="CRM/common/formButtons.tpl"} 
+<div class="crm-submit-buttons">
+  {include file="CRM/common/formButtons.tpl" location="bottom"} 
+</div>
 </div>

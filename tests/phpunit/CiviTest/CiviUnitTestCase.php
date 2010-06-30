@@ -456,7 +456,8 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                          // FIXME: I know it's 1, cause it was loaded directly to the db.
                          // FIXME: when we load all the data, we'll need to address this to
                          // FIXME: avoid hunting numbers around.
-                         'contribution_type_id' => 1 );
+                         'contribution_type_id' => 1,
+                         'is_active'            => 1 );
         
         $result = civicrm_membership_type_create( $params );
         

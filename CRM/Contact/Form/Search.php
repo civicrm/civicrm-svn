@@ -229,13 +229,21 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
     static function &validContext()
     {
         if (!(self::$_validContext)) {
-            self::$_validContext = array(
-                'search' => 'Search',
-                'smog'   => 'Show members of group',
-                'amtg'   => 'Add members to group'
-            );
+            self::$_validContext = array( 'smog'     => 'Show members of group',
+                                          'amtg'     => 'Add members to group',
+                                          'basic'    => 'Basic Search',
+                                          'search'   => 'Search',
+                                          'builder'  => 'Search Builder',
+                                          'advanced' => 'Advanced Search',
+                                          'custom'   => 'Custom Search' );
         }
         return self::$_validContext;
+    }
+    
+    static function isSearchContext( $context ) 
+    {
+        $searchContext = CRM_Utils_Array::value( $context, self::validContext( ) );
+        return $searchContext ? true : false;
     }
     
     /**
@@ -249,7 +257,10 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $permission = CRM_Core_Permission::getPermission( );
 
         // some tasks.. what do we want to do with the selected contacts ?
-        $tasks = array( '' => ts('- actions -') ) + CRM_Contact_Task::permissionedTaskTitles($permission, $this->_formValues['deleted_contacts']);
+        $tasks = array( '' => ts('- actions -') ) + 
+            CRM_Contact_Task::permissionedTaskTitles( $permission, 
+                                                      CRM_Utils_Array::value( 'deleted_contacts', $this->_formValues ) );
+        
         if ( isset( $this->_ssID ) ) {
             if ( $permission == CRM_Core_Permission::EDIT ) {
                 $tasks = $tasks + CRM_Contact_Task::optionalTaskTitle();
@@ -386,7 +397,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
          */
         $this->_group           =& CRM_Core_PseudoConstant::group( );
         $this->_groupIterator   =& CRM_Core_PseudoConstant::groupIterator( );
-        $this->_tag             =  CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
+        $this->_tag             =  CRM_Core_BAO_Tag::getTags( );
         $this->_done            =  false;
 
         /**
@@ -433,14 +444,13 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         /*
          * assign context to drive the template display, make sure context is valid
          */
-        $this->_context = CRM_Utils_Request::retrieve( 'context', 'String',
-                                                       $this, false, 'search' );
-        if ( ! CRM_Utils_Array::value( $this->_context, self::validContext() ) ) {
+        $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'search' );
+        if ( ! CRM_Utils_Array::value( $this->_context, self::validContext( ) ) ) {
             $this->_context = 'search';
-            $this->set( 'context', $this->_context );
         }
+        $this->set( 'context', $this->_context );
         $this->assign( 'context', $this->_context );
-
+        
         $this->set( 'selectorName', $this->_selectorName );
 
         // get user submitted values 
@@ -492,7 +502,7 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
         $this->assign( 'id', CRM_Utils_Array::value( 'uf_group_id', $this->_formValues ) );
         
         // show the context menu only when we’re not searching for deleted contacts; CRM-5673
-        if (!$this->_formValues['deleted_contacts']) {
+        if ( !CRM_Utils_Array::value( 'deleted_contacts', $this->_formValues ) ) {
             require_once 'CRM/Contact/BAO/Contact.php';
             $menuItems = CRM_Contact_BAO_Contact::contextMenu( );
             $primaryActions     = CRM_Utils_Array::value( 'primaryActions', $menuItems, array( ) ); 
@@ -603,6 +613,8 @@ class CRM_Contact_Form_Search extends CRM_Core_Form {
                      $searchChildGroups,
                      $this->_context,
                      $this->_contextMenu );' );
+
+            $selector->setKey( $this->controller->_key );
             
             // added the sorting  character to the form array
             // lets recompute the aToZ bar without the sortByCharacter

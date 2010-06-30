@@ -37,7 +37,8 @@ class WebTest_Mailing_AddNewMailingComponent extends CiviSeleniumTestCase {
         parent::setUp();
     }
     
-    function testHeaderAdd( ) {
+    function testHeaderAdd( ) 
+    {
         // This is the path where our testing install resides. 
         // The rest of URL is defined in CiviSeleniumTestCase base class, in
         // class attributes.
@@ -50,7 +51,7 @@ class WebTest_Mailing_AddNewMailingComponent extends CiviSeleniumTestCase {
         // page contents loaded and you can continue your test execution.
         $this->webtestLogin( );
         
-        // Go directly to the URL of the screen that you will be testing (New Individual).
+        // Go directly to the URL of the screen that you will be testing (Add New Mailing Component).
         $this->open($this->sboxPath . "civicrm/admin/component?action=add&reset=1");
         
         
@@ -79,11 +80,19 @@ class WebTest_Mailing_AddNewMailingComponent extends CiviSeleniumTestCase {
         $this->click("_qf_Component_next");
         $this->waitForPageToLoad("30000");
 
-        $this->assertTrue($this->isTextPresent("The mailing component".$componentName." has been saved."));
+        // Is status message correct.
+        $this->assertTrue($this->isTextPresent("The mailing component '$componentName' has been saved."));
        
+        // Verify text.
+        $this->assertTrue( $this->isTextPresent( $componentName ) );
+        $this->assertTrue( $this->isTextPresent( "Header" ) );
+        $this->assertTrue( $this->isTextPresent( $subject ) );                                       
+        $this->assertTrue( $this->isTextPresent( $txtMsg) );
+        $this->assertTrue( $this->isTextPresent( $htmlMsg) );
     }
     
-    function testFooterAdd( ) {
+    function testFooterAdd( ) 
+    {
         // This is the path where our testing install resides. 
         // The rest of URL is defined in CiviSeleniumTestCase base class, in
         // class attributes.
@@ -96,7 +105,7 @@ class WebTest_Mailing_AddNewMailingComponent extends CiviSeleniumTestCase {
         // page contents loaded and you can continue your test execution.
         $this->webtestLogin( );
         
-        // Go directly to the URL of the screen that you will be testing (New Individual).
+        // Go directly to the URL of the screen that you will be testing (Add New Mailing Component).
         $this->open($this->sboxPath . "civicrm/admin/component?action=add&reset=1");
         
         
@@ -125,11 +134,20 @@ class WebTest_Mailing_AddNewMailingComponent extends CiviSeleniumTestCase {
         $this->click("_qf_Component_next");
         $this->waitForPageToLoad("30000");
         
-        $this->assertTrue($this->isTextPresent("The mailing component".$componentName." has been saved."));
+        // Is status message correct.
+        $this->assertTrue($this->isTextPresent("The mailing component '$componentName' has been saved."));
+      
+        // Verify text.
+        $this->assertTrue( $this->isTextPresent( $componentName ) );
+        $this->assertTrue( $this->isTextPresent( "Footer" ) );
+        $this->assertTrue( $this->isTextPresent( $subject ) );                                       
+        $this->assertTrue( $this->isTextPresent( $txtMsg) );
+        $this->assertTrue( $this->isTextPresent( $htmlMsg) );
         
     }
     
-    function testAutomatedAdd( ) {
+    function testAutomatedAdd( ) 
+    {
         // This is the path where our testing install resides. 
         // The rest of URL is defined in CiviSeleniumTestCase base class, in
         // class attributes.
@@ -142,7 +160,7 @@ class WebTest_Mailing_AddNewMailingComponent extends CiviSeleniumTestCase {
         // page contents loaded and you can continue your test execution.
         $this->webtestLogin( );
         
-        // Go directly to the URL of the screen that you will be testing (New Individual).
+        // Go directly to the URL of the screen that you will be testing (Add New Mailing Component).
         $this->open($this->sboxPath . "civicrm/admin/component?action=add&reset=1");
         
         
@@ -171,7 +189,15 @@ class WebTest_Mailing_AddNewMailingComponent extends CiviSeleniumTestCase {
         $this->click("_qf_Component_next");
         $this->waitForPageToLoad("30000");
         
-        $this->assertTrue($this->isTextPresent("The mailing component".$componentName." has been saved."));
+        // Is status message correct.
+        $this->assertTrue($this->isTextPresent("The mailing component '$componentName' has been saved."));
+        
+        // Verify text
+        $this->assertTrue( $this->isTextPresent( $componentName ) );
+        $this->assertTrue( $this->isTextPresent( "Reply" ) );
+        $this->assertTrue( $this->isTextPresent( $subject ) );                                       
+        $this->assertTrue( $this->isTextPresent( $txtMsg) );
+        $this->assertTrue( $this->isTextPresent( $htmlMsg) );
     }
 }
 ?>

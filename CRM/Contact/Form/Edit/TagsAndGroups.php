@@ -135,8 +135,8 @@ class CRM_Contact_Form_Edit_TagsandGroups
             }
             $form->_tagGroup[$fName] = 1;
             $elements = array( );
-            require_once 'CRM/Core/BAO/Tag.php';
-            $tag = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
+            require_once 'CRM/Core/BAO/Tag.php';            
+            $tag = CRM_Core_BAO_Tag::getTags( );
             
             foreach ($tag as $id => $name) {
                 $elements[] =& HTML_QuickForm::createElement('checkbox', $id, null, $name);
@@ -149,6 +149,13 @@ class CRM_Contact_Form_Edit_TagsandGroups
             if ( $isRequired ) {
                 $form->addRule( $fName , ts('%1 is a required field.', array(1 => $tagName)) , 'required');   
             }
+            
+            // build tag widget
+            require_once 'CRM/Core/Form/Tag.php';
+            require_once 'CRM/Core/BAO/Tag.php';
+            $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_contact' );
+            
+            CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact', $form->_contactId, false, true );
         }
         $form->assign('tagGroup', $form->_tagGroup); 
     }

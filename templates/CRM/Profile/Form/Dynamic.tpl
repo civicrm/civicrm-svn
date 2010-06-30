@@ -73,7 +73,7 @@
      {/if}
 
     {if $field.options_per_line}
-	<div class="section editrow_{$n}-section form-item" id="editrow-{$n}">
+	<div class="crm-section editrow_{$n}-section form-item" id="editrow-{$n}">
         <div class="label">{$form.$n.label}</div>
         <div class="content edit-value">
 	    {assign var="count" value="1"}
@@ -98,7 +98,7 @@
           {/foreach}
         </tr>
         </table>
-	{if $field.html_type eq 'Radio' and $form.formName eq 'Edit'}
+	{if $field.html_type eq 'Radio' and $form.formName eq 'Edit' and $field.is_view neq 1 }
            &nbsp;<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
 	{/if}
         {/strip}
@@ -106,7 +106,7 @@
         <div class="clear"></div>
     </div>
 	{else}
-        <div id="editrow-{$n}" class="section editrow_{$n}-section form-item">
+        <div id="editrow-{$n}" class="crm-section editrow_{$n}-section form-item">
            <div class="label">{$form.$n.label}</div>
            <div class="edit-value content">
            {if $n|substr:0:3 eq 'im-'}
@@ -123,7 +123,7 @@
            {elseif ( $form.$n.name eq 'image_URL' )}
 	        {$form.$n.html}
 		      {if $imageURL}
- 	 	          <div class="section contact_image-section">
+ 	 	          <div class="crm-section contact_image-section">
  	 	              <div class="content">
  	 	              {include file="CRM/Contact/Page/ContactImage.tpl"}
  	 	              </div>
@@ -137,7 +137,8 @@
    		       {else}       
                   {$form.$n.html}
                {/if}
-               {if ($n eq 'gender') or ($field.html_type eq 'Radio' and $form.formName eq 'Edit' and $field.is_required neq 1)}
+               {if (($n eq 'gender') or ($field.html_type eq 'Radio' and $form.formName eq 'Edit' and $field.is_required neq 1)) and
+	       	   ($field.is_view neq 1)}
                        &nbsp;<span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('{$n}', '{$form.formName}'); return false;">{ts}clear{/ts}</a>)</span>
 		       {elseif $field.html_type eq 'Autocomplete-Select'}
                     {include file="CRM/Custom/Form/AutoComplete.tpl" element_name = $n }
@@ -146,14 +147,14 @@
         <div class="clear"></div>
         </div>
         {if $form.$n.type eq 'file'}
-	      <div class="section file_displayURL-section file_displayURL{$n}-section"><div class="content">{$customFiles.$n.displayURL}</div></div>
-	      <div class="section file_deleteURL-section file_deleteURL{$n}-section"><div class="content">{$customFiles.$n.deleteURL}</div></div>
+	      <div class="crm-section file_displayURL-section file_displayURL{$n}-section"><div class="content">{$customFiles.$n.displayURL}</div></div>
+	      <div class="crm-section file_deleteURL-section file_deleteURL{$n}-section"><div class="content">{$customFiles.$n.deleteURL}</div></div>
         {/if} 
 	{/if}
 
     {* Show explanatory text for field if not in 'view' mode *}
     {if $field.help_post && $action neq 4 && $form.$n.html}
-        <div class="section helprow-{$n}-section" id="helprow-{$n}"><div class="content description">{$field.help_post}</div></div>
+        <div class="crm-section helprow-{$n}-section" id="helprow-{$n}"><div class="content description">{$field.help_post}</div></div>
     {/if}
 
     {/if}
@@ -208,10 +209,8 @@ invert              = 0
 }
 {elseif $statusMessage}
     <div class="messages status">
-      <dl>
-        <dt><div class="icon inform-icon"></div></dt>
-        <dd>{$statusMessage}</dd>
-      </dl>
+    <div class="icon inform-icon"></div>
+       {$statusMessage}
     </div>
 {/if}
 {literal}

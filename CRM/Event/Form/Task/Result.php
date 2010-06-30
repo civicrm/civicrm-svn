@@ -60,6 +60,9 @@ class CRM_Event_Form_Task_Result extends CRM_Event_Form_Task {
         if ( isset( $ssID ) ) {
             $path .= "&reset=1&ssID={$ssID}";
         }
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        require_once 'CRM/Utils/Rule.php';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $path .= "&qfKey=$qfKey";
         
         $url = CRM_Utils_System::url( 'civicrm/event/search', $path );
         $session->replaceUserContext( $url );

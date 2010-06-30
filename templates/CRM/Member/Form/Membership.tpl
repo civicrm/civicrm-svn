@@ -24,7 +24,6 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting memberships for a contact  *}
-<div class="crm-block crm-form-block crm-membership-form-block">
 <div class="spacer"></div>
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
@@ -40,18 +39,20 @@
         <p>{ts}You will not be able to send an automatic email receipt for this Membership because there is no email address recorded for this contact. If you want a receipt to be sent when this Membership is recorded, click Cancel and then click Edit from the Summary tab to add an email address before recording the Membership.{/ts}</p>
 </div>
 {/if}
-
+{if $context NEQ 'standalone'}
+   <h3>{if $action eq 1}{ts}New Membership{/ts}{elseif $action eq 2}{ts}Edit Membership{/ts}{else}{ts}Delete Membership{/ts}{/if}</h3>
+{/if}
 {if $membershipMode}
     <div id="help">
         {ts 1=$displayName 2=$registerMode}Use this form to submit Membership Record on behalf of %1. <strong>A %2 transaction will be submitted</strong> using the selected payment processor.{/ts}
     </div>
 {/if}
-<fieldset><legend>{if $action eq 1}{ts}New Membership{/ts}{elseif $action eq 2}{ts}Edit Membership{/ts}{else}{ts}Delete Membership{/ts}{/if}</legend>
+<div class="crm-block crm-form-block crm-membership-form-block">
    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     {if $action eq 8}
       <div class="messages status">
           <div class="icon inform-icon"></div>       
-          {ts}WARNING: Deleting this membership will also delete related membership log and payment records. This action cannot be undone. Consider modifying the membership status instead if you want to maintain a record of this membership.{/ts}
+          {ts}WARNING: Deleting this membership will also delete related membership log and payment records.{/ts} {ts}This action cannot be undone.{/ts} {ts}Consider modifying the membership status instead if you want to maintain a record of this membership.{/ts}
           {ts}Do you want to continue?{/ts}    
       </div>
     {else}
@@ -166,7 +167,6 @@
                  {$form.receipt_text_signup.html|crmReplace:class:huge}</td>
         </tr>
     </table>
-</fieldset>   
     <div id="customData"></div>
     {*include custom data js file*}
     {include file="CRM/common/customData.tpl"}

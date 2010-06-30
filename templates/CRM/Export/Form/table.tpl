@@ -57,12 +57,12 @@
             <span>{$form.updateMapping.html}{$form.updateMapping.label}&nbsp;&nbsp;&nbsp;</span>
 	{/if}
 	<span>{$form.saveMapping.html}{$form.saveMapping.label}</span>
-	<div id="saveDetails" class="form-item">
-	      <dl>
-		   <dt>{$form.saveMappingName.label}</dt><dd>{$form.saveMappingName.html}</dd>
-		   <dt>{$form.saveMappingDesc.label}</dt><dd>{$form.saveMappingDesc.html}</dd>
-	      </dl>
-	</div>
+    <div id="saveDetails" class="form-item">
+      <table class="form-layout-compressed">
+         <tr><td class="label">{$form.saveMappingName.label}</td><td>{$form.saveMappingName.html}</td></tr>
+         <tr><td class="label">{$form.saveMappingDesc.label}</td><td>{$form.saveMappingDesc.html}</td></tr>
+      </table>
+    </div>
 	
 
 	<script type="text/javascript">

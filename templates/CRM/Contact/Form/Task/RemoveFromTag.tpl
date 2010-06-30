@@ -24,12 +24,13 @@
  +--------------------------------------------------------------------+
 *}
 {* template to remove tags from contact  *}
-<div class="crm-form-block crm-block crm-remove_from_tag-block">
+<div class="crm-form-block crm-block crm-contact-task-removefromtag-form-block">
 <h3>
 {ts}Tag Contact(s) (Remove){/ts}
 </h3>
-<table class="form-layout">
-    <tr>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
+<table class="form-layout-compressed">
+    <tr class="crm-contact-task-removefromtag-form-block-tag">
         <td>
             <div class="listing-box">
             {foreach from=$form.tag item="tag_val"}
@@ -46,6 +47,6 @@
     </tr>
 
     <tr><td>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>
-    <tr><td>{$form.buttons.html}</td></tr>
 </table>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>

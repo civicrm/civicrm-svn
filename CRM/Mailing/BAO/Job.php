@@ -67,7 +67,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
         $jobTable     = CRM_Mailing_DAO_Job::getTableName();
         $mailingTable = CRM_Mailing_DAO_Mailing::getTableName();
 
-        if (!empty($testParams)) {
+        if ( ! empty( $testParams ) ) {
             $query = "
 SELECT *
   FROM $jobTable
@@ -100,11 +100,6 @@ ORDER BY j.scheduled_date,
 
         /* TODO We should parallelize or prioritize this */
         while ($job->fetch()) {
-            // fix for cancel job at run time which is in queue, CRM-4246
-            if ( CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Job', $job->id, 'status' ) == 'Canceled' ) {
-                continue;
-            }
-            
             $lockName = "civimail.job.{$job->id}";
 
             // get a lock on this job id
@@ -113,6 +108,23 @@ ORDER BY j.scheduled_date,
                 continue;
             }
 
+            // for test jobs we do not change anything, since its on a short-circuit path
+            if ( empty( $testParams ) ) {
+                // we've got the lock, but while we were waiting and processing
+                // other emails, this job might have changed under us
+                // lets get the job status again and check
+                $job->status = CRM_Core_DAO::getFieldValue( 'CRM_Mailing_DAO_Job', 
+                                                            $job->id,
+                                                            'status' );
+
+                if ( $job->status != 'Running' &&
+                     $job->status != 'Scheduled' ) {
+                    // this includes Cancelled and other statuses, CRM-4246
+                    $lock->release( );
+                    continue;
+                }
+            }
+          
             /* Queue up recipients for all jobs being launched */
             if ($job->status != 'Running') {
                 require_once 'CRM/Core/Transaction.php';
@@ -137,7 +149,7 @@ ORDER BY j.scheduled_date,
 
             /* Compose and deliver */
             $isComplete = $job->deliver($mailer, $testParams);
-
+            
             require_once 'CRM/Utils/Hook.php';
             CRM_Utils_Hook::post( 'create', 'CRM_Mailing_DAO_Spool', $job->id, $isComplete);
             
@@ -310,7 +322,7 @@ ORDER BY j.scheduled_date,
                 $fields = array( );
             }
         }
-        
+
         $isDelivered = $this->deliverGroup( $fields, $mailing, $mailer, $job_date, $attachments );
         return $isDelivered;
     }

@@ -57,6 +57,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
      */
     function buildQuickForm( )
     {
+        $this->set('context', 'advanced' );
         require_once 'CRM/Contact/Form/Search/Criteria.php';
 
         $this->_searchPane = CRM_Utils_Array::value( 'searchPane', $_GET );
@@ -204,7 +205,7 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
     function postProcess( ) 
     {
         $this->set('isAdvanced', '1');
-
+        
         // get user submitted values
         // get it from controller only if form has been submitted, else preProcess has set this
         if ( ! empty( $_POST ) ) {
@@ -307,13 +308,16 @@ class CRM_Contact_Form_Search_Advanced extends CRM_Contact_Form_Search
         }
         
         $taglist = CRM_Utils_Array::value( 'taglist', $this->_formValues );
+        
         if ( $taglist && is_array( $taglist ) ) {
             unset( $this->_formValues['taglist'] );
             foreach( $taglist as $value ) {
                 if ( $value ) {
                     $value = explode(',', $value );
                     foreach( $value as $tId ) {
-                        $this->_formValues['contact_tags'][$tId] = 1;
+                        if ( is_numeric( $tId ) ) {
+                            $this->_formValues['contact_tags'][$tId] = 1;
+                        }
                     }
                 }
             }            

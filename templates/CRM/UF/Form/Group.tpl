@@ -24,52 +24,48 @@
  +--------------------------------------------------------------------+
 *}
 {* add/update/view CiviCRM Profile *} 
+  <div class=" crm-block crm-form-block crm-uf_group-form-block">  
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {if $action eq 2 or $action eq 4 } {* Update or View*}
     <div class="action-link">
 	<a href="{crmURL p='civicrm/admin/uf/group/field' q="action=browse&reset=1&gid=$gid"}" class="button"><span>{ts}View or Edit Fields for this Profile{/ts}</a></span>
 	<div class="clear"></div>
     </div>
 {/if}      
-<div class="crm-form-block">   
+ 
     {if $action eq 8 or $action eq 64}
+    {if $action eq 8}
+     <h2> {ts}Delete CiviCRM Profile{/ts}</h2>
+    {/if}
             <div class="messages status">
-                <dl>
-                    <dt><div class="icon inform-icon"></div></dt>
-                    <dd>{$message}</dd>
-                </dl>
-            </div>            
-            <h3>
-            {if $action eq 8}
-                {ts}Delete CiviCRM Profile{/ts}
-            {else}
-                {ts}Disable CiviCRM Profile{/ts}
-            {/if}
-            </h3>
-
+                   <div class="icon inform-icon"></div>
+                   {$message}
+            </div>   
+	       
     {else}
-        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+       
         <table class="form-layout">
-            <tr>
+            <tr class="crm-uf_group-form-block-title">
                 <td class="label">{$form.title.label} {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_uf_group' field='title' id=$gid}{/if}</td>
                 <td class="html-adjust">{$form.title.html}</td>
             </tr>
-            <tr>
+            <tr class="crm-uf_group-form-block-uf_group_type">
                 <td class="label">{$form.uf_group_type.label} {help id='id-used_for' file="CRM/UF/Form/Group.hlp"}</td>
                 <td class="html-adjust">{$form.uf_group_type.html}&nbsp;{$otherModuleString}</td>
             </tr>
-            <tr>
+            <tr class="crm-uf_group-form-block-weight" >
                 <td class="label">{$form.weight.label}{if $config->userFramework EQ 'Drupal'} {help id='id-profile_weight' file="CRM/UF/Form/Group.hlp"}{/if}</td>
                 <td class="html-adjust">{$form.weight.html}</td>
             </tr>
-            <tr>
+            <tr class="crm-uf_group-form-block-help_pre" >
                 <td class="label">{$form.help_pre.label} {help id='id-help_pre' file="CRM/UF/Form/Group.hlp"}</td>
                 <td class="html-adjust">{$form.help_pre.html}</td>
             </tr>
-            <tr>
+            <tr class="crm-uf_group-form-block-help_post" >
                 <td class="label">{$form.help_post.label} {help id='id-help_post' file="CRM/UF/Form/Group.hlp"}</td>
                 <td class="html-adjust">{$form.help_post.html}</td>
             </tr>
-            <tr>
+            <tr class="crm-uf_group-form-block-is_active" >
                 <td class="label"></td><td class="html-adjust">{$form.is_active.html} {$form.is_active.label}</td>
             </tr>
         </table>
@@ -77,9 +73,9 @@
         {include file='CRM/UF/Form/AdvanceSetting.tpl'}        
     {/if}
 
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
-
+</div>
 {include file="CRM/common/showHide.tpl"}
 
 {* include jscript to warn if unsaved form field changes *}

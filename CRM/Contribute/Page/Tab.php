@@ -270,6 +270,15 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
     {
         $context = CRM_Utils_Request::retrieve( 'context', 'String',
                                                 $this, false, 'search' );
+        $qfKey     = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+
+        // make sure we dont get tricked with a bad key
+        // so check format
+        require_once 'CRM/Core/Key.php';
+        if ( ! CRM_Core_Key::valid( $qfKey ) ) {
+            $qfKey = null;
+        }
+                                                
         $session = CRM_Core_Session::singleton( ); 
        
         switch ( $context ) {
@@ -302,7 +311,12 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             break;
             
         case 'search':
-            $url = CRM_Utils_System::url( 'civicrm/contribute/search', 'force=1' );
+            $extraParams = "force=1";
+            if ( $qfKey ) {
+                $extraParams .= "&qfKey=$qfKey";
+            }
+            $this->assign( 'searchKey',  $qfKey );
+            $url = CRM_Utils_System::url( 'civicrm/contribute/search', $extraParams );
             break;
 
         case 'home':
@@ -350,18 +364,20 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             break;
             
         case 'fulltext':
+            $keyName   = '&qfKey';
+            $urlParams = 'force=1';
+            $urlString = 'civicrm/contact/search/custom';
             if ( $this->_action == CRM_Core_Action::UPDATE ) {
-                $cid = null;
                 if ( $this->_contactId ) {
-                    $cid = '&cid=' . $this->_contactId;
+                    $urlParams .= '&cid=' . $this->_contactId;
                 }
-                
-                $url = CRM_Utils_System::url( 'civicrm/contact/view/contribution', 
-                                              "reset=1&force=1&context=fulltext&action=view".$cid );
-            } else {
-                $url = CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+                $keyName    = '&key';
+                $urlParams .= '&context=fulltext&action=view';
+                $urlString  = 'civicrm/contact/view/contribution';
             }
-            
+            if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
+            $this->assign( 'searchKey',  $qfKey );
+            $url = CRM_Utils_System::url( $urlString, $urlParams );
             break;
             
         default:

@@ -63,7 +63,7 @@ class CRM_Contact_Form_Search_Criteria {
         if ( $form->_searchOptions['tags'] ) {
             // multiselect for categories
             require_once 'CRM/Core/BAO/Tag.php';
-            $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor( 'civicrm_contact' );
+            $contactTags = CRM_Core_BAO_Tag::getTags( );
             
             if ( $contactTags ) {
                 $form->add( 'select', 'contact_tags',  ts( 'Tags' ), $contactTags, false, 
@@ -73,7 +73,7 @@ class CRM_Contact_Form_Search_Criteria {
             require_once 'CRM/Core/Form/Tag.php';
             require_once 'CRM/Core/BAO/Tag.php';
             $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_contact' );
-            CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact' );
+            CRM_Core_Form_Tag::buildQuickForm( $form, $parentNames, 'civicrm_contact', null, true );
         }
 
         // add text box for last name, first name, street name, city

@@ -27,11 +27,11 @@
 {if $report}
 {$report}
 {else}
-<div id="reportForm" class="crm-form-block">
+<div id="reportForm" class="crm-block crm-form-block crm-case-report-form-block">
 <h3>{ts}Report Parameters{/ts}</h3>
     {strip} 
         <table class="form-layout">
-        <tr class="crm-case-form-block-include_activities">
+        <tr class="crm-case-report-form-block-include_activities">
            <td class="label">
                {$form.include_activities.label}
            </td>       
@@ -39,7 +39,7 @@
                {$form.include_activities.html}
            </td>       
         </tr>
-        <tr class="crm-case-form-block-is_redact">
+        <tr class="crm-case-report-form-block-is_redact">
            <td>
 	       &nbsp;
            </td>       

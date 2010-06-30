@@ -52,17 +52,17 @@
             <th class="hiddenElement"></th>
         </thead>
         {foreach from=$rows item=row}
-           <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class} crm-membership_type {if NOT $row.is_active} disabled{/if}">
-    	        <td class="crm-membership_type-type_name" >{$row.name}</td>	
-	        <td class="crm-memberhip_type-period_type">{$row.period_type}</td>
-	        <td class="crm-membership_type-fixed_period_start_day">{$row.fixed_period_start_day}</td>
-    	        <td class="crm-membership_type-minimum_fee" align="right">{$row.minimum_fee|crmMoney}</td>
-    	        <td class="crm-membership_type-duration_interval_unit">{$row.duration_interval} {$row.duration_unit}</td>
-                <td class="crm-membership_type-relationship_type_name">{$row.relationshipTypeName}</td> 
-                <td class="crm-membership_type-visibility">{$row.visibility}</td>
+           <tr id="row_{$row.id}" class="{cycle values="odd-row,even-row"} {$row.class} crm-membership-type {if NOT $row.is_active} disabled{/if}">
+                <td class="crm-membership-type-type_name" >{$row.name}</td>
+                <td class="crm-memberhip-type-period_type">{$row.period_type}</td>
+                <td class="crm-membership-type-fixed_period_start_day">{$row.fixed_period_start_day}</td>
+                <td class="crm-membership-type-minimum_fee" align="right">{$row.minimum_fee|crmMoney}</td>
+                <td class="crm-membership-type-duration_interval_unit">{$row.duration_interval} {$row.duration_unit}</td>
+                <td class="crm-membership-type-relationship_type_name">{$row.relationshipTypeName}</td>
+                <td class="crm-membership-type-visibility">{$row.visibility}</td>
                 <td class="nowrap crm-membership_type-order">{$row.order}</td>
-    	        <td class="crm-membership_type-status_{$row.id}" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-    	        <td>{$row.action|replace:'xx':$row.id}</td>
+                <td class="crm-membership-type-status_{$row.id}" id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+                <td>{$row.action|replace:'xx':$row.id}</td>
                 <td class="order hiddenElement">{$row.weight}</td>
            </tr>
         {/foreach}

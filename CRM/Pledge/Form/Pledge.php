@@ -115,24 +115,18 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         }
 
         require_once 'CRM/Contact/BAO/Contact/Location.php';
+        $this->userDisplayName = $this->userEmail = null;
         if ( $this->_contactID ) {
             list( $this->userDisplayName, 
                   $this->userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
             $this->assign( 'displayName', $this->userDisplayName );
-            
-            //set the post url
-            $postURL = CRM_Utils_System::url( 'civicrm/contact/view',
-                                              "reset=1&force=1&cid={$this->_contactID}&selectedChild=pledge" );
-            $session = CRM_Core_Session::singleton( ); 
-            $session->pushUserContext( $postURL );
+
+            // set title to "Pledge - "+Contact Name    
+            $displayName = $this->userDisplayName;
+            $pageTitle = 'Pledge - '.$displayName;
+            $this->assign( 'pageTitle', $pageTitle );
         }
-        
-        
-        // set title to "Pledge - "+Contact Name    
-    	$displayName = $this->userDisplayName;
-    	$pageTitle = 'Pledge - '.$displayName;
-    	$this->assign( 'pageTitle', $pageTitle );
-        
+                
         //build custom data
         CRM_Custom_Form_Customdata::preProcess( $this, null, null, 1, 'Pledge', $this->_id );
 
@@ -180,13 +174,6 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         //get the pledge frequency units.
         require_once 'CRM/Core/OptionGroup.php';
         $this->_freqUnits = CRM_Core_OptionGroup::values("recur_frequency_units");
-        if ( $this->_contactID ) {
-            // also set the post url
-            $postURL = CRM_Utils_System::url( 'civicrm/contact/view',
-                                              "reset=1&force=1&cid={$this->_contactID}&selectedChild=pledge" );
-            $session = CRM_Core_Session::singleton( ); 
-            $session->pushUserContext( $postURL );
-        }
     }
     
     /**
@@ -267,7 +254,9 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             $defaults["honor_type"]       = $honorType[$defaults["honor_type_id"]];
         }
         
-        $this->assign( 'email', $this->userEmail );
+        if ( isset( $this->userEmail ) ) {
+            $this->assign( 'email', $this->userEmail );
+        }
 
 		// custom data set defaults
 		$defaults += CRM_Custom_Form_Customdata::setDefaultValues( $this );

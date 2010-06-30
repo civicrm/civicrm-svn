@@ -109,6 +109,6 @@
 {/htxt}
 
 {htxt id='id-is_proximity_search'}
-{ts}If you are using this profile as a search form, you can choose to include proximity searching. When enabled, a proximity search block will be added to the search criteria. This block will contain fields to set the proximity start address, and a field to set a 'Radius' (distance from that address).
-Set proximity search required is you want all searches using this profile to require the user to enter a start address and a radius.{/ts}
+{ts}If you are using this profile as a search form, you can choose to include proximity searching. When enabled, a proximity search block will be added to the search criteria. This block will contain fields to set the proximity start address, and a field to set a 'Radius' (distance from that address).{/ts}
+{ts}Set proximity search required is you want all searches using this profile to require the user to enter a start address and a radius.{/ts}
 {/htxt}

@@ -111,7 +111,7 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
 
         $country = array( ) ;
         CRM_Core_PseudoConstant::populate( $country, 'CRM_Core_DAO_Country', true, 'name', 'is_active' );
-        $i18n->localizeArray($country);
+        $i18n->localizeArray($country, array('context' => 'country'));
         asort($country);
         
         $includeCountry =& $this->addElement('advmultiselect', 'countryLimit', 
@@ -212,33 +212,6 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
         // FIXME: stupid QF not submitting unchecked checkboxen…
         if (!isset($values['inheritLocale'])) $values['inheritLocale'] = 0;
 
-        // make the site multi-lang if requested
-        if ( CRM_Utils_Array::value( 'makeMultilingual', $values ) ) {
-            require_once 'CRM/Core/I18n/Schema.php';
-            CRM_Core_I18n_Schema::makeMultilingual($values['lcMessages']);
-            $values['languageLimit'][$values['lcMessages']] = 1;
-        // make the site single-lang if requested
-        } elseif (CRM_Utils_Array::value('makeSinglelingual', $values)) {
-            require_once 'CRM/Core/I18n/Schema.php';
-            CRM_Core_I18n_Schema::makeSinglelingual($values['lcMessages']);
-            $values['languageLimit'] = '';
-        }
-
-        // add a new db locale if the requested language is not yet supported by the db
-        if (!CRM_Utils_Array::value('makeSinglelingual', $values) and CRM_Utils_Array::value('addLanguage', $values)) {
-            require_once 'CRM/Core/DAO/Domain.php';
-            $domain = new CRM_Core_DAO_Domain();
-            $domain->find(true);
-            if (!substr_count($domain->locales, $values['addLanguage'])) {
-                require_once 'CRM/Core/I18n/Schema.php';
-                CRM_Core_I18n_Schema::addLocale($values['addLanguage'], $values['lcMessages']);
-            }
-            $values['languageLimit'][$values['addLanguage']] = 1;
-        }
-
-        // if we manipulated the language list, return to the localization admin screen
-        $return = (bool) (CRM_Utils_Array::value('makeMultilingual', $values) or CRM_Utils_Array::value('addLanguage', $values) );
-        
         //cache contact fields retaining localized titles
         //though we changed localization, so reseting cache.
         require_once 'CRM/Core/BAO/Cache.php';
@@ -279,6 +252,33 @@ class CRM_Admin_Form_Setting_Localization extends  CRM_Admin_Form_Setting
 
 	// unset currencyLimit so we dont store there
 	unset( $values['currencyLimit'] );
+
+        // make the site multi-lang if requested
+        if ( CRM_Utils_Array::value( 'makeMultilingual', $values ) ) {
+            require_once 'CRM/Core/I18n/Schema.php';
+            CRM_Core_I18n_Schema::makeMultilingual($values['lcMessages']);
+            $values['languageLimit'][$values['lcMessages']] = 1;
+        // make the site single-lang if requested
+        } elseif (CRM_Utils_Array::value('makeSinglelingual', $values)) {
+            require_once 'CRM/Core/I18n/Schema.php';
+            CRM_Core_I18n_Schema::makeSinglelingual($values['lcMessages']);
+            $values['languageLimit'] = '';
+        }
+
+        // add a new db locale if the requested language is not yet supported by the db
+        if (!CRM_Utils_Array::value('makeSinglelingual', $values) and CRM_Utils_Array::value('addLanguage', $values)) {
+            require_once 'CRM/Core/DAO/Domain.php';
+            $domain = new CRM_Core_DAO_Domain();
+            $domain->find(true);
+            if (!substr_count($domain->locales, $values['addLanguage'])) {
+                require_once 'CRM/Core/I18n/Schema.php';
+                CRM_Core_I18n_Schema::addLocale($values['addLanguage'], $values['lcMessages']);
+            }
+            $values['languageLimit'][$values['addLanguage']] = 1;
+        }
+
+        // if we manipulated the language list, return to the localization admin screen
+        $return = (bool) (CRM_Utils_Array::value('makeMultilingual', $values) or CRM_Utils_Array::value('addLanguage', $values) );
 
         // save all the settings
         parent::commonProcess($values);

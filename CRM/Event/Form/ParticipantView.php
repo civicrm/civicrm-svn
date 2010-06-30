@@ -89,7 +89,7 @@ class CRM_Event_Form_ParticipantView extends CRM_Core_Form
             $values[$participantID]['lineItem'][] = $lineItem;
         }
         
-        $values[$participantID]['totalAmount'] = $values[$participantID]['fee_amount'];
+        $values[$participantID]['totalAmount'] = CRM_Utils_Array::value( 'fee_amount', $values[$participantID] );
         
         // get the option value for custom data type 	
         $roleCustomDataTypeID      = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantRole', 'name' );
@@ -155,7 +155,7 @@ class CRM_Event_Form_ParticipantView extends CRM_Core_Form
     public function buildQuickForm( ) 
     {
         $this->addButtons(array(  
-                                array ( 'type'      => 'next',  
+                                array ( 'type'      => 'cancel',  
                                         'name'      => ts('Done'),  
                                         'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',  
                                         'isDefault' => true   )

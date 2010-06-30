@@ -64,7 +64,7 @@
     {include file="CRM/common/jsortable.tpl"}
     {if $activeMembers}
     <div id="memberships">
-        <div><label>{ts}Active Memberships{/ts}</label></div>
+        <h3>{ts}Active Memberships{/ts}</h3>
         {strip}
         <table id="active_membership" class="display">
             <thead>
@@ -101,7 +101,7 @@
     {if $inActiveMembers}
         <div id="inactive-memberships">
         <p></p>
-        <div class="label font-red">{ts}Pending and Inactive Memberships{/ts}</div>
+        <h3 class="font-red">{ts}Pending and Inactive Memberships{/ts}</h3>
         {strip}
         <table id="pending_membership" class="display">
            <thead>

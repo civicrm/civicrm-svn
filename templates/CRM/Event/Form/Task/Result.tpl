@@ -24,9 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div class='spacer'></div>
-<div class="form-item">
-    <p>
-    {include file="CRM/common/formButtons.tpl"}
-    </p>
+<div class="crm-submit-buttons">
+     {include file="CRM/common/formButtons.tpl"}
 </div>
 

@@ -47,6 +47,10 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         if ( CRM_Core_Permission::check( 'administer CiviCRM' ) ) {
             $this->assign( 'isAdmin', 1 );
         }
+        
+        //when user come from search context.
+        require_once 'CRM/Contact/Form/Search.php';
+        $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
     }
 
     /**
@@ -228,8 +232,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
         
         //fix upload files when context is search. CRM-3711
         $ssID    = $this->get( 'ssID' );
-        $context = $this->get( 'context' );
-        if ( $context == 'search' && $ssID ) {
+        if ( $this->_searchBasedMailing && $ssID ) {
             $this->set( 'uploadNames', array( 'textFile', 'htmlFile' ) );
         }
         
@@ -261,7 +264,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
                           array ( 'type'      => 'cancel',
                                   'name'      => ts('Cancel') ),
                           );
-        if ( $context == 'search' && $ssID ) {
+        if ( $this->_searchBasedMailing && $ssID ) {
             $buttons = array( array ( 'type'      => 'back',
                                       'name'      => ts('<< Previous') ),
                               array ( 'type'      => 'upload',
@@ -397,8 +400,7 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
             //when user perform mailing from search context 
             //redirect it to search result CRM-3711.
             $ssID    = $this->get( 'ssID' );
-            $context = $this->get( 'context' );
-            if ( $ssID && $context == 'search' ) {
+            if ( $ssID && $this->_searchBasedMailing ) {
                 if ( $this->_action == CRM_Core_Action::BASIC ) {
                     $fragment = 'search';
                 } else if ( $this->_action == CRM_Core_Action::PROFILE ) {
@@ -409,13 +411,19 @@ class CRM_Mailing_Form_Upload extends CRM_Core_Form
                     $fragment = 'search/custom';
                 }
                 
+                $context = $this->get( 'context' );
+                if ( !CRM_Contact_Form_Search::isSearchContext( $context ) ) $context = 'search';
+                $urlParams = "force=1&reset=1&ssID={$ssID}&context={$context}";
+                $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+                if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+                
                 $session = CRM_Core_Session::singleton( );
                 $draftURL = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1' );
                 $status = ts("Your mailing has been saved. You can continue later by clicking the 'Continue' action to resume working on it.<br /> From <a href='%1'>Draft and Unscheduled Mailings</a>.", array( 1 => $draftURL ) );
                 CRM_Core_Session::setStatus( $status );
                 
                 //replace user context to search.
-                $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, "force=1&reset=1&ssID={$ssID}" );
+                $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
                 CRM_Utils_System::redirect( $url );
             } else { 
                 $status = ts("Your mailing has been saved. Click the 'Continue' action to resume working on it.");

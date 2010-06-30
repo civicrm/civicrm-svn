@@ -126,7 +126,7 @@ class CRM_Core_Menu
                             $elements = explode( ',', $value );
                             $op = 'and';
                         } else {
-                            $elements = explode( ';', $element );
+                            $elements = explode( ';', $value );
                             $op = 'or';
                         }
                         $items = array( );
@@ -288,7 +288,7 @@ class CRM_Core_Menu
                                                                    )
                                              ),
                             'url'   => CRM_Utils_System::url( $path, $query, false ), 
-                            'icon'  => $item['icon'],
+                            'icon'  => CRM_Utils_Array::value( 'icon', $item ),
                             'extra' => CRM_Utils_Array::value( 'extra', $item ) );
             if ( ! array_key_exists( $item['adminGroup'], $values ) ) {
                 $values[$item['adminGroup']] = array( );

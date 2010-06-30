@@ -557,7 +557,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                                 }
                                 
                                 if ( !empty($contactSubType) && 
-                                     ( !CRM_Contact_BAO_ContactType::isAllowEdit($params['id'], $contactSubType) || 
+                                     ( !CRM_Contact_BAO_ContactType::isAllowEdit($params['id'], $contactSubType) && 
                                         $contactSubType != CRM_Utils_Array::value('contact_sub_type', $formatted)  ) ) {
                                     
                                     $message = "Mismatched contact SubTypes :";
@@ -603,7 +603,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                             }
                             
                             if ( !empty($contactSubType) && 
-                                 (!CRM_Contact_BAO_ContactType::isAllowEdit($params['id'], $contactSubType) ||
+                                 (!CRM_Contact_BAO_ContactType::isAllowEdit($params['id'], $contactSubType) &&
                                    $contactSubType != CRM_Utils_Array::value('contact_sub_type', $formatted)  ) ) {
                                 
                                 $message = "Mismatched contact SubTypes :";
@@ -672,6 +672,15 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                 $this->_retCode = CRM_Import_Parser::VALID;
             }
         } else if ( civicrm_duplicate( $newContact ) ) {
+            // if duplicate, no need of further processing
+            if ( $onDuplicate == CRM_Import_Parser::DUPLICATE_SKIP ) {
+                $errorMessage = "Skipping duplicate record";
+                array_unshift( $values, $errorMessage );
+                $importRecordParams = array( $statusFieldName => 'DUPLICATE', "${statusFieldName}Msg" => $errorMessage );
+                $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
+                return CRM_Import_Parser::DUPLICATE; 
+            }
+            
             $relationship = true;
             $contactID = $newContact['error_message']['params'][0];
             if ( !in_array( $contactID, $this->_newContacts ) ) {
@@ -749,7 +758,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                             }
                             
                             if ( !empty($relatedCsType) && 
-                                 (!CRM_Contact_BAO_ContactType::isAllowEdit($params[$key]['id'], $relatedCsType) ||
+                                 (!CRM_Contact_BAO_ContactType::isAllowEdit($params[$key]['id'], $relatedCsType) &&
                                    $relatedCsType != CRM_Utils_Array::value( 'contact_sub_type', $formatting )     ) ) {
                                 $errorMessage = ts( "Mismatched or Invalid contact subtype found for this related contact ID: %1", array( 1 => $params[$key]['id'] ) );
                                 array_unshift($values, $errorMessage);
@@ -816,7 +825,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         }
                         
                         if ( !empty($relatedCsType) && 
-                             (!CRM_Contact_BAO_ContactType::isAllowEdit($matchedIDs[0], $relatedCsType) || 
+                             (!CRM_Contact_BAO_ContactType::isAllowEdit($matchedIDs[0], $relatedCsType) && 
                               $relatedCsType != CRM_Utils_Array::value('contact_sub_type', $formatting)   ) ) {
                             $errorMessage = ts( "Mismatched or Invalid contact subtype found for this related contact." );
                             array_unshift($values, $errorMessage);
@@ -867,9 +876,15 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                             list( $valid, $invalid, $duplicate, $saved, $relationshipIds ) =
                                 CRM_Contact_BAO_Relationship::create( $relationParams, $relationIds );
                             
-                            CRM_Contact_BAO_Relationship::relatedMemberships( $primaryContactId, 
-                                                                              $relationParams,
-                                                                              $relationIds );
+                            if ( $valid || $duplicate ) {
+                                $relationIds['contactTarget'] = $relContactId;
+                                $action = ( $duplicate ) ? CRM_Core_Action::UPDATE : CRM_Core_Action::ADD;
+                                CRM_Contact_BAO_Relationship::relatedMemberships( $primaryContactId, 
+                                                                                  $relationParams,
+                                                                                  $relationIds,
+                                                                                  $action );
+                            }
+                            
                             //handle current employer, CRM-3532
                             if ( $valid ) {
                                 require_once 'CRM/Core/PseudoConstant.php';
@@ -1065,7 +1080,8 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     // need not check for label filed import
                     $htmlType = array('CheckBox','Multi-Select','AdvMulti-Select','Select','Radio','Multi-Select State/Province' ,'Multi-Select Country' );
                     if ( ! in_array( $customFields[$customFieldID]['html_type'], $htmlType ) ||
-                         $customFields[$customFieldID]['data_type'] =='Boolean' ) {
+                         $customFields[$customFieldID]['data_type'] =='Boolean' || 
+                         $customFields[$customFieldID]['data_type'] == 'ContactReference' ) {
                         $valid = 
                             CRM_Core_BAO_CustomValue::typecheck($customFields[$customFieldID]['data_type'], $value);
                         if (! $valid) {

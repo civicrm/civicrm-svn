@@ -676,6 +676,11 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
             // unset from main street address.
             $streetAddress = preg_replace( '/^[A-Za-z0-9]+([^\s]+)/', '', $streetAddress );
             $streetAddress = trim( $streetAddress );
+        } else if ( preg_match( '/^(\d+)/', $streetAddress, $matches ) ) {
+            $parseFields['street_number'] = $matches[0];
+            // unset from main street address.
+            $streetAddress = preg_replace( '/^(\d+)/', '', $streetAddress );
+            $streetAddress = trim( $streetAddress );
         }
         
         // suffix might be like 1/2

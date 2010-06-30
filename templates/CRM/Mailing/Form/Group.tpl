@@ -29,13 +29,13 @@
         {ts}To send a mailing, you must have a valid group of recipients - either at least one group that's a Mailing List or at least one previous mailing.{/ts}
   </div>
 {else}
-<div class="crm-block crm-form-block crm-mailing-form-block">
+<div class="crm-block crm-form-block crm-mailing-group-form-block">
 {include file="CRM/common/WizardHeader.tpl"}
 
   <table class="form-layout">
-   <tr class="crm-mailing-form-block-name"><td class="label">{$form.name.label}</td><td>{$form.name.html} {help id="mailing-name"}</td></tr>
+   <tr class="crm-mailing-group-form-block-name"><td class="label">{$form.name.label}</td><td>{$form.name.html} {help id="mailing-name"}</td></tr>
     {if $context EQ 'search'}
-    <tr class="crm-mailing-form-block-baseGroup"><td class="label">{$form.baseGroup.label}</td><td>{$form.baseGroup.html}</td>
+    <tr class="crm-mailing-group-form-block-baseGroup"><td class="label">{$form.baseGroup.label}</td><td>{$form.baseGroup.html}</td>
     {/if}	
   </table>
 
@@ -51,16 +51,16 @@
 
   <table>
   {if $groupCount > 0}
-    <tr class="crm-mailing-form-block-includeGroups"><td class="label">{$form.includeGroups.label} {help id="include-groups"}</th></tr>
-    <tr class="crm-mailing-form-block-includeGroups"><td>{$form.includeGroups.html}</td></tr>
-    <tr class="crm-mailing-form-block-excludeGroups"><td class="label">{$form.excludeGroups.label} {help id="exclude-groups"}</th></tr>
-    <tr class="crm-mailing-form-block-excludeGroups"><td>{$form.excludeGroups.html}</td></tr>
+    <tr class="crm-mailing-group-form-block-includeGroups"><td class="label">{$form.includeGroups.label} {help id="include-groups"}</th></tr>
+    <tr class="crm-mailing-group-form-block-includeGroups"><td>{$form.includeGroups.html}</td></tr>
+    <tr class="crm-mailing-group-form-block-excludeGroups"><td class="label">{$form.excludeGroups.label} {help id="exclude-groups"}</th></tr>
+    <tr class="crm-mailing-group-form-block-excludeGroups"><td>{$form.excludeGroups.html}</td></tr>
   {/if}
   {if $mailingCount > 0}
-  <tr class="crm-mailing-form-block-includeMailings"><td class="label">{$form.includeMailings.label} {help id="include-mailings"}</th></tr>
-  <tr class="crm-mailing-form-block-includeMailings"><td>{$form.includeMailings.html}</td></tr>
-  <tr class="crm-mailing-form-block-excludeMailings"><td class="label">{$form.excludeMailings.label} {help id="exclude-mailings"}</th></tr>
-  <tr class="crm-mailing-form-block-excludeMailings"><td>{$form.excludeMailings.html}</td></tr>
+  <tr class="crm-mailing-group-form-block-includeMailings"><td class="label">{$form.includeMailings.label} {help id="include-mailings"}</th></tr>
+  <tr class="crm-mailing-group-form-block-includeMailings"><td>{$form.includeMailings.html}</td></tr>
+  <tr class="crm-mailing-group-form-block-excludeMailings"><td class="label">{$form.excludeMailings.label} {help id="exclude-mailings"}</th></tr>
+  <tr class="crm-mailing-group-form-block-excludeMailings"><td>{$form.excludeMailings.html}</td></tr>
   {/if}
   </table>
 

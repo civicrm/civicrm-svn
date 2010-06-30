@@ -24,20 +24,23 @@
  +--------------------------------------------------------------------+
 *}
 {if ! empty( $row )} 
-{* wrap in crm-container div so crm styles are used *}
-<div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
-
-{foreach from=$row item=value key=rowName name=profile}
-  <div id="row-{$smarty.foreach.profile.iteration}" class="section {$smarty.foreach.profile.iteration}-section">
-    <div class="label">
-        {$rowName}
+    {* wrap in crm-container div so crm styles are used *}
+    <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
+        {if $overlayProfile }
+            {include file="CRM/Profile/Page/Overlay.tpl"}
+        {else}
+            {foreach from=$row item=value key=rowName name=profile}
+              <div id="row-{$smarty.foreach.profile.iteration}" class="crm-section {$smarty.foreach.profile.iteration}-section">
+                <div class="label">
+                    {$rowName}
+                </div>
+                 <div class="content">
+                    {$value}
+                 </div>
+                 <div class="clear"></div>
+              </div>
+            {/foreach}
+        {/if}
     </div>
-     <div class="content">
-        {$value}
-     </div>
-     <div class="clear"></div>
-  </div>
-{/foreach}
-</div>
 {/if} 
 {* fields array is not empty *}

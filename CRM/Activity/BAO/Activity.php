@@ -107,20 +107,14 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             $defaults['assignee_contact'] = CRM_Activity_BAO_ActivityAssignment::retrieveAssigneeIdsByActivityId( $activity->id );
             $assignee_contact_names = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $activity->id );
       
-            $defaults['assignee_contact_value'] = null;
-            foreach( $assignee_contact_names as $key => $name ) {
-                $defaults['assignee_contact_value'] .= $defaults['assignee_contact_value']?"; $name":"$name";
-            } 
+            $defaults['assignee_contact_value'] = implode('; ', $assignee_contact_names);
             
             if ($activity->activity_type_id != CRM_Core_OptionGroup::getValue( 'activity_type', 'Bulk Email', 'name' ) ) {  
                 require_once 'CRM/Activity/BAO/ActivityTarget.php';
                 $defaults['target_contact'] = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activity->id );
                 $target_contact_names = CRM_Activity_BAO_ActivityTarget::getTargetNames( $activity->id );
                 
-                $defaults['target_contact_value'] = null;
-                foreach ( $target_contact_names as $key => $name ) {
-                    $defaults['target_contact_value'] .= $defaults['target_contact_value']?"; $name":"$name";
-                }
+                $defaults['target_contact_value'] = implode('; ', $target_contact_names);
             } else if ( CRM_Core_Permission::check('access CiviMail') ) {
                 $defaults['mailingId'] = CRM_Utils_System::url( 'civicrm/mailing/report', 
                                                                 "mid={$activity->source_record_id}&reset=1&atype={$activity->activity_type_id}&aid={$activity->id}&cid={$activity->source_contact_id}&context=activity" );
@@ -128,7 +122,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                 $defaults['target_contact_value'] = ts('(recipients)');   
             }
             
-            if ( $activity->source_contact_id ) {
+            if ($activity->source_contact_id and !CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $activity->source_contact_id, 'is_deleted')) {
                 $defaults['source_contact'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
                                                                            $activity->source_contact_id,
                                                                            'sort_name' );
@@ -216,8 +210,9 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         }
         
         $transaction->commit( );
-
-        CRM_Utils_Hook::post( 'delete','Activity', $activity->id, $activity );
+        if ( isset( $activity ) ) {
+            CRM_Utils_Hook::post( 'delete','Activity', $activity->id, $activity );
+        }
 
         return $result;
     }
@@ -692,7 +687,8 @@ as tbl ";
                   FROM civicrm_activity_target at
                   INNER JOIN {$activityTempTable} ON ( at.activity_id = {$activityTempTable}.activity_id 
                     AND {$activityTempTable}.activity_type_id <> {$bulkActivityTypeID} )
-                  INNER JOIN civicrm_contact c ON c.id = at.target_contact_id";
+                  INNER JOIN civicrm_contact c ON c.id = at.target_contact_id
+                  WHERE c.is_deleted = 0";
         
         CRM_Core_DAO::executeQuery( $query );
         
@@ -712,7 +708,8 @@ as tbl ";
                   FROM civicrm_activity_assignment aa
                   INNER JOIN {$activityTempTable} ON ( aa.activity_id = {$activityTempTable}.activity_id
                       AND {$activityTempTable}.activity_type_id <> {$bulkActivityTypeID} )
-                  INNER JOIN civicrm_contact c ON c.id = aa.assignee_contact_id";
+                  INNER JOIN civicrm_contact c ON c.id = aa.assignee_contact_id
+                  WHERE c.is_deleted = 0";
         
         CRM_Core_DAO::executeQuery( $query );
         
@@ -726,6 +723,14 @@ as tbl ";
             LEFT JOIN {$activityAssigneetContactTempTable} on {$activityTempTable}.activity_id = {$activityAssigneetContactTempTable}.activity_id                  
         ";
         
+        //filter case activities - CRM-5761
+        $components = self::activityComponents( );
+        if ( !in_array( 'CiviCase', $components ) ) {
+            $query .=  "
+LEFT JOIN  civicrm_case_activity ON ( civicrm_case_activity.activity_id = {$activityTempTable}.activity_id )
+    WHERE  civicrm_case_activity.id IS NULL";
+        }
+
         $dao = CRM_Core_DAO::executeQuery( $query );
                 
         //CRM-3553, need to check user has access to target groups.
@@ -765,10 +770,66 @@ as tbl ";
                 }
             }
         }
-        
+
+        // add info on whether the related contacts are deleted (CRM-5673)
+        // FIXME: ideally this should be tied to ACLs
+
+        // grab all the related contact ids
+        $cids = array();
+        foreach ($values as $value) {
+            $cids[] = $value['source_contact_id'];
+        }
+        $cids = array_filter(array_unique($cids));
+
+        // see which of the cids are of deleted contacts
+        if ($cids) {
+            $sql = 'SELECT id FROM civicrm_contact WHERE id IN (' . implode(', ', $cids) . ') AND is_deleted = 1';
+            $dao =& CRM_Core_DAO::executeQuery($sql);
+            $dels = array();
+            while ($dao->fetch()) {
+                $dels[] = $dao->id;
+            }
+
+            // hide the deleted contacts
+            foreach ($values as &$value) {
+                if (in_array($value['source_contact_id'], $dels)) {
+                    unset($value['source_contact_id'], $value['source_contact_name']);
+                }
+            }
+        }
+
         return $values;
     }
-
+    
+    /**
+     * Get the component id and name those are enabled and logged in
+     * user has permission. To decide whether we are going to include 
+     * component related activities w/ core activity retrieve process. 
+     *
+     * return an array of component id and name.
+     **/
+    function activityComponents( ) 
+    {
+        require_once 'CRM/Core/Permission.php';
+        $components = array( );
+        $compInfo = CRM_Core_Component::getEnabledComponents( );
+        foreach ( $compInfo as $compObj ) {
+            if ( CRM_Utils_Array::value( 'showActivitiesInCore', $compObj->info ) ) {
+                $componentPermission = "access {$compObj->name}";
+                if ( $compObj->info['name'] == 'CiviCase' ) {
+                    require_once 'CRM/Case/BAO/Case.php';
+                    if ( CRM_Case_BAO_Case::accessCiviCase( ) ) {
+                        $components[$compObj->componentID] = $compObj->info['name'];
+                    }
+                } else if ( CRM_Core_Permission::check( $componentPermission ) ) {
+                    $components[$compObj->componentID] = $compObj->info['name'];
+                }
+            }
+        }
+        
+        return $components;
+    }
+    
     /**
      * function to get the actvity count
      *
@@ -785,8 +846,18 @@ as tbl ";
     static function &getActivitiesCount( $contactID, $admin = false, $caseId = null, $context = null ) 
     {
         list( $sqlClause, $params ) = self::getActivitySQLClause( $contactID, $admin, $caseId, $context, true );
-
+        
         $query = "SELECT COUNT(DISTINCT(activity_id)) as count  from ( {$sqlClause} ) as tbl";
+        
+        //filter case activities - CRM-5761
+        $components = self::activityComponents( );
+        if ( !in_array( 'CiviCase', $components ) ) {
+            $query = "
+   SELECT   COUNT(DISTINCT(tbl.activity_id)) as count  
+     FROM   ( {$sqlClause} ) as tbl
+LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.activity_id )
+    WHERE   civicrm_case_activity.id IS NULL";
+        }
         
         return CRM_Core_DAO::singleValueQuery( $query, $params );
     }
@@ -810,32 +881,20 @@ as tbl ";
         if ( $context == 'home' ) {
             $statusClause = " civicrm_activity.status_id = 1 "; 
         }
-
-        // Filter on component IDs.
-        // do not include activities of disabled components and also handle permission
-        $componentClause = "civicrm_option_value.component_id IS NULL";
-        $componentsIn    = array( );
-        $compInfo        = CRM_Core_Component::getEnabledComponents();
+        
+        //Filter on component IDs.
+        $components = self::activityComponents( );
+        $componentClause = 'civicrm_option_value.component_id IS NULL';
+        if ( !empty( $components ) ) {
+            $componentsIn = implode( ',',  array_keys( $components ) );
+            $componentClause  = "( $componentClause OR civicrm_option_value.component_id IN ( $componentsIn ) )";
+        }
         $includeCaseActivities = false;
-        foreach ( $compInfo as $compObj ) {            
-            if ( $compObj->info['showActivitiesInCore'] ) {
-                $componentPermission = "access {$compObj->name}";
-                if ( $compObj->info['name'] == 'CiviCase' ) {
-                    require_once 'CRM/Case/BAO/Case.php';
-                    if ( CRM_Case_BAO_Case::accessCiviCase( ) ) {
-                        $componentsIn[] = $compObj->componentID;
-                        $includeCaseActivities = true;
-                    }
-                } else if ( CRM_Core_Permission::check( $componentPermission ) ) {
-                    $componentsIn[] = $compObj->componentID;
-                }                
-            }
+        if ( in_array( 'CiviCase', $components ) ) {
+            $includeCaseActivities = true;
         }
         
-        if ( !empty( $componentsIn ) ) {        
-            $componentClause = "($componentClause OR civicrm_option_value.component_id IN ( " . implode( ',', $componentsIn ) . "))";
-        }
- 
+
         // build main activity table select clause
         $sourceSelect = '';
         $sourceJoin   = '';
@@ -1970,7 +2029,6 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         
         //check for source contact.
         if ( !$componentId || $allow ) {
-            $allow = false;
             $allow = CRM_Contact_BAO_Contact_Permission::allow( $activity->source_contact_id, $permission );
         }
         
@@ -1978,7 +2036,7 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         $isCaseActivity = CRM_Case_BAO_Case::isCaseActivity( $activityId );
         
         //check for civicase related permission.
-        if ( $isCaseActivity ) { 
+        if ( $allow && $isCaseActivity ) { 
             $allow = false;
             foreach ( $compPermissions['CiviCase'] as $per  ) {
                 if ( CRM_Core_Permission::check( $per ) ) {
@@ -1986,26 +2044,45 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
                     break;
                 }
             }
+            
+            //check for case specific permissions.
+            if ( $allow ) {
+                $oper = 'view';
+                if ( $action == CRM_Core_Action::UPDATE ) $oper = 'edit'; 
+                $allow = CRM_Case_BAO_Case::checkPermission( $activityId, 
+                                                             $oper,
+                                                             $activity->activity_type_id );
+            }
         }
         
         //check for target and assignee contacts.
         if ( $allow ) { 
-            //get the target contacts. 
-            $targetContacts = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activity->id );
-            foreach ( $targetContacts as $cnt => $contactId ) {
-                if ( !CRM_Contact_BAO_Contact_Permission::allow( $contactId, $permission ) ) {
-                    $allow = false;
-                    break;
-                }
-            }
+            //first check for supper permission.
+            $supPermission = 'view all contacts';
+            if ( $action == CRM_Core_Action::UPDATE ) $supPermission = 'edit all contacts';
+            $allow = CRM_Core_Permission::check( $supPermission );
             
-            //get the assignee contacts.
-            if ( $allow ) {
-                $assigneeContacts = CRM_Activity_BAO_ActivityAssignment::retrieveAssigneeIdsByActivityId( $activity->id );
-                foreach ( $assigneeContacts as $cnt => $contactId ) {
+            //user might have sufficient permission, through acls. 
+            if ( !$allow ) {
+                $allow = true;
+                //get the target contacts. 
+                $targetContacts = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activity->id );
+                foreach ( $targetContacts as $cnt => $contactId ) {
                     if ( !CRM_Contact_BAO_Contact_Permission::allow( $contactId, $permission ) ) {
                         $allow = false;
                         break;
+                    }
+                }
+                
+                //get the assignee contacts.
+                if ( $allow ) {
+                    $assigneeContacts = 
+                        CRM_Activity_BAO_ActivityAssignment::retrieveAssigneeIdsByActivityId( $activity->id );
+                    foreach ( $assigneeContacts as $cnt => $contactId ) {
+                        if ( !CRM_Contact_BAO_Contact_Permission::allow( $contactId, $permission ) ) {
+                            $allow = false;
+                            break;
+                        }
                     }
                 }
             }

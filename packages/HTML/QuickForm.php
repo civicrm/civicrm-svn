@@ -1985,6 +1985,12 @@ class HTML_QuickForm extends HTML_Common
                     $this->filterValue( $value );
                 }
                 
+                // hack to fix extra <br /> injected by CKEDITOR, we should remove this code
+                // once the bug is fixed and is part of release https://dev.fckeditor.net/ticket/5293
+                if ( is_a( $this->_elements[$key], 'HTML_QuickForm_CKeditor' ) ) {
+                    $value[$fldName] = rtrim( $value[$fldName], '<br />');
+                }
+                
                 if (is_array($value)) {
                     // This shit throws a bogus warning in PHP 4.3.x
                     $values = HTML_QuickForm::arrayMerge($values, $value);
@@ -1996,7 +2002,7 @@ class HTML_QuickForm extends HTML_Common
             }
             foreach ($elementList as $elementName) {
                 $value = $this->exportValue($elementName);
-                
+                                
                 //filter the value across XSS vulnerability issues.
                 if ( !in_array( $elementName, $skipFields ) ) {
                     $this->filterValue( $value );

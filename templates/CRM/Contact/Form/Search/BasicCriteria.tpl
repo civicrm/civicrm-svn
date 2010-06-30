@@ -134,40 +134,68 @@ dojo.addOnLoad( function( ) {
 {/literal}
 {/if}
 
-    {strip}
-	<table class="{$form.sort_name.name}">
-        <tr>
-            <td class="label">{$form.sort_name.label} {$form.sort_name.html}</td>
-{if $form.contact_type}
-            <td class="label">{$form.contact_type.label} {$form.contact_type.html}</td>
+{strip}
+<div class="crm-block crm-form-block crm-basic-criteria-form-block">
+<div class="crm-section sort_name-section">	
+	<div class="label">
+		{$form.sort_name.label}
+	</div>
+	<div class="content">
+		{$form.sort_name.html}
+	</div>
+	<div class="clear"></div> 
+</div>
+
+{if $form.contact_type}    
+	<div class="crm-section contact_type-section">	
+		<div class="label">
+			{$form.contact_type.label}
+		</div>
+    	<div class="content">
+    		{$form.contact_type.html}
+    	</div>
+    	<div class="clear"></div> 
+	</div>
 {/if}
+
 {if $form.group}
-            <td class="label">
-                {if $context EQ 'smog'}
-                    {$form.group_contact_status.label}<br />
-                {else}
-                    {ts}in{/ts} &nbsp;
-                {/if}
-                {if $context EQ 'smog'}
-                    {$form.group_contact_status.html}
-                {else}
-                    { if $config->groupTree }
-                        <a href="#" onclick="dijit.byId('id-groupPicker').show(); displayGroupTree( );">{ts}Select Group(s){/ts}</a>
-                        <div class="tundra" style="background-color: #f4eeee;" dojoType="dijit.Dialog" id="id-groupPicker" title="Select Group(s)" execute="getCheckedNodes();">
-                        </div><br />
-                        <span id="id-group-names"></span>
-                    {else}
-                        {$form.group.html|crmReplace:class:big}
-                    {/if}
-                {/if}
-            </td>
+<div class="crm-section group_selection-section">	
+	<div class="label">
+		{if $context EQ 'smog'}
+            {$form.group_contact_status.label}
+        {else}
+            {ts}in{/ts} &nbsp;
+        {/if}
+	</div>
+	<div class="content">
+		{if $context EQ 'smog'}
+            {$form.group_contact_status.html}
+        {else}
+            { if $config->groupTree }
+                <a href="#" onclick="dijit.byId('id-groupPicker').show(); displayGroupTree( );">{ts}Select Group(s){/ts}</a>
+                <div class="tundra" style="background-color: #f4eeee;" dojoType="dijit.Dialog" id="id-groupPicker" title="Select Group(s)" execute="getCheckedNodes();">
+                </div><br />
+                <span id="id-group-names"></span>
+            {else}
+                {$form.group.html|crmReplace:class:big}
+            {/if}
+         {/if}
+	</div>
+	<div class="clear"></div> 
+</div>
 {/if}
+
 {if $form.tag}
-            <td class="label">{$form.tag.label} {$form.tag.html|crmReplace:class:medium}</td>
+    <div class="crm-section tag-section">	
+    	<div class="label">
+    		{$form.tag.label}
+    	</div>
+    	<div class="content">
+    		{$form.tag.html|crmReplace:class:medium}
+    	</div>
+    	<div class="clear"></div> 
+    </div>
 {/if}
-            <td style="vertical-align: bottom;">
-                {$form.buttons.html}
-            </td>
-        </tr>
-    </table>
-    {/strip}
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+</div>
+{/strip}

@@ -24,13 +24,12 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/viewing relationships  *}
-<div class="crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-relationship-form-block">
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
   {if $action eq 4 } {* action = view *}
-    <div class="form-item">
-      <fieldset><legend>{ts}View Relationship{/ts}</legend>
+      <h3>{ts}View Relationship{/ts}</h3>
 
         <table class="view-layout">
 	    {foreach from=$viewRelationship item="row"}
@@ -70,49 +69,45 @@
             <tr><td class="label">{ts}Status{/ts}</td><td>{if $row.is_active}{ts}Enabled{/ts} {else} {ts}Disabled{/ts}{/if}</td></tr>
 
             {include file="CRM/Custom/Page/CustomDataView.tpl"}
-            <tr>
-            <td></td>
-            <td><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=rel'}';"/></td>
-            </tr>
-            {/foreach}
-		
+        {/foreach}
         </table>
-        </fieldset>
-     </div>    
+        <div class="crm-submit-buttons"><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=rel'}';"/></div>
    {/if}
 
    {if $action eq 2 | $action eq 1} {* add and update actions *}
-    <fieldset><legend>{if $action eq 1}{ts}New Relationship{/ts}{else}{ts}Edit Relationship{/ts}{/if}</legend>
-        <div class="form-item">
+    <h3>{if $action eq 1}{ts}New Relationship{/ts}{else}{ts}Edit Relationship{/ts}{/if}</h3>
             {if $action eq 1}
                 <div class="description">
                 {ts}Select the relationship type. Then locate target contact(s) for this relationship by entering a complete or partial name and clicking 'Search'.{/ts}
                 </div>
             {/if}
-            <dl>
-            <dt>{$form.relationship_type_id.label}</dt><dd>{$form.relationship_type_id.html}
+            <table class="form-layout-compressed">
+             <tr class="crm-relationship-form-block-relationship_type_id">
+               <td class="label">{$form.relationship_type_id.label}</td><td>{$form.relationship_type_id.html}</td>
             {if $action EQ 2} {* action = update *}
                 {literal}
                 <script type="text/javascript">
                     var relType = 0;
                     cj( function( ) {
                     	cj('#relationship_type_id').change( function() { 
-			    changeCustomData( 'Relationship' );
-			    currentEmployer( ); 
+			                changeCustomData( 'Relationship' );
+			                currentEmployer( ); 
                         });
                     });
                 </script>
                 {/literal} 
-                <label>{$sort_name_b}</label></dd>
-                </dl>
-        	    <div>
-                    <dt id="employee">{ts}Current Employee?{/ts}</dt>
-                    <dt id="employer">{ts}Current Employer?{/ts}</dt>
-                    <dd id="current_employer">{$form.is_current_employer.html}</dd>
-        	    </div>
+                <td><label>{$sort_name_b}</label></td></tr>
+                <tr class="crm-relationship-form-block-is_current_employer">
+                  <td class="label">
+                     <div id="employee">{ts}Current Employee?{/ts}</div>
+                     <div id="employer">{ts}Current Employer?{/ts}</div>
+                  </td>
+                  <td id="current_employer">{$form.is_current_employer.html}</td>
+                </tr>  
             {else} {* action = add *}
-                </dd>
-		    <dt>{$form.rel_contact.label}</dt>
+             </tr>
+             <tr class="crm-relationship-form-block-rel_contact">
+               <td class="label">{$form.rel_contact.label}</td>
                 {literal}
                   <script type="text/javascript">
                     var relType = 0;
@@ -136,7 +131,7 @@
                              cj('#rel_contact').autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
                              cj('#rel_contact').result(function( event, data ) {
                                	cj("input[name=rel_contact_id]").val(data[1]);
-                                cj('#relationship-refresh-save').show();
+                                cj('#relationship-refresh-save').show( );
                                 buildRelationFields( relType );
                              });
                         } else { 
@@ -147,19 +142,19 @@
                     }       
 				  </script>
                 {/literal}
-                <dd>{$form.rel_contact.html}</dd>
-                <dt> </dt>
-                  <dd>
+                <td>{$form.rel_contact.html}</td>
+              </tr>
+              </table>
+                <div class="crm-submit-buttons">
                     <span id="relationship-refresh" class="crm-button crm-button-type-refresh crm-button_qf_Relationship_refresh.html">{$form._qf_Relationship_refresh.html}</span>
                     <span id="relationship-refresh-save" class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_save" style="display:none">{$form._qf_Relationship_refresh_save.html}</span>
                     <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
-                  </dd>
-                </dl>
+                </div>
                 <div class="clear"></div>
 
               {if $searchDone } {* Search button clicked *} 
                 {if $searchCount || $callAjax}
-                    {if $searchRows || $callAjax} {* we've got rows to display *}
+                    {if $searchRows || $callAjax} {* we got rows to display *}
                         <fieldset id="searchResult"><legend>{ts}Mark Target Contact(s) for this Relationship{/ts}</legend>
                         <div class="description">
                             {ts}Mark the target contact(s) for this relationship if it appears below. Otherwise you may modify the search name above and click Search again.{/ts}
@@ -230,64 +225,76 @@
                 </div></fieldset>
               {/if} {* end if searchDone *}
         {/if} {* end action = add *}
+        </table>
         <fieldset id = 'saveElements'>
-            <div class="form-item">
-                <dl class="html-adjust">
-
-                    {if $action EQ 1}
-                        <div id='addCurrentEmployer'>
-                        <dt>{$form.add_current_employer.label}</dt><dd>{$form.add_current_employer.html}</dd>
-                        </div>
-                        <div id='addCurrentEmployee'>
-                        <dt>{$form.add_current_employee.label}</dt><dd>{$form.add_current_employee.html}</dd>
-                        </div>
-                    {/if}
-		
-                    <dt>{$form.start_date.label}</dt>
-                    <dd>{include file="CRM/common/jcalendar.tpl" elementName=start_date}</dd>
-                    <dt>{$form.end_date.label}</dt>
-                    <dd>{include file="CRM/common/jcalendar.tpl" elementName=end_date}</dd>
-                    <dt>&nbsp;</dt>
-                    <dd class="description">
-                        {ts}If this relationship has start and/or end dates, specify them here.{/ts}
-                    </dd>
-                    <dt>{$form.description.label}</dt>
-                    <dd>{$form.description.html}</dd>
-                    <dt>{$form.note.label}</dt><dd>{$form.note.html}</dd>
-                    <dt>&nbsp;</dt>
-                    <dd>{$form.is_permission_a_b.html}&nbsp;<strong>{if $rtype eq 'a_b'}'{$sort_name_a}'{else}{if $sort_name_b}'{$sort_name_b}'{else}{ts}Selected contact(s){/ts}{/if}{/if}</strong> {ts}can view and update information for{/ts} <strong>{if $rtype eq 'a_b'}{if $sort_name_b}'{$sort_name_b}'{else}{ts}selected contact(s){/ts}{/if}{else}'{$sort_name_a}'{/if}</strong></dd>
-
-                    <dt>&nbsp;</dt><dd>{$form.is_permission_b_a.html}&nbsp;<strong>{if $rtype eq 'b_a'}'{$sort_name_a}'{else}{if $sort_name_b}'{$sort_name_b}'{else}{ts}Selected contact(s){/ts}{/if}{/if}</strong> {ts}can view and update information for{/ts} <strong>{if $rtype eq 'b_a'}{if $sort_name_b}'{$sort_name_b}'{else}{ts}selected contact(s){/ts}{/if}{else}'{$sort_name_a}'{/if}</strong></dd>
-
-                    <dt>{$form.is_active.label}</dt><dd>{$form.is_active.html}</dd>
-                </dl>
+            <div>
+                {if $action EQ 1}
+                <div id='addCurrentEmployer'>
+                   <table class="form-layout-compressed">  
+                       <tr class="crm-relationship-form-block-add_current_employer">
+                         <td class="label">{$form.add_current_employer.label}</td>
+                         <td>{$form.add_current_employer.html}</td>
+                       </tr>
+                   </table> 
+                </div>
+                <div id='addCurrentEmployee'>
+                   <table class="form-layout-compressed">   
+                       <tr class="crm-relationship-form-block-add_current_employee">
+                         <td class="label">{$form.add_current_employee.label}</td>
+                         <td>{$form.add_current_employee.html}</td>
+                       </tr>
+                   </table>
+                </div> 
+                {/if}
+                <table class="form-layout-compressed">
+                    <tr class="crm-relationship-form-block-start_date">
+                        <td class="label">{$form.start_date.label}</td>
+                        <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}</td></tr>
+                    <tr class="crm-relationship-form-block-end_date">
+                        <td class="label">{$form.end_date.label}</td>
+                        <td>{include file="CRM/common/jcalendar.tpl" elementName=end_date}<br />
+                        <span class="description">{ts}If this relationship has start and/or end dates, specify them here.{/ts}</span></td>
+                    </tr>
+                    <tr class="crm-relationship-form-block-description">
+                        <td class="label">{$form.description.label}</td>
+                        <td>{$form.description.html}</td>
+                    </tr>
+                    <tr class="crm-relationship-form-block-note">
+                        <td class="label">{$form.note.label}</td>
+                        <td>{$form.note.html}</td>
+                    </tr>
+                    <tr class="crm-relationship-form-block-is_permission_a_b">
+                        <td class="label"></td><td>{$form.is_permission_a_b.html}
+                        <strong>{if $rtype eq 'a_b'}'{$sort_name_a}'{else}{if $sort_name_b}'{$sort_name_b}'{else}{ts}Selected contact(s){/ts}{/if}{/if}</strong> {ts}can view and update information for{/ts} <strong>{if $rtype eq 'a_b'}{if $sort_name_b}'{$sort_name_b}'{else}{ts}selected contact(s){/ts}{/if}{else}'{$sort_name_a}'{/if}</strong></td>
+                    </tr>
+                    <tr class="crm-relationship-form-block-is_permission_b_a">
+                        <td class="label"></td><td>{$form.is_permission_b_a.html}
+                        <strong>{if $rtype eq 'b_a'}'{$sort_name_a}'{else}{if $sort_name_b}'{$sort_name_b}'{else}{ts}Selected contact(s){/ts}{/if}{/if}</strong> {ts}can view and update information for{/ts} <strong>{if $rtype eq 'b_a'}{if $sort_name_b}'{$sort_name_b}'{else}{ts}selected contact(s){/ts}{/if}{else}'{$sort_name_a}'{/if}</strong></td>
+                    </tr>
+                    <tr class="crm-relationship-form-block-is_active">
+                        <td class="label">{$form.is_active.label}</td>
+                        <td>{$form.is_active.html}</td>
+                    </tr>
+                </table>
             </div>
         <div id="customData"></div>
         <div class="spacer"></div>
-        <dl>
-        <dt></dt>
-        <dd><div id="saveButtons"> {include file="CRM/common/formButtons.tpl"} </div> 
+        <div class="crm-submit-buttons" id="saveButtons"> {include file="CRM/common/formButtons.tpl"}</div> 
             {if $action EQ 1}
-                <div id="saveDetails">
+                <div class="crm-submit-buttons" id="saveDetails">
                 <span class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_savedetails">{$form._qf_Relationship_refresh_savedetails.html}</span>
                 <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
                 </div>
             {/if}
-        </dd>
-        </dl>
-        </fieldset>
   {/if}
  
   {if $action eq 8}
      <fieldset><legend>{ts}Delete Relationship{/ts}</legend>
-       <dl>
         <div class="status">
         {capture assign=relationshipsString}{$currentRelationships.$id.relation}{ $disableRelationships.$id.relation} {$currentRelationships.$id.name}{ $disableRelationships.$id.name }{/capture}
         {ts 1=$relationshipsString}Are you sure you want to delete the Relationship '%1'?{/ts}
         </div>
-        <dt></dt>
-        <dd>{include file="CRM/common/formButtons.tpl"}</dd>
-      </dl>
+        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
     </fieldset>	
   {/if}
 {/if} {* close of custom data else*}
@@ -408,14 +415,19 @@ cj(".contact_select .form-checkbox").each(
 {/literal} {/if} {literal}
 
 {/literal} {if $action EQ 1}{literal} 
-hide('saveDetails');
-hide('addCurrentEmployer');
-hide('addCurrentEmployee');
+cj('#saveDetails').hide( );
+cj('#addCurrentEmployer').hide( );
+cj('#addCurrentEmployee').hide( );
 
-cj('#rel_contact').bind( "focus change" ,function() {
-    show('relationship-refresh');
-    hide('relationship-refresh-save');
-    cj("input[name=rel_contact_id]").val('');    			      
+cj('#rel_contact').focus( function() {
+    cj('#relationship-refresh').show( );
+    cj('#relationship-refresh-save').hide( );	      
+});
+
+cj('#rel_contact').change( function() {    
+    if ( cj("input[name=rel_contact]").val( ).length > 0 ) {
+        cj("input[name=rel_contact_id]").val('');
+    }	      
 });
 
 {/literal}{if $searchRows || $callAjax}{literal} 

@@ -793,7 +793,7 @@ class CRM_Report_Form extends CRM_Core_Form {
 
     function buildTagFilter( ) {
         require_once 'CRM/Core/BAO/Tag.php';
-        $contactTags = CRM_Core_BAO_Tag::getTagsUsedFor('civicrm_contact');
+        $contactTags = CRM_Core_BAO_Tag::getTags( );
         if ( !empty($contactTags) ) {
             $this->_columns['civicrm_tag'] = 
                 array( 'dao'     => 'CRM_Core_DAO_Tag',
@@ -973,7 +973,7 @@ class CRM_Report_Form extends CRM_Core_Form {
         list($from, $to) = self::getFromTo($relative, $from, $to);
         
         if ( $from ) {
-            $form = ($type == CRM_Utils_Type::T_DATE)?substr($from,0,8 ):$from;
+            $from = ($type == CRM_Utils_Type::T_DATE)?substr($from,0,8 ):$from;
             $clauses[] = "( {$fieldName} >= $from )";
         }
 

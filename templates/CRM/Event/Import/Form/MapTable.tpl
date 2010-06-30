@@ -24,7 +24,8 @@
  +--------------------------------------------------------------------+
 *}
 {* Event Import Wizard - Data Mapping table used by MapFields.tpl and Preview.tpl *}
- <div id="map-field">
+<div class="crm-block crm-form-block crm-event-import-maptable-form-block"> 
+<div id="map-field">
     {strip}
     <table>
     {if $loadedMapping}
@@ -80,10 +81,10 @@
     	<span>{$form.saveMapping.html} &nbsp;&nbsp; {$form.saveMapping.label}</span>
     	<div id="saveDetails" class="form-item">
 	   <table class="form-layout">
-    	      <tr class="crm-participant-saveMappingName">
+    	      <tr class="crm-event_map_table-form-block-saveMappingName">
     		   <td class="label">{$form.saveMappingName.label}</td><td>{$form.saveMappingName.html}</td>
 	      </tr>
-	      <tr class="crm-participant-saveMappingDesc">	   
+	      <tr class="crm-event_map_table-form-block-saveMappingDesc">	   
     		   <td class="label">{$form.saveMappingDesc.label}</td><td>{$form.saveMappingDesc.html}</td>
     	      </tr>
 	   </table>
@@ -113,3 +114,4 @@
     </div>
     {/if}
  </div>
+</div>

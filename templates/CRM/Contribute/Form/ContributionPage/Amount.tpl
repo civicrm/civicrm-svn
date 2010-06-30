@@ -26,14 +26,10 @@
 {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
 {include file="CRM/common/WizardHeader.tpl"}
 {capture assign="adminPriceSets"}{crmURL p='civicrm/admin/price' q="reset=1"}{/capture}
-
-
+<div class="crm-block crm-form-block crm-contribution-contributionpage-amount-form-block">
 <div id="help">
     {ts}Use this form to configure Contribution Amount options. You can give contributors the ability to enter their own contribution amounts - and/or provide a fixed list of amounts. For fixed amounts, you can enter a label for each 'level' of contribution (e.g. Friend, Sustainer, etc.). If you allow people to enter their own dollar amounts, you can also set minimum and maximum values. Depending on your choice of Payment Processor, you may be able to offer a recurring contribution option.{/ts} {docURL page="PayPal Website Payments Standard and Recurring Contributions"}
 </div>
- 
-<div class="crm-block crm-form-block crm-contribution_page-amount-form-block">
-    <fieldset><legend>{ts}Contribution Amounts{/ts}</legend>
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
     {if !$paymentProcessor}
         {capture assign=ppUrl}{crmURL p='civicrm/admin/paymentProcessor' q="reset=1"}{/capture}
@@ -43,36 +39,36 @@
         </div>
     {/if}
     <table class="form-layout-compressed">  
-        <tr class="crm-contribution-form-block-is_monetary"><th scope="row" class="label" width="20%">{$form.is_monetary.label}</th>
+        <tr class="crm-contribution-contributionpage-amount-form-block-is_monetary"><th scope="row" class="label" width="20%">{$form.is_monetary.label}</th>
             <td>{$form.is_monetary.html}<br />
             <span class="description">{ts}Uncheck this box if you are using this contribution page for free membership signup ONLY, or to solicit in-kind / non-monetary donations such as furniture, equipment.. etc.{/ts}</span></td>
         </tr>
         {if $paymentProcessor}
-        <tr class="crm-contribution-form-block-payment_processor_id"><th scope="row" class="label" width="20%">{$form.payment_processor_id.label}</th>
+        <tr class="crm-contribution-contributionpage-amount-form-block-payment_processor_id"><th scope="row" class="label" width="20%">{$form.payment_processor_id.label}</th>
             <td>{$form.payment_processor_id.html}<br />
             <span class="description">{ts}Select the payment processor to be used for contributions submitted from this contribution page (unless you are soliciting non-monetary / in-kind contributions only).{/ts} {docURL page="CiviContribute Payment Processor Configuration"}</span></td>
         </tr>
         {/if}
-        <tr class="crm-contribution-form-block-amount_block_is_active"><th scope="row" class="label">{$form.amount_block_is_active.label}</th>
+        <tr class="crm-contribution-contributionpage-amount-form-block-amount_block_is_active"><th scope="row" class="label">{$form.amount_block_is_active.label}</th>
             <td>{$form.amount_block_is_active.html}<br />
             <span class="description">{ts}Uncheck this box if you are using this contribution page for membership signup and renewal only - and you do NOT want users to select or enter any additional contribution amounts.{/ts}</span></td>
         </tr>
-            <tr class="crm-contribution-form-block-is_pay_later"><th scope="row" class="label">{$form.is_pay_later.label}</th>
+            <tr class="crm-contribution-contributionpage-amount-form-block-is_pay_later"><th scope="row" class="label">{$form.is_pay_later.label}</th>
             <td>{$form.is_pay_later.html}<br />
             <span class="description">{ts}Check this box if you want to give users the option to submit payment offline (e.g. mail in a check, call in a credit card, etc.).{/ts}</span></td></tr>
         <tr id="payLaterFields" class="crm-contribution-form-block-payLaterFields"><td>&nbsp;</td>
             <td>
             <table class="form-layout">
-                <tr class="crm-contribution-form-block-pay_later_text"><th scope="row" class="label">{$form.pay_later_text.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='pay_later_text' id=$id}{/if}</th>
+                <tr class="crm-contribution-contributionpage-amount-form-block-pay_later_text"><th scope="row" class="label">{$form.pay_later_text.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='pay_later_text' id=$id}{/if}</th>
                 <td>{$form.pay_later_text.html|crmReplace:class:big}<br />
                     <span class="description">{ts}Text displayed next to the checkbox for the 'pay later' option on the contribution form.{/ts}</span></td></tr> 
-                <tr class="crm-contribution-form-block-pay_later_receipt"><th scope="row" class="label">{$form.pay_later_receipt.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='pay_later_receipt' id=$id}{/if}</th>
+                <tr class="crm-contribution-contributionpage-amount-form-block-pay_later_receipt"><th scope="row" class="label">{$form.pay_later_receipt.label} <span class="marker" title="This field is required.">*</span> {if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_contribution_page' field='pay_later_receipt' id=$id}{/if}</th>
                 <td>{$form.pay_later_receipt.html|crmReplace:class:big}<br />
                     <span class="description">{ts}Instructions added to Confirmation and Thank-you pages, as well as the confirmation email, when the user selects the 'pay later' option (e.g. 'Mail your check to ... within 3 business days.').{/ts}</span></td></tr>
             </table>
             </td>
         </tr>
-	<tr id="priceSet" class="crm-contribution-form-block-priceSet">
+	<tr id="priceSet" class="crm-contribution-contributionpage-amount-form-block-priceSet">
 	     <th scope="row" class="label">{$form.price_set_id.label}</th>
 	     {if $price eq true}
 	     	 <td>{$form.price_set_id.html}<br /><span class="description">{ts 1=$adminPriceSets}Select a pre-configured Price Set to offer multiple individually priced options for contributions. Otherwise, select &quot;-none-&quot; and enter one or more fee levels in the table below. Create or edit Price Sets <a href='%1'>here</a>.{/ts}</span></td>
@@ -80,8 +76,6 @@
 		<td><div class="status message">{ts 1=$adminPriceSets}No Price Set has been configured / enabled for your site. Price sets allow you to configure more complex contribution options (e.g. "Contribute $25 more to receive our monthly magazine."). Click <a href='%1'>here</a> if you want to configure price sets for your site.{/ts}</div></td>
 	     {/if}
         </tr>
-
-
     </table>
    
     <div id="amountFields">
@@ -171,7 +165,6 @@
         </table>
       </div>
       <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-   </fieldset>
 </div>
 
 {literal}

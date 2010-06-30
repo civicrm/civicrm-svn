@@ -341,6 +341,14 @@ class CRM_Utils_System_Drupal {
         require_once 'includes/bootstrap.inc';
         @drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
         //chdir( $cur_dir ); 
+        
+        //load user, we need to check drupal permissions.
+        $name = trim( CRM_Utils_Array::value( 'name', $_REQUEST ) );
+        $pass = trim( CRM_Utils_Array::value( 'pass', $_REQUEST ) );
+        if ( $name ) {
+            module_enable( array( 'user' ) );
+            user_authenticate(  array( 'name' => $name, 'pass' => $pass ) );
+        }
     }
 
 }

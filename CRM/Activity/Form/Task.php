@@ -86,13 +86,18 @@ class CRM_Activity_Form_Task extends CRM_Core_Form
      */
     function preProcess( ) 
     {
-        $this->_activityHolderIds = array();
+        self::preProcessCommon( $this );
+    }
 
-        $values = $this->controller->exportValues( 'Search' );
+    static function preProcessCommon( &$form, $useTable = false )
+    {
+        $form->_activityHolderIds = array();
+
+        $values = $form->controller->exportValues( 'Search' );
         
-        $this->_task = $values['task'];
+        $form->_task = $values['task'];
         $activityTasks = CRM_Activity_Task::tasks();
-        $this->assign( 'taskName', $activityTasks[$this->_task] );
+        $form->assign( 'taskName', $activityTasks[$form->_task] );
 
         $ids = array();
         if ( $values['radio_ts'] == 'ts_sel' ) {
@@ -102,7 +107,7 @@ class CRM_Activity_Form_Task extends CRM_Core_Form
                 }
             }
         } else {
-            $queryParams =  $this->get( 'queryParams' );
+            $queryParams =  $form->get( 'queryParams' );
             $query       = new CRM_Contact_BAO_Query( $queryParams, null, null, false, false, 
                                                        CRM_Contact_BAO_Query::MODE_ACTIVITY);
             $result = $query->searchQuery(0, 0, null);
@@ -113,17 +118,22 @@ class CRM_Activity_Form_Task extends CRM_Core_Form
         }
         
         if ( ! empty( $ids ) ) {
-            $this->_componentClause =
+            $form->_componentClause =
                 ' civicrm_activity.id IN ( ' .
                 implode( ',', $ids ) . ' ) ';
-            $this->assign( 'totalSelectedActivities', count( $ids ) );
+            $form->assign( 'totalSelectedActivities', count( $ids ) );
         }
         
-        $this->_activityHolderIds = $this->_componentIds = $ids;
+        $form->_activityHolderIds = $form->_componentIds = $ids;
 
         //set the context for redirection for any task actions
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
+        require_once 'CRM/Utils/Rule.php';
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+        
         $session = CRM_Core_Session::singleton( );
-        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/activity/search', 'force=1' ) );
+        $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/activity/search', $urlParams ) );
     }
 
     /**

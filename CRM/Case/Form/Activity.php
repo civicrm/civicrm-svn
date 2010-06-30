@@ -212,20 +212,25 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
     function setDefaultValues( ) 
     {
         $this->_defaults = parent::setDefaultValues( );
-        
         $targetContactValues = array( );
+
+        //get all clients.
+        $clients = CRM_Case_BAO_Case::getContactNames( $this->_caseId );
         if ( isset( $this->_activityId ) && empty( $_POST ) ) {
             if ( !CRM_Utils_Array::crmIsEmptyArray( $this->_defaults['target_contact'] ) ) {
                 $targetContactValues = array_combine( array_unique( $this->_defaults['target_contact'] ), 
                                                       explode(';', trim($this->_defaults['target_contact_value'] ) ) );
-                // exclude the contact id of client
-                if ( array_key_exists ( $this->_currentlyViewedContactId, $targetContactValues ) ) {
-                    unset( $targetContactValues[$this->_currentlyViewedContactId] );
+                
+                //exclude all clients.
+                foreach ( $clients as $clientId => $vals ) {
+                    if ( array_key_exists ( $clientId, $targetContactValues ) ) {
+                        unset( $targetContactValues[$clientId] );
+                    }
                 }
             }
         }
         $this->assign( 'targetContactValues', empty( $targetContactValues ) ? false : $targetContactValues );
-        
+                
         //return form for ajax
         if ( $this->_cdType  || $this->_addAssigneeContact || $this->_addTargetContact ) {
             return $this->_defaults;
@@ -512,14 +517,23 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         }
         
         if ( $activity->id ) {
+            // add tags if exists
             $tagParams = array( );
             if ( !empty($params['tag']) ) {
                 foreach( $params['tag'] as $tag ) {
                     $tagParams[$tag] = 1;
                 }
             }
+
+            //save static tags
             require_once 'CRM/Core/BAO/EntityTag.php';
             CRM_Core_BAO_EntityTag::create( $tagParams, 'civicrm_activity',  $activity->id );
+
+            //save free tags
+            if ( isset( $params['taglist'] ) && !empty( $params['taglist'] ) ) {
+                require_once 'CRM/Core/Form/Tag.php';
+                CRM_Core_Form_Tag::postProcess( $params['taglist'], $activity->id, 'civicrm_activity', $this );
+            }
         }
  
         $params['assignee_contact_id'] = $assineeContacts;

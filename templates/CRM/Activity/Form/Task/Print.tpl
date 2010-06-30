@@ -23,24 +23,24 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+<div class="crm-block crm-activity_task_print-form-block">
 <p>
-
 {if $rows } 
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
+<div class="crm-submit-buttons element-right">
+  {include file="CRM/common/formButtons.tpl" location="top"}
 </div>
 <div class="spacer"></div>
 <br />
 <p>
 <table>
   <tr class="columnheader">
-    <th>{ts}Type{/ts}</th>
-    <th>{ts}Subject{/ts}</th>
-    <th>{ts}Added By{/ts}</th>
-    <th>{ts}With{/ts}</th>
-    <th>{ts}Assigned To{/ts}</th>
-    <th>{ts}Date{/ts}</th>
-    <th>{ts}Status{/ts}</th>
+    <td>{ts}Type{/ts}</td>
+    <td>{ts}Subject{/ts}</td>
+    <td>{ts}Added By{/ts}</td>
+    <td>{ts}With{/ts}</td>
+    <td>{ts}Assigned To{/ts}</td>
+    <td>{ts}Date{/ts}</td>
+    <td>{ts}Status{/ts}</td>
   </tr>
 
 {foreach from=$rows item=row}
@@ -79,18 +79,12 @@
     </tr>
 {/foreach}
 </table>
-
-<div class="form-item">
-     <span class="element-right">{$form.buttons.html}</span>
-</div>
-
+<div class="crm-submit-buttons element-right">
+  {include file="CRM/common/formButtons.tpl" location="bottom"}
 {else}
    <div class="messages status">
-    <dl>
-    <dt><div class="icon inform-icon"></div></dt>
-    <dd>
-        {ts}There are no records selected for Print.{/ts}
-    </dd>
-    </dl>
-   </div>
+       <div class="icon inform-icon"></div>
+         {ts}There are no records selected for Print.{/ts}
+    </div>
 {/if}
+</div>

@@ -40,7 +40,7 @@ class WebTest_Contact_AddGroup extends CiviSeleniumTestCase {
       parent::setUp();
   }
 
-  function testIndividualAdd( )
+  function testGroupAdd( )
   {
       // This is the path where our testing install resides. 
       // The rest of URL is defined in CiviSeleniumTestCase base class, in

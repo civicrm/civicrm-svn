@@ -32,14 +32,14 @@
     <label>{ts}Edit Search Criteria{/ts}</label>
 </div>
 
-<div id="searchForm" class="form-item">
+<div id="searchForm" class="crm-block crm-form-block crm-contact-custom-search-eventDetails-form-block">
     <fieldset>
         <legend><span id="searchForm_hide"><a href="#" onclick="hide('searchForm','searchForm_hide'); show('searchForm_show'); return false;"><img src="{$config->resourceBase}i/TreeMinus.gif" class="action-icon" alt="{ts}close section{/ts}" /></a></span>{ts}Search Criteria{/ts}</legend>
-    
+      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
         <table class="form-layout-compressed">
             {* Loop through all defined search criteria fields (defined in the buildForm() function). *}
             {foreach from=$elements item=element}
-                <tr>
+                <tr class="crm-contact-custom-search-eventDetails-form-block-{$element}">
                     <td class="label">{$form.$element.label}</td>
                     {if $element eq 'start_date'}
                         <td>{include file="CRM/common/jcalendar.tpl" elementName=start_date}</td>
@@ -50,7 +50,7 @@
                     {/if}
                 </tr>
             {/foreach}
-            <tr>
+            <tr class="crm-contact-custom-search-eventDetails-form-block-event_type">
                 <td class="label">{ts}Event Type{/ts}</td>
                 <td>     
                     <div class="listing-box">
@@ -63,11 +63,8 @@
                     <div class="spacer"></div>
                 </td>
             </tr>
-            <tr>
-                <td>&nbsp;</td>
-                <td>{$form.buttons.html}</td>
-            </tr>
         </table>
+      <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     </fieldset>
 </div>
 

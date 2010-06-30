@@ -25,7 +25,7 @@
 *}
 {* CiviContribute DashBoard (launch page) *}
 {if $buildTabularView}
-<table class="report" style="">
+<table class="report">
 <tr class="columnheader-dark">
     <th scope="col">{ts}Period{/ts}</th>
     <th scope="col">{ts}Total Amount{/ts}</th>
@@ -52,12 +52,12 @@
 {elseif $buildChart}
   {include file = "CRM/Contribute/Form/ContributionCharts.tpl"}
 {else} 
-  <h3>{ts}Contribution Summary{/ts} {help id="id-contribute-intro"}</h3>&nbsp;
+  <h3>{ts}Contribution Summary{/ts} {help id="id-contribute-intro"}</h3>
       <div id="mainTabContainer" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
         <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-           <li id="chart_view"   class="ui-state-active ui-corner-top ui-tabs-selected" > 
+           <li id="chart_view"   class="crm-tab-button ui-state-active ui-corner-top ui-corner-bottom ui-tabs-selected" > 
              <a href="#chart_layout"><span>&nbsp;</span>&nbsp;{ts}Chart Layout{/ts}&nbsp;</a> </li>&nbsp;
-           <li id ="table_view"  class="ui-corner-top ui-state-default" >
+           <li id ="table_view"  class="crm-tab-button ui-corner-top ui-corner-bottom ui-state-default" >
              <a href="#table_layout"><span>&nbsp;</span>&nbsp;{ts}Table Layout{/ts}&nbsp;</a>
            </li>
 {if $isAdmin}
@@ -68,7 +68,7 @@
 <table class="form-layout-compressed">
 <tr>
     <td>
-     <a href="{$configPagesURL}" class="button"><span>&raquo; {ts}Manage Contribution Pages{/ts}
+     <a href="{$configPagesURL}" class="button"><span>{ts}Manage Contribution Pages{/ts}
        </span></a>
     </td>
     <td><a href="{$newPageURL}" class="button"><span><div class="icon add-icon"></div>{ts}Add Contribution Page{/ts}
@@ -90,13 +90,7 @@
     </div>
 {/if}{literal}
 <script type="text/javascript">
-       cj('#table_view,#chart_view').hover( function() {
-	           cj(this).toggleClass('ui-state-hover');
-           },
-	   function () {
-	   	   cj(this).removeClass('ui-state-hover');
-	   } 
-	   );
+       
        cj(document).ready( function( ) {
                  getChart( );
                  cj('#chart_view').click(function( ) {

@@ -27,7 +27,7 @@
     {include file="CRM/Case/Page/ConfigureError.tpl"}
 {else}
 <tr>
-  <td class="crm-case-form-block-case_type" width="25%"><label>{ts}Case Type{/ts}</label>
+  <td class="crm-case-common-form-block-case_type" width="25%"><label>{ts}Case Type{/ts}</label>
     <br />
       <div class="listing-box" style="width: auto; height: 120px">
        {foreach from=$form.case_type_id item="case_type_id_val"}
@@ -38,7 +38,7 @@
       </div><br />
   </td>
   
-  <td class="crm-case-form-block-case_status_id" width="25%">
+  <td class="crm-case-common-form-block-case_status_id" width="25%">
     {$form.case_status_id.label}<br /> 
     {$form.case_status_id.html}<br /><br />	
     {if $accessAllCases}
@@ -50,7 +50,7 @@
     {/if}
   </td>
   {if $form.case_tags }
-  <td class="crm-case-form-block-case_tags">
+  <td class="crm-case-common-form-block-case_tags">
   <label>{ts}Case Tag(s){/ts}</label>
     <div id="Tag" class="listing-box">
       {foreach from=$form.case_tags item="tag_val"} 

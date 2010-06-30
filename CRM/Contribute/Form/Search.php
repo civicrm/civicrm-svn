@@ -372,17 +372,19 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
         require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         $selector = new CRM_Contribute_Selector_Search( $this->_queryParams,
-                                                         $this->_action,
-                                                         null,
-                                                         $this->_single,
-                                                         $this->_limit,
-                                                         $this->_context ); 
+                                                        $this->_action,
+                                                        null,
+                                                        $this->_single,
+                                                        $this->_limit,
+                                                        $this->_context ); 
+        $selector->setKey( $this->controller->_key );
+
         $prefix = null;
         if ( $this->_context == 'basic' || $this->_context == 'user' ) {
             $prefix = $this->_prefix;
         }
 
-        $controller = new CRM_Core_Selector_Controller($selector , 
+        $controller = new CRM_Core_Selector_Controller( $selector , 
                                                         $this->get( CRM_Utils_Pager::PAGE_ID ), 
                                                         $sortID, 
                                                         CRM_Core_Action::VIEW,

@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div id="pricesetTotal" class="section section-pricesetTotal">
+<div id="pricesetTotal" class="crm-section section-pricesetTotal">
 	<div class="label" id="pricelabel"><label>Total Fee(s)</label></div>
 	<div class="content view-value" id="pricevalue" ></div>
 </div>

@@ -36,29 +36,28 @@
  <div class="crm-accordion-body" id="addressBlock">
 {/if}
 
-{if $blockId gt 1}<div class="spacer"></div>{/if}
-
- <div id="Address_Block_{$blockId}" {if $className eq 'CRM_Contact_Form_Contact'} class="boxBlock" {/if}>
-  <table class="form-layout-compressed">
+ <div id="Address_Block_{$blockId}" {if $className eq 'CRM_Contact_Form_Contact'} class="boxBlock crm-edit-address-block" {/if}>
+  {if $blockId gt 1}<fieldset><legend>Additional Address</legend>{/if}
+  <table class="form-layout-compressed crm-edit-address-form">
      <tr>
 	 {if $className eq 'CRM_Contact_Form_Contact'}
         <td id='Address-Primary-html' colspan="2">
-           {$form.address.$blockId.location_type_id.label}
-           {$form.address.$blockId.location_type_id.html}
-           {$form.address.$blockId.is_primary.html}
-           {$form.address.$blockId.is_billing.html}
+           <span class="crm-address-element location_type_id-address-element">{$form.address.$blockId.location_type_id.label}
+           {$form.address.$blockId.location_type_id.html}</span>
+           <span class="crm-address-element is_primary-address-element">{$form.address.$blockId.is_primary.html}</span>
+           <span class="crm-address-element is_billing-address-element">{$form.address.$blockId.is_billing.html}</span>
         </td>
 	 {/if}
         {if $blockId gt 1}
             <td>
-                <a href="#" title="{ts}Delete Address Block{/ts}" onClick="removeBlock( 'Address', '{$blockId}' ); return false;">{ts}delete{/ts}</a>
+                <a href="#" title="{ts}Delete Address Block{/ts}" onClick="removeBlock( 'Address', '{$blockId}' ); return false;">{ts}Delete this address{/ts}</a>
             </td>
         {/if}
      </tr>
      {if $form.use_household_address} 
      <tr>
         <td>
-            {$form.use_household_address.html}{$form.use_household_address.label}{help id="id-usehousehold"}<br />
+            {$form.use_household_address.html}{$form.use_household_address.label}{help id="id-usehousehold" file="CRM/Contact/Form/Contact.hlp"}<br />
             <div id="share_household" style="display:none">
                 {$form.shared_household.label}<br />
                 {$form.shared_household.html|crmReplace:class:huge}&nbsp;&nbsp;<span id="show_address"></span>
@@ -79,17 +78,18 @@
 
      </td></tr>
   </table>
-
+  <div class="crm-edit-address-custom_data"> 
   {include file="CRM/Contact/Form/Edit/Address/CustomData.tpl"}
+  </div> 
 
   {if $className eq 'CRM_Contact_Form_Contact'}
-      <div id="addMoreAddress{$blockId}" >
-          <a href="#" onclick="buildAdditionalBlocks( 'Address', '{$className}' );return false;">{ts}add address{/ts}</a>
+      <div id="addMoreAddress{$blockId}" class="crm-add-address-wrapper">
+          <a href="#" class="button" onclick="buildAdditionalBlocks( 'Address', '{$className}' );return false;"><span><div class="icon add-icon"></div>{ts}Another Address{/ts}</span></a>
       </div>
   {/if}
 
 {if $title and $className eq 'CRM_Contact_Form_Contact'}
-</div>
+</fieldset></div>
  </div><!-- /.crm-accordion-body -->
 </div><!-- /.crm-accordion-wrapper -->
 {/if}

@@ -27,7 +27,11 @@
 {if $cdType }
    {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
-    <div class="crm-block crm-form-block crm-activity-form-block">
+    {if $action eq 4}
+        <div class="crm-block crm-content-block crm-activity-view-block">
+    {else}
+        <div class="crm-block crm-form-block crm-activity-form-block">
+    {/if}
     {* added onload javascript for source contact*}
     {literal}
     <script type="text/javascript">
@@ -78,7 +82,7 @@
     cj( "#target_contact_id"  ).tokenInput( tokenDataUrl, { prePopulate: target_contact,   classes: tokenClass, hintText: hintText });
     cj( "#assignee_contact_id").tokenInput( tokenDataUrl, { prePopulate: assignee_contact, classes: tokenClass, hintText: hintText });
     cj( 'ul.token-input-list-facebook, div.token-input-dropdown-facebook' ).css( 'width', '450px' );
-    cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst : false, hintText: hintText, matchContains: true, minChars: 2
+    cj('#source_contact_id').autocomplete( sourceDataUrl, { width : 180, selectFirst : false, hintText: hintText, matchContains: true, minChars: 1
                                 }).result( function(event, data, formatted) { cj( "#source_contact_qid" ).val( data[1] );
                                 }).bind( 'click', function( ) { cj( "#source_contact_qid" ).val(''); });
     });
@@ -101,12 +105,16 @@
                 <div id="help">{$activityTypeDescription}</div>
             {/if}
 
-            <table class="{if $action eq 4}view-layout{else}form-layout{/if}">
-             {if $context eq 'standalone' or $context eq 'smog'}
+            <table class="{if $action eq 4}crm-info-panel{else}form-layout{/if}">
+
+	     {* don't show in activity view mode, since act type is present as a part if title. *}	     	    
+	     {if $action neq 4}	   
+             {if $context eq 'standalone' or $context eq 'search' or $context eq 'smog'}
                 <tr class="crm-activity-form-block-activity_type_id">
                    <td class="label">{$form.activity_type_id.label}</td><td class="view-value">{$form.activity_type_id.html}</td>
                 </tr>
              {/if}
+	     {/if}
              <tr class="crm-activity-form-block-source_contact_id">
                 <td class="label">{$form.source_contact_id.label}</td>
                 <td class="view-value">
@@ -182,12 +190,14 @@
              <tr class="crm-activity-form-block-details">
                <td class="label">{$form.details.label}</td>
         	        {if $activityTypeName eq "Print PDF Letter"}
-            		  <td class="view-value report">
-            	    	    {$form.details.value|crmReplace:class:huge}
+            		  <td class="view-value">
+                          {* If using plain textarea, assign class=huge to make input large enough. *}
+                          {if $defaultWysiwygEditor eq 0}{$form.details.html|crmReplace:class:huge}{else}{$form.details.html}{/if}
             		  </td>
             		{else}
-            	      <td class="view-value report">
-            	    	    {$form.details.html|crmStripAlternatives|crmReplace:class:huge}
+            	      <td class="view-value">
+                          {* If using plain textarea, assign class=huge to make input large enough. *}
+                          {if $defaultWysiwygEditor eq 0}{$form.details.html|crmStripAlternatives|crmReplace:class:huge}{else}{$form.details.html|crmStripAlternatives}{/if}
             		  </td>
             		{/if}     
                </td>
@@ -195,39 +205,51 @@
              <tr class="crm-activity-form-block-priority_id">
                 <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
              </tr>
+             
              {if $form.tag.html}
-             <tr class="crm-activity-form-block-tag">
-                <td class="label">{$form.tag.label}</td>
-                <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
-                    {literal}
-                    <script type="text/javascript">
-                        cj("select[multiple]").crmasmSelect({
-                            addItemTarget: 'bottom',
-                            animate: true,
-                            highlight: true,
-                            sortable: true,
-                            respectParents: true
-                        });
-                    </script>
-                    {/literal}
-                </td>
-             </tr>
+                 <tr class="crm-activity-form-block-tag">
+                    <td class="label">{$form.tag.label}</td>
+                    <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
+                        {literal}
+                        <script type="text/javascript">
+                            cj("select[multiple]").crmasmSelect({
+                                addItemTarget: 'bottom',
+                                animate: true,
+                                highlight: true,
+                                sortable: true,
+                                respectParents: true
+                            });
+                        </script>
+                        {/literal}
+                    </td>
+                 </tr>
              {/if}
-             <tr class="crm-activity-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>	     
-             <tr class="crm-activity-form-block-custom_data">
-                <td colspan="2">
-	            {if $action eq 4} 
-                    {include file="CRM/Custom/Page/CustomDataView.tpl"}
-                {else}
-                    <div id="customData"></div>
-                {/if} 
-                </td>
-             </tr> 
-             <tr class="crm-activity-form-block-attachment">
-                <td colspan="2">
-                    {include file="CRM/Form/attachment.tpl"}
-                </td>
-             </tr>
+             
+             {if $tagset}
+                <tr class="crm-activity-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>
+             {/if}
+             
+             {if $action neq 4 OR $viewCustomData} 
+                 <tr class="crm-activity-form-block-custom_data">
+                    <td colspan="2">
+    	            {if $action eq 4} 
+                        {include file="CRM/Custom/Page/CustomDataView.tpl"}
+                    {else}
+                        <div id="customData"></div>
+                    {/if} 
+                    </td>
+                 </tr>
+             {/if}
+             
+             {if $action eq 4 AND $currentAttachmentURL}
+                {include file="CRM/Form/attachment.tpl"}{* For view action the include provides the row and cells. *}
+             {else if $action eq 1 OR $action eq 2}
+                 <tr class="crm-activity-form-block-attachment">
+                    <td colspan="2">
+                        {include file="CRM/Form/attachment.tpl"}
+                    </td>
+                 </tr>
+             {/if}
 
              {if $action neq 4} {* Don't include "Schedule Follow-up" section in View mode. *}
                  <tr class="crm-activity-form-block-schedule_followup">
@@ -261,35 +283,30 @@
                  </tr>
              {/if}
         {/if} {* End Delete vs. Add / Edit action *}
-        <tr class="buttons">
-            <td>
-                {if $action eq 4 or $action eq 8 or $action eq 32768}
-	    	    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-		        {/if}
-	        </td>
-            <td>
+        </table>   
+	    <div class="crm-submit-buttons">
             {if $action eq 4 && $activityTName neq 'Inbound Email'} 
 	            {if !$context }
 	                {assign var="context" value='activity'}
 	            {/if}
 	            {if $permission EQ 'edit'}
-                    <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=$context"}" class="edit button" title="{ts}Edit{/ts}">
-                    <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
-                    </a>
-                {/if}
-                {if call_user_func(array('CRM_Core_Permission','check'), 'delete activities')}
-                    <a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&atype=$atype&action=delete&reset=1&id=$entityID&cid=$contactId&context=$context"}" class="delete button" title="{ts}Delete{/ts}">
-                    <span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span>
-                    </a>
-                {/if}
+		            {assign var='urlParams' value="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=$context"}
+		            {if ($context eq 'fulltext' || $context eq 'search') && $searchKey}
+		                {assign var='urlParams' value="reset=1&atype=$atype&action=update&reset=1&id=$entityID&cid=$contactId&context=$context&key=$searchKey"}
+		            {/if}
+                    <a href="{crmURL p='civicrm/contact/view/activity' q=$urlParams}" class="edit button" title="{ts}Edit{/ts}"><span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span></a>
+                 {/if}
+                 
+                 {if call_user_func(array('CRM_Core_Permission','check'), 'delete activities')}
+		            {assign var='urlParams' value="reset=1&atype=$atype&action=delete&reset=1&id=$entityID&cid=$contactId&context=$context"}
+		            {if ($context eq 'fulltext' || $context eq 'search') && $searchKey}
+		                {assign var='urlParams' value="reset=1&atype=$atype&action=delete&reset=1&id=$entityID&cid=$contactId&context=$context&key=$searchKey"}	
+		            {/if}
+                    <a href="{crmURL p='civicrm/contact/view/activity' q=$urlParams}" class="delete button" title="{ts}Delete{/ts}"><span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span></a>
+                 {/if}
 	        {/if}
-	        </td>
-        </tr> 
-    </table>   
-
-    {if !$action or ( $action eq 1 ) or ( $action eq 2 ) }
-        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
-    {/if}
+            {include file="CRM/common/formButtons.tpl" location="bottom"}
+	    </div>
 
     {include file="CRM/Case/Form/ActivityToCase.tpl"}
 

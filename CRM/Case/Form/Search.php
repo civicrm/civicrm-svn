@@ -381,11 +381,13 @@ class CRM_Case_Form_Search extends CRM_Core_Form
         $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         
         $selector = new CRM_Case_Selector_Search( $this->_queryParams,
-                                                     $this->_action,
-                                                     null,
-                                                     $this->_single,
-                                                     $this->_limit,
-                                                     $this->_context ); 
+                                                  $this->_action,
+                                                  null,
+                                                  $this->_single,
+                                                  $this->_limit,
+                                                  $this->_context );
+        $selector->setKey( $this->controller->_key );
+        
         $prefix = null;
         if ( $this->_context == 'user') {
             $prefix = $this->_prefix;
@@ -506,13 +508,8 @@ class CRM_Case_Form_Search extends CRM_Core_Form
                 $this->_single = true;
             }
         } else {
-            $session = & CRM_Core_Session::singleton();
-            
-            if ( !CRM_Utils_Request::retrieve( 'all', 'Positive', $session ) ) {
-                $this->_formValues['case_mycases'] = 0;
-                $this->_formValues['case_owner'] = 0;
-                $this->_defaults['case_owner']   = 0;
-            } else {
+            $session = CRM_Core_Session::singleton();
+            if ( CRM_Utils_Request::retrieve( 'all', 'Positive', $session ) ) {
                 $this->_formValues['case_owner'] = 1;
                 $this->_defaults['case_owner']   = 1;
             }

@@ -23,7 +23,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block">
+<div class="crm-block crm-form-block crm-import-maptable-form-block">
 
 {* Import Wizard - Data Mapping table used by MapFields.tpl and Preview.tpl *}
  <div id="map-field">
@@ -40,15 +40,15 @@
 	    {/if}	
             {section name=rows loop=$totalRowsDisplay}
                 { if $smarty.section.rows.iteration == 1 and $showColNames}
-                  <th>{ts}Column Names{/ts}</th>
+                  <td>{ts}Column Names{/ts}</td>
                 {elseif $showColNames}
-                  <th>{ts 1=$smarty.section.rows.iteration-1}Import Data (row %1){/ts}</th>
+                  <td>{ts 1=$smarty.section.rows.iteration-1}Import Data (row %1){/ts}</td>
 		{else}
-		  <th>{ts 1=$smarty.section.rows.iteration}Import Data (row %1){/ts}</th>
+		  <td>{ts 1=$smarty.section.rows.iteration}Import Data (row %1){/ts}</td>
                 {/if}
             {/section}
             
-            <th>{ts}Matching CiviCRM Field{/ts}</th>
+            <td>{ts}Matching CiviCRM Field{/ts}</td>
         </tr>
         
         {*Loop on columns parsed from the import data rows*}
@@ -120,10 +120,16 @@
     	{/if}
     	<span>{$form.saveMapping.html} &nbsp;&nbsp; {$form.saveMapping.label}</span>
     	<div id="saveDetails" class="form-item">
-    	      <dl>
-    		   <dt>{$form.saveMappingName.label}</dt><dd>{$form.saveMappingName.html}</dd>
-    		   <dt>{$form.saveMappingDesc.label}</dt><dd>{$form.saveMappingDesc.html}</dd>
-    	      </dl>
+    	      <table class="form-layout-compressed">
+    		    <tr class="crm-import-maptable-form-block-saveMappingName">
+                        <td class="label">{$form.saveMappingName.label}</td>
+                        <td>{$form.saveMappingName.html}</td>
+                    </tr>
+    		    <tr class="crm-import-maptable-form-block-saveMappingName">
+                        <td class="label">{$form.saveMappingDesc.label}</td>
+                        <td>{$form.saveMappingDesc.html}</td>
+                    </tr>
+    	      </table>
     	</div>
     	<script type="text/javascript">
              {if $mappingDetailsError }

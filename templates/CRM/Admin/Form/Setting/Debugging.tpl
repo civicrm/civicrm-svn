@@ -23,9 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item crm-block crm-form-block crm-debugging-form-block">
+<div class="crm-block crm-form-block crm-debugging-form-block">
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
-         <table>
+         <table class="form-layout">
             <tr class="crm-debugging-form-block-debug">
                 <td class="label">{$form.debug.label}</td>
                 <td>{$form.debug.html}<br />

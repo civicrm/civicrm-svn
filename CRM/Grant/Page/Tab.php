@@ -171,10 +171,19 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
         $this->_id = CRM_Utils_Request::retrieve('id', 'Integer', $this );
         $session   = CRM_Core_Session::singleton( ); 
         
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;          
+        
         switch ( $context ) {
             
         case 'search':
-            $url = CRM_Utils_System::url('civicrm/grant/search','force=1');
+            $urlParams = 'force=1';
+            if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            $this->assign( 'searchKey', $qfKey );
+            
+            $url = CRM_Utils_System::url( 'civicrm/grant/search', $urlParams );
             break;
             
         case 'dashboard':

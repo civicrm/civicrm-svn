@@ -150,16 +150,12 @@ class CRM_Event_Page_ManageEvent extends CRM_Core_Page
         }
 
         // what action to take ?
-        if ( $action & CRM_Core_Action::ADD || $action & CRM_Core_Action::UPDATE ) {
-            require_once 'CRM/Event/Page/ManageEventEdit.php';
-            $page = new CRM_Event_Page_ManageEventEdit( );
-            return $page->run( );
-        } else if ( $action & CRM_Core_Action::DELETE ) {
+        if ( $action & CRM_Core_Action::DELETE ) {
             $session = CRM_Core_Session::singleton();
             $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=browse' ) );
             $controller = new CRM_Core_Controller_Simple( 'CRM_Event_Form_ManageEvent_Delete',
-                                                           'Delete Event',
-                                                           $action );
+                                                          'Delete Event',
+                                                          $action );
             $controller->set( 'id', $id );
             $controller->process( );
             return $controller->run( );
@@ -253,7 +249,9 @@ ORDER BY start_date desc
                                                                               true );
 
                 $params = array( 'entity_id'    => $dao->id, 
-                                 'entity_table' => 'civicrm_event');
+                                 'entity_table' => 'civicrm_event',
+                                 'is_active'    => 1
+                                 );
                 
                 require_once 'CRM/Core/BAO/Location.php';
                 $defaults['location'] = CRM_Core_BAO_Location::getValues( $params, true );
@@ -295,7 +293,7 @@ ORDER BY start_date desc
         $urlParams = 'reset=1';
         // Redirect to Copied Event Configuration
         if ( $copyEvent->id ) {
-            $urlParams .=  '&action=update&id='.$copyEvent->id ;
+            $urlParams .=  '&action=update&id='.$copyEvent->id.'&subPage=EventInfo';
         }
 
         return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', $urlParams ) );

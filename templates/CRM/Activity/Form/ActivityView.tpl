@@ -23,12 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="form-item">
-   <fieldset> <legend>{ts}View{/ts} {$activityTypeName}</legend>
+<h3>{$activityTypeName}</h3>
+<div class="crm-block crm-content-block crm-activity-view-block">
       {if $activityTypeDescription}
         <div id="help">{$activityTypeDescription}</div>
       {/if}
-      <table class="form-layout">
+      <table class="crm-info-panel">
         <tr>
             <td class="label">{ts}Added By{/ts}</td><td class="view-value">{$values.source_contact}</td>
         </tr> 
@@ -103,10 +103,7 @@
             <td class="label">{ts}Attachment(s){/ts}</td><td class="view-value report">{$values.attachment}</td>
         </tr>  
 {/if}
-       <tr> 
-           <td>&nbsp;</td><td class="buttons">{$form.buttons.html}</td> 
-       </tr> 
      </table>
-   </fieldset>
+     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>  
  

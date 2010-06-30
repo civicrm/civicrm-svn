@@ -37,7 +37,7 @@
                     <ul id="actions">
                     	{* CRM-4418 *}
                         {* user should have edit permission to delete contact *}
-                        {if (call_user_func(array('CRM_Core_Permission','check'), 'delete contacts')) && ($permission EQ 'edit') }
+                        {if (call_user_func(array('CRM_Core_Permission','check'), 'delete contacts') and $permission == 'edit') or (call_user_func(array('CRM_Core_Permission','check'), 'access deleted contacts') and $is_deleted)}
                         {if call_user_func(array('CRM_Core_Permission','check'), 'access deleted contacts') and $is_deleted}
                         <li class="crm-delete-action crm-contact-restore">
                         <a href="{crmURL p='civicrm/contact/view/delete' q="reset=1&cid=$contactId&restore=1"}" class="delete button" title="{ts}Restore{/ts}">
@@ -65,7 +65,15 @@
                             {include file="CRM/Contact/Form/ActionsButton.tpl"}
                         </li>
                         <li>
-                        <a href="{crmURL p='civicrm/contact/add' q="reset=1&action=update&cid=$contactId"}" class="edit button" title="{ts}Edit{/ts}">
+			{assign var='urlParams' value="reset=1&action=update&cid=$contactId"}
+		        {if $searchKey}
+		            {assign var='urlParams' value="reset=1&action=update&cid=$contactId&key=$searchKey"}
+ 		        {/if}
+			{if $context}
+			    {assign var='urlParams' value=$urlParams|cat:"&context=$context"}
+			{/if}
+			
+                        <a href="{crmURL p='civicrm/contact/add' q=$urlParams}" class="edit button" title="{ts}Edit{/ts}">
                         <span><div class="icon edit-icon"></div>{ts}Edit{/ts}</span>
                         </a>
                         </li>
@@ -229,7 +237,7 @@
 					{if $address}
                     <div class="contact_panel">
                         {foreach from=$address item=add key=locationIndex}
-                        <div class="{cycle name=location values="contactCardLeft,contactCardRight"}">
+                        <div class="{cycle name=location values="contactCardLeft,contactCardRight"} crm-address_{$locationIndex} crm-address-block crm-address_type_{$add.location_type}">
                             <table>
                                 <tr>
                                     <td class="label">{ts 1=$add.location_type}%1&nbsp;Address{/ts}

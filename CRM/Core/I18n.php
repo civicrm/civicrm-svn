@@ -179,10 +179,10 @@ class CRM_Core_I18n
         $config =& CRM_Core_Config::singleton( );
         $stringTable = CRM_Utils_Array::value( $config->lcMessages,
                                                $config->localeCustomStrings );
-
+        
         $exactMatch = false;
-        if ( isset( $stringTable['exactMatch'] ) ) {
-            foreach ( $stringTable['exactMatch'] as $search => $replace ) {
+        if ( isset( $stringTable['enabled']['exactMatch'] ) ) {
+            foreach ( $stringTable['enabled']['exactMatch'] as $search => $replace ) {
                 if ( $search === $text ) {
                     $exactMatch = true;
                     $text = $replace;
@@ -190,11 +190,11 @@ class CRM_Core_I18n
                 }
             }
         }
-
+        
         if ( ! $exactMatch &&
-             isset( $stringTable['wildcardMatch'] ) ) {
-            $search  = array_keys  ( $stringTable['wildcardMatch'] );
-            $replace = array_values( $stringTable['wildcardMatch'] );
+             isset( $stringTable['enabled']['wildcardMatch'] ) ) {
+            $search  = array_keys  ( $stringTable['enabled']['wildcardMatch'] );
+            $replace = array_values( $stringTable['enabled']['wildcardMatch'] );
             $text = str_replace( $search,
                                  $replace,
                                  $text );
@@ -218,7 +218,11 @@ class CRM_Core_I18n
                 
                 // if not plural, but the locale's set, translate
             } elseif ($this->_phpgettext) {
-                $text = $this->_phpgettext->translate($text, $context);
+                if ($context) {
+                    $text = $this->_phpgettext->pgettext($context, $text);
+                } else {
+                    $text = $this->_phpgettext->translate($text);
+                }
             }
         }
 
@@ -248,12 +252,13 @@ class CRM_Core_I18n
      * Localize (destructively) array values.
      *
      * @param  $array array  the array for localization (in place)
+     * @param  $params array an array of additional parameters
      * @return        void
      */
-    function localizeArray(&$array)
+    function localizeArray(&$array, $params = array())
     {
-        foreach ($array as $key => $value) {
-            if ($value) $array[$key] = ts($value);
+        foreach ($array as &$value) {
+            if ($value) $value = ts($value, $params);
         }
     }
 

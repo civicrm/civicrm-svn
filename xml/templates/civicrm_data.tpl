@@ -185,7 +185,9 @@ VALUES
    ('account_type'                  , '{ts escape="sql"}Account type{/ts}'                       , 0, 1),
    ('website_type'                  , '{ts escape="sql"}Website Type{/ts}'                       , 0, 1),
    ('tag_used_for'                  , '{ts escape="sql"}Tag Used For{/ts}'                       , 0, 1),
-   ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 0, 1);
+   ('currencies_enabled'            , '{ts escape="sql"}List of currencies enabled for this site{/ts}', 0, 1),
+   ('event_badge'                   , '{ts escape="sql"}Event Name Badge{/ts}'                   , 0, 1);
+
    
 SELECT @option_group_id_pcm            := max(id) from civicrm_option_group where name = 'preferred_communication_method';
 SELECT @option_group_id_act            := max(id) from civicrm_option_group where name = 'activity_type';
@@ -235,6 +237,7 @@ SELECT @option_group_id_accTp          := max(id) from civicrm_option_group wher
 SELECT @option_group_id_website        := max(id) from civicrm_option_group where name = 'website_type';
 SELECT @option_group_id_tuf            := max(id) from civicrm_option_group where name = 'tag_used_for';
 SELECT @option_group_id_currency       := max(id) from civicrm_option_group where name = 'currencies_enabled';
+SELECT @option_group_id_eventBadge     := max(id) from civicrm_option_group where name = 'event_badge';
 
 SELECT @contributeCompId := max(id) FROM civicrm_component where name = 'CiviContribute';
 SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEvent';
@@ -600,7 +603,12 @@ VALUES
    (@option_group_id_tuf, 'Activities', 'civicrm_activity', 'Activities',  NULL, 0, NULL, 2, NULL, 0, 0, 1, NULL, NULL),
    (@option_group_id_tuf, 'Cases',      'civicrm_case',     'Cases',       NULL, 0, NULL, 3, NULL, 0, 0, 1, NULL, NULL),
 
-   (@option_group_id_currency, 'USD ($)',      'USD',     'USD',       NULL, 0, 1, 1, NULL, 0, 0, 1, NULL, NULL);
+   (@option_group_id_currency, 'USD ($)',      'USD',     'USD',       NULL, 0, 1, 1, NULL, 0, 0, 1, NULL, NULL),
+
+-- event name badges
+  (@option_group_id_eventBadge, '{ts escape="sql"}Name Only{/ts}'     , 1, 'CRM_Event_Badge_Simple',  NULL, 0, 0, 1, '{ts escape="sql"}Simple Event Name Badge{/ts}', 0, 1, 1, NULL, NULL),
+  (@option_group_id_eventBadge, '{ts escape="sql"}Name Tent{/ts}'     , 2, 'CRM_Event_Badge_NameTent',  NULL, 0, 0, 2, '{ts escape="sql"}Name Tent{/ts}', 0, 1, 1, NULL, NULL),
+  (@option_group_id_eventBadge , '{ts escape="sql"}With Logo{/ts}'    , 3, 'CRM_Event_Badge_Logo', NULL, 0, 0, 3, '{ts escape="sql"}You can set your own background image{/ts}',  0, 1, 1, NULL, NULL );
     
 -- Now insert option values which require domainID
 --
@@ -745,7 +753,7 @@ INSERT INTO civicrm_mailing_bounce_pattern
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 
-        VALUES ('Away', '{ts escape="sql"}Recipient is on vacation{/ts}', 3);
+        VALUES ('Away', '{ts escape="sql"}Recipient is on vacation{/ts}', 30);
 
 SELECT @bounceTypeID := max(id) FROM civicrm_mailing_bounce_type WHERE name = 'Away';
 INSERT INTO civicrm_mailing_bounce_pattern 
@@ -999,20 +1007,17 @@ INSERT INTO civicrm_uf_field
        (16, 5,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Email Address{/ts}',         		'Contact',     NULL),
        (17, 6,           'household_name',        1,           0,           2,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Household Name{/ts}',        		'Household',   NULL),
        (18, 6,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Email Address{/ts}',         		'Contact',     NULL),
-	   (19, 7, 			 'tag', 				  1, 		   0, 			2, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Tags{/ts}', 						'Contact', 	   NULL),
-	   (20, 7, 			 'email', 				  1, 		   0, 			3, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Primary Email{/ts}',  				'Contact', 	   NULL),
-	   (21, 7, 			 'group', 				  1, 		   0, 			1, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Groups{/ts}',  					'Contact', 	   NULL),
-	   (22, 7, 			 'phone', 				  1, 		   0, 			4, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Primary Phone{/ts}',  				'Contact', 	   NULL),
-	   (23, 7, 			 'street_address', 		  1, 		   0, 			5, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Primary Address{/ts}',		'Contact', 	   NULL),
-	   (24, 7, 			 'postal_code', 		  1, 		   0, 			8, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Postal Code{/ts}',  				'Contact', 	   NULL),
-	   (25, 7, 			 'state_province', 		  1, 		   0, 			7, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}State{/ts}',  						'Contact', 	   NULL),
-	   (26, 7, 			 'city',				  1, 		   0, 			6, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}City{/ts}',  						'Contact', 	   NULL),
-	   (27  ,7  	    ,'gender'  				 ,1  	      ,0  			,9  	,'User and User Admin Only' ,0  		 ,0  			,NULL  			  ,'{ts escape="sql"}Gender{/ts}'  						,'Individual' ,NULL),
-	   (28 	,7 		    ,'birth_date' 			 ,1  	      ,0 			,10 	,'User and User Admin Only' ,0 		 	 ,0 			,NULL 			  ,'{ts escape="sql"}Date of Birth{/ts}' 			    ,'Individual' ,NULL),
-	   (29 	,7 		    ,'phone' 				 ,1  	      ,0 			,11 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'{ts escape="sql"}Home Phone{/ts}' 					,'Contact' 	  ,NULL),
-	   (30 	,7 		    ,'phone' 				 ,1  	      ,0 			,12 	,'User and User Admin Only' ,0 		 	 ,0 			,2 				  ,'{ts escape="sql"}Home Mobile{/ts}' 					,'Contact' 	  ,NULL),
-	   (31 	,7 		    ,'url-1' 				 ,1  	      ,0 			,13 	,'User and User Admin Only' ,0 		 	 ,0 			,NULL			  ,'{ts escape="sql"}Website{/ts}' 						,'Contact' 	  ,NULL);
-
+	   (19 	,7 		    ,'phone' 				 ,1  	      ,0 			,1 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'{ts escape="sql"}Home Phone{/ts}' 					,'Contact' 	  ,NULL),
+	   (20 	,7 		    ,'phone' 				 ,1  	      ,0 			,2 	,'User and User Admin Only' ,0 		 	 ,0 			,2 				  ,'{ts escape="sql"}Home Mobile{/ts}' 					,'Contact' 	  ,NULL),
+	   (21, 7, 			 'street_address', 		  1, 		   0, 			3, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Primary Address{/ts}',		'Contact', 	   NULL),
+	   (22, 7, 			 'city',				  1, 		   0, 			4, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}City{/ts}',  						'Contact', 	   NULL),
+	   (23, 7, 			 'state_province', 		  1, 		   0, 			5, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}State{/ts}',  						'Contact', 	   NULL),
+	   (24, 7, 			 'postal_code', 		  1, 		   0, 			6, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Postal Code{/ts}',  				'Contact', 	   NULL),
+	   (25, 7, 			 'email', 				  1, 		   0, 			7, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Primary Email{/ts}',  				'Contact', 	   NULL),
+	   (26, 7, 			 'group', 				  1, 		   0, 			8, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Groups{/ts}',  					'Contact', 	   NULL),
+	   (27, 7, 			 'tag', 				  1, 		   0, 			9, 	  	'User and User Admin Only',  0, 	      0, 		     NULL, 			   '{ts escape="sql"}Tags{/ts}', 						'Contact', 	   NULL),
+	   (28  ,7  	    ,'gender'  				 ,1  	      ,0  			,10  	,'User and User Admin Only' ,0  		 ,0  			,NULL,  			 '{ts escape="sql"}Gender{/ts}'  						,'Individual' ,NULL),
+	   (29 	,7 		    ,'birth_date' 			 ,1  	      ,0 			,11 	,'User and User Admin Only' ,0 		 	 ,0 			,NULL, 			  '{ts escape="sql"}Date of Birth{/ts}' 			    ,'Individual' ,NULL);
 
 INSERT INTO civicrm_participant_status_type
   (id, name,                                  label,                                                       class,      is_reserved, is_active, is_counted, weight, visibility_id) VALUES

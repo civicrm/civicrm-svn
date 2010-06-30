@@ -294,6 +294,7 @@ class CRM_Custom_Page_Field extends CRM_Core_Page
         $session = CRM_Core_Session::singleton();
         $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/custom/group/field', 'reset=1&action=browse&gid=' . $this->_gid));
         $controller->set('fieldId', $id);
+        $controller->set('groupId', $this->_gid);
         $controller->setEmbedded(true);
         $controller->process();
         $controller->run();

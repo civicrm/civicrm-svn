@@ -143,10 +143,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                                                                $this, true, null, 'REQUEST' );
             if ( ! in_array( $this->_contactType,
                              array( 'Individual', 'Household', 'Organization' ) ) ) {
-                CRM_Core_Error::statusBounce( ts('Could not get a contact_id and/or contact_type') );
+                CRM_Core_Error::statusBounce( ts('Could not get a contact id and/or contact type') );
             }
             
             $this->_contactSubType = CRM_Utils_Request::retrieve( 'cst','String', $this );
+            
+            if ( $this->_contactSubType && !(CRM_Contact_BAO_ContactType::isExtendsContactType($this->_contactSubType, $this->_contactType, true)) ) { 
+                CRM_Core_Error::statusBounce(ts("Could not get a valid contact subtype for contact type '%1'", array(1 => $this->_contactType)));
+            }
 
             $this->_gid = CRM_Utils_Request::retrieve( 'gid', 'Integer',
                                                        CRM_Core_DAO::$_nullObject,
@@ -186,8 +190,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 
                 list( $displayName, $contactImage ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $this->_contactId );
                 
-                CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName ); 
-                $session->pushUserContext(CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid='. $this->_contactId ));
+                CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
+                $context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+                $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+                require_once 'CRM/Utils/Rule.php';
+                $urlParams = 'reset=1&cid='. $this->_contactId;
+                if ( $context ) $urlParams .= "&context=$context"; 
+                if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&key=$qfKey"; 
+                $session->pushUserContext(CRM_Utils_System::url('civicrm/contact/view', $urlParams ));
                 
                 $values = $this->get( 'values');
                 // get contact values.
@@ -902,6 +912,12 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             require_once 'CRM/Core/BAO/EntityTag.php';
             CRM_Core_BAO_EntityTag::create( $params['tag'],'civicrm_contact' ,
                                             $params['contact_id'] );
+        
+            //save free tags
+            if ( isset( $params['taglist'] ) && !empty( $params['taglist'] ) ) {
+                require_once 'CRM/Core/Form/Tag.php';
+                CRM_Core_Form_Tag::postProcess( $params['taglist'], $params['contact_id'], 'civicrm_contact', $this );
+            }
         }
         
         $statusMsg = ts('Your %1 contact record has been saved.', array( 1 => $contact->contact_type_display ) );
@@ -931,7 +947,15 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $resetStr .= $this->_contactSubType ? "&cst={$this->_contactSubType}" : '';
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/add', $resetStr ) );
         } else {
-            $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $contact->id));
+            $context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+            $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+            //validate the qfKey
+            require_once 'CRM/Utils/Rule.php';
+            $urlParams = 'reset=1&cid='. $contact->id;
+            if ( $context ) $urlParams .= "&context=$context";  
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&key=$qfKey";
+            
+            $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/contact/view', $urlParams ));
         }
         
         // now invoke the post hook
@@ -1054,8 +1078,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     function getTemplateFileName() 
     {
         if ( $this->_contactSubType ) {
-            $templateFile = "CRM/Contact/Form/Edit/{$this->_contactSubType}.tpl";
-            $template     =& CRM_Core_Form::getTemplate( );
+            $templateFile = "CRM/Contact/Form/Edit/SubType/{$this->_contactSubType}.tpl";
+            $template     = CRM_Core_Form::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }

@@ -26,6 +26,7 @@
 {* this template is used for adding/editing a tag (admin)  *}
 <div class="crm-block crm-form-block crm-mapping-form-block">
 <fieldset><legend>{if $action eq 1}{ts}New Tag{/ts}{elseif $action eq 2}{ts}Edit Mapping{/ts}{else}{ts}Delete Mapping{/ts}{/if}</legend>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>                  
     {if $action eq 1 or $action eq 2 }
       <table class="form-layout-compressed">
        <tr class="crm-mapping-form-block-name">
@@ -44,9 +45,9 @@
     {else}
         <div class="status">
         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
-        {ts 1=$mappingName}WARNING: Are you sure you want to delete mapping '<b>%1</b>'? This action cannot be undone.{/ts}</div>
+        {ts 1=$mappingName}WARNING: Are you sure you want to delete mapping '<b>%1</b>'?{/ts} {ts}This action cannot be undone.{/ts}</div>
     {/if}
-    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
+    <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" loaction="bottom"}</div>
     <div class="spacer"></div>
 </fieldset>
 </div>

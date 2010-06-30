@@ -1,6 +1,6 @@
 {if $rows}
-<div class="form-item">
-     <span class="element-right">{include file="CRM/common/formButtons.tpl"}</span>
+<div class="crm-submit-buttons element-right">
+   {include file="CRM/common/formButtons.tpl" location="top"}
 </div>
 
 <div class="spacer"></div>
@@ -25,11 +25,9 @@
   {/foreach}
 </table>
 </div>
-
-<div class="form-item">
-     <span class="element-right">{include file="CRM/common/formButtons.tpl"}</span>
+<div class="crm-submit-buttons element-right">
+   {include file="CRM/common/formButtons.tpl" location="bottom"}
 </div>
-
 {else}
    <div class="messages status">
             <div class="icon inform-icon"></div>

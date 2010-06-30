@@ -49,13 +49,13 @@
     {ts 1=$display_name}Welcome %1{/ts}. (<a href="{crmURL p='civicrm/event/register' q="&cid=0&reset=1&id=`$event.id`"}" title="{ts}Click here to register a different person for this event.{/ts}">{ts 1=$display_name}Not %1, or want to register a different person{/ts}</a>?)</div>
 {/if}
 {if $event.intro_text}
-    <div id="intro_text" class="section intro_text-section">
+    <div id="intro_text" class="crm-section intro_text-section">
         <p>{$event.intro_text}</p>
     </div>
 {/if}
 
 {if $form.additional_participants.html}
-    <div class="section additional_participants-section" id="noOfparticipants">
+    <div class="crm-section additional_participants-section" id="noOfparticipants">
         <div class="label">{$form.additional_participants.label}</div>
         <div class="content">
             {$form.additional_participants.html} &nbsp; ({ts}including yourself{/ts})<br />
@@ -70,7 +70,7 @@
         {include file="CRM/Price/Form/PriceSet.tpl"}
     </fieldset>
     {if $form.is_pay_later}
-        <div class="section pay_later-section">
+        <div class="crm-section pay_later-section">
 	        <div class="label">&nbsp;</div>
             <div class="content">{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}</div>
             <div class="clear"></div>
@@ -79,13 +79,13 @@
 
 {else}
     {if $paidEvent}
-        <div class="section paid_event-section">
+        <div class="crm-section paid_event-section">
     	    <div class="label">{$event.fee_label} <span class="marker">*</span></div>
     		<div class="content">{$form.amount.html}</div>
             <div class="clear"></div>
      	</div>
         {if $form.is_pay_later}
-            <div class="section pay_later-section">
+            <div class="crm-section pay_later-section">
     	        <div class="label">&nbsp;</div>
                 <div class="content">{$form.is_pay_later.html}&nbsp;{$form.is_pay_later.label}</div>
                 <div class="clear"></div>
@@ -95,7 +95,7 @@
 {/if}
 
 {assign var=n value=email-$bltID}
-    <div class="section email-section">
+    <div class="crm-section email-section">
         <div class="label">{$form.$n.label}</div>
         <div class="content">{$form.$n.html}</div>
         <div class="clear"></div>
@@ -134,7 +134,7 @@
 </div>
 
 {if $event.footer_text}
-    <div id="footer_text" class="section event_footer_text-section">
+    <div id="footer_text" class="crm-section event_footer_text-section">
         <p>{$event.footer_text}</p>
     </div>
 {/if}

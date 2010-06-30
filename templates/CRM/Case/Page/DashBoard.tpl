@@ -34,29 +34,23 @@
 
 
 
-<div class="float-right">
-  <table class="form-layout-compressed">
-    <tr>
-     <td class="right">
-        {if $myCases}
-        {* check for access all cases and activities *}
-        {if call_user_func(array('CRM_Core_Permission','check'), 'access all cases and activities')}
-            <a class="button" href="{crmURL p="civicrm/case" q="reset=1&all=1"}"><span>{ts}All Cases with Upcoming Activities{/ts}</span></a>
-        {/if}
-       {else}
-        <a class="button" href="{crmURL p="civicrm/case" q="reset=1&all=0"}"><span>{ts}My Cases with Upcoming Activities{/ts}</span></a>
-       {/if}
-       <a class="button" href="{crmURL p="civicrm/case/search" q="reset=1&case_owner=1&force=1"}"><span>{ts}My Cases{/ts}</span></a>
-     </td>
-   </tr>
-  </table>
-</div>
 
-{if $newClient}	
 <div class="crm-submit-buttons">
-	<a href="{$newCaseURL}" class="button"><span><div class="icon add-icon"></div> {ts}Add Case{/ts}</span></a>
+    {if $newClient}	
+	    <a href="{$newCaseURL}" class="button"><span><div class="icon add-icon"></div> {ts}Add Case{/ts}</span></a>
+    {/if}
+    <div class="crm-case-dashboard-switch-view-buttons">
+        {if $myCases}
+            {* check for access all cases and activities *}
+            {if call_user_func(array('CRM_Core_Permission','check'), 'access all cases and activities')}
+                <a class="button" href="{crmURL p="civicrm/case" q="reset=1&all=1"}"><span>{ts}All Cases with Upcoming Activities{/ts}</span></a>
+            {/if}
+        {else}
+            <a class="button" href="{crmURL p="civicrm/case" q="reset=1&all=0"}"><span>{ts}My Cases with Upcoming Activities{/ts}</span></a>
+        {/if}
+        <a class="button" href="{crmURL p="civicrm/case/search" q="reset=1&case_owner=1&force=1"}"><span>{ts}My Cases{/ts}</span></a>
+    </div>
 </div>
-{/if}
 
 
 <h3>{ts}Summary of Case Involvement{/ts}</h3>

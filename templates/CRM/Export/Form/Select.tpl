@@ -33,14 +33,25 @@
 
 {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
 {include file="CRM/common/WizardHeader.tpl"}
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
  <div id="export-type">
   <table class="form-layout-compressed">
-      <tr>        
-         {ts count=$totalSelectedRecords plural='%count records selected for export.'}One record selected for export.{/ts}
-        </tr> 
-        <tr class="crm-export-form-block-exportOption"><td>{$form.exportOption.html}</td>
+      <tr class="crm-export-form-block-records">
+         <td class="label"></td><td>{ts count=$totalSelectedRecords plural='%count records selected for export.'}One record selected for export.{/ts}</td>
+      </tr> 
+      <tr class="crm-export-form-block-exportOption">
+         <td class="label"></td><td>{$form.exportOption.html}</td>
+      </tr>
+      {if $taskName eq 'Export Contacts'}
+      	  <tr class="crm-export-form-block-mergeSameAddress">
+             <td class="label"></td><td>{$form.merge_same_address.html}</td>
+      	  </tr>
+       	  <tr class="crm-export-form-block-mergeSameHousehold">
+             <td class="label"></td><td>{$form.merge_same_household.html}</td>
+      	  </tr>
+      {/if}
   </table>
-         <div id="map">
+      <div id="map">
        {if $form.mapping }
             <table class="form-layout-compressed">
             <tr class="crm-export-form-block-mapping"><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td>{$form.mapping.label} &nbsp; {$form.mapping.html}</td></tr></table>
@@ -48,9 +59,7 @@
       </div>
   </div>
 
-<div class="crm-submit-buttons">
-    {include file="CRM/common/formButtons.tpl"}
-</div>
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 
 {literal}
   <script type="text/javascript">
