@@ -24,13 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/viewing relationships  *}
-<div class="crm-block crm-form-block crm-relationship-form-block">
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
   {if $action eq 4 } {* action = view *}
       <h3>{ts}View Relationship{/ts}</h3>
-
         <table class="view-layout">
 	    {foreach from=$viewRelationship item="row"}
             <tr>
@@ -72,9 +70,10 @@
         {/foreach}
         </table>
         <div class="crm-submit-buttons"><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=rel'}';"/></div>
-   {/if}
+  {/if}
 
-   {if $action eq 2 | $action eq 1} {* add and update actions *}
+  {if $action eq 2 | $action eq 1} {* add and update actions *}
+    <div class="crm-block crm-form-block crm-relationship-form-block">
     <h3>{if $action eq 1}{ts}New Relationship{/ts}{else}{ts}Edit Relationship{/ts}{/if}</h3>
             {if $action eq 1}
                 <div class="description">
@@ -160,59 +159,57 @@
                             {ts}Mark the target contact(s) for this relationship if it appears below. Otherwise you may modify the search name above and click Search again.{/ts}
                         </div>
                         {strip}
-				
-			{if $callAjax}
-			<div id="count_selected"> </div><br />
-			{$form.store_contacts.html}
+			            {if $callAjax}
+                			<div id="count_selected"> </div><br />
+                			{$form.store_contacts.html}
 		
-			{if $isEmployeeOf || $isEmployerOf}
-			     {$form.store_employer.html}     	
-			{/if}
-			{include file="CRM/common/jsortable.tpl"  sourceUrl=$sourceUrl useAjax=1 callBack=1 }
-			{/if}
+                			{if $isEmployeeOf || $isEmployerOf}
+                			     {$form.store_employer.html}     	
+                			{/if}
+			                {include file="CRM/common/jsortable.tpl"  sourceUrl=$sourceUrl useAjax=1 callBack=1 }
+			            {/if}
+
                         <table id="rel-contacts" class="pagerDisplay">
-			<thead>
-                        <tr class="columnheader">
-                        <th id="nosort" class="contact_select">&nbsp;</th>
-                        <th>{ts}Name{/ts}</th>
-                        {if $isEmployeeOf}<th id="nosort" class="current_employer">{ts}Current Employer?{/ts}</th> 
-                        {elseif $isEmployerOf}<th id="nosort" class="current_employer">{ts}Current Employee?{/ts}</th>{/if}
-                        <th>{ts}City{/ts}</th>
-                        <th>{ts}State{/ts}</th>
-                        <th>{ts}Email{/ts}</th>
-                        <th>{ts}Phone{/ts}</th>
-                        </tr>
-			</thead>
- 			<tbody>
-
-			{if !$callAjax}
-                        {foreach from=$searchRows item=row}
-                        <tr class="{cycle values="odd-row,even-row"}">
-                            <td class="contact_select">{$form.contact_check[$row.id].html}</td>
-                            <td>{$row.type} {$row.name}</td>
-                            {if $isEmployeeOf}<td>{$form.employee_of[$row.id].html}</td>
-                            {elseif $isEmployerOf}<td>{$form.employer_of[$row.id].html}</td>{/if}
-                            <td>{$row.city}</td>
-                            <td>{$row.state}</td>
-                            <td>{$row.email}</td>
-                            <td>{$row.phone}</td>
-                        </tr>
-                        {/foreach}
-			{else}
-			<tr><td colspan="5" class="dataTables_empty">Loading data from server</td></tr>
-			{/if}
-
-			</tbody>
+			                <thead>
+                                <tr class="columnheader">
+                                    <th id="nosort" class="contact_select">&nbsp;</th>
+                                    <th>{ts}Name{/ts}</th>
+                                {if $isEmployeeOf}<th id="nosort" class="current_employer">{ts}Current Employer?{/ts}</th> 
+                                {elseif $isEmployerOf}<th id="nosort" class="current_employer">{ts}Current Employee?{/ts}</th>{/if}
+                                    <th>{ts}City{/ts}</th>
+                                    <th>{ts}State{/ts}</th>
+                                    <th>{ts}Email{/ts}</th>
+                                    <th>{ts}Phone{/ts}</th>
+                                </tr>
+			                </thead>
+ 			                <tbody>
+                			{if !$callAjax}
+                                {foreach from=$searchRows item=row}
+                                <tr class="{cycle values="odd-row,even-row"}">
+                                    <td class="contact_select">{$form.contact_check[$row.id].html}</td>
+                                    <td>{$row.type} {$row.name}</td>
+                                    {if $isEmployeeOf}<td>{$form.employee_of[$row.id].html}</td>
+                                    {elseif $isEmployerOf}<td>{$form.employer_of[$row.id].html}</td>{/if}
+                                    <td>{$row.city}</td>
+                                    <td>{$row.state}</td>
+                                    <td>{$row.email}</td>
+                                    <td>{$row.phone}</td>
+                                </tr>
+                                {/foreach}
+                			{else}
+                			    <tr><td colspan="5" class="dataTables_empty">Loading data from server</td></tr>
+                			{/if}
+                			</tbody>
                         </table>
                         {/strip}
                         </fieldset>
                         <div class="spacer"></div>
-                    {else} {* too many results - we're only displaying 50 *}
+                    {else} {* too many results - we display only 50 *}
                         </div></fieldset>
                         {if $duplicateRelationship}  
-                          {capture assign=infoMessage}{ts}Duplicate relationship.{/ts}{/capture}
+                            {capture assign=infoMessage}{ts}Duplicate relationship.{/ts}{/capture}
                         {else}   
-                          {capture assign=infoMessage}{ts}Too many matching results. Please narrow your search by entering a more complete target contact name.{/ts}{/capture}
+                            {capture assign=infoMessage}{ts}Too many matching results. Please narrow your search by entering a more complete target contact name.{/ts}{/capture}
                         {/if}  
                         {include file="CRM/common/info.tpl"}
                     {/if}
@@ -280,22 +277,23 @@
         <div id="customData"></div>
         <div class="spacer"></div>
         <div class="crm-submit-buttons" id="saveButtons"> {include file="CRM/common/formButtons.tpl"}</div> 
-            {if $action EQ 1}
-                <div class="crm-submit-buttons" id="saveDetails">
-                <span class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_savedetails">{$form._qf_Relationship_refresh_savedetails.html}</span>
-                <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
-                </div>
-            {/if}
+        {if $action EQ 1}
+            <div class="crm-submit-buttons" id="saveDetails">
+            <span class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_savedetails">{$form._qf_Relationship_refresh_savedetails.html}</span>
+            <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
+            </div>
+        {/if}
   {/if}
  
   {if $action eq 8}
      <fieldset><legend>{ts}Delete Relationship{/ts}</legend>
         <div class="status">
-        {capture assign=relationshipsString}{$currentRelationships.$id.relation}{ $disableRelationships.$id.relation} {$currentRelationships.$id.name}{ $disableRelationships.$id.name }{/capture}
-        {ts 1=$relationshipsString}Are you sure you want to delete the Relationship '%1'?{/ts}
+            {capture assign=relationshipsString}{$currentRelationships.$id.relation}{ $disableRelationships.$id.relation} {$currentRelationships.$id.name}{ $disableRelationships.$id.name }{/capture}
+            {ts 1=$relationshipsString}Are you sure you want to delete the Relationship '%1'?{/ts}
         </div>
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
     </fieldset>	
+    </div>
   {/if}
 {/if} {* close of custom data else*}
 
@@ -385,7 +383,6 @@ function checkSelected( ) {
                 });  
             }	  	  
         }
-
         function submitAjaxData() {
             cj('#store_contacts').val( contact_checked.toString() );
             if ( useEmployer )  {
@@ -504,7 +501,6 @@ function changeCustomData( cType ) {
 {if $action EQ 2}
 {literal}
 <script type="text/javascript">
-
    currentEmployer( );
    function currentEmployer( ) 
    {
@@ -526,4 +522,3 @@ function changeCustomData( cType ) {
 </script>
 {/literal}
 {/if}
-</div>
