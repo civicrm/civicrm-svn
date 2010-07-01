@@ -445,7 +445,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         
         if ( $this->_mode != self::MODE_SEARCH ) {
             if ( isset($addToGroupId) ) {
-                $this->add('hidden', "group[$addToGroupId]", 1 );
+                $this->add('hidden', "add_to_group", $addToGroupId );
                 $this->_addToGroupID = $addToGroupId;
             }
         }
@@ -774,10 +774,14 @@ class CRM_Profile_Form extends CRM_Core_Form
             }
         }
         
+        if ( CRM_Utils_Array::value( 'add_to_group', $params ) ) {
+            $params['group'][$params['add_to_group']] = 1;
+        }
+        
         if ( $this->_grid ){
             $params['group'] = $groupSubscribed;
         }
-
+        
         // commenting below code, since we potentially
         // triggered maximum name field formatting cases during CRM-4430.
         // CRM-4343
