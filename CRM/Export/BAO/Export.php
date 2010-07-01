@@ -924,7 +924,12 @@ GROUP BY        {$contactA}";
             if ( substr( $fieldName, -3, 3 ) == '_id' ) {
                 $sqlColumns[$fieldName] = "$fieldName varchar(16)";
             } else {
-                $sqlColumns[$fieldName] = "$fieldName varchar(64)";
+                $changeFields = array( 'groups', 'tags', 'notes' );
+                if ( in_array( $fieldName, $changeFields) ) {
+                    $sqlColumns[$fieldName] = "$fieldName text";
+                } else {
+                    $sqlColumns[$fieldName] = "$fieldName varchar(64)";
+                }
             }
         }
     }
