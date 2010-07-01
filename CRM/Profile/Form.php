@@ -670,7 +670,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                                 'email_greeting'  => 'email_greeting_id', 
                                 'postal_greeting' => 'postal_greeting_id'
                                 );
-        if( $this->_id ) {
+        if ( $this->_id ) {
             $contactDetails = CRM_Contact_BAO_Contact::getHierContactDetails( $this->_id ,
                                                                               $greetingTypes );
             $details = $contactDetails[0][$this->_id];
@@ -712,7 +712,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                     }
                 }
             }
-            if( $profileType == 'Organization' ) {
+            if ( $profileType == 'Organization' ) {
                 unset( $params['email_greeting'], $params['postal_greeting'] );
                 
             }
@@ -775,7 +775,19 @@ class CRM_Profile_Form extends CRM_Core_Form
         }
         
         if ( CRM_Utils_Array::value( 'add_to_group', $params ) ) {
-            $params['group'][$params['add_to_group']] = 1;
+            $addToGroupId = $params['add_to_group'];
+
+            // since we are directly adding contact to group lets unset it from mailing
+            if ( $key = array_search( $addToGroupId, $mailingType ) ) {
+                unset( $mailingType[$key] );
+            }
+            
+            // add add to group to main group array
+            if ( !isset( $params['group'] ) ) {
+                $params['group'] = array( );
+            }
+            
+            $params['group'][$addToGroupId] = 1;
         }
         
         if ( $this->_grid ){
