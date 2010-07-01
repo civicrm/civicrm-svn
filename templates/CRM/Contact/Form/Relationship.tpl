@@ -29,7 +29,8 @@
 {else}
   {if $action eq 4 } {* action = view *}
       <h3>{ts}View Relationship{/ts}</h3>
-        <table class="view-layout">
+        <div class="crm-block crm-content-block crm-relationship-view-block">
+        <table class="crm-info-panel">
 	    {foreach from=$viewRelationship item="row"}
             <tr>
                 <td class="label">{$row.relation}</td> 
@@ -70,6 +71,7 @@
         {/foreach}
         </table>
         <div class="crm-submit-buttons"><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=rel'}';"/></div>
+        </div>
   {/if}
 
   {if $action eq 2 | $action eq 1} {* add and update actions *}
