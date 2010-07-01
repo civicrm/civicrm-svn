@@ -73,8 +73,8 @@
   {/if}
 
   {if $action eq 2 | $action eq 1} {* add and update actions *}
-    <div class="crm-block crm-form-block crm-relationship-form-block">
     <h3>{if $action eq 1}{ts}New Relationship{/ts}{else}{ts}Edit Relationship{/ts}{/if}</h3>
+    <div class="crm-block crm-form-block crm-relationship-form-block">
             {if $action eq 1}
                 <div class="description">
                 {ts}Select the relationship type. Then locate target contact(s) for this relationship by entering a complete or partial name and clicking 'Search'.{/ts}
