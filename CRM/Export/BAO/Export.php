@@ -285,8 +285,8 @@ class CRM_Export_BAO_Export
             //while using merge same address feature
             $returnProperties['addressee'     ] = 1;
             $returnProperties['street_name'   ] = 1;
-            if (!in_array('last_name', $returnProperties)) {
-                $returnProperties['last_name'   ] = 1;
+            if ( !CRM_Utils_Array::value( 'last_name', $returnProperties ) ) {
+                $returnProperties['last_name' ] = 1;
                 $drop = 'last_name';
             }
             $returnProperties['household_name'] = 1;
@@ -1115,12 +1115,12 @@ ALTER TABLE $tableName
 DROP  $drop";
             
             CRM_Core_DAO::executeQuery( $dropQuery );
-
-            unset($sqlColumns[$drop]);
             $allKeys = array_keys( $sqlColumns );
+
             if ( $key = CRM_Utils_Array::key( $drop, $allKeys ) ) {
                 unset( $headerRows[$key] );
             }
+            unset( $sqlColumns[$drop] );
         }
     }
     
