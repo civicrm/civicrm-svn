@@ -122,21 +122,22 @@
                     });
                     
                     function createRelation(  ) {
-                        var relType = cj('#relationship_type_id').val( );
+                        var relType    = cj('#relationship_type_id').val( );
+                        var relContact = cj('#rel_contact');
                         if ( relType ) {
-                             cj('#rel_contact').unbind( 'click' );
+                             relContact.unbind( 'click' );
                              cj("input[name=rel_contact_id]").val('');
                              var dataUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=relationship&rel="}'{literal} + relType;
-                             cj('#rel_contact').autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
-                             cj('#rel_contact').result(function( event, data ) {
+                             relContact.autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
+                             relContact.result(function( event, data ) {
                                	cj("input[name=rel_contact_id]").val(data[1]);
                                 cj('#relationship-refresh-save').show( );
                                 buildRelationFields( relType );
                              });
                         } else { 
-                            cj('#rel_contact').unautocomplete( );
+                            relContact.unautocomplete( );
                             cj("input[name=rel_contact_id]").val('');
-                            cj('#rel_contact').click( function() { alert( '{/literal}{ts}Please select a relationship type first.{/ts}{literal} ...' );});
+                            relContact.click( function() { alert( '{/literal}{ts}Please select a relationship type first.{/ts}{literal} ...' );});
                         }
                     }       
 				  </script>
@@ -344,7 +345,6 @@ cj( function( ) {
                 employer_checked = new Array();
             }
             if ( cj(this).attr('checked') == true ) {
-
                 // add validation to match with selected contacts
                 if( !contact_checked[valueSelected] ) {
                     alert('Current employer / Current employee should be among the selected contacts.');
@@ -364,32 +364,31 @@ cj( function( ) {
 });
 
 function checkSelected( ) {
-    cj('.pagerDisplay tbody tr .contact_select input').each(
-        function( ) {
-            if ( contact_checked[cj(this).val()] ) { 
-                cj(this).attr('checked',true);
-            }
-        });
+    cj('.pagerDisplay tbody tr .contact_select input').each( function( ) {
+        if ( contact_checked[cj(this).val()] ) { 
+            cj(this).attr('checked',true);
+        }
+    });
 
-        if ( useEmployer ) {
-            // register new elements
-            employer_holdelement = new Array();
-            cj('.pagerDisplay tbody tr .'+ employerClass +' input').each(
-                function( ) {
-                    if ( employer_checked[cj(this).val()] ) { 
-                        cj(this).attr('checked',true);
-                        employer_holdelement[cj(this).val()] = this;
-                    }
-                });  
-            }	  	  
-        }
-        function submitAjaxData() {
-            cj('#store_contacts').val( contact_checked.toString() );
-            if ( useEmployer )  {
-                cj('#store_employers').val( employer_checked.toString() ); 
+    if ( useEmployer ) {
+        // register new elements
+        employer_holdelement = new Array();
+        cj('.pagerDisplay tbody tr .'+ employerClass +' input').each( function( ) {
+            if ( employer_checked[cj(this).val()] ) { 
+                cj(this).attr('checked',true);
+                employer_holdelement[cj(this).val()] = this;
             }
-            return true;	 
-        }
+        });  
+    }	  	  
+}
+
+function submitAjaxData() {
+    cj('#store_contacts').val( contact_checked.toString() );
+    if ( useEmployer )  {
+        cj('#store_employers').val( employer_checked.toString() ); 
+    }
+    return true;	 
+}
 
 </script>
 {/literal}
@@ -402,13 +401,11 @@ function checkSelected( ) {
 <script type="text/javascript">
 
 {/literal} {if $searchRows} {literal}
-cj(".contact_select .form-checkbox").each(
-    function( ) {
-        if (this) { 
-            cj(this).attr('checked',true);
-        } 
-    }	  
-);
+cj(".contact_select .form-checkbox").each( function( ) {
+    if (this) { 
+        cj(this).attr('checked',true);
+    } 
+});
 {/literal} {/if} {literal}
 
 {/literal} {if $action EQ 1}{literal} 
@@ -417,14 +414,9 @@ cj('#addCurrentEmployer').hide( );
 cj('#addCurrentEmployee').hide( );
 
 cj('#rel_contact').focus( function() {
+    cj("input[name=rel_contact_id]").val('');
     cj('#relationship-refresh').show( );
     cj('#relationship-refresh-save').hide( );	      
-});
-
-cj('#rel_contact').change( function() {    
-    if ( cj("input[name=rel_contact]").val( ).length > 0 ) {
-        cj("input[name=rel_contact_id]").val('');
-    }	      
 });
 
 {/literal}{if $searchRows || $callAjax}{literal} 
@@ -433,7 +425,7 @@ show('saveElements');
 hide('saveElements');
 {/literal}{/if}{/if}{literal}	
 
-cj(document).ready(function() {
+cj( function( ) {
     var relType = cj('#relationship_type_id').val( );
     if ( relType ) {
         var relTypeId = relType.split("_");
