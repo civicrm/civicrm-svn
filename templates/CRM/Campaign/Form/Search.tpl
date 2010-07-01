@@ -38,17 +38,53 @@
     {strip} 
         <table class="form-layout">
         <tr>
-            <td class="font-size12pt" colspan="2">
-                {$form.sort_name.label}&nbsp;&nbsp;{$form.sort_name.html|crmReplace:class:'twenty'}&nbsp;&nbsp;&nbsp;
-		{$form.buttons.html}
+            <td class="font-size12pt">
+                {$form.sort_name.label}
+            </td>
+            <td>			
+		{$form.sort_name.html|crmReplace:class:'twenty'}
             </td>       
         </tr>
 	<tr>
-            <td class="font-size12pt" colspan="2">
-                {$form.filter_survey_id.label}&nbsp;&nbsp;{$form.filter_survey_id.html}
+            <td class="font-size12pt">
+                {$form.street_number.label}
+       	    </td>
+            <td>	
+                {$form.street_number.html}
             </td>
 	</tr>
-
+	<tr>
+            <td class="font-size12pt">
+                {$form.street_address.label}
+	    </td>
+            <td>
+                {$form.street_address.html}
+            </td>
+	</tr>
+	<tr>
+            <td class="font-size12pt">
+                {$form.city.label}
+            </td>
+            <td>
+                {$form.city.html}
+            </td>
+	</tr>
+	<tr>
+            <td class="font-size12pt">
+                {$form.status_id.label}
+            </td>
+            <td>
+	        {$form.status_id.html}
+            </td>
+	</tr>
+	<tr>
+            <td class="font-size12pt">
+                {$form.survey_id.label}
+            </td>
+            <td>
+	        {$form.survey_id.html}
+            </td>
+	</tr>
         <tr>
            <td colspan="2">{$form.buttons.html}</td>
         </tr>

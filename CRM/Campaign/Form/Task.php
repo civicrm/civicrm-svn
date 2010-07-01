@@ -121,6 +121,8 @@ class CRM_Campaign_Form_Task extends CRM_Core_Form
         }
         $this->_voterIds = $this->_contactIds = $this->_componentIds = $ids;
         
+        $this->assign( 'totalSelectedContacts', count( $this->_contactIds ) ); 
+
         //set the context for redirection for any task actions
         $session = CRM_Core_Session::singleton( );
         require_once 'CRM/Utils/Rule.php';

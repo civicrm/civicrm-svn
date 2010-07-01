@@ -225,14 +225,18 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
      */
     function buildQuickForm( ) 
     {
-        // text for sort_name 
-        $this->addElement( 'text', 'sort_name', ts('Voter Name or Email'), 
-                           CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name') );
-        
         require_once 'CRM/Campaign/BAO/Survey.php';
+
+        $this->add( 'text', 'sort_name', ts( 'Contact Name' ), true );
+        $this->add( 'text', 'street_number', ts( 'Street Number' ), true );
+        $this->add( 'text', 'street_address', ts( 'Street Address' ), true );
+        $this->add( 'text', 'city', ts( 'City' ), true );
+        
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
-        $this->add( 'select', 'filter_survey_id', ts('Survey'), 
-                    array('' => ts('- select survey -') ) + $surveys );
+        $this->add('select', 'survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
+        
+        $this->add('checkbox', 'status_id', ts('Is Held'), null, false );
+        
         
         /* 
          * add form checkboxes for each row. This is needed out here to conform to QF protocol 
