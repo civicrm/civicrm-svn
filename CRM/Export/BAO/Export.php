@@ -464,7 +464,6 @@ GROUP BY        {$contactA}";
         $header = $addPaymentHeader = false;
 
         if ( $paymentFields ) {
-            $addPaymentHeader = true;
             //special return properties for event and members
             $paymentHeaders = array( ts('Total Amount'), 
                                      ts('Contribution Status'), 
@@ -475,6 +474,7 @@ GROUP BY        {$contactA}";
             // get payment related in for event and members
             require_once 'CRM/Contribute/BAO/Contribution.php';
             $paymentDetails = CRM_Contribute_BAO_Contribution::getContributionDetails( $exportMode, $ids );
+            if( !empty( $paymentDetails ) ) $addPaymentHeader = true;
         }
 
         $componentDetails = $headerRows = $sqlColumns = array( );
