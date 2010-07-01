@@ -206,7 +206,6 @@
                         </fieldset>
                         <div class="spacer"></div>
                     {else} {* too many results - we display only 50 *}
-                        </div></fieldset>
                         {if $duplicateRelationship}  
                             {capture assign=infoMessage}{ts}Duplicate relationship.{/ts}{/capture}
                         {else}   
@@ -215,12 +214,10 @@
                         {include file="CRM/common/info.tpl"}
                     {/if}
                 {else} {* no valid matches for name + contact_type *}
-                        </div></fieldset>
                         {capture assign=infoMessage}{ts}No matching results for{/ts} <ul><li>{ts 1=$form.rel_contact.value}Name like: %1{/ts}</li><li>{ts}Contact Type{/ts}: {$contact_type_display}</li></ul>{ts}Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
                         {include file="CRM/common/info.tpl"}                
                 {/if} {* end if searchCount *}
               {else}
-                </div></fieldset>
               {/if} {* end if searchDone *}
         {/if} {* end action = add *}
         </table>
@@ -284,6 +281,7 @@
             <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
             </div>
         {/if}
+      </div> {* close main block div *}
   {/if}
  
   {if $action eq 8}
@@ -294,7 +292,6 @@
         </div>
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
     </fieldset>	
-    </div>
   {/if}
 {/if} {* close of custom data else*}
 
