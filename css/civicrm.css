@@ -28,6 +28,7 @@
 #crm-container table {
     margin: 0em 0em 1em;
     border-collapse: collapse;
+    width: 100%;
 }
     #crm-container table.criteria-group {
         margin-bottom: .1em;
@@ -2201,7 +2202,6 @@ div.grippie {
         }
 
 #crm-container a.button,
-#crm-create-new-link,
 #crm-participant-link,
 #crm-event-links-link,
 #crm-contact-actions-link,
@@ -2538,44 +2538,6 @@ span.icon {
     background       : white url('../i/loading.gif') no-repeat right center;
 }
 
-
-/* Joomla Admin Menu alterations */
-
-div.m ul#civicrm-menu {
-    z-index: 0;
-    position:relative;
-    border: none;
-    left:0px;
-    height:0px;
-    padding: 5px 0px 20px 2px;
-	}
-
-div.m ul#civicrm-menu {
-    z-index: 1;
-    position:relative;
-    border: none;
-    left:0px;
-    height:0px;
-    padding: 5px 0px 20px 2px;
-    padding-bottom:20px !important; /*moz bottom */
-    padding-bottom:2px; /*ie bottom */
-	}
-
-
-div#toolbar-box div.m{ 
-    padding: 0px 8px !important;
-}
-
-div#toolbar-box, div#toolbar-box div.m{
-    height: auto;
-}
-
-div.m ul#civicrm-menu li#crm-qsearch {
-    height:0px;
-}
-
-
-
 /* Pop-up help icon - eliminate forced line break */
 div.helpicon {
     background  : transparent url(../i/quiz.png) no-repeat;
@@ -2788,7 +2750,10 @@ div#civicrm-dashboard form {
     color:#2786c2;
 }
 
-#crm-container .crm-title { margin-bottom: 8px; }
+#crm-container .crm-title {
+	margin-bottom: 8px;
+	float: left;
+}
 
 /* tables */
 #crm-container table {

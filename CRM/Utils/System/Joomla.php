@@ -129,6 +129,9 @@ class CRM_Utils_System_Joomla {
             require_once 'CRM/Core/Config.php';
             $config = CRM_Core_Config::singleton();
 
+            $document->addStyleSheet( "{$config->resourceBase}css/deprecate.css" );
+            $document->addStyleSheet( "{$config->resourceBase}css/civicrm.css" );
+
             if ( ! $config->userFrameworkFrontend ) {
                 $document->addStyleSheet( "{$config->resourceBase}css/joomla.css" );
             } else {
@@ -138,8 +141,6 @@ class CRM_Utils_System_Joomla {
                 $document->addStyleSheet( $config->customCSSURL );
             }
 
-            $document->addStyleSheet( "{$config->resourceBase}css/deprecate.css" );
-            $document->addStyleSheet( "{$config->resourceBase}css/civicrm.css" );
             $document->addStyleSheet( "{$config->resourceBase}css/extras.css" );
 
             $document->addScript( "{$config->resourceBase}js/Common.js" );
