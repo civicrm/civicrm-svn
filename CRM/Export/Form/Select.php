@@ -180,11 +180,11 @@ FROM   {$this->_componentTable}
         $mergeAddress[] = HTML_QuickForm::createElement( 'advcheckbox', 
                                                          'merge_same_address', 
                                                          null, 
-                                                         ts('Merge Same Address'));
+                                                         ts('Merge Contacts with the Same Address'));
         $mergeHousehold[] = HTML_QuickForm::createElement( 'advcheckbox', 
                                                            'merge_same_household', 
                                                            null, 
-                                                           ts('Merge Same Household Address'));
+                                                           ts('Merge Household Members into their Households'));
         
         $this->addGroup( $exportOptions, 'exportOption', ts('Export Type'), '<br/>' );
 
