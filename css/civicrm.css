@@ -1166,14 +1166,15 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 
 .block-civicrm div#recently-viewed ul li {
     margin: 1px;
-    padding: 1px;
-    padding-left: 3px;
+    padding: 1px 1px 4px 3px;
     border: 1px solid #999999;
     background-color: #fff;
     white-space: nowrap;
+    list-style-type:none;
 }
 
-#crm-container #recently-viewed a {
+#crm-container #recently-viewed a,
+.block-civicrm div#recently-viewed a {
     font-weight: normal;
     /*color: #6e6e6e;*/
     color: #4A88DF;
@@ -1720,7 +1721,7 @@ table.campaign td,
     padding    : 5px 0 0 0px;
     margin     : 0px 0px 0px -20px;
     display    : none;
-    width      : 132px;
+    width      : 180px;
     background:transparent url(../i/dropdown-pointer.gif) no-repeat scroll 10px 1px;
 }
 
@@ -1732,7 +1733,7 @@ table.campaign td,
 .crm-contextmenu li {
     background-image: none;
     list-style : none;
-    padding    : 2px;
+    padding    : 3px;
     margin     : 0px;
 }
 
