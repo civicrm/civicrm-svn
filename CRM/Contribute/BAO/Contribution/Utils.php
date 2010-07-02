@@ -598,9 +598,26 @@ class CRM_Contribute_BAO_Contribution_Utils {
         
         // if this is a recurring contribution then process it first
         if ( $params['trxn_type'] == 'subscrpayment' ) {
+            // see if a recurring record already exists
             require_once 'CRM/Contribute/BAO/ContributionRecur.php';
-            $recurring =& CRM_Contribute_BAO_ContributionRecur::add( $params,
-                                                                     CRM_Core_DAO::$_nullArray );
+            $recurring = new CRM_Contribute_BAO_ContributionRecur;
+            $recurring->processor_id = $params['processor_id'];
+            if ( ! $recurring->find( true ) ) {
+                $recurring = new CRM_Contribute_BAO_ContributionRecur;
+                $recurring->invoice_id = $params['invoice_id'];
+                $recurring->find( true );
+            }
+            
+            // This is the same thing the CiviCRM IPN handler does to handle
+            // subsequent recurring payments to avoid duplicate contribution
+            // errors due to invoice ID. See:
+            // ./CRM/Core/Payment/PayPalIPN.php:200
+            if ( $recurring->id ) {
+                $params['invoice_id'] = md5( uniqid( rand( ), true ) );
+            }
+            
+            $recurring->copyValues( $params );
+            $recurring->save( );
             if ( is_a( $recurring, 'CRM_Core_Error' ) ) {
                 return false;
             } else {
