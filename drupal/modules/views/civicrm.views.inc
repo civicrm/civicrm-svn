@@ -857,6 +857,30 @@ function civicrm_views_data() {
                                                                 ),
                                                 );
 
+    //COUNTY
+    $data['civicrm_address']['county'] = array(
+                                                'title' => t('County'),
+                                                'real field' => 'county_id',
+                                                'help' => t('The County of the Address'),
+                                                'field' => array(
+                                                                 'handler' => 'civicrm_handler_field_county',
+                                                                 'click sortable' => TRUE,
+                                                                 ),
+
+                                                'argument' => array(
+                                                                    'handler' => 'views_handler_argument',
+                                                                    ),
+
+                                                'filter' => array(
+                                                                  'handler' => 'civicrm_handler_filter_county',
+                                                                  'allow empty' => TRUE,
+                                                                  ),
+
+                                                'sort' => array(
+                                                                'handler' => 'views_handler_sort',
+                                                                ),
+                                                );
+
     //Address name
     $link = l(t('In Global Settings'), 'civicrm/admin/setting/preferences/address', array('query' => 'reset=1'));
     $data['civicrm_address']['name'] = array(
@@ -4873,6 +4897,9 @@ function civicrm_get_field_handler($type) {
   
     case "Country":
         return 'civicrm_handler_field_country';
+
+    case "County":
+        return 'civicrm_handler_field_county';
     
     default:
         return 'views_handler_field'; 
@@ -4899,6 +4926,9 @@ function civicrm_get_argument_handler($type) {
         return 'views_handler_argument';
   
     case "Country":
+        return 'views_handler_argument';
+        
+    case "County":
         return 'views_handler_argument';
     
     default:
@@ -4927,6 +4957,9 @@ function civicrm_get_filter_handler($type) {
   
     case "Country":
         return 'civicrm_handler_filter_country';
+
+     case "County":
+        return 'civicrm_handler_filter_county';    
     
     default:
         return 'views_handler_filter_string';
@@ -4952,6 +4985,9 @@ function civicrm_get_sort_handler($type) {
   
     case "Country":
         return 'views_handler_sort';
+        
+    case "County":
+        return 'views_handler_sort';    
     
     default:
         return 'views_handler_sort';
@@ -5048,6 +5084,9 @@ function civicrm_views_handlers() {
                        'civicrm_handler_field_country' => array(
                                                                 'parent' => 'views_handler_field',
                                                                 ),
+                       'civicrm_handler_field_county' => array(
+                                                                'parent' => 'views_handler_field',
+                                                                ),
                        'civicrm_handler_field_email' => array(
                                                               'parent' => 'views_handler_field',
                                                               ),
@@ -5134,6 +5173,9 @@ function civicrm_views_handlers() {
                                                                'parent' => 'views_handler_filter_in_operator',
                                                                ),
                        'civicrm_handler_filter_country' => array(
+                                                                 'parent' => 'views_handler_filter_in_operator',
+                                                                 ),
+                       'civicrm_handler_filter_county' => array(
                                                                  'parent' => 'views_handler_filter_in_operator',
                                                                  ),
                        'civicrm_handler_filter_event_type' => array(
