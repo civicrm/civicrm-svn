@@ -1070,7 +1070,7 @@ ORDER BY  r1.id
             }
             $processed[$masterID] = 1;
             if ( $values['addressee'] ) {
-                $masterAddressee = array( $values['addressee'] );
+                $masterAddressee = array( trim ( $values['addressee'] ) );
             }
             $deleteIDs = array( );
             foreach ( $values['copy'] as $copyID => $copyAddressee ) {
@@ -1079,14 +1079,14 @@ ORDER BY  r1.id
                 }
                 $processed[$copyID] = 1;
                 if ( $copyAddressee ) {
-                    $masterAddressee[] = $copyAddressee;
+                    $masterAddressee[] = trim ( $copyAddressee );
                 }
                 $deleteIDs[] = $copyID;
             }
             
-            $addresseeString = implode( ',', $masterAddressee );
+            $addresseeString = implode( ', ', $masterAddressee );
             if ( $mergeLastName ) {
-                $addresseeString = str_replace( $lastName . " ,", ",", $addresseeString );
+                $addresseeString = str_replace( " ".$lastName.",", ",", $addresseeString );
             }
             
             $sql = "
