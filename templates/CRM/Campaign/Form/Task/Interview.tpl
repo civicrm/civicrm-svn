@@ -82,8 +82,7 @@
 
 	//load jQuery data table.
         cj('#voterRecords').dataTable( {
-		"bJQueryUI": true,
-		"sPaginationType": "full_numbers"
+		"bJQueryUI": true
         });        
 
     });
