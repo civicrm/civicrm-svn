@@ -1034,7 +1034,7 @@ ORDER BY  r1.id
 
         $dao = CRM_Core_DAO::executeQuery( $sql );
         $mergeLastName = true;
-        $merge = $parents = array( );
+        $merge = $parents = $masterAddressee = array( );
         while ( $dao->fetch( ) ) {
             $masterID = $dao->master_id;
             $copyID   = $dao->copy_id;
