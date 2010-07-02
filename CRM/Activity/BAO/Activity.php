@@ -567,6 +567,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
     {
         $session = & CRM_Core_Session::singleton();
         $id = $session->get('userID');
+        if ( !$id ) $id = $activity->source_contact_id;
         require_once 'CRM/Core/BAO/Log.php';
         $logParams = array(
                            'entity_table'  => 'civicrm_activity' ,
@@ -578,7 +579,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         CRM_Core_BAO_Log::add( $logParams );
         return true;
     }
-
+    
     /**
      * function to get the list Actvities
      *
