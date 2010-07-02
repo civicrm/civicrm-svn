@@ -131,7 +131,13 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
      */
     protected $_prefix = "survey_";
     
-    
+    /**
+     * survey status customgroup
+     *
+     */
+    const
+        SURVEY_STATUS = 'survey_status_201011040411';
+        
     /** 
      * processing needed for buildForm and later 
      * 
@@ -226,6 +232,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     function buildQuickForm( ) 
     {
         require_once 'CRM/Campaign/BAO/Survey.php';
+        require_once 'CRM/Core/OptionGroup.php';
 
         $this->add( 'text', 'sort_name', ts( 'Contact Name' ), true );
         $this->add( 'text', 'street_number', ts( 'Street Number' ), true );
@@ -233,10 +240,10 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $this->add( 'text', 'city', ts( 'City' ), true );
         
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
-        $this->add('select', 'survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
+        $this->add( 'select', 'survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
         
-        $this->add('checkbox', 'status_id', ts('Is Held'), null, false );
-        
+        $surveyStatus = CRM_Core_OptionGroup::values(self::SURVEY_STATUS);
+        $this->add( 'select', 'status_id', ts('Survey Status'), array('' => ts('- select -') ) + $surveyStatus );
         
         /* 
          * add form checkboxes for each row. This is needed out here to conform to QF protocol 
@@ -374,6 +381,8 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     
     function fixFormValues( ) 
     {
+        $session = CRM_Core_Session::singleton( );
+        
         // if this search has been forced
         // then see if there are any get values, and if so over-ride the post values
         // note that this means that GET over-rides POST :)
@@ -401,6 +410,11 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             }
         }
         
+        if ( CRM_Utils_Array::value( 'survey_id', $this->_formValues ) &&
+             $session->get('userID') ) {
+            $this->_formValues['interviewer_id'] = $session->get('userID');
+        }
+
         $this->_limit = CRM_Utils_Request::retrieve( 'limit', 'Positive', $this );
     }
     

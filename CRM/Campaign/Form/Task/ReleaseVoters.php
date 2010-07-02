@@ -83,11 +83,12 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
         //get the survey id from user submitted values.
         $this->_surveyId = CRM_Utils_Array::value( 'survey_id', $this->get( 'formValues' ) );
         $isHeld          = CRM_Utils_Array::value( 'status_id', $this->get( 'formValues' ) );
-        if ( !$this->_surveyId || !$isHeld ) {
-            CRM_Core_Error::statusBounce( ts( "Please search with 'Is Held' and 'Survey Id' filters to apply this action.") );
+        if ( !$this->_surveyId || !$isHeld || !in_array( $isHeld, array('H', 'C', 'X') ) ) {
+            CRM_Core_Error::statusBounce( ts( "Please search with 'Survey' filter and 'Survey Status' should be completed or held or expired, to apply this action.") );
         }
         
         $session = CRM_Core_Session::singleton( );
+
         if ( empty($this->_contactIds) || !($session->get('userID')) ) {
             CRM_Core_Error::statusBounce( ts( "Could not find contacts for release voters resevation Or Missing Interviewer contact.") );
         }
@@ -97,7 +98,7 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
         $params        = array( 'id' => $this->_surveyId );
         $this->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve($params, $surveyDetails);
 
-        $numVoters = CRM_Core_DAO::singleValueQuery( "SELECT COUNT(*) FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." WHERE status_id = 'H' AND survey_id = %1 AND interviewer_id = %2", array( 1 => array( $this->_surveyId, 'Integer' ), 2 => array( $this->_interviewerId, 'Integer' )  ) );
+        $numVoters = CRM_Core_DAO::singleValueQuery( "SELECT COUNT(*) FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." WHERE status_id IN ('H','C','X') AND survey_id = %1 AND interviewer_id = %2", array( 1 => array( $this->_surveyId, 'Integer' ), 2 => array( $this->_interviewerId, 'Integer' )  ) );
 
         if ( !isset($numVoters) || ($numVoters < 1) ) {
             CRM_Core_Error::statusBounce( ts( "All voters held by you are already released for this survey.") );
@@ -134,8 +135,9 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
         
         $heldContacts = array( );
         
-        // interviewer can release only those contacts which are held by himself
-        $query = "SELECT target.target_contact_id as contact_id, survey.entity_id as entity_id FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." survey INNER JOIN civicrm_activity_target target ON ( target.activity_id = survey.entity_id ) WHERE survey.status_id = 'H' AND survey.survey_id = %1  AND survey.interviewer_id = %2 AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
+        // interviewer can release only those contacts which are held
+        // by himself having survey status 'H' or 'C' or 'X' 
+        $query = "SELECT target.target_contact_id as contact_id, survey.entity_id as entity_id FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." survey INNER JOIN civicrm_activity_target target ON ( target.activity_id = survey.entity_id ) WHERE survey.status_id IN ( 'H', 'C', 'X' ) AND survey.survey_id = %1  AND survey.interviewer_id = %2 AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
         $findHeld = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer'), 2 => array( $this->_interviewerId, 'Integer') ) );
         
         while( $findHeld->fetch() ) {

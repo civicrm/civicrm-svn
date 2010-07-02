@@ -123,7 +123,8 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
             $params        = array( 'id' => $form->_surveyId );
             $form->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve($params, $surveyDetails);
             
-            $numVoters = CRM_Core_DAO::singleValueQuery( "SELECT COUNT(*) FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." WHERE status_id = 'H' AND survey_id = %1 ", array( 1 => array( $form->_surveyId, 'Integer') ) );
+            // can not held contact for survey status = 'H' OR 'C' OR 'X'
+            $numVoters = CRM_Core_DAO::singleValueQuery( "SELECT COUNT(*) FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." WHERE status_id IN ('H','C','X') AND survey_id = %1 ", array( 1 => array( $form->_surveyId, 'Integer') ) );
             $form->_numVoters = isset($numVoters)? $numVoters : 0;
             
             if ( CRM_Utils_Array::value('max_number_of_contacts', $surveyDetails) &&
@@ -174,7 +175,8 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
 
         $duplicateContacts = array( );
 
-        $query = "SELECT DISTINCT(target.target_contact_id) as contact_id FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." survey INNER JOIN civicrm_activity_target target ON ( target.activity_id = survey.entity_id ) WHERE survey.status_id = 'H' AND survey.survey_id = %1  AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
+        // duplicate contacts: contact with survey_status 'H' OR 'C' OR 'X'
+        $query = "SELECT DISTINCT(target.target_contact_id) as contact_id FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." survey INNER JOIN civicrm_activity_target target ON ( target.activity_id = survey.entity_id ) WHERE survey.status_id IN ('H','C','X') AND survey.survey_id = %1  AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
         $findDuplicate = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer') ) );
         
         while( $findDuplicate->fetch() ) {

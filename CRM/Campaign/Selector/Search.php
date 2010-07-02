@@ -220,11 +220,15 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      */
     function getTotalCount( $action )
     {
+        /*
         return $this->_query->searchQuery( 0, 0, null,
-                                           true, false, 
-                                           false, false, 
-                                           false, 
-                                           $this->_campaignClause );
+        true, false, 
+        false, false, 
+        false, 
+        $this->_campaignClause );
+        */
+        
+        return $this->_buildQuery( true );
     }
     
     
@@ -274,7 +278,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
         return $rows;
     }
     
-    function _buildQuery( ) {
+    function _buildQuery( $getCount = false ) {
          $session = CRM_Core_Session::singleton( );
  
         $select = "
@@ -283,7 +287,7 @@ DISTINCT(contact_a.id) as contact_id, contact_a.sort_name as sort_name, civicrm_
         $from =  "civicrm_contact contact_a LEFT JOIN civicrm_address ON ( contact_a.id = civicrm_address.contact_id AND civicrm_address.is_primary = 1 ) LEFT JOIN civicrm_state_province ON civicrm_address.state_province_id = civicrm_state_province.id  LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id  LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_email.is_primary = 1) LEFT JOIN civicrm_phone ON (contact_a.id = civicrm_phone.contact_id AND civicrm_phone.is_primary = 1) LEFT JOIN civicrm_activity_target activity_target ON ( activity_target.target_contact_id = contact_a.id ) LEFT JOIN ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." survery_details ON ( activity_target.activity_id = survery_details.entity_id )";
         
         $where   = "(contact_a.is_deleted = 0 AND contact_a.contact_type = 'Individual') "; 
-        $columns = array( 'sort_name', 'street_number', 'street_address', 'city', 'status_id', 'survey_id' );
+        $columns = array( 'sort_name', 'street_number', 'street_address', 'city', 'status_id', 'survey_id', 'interviewer_id' );
 
         $params = $clause = array( );
         $count  = 1;
@@ -301,13 +305,10 @@ DISTINCT(contact_a.id) as contact_id, contact_a.sort_name as sort_name, civicrm_
                         $params[$count] = array( '%'.$value.'%', 'String' );
                     } else if ( $column == 'status_id' ) { 
                         $clause[ ] = "survery_details.status_id = %{$count}";
-                        $params[$count] = array( 'H', 'String' );
-                        
-                        // show voters contacts held by current interviewer
-                        $count++;
+                        $params[$count] = array( $value, 'String' );
+                    } else if ( $column == 'interviewer_id' ) {
                         $clause[ ] = "survery_details.interviewer_id = %{$count}";
                         $params[$count] = array( $session->get('userID'), 'Integer' );
-                        
                     } else if ($column == 'survey_id' ) {
                         $clause[ ] = "survery_details.survey_id = %{$count}";
                         $params[$count] = array( $value, 'Integer' );
@@ -324,8 +325,14 @@ DISTINCT(contact_a.id) as contact_id, contact_a.sort_name as sort_name, civicrm_
             }
         }
         $whereClause = CRM_Core_DAO::composeQuery( $where, $params, true );
-        $query    =  "SELECT {$select} FROM {$from} WHERE {$whereClause} LIMIT 0, 50";
-        $result = CRM_Core_DAO::executeQuery($query);
+
+        if ( $getCount ) { 
+            $query    = "SELECT COUNT(contact_a.id) FROM {$from} WHERE {$whereClause}";
+            $result   = CRM_Core_DAO::singleValueQuery($query);
+        } else {
+            $query    = "SELECT {$select} FROM {$from} WHERE {$whereClause} LIMIT 0, 50";
+            $result   = CRM_Core_DAO::executeQuery($query);
+        }
         return $result;
     }
 
