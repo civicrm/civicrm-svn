@@ -134,8 +134,11 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
         $form->assign( 'taskName', $crmContactTaskTasks[$form->_task] );
        
         if ( $useTable ) {
-            $form->_componentTable = CRM_Core_DAO::createTempTableName( 'civicrm_task_action' );
-            $sql = "CREATE TEMPORARY TABLE {$form->_componentTable} ( contact_id int primary key) ENGINE=HEAP";
+            $form->_componentTable = CRM_Core_DAO::createTempTableName( 'civicrm_task_action', false );
+            $sql = " DROP TABLE IF EXISTS {$form->_componentTable}";
+            CRM_Core_DAO::executeQuery( $sql );
+
+            $sql = "CREATE TABLE {$form->_componentTable} ( contact_id int primary key) ENGINE=MyISAM DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci";
             CRM_Core_DAO::executeQuery( $sql );
         }            
 
