@@ -101,8 +101,8 @@
 	data['survey_type_id'] = {/literal}{$surveyTypeId}{literal};
 	data['campaign_id']    = {/literal}{$campaignId}{literal};	
 	data['field_'+ voterId + '_interview_id'] = cj( '#field_' + voterId + '_interview_id' ).val( );
-		
-	var dataUrl = {/literal}"{crmURL p='civicrm/survey/interview' h=0 }"{literal}	          
+
+	var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=registerInterview' }"{literal}	          
 	
 	//post data to create interview.
 	cj.post( dataUrl, data, function( interview ) {
