@@ -123,7 +123,7 @@ class CRM_Export_Form_Select extends CRM_Core_Form
             $taskName = $contactTasks[$this->_task]; 
             
             require_once "CRM/Contact/Form/Task.php";
-            CRM_Contact_Form_Task::preProcessCommon( $this );
+            CRM_Contact_Form_Task::preProcessCommon( $this, true );
         } else {
             $this->assign( 'taskName', "Export $componentName[1]" ); 
             eval( '$componentTasks = CRM_'. $componentName[1] .'_Task::tasks();' );
