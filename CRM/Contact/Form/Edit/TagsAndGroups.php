@@ -119,7 +119,7 @@ class CRM_Contact_Form_Edit_TagsandGroups
                 }
             
     	        if ( ! empty( $elements ) ) {
-                    $form->addGroup( $elements, $fName, $groupName, '&nbsp;' );
+                    $form->addGroup( $elements, $fName, $groupName, '&nbsp;<br />' );
                     $form->assign('groupCount', count($elements));
                     if ( $isRequired ) {
                         $form->addRule( $fName , ts('%1 is a required field.', array(1 => $groupName)) , 'required');   
