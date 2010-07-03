@@ -219,8 +219,7 @@ class CRM_Export_BAO_Export
                 $returnProperties['grant_id'] = 1;
             } else if ( $exportMode == CRM_Export_Form_Select::ACTIVITY_EXPORT ) {
                 $returnProperties['activity_id'] = 1;
-             }
-            
+            }            
          } else {
             $primary = true;
             $fields = CRM_Contact_BAO_Contact::exportableFields( 'All', true, true );
@@ -339,7 +338,7 @@ class CRM_Export_BAO_Export
                 }
                 if ( $exportMode == CRM_Export_Form_Select::CONTACT_EXPORT ) {
                     $relIDs = $ids;
-                }else if( $exportMode == CRM_Export_Form_Select::ACTIVITY_EXPORT )  {
+                } else if( $exportMode == CRM_Export_Form_Select::ACTIVITY_EXPORT )  {
                     $query = "SELECT source_contact_id FROM civicrm_activity
                               WHERE id IN ( ".implode(',', $ids).")";
                     $dao = CRM_Core_DAO::executeQuery( $query );
@@ -368,45 +367,35 @@ class CRM_Export_BAO_Export
                         break;
                     }
                     $relIDs = CRM_Core_DAO::getContactIDsFromComponent( $ids,$component );
+                }                
+                
+                $relationshipJoin = $relationshipClause = '';
+                if ( $componentTable ) {
+                    $relationshipJoin   = " INNER JOIN $componentTable ctTable ON ctTable.contact_id = contact_a.id ";
+                } else {
+                    $relID  = implode( ',', $relIDs );
+                    $relationshipClause = " AND crel.{$contactA} IN ( {$relID} )";
                 }
-                $relID  = implode( ',', $relIDs );
-                $relSQL = "
-SELECT          {$contactB} as relContact, {$contactA} as refContact
-FROM            civicrm_relationship 
-LEFT JOIN       civicrm_contact contact ON (civicrm_relationship.{$contactB} = contact.id ) 
-WHERE           relationship_type_id = $id 
-AND             {$contactA} IN ( {$relID} )
-AND             contact.is_deleted = 0
-GROUP BY        {$contactA}";
 
-                // Get the related contacts
-                $relContactDAO   = CRM_Core_DAO::executeQuery( $relSQL );
-                $relContactArray = array( );
-                while ( $relContactDAO->fetch() ) {
-                    $relContactArray[$relContactDAO->refContact] = $relContactDAO->relContact;
-                }
-                $relContactDAO->free( );
+                $relationFrom = " {$relationFrom}
+                INNER JOIN civicrm_relationship crel ON crel.{$contactB} = contact_a.id AND crel.relationship_type_id = {$id} 
+                {$relationshipJoin} ";
+                
+                $relationWhere       = " WHERE contact_a.is_deleted = 0 {$relationshipClause}";
+                $relationGroupBy     = " GROUP BY crel.{$contactA}";
+                $relationSelect      = "{$relationSelect}, {$contactA} as refContact ";
+                $relationQueryString = "$relationSelect $relationFrom $relationWhere $relationGroupBy";                
 
-                $uniqueContacts = array_unique( $relContactArray );
-                if ( !empty( $uniqueContacts ) ) {
-                    $relationWhere       = " WHERE contact_a.id IN (". implode( ',', $uniqueContacts ) .") 
-                                             AND contact_a.is_deleted = 0 ";
-                    $relationGroupBy     = " GROUP BY contact_id";
-                    $relationQueryString = "$relationSelect $relationFrom $relationWhere $relationGroupBy";
-
-                    $allRelContactDAO    = CRM_Core_DAO::executeQuery( $relationQueryString );
-                    while ( $allRelContactDAO->fetch() ) {
-                        foreach ( $relContactArray as $k => $v ) {
-                            if ( $allRelContactDAO->contact_id == $v ) {
-                                // build the array of all related contacts
-                                $allRelContactArray[$rel][$k] = clone( $allRelContactDAO );
-                            }
-                        }
-                    }
-                    $allRelContactDAO->free( );
-                }
+                $allRelContactDAO    = CRM_Core_DAO::executeQuery( $relationQueryString );
+                while ( $allRelContactDAO->fetch() ) {
+                    //FIX Me: Migrate this to table rather than array
+                    // build the array of all related contacts
+                    $allRelContactArray[$rel][$allRelContactDAO->refContact] = clone( $allRelContactDAO );
+                }              
+                $allRelContactDAO->free( );
             }
         }
+
         // make sure the groups stuff is included only if specifically specified
         // by the fields param (CRM-1969), else we limit the contacts outputted to only
         // ones that are part of a group
@@ -996,7 +985,7 @@ CREATE TABLE {$exportTempTable} (
   PRIMARY KEY ( id )
 ";
         // add indexes for street_address and household_name if present
-        $addIndices = array( 'street_address', 'household_name' );
+        $addIndices = array( 'street_address', 'household_name', 'civicrm_primary_id' );
         foreach ( $addIndices as $index ) {
             if ( isset( $sqlColumns[$index] ) ) {
                 $sql .= ",
