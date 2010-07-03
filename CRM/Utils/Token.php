@@ -192,7 +192,7 @@ class CRM_Utils_Token
     private static function tokenEscapeSmarty($string)
     {
         // need to use negative look-behind, as both str_replace() and preg_replace() are sequential
-        return preg_replace(array('/{/', '/(?<!ldelim)}/'), array('{ldelim}', '{rdelim}'), $string);
+        return preg_replace(array('/{/', '/(?<!{ldelim)}/'), array('{ldelim}', '{rdelim}'), $string);
     }
 
     /**
