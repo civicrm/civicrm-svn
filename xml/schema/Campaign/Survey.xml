@@ -45,35 +45,19 @@
   </foreignKey>
   
   <field>
-    <name>survey_type_id</name>
-    <title>Survey Type ID</title>  
+    <name>activity_type_id</name>
+    <title>Activity Type ID</title>  
     <type>int unsigned</type> 
     <default>NULL</default>                
-    <comment>Survey Type ID.Implicit FK to civicrm_option_value where option_group = activity_type</comment> 
+    <comment>The activity type to be used for this survey (Canvass, PhoneBank, WalkList etc). This is useful to share custom group data. These activity types will be restricted by component id of campaign.Implicit FK to civicrm_option_value where option_group = activity_type</comment> 
     <import>true</import>
     <add>3.2</add> 
   </field>
   <index>
-    <name>UI_survey_type_id</name>
-    <fieldName>survey_type_id</fieldName>
+    <name>UI_activity_type_id</name>
+    <fieldName>activity_type_id</fieldName>
     <add>3.2</add>
   </index>
-  
-  <field>
-    <name>custom_group_id</name>
-    <type>int unsigned</type>
-    <title>Custom Group ID</title>
-    <default>NULL</default>
-    <comment>FK to civicrm_custom_group</comment>
-  </field>
-  <foreignKey>
-    <name>custom_group_id</name>
-    <table>civicrm_custom_group</table>
-    <key>id</key>
-    <add>3.2</add>
-    <onDelete>SET NULL</onDelete>
-  </foreignKey>
-
   <field>
     <name>recontact_interval</name>
     <type>text</type>

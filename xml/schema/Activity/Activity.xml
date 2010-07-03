@@ -20,22 +20,6 @@
        <name>id</name>
        <autoincrement>true</autoincrement>
   </primaryKey>
-
-  <field>
-    <name>campaign_id</name>
-    <type>int unsigned</type>
-    <comment>Foreign key to the Campaign.</comment>
-    <default>NULL</default>
-    <add>3.2</add>
-  </field>
-  <foreignKey>
-    <name>campaign_id</name>
-    <table>civicrm_campaign</table>
-    <key>id</key>
-    <add>3.2</add>
-    <onDelete>CASCADE</onDelete>
-  </foreignKey>
-
   <field>
       <name>source_contact_id</name>
       <type>int unsigned</type>
