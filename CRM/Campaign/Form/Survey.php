@@ -134,12 +134,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         }
 
         require_once 'CRM/Event/PseudoConstant.php';
+        require_once 'CRM/Core/BAO/UFGroup.php';
        
         $this->add('text', 'title', ts('Survey Title'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'title'), true );
 
         $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
         // Activity Type id
-        $this->add('select', 'survey_type_id', ts('Select Survey Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true, array( 'onChange' => 'surveyCustomGroup();') );
+        $this->add('select', 'activity_type_id', ts('Select Activity Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
         
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
@@ -157,20 +158,17 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             $params[] = $sid;
         }
 
-        $customGroups = array( );
-        $surveyCustomGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( $params );
-        foreach ( $surveyCustomGroups as $grpId => $grpVals ) {
-            $customGroups[$grpId] = $grpVals['title'];
-        }
+        $customProfiles = CRM_Core_BAO_UFGroup::getProfiles( array('Activity') );
+        
         // custom group id
-        $this->add('select', 'custom_group_id', ts('Select Custom Group'), 
-                   array( '' => ts('- select -')) + $customGroups, true );
+        $this->add('select', 'profile_id', ts('Select Custom Group'), 
+                   array( '' => ts('- select -')) + $customProfiles );
         
         // script / instructions
         $this->add( 'textarea', 'instructions', ts('Instructions for volunteers'), array( 'rows' => 5, 'cols' => 40 ) );
         
         // release frequency unit
-        $this->add('select', 'release_frequency_unit', ts('Release Frequency Unit'), array( 'day' => 'Day' , 'week' => 'Week', 'month' => 'Month', 'year' => 'Year') );
+        $this->add('select', 'release_frequency_unit', ts('Release Frequency Unit'), array( '' => ts('- select -'), 'day' => ts('Day') , 'week' => ts('Week'), 'month' => ts('Month'), 'year' => ts('Year') ) );
         
         // release frequency interval
         $this->add('text', 'release_frequency_interval', ts('Release Frequency Interval'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency_interval') );
@@ -257,6 +255,23 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $params['is_default'] = CRM_Utils_Array::value('is_active', $params, 0);
 
         $surveyId = CRM_Campaign_BAO_Survey::create( $params  );
+        
+        require_once 'CRM/Core/BAO/UFJoin.php';
+        
+        // also update the ProfileModule tables 
+        $ufJoinParams = array( 'is_active'    => 1, 
+                               'module'       => 'CiviCampaign',
+                               'entity_table' => 'civicrm_survey', 
+                               'entity_id'    => $surveyId );
+        
+        // first delete all past entries
+        CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParams );
+            
+        if ( CRM_Utils_Array::value('profile_id' , $params) ) {
+            $ufJoinParams['weight'     ] = 1;
+            $ufJoinParams['uf_group_id'] = $params['profile_id'];
+            CRM_Core_BAO_UFJoin::create( $ufJoinParams ); 
+        }
         
         if( ! is_a( $surveyId, 'CRM_Core_Error' ) ) {
             CRM_Core_Session::setStatus(ts('Survey has been saved.'));

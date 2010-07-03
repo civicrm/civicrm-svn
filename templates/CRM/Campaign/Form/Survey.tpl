@@ -51,15 +51,15 @@
            <td>{$form.campaign_id.html}
 	   <div class="description">{ts}Select the campaign for which survey is created.{/ts}</div></td>
        </tr> 
-       <tr class="crm-campaign-survey-form-block-survey_type_id">
-           <td class="label">{$form.survey_type_id.label}</td>
-           <td>{$form.survey_type_id.html}
-	   <div class="description">{ts}Select the Survey Type.{/ts}</div></td>
+       <tr class="crm-campaign-survey-form-block-activity_type_id">
+           <td class="label">{$form.activity_type_id.label}</td>
+           <td>{$form.activity_type_id.html}
+	   <div class="description">{ts}Select the Activity Type.{/ts}</div></td>
        </tr>
-       <tr class="crm-campaign-survey-form-block-custom_group_id">
-           <td class="label">{$form.custom_group_id.label}</td>
-           <td>{$form.custom_group_id.html}
-	   <div class="description">{ts}Select the Custom Group.{/ts}</div></td>
+       <tr class="crm-campaign-survey-form-block-profile_id">
+           <td class="label">{$form.profile_id.label}</td>
+           <td>{$form.profile_id.html}
+	   <div class="description">{ts}Select the Profile for Survey.{/ts}</div></td>
        </tr>
        <tr class="crm-campaign-survey-form-block-instructions">
            <td class="label">{$form.instructions.label}</td>
@@ -100,33 +100,3 @@
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 
 </div>
-
-{literal}
-<script language="JavaScript" type="text/javascript">
-
-if ( cj("#custom_group_id").val() == '' ) {
- surveyCustomGroup();		 
-}
-
-function surveyCustomGroup( ) {
-	$('#custom_group_id').html("");
-		
-        var surveyTypeId = cj("#survey_type_id").val();
- 	var dataUrl = "{/literal}{crmURL p='civicrm/ajax/surveygroups' h=0 q="sid="}{literal}"+surveyTypeId;
-	cj.ajax({ 
-            url     : dataUrl,   
-            async   : false,
-            success : function(data){
-	                data = eval(data);
-			if ( data != null ) {
-			    for (i = 0; i < data.length; i++) {
-				$('#custom_group_id').get(0).add(new Option(data[i].name, data[i].value), document.all ? i : null);
-			    }
-			} else {
-				$('#custom_group_id').get(0).add(new Option('- select -', 0), document.all ? i : null);
-			}
-                    }
-                });
-}
-</script>
-{/literal}

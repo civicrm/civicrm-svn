@@ -40,49 +40,6 @@ require_once 'CRM/Utils/Type.php';
  */
 class CRM_Campaign_Page_AJAX
 {
-    static function getSurveyCustomGroup( )
-    {
-        //$customGroups  = array( );
-        require_once 'CRM/Campaign/BAO/Survey.php';
-        require_once 'CRM/Core/OptionGroup.php';
-        $sid      = CRM_Utils_Array::value('sid', $_REQUEST);
-        $surveyId = CRM_Core_OptionGroup::getValue('activity_type','Survey','name');
-        $params[] = $surveyId;
-        if ( $sid ) {
-            $params[] = $sid;
-        }
-       
-        // get survey custom groups
-        $customGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( $params );
-        
-        $elements[] = array( 'name'  => ts('- select -'),
-                             'value' => '');
-        $selectGroups = array( );
-        if ( !empty($customGroups ) ) {
-             foreach ( $customGroups as $gid => $group ) {
-                 if ( CRM_Utils_Array::value('extends', $group) ) {
-                     $extends = explode( CRM_Core_DAO::VALUE_SEPARATOR, $group['extends']);
-                     foreach( $extends as $tid ) {
-                         if ($tid) {
-                             $selectGroups[$gid] = $gid;  
-                         }
-                     }
-                 }
-             }
-        }
-        
-        if ( !empty($selectGroups) ) {
-            foreach( $selectGroups as $gid ) {
-                $elements[] = array( 'name'  => ts( $customGroups[$gid]['title']),
-                                     'value' => $gid);
-            }
-        }
-        require_once "CRM/Utils/JSON.php";
-        echo json_encode( $elements );
-        
-        CRM_Utils_System::civiExit( );
-        
-    }
     
     static function registerInterview( )
     {
