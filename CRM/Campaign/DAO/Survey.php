@@ -241,7 +241,7 @@ class CRM_Campaign_DAO_Survey extends CRM_Core_DAO
                 'campaign_id' => array(
                     'name' => 'campaign_id',
                     'type' => CRM_Utils_Type::T_INT,
-                    'required' => true,
+                    'default' => 'UL',
                     'FKClassName' => 'CRM_Campaign_DAO_Campaign',
                 ) ,
                 'survey_type_id' => array(
@@ -280,15 +280,14 @@ class CRM_Campaign_DAO_Survey extends CRM_Core_DAO
                     'name' => 'release_frequency_unit',
                     'type' => CRM_Utils_Type::T_ENUM,
                     'title' => ts('Release Frequency Unit') ,
-                    'default' => 'day',
+                    'default' => 'UL',
                     'enumValues' => 'day,week,month,year',
                 ) ,
                 'release_frequency_interval' => array(
                     'name' => 'release_frequency_interval',
                     'type' => CRM_Utils_Type::T_INT,
                     'title' => ts('Release Frequency Interval') ,
-                    'required' => true,
-                    'default' => '',
+                    'default' => 'UL',
                 ) ,
                 'max_number_of_contacts' => array(
                     'name' => 'max_number_of_contacts',

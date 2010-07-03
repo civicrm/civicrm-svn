@@ -144,7 +144,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( );
-        $this->add('select', 'campaign_id', ts('Select Campaign'), array( '' => ts('- select -') ) + $campaigns, true );
+        $this->add('select', 'campaign_id', ts('Select Campaign'), array( '' => ts('- select -') ) + $campaigns );
         
         $params = array( );
         require_once 'CRM/Core/OptionGroup.php';
@@ -170,10 +170,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $this->add( 'textarea', 'instructions', ts('Instructions for volunteers'), array( 'rows' => 5, 'cols' => 40 ) );
         
         // release frequency unit
-        $this->add('select', 'release_frequency_unit', ts('Release Frequency Unit'), array( 'day' => 'Day' , 'week' => 'Week', 'month' => 'Month', 'year' => 'Year'), true );
+        $this->add('select', 'release_frequency_unit', ts('Release Frequency Unit'), array( 'day' => 'Day' , 'week' => 'Week', 'month' => 'Month', 'year' => 'Year') );
         
         // release frequency interval
-        $this->add('text', 'release_frequency_interval', ts('Release Frequency Interval'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency_interval'), true );
+        $this->add('text', 'release_frequency_interval', ts('Release Frequency Interval'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'release_frequency_interval') );
 
         $this->addRule('release_frequency_interval', ts('Frequenct interval should be a positive number') , 'positiveInteger');
 

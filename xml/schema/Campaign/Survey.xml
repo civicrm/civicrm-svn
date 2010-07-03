@@ -32,7 +32,7 @@
   <field>
     <name>campaign_id</name>
     <type>int unsigned</type>
-    <required>true</required>
+    <default>NULL</default>     
     <comment>Foreign key to the Campaign.</comment>
     <add>3.2</add>
   </field>
@@ -41,7 +41,7 @@
     <table>civicrm_campaign</table>
     <key>id</key>
     <add>3.2</add>
-    <onDelete>CASCADE</onDelete>
+    <onDelete>SET NULL</onDelete>
   </foreignKey>
   
   <field>
@@ -98,7 +98,7 @@
     <name>release_frequency_unit</name>
     <type>enum</type> 
     <values>day,week,month,year</values>
-    <default>'day'</default>
+    <default>NULL</default>
     <comment>Time units for recurrence of release.</comment>
     <add>3.2</add>
   </field>
@@ -106,8 +106,7 @@
   <field>
     <name>release_frequency_interval</name>
     <type>int unsigned</type>
-    <required>true</required>
-    <default>1</default>
+    <default>NULL</default>
     <comment>Number of time units for recurrence of release.</comment>
     <add>3.2</add>
   </field>
