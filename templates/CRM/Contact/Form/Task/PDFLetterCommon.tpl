@@ -52,8 +52,6 @@
             {/if}
             {$form.html_message.html}<br />
         </div>
-    </div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->
 
 {if ! $noAttach}
     <div class="spacer"></div>
@@ -75,6 +73,10 @@
     <div class="label">{$form.saveTemplateName.label}</div>
     <div class="content">{$form.saveTemplateName.html|crmReplace:class:huge}</div>
 </div>
+
+    </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
+
 {literal}
 <script type="text/javascript" >
 {/literal}
