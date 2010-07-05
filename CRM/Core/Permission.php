@@ -336,6 +336,9 @@ class CRM_Core_Permission {
             'civicrm/ajax/dashboard',
             'civicrm/ajax/ed',
             'civicrm/ajax/relation',
+            'civicrm/ajax/menu',
+            'civicrm/ajax/menutree',
+            'civicrm/ajax/activity/convert'
         );
         if (in_array($item['path'], $paths)) {
             require_once 'CRM/Core/Key.php';

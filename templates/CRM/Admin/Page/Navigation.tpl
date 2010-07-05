@@ -47,7 +47,7 @@
             data  : {
                 type  : "json",
                 async : true, 
-                url : {/literal}"{crmURL p='civicrm/ajax/menu' h=0 }"{literal}
+                url : {/literal}"{crmURL p='civicrm/ajax/menu' h=0 }?key={crmKey name='civicrm/ajax/menu'}"{literal}
             },
             rules : {
                 droppable : [ "tree-drop" ],
@@ -90,7 +90,7 @@
             },                
             callback : {
                 onmove  : function( node, reference, type ) {
-                    var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }"{literal};
+                    var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }?key={crmKey name='civicrm/ajax/menutree'}"{literal};
                     cj.get( postURL + '&type=move&id=' + node.id + '&ref_id=' + (reference === -1 ? 0 : reference.id) + '&move_type=' + type, 
                         function (data) {
             			    cj("#reset-menu").show( );
@@ -98,7 +98,7 @@
             		);                		                    
                 },
                 onrename : function( node ) {
-                    var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }"{literal};
+                    var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }?key={crmKey name='civicrm/ajax/menutree'}"{literal};
                     cj.get( postURL + '&type=rename&id=' + node.id + '&data=' + cj( node ).children("a:visible").text(), 
                         function (data) {
             			    cj("#reset-menu").show( );
@@ -112,7 +112,7 @@
     				return confirm( deleteMsg );
     			},
     			ondelete : function ( node ) {
-                    var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }"{literal};
+                    var postURL = {/literal}"{crmURL p='civicrm/ajax/menutree' h=0 }?key={crmKey name='civicrm/ajax/menutree'}"{literal};
                     cj.get( postURL + '&type=delete&id=' + node.id, 
                         function (data) {
             			    cj("#reset-menu").show( );

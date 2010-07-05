@@ -323,7 +323,7 @@ function fileOnCase() {
 				cj(this).dialog("destroy");
 
 				var postUrl = {/literal}"{crmURL p='civicrm/ajax/activity/convert' h=0 }"{literal};
-                cj.post( postUrl, { activityID: activityID, caseID: v1, newSubject: v2 },
+                cj.post( postUrl, { activityID: activityID, caseID: v1, newSubject: v2, key: {/literal}"{crmKey name='civicrm/ajax/activity/convert'}"{literal} },
                     function( data ) {
                     		if (data.error_msg == "") {
                             	window.location.href = destUrl + case_id + '&cid=' + contact_id;
