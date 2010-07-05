@@ -1078,8 +1078,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     function getTemplateFileName() 
     {
         if ( $this->_contactSubType ) {
-            $templateFile = "CRM/Contact/Form/Edit/{$this->_contactSubType}.tpl";
-            $template     =& CRM_Core_Form::getTemplate( );
+            $templateFile = "CRM/Contact/Form/Edit/SubType/{$this->_contactSubType}.tpl";
+            $template     = CRM_Core_Form::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }

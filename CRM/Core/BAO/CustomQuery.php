@@ -226,7 +226,10 @@ SELECT label, value
                     }
                 }
                 require_once 'CRM/Utils/Hook.php';
-                CRM_Utils_Hook::customFieldOptions( $dao->id, $this->_options[$dao->id], false );
+                $options = $this->_options[$dao->id];
+                //unset attributes to avoid confussion
+                unset( $options['attributes']);
+                CRM_Utils_Hook::customFieldOptions( $dao->id, $options, false );
             }
         }
     }

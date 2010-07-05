@@ -123,7 +123,7 @@ class CRM_Export_Form_Select extends CRM_Core_Form
             $taskName = $contactTasks[$this->_task]; 
             
             require_once "CRM/Contact/Form/Task.php";
-            CRM_Contact_Form_Task::preProcessCommon( $this );
+            CRM_Contact_Form_Task::preProcessCommon( $this, true );
         } else {
             $this->assign( 'taskName', "Export $componentName[1]" ); 
             eval( '$componentTasks = CRM_'. $componentName[1] .'_Task::tasks();' );
@@ -180,11 +180,11 @@ FROM   {$this->_componentTable}
         $mergeAddress[] = HTML_QuickForm::createElement( 'advcheckbox', 
                                                          'merge_same_address', 
                                                          null, 
-                                                         ts('Merge Same Address'));
+                                                         ts('Merge Contacts with the Same Address'));
         $mergeHousehold[] = HTML_QuickForm::createElement( 'advcheckbox', 
                                                            'merge_same_household', 
                                                            null, 
-                                                           ts('Merge Same Household Address'));
+                                                           ts('Merge Household Members into their Households'));
         
         $this->addGroup( $exportOptions, 'exportOption', ts('Export Type'), '<br/>' );
 

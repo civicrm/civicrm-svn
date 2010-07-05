@@ -44,7 +44,7 @@
                 <td>{$form.addressee_id.label}</td>
             {/if}
 	    {if $form.email_greeting_id OR $form.postal_greeting_id OR $form.addressee_id}
-                <td>&nbsp;&nbsp;{help id="id-greeting"}</td>
+                <td>&nbsp;&nbsp;{help id="id-greeting" file="CRM/Contact/Form/Contact.hlp"}</td>
 	    {/if}
         </tr>
         <tr>
@@ -98,7 +98,7 @@
         <tr>
             {foreach key=key item=item from=$commPreference}
                 <td>
-                    <br /><span class="label"{$form.$key.label}</span> {help id="id-$key"}
+                    <br /><span class="label"{$form.$key.label}</span> {help id="id-$key" file="CRM/Contact/Form/Contact.hlp"}
                     {foreach key=k item=i from=$item}
                      <br />{$form.$key.$k.html}
                     {/foreach}
@@ -110,9 +110,9 @@
                 </td>
         </tr>
         <tr>
-            <td>{$form.is_opt_out.html} {$form.is_opt_out.label} {help id="id-optOut"}</td>
+            <td>{$form.is_opt_out.html} {$form.is_opt_out.label} {help id="id-optOut" file="CRM/Contact/Form/Contact.hlp"}</td>
             <td>{$form.preferred_mail_format.label} &nbsp;
-                {$form.preferred_mail_format.html} {help id="id-emailFormat"}
+                {$form.preferred_mail_format.html} {help id="id-emailFormat" file="CRM/Contact/Form/Contact.hlp"}
             </td>
 
         </tr>

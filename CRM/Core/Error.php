@@ -379,12 +379,18 @@ class CRM_Core_Error extends PEAR_ErrorStack {
             $comp .
             md5( $config->dsn . $config->userFrameworkResourceURL ) .
             '.log';
-        //Roll log file monthly
-        if ( file_exists($fileName) ) {
+
+        // Roll log file monthly or if greater than 256M
+        // note that PHP file functions have a limit of 2G and hence
+        // the alternative was introduce :)
+        if ( file_exists( $fileName ) ) {
             $fileTime = date ("Ym", filemtime($fileName));
-            if ($fileTime < date('Ym') ) {
+            $fileSize = filesize($fileName);
+            if ( ( $fileTime < date('Ym') ) ||
+                 ( $fileSize > 256 * 1024 * 1024 ) ||
+                 ( $fileSize < 0 ) ) {
                 rename( $fileName,
-                        $fileName . '.' . date('Ym', mktime(0, 0, 0, date("m")-1, date("d"), date("Y")) ) );
+                        $fileName . '.' . date('Ymdhs', mktime(0, 0, 0, date("m")-1, date("d"), date("Y")) ) );
             }
         }
 
