@@ -47,12 +47,31 @@
         </tr>
 	<tr>
             <td class="font-size12pt">
+                {$form.street_name.label}
+       	    </td>
+            <td>	
+                {$form.street_name.html}
+            </td>
+	</tr>	
+
+	<tr>
+            <td class="font-size12pt">
                 {$form.street_number.label}
        	    </td>
             <td>	
                 {$form.street_number.html}
             </td>
 	</tr>
+
+        <tr>
+            <td class="font-size12pt">
+                {$form.street_type.label}
+       	    </td>
+            <td>	
+                {$form.street_type.html}
+            </td>
+	</tr>
+
 	<tr>
             <td class="font-size12pt">
                 {$form.street_address.label}
