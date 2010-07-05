@@ -678,6 +678,10 @@ function _civicrm_cck_potential_references($field, $string = '', $exact_string =
 function _civicrm_cck_potential_references_standard( $field, $string = '', $exact_string = FALSE, $limit = '10' ) {
     $args = $whereClause = $contactTypes = $contactSubTypes = array();
     
+    if ( ! civicrm_initialize( ) ) {
+        return;
+    }
+
     require_once 'CRM/Contact/BAO/ContactType.php';
     $basicTypes = CRM_Contact_BAO_ContactType::basicTypePairs( );
       
@@ -716,11 +720,7 @@ function _civicrm_cck_potential_references_standard( $field, $string = '', $exac
             $args[] = "%%" . $string ."%";
         }
     }
-    
-    if ( ! civicrm_initialize( ) ) {
-        return;
-    }
-    
+      
     $q = "
     SELECT sort_name, id
     FROM civicrm_contact
