@@ -24,5 +24,6 @@
      <path>civicrm/ajax/activity/convert</path>
      <page_callback>CRM_Activity_Page_AJAX::convertToCaseActivity</page_callback>
      <access_arguments>access CiviCRM</access_arguments>
+     <page_type>3</page_type>
   </item>  
 </menu>

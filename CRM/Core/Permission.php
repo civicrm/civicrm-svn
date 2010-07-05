@@ -331,16 +331,7 @@ class CRM_Core_Permission {
 
         // check whether the following Ajax requests submitted the right key
         // FIXME: this should be integrated into ACLs proper
-        $paths = array(
-            'civicrm/ajax/customvalue',
-            'civicrm/ajax/dashboard',
-            'civicrm/ajax/ed',
-            'civicrm/ajax/relation',
-            'civicrm/ajax/menu',
-            'civicrm/ajax/menutree',
-            'civicrm/ajax/activity/convert'
-        );
-        if (in_array($item['path'], $paths)) {
+        if ( $item['page_type'] == 3 ) {
             require_once 'CRM/Core/Key.php';
             if (!CRM_Core_Key::validate($_REQUEST['key'], $item['path'])) {
                 return false;
