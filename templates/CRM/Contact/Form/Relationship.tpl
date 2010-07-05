@@ -222,7 +222,7 @@
               {else}
               {/if} {* end if searchDone *}
         {/if} {* end action = add *}
-        </table>
+        
         <fieldset id = 'saveElements'>
             <div>
                 {if $action EQ 1}
