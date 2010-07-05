@@ -36,6 +36,9 @@
                 <td class="label">{$row.relation}</td> 
                 <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.cid`"}">{$row.name}</a></td>
             </tr>
+            {if $isCurrentEmployer}
+                <tr><td class="label">{ts}Current Employee?{/ts}</td><td>{ts}Yes{/ts}</td></tr>
+            {/if}
             {if $row.start_date}
                 <tr><td class="label">{ts}Start Date:{/ts}</td><td>{$row.start_date|crmDate}</td></tr>
             {/if}
@@ -116,7 +119,8 @@
                     var relType = 0;
                     cj( function( ) {
                         createRelation( );
-                        cj('#relationship_type_id').change( function() { 
+                        var relationshipType = cj('#relationship_type_id'); 
+                        relationshipType.change( function() { 
                             cj('#relationship-refresh-save').hide();
                             cj('#rel_contact').val('');
                             cj("input[name=rel_contact_id]").val('');
@@ -124,6 +128,7 @@
                             changeCustomData( 'Relationship' );
                             setPermissionStatus( cj(this).val( ) ); 
                         });
+                        setPermissionStatus( relationshipType.val( ) ); 
                     });
                     
                     function createRelation(  ) {
