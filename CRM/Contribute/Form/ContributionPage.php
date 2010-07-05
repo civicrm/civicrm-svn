@@ -236,10 +236,7 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
             $defaults['recur_frequency_unit'] = 
                 array_fill_keys( CRM_Core_OptionGroup::values( 'recur_frequency_units' ), '1' );
         }
-        if ( !isset( $defaults['is_recur_interval'] ) ) {
-            $defaults['is_recur_interval'] = 1;
-        }
-
+        
         if ( CRM_Utils_Array::value( 'is_for_organization', $defaults ) ) {
             $defaults['is_organization'] = 1;
         } else {

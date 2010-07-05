@@ -256,6 +256,14 @@
 	   }
  	}
 
+	function showRecurInterval( ) {
+		 if ( cj("#is_recur").attr( 'checked' ) ) {
+		     cj("#is_recur_interval").attr( 'checked', true );    
+		 } else {
+		     cj("#is_recur_interval").attr( 'checked', false ); 
+		 }
+	}
+
 </script>
 {/literal}
 {if $form.is_recur}
