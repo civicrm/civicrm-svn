@@ -105,8 +105,8 @@
                 <td><label>{$sort_name_b}</label></td></tr>
                 <tr class="crm-relationship-form-block-is_current_employer">
                   <td class="label">
-                     <div id="employee">{ts}Current Employee?{/ts}</div>
-                     <div id="employer">{ts}Current Employer?{/ts}</div>
+                     <div id="employee"><label>{ts}Current Employee?{/ts}</label></div>
+                     <div id="employer"><label>{ts}Current Employer?{/ts}</label></div>
                   </td>
                   <td id="current_employer">{$form.is_current_employer.html}</td>
                 </tr>  
