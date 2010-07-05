@@ -88,9 +88,15 @@ AND    {$this->_componentClause}";
         parent::setContactIDs( );
         $this->assign( 'single', $this->_single );
         
-        $breadCrumb = array ( array('title' => ts('Search Results'),
-                                    'url'   => CRM_Utils_System::url( 'civicrm/contribute/search'
-                                                                      )) );
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        require_once 'CRM/Utils/Rule.php';
+        $urlParams = 'force=1';
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+        
+        $url = CRM_Utils_System::url( 'civicrm/contribute/search', $urlParams );
+        $breadCrumb = array ( array( 'url'   => $url,
+                                     'title' => ts('Search Results') ) );
+        
         CRM_Utils_System::appendBreadCrumb( $breadCrumb );
         CRM_Utils_System::setTitle( ts('Print Contribution Receipts') );
     }

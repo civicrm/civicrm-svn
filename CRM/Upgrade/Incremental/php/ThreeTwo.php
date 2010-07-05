@@ -45,7 +45,7 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
         //give all new permissions and drop access CiviCase.
         $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Drupal' ) {
-            db_query( "UPDATE permission SET perm = REPLACE( perm, 'access CiviCase', 'access my cases and activities, access all cases and activities, administer CiviCase' )" );
+            db_query( "UPDATE {permission} SET perm = REPLACE( perm, 'access CiviCase', 'access my cases and activities, access all cases and activities, administer CiviCase' )" );
             //insert core acls.
             $casePermissions = array( 'delete in CiviCase',
                                       'administer CiviCase', 

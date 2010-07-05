@@ -346,7 +346,7 @@ class CRM_Core_Payment_Form {
         require_once 'CRM/Core/DAO/StateProvince.php';
         $config = CRM_Core_Config::singleton( );
         $stateProvince = new CRM_Core_DAO_StateProvince( );
-        $stateProvince->country_id = $form->_submitValues["billing_country_id-{$form->_bltID}"];
+        $stateProvince->country_id = CRM_Utils_Array::value( "billing_country_id-{$form->_bltID}", $form->_submitValues );
         
         if ( $stateProvince->count( ) > 0 ) {
             // check that the state/province data is not excluded by a
@@ -359,7 +359,8 @@ class CRM_Core_Payment_Form {
                 $limitIds = array_merge( $limitIds, array_keys( $countryIsoCodes, $code ) );
             }
             
-            if ( in_array( $form->_submitValues["billing_country_id-{$form->_bltID}"], $limitIds ) ) {
+            $limitCountryId = CRM_Utils_Array::value( "billing_country_id-{$form->_bltID}", $form->_submitValues );
+            if ( $limitCountryId && in_array( $limitCountryId, $limitIds ) ) {
                 return true;    
             }
             return false;

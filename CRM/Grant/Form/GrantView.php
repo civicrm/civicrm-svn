@@ -53,6 +53,9 @@ class CRM_Grant_Form_GrantView extends CRM_Core_Form
     {
         $this->_contactID = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         $this->_id        = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
+        $context          = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+        $this->assign( 'context', $context );
+        
         $values = array( ); 
         $params['id'] = $this->_id;
         require_once 'CRM/Grant/BAO/Grant.php';

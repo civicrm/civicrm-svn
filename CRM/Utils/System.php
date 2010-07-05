@@ -634,11 +634,17 @@ class CRM_Utils_System {
         }
     }
 
-    static function xMemory( $title = null ) {
-        $mem = (float ) xdebug_memory_usage( ) / (float ) ( 1024 * 1024 );
+    static function xMemory( $title = null, $log = false ) {
+        $mem = (float ) xdebug_memory_usage( ) / (float ) ( 1024 );
         $mem = number_format( $mem, 5 ) . ", " . time( );
-        echo "$title: $mem<p>";
-        flush( );
+        if ( $log ) {
+            echo "<p>$title: $mem<p>";
+            flush( );
+            CRM_Core_Error::debug_var( $title, $mem );
+        } else {
+            echo "<p>$title: $mem<p>";
+            flush( );
+        }
     }
 
     static function fixURL( $url ) {
@@ -1092,5 +1098,27 @@ class CRM_Utils_System {
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
         return eval('return '. $config->userFrameworkClass . '::loadBootStrap($config);');
     }
-
+    
+    /**
+     * check is user logged in.
+     *
+     * @return boolean.
+     */
+    public static function isUserLoggedIn( ) {
+        $config = CRM_Core_Config::singleton();
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
+        return eval('return '. $config->userFrameworkClass . '::isUserLoggedIn( );');
+    }
+    
+    /**
+     * Get current logged in user id.
+     *
+     * @return int ufId, currently logged in user uf id.
+     */
+    public static function getLoggedInUfID( ) {
+        $config = CRM_Core_Config::singleton( );
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
+        return eval('return '. $config->userFrameworkClass . '::getLoggedInUfID( );');
+    }
+    
 }

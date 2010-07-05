@@ -123,6 +123,11 @@ class CRM_Contribute_Page_Premium extends CRM_Core_Page_Basic
         
         $this->edit($action, $id, false, false) ;
 
+        // this is special case where we need to call browse to list premium
+        if ( $action == CRM_Core_Action::UPDATE ) {
+            $this->browse( );
+        }
+
         // parent run 
         parent::run();
     }

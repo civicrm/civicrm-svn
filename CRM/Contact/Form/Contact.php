@@ -190,8 +190,14 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                 
                 list( $displayName, $contactImage ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $this->_contactId );
                 
-                CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName ); 
-                $session->pushUserContext(CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid='. $this->_contactId ));
+                CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
+                $context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+                $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+                require_once 'CRM/Utils/Rule.php';
+                $urlParams = 'reset=1&cid='. $this->_contactId;
+                if ( $context ) $urlParams .= "&context=$context"; 
+                if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&key=$qfKey"; 
+                $session->pushUserContext(CRM_Utils_System::url('civicrm/contact/view', $urlParams ));
                 
                 $values = $this->get( 'values');
                 // get contact values.
@@ -941,7 +947,15 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $resetStr .= $this->_contactSubType ? "&cst={$this->_contactSubType}" : '';
             $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/add', $resetStr ) );
         } else {
-            $session->replaceUserContext(CRM_Utils_System::url('civicrm/contact/view', 'reset=1&cid=' . $contact->id));
+            $context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+            $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+            //validate the qfKey
+            require_once 'CRM/Utils/Rule.php';
+            $urlParams = 'reset=1&cid='. $contact->id;
+            if ( $context ) $urlParams .= "&context=$context";  
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&key=$qfKey";
+            
+            $session->replaceUserContext(CRM_Utils_System::url( 'civicrm/contact/view', $urlParams ));
         }
         
         // now invoke the post hook
@@ -1064,8 +1078,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     function getTemplateFileName() 
     {
         if ( $this->_contactSubType ) {
-            $templateFile = "CRM/Contact/Form/Edit/{$this->_contactSubType}.tpl";
-            $template     =& CRM_Core_Form::getTemplate( );
+            $templateFile = "CRM/Contact/Form/Edit/SubType/{$this->_contactSubType}.tpl";
+            $template     = CRM_Core_Form::getTemplate( );
             if ( $template->template_exists( $templateFile ) ) {
                 return $templateFile;
             }

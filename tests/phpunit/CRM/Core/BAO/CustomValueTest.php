@@ -79,6 +79,7 @@ class CRM_Core_BAO_CustomValueTest extends CiviUnitTestCase
         $values = array( );
         $values = array( 'check1'  => 'chk' );
         foreach ( $values as $type => $value ) {
+            require_once 'CRM/Core/BAO/CustomValue.php';
             $valid =  CRM_Core_BAO_CustomValue::typecheck( $type, $value );  
             $this->assertEquals( $valid, null , 'Checking invalid type for returned CustomField Type.' ); 
         }

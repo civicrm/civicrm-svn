@@ -237,11 +237,12 @@ class CRM_Core_Action {
                     $url[] = sprintf('<a href="%s" class="%s" title="%s" %s ' . $extra . '>%s</a>',
                                        $urlPath,
                                        $linkClass,
-                                       $link['title'], $ref, $link['name'] );
+                                       CRM_Utils_Array::value( 'title', $link )
+                                       , $ref, $link['name'] );
                 } else {
                     $linkClass .= ' '. strtolower( $link['ref'] );
                     $url[] = sprintf('<a title="%s" class="%s" %s ' . $extra . '>%s</a>',
-                                       $link['title'],
+                                       CRM_Utils_Array::value( 'title', $link ),
                                        $linkClass,
                                        $ref, $link['name'] );
                 }

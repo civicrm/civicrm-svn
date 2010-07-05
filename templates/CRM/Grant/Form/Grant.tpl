@@ -24,22 +24,27 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting grant *}
+
+{if $action eq 1}
+	<h3>{ts}New Grant{/ts}</h3>
+{elseif $action eq 2}
+	<h3>{ts}Edit Grant{/ts}</h3>
+{elseif $action eq 8}
+	<h3>{ts}Delete Grant{/ts}</h3>
+{/if}
+
 <div class="crm-block crm-form-block crm-grant-form-block">
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div> 
-<fieldset>
+
   {if $action eq 8} 
       <div class="messages status">
              <p><div class="icon inform-icon"></div>&nbsp;
-             {ts}Are you sure you want to delete this Grant? This delete operation cannot be undone.{/ts}</p>
+             {ts}Are you sure you want to delete this Grant?{/ts} {ts}This operation cannot be undone.{/ts}</p>
              <p>{include file="CRM/Grant/Form/Task.tpl"}</p>
       </div>
   {else}
-	{if $action eq 1}
-	<legend>{ts}New Grant{/ts}</legend>
-	{elseif $action eq 2}
-	<legend>{ts}Edit Grant{/ts}</legend>
-	{/if}
-	<div class="form-item">
+
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div> 	
+
 		<table class="form-layout-compressed">  
 		    {if $context eq 'standalone'}
                 {include file="CRM/Contact/Form/NewContact.tpl"}
@@ -115,8 +120,7 @@
 		<div class="crm-grant-form-block-attachment">
 		     {include file="CRM/Form/attachment.tpl"}
 		</div>
-	</div>
+
    {/if}
-</fieldset>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
 </div>

@@ -70,22 +70,20 @@ class CRM_Contact_Form_Task_Map  extends CRM_Contact_Form_Task
         $profileGID = CRM_Utils_Request::retrieve( 'profileGID', 'Integer',
                                                    $this, false );
         $this->assign( 'profileGID', $profileGID );
-        $seachType = CRM_Utils_Request::retrieve( 'searchType', 'String',
-                                                  $this, false );
-
+        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+        
         $type = 'Contact';
         if ( $cid ) {
             $ids = array( $cid );
             $this->_single     = true;
-            if ( $seachType && ! $profileGID ) {
-                $fragment = '/basic';
-                if ( $seachType == 'advance') {
-                    $fragment = '/advanced';
-                } elseif ( $seachType == 'custom') {
-                    $fragment = '/custom';
-                }
-                $session = CRM_Core_Session::singleton();
-                $url = CRM_Utils_System::url( 'civicrm/contact/search' . $fragment, 'force=1' );
+            if ( $context && !$profileGID ) {
+                $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+                $urlParams = 'force=1';
+                if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
+                $session = CRM_Core_Session::singleton( );
+                $urlString = "civicrm/contact/search/$context";
+                if ( $context == 'search' ) $urlString = 'civicrm/contact/search';  
+                $url = CRM_Utils_System::url( $urlString, $urlParams );
                 $session->replaceUserContext( $url );
             }
         } else if ( $eid ) {

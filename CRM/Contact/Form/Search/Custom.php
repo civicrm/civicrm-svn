@@ -41,6 +41,7 @@ class CRM_Contact_Form_Search_Custom extends CRM_Contact_Form_Search {
     protected $_customClass = null;
 
     public function preProcess( ) {
+        $this->set('context', 'custom' );
         require_once 'CRM/Contact/BAO/SearchCustom.php';
 
         $csID = CRM_Utils_Request::retrieve( 'csid', 'Integer', $this );

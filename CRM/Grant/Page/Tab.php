@@ -181,6 +181,7 @@ class CRM_Grant_Page_Tab extends CRM_Contact_Page_View
         case 'search':
             $urlParams = 'force=1';
             if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+            $this->assign( 'searchKey', $qfKey );
             
             $url = CRM_Utils_System::url( 'civicrm/grant/search', $urlParams );
             break;

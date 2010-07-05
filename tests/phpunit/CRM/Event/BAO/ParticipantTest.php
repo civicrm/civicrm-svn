@@ -115,7 +115,12 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
                         'status_id'        => 1,
                         'source'           => 'Event_'.$this->_eventId,
                         'contact_id'       => $this->_contactId,
-                        'id'               => $participantId
+                        'id'               => $participantId,
+                        'fee_level'        => null,
+                        'fee_amount'       => null,
+                        'registered_by_id' => null,
+                        'discount_id'      => null,
+                        'fee_currency'     => null
                         );
 
         foreach ( $compareValues as $key => $value ) {
@@ -247,7 +252,7 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
         $this->assertEquals( count( $duplicate ) , 3, 'Equating the array contains with duplicate array.' );
         
         //Checking for the duplicate participant
-        foreach ( $duplicate as $key ) {
+        foreach ( $duplicate as $key => $value ) {
             $this->assertEquals( $partiId[$key] , $duplicate[$key], 'Equating the contactid which is in the database.' );
         }
         
@@ -361,6 +366,8 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
                               'price'              => 10,
                               'option_label'       => Array ('1' => 'Price Field' ),
                               'option_value'       => Array ('1' => 10 ),
+                              'option_name'        => Array ('1' => 10 ),
+                              'option_weight'      => Array ('1' => 1 ),
                               'is_display_amounts' => 1,
                               'weight'             => 1,
                               'options_per_line'   => 1,
@@ -391,6 +398,7 @@ class CRM_Event_BAO_ParticipantTest extends CiviUnitTestCase
                                    'fee_level'        => 'Price_Field - 55' 
                                    );
         
+        require_once 'CRM/Event/BAO/Participant.php';
         $participant = CRM_Event_BAO_Participant::add($participantParams);
         
         //Checking for participant added in the table.

@@ -192,10 +192,10 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             if ( !empty( $this->_values ) ) {
                 $defaults['relationship_type_id'] = $this->_rtypeId;
-                if ( $this->_values['start_date'] ) {
+                if ( CRM_Utils_Array::value( 'start_date', $this->_values ) ) {
                     list( $defaults['start_date'] ) = CRM_Utils_Date::setDateDefaults( $this->_values['start_date'] );
                 }
-                if ( $this->_values['end_date'] ) {
+                if ( CRM_Utils_Array::value( 'end_date', $this->_values ) ) {
                     list( $defaults['end_date'] ) = CRM_Utils_Date::setDateDefaults( $this->_values['end_date'] );
                 }
                 $defaults['description'         ] = CRM_Utils_Array::value( 'description', $this->_values );
@@ -362,8 +362,8 @@ class CRM_Contact_Form_Relationship extends CRM_Core_Form
             }
         }
         
+        $employers = $checkBoxes = $employees = array( );
         if ( $searchRows ) {
-            $employers = $checkBoxes = $employees = array( );
             foreach ( $searchRows as $id => $row ) {
                 $checkBoxes[$id] = $this->createElement('checkbox', $id, null, '' );
                 if ( $isEmployeeOf ) {

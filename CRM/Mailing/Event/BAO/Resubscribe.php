@@ -225,11 +225,7 @@ class CRM_Mailing_Event_BAO_Resubscribe {
             }
         }
 
-        // we need to wrap Mail_mime because PEAR is apparently unable to fix
-        // a six-year-old bug (PEAR bug #30) in Mail_mime::_encodeHeaders()
-        // this fixes CRM-5466
-        require_once 'CRM/Utils/Mail/FixedMailMIME.php';
-        $message = new CRM_Utils_Mail_FixedMailMIME("\n");
+        $message = new Mail_mime("\n");
 
         list($addresses, $urls) = CRM_Mailing_BAO_Mailing::getVerpAndUrls($job, $queue_id, $eq->hash, $eq->email);
         $bao = new CRM_Mailing_BAO_Mailing();

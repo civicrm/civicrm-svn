@@ -43,8 +43,8 @@ INSERT INTO `civicrm_dashboard`
     ( `domain_id`, `label`, `url`, `content`, `permission`, `permission_operator`, `column_no`, `is_minimized`, `is_active`, `weight`, `created_date`, `is_fullscreen`, `is_reserved`) 
     VALUES 
     ( @domainID, '{ts escape="sql"}Activities{/ts}', 'civicrm/dashlet/activity&reset=1&snippet=4', NULL, 'access CiviCRM', NULL, 0, 0, 1, 1, NULL, 1, 1),
-    ( @domainID, '{ts escape="sql"}My Cases{/ts}', 'civicrm/dashlet/myCases&reset=1&snippet=4', NULL, 'access my cases and activities', NULL , 0, 0, 1, 2, NULL, 1, 0),
-    ( @domainID, '{ts escape="sql"}All Cases{/ts}', 'civicrm/dashlet/allCases&reset=1&snippet=4', NULL, 'access all cases and activities', NULL , 0, 0, 1, 3, NULL, 1, 0);
+    ( @domainID, '{ts escape="sql"}My Cases{/ts}', 'civicrm/dashlet/myCases&reset=1&snippet=4', NULL, 'access my cases and activities', NULL , 0, 0, 1, 2, NULL, 1, 1),
+    ( @domainID, '{ts escape="sql"}All Cases{/ts}', 'civicrm/dashlet/allCases&reset=1&snippet=4', NULL, 'access all cases and activities', NULL , 0, 0, 1, 3, NULL, 1, 1);
 
 -- navigation 
 
@@ -59,7 +59,7 @@ INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES    
     ( @domainID, 'civicrm/contact/search&reset=1',                          '{ts escape="sql"}Find Contacts{/ts}',      'Find Contacts', NULL, '',                      @searchlastID, '1', NULL, 1 ), 
-    ( @domainID, 'civicrm/contact/search/advanced&reset=1',                 '{ts escape="sql"}Find Contacts - Advanced Search{/ts}', 'Find Contacts - Advanced Search', NULL, '', @searchlastID, '1', NULL, 2 ), 
+    ( @domainID, 'civicrm/contact/search/advanced&reset=1',                 '{ts escape="sql"}Advanced Search{/ts}',    'Advanced Search', NULL, '', @searchlastID, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/contact/search/custom&csid=15&reset=1',           '{ts escape="sql"}Full-text Search{/ts}',   'Full-text Search', NULL, '',                   @searchlastID, '1', NULL, 3 ), 
     ( @domainID, 'civicrm/contact/search/builder&reset=1',                  '{ts escape="sql"}Search Builder{/ts}',     'Search Builder', NULL, '',                     @searchlastID, '1', '1',  4 ), 
     ( @domainID, 'civicrm/case/search&reset=1',                             '{ts escape="sql"}Find Cases{/ts}',         'Find Cases', 'access my cases and activities,access all cases and activities', 'OR',            @searchlastID, '1', NULL, 5 ), 

@@ -89,7 +89,7 @@ implements CRM_Contact_Form_Search_Interface {
      * Define the smarty template used to layout the search form and results listings.
      */
     function templateFile( ) {
-        return 'CRM/Contact/Form/Search/Custom/Sample.tpl';
+        return 'CRM/Contact/Form/Search/Custom.tpl';
     }
         
     /**

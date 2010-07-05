@@ -23,12 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-activity-view-form-block">
-   <h3>{$activityTypeName}</h3>
+<h3>{$activityTypeName}</h3>
+<div class="crm-block crm-content-block crm-activity-view-block">
       {if $activityTypeDescription}
         <div id="help">{$activityTypeDescription}</div>
       {/if}
-      <table class="form-layout">
+      <table class="crm-info-panel">
         <tr>
             <td class="label">{ts}Added By{/ts}</td><td class="view-value">{$values.source_contact}</td>
         </tr> 

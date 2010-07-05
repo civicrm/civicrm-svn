@@ -220,10 +220,14 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
 
         $session = CRM_Core_Session::singleton( );
         $this->_currentUserId = $session->get( 'userID' );
-
-        // this is used for setting jQuery tabs
-        if ( ! $this->_context ) {
-            $this->_context = CRM_Utils_Request::retrieve('context', 'String', $this );
+        
+        //give the context.
+        if ( !$this->_context ) {
+            $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+            require_once 'CRM/Contact/Form/Search.php';
+            if ( CRM_Contact_Form_Search::isSearchContext( $this->_context ) ) {
+                $this->_context = 'search';
+            }
         }
         $this->assign( 'context', $this->_context );
         
@@ -273,7 +277,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         }
         
         // Assign pageTitle to be "Activity - "+ activity name
-        $pageTitle = 'Activity - '.$activityTName[$this->_activityTypeId];
+        $pageTitle = 'Activity - '.CRM_Utils_Array::value( $this->_activityTypeId, $activityTName );
     	$this->assign( 'pageTitle', $pageTitle );
 
         //check the mode when this form is called either single or as
@@ -285,22 +289,30 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $this->assign( 'urlPath', 'civicrm/activity' );
         } else {
             //set the appropriate action
-            $advanced = null;
-            $builder  = null;
-            
-            $session = CRM_Core_Session::singleton();
-            $advanced = $session->get('isAdvanced');
-            $builder  = $session->get('isSearchBuilder');
-
-            $searchType = "basic";
-            if ( $advanced == 1 ) {
+            $url = CRM_Utils_System::currentPath( );
+            $seachPath = array_pop( explode( '/', $url ) );
+            $searchType = 'basic';
+            $this->_action = CRM_Core_Action::BASIC;
+            switch ( $seachPath ) {
+            case 'basic' :
+                $searchType = $seachPath;
+                $this->_action = CRM_Core_Action::BASIC;
+                break;
+                
+            case 'advanced' :
+                $searchType = $seachPath;
                 $this->_action = CRM_Core_Action::ADVANCED;
-                $searchType = "advanced";
-            } else if ( $advanced == 2 && $builder = 1) {
+                break;
+                
+            case 'builder':
+                $searchType = $seachPath;
                 $this->_action = CRM_Core_Action::PROFILE;
-                $searchType = "builder";
-            } else if ( $advanced == 3 ) {
-                $searchType = "custom";
+                break;
+                
+            case 'custom':
+                $this->_action = CRM_Core_Action::COPY;
+                $searchType = $seachPath;
+                break;
             }
             
             parent::preProcess( );
@@ -346,7 +358,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                 $urlString  = 'civicrm/contact/view/activity';
             }
             if ( $qfKey ) $urlParams .= "$keyName=$qfKey";
-            $this->assign( 'fullTextSearchKey',  $qfKey );
+            $this->assign( 'searchKey',  $qfKey );
         } else if ( in_array( $this->_context, array( 'standalone', 'home' ) ) ) {
             $urlParams = 'reset=1';
             $urlString = 'civicrm/dashboard';
@@ -354,6 +366,7 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
             $urlParams = 'force=1';
             if ( $qfKey ) $urlParams .= "&qfKey=$qfKey"; 
             $urlString = 'civicrm/activity/search';
+            $this->assign( 'searchKey',  $qfKey );
         } else if ( $this->_context != 'caseActivity' ) {
             $urlParams = "action=browse&reset=1&cid={$this->_currentlyViewedContactId}&selectedChild=activity";
             $urlString = 'civicrm/contact/view';

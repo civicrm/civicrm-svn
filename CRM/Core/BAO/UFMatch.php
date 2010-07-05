@@ -112,9 +112,21 @@ WHERE     openid = %1";
             return;
         }
 
+        //check do we have logged in user.
+        require_once 'CRM/Utils/System.php';
+        $isUserLoggedIn = CRM_Utils_System::isUserLoggedIn( );
+        
         // reset the session if we are a different user
         if ( $ufID && $ufID != $user->$key ) {
             $session->reset( );
+        
+            //get logged in user ids, and set to session.
+            if ( $isUserLoggedIn ) {
+                $userIds  = self::getUFValues( );
+                $session->set( 'ufID'    , CRM_Utils_Array::value( 'uf_id',      $userIds, '' ) );
+                $session->set( 'userID'  , CRM_Utils_Array::value( 'contact_id', $userIds, '' ) );
+                $session->set( 'ufUniqID', CRM_Utils_Array::value( 'uf_name',    $userIds, '' ) );
+            }
         }
 
         // return early
@@ -132,11 +144,27 @@ WHERE     openid = %1";
         if ( ! $ufmatch ) {
             return;
         }
-
-        $session->set( 'ufID'    , $ufmatch->uf_id      );
-        $session->set( 'userID'  , $ufmatch->contact_id );
-        $session->set( 'ufUniqID', isset($ufmatch->user_unique_id) ? $ufmatch->user_unique_id : "");
-
+        
+        //make sure we have session w/ consistent ids.
+        $ufID     = $ufmatch->uf_id;
+        $userID   = $ufmatch->contact_id;
+        $ufUniqID = isset($ufmatch->user_unique_id) ? $ufmatch->user_unique_id : '';
+        if ( $isUserLoggedIn ) {
+            $loggedInUserUfID = CRM_Utils_System::getLoggedInUfID( );
+            //are we processing logged in user.
+            if ( $loggedInUserUfID && $loggedInUserUfID != $ufID ) {
+                $userIds  = self::getUFValues( $loggedInUserUfID );
+                $ufID     = CRM_Utils_Array::value( 'uf_id',      $userIds, '' );
+                $userID   = CRM_Utils_Array::value( 'contact_id', $userIds, '' );
+                $ufUniqID = CRM_Utils_Array::value( 'uf_name',    $userIds, '' ); 
+            }
+        }
+        
+        //set user ids to session.
+        $session->set( 'ufID'    , $ufID     );
+        $session->set( 'userID'  , $userID   );
+        $session->set( 'ufUniqID', $ufUniqID );
+        
         // add current contact to recentlty viewed
         if ( $ufmatch->contact_id ) {
             require_once 'CRM/Contact/BAO/Contact.php';
@@ -213,6 +241,7 @@ WHERE     openid = %1";
 
                 require_once 'CRM/Dedupe/Finder.php';
                 $dedupeParams = CRM_Dedupe_Finder::formatParams ( $params      , 'Individual' );
+                $dedupeParams['check_permission'] = false;
                 $ids          = CRM_Dedupe_Finder::dupesByParams( $dedupeParams, 'Individual' );
                 
                 if ( ! empty( $ids ) && defined( 'CIVICRM_UNIQ_EMAIL_PER_SITE' ) && CIVICRM_UNIQ_EMAIL_PER_SITE ) {
@@ -568,5 +597,36 @@ AND    domain_id    = %4
         }
         return false;
     }
-
+    
+    /**
+     * Get uf match values for given uf id or logged in user. 
+     *
+     * @param int    $ufID uf id.
+     *
+     * return array  $ufValues uf values. 
+     **/
+    static function getUFValues( $ufID = null ) {
+        if ( !$ufID ) {
+            //get logged in user uf id.
+            require_once 'CRM/Utils/System.php';
+            $ufID = CRM_Utils_System::getLoggedInUfID( );
+        }
+        if ( !$ufID ) return array( );
+        
+        static $ufValues;
+        if ( $ufID && !isset( $ufValues[$ufID] ) ) {
+            $ufmatch = new CRM_Core_DAO_UFMatch( );
+            $ufmatch->uf_id     = $ufID;
+            $ufmatch->domain_id = CRM_Core_Config::domainID( );
+            if ( $ufmatch->find( true ) ) {
+                $ufValues[$ufID] = array( 'uf_id'      => $ufmatch->uf_id,
+                                          'uf_name'    => $ufmatch->uf_name,
+                                          'contact_id' => $ufmatch->contact_id,
+                                          'domain_id'  => $ufmatch->domain_id );
+            }
+        }
+        
+        return $ufValues[$ufID];
+    }
+    
 }

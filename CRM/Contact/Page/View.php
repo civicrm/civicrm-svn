@@ -95,6 +95,12 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         $this->_id = CRM_Utils_Request::retrieve( 'id', 'Positive', $this );
         $this->assign( 'id', $this->_id );
         
+        $qfKey = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
+        $this->assign( 'searchKey', $qfKey );
+        
         // retrieve the group contact id, so that we can get contact id
         $gcid = CRM_Utils_Request::retrieve( 'gcid', 'Positive', $this );
         
@@ -217,21 +223,52 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
                                                                                        true,
                                                                                        true );
     }
-
+    
     function getSearchURL( ) {
-        $session = CRM_Core_Session::singleton();
-        $isAdvanced = $session->get('isAdvanced');
+        $qfKey   = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        $context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'search' );
+        $this->assign( 'context',  $context );
         
-        if ( $isAdvanced == '1' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/advanced', 'force=1' );
-        } else if ( $isAdvanced == '2' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/builder', 'force=1' );
-        } else if ( $isAdvanced == '3' ) {
-            return CRM_Utils_System::url( 'civicrm/contact/search/custom', 'force=1' );
+        //validate the qfKey
+        require_once 'CRM/Utils/Rule.php';
+        if ( !CRM_Utils_Rule::qfKey( $qfKey ) ) $qfKey = null;
+        
+        $urlString = null;
+        $urlParams = 'force=1';
+        
+        switch ( $context ) {
+        case 'custom' :
+        case 'fulltext' :
+            $urlString = 'civicrm/contact/search/custom';
+            break;
+            
+        case 'advanced' :
+            $urlString = 'civicrm/contact/search/advanced';
+            break;
+            
+        case 'builder' :
+            $urlString = 'civicrm/contact/search/builder';
+            break;
+            
+        case 'basic' :
+            $urlString = 'civicrm/contact/search/basic';
+            break;
+            
+        case 'search':
+            $urlString = 'civicrm/contact/search';
+            break;
+            
+        case 'smog' :
+        case 'amtg' :    
+            $urlString = 'civicrm/group/search';
+            break;
         }
-        return CRM_Utils_System::url( 'civicrm/contact/search/basic', 'force=1' );
+        if ( $qfKey ) $urlParams .= "&qfKey=$qfKey";
+        if ( !$urlString ) $urlString = 'civicrm/contact/search/basic';
+        
+        return CRM_Utils_System::url( $urlString, $urlParams );
     }
-
+    
     static function checkUserPermission( $page ) {
         // check for permissions
         $page->_permission = null;
@@ -245,7 +282,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
             $page->assign( 'permission', 'edit' );
             $page->_permission = CRM_Core_Permission::EDIT;
         // deleted contacts’ stuff should be (at best) only viewable
-        } elseif (CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $page->_contactId, 'is_deleted')) {
+        } elseif (CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $page->_contactId, 'is_deleted') and CRM_Core_Permission::check('access deleted contacts')) {
             $page->assign('permission', 'view');
             $page->_permission = CRM_Core_Permission::VIEW;
         } else if ( CRM_Contact_BAO_Contact_Permission::allow( $page->_contactId, CRM_Core_Permission::EDIT ) ) {

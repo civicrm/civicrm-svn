@@ -39,6 +39,19 @@
  */
 class CRM_Mailing_Form_Settings extends CRM_Core_Form 
 {
+    /** 
+     * Function to set variables up before form is built 
+     *                                                           
+     * @return void 
+     * @access public 
+     */ 
+    public function preProcess()  
+    {
+        //when user come from search context. 
+        require_once 'CRM/Contact/Form/Search.php';
+        $this->_searchBasedMailing = CRM_Contact_Form_Search::isSearchContext( $this->get( 'context' ) );
+    }
+    
     /**
      * This function sets the default values for the form.
      * the default values are retrieved from the database
@@ -129,7 +142,7 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
                           array ( 'type'      => 'cancel',
                                   'name'      => ts('Cancel') ),
                           );
-        if ( $this->get( 'context' ) == 'search' && $this->get( 'ssID' ) ) {
+        if ( $this->_searchBasedMailing && $this->get( 'ssID' ) ) {
             $buttons = array( array ( 'type'      => 'back',
                                       'name'      => ts('<< Previous') ),
                               array ( 'type'      => 'next',
@@ -183,8 +196,7 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
             //when user perform mailing from search context 
             //redirect it to search result CRM-3711.
             $ssID    = $this->get( 'ssID' );
-            $context = $this->get( 'context' );
-            if ( $ssID && $context == 'search' ) {
+            if ( $ssID && $this->_searchBasedMailing ) {
                 if ( $this->_action == CRM_Core_Action::BASIC ) {
                     $fragment = 'search';
                 } else if ( $this->_action == CRM_Core_Action::PROFILE ) {
@@ -194,13 +206,19 @@ class CRM_Mailing_Form_Settings extends CRM_Core_Form
                 } else {
                     $fragment = 'search/custom';
                 }
+
+                $context = $this->get( 'context' );
+                if ( !CRM_Contact_Form_Search::isSearchContext( $context ) ) $context = 'search';
+                $urlParams = "force=1&reset=1&ssID={$ssID}&context={$context}";
+                $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+                if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= "&qfKey=$qfKey";
                 
                 $draftURL = CRM_Utils_System::url( 'civicrm/mailing/browse/unscheduled', 'scheduled=false&reset=1' );
                 $status = ts("Your mailing has been saved. You can continue later by clicking the 'Continue' action to resume working on it.<br /> From <a href='%1'>Draft and Unscheduled Mailings</a>.", array( 1 => $draftURL ) );
                 CRM_Core_Session::setStatus( $status );
                 
                 //replace user context to search.
-                $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, "force=1&reset=1&ssID={$ssID}" );
+                $url = CRM_Utils_System::url( 'civicrm/contact/' . $fragment, $urlParams );
                 CRM_Utils_System::redirect( $url );
             } else { 
                 $status = ts("Your mailing has been saved. Click the 'Continue' action to resume working on it.");

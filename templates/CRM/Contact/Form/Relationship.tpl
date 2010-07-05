@@ -24,14 +24,13 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/viewing relationships  *}
-<div class="crm-block crm-form-block crm-relationship-form-block">
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {else}
   {if $action eq 4 } {* action = view *}
       <h3>{ts}View Relationship{/ts}</h3>
-
-        <table class="view-layout">
+        <div class="crm-block crm-content-block crm-relationship-view-block">
+        <table class="crm-info-panel">
 	    {foreach from=$viewRelationship item="row"}
             <tr>
                 <td class="label">{$row.relation}</td> 
@@ -72,10 +71,12 @@
         {/foreach}
         </table>
         <div class="crm-submit-buttons"><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=rel'}';"/></div>
-   {/if}
+        </div>
+  {/if}
 
-   {if $action eq 2 | $action eq 1} {* add and update actions *}
+  {if $action eq 2 | $action eq 1} {* add and update actions *}
     <h3>{if $action eq 1}{ts}New Relationship{/ts}{else}{ts}Edit Relationship{/ts}{/if}</h3>
+    <div class="crm-block crm-form-block crm-relationship-form-block">
             {if $action eq 1}
                 <div class="description">
                 {ts}Select the relationship type. Then locate target contact(s) for this relationship by entering a complete or partial name and clicking 'Search'.{/ts}
@@ -123,21 +124,22 @@
                     });
                     
                     function createRelation(  ) {
-                        var relType = cj('#relationship_type_id').val( );
+                        var relType    = cj('#relationship_type_id').val( );
+                        var relContact = cj('#rel_contact');
                         if ( relType ) {
-                             cj('#rel_contact').unbind( 'click' );
+                             relContact.unbind( 'click' );
                              cj("input[name=rel_contact_id]").val('');
                              var dataUrl = {/literal}'{crmURL p="civicrm/ajax/rest" h=0 q="className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&context=relationship&rel="}'{literal} + relType;
-                             cj('#rel_contact').autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
-                             cj('#rel_contact').result(function( event, data ) {
+                             relContact.autocomplete( dataUrl, { width : 180, selectFirst : false, matchContains: true });
+                             relContact.result(function( event, data ) {
                                	cj("input[name=rel_contact_id]").val(data[1]);
                                 cj('#relationship-refresh-save').show( );
                                 buildRelationFields( relType );
                              });
                         } else { 
-                            cj('#rel_contact').unautocomplete( );
+                            relContact.unautocomplete( );
                             cj("input[name=rel_contact_id]").val('');
-                            cj('#rel_contact').click( function() { alert( '{/literal}{ts}Please select a relationship type first.{/ts}{literal} ...' );});
+                            relContact.click( function() { alert( '{/literal}{ts}Please select a relationship type first.{/ts}{literal} ...' );});
                         }
                     }       
 				  </script>
@@ -160,69 +162,64 @@
                             {ts}Mark the target contact(s) for this relationship if it appears below. Otherwise you may modify the search name above and click Search again.{/ts}
                         </div>
                         {strip}
-				
-			{if $callAjax}
-			<div id="count_selected"> </div><br />
-			{$form.store_contacts.html}
+			            {if $callAjax}
+                			<div id="count_selected"> </div><br />
+                			{$form.store_contacts.html}
 		
-			{if $isEmployeeOf || $isEmployerOf}
-			     {$form.store_employer.html}     	
-			{/if}
-			{include file="CRM/common/jsortable.tpl"  sourceUrl=$sourceUrl useAjax=1 callBack=1 }
-			{/if}
+                			{if $isEmployeeOf || $isEmployerOf}
+                			     {$form.store_employer.html}     	
+                			{/if}
+			                {include file="CRM/common/jsortable.tpl"  sourceUrl=$sourceUrl useAjax=1 callBack=1 }
+			            {/if}
+
                         <table id="rel-contacts" class="pagerDisplay">
-			<thead>
-                        <tr class="columnheader">
-                        <th id="nosort" class="contact_select">&nbsp;</th>
-                        <th>{ts}Name{/ts}</th>
-                        {if $isEmployeeOf}<th id="nosort" class="current_employer">{ts}Current Employer?{/ts}</th> 
-                        {elseif $isEmployerOf}<th id="nosort" class="current_employer">{ts}Current Employee?{/ts}</th>{/if}
-                        <th>{ts}City{/ts}</th>
-                        <th>{ts}State{/ts}</th>
-                        <th>{ts}Email{/ts}</th>
-                        <th>{ts}Phone{/ts}</th>
-                        </tr>
-			</thead>
- 			<tbody>
-
-			{if !$callAjax}
-                        {foreach from=$searchRows item=row}
-                        <tr class="{cycle values="odd-row,even-row"}">
-                            <td class="contact_select">{$form.contact_check[$row.id].html}</td>
-                            <td>{$row.type} {$row.name}</td>
-                            {if $isEmployeeOf}<td>{$form.employee_of[$row.id].html}</td>
-                            {elseif $isEmployerOf}<td>{$form.employer_of[$row.id].html}</td>{/if}
-                            <td>{$row.city}</td>
-                            <td>{$row.state}</td>
-                            <td>{$row.email}</td>
-                            <td>{$row.phone}</td>
-                        </tr>
-                        {/foreach}
-			{else}
-			<tr><td colspan="5" class="dataTables_empty">Loading data from server</td></tr>
-			{/if}
-
-			</tbody>
+			                <thead>
+                                <tr class="columnheader">
+                                    <th id="nosort" class="contact_select">&nbsp;</th>
+                                    <th>{ts}Name{/ts}</th>
+                                {if $isEmployeeOf}<th id="nosort" class="current_employer">{ts}Current Employer?{/ts}</th> 
+                                {elseif $isEmployerOf}<th id="nosort" class="current_employer">{ts}Current Employee?{/ts}</th>{/if}
+                                    <th>{ts}City{/ts}</th>
+                                    <th>{ts}State{/ts}</th>
+                                    <th>{ts}Email{/ts}</th>
+                                    <th>{ts}Phone{/ts}</th>
+                                </tr>
+			                </thead>
+ 			                <tbody>
+                			{if !$callAjax}
+                                {foreach from=$searchRows item=row}
+                                <tr class="{cycle values="odd-row,even-row"}">
+                                    <td class="contact_select">{$form.contact_check[$row.id].html}</td>
+                                    <td>{$row.type} {$row.name}</td>
+                                    {if $isEmployeeOf}<td>{$form.employee_of[$row.id].html}</td>
+                                    {elseif $isEmployerOf}<td>{$form.employer_of[$row.id].html}</td>{/if}
+                                    <td>{$row.city}</td>
+                                    <td>{$row.state}</td>
+                                    <td>{$row.email}</td>
+                                    <td>{$row.phone}</td>
+                                </tr>
+                                {/foreach}
+                			{else}
+                			    <tr><td colspan="5" class="dataTables_empty">Loading data from server</td></tr>
+                			{/if}
+                			</tbody>
                         </table>
                         {/strip}
                         </fieldset>
                         <div class="spacer"></div>
-                    {else} {* too many results - we're only displaying 50 *}
-                        </div></fieldset>
+                    {else} {* too many results - we display only 50 *}
                         {if $duplicateRelationship}  
-                          {capture assign=infoMessage}{ts}Duplicate relationship.{/ts}{/capture}
+                            {capture assign=infoMessage}{ts}Duplicate relationship.{/ts}{/capture}
                         {else}   
-                          {capture assign=infoMessage}{ts}Too many matching results. Please narrow your search by entering a more complete target contact name.{/ts}{/capture}
+                            {capture assign=infoMessage}{ts}Too many matching results. Please narrow your search by entering a more complete target contact name.{/ts}{/capture}
                         {/if}  
                         {include file="CRM/common/info.tpl"}
                     {/if}
                 {else} {* no valid matches for name + contact_type *}
-                        </div></fieldset>
                         {capture assign=infoMessage}{ts}No matching results for{/ts} <ul><li>{ts 1=$form.rel_contact.value}Name like: %1{/ts}</li><li>{ts}Contact Type{/ts}: {$contact_type_display}</li></ul>{ts}Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
                         {include file="CRM/common/info.tpl"}                
                 {/if} {* end if searchCount *}
               {else}
-                </div></fieldset>
               {/if} {* end if searchDone *}
         {/if} {* end action = add *}
         </table>
@@ -280,19 +277,20 @@
         <div id="customData"></div>
         <div class="spacer"></div>
         <div class="crm-submit-buttons" id="saveButtons"> {include file="CRM/common/formButtons.tpl"}</div> 
-            {if $action EQ 1}
-                <div class="crm-submit-buttons" id="saveDetails">
-                <span class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_savedetails">{$form._qf_Relationship_refresh_savedetails.html}</span>
-                <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
-                </div>
-            {/if}
+        {if $action EQ 1}
+            <div class="crm-submit-buttons" id="saveDetails">
+            <span class="crm-button crm-button-type-save crm-button_qf_Relationship_refresh_savedetails">{$form._qf_Relationship_refresh_savedetails.html}</span>
+            <span class="crm-button crm-button-type-cancel crm-button_qf_Relationship_cancel">{$form._qf_Relationship_cancel.html}</span>
+            </div>
+        {/if}
+      </div> {* close main block div *}
   {/if}
  
   {if $action eq 8}
      <fieldset><legend>{ts}Delete Relationship{/ts}</legend>
         <div class="status">
-        {capture assign=relationshipsString}{$currentRelationships.$id.relation}{ $disableRelationships.$id.relation} {$currentRelationships.$id.name}{ $disableRelationships.$id.name }{/capture}
-        {ts 1=$relationshipsString}Are you sure you want to delete the Relationship '%1'?{/ts}
+            {capture assign=relationshipsString}{$currentRelationships.$id.relation}{ $disableRelationships.$id.relation} {$currentRelationships.$id.name}{ $disableRelationships.$id.name }{/capture}
+            {ts 1=$relationshipsString}Are you sure you want to delete the Relationship '%1'?{/ts}
         </div>
         <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
     </fieldset>	
@@ -346,7 +344,6 @@ cj( function( ) {
                 employer_checked = new Array();
             }
             if ( cj(this).attr('checked') == true ) {
-
                 // add validation to match with selected contacts
                 if( !contact_checked[valueSelected] ) {
                     alert('Current employer / Current employee should be among the selected contacts.');
@@ -366,33 +363,31 @@ cj( function( ) {
 });
 
 function checkSelected( ) {
-    cj('.pagerDisplay tbody tr .contact_select input').each(
-        function( ) {
-            if ( contact_checked[cj(this).val()] ) { 
+    cj('.pagerDisplay tbody tr .contact_select input').each( function( ) {
+        if ( contact_checked[cj(this).val()] ) { 
+            cj(this).attr('checked',true);
+        }
+    });
+
+    if ( useEmployer ) {
+        // register new elements
+        employer_holdelement = new Array();
+        cj('.pagerDisplay tbody tr .'+ employerClass +' input').each( function( ) {
+            if ( employer_checked[cj(this).val()] ) { 
                 cj(this).attr('checked',true);
+                employer_holdelement[cj(this).val()] = this;
             }
-        });
+        });  
+    }	  	  
+}
 
-        if ( useEmployer ) {
-            // register new elements
-            employer_holdelement = new Array();
-            cj('.pagerDisplay tbody tr .'+ employerClass +' input').each(
-                function( ) {
-                    if ( employer_checked[cj(this).val()] ) { 
-                        cj(this).attr('checked',true);
-                        employer_holdelement[cj(this).val()] = this;
-                    }
-                });  
-            }	  	  
-        }
-
-        function submitAjaxData() {
-            cj('#store_contacts').val( contact_checked.toString() );
-            if ( useEmployer )  {
-                cj('#store_employers').val( employer_checked.toString() ); 
-            }
-            return true;	 
-        }
+function submitAjaxData() {
+    cj('#store_contacts').val( contact_checked.toString() );
+    if ( useEmployer )  {
+        cj('#store_employers').val( employer_checked.toString() ); 
+    }
+    return true;	 
+}
 
 </script>
 {/literal}
@@ -405,13 +400,11 @@ function checkSelected( ) {
 <script type="text/javascript">
 
 {/literal} {if $searchRows} {literal}
-cj(".contact_select .form-checkbox").each(
-    function( ) {
-        if (this) { 
-            cj(this).attr('checked',true);
-        } 
-    }	  
-);
+cj(".contact_select .form-checkbox").each( function( ) {
+    if (this) { 
+        cj(this).attr('checked',true);
+    } 
+});
 {/literal} {/if} {literal}
 
 {/literal} {if $action EQ 1}{literal} 
@@ -420,14 +413,9 @@ cj('#addCurrentEmployer').hide( );
 cj('#addCurrentEmployee').hide( );
 
 cj('#rel_contact').focus( function() {
+    cj("input[name=rel_contact_id]").val('');
     cj('#relationship-refresh').show( );
     cj('#relationship-refresh-save').hide( );	      
-});
-
-cj('#rel_contact').change( function() {    
-    if ( cj("input[name=rel_contact]").val( ).length > 0 ) {
-        cj("input[name=rel_contact_id]").val('');
-    }	      
 });
 
 {/literal}{if $searchRows || $callAjax}{literal} 
@@ -436,7 +424,7 @@ show('saveElements');
 hide('saveElements');
 {/literal}{/if}{/if}{literal}	
 
-cj(document).ready(function() {
+cj( function( ) {
     var relType = cj('#relationship_type_id').val( );
     if ( relType ) {
         var relTypeId = relType.split("_");
@@ -504,7 +492,6 @@ function changeCustomData( cType ) {
 {if $action EQ 2}
 {literal}
 <script type="text/javascript">
-
    currentEmployer( );
    function currentEmployer( ) 
    {
@@ -526,4 +513,3 @@ function changeCustomData( cType ) {
 </script>
 {/literal}
 {/if}
-</div>

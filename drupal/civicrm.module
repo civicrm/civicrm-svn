@@ -634,7 +634,7 @@ function civicrm_view_data( &$user )
 
             // CRM-3537: profile edit link
             if ( user_edit_access($user) ) {
-                $editURL = '&raquo; ' . l( "Edit '{$title['title']}'", 
+                $editURL = '&raquo; ' . l( t("Edit '!1'", array('!1' => $title['title'])),
                                            "user/{$user->uid}/edit/{$title['title']}");
             }
 
@@ -840,9 +840,11 @@ function civicrm_theme_registry_alter(&$theme_registry) {
  * 
  * Strips out JS and CSS for a path. 
  */function civicrm_preprocess_page(&$variables) {
-
-	// unset Drupal $title, as we print it in #crm-container
-	unset($variables['title']);
+    
+	// unset Drupal $title, as we print it in #crm-container - but only on civicrm pages!!
+    if ( arg(0) == 'civicrm' )	{
+        unset($variables['title']);
+        }
 	
 	// to increase it's flexibility. 
   	if ( module_exists('date_popup') && ( in_array( arg(0), array('civicrm', 'user') ) ) ) { 

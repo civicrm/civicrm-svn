@@ -45,7 +45,7 @@
     {else}
         <div class="status">
         <img src="{$config->resourceBase}i/Inform.gif" alt="{ts}status{/ts}"/>
-        {ts 1=$mappingName}WARNING: Are you sure you want to delete mapping '<b>%1</b>'? This action cannot be undone.{/ts}</div>
+        {ts 1=$mappingName}WARNING: Are you sure you want to delete mapping '<b>%1</b>'?{/ts} {ts}This action cannot be undone.{/ts}</div>
     {/if}
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" loaction="bottom"}</div>
     <div class="spacer"></div>

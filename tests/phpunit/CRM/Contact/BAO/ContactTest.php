@@ -597,6 +597,30 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
     function testDeleteContact( )
     {
         $contactParams = $this->contactParams( );
+        
+        //create custom data
+        require_once 'CiviTest/Custom.php';
+        $customGroup = Custom::createGroup( array( ), 'Individual' );
+        $fields = array(
+                        'label'            => 'testFld',
+                        'data_type'        => 'String',
+                        'html_type'        => 'Text',
+                        'custom_group_id'  => $customGroup->id,
+                        );
+        $customField = CRM_Core_BAO_CustomField::create( $fields );
+        $contactParams['custom']= array(
+                                        $customField->id => array(
+                                                                  -1 => array(
+                                                                              'value'           => 'Test custom value',
+                                                                              'type'            => 'String',
+                                                                              'custom_field_id' => $customField->id,
+                                                                              'custom_group_id' => $customGroup->id,
+                                                                              'table_name'      => $customGroup->table_name,
+                                                                              'column_name'     => $customField->column_name,
+                                                                              'file_id'         => null
+                                                                              )
+                                                                  )
+                                        );
 
         //create contact
         require_once 'CRM/Contact/BAO/Contact.php';
@@ -631,10 +655,11 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         require_once 'CRM/Core/BAO/CustomValueTable.php';
 
         // Check that the custom field value is no longer present
-        $params = array( 'entityID'           => $contactId,
-                         'custom_' . $fieldID => 1);
+        $params = array( 'entityID'                  => $contactId,
+                         'custom_'.$customField->id  => 1 
+                         );
         $values = CRM_Core_BAO_CustomValueTable::getValues( $params );
-        $this->assertEquals( CRM_Utils_Array::value( "custom_{$fieldID}", $values ), '', 
+        $this->assertEquals( CRM_Utils_Array::value( "custom_".$customField->id, $values ), '',
                              'Verify that the data value is empty for contact ' . $contactId);
         $this->assertEquals( $values['is_error'], 1, 'Verify that is_error = 0 (success).');
         
@@ -676,6 +701,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                 'do_not_mail'                    => '1',
                                 'do_not_phone'                   => '1',
                                 'do_not_trade'                   => '1',
+                                'do_not_sms'                     => '1',
                                 'email-Primary'                  => 'john.smith@example.org',
                                 'geo_code_1-Primary'             => '18.219023',
                                 'geo_code_2-Primary'             => '-105.00973',
@@ -864,6 +890,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
                                   'do_not_mail'                    => '1',
                                   'do_not_phone'                   => '1',
                                   'do_not_trade'                   => '1',
+                                  'do_not_sms'                     => '1',
                                   'email-Primary'                  => 'john.doe@example.org',
                                   'geo_code_1-Primary'             => '31.694842',
                                   'geo_code_2-Primary'             => '-106.29998',
@@ -1204,7 +1231,7 @@ class CRM_Contact_BAO_ContactTest extends CiviUnitTestCase
         list( $displayName, $image ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $contactId );
         
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
-        $checkImage = CRM_Contact_BAO_Contact_Utils::getImage( $params['contact_type'] );
+        $checkImage = CRM_Contact_BAO_Contact_Utils::getImage( $params['contact_type'], false, $contactId );
         
         require_once 'CRM/Core/PseudoConstant.php';
         $prefix = CRM_Core_PseudoConstant::individualPrefix( );

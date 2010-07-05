@@ -40,6 +40,9 @@
      <tr class="crm-contact-task-mailing-label-form-block-merge_same_address">
         <td></td><td>{$form.merge_same_address.html} {$form.merge_same_address.label}</td>
      </tr>
+     <tr class="crm-contact-task-mailing-label-form-block-merge_same_household">
+        <td></td><td>{$form.merge_same_household.html} {$form.merge_same_household.label}</td>
+     </tr>
      <tr><td></td><td>{include file="CRM/Contact/Form/Task.tpl"}</td></tr>
 </table>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>

@@ -25,11 +25,9 @@
 *}
 <div class="crm-form-block crm-block crm-contact-task-pdf-form-block">
 <h3>{ts}Create Printable PDF Letters{/ts}</h3>
-<table class="form-layout-compressed">
-
 
 {include file="CRM/Contact/Form/Task/PDFLetterCommon.tpl"}
-</table>
+
 <div class="spacer"> </div>
 <div>
 {if $single eq false}
