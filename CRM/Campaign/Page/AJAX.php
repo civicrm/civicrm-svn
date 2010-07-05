@@ -44,10 +44,10 @@ class CRM_Campaign_Page_AJAX
     static function registerInterview( )
     {
         $voterId = CRM_Utils_Array::value( 'voter_id', $_POST );
-        $params  = array( 'voter_id'       => $voterId,
-                          'interviewer_id' => CRM_Utils_Array::value( 'interviewer_id', $_POST ),
-                          'survey_type_id' => CRM_Utils_Array::value( 'survey_type_id', $_POST ),
-                          'campaign_id'    => CRM_Utils_Array::value( 'campaign_id', $_POST ) );
+        $params  = array( 'voter_id'         => $voterId,
+                          'campaign_id'      => CRM_Utils_Array::value( 'campaign_id', $_POST ),
+                          'interviewer_id'   => CRM_Utils_Array::value( 'interviewer_id', $_POST ),
+                          'activity_type_id' => CRM_Utils_Array::value( 'activity_type_id', $_POST ) );
         
         $customKey = "field_{$voterId}_custom";
         foreach ( $_POST as $key => $value ) {

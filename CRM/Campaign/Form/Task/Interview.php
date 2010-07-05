@@ -116,7 +116,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         //get the survey type id.
         $this->_surveyTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
                                                             $this->_surveyId, 
-                                                            'survey_type_id' );
+                                                            'activity_type_id' );
         
         $this->assign( 'surveyTypeId', $this->_surveyTypeId );
         
@@ -206,10 +206,10 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         
         require_once 'CRM/Activity/BAO/Activity.php';
         foreach ( $params['field'] as $voterId => &$values ) {
-            $values['voter_id']       = $voterId;
-            $values['survey_type_id'] = $this->_surveyTypeId;
-            $values['interviewer_id'] = $this->_interviewerId;
-            $values['campaign_id']    = $this->_campaignId;
+            $values['voter_id']         = $voterId;
+            $values['campaign_id']      = $this->_campaignId;
+            $values['interviewer_id']   = $this->_interviewerId;
+            $values['activity_type_id'] = $this->_surveyTypeId;
             self::registerInterview( $values );
         }
         
@@ -217,8 +217,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
 
     static function registerInterview( $params )
     {
-        $interviewId  = CRM_Utils_Array::value( 'interview_id', $params );
-        $surveyTypeId = CRM_Utils_Array::value( 'survey_type_id', $params );
+        $interviewId  = CRM_Utils_Array::value( 'interview_id',     $params );
+        $surveyTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
         if ( !is_array( $params ) || !$surveyTypeId ) {
             return $interviewId;
         }

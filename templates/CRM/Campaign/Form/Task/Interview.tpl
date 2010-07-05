@@ -97,7 +97,7 @@
 	
 	data['voter_id']       = voterId;
 	data['interviewer_id'] = {/literal}{$interviewerId}{literal};
-	data['survey_type_id'] = {/literal}{$surveyTypeId}{literal};
+	data['activity_type_id'] = {/literal}{$surveyTypeId}{literal};
 	data['campaign_id']    = {/literal}{$campaignId}{literal};	
 	data['field_'+ voterId + '_interview_id'] = cj( '#field_' + voterId + '_interview_id' ).val( );
 
