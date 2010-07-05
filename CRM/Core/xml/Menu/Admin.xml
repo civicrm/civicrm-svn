@@ -539,5 +539,6 @@
        <path>civicrm/ajax/processTags</path>
        <page_callback>CRM_Admin_Page_AJAX::processTags</page_callback>
        <access_arguments>access CiviCRM</access_arguments>
+       <page_type>3</page_type>
   </item>  
 </menu>
