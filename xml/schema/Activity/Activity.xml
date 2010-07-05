@@ -324,7 +324,16 @@
        <name>index_is_deleted</name>
        <fieldName>is_deleted</fieldName>
        <add>2.2</add>
-  </index> 
+  </index>
+  <field>
+       <name>result</name>
+       <uniqueName>activity_result</uniqueName>
+       <type>varchar</type>
+       <title>Result</title>
+       <length>255</length>
+       <comment>Currently being used to store result id for survey activity, FK to option value.</comment>
+       <add>3.2</add>
+  </field>
   <field>
        <name>activity_tag1_id</name>
        <type>int unsigned</type>
