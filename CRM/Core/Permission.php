@@ -339,7 +339,7 @@ class CRM_Core_Permission {
         );
         if (in_array($item['path'], $paths)) {
             require_once 'CRM/Core/Key.php';
-            if (!CRM_Core_Key::validate($_POST['key'], $item['path'])) {
+            if (!CRM_Core_Key::validate($_REQUEST['key'], $item['path'])) {
                 return false;
             }
         }
