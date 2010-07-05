@@ -189,6 +189,7 @@ class CRM_Admin_Page_AJAX
             case 'CRM_Core_BAO_OptionGroup':
                 $status = ts('Are you sure you want to disable this Option?');
                 break;
+
             case 'CRM_Contact_BAO_ContactType':
                 $status = ts('Are you sure you want to disable this Contact Type?');
                 break;
