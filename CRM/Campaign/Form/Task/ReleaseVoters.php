@@ -63,14 +63,7 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
      * @var object
      */
     protected $_surveyDetails;
-
-    /**
-     * custom data table
-     *
-     */
-    CONST
-        ACTIVITY_SURVEY_DETAIL_TABLE = 'civicrm_value_survey_activity_details';
-    
+   
     /**
      * build all the data structures needed to build the form
      *
@@ -83,8 +76,11 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
         //get the survey id from user submitted values.
         $this->_surveyId = CRM_Utils_Array::value( 'survey_id', $this->get( 'formValues' ) );
         $isHeld          = CRM_Utils_Array::value( 'status_id', $this->get( 'formValues' ) );
-        if ( !$this->_surveyId || !$isHeld || !in_array( $isHeld, array('H', 'C', 'X') ) ) {
-            CRM_Core_Error::statusBounce( ts( "Please search with 'Survey' filter and 'Survey Status' should be completed or held or expired, to apply this action.") );
+        $surveyStatus    = CRM_Campaign_BAO_Survey::getSurveyActivityStatus( 'held' );
+        $surveyActType   = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
+
+        if ( !$this->_surveyId || !$isHeld || !in_array( $isHeld, array_keys($surveyStatus) ) ) {
+            CRM_Core_Error::statusBounce( ts( "Please search with 'Survey' filter and 'Survey Status' should be %1, to apply this action.", array( '%1' => implode( ' OR ', $surveyStatus ) ) ) );
         }
         
         $session = CRM_Core_Session::singleton( );
@@ -98,7 +94,10 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
         $params        = array( 'id' => $this->_surveyId );
         $this->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve($params, $surveyDetails);
 
-        $numVoters = CRM_Core_DAO::singleValueQuery( "SELECT COUNT(*) FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." WHERE status_id IN ('H','C','X') AND survey_id = %1 AND interviewer_id = %2", array( 1 => array( $this->_surveyId, 'Integer' ), 2 => array( $this->_interviewerId, 'Integer' )  ) );
+        // get held contacts by interviewer
+        $query = "SELECT COUNT(*) FROM civicrm_activity source INNER JOIN civicrm_activity_assignment assignment ON ( assignment.activity_id = source.id ) WHERE source.activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND source.status_id IN (". implode( ',', array_keys($surveyStatus) ) .") AND source.source_record_id = %1 AND assignment.assignee_contact_id = %2";
+
+        $numVoters = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $this->_surveyId, 'Integer' ), 2 => array( $this->_interviewerId, 'Integer' ) ) );
 
         if ( !isset($numVoters) || ($numVoters < 1) ) {
             CRM_Core_Error::statusBounce( ts( "All voters held by you are already released for this survey.") );
@@ -135,18 +134,24 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
         
         $heldContacts = array( );
         
+        $surveyStatus    = CRM_Campaign_BAO_Survey::getSurveyActivityStatus( 'held' );
+        $surveyActType   = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
+        
         // interviewer can release only those contacts which are held
-        // by himself having survey status 'H' or 'C' or 'X' 
-        $query = "SELECT target.target_contact_id as contact_id, survey.entity_id as entity_id FROM ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." survey INNER JOIN civicrm_activity_target target ON ( target.activity_id = survey.entity_id ) WHERE survey.status_id IN ( 'H', 'C', 'X' ) AND survey.survey_id = %1  AND survey.interviewer_id = %2 AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
+        // by himself
+        $query = "SELECT DISTINCT(target.activity_id) as activity_id FROM civicrm_activity_target target INNER JOIN civicrm_activity source ON( target.activity_id = source.id ) INNER JOIN civicrm_activity_assignment assignment ON ( assignment.activity_id = source.id ) WHERE source.status_id IN (". implode( ',',  array_keys($surveyStatus) ) .") AND source.activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND source.source_record_id = %1  AND assignment.assignee_contact_id = %2 AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
+
         $findHeld = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer'), 2 => array( $this->_interviewerId, 'Integer') ) );
         
         while( $findHeld->fetch() ) {
-            $heldContacts[$findHeld->contact_id] = $findHeld->entity_id; 
+            $heldContacts[$findHeld->activity_id] = $findHeld->activity_id; 
         }
 
+        $statusReleased =  CRM_Utils_Array::value( 'Completed', array_flip(CRM_Campaign_BAO_Survey::getSurveyActivityStatus('released')) );
+
         if ( !empty($heldContacts) ) {
-            $query = "UPDATE ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." SET status_id = 'R' WHERE survey_id=%1 AND interviewer_id = %2 AND entity_id IN (". implode(',', $heldContacts ) .")";
-            CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer'), 2 => array( $this->_interviewerId, 'Integer') ) );
+            $query = "UPDATE civicrm_activity source INNER JOIN civicrm_activity_assignment assignment ON (source.id = assignment.activity_id ) SET source.status_id = %1 WHERE source.source_record_id = %2 AND assignment.assignee_contact_id = %3 AND source.id IN (". implode(',', $heldContacts ) .")";
+            CRM_Core_DAO::executeQuery( $query, array( 1 => array( $statusReleased, 'Integer'), 2 => array( $this->_surveyId, 'Integer'), 3 => array( $this->_interviewerId, 'Integer') ) );
         }
         
         $status = array( );
