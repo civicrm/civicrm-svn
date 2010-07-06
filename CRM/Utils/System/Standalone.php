@@ -330,6 +330,27 @@ class CRM_Utils_System_Standalone {
     {
         return null;
     }
+
+    /**
+     * check is user logged in.
+     *
+     * @return boolean true/false.
+     */
+    public static function isUserLoggedIn( ) {
+        return true;
+    }
+    
+    /**
+     * Get currently logged in user uf id.
+     *
+     * @return int logged in user uf id.
+     */
+    public static function getLoggedInUfID( ) {
+        //FIXME :
+        $session = CRM_Core_session::singleton( );
+        return $session->get( 'ufID' );
+    }
+    
 }
 
 

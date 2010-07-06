@@ -199,9 +199,9 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                 $tokens = $dummy_mail->getTokens();
                 
                 if ( $$bodyType ) {
-                    $$bodyType = CRM_Utils_Token::replaceDomainTokens($$bodyType, $domain, true, $tokens[$value] );
-                    $$bodyType = CRM_Utils_Token::replaceContactTokens($$bodyType, $contact, false, $tokens[$value] );
-                    $$bodyType = CRM_Utils_Token::replaceComponentTokens($$bodyType, $contact, $tokens[$value] );
+                    $$bodyType = CRM_Utils_Token::replaceDomainTokens($$bodyType, $domain, true, $tokens[$value], true );
+                    $$bodyType = CRM_Utils_Token::replaceContactTokens($$bodyType, $contact, false, $tokens[$value], false, true );
+                    $$bodyType = CRM_Utils_Token::replaceComponentTokens($$bodyType, $contact, $tokens[$value], true );
                 }
             }
             $html = $body_html;
@@ -404,13 +404,13 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
         $mailing->body_html = $html;
         $tokens = $mailing->getTokens();
 
-        $subject = CRM_Utils_Token::replaceDomainTokens($subject, $domain, true, $tokens['text']);
-        $text    = CRM_Utils_Token::replaceDomainTokens($text,    $domain, true, $tokens['text']);
-        $html    = CRM_Utils_Token::replaceDomainTokens($html,    $domain, true, $tokens['html']);
+        $subject = CRM_Utils_Token::replaceDomainTokens($subject, $domain, true, $tokens['text'], true);
+        $text    = CRM_Utils_Token::replaceDomainTokens($text,    $domain, true, $tokens['text'], true);
+        $html    = CRM_Utils_Token::replaceDomainTokens($html,    $domain, true, $tokens['html'], true);
         if ($params['contactId']) {
-            $subject = CRM_Utils_Token::replaceContactTokens($subject, $contact, false, $tokens['text']);
-            $text    = CRM_Utils_Token::replaceContactTokens($text,    $contact, false, $tokens['text']);
-            $html    = CRM_Utils_Token::replaceContactTokens($html,    $contact, false, $tokens['html']);
+            $subject = CRM_Utils_Token::replaceContactTokens($subject, $contact, false, $tokens['text'], false, true);
+            $text    = CRM_Utils_Token::replaceContactTokens($text,    $contact, false, $tokens['text'], false, true);
+            $html    = CRM_Utils_Token::replaceContactTokens($html,    $contact, false, $tokens['html'], false, true);
         }
 
         // strip whitespace from ends and turn into a single line

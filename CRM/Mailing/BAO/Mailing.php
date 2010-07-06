@@ -962,6 +962,11 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
             $headers['From'] = "<{$fromEmail}>";
         } 
 
+        if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+            require_once 'CRM/Core/Smarty/resources/String.php';
+            civicrm_smarty_register_string_resource( );
+        }
+        
         if ( $contactDetails ) {
             $contact = $contactDetails;
         } else {
@@ -1147,6 +1152,8 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
         $token = $token_a['token'];
         $data = $token;
 
+        $escapeSmarty = defined( 'CIVICRM_MAIL_SMARTY' ) ? true : false;
+
         if ($type == 'embedded_url') {
             $embed_data = array( );
             foreach ( $token as $t ) {
@@ -1175,7 +1182,7 @@ AND    civicrm_mailing.id = civicrm_mailing_job.mailing_id";
                 $data = $token;
             }
         } else if ( $type == 'contact' ) {
-          $data = CRM_Utils_Token::getContactTokenReplacement($token, $contact);
+            $data = CRM_Utils_Token::getContactTokenReplacement($token, $contact, false, false, $escapeSmarty );
         } else if ( $type == 'action' ) {
           $data = CRM_Utils_Token::getActionTokenReplacement($token, $verp, $urls, $html);
         } else if ( $type == 'domain' ) {

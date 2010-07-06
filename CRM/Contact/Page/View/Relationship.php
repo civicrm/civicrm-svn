@@ -78,7 +78,14 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
             }
         }
         $relType = $viewRelationship[$this->_id]['civicrm_relationship_type_id'];
-        $this->assign( 'viewRelationship', $viewRelationship );
+        $this->assign( 'viewRelationship', $viewRelationship );        
+                
+        $this->assign( 'isCurrentEmployer', false );
+        if ( $viewRelationship[$this->_id]['employer_id'] ) {
+            $this->assign( 'isCurrentEmployer', true);
+        } else if ( CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $this->_contactId, 'employer_id' ) ) {
+            $this->assign( 'isCurrentEmployer', true);
+        }
 
         $viewNote = CRM_Core_BAO_Note::getNote($this->_id);
         $this->assign( 'viewNote', $viewNote );
@@ -91,7 +98,10 @@ class CRM_Contact_Page_View_Relationship extends CRM_Core_Page
         $url = CRM_Utils_System::url( 'civicrm/contact/view/rel', 
                                       "action=view&reset=1&id={$viewRelationship[$this->_id]['id']}&cid={$this->_contactId}&context=home" );
         
-        $title = CRM_Contact_BAO_Contact::displayName( $this->_contactId ) . ' (' . 
+        $displayName = CRM_Contact_BAO_Contact::displayName( $this->_contactId );
+        $this->assign( 'displayName', $displayName );
+        
+        $title =  $displayName . ' (' . 
                  $viewRelationship[$this->_id]['relation']. ' ' . 
                  CRM_Contact_BAO_Contact::displayName( $viewRelationship[$this->_id]['cid'] )  . ')';
         
