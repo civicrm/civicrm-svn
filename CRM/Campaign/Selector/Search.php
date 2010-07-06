@@ -57,7 +57,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      * @static
      */
     static $_links = null;
-
+    
     /**
      * we use desc to remind us what that column is, name is used in the tpl
      *
@@ -65,7 +65,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      * @static
      */
     static $_columnHeaders;
-
+    
     /**
      * Properties of contact we're interested in displaying
      * @var array
@@ -90,7 +90,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      * @var boolean   
      */   
     protected $_single = false;
-
+    
     /**  
      * are we restricting ourselves to a single contact  
      *  
@@ -98,7 +98,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      * @var boolean    
      */    
     protected $_limit = null;
-
+    
     /**
      * what context are we being invoked from
      *   
@@ -106,7 +106,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      * @var string
      */     
     protected $_context = null;
-
+    
     /**
      * queryParams is the array returned by exportValues called on
      * the HTML_QuickForm_Controller for that page.
@@ -115,7 +115,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      * @access protected
      */
     public $_queryParams;
-
+    
     /**
      * represent the type of selector
      *
@@ -123,7 +123,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      * @access protected
      */
     protected $_action;
-
+    
     /** 
      * The additional clause that we restrict the search with 
      * 
@@ -138,12 +138,6 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      */ 
     protected $_query;
     
-    /*
-     * activity detail table
-     */
-    const
-        ACTIVITY_SURVEY_DETAIL_TABLE = 'civicrm_value_survey_activity_details';
-
     /**
      * Class constructor
      *
@@ -175,7 +169,8 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
         // type of selector
         $this->_action = $action;
         
-        $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
+        $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, 
+                                                   null, null, false, false,
                                                    CRM_Contact_BAO_Query::MODE_CAMPAIGN );
     }//end of constructor
     
@@ -220,17 +215,13 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      */
     function getTotalCount( $action )
     {
-        /*
         return $this->_query->searchQuery( 0, 0, null,
-        true, false, 
-        false, false, 
-        false, 
-        $this->_campaignClause );
-        */
-        
-        return $this->_buildQuery( true );
+                                           true, false, 
+                                           false, false, 
+                                           false, 
+                                           $this->_campaignClause );
+        //return $this->_buildQuery( true );
     }
-    
     
     /**
      * returns all the rows in the given offset and rowCount
@@ -245,19 +236,17 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      */
     function &getRows( $action, $offset, $rowCount, $sort, $output = null ) 
     {
-        
-        /*
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
         $result = $this->_query->searchQuery( $offset, $rowCount, $sort,
                                               false, false, 
                                               false, false, 
                                               false, 
                                               $this->_campaignClause
-        );
-
-        */
+                                              );
+        
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
-        $result = $this->_buildQuery( );
+        //$result = $this->_buildQuery( );
+        
         // process the result of the query
         $rows = array( );
         
