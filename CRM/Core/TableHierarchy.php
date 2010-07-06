@@ -72,6 +72,9 @@ class CRM_Core_TableHierarchy {
                          );
 
     static function &info( ) {
+        //get the campaign related tables.
+        CRM_Campaign_BAO_Query::info( self::$info );
+        
         return self::$info;
     }
 

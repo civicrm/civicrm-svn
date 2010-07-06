@@ -98,10 +98,10 @@
 	</tr>
 	<tr>
             <td class="font-size12pt">
-                {$form.survey_id.label}
+                {$form.campaign_survey_id.label}
             </td>
             <td>
-	        {$form.survey_id.html}
+	        {$form.campaign_survey_id.html}
             </td>
 	</tr>
         <tr>

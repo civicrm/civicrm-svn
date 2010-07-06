@@ -244,7 +244,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $this->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
         
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
-        $this->add( 'select', 'survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
+        $this->add( 'select', 'campaign_survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
         
         $surveyStatus = CRM_Core_OptionGroup::values(self::SURVEY_STATUS);
         $this->add( 'select', 'status_id', ts('Survey Status'), array('' => ts('- select -') ) + $surveyStatus );

@@ -36,6 +36,11 @@
 
 class CRM_Campaign_BAO_Query 
 {
+    //since normal activity clause clause get collides.
+    const
+        civicrm_activity         =  'civicrm_survey_activity',
+        civicrm_activity_target  =  'civicrm_survey_activity_target';
+    
     /**
      * static field for all the campaign fields
      *
@@ -67,18 +72,34 @@ class CRM_Campaign_BAO_Query
      */
     static function select( &$query ) 
     {
+        // get survey activity target table in.
+        if ( CRM_Utils_Array::value( 'survey_activity_target_id', $query->_returnProperties ) ) {
+            $query->_select['survey_activity_target_id'] = 'civicrm_activity_target.target_contact_id as survey_activity_target_id';
+            $query->_element['survey_activity_target_id']       = 1;
+            $query->_tables[self::civicrm_activity_target]      = 1;
+            $query->_whereTables[self::civicrm_activity_target] = 1;
+        }
+        
+        // get survey activity table in.
+        if ( CRM_Utils_Array::value( 'survey_activity_id', $query->_returnProperties ) ) {
+            $query->_select['survey_activity_id']        = 'civicrm_activity.id as survey_activity_id';
+            $query->_element['survey_activity_id']       = 1;
+            $query->_tables[self::civicrm_activity]      = 1;
+            $query->_whereTables[self::civicrm_activity] = 1;
+        }
+        
         // get survey table.
-        if ( CRM_Utils_Array::value( 'survey_id', $query->_returnProperties ) ) {
-            $query->_select['survey_id']           = 'civicrm_survey.id as survey_id';
-            $query->_element['survey_id']          = 1;
+        if ( CRM_Utils_Array::value( 'campaign_survey_id', $query->_returnProperties ) ) {
+            $query->_select['campaign_survey_id']  = 'civicrm_survey.id as survey_id';
+            $query->_element['campaign_survey_id'] = 1;
             $query->_tables['civicrm_survey']      = 1;
             $query->_whereTables['civicrm_survey'] = 1;
         }
         
-        // get camaign table.
-        if ( CRM_Utils_Array::value( 'camaign_id', $query->_returnProperties ) ) {
+        // get campaign table.
+        if ( CRM_Utils_Array::value( 'campaign_id', $query->_returnProperties ) ) {
             $query->_select['campaign_id']           = 'civicrm_campaign.id as campaign_id';
-            $query->_element['camaign_id']           = 1;
+            $query->_element['campaign_id']          = 1;
             $query->_tables['civicrm_campaign']      = 1;
             $query->_whereTables['civicrm_campaign'] = 1;
         }
@@ -86,18 +107,14 @@ class CRM_Campaign_BAO_Query
     }
     
     static function where( &$query ) 
-    {
-        $isTest   = false;
+    {        
         $grouping = null;
         foreach ( array_keys( $query->_params ) as $id ) {
-            if ( substr( $query->_params[$id][0], 0, 9 ) == 'campaign_' ) {
-                if ( $query->_mode == CRM_Contact_BAO_QUERY::MODE_CONTACTS ) {
-                    $query->_useDistinct = true;
-                }
-                
-                $grouping = $query->_params[$id][3];
-                self::whereClauseSingle( $query->_params[$id], $query );
+            if ( $query->_mode == CRM_Contact_BAO_QUERY::MODE_CONTACTS ) {
+                $query->_useDistinct = true;
             }
+            
+            self::whereClauseSingle( $query->_params[$id], $query );
         }
     }
     
@@ -116,11 +133,13 @@ class CRM_Campaign_BAO_Query
         
         switch ( $name ) {
             
-        case 'survey_id' :
+        case 'campaign_survey_id' :
             $aType = $value;
             $query->_qill[$grouping ][] = ts( 'Survey Type - %1', array( 1 => $surveyActivityTypes[$cType] ) );
-            $query->_tables['civicrm_survey'  ] = $query->_whereTables['civicrm_survey'  ] = 1;
-            $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
+            $query->_tables['civicrm_survey']              = $query->_whereTables['civicrm_survey'  ] = 1;
+            $query->_tables[self::civicrm_activity]        = $query->_whereTables['survey_civicrm_activity'] = 1;
+            $query->_tables[self::civicrm_activity_target] = $query->_whereTables[self::civicrm_activity_target] = 1;
+            
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity.source_record_id', 
                                                                               $op, $value, "Integer" );
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_survey.id', 
@@ -138,14 +157,21 @@ class CRM_Campaign_BAO_Query
         $from = null;
         switch ( $name ) {
             
+        case self::civicrm_activity_target :
+            $from = " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
+            break;
+            
+        case self::civicrm_activity :
+            $from = " $side JOIN civicrm_activity ON civicrm_activity.id = civicrm_activity_target.activity_id ";
+            break;
+            
         case 'civicrm_survey':
-            $from = ' INNER JOIN civicrm_survey ON civicrm_survey.id = civicrm_activity.source_record_id ';
+            $from = " $side JOIN civicrm_survey ON civicrm_survey.id = civicrm_activity.source_record_id ";
             break;
             
         case 'civicrm_campaign':
-            $from = " $side JOIN civicrm_campaign ON civicrm_campign.survey_id = civicrm_survey.id ";
+            $from = " $side JOIN civicrm_campaign ON civicrm_campaign.id = civicrm_survey.campaign_id ";
             break;
-            
         }
         
         return $from;
@@ -156,27 +182,38 @@ class CRM_Campaign_BAO_Query
         $properties = null;
         if ( $mode & CRM_Contact_BAO_Query::MODE_CAMPAIGN ) {
             $properties = array(
-                                'contact_id'              => 1,
-                                'contact_type'            => 1, 
-                                'sort_name'               => 1, 
-                                'display_name'            => 1,
-                                'street_number'           => 1,
-                                'street_address'          => 1,
-                                'city'                    => 1, 
-                                'postal_code'             => 1,
-                                'state_province'          => 1,
-                                'country'                 => 1,
-                                'email'                   => 1,
-                                'phone'                   => 1,
-                                'campign_id'              => 1,
+                                'contact_id'                => 1,
+                                'contact_type'              => 1, 
+                                'sort_name'                 => 1, 
+                                'display_name'              => 1,
+                                'street_number'             => 1,
+                                'street_address'            => 1,
+                                'city'                      => 1, 
+                                'postal_code'               => 1,
+                                'state_province'            => 1,
+                                'country'                   => 1,
+                                'email'                     => 1,
+                                'phone'                     => 1,
+                                'survey_activity_target_id' => 1,
+                                'survey_activity_id'        => 1,
+                                'campaign_survey_id'        => 1,
+                                'campaign_id'               => 1
                                 );
         }
         
         return $properties;
     }
-
+    
     static function tableNames( &$tables ) 
     {
+    }
+    
+    static function info( &$tables ) {
+        $weight = end( $tables );
+        $tables[self::civicrm_activity_target] = ++$weight;
+        $tables[self::civicrm_activity]        = ++$weight;
+        $tables['civicrm_survey']              = ++$weight;
+        $tables['civicrm_campaign']            = ++$weight;
     }
     
 }
