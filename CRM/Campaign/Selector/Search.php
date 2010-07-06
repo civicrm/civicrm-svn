@@ -220,7 +220,6 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                            false, false, 
                                            false, 
                                            $this->_campaignClause );
-        //return $this->_buildQuery( true );
     }
     
     /**
@@ -245,7 +244,6 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                               );
         
         require_once 'CRM/Contact/BAO/Contact/Utils.php';
-        //$result = $this->_buildQuery( );
         
         // process the result of the query
         $rows = array( );
@@ -267,71 +265,10 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
         return $rows;
     }
     
-    function _buildQuery( $getCount = false ) {
-         $session = CRM_Core_Session::singleton( );
- 
-        $select = "
-DISTINCT(contact_a.id) as contact_id, contact_a.sort_name as sort_name, civicrm_address.id as address_id, civicrm_address.street_address as street_address, civicrm_address.street_number as street_number, civicrm_address.city as city, civicrm_address.postal_code as postal_code, civicrm_state_province.id as state_province_id, civicrm_state_province.abbreviation as state_province, civicrm_state_province.name as state_province_name, civicrm_country.id as country_id, civicrm_country.name as country, civicrm_phone.id as phone_id, civicrm_phone.phone_type_id as phone_type_id, civicrm_phone.phone as phone, civicrm_email.id as email_id, civicrm_email.email as email";
-
-        $from =  "civicrm_contact contact_a LEFT JOIN civicrm_address ON ( contact_a.id = civicrm_address.contact_id AND civicrm_address.is_primary = 1 ) LEFT JOIN civicrm_state_province ON civicrm_address.state_province_id = civicrm_state_province.id  LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id  LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_email.is_primary = 1) LEFT JOIN civicrm_phone ON (contact_a.id = civicrm_phone.contact_id AND civicrm_phone.is_primary = 1) LEFT JOIN civicrm_activity_target activity_target ON ( activity_target.target_contact_id = contact_a.id ) LEFT JOIN ". self::ACTIVITY_SURVEY_DETAIL_TABLE ." survery_details ON ( activity_target.activity_id = survery_details.entity_id )";
-        
-        $where   = "(contact_a.is_deleted = 0 AND contact_a.contact_type = 'Individual') "; 
-        $columns = array( 'sort_name', 'street_number', 'street_address', 'city', 'status_id', 'survey_id', 'interviewer_id' );
-
-        $params = $clause = array( );
-        $count  = 1;
-        if ( !empty($this->_queryParams) ) {
-            foreach( $this->_queryParams  as $queryParam ) {
-                if ( in_array( $queryParam[0], $columns ) ) {
-                    if ( !CRM_Utils_Array::value('2', $queryParam) ) {
-                        continue;
-                    }
-                    $column = $queryParam[0];
-                    $value  = $queryParam[2];
-                    
-                    if ( $column == 'sort_name' ) {
-                        $clause[ ] = "{$column} LIKE %{$count}";
-                        $params[$count] = array( '%'.$value.'%', 'String' );
-                    } else if ( $column == 'status_id' ) { 
-                        $clause[ ] = "survery_details.status_id = %{$count}";
-                        $params[$count] = array( $value, 'String' );
-                    } else if ( $column == 'interviewer_id' ) {
-                        $clause[ ] = "survery_details.interviewer_id = %{$count}";
-                        $params[$count] = array( $session->get('userID'), 'Integer' );
-                    } else if ($column == 'survey_id' ) {
-                        $clause[ ] = "survery_details.survey_id = %{$count}";
-                        $params[$count] = array( $value, 'Integer' );
-                    } else {
-                        $clause[ ] = "{$column} = %{$count}";
-                        $params[$count] = array( $value, 'String' );
-                    }
-                    $count++;
-                }
-            }
-
-            if ( !empty($clause) ) {  
-                $where .=  ' AND '. implode( ' AND ', $clause );
-            }
-        }
-        $whereClause = CRM_Core_DAO::composeQuery( $where, $params, true );
-
-        if ( $getCount ) { 
-            $query    = "SELECT COUNT(contact_a.id) FROM {$from} WHERE {$whereClause}";
-            $result   = CRM_Core_DAO::singleValueQuery($query);
-        } else {
-            $query    = "SELECT {$select} FROM {$from} WHERE {$whereClause} LIMIT 0, 50";
-            $result   = CRM_Core_DAO::executeQuery($query);
-        }
-        return $result;
-    }
-
     /**
-     * @return array              $qill         which contains an array of strings
+     * @return array   $qill which contains an array of strings
      * @access public
-     x*/
-    
-    // the current internationalisation is bad, but should more or less work
-    // for most of "European" languages
+     **/
     public function getQILL( )
     {
         return $this->_query->qill( );
