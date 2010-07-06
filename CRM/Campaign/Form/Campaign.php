@@ -109,6 +109,18 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         if ( !isset( $defaults['is_active'] ) ) {
             $defaults['is_active'] = 1;
         }
+        
+        require_once "CRM/Campaign/DAO/CampaignGroup.php";
+        $dao = new  CRM_Campaign_DAO_CampaignGroup();
+        
+        $campaignGroups = array();
+        $dao->campaign_id = $this->_campaignId;
+        $dao->find();
+        
+        while ( $dao->fetch() ) {
+            $campaignGroups[$dao->entity_table][$dao->group_type][] = $dao->entity_id;
+        }
+        $defaults['includeGroups'] = $campaignGroups['civicrm_group']['Include'];
         return $defaults;
        
     }
@@ -164,6 +176,19 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
                               array('' => ts( '- select Parent -' )) + $campaigns );
         }
         
+        //get the campaign groups.
+        $groups = CRM_Core_PseudoConstant::group('Campaign');
+        
+        $inG =& $this->addElement('advmultiselect', 'includeGroups', 
+                                  ts('Include Group(s)') . ' ', 
+                                  $groups,
+                                  array('size' => 5,
+                                        'style' => 'width:240px',
+                                        'class' => 'advmultiselect')
+                                  );
+        $inG->setButtonAttributes ('add'   , array('value' => ts('Add >>'   )));
+        $inG->setButtonAttributes ('remove', array('value' => ts('<< Remove')));
+        
         // is this Campaign active
         $this->addElement('checkbox', 'is_active', ts('Is Active?') );
         
@@ -209,8 +234,9 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         $params = $this->controller->exportValues( $this->_name );
         $session = CRM_Core_Session::singleton( );
         
-         if ( isset( $this->_campaignId ) ) {
-             if ( $this->_action & CRM_Core_Action::DELETE ) {
+        $groups = array ( );
+        if ( isset( $this->_campaignId ) ) {
+            if ( $this->_action & CRM_Core_Action::DELETE ) {
                 CRM_Campaign_BAO_Campaign::del( $this->_campaignId );
                 CRM_Core_Session::setStatus(ts(' Campaign has been deleted.'));
                 $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/browse', 'reset=1' ) ); 
@@ -227,6 +253,25 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         $params['is_active' ] = CRM_Utils_Array::value('is_active', $params, false);
         $params['last_modified_id']   = $session->get( 'userID' );
         $params['last_modified_date'] = date('YmdHis');
+        
+        if ( is_array( $params['includeGroups'] ) ) {
+            foreach( $params['includeGroups'] as $key => $id ) {
+                if ( $id ) {
+                    $groups['include'][] = $id;
+                }
+            }
+        }
+        $params['groups'] = $groups;
+
+        // delete previous includes/excludes, if campaign already existed
+        $groupTableName   = CRM_Contact_BAO_Group::getTableName( );
+        $dao = new CRM_Campaign_DAO_CampaignGroup();
+        $dao->campaign_id  = $this->_campaignId;                        
+        $dao->entity_table = $groupTableName;
+        $dao->find();
+        while ( $dao->fetch() ) {
+            $dao->delete( );
+        }
         
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $result = CRM_Campaign_BAO_Campaign::create( $params );

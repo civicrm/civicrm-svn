@@ -46,6 +46,10 @@
 	    <td class="label">{$form.description.label}</td>
 	    <td class="view-value">{$form.description.html}</td>
 	</tr>
+	<tr class="crm-campaign-form-block-includeGroups">
+	    <td class="label">{$form.includeGroups.label}</td>
+	    <td>{$form.includeGroups.html}</td>  
+	</tr>
 	<tr class="crm-campaign-form-block-start_date">
 	    <td class="label">{$form.start_date.label}</td>
 	    <td class="view-value">{include file="CRM/common/jcalendar.tpl" elementName=start_date}

@@ -76,7 +76,23 @@ Class CRM_Campaign_BAO_Campaign extends CRM_Campaign_DAO_Campaign
         $campaign = new CRM_Campaign_DAO_Campaign();
         $campaign->copyValues( $params );
         $campaign->save();
-        
+       
+        /* Create the campaign group record */
+        $groupTableName   = CRM_Contact_BAO_Group::getTableName( );
+        require_once 'CRM/Campaign/DAO/CampaignGroup.php';
+        $dao = new CRM_Campaign_DAO_CampaignGroup();
+       
+        if( CRM_Utils_Array::value( 'include', $params['groups'] ) && is_array( $params['groups']['include'] ) ) {                    
+             foreach( $params['groups']['include'] as $entityId ) {
+                        $dao->reset( );
+                        $dao->campaign_id  = $campaign->id;
+                        $dao->entity_table = $groupTableName;
+                        $dao->entity_id    = $entityId;
+                        $dao->group_type   = 'include';
+                        $dao->save( );
+                    }
+        }
+              
         return $campaign;
     }
    
