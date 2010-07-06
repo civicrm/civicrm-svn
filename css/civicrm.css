@@ -28,6 +28,7 @@
 #crm-container table {
     margin: 0em 0em 1em;
     border-collapse: collapse;
+    width: 100%;
 }
     #crm-container table.criteria-group {
         margin-bottom: .1em;
@@ -1165,14 +1166,15 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 
 .block-civicrm div#recently-viewed ul li {
     margin: 1px;
-    padding: 1px;
-    padding-left: 3px;
+    padding: 1px 1px 4px 3px;
     border: 1px solid #999999;
     background-color: #fff;
     white-space: nowrap;
+    list-style-type:none;
 }
 
-#crm-container #recently-viewed a {
+#crm-container #recently-viewed a,
+.block-civicrm div#recently-viewed a {
     font-weight: normal;
     /*color: #6e6e6e;*/
     color: #4A88DF;
@@ -1719,7 +1721,7 @@ table.campaign td,
     padding    : 5px 0 0 0px;
     margin     : 0px 0px 0px -20px;
     display    : none;
-    width      : 132px;
+    width      : 180px;
     background:transparent url(../i/dropdown-pointer.gif) no-repeat scroll 10px 1px;
 }
 
@@ -1731,7 +1733,7 @@ table.campaign td,
 .crm-contextmenu li {
     background-image: none;
     list-style : none;
-    padding    : 2px;
+    padding    : 3px;
     margin     : 0px;
 }
 
@@ -2539,44 +2541,6 @@ span.icon {
     background       : white url('../i/loading.gif') no-repeat right center;
 }
 
-
-/* Joomla Admin Menu alterations */
-
-div.m ul#civicrm-menu {
-    z-index: 0;
-    position:relative;
-    border: none;
-    left:0px;
-    height:0px;
-    padding: 5px 0px 20px 2px;
-	}
-
-div.m ul#civicrm-menu {
-    z-index: 1;
-    position:relative;
-    border: none;
-    left:0px;
-    height:0px;
-    padding: 5px 0px 20px 2px;
-    padding-bottom:20px !important; /*moz bottom */
-    padding-bottom:2px; /*ie bottom */
-	}
-
-
-div#toolbar-box div.m{ 
-    padding: 0px 8px !important;
-}
-
-div#toolbar-box, div#toolbar-box div.m{
-    height: auto;
-}
-
-div.m ul#civicrm-menu li#crm-qsearch {
-    height:0px;
-}
-
-
-
 /* Pop-up help icon - eliminate forced line break */
 div.helpicon {
     background  : transparent url(../i/quiz.png) no-repeat;
@@ -2789,7 +2753,9 @@ div#civicrm-dashboard form {
     color:#2786c2;
 }
 
-#crm-container .crm-title { margin-bottom: 8px; }
+#crm-container .crm-title {
+	margin-bottom: 8px;
+}
 
 /* tables */
 #crm-container table {

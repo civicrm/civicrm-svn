@@ -1098,5 +1098,27 @@ class CRM_Utils_System {
         require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
         return eval('return '. $config->userFrameworkClass . '::loadBootStrap($config);');
     }
-
+    
+    /**
+     * check is user logged in.
+     *
+     * @return boolean.
+     */
+    public static function isUserLoggedIn( ) {
+        $config = CRM_Core_Config::singleton();
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
+        return eval('return '. $config->userFrameworkClass . '::isUserLoggedIn( );');
+    }
+    
+    /**
+     * Get current logged in user id.
+     *
+     * @return int ufId, currently logged in user uf id.
+     */
+    public static function getLoggedInUfID( ) {
+        $config = CRM_Core_Config::singleton( );
+        require_once(str_replace('_', DIRECTORY_SEPARATOR, $config->userFrameworkClass) . '.php');
+        return eval('return '. $config->userFrameworkClass . '::getLoggedInUfID( );');
+    }
+    
 }

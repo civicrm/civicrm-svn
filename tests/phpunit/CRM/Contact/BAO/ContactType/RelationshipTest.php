@@ -235,6 +235,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $relTypeIds = array( );
         $relType    = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
         $params     = array( 'relationship_type_id' => $relType->id.'_a_b',
+                             'is_active'            => 1,
                              'contact_check'        => array( $this->indivi_parent => $this->indivi_parent )
                              );
         $ids = array('contact' => $this->individual );
@@ -262,6 +263,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $relTypeIds = array( );
         $relType    = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
         $params     = array( 'relationship_type_id' => $relType->id.'_a_b',
+                             'is_active'            => 1,
                              'contact_check'        => array( $this->indivi_student => 1 )
                              );
         $ids = array('contact' => $this->organization_sponsor );
@@ -285,6 +287,7 @@ class CRM_Contact_BAO_ContactType_RelationshipTest extends CiviUnitTestCase
         $relTypeIds = array( );
         $relType    = CRM_Contact_BAO_RelationshipType::add( $relTypeParams, $relTypeIds );
         $params     = array( 'relationship_type_id' => $relType->id.'_a_b',
+                             'is_active'            => 1,
                              'contact_check'        => array( $this->organization_sponsor => 1 )
                              );
         $ids = array('contact' => $this->indivi_student );

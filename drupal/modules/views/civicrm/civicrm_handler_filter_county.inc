@@ -1,8 +1,7 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -22,17 +21,41 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-<div class="crm-form-block crm-block crm-contact-task-pdf-form-block">
-<h3>{ts}Create Printable PDF Letters{/ts}</h3>
+*/
 
-{include file="CRM/Contact/Form/Task/PDFLetterCommon.tpl"}
+/*
+ * Heavily based on anonymous code contribution. No claim.
+ * CiviCRM Views Integration
+ *
+ * civicrm_handler_filter_county.inc
+ * Filters Counties, and is configured using the labels from the database
+ *
+ */
 
-<div class="spacer"> </div>
-<div>
-{if $single eq false}
-    <div>{include file="CRM/Contact/Form/Task.tpl"}</div><br />
-{/if}
-</div>
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-</div>
+class civicrm_handler_filter_county extends views_handler_filter_in_operator {
+    static $_counties;
+
+    function construct( ) {
+        parent::construct();
+        if ( ! self::$_counties ) {
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
+            require_once 'CRM/Core/PseudoConstant.php';
+            self::$_counties = CRM_Core_PseudoConstant::county( );
+        }
+    }
+
+    function get_value_options() {
+        if (!isset($this->value_options)) {
+            $this->value_title = t('County');
+            $options = array( );
+            foreach (self::$_counties as $id => $name ) {
+                $options[$id] = $name;
+            }
+            $this->value_options = $options;
+        }
+    }
+
+}
+?>

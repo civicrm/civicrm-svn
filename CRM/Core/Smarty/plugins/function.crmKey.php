@@ -1,4 +1,6 @@
-{*
+<?php
+
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
@@ -22,17 +24,26 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-<div class="crm-form-block crm-block crm-contact-task-pdf-form-block">
-<h3>{ts}Create Printable PDF Letters{/ts}</h3>
+*/
 
-{include file="CRM/Contact/Form/Task/PDFLetterCommon.tpl"}
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2010
+ * $Id$
+ *
+ */
 
-<div class="spacer"> </div>
-<div>
-{if $single eq false}
-    <div>{include file="CRM/Contact/Form/Task.tpl"}</div><br />
-{/if}
-</div>
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-</div>
+/**
+ * Generate a CRM_Core_Key of a given name
+ *
+ * @param string $params params of the {crmKey} call, with the ‘name’ key holding the name of the key
+ * @param object $smarty the Smarty object
+ *
+ * @return string the generated key
+ */
+function smarty_function_crmKey($params, &$smarty)
+{
+    require_once 'CRM/Core/Key.php';
+    return CRM_Core_Key::get($params['name']);
+}
