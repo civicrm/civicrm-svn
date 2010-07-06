@@ -226,7 +226,10 @@ SELECT label, value
                     }
                 }
                 require_once 'CRM/Utils/Hook.php';
-                CRM_Utils_Hook::customFieldOptions( $dao->id, $this->_options[$dao->id], false );
+                $options = $this->_options[$dao->id];
+                //unset attributes to avoid confussion
+                unset( $options['attributes']);
+                CRM_Utils_Hook::customFieldOptions( $dao->id, $options, false );
             }
         }
     }
@@ -360,6 +363,7 @@ SELECT label, value
                                     $sqlOPlabel = ts('match ANY');
                                     continue;
                                 }
+                                $v = CRM_Core_DAO::escapeString($v);
                                 $sqlValue[] = "( $sql like '%" . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . $v . CRM_Core_BAO_CustomOption::VALUE_SEPERATOR . "%' ) ";
                             }
                             //if user select only 'CiviCRM_OP_OR' value

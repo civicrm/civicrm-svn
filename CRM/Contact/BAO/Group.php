@@ -426,13 +426,15 @@ class CRM_Contact_BAO_Group extends CRM_Contact_DAO_Group
         }
 
         require_once 'CRM/Utils/Recent.php';
-        // add the recently added group
-        CRM_Utils_Recent::add( $group->title,
-                               CRM_Utils_System::url( 'civicrm/group/search', 'reset=1&force=1&context=smog&gid=' . $group->id ),
-                               $group->id,
-                               'Group',
-                               null,
-                               null );
+        // add the recently added group (unless hidden: CRM-6432)
+        if (!$group->is_hidden) {
+            CRM_Utils_Recent::add( $group->title,
+                                   CRM_Utils_System::url( 'civicrm/group/search', 'reset=1&force=1&context=smog&gid=' . $group->id ),
+                                   $group->id,
+                                   'Group',
+                                   null,
+                                   null );
+        }
         return $group;
     }
 

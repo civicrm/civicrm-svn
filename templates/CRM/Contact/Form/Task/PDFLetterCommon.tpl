@@ -24,14 +24,19 @@
  +--------------------------------------------------------------------+
 *}
 {*common template for compose mail*}
-<table class="form-layout">
+<table class="form-layout-compressed">
     <tr>
         <td class="label-left">{$form.template.label}</td>
 	    <td>{$form.template.html}</td>
     </tr>
-    <tr>
-        <td colspan="2" class="ui-accordion ui-widget">
-	    <span class="helpIcon" id="helphtml">
+</table>
+
+<div class="crm-accordion-wrapper crm-html_email-accordion crm-accordion-open">
+    <div class="crm-accordion-header">
+        {$form.html_message.label}
+    </div>
+    <div class="crm-accordion-body">
+        <span class="helpIcon" id="helphtml">
 		<a href="#" onClick="return showToken('Html', 1);">{$form.token1.label}</a> 
 		{help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp"}
 		<div id='tokenHtml' style="display:none">
@@ -40,16 +45,13 @@
 		    {$form.token1.html}
 		</div>
 	    </span>
-	    <h3 class="head ui-accordion-header ui-helper-reset ui-state-default ui-corner-all" style="width: 95%;"> 
-		<a style="text-decoration:none;">{$form.html_message.label}</a>
-	    </h3>
-            {if $editor EQ 'textarea'}
-                <span class="description">{ts}If you are composing HTML-formatted messages, you may want to enable a WYSIWYG editor (Administer CiviCRM &raquo; Global Settings &raquo; Site Preferences).{/ts}</span><br />
+	    <div class="clear"></div>
+        <div class='html'>
+        {if $editor EQ 'textarea'}
+            <span class="description">{ts}If you are composing HTML-formatted messages, you may want to enable a WYSIWYG editor (Administer CiviCRM &raquo; Global Settings &raquo; Site Preferences).{/ts}</span><br />
             {/if}
-            {$form.html_message.html}
-        </td>
-    </tr>
-</table>
+            {$form.html_message.html}<br />
+        </div>
 
 {if ! $noAttach}
     <div class="spacer"></div>
@@ -71,6 +73,9 @@
     <div class="label">{$form.saveTemplateName.label}</div>
     <div class="content">{$form.saveTemplateName.html|crmReplace:class:huge}</div>
 </div>
+
+    </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 
 {literal}
 <script type="text/javascript" >

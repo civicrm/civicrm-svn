@@ -59,7 +59,7 @@ class CiviContributeProcessor {
                                      'amt'              => 'total_amount',
                                      'feeamt'           => 'fee_amount',
                                      'transactionid'    => 'trxn_id',
-                                     'currencycode'     => 'currencyID',
+                                     'currencycode'     => 'currency',
                                      'l_name0'          => 'source',
                                      'ordertime'        => 'receive_date',
                                      'note'             => 'note',
@@ -70,6 +70,7 @@ class CiviContributeProcessor {
                                      'l_period2'        => 'lol',
                                      'invnum'           => 'invoice_id',
                                      'subscriptiondate' => 'start_date',
+                                     'subscriptionid'   => 'processor_id',
                                      'timestamp'        => 'modified_date',
                                      ),
               );

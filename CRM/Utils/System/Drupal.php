@@ -350,5 +350,35 @@ class CRM_Utils_System_Drupal {
             user_authenticate(  array( 'name' => $name, 'pass' => $pass ) );
         }
     }
-
+    
+    /**
+     * check is user logged in.
+     *
+     * @return boolean true/false.
+     */
+    public static function isUserLoggedIn( ) {
+        $isloggedIn = false;
+        if ( function_exists( 'user_is_logged_in' ) ) {
+            $isloggedIn = user_is_logged_in( );
+        }
+        
+        return $isloggedIn;
+    }
+    
+    /**
+     * Get currently logged in user uf id.
+     *
+     * @return int $userID logged in user uf id.
+     */
+    public static function getLoggedInUfID( ) {
+        $ufID = null;
+        if ( function_exists( 'user_is_logged_in' ) && 
+             user_is_logged_in( ) && 
+             function_exists( 'user_uid_optional_to_arg' ) ) {
+            $ufID = user_uid_optional_to_arg( array( ) );
+        }
+        
+        return $ufID;
+    }
+    
 }

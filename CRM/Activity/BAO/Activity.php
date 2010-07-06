@@ -567,6 +567,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
     {
         $session = & CRM_Core_Session::singleton();
         $id = $session->get('userID');
+        if ( !$id ) $id = $activity->source_contact_id;
         require_once 'CRM/Core/BAO/Log.php';
         $logParams = array(
                            'entity_table'  => 'civicrm_activity' ,
@@ -578,7 +579,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         CRM_Core_BAO_Log::add( $logParams );
         return true;
     }
-
+    
     /**
      * function to get the list Actvities
      *
@@ -1170,11 +1171,14 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
         CRM_Utils_Hook::tokens( $tokens );
         $categories = array_keys( $tokens );
 
+        $escapeSmarty = false;
         if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
             $smarty = CRM_Core_Smarty::singleton( );
 
             require_once 'CRM/Core/Smarty/resources/String.php';
             civicrm_smarty_register_string_resource( );
+
+            $escapeSmarty = true;
         }
 
         require_once 'CRM/Utils/Token.php';
@@ -1190,20 +1194,20 @@ LEFT JOIN   civicrm_case_activity ON ( civicrm_case_activity.activity_id = tbl.a
                 $values = array_merge( $values, $details["{$contactId}"] );
             }
 
-            $tokenSubject = CRM_Utils_Token::replaceContactTokens( $subject     , $values, false, $subjectToken );
-            $tokenSubject = CRM_Utils_Token::replaceHookTokens   ( $tokenSubject, $values, $categories, false );
+            $tokenSubject = CRM_Utils_Token::replaceContactTokens( $subject     , $values, false, $subjectToken, false, $escapeSmarty );
+            $tokenSubject = CRM_Utils_Token::replaceHookTokens   ( $tokenSubject, $values, $categories, false, $escapeSmarty );
             
             //CRM-4539
             if ( $values['preferred_mail_format'] == 'Text' || $values['preferred_mail_format'] == 'Both' ) {
-                $tokenText    = CRM_Utils_Token::replaceContactTokens( $text     , $values, false, $messageToken );
-                $tokenText    = CRM_Utils_Token::replaceHookTokens   ( $tokenText, $values, $categories, false );
+                $tokenText    = CRM_Utils_Token::replaceContactTokens( $text     , $values, false, $messageToken, false, $escapeSmarty );
+                $tokenText    = CRM_Utils_Token::replaceHookTokens   ( $tokenText, $values, $categories, false, $escapeSmarty );
             } else {
                 $tokenText = null;
             } 
 
             if ( $values['preferred_mail_format'] == 'HTML' || $values['preferred_mail_format'] == 'Both' ) {
-                $tokenHtml    = CRM_Utils_Token::replaceContactTokens( $html     , $values, true , $messageToken );
-                $tokenHtml    = CRM_Utils_Token::replaceHookTokens   ( $tokenHtml, $values, $categories, true );
+                $tokenHtml    = CRM_Utils_Token::replaceContactTokens( $html     , $values, true , $messageToken, false, $escapeSmarty );
+                $tokenHtml    = CRM_Utils_Token::replaceHookTokens   ( $tokenHtml, $values, $categories, true, $escapeSmarty );
             } else {
                 $tokenHtml = null;
             }

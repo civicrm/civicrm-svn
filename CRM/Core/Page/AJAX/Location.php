@@ -100,7 +100,7 @@ class CRM_Core_Page_AJAX_Location
         CRM_Utils_System::civiExit( );
     }
 
-    function jqState( &$config ) {
+    function jqState( $config ) {
         if ( ! isset( $_GET['_value'] ) ||
         empty( $_GET['_value'] ) ) {
             CRM_Utils_System::civiExit( );
