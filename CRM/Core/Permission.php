@@ -337,6 +337,15 @@ class CRM_Core_Permission {
             return (boolean ) $item['access_callback'];
         }
 
+        // check whether the following Ajax requests submitted the right key
+        // FIXME: this should be integrated into ACLs proper
+        if ( $item['page_type'] == 3 ) {
+            require_once 'CRM/Core/Key.php';
+            if (!CRM_Core_Key::validate($_REQUEST['key'], $item['path'])) {
+                return false;
+            }
+        }
+
         // check if callback is for checkMenu, if so optimize it
         if ( is_array( $item['access_callback'] ) &&
              $item['access_callback'][0] == 'CRM_Core_Permission' &&

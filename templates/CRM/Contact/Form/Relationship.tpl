@@ -36,6 +36,9 @@
                 <td class="label">{$row.relation}</td> 
                 <td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.cid`"}">{$row.name}</a></td>
             </tr>
+            {if $isCurrentEmployer}
+                <tr><td class="label">{ts}Current Employee?{/ts}</td><td>{ts}Yes{/ts}</td></tr>
+            {/if}
             {if $row.start_date}
                 <tr><td class="label">{ts}Start Date:{/ts}</td><td>{$row.start_date|crmDate}</td></tr>
             {/if}
@@ -90,18 +93,20 @@
                 <script type="text/javascript">
                     var relType = 0;
                     cj( function( ) {
-                    	cj('#relationship_type_id').change( function() { 
-			                changeCustomData( 'Relationship' );
-			                currentEmployer( ); 
+                        var relationshipType = cj('#relationship_type_id'); 
+                        relationshipType.change( function( ) { 
+                            changeCustomData( 'Relationship' );
+                            currentEmployer( ); 
                         });
+                        setPermissionStatus( relationshipType.val( ) ); 
                     });
                 </script>
                 {/literal} 
                 <td><label>{$sort_name_b}</label></td></tr>
                 <tr class="crm-relationship-form-block-is_current_employer">
                   <td class="label">
-                     <div id="employee">{ts}Current Employee?{/ts}</div>
-                     <div id="employer">{ts}Current Employer?{/ts}</div>
+                     <div id="employee"><label>{ts}Current Employee?{/ts}</label></div>
+                     <div id="employer"><label>{ts}Current Employer?{/ts}</label></div>
                   </td>
                   <td id="current_employer">{$form.is_current_employer.html}</td>
                 </tr>  
@@ -113,14 +118,17 @@
                   <script type="text/javascript">
                     var relType = 0;
                     cj( function( ) {
-                        createRelation( ); 
-                    	cj('#relationship_type_id').change( function() { 
+                        createRelation( );
+                        var relationshipType = cj('#relationship_type_id'); 
+                        relationshipType.change( function() { 
                             cj('#relationship-refresh-save').hide();
                             cj('#rel_contact').val('');
                             cj("input[name=rel_contact_id]").val('');
                             createRelation( );
-                            changeCustomData( 'Relationship' ); 
+                            changeCustomData( 'Relationship' );
+                            setPermissionStatus( cj(this).val( ) ); 
                         });
+                        setPermissionStatus( relationshipType.val( ) ); 
                     });
                     
                     function createRelation(  ) {
@@ -222,7 +230,7 @@
               {else}
               {/if} {* end if searchDone *}
         {/if} {* end action = add *}
-        </table>
+        
         <fieldset id = 'saveElements'>
             <div>
                 {if $action EQ 1}
@@ -262,17 +270,56 @@
                     </tr>
                     <tr class="crm-relationship-form-block-is_permission_a_b">
                         <td class="label"></td><td>{$form.is_permission_a_b.html}
-                        <strong>{if $rtype eq 'a_b'}'{$sort_name_a}'{else}{if $sort_name_b}'{$sort_name_b}'{else}{ts}Selected contact(s){/ts}{/if}{/if}</strong> {ts}can view and update information for{/ts} <strong>{if $rtype eq 'a_b'}{if $sort_name_b}'{$sort_name_b}'{else}{ts}selected contact(s){/ts}{/if}{else}'{$sort_name_a}'{/if}</strong></td>
+                        <span id='permision_a_b-a_b' class="hiddenElement">
+                            {if $action eq 1}
+                                <strong>'{$sort_name_a}'</strong> {ts}can view and update information for selected contact(s){/ts}
+                            {else}
+                                <strong>'{$sort_name_a}'</strong> {ts}can view and update information for {/ts} <strong>'{$sort_name_b}'</strong>
+                            {/if}
+                        </span>
+                        <span id ='permision_a_b-b_a' class="hiddenElement">
+                            {if $action eq 1}
+                                <strong>{ts}Selected contact(s)</strong> can view and update information for {/ts} <strong>'{$sort_name_a}'</strong>
+                            {else}
+                                <strong>'{$sort_name_b}'</strong> {ts}can view and update information for {/ts} <strong>'{$sort_name_a}'</strong>
+                            {/if}
+                        </span>
+                        </td>
                     </tr>
                     <tr class="crm-relationship-form-block-is_permission_b_a">
                         <td class="label"></td><td>{$form.is_permission_b_a.html}
-                        <strong>{if $rtype eq 'b_a'}'{$sort_name_a}'{else}{if $sort_name_b}'{$sort_name_b}'{else}{ts}Selected contact(s){/ts}{/if}{/if}</strong> {ts}can view and update information for{/ts} <strong>{if $rtype eq 'b_a'}{if $sort_name_b}'{$sort_name_b}'{else}{ts}selected contact(s){/ts}{/if}{else}'{$sort_name_a}'{/if}</strong></td>
+                        <span id='permision_b_a-b_a' class="hiddenElement">
+                            {if $action eq 1}
+                                <strong>'{$sort_name_a}'</strong> {ts}can view and update information for selected contact(s){/ts}
+                            {else}
+                                <strong>'{$sort_name_a}'</strong> {ts}can view and update information for {/ts} <strong>'{$sort_name_b}'</strong>
+                            {/if}
+                        </span>
+                        <span id ='permision_b_a-a_b' class="hiddenElement">
+                            {if $action eq 1}
+                                <strong>{ts}Selected contact(s)</strong> can view and update information for {/ts} <strong>'{$sort_name_a}'</strong>
+                            {else}
+                                <strong>'{$sort_name_b}'</strong> {ts}can view and update information for {/ts} <strong>'{$sort_name_a}'</strong>
+                            {/if}
+                        </span>
+                        </td>
                     </tr>
                     <tr class="crm-relationship-form-block-is_active">
                         <td class="label">{$form.is_active.label}</td>
                         <td>{$form.is_active.html}</td>
                     </tr>
                 </table>
+                {literal}
+                    <script type="text/javascript">
+                        function setPermissionStatus( relTypeDirection ) {
+                            var direction = relTypeDirection.split( '_' );
+                            cj('#permision_a_b-' + direction[1] + '_' + direction[2] ).show( );
+                            cj('#permision_a_b-' + direction[2] + '_' + direction[1] ).hide( );
+                            cj('#permision_b_a-' + direction[1] + '_' + direction[2] ).show( );
+                            cj('#permision_b_a-' + direction[2] + '_' + direction[1] ).hide( );                            
+                        }
+                    </script>
+                {/literal}
             </div>
         <div id="customData"></div>
         <div class="spacer"></div>

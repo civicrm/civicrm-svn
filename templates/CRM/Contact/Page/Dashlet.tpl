@@ -97,6 +97,7 @@
                 // post to server
                 var postUrl = {/literal}"{crmURL p='civicrm/ajax/dashboard' h=0 }"{literal};
                 params['op'] = 'save_columns';
+                params['key'] = {/literal}"{crmKey name='civicrm/ajax/dashboard'}"{literal};
                 cj.post( postUrl, params, function(response, status) {
                     // TO DO show done / disable escape action
                 });
@@ -117,6 +118,7 @@
                 // delete dashlet
                 var postUrl = {/literal}"{crmURL p='civicrm/ajax/dashboard' h=0 }"{literal};
                 params['op'] = 'delete_dashlet';
+                params['key'] = {/literal}"{crmKey name='civicrm/ajax/dashboard'}"{literal};
                 cj.post( postUrl, params, function(response, status) {
                     // delete dom object
                     cj('#' + dashletID ).parent().remove();

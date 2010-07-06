@@ -152,7 +152,7 @@ function saveEnableDisable( recordID, recordBAO, op ) {
     var postUrl = {/literal}"{crmURL p='civicrm/ajax/ed' h=0 }"{literal};
 
     //post request and get response
-    cj.post( postUrl, { recordID: recordID, recordBAO: recordBAO, op:op  }, function( html ){
+    cj.post( postUrl, { recordID: recordID, recordBAO: recordBAO, op:op, key: {/literal}"{crmKey name='civicrm/ajax/ed'}"{literal}  }, function( html ){
         responseFromServer = true;      
        
         //this is custom status set when record update success.
