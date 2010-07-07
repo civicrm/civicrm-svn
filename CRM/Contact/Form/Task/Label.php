@@ -161,6 +161,10 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
             $returnProperties = array_merge( $returnProperties , $customFormatProperties );
         }
         
+        if ( isset( $fv['merge_same_address'] ) ) {
+            $returnProperties = array_merge( $returnProperties , array( 'first_name' => 1, 'last_name' => 1 ) );
+        }
+        
         //get the contacts information
         $params = array( );       
         if ( CRM_Utils_Array::value( 'location_type_id', $fv ) ) {
@@ -439,12 +443,14 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                 }
                 $family = implode(" & ", $first_names) . " " . $last_name;		// collapse the tree to summarize
                 if ($count) {
-                    $rows[$data['ID']]['display_name'] .=  "\n" . $family;
+                    $processedNames .=  "\n" . $family;
                 } else {
-                    $rows[$data['ID']]['display_name']  = $family;		// build display_name string
+                    $processedNames  = $family;	                            	// build display_name string
                 }
                 $count++;
             }
+            $rows[$data['ID']]['addressee'] = $rows[$data['ID']]['addressee_display'] = 
+                $rows[$data['ID']]['display_name'] = $processedNames;
         }
     }
 
