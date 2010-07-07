@@ -215,6 +215,9 @@ class CRM_Campaign_BAO_Query
     static function tableNames( &$tables ) 
     {
     }
+    static function searchAction( &$row, $id ) 
+    {
+    }
     
     static function info( &$tables ) {
         $weight = end( $tables );

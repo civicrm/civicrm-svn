@@ -131,12 +131,9 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
      */
     protected $_prefix = "survey_";
     
-    /**
-     * survey status customgroup
-     *
-     */
-    const
-        SURVEY_STATUS = 'survey_status_201011040411';
+    
+    private $_operation = 'reserve'; 
+
         
     /** 
      * processing needed for buildForm and later 
@@ -160,6 +157,14 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $this->_force   = CRM_Utils_Request::retrieve( 'force', 'Boolean',  $this, false );  
         $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this, false, 'search' );
         $this->_reset   = CRM_Utils_Request::retrieve( 'reset', 'Boolean',  CRM_Core_DAO::$_nullObject ); 
+        
+        //operation for state machine.
+        $this->_operation = CRM_Utils_Request::retrieve( 'op', 'String', $this, false, 'reserve' );
+        //validate operation.
+        if ( !in_array( $this->_operation, array( 'reserve', 'release', 'interview' ) ) ) {
+            $this->_operation = 'reserve';
+            $this->set( 'op', $this->_operation );
+        }
         
         $this->assign( "context", $this->_context );
         
@@ -233,7 +238,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     {
         require_once 'CRM/Campaign/BAO/Survey.php';
         require_once 'CRM/Core/PseudoConstant.php';
-
+        
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Address' );
         
         $this->add( 'text', 'sort_name',       ts( 'Contact Name'   ), 
@@ -245,10 +250,17 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $this->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
         
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
-        $this->add( 'select', 'campaign_survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
+        $isRequired = false;
+        if ( in_array( $this->_operation, array( 'release', 'interview' ) ) ) {
+            $isRequired = true;
+        }
+        $this->add( 'select', 'campaign_survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys, $isRequired );
         
         $surveyStatus = CRM_Core_PseudoConstant::activityStatus( );
         $this->add( 'select', 'survey_status_id', ts('Survey Status'), array('' => ts('- select -') ) + $surveyStatus );
+        
+        //set the form title.
+        CRM_Utils_System::setTitle( ts( 'Find Voters To %1', array( 1 => ucfirst( $this->_operation ) ) ) );
         
         /* 
          * add form checkboxes for each row. This is needed out here to conform to QF protocol 
@@ -268,12 +280,19 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             }
             
             $total = $cancel = 0;
-
+            
             require_once "CRM/Core/Permission.php";
             $permission = CRM_Core_Permission::getPermission( );
             require_once 'CRM/Campaign/Task.php';
-            $tasks = array( '' => ts('- actions -') ) + CRM_Campaign_Task::permissionedTaskTitles( $permission );
-            $this->add('select', 'task'   , ts('Actions:') . ' '    , $tasks    ); 
+            $allTasks = CRM_Campaign_Task::permissionedTaskTitles( $permission );
+            //hack to serve right page to state machine.
+            $taskMapping = array( 'interview' => 1,
+                                  'reserve'   => 2, 
+                                  'release'   => 3 );
+            
+            $currentTaskValue = CRM_Utils_Array::value( $this->_operation, $taskMapping );
+            $this->add('select', 'task', ts('Actions:') . ' ', array( $currentTaskValue => $allTasks[$currentTaskValue] ) );
+            $this->setDefaults( array( 'task' => $currentTaskValue ) );
             
             $this->add('submit', $this->_actionButtonName, ts('Go'),
                        array( 'class'   => 'form-submit',
@@ -329,8 +348,11 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         
         $this->fixFormValues( );
         
+        //pass voter search operation.
+        $this->_formValues['campaign_search_voter_for'] = $this->_operation;
+        
         require_once 'CRM/Contact/BAO/Query.php';
-        $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues ); 
+        $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         
         $this->set( 'formValues' , $this->_formValues  );
         $this->set( 'queryParams', $this->_queryParams );
