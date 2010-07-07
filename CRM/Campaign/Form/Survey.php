@@ -161,7 +161,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $customProfiles = CRM_Core_BAO_UFGroup::getProfiles( array('Activity') );
         
         // custom group id
-        $this->add('select', 'profile_id', ts('Select Custom Group'), 
+        $this->add('select', 'profile_id', ts('Select Profile'), 
                    array( '' => ts('- select -')) + $customProfiles );
         
         // script / instructions
@@ -262,12 +262,14 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $ufJoinParams = array( 'is_active'    => 1, 
                                'module'       => 'CiviCampaign',
                                'entity_table' => 'civicrm_survey', 
-                               'entity_id'    => $surveyId );
+                               'entity_id'    => $surveyId->id );
         
         // first delete all past entries
-        CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParams );
-            
+        if ( $this->_surveyId ) {
+            CRM_Core_BAO_UFJoin::deleteAll( $ufJoinParams );
+        }    
         if ( CRM_Utils_Array::value('profile_id' , $params) ) {
+
             $ufJoinParams['weight'     ] = 1;
             $ufJoinParams['uf_group_id'] = $params['profile_id'];
             CRM_Core_BAO_UFJoin::create( $ufJoinParams ); 

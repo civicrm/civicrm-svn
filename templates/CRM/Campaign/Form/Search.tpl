@@ -88,14 +88,16 @@
                 {$form.city.html}
             </td>
 	</tr>
-	<tr>
-            <td class="font-size12pt">
-                {$form.survey_status_id.label}
-            </td>
-            <td>
-	        {$form.survey_status_id.html}
-            </td>
-	</tr>
+	{if $form.survey_status_id}
+	  <tr>
+              <td class="font-size12pt">
+                  {$form.survey_status_id.label}
+              </td>
+              <td>
+	          {$form.survey_status_id.html}
+              </td>
+	  </tr> 
+        {/if}
 	<tr>
             <td class="font-size12pt">
                 {$form.campaign_survey_id.label}
