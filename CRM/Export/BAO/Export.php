@@ -451,19 +451,21 @@ class CRM_Export_BAO_Export
         }
         
         $header = $addPaymentHeader = false;
-
+        
         if ( $paymentFields ) {
             //special return properties for event and members
-            $paymentHeaders = array( ts('Total Amount'), 
-                                     ts('Contribution Status'), 
-                                     ts('Received Date'),
-                                     ts('Payment Instrument'), 
-                                     ts('Transaction ID') );
+            $paymentHeaders = array( 'total_amount'        => ts('Total Amount'), 
+                                     'contribution_status' => ts('Contribution Status'), 
+                                     'received_date'       => ts('Received Date'),
+                                     'payment_instrument'  => ts('Payment Instrument'), 
+                                     'transaction_id'      => ts('Transaction ID') 
+                                     );
             
             // get payment related in for event and members
             require_once 'CRM/Contribute/BAO/Contribution.php';
             $paymentDetails = CRM_Contribute_BAO_Contribution::getContributionDetails( $exportMode, $ids );
             if( !empty( $paymentDetails ) ) $addPaymentHeader = true;
+            $nullContributionDetails = array_fill_keys($paymentHeaders,null);    
         }
 
         $componentDetails = $headerRows = $sqlColumns = array( );
@@ -696,6 +698,8 @@ class CRM_Export_BAO_Export
                 // add payment related information
                 if ( $paymentFields && isset( $paymentDetails[ $row[$paymentTableId] ] ) ) {
                     $row = array_merge( $row, $paymentDetails[ $row[$paymentTableId] ] );
+                } else if ( $paymentDetails ) {
+                    $row = array_merge( $row, $nullContributionDetails );  
                 }
 
                 //remove organization name for individuals if it is set for current employer
