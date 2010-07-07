@@ -869,7 +869,8 @@ INSERT INTO civicrm_mailing_bounce_pattern
     (@bounceTypeID, 'unregistered address'),
     (@bounceTypeID, 'user (unknown|does not exist)'),
     (@bounceTypeID, 'user doesn\'t have an? \w+ account'),
-    (@bounceTypeID, 'user(\'s e-?mail name is)? not found');
+    (@bounceTypeID, 'user(\'s e-?mail name is)? not found'),
+    (@bounceTypeID, '^Validation failed for:');
 
 INSERT INTO civicrm_mailing_bounce_type 
         (name, description, hold_threshold) 

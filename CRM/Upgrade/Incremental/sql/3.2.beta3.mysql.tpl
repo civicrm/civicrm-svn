@@ -33,3 +33,7 @@ INSERT INTO
        VALUES( @option_group_id_ceOpt, {localize}'Website'{/localize}, @option_value_ceOpt+1, 'Website', NULL, 1, NULL, @option_weight_ceOpt+1, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL, NULL );
 
 UPDATE civicrm_preferences SET contact_edit_options  = CONCAT(contact_edit_options, @option_value_ceOpt+1, '');
+
+-- CRM-6410
+SELECT @bounceTypeID := MAX(id) FROM civicrm_mailing_bounce_type WHERE name = 'Invalid';
+INSERT INTO civicrm_mailing_bounce_pattern (bounce_type_id, pattern) VALUES (@bounceTypeID, '^Validation failed for:');
