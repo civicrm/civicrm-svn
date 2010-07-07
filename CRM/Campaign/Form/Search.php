@@ -232,7 +232,8 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     function buildQuickForm( ) 
     {
         require_once 'CRM/Campaign/BAO/Survey.php';
-        require_once 'CRM/Core/OptionGroup.php';
+        require_once 'CRM/Core/PseudoConstant.php';
+
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Address' );
         
         $this->add( 'text', 'sort_name',       ts( 'Contact Name'   ), 
@@ -246,8 +247,8 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
         $this->add( 'select', 'campaign_survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys );
         
-        $surveyStatus = CRM_Core_OptionGroup::values(self::SURVEY_STATUS);
-        $this->add( 'select', 'status_id', ts('Survey Status'), array('' => ts('- select -') ) + $surveyStatus );
+        $surveyStatus = CRM_Core_PseudoConstant::activityStatus( );
+        $this->add( 'select', 'survey_status_id', ts('Survey Status'), array('' => ts('- select -') ) + $surveyStatus );
         
         /* 
          * add form checkboxes for each row. This is needed out here to conform to QF protocol 

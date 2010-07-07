@@ -90,10 +90,10 @@
 	</tr>
 	<tr>
             <td class="font-size12pt">
-                {$form.status_id.label}
+                {$form.survey_status_id.label}
             </td>
             <td>
-	        {$form.status_id.html}
+	        {$form.survey_status_id.html}
             </td>
 	</tr>
 	<tr>

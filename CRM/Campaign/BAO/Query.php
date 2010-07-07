@@ -113,6 +113,11 @@ class CRM_Campaign_BAO_Query
             if ( $query->_mode == CRM_Contact_BAO_QUERY::MODE_CONTACTS ) {
                 $query->_useDistinct = true;
             }
+            if ( in_array( $query->_params[$id][0], array( 'campaign_survey_id', 'survey_status_id' ) ) ) {
+                $query->_tables['civicrm_survey']              = $query->_whereTables['civicrm_survey'  ] = 1;
+                $query->_tables[self::civicrm_activity]        = $query->_whereTables['survey_civicrm_activity'] = 1;
+                $query->_tables[self::civicrm_activity_target] = $query->_whereTables[self::civicrm_activity_target] = 1;
+            }
             
             self::whereClauseSingle( $query->_params[$id], $query );
         }
@@ -128,27 +133,27 @@ class CRM_Campaign_BAO_Query
             $quoteValue = "\"$value\"";
         }
         
-        require_once 'CRM/Campaign/PseudoConstant.php';
-        $surveyActivityTypes = CRM_Campaign_PseudoConstant::activityType( );
         
         switch ( $name ) {
             
         case 'campaign_survey_id' :
             $aType = $value;
             $query->_qill[$grouping ][] = ts( 'Survey Type - %1', array( 1 => $surveyActivityTypes[$cType] ) );
-            $query->_tables['civicrm_survey']              = $query->_whereTables['civicrm_survey'  ] = 1;
-            $query->_tables[self::civicrm_activity]        = $query->_whereTables['survey_civicrm_activity'] = 1;
-            $query->_tables[self::civicrm_activity_target] = $query->_whereTables[self::civicrm_activity_target] = 1;
+            
             
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity.source_record_id', 
                                                                               $op, $value, "Integer" );
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_survey.id', 
                                                                               $op, $value, "Integer" );
-            
-            $typeIds = implode( ',', array_keys( $surveyActivityTypes ) ); 
-            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity.activity_type_id', 
-                                                                              $op, $typeIds, 'String' );
             return;
+        case 'survey_status_id' :
+            require_once 'CRM/Core/PseudoConstant.php';
+            $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
+
+            $query->_qill[$grouping ][] = ts( 'Survey Status - %1', array( 1 => $activityStatus[$value] ) );
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity.status_id', 
+                                                                              $op, $value, "Integer" );
+            
         }
     }
     
@@ -162,7 +167,9 @@ class CRM_Campaign_BAO_Query
             break;
             
         case self::civicrm_activity :
-            $from = " $side JOIN civicrm_activity ON civicrm_activity.id = civicrm_activity_target.activity_id ";
+            require_once 'CRM/Campaign/PseudoConstant.php';
+            $surveyActivityTypes = CRM_Campaign_PseudoConstant::activityType( );
+            $from = " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id AND civicrm_activity.activity_type_id IN (". implode( ',', array_keys( $surveyActivityTypes ) ) .") ) ";
             break;
             
         case 'civicrm_survey':
@@ -196,6 +203,7 @@ class CRM_Campaign_BAO_Query
                                 'phone'                     => 1,
                                 'survey_activity_target_id' => 1,
                                 'survey_activity_id'        => 1,
+                                'survey_status_id'          => 1,
                                 'campaign_survey_id'        => 1,
                                 'campaign_id'               => 1
                                 );
