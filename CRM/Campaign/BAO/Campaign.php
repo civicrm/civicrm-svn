@@ -182,6 +182,30 @@ WHERE c.title IS NOT NULL" . $whereClause;
        
        return $campaign;
     }
+    
+    /**
+     * Function to get Campaigns groups
+     *
+     * @param int $campaignId campaign id 
+     *
+     * @static
+     */
+    static function getCampaignGroups( $campaignId = null ) {
+        require_once 'CRM/Campaign/DAO/CampaignGroup.php';
+                                                       
+        $campaignGroups = array( );
+        $dao = new CRM_Campaign_DAO_CampaignGroup( );
+        if ( $campaignId ) {
+            $dao->campaign_id = $campaignId;
+        }
+        $dao->find( );
+        while ( $dao->fetch() ) {
+            CRM_Core_DAO::storeValues($dao, $campaignGroups[$dao->id]);
+        }
+
+        return $campaignGroups;
+    }
+    
 
     /**
      * update the is_active flag in the db

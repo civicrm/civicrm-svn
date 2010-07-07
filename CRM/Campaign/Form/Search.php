@@ -237,7 +237,6 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     function buildQuickForm( ) 
     {
         require_once 'CRM/Campaign/BAO/Survey.php';
-        require_once 'CRM/Core/PseudoConstant.php';
         
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Address' );
         
@@ -252,12 +251,13 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
         $isRequired = false;
         if ( in_array( $this->_operation, array( 'release', 'interview' ) ) ) {
+            require_once 'CRM/Core/PseudoConstant.php';
+
+            $surveyStatus = CRM_Core_PseudoConstant::activityStatus( );
+            $this->add( 'select', 'survey_status_id', ts('Survey Status'), array('' => ts('- select -') ) + $surveyStatus );
             $isRequired = true;
         }
         $this->add( 'select', 'campaign_survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys, $isRequired );
-        
-        $surveyStatus = CRM_Core_PseudoConstant::activityStatus( );
-        $this->add( 'select', 'survey_status_id', ts('Survey Status'), array('' => ts('- select -') ) + $surveyStatus );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Find Voters To %1', array( 1 => ucfirst( $this->_operation ) ) ) );
@@ -348,6 +348,8 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         
         $this->fixFormValues( );
         
+        $this->addGroupsParams( );
+        
         //pass voter search operation.
         $this->_formValues['campaign_search_voter_for'] = $this->_operation;
         
@@ -375,8 +377,6 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                                                    $this->get( CRM_Utils_Sort::SORT_DIRECTION ) ); 
         } 
         
-        require_once 'CRM/Contact/BAO/Query.php';
-        $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         $selector = new CRM_Campaign_Selector_Search( $this->_queryParams,
                                                       $this->_action,
                                                       null,
@@ -405,6 +405,31 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         }
         $controller->run(); 
     }
+
+    function addGroupsParams( ) {
+
+        if ( CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) ) {
+            
+            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',  $this->_formValues['campaign_survey_id'], 'campaign_id');
+            if ( $campaignId ) {
+                require_once 'CRM/Campaign/BAO/Campaign.php';
+                $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
+                
+                foreach( $campaignGroups as $id => $group ) {
+                    if ( $group['entity_table'] == 'civicrm_group' ) {
+                        $this->_formValues['group'][$group['entity_id']] = 1;
+                    }
+                }
+            }
+            
+            // for realase only apply group criteria
+            if ( $this->_operation == 'reserve' ) {
+                unset( $this->_formValues['campaign_survey_id'] );
+                unset( $this->_formValues['survey_status_id'] );
+            }
+            
+        }
+    }
     
     function fixFormValues( ) 
     {
@@ -415,14 +440,14 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         // note that this means that GET over-rides POST :)
         
         if ( !$this->_force ) {
-            return;
-        }
-        
-        $surveyId = CRM_Utils_Request::retrieve( 'surveyId', 'String', CRM_Core_DAO::$_nullObject );
-        if ( $surveyId ) {
-            $this->_defaults['survey_id'] = $this->_formValues['survey_id'] = array( $surveyId => 1 );
-        }
-        
+             return;
+         }
+
+         $surveyId = CRM_Utils_Request::retrieve( 'surveyId', 'String', CRM_Core_DAO::$_nullObject );
+         if ( $surveyId ) {
+             $this->_defaults['campaign_survey_id'] = $this->_formValues['campaign_survey_id'] = $surveyId;
+         }
+         
         $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         if ( $cid ) {
             $cid = CRM_Utils_Type::escape( $cid, 'Integer' );
@@ -437,7 +462,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             }
         }
         
-        if ( CRM_Utils_Array::value( 'survey_id', $this->_formValues ) &&
+        if ( CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) &&
              $session->get('userID') ) {
             $this->_formValues['interviewer_id'] = $session->get('userID');
         }
