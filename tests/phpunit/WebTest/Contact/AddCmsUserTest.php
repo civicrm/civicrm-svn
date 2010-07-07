@@ -85,7 +85,7 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       $this->click( "edit-submit" );
       $this->waitForPageToLoad( "30000" );
       
-      $this->assertTrue( $this->isTextPresent( "Created a new user account for '$name'" ) );
+      $this->assertTrue( $this->isTextPresent( "Created a new user account for " . $name ) );
       
       
       
@@ -116,14 +116,14 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       //Address Details
       $this->type( "street_address-1", "902C El Camino Way SW" );
       $this->type( "city-1", "Dumfries" );
-      $this->type("postal_code-1", "1234" );
+      $this->type( "postal_code-1", "1234" );
       $this->assertTrue( $this->isTextPresent( "- select - United States" ) );
       $this->select( "state_province-1", "value=1019" );
       
       $this->click( "edit-submit" );
       $this->waitForPageToLoad( "30000" );
       
-      $this->assertTrue( $this->isTextPresent( "Created a new user account for '$name'" ) );
+      $this->assertTrue( $this->isTextPresent( "Your password and further instructions have been sent to your e-mail address" ) );
       
       
       
