@@ -237,7 +237,10 @@ VALUES
     ( @domainID, 'civicrm/campaign/browse&reset=1',        '{ts escape="sql"}Campaign Dashboard{/ts}', 'Campaign Dashboard', 'access CiviCampaign', '', @campaignlastID, '1', NULL, 1 ), 
     ( @domainID, 'civicrm/campaign/add&reset=1',        '{ts escape="sql"}New Campaign{/ts}', 'New Campaign', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/survey/browse&reset=1',        '{ts escape="sql"}Survey Dashboard{/ts}', 'Survey Dashboard', 'access CiviCampaign', '', @campaignlastID, '1', NULL, 3 ), 
-    ( @domainID, 'civicrm/survey/add&reset=1',        '{ts escape="sql"}New Survey{/ts}', 'New Survey', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 4 ); 
+    ( @domainID, 'civicrm/survey/add&reset=1',        '{ts escape="sql"}New Survey{/ts}', 'New Survey', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 4 ),
+    ( @domainID, 'civicrm/survey/search&reset=1&op=reserve', '{ts escape="sql"}Reserve Voters{/ts}', 'Reserve Voters', 'administer CiviCampaign,access CiviCampaign', '', @campaignlastID, '1', NULL, 5 ),
+    ( @domainID, 'civicrm/survey/search&reset=1&op=release', '{ts escape="sql"}Release Voters{/ts}', 'Release Voters', 'administer CiviCampaign,access CiviCampaign', '', @campaignlastID, '1', NULL, 6 ),
+    ( @domainID, 'civicrm/survey/search&reset=1&op=interview', '{ts escape="sql"}Record Voters Interview{/ts}', 'Record Voters Interview', 'administer CiviCampaign,access CiviCampaign', '', @campaignlastID, '1', NULL, 7 ); 
 
     
 INSERT INTO civicrm_navigation

@@ -39,7 +39,22 @@
   </item>
   <item>
     <path>civicrm/survey/search</path>
-    <title>Find Voters</title>
+    <title>Reserve Voters</title>
+    <path_arguments>op=reserve</path_arguments>
+    <page_callback>CRM_Campaign_Controller_Search</page_callback>
+    <access_arguments>administer CiviCampaign, access CiviCampaign</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/survey/search</path>
+    <title>Release Voters</title>
+    <path_arguments>op=release</path_arguments>
+    <page_callback>CRM_Campaign_Controller_Search</page_callback>
+    <access_arguments>administer CiviCampaign, access CiviCampaign</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/survey/search</path>
+    <title>Record Voters Interview</title>
+    <path_arguments>op=interview</path_arguments>
     <page_callback>CRM_Campaign_Controller_Search</page_callback>
     <access_arguments>administer CiviCampaign, access CiviCampaign</access_arguments>
   </item>
