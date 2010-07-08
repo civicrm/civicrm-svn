@@ -257,7 +257,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
                 }      
             }
             $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->contact_id;
-            $row['contact_type'] = CRM_Contact_BAO_Contact_Utils::getImage( 'Individual' );
+            $row['contact_type'] = CRM_Contact_BAO_Contact_Utils::getImage( 'Individual', false,  $result->contact_id );
             
             $rows[] = $row;
         }

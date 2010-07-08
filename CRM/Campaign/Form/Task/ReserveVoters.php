@@ -111,16 +111,18 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
         $surveyDetails = array( );
         
         if ( CRM_Utils_Array::value('survey_id', $params) )  {
-           
+            require_once 'CRM/Core/PseudoConstant.php';
+
+            $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
             $surveyActType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
-            $surveyStatus   = CRM_Campaign_BAO_Survey::getSurveyActivityStatus( 'held' );
 
             $form->_surveyId = $params['survey_id'];
             $params          = array( 'id' => $form->_surveyId );
             $form->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve($params, $surveyDetails);
-            
-            // survey activities with status held
-            $query = "SELECT COUNT(*) FROM civicrm_activity WHERE activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND status_id IN (". implode( ',', array_keys($surveyStatus) ) .") AND source_record_id = %1 ";
+
+            // held survey activities 
+            // activities are considered as held if is_deleted != 1
+            $query = "SELECT COUNT(*) FROM civicrm_activity WHERE activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND status_id IN (". implode( ',', array_keys($activityStatus) ) .") AND source_record_id = %1 AND is_deleted != 1";
             
             $numVoters = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $form->_surveyId, 'Integer') ) );
             $form->_numVoters = isset($numVoters)? $numVoters : 0;
@@ -134,7 +136,6 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
                     $errors['survey_id'] = ts( "You can select maximum %1 contact(s) at a time for voter reservation of this survey.", array( 1 => $surveyDetails['default_number_of_contacts']) );
                 }
             }
-
         }
         return $errors;
     }
@@ -150,14 +151,16 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
         $params  = $this->controller->exportValues( $this->_name );
 
         require_once 'CRM/Activity/BAO/Activity.php';
-     
+        require_once 'CRM/Core/PseudoConstant.php';
+
         $this->_surveyId   = CRM_Utils_Array::value( 'survey_id', $params);
         $duplicateContacts = array( );
-        $surveyStatus      = CRM_Campaign_BAO_Survey::getSurveyActivityStatus( 'held' );
-        $surveyActType     = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
+
+        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
+        $surveyActType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
 
         // duplicate contacts: contact with survey activity status is Held
-        $query = "SELECT DISTINCT(target.target_contact_id) as contact_id FROM civicrm_activity_target target INNER JOIN civicrm_activity source ON( target.activity_id = source.id ) WHERE source.status_id IN (". implode( ',',  array_keys($surveyStatus) ) .") AND source.activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND source.source_record_id = %1  AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
+        $query = "SELECT DISTINCT(target.target_contact_id) as contact_id FROM civicrm_activity_target target INNER JOIN civicrm_activity source ON( target.activity_id = source.id ) WHERE source.status_id IN (". implode( ',',  array_keys($activityStatus) ) .") AND source.is_deleted != 1 AND source.activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND source.source_record_id = %1  AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
         $findDuplicate = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer') ) );
         
         while( $findDuplicate->fetch() ) {
@@ -168,7 +171,7 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
         $maxVoters     = $surveyDetails->max_number_of_contacts;
 
         $countVoters = 0;
-        $statusHeld  = CRM_Utils_Array::value( 'Scheduled', array_flip($surveyStatus) );
+        $statusHeld  = CRM_Utils_Array::value( 'Scheduled', array_flip($activityStatus) );
         
         foreach ( $this->_contactIds as $cid ) {
             if ($maxVoters && ($maxVoters <= ($this->_numVoters + $countVoters) ) ) {

@@ -322,24 +322,4 @@ Group By  contact.id";
         return $voterDetails; 
     }
 
-    static function getSurveyActivityStatus( $type = 'held' ) {
-        $status = array( );
-
-        require_once 'CRM/Core/PseudoConstant.php';
-        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
-        
-        foreach( $activityStatus as $statusId => $name ) {
-            if ( $type == 'held' &&
-                 in_array( $name, array( 'Scheduled', 'Cancelled', 'Unreachable') ) ) { 
-                $status[$statusId] = $name; 
-                
-            } elseif ( $type == 'released' &&
-                       in_array( $name, array( 'Completed' ) ) ) {
-                $status[$statusId] = $name;
-            }
-        }
-
-        return $status;
-    }
-
 }
