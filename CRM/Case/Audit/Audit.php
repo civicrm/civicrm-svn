@@ -145,6 +145,7 @@ class Audit
 					is completed, since the field that determines it and its value is configurable,
 					so either way isn't ideal. */
 					unset($retval[$activityindex]);
+					unset($caseActivities[$activityindex]);
 				}
 			}
 
