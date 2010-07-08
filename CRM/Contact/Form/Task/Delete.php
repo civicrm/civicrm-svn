@@ -130,7 +130,7 @@ class CRM_Contact_Form_Task_Delete extends CRM_Contact_Form_Task {
         $urlParams = 'force=1';
         if ( CRM_Utils_Rule::qfKey( $this->_searchKey ) ) {
             $urlParams .= "&qfKey=$this->_searchKey";
-        } else{
+        } elseif ( $context == 'search' ) {
             $urlParams .= "&qfKey={$this->controller->_key}";
         }
         $urlString = "civicrm/contact/search/$context";
