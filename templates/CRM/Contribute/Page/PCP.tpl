@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 <div id="help">
-<p>{ts}This screen shows all the Personal Campaign Pages created in the system and allows administrator to review them and change their status.{/ts}</p>
+{ts}This screen shows all the Personal Campaign Pages created in the system and allows administrator to review them and change their status.{/ts} {help id="id-pcp-intro"}
 </div>
 {if $action ne 8} 
 {include file="CRM/Contribute/Form/PCP/PCP.tpl"} 
