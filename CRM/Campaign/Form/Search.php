@@ -296,8 +296,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             
             $this->add('submit', $this->_actionButtonName, ts('Go'),
                        array( 'class'   => 'form-submit',
-                              'id'      => 'Go',
-                              'onclick' => "return checkPerformAction('mark_x', '".$this->getName()."', 0);" ) ); 
+                              'id'      => 'Go' ) ); 
             
             $this->add('submit', $this->_printButtonName, ts('Print'), 
                        array( 'class' => 'form-submit', 
