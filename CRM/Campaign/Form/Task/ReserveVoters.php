@@ -122,7 +122,7 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
 
             // held survey activities 
             // activities are considered as held if is_deleted != 1
-            $query = "SELECT COUNT(*) FROM civicrm_activity WHERE activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND status_id IN (". implode( ',', array_keys($activityStatus) ) .") AND source_record_id = %1 AND is_deleted != 1";
+            $query = "SELECT COUNT(*) FROM civicrm_activity WHERE activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND status_id IN (". implode( ',', array_keys($activityStatus) ) .") AND source_record_id = %1 AND (is_deleted = 0 OR is_deleted IS NULL )";
             
             $numVoters = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $form->_surveyId, 'Integer') ) );
             $form->_numVoters = isset($numVoters)? $numVoters : 0;
@@ -160,7 +160,7 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
         $surveyActType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
 
         // duplicate contacts: contact with survey activity status is Held
-        $query = "SELECT DISTINCT(target.target_contact_id) as contact_id FROM civicrm_activity_target target INNER JOIN civicrm_activity source ON( target.activity_id = source.id ) WHERE source.status_id IN (". implode( ',',  array_keys($activityStatus) ) .") AND source.is_deleted != 1 AND source.activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND source.source_record_id = %1  AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
+        $query = "SELECT DISTINCT(target.target_contact_id) as contact_id FROM civicrm_activity_target target INNER JOIN civicrm_activity source ON( target.activity_id = source.id ) WHERE source.status_id IN (". implode( ',',  array_keys($activityStatus) ) .") AND (source.is_deleted = 0 OR source.is_deleted IS NULL) AND source.activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND source.source_record_id = %1  AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
         $findDuplicate = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer') ) );
         
         while( $findDuplicate->fetch() ) {
