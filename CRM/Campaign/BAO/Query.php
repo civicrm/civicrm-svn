@@ -133,13 +133,11 @@ class CRM_Campaign_BAO_Query
             $quoteValue = "\"$value\"";
         }
         
-        
         switch ( $name ) {
             
         case 'campaign_survey_id' :
             $aType = $value;
-            $query->_qill[$grouping ][] = ts( 'Survey Type - %1', array( 1 => $surveyActivityTypes[$cType] ) );
-            
+            $query->_qill[$grouping ][] = ts( 'Survey - %1', array( 1 => CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $value, 'title' ) ) );
             
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity.source_record_id', 
                                                                               $op, $value, "Integer" );
@@ -153,7 +151,12 @@ class CRM_Campaign_BAO_Query
             $query->_qill[$grouping ][] = ts( 'Survey Status - %1', array( 1 => $activityStatus[$value] ) );
             $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity.status_id', 
                                                                               $op, $value, "Integer" );
-            
+            return;
+        case 'campaign_search_voter_for' :
+            if ( in_array( $value, array('release', 'interview' ) ) ) {
+                $query->_where[$grouping][] = '(civicrm_activity.is_deleted = 0 OR civicrm_activity.is_deleted IS NULL)';
+            }
+            return;
         }
     }
     
