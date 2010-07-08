@@ -64,6 +64,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     
     private $_campaignId;
     
+    private $_ufGroupId;
+    
     /**
      * build all the data structures needed to build the form
      *
@@ -93,6 +95,13 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                                                                true, null, false, 'name', true ) );
         //get the read only field data.
         $returnProperties  = array_fill_keys( array_keys( $readOnlyFields ), 1 );
+        
+        //get the profile id.
+        require_once 'CRM/Core/BAO/UFJoin.php'; 
+        $ufJoinParams = array( 'entity_id'    => $this->_surveyId,
+                               'entity_table' => 'civicrm_survey',   
+                               'module'       => 'CiviCampaign' );
+        $this->_ufGroupId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
         
         //retrieve the contact details.
         require_once 'CRM/Campaign/BAO/Survey.php';
@@ -125,42 +134,61 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $customGrpIds = array_keys( $surveyCustomGroups );
         
         //build the group tree for given survey.
-        $this->_groupTree = array( );
+        $allCustomFieldOptions = $allOptions = array( );
         require_once 'CRM/Core/BAO/CustomGroup.php';
         foreach ( $customGrpIds as $customGrpId ) {
-            //get the tree
-            $tree = CRM_Core_BAO_CustomGroup::getTree( 'Activity', 
-                                                       CRM_Core_DAO::$_nullObject,
-                                                       null,
-                                                       $customGrpId,
-                                                       $this->_surveyTypeId );
-            //simplified formatted groupTree
-            $tree = CRM_Core_BAO_CustomGroup::formatGroupTree( $tree, 
-                                                               1, 
-                                                               CRM_Core_DAO::$_nullObject );
-            //build complete group tree.
-            foreach ( $tree as $grpId => $values ) {
-                $this->_groupTree[$grpId] = $values; 
+            $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( $customGrpId );
+            foreach ( $groupDetails as $grpId => $grpVals ) {
+                if ( is_array( $grpVals['fields'] ) ) {
+                    foreach ( $grpVals['fields'] as $fldId => $fldVals ) {
+                        $optionGroupId = CRM_Utils_Array::value( 'option_group_id', $fldVals );
+                        if ( !$optionGroupId ) continue;
+                        $options = CRM_Core_BAO_CustomOption::getCustomOption( $fldId ); 
+                        if ( !empty( $options ) ) {
+                            $allCustomFieldOptions[$fldId] = $options;
+                            foreach ( $options as $optId => $optVals ) {
+                                $allOptions[$optId] = $optVals['label'];
+                            }
+                        }
+                    }
+                }
             }
         }
-        $this->assign( 'groupTree', $this->_groupTree );
         
-        //get the fields.
+        $addResultField = false;
+        if ( !CRM_Utils_System::isNull( $allOptions ) ) {
+            $addResultField = true;
+        }
+        $this->assign( 'hasResultField', $addResultField );
+        
+        //pickup the uf fields.
         $this->_surveyFields = array( );
-        foreach ( $this->_groupTree as $grpId => $grpVals ) {
-            if ( !is_array( $grpVals['fields'] ) ) continue;
-            foreach ( $grpVals['fields'] as $fId => $fVals )  { 
-                $this->_surveyFields[$fId] = $fVals;
-            }
+        if ( $this->_ufGroupId ) {
+            require_once 'CRM/Core/BAO/UFGroup.php';
+            $this->_surveyFields = CRM_Core_BAO_UFGroup::getFields( $this->_ufGroupId, 
+                                                                    false, CRM_Core_Action::VIEW );
         }
         
-        require_once "CRM/Core/BAO/CustomField.php";
+        //build all fields.
         foreach ( $this->_contactIds as $contactId ) {
-            foreach ( $this->_surveyFields as $fldId => &$field ) {
-                $fieldId       = $field['id'];                 
-                $elementName   = $field['element_name'];
-                $fieldName     = "field[$contactId][$elementName]";
-                CRM_Core_BAO_CustomField::addQuickFormElement( $this, $fieldName, $fieldId, false, false );
+            //build the profile fields.
+            foreach ( $this->_surveyFields as $name => $field ) {
+                if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
+                    $customValue = CRM_Utils_Array::value( $customFieldID, $customFields );
+                    if ( ( $this->_surveyTypeId == $customValue['extends_entity_column_value'] ) ||
+                         CRM_Utils_System::isNull( $customValue['extends_entity_column_value'] ) ) {
+                        CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $contactId );
+                    }
+                } else {
+                    // handle non custom fields
+                    CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $contactId );
+                }
+            }
+            
+            //build the result field.
+            if ( $addResultField ) {
+                $this->add( 'select', "field[$contactId][result]", ts('Result'), 
+                            array( '' => ts('- select -') ) + $allOptions );
             }
             
             //hack to get control for interview ids during ajax calls.

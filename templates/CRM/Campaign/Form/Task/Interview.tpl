@@ -36,11 +36,16 @@
              {foreach from=$readOnlyFields item=fTitle key=fName}
 	        <th>{$fTitle}</th>
 	     {/foreach}
-
+	     
+	     {if $hasResultField}
+	     	<th>{ts}Result{/ts}</th> 
+	     {/if}
+	     
 	     {* display headers for survey fields *}
-	     {foreach from=$surveyFields item=fVal key=fId}
-	        <th>{$fVal.label}</th>
-	     {/foreach}
+	     {foreach from=$surveyFields item=field key=fieldName}
+                  <th>{$field.title}</th>
+             {/foreach}
+	     
        </tr>
     </thead>
 
@@ -51,21 +56,32 @@
 	       <td>{$voterDetails.$voterId.$fName}</td>
 	    {/foreach}
 
+	    {if $hasResultField}
+	      	<td>{$form.field.$voterId.result.html}</td>
+	    {/if}
+	    
 	    {* here build the survey fields *}
 	    {assign var=surveyFieldCount value=$surveyFields|@count}
 	    {assign var=currentCount value='1'}
-	    {foreach from=$surveyFields item=field key=fId}
-		{assign var=name value=$field.element_name}
-	        <td>{$form.field.$voterId.$name.html}
-		{* display save button *}
+	    {foreach from=$surveyFields item=field key=fieldName}
+                {assign var=n value=$field.name}
+		<td class="compressed">
+                {if ( $fields.$n.data_type eq 'Date') or 
+		    ( $n eq 'thankyou_date' ) or ( $n eq 'cancel_date' ) or ( $n eq 'receipt_date' )}
+                   {include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$voterId batchUpdate=1}</td>
+                {else}
+                   {$form.field.$voterId.$n.html}
+                {/if}
+
 		{if $currentCount eq $surveyFieldCount}
 		    &nbsp;&nbsp;&nbsp;<a id='saveVoter' href="#" title={ts}Save{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}save{/ts}</a>
 		   {* hack to get control for interview ids during ajax calls. *}
 		   <span style="display:none;">{$form.field.$voterId.interview_id.html}</span>
  		{/if}
-		</td>		
-		{assign var=currentCount value=$currentCount+1}
-	    {/foreach}
+		</td> 
+		{assign var=currentCount value=$currentCount+1}     
+            {/foreach}
+	    
 	</tr>
 	{/foreach}
     </tbody>

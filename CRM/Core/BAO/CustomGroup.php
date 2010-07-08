@@ -629,7 +629,7 @@ SELECT $select
                         'default_value',
                         'attributes',
                         'is_required',
-			'help_pre',
+                        'help_pre',
                         'help_post',
                         'options_per_line',
                         'is_searchable',
@@ -641,7 +641,8 @@ SELECT $select
                         'note_columns',
                         'note_rows',
                         'column_name',
-                        'is_view' ),
+                        'is_view',
+                        'option_group_id' ),
                   'civicrm_custom_group' =>
                   array('id',
                         'name',
@@ -654,7 +655,7 @@ SELECT $select
                         'extends_entity_column_value',
                         'table_name' ),
                   );
-
+        
         // create select
         $select = "SELECT"; 
         $s = array( );
