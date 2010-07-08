@@ -10,7 +10,7 @@ INSERT INTO civicrm_uf_join
    (1, 'Profile', NULL, NULL, 6, @uf_group_id_summary );
    
 INSERT INTO civicrm_uf_field
-   ( uf_group_id, field_name, is_required, is_reserved, weight, visibility, in_selector, is_searchable, location_type_id, {localize field='label'}label{/localize},field_type, help_post ) VALUES
+   ( uf_group_id, field_name, is_required, is_reserved, weight, visibility, in_selector, is_searchable, location_type_id, {localize field='label'}label{/localize},field_type, {localize field='help_post'}help_post{/localize} ) VALUES
    ( @uf_group_id_summary,           'phone' 				 ,1,  	      0, 			1, 	    'User and User Admin Only',   0, 	  0, 			 1, 				  {localize}'Home Phone'{/localize}, 					'Contact',    NULL),
    ( @uf_group_id_summary,           'phone' 				 ,1,    	  0, 			2, 	    'User and User Admin Only',   0,      0, 			 2, 				  {localize}'Home Mobile'{/localize}, 				'Contact',    NULL),
    ( @uf_group_id_summary, 			 'street_address', 		  1, 		   0, 			3, 	  	'User and User Admin Only',   0, 	  0, 			 NULL, 			   {localize}'Primary Address'{/localize},		        'Contact', 	   NULL),
