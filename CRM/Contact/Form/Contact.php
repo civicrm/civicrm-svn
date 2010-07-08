@@ -814,6 +814,11 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $params['is_deceased']        = false;
             $params['deceased_date'] = null;
         }
+
+        // process membership status for deceased contact
+        $deceasedParams = array( 'contact_id'  => $params['contact_id'],
+                                 'is_deceased' => $params['is_deceased']);
+        $updateMembershipMsg = $this->updateMembershipStatus( $deceasedParams );
         
         // action is taken depending upon the mode
         require_once 'CRM/Utils/Hook.php';
@@ -927,6 +932,10 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         if ( $uploadFailMsg  ) {
             $statusMsg = "$statusMsg <br > $uploadFailMsg";
         }
+        if ( $updateMembershipMsg ) {
+            $statusMsg = "$statusMsg <br > $updateMembershipMsg";
+        }
+
         $session = CRM_Core_Session::singleton( );
         CRM_Core_Session::setStatus( $statusMsg );
 
@@ -1235,6 +1244,77 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
         return "$number$str";
     }
     
+    /* Update membership status to deceased
+     * function return the status message for updated membership.
+     * 
+     * @param  $deceasedParams array  having contact id and deceased value.
+     *
+     * @return $updateMembershipMsg string  status message for updated membership. 
+     */
+    function updateMembershipStatus( $deceasedParams ) 
+    {
+        $updateMembershipMsg = null;
+        $contactId = CRM_Utils_Array::value( 'contact_id', $deceasedParams );
+        
+        // process to set membership status to deceased for both active/inactive membership        
+        if ( $contactId && 
+             $this->_contactType == 'Individual' &&
+             CRM_Utils_Array::value( 'is_deceased', $deceasedParams ) ) {
+            
+            $session = CRM_Core_Session::singleton( );
+            $userId = $session->get( 'userID' );
+            if ( !$userId ) {
+                $userId = $contactId; 
+            }
+            
+            require_once 'CRM/Member/BAO/MembershipLog.php';
+            require_once 'CRM/Member/DAO/Membership.php';
+            require_once 'CRM/Member/PseudoConstant.php';
+            require_once 'CRM/Utils/Date.php';
+            
+            // get deceased status id            
+            $allStatus        = CRM_Member_PseudoConstant::membershipStatus( );
+            $deceasedStatusId = array_search( 'Deceased', $allStatus );
+            if ( !$deceasedStatusId ) return $updateMembershipMsg; 
+            
+            // get non deceased membership
+            $dao = new CRM_Member_DAO_Membership( );
+            $dao->contact_id = $contactId;
+            $dao->whereAdd( "status_id != $deceasedStatusId" );
+            $dao->find( );
+            
+            $memCount  = 0;
+            while( $dao->fetch( ) ) {
+                // update status to deceased (for both active/inactive membership )
+                CRM_Core_DAO::setFieldValue( 'CRM_Member_DAO_Membership', $dao->id, 
+                                             'status_id', $deceasedStatusId );
+                
+                // add membership log
+                $membershipLog = array('membership_id'         => $dao->id,
+                                       'status_id'             => $deceasedStatusId,
+                                       'start_date'            => CRM_Utils_Date::isoToMysql( $dao->start_date ),
+                                       'end_date'              => CRM_Utils_Date::isoToMysql( $dao->end_date ),
+                                       'renewal_reminder_date' => CRM_Utils_Date::isoToMysql( $dao->reminder_date ), 
+                                       'modified_id'           => $userId,
+                                       'modified_date'         => date('Ymd')
+                                       );
+                
+                
+                CRM_Member_BAO_MembershipLog::add( $membershipLog, CRM_Core_DAO::$_nullArray );
+                
+                $memCount ++; 
+            }
+            
+            // set status msg
+            if ( $memCount ) {
+                $updateMembershipMsg =  ts("%1 Current membership(s) for this contact have been set to 'Deceased' status.", 
+                                           array( 1 => $memCount ) );
+            }
+        }
+        
+        return $updateMembershipMsg;
+    }
+
 }
 
 
