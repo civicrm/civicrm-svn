@@ -247,6 +247,8 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $this->add( 'text', 'street_type',     ts( 'Street Type'    ), $attributes['street_type']    );
         $this->add( 'text', 'street_address',  ts( 'Street Address' ), $attributes['street_address'] );
         $this->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
+        $this->add( 'text', 'ward',            ts( 'Ward'           )        );
+        $this->add( 'text', 'precinct',        ts( 'Precinct'       )        );
         
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
         $isRequired = false;

@@ -88,6 +88,22 @@
                 {$form.city.html}
             </td>
 	</tr>
+	<tr>
+            <td class="font-size12pt">
+                {$form.ward.label}
+            </td>
+            <td>
+                {$form.ward.html}
+            </td>
+	</tr>
+	<tr>
+            <td class="font-size12pt">
+                {$form.precinct.label}
+            </td>
+            <td>
+                {$form.precinct.html}
+            </td>
+	</tr>
 	{if $form.survey_status_id}
 	  <tr>
               <td class="font-size12pt">

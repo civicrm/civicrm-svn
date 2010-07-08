@@ -95,8 +95,18 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $defaults = array();
 
         if ( $this->_surveyId ) {
+            require_once 'CRM/Core/BAO/UFJoin.php';
+            
             $params = array( 'id' => $this->_surveyId );
             CRM_Campaign_BAO_Survey::retrieve( $params, $defaults );
+
+            $ufJoinParams = array( 'entity_table' => 'civicrm_survey',
+                                   'entity_id'    => $this->_surveyId,
+                                   'weight'       => 1);
+
+            if ( $ufGroupId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams ) ) {
+                $defaults['profile_id'] = $ufGroupId;
+            }
         }
         if ( !isset($defaults['is_active']) ) {
             $defaults['is_active'] = 1;
@@ -147,19 +157,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( );
         $this->add('select', 'campaign_id', ts('Select Campaign'), array( '' => ts('- select -') ) + $campaigns );
         
-        $params = array( );
-        require_once 'CRM/Core/OptionGroup.php';
-
-        if ( $surveyTypeId = CRM_Core_OptionGroup::getValue('activity_type','Survey','name') ) {
-            $params[] = $surveyTypeId;
-        }
-
-        if ( $this->_surveyId && ( $sid = CRM_Core_DAO::getFieldValue('CRM_Campaign_DAO_Survey', $this->_surveyId, 'custom_group_id' ) ) ) {
-            $params[] = $sid;
-        }
-
         $customProfiles = CRM_Core_BAO_UFGroup::getProfiles( array('Activity') );
-        
         // custom group id
         $this->add('select', 'profile_id', ts('Select Profile'), 
                    array( '' => ts('- select -')) + $customProfiles );
@@ -252,7 +250,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             $params['created_date'] = date('YmdHis');
         } 
         $params['is_active' ] = CRM_Utils_Array::value('is_active', $params, 0);
-        $params['is_default'] = CRM_Utils_Array::value('is_active', $params, 0);
+        $params['is_default'] = CRM_Utils_Array::value('is_default', $params, 0);
 
         $surveyId = CRM_Campaign_BAO_Survey::create( $params  );
         

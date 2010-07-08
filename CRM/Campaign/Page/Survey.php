@@ -100,7 +100,7 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page
             $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, false , 'name' );
             foreach( $surveys as $sid => $survey ) {
                 $surveys[$sid]['campaign_id']    = $campaigns[$survey['campaign_id']];
-                $surveys[$sid]['survey_type_id'] = $surveyType[$survey['survey_type_id']];
+                $surveys[$sid]['activity_type_id'] = $surveyType[$survey['activity_type_id']];
                 $surveys[$sid]['release_frequency'] = $survey['release_frequency_interval'].' '.$survey['release_frequency_unit'];
                 
                 if ( $manageCampaign ) {
