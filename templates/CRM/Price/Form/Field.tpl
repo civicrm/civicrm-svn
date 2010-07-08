@@ -85,12 +85,14 @@
            </td>
         </tr>
         {/if}
-        <tr class="crm-price-field-form-block-count">
+        {if $form.count }
+	<tr class="crm-price-field-form-block-count">
            <td class="label">{$form.count.label}</td>
            <td>{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_price_field' field='count' id=$id}{/if}{$form.count.html}<br />
                 <span class="description">{ts}Enter a value here if you want to increment the number of registered participants per unit against the maximum number of participants allowed for this event. For example, if this price field is for a table at a fundraiser which seats eight people, you would set Participant Count to 8.{/ts}</span>
             </td>
         </tr>
+	{/if}
     </table>
     <div class="spacer"></div>
     <div id="price-block" {if $action eq 2 && $form.html_type.value.0 eq 'Text'} class="show-block" {else} class="hide-block" {/if}>
