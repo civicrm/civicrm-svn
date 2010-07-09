@@ -256,24 +256,17 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
      WHERE  grp.name = %1';        
         $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( 'Voter_Info', 'String' ) ) );
         $customSearchFields = array( );
-        while ( $dao->fetch( ) ) {
-            if ( stripos( 'ward', $dao->label ) !== false  ) {
-                $customSearchFields['ward'] = 'custom_'.$dao->id;
-            }
-            if ( stripos( 'precinct', $dao->label ) !== false  ) {
-                $customSearchFields['precinct'] = 'custom_'.$dao->id;
-            }
-        }
         require_once 'CRM/Core/BAO/CustomField.php';
-        if ( array_key_exists( 'ward', $customSearchFields ) ) {
-            $name = $customSearchFields['ward'];
-            $fieldId = substr( $name, 7 );
-            CRM_Core_BAO_CustomField::addQuickFormElement( $this, $name, $fieldId, false, false );
-        }
-        if ( array_key_exists( 'precinct', $customSearchFields ) ) {
-            $name = $customSearchFields['precinct'];
-            $fieldId = substr( $name, 7 );
-            CRM_Core_BAO_CustomField::addQuickFormElement( $this, $name, $fieldId, false, false );
+        while ( $dao->fetch( ) ) {
+            foreach ( array( 'ward', 'precinct' ) as $name ) {
+                if ( stripos( $name, $dao->label ) !== false  ) {
+                    $fieldId   = $dao->id;
+                    $fieldName = 'custom_'.$dao->id;
+                    $customSearchFields[$name] = $fieldName;
+                    CRM_Core_BAO_CustomField::addQuickFormElement( $this, $fieldName, $fieldId, false, false );
+                    break;
+                }
+            }
         }
         $this->assign( 'customSearchFields',  $customSearchFields );
         
