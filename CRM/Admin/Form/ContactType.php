@@ -60,16 +60,23 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form
                    true );
         $contactType = $this->add( 'select', 'parent_id', ts('Basic Contact Type'),
                                    CRM_Contact_BAO_ContactType::basicTypePairs( false, 'id' ) );
-        if ($this->_action & CRM_Core_Action::UPDATE ) {
+        $enabled = $this->add('checkbox', 'is_active', ts('Enabled?'));
+        if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $contactType->freeze( );
             // We'll display actual "name" for built-in types (for reference) when editing their label / image_URL
             $contactTypeName = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType', $this->_id, 'name');
             $this->assign('contactTypeName', $contactTypeName);
+
+            $parentId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType', $this->_id, 'parent_id');
+            // Freeze Enabled field for built-in contact types (parent_id is NULL for these)
+            if ( is_null($parentId) ) {
+                $enabled->freeze( );                
+            }
         }
         $this->addElement('text','image_URL', ts('Image URL'));  
         $this->add('text', 'description', ts('Description'), 
                    CRM_Core_DAO::getAttribute( 'CRM_Contact_DAO_ContactType', 'description' ) );
-        $this->add('checkbox', 'is_active', ts('Enabled?'));
+        
         $this->assign('id', $this->_id );
         $this->addFormRule( array( 'CRM_Admin_Form_ContactType', 'formRule' ) , $this );
     }
@@ -118,8 +125,14 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form
         }
         // store the submitted values in an array
         $params = $this->exportValues();
+        
         if ($this->_action & CRM_Core_Action::UPDATE ) {
             $params['id'] = $this->_id;
+            $parentId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_ContactType', $this->_id, 'parent_id');
+            // Force Enabled = true for built-in contact types to fix problems caused by CRM-6471 (parent_id is NULL for these types)
+            if ( is_null($parentId) ) {
+                $params['is_active'] = 1;
+            }
         }  
         if ( $this->_action & CRM_Core_Action::ADD ){
             $params['name'] = ucfirst( CRM_Utils_String::munge($params['label'] ) );

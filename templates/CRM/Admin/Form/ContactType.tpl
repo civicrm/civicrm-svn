@@ -25,15 +25,15 @@
 *}
 {* this template is used for adding/editing Contact Type  *}
 
+<h3>{if $action eq 1}{ts}New Contact Type{/ts}{elseif $action eq 2}{ts}Edit Contact Type{/ts}{else}{ts}Delete Contact Type{/ts}{/if}</h3>
 <div class="crm-block crm-form-block crm-contact-type-form-block">
-<fieldset><legend>{if $action eq 1}{ts}New Contact Type{/ts}{elseif $action eq 2}{ts}Edit Contact Type{/ts}{else}{ts}Delete Contact Type{/ts}{/if}</legend>
-<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 {if $action eq 8}
   <div class="messages status">
     <div class="icon inform-icon"></div>
         {ts}WARNING: {ts}This action cannot be undone.{/ts} {ts}Do you want to continue?{/ts}{/ts}
     </div>
 {else}
+ <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
  <table class="form-layout-compressed">
    <tr class="crm-contact-type-form-block-label">
       <td class="label">{$form.label.label}</td>
@@ -63,13 +63,10 @@
           {/if}
      <td>{$form.description.html}</td>
    </tr>
-         {if $is_parent OR $action eq 1}
    <tr class="crm-contact-type-form-block-is_active">
      <td class="label">{$form.is_active.label}</td><td>{$form.is_active.html}</td>
    </tr>
-        {/if}
  </table>
-    {/if}
-   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-</fieldset>
+{/if}
+<div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </div>
