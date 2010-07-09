@@ -408,10 +408,13 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     }
 
     function addGroupsParams( ) {
-
+        
+        //apply group clause only for voter reservation.
+        if ( $this->_operation != 'reserve' ) return;  
+        
         if ( CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) ) {
-            
-            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',  $this->_formValues['campaign_survey_id'], 'campaign_id');
+            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',  
+                                                       $this->_formValues['campaign_survey_id'], 'campaign_id');
             if ( $campaignId ) {
                 require_once 'CRM/Campaign/BAO/Campaign.php';
                 $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
@@ -423,12 +426,8 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                 }
             }
             
-            // for realase only apply group criteria
-            if ( $this->_operation == 'reserve' ) {
-                unset( $this->_formValues['campaign_survey_id'] );
-                unset( $this->_formValues['survey_status_id'] );
-            }
-            
+            unset( $this->_formValues['campaign_survey_id'] );
+            unset( $this->_formValues['survey_status_id'] );
         }
     }
     
