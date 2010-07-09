@@ -817,7 +817,8 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
 
         // process membership status for deceased contact
         $deceasedParams = array( 'contact_id'  => $params['contact_id'],
-                                 'is_deceased' => $params['is_deceased']);
+                                 'is_deceased'   => $params['is_deceased'],
+                                 'deceased_date' => $params['deceased_date'] );
         $updateMembershipMsg = $this->updateMembershipStatus( $deceasedParams );
         
         // action is taken depending upon the mode
@@ -1255,6 +1256,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
     {
         $updateMembershipMsg = null;
         $contactId = CRM_Utils_Array::value( 'contact_id', $deceasedParams );
+        $deceasedDate = CRM_Utils_Array::value( 'deceased_date', $deceasedParams );
         
         // process to set membership status to deceased for both active/inactive membership        
         if ( $contactId && 
@@ -1276,6 +1278,9 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             $allStatus        = CRM_Member_PseudoConstant::membershipStatus( );
             $deceasedStatusId = array_search( 'Deceased', $allStatus );
             if ( !$deceasedStatusId ) return $updateMembershipMsg; 
+            
+            $today = time( );
+            if ( $deceasedDate  && strtotime( $deceasedDate ) > $today ) return $updateMembershipMsg;
             
             // get non deceased membership
             $dao = new CRM_Member_DAO_Membership( );
