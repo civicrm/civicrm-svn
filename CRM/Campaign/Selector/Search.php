@@ -80,7 +80,11 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                  'state_province',
                                  'country',
                                  'email',
-                                 'phone' 
+                                 'phone',
+                                 'campaign_id',
+                                 'survey_activity_id',
+                                 'survey_activity_target_id',
+                                 'survey_activity_target_contact_id',
                                  );
     
     /** 
@@ -164,7 +168,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
         $this->_limit   = $limit;
         $this->_context = $context;
         
-        $this->_surveyClause = $surveyClause;
+        $this->_campaignClause = $surveyClause;
         
         // type of selector
         $this->_action = $action;

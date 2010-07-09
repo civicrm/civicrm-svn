@@ -66,6 +66,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     
     private $_ufGroupId;
     
+    private $_surveyActivityIds;
+    
     /**
      * build all the data structures needed to build the form
      *
@@ -106,6 +108,10 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         //retrieve the contact details.
         require_once 'CRM/Campaign/BAO/Survey.php';
         $voterDetails = CRM_Campaign_BAO_Survey::voterDetails( $this->_contactIds, $returnProperties );
+        
+        //get the survey activities for given voters.
+        $this->_surveyActivityIds = CRM_Campaign_BAO_Survey::voterActivityDetails( $this->_surveyId, 
+                                                                                   $this->_contactIds );
         
         $this->assign( 'voterIds',       $this->_contactIds );
         $this->assign( 'voterDetails',   $voterDetails );

@@ -91,10 +91,12 @@ class CRM_Campaign_BAO_Query
         //all below tables are require to fetch  result.
         
         //1. get survey activity target table in.
-        $query->_select['survey_activity_target_id'] = 'civicrm_activity_target.target_contact_id as survey_activity_target_id';
-        $query->_element['survey_activity_target_id']       = 1;
-        $query->_tables[self::civicrm_activity_target]      = 1;
-        $query->_whereTables[self::civicrm_activity_target] = 1;
+        $query->_select['survey_activity_target_contact_id']  = 'civicrm_activity_target.target_contact_id as survey_activity_target_contact_id';
+        $query->_select['survey_activity_target_id']          = 'civicrm_activity_target.id as survey_activity_target_id';
+        $query->_element['survey_activity_target_id']         = 1;
+        $query->_element['survey_activity_target_contact_id'] = 1;
+        $query->_tables[self::civicrm_activity_target]        = 1;
+        $query->_whereTables[self::civicrm_activity_target]   = 1;
         
         //2. get survey activity table in.
         $query->_select['survey_activity_id']        = 'civicrm_activity.id as survey_activity_id';
@@ -103,7 +105,7 @@ class CRM_Campaign_BAO_Query
         $query->_whereTables[self::civicrm_activity] = 1;
         
         //3. get survey table.
-        $query->_select['campaign_survey_id']  = 'civicrm_survey.id as survey_id';
+        $query->_select['campaign_survey_id']  = 'civicrm_survey.id as campaign_survey_id';
         $query->_element['campaign_survey_id'] = 1;
         $query->_tables['civicrm_survey']      = 1;
         $query->_whereTables['civicrm_survey'] = 1;
@@ -120,16 +122,11 @@ class CRM_Campaign_BAO_Query
         //get survey clause in force,
         //only when we have survey id.
         if ( !self::$_applySurveyClause ) return;
-        
+                
         $grouping = null;
         foreach ( array_keys( $query->_params ) as $id ) {
             if ( $query->_mode == CRM_Contact_BAO_QUERY::MODE_CONTACTS ) {
                 $query->_useDistinct = true;
-            }
-            if ( in_array( $query->_params[$id][0], array( 'campaign_survey_id', 'survey_status_id' ) ) ) {
-                $query->_tables['civicrm_survey']              = $query->_whereTables['civicrm_survey'  ] = 1;
-                $query->_tables[self::civicrm_activity]        = $query->_whereTables['survey_civicrm_activity'] = 1;
-                $query->_tables[self::civicrm_activity_target] = $query->_whereTables[self::civicrm_activity_target] = 1;
             }
             
             self::whereClauseSingle( $query->_params[$id], $query );
@@ -229,7 +226,8 @@ class CRM_Campaign_BAO_Query
                                 'survey_activity_id'        => 1,
                                 'survey_status_id'          => 1,
                                 'campaign_survey_id'        => 1,
-                                'campaign_id'               => 1
+                                'campaign_id'               => 1,
+                                'survey_activity_target_contact_id' => 1,
                                 );
         }
         

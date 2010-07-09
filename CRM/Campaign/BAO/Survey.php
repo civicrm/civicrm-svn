@@ -321,5 +321,39 @@ Group By  contact.id";
         
         return $voterDetails; 
     }
-
+    
+    
+    /**
+     * This function retrieve survey related activities w/ for give voter ids.
+     *
+     * @param int   $surveyId  survey id.
+     * @param array $voterIds  voterIds.
+     *
+     * @return $activityDetails array of survey activity.
+     * @static
+     */
+    static function voterActivityDetails( $surveyId, $voterIds ) 
+    {
+        $activityDetails = array( );
+        if ( !$surveyId || 
+             !is_array( $voterIds ) || empty( $voterIds ) ) {
+            return $activityDetails;
+        }
+        $targetContactIds = ' ( ' . implode( ',', $voterIds ) . ' ) ';
+        
+        $query = " 
+    SELECT  activity.id, civicrm_activity_target.target_contact_id as voter_id
+      FROM  civicrm_activity activity
+INNER JOIN  civicrm_activity_target ON ( civicrm_activity_target.activity_id = activity.id )
+     WHERE  activity.source_record_id = %1
+       AND  civicrm_activity_target.target_contact_id IN {$targetContactIds}";
+        
+        $activity = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $surveyId, 'Integer' ) ) );
+        while ( $activity->fetch( ) ) {
+            $activityDetails[$activity->voter_id] = $activity->id;
+        }
+        
+        return $activityDetails;
+    }
+    
 }
