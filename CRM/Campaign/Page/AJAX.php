@@ -43,11 +43,13 @@ class CRM_Campaign_Page_AJAX
     
     static function registerInterview( )
     {
-        $voterId = CRM_Utils_Array::value( 'voter_id', $_POST );
-        $params  = array( 'voter_id'         => $voterId,
-                          'campaign_id'      => CRM_Utils_Array::value( 'campaign_id', $_POST ),
-                          'interviewer_id'   => CRM_Utils_Array::value( 'interviewer_id', $_POST ),
-                          'activity_type_id' => CRM_Utils_Array::value( 'activity_type_id', $_POST ) );
+        $voterId    = CRM_Utils_Array::value( 'voter_id',    $_POST );
+        $activityId = CRM_Utils_Array::value( 'activity_id', $_POST );
+        $params     = array( 'voter_id'         => $voterId,
+                             'activity_id'      => $activityId,
+                             'result'           => CRM_Utils_Array::value( 'result',           $_POST ),
+                             'interviewer_id'   => CRM_Utils_Array::value( 'interviewer_id',   $_POST ),
+                             'activity_type_id' => CRM_Utils_Array::value( 'activity_type_id', $_POST ) );
         
         $customKey = "field_{$voterId}_custom";
         foreach ( $_POST as $key => $value ) {
@@ -56,14 +58,12 @@ class CRM_Campaign_Page_AJAX
                 $params[$customFieldKey] = $value;
             }
         }
-        $interviewId = CRM_Utils_Array::value( "field_{$voterId}_interview_id", $_POST );
-        if ( $interviewId ) $params['interview_id'] = $interviewId; 
         
         require_once 'CRM/Campaign/Form/Task/Interview.php';
-        $interviewId = CRM_Campaign_Form_Task_Interview::registerInterview( $params );
-        $result = array( 'status'       => ( $interviewId ) ? 'success' : 'fail',
+        $activityId = CRM_Campaign_Form_Task_Interview::registerInterview( $params );
+        $result = array( 'status'       => ( $activityId ) ? 'success' : 'fail',
                          'voter_id'     => $voterId,
-                         'interview_id' => $interviewId );
+                         'activity_id'  => $interviewId );
         
         require_once "CRM/Utils/JSON.php";
         echo json_encode( $result );

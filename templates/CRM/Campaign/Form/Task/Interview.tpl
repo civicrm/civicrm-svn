@@ -75,8 +75,6 @@
 
 		{if $currentCount eq $surveyFieldCount}
 		    &nbsp;&nbsp;&nbsp;<a id='saveVoter' href="#" title={ts}Save{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}save{/ts}</a>
-		   {* hack to get control for interview ids during ajax calls. *}
-		   <span style="display:none;">{$form.field.$voterId.interview_id.html}</span>
  		{/if}
 		</td> 
 		{assign var=currentCount value=$currentCount+1}     
@@ -111,18 +109,23 @@
 	    data[cj(this).attr( 'id' )] = cj( this ).val( );
         });
 	
-	data['voter_id']       = voterId;
-	data['interviewer_id'] = {/literal}{$interviewerId}{literal};
+	var surveyActivityIds = {/literal}{$surveyActivityIds}{literal};
+	activityId =  eval( "surveyActivityIds.activity_id_" + voterId );
+	if ( !activityId ) return; 	
+
+	data['voter_id']         = voterId;
+	data['interviewer_id']   = {/literal}{$interviewerId}{literal};
 	data['activity_type_id'] = {/literal}{$surveyTypeId}{literal};
-	data['campaign_id']    = {/literal}{$campaignId}{literal};	
-	data['field_'+ voterId + '_interview_id'] = cj( '#field_' + voterId + '_interview_id' ).val( );
+	data['activity_id']      = activityId;
+	data['result']           = cj( '#field_' + voterId + '_result' ).val( ); 
 
 	var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=registerInterview' }"{literal}	          
 	
 	//post data to create interview.
 	cj.post( dataUrl, data, function( interview ) {
 	       if ( interview.status == 'success' ) {
-	       	   cj( '#field_' + voterId + '_interview_id' ).val( interview.interview_id );
+	       	  //data is saved for given row.
+		   
 	       }		 
 	}, "json" );
     }

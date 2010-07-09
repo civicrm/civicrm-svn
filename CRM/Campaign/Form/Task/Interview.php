@@ -118,6 +118,12 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->assign( 'readOnlyFields', $readOnlyFields );
         $this->assign( 'interviewerId',  $this->_interviewerId );
         $this->assign( 'campaignId',     $this->_campaignId );
+        
+        $activityIds = array( );
+        foreach ( $this->_surveyActivityIds as $voterId => $actId ) {
+            $activityIds["activity_id_{$voterId}"] = $actId;
+        }
+        $this->assign( 'surveyActivityIds', json_encode( $activityIds ) );
     }
     
     /**
@@ -153,7 +159,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                         if ( !empty( $options ) ) {
                             $allCustomFieldOptions[$fldId] = $options;
                             foreach ( $options as $optId => $optVals ) {
-                                $allOptions[$optId] = $optVals['label'];
+                                $label = $optVals['label'];
+                                $allOptions[$label] = $label;
                             }
                         }
                     }
@@ -196,9 +203,6 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                 $this->add( 'select', "field[$contactId][result]", ts('Result'), 
                             array( '' => ts('- select -') ) + $allOptions );
             }
-            
-            //hack to get control for interview ids during ajax calls.
-            $this->add( 'text', "field[$contactId][interview_id]" );
         }
         $this->assign( 'surveyFields', $this->_surveyFields );
         
@@ -235,26 +239,24 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $params = $this->controller->exportValues( $this->_name );
         
         //process survey.
-        //1. create an activity w/ each contact
-        //2. store custom data as activity custom data.
-        
         require_once 'CRM/Activity/BAO/Activity.php';
         foreach ( $params['field'] as $voterId => &$values ) {
             $values['voter_id']         = $voterId;
             $values['campaign_id']      = $this->_campaignId;
             $values['interviewer_id']   = $this->_interviewerId;
             $values['activity_type_id'] = $this->_surveyTypeId;
+            $values['activity_id']      = CRM_Utils_Array::value( $voterId, $this->_surveyActivityIds );
             self::registerInterview( $values );
         }
         
     }
-
+    
     static function registerInterview( $params )
     {
-        $interviewId  = CRM_Utils_Array::value( 'interview_id',     $params );
+        $activityId   = CRM_Utils_Array::value( 'activity_id',      $params );
         $surveyTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
-        if ( !is_array( $params ) || !$surveyTypeId ) {
-            return $interviewId;
+        if ( !is_array( $params ) || !$surveyTypeId || !$activityId ) {
+            return false;
         }
         
         static $surveyFields;
@@ -269,38 +271,30 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                                                  true );
         }
         
-        static $actTypeId;
-        if ( !$actTypeId ) { 
+        static $statusId;
+        if ( !$statusId ) { 
             require_once 'CRM/Core/PseudoConstant.php';
-            $actTypeId = array_search( 'Interview', CRM_Core_PseudoConstant::activityType( true, false, false, 'name') );
+            $statusId = array_search( 'Completed', CRM_Core_PseudoConstant::activityStatus( 'name' ) );
         }
         
-        //create a activity record for given survey interview.
-        $actParams = array( 'subject' => ts( 'Interview' ) );
-        
-        //carry id for update.
-        if ( $interviewId ) $actParams['id'] = $interviewId;
-        
         //format custom fields.
-        $actParams['custom'] = CRM_Core_BAO_CustomField::postProcess( $params,
-                                                                      $surveyFields,
-                                                                      $interviewId,
-                                                                      'Activity' );
+        $customParams = CRM_Core_BAO_CustomField::postProcess( $params,
+                                                               $surveyFields,
+                                                               $activityId,
+                                                               'Activity' );
+        require_once 'CRM/Core/BAO/CustomValueTable.php';
+        CRM_Core_BAO_CustomValueTable::store( $customParams, 'civicrm_activity', $activityId );
         
-        //create an activity record.
-        $actParams['source_contact_id']  = $params['interviewer_id'];
-        $actParams['target_contact_id']  = $params['voter_id'];
-        $actParams['activity_type_id']   = $actTypeId;
-        $actParams['activity_date_time'] = date( 'Ymdhis' );
-        $actParams['campaign_id']        = $params['campaign_id'];
+        //update status of activity record to completed.
+        CRM_Core_DAO::setFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'status_id', $statusId );
         
-        //create an activity record.
-        require_once 'CRM/Activity/BAO/Activity.php';
-        $activity = CRM_Activity_BAO_Activity::create( $actParams );
-        $interviewId = $activity->id; 
+        //set the result.
+        if ( $result = CRM_Utils_Array::value( 'result', $params ) ) {
+            CRM_Core_DAO::setFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'result', $result );
+        }
         
-        return $interviewId; 
+        return $activityId; 
     }
-    
+
 }
 
