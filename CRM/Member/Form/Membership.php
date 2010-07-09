@@ -382,7 +382,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         
         if ( !$this->_mode ) {
             $this->add('select', 'status_id', ts( 'Membership Status' ), 
-                       array(''=>ts( '- select -' )) + CRM_Member_PseudoConstant::membershipStatus( ) );
+                       array('' =>ts('- select -')) + CRM_Member_PseudoConstant::membershipStatus(null, null, 'label'));
             $this->addElement('checkbox', 'is_override', 
                               ts('Status Override?'), null, 
                               array( 'onClick' => 'showHideMemberStatus()'));

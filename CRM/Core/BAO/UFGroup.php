@@ -1463,7 +1463,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         } else if ($field['name'] == 'status_id'  && ( $mode && CRM_Contact_BAO_Query::MODE_MEMBER ) ) { 
             require_once 'CRM/Member/PseudoConstant.php';
             $form->add('select', 'status_id', $title,
-                       array(''=>ts( '- select -' )) + CRM_Member_PseudoConstant::membershipStatus( ), $required );
+                       array('' => ts('- select -')) + CRM_Member_PseudoConstant::membershipStatus(null, null, 'label'), $required);
         } else if ( $fieldName === 'gender' ) {  
             $genderOptions = array( );   
             $gender = CRM_Core_PseudoConstant::gender();   
