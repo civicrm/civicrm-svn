@@ -40,7 +40,10 @@
                  		<span><div class="icon print-icon"></div>{ts}Print Summary{/ts}</span>
                  		</a>
                   </li>
-                  <li><a class="vcard " title="{ts}vCard record for this contact.{/ts}" href="{crmURL p='civicrm/contact/view/vcard' q="reset=1&cid=$contactId"}"><span><div class="icon vcard-icon"></div>{ts}vCard{/ts}</span></li>
+                  <li>
+                        <a class="vcard " title="{ts}vCard record for this contact.{/ts}" href="{crmURL p='civicrm/contact/view/vcard' q="reset=1&cid=$contactId"}"><span><div class="icon vcard-icon"></div>{ts}vCard{/ts}</span>
+                        </a>
+                  </li>
                  {if $dashboardURL }
                    <li class="crm-contact-dashboard">
                       <a href="{$dashboardURL}" class="dashboard " title="{ts}dashboard{/ts}">
