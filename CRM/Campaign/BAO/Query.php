@@ -74,6 +74,7 @@ class CRM_Campaign_BAO_Query
      */
     static function select( &$query ) 
     {
+        self::$_applySurveyClause = false;
         if ( is_array( $query->_params ) ) {
             foreach ( $query->_params as $values ) {
                 list( $name, $op, $value, $grouping, $wildcard ) = $values;

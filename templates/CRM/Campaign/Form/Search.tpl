@@ -88,22 +88,31 @@
                 {$form.city.html}
             </td>
 	</tr>
+
+	{if $customSearchFields.ward}
+	{assign var='ward' value=$customSearchFields.ward}
 	<tr>
             <td class="font-size12pt">
-                {$form.ward.label}
+                {$form.$ward.label}
             </td>
             <td>
-                {$form.ward.html}
+                {$form.$ward.html}
             </td>
 	</tr>
+	{/if}
+
+	{if $customSearchFields.precinct}
+	{assign var='precinct' value=$customSearchFields.precinct}
 	<tr>
             <td class="font-size12pt">
-                {$form.precinct.label}
+                {$form.$precinct.label}
             </td>
             <td>
-                {$form.precinct.html}
+                {$form.$precinct.html}
             </td>
 	</tr>
+	{/if}
+
 	{if $form.survey_status_id}
 	  <tr>
               <td class="font-size12pt">

@@ -247,8 +247,35 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $this->add( 'text', 'street_type',     ts( 'Street Type'    ), $attributes['street_type']    );
         $this->add( 'text', 'street_address',  ts( 'Street Address' ), $attributes['street_address'] );
         $this->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
-        $this->add( 'text', 'ward',            ts( 'Ward'           )        );
-        $this->add( 'text', 'precinct',        ts( 'Precinct'       )        );
+        
+        //build ward and precinct custom fields.
+        $query = '
+    SELECT  fld.id, fld.label 
+      FROM  civicrm_custom_field fld 
+INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
+     WHERE  grp.name = %1';        
+        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( 'Voter_Info', 'String' ) ) );
+        $customSearchFields = array( );
+        while ( $dao->fetch( ) ) {
+            if ( stripos( 'ward', $dao->label ) !== false  ) {
+                $customSearchFields['ward'] = 'custom_'.$dao->id;
+            }
+            if ( stripos( 'precinct', $dao->label ) !== false  ) {
+                $customSearchFields['precinct'] = 'custom_'.$dao->id;
+            }
+        }
+        require_once 'CRM/Core/BAO/CustomField.php';
+        if ( array_key_exists( 'ward', $customSearchFields ) ) {
+            $name = $customSearchFields['ward'];
+            $fieldId = substr( $name, 7 );
+            CRM_Core_BAO_CustomField::addQuickFormElement( $this, $name, $fieldId, false, false );
+        }
+        if ( array_key_exists( 'precinct', $customSearchFields ) ) {
+            $name = $customSearchFields['precinct'];
+            $fieldId = substr( $name, 7 );
+            CRM_Core_BAO_CustomField::addQuickFormElement( $this, $name, $fieldId, false, false );
+        }
+        $this->assign( 'customSearchFields',  $customSearchFields );
         
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
         $isRequired = false;
@@ -350,7 +377,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $this->fixFormValues( );
         
         $this->addGroupsParams( );
-        
+
         //pass voter search operation.
         $this->_formValues['campaign_search_voter_for'] = $this->_operation;
         
