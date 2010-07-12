@@ -27,8 +27,9 @@
 <p>{ts}Select the corresponding contribution type for contributions made using this page (e.g. donation, capital campaign, etc.).
 Contribution types (and associated accounting codes) are included when contributions are exported, so it can helpful to set up
 specific types for accounting purposes. You can add or modify contribution available types from Administer &gt; CiviContribute &gt; Contribution Types.{/ts}</p>
-<p>{ts}NOTE: If you are using this contribution page for membership signup and renewals - then the contribution type associated with the
-membership selected by the end-user will be assigned rather than the contribution type selected here.{/ts}</p>
+<p>{ts}NOTE: If you are using this contribution page for membership signup and renewals, the contribution type configured in the
+membership type settings will be used when recording the membership payment. The contribution type selected here will only be used
+if you are also collecting additional contributions (as configured on the Membership Settings page).{/ts}</p>
 {/htxt}
 
 {htxt id="id-intro_msg"}
