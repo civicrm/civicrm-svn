@@ -74,7 +74,7 @@
                 {/if}
 
 		{if $currentCount eq $surveyFieldCount}
-		    &nbsp;&nbsp;&nbsp;<a id='saveVoter' href="#" title={ts}Save{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}save{/ts}</a>
+		    &nbsp;&nbsp;&nbsp;<a id='saveVoter' href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>
  		{/if}
 		</td> 
 		{assign var=currentCount value=$currentCount+1}     

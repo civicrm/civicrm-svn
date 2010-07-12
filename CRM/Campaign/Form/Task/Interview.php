@@ -79,9 +79,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         parent::preProcess( );
         
         //get the survey id from user submitted values.
-        $this->_surveyId = CRM_Utils_Array::value( 'survey_id',$this->get( 'formValues' ) );
-        
-        $this->_surveyId = 1;
+        $this->_surveyId = CRM_Utils_Array::value( 'campaign_survey_id', $this->get( 'formValues' ) );
         if ( !$this->_surveyId ) {
             CRM_Core_Error::statusBounce( ts( "Could not find Survey Id.") );
         }
@@ -105,24 +103,34 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                'module'       => 'CiviCampaign' );
         $this->_ufGroupId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );
         
-        //retrieve the contact details.
-        require_once 'CRM/Campaign/BAO/Survey.php';
-        $voterDetails = CRM_Campaign_BAO_Survey::voterDetails( $this->_contactIds, $returnProperties );
-        
+        //validate all voters for required activity.
         //get the survey activities for given voters.
+        require_once 'CRM/Campaign/BAO/Survey.php';
         $this->_surveyActivityIds = CRM_Campaign_BAO_Survey::voterActivityDetails( $this->_surveyId, 
-                                                                                   $this->_contactIds );
+                                                                                   $this->_contactIds,
+                                                                                   $this->_interviewerId );
+        $activityIds = array( );
+        foreach ( $this->_contactIds as $key => $voterId ) {
+            $actVals    = CRM_Utils_Array::value( $voterId, $this->_surveyActivityIds );
+            $activityId = CRM_Utils_Array::value( 'activity_id', $actVals );
+            if ( !$activityId ) {
+                unset( $this->_contactIds[$key] );
+            } else {
+                $activityIds["activity_id_{$voterId}"] = $activityId;
+            }
+        }
+        if ( empty( $this->_contactIds ) ) {
+            CRM_Core_Error::statusBounce( ts( 'Could not find valid activities for selected voters.') );
+        }
+        
+        //retrieve the contact details.
+        $voterDetails = CRM_Campaign_BAO_Survey::voterDetails( $this->_contactIds, $returnProperties );
         
         $this->assign( 'voterIds',       $this->_contactIds );
         $this->assign( 'voterDetails',   $voterDetails );
         $this->assign( 'readOnlyFields', $readOnlyFields );
         $this->assign( 'interviewerId',  $this->_interviewerId );
         $this->assign( 'campaignId',     $this->_campaignId );
-        
-        $activityIds = array( );
-        foreach ( $this->_surveyActivityIds as $voterId => $actId ) {
-            $activityIds["activity_id_{$voterId}"] = $actId;
-        }
         $this->assign( 'surveyActivityIds', json_encode( $activityIds ) );
     }
     
@@ -245,7 +253,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             $values['campaign_id']      = $this->_campaignId;
             $values['interviewer_id']   = $this->_interviewerId;
             $values['activity_type_id'] = $this->_surveyTypeId;
-            $values['activity_id']      = CRM_Utils_Array::value( $voterId, $this->_surveyActivityIds );
+            $values['activity_id']      = CRM_Utils_Array::value( 'activity_id', $this->_surveyActivityIds[$voterId] );
             self::registerInterview( $values );
         }
         
@@ -285,13 +293,21 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         require_once 'CRM/Core/BAO/CustomValueTable.php';
         CRM_Core_BAO_CustomValueTable::store( $customParams, 'civicrm_activity', $activityId );
         
-        //update status of activity record to completed.
-        CRM_Core_DAO::setFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'status_id', $statusId );
+        //update activity record.
+        require_once 'CRM/Activity/DAO/Activity.php';
+        $activity = new CRM_Activity_DAO_Activity( );
+        $activity->id = $activityId;
         
-        //set the result.
+        $activity->selectAdd( );
+        $activity->selectAdd( 'activity_date_time, status_id, result' ); 
+        $activity->find( true );
+        $activity->activity_date_time = date( 'Ymdhis' );
+        $activity->status_id = $statusId;
         if ( $result = CRM_Utils_Array::value( 'result', $params ) ) {
-            CRM_Core_DAO::setFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'result', $result );
+            $activity->result = $result;
         }
+        $activity->save( );
+        $activity->free( );
         
         return $activityId; 
     }

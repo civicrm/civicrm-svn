@@ -332,25 +332,40 @@ Group By  contact.id";
      * @return $activityDetails array of survey activity.
      * @static
      */
-    static function voterActivityDetails( $surveyId, $voterIds ) 
+    static function voterActivityDetails( $surveyId, $voterIds, $interviewerId = null ) 
     {
         $activityDetails = array( );
         if ( !$surveyId || 
              !is_array( $voterIds ) || empty( $voterIds ) ) {
             return $activityDetails;
         }
+
+        if ( !$interviewerId ) {
+            $session = CRM_Core_Session::singleton( );
+            $interviewerId = $session->get('userID');
+        }
+        
         $targetContactIds = ' ( ' . implode( ',', $voterIds ) . ' ) ';
         
         $query = " 
-    SELECT  activity.id, civicrm_activity_target.target_contact_id as voter_id
+    SELECT  activity.id, activity.status_id, 
+            activityTarget.target_contact_id as voter_id,
+            activityAssignment.assignee_contact_id as interviewer_id
       FROM  civicrm_activity activity
-INNER JOIN  civicrm_activity_target ON ( civicrm_activity_target.activity_id = activity.id )
+INNER JOIN  civicrm_activity_target activityTarget ON ( activityTarget.activity_id = activity.id )
+INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignment.activity_id = activity.id )
      WHERE  activity.source_record_id = %1
-       AND  civicrm_activity_target.target_contact_id IN {$targetContactIds}";
+       AND  ( activity.is_deleted IS NULL OR activity.is_deleted = 0 )
+       AND  activityAssignment.assignee_contact_id = %2
+       AND  activityTarget.target_contact_id IN {$targetContactIds}";
         
-        $activity = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $surveyId, 'Integer' ) ) );
+        $activity = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $surveyId, 'Integer' ),
+                                                               2 => array( $interviewerId, 'Integer' ) ) );
         while ( $activity->fetch( ) ) {
-            $activityDetails[$activity->voter_id] = $activity->id;
+            $activityDetails[$activity->voter_id] = array( 'voter_id'       => $activity->voter_id,
+                                                           'status_id'      => $activity->status_id,
+                                                           'activity_id'    => $activity->id,
+                                                           'interviewer_id' => $activity->interviewer_id );
         }
         
         return $activityDetails;
