@@ -153,23 +153,45 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
         require_once 'CRM/Activity/BAO/Activity.php';
         require_once 'CRM/Core/PseudoConstant.php';
 
-        $this->_surveyId   = CRM_Utils_Array::value( 'survey_id', $params);
-        $duplicateContacts = array( );
+        $this->_surveyId = CRM_Utils_Array::value( 'survey_id', $params);
+        $includeContacts = array( );
 
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $surveyActType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
-
-        // duplicate contacts: contact with survey activity status is Held
-        $query = "SELECT DISTINCT(target.target_contact_id) as contact_id FROM civicrm_activity_target target INNER JOIN civicrm_activity source ON( target.activity_id = source.id ) WHERE source.status_id IN (". implode( ',',  array_keys($activityStatus) ) .") AND (source.is_deleted = 0 OR source.is_deleted IS NULL) AND source.activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND source.source_record_id = %1  AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
-        $findDuplicate = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer') ) );
+        $surveyDetails  = $this->_surveyDetails;
         
-        while( $findDuplicate->fetch() ) {
-            $duplicateContacts[$findDuplicate->contact_id] = $findDuplicate->contact_id; 
+        $includeGroups  = array( );
+        if ( $surveyDetails->campaign_id ) {
+            require_once 'CRM/Campaign/BAO/Campaign.php';
+            $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups( $surveyDetails->campaign_id );
+            foreach( $campaignGroups as $id => $group ) {
+                if ( $group['entity_table'] == 'civicrm_group' ) {
+                    $includeGroups[ ] = $group['entity_id'];
+                }
+            }
         }
 
-        $surveyDetails = $this->_surveyDetails;
-        $maxVoters     = $surveyDetails->max_number_of_contacts;
+        // duplicate contacts: contact with survey activity status is Held
+        $query = "SELECT DISTINCT(c.id) as contact_id FROM civicrm_contact c ";
+        if ( !empty($includeGroups) ) {
+           $query .= "LEFT JOIN civicrm_group_contact gc ON c.id = gc.contact_id";
+        }
 
+       $query .= " WHERE 
+                   c.id NOT IN ( SELECT DISTINCT(target.target_contact_id) FROM civicrm_activity_target target INNER JOIN civicrm_activity source ON( target.activity_id = source.id ) WHERE source.status_id IN (". implode( ',',  array_keys($activityStatus) ) .") AND (source.is_deleted = 0 OR source.is_deleted IS NULL) AND source.activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND source.source_record_id = %1  AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ) AND
+                   c.id IN (". implode(',', $this->_contactIds) .")";
+       
+       if ( !empty($includeGroups) ) {
+           $query .= " AND ( gc.group_id IN (". implode(',', $includeGroups) .") AND gc.status IN ('Added') )";
+       }
+
+       $findContacts = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer') ) );
+        
+        while( $findContacts->fetch() ) {
+            $includeContacts[$findContacts->contact_id] = $findContacts->contact_id; 
+        }
+
+        $maxVoters   = $surveyDetails->max_number_of_contacts;
         $countVoters = 0;
         $statusHeld  = CRM_Utils_Array::value( 'Scheduled', array_flip($activityStatus) );
         
@@ -177,10 +199,10 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
             if ($maxVoters && ($maxVoters <= ($this->_numVoters + $countVoters) ) ) {
                 break;
             }
-            if ( in_array($cid ,$duplicateContacts) ) {
+            if ( !in_array($cid ,$includeContacts) ) {
                 continue;
             }
-            
+
             $countVoters++;
             $activityParams = array( 'source_contact_id'   => $this->_interviewerId,
                                      'assignee_contact_id' => array( $this->_interviewerId ),
