@@ -31,7 +31,11 @@
 {* Wrap in crm-container div so crm styles are used.*}
 {* Replace div id with this logic if you want CMS account create and CMS edit to use CMS theme styles: id="{if $mode eq 4}crm-container{else}crm-profile-block{/if}" *}
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
-
+    {if ($action eq 1 and $mode eq 4 ) or ($action eq 2) or ($action eq 8192)}
+    <div class="crm-submit-buttons"> 
+         {if $isDuplicate}<span class="crm-button">{$form._qf_Edit_upload_duplicate.html}</span>{/if}
+    </div>
+    {/if}
     {if $mode eq 1 || $activeComponent neq "CiviCRM"}
         {include file="CRM/Form/body.tpl"}
     {/if}
