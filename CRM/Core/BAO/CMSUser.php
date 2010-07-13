@@ -547,7 +547,7 @@ SELECT username, email
         $values['password2']    = $params['cms_confirm_pass'];
         $values['email']        = trim($params[$mail]);
         $values['gid']          = $acl->get_group_id( '', $userType);
-        $values['sendEmail']    = 1; 
+        $values['sendEmail']    = 0; 
         
         $useractivation = $userParams->get( 'useractivation' );
         if ( $useractivation == 1 ) { 
