@@ -119,7 +119,7 @@
         {if !$contributionMode}
             <tr class="crm-contribution-form-block-receive_date">
                 <td class="label">{$form.receive_date.label}</td>
-                <td{$valueStyle}>{if $hideCalender neq true}{include file="CRM/common/jcalendar.tpl" elementName=receive_date}{else}{$receive_date|truncate:10:''|crmDate}{/if}<br />
+                <td{$valueStyle}>{if $hideCalender neq true}{include file="CRM/common/jcalendar.tpl" elementName=receive_date}{else}{$receive_date|crmDate}{/if}<br />
                     <span class="description">{ts}The date this contribution was received.{/ts}</span>
                 </td>
             </tr>

@@ -502,8 +502,6 @@ WHERE  contribution_id = {$this->_id}
         
         if ( $this->_id ) {
             $this->_contactID = $defaults['contact_id'];
-        } else {
-            list( $defaults['receive_date'] ) = CRM_Utils_Date::setDateDefaults( );
         }
 
         require_once 'CRM/Utils/Money.php';
@@ -575,11 +573,17 @@ WHERE  contribution_id = {$this->_id}
         $dates = array( 'receive_date', 'receipt_date', 'cancel_date', 'thankyou_date' );
         foreach( $dates as $key ) {
             if ( CRM_Utils_Array::value( $key, $defaults ) ) {
-                list( $defaults[$key] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( $key, $defaults ) );
+                list( $defaults[$key],
+                      $defaults[$key.'_time'] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( $key, $defaults ), 'activityDateTime' );
             }
         }
 
-        $this->assign( 'receive_date', CRM_Utils_Date::processDate( $defaults['receive_date'] ) );
+        if ( !CRM_Utils_Array::value( 'receive_date', $defaults ) ) {
+            list( $defaults['receive_date'],
+                  $defaults['receive_date_time'] ) = CRM_Utils_Date::setDateDefaults( null, 'activityDateTime' );
+        }
+
+        $this->assign( 'receive_date', CRM_Utils_Date::processDate( $defaults['receive_date'], $params['receive_date_time'] ) );
         $this->assign( 'currency', CRM_Utils_Array::value( 'currency', $defaults ) );
         $this->assign( 'totalAmount', CRM_Utils_Array::value( 'total_amount', $defaults ) );
 
@@ -801,7 +805,7 @@ WHERE  contribution_id = {$this->_id}
                                 'onChange' => "return showHideByValue('contribution_status_id','3','cancelInfo','table-row','select',false);"));
 
         // add various dates
-        $this->addDate( 'receive_date', ts('Received'), false, array( 'formatType' => 'activityDate') );
+        $this->addDateTime( 'receive_date', ts('Received'), false, array( 'formatType' => 'activityDateTime') );
                 
         if ( $this->_online ) {
             $this->assign("hideCalender" , true );
@@ -811,8 +815,8 @@ WHERE  contribution_id = {$this->_id}
             $element->freeze( );
         }
         
-        $this->addDate( 'receipt_date', ts('Receipt Date'), false, array( 'formatType' => 'activityDate') );
-        $this->addDate( 'cancel_date', ts('Cancelled Date'), false, array( 'formatType' => 'activityDate') );
+        $this->addDateTime( 'receipt_date', ts('Receipt Date'), false, array( 'formatType' => 'activityDateTime') );
+        $this->addDateTime( 'cancel_date', ts('Cancelled Date'), false, array( 'formatType' => 'activityDateTime') );
         
         $this->add('textarea', 'cancel_reason', ts('Cancellation Reason'), $attributes['cancel_reason'] );
         
@@ -1155,12 +1159,12 @@ WHERE  contribution_id = {$this->_id}
             if ( CRM_Utils_Array::value( 'is_email_receipt', $this->_params ) ) {
                 $this->_params['receipt_date'] = $now;
             } else {
-                $this->_params['receipt_date'] = CRM_Utils_Date::processDate( $this->_params['receipt_date'], null, true );
+                $this->_params['receipt_date'] = CRM_Utils_Date::processDate( $this->_params['receipt_date'], $params['receipt_date_time'] , true );
             }
             
             $this->set( 'params', $this->_params );
             $this->assign( 'trxn_id', $result['trxn_id'] );
-            $this->assign( 'receive_date', CRM_Utils_Date::processDate( $this->_params['receive_date']) );
+            $this->assign( 'receive_date', CRM_Utils_Date::processDate( $this->_params['receive_date'], $this->_params['receive_date_time']) );
             
             // result has all the stuff we need
             // lets archive it to a financial transaction
@@ -1301,7 +1305,7 @@ WHERE  contribution_id = {$this->_id}
                             'cancel_date' );
             
             foreach ( $dates as $d ) {
-                $params[$d] = CRM_Utils_Date::processDate( $formValues[$d], null, true );
+                $params[$d] = CRM_Utils_Date::processDate( $formValues[$d], $formValues[$d.'_time'], true );
             }
 
             if ( CRM_Utils_Array::value( 'is_email_receipt', $formValues ) ) {

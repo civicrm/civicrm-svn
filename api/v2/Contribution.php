@@ -368,7 +368,7 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
         case 'cancel_date':
         case 'receipt_date':
         case 'thankyou_date':
-            if (!CRM_Utils_Rule::date($value)) {
+            if (!CRM_Utils_Rule::dateTime($value)) {
                 return civicrm_create_error("$key not a valid date: $value");
             }
             break;
