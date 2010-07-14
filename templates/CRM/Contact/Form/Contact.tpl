@@ -137,6 +137,7 @@ cj('a#expand').click( function( ){
         cj(this).attr('href', '#expand');
     }
     cj(this).html(message);
+    return false;
 });
 
 function showHideSignature( blockId ) {
