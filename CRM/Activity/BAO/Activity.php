@@ -167,6 +167,7 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
                 $activity    = new CRM_Activity_DAO_Activity( );
                 $activity->copyValues( $params );
                 $result = $activity->delete( );
+                CRM_Utils_Hook::post( 'delete', 'Activity', $activity->id, $activity );
             }
         } else {
             $activity    = new CRM_Activity_DAO_Activity( );
