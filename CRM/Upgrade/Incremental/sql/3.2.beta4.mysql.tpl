@@ -20,7 +20,12 @@ DELETE civicrm_uf_field FROM civicrm_uf_field
 INNER JOIN civicrm_uf_group 
 WHERE civicrm_uf_group.id = civicrm_uf_field.uf_group_id 
 AND civicrm_uf_group.name = 'summary_overlay';
-    
+
+DELETE civicrm_uf_join FROM civicrm_uf_join 
+INNER JOIN civicrm_uf_group 
+WHERE civicrm_uf_group.id = civicrm_uf_join.uf_group_id 
+AND civicrm_uf_group.name = 'summary_overlay';
+
 DELETE FROM civicrm_uf_group WHERE name = 'summary_overlay';
 
 INSERT INTO civicrm_uf_group
