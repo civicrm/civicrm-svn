@@ -81,14 +81,18 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
     function upgrade_3_2_beta4($rev)
     {
         $upgrade = new CRM_Upgrade_Form;
-
+        
         $config =& CRM_Core_Config::singleton();
         $seedLocale = $config->lcMessages;
 
+        //handle missing civicrm_uf_field.help_pre
+        $hasLocalizedPreHelpCols = false;
+        
         // CRM-6451: for multilingual sites we need to find the optimal
         // locale to use as the final civicrm_membership_status.name column
         $domain = new CRM_Core_DAO_Domain;
         $domain->find(true);
+        $locales = array( );
         if ($domain->locales) {
             $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
             // optimal: an English locale
@@ -104,8 +108,23 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
 
             $upgrade->assign('seedLocale', $seedLocale);
             $upgrade->assign('locales',    $locales);
+            
+            $localizedColNames = array( );
+            foreach ( $locales as $loc ) {
+                $localizedName = "help_pre_{$loc}";
+                $localizedColNames[$localizedName] = $localizedName;
+            }
+            $columns = CRM_Core_DAO::executeQuery( 'SHOW COLUMNS FROM civicrm_uf_field' );
+            while ( $columns->fetch( ) ) {
+                if ( strpos( $columns->Field, 'help_pre' ) !== false &&
+                     in_array( $columns->Field, $localizedColNames ) ) {
+                    $hasLocalizedPreHelpCols = true;
+                    break;
+                }
+            }
         }
-
+        $upgrade->assign( 'hasLocalizedPreHelpCols',  $hasLocalizedPreHelpCols);
+        
         $upgrade->processSQL($rev);
 
         // now civicrm_membership_status.name has possibly localised strings, so fix them
