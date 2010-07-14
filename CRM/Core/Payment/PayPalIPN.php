@@ -84,8 +84,6 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
 
         $now = date( 'YmdHis' );
 
-        CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false, $this->_userID );
-
         // fix dates that already exist
         $dates = array( 'create', 'start', 'end', 'cancel', 'modified' );
         foreach ( $dates as $date ) {
