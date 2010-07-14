@@ -91,21 +91,24 @@ class CRM_Member_PseudoConstant extends CRM_Core_PseudoConstant {
         if ( self::$membershipStatus === null ) {
             self::$membershipStatus = array( );
         }
-        $index = $cond ? $cond : 'No Condition';
         
-        if ( ! CRM_Utils_Array::value( $index, self::$membershipStatus ) ) {
-            CRM_Core_PseudoConstant::populate( self::$membershipStatus[$index],
+        $cacheKey = $column;
+        if ( $cond ) $cacheKey .= "_{$cond}"; 
+        if ( !isset( self::$membershipStatus[$cacheKey] ) ) {
+            CRM_Core_PseudoConstant::populate( self::$membershipStatus[$cacheKey],
                                                'CRM_Member_DAO_MembershipStatus',
                                                false, $column, 'is_active', $cond, 'weight');
+            
         }
-        if ($id) {
-            if (array_key_exists($id, self::$membershipStatus[$index])) {
-                return self::$membershipStatus[$index][$id];
-            } else {
-                return null;
-            }
+        
+        $value = null;
+        if ( $id ) {
+            $value = CRM_Utils_Array::value( $id, self::$membershipStatus[$cacheKey] );
+        } else {
+            $value = self::$membershipStatus[$cacheKey];
         }
-        return self::$membershipStatus[$index];
+        
+        return $value;
     }
     
 }

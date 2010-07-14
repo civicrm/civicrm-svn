@@ -1432,7 +1432,8 @@ LEFT JOIN  civicrm_contribution on (civicrm_contribution.contact_id = civicrm_co
             if ( $componentName == 'CiviMember' ) {
                 require_once 'CRM/Member/PseudoConstant.php';
                 $updatedStatusName = CRM_Utils_Array::value( $updatedStatusId,
-                                                             CRM_Member_PseudoConstant::membershipStatus( ) );
+                                                             CRM_Member_PseudoConstant::membershipStatus( null, 
+                                                                                                          null, 'label' ) );
                 if (  $updatedStatusName == 'Cancelled' ) {
                     $statusMsg .= ts( "<br />Membership for %1 has been Cancelled.", array( 1 => $userDisplayName ) ); 
                 } else if (  $updatedStatusName == 'Expired') {

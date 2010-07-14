@@ -78,7 +78,7 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
                                 'status_id' =>
                                 array('title'         => ts('Membership Status'),
                                       'operatorType'  => CRM_Report_Form::OP_MULTISELECT,
-                                      'options'       => CRM_Member_PseudoConstant::membershipStatus(),
+                                      'options'       => CRM_Member_PseudoConstant::membershipStatus( null, null, 'label' ),
                                       ),
                                 ),  
                          'group_bys'        =>
