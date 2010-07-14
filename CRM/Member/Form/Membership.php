@@ -192,10 +192,16 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             if ( $this->_onlinePendingContributionId ) {
                 $defaults['record_contribution'] = $this->_onlinePendingContributionId;
             } else {
-                $defaults['record_contribution'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipPayment', 
-                                                                                $defaults['id'], 
-                                                                                'contribution_id', 
-                                                                                'membership_id' );
+                $contributionId = CRM_Core_DAO::singleValueQuery( "
+  SELECT contribution_id 
+    FROM civicrm_membership_payment 
+   WHERE membership_id = $this->_id 
+ORDER BY contribution_id 
+    DESC limit 1" );
+               
+                if ( $contributionId ) {
+                    $defaults['record_contribution'] = $contributionId;
+                }
             }
         }
         
