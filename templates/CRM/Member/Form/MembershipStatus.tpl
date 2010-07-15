@@ -42,7 +42,7 @@
       {/if}
 
       <tr class="crm-membership-status-form-block-label">
-	<td class="label">{$form.label.label}</td>
+	<td class="label">{$form.label.label}{if $action == 2}{include file='CRM/Core/I18n/Dialog.tpl' table='civicrm_membership_status' field='label' id=$id}{/if}</td>
         <td class="html-adjust">{$form.label.html}<br />
            <span class="description">{ts}Display name for this Membership status (e.g. New, Current, Grace, Expired...).{/ts}</span>
         </td>

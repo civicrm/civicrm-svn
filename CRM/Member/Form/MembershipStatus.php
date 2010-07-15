@@ -81,6 +81,7 @@ class CRM_Member_Form_MembershipStatus extends CRM_Member_Form
             $name = $this->add('text', 'name', ts('Name'), 
                                CRM_Core_DAO::getAttribute( 'CRM_Member_DAO_MembershipStatus', 'name' ) ); 
             $name->freeze( );
+            $this->assign( 'id', $this->_id );
         }
         $this->add('text', 'label', ts('Label'), 
                    CRM_Core_DAO::getAttribute( 'CRM_Member_DAO_MembershipStatus', 'label' ), true );
