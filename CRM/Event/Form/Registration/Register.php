@@ -890,12 +890,12 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     $params['eventId']    = $this->_values['event']['id'];
            
                     $params['cancelURL' ] = CRM_Utils_System::url( 'civicrm/event/register',
-                                                                   '_qf_Register_display=1',
+                                                                   "_qf_Register_display=1&qfKey={$this->controller->_key}",
                                                                    true, null, false );
                     if ( CRM_Utils_Array::value( 'additional_participants', $params, false ) ) {
                         $urlArgs = "_qf_Participant_1_display=1&rfp=1&qfKey={$this->controller->_key}";
                     } else {
-                        $urlArgs = '_qf_Confirm_display=1&rfp=1';
+                        $urlArgs = "_qf_Confirm_display=1&rfp=1&qfKey={$this->controller->_key}";
                     } 
                     $params['returnURL' ] = CRM_Utils_System::url('civicrm/event/register',
                                                                   $urlArgs,
