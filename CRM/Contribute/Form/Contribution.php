@@ -578,7 +578,7 @@ WHERE  contribution_id = {$this->_id}
             }
         }
 
-        if ( !CRM_Utils_Array::value( 'receive_date', $defaults ) ) {
+        if ( !$this->_id && !CRM_Utils_Array::value( 'receive_date', $defaults ) ) {
             list( $defaults['receive_date'],
                   $defaults['receive_date_time'] ) = CRM_Utils_Date::setDateDefaults( null, 'activityDateTime' );
         }
