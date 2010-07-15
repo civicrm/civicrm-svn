@@ -149,7 +149,18 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                         $message .= '<br />' . ts("You are using custom template for contact subtypes: {$subTypeTemplates}.") . '<br />' . ts("You need to move these subtype templates to the SubType directory in CRM/Contact/Form/Edit/ and CRM/Contact/Page/View respectively.");
                     }
                 }
+            } else if ( $latestVer == '3.2.beta4' ) {
+                $statuses = array( 'New', 'Current', 'Grace', 'Expired', 'Pending', 'Cancelled', 'Deceased' );
+                $sql = "
+SELECT  count( id ) as statusCount 
+  FROM  civicrm_membership_status 
+ WHERE  name IN ( '" . implode( "' , '", $statuses )  .  "' ) ";
+                $count = CRM_Core_DAO::singleValueQuery( $sql );
+                if ( $count < count( $statuses ) ) {
+                    $message .= '<br />' . ts( "One or more Membership Status Rules was disabled during the upgrade because it did not match a recognized status name. if custom membership status rules were added to this site - review the disabled statuses and re-enable any that are still needed (Administer > CiviMember > Membership Status Rules)." );
+                }
             }
+            
             $template->assign( 'currentVersion',  $currentVer);
             $template->assign( 'newVersion',      $latestVer );
             $template->assign( 'upgradeTitle',   ts('Upgrade CiviCRM from v %1 To v %2', 

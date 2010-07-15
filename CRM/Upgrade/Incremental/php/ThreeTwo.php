@@ -104,7 +104,7 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
             }
 
             // if no English and no $config->lcMessages: use the first available
-            if (!$seedLocale) $seedLocale = $locales[0];
+            if ( !$seedLocale ) $seedLocale = $locales[0];
 
             $upgrade->assign('seedLocale', $seedLocale);
             $upgrade->assign('locales',    $locales);
@@ -148,7 +148,7 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
                 'is_current_member'           => '1',
                 'is_admin'                    => '0',
                 'is_default'                  => '1',
-                'is_reserved'                 => '1',
+                'is_reserved'                 => '0',
             ),
             array(
                 'name'                        => 'Grace',
@@ -169,7 +169,7 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
                 'is_current_member'           => '0',
                 'is_admin'                    => '0',
                 'is_default'                  => '0',
-                'is_reserved'                 => '1',
+                'is_reserved'                 => '0',
             ),
             array(
                 'name'                        => 'Pending',
@@ -187,7 +187,7 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
                 'is_current_member'           => '0',
                 'is_admin'                    => '0',
                 'is_default'                  => '0',
-                'is_reserved'                 => '1',
+                'is_reserved'                 => '0',
             ),
             array(
                 'name'                        => 'Deceased',
@@ -199,32 +199,52 @@ class CRM_Upgrade_Incremental_php_ThreeTwo {
         );
 
         require_once 'CRM/Member/DAO/MembershipStatus.php';
+        $statusIds = array( );
+        $insertedNewRecord = false;
         foreach ($statuses as $status) {
             $dao = new CRM_Member_DAO_MembershipStatus;
 
             // try to find an existing English status
             $dao->name = $status['name'];
 
-            // if not found, look for translated status name
-            if (!$dao->find(true)) {
-                $dao->name = $i18n->translate($status['name']);
-            }
-
+//             // if not found, look for translated status name
+//             if (!$dao->find(true)) {
+//                 $found     = false;
+//                 $dao->name = $i18n->translate($status['name']);
+//             }
+            
             // if found, update name and is_reserved
             if ($dao->find(true)) {
                 $dao->name        = $status['name'];
                 $dao->is_reserved = $status['is_reserved'];
-            // if not found, prepare a new row for insertion
+                if ( $status['is_reserved'] ) {
+                    $dao->is_active = 1; 
+                }
+                // if not found, prepare a new row for insertion
             } else {
+                $insertedNewRecord = true;
                 foreach ($status as $property => $value) {
                     $dao->$property = $value;
                 }
                 $dao->weight = CRM_Utils_Weight::getDefaultWeight('CRM_Member_DAO_MembershipStatus');
             }
-
+            
             // add label (translated name) and save (UPDATE or INSERT)
             $dao->label = $i18n->translate($status['name']);
             $dao->save();
+            
+            $statusIds[$dao->id] = $dao->id;
         }
+        
+        //disable all status those are customs.
+        if ( $insertedNewRecord  ) {
+            $sql = '
+UPDATE  civicrm_membership_status 
+   SET  is_active = 0 
+ WHERE  id NOT IN ( ' . implode( ',', $statusIds ) . ' )';
+            CRM_Core_DAO::executeQuery( $sql );
+        }
+    
     }
-}
+    
+  }
