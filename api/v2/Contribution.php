@@ -397,6 +397,12 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
             require_once 'CRM/Core/OptionGroup.php';
             $values['payment_instrument_id'] = CRM_Core_OptionGroup::getValue( 'payment_instrument', $value );
             break;
+        case 'soft_credit_to':
+            if ( !CRM_Utils_Rule::integer( $value ) ) {
+                return civicrm_create_error("$key not a valid Id: $value");  
+            } 
+            $values['soft_credit_to'] = $value;
+            break;
         default:
             break;
         }
