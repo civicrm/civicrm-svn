@@ -261,7 +261,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
                 }      
             }
             $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->contact_id;
-            $row['contact_type'] = CRM_Contact_BAO_Contact_Utils::getImage( 'Individual', false,  $result->contact_id );
+            $row['contact_type'] = CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_type, false,  $result->contact_id );
             
             $rows[] = $row;
         }
@@ -296,7 +296,7 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
             $contactDetails = array(
                                     array( 'name'      => ts('Contact Name'), 
                                            'sort'      => 'sort_name', 
-                                           'direction' => CRM_Utils_Sort::DONTCARE ),
+                                           'direction' => CRM_Utils_Sort::ASCENDING ),
                                     array( 'name' => ts('Street Number'),),
                                     array( 'name' => ts('Street Address') ),
                                     array( 'name' => ts('City') ),  
