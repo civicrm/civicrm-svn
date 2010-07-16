@@ -35,7 +35,8 @@
     	      	   	    <li><a class="crm-event-info" href="{crmURL p='civicrm/event/info' q="reset=1&id=`$id`"}">{ts}Event Info{/ts}</a></li>
     		            {if $isOnlineRegistration}
     		                <li><a class="crm-event-test" href="{crmURL p='civicrm/event/register' q="reset=1&action=preview&id=`$id`"}">{ts}Online Registration (Test-drive){/ts}</a></li>
-    		                <li><a class="crm-event-live" href="{crmURL p='civicrm/event/register' q="reset=1&id=`$id`"}">{ts}Online Registration (Live){/ts}</a></li>
+    		                <li><a class="crm-event-liveinfo" href="{crmURL p='civicrm/event/info' q="reset=1&id=`$id`" fe='true'}" target="_blank">{ts}Live Event Information Page{/ts}</a></li>
+                               <li><a class="crm-event-liveregister" href="{crmURL p='civicrm/event/register' q="reset=1&id=`$id`" fe='true'}" target="_blank">{ts}Live Event Registration Form{/ts}</a></li>
     		            {/if}
     		        </ul>
     	           </div>
