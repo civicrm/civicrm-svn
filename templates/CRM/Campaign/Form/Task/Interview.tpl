@@ -30,6 +30,7 @@
 </div>
 
 {if $voterDetails}
+
 <table id="voterRecords" class="display">
     <thead>
        <tr class="columnheader">
@@ -51,13 +52,13 @@
 
     <tbody>
 	{foreach from=$voterIds item=voterId}
-	<tr class="{cycle values="odd-row,even-row"}">
+	<tr id="row_{$voterId}" class="{cycle values="odd-row,even-row"}">
 	    {foreach from=$readOnlyFields item=fTitle key=fName}
-	       <td>{$voterDetails.$voterId.$fName}</td>
+	       <td class='name'>{$voterDetails.$voterId.$fName}</td>
 	    {/foreach}
 
 	    {if $hasResultField}
-	      	<td>{$form.field.$voterId.result.html}</td>
+	      	<td class='result'>{$form.field.$voterId.result.html}</td>
 	    {/if}
 	    
 	    {* here build the survey fields *}
@@ -74,7 +75,7 @@
                 {/if}
 
 		{if $currentCount eq $surveyFieldCount}
-		    &nbsp;&nbsp;&nbsp;<a id='saveVoter' href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>
+		    &nbsp;&nbsp;&nbsp;<a class="saveVoter" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>&nbsp; <span id='restmsg_{$voterId}' class="ok" style="display:none">{ts}Vote Saved.{/ts}</span>
  		{/if}
 		</td> 
 		{assign var=currentCount value=$currentCount+1}     
@@ -91,7 +92,7 @@
 
 {literal}
 <script type="text/javascript">
-	
+    var updateVote = "{/literal}{ts}Update Vote{/ts}{literal}";	
     cj( function( ) {
 
 	//load jQuery data table.
@@ -124,8 +125,9 @@
 	//post data to create interview.
 	cj.post( dataUrl, data, function( interview ) {
 	       if ( interview.status == 'success' ) {
-	       	  //data is saved for given row.
-		   
+	       	 cj("#row_"+voterId+' td.name').attr('class', 'name disabled' );
+		 cj("#restmsg_"+voterId).fadeIn("slow").fadeOut("slow");
+		 cj("#row_"+voterId+' a.saveVoter').html(updateVote);
 	       }		 
 	}, "json" );
     }
