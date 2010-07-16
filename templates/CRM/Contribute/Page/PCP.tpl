@@ -56,9 +56,9 @@
 	<tbody>
 	{foreach from=$rows item=row}
 	<tr class="{cycle values="odd-row,even-row"} {$row.class}">
-		<td><a href="{crmURL p='civicrm/contribute/pcp/info' q="reset=1&id=`$row.id` "}" title="{ts}View Personal Campaign Page{/ts}">{$row.title}</a></td>
+        	<td><a href="{crmURL p='civicrm/contribute/pcp/info' q="reset=1&id=`$row.id` " fe='true'}" title="{ts}View Personal Campaign Page{/ts}" target="_blank">{$row.title}</a></td>
 		<td><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=`$row.supporter_id`"}" title="{ts}View contact record{/ts}">{$row.supporter}</a></td>
-		<td><a href="{crmURL p='civicrm/contribute/transact' q="id=`$row.contribution_page_id`&reset=1"}" title="{ts}View contribution page{/ts}">{$row.contribution_page_title}</td>
+		<td><a href="{crmURL p='civicrm/contribute/transact' q="id=`$row.contribution_page_id`&reset=1" fe='true'}" title="{ts}View contribution page{/ts}" target="_blank">{$row.contribution_page_title}</td>
 		<td>{$row.start_date|crmDate:"%b %d, %Y %l:%M %P"}</td>
 		<td>{if $row.end_date}{$row.end_date|crmDate:"%b %d, %Y %l:%M %P"}{else}({ts}ongoing{/ts}){/if}</td>
 		<td>{$row.status_id}</td>
