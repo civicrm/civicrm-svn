@@ -130,7 +130,7 @@ class civicrm_handler_field_event_link extends views_handler_field {
     // CUSTOM NODE LINKAGE, GOOD FOR LINKING TO OTHER VIEWS WITH AN ARGUMENT
       case 'custom':
            if ($custom_link !== NULL && $custom_link !== '' && $data !== NULL && $data !== '') {
-           return l($data, $custom_link . "{$values->{$this->aliases['id']}}" );
+           return l($data, $custom_link . "{$values->{$this->aliases['id']}}", array('html' => TRUE));
            }
     
     // IF THE OTHER CASES AREN'T IN PLAY, THEN JUST PRINT THE DATA
