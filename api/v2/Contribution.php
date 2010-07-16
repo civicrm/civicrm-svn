@@ -61,10 +61,12 @@ function &civicrm_contribution_add( &$params ) {
     if ( ! is_array( $params ) ) {
         return civicrm_create_error( ts( 'Input parameters is not an array' ) );
     }
-
-    $error = _civicrm_contribute_check_params( $params );
-    if ( civicrm_error( $error ) ) {
-        return $error;
+    
+    if ( !CRM_Utils_Array::value( 'id', $params ) ) {
+        $error = _civicrm_contribute_check_params( $params );
+        if ( civicrm_error( $error ) ) {
+            return $error;
+        }
     }
 
     $values  = array( );
