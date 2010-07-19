@@ -2106,7 +2106,7 @@ div.grippie {
 #crm-container div#printer-friendly {
     float: right;
     position:relative;
-    margin: 0px 0px 0px 0px;
+    margin:-2em 0.5em 0 0;
 }
 
 #crm-container .order-icon {
