@@ -627,6 +627,11 @@ WHERE cc.contact_id = %1
             return $casesList;
         }
         
+        if ( !$userID ) {
+            $session = CRM_Core_Session::singleton( );
+            $userID = $session->get( 'userID' );
+        }
+        
         //validate access for all cases.
         if ( $allCases && !CRM_Core_Permission::check( 'access all cases and activities' ) ) {
             $allCases = false;
@@ -877,7 +882,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
     static function getCaseActivity( $caseID, &$params, $contactID, $context = null )
     {
         $values = array( );
-                
+                        
         // CRM-5081 - formatting the dates to omit seconds.
         // Note the 00 in the date format string is needed otherwise later on it thinks scheduled ones are overdue.
         $select = "SELECT count(ca.id) as ismultiple, ca.id as id, 
@@ -1041,7 +1046,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             $allowView   = self::checkPermission( $dao->id, 'view',   $dao->activity_type_id, $contactID );
             $allowEdit   = self::checkPermission( $dao->id, 'edit',   $dao->activity_type_id, $contactID );
             $allowDelete = self::checkPermission( $dao->id, 'delete', $dao->activity_type_id, $contactID );
-                        
+            
             //do not have sufficient permission 
             //to access given case activity record.  
             if ( !$allowView && !$allowEdit && !$allowDelete ) {
