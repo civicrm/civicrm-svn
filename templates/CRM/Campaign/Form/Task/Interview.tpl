@@ -57,12 +57,19 @@
 	       <td class='name'>{$voterDetails.$voterId.$fName}</td>
 	    {/foreach}
 
+	    {* do check for profile fields *}
+	    {assign var=surveyFieldCount value=$surveyFields|@count}
+	    
 	    {if $hasResultField}
-	      	<td class='result'>{$form.field.$voterId.result.html}</td>
+	      	<td class='result'>{$form.field.$voterId.result.html}
+		{if !$surveyFieldCount}{*no profile fields*}
+		   &nbsp;&nbsp;&nbsp;<a class="saveVoter" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>&nbsp; <span id='restmsg_{$voterId}' class="ok" style="display:none">{ts}Vote Saved.{/ts}</span> 
+		{/if}
+		</td>
 	    {/if}
 	    
 	    {* here build the survey fields *}
-	    {assign var=surveyFieldCount value=$surveyFields|@count}
+	    {if $surveyFieldCount}
 	    {assign var=currentCount value='1'}
 	    {foreach from=$surveyFields item=field key=fieldName}
                 {assign var=n value=$field.name}
@@ -80,6 +87,7 @@
 		</td> 
 		{assign var=currentCount value=$currentCount+1}     
             {/foreach}
+	    {/if}
 	    
 	</tr>
 	{/foreach}
