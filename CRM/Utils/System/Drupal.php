@@ -49,23 +49,15 @@ class CRM_Utils_System_Drupal {
      * @access public
      */
     function setTitle( $title, $pageTitle = null ) {
-        if ( $pageTitle ) {
-			$markupTitle = $pageTitle;
-        	$cleanTitle = strip_tags($pageTitle);
-            $title = $cleanTitle;
+        if ( !$pageTitle ) {
+            $pageTitle = $title;
         }
         
         //set drupal title 
-        drupal_set_title( $title );
+        drupal_set_title( $pageTitle );
     	
         $template =& CRM_Core_Smarty::singleton( );
-		if ($pageTitle != '') {
-        	$template->assign( 'pageTitle', $pageTitle );
-		} else {
-        	$template->assign( 'pageTitle', $title );			
-		}
-		
-
+        $template->assign( 'pageTitle', $pageTitle );
 	}
 
     /**
