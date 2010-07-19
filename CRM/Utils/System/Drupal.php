@@ -54,7 +54,7 @@ class CRM_Utils_System_Drupal {
         }
         
         //set drupal title 
-        drupal_set_title( filter_xss( $pageTitle ) );
+        drupal_set_title( $pageTitle );
 	}
 
     /**
