@@ -170,8 +170,10 @@
     		<th>{ts}Case Role{/ts}</th>
     		<th>{ts}Name{/ts}</th>
     	   	<th>{ts}Phone{/ts}</th>
-                <th>{ts}Email{/ts}</th>
-    		<th>{ts}Actions{/ts}</th>
+            <th>{ts}Email{/ts}</th>
+            {if $relId neq 'client' and $hasAccessToAllCases}
+    		    <th>{ts}Actions{/ts}</th>
+    		{/if}
     	</tr>
 		{assign var=rowNumber value = 1}
         {foreach from=$caseRelationships item=row key=relId}
@@ -194,9 +196,7 @@
             	<div class="icon delete-icon" title="remove contact from case role"></div>
             	</a>
             	
-            	</td>
-          {else}
-           <td></td>
+            </td>
           {/if}
         </tr>
 		{assign var=rowNumber value = `$rowNumber+1`}
