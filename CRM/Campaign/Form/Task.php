@@ -114,7 +114,7 @@ class CRM_Campaign_Form_Task extends CRM_Core_Form
         
         if ( ! empty( $ids ) ) {
             $this->_componentClause =
-                'civicrm_contact.id IN ( ' .
+                'contact_a.id IN ( ' .
                 implode( ',', $ids ) . ' ) ';
             
             $this->assign( 'totalSelectedVoters', count( $ids ) );
