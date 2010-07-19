@@ -54,10 +54,7 @@ class CRM_Utils_System_Drupal {
         }
         
         //set drupal title 
-        drupal_set_title( $pageTitle );
-    	
-        $template =& CRM_Core_Smarty::singleton( );
-        $template->assign( 'pageTitle', $pageTitle );
+        drupal_set_title( filter_xss( $pageTitle ) );
 	}
 
     /**
