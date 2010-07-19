@@ -491,12 +491,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $form->addGroup( $elements, 'amount', ts('Event Fee(s)'), '<br />' );      
             $form->add( 'hidden', 'priceSetId', $form->_priceSetId );
             $form->assign( 'priceSet', $form->_priceSet );
-            $visibility = CRM_Core_PseudoConstant::visibility( 'name' );
-            $visibilityId =  array_search( 'public', $visibility );
             $className = CRM_Utils_System::getClassName( $form );
             require_once 'CRM/Price/BAO/Field.php';                       
             foreach ( $form->_values['fee']['fields'] as $field ) {
-                if ( $visibilityId == CRM_Utils_Array::value( 'visibility_id', $field ) || $className == 'CRM_Event_Form_Participant' ) {
+                if (  CRM_Utils_Array::value( 'visibility', $field ) == 'public' || $className == 'CRM_Event_Form_Participant' ) {
                     $fieldId = $field['id'];
                      $elementName = 'price_' . $fieldId;
                     if ( $button == 'skip' ) {

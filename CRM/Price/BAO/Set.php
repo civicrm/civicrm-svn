@@ -426,6 +426,8 @@ WHERE     ct.id = cp.contribution_type_id AND
 
         $dao =& CRM_Core_DAO::executeQuery( $sql, $params );
 
+        $visibility = CRM_Core_PseudoConstant::visibility( 'name' );
+        
         while ( $dao->fetch() ) {
             $fieldID = $dao->id;
 
@@ -436,7 +438,11 @@ WHERE     ct.id = cp.contribution_type_id AND
                 if ( $field == 'id' || is_null( $dao->$field) ) {
                     continue;
                 }
-                $setTree[$setID]['fields'][$fieldID][$field] = $dao->$field;
+                
+                if ( $field == 'visibility_id' ) {
+                    $setTree[$setID]['fields'][$fieldID]['visibility'] = $visibility[$dao->$field];
+                }
+                $setTree[$setID]['fields'][$fieldID][$field] = $dao->$field;                    
             }
             $setTree[$setID]['fields'][$fieldID]['options'] = CRM_Price_BAO_Field::getOptions( $fieldID, false );
         }
