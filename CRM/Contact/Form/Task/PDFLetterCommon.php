@@ -226,7 +226,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
             CRM_Activity_BAO_Activity::createActivityTarget( $activityTargetParams );
         }
         require_once 'CRM/Utils/PDF/Utils.php';
-        CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", 'portrait' ); 
+        CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", 'portrait', 'letter' ); 
 
         // we need to call the hook manually here since we redirect and never 
         // go back to CRM/Core/Form.php
