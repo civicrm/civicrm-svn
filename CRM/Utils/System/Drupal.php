@@ -55,9 +55,8 @@ class CRM_Utils_System_Drupal {
             $title = $cleanTitle;
         }
         
-        // remove default title set by drupal, this needs to be ' ', since some themes don't set
-        // breadcrumb if title is empty or if you remove title
-        drupal_set_title( ' ' );
+        //set drupal title 
+        drupal_set_title( $title );
     	
         $template =& CRM_Core_Smarty::singleton( );
 		if ($pageTitle != '') {
