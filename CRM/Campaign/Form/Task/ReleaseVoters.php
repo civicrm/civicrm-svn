@@ -117,7 +117,7 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
      */
     function buildQuickForm( ) {
        
-        $this->addDefaultButtons( ts('Release Voters') );
+        $this->addDefaultButtons( ts('Release Voters'), 'done' );
     }
 
     function addRules( )

@@ -98,7 +98,7 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
        
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
         $this->add('select', 'survey_id', ts('Survey'), array( '' => ts('- select -') ) + $surveys, true );
-        $this->addDefaultButtons( ts('Add Voter Reservation') );
+        $this->addDefaultButtons( ts('Add Voter Reservation'), 'done' );
     }
 
     function addRules( )
