@@ -101,7 +101,7 @@ class CRM_Core_Block {
                                                                          'info'       => ts('CiviCRM Recent Items'),
                                                                          'subject'    => ts('Recent Items'),
                                                                          'active'     => true,
-                                                                         'cache'      => BLOCK_CACHE_GLOBAL,
+                                                                         'cache'      => BLOCK_NO_CACHE,
                                                                          'visibility' => 1,
                                                                          'weight'     => -99,
                                                                          'status'     => 1,
