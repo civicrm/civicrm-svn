@@ -1163,7 +1163,8 @@ FROM civicrm_relationship cr
 LEFT JOIN civicrm_relationship_type crt ON crt.id = cr.relationship_type_id 
 LEFT JOIN civicrm_contact cc ON cc.id = cr.contact_id_b 
 LEFT JOIN civicrm_email   ce ON ce.contact_id = cc.id
-WHERE cr.case_id =  %1 AND ce.is_primary= 1';
+WHERE cr.case_id =  %1 AND ce.is_primary= 1
+GROUP BY cc.id';
         
         $params = array( 1 => array( $caseID, 'Integer' ) );
         $dao    =& CRM_Core_DAO::executeQuery( $query, $params );
