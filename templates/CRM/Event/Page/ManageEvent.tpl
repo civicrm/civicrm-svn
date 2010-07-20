@@ -155,12 +155,3 @@
    {/if}
 {/if}
 </div>
-{literal}
-<script type="text/javascript">
-cj('.btn-slide').click( function( ) {
-  {/literal}
-cj('.panel').css('display', 'none');
-  {literal}
-});
-</script>
-{/literal}

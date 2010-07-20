@@ -28,6 +28,7 @@
  cj({/literal}{if $isSnippet }document{else}'#crm-container'{/if}{literal})
  	.bind('click', function(event) {
     if (cj(event.target).is('.btn-slide')) {
+      cj('.panel').css('display', 'none');
       cj(event.target).children().show();
     } else {
     	cj('.btn-slide .panel').hide();	
