@@ -1083,7 +1083,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             if ( isset($dao->assignee) ) {
                 if( $dao->ismultiple == 1 ) {
                     if ( $dao->reporter_id != $dao->assignee_id ) {
-                        $values[$dao->id]['reporter'] .= ($hasViewContact)? ' / '."<a href='{$contactViewUrl}{$dao->assignee_id}'>$dao->assignee</a>":$dao->assignee;
+                        $values[$dao->id]['reporter'] .= ($hasViewContact)? ' / '."<a href='{$contactViewUrl}{$dao->assignee_id}'>$dao->assignee</a>": ' / '.$dao->assignee;
                     }
                     $values[$dao->id]['assignee']  = $dao->assignee;
                 } else {
