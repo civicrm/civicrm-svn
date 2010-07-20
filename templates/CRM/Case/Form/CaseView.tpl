@@ -831,7 +831,8 @@ function addTags() {
 cj(document).ready(function(){
 
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/activity' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
-    dataUrl = dataUrl + '&cid={/literal}{if $userID}{$userID}{else}{$contactID}{/if}{literal}';
+    dataUrl = dataUrl + '&cid={/literal}{$contactID}{literal}';
+    dataUrl = dataUrl + '&userID={/literal}{$userID}{literal}'    
 
     {/literal}{if $fulltext}{literal}
     	dataUrl = dataUrl + '&context={/literal}{$fulltext}{literal}';

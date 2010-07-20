@@ -879,7 +879,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
      *
      * @static
      */
-    static function getCaseActivity( $caseID, &$params, $contactID, $context = null )
+    static function getCaseActivity( $caseID, &$params, $contactID, $context = null, $userID = null )
     {
         $values = array( );
                         
@@ -1042,10 +1042,16 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
         $hasViewContact = CRM_Core_Permission::giveMeAllACLs( );
         $clientIds = self::retrieveContactIdsByCaseId( $caseID );
         
+        if ( !$userID ) {
+            $session = CRM_Core_Session::singleton( );
+            $userID  = $session->get( 'userID' );
+        }
+        
         while ( $dao->fetch( ) ) {
-            $allowView   = self::checkPermission( $dao->id, 'view',   $dao->activity_type_id, $contactID );
-            $allowEdit   = self::checkPermission( $dao->id, 'edit',   $dao->activity_type_id, $contactID );
-            $allowDelete = self::checkPermission( $dao->id, 'delete', $dao->activity_type_id, $contactID );
+            
+            $allowView   = self::checkPermission( $dao->id, 'view',   $dao->activity_type_id, $userID );
+            $allowEdit   = self::checkPermission( $dao->id, 'edit',   $dao->activity_type_id, $userID );
+            $allowDelete = self::checkPermission( $dao->id, 'delete', $dao->activity_type_id, $userID );
             
             //do not have sufficient permission 
             //to access given case activity record.  
