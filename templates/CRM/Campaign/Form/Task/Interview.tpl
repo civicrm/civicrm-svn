@@ -94,6 +94,7 @@
     </tbody>
 </table>
 
+<div class="spacer"></div>
 <div class="crm-submit-buttons">{$form.buttons.html}</div>
 </fieldset>
 {/if}
@@ -105,7 +106,6 @@
 
 	//load jQuery data table.
         cj('#voterRecords').dataTable( {
-		"bJQueryUI": true,
 		"sPaginationType": "full_numbers"
         });        
 
