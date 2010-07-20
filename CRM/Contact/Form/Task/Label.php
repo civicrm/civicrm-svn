@@ -437,11 +437,11 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                 if ($count > 2) {			// too many to list 
                     break;
                 }
-                $family = implode(" & ", $first_names) . " " . $last_name;		// collapse the tree to summarize
+                $family = trim (implode(" & ", $first_names) . " " . $last_name );		// collapse the tree to summarize
                 if ($count) {
-                    $rows[$data['ID']]['display_name'] .=  "\n" . $family;
+                    $rows[$data['ID']]['addressee_display'] .=  "\n" . trim( $family );
                 } else {
-                    $rows[$data['ID']]['display_name']  = $family;		// build display_name string
+                    $rows[$data['ID']]['addressee_display']  = trim( $family ); 		// build display_name string
                 }
                 $count++;
             }
