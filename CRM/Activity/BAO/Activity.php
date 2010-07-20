@@ -1984,19 +1984,6 @@ AND cl.modified_id  = c.id
         $activity->id = $activityId;
         if ( !$activity->find( true ) ) return $allow;
         
-        require_once 'CRM/Core/Permission.php';
-        require_once 'CRM/Contact/BAO/Contact/Permission.php';
-        
-        //first check the component permission.
-        $sql = "
-    SELECT  component_id
-      FROM  civicrm_option_value val
-INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.name = %1 )
-     WHERE  val.value = %2";    
-        $params = array( 1 => array( 'activity_type', 'String' ),
-                         2 => array( $activity->activity_type_id, 'Integer' ) );
-        $componentId = CRM_Core_DAO::singleValueQuery( $sql, $params );
-        
         //component related permissions.
         $compPermissions = array( 'CiviCase'       => array( 'administer CiviCase',
                                                              'access my cases and activities',
@@ -2009,6 +1996,44 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
                                   'CiviReport'     => array( 'access CiviReport'     ),
                                   'CiviContribute' => array( 'access CiviContribute' ),
                                   );
+        
+        //return early when it is case activity.
+        require_once 'CRM/Case/BAO/Case.php';
+        $isCaseActivity = CRM_Case_BAO_Case::isCaseActivity( $activityId );
+        //check for civicase related permission.
+        if ( $isCaseActivity ) { 
+            $allow = false;
+            foreach ( $compPermissions['CiviCase'] as $per  ) {
+                if ( CRM_Core_Permission::check( $per ) ) {
+                    $allow = true;
+                    break;
+                }
+            }
+            
+            //check for case specific permissions.
+            if ( $allow ) {
+                $oper = 'view';
+                if ( $action == CRM_Core_Action::UPDATE ) $oper = 'edit'; 
+                $allow = CRM_Case_BAO_Case::checkPermission( $activityId, 
+                                                             $oper,
+                                                             $activity->activity_type_id );
+            }
+            
+            return $allow;
+        }
+        
+        require_once 'CRM/Core/Permission.php';
+        require_once 'CRM/Contact/BAO/Contact/Permission.php';
+        
+        //first check the component permission.
+        $sql = "
+    SELECT  component_id
+      FROM  civicrm_option_value val
+INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.name = %1 )
+     WHERE  val.value = %2";    
+        $params = array( 1 => array( 'activity_type', 'String' ),
+                         2 => array( $activity->activity_type_id, 'Integer' ) );
+        $componentId = CRM_Core_DAO::singleValueQuery( $sql, $params );
         
         if ( $componentId ) {
             require_once 'CRM/Core/Component.php';
@@ -2035,29 +2060,6 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         //check for source contact.
         if ( !$componentId || $allow ) {
             $allow = CRM_Contact_BAO_Contact_Permission::allow( $activity->source_contact_id, $permission );
-        }
-        
-        require_once 'CRM/Case/BAO/Case.php';
-        $isCaseActivity = CRM_Case_BAO_Case::isCaseActivity( $activityId );
-        
-        //check for civicase related permission.
-        if ( $isCaseActivity ) { 
-            $allow = false;
-            foreach ( $compPermissions['CiviCase'] as $per  ) {
-                if ( CRM_Core_Permission::check( $per ) ) {
-                    $allow = true;
-                    break;
-                }
-            }
-            
-            //check for case specific permissions.
-            if ( $allow ) {
-                $oper = 'view';
-                if ( $action == CRM_Core_Action::UPDATE ) $oper = 'edit'; 
-                $allow = CRM_Case_BAO_Case::checkPermission( $activityId, 
-                                                             $oper,
-                                                             $activity->activity_type_id );
-            }
         }
         
         //check for target and assignee contacts.
