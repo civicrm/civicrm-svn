@@ -29,7 +29,7 @@
    {foreach from=$tabHeader key=tabName item=tabValue}
       <li id="tab_{$tabName}" class="crm-tab-button ui-corner-all {if !$tabValue.valid}disabled{/if}">
       {if $tabValue.link and $tabValue.active}
-         <a href="{$tabValue.link}" title="{$tabValue.title}{if !$tabValue.valid} ({ts}disabled{/ts}){/if}">{$tabValue.title}</a>
+         <a href="{$tabValue.link}" title="{$tabValue.title}{if !$tabValue.valid} ({ts}disabled{/ts}){/if}"><span> </span> {$tabValue.title}</a>
       {else}
          <span {if !$tabValue.valid}title="{ts}disabled{/ts}"{/if}>{$tabValue.title}</span>
       {/if}
@@ -42,12 +42,14 @@
 
 <script type="text/javascript"> 
    var selectedTab = 'EventInfo';
-   {if $selectedTab}selectedTab = "{$selectedTab}";{/if}    
+   {if $selectedTab}selectedTab = "{$selectedTab}";{/if}
+   var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';    
 {literal}
     cj( function() {
         var tabIndex = cj('#tab_' + selectedTab).prevAll().length
         cj("#mainTabContainer").tabs( {
             selected: tabIndex,
+            spinner: spinnerImage,
             select: function(event, ui) {
                 // we need to change the action of parent form, so that form submits to correct page
                 var url = cj.data(ui.tab, 'load.tabs');
