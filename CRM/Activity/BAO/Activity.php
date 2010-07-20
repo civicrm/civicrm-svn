@@ -2041,7 +2041,7 @@ INNER JOIN  civicrm_option_group grp ON ( grp.id = val.option_group_id AND grp.n
         $isCaseActivity = CRM_Case_BAO_Case::isCaseActivity( $activityId );
         
         //check for civicase related permission.
-        if ( $allow && $isCaseActivity ) { 
+        if ( $isCaseActivity ) { 
             $allow = false;
             foreach ( $compPermissions['CiviCase'] as $per  ) {
                 if ( CRM_Core_Permission::check( $per ) ) {
