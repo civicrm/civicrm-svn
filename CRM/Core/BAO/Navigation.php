@@ -434,8 +434,8 @@ ORDER BY parent_id, weight";
         }
         
         //we need to check core view/edit or supported acls.
+        require_once 'CRM/Core/Permission.php';
         if ( in_array( $menuName, array( 'Search...', 'Contacts' ) ) ) {
-            require_once 'CRM/Core/Permission.php';
             if (!CRM_Core_Permission::giveMeAllACLs( ) ) {
                 $skipMenuItems[] = $navID;
                 return false;
@@ -443,13 +443,6 @@ ORDER BY parent_id, weight";
         }
         
         $config = CRM_Core_Config::singleton( );
-        if ( $menuName == 'Other' && 
-             !in_array( 'CiviCase', $config->enableComponents ) &&
-             !in_array( 'CiviGrant', $config->enableComponents ) &&
-             !in_array( 'CiviCampaign', $config->enableComponents ) ) {
-            $skipMenuItems[] = $navID;
-            return false;
-        }
         
         $makeLink = false;
         if ( isset( $url ) && $url) {
@@ -471,19 +464,12 @@ ORDER BY parent_id, weight";
             
             $hasPermission = false;    
             foreach ( $permissions as $key ) {
+                $key = trim( $key ); 
                 $showItem = true;
-                //hack to determine if it's a component related permission
                 
-                $componentName = null;
-                if ( strpos( $key, 'access' ) === 0 ) { 
-                    $componentName = trim( substr( $key, 6 ) );
-                    if ( !in_array( $componentName, $allComponents ) ) {
-                        $componentName = null;
-                    }
-                }
-                if ( !$componentName && in_array( $menuName, array( 'Cases', 'CiviCase' ) ) ) { 
-                    $componentName = 'CiviCase';
-                }
+                //get the component name from permission.
+                $componentName = CRM_Core_Permission::getComponentName( $key );
+                
                 if ( $componentName ) {
                     if ( !in_array( $componentName, $config->enableComponents ) || 
                          !CRM_Core_Permission::check( $key ) ) {
@@ -779,5 +765,5 @@ ORDER BY parent_id, weight";
               $dao->copyValues( $newParams );
               $dao->save( );
           }
-      } 
+      }
 }
