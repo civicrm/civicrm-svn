@@ -1,5 +1,5 @@
 -- CRM-6458
-SELECT @domainID  := id FROM civicrm_domain where name = 'Default Domain Name';
+SELECT @domainID := min(id) FROM civicrm_domain;
 SELECT @reportlastID := id FROM civicrm_navigation where name = 'Reports';
 SELECT @option_group_id_report := max(id) from civicrm_option_group where name = 'report_template';
 
