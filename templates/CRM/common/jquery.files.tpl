@@ -75,8 +75,6 @@ packages/jquery/css/dashboard.css
 
 packages/jquery/plugins/jquery.FormNavigate.js
 
-js/rest.js
-
 js/jquery/jquery.crmaccordions.js
 js/jquery/jquery.crmasmselect.js
 js/jquery/jquery.crmtooltip.js
