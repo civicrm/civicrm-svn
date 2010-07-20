@@ -371,9 +371,14 @@
  function fixTabAbort(event,ui){
 //	jQuery(ui.tab).data("cache.tabs",(jQuery(ui.panel).html() == "") ? false : true);
     }
+
+//explicitly stop spinner
+function stopSpinner( ) {
+ cj('li.crm-tab-button').each(function(){ cj(this).find('span').text(' ');})	 
+}
  cj( function() {
      var tabIndex = cj('#tab_' + selectedTab).prevAll().length;
-     cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage,cache: true, select: fixTabAbort});
+     cj("#mainTabContainer").tabs({ selected: tabIndex, spinner: spinnerImage,cache: true, select: fixTabAbort, load: stopSpinner});
      cj(".crm-tab-button").addClass("ui-corner-bottom");     
  });
  {/literal}

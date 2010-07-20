@@ -45,6 +45,11 @@
    {if $selectedTab}selectedTab = "{$selectedTab}";{/if}
    var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';    
 {literal}
+//explicitly stop spinner
+function stopSpinner( ) {
+ cj('li.crm-tab-button').each(function(){ cj(this).find('span').text(' ');})	 
+}
+
     cj( function() {
         var tabIndex = cj('#tab_' + selectedTab).prevAll().length
         cj("#mainTabContainer").tabs( {
@@ -65,7 +70,8 @@
                     }
                 }
                 return true;
-            }
+            },
+	    load: stopSpinner
         });        
     });
 {/literal}
