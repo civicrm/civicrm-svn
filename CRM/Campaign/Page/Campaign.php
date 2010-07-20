@@ -93,11 +93,6 @@ class CRM_Campaign_Page_Campaign extends CRM_Core_Page
 
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaign( true );
 
-        $manageCampaign = false;
-        if ( CRM_Core_Permission::check( 'administer Campaign' ) ) {
-            $manageCampaign = true;
-        }
-
         if ( !empty($campaigns) ) {
             require_once 'CRM/Campaign/BAO/Campaign.php';
             $campaignType = CRM_Core_PseudoConstant::campaignType();
@@ -112,28 +107,24 @@ class CRM_Campaign_Page_Campaign extends CRM_Core_Page
                 $campaigns[$cmpid]['campaign_type_id'] = $campaignType[$campaign['campaign_type_id']];
                 $campaigns[$cmpid]['status_id'] = $campaignStatus[$campaign['status_id']];
                 
-                if ( $manageCampaign ) {
-                    $action = array_sum(array_keys($this->actionLinks()));
-                    if ( $campaign['is_active'] ) {
-                        $action -= CRM_Core_Action::ENABLE;
-                    } else {
-                        $action -= CRM_Core_Action::DISABLE;
-                    }
-                    $campaigns[$cmpid]['action'] = CRM_Core_Action::formLink(self::actionLinks(), $action, 
-                                                                             array('id' => $campaign['id']));
+                $action = array_sum(array_keys($this->actionLinks()));
+                if ( $campaign['is_active'] ) {
+                    $action -= CRM_Core_Action::ENABLE;
+                } else {
+                    $action -= CRM_Core_Action::DISABLE;
                 }
+                $campaigns[$cmpid]['action'] = CRM_Core_Action::formLink(self::actionLinks(), $action, 
+                                                                         array('id' => $campaign['id']));
             }
         }
         
         $this->assign('campaigns', $campaigns);
 
-        if ( $manageCampaign ) {
-            $addCampaignUrl = CRM_Utils_System::url( "civicrm/campaign/add",
-                                                     'reset=1&action=add' );
-            $this->assign('addCampaign', $addCampaignUrl);
-        }
+        $addCampaignUrl = CRM_Utils_System::url( "civicrm/campaign/add",
+                                                 'reset=1&action=add' );
+        $this->assign('addCampaign', $addCampaignUrl);
 
-        $this->assign('manageCampaign', $manageCampaign);
+        $this->assign('manageCampaign', true);
         
     }
     

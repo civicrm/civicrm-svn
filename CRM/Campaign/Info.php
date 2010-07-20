@@ -59,8 +59,12 @@ class CRM_Campaign_Info extends CRM_Core_Component_Info
     // docs inherited from interface
     public function getPermissions()
     {
-        return array( 'access CiviCampaign',
-                      'administer CiviCampaign');
+        return array( 'administer CiviCampaign',
+                      'manage Campaign',
+                      'reserve Campaign Contacts',
+                      'release Campaign Contacts',
+                      'interview Campaign Contacts'
+                      );
     }
 
 

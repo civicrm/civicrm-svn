@@ -87,11 +87,6 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page
 
         $surveys = CRM_Campaign_BAO_Survey::getSurvey( true );
         
-        $manageCampaign = false;
-        if ( CRM_Core_Permission::check( 'administer Campaign' ) ) {
-            $manageCampaign = true;
-        }
-
         if ( !empty($surveys) ) {
             require_once 'CRM/Campaign/BAO/Campaign.php';
 
@@ -103,27 +98,23 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page
                 $surveys[$sid]['activity_type_id'] = $surveyType[$survey['activity_type_id']];
                 $surveys[$sid]['release_frequency'] = $survey['release_frequency_interval'].' '.$survey['release_frequency_unit'];
                 
-                if ( $manageCampaign ) {
-                    $action = array_sum( array_keys($this->actionLinks()) );
-                    if ( $survey['is_active'] ) {
-                        $action -= CRM_Core_Action::ENABLE;
-                    } else {
-                        $action -= CRM_Core_Action::DISABLE;
-                    }
-                    
-                    $surveys[$sid]['action'] = CRM_Core_Action::formLink( $this->actionLinks(), $action, array('id' => $sid) );
+                $action = array_sum( array_keys($this->actionLinks()) );
+                if ( $survey['is_active'] ) {
+                    $action -= CRM_Core_Action::ENABLE;
+                } else {
+                    $action -= CRM_Core_Action::DISABLE;
                 }
+                
+                $surveys[$sid]['action'] = CRM_Core_Action::formLink( $this->actionLinks(), $action, array('id' => $sid) );
             }
         }
         $this->assign('surveys', $surveys);
 
-        if ( $manageCampaign ) {
-            $addSurveyUrl = CRM_Utils_System::url( "civicrm/survey/add",
-                                                   'reset=1&action=add' );
-            $this->assign('addSurvey', $addSurveyUrl);
-        }
-
-        $this->assign('manageCampaign', $manageCampaign);
+        $addSurveyUrl = CRM_Utils_System::url( "civicrm/survey/add",
+                                               'reset=1&action=add' );
+        $this->assign('addSurvey', $addSurveyUrl);
+        
+        $this->assign('manageCampaign', true);
         
     }
 
