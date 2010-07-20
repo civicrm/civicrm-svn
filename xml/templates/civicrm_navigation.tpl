@@ -196,7 +196,7 @@ VALUES
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES     
-    ( @domainID, NULL, '{ts escape="sql"}Other{/ts}', 'Other', 'access CiviGrant,administer CiviCase,access my cases and activities,access all cases and activities', 'OR', NULL, '1', NULL, 9 );
+    ( @domainID, NULL, '{ts escape="sql"}Other{/ts}', 'Other', 'access CiviGrant,administer CiviCase,access my cases and activities,access all cases and activities, administer CiviCampaign, manage campaign, reserve campaign contacts, release campaign contacts, interview campaign contacts', 'OR', NULL, '1', NULL, 9 );
     
 SET @otherlastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
@@ -229,7 +229,7 @@ VALUES
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
-    ( @domainID, NULL, '{ts escape="sql"}Campaigns{/ts}', 'Campaigns', 'interview Campaign Contacts,release Campaign Contacts,reserve Campaign Contacts,manage Campaign,administer CiviCampaign', 'OR', @otherlastID, '1', NULL, 3 );
+    ( @domainID, NULL, '{ts escape="sql"}Campaigns{/ts}', 'Campaigns', 'interview campaign contacts, release campaign contacts, reserve campaign contacts, manage campaign, administer CiviCampaign', 'OR', @otherlastID, '1', NULL, 3 );
 
 SET @campaignlastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
@@ -239,9 +239,9 @@ VALUES
     ( @domainID, 'civicrm/campaign/add&reset=1',        '{ts escape="sql"}New Campaign{/ts}', 'New Campaign', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 2 ), 
     ( @domainID, 'civicrm/survey/browse&reset=1',        '{ts escape="sql"}Survey Dashboard{/ts}', 'Survey Dashboard', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 3 ), 
     ( @domainID, 'civicrm/survey/add&reset=1',        '{ts escape="sql"}New Survey{/ts}', 'New Survey', 'administer CiviCampaign', '', @campaignlastID, '1', NULL, 4 ),
-    ( @domainID, 'civicrm/survey/search&reset=1&op=reserve', '{ts escape="sql"}Reserve Voters{/ts}', 'Reserve Voters', 'administer CiviCampaign,manage Campaign,reserve Campaign Contacts', 'OR', @campaignlastID, '1', NULL, 5 ),
-    ( @domainID, 'civicrm/survey/search&reset=1&op=release', '{ts escape="sql"}Release Voters{/ts}', 'Release Voters', 'administer CiviCampaign,manage Campaign,release Campaign Contacts', 'OR', @campaignlastID, '1', NULL, 6 ),
-    ( @domainID, 'civicrm/survey/search&reset=1&op=interview', '{ts escape="sql"}Record Voters Interview{/ts}', 'Record Voters Interview', 'administer CiviCampaign,manage Campaign,interview Campaign Contacts', 'OR', @campaignlastID, '1', NULL, 7 ); 
+    ( @domainID, 'civicrm/survey/search&reset=1&op=reserve', '{ts escape="sql"}Reserve Voters{/ts}', 'Reserve Voters', 'administer CiviCampaign, manage campaign, reserve campaign contacts', 'OR', @campaignlastID, '1', NULL, 5 ),
+    ( @domainID, 'civicrm/survey/search&reset=1&op=release', '{ts escape="sql"}Release Voters{/ts}', 'Release Voters', 'administer CiviCampaign, manage campaign, release campaign contacts', 'OR', @campaignlastID, '1', NULL, 6 ),
+    ( @domainID, 'civicrm/survey/search&reset=1&op=interview', '{ts escape="sql"}Record Voters Interview{/ts}', 'Record Voters Interview', 'administer CiviCampaign, manage campaign, interview campaign contacts', 'OR', @campaignlastID, '1', NULL, 7 ); 
 
     
 INSERT INTO civicrm_navigation

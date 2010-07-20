@@ -60,10 +60,10 @@ class CRM_Campaign_Info extends CRM_Core_Component_Info
     public function getPermissions()
     {
         return array( 'administer CiviCampaign',
-                      'manage Campaign',
-                      'reserve Campaign Contacts',
-                      'release Campaign Contacts',
-                      'interview Campaign Contacts'
+                      'manage campaign',
+                      'reserve campaign contacts',
+                      'release campaign contacts',
+                      'interview campaign contacts'
                       );
     }
 
