@@ -59,6 +59,15 @@ class CRM_Campaign_Page_AJAX
             }
         }
         
+        if ( isset($_POST['field']) &&
+             CRM_Utils_Array::value( $voterId, $_POST['field']) ) {
+            foreach( $_POST['field'][$voterId] as $fieldKey => $value ) {
+                if ( !empty($value) ) {
+                    $params[$fieldKey] = $value;
+                }
+            }
+        }
+
         require_once 'CRM/Campaign/Form/Task/Interview.php';
         $activityId = CRM_Campaign_Form_Task_Interview::registerInterview( $params );
         $result = array( 'status'       => ( $activityId ) ? 'success' : 'fail',

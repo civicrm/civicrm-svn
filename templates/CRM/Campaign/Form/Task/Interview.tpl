@@ -105,7 +105,8 @@
 
 	//load jQuery data table.
         cj('#voterRecords').dataTable( {
-		"bJQueryUI": true
+		"bJQueryUI": true,
+		"sPaginationType": "full_numbers"
         });        
 
     });
@@ -115,7 +116,27 @@
     	var data = new Object;
     	var fieldName = 'field_' + voterId + '_custom_';
 	cj( '[id^="'+ fieldName +'"]' ).each( function( ) {
-	    data[cj(this).attr( 'id' )] = cj( this ).val( );
+	    if( cj(this).attr( 'type' ) == 'select-multiple' ) {
+	      var eleId = cj(this).attr('id');
+	      cj('#' + eleId +" option").each( function(i) {
+	        if ( cj(this).attr('selected') == true ) {
+		  data[eleId + '['+cj(this).val()+']'] = cj(this).val();
+		} 
+	      });
+	    } else {
+	      data[cj(this).attr( 'id' )] = cj( this ).val( );
+            }
+        });
+		
+	var multiValueFields = 'field['+ voterId +'][custom_';		
+	cj( '[id^="'+ multiValueFields +'"]' ).each( function( ) {
+	   if ( cj(this).attr( 'type' ) == 'checkbox' ) {
+	     if ( cj(this).attr('checked') == true ) {
+	       data[cj(this).attr( 'id' )] = 1;
+             } else {
+	       data[cj(this).attr( 'id' )] = '';
+	     }
+           }
         });
 	
 	var surveyActivityIds = {/literal}{$surveyActivityIds}{literal};
