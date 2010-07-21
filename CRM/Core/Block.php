@@ -84,6 +84,10 @@ class CRM_Core_Block {
             define('BLOCK_CACHE_PER_PAGE', 0x0004);
         }
 
+        if ( ! defined( 'BLOCK_NO_CACHE' ) ) {
+            define('BLOCK_NO_CACHE', -1);
+        }
+        
         if (!(self::$_properties)) {
             self::$_properties = array(
             // set status item to 0 to disable block by default (at install)
