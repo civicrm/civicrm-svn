@@ -131,8 +131,8 @@ class CRM_Event_Form_EventFees
             $fields["email-Primary"                 ] = 1;
             
             require_once "CRM/Core/BAO/UFGroup.php";
-            if ( $form->_contactID ) {
-                CRM_Core_BAO_UFGroup::setProfileDefaults( $form->_contactID, $fields, $form->_defaults );
+            if ( $form->_contactId ) {
+                CRM_Core_BAO_UFGroup::setProfileDefaults( $form->_contactId, $fields, $form->_defaults );
             }
 
             // use primary email address if billing email address is empty

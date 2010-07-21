@@ -258,7 +258,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         $hasAdditionalParticipants = false;
         if ( $this->_allowConfirmation ) { 
             require_once 'CRM/Event/Form/EventFees.php';
-            $this->_contactID  = $contactID;
+            $this->_contactId  = $contactID;
             $this->_discountId = $discountId;
             $forcePayLater   = CRM_Utils_Array::value( 'is_pay_later', $this->_defaults,  false );
             $this->_defaults = array_merge( $this->_defaults, CRM_Event_Form_EventFees::setDefaultValues( $this ) );
