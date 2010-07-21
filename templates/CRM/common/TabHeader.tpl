@@ -58,8 +58,15 @@ function stopSpinner( ) {
             select: function(event, ui) {
                 // we need to change the action of parent form, so that form submits to correct page
                 var url = cj.data(ui.tab, 'load.tabs');
-                var actionUrl = url.split( '?' );
-                cj(this).parents("form").attr("action", actionUrl[0] )                
+                {/literal}{if $config->userFramework eq 'Drupal'}{literal}
+                    var actionUrl = url.split( '?' );
+                    var actualUrl = actionUrl[0];
+                {/literal}{else}{literal}
+                    var actionUrl = url.split( '&' );
+                    var actualUrl = actionUrl[0] + '&' + actionUrl[1];
+                {/literal}{/if}{literal}
+
+                cj(this).parents("form").attr("action", actualUrl )                
                 
                 if ( !global_formNavigate ) {
                     var message = '{/literal}{ts escape="js"}Confirm\n\nAre you sure you want to navigate away from this tab?\n\nYou have unsaved changes.\n\nPress OK to continue, or Cancel to stay on the current tab.{/ts}{literal}';
