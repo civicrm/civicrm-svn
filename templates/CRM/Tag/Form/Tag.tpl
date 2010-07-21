@@ -70,11 +70,11 @@ function initTagTree() {
         var currentTagLabel = cj("#tagLabel_" + tagid ).text( );
         if (this.checked) {
             //civiREST ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},image);
-            crmAPI ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
+            cj().crmAPI ('entity_tag','add',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
             // add check to tab label array
             tagsArray.push( currentTagLabel );
         } else {
-            crmAPI ('entity_tag','remove',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
+            cj().crmAPI ('entity_tag','remove',{entity_table:entityTable,entity_id:entityID,tag_id:tagid},options);
             // build array of tag labels
             tagsArray = cj.map(tagsArray, function (a) { 
                  if ( cj.trim( a ) != currentTagLabel ) {
