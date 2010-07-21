@@ -2,11 +2,12 @@
 SELECT @domainID := min(id) FROM civicrm_domain;
 SELECT @reportlastID := id FROM civicrm_navigation where name = 'Reports';
 SELECT @option_group_id_report := max(id) from civicrm_option_group where name = 'report_template';
+SELECT @nav_max_weight := MAX(ROUND(weight)) from civicrm_navigation WHERE parent_id = @reportlastID;
 
 INSERT INTO 
-   `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
+   `civicrm_option_value` (`option_group_id`, {localize field='label'}`label`{/localize}, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`,{localize field='description'} `description`{/localize}, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
 VALUES
-   (@option_group_id_report, '{ts escape="sql"}Bookkeeping Transactions Report{/ts}',          'contribute/bookkeeping',         'CRM_Report_Form_Contribute_Bookkeeping',         NULL, 0, 0, 29,    '{ts escape="sql"}Shows Bookkeeping Transactions Report{/ts}', 0, 0, 1, 2, NULL);
+   (@option_group_id_report, {localize}'{ts escape="sql"}Bookkeeping Transactions Report{/ts}'{/localize}, 'contribute/bookkeeping', 'CRM_Report_Form_Contribute_Bookkeeping', NULL, 0, 0, 29, {localize}'{ts escape="sql"}Shows Bookkeeping Transactions Report{/ts}'{/localize}, 0, 0, 1, 2, NULL);
 
 INSERT INTO `civicrm_report_instance`
     ( `domain_id`, `title`, `report_id`, `description`, `permission`, `form_values`)
@@ -17,5 +18,5 @@ SET @instanceID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
-    ( @domainID, CONCAT('civicrm/report/instance/', @instanceID,'&reset=1'), '{ts escape="sql"}Bookkeeping Transactions Report{/ts}', '{literal}Bookkeeping Transactions Report{/literal}', 'access CiviContribute', '', @reportlastID, '1', NULL, 25 );
+    ( @domainID, CONCAT('civicrm/report/instance/', @instanceID,'&reset=1'), '{ts escape="sql"}Bookkeeping Transactions Report{/ts}', '{literal}Bookkeeping Transactions Report{/literal}', 'access CiviContribute', '', @reportlastID, '1', NULL, @nav_max_weight+1 );
 UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @instanceID; 
