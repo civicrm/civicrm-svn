@@ -43,7 +43,7 @@
       <td class="crm-case-subject">{$row.subject}</td>
       <td class="crm-case-type">{$row.type}</td>
       <td class="crm-case-with_contacts">{$row.with_contacts}</td>
-      <td class="crm-case-reporter>{$row.reporter}</td>
+      <td class="crm-case-reporter">{$row.reporter}</td>
       <td class="crm-case-status">{$row.status}</td>
       <td style="white-space: nowrap;">{$row.links}</td>
     </tr>
