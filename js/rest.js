@@ -27,27 +27,17 @@
 *
 */
 
-/*
-TO BE VERIFIED
-If you do not use clean urls on drupal, you have to define a variable to set the url of the server to be used for the rest
-<script type="text/javascript">
-var options {ajaxURL:"{$config->userFrameworkResourceURL}";
-</script>
-
-
-*/
-
-(function($){ $.fn.crmAPI = function( entity,action,params,options ){
+function crmAPI( entity,action,params,options ){
     var defaults = {
         success: function(result,settings){
             var successMsg = 'Saved &nbsp; <a href="#" id="closerestmsg">'+ settings.closetxt +'</a>'; 
-            $(settings.msgbox).addClass('msgok').html( successMsg ).show();
-            $("#closerestmsg").click(function(){$(settings.msgbox).fadeOut("slow");return false;});
+            cj(settings.msgbox).addClass('msgok').html( successMsg ).show();
+            cj("#closerestmsg").click(function(){cj(settings.msgbox).fadeOut("slow");return false;});
             return true;
         },
         callBack: function(result,settings){
             if (result.is_error == 1) {
-                $(settings.msgbox).addClass('msgnok').html(result.error_message);
+                cj(settings.msgbox).addClass('msgnok').html(result.error_message);
                 return false;
             }
             return settings.success(result,settings);
@@ -59,8 +49,7 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
 
     params ['fnName'] = "civicrm/"+entity+"/"+action;
     params ['json'] = 1;
-    var settings = $.extend({}, defaults, options);
-    $(settings.msgbox).removeClass('msgok').removeClass('msgnok').html("");
-    $.getJSON(settings.ajaxURL,params,function(result){return settings.callBack(result,settings);});
-}; 
-})(jQuery);
+    var settings = cj.extend({}, defaults, options);
+    cj(settings.msgbox).removeClass('msgok').removeClass('msgnok').html("");
+    cj.getJSON(settings.ajaxURL,params,function(result){return settings.callBack(result,settings);});
+}
