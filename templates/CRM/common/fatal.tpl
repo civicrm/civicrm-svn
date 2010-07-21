@@ -44,10 +44,26 @@
     <p>{$error.message}</p>
 {/if}
 {if $code}
-      <p>{ts}Error Code:{/ts} {$code}</p>
+    <div class="crm-accordion-wrapper crm-accordion_error_code-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+  {ts}Error Code{/ts}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+  {$code}
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 {/if}
 {if $mysql_code}
-      <p>{ts}Database Error Code:{/ts} {$mysql_code}</p>
+    <div class="crm-accordion-wrapper crm-accordion_mysql_error_code-accordion crm-accordion-closed">
+ <div class="crm-accordion-header">
+  <div class="icon crm-accordion-pointer"></div> 
+  {ts}Database Error Code{/ts}
+ </div><!-- /.crm-accordion-header -->
+ <div class="crm-accordion-body">
+  {$mysql_code}
+ </div><!-- /.crm-accordion-body -->
+</div><!-- /.crm-accordion-wrapper -->
 {/if}
       <p><a href="{$config->userFrameworkBaseURL}" title="{ts}Main Menu{/ts}">{ts}Return to home page.{/ts}</a></p>
 </div>
