@@ -64,7 +64,7 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     	  $(settings.msgbox).removeClass('msgok').removeClass('msgnok').html("");
     	  $.getJSON(settings.ajaxURL,params,function(result){return settings.callBack(result,settings);});
       };
-
+/*
       $.fn.crmAutocomplete = function (options) {
 	  var defaultsContact = {
 	        returnParam: ['sort_name','email'],
@@ -121,7 +121,7 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     		 });
        });
      }
-
+*/
 })(jQuery);
 
 /* Depreciated as of 3.2. kept for backward compatibility reason. */
