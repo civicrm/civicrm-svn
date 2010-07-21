@@ -1703,6 +1703,11 @@ table.campaign td,
     border-left:none;
 }
 
+.crm-configure-actions,
+.crm-event-participants,
+.crm-event-links,
+.crm-event-more { min-height:1px; }
+
 #crm-container .panel li a {
     text-decoration: none;
     padding: 4px;
