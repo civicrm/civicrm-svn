@@ -537,6 +537,10 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
             }
         }
 
+        // reset the group contact cache since smart groups might be affected due to this
+        require_once 'CRM/Contact/BAO/GroupContactCache.php';
+        CRM_Contact_BAO_GroupContactCache::remove( );
+
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
             CRM_Utils_Hook::post( 'edit', 'Activity', $activity->id, $activity );
         } else {
