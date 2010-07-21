@@ -131,8 +131,8 @@ class CRM_Event_Form_EventFees
             $fields["email-Primary"                 ] = 1;
             
             require_once "CRM/Core/BAO/UFGroup.php";
-            if ( $form->_contactID ) {
-                CRM_Core_BAO_UFGroup::setProfileDefaults( $form->_contactID, $fields, $form->_defaults );
+            if ( $form->_contactId ) {
+                CRM_Core_BAO_UFGroup::setProfileDefaults( $form->_contactId, $fields, $form->_defaults );
             }
 
             // use primary email address if billing email address is empty
@@ -524,9 +524,9 @@ SELECT  id, label, name, option_group_id
         
         // Retrieve the name and email of the contact - form will be the TO for receipt email ( only if context is not standalone)        
         if ( $form->_context != 'standalone' ) {    
-            if ( $form->_contactID ) {
+            if ( $form->_contactId ) {
                 list( $form->_contributorDisplayName, 
-                     $form->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $form->_contactID );
+                     $form->_contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $form->_contactId );
                 $form->assign( 'email', $form->_contributorEmail );
             } else {
                 //show email block for batch update for event
