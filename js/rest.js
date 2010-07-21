@@ -57,7 +57,7 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     	  msgbox: '#restmsg',
       };
 
-      $.fn.crmAPI = function(entity,action,params,options) {
+      cj.fn.crmAPI = function(entity,action,params,options) {
     	  params ['fnName'] = "civicrm/"+entity+"/"+action;
     	  params ['json'] = 1;
     	  var settings = $.extend({}, defaults, options);
@@ -65,7 +65,6 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     	  $.getJSON(settings.ajaxURL,params,function(result){return settings.callBack(result,settings);});
       };
 
-      /*
       $.fn.crmAutocomplete = function (options) {
 	  var defaultsContact = {
 	        returnParam: ['sort_name','email'],
@@ -122,7 +121,7 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     		 });
        });
      }
-     */
+
 })(jQuery);
 
 /* Depreciated as of 3.2. kept for backward compatibility reason. */
