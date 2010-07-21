@@ -771,7 +771,7 @@ div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
 }
 #crm-container .tree-default li span.clicked { padding:0px 3px 0px 20px; }
 #crm-container .tree-default li a.loading,
-#crm-container .crm-loading-element { background-image:url("../i/loading.gif"); }
+#crm-container .crm-loading-element { background-image:url("../i/loading.gif"); width:20px; height:20px;}
 #crm-container .crm-form-block .crm-loading-element { background-image:url("../i/loading-E6E6DC.gif"); }
 
 #crm-container .tree li {position: relative;}
@@ -2612,7 +2612,7 @@ div#crm-toolTip #hide-tooltip {
 
 .crm-summary-link {
     position: relative;
-    z-index: 5;
+    z-index: 16;
 }
 
 .crm-tooltip-wrapper {
@@ -2624,7 +2624,20 @@ div#crm-toolTip #hide-tooltip {
     padding-bottom: 10px;
     background: transparent url('../i/overlay-pointer.png') no-repeat bottom left;
     font-size:12px;
+    display:none;
 }
+
+.crm-tooltip-down .crm-tooltip-wrapper {
+    top:20px;
+    padding-top: 10px;
+    background: transparent url('../i/overlay-pointer.png') no-repeat top left;
+    overflow: visible;
+}
+
+.crm-tooltip-active {z-index: 20;}
+
+.crm-tooltip-active .crm-tooltip-wrapper {display:block;}
+
 
 .crm-summary-group h2 {
 	padding:2px 4px 0 4px;
@@ -2639,6 +2652,8 @@ div#crm-toolTip #hide-tooltip {
     background-color: #2f2f2e;
     color:#FFF;
     margin-left:11px;
+    min-width: 20px;
+    min-height: 20px;
 }
 #crm-container .crm-tooltip table,
 #crm-container .crm-tooltip table tr td {border:none;}
@@ -2771,6 +2786,7 @@ div#civicrm-dashboard form {
 #crm-container table {
     border:1px solid #efefef;
 }
+.crm-tooltip #crm-container table {border-color:transparent;}
 
 #crm-container .crm-form-block table {
     border:none;
