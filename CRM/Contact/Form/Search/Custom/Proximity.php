@@ -72,7 +72,13 @@ class CRM_Contact_Form_Search_Custom_Proximity
 
             $this->_latitude  = $this->_formValues['geo_code_1'];
             $this->_longitude = $this->_formValues['geo_code_2'];
-            $this->_distance  = $this->_formValues['distance'] * 1000;
+
+            if ( $this->_formValues['prox_distance_unit'] == "miles" ) {
+                $conversionFactor = 1609.344;
+            } else {
+                $conversionFactor = 1000;
+            }
+            $this->_distance = $this->_formValues['distance'] * $conversionFactor;
         }
         $this->_group = CRM_Utils_Array::value( 'group', $this->_formValues );
         
@@ -130,19 +136,22 @@ class CRM_Contact_Form_Search_Custom_Proximity
         $country = array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::country( );
         $form->add( 'select', 'country_id', ts('Country'), $country, true );
         
-        $form->add( 'text', 'distance', ts( 'Radius for Proximity Search (in km)' ), null, true );
+        $form->add( 'text', 'distance', ts( 'Radius for Proximity Search' ), null, true );
+        
+        $proxUnits = array( 'km' => ts('km'), 'miles' => ts('miles') ); 
+        $form->add( 'select', 'prox_distance_unit', ts( 'Units' ), $proxUnits, true );
+        
         // state country js, CRM-5233
         require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::addStateCountryMap( $stateCountryMap ); 
         CRM_Core_BAO_Address::fixAllStateSelects( $form, $defaults );
         
-
         /**
          * You can define a custom title for the search form
          */
-         $this->setTitle('Proximity Search');
-         
-         /**
+        $this->setTitle('Proximity Search');
+        
+        /**
          * if you are using the standard template, this array tells the template what elements
          * are part of the search criteria
          */
@@ -152,9 +161,11 @@ class CRM_Contact_Form_Search_Custom_Proximity
                                           'postal_code',
                                           'country_id',
                                           'state_province_id',
-                                          'distance','group' ) );
+                                          'distance',
+                                          'prox_distance_unit',
+                                          'group' ) );
     }
-
+    
     function all( $offset = 0, $rowcount = 0, $sort = null,
                   $includeContactIDs = false ) {
 
@@ -229,9 +240,16 @@ AND cgc.group_id = {$this->_group}
     function setDefaultValues( ) {
     	$config = CRM_Core_Config::singleton( );
     	$countryDefault = $config->defaultContactCountry;
+        $defaults = array();
     	
-    	if ($countryDefault) {
-    		return array( 'country_id' => $countryDefault );
+    	if ( $countryDefault ) {
+            if ( $countryDefault == '1228' || $countryDefault == '1226' ) {
+    		    $defaults['prox_distance_unit'] = 'miles';
+    		} else {
+    		    $defaults['prox_distance_unit'] = 'km';
+    		}
+            $defaults['country_id'] = $countryDefault;
+    		return $defaults;
     	}
     	return null;     
     }
