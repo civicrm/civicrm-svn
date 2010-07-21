@@ -1901,10 +1901,6 @@ div.grippie {
 
 
 
-#crm-container div#contactTopBar td.label {
-    width : 14%;
-}
-
 #crm-container div.contact_panel td.label {
     width : 28%;
 }
@@ -2851,10 +2847,13 @@ table.crm-info-panel td {
 #crm-container div.contact_panel td.label,
 table.crm-info-panel td.label {
     background-color: #fafafa;
-    width:150px;
+    width:100px;
     text-align: left;
     color: #7a7a60;
 }
+    table.crm-info-panel td.label {
+        width:150px;
+    }
 
 #crm-container .form-layout td.label, 
 #crm-container .form-layout-compressed td.label,

@@ -122,7 +122,7 @@
                 {if $contact_type_label OR $current_employer_id OR $job_title OR $legal_name OR $sic_code OR $nick_name OR $contactTag OR $source}
                 <div id="contactTopBar">
                     <table>
-                        {if $contact_type_label OR $current_employer_id OR $job_title OR $legal_name OR $sic_code OR $nick_name}
+                        {if $contact_type_label OR $userRecordUrl OR $current_employer_id OR $job_title OR $legal_name OR $sic_code OR $nick_name}
                         <tr>
                             <td class="label">{ts}Contact Type{/ts}</td>
                             <td>{$contact_type_label}</td>
@@ -147,9 +147,14 @@
                             {/if}
                         </tr>
                         {/if}
-                        {if $contactTag OR $source}
+                        {if $contactTag OR $userRecordUrl OR $source}
                         <tr>
+                            {if $contactTag}
                             <td class="label" id="tagLink"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId&selectedChild=tag"}" title="{ts}Edit Tags{/ts}">{ts}Tags{/ts}</a></td><td id="tags">{$contactTag}</td>
+                            {/if}
+                            {if $userRecordUrl}
+                            <td class="label">{ts 1=$config->userFramework}%1 User ID{/ts}</td><td><a title="View user record" class="user-record-link" href="{$userRecordUrl}">{$userRecordId}</a></div>
+                            {/if}
                             {if $source}
                             <td class="label">{ts}Source{/ts}</td><td>{$source}</td>
                             {/if}
