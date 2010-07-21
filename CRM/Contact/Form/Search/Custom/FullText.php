@@ -427,6 +427,8 @@ WHERE      c.sort_name LIKE {$this->_text} OR
            ( e.email LIKE {$this->_text}    AND 
              ca.activity_type_id = ov.value AND
              ov.name IN ('Inbound Email', 'Email') )
+AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
+     c.is_deleted = 0 OR c.is_deleted IS NULL)
 ";
 
         $contactSQL[] = "
@@ -441,6 +443,8 @@ WHERE      c.sort_name LIKE {$this->_text} OR
            ( e.email LIKE {$this->_text}    AND 
              ca.activity_type_id = ov.value AND
              ov.name IN ('Inbound Email', 'Email') )
+AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
+     c.is_deleted = 0 OR c.is_deleted IS NULL)
 ";
 
         $contactSQL[] = "
@@ -457,6 +461,8 @@ AND        c.sort_name LIKE {$this->_text}  OR
            ( e.email LIKE {$this->_text} AND
              ca.activity_type_id = ov.value AND
              ov.name IN ('Inbound Email', 'Email') )
+AND (ca.is_deleted = 0 OR ca.is_deleted IS NULL OR
+     c.is_deleted = 0 OR c.is_deleted IS NULL)
 ";
         
         $tables = array( 'civicrm_activity' => array( 'id' => 'id',
@@ -816,6 +822,7 @@ LEFT JOIN  civicrm_activity_target cat ON cat.activity_id = ca.id
 LEFT JOIN  civicrm_contact c3 ON cat.target_contact_id = c3.id
 LEFT JOIN  civicrm_case_activity cca ON cca.activity_id = ca.id
 LEFT JOIN  civicrm_case_contact ccc ON ccc.case_id = cca.case_id
+WHERE (ca.is_deleted = 0 OR ca.is_deleted IS NULL)
 {$this->_limitRowClause}
 ";   
             break;
