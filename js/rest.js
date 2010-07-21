@@ -57,7 +57,7 @@ var options {ajaxURL:"{$config->userFrameworkResourceURL}";
     	  msgbox: '#restmsg'
       };
 
-      cj.fn.crmAPI = function(entity,action,params,options) {
+      $.fn.crmAPI = function(entity,action,params,options) {
     	  params ['fnName'] = "civicrm/"+entity+"/"+action;
     	  params ['json'] = 1;
     	  var settings = $.extend({}, defaults, options);
