@@ -1918,12 +1918,6 @@ div.grippie {
     width: 100%;
 }
 
-#crm-container #customFields div.contact_panel td {
-    BORDER-BOTTOM  : lightgray 1px solid; 
-    padding: 4px;
-    vertical-align: top;
-}
-
 #crm-container #customFields div.contact_panel td.talabel {
     padding:4px 0 0 4px;
     border: 0px;
@@ -2191,13 +2185,17 @@ div.grippie {
     cursor: pointer;
     border:1px solid #3e3e3e;
     }
+    #crm-container .crm-button {
+        padding:0;
+    }
+
     #crm-container input.form-submit,
     #crm-container input[type=button],
     #crm-container input.form-submit-inline { padding:2px 6px;}
     #crm-container .crm-button input[type=button],
     #crm-container .crm-button input.form-submit,
     #crm-container .crm-button input.form-submit-inline{
-        padding:0px;
+        padding:2px 4px;
         margin:0px;
         background: none;
         border:none;
@@ -2862,6 +2860,7 @@ table.crm-info-panel td {
 
 #crm-container div#contactTopBar td.label,
 #crm-container div.contact_panel td.label,
+#crm-container #customFields div.contact_panel td.label,
 table.crm-info-panel td.label {
     background-color: #fafafa;
     width:100px;
