@@ -486,6 +486,7 @@ FROM      civicrm_case cc
 LEFT JOIN civicrm_case_contact ccc ON cc.id = ccc.case_id
 LEFT JOIN civicrm_contact c ON ccc.contact_id = c.id
 WHERE     c.sort_name LIKE {$this->_text}
+          AND (cc.is_deleted = 0 OR cc.is_deleted IS NULL)
 {$this->_limitClause}
 ";
 
@@ -502,6 +503,7 @@ FROM      civicrm_case cc
 LEFT JOIN civicrm_case_contact ccc ON cc.id = ccc.case_id
 LEFT JOIN civicrm_contact c ON ccc.contact_id = c.id
 WHERE     cc.id = {$this->_textID}
+          AND (cc.is_deleted = 0 OR cc.is_deleted IS NULL)
 {$this->_limitClause}
     ";
 
