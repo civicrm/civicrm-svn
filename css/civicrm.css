@@ -2314,6 +2314,18 @@ div.grippie {
     border-right: 1px solid #a7a7a7;
     }    
 
+/* =================== */
+/* ! contact actions   */
+/* =================== */
+
+
+#crm-contact-actions-wrapper {
+        width:80px; /* fixes ie bug where button is toooooo long */
+        }
+#crm-contact-actions-list {
+        width:490px; /* fixes ie bug  caused by above*/
+        }
+
 /* setup for icons */
 
 .ac_results ul li {background-image:url('');}
