@@ -33,6 +33,8 @@
   <base href="{$config->resourceBase}" />
   <style type="text/css" media="screen">@import url({$config->resourceBase}css/civicrm.css);</style>
   <style type="text/css" media="screen">@import url({$config->resourceBase}css/extras.css);</style>
+  <script type="text/javascript" src="@import url({$config->resourceBase}packages/jquery/jquery.js);"></script>
+  <script type="text/javascript" src="@import url({$config->resourceBase}packages/jquery/jquery.crmaccordions.js);"></script>
 </head>
 <body>
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
@@ -67,6 +69,14 @@
 {/if}
       <p><a href="{$config->userFrameworkBaseURL}" title="{ts}Main Menu{/ts}">{ts}Return to home page.{/ts}</a></p>
 </div>
+{literal}
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+{/literal}
+
 </div> {* end crm-container div *}
 </body>
 </html>
