@@ -428,7 +428,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
             
             //carry additional participant id, contact id if pre-registered.
             if ( $this->_allowConfirmation && $this->_additionalParticipantId ) {
-                $params['contact_id']     = $this->_contactID;
+                $params['contact_id']     = $this->_contactId;
                 $params['participant_id'] = $this->_additionalParticipantId;
             }
             
