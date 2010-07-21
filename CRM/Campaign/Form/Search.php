@@ -165,7 +165,29 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             $this->_operation = 'reserve';
             $this->set( 'op', $this->_operation );
         }
-        
+
+        // provide task wise permissions
+        $accessDenied = true;
+        if ( CRM_Core_Permission::check( 'administer CiviCampaign' ) ||     
+             CRM_Core_Permission::check( 'manage campaign' ) ) {
+            $accessDenied = false;
+        } else {
+            if ( $this->_operation == 'interview' && 
+                 CRM_Core_Permission::check( 'interview campaign contacts' ) ) {
+                $accessDenied = false;
+            } else if ( $this->_operation == 'release' && 
+                        CRM_Core_Permission::check( 'release campaign contacts' ) ) {
+                $accessDenied = false;
+            } else if ( $this->_operation == 'reserve' && 
+                        CRM_Core_Permission::check( 'reserve campaign contacts' ) ) {
+                $accessDenied = false;
+            }
+        } 
+        if ( $accessDenied ) {
+            CRM_Utils_System::permissionDenied( );
+            CRM_Utils_System::civiExit( );
+        }
+
         $this->assign( "context", $this->_context );
         
         // get user submitted values  
