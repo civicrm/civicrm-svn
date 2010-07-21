@@ -33,8 +33,6 @@
   <base href="{$config->resourceBase}" />
   <style type="text/css" media="screen">@import url({$config->resourceBase}css/civicrm.css);</style>
   <style type="text/css" media="screen">@import url({$config->resourceBase}css/extras.css);</style>
-  <script type="text/javascript" src="@import url({$config->resourceBase}packages/jquery/jquery.js);"></script>
-  <script type="text/javascript" src="@import url({$config->resourceBase}packages/jquery/jquery.crmaccordions.js);"></script>
 </head>
 <body>
 <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
@@ -46,37 +44,13 @@
     <p>{$error.message}</p>
 {/if}
 {if $code}
-    <div class="crm-accordion-wrapper crm-accordion_error_code-accordion crm-accordion-closed">
- <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
-  {ts}Error Code{/ts}
- </div><!-- /.crm-accordion-header -->
- <div class="crm-accordion-body">
-  {$code}
- </div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->
+      <p>{ts}Error Code:{/ts} {$code}</p>
 {/if}
 {if $mysql_code}
-    <div class="crm-accordion-wrapper crm-accordion_mysql_error_code-accordion crm-accordion-closed">
- <div class="crm-accordion-header">
-  <div class="icon crm-accordion-pointer"></div> 
-  {ts}Database Error Code{/ts}
- </div><!-- /.crm-accordion-header -->
- <div class="crm-accordion-body">
-  {$mysql_code}
- </div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->
+      <p>{ts}Database Error Code:{/ts} {$mysql_code}</p>
 {/if}
       <p><a href="{$config->userFrameworkBaseURL}" title="{ts}Main Menu{/ts}">{ts}Return to home page.{/ts}</a></p>
 </div>
-{literal}
-<script type="text/javascript">
-cj(function() {
-   cj().crmaccordions(); 
-});
-</script>
-{/literal}
-
 </div> {* end crm-container div *}
 </body>
 </html>
