@@ -24,19 +24,24 @@
  +--------------------------------------------------------------------+
 *}
 {* Search form and results for voters *}
-{assign var="showBlock" value="'searchForm'"}
-{assign var="hideBlock" value="'searchForm_show'"}
 <div class="crm-block crm-form-block crm-search-form-block">
-<div id="searchForm_show" class="form-item">
-  <a href="#" onclick="hide('searchForm_show'); show('searchForm'); return false;"><img src="{$config->resourceBase}i/TreePlus.gif" class="action-icon" alt="{ts}open section{/ts}" /></a>
-  <label>
+  <div class="crm-accordion-wrapper crm-contribution_search_form-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
+    <div class="crm-accordion-header crm-master-accordion-header">
+      <div class="icon crm-accordion-pointer"></div> 
         {ts}Edit Search Criteria{/ts}
-  </label>
-</div>
+    </div><!-- /.crm-accordion-header -->
 
-<div id="searchForm" class="form-item">
+    <div class="crm-accordion-body">
     {strip} 
         <table class="form-layout">
+	<tr>
+            <td class="font-size12pt">
+                {$form.campaign_survey_id.label}
+            </td>
+            <td>
+	        {$form.campaign_survey_id.html}
+            </td>
+	</tr>
         <tr>
             <td class="font-size12pt">
                 {$form.sort_name.label}
@@ -112,31 +117,13 @@
             </td>
 	</tr>
 	{/if}
-
-	{if $form.survey_status_id}
-	  <tr>
-              <td class="font-size12pt">
-                  {$form.survey_status_id.label}
-              </td>
-              <td>
-	          {$form.survey_status_id.html}
-              </td>
-	  </tr> 
-        {/if}
-	<tr>
-            <td class="font-size12pt">
-                {$form.campaign_survey_id.label}
-            </td>
-            <td>
-	        {$form.campaign_survey_id.html}
-            </td>
-	</tr>
         <tr>
            <td colspan="2">{$form.buttons.html}</td>
         </tr>
         </table>
     {/strip}
 
+</div>
 </div>
 </div>
     {if $rowsEmpty || $rows}
@@ -166,10 +153,10 @@
 {/if}
 </div>
 {/if}
+{literal}
 <script type="text/javascript">
-    var showBlock = new Array({$showBlock});
-    var hideBlock = new Array({$hideBlock});
-
-{* hide and display the appropriate blocks *}
-    on_load_init_blocks( showBlock, hideBlock );
+    cj(function() {
+      cj().crmaccordions(); 
+    });
 </script>
+{/literal}

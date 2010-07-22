@@ -295,10 +295,6 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
         $isRequired = false;
         if ( in_array( $this->_operation, array( 'release', 'interview' ) ) ) {
-            require_once 'CRM/Core/PseudoConstant.php';
-
-            $surveyStatus = CRM_Core_PseudoConstant::activityStatus( );
-            $this->add( 'select', 'survey_status_id', ts('Survey Status'), array('' => ts('- select -') ) + $surveyStatus );
             $isRequired = true;
         }
         $this->add( 'select', 'campaign_survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys, $isRequired );
