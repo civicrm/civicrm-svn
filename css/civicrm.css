@@ -25,7 +25,8 @@
 #crm-container .crm-content-block .crm-content-block {padding:0px;}
 /* TABLE STYLING */
 
-#crm-container table {
+#crm-container table,
+table.crm-table-group-summary {
     margin: 0em 0em 1em;
     border-collapse: collapse;
     width: 100%;
@@ -102,7 +103,8 @@ th.sorting_asc {
 /* Set background back to normal gray for form labels which use <th>. Temporary fix until we standardize form layout markup. */
 #crm-container table.form-layout-compressed tbody th.label { background-color: #F7F7F7; }
 
-#crm-container tbody{
+#crm-container tbody,
+table.crm-table-group-summary tbody {
     border-top: none
 }
 
@@ -367,11 +369,13 @@ div.spacer,
     border:none;
 }
 
-#crm-container .crm-section {
+#crm-container .crm-section,
+.crm-section {
     margin-bottom:1em;
 }
 
-#crm-container .crm-section .label {
+#crm-container .crm-section .label,
+.crm-section .label {
     float:left;
     width:15%;
     text-align: right;
@@ -381,7 +385,8 @@ div.spacer,
     text-align: left;
 }
 
-#crm-container .crm-section .content {
+#crm-container .crm-section .content,
+.crm-section .content {
     margin-left:16%;
 }
 
@@ -1357,7 +1362,8 @@ editor specific classes
     width: 58em;
 }
 
-#crm-container.clear { /* generic container (i.e. div) for floating buttons */
+#crm-container.clear,
+.crm-group-summary .clear { /* generic container (i.e. div) for floating buttons */
     overflow: hidden;
     width: 100%;
 }
@@ -2662,13 +2668,17 @@ div#crm-toolTip #hide-tooltip {
     margin-bottom: 0px;
 }
 
-#crm-container .crm-summary-group .crm-section .label {
+/* crm-summary-group appears outside crm-container for contact summary icon overlay */
+#crm-container .crm-summary-group .crm-section .label,
+.crm-summary-group .crm-section .label {
     text-align: left;
     width:40%;
     font-size:11px;
     color:#A7A7A7;
 }
-#crm-container .crm-summary-group .crm-section .content {
+
+#crm-container .crm-summary-group .crm-section .content,
+.crm-summary-group .crm-section .content {
     margin-left:41%;
 }
 

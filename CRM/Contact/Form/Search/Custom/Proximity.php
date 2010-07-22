@@ -96,14 +96,11 @@ class CRM_Contact_Form_Search_Custom_Proximity
 
         $config         = CRM_Core_Config::singleton( );
         $countryDefault = $config->defaultContactCountry; 
-        $tag =
-            array('' => ts('- any tag -')) +
-            CRM_Core_PseudoConstant::tag( );
-        $form->addElement('select', 'tag', ts('Tag'), $tag);
 
-        $form->add( 'text',
-                    'distance',
-                    ts( 'Distance' ) );
+        $form->add( 'text', 'distance', ts( 'Distance' ), null, true );
+        
+        $proxUnits = array( 'km' => ts('km'), 'miles' => ts('miles') ); 
+        $form->add( 'select', 'prox_distance_unit', ts( 'Units' ), $proxUnits, true );
 
         $form->add( 'text',
                     'street_address',
@@ -116,11 +113,6 @@ class CRM_Contact_Form_Search_Custom_Proximity
         $form->add( 'text',
                     'postal_code',
                     ts( 'Postal Code' ) );
-        $group =
-            array('' => ts('- any group -')) +
-            CRM_Core_PseudoConstant::group( );
-        $form->addElement('select', 'group', ts('Group'), $group );
-        
         $stateCountryMap   = array( );
         $stateCountryMap[] = array( 'state_province' => 'state_province_id',
                                     'country'        => 'country_id' );
@@ -135,11 +127,17 @@ class CRM_Contact_Form_Search_Custom_Proximity
         
         $country = array( '' => ts('- select -') ) + CRM_Core_PseudoConstant::country( );
         $form->add( 'select', 'country_id', ts('Country'), $country, true );
+
+        $group =
+            array('' => ts('- any group -')) +
+            CRM_Core_PseudoConstant::group( );
+        $form->addElement('select', 'group', ts('Group'), $group );
         
-        $form->add( 'text', 'distance', ts( 'Radius for Proximity Search' ), null, true );
-        
-        $proxUnits = array( 'km' => ts('km'), 'miles' => ts('miles') ); 
-        $form->add( 'select', 'prox_distance_unit', ts( 'Units' ), $proxUnits, true );
+        $tag =
+            array('' => ts('- any tag -')) +
+            CRM_Core_PseudoConstant::tag( );
+        $form->addElement('select', 'tag', ts('Tag'), $tag);
+
         
         // state country js, CRM-5233
         require_once 'CRM/Core/BAO/Address.php';
@@ -155,15 +153,15 @@ class CRM_Contact_Form_Search_Custom_Proximity
          * if you are using the standard template, this array tells the template what elements
          * are part of the search criteria
          */
-        $form->assign( 'elements', array( 'tag',
+        $form->assign( 'elements', array( 'distance',
+                                          'prox_distance_unit',
                                           'street_address',
                                           'city',
                                           'postal_code',
                                           'country_id',
                                           'state_province_id',
-                                          'distance',
-                                          'prox_distance_unit',
-                                          'group' ) );
+                                          'group',
+                                          'tag' ) );
     }
     
     function all( $offset = 0, $rowcount = 0, $sort = null,
