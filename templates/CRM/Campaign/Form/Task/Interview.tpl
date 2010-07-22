@@ -63,7 +63,7 @@
 	    {if $hasResultField}
 	      	<td class='result'>{$form.field.$voterId.result.html}
 		{if !$surveyFieldCount}{*no profile fields*}
-		   &nbsp;&nbsp;&nbsp;<a class="saveVoter" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>&nbsp; <span id='restmsg_{$voterId}' class="ok" style="display:none">{ts}Vote Saved.{/ts}</span> 
+		   &nbsp;&nbsp;&nbsp;<a class="saveVoter button" style="float:right;" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>&nbsp; <span id='restmsg_{$voterId}' class="ok" style="display:none; float:right;">{ts}Vote Saved.{/ts}</span> 
 		{/if}
 		</td>
 	    {/if}

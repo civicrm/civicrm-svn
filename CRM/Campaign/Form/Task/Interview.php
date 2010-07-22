@@ -242,6 +242,9 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      */
     public function postProcess( ) 
     {
+        // vote is done through ajax
+        return;
+        
         $params = $this->controller->exportValues( $this->_name );
         
         //process survey.
