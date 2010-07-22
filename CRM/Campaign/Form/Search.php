@@ -293,11 +293,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         $this->assign( 'customSearchFields',  $customSearchFields );
         
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
-        $isRequired = false;
-        if ( in_array( $this->_operation, array( 'release', 'interview' ) ) ) {
-            $isRequired = true;
-        }
-        $this->add( 'select', 'campaign_survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys, $isRequired );
+        $this->add( 'select', 'campaign_survey_id', ts('Survey'), array('' => ts('- select -') ) + $surveys, true );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Find Voters To %1', array( 1 => ucfirst( $this->_operation ) ) ) );
@@ -464,6 +460,8 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
                 }
             }
             
+            //carry servey id w/ this.
+            $this->set( 'surveyId', $this->_formValues['campaign_survey_id'] );
             unset( $this->_formValues['campaign_survey_id'] );
             unset( $this->_formValues['survey_status_id'] );
         }
