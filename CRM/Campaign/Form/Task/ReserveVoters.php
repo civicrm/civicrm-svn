@@ -216,8 +216,9 @@ SELECT  COUNT(id)
                                      'activity_type_id'    => $this->_surveyDetails['activity_type_id'],
                                      'subject'             => ts('Voter Reservation'),
                                      'activity_date_time'  => date('YmdHis'),
-                                     'status_id'           => $statusHeld
-                                     );  
+                                     'status_id'           => $statusHeld,
+                                     'skipRecentView'      => 1
+                                     );
             CRM_Activity_BAO_Activity::create( $activityParams );
         }
         
