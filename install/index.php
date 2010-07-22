@@ -334,6 +334,9 @@ class InstallRequirements {
         // Check for MySQL support
         $this->requireFunction('mysql_connect', array("PHP Configuration", "MySQL support", "MySQL support not included in PHP."));
 
+        // Check for JSON support
+        $this->requireFunction('json_encode', array("PHP Configuration", "JSON support", "JSON support not included in PHP."));
+        
         // Check memory allocation
         $this->requireMemory(32*1024*1024, 64*1024*1024, array("PHP Configuration", "Memory allocated (PHP config option 'memory_limit')", "CiviCRM needs a minimum of 32M allocated to PHP, but recommends 64M.", ini_get("memory_limit")));
 
