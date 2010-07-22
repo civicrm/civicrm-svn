@@ -319,5 +319,6 @@ function civicrm_case_add_activities ( $params ) {
         
 	// return case create success
 	$case = _civicrm_case_get( $params['case_id'] );
-        return civicrm_create_success( $case )
+    return civicrm_create_success( $case );
+
 }
