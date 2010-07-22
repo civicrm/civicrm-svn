@@ -28,7 +28,7 @@
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {elseif $priceSetId}
-  {include file="CRM/Price/Form/PriceSet.tpl"}
+  {include file="CRM/Price/Form/PriceSet.tpl" context="standalone"}
 {elseif $showAdditionalInfo and $formType }
   {include file="CRM/Contribute/Form/AdditionalInfo/$formType.tpl"}
 {else}
