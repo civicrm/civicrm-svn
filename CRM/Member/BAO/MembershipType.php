@@ -503,6 +503,7 @@ class CRM_Member_BAO_MembershipType extends CRM_Member_DAO_MembershipType
             $today = date( 'Y-m-d' );
         } else {
             //get date in 'Ymd' format, CRM-5795
+            if ( !$changeToday ) $changeToday = date( 'Y-m-d' );
             $today = CRM_Utils_Date::processDate( $changeToday, null, false, 'Ymd' );
             
             $rollover = false;
