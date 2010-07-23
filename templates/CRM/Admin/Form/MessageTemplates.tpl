@@ -62,8 +62,14 @@
             </td>
         </tr>
         <tr>
-            <td colspan="2">
-                        <div class="accordion ui-accordion ui-widget ui-helper-reset">
+	</table>
+
+	    <div class="crm-accordion-wrapper crm-plaint_text_email-accordion crm-accordion-open">
+	    	 <div class="crm-accordion-header">
+  	    	      <div class="icon crm-accordion-pointer"></div> 
+  	    	      {ts}Plain-Text Format{/ts}
+	    	 </div><!-- /.crm-accordion-header -->
+ 	    	      <div class="crm-accordion-body">
                             <span class="helpIcon" id="helptext">
 	                          <a href="#" onClick="return showToken('Text', 1);">{$form.token1.label}</a>
 	                          {help id="id-token-text" file="CRM/Contact/Form/Task/Email.hlp"}
@@ -73,19 +79,21 @@
 	                              {$form.token1.html}
 	                          </div>
                             </span>
-                            <h3 class="head"> 
-	                            <span class="ui-icon ui-icon-triangle-1-s" id='text'></span><a href="#">{ts}Text Message{/ts}</a>
-                            </h3>
+      		            <div class="clear"></div>
                             <div class='text'>
                               {$form.msg_text.html|crmReplace:class:huge}<br />
                               <span class="description">{ts}Text formatted message.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}
                             </div>
-                        </div>
-            </td>          
-        </tr>            
-        <tr>               
-            <td colspan="2">
-                        <div class="accordion ui-accordion ui-widget ui-helper-reset">
+                       </div><!-- /.crm-accordion-body -->
+	    </div><!-- /.crm-accordion-wrapper -->  
+
+	    <div class="crm-accordion-wrapper crm-html_email-accordion crm-accordion-open">
+	    	 <div class="crm-accordion-header">
+    		      <div class="icon crm-accordion-pointer"></div> 
+    		      {ts}HTML Format{/ts}
+    		      {help id="id-message-text" file="CRM/Contact/Form/Task/Email.hlp"}
+		 </div><!-- /.crm-accordion-header -->
+ 		      <div class="crm-accordion-body">
                             <span class="helpIcon" id="helphtml">
 	                          <a href="#" onClick="return showToken('Html', 2);">{$form.token2.label}</a> 
 	                          {help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp"}
@@ -95,26 +103,32 @@
 	                              {$form.token2.html}
 	                          </div>
                             </span>
-                            <h3 class="head"> 
-	                            <span class="ui-icon ui-icon-triangle-1-e" id='html'></span><a href="#">{ts}HTML Message{/ts}</a>
-                            </h3>
+			    <div class="clear"></div>
                             <div class='html'>
                                 {$form.msg_html.html|crmReplace:class:huge}<br />
                                 <span class="description">{ts}You may optionally create an HTML formatted version of this message. It will be sent to contacts whose Email Format preference is 'HTML' or 'Both'.{/ts} {ts 1=$tokenDocsRepeated}Tokens may be included (%1).{/ts}
                             </div>  
-                        </div>
-            </td>
-        </tr>
+		       </div><!-- /.crm-accordion-body -->
+	    </div><!-- /.crm-accordion-wrapper -->
+
         {if !$workflow_id}
+	<table class="form-layout-compressed">
           <tr>
             <td class="label">{$form.is_active.label}</td>
             <td>{$form.is_active.html}</td>
           </tr>
+	</table>
         {/if}
-    </table> 
   {/if}
   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>
   <br clear="all" />
 </div>
 </div> <!-- end of crm-form-block -->
 {include file="CRM/Mailing/Form/InsertTokens.tpl"}
+{literal}
+<script type="text/javascript">
+cj(function() {
+   cj().crmaccordions(); 
+});
+</script>
+{/literal}
