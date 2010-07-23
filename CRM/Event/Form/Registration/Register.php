@@ -311,6 +311,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     "email-{$this->_bltID}",
                     ts( 'Email Address' ),
                     array( 'size' => 30, 'maxlength' => 60 ), true );
+        $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
         
         $bypassPayment = false;
         $allowGroupOnWaitlist = false;

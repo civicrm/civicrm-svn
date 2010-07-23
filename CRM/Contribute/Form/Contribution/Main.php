@@ -296,6 +296,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $this->applyFilter('__ALL__', 'trim');
         $this->add( 'text', "email-{$this->_bltID}",
                     ts( 'Email Address' ), array( 'size' => 30, 'maxlength' => 60 ), true );
+        $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
         
          //build pledge block.
 
