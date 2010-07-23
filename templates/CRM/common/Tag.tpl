@@ -13,7 +13,7 @@
 {literal}
     eval( 'tokenClass = { tokenList: "token-input-list-facebook", token: "token-input-token-facebook", tokenDelete: "token-input-delete-token-facebook", selectedToken: "token-input-selected-token-facebook", highlightedToken: "token-input-highlighted-token-facebook", dropdown: "token-input-dropdown-facebook", dropdownItem: "token-input-dropdown-item-facebook", dropdownItem2: "token-input-dropdown-item2-facebook", selectedDropdownItem: "token-input-selected-dropdown-item-facebook", inputToken: "token-input-input-token-facebook" } ');
     
-    var tagUrl = {/literal}"{$tagset.tagUrl}"{literal};
+    var tagUrl = {/literal}"{$tagset.tagUrl}&key={crmKey name='civicrm/ajax/taglist'}"{literal};
     var entityTags = '';
     {/literal}{if $tagset.entityTags}{literal}
         eval( 'entityTags = ' + {/literal}'{$tagset.entityTags}'{literal} );
@@ -34,7 +34,7 @@
         var skipEntityAction = "{/literal}{$tagset.skipEntityAction}{literal}";
          
         cj.post( postUrl, { action: action, tagID: id, parentId: parentId, entityId: entityId, entityTable: entityTable,
-                            skipTagCreate: skipTagCreate, skipEntityAction: skipEntityAction },
+                            skipTagCreate: skipTagCreate, skipEntityAction: skipEntityAction, key: {/literal}"{crmKey name='civicrm/ajax/processTags'}"{literal} },
             function ( response ) {
                 // update hidden element
                 if ( response.id ) {

@@ -480,7 +480,7 @@ ORDER BY parent_id, weight";
                         $componentName = null;
                     }
                 }
-                if ( !$componentName && in_array( $menuName, array( 'Cases', 'CiviCase' ) ) ) { 
+                if ( !$componentName && in_array( $menuName, array( 'Cases', 'CiviCase', 'Find Cases' ) ) ) { 
                     $componentName = 'CiviCase';
                 }
                 if ( $componentName ) {

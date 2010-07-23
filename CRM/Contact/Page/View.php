@@ -184,6 +184,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
                 $userRecordUrl = null;
             }
             $this->assign( 'userRecordUrl', $userRecordUrl );
+            $this->assign( 'userRecordId' , $uid );
         }
     
         if ( CRM_Core_Permission::check( 'access Contact Dashboard' ) ) {

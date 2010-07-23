@@ -37,7 +37,11 @@ cj( function( ) {
                 cj( custom_id ).val( data[1] );
             }
         );
-    }
+        cj(custom).change( function( ) {
+                cj( custom_id ).val('');
+	    }
+        ); 
+     }
 });
 </script>
 {/literal}

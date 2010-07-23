@@ -168,7 +168,11 @@ class CRM_Contact_Form_Task_PDFLetterCommon
                     
         require_once 'CRM/Mailing/BAO/Mailing.php';
         $mailing = new CRM_Mailing_BAO_Mailing();
-		
+        if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+            require_once 'CRM/Core/Smarty/resources/String.php';
+            civicrm_smarty_register_string_resource( );
+        }
+
         $first = TRUE;
 
         foreach ($form->_contactIds as $item => $contactId) {
@@ -183,7 +187,14 @@ class CRM_Contact_Form_Task_PDFLetterCommon
 	
 			$tokenHtml    = CRM_Utils_Token::replaceContactTokens( $html_message, $contact[$contactId], true       , $messageToken);
             $tokenHtml    = CRM_Utils_Token::replaceHookTokens   ( $tokenHtml, $contact[$contactId]   , $categories, true         );
-            
+                
+            if ( defined( 'CIVICRM_MAIL_SMARTY' ) ) {
+            	$smarty = CRM_Core_Smarty::singleton( );
+            	// also add the contact tokens to the template
+            	$smarty->assign_by_ref( 'contact', $contact );
+            	$tokenHtml = $smarty->fetch( "string:$tokenHtml" );
+            }
+
             if ( $first == TRUE ) {
               $first = FALSE;
               $html .= $tokenHtml;
@@ -215,7 +226,7 @@ class CRM_Contact_Form_Task_PDFLetterCommon
             CRM_Activity_BAO_Activity::createActivityTarget( $activityTargetParams );
         }
         require_once 'CRM/Utils/PDF/Utils.php';
-        CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", 'portrait' ); 
+        CRM_Utils_PDF_Utils::html2pdf( $html, "CiviLetter.pdf", 'portrait', 'letter' ); 
 
         // we need to call the hook manually here since we redirect and never 
         // go back to CRM/Core/Form.php

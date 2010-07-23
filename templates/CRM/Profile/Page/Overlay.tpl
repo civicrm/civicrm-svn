@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {if $overlayProfile }
-<table>
+<table class="crm-table-group-summary">
 <tr><td>{$displayName}</td></tr>
 <tr><td>
 {assign var="count" value="0"}

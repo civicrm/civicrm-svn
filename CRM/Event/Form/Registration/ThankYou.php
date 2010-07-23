@@ -134,6 +134,9 @@ class CRM_Event_Form_Registration_ThankYou extends CRM_Event_Form_Registration
                 }
             }
         }
+       
+        $this->_submitValues = array_merge( $this->_submitValues, $defaults );
+              
         $this->setDefaults( $defaults );
 
         require_once 'CRM/Friend/BAO/Friend.php';

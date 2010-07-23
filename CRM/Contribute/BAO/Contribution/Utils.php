@@ -204,7 +204,7 @@ class CRM_Contribute_BAO_Contribution_Utils {
             if ( $component !== 'membership' ) {
                 CRM_Core_Error::displaySessionError( $result );
                 CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/contribute/transact', 
-                                                                   '_qf_Main_display=true' ) );
+                                                                   "_qf_Main_display=true&qfKey={$form->_params['qfKey']}" ) );
             }
             $membershipResult[1] = $result;
         } else {

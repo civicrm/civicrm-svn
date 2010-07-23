@@ -37,10 +37,11 @@
 		{* $type assigned from dynamic.tpl *}
 		{if !$type || $type eq $key }
 		<td width={cycle name=tdWidth values="70%","30%"}><span class="label">{if $title}{$form.$key.label}{/if}</span>
-		    <table>
+		    <div id="crm-tagListWrap">
+		    <table id="crm-tagGroupTable">
 			{foreach key=k item=it from=$form.$key}
 			    {if $k|is_numeric}
-				<tr class={cycle values="'odd-row','even-row'" name=$key}>
+				<tr class={cycle values="'odd-row','even-row'" name=$key} id="crm-tagRow{$k}">
 				    <td>
 					<strong>{$it.html}</strong><br />
 					{if $item.$k.description}
@@ -53,6 +54,7 @@
 			    {/if}
 			{/foreach}   
 		    </table>
+		    </div>
 		</td>
 		{/if}
 	    {/foreach}
