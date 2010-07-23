@@ -24,11 +24,11 @@
  +--------------------------------------------------------------------+
 *}
 {if ! empty( $row )} 
-    {* wrap in crm-container div so crm styles are used *}
-    <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
-        {if $overlayProfile }
-            {include file="CRM/Profile/Page/Overlay.tpl"}
-        {else}
+{* wrap in crm-container div so crm styles are used *}
+    {if $overlayProfile }
+        {include file="CRM/Profile/Page/Overlay.tpl"}
+    {else}
+        <div id="crm-container" lang="{$config->lcMessages|truncate:2:"":true}" xml:lang="{$config->lcMessages|truncate:2:"":true}">
             {foreach from=$row item=value key=rowName name=profile}
               <div id="row-{$smarty.foreach.profile.iteration}" class="crm-section {$smarty.foreach.profile.iteration}-section">
                 <div class="label">
@@ -40,7 +40,7 @@
                  <div class="clear"></div>
               </div>
             {/foreach}
-        {/if}
-    </div>
+        </div>
+    {/if}
 {/if} 
 {* fields array is not empty *}

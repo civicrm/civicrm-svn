@@ -51,15 +51,33 @@ class CRM_Case_XMLProcessor {
                 self::$_xml = array( );
             }
 
-            // ensure that the file exists
-            $fileName = implode( DIRECTORY_SEPARATOR,
-                                 array( dirname( __FILE__ ),
-                                        'xml',
-                                        'configuration',
-                                        "$caseType.xml" ) );
-
-            if ( ! file_exists( $fileName ) ) {
-                return false;
+            // first check custom templates directory
+            $fileName = null;
+            $config   = CRM_Core_Config::singleton( );
+            if ( isset( $config->customTemplateDir ) &&
+                 $config->customTemplateDir ) {
+                // check if the file exists in the custom templates directory
+                $fileName = implode( DIRECTORY_SEPARATOR,
+                                     array( $config->customTemplateDir,
+                                            'CRM',
+                                            'Case', 
+                                            'xml',
+                                            'configuration',
+                                            "$caseType.xml" ) );
+            }
+            
+            if ( ! $fileName ||
+                 ! file_exists( $fileName ) ) {
+                // check if file exists locally
+                $fileName = implode( DIRECTORY_SEPARATOR,
+                                     array( dirname( __FILE__ ),
+                                            'xml',
+                                            'configuration',
+                                            "$caseType.xml" ) );
+                
+                if ( ! file_exists( $fileName ) ) {
+                    return false;
+                }
             }
 
             // read xml file

@@ -223,13 +223,13 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
             foreach ( $processors as $ppID => $label ) {
                 require_once 'CRM/Core/BAO/PaymentProcessor.php';
                 require_once 'CRM/Core/Payment.php';
-                $paymentProcessor =& CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $this->_mode );
+                $paymentProcessor = CRM_Core_BAO_PaymentProcessor::getPayment( $ppID, $this->_mode );
                 if ( $paymentProcessor['payment_processor_type'] == 'PayPal' && !$paymentProcessor['user_name'] ) {
                     continue;
                 } else if ( $paymentProcessor['payment_processor_type'] == 'Dummy' && $this->_mode == 'live' ) {
                     continue;
                 } else {
-                    $paymentObject =& CRM_Core_Payment::singleton( $this->_mode, 'Contribute', $paymentProcessor, $this );
+                    $paymentObject = CRM_Core_Payment::singleton( $this->_mode, 'Contribute', $paymentProcessor, $this );
                     $error = $paymentObject->checkConfig( );
                     if ( empty( $error ) ) {
                         $validProcessors[$ppID] = $label;
@@ -261,7 +261,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
         
         // also check for billing information
         // get the billing location type
-        $locationTypes =& CRM_Core_PseudoConstant::locationType( );
+        $locationTypes = CRM_Core_PseudoConstant::locationType( );
         $this->_bltID = array_search( 'Billing',  $locationTypes );
         if ( ! $this->_bltID ) {
             CRM_Core_Error::fatal( ts( 'Please set a location type of %1', array( 1 => 'Billing' ) ) );
@@ -502,8 +502,6 @@ WHERE  contribution_id = {$this->_id}
         
         if ( $this->_id ) {
             $this->_contactID = $defaults['contact_id'];
-        } else {
-            list( $defaults['receive_date'] ) = CRM_Utils_Date::setDateDefaults( );
         }
 
         require_once 'CRM/Utils/Money.php';
@@ -575,11 +573,17 @@ WHERE  contribution_id = {$this->_id}
         $dates = array( 'receive_date', 'receipt_date', 'cancel_date', 'thankyou_date' );
         foreach( $dates as $key ) {
             if ( CRM_Utils_Array::value( $key, $defaults ) ) {
-                list( $defaults[$key] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( $key, $defaults ) );
+                list( $defaults[$key],
+                      $defaults[$key.'_time'] ) = CRM_Utils_Date::setDateDefaults( CRM_Utils_Array::value( $key, $defaults ), 'activityDateTime' );
             }
         }
 
-        $this->assign( 'receive_date', CRM_Utils_Date::processDate( $defaults['receive_date'] ) );
+        if ( !$this->_id && !CRM_Utils_Array::value( 'receive_date', $defaults ) ) {
+            list( $defaults['receive_date'],
+                  $defaults['receive_date_time'] ) = CRM_Utils_Date::setDateDefaults( null, 'activityDateTime' );
+        }
+
+        $this->assign( 'receive_date', CRM_Utils_Date::processDate( $defaults['receive_date'], $params['receive_date_time'] ) );
         $this->assign( 'currency', CRM_Utils_Array::value( 'currency', $defaults ) );
         $this->assign( 'totalAmount', CRM_Utils_Array::value( 'total_amount', $defaults ) );
 
@@ -754,7 +758,7 @@ WHERE  contribution_id = {$this->_id}
         
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_Contribution' );
         
-        $element =& $this->add('select', 'contribution_type_id', 
+        $element = $this->add('select', 'contribution_type_id', 
                                ts( 'Contribution Type' ), 
                                array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::contributionType( ),
                                true, array('onChange' => "buildCustomData( 'Contribution', this.value );"));
@@ -762,7 +766,7 @@ WHERE  contribution_id = {$this->_id}
             $element->freeze( );
         }
         if ( !$this->_mode ) { 
-            $element =& $this->add('select', 'payment_instrument_id', 
+            $element = $this->add('select', 'payment_instrument_id', 
                                    ts( 'Paid By' ), 
                                    array(''=>ts( '- select -' )) + CRM_Contribute_PseudoConstant::paymentInstrument( ),
                                    false, array( 'onChange' => "return showHideByValue('payment_instrument_id','4','checkNumber','table-row','select',false);"));
@@ -772,7 +776,7 @@ WHERE  contribution_id = {$this->_id}
             }
         }
         
-        $element =& $this->add( 'text', 'trxn_id', ts('Transaction ID'), 
+        $element = $this->add( 'text', 'trxn_id', ts('Transaction ID'), 
                                 $attributes['trxn_id'] );
         if ( $this->_online ) {
             $element->freeze( );
@@ -801,24 +805,24 @@ WHERE  contribution_id = {$this->_id}
                                 'onChange' => "return showHideByValue('contribution_status_id','3','cancelInfo','table-row','select',false);"));
 
         // add various dates
-        $this->addDate( 'receive_date', ts('Received'), false, array( 'formatType' => 'activityDate') );
+        $this->addDateTime( 'receive_date', ts('Received'), false, array( 'formatType' => 'activityDateTime') );
                 
         if ( $this->_online ) {
             $this->assign("hideCalender" , true );
         }
-        $element =& $this->add( 'text', 'check_number', ts('Check Number'), $attributes['check_number'] );
+        $element = $this->add( 'text', 'check_number', ts('Check Number'), $attributes['check_number'] );
         if ( $this->_online ) {
             $element->freeze( );
         }
         
-        $this->addDate( 'receipt_date', ts('Receipt Date'), false, array( 'formatType' => 'activityDate') );
-        $this->addDate( 'cancel_date', ts('Cancelled Date'), false, array( 'formatType' => 'activityDate') );
+        $this->addDateTime( 'receipt_date', ts('Receipt Date'), false, array( 'formatType' => 'activityDateTime') );
+        $this->addDateTime( 'cancel_date', ts('Cancelled Date'), false, array( 'formatType' => 'activityDateTime') );
         
         $this->add('textarea', 'cancel_reason', ts('Cancellation Reason'), $attributes['cancel_reason'] );
         
-        $element =& $this->add( 'select', 'payment_processor_id',
-                                ts( 'Payment Processor' ),
-                                $this->_processors );
+        $element = $this->add( 'select', 'payment_processor_id',
+                               ts( 'Payment Processor' ),
+                               $this->_processors );
         if ( $this->_online ) {
             $element->freeze( );
         }
@@ -847,7 +851,7 @@ WHERE  contribution_id = {$this->_id}
             $hasPriceSets = false;
             if ( $buildPriceSet ) {
                 $hasPriceSets = true;
-                $element =& $this->add( 'select', 'price_set_id', ts( 'Choose price set' ),
+                $element = $this->add( 'select', 'price_set_id', ts( 'Choose price set' ),
                                         array( '' => ts( 'Choose price set' )) + $priceSets,
                                         null, array('onchange' => "buildAmount( this.value );" ) );
                 if ( $this->_online ) $element->freeze( );
@@ -863,7 +867,7 @@ WHERE  contribution_id = {$this->_id}
             }
         }
         
-        $element =& $this->add( 'text', 'source', ts('Source'), CRM_Utils_Array::value('source',$attributes) );
+        $element = $this->add( 'text', 'source', ts('Source'), CRM_Utils_Array::value('source',$attributes) );
         if ( $this->_online ) {
             $element->freeze( );
         }
@@ -892,7 +896,7 @@ WHERE  contribution_id = {$this->_id}
         }
         
         require_once "CRM/Core/BAO/Preferences.php";
-        $mailingInfo =& CRM_Core_BAO_Preferences::mailingPreferences();
+        $mailingInfo = CRM_Core_BAO_Preferences::mailingPreferences();
         $this->assign( 'outBound_option', $mailingInfo['outBound_option'] );
         
         $this->addButtons(array( 
@@ -1132,9 +1136,9 @@ WHERE  contribution_id = {$this->_id}
                 $paymentParams['email'] = $this->userEmail;
             }
             
-            $payment =& CRM_Core_Payment::singleton( $this->_mode, 'Contribute', $this->_paymentProcessor, $this );
+            $payment = CRM_Core_Payment::singleton( $this->_mode, 'Contribute', $this->_paymentProcessor, $this );
             
-            $result =& $payment->doDirectPayment( $paymentParams );
+            $result = $payment->doDirectPayment( $paymentParams );
             
             if ( is_a( $result, 'CRM_Core_Error' ) ) {
                 //set the contribution mode.
@@ -1155,12 +1159,12 @@ WHERE  contribution_id = {$this->_id}
             if ( CRM_Utils_Array::value( 'is_email_receipt', $this->_params ) ) {
                 $this->_params['receipt_date'] = $now;
             } else {
-                $this->_params['receipt_date'] = CRM_Utils_Date::processDate( $this->_params['receipt_date'], null, true );
+                $this->_params['receipt_date'] = CRM_Utils_Date::processDate( $this->_params['receipt_date'], $params['receipt_date_time'] , true );
             }
             
             $this->set( 'params', $this->_params );
             $this->assign( 'trxn_id', $result['trxn_id'] );
-            $this->assign( 'receive_date', CRM_Utils_Date::processDate( $this->_params['receive_date']) );
+            $this->assign( 'receive_date', CRM_Utils_Date::processDate( $this->_params['receive_date'], $this->_params['receive_date_time']) );
             
             // result has all the stuff we need
             // lets archive it to a financial transaction
@@ -1189,7 +1193,7 @@ WHERE  contribution_id = {$this->_id}
                         
             require_once 'CRM/Contribute/Form/Contribution/Confirm.php';
             $contribution 
-                =& CRM_Contribute_Form_Contribution_Confirm::processContribution( $this, 
+                = CRM_Contribute_Form_Contribution_Confirm::processContribution( $this, 
                                                                                   $this->_params, 
                                                                                   $result, 
                                                                                   $this->_contactID, 
@@ -1301,7 +1305,7 @@ WHERE  contribution_id = {$this->_id}
                             'cancel_date' );
             
             foreach ( $dates as $d ) {
-                $params[$d] = CRM_Utils_Date::processDate( $formValues[$d], null, true );
+                $params[$d] = CRM_Utils_Date::processDate( $formValues[$d], $formValues[$d.'_time'], true );
             }
 
             if ( CRM_Utils_Array::value( 'is_email_receipt', $formValues ) ) {
@@ -1324,7 +1328,7 @@ WHERE  contribution_id = {$this->_id}
             
             //create contribution.
             require_once 'CRM/Contribute/BAO/Contribution.php';
-            $contribution =& CRM_Contribute_BAO_Contribution::create( $params, $ids );
+            $contribution = CRM_Contribute_BAO_Contribution::create( $params, $ids );
             
             // process line items, until no previous line items.
             if ( empty( $this->_lineItems )  && $contribution->id && !empty( $lineItem ) ) {

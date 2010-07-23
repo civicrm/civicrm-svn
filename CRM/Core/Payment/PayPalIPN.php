@@ -82,7 +82,7 @@ class CRM_Core_Payment_PayPalIPN extends CRM_Core_Payment_BaseIPN {
             return false;
         }
 
-        $now = date( 'YmdHCRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false, $this->_userID );is' );
+        $now = date( 'YmdHis' );
 
         // fix dates that already exist
         $dates = array( 'create', 'start', 'end', 'cancel', 'modified' );

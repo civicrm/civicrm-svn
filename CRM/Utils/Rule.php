@@ -158,7 +158,7 @@ class CRM_Utils_Rule
     {
         $result = $default;
         if ( is_string( $value ) &&
-             preg_match( '/^\d\d\d\d-?\d\d-?\d\d(\s\d\d:\d{1,2})?$/', $value ) ) {
+             preg_match( '/^\d\d\d\d-?\d\d-?\d\d(\s\d\d:\d\d:\d\d|\d\d\d\d\d\d)?$/', $value ) ) {
             $result = $value;
         }
         

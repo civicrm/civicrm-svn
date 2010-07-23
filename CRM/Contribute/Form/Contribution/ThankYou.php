@@ -182,6 +182,7 @@ class CRM_Contribute_Form_Contribution_ThankYou extends CRM_Contribute_Form_Cont
             }
         }
 
+        $this->_submitValues = array_merge( $this->_submitValues, $defaults );
         $this->setDefaults( $defaults );
         require_once 'CRM/Friend/BAO/Friend.php';
         $values['entity_id'] = $this->_id;

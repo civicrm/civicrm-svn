@@ -38,7 +38,7 @@ class civicrm_handler_field_membership_status extends views_handler_field {
                 return;
             }
             require_once 'CRM/Member/PseudoConstant.php';
-            self::$_membershipStatus = CRM_Member_PseudoConstant::membershipStatus( );
+            self::$_membershipStatus = CRM_Member_PseudoConstant::membershipStatus( null, null, 'label' );
         }
     }
 

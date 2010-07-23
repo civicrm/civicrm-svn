@@ -114,11 +114,26 @@ class CRM_Member_BAO_MembershipStatus extends CRM_Member_DAO_MembershipStatus
             CRM_Core_DAO::executeQuery( $query, 
                                         CRM_Core_DAO::$_nullArray );
         }
+        
+        //copy name to label when not passed.
+        if ( !CRM_Utils_Array::value( 'label', $params ) && 
+             CRM_Utils_Array::value( 'name', $params ) ) {
+            $params['label'] = $params['name'];
+        }
+        
+        //for add mode, copy label to name.
+        $statusId = CRM_Utils_Array::value( 'membershipStatus', $ids );
+        if ( !$statusId && 
+             CRM_Utils_Array::value( 'label', $params ) && 
+             !CRM_Utils_Array::value( 'name', $params ) ) {
+            $params['name'] = $params['label'];
+        }
+        
         // action is taken depending upon the mode
         $membershipStatus               = new CRM_Member_DAO_MembershipStatus( );
         $membershipStatus->copyValues( $params );
         
-        $membershipStatus->id = CRM_Utils_Array::value( 'membershipStatus', $ids );
+        $membershipStatus->id = $statusId;
 
         $membershipStatus->save( );
         return $membershipStatus;

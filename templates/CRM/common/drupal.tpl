@@ -76,12 +76,6 @@
 </a>
 </div>
 {/if}
-{if $pageTitle}
-	<div class="crm-title">
-		<h1 class="title">{if $isDeleted}<del>{/if}{$pageTitle}{if $isDeleted}</del>{/if}</h1>
-	</div>
-{/if}
-
 
 {*{include file="CRM/common/langSwitch.tpl"}*}
 

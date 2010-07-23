@@ -31,6 +31,7 @@
             <div class="description font-italic">
                 {ts}Complete OR partial Contribution Page title.{/ts}
             </div>
+            <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl"}</div>  
         </td>
         
         <td>
@@ -43,7 +44,6 @@
                 {/foreach}
             </div>
         </td>
-        <td class="right">{$form.buttons.html}</td>  
     </tr>
  </table>
 </fieldset>

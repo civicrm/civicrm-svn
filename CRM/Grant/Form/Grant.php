@@ -225,6 +225,7 @@ class CRM_Grant_Form_Grant extends CRM_Core_Form
         if ( $this->_context == 'standalone' ) {
             require_once 'CRM/Contact/Form/NewContact.php';
             CRM_Contact_Form_NewContact::buildQuickForm( $this );
+            $this->addFormRule( array( 'CRM_Grant_Form_Grant', 'formRule' ), $this );
         }
     }
     
