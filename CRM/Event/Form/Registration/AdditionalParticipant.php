@@ -187,6 +187,7 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                     ts( 'Email Address' ),
                     array( 'size' => 30, 'maxlength' => 60 ),
                     $required );
+        $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
         //add buttons
         $js = null;
         if ( $this->isLastParticipant( true ) && !CRM_Utils_Array::value('is_monetary', $this->_values['event']) ) {
