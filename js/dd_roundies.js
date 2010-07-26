@@ -18,7 +18,10 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
 
 
-$(document).ready(function() { 
+$(document).ready(function() {
+if ( cj( ) ) {
+    $ = cj;
+}     
 $.uicornerfix = function(r){
   DD_roundies.addRule('.ui-corner-all', r);
   DD_roundies.addRule('.ui-corner-top', r+' '+r+' 0 0');
