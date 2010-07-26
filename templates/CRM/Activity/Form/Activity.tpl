@@ -199,8 +199,7 @@
                           {* If using plain textarea, assign class=huge to make input large enough. *}
                           {if $defaultWysiwygEditor eq 0}{$form.details.html|crmStripAlternatives|crmReplace:class:huge}{else}{$form.details.html|crmStripAlternatives}{/if}
             		  </td>
-            		{/if}     
-               </td>
+            		{/if}
              </tr> 
              <tr class="crm-activity-form-block-priority_id">
                 <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
