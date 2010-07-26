@@ -66,7 +66,6 @@
 {/htxt}
 
 {htxt id='data-source-selection'}
-  <p>
     {ts}Select the source of the imported data. By default the following choices are possible:{/ts}
     <table>
       <tr><td><strong>{ts}Comma-Separated Values (CSV){/ts}</strong></td></tr>
@@ -76,5 +75,4 @@
       <tr><td><code>SELECT first_name, last_name, email FROM somedatabase.sometable</code><td></tr>
       <tr><td>{ts}This query can be against a different database, but that database has to be on the same database server and the CiviCRM database user has to have the SELECT privilege (and any other privileges required to execute the query).{/ts}</td></tr>
     </table>
-  </p>
 {/htxt}
