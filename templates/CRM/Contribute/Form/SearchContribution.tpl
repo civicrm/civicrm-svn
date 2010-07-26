@@ -46,5 +46,4 @@
         </td>
     </tr>
  </table>
-</fieldset>
 </div>
