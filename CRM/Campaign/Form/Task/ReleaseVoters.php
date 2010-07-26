@@ -74,24 +74,24 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
         parent::preProcess( );
 
         require_once 'CRM/Core/PseudoConstant.php';
-
+        
         //get the survey id from user submitted values.
-        $this->_surveyId = CRM_Utils_Array::value( 'campaign_survey_id', $this->get( 'formValues' ) );
-
+        $this->_surveyId      = CRM_Utils_Array::value( 'campaign_survey_id',    $this->get( 'formValues' ) );
+        $this->_interviewerId = CRM_Utils_Array::value( 'survey_interviewer_id', $this->get( 'formValues' ) );
+        
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $surveyActType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
-
+        
         if ( !$this->_surveyId ) {
             CRM_Core_Error::statusBounce( ts( "Please search with 'Survey', to apply this action.") );
         }
-        
-        $session = CRM_Core_Session::singleton( );
-
-        if ( empty($this->_contactIds) || !($session->get('userID')) ) {
-            CRM_Core_Error::statusBounce( ts( "Could not find contacts for release voters resevation Or Missing Interviewer contact.") );
+        if ( !$this->_interviewerId ) {
+            CRM_Core_Error::statusBounce( ts( 'Missing Interviewer contact.' ) );
         }
-        $this->_interviewerId = $session->get('userID');
-
+        if ( !is_array( $this->_contactIds ) || empty( $this->_contactIds ) ) {
+            CRM_Core_Error::statusBounce( ts( 'Could not find contacts for release voters resevation.') );
+        }
+        
         $surveyDetails = array( );
         $params        = array( 'id' => $this->_surveyId );
         $this->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve($params, $surveyDetails);

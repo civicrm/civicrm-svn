@@ -171,6 +171,18 @@ class CRM_Campaign_BAO_Query
                 $query->_where[$grouping][] = '(civicrm_activity.is_deleted = 0 OR civicrm_activity.is_deleted IS NULL)';
             }
             return;
+
+        case 'survey_interviewer_id' :
+            $surveyInterviewerName = null;
+            foreach ( $query->_params as $paramValues ) {
+                if ( CRM_Utils_Array::value( 0, $paramValues ) == 'survey_interviewer_name' ) {
+                    $surveyInterviewerName = CRM_Utils_Array::value( 2, $paramValues );
+                }
+            }
+            $query->_qill[$grouping ][] = ts( 'Survey Interviewer - %1', array( 1 => $surveyInterviewerName ) );
+            $query->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( 'civicrm_activity.source_contact_id', 
+                                                                              $op, $value, "Integer" );
+            return;
         }
     }
     

@@ -264,17 +264,17 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                                               'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1',
                                               false, null, false );
             $this->assign( 'dataUrl',$dataUrl );
-            $this->add( 'text',   'interviewer_name', ts( 'Select Interviewer' ) );
-            $this->add( 'hidden', 'interviewer_id', '',array( 'id' => 'interviewer_id' ) );
+            $this->add( 'text',   'survey_interviewer_name', ts( 'Select Interviewer' ) );
+            $this->add( 'hidden', 'survey_interviewer_id', '',array( 'id' => 'survey_interviewer_id' ) );
             
             $session = CRM_core_Session::singleton( );
             $userId  = $session->get( 'userID' );
             if ( $userId ) {
-                $defaults['interviewer_id']    = $userId;
-                $defaults['interviewer_name']  = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
-                                                                              $userId,
-                                                                              'sort_name',
-                                                                              'id' );
+                $defaults['survey_interviewer_id']    = $userId;
+                $defaults['survey_interviewer_name']  = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                                                     $userId,
+                                                                                     'sort_name',
+                                                                                     'id' );
                 $this->setDefaults( $defaults );
             }
         }
@@ -474,6 +474,11 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             $this->set( 'surveyId', $this->_formValues['campaign_survey_id'] );
             unset( $this->_formValues['campaign_survey_id'] );
             unset( $this->_formValues['survey_status_id'] );
+        }
+        
+        if ( CRM_Utils_Array::value( 'survey_interviewer_id', $this->_formValues ) ) {
+            $this->set( 'interviewerId', $this->_formValues['survey_interviewer_id'] );
+            unset( $this->_formValues['survey_interviewer_id'] );
         }
     }
     

@@ -79,17 +79,19 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
      */
     function preProcess( ) {
         parent::preProcess( );
-        $session = CRM_Core_Session::singleton( );
         
         //get the survey id from user submitted values.
-        $this->_surveyId = $this->get( 'surveyId' );
+        $this->_surveyId      = $this->get( 'surveyId' );
+        $this->_interviewerId = $this->get('interviewerId');
         if ( !$this->_surveyId ) {
             CRM_Core_Error::statusBounce( ts( "Could not find Survey Id.") );
         }
-        if ( empty($this->_contactIds) || !($session->get('userID')) ) {
-            CRM_Core_Error::statusBounce( ts( "Could not find contacts for voter reservation Or Missing Interviewer contact.") );
+        if ( !$this->_interviewerId ) {
+            CRM_Core_Error::statusBounce( ts( "Missing Interviewer contact." ) );
         }
-        $this->_interviewerId = $session->get('userID');
+        if ( !is_array( $this->_contactIds ) || empty( $this->_contactIds ) ) {
+            CRM_Core_Error::statusBounce( ts( "Could not find contacts for voter reservation.") );
+        }
         
         $params = array( 'id' => $this->_surveyId );
         CRM_Campaign_BAO_Survey::retrieve( $params, $this->_surveyDetails );
@@ -159,14 +161,14 @@ SELECT  COUNT(id)
         
         require_once 'CRM/Activity/BAO/Activity.php';
         require_once 'CRM/Core/PseudoConstant.php';
-
+        
         $includeContacts = array( );
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $surveyActType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
         $campaignId     = CRM_Utils_Array::value( 'campaign_id', $this->_surveyDetails );
         
         $includeGroups  = array( );
-        if ( $campaignId  ) {
+        if ( $campaignId ) {
             require_once 'CRM/Campaign/BAO/Campaign.php';
             $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups( $campaignId  );
             foreach( $campaignGroups as $id => $group ) {

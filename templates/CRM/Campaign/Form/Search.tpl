@@ -43,16 +43,12 @@
             </td>
 
 	    {if $showInterviewer}
-
-	    
 	    <td class="font-size12pt">
-	        {$form.interviewer_name.label}
+	        {$form.survey_interviewer_name.label}
             </td>
             <td class="font-size12pt ">
-	        {$form.interviewer_name.html}
+	        {$form.survey_interviewer_name.html}
             </td>  
-	    
-
 	    {/if}		    
 
 	</tr>
@@ -176,18 +172,18 @@
   //load interviewer autocomplete.
   var interviewerDataUrl = "{/literal}{$dataUrl}{literal}";
   var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
-  cj( "#interviewer_name" ).autocomplete( interviewerDataUrl, 
-                                         { width : 180, 
-                                           selectFirst : false, 
-                                           hintText: hintText, 
-                                           matchContains: true, 
-                                           minChars: 1
-                                         }
-                                      ).result( function( event, data, formatted ) { 
-				                      cj( "#interviewer_id" ).val( data[1] );
-                                              }).bind( 'click', function( ) { 
-                                                      cj( "#interviewer_id" ).val(''); 
-                                              });
+  cj( "#survey_interviewer_name" ).autocomplete( interviewerDataUrl, 
+                                                 { width : 256, 
+                                                   selectFirst : false, 
+                                                   hintText: hintText, 
+                                                   matchContains: true, 
+                                                   minChars: 1
+                                                  }
+                                                 ).result( function( event, data, formatted ) { 
+				                              cj( "#survey_interviewer_id" ).val( data[1] );
+                                                         }).bind( 'click', function( ) { 
+                                                              cj( "#survey_interviewer_id" ).val(''); 
+                                                         });
 
 
 </script>

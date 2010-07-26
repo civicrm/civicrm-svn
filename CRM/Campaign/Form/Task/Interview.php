@@ -79,14 +79,16 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         parent::preProcess( );
         
         //get the survey id from user submitted values.
-        $this->_surveyId = CRM_Utils_Array::value( 'campaign_survey_id', $this->get( 'formValues' ) );
+        $this->_surveyId      = CRM_Utils_Array::value( 'campaign_survey_id',    $this->get( 'formValues' ) );
+        $this->_interviewerId = CRM_Utils_Array::value( 'survey_interviewer_id', $this->get( 'formValues' ) );
         if ( !$this->_surveyId ) {
             CRM_Core_Error::statusBounce( ts( "Could not find Survey Id.") );
         }
-        $this->_campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $this->_surveyId, 'campaign_id' );
+        if ( !$this->_interviewerId ) {
+            CRM_Core_Error::statusBounce( ts( 'Missing Interviewer contact.' ) );
+        }
         
-        $session = CRM_Core_Session::singleton( );
-        $this->_interviewerId = $session->get('userID');
+        $this->_campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $this->_surveyId, 'campaign_id' );
         
         //get the contact read only fields to display.
         require_once 'CRM/Core/BAO/Preferences.php';
