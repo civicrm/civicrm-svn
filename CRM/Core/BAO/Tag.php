@@ -93,7 +93,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
 
         $sql .= " ORDER BY parent_id,name";
 
-        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        $dao =& CRM_Core_DAO::executeQuery( $sql, CRM_Core_DAO::$_nullArray, true, null, false, false );
 
         $orphan = array();
         while ( $dao->fetch( ) ) {
@@ -186,7 +186,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
                   FROM civicrm_tag 
                   WHERE {$parentClause} AND used_for LIKE '%{$usedFor}%' ORDER BY name";
         
-        $dao = CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray, true, null, false, false );
         
         while( $dao->fetch( ) ) {
             $tags[$dao->id] = $separator . $dao->name;
@@ -318,7 +318,7 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
     static function getTagSet( $entityTable ) {
         $tagSets = array( );
         $query = "SELECT name FROM civicrm_tag WHERE is_tagset=1 AND parent_id IS NULL and used_for LIKE '%{$entityTable}%'";
-        $dao = CRM_Core_DAO::executeQuery( $query );
+        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray, true, null, false, false );
         while( $dao->fetch( ) ) {
            $tagSets[] = $dao->name;
         }
