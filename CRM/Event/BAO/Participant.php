@@ -793,6 +793,7 @@ WHERE  civicrm_participant.id = {$participantId}
      */
     static function fixEventLevel( &$eventLevel )
     {
+        require_once 'CRM/Core/BAO/CustomOption.php';
         if ( ( substr( $eventLevel, 0, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) &&
              ( substr( $eventLevel, -1, 1) == CRM_Core_BAO_CustomOption::VALUE_SEPERATOR ) ) {
             $eventLevel = implode( ', ', explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
@@ -919,7 +920,7 @@ WHERE  civicrm_participant.id = {$participantId}
      * @access public
      * @static
      */
-    static function updateStatus( $participantIds, $statusId, $updateRegisterDate = true ) 
+    static function updateStatus( $participantIds, $statusId, $updateRegisterDate = false ) 
     {    
         if ( !is_array( $participantIds ) || empty( $participantIds ) || !$statusId ) {
             return;
@@ -994,6 +995,8 @@ UPDATE  civicrm_participant
         require_once 'CRM/Event/PseudoConstant.php';
         $statusTypes = CRM_Event_PseudoConstant::participantStatus( );
         $participantRoles = CRM_Event_PseudoConstant::participantRole( );
+        $pendingStatuses  = CRM_Event_PseudoConstant::participantStatus( null, 
+                                                                         "class = 'Pending'"  );
         
         //first thing is pull all necessory data from db.
         $participantIdClause = "(" . implode( ',', $allParticipantIds ) . ")";  
@@ -1146,7 +1149,14 @@ UPDATE  civicrm_participant
             
             //now update status of group/one at once.
             $updateParticipantIds[] = $participantId;
-            self::updateStatus( $updateParticipantIds, $toStatusId );
+            
+            //update the register date only when we,
+            //move participant to pending class, CRM-6496
+            $updateRegisterDate = false;
+            if ( array_key_exists( $toStatusId, $pendingStatuses ) ) {
+                $updateRegisterDate = true;
+            }
+            self::updateStatus( $updateParticipantIds, $toStatusId, $updateRegisterDate );
             $processedParticipantIds[] = $participantId;
         }
         

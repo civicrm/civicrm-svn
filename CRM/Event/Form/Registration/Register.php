@@ -258,7 +258,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         $hasAdditionalParticipants = false;
         if ( $this->_allowConfirmation ) { 
             require_once 'CRM/Event/Form/EventFees.php';
-            $this->_contactID  = $contactID;
+            $this->_contactId  = $contactID;
             $this->_discountId = $discountId;
             $forcePayLater   = CRM_Utils_Array::value( 'is_pay_later', $this->_defaults,  false );
             $this->_defaults = array_merge( $this->_defaults, CRM_Event_Form_EventFees::setDefaultValues( $this ) );
@@ -311,6 +311,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     "email-{$this->_bltID}",
                     ts( 'Email Address' ),
                     array( 'size' => 30, 'maxlength' => 60 ), true );
+        $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
         
         $bypassPayment = false;
         $allowGroupOnWaitlist = false;
@@ -491,12 +492,10 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $form->addGroup( $elements, 'amount', ts('Event Fee(s)'), '<br />' );      
             $form->add( 'hidden', 'priceSetId', $form->_priceSetId );
             $form->assign( 'priceSet', $form->_priceSet );
-            $visibility = CRM_Core_PseudoConstant::visibility( 'name' );
-            $visibilityId =  array_search( 'public', $visibility );
             $className = CRM_Utils_System::getClassName( $form );
             require_once 'CRM/Price/BAO/Field.php';                       
             foreach ( $form->_values['fee']['fields'] as $field ) {
-                if ( $visibilityId == CRM_Utils_Array::value( 'visibility_id', $field ) || $className == 'CRM_Event_Form_Participant' ) {
+                if (  CRM_Utils_Array::value( 'visibility', $field ) == 'public' || $className == 'CRM_Event_Form_Participant' ) {
                     $fieldId = $field['id'];
                      $elementName = 'price_' . $fieldId;
                     if ( $button == 'skip' ) {
@@ -890,12 +889,12 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                     $params['eventId']    = $this->_values['event']['id'];
            
                     $params['cancelURL' ] = CRM_Utils_System::url( 'civicrm/event/register',
-                                                                   '_qf_Register_display=1',
+                                                                   "_qf_Register_display=1&qfKey={$this->controller->_key}",
                                                                    true, null, false );
                     if ( CRM_Utils_Array::value( 'additional_participants', $params, false ) ) {
                         $urlArgs = "_qf_Participant_1_display=1&rfp=1&qfKey={$this->controller->_key}";
                     } else {
-                        $urlArgs = '_qf_Confirm_display=1&rfp=1';
+                        $urlArgs = "_qf_Confirm_display=1&rfp=1&qfKey={$this->controller->_key}";
                     } 
                     $params['returnURL' ] = CRM_Utils_System::url('civicrm/event/register',
                                                                   $urlArgs,
@@ -958,7 +957,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
     public function processRegistration( $params, $contactID = null ) 
     {
         $session = CRM_Core_Session::singleton( );
-        $contactID = $this->getContactID( );
+        $contactID = self::getContactID( );
         $this->_participantInfo   = array();
         
         // CRM-4320, lets build array of cancelled additional participant ids 
@@ -997,7 +996,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 // we dont store in userID in case the user is doing multiple
                 // transactions etc
                 // for things like tell a friend
-                if ( ! $this->getContactID( ) && CRM_Utils_Array::value( 'is_primary', $value ) ) {
+                if ( ! self::getContactID( ) && CRM_Utils_Array::value( 'is_primary', $value ) ) {
                     $session->set( 'transaction.userID', $contactID );
                 }
                 

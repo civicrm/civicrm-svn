@@ -296,6 +296,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $this->applyFilter('__ALL__', 'trim');
         $this->add( 'text', "email-{$this->_bltID}",
                     ts( 'Email Address' ), array( 'size' => 30, 'maxlength' => 60 ), true );
+        $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
         
          //build pledge block.
 
@@ -989,8 +990,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     $this->set( 'contributeMode', 'express' ); 
                     
                     $donateURL = CRM_Utils_System::url( 'civicrm/contribute', '_qf_Contribute_display=1' ); 
-                    $params['cancelURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', '_qf_Main_display=1', true, null, false ); 
-                    $params['returnURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', '_qf_Confirm_display=1&rfp=1', true, null, false ); 
+                    $params['cancelURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', "_qf_Main_display=1&qfKey={$params['qfKey']}", true, null, false ); 
+                    $params['returnURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', "_qf_Confirm_display=1&rfp=1&qfKey={$params['qfKey']}", true, null, false ); 
                     $params['invoiceID' ] = $invoiceID;
 
                     //default action is Sale

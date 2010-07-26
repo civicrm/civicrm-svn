@@ -306,7 +306,7 @@ AND        a.is_deleted = 0
                              &$params ) {
 
         $activityTypeName =  (string) $activityTypeXML->name;
-        $activityTypes    =& $this->allActivityTypes( );
+        $activityTypes    =& $this->allActivityTypes( true, true );
         $activityTypeInfo = CRM_Utils_Array::value( $activityTypeName, $activityTypes );
 
         if ( ! $activityTypeInfo ) {

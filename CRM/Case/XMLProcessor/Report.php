@@ -183,12 +183,19 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
                             $caseID,
                             $activityTypes,
                             &$activities ) {
-        // get all activities for this case that in this activityTypes set
-        
+        // get all activities for this case that in this activityTypes set        
         foreach ( $activityTypes as $aType ) {
             $map[$aType['id']] = $aType;
         }
         
+        // get all core activities
+        require_once "CRM/Case/PseudoConstant.php";
+        $coreActivityTypes  = CRM_Case_PseudoConstant::activityType( false, true );
+        
+        foreach ( $coreActivityTypes as $aType ) {
+            $map[$aType['id']] = $aType;
+        }               
+                
         $activityTypeIDs = implode( ',', array_keys( $map ) );
         $query = "
 SELECT a.*, c.id as caseID
@@ -208,7 +215,7 @@ AND    ac.case_id = %1
             $activityTypeInfo = $map[$dao->activity_type_id];
             $activities[] = $this->getActivity( $clientID,
                                                 $dao,
-                                                $map[$dao->activity_type_id] );
+                                                $activityTypeInfo );
         }
     }
     
@@ -283,9 +290,11 @@ WHERE      a.id = %1
         $activity['fields'] = array( );
         if ( $clientID ) {
             $clientID = CRM_Utils_Type::escape($clientID, 'Integer');
-            
-            $activity['editURL'] = CRM_Utils_System::url( 'civicrm/case/activity',
-                                                          "reset=1&cid={$clientID}&caseid={$activityDAO->caseID}&action=update&atype={$activityDAO->activity_type_id}&id={$activityDAO->id}" );
+            if ( !in_array( $activityTypeInfo['name'], array( 'Email', 'Inbound Email' ) ) ) {
+                $activity['editURL'] = CRM_Utils_System::url( 'civicrm/case/activity',                                          "reset=1&cid={$clientID}&caseid={$activityDAO->caseID}&action=update&atype={$activityDAO->activity_type_id}&id={$activityDAO->id}" );
+            } else {
+                $activity['editURL'] = '';
+            }
             
             $client = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $clientID, 'display_name' );
             // add Client SortName as well as Display to the strings to be redacted across the case session 
@@ -422,7 +431,7 @@ WHERE      a.id = %1
                                        'type'  => 'Date' );
         
         $activity['fields'][] = array( 'label' => 'Details',
-                                       'value' => $this->redact($activityDAO->details ),
+                                       'value' => $this->redact( htmlspecialchars($activityDAO->details) ),
                                        'type'  => 'Memo' );
         
         // Skip Duration field if empty (to avoid " minutes" output). Might want to do this for all fields at some point. dgg
@@ -446,7 +455,6 @@ WHERE      a.id = %1
                                                           $activityDAO,
                                                           $activityTypeInfo );
         
-        //CRM_Core_Error::debug($activity);
         return $activity;
     }
     
@@ -650,11 +658,11 @@ LIMIT  1
         
         //now collect all the information about activities
         $activities = array( );
-        $form->getActivities( $clientID, $caseID, $activityTypes, $activities );
+        $form->getActivities( $clientID, $caseID, $activityTypes, $activities );        
         $template->assign_by_ref( 'activities', $activities );
         
         // now run the template
-        $contents = $template->fetch( 'CRM/Case/XMLProcessor/Report.tpl' );
+        $contents = $template->fetch( 'CRM/Case/XMLProcessor/Report.tpl' );        
         return $contents;
     }
 

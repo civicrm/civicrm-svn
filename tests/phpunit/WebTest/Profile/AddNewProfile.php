@@ -26,7 +26,7 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-class WebTest_UF_AddNewProfile extends CiviSeleniumTestCase {
+class WebTest_Profile_AddNewProfile extends CiviSeleniumTestCase {
     
     protected $captureScreenshotOnFailure = TRUE;
     protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';

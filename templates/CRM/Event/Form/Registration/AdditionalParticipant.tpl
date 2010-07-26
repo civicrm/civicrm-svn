@@ -46,6 +46,8 @@
     <fieldset id="priceset"><legend>{$event.fee_label}</legend>
     <table class="form-layout">
     {foreach from=$priceSet.fields item=element key=field_id}
+      {* Skip 'Admin' visibility price fields since this tpl is used in online registration. *}
+      {if $element.visibility EQ 'public'}
         {if ($element.html_type eq 'CheckBox' || $element.html_type == 'Radio') && $element.options_per_line}
             {assign var="element_name" value=price_$field_id}
          <tr class="crm-event-additionalparticipant-form-block-element_name">
@@ -83,6 +85,7 @@
            <td class="description">{$element.help_post}</td>
         </tr>
         {/if}
+      {/if}
     {/foreach}
     </table>
     <div>

@@ -59,7 +59,20 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
       $this->waitForElementPresent("search-status");
       $this->assertText("search-status","Contacts IN Newsletter Subscribers ...AND...");
-
+      
+      // Advanced Search by Tag
+      $this->click("//ul[@id='civicrm-menu']/li[3]");
+      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[2]/div/a");
+      $this->waitForPageToLoad("30000");
+      $this->click("crmasmSelect2");
+      $this->select("crmasmSelect2", "label=Major Donor");
+//      $this->select("crmasmSelect2", "label=- select -");
+//      $this->click("//select[@id='crmasmSelect2']/option[4]");
+      $this->waitForElementPresent("//ul[@id='crmasmList2']/li/span");
+      $this->click("_qf_Advanced_refresh");
+      $this->waitForPageToLoad("30000");
+      $this->waitForElementPresent("search-status");
+      $this->assertText("search-status","Tagged IN Major Donor");
   }
 
 }

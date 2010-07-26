@@ -126,7 +126,7 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         require_once 'CRM/Member/BAO/MembershipLog.php';
         CRM_Member_BAO_MembershipLog::add($membershipLog, CRM_Core_DAO::$_nullArray);
         
-        // reset the group contact cache for this group
+        // reset the group contact cache since smart groups might be affected due to this
         require_once 'CRM/Contact/BAO/GroupContactCache.php';
         CRM_Contact_BAO_GroupContactCache::remove( );
 
@@ -1284,7 +1284,11 @@ AND civicrm_membership.is_test = %2";
             $memParams['status_id']     = $updateStatusId;
             $memParams['skipStatusCal'] = true;
         }
-        
+
+        //since we are renewing, 
+        //make status override false.  
+        $memParams['is_override'] = false;
+
         //CRM-4027, create log w/ individual contact.
         if ( $modifiedID ) {
             $ids['userId'] = $modifiedID; 

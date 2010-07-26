@@ -97,7 +97,7 @@
 {literal}
 <script type="text/javascript">
     cj( function( ) {
-        $('.mailoption').hide();
+        cj('.mailoption').hide();
         cj("input[name='outBound_option']").click( function( ) {
         switch(cj(this).val()) {
           case "0":
@@ -111,7 +111,7 @@
             cj("#_qf_Smtp_refresh_test").show( );
           break;
           case "3":
-            $('.mailoption').hide();
+            cj('.mailoption').hide();
             cj("#_qf_Smtp_refresh_test").show( );
           break;
           default:

@@ -31,6 +31,11 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
  
 class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
 
+    protected $captureScreenshotOnFailure = TRUE;
+    protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
+    protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
+            
+
   protected function setUp()
   {
       parent::setUp();

@@ -104,6 +104,7 @@ class CRM_Utils_Mail
           $headers['Auto-Submitted']          = "Auto-Generated";
         }
 
+        require_once 'Mail/mime.php';
         $msg = new Mail_mime("\n");
         if ( $textMessage ) {
             $msg->setTxtBody($textMessage);

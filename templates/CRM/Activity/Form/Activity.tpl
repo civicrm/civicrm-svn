@@ -199,8 +199,7 @@
                           {* If using plain textarea, assign class=huge to make input large enough. *}
                           {if $defaultWysiwygEditor eq 0}{$form.details.html|crmStripAlternatives|crmReplace:class:huge}{else}{$form.details.html|crmStripAlternatives}{/if}
             		  </td>
-            		{/if}     
-               </td>
+            		{/if}
              </tr> 
              <tr class="crm-activity-form-block-priority_id">
                 <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
@@ -266,7 +265,7 @@
                            </tr>
                            <tr>
                               <td class="label">{$form.followup_activity_subject.label}</td>
-                              <td>{$form.followup_activity_subject.html}</td>
+                              <td>{$form.followup_activity_subject.html|crmReplace:class:huge}</td>
                            </tr>
                         </table>
                        </div><!-- /.crm-accordion-body -->

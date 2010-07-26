@@ -76,15 +76,18 @@
          
         {if $geoCode}
          <tr class="crm-import-datasource-form-block-doGeocodeAddress">
+             <td class="label"></td>
              <td>{$form.doGeocodeAddress.html} {$form.doGeocodeAddress.label}<br />
                <span class="description">
                 {ts}This option is not recommended for large imports. Use the command-line geocoding script instead.{/ts} {docURL page="Batch Geocoding Script"}
-            </td></tr>
+               </span>
+            </td>
+         </tr>
         {/if}
 
         {if $savedMapping}
          <tr  class="crm-import-datasource-form-block-savedMapping">
-              <td class="lable">{if $loadedMapping}{ts}Select a Different Field Mapping{/ts}{else}{ts}Load Saved Field Mapping{/ts}{/if}</td>
+              <td class="label"><label for="savedMapping">{if $loadedMapping}{ts}Select a Different Field Mapping{/ts}{else}{ts}Load Saved Field Mapping{/ts}{/if}</label></td>
               <td>{$form.savedMapping.html}<br />
 	    &nbsp;&nbsp;&nbsp;<span class="description">{ts}Select Saved Mapping or Leave blank to create a new One.{/ts}</span></td>
          </tr>

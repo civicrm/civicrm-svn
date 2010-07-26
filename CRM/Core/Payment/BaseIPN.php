@@ -317,7 +317,8 @@ class CRM_Core_Payment_BaseIPN {
         $membership   =& $objects['membership']  ;
         $participant  =& $objects['participant'] ;
         $event        =& $objects['event']       ;
-        
+        $changeToday  =  CRM_Utils_Array::value( 'trxn_date', $input, self::$_now );
+
         $values = array( );
         if ( $input['component'] == 'contribute' ) {
             require_once 'CRM/Contribute/BAO/ContributionPage.php';
@@ -341,9 +342,10 @@ class CRM_Core_Payment_BaseIPN {
                      * In BAO/Membership.php(renewMembership function), we skip the extend membership date and status 
                      * when Contribution mode is notify and membership is for renewal ) 
                      */
-                    CRM_Member_BAO_Membership::fixMembershipStatusBeforeRenew( $currentMembership, $changeToday = null  );
+                    CRM_Member_BAO_Membership::fixMembershipStatusBeforeRenew( $currentMembership, $changeToday );
                     
-                    $dates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType( $membership->id , $changeToday = null );
+                    $dates = CRM_Member_BAO_MembershipType::getRenewalDatesForMembershipType( $membership->id , 
+                                                                                              $changeToday );
                     
                     $dates['join_date'] =  CRM_Utils_Date::customFormat($currentMembership['join_date'], $format );
                     
@@ -364,7 +366,10 @@ class CRM_Core_Payment_BaseIPN {
                                          'start_date'    => CRM_Utils_Date::customFormat( $dates['start_date'],    $format ),
                                          'end_date'      => CRM_Utils_Date::customFormat( $dates['end_date'],      $format ),
                                          'reminder_date' => CRM_Utils_Date::customFormat( $dates['reminder_date'], $format ) );
-                
+                //we might be renewing membership, 
+                //so make status override false.  
+                $formatedParams['is_override'] = false;
+
                 $membership->copyValues( $formatedParams );
                 $membership->save( );
 

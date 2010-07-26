@@ -119,13 +119,11 @@
     </tr>
     {/foreach}
 
-    {if $eventSummary.total_events GT 10}
-        <tr>
-            <td colspan="7"><a href="{crmURL p='civicrm/admin/event' q='reset=1'}">&raquo; {ts}Browse more events{/ts}...</a></td>
-        </tr>
-    {/if}
     </tbody>
     </table>
+    {if $eventSummary.total_events GT 10}
+     <div><a href="{crmURL p='civicrm/admin/event' q='reset=1'}">&raquo; {ts}Browse more events{/ts}...</a></div>
+    {/if}
 {else}
     <br />
     <div class="messages status">
