@@ -362,7 +362,7 @@ WHERE      a.id = %1
                                        'type'     => 'String' );
         
         $activity['fields'][] = array( 'label' => 'Subject',
-                                       'value' => $this->redact( $activityDAO->subject ),
+                                       'value' => htmlspecialchars($this->redact( $activityDAO->subject ) ),
                                        'type'  => 'Memo' );
 
         $creator = $this->getCreatedBy( $activityDAO->id );
