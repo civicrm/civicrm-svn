@@ -1174,13 +1174,7 @@ AND civicrm_membership.is_test = %2";
                 $currentMembership['end_date']      = CRM_Utils_Array::value( 'end_date',      $dates );
                 $currentMembership['reminder_date'] = CRM_Utils_Array::value( 'reminder_date', $dates );
                 $currentMembership['is_test']       = $is_test;
-                $currentMembership['status_id']     = 
-                    CRM_Member_BAO_MembershipStatus::getMembershipStatusByDate( 
-                                                                               $currentMembership['start_date'],
-                                                                               $currentMembership['end_date'],
-                                                                               $currentMembership['join_date'],
-                                                                               $changeToday
-                                                                                );
+                
                 if ( $form->_params['membership_source'] ) {
                     $currentMembership['source'] = $form->_params['membership_source'];
                 } else if ( $form->_values['title'] ) {
