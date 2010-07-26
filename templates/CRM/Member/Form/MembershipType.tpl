@@ -24,10 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for adding/editing/deleting membership type  *}
+<h3>{if $action eq 1}{ts}New Membership Type{/ts}{elseif $action eq 2}{ts}Edit Membership Type{/ts}{else}{ts}Delete Membership Type{/ts}{/if}</h3>
 <div class="crm-block crm-form-block crm-membership-type-form-block">
 
-<fieldset>
-<legend>{if $action eq 1}{ts}New Membership Type{/ts}{elseif $action eq 2}{ts}Edit Membership Type{/ts}{else}{ts}Delete Membership Type{/ts}{/if}</legend>
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <div class="form-item" id="membership_type_form">
     {if $action eq 8}   
@@ -58,6 +57,7 @@
               <span class="description">{ts}Members assigned this membership type belong to which organization (e.g. this is for membership in 'Save the Whales - Northwest Chapter'). NOTE: This organization/group/chapter must exist as a CiviCRM Organization type contact.{/ts}
           </td>
       </tr>
+  </table>
         {/if} 
          <div class="spacer"></div>	
             {if $searchDone} {* Search button clicked *}
@@ -117,10 +117,10 @@
               <table  class="form-layout-compressed">
                  <tr> {capture assign=infoMessage}{ts 1=$form.member_org.value 2=Organization}No matching results for <ul><li>Name like: %1</li><li>Contact type: %2</li></ul>Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
             {include file="CRM/common/info.tpl"}           
+	         </tr>
+	      </table>
          {/if} {* end if searchCount *}
      {/if} {* end if searchDone *}
-               </tr>
-             </table>
       <table class="form-layout-compressed">
          <tr class="crm-membership-type-form-block-minimum_fee">
              <td class="label">{$form.minimum_fee.label}</td>
@@ -146,21 +146,18 @@
                   <span class="description">{ts}Select 'rolling' if membership periods begin at date of signup. Select 'fixed' if membership periods begin on a set calendar date.{/ts} {help id="period-type"}</span>
              </td>
          </tr>   
-         <div id="fixed_period">
-         <tr class="crm-membership-type-form-block-fixed_period_start_day">
+         <tr id="fixed_start_day_row" class="crm-membership-type-form-block-fixed_period_start_day">
              <td class="label">{$form.fixed_period_start_day.label}</td>
              <td>{$form.fixed_period_start_day.html}<br />
                  <span class="description">{ts}Month and day on which a <strong>fixed</strong> period membership or subscription begins. Example: A fixed period membership with Start Day set to Jan 01 means that membership periods would be 1/1/06 - 12/31/06 for anyone signing up during 2006.{/ts}</span>
              </td>
          </tr>
-         <tr class="crm-membership-type-form-block-fixed_period_rollover_day">
+         <tr id="fixed_rollover_day_row" class="crm-membership-type-form-block-fixed_period_rollover_day">
              <td class="label">{$form.fixed_period_rollover_day.label}</td>
              <td>{$form.fixed_period_rollover_day.html}<br />
                  <span class="description">{ts}Membership signups after this date cover the following calendar year as well. Example: If the rollover day is November 31, membership period for signups during December will cover the following year.{/ts}</span>
              </td>
          </tr>
-       </div>
-       <div class="spacer"></div>	    
          <tr class="crm-membership-type-form-block-relationship_type_id"> 	
              <td class="label">{$form.relationship_type_id.label}</td>
              <td>{$form.relationship_type_id.html}<br />
@@ -206,33 +203,37 @@
                         <span class="description">{ts}Send Reminder these many days prior to membership expiration.{/ts}</span>
                     </td>
                 </tr>
+            </table>
         {/if}
     </fieldset>
-     </table>
+
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {/if}
     <div class="spacer"></div>
 </div>
-</fieldset>
 </div>
 {literal}
     <script type="text/javascript">
     if ( ( document.getElementsByName("period_type")[0].value   == "fixed" ) && 
          ( document.getElementsByName("duration_unit")[0].value == "year"  ) ) {
-	   show( 'fixed_period' );
+ 	        show('fixed_start_day_row', 'table-row');
+ 	        show('fixed_rollover_day_row', 'table-row');
     } else {
-	   hide( 'fixed_period' );
+        hide('fixed_start_day_row', 'table-row');
+        hide('fixed_rollover_day_row', 'table-row');
     }
 	function showHidePeriodSettings(){
         if ( ( document.getElementsByName("period_type")[0].value   == "fixed" ) && 
              ( document.getElementsByName("duration_unit")[0].value == "year"  ) ) {
-	        show('fixed_period');
+	        show('fixed_start_day_row', 'table-row');
+	        show('fixed_rollover_day_row', 'table-row');
 		    document.getElementsByName("fixed_period_start_day[M]")[0].value = "1";
 		    document.getElementsByName("fixed_period_start_day[d]")[0].value = "1";
             document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "12";
 		    document.getElementsByName("fixed_period_rollover_day[d]")[0].value = "31";
         } else {
-		    hide('fixed_period');
+            hide('fixed_start_day_row', 'table-row');
+            hide('fixed_rollover_day_row', 'table-row');
             document.getElementsByName("fixed_period_start_day[M]")[0].value = "";
 		    document.getElementsByName("fixed_period_start_day[d]")[0].value = "";
 		    document.getElementsByName("fixed_period_rollover_day[M]")[0].value = "";

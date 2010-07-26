@@ -106,7 +106,7 @@ class CRM_Utils_ReCAPTCHA {
 
     }
 
-    function validate( $value, &$form ) {
+    function validate( $value, $form ) {
         $config = CRM_Core_Config::singleton( );
 
         $resp = recaptcha_check_answer( $config->recaptchaPrivateKey,

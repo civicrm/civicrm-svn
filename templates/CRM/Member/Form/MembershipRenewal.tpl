@@ -96,9 +96,9 @@
                     <td class="label">{$form.payment_instrument_id.label}</td>
                     <td>{$form.payment_instrument_id.html}</td>
                 </tr>
-                <tr class="crm-member-membershiprenew-form-block-check_number">
-                    <div id="checkNumber"><td class="label">{$form.check_number.label}</td>
-                    <td>{$form.check_number.html|crmReplace:class:six}</td></div>
+                <tr id="checkNumber" class="crm-member-membershiprenew-form-block-check_number">
+                    <td class="label">{$form.check_number.label}</td>
+                    <td>{$form.check_number.html|crmReplace:class:six}</td>
                 </tr>
                 <tr class="crm-member-membershiprenew-form-block-trxn_id">
 	                <td class="label">{$form.trxn_id.label}</td>

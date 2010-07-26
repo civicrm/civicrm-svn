@@ -162,7 +162,9 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
         }
         
         if ( isset( $fv['merge_same_address'] ) ) {
-            $returnProperties = array_merge( $returnProperties , array( 'first_name' => 1, 'last_name' => 1 ) );
+            // we need first name/last name for summarising to avoid spillage
+            $returnProperties['first_name'] = 1;
+            $returnProperties['last_name']  = 1;
         }
         
         //get the contacts information
@@ -296,10 +298,13 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                     continue;
                 }
                 
+                if ( CRM_Utils_Array::value( 'addressee_display', $contact )  ) {
+                    $contact['addressee_display'] = trim( $contact['addressee_display'] );
+                }
                 if ( CRM_Utils_Array::value( 'addressee', $contact )  ) {
                     $contact['addressee'] = $contact['addressee_display'];
                 }
-                                                                            
+
                 // now create the rows for generating mailing labels
                 foreach ( $contact as $field => $fieldValue ) {
                     $rows[$value][$field] = $fieldValue;
@@ -441,7 +446,7 @@ class CRM_Contact_Form_Task_Label extends CRM_Contact_Form_Task
                 if ($count > 2) {			// too many to list 
                     break;
                 }
-                $family = implode(" & ", $first_names) . " " . $last_name;		// collapse the tree to summarize
+                $family = trim (implode(" & ", $first_names) . " " . $last_name );		// collapse the tree to summarize
                 if ($count) {
                     $processedNames .=  "\n" . $family;
                 } else {
