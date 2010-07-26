@@ -47,15 +47,13 @@
 <table class="form-layout">
 {if $clientName}
     <tr class="crm-case-form-block-clientName">
-	<td class="label font-size12pt">{ts}Client{/ts}</td>
-	<td class="font-size12pt bold view-value">{$clientName}</td>
+    	<td class="label font-size12pt">{ts}Client{/ts}</td>
+    	<td class="font-size12pt bold view-value">{$clientName}</td>
     </tr>
 {elseif !$clientName and $action eq 1} 
-    <tr class="form-layout-compressed" border="0">			      
-            {if $context eq 'standalone'}
-                {include file="CRM/Contact/Form/NewContact.tpl"}
-            {/if}
-    </tr>
+    {if $context eq 'standalone'}
+        {include file="CRM/Contact/Form/NewContact.tpl"}
+    {/if}
 {/if}
 {* activity fields *}
 {if $form.medium_id.html and $form.activity_location.html}
@@ -105,20 +103,19 @@
     <tr class="crm-case-form-block-tag">
       <td class="label">{$form.tag.label}</td>
       <td class="view-value"><div class="crm-select-container">{$form.tag.html}</div>
-                             {literal}
-                             <script type="text/javascript">
-                                                     $("select[multiple]").crmasmSelect({
-                                                              addItemTarget: 'bottom',
-                                                              animate: true,
-                                                              highlight: true,
-                                                              sortable: true,
-                                                              respectParents: true
-                                                     });
-                              </script>
-                              {/literal}
+{literal}
+<script type="text/javascript">
+cj("select[multiple]").crmasmSelect({
+    addItemTarget: 'bottom',
+    animate: true,
+    highlight: true,
+    sortable: true,
+    respectParents: true
+});
+</script>
+{/literal}
       </td>
     </tr>
-
 {/if}
 
 <tr class="crm-case-form-block-tag_set"><td colspan="2">{include file="CRM/common/Tag.tpl"}</td></tr>	     
