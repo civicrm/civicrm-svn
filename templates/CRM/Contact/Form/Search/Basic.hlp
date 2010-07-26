@@ -55,7 +55,5 @@
 {/htxt}
 
 {htxt id="id-add-to-smartGroup"}
-    {ts}You can also add contacts to a smart group directly - regardless of whether they meet the smart group search criteria. For example,
-    you might have a smart group for constituents who live in a certain locality, AND might have a few constituents who want to stay informed
-    about events in that locality even though they no longer live there. Click this button to add contacts directly to this smart group.{/ts}
+    {ts}You can also add contacts to a smart group directly - regardless of whether they meet the smart group search criteria. For example, you might have a smart group for constituents who live in a certain locality, AND might have a few constituents who want to stay informed about events in that locality even though they no longer live there. Click this button to add contacts directly to this smart group.{/ts}
 {/htxt}
