@@ -2097,6 +2097,8 @@ div.grippie {
     margin-bottom: -6px;
 }
 
+.ui-datepicker { width: 17em; padding: .2em .2em 0; z-index: 9999 !important; }
+
 #crm-container .cke_editor {
     border: 0px none;
 }
