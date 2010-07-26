@@ -42,6 +42,17 @@
 	        {$form.campaign_survey_id.html}
             </td>
 	</tr>
+        {if $showInterviewer}
+	  <tr class="crm-new-contact-form-block-contact">
+            <td class="font-size12pt">
+                {ts}Select Interviewer{/ts}
+            </td>
+            <td class="font-size12pt ">
+              {include file="CRM/Contact/Form/NewContact.tpl"}
+	      {$form.contact.html}
+            </td>
+	  </tr>
+        {/if}
         <tr>
             <td class="font-size12pt">
                 {$form.sort_name.label}

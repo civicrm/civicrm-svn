@@ -270,6 +270,14 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         $this->add( 'text', 'street_address',  ts( 'Street Address' ), $attributes['street_address'] );
         $this->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
         
+        $showInterviewer = false;
+        if ( CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+            require_once 'CRM/Contact/Form/NewContact.php';
+            CRM_Contact_Form_NewContact::buildQuickForm( $this );
+            $showInterviewer = true;
+        }
+        $this->assign( 'showInterviewer', $showInterviewer );
+        
         //build ward and precinct custom fields.
         $query = '
     SELECT  fld.id, fld.label 
