@@ -583,7 +583,7 @@ WHERE  contribution_id = {$this->_id}
                   $defaults['receive_date_time'] ) = CRM_Utils_Date::setDateDefaults( null, 'activityDateTime' );
         }
         
-        $this->assign( 'receive_date', CRM_Utils_Date::processDate( CRM_Utils_Array::value( 'receive_date', $defaults ) 
+        $this->assign( 'receive_date', CRM_Utils_Date::processDate( CRM_Utils_Array::value( 'receive_date', $defaults ), 
                                                                     CRM_Utils_Array::value( 'receive_date_time', $defaults ) ) );
         $this->assign( 'currency', CRM_Utils_Array::value( 'currency', $defaults ) );
         $this->assign( 'totalAmount', CRM_Utils_Array::value( 'total_amount', $defaults ) );
