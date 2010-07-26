@@ -44,23 +44,13 @@ class JElementCiviprofiles extends JElement {
 		require_once 'CRM/Core/Config.php';
 		$config =& CRM_Core_Config::singleton( );
 		
-		//require_once 'api/v2/UFGroup.php';
-		// Would like to eventually retrieve profiles using API
-		// Currently does not provide sufficient control to retrieve list
-        
-		// Get list of all profiles and assign to options array
-		$options = array();
-		
-    	$db = &JFactory::getDBO();
-		$query = 'SELECT DISTINCT civicrm_uf_group.id AS value, civicrm_uf_group.title AS text '
-            .' FROM civicrm_uf_join'
-            .' INNER JOIN civicrm_uf_group ON (civicrm_uf_join.uf_group_id = civicrm_uf_group.id)'
-            .' WHERE (civicrm_uf_group.is_active = 1)'
-            .' ORDER BY civicrm_uf_group.title ASC';
-		$db->setQuery( $query );
-		$options = $db->loadObjectList( );
-		
-		return JHTML::_( 'select.genericlist', $options, 'params[gid]', null, 'value', 'text', $value );
+		require_once 'api/v2/UFGroup.php';
+        $ufGroups =civicrm_uf_profile_groups_get();
+        $options[] = JHTML::_('select.option', '', JText::_('- Select Profile -') );
+        foreach ( $ufGroups  as $key =>$value ) {
+            $options[] = JHTML::_( 'select.option', $key, $value );
+        }
+        return JHTML::_( 'select.genericlist', $options, 'params[gid]', null, 'value', 'text', $value );
 	}
 }
 ?>

@@ -23,7 +23,7 @@
    +--------------------------------------------------------------------+
   */
 
-  // Retrieve list of CiviCRM contribution pages
+  // Retrieve list of CiviCRM contribution page PCP'S
   // Active
 
   // Check to ensure this file is included in Joomla!
@@ -47,12 +47,12 @@ class JElementCiviPCPs extends JElement {
 		// Get list of all profiles and assign to options array
 		$options = array();
 		
-    	$db = &JFactory::getDBO();
-		$query = 'SELECT id, title FROM civicrm_pcp WHERE is_active = 1 AND status_id = 2 ORDER BY title';
-		$db->setQuery( $query );
-		$options = $db->loadObjectList( );
-		
-		return JHTML::_( 'select.genericlist', $options, 'params[id]', null, 'id', 'title', $value );
+        $query = 'SELECT id, title FROM civicrm_pcp WHERE is_active = 1 AND status_id = 2 ORDER BY title';
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        while ( $dao->fetch( ) ) {
+            $options[] = JHTML::_( 'select.option', $dao->id, $dao->title ); 
+        }
+		return JHTML::_( 'select.genericlist', $options, 'params[id]', null, 'value', 'text', $value );
 	}
 }
 ?>

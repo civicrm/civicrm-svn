@@ -23,7 +23,7 @@
    +--------------------------------------------------------------------+
   */
 
-  // Retrieve list of CiviCRM contribution pages
+  // Retrieve list of CiviCRM PCP's contribution pages
   // Active
 
   // Check to ensure this file is included in Joomla!
@@ -44,17 +44,17 @@ class JElementCiviContribPagesPCP extends JElement {
 		require_once 'CRM/Core/Config.php';
 		$config =& CRM_Core_Config::singleton( );
         
-		// Get list of all profiles and assign to options array
+		// Get list of all ContribPagesPCP  and assign to options array
 		$options = array();
 		
-    	$db = &JFactory::getDBO();
-		$query = "SELECT cp.id, cp.title FROM civicrm_contribution_page cp, civicrm_pcp_block pcp" 
+        $query = "SELECT cp.id, cp.title FROM civicrm_contribution_page cp, civicrm_pcp_block pcp" 
             ." WHERE cp.is_active =1 AND pcp.is_active =1 AND pcp.entity_id = cp.id AND pcp.entity_table = 'civicrm_contribution_page'"
             ." ORDER BY cp.title";
-		$db->setQuery( $query );
-		$options = $db->loadObjectList( );
-		
-		return JHTML::_( 'select.genericlist', $options, 'params[id]', null, 'id', 'title', $value );
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        while ( $dao->fetch( ) ) {
+            $options[] = JHTML::_( 'select.option', $dao->id, $dao->title ); 
+        }
+      	return JHTML::_( 'select.genericlist', $options, 'params[id]', null, 'value', 'text', $value );
 	}
 }
 ?>
