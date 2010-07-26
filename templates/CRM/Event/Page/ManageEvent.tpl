@@ -89,6 +89,7 @@
         		    <li><a title="Fees" class="action-item {if NOT $row.is_monetary} disabled{/if}" href="{crmURL p='civicrm/event/manage/fee' q="reset=1&action=update&id=`$row.id`"}">{ts}Fees{/ts}</a></li>
         		    <li><a title="Online Registration" class="action-item-wrap {if NOT $row.is_online_registration} disabled{/if}" href="{crmURL p='civicrm/event/manage/registration' q="reset=1&action=update&id=`$row.id`"}">{ts}Online Registration{/ts}</a></li>
         		    <li><a title="Tell a Friend" class="action-item-wrap {if NOT $row.friend} disabled{/if}" href="{crmURL p='civicrm/event/manage/friend' q="reset=1&action=update&id=`$row.id`"}">{ts}Tell a Friend{/ts}</a></li>
+			</ul> 
         	    </span>
         	    </div>
         	    <div class=crm-event-participants>
@@ -106,6 +107,7 @@
         		    	<li><a title="Public Participant Listing" class="action-item-wrap" href="{crmURL p='civicrm/event/participant' q="reset=1&id=`$row.id`"}">{ts}Public Participant Listing{/ts}</a>
         		    	</li>
         		    {/if}
+                        </ul> 
         	    </span>
         	    </div> 
         	    <div class="crm-event-links">
@@ -117,6 +119,7 @@
             		    <li><a title="Online Registration (Test-drive)" class="action-item" href="{crmURL p='civicrm/event/register' q="reset=1&action=preview&id=`$row.id`"}">{ts}Registration (Test-drive){/ts}</a></li>
             		    <li><a title="Online Registration (Live)" class="action-item" href="{crmURL p='civicrm/event/register' q="reset=1&id=`$row.id`" fe='true'}" target="_blank">{ts}Registration (Live){/ts}</a></li>
         		    {/if}
+			</ul>
         	    </span>
         	    </div>
         	    <div class="crm-event-more">

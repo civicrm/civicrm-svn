@@ -1712,7 +1712,7 @@ table.campaign td,
 .crm-configure-actions,
 .crm-event-participants,
 .crm-event-links,
-.crm-event-more { min-height:1px; }
+.crm-event-more { min-width:85px; }
 
 #crm-container .panel li a {
     text-decoration: none;
