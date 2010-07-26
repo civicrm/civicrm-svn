@@ -41,18 +41,21 @@
             <td>
 	        {$form.campaign_survey_id.html}
             </td>
-	</tr>
-        {if $showInterviewer}
-	  <tr class="crm-new-contact-form-block-contact">
-            <td class="font-size12pt">
-                {ts}Select Interviewer{/ts}
+
+	    {if $showInterviewer}
+
+	    
+	    <td class="font-size12pt">
+	        {$form.interviewer_name.label}
             </td>
             <td class="font-size12pt ">
-              {include file="CRM/Contact/Form/NewContact.tpl"}
-	      {$form.contact.html}
-            </td>
-	  </tr>
-        {/if}
+	        {$form.interviewer_name.html}
+            </td>  
+	    
+
+	    {/if}		    
+
+	</tr>
         <tr>
             <td class="font-size12pt">
                 {$form.sort_name.label}
@@ -169,5 +172,23 @@
     cj(function() {
       cj().crmaccordions(); 
     });
+
+  //load interviewer autocomplete.
+  var interviewerDataUrl = "{/literal}{$dataUrl}{literal}";
+  var hintText = "{/literal}{ts}Type in a partial or complete name of an existing contact.{/ts}{literal}";
+  cj( "#interviewer_name" ).autocomplete( interviewerDataUrl, 
+                                         { width : 180, 
+                                           selectFirst : false, 
+                                           hintText: hintText, 
+                                           matchContains: true, 
+                                           minChars: 1
+                                         }
+                                      ).result( function( event, data, formatted ) { 
+				                      cj( "#interviewer_id" ).val( data[1] );
+                                              }).bind( 'click', function( ) { 
+                                                      cj( "#interviewer_id" ).val(''); 
+                                              });
+
+
 </script>
 {/literal}

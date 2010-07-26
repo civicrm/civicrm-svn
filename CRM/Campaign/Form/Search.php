@@ -165,29 +165,15 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             $this->_operation = 'reserve';
             $this->set( 'op', $this->_operation );
         }
-
-        // provide task wise permissions
-        $accessDenied = true;
-        if ( CRM_Core_Permission::check( 'administer CiviCampaign' ) ||     
-             CRM_Core_Permission::check( 'manage campaign' ) ) {
-            $accessDenied = false;
-        } else {
-            if ( $this->_operation == 'interview' && 
-                 CRM_Core_Permission::check( 'interview campaign contacts' ) ) {
-                $accessDenied = false;
-            } else if ( $this->_operation == 'release' && 
-                        CRM_Core_Permission::check( 'release campaign contacts' ) ) {
-                $accessDenied = false;
-            } else if ( $this->_operation == 'reserve' && 
-                        CRM_Core_Permission::check( 'reserve campaign contacts' ) ) {
-                $accessDenied = false;
-            }
-        } 
-        if ( $accessDenied ) {
+        
+        //do check permissions.
+        if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) &&
+             !CRM_Core_Permission::check( 'manage campaign' ) && 
+             !CRM_Core_Permission::check( "{$this->_operation} campaign contacts" ) ) {
             CRM_Utils_System::permissionDenied( );
             CRM_Utils_System::civiExit( );
         }
-
+        
         $this->assign( "context", $this->_context );
         
         // get user submitted values  
@@ -272,9 +258,25 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         
         $showInterviewer = false;
         if ( CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
-            require_once 'CRM/Contact/Form/NewContact.php';
-            CRM_Contact_Form_NewContact::buildQuickForm( $this );
             $showInterviewer = true;
+            //autocomplete url
+            $dataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest',
+                                              'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1',
+                                              false, null, false );
+            $this->assign( 'dataUrl',$dataUrl );
+            $this->add( 'text',   'interviewer_name', ts( 'Select Interviewer' ) );
+            $this->add( 'hidden', 'interviewer_id', '',array( 'id' => 'interviewer_id' ) );
+            
+            $session = CRM_core_Session::singleton( );
+            $userId  = $session->get( 'userID' );
+            if ( $userId ) {
+                $defaults['interviewer_id']    = $userId;
+                $defaults['interviewer_name']  = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                                              $userId,
+                                                                              'sort_name',
+                                                                              'id' );
+                $this->setDefaults( $defaults );
+            }
         }
         $this->assign( 'showInterviewer', $showInterviewer );
         
