@@ -34,7 +34,7 @@
   <field>
        <name>name</name>
        <type>varchar</type>
-       <length>64</length>
+       <length>255</length>
        <comment>Mapping field key</comment>
       <add>1.2</add>
   </field>

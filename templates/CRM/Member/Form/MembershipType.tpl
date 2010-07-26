@@ -57,6 +57,7 @@
               <span class="description">{ts}Members assigned this membership type belong to which organization (e.g. this is for membership in 'Save the Whales - Northwest Chapter'). NOTE: This organization/group/chapter must exist as a CiviCRM Organization type contact.{/ts}
           </td>
       </tr>
+  </table>
         {/if} 
          <div class="spacer"></div>	
             {if $searchDone} {* Search button clicked *}
@@ -116,10 +117,10 @@
               <table  class="form-layout-compressed">
                  <tr> {capture assign=infoMessage}{ts 1=$form.member_org.value 2=Organization}No matching results for <ul><li>Name like: %1</li><li>Contact type: %2</li></ul>Check your spelling, or try fewer letters for the target contact name.{/ts}{/capture}
             {include file="CRM/common/info.tpl"}           
+	         </tr>
+	      </table>
          {/if} {* end if searchCount *}
      {/if} {* end if searchDone *}
-               </tr>
-             </table>
       <table class="form-layout-compressed">
          <tr class="crm-membership-type-form-block-minimum_fee">
              <td class="label">{$form.minimum_fee.label}</td>
@@ -202,9 +203,10 @@
                         <span class="description">{ts}Send Reminder these many days prior to membership expiration.{/ts}</span>
                     </td>
                 </tr>
+            </table>
         {/if}
     </fieldset>
-     </table>
+
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     {/if}
     <div class="spacer"></div>
