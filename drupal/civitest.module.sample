@@ -1005,3 +1005,94 @@ function civitest_civicrm_optionValues( &$values, $name ) {
         unset( $values['standard_timeline'] );
     }
 }
+
+function civitest_civicrm_alterMailParams( &$params ) {
+
+    if ( $params['groupName'] == 'msg_tpl_workflow_event' &&
+         $params['valueName'] == 'event_online_receipt' ) {
+
+        $smarty =  CRM_Core_Smarty::singleton( );
+        $values =& $smarty->get_template_vars( );
+        $vars = array( 'lineItem', 'participantID', 'contactID' );
+        foreach ( $vars as $varName ) {
+            $$varName = CRM_Utils_Array::value( $varName, $values, null );
+        }
+
+        // return if no lineitems in event registration
+        if ( ! $lineItem ||
+             ! is_array( $lineItem ) ) {
+            return;
+        }
+
+        // check for price field. the raffle id is 1 (in my test case)
+        define( 'RAFFLE_PRICE_FIELD_ID', 1 );
+        foreach ( $lineItem as $priceSet => $itemValues ) {
+            foreach ( $itemValues as $itemID => $itemValue ) {
+                if ( $itemValue['price_field_id'] != RAFFLE_PRICE_FIELD_ID ) {
+                    continue;
+                }
+
+                $rafflePrefix = "{$contactID}_{$participantID}_";
+                $raffleString = array( );
+                $raffleCount  = 0;
+                switch ( $itemValue['label'] ) {
+                case 'One':
+                    $raffleCount = 1;
+                    break;
+
+                case 'Five':
+                    $raffleCount = 5;
+                    break;
+
+                case 'Ten':
+                    $raffleCount = 10;
+                    break;
+
+                }
+                for ( $i = 1 ; $i <= $raffleCount; $i++ ) {
+                    $raffleString[] = $rafflePrefix . $i;
+                }
+                if ( ! empty( $raffleString ) ) {
+                    $raffleString = implode( ', ', $raffleString );
+                    $params['text'] .= "
+
+===========================================================
+Event Raffle Ticket Numbers
+===========================================================
+
+$raffleString
+
+";
+                    $htmlSnippet = "
+<center>
+ <table width=\"620\" border=\"0\" cellpadding=\"0\" cellspacing=\"0\" id=\"crm-event_receipt\" style=\"font-family: Arial, Verdana, sans-serif; text-align: left;\">
+
+  <tr>
+   <td>
+    <table style=\"border: 1px solid #999; margin: 1em 0em 1em; border-collapse: collapse; width:100%;\">
+     <tr>
+      <th colspan=\"2\" style=\"text-align: left; padding: 4px; border-bottom: 1px solid #999; background-color: #eee;\">
+       Event Raffle Ticket Numbers      </th>
+     </tr>
+     <tr>
+      <td colspan=\"2\" style=\"padding: 4px; border-bottom: 1px solid #999;\">
+       $raffleString
+      </td>
+     </tr>
+    </table>
+   </td>
+  </tr>
+ </table>
+</center>
+
+</body>
+";
+
+                    $params['html'] = str_replace( "</body>",
+                                                   $htmlSnippet,
+                                                   $params['html'] );
+                }
+            }
+        }
+    }
+}
