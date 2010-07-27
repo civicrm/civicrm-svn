@@ -5,7 +5,6 @@
     returns activities as results (not contacts as regular search).</description>
     <maintainter>CiviCRM Core Team &lt;noreply@civicrm.org&gt;</maintainer>
     <compatibility>
-    	<ver>3.1</ver>
     	<ver>3.2</ver>
     </compatibility>
     <develStage>beta</develStage>
