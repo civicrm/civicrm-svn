@@ -1653,10 +1653,11 @@ table.campaign td,
     margin:0px 0px 0px 8px;
 }
 
-#crm-container #crm-contact-actions-list li { 
+#crm-container .ac_results li { 
 	float:none; 
-	padding: 2px 4px;
+	padding: 4px;
 	margin:0px;
+	line-height: 15px;
 	}
 
 /* Styles for Action Items &  Action Link pop-up */
@@ -2132,7 +2133,7 @@ div.grippie {
 }
 
 .ac_results-inner,
-.crm-participant-inner,
+.crm-participant-list-inner,
 .crm-event-links-list-inner,
 .crm-create-new-list-inner,
 .crm-contact-actions-list-inner  {
@@ -2262,23 +2263,21 @@ div.grippie {
 #crm-contact-actions-wrapper{
 	position:relative;
 	z-index:15;
+	float: left;
 	}
 
 #crm-event-links-list,
 #crm-create-new-list,
-#crm-contact-actions-list{
-	position:absolute;
-	display:none;
-	top:24px;
-	left:0px;
-	}
-
+#crm-contact-actions-list,
 #crm-participant-list{
 	position:absolute;
 	display:none;
 	top:24px;
-	left:124px;
+	width:220px;
 	}
+
+#crm-event-links-link {width:90px;}
+#crm-participant-link { width:120px;}
 
 .clear { clear: both; }
 
