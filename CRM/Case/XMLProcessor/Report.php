@@ -430,8 +430,9 @@ WHERE      a.id = %1
                                        'value' => $activityDAO->activity_date_time,
                                        'type'  => 'Date' );
         
+        require_once 'CRM/Utils/String.php';
         $activity['fields'][] = array( 'label' => 'Details',
-                                       'value' => $this->redact( htmlspecialchars($activityDAO->details) ),
+                                       'value' => $this->redact(CRM_Utils_String::stripAlternatives($activityDAO->details)),
                                        'type'  => 'Memo' );
         
         // Skip Duration field if empty (to avoid " minutes" output). Might want to do this for all fields at some point. dgg
