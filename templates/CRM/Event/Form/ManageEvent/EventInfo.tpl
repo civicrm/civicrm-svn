@@ -155,7 +155,7 @@
 		<script type="text/javascript">
 			cj(document).ready(function() {
 				{/literal}
-				{if $action eq 2 } 
+				{if $customDataSubType} 
 					buildCustomData( '{$customDataType}', {$customDataSubType} );
 				{else}
 					buildCustomData( '{$customDataType}' );
