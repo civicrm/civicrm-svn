@@ -408,7 +408,7 @@ SELECT username, email
             if ( $row[0] == $name ) {
                 $errors['cms_name'] = ts( 'The username %1 is already taken. Please select another username.', array( 1 => $name) );
             } else if ( $row[1] == $email ) {
-                $errors['email-5'] = ts( 'This email %1 is already registered. Please select another email.', array( 1 => $email) );
+                $errors['email-Primary'] = ts( 'This email %1 is already registered. Please select another email.', array( 1 => $email) );
             }
         }
     }
