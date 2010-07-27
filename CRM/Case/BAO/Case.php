@@ -1079,9 +1079,9 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             $values[$dao->id]['status']       = $activityStatus[$dao->status];
             
             //check for view activity.
-            $subject = $dao->subject;
+            $subject = (empty($dao->subject)) ? '(' . ts('no subject') . ')'  : $dao->subject;
             if ( $allowView ) {
-                $subject = "<a href='javascript:viewActivity( {$dao->id}, {$contactID} );' title='{$viewTitle}'>{$dao->subject}</a>"; 
+                $subject = "<a href='javascript:viewActivity( {$dao->id}, {$contactID} );' title='{$viewTitle}'>{$subject}</a>"; 
             }
             $values[$dao->id]['subject'] = $subject;
            
