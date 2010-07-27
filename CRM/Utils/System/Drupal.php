@@ -52,11 +52,12 @@ class CRM_Utils_System_Drupal {
         if ( !$pageTitle ) {
             $pageTitle = $title;
         }
-        
-        //set drupal title 
-        drupal_set_title( $pageTitle );
-	}
-
+        if ( arg(0) == 'civicrm' )	{
+            //set drupal title 
+            drupal_set_title( $pageTitle ); 
+        }
+    }
+    
     /**
      * Append an additional breadcrumb tag to the existing breadcrumb
      *
