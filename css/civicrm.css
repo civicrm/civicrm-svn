@@ -2329,7 +2329,7 @@ div.grippie {
 
 
 #crm-contact-actions-wrapper {
-        width:80px; /* fixes ie bug where button is toooooo long */
+        width:85px; /* fixes ie bug where button is toooooo long */
         }
 #crm-contact-actions-list {
         width:490px; /* fixes ie bug  caused by above*/
