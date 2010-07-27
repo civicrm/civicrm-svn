@@ -190,7 +190,7 @@ class CRM_Contribute_Form_AdditionalInfo
         $dao = new CRM_Contribute_DAO_ContributionProduct();
         $dao->contribution_id = $contributionID;
         $dao->product_id      = $params['product_name'][0];
-        $dao->fulfilled_date  = CRM_Utils_Date::processDate( $params['fulfilled_date'] );
+        $dao->fulfilled_date  = CRM_Utils_Date::processDate( $params['fulfilled_date'], null, true );
         if ( CRM_Utils_Array::value( $params['product_name'][0], $options ) ) {
             $dao->product_option  = $options[$params['product_name'][0]][$params['product_name'][1]];
         }

@@ -558,7 +558,9 @@ WHERE  contribution_id = {$this->_id}
             } else {
                 $defaults['product_name']   = array ( $this->_productDAO->product_id);
             }
-            list( $defaults['fulfilled_date'] ) = CRM_Utils_Date::setDateDefaults( $this->_productDAO->fulfilled_date );
+            if ( $this->_productDAO->fulfilled_date ) {  
+                list( $defaults['fulfilled_date'] ) = CRM_Utils_Date::setDateDefaults( $this->_productDAO->fulfilled_date );
+            }
         }
         
         if ( isset($this->userEmail) ) {
