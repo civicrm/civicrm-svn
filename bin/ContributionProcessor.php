@@ -189,9 +189,9 @@ class CiviContributeProcessor {
                                                                                       self::$_paypalParamsMapper,
                                                                                       'paypal' );
                     if ( $paymentMode == 'test' ) {
-                        $params['is_test'] = 1;
+                        $params['transaction']['is_test'] = 1;
                     } else {
-                        $params['is_test'] = 0;
+                        $params['transaction']['is_test'] = 0;
                     }
                     
                     if ( CRM_Contribute_BAO_Contribution_Utils::processAPIContribution( $params ) ) {
