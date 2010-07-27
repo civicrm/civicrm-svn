@@ -2,7 +2,7 @@
 
 <extension key="activity" name="Activity Search" type="search" callback="ActivitySearch">
     <description>This custom search allows to search through activities and
-    returns activities as results (not contacts as regular </description>
+    returns activities as results (not contacts as regular search).</description>
     <maintainter>CiviCRM Core Team &lt;noreply@civicrm.org&gt;</maintainer>
     <compatibility>
     	<ver>3.1</ver>
