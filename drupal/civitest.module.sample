@@ -1006,6 +1006,11 @@ function civitest_civicrm_optionValues( &$values, $name ) {
     }
 }
 
+/**
+ * use the mail alter hook to inject raffle ticket numbers for participants
+ * this is not complete, IMO and i'd also store the raffle ticket numbers in a
+ * DB table to be on the safe side
+ */
 function civitest_civicrm_alterMailParams( &$params ) {
 
     if ( $params['groupName'] == 'msg_tpl_workflow_event' &&
@@ -1060,7 +1065,7 @@ function civitest_civicrm_alterMailParams( &$params ) {
 Event Raffle Ticket Numbers
 ===========================================================
 
-$raffleString
+Thank you for buying raffle tickets.  Your ticket numbers are:$raffleString. Good luck!
 
 ";
                     $htmlSnippet = "
@@ -1076,7 +1081,7 @@ $raffleString
      </tr>
      <tr>
       <td colspan=\"2\" style=\"padding: 4px; border-bottom: 1px solid #999;\">
-       $raffleString
+       Thank you for buying raffle tickets.  Your ticket numbers are:$raffleString. Good luck!
       </td>
      </tr>
     </table>
