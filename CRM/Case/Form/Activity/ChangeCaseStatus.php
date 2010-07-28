@@ -120,7 +120,7 @@ class CRM_Case_Form_Activity_ChangeCaseStatus
         }
 
         if ($activity->subject == 'null'){
-            $activity->subject = ts('Case status changed to: ') . CRM_Utils_Array::value( $params['case_status_id'], $form->_caseStatus );
+            $activity->subject = ts('Case status changed to:') . ' ' . CRM_Utils_Array::value( $params['case_status_id'], $form->_caseStatus );
             $activity->save();            
         }
         
