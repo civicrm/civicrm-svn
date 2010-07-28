@@ -53,9 +53,9 @@
          <table id="paymentProcessor" class="form-layout">
              <tr class="crm-event-manage-fee-form-block-payment_processor_id">            
                 <td class="label">{$form.payment_processor_id.label}</td>
-	        <td>{$form.payment_processor_id.html}</td>
+	            <td>{$form.payment_processor_id.html}</td>
              </tr>
-	     <tr>
+	         <tr>
                 <td class="">&nbsp;</td>
                 <td class="description">
                  {ts}If this is a paid event and you want users to be able to register and pay online, select a payment processor to use.{/ts}
@@ -66,8 +66,8 @@
            
         <table id="contributionType" class="form-layout">
             <tr class="crm-event-manage-fee-form-block-contribution_type_id">
-               <td class="label">{$form.contribution_type_id.label}<span class="marker"> *</span>
-               </td>{$form.contribution_type_id.html}
+               <td class="label">{$form.contribution_type_id.label}<span class="marker"> *</span></td>
+               <td>{$form.contribution_type_id.html}</td>
             </tr>
             <tr>
                <td>&nbsp;</td>
