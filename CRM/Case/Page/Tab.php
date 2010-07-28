@@ -55,6 +55,8 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
     
     function preProcess( )
     {
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
+        
         // Make sure case types have been configured for the component
         require_once 'CRM/Core/OptionGroup.php';        
         $caseType = CRM_Core_OptionGroup::values('case_type');
@@ -65,8 +67,7 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
         $this->_id        = CRM_Utils_Request::retrieve( 'id' , 'Positive', $this );
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         $this->_context   = CRM_Utils_Request::retrieve( 'context', 'String', $this );
-        $this->_action    = CRM_Utils_Request::retrieve('action', 'String', $this, false, 'browse');
-               
+        
         if ( $this->_contactId ) {
             $this->assign( 'contactId', $this->_contactId );
             // check logged in user permission
