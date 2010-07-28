@@ -1708,12 +1708,17 @@ table.campaign td,
     padding:0px 14px 0 5px;
     background: url("../i/TreePlus.gif") no-repeat right 1px;
     border-left:none;
+    z-index: 2;
 }
+    .btn-slide-active { z-index: 10;} 
 
 .crm-configure-actions,
 .crm-event-participants,
 .crm-event-links,
-.crm-event-more { min-width:85px; }
+.crm-event-more { 
+    min-width:85px; 
+    z-index: 1;
+    }
 
 #crm-container .panel li a {
     text-decoration: none;
