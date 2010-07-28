@@ -389,7 +389,11 @@ class CRM_Event_Form_Registration_AdditionalParticipant extends CRM_Event_Form_R
                 $this->_lineItem[$addParticipantNum] = 'skip';
             }
         } else {
-            $params = $this->controller->exportValues( $this->_name );  
+            $params = $this->controller->exportValues( $this->_name );
+            
+            $config = CRM_Core_Config::singleton( );
+            $params['currencyID'] = $config->defaultCurrency;            
+            
             if ( $this->_values['event']['is_monetary'] ) {
 
                 //added for discount

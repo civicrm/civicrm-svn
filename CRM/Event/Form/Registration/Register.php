@@ -778,16 +778,15 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $params['participant_role_id'] = $this->_values['event']['default_role_id'];
         }
 
+        $config = CRM_Core_Config::singleton( );
+        $params['currencyID'] = $config->defaultCurrency;
+        
         if ($this->_values['event']['is_monetary']) {
-            $config = CRM_Core_Config::singleton( );
-            
             // we first reset the confirm page so it accepts new values
             $this->controller->resetPage( 'Confirm' );
             
             // get the submitted form values. 
             
-            $params['currencyID']     = $config->defaultCurrency;
-
             //added for discount
             require_once 'CRM/Core/BAO/Discount.php';
             $discountId = CRM_Core_BAO_Discount::findSet( $this->_eventId, 'civicrm_event' );
