@@ -941,11 +941,11 @@ for(var i=0;i<noneArray.length;i++) {
                 }
                 if ( CRM_Utils_Array::value('1',$v) ) {
                     $fldName = $v[1];
-                    if ( CRM_Utils_Array::value('2',$v ) ) {
+                    if ( $v2 = CRM_Utils_Array::value( '2', $v ) && trim( $v2 ) ) {
                         $fldName .= "-{$v[2]}";
                     }
                     
-                    if ( CRM_Utils_Array::value('3',$v) ) {
+                    if ( $v3 = CRM_Utils_Array::value( '3', $v )  && trim( $v3 ) ) {
                         $fldName .= "-{$v[3]}";
                     }
                     
