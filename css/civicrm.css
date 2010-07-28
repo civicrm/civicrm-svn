@@ -2274,6 +2274,7 @@ div.grippie {
 	display:none;
 	top:24px;
 	width:220px;
+	left:0px;
 	}
 
 #crm-event-links-link {width:90px;}
@@ -2332,7 +2333,7 @@ div.grippie {
         width:85px; /* fixes ie bug where button is toooooo long */
         }
 #crm-contact-actions-list {
-        width:490px; /* fixes ie bug  caused by above*/
+        width:495px; /* fixes ie bug  caused by above*/
         }
 
 /* setup for icons */
