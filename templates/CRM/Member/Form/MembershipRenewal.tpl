@@ -78,7 +78,7 @@
         </tr>
             
         <tr id="recordContribution" class="crm-member-membershiprenew-form-block-membership_renewal">
-	    <td class="label" colspan="2">
+	    <td colspan="2">
                <fieldset><legend>{ts}Renewal Payment and Receipt{/ts}</legend>
                  <table class="form-layout-compressed">
                     <tr class="crm-member-membershiprenew-form-block-contribution_type_id">	
