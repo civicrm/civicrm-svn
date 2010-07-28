@@ -294,6 +294,7 @@ function loadPanes( id ) {
 {/if}
 <br />
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+</div>
     {literal}
     <script type="text/javascript">
      function verify( ) {
@@ -436,4 +437,3 @@ function buildAmount( priceSetId ) {
 }
 </script>
 {/literal}
-</div>
