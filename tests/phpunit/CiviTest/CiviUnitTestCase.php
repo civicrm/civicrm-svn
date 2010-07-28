@@ -141,8 +141,9 @@ class CiviUnitTestCase extends PHPUnit_Extensions_Database_TestCase {
                               "CREATE DATABASE civicrm_tests_dev DEFAULT" . 
                               " CHARACTER SET utf8 COLLATE utf8_unicode_ci;", 
                               "USE civicrm_tests_dev;", 
-                              "SET SQL_MODE='STRICT_ALL_TABLES';", 
-                              "SET foreign_key_checks = 0" );
+                              // SQL mode needs to be strict, that's our standard
+                              "SET SQL_MODE='STRICT_ALL_TABLES';"
+                             );
             foreach( $queries as $query ) {
                 if ( self::$utils->do_query($query) === false ) {
 
