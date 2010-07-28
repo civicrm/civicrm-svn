@@ -236,7 +236,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     }
                         
                     $this->_amount[$k]['label'] = $v['amount_level'].'  -  '. $append;
-                    $this->_part[$k]['info'] = $v['first_name'] .' ' . $v['last_name'];
+                    $this->_part[$k]['info'] = CRM_Utils_Array::value( 'first_name', $v ) . ' ' . CRM_Utils_Array::value( 'last_name', $v );
                     if ( !CRM_Utils_Array::value( "first_name", $v ) ) {
                         $this->_part[$k]['info'] = $append;
                     }
