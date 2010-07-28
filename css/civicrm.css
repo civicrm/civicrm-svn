@@ -2341,6 +2341,10 @@ div.grippie {
         width:495px; /* fixes ie bug  caused by above*/
         }
 
+#crm-create-new-link {
+    width:95px;
+    }
+
 /* setup for icons */
 
 .ac_results ul li {background-image:url('');}
