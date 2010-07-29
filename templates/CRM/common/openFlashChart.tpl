@@ -34,7 +34,9 @@
        swfobject.embedSWF( flashFilePath, divName,
     		                 xSize, ySize, "9.0.0",
     		                 "expressInstall.swf",
-    		                 {"get-data":loadDataFunction, "id":chartID}
+    		                 {"get-data":loadDataFunction, "id":chartID},
+    		                 null,
+    		                 {"wmode": 'transparent'}
     		                );
     }
 </script>
