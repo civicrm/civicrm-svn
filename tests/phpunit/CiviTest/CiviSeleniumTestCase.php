@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -38,10 +38,6 @@ require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 class CiviSeleniumTestCase extends PHPUnit_Extensions_SeleniumTestCase {
 
 //    protected $coverageScriptUrl = 'http://tests.dev.civicrm.org/drupal/phpunit_coverage.php';
-
-//    protected $captureScreenshotOnFailure = TRUE;
-//    protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
-//    protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
 
     /**
      *  Constructor

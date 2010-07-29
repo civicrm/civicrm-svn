@@ -406,7 +406,7 @@ table {
 */
 .title, .title a {
   font-weight: normal;
-  font-size: 180%;
+  font-size: 1.6em;
   color: #666;
   margin: 0 auto 0 auto;  /* decrease default margins for h<x>.title */
 }

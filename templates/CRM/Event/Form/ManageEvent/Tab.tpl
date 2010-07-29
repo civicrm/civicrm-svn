@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -25,8 +25,9 @@
 *}
 {* Don't show action buttons for event templates *}
 {if ! $isTemplate}
-    <div class="crm-block crm-form-block crm-event-manage-tab-form-block">
-    	<div id="crm-event-links-wrapper">
+    <div class="crm-actions-ribbon crm-event-manage-tab-actions-ribbon">
+    	<ul id="actions">
+    	<li><div id="crm-event-links-wrapper">
     	      <div id="crm-event-links-link"><span><div class="icon dropdown-icon"></div>{ts}Event Links{/ts}</span></div>
     	      <div class="ac_results" id="crm-event-links-list">
     	      	   <div class="crm-event-links-list-inner">
@@ -40,9 +41,9 @@
     		        </ul>
     	           </div>
     	      </div>
-        </div>
+        </div></li>
 
-    	<div id="crm-participant-wrapper">
+    	<li><div id="crm-participant-wrapper">
     	      <div id="crm-participant-link"><span><div class="icon dropdown-icon"></div>{ts}Find Participants{/ts}</span></div>
     	      <div class="ac_results" id="crm-participant-list">
     	      	   <div class="crm-participant-list-inner">
@@ -60,12 +61,13 @@
     		        </ul>
     	           </div>
     	      </div>
-        </div>
+        </div></li>
 	
-    	<div>
+    	<li><div>
     	    {help id="id-configure-events"}
-    	</div>
-    	&nbsp;
+    	</div></li>
+    	</ul>
+    	<div class="clear"></div>
     </div>
 {/if}
 

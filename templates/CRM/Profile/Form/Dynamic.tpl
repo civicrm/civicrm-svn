@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -134,7 +134,7 @@
                  	        {/if}
             	       {else}
                            {if ( $field.data_type eq 'Date' or
-                                      ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) ) ) ) }
+                                      ( ( ( $n eq 'birth_date' ) or ( $n eq 'deceased_date' ) ) ) ) and $field.is_view neq 1 }
                               {include file="CRM/common/jcalendar.tpl" elementName=$n}  
                		       {else}       
                               {$form.$n.html}

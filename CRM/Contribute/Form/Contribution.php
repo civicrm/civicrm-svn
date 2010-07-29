@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -558,7 +558,9 @@ WHERE  contribution_id = {$this->_id}
             } else {
                 $defaults['product_name']   = array ( $this->_productDAO->product_id);
             }
-            list( $defaults['fulfilled_date'] ) = CRM_Utils_Date::setDateDefaults( $this->_productDAO->fulfilled_date );
+            if ( $this->_productDAO->fulfilled_date ) {  
+                list( $defaults['fulfilled_date'] ) = CRM_Utils_Date::setDateDefaults( $this->_productDAO->fulfilled_date );
+            }
         }
         
         if ( isset($this->userEmail) ) {
@@ -582,8 +584,9 @@ WHERE  contribution_id = {$this->_id}
             list( $defaults['receive_date'],
                   $defaults['receive_date_time'] ) = CRM_Utils_Date::setDateDefaults( null, 'activityDateTime' );
         }
-
-        $this->assign( 'receive_date', CRM_Utils_Date::processDate( $defaults['receive_date'], $params['receive_date_time'] ) );
+        
+        $this->assign( 'receive_date', CRM_Utils_Date::processDate( CRM_Utils_Array::value( 'receive_date', $defaults ), 
+                                                                    CRM_Utils_Array::value( 'receive_date_time', $defaults ) ) );
         $this->assign( 'currency', CRM_Utils_Array::value( 'currency', $defaults ) );
         $this->assign( 'totalAmount', CRM_Utils_Array::value( 'total_amount', $defaults ) );
 

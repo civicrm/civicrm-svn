@@ -1653,10 +1653,11 @@ table.campaign td,
     margin:0px 0px 0px 8px;
 }
 
-#crm-container #crm-contact-actions-list li { 
+#crm-container .ac_results li { 
 	float:none; 
-	padding: 2px 4px;
+	padding: 4px;
 	margin:0px;
+	line-height: 15px;
 	}
 
 /* Styles for Action Items &  Action Link pop-up */
@@ -1707,12 +1708,17 @@ table.campaign td,
     padding:0px 14px 0 5px;
     background: url("../i/TreePlus.gif") no-repeat right 1px;
     border-left:none;
+    z-index: 2;
 }
+    .btn-slide-active { z-index: 10;} 
 
 .crm-configure-actions,
 .crm-event-participants,
 .crm-event-links,
-.crm-event-more { min-height:1px; }
+.crm-event-more { 
+    min-width:85px; 
+    z-index: 1;
+    }
 
 #crm-container .panel li a {
     text-decoration: none;
@@ -2097,6 +2103,8 @@ div.grippie {
     margin-bottom: -6px;
 }
 
+.ui-datepicker { width: 17em; padding: .2em .2em 0; z-index: 9999 !important; }
+
 #crm-container .cke_editor {
     border: 0px none;
 }
@@ -2130,12 +2138,16 @@ div.grippie {
 }
 
 .ac_results-inner,
-.crm-participant-inner,
+.crm-participant-list-inner,
 .crm-event-links-list-inner,
 .crm-create-new-list-inner,
 .crm-contact-actions-list-inner  {
     background-color:#2f2f2e;
     padding:4px;
+}
+
+.crm-create-new-list-inner {
+  width: 124px!important;			   
 }
 
 /* crm button style */
@@ -2260,23 +2272,22 @@ div.grippie {
 #crm-contact-actions-wrapper{
 	position:relative;
 	z-index:15;
+	float: left;
 	}
 
 #crm-event-links-list,
 #crm-create-new-list,
-#crm-contact-actions-list{
-	position:absolute;
-	display:none;
-	top:24px;
-	left:0px;
-	}
-
+#crm-contact-actions-list,
 #crm-participant-list{
 	position:absolute;
 	display:none;
 	top:24px;
-	left:124px;
+	width:220px;
+	left:0px;
 	}
+
+#crm-event-links-link {width:90px;}
+#crm-participant-link { width:120px;}
 
 .clear { clear: both; }
 
@@ -2328,11 +2339,15 @@ div.grippie {
 
 
 #crm-contact-actions-wrapper {
-        width:80px; /* fixes ie bug where button is toooooo long */
+        width:85px; /* fixes ie bug where button is toooooo long */
         }
 #crm-contact-actions-list {
-        width:490px; /* fixes ie bug  caused by above*/
+        width:495px; /* fixes ie bug  caused by above*/
         }
+
+#crm-create-new-link {
+    width:95px;
+    }
 
 /* setup for icons */
 

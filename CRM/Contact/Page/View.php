@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -154,9 +154,6 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         if ( is_array( $hookLinks ) ) {
             $this->assign( 'hookLinks', $hookLinks );
         }
-
-        // set page title
-        self::setTitle( $this->_contactId ); 
         
         // add to recently viewed block
         $isDeleted = (bool) CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_contactId, 'is_deleted');
@@ -171,6 +168,9 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
                                $isDeleted
                              );
         $this->assign('isDeleted', $isDeleted);
+
+        // set page title
+        self::setTitle( $this->_contactId, $isDeleted ); 
                 
         $config = CRM_Core_Config::singleton( );
         require_once 'CRM/Core/BAO/UFMatch.php';
@@ -298,7 +298,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         }
     }
     
-    function setTitle( $contactId ) 
+    function setTitle( $contactId, $isDeleted = false ) 
     {
         static $contactDetails;
         $displayName = $contactImage = null;
@@ -312,7 +312,11 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         }
         
         // set page title
-        CRM_Utils_System::setTitle( $displayName, $contactImage . ' ' . $displayName );
+        $title = "{$contactImage} {$displayName}";
+        if ( $isDeleted ) {
+            $title = "<del>{$title}</del>";
+        }
+        CRM_Utils_System::setTitle( $displayName, $title );
     }
     
 }
