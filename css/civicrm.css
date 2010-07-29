@@ -2146,6 +2146,10 @@ div.grippie {
     padding:4px;
 }
 
+.crm-create-new-list-inner {
+  width: 124px!important;			   
+}
+
 /* crm button style */
 
 #crm-container .crm-submit-buttons,
