@@ -108,7 +108,8 @@ VALUES
     ( @domainID, 'civicrm/group/add&reset=1',                               '{ts escape="sql"}New Group{/ts}',              'New Group',            'edit groups',      '',             @contactlastID, '1', NULL,  8 ), 
     ( @domainID, 'civicrm/group&reset=1',                                   '{ts escape="sql"}Manage Groups{/ts}',          'Manage Groups',        'access CiviCRM',   '',             @contactlastID, '1', '1',   9 ), 
     ( @domainID, 'civicrm/admin/tag&reset=1&action=add',                    '{ts escape="sql"}New Tag{/ts}',                'New Tag',              'administer CiviCRM', '',           @contactlastID, '1', NULL, 10 ), 
-    ( @domainID, 'civicrm/admin/tag&reset=1',                               '{ts escape="sql"}Manage Tags (Categories){/ts}', 'Manage Tags (Categories)', 'administer CiviCRM', '',     @contactlastID, '1', NULL, 11 );
+    ( @domainID, 'civicrm/admin/tag&reset=1',                               '{ts escape="sql"}Manage Tags (Categories){/ts}', 'Manage Tags (Categories)', 'administer CiviCRM', '',     @contactlastID, '1','1', 11 ),
+    ( @domainID, 'civicrm/contact/deduperules&reset=1',  '{ts escape="sql"}Find and Merge Duplicate Contacts{/ts}', 'Find and Merge Duplicate Contacts', 'administer dedupe rules,merge duplicate contacts', 'OR', @contactlastID, '1', NULL, 12 );
 
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
@@ -302,9 +303,8 @@ SET @managelastID:=LAST_INSERT_ID();
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES     
-    ( @domainID, 'civicrm/admin/deduperules&reset=1',  '{ts escape="sql"}Find and Merge Duplicate Contacts{/ts}', 'Find and Merge Duplicate Contacts', 'administer CiviCRM', '', @managelastID, '1', NULL, 1 ), 
-    ( @domainID, 'civicrm/admin/access&reset=1',       '{ts escape="sql"}Access Control{/ts}',                    'Access Control',                    'administer CiviCRM', '', @managelastID, '1', NULL, 2 ), 
-    ( @domainID, 'civicrm/admin/synchUser&reset=1',    '{ts escape="sql"}Synchronize Users to Contacts{/ts}',     'Synchronize Users to Contacts',     'administer CiviCRM', '', @managelastID, '1', NULL, 3 );
+    ( @domainID, 'civicrm/admin/access&reset=1',       '{ts escape="sql"}Access Control{/ts}',                    'Access Control',                    'administer CiviCRM', '', @managelastID, '1', NULL, 1 ),
+    ( @domainID, 'civicrm/admin/synchUser&reset=1',    '{ts escape="sql"}Synchronize Users to Contacts{/ts}',     'Synchronize Users to Contacts',     'administer CiviCRM', '', @managelastID, '1', NULL, 2 );
 
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
