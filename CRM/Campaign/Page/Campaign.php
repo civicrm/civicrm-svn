@@ -118,17 +118,16 @@ class CRM_Campaign_Page_Campaign extends CRM_Core_Page
             }
         }
         
-        $this->assign('campaigns', $campaigns);
-
-        $addCampaignUrl = CRM_Utils_System::url( "civicrm/campaign/add",
-                                                 'reset=1&action=add' );
-        $this->assign('addCampaign', $addCampaignUrl);
-
-        $this->assign('manageCampaign', true);
-        
+        $this->assign( 'campaigns',      $campaigns );
+        $this->assign( 'addCampaignUrl', CRM_Utils_System::url( 'civicrm/campaign/add', 'reset=1&action=add' ) );
     }
     
-    function run( ) {
+    function run( ) 
+    {
+        if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+            CRM_Utils_System::permissionDenied( );
+        }
+        
         $action = CRM_Utils_Request::retrieve('action', 'String',
                                               $this, false, 0 ); 
         $this->assign('action', $action);

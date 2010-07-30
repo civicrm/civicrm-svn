@@ -108,17 +108,17 @@ class CRM_Campaign_Page_Survey extends CRM_Core_Page
                 $surveys[$sid]['action'] = CRM_Core_Action::formLink( $this->actionLinks(), $action, array('id' => $sid) );
             }
         }
-        $this->assign('surveys', $surveys);
-
-        $addSurveyUrl = CRM_Utils_System::url( "civicrm/survey/add",
-                                               'reset=1&action=add' );
-        $this->assign('addSurvey', $addSurveyUrl);
         
-        $this->assign('manageCampaign', true);
-        
+        $this->assign( 'surveys',      $surveys );
+        $this->assign( 'addSurveyUrl', CRM_Utils_System::url( 'civicrm/survey/add', 'reset=1&action=add' ) );
     }
 
-    function run( ) {
+    function run( ) 
+    {
+        if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+            CRM_Utils_System::permissionDenied( );
+        }
+        
         $action = CRM_Utils_Request::retrieve('action', 'String',
                                               $this, false, 0 ); 
         $this->assign('action', $action);

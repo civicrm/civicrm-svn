@@ -68,6 +68,9 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
      */
     public function preProcess()
     {
+        if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+            CRM_Utils_System::permissionDenied( );
+        }
         $this->_action   = CRM_Utils_Request::retrieve('action', 'String', $this );
         
         if ( $this->_action & ( CRM_Core_Action::UPDATE | CRM_Core_Action::DELETE ) ) {
