@@ -1548,7 +1548,7 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
         } else if ($fieldName === 'preferred_mail_format') {
             $form->add('select', $name, $title, CRM_Core_SelectValues::pmf());
         } else if ($fieldName === 'preferred_language') {
-            $form->add('select', $name, $title, CRM_Core_PseudoConstant::languages( ));
+            $form->add('select', $name, $title, array('' => ts('- select -')) + CRM_Core_PseudoConstant::languages( ));
         } else if ( $fieldName == 'external_identifier' ) { 
             $form->add('text', $name, $title, $attributes, $required );
             $contID = $contactId;
