@@ -79,7 +79,8 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
      * @return void
      * @access public
      */
-    function preProcess( ) {
+    function preProcess( ) 
+    {
         parent::preProcess( );
         
         //get the survey id from user submitted values.
@@ -143,62 +144,42 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
      * @access public
      * @return None
      */
-    public function postProcess( ) {
-        //get the submitted values in an array
-        $params  = $this->controller->exportValues( $this->_name );
+    public function postProcess( ) 
+    {
+        $existingVoterIds = $campGrpContacts = array( );
+        foreach ( $this->_surveyActivities as $actId => $actVals ) {
+            $voterId = $actVals['voter_id'];
+            $existingVoterIds[$voterId] = $voterId; 
+        }
         
-        require_once 'CRM/Activity/BAO/Activity.php';
+        $campaignId = CRM_Utils_Array::value( 'campaign_id', $this->_surveyDetails );
+        require_once 'CRM/Campaign/BAO/Campaign.php';
+        require_once 'CRM/Contact/DAO/Group.php';
+        require_once 'CRM/Contact/BAO/GroupContact.php';
+        $campGrps = CRM_Campaign_BAO_Campaign::getCampaignGroups( $campaignId );
+        foreach ( $campGrps as $grpId => $grpVals ) {
+            $group = new CRM_Contact_DAO_Group();
+            $group->id = $grpVals['entity_id'];
+            $contacts  = CRM_Contact_BAO_GroupContact::getGroupContacts( $group );
+            foreach ( $contacts as $contact ) {
+                $campContacts[$contact->contact_id] = $contact->contact_id;
+            }
+        }
+        
+        //add reservation.
         require_once 'CRM/Core/PseudoConstant.php';
-        
-        $includeContacts = array( );
+        $countVoters    = 0;
+        $maxVoters      = $surveyDetails['max_number_of_contacts'];
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
-        $surveyActType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
-        $campaignId     = CRM_Utils_Array::value( 'campaign_id', $this->_surveyDetails );
-        
-        $includeGroups  = array( );
-        if ( $campaignId ) {
-            require_once 'CRM/Campaign/BAO/Campaign.php';
-            $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups( $campaignId  );
-            foreach( $campaignGroups as $id => $group ) {
-                if ( $group['entity_table'] == 'civicrm_group' ) {
-                    $includeGroups[ ] = $group['entity_id'];
-                }
-            }
-        }
-        
-        // duplicate contacts: contact with survey activity status is Held
-        $query = "SELECT DISTINCT(c.id) as contact_id FROM civicrm_contact c ";
-        if ( !empty($includeGroups) ) {
-           $query .= "LEFT JOIN civicrm_group_contact gc ON c.id = gc.contact_id";
-        }
-
-       $query .= " WHERE 
-                   c.id NOT IN ( SELECT DISTINCT(target.target_contact_id) FROM civicrm_activity_target target INNER JOIN civicrm_activity source ON( target.activity_id = source.id ) WHERE source.status_id IN (". implode( ',',  array_keys($activityStatus) ) .") AND (source.is_deleted = 0 OR source.is_deleted IS NULL) AND source.activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND source.source_record_id = %1  AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ) AND
-                   c.id IN (". implode(',', $this->_contactIds) .")";
-       
-       if ( !empty($includeGroups) ) {
-           $query .= " AND ( gc.group_id IN (". implode(',', $includeGroups) .") AND gc.status IN ('Added') )";
-       }
-
-       $findContacts = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer') ) );
-        
-        while( $findContacts->fetch() ) {
-            $includeContacts[$findContacts->contact_id] = $findContacts->contact_id; 
-        }
-
-        $maxVoters   = $surveyDetails->max_number_of_contacts;
-        $countVoters = 0;
-        $statusHeld  = CRM_Utils_Array::value( 'Scheduled', array_flip($activityStatus) );
-        
+        $statusHeld     = array_search( 'Scheduled', $activityStatus );
+        require_once 'CRM/Activity/BAO/Activity.php';
         foreach ( $this->_contactIds as $cid ) {
-            if ($maxVoters && ($maxVoters <= ($this->_numVoters + $countVoters) ) ) {
-                break;
-            }
-            if ( !in_array($cid ,$includeContacts) ) {
+            //apply filter for existing voters
+            //and do check across campaign contacts.
+            if ( in_array( $cid, $existingVoterIds ) ||
+                 ( !empty( $campContacts ) && !in_array( $cid, $campContacts ) ) ) {
                 continue;
             }
-
-            $countVoters++;
             $activityParams = array( 'source_contact_id'   => $this->_interviewerId,
                                      'assignee_contact_id' => array( $this->_interviewerId ),
                                      'target_contact_id'   => array( $cid ),
@@ -209,7 +190,11 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
                                      'status_id'           => $statusHeld,
                                      'skipRecentView'      => 1
                                      );
-            CRM_Activity_BAO_Activity::create( $activityParams );
+            $activity = CRM_Activity_BAO_Activity::create( $activityParams );
+            if ( $activity->id ) $countVoters++;
+            if ( $maxVoters && ( $maxVoters <= ( $this->_numVoters + $countVoters ) ) ) {
+                break;
+            }
         }
         
         $status = array( );
@@ -224,6 +209,6 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
             CRM_Core_Session::setStatus( implode('&nbsp;', $status) );
         }
     }
+    
 }
-
 
