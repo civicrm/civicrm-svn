@@ -650,4 +650,21 @@ class CRM_Utils_Hook {
                   '::invoke( 2, $options, $name, $null, $null, $null, \'civicrm_optionValues\' );' );
                                     
     }
+    
+    /**
+     * This hook allows modification of the navigation menu.
+     * @param $params associated array of navigation menu entry to Modify/Add 
+     * @access public
+     */
+    static function navigationMenu( &$params ) {
+        $config =& CRM_Core_Config::singleton( );
+        require_once( str_replace( '_', DIRECTORY_SEPARATOR, $config->userHookClass ) . '.php' );
+        $null =& CRM_Core_DAO::$_nullObject;
+        
+        return   
+            eval( 'return ' .
+                  $config->userHookClass .
+                  '::invoke( 1, $params, $null, $null, $null, $null, \'civicrm_navigationMenu\' );' );
+                                    
+    }
 }
