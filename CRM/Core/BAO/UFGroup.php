@@ -752,6 +752,10 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                     }
                     $params[$index] = $details->$name;
                     $values[$index] = implode( ",", $compref);
+                } else if ( $name === 'preferred_language' ) {
+                    $languages = CRM_Core_PseudoConstant::languages( );
+                    $params[$index] = $details->$name;
+                    $values[$index] = $languages[$details->$name];
                 } else if ( $name == 'group' ) {
                     $groups = CRM_Contact_BAO_GroupContact::getContactGroup( $cid, 'Added', null, false, true );
                     $title = array( );
@@ -1543,6 +1547,8 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
             $form->addGroup($communicationOptions, $name, $title, '<br/>' );
         } else if ($fieldName === 'preferred_mail_format') {
             $form->add('select', $name, $title, CRM_Core_SelectValues::pmf());
+        } else if ($fieldName === 'preferred_language') {
+            $form->add('select', $name, $title, CRM_Core_PseudoConstant::languages( ));
         } else if ( $fieldName == 'external_identifier' ) { 
             $form->add('text', $name, $title, $attributes, $required );
             $contID = $contactId;
