@@ -117,7 +117,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("address_1_geo_code_2", "5678");
       
       //fill in address 2
-      $this->click("link=add address");
+      $this->click("addMoreAddress1");
       $this->waitForElementPresent("address_2_street_address");
       $this->type("address_2_street_address", "2782Y Dowlen Path W");
       $this->type("address_2_city", "Birmingham");
