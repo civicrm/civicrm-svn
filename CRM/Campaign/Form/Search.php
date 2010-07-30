@@ -229,6 +229,9 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
         
         $controller->setEmbedded( true ); 
         $controller->moveFromSessionToTemplate(); 
+
+        //set the form title.
+        CRM_Utils_System::setTitle( ts( 'Find Voters To %1', array( 1 => ucfirst( $this->_operation ) ) ) );
     }
     
     function setDefaultValues( ) 
@@ -263,6 +266,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             $dataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest',
                                               'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1',
                                               false, null, false );
+            
             $this->assign( 'dataUrl',$dataUrl );
             $this->add( 'text',   'survey_interviewer_name', ts( 'Select Interviewer' ) );
             $this->add( 'hidden', 'survey_interviewer_id', '',array( 'id' => 'survey_interviewer_id' ) );
@@ -305,8 +309,6 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
         $this->add( 'select', 'campaign_survey_id', ts('Survey'), $surveys, true );
         
-        //set the form title.
-        CRM_Utils_System::setTitle( ts( 'Find Voters To %1', array( 1 => ucfirst( $this->_operation ) ) ) );
         
         /* 
          * add form checkboxes for each row. This is needed out here to conform to QF protocol 
@@ -331,6 +333,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             $permission = CRM_Core_Permission::getPermission( );
             require_once 'CRM/Campaign/Task.php';
             $allTasks = CRM_Campaign_Task::permissionedTaskTitles( $permission );
+            
             //hack to serve right page to state machine.
             $taskMapping = array( 'interview' => 1,
                                   'reserve'   => 2, 

@@ -64,6 +64,8 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
      */
     protected $_surveyDetails;
 
+    protected $_surveyActivities;
+
     /**
      * number of voters
      *
@@ -96,30 +98,16 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
         $params = array( 'id' => $this->_surveyId );
         CRM_Campaign_BAO_Survey::retrieve( $params, $this->_surveyDetails );
         
+        //get the survey activities.
+        $this->_surveyActivities = CRM_Campaign_BAO_Survey::getSurveyActivities( $this->_surveyId );
+        $this->_numVoters = count( $this->_surveyActivities );
+        
         //validate the selected survey.
         $this->validateSurvey( );
     }
     
     function validateSurvey( ) 
     {
-        require_once 'CRM/Core/PseudoConstant.php';
-        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
-        $surveyActType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
-        
-        // held survey activities 
-        // activities are considered as held if is_deleted != 1
-        $query = '
-SELECT  COUNT(id) 
-  FROM  civicrm_activity 
- WHERE  activity_type_id = %2 
-   AND  status_id IN ('. implode( ',', array_keys($activityStatus) ) . ') 
-   AND  source_record_id = %1 AND ( is_deleted = 0 OR is_deleted IS NULL )';
-        
-        $numVoters = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $this->_surveyId, 'Integer'),
-                                                                    2 => array( $this->_surveyDetails['activity_type_id'],
-                                                                                'Integer' ) ) );
-        $this->_numVoters = isset( $numVoters ) ? $numVoters : 0;
-        
         $errorMsg = null;
         $maxVoters = CRM_Utils_Array::value('max_number_of_contacts', $this->_surveyDetails );
         if ( $maxVoters ) {

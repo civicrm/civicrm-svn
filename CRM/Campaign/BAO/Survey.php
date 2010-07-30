@@ -371,4 +371,51 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         return $activityDetails;
     }
     
+    /**
+     * This function retrieve survey related activities.
+     *
+     * @param int    $surveyId  survey id.
+     *
+     * @return $activities an array of survey activity.
+     * @static
+     */
+    static function getSurveyActivities( $surveyId ) 
+    {
+        $activities = array( );
+        if ( !$surveyId ) return $activities; 
+        
+        require_once 'CRM/Core/PseudoConstant.php';
+        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
+        $statusIds[] = array_search( 'Scheduled', $activityStatus );
+        $statusIds[] = array_search( 'Completed', $activityStatus );
+        $statusWhereClause = null;
+        if ( empty( $statusIds ) ) {
+            $statusWhereClause = ' AND activity.status_id IN ( '. implode( ',', array_values( $statusIds ) ) . ' )';
+        }
+        $actTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'activity_type_id' ); 
+        
+        $query = "
+    SELECT  activity.id, activity.status_id, 
+            activityTarget.target_contact_id as voter_id,
+            activityAssignment.assignee_contact_id as interviewer_id
+      FROM  civicrm_activity activity
+INNER JOIN  civicrm_activity_target activityTarget ON ( activityTarget.activity_id = activity.id )
+INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignment.activity_id = activity.id )
+     WHERE  activity.source_record_id = %1
+       AND  activity.activity_type_id = %2
+       AND  ( activity.is_deleted IS NULL OR activity.is_deleted = 0 )
+            $statusWhereClause";
+        
+        $activity = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $surveyId,  'Integer'),
+                                                               2 => array( $actTypeId, 'Integer' ) ) );
+        while ( $activity->fetch( ) ) {
+            $activities[$activity->id] = array( 'id'             => $activity->id,
+                                                'voter_id'       => $activity->voter_id,
+                                                'status_id'      => $activity->status_id,
+                                                'interviewer_id' => $activity->interviewer_id );
+        }
+        
+        return $activities;
+    }
+    
 }
