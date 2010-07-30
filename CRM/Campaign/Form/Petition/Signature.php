@@ -1,0 +1,429 @@
+<?php
+
+/*
+ +--------------------------------------------------------------------+
+ | CiviCRM version 3.2                                                |
+ +--------------------------------------------------------------------+
+ | Copyright CiviCRM LLC (c) 2004-2010                                |
+ +--------------------------------------------------------------------+
+ | This file is a part of CiviCRM.                                    |
+ |                                                                    |
+ | CiviCRM is free software; you can copy, modify, and distribute it  |
+ | under the terms of the GNU Affero General Public License           |
+ | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
+ |                                                                    |
+ | CiviCRM is distributed in the hope that it will be useful, but     |
+ | WITHOUT ANY WARRANTY; without even the implied warranty of         |
+ | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
+ | See the GNU Affero General Public License for more details.        |
+ |                                                                    |
+ | You should have received a copy of the GNU Affero General Public   |
+ | License and the CiviCRM Licensing Exception along                  |
+ | with this program; if not, contact CiviCRM LLC                     |
+ | at info[AT]civicrm[DOT]org. If you have questions about the        |
+ | GNU Affero General Public License or the licensing of CiviCRM,     |
+ | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
+ +--------------------------------------------------------------------+
+*/
+
+/**
+ *
+ * @package CRM
+ * @copyright CiviCRM LLC (c) 2004-2010
+ * $Id$
+ *
+ */
+
+require_once 'CRM/Core/Form.php';
+require_once 'CRM/Campaign/BAO/Petition.php';
+require_once 'CRM/Core/PseudoConstant.php';
+       
+/**
+ * This class generates form components for processing a petition signature 
+ * 
+ */
+
+class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
+{
+    const
+        MODE_REGISTER = 1,
+        MODE_SEARCH   = 2,
+        MODE_CREATE   = 4,
+        MODE_EDIT     = 8;
+        
+    protected $_mode;        
+        
+    /**
+     * the id of the contact associated with this signature
+     *
+     * @var int
+     * @public
+     */
+    public $_contactId;    
+
+    /** 
+     * The contact type
+     * 
+     * @var int 
+     */ 
+    protected $_ctype;   
+    
+    /** 
+     * The profile id attached with this petition
+     * 
+     * @var int 
+     */ 
+    protected $_profileId;    
+    
+    /**
+     * the id of the survey (petition) we are proceessing
+     *
+     * @var int
+     * @protected
+     */
+    public $_surveyId;
+
+    /** 
+     * The tag id used for email confirmation with the petition
+     * 
+     * @var int 
+     */ 
+    protected $_tagId;    
+    
+    /**
+     * values to use for custom profiles
+     *
+     * @var array
+     * @protected
+     */
+    public $_values;    
+
+    /**
+     * The params submitted by the form
+     *
+     * @var array
+     * @protected
+     */
+    protected $_params;    
+
+    /** 
+     * the fields needed to build this form 
+     * 
+     * @var array 
+     */ 
+    public $_fields; 
+    
+    protected $_image_URL;
+    
+    protected $_defaults = null;
+    
+    public function preProcess()
+    {
+	    $this->_mode = self::MODE_CREATE;
+
+        //get userID from session
+        $session = CRM_Core_Session::singleton( );   
+    
+	    //get the contact id for this user if logged in
+        $this->_contactId =  $session->get( 'userID' );  
+    	
+    	//get the survey id
+        $this->_surveyId 	= CRM_Utils_Request::retrieve('sid', 'Positive', $this );
+               
+        // get the profile id to add custom profile fields to the signature form
+        require_once 'CRM/Core/BAO/UFJoin.php';         
+        $ufJoinParams = array( 'entity_id'    => $this->_surveyId,
+                               'entity_table' => 'civicrm_survey',   
+                               'module'       => 'CiviCampaign' );        
+        
+        $this->_profileId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );   
+              
+        if ( $this->_profileId ) {
+	        require_once 'CRM/Core/BAO/UFGroup.php';
+	        $this->_fields  = CRM_Core_BAO_UFGroup::getFields( $this->_profileId, false, CRM_Core_Action::ADD);	        			       	     
+		}
+		
+        $this->setDefaultsValues();
+    }
+    
+    /**
+     * This function sets the default values for the form.
+     *
+     * @access public
+     * @return None
+     */
+    function setDefaultsValues( ) 
+    {
+        
+        $this->_defaults = array( );   
+        if ( $this->_contactId ) {
+            CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactId, $this->_fields, $this->_defaults, true );
+        }
+        
+        //set custom field defaults
+        require_once "CRM/Core/BAO/CustomField.php";
+        foreach ( $this->_fields as $name => $field ) {
+            if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
+                $htmlType = $field['html_type'];
+                
+                if ( !isset( $this->_defaults[$name] ) ) {
+                    CRM_Core_BAO_CustomField::setProfileDefaults( $customFieldID,
+                                                                  $name,
+                                                                  $this->_defaults,
+                                                                  $this->_contactId,
+                                                                  $this->_mode );
+                                                                  
+                 //*** this->_mode ???                                                 
+                                                                  
+                }
+			}                
+		}      
+
+		// If connecting with Facebook id, fetch in user data like first/last name, email address, ...
+		// ** check for fb module **
+		if (($fb = $GLOBALS['_fb']) && ($fbu = fb_facebook_user())) {
+		  try {
+			$fbdata = $fb->api('/' . $fbu); // Facebook Graph lookup.
+	
+			$this->_defaults['first_name'] = $fbdata['first_name'];
+			$this->_defaults['last_name'] = $fbdata['last_name'];
+			$this->_defaults['email-Primary'] = $fbdata['email'];
+			$this->_defaults['birth_date'] = $fbdata['birthday'];
+			$this->_defaults['image_URL'] = "http://graph.facebook.com/" . $fbdata['id']  ."/picture";			
+		  }
+		  catch (FacebookApiException $e) {
+			fb_log_exception($e, t('Failed lookup of %fbu.', array('%fbu' => $fbu)));
+		  }
+		}
+		
+        $this->setDefaults( $this->_defaults );
+    }
+    
+    public function buildQuickForm()
+    {
+        $this->applyFilter('__ALL__','trim');
+       
+        $this->buildCustom( $this->_profileId , 'petitionProfile'  );
+               
+		// add buttons
+		$this->addButtons(array(
+                                array ('type'      => 'next',
+                                       'name'      => ts('Sign'),
+                                       'isDefault' => true),  
+                                )
+                          );                 
+    }
+    
+    /**
+     * This function is used to add the rules (mainly global rules) for form.
+     * All local rules are added near the element
+     *
+     * @return None
+     * @access public
+     * @see valid_date
+     */
+    
+    static function formRule( $fields, $files, $errors )
+    {
+        $errors = array( );
+        
+        return empty($errors) ? true : $errors;
+    }
+
+    /**
+     * Form submission of petition signature
+     *
+     * @access public
+     * @return None
+     */
+    public function postProcess() 
+    {
+		$this->_ctype = 'Individual';
+		// Check if contact 'email confirmed' tag exists, else create one
+		// This should be in the petition module initialise code to create a default tag for this
+		require_once 'api/v2/Tag.php';	
+		$tag_params['name'] = 'Email Confirmed';
+		$tag = civicrm_tag_get($tag_params); 
+		if ($tag['is_error'] == 1) {				
+			//create tag
+			$tag_params['description'] = 'Email Confirmed';
+			$tag_params['is_reserved'] = 1;
+			$tag_params['used_for'] = 'civicrm_contact,civicrm_activity';
+			$tag = civicrm_tag_create($tag_params); 
+		}
+		$this->_tagId = $tag['id'];
+
+		// export the field values to be used for saving the profile form
+		$params = $this->controller->exportValues( $this->_name );      
+		
+        $session = CRM_Core_Session::singleton( );
+        // format params
+        $params['last_modified_id'] = $session->get( 'userID' );
+        $params['last_modified_date'] = date('YmdHis');
+        
+        if ( $this->_action & CRM_Core_Action::ADD ) { 
+            $params['created_id']   = $session->get( 'userID' );
+            $params['created_date'] = date('YmdHis');
+        } 
+        
+        if ( isset( $this->_surveyId ) ) {
+            $params['sid'] = $this->_surveyId;
+        }
+        
+        if ( isset( $this->_contactId ) ) {
+            $params['cid'] = $this->_contactId;
+        }
+        
+        // save birth_date if received from Facebook connect login
+        if ( isset( $this->_defaults['birth_date'] ) ) {
+            $params['birth_date'] = $this->_defaults['birth_date'];
+        }
+        
+		//	$this->_params['ip_address'] = CRM_Utils_System::ipAddress( );
+		       		
+		// dupeCheck - check if contact record already exists
+		// code modified from api/v2/Contact.php-function civicrm_contact_check_params()
+		require_once 'CRM/Dedupe/Finder.php';
+        $params['contact_type'] = $this->_ctype;
+        $dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
+
+		// allow anonymous users signing the form to run the dedupe check - // CRM-6431
+        $dedupeParams['check_permission'] = '';       
+        
+	    //dupesByParams($params, $ctype, $level = 'Strict', $except = array())
+        $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']);
+
+		switch (count($ids)) {
+			case 0:
+				//no matching contacts - create a new contact
+				// Add a source for this new contact
+				$params['source'] = 'Online Petition Signature';	
+				break;
+			case 1:
+				$this->_contactId = $ids[0];
+				break;
+			default:
+				// more than 1 matching contact
+				// *** handle multiple dupes
+				break;
+		}
+
+
+	    if ( (count($ids) == 0) || (count($ids) == 1) ) {
+			require_once 'CRM/Core/Transaction.php';
+			$transaction = new CRM_Core_Transaction( );
+				
+			$this->_contactId = CRM_Contact_BAO_Contact::createProfileContact($params, $this->_fields,
+																	   $this->_contactId, $this->_addToGroupID,
+																	   $this->_profileId, $this->_ctype,
+																	   true );
+			
+			// check if 'email confirmed' tag already set for this contact
+			require_once 'CRM/Core/DAO/EntityTag.php';
+			$tag =& new CRM_Core_DAO_EntityTag( );
+			$tag->contact_id = $this->_contactId;
+			$tag->tag_id     = $this->_tagId;
+			if (  !($tag->find( )) ) {
+			   // if using Facebook connect to sign in, assign the 'email confirmed' tag to new contact
+				if (($fb = $GLOBALS['_fb']) && ($fbu = fb_facebook_user()) && ($params['email-Primary'] == $fbdata['email']) ) {
+					// set 'Email Confirmed' tag for this contact
+					require_once 'api/v2/EntityTag.php';
+					unset($tag_params);
+					$tag_params['contact_id'] = $this->_contactId;
+					$tag_params['tag_id'] = $this->_tagId;;       		
+					$tag_value = civicrm_entity_tag_add($tag_params);
+				} else {
+					// send email verification message
+					$statusMsg = ts( 'Need to send email verification message.' );
+				}
+			} else {
+				// email confirmed tag already set for contact - send to createSignature to save with activity too
+				$params['tag'] = $this->_tagId;
+			}
+		   
+			// create the signature activity record																  
+			$params['cid'] = $this->_contactId;
+			$result = CRM_Campaign_BAO_Petition::createSignature( $params );
+		  
+			$transaction->commit( );
+		}
+		
+		if ( $result ) {
+			$statusMsg = $statusMsg . ts( 'Petition signature has been saved. ' );
+			$session = CRM_Core_Session::singleton();
+			CRM_Core_Session::setStatus( $statusMsg );
+			$session->pushUserContext(CRM_Utils_System::url('civicrm/dashboard', 'reset=1'));
+		}        
+    }   
+    
+    /**  
+     * Function to build the petition profile form
+     *  
+     * @return None  
+     * @access public  
+     */ 
+    function buildCustom( $id, $name, $viewOnly = false ) 
+    {
+
+        if ( $id ) {
+            require_once 'CRM/Core/BAO/UFGroup.php';
+            require_once 'CRM/Profile/Form.php';
+            $session = CRM_Core_Session::singleton( );
+            $contactID = $this->_contactId;	            
+
+            $fields = null;
+            if ( $contactID ) {
+                require_once "CRM/Core/BAO/UFGroup.php";
+                if ( CRM_Core_BAO_UFGroup::filterUFGroups($id, $contactID)  ) {
+                    $fields = CRM_Core_BAO_UFGroup::getFields( $id, false,CRM_Core_Action::ADD );
+                }
+            } else {
+                $fields = CRM_Core_BAO_UFGroup::getFields( $id, false,CRM_Core_Action::ADD ); 
+            }
+
+            if ( $fields ) {
+                /*
+                // unset any email-* fields since we already collect it, CRM-2888
+                foreach ( array_keys( $fields ) as $fieldName ) {
+                    if ( substr( $fieldName, 0, 6 ) == 'email-' ) {
+                        unset( $fields[$fieldName] );
+                    }
+                }
+                */
+                 
+                $this->assign( $name, $fields );
+                
+                $addCaptcha = false;
+                foreach($fields as $key => $field) {
+                    if ( $viewOnly &&
+                         isset( $field['data_type'] ) &&
+                         $field['data_type'] == 'File' || ( $viewOnly && $field['name'] == 'image_URL' ) ) {
+                        // ignore file upload fields
+                        continue;
+                    }
+
+                
+                    CRM_Core_BAO_UFGroup::buildProfile($this, $field, CRM_Profile_Form::MODE_CREATE, $contactID, true );
+                    $this->_fields[$key] = $field;
+                    if ( $field['add_captcha'] ) {
+                        $addCaptcha = true;
+                    }
+                }
+
+                if ( $addCaptcha &&
+                     ! $viewOnly ) {
+                    require_once 'CRM/Utils/ReCAPTCHA.php';
+                    $captcha =& CRM_Utils_ReCAPTCHA::singleton( );
+                    $captcha->add( $this );
+                    $this->assign( "isCaptcha" , true );
+                }                
+                
+            }
+        }
+    }
+        
+    
+    
+}
+    
+?>

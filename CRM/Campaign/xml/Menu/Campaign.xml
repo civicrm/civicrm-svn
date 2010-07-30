@@ -56,9 +56,15 @@
     <page_callback>CRM_Campaign_Controller_Search</page_callback>
   </item>
   <item>
+    <path>civicrm/petition/add</path>
+    <title>New Petition</title>
+    <page_callback>CRM_Campaign_Form_Petition</page_callback>
+    <access_arguments>administer CiviCampaign</access_arguments>
+  </item>  
+  <item>
     <path>civicrm/petition/sign</path>
     <title>Sign Petition</title>
-    <page_callback>CRM_Campaign_Form_Petition</page_callback>
+    <page_callback>CRM_Campaign_Form_Petition_Signature</page_callback>
   </item>  
   <item>
     <path>civicrm/petition/custom</path>

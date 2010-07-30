@@ -23,35 +23,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* this template is used for displaying signature information *}
+<div class="crm-block crm-form-block crm-campaign-form-block">
 
-{if $signatures} 
-
- {include file="CRM/common/enableDisable.tpl"}
- {include file="CRM/common/jsortable.tpl"}
-  <div id="signatureList">
-    <table id="options" class="display">
-      <thead>
-        <tr>
-		  <th>{ts}Petition ID{/ts}</th>
-		  <th>{ts}Petition Title{/ts}</th> 
-          <th>{ts}Signed By{/ts}</th>
-		  <th>{ts}Date{/ts}</th>
-		  <th>{ts}Status{/ts}</th>	  
-        </tr>
-      </thead>
-      {foreach from=$signatures item=signature}
-        <tr id="row_{$signature.id}">
-          <td>{$signature.source_record_id}</td>
-          <td>{$signature.survey_title}</td>
-          <td><a href="/civicrm/contact/view?reset=1&cid={$signature.cid}#Activities">{$signature.source_contact_id}</a></td>
-          <td>{$signature.activity_date_time}</td>
-          <td>{$signature.status_id}</td>
-        </tr>
-      {/foreach}
-    </table>
-  </div>
-
-{else} 
-  {ts} No signature found!    {/ts} 
-{/if}
+    <div class="crm-group">
+    	{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionProfile} 	
+    </div>
+	
+    <div class="crm-submit-buttons">
+        {include file="CRM/common/formButtons.tpl" location="top"}
+    </div>
+</div>
