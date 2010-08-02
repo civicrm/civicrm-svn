@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -212,7 +212,7 @@ class CRM_Grant_BAO_Query
         $from = null;
         switch ( $name ) {
         case 'civicrm_grant':
-            $from = " INNER JOIN civicrm_grant ON civicrm_grant.contact_id = contact_a.id ";
+            $from = " $side JOIN civicrm_grant ON civicrm_grant.contact_id = contact_a.id ";
             break;
             
         case 'grant_status':
@@ -222,7 +222,11 @@ class CRM_Grant_BAO_Query
             
         case 'grant_type':
             $from .= " $side JOIN civicrm_option_group option_group_grant_type ON (option_group_grant_type.name = 'grant_type')";
-            $from .= " $side JOIN civicrm_option_value grant_type ON (civicrm_grant.grant_type_id = grant_type.value AND option_group_grant_type.id = grant_type.option_group_id ) ";
+            if( $mode & CRM_Contact_BAO_Query::MODE_GRANT ) {
+                $from .= " INNER JOIN civicrm_option_value grant_type ON (civicrm_grant.grant_type_id = grant_type.value AND option_group_grant_type.id = grant_type.option_group_id ) ";
+            } else {
+                $from .= " $side JOIN civicrm_option_value grant_type ON (civicrm_grant.grant_type_id = grant_type.value AND option_group_grant_type.id = grant_type.option_group_id ) ";
+            }
             break;
         } 
         return $from;

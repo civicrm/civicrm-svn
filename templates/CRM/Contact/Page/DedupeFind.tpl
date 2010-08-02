@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -37,7 +37,7 @@
           <td>{$srcLink}</td>
           <td>{$dstLink}</td>
           <td>{$main.weight}</td>
-          <td style="text-align: right;">{$merge}</td>
+          <td style="text-align: right;">{if $main.canMerge}{$merge}{else}<em>{ts}Insufficient access rights - cannot merge{/ts}</em>{/if}</td>
         </tr>
     {/foreach}
   </table>
@@ -58,10 +58,10 @@
 {if $context eq 'search'}
    <a href="{$backURL}" class="button"><span>&raquo; {ts}Done{/ts}</span></a>
 {else}
-   {capture assign=backURL}{crmURL p="civicrm/admin/dedupefind" q="reset=1&rgid=`$rgid`&action=preview" a=1}{/capture}
+   {capture assign=backURL}{crmURL p="civicrm/contact/dedupefind" q="reset=1&rgid=`$rgid`&action=preview" a=1}{/capture}
    <a href="{$backURL}" class="button"><span>&raquo; {ts}Done{/ts}</span></a>
 {/if}
 <div style="clear: both;"></div>
 {else}
-{include file="CRM/Admin/Form/DedupeFind.tpl"}
+{include file="CRM/Contact/Form/DedupeFind.tpl"}
 {/if}

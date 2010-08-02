@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -49,24 +49,15 @@ class CRM_Utils_System_Drupal {
      * @access public
      */
     function setTitle( $title, $pageTitle = null ) {
-        if ( $pageTitle ) {
-			$markupTitle = $pageTitle;
-        	$cleanTitle = strip_tags($pageTitle);
-            $title = $cleanTitle;
+        if ( !$pageTitle ) {
+            $pageTitle = $title;
         }
-        
-        drupal_set_title( $title );
-    	
-        $template =& CRM_Core_Smarty::singleton( );
-		if ($pageTitle != '') {
-        	$template->assign( 'pageTitle', $pageTitle );
-		} else {
-        	$template->assign( 'pageTitle', $title );			
-		}
-		
-
-	}
-
+        if ( arg(0) == 'civicrm' )	{
+            //set drupal title 
+            drupal_set_title( $pageTitle ); 
+        }
+    }
+    
     /**
      * Append an additional breadcrumb tag to the existing breadcrumb
      *

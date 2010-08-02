@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2009                                |
  +--------------------------------------------------------------------+
@@ -30,6 +30,11 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
  
 class WebTest_Case_AddCaseTest extends CiviSeleniumTestCase {
+
+    protected $captureScreenshotOnFailure = TRUE;
+    protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
+    protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
+            
 
   protected function setUp()
   {

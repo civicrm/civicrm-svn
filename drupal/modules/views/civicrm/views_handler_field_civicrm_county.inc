@@ -1,8 +1,7 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -22,17 +21,34 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-<div class="crm-block crm-form-block crm-dedupe-find-form-block">
-<div id="help">
-    {ts}You can search all contacts for duplicates or limit the search to a specific group.{/ts} 
-</div>
-   <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div> 
-   <table class="form-layout-compressed">
-     <tr class="crm-dedupe-find-form-block-group_id">
-       <td class="label">{$form.group_id.label}</td>
-       <td>{$form.group_id.html}</td>
-     </tr>
-   </table>
-  <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
-</div>
+*/
+
+/**
+ * Field handler to provide access control for the state field (which is a lookup)
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_civicrm_county extends views_handler_field_civicrm {
+    static $_counties;
+
+    function construct( ) {
+        if ( ! self::$_counties ) {
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
+            require_once 'CRM/Core/PseudoConstant.php';
+            self::$_counties = CRM_Core_PseudoConstant::county( );
+        }
+    }
+
+    function render( $values ) {
+        $sid = $values->{$this->field_alias};
+        if ( empty( $sid ) ||
+             (int ) $sid <= 0 ) {
+            return null;
+        }
+
+        return self::$_counties[$values->{$this->field_alias}];
+    }
+}
+?>

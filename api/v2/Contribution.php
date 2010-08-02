@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -61,10 +61,12 @@ function &civicrm_contribution_add( &$params ) {
     if ( ! is_array( $params ) ) {
         return civicrm_create_error( ts( 'Input parameters is not an array' ) );
     }
-
-    $error = _civicrm_contribute_check_params( $params );
-    if ( civicrm_error( $error ) ) {
-        return $error;
+    
+    if ( !CRM_Utils_Array::value( 'id', $params ) ) {
+        $error = _civicrm_contribute_check_params( $params );
+        if ( civicrm_error( $error ) ) {
+            return $error;
+        }
     }
 
     $values  = array( );
@@ -368,7 +370,7 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
         case 'cancel_date':
         case 'receipt_date':
         case 'thankyou_date':
-            if (!CRM_Utils_Rule::date($value)) {
+            if (!CRM_Utils_Rule::dateTime($value)) {
                 return civicrm_create_error("$key not a valid date: $value");
             }
             break;
@@ -394,6 +396,12 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
         case 'payment_instrument': 
             require_once 'CRM/Core/OptionGroup.php';
             $values['payment_instrument_id'] = CRM_Core_OptionGroup::getValue( 'payment_instrument', $value );
+            break;
+        case 'soft_credit_to':
+            if ( !CRM_Utils_Rule::integer( $value ) ) {
+                return civicrm_create_error("$key not a valid Id: $value");  
+            } 
+            $values['soft_credit_to'] = $value;
             break;
         default:
             break;

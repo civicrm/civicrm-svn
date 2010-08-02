@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -1055,6 +1055,14 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                 if ( $url ) {
                     $display = $url['file_url'];
                 }
+            }
+            break;
+        
+        case 'TextArea':
+            if ( empty( $value ) ) {
+                $display='';
+            } else {
+                $display = nl2br($value);
             }
             break;
             

@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -37,6 +37,7 @@
 require_once 'CRM/Report/Form.php';
 require_once 'CRM/Event/PseudoConstant.php';
 require_once 'CRM/Core/OptionGroup.php';
+require_once 'CRM/Event/BAO/Participant.php';
 
 class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
 
@@ -357,6 +358,15 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                 $entryFound = true;
             }
             
+            // Handel value seperator in Fee Level 
+            if ( array_key_exists('civicrm_participant_participant_fee_level', $row) ) {
+                if ( $value = $row['civicrm_participant_participant_fee_level'] ) {
+                    CRM_Event_BAO_Participant::fixEventLevel( $value );
+                    $rows[$rowNum]['civicrm_participant_participant_fee_level'] = $value;
+                }
+                $entryFound = true;
+            }
+
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
             if ( !$entryFound ) {

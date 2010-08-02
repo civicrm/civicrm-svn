@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -469,7 +469,7 @@ class CRM_Profile_Form extends CRM_Core_Form
         
         if ( $this->_mode != self::MODE_SEARCH ) {
             if ( isset($addToGroupId) ) {
-                $this->add('hidden', "group[$addToGroupId]", 1 );
+                $this->add('hidden', "add_to_group", $addToGroupId );
                 $this->_addToGroupID = $addToGroupId;
             }
         }
@@ -706,7 +706,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                                 'email_greeting'  => 'email_greeting_id', 
                                 'postal_greeting' => 'postal_greeting_id'
                                 );
-        if( $this->_id ) {
+        if ( $this->_id ) {
             $contactDetails = CRM_Contact_BAO_Contact::getHierContactDetails( $this->_id ,
                                                                               $greetingTypes );
             $details = $contactDetails[0][$this->_id];
@@ -748,7 +748,7 @@ class CRM_Profile_Form extends CRM_Core_Form
                     }
                 }
             }
-            if( $profileType == 'Organization' ) {
+            if ( $profileType == 'Organization' ) {
                 unset( $params['email_greeting'], $params['postal_greeting'] );
                 
             }
@@ -810,10 +810,26 @@ class CRM_Profile_Form extends CRM_Core_Form
             }
         }
         
+        if ( CRM_Utils_Array::value( 'add_to_group', $params ) ) {
+            $addToGroupId = $params['add_to_group'];
+
+            // since we are directly adding contact to group lets unset it from mailing
+            if ( $key = array_search( $addToGroupId, $mailingType ) ) {
+                unset( $mailingType[$key] );
+            }
+            
+            // add add to group to main group array
+            if ( !isset( $params['group'] ) ) {
+                $params['group'] = array( );
+            }
+            
+            $params['group'][$addToGroupId] = 1;
+        }
+        
         if ( $this->_grid ){
             $params['group'] = $groupSubscribed;
         }
-
+        
         // commenting below code, since we potentially
         // triggered maximum name field formatting cases during CRM-4430.
         // CRM-4343

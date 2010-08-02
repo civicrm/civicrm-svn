@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -288,15 +288,17 @@ ORDER BY start_date desc
     {
         $id = CRM_Utils_Request::retrieve('id', 'Positive', $this, true, 0, 'GET');
         
+        $urlString = 'civicrm/event/manage';
         require_once 'CRM/Event/BAO/Event.php';
         $copyEvent = CRM_Event_BAO_Event::copy( $id );
         $urlParams = 'reset=1';
         // Redirect to Copied Event Configuration
         if ( $copyEvent->id ) {
-            $urlParams .=  '&action=update&id='.$copyEvent->id.'&subPage=EventInfo';
+            $urlString  = 'civicrm/event/manage/eventInfo';
+            $urlParams .=  '&action=update&id='.$copyEvent->id;
         }
 
-        return CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/event/manage', $urlParams ) );
+        return CRM_Utils_System::redirect( CRM_Utils_System::url( $urlString, $urlParams ) );
     }
     
     function search( )

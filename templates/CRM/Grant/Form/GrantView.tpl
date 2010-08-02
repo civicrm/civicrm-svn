@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -25,7 +25,24 @@
 *}
 {* this template is used for viewing grants *} 
 <h3>{ts}View Grant{/ts}</h3>
-<div class="crm-block crm-form-block crm-grant-view-form-block">
+<div class="crm-block crm-content-block crm-grant-view-block">
+    <div class="crm-submit-buttons">
+        {if call_user_func(array('CRM_Core_Permission','check'), 'edit grants')}
+            {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context"}
+            {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
+                {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context&key=$searchKey"}
+            {/if}
+            <a class="button" href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}" accesskey="e"><span><div class="icon edit-icon"></div> {ts}Edit{/ts}</span></a>
+        {/if}
+        {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviGrant')}
+    	    {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context"}
+            {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
+                {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context&key=$searchKey"}
+            {/if}
+            <a class="button" href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}"><span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span></a>
+        {/if}
+        {include file="CRM/common/formButtons.tpl" location="top"}
+    </div>
     <table class="crm-info-panel">
         <tr class="crm-grant-view-form-block-name"><td class="label">{ts}Name{/ts}</td><td class="bold">{$displayName}</td></tr>    
         <tr class="crm-grant-view-form-block-status_id"><td class="label">{ts}Grant Status{/ts}          </td> <td>{$grantStatus}</td></tr>
@@ -45,29 +62,22 @@
             <tr class="crm-grant-view-form-block-attachment"><td class="label">{ts}Attachment(s){/ts}</td><td>{$attachment}</td></tr>
         {/if}
     </table>
-	<div class="spacer"></div>
     {include file="CRM/Custom/Page/CustomDataView.tpl"} 
-    <div class="spacer"></div>  
-    <table class="form-layout buttons">
-        <tr>
-    	    <td>&nbsp;</td>
-            <td>
-                {$form.buttons.html}
-                {if call_user_func(array('CRM_Core_Permission','check'), 'edit grants')}
-                {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context"}
+    <div class="crm-submit-buttons">
+        {if call_user_func(array('CRM_Core_Permission','check'), 'edit grants')}
+            {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context"}
 	        {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
-	        {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context&key=$searchKey"}
+	            {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=update&context=$context&key=$searchKey"}
 	        {/if}
-                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}" accesskey="e">Edit</a>
-                {/if}
-                {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviGrant')}
-		{assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context"}
+            <a class="button" href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}" accesskey="e"><span><div class="icon edit-icon"></div> {ts}Edit{/ts}</span></a>
+        {/if}
+        {if call_user_func(array('CRM_Core_Permission','check'), 'delete in CiviGrant')}
+		    {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context"}
 	        {if ( $context eq 'fulltext' || $context eq 'search' ) && $searchKey}
-	        {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context&key=$searchKey"}
+	            {assign var='urlParams' value="reset=1&id=$id&cid=$contactId&action=delete&context=$context&key=$searchKey"}
 	        {/if}
-                    &nbsp;|&nbsp;<a href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}">Delete</a>
-                {/if}
-            </td>
-        </tr>    
-    </table>
+            <a class="button" href="{crmURL p='civicrm/contact/view/grant' q=$urlParams}"><span><div class="icon delete-icon"></div>{ts}Delete{/ts}</span></a>
+        {/if}
+        {include file="CRM/common/formButtons.tpl" location="bottom"}
+    </div>
 </div>

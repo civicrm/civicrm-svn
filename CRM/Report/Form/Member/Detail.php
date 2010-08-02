@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -117,7 +117,7 @@ class CRM_Report_Form_Member_Detail extends CRM_Report_Form {
                                                       'title'        => ts( 'Status' ),
                                                       'type'         => CRM_Utils_Type::T_INT,
                                                       'operatorType' => CRM_Report_Form::OP_MULTISELECT,
-                                                      'options'      => CRM_Member_PseudoConstant::membershipStatus( ) ), ),
+                                                      'options'      => CRM_Member_PseudoConstant::membershipStatus( null, null, 'label') ), ),
                           'grouping' => 'member-fields',		
                           ),
                    

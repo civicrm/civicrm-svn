@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -1117,7 +1117,7 @@ LEFT JOIN civicrm_option_value contribution_status ON (civicrm_contribution.cont
     {
         $query = "SELECT SUM(amount) as amount,
                          AVG(total_amount) as average,
-                         currency
+                         cc.currency
                   FROM civicrm_contribution_soft  ccs 
                        LEFT JOIN civicrm_contribution cc 
                               ON ccs.contribution_id = cc.id 

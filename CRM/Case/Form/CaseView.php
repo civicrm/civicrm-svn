@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -98,17 +98,19 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         
         $this->assign( 'caseID', $this->_caseID );
         $this->assign( 'contactID', $this->_contactID );
-
+        
         //validate case id.
         $this->_userCases = array( );
+        $session  = CRM_Core_Session::singleton( );
+        $userID   = $session->get( 'userID' );
         if ( !$this->_hasAccessToAllCases ) {
-            $session  = CRM_Core_Session::singleton( );
-            $this->_userCases = CRM_Case_BAO_Case::getCases( false, $session->get( 'userID' ) );
+            $this->_userCases = CRM_Case_BAO_Case::getCases( false, $userID );
             if ( !array_key_exists( $this->_caseID, $this->_userCases ) ) {
                 CRM_Core_Error::fatal( ts( 'You are not authorized to access this page.' ) );
             }
         }
-
+        $this->assign( 'userID', $userID );
+        
         if ( CRM_Case_BAO_Case::caseCount( $this->_contactID ) >= 2 ) {
             $this->_mergeCases = true;
         }

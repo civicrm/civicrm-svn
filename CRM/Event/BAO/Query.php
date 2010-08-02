@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -545,7 +545,7 @@ class CRM_Event_BAO_Query
         $form->addDate( 'event_end_date_high', ts('To'), false, array( 'formatType' => 'searchDate') );
 
         require_once 'CRM/Event/PseudoConstant.php';
-        $status = CRM_Event_PseudoConstant::participantStatus( );
+        $status = CRM_Event_PseudoConstant::participantStatus( null, null, 'label' );
         asort( $status );
         foreach ( $status as $id => $Name) {
             $form->_participantStatus =& $form->addElement('checkbox', "participant_status_id[$id]", null,$Name);

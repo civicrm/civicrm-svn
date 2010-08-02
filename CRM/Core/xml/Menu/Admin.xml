@@ -394,15 +394,6 @@
      <weight>399</weight>
   </item>
   <item>
-     <path>civicrm/admin/deduperules</path>
-     <title>Find and Merge Duplicate Contacts</title>
-     <desc>Manage the rules used to identify potentially duplicate contact records. Scan for duplicates using a selected rule and merge duplicate contact data as needed.</desc>
-     <page_callback>CRM_Admin_Page_DedupeRules</page_callback>
-     <adminGroup>Manage</adminGroup>
-     <icon>admin/small/duplicate_matching.png</icon>
-     <weight>105</weight>
-  </item> 
-  <item>
      <path>civicrm/admin/options/email_greeting</path>
      <title>Email Greetings</title>
      <desc>Options for assigning email greetings to individual and household contacts.</desc>
@@ -438,11 +429,6 @@
      <page_callback>CRM_Admin_Page_ContactType</page_callback>
      <adminGroup>Option Lists</adminGroup>
      <icon>admin/small/09.png</icon>
-  </item>
-  <item>
-     <path>civicrm/admin/dedupefind</path>
-     <title>Find and Merge Duplicate Contacts</title>
-     <page_callback>CRM_Admin_Page_DedupeFind</page_callback>
   </item>
   <item>
      <path>civicrm/admin/access</path>
@@ -490,11 +476,13 @@
      <path>civicrm/ajax/menu</path>
      <page_callback>CRM_Admin_Page_AJAX::getNavigationList</page_callback>
      <access_arguments>access CiviCRM,administer CiviCRM</access_arguments>
+     <page_type>3</page_type>
   </item>
   <item>
      <path>civicrm/ajax/menutree</path>
      <page_callback>CRM_Admin_Page_AJAX::menuTree</page_callback>
      <access_arguments>access CiviCRM,administer CiviCRM</access_arguments>
+     <page_type>3</page_type>
   </item>
   <item>
      <path>civicrm/ajax/statusmsg</path>
@@ -539,5 +527,6 @@
        <path>civicrm/ajax/processTags</path>
        <page_callback>CRM_Admin_Page_AJAX::processTags</page_callback>
        <access_arguments>access CiviCRM</access_arguments>
+       <page_type>3</page_type>
   </item>  
 </menu>

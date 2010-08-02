@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -126,7 +126,7 @@ class CRM_Grant_Form_GrantView extends CRM_Core_Form
     public function buildQuickForm( ) 
     {
         $this->addButtons(array(  
-                                array ( 'type'      => 'next',  
+                                array ( 'type'      => 'cancel',  
                                         'name'      => ts('Done'),  
                                         'spacing'   => '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;',  
                                         'isDefault' => true   )

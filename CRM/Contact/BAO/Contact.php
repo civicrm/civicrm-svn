@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -2361,6 +2361,15 @@ UNION
                                                                                         'reset=1&action=add&context=case'),
 					 							'permissions'  =>  array( 'access all cases and activities')
 					 							), 
+                       'grant'   	  => array( 'title'        =>  ts( 'Add Grant' ),
+                                                'weight'	   => 26, 
+                                                'ref'          =>  'new-grant',
+                                                'key'          =>  'grant',
+                                                'component'    =>  'CiviGrant',
+                                                'href'		   => CRM_Utils_System::url('civicrm/contact/view/grant',
+                                                                                         'reset=1&action=add&context=grant'),
+ 					 							'permissions'  =>  array( 'edit grants')
+ 					 							), 
                        'rel'         => array( 'title'        =>  ts( 'Add Relationship' ),
                                                 'weight'	   => 30, 
                                                 'ref'          =>  'new-relationship',

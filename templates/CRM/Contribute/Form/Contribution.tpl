@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -28,7 +28,7 @@
 {if $cdType }
   {include file="CRM/Custom/Form/CustomData.tpl"}
 {elseif $priceSetId}
-  {include file="CRM/Price/Form/PriceSet.tpl"}
+  {include file="CRM/Price/Form/PriceSet.tpl" context="standalone"}
 {elseif $showAdditionalInfo and $formType }
   {include file="CRM/Contribute/Form/AdditionalInfo/$formType.tpl"}
 {else}
@@ -119,7 +119,7 @@
         {if !$contributionMode}
             <tr class="crm-contribution-form-block-receive_date">
                 <td class="label">{$form.receive_date.label}</td>
-                <td{$valueStyle}>{if $hideCalender neq true}{include file="CRM/common/jcalendar.tpl" elementName=receive_date}{else}{$receive_date|truncate:10:''|crmDate}{/if}<br />
+                <td{$valueStyle}>{if $hideCalender neq true}{include file="CRM/common/jcalendar.tpl" elementName=receive_date}{else}{$receive_date|crmDate}{/if}<br />
                     <span class="description">{ts}The date this contribution was received.{/ts}</span>
                 </td>
             </tr>
@@ -294,6 +294,7 @@ function loadPanes( id ) {
 {/if}
 <br />
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
+</div>
     {literal}
     <script type="text/javascript">
      function verify( ) {
@@ -436,4 +437,3 @@ function buildAmount( priceSetId ) {
 }
 </script>
 {/literal}
-</div>

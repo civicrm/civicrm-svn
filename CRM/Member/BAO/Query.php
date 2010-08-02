@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -189,7 +189,7 @@ class CRM_Member_BAO_Query
             }     
             
             $names = array( );
-            $statusTypes = CRM_Member_PseudoConstant::membershipStatus( );
+            $statusTypes = CRM_Member_PseudoConstant::membershipStatus(null, null, 'label');
             foreach ( $value as $id => $dontCare ) {
                 $names[] = $statusTypes[$id];
             }
@@ -350,7 +350,7 @@ class CRM_Member_BAO_Query
         $form->addRadio( 'member_is_primary', '', $primaryValues );
         $form->setDefaults( array( 'member_is_primary' => 1 ) );
         
-        foreach (CRM_Member_PseudoConstant::membershipStatus( ) as $sId => $sName) {
+        foreach (CRM_Member_PseudoConstant::membershipStatus(null, null, 'label') as $sId => $sName) {
             $form->_membershipStatus =& $form->addElement('checkbox', "member_status_id[$sId]", null,$sName);
         }
 

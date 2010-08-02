@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -451,6 +451,15 @@ function civicrm_contact_check_params( &$params, $dupeCheck = true, $dupeErrorAr
         // check for record already existing
         require_once 'CRM/Dedupe/Finder.php';
         $dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
+
+        // CRM-6431
+        // setting 'check_permission' here means that the dedupe checking will be carried out even if the 
+        // person does not have permission to carry out de-dupes
+        // this is similar to the front end form
+        if (isset($params['check_permission'])){
+            $dedupeParams['check_permission'] = $fields['check_permission'];
+        }
+
         $ids = implode(',', CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']));
         
         if ( $ids != null ) {

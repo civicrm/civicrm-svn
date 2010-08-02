@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -319,7 +319,7 @@ class CRM_Grant_Selector_Search extends CRM_Core_Selector_Base implements CRM_Co
              require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
              $row['contact_type' ] = 
                  CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
-                                                          $result->contact_sub_type : $result->contact_type );
+                                                          $result->contact_sub_type : $result->contact_type ,false,$result->contact_id);
 
              $rows[] = $row;
          }

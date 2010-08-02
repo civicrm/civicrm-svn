@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -118,7 +118,7 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
             $message   = ts('CiviCRM upgrade was successful.');
             if ( $latestVer == '3.2.alpha1' ) {
                 $message .= '<br />' . ts("We have reset the COUNTED flag to false for the event participant status 'Pending from incomplete transaction'. This change ensures that people who have a problem during registration can try again.");
-            } else if ( $latestVer == '3.2.beta3' ) {
+            } else if ( $latestVer == '3.2.beta3' && ( version_compare($currentVer, '3.1.alpha1') >= 0 ) ) {
                 require_once 'CRM/Contact/BAO/ContactType.php';
                 $subTypes = CRM_Contact_BAO_ContactType::subTypes( );
                                 
@@ -149,7 +149,18 @@ class CRM_Upgrade_Page_Upgrade extends CRM_Core_Page {
                         $message .= '<br />' . ts("You are using custom template for contact subtypes: {$subTypeTemplates}.") . '<br />' . ts("You need to move these subtype templates to the SubType directory in CRM/Contact/Form/Edit/ and CRM/Contact/Page/View respectively.");
                     }
                 }
+            } else if ( $latestVer == '3.2.beta4' ) {
+                $statuses = array( 'New', 'Current', 'Grace', 'Expired', 'Pending', 'Cancelled', 'Deceased' );
+                $sql = "
+SELECT  count( id ) as statusCount 
+  FROM  civicrm_membership_status 
+ WHERE  name IN ( '" . implode( "' , '", $statuses )  .  "' ) ";
+                $count = CRM_Core_DAO::singleValueQuery( $sql );
+                if ( $count < count( $statuses ) ) {
+                    $message .= '<br />' . ts( "One or more Membership Status Rules was disabled during the upgrade because it did not match a recognized status name. if custom membership status rules were added to this site - review the disabled statuses and re-enable any that are still needed (Administer > CiviMember > Membership Status Rules)." );
+                }
             }
+            
             $template->assign( 'currentVersion',  $currentVer);
             $template->assign( 'newVersion',      $latestVer );
             $template->assign( 'upgradeTitle',   ts('Upgrade CiviCRM from v %1 To v %2', 

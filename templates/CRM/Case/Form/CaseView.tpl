@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -170,8 +170,10 @@
     		<th>{ts}Case Role{/ts}</th>
     		<th>{ts}Name{/ts}</th>
     	   	<th>{ts}Phone{/ts}</th>
-                <th>{ts}Email{/ts}</th>
-    		<th>{ts}Actions{/ts}</th>
+            <th>{ts}Email{/ts}</th>
+            {if $relId neq 'client' and $hasAccessToAllCases}
+    		    <th>{ts}Actions{/ts}</th>
+    		{/if}
     	</tr>
 		{assign var=rowNumber value = 1}
         {foreach from=$caseRelationships item=row key=relId}
@@ -194,9 +196,7 @@
             	<div class="icon delete-icon" title="remove contact from case role"></div>
             	</a>
             	
-            	</td>
-          {else}
-           <td></td>
+            </td>
           {/if}
         </tr>
 		{assign var=rowNumber value = `$rowNumber+1`}
@@ -343,7 +343,7 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
 				}
 
 				var postUrl = {/literal}"{crmURL p='civicrm/ajax/relation' h=0 }"{literal};
-                cj.post( postUrl, { rel_contact: v1, rel_type: relType, contact_id: sourceContact, rel_id: relID, case_id: caseID },
+                cj.post( postUrl, { rel_contact: v1, rel_type: relType, contact_id: sourceContact, rel_id: relID, case_id: caseID, key: {/literal}"{crmKey name='civicrm/ajax/relation'}"{literal} },
                     function( data ) {
                         var resourceBase   = {/literal}"{$config->resourceBase}"{literal};
 
@@ -591,7 +591,7 @@ function addRole() {
 				var postUrl = {/literal}"{crmURL p='civicrm/ajax/relation' h=0 }"{literal}; 
 				cj(this).dialog("close"); 
 				cj(this).dialog("destroy");
-                		var data = 'rel_contact='+ v1 + '&rel_type='+ v2 + '&contact_id='+sourceContact + '&rel_id='+ relID + '&case_id=' + caseID;
+                		var data = 'rel_contact='+ v1 + '&rel_type='+ v2 + '&contact_id='+sourceContact + '&rel_id='+ relID + '&case_id=' + caseID + "&key={/literal}{crmKey name='civicrm/ajax/relation'}{literal}";
                 		cj.ajax({ type     : "POST", 
 					  url      : postUrl, 
 					  data     : data, 
@@ -725,7 +725,7 @@ function addTags() {
                 });
                 
                 var postUrl = {/literal}"{crmURL p='civicrm/case/ajax/processtags' h=0 }"{literal}; 
-                var data = 'case_id=' + caseID + '&tag=' + tagsChecked;
+                var data = 'case_id=' + caseID + '&tag=' + tagsChecked + '&key=' + {/literal}"{crmKey name='civicrm/ajax/activity/convert'}"{literal};
 
                 cj.ajax({ type: "POST", url: postUrl, data: data, async: false });
                 cj(this).dialog("close"); 
@@ -832,6 +832,7 @@ cj(document).ready(function(){
 
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/activity' h=0 q='snippet=4&caseID='}{$caseID}"{literal};
     dataUrl = dataUrl + '&cid={/literal}{$contactID}{literal}';
+    dataUrl = dataUrl + '&userID={/literal}{$userID}{literal}'    
 
     {/literal}{if $fulltext}{literal}
     	dataUrl = dataUrl + '&context={/literal}{$fulltext}{literal}';
@@ -955,7 +956,7 @@ function setSelectorClass( ) {
 function printCaseReport( ){
  
  	var dataUrl = {/literal}"{crmURL p='civicrm/case/report/print'}"{literal};
- 	dataUrl     = dataUrl+ '&cid={/literal}{$contactID}{literal}' 
+ 	dataUrl     = dataUrl+ '&all=1&cid={/literal}{$contactID}{literal}' 
                       +'&caseID={/literal}{$caseID}{literal}';
         window.location = dataUrl;
 }

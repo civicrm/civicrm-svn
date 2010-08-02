@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -113,14 +113,15 @@ function clearAmountOther() {
 	{/if} 
 	{if $form.is_recur}
 	    <div class="crm-section {$form.is_recur.name}-section">
-			<div div class="content">
+			<div class="content">
 				<p><strong>{$form.is_recur.html} {ts}every{/ts} &nbsp;{$form.frequency_interval.html} &nbsp; {$form.frequency_unit.html}&nbsp; {ts}for{/ts} &nbsp; {$form.installments.html} &nbsp;{$form.installments.label}</strong>
 				</p>
 				<p><span class="description">{ts}Your recurring contribution will be processed automatically for the number of installments you specify. You can leave the number of installments blank if you want to make an open-ended commitment. In either case, you can choose to cancel at any time.{/ts} 
-		{if $is_email_receipt}
-		    {ts}You will receive an email receipt for each recurring contribution. The receipts will include a link you can use if you decide to modify or cancel your future contributions.{/ts} 
-		{/if} </p>
-		</div>
+        		{if $is_email_receipt}
+        		    {ts}You will receive an email receipt for each recurring contribution. The receipts will include a link you can use if you decide to modify or cancel your future contributions.{/ts} 
+        		{/if}
+        		</p>
+		    </div>
 	    </div>
 	{/if} 
 	{if $pcpSupporterText}
@@ -282,7 +283,7 @@ function clearAmountOther() {
 	{/if} 
     {/if}
     </div>
-    <div id="crm-submit-buttons">
+    <div id="crm-submit-buttons" class="crm-submit-buttons">
         {include file="CRM/common/formButtons.tpl" location="bottom"}
     </div>
     {if $footer_text}

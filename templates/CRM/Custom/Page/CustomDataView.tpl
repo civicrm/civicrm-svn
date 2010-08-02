@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -113,7 +113,7 @@
         var postUrl = {/literal}"{crmURL p='civicrm/ajax/customvalue' h=0 }"{literal};
         cj.ajax({
           type: "POST",
-          data:  "valueID=" + valueID + "&groupID=" + groupID +"&contactId=" + contactID,    
+          data:  "valueID=" + valueID + "&groupID=" + groupID +"&contactId=" + contactID + "&key={/literal}{crmKey name='civicrm/ajax/customvalue'}{literal}",    
           url: postUrl,
           success: function(html){
               cj( '#' + elementID ).hide( );

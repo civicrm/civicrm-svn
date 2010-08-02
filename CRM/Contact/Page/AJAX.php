@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -276,7 +276,7 @@ ORDER BY sort_name
         $gids  = CRM_Utils_Type::escape( $_GET['gids'], 'String' ); 
         require_once 'CRM/Contact/BAO/GroupNestingCache.php';
         echo CRM_Contact_BAO_GroupNestingCache::json( $gids );
-        exit();
+        CRM_Utils_System::civiExit( );
     }    
 
     /**
@@ -457,9 +457,9 @@ ORDER BY sort_name ";
     {
         $name = CRM_Utils_Type::escape( $_GET['name'], 'String' );
 
-        $query = "                                                                                                                                                                                 
-SELECT id                                                                                                                                                                                          
-FROM civicrm_contact                                                                                                                                                                               
+        $query = "
+SELECT id
+FROM civicrm_contact
 WHERE sort_name LIKE '%$name%'";
 
         $dao = CRM_Core_DAO::executeQuery( $query );
@@ -813,7 +813,7 @@ WHERE  ce.on_hold = 0 AND cc.is_deceased = 0 AND cc.do_not_email = 0 AND {$query
        
         $iFilteredTotal = $iTotal;
         echo CRM_Utils_JSON::encodeDataTableSelector( $searchRows, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );
-        exit();
+        CRM_Utils_System::civiExit( );
   }
 
 }

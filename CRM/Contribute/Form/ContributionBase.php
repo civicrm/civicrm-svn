@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -448,8 +448,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         if ( $linkText = CRM_Contribute_BAO_PCP::getPcpBlockStatus( $this->_id ) ) {
             $linkTextUrl = CRM_Utils_System::url( 'civicrm/contribute/campaign',
                                                   "action=add&reset=1&pageId={$this->_id}",
-                                                  false, null, true,
-                                                  true );
+                                                  false, null, true );
             $this->assign( 'linkTextUrl', $linkTextUrl );
             $this->assign( 'linkText', $linkText );
         }

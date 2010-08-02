@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -104,7 +104,7 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
         //check if selected payment processor supports recurring payment
         if ( CRM_Contribute_BAO_ContributionPage::checkRecurPaymentProcessor( $this->_id ) ) {
             $this->addElement( 'checkbox', 'is_recur', ts('Recurring contributions'), null, 
-                               array('onclick' => "return showHideByValue('is_recur',true,'recurFields','table-row','radio',false);") );
+                               array('onclick' => "showHideByValue('is_recur',true,'recurFields','table-row','radio',false); showRecurInterval( );") );
             require_once 'CRM/Core/OptionGroup.php';
             $this->addCheckBox( 'recur_frequency_unit', ts('Supported recurring units'), 
                                 CRM_Core_OptionGroup::values( 'recur_frequency_units', false, false, false, null, 'name' ),
@@ -332,7 +332,7 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
     {
         // get the submitted form values.
         $params = $this->controller->exportValues( $this->_name );
-        
+       
         // check for price set.
         $priceSetID = CRM_Utils_Array::value( 'price_set_id', $params );
         
@@ -343,7 +343,7 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
                          'max_amount'             => "null",
                          'is_monetary'            => false,
                          'is_pay_later'           => false,
-                         'is_recur_interval'      => "null",
+                         'is_recur_interval'      => false,
                          'recur_frequency_unit'   => "null",
                          'default_amount_id'      => "null",
                          'is_allow_other_amount'  => false,
@@ -354,6 +354,10 @@ class CRM_Contribute_Form_ContributionPage_Amount extends CRM_Contribute_Form_Co
             $resetFields = array( 'min_amount', 'max_amount', 'is_allow_other_amount' );
         }
         
+        if ( !CRM_Utils_Array::value( 'is_recur', $params ) ) {
+            $resetFields = array_merge( $resetFields, array( 'is_recur_interval', 'recur_frequency_unit' ) );
+        }
+
         foreach ( $fields as $field => $defaultVal ) {
             $val = CRM_Utils_Array::value( $field, $params, $defaultVal );
             if ( in_array( $field, $resetFields ) ) $val = $defaultVal;

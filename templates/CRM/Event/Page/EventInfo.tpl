@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -130,7 +130,7 @@
 	                    {/if}
 	                    <tr>
 	                        <td class="{$lClass} crm-event-label">{$feeBlock.label.$idx}</td>
-	                        <td{if $feeBlock.value.$idx} class="fee_amount-value right"{/if}>{$feeBlock.value.$idx|crmMoney}</td>
+	                        <td class="fee_amount-value right">{$feeBlock.value.$idx|crmMoney}</td>
 	                    </tr>
 	                {/foreach}
 	            </table>

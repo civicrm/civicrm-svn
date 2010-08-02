@@ -1,5 +1,5 @@
 -- +--------------------------------------------------------------------+
--- | CiviCRM version 3.1                                                |
+-- | CiviCRM version 3.2                                                |
 -- +--------------------------------------------------------------------+
 -- | Copyright CiviCRM LLC (c) 2004-2010                                |
 -- +--------------------------------------------------------------------+
@@ -568,7 +568,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (1918, 1029, "AL", "Alagoas"),
 (1919, 1029, "AM", "Amazonas"),
 (1920, 1029, "AP", "Amapa"),
-(1921, 1029, "BA", "Baia"),
+(1921, 1029, "BA", "Bahia"),
 (1922, 1029, "CE", "Ceara"),
 (1923, 1029, "DF", "Distrito Federal"),
 (1924, 1029, "ES", "Espirito Santo"),
@@ -591,7 +591,7 @@ INSERT INTO civicrm_state_province (id, country_id, abbreviation, name) VALUES
 (1941, 1029, "SC", "Santa Catarina"),
 (1942, 1029, "SE", "Sergipe"),
 (1943, 1029, "SP", "Sao Paulo"),
-(1944, 1029, "TO", "Tocatins"),
+(1944, 1029, "TO", "Tocantins"),
 (1945, 1212, "AC", "Acklins and Crooked Islands"),
 (1946, 1212, "BI", "Bimini"),
 (1947, 1212, "CI", "Cat Island"),

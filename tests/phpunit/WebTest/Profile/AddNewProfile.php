@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2009                                |
  +--------------------------------------------------------------------+
@@ -26,7 +26,7 @@
 
 require_once 'CiviTest/CiviSeleniumTestCase.php';
 
-class WebTest_UF_AddNewProfile extends CiviSeleniumTestCase {
+class WebTest_Profile_AddNewProfile extends CiviSeleniumTestCase {
     
     protected $captureScreenshotOnFailure = TRUE;
     protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';

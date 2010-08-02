@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -84,6 +84,10 @@ class CRM_Core_Block {
             define('BLOCK_CACHE_PER_PAGE', 0x0004);
         }
 
+        if ( ! defined( 'BLOCK_NO_CACHE' ) ) {
+            define('BLOCK_NO_CACHE', -1);
+        }
+        
         if (!(self::$_properties)) {
             self::$_properties = array(
             // set status item to 0 to disable block by default (at install)
@@ -101,7 +105,7 @@ class CRM_Core_Block {
                                                                          'info'       => ts('CiviCRM Recent Items'),
                                                                          'subject'    => ts('Recent Items'),
                                                                          'active'     => true,
-                                                                         'cache'      => BLOCK_CACHE_GLOBAL,
+                                                                         'cache'      => BLOCK_NO_CACHE,
                                                                          'visibility' => 1,
                                                                          'weight'     => -99,
                                                                          'status'     => 1,
@@ -111,7 +115,7 @@ class CRM_Core_Block {
                                                                    'info'       => ts('CiviCRM Contact Dashboard'),
                                                                    'subject'    => '',
                                                                    'active'     => true,
-                                                                   'cache'      => BLOCK_CACHE_GLOBAL,
+                                                                   'cache'      => BLOCK_NO_CACHE,
                                                                    'visibility' => 1,
                                                                    'weight'     => -98,
                                                                    'status'     => 1,
@@ -132,7 +136,7 @@ class CRM_Core_Block {
                                                                    'subject'    => '',
                                                                    'templateValues' => array(),
                                                                    'active'     => true,
-                                                                   'cache'      => BLOCK_CACHE_GLOBAL,
+                                                                   'cache'      => BLOCK_NO_CACHE,
                                                                    'visibility' => 1,
                                                                    'weight'     => -96,
                                                                    'status'     => 1,
@@ -143,7 +147,7 @@ class CRM_Core_Block {
                                                                    'subject'    => ts('Upcoming Events'),
                                                                    'templateValues' => array(),
                                                                    'active'     => true,
-                                                                   'cache'      => BLOCK_CACHE_GLOBAL,
+                                                                   'cache'      => BLOCK_NO_CACHE,
                                                                    'visibility' => 1,
                                                                    'weight'     => -95,
                                                                    'status'     => 0,

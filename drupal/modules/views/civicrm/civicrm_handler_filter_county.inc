@@ -1,9 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -25,37 +23,39 @@
  +--------------------------------------------------------------------+
 */
 
-require_once 'CiviTest/CiviUnitTestCase.php';
-
-/**
- * Test class for CRM_Contribute_BAO_Premium BAO
+/*
+ * Heavily based on anonymous code contribution. No claim.
+ * CiviCRM Views Integration
  *
- *  @package   CiviCRM
+ * civicrm_handler_filter_county.inc
+ * Filters Counties, and is configured using the labels from the database
+ *
  */
-class CRM_Contribute_BAO_PremiumTest extends CiviUnitTestCase 
-{
 
-    /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
-     *
-     * @access protected
-     */
-    protected function setUp()
-    {
-        parent::setUp();
+class civicrm_handler_filter_county extends views_handler_filter_in_operator {
+    static $_counties;
+
+    function construct( ) {
+        parent::construct();
+        if ( ! self::$_counties ) {
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
+            require_once 'CRM/Core/PseudoConstant.php';
+            self::$_counties = CRM_Core_PseudoConstant::county( );
+        }
     }
 
-    /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
-     *
-     * @access protected
-     */
-    protected function tearDown()
-    {
+    function get_value_options() {
+        if (!isset($this->value_options)) {
+            $this->value_title = t('County');
+            $options = array( );
+            foreach (self::$_counties as $id => $name ) {
+                $options[$id] = $name;
+            }
+            $this->value_options = $options;
+        }
     }
-
-
 
 }
+?>

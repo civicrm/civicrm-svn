@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -345,11 +345,16 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
              $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->membership_id;
             
              if ( ! isset( $result->owner_membership_id ) ) {
+                 // unset renew and followup link for deceased membership
+                 $currentMask = $mask;
+                 if ( $result->status_id == 'Deceased' ) {
+                     $currentMask = $currentMask & ~CRM_Core_Action::RENEW & ~CRM_Core_Action::FOLLOWUP;
+                 }
                  $row['action']   = CRM_Core_Action::formLink( self::links( 'all', 
                                                                             $this->_isPaymentProcessor, 
                                                                             $this->_accessContribution, 
                                                                             $this->_key ), 
-                                                               $mask,
+                                                               $currentMask,
                                                                array( 'id'  => $result->membership_id,
                                                                       'cid' => $result->contact_id,
                                                                       'cxt' => $this->_context ) );
@@ -364,7 +369,7 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
              require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
              $row['contact_type' ] = 
                  CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
-                                                          $result->contact_sub_type : $result->contact_type );
+                                                          $result->contact_sub_type : $result->contact_type ,false,$result->contact_id);
              
              $rows[] = $row;
          }

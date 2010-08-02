@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -100,7 +100,7 @@ class CRM_Contribute_Form_AdditionalInfo
         
         $attributes = CRM_Core_DAO::getAttribute( 'CRM_Contribute_DAO_Contribution' );
         
-        $this->addDate( 'thankyou_date', ts('Thank-you Sent'), false, array( 'formatType' => 'activityDate') );
+        $this->addDateTime( 'thankyou_date', ts('Thank-you Sent'), false, array( 'formatType' => 'activityDateTime') );
         
         // add various amounts
         $element =& $form->add( 'text', 'non_deductible_amount', ts('Non-deductible Amount'),
@@ -190,7 +190,7 @@ class CRM_Contribute_Form_AdditionalInfo
         $dao = new CRM_Contribute_DAO_ContributionProduct();
         $dao->contribution_id = $contributionID;
         $dao->product_id      = $params['product_name'][0];
-        $dao->fulfilled_date  = CRM_Utils_Date::processDate( $params['fulfilled_date'] );
+        $dao->fulfilled_date  = CRM_Utils_Date::processDate( $params['fulfilled_date'], null, true );
         if ( CRM_Utils_Array::value( $params['product_name'][0], $options ) ) {
             $dao->product_option  = $options[$params['product_name'][0]][$params['product_name'][1]];
         }
@@ -254,7 +254,7 @@ class CRM_Contribute_Form_AdditionalInfo
         }
         
         if ( CRM_Utils_Array::value('thankyou_date', $params ) && ! CRM_Utils_System::isNull( $params['thankyou_date'] ) ) {
-            $formatted['thankyou_date'] = CRM_Utils_Date::processDate( $params['thankyou_date'] );
+            $formatted['thankyou_date'] = CRM_Utils_Date::processDate( $params['thankyou_date'], $params['thankyou_date_time'] );
         } else {
             $formatted['thankyou_date'] = 'null';
         }

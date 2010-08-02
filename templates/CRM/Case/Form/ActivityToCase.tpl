@@ -141,7 +141,7 @@ function fileOnCase( action, activityID, currentCaseId ) {
 				cj(this).dialog("destroy");
 									
 				var postUrl = {/literal}"{crmURL p='civicrm/ajax/activity/convert' h=0 }"{literal};
-			        cj.post( postUrl, { activityID: activityID, caseID: selectedCaseId, contactID: contactId, newSubject: subject, targetContactIds: targetContactId, mode: action },
+			        cj.post( postUrl, { activityID: activityID, caseID: selectedCaseId, contactID: contactId, newSubject: subject, targetContactIds: targetContactId, mode: action, key: {/literal}"{crmKey name='civicrm/ajax/activity/convert'}"{literal} },
 					 function( values ) {
 					      if ( values.error_msg ) {
                              alert( "{/literal}{ts}Unable to file on case{/ts}{literal}.\n\n" + values.error_msg );

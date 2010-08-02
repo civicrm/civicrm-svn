@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -223,14 +223,12 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
             foreach ( $activityTypeXML as $recordXML ) {
                 $activityTypeName = (string ) $recordXML->name;
                 $maxInstances     = (string ) $recordXML->max_instances;
-                if ( $maskAction == 'edit') {
-                    $edit = (string ) $recordXML->editable;
-                }
                 $activityTypeInfo = CRM_Utils_Array::value( $activityTypeName, $activityTypes );
-                              
+                
                 if ( $activityTypeInfo['id'] ) {
                     if ( $maskAction ) {
-                        if ( $edit === '0' ) {
+                        if ( $maskAction == 'edit' && 
+                             '0' ===  (string ) $recordXML->editable ) {
                             $result[$maskAction][] = $activityTypeInfo['id'];
                         }
                     } else{
@@ -306,7 +304,7 @@ AND        a.is_deleted = 0
                              &$params ) {
 
         $activityTypeName =  (string) $activityTypeXML->name;
-        $activityTypes    =& $this->allActivityTypes( );
+        $activityTypes    =& $this->allActivityTypes( true, true );
         $activityTypeInfo = CRM_Utils_Array::value( $activityTypeName, $activityTypes );
 
         if ( ! $activityTypeInfo ) {

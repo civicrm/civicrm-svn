@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -51,7 +51,7 @@ class CRM_Core_I18n
      * @param  $locale string  the base of this certain object's existence
      * @return         void
      */
-    private function __construct($locale)
+    function __construct($locale)
     {
         if ($locale != '' and $locale != 'en_US') {
             $config = CRM_Core_Config::singleton();

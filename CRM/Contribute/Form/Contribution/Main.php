@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -296,6 +296,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         $this->applyFilter('__ALL__', 'trim');
         $this->add( 'text', "email-{$this->_bltID}",
                     ts( 'Email Address' ), array( 'size' => 30, 'maxlength' => 60 ), true );
+        $this->addRule( "email-{$this->_bltID}", ts('Email is not valid.'), 'email' );
         
          //build pledge block.
 
@@ -767,11 +768,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         if ( $self->_values['is_monetary'] ) {
             //validate other amount.
             $checkOtherAmount = false;
-            if ( CRM_Utils_Array::value('amount', $fields ) == 'amount_other_radio' ) {
+            if ( CRM_Utils_Array::value('amount', $fields ) == 'amount_other_radio' || CRM_Utils_Array::value( 'amount_other', $fields ) ) {
                 $checkOtherAmount = true;
             }
             $otherAmountVal = CRM_Utils_Array::value( 'amount_other', $fields );
-            if ( $checkOtherAmount || !isset( $fields['amount'] ) ) {
+            if ( $checkOtherAmount || $otherAmountVal ) {
                 if ( !$otherAmountVal ) {
                     $errors['amount_other'] = ts('Amount is required field.');
                 }
@@ -989,8 +990,8 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                     $this->set( 'contributeMode', 'express' ); 
                     
                     $donateURL = CRM_Utils_System::url( 'civicrm/contribute', '_qf_Contribute_display=1' ); 
-                    $params['cancelURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', '_qf_Main_display=1', true, null, false ); 
-                    $params['returnURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', '_qf_Confirm_display=1&rfp=1', true, null, false ); 
+                    $params['cancelURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', "_qf_Main_display=1&qfKey={$params['qfKey']}", true, null, false ); 
+                    $params['returnURL' ] = CRM_Utils_System::url( 'civicrm/contribute/transact', "_qf_Confirm_display=1&rfp=1&qfKey={$params['qfKey']}", true, null, false ); 
                     $params['invoiceID' ] = $invoiceID;
 
                     //default action is Sale

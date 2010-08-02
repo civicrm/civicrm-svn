@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -246,6 +246,14 @@
 		  break;
 	   }
  	}
+
+	function showRecurInterval( ) {
+		 if ( cj("#is_recur").attr( 'checked' ) ) {
+		     cj("#is_recur_interval").attr( 'checked', true );    
+		 } else {
+		     cj("#is_recur_interval").attr( 'checked', false ); 
+		 }
+	}
 
 </script>
 {/literal}
