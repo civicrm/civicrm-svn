@@ -38,7 +38,7 @@ require_once 'CRM/Core/Page/Basic.php';
 require_once 'CRM/Dedupe/DAO/Rule.php';
 require_once 'CRM/Dedupe/DAO/RuleGroup.php';
 
-class CRM_Admin_Page_DedupeRules extends CRM_Core_Page_Basic
+class CRM_Contact_Page_DedupeRules extends CRM_Core_Page_Basic
 {
     /**
      * The action links that we need to display for the browse screen
@@ -70,38 +70,45 @@ class CRM_Admin_Page_DedupeRules extends CRM_Core_Page_Basic
               $defaultExtra = ts('Are you sure you want to make this Rule default?');
 
               // helper variable for nicer formatting
-              self::$_links = array(
-                  CRM_Core_Action::VIEW  => array(
-                      'name'  => ts('Use Rule'),
-                      'url'   => 'civicrm/admin/dedupefind',
-                      'qs'    => 'reset=1&rgid=%%id%%&action=preview',
-                      'title' => ts('Use DedupeRule'),
-                      ),
-                  CRM_Core_Action::UPDATE  => array(
-                      'name'  => ts('Edit Rule'),
-                      'url'   => 'civicrm/admin/deduperules',
-                      'qs'    => 'action=update&id=%%id%%',
-                      'title' => ts('Edit DedupeRule'),
-                  ),
-                  CRM_Core_Action::MAP  => array(
-                      'name'  => ts('Make Default'),
-                      'url'   => 'civicrm/admin/deduperules',
-                      'qs'    => 'action=map&id=%%id%%',
-                      'extra' => 'onclick = "return confirm(\'' . $defaultExtra . '\');"',
-                      'title' => ts('Default DedupeRule'),
-                  ),
-                  CRM_Core_Action::DELETE  => array(
-                      'name'  => ts('Delete'),
-                      'url'   => 'civicrm/admin/deduperules',
-                      'qs'    => 'action=delete&id=%%id%%',
-                      'extra' => 'onclick = "return confirm(\'' . $deleteExtra . '\');"',
-                      'title' => ts('Delete DedupeRule'),
-                  ),
-              );
-        }
-        return self::$_links;
+              $links = array();
+              require_once 'CRM/Core/Permission.php';
+              
+              if ( CRM_Core_Permission::check('merge duplicate contacts') ) {
+                  $links[CRM_Core_Action::VIEW]  = array(
+                                                         'name'  => ts('Use Rule'),
+                                                         'url'   => 'civicrm/contact/dedupefind',
+                                                         'qs'    => 'reset=1&rgid=%%id%%&action=preview',
+                                                         'title' => ts('Use DedupeRule'),
+                                                         );
+              }
+              if ( CRM_Core_Permission::check('administer dedupe rules') ) {
+                  $links[CRM_Core_Action::UPDATE] = array(
+                                                          'name'  => ts('Edit Rule'),
+                                                          'url'   => 'civicrm/contact/deduperules',
+                                                          'qs'    => 'action=update&id=%%id%%',
+                                                          'title' => ts('Edit DedupeRule'),
+                                                          );
+                  $links[CRM_Core_Action::MAP] = array(
+                                                       'name'  => ts('Make Default'),
+                                                       'url'   => 'civicrm/contact/deduperules',
+                                                       'qs'    => 'action=map&id=%%id%%',
+                                                       'extra' => 'onclick = "return confirm(\'' . $defaultExtra . '\');"',
+                                                       'title' => ts('Default DedupeRule'),
+                                                       );
+                  $links[CRM_Core_Action::DELETE] = array(
+                                                          'name'  => ts('Delete'),
+                                                          'url'   => 'civicrm/contact/deduperules',
+                                                          'qs'    => 'action=delete&id=%%id%%',
+                                                          'extra' => 'onclick = "return confirm(\'' . $deleteExtra . '\');"',
+                                                          'title' => ts('Delete DedupeRule'),
+                                                          );
+              }
+              
+              self::$_links = $links;
+          }
+          return self::$_links;
     }
-
+    
     /**
      * Run the page
      *
@@ -122,6 +129,11 @@ class CRM_Admin_Page_DedupeRules extends CRM_Core_Page_Basic
         $this->assign('action', $action);
         $id = CRM_Utils_Request::retrieve('id', 'Positive', $this, false, 0);
 
+        // assign permissions vars to template
+        require_once 'CRM/Core/Permission.php';
+        $this->assign('hasperm_administer_dedupe_rules', CRM_Core_Permission::check('administer dedupe rules'));
+        $this->assign('hasperm_merge_duplicate_contacts', CRM_Core_Permission::check('merge duplicate contacts'));
+        
         // which action to take?
         if ($action & (CRM_Core_Action::UPDATE | CRM_Core_Action::ADD)) {
             $this->edit($action, $id);
@@ -184,7 +196,7 @@ class CRM_Admin_Page_DedupeRules extends CRM_Core_Page_Basic
      */
     function editForm()
     {
-        return 'CRM_Admin_Form_DedupeRules';
+        return 'CRM_Contact_Form_DedupeRules';
     }
     
     /**
@@ -204,7 +216,7 @@ class CRM_Admin_Page_DedupeRules extends CRM_Core_Page_Basic
      */
     function userContext($mode = null)
     {
-        return 'civicrm/admin/deduperules';
+        return 'civicrm/contact/deduperules';
     }
 
     function delete($id)

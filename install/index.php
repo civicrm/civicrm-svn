@@ -277,6 +277,16 @@ class InstallRequirements {
             ),
             true );
 
+        // CRM-6485: make sure the path does not contain PATH_SEPARATOR, as we don’t know how to escape it
+        $this->requireNoPathSeparator(
+            array(
+                'File permissions',
+                'does the CiviCRM path contain PATH_SEPARATOR?',
+                'the ' . $this->getBaseDir() . ' path contains PATH_SEPARATOR (the ' . PATH_SEPARATOR . ' character)',
+                $this->getBaseDir(),
+            )
+        );
+
         $requiredDirectories = array( 'CRM', 'packages', 'templates', 'js', 'api', 'i', 'sql' );
         foreach ( $requiredDirectories as $dir ) {
             $this->requireFile( $crmPath . CIVICRM_DIRECTORY_SEPARATOR . $dir, array("File permissions", "$dir folder exists", "There is no $dir folder" ), true );
@@ -459,6 +469,15 @@ class InstallRequirements {
             $this->error($testDetails);
         }
     }
+
+    function requireNoPathSeparator($testDetails)
+    {
+        $this->testing($testDetails);
+        if (substr_count($this->getBaseDir(), PATH_SEPARATOR)) {
+            $this->error($testDetails);
+        }
+    }
+
     function requireNoFile($filename, $testDetails) {
         $this->testing($testDetails);
         $filename = $this->getBaseDir() . $filename;

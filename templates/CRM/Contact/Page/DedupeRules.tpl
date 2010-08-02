@@ -24,9 +24,9 @@
  +--------------------------------------------------------------------+
 *}
 {if $action eq 1 or $action eq 2}
-  {include file="CRM/Admin/Form/DedupeRules.tpl"}
+  {include file="CRM/Contact/Form/DedupeRules.tpl"}
 {elseif $action eq 4}
-{include file="CRM/Admin/Form/DedupeFind.tpl"}
+{include file="CRM/Contact/Form/DedupeFind.tpl"}
 {else}
     <div id="help">
         {ts}Manage the rules used to identify potentially duplicate contact records. Scan for duplicates using a selected rule and merge duplicate contact data as needed.{/ts} {help id="id-dedupe-intro"}
@@ -62,10 +62,11 @@
             {/strip}
         </div>
     {/if}
+    {if $hasperm_administer_dedupe_rules}
 	    <div class="action-link">
-    	<a href="{crmURL q="action=add&contact_type=Individual&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Dedupe Rule for Individuals{/ts}</span></a><br/><br/>
-    	<a href="{crmURL q="action=add&contact_type=Household&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Dedupe Rule for Households{/ts}</span></a><br/><br/>
+    	<a href="{crmURL q="action=add&contact_type=Individual&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Dedupe Rule for Individuals{/ts}</span></a>
+    	<a href="{crmURL q="action=add&contact_type=Household&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Dedupe Rule for Households{/ts}</span></a>
     	<a href="{crmURL q="action=add&contact_type=Organization&reset=1"}" class="button"><span><div class="icon add-icon"></div>{ts}Add Dedupe Rule for Organizations{/ts}</span></a>
         </div>
-
+    {/if}
 {/if}

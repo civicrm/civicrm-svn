@@ -40,7 +40,7 @@ require_once 'CRM/Admin/Form.php';
  * This class generates form components for DedupeRules
  * 
  */
-class CRM_Admin_Form_DedupeFind extends CRM_Admin_Form
+class CRM_Contact_Form_DedupeFind extends CRM_Admin_Form
 {
     /**
      * defined defaults
@@ -101,13 +101,13 @@ class CRM_Admin_Form_DedupeFind extends CRM_Admin_Form
         $values = $this->exportValues();
         if ( CRM_Utils_Array::value( '_qf_DedupeFind_submit', $_POST ) ) {
             //used for cancel button
-            CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/admin/deduperules','reset=1') );
+            CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/contact/deduperules','reset=1') );
             return;
         }
         if ( $values['group_id'] ) {
-            $url = CRM_Utils_System::url( 'civicrm/admin/dedupefind', "reset=1&action=update&rgid={$this->rgid}&gid={$values['group_id']}" );
+            $url = CRM_Utils_System::url( 'civicrm/contact/dedupefind', "reset=1&action=update&rgid={$this->rgid}&gid={$values['group_id']}" );
         } else {
-            $url = CRM_Utils_System::url( 'civicrm/admin/dedupefind', "reset=1&action=update&rgid={$this->rgid}" );
+            $url = CRM_Utils_System::url( 'civicrm/contact/dedupefind', "reset=1&action=update&rgid={$this->rgid}" );
         }
         
         CRM_Utils_System::redirect($url);
