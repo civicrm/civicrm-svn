@@ -123,19 +123,8 @@ class CRM_Core_IDS {
 
             // also create the .htaccess file so we prevent the reading of the log and ini files
             // via a browser, CRM-3875
-            $htaccessFile = $config->configAndLogDir . '.htaccess';
-            if ( ! file_exists( $htaccessFile ) ) {
-                $contents = '
-# Protect files and directories from prying eyes.
-<FilesMatch "\.(log|ini)$">
- Order allow,deny
-</FilesMatch>
-';
-                if ( file_put_contents( $htaccessFile, $contents ) === false ) {
-                    require_once 'CRM/Core/Error.php';
-                    CRM_Core_Error::movedSiteError( $htaccessFile );
-                }
-            }
+            require_once 'CRM/Utils/File.php';
+            CRM_Utils_File::restrictAccess($config->configAndLogDir);
         }
 
         $init    = IDS_Init::init( $configFile );

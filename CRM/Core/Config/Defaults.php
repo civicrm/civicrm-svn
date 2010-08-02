@@ -217,6 +217,7 @@ class CRM_Core_Config_Defaults
             $uploadDir = $path . "upload/";
             
             CRM_Utils_File::createDir( $uploadDir );
+            CRM_Utils_File::restrictAccess($uploadDir);
             $defaults['uploadDir'] = $uploadDir;
         }
 
