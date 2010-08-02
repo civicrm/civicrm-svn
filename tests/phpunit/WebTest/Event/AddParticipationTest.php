@@ -29,14 +29,14 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
  
-class WebTest_Event_AddTest extends CiviSeleniumTestCase {
+class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
 
   protected function setUp()
   {
       parent::setUp();
   }
 
-  function testStandaloneEventAdd()
+  function testEventParticipationAdd()
   {
 
       // This is the path where our testing install resides. 
