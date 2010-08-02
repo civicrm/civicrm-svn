@@ -2,7 +2,7 @@
 
 /* 
  +--------------------------------------------------------------------+ 
- | CiviCRM version 3.1                                                | 
+ | CiviCRM version 3.2                                                | 
  +--------------------------------------------------------------------+ 
  | Copyright CiviCRM LLC (c) 2004-2010                                | 
  +--------------------------------------------------------------------+ 
@@ -405,8 +405,7 @@ SELECT label, value
                     } 
                     continue;
                 case 'ContactReference':
-                    $label = $value;
-                    $value = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', str_replace( '\\', '', $value), 'id', 'sort_name' );
+                    $label = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value,  'sort_name');
                     $this->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( $fieldName, $op, $value, 'String' );
                     $this->_qill[$grouping][]  = $field['label'] . " $op $label";                    
                     continue;

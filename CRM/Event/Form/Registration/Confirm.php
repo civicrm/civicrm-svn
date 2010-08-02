@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -236,7 +236,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     }
                         
                     $this->_amount[$k]['label'] = $v['amount_level'].'  -  '. $append;
-                    $this->_part[$k]['info'] = $v['first_name'] .' ' . $v['last_name'];
+                    $this->_part[$k]['info'] = CRM_Utils_Array::value( 'first_name', $v ) . ' ' . CRM_Utils_Array::value( 'last_name', $v );
                     if ( !CRM_Utils_Array::value( "first_name", $v ) ) {
                         $this->_part[$k]['info'] = $append;
                     }
@@ -400,12 +400,10 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
     {
         require_once 'CRM/Event/BAO/Participant.php';
 
-        $config  = CRM_Core_Config::singleton( );
-        $session = CRM_Core_Session::singleton( );
-        
-        $contactID = $session->get( 'userID' );
-        $now = date( 'YmdHis' );
-
+        $now           = date( 'YmdHis' );
+        $config        = CRM_Core_Config::singleton( );
+        $session       = CRM_Core_Session::singleton( );
+        $contactID     = parent::getContactID( );
         $this->_params = $this->get( 'params' );
 
         // if a discount has been applied, lets now deduct it from the amount
@@ -497,9 +495,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             // we dont store in userID in case the user is doing multiple
             // transactions etc
             // for things like tell a friend
-            if ( ! $session->get( 'userID' ) && CRM_Utils_Array::value( 'is_primary', $value ) ) {
+            if ( ! parent::getContactID( ) && CRM_Utils_Array::value( 'is_primary', $value ) ) {
                 $session->set( 'transaction.userID', $contactID );
-            } 
+            }
             
             $value['description'] =
                 ts( 'Online Event Registration' ) . ': ' . $this->_values['event']['title'];

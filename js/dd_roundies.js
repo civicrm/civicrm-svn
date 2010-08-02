@@ -19,10 +19,7 @@ eval(function(p,a,c,k,e,r){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a
 
 
 $(document).ready(function() {
-if ( cj( ) ) {
-    $ = cj;
-}     
-$.uicornerfix = function(r){
+cj.uicornerfix = function(r){
   DD_roundies.addRule('.ui-corner-all', r);
   DD_roundies.addRule('.ui-corner-top', r+' '+r+' 0 0');
   DD_roundies.addRule('.ui-corner-bottom', '0 0 '+r+' '+r);
@@ -33,7 +30,7 @@ $.uicornerfix = function(r){
   DD_roundies.addRule('.ui-corner-br', '0 0 '+r+' 0');
   DD_roundies.addRule('.ui-corner-bl', '0 0 0 '+r);
 };
-$.uicornerfix('4px');
+cj.uicornerfix('4px');
 
 DD_roundies.addRule('div.m ul#civicrm-menu, #crm-container #restmsg, #crm-container #help,  #crm-container .help, #crm-container .ui-tabs-panel, #crm-container .crm-tab-button, #crm-container .crm-content-block, #full-screen-header, .crm-tooltip, #crm-container .crm-pager, #crm-container form .section-hidden-border, #crm-container #search-status, #crm-container .crm-form-block, #crm-container .crm-search-tasks, #crm-container .crm-tasks, #crm-container div.form-item, #crm-container div.messages, div#crm-toolTip', '4px');
 });

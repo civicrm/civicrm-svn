@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -316,6 +316,10 @@ ORDER BY parent_id, weight";
         self::buildNavigationTree( $navigations, $parent = NULL );
         $navigationString = null;
 
+        // run the Navigation  through a hook so users can modify it
+        require_once 'CRM/Utils/Hook.php';
+        CRM_Utils_Hook::navigationMenu( $navigations );
+        
         //skip children menu item if user don't have access to parent menu item
         $skipMenuItems = array( );
         foreach( $navigations as $key => $value ) {
