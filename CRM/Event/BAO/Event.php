@@ -852,7 +852,7 @@ WHERE civicrm_event.is_active = 1
         // since the location is sharable, lets use the same loc_block_id.
         $locBlockId     = CRM_Utils_Array::value( 'loc_block_id', $eventValues );
         
-        $fieldsFix = array ( 'prefix' => array( 'title' => ts( 'Copy of ' ) ) );
+        $fieldsFix = array('prefix' => array('title' => ts('Copy of') . ' '));
         if ( !CRM_Utils_Array::value( 'is_show_location', $eventValues ) ) {
             $fieldsFix['prefix']['is_show_location'] = 0;
         }
