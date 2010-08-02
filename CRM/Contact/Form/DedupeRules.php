@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -42,7 +42,7 @@ require_once 'CRM/Dedupe/BAO/RuleGroup.php';
  * This class generates form components for DedupeRules
  * 
  */
-class CRM_Admin_Form_DedupeRules extends CRM_Admin_Form
+class CRM_Contact_Form_DedupeRules extends CRM_Admin_Form
 {
     const RULES_COUNT = 5;
     protected $_contactType;
@@ -58,6 +58,13 @@ class CRM_Admin_Form_DedupeRules extends CRM_Admin_Form
      */
     function preProcess()
     {
+        // Ensure user has permission to be here
+        require_once 'CRM/Core/Permission.php';
+        if ( ! CRM_Core_Permission::check('administer dedupe rules') ) {
+            CRM_Utils_System::permissionDenied( );
+            CRM_Utils_System::civiExit( );
+        }
+        
         $this->_rgid        = CRM_Utils_Request::retrieve('id', 'Positive', $this, false, 0);
         $this->_contactType = CRM_Utils_Request::retrieve('contact_type', 'String', $this, false, 0);
         if ($this->_rgid) {

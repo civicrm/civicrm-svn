@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -79,8 +79,9 @@
              <td class="label"></td>
              <td>{$form.doGeocodeAddress.html} {$form.doGeocodeAddress.label}<br />
                <span class="description">
-                {ts}This option is not recommended for large imports. Use the command-line geocoding script instead.{/ts} {docURL page="Batch Geocoding Script"}
+                {ts}This option is not recommended for large imports. Use the command-line geocoding script instead.{/ts} 
                </span>
+               {docURL page="Batch Geocoding Script"}
             </td>
          </tr>
         {/if}

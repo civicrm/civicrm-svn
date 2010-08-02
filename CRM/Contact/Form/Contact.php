@@ -1,7 +1,7 @@
 <?php
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -1051,7 +1051,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
                  $duplicateContactsLinks .= '.';
                  $duplicateContactsLinks .= '</div>';
                  $duplicateContactsLinks .= '<table class="matching-contacts-actions">';
-
+                 $row = '';
                  for ($i=0; $i < count($contactLinks['rows']); $i++) {                 
             	   $row .='  <tr>	 ';
             	   $row .='  	<td class="matching-contacts-name"> ';
@@ -1063,7 +1063,7 @@ class CRM_Contact_Form_Contact extends CRM_Core_Form
             	   $row .='  	<td class="action-items"> ';
             	   $row .=  		$contactLinks['rows'][$i]['view'];
             	   $row .=  		$contactLinks['rows'][$i]['edit'];
-            	   $row .=  		$contactLinks['rows'][$i]['merge'];
+            	   $row .=  		CRM_Utils_Array::value( 'merge', $contactLinks['rows'][$i] );
             	   $row .='  	</td>';
             	   $row .='  </tr>	 ';
                  }

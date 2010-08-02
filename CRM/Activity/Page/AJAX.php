@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -43,7 +43,7 @@ class CRM_Activity_Page_AJAX
         $caseID    = CRM_Utils_Type::escape( $_GET['caseID'], 'Integer' );
         $contactID = CRM_Utils_Type::escape( $_GET['cid'], 'Integer' );
         $userID    = CRM_Utils_Type::escape( $_GET['userID'], 'Integer' );
-        $context   = CRM_Utils_Type::escape( $_GET['context'], 'String' );
+        $context   = CRM_Utils_Type::escape( CRM_Utils_Array::value( 'context', $_GET ), 'String' );
         
         $params    = $_POST;
         // get the activities related to given case

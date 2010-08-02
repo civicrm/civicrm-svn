@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2009                                |
  +--------------------------------------------------------------------+
@@ -32,7 +32,7 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
 
   protected $captureScreenshotOnFailure = TRUE;
-  protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
+  protected $screenshotPath = '/tmp/';
   protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
     
   protected function setUp()
@@ -54,26 +54,21 @@ class WebTest_Grant_StandaloneAddTest extends CiviSeleniumTestCase {
       // page contents loaded and you can continue your test execution.
       $this->webtestLogin();
 
-       
-      require_once 'CRM/Core/Component.php';
-      require_once 'CRM/Core/Config.php';
-      $enabledComponents = CRM_Core_Component::getEnabledComponents();
-      
-      if (! CRM_Utils_Array::value('CiviGrant', $enabledComponents ) ) {
-             
-          // Go directly to the  Global Settings >> Enable Components. ( To enable CiviGrant Component if disabled).
-          $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
-          $this->select("enableComponents-f", "value=CiviGrant");
-          // select CiviGrant
-          $this->doubleClick("enableComponents-f", "value=CiviGrant");
-          // Clicking save.
-          $this->click("_qf_Component_next-bottom");
-          $this->waitForPageToLoad("30000");
 
-          // Is status message correct?
-          $this->assertTrue($this->isTextPresent("Your changes have been saved."));
+      // Enable CiviCase module if necessary
+      $this->open($this->sboxPath . "civicrm/admin/setting/component?reset=1");
+      $this->waitForPageToLoad('30000');
+      $this->waitForElementPresent("_qf_Component_next-bottom");
+      $enabledComponents = $this->getSelectOptions("enableComponents-t");
+      if (! array_search( "CiviGrant", $enabledComponents ) ) {
+          $this->addSelection("enableComponents-f", "label=CiviGrant");
+          $this->click("//option[@value='CiviGrant']");
+          $this->click("add");
+          $this->click("_qf_Component_next-bottom");
+          $this->waitForPageToLoad("30000");          
+          $this->assertTrue($this->isTextPresent("Your changes have been saved."));          
       }
-      
+       
       // Go directly to the URL of the screen that you will be testing (New Contribution-standalone).
       $this->open($this->sboxPath . "civicrm/grant/add&reset=1&context=standalone");
       

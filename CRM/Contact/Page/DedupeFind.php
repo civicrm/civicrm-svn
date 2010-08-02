@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -39,7 +39,7 @@ require_once 'CRM/Dedupe/Finder.php';
 require_once 'CRM/Dedupe/DAO/Rule.php';
 require_once 'CRM/Dedupe/DAO/RuleGroup.php';
 
-class CRM_Admin_Page_DedupeFind extends CRM_Core_Page_Basic
+class CRM_Contact_Page_DedupeFind extends CRM_Core_Page_Basic
 {
     protected $_cid = null;
     protected $_rgid;
@@ -108,7 +108,7 @@ class CRM_Admin_Page_DedupeFind extends CRM_Core_Page_Basic
                 
                 $session = CRM_Core_Session::singleton();
                 $session->setStatus("No possible duplicates were found using {$ruleGroup->name} rule.");
-                $url = CRM_Utils_System::url('civicrm/admin/deduperules', "reset=1");
+                $url = CRM_Utils_System::url('civicrm/contact/deduperules', "reset=1");
                 if ( $context == 'search' )  $url = $session->readUserContext( ); 
                 CRM_Utils_System::redirect( $url );
             } else {
@@ -140,11 +140,16 @@ class CRM_Admin_Page_DedupeFind extends CRM_Core_Page_Basic
                         $srcID = $dupes[1];
                         $dstID = $dupes[0];
                     }
+                    
+                    $canMerge = ( CRM_Contact_BAO_Contact_Permission::allow( $dstID, CRM_Core_Permission::EDIT )
+                                  && CRM_Contact_BAO_Contact_Permission::allow( $srcID, CRM_Core_Permission::EDIT ) );
+                    
                     $mainContacts[]  = array( 'srcID'   => $srcID,
                                               'srcName' => $displayNames[$srcID],
                                               'dstID'   => $dstID,
                                               'dstName' => $displayNames[$dstID],
-                                              'weight'  => $dupes[2] );
+                                              'weight'  => $dupes[2],
+                                              'canMerge'=> $canMerge );
                 }
                 if ($cid) $this->_cid = $cid;
                 if ($gid) $this->_gid = $gid;
@@ -153,9 +158,9 @@ class CRM_Admin_Page_DedupeFind extends CRM_Core_Page_Basic
                 
                 $session = CRM_Core_Session::singleton( );
                 if ($this->_cid) {
-                    $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/deduperules', "action=update&rgid={$this->_rgid}&gid={$this->_gid}&cid={$this->_cid}"));
+                    $session->pushUserContext(CRM_Utils_System::url('civicrm/contact/deduperules', "action=update&rgid={$this->_rgid}&gid={$this->_gid}&cid={$this->_cid}"));
                 } else {
-                    $session->pushUserContext(CRM_Utils_System::url('civicrm/admin/dedupefind', "reset=1&action=update&rgid={$this->_rgid}"));
+                    $session->pushUserContext(CRM_Utils_System::url('civicrm/contact/dedupefind', "reset=1&action=update&rgid={$this->_rgid}"));
                 }
             }
             $this->assign('action', $this->action);
@@ -193,7 +198,7 @@ class CRM_Admin_Page_DedupeFind extends CRM_Core_Page_Basic
      */
     function editForm()
     {
-        return 'CRM_Admin_Form_DedupeFind';
+        return 'CRM_Contact_Form_DedupeFind';
     }
 
     /**
@@ -213,7 +218,7 @@ class CRM_Admin_Page_DedupeFind extends CRM_Core_Page_Basic
      */
     function userContext($mode = null)
     {
-        return 'civicrm/admin/dedupefind';
+        return 'civicrm/contact/dedupefind';
     }
 }
 
