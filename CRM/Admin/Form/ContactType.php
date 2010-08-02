@@ -2,7 +2,7 @@
 
 /*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.1                                                |
+ | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -77,7 +77,7 @@ class CRM_Admin_Form_ContactType extends CRM_Admin_Form
         $this->add('text', 'description', ts('Description'), 
                    CRM_Core_DAO::getAttribute( 'CRM_Contact_DAO_ContactType', 'description' ) );
         
-        $this->assign('id', $this->_id );
+        $this->assign('cid', $this->_id );
         $this->addFormRule( array( 'CRM_Admin_Form_ContactType', 'formRule' ) , $this );
     }
     

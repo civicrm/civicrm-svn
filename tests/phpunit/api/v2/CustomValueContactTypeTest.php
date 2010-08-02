@@ -226,7 +226,7 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
     function testRetrieveValidCustomDataToIndividual() {
         
         $params = array(
-                        'contact_id'           => $this->individual ,
+                        'contact_id'           => $this->individual,
                         'contact_type' => 'Individual',
                         "custom_{$this->IndividualField->id}" => 'Test String',  
                         );
@@ -236,8 +236,11 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                         'contact_type' => 'Individual',
                         "return.custom_{$this->IndividualField->id}"  => 1
                          );
-        $getContact = civicrm_contact_get( $params, false );
-        $this->assertEquals( $getContact[$this->individual][ "custom_{$this->IndividualField->id}"], 'Test String' );
+        $getContact = civicrm_contact_get( $params );
+        
+        CRM_Core_Error::debug( 'gc', $getContact );
+        
+        $this->assertEquals( $getContact[$this->individual][ "custom_{$this->IndividualField->id}"], 'Test String', 'In line ' . __LINE__ );
     }
     
     /**
@@ -259,7 +262,7 @@ class api_v2_CustomValueContactTypeTest  extends CiviUnitTestCase
                         "return.custom_{$this->IndiStudentField->id}"  => 1
                           ); 
         $getContact = civicrm_contact_get( $params, false );
-        $this->assertEquals( $getContact[$this->individualStudent][ "custom_{$this->IndiStudentField->id}"], 'Test String' );         
+        $this->assertEquals( $getContact[$this->individualStudent][ "custom_{$this->IndiStudentField->id}"], 'Test String', 'In line ' . __LINE__ );
     }
     
 }
