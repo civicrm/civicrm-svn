@@ -462,6 +462,13 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
                 $this->_formValues['survey_status_id'] = $scheduledStatusId; 
             }
         }
+        $interviewerId = CRM_Utils_Array::value( 'survey_interviewer_id', $this->_formValues ); 
+        if ( !$interviewerId ) {
+            $session = CRM_Core_Session::singleton( );
+            $this->_formValues['survey_interviewer_id'] = $interviewerId = $session->get( 'userID' );
+        }
+        $this->set( 'interviewerId', $interviewerId );
+        if ( $this->_operation == 'reserve' ) unset( $this->_formValues['survey_interviewer_id'] ); 
         
         //apply group clause only for voter reservation.
         if ( $this->_operation != 'reserve' ) return;  
@@ -486,10 +493,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             unset( $this->_formValues['survey_status_id'] );
         }
         
-        if ( CRM_Utils_Array::value( 'survey_interviewer_id', $this->_formValues ) ) {
-            $this->set( 'interviewerId', $this->_formValues['survey_interviewer_id'] );
-            unset( $this->_formValues['survey_interviewer_id'] );
-        }
+        
     }
     
     function fixFormValues( ) 

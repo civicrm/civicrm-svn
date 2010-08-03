@@ -379,19 +379,23 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
      * @return $activities an array of survey activity.
      * @static
      */
-    static function getSurveyActivities( $surveyId ) 
+    static function getSurveyActivities( $surveyId, $interviewerId = null, $statusIds = array( ) ) 
     {
         $activities = array( );
         if ( !$surveyId ) return $activities; 
         
-        require_once 'CRM/Core/PseudoConstant.php';
-        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
-        $statusIds[] = array_search( 'Scheduled', $activityStatus );
-        $statusIds[] = array_search( 'Completed', $activityStatus );
-        $statusWhereClause = null;
-        if ( empty( $statusIds ) ) {
-            $statusWhereClause = ' AND activity.status_id IN ( '. implode( ',', array_values( $statusIds ) ) . ' )';
+        $where = array( );
+        if ( is_array( $statusIds ) && !empty( $statusIds ) ) {
+            $where[] = '( activity.status_id IN ( '. implode( ',', array_values( $statusIds ) ) . ' ) )';
         }
+        if ( $interviewerId ) {
+            $where[] = "( activityAssignment.assignee_contact_id =  $interviewerId )";
+        }
+        $whereClause = null;
+        if ( !empty( $where ) ) {
+            $whereClause = ' AND ( '. implode( ' AND ', $where ) . ' )';
+        }
+        
         $actTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'activity_type_id' ); 
         
         $query = "
@@ -404,10 +408,11 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
      WHERE  activity.source_record_id = %1
        AND  activity.activity_type_id = %2
        AND  ( activity.is_deleted IS NULL OR activity.is_deleted = 0 )
-            $statusWhereClause";
+            $whereClause";
         
         $activity = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $surveyId,  'Integer'),
                                                                2 => array( $actTypeId, 'Integer' ) ) );
+        
         while ( $activity->fetch( ) ) {
             $activities[$activity->id] = array( 'id'             => $activity->id,
                                                 'voter_id'       => $activity->voter_id,

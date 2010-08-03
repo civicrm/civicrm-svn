@@ -63,7 +63,9 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
      * @var object
      */
     protected $_surveyDetails;
-   
+    
+    protected $_surveyActivities;
+    
     /**
      * build all the data structures needed to build the form
      *
@@ -94,19 +96,23 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
         
         $surveyDetails = array( );
         $params        = array( 'id' => $this->_surveyId );
-        $this->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve($params, $surveyDetails);
-
-        // get held contacts by interviewer
-        $query = "SELECT COUNT(*) FROM civicrm_activity source INNER JOIN civicrm_activity_assignment assignment ON ( assignment.activity_id = source.id ) WHERE source.activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND source.status_id IN (". implode( ',', array_keys($activityStatus) ) .") AND (source.is_deleted = 0 OR source.is_deleted IS NULL) AND source.source_record_id = %1 AND assignment.assignee_contact_id = %2";
-
-        $numVoters = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $this->_surveyId, 'Integer' ), 2 => array( $this->_interviewerId, 'Integer' ) ) );
-
-        if ( !isset($numVoters) || ($numVoters < 1) ) {
-            CRM_Core_Error::statusBounce( ts( "No any voters held by you are found for this survey.") );
-        }
-
-        $this->assign( 'surveyTitle', $surveyDetails['title'] );
+        $this->_surveyDetails = CRM_Campaign_BAO_Survey::retrieve( $params, $surveyDetails );
         
+        require_once 'CRM/Core/PseudoConstant.php';
+        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
+        $statusIds = array( );
+        foreach ( array( 'Scheduled', 'Completed' ) as $name ) {
+            if ( $statusId = array_search( $name, $activityStatus ) ) $statusIds[] = $statusId; 
+        }
+        //fetch the target survey activities.
+        $this->_surveyActivities = CRM_Campaign_BAO_Survey::getSurveyActivities( $this->_surveyId, 
+                                                                                 $this->_interviewerId,
+                                                                                 $statusIds );
+        if ( count( $this->_surveyActivities ) < 1 ) {
+            CRM_Core_Error::statusBounce( ts( 'We could not found voter for this survey to release.') );
+        }
+        
+        $this->assign( 'surveyTitle', $surveyDetails['title'] );
     }
 
     /**
