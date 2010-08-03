@@ -105,6 +105,7 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
         
         //validate the selected survey.
         $this->validateSurvey( );
+        $this->assign( 'surveyTitle', $this->_surveyDetails['title'] );
     }
     
     function validateSurvey( ) 
@@ -120,7 +121,7 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
             }
         }
         $defaultNum = CRM_Utils_Array::value( 'default_number_of_contacts', $this->_surveyDetails );
-        if ( !$errorMsg && count( $this->_contactIds ) > $defaultNum ) {
+        if ( !$errorMsg && $defaultNum && (count( $this->_contactIds ) > $defaultNum) ) {
             $errorMsg = ts( 'You can select maximum %1 contact(s) at a time for voter reservation of this survey.', 
                             array( 1 => $defaultNum ) );
         }
