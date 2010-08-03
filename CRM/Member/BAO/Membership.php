@@ -704,7 +704,14 @@ class CRM_Member_BAO_Membership extends CRM_Member_DAO_Membership
         }
         $dao->contact_id         = $contactID;
         $dao->membership_type_id = $memType;
-        $dao->is_test            = $isTest;
+        
+        //fetch proper membership record.
+        if ( $isTest ) {
+            $dao->is_test = $isTest;
+        } else {
+            $dao->whereAdd( 'is_test IS NULL OR is_test = 0' );
+        }
+        
         //avoid pending membership as current memebrship: CRM-3027
         require_once 'CRM/Member/PseudoConstant.php';        
         $pendingStatusId = array_search( 'Pending', CRM_Member_PseudoConstant::membershipStatus( ) );
