@@ -42,17 +42,9 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
   
   function testAuthenticAddUser( )
   {
-      // This is the path where our testing install resides. 
-      // The rest of URL is defined in CiviSeleniumTestCase base class, in
-      // class attributes.
       $this->open( $this->sboxPath );
       
-      // Logging in. Remember to wait for page to load. In most cases,
-      // you can rely on 30000 as the value that allows your test to pass, however,
-      // sometimes your test might fail because of this. In such cases, it's better to pick one element
-      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-      // page contents loaded and you can continue your test execution.
-      $this->webtestLogin( );
+      $this->webtestLogin( true );
       
       // Go directly to the URL of the screen that will Create User Authentically.
       $this->open( $this->sboxPath . "admin/user/user/create" );
@@ -60,7 +52,7 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       
       $this->waitForElementPresent( "edit-submit" );
       
-      $name = "TestUserAuthenticate";
+      $name = "TestUserAuthenticated" . substr(sha1(rand()), 0, 4);
       $this->type( "edit-name", $name );
       
       $emailId   = substr(sha1(rand()), 0, 7).'@web.com';
@@ -79,13 +71,12 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       $this->type( "street_address-1", "902C El Camino Way SW" );
       $this->type( "city-1", "Dumfries" );
       $this->type( "postal_code-1", "1234" );
-      $this->assertTrue( $this->isTextPresent( "- select - United States" ) );
       $this->select( "state_province-1", "value=1019" );
       
       $this->click( "edit-submit" );
       $this->waitForPageToLoad( "30000" );
       
-      $this->assertTrue( $this->isTextPresent( "Created a new user account for " . $name ) );
+      $this->assertTrue( $this->isTextPresent( "Created a new user account for " . $name ), 'In line ' . __LINE__ );
       
       
       
@@ -101,7 +92,7 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       $this->open( $this->sboxPath . "user/register" );
       
       $this->waitForElementPresent( "edit-submit" );
-      $name = "TestUserAnonymous";
+      $name = "TestUserAnonymous" . substr(sha1(rand()), 0, 7);
       $this->type( "edit-name", $name );
       $emailId   = substr(sha1(rand()), 0, 7).'@web.com';
       $this->type( "edit-mail", $emailId );
@@ -125,8 +116,17 @@ class WebTest_Contact_AddCmsUserTest extends CiviSeleniumTestCase {
       
       $this->assertTrue( $this->isTextPresent( "Your password and further instructions have been sent to your e-mail address" ) );
       
+      $this->webtestLogin( );
       
-      
+      $this->open( $this->sboxPath . "civicrm/contact/search&reset=1" );
+      $this->waitForElementPresent("_qf_Basic_refresh");
+      $this->type("sort_name", $emailId);
+      $this->click("_qf_Basic_refresh");
+      $this->waitForTextPresent("Access Keys:");
+      $this->assertTrue( $this->isTextPresent( $lastName . ', ' . $firstName );
+      $this->assertTrue( $this->isTextPresent( "902C El Camino Way SW" );
+      $this->assertTrue( $this->isTextPresent( "Dumfries" );
+      $this->assertTrue( $this->isTextPresent( "1234" );
   }  
 }
 ?>
