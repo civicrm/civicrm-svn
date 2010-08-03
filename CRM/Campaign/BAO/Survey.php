@@ -332,14 +332,19 @@ Group By  contact.id";
      * @return $activityDetails array of survey activity.
      * @static
      */
-    static function voterActivityDetails( $surveyId, $voterIds, $interviewerId = null ) 
+    static function voterActivityDetails( $surveyId, $voterIds, $interviewerId = null, $statusIds = array( ) ) 
     {
         $activityDetails = array( );
         if ( !$surveyId || 
              !is_array( $voterIds ) || empty( $voterIds ) ) {
             return $activityDetails;
         }
-
+        
+        $whereClause = null;
+        if ( is_array( $statusIds ) && !empty( $statusIds ) ) {
+            $whereClause = ' AND ( activity.status_id IN ( '. implode( ',', array_values( $statusIds ) ) . ' ) )';
+        }
+        
         if ( !$interviewerId ) {
             $session = CRM_Core_Session::singleton( );
             $interviewerId = $session->get('userID');
@@ -357,7 +362,8 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
      WHERE  activity.source_record_id = %1
        AND  ( activity.is_deleted IS NULL OR activity.is_deleted = 0 )
        AND  activityAssignment.assignee_contact_id = %2
-       AND  activityTarget.target_contact_id IN {$targetContactIds}";
+       AND  activityTarget.target_contact_id IN {$targetContactIds} 
+            $whereClause";
         
         $activity = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $surveyId, 'Integer' ),
                                                                2 => array( $interviewerId, 'Integer' ) ) );

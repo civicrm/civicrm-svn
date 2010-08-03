@@ -105,9 +105,10 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
             if ( $statusId = array_search( $name, $activityStatus ) ) $statusIds[] = $statusId; 
         }
         //fetch the target survey activities.
-        $this->_surveyActivities = CRM_Campaign_BAO_Survey::getSurveyActivities( $this->_surveyId, 
-                                                                                 $this->_interviewerId,
-                                                                                 $statusIds );
+        $this->_surveyActivities = CRM_Campaign_BAO_Survey::voterActivityDetails( $this->_surveyId, 
+                                                                                  $this->_contactIds,
+                                                                                  $this->_interviewerId,
+                                                                                  $statusIds );
         if ( count( $this->_surveyActivities ) < 1 ) {
             CRM_Core_Error::statusBounce( ts( 'We could not found voter for this survey to release.') );
         }
@@ -125,53 +126,29 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
        
         $this->addDefaultButtons( ts('Release Voters'), 'done' );
     }
-
-    function addRules( )
+    
+    function postProcess( ) 
     {
-        $this->addFormRule( array( 'CRM_Campaign_Form_Task_ReleaseVoters', 'formRule'), $this );
+        $deleteActivityIds = array( );
+        foreach ( $this->_contactIds as $cid ) {
+            if ( array_key_exists( $cid, $this->_surveyActivities ) ) {
+                $deleteActivityIds[] = $this->_surveyActivities[$cid]['activity_id'];
+            }
+        }
+        
+        //set survey activites as deleted = true.
+        if ( !empty( $deleteActivityIds ) ) {
+            $query = 'UPDATE civicrm_activity SET is_deleted = 1 WHERE id IN ( '. implode(', ',$deleteActivityIds ) .' )';
+            CRM_Core_DAO::executeQuery( $query );
+            
+            $status = array( ts("%1 voters has been released.", array( 1 => count( $deleteActivityIds ) ) ) );
+            if ( count( $this->_contactIds ) > count( $deleteActivityIds ) ) {
+                $status[] = ts("%1 voters did not release.", 
+                               array( 1 => ( count( $this->_contactIds ) - count( $deleteActivityIds ) ) ) );  
+            }
+            CRM_Core_Session::setStatus( implode('&nbsp;', $status) );
+        }
+        
     }
     
-    static function formRule( $params, $rules, &$form ) {
-        $errors = array();
-        return $errors;
-    }
-
-    function postProcess( ) {
-        //get the submitted values in an array
-        $params    = $this->controller->exportValues( $this->_name );
-        
-        require_once 'CRM/Core/PseudoConstant.php';
-
-        $heldContacts   = array( );
-        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
-        $surveyActType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
-        
-        // Interviewer can release only those contacts which are
-        // held (is_deleted != 1) by himself
-        $query = "SELECT DISTINCT(target.activity_id) as activity_id FROM civicrm_activity_target target INNER JOIN civicrm_activity source ON( target.activity_id = source.id ) INNER JOIN civicrm_activity_assignment assignment ON ( assignment.activity_id = source.id ) WHERE source.status_id IN (". implode( ',',  array_keys($activityStatus) ) .") AND source.activity_type_id IN(". implode( ',', array_keys($surveyActType) ) .") AND source.source_record_id = %1  AND (source.is_deleted = 0 OR source.is_deleted IS NULL) AND assignment.assignee_contact_id = %2 AND target.target_contact_id IN (". implode(',', $this->_contactIds) .") ";
-
-        $findHeld = CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer'), 2 => array( $this->_interviewerId, 'Integer') ) );
-        
-        while( $findHeld->fetch() ) {
-            $heldContacts[$findHeld->activity_id] = $findHeld->activity_id; 
-        }
-
-        if ( !empty($heldContacts) ) {
-            $query = "UPDATE civicrm_activity source INNER JOIN civicrm_activity_assignment assignment ON (source.id = assignment.activity_id ) SET source.is_deleted = 1 WHERE source.source_record_id = %1 AND assignment.assignee_contact_id = %2 AND source.id IN (". implode(',', $heldContacts ) .")";
-            CRM_Core_DAO::executeQuery( $query, array( 1 => array( $this->_surveyId, 'Integer'), 2 => array( $this->_interviewerId, 'Integer') ) );
-        }
-        
-        $status = array( );
-        if ( count($heldContacts) > 0 ) {
-            $status[ ] = ts("%1 voters has been released.", array( 1 => count($heldContacts) ) );
-        }
-        if ( count($this->_contactIds) > count($heldContacts) ) {
-            $status[ ] = ts("%1 voters did not release.", array( 1 => (count($this->_contactIds) - count($heldContacts)) ) );  
-        }
-        
-        if ( !empty($status) ) {
-            CRM_Core_Session::setStatus( implode('&nbsp;', $status) );
-        } 
-    }
-
 }
