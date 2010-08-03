@@ -129,7 +129,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                          'trxn_id'                => '22ereerwww322323',
                          'invoice_id'             => '22ed39c9e9ee6ef6031621ce0eafe6da70',
                          'thankyou_date'          => '20080522',
-                         'custom_1'               => 'testdata');
+                         );
         
         
         $params['custom']= array(
