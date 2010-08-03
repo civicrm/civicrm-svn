@@ -455,6 +455,13 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
     }
 
     function addGroupsParams( ) {
+        //to conduct interview activity status should be scheduled.
+        if ( $this->_operation == 'interview' ) {
+            $activityStatus    = CRM_Core_PseudoConstant::activityStatus( 'name' );
+            if ( $scheduledStatusId = array_search( 'Scheduled', $activityStatus ) ) {
+                $this->_formValues['survey_status_id'] = $scheduledStatusId; 
+            }
+        }
         
         //apply group clause only for voter reservation.
         if ( $this->_operation != 'reserve' ) return;  
