@@ -3912,7 +3912,7 @@ function civicrm_views_data() {
     $data['civicrm_entity_tag']['table']['join']['civicrm_contact'] = array(
                                                                   // Directly links to group table
                                                                    'left_field' => 'id',
-                                                                   'field' => 'contact_id',
+                                                                   'field' => 'entity_id',
                                                                    );
 
 
