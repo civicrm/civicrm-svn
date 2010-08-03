@@ -453,11 +453,11 @@ cj(document).ready(function(){
   
   {if $clientRelationships}
     <div class="crm-submit-buttons">
-    <a class="button" href="#" onClick="window.location='{crmURL p='civicrm/contact/view/rel' q="action=add&reset=1&cid=`$contactId`&caseID=`$caseID`"}'">
+    <a class="button" href="#" onClick="window.location='{crmURL p='civicrm/contact/view/rel' q="action=add&reset=1&cid=`$contactId`&caseID=`$caseID`"}'; return false;">
     <span><div class="icon add-icon"></div>{ts}Add client relationship{/ts}</a></span>
     </div>
 	
-    <table class="report-layout">
+    <table class="report-layout otherRelationships">
     	<tr class="columnheader">
     		<th>{ts}Client Relationship{/ts}</th>
     		<th>{ts}Name{/ts}</th>
@@ -465,11 +465,11 @@ cj(document).ready(function(){
     		<th>{ts}Email{/ts}</th>
     	</tr>
         {foreach from=$clientRelationships item=row key=relId}
-        <tr>
+        <tr id="otherRelationship-{$row.cid}">
             <td class="crm-case-caseview-otherrelationship-relation label">{$row.relation}</td>
             <td class="crm-case-caseview-otherrelationship-name" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
             <td class="crm-case-caseview-otherrelationship-phone" id="phone_{$rowNumber}">{$row.phone}</td>
-	    <td class="crm-case-caseview-otherrelationship-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
+	        <td class="crm-case-caseview-otherrelationship-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
         </tr>
 		{assign var=rowNumber value = `$rowNumber+1`}
         {/foreach}
@@ -485,16 +485,19 @@ cj(document).ready(function(){
   <br />
   
   {if $globalRelationships}
-    <div><input type="button" class="form-submit default" onClick="window.location='{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}'" value="{ts 1=$globalGroupInfo.title}Add members to %1{/ts}" /></div>
+    <div class="crm-submit-buttons">
+        <a class="button" href="#"  onClick="window.location='{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}'; return false;">
+        <span><div class="icon add-icon"></div>{ts 1=$globalGroupInfo.title}Add members to %1{/ts}</a></span>
+    </div>
 	
-    <table class="report">
+    <table class="report-layout caseResources">
     	<tr class="columnheader">
     		<th>{$globalGroupInfo.title}</th>
     		<th>{ts}Phone{/ts}</th>
     		<th>{ts}Email{/ts}</th>
     	</tr>
         {foreach from=$globalRelationships item=row key=relId}
-        <tr>
+        <tr id="caseResource-{$row.contact_id}">
             <td class="crm-case-caseview-globalrelationship-sort_name label" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.contact_id`"}" title="view contact record">{$row.sort_name}</a></td>
             <td class="crm-case-caseview-globalrelationship-phone" id="phone_{$rowNumber}">{$row.phone}</td>
 	    <td class="crm-case-caseview-globalrelationship-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div title="compose and send an email" class="icon email-icon"></div></a>&nbsp;{/if}</td>
