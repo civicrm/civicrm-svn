@@ -27,6 +27,7 @@
 
 require_once 'CiviTest/CiviUnitTestCase.php';
 require_once 'CiviTest/Contact.php';
+require_once 'CiviTest/Custom.php';
 
 class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase 
 {
@@ -92,7 +93,69 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
 
         Contact::delete( $contactId );
     }
-
+    
+    /**
+     * create() method with custom data
+     */
+    function testCreateWithCustomData( )
+    {
+        $contactId = Contact::createIndividual( );
+        $ids = array ('contribution' => null );
+        
+        //create custom data
+        $customGroup = Custom::createGroup( array(), 'Contribution' );
+        $fields = array(
+                        'label'            => 'testFld',
+                        'data_type'        => 'String',
+                        'html_type'        => 'Text',
+                        'custom_group_id'  => $customGroup->id,
+                        );
+        $customField = CRM_Core_BAO_CustomField::create( $fields );
+        
+        $params = array (
+                         'contact_id'             => '1',
+                         'currency'               => 'USD',
+                         'contribution_type_id'   => 1,
+                         'contribution_status_id' => 1,
+                         'payment_instrument_id'  => 1,
+                         'source'                 => 'STUDENT',
+                         'receive_date'           => '20080522000000',
+                         'receipt_date'           => '20080522000000',
+                         'id'                     => null,
+                         'non_deductible_amount'  => 0.00,
+                         'total_amount'           => 200.00,
+                         'fee_amount'             => 5,
+                         'net_amount'             => 195,
+                         'trxn_id'                => '22ereerwww322323',
+                         'invoice_id'             => '22ed39c9e9ee6ef6031621ce0eafe6da70',
+                         'thankyou_date'          => '20080522',
+                         'custom_1'               => 'testdata');
+        
+        
+        $params['custom']= array(
+                                 $customField->id => array(
+                                                           -1 => array(
+                                                                       'value'           => 'Test custom value',
+                                                                       'type'            => 'String',
+                                                                       'custom_field_id' => $customField->id,
+                                                                       'custom_group_id' => $customGroup->id,
+                                                                       'table_name'      => $customGroup->table_name,
+                                                                       'column_name'     => $customField->column_name,
+                                                                       'file_id'         => null
+                                                                       )
+                                                           )
+                                 );
+        
+        
+        require_once 'CRM/Contribute/BAO/Contribution.php';
+        $contribution = CRM_Contribute_BAO_Contribution::create( $params ,$ids );
+        
+        $this->assertEquals( $params['trxn_id'], $contribution->trxn_id, 'Check for transcation id creation.' );
+        $this->assertEquals( $contactId, $contribution->contact_id, 'Check for contact id for Conribution.' );
+        
+        Contact::delete( $contactId );
+    } 
+    
     /**
      * deleteContribution() method
      */
