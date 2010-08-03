@@ -262,7 +262,7 @@ cj( "#source_contact_id").autocomplete( sourceDataUrl, { width : 180, selectFirs
                         </tr>
                         <tr class="crm-case-activity-form-block-followup_activity_subject">
                            <td class="label">{$form.followup_activity_subject.label}</td>
-                           <td>{$form.followup_activity_subject.html}</td>
+                           <td>{$form.followup_activity_subject.html|crmReplace:class:huge}</td>
                         </tr>
                     </table>
  </div><!-- /.crm-accordion-body -->
