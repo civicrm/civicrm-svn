@@ -149,6 +149,7 @@ class CRM_Friend_BAO_Friend extends CRM_Friend_DAO_Friend
             
             //create contact only if it does not exits in db
             $value['email'] = $value['email-Primary'];
+            $value['check_permission'] = false;
             $contact = CRM_Core_BAO_UFGroup::findContact( $value, null, 'Individual' );
 
             if ( !$contact ) {
