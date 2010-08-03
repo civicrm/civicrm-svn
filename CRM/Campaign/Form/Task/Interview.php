@@ -111,14 +111,22 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->_surveyActivityIds = CRM_Campaign_BAO_Survey::voterActivityDetails( $this->_surveyId, 
                                                                                    $this->_contactIds,
                                                                                    $this->_interviewerId );
+        
+        require_once 'CRM/Core/PseudoConstant.php';
+        $activityStatus    = CRM_Core_PseudoConstant::activityStatus( 'name' );
+        $scheduledStatusId = array_search( 'Scheduled', $activityStatus );
+        
         $activityIds = array( );
         foreach ( $this->_contactIds as $key => $voterId ) {
             $actVals    = CRM_Utils_Array::value( $voterId, $this->_surveyActivityIds );
+            $statusId   = CRM_Utils_Array::value( 'status_id',   $actVals );
             $activityId = CRM_Utils_Array::value( 'activity_id', $actVals );
-            if ( !$activityId ) {
-                unset( $this->_contactIds[$key] );
-            } else {
+            if ( $activityId && 
+                 $statusId &&
+                 $scheduledStatusId == $statusId ) {
                 $activityIds["activity_id_{$voterId}"] = $activityId;
+            } else {
+                unset( $this->_contactIds[$key] ); 
             }
         }
         if ( empty( $this->_contactIds ) ) {
@@ -190,6 +198,10 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             require_once 'CRM/Core/BAO/UFGroup.php';
             $this->_surveyFields = CRM_Core_BAO_UFGroup::getFields( $this->_ufGroupId, 
                                                                     false, CRM_Core_Action::VIEW );
+        }
+        
+        if ( !$addResultField && empty( $this->_surveyFields )  ) {
+            CRM_Core_Error::statusBounce( ts( 'Oops, It looks like there is no result field or profile configured to conduct voter interview.' ) );
         }
         
         //build all fields.
