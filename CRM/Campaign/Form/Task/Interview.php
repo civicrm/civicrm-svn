@@ -142,6 +142,9 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->assign( 'interviewerId',  $this->_interviewerId );
         $this->assign( 'campaignId',     $this->_campaignId );
         $this->assign( 'surveyActivityIds', json_encode( $activityIds ) );
+        
+        //set the title.
+        CRM_Utils_System::setTitle( ts( 'Record Voters Interview' ) );
     }
     
     /**

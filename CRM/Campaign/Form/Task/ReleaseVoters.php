@@ -114,6 +114,9 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
         }
         
         $this->assign( 'surveyTitle', $surveyDetails['title'] );
+        
+        //set the title.
+        CRM_Utils_System::setTitle( ts( 'Release Voters' ) );
     }
 
     /**

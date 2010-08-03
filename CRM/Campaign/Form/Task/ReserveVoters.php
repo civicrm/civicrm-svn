@@ -114,6 +114,9 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
         //validate the selected survey.
         $this->validateSurvey( );
         $this->assign( 'surveyTitle', $this->_surveyDetails['title'] );
+        
+        //set the title.
+        CRM_Utils_System::setTitle( ts( 'Reserve Voters' ) );
     }
     
     function validateSurvey( ) 
