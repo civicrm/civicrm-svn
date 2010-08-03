@@ -1069,7 +1069,7 @@ AND civicrm_membership.is_test = %2";
             $session = CRM_Core_Session::singleton( );
             $session->setStatus( $message );
             CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/contribute/transact',
-                                                               '_qf_Main_display=true' ) );
+                                                               "_qf_Main_display=true&qfKey={$form->_params['qfKey']}" ) );
         }
         
         $form->_params['membershipID'] = $membership->id;
