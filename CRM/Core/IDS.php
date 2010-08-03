@@ -103,6 +103,7 @@ class CRM_Core_IDS {
     html[]              = footer_text
     html[]              = thankyou_text
     html[]              = thankyou_footer
+    html[]              = thankyou_footer_text
     html[]              = new_text
     html[]              = renewal_text
     html[]              = help_pre
