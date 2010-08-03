@@ -908,7 +908,7 @@ AND civicrm_membership.is_test = %2";
         $tempParams  = $membershipParams;
         $paymentDone = false;
         $result      = null;
-        $isTest = CRM_Utils_Array::value( 'is_test', $membershipParams );
+        $isTest      = CRM_Utils_Array::value( 'is_test', $membershipParams, false );
         $form->assign('membership_assign' , true );
 
         $form->set('membershipTypeID' , $membershipParams['selectMembership']);
