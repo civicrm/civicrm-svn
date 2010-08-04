@@ -73,15 +73,11 @@
 	    {/literal}
 	    {if $location.lat}
 		var point  = new GLatLng({$location.lat},{$location.lng});
-		{if $location.marker_class eq 'Individual'}
- 			var image = "{$config->resourceBase}i/contact_ind.gif";
- 		{/if}
- 		{if $location.marker_class eq 'Household'}
- 			var image = "{$config->resourceBase}i/contact_house.png";
- 		{/if}
- 		{if $location.marker_class eq 'Organization' || $location.marker_class eq 'Event'}
+ 		{if $location.marker_class eq 'Event'}
  			var image = "{$config->resourceBase}i/contact_org.gif";
- 		{/if}
+ 		{else}
+		        var image = '{$location.image}';
+                {/if}
                	var marker = createMarker(point, data, image);
 		map.addOverlay(marker);
 		bounds.extend(point);
