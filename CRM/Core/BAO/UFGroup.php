@@ -710,7 +710,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
         $websiteTypes  = CRM_Core_PseudoConstant::websiteType( );
 
         $multipleFields = array( 'url' );
-        $nullIndex = ' ';
+        $nullIndex = $nullValueIndex = ' ';
         //start of code to set the default values
         foreach ( $fields as $name => $field ) {            
             // fix for CRM-3962
@@ -719,16 +719,22 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
             }
 
             $index = $field['title'];
+            //handle for the label not set for the field
             if ( empty( $field['title'] ) ) {
                 $index = $nullIndex;
                 $nullIndex .= $nullIndex;
             }
 
+            //handle the case to avoid re-write where the profile field labels are the same
+            if ( CRM_Utils_Array::value( $index, $values ) ) {
+                $index .= $nullValueIndex;
+                $nullValueIndex .= $nullValueIndex;
+            } 
             $params[$index] = $values[$index] = '';
             $customFieldName = null;
-            $elements= array('email_greeting_custom'  => 'email_greeting', 
-                             'postal_greeting_custom' => 'postal_greeting', 
-                             'addressee_custom'       => 'addressee');
+            $elements = array( 'email_greeting_custom'  => 'email_greeting', 
+                               'postal_greeting_custom' => 'postal_greeting', 
+                               'addressee_custom'       => 'addressee' );
             if ( isset($details->$name) || $name == 'group' || $name == 'tag') {//hack for CRM-665
                 // to handle gender / suffix / prefix
                 if ( in_array( $name, array( 'gender', 'individual_prefix', 'individual_suffix' ) ) ) {
@@ -746,8 +752,7 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                     $params[$index] = $details->$idx;
                 } else if ( $name === 'preferred_communication_method' ) {
                     $communicationFields = CRM_Core_PseudoConstant::pcm();
-                    $pref = array();
-                    $compref = array();
+                    $pref = $compref = array();
                     $pref = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $details->$name );
                     
                     foreach ( $pref as $k ) {
