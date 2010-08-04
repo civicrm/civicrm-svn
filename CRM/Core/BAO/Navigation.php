@@ -471,16 +471,9 @@ ORDER BY parent_id, weight";
                 $key = trim( $key ); 
                 $showItem = true;
                 
-                $componentName = null;
-                if ( strpos( $key, 'access' ) === 0 ) { 
-                    $componentName = trim( substr( $key, 6 ) );
-                    if ( !in_array( $componentName, $allComponents ) ) {
-                        $componentName = null;
-                    }
-                }
-                if ( !$componentName && in_array( $menuName, array( 'Cases', 'CiviCase', 'Find Cases' ) ) ) { 
-                    $componentName = 'CiviCase';
-                }
+                //get the component name from permission.
+                $componentName = CRM_Core_Permission::getComponentName( $key );
+                
                 if ( $componentName ) {
                     if ( !in_array( $componentName, $config->enableComponents ) || 
                          !CRM_Core_Permission::check( $key ) ) {
