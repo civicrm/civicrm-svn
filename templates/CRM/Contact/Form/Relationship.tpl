@@ -105,8 +105,8 @@
                 <td><label>{$sort_name_b}</label></td></tr>
                 <tr class="crm-relationship-form-block-is_current_employer">
                   <td class="label">
-                     <div id="employee"><label>{ts}Current Employee?{/ts}</label></div>
-                     <div id="employer"><label>{ts}Current Employer?{/ts}</label></div>
+                     <span id="employee"><label>{ts}Current Employee?{/ts}</label></span>
+                     <span id="employer"><label>{ts}Current Employer?{/ts}</label></span>
                   </td>
                   <td id="current_employer">{$form.is_current_employer.html}</td>
                 </tr>  
@@ -147,7 +147,7 @@
                         } else { 
                             relContact.unautocomplete( );
                             cj("input[name=rel_contact_id]").val('');
-                            relContact.click( function() { alert( '{/literal}{ts escape="js"}Please select a relationship type first.{/ts}{literal} ...' );});
+                            relContact.click( function() { alert( '{/literal}{ts}Please select a relationship type first.{/ts}{literal} ...' );});
                         }
                     }       
 				  </script>
@@ -231,8 +231,7 @@
               {/if} {* end if searchDone *}
         {/if} {* end action = add *}
         
-        <fieldset id = 'saveElements'>
-            <div>
+            <div id = 'saveElements'>
                 {if $action EQ 1}
                 <div id='addCurrentEmployer'>
                    <table class="form-layout-compressed">  
@@ -320,7 +319,7 @@
                         }
                     </script>
                 {/literal}
-            </div>
+            </div>{* end of save element div *}
         <div id="customData"></div>
         <div class="spacer"></div>
         <div class="crm-submit-buttons" id="saveButtons"> {include file="CRM/common/formButtons.tpl"}</div> 
@@ -393,7 +392,7 @@ cj( function( ) {
             if ( cj(this).attr('checked') == true ) {
                 // add validation to match with selected contacts
                 if( !contact_checked[valueSelected] ) {
-                    alert('{/literal}{ts escape="js"}Current employer / Current employee should be among the selected contacts.{/ts}{literal}');
+                    alert('Current employer / Current employee should be among the selected contacts.');
                     cj(this).attr('checked',false); 
                 } else {
                     employer_checked[valueSelected] = valueSelected;
