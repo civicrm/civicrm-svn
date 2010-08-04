@@ -72,8 +72,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         }
         
         $session = CRM_Core_Session::singleton();
-        $url     = CRM_Utils_System::url('civicrm/campaign/browse', 'reset=1'); 
-        $session->pushUserContext( $url );
+        $session->pushUserContext( CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=campaign') );
 
         $this->assign( 'action', $this->_action );
     }
@@ -242,7 +241,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
             if ( $this->_action & CRM_Core_Action::DELETE ) {
                 CRM_Campaign_BAO_Campaign::del( $this->_campaignId );
                 CRM_Core_Session::setStatus(ts(' Campaign has been deleted.'));
-                $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/browse', 'reset=1' ) ); 
+                $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=campaign' ) ); 
                 return;
             }
             $params['id'] = $this->_campaignId;
@@ -281,7 +280,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         
         if ( $result ) {
             CRM_Core_Session::setStatus( ts( 'Campaign %1 has been saved.', array( 1 => $result->title ) ) );
-            $session->pushUserContext(CRM_Utils_System::url('civicrm/campaign/browse', 'reset=1'));
+            $session->pushUserContext(CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=campaign'));
         }
         
         $buttonName = $this->controller->getButtonName( );
@@ -290,7 +289,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
             $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/add', 'reset=1&action=add' ) );
             
         } else {
-            $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign/browse', 'reset=1' ) ); 
+            $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=campaign' ) ); 
         }
     }    
 }

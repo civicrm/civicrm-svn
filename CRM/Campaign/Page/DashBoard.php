@@ -178,6 +178,8 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 $surveysData[$sid]['campaign_id']       = $campaigns[$survey['campaign_id']];
                 $surveysData[$sid]['activity_type']     = $surveyType[$survey['activity_type_id']];
                 $surveysData[$sid]['release_frequency'] = $survey['release_frequency_interval'].' Day(s)';
+                
+                $action = array_sum( array_keys( $this->surveyActionLinks( ) ) );
                 if ( $survey['is_active'] ) {
                     $action -= CRM_Core_Action::ENABLE;
                 } else {
@@ -210,6 +212,9 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         
         $this->_dataType = CRM_Utils_Request::retrieve( 'type', 'String', $this );
         $this->assign( 'dataType', $this->_dataType );
+
+        $subPage = CRM_Utils_Request::retrieve( 'subPage', 'String', $this, false, 'campaign' );
+        $this->assign( 'subPage', $subPage );
         
         $this->browse( );
         

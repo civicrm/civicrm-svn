@@ -78,7 +78,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         }
 
         $session = CRM_Core_Session::singleton();
-        $url     = CRM_Utils_System::url('civicrm/survey/browse', 'reset=1'); 
+        $url     = CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey'); 
         $session->pushUserContext( $url );
 
         $this->assign( 'action', $this->_action );
@@ -243,7 +243,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             if ( $this->_action & CRM_Core_Action::DELETE ) {
                 CRM_Campaign_BAO_Survey::del( $this->_surveyId );
                 CRM_Core_Session::setStatus(ts(' Survey has been deleted.'));
-                $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/browse', 'reset=1' ) ); 
+                $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey' ) ); 
                 return;
             }
 
@@ -285,7 +285,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             CRM_Core_Session::setStatus(ts(' You can add another Survey.'));
             $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/add', 'reset=1&action=add' ) );
         } else {
-            $session->replaceUserContext( CRM_Utils_System::url('civicrm/survey/browse', 'reset=1' ) ); 
+            $session->replaceUserContext( CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey' ) ); 
         }
     }
  }

@@ -169,7 +169,7 @@ cj(document).ready( function( ) {
 
     });
 
-    buildDataView( 'campaign' );
+    buildDataView( {/literal}'{$subPage}'{literal} );
 });
 
 function buildDataView( dataType ) {
