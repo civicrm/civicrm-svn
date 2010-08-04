@@ -109,7 +109,8 @@
                      <span id="employer"><label>{ts}Current Employer?{/ts}</label></span>
                   </td>
                   <td id="current_employer">{$form.is_current_employer.html}</td>
-                </tr>  
+                </tr>
+             </table>  
             {else} {* action = add *}
              </tr>
              <tr class="crm-relationship-form-block-rel_contact">
