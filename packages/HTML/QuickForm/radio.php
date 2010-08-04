@@ -82,10 +82,10 @@ class HTML_QuickForm_radio extends HTML_QuickForm_input
             if ( empty( $text ) ) {
                 $idText = $idTextStr++;
             } else {
-                // use only first 8 characters of text
-                $idText = substr( $text, 0, 7 );
+                // use only first 8 characters
+                $idText = substr( md5( microtime( ) ), 0, 7 );
             }
-            $idValue = CRM_Utils_String::munge( "CIVICRM_QFID_{$value}_{$idText}" ); 
+
             $this->updateAttributes( array('id' => CRM_Utils_String::munge( "CIVICRM_QFID_{$value}_{$idText}" ) ) );
         }
     } //end constructor
