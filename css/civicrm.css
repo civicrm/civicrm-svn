@@ -1992,10 +1992,6 @@ div.grippie {
     float: right;
 }
 
-#crm-container span.crm-case-summary-label {
-	font-weight: bold;
-}
-
 #crm-container .separator {
     border-bottom  : solid 2px #ccc;
 }
