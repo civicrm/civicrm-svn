@@ -6,60 +6,56 @@
     <title>New Campaign</title>
     <page_callback>CRM_Campaign_Form_Campaign</page_callback>
     <access_arguments>administer CiviCampaign</access_arguments>
+    <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/survey/add</path>
     <title>New Survey</title>
     <page_callback>CRM_Campaign_Form_Survey</page_callback>
     <access_arguments>administer CiviCampaign</access_arguments>
-  </item>
-  <item>
-    <path>civicrm/survey/browse</path>
-    <title>Survey Dashboard</title>
-    <page_callback>CRM_Campaign_Page_Survey</page_callback>
-    <access_arguments>administer CiviCampaign</access_arguments>
-  </item>
-  <item>
-    <path>civicrm/campaign/browse</path>
-    <title>Campaign Dashboard</title>
-    <page_callback>CRM_Campaign_Page_Campaign</page_callback>
-    <access_arguments>administer CiviCampaign</access_arguments>
+    <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/campaign</path>
     <title>Campaign Dashboard</title>
     <page_callback>CRM_Campaign_Page_DashBoard</page_callback>
     <access_arguments>administer CiviCampaign</access_arguments>
+    <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/survey/type/browse</path>
     <title>Survey Types</title>
     <page_callback>CRM_Campaign_Page_SurveyType</page_callback>
     <access_arguments>administer CiviCampaign</access_arguments>
+    <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/survey/type/add</path>
     <title>Manage Survey Types</title>
     <page_callback>CRM_Campaign_Form_SurveyType</page_callback>
     <access_arguments>administer CiviCampaign</access_arguments>
+    <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/survey/search</path>
     <title>Reserve Voters</title>
     <path_arguments>op=reserve</path_arguments>
     <page_callback>CRM_Campaign_Controller_Search</page_callback>
+    <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/survey/search</path>
     <title>Release Voters</title>
     <path_arguments>op=release</path_arguments>
     <page_callback>CRM_Campaign_Controller_Search</page_callback>
+    <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/survey/search</path>
     <title>Record Voters Interview</title>
     <path_arguments>op=interview</path_arguments>
     <page_callback>CRM_Campaign_Controller_Search</page_callback>
+    <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/petition/add</path>
