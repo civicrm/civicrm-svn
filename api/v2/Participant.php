@@ -402,7 +402,7 @@ function civicrm_create_participant_formatted( &$params , $onDuplicate )
     require_once 'CRM/Event/Import/Parser.php';
     if ( $onDuplicate != CRM_Event_Import_Parser::DUPLICATE_NOCHECK) {
         CRM_Core_Error::reset( );
-        $error = civicrm_participant_check_params( $params );
+        $error = civicrm_participant_check_params( $params ,true );
         if ( civicrm_error( $error ) ) {
             return $error;
         }
@@ -416,7 +416,7 @@ function civicrm_create_participant_formatted( &$params , $onDuplicate )
  * @param <type> $params
  * @return <type> 
  */
-function civicrm_participant_check_params( &$params ) 
+function civicrm_participant_check_params( &$params ,$checkDuplicate = false ) 
 {
     require_once 'CRM/Event/BAO/Participant.php';
     //check if participant id is valid or not
@@ -437,19 +437,19 @@ function civicrm_participant_check_params( &$params )
         }
     }
     $result = array( );
-  
-    if( CRM_Event_BAO_Participant::checkDuplicate( $params, $result ) ) {
-        $participantID = array_pop( $result );
-        
-        $error = CRM_Core_Error::createError( "Found matching participant record.", 
-                                              CRM_Core_Error::DUPLICATE_PARTICIPANT, 
-                                              'Fatal', $participantID );
-        
-        return civicrm_create_error( $error->pop( ),
-                                     array( 'contactID'     => $params['contact_id'],
-                                            'participantID' => $participantID ) );
+    if( $checkDuplicate ) {
+        if( CRM_Event_BAO_Participant::checkDuplicate( $params, $result ) ) {
+            $participantID = array_pop( $result );
+            
+            $error = CRM_Core_Error::createError( "Found matching participant record.", 
+                                                  CRM_Core_Error::DUPLICATE_PARTICIPANT, 
+                                                  'Fatal', $participantID );
+            
+            return civicrm_create_error( $error->pop( ),
+                                         array( 'contactID'     => $params['contact_id'],
+                                                'participantID' => $participantID ) );
+        }
     }
-    
     return true;
 }
 
