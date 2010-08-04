@@ -26,6 +26,12 @@
     <access_arguments>administer CiviCampaign</access_arguments>
   </item>
   <item>
+    <path>civicrm/campaign</path>
+    <title>Campaign Dashboard</title>
+    <page_callback>CRM_Campaign_Page_DashBoard</page_callback>
+    <access_arguments>administer CiviCampaign</access_arguments>
+  </item>
+  <item>
     <path>civicrm/survey/type/browse</path>
     <title>Survey Types</title>
     <page_callback>CRM_Campaign_Page_SurveyType</page_callback>
