@@ -64,7 +64,8 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       // Let's start filling the form with values.
       
       // create new contact using dialog
-      $this->webtestNewDialogContact( );
+      $firstName = substr(sha1(rand()), 0, 7);
+      $this->webtestNewDialogContact( $firstName, "Contributor", $firstName . "@example.com" );
       
       // select contribution type
       $this->select("contribution_type_id", "value=1");
@@ -86,7 +87,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->type("trxn_id", "P20901X1" . rand(100, 10000));
       
       //Custom Data
-      $this->click('css=#CIVICRM_QFID_3_4_6_yea');
+      $this->click('CIVICRM_QFID_3_4_6_yea');
 
       //Additional Detail section
       $this->click("AdditionalDetail");

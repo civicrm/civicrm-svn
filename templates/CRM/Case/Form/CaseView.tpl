@@ -89,16 +89,16 @@
              </td>
 	    {/if}
         <td class="crm-case-caseview-case_type label">
-            {ts}Case Type{/ts}:&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><span class="icon edit-icon"></span></a>
+            <span class="crm-case-summary-label">{ts}Case Type{/ts}:</span>&nbsp;{$caseDetails.case_type}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseTypeId`"}" title="Change case type (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
         <td class="crm-case-caseview-case_status label">
-            {ts}Status{/ts}:&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title="Change case status (creates activity record)"><span class="icon edit-icon"></span></a>
+            <span class="crm-case-summary-label">{ts}Status{/ts}:</span>&nbsp;{$caseDetails.case_status}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStatusId`"}" title="Change case status (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
         <td class="crm-case-caseview-case_start_date label">
-            {ts}Start Date{/ts}:&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="Change case start date (creates activity record)"><span class="icon edit-icon"></span></a>
+            <span class="crm-case-summary-label">{ts}Start Date{/ts}:</span>&nbsp;{$caseDetails.case_start_date|crmDate}&nbsp;<a href="{crmURL p='civicrm/case/activity' q="action=add&reset=1&cid=`$contactId`&caseid=`$caseId`&selectedChild=activity&atype=`$changeCaseStartDateId`"}" title="Change case start date (creates activity record)"><span class="icon edit-icon"></span></a>
         </td>
         <td class="crm-case-caseview-{$caseID} label">
-            {ts}Case ID{/ts}:&nbsp;{$caseID}
+            <span class="crm-case-summary-label">{ts}Case ID{/ts}:</span>&nbsp;{$caseID}
         </td>
     </tr>
     </table>
@@ -328,7 +328,7 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
 		buttons: { 
 			"Ok": function() { 	    
 				if ( ! cj("#rel_contact").val( ) ) {
-					alert('{/literal}{ts}Select valid contact from the list{/ts}{literal}.');
+					alert('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
 					return false;
 				}
 
@@ -338,7 +338,7 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
 				var v1 = cj("#rel_contact_id").val( );
 
 				if ( ! v1 ) {
-					alert('{/literal}{ts}Select valid contact from the list{/ts}{literal}.');
+					alert('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
 					return false;
 				}
 
@@ -453,11 +453,11 @@ cj(document).ready(function(){
   
   {if $clientRelationships}
     <div class="crm-submit-buttons">
-    <a class="button" href="#" onClick="window.location='{crmURL p='civicrm/contact/view/rel' q="action=add&reset=1&cid=`$contactId`&caseID=`$caseID`"}'">
+    <a class="button" href="#" onClick="window.location='{crmURL p='civicrm/contact/view/rel' q="action=add&reset=1&cid=`$contactId`&caseID=`$caseID`"}'; return false;">
     <span><div class="icon add-icon"></div>{ts}Add client relationship{/ts}</a></span>
     </div>
 	
-    <table class="report-layout">
+    <table class="report-layout otherRelationships">
     	<tr class="columnheader">
     		<th>{ts}Client Relationship{/ts}</th>
     		<th>{ts}Name{/ts}</th>
@@ -465,11 +465,11 @@ cj(document).ready(function(){
     		<th>{ts}Email{/ts}</th>
     	</tr>
         {foreach from=$clientRelationships item=row key=relId}
-        <tr>
+        <tr id="otherRelationship-{$row.cid}">
             <td class="crm-case-caseview-otherrelationship-relation label">{$row.relation}</td>
             <td class="crm-case-caseview-otherrelationship-name" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.cid`"}" title="view contact record">{$row.name}</a></td>
             <td class="crm-case-caseview-otherrelationship-phone" id="phone_{$rowNumber}">{$row.phone}</td>
-	    <td class="crm-case-caseview-otherrelationship-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
+	        <td class="crm-case-caseview-otherrelationship-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.cid`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div class="icon email-icon"></div></a>&nbsp;{/if}</td>
         </tr>
 		{assign var=rowNumber value = `$rowNumber+1`}
         {/foreach}
@@ -485,16 +485,19 @@ cj(document).ready(function(){
   <br />
   
   {if $globalRelationships}
-    <div><input type="button" class="form-submit default" onClick="window.location='{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}'" value="{ts 1=$globalGroupInfo.title}Add members to %1{/ts}" /></div>
+    <div class="crm-submit-buttons">
+        <a class="button" href="#"  onClick="window.location='{crmURL p='civicrm/group/search' q="reset=1&context=amtg&amtgID=`$globalGroupInfo.id`"}'; return false;">
+        <span><div class="icon add-icon"></div>{ts 1=$globalGroupInfo.title}Add members to %1{/ts}</a></span>
+    </div>
 	
-    <table class="report">
+    <table class="report-layout globalrelationship">
     	<tr class="columnheader">
     		<th>{$globalGroupInfo.title}</th>
     		<th>{ts}Phone{/ts}</th>
     		<th>{ts}Email{/ts}</th>
     	</tr>
         {foreach from=$globalRelationships item=row key=relId}
-        <tr>
+        <tr id="caseResource-{$row.contact_id}">
             <td class="crm-case-caseview-globalrelationship-sort_name label" id="relName_{$rowNumber}"><a href="{crmURL p='civicrm/contact/view' q="action=view&reset=1&cid=`$row.contact_id`"}" title="view contact record">{$row.sort_name}</a></td>
             <td class="crm-case-caseview-globalrelationship-phone" id="phone_{$rowNumber}">{$row.phone}</td>
 	    <td class="crm-case-caseview-globalrelationship-email" id="email_{$rowNumber}">{if $row.email}<a href="{crmURL p='civicrm/contact/view/activity' q="reset=1&action=add&atype=3&cid=`$row.contact_id`&caseid=`$caseID`"}" title="{ts}compose and send an email{/ts}"><div title="compose and send an email" class="icon email-icon"></div></a>&nbsp;{/if}</td>
@@ -566,7 +569,7 @@ function addRole() {
 		buttons: { 
 			"Ok": function() { 	    
 				if ( ! cj("#role_contact").val( ) ) {
-					alert('{/literal}{ts}Select valid contact from the list{/ts}{literal}.');
+					alert('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
 					return false;
 				}
 
@@ -577,13 +580,13 @@ function addRole() {
 				var v1 = cj("#role_contact_id").val( );
 
 				if ( ! v1 ) {
-					alert('{/literal}{ts}Select valid contact from the list{/ts}{literal}.');
+					alert('{/literal}{ts escape="js"}Select valid contact from the list{/ts}{literal}.');
 					return false;
 				}
 
 				var v2 = cj("#role_type").val();
 				if ( ! v2 ) {
-					alert('{/literal}{ts}Select valid type from the list{/ts}{literal}.');
+					alert('{/literal}{ts escape="js"}Select valid type from the list{/ts}{literal}.');
 					return false;
 				}
 				

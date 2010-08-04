@@ -232,7 +232,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->click("link=Fees");
       $this->waitForElementPresent("_qf_Fee_upload-bottom");
       $this->click("CIVICRM_QFID_1_Yes");
-      $this->select("payment_processor_id", "value=3");
+      $this->select("payment_processor_id", "value=1");
       $this->select("contribution_type_id", "value=4");
       if ( $priceSet) {
           // get one - TBD

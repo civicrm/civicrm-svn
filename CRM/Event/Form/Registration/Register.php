@@ -729,7 +729,7 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
                 $customizedValue = CRM_Core_OptionGroup::getValue( $greeting, 'Customized', 'name' ); 
                 if( $customizedValue  == $greetingType && 
                     ! CRM_Utils_Array::value( $customizedGreeting, $fields ) ) {
-                    $errors[$customizedGreeting] = ts( 'Custom  %1 is a required field if %1 is of type Customized.', 
+                    $errors[$customizedGreeting] = ts( 'Custom %1 is a required field if %1 is of type Customized.', 
                                                        array( 1 => ucwords(str_replace('_'," ", $greeting) ) ) );
                 }
             }

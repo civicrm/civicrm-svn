@@ -31,7 +31,7 @@
  
  <div id="help">
     <p>
-    {ts}<strong>Import has completed successfully.</strong> The information below summarizes the results.{/ts}
+    <strong>{ts}Import has completed successfully.{/ts}</strong> {ts}The information below summarizes the results.{/ts}
     </p>
     
    {if $unMatchCount }

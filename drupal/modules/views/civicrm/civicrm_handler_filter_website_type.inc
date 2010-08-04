@@ -1,8 +1,7 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2010                                |
+ | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
  | This file is a part of CiviCRM.                                    |
  |                                                                    |
@@ -22,29 +21,41 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{literal}
-<script type="text/javascript">
-cj( function( ) {
-    var url       = "{/literal}{$customUrls.$element_name}{literal}";
-    var custom    = "{/literal}#{$element_name}{literal}";
-    var custom_id = "{/literal}input[name={$element_name}_id]{literal}";
+*/
+/*
+ * Heavily based on anonymous code contribution. No claim.
+ * CiviCRM Views Integration
+ *
+ * civicrm_handler_filter_website_type.inc
+ * Filters Website Types, and is configured using the labels from the database
+ *
+ */
 
-    var customObj   = cj(custom);
-    var customIdObj = cj(custom_id);
-    
-    if ( !customObj.hasClass('ac_input') ) {
-        customObj.autocomplete( url, 
-            { width : 250, selectFirst : false, matchContains: true
-            }).result( 
-                function(event, data ) {
-                    customIdObj.val( data[1] );
-                }
-        );
-        customObj.click( function( ) {
-            customIdObj.val('');
-	    }); 
-     }
-});
-</script>
-{/literal}
+
+class civicrm_handler_filter_website_type extends views_handler_filter_in_operator {
+    static $_websiteTypes;
+
+    function construct( ) {
+        parent::construct();
+        if ( ! self::$_websiteTypes ) {
+            if ( ! civicrm_initialize( ) ) {
+                return;
+            }
+            require_once 'CRM/Core/PseudoConstant.php';
+            self::$_websiteTypes = CRM_Core_PseudoConstant::websiteType( );
+        }
+    }
+
+    function get_value_options() {
+        if (!isset($this->value_options)) {
+            $this->value_title = t('Website type');
+            $options = array( );
+            foreach (self::$_websiteTypes as $id => $name ) {
+                $options[$id] = $name;
+            }
+            $this->value_options = $options;
+        }
+    }
+
+}
+?>

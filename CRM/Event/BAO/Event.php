@@ -668,7 +668,7 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
             $location['url'          ] = CRM_Utils_System::url( 'civicrm/event/register', 'reset=1&id=' . $dao->event_id );
             $location['location_type'] = $dao->location_type;
             $eventImage = '<img src="' . $config->resourceBase . 'i/contact_org.gif" alt="Organization " height="20" width="15" />';
-            $location['image'] = $eventImage;
+            $location['image'] = "'".$eventImage."'";
             $location['displayAddress'] = str_replace( '<br />', ', ', $address );
             $locations[] = $location;
         }
@@ -852,7 +852,7 @@ WHERE civicrm_event.is_active = 1
         // since the location is sharable, lets use the same loc_block_id.
         $locBlockId     = CRM_Utils_Array::value( 'loc_block_id', $eventValues );
         
-        $fieldsFix = array ( 'prefix' => array( 'title' => ts( 'Copy of ' ) ) );
+        $fieldsFix = array('prefix' => array('title' => ts('Copy of') . ' '));
         if ( !CRM_Utils_Array::value( 'is_show_location', $eventValues ) ) {
             $fieldsFix['prefix']['is_show_location'] = 0;
         }
@@ -1116,9 +1116,9 @@ WHERE civicrm_event.is_active = 1
                 }
 
 
-                CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values , false, $params );
+                CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values, false, $params );
 
-                if ( isset($values[$fields['participant_status_id']['title']]) &&
+                if ( isset( $values[$fields['participant_status_id']['title']] ) &&
                      is_numeric( $values[$fields['participant_status_id']['title']] ) ) {
                     $status = array( );
                     $status = CRM_Event_PseudoConstant::participantStatus( );
@@ -1132,11 +1132,12 @@ WHERE civicrm_event.is_active = 1
                     $values[$fields['participant_role_id']['title']] = $roles[$values[$fields['participant_role_id']['title']]];
                 }
 
-                if ( isset($values[$fields['participant_register_date']['title']]) ) {
+                if ( isset( $fields['participant_register_date']['title'] ) &&
+                     isset( $values[$fields['participant_register_date']['title']] ) ) {
                     $values[$fields['participant_register_date']['title']] = 
-                        CRM_Utils_Date::customFormat($values[$fields['participant_register_date']['title']]);
+                        CRM_Utils_Date::customFormat( $values[$fields['participant_register_date']['title']] );
                 }
-                
+
                 //handle fee_level for price set
                 if ( isset( $values[$fields['participant_fee_level']['title']] ) ) {
                     $feeLevel = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 

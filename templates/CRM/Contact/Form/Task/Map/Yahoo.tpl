@@ -97,7 +97,7 @@
             {literal}
             var data = "{/literal}<a href='{$profileURL}'>{$location.displayName}</a><br />{if !$skipLocationType}{$location.location_type}<br />{/if}{$location.address}<br /><br />Get Directions FROM:&nbsp;<input type=hidden id=to value='{$location.displayAddress}'><input id=from type=text onclick='this.focus();'/>&nbsp;<a href=\"javascript:ypopUp();\">&raquo; Go</a>";
         {/if}
-        var img  = '{$location.image}';
+        var img  = {$location.image};
         {literal}
         var marker = createYahooMarker(GeoPoint, data, img); 
         map.addOverlay(marker); 
