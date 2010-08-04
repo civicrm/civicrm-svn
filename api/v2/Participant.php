@@ -427,6 +427,7 @@ function civicrm_participant_check_params( &$params )
             return civicrm_create_error( ts( 'Participant  id is not valid' ));
         }
     }
+    require_once 'CRM/Contact/BAO/Contact.php';
     //check if contact id is valid or not
     if( CRM_Utils_Array::value( 'contact_id', $params ) ) {
         $contact = new CRM_Contact_BAO_Contact();
