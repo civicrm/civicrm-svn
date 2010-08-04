@@ -475,6 +475,11 @@ class CRM_Export_BAO_Export
         $offset   = 0;
 
         $count = -1;
+
+        // for CRM-3157 purposes
+        require_once 'CRM/Core/I18n.php';
+        $i18n =& CRM_Core_I18n::singleton();
+
         while ( 1 ) {
             $limitQuery = "{$queryString} LIMIT {$offset}, {$rowCount}";
             $dao = CRM_Core_DAO::executeQuery( $limitQuery );
@@ -600,7 +605,19 @@ class CRM_Export_BAO_Export
                                     $fldValue .= "-" . $type[1];
                                 }
                             
-                                $row[$fldValue] = $dao->$fldValue;
+                                // CRM-3157: localise country, region (both have ‘country’ context) and state_province (‘province’ context)
+                                switch ($fld) {
+                                case 'country':
+                                case 'world_region':
+                                    $row[$fldValue] = $i18n->crm_translate($dao->$fldValue, array('context' => 'country'));
+                                    break;
+                                case 'state_province':
+                                    $row[$fldValue] = $i18n->crm_translate($dao->$fldValue, array('context' => 'province'));
+                                    break;
+                                default:
+                                    $row[$fldValue] = $dao->$fldValue;
+                                    break;
+                                }
                             }
                         }
                     } else if ( array_key_exists( $field, $contactRelationshipTypes ) ) {
@@ -707,16 +724,10 @@ class CRM_Export_BAO_Export
                     $row['organization_name'] = '';
                 }
 
-                // CRM-3157: localise the output
-                // FIXME: we should move this to multilingual stack some day
-                require_once 'CRM/Core/I18n.php';
-                $i18n =& CRM_Core_I18n::singleton();
+                // CRM-3157: localise output
                 $translatable = array('preferred_communication_method', 
                                       'preferred_mail_format',
-                                      'gender',
-                                      'state_province',
-                                      'country',
-                                      'world_region');
+                                      'gender');
                 foreach ( $translatable as $column ) {
                     if ( isset( $row[$column] ) and $row[$column] ) {
                         $row[$column] = $i18n->translate( $row[$column] );
