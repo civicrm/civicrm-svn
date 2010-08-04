@@ -953,6 +953,12 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         // check for profile double opt-in and get groups to be subscribed
         require_once 'CRM/Core/BAO/UFGroup.php';
         $subscribeGroupIds = CRM_Core_BAO_UFGroup::getDoubleOptInGroupIds( $params, $contactID );
+                
+        foreach ( $addToGroups as $k ) {
+            if ( array_key_exists( $k, $subscribeGroupIds ) ) {
+                unset( $addToGroups[$k] );
+            }
+        }
         
         require_once "CRM/Contact/BAO/Contact.php";
 
