@@ -1116,9 +1116,9 @@ WHERE civicrm_event.is_active = 1
                 }
 
 
-                CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values , false, $params );
+                CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values, false, $params );
 
-                if ( isset($values[$fields['participant_status_id']['title']]) &&
+                if ( isset( $values[$fields['participant_status_id']['title']] ) &&
                      is_numeric( $values[$fields['participant_status_id']['title']] ) ) {
                     $status = array( );
                     $status = CRM_Event_PseudoConstant::participantStatus( );
@@ -1132,11 +1132,12 @@ WHERE civicrm_event.is_active = 1
                     $values[$fields['participant_role_id']['title']] = $roles[$values[$fields['participant_role_id']['title']]];
                 }
 
-                if ( isset($values[$fields['participant_register_date']['title']]) ) {
+                if ( isset( $fields['participant_register_date']['title'] ) &&
+                     isset( $values[$fields['participant_register_date']['title']] ) ) {
                     $values[$fields['participant_register_date']['title']] = 
-                        CRM_Utils_Date::customFormat($values[$fields['participant_register_date']['title']]);
+                        CRM_Utils_Date::customFormat( $values[$fields['participant_register_date']['title']] );
                 }
-                
+
                 //handle fee_level for price set
                 if ( isset( $values[$fields['participant_fee_level']['title']] ) ) {
                     $feeLevel = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
