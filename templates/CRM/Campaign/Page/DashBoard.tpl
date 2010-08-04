@@ -26,7 +26,7 @@
 {* CiviCampaign DashBoard (launch page) *}
 
 {* build the campaign selector *}
-{if $dataType eq 'campaign'}
+{if $subPageType eq 'campaign'}
 
 {if $campaigns} 
   <div class="action-link">
@@ -73,7 +73,7 @@
 </div>
 
 {* build the survey selector *}
-{elseif $dataType eq 'survey'}
+{elseif $subPageType eq 'survey'}
 
 {if $surveys} 
   <div class="action-link">
@@ -126,64 +126,38 @@
 {else}
 
  <div id="mainTabContainer" class="ui-tabs ui-widget ui-widget-content ui-corner-all">
-     <ul class="ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all">
-         <li id="campaign_view" class="crm-tab-button ui-state-active ui-corner-top ui-corner-bottom ui-tabs-selected"> 
-             <a href="#campaign"><span>&nbsp;</span>&nbsp;{ts}Campaign{/ts}&nbsp;</a> 
-	 </li>&nbsp;
-		
-	 <li id ="survey_view"  class="crm-tab-button ui-corner-top ui-corner-bottom ui-state-default" >
-             <a href="#survey"><span>&nbsp;</span>&nbsp;{ts}Survey{/ts}&nbsp;</a>
-         </li>
+     <ul class="crm-campaign-tabs-list">
+           {foreach from=$allTabs key=tabName item=tabValue}
+           <li id="tab_{$tabValue.id}" class="crm-tab-button ui-corner-bottom">
+            	<a href="{$tabValue.url}" title="{$tabValue.title}"><span></span>{$tabValue.title}</a>
+           </li>
+           {/foreach}
      </ul>
-
-    <div id="campaignData"></div>
-    <div id="surveyData"></div>
  </div>
 
  <div class="spacer"></div>
 
 {literal}
 <script type="text/javascript">
+
+//explicitly stop spinner
+function stopSpinner( ) {
+  cj('li.crm-tab-button').each(function(){ cj(this).find('span').text(' ');})	 
+}
+
 cj(document).ready( function( ) {
-
-    cj('#campaign_view').click( function( ) {
-        if ( cj('#campaign_view').hasClass('ui-state-default') ) { 
-            cj('#campaign_view').removeClass('ui-state-default').addClass('ui-state-active ui-tabs-selected');
-            cj('#survey_view').removeClass('ui-state-active ui-tabs-selected').addClass('ui-state-default');
-            cj('#surveyData').html('');
-	    
-	    //refill campaign data.
-	    buildDataView( 'campaign' );
-        }
-    });
-
-    cj('#survey_view').click( function( ) {
-        if ( cj('#survey_view').hasClass('ui-state-default') ) {
-            cj('#survey_view').removeClass('ui-state-default').addClass('ui-state-active ui-tabs-selected');
-            cj('#campaign_view').removeClass('ui-state-active ui-tabs-selected').addClass('ui-state-default');
-	    cj('#campaignData').html( '' );
-	    
-	    //refill survey data.
-	    buildDataView( 'survey' );	   
-        }
-
-    });
-
-    buildDataView( {/literal}'{$subPage}'{literal} );
+     {/literal}
+     var spinnerImage = '<img src="{$config->resourceBase}i/loading.gif" style="width:10px;height:10px"/>';
+     {literal} 
+     
+     var selectedTabIndex = {/literal}{$selectedTabIndex}{literal};
+     cj("#mainTabContainer").tabs( { 
+                                    selected: selectedTabIndex, 
+                                    spinner: spinnerImage, 
+				    cache: true, 
+				    load: stopSpinner 
+				    });
 });
-
-function buildDataView( dataType ) {
-    var dataUrl = {/literal}"{crmURL p='civicrm/campaign' h=0}"{literal};
-    dataUrl    += "&snippet=4&type=" + dataType;
-    
-    cj.ajax({
-        url      : dataUrl,
-        async    : false,
-        success  : function( html ) {
-	    cj( '#' + dataType + 'Data' ).html( html );
-        }	 
-    });
-}        
            
 </script>
 {/literal}

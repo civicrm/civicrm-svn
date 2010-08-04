@@ -50,7 +50,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
      */
     private static $_campaignActionLinks;
     private static $_surveyActionLinks;
-    private $_dataType;
+    private static $_tabs = array( 'campaign', 'survey' );
     
     /**
      * Get the action links for this page.
@@ -177,7 +177,9 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                 $surveysData[$sid] = $survey;
                 $surveysData[$sid]['campaign_id']       = $campaigns[$survey['campaign_id']];
                 $surveysData[$sid]['activity_type']     = $surveyType[$survey['activity_type_id']];
-                $surveysData[$sid]['release_frequency'] = $survey['release_frequency_interval'].' Day(s)';
+                if ( $survey['release_frequency_interval'] ) {
+                    $surveysData[$sid]['release_frequency'] = $survey['release_frequency_interval'].' Day(s)';
+                }
                 
                 $action = array_sum( array_keys( $this->surveyActionLinks( ) ) );
                 if ( $survey['is_active'] ) {
@@ -196,9 +198,20 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     }
     
     function browse( ) 
-    {
-        $this->browseSurvey( );
-        $this->browseCampaign( );
+    {        
+        $subPageType = CRM_Utils_Request::retrieve( 'type', 'String', $this );
+        if ( $subPageType ) {
+            //load the data in tabs.
+            $this->{'browse'.ucfirst( $subPageType )}( );
+        } else {
+            //build the tabs.
+            $this->buildTabs( );
+        }
+        $this->assign( 'subPageType', $subPageType );
+        
+        //give focus to proper tab.
+        $this->assign( 'selectedTabIndex', array_search( CRM_Utils_Array::value( 'subPage', $_GET, 'campaign' ), 
+                                                         self::$_tabs ) ); 
     }
     
     function run( ) 
@@ -207,18 +220,20 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
             CRM_Utils_System::permissionDenied( );
         }
         
-        $action = CRM_Utils_Request::retrieve( 'action', 'String', $this, false, 0 ); 
-        $this->assign('action', $action);
-        
-        $this->_dataType = CRM_Utils_Request::retrieve( 'type', 'String', $this );
-        $this->assign( 'dataType', $this->_dataType );
-
-        $subPage = CRM_Utils_Request::retrieve( 'subPage', 'String', $this, false, 'campaign' );
-        $this->assign( 'subPage', $subPage );
-        
         $this->browse( );
         
         parent::run();
+    }
+    
+    function buildTabs( ) 
+    {        
+        $allTabs = array( );
+        foreach ( self::$_tabs as $tab ) {
+            $allTabs[] = array( 'id'    => $tab,
+                                'title' => ucfirst( $tab ),
+                                'url'   => CRM_Utils_System::url( 'civicrm/campaign', "reset=1&type=$tab&snippet=1" ) );
+        }
+        $this->assign( 'allTabs', $allTabs );
     }
     
 }
