@@ -354,13 +354,13 @@ function createRelationship( relType, contactID, relID, rowNumber, relTypeName )
                             var html = '<a href=' + contactViewUrl + data.cid +' title="view contact record">' +  data.name +'</a>';
                             cj('#relName_' + rowNumber ).html( html );
                             html = '';
-                            html = '<a onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +', \''+ relTypeName +'\' ); return false" title="edit case role" href="#"><div class="icon edit-icon" ></div></a> &nbsp;&nbsp; <a href=' + deleteUrl + data.rel_id +' onclick = "if (confirm(\'{/literal}{ts}Are you sure you want to delete this relationship{/ts}{literal}?\') ) this.href +=\'&confirmed=1\'; else return false;"><div title="remove contact from case role" class="icon delete-icon"></div></a>';
+                            html = '<a onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +', \''+ relTypeName +'\' ); return false" title="edit case role" href="#"><div class="icon edit-icon" ></div></a> &nbsp;&nbsp; <a href=' + deleteUrl + data.rel_id +' onclick = "if (confirm(\'{/literal}{ts escape="js"}Are you sure you want to delete this relationship{/ts}{literal}?\') ) this.href +=\'&confirmed=1\'; else return false;"><div title="remove contact from case role" class="icon delete-icon"></div></a>';
                             cj('#edit_' + rowNumber ).html( html );
 
 			} else {
 			   html = '<img src="' +resourceBase+'i/edit.png" title="edit case role" onclick="createRelationship( ' + relType +','+ data.cid +', ' + data.rel_id +', ' + rowNumber +', \''+ relTypeName +'\' );">&nbsp;&nbsp;';
 			   var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
-			   var errorMsg = '{/literal}{ts}The relationship type definition for the  {literal}' + relTypeName + '{/literal} case role is not valid. Both sides of the relationship type must be an Individual or a subtype of Individual. You can review and edit relationship types at <a href="{literal}' + relTypeAdminLink + '{/literal}">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
+			   var errorMsg = '{/literal}{ts escape="js"}The relationship type definition for the  {literal}' + relTypeName + '{/literal} case role is not valid. Both sides of the relationship type must be an Individual or a subtype of Individual. You can review and edit relationship types at <a href="{literal}' + relTypeAdminLink + '{/literal}">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
 
 			   //display error message.
 			   var imageIcon = "<a href='#'  onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="icon close-icon"></div>' + '</a>';
@@ -606,7 +606,7 @@ function addRole() {
 							} else {
 							     var relTypeName = cj("#role_type :selected").text();  
 							     var relTypeAdminLink = {/literal}"{crmURL p='civicrm/admin/reltype' q='reset=1' h=0 }"{literal};
-			  				     var errorMsg = '{/literal}{ts}The relationship type definition for the  {literal}' + relTypeName + '{/literal} case role is not valid. Both sides of the relationship type must be an Individual or a subtype of Individual. You can review and edit relationship types at <a href="{literal}' + relTypeAdminLink + '{/literal}">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
+			  				     var errorMsg = '{/literal}{ts escape="js"}The relationship type definition for the  {literal}' + relTypeName + '{/literal} case role is not valid. Both sides of the relationship type must be an Individual or a subtype of Individual. You can review and edit relationship types at <a href="{literal}' + relTypeAdminLink + '{/literal}">Administer >> Option Lists >> Relationship Types</a>{/ts}{literal}.'; 
 
 			   				     //display error message.
 			   				     var imageIcon = "<a href='#'  onclick='cj( \"#restmsg\" ).hide( ); return false;'>" + '<div class="icon close-icon"></div>' + '</a>';
@@ -906,13 +906,13 @@ function checkSelection( field ) {
 
     switch ( fName )  {
         case '_qf_CaseView_next' :
-            validationMessage = '{/literal}{ts}Please select an activity set from the list.{/ts}{literal}';
+            validationMessage = '{/literal}{ts escape="js"}Please select an activity set from the list.{/ts}{literal}';
             validationField   = 'timeline_id';
-            successAction     = "confirm('{/literal}{ts}Are you sure you want to add a set of scheduled activities to this case?{/ts}{literal}');";
+            successAction     = "confirm('{/literal}{ts escape='js'}Are you sure you want to add a set of scheduled activities to this case?{/ts}{literal}');";
             break;
 
         case 'new_activity' :
-            validationMessage = '{/literal}{ts}Please select an activity type from the list.{/ts}{literal}';
+            validationMessage = '{/literal}{ts escape="js"}Please select an activity type from the list.{/ts}{literal}';
             validationField   = 'activity_type_id';
             if ( document.getElementById('activity_type_id').value == 3 ) {
                 successAction     = "window.location='{/literal}{$newActivityEmailUrl}{literal}' + document.getElementById('activity_type_id').value";            
@@ -922,23 +922,23 @@ function checkSelection( field ) {
             break;
 
         case 'case_report' :
-            validationMessage = '{/literal}{ts}Please select a report from the list.{/ts}{literal}';
+            validationMessage = '{/literal}{ts escape="js"}Please select a report from the list.{/ts}{literal}';
             validationField   = 'report_id';
             successAction     = "window.location='{/literal}{$reportUrl}{literal}' + document.getElementById('report_id').value";
             break;
  
         case '_qf_CaseView_next_merge_case' :
-            validationMessage = '{/literal}{ts}Please select a case from the list to merge with.{/ts}{literal}';
+            validationMessage = '{/literal}{ts escape="js"}Please select a case from the list to merge with.{/ts}{literal}';
             validationField   = 'merge_case_id';
             break;
         case '_qf_CaseView_next_edit_client' :
-            validationMessage = '{/literal}{ts}Please select a client for this case.{/ts}{literal}';
+            validationMessage = '{/literal}{ts escape="js"}Please select a client for this case.{/ts}{literal}';
 	    if ( cj('#contact_id').val( ) == '{/literal}{$contactID}{literal}' ) {
 	       	forceValidation = true;
-                validationMessage = '{/literal}{ts}'+clientName[0]+' is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
+                validationMessage = '{/literal}{ts 1="'+clientName[0]+'" escape="js"}%1 is already assigned to this case. Please select some other client for this case.{/ts}{literal}';
             }
             validationField   = 'change_client_id';
-	    successAction     = "confirm( '{/literal}{ts}Are you sure you want to reassign this case and all related activities and relationships to '+clientName[0]+'?{/ts}{literal}' )";
+	    successAction     = "confirm( '{/literal}{ts 1="'+clientName[0]+'" escape="js"}Are you sure you want to reassign this case and all related activities and relationships to %1?{/ts}{literal}' )";
             break;   	    
     }	
 
