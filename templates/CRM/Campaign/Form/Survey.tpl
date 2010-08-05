@@ -61,19 +61,29 @@
            <td>{$form.profile_id.html}
 	   <div class="description">{ts}Select the Profile for Survey.{/ts}</div></td>
        </tr>
+      
+      
+   
+    	   <tr id='showoption' >
+            <td colspan="2">
+            <table class="form-layout-compressed">
+                {* Conditionally show table for setting up selection options - for field types = radio, checkbox or select *}
+                {include file="CRM/Campaign/Form/ResultOptions.tpl"}
+            </table>
+         </tr>
+
+
+
        <tr class="crm-campaign-survey-form-block-instructions">
            <td class="label">{$form.instructions.label}</td>
            <td>{$form.instructions.html}
 	   <div class="description">{ts}Instruction for volunteers.{/ts}</div></td>
        </tr>
-       <tr class="crm-campaign-survey-form-block-release_frequency_unit">
-           <td class="label">{$form.release_frequency_unit.label}</td>
-           <td>{$form.release_frequency_unit.html}
-           &nbsp;&nbsp; 
-           <span class='label'>{$form.release_frequency_interval.label}</span>
-           <span>{$form.release_frequency_interval.html}</span>
-	   <div class="description">{ts}Release frequency unit and interval for Survey.{/ts}</div> 
-
+       <tr class="crm-campaign-survey-form-block-release_frequency">
+           <td class="label">{$form.release_frequency.label}</td>
+           <td>{$form.release_frequency.html}
+ 	   <div class="description">{ts}Release frequency interval for this survey (in days).{/ts}</div> 
+           </td>
        </tr>
        <tr class="crm-campaign-survey-form-block-max_number_of_contacts">
            <td class="label">{$form.max_number_of_contacts.label}</td>
@@ -100,3 +110,4 @@
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 
 </div>
+
