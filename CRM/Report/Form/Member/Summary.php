@@ -51,7 +51,7 @@ class CRM_Report_Form_Member_Summary extends CRM_Report_Form {
     protected $_add2groupSupported = false;
     
     protected $_customGroupExtends = array( 'Membership' );
-    protected $_customGroupGroupBy = true;
+    protected $_customGroupGroupBy = false;
     function __construct( ) {
         // UI for selecting columns to appear in the report list
         // array conatining the columns, group_bys and filters build and provided to Form
