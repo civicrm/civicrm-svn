@@ -2295,8 +2295,7 @@ SELECT id, cache_date, saved_search_id, children
 FROM   civicrm_group
 WHERE  id IN ( $groupIDs )
   AND  ( saved_search_id != 0
-   OR    saved_search_id IS NOT NULL
-   OR    children IS NOT NULL )
+   OR    saved_search_id IS NOT NULL )
 ";
         $group = CRM_Core_DAO::executeQuery( $sql );
         $ssWhere = array(); 
