@@ -728,7 +728,7 @@ function addTags() {
                 });
                 
                 var postUrl = {/literal}"{crmURL p='civicrm/case/ajax/processtags' h=0 }"{literal}; 
-                var data = 'case_id=' + caseID + '&tag=' + tagsChecked + '&key=' + {/literal}"{crmKey name='civicrm/ajax/activity/convert'}"{literal};
+                var data = 'case_id=' + caseID + '&tag=' + tagsChecked + '&key=' + {/literal}"{crmKey name='civicrm/case/ajax/processtags'}"{literal};
 
                 cj.ajax({ type: "POST", url: postUrl, data: data, async: false });
                 cj(this).dialog("close"); 
