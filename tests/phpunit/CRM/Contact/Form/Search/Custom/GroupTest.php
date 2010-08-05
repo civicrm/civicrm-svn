@@ -93,12 +93,11 @@ class CRM_Contact_Form_Search_Custom_GroupTest extends CiviUnitTestCase
         $sql = $obj->all( );
         $dao = CRM_Core_DAO::executeQuery( $sql );
         /**
-        echo "Count: $count, OBJ: ", $obj->count( ) . ", " . $obj->all( ) . ", SQL: $sql\n";
-        exit( );
+        echo "Count: $count, OBJ: ", $obj->count( ) . "\n";
         while ( $dao->fetch( ) ) {
             echo "{$dao->contact_id}, {$dao->contact_type}, {$dao->sort_name}, {$dao->group_names}\n";
         }
-        */
+        **/
         $this->assertEquals( $count, $obj->count( ),
                              'In line ' . __LINE__  );
 
