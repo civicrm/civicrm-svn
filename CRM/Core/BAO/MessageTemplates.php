@@ -402,19 +402,21 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
 
         if ($params['contactId']) {
             $contactParams = array('contact_id' => $params['contactId']);
+            $returnProperties = array( );
 
             if ( isset( $tokens['text']['contact'] ) ) {
-                foreach ( $tokens['text']['contact'] as $name => $dontCare ) {
-                    $contactParams["return.{$name}"] = 1;
+                foreach ( $tokens['text']['contact'] as $name ) {
+                    $returnProperties[$name] = 1;
                 }
             }
 
             if ( isset( $tokens['html']['contact'] ) ) {
-                foreach ( $tokens['html']['contact'] as $name => $dontCare ) {
-                    $contactParams["return.{$name}"] = 1;
+                foreach ( $tokens['html']['contact'] as $name ) {
+                    $returnProperties[$name] = 1;
                 }
             }
-            $contact =& civicrm_contact_get($contactParams);
+            list( $contact ) = $mailing->getDetails($contactParams, $returnProperties, false );
+            $contact = $contact[$contactId];
         }
 
         $subject = CRM_Utils_Token::replaceDomainTokens($subject, $domain, true, $tokens['text'], true);
