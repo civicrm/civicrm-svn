@@ -416,7 +416,10 @@ class CRM_Core_BAO_MessageTemplates extends CRM_Core_DAO_MessageTemplates
                 }
             }
             list( $contact ) = $mailing->getDetails($contactParams, $returnProperties, false );
-            $contact = $contact[$contactId];
+            crm_core_error::debug('$contact', $contact);
+            $contact = $contact[$params['contactId']];
+            
+            
         }
 
         $subject = CRM_Utils_Token::replaceDomainTokens($subject, $domain, true, $tokens['text'], true);
