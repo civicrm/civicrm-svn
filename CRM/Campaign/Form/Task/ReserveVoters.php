@@ -103,7 +103,7 @@ class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
         require_once 'CRM/Core/PseudoConstant.php';
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $statusIds = array( );
-        foreach ( array( 'Scheduled', 'Completed' ) as $name ) {
+        foreach ( array( 'Scheduled' ) as $name ) {
             if ( $statusId = array_search( $name, $activityStatus ) ) $statusIds[] = $statusId; 
         }
         $this->_surveyActivities = CRM_Campaign_BAO_Survey::getSurveyActivities( $this->_surveyId, 

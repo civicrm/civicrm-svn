@@ -101,7 +101,7 @@ class CRM_Campaign_Form_Task_ReleaseVoters extends CRM_Campaign_Form_Task {
         require_once 'CRM/Core/PseudoConstant.php';
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $statusIds = array( );
-        foreach ( array( 'Scheduled', 'Completed' ) as $name ) {
+        foreach ( array( 'Scheduled' ) as $name ) {
             if ( $statusId = array_search( $name, $activityStatus ) ) $statusIds[] = $statusId; 
         }
         //fetch the target survey activities.

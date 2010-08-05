@@ -396,10 +396,8 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         
         $this->fixFormValues( );
         
-        $this->addGroupsParams( );
-
-        //pass voter search operation.
-        $this->_formValues['campaign_search_voter_for'] = $this->_operation;
+        //format params as per task.
+        $this->formatParams( );
         
         require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
@@ -454,46 +452,46 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         $controller->run(); 
     }
 
-    function addGroupsParams( ) {
-        //to conduct interview activity status should be scheduled.
-        if ( $this->_operation == 'interview' ) {
-            $activityStatus    = CRM_Core_PseudoConstant::activityStatus( 'name' );
-            if ( $scheduledStatusId = array_search( 'Scheduled', $activityStatus ) ) {
-                $this->_formValues['survey_status_id'] = $scheduledStatusId; 
-            }
-        }
+    function formatParams( ) 
+    {
         $interviewerId = CRM_Utils_Array::value( 'survey_interviewer_id', $this->_formValues ); 
         if ( !$interviewerId ) {
             $session = CRM_Core_Session::singleton( );
             $this->_formValues['survey_interviewer_id'] = $interviewerId = $session->get( 'userID' );
         }
         $this->set( 'interviewerId', $interviewerId );
-        if ( $this->_operation == 'reserve' ) unset( $this->_formValues['survey_interviewer_id'] ); 
         
-        //apply group clause only for voter reservation.
-        if ( $this->_operation != 'reserve' ) return;  
-        
-        if ( CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) ) {
-            $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',  
-                                                       $this->_formValues['campaign_survey_id'], 'campaign_id');
-            if ( $campaignId ) {
-                require_once 'CRM/Campaign/BAO/Campaign.php';
-                $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
-                
-                foreach( $campaignGroups as $id => $group ) {
-                    if ( $group['entity_table'] == 'civicrm_group' ) {
-                        $this->_formValues['group'][$group['entity_id']] = 1;
+        if ( $this->_operation == 'reserve' ) {
+            if ( CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) ) {
+                $campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',  
+                                                           $this->_formValues['campaign_survey_id'], 
+                                                           'campaign_id');
+                if ( $campaignId ) {
+                    require_once 'CRM/Campaign/BAO/Campaign.php';
+                    $campaignGroups = CRM_Campaign_BAO_Campaign::getCampaignGroups($campaignId);
+                    foreach( $campaignGroups as $id => $group ) {
+                        if ( $group['entity_table'] == 'civicrm_group' ) {
+                            $this->_formValues['group'][$group['entity_id']] = 1;
+                        }
                     }
                 }
+                
+                //carry servey id w/ this.
+                $this->set( 'surveyId', $this->_formValues['campaign_survey_id'] );
+                unset( $this->_formValues['campaign_survey_id'] );
             }
-            
-            //carry servey id w/ this.
-            $this->set( 'surveyId', $this->_formValues['campaign_survey_id'] );
-            unset( $this->_formValues['campaign_survey_id'] );
-            unset( $this->_formValues['survey_status_id'] );
+            unset( $this->_formValues['survey_interviewer_id'] );
+        } else if ( $this->_operation == 'interview' || 
+                    $this->_operation == 'release' ) {
+            //to conduct interview / release activity status should be scheduled.
+            $activityStatus    = CRM_Core_PseudoConstant::activityStatus( 'name' );
+            if ( $scheduledStatusId = array_search( 'Scheduled', $activityStatus ) ) {
+                $this->_formValues['survey_status_id'] = $scheduledStatusId; 
+            }
         }
         
-        
+        //pass voter search operation.
+        $this->_formValues['campaign_search_voter_for'] = $this->_operation;
     }
     
     function fixFormValues( ) 
