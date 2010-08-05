@@ -192,7 +192,7 @@ class CRM_Contact_Form_Task extends CRM_Core_Form
                 }
                 if ( ! empty( $insertString ) ) {
                     $string = implode( ',', $insertString );
-                    $sql = "INSERT INTO {$form->_componentTable} ( contact_id ) VALUES $string";
+                    $sql = "REPLACE INTO {$form->_componentTable} ( contact_id ) VALUES $string";
                     CRM_Core_DAO::executeQuery( $sql );
                 }
                 $dao->free( );
