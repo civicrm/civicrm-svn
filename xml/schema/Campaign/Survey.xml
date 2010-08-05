@@ -58,6 +58,7 @@
     <fieldName>activity_type_id</fieldName>
     <add>3.2</add>
   </index>
+
   <field>
     <name>recontact_interval</name>
     <type>text</type>
@@ -71,27 +72,18 @@
   <field>
     <name>instructions</name>
     <type>text</type>
-    <comment>Script instructions for volunteers to use for the campaign.</comment>
+    <comment>Script instructions for volunteers to use for the survey.</comment>
     <htmlType>textarea</htmlType>
     <rows>20</rows>
     <cols>80</cols>
     <add>3.2</add>
   </field>
-  
-  <field>
-    <name>release_frequency_unit</name>
-    <type>enum</type> 
-    <values>day,week,month,year</values>
-    <default>NULL</default>
-    <comment>Time units for recurrence of release.</comment>
-    <add>3.2</add>
-  </field>
 
   <field>
-    <name>release_frequency_interval</name>
+    <name>release_frequency</name>
     <type>int unsigned</type>
     <default>NULL</default>
-    <comment>Number of time units for recurrence of release.</comment>
+    <comment>Number of days for recurrence of release.</comment>
     <add>3.2</add>
   </field>
   
@@ -169,6 +161,14 @@
     <name>last_modified_date</name>
     <type>datetime</type>
     <comment>Date and time that Survey was edited last time.</comment>
+    <add>3.2</add>
+  </field>
+
+  <field>
+    <name>result_id</name>
+    <type>int unsigned</type>
+    <default>NULL</default>
+    <comment>Used to store option group id.</comment>
     <add>3.2</add>
   </field>
 </table>

@@ -42,6 +42,10 @@
 	    <td class="label">{$form.title.label}</td>
 	    <td class="view-value">{$form.title.html}</td>
 	</tr>
+	<tr class="crm-campaign-form-block-campaign_type_id">
+	    <td class="label">{$form.campaign_type_id.label}</td>
+	    <td class="view-value">{$form.campaign_type_id.html}</td>
+	</tr>
 	<tr class="crm-campaign-form-block-description">
 	    <td class="label">{$form.description.label}</td>
 	    <td class="view-value">{$form.description.html}</td>
@@ -58,10 +62,6 @@
 	<tr class="crm-campaign-form-block-end_date">
 	    <td class="label">{$form.end_date.label}</td>
 	    <td class="view-value">{include file="CRM/common/jcalendar.tpl" elementName=end_date}</td>
-	</tr>
-	<tr class="crm-campaign-form-block-campaign_type_id">
-	    <td class="label">{$form.campaign_type_id.label}</td>
-	    <td class="view-value">{$form.campaign_type_id.html}</td>
 	</tr>
 	<tr class="crm-campaign-form-block-status_id">
 	    <td class="label">{$form.status_id.label}</td>
