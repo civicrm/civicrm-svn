@@ -44,11 +44,6 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
 {
 
     /**
-     * The option group name
-     */
-    const OPTION_GROUP_NAME = 'system_extensions';
-
-    /**
      * The action links that we need to display for the browse screen
      *
      * @var array
@@ -66,13 +61,12 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
     function preProcess( )
     {
 
-        require_once 'CRM/Core/Config.php';
+        require_once 'CRM/Core/Extensions.php';
 
-        $extensions = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', self::OPTION_GROUP_NAME, 'id', 'name');
+        $ext = new CRM_Core_Extensions();
+        $extensions = $ext->getExtensions();
 
-        if( is_null($extensions) ) {
-            CRM_Core_Error::fatal( 'Cannot retrieve option group for extensions (' . self::OPTION_GROUP_NAME . '). Make sure the upgrade process was correct.' );
-        }
+
 
 //        CRM_Utils_System::setTitle(ts('CiviCRM Extensions');
             
@@ -150,8 +144,7 @@ class CRM_Admin_Page_Extensions extends CRM_Core_Page_Basic
     {
         require_once 'CRM/Core/OptionValue.php';
         
-        $groupParams = array( 'name' => self::OPTION_GROUP_NAME );
-        $optionValue = CRM_Core_OptionValue::getRows($groupParams, $this->links(), 'component_id,weight');
+
         $returnURL = CRM_Utils_System::url( "civicrm/admin/options/extensions",
                                             "reset=1" );
         $filter    = "option_group_id = 35";
