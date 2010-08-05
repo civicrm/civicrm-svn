@@ -50,7 +50,6 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
      */
     private static $_campaignActionLinks;
     private static $_surveyActionLinks;
-    private static $_tabs = array( 'campaign', 'survey' );
     
     /**
      * Get the action links for this page.
@@ -198,7 +197,10 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     }
     
     function browse( ) 
-    {        
+    {   
+        $this->_tabs = array( 'campaign' => ts( 'Campaign' ), 
+                              'survey'   => ts( 'Survey' ) );
+        
         $subPageType = CRM_Utils_Request::retrieve( 'type', 'String', $this );
         if ( $subPageType ) {
             //load the data in tabs.
@@ -211,7 +213,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         
         //give focus to proper tab.
         $this->assign( 'selectedTabIndex', array_search( CRM_Utils_Array::value( 'subPage', $_GET, 'campaign' ), 
-                                                         self::$_tabs ) ); 
+                                                         array_keys( $this->_tabs ) ) ); 
     }
     
     function run( ) 
@@ -228,11 +230,12 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
     function buildTabs( ) 
     {        
         $allTabs = array( );
-        foreach ( self::$_tabs as $tab ) {
-            $allTabs[] = array( 'id'    => $tab,
-                                'title' => ucfirst( $tab ),
-                                'url'   => CRM_Utils_System::url( 'civicrm/campaign', "reset=1&type=$tab&snippet=1" ) );
+        foreach ( $this->_tabs as $name => $title ) {
+            $allTabs[] = array( 'id'    => $name,
+                                'title' => $title,
+                                'url'   => CRM_Utils_System::url( 'civicrm/campaign', "reset=1&type=$name&snippet=1" ) );
         }
+        
         $this->assign( 'allTabs', $allTabs );
     }
     
