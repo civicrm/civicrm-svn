@@ -25,3 +25,11 @@ INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES
     ( @domainID, 'civicrm/contact/deduperules&reset=1', '{ts escape="sql"}Find and Merge Duplicate Contacts{/ts}','Find and Merge Duplicate Contacts', 'administer dedupe rules,merge duplicate contacts', 'OR', @nav_c, '1', NULL, @nav_c_wt+1 );
+
+--CRM-6565
+ALTER TABLE civicrm_activity
+ADD INDEX UI_source_record_id(source_record_id),
+ADD INDEX UI_activity_type_id (activity_type_id),
+ADD INDEX index_medium_id (medium_id),
+ADD INDEX index_is_current_revision (is_current_revision),
+ADD INDEX index_is_deleted (is_deleted);

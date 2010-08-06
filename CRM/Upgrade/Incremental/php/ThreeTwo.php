@@ -254,5 +254,7 @@ UPDATE  civicrm_membership_status
         require_once 'CRM/Utils/File.php';
         CRM_Utils_File::restrictAccess($config->uploadDir);
         CRM_Utils_File::restrictAccess($config->configAndLogDir);
+        $upgrade = new CRM_Upgrade_Form;
+        $upgrade->processSQL($rev);
     }
   }

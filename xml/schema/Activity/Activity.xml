@@ -41,6 +41,7 @@
        <name>UI_source_contact_id</name>
        <fieldName>source_contact_id</fieldName>       
        <add>2.0</add>
+       <drop>3.2</drop>
   </index>
 
   <field>
@@ -315,6 +316,7 @@
        <name>UI_original_id</name>
        <fieldName>original_id</fieldName>
        <add>2.2</add>
+       <drop>3.2</drop>
   </index>    
   <field>
        <name>is_deleted</name>
