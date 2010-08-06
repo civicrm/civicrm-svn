@@ -73,7 +73,7 @@
 	    {/literal}
 	    {if $location.lat}
 		var point  = new GLatLng({$location.lat},{$location.lng});
-		{if $location.image}
+		{if $location.image && ( $location.marker_class neq 'Event' ) }
  		  var image = '{$location.image}';
 		{else}
                  {if $location.marker_class eq 'Individual'}
