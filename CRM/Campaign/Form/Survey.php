@@ -92,6 +92,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $url     = CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=survey'); 
         $session->pushUserContext( $url );
 
+        if ( $this->_surveyId ) {
+            $this->_resultId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $this->_surveyId, 'result_id' ); 
+        } 
+
         $this->assign( 'action', $this->_action );
     }
     
@@ -138,6 +142,9 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                         $defaults['option_weight['.$i.']'] = $opValue['weight'];
                         if ( CRM_Utils_Array::value( $opValue['value'], $recontactInterval) ) {
                             $defaults['option_interval['.$i.']'] = $recontactInterval[$opValue['value']];
+                        }
+                        if ( CRM_Utils_Array::value('is_default', $opValue) ) {
+                            $defaults['default_option'] = $i;   
                         }
                         $i++;
                     }
@@ -206,24 +213,28 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $this->add('select', 'profile_id', ts('Select Profile'), 
                    array( '' => ts('- select -')) + $customProfiles );
 
-        
-        if ( $this->_surveyId ) {
-            $params = array( 'id' => $this->_surveyId );
-            CRM_Campaign_BAO_Survey::retrieve( $params, $defaults );
-            if ( $defaults['result_id'] ) {
-                $this->_resultId = $defaults['result_id'];
-            }
-        } 
 
         // form fields of Custom Option rows
         $defaultOption = array();
         require_once 'CRM/Core/ShowHideBlocks.php';
         $_showHide = new CRM_Core_ShowHideBlocks('','');
+        
+        $showBlockDefault = 2;
+        if ( $this->_resultId ) {
+            require_once 'CRM/Core/OptionValue.php';
+            $values = array( );
+            $groupParams = array( 'id' => $this->_resultId );
+            CRM_Core_OptionValue::getValues($groupParams, $values);
+            if ( !empty($values) ) {
+                $showBlockDefault = count($values);
+            }
+        }
+        
         for($i = 1; $i <= self::NUM_OPTION; $i++) {
             
             //the show hide blocks
             $showBlocks = 'optionField_'.$i;
-            if ($i > 2) {
+            if ($i > $showBlockDefault) {
                 $_showHide->addHide($showBlocks);
                 if ($i == self::NUM_OPTION)
                     $_showHide->addHide('additionalOption');
