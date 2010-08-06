@@ -972,6 +972,7 @@ WHERE civicrm_event.is_active = 1
     static function sendMail( $contactID, &$values, $participantId, $isTest = false, $returnMessageText = false ) 
     {
         require_once 'CRM/Core/BAO/UFGroup.php';
+        
         $template = CRM_Core_Smarty::singleton( );
         $gIds = array(
                       'custom_pre_id' => $values['custom_pre_id'],
@@ -1027,8 +1028,8 @@ WHERE civicrm_event.is_active = 1
                     $postProfileID = $values['additional_custom_post_id'];
                 }
                 
-                self::buildCustomDisplay( $preProfileID, 'customPre' , $contactID, $template, $participantId, $isTest );
-                self::buildCustomDisplay( $postProfileID, 'customPost', $contactID, $template, $participantId, $isTest );
+                self::buildCustomDisplay( $preProfileID, 'customPre' , $contactID, $template, $participantId, $isTest, null, &$values );
+                self::buildCustomDisplay( $postProfileID, 'customPost', $contactID, $template, $participantId, $isTest, null, &$values );
 
                 $sendTemplateParams = array(
                     'groupName' => 'msg_tpl_workflow_event',
@@ -1079,7 +1080,7 @@ WHERE civicrm_event.is_active = 1
      * @return None  
      * @access public  
      */ 
-    function buildCustomDisplay( $gid, $name, $cid, &$template, $participantId, $isTest, $isCustomProfile = false ) 
+    function buildCustomDisplay( $gid, $name, $cid, &$template, $participantId, $isTest, $isCustomProfile = false, $profileGroups = null ) 
     {  
         if ( $gid ) {
             require_once 'CRM/Core/BAO/UFGroup.php';
@@ -1115,9 +1116,13 @@ WHERE civicrm_event.is_active = 1
                     $groupTitles[ $name."_grouptitle" ] = $groupTitle;
                 }
 
-
+                if ( CRM_Utils_Array::value( 'group', $profileGroups ) ) {
+                    $groups = implode(', ', $profileGroups['group'] );
+                    $values[$fields['group']['title']] = $groups;
+                } 
+                
                 CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values, false, $params );
-
+                
                 if ( isset( $values[$fields['participant_status_id']['title']] ) &&
                      is_numeric( $values[$fields['participant_status_id']['title']] ) ) {
                     $status = array( );
@@ -1448,8 +1453,7 @@ WHERE  id = $cfID
                 $isCustomProfile = true;
                 $i = 1;
                 foreach ( $additionalIDs as $pId => $cId ) {
-                    list( $profilePre, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_pre_id'], 'additionalCustomPre',
-                                                             $cId, $template, $pId, $isTest, $isCustomProfile );
+                    list( $profilePre, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_pre_id'], 'additionalCustomPre', $cId, $template, $pId, $isTest, $isCustomProfile );
                     if ( $profilePre ) {
                         $customProfile[$i]['additionalCustomPre'] =  $profilePre;
                         $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );

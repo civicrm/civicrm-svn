@@ -450,8 +450,22 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         }
         
         $payment = $registerByID = $primaryCurrencyID = $contribution = null;
+        $groups = null;
         foreach ( $params as $key => $value ) {
+            $group = array( );
+            if ( CRM_Utils_Array::value( 'group', $params[$key] ) ) {
+                foreach ( $params[$key]['group'] as $k => $v ) {
+                    if ( !$v ) {
+                        continue;
+                    }
+                    $group[] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $k , 'title' ); 
+                }
+            } 
+            
             $this->_values['params'] = array( );
+            if ( $group ) {
+                $this->_values['group'] = $group;
+            }
             $this->fixLocationFields( $value, $fields );
             //unset the billing parameters if it is pay later mode
             //to avoid creation of billing location
@@ -626,7 +640,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             
             $this->confirmPostProcess( $contactID, $contribution, $payment );
         }
-
         //handle if no additional participant.
         if ( !$registerByID ) {
             $registerByID = $this->get('registerByID');
