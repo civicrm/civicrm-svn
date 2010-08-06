@@ -37,7 +37,7 @@
              {foreach from=$readOnlyFields item=fTitle key=fName}
 	        <th>{$fTitle}</th>
 	     {/foreach}
-	     
+	     <th>{ts}Note{/ts}</th>
 	     {if $hasResultField}
 	     	<th>{ts}Result{/ts}</th> 
 	     {/if}
@@ -56,6 +56,8 @@
 	    {foreach from=$readOnlyFields item=fTitle key=fName}
 	       <td class='name'>{$voterDetails.$voterId.$fName}</td>
 	    {/foreach}
+
+	    <td class='note'>{$form.field.$voterId.note.html}</td>
 
 	    {* do check for profile fields *}
 	    {assign var=surveyFieldCount value=$surveyFields|@count}
@@ -148,6 +150,7 @@
 	data['activity_type_id'] = {/literal}{$surveyTypeId}{literal};
 	data['activity_id']      = activityId;
 	data['result']           = cj( '#field_' + voterId + '_result' ).val( ); 
+	data['note']             = cj( '#field_' + voterId + '_note' ).val( );
 
 	var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=registerInterview' }"{literal}	          
 	

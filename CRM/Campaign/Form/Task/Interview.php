@@ -228,6 +228,9 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                 $this->add( 'select', "field[$contactId][result]", ts('Result'), 
                             array( '' => ts('- select -') ) + $allOptions );
             }
+
+            $this->add( 'text', "field[{$contactId}][note]", ts('Note') );
+            
         }
         $this->assign( 'surveyFields', $this->_surveyFields );
         
@@ -321,6 +324,9 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $activity->find( true );
         $activity->activity_date_time = date( 'Ymdhis' );
         $activity->status_id = $statusId;
+        if ( CRM_Utils_Array::value( 'details', $params ) ) {
+            $activity->details = $params['details'];
+        }
         if ( $result = CRM_Utils_Array::value( 'result', $params ) ) {
             $activity->result = $result;
         }

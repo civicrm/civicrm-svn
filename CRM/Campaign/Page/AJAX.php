@@ -47,6 +47,7 @@ class CRM_Campaign_Page_AJAX
         $activityId = CRM_Utils_Array::value( 'activity_id', $_POST );
         $params     = array( 'voter_id'         => $voterId,
                              'activity_id'      => $activityId,
+                             'details'          => CRM_Utils_Array::value( 'note',             $_POST ),
                              'result'           => CRM_Utils_Array::value( 'result',           $_POST ),
                              'interviewer_id'   => CRM_Utils_Array::value( 'interviewer_id',   $_POST ),
                              'activity_type_id' => CRM_Utils_Array::value( 'activity_type_id', $_POST ) );
