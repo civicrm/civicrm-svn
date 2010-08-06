@@ -77,8 +77,8 @@
                 {assign var=n value=$field.name}
 		<td class="compressed">
                 {if ( $fields.$n.data_type eq 'Date') or 
-		    ( $n eq 'thankyou_date' ) or ( $n eq 'cancel_date' ) or ( $n eq 'receipt_date' )}
-                   {include file="CRM/common/jcalendar.tpl" elementName=$n elementIndex=$voterId batchUpdate=1}</td>
+		    ( $n eq 'thankyou_date' ) or ( $n eq 'cancel_date' ) or ( $n eq 'receipt_date' ) or (  $n eq 'activity_date_time') }
+                    {include file="CRM/common/jcalendar.tpl" elementName=$fieldName elementIndex=$voterId batchUpdate=1}
                 {else}
                    {$form.field.$voterId.$n.html}
                 {/if}

@@ -207,20 +207,22 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             CRM_Core_Error::statusBounce( ts( 'Oops, It looks like there is no result field or profile configured to conduct voter interview.' ) );
         }
         
+        $exposedSurveyFields = array( );
+
         //build all fields.
         foreach ( $this->_contactIds as $contactId ) {
             //build the profile fields.
             foreach ( $this->_surveyFields as $name => $field ) {
                 if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID( $name ) ) {
                     $customValue = CRM_Utils_Array::value( $customFieldID, $customFields );
+                    // allow custom fields from profile which are having
+                    // the activty type same of that selected survey.
                     if ( ( $this->_surveyTypeId == $customValue['extends_entity_column_value'] ) ||
                          CRM_Utils_System::isNull( $customValue['extends_entity_column_value'] ) ) {
                         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $contactId );
+                        $exposedSurveyFields[$name] = $field;
                     }
-                } else {
-                    // handle non custom fields
-                    CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $contactId );
-                }
+                } 
             }
             
             //build the result field.
@@ -232,7 +234,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             $this->add( 'text', "field[{$contactId}][note]", ts('Note') );
             
         }
-        $this->assign( 'surveyFields', $this->_surveyFields );
+        $this->assign( 'surveyFields', $exposedSurveyFields );
         
         $this->addButtons( array(
                                 

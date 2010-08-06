@@ -999,12 +999,17 @@ class CRM_Core_Form extends HTML_QuickForm_Page {
                 if ( $timeFormat == 1 ) {
                     $show24Hours = false;
                 } 
+
+                $className    = CRM_Utils_System::getClassName($this);
+                $checkClasses = array( 'CRM_Contact_Form_Task_Batch',
+                                       'CRM_Contribute_Form_Task_Batch',
+                                       'CRM_Event_Form_Task_Batch',
+                                       'CRM_Member_Form_Task_Batch',
+                                       'CRM_Activity_Form_Task_Batch',
+                                       'CRM_Campaign_Form_Task_Interview' );
+                
                 $elemetName = $name;
-                if( is_a($this, 'CRM_Contact_Form_Task_Batch') 
-                	|| is_a($this, 'CRM_Contribute_Form_Task_Batch') 
-                	|| is_a($this, 'CRM_Event_Form_Task_Batch') 
-                	|| is_a($this, 'CRM_Member_Form_Task_Batch')
-                    || is_a($this, 'CRM_Activity_Form_Task_Batch')) { 
+                if( $className && in_array($className, $checkClasses) ) { 
                 	$elemetName  = substr( $name, 0, $name.length - 1);
                 	$elemetName .= '_time]' ;
 				}else {
