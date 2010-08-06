@@ -47,6 +47,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
     protected $_mapperLocType;
     protected $_mapperPhoneType;
     protected $_mapperImProvider;
+    protected $_mapperWebsiteTypes;
     protected $_mapperRelated;
     protected $_mapperRelatedContactType;
     protected $_mapperRelatedContactDetails;
@@ -105,12 +106,14 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
     function __construct( &$mapperKeys, $mapperLocType = null, $mapperPhoneType = null, 
                           $mapperImProvider = null, $mapperRelated = null, $mapperRelatedContactType=null,
                           $mapperRelatedContactDetails = null, $mapperRelatedContactLocType = null, 
-                          $mapperRelatedContactPhoneType = null, $mapperRelatedContactImProvider = null) 
+                          $mapperRelatedContactPhoneType = null, $mapperRelatedContactImProvider = null,
+                          $mapperWebsiteTypes = null ) 
     {
         parent::__construct();
         $this->_mapperKeys =& $mapperKeys;
         $this->_mapperLocType =& $mapperLocType;
         $this->_mapperPhoneType =& $mapperPhoneType;
+        $this->_mapperWebsiteTypes = $mapperWebsiteTypes;
         // get IM service provider type id for contact
         $this->_mapperImProvider =& $mapperImProvider;
         $this->_mapperRelated =& $mapperRelated;
@@ -181,6 +184,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         $this->setActiveFields( $this->_mapperKeys );
         $this->setActiveFieldLocationTypes( $this->_mapperLocType );
         $this->setActiveFieldPhoneTypes( $this->_mapperPhoneType );
+        $this->setActiveFieldWebsiteTypes( $this->_mapperWebsiteTypes );
         //set active fields of IM provider of contact
         $this->setActiveFieldImProviders( $this->_mapperImProvider );
 
@@ -501,7 +505,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         
         //format common data, CRM-4062
         $this->formatCommonData( $params, $formatted, $contactFields );
-        
+                
         $relationship = false;
         $createNewContact = true;
         // Support Match and Update Via Contact ID

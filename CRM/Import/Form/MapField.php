@@ -360,6 +360,10 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
 
         $phoneTypes = CRM_Core_PseudoConstant::phoneType();
         $imProviders = CRM_Core_PseudoConstant::IMProvider();
+        $websiteTypes = CRM_Core_PseudoConstant::websiteType( );
+        
+        $sel2['url']  = $websiteTypes;
+
         foreach ($this->_location_types as $key => $value) {
             $sel3['phone'][$key] =& $phoneTypes;
             //build array for IM service provider type for contact
@@ -471,7 +475,9 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                 }
                 
             } else {
-                if ($hasLocationTypes[$key]) {
+                if ( $key == 'url' ) {
+                    $sel2[$key] = $websiteTypes;
+                } else if ($hasLocationTypes[$key]) {
                     $sel2[$key] = $this->_location_types;
                 } else {
                     $sel2[$key] = null;
@@ -722,11 +728,13 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
         $mapperLocType      = array();
         $mapperPhoneType    = array();
         $mapperImProvider   = array();
-        
+        $mapperWebsiteTypes = array();
+
         $locations = array();
         
         $phoneTypes = CRM_Core_PseudoConstant::phoneType();
         $imProviders = CRM_Core_PseudoConstant::IMProvider();
+        $websiteTypes = CRM_Core_PseudoConstant::websiteType( );
 
         for ( $i = 0; $i < $this->_columnCount; $i++ ) {
             $mapper[$i]     = $this->_mapperFields[$mapperKeys[$i][0]];
@@ -743,15 +751,22 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                             ?   $this->_location_types[$mapperLocType[$i]]
                             :   null;
             // to store phone_type id and provider id seperately, CRM-3140
-            if ( CRM_Utils_Array::value($i,$mapperKeysMain) == 'phone' ) {
+            if ( CRM_Utils_Array::value( $i,$mapperKeysMain ) == 'url' ) {
+                $mapperWebsiteTypes[$i] = $websiteTypes[$mapperKeys[$i][1]];
+                $mapperPhoneType[$i]  = null;
+                $mapperImProvider[$i] = null;
+            } else if ( CRM_Utils_Array::value($i,$mapperKeysMain) == 'phone' ) {
                 $mapperPhoneType[$i]  = $phoneTypes[$mapperKeys[$i][2]];
                 $mapperImProvider[$i] = null;
+                $mapperWebsiteTypes[$i] = null;
             } else if ( CRM_Utils_Array::value($i,$mapperKeysMain) == 'im' ) {
                 $mapperImProvider[$i] = $imProviders[$mapperKeys[$i][2]];
                 $mapperPhoneType[$i]  = null;
+                $mapperWebsiteTypes[$i] = null;
             } else {
                 $mapperPhoneType[$i]  = null;
                 $mapperImProvider[$i] = null;
+                $mapperWebsiteTypes[$i] = null;
             }
 
             //relationship info
@@ -919,9 +934,10 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
         }
         
         $parser = new CRM_Import_Parser_Contact(  $mapperKeysMain, $mapperLocType, $mapperPhoneType, 
-                                                   $mapperImProvider, $related, $relatedContactType, 
-                                                   $relatedContactDetails, $relatedContactLocType, 
-                                                   $relatedContactPhoneType, $relatedContactImProvider );
+                                                  $mapperImProvider, $related, $relatedContactType, 
+                                                  $relatedContactDetails, $relatedContactLocType, 
+                                                  $relatedContactPhoneType, $relatedContactImProvider,
+                                                  $mapperWebsiteTypes );
        
                                          
         $primaryKeyName = $this->get( 'primaryKeyName' );

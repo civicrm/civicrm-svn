@@ -64,6 +64,7 @@ class CRM_Import_ImportJob {
     protected $_mapperLocTypes;
     protected $_mapperPhoneTypes;
     protected $_mapperImProviders;
+    protected $_mapperWebsiteTypes;
     protected $_mapperRelated;
     protected $_mapperRelatedContactType;
     protected $_mapperRelatedContactDetails;
@@ -101,6 +102,7 @@ class CRM_Import_ImportJob {
         $this->_mapperLocTypes = array();
         $this->_mapperPhoneTypes = array();
         $this->_mapperImProviders = array();
+        $this->_mapperWebsiteTypes = array();
         $this->_mapperRelated = array();
         $this->_mapperRelatedContactType = array();
         $this->_mapperRelatedContactDetails = array();
@@ -146,6 +148,20 @@ class CRM_Import_ImportJob {
             } else {
                 $this->_mapperLocTypes[$key] = null;
             }
+            
+            //to store websiteTypes id 
+            if ( is_numeric($mapper[$key][1]) ) {
+                if ( CRM_Utils_Array::value( '0', $mapper[$key] ) == 'url' ) {
+                    $this->_mapperWebsiteTypes[$key]  = $mapper[$key][1];
+                    $this->_mapperPhoneTypes[$key] = null;
+                    $this->_mapperImProviders[$key] = null;
+                } 
+            } else {
+                $this->_mapperWebsiteTypes[$key]  = null;
+                $this->_mapperPhoneTypes[$key] = null;
+                $this->_mapperImProviders[$key] = null;
+            }
+
             //to store phoneType id and provider id separately for contact
             if ( is_numeric($mapper[$key][2]) ) {
                 if ( CRM_Utils_Array::value( '0', $mapper[$key] ) == 'phone' ) {
@@ -202,12 +218,14 @@ class CRM_Import_ImportJob {
             $this->_mapperRelatedContactDetails,
             $this->_mapperRelatedContactLocType, 
             $this->_mapperRelatedContactPhoneType, 
-            $this->_mapperRelatedContactImProvider );
+            $this->_mapperRelatedContactImProvider,
+            $this->_mapperWebsiteTypes );
         
         $locationTypes  = CRM_Core_PseudoConstant::locationType();
         $phoneTypes  = CRM_Core_PseudoConstant::phoneType();
         $imProviders = CRM_Core_PseudoConstant::IMProvider();
-        
+        $websiteTypes = CRM_Core_PseudoConstant::websiteType();
+
         foreach ($mapper as $key => $value) {
             $header = array();
             list($id, $first, $second) = explode('_', $mapper[$key][0]);
@@ -232,8 +250,12 @@ class CRM_Import_ImportJob {
             } else {
                 if ( isset($this->_mapFields[$mapper[$key][0]]) ) {
                     $header[] = $this->_mapFields[$mapper[$key][0]];
-                    if ( isset($mapper[$key][1]) ) {
-                        $header[] = $locationTypes[$mapper[$key][1]];
+                    if ( CRM_Utils_Array::value( '0', $mapper[$key] ) == 'url' ) {
+                        $header[] = $websiteTypes[$mapper[$key][1]];
+                    } else {
+                        if ( isset($mapper[$key][1]) ) {
+                            $header[] = $locationTypes[$mapper[$key][1]];
+                        }
                     }
                     if ( isset($mapper[$key][2]) ) {
                         if( CRM_Utils_Array::value( '0', $mapper[$key] ) == 'phone' ) {

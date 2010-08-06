@@ -591,6 +591,7 @@ abstract class CRM_Import_Parser {
 
     function setActiveFieldLocationTypes( $elements ) {
         for ($i = 0; $i < count( $elements ); $i++) {
+            if ( $this->_activeFields[$i]->_name == 'url' ) continue;
             $this->_activeFields[$i]->_hasLocationType = $elements[$i];
         }
     }
@@ -598,6 +599,12 @@ abstract class CRM_Import_Parser {
     function setActiveFieldPhoneTypes( $elements ) {
         for ($i = 0; $i < count( $elements ); $i++) {
             $this->_activeFields[$i]->_phoneType = $elements[$i];
+        }
+    }
+
+    function setActiveFieldWebsiteTypes( $elements ) {
+        for ($i = 0; $i < count( $elements ); $i++) {
+            $this->_activeFields[$i]->_websiteTypes = $elements[$i];
         }
     }
 
@@ -696,6 +703,13 @@ abstract class CRM_Import_Parser {
                     }
                     
                     $params[$this->_activeFields[$i]->_name][] = $value;
+                }
+                if ( $this->_activeFields[$i]->_name == 'url' ) {
+                    $params[$this->_activeFields[$i]->_name][] = array(
+                                                                       $this->_activeFields[$i]->_name => 
+                                                                       $this->_activeFields[$i]->_value,
+                                                                       'website_type_id' => 
+                                                                       $this->_activeFields[$i]->_websiteTypes );
                 }
                 
                 if ( ! isset($params[$this->_activeFields[$i]->_name] ) ) {

@@ -310,6 +310,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
         $mapperKeys = array();
         $mapperLocTypes = array();
         $mapperPhoneTypes = array();
+        $mapperWebsiteTypes = array();
         $mapperRelated = array();
         $mapperRelatedContactType = array();
         $mapperRelatedContactDetails = array();
@@ -322,6 +323,12 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
                 $mapperLocTypes[$key] = $mapper[$key][1];
             } else {
                 $mapperLocTypes[$key] = null;
+            }
+            
+            if ( CRM_Utils_Array::value( $key, $mapperKeys ) == 'url' ) {
+                $mapperWebsiteTypes[$key] = $mapper[$key][1];
+            } else { 
+                $mapperWebsiteTypes[$key] = null;
             }
             
             if ( CRM_Utils_Array::value($key,$mapperKeys) == 'phone' ) {
@@ -350,9 +357,9 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
         }
         
         $parser = new CRM_Import_Parser_Contact( $mapperKeys, $mapperLocTypes,
-                                                  $mapperPhoneTypes, $mapperRelated, $mapperRelatedContactType,
-                                                  $mapperRelatedContactDetails, $mapperRelatedContactLocType, 
-                                                  $mapperRelatedContactPhoneType);
+                                                 $mapperPhoneTypes, $mapperRelated, $mapperRelatedContactType,
+                                                 $mapperRelatedContactDetails, $mapperRelatedContactLocType, 
+                                                 $mapperRelatedContactPhoneType, $mapperWebsiteTypes );
         
         $mapFields = $this->get('fields');
       
