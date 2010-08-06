@@ -58,6 +58,12 @@
     <component>CiviCampaign</component>
   </item>
   <item>
+    <path>civicrm/campaign/gotv</path>
+    <title>Voter List</title>
+    <page_callback>CRM_Campaign_Form_Gotv</page_callback>
+    <component>CiviCampaign</component>
+  </item>
+  <item>
     <path>civicrm/petition/add</path>
     <title>New Petition</title>
     <page_callback>CRM_Campaign_Form_Petition</page_callback>
