@@ -933,7 +933,7 @@ SELECT $select
         return true;
     }
 
-    static function setDefaults( &$groupTree, &$defaults, $viewMode = false, $inactiveNeeded = false ) 
+    static function setDefaults( &$groupTree, &$defaults, $viewMode = false, $inactiveNeeded = false, $action = CRM_Core_Action::NONE ) 
     {
         require_once 'CRM/Core/BAO/CustomOption.php';
         foreach ( $groupTree as $id => $group ) {
@@ -944,7 +944,7 @@ SELECT $select
             foreach ( $group['fields'] as $field ) {
                 if ( CRM_Utils_Array::value( 'element_value', $field ) !== null ) {
                     $value = $field['element_value'];
-                } else if ( CRM_Utils_Array::value( 'default_value', $field ) !== null ) {
+                } else if ( CRM_Utils_Array::value( 'default_value', $field ) !== null && $action != CRM_Core_Action::UPDATE ) {
                     $value = $viewMode ? null : $field['default_value'];
                 } else {
                     continue;
