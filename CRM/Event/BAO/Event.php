@@ -668,7 +668,7 @@ WHERE civicrm_address.geo_code_1 IS NOT NULL
             $location['url'          ] = CRM_Utils_System::url( 'civicrm/event/register', 'reset=1&id=' . $dao->event_id );
             $location['location_type'] = $dao->location_type;
             $eventImage = '<img src="' . $config->resourceBase . 'i/contact_org.gif" alt="Organization " height="20" width="15" />';
-            $location['image'] = "'".$eventImage."'";
+            $location['image'] = $eventImage;
             $location['displayAddress'] = str_replace( '<br />', ', ', $address );
             $locations[] = $location;
         }
