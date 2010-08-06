@@ -405,7 +405,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         $session       = CRM_Core_Session::singleton( );
         $contactID     = parent::getContactID( );
         $this->_params = $this->get( 'params' );
-
+        
         // if a discount has been applied, lets now deduct it from the amount
         // and fix the fee level
         if ( CRM_Utils_Array::value( 'discount', $this->_params[0] ) &&
@@ -450,22 +450,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         }
         
         $payment = $registerByID = $primaryCurrencyID = $contribution = null;
-        $groups = null;
         foreach ( $params as $key => $value ) {
-            $group = array( );
-            if ( CRM_Utils_Array::value( 'group', $params[$key] ) ) {
-                foreach ( $params[$key]['group'] as $k => $v ) {
-                    if ( !$v ) {
-                        continue;
-                    }
-                    $group[] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Group', $k , 'title' ); 
-                }
-            } 
-            
-            $this->_values['params'] = array( );
-            if ( $group ) {
-                $this->_values['group'] = $group;
-            }
             $this->fixLocationFields( $value, $fields );
             //unset the billing parameters if it is pay later mode
             //to avoid creation of billing location
@@ -690,7 +675,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         if ( $this->_action & CRM_Core_Action::PREVIEW ) {
             $isTest = true;
         }
-        
+                
         // for Transfer checkout.
         require_once "CRM/Event/BAO/Event.php";
         if ( ( $this->_contributeMode == 'checkout' ||
@@ -730,8 +715,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             //lets send  mails to all with meaningful text, CRM-4320.
             $this->assign( 'isOnWaitlist', $this->_allowWaitlist );
             $this->assign( 'isRequireApproval', $this->_requireApproval );
-            
+                                    
             foreach( $additionalIDs as $participantID => $contactId ) {
+                $participantNum = 0;
                 if ( $participantID == $registerByID ) {
                     //set as Primary Participant
                     $this->assign ( 'isPrimary' , 1 );
@@ -745,8 +731,8 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     $this->_values['params']['additionalParticipant'] = false;
                 } else {
                     //take the Additional participant number. 
-                    if ( $paticipantNum = array_search( 'participant', $participantCount ) ) {
-                        unset( $participantCount[$paticipantNum] );
+                    if ( $participantNum = array_search( 'participant', $participantCount ) ) {
+                        unset( $participantCount[$participantNum] );
                     }
                     $this->assign ( 'isPrimary' , 0 );
                     $this->assign( 'customProfile', null );
@@ -754,18 +740,21 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     if ( $this->_amount ) {
                         $amount = array();
                         $params = $this->get( 'params' );
-                        $amount[$paticipantNum]['label']  = $params[$paticipantNum]['amount_level'];
-                        $amount[$paticipantNum]['amount'] = $params[$paticipantNum]['amount'];
+                        $amount[$participantNum]['label']  = $params[$participantNum]['amount_level'];
+                        $amount[$participantNum]['amount'] = $params[$participantNum]['amount'];
                         $this->assign( 'amount', $amount );
                     }
                     if ( $this->_lineItem ) {
                         $lineItems = $this->_lineItem;
                         $lineItem = array();
-                        $lineItem[] = CRM_Utils_Array::value( $paticipantNum, $lineItems );
+                        $lineItem[] = CRM_Utils_Array::value( $participantNum, $lineItems );
                         $this->assign( 'lineItem',$lineItem );
                     }
                     $this->_values['params']['additionalParticipant'] = true;
                 }
+                
+                //carry the participant submitted values.
+                $this->_values['params'][$participantID] = $params[$participantNum];
                 
                 //pass these variables since these are run time calculated.
                 $this->_values['params']['isOnWaitlist']  = $this->_allowWaitlist;

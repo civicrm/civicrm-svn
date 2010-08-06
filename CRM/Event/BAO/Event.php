@@ -1028,9 +1028,27 @@ WHERE civicrm_event.is_active = 1
                     $postProfileID = $values['additional_custom_post_id'];
                 }
                 
-                self::buildCustomDisplay( $preProfileID, 'customPre' , $contactID, $template, $participantId, $isTest, null, &$values );
-                self::buildCustomDisplay( $postProfileID, 'customPost', $contactID, $template, $participantId, $isTest, null, &$values );
-
+                //get the params submitted by participant.
+                $participantParams = CRM_Utils_Array::value( $participantId, $values, array( ) );
+                
+                self::buildCustomDisplay( $preProfileID, 
+                                          'customPre', 
+                                          $contactID, 
+                                          $template, 
+                                          $participantId, 
+                                          $isTest, 
+                                          null, 
+                                          $participantParams );
+                
+                self::buildCustomDisplay( $postProfileID, 
+                                          'customPost', 
+                                          $contactID, 
+                                          $template, 
+                                          $participantId, 
+                                          $isTest, 
+                                          null, 
+                                          $participantParams );
+                
                 $sendTemplateParams = array(
                     'groupName' => 'msg_tpl_workflow_event',
                     'valueName' => 'event_online_receipt',
@@ -1080,7 +1098,14 @@ WHERE civicrm_event.is_active = 1
      * @return None  
      * @access public  
      */ 
-    function buildCustomDisplay( $gid, $name, $cid, &$template, $participantId, $isTest, $isCustomProfile = false, $profileGroups = null ) 
+    function buildCustomDisplay( $gid, 
+                                 $name, 
+                                 $cid, 
+                                 &$template, 
+                                 $participantId, 
+                                 $isTest, 
+                                 $isCustomProfile = false, 
+                                 $participantParams = array( ) ) 
     {  
         if ( $gid ) {
             require_once 'CRM/Core/BAO/UFGroup.php';
@@ -1110,16 +1135,30 @@ WHERE civicrm_event.is_active = 1
                         unset( $fields[$k] );
                     }
                 }
-
+                
                 if ( $groupTitle ) {
                     $template->assign( $name."_grouptitle", $groupTitle );
                     $groupTitles[ $name."_grouptitle" ] = $groupTitle;
                 }
-
-                if ( CRM_Utils_Array::value( 'group', $profileGroups ) ) {
-                    $groups = implode(', ', $profileGroups['group'] );
-                    $values[$fields['group']['title']] = $groups;
-                } 
+                
+                //display profile groups those are subscribed by participant.
+                if ( $groups = CRM_Utils_Array::value( 'group', $participantParams ) && 
+                     is_array( $groups ) ) {
+                    $grpIds = array( );
+                    foreach ( $groups as $grpId => $isSelected ) {
+                        if ( $isSelected ) $grpIds[] = $grpId; 
+                    }
+                    if ( !empty( $grpIds ) ) {
+                        //get the group titles.
+                        $grpTitles = array( );
+                        $query = 'SELECT title FROM civicrm_group where id IN ( ' . implode( ',', $grpIds ) . ' )';
+                        $grp = CRM_Core_DAO::executeQuery( $query );
+                        while ( $grp->fetch( ) ) {
+                            $grpTitles[] = $grp->title; 
+                        }
+                        $values[$fields['group']['title']] = implode(', ', $grpTitles );
+                    }
+                }
                 
                 CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values, false, $params );
                 
