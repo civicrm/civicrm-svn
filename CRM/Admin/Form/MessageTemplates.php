@@ -46,6 +46,15 @@ class CRM_Admin_Form_MessageTemplates extends CRM_Admin_Form
     // which (and whether) mailing workflow this template belongs to
     protected $_workflow_id = null;
 
+    function preProcess( ) {
+        $this->_id      = CRM_Utils_Request::retrieve('id', 'Positive', $this);
+        $this->_action  = CRM_Utils_Request::retrieve( 'action', 'String',
+                                                       $this, false, 'add' );
+        $this->assign( 'action', $this->_action );
+                
+        $this->_BAOName = 'CRM_Core_BAO_MessageTemplates';
+    }
+
     /**
      * This function sets the default values for the form. 
      * the default values are retrieved from the database
