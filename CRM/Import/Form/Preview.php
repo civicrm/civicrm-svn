@@ -97,7 +97,6 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
             $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams ) );
         }
         
-        
         $properties = array( 'mapper', 'locations', 'phones', 'ims',
                              'dataValues', 'columnCount',
                              'totalRowCount', 'validRowCount', 
@@ -106,9 +105,9 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
                              'downloadConflictRecordsUrl',
                              'downloadMismatchRecordsUrl',
                              'related', 'relatedContactDetails', 'relatedContactLocType',
-                             'relatedContactPhoneType', 'relatedContactImProvider'
+                             'relatedContactPhoneType', 'relatedContactImProvider', 'websites'
                              );
-                             
+        
         foreach ( $properties as $property ) {
             $this->assign( $property, $this->get( $property ) );
         }
@@ -310,7 +309,6 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
         $mapperKeys = array();
         $mapperLocTypes = array();
         $mapperPhoneTypes = array();
-        $mapperWebsiteTypes = array();
         $mapperRelated = array();
         $mapperRelatedContactType = array();
         $mapperRelatedContactDetails = array();
@@ -324,13 +322,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
             } else {
                 $mapperLocTypes[$key] = null;
             }
-            
-            if ( CRM_Utils_Array::value( $key, $mapperKeys ) == 'url' ) {
-                $mapperWebsiteTypes[$key] = $mapper[$key][1];
-            } else { 
-                $mapperWebsiteTypes[$key] = null;
-            }
-            
+                        
             if ( CRM_Utils_Array::value($key,$mapperKeys) == 'phone' ) {
                 $mapperPhoneTypes[$key] = $mapper[$key][2];
             } else {
@@ -359,7 +351,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
         $parser = new CRM_Import_Parser_Contact( $mapperKeys, $mapperLocTypes,
                                                  $mapperPhoneTypes, $mapperRelated, $mapperRelatedContactType,
                                                  $mapperRelatedContactDetails, $mapperRelatedContactLocType, 
-                                                 $mapperRelatedContactPhoneType, $mapperWebsiteTypes );
+                                                 $mapperRelatedContactPhoneType );
         
         $mapFields = $this->get('fields');
       

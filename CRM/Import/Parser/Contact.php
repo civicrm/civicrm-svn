@@ -47,7 +47,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
     protected $_mapperLocType;
     protected $_mapperPhoneType;
     protected $_mapperImProvider;
-    protected $_mapperWebsiteTypes;
+    protected $_mapperWebsiteType;
     protected $_mapperRelated;
     protected $_mapperRelatedContactType;
     protected $_mapperRelatedContactDetails;
@@ -107,13 +107,13 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                           $mapperImProvider = null, $mapperRelated = null, $mapperRelatedContactType=null,
                           $mapperRelatedContactDetails = null, $mapperRelatedContactLocType = null, 
                           $mapperRelatedContactPhoneType = null, $mapperRelatedContactImProvider = null,
-                          $mapperWebsiteTypes = null ) 
+                          $mapperWebsiteType = null ) 
     {
         parent::__construct();
         $this->_mapperKeys =& $mapperKeys;
         $this->_mapperLocType =& $mapperLocType;
         $this->_mapperPhoneType =& $mapperPhoneType;
-        $this->_mapperWebsiteTypes = $mapperWebsiteTypes;
+        $this->_mapperWebsiteType = $mapperWebsiteType;
         // get IM service provider type id for contact
         $this->_mapperImProvider =& $mapperImProvider;
         $this->_mapperRelated =& $mapperRelated;
@@ -184,7 +184,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         $this->setActiveFields( $this->_mapperKeys );
         $this->setActiveFieldLocationTypes( $this->_mapperLocType );
         $this->setActiveFieldPhoneTypes( $this->_mapperPhoneType );
-        $this->setActiveFieldWebsiteTypes( $this->_mapperWebsiteTypes );
+        $this->setActiveFieldWebsiteTypes( $this->_mapperWebsiteType );
         //set active fields of IM provider of contact
         $this->setActiveFieldImProviders( $this->_mapperImProvider );
 
@@ -335,7 +335,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     array_unshift($values, $errorMessage);
                     $importRecordParams = array($statusFieldName => 'ERROR', "${statusFieldName}Msg" => $errorMessage);
                     $this->updateImportRecord( $values[count($values)-1], $importRecordParams );
-
+                    
                     return CRM_Import_Parser::ERROR;
                 }
             }

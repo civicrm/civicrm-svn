@@ -296,11 +296,25 @@ function _civicrm_add_formatted_param(&$values, &$params)
         return true;
     }
     
-    if ( CRM_Utils_Array::value( 'website_type_id', $values ) ) {
-        $params['website'][] = $values;
+    //format the website params.
+    if ( CRM_Utils_Array::value( 'url', $values ) ) {
+        static $websiteFields;
+        if ( !is_array( $websiteFields ) ) {
+            require_once 'CRM/Core/DAO/Website.php';
+            $websiteFields = CRM_Core_DAO_Website::fields( );
+        }
+        if ( !array_key_exists( 'website', $params ) || 
+             !is_array( $params['website'] ) ) {
+            $params['website'] = array( );
+        }
+        
+        $websiteCount = count( $params['website'] );
+        _civicrm_store_values( $websiteFields, $values,
+                               $params['website'][++$websiteCount] );
+        
         return true;
     }
-
+    
     // get the formatted location blocks into params - w/ 3.0 format, CRM-4605
     if ( CRM_Utils_Array::value( 'location_type_id', $values ) ) {
         _civicrm_add_formatted_location_blocks( $values, $params );

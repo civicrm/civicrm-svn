@@ -591,7 +591,6 @@ abstract class CRM_Import_Parser {
 
     function setActiveFieldLocationTypes( $elements ) {
         for ($i = 0; $i < count( $elements ); $i++) {
-            if ( $this->_activeFields[$i]->_name == 'url' ) continue;
             $this->_activeFields[$i]->_hasLocationType = $elements[$i];
         }
     }
@@ -604,7 +603,7 @@ abstract class CRM_Import_Parser {
 
     function setActiveFieldWebsiteTypes( $elements ) {
         for ($i = 0; $i < count( $elements ); $i++) {
-            $this->_activeFields[$i]->_websiteTypes = $elements[$i];
+            $this->_activeFields[$i]->_websiteType = $elements[$i];
         }
     }
 
@@ -701,16 +700,11 @@ abstract class CRM_Import_Parser {
                     if ( isset( $this->_activeFields[$i]->_imProvider ) ) {
                         $value['provider_id'] = $this->_activeFields[$i]->_imProvider;
                     }
-                    
-                    $params[$this->_activeFields[$i]->_name][] = $value;
+                } else if ( isset( $this->_activeFields[$i]->_websiteType ) ) {
+                    $value = array( $this->_activeFields[$i]->_name => $this->_activeFields[$i]->_value,
+                                    'website_type_id'               => $this->_activeFields[$i]->_websiteType );
                 }
-                if ( $this->_activeFields[$i]->_name == 'url' ) {
-                    $params[$this->_activeFields[$i]->_name][] = array(
-                                                                       $this->_activeFields[$i]->_name => 
-                                                                       $this->_activeFields[$i]->_value,
-                                                                       'website_type_id' => 
-                                                                       $this->_activeFields[$i]->_websiteTypes );
-                }
+                $params[$this->_activeFields[$i]->_name][] = $value;
                 
                 if ( ! isset($params[$this->_activeFields[$i]->_name] ) ) {
                     if ( !isset($this->_activeFields[$i]->_related) ) {

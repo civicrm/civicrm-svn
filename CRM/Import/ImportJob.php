@@ -98,17 +98,14 @@ class CRM_Import_ImportJob {
         
         $this->_tableName = $tableName;
         
-        $this->_mapperKeys = array();
-        $this->_mapperLocTypes = array();
-        $this->_mapperPhoneTypes = array();
-        $this->_mapperImProviders = array();
-        $this->_mapperWebsiteTypes = array();
-        $this->_mapperRelated = array();
-        $this->_mapperRelatedContactType = array();
-        $this->_mapperRelatedContactDetails = array();
-        $this->_mapperRelatedContactLocType = array();
-        $this->_mapperRelatedContactPhoneType = array();
-        $this->_mapperRelatedContactImProvider = array();
+        //initialize the properties.
+        $properties = array( 'mapperKeys', 'mapperLocTypes', 'mapperPhoneTypes', 
+                             'mapperImProviders', 'mapperWebsiteTypes', 'mapperRelated', 
+                             'mapperRelatedContactType', 'mapperRelatedContactDetails', 
+                             'mapperRelatedContactLocType', 'mapperRelatedContactPhoneType', 
+                             'mapperRelatedContactImProvider'  );
+        foreach ( $properties as $property ) $this->{"_$property"} = array( ); 
+        
     }
     
     public function getTableName() {
@@ -141,41 +138,41 @@ class CRM_Import_ImportJob {
     
     public function runImport(&$form, $timeout = 55) {
         $mapper = $this->_mapper;
+        
+        //initialize mapper perperty value.
+        $mapperPeroperties = array( 'mapperLocTypesVal', 
+                                    'mapperPhoneTypesVal',
+                                    'mapperImProvidersVal',
+                                    'mapperWebsiteTypesVal' );
+        
         foreach ($mapper as $key => $value) {
-            $this->_mapperKeys[$key] = $mapper[$key][0];
-            if (is_numeric($mapper[$key][1])) {
-                $this->_mapperLocTypes[$key] = $mapper[$key][1];
-            } else {
-                $this->_mapperLocTypes[$key] = null;
-            }
+            foreach ( $mapperPeroperties as $perpertyVal ) $$perpertyVal = null;  
             
-            //to store websiteTypes id 
-            if ( is_numeric($mapper[$key][1]) ) {
-                if ( CRM_Utils_Array::value( '0', $mapper[$key] ) == 'url' ) {
-                    $this->_mapperWebsiteTypes[$key]  = $mapper[$key][1];
-                    $this->_mapperPhoneTypes[$key] = null;
-                    $this->_mapperImProviders[$key] = null;
-                } 
-            } else {
-                $this->_mapperWebsiteTypes[$key]  = null;
-                $this->_mapperPhoneTypes[$key] = null;
-                $this->_mapperImProviders[$key] = null;
-            }
-
-            //to store phoneType id and provider id separately for contact
-            if ( is_numeric($mapper[$key][2]) ) {
-                if ( CRM_Utils_Array::value( '0', $mapper[$key] ) == 'phone' ) {
-                    $this->_mapperPhoneTypes[$key]  = $mapper[$key][2];
-                    $this->_mapperImProviders[$key] = null;
-                } else if ( CRM_Utils_Array::value( '0', $mapper[$key] ) == 'im' ) {
-                    $this->_mapperImProviders[$key] = $mapper[$key][2];
-                    $this->_mapperPhoneTypes[$key]  = null;
+            $this->_mapperKeys[$key] = $mapper[$key][0];
+            $fldName = CRM_Utils_Array::value( 0, $mapper[$key] );
+            $selOne  = CRM_Utils_Array::value( 1, $mapper[$key] );
+            $selTwo  = CRM_Utils_Array::value( 2, $mapper[$key] );
+            
+            //need to differentiate non location elements.
+            if ( $selOne && is_numeric( $selOne ) ) {
+                if ( $fldName == 'url' ) {
+                    $mapperWebsiteTypesVal = $selOne;
+                } else {
+                    $mapperLocTypesVal = $selOne;
+                    if ( $selTwo && is_numeric( $selTwo ) ) {
+                        if ( $fldName == 'phone' ) {
+                            $mapperPhoneTypesVal = $selTwo; 
+                        } else if ( $fldName == 'im' ) {
+                            $mapperImProvidersVal = $selTwo;
+                        }
+                    }
                 }
-            } else {
-                $this->_mapperPhoneTypes[$key] = null;
-                $this->_mapperImProviders[$key] = null;
             }
-                        
+            $this->_mapperLocTypes[$key]     = $mapperLocTypesVal;
+            $this->_mapperPhoneTypes[$key]   = $mapperPhoneTypesVal;
+            $this->_mapperImProviders[$key]  = $mapperImProvidersVal;
+            $this->_mapperWebsiteTypes[$key] = $mapperWebsiteTypesVal;
+            
             list($id, $first, $second) = explode('_', $mapper[$key][0]);
             if ( ($first == 'a' && $second == 'b') || ($first == 'b' && $second == 'a') ) {
                 $relationType = new CRM_Contact_DAO_RelationshipType();
@@ -250,22 +247,26 @@ class CRM_Import_ImportJob {
             } else {
                 if ( isset($this->_mapFields[$mapper[$key][0]]) ) {
                     $header[] = $this->_mapFields[$mapper[$key][0]];
-                    if ( CRM_Utils_Array::value( '0', $mapper[$key] ) == 'url' ) {
-                        $header[] = $websiteTypes[$mapper[$key][1]];
-                    } else {
-                        if ( isset($mapper[$key][1]) ) {
-                            $header[] = $locationTypes[$mapper[$key][1]];
-                        }
-                    }
-                    if ( isset($mapper[$key][2]) ) {
-                        if( CRM_Utils_Array::value( '0', $mapper[$key] ) == 'phone' ) {
-                            $header[] = $phoneTypes[$mapper[$key][2]];
-                        } else if ( CRM_Utils_Array::value( '0', $mapper[$key] ) == 'im' ) {
-                            $header[] = $imProviders[$mapper[$key][2]];
+                    $fldName  = CRM_Utils_Array::value( 0, $mapper[$key] );
+                    $selOne   = CRM_Utils_Array::value( 1, $mapper[$key] );
+                    $selTwo   = CRM_Utils_Array::value( 2, $mapper[$key] );
+                    if ( $selOne ) {
+                        if ( $fldName == 'url' ) {
+                            $header[] = $websiteTypes[$selOne];   
+                        } else {
+                            $header[] = $locationTypes[$selOne];
+                            if ( $selTwo ) {
+                                if ( $fldName == 'phone' ) {
+                                    $header[] = $phoneTypes[$selTwo];
+                                } else if ( $fldName == 'im' ) {
+                                    $header[] = $imProviders[$selTwo];
+                                }
+                            }
                         }
                     }
                 }
-            }            
+            }
+            
             $mapperFields[] = implode(' - ', $header);
         }
         
