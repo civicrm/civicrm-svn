@@ -1499,15 +1499,22 @@ SELECT IF( EXISTS(SELECT name FROM civicrm_contact_type WHERE name like %1), 1, 
                         $details[$groupID][$values['id']]['help_post']            = CRM_Utils_Array::value('help_post', $group); 
                         $details[$groupID][$values['id']]['collapse_display']     = CRM_Utils_Array::value('collapse_display', $group);
                         $details[$groupID][$values['id']]['collapse_adv_display'] = CRM_Utils_Array::value('collapse_adv_display', $group);
-
                         $details[$groupID][$values['id']]['fields'][$k] = 
                             array( 'field_title'      => CRM_Utils_Array::value('label', $properties) ,
                                    'field_type'       => CRM_Utils_Array::value('html_type',
                                                                                 $properties),
+                                   'field_data_type'  => CRM_Utils_Array::value('data_type',
+                                                                                 $properties),
                                    'field_value'      => self::formatCustomValues( $values,
                                                                                    $properties ),
                                    'options_per_line' => CRM_Utils_Array::value('options_per_line',
-                                                                                $properties) ) ;
+                                                                                $properties ) );
+                        // also return contact reference contact id if user has view all or edit all contacts perm
+                        if ( ( CRM_Core_Permission::check( 'view all contacts' ) || CRM_Core_Permission::check( 'edit all contacts' ) )
+                               && $details[$groupID][$values['id']]['fields'][$k]['field_data_type'] == 'ContactReference' ){
+                                   $details[$groupID][$values['id']]['fields'][$k]['contact_ref_id'] = 
+                                   CRM_Utils_Array::value('data', $values );
+                        }
                     }
                 } else {
                     $details[$groupID][0]['title']                = CRM_Utils_Array::value('title', $group);  
