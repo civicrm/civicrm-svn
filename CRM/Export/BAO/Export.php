@@ -691,18 +691,18 @@ class CRM_Export_BAO_Export
                             switch ($field) {
                             case 'country':
                             case 'world_region':
-                                $row[$field] = $i18n->crm_translate($dao->$fldValue, array('context' => 'country'));
+                                $row[$field] = $i18n->crm_translate($fieldValue, array('context' => 'country'));
                                 break;
                             case 'state_province':
-                                $row[$field] = $i18n->crm_translate($dao->$fldValue, array('context' => 'province'));
+                                $row[$field] = $i18n->crm_translate($fieldValue, array('context' => 'province'));
                                 break;
                             case 'gender':
                             case 'preferred_communication_method':
                             case 'preferred_mail_format':
-                                $row[$field] = $i18n->crm_translate($dao->$fldValue);
+                                $row[$field] = $i18n->crm_translate($fieldValue);
                                 break;
                             default:
-                                $row[$field] = $dao->$fldValue;
+                                $row[$field] = $fieldValue;
                                 break;
                             }
                         }
