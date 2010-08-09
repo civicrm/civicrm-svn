@@ -1029,7 +1029,7 @@ WHERE civicrm_event.is_active = 1
                 }
                 
                 //get the params submitted by participant.
-                $participantParams = CRM_Utils_Array::value( $participantId, $values, array( ) );
+                $participantParams = CRM_Utils_Array::value( $participantId, $values['params'], array( ) );
                 
                 self::buildCustomDisplay( $preProfileID, 
                                           'customPre', 
@@ -1142,7 +1142,7 @@ WHERE civicrm_event.is_active = 1
                 }
                 
                 //display profile groups those are subscribed by participant.
-                if ( $groups = CRM_Utils_Array::value( 'group', $participantParams ) && 
+                if ( ( $groups = CRM_Utils_Array::value( 'group', $participantParams ) ) && 
                      is_array( $groups ) ) {
                     $grpIds = array( );
                     foreach ( $groups as $grpId => $isSelected ) {
@@ -1157,6 +1157,7 @@ WHERE civicrm_event.is_active = 1
                             $grpTitles[] = $grp->title; 
                         }
                         $values[$fields['group']['title']] = implode(', ', $grpTitles );
+                        unset($fields['group']);
                     }
                 }
                 
