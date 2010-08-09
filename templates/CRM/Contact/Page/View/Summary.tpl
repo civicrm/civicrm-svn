@@ -358,7 +358,20 @@
                         <div class="clear"></div>
                     </div>
                 </div>
-                
+                {literal}
+                <script type="text/javascript">
+                    cj('.columnheader').click( function( ) {
+                        var aTagObj = cj(this).find('a');
+                        if ( aTagObj.hasClass( "expanded" ) ) {
+                            cj(this).parent().find('tr:not(".columnheader")').hide( );
+                        } else {    
+                            cj(this).parent().find('tr:not(".columnheader")').show( );
+                        }
+                        aTagObj.toggleClass("expanded");
+                        return false;
+                    });
+                </script>
+                {/literal}
                 {if $hookContent and $hookContentPlacement eq 1}
                     {include file="CRM/Contact/Page/View/SummaryHook.tpl"}
                 {/if}

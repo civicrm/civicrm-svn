@@ -41,6 +41,7 @@
        <name>UI_source_contact_id</name>
        <fieldName>source_contact_id</fieldName>       
        <add>2.0</add>
+       <drop>3.2</drop>
   </index>
 
   <field>
@@ -49,7 +50,11 @@
       <comment>Artificial FK to original transaction (e.g. contribution) IF it is not an Activity. Table can be figured out through activity_type_id, and further through component registry.</comment>
       <add>2.0</add>
   </field>
-
+  <index>
+       <name>UI_source_record_id</name>
+       <fieldName>source_record_id</fieldName>       
+       <add>3.2</add>
+  </index>
   <field>
        <name>activity_type_id</name>
        <title>Activity Type ID</title>
@@ -311,6 +316,7 @@
        <name>UI_original_id</name>
        <fieldName>original_id</fieldName>
        <add>2.2</add>
+       <drop>3.2</drop>
   </index>    
   <field>
        <name>is_deleted</name>

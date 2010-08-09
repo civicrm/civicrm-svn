@@ -25,7 +25,7 @@
 *}
 <div id="priceset_{$priceSetId}" class="crm-section price_set-section">
     {if $priceSet.help_pre}
-        <div class="description">{$priceSet.help_pre}</div>
+        <div class="messages help">{$priceSet.help_pre}</div>
     {/if}
           
     {foreach from=$priceSet.fields item=element key=field_id}
@@ -73,7 +73,7 @@
     {/foreach}
     
     {if $priceSet.help_post}
-    <div class="description">{$priceSet.help_post}</div>
+    	<div class="messages help">{$priceSet.help_post}</div>
     {/if}
 
     {include file="CRM/Price/Form/Calculate.tpl"} 

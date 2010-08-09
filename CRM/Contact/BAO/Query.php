@@ -2295,8 +2295,7 @@ SELECT id, cache_date, saved_search_id, children
 FROM   civicrm_group
 WHERE  id IN ( $groupIDs )
   AND  ( saved_search_id != 0
-   OR    saved_search_id IS NOT NULL
-   OR    children IS NOT NULL )
+   OR    saved_search_id IS NOT NULL )
 ";
         $group = CRM_Core_DAO::executeQuery( $sql );
         $ssWhere = array(); 
@@ -2595,21 +2594,29 @@ WHERE  id IN ( $groupIDs )
     function street_address( &$values ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
-        $op = 'LIKE';
+        
+        if ( !$op ) {
+            $op = 'LIKE';
+        }
         
         $n = trim( $value ); 
-
-        $value = strtolower(CRM_Core_DAO::escapeString($n));
-        if ( strpos( $value, '%' ) !== false ) {
-            $value = "'$value'";
-            // only add wild card if not there
+        
+        if ( $n ) {
+            $value = strtolower(CRM_Core_DAO::escapeString($n));
+            if ( strpos( $value, '%' ) !== false ) {
+                $value = "'$value'";
+                // only add wild card if not there
+            } else {
+                $value = "'$value%'";
+            }
+            $this->_where[$grouping][] = " ( LOWER(civicrm_address.street_address) $op $value )";
+            $this->_qill[$grouping][]  = ts( 'Street' ) . " $op '$n'";
         } else {
-            $value = "'$value%'";
+            $this->_where[$grouping][] = " (civicrm_address.street_address $op $value )";
+            $this->_qill[$grouping][]  = ts( 'Street' ) . " $op ";
         }
 
         $this->_tables['civicrm_address'] = $this->_whereTables['civicrm_address'] = 1; 
-        $this->_where[$grouping][] = " ( LOWER(civicrm_address.street_address) LIKE $value )";
-        $this->_qill[$grouping][]  = ts( 'Street' ) . " ILIKE '$n'";
     }
 
     /**
@@ -2678,8 +2685,13 @@ WHERE  id IN ( $groupIDs )
         $this->_tables['civicrm_address' ] = $this->_whereTables['civicrm_address' ] = 1;
 
         if ( $name == 'postal_code' ) {
-            $this->_where[$grouping][] = "{$field} {$op} '$val'"; 
-            $this->_qill[$grouping][] = ts('Postal code') . " - '$value'";
+            if ( $val ) {
+                $this->_where[$grouping][] = "{$field} {$op} '$val'"; 
+                $this->_qill[$grouping][] = ts('Postal code') . " - '$value'";
+            } else {
+                $this->_where[$grouping][] = "{$field} {$op}"; 
+                $this->_qill[$grouping][] = ts('Postal code') . " {$op}";
+            }
         } else if ( $name =='postal_code_low') { 
             $this->_where[$grouping][] = " ( $field >= '$val' ) ";
             $this->_qill[$grouping][] = ts('Postal code greater than or equal to \'%1\'', array( 1 => $value ) );
@@ -3318,7 +3330,7 @@ WHERE  id IN ( $groupIDs )
             $groupBy = 'GROUP BY civicrm_activity.id ';
         }
         $query = "$select $from $where $groupBy $order $limit";
-        // CRM_Core_Error::debug('query', $query);
+        //CRM_Core_Error::debug('query', $query); exit();
 
         if ( $returnQuery ) {
             return $query;

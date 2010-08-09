@@ -1332,10 +1332,7 @@ buildEventTypeCustomData( {$this->_eID}, {$this->_eventTypeCustomDataTypeID}, '{
                 foreach ( $values as $fieldValue ) {
                     $customValue = array( 'data' => $fieldValue['value'] );
                     $customFields[$fieldID]['id'] = $fieldID;
-                    $formattedValue = CRM_Core_BAO_CustomGroup::formatCustomValues( $customValue, $customFields[$fieldID] );
-                    if ( is_array( $formattedValue ) ) {
-                        $formattedValue = implode( ',', $formattedValue );
-                    }
+                    $formattedValue = CRM_Core_BAO_CustomGroup::formatCustomValues( $customValue, $customFields[$fieldID], true );
                     $customGroup[$customFields[$fieldID]['groupTitle']][$customFields[$fieldID]['label']] = str_replace( '&nbsp;', '', $formattedValue );
                 }                
             }

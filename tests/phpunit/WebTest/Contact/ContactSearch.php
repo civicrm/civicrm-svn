@@ -67,8 +67,8 @@ class WebTest_Contact_ContactSearch extends CiviSeleniumTestCase {
       $this->waitForPageToLoad("30000");
 
       // type sortname in autocomplete
-      $this->typeKeys("css=input#sort_name", $sortName);
-      $this->click("css=input#sort_name");
+      $this->typeKeys("css=input#sort_name_navigation", $sortName);
+      $this->click("css=input#sort_name_navigation");
 
       // wait for result list
       $this->waitForElementPresent("css=div.ac_results-inner li");

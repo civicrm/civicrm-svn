@@ -108,6 +108,7 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
                         'label'            => 'testFld',
                         'data_type'        => 'String',
                         'html_type'        => 'Text',
+                        'is_active'        => 1,
                         'custom_group_id'  => $customGroup->id,
                         );
         $customField = CRM_Core_BAO_CustomField::create( $fields );
@@ -151,11 +152,11 @@ class CRM_Contribute_BAO_ContributionTest extends CiviUnitTestCase
         $contribution = CRM_Contribute_BAO_Contribution::create( $params ,$ids );
         
         // Check that the custom field value is saved
-        //$customValueParams = array( 'entityID'                  => $contactId,
-        //                            'custom_'.$customField->id  => 1 
-        //                            );
-        //$values = CRM_Core_BAO_CustomValueTable::getValues( $customValueParams );
-        //$this->assertEquals( 'Test custom value', $values['custom_'.$customField->id], 'Check the custom field value');
+        $customValueParams = array( 'entityID'                  => $contactId,
+                                    'custom_'.$customField->id  => 1 
+                                    );
+        $values = CRM_Core_BAO_CustomValueTable::getValues( $customValueParams );
+        $this->assertEquals( 'Test custom value', $values['custom_'.$customField->id], 'Check the custom field value');
         
         $this->assertEquals( $params['trxn_id'], $contribution->trxn_id, 'Check for transcation id creation.' );
         $this->assertEquals( $contactId, $contribution->contact_id, 'Check for contact id for Conribution.' );

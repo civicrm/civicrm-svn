@@ -601,6 +601,12 @@ abstract class CRM_Import_Parser {
         }
     }
 
+    function setActiveFieldWebsiteTypes( $elements ) {
+        for ($i = 0; $i < count( $elements ); $i++) {
+            $this->_activeFields[$i]->_websiteType = $elements[$i];
+        }
+    }
+
     /**
      * Function to set IM Service Provider type fields   
      *
@@ -694,6 +700,11 @@ abstract class CRM_Import_Parser {
                     if ( isset( $this->_activeFields[$i]->_imProvider ) ) {
                         $value['provider_id'] = $this->_activeFields[$i]->_imProvider;
                     }
+                    
+                    $params[$this->_activeFields[$i]->_name][] = $value;
+                } else if ( isset( $this->_activeFields[$i]->_websiteType ) ) {
+                    $value = array( $this->_activeFields[$i]->_name => $this->_activeFields[$i]->_value,
+                                    'website_type_id'               => $this->_activeFields[$i]->_websiteType );
                     
                     $params[$this->_activeFields[$i]->_name][] = $value;
                 }
