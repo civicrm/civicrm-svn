@@ -47,7 +47,7 @@ class WebTest_Contribute_ContributionPageAddTest extends CiviSeleniumTestCase {
 
         $this->click('is_organization');
         $this->type('for_organization', "On behalf $hash");
-        $this->click('CIVICRM_QFID_2_Require');
+        $this->click('CIVICRM_QFID_2_4');
 
         // FIXME: handle Introductory/Footer Message
 

@@ -206,7 +206,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
         $this->open($this->sboxPath . "civicrm/event/search&reset=1");
         $this->waitForPageToLoad("30000");
 
-        $this->click( "CIVICRM_QFID_chicken_Chicken" );
+        $this->click( "CIVICRM_QFID_chicken_4" );
       
         $this->click( "_qf_Search_refresh" );
         $this->waitForPageToLoad("30000");
@@ -219,7 +219,7 @@ class WebTest_Event_ParticipantSearchTest extends CiviSeleniumTestCase {
       
         $this->_checkStrings( $stringsToCheck );
 
-        $this->click( "CIVICRM_QFID_salmon_Salmon" );
+        $this->click( "CIVICRM_QFID_salmon_6" );
       
         $this->click( "_qf_Search_refresh" );
         $this->waitForPageToLoad("30000");

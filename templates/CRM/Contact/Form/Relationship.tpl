@@ -105,11 +105,12 @@
                 <td><label>{$sort_name_b}</label></td></tr>
                 <tr class="crm-relationship-form-block-is_current_employer">
                   <td class="label">
-                     <div id="employee"><label>{ts}Current Employee?{/ts}</label></div>
-                     <div id="employer"><label>{ts}Current Employer?{/ts}</label></div>
+                     <span id="employee"><label>{ts}Current Employee?{/ts}</label></span>
+                     <span id="employer"><label>{ts}Current Employer?{/ts}</label></span>
                   </td>
                   <td id="current_employer">{$form.is_current_employer.html}</td>
-                </tr>  
+                </tr>
+             </table>  
             {else} {* action = add *}
              </tr>
              <tr class="crm-relationship-form-block-rel_contact">
@@ -231,8 +232,7 @@
               {/if} {* end if searchDone *}
         {/if} {* end action = add *}
         
-        <fieldset id = 'saveElements'>
-            <div>
+            <div id = 'saveElements'>
                 {if $action EQ 1}
                 <div id='addCurrentEmployer'>
                    <table class="form-layout-compressed">  
@@ -320,7 +320,7 @@
                         }
                     </script>
                 {/literal}
-            </div>
+            </div>{* end of save element div *}
         <div id="customData"></div>
         <div class="spacer"></div>
         <div class="crm-submit-buttons" id="saveButtons"> {include file="CRM/common/formButtons.tpl"}</div> 

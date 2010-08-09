@@ -318,9 +318,6 @@ class CRM_Utils_Rule
 
         $config =& CRM_Core_Config::singleton( );
 
-        setlocale(LC_MONETARY, $config->lcMonetary);
-        $localeInfo = localeconv( );
-
         if ( $config->monetaryThousandSeparator ) {
             $mon_thousands_sep = $config->monetaryThousandSeparator;
         } else {

@@ -14,6 +14,9 @@ class CiviSeleniumSettings {
 
 	var $password = 'demo';
 
+	var $adminUsername = 'USERNAME';
+	
+	var $adminPassword = 'PASSWORD';
 
 	function __construct() {
 		$this->fullSandboxPath = $this->sandboxURL . $this->sandboxPATH;

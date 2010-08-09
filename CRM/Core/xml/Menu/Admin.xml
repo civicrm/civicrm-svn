@@ -176,6 +176,13 @@
      <weight>260</weight>
   </item>
   <item>
+     <path>civicrm/admin/messageTemplates/add</path>
+     <title>Message Templates</title>
+     <desc>Add/Edit Message Templates</desc>
+     <page_callback>CRM_Admin_Form_MessageTemplates</page_callback>
+     <weight>262</weight>
+  </item>
+  <item>
      <path>civicrm/admin/domain</path>
      <title>Domain Information</title>
      <desc>Configure primary contact name, email, return-path and address information. This information is used by CiviMail to identify the sending organization.</desc>
