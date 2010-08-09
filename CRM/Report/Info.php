@@ -96,4 +96,9 @@ class CRM_Report_Info extends CRM_Core_Component_Info
         return null;
     }
     
+    // add shortcut to Create New
+    public function creatNewShortcut( &$shortCuts ) {
+
+    }
+    
 }
