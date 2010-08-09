@@ -87,7 +87,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->type("trxn_id", "P20901X1" . rand(100, 10000));
       
       //Custom Data
-      $this->click('CIVICRM_QFID_3_4_6_yea');
+      $this->click('CIVICRM_QFID_3_6');
 
       //Additional Detail section
       $this->click("AdditionalDetail");
@@ -104,7 +104,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
       $this->click("Honoree");
       $this->waitForElementPresent("honor_email");
 
-      $this->click("CIVICRM_QFID_1_In_Hono");
+      $this->click("CIVICRM_QFID_1_2");
       $this->select("honor_prefix_id", "label=Ms.");
       $this->type("honor_first_name", "Foo");
       $this->type("honor_last_name", "Bar");
