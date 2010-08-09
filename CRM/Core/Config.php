@@ -539,6 +539,7 @@ class CRM_Core_Config extends CRM_Core_Config_Variables
             // clean upload dir
             CRM_Utils_File::cleanDir ( $this->uploadDir );
             CRM_Utils_File::createDir( $this->uploadDir );
+            CRM_Utils_File::restrictAccess($this->uploadDir);
         }
     }
 

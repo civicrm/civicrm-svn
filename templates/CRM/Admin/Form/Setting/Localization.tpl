@@ -66,11 +66,6 @@
                 <td class="label">{$form.currencyLimit.label}</td>
                 <td>{$form.currencyLimit.html}</td>
             </tr>
-            <tr class="crm-localization-form-block-lcMonetary">
-                <td class="label">{$form.lcMonetary.label}</td>
-                <td>{$form.lcMonetary.html}<br />
-                <span class="description">{ts}Locale for monetary display (affects formatting specifiers below).{/ts}</span></td>
-            </tr>
             <tr class="crm-localization-form-block-moneyformat">
                 <td class="label">{$form.moneyformat.label}</td>
                 <td>{$form.moneyformat.html}<br />

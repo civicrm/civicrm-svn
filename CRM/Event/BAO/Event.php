@@ -852,7 +852,7 @@ WHERE civicrm_event.is_active = 1
         // since the location is sharable, lets use the same loc_block_id.
         $locBlockId     = CRM_Utils_Array::value( 'loc_block_id', $eventValues );
         
-        $fieldsFix = array ( 'prefix' => array( 'title' => ts( 'Copy of ' ) ) );
+        $fieldsFix = array('prefix' => array('title' => ts('Copy of') . ' '));
         if ( !CRM_Utils_Array::value( 'is_show_location', $eventValues ) ) {
             $fieldsFix['prefix']['is_show_location'] = 0;
         }
@@ -972,11 +972,16 @@ WHERE civicrm_event.is_active = 1
     static function sendMail( $contactID, &$values, $participantId, $isTest = false, $returnMessageText = false ) 
     {
         require_once 'CRM/Core/BAO/UFGroup.php';
+        
         $template = CRM_Core_Smarty::singleton( );
         $gIds = array(
                       'custom_pre_id' => $values['custom_pre_id'],
                       'custom_post_id'=> $values['custom_post_id']
                       );
+        
+        
+        //get the params submitted by participant.
+        $participantParams = CRM_Utils_Array::value( $participantId, $values['params'], array( ) );
         
         if ( ! $returnMessageText ) {
             //send notification email if field values are set (CRM-1941)
@@ -985,7 +990,14 @@ WHERE civicrm_event.is_active = 1
                     $email = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $gId, 'notify' );
                     if ( $email ) {
                         //get values of corresponding profile fields for notification
-                        list( $profileValues ) = self::buildCustomDisplay( $gId, null, $contactID, $template, $participantId, $isTest, true );  
+                        list( $profileValues ) = self::buildCustomDisplay( $gId, 
+                                                                           null, 
+                                                                           $contactID, 
+                                                                           $template, 
+                                                                           $participantId, 
+                                                                           $isTest, 
+                                                                           true,
+                                                                           $participantParams );  
                         $val = array(
                                      'id'     => $gId,
                                      'values' => $profileValues,
@@ -1027,9 +1039,24 @@ WHERE civicrm_event.is_active = 1
                     $postProfileID = $values['additional_custom_post_id'];
                 }
                 
-                self::buildCustomDisplay( $preProfileID, 'customPre' , $contactID, $template, $participantId, $isTest );
-                self::buildCustomDisplay( $postProfileID, 'customPost', $contactID, $template, $participantId, $isTest );
-
+                self::buildCustomDisplay( $preProfileID, 
+                                          'customPre', 
+                                          $contactID, 
+                                          $template, 
+                                          $participantId, 
+                                          $isTest, 
+                                          null, 
+                                          $participantParams );
+                
+                self::buildCustomDisplay( $postProfileID, 
+                                          'customPost', 
+                                          $contactID, 
+                                          $template, 
+                                          $participantId, 
+                                          $isTest, 
+                                          null, 
+                                          $participantParams );
+                
                 $sendTemplateParams = array(
                     'groupName' => 'msg_tpl_workflow_event',
                     'valueName' => 'event_online_receipt',
@@ -1079,7 +1106,14 @@ WHERE civicrm_event.is_active = 1
      * @return None  
      * @access public  
      */ 
-    function buildCustomDisplay( $gid, $name, $cid, &$template, $participantId, $isTest, $isCustomProfile = false ) 
+    function buildCustomDisplay( $gid, 
+                                 $name, 
+                                 $cid, 
+                                 &$template, 
+                                 $participantId, 
+                                 $isTest, 
+                                 $isCustomProfile = false, 
+                                 $participantParams = array( ) ) 
     {  
         if ( $gid ) {
             require_once 'CRM/Core/BAO/UFGroup.php';
@@ -1109,16 +1143,35 @@ WHERE civicrm_event.is_active = 1
                         unset( $fields[$k] );
                     }
                 }
-
+                
                 if ( $groupTitle ) {
                     $template->assign( $name."_grouptitle", $groupTitle );
                     $groupTitles[ $name."_grouptitle" ] = $groupTitle;
                 }
-
-
-                CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values , false, $params );
-
-                if ( isset($values[$fields['participant_status_id']['title']]) &&
+                
+                //display profile groups those are subscribed by participant.
+                if ( ( $groups = CRM_Utils_Array::value( 'group', $participantParams ) ) && 
+                     is_array( $groups ) ) {
+                    $grpIds = array( );
+                    foreach ( $groups as $grpId => $isSelected ) {
+                        if ( $isSelected ) $grpIds[] = $grpId; 
+                    }
+                    if ( !empty( $grpIds ) ) {
+                        //get the group titles.
+                        $grpTitles = array( );
+                        $query = 'SELECT title FROM civicrm_group where id IN ( ' . implode( ',', $grpIds ) . ' )';
+                        $grp = CRM_Core_DAO::executeQuery( $query );
+                        while ( $grp->fetch( ) ) {
+                            $grpTitles[] = $grp->title; 
+                        }
+                        $values[$fields['group']['title']] = implode(', ', $grpTitles );
+                        unset($fields['group']);
+                    }
+                }
+                
+                CRM_Core_BAO_UFGroup::getValues( $cid, $fields, $values, false, $params );
+                
+                if ( isset( $values[$fields['participant_status_id']['title']] ) &&
                      is_numeric( $values[$fields['participant_status_id']['title']] ) ) {
                     $status = array( );
                     $status = CRM_Event_PseudoConstant::participantStatus( );
@@ -1132,11 +1185,12 @@ WHERE civicrm_event.is_active = 1
                     $values[$fields['participant_role_id']['title']] = $roles[$values[$fields['participant_role_id']['title']]];
                 }
 
-                if ( isset($values[$fields['participant_register_date']['title']]) ) {
+                if ( isset( $fields['participant_register_date']['title'] ) &&
+                     isset( $values[$fields['participant_register_date']['title']] ) ) {
                     $values[$fields['participant_register_date']['title']] = 
-                        CRM_Utils_Date::customFormat($values[$fields['participant_register_date']['title']]);
+                        CRM_Utils_Date::customFormat( $values[$fields['participant_register_date']['title']] );
                 }
-                
+
                 //handle fee_level for price set
                 if ( isset( $values[$fields['participant_fee_level']['title']] ) ) {
                     $feeLevel = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, 
@@ -1404,13 +1458,18 @@ WHERE  id = $cfID
      *@return array $customProfile array of Additional participant's info OR array of Ids.   
      *@access public  
      */ 
-    function buildCustomProfile( $participantId, $values, $contactId = null, $isTest = false, $isIdsArray = false, $skipCancel = true ) 
+    function buildCustomProfile( $participantId, 
+                                 $values, 
+                                 $contactId = null, 
+                                 $isTest = false, 
+                                 $isIdsArray = false, 
+                                 $skipCancel = true ) 
     {
         $customProfile = $additionalIDs = array( );
         if ( !$participantId ) {
             CRM_Core_Error::fatal(ts('Cannot find participant ID'));
         }
-                    
+        
         //set Ids of Primary Participant also.
         if ( $isIdsArray && $contactId ) {
             $additionalIDs[$participantId] = $contactId; 
@@ -1447,15 +1506,30 @@ WHERE  id = $cfID
                 $isCustomProfile = true;
                 $i = 1;
                 foreach ( $additionalIDs as $pId => $cId ) {
-                    list( $profilePre, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_pre_id'], 'additionalCustomPre',
-                                                             $cId, $template, $pId, $isTest, $isCustomProfile );
+                    //get the params submitted by participant.
+                    $participantParams = CRM_Utils_Array::value( $pId, $values['params'], array( ) );
+                    
+                    list( $profilePre, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_pre_id'], 
+                                                                                   'additionalCustomPre', 
+                                                                                   $cId, 
+                                                                                   $template, 
+                                                                                   $pId, 
+                                                                                   $isTest, 
+                                                                                   $isCustomProfile,
+                                                                                   $participantParams );
                     if ( $profilePre ) {
                         $customProfile[$i]['additionalCustomPre'] =  $profilePre;
                         $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );
                     }
-
-                    list( $profilePost, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_post_id'], 'additionalCustomPost',
-                                                              $cId, $template, $pId, $isTest, $isCustomProfile );
+                    
+                    list( $profilePost, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_post_id'], 
+                                                                                    'additionalCustomPost',
+                                                                                    $cId, 
+                                                                                    $template, 
+                                                                                    $pId, 
+                                                                                    $isTest, 
+                                                                                    $isCustomProfile,
+                                                                                    $participantParams );
                     if ( $profilePost ) {
                         $customProfile[$i]['additionalCustomPost'] =  $profilePost;
                         $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );

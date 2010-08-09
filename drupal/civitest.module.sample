@@ -1101,3 +1101,38 @@ Thank you for buying raffle tickets.  Your ticket numbers are:$raffleString. Goo
         }
     }
 }
+
+function civitest_civicrm_navigationMenu( &$params ) {
+   
+    //  Get the maximum key of $params 
+    $maxKey = ( max( array_keys($params) ) );
+    
+    $params[$maxKey+1] = array ( 
+                       'attributes' => array (
+                                              'label'      => 'Custom Menu Entry',
+                                              'name'       => 'Custom Menu Entry',
+                                              'url'        => null,
+                                              'permission' => null,
+                                              'operator'   => null,
+                                              'separator'  => null,
+                                              'parentID'   => null,
+                                              'navID'      => $maxKey+1,
+                                              'active'     => 1
+                                              ),
+                       'child' =>  array ( 
+                                          '1' => array (
+                                                        'attributes' => array ( 
+                                                                               'label'      => 'Custom Child Menu',
+                                                                               'name'       => 'Custom Child Menu',
+                                                                               'url'        => 'http://www.testlink.com',
+                                                                               'permission' => 'access CiviContribute
+',
+                                                                               'operator'   => null,
+                                                                               'separator'  => 1,
+                                                                               'parentID'   => $maxKey+1,
+                                                                               'navID'      => 1,
+                                                                               'active'     => 1
+                                                                                ),
+                                                        'child' => null 
+                                                        ) ) );    
+}
