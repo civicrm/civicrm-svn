@@ -81,4 +81,44 @@ class CRM_Campaign_Page_AJAX
         CRM_Utils_System::civiExit( );
     }
     
+    static function loadOptionGroupDetails( ) {
+
+        $id       = CRM_Utils_Array::value( 'option_group_id', $_POST );
+        $status   = 'fail';
+        $opValues = array( );
+        
+        if ( $id ) {
+            require_once 'CRM/Core/OptionValue.php';
+            $groupParams['id'] = $id;
+            CRM_Core_OptionValue::getValues( $groupParams, $opValues );
+        }
+
+        $surveyId = CRM_Utils_Array::value( 'survey_id', $_POST );
+        if ( $surveyId ) {
+            require_once 'CRM/Campaign/DAO/Survey.php';
+            $survey = new CRM_Campaign_DAO_Survey( );
+            $survey->id        = $surveyId;
+            $survey->result_id = $id;
+            if ( $survey->find( true ) ) {
+                if ( $survey->recontact_interval ) {
+                    $recontactInterval = unserialize( $survey->recontact_interval );
+                    foreach( $opValues as $opValId => $opVal ) {
+                        if ( CRM_Utils_Array::value( $opVal['value'], $recontactInterval) ) {
+                            $opValues[$opValId]['interval'] = $recontactInterval[$opVal['value']];
+                        }
+                    }
+                }
+            }
+        }
+
+        if ( !empty($opValues) ) {
+            $status = 'success';
+        }
+
+        $result = array( 'status' => $status,
+                         'result' => $opValues);
+        
+        echo json_encode( $result );
+        CRM_Utils_System::civiExit( );
+    }
 }

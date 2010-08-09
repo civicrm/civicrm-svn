@@ -93,7 +93,8 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $session->pushUserContext( $url );
 
         if ( $this->_surveyId ) {
-            $this->_resultId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $this->_surveyId, 'result_id' ); 
+            $this->_resultId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $this->_surveyId, 'result_id' );
+            $this->assign( 'surveyId', $this->_surveyId );
         } 
 
         $this->assign( 'action', $this->_action );
@@ -127,28 +128,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
 
                 unset($defaults['recontact_interval']);
                 $defaults['option_group_id'] = $resultId;
-
-                $values = array( );
-                $groupParams = array( 'id' => $resultId );
-                CRM_Core_OptionValue::getValues($groupParams, $values);
-                if ( !empty($values) ) {
-                    $i = 1;
-                    foreach( $values as $id => $opValue ) {
-                        if ( $i > self::NUM_OPTION ) {
-                            break;
-                        }
-                        $defaults['option_label['.$i.']'] = $opValue['label'];
-                        $defaults['option_value['.$i.']'] = $opValue['value'];
-                        $defaults['option_weight['.$i.']'] = $opValue['weight'];
-                        if ( CRM_Utils_Array::value( $opValue['value'], $recontactInterval) ) {
-                            $defaults['option_interval['.$i.']'] = $recontactInterval[$opValue['value']];
-                        }
-                        if ( CRM_Utils_Array::value('is_default', $opValue) ) {
-                            $defaults['default_option'] = $i;   
-                        }
-                        $i++;
-                    }
-                }
             } 
                 
             $ufJoinParams = array( 'entity_table' => 'civicrm_survey',
@@ -196,6 +175,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
 
         require_once 'CRM/Event/PseudoConstant.php';
         require_once 'CRM/Core/BAO/UFGroup.php';
+        require_once 'CRM/Core/BAO/CustomField.php';
        
         $this->add('text', 'title', ts('Survey Title'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'title'), true );
 
@@ -214,27 +194,46 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                    array( '' => ts('- select -')) + $customProfiles );
 
 
+        
+        $optionGroups = CRM_Core_BAO_CustomField::customOptionGroup( null );
+
+        if ( !empty($optionGroups) ) {
+            $this->add( 'select', 
+                        'option_group_id', 
+                        ts( 'Result Set' ),
+                        array( '' => ts( '- select -' ) ) + $optionGroups, false, 
+                        array('onChange' => 'loadOptionGroup( )' ) );
+            
+            $optionTypes = array( '1' => ts( 'Create a new Result set' ),
+                                  '2' => ts( 'Reuse an existing Result Set' ) );
+        } 
+        
+        $this->assign( 'existingOptions', $existingOptions );
+        
+        $element =& $this->addRadio( 'option_type', 
+                                     ts('Option Type'), 
+                                     $optionTypes,
+                                      array( 'onclick' => "showOptionSelect();"), '<br/>', true );
+
+        if ( empty($optionGroups) || !$this->_resultId ) {
+            $this->setdefaults( array( 'option_type' => 1 ) );
+        } else if ( $this->_resultId ) {
+            $this->setdefaults( array( 'option_type'     => 2 ,
+                                       'option_group_id' => $this->_resultId ) );
+            
+        }
+
         // form fields of Custom Option rows
         $defaultOption = array();
         require_once 'CRM/Core/ShowHideBlocks.php';
         $_showHide = new CRM_Core_ShowHideBlocks('','');
         
-        $showBlockDefault = 2;
-        if ( $this->_resultId ) {
-            require_once 'CRM/Core/OptionValue.php';
-            $values = array( );
-            $groupParams = array( 'id' => $this->_resultId );
-            CRM_Core_OptionValue::getValues($groupParams, $values);
-            if ( !empty($values) ) {
-                $showBlockDefault = count($values);
-            }
-        }
-        
+
         for($i = 1; $i <= self::NUM_OPTION; $i++) {
             
             //the show hide blocks
             $showBlocks = 'optionField_'.$i;
-            if ($i > $showBlockDefault) {
+            if ($i > 2) {
                 $_showHide->addHide($showBlocks);
                 if ($i == self::NUM_OPTION)
                     $_showHide->addHide('additionalOption');
@@ -316,83 +315,86 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         
         $errors = array( );
         
-                //capture duplicate Custom option values
-            if ( ! empty($fields['option_value']) ) {
-                $countValue = count($fields['option_value']);
-                $uniqueCount = count(array_unique($fields['option_value']));
-                
-                if ( $countValue > $uniqueCount) {
-                    
-                    $start=1;
-                    while ($start < self::NUM_OPTION) { 
-                        $nextIndex = $start + 1;
-                            
-                        while ($nextIndex <= self::NUM_OPTION) {
-                            
-                            if ( $fields['option_value'][$start] == $fields['option_value'][$nextIndex] &&
-                                 !empty($fields['option_value'][$nextIndex]) ) {
+        if ( $fields['option_type'] == 2 && 
+             !CRM_Utils_Array::value( 'option_group_id', $fields) ) {
+            $errors['option_group_id'] = ts("Please select Result set.");
+            return $errors;
+        }
 
-                                $errors['option_value['.$start.']']     = ts( 'Duplicate Option values' );
-                                $errors['option_value['.$nextIndex.']'] = ts( 'Duplicate Option values' );
-                                $_flagOption = 1;
-                            }
-                            $nextIndex++;
+        //capture duplicate Custom option values
+        if ( ! empty($fields['option_value']) ) {
+            $countValue = count($fields['option_value']);
+            $uniqueCount = count(array_unique($fields['option_value']));
+            
+            if ( $countValue > $uniqueCount) {
+                $start=1;
+                while ($start < self::NUM_OPTION) { 
+                    $nextIndex = $start + 1;
+                    
+                    while ($nextIndex <= self::NUM_OPTION) {
+                        if ( $fields['option_value'][$start] == $fields['option_value'][$nextIndex] &&
+                             !empty($fields['option_value'][$nextIndex]) ) {
+                            
+                            $errors['option_value['.$start.']']     = ts( 'Duplicate Option values' );
+                            $errors['option_value['.$nextIndex.']'] = ts( 'Duplicate Option values' );
+                            $_flagOption = 1;
                         }
-                        $start++;
+                        $nextIndex++;
                     }
+                    $start++;
                 }
+            }
+        }
+        
+        //capture duplicate Custom Option label
+        if ( ! empty( $fields['option_label'] ) ) {
+            $countValue = count($fields['option_label']);
+            $uniqueCount = count(array_unique($fields['option_label']));
+            
+            if ( $countValue > $uniqueCount) {
+                $start=1;
+                while ($start < self::NUM_OPTION) { 
+                    $nextIndex = $start + 1;
+                    
+                    while ($nextIndex <= self::NUM_OPTION) {
+                        if ( $fields['option_label'][$start] == $fields['option_label'][$nextIndex] && !empty($fields['option_label'][$nextIndex]) ) {
+                            $errors['option_label['.$start.']']     =  ts( 'Duplicate Option label' );
+                            $errors['option_label['.$nextIndex.']'] = ts( 'Duplicate Option label' );
+                            $_flagOption = 1;
+                        }
+                        $nextIndex++;
+                    }
+                    $start++;
+                }
+            }
+        }
+        
+        for($i=1; $i<= self::NUM_OPTION; $i++) {
+            if (!$fields['option_label'][$i]) {
+                if ($fields['option_value'][$i]) {
+                    $errors['option_label['.$i.']'] = ts( 'Option label cannot be empty' );
+                    $_flagOption = 1;
+                } else {
+                    $_emptyRow = 1;
+                }
+            } else if (!strlen(trim($fields['option_value'][$i]))) {
+                if (!$fields['option_value'][$i]) {
+                    $errors['option_value['.$i.']'] = ts( 'Option value cannot be empty' );
+                    $_flagOption = 1;
+                }
+            } else if (!strlen(trim($fields['option_interval'][$i]))) {
+                if (!$fields[''][$i]) {
+                    $errors['option_interval['.$i.']'] = ts( 'Recontact Interval cannot be empty' );
+                    $_flagOption = 1;
+                }
+            }
+            if ( CRM_Utils_Array::value($i, $fields['option_interval']) && !CRM_Utils_Rule::integer( $fields['option_interval'][$i] ) ) {
+                $_flagOption = 1;
+                $errors['option_interval['.$i.']'] = ts( 'Please enter a valid integer.' );
             }
             
-            //capture duplicate Custom Option label
-            if ( ! empty( $fields['option_label'] ) ) {
-                $countValue = count($fields['option_label']);
-                $uniqueCount = count(array_unique($fields['option_label']));
-                
-                if ( $countValue > $uniqueCount) {
-                    $start=1;
-                    while ($start < self::NUM_OPTION) { 
-                        $nextIndex = $start + 1;
-                        
-                        while ($nextIndex <= self::NUM_OPTION) {
-                            
-                            if ( $fields['option_label'][$start] == $fields['option_label'][$nextIndex] && !empty($fields['option_label'][$nextIndex]) ) {
-                                $errors['option_label['.$start.']']     =  ts( 'Duplicate Option label' );
-                                $errors['option_label['.$nextIndex.']'] = ts( 'Duplicate Option label' );
-                                $_flagOption = 1;
-                            }
-                            $nextIndex++;
-                        }
-                        $start++;
-                    }
-                }
-            }
-
-            for($i=1; $i<= self::NUM_OPTION; $i++) {
-                if (!$fields['option_label'][$i]) {
-                    if ($fields['option_value'][$i]) {
-                        $errors['option_label['.$i.']'] = ts( 'Option label cannot be empty' );
-                        $_flagOption = 1;
-                    } else {
-                        $_emptyRow = 1;
-                    }
-                } else if (!strlen(trim($fields['option_value'][$i]))) {
-                        if (!$fields['option_value'][$i]) {
-                            $errors['option_value['.$i.']'] = ts( 'Option value cannot be empty' );
-                            $_flagOption = 1;
-                        }
-                } else if (!strlen(trim($fields['option_interval'][$i]))) {
-                    if (!$fields[''][$i]) {
-                            $errors['option_interval['.$i.']'] = ts( 'Recontact Interval cannot be empty' );
-                            $_flagOption = 1;
-                    }
-                }
-                if ( CRM_Utils_Array::value($i, $fields['option_interval']) && !CRM_Utils_Rule::integer( $fields['option_interval'][$i] ) ) {
-                            $_flagOption = 1;
-                            $errors['option_interval['.$i.']'] = ts( 'Please enter a valid integer.' );
-                }
-                
-            }
-
+        }
+        
         return empty($errors) ? true : $errors;
     }   
     
@@ -416,6 +418,11 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         
         require_once 'CRM/Core/BAO/OptionValue.php';
         require_once 'CRM/Core/BAO/OptionGroup.php';
+        
+        if ( (CRM_Utils_Array::value('option_type', $params) == 2) &&
+             CRM_Utils_Array::value('option_group_id', $params) ) {
+            $this->_resultId = $params['option_group_id'];
+        }
 
         if ( $this->_surveyId ) {
 

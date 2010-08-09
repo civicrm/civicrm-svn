@@ -24,6 +24,18 @@
  +--------------------------------------------------------------------+
 *}
 
+<tr>
+<td class="label">{$form.option_type.label}</td>
+<td class="html-adjust">{$form.option_type.html}<br />
+    <span class="description">{ts}You can create new multiple choice options for this field, or select an existing set of options which you've already created for another custom field.{/ts}</span>
+</td>
+</tr>
+
+<tr id="option_group" {if !$form.option_group_id}class="hiddenElement"{/if}>
+  <td class="label">{$form.option_group_id.label}</td>
+  <td class="html-adjust">{$form.option_group_id.html}</td>
+</tr>
+
 <tr id="multiple">
 <td colspan="2" class="html-adjust">
     <fieldset><legend>{ts}Result Set{/ts}</legend>
@@ -78,6 +90,8 @@
     var showRows   = new Array({$showBlocks});
     var hideBlocks = new Array({$hideBlocks});
     var rowcounter = 0;
+    var surveyId   = {if $surveyId}{$surveyId}{else}''{/if};
+    
     {literal}
     if (navigator.appName == "Microsoft Internet Explorer") {    
 	for ( var count = 0; count < hideBlocks.length; count++ ) {
@@ -85,6 +99,72 @@
             r.style.display = 'none';
         }
     }
+    
+    function showOptionSelect( ) {
+      if ( document.getElementsByName("option_type")[0].checked ) {
+        cj('#option_group').hide();
+	cj('#default_option').val(''); 
+	resetResultSet( );
+      } else {
+        cj('#option_group').show();
+	loadOptionGroup( );
+      }
+    }
+
+    function resetResultSet( ) {
+	for( i=1; i<=11; i++ ) {
+	  cj('#option_label_'+ i).val('');
+	  cj('#option_value_'+ i).val('');
+	  cj('#option_weight_'+ i).val('');
+	  cj('#option_interval_'+ i).val('');
+	  if ( i > 2 ) {
+	    showHideRow(i);
+	  }
+	}
+    }
+
+    function loadOptionGroup( ) {
+        var data = new Object;
+	
+	resetResultSet( );
+	if ( cj('#option_group_id').val() ) { 
+	  data['option_group_id'] = cj('#option_group_id').val();
+	  data['survey_id'] = surveyId;
+	} else {
+	  return false;
+	}
+ 
+     	var dataUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=loadOptionGroupDetails' }"{literal}	          
+	
+	// build new options
+	cj.post( dataUrl, data, function( opGroup ) {
+	       if ( opGroup.status == 'success' ) {
+	         var result = opGroup.result;
+		 var countRows = 1;
+	       	 for( key in result ) {
+		  
+		   cj('#option_label_'+ countRows).val( result[key].label);
+		   cj('#option_value_'+ countRows).val( result[key].value);
+		   cj('#option_weight_'+ countRows).val( result[key].weight);
+
+		   if ( surveyId && result[key].interval ) {
+		      cj('#option_interval_'+ countRows).val( result[key].interval);
+		   }
+		  
+		   if ( result[key].is_default == 1 ) {
+		     cj('#default_option').val(countRows);
+		   } 
+		   
+		   if ( countRows > 1 ) {
+		   	 showHideRow( );
+		   }
+                   countRows +=1; 
+		 }
+	       }		 
+	}, "json" );
+    }
+
+    showOptionSelect( );
     {/literal}	
     on_load_init_blocks( showRows, hideBlocks, '' );
 </script>
