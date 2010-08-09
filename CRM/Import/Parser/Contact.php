@@ -1978,6 +1978,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                     $relatedContactFields[$name] = array( );
                 }
                 $fldName = CRM_Utils_Array::value( $key, $this->_mapperRelatedContactDetails );
+                if ( $fldName == 'url' ) $fldName = 'website';
                 if ( $fldName ) {
                     $relatedContactFields[$name][] = $fldName;
                 }

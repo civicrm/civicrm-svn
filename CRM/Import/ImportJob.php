@@ -209,13 +209,12 @@ class CRM_Import_ImportJob {
                 
                 $mapperRelatedVal = $fldName;
                 if ( $selOne ) {
+                    $mapperRelatedContactDetailsVal = $selOne;
                     if ( $selTwo ) {
                         if ( $selOne == 'url' ) {
-                            $mapperRelatedContactDetailsVal = 'website';
                             $header[] = $websiteTypes[$selTwo];
                             $mapperRelatedContactWebsiteTypeVal = $selTwo;
                         } else {
-                            $mapperRelatedContactDetailsVal = $selOne;
                             $header[] = $locationTypes[$selTwo];
                             $mapperRelatedContactLocTypeVal = $selTwo;
                             if ( $selThree ) {
