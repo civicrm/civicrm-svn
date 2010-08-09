@@ -146,6 +146,13 @@ class CRM_Event_Form_EventFees
                     $defaults[$form->_pId]["billing_" . $name] = $form->_defaults[$name];
                 }
             }
+            
+            require_once 'CRM/Core/Config.php';
+            $config = CRM_Core_Config::singleton( );
+            // set default country from config if no country set
+            if ( !CRM_Utils_Array::value("billing_country_id-{$form->_bltID}", $defaults[$form->_pId] ) ) { 
+                $defaults[$form->_pId]["billing_country_id-{$form->_bltID}"] = $config->defaultContactCountry;
+            }
         }
 
         require_once 'CRM/Price/BAO/Set.php';

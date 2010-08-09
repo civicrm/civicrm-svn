@@ -97,7 +97,6 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
             $this->set('downloadMismatchRecordsUrl', CRM_Utils_System::url('civicrm/export', $urlParams ) );
         }
         
-        
         $properties = array( 'mapper', 'locations', 'phones', 'ims',
                              'dataValues', 'columnCount',
                              'totalRowCount', 'validRowCount', 
@@ -106,9 +105,9 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
                              'downloadConflictRecordsUrl',
                              'downloadMismatchRecordsUrl',
                              'related', 'relatedContactDetails', 'relatedContactLocType',
-                             'relatedContactPhoneType', 'relatedContactImProvider'
+                             'relatedContactPhoneType', 'relatedContactImProvider', 'websites'
                              );
-                             
+        
         foreach ( $properties as $property ) {
             $this->assign( $property, $this->get( $property ) );
         }
@@ -323,7 +322,7 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
             } else {
                 $mapperLocTypes[$key] = null;
             }
-            
+                        
             if ( CRM_Utils_Array::value($key,$mapperKeys) == 'phone' ) {
                 $mapperPhoneTypes[$key] = $mapper[$key][2];
             } else {
@@ -350,9 +349,9 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
         }
         
         $parser = new CRM_Import_Parser_Contact( $mapperKeys, $mapperLocTypes,
-                                                  $mapperPhoneTypes, $mapperRelated, $mapperRelatedContactType,
-                                                  $mapperRelatedContactDetails, $mapperRelatedContactLocType, 
-                                                  $mapperRelatedContactPhoneType);
+                                                 $mapperPhoneTypes, $mapperRelated, $mapperRelatedContactType,
+                                                 $mapperRelatedContactDetails, $mapperRelatedContactLocType, 
+                                                 $mapperRelatedContactPhoneType );
         
         $mapFields = $this->get('fields');
       

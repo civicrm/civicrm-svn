@@ -128,7 +128,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       // Go to Fees tab and check that Paid Event is false (No)
       $this->click("link=Fees");
       $this->waitForElementPresent("_qf_Fee_upload-bottom");
-      $this->verifyChecked("CIVICRM_QFID_0_No");
+      $this->verifyChecked("CIVICRM_QFID_0_4");
       
       // intro text for registration page
       $registerIntro = "Fill in all the fields below and click Continue.";
@@ -231,8 +231,8 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       // Go to Fees tab
       $this->click("link=Fees");
       $this->waitForElementPresent("_qf_Fee_upload-bottom");
-      $this->click("CIVICRM_QFID_1_Yes");
-      $this->select("payment_processor_id", "value=3");
+      $this->click("CIVICRM_QFID_1_2");
+      $this->select("payment_processor_id", "value=1");
       $this->select("contribution_type_id", "value=4");
       if ( $priceSet) {
           // get one - TBD
@@ -265,7 +265,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->type("intro_text", $registerIntro);
       
       // enable confirmation email
-      $this->click("CIVICRM_QFID_1_Yes");
+      $this->click("CIVICRM_QFID_1_2");
       $this->type("confirm_from_name", "Jane Doe");
       $this->type("confirm_from_email", "jane.doe@example.org");
 

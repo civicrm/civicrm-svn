@@ -57,8 +57,8 @@ class WebTest_Generic_CheckActivityTest extends CiviSeleniumTestCase {
 
       // Adding another contact with randomized first name
       // We're using Quick Add block on the main page for this.
-      $$contactFirstName2 = substr(sha1(rand()), 0, 7);
-      $this->webtestAddContact( $$contactFirstName2, "Anderson", true );
+      $contactFirstName2 = substr(sha1(rand()), 0, 7);
+      $this->webtestAddContact( $contactFirstName2, "Anderson", true );
       $this->open($this->sboxPath . "civicrm/activity&reset=1&action=add&context=standalone");
       
       // make sure the form loaded, check the end element

@@ -738,6 +738,7 @@ GROUP BY p.id
         if ( !$honorId ) {
             require_once "CRM/Core/BAO/UFGroup.php";
             $honorParams['email'] = $params["honor_email"];
+            $honorParams['check_permission'] = false;
             $ids = CRM_Core_BAO_UFGroup::findContact( $honorParams, null, 'Individual' );
             $contactsIds = explode( ',', $ids );
             

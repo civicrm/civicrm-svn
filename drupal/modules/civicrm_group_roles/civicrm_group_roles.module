@@ -161,10 +161,8 @@ function civicrm_group_roles_form_alter(&$form, &$form_state, $form_id) {
     if (!$contact_id) {
       return;
     }
-    $form['#submit'][] = '_civicrm_group_update';
+    array_unshift( $form['#submit'], '_civicrm_group_update' );
     $form['#civicrm_contact_id'] = $contact_id;
-    //change the order of the submits so we catch the changes before the form submits them
-    $form['#submit'] = array_reverse($form['#submit']);
   }
 }
 
@@ -175,7 +173,8 @@ function _civicrm_group_update ($form_id, $form_values) {
   $user = user_load($form_id['#uid']);
   //load the currently saved roles
   $roles = $user->roles;
-  //get the roles as submitted on the user form
+  //if roles are in the $form_values array get the roles as submitted on the user form
+  if (!is_array($form_values['values']['roles'])) { return; }
   $new_roles = array_filter($form_values['values']['roles']);
   //if there is a difference then something was removed
   $removed_roles = array_diff_key($roles,$new_roles);

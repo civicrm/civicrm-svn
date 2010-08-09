@@ -29,14 +29,14 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 
 
  
-class WebTest_Event_AddTest extends CiviSeleniumTestCase {
+class WebTest_Event_AddParticipationTest extends CiviSeleniumTestCase {
 
   protected function setUp()
   {
       parent::setUp();
   }
 
-  function testStandaloneEventAdd()
+  function testEventParticipationAdd()
   {
 
       // This is the path where our testing install resides. 
@@ -65,8 +65,8 @@ class WebTest_Event_AddTest extends CiviSeleniumTestCase {
       // Type contact last name in contact auto-complete, wait for dropdown and click first result
       $this->webtestFillAutocomplete( $firstName );
 
-      // Select first event. Use option value, not label - since labels can be translated and test would fail
-      $this->select("event_id", "value=1");
+      // Select event. Based on label for now.
+      $this->select("event_id", "label=regexp:Rain-forest Cup Youth Soccer Tournament.");
       
       // Select role
       $this->select("role_id", "value=1");
@@ -75,7 +75,6 @@ class WebTest_Event_AddTest extends CiviSeleniumTestCase {
       // Using helper webtestFillDate function.
       $this->webtestFillDate('register_date', 'now');
       $today = date('F jS, Y', strtotime('now'));
-      echo 'Today is ' . $today;
       // May 5th, 2010
 
       // Select participant status
@@ -90,13 +89,13 @@ class WebTest_Event_AddTest extends CiviSeleniumTestCase {
       // Select an event fee
       $feeHelp = "Event Fee Level (if applicable).";
       $this->waitForTextPresent($feeHelp);
-      $this->click("css=tr.crm-participant-form-block-fee_amount input");
+      $this->click("CIVICRM_QFID_521_10");
 
       // Select 'Record Payment'
       $this->click("record_contribution");
       
       // Enter amount to be paid (note: this should default to selected fee level amount, s/b fixed during 3.2 cycle)
-      $this->type("total_amount", "50.00");
+      $this->type("total_amount", "800");
       
       // Select payment method = Check and enter chk number
       $this->select("payment_instrument_id", "value=4");
@@ -104,7 +103,7 @@ class WebTest_Event_AddTest extends CiviSeleniumTestCase {
       $this->type("check_number", "1044");
       
       // go for the chicken combo (obviously)
-      $this->click("CIVICRM_QFID_chicken_Chicken");
+//      $this->click("CIVICRM_QFID_chicken_Chicken");
 
       // Clicking save.
       $this->click("_qf_Participant_upload-bottom");
@@ -121,12 +120,12 @@ class WebTest_Event_AddTest extends CiviSeleniumTestCase {
       // verify that the event registration values were properly saved by checking for label/value pairs on the view page 
       $this->webtestVerifyTabularData(
           array(
-              'Event'	         => 'Fall Fundraiser Dinner', 
+              'Event'	         => 'Rain-forest Cup Youth Soccer Tournament', 
               'Participant Role' => 'Attendee',
               'Status'           => 'Registered',
               'Event Source'	 => 'Event StandaloneAddTest Webtest', 
-              'Event Level' 	 => 'Single - $ 50.00',
-              'Soup Selection'   => 'Chicken Combo'
+              'Event Level' 	 => 'Tiny-tots (ages 5-8) - $ 800.00',
+//              'Soup Selection'   => 'Chicken Combo'
           )
       );
       
@@ -138,7 +137,7 @@ class WebTest_Event_AddTest extends CiviSeleniumTestCase {
           array(
               'From'                => $displayName,
               'Contribution Type'   => 'Event Fee', 
-              'Total Amount' 	    => '$ 50.00',
+              'Total Amount' 	    => '$ 800.00',
               'Received'            => $today, 
               'Contribution Status' => 'Completed',
               'Paid By'             => 'Check',

@@ -456,11 +456,16 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             
             // always create a revision of an case activity. CRM-4533
             $newActParams = $params;
+            
+            // add target contact values in update mode
+            if ( empty($params['target_contact_id']) && !empty( $this->_defaults['target_contact'] ) ) {
+                $newActParams['target_contact_id'] = $this->_defaults['target_contact'];
+            }
                       
             // record status for status msg
             $recordStatus = 'updated';
         }
-        
+                
         if ( ! isset($newActParams) ) {
             // add more attachments if needed for old activity
             CRM_Core_BAO_File::formatAttachment( $params,
@@ -505,6 +510,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             // call begin post process, before the activity is created/updated.
             $this->beginPostProcess( $newActParams );
             $newActParams['case_id'] = $this->_caseId;
+                        
             $activity = CRM_Activity_BAO_Activity::create( $newActParams );
             
             // call end post process, after the activity has been created/updated.

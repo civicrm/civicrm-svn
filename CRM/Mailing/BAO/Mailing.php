@@ -1946,7 +1946,11 @@ SELECT $selectClause
      * @return array
      * @access public
      */
-    function getDetails($contactIDs, $returnProperties = null, $skipOnHold = true, $skipDeceased = true, $extraParams = null ) 
+    function getDetails($contactIDs,
+                        $returnProperties = null,
+                        $skipOnHold = true,
+                        $skipDeceased = true,
+                        $extraParams = null ) 
     {
         $params = array( );
         foreach ( $contactIDs  as $key => $contactID ) {

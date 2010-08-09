@@ -124,7 +124,7 @@ class WebTest_Mailing_MailingTest extends CiviSeleniumTestCase {
       $this->type("subject", "Test subject $mailingName for Webtest");
       
       // check for default option enabled
-      $this->assertChecked("CIVICRM_QFID_1_Compose");
+      $this->assertChecked("CIVICRM_QFID_1_4");
       
       // fill message (presently using script for simple text area)
       $this->click("//fieldset[@id='compose_id']/div[2]/div[1]");
