@@ -33,3 +33,7 @@ ADD INDEX UI_activity_type_id (activity_type_id),
 ADD INDEX index_medium_id (medium_id),
 ADD INDEX index_is_current_revision (is_current_revision),
 ADD INDEX index_is_deleted (is_deleted);
+
+-- CRM-6622
+SELECT @uf_group_id_summary   := max(id) FROM civicrm_uf_group WHERE name = 'summary_overlay';
+UPDATE civicrm_uf_field SET location_type_id = 1, phone_type_id = 2 WHERE uf_group_id = @uf_group_id_summary AND location_type_id = 2;
