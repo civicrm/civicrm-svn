@@ -979,6 +979,10 @@ WHERE civicrm_event.is_active = 1
                       'custom_post_id'=> $values['custom_post_id']
                       );
         
+        
+        //get the params submitted by participant.
+        $participantParams = CRM_Utils_Array::value( $participantId, $values['params'], array( ) );
+        
         if ( ! $returnMessageText ) {
             //send notification email if field values are set (CRM-1941)
             foreach ( $gIds as $key => $gId ) {
@@ -986,7 +990,14 @@ WHERE civicrm_event.is_active = 1
                     $email = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_UFGroup', $gId, 'notify' );
                     if ( $email ) {
                         //get values of corresponding profile fields for notification
-                        list( $profileValues ) = self::buildCustomDisplay( $gId, null, $contactID, $template, $participantId, $isTest, true );  
+                        list( $profileValues ) = self::buildCustomDisplay( $gId, 
+                                                                           null, 
+                                                                           $contactID, 
+                                                                           $template, 
+                                                                           $participantId, 
+                                                                           $isTest, 
+                                                                           true,
+                                                                           $participantParams );  
                         $val = array(
                                      'id'     => $gId,
                                      'values' => $profileValues,
@@ -1027,9 +1038,6 @@ WHERE civicrm_event.is_active = 1
                     $preProfileID  = $values['additional_custom_pre_id'];
                     $postProfileID = $values['additional_custom_post_id'];
                 }
-                
-                //get the params submitted by participant.
-                $participantParams = CRM_Utils_Array::value( $participantId, $values['params'], array( ) );
                 
                 self::buildCustomDisplay( $preProfileID, 
                                           'customPre', 
@@ -1450,13 +1458,18 @@ WHERE  id = $cfID
      *@return array $customProfile array of Additional participant's info OR array of Ids.   
      *@access public  
      */ 
-    function buildCustomProfile( $participantId, $values, $contactId = null, $isTest = false, $isIdsArray = false, $skipCancel = true ) 
+    function buildCustomProfile( $participantId, 
+                                 $values, 
+                                 $contactId = null, 
+                                 $isTest = false, 
+                                 $isIdsArray = false, 
+                                 $skipCancel = true ) 
     {
         $customProfile = $additionalIDs = array( );
         if ( !$participantId ) {
             CRM_Core_Error::fatal(ts('Cannot find participant ID'));
         }
-                    
+        
         //set Ids of Primary Participant also.
         if ( $isIdsArray && $contactId ) {
             $additionalIDs[$participantId] = $contactId; 
@@ -1493,14 +1506,30 @@ WHERE  id = $cfID
                 $isCustomProfile = true;
                 $i = 1;
                 foreach ( $additionalIDs as $pId => $cId ) {
-                    list( $profilePre, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_pre_id'], 'additionalCustomPre', $cId, $template, $pId, $isTest, $isCustomProfile );
+                    //get the params submitted by participant.
+                    $participantParams = CRM_Utils_Array::value( $pId, $values['params'], array( ) );
+                    
+                    list( $profilePre, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_pre_id'], 
+                                                                                   'additionalCustomPre', 
+                                                                                   $cId, 
+                                                                                   $template, 
+                                                                                   $pId, 
+                                                                                   $isTest, 
+                                                                                   $isCustomProfile,
+                                                                                   $participantParams );
                     if ( $profilePre ) {
                         $customProfile[$i]['additionalCustomPre'] =  $profilePre;
                         $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );
                     }
-
-                    list( $profilePost, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_post_id'], 'additionalCustomPost',
-                                                              $cId, $template, $pId, $isTest, $isCustomProfile );
+                    
+                    list( $profilePost, $groupTitles ) =  self::buildCustomDisplay( $values['additional_custom_post_id'], 
+                                                                                    'additionalCustomPost',
+                                                                                    $cId, 
+                                                                                    $template, 
+                                                                                    $pId, 
+                                                                                    $isTest, 
+                                                                                    $isCustomProfile,
+                                                                                    $participantParams );
                     if ( $profilePost ) {
                         $customProfile[$i]['additionalCustomPost'] =  $profilePost;
                         $customProfile[$i] = array_merge( $groupTitles, $customProfile[$i] );

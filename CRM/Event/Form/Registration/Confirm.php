@@ -429,6 +429,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         $params = $this->_params;
         $this->set( 'finalAmount' ,$this->_amount );
         $participantCount = array( );
+        
         //unset the skip participant from params.
         //build the $participantCount array.
         //maintain record for all participants.
@@ -448,7 +449,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                 }
             }
         }
-        
+                
         $payment = $registerByID = $primaryCurrencyID = $contribution = null;
         foreach ( $params as $key => $value ) {
             $this->fixLocationFields( $value, $fields );
@@ -715,7 +716,26 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             //lets send  mails to all with meaningful text, CRM-4320.
             $this->assign( 'isOnWaitlist', $this->_allowWaitlist );
             $this->assign( 'isRequireApproval', $this->_requireApproval );
-                                    
+            
+            //need to copy, since we are unsetting on the way.
+            $copyParticipantCount = $participantCount;
+            
+            //lets carry all paticipant params w/ values.
+            foreach ( $additionalIDs as $participantID => $contactId ) {
+                $participantNum = null;
+                if ( $participantID == $registerByID ) {
+                    $participantNum = 0;
+                } else {
+                    if ( $participantNum = array_search( 'participant', $copyParticipantCount ) ) {
+                        unset( $copyParticipantCount[$participantNum] );
+                    }
+                }
+                if ( $participantNum === null ) break;
+                
+                //carry the participant submitted values.
+                $this->_values['params'][$participantID] = $params[$participantNum];
+            }
+            
             foreach( $additionalIDs as $participantID => $contactId ) {
                 $participantNum = 0;
                 if ( $participantID == $registerByID ) {
@@ -752,9 +772,6 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     }
                     $this->_values['params']['additionalParticipant'] = true;
                 }
-                
-                //carry the participant submitted values.
-                $this->_values['params'][$participantID] = $params[$participantNum];
                 
                 //pass these variables since these are run time calculated.
                 $this->_values['params']['isOnWaitlist']  = $this->_allowWaitlist;

@@ -946,6 +946,15 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
         // get all in and then unset those are confirmed.
         $cancelledIds = $this->_additionalParticipantIds;
         
+        $participantCount = array( );
+        foreach ( $params as $participantNum => $record ) {
+            if ( $record == 'skip' ) {
+                $participantCount[$participantNum] = 'skip';
+            } else if ( $participantNum ) {
+                $participantCount[$participantNum] = 'participant';
+            }
+        }
+        
         foreach ( $params as $key => $value ) {
             if ( $value != 'skip') {
                 $fields = null;
@@ -1033,8 +1042,25 @@ class CRM_Event_Form_Registration_Register extends CRM_Event_Form_Registration
             $primaryContactId = $this->get('primaryContactId');
 
             //build an array of custom profile and assigning it to template.
-            $additionalIDs = CRM_Event_BAO_Event::buildCustomProfile( $registerByID, null, $primaryContactId, $isTest, true );  
-
+            $additionalIDs = CRM_Event_BAO_Event::buildCustomProfile( $registerByID, null, 
+                                                                      $primaryContactId, $isTest, true );  
+            
+            //lets carry all paticipant params w/ values.
+            foreach ( $additionalIDs as $participantID => $contactId ) {
+                $participantNum = null;
+                if ( $participantID == $registerByID ) {
+                    $participantNum = 0;
+                } else {
+                    if ( $participantNum = array_search( 'participant', $participantCount ) ) {
+                        unset( $participantCount[$participantNum] );
+                    }
+                }
+                if ( $participantNum === null ) break;
+                
+                //carry the participant submitted values.
+                $this->_values['params'][$participantID] = $params[$participantNum];
+            }
+            
             //lets send  mails to all with meanigful text, CRM-4320.
             $this->assign( 'isOnWaitlist', $this->_allowWaitlist );
             $this->assign( 'isRequireApproval', $this->_requireApproval );
