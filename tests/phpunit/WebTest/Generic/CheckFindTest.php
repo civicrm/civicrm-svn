@@ -56,7 +56,7 @@ class WebTest_Generic_CheckFindTest extends CiviSeleniumTestCase
       $this->click("link=CiviCRM");
       $this->waitForPageToLoad("30000");
       $this->click("//ul[@id='civicrm-menu']/li[3]");
-      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[1]/div/a");
+      $this->click("//div[@id='root-menu-div']/div[3]/ul/li[1]/div/a");
       $this->waitForPageToLoad("30000");
       $this->click("//input[@name='_qf_Basic_refresh' and @value='Search']");
       $this->waitForPageToLoad("30000");

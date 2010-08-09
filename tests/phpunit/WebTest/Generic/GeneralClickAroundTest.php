@@ -48,7 +48,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       $this->waitForPageToLoad('30000');
 
       $this->click("//ul[@id='civicrm-menu']/li[3]");
-      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[1]/div/a");
+      $this->click("//div[@id='root-menu-div']/div[3]/ul/li[1]/div/a");
       $this->waitForPageToLoad("30000");
 
       $this->click("contact_type");
@@ -62,7 +62,7 @@ class WebTest_Generic_GeneralClickAroundTest extends CiviSeleniumTestCase {
       
       // Advanced Search by Tag
       $this->click("//ul[@id='civicrm-menu']/li[3]");
-      $this->click("//div[@id='root-menu-div']/div[2]/ul/li[2]/div/a");
+      $this->click("//div[@id='root-menu-div']/div[3]/ul/li[2]/div/a");
       $this->waitForPageToLoad("30000");
       $this->click("crmasmSelect2");
       $this->select("crmasmSelect2", "label=Major Donor");
