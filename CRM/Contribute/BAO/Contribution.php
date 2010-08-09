@@ -735,19 +735,21 @@ GROUP BY p.id
                               'last_name'     => $params["honor_last_name"], 
                               'prefix_id'     => $params["honor_prefix_id"],
                               'email-Primary' => $params["honor_email"] );
-        if ( !$honorId ) {
-            require_once "CRM/Core/BAO/UFGroup.php";
+        if ( ! $honorId ) {
             $honorParams['email'] = $params["honor_email"];
-            $honorParams['check_permission'] = false;
-            $ids = CRM_Core_BAO_UFGroup::findContact( $honorParams, null, 'Individual' );
-            $contactsIds = explode( ',', $ids );
-            
-            if ( is_numeric( $contactsIds[0] ) && count ( $contactsIds ) ==  1 ) {
-                $honorId = $contactsIds[0];
-            }
+
+            require_once 'CRM/Dedupe/Finder.php';
+            $dedupeParams = CRM_Dedupe_Finder::formatParams($honorParams, 'Individual');
+            $dedupeParams['check_permission'] = false;
+            $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, 'Individual');
+
+            // if we find more than one contact, use the first one
+            $honorId  = CRM_Utils_Array::value( 0, $ids );
         }
         
-        $contact =& CRM_Contact_BAO_Contact::createProfileContact( $honorParams, CRM_Core_DAO::$_nullArray, $honorId );
+        $contact =& CRM_Contact_BAO_Contact::createProfileContact( $honorParams,
+                                                                   CRM_Core_DAO::$_nullArray,
+                                                                   $honorId );
         return $contact;
     }
     
