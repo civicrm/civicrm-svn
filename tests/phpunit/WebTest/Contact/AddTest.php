@@ -32,7 +32,7 @@ require_once 'CiviTest/CiviSeleniumTestCase.php';
 class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
   protected $captureScreenshotOnFailure = TRUE;
-  protected $screenshotPath = '/var/www/api.dev.civicrm.org/public/sc';
+  protected $screenshotPath = '/tmp';
   protected $screenshotUrl = 'http://api.dev.civicrm.org/sc/';
     
   protected function setUp()
@@ -63,13 +63,13 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->select("prefix_id", "value=3");
       
       //fill in first name
-      $this->type("first_name", "John");
+      $this->type("first_name", "John" . substr(sha1(rand()), 0, 7));
       
       //fill in middle name
       $this->type("middle_name", "Bruce");
       
       //fill in last name
-      $this->type("last_name", "Smith");
+      $this->type("last_name", "Smith" . substr(sha1(rand()), 0, 7));
       
       //select suffix
       $this->select("suffix_id", "value=3");
@@ -78,7 +78,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("nick_name", "jsmith");
       
       //fill in email
-      $this->type("email_1_email", "john@gmail.com");
+      $this->type("email_1_email", substr(sha1(rand()), 0, 7) . "john@gmail.com");
       
       //fill in phone
       $this->type("phone_1_phone", "2222-4444");
@@ -87,7 +87,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("im_1_name", "testYahoo");
       
       //fill in openID
-      $this->type("openid_1_openid", "http://www.johnopenid.com");
+      $this->type("openid_1_openid", "http://www.john-" . substr(sha1(rand()), 0, 7) . "-openid.com");
       
       //fill in website
       $this->type("website_1_url", "http://www.john.com");
@@ -159,7 +159,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       //Demographics section
       $this->click("demographics");
       
-      $this->click("CIVICRM_QFID_2_18");
+      $this->click("CIVICRM_QFID_1_8");
       $this->webtestFillDate('birth_date');
       
       //Tags and Groups section
@@ -177,16 +177,8 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
 
   function testHouseholdAdd( )
   {
-      // This is the path where our testing install resides. 
-      // The rest of URL is defined in CiviSeleniumTestCase base class, in
-      // class attributes.
       $this->open( $this->sboxPath );
       
-      // Logging in. Remember to wait for page to load. In most cases,
-      // you can rely on 30000 as the value that allows your test to pass, however,
-      // sometimes your test might fail because of this. In such cases, it's better to pick one element
-      // somewhere at the end of page and use waitForElementPresent on it - this assures you, that whole
-      // page contents loaded and you can continue your test execution.
       $this->webtestLogin( );
       
       // Go directly to the URL of the screen that you will be testing (New Household).
@@ -195,13 +187,15 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       //contact details section
       //fill in Household name
       $this->click("household_name");
-      $this->type("household_name", "Fraddie Grant's home");
+      $name = "Fraddie Grant's home " . substr(sha1(rand()), 0, 7);
+      $this->type("household_name", $name );
       
       //fill in nick name
-      $this->type("nick_name", "Grant's home");
+      $this->type("nick_name", "Grant's home" . substr(sha1(rand()), 0, 7));
 
       //fill in email
-      $this->type("email_1_email", "fraddiegrantshome@web.com");
+      $email = substr(sha1(rand()), 0, 7) . "fraddiegrantshome@web.com ";
+      $this->type("email_1_email", $email);
       $this->click("Email_1_IsBulkmail");
       
       //fill in phone
@@ -216,7 +210,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->select("im_1_provider_id", "value=6");
       
       //fill in openID
-      $this->type("openid_1_openid", "http://www.grantshomeopenid.com");
+      $this->type("openid_1_openid", "http://www.grant" . substr(sha1(rand()), 0, 7) . "shomeopenid.com");
       
       //fill in website url
       $this->type("website_1_url", "http://www.fraddiegrantshome.com");
@@ -304,7 +298,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       //contact details section
       //fill in Organization name
       $this->click("organization_name");
-      $this->type("organization_name", "syntel tech");
+      $this->type("organization_name", "syntel tech" . substr(sha1(rand()), 0, 7));
       
       //fill in legal name
       $this->type("legal_name", "syntel tech Ltd");
@@ -313,7 +307,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       $this->type("nick_name", "syntel");
       
       //fill in email
-      $this->type("email_1_email", "info@syntel.com");
+      $this->type("email_1_email", substr(sha1(rand()), 0, 7) . "info@syntel.com");
       
       //fill in phone
       $this->type("phone_1_phone", "222-7777");
@@ -326,7 +320,7 @@ class WebTest_Contact_AddTest extends CiviSeleniumTestCase {
       
       //fill in openID
       $this->select("openid_1_location_type_id", "value=5");
-      $this->type("openid_1_openid", "http://www.syntelOpenid.com");
+      $this->type("openid_1_openid", "http://www.syntel-" . substr(sha1(rand()), 0, 7) . "-Openid.com");
       
       //fill in website url
       $this->type("website_1_url", "http://syntelglobal.com");
