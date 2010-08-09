@@ -334,7 +334,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
         $columnPatterns   = $this->get( 'columnPatterns' );
         $dataPatterns     = $this->get( 'dataPatterns' );
         $hasLocationTypes = $this->get( 'fieldTypes' );
-        
+                
         $this->_location_types  =& CRM_Core_PseudoConstant::locationType();
 
         $defaultLocationType =& CRM_Core_BAO_LocationType::getDefault();
@@ -418,6 +418,8 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                     $values[$name] = $field['title'];
                     if (isset ( $hasLocationTypes[$name] ) ) {
                         $sel3[$key][$name] = $this->_location_types;
+                    } else if ( $name == 'url' ) {
+                        $sel3[$key][$name] = $websiteTypes;
                     } else {
                         $sel3[$name] = null;
                     }
@@ -741,6 +743,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                                'relatedContactLocType'    => 'relatedContactLocTypeVal', 
                                'relatedContactPhoneType'  => 'relatedContactPhoneTypeVal',
                                'relatedContactImProvider' => 'relatedContactImProviderVal',
+                               'relatedContactWebsiteType'=> 'relatedContactWebsiteTypeVal'
                                );
         
         //set respective mapper params to array.
@@ -780,12 +783,16 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                  ($first == 'b' && $second == 'a') ) {
                 $relatedVal = $this->_mapperFields[$fldName];
                 if ( $selOne ) {
-                    $relatedContactLocTypeVal = $locationTypes[$selTwo];
-                    if ( $selThree ) {
-                        if ( $selOne == 'phone' ) {
-                            $relatedContactPhoneTypeVal = $phoneTypes[$selThree];
-                        } else if ( $selOne == 'im' ) {
-                            $relatedContactImProviderVal = $imProviders[$selThree];
+                    if ( $selOne == 'url' ) {
+                        $relatedContactWebsiteTypeVal = $websiteTypes[$selTwo];
+                    } else {
+                        $relatedContactLocTypeVal = $locationTypes[$selTwo];
+                        if ( $selThree ) {
+                            if ( $selOne == 'phone' ) {
+                                $relatedContactPhoneTypeVal = $phoneTypes[$selThree];
+                            } else if ( $selOne == 'im' ) {
+                                $relatedContactImProviderVal = $imProviders[$selThree];
+                            }
                         }
                     }
                     
@@ -803,7 +810,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                 ${$mapperParamKey}[$i] = $$mapperParamVal;
             }
         }
-        
+       
         $this->set( 'columnNames', $this->_columnNames);
         
         //set main contact properties.
@@ -818,7 +825,8 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
         
         //set related contact propeties.
         $relProperties = array( 'related', 'relatedContactType', 'relatedContactDetails', 
-                                'relatedContactLocType', 'relatedContactPhoneType', 'relatedContactImProvider' );
+                                'relatedContactLocType', 'relatedContactPhoneType', 'relatedContactImProvider',
+                                'relatedContactWebsiteType' );
         foreach ( $relProperties as $relProperty ) {
             $this->set( $relProperty, $$relProperty );
         }
@@ -853,26 +861,34 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                     $updateMappingFields->relationship_type_id = $id;
                     $updateMappingFields->relationship_direction = "{$first}_{$second}";
                     $updateMappingFields->name = ucwords(str_replace("_", " ",$mapperKeys[$i][1]));
-                    $updateMappingFields->location_type_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null;  
                     // get phoneType id and provider id separately
                     // before updating mappingFields of phone and IM for related contact, CRM-3140
-                    if ( CRM_Utils_Array::value( '1', $mapperKeys[$i] ) == 'phone' ) {               
-                        $updateMappingFields->phone_type_id = isset($mapperKeys[$i][3]) ? $mapperKeys[$i][3] : null;
-                    } else if ( CRM_Utils_Array::value( '1', $mapperKeys[$i] ) == 'im' ) {
-                        $updateMappingFields->im_provider_id = isset($mapperKeys[$i][3]) ? $mapperKeys[$i][3] : null; 
+                    if ( CRM_Utils_Array::value( '1', $mapperKeys[$i] ) == 'url' ) {
+                        $updateMappingFields->website_type_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null;
+                    } else {
+                        if ( CRM_Utils_Array::value( '1', $mapperKeys[$i] ) == 'phone' ) {               
+                            $updateMappingFields->phone_type_id = isset($mapperKeys[$i][3]) ? $mapperKeys[$i][3] : null;
+                        } else if ( CRM_Utils_Array::value( '1', $mapperKeys[$i] ) == 'im' ) {
+                            $updateMappingFields->im_provider_id = isset($mapperKeys[$i][3]) ? $mapperKeys[$i][3] : null; 
+                        }
+                        $updateMappingFields->location_type_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null;  
                     }
                 } else {
                     $updateMappingFields->name = $mapper[$i];
                     $updateMappingFields->relationship_type_id = 'NULL';
                     $updateMappingFields->relationship_type_direction = 'NULL';
-                    $location = array_keys($locationTypes, $locations[$i]);
-                    $updateMappingFields->location_type_id = isset($location) ? $location[0] : null;                    
                     // to store phoneType id and provider id seperately
                     // before updating mappingFields for phone and IM, CRM-3140
-                    if ( CRM_Utils_Array::value( '0', $mapperKeys[$i] ) == 'phone' ) {
-                        $updateMappingFields->phone_type_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null; 
-                    } else if ( CRM_Utils_Array::value( '0', $mapperKeys[$i] ) == 'im' ) {
-                        $updateMappingFields->im_provider_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null; 
+                    if ( CRM_Utils_Array::value( '0', $mapperKeys[$i] ) == 'url' ) {
+                        $updateMappingFields->website_type_id = isset($mapperKeys[$i][1]) ? $mapperKeys[$i][1] : null;
+                    } else {
+                        if ( CRM_Utils_Array::value( '0', $mapperKeys[$i] ) == 'phone' ) {
+                            $updateMappingFields->phone_type_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null; 
+                        } else if ( CRM_Utils_Array::value( '0', $mapperKeys[$i] ) == 'im' ) {
+                            $updateMappingFields->im_provider_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null; 
+                        }
+                        $location = array_keys($locationTypes, $locations[$i]);
+                        $updateMappingFields->location_type_id = isset($location) ? $location[0] : null;                    
                     }
                 }
                 $updateMappingFields->save();                
@@ -901,7 +917,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
             case CRM_Import_Parser::CONTACT_ORGANIZATION :
                 $cType = 'Organization';
             }
-
+            
             for ( $i = 0; $i < $this->_columnCount; $i++ ) {                  
                 $saveMappingFields = new CRM_Core_DAO_MappingField();
                 $saveMappingFields->mapping_id    = $saveMapping->id;
@@ -915,22 +931,30 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                     $saveMappingFields->relationship_direction = "{$first}_{$second}";
                     // to get phoneType id and provider id seperately
                     // before saving mappingFields of phone and IM for related contact, CRM-3140
-                    if ( CRM_Utils_Array::value( '1', $mapperKeys[$i] ) == 'phone' ) {
-                        $saveMappingFields->phone_type_id = isset($mapperKeys[$i][3]) ? $mapperKeys[$i][3] : null;
-                    } else if ( CRM_Utils_Array::value( '1', $mapperKeys[$i] ) == 'im' ) {
-                        $saveMappingFields->im_provider_id = isset($mapperKeys[$i][3]) ? $mapperKeys[$i][3] : null;
+                    if ( CRM_Utils_Array::value ( '1', $mapperKeys[$i] ) == 'url' ) {
+                        $saveMappingFields->website_type_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null; 
+                    } else {
+                        if ( CRM_Utils_Array::value( '1', $mapperKeys[$i] ) == 'phone' ) {
+                            $saveMappingFields->phone_type_id = isset($mapperKeys[$i][3]) ? $mapperKeys[$i][3] : null;
+                        } else if ( CRM_Utils_Array::value( '1', $mapperKeys[$i] ) == 'im' ) {
+                            $saveMappingFields->im_provider_id = isset($mapperKeys[$i][3]) ? $mapperKeys[$i][3] : null;
+                        }
+                        $saveMappingFields->location_type_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null;
                     }
-                    $saveMappingFields->location_type_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null;
                 } else {
                     $saveMappingFields->name = $mapper[$i];
                     $location_id = array_keys($locationTypes, $locations[$i]);
-                    $saveMappingFields->location_type_id = isset($location_id[0]) ? $location_id[0] : null;
                     // to get phoneType id and provider id seperately
                     // before saving mappingFields of phone and IM, CRM-3140
-                    if ( CRM_Utils_Array::value( '0', $mapperKeys[$i] ) == 'phone' ) {
-                        $saveMappingFields->phone_type_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null;
-                    } else if ( CRM_Utils_Array::value( '0', $mapperKeys[$i] ) == 'im' ) {
-                        $saveMappingFields->im_provider_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null;
+                    if ( CRM_Utils_Array::value( '0', $mapperKeys[$i] ) == 'url' ) {
+                        $saveMappingFields->website_type_id = isset($mapperKeys[$i][1]) ? $mapperKeys[$i][1] : null;
+                    } else {
+                        if ( CRM_Utils_Array::value( '0', $mapperKeys[$i] ) == 'phone' ) {
+                            $saveMappingFields->phone_type_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null;
+                        } else if ( CRM_Utils_Array::value( '0', $mapperKeys[$i] ) == 'im' ) {
+                            $saveMappingFields->im_provider_id = isset($mapperKeys[$i][2]) ? $mapperKeys[$i][2] : null;
+                        }
+                        $saveMappingFields->location_type_id = isset($location_id[0]) ? $location_id[0] : null;
                     }
                     $saveMappingFields->relationship_type_id = null;
                 }
@@ -943,7 +967,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                                                   $mapperImProvider, $related, $relatedContactType, 
                                                   $relatedContactDetails, $relatedContactLocType, 
                                                   $relatedContactPhoneType, $relatedContactImProvider,
-                                                  $mapperWebsiteType );
+                                                  $mapperWebsiteType, $relatedContactWebsiteType );
         
         $primaryKeyName = $this->get( 'primaryKeyName' );
         $statusFieldName = $this->get( 'statusFieldName' );

@@ -105,7 +105,8 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
                              'downloadConflictRecordsUrl',
                              'downloadMismatchRecordsUrl',
                              'related', 'relatedContactDetails', 'relatedContactLocType',
-                             'relatedContactPhoneType', 'relatedContactImProvider', 'websites'
+                             'relatedContactPhoneType', 'relatedContactImProvider', 'websites',
+                             'relatedContactWebsiteType'
                              );
         
         foreach ( $properties as $property ) {

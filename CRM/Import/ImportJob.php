@@ -71,6 +71,7 @@ class CRM_Import_ImportJob {
     protected $_mapperRelatedContactLocType;
     protected $_mapperRelatedContactPhoneType;
     protected $_mapperRelatedContactImProvider;
+    protected $_mapperRelatedContactWebsiteType;
     protected $_mapFields;
     
     protected $_parser;
@@ -109,7 +110,8 @@ class CRM_Import_ImportJob {
                              'mapperRelatedContactDetails', 
                              'mapperRelatedContactLocType', 
                              'mapperRelatedContactPhoneType', 
-                             'mapperRelatedContactImProvider' );
+                             'mapperRelatedContactImProvider',
+                             'mapperRelatedContactWebsiteType' );
         foreach ( $properties as $property ) $this->{"_$property"} = array( ); 
         
     }
@@ -160,7 +162,8 @@ class CRM_Import_ImportJob {
                                     'mapperRelatedContactDetails'    => 'mapperRelatedContactDetailsVal', 
                                     'mapperRelatedContactLocType'    => 'mapperRelatedContactLocTypeVal', 
                                     'mapperRelatedContactPhoneType'  => 'mapperRelatedContactPhoneTypeVal', 
-                                    'mapperRelatedContactImProvider' => 'mapperRelatedContactImProviderVal' );
+                                    'mapperRelatedContactImProvider' => 'mapperRelatedContactImProviderVal',
+                                    'mapperRelatedContactWebsiteType'=> 'mapperRelatedContactWebsiteTypeVal' );
         
         foreach ( $mapper as $key => $value ) {
             //set respective mapper value to null.
@@ -206,17 +209,23 @@ class CRM_Import_ImportJob {
                 
                 $mapperRelatedVal = $fldName;
                 if ( $selOne ) {
-                    $mapperRelatedContactDetailsVal = $selOne;
                     if ( $selTwo ) {
-                        $header[] = $locationTypes[$selTwo];
-                        $mapperRelatedContactLocTypeVal = $selTwo;
-                        if ( $selThree ) {
-                            if ( $selOne == 'phone' ) {
-                                $header[] = $phoneTypes[$selThree];
-                                $mapperRelatedContactPhoneTypeVal = $selThree;
-                            } else if ( $selOne == 'im' ) {
-                                $header[] = $imProviders[$selThree];
-                                $mapperRelatedContactImProviderVal = $selThree;
+                        if ( $selOne == 'url' ) {
+                            $mapperRelatedContactDetailsVal = 'website';
+                            $header[] = $websiteTypes[$selTwo];
+                            $mapperRelatedContactWebsiteTypeVal = $selTwo;
+                        } else {
+                            $mapperRelatedContactDetailsVal = $selOne;
+                            $header[] = $locationTypes[$selTwo];
+                            $mapperRelatedContactLocTypeVal = $selTwo;
+                            if ( $selThree ) {
+                                if ( $selOne == 'phone' ) {
+                                    $header[] = $phoneTypes[$selThree];
+                                    $mapperRelatedContactPhoneTypeVal = $selThree;
+                                } else if ( $selOne == 'im' ) {
+                                    $header[] = $imProviders[$selThree];
+                                    $mapperRelatedContactImProviderVal = $selThree;
+                                }
                             }
                         }
                     }
@@ -242,7 +251,8 @@ class CRM_Import_ImportJob {
             $this->_mapperRelatedContactLocType, 
             $this->_mapperRelatedContactPhoneType, 
             $this->_mapperRelatedContactImProvider,
-            $this->_mapperWebsiteTypes );
+            $this->_mapperWebsiteTypes,
+            $this->_mapperRelatedContactWebsiteType );
         
         $this->_parser->run( $this->_tableName, $mapperFields,
                       CRM_Import_Parser::MODE_IMPORT,

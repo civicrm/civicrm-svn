@@ -53,6 +53,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
     protected $_mapperRelatedContactDetails;
     protected $_mapperRelatedContactEmailType;
     protected $_mapperRelatedContactImProvider;
+    protected $_mapperRelatedContactWebsiteType;
     protected $_relationships;
 
     protected $_emailIndex;
@@ -107,7 +108,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                           $mapperImProvider = null, $mapperRelated = null, $mapperRelatedContactType=null,
                           $mapperRelatedContactDetails = null, $mapperRelatedContactLocType = null, 
                           $mapperRelatedContactPhoneType = null, $mapperRelatedContactImProvider = null,
-                          $mapperWebsiteType = null ) 
+                          $mapperWebsiteType = null, $mapperRelatedContactWebsiteType = null ) 
     {
         parent::__construct();
         $this->_mapperKeys =& $mapperKeys;
@@ -121,6 +122,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         $this->_mapperRelatedContactDetails =& $mapperRelatedContactDetails;
         $this->_mapperRelatedContactLocType =& $mapperRelatedContactLocType;
         $this->_mapperRelatedContactPhoneType =& $mapperRelatedContactPhoneType;
+        $this->_mapperRelatedContactWebsiteType = $mapperRelatedContactWebsiteType;
         // get IM service provider type id for related contact
         $this->_mapperRelatedContactImProvider =& $mapperRelatedContactImProvider;
 
@@ -194,6 +196,7 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
         $this->setActiveFieldRelatedContactDetails( $this->_mapperRelatedContactDetails );
         $this->setActiveFieldRelatedContactLocType( $this->_mapperRelatedContactLocType );
         $this->setActiveFieldRelatedContactPhoneType( $this->_mapperRelatedContactPhoneType );
+        $this->setActiveFieldRelatedContactWebsiteType( $this->_mapperRelatedContactWebsiteType );
         //set active fields of IM provider of related contact
         $this->setActiveFieldRelatedContactImProvider( $this->_mapperRelatedContactImProvider );
         
