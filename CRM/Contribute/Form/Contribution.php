@@ -498,6 +498,12 @@ WHERE  contribution_id = {$this->_id}
             foreach ( $billingFields as $name => $billingName ) {
                 $defaults[$billingName] = $defaults[$name];
             }
+            
+            $config = CRM_Core_Config::singleton( );
+            // set default country from config if no country set
+            if ( !CRM_Utils_Array::value("billing_country_id-{$this->_bltID}", $defaults ) ) { 
+                $defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
+            }
         }
         
         if ( $this->_id ) {

@@ -262,6 +262,12 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
             $this->_defaults = array_merge( $this->_defaults, $getDefaults );
         }
 
+        $config = CRM_Core_Config::singleton( );
+        // set default country from config if no country set
+        if ( !CRM_Utils_Array::value("billing_country_id-{$this->_bltID}", $this->_defaults ) ) { 
+            $this->_defaults["billing_country_id-{$this->_bltID}"] = $config->defaultContactCountry;
+        }
+        
         // now fix all state country selectors
         require_once 'CRM/Core/BAO/Address.php';
         CRM_Core_BAO_Address::fixAllStateSelects( $this, $this->_defaults );
