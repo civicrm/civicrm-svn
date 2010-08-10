@@ -63,10 +63,10 @@
 <tr>
    <td>
 	  {$form.activity_role.html}
-      <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('activity_role', '{$form.formName}'); document.getElementById('activity_target_name').value = ''; return false;" >{ts}clear{/ts}</a>)</span><br />
+      <span class="crm-clear-link">(<a href="#" title="unselect" onclick="unselectRadio('activity_role', '{$form.formName}'); document.getElementById('activity_contact_name').value = ''; return false;" >{ts}clear{/ts}</a>)</span><br />
    </td>
    <td colspan="2"><br />
-	  {$form.activity_target_name.html}<br />
+	  {$form.activity_contact_name.html}<br />
       <span class="description font-italic">{ts}Complete OR partial Contact Name.{/ts}</span><br /><br />
 	  {$form.activity_test.label} &nbsp; {$form.activity_test.html} 
    </td>

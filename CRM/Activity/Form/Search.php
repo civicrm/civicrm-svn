@@ -327,7 +327,7 @@ class CRM_Activity_Form_Search extends CRM_Core_Form
         if ( ! CRM_Utils_Array::value( 'activity_test', $this->_formValues ) ) {
             $this->_formValues["activity_test"] = 0;
         }
-        if ( ! CRM_Utils_Array::value( 'activity_target_name', $this->_formValues ) ) {
+        if ( ! CRM_Utils_Array::value( 'activity_contact_name', $this->_formValues ) ) {
             $this->_formValues['activity_role'] = null;
         }
         require_once 'CRM/Core/BAO/CustomValue.php';
