@@ -216,9 +216,6 @@ WHERE 	a.source_record_id = " . $surveyId . "
 				$group_id = array_keys($groups);
 			}
     	}
-	
-		print 'sendemailmode is ' . $sendEmailMode;
-		print 'params are ' . print_r($params);
 		
 		switch ($sendEmailMode) {
 			case 1:	    	
