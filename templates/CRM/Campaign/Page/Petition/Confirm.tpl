@@ -1,6 +1,6 @@
 {*
  +--------------------------------------------------------------------+
- | CiviCRM version 3.2                                                |
+ | CiviCRM version 3.1                                                |
  +--------------------------------------------------------------------+
  | Copyright CiviCRM LLC (c) 2004-2010                                |
  +--------------------------------------------------------------------+
@@ -23,35 +23,12 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* this template is used for displaying signature information *}
-
-{if $signatures} 
-
- {include file="CRM/common/enableDisable.tpl"}
- {include file="CRM/common/jsortable.tpl"}
-  <div id="signatureList">
-    <table id="options" class="display">
-      <thead>
-        <tr>
-		  <th>{ts}Petition ID{/ts}</th>
-		  <th>{ts}Petition Title{/ts}</th> 
-          <th>{ts}Signed By{/ts}</th>
-		  <th>{ts}Date{/ts}</th>
-		  <th>{ts}Status{/ts}</th>	  
-        </tr>
-      </thead>
-      {foreach from=$signatures item=signature}
-        <tr id="row_{$signature.id}">
-          <td>{$signature.source_record_id}</td>
-          <td>{$signature.survey_title}</td>
-          <td><a href="/civicrm/contact/view?reset=1&cid={$signature.contactId}#Activities">{$signature.source_contact_id}</a></td>
-          <td>{$signature.activity_date_time}</td>
-          <td>{$signature.status_id}</td>
-        </tr>
-      {/foreach}
-    </table>
-  </div>
-
-{else} 
-  {ts} No signature found!    {/ts} 
+<div class="messages status">
+      <div class="icon inform-icon"></div>&nbsp;
+{if $success}
+      {ts 1=$display_name 2=$email 3=$group}<strong>%1 - your email address '%2' has been successfully verified.</strong>{/ts}
+		<p>Thank you for signing the petition.</p>
+{else}
+      {ts}Oops. We encountered a problem in processing your email verification. Please contact the site administrator.{/ts}
 {/if}
+</div>

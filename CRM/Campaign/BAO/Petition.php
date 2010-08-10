@@ -60,7 +60,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 			return;
 		}
   
-        if ( isset( $params['cid'] ) ) {
+        if ( isset( $params['contactId'] ) ) {
         
         	// add signature as activity with survey id as source id
         	// get the activity type id associated with this survey        	
@@ -71,7 +71,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 			// activity status id (from /civicrm/admin/optionValue?reset=1&action=browse&gid=25)
 			// 1-Schedule, 2-Completed
 	        
-			$activityParams = array ( 'source_contact_id'  => $params['cid'],
+			$activityParams = array ( 'source_contact_id'  => $params['contactId'],
 			                          'source_record_id'   => $params['sid'],
 									  'activity_type_id'   => $surveyInfo['activity_type_id'],
 									  'activity_date_time' => date("YmdHis"), 
@@ -80,13 +80,6 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 			//activity creation
         	// *** check for activity using source id - if already signed
 			$activity = CRM_Activity_BAO_Activity::create( $activityParams );	
-
-			if ( isset( $params['tag'] ) ) {
-	        	// contact 'email confirmed' tag is set, so set this tag against the activity too
-				require_once 'CRM/Core/BAO/EntityTag.php';
-				$entityId = array($activity->id);
-				CRM_Core_BAO_EntityTag::addEntitiesToTag($entityId, $params['tag'], 'civicrm_activity');
-	        }
 			
 		}
 		
@@ -158,13 +151,173 @@ WHERE 	a.source_record_id = " . $surveyId . "
            $signature[$dao->id]['activity_type_id'] = $dao->activity_type_id;   
            $signature[$dao->id]['status_id'] = $dao->status_id;
            $signature[$dao->id]['survey_title'] = $dao->survey_title;
-           $signature[$dao->id]['cid'] = $dao->source_contact_id;
+           $signature[$dao->id]['contactId'] = $dao->source_contact_id;
         }
 
         return $signature;
     }    
 
+    /**
+     * This function returns all entities assigned to a specific tag
+     * 
+     * @param object  $tag    an object of a tag.
+     *
+     * @return  array   $contactIds    array of contact ids
+     * @access public
+     */
+    function getEntitiesByTag($tag)
+    {
+	    require_once 'CRM/Core/DAO/EntityTag.php';
+        $contactIds = array();
+        $entityTagDAO = new CRM_Core_DAO_EntityTag();
+        $entityTagDAO->tag_id = $tag['id'];
+        $entityTagDAO->find();
+
+        while($entityTagDAO->fetch()) {
+            $contactIds[] = $entityTagDAO->entity_id;
+        }
+        return $contactIds;
+    }
+
+    /**
+     * takes an associative array and sends a thank you or email verification email
+     *
+     * @param array  $params (reference ) an assoc array of name/value pairs
+     *
+     * @return 
+     * @access public
+     * @static
+     */
+    static function sendEmail( $params, $sendEmailMode )
+    {
+    
+    /* sendEmailMode
+     * 1 = connected user via login/pwd - thank you
+	 * 	 or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
+	 * 2 = login using fb connect - thank you + click to add msg to fb wall
+	 * 3 = send a confirmation request email     
+	 */
+
+		define('PETITION_CONTACT_GROUP','Petition Contacts');
+		
+		if (defined('PETITION_CONTACT_GROUP')) {
+			// check if 'Petition Contacts' group exists, else create it
+			require_once 'api/v2/Group.php';
+			$group_params['title'] = PETITION_CONTACT_GROUP;
+			$groups = civicrm_group_get($group_params);
+			if (($groups['is_error'] == 1) && ($groups['error_message'] == 'No such group exists')) {
+				$group_params['is_active'] = 1;
+				$group_params['visibility'] = 'Public Pages';
+				$newgroup = civicrm_group_add($group_params);
+				if ($newgroup['is_error'] == 0) {
+					$group_id[0] = $newgroup['result'];
+				}
+			} else {
+				$group_id = array_keys($groups);
+			}
+    	}
+	
+		print 'sendemailmode is ' . $sendEmailMode;
+		print 'params are ' . print_r($params);
+		
+		switch ($sendEmailMode) {
+			case 1:	    	
+    			break;
+    			
+			case 2:	    	
+    			break;
+    			
+			case 3:
+				// create mailing event subscription record for this contact
+				require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
+				$se = CRM_Mailing_Event_BAO_Subscribe::subscribe( $group_id[0], 
+																	$params['email-Primary'] , 
+																	$params['contactId'] );			
+
+				require_once 'CRM/Core/BAO/MessageTemplates.php';
+				$template_data = array();
+				/***??? fix hardcoded template msg_title ***/
+				$template_params['msg_title'] = 'ConfirmEmail';
+				CRM_Core_BAO_MessageTemplates::retrieve($template_params,$template_data);
+
+				$config = CRM_Core_Config::singleton();
+		
+				require_once 'CRM/Core/BAO/Domain.php';
+				$domain =& CRM_Core_BAO_Domain::getDomain();
+				
+				//get the default domain email address.
+				list( $domainEmailName, $domainEmailAddress ) = CRM_Core_BAO_Domain::getNameAndEmail( );
+				
+				require_once 'CRM/Core/BAO/MailSettings.php';
+				$localpart   = CRM_Core_BAO_MailSettings::defaultLocalpart();
+				$emailDomain = CRM_Core_BAO_MailSettings::defaultDomain();
+		
+				require_once 'CRM/Utils/Verp.php';
+				$confirm = implode($config->verpSeparator,
+								   array($localpart . 'c',
+										 $se->contact_id,
+										 $se->id,
+										 $se->hash)
+								  ) . "@$emailDomain";			
+	
+				$headers = array(
+								 'Subject'   => $template_data['msg_subject'],
+								 'From'      => "\"{$domainEmailName}\" <{$domainEmailAddress}>",
+								 'To'        => $params['email-Primary'],
+								 'Reply-To'  => $confirm,
+								 'Return-Path'   => "do-not-reply@$emailDomain"
+								 );
+				
+				$url = CRM_Utils_System::url( 'civicrm/petition/confirm',
+											  "reset=1&cid={$se->contact_id}&sid={$se->id}&h={$se->hash}",
+											  true );
+				
+				$html = $template_data['msg_html'];
+		
+				if (isset($template_data['msg_text'])) {
+					$text = $template_data['msg_text'];
+				} else {
+					$text = CRM_Utils_String::htmlToText($template_data['msg_html']);
+				}			
+				
+				require_once 'CRM/Mailing/BAO/Mailing.php';
+				$bao = new CRM_Mailing_BAO_Mailing();
+				$bao->body_text = $text;
+				$bao->body_html = $html;
+				$tokens = $bao->getTokens();
+		
+				require_once 'CRM/Utils/Token.php';
+				$html = CRM_Utils_Token::replaceDomainTokens($html, $domain, true, $tokens['html'] );
+				$html = CRM_Utils_Token::replaceSubscribeTokens($html, 
+																'',
+																$url, true);
+				
+				$text = CRM_Utils_Token::replaceDomainTokens($text, $domain, false, $tokens['text'] );
+				$text = CRM_Utils_Token::replaceSubscribeTokens($text, 
+																'',
+																$url, false);
+																
+				// render the &amp; entities in text mode, so that the links work
+				$text = str_replace('&amp;', '&', $text);
+		
+				$message = new Mail_mime("\n");
+		
+				$message->setHTMLBody($html);
+				$message->setTxtBody($text);
+				$b =& CRM_Utils_Mail::setMimeParams( $message );
+				$h =& $message->headers($headers);
+				$mailer =& $config->getMailer();
+		
+				require_once 'CRM/Mailing/BAO/Mailing.php';
+				PEAR::setErrorHandling(PEAR_ERROR_CALLBACK,
+									   array('CRM_Core_Error', 'nullHandler' ) );
+				if ( is_object( $mailer ) ) {
+					$mailer->send($params['email-Primary'], $h, $b);
+					CRM_Core_Error::setCallback();
+				}		
+    			break;    			
+    	}
+
+	}
 
 }
-
-?>

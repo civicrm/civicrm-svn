@@ -62,9 +62,16 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     public $_contactId;    
 
     /** 
-     * The contact type
+     * Is this a logged in user
      * 
      * @var int 
+     */ 
+    protected $_loggedIn;
+    
+    /** 
+     * The contact type
+     * 
+     * @var boolean 
      */ 
     protected $_ctype;   
     
@@ -84,7 +91,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     public $_surveyId;
 
     /** 
-     * The tag id used for email confirmation with the petition
+     * The tag id used to set against contacts with unconfirmed email
      * 
      * @var int 
      */ 
@@ -113,6 +120,17 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
      */ 
     public $_fields; 
     
+    /** 
+     * which email send mode do we use
+     * 
+     * @var int 
+	 * 1 = connected user via login/pwd - thank you
+	 * 	 or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
+	 * 2 = login using fb connect - thank you + click to add msg to fb wall
+	 * 3 = send a confirmation request email         
+     */ 
+    protected $_sendEmailMode;    
+    
     protected $_image_URL;
     
     protected $_defaults = null;
@@ -125,7 +143,10 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         $session = CRM_Core_Session::singleton( );   
     
 	    //get the contact id for this user if logged in
-        $this->_contactId =  $session->get( 'userID' );  
+        $this->_contactId =  $session->get( 'userID' );
+        if (isset($this->_contactId)) {
+	        $this->_loggedIn = TRUE;
+    	}
     	
     	//get the survey id
         $this->_surveyId 	= CRM_Utils_Request::retrieve('sid', 'Positive', $this );
@@ -189,7 +210,8 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			$this->_defaults['last_name'] = $fbdata['last_name'];
 			$this->_defaults['email-Primary'] = $fbdata['email'];
 			$this->_defaults['birth_date'] = $fbdata['birthday'];
-			$this->_defaults['image_URL'] = "http://graph.facebook.com/" . $fbdata['id']  ."/picture";			
+			$this->_defaults['image_URL'] = "http://graph.facebook.com/" . $fbdata['id']  ."/picture";	
+			//$this->_defaults['city'] = $fbdata['[location']['name'];
 		  }
 		  catch (FacebookApiException $e) {
 			fb_log_exception($e, t('Failed lookup of %fbu.', array('%fbu' => $fbu)));
@@ -239,20 +261,25 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     public function postProcess() 
     {
 		$this->_ctype = 'Individual';
-		// Check if contact 'email confirmed' tag exists, else create one
-		// This should be in the petition module initialise code to create a default tag for this
-		require_once 'api/v2/Tag.php';	
-		$tag_params['name'] = 'Email Confirmed';
-		$tag = civicrm_tag_get($tag_params); 
-		if ($tag['is_error'] == 1) {				
-			//create tag
-			$tag_params['description'] = 'Email Confirmed';
-			$tag_params['is_reserved'] = 1;
-			$tag_params['used_for'] = 'civicrm_contact,civicrm_activity';
-			$tag = civicrm_tag_create($tag_params); 
+		
+		define('CIVICRM_TAG_UNCONFIRMED','Unconfirmed');
+		
+		if (defined('CIVICRM_TAG_UNCONFIRMED')) {
+			// Check if contact 'email confirmed' tag exists, else create one
+			// This should be in the petition module initialise code to create a default tag for this
+			require_once 'api/v2/Tag.php';	
+			$tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
+			$tag = civicrm_tag_get($tag_params); 
+			if ($tag['is_error'] == 1) {				
+				//create tag
+				$tag_params['description'] = CIVICRM_TAG_UNCONFIRMED;
+				$tag_params['is_reserved'] = 1;
+				$tag_params['used_for'] = 'civicrm_contact';
+				$tag = civicrm_tag_create($tag_params); 
+			}
+			$this->_tagId = $tag['id'];
 		}
-		$this->_tagId = $tag['id'];
-
+		
 		// export the field values to be used for saving the profile form
 		$params = $this->controller->exportValues( $this->_name );      
 		
@@ -271,7 +298,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         }
         
         if ( isset( $this->_contactId ) ) {
-            $params['cid'] = $this->_contactId;
+            $params['contactId'] = $this->_contactId;
         }
         
         // save birth_date if received from Facebook connect login
@@ -298,18 +325,62 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				//no matching contacts - create a new contact
 				// Add a source for this new contact
 				$params['source'] = 'Online Petition Signature';	
+				$this->_sendEmailMode = 3;
 				break;
 			case 1:
 				$this->_contactId = $ids[0];
+
+				// dedupe matched single contact, check for 'unconfirmed' tag				
+				if (defined('CIVICRM_TAG_UNCONFIRMED')) {
+					require_once 'CRM/Core/DAO/EntityTag.php';
+					$tag =& new CRM_Core_DAO_EntityTag( );
+					$tag->contact_id = $this->_contactId;
+					$tag->tag_id     = $this->_tagId;
+					
+					if (  !($tag->find( )) ) {
+						// send thank you email
+						$this->_sendEmailMode = 1;
+					} else {
+						// send email verification email
+						$this->_sendEmailMode = 3;
+					}
+				}   				
 				break;
 			default:
 				// more than 1 matching contact
 				// *** handle multiple dupes
+				// for time being, take the first matching contact
+				$this->_contactId = $ids[0];
+				// dedupe matched single contact, check for 'unconfirmed' tag				
+				if (defined('CIVICRM_TAG_UNCONFIRMED')) {
+					require_once 'CRM/Core/DAO/EntityTag.php';
+					$tag =& new CRM_Core_DAO_EntityTag( );
+					$tag->contact_id = $this->_contactId;
+					$tag->tag_id     = $this->_tagId;
+					
+					if (  !($tag->find( )) ) {
+						// send thank you email
+						$this->_sendEmailMode = 1;
+					} else {
+						// send email verification email
+						$this->_sendEmailMode = 3;
+					}
+				}				
 				break;
-		}
+			}
 
+			// if logged in user, send thank you email
+			if (isset($this->_loggedIn) && ($this->_loggedIn == TRUE)) {
+				$this->_sendEmailMode = 1;
+			}
+			
+			// if signed using Facebook connect to log in or logged in user, send thank you email
+			if (($fb = $GLOBALS['_fb']) && ($fbu = fb_facebook_user()) 
+					&& ($params['email-Primary'] == $fbdata['email'])) {
+				// send fb specific thank you email	
+				$this->_sendEmailMode = 2;
+			}
 
-	    if ( (count($ids) == 0) || (count($ids) == 1) ) {
 			require_once 'CRM/Core/Transaction.php';
 			$transaction = new CRM_Core_Transaction( );
 				
@@ -317,36 +388,33 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 																	   $this->_contactId, $this->_addToGroupID,
 																	   $this->_profileId, $this->_ctype,
 																	   true );
-			
-			// check if 'email confirmed' tag already set for this contact
-			require_once 'CRM/Core/DAO/EntityTag.php';
-			$tag =& new CRM_Core_DAO_EntityTag( );
-			$tag->contact_id = $this->_contactId;
-			$tag->tag_id     = $this->_tagId;
-			if (  !($tag->find( )) ) {
-			   // if using Facebook connect to sign in, assign the 'email confirmed' tag to new contact
-				if (($fb = $GLOBALS['_fb']) && ($fbu = fb_facebook_user()) && ($params['email-Primary'] == $fbdata['email']) ) {
-					// set 'Email Confirmed' tag for this contact
+		   
+			// create the signature activity record																  
+			$params['contactId'] = $this->_contactId;
+			$result = CRM_Campaign_BAO_Petition::createSignature( $params );
+
+
+			// send thank you or email verification emails
+			switch ($this->_sendEmailMode) {
+				case 1:					
+					break;
+
+				case 2:					
+					break;
+					
+				case 3:
+					// set 'Unconfirmed' tag for this contact
 					require_once 'api/v2/EntityTag.php';
 					unset($tag_params);
 					$tag_params['contact_id'] = $this->_contactId;
 					$tag_params['tag_id'] = $this->_tagId;;       		
-					$tag_value = civicrm_entity_tag_add($tag_params);
-				} else {
-					// send email verification message
-					$statusMsg = ts( 'Need to send email verification message.' );
-				}
-			} else {
-				// email confirmed tag already set for contact - send to createSignature to save with activity too
-				$params['tag'] = $this->_tagId;
+					$tag_value = civicrm_entity_tag_add($tag_params);					
+					break;
 			}
-		   
-			// create the signature activity record																  
-			$params['cid'] = $this->_contactId;
-			$result = CRM_Campaign_BAO_Petition::createSignature( $params );
-		  
+		    CRM_Campaign_BAO_Petition::sendEmail( $params, $this->_sendEmailMode );
+
 			$transaction->commit( );
-		}
+
 		
 		if ( $result ) {
 			$statusMsg = $statusMsg . ts( 'Petition signature has been saved. ' );
