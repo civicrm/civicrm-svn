@@ -237,11 +237,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             // in this mode by default uncheck this checkbox
             unset($defaults['record_contribution']);
         }
-        if ( $defaults['membership_type_id'][1] ) {
-            $defaults['receipt_text_signup'] =  CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                                                             $defaults['membership_type_id'][1],
-                                                                             'receipt_text_signup' );
-        }
         
         $this->assign( "member_is_test", CRM_Utils_Array::value('member_is_test',$defaults) );
         
@@ -886,14 +881,6 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             } else {
                 $membership =& CRM_Member_BAO_Membership::create( $params, $ids );
             }
-        }
-                
-        if ( CRM_Utils_Array::value( 'send_receipt', $formValues ) ) {
-            require_once 'CRM/Core/DAO.php';
-            CRM_Core_DAO::setFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                         $params['membership_type_id'], 
-                                         'receipt_text_signup',
-                                         $formValues['receipt_text_signup'] );
         }
 
         $receiptSend = false;

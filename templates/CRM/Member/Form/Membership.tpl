@@ -163,7 +163,7 @@
     {/if}    
         <tr id='notice' style="display:none;">
             <td class="label">{$form.receipt_text_signup.label}</td>
-            <td class="html-adjust"><span class="description">{ts}Enter a message you want included at the beginning of the emailed receipt. EXAMPLE: 'Thanks for supporting our organization with your membership.'{/ts}</span>
+            <td class="html-adjust"><span class="description">{ts}If you need to include a special message for this member, enter it here. Otherwise, the confirmation email will include the standard receipt message configured under System Message Templates.{/ts}</span>
                  {$form.receipt_text_signup.html|crmReplace:class:huge}</td>
         </tr>
     </table>
