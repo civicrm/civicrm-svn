@@ -196,7 +196,7 @@ class CRM_Activity_BAO_Query
                 $name = strtolower( CRM_Core_DAO::escapeString( $name ) );
             }
             
-            $query->_where[$grouping][] = " contact_b.sort_name LIKE '%{$name}%'";
+            $query->_where[$grouping][] = " contact_b.is_deleted = 0 AND contact_b.sort_name LIKE '%{$name}%'";
             if ( $values[2] == 1 ) {
                 $query->_where[$grouping][] = " civicrm_activity.source_contact_id = contact_b.id";
                 $query->_qill[$grouping][]  = ts( 'Activity created by').  " '$name'";
