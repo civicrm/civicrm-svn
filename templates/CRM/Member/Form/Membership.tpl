@@ -195,6 +195,22 @@
 
 {if $action neq 8} {* Jscript additions not need for Delete action *} 
 {if $accessContribution and !$membershipMode AND ($action neq 2 or !$rows.0.contribution_id or $onlinePendingContributionId)}
+
+{literal}
+<script type="text/javascript">
+cj( function( ) {
+    cj('#record_contribution').click( function( ) {
+        if ( cj(this).attr('checked') ) {
+            cj('#recordContribution').show( );
+            setPaymentBlock( );
+        } else {
+            cj('#recordContribution').hide( );
+        }
+    });
+});
+</script>
+{/literal}
+
 {include file="CRM/common/showHideByFieldValue.tpl" 
     trigger_field_id    ="record_contribution"
     trigger_value       =""
@@ -241,8 +257,13 @@ function showHideMemberStatus() {
 {/literal}
 {/if}
 {literal}
-function setPaymentBlock( memType ) 
-{
+function setPaymentBlock( ) {
+    var memType = cj('#membership_type_id\\[1\\]').val( );
+    
+    if ( !memType ) {
+        return;
+    }
+    
     var dataUrl = {/literal}"{crmURL p='civicrm/ajax/memType' h=0}"{literal};
     
     cj.post( dataUrl, {mtype: memType}, function( data ) {

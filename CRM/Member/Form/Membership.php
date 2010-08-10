@@ -204,17 +204,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                 }
             }
         }
-        
-        if ( $this->_memType ) {
-            $defaults['contribution_type_id'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                                                             $this->_memType, 
-                                                                             'contribution_type_id' );
-            
-            $defaults['total_amount'] = CRM_Core_DAO::getFieldValue( 'CRM_Member_DAO_MembershipType', 
-                                                                     $this->_memType, 
-                                                                     'minimum_fee' );
-        }
-        
+                
         if ( CRM_Utils_Array::value( 'record_contribution', $defaults ) && ! $this->_mode ) {
             $contributionParams   = array( 'id' => $defaults['record_contribution'] );
             $contributionIds      = array( );
@@ -367,7 +357,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
         $sel =& $this->addElement('hierselect', 
                                   'membership_type_id', 
                                   ts('Membership Organization and Type'), 
-                                  array('onChange' => "buildCustomData( 'Membership', this.value ); setPaymentBlock( this.value );")
+                                  array('onChange' => "buildCustomData( 'Membership', this.value );")
                                   );
         
         $sel->setOptions(array($selMemTypeOrg,  $selOrgMemType));
@@ -388,8 +378,7 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
                               ts('Status Override?'), null, 
                               array( 'onClick' => 'showHideMemberStatus()'));
             
-            $this->addElement('checkbox', 'record_contribution', ts('Record Membership Payment?'), null, 
-                              array('onclick' =>"return showHideByValue('record_contribution','','recordContribution','table-row','radio',false);"));
+            $this->addElement('checkbox', 'record_contribution', ts('Record Membership Payment?') );
             
             require_once 'CRM/Contribute/PseudoConstant.php';
             $this->add('select', 'contribution_type_id', 
