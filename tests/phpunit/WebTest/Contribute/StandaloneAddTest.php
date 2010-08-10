@@ -135,7 +135,7 @@ class WebTest_Contribute_StandaloneAddTest extends CiviSeleniumTestCase {
               'Contribution Type'               => 'Donation',
               'Contribution Status'             => 'Completed',
               'Paid By'                         => 'Check',
-              'How long have you been a donor?' => '4-6 years',
+              'How long have you been a donor?' => 'Less than 1 year',
               'Total Amount'                    => '100.00',
               'Check Number'      	            => 'check #1041'
           )

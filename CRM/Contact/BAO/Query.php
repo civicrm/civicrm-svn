@@ -1261,11 +1261,8 @@ class CRM_Contact_BAO_Query
         case 'activity_type_id':
         case 'activity_tags': 
         case 'activity_test':   
+        case 'activity_contact_name':
             CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
-            return;
-
-        case 'activity_target_name':
-            // since this case is handled with the above
             return;
         case 'birth_date_low':
         case 'birth_date_high': 
@@ -1999,6 +1996,7 @@ class CRM_Contact_BAO_Query
             case 'civicrm_activity_tag':
             case 'activity_type':
             case 'activity_status':
+            case 'civicrm_activity_contact':
                 require_once 'CRM/Activity/BAO/Query.php';
                 $from .= CRM_Activity_BAO_Query::from( $name, $mode, $side );
                 continue; 

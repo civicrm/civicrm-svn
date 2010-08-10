@@ -701,6 +701,7 @@ class CRM_Core_Payment_BaseIPN {
                                                    $values ) );
         $template->assign( 'is_monetary', 1 );
         $template->assign( 'is_recur', $recur );
+        $template->assign( 'currency', $contribution->currency );
         if ( $recur ) {
             require_once 'CRM/Core/Payment.php';
             $paymentObject =& CRM_Core_Payment::singleton( $contribution->is_test ? 'test' : 'live', 'Contribute',

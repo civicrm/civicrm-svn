@@ -262,7 +262,7 @@ class WebTest_Event_AddEventTest extends CiviSeleniumTestCase {
       $this->check("is_online_registration");
       $this->assertChecked("is_online_registration");
       
-      $this->type("intro_text", $registerIntro);
+      $this->fillRichTextField("intro_text", $registerIntro);
       
       // enable confirmation email
       $this->click("CIVICRM_QFID_1_2");
