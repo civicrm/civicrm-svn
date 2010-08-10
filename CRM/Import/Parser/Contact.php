@@ -1432,9 +1432,15 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
                         }
                     }
                     break;
-                case 'home_URL':
-                    if ( CRM_Utils_Rule::url( $value ) === false ) {
-                        self::addToErrorMsg(ts('Website'), $errorMessage);
+                case 'url':
+                    if ( is_array( $value ) ) {
+                        foreach ( $value as $values ) {
+                            if ( CRM_Utils_Array::value( 'url', $values ) &&
+                                 !CRM_Utils_Rule::url( $values['url'] ) ) {
+                                self::addToErrorMsg(ts('Website'), $errorMessage);
+                                break;
+                            }
+                        }
                     }
                     break;
                 case 'do_not_email':

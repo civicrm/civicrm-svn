@@ -295,7 +295,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
         } else {
             $savedMapping = $this->get('savedMapping');
 
-            list ($mappingName, $mappingContactType, $mappingLocation, $mappingPhoneType, $mappingImProvider, $mappingRelation  ) = CRM_Core_BAO_Mapping::getMappingFields($savedMapping);
+            list ($mappingName, $mappingContactType, $mappingLocation, $mappingPhoneType, $mappingImProvider, $mappingRelation, $mappingOperator, $mappingValue, $mappingWebsiteType ) = CRM_Core_BAO_Mapping::getMappingFields($savedMapping);
             
             //get loaded Mapping Fields
             $mappingName        = CRM_Utils_Array::value( 1, $mappingName );
@@ -304,6 +304,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
             $mappingPhoneType   = CRM_Utils_Array::value( 1, $mappingPhoneType );
             $mappingImProvider  = CRM_Utils_Array::value( 1, $mappingImProvider );
             $mappingRelation    = CRM_Utils_Array::value( 1, $mappingRelation );
+            $mappingWebsiteType = CRM_Utils_Array::value( 1, $mappingWebsiteType );
            
             $this->assign('loadedMapping', $savedMapping);
             $this->set('loadedMapping', $savedMapping);
@@ -525,32 +526,39 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                             }
 
                             $contactDetails = strtolower(str_replace(" ", "_",$mappingName[$i]));
+                            $websiteTypeId = isset($mappingWebsiteType[$i]) ? $mappingWebsiteType[$i] : null;
                             $locationId = isset($mappingLocation[$i])? $mappingLocation[$i] : 0;
                             $phoneType = isset($mappingPhoneType[$i]) ? $mappingPhoneType[$i] : null;
                             //get provider id from saved mappings
                             $imProvider = isset($mappingImProvider[$i]) ? $mappingImProvider[$i] : null;
                            
-                            // default for IM/phone when mapping with relation is true
-                            $typeId = null;
-                            if ( isset($phoneType) ) {
-                                $typeId = $phoneType;                                   
-                            } else if ( isset($imProvider) ) {
-                                $typeId = $imProvider;
+                            if ( $websiteTypeId ) {
+                                $defaults["mapper[$i]"] = array( $relation, $contactDetails, $websiteTypeId );
+                                if ( ! $websiteTypeId ) {
+                                    $js .= "{$formName}['mapper[$i][2]'].style.display = 'none';\n";
+                                }
+                            } else {
+                                // default for IM/phone when mapping with relation is true
+                                $typeId = null;
+                                if ( isset($phoneType) ) {
+                                    $typeId = $phoneType;                                   
+                                } else if ( isset($imProvider) ) {
+                                    $typeId = $imProvider;
+                                }
+                                $defaults["mapper[$i]"] = array( $relation, $contactDetails, $locationId, $typeId );
+                                if ( ! $locationId ) {
+                                    $js .= "{$formName}['mapper[$i][2]'].style.display = 'none';\n";
+                                }
                             }
-                            
                             // fix for edge cases, CRM-4954
-                            if ( $contactDetails == 'home_url' || $contactDetails == 'image_url' ) {
+                            if ( $contactDetails == 'image_url' ) {
                                 $contactDetails = str_replace( 'url', 'URL', $contactDetails );
                             }
-                            
-                            $defaults["mapper[$i]"] = array( $relation, $contactDetails, $locationId, $typeId
-                                                             );
+                                                        
                             if ( ! $contactDetails ) {
                                 $js .= "{$formName}['mapper[$i][1]'].style.display = 'none';\n";
                             }
-                            if ( ! $locationId ) {
-                                $js .= "{$formName}['mapper[$i][2]'].style.display = 'none';\n";
-                            }
+                            
                             if ( ( ! $phoneType ) && ( ! $imProvider ) ) {
                                 $js .= "{$formName}['mapper[$i][3]'].style.display = 'none';\n";
                             }
@@ -558,13 +566,29 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                             $jsSet = true;
                         } else {
                             $mappingHeader = array_keys($this->_mapperFields, $mappingName[$i]);
+                            $websiteTypeId = isset($mappingWebsiteType[$i]) ? $mappingWebsiteType[$i] : null;
                             $locationId = isset($mappingLocation[$i])? $mappingLocation[$i] : 0;
                             $phoneType = isset($mappingPhoneType[$i]) ? $mappingPhoneType[$i] : null;
                             // get IM service provider id
                             $imProvider = isset($mappingImProvider[$i]) ? $mappingImProvider[$i] : null;
                             
-                            if ( ! $locationId ) {
-                                $js .= "{$formName}['mapper[$i][1]'].style.display = 'none';\n";
+                            if ( $websiteTypeId ) {
+                                if ( ! $websiteTypeId ) {
+                                    $js .= "{$formName}['mapper[$i][1]'].style.display = 'none';\n";
+                                }
+                                $defaults["mapper[$i]"] = array( $mappingHeader[0], $websiteTypeId );
+                            } else {
+                                if ( ! $locationId ) {
+                                    $js .= "{$formName}['mapper[$i][1]'].style.display = 'none';\n";
+                                }
+                                //default for IM/phone without related contact 
+                                $typeId = null;
+                                if( isset($phoneType) ) {
+                                    $typeId = $phoneType;
+                                } else if ( isset($imProvider) ) {
+                                    $typeId = $imProvider;
+                                }
+                                $defaults["mapper[$i]"] = array( $mappingHeader[0], $locationId, $typeId );
                             }
 
                             if ( ( ! $phoneType ) && ( ! $imProvider ) ) {
@@ -572,16 +596,7 @@ class CRM_Import_Form_MapField extends CRM_Core_Form
                             }
                             
                             $js .= "{$formName}['mapper[$i][3]'].style.display = 'none';\n";
-                            
-                            //default for IM/phone without related contact 
-                            $typeId = null;
-                            if( isset($phoneType) ) {
-                                $typeId = $phoneType;
-                            } else if ( isset($imProvider) ) {
-                                $typeId = $imProvider;
-                            }
-                            $defaults["mapper[$i]"] = array( $mappingHeader[0], $locationId, $typeId );
-                            
+                                                       
                             $jsSet = true;
                         }                    
                     } else {

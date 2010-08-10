@@ -38,3 +38,6 @@ ADD INDEX index_is_deleted (is_deleted);
 SELECT @uf_group_id_summary   := max(id) FROM civicrm_uf_group WHERE name = 'summary_overlay';
 UPDATE civicrm_uf_field SET phone_type_id = 1 WHERE uf_group_id = @uf_group_id_summary AND location_type_id = 1 AND field_name = 'phone' AND phone_type_id IS NULL;
 UPDATE civicrm_uf_field SET location_type_id = 1, phone_type_id = 2 WHERE uf_group_id = @uf_group_id_summary AND location_type_id = 2 AND field_name = 'phone' AND phone_type_id IS NULL;
+
+-- CRM-6577
+ALTER TABLE `civicrm_mapping_field` ADD COLUMN `website_type_id` int(10) unsigned DEFAULT NULL COMMENT 'Which type of website does this site belong';
