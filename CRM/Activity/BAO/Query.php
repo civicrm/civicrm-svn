@@ -303,9 +303,7 @@ class CRM_Activity_BAO_Query
                 $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
                 $from .= " $side JOIN civicrm_activity ON civicrm_activity.id = civicrm_activity_target.activity_id ";
             } else if ( in_array( $activityRole, array( 0, 2 ) ) ) {
-                $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id";
-                $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id  OR
-                                    civicrm_activity.source_contact_id = contact_a.id  )";
+                $from .= " $side JOIN civicrm_activity ON civicrm_activity.source_contact_id = contact_a.id ";
             } else if ( $activityRole == 3 ) {
                 $from .= " $side JOIN civicrm_activity_assignment ON civicrm_activity_assignment.assignee_contact_id = contact_a.id ";
                 $from .= " $side JOIN civicrm_activity ON civicrm_activity.id = civicrm_activity_assignment.activity_id ";
