@@ -162,16 +162,13 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         
         $this->assign( 'surveyTypeId', $this->_surveyTypeId );
         
-        $resultSet         = array( );
-        $recontactInterval = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
-                                                          $this->_surveyId, 
-                                                          'recontact_interval' ); 
+        $resultOptions = array( );
+        $resuldId      = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
+                                                      $this->_surveyId, 
+                                                      'result_id' ); 
         
-        if ( $recontactInterval ) {
-           $resultSet =  array_keys(unserialize($recontactInterval));
-
-           // result set should be of label => label
-           $resultSet =  array_combine( $resultSet, $resultSet );
+        if ( $resuldId ) {
+            $resultOptions = CRM_Core_OptionGroup::valuesByID( $resuldId );
         }
 
         //pickup the uf fields.
@@ -182,7 +179,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                                                     false, CRM_Core_Action::VIEW );
         }
         
-        if ( empty($resultSet) ) {
+        if ( empty($resultOptions) ) {
             CRM_Core_Error::statusBounce( ts( 'Oops, It looks like there is no result field or profile configured to conduct voter interview.' ) );
         }
         
@@ -206,7 +203,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             
             //build the result field.
             $this->add( 'select', "field[$contactId][result]", ts('Result'), 
-                        array( '' => ts('- select -') ) + $resultSet );
+                        array( '' => ts('- select -') ) + $resultOptions );
             
             $this->add( 'text', "field[{$contactId}][note]", ts('Note') );
             
