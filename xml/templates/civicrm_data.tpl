@@ -1009,7 +1009,7 @@ INSERT INTO civicrm_uf_field
        (16, 5,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Email Address{/ts}',         		'Contact',     NULL,  NULL),
        (17, 6,           'household_name',        1,           0,           2,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Household Name{/ts}',        		'Household',   NULL,  NULL),
        (18, 6,           'email',                 0,           0,           3,      'User and User Admin Only',  0,           0,             NULL,             '{ts escape="sql"}Email Address{/ts}',         		'Contact',     NULL,  NULL),
-	   (19 	,7 		    ,'phone' 				 ,1  	      ,0 			,1 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'{ts escape="sql"}Home Phone{/ts}' 					,'Contact' 	  ,NULL,  NULL),
+	   (19 	,7 		    ,'phone' 				 ,1  	      ,0 			,1 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'{ts escape="sql"}Home Phone{/ts}' 					,'Contact' 	  ,NULL,  1 ),
 	   (20 	,7 		    ,'phone' 				 ,1  	      ,0 			,2 	,'User and User Admin Only' ,0 		 	 ,0 			,1 				  ,'{ts escape="sql"}Home Mobile{/ts}' 					,'Contact' 	  ,NULL, 2 ),
 	   (21, 7, 			 'street_address', 		  1, 		   0, 			3, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}Primary Address{/ts}',		'Contact', 	   NULL,  NULL),
 	   (22, 7, 			 'city',				  1, 		   0, 			4, 	  	'User and User Admin Only',  0, 		  0, 			 NULL, 			   '{ts escape="sql"}City{/ts}',  						'Contact', 	   NULL,  NULL),
