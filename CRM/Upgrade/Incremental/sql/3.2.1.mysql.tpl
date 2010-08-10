@@ -41,3 +41,6 @@ UPDATE civicrm_uf_field SET location_type_id = 1, phone_type_id = 2 WHERE uf_gro
 
 -- CRM-6577
 ALTER TABLE `civicrm_mapping_field` ADD COLUMN `website_type_id` int(10) unsigned DEFAULT NULL COMMENT 'Which type of website does this site belong';
+
+-- CRM-6631
+{include file='../CRM/Upgrade/3.2.1.msg_template/civicrm_msg_template.tpl'}
