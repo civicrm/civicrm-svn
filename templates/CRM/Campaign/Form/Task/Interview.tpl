@@ -37,16 +37,14 @@
              {foreach from=$readOnlyFields item=fTitle key=fName}
 	        <th>{$fTitle}</th>
 	     {/foreach}
-	     <th>{ts}Note{/ts}</th>
-	     {if $hasResultField}
-	     	<th>{ts}Result{/ts}</th> 
-	     {/if}
-	     
+	    
 	     {* display headers for survey fields *}
 	     {foreach from=$surveyFields item=field key=fieldName}
                   <th>{$field.title}</th>
              {/foreach}
-	     
+
+	     <th>{ts}Note{/ts}</th>
+	     <th>{ts}Result{/ts}</th> 
        </tr>
     </thead>
 
@@ -57,18 +55,8 @@
 	       <td class='name'>{$voterDetails.$voterId.$fName}</td>
 	    {/foreach}
 
-	    <td class='note'>{$form.field.$voterId.note.html}</td>
-
 	    {* do check for profile fields *}
 	    {assign var=surveyFieldCount value=$surveyFields|@count}
-	    
-	    {if $hasResultField}
-	      	<td class='result'>{$form.field.$voterId.result.html}
-		{if !$surveyFieldCount}{*no profile fields*}
-		   &nbsp;&nbsp;&nbsp;<a class="saveVoter button" style="float:right;" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>&nbsp; <span id='restmsg_{$voterId}' class="ok" style="display:none; float:right;">{ts}Vote Saved.{/ts}</span> 
-		{/if}
-		</td>
-	    {/if}
 	    
 	    {* here build the survey fields *}
 	    {if $surveyFieldCount}
@@ -82,15 +70,16 @@
                 {else}
                    {$form.field.$voterId.$n.html}
                 {/if}
-
-		{if $currentCount eq $surveyFieldCount}
-		    &nbsp;&nbsp;&nbsp;<a class="saveVoter" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>&nbsp; <span id='restmsg_{$voterId}' class="ok" style="display:none">{ts}Vote Saved.{/ts}</span>
- 		{/if}
 		</td> 
 		{assign var=currentCount value=$currentCount+1}     
             {/foreach}
 	    {/if}
 	    
+	    <td class='note'>{$form.field.$voterId.note.html}</td>
+	    <td class='result'>{$form.field.$voterId.result.html}
+		&nbsp;&nbsp;&nbsp;<a class="saveVoter button" style="float:right;" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>&nbsp; <span id='restmsg_{$voterId}' class="ok" style="display:none; float:right;">{ts}Vote Saved.{/ts}</span> 
+	    </td>
+
 	</tr>
 	{/foreach}
     </tbody>

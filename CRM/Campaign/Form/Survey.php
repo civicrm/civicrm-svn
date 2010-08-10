@@ -492,7 +492,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                 }
                 
                 $optionValue->save( );
-                $recontactInterval[$optionValue->value]  = $params['option_interval'][$k];
+                $recontactInterval[$optionValue->label]  = $params['option_interval'][$k];
             }
         }
         

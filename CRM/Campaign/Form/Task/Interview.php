@@ -162,39 +162,18 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         
         $this->assign( 'surveyTypeId', $this->_surveyTypeId );
         
-        //get custom group ids.
-        $surveyCustomGroups = CRM_Campaign_BAO_Survey::getSurveyCustomGroups( array( $this->_surveyTypeId ) );
-        $customGrpIds = array_keys( $surveyCustomGroups );
+        $resultSet         = array( );
+        $recontactInterval = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
+                                                          $this->_surveyId, 
+                                                          'recontact_interval' ); 
         
-        //build the group tree for given survey.
-        $allCustomFieldOptions = $allOptions = array( );
-        require_once 'CRM/Core/BAO/CustomGroup.php';
-        foreach ( $customGrpIds as $customGrpId ) {
-            $groupDetails = CRM_Core_BAO_CustomGroup::getGroupDetail( $customGrpId );
-            foreach ( $groupDetails as $grpId => $grpVals ) {
-                if ( is_array( $grpVals['fields'] ) ) {
-                    foreach ( $grpVals['fields'] as $fldId => $fldVals ) {
-                        $optionGroupId = CRM_Utils_Array::value( 'option_group_id', $fldVals );
-                        if ( !$optionGroupId ) continue;
-                        $options = CRM_Core_BAO_CustomOption::getCustomOption( $fldId ); 
-                        if ( !empty( $options ) ) {
-                            $allCustomFieldOptions[$fldId] = $options;
-                            foreach ( $options as $optId => $optVals ) {
-                                $label = $optVals['label'];
-                                $allOptions[$label] = $label;
-                            }
-                        }
-                    }
-                }
-            }
+        if ( $recontactInterval ) {
+           $resultSet =  array_keys(unserialize($recontactInterval));
+
+           // result set should be of label => label
+           $resultSet =  array_combine( $resultSet, $resultSet );
         }
-        
-        $addResultField = false;
-        if ( !CRM_Utils_System::isNull( $allOptions ) ) {
-            $addResultField = true;
-        }
-        $this->assign( 'hasResultField', $addResultField );
-        
+
         //pickup the uf fields.
         $this->_surveyFields = array( );
         if ( $this->_ufGroupId ) {
@@ -203,7 +182,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                                                     false, CRM_Core_Action::VIEW );
         }
         
-        if ( !$addResultField && empty( $this->_surveyFields )  ) {
+        if ( empty($resultSet) ) {
             CRM_Core_Error::statusBounce( ts( 'Oops, It looks like there is no result field or profile configured to conduct voter interview.' ) );
         }
         
@@ -226,11 +205,9 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             }
             
             //build the result field.
-            if ( $addResultField ) {
-                $this->add( 'select', "field[$contactId][result]", ts('Result'), 
-                            array( '' => ts('- select -') ) + $allOptions );
-            }
-
+            $this->add( 'select', "field[$contactId][result]", ts('Result'), 
+                        array( '' => ts('- select -') ) + $resultSet );
+            
             $this->add( 'text', "field[{$contactId}][note]", ts('Note') );
             
         }
