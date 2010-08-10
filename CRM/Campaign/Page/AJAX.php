@@ -121,4 +121,70 @@ class CRM_Campaign_Page_AJAX
         echo json_encode( $result );
         CRM_Utils_System::civiExit( );
     }
+    
+    
+    function voterList() {
+        
+        $searchParams = array( 'city',
+                               'sort_name', 
+                               'street_name', 
+                               'street_number', 
+                               'street_type', 
+                               'street_address', 
+                               'survey_interviewer_id', 
+                               'campaign_survey_id' );
+        
+        $params = $data = $searchValues = $searchRows = array( );
+        foreach ( $searchParams as $param ) {
+            if ( CRM_Utils_Array::value( $param, $_POST ) ) {
+                $params[$param] = $_POST[$param];
+            }
+        }
+        
+        $sortMapper  = array( 1 => 'sort_name' );
+        $sEcho       = CRM_Utils_Type::escape( $_REQUEST['sEcho'], 'Integer' );
+        $offset      = isset($_REQUEST['iDisplayStart'])? CRM_Utils_Type::escape($_REQUEST['iDisplayStart'], 'Integer'):0;
+        $rowCount    = isset($_REQUEST['iDisplayLength'])?CRM_Utils_Type::escape($_REQUEST['iDisplayLength'], 'Integer'):25; 
+        $sort        = isset($_REQUEST['iSortCol_0'] )? $sortMapper[CRM_Utils_Type::escape($_REQUEST['iSortCol_0'],'Integer')]: 'sort_name';
+        $sortOrder   =  isset($_REQUEST['sSortDir_0'] )? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String'):'asc';
+        
+        require_once 'CRM/Contact/BAO/Query.php';
+        $queryParams = CRM_Contact_BAO_Query::convertFormValues( $params );
+        $query       = new CRM_Contact_BAO_Query( $queryParams );
+        $searchCount = $query->searchQuery(0, 0, null, true );
+        $iTotal      = $searchCount;
+        
+        if ( $searchCount > 0 ) {
+            // get the result of the search
+            $result = $query->searchQuery( $offset, $rowCount, $sort, false, false,
+                                           false, false, false, null, $sortOrder );
+            
+            $config =& CRM_Core_Config::singleton( );
+            
+            while( $result->fetch() ) {
+                $contactID = $result->contact_id;
+                
+                $contact_type = '<img src="' . $config->resourceBase . 'i/contact_';
+                require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
+                $typeImage = 
+                    CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
+                                                             $result->contact_sub_type : $result->contact_type );
+                
+                $searchRows[$contactID]['id']    = $contactID;
+                $searchRows[$contactID]['name']  = $typeImage.' '.$result->sort_name;
+            }
+        }
+        
+        foreach( $searchRows as $cid => $row ) {
+            $searchRows[$cid]['check'] = '<input type="checkbox" id="contact_check['.$cid.']" name="contact_check['.$cid.']" value='.$cid.' />';
+        }
+        
+        require_once "CRM/Utils/JSON.php";
+        $selectorElements = array( 'name', 'check' );
+        $iFilteredTotal = $iTotal;
+        
+        echo CRM_Utils_JSON::encodeDataTableSelector( $searchRows, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );
+        CRM_Utils_System::civiExit( );
+    }
+
 }

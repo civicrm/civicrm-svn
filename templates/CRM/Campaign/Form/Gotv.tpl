@@ -25,61 +25,40 @@
 *}
 {* Gotv form for voters. *}
 
-{if $buildSelector}
+ {if $buildSelector}
  {* build selector *}
- {if $voters}
- <table id="voterRecords" class='display'>
-   <thead>
-     <tr class="columnheader">
-	    <th>{ts}Name{/ts}</th>
-	    <th></th>
-     </tr>
-   </thead>
-  
-   <tbody>  
-     {counter start=0 skip=1 print=false}
-     {foreach from=$voters item=voter}
-     <tr id='rowid{$voter.voter_id}' class="{cycle values="odd-row,even-row"} crm-campaign">
-  	<td>{$voter.sort_name}</td>
-	<td>{$voter.voter_check}</td>
-     </tr>
-     {/foreach}
-   </tbody>
- </table>
- {else}
- {include file="CRM/Campaign/Form/Search/EmptyResults.tpl"} 
- {/if}
+ 
+  {* load voter data *}	
+  <script type="text/javascript">loadVoterList( );</script>
+ 
+  <table id="voterRecords" class='display'>
+     <thead>
+       <tr class="columnheader">
+	   <th>{ts}Name{/ts}</th>
+	   <th></th>
+       </tr>
+     </thead>
+     <tbody></tbody>
+  </table>
  
 {else}{* build search form *}
+    
     {include file='CRM/Campaign/Form/Search/Common.tpl' context='gotv'}
     <div id='voterList'></div>
 
 {literal}
 <script type="text/javascript">
 
-function searchVoters( ) {
-  //get the search criteria.
-  var searchCritera = new Object;
-  var searchParams = {/literal}{$searchParams}{literal};
-  for ( param in searchParams ) {
-     if ( val = cj( '#' + param ).val( ) ) searchCritera[param] = val;
-  }  
-    
-  var dataUrl =  {/literal}"{crmURL p='civicrm/campaign/gotv' h=0 q='reset=1&search=1&snippet=4' }"{literal}
-  
-  {/literal}
-  {if $qfKey}
-  
-  dataUrl = dataUrl + '&qfKey=' + '{$qfKey}'; 
-  
-  {/if}
-  {literal}
+ function searchVoters( ) {
+      var dataUrl =  {/literal}"{crmURL p='civicrm/campaign/gotv' h=0 q='reset=1&search=1&snippet=4' }"{literal}
+      {/literal}{if $qfKey}
+      dataUrl = dataUrl + '&qfKey=' + '{$qfKey}'; 
+      {/if}{literal}
 
-  //post data to create interview.
-  cj.post( dataUrl, searchCritera, function( voterList ) {
-	  cj( '#voterList'  ).html( voterList );
-	  cj( '#searchForm' ).addClass( 'crm-accordion-closed' );
-  }, 'html' );
+      cj.get( dataUrl, null, function( voterList ) {
+	      cj( '#voterList'  ).html( voterList );
+	      cj( '#searchForm' ).addClass( 'crm-accordion-closed' );
+      }, 'html' );
 }
 
 </script>
@@ -92,13 +71,38 @@ function searchVoters( ) {
 {literal}
 <script type="text/javascript">
 
-cj( function( ) {
+ function loadVoterList( ) 
+ {
+     var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='snippet=4&className=CRM_Campaign_Page_AJAX&fnName=voterList' }"{literal};
 
-	//load jQuery data table.
-        cj('#voterRecords').dataTable( {
-	    "sPaginationType": "full_numbers"
-        });        
-    });
+     cj( '#voterRecords' ).dataTable({
+     	        "bFilter"    : false,
+		"bAutoWidth" : false,
+	    	"bProcessing": true,
+		"sPaginationType": "full_numbers",
+	   	"bServerSide": true,
+	   	"sAjaxSource": sourceUrl,
+		
+		"fnServerData": function ( sSource, aoData, fnCallback ) {
+			var dataLength = aoData.length;
+		       		
+			//get the search criteria.
+                        var searchParams = {/literal}{$searchParams}{literal};
+                        for ( param in searchParams ) {
+                            if ( val = cj( '#' + param ).val( ) ) {
+			      aoData[dataLength++] = {name: param , value: val };
+			    } 
+                        } 
+
+			$.ajax( {
+				"dataType": 'json', 
+				"type": "POST", 
+				"url": sSource, 
+				"data": aoData, 
+				"success": fnCallback
+			} ); }
+     		}); 					
+ } 
 
 </script>
 {/literal}

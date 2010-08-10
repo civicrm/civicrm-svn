@@ -59,7 +59,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
     {
         $this->_search = CRM_Utils_Array::value( 'search', $_GET );
         $this->assign( 'buildSelector', $this->_search );
-        if ( $this->_search ) $this->buildVoterList( ); return;  
+        $this->assign( 'searchParams',  json_encode( $this->_searchParams ) ); 
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Voter List' ) );
@@ -143,32 +143,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             
         }
         $this->set( 'searchParams',    $this->_searchParams );
-        $this->assign( 'searchParams', json_encode( $this->_searchParams ) );  
+        $this->assign( 'searchParams', json_encode( $this->_searchParams ) ); 
     }
-    
-    function buildVoterList( ) 
-    {
-        $seacrhParams = $_POST;
-        
-        require_once 'CRM/Contact/BAO/Query.php';
-        $queryParams = CRM_Contact_BAO_Query::convertFormValues( $seacrhParams );
-        
-        require_once 'CRM/Contact/BAO/Query.php';
-        $query  = new CRM_Contact_BAO_Query( $queryParams );
-        $result = $query->searchQuery( );
-        $voterList = array( );
-        while( $result->fetch( ) ) {
-            $voterId    = $result->contact_id;
-            $activityId = $result->survey_activity_id;
-            $voterCheck = '<input type="checkbox" id="voter_check['.$voterId.']" name="contact_check['.$voterId.']" value='.$activityId.' />';
-            
-            $voterList[] = array( 'voter_id'           => $result->contact_id,
-                                  'sort_name'          => $result->sort_name,
-                                  'survey_activity_id' => $activityId,
-                                  'voter_check'        => $voterCheck );
-        }
-        
-        $this->assign( 'voters', $voterList );
-    }
-    
+
 }
