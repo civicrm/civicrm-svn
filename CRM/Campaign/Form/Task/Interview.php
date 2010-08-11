@@ -212,7 +212,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         
         $this->addButtons( array(
                                 
-                                 array ( 'type'      => 'done',
+                                 array ( 'type'      => 'cancel',
                                          'name'      => ts('Done') ),
                                  )
                            );

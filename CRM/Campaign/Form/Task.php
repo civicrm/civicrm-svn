@@ -128,7 +128,7 @@ class CRM_Campaign_Form_Task extends CRM_Core_Form
         require_once 'CRM/Utils/Rule.php';
         $qfKey     = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
         $urlParams = 'force=1';
-        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= '&qfKey='.$qfKey;
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams = 'qfKey='.$qfKey;
         $session->replaceUserContext( CRM_Utils_System::url( 'civicrm/survey/search', $urlParams ) );
     }
     
