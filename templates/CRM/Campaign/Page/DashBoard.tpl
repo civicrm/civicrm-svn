@@ -33,6 +33,7 @@
       <a href="{$addCampaignUrl}" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
   </div>
   {include file="CRM/common/enableDisable.tpl"}
+  {include file="CRM/common/jsortable.tpl"}
   <div id="campaignType">
     <table id="options" class="display">
       <thead>
@@ -51,8 +52,8 @@
         <tr id="row_{$campaign.campaign_id}" {if $campaign.is_active neq 1}class="disabled"{/if}>
           <td>{$campaign.title}</td>
           <td>{$campaign.description}</td>
-          <td>{$campaign.start_date}</td>
-          <td>{$campaign.end_date}</td>
+          <td>{$campaign.start_date|crmDate}</td>
+          <td>{$campaign.end_date|crmDate}</td>
           <td>{$campaign.campaign_type}</td>
           <td>{$campaign.status}</td>
           <td id="row_{$campaign.id}_status">{if $campaign.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>

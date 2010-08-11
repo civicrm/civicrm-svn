@@ -139,7 +139,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         if ( !empty( $campaigns ) ) {
             $campaignType    = CRM_Core_PseudoConstant::campaignType( );
             $campaignStatus  = CRM_Core_PseudoConstant::campaignStatus( );
-            $properties      = array( 'id', 'name', 'title', 'status_id', 'description', 'campaign_type_id', 'is_active' );
+            $properties      = array( 'id', 'name', 'title', 'status_id', 'description', 'campaign_type_id', 'is_active', 'start_date', 'end_date' );
             foreach( $campaigns as $cmpid => $campaign ) { 
                 foreach ( $properties as $prop ) {
                     $campaignsData[$cmpid][$prop] = $campaign[$prop];
