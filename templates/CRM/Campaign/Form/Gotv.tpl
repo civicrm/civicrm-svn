@@ -48,6 +48,20 @@
 
 {literal}
 <script type="text/javascript">
+ 
+ {/literal}
+ {* load selector when force *}
+ {if $force and !$buildSelector}
+ {literal}
+ cj( function( ) { 
+    //collapse the search form. 	     
+    cj( '#searchForm' ).addClass( 'crm-accordion-closed' );	      	  
+    searchVoters( );
+ }); 	
+     	
+ {/literal}
+ {/if}
+ {literal}	
 
  function searchVoters( ) {
       var dataUrl =  {/literal}"{crmURL p='civicrm/campaign/gotv' h=0 q='search=1&snippet=4' }"{literal}
@@ -56,8 +70,11 @@
       {/if}{literal}
 
       cj.get( dataUrl, null, function( voterList ) {
-	      cj( '#voterList'  ).html( voterList );
-	      cj( '#searchForm' ).addClass( 'crm-accordion-closed' );
+	      cj( '#voterList' ).html( voterList );
+	      //collapse the search form.
+	      if ( !cj( '#searchForm' ).hasClass( 'crm-accordion-closed' ) ) {
+	      	 cj( '#searchForm' ).addClass( 'crm-accordion-closed' ); 		 
+	      } 
       }, 'html' );
 }
 

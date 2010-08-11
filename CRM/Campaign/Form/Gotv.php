@@ -57,9 +57,13 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
      */ 
     function preProcess( ) 
     {
-        $this->_search = CRM_Utils_Array::value( 'search', $_GET );
+        $this->_search   = CRM_Utils_Array::value( 'search', $_GET );
+        $this->_force    = CRM_Utils_Request::retrieve( 'force',    'Boolean',   $this, false ); 
+        $this->_surveyId = CRM_Utils_Request::retrieve( 'surveyId', 'Positive',  $this ); 
+        
         $this->assign( 'buildSelector', $this->_search );
-        $this->assign( 'searchParams',  json_encode( $this->get( 'searchParams' ) ) ); 
+        $this->assign( 'searchParams',  json_encode( $this->get( 'searchParams' ) ) );
+        $this->assign( 'force',         $this->_force );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Voter List' ) );
@@ -86,6 +90,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
         
         $showInterviewer = false;
+        $defaults = array( );
         if ( CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
             $showInterviewer = true;
             //autocomplete url
@@ -105,7 +110,6 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
                                                                                      $userId,
                                                                                      'sort_name',
                                                                                      'id' );
-                $this->setDefaults( $defaults );
             }
         }
         $this->assign( 'showInterviewer', $showInterviewer );
@@ -144,6 +148,21 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         }
         $this->set( 'searchParams',    $this->_searchParams );
         $this->assign( 'searchParams', json_encode( $this->_searchParams ) ); 
+
+        if ( $this->_force && !$this->_surveyId ) {
+            // use default survey id
+            require_once 'CRM/Campaign/DAO/Survey.php';
+            $dao = new CRM_Campaign_DAO_Survey( );
+            $dao->is_active  = 1;
+            $dao->is_default = 1;   
+            if ( $dao->find( true ) ) {
+                $this->_surveyId = $dao->id;
+            }
+            if ( !$this->_surveyId ) CRM_Core_Error::fatal('Could not find valid Survey Id.'); 
+        }
+        if ( $this->_surveyId ) $defaults['campaign_survey_id'] = $this->_surveyId;
+        
+        $this->setDefaults( $defaults );
     }
 
 }
