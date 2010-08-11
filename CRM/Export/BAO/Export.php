@@ -149,7 +149,7 @@ class CRM_Export_BAO_Export
                         if ( trim ( CRM_Utils_Array::value( 3, $value ) ) ) {
                             $relLocTypeId = CRM_Utils_Array::value( 3, $value );
                         } else {
-                            $relLocTypeId = 1;
+                            $relLocTypeId = 'Primary';
                         }
 
                         if ( $relationField == 'phone' ) { 
@@ -317,7 +317,7 @@ class CRM_Export_BAO_Export
             unset( $returnProperties[$relationKey]['location_type'] );
             unset( $returnProperties[$relationKey]['im_provider'] );
         }
-        
+                
         $allRelContactArray = $relationQuery = array();
         
         foreach ( $contactRelationshipTypes as $rel => $dnt ) {
