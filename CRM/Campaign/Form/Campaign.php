@@ -51,6 +51,13 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
      * @var int
      */
     protected $_action;
+
+    /**
+     * context
+     *
+     * @var string
+     */
+    protected $_context;
     
     /**
      * the id of the campaign we are proceessing
@@ -65,6 +72,13 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
             CRM_Utils_System::permissionDenied( );
         }
+
+        $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+        
+        if ( $this->_context ) {
+            $this->assign( 'context', $this->_context );
+        }
+
         $this->_action = CRM_Utils_Request::retrieve('action', 'String', $this );
         
         if ( $this->_action & ( CRM_Core_Action::UPDATE | $this->_action & CRM_Core_Action::DELETE ) ) {
@@ -194,17 +208,24 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         // is this Campaign active
         $this->addElement('checkbox', 'is_active', ts('Is Active?') );
         
-        $this->addButtons(array(
+        if ( $this->_context == 'dialog' )  {
+            $this->addButtons(array(
                                 array ('type'      => 'next',
                                        'name'      => ts('Save'),
-                                       'isDefault' => true),
-                                array ('type'      => 'next',
-                                       'name'      => ts('Save and New'),
+                                       'isDefault' => true) ) );
+        } else {
+            $this->addButtons(array(
+                                    array ('type'      => 'next',
+                                           'name'      => ts('Save'),
+                                           'isDefault' => true),
+                                    array ('type'      => 'next',
+                                           'name'      => ts('Save and New'),
                                        'subName'   => 'new'),
-                                array ('type'      => 'cancel',
-                                       'name'      => ts('Cancel')),
-                                )
-                          ); 
+                                    array ('type'      => 'cancel',
+                                           'name'      => ts('Cancel')),
+                                    )
+                              ); 
+        }
         
     }
     
@@ -283,6 +304,12 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
             $session->pushUserContext(CRM_Utils_System::url('civicrm/campaign', 'reset=1&subPage=campaign'));
         }
         
+        if ( $this->_context == 'dialog' )  {
+            $returnArray = array( 'returnSuccess' => true );
+            echo json_encode( $returnArray );
+            CRM_Utils_System::civiExit( );
+        }
+
         $buttonName = $this->controller->getButtonName( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another Campaign.'));

@@ -28,10 +28,13 @@
 {* build the campaign selector *}
 {if $subPageType eq 'campaign'}
 
+<div id="campaign-dialog" class='hiddenElement'></div>
 {if $campaigns} 
   <div class="action-link">
-      <a href="{$addCampaignUrl}" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
+      <a href="#" onclick="createCampaign( );" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
   </div>
+
+
   {include file="CRM/common/enableDisable.tpl"}
   {include file="CRM/common/jsortable.tpl"}
   <div id="campaignType">
@@ -70,7 +73,7 @@
     </div>
 {/if}
 <div class="action-link">
-   <a href="{$addCampaignUrl}" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
+   <a href="#" onclick="createCampaign( );"  class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
 </div>
 
 {* build the survey selector *}
@@ -122,7 +125,6 @@
    <a href="{$addSurveyUrl}" class="button"><span>&raquo; {ts}Add Survey{/ts}</span></a>
 </div>
 
-
 {* build normal page *}
 {else}
 
@@ -163,3 +165,30 @@ cj(document).ready( function( ) {
 </script>
 {/literal}
 {/if}
+
+{literal}
+<script type="text/javascript">
+  function createCampaign(  ) {
+     var dataURL = {/literal}"{crmURL p='civicrm/campaign/add' q='reset=1&snippet=5&context=dialog' h=0 }"{literal};
+
+     cj.ajax({
+         url: dataURL,
+         success: function( content ) {
+             cj("#campaign-dialog").show( ).html( content ).dialog({
+         	    	title: "Create New Campaign",
+             		modal: true,
+             		width: 730, 
+             		overlay: { 
+             			opacity: 0.5, 
+             			background: "black" 
+             		},
+
+                 beforeclose: function(event, ui) {
+                     cj(this).dialog("destroy");
+                 }
+             });
+         }
+      });
+  }    
+</script>
+{/literal}

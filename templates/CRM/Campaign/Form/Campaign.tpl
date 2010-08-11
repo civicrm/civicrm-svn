@@ -86,3 +86,53 @@
         {include file="CRM/common/formButtons.tpl" location="top"}
 </div>
 </div>
+
+{if $context eq 'dialog'}
+{literal}
+<script type="text/javascript">
+
+   var options = { 
+        beforeSubmit:  showRequest  // pre-submit callback  
+   }; 
+
+   // bind form using 'ajaxForm'
+   cj('form#Campaign').ajaxForm( options );
+
+   // pre-submit function
+   function showRequest(formData, jqForm, options) { 
+        var queryString = cj.param(formData); 
+        queryString = queryString + '&snippet=5';
+        var postUrl = {/literal}"{crmURL p='civicrm/campaign/add' q='context=dialog' h=0 }"{literal}; 
+        var response = cj.ajax({
+           type: "POST",
+           url: postUrl,
+           async: false,
+           data: queryString,
+           dataType: "json",
+           success: function( response ) {
+               if ( response.returnSuccess ) {
+                   cj("#campaign-dialog").dialog("close");
+		   
+		   // reload page to show updated data
+		   document.location = {/literal}'{crmURL p="civicrm/campaign" q="reset=1&subPage=campaign" h=0 }'{literal};
+               }
+           }
+         }).responseText;
+	 
+         cj("#campaign-dialog").html( response );
+	 
+        // here we could return false to prevent the form from being submitted; 
+        // returning anything other than false will allow the form submit to continue 
+        return false; 
+    }
+ 
+   // hide hidden elements on form
+   cj(document).ready( function() {
+     cj('input.hiddenElement').each( function() {
+     	 cj(this).attr('style','display:none' );
+      });
+   });
+
+</script>
+{/literal}
+{/if}
