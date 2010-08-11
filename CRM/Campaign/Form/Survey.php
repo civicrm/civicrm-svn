@@ -65,6 +65,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
     public $_values;
 
     /**
+     * context
+     *
+     * @var string
+     */
+    protected $_context;
+
+    /**
      * Function to set variables up before form is built
      * 
      * @param null
@@ -81,6 +88,13 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         if ( !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
             CRM_Utils_System::permissionDenied( );
         }
+        
+        $this->_context = CRM_Utils_Request::retrieve( 'context', 'String', $this );
+        
+        if ( $this->_context ) {
+            $this->assign( 'context', $this->_context );
+        }
+
         $this->_action   = CRM_Utils_Request::retrieve('action', 'String', $this );
         
         if ( $this->_action & ( CRM_Core_Action::UPDATE | CRM_Core_Action::DELETE ) ) {
@@ -236,7 +250,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $defaultOption = array();
         require_once 'CRM/Core/ShowHideBlocks.php';
         $_showHide = new CRM_Core_ShowHideBlocks('','');
-        
+                    
+        $optionAttributes =& CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue' );
+        $optionAttributes['label']['size'] = $optionAttributes['value']['size'] = 25;
+
         for($i = 1; $i <= self::NUM_OPTION; $i++) {
             
             //the show hide blocks
@@ -249,8 +266,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                 $_showHide->addShow($showBlocks);
             }
             
-            $optionAttributes =& CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue' );
-            // label
             $this->add('text','option_label['.$i.']', ts('Label'),
                        $optionAttributes['label']);
 
@@ -298,18 +313,26 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $this->add('checkbox', 'is_default', ts('Is Default?'));
 
         // add buttons
-        $this->addButtons(array(
-                                array ('type'      => 'next',
-                                       'name'      => ts('Save'),
-                                       'isDefault' => true),
-                                array ('type'      => 'next',
-                                       'name'      => ts('Save and New'),
+        if ( $this->_context == 'dialog' )  {
+            $this->addButtons(array(
+                                    array ('type'      => 'next',
+                                           'name'      => ts('Save'),
+                                           'isDefault' => true),
+                                    ));
+        } else {
+            $this->addButtons(array(
+                                    array ('type'      => 'next',
+                                           'name'      => ts('Save'),
+                                           'isDefault' => true),
+                                    array ('type'      => 'next',
+                                           'name'      => ts('Save and New'),
                                        'subName'   => 'new'),
-                                array ('type'      => 'cancel',
-                                       'name'      => ts('Cancel')),
-                                )
-                          ); 
-        
+                                    array ('type'      => 'cancel',
+                                           'name'      => ts('Cancel')),
+                                    )
+                              ); 
+        }
+
         // add a form rule to check default value
         $this->addFormRule( array( 'CRM_Campaign_Form_Survey', 'formRule' ),$this );
 
@@ -532,6 +555,12 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             CRM_Core_Session::setStatus(ts('Survey has been saved.'));
         }
         
+        if ( $this->_context == 'dialog' )  {
+            $returnArray = array( 'returnSuccess' => true );
+            echo json_encode( $returnArray );
+            CRM_Utils_System::civiExit( );
+        }
+
         $buttonName = $this->controller->getButtonName( );
         if ( $buttonName == $this->getButtonName( 'next', 'new' ) ) {
             CRM_Core_Session::setStatus(ts(' You can add another Survey.'));
