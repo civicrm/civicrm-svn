@@ -59,7 +59,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
     {
         $this->_search = CRM_Utils_Array::value( 'search', $_GET );
         $this->assign( 'buildSelector', $this->_search );
-        $this->assign( 'searchParams',  json_encode( $this->_searchParams ) ); 
+        $this->assign( 'searchParams',  json_encode( $this->get( 'searchParams' ) ) ); 
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Voter List' ) );

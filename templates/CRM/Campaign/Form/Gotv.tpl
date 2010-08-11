@@ -31,11 +31,11 @@
   {* load voter data *}	
   <script type="text/javascript">loadVoterList( );</script>
  
-  <table id="voterRecords" class='display'>
+  <table id="voterRecords">
      <thead>
        <tr class="columnheader">
 	   <th>{ts}Name{/ts}</th>
-	   <th></th>
+	   <th>{ts}Is Interview Conducted?{/ts}</th>
        </tr>
      </thead>
      <tbody></tbody>
@@ -50,7 +50,7 @@
 <script type="text/javascript">
 
  function searchVoters( ) {
-      var dataUrl =  {/literal}"{crmURL p='civicrm/campaign/gotv' h=0 q='reset=1&search=1&snippet=4' }"{literal}
+      var dataUrl =  {/literal}"{crmURL p='civicrm/campaign/gotv' h=0 q='search=1&snippet=4' }"{literal}
       {/literal}{if $qfKey}
       dataUrl = dataUrl + '&qfKey=' + '{$qfKey}'; 
       {/if}{literal}
@@ -79,10 +79,11 @@
      	        "bFilter"    : false,
 		"bAutoWidth" : false,
 	    	"bProcessing": true,
+		"aoColumns":[{sClass:""},{bSortable:false}],
 		"sPaginationType": "full_numbers",
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
-		
+				
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
 			var dataLength = aoData.length;
 		       		
@@ -94,7 +95,7 @@
 			    } 
                         } 
 
-			$.ajax( {
+			cj.ajax( {
 				"dataType": 'json', 
 				"type": "POST", 
 				"url": sSource, 
@@ -103,6 +104,17 @@
 			} ); }
      		}); 					
  } 
+
+function processInterview( element ) {
+  var interviewActId = cj( element ).val( );
+  var isDelete = 0;
+  if ( cj( element ).attr( 'checked') ) isDelete = 1;
+
+  if ( !interviewActId ) return;
+   
+  var actUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processInterview' }"{literal};
+  cj.post( actUrl, {'actId': interviewActId, 'delete' :isDelete } );	 	 
+}
 
 </script>
 {/literal}

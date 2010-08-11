@@ -122,9 +122,8 @@ class CRM_Campaign_Page_AJAX
         CRM_Utils_System::civiExit( );
     }
     
-    
-    function voterList() {
-        
+    function voterList( ) 
+    {
         $searchParams = array( 'city',
                                'sort_name', 
                                'street_name', 
@@ -134,12 +133,20 @@ class CRM_Campaign_Page_AJAX
                                'survey_interviewer_id', 
                                'campaign_survey_id' );
         
-        $params = $data = $searchValues = $searchRows = array( );
+        $params = $searchRows = array( );
         foreach ( $searchParams as $param ) {
             if ( CRM_Utils_Array::value( $param, $_POST ) ) {
                 $params[$param] = $_POST[$param];
             }
         }
+        
+        //get the survey status in where clause.
+        require_once 'CRM/Core/PseudoConstant.php';
+        $scheduledStatusId = array_search( 'Scheduled', CRM_Core_PseudoConstant::activityStatus( 'name' ) );
+        if ( $scheduledStatusId ) $params['survey_status_id'] = $scheduledStatusId;
+        
+        //we should process only non deleted activity.
+        $params['campaign_search_voter_for'] = 'release';
         
         $sortMapper  = array( 1 => 'sort_name' );
         $sEcho       = CRM_Utils_Type::escape( $_REQUEST['sEcho'], 'Integer' );
@@ -155,28 +162,28 @@ class CRM_Campaign_Page_AJAX
         $iTotal      = $searchCount;
         
         if ( $searchCount > 0 ) {
+            require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
+            $config = CRM_Core_Config::singleton( );
+            
             // get the result of the search
             $result = $query->searchQuery( $offset, $rowCount, $sort, false, false,
                                            false, false, false, null, $sortOrder );
             
-            $config =& CRM_Core_Config::singleton( );
-            
             while( $result->fetch() ) {
-                $contactID = $result->contact_id;
-                
+                $contactID    = $result->contact_id;
+                $surveyActId  = $result->survey_activity_id; 
                 $contact_type = '<img src="' . $config->resourceBase . 'i/contact_';
-                require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
+                
                 $typeImage = 
                     CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
                                                              $result->contact_sub_type : $result->contact_type );
                 
                 $searchRows[$contactID]['id']    = $contactID;
                 $searchRows[$contactID]['name']  = $typeImage.' '.$result->sort_name;
+                
+                $check = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processInterview( this );" />';
+                $searchRows[$contactID]['check'] = $check;
             }
-        }
-        
-        foreach( $searchRows as $cid => $row ) {
-            $searchRows[$cid]['check'] = '<input type="checkbox" id="contact_check['.$cid.']" name="contact_check['.$cid.']" value='.$cid.' />';
         }
         
         require_once "CRM/Utils/JSON.php";
@@ -186,5 +193,17 @@ class CRM_Campaign_Page_AJAX
         echo CRM_Utils_JSON::encodeDataTableSelector( $searchRows, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );
         CRM_Utils_System::civiExit( );
     }
-
+    
+    function processInterview( ) 
+    {
+        require_once 'CRM/Utils/String.php';
+        $activityId = CRM_Utils_Type::escape($_POST['actId'],  'Integer' );
+        $isDelete   = CRM_Utils_String::strtoboolstr( CRM_Utils_Type::escape($_POST['delete'], 'String' ) );
+        if ( $activityId ) { 
+            CRM_Core_DAO::setFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'is_deleted', $isDelete );        
+        }
+        
+        CRM_Utils_System::civiExit( );
+    }
+    
 }
