@@ -155,14 +155,6 @@ class CRM_Activity_BAO_Query
         $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
         $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
         
-        static $includeIsDelete = false;
-        // exclude activities where is_deleted is true, and where is_current_revision is false
-        // include only once
-        if ( !$includeIsDelete ) {
-            $query->_where[$grouping][] = ' civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1';
-            $includeIsDelete = true;
-        }
-        
         switch ( $name ) {
         
         case 'activity_type_id':
