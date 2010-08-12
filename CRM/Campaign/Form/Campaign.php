@@ -212,7 +212,10 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
             $this->addButtons(array(
                                 array ('type'      => 'next',
                                        'name'      => ts('Save'),
-                                       'isDefault' => true) ) );
+                                       'isDefault' => true),
+                                array ('type'      => 'cancel',
+                                       'name'      => ts('Cancel'),
+                                       'js'        => array( 'onclick' => "cj('#campaign-dialog').dialog('close'); return false;" ) ) ) );
         } else {
             $this->addButtons(array(
                                     array ('type'      => 'next',

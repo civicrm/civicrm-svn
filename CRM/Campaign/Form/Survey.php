@@ -316,7 +316,10 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                                     array ('type'      => 'next',
                                            'name'      => ts('Save'),
                                            'isDefault' => true),
-                                    ));
+                                    array ('type'      => 'cancel',
+                                           'name'      => ts('Cancel'),
+                                           'js'        => array( 'onclick' => "cj('#survey-dialog').dialog('close'); return false;" ) )
+                                    ) );
         } else {
             $this->addButtons(array(
                                     array ('type'      => 'next',
