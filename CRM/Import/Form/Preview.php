@@ -161,8 +161,10 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
             }
         }
         
+        $path = "_qf_MapField_display=true";
         $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $form );
-        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $path = "_qf_MapField_display=true&qfKey=$qfKey";
+        if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $path .= "&qfKey=$qfKey";
+        
         $previousURL = CRM_Utils_System::url('civicrm/import/contact', $path, false, null, false);
         $cancelURL   = CRM_Utils_System::url('civicrm/import/contact', 'reset=1');
         
