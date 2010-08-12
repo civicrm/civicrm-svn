@@ -54,7 +54,7 @@ require_once 'CRM/Contribute/PseudoConstant.php';
  */
 function &civicrm_contribution_add( &$params ) {
     _civicrm_initialize( );
-
+    
     if ( empty( $params ) ) {
         return civicrm_create_error( ts( 'No input parameters present' ) );
     }
@@ -276,17 +276,22 @@ function &civicrm_contribution_format_create( &$params ) {
  * @access private
  */
 function _civicrm_contribute_check_params( &$params ) {
-    static $required = array( 'contact_id', 'total_amount', 'contribution_type_id' );
+    static $required = array( 'contact_id'           => null, 
+                              'total_amount'         => null, 
+                              'contribution_type_id' => 'contribution_type' );
     
     // cannot create a contribution with empty params
     if ( empty( $params ) ) {
         return civicrm_create_error( 'Input Parameters empty' );
     }
-
+    
     $valid = true;
     $error = '';
-    foreach ( $required as $field ) {
-        if ( ! CRM_Utils_Array::value( $field, $params ) ) {
+    foreach ( $required as $field => $eitherField ) {
+        if ( !CRM_Utils_Array::value( $field, $params ) ) {
+            if ( $eitherField && CRM_Utils_Array::value( $eitherField, $params ) ) {
+                continue;
+            }
             $valid = false;
             $error .= $field;
             break;
