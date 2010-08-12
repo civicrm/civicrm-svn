@@ -502,10 +502,12 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         // then see if there are any get values, and if so over-ride the post values
         // note that this means that GET over-rides POST :)
         
-        if ( !$this->_force ) {
+        //since we have qfKey, no need to manipulate set defaults.
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+        if ( !$this->_force || CRM_Utils_Rule::qfKey( $qfKey ) ) {
             return;
         }
-
+        
         // get survey id
         $surveyId = CRM_Utils_Request::retrieve( 'sid', 'Positive', CRM_Core_DAO::$_nullObject );
         
