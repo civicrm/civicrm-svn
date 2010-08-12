@@ -41,6 +41,7 @@
  */
 require_once 'api/v2/utils.php';
 require_once 'CRM/Utils/Rule.php';
+require_once 'CRM/Contribute/PseudoConstant.php';
 
 /**
  * Add or update a contribution
@@ -388,10 +389,23 @@ function _civicrm_contribute_format_params( &$params, &$values, $create=false ) 
                 return civicrm_create_error("currency not a valid code: $value");
             }
             break;
-        case 'contribution_type':            
-            $values['contribution_type_id'] = CRM_Utils_Array::key( ucfirst( $value ),
-                                                                    CRM_Contribute_PseudoConstant::contributionType( )
-                                                                    );
+        case 'contribution_type_id' :
+            if ( !CRM_Utils_Array::value( $value, CRM_Contribute_PseudoConstant::contributionType( ) ) ) {
+                return civicrm_create_error( "Invalid Contribution Type Id" );
+            }
+            break;
+        case 'contribution_type':
+            $contributionTypeId = CRM_Utils_Array::key( ucfirst( $value ), 
+                                                        CRM_Contribute_PseudoConstant::contributionType( ) );
+            if ( $contributionTypeId ) {
+                if ( CRM_Utils_Array::value( 'contribution_type_id', $values ) &&
+                     $contributionTypeId != $values['contribution_type_id'] ) {
+                    return civicrm_create_error( "Mismatched Contribution Type and Contribution Type Id" );
+                } 
+                $values['contribution_type_id'] = $contributionTypeId; 
+            } else {
+                return civicrm_create_error( "Invalid Contribution Type" );
+            }
             break;
         case 'payment_instrument': 
             require_once 'CRM/Core/OptionGroup.php';
