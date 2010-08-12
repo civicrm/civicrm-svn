@@ -644,7 +644,19 @@ class CRM_Export_BAO_Export
                                         if ( CRM_Utils_Array::value( 1, $type ) ) {
                                             $fldValue .= "-" . $type[1];
                                         }
-                                        $row[$field . $fldValue] = $relDAO->$fldValue;
+                                        // CRM-3157: localise country, region (both have ‘country’ context) and state_province (‘province’ context)
+                                        switch (true) {
+                                        case in_array('country',      $type):
+                                        case in_array('world_region', $type):
+                                            $row[$field . $fldValue] = $i18n->crm_translate($relDAO->$fldValue, array('context' => 'country'));
+                                            break;
+                                        case in_array('state_province', $type):
+                                            $row[$field . $fldValue] = $i18n->crm_translate($relDAO->$fldValue, array('context' => 'province'));
+                                            break;
+                                        default:
+                                            $row[$field . $fldValue] = $relDAO->$fldValue;
+                                            break;
+                                        }
                                     }
                                 }
                             } else if ( isset( $fieldValue ) && $fieldValue != '' ) {
@@ -659,7 +671,19 @@ class CRM_Export_BAO_Export
                                     $row[$field . $relationField] = $relDAO->$fldValue;
                                 } else {
                                     //normal relationship fields
-                                    $row[$field . $relationField] = $fieldValue;
+                                    // CRM-3157: localise country, region (both have ‘country’ context) and state_province (‘province’ context)
+                                    switch ($relationField) {
+                                    case 'country':
+                                    case 'world_region':
+                                        $row[$field . $relationField] = $i18n->crm_translate($fieldValue, array('context' => 'country'));
+                                        break;
+                                    case 'state_province':
+                                        $row[$field . $relationField] = $i18n->crm_translate($fieldValue, array('context' => 'province'));
+                                        break;
+                                    default:
+                                        $row[$field . $relationField] = $fieldValue;
+                                        break;
+                                    }
                                 }
                             } else {
                                 // if relation field is empty or null
