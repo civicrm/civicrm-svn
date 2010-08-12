@@ -153,7 +153,7 @@
 		   }
 		  
 		   if ( result[key].is_default == 1 ) {
-		     cj('#default_option').val(countRows);
+		     cj('#radio'+countRows+' input').attr('checked', 'true');
 		   } 
 		   
 		   if ( countRows > 1 ) {

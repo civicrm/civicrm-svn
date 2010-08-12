@@ -214,8 +214,6 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $this->add('select', 'profile_id', ts('Select Profile'), 
                    array( '' => ts('- select -')) + $customProfiles );
 
-
-        
         $optionGroups = CRM_Campaign_BAO_Survey::getResultSets( );
 
         if ( empty($optionGroups) ) {
@@ -413,12 +411,8 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                     $errors['option_value['.$i.']'] = ts( 'Option value cannot be empty' );
                     $_flagOption = 1;
                 }
-            } else if (!strlen(trim($fields['option_interval'][$i]))) {
-                if (!$fields[''][$i]) {
-                    $errors['option_interval['.$i.']'] = ts( 'Recontact Interval cannot be empty' );
-                    $_flagOption = 1;
-                }
-            }
+            } 
+
             if ( CRM_Utils_Array::value($i, $fields['option_interval']) && !CRM_Utils_Rule::integer( $fields['option_interval'][$i] ) ) {
                 $_flagOption = 1;
                 $errors['option_interval['.$i.']'] = ts( 'Please enter a valid integer.' );
@@ -515,11 +509,15 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
                 }
                 
                 $optionValue->save( );
-                $recontactInterval[$optionValue->label]  = $params['option_interval'][$k];
+                
+                if ( CRM_Utils_Array::value($k, $params['option_interval']) ) { 
+                    $recontactInterval[$optionValue->label]  = $params['option_interval'][$k];
+                }
             }
         }
         
         $params['recontact_interval'] = serialize($recontactInterval);
+            
         $surveyId = CRM_Campaign_BAO_Survey::create( $params  );
         
         if ( CRM_Utils_Array::value('result_id', $this->_values) && !$updateResultSet ) {
@@ -552,7 +550,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         }
         
         if( ! is_a( $surveyId, 'CRM_Core_Error' ) ) {
-            CRM_Core_Session::setStatus(ts('Survey has been saved.'));
+            CRM_Core_Session::setStatus( ts( 'Survey %1 as been saved.', array( 1 => $params['title'] ) ) );
         }
         
         if ( $this->_context == 'dialog' )  {
