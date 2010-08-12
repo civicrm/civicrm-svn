@@ -191,6 +191,7 @@ cj(document).ready( function( ) {
          	    	title: formTitle,
              		modal: true,
              		width: formWidth, 
+			position: ['center',75],
              		overlay: { 
              			opacity: 0.5, 
              			background: "black" 
