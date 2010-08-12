@@ -371,7 +371,7 @@ class CRM_Export_BAO_Export
                 
                 $relationshipJoin = $relationshipClause = '';
                 if ( $componentTable ) {
-                    $relationshipJoin   = " INNER JOIN $componentTable ctTable ON ctTable.contact_id = contact_a.id ";
+                    $relationshipJoin   = " INNER JOIN $componentTable ctTable ON ctTable.contact_id = {$contactA}";
                 } else {
                     $relID  = implode( ',', $relIDs );
                     $relationshipClause = " AND crel.{$contactA} IN ( {$relID} )";
