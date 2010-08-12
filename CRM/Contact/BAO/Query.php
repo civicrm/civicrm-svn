@@ -3197,7 +3197,7 @@ WHERE  id IN ( $groupIDs )
             // regenerate fromClause since permission might have added tables
             if ( $permission ) {
                 //fix for row count in qill (in contribute/membership find)
-                if (! $count ) {
+                if (! $count  || $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
                     $this->_useDistinct = true;
                 }
                 $this->_fromClause       = self::fromClause( $this->_tables     , null, null, $this->_primaryLocation, $this->_mode ); 
