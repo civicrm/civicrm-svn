@@ -55,19 +55,9 @@ require_once 'CRM/Contribute/PseudoConstant.php';
 function &civicrm_contribution_add( &$params ) {
     _civicrm_initialize( );
     
-    if ( empty( $params ) ) {
-        return civicrm_create_error( ts( 'No input parameters present' ) );
-    }
-
-    if ( ! is_array( $params ) ) {
-        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
-    }
-    
-    if ( !CRM_Utils_Array::value( 'id', $params ) ) {
-        $error = _civicrm_contribute_check_params( $params );
-        if ( civicrm_error( $error ) ) {
-            return $error;
-        }
+    $error = _civicrm_contribute_check_params( $params );
+    if ( civicrm_error( $error ) ) {
+        return $error;
     }
 
     $values  = array( );
@@ -280,6 +270,11 @@ function _civicrm_contribute_check_params( &$params ) {
                               'total_amount'         => null, 
                               'contribution_type_id' => 'contribution_type' );
     
+    // params should be an array
+    if ( ! is_array( $params ) ) {
+        return civicrm_create_error( ts( 'Input parameters is not an array' ) );
+    }
+
     // cannot create a contribution with empty params
     if ( empty( $params ) ) {
         return civicrm_create_error( 'Input Parameters empty' );
@@ -287,6 +282,19 @@ function _civicrm_contribute_check_params( &$params ) {
     
     $valid = true;
     $error = '';
+    
+    // check params for contribution id during update
+    if ( CRM_Utils_Array::value( 'id', $params ) ) {
+        require_once 'CRM/Contribute/BAO/Contribution.php';
+        $contributor     = new CRM_Contribute_BAO_Contribution();
+        $contributor->id = $params['id'];
+        if ( !$contributor->find( true ) ) {
+            return civicrm_create_error( ts( 'Contribution id is not valid' ));
+        }
+        // do not check other field during update
+        return array();
+    }
+    
     foreach ( $required as $field => $eitherField ) {
         if ( !CRM_Utils_Array::value( $field, $params ) ) {
             if ( $eitherField && CRM_Utils_Array::value( $eitherField, $params ) ) {

@@ -58,15 +58,10 @@ require_once 'CRM/Utils/Array.php';
 function civicrm_membership_contact_create(&$params)
 {
     _civicrm_initialize();
-    if ( !is_array( $params ) ) {
-        return civicrm_create_error( 'Params is not an array' );
-    }
     
-    if ( ! isset( $params['membership_type_id'] ) ||
-         ! isset( $params['contact_id'] ) ||
-         ( isset( $params['is_override'] ) &&
-           ! $params['status_id'] )) {
-        return civicrm_create_error( ts('Required parameter missing') );
+    $error = _civicrm_membership_check_params( $params );
+    if ( civicrm_error( $error ) ) {
+        return $error;
     }
     
     $values  = array( );   
@@ -79,11 +74,13 @@ function civicrm_membership_contact_create(&$params)
     
     require_once 'CRM/Core/Action.php';
     $action = CRM_Core_Action::ADD;
+    // we need user id during add mode
+    $ids = array ( 'userId' => $params['contact_id'] );
 
     //for edit membership id should be present
     if ( CRM_Utils_Array::value( 'id', $params ) ) {
         $ids = array( 'membership' => $params['id'],
-                      'user_id'    => $params['contact_id'] );
+                      'userId'     => $params['contact_id'] );
         $action = CRM_Core_Action::UPDATE;
     }
     
@@ -315,4 +312,66 @@ function _civicrm_membership_format_params( &$params, &$values, $create=false)
     }
     
     return null;
+}
+
+/**
+ * This function ensures that we have the right input membership parameters
+ *
+ *
+ * @param array  $params       Associative array of property name/value
+ *                             pairs to insert in new membership.
+ *
+ * @return bool|CRM_Utils_Error
+ * @access private
+ */
+function _civicrm_membership_check_params( &$params ) {
+    
+    // params should be an array
+    if ( !is_array( $params ) ) {
+        return civicrm_create_error( 'Params is not an array' );
+    }
+
+    // cannot create a membership with empty params
+    if ( empty( $params ) ) {
+        return civicrm_create_error( 'Input Parameters empty' );
+    }
+    
+    $valid = true;
+    $error = '';
+
+    // contact id is required for both add and update
+    if ( !CRM_Utils_Array::value( 'contact_id', $params ) ) { 
+        $valid  = false;
+        $error .= ' contact_id';
+    }
+
+    // check params for membership id during update
+    if ( CRM_Utils_Array::value( 'id', $params ) ) {
+        require_once 'CRM/Member/BAO/Membership.php';
+        $membership     = new CRM_Member_BAO_Membership();
+        $membership->id = $params['id'];
+        if ( !$membership->find( true ) ) {
+            return civicrm_create_error( ts( 'Membership id is not valid' ));
+        }
+    } else {
+        // membership type id is required during add
+        if ( !CRM_Utils_Array::value( 'membership_type_id', $params ) ) {
+            $valid  = false;
+            $error .= ' membership_type_id';
+        }        
+    }
+    
+    // also check for status id if override is set (during add/update)
+    if ( isset( $params['is_override'] ) &&
+         !CRM_Utils_Array::value( 'status_id', $params ) ) {
+        $valid  = false;
+        $error .= ' status_id';
+    }
+    
+    if ( ! $valid ) {
+        return civicrm_create_error( "Required fields not found for membership $error" );
+    }
+    
+    return array();
+
 }
