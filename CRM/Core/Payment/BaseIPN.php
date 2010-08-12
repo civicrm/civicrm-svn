@@ -717,6 +717,13 @@ class CRM_Core_Payment_BaseIPN {
         require_once 'CRM/Utils/Address.php';
         $template->assign( 'address', CRM_Utils_Address::format( $input ) );
 
+        if ( $contribution->contribution_type_id ) {
+            $template->assign( 'contributionTypeId', $contribution->contribution_type_id);
+            $template->assign( 'contributionTypeName',
+                               CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
+                                                            $contribution->contribution_type_id ) );
+        }
+        
         if ( $input['component'] == 'event' ) { 
             require_once 'CRM/Core/OptionGroup.php';
             $participant_role = CRM_Core_OptionGroup::values('participant_role');
@@ -783,11 +790,6 @@ class CRM_Core_Payment_BaseIPN {
             $template->assign( 'isPrimary', 1 );
             $template->assign( 'amount', $primaryAmount );
             $template->assign( 'register_date', CRM_Utils_Date::isoToMysql($participant->register_date) );
-            if ( $contribution->contribution_type_id ) {
-                $template->assign( 'contributionTypeName',
-                                   CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
-                                                                $contribution->contribution_type_id ) );
-            }
             if ( $contribution->payment_instrument_id ) {
                 $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
                 $template->assign( 'paidBy', $paymentInstrument[$contribution->payment_instrument_id] );
