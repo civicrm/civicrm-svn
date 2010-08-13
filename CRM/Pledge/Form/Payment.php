@@ -83,8 +83,8 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
             CRM_Pledge_BAO_Payment::retrieve( $params, $defaults );
             list( $defaults['scheduled_date'] ) = CRM_Utils_Date::setDateDefaults( $defaults['scheduled_date'] );
             
-            $statuses = CRM_Contribute_PseudoConstant::contributionStatus( );
-            $this->assign('status', $statuses[$defaults['status_id']] );
+            $status = CRM_Contribute_PseudoConstant::contributionStatus( $defaults['status_id'] );
+            $this->assign('status', $status );
         }
 
         return $defaults;

@@ -398,7 +398,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         }
         
         if ( CRM_Utils_Array::value('status_id', $this->_values) != 
-             array_search( 'Cancelled', CRM_Contribute_PseudoConstant::contributionStatus( )) ) { 
+             array_search( 'Cancelled', CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' ) ) ) { 
             
             $this->addElement('checkbox','is_acknowledge', ts('Send Acknowledgment?'),null, array('onclick' =>"return showHideByValue('is_acknowledge','','acknowledgeDate','table-row','radio',true);") );
         }
