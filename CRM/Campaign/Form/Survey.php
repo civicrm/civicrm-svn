@@ -94,11 +94,17 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         if ( $this->_context ) {
             $this->assign( 'context', $this->_context );
         }
-
+        
         $this->_action   = CRM_Utils_Request::retrieve('action', 'String', $this );
         
         if ( $this->_action & ( CRM_Core_Action::UPDATE | CRM_Core_Action::DELETE ) ) {
             $this->_surveyId = CRM_Utils_Request::retrieve('id', 'Positive', $this, true);
+
+            if ( $this->_action & CRM_Core_Action::UPDATE ) {
+                CRM_Utils_System::setTitle( ts('Edit Survey') ); 
+            } else {
+                CRM_Utils_System::setTitle( ts('Delete Survey') ); 
+            }
         }
 
         $session = CRM_Core_Session::singleton();

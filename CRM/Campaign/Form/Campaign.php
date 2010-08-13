@@ -83,6 +83,12 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         
         if ( $this->_action & ( CRM_Core_Action::UPDATE | $this->_action & CRM_Core_Action::DELETE ) ) {
             $this->_campaignId = CRM_Utils_Request::retrieve('id', 'Positive', $this , true);
+
+            if ( $this->_action & CRM_Core_Action::UPDATE ) {
+                CRM_Utils_System::setTitle( ts('Edit Campaign') ); 
+            } else {
+                CRM_Utils_System::setTitle( ts('Delete Campaign') ); 
+            }
         }
         
         $session = CRM_Core_Session::singleton();
