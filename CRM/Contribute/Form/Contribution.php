@@ -299,7 +299,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
                 $this->_id = CRM_Utils_Array::value( 'contribution_id', $this->_pledgeValues['pledgePayment'] );
         
                 //get all status
-                $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
+                $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
                 if ( !( $paymentStatusID == array_search( 'Pending', $allStatus ) ||
                         $paymentStatusID == array_search( 'Overdue', $allStatus ) ) ) {
                     CRM_Core_Error::fatal( ts( "Pledge payment status should be 'Pending' or  'Overdue'.") );
