@@ -143,7 +143,8 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             //get the honorID
             $this->_honorID = CRM_Utils_Array::value( 'honor_contact_id', $this->_values );
             
-	    	$paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( );
+	    	$paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
+
 			//check for pending pledge.
 			if ( CRM_Utils_Array::value( 'status_id', $this->_values ) ==  
                  array_search( 'Pending', $paymentStatusTypes ) ) {
@@ -522,7 +523,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         $session = CRM_Core_Session::singleton( );
         
         //get All Payments status types.
-        $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         
         $fields = array(
                          'frequency_unit',
@@ -612,6 +613,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         //create pledge record.
         require_once 'CRM/Pledge/BAO/Pledge.php';
         $pledge =& CRM_Pledge_BAO_Pledge::create( $params );
+
         $statusMsg = null;
         
         if ( $pledge->id ) {

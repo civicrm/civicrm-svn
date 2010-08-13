@@ -126,11 +126,12 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
         $formValues['scheduled_date'] = CRM_Utils_Date::processDate( $formValues['scheduled_date'] );
         $params['scheduled_date'] = CRM_Utils_Date::format( $formValues['scheduled_date'] );
         $now = date( 'Ymd' );
+        $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         
         if ( CRM_Utils_Date::overdue( CRM_Utils_Date::customFormat( $params['scheduled_date'], '%Y%m%d'), $now ) ) {
-            $params['status_id'] =  array_search( 'Overdue', CRM_Contribute_PseudoConstant::contributionStatus( )); 
+            $params['status_id'] =  array_search( 'Overdue', $contributionStatus ); 
         } else {
-            $params['status_id'] =  array_search( 'Pending', CRM_Contribute_PseudoConstant::contributionStatus( )); 
+            $params['status_id'] =  array_search( 'Pending', $contributionStatus ); 
         } 
         
         $params['id'] = $this->_id;
