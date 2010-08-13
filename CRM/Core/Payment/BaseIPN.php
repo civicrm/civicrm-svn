@@ -783,6 +783,7 @@ class CRM_Core_Payment_BaseIPN {
             $template->assign( 'amount', $primaryAmount );
             $template->assign( 'register_date', CRM_Utils_Date::isoToMysql($participant->register_date) );
             if ( $contribution->payment_instrument_id ) {
+                require_once 'CRM/Contribute/PseudoConstant.php';
                 $paymentInstrument = CRM_Contribute_PseudoConstant::paymentInstrument();
                 $template->assign( 'paidBy', $paymentInstrument[$contribution->payment_instrument_id] );
             }
