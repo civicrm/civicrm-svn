@@ -201,7 +201,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
         }
 
         if ( $key ) {
-            $extraParams = "&key={$key}";
+            $extraParams .= "&key={$key}";
         }
         
         if (!(self::$_links)) {
