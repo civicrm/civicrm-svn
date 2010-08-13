@@ -716,14 +716,6 @@ class CRM_Core_Payment_BaseIPN {
         
         require_once 'CRM/Utils/Address.php';
         $template->assign( 'address', CRM_Utils_Address::format( $input ) );
-
-        if ( $contribution->contribution_type_id ) {
-            $template->assign( 'contributionTypeId', $contribution->contribution_type_id);
-            $template->assign( 'contributionTypeName',
-                               CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
-                                                            $contribution->contribution_type_id ) );
-        }
-        
         if ( $input['component'] == 'event' ) { 
             require_once 'CRM/Core/OptionGroup.php';
             $participant_role = CRM_Core_OptionGroup::values('participant_role');
