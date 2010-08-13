@@ -82,6 +82,7 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                                  'receive_date',
                                  'thankyou_date',
                                  'contribution_status_id',
+                                 'contribution_status',
                                  'cancel_date',
                                  'product_name',
                                  'is_test',
@@ -228,7 +229,6 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
         return self::$_links;
     } //end of function
 
-
     /**
      * getter for array of the parameters required for creating pager.
      *
@@ -264,7 +264,6 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
                                            false, 
                                            $this->_contributionClause );
     }
-
 
     /**
      * returns all the rows in the given offset and rowCount
@@ -344,13 +343,12 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
             
             $rows[] = $row;
         }
-
         return $rows;
-    }
-    
+
+    }    
     
     /**
-     * @return array              $qill         which contains an array of strings
+     * @return array   $qill         which contains an array of strings
      * @access public
      */
   
@@ -428,7 +426,8 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
         return self::$_columnHeaders;
     }
     
-    function &getQuery( ) {
+    function &getQuery( )
+    {
         return $this->_query;
     }
 
@@ -438,11 +437,13 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
      * @param string $output type of output 
      * @return string name of the file 
      */ 
-    function getExportFileName( $output = 'csv') { 
+    function getExportFileName( $output = 'csv')
+    { 
         return ts('CiviCRM Contribution Search'); 
     }
 
-    function getSummary( ) {
+    function getSummary( )
+    {
         return $this->_query->summaryContribution( );
     }
 
