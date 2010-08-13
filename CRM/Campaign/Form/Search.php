@@ -401,7 +401,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         
         require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams = CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
-        
+       
         $this->set( 'formValues' , $this->_formValues  );
         $this->set( 'queryParams', $this->_queryParams );
         
@@ -496,16 +496,13 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
     
     function fixFormValues( ) 
     {
-        $session = CRM_Core_Session::singleton( );
-        
         // if this search has been forced
         // then see if there are any get values, and if so over-ride the post values
         // note that this means that GET over-rides POST :)
         
         //since we have qfKey, no need to manipulate set defaults.
-        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
-
-        // FIX ME: working incorrect for force=1 
+        $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', CRM_Core_DAO::$_nullObject );
+        
         if ( !$this->_force || CRM_Utils_Rule::qfKey( $qfKey ) ) {
             return;
         }
@@ -527,32 +524,29 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             }
         }
         if ( !$surveyId ) {
-            CRM_Core_Error::fatal("Could not find valid Survey Id.");
+            CRM_Core_Error::fatal('Could not find valid Survey Id.');
         }
-
-        $this->_defaults['campaign_survey_id'] = $this->_formValues['campaign_survey_id'] = $surveyId; 
+        $this->_formValues['campaign_survey_id'] = $this->_formValues['campaign_survey_id'] = $surveyId; 
+        
+        $session = CRM_Core_Session::singleton( );
+        $userId = $session->get( 'userID' );
         
         // get interviewer id
-        $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
-        if ( $cid ) {
-            $cid = CRM_Utils_Type::escape( $cid, 'Integer' );
-            if ( $cid > 0 ) {
-                
-                if ( ($cid  != $session->get( 'userID' )) && 
-                     !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
-                    CRM_Utils_System::permissionDenied( );
-                    CRM_Utils_System::civiExit( );
-                }
-                
-                require_once 'CRM/Contact/BAO/Contact.php';
-                $this->_defaults['survey_interviewer_id']   = $this->_formValues['survey_interviewer_id'] = $cid;
-                $this->_defaults['survey_interviewer_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
-                                                                                           $cid,
-                                                                                           'sort_name',
-                                                                                           'id' );
-            }
+        $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', 
+                                            CRM_Core_DAO::$_nullObject, false, $userId );
+        //to force other contact as interviewer, user should be admin.
+        if ( $cid != $userId && 
+             !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+            CRM_Utils_System::permissionDenied( );
         }
-
+        require_once 'CRM/Contact/BAO/Contact.php';
+        $this->_formValues['survey_interviewer_id']   = $cid;
+        $this->_formValues['survey_interviewer_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                                                     $cid,
+                                                                                     'sort_name',
+                                                                                     'id' );
+        //get all in defaults.
+        $this->_defaults = $this->_formValues;
         $this->_limit = CRM_Utils_Request::retrieve( 'limit', 'Positive', $this );
     }
     
