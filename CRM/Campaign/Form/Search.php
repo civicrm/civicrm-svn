@@ -504,6 +504,8 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         
         //since we have qfKey, no need to manipulate set defaults.
         $qfKey = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+
+        // FIX ME: working incorrect for force=1 
         if ( !$this->_force || CRM_Utils_Rule::qfKey( $qfKey ) ) {
             return;
         }
@@ -535,6 +537,13 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         if ( $cid ) {
             $cid = CRM_Utils_Type::escape( $cid, 'Integer' );
             if ( $cid > 0 ) {
+                
+                if ( ($cid  != $session->get( 'userID' )) && 
+                     !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+                    CRM_Utils_System::permissionDenied( );
+                    CRM_Utils_System::civiExit( );
+                }
+                
                 require_once 'CRM/Contact/BAO/Contact.php';
                 $this->_defaults['survey_interviewer_id']   = $this->_formValues['survey_interviewer_id'] = $cid;
                 $this->_defaults['survey_interviewer_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
