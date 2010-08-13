@@ -619,7 +619,7 @@ class CRM_Core_Payment_BaseIPN {
             }
         }
 
-        $template = CRM_Core_Smarty::singleton( );
+        $template =& CRM_Core_Smarty::singleton( );
         // CRM_Core_Error::debug('tpl',$template);
         //assign honor infomation to receiptmessage
         if ( $honarID = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_Contribution',
@@ -884,7 +884,7 @@ class CRM_Core_Payment_BaseIPN {
         $transaction = new CRM_Core_Transaction( );
         
         // reset template values.
-        $template = CRM_Core_Smarty::singleton( );
+        $template =& CRM_Core_Smarty::singleton( );
         $template->clearTemplateVars( ); 
         
         if ( !$baseIPN->validateData( $input, $ids, $objects, false ) ) {
