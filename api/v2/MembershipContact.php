@@ -66,8 +66,8 @@ function civicrm_membership_contact_create(&$params)
     
     $values  = array( );   
     $error = _civicrm_membership_format_params( $params, $values );
-    if (is_a($error, 'CRM_Core_Error') ) {
-        return civicrm_create_error( 'Membership is not created' );
+    if ( civicrm_error( $error ) ) {
+        return $error;
     }
 
     $params = array_merge($values,$params);
@@ -246,6 +246,7 @@ function civicrm_membership_contact_get(&$params)
 function _civicrm_membership_format_params( &$params, &$values, $create=false) 
 {
     require_once "CRM/Member/DAO/Membership.php";
+    require_once "CRM/Member/PseudoConstant.php";
     $fields =& CRM_Member_DAO_Membership::fields( );
     _civicrm_store_values( $fields, $params, $values );
     
@@ -278,12 +279,29 @@ function _civicrm_membership_format_params( &$params, &$values, $create=false)
             }
             break;
         case 'membership_type_id':
-            $id = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_MembershipType", $value, 'id', 'name' );
-            $values[$key] = $id;
+            if ( !CRM_Utils_Array::value( $value, CRM_Member_PseudoConstant::membershipType( ) ) ) {
+                return civicrm_create_error( 'Invalid Membership Type Id' );
+            }
+            $values[$key] = $value;
+            break;
+        case 'membership_type':
+            $membershipTypeId = CRM_Utils_Array::key( ucfirst( $value ), 
+                                                      CRM_Member_PseudoConstant::membershipType( ) );
+            if ( $membershipTypeId ) {
+                if ( CRM_Utils_Array::value( 'membership_type_id', $values ) &&
+                     $membershipTypeId != $values['membership_type_id'] ) {
+                    return civicrm_create_error( 'Mismatched membership Type and Membership Type Id' );
+                } 
+            } else {
+                return civicrm_create_error( 'Invalid Membership Type' );
+            } 
+            $values['membership_type_id'] = $membershipTypeId;
             break;
         case 'status_id':
-            $id = CRM_Core_DAO::getFieldValue( "CRM_Member_DAO_MembershipStatus", $value, 'id', 'name' );
-            $values[$key] = $id;
+            if ( !CRM_Utils_Array::value( $value, CRM_Member_PseudoConstant::membershipStatus( ) ) ) {
+                return civicrm_create_error( 'Invalid Membership Status Id' );
+            }
+            $values[$key] = $value;
             break;
         default:
             break;
@@ -354,10 +372,11 @@ function _civicrm_membership_check_params( &$params ) {
             return civicrm_create_error( ts( 'Membership id is not valid' ));
         }
     } else {
-        // membership type id is required during add
-        if ( !CRM_Utils_Array::value( 'membership_type_id', $params ) ) {
+        // membership type id Or membership type is required during add
+        if ( !CRM_Utils_Array::value( 'membership_type_id', $params ) && 
+             !CRM_Utils_Array::value( 'membership_type', $params )) {
             $valid  = false;
-            $error .= ' membership_type_id';
+            $error .= ' membership_type_id Or membership_type';
         }        
     }
     
