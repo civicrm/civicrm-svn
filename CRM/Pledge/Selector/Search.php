@@ -80,7 +80,7 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
                                 'pledge_next_pay_amount',    
                                 'pledge_outstanding_amount',    
                                 'pledge_status_id',
-                                'pledge_status_label',
+                                'pledge_status',
                                 'pledge_is_test',
                                 'pledge_contribution_page_id'
                                  );
@@ -390,7 +390,7 @@ class CRM_Pledge_Selector_Search extends CRM_Core_Selector_Base
                                                 ),
                                           array(
                                                 'name'      => ts('Status'),
-                                                'sort'      => 'pledge_status_label',
+                                                'sort'      => 'pledge_status',
                                                 'direction' => CRM_Utils_Sort::DONTCARE,
                                                 ),
                                           array('desc'      => ts('Actions') ),

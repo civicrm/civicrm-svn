@@ -78,8 +78,8 @@ class CRM_Pledge_BAO_Query
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
         }
 
-        if ( CRM_Utils_Array::value( 'pledge_status_label', $query->_returnProperties ) ) {
-            $query->_select['pledge_status_label']  = "pledge_status.label as pledge_status_label";
+        if ( CRM_Utils_Array::value( 'pledge_status', $query->_returnProperties ) ) {
+            $query->_select['pledge_status']  = "pledge_status.label as pledge_status";
             $query->_element['pledge_status'] = 1;
             $query->_tables['pledge_status']  = $query->_whereTables['pledge_status'] = 1;
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
@@ -160,9 +160,9 @@ class CRM_Pledge_BAO_Query
             $query->_tables['civicrm_pledge_payment'] = $query->_whereTables['civicrm_pledge_payment'] = 1;
         }
 
-        if ( CRM_Utils_Array::value( 'pledge_payment_status_label', $query->_returnProperties ) ) {
-            $query->_select['pledge_payment_status_label']  = "payment_status.label as pledge_payment_status_label";
-            $query->_element['pledge_payment_status_label'] = 1;
+        if ( CRM_Utils_Array::value( 'pledge_payment_status', $query->_returnProperties ) ) {
+            $query->_select['pledge_payment_status']  = "payment_status.label as pledge_payment_status";
+            $query->_element['pledge_payment_status'] = 1;
             $query->_tables['payment_status'] = $query->_whereTables['payment_status'] = 1;
             $query->_tables['civicrm_pledge_payment'] = $query->_whereTables['civicrm_pledge_payment'] = 1;
         }
@@ -438,7 +438,7 @@ class CRM_Pledge_BAO_Query
                                 'pledge_next_pay_date'            => 1,
                                 'pledge_next_pay_amount'          => 1,
                                 'pledge_status_id'                => 1,
-                                'pledge_status_label'             => 1,
+                                'pledge_status'                   => 1,
                                 'pledge_is_test'                  => 1,
                                 'pledge_contribution_page_id'     => 1
                                 );
