@@ -202,12 +202,15 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                                                    $this->get( CRM_Utils_Sort::SORT_DIRECTION ) ); 
         }
         
+        //get the voter clause.
+        $voterClause = $this->voterClause( );
+        
         require_once 'CRM/Contact/BAO/Query.php';
         $this->_queryParams =& CRM_Contact_BAO_Query::convertFormValues( $this->_formValues );
         
         $selector = new CRM_Campaign_Selector_Search( $this->_queryParams,
                                                       $this->_action,
-                                                      null,
+                                                      $voterClause,
                                                       $this->_single,
                                                       $this->_limit,
                                                       $this->_context ); 
@@ -423,9 +426,12 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
                                                    $this->get( CRM_Utils_Sort::SORT_DIRECTION ) ); 
         } 
         
+        //get the voter clause.
+        $voterClause = $this->voterClause( );
+        
         $selector = new CRM_Campaign_Selector_Search( $this->_queryParams,
                                                       $this->_action,
-                                                      null,
+                                                      $voterClause,
                                                       $this->_single,
                                                       $this->_limit,
                                                       $this->_context ); 
@@ -548,6 +554,35 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         //get all in defaults.
         $this->_defaults = $this->_formValues;
         $this->_limit = CRM_Utils_Request::retrieve( 'limit', 'Positive', $this );
+    }
+    
+    function voterClause( ) 
+    {
+        $voterClause = null;
+        
+        //get the survey activities.
+        require_once 'CRM/Core/PseudoConstant.php';
+        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
+        $status = array( 'Scheduled' );
+        foreach ( $status as $name ) {
+            if ( $statusId = array_search( $name, $activityStatus ) ) $statusIds[] = $statusId; 
+        }
+        
+        $params = array( 'surveyId'      => 'campaign_survey_id', 
+                         'interviewerId' => 'survey_interviewer_id' );
+        foreach ( $params as $param => $key ) {
+            $$param = CRM_Utils_Array::value( $key, $this->_formValues );
+            if ( !$$param ) $$param = $this->get( $param ); 
+        }
+        require_once 'CRM/Campaign/BAO/Survey.php';
+        $voterIds = CRM_Campaign_BAO_Survey::getSurveyVoterIds( $surveyId, $interviewerId, $statusIds );
+        if ( !empty( $voterIds ) ) {
+            $operator = 'IN';
+            if ( $this->_operation == 'reserve' ) $operator = 'NOT IN';
+            $voterClause = "( contact_a.id $operator (".  implode( ', ', $voterIds ). ') )';
+        }
+        
+        return $voterClause;
     }
     
     /**

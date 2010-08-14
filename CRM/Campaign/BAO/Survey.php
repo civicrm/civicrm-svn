@@ -429,6 +429,38 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         return $activities;
     }
     
+    /**
+     * This function retrieve survey voter ids.
+     *
+     * @param int    $surveyId       survey id.
+     * @param int    $interviewerId  interviewer id.
+     * @param array  $statusIds      survey status ids.
+     * @return survey related contact ids. 
+     * @static
+     */
+    static function getSurveyVoterIds( $surveyId, $interviewerId = null, $statusIds = array( ) ) 
+    {
+        $voterIds = array( );
+        if ( !$surveyId ) return $voterIds;
+        
+        $cacheKey = $surveyId;
+        if ( $interviewerId ) $cacheKey .= "_{$interviewerId}";
+        if ( is_array( $statusIds ) && !empty( $statusIds ) ) {
+            $cacheKey = "{$cacheKey}_" . implode( '_', $statusIds );
+        }
+        
+        static $contactIds = array( );
+        if ( !isset( $contactIds[$cacheKey] ) ) {
+            $activities = self::getSurveyActivities( $surveyId, $interviewerId, $statusIds );
+            foreach ( $activities as $values ) {
+                $voterIds[$values['voter_id']] = $values['voter_id'];
+            }
+            $contactIds[$cacheKey] = $voterIds;
+        }
+        
+        return $contactIds[$cacheKey];
+    }
+    
     /*
      * This function retrieve all option groups which are created as a result set 
      *
