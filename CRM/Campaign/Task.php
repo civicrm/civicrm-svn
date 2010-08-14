@@ -43,10 +43,10 @@
 class CRM_Campaign_Task 
 {
     const 
-        VOTER_INTERVIEW = 1,
-        RESERVE_VOTERS  = 2,
-        RELEASE_VOTERS  = 3,
-        PRINT_VOTERS    = 4;
+        INTERVIEW     = 1,
+        RESERVE       = 2,
+        RELEASE       = 3,
+        PRINT_VOTERS  = 4;
     
     /**
      * the task array
@@ -80,11 +80,11 @@ class CRM_Campaign_Task
                                                'result' => false ),
                                    
                                    2 => array( 'title'  => ts( 'Reserve Voters' ),
-                                               'class'  => 'CRM_Campaign_Form_Task_ReserveVoters',
+                                               'class'  => 'CRM_Campaign_Form_Task_Reserve',
                                                'result' => false ),
                                    
                                    3 => array( 'title'  => ts( 'Release Voters' ),
-                                               'class'  => 'CRM_Campaign_Form_Task_ReleaseVoters',
+                                               'class'  => 'CRM_Campaign_Form_Task_Release',
                                                'result' => false ),
                                    
                                    4 => array( 'title'  => ts( 'Print Voters' ),

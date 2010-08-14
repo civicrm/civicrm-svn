@@ -41,7 +41,7 @@ require_once 'CRM/Campaign/BAO/Survey.php';
  * This class provides the functionality to add contacts for
  * voter reservation.
  */
-class CRM_Campaign_Form_Task_ReserveVoters extends CRM_Campaign_Form_Task {
+class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
 
     /**
      * survet id`
