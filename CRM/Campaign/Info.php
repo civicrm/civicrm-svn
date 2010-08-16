@@ -63,7 +63,8 @@ class CRM_Campaign_Info extends CRM_Core_Component_Info
                       'manage campaign',
                       'reserve campaign contacts',
                       'release campaign contacts',
-                      'interview campaign contacts'
+                      'interview campaign contacts',
+                      'sign CiviCRM Petition'
                       );
     }
 

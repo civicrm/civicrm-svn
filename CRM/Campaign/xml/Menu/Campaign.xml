@@ -74,6 +74,7 @@
     <path>civicrm/petition/sign</path>
     <title>Sign Petition</title>
     <page_callback>CRM_Campaign_Form_Petition_Signature</page_callback>
+    <access_arguments>sign CiviCRM Petition</access_arguments>
   </item>  
   <item>
     <path>civicrm/petition/custom</path>
@@ -89,7 +90,7 @@
      <path>civicrm/petition/confirm</path>
      <title>Email address verified</title>
      <page_callback>CRM_Campaign_Page_Petition_Confirm</page_callback>
-     <access_arguments>access CiviMail subscribe/unsubscribe pages</access_arguments>
+     <access_arguments>sign CiviCRM Petition</access_arguments>
      <is_public>true</is_public>
   </item>
  </menu>
