@@ -83,8 +83,8 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
             CRM_Pledge_BAO_Payment::retrieve( $params, $defaults );
             list( $defaults['scheduled_date'] ) = CRM_Utils_Date::setDateDefaults( $defaults['scheduled_date'] );
             
-            $statuses = CRM_Contribute_PseudoConstant::contributionStatus( );
-            $this->assign('status', $statuses[$defaults['status_id']] );
+            $status = CRM_Contribute_PseudoConstant::contributionStatus( $defaults['status_id'] );
+            $this->assign('status', $status );
         }
 
         return $defaults;
@@ -126,11 +126,12 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
         $formValues['scheduled_date'] = CRM_Utils_Date::processDate( $formValues['scheduled_date'] );
         $params['scheduled_date'] = CRM_Utils_Date::format( $formValues['scheduled_date'] );
         $now = date( 'Ymd' );
+        $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         
         if ( CRM_Utils_Date::overdue( CRM_Utils_Date::customFormat( $params['scheduled_date'], '%Y%m%d'), $now ) ) {
-            $params['status_id'] =  array_search( 'Overdue', CRM_Contribute_PseudoConstant::contributionStatus( )); 
+            $params['status_id'] =  array_search( 'Overdue', $contributionStatus ); 
         } else {
-            $params['status_id'] =  array_search( 'Pending', CRM_Contribute_PseudoConstant::contributionStatus( )); 
+            $params['status_id'] =  array_search( 'Pending', $contributionStatus ); 
         } 
         
         $params['id'] = $this->_id;

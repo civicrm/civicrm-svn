@@ -299,7 +299,7 @@ class CRM_Contribute_Form_Contribution extends CRM_Core_Form
                 $this->_id = CRM_Utils_Array::value( 'contribution_id', $this->_pledgeValues['pledgePayment'] );
         
                 //get all status
-                $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
+                $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
                 if ( !( $paymentStatusID == array_search( 'Pending', $allStatus ) ||
                         $paymentStatusID == array_search( 'Overdue', $allStatus ) ) ) {
                     CRM_Core_Error::fatal( ts( "Pledge payment status should be 'Pending' or  'Overdue'.") );
@@ -798,11 +798,12 @@ WHERE  contribution_id = {$this->_id}
         //add receipt for offline contribution
         $this->addElement('checkbox','is_email_receipt', ts('Send Receipt?'),null, array('onclick' =>"return showHideByValue('is_email_receipt','','receiptDate','table-row','radio',true);") );
 
-        $status = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $status = CRM_Contribute_PseudoConstant::contributionStatus(  );
         // supressing contribution statuses that are NOT relevant to pledges (CRM-5169)
         if ( $this->_ppID ) {
-            foreach ( array('Cancelled', 'Failed', 'In Progress') as $supress ) {
-                unset($status[CRM_Utils_Array::key($supress,$status)]);
+            $statusName = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
+            foreach ( array( 'Cancelled', 'Failed', 'In Progress' ) as $supress ) {
+                unset( $status[CRM_Utils_Array::key($supress,$statusName)] );
             }
         }
         

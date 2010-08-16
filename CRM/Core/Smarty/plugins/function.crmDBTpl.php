@@ -29,36 +29,22 @@
 /**
  *
  * @package CRM
- * @copyright CiviCRM LLC (c) 2004-2010
+ * @copyright TTTP
  * $Id$
  *
  */
 
-function civicrm_smarty_resource_string_get_template($tpl_name, &$tpl_source, &$smarty_obj) {
-    $tpl_source = $tpl_name;
-    return true;
-}
+/**
+ * Function to load a context. If name is asked for only name data is returned. 
+ * And if name is not provided whole context is returned.
+ *
+ */
+function smarty_function_crmDBTpl( $params, &$smarty ) {
+    // $vars = array( 'context', 'name', 'assign' ); out of which name is optional
 
-function civicrm_smarty_resource_string_get_timestamp($tpl_name, &$tpl_timestamp, &$smarty_obj) {
-    $tpl_timestamp = time();
-    return true;
+    require_once 'CRM/Core/BAO/Persistent.php';
+    $contextNameData = CRM_Core_BAO_Persistent::getContext( $params['context'],
+                                                            CRM_Utils_Array::value( 'name', $params ) );
+    $smarty->assign( $params['var'], $contextNameData );
 }
-
-function civicrm_smarty_resource_string_get_secure($tpl_name, &$smarty_obj) {
-    return true;
-}
-
-function civicrm_smarty_resource_string_get_trusted($tpl_name, &$smarty_obj) {
-}
-
-function civicrm_smarty_register_string_resource( ) {
-    require_once 'CRM/Core/Smarty.php';
-    $template =& CRM_Core_Smarty::singleton( );
-    $template->register_resource('string', array(
-                                                 'civicrm_smarty_resource_string_get_template',
-                                                 'civicrm_smarty_resource_string_get_timestamp',
-                                                 'civicrm_smarty_resource_string_get_secure',
-                                                 'civicrm_smarty_resource_string_get_trusted')
-                                 );
-}
-
+?>

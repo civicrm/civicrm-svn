@@ -305,14 +305,16 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     if ( ! $addMode && $params['id'] && ! is_numeric ( $params['id'] )) {
         return civicrm_create_error( ts( 'Invalid activity "id"' ) );
     }
-    
+
+    require_once 'CRM/Core/PseudoConstant.php';
+    $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
+        
     // check if activity type_id is passed in
     if ( ! isset($params['activity_name'] )  && ! isset($params['activity_type_id'] ) ) {
         //when name AND id are both absent
         return civicrm_create_error( ts ( 'Missing Activity' ) );
     } else if ( isset( $params['activity_name'] )  && isset( $params['activity_type_id'] ) ) {
         //when name AND id are both present - check for the match
-        $activityTypes  =& CRM_Core_PseudoConstant::activityType( );
         $activityId     = array_search( $params['activity_name'], $activityTypes );
         if ( $activityId != $params['activity_type_id'] ) {
             return civicrm_create_error( ts ( 'Mismatch in Activity' ) );
@@ -320,8 +322,6 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     } else {
         //either name OR id is present
         if ( isset( $params['activity_name'] ) ) {
-            require_once "CRM/Core/PseudoConstant.php";
-            $activityTypes  =& CRM_Core_PseudoConstant::activityType( true, false, true );
             $activityId     = array_search( $params['activity_name'], $activityTypes );
             
             if ( ! $activityId ) { 
@@ -333,7 +333,6 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
             if ( !is_numeric( $params['activity_type_id'] ) ) {
                 return  civicrm_create_error( ts('Invalid Activity Type ID') );
             } else {
-                $activityTypes =& CRM_Core_PseudoConstant::activityType( );
                 if ( !array_key_exists( $params['activity_type_id'], $activityTypes ) ) {
                     return  civicrm_create_error( ts('Invalid Activity Type ID') ); 
                 }

@@ -121,7 +121,7 @@ class CRM_Contact_Page_View extends CRM_Core_Page {
         CRM_Utils_System::appendBreadCrumb( array( array( 'title' => ts('Search Results'),
                                                           'url'   => self::getSearchURL( ) ) ) );
 
-        if ( $image_URL  = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_contactId , 'image_url') ) {
+        if ( $image_URL  = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_Contact', $this->_contactId , 'image_URL') ) {
             list( $imageWidth, $imageHeight ) = getimagesize( $image_URL );
             list( $imageThumbWidth, $imageThumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $imageWidth, $imageHeight );
             $this->assign( "imageWidth", $imageWidth );

@@ -116,6 +116,16 @@ class CRM_Contribute_BAO_Query
             $query->_whereTables['civicrm_contribution'] = 1;
             $query->_whereTables['contribution_status'] = 1;
         }
+
+        // get contribution_status label
+        if ( CRM_Utils_Array::value( 'contribution_status', $query->_returnProperties ) ) {
+            $query->_select['contribution_status']  = "contribution_status.label as contribution_status";
+            $query->_element['contribution_status'] = 1;
+            $query->_tables['civicrm_contribution'] = 1;
+            $query->_tables['contribution_status'] = 1;
+            $query->_whereTables['civicrm_contribution'] = 1;
+            $query->_whereTables['contribution_status'] = 1;
+        }
         
         // get payment instruments
         if ( CRM_Utils_Array::value( 'payment_instrument', $query->_returnProperties ) ) {
@@ -551,6 +561,7 @@ class CRM_Contribute_BAO_Query
                                 'is_test'                 => 1,
                                 'is_pay_later'            => 1,
                                 'contribution_status_id'  => 1,
+                                'contribution_status'     => 1,
                                 'contribution_recur_id'   => 1, 
                                 'amount_level'            => 1,
                                 'contribution_note'       => 1

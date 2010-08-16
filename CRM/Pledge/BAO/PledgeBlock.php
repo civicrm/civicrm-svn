@@ -220,7 +220,7 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
                                              $form->_values['pledge_id'], $allPayments, $returnProperties );
             //get all status
             require_once 'CRM/Contribute/PseudoConstant.php';
-            $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
+            $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
             
             $nextPayment = array( );
             $isNextPayment = false;
@@ -233,8 +233,8 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
                                                       'scheduled_date'   => CRM_Utils_Date::customFormat( $value['scheduled_date'], 
                                                                                                           '%B %d') 
                                                       );
-                } else if (  !$isNextPayment && 
-                             $allStatus[$value['status_id']] == 'Pending' ) { 
+                } else if ( !$isNextPayment && 
+                            $allStatus[$value['status_id']] == 'Pending' ) { 
                     //get the next payment.
                     $nextPayment =  array( 'id'               => $payID ,
                                            'scheduled_amount' => CRM_Utils_Rule::cleanMoney( $value['scheduled_amount']),

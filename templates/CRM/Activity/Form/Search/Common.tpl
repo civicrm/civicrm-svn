@@ -67,7 +67,7 @@
    </td>
    <td colspan="2"><br />
 	  {$form.activity_contact_name.html}<br />
-      <span class="description font-italic">{ts}Complete OR partial Contact Name.{/ts}</span><br /><br />
+      <span class="description font-italic">{ts}Complete OR partial Name of the Source Contact or the Assignee Contact.{/ts}</span><br /><br />
 	  {$form.activity_test.label} &nbsp; {$form.activity_test.html} 
    </td>
 </tr>

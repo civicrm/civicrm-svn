@@ -545,5 +545,15 @@
        <page_callback>CRM_Admin_Page_AJAX::processTags</page_callback>
        <access_arguments>access CiviCRM</access_arguments>
        <page_type>3</page_type>
-  </item>  
+  </item>
+  <item>
+     <path>civicrm/admin/tplstrings/add</path>
+     <page_callback>CRM_Admin_Form_Persistent</page_callback>
+     <access_arguments>administer CiviCRM,access CiviCRM</access_arguments>
+  </item>
+  <item>
+     <path>civicrm/admin/tplstrings</path>
+     <page_callback>CRM_Admin_Page_Persistent</page_callback>
+     <access_arguments>administer CiviCRM,access CiviCRM</access_arguments>
+  </item>
 </menu>
