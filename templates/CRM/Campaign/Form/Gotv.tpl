@@ -100,6 +100,7 @@
      	        "bFilter"    : false,
 		"bAutoWidth" : false,
 	    	"bProcessing": true,
+                "aaSorting": [ [0,'asc'], [1,'asc'], [2,'asc'], [3,'asc'], [4,'asc'] ],
 		"aoColumns":[{sClass:""},{sClass:""},{sClass:""},{sClass:""},{sClass:""},{bSortable:false}],
 		"sPaginationType": "full_numbers",
 	   	"bServerSide": true,

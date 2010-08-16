@@ -148,13 +148,35 @@ class CRM_Campaign_Page_AJAX
         
         //we should process only non deleted activity.
         $params['campaign_search_voter_for'] = 'release';
+        $selectorCols = array( 'sort_name', 
+                               'street_address', 
+                               'street_name', 
+                               'street_number', 
+                               'street_unit' );
         
-        $sortMapper  = array( 1 => 'sort_name' );
-        $sEcho       = CRM_Utils_Type::escape( $_REQUEST['sEcho'], 'Integer' );
-        $offset      = isset($_REQUEST['iDisplayStart'])? CRM_Utils_Type::escape($_REQUEST['iDisplayStart'], 'Integer'):0;
-        $rowCount    = isset($_REQUEST['iDisplayLength'])?CRM_Utils_Type::escape($_REQUEST['iDisplayLength'], 'Integer'):25; 
-        $sort        = isset($_REQUEST['iSortCol_0'] )? $sortMapper[CRM_Utils_Type::escape($_REQUEST['iSortCol_0'],'Integer')]: 'sort_name';
-        $sortOrder   =  isset($_REQUEST['sSortDir_0'] )? CRM_Utils_Type::escape($_REQUEST['sSortDir_0'], 'String'):'asc';
+        // get the data table params.
+        $dataTableParams = array( 'sEcho'     => array( 'name'    => 'sEcho',
+                                                        'type'    => 'Integer',
+                                                        'default' => 0                ), 
+                                  'offset'    => array( 'name'    => 'iDisplayStart',
+                                                        'type'    => 'Integer',
+                                                        'default' => 0                ),
+                                  'rowCount'  => array( 'name'    => 'iDisplayLength',
+                                                        'type'    => 'Integer',
+                                                        'default' => 25               ),
+                                  'sort'      => array( 'name'    => 'iSortCol_0',
+                                                        'type'    => 'Integer',
+                                                        'default' => 'sort_name'      ),
+                                  'sortOrder' => array( 'name'    => 'sSortDir_0',
+                                                        'type'    => 'String', 
+                                                        'default' => 'asc'            ) );
+        foreach ( $dataTableParams as $pName => $pValues ) {
+            $$pName = $pValues['default'];
+            if ( CRM_Utils_Array::value( $pValues['name'], $_POST ) ) {
+                $$pName = CRM_Utils_Type::escape( $_POST[$pValues['name']], $pValues['type'] );
+                if ( $pName == 'sort' ) $$pName = $selectorCols[$$pName];   
+            }
+        }
         
         require_once 'CRM/Contact/BAO/Query.php';
         $queryParams = CRM_Contact_BAO_Query::convertFormValues( $params );
