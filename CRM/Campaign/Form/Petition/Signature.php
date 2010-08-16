@@ -261,6 +261,12 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     
     public function buildQuickForm()
     {
+
+    	//get the survey id
+        $this->_surveyId 	= CRM_Utils_Request::retrieve('sid', 'Positive', $this );
+        if (!$this->_surveyId) {
+die ("TODO: displays list of active petition (&sid={petition id} missing in the URL)");
+        }
         $this->applyFilter('__ALL__','trim');
 
         $this->buildCustom( $this->_contactProfileId , 'petitionContactProfile'  );       
