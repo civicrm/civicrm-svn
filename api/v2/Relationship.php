@@ -125,7 +125,13 @@ function civicrm_relationship_delete( &$params ) {
     }
     
     $relationBAO = new CRM_Contact_BAO_Relationship( );
-    return $relationBAO->del( $params['id'] ) ? civicrm_create_success( ts( 'Deleted relationship successfully' ) ):civicrm_create_error( ts( 'Could not delete relationship' ) );
+    $relationBAO->id = $params['id'];
+    if ( !$relationBAO->find( true ) ) {
+        return civicrm_create_error( ts( 'Relationship id is not valid' ));
+    } else {
+        $relationBAO->del( $params['id'] );
+        return civicrm_create_success( ts( 'Deleted relationship successfully' ) );
+    }
 
 }
 
