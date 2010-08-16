@@ -200,7 +200,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
      */
     function setDefaultValues( ) 
     {
-        
+        require_once 'CRM/Core/BAO/UFGroup.php';         
         $this->_defaults = array( );   
         if ( $this->_contactId ) {
             CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactId, $this->_contactProfileFields, $this->_defaults, true );        
