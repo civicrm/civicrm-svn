@@ -73,7 +73,7 @@
 {* custom data group *}
 {if $groupTree}
     <tr>
-       <td colspan="2">{include file="CRM/Custom/Form/CustomData.tpl"}</td>
+       <td colspan="2">{include file="CRM/Custom/Form/CustomData.tpl" bottomBorder="1"}</td>
     </tr>    
 {/if}
 

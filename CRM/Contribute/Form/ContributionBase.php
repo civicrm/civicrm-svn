@@ -786,7 +786,7 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
         
         //get all status
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         $validStatus = array( array_search( 'Pending', $allStatus ), 
                               array_search( 'In Progress', $allStatus ),
                               array_search( 'Overdue', $allStatus ), );

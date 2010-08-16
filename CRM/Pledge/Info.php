@@ -94,4 +94,17 @@ class CRM_Pledge_Info extends CRM_Core_Component_Info
     {
         return null;
     }
+    
+    // add shortcut to Create New
+    public function creatNewShortcut( &$shortCuts ) {
+        if ( CRM_Core_Permission::check('access CiviPledge') &&
+             CRM_Core_Permission::check('edit pledges') ) {
+            $shortCuts = 
+                array_merge($shortCuts, array( array( 'path'  => 'civicrm/pledge/add',
+                                                      'query' => "reset=1&action=add&context=standalone",
+                                                      'ref'   => 'new-pledge',
+                                                      'title' => ts('Pledge') ) ));
+        }
+    }
+    
 }

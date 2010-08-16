@@ -267,6 +267,8 @@ class CRM_Activity_BAO_Activity extends CRM_Activity_DAO_Activity
         $target              = new CRM_Activity_BAO_ActivityTarget( );
         $target->activity_id = $params['activity_id'];
         $target->target_contact_id = $params['target_contact_id'];
+        // avoid duplicate entries
+        $target->find(true);
         $target->save( );
     }
     

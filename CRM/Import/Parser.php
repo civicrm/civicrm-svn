@@ -651,6 +651,12 @@ abstract class CRM_Import_Parser {
         }        
     }
 
+    function setActiveFieldRelatedContactWebsiteType( $elements ) {
+        for ($i = 0; $i < count( $elements ); $i++) {
+            $this->_activeFields[$i]->_relatedContactWebsiteType = $elements[$i];
+        }        
+    }
+
     /**
      * Function to set IM Service Provider type fields for related contacts  
      *
@@ -743,10 +749,15 @@ abstract class CRM_Import_Parser {
                         }
                         
                         $params[$this->_activeFields[$i]->_related][$this->_activeFields[$i]->_relatedContactDetails][] = $value;
+                    } else if ( isset( $this->_activeFields[$i]->_relatedContactWebsiteType ) ) {
+                            $params[$this->_activeFields[$i]->_related][$this->_activeFields[$i]->_relatedContactDetails][] 
+                                = array( 'url'             => $this->_activeFields[$i]->_value,
+                                         'website_type_id' => $this->_activeFields[$i]->_relatedContactWebsiteType );
+                            
                     } else {
-                        $params[$this->_activeFields[$i]->_related][$this->_activeFields[$i]->_relatedContactDetails] = 
-                            $this->_activeFields[$i]->_value;                        
-                    }
+                            $params[$this->_activeFields[$i]->_related][$this->_activeFields[$i]->_relatedContactDetails] = 
+                                $this->_activeFields[$i]->_value;
+                    }  
                 }
             }
         }

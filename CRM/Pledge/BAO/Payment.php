@@ -59,7 +59,7 @@ class CRM_Pledge_BAO_Payment extends CRM_Pledge_DAO_Payment
     {
         $query = "
 SELECT civicrm_pledge_payment.id id, scheduled_amount, scheduled_date, reminder_date, reminder_count,
-        total_amount, receive_date, civicrm_option_value.name as status, civicrm_contribution.id as contribution_id
+        total_amount, receive_date, civicrm_option_value.name as status, civicrm_option_value.label as label, civicrm_contribution.id as contribution_id
 FROM civicrm_pledge_payment
 LEFT JOIN civicrm_contribution ON civicrm_pledge_payment.contribution_id = civicrm_contribution.id
 LEFT JOIN civicrm_option_group ON ( civicrm_option_group.name = 'contribution_status' )
@@ -80,6 +80,7 @@ WHERE pledge_id = %1
             $paymentDetails[$payment->id]['total_amount'    ] = $payment->total_amount;
             $paymentDetails[$payment->id]['receive_date'    ] = $payment->receive_date;
             $paymentDetails[$payment->id]['status'          ] = $payment->status;
+            $paymentDetails[$payment->id]['label'           ] = $payment->label;
             $paymentDetails[$payment->id]['id'              ] = $payment->id;
             $paymentDetails[$payment->id]['contribution_id' ] = $payment->contribution_id;
         }
@@ -99,7 +100,7 @@ WHERE pledge_id = %1
         $date['month']  = (int) substr($scheduled_date,  4, 2);
         $date['day']    = (int) substr($scheduled_date,  6, 2);
         
-        $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         //calculation of schedule date according to frequency day of period
         //frequency day is not applicable for daily installments
         if ( $params['frequency_unit'] != 'day' ) {
@@ -281,7 +282,7 @@ WHERE pledge_id = %1
     { 
         //get all status
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         
         require_once 'CRM/Core/Transaction.php';
         $transaction = new CRM_Core_Transaction( );
@@ -321,7 +322,7 @@ WHERE pledge_id = %1
     {
         //get all status
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
         // if payment ids are passed, we update payment table first, since payments statuses are not dependent on pledge status
         if ( !empty( $paymentIDs ) || $pledgeStatusID == array_search( 'Cancelled', $allStatus ) ) {
@@ -424,7 +425,7 @@ WHERE  civicrm_pledge_payment.status_id != %1
 ";
         //get all status
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         $params = array( 1 => array( array_search( 'Completed', $allStatus ),
                                      'Integer'),
                          2 => array( $pledgeId, 'Integer' ) );
@@ -460,7 +461,7 @@ WHERE  civicrm_pledge_payment.id = {$paymentId}
     static function getOldestPledgePayment( $pledgeID )
     {
         //get pending / overdue statuses
-        $pledgeStatuses = CRM_Core_OptionGroup::values( 'contribution_status');
+        $pledgeStatuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
 
         //get pending and overdue payments
         $status[] = array_search( 'Pending', $pledgeStatuses );

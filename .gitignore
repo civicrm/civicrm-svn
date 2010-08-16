@@ -53,6 +53,7 @@ CRM/Core/DAO/OptionGroup.php
 CRM/Core/DAO/OptionValue.php
 CRM/Core/DAO/PaymentProcessor.php
 CRM/Core/DAO/PaymentProcessorType.php
+CRM/Core/DAO/Persistent.php
 CRM/Core/DAO/Phone.php
 CRM/Core/DAO/Preferences.php
 CRM/Core/DAO/PreferencesDate.php

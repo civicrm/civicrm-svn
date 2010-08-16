@@ -1261,11 +1261,8 @@ class CRM_Contact_BAO_Query
         case 'activity_type_id':
         case 'activity_tags': 
         case 'activity_test':   
+        case 'activity_contact_name':
             CRM_Activity_BAO_Query::whereClauseSingle( $values, $this );
-            return;
-
-        case 'activity_target_name':
-            // since this case is handled with the above
             return;
         case 'birth_date_low':
         case 'birth_date_high': 
@@ -1999,6 +1996,7 @@ class CRM_Contact_BAO_Query
             case 'civicrm_activity_tag':
             case 'activity_type':
             case 'activity_status':
+            case 'civicrm_activity_contact':
                 require_once 'CRM/Activity/BAO/Query.php';
                 $from .= CRM_Activity_BAO_Query::from( $name, $mode, $side );
                 continue; 
@@ -2557,32 +2555,37 @@ WHERE  id IN ( $groupIDs )
         
         $n = trim( $value ); 
 
-        $config = CRM_Core_Config::singleton( );
+        if ( $n ) {
+            $config = CRM_Core_Config::singleton( );
 
-        if ( substr( $n, 0 , 1 ) == '"' &&
-             substr( $n, -1, 1 ) == '"' ) {
-            $n     = substr( $n, 1, -1 );
-            $value = strtolower(CRM_Core_DAO::escapeString($n));
-            $value = "'$value'";
-            $op    = '=';
-        } else {
-            $value = strtolower(CRM_Core_DAO::escapeString($n));
-            if ( $wildcard ) {
-                if ( strpos( $value, '%' ) !== false ) {
-                    $value = "'$value'";
-                    // only add wild card if not there
-                } else {
-                    $value = "'$value%'";
-                }
-                $op    = 'LIKE';
-            } else {
+            if ( substr( $n, 0 , 1 ) == '"' &&
+                 substr( $n, -1, 1 ) == '"' ) {
+                $n     = substr( $n, 1, -1 );
+                $value = strtolower(CRM_Core_DAO::escapeString($n));
                 $value = "'$value'";
+                $op    = '=';
+            } else {
+                $value = strtolower(CRM_Core_DAO::escapeString($n));
+                if ( $wildcard ) {
+                    if ( strpos( $value, '%' ) !== false ) {
+                        $value = "'$value'";
+                        // only add wild card if not there
+                    } else {
+                        $value = "'$value%'";
+                    }
+                    $op    = 'LIKE';
+                } else {
+                    $value = "'$value'";
+                }
             }
+            $this->_qill[$grouping][]  = ts( 'Email' ) . " $op '$n'";
+            $this->_where[$grouping][] = " ( civicrm_email.email $op $value )";
+        } else {
+            $this->_qill[$grouping][]  = ts( 'Email' ) . " $op ";
+            $this->_where[$grouping][] = " ( civicrm_email.email $op )";
         }
-
+        
         $this->_tables['civicrm_email'] = $this->_whereTables['civicrm_email'] = 1; 
-        $this->_where[$grouping][] = " ( civicrm_email.email $op $value )";
-        $this->_qill[$grouping][]  = ts( 'Email' ) . " $op '$n'";
     }
 
     /**
@@ -3199,7 +3202,7 @@ WHERE  id IN ( $groupIDs )
             // regenerate fromClause since permission might have added tables
             if ( $permission ) {
                 //fix for row count in qill (in contribute/membership find)
-                if (! $count ) {
+                if (! $count  || $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
                     $this->_useDistinct = true;
                 }
                 $this->_fromClause       = self::fromClause( $this->_tables     , null, null, $this->_primaryLocation, $this->_mode ); 

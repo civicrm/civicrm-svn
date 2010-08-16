@@ -68,7 +68,7 @@
     <td class="crm-contribution-receive_date">{$row.receive_date|crmDate}</td>
     <td class="crm-contribution-thankyou_date">{$row.thankyou_date|crmDate}</td>
     <td class="crm-contribution-status"> 
-        {$row.contribution_status_id}<br />
+        {$row.contribution_status}<br />
         {if $row.cancel_date}    
         {$row.cancel_date|crmDate}
         {/if}

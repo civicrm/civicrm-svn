@@ -467,8 +467,10 @@ cj('#rel_contact').focus( function() {
 
 {/literal}{if $searchRows || $callAjax}{literal} 
 show('saveElements');
+show('saveButtons');
 {/literal}{else}{literal}
 hide('saveElements');
+hide('saveButtons');
 {/literal}{/if}{/if}{literal}	
 
 cj( function( ) {

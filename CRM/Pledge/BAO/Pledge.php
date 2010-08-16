@@ -175,7 +175,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
         
         //get All Payments status types.
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         
         //update the pledge status only if it does NOT come from form
         if ( ! isset ( $params['pledge_status_id'] ) ) {
@@ -308,7 +308,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
         $select = $from = $queryDate = null;
         //get all status
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         $statusId = array_search( $status, $allStatus);
         
         switch ( $status ) {
@@ -471,7 +471,7 @@ WHERE  $whereCond
                 
         //get All Payments status types.
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         $returnProperties = array( 'status_id', 'scheduled_amount', 'scheduled_date', 'contribution_id' );
         //get all paymnets details.
         CRM_Core_DAO::commonRetrieveAll( 'CRM_Pledge_DAO_Payment', 'pledge_id', $params['id'], $allPayments, $returnProperties );
