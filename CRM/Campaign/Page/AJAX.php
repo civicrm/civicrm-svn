@@ -162,6 +162,7 @@ class CRM_Campaign_Page_AJAX
         $searchCount = $query->searchQuery(0, 0, null, true );
         $iTotal      = $searchCount;
         
+        $selectorCols = array( 'sort_name', 'street_address', 'street_name', 'street_number', 'street_unit' );
         if ( $searchCount > 0 ) {
             require_once( 'CRM/Contact/BAO/Contact/Utils.php' );
             $config = CRM_Core_Config::singleton( );
@@ -174,21 +175,27 @@ class CRM_Campaign_Page_AJAX
                 $contactID    = $result->contact_id;
                 $surveyActId  = $result->survey_activity_id; 
                 $contact_type = '<img src="' . $config->resourceBase . 'i/contact_';
-                
                 $typeImage = 
                     CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
                                                              $result->contact_sub_type : $result->contact_type );
                 
-                $searchRows[$contactID]['id']    = $contactID;
-                $searchRows[$contactID]['name']  = $typeImage.' '.$result->sort_name;
+                $searchRows[$contactID] = array( 'id' => $contactID );
+                foreach ( $selectorCols as $col ) {
+                    $colVal = $result->$col;
+                    if ( $col == 'sort_name' ) {
+                        $colVal = $typeImage.' '.$result->sort_name;
+                    }               
+                    $searchRows[$contactID][$col] = $colVal;
+                }
                 
                 $check = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processInterview( this );" />';
-                $searchRows[$contactID]['check'] = $check;
+                $searchRows[$contactID]['is_interview_conducted'] = $check;
             }
         }
         
         require_once "CRM/Utils/JSON.php";
-        $selectorElements = array( 'name', 'check' );
+        $selectorElements = array_merge( $selectorCols, array( 'is_interview_conducted' ) );
+        
         $iFilteredTotal = $iTotal;
         
         echo CRM_Utils_JSON::encodeDataTableSelector( $searchRows, $sEcho, $iTotal, $iFilteredTotal, $selectorElements );

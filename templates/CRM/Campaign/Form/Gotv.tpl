@@ -35,6 +35,10 @@
      <thead>
        <tr class="columnheader">
 	   <th>{ts}Name{/ts}</th>
+	   <th>{ts}Street Address{/ts}</th>
+	   <th>{ts}Street Name{/ts}</th>
+	   <th>{ts}Street Number{/ts}</th>
+	   <th>{ts}Street Unit{/ts}</th>
 	   <th>{ts}Is Interview Conducted?{/ts}</th>
        </tr>
      </thead>
@@ -96,7 +100,7 @@
      	        "bFilter"    : false,
 		"bAutoWidth" : false,
 	    	"bProcessing": true,
-		"aoColumns":[{sClass:""},{bSortable:false}],
+		"aoColumns":[{sClass:""},{sClass:""},{sClass:""},{sClass:""},{sClass:""},{bSortable:false}],
 		"sPaginationType": "full_numbers",
 	   	"bServerSide": true,
 	   	"sAjaxSource": sourceUrl,
