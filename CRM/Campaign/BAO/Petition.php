@@ -79,11 +79,19 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 									  			
 			//activity creation
         	// *** check for activity using source id - if already signed
-			$activity = CRM_Activity_BAO_Activity::create( $activityParams );	
+			$activity = CRM_Activity_BAO_Activity::create( $activityParams );
+			
+			// save activity custom data
+		    if ( CRM_Utils_Array::value( 'custom', $params ) &&
+            		is_array( $params['custom'] ) ) {
+            	require_once 'CRM/Core/BAO/CustomValueTable.php';
+            	CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_activity', $activity->id );
+        	}
+        	
 			
 		}
 		
-        return $contact;
+        return $activity;
     }
 
     

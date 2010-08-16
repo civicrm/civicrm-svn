@@ -56,10 +56,15 @@
            <td>{$form.activity_type_id.html}
 	   <div class="description">{ts}Select the Activity Type.{/ts}</div></td>
        </tr>
+       <tr class="crm-campaign-survey-form-block-contact_profile_id">
+           <td class="label">{$form.contact_profile_id.label}</td>
+           <td>{$form.contact_profile_id.html}
+	   <div class="description">{ts}Select the contact profile for this petition.{/ts}</div></td>
+       </tr>	
        <tr class="crm-campaign-survey-form-block-profile_id">
            <td class="label">{$form.profile_id.label}</td>
            <td>{$form.profile_id.html}
-	   <div class="description">{ts}Select the Profile for petition.{/ts}</div></td>
+	   <div class="description">{ts}Select the activity profile for this petition.{/ts}</div></td>
        </tr>	
        <tr class="crm-campaign-survey-form-block-is_active">
            <td class="label">{$form.is_active.label}</td>

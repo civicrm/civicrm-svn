@@ -26,7 +26,11 @@
 <div class="crm-block crm-form-block crm-campaign-form-block">
 
     <div class="crm-group">
-    	{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionProfile} 	
+    	{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionContactProfile} 	
+    </div>
+    
+    <div class="crm-group">
+    	{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionActivityProfile} 	
     </div>
 	
     <div class="crm-submit-buttons">
