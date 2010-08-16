@@ -329,7 +329,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
                     $fieldId   = $dao->id;
                     $fieldName = 'custom_'.$dao->id;
                     $customSearchFields[$name] = $fieldName;
-                    CRM_Core_BAO_CustomField::addQuickFormElement( $this, $fieldName, $fieldId, false, false );
+                    CRM_Core_BAO_CustomField::addQuickFormElement( $form, $fieldName, $fieldId, false, false );
                     break;
                 }
             }
