@@ -575,7 +575,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
             if ( !$$param ) $$param = $this->get( $param ); 
         }
         require_once 'CRM/Campaign/BAO/Survey.php';
-        $voterIds = CRM_Campaign_BAO_Survey::getSurveyVoterIds( $surveyId, $interviewerId, $statusIds );
+        $voterIds = CRM_Campaign_BAO_Survey::getSurveyVoterIds( $surveyId, null, $statusIds );
         if ( !empty( $voterIds ) ) {
             $operator = 'IN';
             if ( $this->_operation == 'reserve' ) $operator = 'NOT IN';
