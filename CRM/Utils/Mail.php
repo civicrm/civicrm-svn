@@ -122,10 +122,11 @@ class CRM_Utils_Mail
             }
         }
         
-        $message =  self::setMimeParams( $msg );
+        $message =& self::setMimeParams( $msg );
         $headers =& $msg->headers($headers);
         
         $to = array( $params['toEmail'] );
+
         //get emails from headers, since these are 
         //combination of name and email addresses.
         if ( CRM_Utils_Array::value( 'Cc', $headers ) ) {
@@ -137,7 +138,7 @@ class CRM_Utils_Mail
         }
         
         $result = null;
-        $mailer = CRM_Core_Config::getMailer( );
+        $mailer =& CRM_Core_Config::getMailer( );
         CRM_Core_Error::ignoreException( );
         if ( is_object( $mailer ) ) {
             $result = $mailer->send($to, $headers, $message);

@@ -224,6 +224,12 @@ class CRM_Contribute_BAO_ContributionPage extends CRM_Contribute_DAO_Contributio
                 'priceSetID'       => CRM_Utils_Array::value('priceSetID',    $values), // CRM-5095
             );
 
+            if ( $contributionTypeId = CRM_Utils_Array::value('contribution_type_id', $values ) ) {
+                $tplParams['contributionTypeId']   = $contributionTypeId;
+                $tplParams['contributionTypeName'] = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionType',
+                                                                                  $contributionTypeId );
+            }
+                        
             // address required during receipt processing (pdf and email receipt)
             if ( $displayAddress = CRM_Utils_Array::value('address', $values) ) {
                 $tplParams['address'] = $displayAddress;

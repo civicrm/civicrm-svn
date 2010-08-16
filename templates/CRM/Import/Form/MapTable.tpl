@@ -83,6 +83,11 @@
                             {if  $relatedContactImProvider && $relatedContactImProvider[$i] != ''}
                                 - {$relatedContactImProvider[$i]}
                             {/if}
+			    
+			    {* append website type *}
+			    {if  $relatedContactWebsiteType && $relatedContactWebsiteType[$i] != ''}
+                                - {$relatedContactWebsiteType[$i]}
+                            {/if}
                                        
 			    {else}                        
 			    

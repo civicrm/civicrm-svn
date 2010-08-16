@@ -837,7 +837,7 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         }
         
         require_once 'CRM/Contribute/PseudoConstant.php';
-        $allStatuses = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $allStatuses = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         $contribParams["contribution_status_id"] = array_search( 'Completed', $allStatuses );
         if ( $pending ) {
             $contribParams["contribution_status_id"] = array_search( 'Pending', $allStatuses );
