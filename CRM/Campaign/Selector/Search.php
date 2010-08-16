@@ -73,6 +73,8 @@ class CRM_Campaign_Selector_Search extends CRM_Core_Selector_Base implements CRM
      */
     static $_properties = array( 'contact_id', 
                                  'sort_name', 
+                                 'street_unit',  
+                                 'street_name',
                                  'street_number',
                                  'street_address',
                                  'city',

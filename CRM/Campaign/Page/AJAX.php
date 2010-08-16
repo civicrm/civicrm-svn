@@ -158,7 +158,10 @@ class CRM_Campaign_Page_AJAX
         
         require_once 'CRM/Contact/BAO/Query.php';
         $queryParams = CRM_Contact_BAO_Query::convertFormValues( $params );
-        $query       = new CRM_Contact_BAO_Query( $queryParams );
+        $query       = new CRM_Contact_BAO_Query( $queryParams,
+                                                  null, null, false, false, 
+                                                  CRM_Contact_BAO_Query::MODE_CAMPAIGN );
+        
         $searchCount = $query->searchQuery(0, 0, null, true );
         $iTotal      = $searchCount;
         
@@ -184,7 +187,7 @@ class CRM_Campaign_Page_AJAX
                     $colVal = $result->$col;
                     if ( $col == 'sort_name' ) {
                         $colVal = $typeImage.' '.$result->sort_name;
-                    }               
+                    }
                     $searchRows[$contactID][$col] = $colVal;
                 }
                 

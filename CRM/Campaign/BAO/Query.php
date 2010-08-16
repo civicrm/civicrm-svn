@@ -226,6 +226,8 @@ class CRM_Campaign_BAO_Query
                                 'contact_type'              => 1, 
                                 'sort_name'                 => 1, 
                                 'display_name'              => 1,
+                                'street_unit'               => 1,
+                                'street_name'               => 1,
                                 'street_number'             => 1,
                                 'street_address'            => 1,
                                 'city'                      => 1, 
