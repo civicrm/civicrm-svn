@@ -88,11 +88,11 @@ class CRM_Admin_Form_Persistent extends CRM_Core_Form {
         $params['is_config'] = $this->_config;
 
         if ( $this->_action & CRM_Core_Action::ADD ) {
-            $statusMsg = ts(" DB Template has been added successfully" );
+            $statusMsg = ts('DB Template has been added successfully.');
         }
         if ( $this->_action & CRM_Core_Action::UPDATE ) {
             $ids['persistent'] = $this->_indexID;
-            $statusMsg = ts(" DB Template has been updated successfully" );
+            $statusMsg = ts('DB Template has been updated successfully.');
         }
         CRM_Core_BAO_Persistent::add($params, $ids);
 
