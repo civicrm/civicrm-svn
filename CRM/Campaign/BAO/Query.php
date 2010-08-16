@@ -265,5 +265,80 @@ class CRM_Campaign_BAO_Query
         $tables['civicrm_campaign']            = ++$weight;
     }
     
+    
+    /**
+     * add all the elements shared between,
+     * normal voter search and voter listing (GOTV form)
+     *
+     * @access public 
+     * @return void
+     * @static
+     */ 
+    static function buildSearchForm( &$form ) 
+    {
+        require_once 'CRM/Campaign/BAO/Survey.php';
+        $attributes = CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_Address' );
+        
+        $form->add( 'text', 'sort_name',       ts( 'Contact Name'   ), 
+                    CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name' ) );
+        $form->add( 'text', 'street_name',     ts( 'Street Name'    ), $attributes['street_name']    );
+        $form->add( 'text', 'street_number',   ts( 'Street Number'  ), $attributes['street_number']  );
+        $form->add( 'text', 'street_type',     ts( 'Street Type'    ), $attributes['street_type']    );
+        $form->add( 'text', 'street_unit',     ts( 'Street Unit'    ), $attributes['street_unit']    );
+        $form->add( 'text', 'street_address',  ts( 'Street Address' ), $attributes['street_address'] );
+        $form->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
+        
+        $showInterviewer = false;
+        if ( CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+            $showInterviewer = true;
+            //autocomplete url
+            $dataUrl = CRM_Utils_System::url( 'civicrm/ajax/rest',
+                                              'className=CRM_Contact_Page_AJAX&fnName=getContactList&json=1&reset=1',
+                                              false, null, false );
+            
+            $form->assign( 'dataUrl',$dataUrl );
+            $form->add( 'text',   'survey_interviewer_name', ts( 'Select Interviewer' ) );
+            $form->add( 'hidden', 'survey_interviewer_id', '',array( 'id' => 'survey_interviewer_id' ) );
+            
+            $session = CRM_core_Session::singleton( );
+            $userId  = $session->get( 'userID' );
+            if ( $userId ) {
+                $defaults = array( );
+                $defaults['survey_interviewer_id']    = $userId;
+                $defaults['survey_interviewer_name']  = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                                                     $userId,
+                                                                                     'sort_name',
+                                                                                     'id' );
+                $form->setDefaults( $defaults );
+            }
+        }
+        $form->assign( 'showInterviewer', $showInterviewer );
+        
+        //build ward and precinct custom fields.
+        $query = '
+    SELECT  fld.id, fld.label 
+      FROM  civicrm_custom_field fld 
+INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
+     WHERE  grp.name = %1';        
+        $dao = CRM_Core_DAO::executeQuery( $query, array( 1 => array( 'Voter_Info', 'String' ) ) );
+        $customSearchFields = array( );
+        require_once 'CRM/Core/BAO/CustomField.php';
+        while ( $dao->fetch( ) ) {
+            foreach ( array( 'ward', 'precinct' ) as $name ) {
+                if ( stripos( $name, $dao->label ) !== false  ) {
+                    $fieldId   = $dao->id;
+                    $fieldName = 'custom_'.$dao->id;
+                    $customSearchFields[$name] = $fieldName;
+                    CRM_Core_BAO_CustomField::addQuickFormElement( $this, $fieldName, $fieldId, false, false );
+                    break;
+                }
+            }
+        }
+        $form->assign( 'customSearchFields',  $customSearchFields );
+        
+        $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
+        $form->add( 'select', 'campaign_survey_id', ts('Survey'), $surveys, true );
+    }
+    
 }
 
