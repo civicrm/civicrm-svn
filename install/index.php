@@ -825,7 +825,7 @@ class Installer extends InstallRequirements {
                 cache_clear_all();
                 
                 //add basic drupal permissions
-                db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', access CiviMail subscribe/unsubscribe pages, access all custom data, access uploaded files, make online contributions, profile listings and forms, register for events, view event info, view event participants\') WHERE rid IN (1, 2)' );
+                db_query( 'UPDATE {permission} SET perm = CONCAT( perm, \', access CiviMail subscribe/unsubscribe pages, access all custom data, access uploaded files, make online contributions, profile create, profile edit, profile view, register for events, view event info\') WHERE rid IN (1, 2)' );
                 
             } elseif ( $installType == 'standalone' ) {
                 $standaloneURL = civicrm_cms_base( ) . 'standalone/index.php';

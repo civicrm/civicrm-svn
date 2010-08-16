@@ -417,6 +417,7 @@ class CRM_Contribute_Form_AdditionalInfo
               $contributorEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $params['contact_id'] );
         $this->assign( 'contactID', $params['contact_id'] );
         $this->assign( 'contributionID', $params['contribution_id'] );
+        $this->assign( 'currency', $params['currency']);
 
         $session  = CRM_Core_Session::singleton( );
         $userID   = $session->get( 'userID' );

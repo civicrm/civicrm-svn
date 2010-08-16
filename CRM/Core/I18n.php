@@ -235,7 +235,7 @@ class CRM_Core_I18n
         if (isset($escape) and ($escape == 'sql')) $text = mysql_escape_string($text);
 
         // escape for JavaScript (if requested)
-        if (isset($escape) and ($escape == 'js'))  $text = addslashes($text);
+        if (isset($escape) and ($escape == 'js'))  $text = addcslashes($text, "'");
 
         return $text;
     }
