@@ -126,7 +126,8 @@ class CRM_Campaign_Page_AJAX
     {
         $searchParams = array( 'city',
                                'sort_name', 
-                               'street_name', 
+                               'street_unit',
+                               'street_name',
                                'street_number', 
                                'street_type', 
                                'street_address', 

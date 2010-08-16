@@ -86,6 +86,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->add( 'text', 'street_name',     ts( 'Street Name'    ), $attributes['street_name']    );
         $this->add( 'text', 'street_number',   ts( 'Street Number'  ), $attributes['street_number']  );
         $this->add( 'text', 'street_type',     ts( 'Street Type'    ), $attributes['street_type']    );
+        $this->add( 'text', 'street_unit',     ts( 'Street Unit'    ), $attributes['street_unit']    );
         $this->add( 'text', 'street_address',  ts( 'Street Address' ), $attributes['street_address'] );
         $this->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
         
@@ -144,7 +145,6 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         foreach  ( $this->_elements as $element ) {
             $name = $element->_attributes['name'];
             $this->_searchParams[$name] = $name;
-            
         }
         $this->set( 'searchParams',    $this->_searchParams );
         $this->assign( 'searchParams', json_encode( $this->_searchParams ) ); 

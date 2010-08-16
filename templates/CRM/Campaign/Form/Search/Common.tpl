@@ -58,21 +58,28 @@
               </td>
               <td>			
 		  {$form.sort_name.html|crmReplace:class:'twenty'}
-              </td>       
-          </tr>
-	  <tr>
+              </td>
+
               <td class="font-size12pt">
                   {$form.street_address.label}
 	      </td>
               <td>
                   {$form.street_address.html}
-              </td>
+              </td>       
+          </tr>
+	  <tr>
 	      <td class="font-size12pt">
                   {$form.street_name.label}
        	      </td>
               <td>	
                   {$form.street_name.html}
               </td>
+              <td class="font-size12pt">
+                  {$form.street_unit.label}
+	      </td>
+              <td>
+                  {$form.street_unit.html}
+              </td> 
 	  </tr>	
           <tr>
               <td class="font-size12pt">

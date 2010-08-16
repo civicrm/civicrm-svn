@@ -258,6 +258,7 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                     CRM_Core_DAO::getAttribute('CRM_Contact_DAO_Contact', 'sort_name' ) );
         $this->add( 'text', 'street_name',     ts( 'Street Name'    ), $attributes['street_name']    );
         $this->add( 'text', 'street_number',   ts( 'Street Number'  ), $attributes['street_number']  );
+        $this->add( 'text', 'street_unit',     ts( 'Street Unit'    ), $attributes['street_unit']    );
         $this->add( 'text', 'street_type',     ts( 'Street Type'    ), $attributes['street_type']    );
         $this->add( 'text', 'street_address',  ts( 'Street Address' ), $attributes['street_address'] );
         $this->add( 'text', 'city',            ts( 'City'           ), $attributes['city']           );
