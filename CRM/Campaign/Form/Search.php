@@ -544,6 +544,7 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         if ( $cid != $userId && 
              !CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
             CRM_Utils_System::permissionDenied( );
+            CRM_Utils_System::civiExit( );
         }
         require_once 'CRM/Contact/BAO/Contact.php';
         $this->_formValues['survey_interviewer_id']   = $cid;
