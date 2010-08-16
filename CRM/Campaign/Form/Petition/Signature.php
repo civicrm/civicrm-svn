@@ -165,27 +165,25 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     	
     	//get the survey id
         $this->_surveyId 	= CRM_Utils_Request::retrieve('sid', 'Positive', $this );
-               
+      
         // add the custom contact and activity profile fields to the signature form
         require_once 'CRM/Core/BAO/UFJoin.php';         
+	      require_once 'CRM/Core/BAO/UFGroup.php';
 
         $ufJoinParams = array( 'entity_id'    => $this->_surveyId,
                                'entity_table' => 'civicrm_survey',   
                                'module'       => 'CiviCampaign',
                                'weight'		  =>  2);        
         
-        $this->_contactProfileId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );   
-              
+        $this->_contactProfileId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );  
         if ( $this->_contactProfileId ) {
-	        require_once 'CRM/Core/BAO/UFGroup.php';
 	        $this->_contactProfileFields  = CRM_Core_BAO_UFGroup::getFields( $this->_contactProfileId, false, CRM_Core_Action::ADD);	        			       	     
-		}	        
+    		}	        
         
         $ufJoinParams['weight'] = 1;
-        $this->_activityProfileId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );   
-             
+        $this->_activityProfileId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );  
+
         if ( $this->_activityProfileId ) {
-	        require_once 'CRM/Core/BAO/UFGroup.php';
 	        $this->_activityProfileFields  = CRM_Core_BAO_UFGroup::getFields( $this->_activityProfileId, false, CRM_Core_Action::ADD);	        			       	     
 		}
 
@@ -209,7 +207,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         
         //set custom field defaults
         require_once "CRM/Core/BAO/CustomField.php";
-        
+    
 		foreach ( $this->_contactProfileFields as $name => $field ) {
             if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
                 $htmlType = $field['html_type'];
@@ -223,7 +221,8 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
                 }
 			}                
 		}
-		
+
+    if ($this->_activityProfileFields) {		
         foreach ( $this->_activityProfileFields as $name => $field ) {
             if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
                 $htmlType = $field['html_type'];
@@ -235,8 +234,9 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
                                                                   $this->_contactId,
                                                                   $this->_mode );
                 }
-			}                
-		}      
+			      }                
+		    }
+    }      
 
 		// If connecting with Facebook id, fetch in user data like first/last name, email address, ...
 		// ** check for fb module **
@@ -369,7 +369,7 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
 			case 0:
 				//no matching contacts - create a new contact
 				// Add a source for this new contact
-				$params['source'] = 'Online Petition Signature';	
+				$params['source'] = 'Online Petition Signature';//TOTO concatenate with add petition->title	
 				$this->_sendEmailMode = 3;
 				break;
 			case 1:
@@ -499,10 +499,11 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
             require_once 'CRM/Core/BAO/UFGroup.php';
             require_once 'CRM/Profile/Form.php';
             $session = CRM_Core_Session::singleton( );
-            //$contactID = $this->_contactId;	            
+            //$contactID = $this->_contactId;	   
+            $this->assign( contact_id, $this->_contactId );
 
             $fields = null;
-            if ( $contactID ) {
+            if ( $contactID ) { //TODO: contactID is never set (commented above)
                 require_once "CRM/Core/BAO/UFGroup.php";
                 if ( CRM_Core_BAO_UFGroup::filterUFGroups($id, $contactID)  ) {
                     $fields = CRM_Core_BAO_UFGroup::getFields( $id, false,CRM_Core_Action::ADD );

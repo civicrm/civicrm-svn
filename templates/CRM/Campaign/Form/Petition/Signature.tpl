@@ -23,8 +23,26 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-<div class="crm-block crm-form-block crm-campaign-form-block">
 
+
+<div class="crm-block crm-form-block crm-petition-form-block">
+
+{if !$contact_id}
+(rem: Anonymous user only)
+<div>{ts}Sign using your Facebook Account{/ts} <span style="background:blue;color:white;" title="it should be the button">F Connect</span><div>
+<div id="nofb">{ts}Don't have a facebook account ? <a href="#signwithoutfb" id="signwithoutfb">Sign here</a>{/ts} </div>
+{literal}
+<script type="text/javascript">
+    jQuery(document).ready(function($) 
+    {
+       $('.crm-group').hide();//not sure we need to hide the sign button
+       $('#signwithoutfb').click( function(){$('.crm-group').slideDown();});
+    });
+
+</script>
+{/literal}
+
+{/if}
     <div class="crm-group">
     	{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionContactProfile} 	
     </div>
