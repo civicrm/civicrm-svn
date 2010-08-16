@@ -798,11 +798,12 @@ WHERE  contribution_id = {$this->_id}
         //add receipt for offline contribution
         $this->addElement('checkbox','is_email_receipt', ts('Send Receipt?'),null, array('onclick' =>"return showHideByValue('is_email_receipt','','receiptDate','table-row','radio',true);") );
 
-        $status = CRM_Contribute_PseudoConstant::contributionStatus( );
+        $status = CRM_Contribute_PseudoConstant::contributionStatus(  );
         // supressing contribution statuses that are NOT relevant to pledges (CRM-5169)
         if ( $this->_ppID ) {
-            foreach ( array('Cancelled', 'Failed', 'In Progress') as $supress ) {
-                unset($status[CRM_Utils_Array::key($supress,$status)]);
+            $statusName = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
+            foreach ( array( 'Cancelled', 'Failed', 'In Progress' ) as $supress ) {
+                unset( $status[CRM_Utils_Array::key($supress,$statusName)] );
             }
         }
         

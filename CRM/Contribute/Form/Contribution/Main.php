@@ -240,7 +240,7 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
                                              $statuses, $returnProperties );
             
             require_once 'CRM/Contribute/PseudoConstant.php';
-            $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( );
+            $paymentStatusTypes = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
             $duePayment = false;
             foreach ( $statuses as $payId => $value ) {
                 if ( $paymentStatusTypes[$value['status_id']] == 'Overdue' ) {
