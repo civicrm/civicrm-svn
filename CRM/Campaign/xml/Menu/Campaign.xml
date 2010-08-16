@@ -61,6 +61,7 @@
     <path>civicrm/campaign/gotv</path>
     <title>Voter List</title>
     <page_callback>CRM_Campaign_Form_Gotv</page_callback>
+    <access_arguments>administer CiviCampaign;manage campaign</access_arguments>
     <component>CiviCampaign</component>
   </item>
   <item>
