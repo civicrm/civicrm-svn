@@ -298,18 +298,12 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
                          'target'   => CRM_Utils_Array::value( 'target_contact_id', $params )
                          );
 
-    require_once 'CRM/Contact/DAO/Contact.php';
-    $dao = new CRM_Contact_DAO_Contact( );
-
     foreach ( $contactIds as $key => $value ) {
-        if ( $value ) {
-            $dao->id = $value;
-            if ( !$dao->find( ) ) {
-                return civicrm_create_error( ts( 'Invalid %1 Contact Id', array( 1 => ucfirst( $key ) ) ) );
-            }
+        if ( $value &&
+             !CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact', $value, 'id' ) ) {
+            return civicrm_create_error( ts( 'Invalid %1 Contact Id', array( 1 => ucfirst( $key ) ) ) );
         }
     }
-    $dao->free( );
     
     // check for activity subject if add mode
     if ( $addMode && ! isset( $params['subject'] ) ) {
