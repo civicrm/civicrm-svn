@@ -140,7 +140,7 @@ class CRM_Admin_Form_Tag extends CRM_Admin_Form
             
             // check if parent is tag set
             if ( $parentId && CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_Tag',  $parentId, 'is_tagset' ) ) {
-                $errors['parent_id'] = ts( 'You cannot add a child tag for the tag that belong to a tagset.');
+                $errors['parent_id'] = ts( 'You cannot select a tag that belongs to a tagset as a Parent Tag.');
                 return $errors;
             }  
         }
