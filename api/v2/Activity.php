@@ -90,11 +90,7 @@ function &civicrm_activity_create( &$params )
     if ( ! empty($values['custom']) ) {
         $params['custom'] = $values['custom'];
     }
-    
-    if ( ! CRM_Utils_Array::value( 'activity_type_id', $params ) ) {
-        $params['activity_type_id'] = CRM_Core_OptionGroup::getValue( 'activity_type', $params['activity_name'] , 'name' );
-    }
-    
+
     // create activity
     $activity = CRM_Activity_BAO_Activity::create( $params );
     
@@ -184,8 +180,8 @@ function &civicrm_activity_update( &$params )
     if ( !empty( $errors ) ) {
         return $errors;
     }
-    
-    $activity = _civicrm_activity_update( $params );
+   
+    $activity = CRM_Activity_BAO_Activity::create( $params );
     return $activity;
 }
 
@@ -217,37 +213,6 @@ function civicrm_activity_delete( &$params )
     } else {
         return civicrm_create_error( ts( 'Could not delete activity' ) );
     }
-}
-
-/**
- * Function to update activities
- * @param CRM_Activity $activity Activity object to be deleted
- *
- * @return void|CRM_Core_Error  An error if 'activityName or ID' is invalid,
- *                         permissions are insufficient, etc.
- *
- * @access public
- *
- */
-function _civicrm_activity_update( $params ) 
-{
-    require_once 'CRM/Activity/DAO/Activity.php';
-    $dao = new CRM_Activity_BAO_Activity();
-    $dao->id = $params['id'];
-    if ( $dao->find( true ) ) {
-        $dao->copyValues( $params );
-        if ( ! isset( $params['activity_date_time'] ) &&
-             isset( $dao->activity_date_time ) ) {
-            // dont update it
-            $dao->activity_date_time = null;
-        }
-
-        $dao->save( );
-    }
-    $activity = array();
-    _civicrm_object_to_array( $dao, $activity );
-    
-    return $activity;
 }
 
 /**
@@ -317,38 +282,29 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     if ( ! $addMode && $params['id'] && ! is_numeric ( $params['id'] )) {
         return civicrm_create_error( ts( 'Invalid activity "id"' ) );
     }
-
+    
     require_once 'CRM/Core/PseudoConstant.php';
     $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
-        
+    
     // check if activity type_id is passed in
-    if ( ! isset($params['activity_name'] )  && ! isset($params['activity_type_id'] ) ) {
+    if ( $addMode && !isset( $params['activity_name'] )  && !isset( $params['activity_type_id'] ) ) {
         //when name AND id are both absent
-        return civicrm_create_error( ts ( 'Missing Activity' ) );
-    } else if ( isset( $params['activity_name'] )  && isset( $params['activity_type_id'] ) ) {
-        //when name AND id are both present - check for the match
-        $activityId     = array_search( $params['activity_name'], $activityTypes );
-        if ( $activityId != $params['activity_type_id'] ) {
-            return civicrm_create_error( ts ( 'Mismatch in Activity' ) );
-        }
+        return civicrm_create_error( ts ( 'Missing Activity Type' ) );
     } else {
-        //either name OR id is present
-        if ( isset( $params['activity_name'] ) ) {
-            $activityId     = array_search( $params['activity_name'], $activityTypes );
-            
-            if ( ! $activityId ) { 
-                return civicrm_create_error( ts ( 'Invalid Activity Name' ) );
-            } else {
-                $params['activity_type_id'] = $activityId;
+        $activityName   = CRM_Utils_Array::value( 'activity_name', $params );
+        $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
+        
+        if ( $activityName ) {
+            $activityNameId = array_search( $activityName, $activityTypes );
+
+            if ( !$activityNameId ) {
+                return civicrm_create_error( ts ( 'Invalid Activity Name' ) ); 
+            } else if ( $activityTypeId && ( $activityTypeId != $activityNameId ) ) {
+                return civicrm_create_error( ts ( 'Mismatch in Activity' ) );
             }
-        } else {
-            if ( !is_numeric( $params['activity_type_id'] ) ) {
-                return  civicrm_create_error( ts('Invalid Activity Type ID') );
-            } else {
-                if ( !array_key_exists( $params['activity_type_id'], $activityTypes ) ) {
-                    return  civicrm_create_error( ts('Invalid Activity Type ID') ); 
-                }
-            }
+        } else if ( $activityTypeId &&
+                    !array_key_exists( $activityTypeId, $activityTypes ) ) {
+            return civicrm_create_error( ts('Invalid Activity Type ID') );
         }
     }
     
@@ -374,7 +330,16 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     if ( $addMode && empty( $params['source_contact_id'] ) ) {
         return  civicrm_create_error( ts('Missing Source Contact') );
     } 
-    
+
+    if ( $addMode && 
+         !CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
+        $params['activity_date_time'] = CRM_Utils_Date::processDate( date( 'Y-m-d H:i:s' ) );
+    } else { 
+        if ( CRM_Utils_Array::value( 'activity_date_time', $params ) ) {
+            $params['activity_date_time'] = CRM_Utils_Date::processDate( $params['activity_date_time'] );
+        }
+    }
+        
     return null;
 }
 
