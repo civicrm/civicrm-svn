@@ -1010,7 +1010,11 @@ SELECT $select
                             list( $defaults[$elementName] ) = CRM_Utils_Date::setDateDefaults( $value, null, 
                                                                                                $field['date_format'] );
                         } else {
-                            list( $defaults[$elementName], $defaults[ $elementName . '_time' ] ) = 
+                            $timeElement = $elementName . '_time';
+                            if ( substr( $elementName, -1 ) == ']' ) { 
+                                $timeElement = substr( $elementName, 0, $$elementName.length - 1).'_time]';
+                            }
+                            list( $defaults[$elementName], $defaults[ $timeElement ] ) = 
                             CRM_Utils_Date::setDateDefaults( $value, null, $field['date_format'], $field['time_format'] );
                         }
                     }
