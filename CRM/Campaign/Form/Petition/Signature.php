@@ -158,7 +158,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         $this->_surveyId = CRM_Utils_Request::retrieve('sid', 'Positive', $this );
         
         //some sanity checks
-        if (!$this->_surveyId) {
+        if (!$this->_surveyId ) {
 			CRM_Core_Error::fatal( 'Petition id is not valid.' );
 		} else {
 			//check petition is valid and active
@@ -195,8 +195,12 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         $this->_contactProfileId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );  
         if ( $this->_contactProfileId ) {
 	        $this->_contactProfileFields  = CRM_Core_BAO_UFGroup::getFields( $this->_contactProfileId, false, CRM_Core_Action::ADD);	        			       	     
-    		}	        
+    		}	   
+        if ( !isset ($this->_contactProfileFields['email-Primary']) ) {
+   				CRM_Core_Error::fatal( 'The contact profile needs to contain the primary email address field' );
+        }
         
+
         $ufJoinParams['weight'] = 1;
         $this->_activityProfileId = CRM_Core_BAO_UFJoin::findUFGroupId( $ufJoinParams );  
 
