@@ -193,17 +193,19 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
      * @access public
      *
      */
-    static function &links( $componentId = null, $componentAction = null, $key = null )
+    static function &links( $componentId = null, $componentAction = null, $key = null, $compContext = null  )
     {
         $extraParams = null;
         if ( $componentId ) {
             $extraParams = "&compId={$componentId}&compAction={$componentAction}";
         }
-
+        if ( $compContext ) {
+            $extraParams .= "&compContext={$compContext}";
+        }
         if ( $key ) {
             $extraParams .= "&key={$key}";
         }
-        
+       
         if (!(self::$_links)) {
             self::$_links = array(
                                   CRM_Core_Action::VIEW   => array(
@@ -297,7 +299,17 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
         }
         $mask = CRM_Core_Action::mask( $permissions );
 
-        $componentId = null;
+        $componentId = $componentContext = null;
+        
+        $qfKey = $this->_key;
+        if ( $this->_context != 'contribute' ) {
+            $qfKey            = CRM_Utils_Request::retrieve( 'key', 'String', CRM_Core_DAO::$_nullArray ); 
+            $componentId      =  CRM_Utils_Request::retrieve( 'id', 'Positive', CRM_Core_DAO::$_nullArray );
+            $componentAction  =  CRM_Utils_Request::retrieve( 'action', 'String', CRM_Core_DAO::$_nullArray );
+            $componentContext = CRM_Utils_Request::retrieve( 'selectedChild', 'String', CRM_Core_DAO::$_nullObject );
+            if ( $componentContext == 'event' ) $componentContext = 'participant';
+        }
+                
         While ($result->fetch()) {
             $row = array();
             // the columns we are interested in
@@ -320,19 +332,19 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
             
             $row['checkbox'] = CRM_Core_Form::CB_PREFIX . $result->contribution_id;
             
-            if ( $this->_context != 'contribute' ) {
-                $componentId     =  CRM_Utils_Request::retrieve( 'id', 'Positive', CRM_Core_DAO::$_nullArray );
-                $componentAction =  CRM_Utils_Request::retrieve( 'action', 'String', CRM_Core_DAO::$_nullArray );
-            }
-
+            
+            
             $actions =  array( 'id'               => $result->contribution_id,
                                'cid'              => $result->contact_id,
                                'cxt'              => $this->_context
                                );
-
-            $row['action']       = CRM_Core_Action::formLink( self::links( $componentId, $componentAction, $this->_key ),
+            
+            $row['action']       = CRM_Core_Action::formLink( self::links( $componentId, 
+                                                                           $componentAction, 
+                                                                           $qfKey,
+                                                                           $componentContext ),
                                                               $mask, $actions );
-
+            
             $row['contact_type'] = 
                 CRM_Contact_BAO_Contact_Utils::getImage( $result->contact_sub_type ? 
                                                          $result->contact_sub_type : $result->contact_type,false,$result->contact_id );

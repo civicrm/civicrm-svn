@@ -268,10 +268,17 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
     
     function setContext( ) 
     {
-        $context = CRM_Utils_Request::retrieve( 'context', 'String',
-                                                $this, false, 'search' );
-        $qfKey     = CRM_Utils_Request::retrieve( 'key', 'String', $this );
-
+        $qfKey       = CRM_Utils_Request::retrieve( 'key', 'String', $this );
+        $context     = CRM_Utils_Request::retrieve( 'context', 'String',
+                                                    $this, false, 'search' );
+        $compContext = CRM_Utils_Request::retrieve( 'compContext', 'String', $this );
+        //swap the context.
+        if ( $context == 'search' && $compContext ) {
+            $context = $compContext;
+        } else {
+            $compContext = null;
+        }
+        
         // make sure we dont get tricked with a bad key
         // so check format
         require_once 'CRM/Core/Key.php';
@@ -315,6 +322,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             if ( $qfKey ) {
                 $extraParams .= "&qfKey=$qfKey";
             }
+
             $this->assign( 'searchKey',  $qfKey );
             $url = CRM_Utils_System::url( 'civicrm/contribute/search', $extraParams );
             break;
@@ -331,27 +339,39 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
         case 'membership':
             $componentId     =  CRM_Utils_Request::retrieve( 'compId', 'Positive', $this);
             $componentAction =  CRM_Utils_Request::retrieve( 'compAction', 'Integer', $this );
-
+            
+            $context   = 'membership';
+            $searchKey = null;
+            if ( $compContext ) {
+                $context = 'search';
+                if ( $qfKey ) $searchKey = "&key=$qfKey";
+            }
             if ( $componentAction & CRM_Core_Action::VIEW ) {
                 $action = 'view';
             } else {
                 $action = 'update';
             } 
             $url = CRM_Utils_System::url( 'civicrm/contact/view/membership',
-                                          "reset=1&action={$action}&cid={$this->_contactId}&id={$componentId}&context=membership&selectedChild=member" );
+                                          "reset=1&action={$action}&cid={$this->_contactId}&id={$componentId}&context={$context}&selectedChild=member{$searchKey}" );
             break; 
             
         case 'participant':
             $componentId     =  CRM_Utils_Request::retrieve( 'compId', 'Positive', $this );
             $componentAction =  CRM_Utils_Request::retrieve( 'compAction', 'Integer', $this );
             
+            $context   = 'participant';
+            $searchKey = null;
+            if ( $compContext ) {
+                $context = 'search';
+                if ( $qfKey ) $searchKey = "&key=$qfKey";
+            }
             if ( $componentAction == CRM_Core_Action::VIEW ) {
                 $action = 'view';
             } else {
                 $action = 'update';
             } 
             $url = CRM_Utils_System::url( 'civicrm/contact/view/participant',
-                                          "reset=1&action={$action}&id={$componentId}&cid={$this->_contactId}&context=participant&selectedChild=event" );
+                                          "reset=1&action={$action}&id={$componentId}&cid={$this->_contactId}&context={$context}&selectedChild=event{$searchKey}" );
             break;
             
         case 'pledge':
