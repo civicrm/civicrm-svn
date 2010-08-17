@@ -154,6 +154,26 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     {
 	    $this->_mode = self::MODE_CREATE;
 
+    	//get the survey id
+        $this->_surveyId = CRM_Utils_Request::retrieve('sid', 'Positive', $this );
+        
+        //some sanity checks
+        if (!$this->_surveyId) {
+			CRM_Core_Error::fatal( 'Petition id is not valid.' );
+		} else {
+			//check petition is valid and active
+			require_once 'CRM/Campaign/BAO/Survey.php';
+			$params['id'] = $this->_surveyId;
+			$petition = array();
+			CRM_Campaign_BAO_Survey::retrieve($params,$petition);
+	        if (empty($petition)) {
+				CRM_Core_Error::fatal( 'Petition id is not valid.' );
+			}
+			if ($petition['is_active'] == 0) {
+				CRM_Core_Error::fatal( 'Petition is no longer active.' );
+			}
+		}
+
         //get userID from session
         $session = CRM_Core_Session::singleton( );   
     
@@ -162,9 +182,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         if (isset($this->_contactId)) {
 	        $this->_loggedIn = TRUE;
     	}
-    	
-    	//get the survey id
-        $this->_surveyId 	= CRM_Utils_Request::retrieve('sid', 'Positive', $this );
       
         // add the custom contact and activity profile fields to the signature form
         require_once 'CRM/Core/BAO/UFJoin.php';         
@@ -364,12 +381,16 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
         
 	    //dupesByParams($params, $ctype, $level = 'Strict', $except = array())
         $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']);
-
+		
 		switch (count($ids)) {
 			case 0:
-				//no matching contacts - create a new contact
+				//no matching contacts - create a new contact				
+				require_once 'CRM/Campaign/BAO/Survey.php';
+				$petition_params['id'] = $this->_surveyId;
+				$petition = array();
+				CRM_Campaign_BAO_Survey::retrieve($petition_params,$petition);
 				// Add a source for this new contact
-				$params['source'] = 'Online Petition Signature';//TOTO concatenate with add petition->title	
+				$params['source'] = 'Online Petition Signature - ' . $petition['title'];
 				$this->_sendEmailMode = 3;
 				break;
 			case 1:
