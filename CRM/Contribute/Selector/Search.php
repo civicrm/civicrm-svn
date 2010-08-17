@@ -298,18 +298,16 @@ class CRM_Contribute_Selector_Search extends CRM_Core_Selector_Base implements C
             $permissions[] = CRM_Core_Permission::DELETE;
         }
         $mask = CRM_Core_Action::mask( $permissions );
-
-        $componentId = $componentContext = null;
         
         $qfKey = $this->_key;
+        $componentId = $componentContext = null;
         if ( $this->_context != 'contribute' ) {
-            $qfKey            = CRM_Utils_Request::retrieve( 'key', 'String', CRM_Core_DAO::$_nullArray ); 
-            $componentId      =  CRM_Utils_Request::retrieve( 'id', 'Positive', CRM_Core_DAO::$_nullArray );
-            $componentAction  =  CRM_Utils_Request::retrieve( 'action', 'String', CRM_Core_DAO::$_nullArray );
-            $componentContext = CRM_Utils_Request::retrieve( 'selectedChild', 'String', CRM_Core_DAO::$_nullObject );
-            if ( $componentContext == 'event' ) $componentContext = 'participant';
+            $qfKey            = CRM_Utils_Request::retrieve(  'key',         'String',   CRM_Core_DAO::$_nullObject ); 
+            $componentId      =  CRM_Utils_Request::retrieve( 'id',          'Positive', CRM_Core_DAO::$_nullObject );
+            $componentAction  =  CRM_Utils_Request::retrieve( 'action',      'String',   CRM_Core_DAO::$_nullObject );
+            $componentContext = CRM_Utils_Request::retrieve(  'compContext', 'String',   CRM_Core_DAO::$_nullObject );
         }
-                
+        
         While ($result->fetch()) {
             $row = array();
             // the columns we are interested in

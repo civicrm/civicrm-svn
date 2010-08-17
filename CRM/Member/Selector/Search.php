@@ -188,10 +188,15 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
      * @access public
      *
      */
-    static function &links( $status = 'all', $isPaymentProcessor = null, $accessContribution = null, $key = null  )
+    static function &links( $status = 'all', 
+                            $isPaymentProcessor = null, 
+                            $accessContribution = null, 
+                            $qfKey = null, 
+                            $context = null  )
     {
-        
-        $extraParams = ($key ) ? "&key={$key}" : null;
+        $extraParams = null;
+        if ( $context == 'search' ) $extraParams .= '&compContext=membership';
+        if ( $qfKey ) $extraParams .= "&key={$qfKey}";
         
         if ( !self::$_links['view'] ) {
             self::$_links['view'] = array(
@@ -353,7 +358,8 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
                  $row['action']   = CRM_Core_Action::formLink( self::links( 'all', 
                                                                             $this->_isPaymentProcessor, 
                                                                             $this->_accessContribution, 
-                                                                            $this->_key ), 
+                                                                            $this->_key,
+                                                                            $this->_context ), 
                                                                $currentMask,
                                                                array( 'id'  => $result->membership_id,
                                                                       'cid' => $result->contact_id,

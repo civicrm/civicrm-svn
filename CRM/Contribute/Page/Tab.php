@@ -285,7 +285,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
         if ( ! CRM_Core_Key::valid( $qfKey ) ) {
             $qfKey = null;
         }
-                                                
+        
         $session = CRM_Core_Session::singleton( ); 
        
         switch ( $context ) {
@@ -346,6 +346,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             if ( $compContext ) {
                 $context = 'search';
                 if ( $qfKey ) $searchKey = "&key=$qfKey";
+                $compContext = "&compContext={$compContext}";
             }
             if ( $componentAction & CRM_Core_Action::VIEW ) {
                 $action = 'view';
@@ -365,6 +366,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
             if ( $compContext ) {
                 $context = 'search';
                 if ( $qfKey ) $searchKey = "&key=$qfKey";
+                $compContext = "&compContext={$compContext}";
             }
             if ( $componentAction == CRM_Core_Action::VIEW ) {
                 $action = 'view';
@@ -372,7 +374,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
                 $action = 'update';
             } 
             $url = CRM_Utils_System::url( 'civicrm/contact/view/participant',
-                                          "reset=1&action={$action}&id={$componentId}&cid={$this->_contactId}&context={$context}&selectedChild=event{$searchKey}" );
+                                          "reset=1&action={$action}&id={$componentId}&cid={$this->_contactId}&context={$context}&selectedChild=event{$searchKey}{$compContext}" );
             break;
             
         case 'pledge':
