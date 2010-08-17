@@ -336,6 +336,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
                                           "reset=1&force=1&cid={$this->_contactId}&selectedChild=activity" );
             break;
             
+        case 'member':
         case 'membership':
             $componentId     =  CRM_Utils_Request::retrieve( 'compId', 'Positive', $this);
             $componentAction =  CRM_Utils_Request::retrieve( 'compAction', 'Integer', $this );
@@ -352,7 +353,7 @@ class CRM_Contribute_Page_Tab extends CRM_Core_Page
                 $action = 'update';
             } 
             $url = CRM_Utils_System::url( 'civicrm/contact/view/membership',
-                                          "reset=1&action={$action}&cid={$this->_contactId}&id={$componentId}&context={$context}&selectedChild=member{$searchKey}" );
+                                          "reset=1&action={$action}&id={$componentId}&cid={$this->_contactId}&context={$context}&selectedChild=member{$searchKey}" );
             break; 
             
         case 'participant':
