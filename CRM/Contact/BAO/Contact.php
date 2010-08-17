@@ -749,7 +749,7 @@ WHERE id={$id}; ";
         $relativePath = null;
         $config = CRM_Core_Config::singleton( );
         if ( $config->userFramework == 'Joomla' ) {
-            $userFrameworkBaseURL = trim( $config->userFrameworkBaseURL,'/administrator/' );
+            $userFrameworkBaseURL = trim( str_replace( "/administrator/", "", $config->userFrameworkBaseURL ) );
             $customFileUploadDirectory = strstr( $absolutePath, '/media' );
             $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;     
         } else if ( $config->userFramework == 'Drupal' ) {   
