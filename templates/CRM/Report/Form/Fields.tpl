@@ -38,7 +38,7 @@
 </div><!-- /.crm-accordion-wrapper -->       
 </div> {* criteria section ends *}
 
-{if ($instanceForm and $updateReportButton) OR $instanceFormError} {* settings section starts *}
+{if $instanceForm OR $instanceFormError} {* settings section starts *}
 <div class="crm-accordion-wrapper crm-report_setting-accordion crm-accordion_title-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
  <div class="crm-accordion-header" {if $updateReportButton} onclick="hide('update-button'); return false;" {/if} >
   <div class="icon crm-accordion-pointer"></div> 
