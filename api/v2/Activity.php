@@ -293,6 +293,24 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
         return civicrm_create_error( ts( 'Input Parameters empty' ) );
     }
 
+    $contactIds = array( 'source'   => CRM_Utils_Array::value( 'source_contact_id', $params ),
+                         'assignee' => CRM_Utils_Array::value( 'assignee_contact_id', $params ),
+                         'target'   => CRM_Utils_Array::value( 'target_contact_id', $params )
+                         );
+
+    require_once 'CRM/Contact/DAO/Contact.php';
+    $dao = new CRM_Contact_DAO_Contact( );
+
+    foreach ( $contactIds as $key => $value ) {
+        if ( $value ) {
+            $dao->id = $value;
+            if ( !$dao->find( ) ) {
+                return civicrm_create_error( ts( 'Invalid %1 Contact Id', array( 1 => ucfirst( $key ) ) ) );
+            }
+        }
+    }
+    $dao->free( );
+    
     // check for activity subject if add mode
     if ( $addMode && ! isset( $params['subject'] ) ) {
         return civicrm_create_error( ts( 'Missing Subject' ) );
@@ -363,9 +381,6 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
         return  civicrm_create_error( ts('Missing Source Contact') );
     } 
     
-    if (isset( $params['source_contact_id'] ) && !is_numeric( $params['source_contact_id'] ) ) {
-        return  civicrm_create_error( ts('Invalid Source Contact') );
-    }
     return null;
 }
 
