@@ -34,8 +34,9 @@
             {if $birthDateViewFormat}	 
                 {$birth_date_display|crmDate:$birthDateViewFormat}
             {else}
-                {$birth_date_display|crmDate}</td>
+                {$birth_date_display|crmDate}
             {/if} 
+        </td>
         </tr>
         <tr>
         {if $is_deceased eq 1}
