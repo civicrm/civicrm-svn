@@ -270,6 +270,18 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
         }
     }
     
+    $activityIds = array( 'activity' => CRM_Utils_Array::value( 'id', $params ),
+                          'parent'   => CRM_Utils_Array::value( 'parent_id', $params ),
+                          'original' => CRM_Utils_Array::value( 'original_id', $params )
+                          );
+    
+    foreach ( $activityIds as $id => $value ) {
+        if (  $value &&
+              !CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', $value, 'id' ) ) {
+            return civicrm_create_error( ts( 'Invalid %1 Id', array( 1 => ucfirst( $id ) ) ) );
+        }
+    }
+
     // check for activity subject if add mode
     if ( $addMode && ! isset( $params['subject'] ) ) {
         return civicrm_create_error( ts( 'Missing Subject' ) );
@@ -285,7 +297,7 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     
     require_once 'CRM/Core/PseudoConstant.php';
     $activityTypes = CRM_Core_PseudoConstant::activityType( true, true, false, 'name' );
-    
+        
     // check if activity type_id is passed in
     if ( $addMode && !isset( $params['activity_name'] )  && !isset( $params['activity_type_id'] ) ) {
         //when name AND id are both absent
@@ -295,13 +307,14 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
         $activityTypeId = CRM_Utils_Array::value( 'activity_type_id', $params );
         
         if ( $activityName ) {
-            $activityNameId = array_search( $activityName, $activityTypes );
-
+            $activityNameId = array_search( ucfirst( $activityName ), $activityTypes );
+            
             if ( !$activityNameId ) {
                 return civicrm_create_error( ts ( 'Invalid Activity Name' ) ); 
             } else if ( $activityTypeId && ( $activityTypeId != $activityNameId ) ) {
                 return civicrm_create_error( ts ( 'Mismatch in Activity' ) );
             }
+            $params['activity_type_id'] = $activityNameId;
         } else if ( $activityTypeId &&
                     !array_key_exists( $activityTypeId, $activityTypes ) ) {
             return civicrm_create_error( ts('Invalid Activity Type ID') );
@@ -309,17 +322,24 @@ function _civicrm_activity_check_params ( &$params, $addMode = false )
     }
     
     // check for activity status is passed in
-    if ( isset( $params['status_id'] ) && !is_numeric( $params['status_id'] ) ) {
+    if ( isset( $params['status_id'] ) && is_numeric( $params['status_id'] ) ) {
         require_once "CRM/Core/PseudoConstant.php";
-        $activityStatus   =& CRM_Core_PseudoConstant::activityStatus( );
-        $activityStatusId = array_search( $params['status_id'], $activityStatus );
-        if ( ! $activityStatusId ) { 
+        $activityStatus = CRM_Core_PseudoConstant::activityStatus( );
+        
+        if ( !array_key_exists( $params['status_id'], $activityStatus ) ) { 
             return civicrm_create_error( ts('Invalid Activity Status') );
-        } else {
-            $params['status_id'] = $activityStatusId;
         }
     }
     
+    if ( isset( $params['priority_id'] ) && is_numeric( $params['priority_id'] ) ) { 
+        require_once "CRM/Core/PseudoConstant.php";
+        $activityPriority = CRM_Core_PseudoConstant::priority( );
+        
+        if ( !array_key_exists( $params['priority_id'], $activityStatus ) ) { 
+            return civicrm_create_error( ts('Invalid Priority') );
+        }
+    }
+
     // check for activity duration minutes
     if ( isset( $params['duration_minutes'] ) && !is_numeric( $params['duration_minutes'] ) ) {
         return civicrm_create_error( ts('Invalid Activity Duration (in minutes)') );
