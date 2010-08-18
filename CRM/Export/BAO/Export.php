@@ -962,7 +962,26 @@ class CRM_Export_BAO_Export
                 if ( in_array( $fieldName, $changeFields) ) {
                     $sqlColumns[$fieldName] = "$fieldName text";
                 } else {
-                    $sqlColumns[$fieldName] = "$fieldName varchar(64)";
+                    // set the sql columns for custom data
+                    if ( isset( $query->_fields[$field]['data_type'] ) ) {
+                        
+                        switch ( $query->_fields[$field]['data_type'] ) {
+                        case 'String':
+                            $sqlColumns[$fieldName] = "$fieldName varchar(255)";
+                            break;
+                          
+                        case 'Memo':
+                            $sqlColumns[$fieldName] = "$fieldName text";
+                            break;
+                          
+                        default:
+                            $sqlColumns[$fieldName] = "$fieldName varchar(64)";
+                            break;
+                        }
+                    } else {
+                        $sqlColumns[$fieldName] = "$fieldName varchar(64)";
+                    }
+
                 }
             }
         }
