@@ -38,12 +38,23 @@
 			{
 			   $('.crm-group').hide();//not sure we need to hide the sign button
 			   $('.crm-submit-buttons').hide();
-			   $('#signwithoutfb').click( function(){$('.crm-group').slideDown();});
-			   Drupal.settings.fb.reload_url = windows.location;
-			});
-		
+			   $('#signwithoutfb').click( function(){$('.crm-group').slideDown();$('.crm-submit-buttons').slideDown();});
+			   Drupal.settings.fb.reload_url = document.baseURI;
+			});		
 		</script>
 		{/literal}
+	{/if}
+	
+	{if !empty($fblogout)}
+		<div> {$fblogout} <br />&nbsp; <div>
+		{literal}
+		<script type="text/javascript">
+			jQuery(document).ready(function($) 
+			{
+			   Drupal.settings.fb.reload_url = document.baseURI;
+			});		
+		</script>
+		{/literal}		
 	{/if}
 {/if}
     <div class="crm-group">

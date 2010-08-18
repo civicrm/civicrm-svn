@@ -278,13 +278,12 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 		  }
 		}
 
-//???		print_r($GLOBALS['_SESSION']['fb_user_fbu']);
         $this->setDefaults( $this->_defaults );
     }
     
     public function buildQuickForm()
     {
-
+		define('FACEBOOK_LOGIN_LABEL','Login with Facebook');
     	//get the survey id
         $this->_surveyId 	= CRM_Utils_Request::retrieve('sid', 'Positive', $this );
         if (!$this->_surveyId) {
@@ -306,10 +305,11 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
         //TODO - if snippet=1 don't show fbconnect?              
         // add fbconnect button if fb module installed and primary application available                   
 		$fbapp = variable_get(FB_CONNECT_VAR_PRIMARY, NULL);		
-		if (($fbapp <> NULL) && (!$this->_loggedIn)) {
+
+		if (($fbapp <> NULL) && !(fb_facebook_user())) {
 //			$this->assign( 'fbconnect', fb_connect_block('view','login_'.$fbapp) );
 //			$fbconnect = fb_connect_block('view','login_'.$fbapp);
-			$fbconnect = '<fb:login-button perms="!perms" onlogin="FB_JS.reload();" v="2"><fb:intl>Connect with Facebook</fb:intl></fb:login-button>';
+			$fbconnect = '<fb:login-button perms="!perms" onlogin="FB_JS.reload();" v="2"><fb:intl>'.FACEBOOK_LOGIN_LABEL.'</fb:intl></fb:login-button>';
 			// substitute perms
 			$perms = array();
 			drupal_alter('fb_required_perms', $perms);
@@ -317,6 +317,10 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
 			$this->assign( 'fbconnect', $fbconnect);
     	}
     	
+    	if (($fbapp <> NULL) && (fb_facebook_user())) {
+    		$fblogout = '<fb:login-button autologoutlink=true></fb:login-button>';
+    		$this->assign( 'fblogout', $fblogout);
+    	}
     }
     
     /**
@@ -342,9 +346,7 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
      * @return None
      */
     public function postProcess() 
-    {
-		$this->_ctype = 'Individual';
-		
+    {		
 		define('CIVICRM_TAG_UNCONFIRMED','Unconfirmed');
 		
 		if (defined('CIVICRM_TAG_UNCONFIRMED')) {
@@ -390,18 +392,21 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
         }
         
 		//	$this->_params['ip_address'] = CRM_Utils_System::ipAddress( );
-		       		
+		
+		$this->_ctype = 'Individual';
 		// dupeCheck - check if contact record already exists
 		// code modified from api/v2/Contact.php-function civicrm_contact_check_params()
 		require_once 'CRM/Dedupe/Finder.php';
-        $params['contact_type'] = $this->_ctype;
+        $params['contact_type'] = $this->_ctype;    
+        //TODO - current dedupe finds soft deleted contacts - adding param is_deleted not working
+        //$params['is_deleted'] = 0;  // ignore soft deleted contacts
         $dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
 
 		// allow anonymous users signing the form to run the dedupe check - // CRM-6431
         $dedupeParams['check_permission'] = '';       
-        
+                
 	    //dupesByParams($params, $ctype, $level = 'Strict', $except = array())
-        $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']);
+        $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']);		
 		
 		switch (count($ids)) {
 			case 0:
