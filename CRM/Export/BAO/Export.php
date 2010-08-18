@@ -964,8 +964,11 @@ class CRM_Export_BAO_Export
                 } else {
                     // set the sql columns for custom data
                     if ( isset( $query->_fields[$field]['data_type'] ) ) {
-                        
+
                         switch ( $query->_fields[$field]['data_type'] ) {
+                        case 'Country':
+                        case 'StateProvince':
+                        case 'Link':
                         case 'String':
                             $sqlColumns[$fieldName] = "$fieldName varchar(255)";
                             break;
