@@ -39,7 +39,7 @@ class CRM_Dedupe_Merger
     static $validFields = array(
         'addressee', 'addressee_custom', 'birth_date', 'contact_source', 'contact_type',
         'deceased_date', 'do_not_email', 'do_not_mail', 'do_not_sms', 'do_not_phone', 
-        'do_not_trade', 'external_identifier', 'email_greeting', 'email_greeting_custom', 'first_name', 'gender', 
+        'do_not_trade', 'email_greeting', 'email_greeting_custom', 'first_name', 'gender', 
         'home_URL', 'household_name', 'image_URL', 
         'individual_prefix', 'individual_suffix', 'is_deceased', 'is_opt_out', 
         'job_title', 'last_name', 'legal_identifier', 'legal_name', 
