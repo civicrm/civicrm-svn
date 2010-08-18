@@ -66,7 +66,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
      * 
      * @var int 
      */ 
-    protected $_loggedIn;
+    protected $_loggedIn = FALSE;
     
     /** 
      * The contact type
@@ -270,6 +270,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			$this->_defaults['email-Primary'] = $fbdata['email'];
 			$this->_defaults['birth_date'] = $fbdata['birthday'];
 			$this->_defaults['image_URL'] = "http://graph.facebook.com/" . $fbdata['id']  ."/picture";	
+			//TODO: get location from fb and parse into city and country
 			//$this->_defaults['city'] = $fbdata['[location']['name'];
 		  }
 		  catch (FacebookApiException $e) {
@@ -299,7 +300,14 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
                                        'name'      => ts('Sign'),
                                        'isDefault' => true),  
                                 )
-                          );                 
+                          ); 
+                          
+        //TODO - if snippet=1 don't show fbconnect?              
+        // add fbconnect button if fb module installed and primary application available                   
+		$fbapp = variable_get(FB_CONNECT_VAR_PRIMARY, NULL);		
+		if (($fbapp <> NULL) && (!$this->_loggedIn)) {
+			$this->assign( 'fbconnect', fb_connect_block('view','login_'.$fbapp) );
+    	}
     }
     
     /**
@@ -478,8 +486,6 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
 			// create the signature activity record																  
 			$params['contactId'] = $this->_contactId;
 			$result = CRM_Campaign_BAO_Petition::createSignature( $params );
-
-
 
 			// send thank you or email verification emails
 			switch ($this->_sendEmailMode) {

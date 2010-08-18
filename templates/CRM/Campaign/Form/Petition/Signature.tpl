@@ -28,20 +28,22 @@
 <div class="crm-block crm-form-block crm-petition-form-block">
 
 {if !$contact_id}
-(rem: Anonymous user only)
-<div>{ts}Sign using your Facebook Account{/ts} <span style="background:blue;color:white;" title="it should be the button">F Connect</span><div>
-<div id="nofb">{ts}Don't have a facebook account ? <a href="#signwithoutfb" id="signwithoutfb">Sign here</a>{/ts} </div>
-{literal}
-<script type="text/javascript">
-    jQuery(document).ready(function($) 
-    {
-       $('.crm-group').hide();//not sure we need to hide the sign button
-       $('#signwithoutfb').click( function(){$('.crm-group').slideDown();});
-    });
-
-</script>
-{/literal}
-
+	{if !empty($fbconnect)}
+		<div>{ts}Sign using your Facebook Account{/ts} {$fbconnect.content} <div>
+		<div id="nofb">{ts}Don't have a facebook account? <a href="#signwithoutfb" id="signwithoutfb">Sign here</a>{/ts} </div>
+	
+		{literal}
+		<script type="text/javascript">
+			jQuery(document).ready(function($) 
+			{
+			   $('.crm-group').hide();//not sure we need to hide the sign button
+			   $('.crm-submit-buttons').hide();
+			   $('#signwithoutfb').click( function(){$('.crm-group').slideDown();});
+			});
+		
+		</script>
+		{/literal}
+	{/if}
 {/if}
     <div class="crm-group">
     	{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionContactProfile} 	
@@ -50,7 +52,7 @@
     <div class="crm-group">
     	{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionActivityProfile} 	
     </div>
-	
+    
     <div class="crm-submit-buttons">
         {include file="CRM/common/formButtons.tpl" location="top"}
     </div>
