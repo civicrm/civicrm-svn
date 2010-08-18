@@ -546,7 +546,8 @@ SELECT $select
                                                                                          'entity_id',
                                                                                          'id' );
                                                 require_once 'CRM/Core/BAO/File.php';
-                                                list( $path ) = CRM_Core_BAO_File::path( $fileID, $entityId, null, null);
+                                                list( $path ) = CRM_Core_BAO_File::path( $fileDAO->id, $entityId,
+                                                                                         null, null);
                                                 list( $imageWidth, $imageHeight ) = getimagesize( $path );
                                                 require_once 'CRM/Contact/BAO/Contact.php';
                                                 list( $imageThumbWidth, $imageThumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $imageWidth, $imageHeight );
