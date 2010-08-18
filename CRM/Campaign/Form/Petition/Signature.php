@@ -277,7 +277,8 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			fb_log_exception($e, t('Failed lookup of %fbu.', array('%fbu' => $fbu)));
 		  }
 		}
-		
+
+//???		print_r($GLOBALS['_SESSION']['fb_user_fbu']);
         $this->setDefaults( $this->_defaults );
     }
     
@@ -306,8 +307,16 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
         // add fbconnect button if fb module installed and primary application available                   
 		$fbapp = variable_get(FB_CONNECT_VAR_PRIMARY, NULL);		
 		if (($fbapp <> NULL) && (!$this->_loggedIn)) {
-			$this->assign( 'fbconnect', fb_connect_block('view','login_'.$fbapp) );
+//			$this->assign( 'fbconnect', fb_connect_block('view','login_'.$fbapp) );
+//			$fbconnect = fb_connect_block('view','login_'.$fbapp);
+			$fbconnect = '<fb:login-button perms="!perms" onlogin="FB_JS.reload();" v="2"><fb:intl>Connect with Facebook</fb:intl></fb:login-button>';
+			// substitute perms
+			$perms = array();
+			drupal_alter('fb_required_perms', $perms);
+			$fbconnect = str_replace('!perms', implode(',', $perms), $fbconnect);
+			$this->assign( 'fbconnect', $fbconnect);
     	}
+    	
     }
     
     /**

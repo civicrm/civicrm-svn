@@ -29,7 +29,7 @@
 
 {if !$contact_id}
 	{if !empty($fbconnect)}
-		<div>{ts}Sign using your Facebook Account{/ts} {$fbconnect.content} <div>
+		<div>{ts}Sign using your Facebook Account{/ts} {$fbconnect} <div>
 		<div id="nofb">{ts}Don't have a facebook account? <a href="#signwithoutfb" id="signwithoutfb">Sign here</a>{/ts} </div>
 	
 		{literal}
@@ -39,6 +39,7 @@
 			   $('.crm-group').hide();//not sure we need to hide the sign button
 			   $('.crm-submit-buttons').hide();
 			   $('#signwithoutfb').click( function(){$('.crm-group').slideDown();});
+			   Drupal.settings.fb.reload_url = windows.location;
 			});
 		
 		</script>
