@@ -443,14 +443,19 @@ function _civicrm_member_roles_sync($ext_uid = NULL)
         //Get all memberships of contact
         require_once 'api/v2/Membership.php';
         $memberships = civicrm_contact_memberships_get( $cid );
+        $contactMemberships = CRM_Utils_Array::value( $cid, $memberships, array( ));
+        if ( empty($contactMemberships) ) {
+            db_query('DELETE  FROM {users_roles} WHERE uid = '.$uid );
+            continue;
+        }
         $currentRoleIds = $expiredRoleIds = array( );
         $addAcount = $removeAccount = array( );
-        while ($ruleValues = db_fetch_object($rules)) {
+        while ( $ruleValues = db_fetch_object( $rules ) ) {
             $codes = unserialize($ruleValues->status_codes);
             $rid = $ruleValues->rid;
             $addRule = false;
             $removeRule = true;
-            foreach ($memberships[$cid] as $membership) {
+            foreach ( $contactMemberships as $membership ) {
                 //If the record has the correct status, then
                 //+ set up the Drupal user to either have a role added or removed
                 //+ save the role id ($rid) in $roles array for final processing loop
