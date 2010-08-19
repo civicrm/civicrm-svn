@@ -208,8 +208,9 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
         }
 
         if ( CRM_Utils_Array::value( 'newGroupName', $fields ) ) {
-            if ( !CRM_Utils_Rule::objectExists( trim( $fields['newGroupName'] ),
-                                                array( 'CRM_Contact_DAO_Group', null, 'title' ) ) ) {
+            $title = CRM_Utils_String::titleToVar( $fields['newGroupName'] );
+            if ( !CRM_Utils_Rule::objectExists( trim( $title ),
+                                                array( 'CRM_Contact_DAO_Group' ) ) ) {
                 $errors['newGroupName'] = ts( 'Group \'%1\' already exists.',
                                               array( 1 => $fields['newGroupName']));
                 $invalidGroupName = true;
