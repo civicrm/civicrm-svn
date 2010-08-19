@@ -342,15 +342,16 @@ class CRM_Group_Form_Edit extends CRM_Core_Form
         if ( (count($parentGroups) >= 1) && (($grpRemove - $grpAdd) >=  count($parentGroups)) ) {
             $errors['parents'] = ts( 'Make sure at least one parent group is set.' );
         }
-
+        
         // do check for both name and title uniqueness
         if ( CRM_Utils_Array::value( 'title', $fields ) ) {
             $title = trim( $fields['title'] );
             $name  = CRM_Utils_String::titleToVar( $title );
-            if ( !CRM_Utils_Rule::objectExists( $title, array( 'CRM_Contact_DAO_Group', null, 'title' ) ) ||
-                 !CRM_Utils_Rule::objectExists( $name,  array( 'CRM_Contact_DAO_Group', null, 'name'  ) ) ) {
-                $errors['title'] = ts( 'Group name \'%1\' already exists.',
-                                       array( 1 => $fields['title']) );
+            $query  = 'select count(*) from civicrm_group where name like %1 OR title like %2';
+            $grpCnt = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $name,  'String' ),
+                                                                     2 => array( $title, 'String' ) ) );
+            if ( $grpCnt ) {
+                $errors['title'] = ts( 'Group \'%1\' already exists.', array( 1 => $fields['title']) );
             }
         }
 

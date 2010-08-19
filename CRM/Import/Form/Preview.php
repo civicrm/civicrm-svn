@@ -210,14 +210,12 @@ class CRM_Import_Form_Preview extends CRM_Core_Form {
         if ( CRM_Utils_Array::value( 'newGroupName', $fields ) ) {
             $title = trim( $fields['newGroupName'] );
             $name  = CRM_Utils_String::titleToVar( $title );
-
-            if ( !CRM_Utils_Rule::objectExists( $name,
-                                                array( 'CRM_Contact_DAO_Group' ) ) || 
-                 !CRM_Utils_Rule::objectExists( $title,
-                                                array( 'CRM_Contact_DAO_Group', null, 'title' ) ) ) {
-                $errors['newGroupName'] = ts( 'Group \'%1\' already exists.',
-                                              array( 1 => $fields['newGroupName']));
+            $query  = 'select count(*) from civicrm_group where name like %1 OR title like %2';
+            $grpCnt = CRM_Core_DAO::singleValueQuery( $query, array( 1 => array( $name,  'String' ),
+                                                                     2 => array( $title, 'String' ) ) );
+            if ( $grpCnt ) {
                 $invalidGroupName = true;
+                $errors['newGroupName'] = ts( 'Group \'%1\' already exists.', array( 1 => $fields['newGroupName']));
             }
         }
 
