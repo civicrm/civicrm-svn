@@ -147,7 +147,22 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
      */
     function buildQuickForm( ) 
     {
-        $this->addDefaultButtons( ts('Add Voter Reservation'), 'done' );
+        $buttons = array( array ( 'type'      => 'done',
+                                  'name'      => ts('Reserve'),
+                                  'subName'   => 'reserve',
+                                  'isDefault' => true   ) );
+        
+        if ( CRM_Core_Permission::check( 'manage campaign' ) ||
+             CRM_Core_Permission::check( 'administer CiviCampaign' ) ||
+             CRM_Core_Permission::check( 'interview campaign contacts' ) ) { 
+            $buttons[] = array ( 'type'      => 'done',
+                                 'name'      => ts('Reserve and Interview'),
+                                 'subName'   => 'resAndInt' );
+        }
+        $buttons[] = array ( 'type'       => 'back',
+                             'name'      => ts('Cancel') );
+        
+        $this->addButtons( $buttons );
     }
     
     /**
@@ -217,9 +232,20 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
             $status[] = ts( 'Voter Reservation did not add for %1 Contact(s).', 
                             array( 1 => ( count($this->_contactIds) - $countVoters) ) );
         }
-        if ( !empty($status) ) {
-            CRM_Core_Session::setStatus( implode('&nbsp;', $status) );
+        
+        $interviewUrl = null;
+        $buttonName   = $this->controller->getButtonName( );
+        if ( $buttonName == '_qf_Reserve_done_resAndInt' ) {
+            $status[]  = ts( 'Search Voters To Conduct Interview.' );
+            $qfKey     = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+            $urlParams = 'force=1&op=interview';
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= '&qfKey='.$qfKey;
+            $interviewUrl = CRM_Utils_System::url( 'civicrm/survey/search', $urlParams );
         }
+        if ( !empty($status) ) {
+            CRM_Core_Session::setStatus( implode('&nbsp;&nbsp;', $status) );
+        }
+        if ( $interviewUrl ) CRM_Utils_System::redirect( $interviewUrl );
     }
     
 }
