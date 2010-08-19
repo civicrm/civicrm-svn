@@ -33,14 +33,19 @@
 		<div id="nofb">{ts}Don't have a facebook account? <a href="#signwithoutfb" id="signwithoutfb">Sign here</a>{/ts} </div>
 	
 		{literal}
+
 		<script type="text/javascript">
-			jQuery(document).ready(function($) 
-			{
+			jQuery(document).ready(function($) {initCiviPetition($)});
+
+      function initCiviPetition ($) 			{
 			   $('.crm-group').hide();//not sure we need to hide the sign button
 			   $('.crm-submit-buttons').hide();
 			   $('#signwithoutfb').click( function(){$('.crm-group').slideDown();$('.crm-submit-buttons').slideDown();});
 			   Drupal.settings.fb.reload_url = document.baseURI;
 			});		
+
+      //TODO. Check that it is called only once. not sure how not to verify that jquery.init has/has not been fired.
+      initCiviPetition ($);
 		</script>
 		{/literal}
 	{/if}
