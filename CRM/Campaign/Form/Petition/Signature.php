@@ -159,17 +159,17 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         
         //some sanity checks
         if (!$this->_surveyId ) {
-			CRM_Core_Error::fatal( 'Petition id is not valid.' );
+			CRM_Core_Error::fatal( 'Petition id is not valid. (it needs a "sid" in the url).' );
 		} else {
 			//check petition is valid and active
 			require_once 'CRM/Campaign/BAO/Survey.php';
 			$params['id'] = $this->_surveyId;
-			$petition = array();
-			CRM_Campaign_BAO_Survey::retrieve($params,$petition);
-	        if (empty($petition)) {
-				CRM_Core_Error::fatal( 'Petition id is not valid.' );
+			$this->petition = array();
+			CRM_Campaign_BAO_Survey::retrieve($params,$this->petition);
+	        if (empty($this->petition)) {
+				CRM_Core_Error::fatal( 'Petition doesn\'t exist.' );
 			}
-			if ($petition['is_active'] == 0) {
+			if ($this->petition['is_active'] == 0) {
 				CRM_Core_Error::fatal( 'Petition is no longer active.' );
 			}
 		}
@@ -209,6 +209,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 		}
 
         $this->setDefaultValues();
+        CRM_Utils_System::setTitle( $this->petition['title'] );
     }
     
     /**
