@@ -75,7 +75,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 			                          'source_record_id'   => $params['sid'],
 									  'activity_type_id'   => $surveyInfo['activity_type_id'],
 									  'activity_date_time' => date("YmdHis"), 
-									  'status_id'          => 2 );
+									  'status_id'          => $params['statusId'] );
 									  			
 			//activity creation
         	// *** check for activity using source id - if already signed
@@ -186,6 +186,50 @@ WHERE 	a.source_record_id = " . $surveyId . "
         }
         return $contactIds;
     }
+
+
+     /**
+     * Function to check if contact has signed this petition
+     * 
+     * @param boolean $all
+     * @param int $id
+     * @static
+     */
+    static function checkSignature( $surveyId, $contactId ) {
+    
+    	$surveyInfo = CRM_Campaign_BAO_Petition::getSurveyInfo($surveyId);
+        $signature = array( );	
+
+        $sql = "
+SELECT 	a.id AS id,
+		a.source_record_id AS source_record_id,
+		a.source_contact_id AS source_contact_id,
+		a.activity_date_time AS activity_date_time,
+		a.activity_type_id AS activity_type_id,
+		a.status_id AS status_id," .
+		"'" . $surveyInfo['title'] . "'" ." AS survey_title 
+FROM  	civicrm_activity a
+WHERE 	a.source_record_id = " . $surveyId . " 
+	AND a.activity_type_id = " . $surveyInfo['activity_type_id'] . "
+	AND a.source_contact_id = " . $contactId;
+
+        require_once 'CRM/Contact/BAO/Contact.php'; 
+
+        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        while ( $dao->fetch() ) {
+           $signature[$dao->id]['id'] = $dao->id;     
+           $signature[$dao->id]['source_record_id'] = $dao->source_record_id;
+           $signature[$dao->id]['source_contact_id'] = CRM_Contact_BAO_Contact::displayName($dao->source_contact_id);
+           $signature[$dao->id]['activity_date_time'] = $dao->activity_date_time;
+           $signature[$dao->id]['activity_type_id'] = $dao->activity_type_id;   
+           $signature[$dao->id]['status_id'] = $dao->status_id;
+           $signature[$dao->id]['survey_title'] = $dao->survey_title;
+           $signature[$dao->id]['contactId'] = $dao->source_contact_id;
+        }
+        
+        return $signature;
+    }
+
 
     /**
      * takes an associative array and sends a thank you or email verification email

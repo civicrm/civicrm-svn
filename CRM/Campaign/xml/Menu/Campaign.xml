@@ -93,4 +93,10 @@
      <access_arguments>sign CiviCRM Petition</access_arguments>
      <is_public>true</is_public>
   </item>
+   <item>
+     <path>civicrm/petition/thankyou</path>
+     <title>Thank You</title>
+     <page_callback>CRM_Campaign_Page_Petition_ThankYou</page_callback>
+     <access_arguments>sign CiviCRM Petition</access_arguments>
+  </item>
  </menu>

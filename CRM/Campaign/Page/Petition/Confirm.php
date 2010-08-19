@@ -97,6 +97,7 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
         $ce->time_stamp = date('YmdHis');
         $ce->save();
         
+        
         require_once 'CRM/Contact/BAO/GroupContact.php';
         CRM_Contact_BAO_GroupContact::updateGroupMembershipStatus( $contact_id, $se->group_id,
                                                                    'Email',$ce->id);

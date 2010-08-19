@@ -287,7 +287,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     	//get the survey id
         $this->_surveyId 	= CRM_Utils_Request::retrieve('sid', 'Positive', $this );
         if (!$this->_surveyId) {
-die ("TODO: displays list of active petition (&sid={petition id} missing in the URL)");
+			die ("TODO: displays list of active petition (&sid={petition id} missing in the URL)");
         }
         $this->applyFilter('__ALL__','trim');
 
@@ -408,6 +408,7 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
 	    //dupesByParams($params, $ctype, $level = 'Strict', $except = array())
         $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']);		
 		
+		
 		switch (count($ids)) {
 			case 0:
 				//no matching contacts - create a new contact				
@@ -418,44 +419,75 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
 				// Add a source for this new contact
 				$params['source'] = 'Online Petition Signature - ' . $petition['title'];
 				$this->_sendEmailMode = 3;
+				// Set status for signature activity to scheduled until email is verified
+				$params['statusId'] = 1;
 				break;
 			case 1:
 				$this->_contactId = $ids[0];
 
+				// check if user has already signed this petition - redirects to Thank You if true
+				$this->checkPetitionSigned();
+				
 				// dedupe matched single contact, check for 'unconfirmed' tag				
 				if (defined('CIVICRM_TAG_UNCONFIRMED')) {
 					require_once 'CRM/Core/DAO/EntityTag.php';
 					$tag =& new CRM_Core_DAO_EntityTag( );
-					$tag->contact_id = $this->_contactId;
+					$tag->entity_id  = $this->_contactId;
 					$tag->tag_id     = $this->_tagId;
 					
 					if (  !($tag->find( )) ) {
 						// send thank you email
 						$this->_sendEmailMode = 1;
+						// Set status for signature activity to completed
+						$params['statusId'] = 2;
 					} else {
 						// send email verification email
 						$this->_sendEmailMode = 3;
+						// Set status for signature activity to scheduled until email is verified
+						$params['statusId'] = 1;
 					}
 				}   				
 				break;
 			default:
 				// more than 1 matching contact
-				// *** handle multiple dupes
-				// for time being, take the first matching contact
+				// TODO: handle multiple dupes - for time being, take the first matching contact
 				$this->_contactId = $ids[0];
+				
+				// check if user has already signed this petition
+				$signature = CRM_Campaign_BAO_Petition::checkSignature( $this->_surveyId, $this->_contactId );
+				//TODO: error case when more than one signature found for this petition and this contact
+				if ( !empty($signature) && (count($signature) == 1)) {
+					$signature_id = array_keys($signature);
+					switch ($signature[$signature_id[0]]['status_id']) {
+						case 1: //status is scheduled - email is unconfirmed
+							$session->pushUserContext(CRM_Utils_System::url('civicrm/petition/thankyou', 'id=4&reset=1'));
+							return;
+							break;
+						
+						case 2: //status is completed 
+							$session->pushUserContext(CRM_Utils_System::url('civicrm/petition/thankyou', 'id=5&reset=1'));
+							return;
+							break;
+					}
+				}
+				
 				// dedupe matched single contact, check for 'unconfirmed' tag				
 				if (defined('CIVICRM_TAG_UNCONFIRMED')) {
 					require_once 'CRM/Core/DAO/EntityTag.php';
 					$tag =& new CRM_Core_DAO_EntityTag( );
-					$tag->contact_id = $this->_contactId;
+					$tag->entity_id  = $this->_contactId;
 					$tag->tag_id     = $this->_tagId;
 					
 					if (  !($tag->find( )) ) {
 						// send thank you email
 						$this->_sendEmailMode = 1;
+						// Set status for signature activity to completed
+						$params['statusId'] = 2;						
 					} else {
 						// send email verification email
 						$this->_sendEmailMode = 3;
+						// Set status for signature activity to scheduled until email is verified
+						$params['statusId'] = 1;
 					}
 				}				
 				break;
@@ -481,8 +513,8 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
 																	   $this->_contactProfileId, $this->_ctype,
 																	   true );
 
-			// get additional custom activity profile field data to save when creating
-			// signature activity record
+			// get additional custom activity profile field data 
+			// to save with new signature activity record
 			$surveyInfo = CRM_Campaign_BAO_Petition::getSurveyInfo($this->_surveyId);
             $customActivityFields     = 
                 CRM_Core_BAO_CustomField::getFields( 'Activity', false, false, 
@@ -502,6 +534,13 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
 			$result = CRM_Campaign_BAO_Petition::createSignature( $params );
 
 			// send thank you or email verification emails
+			/* 
+			 * sendEmailMode
+			 * 1 = connected user via login/pwd - thank you
+			 * 	 or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
+			 * 2 = login using fb connect - thank you + click to add msg to fb wall
+			 * 3 = send a confirmation request email     
+			 */
 			switch ($this->_sendEmailMode) {
 				case 1:					
 					break;
@@ -518,16 +557,12 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
 					$tag_value = civicrm_entity_tag_add($tag_params);					
 					break;
 			}
-		    CRM_Campaign_BAO_Petition::sendEmail( $params, $this->_sendEmailMode );
+		    //CRM_Campaign_BAO_Petition::sendEmail( $params, $this->_sendEmailMode );
 
 			$transaction->commit( );
-
 		
 		if ( $result ) {
-			$statusMsg = $statusMsg . ts( 'Petition signature has been saved. ' );
-			$session = CRM_Core_Session::singleton();
-			CRM_Core_Session::setStatus( $statusMsg );
-			$session->pushUserContext(CRM_Utils_System::url('civicrm/dashboard', 'reset=1'));
+			CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/petition/thankyou', 'id=' . $this->_sendEmailMode . '&reset=1'));
 		}        
     }   
     
@@ -598,6 +633,24 @@ die ("TODO: displays list of active petition (&sid={petition id} missing in the 
         }
     }
         
+    // check if user has already signed this petition    
+	function checkPetitionSigned()
+	{		
+		$signature = CRM_Campaign_BAO_Petition::checkSignature( $this->_surveyId, $this->_contactId );
+		//TODO: error case when more than one signature found for this petition and this contact
+		if ( !empty($signature) && (count($signature) == 1)) {
+			$signature_id = array_keys($signature);
+			switch ($signature[$signature_id[0]]['status_id']) {
+				case 1: //status is scheduled - email is unconfirmed
+					CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/petition/thankyou', 'id=4&reset=1'));
+					break;
+				
+				case 2: //status is completed 
+					CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/petition/thankyou', 'id=5&reset=1'));
+					break;
+			}
+		}	
+	}
     
     
 }
