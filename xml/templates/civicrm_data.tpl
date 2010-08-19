@@ -244,7 +244,7 @@ SELECT @eventCompId      := max(id) FROM civicrm_component where name = 'CiviEve
 SELECT @memberCompId     := max(id) FROM civicrm_component where name = 'CiviMember';
 SELECT @pledgeCompId     := max(id) FROM civicrm_component where name = 'CiviPledge';
 SELECT @caseCompId       := max(id) FROM civicrm_component where name = 'CiviCase';
-
+SELECT @grantCompId      := max(id) FROM civicrm_component where name = 'CiviGrant';
 
 INSERT INTO 
    `civicrm_option_value` (`option_group_id`, `label`, `value`, `name`, `grouping`, `filter`, `is_default`, `weight`, `description`, `is_optgroup`, `is_reserved`, `is_active`, `component_id`, `visibility_id`) 
@@ -482,6 +482,7 @@ VALUES
   (@option_group_id_report , '{ts escape="sql"}Database Log Report{/ts}',                     'contact/log',                    'CRM_Report_Form_Contact_Log',                    NULL, 0, NULL, 27, '{ts escape="sql"}Log of contact and activity records created or updated in a given date range.{/ts}', 0, 0, 1, NULL, NULL),
   (@option_group_id_report , '{ts escape="sql"}Activity Report (Summary){/ts}',               'activitySummary',                'CRM_Report_Form_ActivitySummary',                NULL, 0, NULL, 28, '{ts escape="sql"}Shows activity statistics by type / date{/ts}', 0, 0, 1, NULL, NULL),
   (@option_group_id_report, '{ts escape="sql"}Bookkeeping Transactions Report{/ts}',          'contribute/bookkeeping',         'CRM_Report_Form_Contribute_Bookkeeping',         NULL, 0, 0, 29,    '{ts escape="sql"}Shows Bookkeeping Transactions Report{/ts}', 0, 0, 1, 2, NULL),
+  (@option_group_id_report , '{ts escape="sql"}Grant Report{/ts}',                             'grant', 'CRM_Report_Form_Grant', NULL, 0, 0, 30,  '{ts escape="sql"}Grant Report{/ts}', 0, 0, 1, @grantCompId, NULL),
   
   (@option_group_id_acs, '{ts escape="sql"}Scheduled{/ts}',  1, 'Scheduled',  NULL, 0, 1,    1, NULL, 0, 1, 1, NULL, NULL),
   (@option_group_id_acs, '{ts escape="sql"}Completed{/ts}',  2, 'Completed',  NULL, 0, NULL, 2, NULL, 0, 1, 1, NULL, NULL),
