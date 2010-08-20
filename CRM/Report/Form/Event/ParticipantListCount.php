@@ -186,6 +186,7 @@ class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form {
 	function statistics( &$rows ) {
 		
         $statistics = parent::statistics( $rows );
+        $avg = null;
         $select	=	" SELECT SUM( {$this->_aliases['civicrm_line_item']}.participant_count ) as count,
 									SUM( {$this->_aliases['civicrm_line_item']}.line_total )	 as amount
 						";
