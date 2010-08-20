@@ -140,7 +140,8 @@ class CRM_Report_Form_Grant extends CRM_Report_Form {
                                'grant_due_date'=>
                                array(
                                      'title'        => ts('Grant Due Date'),
-                                     'operatorType' => CRM_Report_Form::OP_DATE ),
+                                     'operatorType' => CRM_Report_Form::OP_DATE,
+                                     'type' => CRM_Report_Form::OP_DATE),
                                
                                ),
                          'group_bys'=>
