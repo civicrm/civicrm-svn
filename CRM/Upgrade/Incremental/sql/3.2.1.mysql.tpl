@@ -29,10 +29,14 @@ VALUES
 --CRM-6565
 ALTER TABLE civicrm_activity
 ADD INDEX UI_source_record_id(source_record_id),
-ADD INDEX UI_activity_type_id (activity_type_id),
 ADD INDEX index_medium_id (medium_id),
 ADD INDEX index_is_current_revision (is_current_revision),
 ADD INDEX index_is_deleted (is_deleted);
+
+{if $addActivityTypeIndex}
+ALTER TABLE civicrm_activity
+ADD INDEX UI_activity_type_id (activity_type_id);
+{/if}
 
 -- CRM-6622
 SELECT @uf_group_id_summary   := max(id) FROM civicrm_uf_group WHERE name = 'summary_overlay';
