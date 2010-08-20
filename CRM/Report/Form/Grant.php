@@ -115,7 +115,7 @@ class CRM_Report_Form_Grant extends CRM_Report_Form {
                                      'operatorType'   => CRM_Report_Form::OP_MULTISELECT,
                                      'options'      => CRM_Grant_PseudoConstant::grantType( ),
                                      ),
-                               'grant_status'  => 
+                               'status_id'  => 
                                array( 
                                      'name'         => 'status_id',
                                      'title'        => ts('Grant Status' ),
@@ -148,7 +148,7 @@ class CRM_Report_Form_Grant extends CRM_Report_Form {
                                'grant_type_id' => 
                                array( 
                                      'title'        => ts( 'Grant Type' )),
-                               'grant_status'  => 
+                               'status_id'  => 
                                array( 
                                      'title'        => ts('Grant Status' )),
                                'amount_requested'   =>
