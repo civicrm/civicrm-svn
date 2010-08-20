@@ -109,7 +109,10 @@ class CRM_Utils_OpenFlashChart
                         
         // set the tooltip.
         $bar->set_tooltip( "$symbol #val#" );
-        
+        if( isset( $params['tip'] ) ) {
+            $bar->set_tooltip( $params['tip'] );;
+        }
+
         // create x axis label obj.
         $xLabels = new x_axis_labels( );
         $xLabels->set_labels( $xValues );
@@ -205,6 +208,9 @@ class CRM_Utils_OpenFlashChart
         
         // set the tooltip.
         $pie->set_tooltip( "Amount is $symbol #val# of $symbol #total# <br>#percent#" );
+        if( isset( $params['tip'] ) ) {
+            $pie->set_tooltip( $params['tip'] );
+        }
         
         // set colours.
         $pie->set_colours( self::$_colours );

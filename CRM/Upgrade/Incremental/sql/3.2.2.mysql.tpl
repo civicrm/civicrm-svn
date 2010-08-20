@@ -15,12 +15,15 @@ SELECT @reportlastID    := id FROM civicrm_navigation where name = 'Reports';
 SELECT @ogrID           := max(id) from civicrm_option_group where name = 'report_template';
 SELECT @nav_max_weight  := MAX(ROUND(weight)) from civicrm_navigation WHERE parent_id = @reportlastID;
 SELECT @grantCompId     := max(id) FROM civicrm_component where name = 'CiviGrant';
+SELECT @eventCompId     := max(id) FROM civicrm_component where name = 'CiviEvent';
 SELECT @max_weight      := MAX(ROUND(weight)) from civicrm_option_value WHERE option_group_id = @ogrID;
 
 INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight,{localize field='description'} description{/localize}, is_optgroup,is_reserved, is_active, component_id, visibility_id ) 
 VALUES
-    (@ogrID  , '{ts escape="sql"}Grant Report{/ts}',                             'grant', 'CRM_Report_Form_Grant', NULL, 0, 0,  @max_weight+1, '{ts escape="sql"}Grant Report{/ts}', 0, 0, 1, @grantCompId, NULL);
+    (@ogrID  , '{ts escape="sql"}Grant Report{/ts}', 'grant', 'CRM_Report_Form_Grant', NULL, 0, 0,  @max_weight+1, '{ts escape="sql"}Grant Report{/ts}', 0, 0, 1, @grantCompId, NULL),
+    (@ogrID, {localize}'{ts escape="sql"}Participant list Count Report{/ts}'{/localize}, 'event/participantlist', 'CRM_Report_Form_Event_ParticipantListCount', NULL, 0, 0, @max_weight+2, {localize}'{ts escape="sql"}Shows the Participant list with Participant Count.{/ts}'{/localize}, 0, 0, 1, @eventCompId, NULL),
+    (@ogrID, {localize}'{ts escape="sql"}Income Count Summary Report{/ts}'{/localize}, 'event/incomesummary', 'CRM_Report_Form_Event_IncomeCountSummary', NULL, 0, 0, @max_weight+3, {localize}'{ts escape="sql"}Shows the Income Summary of events with Count.{/ts}'{/localize}, 0, 0, 1, @eventCompId, NULL);
  
 INSERT INTO `civicrm_report_instance`
     ( `domain_id`, `title`, `report_id`, `description`, `permission`, `form_values`)
@@ -33,4 +36,4 @@ INSERT INTO civicrm_navigation
 VALUES
     ( @domainID, CONCAT('civicrm/report/instance/', @instanceID,'&reset=1'), '{ts escape="sql"}Grant Report{/ts}', '{literal}Grant Report{/literal}', 'access CiviGrant', '',@reportlastID, '1', NULL, @nav_max_weight+1 );
 
-UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @instanceID;  
+UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @instanceID;
