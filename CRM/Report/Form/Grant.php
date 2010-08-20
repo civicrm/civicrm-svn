@@ -73,6 +73,7 @@ class CRM_Report_Form_Grant extends CRM_Report_Form {
                                array( 
                                      'name'      => 'amount_requested' ,
                                      'title'     => ts( 'Amount Requested' ),
+                                     'type'      => CRM_Utils_Type::T_MONEY
                                       ),
                                'amount_granted'   =>
                                array( 
@@ -89,11 +90,13 @@ class CRM_Report_Form_Grant extends CRM_Report_Form {
                                array( 
                                      'name'      => 'money_transfer_date' ,
                                      'title'     => ts( 'Money Transfer Date' ),
+                                     'type' => CRM_Utils_Type::T_DATE
                                       ),
                                'grant_due_date'=>
                                array( 
                                      'name'      => 'grant_due_date' ,
                                      'title'     => ts( 'Grant Due Date' ),
+                                     'type' => CRM_Utils_Type::T_DATE
                                       ),
                                'rationale'=>
                                array( 
