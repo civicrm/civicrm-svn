@@ -335,7 +335,23 @@ function civicrm_member_roles_add_rule_form_validate($form, &$form_state)
   
     //Validate edit flag if set
     if (isset($form_state['values']['edit_flag']) && !is_numeric($form_state['values']['edit_flag'])) {
-        for_set_error('', t('Edit flag was not numeric.'));
+        form_set_error('', t('Edit flag was not numeric.'));
+    }
+    
+    //Validate duplicate rules
+    if ( !isset( $form_state['values']['edit_flag'] ) ) {
+        $result = false;
+        $membershipTypeId = (int) $form_state['values']['add_rule']['select_membership'];
+        $roleId           = (int) $form_state['values']['add_rule']['select_role'];
+        $sql = db_query( "SELECT * FROM {civicrm_member_roles_rules} WHERE rid = %d AND type_id = %d", 
+                         $roleId, $membershipTypeId );
+        while( $values = db_fetch_object( $sql ) ) {
+            if ( $values ) {
+                $result = true;
+                break;
+            }
+        }
+        if ( $result ) form_set_error('', t('This rule set is already exist in data base.'));
     }
 }
 
@@ -413,9 +429,10 @@ function _civicrm_member_roles_sync($ext_uid = NULL)
         while ($result = db_fetch_object($rules)) {
             $all_rule_membership_types[] = $result->type_id;
         }
+        if ( empty( $all_rule_membership_types ) ) return FALSE;
         $memTypes = implode(",",$all_rule_membership_types);
         // OPTIMIZATION: "SELECT DISTINCT contact_id" would be better if field were indexed
-        $sql ="SELECT DISTINCT contact_id FROM civicrm_membership WHERE membership_type_id IN (". $memTypes .");";
+        $sql ="SELECT DISTINCT contact_id FROM civicrm_uf_match";
         $contacts = CRM_Core_DAO::executeQuery ($sql,CRM_Core_DAO::$_nullArray);
         if ($contacts->N == 0) {
             return FALSE;
@@ -437,25 +454,38 @@ function _civicrm_member_roles_sync($ext_uid = NULL)
     
     while ( $contacts->fetch() ) {
         $cid = $contacts->contact_id;
-        if ( empty($ext_uid) ) $uid = CRM_Core_BAO_UFMatch::getUFId($cid);
+        $uid = CRM_Core_BAO_UFMatch::getUFId($cid);
         if ( empty($uid) ) continue;
         
         //Get all memberships of contact
         require_once 'api/v2/Membership.php';
         $memberships = civicrm_contact_memberships_get( $cid );
         $contactMemberships = CRM_Utils_Array::value( $cid, $memberships, array( ));
-        if ( empty($contactMemberships) ) {
-            db_query('DELETE  FROM {users_roles} WHERE uid = '.$uid );
-            continue;
-        }
         $currentRoleIds = $expiredRoleIds = array( );
         $addAcount = $removeAccount = array( );
-        while ( $ruleValues = db_fetch_object( $rules ) ) {
-            $codes = unserialize($ruleValues->status_codes);
-            $rid = $ruleValues->rid;
+        
+        $memberRules = db_query('SELECT * FROM {civicrm_member_roles_rules}');
+        while ( $ruleValues = db_fetch_object( $memberRules ) ) {
+            $codes  = unserialize($ruleValues->status_codes);
+            $rid    = $ruleValues->rid;
+            $typeId = $ruleValues->type_id;
+            
             $addRule = false;
             $removeRule = true;
-            foreach ( $contactMemberships as $membership ) {
+            
+            // If contact doesn't have any membeship lets unset the membership rule roles.
+            if ( empty( $contactMemberships ) ) {
+                db_query('DELETE  FROM {users_roles} WHERE uid = '.$uid.' AND rid = '.$rid );
+                continue;
+            }
+            
+            foreach ( $contactMemberships as $membership ) { 
+                if ( !empty( $contactMemberships ) ) {
+                    if ( $membership['membership_type_id'] != $typeId ) { 
+                        db_query('DELETE  FROM {users_roles} WHERE uid = '.$uid.' AND rid = '.$rid );
+                        continue;
+                    }
+                }
                 //If the record has the correct status, then
                 //+ set up the Drupal user to either have a role added or removed
                 //+ save the role id ($rid) in $roles array for final processing loop
