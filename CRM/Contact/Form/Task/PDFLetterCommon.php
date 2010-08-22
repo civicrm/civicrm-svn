@@ -35,9 +35,8 @@
  */
 
 /**
- * This class provides the common functionality for sending email to
- * one or a group of contact ids. This class is reused by all the search
- * components in CiviCRM (since they all have send email as a task)
+ * This class provides the common functionality for creating PDF letter for
+ * one or a group of contact ids.
  */
 class CRM_Contact_Form_Task_PDFLetterCommon
 {
@@ -69,6 +68,9 @@ class CRM_Contact_Form_Task_PDFLetterCommon
     static function preProcessSingle( &$form, $cid )
     {
         $form->_contactIds = array( $cid );
+        // put contact display name in title for single contact mode
+        require_once 'CRM/Contact/Page/View.php';
+        CRM_Contact_Page_View::setTitle( $cid );
     }
 
 
@@ -84,8 +86,24 @@ class CRM_Contact_Form_Task_PDFLetterCommon
 
         require_once "CRM/Mailing/BAO/Mailing.php";
         CRM_Mailing_BAO_Mailing::commonLetterCompose( $form );
-        
-        $form->addDefaultButtons( ts('Make PDF Letters') );
+        if ( $form->_single ){
+            $cancelURL   = CRM_Utils_System::url('civicrm/contact/view',
+                                                 "reset=1&cid={$form->_cid}&selectedChild=activity",
+                                                 false, null, false);
+    
+            $form->addButtons( array(
+                                     array ( 'type'      => 'submit',
+                                             'name'      => ts('Make PDF Letter'),
+                                             'isDefault' => true   ),
+                                     array ( 'type'      => 'cancel',
+                                             'name'      => ts('Done'),
+                                             'js'        => array( 'onclick' => "location.href='{$cancelURL}'; return false;" ) ),
+                                     )
+                               );
+            
+        } else {
+            $form->addDefaultButtons( ts('Make PDF Letters') );            
+        }
         
         $form->addFormRule( array( 'CRM_Contact_Form_Task_PDFLetterCommon', 'formRule' ), $form );
     }
