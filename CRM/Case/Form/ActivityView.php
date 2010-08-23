@@ -133,7 +133,7 @@ class CRM_Case_Form_ActivityView extends CRM_Core_Form
         
         $activityTargetContacts = CRM_Activity_BAO_ActivityTarget::retrieveTargetIdsByActivityId( $activityID ); 
         if (!empty( $activityTargetContacts ) ) {
-            $recentContactId = $activityTargetContacts[1];
+            $recentContactId = $activityTargetContacts[0];
         } else {
             $recentContactId = $contactID; 
         }

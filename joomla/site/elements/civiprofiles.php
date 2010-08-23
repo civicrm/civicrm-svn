@@ -47,8 +47,8 @@ class JElementCiviprofiles extends JElement {
 		require_once 'api/v2/UFGroup.php';
         $ufGroups =civicrm_uf_profile_groups_get();
         $options[] = JHTML::_('select.option', '', JText::_('- Select Profile -') );
-        foreach ( $ufGroups  as $key =>$value ) {
-            $options[] = JHTML::_( 'select.option', $key, $value );
+        foreach ( $ufGroups  as $key =>$values ) {
+            $options[] = JHTML::_( 'select.option', $key, $values );
         }
         return JHTML::_( 'select.genericlist', $options, 'params[gid]', null, 'value', 'text', $value );
 	}

@@ -303,7 +303,6 @@ class CRM_Import_ImportJob {
         if ($newGroupName) {
             /* Create a new group */
             $gParams = array(
-                             'name'          => $newGroupName,
                              'title'         => $newGroupName,
                              'description'   => $newGroupDesc,
                              'is_active'     => true,
