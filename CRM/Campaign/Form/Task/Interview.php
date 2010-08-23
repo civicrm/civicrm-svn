@@ -214,12 +214,22 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                   'name'      => ts('Done'),
                                   'subName'   => 'interview',
                                   'isDefault' => true   ) );
-        if ( CRM_Core_Permission::check( 'manage campaign' ) ||
-             CRM_Core_Permission::check( 'administer CiviCampaign' ) ||
+        
+        $manageCampaign = CRM_Core_Permission::check( 'manage campaign' );
+        $adminCampaign  = CRM_Core_Permission::check( 'administer CiviCampaign' );
+        if ( $manageCampaign ||
+             $adminCampaign  ||
              CRM_Core_Permission::check( 'release campaign contacts' ) ) { 
             $buttons[] = array ( 'type'      => 'done',
-                                 'name'      => ts('Done and Release >>'),
+                                 'name'      => ts('Release Voters >>'),
                                  'subName'   => 'doneANDRelease' );
+        }
+        if ( $manageCampaign ||
+             $adminCampaign  ||
+             CRM_Core_Permission::check( 'reserve campaign contacts' ) ) { 
+            $buttons[] = array ( 'type'      => 'done',
+                                 'name'      => ts('Reserve More Voters >>'),
+                                 'subName'   => 'doneANDReserve' );
         }
         
         $this->addButtons( $buttons );
@@ -246,11 +256,12 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     public function postProcess( ) 
     {
         $buttonName = $this->controller->getButtonName( );
-        if ( $buttonName == '_qf_Interview_done_doneANDRelease' ) {
+        if ( in_array( $buttonName, array( '_qf_Interview_done_doneANDRelease',
+                                           '_qf_Interview_done_doneANDReserve' ) ) ) {
+            $op = strtolower( substr( $buttonName, -7 ) );
+            $urlParams = "force=1&op={$op}";
             $qfKey     = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
-            $urlParams = 'force=1&op=release';
             if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= '&qfKey='.$qfKey;
-            CRM_Core_Session::setStatus( ts( 'Search Voters To Release.' ) );
             CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/survey/search', $urlParams ) );
         }
         
@@ -312,7 +323,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $activity->id = $activityId;
         
         $activity->selectAdd( );
-        $activity->selectAdd( 'activity_date_time, status_id, result' ); 
+        $activity->selectAdd( 'activity_date_time, status_id, result, subject' ); 
         $activity->find( true );
         $activity->activity_date_time = date( 'Ymdhis' );
         $activity->status_id = $statusId;
@@ -322,6 +333,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         if ( $result = CRM_Utils_Array::value( 'result', $params ) ) {
             $activity->result = $result;
         }
+        $activity->subject = CRM_Utils_Array::value( 'subject', $params, ts('Voter Interview') );
         $activity->save( );
         $activity->free( );
         

@@ -232,20 +232,18 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
             $status[] = ts( 'Voter Reservation did not add for %1 Contact(s).', 
                             array( 1 => ( count($this->_contactIds) - $countVoters) ) );
         }
-        
-        $interviewUrl = null;
-        $buttonName   = $this->controller->getButtonName( );
-        if ( $buttonName == '_qf_Reserve_done_resAndInt' ) {
-            $status[]  = ts( 'Search Voters To Conduct Interview.' );
-            $qfKey     = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
-            $urlParams = 'force=1&op=interview';
-            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= '&qfKey='.$qfKey;
-            $interviewUrl = CRM_Utils_System::url( 'civicrm/survey/search', $urlParams );
-        }
         if ( !empty($status) ) {
             CRM_Core_Session::setStatus( implode('&nbsp;&nbsp;', $status) );
         }
-        if ( $interviewUrl ) CRM_Utils_System::redirect( $interviewUrl );
+        
+        $buttonName = $this->controller->getButtonName( );
+        if ( $buttonName == '_qf_Reserve_done_resAndInt' ) {
+            $qfKey     = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+            $urlParams = 'force=1&op=interview';
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= '&qfKey='.$qfKey;
+            CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/survey/search', $urlParams ) );
+        }
+        
     }
     
 }

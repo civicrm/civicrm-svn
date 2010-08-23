@@ -26,7 +26,7 @@
 <div class="form-item">
 <fieldset>
 <div id="help">
-    {ts}Click <strong>vote</strong> button to update values for each voter as needed. click <strong>Done and Release >></strong> button below to continue with release voters.{/ts}
+    {ts}Click <strong>vote</strong> button to update values for each voter as needed. <br />Click <strong>Release Voters >></strong> button below to continue for release voters. <br />Click <strong>Reserve More Voters >></strong> button below to continue for reserve voters. {/ts}
 </div>
 
 {if $voterDetails}
