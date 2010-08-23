@@ -1210,12 +1210,16 @@ GROUP BY cc.id';
 
         require_once 'CRM/Utils/Mail.php';
         require_once 'CRM/Contact/BAO/Contact/Location.php';        
-        $tplParams = array();
-
-        $activityInfo   = array( );
+        $tplParams = $activityInfo = array( );
         //if its a case activity
         if ( $caseId ) {
-            $anyActivity = false; 
+            $activityTypeId       = CRM_Core_DAO::getFieldValue('CRM_Activity_DAO_Activity', $activityId, 'activity_type_id');
+            $nonCaseActivityTypes = CRM_Core_PseudoConstant::activityType( );
+            if ( CRM_Utils_Array::value( $activityTypeId, $nonCaseActivityTypes ) ) {
+                $anyActivity = true;
+            } else {
+                $anyActivity = false; 
+            }
             $tplParams['isCaseActivity'] = 1;
         } else {
             $anyActivity = true;

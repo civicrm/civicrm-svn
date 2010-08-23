@@ -400,7 +400,7 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
         $isMultiClient = $xmlProcessorProcess->getAllowMultipleCaseClients( );
         $this->assign( 'multiClient', $isMultiClient );
         
-        $targetContacts = array( );
+        $targetContacts =  array( $this->_currentlyViewedContactId );
         if ( CRM_Utils_Array::value( 'hidden_target_contact', $params ) && 
              CRM_Utils_Array::value( 'target_contact_id', $params ) ) {
             $targetContacts = array_unique( explode( ',', $params['target_contact_id'] ) );

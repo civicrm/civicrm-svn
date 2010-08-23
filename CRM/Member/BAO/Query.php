@@ -63,9 +63,9 @@ class CRM_Member_BAO_Query
             $query->_whereTables['civicrm_membership'] = 1;
            
             //add membership type
-            if ( CRM_Utils_Array::value( 'membership_type_id', $query->_returnProperties ) ) {
-                $query->_select['membership_type_id']  = "civicrm_membership_type.name as membership_type_id";
-                $query->_element['membership_type_id'] = 1;
+            if ( CRM_Utils_Array::value( 'membership_type', $query->_returnProperties ) ) {
+                $query->_select['membership_type']  = "civicrm_membership_type.name as membership_type";
+                $query->_element['membership_type'] = 1;
                 $query->_tables['civicrm_membership_type'] = 1;
                 $query->_whereTables['civicrm_membership_type'] = 1;
             }
@@ -313,7 +313,7 @@ class CRM_Member_BAO_Query
                                 'contact_sub_type'       => 1, 
                                 'sort_name'              => 1, 
                                 'display_name'           => 1,
-                                'membership_type_id'     => 1,
+                                'membership_type'        => 1,
                                 'member_is_test'         => 1, 
                                 'member_is_pay_later'    => 1, 
                                 'join_date'              => 1,

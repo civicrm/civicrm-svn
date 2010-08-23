@@ -34,6 +34,12 @@
     {assign var='elementId'   value=$form.$elementName.$elementIndex.id}
     {assign var="timeElement" value=$elementName|cat:"_time.$elementIndex"}
     {$form.$elementName.$elementIndex.html|crmReplace:class:dateplugin}
+{elseif $blockId and $blockSection}
+    {assign var='elementId'   value=$form.$blockSection.$blockId.$elementName.id}
+    {assign var="tElement" value=`$elementName`_time}
+    {$form.$blockSection.$blockId.$elementName.html|crmReplace:class:dateplugin}
+    {assign var="timeElement" value=`$blockSection`_`$blockId`_`$elementName`_time}
+    &nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.label}&nbsp;&nbsp;{$form.$blockSection.$blockId.$tElement.html|crmReplace:class:six}
 {else}
     {assign var='elementId'   value=$form.$elementName.id}
     {assign var="timeElement" value=$elementName|cat:'_time'}

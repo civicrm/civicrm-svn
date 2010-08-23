@@ -603,9 +603,9 @@ class CRM_Contact_Selector extends CRM_Core_Selector_Base implements CRM_Core_Se
                     $greeting = $property.'_display';
                     $row[$property] = $result->$greeting;
                 } elseif ($property == 'country') {
-                    $row[$property] = $countries[$result->country_id];
+                    $row[$property] = CRM_Utils_Array::value( $result->country_id, $countries );
                 } elseif ($property == 'state_province') {
-                    $row[$property] = $provinces[$result->state_province_id];
+                    $row[$property] = CRM_Utils_Array::value( $result->state_province_id, $provinces );
                 } elseif ($property == 'world_region') {
                     $row[$property] = $regions[$result->world_region_id];
                 } else {

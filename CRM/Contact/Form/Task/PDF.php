@@ -41,8 +41,8 @@ require_once 'CRM/Core/Menu.php';
 require_once 'CRM/Core/BAO/CustomGroup.php';
 require_once 'CRM/Contact/BAO/Contact.php';
 /**
- * This class provides the functionality to email a group of
- * contacts. 
+ * This class provides the functionality to create PDF letter for a group of
+ * contacts or a single contact. 
  */
 class CRM_Contact_Form_Task_PDF extends CRM_Contact_Form_Task {
     /**
@@ -53,6 +53,9 @@ class CRM_Contact_Form_Task_PDF extends CRM_Contact_Form_Task {
     public $_templates = null;
 	
 	public $_single    = null;
+	
+	public $_cid       = null;
+	
     /**
      * build all the data structures needed to build the form
      *
@@ -66,10 +69,13 @@ class CRM_Contact_Form_Task_PDF extends CRM_Contact_Form_Task {
         // store case id if present
         $this->_caseId = CRM_Utils_Request::retrieve( 'caseid', 'Positive', $this, false );
 
+        // retrieve contact ID if this is 'single' mode
         $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false );
 
         if ( $cid ) {
             CRM_Contact_Form_Task_PDFLetterCommon::preProcessSingle( $this, $cid );
+            $this->_single = true;
+            $this->_cid = $cid;
         } else {
             parent::preProcess( );
         }

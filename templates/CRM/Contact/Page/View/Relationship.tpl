@@ -154,10 +154,10 @@
 {* end of code to show inactive relationships *}
 
 
+</div>
 {/if} {* close of custom data else*}
 
 {if $searchRows }
  {*include custom data js file*}
  {include file="CRM/common/customData.tpl"}
 {/if}
-</div>

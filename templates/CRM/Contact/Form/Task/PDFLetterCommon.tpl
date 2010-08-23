@@ -23,13 +23,15 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{*common template for compose mail*}
+{*common template for compose PDF letters*}
+{if $form.template.html}
 <table class="form-layout-compressed">
     <tr>
         <td class="label-left">{$form.template.label}</td>
 	    <td>{$form.template.html}</td>
     </tr>
 </table>
+{/if}
 
 <div class="crm-accordion-wrapper crm-html_email-accordion crm-accordion-open">
     <div class="crm-accordion-header">

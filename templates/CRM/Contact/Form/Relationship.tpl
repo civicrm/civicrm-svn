@@ -69,10 +69,9 @@
             {/if}
            
             <tr><td class="label">{ts}Status{/ts}</td><td>{if $row.is_active}{ts}Enabled{/ts} {else} {ts}Disabled{/ts}{/if}</td></tr>
-
-            {include file="CRM/Custom/Page/CustomDataView.tpl"}
         {/foreach}
         </table>
+        {include file="CRM/Custom/Page/CustomDataView.tpl"}
         <div class="crm-submit-buttons"><input type="button" name='cancel' value="{ts}Done{/ts}" onclick="location.href='{crmURL p='civicrm/contact/view' q='action=browse&selectedChild=rel'}';"/></div>
         </div>
   {/if}
