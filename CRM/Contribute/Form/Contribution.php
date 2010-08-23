@@ -1371,16 +1371,34 @@ WHERE  contribution_id = {$this->_id}
                 $formValues['contribution_id'] = $contribution->id;
                 $sendReceipt = CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $formValues );
             }
-            
-            //update pledge payment status.
-            if ( ($this->_ppID && $contribution->id) && $this->_action & CRM_Core_Action::ADD ) { 
-             
-                //store contribution id in payment record.
-                CRM_Core_DAO::setFieldValue('CRM_Pledge_DAO_Payment', $this->_ppID, 'contribution_id', $contribution->id );
 
+            //update pledge payment status.
+            if (  ( ( $this->_ppID && $contribution->id ) && $this->_action & CRM_Core_Action::ADD ) ||
+                  ( ( $contribution->id ) && $this->_action & CRM_Core_Action::UPDATE )
+                  ) { 
+             
+                if ( $this->_ppID ) {
+                    //store contribution id in payment record.
+                    CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $this->_ppID, 'contribution_id', $contribution->id );
+                } else {
+                    $this->_ppID = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
+                                                                $contribution->id,
+                                                                'id', 
+                                                                'contribution_id'
+                                                                );
+                    $this->_pledgeID = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
+                                                                    $contribution->id,
+                                                                    'pledge_id', 
+                                                                    'contribution_id'
+                                                                    );
+                }
+                
                 require_once 'CRM/Pledge/BAO/Payment.php';
-                CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $this->_pledgeID, array( $this->_ppID ), 
-                                                                   $contribution->contribution_status_id );
+                CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $this->_pledgeID, 
+                                                                   array( $this->_ppID ), 
+                                                                   $contribution->contribution_status_id,
+                                                                   null,
+                                                                   $contribution->total_amount );
             } 
             
             $statusMsg = ts('The contribution record has been saved.');
