@@ -539,6 +539,12 @@ class CRM_Core_BAO_CustomField extends CRM_Core_DAO_CustomField
                                             'html_type'        => CRM_Utils_Array::value('html_type', $values),
                                             'is_search_range'  => CRM_Utils_Array::value('is_search_range', $values),
                                             );
+
+            // CRM-6681, pass date and time format when html_type = Select Date 
+            if ( CRM_Utils_Array::value('html_type', $values) == 'Select Date' ) {
+                $importableFields[$key]['date_format'] = CRM_Utils_Array::value('date_format', $values);
+                $importableFields[$key]['time_format'] = CRM_Utils_Array::value('time_format', $values);
+            }
         }
          
         return $importableFields;

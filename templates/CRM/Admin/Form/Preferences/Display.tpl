@@ -76,7 +76,7 @@
             </tr>
             <tr class="crm-preferences-display-form-block-description">
                <td>&nbsp;</td>
-               <td class="description">{ts}Select the HTML WYSIWYG Editor provided for fields that allow HTML formatting. Select 'Textarea' if you don't want to provide a WYSIWYG Editor (users will type text and / or HTML code into plain text fields).{/ts}
+               <td class="description">{ts}Select the HTML WYSIWYG Editor provided for fields that allow HTML formatting. Select 'Textarea' if you don't want to provide a WYSIWYG Editor (users will type text and / or HTML code into plain text fields).{/ts} {help id="id-wysiwyg_editor"}
                </td>
             </tr>
 	{/if}

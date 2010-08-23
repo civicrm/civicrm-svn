@@ -263,6 +263,7 @@ FROM   civicrm_activity a
 INNER JOIN civicrm_activity_target t ON t.activity_id = a.id
 WHERE  t.target_contact_id = %1
 AND    a.is_auto = 1
+AND    a.is_current_revision = 1
 ";
         $sqlParams = array( 1 => array( $params['clientID'], 'Integer' ) );
         CRM_Core_DAO::executeQuery( $query, $sqlParams );

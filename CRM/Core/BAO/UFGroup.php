@@ -438,7 +438,12 @@ class CRM_Core_BAO_UFGroup extends CRM_Core_DAO_UFGroup
                         // fix for CRM-1994
                         $fields[$name]['options_per_line'] = $customFields[$field->field_name]['options_per_line']; 
                         $fields[$name]['data_type']        = $customFields[$field->field_name]['data_type']; 
-                        $fields[$name]['html_type']        = $customFields[$field->field_name]['html_type']; 
+                        $fields[$name]['html_type']        = $customFields[$field->field_name]['html_type'];
+                        
+                        if ( CRM_Utils_Array::value('html_type', $fields[$name]) == 'Select Date' ) {
+                            $fields[$name]['date_format'] = $customFields[$field->field_name]['date_format'];
+                            $fields[$name]['time_format'] = $customFields[$field->field_name]['time_format'];
+                        }    
                     } else {
                         unset( $fields[$name] );
                     }
@@ -1815,9 +1820,23 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                             break;
                             
                         case 'Select Date':
-                            list($defaults[$fldName], $defaults[substr($fldName,0,-1).'_time]']) 
-                                = CRM_Utils_Date::setDateDefaults($details[$name]
-                                                                  );
+                            // CRM-6681, set defult values according to date and time format (if any).
+                            $dateFormat = null;
+                            if ( CRM_Utils_Array::value('date_format', $field) ) {
+                                $dateFormat = $field['date_format'];
+                            }
+                            
+                            if ( !CRM_Utils_Array::value('time_format', $field) ) {
+                                list( $defaults[$fldName] ) = CRM_Utils_Date::setDateDefaults( $details[$name], null, 
+                                                                                               $dateFormat );
+                            } else {
+                                $timeElement = $fldName.'_time';
+                                if ( substr( $fldName, -1 ) == ']' ) { 
+                                    $timeElement = substr( $fldName, 0, $fldName.length - 1).'_time]';
+                                }
+                                list( $defaults[$fldName], $defaults[$timeElement] ) = 
+                                    CRM_Utils_Date::setDateDefaults( $details[$name], null, $dateFormat, $field['time_format'] );
+                            }
                             break;
                             
                         default:                        
@@ -2415,9 +2434,12 @@ AND    ( entity_id IS NULL OR entity_id <= 0 )
                                     break;
                                 } else if ( CRM_Utils_Array::value( 'data_type', $tree['fields'][$customFieldDetails[0]] ) == 'Date' ) {
                                 	$skipValue = true;
-                                       $customValue = $tree['fields'][$customFieldDetails[0]]['element_value'] ;
-                                	list( $defaults['field'][$componentId][$name], $defaults['field'][$componentId][$name . '_time'] ) = 
-                            		CRM_Utils_Date::setDateDefaults( $customValue );	
+
+                                    // CRM-6681, $default contains formatted date, time values.
+                                    $defaults[$fldName] = $customValue;
+                                    if ( CRM_Utils_Array::value( $customKey.'_time', $defaults ) ) {
+                                        $defaults['field'][$componentId][$name . '_time'] = $defaults[$customKey.'_time'];
+                                    }
 								}
                             }
                             

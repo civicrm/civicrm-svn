@@ -324,4 +324,36 @@ class CRM_Core_BAO_Tag extends CRM_Core_DAO_Tag {
         }
         return $tagSets;
     }
+    
+    /**
+     * Function to get the tags that are not children of a tagset.
+     *
+     * @return $tags associated array of tag name and id
+     * @access public
+     * @static
+     */
+    static function getTagsNotInTagset( ) {
+        $tags = $tagSets = array( );
+        // first get all the tag sets
+        $query = "SELECT id FROM civicrm_tag WHERE is_tagset=1 AND parent_id IS NULL";
+        $dao = CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        while( $dao->fetch( ) ) {
+           $tagSets[] = $dao->id;
+        }
+        
+        $parentClause = '';
+        if ( !empty( $tagSets ) ) {
+            $parentClause = ' WHERE ( parent_id IS NULL ) OR ( parent_id NOT IN ( ' .implode( ',', $tagSets ) .' ) )';
+        }
+        
+        // get that tags that don't have tagset as parent
+        $query = "SELECT id, name FROM civicrm_tag {$parentClause}";
+        $dao = CRM_Core_DAO::executeQuery( $query );
+        while( $dao->fetch( ) ) {
+           $tags[$dao->id] = $dao->name;
+        }
+                
+        return $tags;
+    }
+    
 }

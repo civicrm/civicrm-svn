@@ -546,7 +546,8 @@ SELECT $select
                                                                                          'entity_id',
                                                                                          'id' );
                                                 require_once 'CRM/Core/BAO/File.php';
-                                                list( $path ) = CRM_Core_BAO_File::path( $fileID, $entityId, null, null);
+                                                list( $path ) = CRM_Core_BAO_File::path( $fileDAO->id, $entityId,
+                                                                                         null, null);
                                                 list( $imageWidth, $imageHeight ) = getimagesize( $path );
                                                 require_once 'CRM/Contact/BAO/Contact.php';
                                                 list( $imageThumbWidth, $imageThumbHeight ) = CRM_Contact_BAO_Contact::getThumbSize( $imageWidth, $imageHeight );
@@ -1010,7 +1011,11 @@ SELECT $select
                             list( $defaults[$elementName] ) = CRM_Utils_Date::setDateDefaults( $value, null, 
                                                                                                $field['date_format'] );
                         } else {
-                            list( $defaults[$elementName], $defaults[ $elementName . '_time' ] ) = 
+                            $timeElement = $elementName . '_time';
+                            if ( substr( $elementName, -1 ) == ']' ) { 
+                                $timeElement = substr( $elementName, 0, $$elementName.length - 1).'_time]';
+                            }
+                            list( $defaults[$elementName], $defaults[ $timeElement ] ) = 
                             CRM_Utils_Date::setDateDefaults( $value, null, $field['date_format'], $field['time_format'] );
                         }
                     }

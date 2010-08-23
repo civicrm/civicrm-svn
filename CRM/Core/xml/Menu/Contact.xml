@@ -125,6 +125,11 @@
      <page_callback>CRM_Contact_Form_Task_Email</page_callback>
   </item>
   <item>
+     <path>civicrm/contact/pdf</path>
+     <title>Create Printable Letter (PDF)</title>
+     <page_callback>CRM_Contact_Form_Task_PDF</page_callback>
+  </item>
+  <item>
      <path>civicrm/contact/map</path>
      <title>Map Location(s)</title>
      <is_public>true</is_public>
