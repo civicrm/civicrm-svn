@@ -37,3 +37,9 @@ VALUES
     ( @domainID, CONCAT('civicrm/report/instance/', @instanceID,'&reset=1'), '{ts escape="sql"}Grant Report{/ts}', '{literal}Grant Report{/literal}', 'access CiviGrant', '',@reportlastID, '1', NULL, @nav_max_weight+1 );
 
 UPDATE civicrm_report_instance SET navigation_id = LAST_INSERT_ID() WHERE id = @instanceID;
+
+-- CRM-6694
+insert into civicrm_navigation
+ ( domain_id, label, name, url, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES
+ ( @domainID, '{ts escape="sql"}Home{/ts}', 'Home', 'civicrm/dashboard&reset=1', NULL, '', NULL, 1, NULL, 0);
