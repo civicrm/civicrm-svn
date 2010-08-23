@@ -148,10 +148,10 @@ function civicrm_member_roles_show_rules($action = NULL, $id = NULL)
     }
     
     if (!empty($data)) {
-        $output = t('Use the "Add Association Rule" form to add new rules.');
+        $output = t("Use the 'Add Association Rule' form to add new rules.");
         $output .= theme('table', $header, $data);
     } else {
-        $output = t('There are no rules currently set. Use the "Add Association Rule" form to add one.');
+        $output = t("There are no rules currently set. Use the 'Add Association Rule' form to add one.");
     }
     
     return $output;
