@@ -45,7 +45,7 @@
    <div class="icon crm-accordion-pointer"></div>
     {$cd_edit.title}
    </div><!-- /.crm-accordion-header -->
-  <div id="{$cd_edit.name}" class="crm-accordion-body{if $bottomBorder EQ 1 AND $smarty.foreach.custom_sets.last} separator{/if}">
+  <div id="{$cd_edit.name}" class="crm-accordion-body">
             {if $cd_edit.help_pre}
                 <div class="messages help">{$cd_edit.help_pre}</div>
             {/if}

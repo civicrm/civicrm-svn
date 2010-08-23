@@ -302,7 +302,9 @@ class CRM_Contribute_BAO_Contribution_Utils {
         
         $params = null;
         while ( $dao->fetch( ) ) {
-            $params['By Month'][$dao->contribMonth] = $dao->ctAmt;
+            if ( $dao->contribMonth ) {
+                $params['By Month'][$dao->contribMonth] = $dao->ctAmt;
+            }
         } 
         return $params;
         
@@ -330,7 +332,9 @@ class CRM_Contribute_BAO_Contribution_Utils {
         
         $params = null;
         while ( $dao->fetch( ) ) {
-            $params['By Year'][$dao->contribYear] = $dao->ctAmt;
+            if ( $dao->contribYear ) {
+                $params['By Year'][$dao->contribYear] = $dao->ctAmt;
+            }
         }
         return $params;
     }
