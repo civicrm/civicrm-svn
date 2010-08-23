@@ -88,8 +88,10 @@
   </field>
   <field>
        <name>description</name>
-       <type>varchar</type>
-       <length>16300</length>
+       <type>text</type>
+       <htmlType>textarea</htmlType>
+       <rows>8</rows>
+       <cols>60</cols>
        <localizable>true</localizable>
        <comment>Optional description.</comment>
        <add>1.5</add>
