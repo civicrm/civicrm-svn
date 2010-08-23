@@ -462,7 +462,7 @@ function _civicrm_member_roles_sync($ext_uid = NULL)
         $memberships = civicrm_contact_memberships_get( $cid );
         $contactMemberships = CRM_Utils_Array::value( $cid, $memberships, array( ));
         $currentRoleIds = $expiredRoleIds = array( );
-        $addAcount = $removeAccount = array( );
+        $addAccount = $removeAccount = array( );
         
         $memberRules = db_query('SELECT * FROM {civicrm_member_roles_rules}');
         while ( $ruleValues = db_fetch_object( $memberRules ) ) {
