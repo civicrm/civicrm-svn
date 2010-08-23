@@ -86,7 +86,7 @@ class CRM_Pledge_BAO_Query
         }
 
         if ( CRM_Utils_Array::value( 'pledge_total_paid', $query->_returnProperties ) ) {
-            $query->_select['pledge_total_paid']  = " (SELECT sum(civicrm_pledge_payment.scheduled_amount) FROM civicrm_pledge_payment WHERE civicrm_pledge_payment.pledge_id = civicrm_pledge.id AND civicrm_pledge_payment.status_id = 1 ) as pledge_total_paid";
+            $query->_select['pledge_total_paid']  = " (SELECT sum(civicrm_pledge_payment.actual_amount) FROM civicrm_pledge_payment WHERE civicrm_pledge_payment.pledge_id = civicrm_pledge.id AND civicrm_pledge_payment.status_id = 1 ) as pledge_total_paid";
             $query->_element['pledge_total_paid'] = 1;
         }
 

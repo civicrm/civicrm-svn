@@ -58,16 +58,25 @@ class CRM_Pledge_BAO_Payment extends CRM_Pledge_DAO_Payment
     static function getPledgePayments( $pledgeId )
     {
         $query = "
-SELECT civicrm_pledge_payment.id id, scheduled_amount, scheduled_date, reminder_date, reminder_count,
-        total_amount, receive_date, civicrm_option_value.name as status, civicrm_option_value.label as label, civicrm_contribution.id as contribution_id
-FROM civicrm_pledge_payment
+SELECT    civicrm_pledge_payment.id id, 
+          scheduled_amount,
+          scheduled_date, 
+          reminder_date, 
+          reminder_count,
+          actual_amount, 
+          receive_date,
+          civicrm_option_value.name as status,
+          civicrm_option_value.label as label,
+          civicrm_contribution.id as contribution_id
+FROM      civicrm_pledge_payment
+
 LEFT JOIN civicrm_contribution ON civicrm_pledge_payment.contribution_id = civicrm_contribution.id
 LEFT JOIN civicrm_option_group ON ( civicrm_option_group.name = 'contribution_status' )
-LEFT JOIN civicrm_option_value ON ( civicrm_pledge_payment.status_id = civicrm_option_value.value
-AND civicrm_option_group.id = civicrm_option_value.option_group_id )
-WHERE pledge_id = %1
+LEFT JOIN civicrm_option_value ON ( civicrm_pledge_payment.status_id = civicrm_option_value.value AND
+                                    civicrm_option_group.id = civicrm_option_value.option_group_id )
+WHERE     pledge_id = %1
 ";
-
+  
         $params[1] = array( $pledgeId, 'Integer' );
         $payment = CRM_Core_DAO::executeQuery( $query, $params );
 
@@ -77,7 +86,7 @@ WHERE pledge_id = %1
             $paymentDetails[$payment->id]['scheduled_date'  ] = $payment->scheduled_date;
             $paymentDetails[$payment->id]['reminder_date'   ] = $payment->reminder_date;
             $paymentDetails[$payment->id]['reminder_count'  ] = $payment->reminder_count;
-            $paymentDetails[$payment->id]['total_amount'    ] = $payment->total_amount;
+            $paymentDetails[$payment->id]['total_amount'    ] = $payment->actual_amount;
             $paymentDetails[$payment->id]['receive_date'    ] = $payment->receive_date;
             $paymentDetails[$payment->id]['status'          ] = $payment->status;
             $paymentDetails[$payment->id]['label'           ] = $payment->label;
