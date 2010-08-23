@@ -26,7 +26,7 @@
 <div class="form-item">
 <fieldset>
 <div id="help">
-    {ts}Update field values for each voter as needed. Click <strong>Record Voters Interview</strong> below to save all your changes. To set a field to the same value for ALL rows.{/ts}
+    {ts}Click <strong>vote</strong> button to update values for each voter as needed. click <strong>Done and Release >></strong> button below to continue with release voters.{/ts}
 </div>
 
 {if $voterDetails}

@@ -210,12 +210,19 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         }
         $this->assign( 'surveyFields', $exposedSurveyFields );
         
-        $this->addButtons( array(
-                                
-                                 array ( 'type'      => 'cancel',
-                                         'name'      => ts('Done') ),
-                                 )
-                           );
+        $buttons = array( array ( 'type'      => 'cancel',
+                                  'name'      => ts('Done'),
+                                  'subName'   => 'interview',
+                                  'isDefault' => true   ) );
+        if ( CRM_Core_Permission::check( 'manage campaign' ) ||
+             CRM_Core_Permission::check( 'administer CiviCampaign' ) ||
+             CRM_Core_Permission::check( 'release campaign contacts' ) ) { 
+            $buttons[] = array ( 'type'      => 'done',
+                                 'name'      => ts('Done and Release >>'),
+                                 'subName'   => 'doneANDRelease' );
+        }
+        
+        $this->addButtons( $buttons );
         
     }
     
@@ -238,6 +245,15 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      */
     public function postProcess( ) 
     {
+        $buttonName = $this->controller->getButtonName( );
+        if ( $buttonName == '_qf_Interview_done_doneANDRelease' ) {
+            $qfKey     = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
+            $urlParams = 'force=1&op=release';
+            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= '&qfKey='.$qfKey;
+            CRM_Core_Session::setStatus( ts( 'Search Voters To Release.' ) );
+            CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/survey/search', $urlParams ) );
+        }
+        
         // vote is done through ajax
         return;
         
