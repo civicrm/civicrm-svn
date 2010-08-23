@@ -135,7 +135,20 @@ function processInterview( element ) {
   if ( !interviewActId ) return;
    
   var actUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processInterview' }"{literal};
-  cj.post( actUrl, {'actId': interviewActId, 'delete' :isDelete } );	 	 
+
+  //post data to save voter as voted/non voted.
+  cj.post( actUrl, 
+  	   {'actId': interviewActId, 'delete' :isDelete }, 
+	   function( response ) {
+	       if ( response.status == 'success' ) {
+	       	   var msgId = '#success_msg_' + interviewActId;
+		   cj( msgId ).fadeIn('slow').fadeOut('slow');
+		   msg = '{/literal}{ts}Save as voted.{/ts}{literal}';
+		   if ( !isDelete ) msg = '{/literal}{ts}Save as non voted.{/ts}{literal}'; 
+		   cj( msgId ).html( msg )
+	       } 
+	   }, 'json' );
+	 
 }
 
 </script>

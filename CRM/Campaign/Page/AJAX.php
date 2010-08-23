@@ -212,9 +212,9 @@ class CRM_Campaign_Page_AJAX
                     }
                     $searchRows[$contactID][$col] = $colVal;
                 }
-                
-                $check = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processInterview( this );" />';
-                $searchRows[$contactID]['is_interview_conducted'] = $check;
+                $markedAsVoted = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processInterview( this );" />';
+                $markedAsVoted .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id='success_msg_{$surveyActId}' class='ok' style='display:none;'>{ts}Vote Saved.{/ts}</span>";
+                $searchRows[$contactID]['is_interview_conducted'] = $markedAsVoted;
             }
         }
         
@@ -232,9 +232,12 @@ class CRM_Campaign_Page_AJAX
         require_once 'CRM/Utils/String.php';
         $activityId = CRM_Utils_Type::escape($_POST['actId'],  'Integer' );
         $isDelete   = CRM_Utils_String::strtoboolstr( CRM_Utils_Type::escape($_POST['delete'], 'String' ) );
-        if ( $activityId ) { 
+        $status     = null; 
+        if ( $activityId ) {
+            $status = 'success';
             CRM_Core_DAO::setFieldValue( 'CRM_Activity_DAO_Activity', $activityId, 'is_deleted', $isDelete );        
         }
+        echo json_encode( array( 'status' => $status ) );
         
         CRM_Utils_System::civiExit( );
     }

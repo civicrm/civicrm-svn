@@ -77,7 +77,8 @@
 	    
 	    <td class='note'>{$form.field.$voterId.note.html}</td>
 	    <td class='result'>{$form.field.$voterId.result.html}
-		&nbsp;&nbsp;&nbsp;<a class="saveVoter button" style="float:right;" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>&nbsp; <span id='restmsg_{$voterId}' class="ok" style="display:none; float:right;">{ts}Vote Saved.{/ts}</span> 
+		&nbsp;&nbsp;&nbsp;<a class="saveVoter button" style="float:right;" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>&nbsp;&nbsp;&nbsp;
+		<span id='restmsg_{$voterId}' class="ok" style="display:none; float:right;">{ts}Vote Saved.{/ts}</span> 
 	    </td>
 
 	</tr>
