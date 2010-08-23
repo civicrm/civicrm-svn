@@ -36,7 +36,7 @@
 
 require_once 'CRM/Core/Form.php';
 require_once 'CRM/Campaign/BAO/Campaign.php';
-require_once 'CRM/Core/PseudoConstant.php';
+require_once 'CRM/Campaign/PseudoConstant.php';
        
 /**
  * This class generates form components for processing a campaign 
@@ -178,11 +178,11 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         $this->addDateTime('end_date', ts('End Date'), false, array( 'formatType' => 'campaignDateTime') );
 
         // add campaign type
-        $campaignType = CRM_Core_PseudoConstant::campaignType();
+        $campaignType = CRM_Campaign_PseudoConstant::campaignType();
         $this->add('select', 'campaign_type_id', ts('Campaign Type'), array( '' => ts( '- select -' ) ) + $campaignType, true );
         
         // add campaign status
-        $campaignStatus = CRM_Core_PseudoConstant::campaignStatus();
+        $campaignStatus = CRM_Campaign_PseudoConstant::campaignStatus();
         $this->addElement('select', 'status_id', ts('Compaign Status'), array('' => ts( '- select -' )) + $campaignStatus );
            
         // add External Identifire Element

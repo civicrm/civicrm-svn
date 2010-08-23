@@ -306,27 +306,6 @@ class CRM_Core_PseudoConstant
      * @static
      */
     private static $greeting = array( );
-
-    /**
-     * Campaign Type
-     * @var array
-     * @static
-     */
-    private static $campaignType = array();
-    
-    /**
-     * Campaign Status
-     * @var array
-     * @static
-     */
-    private static $campaignStatus = array();
-    
-    /**
-     * Survey Type
-     * @var array
-     * @static
-     */
-    private static $surveyType = array();
     
     /**
      * populate the object from the database. generic populate
@@ -1510,63 +1489,7 @@ ORDER BY name";
         }        
         return $_languages;
     }
-
-    /**
-     * Get all campaign types.
-     *
-     * The static array campaignType is returned
-     *
-     * @access public
-     * @static
-     * @return array - array reference of all campaign types.
-     *
-     */
-    public static function &campaignType( )
-    {
-        if ( ! self::$campaignType ) {
-            require_once 'CRM/Core/OptionGroup.php';
-            self::$campaignType = CRM_Core_OptionGroup::values('campaign_type');
-        }
-        return self::$campaignType;
-    }
-
-    /**
-     * Get all campaign status.
-     *
-     * The static array campaignStatus is returned
-     *
-     * @access public
-     * @static
-     * @return array - array reference of all campaign status.
-     *
-     */
-    public static function &campaignStatus( )
-    {
-        if ( ! self::$campaignStatus ) {
-            require_once 'CRM/Core/OptionGroup.php';
-            self::$campaignStatus = CRM_Core_OptionGroup::values('campaign_status');
-        }
-        return self::$campaignStatus;
-    }
-
-    /**
-     * Get all survey type.
-     *
-     * The static array surveyType is returned
-     *
-     * @access public
-     * @static
-     * @return array - array reference of all survey type.
-     *
-     */
-    public static function &surveyType( )
-    {
-        if ( ! self::$surveyType ) {
-            require_once 'CRM/Core/OptionGroup.php';
-            self::$surveyType = CRM_Core_OptionGroup::values('survey_type');
-        }
-        return self::$surveyType;
-    }
+    
 }
 
 

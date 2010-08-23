@@ -34,7 +34,7 @@
 
 require_once 'CRM/Core/Page.php';
 require_once 'CRM/Core/Permission.php';
-require_once 'CRM/Core/PseudoConstant.php';
+require_once 'CRM/Campaign/PseudoConstant.php';
 require_once 'CRM/Campaign/BAO/Survey.php';
 require_once 'CRM/Campaign/BAO/Campaign.php';
 
@@ -137,8 +137,8 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         //get the campaigns.
         $campaigns = CRM_Campaign_BAO_Campaign::getCampaign( true );
         if ( !empty( $campaigns ) ) {
-            $campaignType    = CRM_Core_PseudoConstant::campaignType( );
-            $campaignStatus  = CRM_Core_PseudoConstant::campaignStatus( );
+            $campaignType    = CRM_Campaign_PseudoConstant::campaignType( );
+            $campaignStatus  = CRM_Campaign_PseudoConstant::campaignStatus( );
             $properties      = array( 'id', 'name', 'title', 'status_id', 'description', 'campaign_type_id', 'is_active', 'start_date', 'end_date' );
             foreach( $campaigns as $cmpid => $campaign ) { 
                 foreach ( $properties as $prop ) {
