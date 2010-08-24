@@ -1,3 +1,5 @@
+SELECT @domainID        := min(id) FROM civicrm_domain;
+
 -- CRM-6694
 INSERT INTO civicrm_navigation
  ( domain_id, label, name, url, permission, permission_operator, parent_id, is_active, has_separator, weight )
