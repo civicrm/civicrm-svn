@@ -4979,8 +4979,14 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
             } else {
                 $handler = civicrm_get_field_handler( $currentfield['data_type'] );
             }
-
-              //Create the Views Field
+            
+            if ( $currentfield['option_group_id'] ) {
+                $filter_handler = 'civicrm_handler_filter_custom_option';
+            } else {
+                $filter_handler = civicrm_get_filter_handler( $currentfield['data_type'] );
+            }
+            
+            //Create the Views Field
             $data[$currentgroup['table_name']][$currentfield['column_name']] = array(
                                                                                      'title' => $currentfield['label'],
                                                                                      'help' => $currentfield['help_post'],
@@ -4994,21 +5000,21 @@ function civicrm_views_custom_data_cache($data, $entity_type, $groupID, $subType
                                                                                                          ),
 
                                                                                      'filter' => array(
-                                                                                                       'handler' => civicrm_get_filter_handler($currentfield['data_type']),
+                                                                                                       'handler' => $filter_handler
                                                                                                        ),
 
                                                                                      'sort' => array(
                                                                                                      'handler' => civicrm_get_sort_handler($currentfield['data_type']),
                                                                                                      ),
                                                                                      );
-         //For date fields add in 6 arguments
-         if ($currentfield['data_type'] == 'Date'){
-             //@TODO  Still need to get the field under it's respecitve group, I may e able to set the civicrm_views_add_date_arguments() function with a group variable and default it to null
-             $value = array();
-             $value['title'] = $currentfield['label'];
-             $value['name'] = $currentfield['column_name'];
-             civicrm_views_add_date_arguments($data[$currentgroup['table_name']],$value);
-         }
+            //For date fields add in 6 arguments
+            if ( $currentfield['data_type'] == 'Date' ){
+                //@TODO  Still need to get the field under it's respecitve group, I may e able to set the civicrm_views_add_date_arguments() function with a group variable and default it to null
+                $value = array();
+                $value['title'] = $currentfield['label'];
+                $value['name'] = $currentfield['column_name'];
+                civicrm_views_add_date_arguments($data[$currentgroup['table_name']],$value);
+            }
         }
     }
     return $data;
@@ -5378,7 +5384,10 @@ function civicrm_views_handlers() {
                                                                            ),
                        'civicrm_handler_filter_mailing_name' => array(
                                                                       'parent' => 'views_handler_filter_in_operator',
-                                                                      ),                                      
+                                                                      ),
+                       'civicrm_handler_filter_custom_option' => array(
+                                                                       'parent' => 'views_handler_filter_in_operator',
+                                                                       ),
                        
                        // ARGUMENT HANDLERS
                        'civicrm_handler_argument_date_api_contact' => array(
