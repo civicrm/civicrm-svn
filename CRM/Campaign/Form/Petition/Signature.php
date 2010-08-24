@@ -224,7 +224,9 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         $this->_defaults = array( );   
         if ( $this->_contactId ) {
             CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactId, $this->_contactProfileFields, $this->_defaults, true );        
-            CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactId, $this->_activityProfileFields, $this->_defaults, true );
+			if ( $this->_activityProfileId ) {
+            	CRM_Core_BAO_UFGroup::setProfileDefaults( $this->_contactId, $this->_activityProfileFields, $this->_defaults, true );
+        	}
         }
         
         //set custom field defaults
@@ -244,21 +246,21 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			}                
 		}
 
-    if ($this->_activityProfileFields) {		
-        foreach ( $this->_activityProfileFields as $name => $field ) {
-            if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
-                $htmlType = $field['html_type'];
-                
-                if ( !isset( $this->_defaults[$name] ) ) {
-                    CRM_Core_BAO_CustomField::setProfileDefaults( $customFieldID,
-                                                                  $name,
-                                                                  $this->_defaults,
-                                                                  $this->_contactId,
-                                                                  $this->_mode );
-                }
-			      }                
-		    }
-    }      
+		if ($this->_activityProfileFields) {		
+			foreach ( $this->_activityProfileFields as $name => $field ) {
+				if ( $customFieldID = CRM_Core_BAO_CustomField::getKeyID($name) ) {
+					$htmlType = $field['html_type'];
+					
+					if ( !isset( $this->_defaults[$name] ) ) {
+						CRM_Core_BAO_CustomField::setProfileDefaults( $customFieldID,
+																	  $name,
+																	  $this->_defaults,
+																	  $this->_contactId,
+																	  $this->_mode );
+					}
+				}                
+			}
+		}      
 
 		// If connecting with Facebook id, fetch in user data like first/last name, email address, ...
 		// ** check for fb module **
@@ -292,9 +294,10 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         }
         $this->applyFilter('__ALL__','trim');
 
-        $this->buildCustom( $this->_contactProfileId , 'petitionContactProfile'  );       
-        $this->buildCustom( $this->_activityProfileId , 'petitionActivityProfile'  );
-               
+        $this->buildCustom( $this->_contactProfileId , 'petitionContactProfile'  );      
+        if ( $this->_activityProfileId ) {
+	        $this->buildCustom( $this->_activityProfileId , 'petitionActivityProfile'  );
+    	}           
 		// add buttons
 		$this->addButtons(array(
                                 array ('type'      => 'next',
@@ -308,7 +311,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 		$fbapp = variable_get(FB_CONNECT_VAR_PRIMARY, NULL);		
 
 		if (($fbapp <> NULL) && !(fb_facebook_user())) {
-//			$this->assign( 'fbconnect', fb_connect_block('view','login_'.$fbapp) );
 //			$fbconnect = fb_connect_block('view','login_'.$fbapp);
 			$fbconnect = '<fb:login-button perms="!perms" onlogin="FB_JS.reload();" v="2"><fb:intl>'.FACEBOOK_LOGIN_LABEL.'</fb:intl></fb:login-button>';
 			// substitute perms
@@ -393,22 +395,27 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
         }
         
 		//	$this->_params['ip_address'] = CRM_Utils_System::ipAddress( );
-		
-		$this->_ctype = 'Individual';
-		// dupeCheck - check if contact record already exists
-		// code modified from api/v2/Contact.php-function civicrm_contact_check_params()
-		require_once 'CRM/Dedupe/Finder.php';
-        $params['contact_type'] = $this->_ctype;    
-        //TODO - current dedupe finds soft deleted contacts - adding param is_deleted not working
-        //$params['is_deleted'] = 0;  // ignore soft deleted contacts
-        $dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
 
-		// allow anonymous users signing the form to run the dedupe check - // CRM-6431
-        $dedupeParams['check_permission'] = '';       
-                
-	    //dupesByParams($params, $ctype, $level = 'Strict', $except = array())
-        $ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']);		
-		
+		// if logged in user, skip dedupe and set email mode
+		if (isset($this->_loggedIn) && ($this->_loggedIn == TRUE)) {
+			$ids[0] = $this->_contactId;
+			$this->_sendEmailMode = 1;
+		} else {	
+			$this->_ctype = 'Individual';
+			// dupeCheck - check if contact record already exists
+			// code modified from api/v2/Contact.php-function civicrm_contact_check_params()
+			require_once 'CRM/Dedupe/Finder.php';
+			$params['contact_type'] = $this->_ctype;    
+			//TODO - current dedupe finds soft deleted contacts - adding param is_deleted not working
+			//$params['is_deleted'] = 0;  // ignore soft deleted contacts
+			$dedupeParams = CRM_Dedupe_Finder::formatParams($params, $params['contact_type']);
+	
+			// allow anonymous users signing the form to run the dedupe check - // CRM-6431
+			$dedupeParams['check_permission'] = '';       
+					
+			//dupesByParams($params, $ctype, $level = 'Strict', $except = array())
+			$ids = CRM_Dedupe_Finder::dupesByParams($dedupeParams, $params['contact_type']);		
+		}
 		
 		switch (count($ids)) {
 			case 0:
@@ -418,7 +425,8 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				$petition = array();
 				CRM_Campaign_BAO_Survey::retrieve($petition_params,$petition);
 				// Add a source for this new contact
-				$params['source'] = 'Online Petition Signature - ' . $petition['title'];
+				//$params['source'] = 'Online Petition Signature - ' . $petition['title'];
+				$params['source'] = 'Online Petition Signature - ' . $this->petition['title'];
 				$this->_sendEmailMode = 3;
 				// Set status for signature activity to scheduled until email is verified
 				$params['statusId'] = 1;
@@ -427,7 +435,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				$this->_contactId = $ids[0];
 
 				// check if user has already signed this petition - redirects to Thank You if true
-				$this->checkPetitionSigned();
+				$this->checkPetitionSigned($params);
 				
 				// dedupe matched single contact, check for 'unconfirmed' tag				
 				if (defined('CIVICRM_TAG_UNCONFIRMED')) {
@@ -454,23 +462,8 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				// TODO: handle multiple dupes - for time being, take the first matching contact
 				$this->_contactId = $ids[0];
 				
-				// check if user has already signed this petition
-				$signature = CRM_Campaign_BAO_Petition::checkSignature( $this->_surveyId, $this->_contactId );
-				//TODO: error case when more than one signature found for this petition and this contact
-				if ( !empty($signature) && (count($signature) == 1)) {
-					$signature_id = array_keys($signature);
-					switch ($signature[$signature_id[0]]['status_id']) {
-						case 1: //status is scheduled - email is unconfirmed
-							$session->pushUserContext(CRM_Utils_System::url('civicrm/petition/thankyou', 'id=4&reset=1'));
-							return;
-							break;
-						
-						case 2: //status is completed 
-							$session->pushUserContext(CRM_Utils_System::url('civicrm/petition/thankyou', 'id=5&reset=1'));
-							return;
-							break;
-					}
-				}
+				// check if user has already signed this petition - redirects to Thank You if true
+				$this->checkPetitionSigned($params);
 				
 				// dedupe matched single contact, check for 'unconfirmed' tag				
 				if (defined('CIVICRM_TAG_UNCONFIRMED')) {
@@ -494,10 +487,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				break;
 			}
 
-			// if logged in user, send thank you email
-			if (isset($this->_loggedIn) && ($this->_loggedIn == TRUE)) {
-				$this->_sendEmailMode = 1;
-			}
 			
 			// if signed using Facebook connect to log in or logged in user, send thank you email
 			if (($fb = $GLOBALS['_fb']) && ($fbu = fb_facebook_user()) 
@@ -542,23 +531,18 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			 * 2 = login using fb connect - thank you + click to add msg to fb wall
 			 * 3 = send a confirmation request email     
 			 */
-			switch ($this->_sendEmailMode) {
-				case 1:					
-					break;
-
-				case 2:					
-					break;
-					
-				case 3:
-					// set 'Unconfirmed' tag for this contact
-					require_once 'api/v2/EntityTag.php';
-					unset($tag_params);
-					$tag_params['contact_id'] = $this->_contactId;
-					$tag_params['tag_id'] = $this->_tagId;;       		
-					$tag_value = civicrm_entity_tag_add($tag_params);					
-					break;
+			if ($this->_sendEmailMode == 3){
+				// set 'Unconfirmed' tag for this new contact
+				require_once 'api/v2/EntityTag.php';
+				unset($tag_params);
+				$tag_params['contact_id'] = $this->_contactId;
+				$tag_params['tag_id'] = $this->_tagId;;       		
+				$tag_value = civicrm_entity_tag_add($tag_params);					
 			}
-		    //CRM_Campaign_BAO_Petition::sendEmail( $params, $this->_sendEmailMode );
+			
+			$params['activityId'] = $result->id;
+			$params['tagId'] = $this->_tagId;
+		    CRM_Campaign_BAO_Petition::sendEmail( $params, $this->_sendEmailMode );
 
 			$transaction->commit( );
 		
@@ -635,7 +619,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     }
         
     // check if user has already signed this petition    
-	function checkPetitionSigned()
+	function checkPetitionSigned( $params )
 	{		
 		$signature = CRM_Campaign_BAO_Petition::checkSignature( $this->_surveyId, $this->_contactId );
 		//TODO: error case when more than one signature found for this petition and this contact
@@ -647,6 +631,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 					break;
 				
 				case 2: //status is completed 
+					CRM_Campaign_BAO_Petition::sendEmail( $params, 1 );
 					CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/petition/thankyou', 'id=5&reset=1'));
 					break;
 			}

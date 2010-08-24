@@ -46,7 +46,7 @@
           <td>{$signature.survey_title}</td>
           <td><a href="/civicrm/contact/view?reset=1&cid={$signature.contactId}#Activities">{$signature.source_contact_id}</a></td>
           <td>{$signature.activity_date_time}</td>
-          <td>{$signature.status_id}</td>
+          <td>{if $signature.status_id eq 1}Unconfirmed{/if}{if $signature.status_id eq 2}Confirmed{/if}</td>
         </tr>
       {/foreach}
     </table>

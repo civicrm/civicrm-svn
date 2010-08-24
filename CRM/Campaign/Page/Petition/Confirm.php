@@ -46,6 +46,7 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
         $contact_id   = CRM_Utils_Request::retrieve( 'cid', 'Integer', CRM_Core_DAO::$_nullObject );
         $subscribe_id = CRM_Utils_Request::retrieve( 'sid', 'Integer', CRM_Core_DAO::$_nullObject );
         $hash         = CRM_Utils_Request::retrieve( 'h'  , 'String' , CRM_Core_DAO::$_nullObject );
+        $activity_id  = CRM_Utils_Request::retrieve( 'a'  , 'String' , CRM_Core_DAO::$_nullObject );
         
         if ( ! $contact_id   ||
              ! $subscribe_id ||
@@ -54,7 +55,7 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
         }
 
         require_once 'CRM/Mailing/Event/BAO/Confirm.php';
-        $result = $this->confirm( $contact_id, $subscribe_id, $hash );
+        $result = $this->confirm( $contact_id, $subscribe_id, $hash, $activity_id );
         if ( $result === false ) {
             $this->assign( 'success', $result );
         } else {
@@ -62,7 +63,7 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
             // $this->assign( 'group'  , $result );
         }
 
-	require_once 'CRM/Contact/BAO/Contact/Location.php';
+		require_once 'CRM/Contact/BAO/Contact/Location.php';
         list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contact_id );
         $this->assign( 'display_name', $displayName);
         $this->assign( 'email'       , $email );
@@ -80,7 +81,7 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
      * @access public
      * @static
      */
-    public static function confirm($contact_id, $subscribe_id, $hash) 
+    public static function confirm($contact_id, $subscribe_id, $hash, $activity_id) 
     {
         require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
         $se =& CRM_Mailing_Event_BAO_Subscribe::verify($contact_id, $subscribe_id, $hash);
@@ -101,6 +102,29 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
         require_once 'CRM/Contact/BAO/GroupContact.php';
         CRM_Contact_BAO_GroupContact::updateGroupMembershipStatus( $contact_id, $se->group_id,
                                                                    'Email',$ce->id);
+
+		//change activity status to completed (status_id=2)	
+        $query = "UPDATE civicrm_activity SET status_id = 2 
+        			WHERE 	id = $activity_id 
+        			AND  	source_contact_id = $contact_id";
+        CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+
+		// remove 'Unconfirmed' tag for this contact
+		define('CIVICRM_TAG_UNCONFIRMED','Unconfirmed');
+		
+		if (defined('CIVICRM_TAG_UNCONFIRMED')) {
+			// Check if contact 'email confirmed' tag exists, else create one
+			// This should be in the petition module initialise code to create a default tag for this
+			require_once 'api/v2/Tag.php';	
+			$tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
+			$tag = civicrm_tag_get($tag_params); 
+			
+			require_once 'api/v2/EntityTag.php';				
+			unset($tag_params);
+			$tag_params['contact_id'] = $contact_id;
+			$tag_params['tag_id'] = $tag['id'];			
+			$tag_value = civicrm_entity_tag_remove($tag_params);	
+		}
         
         $transaction->commit( );
         
