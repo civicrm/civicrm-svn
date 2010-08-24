@@ -53,11 +53,11 @@
          <CustomGroups>
 {foreach from=$activity.customGroups key=customGroupName item=customGroup}
             <CustomGroup>
-               <GroupName>{$customGroupName}</GroupName>
+               <GroupName>{$customGroupName|escape}</GroupName>
 {foreach from=$customGroup item=field}
                   <Field>
-                    <Label>{$field.label}</Label>
-                    <Value>{$field.value}</Value>
+                    <Label>{$field.label|escape}</Label>
+                    <Value>{$field.value|escape}</Value>
                     <Type>{$field.type}</Type>
                   </Field>
 {/foreach}
