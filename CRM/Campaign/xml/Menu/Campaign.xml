@@ -29,18 +29,36 @@
     <component>CiviCampaign</component>
   </item>
   <item>
-    <path>civicrm/survey/type/browse</path>
+    <path>civicrm/admin/campaign/surveyType</path>
     <title>Survey Types</title>
     <page_callback>CRM_Campaign_Page_SurveyType</page_callback>
     <access_arguments>administer CiviCampaign</access_arguments>
+    <icon>admin/small/05.png</icon>
+    <adminGroup>CiviCampaign</adminGroup>
     <component>CiviCampaign</component>
+    <weight>1</weight>
   </item>
   <item>
-    <path>civicrm/survey/type/add</path>
-    <title>Manage Survey Types</title>
-    <page_callback>CRM_Campaign_Form_SurveyType</page_callback>
-    <access_arguments>administer CiviCampaign</access_arguments>
-    <component>CiviCampaign</component>
+     <path>civicrm/admin/options/campaign_type</path>
+     <title>Campaign Types</title>
+     <desc>categorize your campaigns using campaign types.</desc>
+     <path_arguments>group=campaign_type</path_arguments>
+     <page_callback>CRM_Admin_Page_Options</page_callback>
+     <adminGroup>CiviCampaign</adminGroup>
+     <icon>admin/small/05.png</icon>
+     <weight>2</weight>
+     <component>CiviCampaign</component>
+  </item>
+  <item>
+     <path>civicrm/admin/options/campaign_status</path>
+     <title>Campaign Status</title>
+     <desc>Define statuses for campaign here.</desc>
+     <path_arguments>group=campaign_status</path_arguments>
+     <page_callback>CRM_Admin_Page_Options</page_callback>
+     <adminGroup>CiviCampaign</adminGroup>
+     <icon>admin/small/05.png</icon>
+     <weight>3</weight>
+     <component>CiviCampaign</component>
   </item>
   <item>
     <path>civicrm/survey/search</path>

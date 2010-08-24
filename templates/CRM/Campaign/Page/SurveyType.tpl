@@ -1,10 +1,12 @@
 <div class="crm-content-block crm-block">
+{if ($action eq 1) or ($action eq 2) or ($action eq 8) }
+  {include file="CRM/Campaign/Form/SurveyType.tpl" }
+{else}
 {if $rows}
-{if $action ne 1 and $action ne 2}
-    <div class="action-link">
-        <a href="{$addSurveyType}" class="button"><span><div class="icon add-icon"></div>{ts 1=$GName}Add %1{/ts}</span></a>
-    </div>
-{/if}
+<div class="action-link">
+  <a href="{$addSurveyType}" class="button"><span><div class="icon add-icon"></div>{ts 1=$GName}Add %1{/ts}</span></a>
+</div>
+
 <div id={$gName}>
         {strip}
 	{* handle enable/disable actions*} 
@@ -41,17 +43,16 @@
         {/foreach}
         </table>
         {/strip}
-
-        {if $action ne 1 and $action ne 2}
-            <div class="action-link">
-                <a href="{$addSurveyType}" class="button"><span><div class="icon add-icon"></div>{ts 1=$GName}Add %1{/ts}</span></a>
-            </div>
-        {/if}
+        <div class="action-link">
+          <a href="{$addSurveyType}" class="button"><span><div class="icon add-icon"></div>{ts 1=$GName}Add %1{/ts}</span></a>
+        </div>
+        
 </div>
 {else}
     <div class="messages status">
          <div class="icon inform-icon"> &nbsp;
          {ts 1=$addSurveyType}There are no survey type entered. You can <a href='%1'>add one</a>.{/ts}</div>
     </div>    
+{/if}
 {/if}
 </div>

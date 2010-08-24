@@ -93,7 +93,7 @@ class CRM_Campaign_Page_SurveyType extends CRM_Core_Page_Basic
 
         CRM_Utils_System::setTitle(ts('%1 Options', array(1 =>  $this->_GName)));
         
-        $this->assign( 'addSurveyType' , CRM_Utils_System::url( "civicrm/survey/type/add",'reset=1&action=add' ) );
+        $this->assign( 'addSurveyType' , CRM_Utils_System::url( "civicrm/admin/campaign/surveyType",'reset=1&action=add' ) );
     }
 
     /**
@@ -117,7 +117,7 @@ class CRM_Campaign_Page_SurveyType extends CRM_Core_Page_Basic
             self::$_links = array(
                                   CRM_Core_Action::UPDATE  => array(
                                                                     'name'  => ts('Edit'),
-                                                                    'url'   => 'civicrm/survey/type/add',
+                                                                    'url'   => 'civicrm/admin/campaign/surveyType',
                                                                     'qs'    => 'action=update&id=%%id%%&reset=1',
                                                                     'title' => ts('Edit %1', array(1 => $this->_gName))
                                                                     ),
@@ -135,7 +135,7 @@ class CRM_Campaign_Page_SurveyType extends CRM_Core_Page_Basic
                                                                     ),
                                   CRM_Core_Action::DELETE  => array(
                                                                     'name'  => ts('Delete'),
-                                                                    'url'   => 'civicrm/survey/type/add',
+                                                                    'url'   => 'civicrm/admin/campaign/surveyType',
                                                                     'qs'    => 'action=delete&id=%%id%%',
                                                                     'title' => ts('Delete %1 Type', array(1 => $this->_gName) ),
                                                                     ),
@@ -178,7 +178,7 @@ class CRM_Campaign_Page_SurveyType extends CRM_Core_Page_Basic
             }
         }
 
-        $returnURL = CRM_Utils_System::url( "civicrm/survey/type/browse",
+        $returnURL = CRM_Utils_System::url( "civicrm/admin/campaign/surveyType",
                                             "reset=1" );
         $filter    = "option_group_id = " . $this->_gid;
         require_once 'CRM/Utils/Weight.php';
@@ -214,7 +214,7 @@ class CRM_Campaign_Page_SurveyType extends CRM_Core_Page_Basic
      */
     function userContext($mode = null) 
     {
-        return 'civicrm/survey/type/add';
+        return 'civicrm/admin/campaign/surveyType';
     }
 
     /**

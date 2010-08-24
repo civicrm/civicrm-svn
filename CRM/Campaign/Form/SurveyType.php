@@ -89,7 +89,7 @@ class CRM_Campaign_Form_SurveyType extends CRM_Admin_Form
         $this->_gid     = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $this->_gName, 'id' , 'name' );
         
         $session = CRM_Core_Session::singleton();
-        $url     = CRM_Utils_System::url('civicrm/survey/type/browse', 'reset=1'); 
+        $url     = CRM_Utils_System::url('civicrm/admin/campaign/surveyType', 'reset=1'); 
         $session->pushUserContext( $url );
 
         require_once 'CRM/Core/OptionGroup.php';

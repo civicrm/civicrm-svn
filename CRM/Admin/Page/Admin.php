@@ -83,6 +83,10 @@ class CRM_Admin_Page_Admin extends CRM_Core_Page
             $groups['CiviReport'] = ts( 'CiviReport' );
         }
 
+        if ( in_array("CiviCampaign", $config->enableComponents) ) {
+            $groups['CiviCampaign'] = ts( 'CiviCampaign' );
+        }
+
         require_once 'CRM/Core/Menu.php';
         $values =& CRM_Core_Menu::getAdminLinks( );
         
