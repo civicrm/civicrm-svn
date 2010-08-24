@@ -31,7 +31,7 @@
   {* load voter data *}	
   <script type="text/javascript">loadVoterList( );</script>
  
-  <table id="voterRecords">
+  <table id="gotvVoterRecords">
      <thead>
        <tr class="columnheader">
 	   <th>{ts}Name{/ts}</th>
@@ -96,7 +96,7 @@
  {
      var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='snippet=4&className=CRM_Campaign_Page_AJAX&fnName=voterList' }"{literal};
 
-     cj( '#voterRecords' ).dataTable({
+     cj( '#gotvVoterRecords' ).dataTable({
      	        "bFilter"    : false,
 		"bAutoWidth" : false,
 	    	"bProcessing": true,
