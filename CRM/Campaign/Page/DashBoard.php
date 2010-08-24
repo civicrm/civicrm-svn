@@ -50,6 +50,7 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
      */
     private static $_campaignActionLinks;
     private static $_surveyActionLinks;
+    private static $_petitionActionLinks;
     
     /**
      * Get the action links for this page.
@@ -92,8 +93,9 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
         
         return self::$_campaignActionLinks;
     }
-    
-    function &surveyActionLinks( )
+   
+
+    function &surveyActionLinks( $activityType= null )
     {
         // check if variable _actionsLinks is populated
         if ( !isset( self::$_surveyActionLinks ) ) {
@@ -124,10 +126,33 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                                                                                 'url'   => 'civicrm/survey/add',
                                                                                 'qs'    => 'action=delete&id=%%id%%&reset=1',
                                                                                 'title' => ts('Delete Survey'),
-                                                                                ), 
+                                                                                ) 
                                               );
+             self::$_petitionActionLinks = self::$_surveyActionLinks;
+             self::$_petitionActionLinks [CRM_Core_Action::UPDATE]  = array(
+                                                                                'name'  => ts('Edit'),
+                                                                                'url'   => 'civicrm/petition/add',
+                                                                                'qs'    => 'action=update&id=%%id%%&reset=1',
+                                                                                'title' => ts('Update Petition')
+                                                                                );
+             self::$_petitionActionLinks [CRM_Core_Action::PROFILE]  = array(
+                                                                                'name'  => ts('Sign'),
+                                                                                'url'   => 'civicrm/petition/sign',
+                                                                                'qs'    => 'sid=%%id%%&reset=1',
+                                                                                'title' => ts('Sign Petition')
+                                                                                );//CRM_Core_Action::PROFILE is used because there isn't a specific action for sign
+             self::$_petitionActionLinks [CRM_Core_Action::BROWSE]  = array(
+                                                                                'name'  => ts('Signatures'),
+                                                                                'url'   => 'civicrm/petition/browse',
+                                                                                'qs'    => 'sid=%%id%%&reset=1',
+                                                                                'title' => ts('List the signatures')
+                                                                                );//CRM_Core_Action::PROFILE is used because there isn't a specific action for sign
         }
-        
+       
+ 
+        if ($activityType == "Petition") {
+          return self::$_petitionActionLinks;
+        }
         return self::$_surveyActionLinks;
     }
     
@@ -180,13 +205,13 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                     $surveysData[$sid]['release_frequency'] = $survey['release_frequency_interval'].' Day(s)';
                 }
                 
-                $action = array_sum( array_keys( $this->surveyActionLinks( ) ) );
+                $action = array_sum( array_keys( $this->surveyActionLinks($surveysData[$sid]['activity_type']  ) ) );
                 if ( $survey['is_active'] ) {
                     $action -= CRM_Core_Action::ENABLE;
                 } else {
                     $action -= CRM_Core_Action::DISABLE;
                 }
-                $surveysData[$sid]['action'] = CRM_Core_Action::formLink( $this->surveyActionLinks( ), 
+                $surveysData[$sid]['action'] = CRM_Core_Action::formLink( $this->surveyActionLinks($surveysData[$sid]['activity_type'] ), 
                                                                           $action, 
                                                                           array('id' => $sid ) );
             }
