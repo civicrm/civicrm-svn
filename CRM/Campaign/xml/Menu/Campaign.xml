@@ -23,6 +23,12 @@
     <component>CiviCampaign</component>
   </item>
   <item>
+    <path>civicrm/campaign/vote</path>
+    <title>Conduct Survey</title>
+    <page_callback>CRM_Campaign_Page_Vote</page_callback>
+    <component>CiviCampaign</component>
+  </item>
+  <item>
     <path>civicrm/survey/type/browse</path>
     <title>Survey Types</title>
     <page_callback>CRM_Campaign_Page_SurveyType</page_callback>

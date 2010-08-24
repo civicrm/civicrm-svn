@@ -23,13 +23,29 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+
+{if $votingTab and $errorMessages}
+  <div class='messages status-fatal'>
+     <div class="icon inform-icon"></div>
+        <ul>
+	   {foreach from=$errorMessages item=errorMsg}	
+             <li>{ts}{$errorMsg}{/ts}</li>
+           {/foreach}
+       </ul>
+     </div>
+  </div>
+
+{elseif $voterDetails}
 <div class="form-item">
 <fieldset>
-<div id="help">
-    {ts}Click <strong>vote</strong> button to update values for each voter as needed. <br />Click <strong>Release Voters >></strong> button below to continue for release voters. <br />Click <strong>Reserve More Voters >></strong> button below to continue for reserve voters. {/ts}
-</div>
 
-{if $voterDetails}
+<div id='help'>
+    {if $votingTab}
+    {ts}Click <strong>vote</strong> button to update values for each voter as needed.{/ts}
+    {else}
+    {ts}Click <strong>vote</strong> button to update values for each voter as needed. <br />Click <strong>Release Voters >></strong> button below to continue for release voters. <br />Click <strong>Reserve More Voters >></strong> button below to continue for reserve voters. {/ts}
+    {/if}
+</div>
 
 <table id="voterRecords" class="display">
     <thead>
@@ -86,9 +102,13 @@
     </tbody>
 </table>
 
-<div class="spacer"></div>
-<div class="crm-submit-buttons">{$form.buttons.html}</div>
+ {if !$votingTab}
+ <div class="spacer"></div>
+ <div class="crm-submit-buttons">{$form.buttons.html}</div>
+ {/if}
+
 </fieldset>
+</div>
 {/if}
 
 {literal}

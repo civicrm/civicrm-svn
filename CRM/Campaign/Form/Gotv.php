@@ -49,6 +49,8 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
      */ 
     protected $_force; 
     
+    protected $_votingTab = false;
+    
     /** 
      * processing needed for buildForm and later 
      * 
@@ -57,13 +59,15 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
      */ 
     function preProcess( ) 
     {
-        $this->_search   = CRM_Utils_Array::value( 'search', $_GET );
-        $this->_force    = CRM_Utils_Request::retrieve( 'force',    'Boolean',   $this, false ); 
-        $this->_surveyId = CRM_Utils_Request::retrieve( 'surveyId', 'Positive',  $this ); 
+        $this->_search    = CRM_Utils_Array::value( 'search', $_GET );
+        $this->_force     = CRM_Utils_Request::retrieve( 'force',    'Boolean',   $this, false ); 
+        $this->_surveyId  = CRM_Utils_Request::retrieve( 'surveyId', 'Positive',  $this );
+        $this->_votingTab = $this->get( 'votingTab' );
         
         $this->assign( 'buildSelector', $this->_search );
         $this->assign( 'searchParams',  json_encode( $this->get( 'searchParams' ) ) );
         $this->assign( 'force',         $this->_force );
+        $this->assign( 'votingTab',     $this->_votingTab );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Voter List' ) );

@@ -62,11 +62,11 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     
     private $_interviewerId;
     
-    private $_campaignId;
-    
     private $_ufGroupId;
     
     private $_surveyActivityIds;
+    
+    private $_votingTab = false;
     
     /**
      * build all the data structures needed to build the form
@@ -76,19 +76,18 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      */
     function preProcess( ) 
     {
-        parent::preProcess( );
-        
-        //get the survey id from user submitted values.
-        $this->_surveyId      = CRM_Utils_Array::value( 'campaign_survey_id',    $this->get( 'formValues' ) );
-        $this->_interviewerId = CRM_Utils_Array::value( 'survey_interviewer_id', $this->get( 'formValues' ) );
-        if ( !$this->_surveyId ) {
-            CRM_Core_Error::statusBounce( ts( "Could not find Survey Id.") );
+        $this->_votingTab = $this->get( 'votingTab' );
+        if ( $this->_votingTab ) {
+            //time being hack.
+            $this->_surveyId      = 1;
+            $this->_contactIds    = array( 102 );
+            $this->_interviewerId = 102;
+        } else {
+            parent::preProcess( );  
+            //get the survey id from user submitted values.
+            $this->_surveyId      = CRM_Utils_Array::value( 'campaign_survey_id',    $this->get( 'formValues' ) );
+            $this->_interviewerId = CRM_Utils_Array::value( 'survey_interviewer_id', $this->get( 'formValues' ) );
         }
-        if ( !$this->_interviewerId ) {
-            CRM_Core_Error::statusBounce( ts( 'Missing Interviewer contact.' ) );
-        }
-        
-        $this->_campaignId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $this->_surveyId, 'campaign_id' );
         
         //get the contact read only fields to display.
         require_once 'CRM/Core/BAO/Preferences.php';
@@ -129,22 +128,42 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                 unset( $this->_contactIds[$key] ); 
             }
         }
-        if ( empty( $this->_contactIds ) ) {
-            CRM_Core_Error::statusBounce( ts( 'Could not find valid activities for selected voters.') );
-        }
         
         //retrieve the contact details.
         $voterDetails = CRM_Campaign_BAO_Survey::voterDetails( $this->_contactIds, $returnProperties );
         
+        $this->assign( 'votingTab',      $this->_votingTab );
         $this->assign( 'voterIds',       $this->_contactIds );
         $this->assign( 'voterDetails',   $voterDetails );
         $this->assign( 'readOnlyFields', $readOnlyFields );
         $this->assign( 'interviewerId',  $this->_interviewerId );
-        $this->assign( 'campaignId',     $this->_campaignId );
         $this->assign( 'surveyActivityIds', json_encode( $activityIds ) );
+        
+        //validate the required ids.
+        $this->validateIds( );
         
         //set the title.
         CRM_Utils_System::setTitle( ts( 'Record Voters Interview' ) );
+    }
+    
+    function validateIds( ) 
+    {
+        $required = array( 'surveyId'      => ts( 'Could not find Survey.'),
+                           'interviewerId' => ts( 'Could not find Interviewer.' ),
+                           'contactIds'    => ts( 'Could not find valid activities for selected voters.') );
+        
+        $errorMessages = array( );
+        foreach ( $required as $fld => $msg ) {
+            if ( empty( $this->{"_$fld"} ) ) {
+                if ( !$this->_votingTab ) {
+                    CRM_Core_Error::statusBounce( $msg );
+                    break;
+                }
+                $errorMessages[] = $msg;
+            }
+        }
+        
+        $this->assign( 'errorMessages', $errorMessages );
     }
     
     /**
@@ -210,6 +229,9 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         }
         $this->assign( 'surveyFields', $exposedSurveyFields );
         
+        //no need to get qf buttons.
+        if ( $this->_votingTab ) return;  
+        
         $buttons = array( array ( 'type'      => 'cancel',
                                   'name'      => ts('Done'),
                                   'subName'   => 'interview',
@@ -274,7 +296,6 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         require_once 'CRM/Activity/BAO/Activity.php';
         foreach ( $params['field'] as $voterId => &$values ) {
             $values['voter_id']         = $voterId;
-            $values['campaign_id']      = $this->_campaignId;
             $values['interviewer_id']   = $this->_interviewerId;
             $values['activity_type_id'] = $this->_surveyTypeId;
             $values['activity_id']      = CRM_Utils_Array::value( 'activity_id', $this->_surveyActivityIds[$voterId] );
