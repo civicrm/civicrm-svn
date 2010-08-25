@@ -216,7 +216,18 @@ class CRM_Activity_Page_Tab extends CRM_Core_Page
            ( CRM_Core_Action::UPDATE | CRM_Core_Action::ADD | CRM_Core_Action::VIEW ) ) {
             $this->edit( );
             $activityTypeId = CRM_Utils_Request::retrieve('atype', 'Positive', $this );
-            if ( $activityTypeId == 3 ) {
+            
+            // Email and Create Letter activities use a different form class
+            require_once 'CRM/Core/OptionGroup.php';
+            $emailTypeValue = CRM_Core_OptionGroup::getValue( 'activity_type',
+                                                              'Email',
+                                                              'name' );
+
+            $letterTypeValue = CRM_Core_OptionGroup::getValue( 'activity_type',
+                                                               'Print PDF Letter',
+                                                               'name' );
+            
+            if ( in_array( $activityTypeId, array( $emailTypeValue, $letterTypeValue ) ) ) {
                 return;
             }
          } elseif ( $this->_action & ( CRM_Core_Action::DELETE | CRM_Core_Action::DETACH ) ) {
