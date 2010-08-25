@@ -32,6 +32,7 @@
             <td>{include file="CRM/common/jcalendar.tpl" elementName=scheduled_date}
             <span class="description">{ts}Scheduled Date for Pledge payment.{/ts}</span></td></tr>
         </td></tr>
+	<tr><td class="label">{$form.scheduled_amount.label}</td><td class="form-layout">{$form.scheduled_amount.html}</td></tr>
       </table> 
        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>

@@ -100,6 +100,14 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
     {   
         //add various dates
         $this->addDate( 'scheduled_date', ts('Scheduled Date'), true );
+        
+        $this->add( 'text',
+                    'scheduled_amount', 
+                    ts('Scheduled Amount'),
+                    CRM_Core_DAO::getAttribute( 'CRM_Pledge_DAO_Payment', 'scheduled_amount' ),
+                    true );
+        $this->addRule( 'scheduled_amount', ts('Please enter a valid monetary amount.'), 'money');
+
         $this->addButtons(array( 
                                 array ( 'type'      => 'next',
                                         'name'      => ts('Save'), 
@@ -124,7 +132,8 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
         $formValues = $this->controller->exportValues( $this->_name );
         $params = array( );
         $formValues['scheduled_date'] = CRM_Utils_Date::processDate( $formValues['scheduled_date'] );
-        $params['scheduled_date'] = CRM_Utils_Date::format( $formValues['scheduled_date'] );
+        $params['scheduled_date']     = CRM_Utils_Date::format( $formValues['scheduled_date'] );
+       
         $now = date( 'Ymd' );
         $contributionStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         
@@ -136,6 +145,7 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
         
         $params['id'] = $this->_id;
         $pledgeId = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', $params['id'], 'pledge_id' );       
+
         require_once 'CRM/Pledge/BAO/Payment.php';
         CRM_Pledge_BAO_Payment::add( $params );
 
