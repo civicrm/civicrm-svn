@@ -27,7 +27,7 @@
 <tr>
 <td class="label">{$form.option_type.label}</td>
 <td class="html-adjust">{$form.option_type.html}<br />
-    <span class="description">{ts}You can create new multiple choice options for this field, or select an existing set of options which you've already created for another custom field.{/ts}</span>
+    <span class="description">{ts}You can create new response options for this survey, or select an existing survey response set which you've already created for another survey.{/ts}</span>
 </td>
 </tr>
 
@@ -40,7 +40,7 @@
 <td colspan="2" class="html-adjust">
     <fieldset><legend>{ts}Response Options{/ts}</legend>
     <span class="description">
-        {ts}Enter up to ten (10) multiple choice options in this table (click 'another choice' for each additional choice).You can use existing response options set options by selecting survey response.{/ts} 
+        {ts}Enter up to ten (10) multiple choice options in this table (click 'another choice' for each additional choice).You can use existing response options set options by selecting survey response set.{/ts} 
     </span>
     <br />
 	{strip}

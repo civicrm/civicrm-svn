@@ -223,15 +223,15 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $optionGroups = CRM_Campaign_BAO_Survey::getResultSets( );
 
         if ( empty($optionGroups) ) {
-            $optionTypes = array( '1' => ts( 'Create a new Result set' ));
+            $optionTypes = array( '1' => ts( 'Create a new' ));
         } else {
-            $optionTypes = array( '1' => ts( 'Create a new Result set' ),
-                                  '2' => ts( 'Reuse an existing Result Set' ) );
+            $optionTypes = array( '1' => ts( 'Create a new' ),
+                                  '2' => ts( 'Copy From Existing' ) );
         }
 
         $this->add( 'select', 
                         'option_group_id', 
-                        ts( 'Result Set' ),
+                        ts( 'Survey Response Set' ),
                         array( '' => ts( '- select -' ) ) + $optionGroups, false, 
                         array('onChange' => 'loadOptionGroup( )' ) );
         
@@ -355,7 +355,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         
         if ( $fields['option_type'] == 2 && 
              !CRM_Utils_Array::value( 'option_group_id', $fields) ) {
-            $errors['option_group_id'] = ts("Please select Result set.");
+            $errors['option_group_id'] = ts("Please select Survey Response set.");
             return $errors;
         }
 
@@ -495,7 +495,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
             
             $optionGroup            = new CRM_Core_DAO_OptionGroup( );
             $optionGroup->name      =  $opGroupName;
-            $optionGroup->label     =  $params['title']. ' Result Set';
+            $optionGroup->label     =  $params['title']. ' Response Set';
             $optionGroup->is_active = 1;
             $optionGroup->save( );
 
