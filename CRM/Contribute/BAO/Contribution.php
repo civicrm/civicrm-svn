@@ -464,17 +464,18 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             require_once 'CRM/Contribute/DAO/Product.php';
             require_once 'CRM/Contribute/DAO/ContributionProduct.php';
             require_once 'CRM/Contribute/DAO/ContributionType.php';
-            $impFields = CRM_Contribute_DAO_Contribution::import( );
-            $expFieldProduct = CRM_Contribute_DAO_Product::export( );
-            $expFieldsContrib = CRM_Contribute_DAO_ContributionProduct::export( );
-            $typeField = CRM_Contribute_DAO_ContributionType::export( );
-            $optionField = CRM_Core_OptionValue::getFields($mode ='contribute' );
-            $fields = array_merge($impFields, $typeField);
-            $fields = array_merge($fields, $expFieldProduct );
-            $fields = array_merge($fields, $expFieldsContrib );
-            $fields = array_merge($fields, $optionField );
-            $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport('Contribution'));
             
+            $impFields          = CRM_Contribute_DAO_Contribution::import( );
+            $expFieldProduct    = CRM_Contribute_DAO_Product::export( );
+            $expFieldsContrib   = CRM_Contribute_DAO_ContributionProduct::export( );
+            $typeField          = CRM_Contribute_DAO_ContributionType::export( );
+            $optionField        = CRM_Core_OptionValue::getFields($mode ='contribute' );
+            $contributionStatus = array( 'contribution_status' => array( 'title' => 'Contribution Status',
+                                                                         'name'  => 'contribution_status' ) );
+                                       
+            $fields = array_merge( $impFields, $typeField, $contributionStatus, $optionField, $expFieldProduct,
+                                   $expFieldsContrib, CRM_Core_BAO_CustomField::getFieldsForImport('Contribution') );
+                            
             self::$_exportableFields = $fields;
         }
         return self::$_exportableFields;

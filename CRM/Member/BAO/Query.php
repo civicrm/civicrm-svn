@@ -83,8 +83,15 @@ class CRM_Member_BAO_Query
             }
 
             //add status
+            if ( CRM_Utils_Array::value( 'membership_status', $query->_returnProperties ) ) {
+                $query->_select['membership_status']  = "civicrm_membership_status.label as membership_status";
+                $query->_element['membership_status'] = 1;
+                $query->_tables['civicrm_membership_status'] = 1;
+                $query->_whereTables['civicrm_membership_status'] = 1;
+            }
+
             if ( CRM_Utils_Array::value( 'status_id', $query->_returnProperties ) ) {
-                $query->_select['status_id']  = "civicrm_membership_status.name as status_id";
+                $query->_select['status_id']  = "civicrm_membership_status.id as status_id";
                 $query->_element['status_id'] = 1;
                 $query->_tables['civicrm_membership_status'] = 1;
                 $query->_whereTables['civicrm_membership_status'] = 1;
@@ -321,6 +328,7 @@ class CRM_Member_BAO_Query
                                 'membership_end_date'    => 1,
                                 'membership_source'      => 1,
                                 'status_id'              => 1,
+                                'membership_status'      => 1,
                                 'membership_id'          => 1,
                                 'owner_membership_id'    => 1
                                 );

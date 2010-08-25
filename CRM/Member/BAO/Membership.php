@@ -1485,7 +1485,15 @@ SELECT c.contribution_page_id as pageID
         
         unset( $fields['membership_contact_id'] );
         $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport('Membership'));
-        
+
+        require_once 'CRM/Member/DAO/MembershipType.php';
+        $membershipType = CRM_Member_DAO_MembershipType::export( );
+
+        require_once 'CRM/Member/DAO/MembershipStatus.php';
+        $membershipStatus = CRM_Member_DAO_MembershipStatus::export( );
+
+        $fields = array_merge( $membershipFields, $membershipType, $membershipStatus );
+               
         return $fields;
     }
     
