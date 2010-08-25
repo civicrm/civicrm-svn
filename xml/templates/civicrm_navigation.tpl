@@ -463,6 +463,19 @@ VALUES
 INSERT INTO civicrm_navigation
     ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
 VALUES     
+    ( @domainID, NULL,                                             '{ts escape="sql"}CiviCampaign{/ts}',              'CiviCampaign',              'administer CiviCampaign,administer CiviCRM', 'AND', @adminlastID, '1', NULL, 13 );
+
+SET @adminCampaignlastID:=LAST_INSERT_ID();
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES     
+    ( @domainID, 'civicrm/admin/campaign/surveyType&reset=1',                            '{ts escape="sql"}Survey Types{/ts}',  'Survey Types', 'administer CiviCampaign',    '', @adminCampaignlastID, '1', NULL, 1 ),
+    ( @domainID, 'civicrm/admin/options/campaign_type&group=campaign_type&reset=1',      '{ts escape="sql"}Campaign Types{/ts}',  'Campaign Types', 'administer CiviCampaign',    '', @adminCampaignlastID, '1', NULL, 2 ),
+    ( @domainID, 'civicrm/admin/options/campaign_status&group=campaign_status&reset=1',      '{ts escape="sql"}Campaign Status{/ts}',  'Campaign Status', 'administer CiviCampaign',    '', @adminCampaignlastID, '1', NULL, 3 );
+
+INSERT INTO civicrm_navigation
+    ( domain_id, url, label, name, permission, permission_operator, parent_id, is_active, has_separator, weight )
+VALUES     
     ( @domainID, NULL, '{ts escape="sql"}Help{/ts}', 'Help', NULL, '',  NULL, '1', NULL, 11);
 
 SET @adminHelplastID:=LAST_INSERT_ID();
