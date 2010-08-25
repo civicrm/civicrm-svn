@@ -156,8 +156,11 @@ cj(document).ready( function( ) {
      var selectedTabIndex = {/literal}{$selectedTabIndex}{literal};
      cj("#mainTabContainer").tabs( { 
                                     selected: selectedTabIndex, 
-                                    spinner: spinnerImage, 
-				    cache: true, 
+                                    spinner: spinnerImage,
+				    
+				    //FIXME:first fix the template cache and then enable.  
+				    //cache: true, 
+				    
 				    load: stopSpinner 
 				    });
 });
