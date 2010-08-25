@@ -8,3 +8,6 @@ INSERT INTO civicrm_navigation
 VALUES
  ( @domainID, '{ts escape="sql"}Home{/ts}', 'Home', 'civicrm/dashboard&reset=1', NULL, '', NULL, 1, NULL, 0),
  ( @domainID, '{ts escape="sql"}Website Types{/ts}', 'Website Types', 'civicrm/admin/options/website_type&group=website_type&reset=1', 'administer CiviCRM', '', @navid, 1, NULL, @wt + 1);
+ 
+ -- CRM-6726
+ UPDATE  civicrm_option_value SET  filter =  0 WHERE  civicrm_option_value.name = 'Print PDF Letter';
