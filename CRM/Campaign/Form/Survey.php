@@ -238,7 +238,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $this->assign( 'existingOptions', $existingOptions );
         
         $element =& $this->addRadio( 'option_type', 
-                                     ts('Option Type'), 
+                                     ts('Survey Responses'), 
                                      $optionTypes,
                                       array( 'onclick' => "showOptionSelect();"), '<br/>', true );
 

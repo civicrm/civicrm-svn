@@ -38,9 +38,9 @@
 
 <tr id="multiple">
 <td colspan="2" class="html-adjust">
-    <fieldset><legend>{ts}Result Set{/ts}</legend>
+    <fieldset><legend>{ts}Response Options{/ts}</legend>
     <span class="description">
-        {ts}Enter up to ten (10) multiple choice options in this table (click 'another choice' for each additional choice).You can use existing result set options by selecting result set.{/ts} 
+        {ts}Enter up to ten (10) multiple choice options in this table (click 'another choice' for each additional choice).You can use existing response options set options by selecting survey response.{/ts} 
     </span>
     <br />
 	{strip}

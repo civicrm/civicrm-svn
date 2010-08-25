@@ -34,13 +34,12 @@
       <a href="#" onclick="createCampaign( );" class="button"><span>&raquo; {ts}Add Campaign{/ts}</span></a>
   </div>
 
-
   {include file="CRM/common/enableDisable.tpl"}
   {include file="CRM/common/jsortable.tpl"}
-  <div id="campaignType">
+  <div id="campaignList">
     <table id="options" class="display">
       <thead>
-        <tr>      
+        <tr class="columnheader">      
           <th>{ts}Campaign Title{/ts}</th>
           <th>{ts}Description{/ts}</th>
           <th>{ts}Start Date{/ts}</th> 
@@ -52,15 +51,15 @@
 	</tr>
       </thead>
       {foreach from=$campaigns item=campaign}
-        <tr id="row_{$campaign.campaign_id}" {if $campaign.is_active neq 1}class="disabled"{/if}>
-          <td>{$campaign.title}</td>
-          <td>{$campaign.description}</td>
-          <td>{$campaign.start_date|crmDate}</td>
-          <td>{$campaign.end_date|crmDate}</td>
-          <td>{$campaign.campaign_type}</td>
-          <td>{$campaign.status}</td>
-          <td id="row_{$campaign.id}_status">{if $campaign.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-          <td>{$campaign.action}</td>
+        <tr class="{cycle values="odd-row,even-row"} crm-campaign{if $campaign.is_active neq 1} disabled{/if}" id="row_{$campaign.campaign_id}">
+          <td class="crm-campaign-title">{$campaign.title}</td>
+          <td class="crm-campaign-description">{$campaign.description}</td>
+          <td class="crm-campaign-start_date">{$campaign.start_date|crmDate}</td>
+          <td class="crm-campaign-end_date">{$campaign.end_date|crmDate}</td>
+          <td class="crm-campaign-campaign_type">{$campaign.campaign_type}</td>
+          <td class="crm-campaign-campaign_status">{$campaign.status}</td>
+          <td class="crm-campaign-campaign-is_active" id="row_{$campaign.id}_status">{if $campaign.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
+          <td class="crm-campaign-action">{$campaign.action}</td>
 	</tr>
       {/foreach}
     </table>
@@ -89,7 +88,7 @@
   <div id="surveyList">
     <table id="options" class="display">
       <thead>
-        <tr>  
+        <tr class="columnheader">  
           <th>{ts}Survey{/ts}</th>
           <th>{ts}Campaign{/ts}</th>
           <th>{ts}Survey Type{/ts}</th>   
@@ -102,16 +101,16 @@
         </tr>
       </thead>
       {foreach from=$surveys item=survey}
-        <tr id="row_{$survey.id}" {if $survey.is_active neq 1}class="disabled"{/if}>
-	  <td>{$survey.title}</td>
-          <td>{$survey.campaign_id}</td>
-          <td>{$survey.activity_type}</td>
-          <td>{$survey.release_frequency}</td>
-          <td>{$survey.max_number_of_contacts}</td>
-          <td>{$survey.default_number_of_contacts}</td>
-          <td>{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
-          <td id="row_{$survey.id}_status">{if $survey.is_active}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
- 	  <td class="crm-report-optionList-action">{$survey.action}</td>
+        <tr id="row_{$survey.id}" class="{cycle values="odd-row,even-row"} crm-survey{if $survey.is_active neq 1} disabled{/if}">
+	  <td class="crm-survey-title">{$survey.title}</td>
+          <td class="crm-survey-campaign_id">{$survey.campaign_id}</td>
+          <td class="crm-survey-activity_type">{$survey.activity_type}</td>
+          <td class="crm-survey-release_frequency">{$survey.release_frequency}</td>
+          <td class="crm-survey-max_number_of_contacts">{$survey.max_number_of_contacts}</td>
+          <td class="crm-survey-default_number_of_contacts">{$survey.default_number_of_contacts}</td>
+          <td class="crm-survey-is_default">{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
+          <td class="crm-survey-is_active" id="row_{$survey.id}_status">{if $survey.is_active}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
+ 	  <td class="crm-survey-action">{$survey.action}</td>
         </tr>
       {/foreach}
     </table>
