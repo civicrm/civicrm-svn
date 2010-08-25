@@ -37,7 +37,8 @@
 require_once 'CRM/Core/Form.php';
 require_once 'CRM/Campaign/BAO/Campaign.php';
 require_once 'CRM/Campaign/PseudoConstant.php';
-       
+require_once 'CRM/Campaign/DAO/CampaignGroup.php';
+     
 /**
  * This class generates form components for processing a campaign 
  * 
@@ -132,7 +133,10 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
             $defaults['is_active'] = 1;
         }
         
-        require_once "CRM/Campaign/DAO/CampaignGroup.php";
+        if ( !$this->_campaignId ) {
+            return $defaults;
+        }
+
         $dao = new  CRM_Campaign_DAO_CampaignGroup();
         
         $campaignGroups = array();
@@ -142,7 +146,10 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         while ( $dao->fetch() ) {
             $campaignGroups[$dao->entity_table][$dao->group_type][] = $dao->entity_id;
         }
-        $defaults['includeGroups'] = $campaignGroups['civicrm_group']['Include'];
+
+        if ( !empty($campaignGroups) ) {
+            $defaults['includeGroups'] = $campaignGroups['civicrm_group']['Include'];
+        }
         return $defaults;
        
     }
