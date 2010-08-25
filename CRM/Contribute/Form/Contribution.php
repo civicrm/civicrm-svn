@@ -471,6 +471,7 @@ WHERE  contribution_id = {$this->_id}
             $defaults['honor_type_id'] = CRM_Utils_Array::value( 'honor_type_id', $this->_pledgeValues );
             $defaults['honor_contact_id'] = CRM_Utils_Array::value( 'honor_contact_id', $this->_pledgeValues );
             $defaults['contribution_type_id'] = CRM_Utils_Array::value( 'contribution_type_id', $this->_pledgeValues );
+            $defaults['option_type'] = 1;
         }
         
         $fields   = array( );
@@ -867,14 +868,24 @@ WHERE  contribution_id = {$this->_id}
                 if ( $this->_online ) $element->freeze( );
             }
             $this->assign( 'hasPriceSets', $hasPriceSets );
+            if ( $this->_online || $this->_ppID ) {
+                
+                $attributes['total_amount'] = array_merge( $attributes['total_amount'], array (
+                                                                                               'READONLY'         => true,
+                                                                                               'style'=> "background-color:#EBECE4" ) );
+                $optionTypes = array( '1' => ts( 'Adjust Pledge Payment Schedule?' ),
+                                      '2' => ts( 'Adjust Total Pledge Amount?') );
+                $element = $this->addRadio( 'option_type', 
+                                            ts('Option Type'), 
+                                            $optionTypes,
+                                            array(), '<br/>' );
+            }
+            
             $element = $this->addMoney( 'total_amount',
                                         ts('Total Amount'),
                                         ($hasPriceSets)?false:true,
                                         $attributes['total_amount'],
                                         true );
-            if ( $this->_online || $this->_ppID ) {
-                $element->freeze( );
-            }
         }
         
         $element = $this->add( 'text', 'source', ts('Source'), CRM_Utils_Array::value('source',$attributes) );
@@ -1380,6 +1391,8 @@ WHERE  contribution_id = {$this->_id}
                 if ( $this->_ppID ) {
                     //store contribution id in payment record.
                     CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $this->_ppID, 'contribution_id', $contribution->id );
+                    //store actual amount in payment record.
+                    CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $this->_ppID, 'actual_amount', $contribution->total_amount );          
                 } else {
                     $this->_ppID = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
                                                                 $contribution->id,
@@ -1393,12 +1406,15 @@ WHERE  contribution_id = {$this->_id}
                                                                     );
                 }
                 
+                if ( CRM_Utils_Array::value( 'option_type', $formValues ) == 2 ) {
+                    $adjustTotalAmount = true;
+                }
                 require_once 'CRM/Pledge/BAO/Payment.php';
                 CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $this->_pledgeID, 
                                                                    array( $this->_ppID ), 
                                                                    $contribution->contribution_status_id,
                                                                    null,
-                                                                   $contribution->total_amount );
+                                                                   $contribution->total_amount, $adjustTotalAmount );
             } 
             
             $statusMsg = ts('The contribution record has been saved.');
