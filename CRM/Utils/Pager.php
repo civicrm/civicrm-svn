@@ -90,7 +90,7 @@ class CRM_Utils_Pager extends Pager_Sliding {
             $params['status'] = ts('Contacts %%StatusMessage%%');
         }
 
-        $params['path'] = CRM_Utils_System::makeURL('contact/search');
+        $params['path'] = CRM_Utils_System::makeURL(CRM_Utils_System::currentPath());
 
         $this->initialize( $params );
 
