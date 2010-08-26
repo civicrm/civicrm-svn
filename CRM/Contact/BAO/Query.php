@@ -720,8 +720,14 @@ class CRM_Contact_BAO_Query
                     $elementCmpName = 'phone';
                 }
                 
+                if ( in_array( $elementCmpName, array_keys( $addressCustomFields ) ) ) {
+                    if ( $cfID = CRM_Core_BAO_CustomField::getKeyID( $elementCmpName ) ) {
+                        $addressCustomFieldIds[$cfID][$name] = 1;
+                    }
+                }
                 //add address table only once
-                if ( in_array( $elementCmpName, self::$_locationSpecificFields ) && ! $addAddress
+                if ( ( in_array( $elementCmpName, self::$_locationSpecificFields ) || !empty($addressCustomFieldIds) ) 
+                     && ! $addAddress
                      && !in_array( $elementCmpName, array( 'email', 'phone', 'im', 'openid' ) )) {                         
                     $tName = "$name-address";
                     $aName = "`$name-address`";
@@ -732,11 +738,6 @@ class CRM_Contact_BAO_Query
                     $locationTypeJoin[$tName] = " ( $aName.location_type_id = $ltName.id ) ";
                     $processed[$aName] = 1;
                     $addAddress = true;
-                }
-                if ( in_array( $elementCmpName, array_keys( $addressCustomFields ) ) ) {
-                    if ( $cfID = CRM_Core_BAO_CustomField::getKeyID( $elementCmpName ) ) {
-                        $addressCustomFieldIds[$cfID][$name] = 1;
-                    }
                 }
 
                 $cond = $elementType = '';
