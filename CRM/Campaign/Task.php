@@ -82,7 +82,8 @@ class CRM_Campaign_Task
                                    
                                    2 => array( 'title'  => ts( 'Reserve Voters' ),
                                                'class'  => array( 'CRM_Campaign_Form_Task_Reserve',
-                                                                  'CRM_Campaign_Form_Task_Interview' ),
+                                                                  'CRM_Campaign_Form_Task_Interview',
+                                                                  'CRM_Campaign_Form_Task_Release' ),
                                                'result' => false ),
                                    
                                    3 => array( 'title'  => ts( 'Release Voters' ),

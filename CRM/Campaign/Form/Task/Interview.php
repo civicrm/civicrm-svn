@@ -290,7 +290,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         if ( $buttonName == '_qf_Interview_done_interviewToReserve' ) {
             //hey its time to stop cycle.
             CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/survey/search', 'reset=1&op=reserve' ) );
-        } else if ( $buttonName == '_qf_Interview_done_interviewToRelease' ) {
+        } else if ( $buttonName == '_qf_Interview_next_interviewToRelease' ) {
             //get ready to jump to release form.
             foreach ( array( 'surveyId', 'contactIds', 'interviewerId' ) as $fld ) {
                 $this->controller->set( $fld, $this->{"_$fld"} ); 
