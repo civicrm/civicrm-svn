@@ -251,16 +251,16 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         if ( $manageCampaign ||
              $adminCampaign  ||
              CRM_Core_Permission::check( 'release campaign contacts' ) ) { 
-            $buttons[] = array ( 'type'      => 'done',
+            $buttons[] = array ( 'type'      => 'next',
                                  'name'      => ts('Release Voters >>'),
-                                 'subName'   => 'doneANDRelease' );
+                                 'subName'   => 'interviewToRelease' );
         }
         if ( $manageCampaign ||
              $adminCampaign  ||
              CRM_Core_Permission::check( 'reserve campaign contacts' ) ) { 
             $buttons[] = array ( 'type'      => 'done',
                                  'name'      => ts('Reserve More Voters >>'),
-                                 'subName'   => 'doneANDReserve' );
+                                 'subName'   => 'interviewToReserve' );
         }
         
         $this->addButtons( $buttons );
@@ -287,13 +287,15 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     public function postProcess( ) 
     {
         $buttonName = $this->controller->getButtonName( );
-        if ( in_array( $buttonName, array( '_qf_Interview_done_doneANDRelease',
-                                           '_qf_Interview_done_doneANDReserve' ) ) ) {
-            $op = strtolower( substr( $buttonName, -7 ) );
-            $urlParams = "force=1&op={$op}";
-            $qfKey     = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
-            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= '&qfKey='.$qfKey;
-            CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/survey/search', $urlParams ) );
+        if ( $buttonName == '_qf_Interview_done_interviewToReserve' ) {
+            //hey its time to stop cycle.
+            CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/survey/search', 'reset=1&op=reserve' ) );
+        } else if ( $buttonName == '_qf_Interview_done_interviewToRelease' ) {
+            //get ready to jump to release form.
+            foreach ( array( 'surveyId', 'contactIds', 'interviewerId' ) as $fld ) {
+                $this->controller->set( $fld, $this->{"_$fld"} ); 
+            }
+            $this->controller->set( 'interviewToRelease', true );
         }
         
         // vote is done through ajax

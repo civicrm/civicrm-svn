@@ -36,6 +36,7 @@
 
 require_once 'CRM/Campaign/Form/Task.php';
 require_once 'CRM/Campaign/BAO/Survey.php';
+require_once 'CRM/Core/PseudoConstant.php';
 
 /**
  * This class provides the functionality to add contacts for
@@ -72,14 +73,20 @@ class CRM_Campaign_Form_Task_Release extends CRM_Campaign_Form_Task {
      * @return void
      * @access public
      */
-    function preProcess( ) {
-        parent::preProcess( );
-
-        require_once 'CRM/Core/PseudoConstant.php';
-        
-        //get the survey id from user submitted values.
-        $this->_surveyId      = CRM_Utils_Array::value( 'campaign_survey_id',    $this->get( 'formValues' ) );
-        $this->_interviewerId = CRM_Utils_Array::value( 'survey_interviewer_id', $this->get( 'formValues' ) );
+    function preProcess( ) 
+    {
+        $this->_interviewToRelease = $this->get( 'interviewToRelease' );
+        if ( $this->_interviewToRelease ) {
+            //user came from interview form.
+            foreach ( array( 'surveyId', 'contactIds', 'interviewerId' ) as $fld ) {
+                $this->{"_$fld"} = $this->get( $fld ); 
+            }
+        } else {
+            parent::preProcess( );
+            //get the survey id from user submitted values.
+            $this->_surveyId      = CRM_Utils_Array::value( 'campaign_survey_id',    $this->get( 'formValues' ) );
+            $this->_interviewerId = CRM_Utils_Array::value( 'survey_interviewer_id', $this->get( 'formValues' ) );
+        }
         
         $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
         $surveyActType  = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
