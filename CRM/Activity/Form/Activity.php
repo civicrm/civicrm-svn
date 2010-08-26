@@ -667,19 +667,18 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         require_once 'CRM/Core/Form/Tag.php';
         $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_activity' );
         CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_activity', $this->_activityId, false, true );
-            
+        
         // check for survey activity
         if ( $this->_activityId ) {
             require_once 'CRM/Campaign/BAO/Survey.php';
-            $this->_isSurveyActivity = CRM_Campaign_BAO_Survey::isSurveyActivity( $this->_activityId, $this->_activityTypeId );
+            $this->_isSurveyActivity = CRM_Campaign_BAO_Survey::isSurveyActivity( $this->_activityId );
             if ( $this->_isSurveyActivity ) {
-                $sourceRecord  = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity',
-                                                              $this->_activityId,
-                                                              'source_record_id'
-                                                              );
-                $responseOptions = CRM_Campaign_BAO_Survey::getResponsesOptions( $sourceRecord );
-                
-                $this->add( 'select', 'result', ts('Result'), array( '' => ts('- select -') ) + $responseOptions );
+                $surveyId = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity', 
+                                                         $this->_activityId, 
+                                                         'source_record_id' );
+                $responseOptions = CRM_Campaign_BAO_Survey::getResponsesOptions( $surveyId );
+                $this->add( 'select', 'result', ts('Result'),
+                            array( '' => ts('- select -') ) + array_combine( $responseOptions, $responseOptions ) );
             }
             $this->assign( 'surveyActivity', $this->_isSurveyActivity );
         }

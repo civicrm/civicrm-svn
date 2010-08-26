@@ -485,22 +485,24 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
      * @return true/false boolean.
      * @static
      */
-    static function isSurveyActivity( $activityId, $activityTypeId = null ) {
-        $params = $details = array( ); 
-        $params['id'] = $activityId;
+    static function isSurveyActivity( $activityId ) 
+    {
+        $isSurveyActivity = false;
+        if ( !$activityId ) return $isSurveyActivity;
         
-        require_once 'CRM/Activity/BAO/Activity.php';
-        CRM_Activity_BAO_Activity::retrieve( $params, $details );
-
-        if ( !$activityTypeId ) {
-            $activityTypeId = CRM_Utils_Array::value( 'activity_type_id',  $details ); 
+        require_once 'CRM/Activity/DAO/Activity.php';
+        $activity     = new CRM_Activity_DAO_Activity( );
+        $activity->id = $activityId; 
+        $activity->selectAdd( 'source_record_id, activity_type_id' );
+        if ( $activity->find( true ) && 
+             $activity->source_record_id ) {
+            $surveyActTypes = self::getSurveyActivityType( ); 
+            if ( array_key_exists( $activity->activity_type_id, $surveyActTypes ) ) {
+                $isSurveyActivity = true;
+            }
         }
         
-        if ( CRM_Utils_Array::value( 'source_record_id', $details ) && 
-             in_array( $activityTypeId, array_keys(self::getSurveyActivityType()) ) ) {
-            return true;
-        }
-        return false;
+        return $isSurveyActivity;
     }
     
     /*
@@ -510,16 +512,17 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
      * @return $responseOptions an array of option values
      * @static
      */
-    static function getResponsesOptions( $surveyId ) {
+    static function getResponsesOptions( $surveyId ) 
+    {
         $responseOptions = array( );
-        $resultId        = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
-                                                        $surveyId, 
-                                                        'result_id' );
+        if ( !$surveyId ) return $responseOptions;  
+        
+        $resultId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'result_id' );
         if ( $resultId ) { 
             require_once 'CRM/Core/OptionGroup.php';
             $responseOptions = CRM_Core_OptionGroup::valuesByID( $resultId );
-            $responseOptions = array_combine( $responseOptions, $responseOptions );
         }
+        
         return $responseOptions;
     }
 }
