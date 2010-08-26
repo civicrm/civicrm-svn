@@ -204,7 +204,7 @@
              <tr class="crm-activity-form-block-priority_id">
                 <td class="label">{$form.priority_id.label}</td><td class="view-value">{$form.priority_id.html}</td>
              </tr>
-	     {if $campaignActivity } 
+	     {if $surveyActivity } 
                <tr class="crm-activity-form-block-result">
                  <td class="label">{$form.result.label}</td><td class="view-value">{$form.result.html}</td>
                </tr>
