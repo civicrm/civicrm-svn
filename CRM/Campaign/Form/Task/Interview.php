@@ -143,7 +143,12 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->validateIds( );
         
         //set the title.
-        CRM_Utils_System::setTitle( ts( 'Record Voters Interview' ) );
+        require_once 'CRM/Core/PseudoConstant.php';
+        $activityTypes = CRM_Core_PseudoConstant::activityType( );
+        $surveyTypeId  = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',
+                                                      $this->_surveyId,
+                                                      'activity_type_id' );
+        CRM_Utils_System::setTitle( ts( 'Record %1 Responses', array( 1 => $activityTypes[$surveyTypeId] ) ) );
     }
     
     function validateIds( ) 

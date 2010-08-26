@@ -185,12 +185,6 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
             $this->_formValues = $this->controller->exportValues( $this->_name );
         }
         
-        //survey id.
-        $surveyId = CRM_Utils_Request::retrieve( 'memberId', 'Positive', $this );
-        if ( $surveyId  ) {
-            $this->_formValues['survey_id'] = $surveyId; 
-        }
-        
         if ( $this->_force ) {
             $this->postProcess( );
             $this->set( 'force', 0 );
@@ -284,7 +278,19 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
                                   'release'   => 3 );
             
             $currentTaskValue = CRM_Utils_Array::value( $this->_operation, $taskMapping );
-            $this->add('select', 'task', ts('Actions:') . ' ', array( $currentTaskValue => $allTasks[$currentTaskValue] ) );
+            $taskValue = array( $currentTaskValue => $allTasks[$currentTaskValue] );
+            if ( $this->_operation == 'interview' && 
+                 CRM_Utils_Array::value( 'campaign_survey_id', $this->_formValues ) ) {
+                require_once 'CRM/Core/PseudoConstant.php';
+                $activityTypes = CRM_Core_PseudoConstant::activityType( );
+                $surveyTypeId  = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',
+                                                              $this->_formValues['campaign_survey_id'],
+                                                              'activity_type_id' );
+                $taskValue = array( $currentTaskValue => ts( 'Record %1 Responses', 
+                                                             array( 1 => $activityTypes[$surveyTypeId] ) ) );
+            }
+            
+            $this->add('select', 'task', ts('Actions:') . ' ', $taskValue );
             $this->setDefaults( array( 'task' => $currentTaskValue ) );
             
             $this->add('submit', $this->_actionButtonName, ts('Go'),
