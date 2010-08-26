@@ -40,6 +40,7 @@ require_once 'CRM/Contact/Form/Task/PDFLetterCommon.php';
 require_once 'CRM/Core/Menu.php';
 require_once 'CRM/Core/BAO/CustomGroup.php';
 require_once 'CRM/Contact/BAO/Contact.php';
+require_once 'CRM/Activity/BAO/Activity.php';
 /**
  * This class provides the functionality to create PDF letter for a group of
  * contacts or a single contact. 
@@ -71,7 +72,9 @@ class CRM_Contact_Form_Task_PDF extends CRM_Contact_Form_Task {
 
         // retrieve contact ID if this is 'single' mode
         $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, false );
-
+        
+        $this->_activityId = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, false );
+        
         if ( $cid ) {
             CRM_Contact_Form_Task_PDFLetterCommon::preProcessSingle( $this, $cid );
             $this->_single = true;
@@ -81,6 +84,16 @@ class CRM_Contact_Form_Task_PDF extends CRM_Contact_Form_Task {
         }
         $this->assign( 'single', $this->_single );
 
+    }
+    function setDefaultValues( ) 
+    {
+        if ( isset( $this->_activityId ) ) {
+            $params = array( 'id' => $this->_activityId );
+            CRM_Activity_BAO_Activity::retrieve( $params, $defaults );
+            $defaults['html_message'] = $defaults['details'];
+            return $defaults;
+        }
+        
     }
     
     /**
