@@ -459,7 +459,6 @@ class CRM_Pledge_BAO_Query
                                 'pledge_create_date'              => 1,
                                 'pledge_next_pay_date'            => 1,
                                 'pledge_next_pay_amount'          => 1,
-                                'pledge_status_id'                => 1,
                                 'pledge_status'                   => 1,
                                 'pledge_is_test'                  => 1,
                                 'pledge_contribution_page_id'     => 1,

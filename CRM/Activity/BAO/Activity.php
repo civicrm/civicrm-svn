@@ -1808,7 +1808,7 @@ AND cl.modified_id  = c.id
 	            require_once 'CRM/Activity/DAO/Activity.php'; 
                 $exportableFields = CRM_Activity_DAO_Activity::export( );
                 $Activityfields   = array( 
-                                          'activity_type'     => array( 'title' => 'Activity Type',               'type' => CRM_Utils_Type::T_STRING ),
+                                          'activity_type'     => array( 'title' => ts('Activity Type'),           'type' => CRM_Utils_Type::T_STRING ),
                                           'activity_status'   => array( 'title' => ts('Activity Status'),         'type' => CRM_Utils_Type::T_STRING ) 
                                            );
                 $fields = array_merge( $Activityfields, $exportableFields );
@@ -1817,13 +1817,10 @@ AND cl.modified_id  = c.id
 	            //set title to activity fields
 	            $fields = array( 
 	                           'case_subject'                 => array( 'title' => ts('Activity Subject'),        'type' => CRM_Utils_Type::T_STRING ),
-                               'case_status'                  => array( 'title' => ts('Case Status'),             'type' => CRM_Utils_Type::T_STRING ),
-                               'case_type'                    => array( 'title' => ts('Case Type'),               'type' => CRM_Utils_Type::T_STRING ),
-	                           'case_source_contact_id'       => array( 'title' => ts('Activity Reporter'),       'type' => CRM_Utils_Type::T_STRING ),
+                               'case_source_contact_id'       => array( 'title' => ts('Activity Reporter'),       'type' => CRM_Utils_Type::T_STRING ),
 	                           'case_recent_activity_date'    => array( 'title' => ts('Activity Actual Date'),    'type' => CRM_Utils_Type::T_DATE ),
 	                           'case_scheduled_activity_date' => array( 'title' => ts('Activity Scheduled Date'), 'type' => CRM_Utils_Type::T_DATE ),
 	                           'case_recent_activity_type'    => array( 'title' => ts('Activity Type'),           'type' => CRM_Utils_Type::T_STRING ),
-	                           'case_activity_status_id'      => array( 'title' => ts('Activity Status Id'),      'type' => CRM_Utils_Type::T_INT ),
                                'case_activity_status'         => array( 'title' => ts('Activity Status'),         'type' => CRM_Utils_Type::T_STRING ),
 	                           'case_activity_duration'       => array( 'title' => ts('Activity Duration'),       'type' => CRM_Utils_Type::T_INT ),
 	                           'case_activity_medium_id'      => array( 'title' => ts('Activity Medium'),         'type' => CRM_Utils_Type::T_INT ),

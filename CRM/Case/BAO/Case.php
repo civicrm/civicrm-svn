@@ -1488,7 +1488,7 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
             }
             require_once 'CRM/Case/DAO/Case.php';
             
-            $fields = CRM_Case_DAO_Case::import( );
+            $fields = CRM_Case_DAO_Case::export( );
             $fields['case_role']   = array( 'title' => ts('Role in Case') );
             $fields['case_type']   = array( 'title' => ts( 'Case Type' ),
                                             'name'  => 'case_type' );

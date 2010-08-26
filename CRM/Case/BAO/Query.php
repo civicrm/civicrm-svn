@@ -67,7 +67,7 @@ class CRM_Case_BAO_Query
         }
         
         if ( CRM_Utils_Array::value( 'case_type_id', $query->_returnProperties ) ) {
-            $query->_select['case_type_id']  = "case_type.name as case_type_id";
+            $query->_select['case_type_id']  = "case_type.id as case_type_id";
             $query->_element['case_type_id'] = 1;
             $query->_tables['case_type']  = $query->_whereTables['case_type'] = 1;
             $query->_tables['civicrm_case'] = $query->_whereTables['civicrm_case'] = 1;
@@ -553,9 +553,7 @@ case_relation_type.id = case_relationship.relationship_type_id )";
                                 'sort_name'                   =>      1,   
                                 'display_name'                =>      1,
                                 'case_id'                     =>      1,   
-                                'case_status_id'              =>      1, 
                                 'case_status'                 =>      1, 
-                                'case_type_id'                =>      1,
                                 'case_type'                   =>      1,
                                 'case_role'                   =>      1,
                                 'case_deleted'                =>      1, 
@@ -583,7 +581,6 @@ case_relation_type.id = case_relationship.relationship_type_id )";
                                 'case_end_date'           => 1,
                                 'case_subject'            => 1,
                                 'case_source_contact_id'  => 1,
-                                'case_activity_status_id' => 1,
                                 'case_activity_status'    => 1,
                                 'case_activity_duration'  => 1,
                                 'case_activity_medium_id' => 1,
