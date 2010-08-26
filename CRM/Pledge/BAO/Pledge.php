@@ -672,9 +672,12 @@ WHERE  $whereCond
                                        'pledge_payment_paid_amount' => array( 'title' => ts('Paid Amount') ),
                                        'pledge_payment_paid_date'   => array( 'title' => ts('Paid Date') )
                                        );
-                        
-            $fields = array_merge( $fields, $calculatedFields );
 
+            $pledgeFields     = array( 'pledge_status'     => array( 'title' => 'Pledge Status',
+                                                                     'name'  => 'pledge_status' ) );
+
+            $fields = array_merge( $fields, $pledgeFields, $calculatedFields );
+           
             // add custom data
             $fields = array_merge($fields, CRM_Core_BAO_CustomField::getFieldsForImport('Pledge'));
             self::$_exportableFields = $fields;

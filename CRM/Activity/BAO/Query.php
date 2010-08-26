@@ -51,8 +51,17 @@ class CRM_Activity_BAO_Query
         }
         
         if ( CRM_Utils_Array::value( 'activity_type_id', $query->_returnProperties ) ) {
-            $query->_select['activity_type_id']  = "activity_type.label as activity_type_id";
+            $query->_select['activity_type_id']  = "activity_type.id as activity_type_id";
             $query->_element['activity_type_id'] = 1;
+            $query->_tables['civicrm_activity'] = 1;
+            $query->_tables['activity_type'] = 1;
+            $query->_whereTables['civicrm_activity'] = 1;
+            $query->_whereTables['activity_type'] = 1;
+        }
+
+        if ( CRM_Utils_Array::value( 'activity_type', $query->_returnProperties ) ) {
+            $query->_select['activity_type']  = "activity_type.label as activity_type";
+            $query->_element['activity_type'] = 1;
             $query->_tables['civicrm_activity'] = 1;
             $query->_tables['activity_type'] = 1;
             $query->_whereTables['civicrm_activity'] = 1;
@@ -72,13 +81,22 @@ class CRM_Activity_BAO_Query
         }
         
         if ( CRM_Utils_Array::value( 'activity_status_id', $query->_returnProperties ) ) {
-            $query->_select['activity_status_id']  = "activity_status.label as activity_status_id";
+            $query->_select['activity_status_id']  = "activity_status.id as activity_status_id";
             $query->_element['activity_status_id'] = 1;
             $query->_tables['civicrm_activity'] = 1;
             $query->_tables['activity_status'] = 1;
             $query->_whereTables['civicrm_activity'] = 1;
             $query->_whereTables['activity_status'] = 1;
         }  
+
+        if ( CRM_Utils_Array::value( 'activity_status', $query->_returnProperties ) ) {
+            $query->_select['activity_status']  = "activity_status.label as activity_status";
+            $query->_element['activity_status'] = 1;
+            $query->_tables['civicrm_activity'] = 1;
+            $query->_tables['activity_status'] = 1;
+            $query->_whereTables['civicrm_activity'] = 1;
+            $query->_whereTables['activity_status'] = 1;
+        } 
 
         if ( CRM_Utils_Array::value( 'activity_duration', $query->_returnProperties ) ) {
             $query->_select['activity_duration']  = "civicrm_activity.duration as activity_duration";
@@ -412,12 +430,14 @@ AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1
                                 'sort_name'           => 1, 
                                 'display_name'        => 1,
                                 'activity_type_id'	  => 1,
+                                'activity_type'  	  => 1,
                                 'activity_subject'	  => 1,
                                 'activity_date_time'  => 1,
                                 'activity_duration'	  => 1,
                                 'activity_location'   => 1,
                                 'activity_details'    => 1,
                                 'activity_status_id'  => 1,
+                                'activity_status'     => 1,
                                 'source_contact_id'   => 1,
                                 'source_record_id'    => 1,
                                 'activity_is_test'    => 1

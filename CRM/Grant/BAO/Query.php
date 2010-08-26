@@ -54,13 +54,28 @@ class CRM_Grant_BAO_Query
     {
         if ( $query->_mode & CRM_Contact_BAO_Query::MODE_GRANT ) {
             if ( CRM_Utils_Array::value( 'grant_status_id', $query->_returnProperties ) ) {
-                $query->_select['grant_status_id']  = 'grant_status.name as grant_status_id';
+                $query->_select['grant_status_id']  = 'grant_status.id as grant_status_id';
                 $query->_element['grant_status']    = 1;
                 $query->_tables['grant_status']     = $query->_whereTables['grant_status'] = 1;
                 $query->_tables['civicrm_grant']    = $query->_whereTables['civicrm_grant'] = 1;
             }
+
+            if ( CRM_Utils_Array::value( 'grant_status', $query->_returnProperties ) ) {
+                $query->_select['grant_status']  = 'grant_status.label as grant_status';
+                $query->_element['grant_status']    = 1;
+                $query->_tables['grant_status']     = $query->_whereTables['grant_status'] = 1;
+                $query->_tables['civicrm_grant']    = $query->_whereTables['civicrm_grant'] = 1;
+            }
+
             if ( CRM_Utils_Array::value( 'grant_type_id', $query->_returnProperties ) ) {
-                $query->_select['grant_type_id']  = 'grant_type.label as grant_type_id';
+                $query->_select['grant_type_id']  = 'grant_type.id as grant_type_id';
+                $query->_element['grant_type']    = 1;
+                $query->_tables['grant_type']     = $query->_whereTables['grant_type'] = 1;
+                $query->_tables['civicrm_grant']  = $query->_whereTables['civicrm_grant'] = 1;
+            }
+
+            if ( CRM_Utils_Array::value( 'grant_type', $query->_returnProperties ) ) {
+                $query->_select['grant_type']  = 'grant_type.label as grant_type';
                 $query->_element['grant_type']    = 1;
                 $query->_tables['grant_type']     = $query->_whereTables['grant_type'] = 1;
                 $query->_tables['civicrm_grant']  = $query->_whereTables['civicrm_grant'] = 1;
@@ -253,6 +268,8 @@ class CRM_Grant_BAO_Query
                                 'sort_name'                       => 1,
                                 'grant_id'                        => 1, 
                                 'grant_type_id'                   => 1, 
+                                'grant_type'                      => 1, 
+                                'grant_status'                    => 1,
                                 'grant_status_id'                 => 1, 
                                 'grant_amount_requested'          => 1,
                                 'grant_application_received_date' => 1,
