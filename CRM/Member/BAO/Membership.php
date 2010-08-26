@@ -1492,7 +1492,7 @@ SELECT c.contribution_page_id as pageID
         require_once 'CRM/Member/DAO/MembershipStatus.php';
         $membershipStatus = CRM_Member_DAO_MembershipStatus::export( );
 
-        $fields = array_merge( $membershipFields, $membershipType, $membershipStatus );
+        $fields = array_merge( $fields, $membershipType, $membershipStatus );
                
         return $fields;
     }
