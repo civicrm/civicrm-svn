@@ -76,12 +76,18 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      */
     function preProcess( ) 
     {
-        $this->_votingTab = $this->get( 'votingTab' );
+        $this->_votingTab          = $this->get( 'votingTab' );
+        $this->_reserveToInterview = $this->get( 'reserveToInterview' );
         if ( $this->_votingTab ) {
             //time being hack.
             $this->_surveyId      = 1;
             $this->_contactIds    = array( 102 );
             $this->_interviewerId = 102;
+        } else if ( $this->_reserveToInterview ) {
+            //user came from reserve form.
+            foreach ( array( 'surveyId', 'contactIds', 'interviewerId' ) as $fld ) {
+                $this->{"_$fld"} = $this->get( $fld ); 
+            }
         } else {
             parent::preProcess( );  
             //get the survey id from user submitted values.
@@ -143,12 +149,12 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->validateIds( );
         
         //set the title.
+        $this->_surveyTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
+                                                            $this->_surveyId, 
+                                                            'activity_type_id' );
         require_once 'CRM/Core/PseudoConstant.php';
         $activityTypes = CRM_Core_PseudoConstant::activityType( );
-        $surveyTypeId  = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',
-                                                      $this->_surveyId,
-                                                      'activity_type_id' );
-        CRM_Utils_System::setTitle( ts( 'Record %1 Responses', array( 1 => $activityTypes[$surveyTypeId] ) ) );
+        CRM_Utils_System::setTitle( ts( 'Record %1 Responses', array( 1 => $activityTypes[$this->_surveyTypeId] ) ) );
     }
     
     function validateIds( ) 
@@ -179,10 +185,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      */
     function buildQuickForm( ) 
     {
-        //get the survey type id.
-        $this->_surveyTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
-                                                            $this->_surveyId, 
-                                                            'activity_type_id' );
+        
         
         $this->assign( 'surveyTypeId', $this->_surveyTypeId );
         

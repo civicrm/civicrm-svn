@@ -150,14 +150,14 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
         $buttons = array( array ( 'type'      => 'done',
                                   'name'      => ts('Reserve'),
                                   'subName'   => 'reserve',
-                                  'isDefault' => true   ) );
+                                  'isDefault' => true  ) );
         
         if ( CRM_Core_Permission::check( 'manage campaign' ) ||
              CRM_Core_Permission::check( 'administer CiviCampaign' ) ||
              CRM_Core_Permission::check( 'interview campaign contacts' ) ) { 
-            $buttons[] = array ( 'type'      => 'done',
+            $buttons[] = array ( 'type'      => 'next',
                                  'name'      => ts('Reserve and Interview'),
-                                 'subName'   => 'resAndInt' );
+                                 'subName'   => 'reserveToInterview' );
         }
         $buttons[] = array ( 'type'       => 'back',
                              'name'      => ts('Cancel') );
@@ -173,7 +173,7 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
      */
     public function postProcess( ) 
     {
-        $existingVoterIds = $campGrpContacts = array( );
+        $existingVoterIds = $campGrpContacts = $reservedVoterIds = array( );
         foreach ( $this->_surveyActivities as $actId => $actVals ) {
             $voterId = $actVals['voter_id'];
             $existingVoterIds[$voterId] = $voterId; 
@@ -218,7 +218,10 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
                                      'skipRecentView'      => 1
                                      );
             $activity = CRM_Activity_BAO_Activity::create( $activityParams );
-            if ( $activity->id ) $countVoters++;
+            if ( $activity->id ) {
+                $countVoters++;
+                $reservedVoterIds[$cid] = $cid; 
+            }
             if ( $maxVoters && ( $maxVoters <= ( $this->_numVoters + $countVoters ) ) ) {
                 break;
             }
@@ -236,12 +239,14 @@ class CRM_Campaign_Form_Task_Reserve extends CRM_Campaign_Form_Task {
             CRM_Core_Session::setStatus( implode('&nbsp;&nbsp;', $status) );
         }
         
+        //get ready to jump to voter interview form.
         $buttonName = $this->controller->getButtonName( );
-        if ( $buttonName == '_qf_Reserve_done_resAndInt' ) {
-            $qfKey     = CRM_Utils_Request::retrieve( 'qfKey', 'String', $this );
-            $urlParams = 'force=1&op=interview';
-            if ( CRM_Utils_Rule::qfKey( $qfKey ) ) $urlParams .= '&qfKey='.$qfKey;
-            CRM_Utils_System::redirect( CRM_Utils_System::url( 'civicrm/survey/search', $urlParams ) );
+        if ( !empty( $reservedVoterIds ) && 
+             $buttonName == '_qf_Reserve_next_reserveToInterview' ) {
+            $this->controller->set( 'surveyId',           $this->_surveyId );
+            $this->controller->set( 'contactIds',         $reservedVoterIds );
+            $this->controller->set( 'interviewerId',      $this->_interviewerId );
+            $this->controller->set( 'reserveToInterview', true );
         }
         
     }
