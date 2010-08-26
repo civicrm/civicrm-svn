@@ -163,13 +163,12 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
      */
     static function getSurveyActivityType( ) {
         require_once 'CRM/Core/OptionGroup.php';
+        $activityTypes = array( );
 
         $campaingCompId = CRM_Core_Component::getComponentID('CiviCampaign');
-        if ( !$campaingCompId ) {
-            CRM_Core_Error::fatal( ts( 'CiviCampaign component is not enabled.' ) );
+        if ( $campaingCompId ) {
+            $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, " AND v.component_id={$campaingCompId}" , 'name' );
         }
-
-        $activityTypes = CRM_Core_OptionGroup::values( 'activity_type', false, false, false, " AND v.component_id={$campaingCompId}" , 'name' );
         return $activityTypes;
     }
     

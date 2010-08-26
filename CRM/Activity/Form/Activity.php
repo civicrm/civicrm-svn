@@ -106,6 +106,13 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
      */
     protected $_crmDir = 'Activity';
 
+    /*
+     * Campaign activity
+     *
+     * @var boolean
+     */
+    protected $_isCampaignActivity;
+
     /**
      * The _fields var can be used by sub class to set/unset/edit the 
      * form fields based on their requirement  
@@ -661,12 +668,37 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
         $parentNames = CRM_Core_BAO_Tag::getTagSet( 'civicrm_activity' );
         CRM_Core_Form_Tag::buildQuickForm( $this, $parentNames, 'civicrm_activity', $this->_activityId, false, true );
             
+        // check for campaign activity
+        $this->_isCampaignActivity = false;
+        if ( $this->_activityId && $this->_activityTypeId ) {
+            require_once 'CRM/Campaign/BAO/Survey.php';
+            if ( in_array( $this->_activityTypeId, array_keys(CRM_Campaign_BAO_Survey::getSurveyActivityType()) ) ) {
+                $sourceRecord  = CRM_Core_DAO::getFieldValue( 'CRM_Activity_DAO_Activity',
+                                                              $this->_activityId,
+                                                              'source_record_id'
+                                                              );
+                if ( $sourceRecord ) {
+                    $resuldId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
+                                                             $sourceRecord, 
+                                                             'result_id' );
+                    $resultOptions = array( );
+                    if ( $resuldId ) {
+                        $resultOptions = CRM_Core_OptionGroup::valuesByID( $resuldId );
+                        $resultOptions = array_combine( $resultOptions, $resultOptions );
+                    }
+                    $this->_isCampaignActivity = true;
+                    $this->add( 'select', 'result', ts('Result'), array( '' => ts('- select -') ) + $resultOptions );
+                }
+            }
+        }
+        $this->assign( 'campaignActivity', $this->_isCampaignActivity );
+        
         // if we're viewing, we're assigning different buttons than for adding/editing
         if ( $this->_action & CRM_Core_Action::VIEW ) { 
             if ( isset( $this->_groupTree ) ) {
 				CRM_Core_BAO_CustomGroup::buildCustomDataView( $this, $this->_groupTree );
             }
-            
+
 			$buttons  = array( );
             // do check for permissions 
             require_once 'CRM/Case/BAO/Case.php';

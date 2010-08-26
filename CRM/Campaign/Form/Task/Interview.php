@@ -188,6 +188,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         
         if ( $resuldId ) {
             $resultOptions = CRM_Core_OptionGroup::valuesByID( $resuldId );
+            $resultOptions = array_combine( $resultOptions, $resultOptions );
         }
 
         //pickup the uf fields.
