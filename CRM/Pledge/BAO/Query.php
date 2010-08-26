@@ -166,6 +166,18 @@ class CRM_Pledge_BAO_Query
             $query->_tables['payment_status'] = $query->_whereTables['payment_status'] = 1;
             $query->_tables['civicrm_pledge_payment'] = $query->_whereTables['civicrm_pledge_payment'] = 1;
         }
+
+        if ( CRM_Utils_Array::value( 'pledge_frequency_interval', $query->_returnProperties ) ) {
+            $query->_select['pledge_frequency_interval'] = "civicrm_pledge.frequency_interval as pledge_frequency_interval";
+            $query->_element['pledge_frequency_interval'] = 1;
+            $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
+        }
+
+        if ( CRM_Utils_Array::value( 'pledge_frequency_unit', $query->_returnProperties ) ) {
+            $query->_select['pledge_frequency_unit'] = "civicrm_pledge.frequency_unit as pledge_frequency_unit";
+            $query->_element['pledge_frequency_unit'] = 1;
+            $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
+        }
     }
     
     static function where( &$query ) 
@@ -195,7 +207,7 @@ class CRM_Pledge_BAO_Query
     static function whereClauseSingle( &$values, &$query ) 
     {
         list( $name, $op, $value, $grouping, $wildcard ) = $values;
-             
+        
         switch( $name ) {
         
         case 'pledge_create_date_low':
@@ -365,6 +377,16 @@ class CRM_Pledge_BAO_Query
             $query->_where[$grouping][] = "civicrm_pledge.id $op $value";
             $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
             return;
+
+        case 'pledge_frequency_interval':
+            $query->_where[$grouping][] = "civicrm_pledge.frequency_interval $op $value";
+            $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
+            return;
+
+        case 'pledge_frequency_unit':
+            $query->_where[$grouping][] = "civicrm_pledge.frequency_unit $op $value";
+            $query->_tables['civicrm_pledge'] = $query->_whereTables['civicrm_pledge'] = 1;
+            return; 
         }
     }
 
@@ -440,7 +462,9 @@ class CRM_Pledge_BAO_Query
                                 'pledge_status_id'                => 1,
                                 'pledge_status'                   => 1,
                                 'pledge_is_test'                  => 1,
-                                'pledge_contribution_page_id'     => 1
+                                'pledge_contribution_page_id'     => 1,
+                                'pledge_frequency_interval'       => 1,
+                                'pledge_frequency_unit'           => 1
                                 );
         }
         return $properties;
@@ -537,6 +561,18 @@ class CRM_Pledge_BAO_Query
         
         //add fields for honor search
         $form->addElement( 'text', 'pledge_in_honor_of', ts( "In Honor Of" ) );
+
+        //add fields for pledge frequency
+        $form->add( 'text', 'pledge_frequency_interval', ts( "Every" ), array( 'size' => 8, 'maxlength' => 8 ) );
+        
+        $frequencies = CRM_Core_OptionGroup::values( 'recur_frequency_units' );
+        foreach ( $frequencies as $val => $label) {
+            $freqUnitsDisplay["'{$val}'"] = ts( '%1(s)', array( 1 => $val ) );
+        }
+        
+        $form->add( 'select', 'pledge_frequency_unit', 
+                    ts( 'Pledge Frequency'), 
+                    array( '' => ts( '- select -' ) ) + $freqUnitsDisplay );
 
         // add all the custom  searchable fields
         require_once 'CRM/Core/BAO/CustomGroup.php';
