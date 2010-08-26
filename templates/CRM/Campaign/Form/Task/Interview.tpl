@@ -51,21 +51,21 @@
     <thead>
        <tr class="columnheader">
              {foreach from=$readOnlyFields item=fTitle key=fName}
-	        <th>{$fTitle}</th>
+	        <th class="contact_details">{$fTitle}</th>
 	     {/foreach}
 	    
 	     {* display headers for survey fields *}
 	     {foreach from=$surveyFields item=field key=fieldName}
-                  <th>{$field.title}</th>
+                  <th>{if $field.data_type eq 'Date' } <img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValuesDate('{$field.name}')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" /> {else} <img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$fieldName}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValues('{$fieldName}')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{/if}{$field.title}</th>
              {/foreach}
 
-	     <th>{ts}Note{/ts}</th>
-	     <th>{ts}Result{/ts}</th> 
+	     <th><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=note}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValues('note')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{ts}Note{/ts}</th>
+	     <th><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=result}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValues('result')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{ts}Result{/ts}</th> 
        </tr>
     </thead>
 
     <tbody>
-	{foreach from=$voterIds item=voterId}
+	{foreach from=$componentIds item=voterId}
 	<tr id="row_{$voterId}" class="{cycle values="odd-row,even-row"}">
 	    {foreach from=$readOnlyFields item=fTitle key=fName}
 	       <td class='name'>{$voterDetails.$voterId.$fName}</td>
@@ -80,7 +80,7 @@
 	    {foreach from=$surveyFields item=field key=fieldName}
                 {assign var=n value=$field.name}
 		<td class="compressed">
-                {if ( $fields.$n.data_type eq 'Date') or 
+                {if ( $field.data_type eq 'Date') or 
 		    ( $n eq 'thankyou_date' ) or ( $n eq 'cancel_date' ) or ( $n eq 'receipt_date' ) or (  $n eq 'activity_date_time') }
                     {include file="CRM/common/jcalendar.tpl" elementName=$fieldName elementIndex=$voterId batchUpdate=1}
                 {else}
@@ -115,10 +115,28 @@
 <script type="text/javascript">
     var updateVote = "{/literal}{ts}Update Vote{/ts}{literal}";	
     cj( function( ) {
+        var count = 0; var columns=''; var sortColumn = '';
+	
+        cj('#voterRecords th').each( function( ) {
+          if ( cj(this).attr('class') == 'contact_details' ) {
+	    sortColumn += '[' + count + ', "asc" ],'; 
+	    columns += '{"sClass": "contact_details"},';
+	  } else {
+	    columns += '{ "bSortable": false },';
+	  }
+	  count++; 
+	});
+
+	columns    = columns.substring(0, columns.length - 1 );
+	sortColumn = sortColumn.substring(0, sortColumn.length - 1 );
+	eval('sortColumn =[' + sortColumn + ']');
+	eval('columns =[' + columns + ']');
 
 	//load jQuery data table.
         cj('#voterRecords').dataTable( {
-		"sPaginationType": "full_numbers"
+		"sPaginationType": "full_numbers",
+		"aaSorting"  : sortColumn,
+		"aoColumns"  : columns
         });        
 
     });
@@ -176,4 +194,6 @@
     
 </script>
 {/literal}
+{*include batch copy js js file*}
+{include file="CRM/common/batchCopy.tpl"}
 

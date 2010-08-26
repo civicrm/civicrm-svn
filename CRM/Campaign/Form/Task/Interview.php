@@ -139,7 +139,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $voterDetails = CRM_Campaign_BAO_Survey::voterDetails( $this->_contactIds, $returnProperties );
         
         $this->assign( 'votingTab',      $this->_votingTab );
-        $this->assign( 'voterIds',       $this->_contactIds );
+        $this->assign( 'componentIds',   $this->_contactIds );
         $this->assign( 'voterDetails',   $voterDetails );
         $this->assign( 'readOnlyFields', $readOnlyFields );
         $this->assign( 'interviewerId',  $this->_interviewerId );
