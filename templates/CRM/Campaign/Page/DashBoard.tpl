@@ -98,6 +98,7 @@
 	  <th>{ts}Default?{/ts}</th>
 	  <th>{ts}Active?{/ts}</th>
 	  <th id="nosort"></th>
+	  <th id="nosort"></th>
         </tr>
       </thead>
       {foreach from=$surveys item=survey}
@@ -111,6 +112,17 @@
           <td class="crm-survey-is_default">{if $survey.is_default}<img src="{$config->resourceBase}/i/check.gif" alt="{ts}Default{/ts}" /> {/if}</td>
           <td class="crm-survey-is_active" id="row_{$survey.id}_status">{if $survey.is_active}{ts}Yes{/ts}{else}{ts}No{/ts}{/if}</td>
  	  <td class="crm-survey-action">{$survey.action}</td>
+	  <td class="crm-survey-voter_links">
+	  {if $survey.voterLinks}
+	    <span id="voter_links-{$survey.id}" class="btn-slide">{ts}Voter Links{/ts}
+              <ul class="panel" id="panels_voter_links_{$survey.id}"> 
+ 	      {foreach from=$survey.voterLinks item=voterLink}
+                <li>{$voterLink}</li>
+              {/foreach}   
+	      </ul>
+	    </span>
+	  {/if}				
+	  </td>
         </tr>
       {/foreach}
     </table>
