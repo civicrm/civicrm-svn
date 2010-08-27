@@ -215,7 +215,7 @@ class CRM_Pledge_BAO_Pledge extends CRM_Pledge_DAO_Pledge
             //building payment params
             $paymentParams['pledge_id'] = $pledge->id;
             $paymentKeys = array( 'amount', 'installments', 'scheduled_date', 'frequency_unit',
-                                  'frequency_day', 'frequency_interval', 'contribution_id', 'installment_amount' );
+                                  'frequency_day', 'frequency_interval', 'contribution_id', 'installment_amount', 'actual_amount' );
             foreach ( $paymentKeys as $key ) {
                 $paymentParams[$key] = CRM_Utils_Array::value( $key, $params, null );               
             }

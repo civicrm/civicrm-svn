@@ -181,6 +181,7 @@ WHERE     pledge_id = %1
              // we should add contribution id to only first payment record
             if ( isset( $params['contribution_id'] ) ){
                 unset( $params['contribution_id'] );
+                unset( $params['actual_amount'] );
             }
         }
         
