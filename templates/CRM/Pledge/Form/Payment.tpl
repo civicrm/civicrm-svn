@@ -32,8 +32,28 @@
             <td>{include file="CRM/common/jcalendar.tpl" elementName=scheduled_date}
             <span class="description">{ts}Scheduled Date for Pledge payment.{/ts}</span></td></tr>
         </td></tr>
-	<tr><td class="label">{$form.scheduled_amount.label}</td><td class="form-layout">{$form.scheduled_amount.html}</td></tr>
+	<tr><td class="label">{$form.scheduled_amount.label}</td><td class="form-layout">{$form.scheduled_amount.html}
+	    {ts}(<a href="#" onclick="adjustPayment();">adjust scheduled amount</a>){/ts}
+	    </td>
+	</tr>
+	<tr id="adjust-option-type" class="crm-contribution-form-block-option_type">
+         <td class="label">{$form.option_type.label}</td>
+	 <td >{$form.option_type.html}</td> 
+	</tr>
       </table> 
        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
 </fieldset>
 </div> 
+{literal}
+<script type="text/javascript">
+cj(document).ready( function() {
+    cj('#adjust-option-type').hide();
+});
+
+function adjustPayment( ) {
+cj('#adjust-option-type').show();		    	    
+cj("#scheduled_amount").removeAttr("READONLY");
+cj("#scheduled_amount").css('background-color', '#ffffff');
+}
+</script>
+{/literal}

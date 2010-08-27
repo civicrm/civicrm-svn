@@ -1250,8 +1250,10 @@ WHERE  contribution_id = {$this->_id}
                 CRM_Core_DAO::setFieldValue('CRM_Pledge_DAO_Payment', $this->_ppID, 'contribution_id', $contribution->id );
 
                 require_once 'CRM/Pledge/BAO/Payment.php';
-                CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $this->_pledgeID, array( $this->_ppID ), 
-                                                                   $contribution->contribution_status_id );
+                CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $this->_pledgeID,
+                                                                   array( $this->_ppID ), 
+                                                                   $contribution->contribution_status_id,
+                                                                   $contribution->total_amount );
             }
             
             if ( $contribution->id ) {
@@ -1391,8 +1393,6 @@ WHERE  contribution_id = {$this->_id}
                 if ( $this->_ppID ) {
                     //store contribution id in payment record.
                     CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $this->_ppID, 'contribution_id', $contribution->id );
-                    //store actual amount in payment record.
-                    CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $this->_ppID, 'actual_amount', $contribution->total_amount );          
                 } else {
                     $this->_ppID = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
                                                                 $contribution->id,
@@ -1406,6 +1406,7 @@ WHERE  contribution_id = {$this->_id}
                                                                     );
                 }
                 
+                $adjustTotalAmount = false;
                 if ( CRM_Utils_Array::value( 'option_type', $formValues ) == 2 ) {
                     $adjustTotalAmount = true;
                 }
@@ -1414,7 +1415,8 @@ WHERE  contribution_id = {$this->_id}
                                                                    array( $this->_ppID ), 
                                                                    $contribution->contribution_status_id,
                                                                    null,
-                                                                   $contribution->total_amount, $adjustTotalAmount );
+                                                                   $contribution->total_amount,
+                                                                   $adjustTotalAmount );
             } 
             
             $statusMsg = ts('The contribution record has been saved.');

@@ -86,7 +86,7 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
             $status = CRM_Contribute_PseudoConstant::contributionStatus( $defaults['status_id'] );
             $this->assign('status', $status );
         }
-
+        $defaults['option_type'] = 1;
         return $defaults;
     }
     
@@ -104,9 +104,16 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
         $this->add( 'text',
                     'scheduled_amount', 
                     ts('Scheduled Amount'),
-                    CRM_Core_DAO::getAttribute( 'CRM_Pledge_DAO_Payment', 'scheduled_amount' ),
+                    array (  'READONLY'         => true,
+                             'style'=> "background-color:#EBECE4" ),
                     true );
         $this->addRule( 'scheduled_amount', ts('Please enter a valid monetary amount.'), 'money');
+        $optionTypes = array( '1' => ts( 'Adjust Pledge Payment Schedule?' ),
+                              '2' => ts( 'Adjust Total Pledge Amount?') );
+        $element = $this->addRadio( 'option_type', 
+                                    ts('Option Type'), 
+                                    $optionTypes,
+                                    array(), '<br/>' );
 
         $this->addButtons(array( 
                                 array ( 'type'      => 'next',
@@ -148,9 +155,18 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
 
         require_once 'CRM/Pledge/BAO/Payment.php';
         CRM_Pledge_BAO_Payment::add( $params );
+        $adjustTotalAmount = false;
+        if ( CRM_Utils_Array::value( 'option_type', $formValues ) == 2 ) {
+            $adjustTotalAmount = true;
+        }
 
         //update pledge status
-        CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $pledgeId );
+        CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $pledgeId,
+                                                           array( $params['id'] ),
+                                                           null,
+                                                           null,
+                                                           $formValues['scheduled_amount'],
+                                                           $adjustTotalAmount );
         
         $statusMsg = ts('Pledge Payment Schedule has been updated.<br />');
         CRM_Core_Session::setStatus( $statusMsg );
