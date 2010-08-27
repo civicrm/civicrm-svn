@@ -849,7 +849,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 foreach ( $form->_params['pledge_amount'] as $paymentId => $dontCare ) {
                     $pledgePaymentParams = array('id'              => $paymentId,
                                                  'contribution_id' => $contribution->id,
-                                                 'status_id'       => $contribution->contribution_status_id
+                                                 'status_id'       => $contribution->contribution_status_id,
+                                                 'actual_amount'   => $contribution->total_amount
                                                  );
                     
                     CRM_Pledge_BAO_Payment::add( $pledgePaymentParams );
