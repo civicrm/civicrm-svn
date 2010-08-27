@@ -627,6 +627,12 @@ WHERE  $whereCond
         $activity->activity_type_id = CRM_Core_OptionGroup::getValue( 'activity_type',
                                                                       $activityType,
                                                                       'name' );
+        $config  = CRM_Core_Config::singleton();
+        $money   = $config->defaultCurrencySymbol;
+        $details = 'Total Amount '.$money. $params['total_pledge_amount'].' To be paid in '.
+            $params['installments'].' installments of '.$money.$params['scheduled_amount'].' every '.
+            $params['frequency_interval'].' '.$params['frequency_unit'].'(s)' ;
+        
         if ( ! $activity->find( ) ) {
             $activityParams = array( 'subject'            => $subject,
                                      'source_contact_id'  => $params['contact_id'],
@@ -636,7 +642,8 @@ WHERE  $whereCond
                                                                                              'name' ),
                                      'activity_date_time' => CRM_Utils_Date::isoToMysql( $params['acknowledge_date'] ),
                                      'is_test'            => $params['is_test'],
-                                     'status_id'          => 2
+                                     'status_id'          => 2,
+                                     'details'            => $details
                                      );
             require_once 'api/v2/Activity.php';
             if ( is_a( civicrm_activity_create( $activityParams ), 'CRM_Core_Error' ) ) {
