@@ -204,20 +204,20 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         require_once 'CRM/Core/BAO/UFGroup.php';
         require_once 'CRM/Core/BAO/CustomField.php';
        
-        $this->add('text', 'title', ts('Survey Title'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'title'), true );
-
+        $this->add('text', 'title', ts('Title'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'title'), true );
+        
         $surveyActivityTypes = CRM_Campaign_BAO_Survey::getSurveyActivityType( );
         // Activity Type id
-        $this->add('select', 'activity_type_id', ts('Select Activity Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
+        $this->add('select', 'activity_type_id', ts('Activity Type'), array( '' => ts('- select -') ) + $surveyActivityTypes, true );
         
         // Campaign id
         require_once 'CRM/Campaign/BAO/Campaign.php';
         $campaigns = CRM_Campaign_BAO_Campaign::getAllCampaign( );
-        $this->add('select', 'campaign_id', ts('Select Campaign'), array( '' => ts('- select -') ) + $campaigns );
+        $this->add('select', 'campaign_id', ts('Campaign'), array( '' => ts('- select -') ) + $campaigns );
         
         $customProfiles = CRM_Core_BAO_UFGroup::getProfiles( array('Activity') );
         // custom group id
-        $this->add('select', 'profile_id', ts('Select Profile'), 
+        $this->add('select', 'profile_id', ts('Profile'), 
                    array( '' => ts('- select -')) + $customProfiles );
 
         $optionGroups = CRM_Campaign_BAO_Survey::getResultSets( );
@@ -302,7 +302,7 @@ class CRM_Campaign_Form_Survey extends CRM_Core_Form
         $this->addRule('release_frequency', ts('Frequenct interval should be a positive number') , 'positiveInteger');
 
         // max number of contacts
-        $this->add('text', 'max_number_of_contacts', ts('Maximum number of contacts '), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'max_number_of_contacts') );
+        $this->add('text', 'max_number_of_contacts', ts('Maximum number of contacts'), CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Survey', 'max_number_of_contacts') );
 
         $this->addRule('max_number_of_contacts', ts('Maximum number of contacts should be a positive number') , 'positiveInteger');
         

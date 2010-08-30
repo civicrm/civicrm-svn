@@ -40,11 +40,11 @@
     <table id="options" class="display">
       <thead>
         <tr class="columnheader">      
-          <th>{ts}Campaign Title{/ts}</th>
+          <th>{ts}Title{/ts}</th>
           <th>{ts}Description{/ts}</th>
           <th>{ts}Start Date{/ts}</th> 
           <th>{ts}End Date{/ts}</th>
-          <th>{ts}Campaign Type{/ts}</th>
+          <th>{ts}Type{/ts}</th>
           <th>{ts}Status{/ts}</th>
           <th>{ts}Active?{/ts}</th>
           <th id="nosort"></th>
@@ -89,12 +89,12 @@
     <table id="options" class="display">
       <thead>
         <tr class="columnheader">  
-          <th>{ts}Survey{/ts}</th>
+          <th>{ts}Title{/ts}</th>
           <th>{ts}Campaign{/ts}</th>
           <th>{ts}Survey Type{/ts}</th>   
           <th>{ts}Release Frequency{/ts}</th>
-	  <th>{ts}Max Number Of Contacts{/ts}</th>
-	  <th>{ts}Default Number Of Contacts{/ts}</th>
+	  <th>{ts}Max Contacts{/ts}</th>
+	  <th>{ts}Default Contacts{/ts}</th>
 	  <th>{ts}Default?{/ts}</th>
 	  <th>{ts}Active?{/ts}</th>
 	  <th id="nosort"></th>

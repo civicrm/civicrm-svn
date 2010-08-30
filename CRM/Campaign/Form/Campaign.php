@@ -173,7 +173,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         $attributes = CRM_Core_DAO::getAttribute('CRM_Campaign_DAO_Campaign');
        
         // add comaign title.
-        $this->add('text', 'title', ts('Campaign Title'), $attributes['title'], true );
+        $this->add('text', 'title', ts('Title'), $attributes['title'], true );
         
         // add description
         $this->add('textarea', 'description', ts('Description'), $attributes['description'] );
@@ -183,7 +183,7 @@ class CRM_Campaign_Form_Campaign extends CRM_Core_Form
         
         // add campaign end date
         $this->addDateTime('end_date', ts('End Date'), false, array( 'formatType' => 'campaignDateTime') );
-
+        
         // add campaign type
         $campaignType = CRM_Campaign_PseudoConstant::campaignType();
         $this->add('select', 'campaign_type_id', ts('Campaign Type'), array( '' => ts( '- select -' ) ) + $campaignType, true );
