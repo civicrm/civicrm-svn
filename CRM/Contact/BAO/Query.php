@@ -193,6 +193,13 @@ class CRM_Contact_BAO_Query
     public $_skipPermission = false;
 
     /**
+     * should we skip adding of delete clause
+     *
+     * @var boolean
+     */
+    public $_skipDeleteClause = false;
+    
+    /**
      * are we in strict mode (use equality over LIKE)
      *
      * @var boolean
@@ -1911,7 +1918,8 @@ class CRM_Contact_BAO_Query
         }
 
         $tables = $newTables;
-
+        $unsetFrom = true;
+        
         foreach ( $tables as $name => $value ) {
             if ( ! $value ) {
                 continue;
@@ -1999,6 +2007,10 @@ class CRM_Contact_BAO_Query
             case 'activity_status':
             case 'civicrm_activity_contact':
                 require_once 'CRM/Activity/BAO/Query.php';
+                if ( $unsetFrom && ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) {
+                    $from = '';
+                    $unsetFrom = false;
+                }
                 $from .= CRM_Activity_BAO_Query::from( $name, $mode, $side );
                 continue; 
 
@@ -3179,7 +3191,7 @@ WHERE  id IN ( $groupIDs )
 
         // hack for now, add permission only if we are in search
         // FIXME: we should actually filter out deleted contacts (unless requested to do the opposite)
-        $permission = ' ( 1 ) ';
+        $permission = ' ( 1 ) ';        
         $onlyDeleted = in_array(array('deleted_contacts', '=', '1', '0', '0'), $this->_params);
 
         // if we’re explicitely looking for a certain contact’s contribs, events, etc.
@@ -3196,7 +3208,7 @@ WHERE  id IN ( $groupIDs )
 
         if ( ! $this->_skipPermission ) {
             require_once 'CRM/ACL/API.php';
-            $permission = CRM_ACL_API::whereClause( CRM_Core_Permission::VIEW, $this->_tables, $this->_whereTables, null, $onlyDeleted );
+            $permission = CRM_ACL_API::whereClause( CRM_Core_Permission::VIEW, $this->_tables, $this->_whereTables, null, $onlyDeleted, $this->_skipDeleteClause );
             // CRM_Core_Error::debug( 'p', $permission );
             // CRM_Core_Error::debug( 't', $this->_tables );
             // CRM_Core_Error::debug( 'w', $this->_whereTables );

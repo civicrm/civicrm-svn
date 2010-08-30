@@ -172,6 +172,9 @@ class CRM_Activity_BAO_Query
         
         $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
         $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
+        if ( $query->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
+            $query->_skipDeleteClause = true;
+        }        
         
         switch ( $name ) {
         
@@ -301,14 +304,19 @@ class CRM_Activity_BAO_Query
         $from = null;
         switch ( $name ) {
             
-        case 'civicrm_activity': 
-            if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
-                $side = ' INNER ';
+        case 'civicrm_activity':
+        	if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
+		        $from = " FROM civicrm_activity 
+		                  LEFT JOIN civicrm_activity_target  ON ( civicrm_activity_target.activity_id = civicrm_activity.id 
+		                       AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1  ) 
+                          LEFT JOIN civicrm_contact contact_a ON ( civicrm_activity_target.target_contact_id = contact_a.id AND contact_a.is_deleted = 0)
+                          LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_email.is_primary = 1)";
+            } else {
+                $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
+                $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
+                                 AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
+                
             }
-		    
-            $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
-            $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
-AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
             
             break;
             
