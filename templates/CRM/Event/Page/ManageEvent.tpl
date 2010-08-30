@@ -28,7 +28,6 @@
 {capture assign=icalFeed}{crmURL p='civicrm/event/ical' q="reset=1&page=1"}{/capture}
 {capture assign=rssFeed}{crmURL p='civicrm/event/ical' q="reset=1&page=1&rss=1"}{/capture}
 {capture assign=htmlFeed}{crmURL p='civicrm/event/ical' q="reset=1&page=1&html=1"}{/capture}
-<div class="crm-form-block">
 <div class="float-right">
     <a href="{$htmlFeed}" title="{ts}HTML listing of current and future public events.{/ts}">
     <img src="{$config->resourceBase}i/applications-internet.png" alt="{ts}HTML listing of current and future public events.{/ts}" /></a>&nbsp;&nbsp;
@@ -40,10 +39,7 @@
     <img src="{$config->resourceBase}i/ical_feed.gif" alt="{ts}Get iCalendar feed for current and future public events.{/ts}" /></a>&nbsp;&nbsp;&nbsp;{help id='icalendar'}
 </div>
 {include file="CRM/Event/Form/SearchEvent.tpl"}
-</div>
 
-
-<div class="crm-content-block">
 <div class="action-link">
     <a accesskey="N" href="{$newEventURL}" id="newManageEvent" class="button"><span><div class="icon add-icon"></div>{ts}Add Event{/ts}</span></a>
 <div class="clear"></div>
@@ -145,15 +141,13 @@
                 <li>{ts}Check your spelling.{/ts}</li>
                 <li>{ts}Try a different spelling or use fewer letters.{/ts}</li>
                 <li>{ts}Make sure you have enough privileges in the access control system.{/ts}</li>
-              </ul>
+             </ul>
               {ts 1=$browseURL}Or you can <a href='%1'>browse all available Current Events</a>.{/ts}
     </div>
    {else}
     <div class="messages status">
          <div class="icon inform-icon"></div>
          {ts 1=$newEventURL}There are no events scheduled for the date range. You can <a href='%1'>add one</a>.{/ts}
-
     </div>    
    {/if}
 {/if}
-</div>
