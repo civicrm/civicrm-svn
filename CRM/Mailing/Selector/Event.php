@@ -166,10 +166,15 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
         if ( ! isset( $this->_columnHeaders ) ) {
             $this->_columnHeaders = array( 
                 array(
-                    'name'  => ts('Contact'),
+                    'name'      => ts('Contact'),
+                    'sort'      => 'sort_name',
+                    'direction' => CRM_Utils_Sort::ASCENDING
                 ), 
                 array(
-                    'name' => ts('Email Address'),
+                    'name'      => ts('Email Address'),
+                    'sort'      => 'email',
+                    'direction' => CRM_Utils_Sort::DONTCARE,
+
                 ), 
             );
             if ($this->_event_type == 'bounce') {
@@ -205,7 +210,9 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
             $this->_columnHeaders = array_merge($this->_columnHeaders,
                 array(
                     array(
-                        'name' => ts('Date'),
+                        'name'      => ts('Date'),
+                        'sort'      => 'start_date',
+                        'direction' => CRM_Utils_Sort::DESCENDING,
                     ), 
                 ));
         }
