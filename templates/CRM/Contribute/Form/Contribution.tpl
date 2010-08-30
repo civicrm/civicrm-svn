@@ -98,7 +98,7 @@
                     <div id="priceset" class="hiddenElement"></div>	    
         	    {/if}
         	    <span class="description">{ts}Actual amount given by contributor.{/ts}</span>
-            	    {if $ppID}{ts}(<a href="#" onclick="adjustPayment();">adjust payment amount</a>){/ts}{/if}
+            	    {if $ppID}{ts}(<a href="#" onclick="adjustPayment();">adjust payment amount</a>{/ts}{help id="adjust-payment-amount"}){/if}
 	    </td>
         </tr>
 	<tr id="adjust-option-type" class="crm-contribution-form-block-option_type">

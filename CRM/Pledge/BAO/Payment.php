@@ -360,7 +360,7 @@ WHERE     pledge_id = %1
             
             self::updatePledgePayments( $pledgeID, $paymentStatusID, $paymentIDs, $actualAmount, $paymentContributionId );
         }
-        if ( !empty( $paymentIDs ) ) {
+        if ( !empty( $paymentIDs ) && $actualAmount  ) {
             $payments = implode( ',', $paymentIDs );
             $pledgeScheduledAmount = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
                                                                   $payments,
@@ -435,7 +435,7 @@ WHERE     pledge_id = %1
                 $totalPaidParams = array( 1 => array( $pledgeID, 'Integer' ) ); 
                 $totalPaidAmount =  CRM_Core_DAO::singleValueQuery( $balanceQuery, $totalPaidParams );
                 $remainingTotalAmount = ( $actualPledgeAmount - $totalPaidAmount );
-                if ( ( $pledgeStatusId && $pledgeStatusId == array_search( 'Completed', $allStatus ) ) && ( $actualAmount > $remainingTotalAmount ) && ( $actualAmount > $actualPledgeAmount ) ) {
+                if ( ( $pledgeStatusId && $pledgeStatusId == array_search( 'Completed', $allStatus ) ) && ( $actualAmount > $remainingTotalAmount ) && ( $actualAmount >= $actualPledgeAmount ) ) {
                     $totalAmountClause = ", civicrm_pledge.amount = {$totalPaidAmount}";   
                 }
             }
@@ -541,16 +541,14 @@ WHERE  civicrm_pledge.id = %2
 UPDATE civicrm_pledge_payment
 SET    civicrm_pledge_payment.status_id = {$paymentStatusId}
        {$actualAmountClause} {$contributionIdClause}
-WHERE  civicrm_pledge_payment.pledge_id = %2    
+WHERE  civicrm_pledge_payment.pledge_id = %1    
        {$paymentClause}
 ";
         
         //get all status
         require_once 'CRM/Contribute/PseudoConstant.php';
         $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
-        $params = array( 1 => array( array_search( 'Completed', $allStatus ),
-                                     'Integer'),
-                         2 => array( $pledgeId, 'Integer' ) );
+        $params = array( 1 => array( $pledgeId, 'Integer' ) );
 
         $dao = CRM_Core_DAO::executeQuery( $query, $params );
     }
