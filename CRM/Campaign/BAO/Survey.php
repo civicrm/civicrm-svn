@@ -53,7 +53,6 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
      *
      * @var array
      */
-    private static $_voterLinks;
     
     static function retrieve ( &$params, &$defaults ) 
     {
@@ -533,68 +532,62 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         
         return $responseOptions;
     }
-
+    
     /*
      * This function return all voter links with respecting permissions
      *
      * @return $url array of permissioned links
      * @static
      */
-    
-    static function buildPermissionLinks( $values ) {
+    static function buildPermissionLinks( $surveyId ) 
+    {
+        $menuLinks = array( );
+        if ( !$surveyId ) return $menuLinks;  
         
-        if ( !isset( self::$_voterLinks ) ) {
-            $permissioned = false;
+        static $voterLinks = array( );
+        if ( empty( $voterLinks ) ) {
             require_once 'CRM/Core/Permission.php';
-            if ( CRM_Core_Permission::check( 'administer CiviCampaign' ) ||
-                 CRM_Core_Permission::check( 'manage campaign' ) ) {
+            $permissioned = false;
+            if ( CRM_Core_Permission::check( 'manage campaign' ) ||
+                 CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
                 $permissioned = true; 
             }
             
             if ( $permissioned || CRM_Core_Permission::check( "reserve campaign contacts" ) ) {
-                self::$_voterLinks['reserve'] = array(
-                                                      'name'  => ts('Reserve'),
-                                                      'url'   => 'civicrm/survey/search',
-                                                      'qs'    => 'sid=%%id%%&reset=1&op=reserve&force=1',
-                                                      'title' => ts('Reserve Voters')
-                                                      );
+                $voterLinks['reserve'] = array( 'name'  => 'reserve',
+                                                'url'   => 'civicrm/survey/search',
+                                                'qs'    => 'sid=%%id%%&reset=1&op=reserve&force=1',
+                                                'title' => ts('Reserve Voters') );
             }
-            
             if ( $permissioned || CRM_Core_Permission::check( "interview campaign contacts" ) ) {
-                self::$_voterLinks['release'] = array(
-                                                      'name'  => ts('Interview'),
-                                                      'url'   => 'civicrm/survey/search',
-                                                      'qs'    => 'sid=%%id%%&reset=1&op=interview&force=1',
-                                                      'title' => ts('Interview Voters')
-                                                      );
+                $voterLinks['release'] = array( 'name'  => 'interview',
+                                                'url'   => 'civicrm/survey/search',
+                                                'qs'    => 'sid=%%id%%&reset=1&op=interview&force=1',
+                                                'title' => ts('Interview Voters') );
             }
-            
             if ( $permissioned || CRM_Core_Permission::check( "release campaign contacts" ) ) {
-                self::$_voterLinks['interview'] = array(
-                                                        'name'  => ts('Release'),
-                                                        'url'   => 'civicrm/survey/search',
-                                                        'qs'    => 'sid=%%id%%&reset=1&op=release&force=1',
-                                                        'title' => ts('Release Voters')
-                                                        );
+                $voterLinks['interview'] = array( 'name'  => 'release',
+                                                  'url'   => 'civicrm/survey/search',
+                                                  'qs'    => 'sid=%%id%%&reset=1&op=release&force=1',
+                                                  'title' => ts('Release Voters') );
             }
         }
         
         require_once 'CRM/Core/Action.php';
-        $url = array( );
-        foreach ( self::$_voterLinks as $link ) {
-            if ( CRM_Utils_Array::value( 'qs', $link ) && !CRM_Utils_System::isNull( $link['qs'] ) ) {
-                $urlPath = CRM_Utils_System::url( CRM_Core_Action::replace( $link['url'], $values ),
-                                                  CRM_Core_Action::replace( $link['qs'], $values ), true, null, true, $frontend );
-            } else {
-                $urlPath = CRM_Utils_Array::value( 'url', $link );
+        $ids = array( 'id' => $surveyId );
+        foreach ( $voterLinks as $link ) {
+            if ( CRM_Utils_Array::value( 'qs', $link ) && 
+                 !CRM_Utils_System::isNull( $link['qs'] ) ) {
+                $urlPath = CRM_Utils_System::url( CRM_Core_Action::replace( $link['url'], $ids ),
+                                                  CRM_Core_Action::replace( $link['qs'], $ids ) );
+                $menuLinks[] = sprintf( '<a href="%s" class="action-item" title="%s" target=_blank>%s</a>',
+                                        $urlPath,
+                                        CRM_Utils_Array::value( 'title', $link ),
+                                        $link['title'] );
             }
-            
-            $url[] = sprintf( '<a href="%s" class="action-item" title="%s" target=_blank>%s</a>',
-                              $urlPath,
-                              CRM_Utils_Array::value( 'title', $link ),
-                              $link['name'] );
         }
         
-        return $url;
+        return $menuLinks;
     }
+    
 }

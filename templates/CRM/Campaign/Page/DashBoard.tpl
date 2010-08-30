@@ -114,13 +114,14 @@
  	  <td class="crm-survey-action">{$survey.action}</td>
 	  <td class="crm-survey-voter_links">
 	  {if $survey.voterLinks}
-	    <span id="voter_links-{$survey.id}" class="btn-slide">{ts}Voter Links{/ts}
+	    <span id="voter_links-{$survey.id}" class="btn-slide">{ts}more{/ts}
               <ul class="panel" id="panels_voter_links_{$survey.id}"> 
  	      {foreach from=$survey.voterLinks item=voterLink}
                 <li>{$voterLink}</li>
               {/foreach}   
 	      </ul>
 	    </span>
+	    &nbsp;
 	  {/if}				
 	  </td>
         </tr>

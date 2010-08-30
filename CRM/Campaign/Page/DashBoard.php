@@ -215,8 +215,8 @@ class CRM_Campaign_Page_DashBoard extends CRM_Core_Page
                                                                           $action, 
                                                                           array('id' => $sid ) );
                 
-                if ( CRM_Utils_Array::value('activity_type', $surveysData[$sid]) != 'Petition' ) {
-                    $surveysData[$sid]['voterLinks'] =  CRM_Campaign_BAO_Survey::buildPermissionLinks( array('id' => $sid ) );
+                if ( CRM_Utils_Array::value('activity_type', $surveysData[$sid] ) != 'Petition' ) {
+                    $surveysData[$sid]['voterLinks'] =  CRM_Campaign_BAO_Survey::buildPermissionLinks( $sid );
                 }
             }
         }
