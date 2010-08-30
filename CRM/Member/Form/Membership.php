@@ -967,6 +967,8 @@ class CRM_Member_Form_Membership extends CRM_Member_Form
             );
         }
         
+        //end date can be modified by hooks, so if end date is set then use it. 
+        $endDate = ( $membership->end_date ) ? $membership->end_date : $endDate ;
         if ( ( $this->_action & CRM_Core_Action::UPDATE ) ) {
             $statusMsg = ts('Membership for %1 has been updated.', array(1 => $this->_memberDisplayName));
             if ( $endDate ) {
