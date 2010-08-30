@@ -39,7 +39,12 @@
 	   <th>{ts}Street Name{/ts}</th>
 	   <th>{ts}Street Number{/ts}</th>
 	   <th>{ts}Street Unit{/ts}</th>
+
+	   {if $searchVoterFor eq 'release'}
 	   <th>{ts}Is Interview Conducted?{/ts}</th>
+	   {else}
+	   <th>{ts}Reserve Voter{/ts}</th>
+	   {/if}
        </tr>
      </thead>
      <tbody></tbody>
@@ -96,6 +101,8 @@
  {
      var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='snippet=4&className=CRM_Campaign_Page_AJAX&fnName=voterList' }"{literal};
 
+     var searchVoterFor = {/literal}'{$searchVoterFor}'{literal};
+
      cj( '#gotvVoterRecords' ).dataTable({
      	        "bFilter"    : false,
 		"bAutoWidth" : false,
@@ -117,6 +124,9 @@
 			    } 
                         } 
 
+			//do search to reserve voters.			
+			aoData[dataLength++] = {name: 'campaign_search_voter_for', value: searchVoterFor};
+			
 			cj.ajax( {
 				"dataType": 'json', 
 				"type": "POST", 
@@ -127,26 +137,42 @@
      		}); 					
  } 
 
-function processInterview( element ) {
-  var interviewActId = cj( element ).val( );
-  var isDelete = 0;
-  if ( cj( element ).attr( 'checked') ) isDelete = 1;
+function processVoterData( element, operation ) {
+  var data = new Object;   
+  if ( !operation ) return;
 
-  if ( !interviewActId ) return;
+  var data = new Object;
+  if ( operation == 'release' ) {
+       	data['operation']   = operation; 
+	data['activity_id'] = cj( element ).val( );
+	data['isDelete']    = cj( element ).attr( 'checked') ? 1:0; 	 
+  } else if ( operation == 'reserve' ) {
+        var interviewerId           = cj( '#survey_interviewer_id' ).val( );
+        data['operation']           = operation;
+        data['source_record_id']    = cj( '#campaign_survey_id' ).val( );
+	data['target_contact_id']   = cj( element ).val( );
+        data['source_contact_id']   = interviewerId;
+        data['assignee_contact_id'] = interviewerId;
+  }
    
-  var actUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processInterview' }"{literal};
+  var actUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processVoterData' }"{literal};
 
   //post data to save voter as voted/non voted.
   cj.post( actUrl, 
-  	   {'actId': interviewActId, 'delete' :isDelete }, 
+  	   data, 
 	   function( response ) {
 	       if ( response.status == 'success' ) {
-	       	   var msgId = '#success_msg_' + interviewActId;
+                   var msgId = '#success_msg_' + cj( element ).val( ); 
 		   cj( msgId ).fadeIn('slow').fadeOut('slow');
-		   msg = '{/literal}{ts}Save as voted.{/ts}{literal}';
-		   if ( !isDelete ) msg = '{/literal}{ts}Save as non voted.{/ts}{literal}'; 
-		   cj( msgId ).html( msg )
-	       } 
+		   if ( operation == 'release' ) {
+	               msg = '{/literal}{ts}Save as voted.{/ts}{literal}';
+		       var isDeleted = cj( element ).attr( 'checked') ? 1:0;
+		       if ( !isDeleted ) msg = '{/literal}{ts}Save as non voted.{/ts}{literal}'; 
+		   } else if ( operation == 'reserve' ) {
+		       msg = '{/literal}{ts}Voter is Reserved.{/ts}{literal}';
+		   }
+		   cj( msgId ).html( msg );
+	       }
 	   }, 'json' );
 	 
 }

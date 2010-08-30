@@ -68,6 +68,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->assign( 'searchParams',  json_encode( $this->get( 'searchParams' ) ) );
         $this->assign( 'force',         $this->_force );
         $this->assign( 'votingTab',     $this->_votingTab );
+        $this->assign( 'searchVoterFor', $this->_votingTab ? 'reserve' : 'release' );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Voter List' ) );
