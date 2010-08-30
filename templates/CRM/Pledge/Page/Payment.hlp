@@ -26,11 +26,11 @@
 {htxt id="adjust-payment-amount"}
 <b>{ts}Adjust Pledge Payment Schedule{/ts}</b>
 <p>
-{ts}Record pledge payments different from scheduled amount and modify future pledge payment amounts.{/ts}
+{ts}Record pledge payments different from the scheduled amount and modify future pledge payment amounts.{/ts}
 </p>
 <b>{ts}Adjust Total Pledge Amount{/ts}</b>
 <p>
-{ts}Record pledge payments different from scheduled amount and adjust the Total Pledge Amount. The payment schedule ( amounts / dates for future pending pledge payments ) are not modified.{/ts}
+{ts}Record pledge payments different from the scheduled amount and adjust the Total Pledge Amount. The payment schedule ( amounts / dates for future pending pledge payments ) are not modified.{/ts}
 </p>
 {/htxt}
 
