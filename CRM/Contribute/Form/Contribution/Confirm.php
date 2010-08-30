@@ -844,14 +844,15 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 
                 //when user doing pledge payments.
                 //update the schedule when payment(s) are made 
-                
+                $paymentCount = count($form->_params['pledge_amount']);
                 require_once 'CRM/Pledge/BAO/Payment.php';
                 foreach ( $form->_params['pledge_amount'] as $paymentId => $dontCare ) {
                     $pledgePaymentParams = array('id'              => $paymentId,
                                                  'contribution_id' => $contribution->id,
                                                  'status_id'       => $contribution->contribution_status_id,
-                                                 'actual_amount'   => $contribution->total_amount
+                                                 'actual_amount'   => ($contribution->total_amount/$paymentCount)
                                                  );
+
                     
                     CRM_Pledge_BAO_Payment::add( $pledgePaymentParams );
                 }
