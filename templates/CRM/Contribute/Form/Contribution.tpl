@@ -103,8 +103,7 @@
 	    </td>
         </tr>
 	<tr id="adjust-option-type" class="crm-contribution-form-block-option_type">
-         <td class="label">{$form.option_type.label}</td>
-	 <td {$valueStyle}>{$form.option_type.html}</td> 
+         <td class="label"></td><td {$valueStyle}>{$form.option_type.html}</td> 
 	</tr>
     {/if}
 

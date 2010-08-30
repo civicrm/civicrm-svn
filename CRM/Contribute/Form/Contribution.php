@@ -876,7 +876,7 @@ WHERE  contribution_id = {$this->_id}
                 $optionTypes = array( '1' => ts( 'Adjust Pledge Payment Schedule?' ),
                                       '2' => ts( 'Adjust Total Pledge Amount?') );
                 $element = $this->addRadio( 'option_type', 
-                                            ts('Option Type'), 
+                                            null, 
                                             $optionTypes,
                                             array(), '<br/>' );
             }

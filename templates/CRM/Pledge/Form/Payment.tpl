@@ -37,8 +37,7 @@
 	    </td>
 	</tr>
 	<tr id="adjust-option-type" class="crm-contribution-form-block-option_type">
-         <td class="label">{$form.option_type.label}</td>
-	 <td >{$form.option_type.html}</td> 
+         <td class="label"></td> <td>{$form.option_type.html}</td> 
 	</tr>
       </table> 
        <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
