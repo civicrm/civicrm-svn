@@ -128,10 +128,8 @@ class CRM_Pledge_BAO_Query
         }
 
         if ( CRM_Utils_Array::value( 'pledge_payment_paid_amount', $query->_returnProperties ) ) {
-            $query->_select['pledge_payment_paid_amount'] = "payment_contribution.total_amount as pledge_payment_paid_amount";
+            $query->_select['pledge_payment_paid_amount'] = "civicrm_pledge_payment.actual_amount as pledge_payment_paid_amount";
             $query->_element['pledge_payment_paid_amount'] = 1;
-            $query->_tables['civicrm_pledge_payment'] = $query->_whereTables['civicrm_pledge_payment'] = 1;
-            $query->_tables['payment_contribution'] = $query->_whereTables['payment_contribution'] = 1;
         }
         
         if ( CRM_Utils_Array::value( 'pledge_payment_paid_date', $query->_returnProperties ) ) {
