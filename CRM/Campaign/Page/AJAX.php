@@ -265,7 +265,6 @@ class CRM_Campaign_Page_AJAX
     function processVoterData( ) 
     {
         $status    = null; 
-        $result    = array( );
         $operation = CRM_Utils_Type::escape( $_POST['operation'], 'String' );
         if ( $operation == 'release' ) {
             require_once 'CRM/Utils/String.php';
@@ -278,9 +277,7 @@ class CRM_Campaign_Page_AJAX
                                               $isDelete ) ) {
                 $status = 'success';
             }
-            $result = array( 'status' => $status );
         } else if ( $operation == 'reserve' ) {
-            $activityId = null;
             $createActivity = true;
             $ids = array( 'source_record_id', 
                           'source_contact_id', 
@@ -295,31 +292,48 @@ class CRM_Campaign_Page_AJAX
                 }
                 $activityParams[$id] = CRM_Utils_Type::escape( $val, 'Integer' );
             }
-            if ( $createActivity ) {
+            if ( $createActivity  ) {
+                $isReserved = CRM_Utils_String::strtoboolstr( CRM_Utils_Type::escape($_POST['isReserved'], 'String' ) );
                 require_once 'CRM/Core/PseudoConstant.php';
-                $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
-                $activityParams['subject']            = ts('Voter Reservation');
-                $activityParams['status_id']          = array_search( 'Scheduled', $activityStatus );
-                $activityParams['skipRecentView']     = 1;
-                $activityParams['activity_date_time'] = date('YmdHis');
-                $activityParams['activity_type_id']   = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',
-                                                                                     $activityParams['source_record_id'],
-                                                                                     'activity_type_id'
-                                                                                     );
-                
-                require_once 'CRM/Activity/BAO/Activity.php';
-                $activity = CRM_Activity_BAO_Activity::create( $activityParams );
-                if ( $activity->id ) {
-                    $status     = 'success';
-                    $activityId = $activity->id;
+                $activityStatus    = CRM_Core_PseudoConstant::activityStatus( 'name' );
+                $scheduledStatusId = array_search( 'Scheduled', $activityStatus ); 
+                if ( $isReserved ) {
+                    $activityTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey',
+                                                                   $activityParams['source_record_id'],
+                                                                   'activity_type_id' );
+                    $activityParams['subject']            = ts('Voter Reservation');
+                    $activityParams['status_id']          = $scheduledStatusId;
+                    $activityParams['skipRecentView']     = 1;
+                    $activityParams['activity_date_time'] = date('YmdHis');
+                    $activityParams['activity_type_id']   = $activityTypeId;
+                    
+                    require_once 'CRM/Activity/BAO/Activity.php';
+                    $activity = CRM_Activity_BAO_Activity::create( $activityParams );
+                    if ( $activity->id ) $status = 'success';
+                } else {
+                    //delete reserved activity for given voter.
+                    require_once 'CRM/Campaign/BAO/Survey.php';
+                    $voterIds   = array( $activityParams['target_contact_id'] ); 
+                    $activities = CRM_Campaign_BAO_Survey::voterActivityDetails( $activityParams['source_record_id'], 
+                                                                                 $voterIds,
+                                                                                 $activityParams['source_contact_id'],
+                                                                                 array( $scheduledStatusId ) );
+                    foreach ( $activities as $voterId => $values ) {
+                        $activityId = CRM_Utils_Array::value( 'activity_id', $values );
+                        if ( $activityId && ( $values['status_id'] == $scheduledStatusId ) ) {
+                            CRM_Core_DAO::setFieldValue( 'CRM_Activity_DAO_Activity', 
+                                                         $activityId,
+                                                         'is_deleted',
+                                                         true );
+                            $status = 'success';
+                            break;
+                        }
+                    }
                 }
             }
-            $result = array( 'status'      => $status,
-                             'activity_id' => $activityId );
         }
         
-        echo json_encode( $result );
-        
+        echo json_encode( array( 'status' => $status ) );
         CRM_Utils_System::civiExit( );
     }
     

@@ -43,7 +43,7 @@
 	   {if $searchVoterFor eq 'release'}
 	   <th>{ts}Is Interview Conducted?{/ts}</th>
 	   {else}
-	   <th>{ts}Reserve Voter{/ts}</th>
+	   <th>{ts}Is Reserved?{/ts}</th>
 	   {/if}
        </tr>
      </thead>
@@ -153,6 +153,7 @@ function processVoterData( element, operation ) {
 	data['target_contact_id']   = cj( element ).val( );
         data['source_contact_id']   = interviewerId;
         data['assignee_contact_id'] = interviewerId;
+	data['isReserved']          = cj( element ).attr( 'checked') ? 1:0; 
   }
    
   var actUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processVoterData' }"{literal};
@@ -169,7 +170,11 @@ function processVoterData( element, operation ) {
 		       var isDeleted = cj( element ).attr( 'checked') ? 1:0;
 		       if ( !isDeleted ) msg = '{/literal}{ts}Save as non voted.{/ts}{literal}'; 
 		   } else if ( operation == 'reserve' ) {
-		       msg = '{/literal}{ts}Voter is Reserved.{/ts}{literal}';
+		       if ( cj( element ).attr( 'checked') ) {
+		       	  msg = '{/literal}{ts}Reserved.{/ts}{literal}';	  
+		       } else {
+		       	  msg = '{/literal}{ts}Released.{/ts}{literal}';	  
+		       }
 		   }
 		   cj( msgId ).html( msg );
 	       }
