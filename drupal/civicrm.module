@@ -491,12 +491,30 @@ function civicrm_categories( &$user )
         if ( $value['is_active'] ) {
             $ufGroups[] = array( 'name'   => $value['name'],
                                  'title'  => $value['name'],
-                                 'weight' => $weight );
+                                 'weight' => $weight,
+                                 'access callback' => '_civicrm_categories_access',
+                                 'access arguments' => array( "$key" ),
+                                 );
             $weight += 10;
         }
     }
 
     return $ufGroups;
+}
+
+function _civicrm_categories_access( $profile_id ) {
+    if ( ! civicrm_initialize( ) ) {
+        return FALSE;
+    }
+
+    require_once 'CRM/Core/BAO/UFGroup.php';
+    $allUFGroups =& CRM_Core_BAO_UFGroup::getModuleUFGroup( 'User Account', 0, false );
+
+    require_once 'CRM/Utils/Array.php';
+    if ( is_array( CRM_Utils_Array::value( $profile_id, $allUFGroups ) ) ) {
+        return TRUE;
+    }
+
 }
 
 function civicrm_register_data($edit, &$user, $category, $reset, $doNotProcess = false ) 
