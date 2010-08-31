@@ -23,56 +23,66 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{* Gotv form for voters. *}
+{if $buildSelector}
 
- {if $buildSelector}
- {* build selector *}
- 
-  {* load voter data *}	
-  <script type="text/javascript">loadVoterList( );</script>
- 
-  <table id="gotvVoterRecords">
-     <thead>
-       <tr class="columnheader">
-	   <th>{ts}Name{/ts}</th>
-	   <th>{ts}Street Address{/ts}</th>
-	   <th>{ts}Street Name{/ts}</th>
-	   <th>{ts}Street Number{/ts}</th>
-	   <th>{ts}Street Unit{/ts}</th>
+  {if $searchVoterFor eq 'interview'}
 
-	   {if $searchVoterFor eq 'release'}
-	   <th>{ts}Is Interview Conducted?{/ts}</th>
-	   {else}
-	   <th>{ts}Is Reserved?{/ts}</th>
-	   {/if}
-       </tr>
-     </thead>
-     <tbody></tbody>
-  </table>
- 
-{else}{* build search form *}
-    
+     {* load voters interview grid *}
+     <script type="text/javascript">loadInterviewGrid( );</script>
+     {include file='CRM/Campaign/Form/Task/Interview.tpl'}
+
+  {else}
+
+       {* load voter selector for reserve/release *}
+       <script type="text/javascript">loadVoterList( );</script>
+       <table id="gotvVoterRecords">
+           <thead>
+              <tr class="columnheader">
+	          <th>{ts}Name{/ts}</th>
+	          <th>{ts}Street Address{/ts}</th>
+	          <th>{ts}Street Name{/ts}</th>
+	          <th>{ts}Street Number{/ts}</th>
+	          <th>{ts}Street Unit{/ts}</th>
+	          {if $searchVoterFor eq 'release'}
+	          <th>{ts}Is Interview Conducted?{/ts}</th>
+	          {else}
+	          <th>{ts}Is Reserved?{/ts}</th>
+	          {/if}
+              </tr>
+           </thead>
+           <tbody></tbody>
+       </table>
+
+  {/if}
+
+{else}
+
+    {* build search form *}
     {include file='CRM/Campaign/Form/Search/Common.tpl' context='gotv'}
     <div id='voterList'></div>
 
+{/if} {* end of search form build *}
+
+
 {literal}
 <script type="text/javascript">
- 
+
  {/literal}
  {* load selector when force *}
  {if $force and !$buildSelector}
  {literal}
  cj( function( ) { 
-    //collapse the search form. 	     
-    cj( '#searchForm' ).addClass( 'crm-accordion-closed' );	      	  
+    //collapse the search form.
+    cj( '#search_form_' + {/literal}'{$searchVoterFor}'{literal} ).addClass( 'crm-accordion-closed' );	      	  
     searchVoters( );
  }); 	
      	
  {/literal}
  {/if}
- {literal}	
+ {literal}
 
- function searchVoters( ) {
+function searchVoters( ) 
+{
       var dataUrl =  {/literal}"{crmURL p='civicrm/campaign/gotv' h=0 q='search=1&snippet=4' }"{literal}
       {/literal}{if $qfKey}
       dataUrl = dataUrl + '&qfKey=' + '{$qfKey}'; 
@@ -80,25 +90,38 @@
 
       cj.get( dataUrl, null, function( voterList ) {
 	      cj( '#voterList' ).html( voterList );
+
 	      //collapse the search form.
-	      if ( !cj( '#searchForm' ).hasClass( 'crm-accordion-closed' ) ) {
-	      	 cj( '#searchForm' ).addClass( 'crm-accordion-closed' ); 		 
-	      } 
+	      cj( '#search_form_' + {/literal}'{$searchVoterFor}'{literal} ).addClass( 'crm-accordion-closed' );
       }, 'html' );
 }
 
-</script>
-{/literal}
+function loadInterviewGrid( ) 
+{
+	return;
+	 	 
+ 	 var data = new object;       	 
 
-{/if} {* end of search form build *}
-
-
-{* load jQuery databale *}
-{literal}
-<script type="text/javascript">
-
- function loadVoterList( ) 
- {
+	 //get the search criteria.
+         var searchParams = {/literal}{$searchParams}{literal};
+         for ( param in searchParams ) {
+              if ( val = cj( '#' + param ).val( ) ) {
+	      	   data[param] = val;
+	      } 
+         } 
+	 var url = {/literal}
+	     	   "{crmURL p='civicrm/campaign/vote' h=0 q='reset=1&subPage=interview&interview=true'}"
+		   {literal}; 
+	 cj.ajax( {
+	 	'url'      :  url,   
+	 	'type'     :  'POST', 
+	 	'data'     :  data,
+	 	'dataType' :  'json', 
+	 	} ); 
+}	
+	
+function loadVoterList( ) 
+{
      var sourceUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='snippet=4&className=CRM_Campaign_Page_AJAX&fnName=voterList' }"{literal};
 
      var searchVoterFor = {/literal}'{$searchVoterFor}'{literal};
@@ -135,9 +158,11 @@
 				"success": fnCallback
 			} ); }
      		}); 					
- } 
+} 
 
-function processVoterData( element, operation ) {
+function processVoterData( element, operation ) 
+{
+
   var data = new Object;   
   if ( !operation ) return;
 
@@ -156,7 +181,9 @@ function processVoterData( element, operation ) {
 	data['isReserved']          = cj( element ).attr( 'checked') ? 1:0; 
   }
    
-  var actUrl = {/literal}"{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processVoterData' }"{literal};
+  var actUrl = {/literal}
+	       "{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processVoterData'}"
+	       {literal};
 
   //post data to save voter as voted/non voted.
   cj.post( actUrl, 

@@ -25,7 +25,13 @@
 *}
 {* Search form and results for voters *}
   <div class="crm-block crm-form-block crm-search-form-block">
-  <div id='searchForm' class="crm-accordion-wrapper crm-contribution_search_form-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
+  
+  {assign var='searchForm' value='searchForm'}
+  {if $searchVoterFor}
+  {assign var='searchForm' value="search_form_$searchVoterFor"}
+  {/if}
+
+  <div id="{$searchForm}" class="crm-accordion-wrapper crm-contribution_search_form-accordion {if $rows}crm-accordion-closed{else}crm-accordion-open{/if}">
     <div class="crm-accordion-header crm-master-accordion-header">
     <div class="icon crm-accordion-pointer"></div> 
         {ts}Edit Search Criteria{/ts}

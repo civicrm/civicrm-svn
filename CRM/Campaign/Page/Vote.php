@@ -45,7 +45,8 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
     {
         //build ajax voter search and selector.
         $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Gotv', 'Reserve Voters' );
-        $controller->set( 'votingTab', true );
+        $controller->set( 'votingTab',    true );
+        $controller->set( 'subVotingTab', 'searchANDReserve' );
         $controller->process( );
         return $controller->run( );
     }
@@ -53,8 +54,11 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
     function interview( ) 
     {
         //build interview and release voter interface.
-        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Task_Interview', 'Interview Voters' );
-        $controller->set( 'votingTab', true );
+        //$controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Task_Interview', 'Interview Voters' );
+        
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Gotv', 'Interview Voters' );
+        $controller->set( 'votingTab',    true );
+        $controller->set( 'subVotingTab', 'searchANDInterview' );
         $controller->process( );
         return $controller->run( );
     }

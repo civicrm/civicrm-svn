@@ -144,7 +144,7 @@ class CRM_Campaign_Page_AJAX
         
         $interviewerId  = $surveyTypeId = $surveyId = null;
         $searchVoterFor = $params['campaign_search_voter_for']; 
-        if ( $searchVoterFor = 'reserve' ) {
+        if ( $searchVoterFor == 'reserve' ) {
             if ( CRM_Utils_Array::value( 'campaign_survey_id', $params ) ) {
                 require_once 'CRM/Campaign/DAO/Survey.php';
                 $survey = new CRM_Campaign_DAO_Survey( );
@@ -243,7 +243,7 @@ class CRM_Campaign_Page_AJAX
                 }
                 if ( $searchVoterFor == 'reserve' ) {
                     $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $contactID .']" name="survey_activity['. $contactID .']" value='. $contactID .' onClick="processVoterData( this, \'reserve\' );" />';
-                    $voterExtraColHtml .= "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span id='success_msg_{$contactID}' class='ok' style='display:none;'>{ts}Voter Reserved.{/ts}</span>";
+                    $voterExtraColHtml .= "&nbsp;<span id='success_msg_{$contactID}' class='ok' style='display:none;'>{ts}Voter Reserved.{/ts}</span>";
                 } else {
                     $surveyActId  = $result->survey_activity_id; 
                     $voterExtraColHtml = '<input type="checkbox" id="survey_activity['. $surveyActId .']" name="survey_activity['. $surveyActId .']" value='. $surveyActId .' onClick="processVoterData( this, \'release\' );" />';

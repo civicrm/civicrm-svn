@@ -62,13 +62,24 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->_search    = CRM_Utils_Array::value( 'search', $_GET );
         $this->_force     = CRM_Utils_Request::retrieve( 'force',    'Boolean',   $this, false ); 
         $this->_surveyId  = CRM_Utils_Request::retrieve( 'surveyId', 'Positive',  $this );
-        $this->_votingTab = $this->get( 'votingTab' );
         
-        $this->assign( 'buildSelector', $this->_search );
-        $this->assign( 'searchParams',  json_encode( $this->get( 'searchParams' ) ) );
-        $this->assign( 'force',         $this->_force );
-        $this->assign( 'votingTab',     $this->_votingTab );
-        $this->assign( 'searchVoterFor', $this->_votingTab ? 'reserve' : 'release' );
+        //does control come from voting tab interface.
+        $this->_votingTab    = $this->get( 'votingTab' );
+        $this->_subVotingTab = $this->get( 'subVotingTab' );
+        $searchVoterFor = 'release';
+        if ( $this->_votingTab ) {
+            if ( $this->_subVotingTab == 'searchANDReserve' ) {
+                $searchVoterFor = 'reserve';
+            } else if ( $this->_subVotingTab == 'searchANDInterview' ) {
+                $searchVoterFor = 'interview';
+                
+            }
+        }
+        $this->assign( 'force',          $this->_force );
+        $this->assign( 'votingTab',      $this->_votingTab );
+        $this->assign( 'searchParams',   json_encode( $this->get( 'searchParams' ) ) );
+        $this->assign( 'buildSelector',  $this->_search );
+        $this->assign( 'searchVoterFor', $searchVoterFor );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Voter List' ) );
@@ -110,5 +121,5 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         }
         if ( $this->_surveyId ) $this->setDefaults( array( 'campaign_survey_id' => $this->_surveyId ) );
     }
-
+    
 }

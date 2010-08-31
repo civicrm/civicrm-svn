@@ -25,13 +25,10 @@
 *}
 {* Voting Tab Interface - Easy way to get the voter Interview. *}
 
-{if $subPageType eq 'reserve'}
-   {* build the ajax search w/ selector and reserve interface here *}
+{if $subPageType eq 'reserve' or $subPageType eq 'interview'}
+
+   {* build the ajax search w/ voters selector interface here *}
    {include file='CRM/Campaign/Form/Gotv.tpl'}
-  
-{elseif $subPageType eq 'interview'}
-  {* build the interview and release interface here *}	
-  {include file='CRM/Campaign/Form/Task/Interview.tpl'}
 
 {else}
  {* build normal page *}

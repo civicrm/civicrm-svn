@@ -109,7 +109,7 @@
 
 </fieldset>
 </div>
-{/if}
+
 
 {literal}
 <script type="text/javascript">
@@ -196,4 +196,5 @@
 {/literal}
 {*include batch copy js js file*}
 {include file="CRM/common/batchCopy.tpl"}
+{/if}
 
