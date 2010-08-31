@@ -1488,14 +1488,18 @@ AND civicrm_case.is_deleted     = {$cases['case_deleted']}";
             }
             require_once 'CRM/Case/DAO/Case.php';
             
-            $fields = CRM_Case_DAO_Case::import( );
-            $fields['case_role'] = array( 'title' => ts('Role in Case') );
-            
+            $fields = CRM_Case_DAO_Case::export( );
+            $fields['case_role']   = array( 'title' => ts('Role in Case') );
+            $fields['case_type']   = array( 'title' => ts( 'Case Type' ),
+                                            'name'  => 'case_type' );
+            $fields['case_status'] = array( 'title' => ts( 'Case Status' ),
+                                            'name'  => 'case_status' );
+
             self::$_exportableFields = $fields;
         }
         return self::$_exportableFields;
     }
-
+    
     /**                                                           
      * Restore the record that are associated with this case 
      * 

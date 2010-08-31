@@ -275,7 +275,7 @@ class CRM_Report_Form_Event_ParticipantListCount extends CRM_Report_Form {
 						  ON ({$this->_aliases['civicrm_contact']}.id = {$this->_aliases['civicrm_email']}.contact_id AND
 							  {$this->_aliases['civicrm_email']}.is_primary = 1) 
 				 LEFT JOIN civicrm_line_item {$this->_aliases['civicrm_line_item']}
-						  ON {$this->_aliases['civicrm_participant']}.id ={$this->_aliases['civicrm_line_item']}.entity_id AND {$this->_aliases['civicrm_line_item']}.entity_table = 'civicrm_participant' ";
+						  ON {$this->_aliases['civicrm_participant']}.id ={$this->_aliases['civicrm_line_item']}.entity_id AND {$this->_aliases['civicrm_line_item']}.entity_table = 'civicrm_participant'";
     }
     
     function where( ) {

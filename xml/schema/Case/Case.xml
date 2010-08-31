@@ -42,7 +42,8 @@
        <length>128</length>
        <required>true</required>
        <import>true</import>
-       <title>Case Type</title>
+       <export>false</export>
+       <title>Case Type Id</title>
        <comment>Id of first case category.</comment>
        <add>2.0</add>
   </field>
@@ -136,7 +137,8 @@
        <uniqueName>case_status_id</uniqueName>
        <required>true</required>
        <import>true</import>
-       <title>Case Status</title>
+       <export>false</export>
+       <title>Case Status Id</title>
        <comment>Id of case status.</comment>
        <add>1.8</add>
   </field>

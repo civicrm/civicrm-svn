@@ -1,6 +1,7 @@
 CRM/ACL/DAO
 CRM/Activity/DAO
 CRM/Auction/DAO
+CRM/Campaign/DAO
 CRM/Case/DAO
 CRM/Case/xml/configuration
 CRM/Contact/DAO/ACLContactCache.php

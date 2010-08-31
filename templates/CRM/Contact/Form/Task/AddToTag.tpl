@@ -35,6 +35,7 @@
             {foreach from=$form.tag item="tag_val"}
                 <div class="{cycle values="odd-row,even-row"}">
                 {$tag_val.html}
+                </div>
             {/foreach}
             </div>
         </td>
