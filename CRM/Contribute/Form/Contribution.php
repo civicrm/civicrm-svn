@@ -1253,6 +1253,7 @@ WHERE  contribution_id = {$this->_id}
                 CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $this->_pledgeID,
                                                                    array( $this->_ppID ), 
                                                                    $contribution->contribution_status_id,
+                                                                   null,
                                                                    $contribution->total_amount );
             }
             
