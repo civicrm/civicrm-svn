@@ -241,9 +241,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
             }
             $row['target_contact_name'] = CRM_Activity_BAO_ActivityTarget::getTargetNames( $row['activity_id'] );
             $row['assignee_contact_name'] = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $row['activity_id'] );
-            $row['activity_type'] = $row['activity_type_id'];
-            $row['activity_status'] = $row['activity_status_id'];
-            
+                     
             if ( CRM_Utils_Array::value( 'source_contact_id', $row ) ) {
                 $row['source_contact_name'] = CRM_Contact_BAO_Contact::displayName( $row['source_contact_id'] );
             }

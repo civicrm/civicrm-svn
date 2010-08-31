@@ -19,7 +19,10 @@
   </primaryKey>
   <field>
        <name>name</name>
+       <uniqueName>membership_status</uniqueName>
+       <title>Membership Status</title>
        <type>varchar</type>
+       <import>true</import>
        <length>128</length>
        <comment>Name for Membership Status</comment>
        <add>1.5</add>

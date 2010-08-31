@@ -1136,3 +1136,83 @@ function civitest_civicrm_navigationMenu( &$params ) {
                                                         'child' => null 
                                                         ) ) );    
 }
+
+/**
+ * This hook allows modification of the data used to perform merging of duplicates.
+ * @param string $type the type of data being passed (cidRefs|eidRefs|relTables|sqls)
+ * @param array $data  the data, which depends on the value of $type:
+ *      'relTables':
+ *          an array of tables used for asking user which elements to merge,
+ *          as used at civicrm/contact/merge; each table in the array has this format:
+ *                'rel_table_UNIQUE-TABLE-NICKNAME' => array(
+ *                    'title'  => ts('TITLE'),
+ *                    'tables' => array('TABLE-NAME' [, ...]),
+ *                    'url'    => CRM_Utils_System::url(PATH, QUERY),
+ *                )
+ *      'sqls':
+ *          a one-dimensional array of SQL statements to be run in the final merge operation;
+ *          These SQL statements are run within a single transaction.
+ *      'cidRefs':
+ *          an array of tables and their fields referencing civicrm_contact.contact_id explicitely;
+ *          each table in the array has this format:
+ *                'TABLE-NAME' => array('COLUMN-NAME' [, ...])
+ *      'eidRefs':
+ *          an array of tables and their fields referencing civicrm_contact.contact_id with entity_id;
+ *          each table in the array has this format:
+ *                'TABLE-NAME' => array('entity_table-COLUMN-NAME' => 'entity_id-COLUMN-NAME')
+ * @param int $mainId  contact_id of the contact that survives the merge (only when $type == 'sqls')
+ * @param int $otherId contact_id of the contact that will be absorbed and deleted (only when $type == 'sqls')
+ * @param array $tables when $type is "sqls", an array of tables as it may have been handed to the calling function
+ *
+ * @access public
+ */
+
+function civitest_civicrm_merge ( $type, &$data, $mainId = NULL, $otherId = NULL, $tables = NULL ) {
+
+    switch ($type) {
+        case 'relTables':
+            // Allow user to decide whether or not to merge records in `civitest_foo` table
+            $data['rel_table_foo'] = array(
+                'title'  => ts('Foos'),                 // Title as shown to user for this type of data
+                'tables' => array('civitest_foo'),      // Name of database table holding these records
+                'url'    => CRM_Utils_System::url('civicrm/civitest/foo', 'action=browse&cid=$cid'),
+                                                        // URL to view this data for this contact, 
+                                                        // in this case using CiviCRM's native URL utility
+                                                        // NOTE: '$cid' will be replaced with correct 
+                                                        // CiviCRM contact ID.
+            );
+        break;
+
+        case 'cidRefs':
+            // Add references to civitest_foo.contact_id, and civitest_foo.foo_id, both of which
+            // are foreign keys to civicrm_contact.id.  By adding this to $data, records in this
+            // table will be automatically included in the merge.
+            $data['civitest_foo'] = array('contact_id', 'foo_id');
+        break;
+
+        case 'eidRefs':
+            // Add references to civitest_bar table, which is keyed to civicrm_contact.id
+            // using `bar_entity_id` column, when `entity_table` is equal to 'civicrm_contact'. By
+            // adding this to $data, records in this table will be automatically included in
+            // the merge.
+            $data['civitest_bar'] = array('entity_table' => 'bar_entity_id');
+        break;
+
+        case 'sqls':
+            // Note that this hook can be called twice with $type = 'sqls': once with $tables 
+            // and once without. In our case, SQL statements related to table `civicrm_foo`
+            // will be listed in $data when $tables is set; SQL statements related to table
+            // `civicrm_bar` will be listed in $data when $tables is NOT set.  The deciding
+            // factor here is that `civicrm_foo` was referenced above as part of the 'relTables'
+            // data, whereas `civicrm_bar` was not.
+            if ($tables) {
+                // Nothing to do in our case. In some cases, you might want to find and
+                // modify existing SQL statements in $data.
+            } else {
+                // Nothing to do in our case. In some cases, you might want to find and
+                // modify existing SQL statements in $data.
+            }
+        break;
+    
+    }
+}

@@ -37,7 +37,9 @@
 require_once 'CRM/Report/Form.php';
 require_once 'CRM/Grant/PseudoConstant.php';
 class CRM_Report_Form_Grant extends CRM_Report_Form {
-  
+    
+    protected $_addressField = false;
+    
     function __construct( ) {
         $this->_columns = 
             array( 
@@ -53,7 +55,25 @@ class CRM_Report_Form_Grant extends CRM_Report_Form {
                          'filters' =>             
                          array('display_name'     => 
                                array( 'title'      => ts( 'Contact Name' ),
-                                      'operator'   => 'like' ), ),
+                                      'operator'   => 'like' ), 
+                               'gender_id' => 
+                               array( 'title'     => ts( 'Gender' ),
+                                      'operatorType' => CRM_Report_Form::OP_MULTISELECT,
+                                      'options' => CRM_Core_PseudoConstant::gender( ),
+                                      ),
+                               ),
+                         ),
+                  'civicrm_address' =>
+                  array( 'dao' => 'CRM_Core_DAO_Address',
+                         'filters' =>             
+                         array( 'country_id' => 
+                                array( 'title'         => ts( 'Country' ), 
+                                       'operatorType'  => CRM_Report_Form::OP_MULTISELECT,
+                                       'options'       => CRM_Core_PseudoConstant::country( ),), 
+                                'state_province_id' => 
+                                array( 'title'         => ts( 'State/Province' ), 
+                                       'operatorType'  => CRM_Report_Form::OP_MULTISELECT,
+                                       'options'       => CRM_Core_PseudoConstant::stateProvince( ),), ),
                          ),
                   'civicrm_grant'  =>
                   array( 'dao'     => 'CRM_Grant_DAO_Grant',
@@ -175,6 +195,9 @@ class CRM_Report_Form_Grant extends CRM_Report_Form {
         
         $this->_columnHeaders = array( );
         foreach ( $this->_columns as $tableName => $table ) {
+            if ( $tableName == 'civicrm_address' ) {
+                $this->_addressField = true;
+            }
             if ( array_key_exists('fields', $table) ) { 
                 foreach ( $table['fields'] as $fieldName => $field ) {
                     if ( CRM_Utils_Array::value( 'required', $field ) ||
@@ -197,7 +220,13 @@ class CRM_Report_Form_Grant extends CRM_Report_Form {
         FROM civicrm_grant {$this->_aliases['civicrm_grant']}
                         LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']} 
                     ON ({$this->_aliases['civicrm_grant']}.contact_id  = {$this->_aliases['civicrm_contact']}.id  ) ";
-        
+        if ( $this->_addressField ) {
+            $this->_from .= "
+                  LEFT JOIN civicrm_address {$this->_aliases['civicrm_address']} 
+                         ON {$this->_aliases['civicrm_contact']}.id = 
+                            {$this->_aliases['civicrm_address']}.contact_id AND 
+                            {$this->_aliases['civicrm_address']}.is_primary = 1\n";
+        }
     }
     function where( ) {
         $clauses = array( );

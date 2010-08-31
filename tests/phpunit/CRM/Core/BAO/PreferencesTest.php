@@ -1,4 +1,5 @@
-{*
+<?php
+/*
  +--------------------------------------------------------------------+
  | CiviCRM version 3.2                                                |
  +--------------------------------------------------------------------+
@@ -22,38 +23,43 @@
  | GNU Affero General Public License or the licensing of CiviCRM,     |
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
-*}
-{* Links for scheduling/logging meetings and calls and Sending Email *}
-{if $cdType eq false }
-{if $contact_id }
-{assign var = "contactId" value= $contact_id }
-{/if}
+*/
 
-{if $as_select} {* on 3.2, the activities can be either a drop down select (on the activity tab) or a list (on the action menu) *}
-<select onchange="if (this.value) window.location='{$url}'+ this.value; else return false" name="other_activity" id="other_activity" class="form-select">
-  <option value="">{ts}- new activity -{/ts}</option>
-{foreach from=$activityTypes key=k item=link}
-  <option value="{$k}">{$link}</option>
-{/foreach}
-</select>
+require_once 'CiviTest/CiviUnitTestCase.php';
+require_once 'CRM/Core/BAO/Preferences.php';
 
-{else}
-<ul>
-{foreach from=$activityTypes key=k item=link}
-<li class="crm-activity-type_{$k}"><a href="{$url}{$k}">{$link}</a></li>
-{/foreach}</ul>
+class CRM_Core_BAO_PreferencesTest extends CiviUnitTestCase 
+{
+    function get_info( ) 
+    {
+        return array(
+                     'name'        => 'Preference BAO',
+                     'description' => 'Test set/get on preference variables.',
+                     'group'       => 'CiviCRM BAO Tests',
+                     );
+    }
+    
+    function setUp( ) 
+    {
+        parent::setUp();
+    }
 
-{/if}
+    function testValueOptions( ) {
+        
+        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options' );
+        
+        // street_address should be set 
+        $this->assertEquals( $addressOptions['street_address'], 1, 'Street Address is not set in address options' );
+        $this->assertEquals( $addressOptions['country']       , 1, 'Country is not set in address options' );
+    }
 
+    function testSetValueOptions( ) {
+        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options' );
+        $addressOptions['county'] = 1;
+        CRM_Core_BAO_Preferences::setValue( 'address_options', $addressOptions );
+        $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options' );
 
-{* add hook links if any *}
-{if $hookLinks}
-   {foreach from=$hookLinks item=link}
-{if $link.img}
-      <a href="{$link.url}"><img src="{$link.img}" alt="{$link.title}" /></a>&nbsp;
-{/if}
-      <a href="{$link.url}">{$link.title}</a>&nbsp;&nbsp;
-   {/foreach}
-{/if}
+        $this->assertEquals( $addressOptions['county'], 1, 'County was set but did not stick in db' );
+    }
 
-{/if}
+}

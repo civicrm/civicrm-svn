@@ -90,16 +90,24 @@ class CRM_Contact_Form_Task_PDFLetterCommon
             $cancelURL   = CRM_Utils_System::url('civicrm/contact/view',
                                                  "reset=1&cid={$form->_cid}&selectedChild=activity",
                                                  false, null, false);
-    
-            $form->addButtons( array(
-                                     array ( 'type'      => 'submit',
-                                             'name'      => ts('Make PDF Letter'),
-                                             'isDefault' => true   ),
-                                     array ( 'type'      => 'cancel',
-                                             'name'      => ts('Done'),
-                                             'js'        => array( 'onclick' => "location.href='{$cancelURL}'; return false;" ) ),
-                                     )
-                               );
+            if( $form->get( 'action' ) == CRM_Core_Action::VIEW ) {
+                $form->addButtons( array(
+                                         array ( 'type'      => 'cancel',
+                                                 'name'      => ts('Done'),
+                                                 'js'        => array( 'onclick' => "location.href='{$cancelURL}'; return false;" ) ),
+                                         )
+                                   );
+            } else {
+                $form->addButtons( array(
+                                         array ( 'type'      => 'submit',
+                                                 'name'      => ts('Make PDF Letter'),
+                                                 'isDefault' => true   ),
+                                         array ( 'type'      => 'cancel',
+                                                 'name'      => ts('Done'),
+                                                 'js'        => array( 'onclick' => "location.href='{$cancelURL}'; return false;" ) ),
+                                         )
+                                   );
+            }
             
         } else {
             $form->addDefaultButtons( ts('Make PDF Letters') );            
@@ -235,6 +243,9 @@ class CRM_Contact_Form_Task_PDFLetterCommon
                                 'activity_date_time'   => date('YmdHis'),
                                 'details'              => $html_message,
                                 );
+        if( $form->_activityId ) {
+            $activityParams  += array( 'id'=> $form->_activityId );
+        }
         $activity = CRM_Activity_BAO_Activity::create( $activityParams );
         
         foreach ( $form->_contactIds as $contactId ) {

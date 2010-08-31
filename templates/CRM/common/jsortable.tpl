@@ -133,7 +133,7 @@ eval('tableId =[' + tableId + ']');
 		{/literal}{/if}{literal}
 
 		"fnServerData": function ( sSource, aoData, fnCallback ) {
-			$.ajax( {
+			cj.ajax( {
 				"dataType": 'json', 
 				"type": "POST", 
 				"url": sSource, 

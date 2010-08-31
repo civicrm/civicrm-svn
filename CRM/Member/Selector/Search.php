@@ -81,7 +81,8 @@ class CRM_Member_Selector_Search extends CRM_Core_Selector_Base implements CRM_C
                                  'membership_source',
                                  'status_id',
                                  'member_is_test',
-                                 'owner_membership_id'
+                                 'owner_membership_id',
+                                 'membership_status',
                                  );
 
     /** 
