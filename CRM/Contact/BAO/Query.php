@@ -193,6 +193,13 @@ class CRM_Contact_BAO_Query
     public $_skipPermission = false;
 
     /**
+     * should we skip adding of delete clause
+     *
+     * @var boolean
+     */
+    public $_skipDeleteClause = false;
+    
+    /**
      * are we in strict mode (use equality over LIKE)
      *
      * @var boolean
@@ -720,8 +727,14 @@ class CRM_Contact_BAO_Query
                     $elementCmpName = 'phone';
                 }
                 
+                if ( in_array( $elementCmpName, array_keys( $addressCustomFields ) ) ) {
+                    if ( $cfID = CRM_Core_BAO_CustomField::getKeyID( $elementCmpName ) ) {
+                        $addressCustomFieldIds[$cfID][$name] = 1;
+                    }
+                }
                 //add address table only once
-                if ( in_array( $elementCmpName, self::$_locationSpecificFields ) && ! $addAddress
+                if ( ( in_array( $elementCmpName, self::$_locationSpecificFields ) || !empty($addressCustomFieldIds) ) 
+                     && ! $addAddress
                      && !in_array( $elementCmpName, array( 'email', 'phone', 'im', 'openid' ) )) {                         
                     $tName = "$name-address";
                     $aName = "`$name-address`";
@@ -732,11 +745,6 @@ class CRM_Contact_BAO_Query
                     $locationTypeJoin[$tName] = " ( $aName.location_type_id = $ltName.id ) ";
                     $processed[$aName] = 1;
                     $addAddress = true;
-                }
-                if ( in_array( $elementCmpName, array_keys( $addressCustomFields ) ) ) {
-                    if ( $cfID = CRM_Core_BAO_CustomField::getKeyID( $elementCmpName ) ) {
-                        $addressCustomFieldIds[$cfID][$name] = 1;
-                    }
                 }
 
                 $cond = $elementType = '';
@@ -1910,7 +1918,8 @@ class CRM_Contact_BAO_Query
         }
 
         $tables = $newTables;
-
+        $unsetFrom = true;
+        
         foreach ( $tables as $name => $value ) {
             if ( ! $value ) {
                 continue;
@@ -1998,6 +2007,10 @@ class CRM_Contact_BAO_Query
             case 'activity_status':
             case 'civicrm_activity_contact':
                 require_once 'CRM/Activity/BAO/Query.php';
+                if ( $unsetFrom && ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) {
+                    $from = '';
+                    $unsetFrom = false;
+                }
                 $from .= CRM_Activity_BAO_Query::from( $name, $mode, $side );
                 continue; 
 
@@ -2293,7 +2306,8 @@ SELECT id, cache_date, saved_search_id, children
 FROM   civicrm_group
 WHERE  id IN ( $groupIDs )
   AND  ( saved_search_id != 0
-   OR    saved_search_id IS NOT NULL )
+   OR    saved_search_id IS NOT NULL
+   OR    children IS NOT NULL )
 ";
         $group = CRM_Core_DAO::executeQuery( $sql );
         $ssWhere = array(); 
@@ -3177,7 +3191,7 @@ WHERE  id IN ( $groupIDs )
 
         // hack for now, add permission only if we are in search
         // FIXME: we should actually filter out deleted contacts (unless requested to do the opposite)
-        $permission = ' ( 1 ) ';
+        $permission = ' ( 1 ) ';        
         $onlyDeleted = in_array(array('deleted_contacts', '=', '1', '0', '0'), $this->_params);
 
         // if we’re explicitely looking for a certain contact’s contribs, events, etc.
@@ -3194,7 +3208,7 @@ WHERE  id IN ( $groupIDs )
 
         if ( ! $this->_skipPermission ) {
             require_once 'CRM/ACL/API.php';
-            $permission = CRM_ACL_API::whereClause( CRM_Core_Permission::VIEW, $this->_tables, $this->_whereTables, null, $onlyDeleted );
+            $permission = CRM_ACL_API::whereClause( CRM_Core_Permission::VIEW, $this->_tables, $this->_whereTables, null, $onlyDeleted, $this->_skipDeleteClause );
             // CRM_Core_Error::debug( 'p', $permission );
             // CRM_Core_Error::debug( 't', $this->_tables );
             // CRM_Core_Error::debug( 'w', $this->_whereTables );
@@ -3202,7 +3216,7 @@ WHERE  id IN ( $groupIDs )
             // regenerate fromClause since permission might have added tables
             if ( $permission ) {
                 //fix for row count in qill (in contribute/membership find)
-                if (! $count  || $this->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
+                if (! $count ) {
                     $this->_useDistinct = true;
                 }
                 $this->_fromClause       = self::fromClause( $this->_tables     , null, null, $this->_primaryLocation, $this->_mode ); 

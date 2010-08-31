@@ -54,6 +54,9 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                                 array( 'title'     => ts( 'Participant Name' ),
                                        'required'  => true,
                                        'no_repeat' => true ),
+                                'id'  => 
+                                array( 'no_display' => true,
+                                       'required'   => true, ),
                                 ),
                          'grouping'  => 'contact-fields',
                          'filters' =>             
@@ -204,7 +207,9 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
         $this->_from = "
         FROM civicrm_participant {$this->_aliases['civicrm_participant']}
              LEFT JOIN civicrm_event {$this->_aliases['civicrm_event']} 
-                    ON ({$this->_aliases['civicrm_event']}.id = {$this->_aliases['civicrm_participant']}.event_id ) AND {$this->_aliases['civicrm_event']}.is_template IS NULL
+                    ON ({$this->_aliases['civicrm_event']}.id = {$this->_aliases['civicrm_participant']}.event_id ) AND 
+                       ({$this->_aliases['civicrm_event']}.is_template IS NULL OR  
+                        {$this->_aliases['civicrm_event']}.is_template = 0)
              LEFT JOIN civicrm_contact {$this->_aliases['civicrm_contact']} 
                     ON ({$this->_aliases['civicrm_participant']}.contact_id  = {$this->_aliases['civicrm_contact']}.id  )
              {$this->_aclFrom}
@@ -367,6 +372,19 @@ class CRM_Report_Form_Event_ParticipantListing extends CRM_Report_Form {
                 $entryFound = true;
             }
 
+            // Convert display name to link 
+            if ( array_key_exists( 'civicrm_contact_display_name', $row ) && 
+                 $rows[$rowNum]['civicrm_contact_display_name'] && 
+                 array_key_exists( 'civicrm_contact_id', $row ) ) {
+                $url = CRM_Utils_System::url( "civicrm/contact/view"  , 
+                                              'reset=1&cid=' . $row['civicrm_contact_id'],
+                                              $this->_absoluteUrl );
+                $rows[$rowNum]['civicrm_contact_display_name_link' ] = $url;
+                $rows[$rowNum]['civicrm_contact_display_name_hover'] = 
+                    ts("View Contact Summary for this Contact.");
+                $entryFound = true;
+            }
+            
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
             if ( !$entryFound ) {

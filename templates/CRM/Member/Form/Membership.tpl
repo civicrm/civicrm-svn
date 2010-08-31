@@ -207,6 +207,10 @@ cj( function( ) {
             cj('#recordContribution').hide( );
         }
     });
+    
+    cj('#membership_type_id\\[1\\]').change( function( ) {
+        setPaymentBlock( );
+    });
 });
 </script>
 {/literal}

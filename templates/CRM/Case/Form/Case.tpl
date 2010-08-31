@@ -45,6 +45,11 @@
       </div> 
 {else}
 <table class="form-layout">
+    {if $activityTypeDescription }
+        <tr>
+            <div id="help">{$activityTypeDescription}</div>
+        </tr>
+    {/if}
 {if $clientName}
     <tr class="crm-case-form-block-clientName">
     	<td class="label font-size12pt">{ts}Client{/ts}</td>

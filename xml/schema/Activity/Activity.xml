@@ -61,6 +61,7 @@
        <import>true</import>
        <type>int unsigned</type>
        <required>true</required>
+       <export>false</export>
        <default>1</default>
        <headerPattern>/(activity.)?type(.id$)/i</headerPattern>
        <comment>FK to civicrm_option_value.id, that has to be valid, registered activity type.</comment>
@@ -214,8 +215,9 @@
   <field>
       <name>status_id</name>
       <uniqueName>activity_status_id</uniqueName>
-      <title>Activity Status Label</title>
+      <title>Activity Status Id</title>
       <import>true</import>
+      <export>false</export>
       <headerPattern>/(activity.)?status(.label$)?/i</headerPattern>
       <type>int unsigned</type>
       <comment>ID of the status this activity is currently in. Foreign key to civicrm_option_value.</comment>

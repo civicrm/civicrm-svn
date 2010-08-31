@@ -560,7 +560,6 @@ class CRM_Contribute_BAO_Query
                                 'contribution_end_date'   => 1,
                                 'is_test'                 => 1,
                                 'is_pay_later'            => 1,
-                                'contribution_status_id'  => 1,
                                 'contribution_status'     => 1,
                                 'contribution_recur_id'   => 1, 
                                 'amount_level'            => 1,

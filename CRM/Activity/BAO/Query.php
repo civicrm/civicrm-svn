@@ -51,8 +51,17 @@ class CRM_Activity_BAO_Query
         }
         
         if ( CRM_Utils_Array::value( 'activity_type_id', $query->_returnProperties ) ) {
-            $query->_select['activity_type_id']  = "activity_type.label as activity_type_id";
+            $query->_select['activity_type_id']  = "activity_type.id as activity_type_id";
             $query->_element['activity_type_id'] = 1;
+            $query->_tables['civicrm_activity'] = 1;
+            $query->_tables['activity_type'] = 1;
+            $query->_whereTables['civicrm_activity'] = 1;
+            $query->_whereTables['activity_type'] = 1;
+        }
+
+        if ( CRM_Utils_Array::value( 'activity_type', $query->_returnProperties ) ) {
+            $query->_select['activity_type']  = "activity_type.label as activity_type";
+            $query->_element['activity_type'] = 1;
             $query->_tables['civicrm_activity'] = 1;
             $query->_tables['activity_type'] = 1;
             $query->_whereTables['civicrm_activity'] = 1;
@@ -72,13 +81,22 @@ class CRM_Activity_BAO_Query
         }
         
         if ( CRM_Utils_Array::value( 'activity_status_id', $query->_returnProperties ) ) {
-            $query->_select['activity_status_id']  = "activity_status.label as activity_status_id";
+            $query->_select['activity_status_id']  = "activity_status.id as activity_status_id";
             $query->_element['activity_status_id'] = 1;
             $query->_tables['civicrm_activity'] = 1;
             $query->_tables['activity_status'] = 1;
             $query->_whereTables['civicrm_activity'] = 1;
             $query->_whereTables['activity_status'] = 1;
         }  
+
+        if ( CRM_Utils_Array::value( 'activity_status', $query->_returnProperties ) ) {
+            $query->_select['activity_status']  = "activity_status.label as activity_status";
+            $query->_element['activity_status'] = 1;
+            $query->_tables['civicrm_activity'] = 1;
+            $query->_tables['activity_status'] = 1;
+            $query->_whereTables['civicrm_activity'] = 1;
+            $query->_whereTables['activity_status'] = 1;
+        } 
 
         if ( CRM_Utils_Array::value( 'activity_duration', $query->_returnProperties ) ) {
             $query->_select['activity_duration']  = "civicrm_activity.duration as activity_duration";
@@ -154,6 +172,9 @@ class CRM_Activity_BAO_Query
         
         $strtolower = function_exists('mb_strtolower') ? 'mb_strtolower' : 'strtolower';
         $query->_tables['civicrm_activity'] = $query->_whereTables['civicrm_activity'] = 1;
+        if ( $query->_mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
+            $query->_skipDeleteClause = true;
+        }        
         
         switch ( $name ) {
         
@@ -283,14 +304,19 @@ class CRM_Activity_BAO_Query
         $from = null;
         switch ( $name ) {
             
-        case 'civicrm_activity': 
-            if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
-                $side = ' INNER ';
+        case 'civicrm_activity':
+        	if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
+		        $from = " FROM civicrm_activity 
+		                  LEFT JOIN civicrm_activity_target  ON ( civicrm_activity_target.activity_id = civicrm_activity.id 
+		                       AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1  ) 
+                          LEFT JOIN civicrm_contact contact_a ON ( civicrm_activity_target.target_contact_id = contact_a.id AND contact_a.is_deleted = 0)
+                          LEFT JOIN civicrm_email ON (contact_a.id = civicrm_email.contact_id AND civicrm_email.is_primary = 1)";
+            } else {
+                $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
+                $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
+                                 AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
+                
             }
-		    
-            $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
-            $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
-AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
             
             break;
             
@@ -411,13 +437,13 @@ AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1
                                 'contact_sub_type'    => 1, 
                                 'sort_name'           => 1, 
                                 'display_name'        => 1,
-                                'activity_type_id'	  => 1,
+                                'activity_type'  	  => 1,
                                 'activity_subject'	  => 1,
                                 'activity_date_time'  => 1,
                                 'activity_duration'	  => 1,
                                 'activity_location'   => 1,
                                 'activity_details'    => 1,
-                                'activity_status_id'  => 1,
+                                'activity_status'     => 1,
                                 'source_contact_id'   => 1,
                                 'source_record_id'    => 1,
                                 'activity_is_test'    => 1
