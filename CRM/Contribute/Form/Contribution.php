@@ -471,7 +471,6 @@ WHERE  contribution_id = {$this->_id}
             $defaults['honor_type_id'] = CRM_Utils_Array::value( 'honor_type_id', $this->_pledgeValues );
             $defaults['honor_contact_id'] = CRM_Utils_Array::value( 'honor_contact_id', $this->_pledgeValues );
             $defaults['contribution_type_id'] = CRM_Utils_Array::value( 'contribution_type_id', $this->_pledgeValues );
-            $defaults['contribution_status_id'] = CRM_Utils_Array::value( 'pledge_payment_status_id', $this->_pledgeValues['pledgePayment'] );
             $defaults['option_type'] = 1;
         }
         
