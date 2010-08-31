@@ -2822,12 +2822,12 @@ WHERE  id IN ( $groupIDs )
         if ( ($name == 'birth_date_low') ||($name == 'birth_date_high') ) {
           
             $this->dateQueryBuilder( $values,
-                                     'contact_a', 'birth_date', 'birth_date', ts('Birth Date'), false );
+                                     'contact_a', 'birth_date', 'birth_date', ts('Birth Date') );
     
         } else if( ($name == 'deceased_date_low') ||($name == 'deceased_date_high') ) {
           
             $this->dateQueryBuilder( $values,
-                                     'contact_a', 'deceased_date', 'deceased_date', ts('Deceased Date'), false );
+                                     'contact_a', 'deceased_date', 'deceased_date', ts('Deceased Date') );
         }
        
     }
