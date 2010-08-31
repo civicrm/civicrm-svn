@@ -2622,6 +2622,26 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
         
         return $isCaseActivity;
     }
-    
+
+    /**
+     * Function to get all the case type ids currently in use 
+     *
+     * 
+     * @return array $caseTypeIds 
+     */
+    static function getUsedCaseType( ) 
+    {
+        $caseTypeIds = array( );
+        $dao = new CRM_Case_DAO_Case( );
+        $dao->is_deleted = 0;
+        $dao->find( );
+
+        while ( $dao->fetch( ) ) {
+            $typeId = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, $dao->case_type_id );
+            $caseTypeIds[$dao->id] = $typeId[1];
+        }
+        
+        return $caseTypeIds;
+    }
 }
 
