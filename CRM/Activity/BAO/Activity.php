@@ -1801,21 +1801,27 @@ AND cl.modified_id  = c.id
     {
         if ( ! isset( self::$_exportableFields[$name] ) ) {
             self::$_exportableFields[$name] = array( );
-
+            
             // TO DO, ideally we should retrieve all fields from xml, in this case since activity processing is done
             // my case hence we have defined fields as case_*
             if ( $name == 'Activity' ) {
-	            require_once 'CRM/Activity/DAO/Activity.php';            
-    	        $fields = CRM_Activity_DAO_Activity::export( );
+	            require_once 'CRM/Activity/DAO/Activity.php'; 
+                $exportableFields = CRM_Activity_DAO_Activity::export( );
+                $Activityfields   = array( 
+                                          'activity_type'     => array( 'title' => ts('Activity Type'),           'type' => CRM_Utils_Type::T_STRING ),
+                                          'activity_status'   => array( 'title' => ts('Activity Status'),         'type' => CRM_Utils_Type::T_STRING ) 
+                                           );
+                $fields = array_merge( $Activityfields, $exportableFields );
+                
             } else {
 	            //set title to activity fields
 	            $fields = array( 
 	                           'case_subject'                 => array( 'title' => ts('Activity Subject'),        'type' => CRM_Utils_Type::T_STRING ),
-	                           'case_source_contact_id'       => array( 'title' => ts('Activity Reporter'),       'type' => CRM_Utils_Type::T_STRING ),
+                               'case_source_contact_id'       => array( 'title' => ts('Activity Reporter'),       'type' => CRM_Utils_Type::T_STRING ),
 	                           'case_recent_activity_date'    => array( 'title' => ts('Activity Actual Date'),    'type' => CRM_Utils_Type::T_DATE ),
 	                           'case_scheduled_activity_date' => array( 'title' => ts('Activity Scheduled Date'), 'type' => CRM_Utils_Type::T_DATE ),
-	                           'case_recent_activity_type'    => array( 'title' => ts('Activity Type'),           'type' => CRM_Utils_Type::T_INT ),
-	                           'case_activity_status_id'      => array( 'title' => ts('Activity Status'),         'type' => CRM_Utils_Type::T_INT ),
+	                           'case_recent_activity_type'    => array( 'title' => ts('Activity Type'),           'type' => CRM_Utils_Type::T_STRING ),
+                               'case_activity_status'         => array( 'title' => ts('Activity Status'),         'type' => CRM_Utils_Type::T_STRING ),
 	                           'case_activity_duration'       => array( 'title' => ts('Activity Duration'),       'type' => CRM_Utils_Type::T_INT ),
 	                           'case_activity_medium_id'      => array( 'title' => ts('Activity Medium'),         'type' => CRM_Utils_Type::T_INT ),
 	                           'case_activity_details'        => array( 'title' => ts('Activity Details'),        'type' => CRM_Utils_Type::T_TEXT ),

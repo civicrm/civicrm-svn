@@ -138,7 +138,8 @@ class CRM_Case_Form_Case extends CRM_Core_Form
        
         CRM_Utils_System::setTitle($details[$this->_activityTypeId]['label']);
         $this->assign('activityType', $details[$this->_activityTypeId]['label']);
-       
+        $this->assign( 'activityTypeDescription', $details[$this->_activityTypeId]['description'] );
+        
         if ( isset($this->_currentlyViewedContactId) ) {
             require_once 'CRM/Contact/BAO/Contact.php';
             $contact = new CRM_Contact_DAO_Contact( );

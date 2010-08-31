@@ -277,8 +277,7 @@ FROM   civicrm_group_contact
 WHERE  civicrm_group_contact.status = 'Added'
   AND  civicrm_group_contact.group_id = $groupID ";
 
-        $dao = CRM_Core_DAO::executeQuery( $sql,
-                                           CRM_Core_DAO::$_nullArray );
+        $dao = CRM_Core_DAO::executeQuery( $sql );
 
         $values = array( );
         while ( $dao->fetch( ) ) {

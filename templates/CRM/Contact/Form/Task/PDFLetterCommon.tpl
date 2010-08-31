@@ -38,6 +38,7 @@
         {$form.html_message.label}
     </div>
     <div class="crm-accordion-body">
+    {if $action neq 4}
         <span class="helpIcon" id="helphtml">
 		<a href="#" onClick="return showToken('Html', 1);">{$form.token1.label}</a> 
 		{help id="id-token-html" file="CRM/Contact/Form/Task/Email.hlp"}
@@ -47,6 +48,7 @@
 		    {$form.token1.html}
 		</div>
 	    </span>
+	    {/if}
 	    <div class="clear"></div>
         <div class='html'>
         {if $editor EQ 'textarea'}

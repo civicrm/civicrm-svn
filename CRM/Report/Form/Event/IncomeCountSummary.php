@@ -182,12 +182,13 @@ class CRM_Report_Form_Event_IncomeCountSummary extends CRM_Report_Form {
     
     function from( ) {
         $this->_from = " 
-                         FROM civicrm_event {$this->_aliases['civicrm_event']}
-                         LEFT JOIN civicrm_participant {$this->_aliases['civicrm_participant']} 
-                              ON {$this->_aliases['civicrm_event']}.id = {$this->_aliases['civicrm_participant']}.event_id 
-                         LEFT JOIN civicrm_line_item {$this->_aliases['civicrm_line_item']}
-                              ON {$this->_aliases['civicrm_participant']}.id ={$this->_aliases['civicrm_line_item']}.entity_id AND {$this->_aliases['civicrm_line_item']}.entity_table = 'civicrm_participant' 
-                       ";
+        FROM civicrm_event {$this->_aliases['civicrm_event']}
+             LEFT JOIN civicrm_participant {$this->_aliases['civicrm_participant']} 
+                    ON {$this->_aliases['civicrm_event']}.id = {$this->_aliases['civicrm_participant']}.event_id AND 
+                       {$this->_aliases['civicrm_participant']}.is_test = 0 
+             LEFT JOIN civicrm_line_item {$this->_aliases['civicrm_line_item']}
+                    ON {$this->_aliases['civicrm_participant']}.id ={$this->_aliases['civicrm_line_item']}.entity_id AND 
+                       {$this->_aliases['civicrm_line_item']}.entity_table = 'civicrm_participant' ";
     }
     
     function where( ) {

@@ -35,6 +35,7 @@
       <uniqueName>membership_type</uniqueName> 
       <title>Membership Type</title>
       <type>varchar</type>
+      <import>true</import>
       <length>128</length>
       <localizable>true</localizable>
       <comment>Name of Membership Type</comment>

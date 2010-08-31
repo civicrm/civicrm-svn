@@ -21,7 +21,7 @@ SELECT @max_weight      := MAX(ROUND(weight)) from civicrm_option_value WHERE op
 INSERT INTO civicrm_option_value
   (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight,{localize field='description'} description{/localize}, is_optgroup,is_reserved, is_active, component_id, visibility_id ) 
 VALUES
-    (@ogrID  , '{ts escape="sql"}Grant Report{/ts}', 'grant', 'CRM_Report_Form_Grant', NULL, 0, 0,  @max_weight+1, '{ts escape="sql"}Grant Report{/ts}', 0, 0, 1, @grantCompId, NULL),
+    (@ogrID  , {localize}'{ts escape="sql"}Grant Report{/ts}'{/localize}, 'grant', 'CRM_Report_Form_Grant', NULL, 0, 0,  @max_weight+1, {localize}'{ts escape="sql"}Grant Report{/ts}'{/localize}, 0, 0, 1, @grantCompId, NULL),
     (@ogrID, {localize}'{ts escape="sql"}Participant list Count Report{/ts}'{/localize}, 'event/participantlist', 'CRM_Report_Form_Event_ParticipantListCount', NULL, 0, 0, @max_weight+2, {localize}'{ts escape="sql"}Shows the Participant list with Participant Count.{/ts}'{/localize}, 0, 0, 1, @eventCompId, NULL),
     (@ogrID, {localize}'{ts escape="sql"}Income Count Summary Report{/ts}'{/localize}, 'event/incomesummary', 'CRM_Report_Form_Event_IncomeCountSummary', NULL, 0, 0, @max_weight+3, {localize}'{ts escape="sql"}Shows the Income Summary of events with Count.{/ts}'{/localize}, 0, 0, 1, @eventCompId, NULL);
  

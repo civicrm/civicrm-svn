@@ -97,6 +97,9 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
      */
     static function add( &$params )
     {
+        require_once 'CRM/Utils/System.php';
+        CRM_Utils_System::flushCache( );
+
         require_once 'CRM/Utils/Hook.php';
         
         if ( CRM_Utils_Array::value( 'id', $params ) ) {
@@ -104,6 +107,7 @@ class CRM_Event_BAO_Event extends CRM_Event_DAO_Event
         } else {
             CRM_Utils_Hook::pre( 'create', 'Event', null, $params ); 
         }
+
         
         $event = new CRM_Event_DAO_Event( );
         

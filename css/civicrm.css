@@ -731,7 +731,14 @@ div.spacer,
 /* Following styles are used to remove the white bullets from the Garland Theme */
 div.block-civicrm li, #crm-container ul li, #crm-container ul.treeview li {
     background-image: none;
+} 
+
+/* But allow them for the help at the top of forms
+*/
+#crm-container #help ul li {
+    background-image: url(menu-leaf.png);
 }
+
 
 /* Styles from jsTree.com menu. Copied here since Drupal styles over-ride otherwise. */
 /* DOTS */
@@ -2345,7 +2352,7 @@ div.grippie {
         width:495px; /* fixes ie bug  caused by above*/
         }
 
-#crm-create-new-link É{
+#crm-create-new-link {
     width:95px;
     }
 
@@ -2537,14 +2544,14 @@ span.icon {
     border-radius:4px; 
     }
 
-.crm-accordion-open .crm-accordion-header {
+.crm-accordion-open>.crm-accordion-header {
     -moz-border-radius: 4px 4px 0px 0px; 
     -webkit-border-radius: 4px 4px 0px 0px;   
     -khtml-border-radius: 4px 4px 0px 0px; 
     border-radius:4px 4px 0px 0px;
     }
 
-.crm-accordion-open .crm-accordion-body {
+.crm-accordion-open>.crm-accordion-body {
     -moz-border-radius: 0px 0px 4px 4px; 
     -webkit-border-radius: 0px 0px 4px 4px;   
     -khtml-border-radius: 0px 0px 4px 4px; 
@@ -3156,16 +3163,6 @@ div#crm-toolTip
 #crm-container span.crm-button_qf_Main_upload input {
     font-size: 1.2em;
 }
-
-
-
-
-
-
-
-
-
-
 
 
 /*
