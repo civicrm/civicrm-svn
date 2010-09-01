@@ -174,13 +174,22 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
     
     function from( ) {
         $this->_from = null;
+
+        $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
+        foreach ( array( 'Pending', 'In Progress', 'Overdue' ) as $statusKey ) {
+            if ( $key = CRM_Utils_Array::key( $statusKey, $allStatus ) ) {
+                $unpaidStatus[] = $key;
+            }
+        } 
         
+        $statusIds = implode( ', ', $unpaidStatus );
+
         $this->_from = "
         FROM civicrm_contact {$this->_aliases['civicrm_contact']} {$this->_aclFrom}
              INNER JOIN civicrm_pledge  {$this->_aliases['civicrm_pledge']} 
                         ON ({$this->_aliases['civicrm_pledge']}.contact_id =
                             {$this->_aliases['civicrm_contact']}.id)  AND 
-                            {$this->_aliases['civicrm_pledge']}.status_id IN ( 2, 5, 6 )
+                            {$this->_aliases['civicrm_pledge']}.status_id IN ( {$statusIds} )
              LEFT  JOIN civicrm_pledge_payment {$this->_aliases['civicrm_pledge_payment']}
                         ON ({$this->_aliases['civicrm_pledge']}.id =
                             {$this->_aliases['civicrm_pledge_payment']}.pledge_id) ";
@@ -220,8 +229,8 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
     function alterDisplay( &$rows ) {
         // custom code to alter rows
         $entryFound = false;
-        $checkList  =  array();
-        $display_flag = $prev_cid = $cid =  0;
+        $checkList  = array();
+        $display_flag = $prev_cid = $cid = 0;
         
         foreach ( $rows as $rowNum => $row ) {
             if ( !empty($this->_noRepeats) && $this->_outputMode != 'csv' ) {

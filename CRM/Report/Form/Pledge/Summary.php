@@ -360,7 +360,7 @@ class CRM_Report_Form_Pledge_Summary extends CRM_Report_Form {
 
                 // Get Sum of all the payments made
                 $payDetailsSQL = "
-                    SELECT SUM( payment.scheduled_amount ) as total_amount 
+                    SELECT SUM( payment.actual_amount ) as total_amount 
                        FROM civicrm_pledge_payment payment 
                        WHERE payment.pledge_id = {$pledgeID} AND
                              payment.status_id = 1";

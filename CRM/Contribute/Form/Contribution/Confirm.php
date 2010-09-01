@@ -847,13 +847,20 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 
                 //when user doing pledge payments.
                 //update the schedule when payment(s) are made 
-                
                 require_once 'CRM/Pledge/BAO/Payment.php';
                 foreach ( $form->_params['pledge_amount'] as $paymentId => $dontCare ) {
+                    $scheduledAmount  =  CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
+                                                                       $paymentId,
+                                                                       'scheduled_amount', 
+                                                                       'id'
+                                                                       );
+                    
                     $pledgePaymentParams = array('id'              => $paymentId,
                                                  'contribution_id' => $contribution->id,
-                                                 'status_id'       => $contribution->contribution_status_id
+                                                 'status_id'       => $contribution->contribution_status_id,
+                                                 'actual_amount'   => $scheduledAmount
                                                  );
+                    
                     
                     CRM_Pledge_BAO_Payment::add( $pledgePaymentParams );
                 }
@@ -865,7 +872,7 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 //when user creating pledge record.
                 $pledgeParams                            = array( );
                 $pledgeParams['contact_id'             ] = $contribution->contact_id;
-                $pledgeParams['installment_amount'     ] = $contribution->total_amount;
+                $pledgeParams['installment_amount'     ] = $pledgeParams['actual_amount'] = $contribution->total_amount;
                 $pledgeParams['contribution_id'        ] = $contribution->id;
                 $pledgeParams['contribution_page_id'   ] = $contribution->contribution_page_id;
                 $pledgeParams['contribution_type_id'   ] = $contribution->contribution_type_id;
