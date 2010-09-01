@@ -239,6 +239,10 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                     $row[$property] = $result->$property;
                 }
             }
+            
+            $contactId = CRM_Utils_Array::value( 'contact_id', $row );
+            if ( !$contactId ) $contactId = CRM_Utils_Array::value( 'source_contact_id', $row );
+
             $row['target_contact_name'] = CRM_Activity_BAO_ActivityTarget::getTargetNames( $row['activity_id'] );
             $row['assignee_contact_name'] = CRM_Activity_BAO_ActivityAssignment::getAssigneeNames( $row['activity_id'] );
                      
@@ -277,7 +281,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
                                                           $this->_key );
             $row['action'] = CRM_Core_Action::formLink( $actionLinks, null,
                                                         array( 'id'  => $result->activity_id,
-                                                               'cid' => $result->contact_id,
+                                                               'cid' => $contactId,
                                                                'cxt' => $this->_context ) );
             $rows[] = $row;
          }
