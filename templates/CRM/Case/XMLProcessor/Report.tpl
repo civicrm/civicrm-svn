@@ -41,11 +41,11 @@
        <Fields>
 {foreach from=$activity.fields item=field}
           <Field>
-            <Label>{$field.label}</Label>
+            <Label>{$field.label|escape}</Label>
 {if $field.category}
-            <Category>{$field.category}</Category>
+            <Category>{$field.category|escape}</Category>
 {/if}
-            <Value>{$field.value}</Value>
+            <Value>{$field.value|escape}</Value>
             <Type>{$field.type}</Type>
           </Field>
 {/foreach}
