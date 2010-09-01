@@ -354,6 +354,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     if ( isset( $this->_params[0][ $timeField ] ) ) {
                         $defaults[ $timeField ] = $this->_params[0][ $timeField ];
                     }
+                    if ( isset( $this->_params[0]["{$name}_id"] ) ) {
+                        $defaults["{$name}_id"] = $this->_params[0]["{$name}_id"];
+                    }
                 } else if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting'))
                             && CRM_Utils_Array::value($name.'_custom', $this->_params[0]) ) { 
                     $defaults[$name.'_custom'] = $this->_params[0][$name.'_custom'];

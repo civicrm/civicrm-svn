@@ -313,6 +313,9 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                     if ( isset( $contact[ $timeField ] ) ) {
                         $defaults[ $timeField ] = $contact[ $timeField ];
                     }
+                    if ( isset( $contact["{$name}_id"] ) ) {
+                        $defaults["{$name}_id"] = $contact["{$name}_id"];
+                    }
                 } else if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting') )
                          && CRM_Utils_Array::value($name.'_custom', $contact) ) { 
                     $defaults[$name.'_custom'] = $contact[$name.'_custom'];
