@@ -1754,17 +1754,17 @@ VALUES
     function addPledgePayment( )
     {
         $pledgePayment = "INSERT INTO civicrm_pledge_payment 
-        ( pledge_id, contribution_id, scheduled_amount, currency, scheduled_date, reminder_date, reminder_count, status_id) 
+        ( pledge_id, contribution_id, scheduled_amount, actual_amount, currency, scheduled_date, reminder_date, reminder_count, status_id) 
        VALUES 
-         (1, 10, 500.00,  'USD','2009-07-01 00:00:00', null, 0, 1 ),
-         (2, 11,   200.00, 'USD','2009-07-01 00:00:00', null, 0,  1 ),
-         (2, null, 200.00, 'USD', '2009-10-01 00:00:00', null, 0,  2 ),
-         (2, null, 200.00, 'USD', '2009-01-01 00:00:00', null, 0,  2 ),
-         (2, null, 200.00, 'USD', '2009-04-01 00:00:00', null, 0,  2 ),
+         (1, 10, 500.00, 500.00, 'USD','2009-07-01 00:00:00', null, 0, 1 ),
+         (2, 11,   200.00, 200.00, 'USD','2009-07-01 00:00:00', null, 0,  1 ),
+         (2, null, 200.00, null, 'USD', '2009-10-01 00:00:00', null, 0,  2 ),
+         (2, null, 200.00, null, 'USD', '2009-01-01 00:00:00', null, 0,  2 ),
+         (2, null, 200.00, null, 'USD', '2009-04-01 00:00:00', null, 0,  2 ),
 
-         (3, 12,   200.00, 'USD', '2009-10-01 00:00:00', null, 0, 1 ),
-         (3, 13,   200.00, 'USD', '2009-11-01 00:0:00', '2009-10-28 00:00:00', 1, 1),
-         (3, null, 200.00, 'USD', '2009-12-01 00:00:00', null, 0, 2 );
+         (3, 12,   200.00, 200.00, 'USD', '2009-10-01 00:00:00', null, 0, 1 ),
+         (3, 13,   200.00, 200.00, 'USD', '2009-11-01 00:0:00', '2009-10-28 00:00:00', 1, 1),
+         (3, null, 200.00, null, 'USD', '2009-12-01 00:00:00', null, 0, 2 );
         ";
         CRM_Core_DAO::executeQuery( $pledgePayment, CRM_Core_DAO::$_nullArray );
     }
