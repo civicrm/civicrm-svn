@@ -174,6 +174,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
         $this->_action = $action;
         $this->_query = new CRM_Contact_BAO_Query( $this->_queryParams, null, null, false, false,
                                                    CRM_Contact_BAO_Query::MODE_ACTIVITY );
+        $this->_query->_distinctComponentClause = 'DISTINCT ( civicrm_activity.id )';
     
     	//CRM_Core_Error::debug( $this->_query ); exit();
     }//end of constructor
@@ -202,7 +203,6 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
      */
     function getTotalCount($action)
     {
-        $this->_query->_distinctComponentClause = 'DISTINCT ( civicrm_activity.id )';
         return $this->_query->searchQuery( 0, 0, null,
                                            true, false, 
                                            false, false, 
