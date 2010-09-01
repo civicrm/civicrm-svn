@@ -202,6 +202,7 @@ class CRM_Activity_Selector_Search extends CRM_Core_Selector_Base implements CRM
      */
     function getTotalCount($action)
     {
+        $this->_query->_distinctComponentClause = 'DISTINCT ( civicrm_activity.id )';
         return $this->_query->searchQuery( 0, 0, null,
                                            true, false, 
                                            false, false, 
