@@ -179,7 +179,7 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
         //update pledge status
         CRM_Pledge_BAO_Payment::updatePledgePaymentStatus( $pledgeId,
                                                            array( $params['id'] ),
-                                                           null,
+                                                           $params['status_id'],
                                                            null,
                                                            $formValues['scheduled_amount'],
                                                            $adjustTotalAmount );

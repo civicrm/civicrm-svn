@@ -333,7 +333,8 @@ WHERE     pledge_id = %1
                                         $paymentStatusID = null,
                                         $pledgeStatusID = null, 
                                         $actualAmount = 0,
-                                        $adjustTotalAmount = false )
+                                        $adjustTotalAmount = false,
+                                        $isScriptUpdate = false )
     {
         //get all status
         require_once 'CRM/Contribute/PseudoConstant.php';
@@ -358,7 +359,7 @@ WHERE     pledge_id = %1
                 $paymentStatusID = $pledgeStatusID ;
             }
             
-            self::updatePledgePayments( $pledgeID, $paymentStatusID, $paymentIDs, $actualAmount, $paymentContributionId );
+            self::updatePledgePayments( $pledgeID, $paymentStatusID, $paymentIDs, $actualAmount, $paymentContributionId ,$isScriptUpdate );
         }
         if ( !empty( $paymentIDs ) && $actualAmount  ) {
             $payments = implode( ',', $paymentIDs );
@@ -524,7 +525,7 @@ WHERE  civicrm_pledge.id = %2
      * @param int   $paymentStatusId payment status id
      * @static
      */
-     static function updatePledgePayments( $pledgeId, $paymentStatusId, $paymentIds = null, $actualAmount = 0 ,$contributionId = null)
+     static function updatePledgePayments( $pledgeId, $paymentStatusId, $paymentIds = null, $actualAmount = 0 ,$contributionId = null ,$isScriptUpdate = false )
      {
         $paymentClause = null;
         if ( !empty( $paymentIds ) ) {
@@ -532,7 +533,7 @@ WHERE  civicrm_pledge.id = %2
             $paymentClause = " AND civicrm_pledge_payment.id IN ( {$payments} )";
         }
         $actualAmountClause = NULL;
-        if ( isset( $contributionId ) ) {
+        if ( isset( $contributionId ) && !$isScriptUpdate ) {
             $contributionIdClause = ", civicrm_pledge_payment.contribution_id = {$contributionId}";
             $actualAmountClause =", civicrm_pledge_payment.actual_amount = {$actualAmount}";
         }
