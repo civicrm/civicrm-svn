@@ -435,7 +435,7 @@ WHERE     pledge_id = %1
                 $totalPaidParams = array( 1 => array( $pledgeID, 'Integer' ) ); 
                 $totalPaidAmount =  CRM_Core_DAO::singleValueQuery( $balanceQuery, $totalPaidParams );
                 $remainingTotalAmount = ( $actualPledgeAmount - $totalPaidAmount );
-                if ( ( $pledgeStatusId && $pledgeStatusId == array_search( 'Completed', $allStatus ) ) && ( $actualAmount > $remainingTotalAmount ) && ( $actualAmount >= $actualPledgeAmount ) ) {
+                if ( ( $pledgeStatusId && $pledgeStatusId == array_search( 'Completed', $allStatus ) ) && ( ( $actualAmount > $remainingTotalAmount ) || ( $actualAmount >= $actualPledgeAmount ) ) ) {
                     $totalAmountClause = ", civicrm_pledge.amount = {$totalPaidAmount}";   
                 }
             }
