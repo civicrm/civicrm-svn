@@ -1549,23 +1549,16 @@ AND    civicrm_contact.id = %1";
             require_once 'CRM/Core/BAO/EntityTag.php';
             CRM_Core_BAO_EntityTag::create( $params['tag'], $contactID );
         } 
-        
-        // Set status = 'Pending' if profileDoubleOptIn = 1. CRM-5905
-        require_once 'CRM/Core/Config.php';
-        $config = CRM_Core_Config::singleton( );
-        if ( $config->profileDoubleOptIn ) {
-            $groupStatus = 'Pending';
-        }
-        
+                
         //to add profile in default group
         if ( is_array ($addToGroupID) ) {
             $contactIds = array($contactID);
             foreach ( $addToGroupID as $groupId ) {
-                CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $groupId, 'Admin' , $groupStatus );
+                CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $groupId );
             }
         } else if ( $addToGroupID ) {
             $contactIds = array($contactID);
-            CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $addToGroupID , 'Admin' , $groupStatus );
+            CRM_Contact_BAO_GroupContact::addContactsToGroup( $contactIds, $addToGroupID );
         }
 
 

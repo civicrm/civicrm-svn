@@ -939,8 +939,16 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
         require_once 'CRM/Core/BAO/UFGroup.php';
         $subscribeGroupIds = CRM_Core_BAO_UFGroup::getDoubleOptInGroupIds( $params, $contactID );
         
+        // since we are directly adding contact to group lets unset it from mailing
+        if ( !empty( $addToGroups ) ) {
+            foreach( $addToGroups as $groupId ) {
+                if ( isset( $subscribeGroupIds[$groupId] ) ) {
+                    unset( $subscribeGroupIds[$groupId] );
+                }
+            }
+        }        
+        
         require_once "CRM/Contact/BAO/Contact.php";
-
         if ($contactID) {
             $ctype = CRM_Core_DAO::getFieldValue( "CRM_Contact_DAO_Contact",
                                                   $contactID,
