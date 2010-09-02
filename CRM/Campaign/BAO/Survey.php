@@ -54,7 +54,7 @@ Class CRM_Campaign_BAO_Survey extends CRM_Campaign_DAO_Survey
      * @var array
      */
     
-    static function retrieve ( &$params, &$defaults ) 
+    static function retrieve( &$params, &$defaults ) 
     {
         $dao = new CRM_Campaign_DAO_Survey( );
         

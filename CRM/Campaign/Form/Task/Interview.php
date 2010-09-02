@@ -68,6 +68,10 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     
     private $_votingTab = false;
     
+    private $_surveyValues;
+    
+    private $_resultOptions;
+        
     /**
      * build all the data structures needed to build the form
      *
@@ -78,16 +82,13 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     {
         $this->_votingTab          = $this->get( 'votingTab' );
         $this->_reserveToInterview = $this->get( 'reserveToInterview' );
-        if ( $this->_votingTab ) {
-            //time being hack.
-            $this->_surveyId      = 1;
-            $this->_contactIds    = array( 102 );
-            $this->_interviewerId = 102;
-        } else if ( $this->_reserveToInterview ) {
-            //user came from reserve form.
+        if ( $this->_reserveToInterview || $this->_votingTab ) {
+            //user came from voting tab / reserve form.
             foreach ( array( 'surveyId', 'contactIds', 'interviewerId' ) as $fld ) {
                 $this->{"_$fld"} = $this->get( $fld ); 
             }
+            //get the target voter ids.
+            if ( $this->_votingTab ) $this->getVoterIds( );
         } else {
             parent::preProcess( );  
             //get the survey id from user submitted values.
@@ -145,23 +146,45 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         $this->assign( 'interviewerId',  $this->_interviewerId );
         $this->assign( 'surveyActivityIds', json_encode( $activityIds ) );
         
+        //get the survey values.
+        $this->_surveyValues = $this->get( 'surveyValues' );
+        if ( !is_array( $this->_surveyValues ) ) {
+            $this->_surveyValues = array( );
+            if ( $this->_surveyId ) {
+                require_once 'CRM/Campaign/BAO/Survey.php';
+                $surveyParams = array( 'id' => $this->_surveyId );
+                CRM_Campaign_BAO_Survey::retrieve( $surveyParams, $this->_surveyValues );
+            }
+            $this->set( 'surveyValues', $this->_surveyValues );
+        }
+        
+        //get the survey result options.
+        $this->_resultOptions = $this->get( 'resultOptions' );
+        if ( !is_array( $this->_resultOptions ) ) {
+            $this->_resultOptions  = array( );
+            if ( $resultOptionId = CRM_Utils_Array::value( 'result_id', $this->_surveyValues ) ) {
+                require_once 'CRM/Core/OptionGroup.php';
+                $this->_resultOptions = CRM_Core_OptionGroup::valuesByID( $resultOptionId );
+            }
+            $this->set( 'resultOptions', $this->_resultOptions );
+        }
+        
         //validate the required ids.
         $this->validateIds( );
         
         //set the title.
-        $this->_surveyTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
-                                                            $this->_surveyId, 
-                                                            'activity_type_id' );
         require_once 'CRM/Core/PseudoConstant.php';
         $activityTypes = CRM_Core_PseudoConstant::activityType( );
+        $this->_surveyTypeId = CRM_Utils_Array::value( 'activity_type_id', $this->_surveyValues );
         CRM_Utils_System::setTitle( ts( 'Record %1 Responses', array( 1 => $activityTypes[$this->_surveyTypeId] ) ) );
     }
     
     function validateIds( ) 
     {
-        $required = array( 'surveyId'      => ts( 'Could not find Survey.'),
-                           'interviewerId' => ts( 'Could not find Interviewer.' ),
-                           'contactIds'    => ts( 'Could not find valid activities for selected voters.') );
+        $required = array( 'surveyId'       => ts( 'Could not find Survey.'),
+                           'interviewerId'  => ts( 'Could not find Interviewer.' ),
+                           'contactIds'     => ts( 'Could not find valid activities for selected voters.'),
+                           'resultOptions'  => ts( 'Oops, It looks like there is no response option configured.' ) );
         
         $errorMessages = array( );
         foreach ( $required as $fld => $msg ) {
@@ -185,20 +208,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
      */
     function buildQuickForm( ) 
     {
-        
-        
         $this->assign( 'surveyTypeId', $this->_surveyTypeId );
         
-        $resultOptions = array( );
-        $resuldId      = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', 
-                                                      $this->_surveyId, 
-                                                      'result_id' ); 
-        
-        if ( $resuldId ) {
-            $resultOptions = CRM_Core_OptionGroup::valuesByID( $resuldId );
-            $resultOptions = array_combine( $resultOptions, $resultOptions );
-        }
-
         //pickup the uf fields.
         $this->_surveyFields = array( );
         if ( $this->_ufGroupId ) {
@@ -207,13 +218,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                                                                     false, CRM_Core_Action::VIEW );
         }
         
-        if ( empty($resultOptions) ) {
-            CRM_Core_Error::statusBounce( ts( 'Oops, It looks like there is no result field or profile configured to conduct voter interview.' ) );
-        }
-        
-        $exposedSurveyFields = array( );
-
         //build all fields.
+        $exposedSurveyFields = array( );
         foreach ( $this->_contactIds as $contactId ) {
             //build the profile fields.
             foreach ( $this->_surveyFields as $name => $field ) {
@@ -226,12 +232,12 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
                         CRM_Core_BAO_UFGroup::buildProfile( $this, $field, null, $contactId );
                         $exposedSurveyFields[$name] = $field;
                     }
-                } 
+                }
             }
             
             //build the result field.
             $this->add( 'select', "field[$contactId][result]", ts('Result'), 
-                        array( '' => ts('- select -') ) + $resultOptions );
+                        array( '' => ts('- select -') ) + array_combine( $this->_resultOptions, $this->_resultOptions ) );
             
             $this->add( 'text', "field[{$contactId}][note]", ts('Note') );
             
@@ -371,6 +377,28 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         
         return $activityId; 
     }
-
+    
+    function getVoterIds( )
+    {
+        if ( !$this->_interviewerId ) {
+            $session = CRM_Core_Session::singleton( );
+            $this->_interviewerId = $session->get( 'userID' );
+        }
+        
+        $this->_contactIds = $this->get( 'contactIds' );
+        if ( !is_array( $this->_contactIds ) ) {
+            //get the survey activities.
+            require_once 'CRM/Core/PseudoConstant.php';
+            $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
+            $statusIds = array( );
+            if ( $statusId = array_search( 'Scheduled', $activityStatus ) ) $statusIds[] = $statusId;  
+            require_once 'CRM/Campaign/BAO/Survey.php';
+            $this->_contactIds = CRM_Campaign_BAO_Survey::getSurveyVoterIds( $this->_surveyId, 
+                                                                             $this->_interviewerId, 
+                                                                             $statusIds );
+            $this->set( 'contactIds', $this->_contactIds );
+        }
+    }
+    
 }
 

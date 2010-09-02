@@ -40,6 +40,8 @@ require_once 'CRM/Core/Permission.php';
  */
 class CRM_Campaign_Page_Vote extends CRM_Core_Page 
 {
+    private $_surveyId;
+    private $_interviewerId;
     
     function reserve( ) 
     {
@@ -54,11 +56,14 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
     function interview( ) 
     {
         //build interview and release voter interface.
-        //$controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Task_Interview', 'Interview Voters' );
+        $surveyId      = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this );
+        $interviewerId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         
-        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Gotv', 'Interview Voters' );
-        $controller->set( 'votingTab',    true );
-        $controller->set( 'subVotingTab', 'searchANDInterview' );
+        $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Task_Interview', 'Interview Voters' );
+        $controller->set( 'surveyId',      $surveyId );
+        $controller->set( 'interviewerId', $interviewerId );
+        $controller->set( 'votingTab',     true );
+        $controller->set( 'subVotingTab',  'searchANDInterview' );
         $controller->process( );
         return $controller->run( );
     }
@@ -93,13 +98,18 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
     }
     
     function buildTabs( ) 
-    {        
-        $allTabs = array( );
+    {   
+        $allTabs       = array( );
+        $surveyId      = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this );
+        $interviewerId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         foreach ( $this->_tabs as $name => $title ) {
+            $urlParams = "reset=1&type={$name}&snippet=1";
+            if ( $surveyId      ) $urlParams .= "&sid={$surveyId}";
+            if ( $interviewerId ) $urlParams .= "&cid={$interviewerId}";
             $allTabs[] = array( 'id'    => $name,
                                 'title' => $title,
                                 'url'   => CRM_Utils_System::url( 'civicrm/campaign/vote', 
-                                                                  "reset=1&type=$name&snippet=1" ) );
+                                                                  $urlParams ) );
         }
         
         $this->assign( 'allTabs', $allTabs );
