@@ -249,7 +249,8 @@ VALUES
     ( @domainID, 'civicrm/survey/search&reset=1&op=reserve', '{ts escape="sql"}Reserve Voters{/ts}', 'Reserve Voters', 'administer CiviCampaign,manage campaign,reserve campaign contacts', 'OR', @campaignlastID, '1', NULL,4 ),
     ( @domainID, 'civicrm/survey/search&reset=1&op=interview', '{ts escape="sql"}Interview Voters{/ts}', 'Interview Voters', 'administer CiviCampaign,manage campaign,interview campaign contacts', 'OR', @campaignlastID, '1', NULL, 5 ),
     ( @domainID, 'civicrm/survey/search&reset=1&op=release', '{ts escape="sql"}Release Voters{/ts}', 'Release Voters', 'administer CiviCampaign,manage campaign,release campaign contacts', 'OR', @campaignlastID, '1', NULL, 6 ),
-    ( @domainID, 'civicrm/campaign/gotv&reset=1', '{ts escape="sql"}Voter Listing{/ts}', 'Voter Listing', 'administer CiviCampaign,manage campaign', 'OR', @campaignlastID, '1', NULL, 7 );
+    ( @domainID, 'civicrm/campaign/gotv&reset=1', '{ts escape="sql"}Voter Listing{/ts}', 'Voter Listing', 'administer CiviCampaign,manage campaign', 'OR', @campaignlastID, '1', NULL, 7 ),
+    ( @domainID, 'civicrm/campaign/vote&reset=1', '{ts escape="sql"}Conduct Survey{/ts}', 'Conduct Survey', 'administer CiviCampaign,manage campaign,reserve campaign contacts,interview campaign contacts', 'OR', @campaignlastID, '1', NULL, 8 );
 
     
 INSERT INTO civicrm_navigation
