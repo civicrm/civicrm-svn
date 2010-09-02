@@ -86,7 +86,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         $params = array( );
         $result =& civicrm_relationship_create( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'No input parameter present' );
+        $this->assertEquals( $result['error_message'], 'Input Parameters empty' );
     }
     
     /**
@@ -113,7 +113,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         
         $result =& civicrm_relationship_create($params);
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Required fields not found contact_id_a contact_id_b relationship_type_id.' );
+        $this->assertEquals( $result['error_message'], 'Required fields not found contact_id_a contact_id_b relationship_type_id' );
     }
     
     /**
@@ -497,7 +497,7 @@ class api_v2_RelationshipTest extends CiviUnitTestCase
         
         $result =& civicrm_relationship_update( $params );
         $this->assertEquals( $result['is_error'], 1 );
-        $this->assertEquals( $result['error_message'], 'Required fields not found contact_id_a contact_id_b relationship_type_id.' );
+        $this->assertEquals( $result['error_message'], 'Required fields not found contact_id_a contact_id_b relationship_type_id' );
     }  
    
     /**
