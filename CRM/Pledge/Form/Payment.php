@@ -159,21 +159,15 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
             $adjustTotalAmount = true;
         }
         
-        $balanceQuery = "
- SELECT sum( civicrm_pledge_payment.actual_amount )
- FROM civicrm_pledge_payment
- WHERE civicrm_pledge_payment.pledge_id = %1
- AND civicrm_pledge_payment.contribution_id IS NOT NULL
- ";
-        $totalPaidParams = array( 1 => array( $pledgeId, 'Integer' ) ); 
-        $totalPaidAmount =  CRM_Core_DAO::singleValueQuery( $balanceQuery, $totalPaidParams );
-        
         $actualPledgeAmount = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Pledge', 
                                                            $pledgeId,
                                                            'amount', 
                                                            'id'
                                                            );
-        if ( $formValues['scheduled_amount'] > ( $actualPledgeAmount - $totalPaidAmount ) ) {
+        
+        $oldestPaymentAmount = CRM_Pledge_BAO_Payment::getOldestPledgePayment( $pledgeId, 2 );
+        
+        if ( $formValues['scheduled_amount'] >=  ( $oldestPaymentAmount['amount'] + $actualPledgeAmount) ) {
             $adjustTotalAmount = true;
         }
         //update pledge status
