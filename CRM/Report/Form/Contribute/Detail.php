@@ -119,6 +119,8 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                    array( 'dao'     => 'CRM_Contribute_DAO_Contribution',
                           'fields'  =>
                           array(
+                                 'id' => array( 'title'   => ts('Contribution ID'),
+                                                ),
                                  'contribution_type_id' => array( 'title'   => ts('Contribution Type'),
                                                                   'default' => true,
                                                                 ),
@@ -390,6 +392,16 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                 $entryFound = true;
             }
 
+            if ( $value = CRM_Utils_Array::value( 'civicrm_contribution_id', $row ) ) {
+                $url = CRM_Utils_System::url( "civicrm/contact/view/contribution" , 
+                                              "reset=1&id=".$row['civicrm_contribution_id']."&cid=".$row['civicrm_contact_id']."&action=view&context=contribution&selectedChild=contribute",
+                                              $this->_absoluteUrl );
+                $rows[$rowNum]['civicrm_contribution_id_link' ] = $url;
+                $rows[$rowNum]['civicrm_contribution_id_hover'] =  
+                    ts("View Details of this Contribution.");
+                $entryFound = true;
+            }
+            
             // skip looking further in rows, if first row itself doesn't 
             // have the column we need
             if ( !$entryFound ) {
