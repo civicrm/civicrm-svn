@@ -506,29 +506,19 @@ class CRM_Campaign_Form_Search extends CRM_Core_Form
     
     function voterClause( ) 
     {
-        $voterClause = null;
+        require_once 'CRM/Campaign/BAO/Query.php';
+        $params = array( 'campaign_search_voter_for' => $this->_operation );
         
-        //get the survey activities.
-        require_once 'CRM/Core/PseudoConstant.php';
-        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
-        $status = array( 'Scheduled' );
-        foreach ( $status as $name ) {
-            if ( $statusId = array_search( $name, $activityStatus ) ) $statusIds[] = $statusId; 
+        $clauseFields = array( 'surveyId'      => 'campaign_survey_id', 
+                               'interviewerId' => 'survey_interviewer_id' );
+        
+        foreach ( $clauseFields as $param => $key ) {
+            $params[$key] = CRM_Utils_Array::value( $key, $this->_formValues );
+            if ( !$params[$key] ) $params[$key] = $this->get( $param ); 
         }
         
-        $params = array( 'surveyId'      => 'campaign_survey_id', 
-                         'interviewerId' => 'survey_interviewer_id' );
-        foreach ( $params as $param => $key ) {
-            $$param = CRM_Utils_Array::value( $key, $this->_formValues );
-            if ( !$$param ) $$param = $this->get( $param ); 
-        }
-        require_once 'CRM/Campaign/BAO/Survey.php';
-        $voterIds = CRM_Campaign_BAO_Survey::getSurveyVoterIds( $surveyId, null, $statusIds );
-        if ( !empty( $voterIds ) ) {
-            $operator = 'IN';
-            if ( $this->_operation == 'reserve' ) $operator = 'NOT IN';
-            $voterClause = "( contact_a.id $operator (".  implode( ', ', $voterIds ). ') )';
-        }
+        //build the clause.
+        $voterClause = CRM_Campaign_BAO_Query::voterClause( $params );
         
         return $voterClause;
     }

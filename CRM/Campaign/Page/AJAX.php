@@ -142,6 +142,11 @@ class CRM_Campaign_Page_AJAX
             }
         }
         
+        $voterClauseParams = array( );
+        foreach ( array( 'campaign_survey_id', 'survey_interviewer_id', 'campaign_search_voter_for' ) as $fld ) {
+            $voterClauseParams[$fld] = CRM_Utils_Array::value( $fld, $params );
+        }
+        
         $interviewerId  = $surveyTypeId = $surveyId = null;
         $searchVoterFor = $params['campaign_search_voter_for']; 
         if ( $searchVoterFor == 'reserve' ) {
@@ -208,7 +213,16 @@ class CRM_Campaign_Page_AJAX
                                                   null, null, false, false, 
                                                   CRM_Contact_BAO_Query::MODE_CAMPAIGN );
         
-        $searchCount = $query->searchQuery(0, 0, null, true );
+        //get the voter clause to restrict and validate search.
+        require_once 'CRM/Campaign/BAO/Query.php';
+        $voterClause = CRM_Campaign_BAO_Query::voterClause( $voterClauseParams );
+        
+        $searchCount = $query->searchQuery( 0, 0, null,
+                                            true, false, 
+                                            false, false, 
+                                            false, 
+                                            $voterClause );
+        
         $iTotal      = $searchCount;
         
         $selectorCols = array( 'sort_name', 'street_address', 'street_name', 'street_number', 'street_unit' );
@@ -223,8 +237,12 @@ class CRM_Campaign_Page_AJAX
             $config = CRM_Core_Config::singleton( );
             
             // get the result of the search
-            $result = $query->searchQuery( $offset, $rowCount, $sort, false, false,
-                                           false, false, false, null, $sortOrder );
+            $result = $query->searchQuery( $offset, $rowCount, $sort, 
+                                           false, false,
+                                           false, false, 
+                                           false, 
+                                           $voterClause, 
+                                           $sortOrder );
             
             while( $result->fetch() ) {
                 $contactID    = $result->contact_id;

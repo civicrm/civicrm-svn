@@ -352,5 +352,42 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         $form->add( 'select', 'campaign_survey_id', ts('Survey'), $surveys, true );
     }
     
+    /*
+     * Retrieve all valid voter ids,
+     * and build respective clause to restrict search.
+     *
+     * @param  array  $criteria an array 
+     * @return $voterClause as a string  
+     * @static
+     */
+    function voterClause( $params ) 
+    {
+        $voterClause = null;
+        if ( !is_array( $params ) || empty( $params ) ) {
+            return $voterClause;
+        }
+        $surveyId       = CRM_Utils_Array::value( 'campaign_survey_id',        $params );
+        $interviewerId  = CRM_Utils_Array::value( 'survey_interviewer_id',     $params );
+        $searchVoterFor = CRM_Utils_Array::value( 'campaign_search_voter_for', $params );
+        
+        //get the survey activities.
+        require_once 'CRM/Core/PseudoConstant.php';
+        $activityStatus = CRM_Core_PseudoConstant::activityStatus( 'name' );
+        $status = array( 'Scheduled' );
+        foreach ( $status as $name ) {
+            if ( $statusId = array_search( $name, $activityStatus ) ) $statusIds[] = $statusId; 
+        }
+        
+        require_once 'CRM/Campaign/BAO/Survey.php';
+        $voterIds = CRM_Campaign_BAO_Survey::getSurveyVoterIds( $surveyId, null, $statusIds );
+        if ( !empty( $voterIds ) ) {
+            $operator = 'IN';
+            if ( $searchVoterFor == 'reserve' ) $operator = 'NOT IN';
+            $voterClause = "( contact_a.id $operator (".  implode( ', ', $voterIds ). ') )';
+        }
+        
+        return $voterClause;
+    }
+    
 }
 
