@@ -409,6 +409,7 @@ INNER JOIN  civicrm_activity_assignment activityAssignment ON ( activityAssignme
         }
         
         $actTypeId = CRM_Core_DAO::getFieldValue( 'CRM_Campaign_DAO_Survey', $surveyId, 'activity_type_id' ); 
+        if ( !$actTypeId ) return $activities;
         
         $query = "
     SELECT  activity.id, activity.status_id, 

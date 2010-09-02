@@ -302,8 +302,11 @@ class CRM_Campaign_BAO_Query
             $form->add( 'text',   'survey_interviewer_name', ts( 'Select Interviewer' ) );
             $form->add( 'hidden', 'survey_interviewer_id', '',array( 'id' => 'survey_interviewer_id' ) );
             
-            $session = CRM_core_Session::singleton( );
-            $userId  = $session->get( 'userID' );
+            $userId = $form->_interviewerId;
+            if ( !$userId ) {
+                $session = CRM_core_Session::singleton( );
+                $userId  = $session->get( 'userID' );
+            }
             if ( $userId ) {
                 $defaults = array( );
                 $defaults['survey_interviewer_id']    = $userId;

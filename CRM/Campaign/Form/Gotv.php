@@ -59,9 +59,10 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
      */ 
     function preProcess( ) 
     {
-        $this->_search    = CRM_Utils_Array::value( 'search', $_GET );
-        $this->_force     = CRM_Utils_Request::retrieve( 'force',    'Boolean',   $this, false ); 
-        $this->_surveyId  = CRM_Utils_Request::retrieve( 'sid',      'Positive',  $this );
+        $this->_search        = CRM_Utils_Array::value( 'search', $_GET );
+        $this->_force         = CRM_Utils_Request::retrieve( 'force',    'Boolean',   $this, false ); 
+        $this->_surveyId      = CRM_Utils_Request::retrieve( 'sid',      'Positive',  $this );
+        $this->_interviewerId = CRM_Utils_Request::retrieve( 'cid',      'Positive',  $this );
         
         //does control come from voting tab interface.
         $this->_votingTab    = $this->get( 'votingTab' );
@@ -107,18 +108,33 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->set( 'searchParams',    $this->_searchParams );
         $this->assign( 'searchParams', json_encode( $this->_searchParams ) );
         
-        if ( $this->_force && !$this->_surveyId ) {
-            // use default survey id
-            require_once 'CRM/Campaign/DAO/Survey.php';
-            $dao = new CRM_Campaign_DAO_Survey( );
-            $dao->is_active  = 1;
-            $dao->is_default = 1;   
-            if ( $dao->find( true ) ) {
+        $defaults = array( );
+        if ( $this->_force || $this->_votingTab ) {
+            if ( !$this->_surveyId ) {
+                // use default survey id
+                require_once 'CRM/Campaign/DAO/Survey.php';
+                $dao = new CRM_Campaign_DAO_Survey( );
+                $dao->is_active  = 1;
+                $dao->is_default = 1;   
+                $dao->find( true );
                 $this->_surveyId = $dao->id;
+                if ( !$this->_surveyId ) CRM_Core_Error::fatal('Could not find valid Survey Id.'); 
             }
-            if ( !$this->_surveyId ) CRM_Core_Error::fatal('Could not find valid Survey Id.'); 
+            $session = CRM_Core_Session::singleton( );
+            $userId = $session->get( 'userID' );
+            // get interviewer id
+            $cid = CRM_Utils_Request::retrieve( 'cid', 'Positive', 
+                                                CRM_Core_DAO::$_nullObject, false, $userId );
+            
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $defaults['survey_interviewer_id']   = $cid;
+            $defaults['survey_interviewer_name'] = CRM_Core_DAO::getFieldValue( 'CRM_Contact_DAO_Contact',
+                                                                                $cid,
+                                                                                'sort_name',
+                                                                                'id' );
         }
-        if ( $this->_surveyId ) $this->setDefaults( array( 'campaign_survey_id' => $this->_surveyId ) );
+        if ( $this->_surveyId ) $defaults['campaign_survey_id'] = $this->_surveyId;
+        if ( !empty( $defaults ) ) $this->setDefaults( $defaults ); 
     }
     
 }
