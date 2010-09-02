@@ -159,15 +159,16 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
             $adjustTotalAmount = true;
         }
         
-        $actualPledgeAmount = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Pledge', 
-                                                           $pledgeId,
-                                                           'amount', 
-                                                           'id'
-                                                           );
+        
+        $pledgeScheduledAmount = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment', 
+                                                              $params['id'],
+                                                              'scheduled_amount', 
+                                                              'id'
+                                                              );
         
         $oldestPaymentAmount = CRM_Pledge_BAO_Payment::getOldestPledgePayment( $pledgeId, 2 );
         
-        if ( $formValues['scheduled_amount'] >=  ( $oldestPaymentAmount['amount'] + $actualPledgeAmount) ) {
+        if ( ( $formValues['scheduled_amount'] - $pledgeScheduledAmount  ) >= $oldestPaymentAmount['amount'] ) {
             $adjustTotalAmount = true;
         }
         //update pledge status
