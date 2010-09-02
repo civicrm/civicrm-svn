@@ -61,7 +61,7 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
     {
         $this->_search    = CRM_Utils_Array::value( 'search', $_GET );
         $this->_force     = CRM_Utils_Request::retrieve( 'force',    'Boolean',   $this, false ); 
-        $this->_surveyId  = CRM_Utils_Request::retrieve( 'surveyId', 'Positive',  $this );
+        $this->_surveyId  = CRM_Utils_Request::retrieve( 'sid',      'Positive',  $this );
         
         //does control come from voting tab interface.
         $this->_votingTab    = $this->get( 'votingTab' );
@@ -72,7 +72,6 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
                 $searchVoterFor = 'reserve';
             } else if ( $this->_subVotingTab == 'searchANDInterview' ) {
                 $searchVoterFor = 'interview';
-                
             }
         }
         $this->assign( 'force',          $this->_force );

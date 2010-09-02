@@ -183,7 +183,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     {
         $required = array( 'surveyId'       => ts( 'Could not find Survey.'),
                            'interviewerId'  => ts( 'Could not find Interviewer.' ),
-                           'contactIds'     => ts( 'Could not find valid activities for selected voters.'),
+                           'contactIds'     => ts( 'Could not find valid activities to conduct survey.'),
                            'resultOptions'  => ts( 'Oops, It looks like there is no response option configured.' ) );
         
         $errorMessages = array( );
@@ -383,6 +383,15 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         if ( !$this->_interviewerId ) {
             $session = CRM_Core_Session::singleton( );
             $this->_interviewerId = $session->get( 'userID' );
+        }
+        if ( !$this->_surveyId ) {
+            // use default survey id
+            require_once 'CRM/Campaign/DAO/Survey.php';
+            $dao = new CRM_Campaign_DAO_Survey( );
+            $dao->is_active  = 1;
+            $dao->is_default = 1; 
+            $dao->find( true );
+            $this->_surveyId = $dao->id;
         }
         
         $this->_contactIds = $this->get( 'contactIds' );

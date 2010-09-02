@@ -24,12 +24,12 @@
  +--------------------------------------------------------------------+
 *}
 {* Voting Tab Interface - Easy way to get the voter Interview. *}
-
-{if $subPageType eq 'reserve' or $subPageType eq 'interview'}
-
-   {* build the ajax search w/ voters selector interface here *}
+{if $subPageType eq 'reserve'}
+   {* build the voter interview grid here *}
+   {include file='CRM/Campaign/Form/Task/Interview.tpl'}
+{elseif $subPageType eq 'interview'}
+   {* build the ajax search and voters reserve interface here *}
    {include file='CRM/Campaign/Form/Gotv.tpl'}
-
 {else}
  {* build normal page *}
  <div id='votingTabs' class="ui-tabs ui-widget ui-widget-content ui-corner-all">

@@ -56,14 +56,11 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
     function interview( ) 
     {
         //build interview and release voter interface.
-        $surveyId      = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this );
-        $interviewerId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
-        
         $controller = new CRM_Core_Controller_Simple( 'CRM_Campaign_Form_Task_Interview', 'Interview Voters' );
-        $controller->set( 'surveyId',      $surveyId );
-        $controller->set( 'interviewerId', $interviewerId );
         $controller->set( 'votingTab',     true );
         $controller->set( 'subVotingTab',  'searchANDInterview' );
+        if ( $this->_surveyId      ) $controller->set( 'surveyId',      $this->_surveyId      );
+        if ( $this->_interviewerId ) $controller->set( 'interviewerId', $this->_interviewerId );
         $controller->process( );
         return $controller->run( );
     }
@@ -72,11 +69,14 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
     {   
         $this->_tabs = array( 'reserve'   => ts( 'Reserve Voters' ), 
                               'interview' => ts( 'Interview Voters' ) );
+
+        $this->_surveyId      = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this );
+        $this->_interviewerId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         
         $subPageType = CRM_Utils_Request::retrieve( 'type', 'String', $this );
         if ( $subPageType ) {
             $session = CRM_Core_Session::singleton( ); 
-            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/campaign/vote', "reset=1&type={$subPageType}" ) );
+            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/campaign/vote', "reset=1&subPage={$subPageType}" ) );
             //load the data in tabs.
             $this->{$subPageType}( );
         } else {
@@ -99,13 +99,11 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
     
     function buildTabs( ) 
     {   
-        $allTabs       = array( );
-        $surveyId      = CRM_Utils_Request::retrieve( 'sid', 'Positive', $this );
-        $interviewerId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
+        $allTabs = array( );
         foreach ( $this->_tabs as $name => $title ) {
-            $urlParams = "reset=1&type={$name}&snippet=1";
-            if ( $surveyId      ) $urlParams .= "&sid={$surveyId}";
-            if ( $interviewerId ) $urlParams .= "&cid={$interviewerId}";
+            $urlParams = "type={$name}&snippet=1";
+            if ( $this->_surveyId      ) $urlParams .= "&sid={$this->_surveyId}";
+            if ( $this->_interviewerId ) $urlParams .= "&cid={$this->_interviewerId}";
             $allTabs[] = array( 'id'    => $name,
                                 'title' => $title,
                                 'url'   => CRM_Utils_System::url( 'civicrm/campaign/vote', 

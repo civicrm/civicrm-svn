@@ -24,15 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {if $buildSelector}
-
-  {if $searchVoterFor eq 'interview'}
-
-     {* load voters interview grid *}
-     <script type="text/javascript">loadInterviewGrid( );</script>
-     {include file='CRM/Campaign/Form/Task/Interview.tpl'}
-
-  {else}
-
+  
        {* load voter selector for reserve/release *}
        <script type="text/javascript">loadVoterList( );</script>
        <table id="gotvVoterRecords">
@@ -52,8 +44,6 @@
            </thead>
            <tbody></tbody>
        </table>
-
-  {/if}
 
 {else}
 
@@ -83,11 +73,19 @@
 
 function searchVoters( ) 
 {
-      var dataUrl =  {/literal}"{crmURL p='civicrm/campaign/gotv' h=0 q='search=1&snippet=4' }"{literal}
+      var dataUrl =  {/literal}"{crmURL h=0 q='search=1&snippet=4'}"{literal};
+
+      //carry survey and interviewer id, 
+      //might be helpful if user jump from current tab to interview tab. 
+      var surveyId = cj( '#campaign_survey_id' ).val();
+      var interviewerId = cj( '#survey_interviewer_id' ).val(); 	 	  
+      if ( surveyId ) dataUrl = dataUrl + '&sid=' + surveyId;
+      if ( interviewerId ) dataUrl = dataUrl + '&cid=' + interviewerId;
+    
       {/literal}{if $qfKey}
       dataUrl = dataUrl + '&qfKey=' + '{$qfKey}'; 
       {/if}{literal}
-
+  
       cj.get( dataUrl, null, function( voterList ) {
 	      cj( '#voterList' ).html( voterList );
 
@@ -95,30 +93,6 @@ function searchVoters( )
 	      cj( '#search_form_' + {/literal}'{$searchVoterFor}'{literal} ).addClass( 'crm-accordion-closed' );
       }, 'html' );
 }
-
-function loadInterviewGrid( ) 
-{
-	return;
-	 	 
- 	 var data = new object;       	 
-
-	 //get the search criteria.
-         var searchParams = {/literal}{$searchParams}{literal};
-         for ( param in searchParams ) {
-              if ( val = cj( '#' + param ).val( ) ) {
-	      	   data[param] = val;
-	      } 
-         } 
-	 var url = {/literal}
-	     	   "{crmURL p='civicrm/campaign/vote' h=0 q='reset=1&subPage=interview&interview=true'}"
-		   {literal}; 
-	 cj.ajax( {
-	 	'url'      :  url,   
-	 	'type'     :  'POST', 
-	 	'data'     :  data,
-	 	'dataType' :  'json', 
-	 	} ); 
-}	
 	
 function loadVoterList( ) 
 {
