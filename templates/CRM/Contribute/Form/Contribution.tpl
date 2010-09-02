@@ -98,13 +98,13 @@
                     <div id="priceset" class="hiddenElement"></div>	    
         	    {/if}
         	    
-            	    {if $ppID}{ts}<a href="#" onclick="adjustPayment();">adjust payment amount</a>{/ts}{help id="adjust-payment-amount"}{/if}
-	    <br /><span class="description">{ts}Actual amount given by contributor.{/ts}</span>
+            	{if $ppID}{ts}<a href="#" onclick="adjustPayment();">adjust payment amount</a>{/ts}{help id="adjust-payment-amount"}{/if}
+	            <br /><span class="description">{ts}Actual amount given by contributor.{/ts}</span>
 	    </td>
         </tr>
-	<tr id="adjust-option-type" class="crm-contribution-form-block-option_type">
-         <td class="label"></td><td {$valueStyle}>{$form.option_type.html}</td> 
-	</tr>
+	    <tr id="adjust-option-type" class="crm-contribution-form-block-option_type">
+            <td class="label"></td><td {$valueStyle}>{$form.option_type.html}</td> 
+	    </tr>
     {/if}
 
         <tr  class="crm-contribution-form-block-source"><td class="label">{$form.source.label}</td><td{$valueStyle}>{$form.source.html} {help id="id-contrib_source"}</td></tr>
