@@ -118,7 +118,6 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
                 $dao->is_default = 1;   
                 $dao->find( true );
                 $this->_surveyId = $dao->id;
-                if ( !$this->_surveyId ) CRM_Core_Error::fatal('Could not find valid Survey Id.'); 
             }
             $session = CRM_Core_Session::singleton( );
             $userId = $session->get( 'userID' );
@@ -135,6 +134,23 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         }
         if ( $this->_surveyId ) $defaults['campaign_survey_id'] = $this->_surveyId;
         if ( !empty( $defaults ) ) $this->setDefaults( $defaults ); 
+        
+        //validate the required ids.
+        $this->validateIds( );
+    }
+    
+    function validateIds( ) 
+    {
+        $errorMessages = array( );
+        require_once 'CRM/Campaign/BAO/Survey.php';
+        $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
+        if ( empty( $surveys ) ) {
+            $errorMessages[] = ts( "Oops, It looks like there is no survey created. <a href='%1'>Click here to create new.</a>", array( 1 => CRM_Utils_System::url( 'civicrm/survey/add', 'reset=1&action=add'  ) ) );
+        }
+        
+        if ( $this->_force && !$this->_surveyId ) $errorMessages[] = ts( 'Could not find Survey.');  
+        
+        $this->assign( 'errorMessages', empty( $errorMessages ) ? false : $errorMessages );
     }
     
 }

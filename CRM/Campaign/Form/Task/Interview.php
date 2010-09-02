@@ -197,7 +197,7 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             }
         }
         
-        $this->assign( 'errorMessages', $errorMessages );
+        $this->assign( 'errorMessages', empty( $errorMessages ) ? false : $errorMessages );
     }
     
     /**

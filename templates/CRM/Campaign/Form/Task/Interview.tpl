@@ -25,7 +25,7 @@
 *}
 
 {if $votingTab and $errorMessages}
-  <div class='messages status-fatal'>
+  <div class='messages status'>
      <div class="icon inform-icon"></div>
         <ul>
 	   {foreach from=$errorMessages item=errorMsg}	

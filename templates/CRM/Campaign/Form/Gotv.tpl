@@ -23,7 +23,19 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-{if $buildSelector}
+
+{if $errorMessages}
+  <div class='messages status'>
+     <div class="icon inform-icon"></div>
+        <ul>
+	   {foreach from=$errorMessages item=errorMsg}	
+             <li>{ts}{$errorMsg}{/ts}</li>
+           {/foreach}
+       </ul>
+     </div>
+  </div>
+
+{elseif $buildSelector}
   
        {* load voter selector for reserve/release *}
        <script type="text/javascript">loadVoterList( );</script>

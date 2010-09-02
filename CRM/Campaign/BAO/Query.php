@@ -342,11 +342,13 @@ INNER JOIN  civicrm_custom_group grp on fld.custom_group_id = grp.id
         $form->assign( 'customSearchFields',  $customSearchFields );
         
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
-        if ( empty( $surveys ) ) {
+        $className = CRM_Utils_System::getClassName( $form );
+        if ( empty( $surveys ) && 
+             ($className == 'CRM_Campaign_Form_Search') ) {
             CRM_Core_Error::statusBounce( ts( 'Could not find survey for %1 voters.', 
                                               array( 1 =>  $form->get( 'op' ) ) ),
-                                          CRM_Utils_System::url( 'civicrm/campaign',
-                                                                 'reset=1&type=survey' ) );
+                                          CRM_Utils_System::url( 'civicrm/survey/add',
+                                                                 'reset=1&action=add' ) );
         }
         
         $form->add( 'select', 'campaign_survey_id', ts('Survey'), $surveys, true );
