@@ -23,12 +23,22 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{* Check if current Total Pledge Amount is different from original pledge amount. *}
+{if ($installments * $original_installment_amount) NEQ $amount}
+    {assign var=originalPledgeAmount value=`$installments*$original_installment_amount`}
+{/if}
+
 <h3>{ts}View Pledge{/ts}</h3>
 <div class="crm-block crm-content-block crm-pledge-view-block">  
 <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="top"}</div>
 <table class="crm-info-panel">
      <tr class="crm-pledge-form-block-displayName"><td class="label">{ts}Pledge By{/ts}</td><td class="bold"><a href="{crmURL p='civicrm/contact/view' q="reset=1&cid=$contactId"}">{$displayName}</a></td></tr>
-     <tr class="crm-pledge-form-block-amount"><td class="label">{ts}Total Amount{/ts}</td><td class="bold">{$amount|crmMoney}&nbsp;</td></tr>
+     <tr class="crm-pledge-form-block-amount">
+        <td class="label">{ts}Total Pledge Amount{/ts}</td>
+        <td><span class="bold">{$amount|crmMoney}</span>
+            {if $originalPledgeAmount}<div class="messages status"><div class="icon inform-icon"></div>&nbsp;{ts 1=$originalPledgeAmount|crmMoney} Pledge total has changed due to payment adjustments. Original pledge amount was %1.{/ts}</div>{/if}
+        </td>
+     </tr>
      <tr class="crm-pledge-form-block-installments"><td class="label">{ts}To be paid in{/ts}</td><td>{$installments}&nbsp;&nbsp;{ts}installments of{/ts} {$eachPaymentAmount|crmMoney}&nbsp;&nbsp;{ts}every{/ts}&nbsp;&nbsp;{$frequency_interval}&nbsp;{$frequencyUnit}</td></tr>
  	 <tr><td class="label">{ts}Payments are due on the{/ts}</td><td>{$frequency_day}&nbsp;day of the period</td></tr>
 

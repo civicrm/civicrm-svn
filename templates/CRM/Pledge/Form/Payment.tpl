@@ -24,7 +24,7 @@
  +--------------------------------------------------------------------+
 *}
 {* this template is used for updating pledge payment*} 
-<h3><legend>{ts}Edit Scheduled Pledge Payment{/ts}</h3> 
+<h3>{ts}Edit Scheduled Pledge Payment{/ts}</h3> 
 <div class="crm-block crm-form-block crm-pledge-payment-form-block">
       <table class="form-layout-compressed">
         <tr><td class="label">{ts}Status{/ts}</td><td class="form-layout">{$status}</td></tr>
