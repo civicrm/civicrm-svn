@@ -47,6 +47,7 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
         $subscribe_id = CRM_Utils_Request::retrieve( 'sid', 'Integer', CRM_Core_DAO::$_nullObject );
         $hash         = CRM_Utils_Request::retrieve( 'h'  , 'String' , CRM_Core_DAO::$_nullObject );
         $activity_id  = CRM_Utils_Request::retrieve( 'a'  , 'String' , CRM_Core_DAO::$_nullObject );
+        $petition_id = CRM_Utils_Request::retrieve( 'p'  , 'String' , CRM_Core_DAO::$_nullObject );
         
         if ( ! $contact_id   ||
              ! $subscribe_id ||
@@ -55,7 +56,7 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
         }
 
         require_once 'CRM/Mailing/Event/BAO/Confirm.php';
-        $result = $this->confirm( $contact_id, $subscribe_id, $hash, $activity_id );
+        $result = $this->confirm( $contact_id, $subscribe_id, $hash, $activity_id, $petition_id );
         if ( $result === false ) {
             $this->assign( 'success', $result );
         } else {
@@ -81,7 +82,7 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
      * @access public
      * @static
      */
-    public static function confirm($contact_id, $subscribe_id, $hash, $activity_id) 
+    public static function confirm($contact_id, $subscribe_id, $hash, $activity_id, $petition_id) 
     {
         require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
         $se =& CRM_Mailing_Event_BAO_Subscribe::verify($contact_id, $subscribe_id, $hash);
@@ -128,6 +129,9 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
         
         $transaction->commit( );
         
+		// set permanent cookie to indicate this users email address now confirmed
+		require_once 'CRM/Campaign/BAO/Petition.php';
+		setcookie('confirmed_'.$petition_id, $activity_id, time() + CRM_Campaign_BAO_Petition::COOKIE_EXPIRE, '/');						
         return true;
     }    
     

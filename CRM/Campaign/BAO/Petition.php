@@ -38,7 +38,9 @@ require_once 'CRM/Campaign/BAO/Survey.php';
 
 Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 {
-    
+    const
+        COOKIE_EXPIRE = 604800; // expire cookie in one week
+		
     /**
      * takes an associative array and creates a petition signature activity
      *
@@ -244,12 +246,16 @@ WHERE 	a.source_record_id = " . $surveyId . "
     {
     
     /* sendEmailMode
-     * 1 = connected user via login/pwd - thank you
-	 * 	 or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
-	 * 2 = login using fb connect - thank you + click to add msg to fb wall
-	 * 3 = send a confirmation request email     
+     * CRM_Campaign_Form_Petition_Signature::EMAIL_THANK
+     * 		connected user via login/pwd - thank you
+	 * 	 	or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
+	 *  	or login using fb connect - thank you + click to add msg to fb wall
+	 *
+	 * CRM_Campaign_Form_Petition_Signature::EMAIL_CONFIRM
+	 *		send a confirmation request email     
 	 */
-
+		require_once 'CRM/Campaign/Form/Petition/Signature.php';
+		
 		define('PETITION_CONTACT_GROUP','Petition Contacts');
 		
 		if (defined('PETITION_CONTACT_GROUP')) {
@@ -290,7 +296,7 @@ WHERE 	a.source_record_id = " . $surveyId . "
 		$replyTo = "do-not-reply@$emailDomain";
 
 		switch ($sendEmailMode) {
-			case 1:
+			case CRM_Campaign_Form_Petition_Signature::EMAIL_THANK:
 				require_once 'CRM/Core/BAO/MessageTemplates.php';
 				if ($params['email-Primary']) {
 					self::sendTemplate(
@@ -308,12 +314,19 @@ WHERE 	a.source_record_id = " . $surveyId . "
 						)
 					);
 				}			
+				
+				//TODO: check if Facebook login and add Fb specific text to email 
+				
+				// set permanent cookie to indicate this petition already signed on the computer
+				setcookie('signed_'.$params['sid'], $params['activityId'], time() + self::COOKIE_EXPIRE, '/');
+				
+				// set permanent cookie to indicate this users email address already confirmed
+				setcookie('confirmed_'.$params['sid'], $params['activityId'], time() + self::COOKIE_EXPIRE, '/');
+				
     			break;
     			
-			case 2:	    	
-    			break;
     			
-			case 3:
+			case CRM_Campaign_Form_Petition_Signature::EMAIL_CONFIRM:
 				// create mailing event subscription record for this contact
 				// this will allow using a hash key to confirm email address by sending a url link
 				require_once 'CRM/Mailing/Event/BAO/Subscribe.php';
@@ -336,7 +349,7 @@ WHERE 	a.source_record_id = " . $surveyId . "
 
 				
 				$confirmUrl = CRM_Utils_System::url( 'civicrm/petition/confirm',
-											  "reset=1&cid={$se->contact_id}&sid={$se->id}&h={$se->hash}&a={$params['activityId']}",
+											  "reset=1&cid={$se->contact_id}&sid={$se->id}&h={$se->hash}&a={$params['activityId']}&p={$params['sid']}",
 											  true );
 						
 				require_once 'CRM/Core/BAO/MessageTemplates.php';
@@ -357,7 +370,9 @@ WHERE 	a.source_record_id = " . $surveyId . "
 						)
 					);
 				}		
-	
+				
+				// set permanent cookie to indicate this petition already signed on the computer
+				setcookie('signed_'.$params['sid'], $params['activityId'], time() + self::COOKIE_EXPIRE, '/');
     			break;    			
     	}
 	}

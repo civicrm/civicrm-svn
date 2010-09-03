@@ -46,11 +46,10 @@ require_once 'CRM/Core/PseudoConstant.php';
 class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 {
     const
-        MODE_REGISTER = 1,
-        MODE_SEARCH   = 2,
         MODE_CREATE   = 4,
-        MODE_EDIT     = 8;
-        
+    	EMAIL_THANK = 1,
+    	EMAIL_CONFIRM = 2;
+    	
     protected $_mode;        
         
     /**
@@ -286,6 +285,17 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     
     public function buildQuickForm()
     {
+    
+    	if (isset($_COOKIE['signed_'.$this->_surveyId])) {
+			if (isset($_COOKIE['confirmed_'.$this->_surveyId])) { 		
+    			$this->assign( 'cookie_message', "You have already signed this petition. Thank you.");
+    		} else {
+    			$this->assign( 'cookie_message', "You have already signed this petition but need to verify your email address. 
+    							Please check your email inbox for the confirmation email. Thank you.");		
+    		}    		
+    		return;
+		}
+    
 		define('FACEBOOK_LOGIN_LABEL','Login with Facebook');
     	//get the survey id
         $this->_surveyId 	= CRM_Utils_Request::retrieve('sid', 'Positive', $this );
@@ -399,7 +409,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 		// if logged in user, skip dedupe and set email mode
 		if (isset($this->_loggedIn) && ($this->_loggedIn == TRUE)) {
 			$ids[0] = $this->_contactId;
-			$this->_sendEmailMode = 1;
+			$this->_sendEmailMode = self::EMAIL_THANK;
 		} else {	
 			$this->_ctype = 'Individual';
 			// dupeCheck - check if contact record already exists
@@ -424,10 +434,11 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				$petition_params['id'] = $this->_surveyId;
 				$petition = array();
 				CRM_Campaign_BAO_Survey::retrieve($petition_params,$petition);
+
 				// Add a source for this new contact
-				//$params['source'] = 'Online Petition Signature - ' . $petition['title'];
 				$params['source'] = 'Online Petition Signature - ' . $this->petition['title'];
-				$this->_sendEmailMode = 3;
+				$this->_sendEmailMode = self::EMAIL_CONFIRM;
+
 				// Set status for signature activity to scheduled until email is verified
 				$params['statusId'] = 1;
 				break;
@@ -446,12 +457,12 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 					
 					if (  !($tag->find( )) ) {
 						// send thank you email
-						$this->_sendEmailMode = 1;
+						$this->_sendEmailMode = self::EMAIL_THANK;
 						// Set status for signature activity to completed
 						$params['statusId'] = 2;
 					} else {
 						// send email verification email
-						$this->_sendEmailMode = 3;
+						$this->_sendEmailMode = self::EMAIL_CONFIRM;
 						// Set status for signature activity to scheduled until email is verified
 						$params['statusId'] = 1;
 					}
@@ -474,12 +485,12 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 					
 					if (  !($tag->find( )) ) {
 						// send thank you email
-						$this->_sendEmailMode = 1;
+						$this->_sendEmailMode = self::EMAIL_THANK;
 						// Set status for signature activity to completed
 						$params['statusId'] = 2;						
 					} else {
 						// send email verification email
-						$this->_sendEmailMode = 3;
+						$this->_sendEmailMode = self::EMAIL_CONFIRM;
 						// Set status for signature activity to scheduled until email is verified
 						$params['statusId'] = 1;
 					}
@@ -492,7 +503,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			if (($fb = $GLOBALS['_fb']) && ($fbu = fb_facebook_user()) 
 					&& ($params['email-Primary'] == $fbdata['email'])) {
 				// send fb specific thank you email	
-				$this->_sendEmailMode = 2;
+				$this->_sendEmailMode = self::EMAIL_THANK;
 			}
 
 			require_once 'CRM/Core/Transaction.php';
@@ -527,11 +538,11 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			/* 
 			 * sendEmailMode
 			 * 1 = connected user via login/pwd - thank you
-			 * 	 or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
-			 * 2 = login using fb connect - thank you + click to add msg to fb wall
-			 * 3 = send a confirmation request email     
+			 * 	 	or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
+			 *  	or login using fb connect - thank you + click to add msg to fb wall
+			 * 2 = send a confirmation request email     
 			 */
-			if ($this->_sendEmailMode == 3){
+			if ($this->_sendEmailMode == self::EMAIL_CONFIRM){
 				// set 'Unconfirmed' tag for this new contact
 				require_once 'api/v2/EntityTag.php';
 				unset($tag_params);
@@ -542,6 +553,8 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			
 			$params['activityId'] = $result->id;
 			$params['tagId'] = $this->_tagId;
+			
+			//send email and set cookie
 		    CRM_Campaign_BAO_Petition::sendEmail( $params, $this->_sendEmailMode );
 
 			$transaction->commit( );

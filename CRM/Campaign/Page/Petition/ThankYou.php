@@ -46,12 +46,12 @@ class CRM_Campaign_Page_Petition_ThankYou extends CRM_Core_Page
 			/* 
 			 * sendEmailMode
 			 * 1 = connected user via login/pwd - thank you
-			 * 	 or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
-			 * 2 = login using fb connect - thank you + click to add msg to fb wall
-			 * 3 = send a confirmation request email     
+			 * 	 	or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
+			 * 	 	login using fb connect - thank you + click to add msg to fb wall
+			 * 2 = send a confirmation request email     
 			 */		
 		switch ($id) {			
-			case 3:
+			case 2:
 				$message = "An email has been sent to you to confirm your email address";				
 				break;
 			case 4: //already signed but waiting for email confirmation
@@ -61,7 +61,7 @@ class CRM_Campaign_Page_Petition_ThankYou extends CRM_Core_Page
 				$message = "You have already signed this petition. Thank you.";				
 				break;	
 			default:
-				$message = "";
+				$message = "Thank you for signing the petition.";
 				break;
 		}
 		$this->assign('message', $message );

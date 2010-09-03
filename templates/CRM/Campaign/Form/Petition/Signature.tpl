@@ -27,50 +27,56 @@
 
 <div class="crm-block crm-form-block crm-petition-form-block">
 
-{if !$contact_id}
-	{if !empty($fbconnect)}
-		<div>{ts}Sign using your Facebook Account{/ts} {$fbconnect} <div>
-		<div id="nofb">{ts}Don't have a facebook account? <a href="#signwithoutfb" id="signwithoutfb">Sign here</a>{/ts} </div>
+{if $cookie_message}
+	{$cookie_message}
+{else}
+
+	{if !$contact_id}
+		{if !empty($fbconnect)}
+			<div>{ts}Sign using your Facebook Account{/ts} {$fbconnect} <div>
+			<div id="nofb">{ts}Don't have a facebook account? <a href="#signwithoutfb" id="signwithoutfb">Sign here</a>{/ts} </div>
+		
+			{literal}
 	
-		{literal}
-
-		<script type="text/javascript">
-			jQuery(document).ready(function($) {initCiviPetition($)});
-
-			function initCiviPetition ($) 			{
-			   $('.crm-group').hide();//not sure we need to hide the sign button
-			   $('.crm-submit-buttons').hide();
-			   $('#signwithoutfb').click( function(){$('.crm-group').slideDown();$('.crm-submit-buttons').slideDown();});
-			   Drupal.settings.fb.reload_url = document.baseURI;
-			};		
-
-      //TODO. Check that it is called only once. not sure how not to verify that jquery.init has/has not been fired.
-      initCiviPetition ($);
-		</script>
-		{/literal}
-	{/if}
+			<script type="text/javascript">
+				jQuery(document).ready(function($) {initCiviPetition($)});
 	
-	{if !empty($fblogout)}
-		<div> {$fblogout} <br />&nbsp; <div>
-		{literal}
-		<script type="text/javascript">
-			jQuery(document).ready(function($) 
-			{
-			   Drupal.settings.fb.reload_url = document.baseURI;
-			});		
-		</script>
-		{/literal}		
+				function initCiviPetition ($) 			{
+				   $('.crm-group').hide();//not sure we need to hide the sign button
+				   $('.crm-submit-buttons').hide();
+				   $('#signwithoutfb').click( function(){$('.crm-group').slideDown();$('.crm-submit-buttons').slideDown();});
+	//			   Drupal.settings.fb.reload_url = document.baseURI;
+				};		
+	
+		  //TODO. Check that it is called only once. not sure how not to verify that jquery.init has/has not been fired.
+		  initCiviPetition ($);
+			</script>
+			{/literal}
+		{/if}
+		
+		{if !empty($fblogout)}
+			<div> {$fblogout} <br />&nbsp; <div>
+			{literal}
+			<script type="text/javascript">
+				jQuery(document).ready(function($) 
+				{
+	//			   Drupal.settings.fb.reload_url = document.baseURI;
+				});		
+			</script>
+			{/literal}		
+		{/if}
 	{/if}
+		<div class="crm-group">
+			{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionContactProfile} 	
+		</div>
+		
+		<div class="crm-group">
+			{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionActivityProfile} 	
+		</div>
+		
+		<div class="crm-submit-buttons">
+			{include file="CRM/common/formButtons.tpl" location="top"}
+		</div>
+	</div>
+
 {/if}
-    <div class="crm-group">
-    	{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionContactProfile} 	
-    </div>
-    
-    <div class="crm-group">
-    	{include file="CRM/Campaign/Form/Petition/Block.tpl" fields=$petitionActivityProfile} 	
-    </div>
-    
-    <div class="crm-submit-buttons">
-        {include file="CRM/common/formButtons.tpl" location="top"}
-    </div>
-</div>
