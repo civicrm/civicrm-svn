@@ -887,7 +887,8 @@ class CRM_Contribute_Form_Contribution_Confirm extends CRM_Contribute_Form_Contr
                 $pledgeParams['additional_reminder_day'] = $form->_values['additional_reminder_day'];
                 $pledgeParams['is_test'                ] = $contribution->is_test;
                 $pledgeParams['acknowledge_date'       ] = date( 'Ymd' );
-                
+                $pledgeParams['original_installment_amount'] = $pledgeParams['installment_amount'] ;
+
                 require_once 'CRM/Pledge/BAO/Pledge.php';
                 $pledge = CRM_Pledge_BAO_Pledge::create( $pledgeParams );
                 
