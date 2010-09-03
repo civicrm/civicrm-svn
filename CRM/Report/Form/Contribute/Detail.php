@@ -119,7 +119,10 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                    array( 'dao'     => 'CRM_Contribute_DAO_Contribution',
                           'fields'  =>
                           array(
-                                 'id' => array( 'title'   => ts('Contribution ID'),
+                                 'contribution_id' => array( 
+                                                            'name' => 'id',
+                                                            'no_display' => true,
+                                                            'required'   => true,
                                                 ),
                                  'contribution_type_id' => array( 'title'   => ts('Contribution Type'),
                                                                   'default' => true,
@@ -392,12 +395,13 @@ class CRM_Report_Form_Contribute_Detail extends CRM_Report_Form {
                 $entryFound = true;
             }
 
-            if ( $value = CRM_Utils_Array::value( 'civicrm_contribution_id', $row ) ) {
+            if ( ( $value = CRM_Utils_Array::value( 'civicrm_contribution_total_amount_sum', $row ) ) && 
+                 CRM_Core_Permission::check( 'access CiviContribute' ) ) {
                 $url = CRM_Utils_System::url( "civicrm/contact/view/contribution" , 
-                                              "reset=1&id=".$row['civicrm_contribution_id']."&cid=".$row['civicrm_contact_id']."&action=view&context=contribution&selectedChild=contribute",
+                                              "reset=1&id=".$row['civicrm_contribution_contribution_id']."&cid=".$row['civicrm_contact_id']."&action=view&context=contribution&selectedChild=contribute",
                                               $this->_absoluteUrl );
-                $rows[$rowNum]['civicrm_contribution_id_link' ] = $url;
-                $rows[$rowNum]['civicrm_contribution_id_hover'] =  
+                $rows[$rowNum]['civicrm_contribution_total_amount_sum_link'] = $url;
+                $rows[$rowNum]['civicrm_contribution_total_amount_sum_hover'] =  
                     ts("View Details of this Contribution.");
                 $entryFound = true;
             }
