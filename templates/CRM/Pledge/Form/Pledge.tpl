@@ -169,7 +169,8 @@ cj(function() {
      function verify( ) {
        var element = document.getElementsByName("is_acknowledge");
         if ( element[0].checked ) {
-            var message = '{/literal}{ts 1=$email}Click OK to save this Pledge record AND send an acknowledgment to %1 now{/ts}{literal}.';
+            var emailAddress = cj('#email-address').html(); 
+	    var message = '{/literal}{ts}Click OK to save this Pledge record AND send an acknowledgment to {/ts}'+emailAddress+'{ts} now{/ts}{literal}.';
             if (!confirm( message) ) {
                 return false;
             }

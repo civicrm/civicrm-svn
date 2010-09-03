@@ -104,7 +104,8 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
         $this->add( 'text',
                     'scheduled_amount', 
                     ts('Scheduled Amount'),
-                    CRM_Core_DAO::getAttribute( 'CRM_Pledge_DAO_Payment', 'scheduled_amount' ),
+                    array ( 'READONLY' => true,
+                            'style'    => "background-color:#EBECE4" ),
                     true );
         $this->addRule( 'scheduled_amount', ts('Please enter a valid monetary amount.'), 'money');
         $optionTypes = array( '1' => ts( 'Adjust Pledge Payment Schedule?' ),

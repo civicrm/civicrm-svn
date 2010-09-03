@@ -1392,12 +1392,16 @@ WHERE  contribution_id = {$this->_id}
                 $formValues['contribution_id'] = $contribution->id;
                 $sendReceipt = CRM_Contribute_Form_AdditionalInfo::emailReceipt( $this, $formValues );
             }
-
+            
+            $pledgePaymentId = CRM_Core_DAO::getFieldValue( 'CRM_Pledge_DAO_Payment',
+                                                            $contribution->id,
+                                                            'id',
+                                                            'contribution_id' );
             //update pledge payment status.
             if (  ( ( $this->_ppID && $contribution->id ) && $this->_action & CRM_Core_Action::ADD ) ||
-                  ( ( $contribution->id ) && $this->_action & CRM_Core_Action::UPDATE )
+                  ( ( $pledgePaymentId ) && $this->_action & CRM_Core_Action::UPDATE )
                   ) { 
-             
+                
                 if ( $this->_ppID ) {
                     //store contribution id in payment record.
                     CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $this->_ppID, 'contribution_id', $contribution->id );

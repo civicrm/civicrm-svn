@@ -32,8 +32,8 @@
             <td>{include file="CRM/common/jcalendar.tpl" elementName=scheduled_date}
             <span class="description">{ts}Scheduled Date for Pledge payment.{/ts}</span></td></tr>
         </td></tr>
-	<tr><td class="label">{$form.scheduled_amount.label}</td><td id="adjustPayment" class="form-layout">{$form.scheduled_amount.html}
-	    {help id="adjust-payment-amount"}
+	<tr><td class="label">{$form.scheduled_amount.label}</td><td class="form-layout">{$form.scheduled_amount.html}
+	    {ts}<a href="#" onclick="adjustPayment();">adjust scheduled amount</a>{help id="adjust-payment-amount"}{/ts}
 	    </td>
 	</tr>
 	<tr id="adjust-option-type" class="crm-contribution-form-block-option_type">
@@ -48,8 +48,10 @@
 cj(document).ready( function() {
     cj('#adjust-option-type').hide();
 });
-cj('#adjustPayment').click(function(){
-cj('#adjust-option-type').show();
-});
+function adjustPayment( ) {
+cj('#adjust-option-type').show();		    	    
+cj("#scheduled_amount").removeAttr("READONLY");
+cj("#scheduled_amount").css('background-color', '#ffffff');
+}
 </script>
 {/literal}
