@@ -480,9 +480,6 @@ SELECT label, value
                         $this->_where[$grouping][] = CRM_Contact_BAO_Query::buildClause( $fieldName, $op, $date, 'String' );
                         $this->_qill[$grouping][]  = $field['label'] . " {$op} " . CRM_Utils_Date::customFormat( $actualValue ); 
                     } else {
-                        // hack to handle yy format during search
-                        $actualFromValue = $fromValue;
-                        $actualToValue   = $toValue;
                         if ( is_numeric( $fromValue ) && strlen( $fromValue ) == 4 ) {
                             $fromValue = "01-01-{$fromValue}";
                         }
@@ -500,12 +497,12 @@ SELECT label, value
                         if ( $fromDate ) {
                             $this->_where[$grouping][] = "$fieldName >= $fromDate";
                             $this->_qill[$grouping][]  = $field['label'] . ' >= ' .
-                                CRM_Utils_Date::customFormat( $actualFromValue );
+                                CRM_Utils_Date::customFormat( $fromDate );
                         }
                         if ( $toDate ) {
                             $this->_where[$grouping][] = "$fieldName <= $toDate";
                             $this->_qill[$grouping][]  = $field['label'] . ' <= ' .
-                                CRM_Utils_Date::customFormat( $actualToValue );
+                                CRM_Utils_Date::customFormat( $toDate );
                         }
                     }
                     continue;
