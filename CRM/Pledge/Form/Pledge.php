@@ -642,6 +642,11 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             require_once 'CRM/Pledge/BAO/Pledge.php';
             CRM_Pledge_BAO_Pledge::sendAcknowledgment( $this, $params );
 
+            if ( !isset( $this->userEmail ) ) {
+                list( $this->userDisplayName, 
+                      $this->userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
+            }
+            
             $statusMsg .= ' ' . ts( "An acknowledgment email has been sent to %1.<br />", array( 1 => $this->userEmail ) );
             
             //build the payment urls.
