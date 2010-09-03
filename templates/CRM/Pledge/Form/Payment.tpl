@@ -33,7 +33,7 @@
             <span class="description">{ts}Scheduled Date for Pledge payment.{/ts}</span></td></tr>
         </td></tr>
 	<tr><td class="label">{$form.scheduled_amount.label}</td><td class="form-layout">{$form.scheduled_amount.html}
-	    {ts}<a href="#" onclick="adjustPayment();">adjust scheduled amount</a>{help id="adjust-payment-amount"}{/ts}
+	    {if !$pledgePayment}{ts}<a href="#" onclick="adjustPayment();">adjust scheduled amount</a>{help id="adjust-payment-amount"}{/ts}{/if}
 	    </td>
 	</tr>
 	<tr id="adjust-option-type" class="crm-contribution-form-block-option_type">

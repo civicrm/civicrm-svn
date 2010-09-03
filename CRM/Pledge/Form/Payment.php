@@ -82,7 +82,9 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
             require_once 'CRM/Pledge/BAO/Payment.php';
             CRM_Pledge_BAO_Payment::retrieve( $params, $defaults );
             list( $defaults['scheduled_date'] ) = CRM_Utils_Date::setDateDefaults( $defaults['scheduled_date'] );
-            
+            if( isset( $defaults['contribution_id'] ) ) {
+                $this->assign('pledgePayment', true );
+            }
             $status = CRM_Contribute_PseudoConstant::contributionStatus( $defaults['status_id'] );
             $this->assign('status', $status );
         }
