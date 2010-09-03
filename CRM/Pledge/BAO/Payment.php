@@ -379,7 +379,7 @@ WHERE     pledge_id = %1
             //  while editing scheduled  we need to check if we are editing last pending
             if ( !$paymentContributionId ) {
                 $checkPendingCount = self::getOldestPledgePayment( $pledgeID, 2 );
-                if ( $checkPendingCount['id'] == $payments ) {
+                if ( $checkPendingCount['count'] == 1 ) {
                     $lastPending = true;
                 }
             }
@@ -605,16 +605,18 @@ WHERE civicrm_pledge.id = civicrm_pledge_payment.pledge_id
 ORDER BY civicrm_pledge_payment.scheduled_date ASC
 LIMIT 0, %2  
 ";
-
+        
         $params[1] = array( $pledgeID, 'Integer' );
         $params[2] = array( $limit, 'Integer' );
         $payment = CRM_Core_DAO::executeQuery( $query, $params );
+        $count = 1;
         $paymentDetails = array();
         while ( $payment->fetch( ) ) {
             $paymentDetails[] = array( 'id'     => $payment->id,
-                                     'amount' => $payment->amount);
+                                       'amount' => $payment->amount,
+                                       'count'  => $count );
+            $count++;
         }
-
         return end($paymentDetails);
     }
     
