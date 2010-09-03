@@ -323,8 +323,8 @@ class CRM_Utils_System_Drupal {
      */
     static function loadBootStrap( $config ) {
         //take the cms root path.
-        $cmsPath = reset( split( '/sites', $_SERVER['SCRIPT_FILENAME'] ) );
-        if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) {
+        $cmsPath = self::cmsRootPath( );
+        if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) { 
             return;
         }
         
@@ -338,6 +338,24 @@ class CRM_Utils_System_Drupal {
         if ( $name ) {
             user_authenticate(  array( 'name' => $name, 'pass' => $pass ) );
         }
+    }
+    
+    static function cmsRootPath( ) 
+    {
+        $cmsRoot  = $valid = null;
+        $pathVars = explode( DIRECTORY_SEPARATOR, $_SERVER['SCRIPT_FILENAME'] );
+        foreach ( $pathVars as $var ) {
+            if ( $var ) {
+                $cmsRoot .= DIRECTORY_SEPARATOR . $var;
+                //stop as we found bootstrap.
+                if ( file_exists( "$cmsRoot/includes/bootstrap.inc" ) ) { 
+                    $valid = true;
+                    break;
+                }
+            }
+        }
+        
+        return ( $valid ) ? $cmsRoot : null; 
     }
     
     /**
