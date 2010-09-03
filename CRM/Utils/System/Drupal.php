@@ -322,22 +322,20 @@ class CRM_Utils_System_Drupal {
      * load drupal bootstrap
      */
     static function loadBootStrap( $config ) {
-        $cmsPath = dirname( dirname( dirname (dirname ( dirname( $config->templateDir ) ) ) ) );
+        //take the cms root path.
+        $cmsPath = reset( split( '/sites', $_SERVER['SCRIPT_FILENAME'] ) );
         if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) {
             return;
         }
         
-        $cur_dir = getcwd();
         chdir($cmsPath);
         require_once 'includes/bootstrap.inc';
         @drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
-        //chdir( $cur_dir ); 
         
         //load user, we need to check drupal permissions.
         $name = trim( CRM_Utils_Array::value( 'name', $_REQUEST ) );
         $pass = trim( CRM_Utils_Array::value( 'pass', $_REQUEST ) );
         if ( $name ) {
-            module_enable( array( 'user' ) );
             user_authenticate(  array( 'name' => $name, 'pass' => $pass ) );
         }
     }
