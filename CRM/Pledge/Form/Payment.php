@@ -170,7 +170,9 @@ class CRM_Pledge_Form_Payment extends CRM_Core_Form
                                                               );
         
         $oldestPaymentAmount = CRM_Pledge_BAO_Payment::getOldestPledgePayment( $pledgeId, 2 );
-        
+        if ( ( $oldestPaymentAmount['count'] != 1 ) && ( $oldestPaymentAmount['id'] == $params['id'] ) ) {
+            $oldestPaymentAmount = CRM_Pledge_BAO_Payment::getOldestPledgePayment( $pledgeId );
+        }
         if ( ( $formValues['scheduled_amount'] - $pledgeScheduledAmount  ) >= $oldestPaymentAmount['amount'] ) {
             $adjustTotalAmount = true;
         }

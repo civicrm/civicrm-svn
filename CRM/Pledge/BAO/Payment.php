@@ -420,7 +420,7 @@ WHERE     pledge_id = %1
                                                                         'contribution_id', 
                                                                         'id'
                                                                         );
-                self::adjustPledgePayment( $pledgeID, $actualAmount , $pledgeScheduledAmount, $paymentContributionId );
+                self::adjustPledgePayment( $pledgeID, $actualAmount , $pledgeScheduledAmount, $paymentContributionId , $payments );
                 // while editing schedule,  after adding a new pledge payemnt update the scheduled amount of the current payment
                 if ( !$paymentContributionId )  {
                     CRM_Core_DAO::setFieldValue( 'CRM_Pledge_DAO_Payment', $payments, 'scheduled_amount', $actualAmount );
@@ -620,13 +620,16 @@ LIMIT 0, %2
         return end($paymentDetails);
     }
     
-    static function adjustPledgePayment( $pledgeID, $actualAmount, $pledgeScheduledAmount, $paymentContributionId = null )
+    static function adjustPledgePayment( $pledgeID, $actualAmount, $pledgeScheduledAmount, $paymentContributionId = null, $pPaymentId = null )
     {   
         $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
         $oldestPayment = self::getOldestPledgePayment( $pledgeID );
-        if ( !$paymentContributionId ) {
+        if ( !$paymentContributionId  ) {
             // means we are editing payment scheduled payment, so get the second pending to update.
             $oldestPayment = self::getOldestPledgePayment( $pledgeID, 2 );
+            if ( ( $oldestPayment['count'] != 1 ) && ( $oldestPayment['id'] == $pPaymentId ) ) {
+                $oldestPayment = CRM_Pledge_BAO_Payment::getOldestPledgePayment( $pledgeID );
+            } 
         }
 
         if ( $oldestPayment ) {
