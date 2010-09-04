@@ -279,7 +279,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     		return;
 		}
     
-		define('FACEBOOK_LOGIN_LABEL','Login with Facebook');
     	//get the survey id
         $this->_surveyId 	= CRM_Utils_Request::retrieve('sid', 'Positive', $this );
         if (!$this->_surveyId) {
@@ -297,26 +296,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
                                        'name'      => ts('Sign'),
                                        'isDefault' => true),  
                                 )
-                          ); 
-                          
-        //TODO - if snippet=1 don't show fbconnect?              
-        // add fbconnect button if fb module installed and primary application available                   
-		$fbapp = variable_get(FB_CONNECT_VAR_PRIMARY, NULL);		
-
-		if (($fbapp <> NULL) && !(fb_facebook_user())) {
-//			$fbconnect = fb_connect_block('view','login_'.$fbapp);
-			$fbconnect = '<fb:login-button perms="!perms" onlogin="FB_JS.reload();" v="2"><fb:intl>'.FACEBOOK_LOGIN_LABEL.'</fb:intl></fb:login-button>';
-			// substitute perms
-			$perms = array();
-			drupal_alter('fb_required_perms', $perms);
-			$fbconnect = str_replace('!perms', implode(',', $perms), $fbconnect);
-			$this->assign( 'fbconnect', $fbconnect);
-    	}
-    	
-    	if (($fbapp <> NULL) && (fb_facebook_user())) {
-    		$fblogout = '<fb:login-button autologoutlink=true></fb:login-button>';
-    		$this->assign( 'fblogout', $fblogout);
-    	}
+                          );                                      
     }
     
     /**
@@ -480,7 +460,6 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				}				
 				break;
 			}
-
 			
 			// if signed using Facebook connect to log in or logged in user, send thank you email
 			if (($fb = $GLOBALS['_fb']) && ($fbu = fb_facebook_user()) 
