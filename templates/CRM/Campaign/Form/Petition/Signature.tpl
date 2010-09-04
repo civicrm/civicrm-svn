@@ -24,6 +24,12 @@
  +--------------------------------------------------------------------+
 *}
 
+<script>
+{literal}
+
+  if (typeof(cj) === 'undefined') cj = jQuery;
+{/literal}
+</script>
 
 <div class="crm-block crm-form-block crm-petition-form-block">
 
