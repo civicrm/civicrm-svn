@@ -138,10 +138,12 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
      * which email send mode do we use
      * 
      * @var int 
-	 * 1 = connected user via login/pwd - thank you
-	 * 	 or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
-	 * 2 = login using fb connect - thank you + click to add msg to fb wall
-	 * 3 = send a confirmation request email         
+     * EMAIL_THANK = 1,
+   	 * 		connected user via login/pwd - thank you
+	 * 	 	or dedupe contact matched who doesn't have a tag CIVICRM_TAG_UNCONFIRMED - thank you
+	 * 		or login using fb connect - thank you + click to add msg to fb wall
+	 * EMAIL_CONFIRM = 2;
+	 *		send a confirmation request email         
      */ 
     protected $_sendEmailMode;    
     
@@ -260,26 +262,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				}                
 			}
 		}      
-
-		// If connecting with Facebook id, fetch in user data like first/last name, email address, ...
-		// ** check for fb module **
-		if (($fb = $GLOBALS['_fb']) && ($fbu = fb_facebook_user())) {
-		  try {
-			$fbdata = $fb->api('/' . $fbu); // Facebook Graph lookup.
-	
-			$this->_defaults['first_name'] = $fbdata['first_name'];
-			$this->_defaults['last_name'] = $fbdata['last_name'];
-			$this->_defaults['email-Primary'] = $fbdata['email'];
-			$this->_defaults['birth_date'] = $fbdata['birthday'];
-			$this->_defaults['image_URL'] = "http://graph.facebook.com/" . $fbdata['id']  ."/picture";	
-			//TODO: get location from fb and parse into city and country
-			//$this->_defaults['city'] = $fbdata['[location']['name'];
-		  }
-		  catch (FacebookApiException $e) {
-			fb_log_exception($e, t('Failed lookup of %fbu.', array('%fbu' => $fbu)));
-		  }
-		}
-
+		
         $this->setDefaults( $this->_defaults );
     }
     

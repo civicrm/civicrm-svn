@@ -45,7 +45,7 @@
 				   $('.crm-group').hide();//not sure we need to hide the sign button
 				   $('.crm-submit-buttons').hide();
 				   $('#signwithoutfb').click( function(){$('.crm-group').slideDown();$('.crm-submit-buttons').slideDown();});
-	//			   Drupal.settings.fb.reload_url = document.baseURI;
+				   Drupal.settings.fb.reload_url = document.baseURI;
 				};		
 	
 		  //TODO. Check that it is called only once. not sure how not to verify that jquery.init has/has not been fired.
@@ -60,7 +60,7 @@
 			<script type="text/javascript">
 				jQuery(document).ready(function($) 
 				{
-	//			   Drupal.settings.fb.reload_url = document.baseURI;
+				   Drupal.settings.fb.reload_url = document.baseURI;
 				});		
 			</script>
 			{/literal}		
