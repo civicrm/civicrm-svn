@@ -207,7 +207,7 @@ SELECT 	a.id,
 		a.status_id,
 		civicrm_contact.id as contact_id,
     civicrm_contact.contact_type,civicrm_contact.contact_sub_type,image_URL,
-    display_name,sort_name,
+    first_name,last_name,sort_name,
     employer_id,organization_name,
     mail_to_household_id,household_name,
     IFNULL(gender_id,'') AS gender_id,
@@ -220,13 +220,12 @@ WHERE
   a.source_contact_id = civicrm_contact.id AND
   a.activity_type_id = civicrm_survey.activity_type_id AND
   civicrm_survey.id =  $surveyId AND  
-	a.source_record_id =  $surveyId  ;";
+	a.source_record_id =  $surveyId  ";
      if ($status_id)
        $sql .= " AND status_id = ". (int) $status_id;
-     $fields = array ('id','survey_id','contact_id','activity_date_time','activity_type_id','status_id','display_name','sort_name','gender_id','country_id','state_province_id','country_iso','country');
+     $fields = array ('id','survey_id','contact_id','activity_date_time','activity_type_id','status_id','first_name','last_name', 'sort_name','gender_id','country_id','state_province_id','country_iso','country');
         $dao =& CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
-           _civicrm_object_to_array ($dao,$signature);
            $row = array();
            foreach ($fields as $field) {
              $row[$field] = $dao->$field;
