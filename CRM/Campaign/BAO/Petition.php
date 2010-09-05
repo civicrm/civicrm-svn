@@ -96,15 +96,79 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         return $activity;
     }
 
+     /**
+     * Function to get Petition Signature Total 
+     * 
+     * @param boolean $all
+     * @param int $id
+     * @static
+     */
+    static function getPetitionSignatureTotalbyCountry ( $surveyId ) {
+    	$surveyInfo = CRM_Campaign_BAO_Petition::getSurveyInfo((int) $surveyId);
+    	//$activityTypeID = $surveyInfo['activity_type_id'];
+        $signature = array( );	
+        
+        $sql = "
+SELECT 
+		status_id,country, count(id) as total
+ FROM  	civicrm_activity
+WHERE 
+	source_record_id = " . (int) $surveyId  . 
+	" AND activity_type_id = " . (int)  $surveyInfo['activity_type_id'] . 
+" GROUP BY status_id";
+        require_once 'CRM/Contact/BAO/Contact.php'; 
+
+        $statusTotal = array();$total =0;
+        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        while ( $dao->fetch() ) {
+          $total += $dao->total;
+          $statusTotal['status'][$dao->status_id] = $dao->total;
+        }
+        $statusTotal['count']=$total;
+        return $statusTotal;
+    }    
+
+     /**
+     * Function to get Petition Signature Total 
+     * 
+     * @param boolean $all
+     * @param int $id
+     * @static
+     */
+    static function getPetitionSignatureTotal( $surveyId ) {
+    	$surveyInfo = CRM_Campaign_BAO_Petition::getSurveyInfo((int) $surveyId);
+    	//$activityTypeID = $surveyInfo['activity_type_id'];
+        $signature = array( );	
+        
+        $sql = "
+SELECT 
+		status_id,count(id) as total
+ FROM  	civicrm_activity
+WHERE 
+	source_record_id = " . (int) $surveyId  . 
+	" AND activity_type_id = " . (int)  $surveyInfo['activity_type_id'] . 
+" GROUP BY status_id";
+        require_once 'CRM/Contact/BAO/Contact.php'; 
+
+        $statusTotal = array();$total =0;
+        $dao =& CRM_Core_DAO::executeQuery( $sql );
+        while ( $dao->fetch() ) {
+          $total += $dao->total;
+          $statusTotal['status'][$dao->status_id] = $dao->total;
+        }
+        $statusTotal['count']=$total;
+        return $statusTotal;
+    }    
+
     
     public function getSurveyInfo( $surveyId=null ) 
     {
 		$surveyInfo = array( );
 
         $sql = "
-SELECT 	s.activity_type_id AS activity_type_id, 
-		s.campaign_id AS campaign_id,
-		s.title AS title,
+SELECT 	activity_type_id, 
+		campaign_id,
+		title,
 		ov.label AS activity_type
 FROM  civicrm_survey s, civicrm_option_value ov, civicrm_option_group og
 WHERE s.id = " . $surveyId ."
@@ -131,39 +195,44 @@ AND og.name = 'activity_type'";
      * @param int $id
      * @static
      */
-    static function getPetitionSignature( $surveyId ) {
+    static function getPetitionSignature( $surveyId, $status_id=null ) {
     
-    	$surveyInfo = CRM_Campaign_BAO_Petition::getSurveyInfo($surveyId);
-    	//$activityTypeID = $surveyInfo['activity_type_id'];
+      $surveyId = (int)$surveyId;// sql injection protection
         $signature = array( );	
 
         $sql = "
-SELECT 	a.id AS id,
-		a.source_record_id AS source_record_id,
-		a.source_contact_id AS source_contact_id,
-		a.activity_date_time AS activity_date_time,
-		a.activity_type_id AS activity_type_id,
-		a.status_id AS status_id," .
-		"'" . $surveyInfo['title'] . "'" ." AS survey_title 
-FROM  	civicrm_activity a
-WHERE 	a.source_record_id = " . $surveyId . " 
-	AND a.activity_type_id = " . $surveyInfo['activity_type_id'];
-
-
-        require_once 'CRM/Contact/BAO/Contact.php'; 
-
+SELECT 	a.id,
+		a.source_record_id as survey_id,
+		a.activity_date_time,
+		a.status_id,
+		civicrm_contact.id as contact_id,
+    civicrm_contact.contact_type,civicrm_contact.contact_sub_type,image_URL,
+    display_name,sort_name,
+    employer_id,organization_name,
+    mail_to_household_id,household_name,
+    IFNULL(gender_id,'') AS gender_id,
+    IFNULL(state_province_id,'') AS state_province_id,
+    IFNULL(country_id,'') as country_id,IFNULL(iso_code,'') as country_iso, IFNULL(civicrm_country.name,'') as country
+ FROM  	civicrm_activity a, civicrm_survey, civicrm_contact
+  LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id  
+  LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id
+WHERE 
+  a.source_contact_id = civicrm_contact.id AND
+  a.activity_type_id = civicrm_survey.activity_type_id AND
+  civicrm_survey.id =  $surveyId AND  
+	a.source_record_id =  $surveyId  ;";
+     if ($status_id)
+       $sql .= " AND status_id = ". (int) $status_id;
+     $fields = array ('id','survey_id','contact_id','activity_date_time','activity_type_id','status_id','display_name','sort_name','gender_id','country_id','state_province_id','country_iso','country');
         $dao =& CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
-           $signature[$dao->id]['id'] = $dao->id;     
-           $signature[$dao->id]['source_record_id'] = $dao->source_record_id;
-           $signature[$dao->id]['source_contact_id'] = CRM_Contact_BAO_Contact::displayName($dao->source_contact_id);
-           $signature[$dao->id]['activity_date_time'] = $dao->activity_date_time;
-           $signature[$dao->id]['activity_type_id'] = $dao->activity_type_id;   
-           $signature[$dao->id]['status_id'] = $dao->status_id;
-           $signature[$dao->id]['survey_title'] = $dao->survey_title;
-           $signature[$dao->id]['contactId'] = $dao->source_contact_id;
+           _civicrm_object_to_array ($dao,$signature);
+           $row = array();
+           foreach ($fields as $field) {
+             $row[$field] = $dao->$field;
+           }
+           $signature [] = $row;
         }
-
         return $signature;
     }    
 
