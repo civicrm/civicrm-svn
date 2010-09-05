@@ -677,8 +677,10 @@ class CRM_Activity_Form_Activity extends CRM_Contact_Form_Task
                                                          $this->_activityId, 
                                                          'source_record_id' );
                 $responseOptions = CRM_Campaign_BAO_Survey::getResponsesOptions( $surveyId );
-                $this->add( 'select', 'result', ts('Result'),
+                if ($responseOptions) {
+                   $this->add( 'select', 'result', ts('Result'),
                             array( '' => ts('- select -') ) + array_combine( $responseOptions, $responseOptions ) );
+                }
             }
             $this->assign( 'surveyActivity', $this->_isSurveyActivity );
         }
