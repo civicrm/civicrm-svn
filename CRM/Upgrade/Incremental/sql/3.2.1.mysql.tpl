@@ -95,6 +95,7 @@ VALUES
    (@option_group_id_act, '{ts escape="sql"}Canvass{/ts}', 28, 'Canvass', NULL,0, 0, 28, '', 0, 1, 1, @campaignCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}PhoneBank{/ts}', 29, 'PhoneBank', NULL,0, 0, 29, '', 0, 1, 1, @campaignCompId, NULL),
    (@option_group_id_act, '{ts escape="sql"}WalkList{/ts}', 30, 'WalkList', NULL,0, 0, 30, '', 0, 1, 1, @campaignCompId, NULL);
+   (@option_group_id_act, '{ts escape="sql"}Petition{/ts}', 31, 'Petition', NULL,0, 0, 30, '', 0, 1, 1, @campaignCompId, NULL);
 
 -- CRM-6554
 SELECT @domainID := min(id) FROM civicrm_domain;
