@@ -23,8 +23,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
+{math equation="x / y" x=$amount y=$installments format="%.2f" assign="currentInstallment"}
 {* Check if current Total Pledge Amount is different from original pledge amount. *}
-{if ($installments * $original_installment_amount) NEQ $amount}
+{if $currentInstallment NEQ $original_installment_amount}
     {assign var=originalPledgeAmount value=`$installments*$original_installment_amount`}
 {/if}
 
@@ -39,7 +40,7 @@
             {if $originalPledgeAmount}<div class="messages status"><div class="icon inform-icon"></div>&nbsp;{ts 1=$originalPledgeAmount|crmMoney} Pledge total has changed due to payment adjustments. Original pledge amount was %1.{/ts}</div>{/if}
         </td>
      </tr>
-     <tr class="crm-pledge-form-block-installments"><td class="label">{ts}To be paid in{/ts}</td><td>{$installments}&nbsp;&nbsp;{ts}installments of{/ts} {$eachPaymentAmount|crmMoney}&nbsp;&nbsp;{ts}every{/ts}&nbsp;&nbsp;{$frequency_interval}&nbsp;{$frequencyUnit}</td></tr>
+     <tr class="crm-pledge-form-block-installments"><td class="label">{ts}To be paid in{/ts}</td><td>{$installments}&nbsp;&nbsp;{ts}installments of{/ts} {$original_installment_amount|crmMoney}&nbsp;&nbsp;{ts}every{/ts}&nbsp;&nbsp;{$frequency_interval}&nbsp;{$frequencyUnit}</td></tr>
  	 <tr><td class="label">{ts}Payments are due on the{/ts}</td><td>{$frequency_day}&nbsp;day of the period</td></tr>
 
     {if $start_date}     

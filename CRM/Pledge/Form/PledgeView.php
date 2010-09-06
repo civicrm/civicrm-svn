@@ -59,7 +59,6 @@ class CRM_Pledge_Form_PledgeView extends CRM_Core_Form
                                           $ids );
 
         $values['frequencyUnit'] = ts( '%1(s)', array( 1 => $values['frequency_unit'] ) );
-        $values['eachPaymentAmount'] = $values['original_installment_amount'];
         
         if (isset( $values["honor_contact_id"] ) && $values["honor_contact_id"] ) {
             $sql = "SELECT display_name FROM civicrm_contact WHERE id = " . $values["honor_contact_id"];

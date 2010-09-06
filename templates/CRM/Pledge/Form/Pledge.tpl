@@ -40,8 +40,10 @@
 {elseif $action EQ 2}
     <h3>{ts}Edit Pledge{/ts}</h3>
     {* Check if current Total Pledge Amount is different from original pledge amount. *}
-    {if ($form.installments.value * $eachPaymentAmount) NEQ $form.amount.value}
-    	{assign var=originalPledgeAmount value=`$form.installments.value*$eachPaymentAmount`}
+    {math equation="x / y" x=$amount y=$installments format="%.2f" assign="currentInstallment"}
+    {* Check if current Total Pledge Amount is different from original pledge amount. *}
+    {if $currentInstallment NEQ $eachPaymentAmount}
+    	{assign var=originalPledgeAmount value=`$installments*$eachPaymentAmount`}
     {/if}
 {elseif $action EQ 8}
     <h3>{ts}Delete Pledge{/ts}</h3>

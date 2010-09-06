@@ -221,7 +221,8 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             if (isset( $this->_values['amount'])) {
                 $defaults['amount'] = CRM_Utils_Money::format($this->_values['amount'], null, '%a');
             }
-            
+            $this->assign( 'amount',  $this->_values['amount'] );
+            $this->assign( 'installments', $defaults['installments'] );
         } else {
             //default values.
             list( $now ) = CRM_Utils_Date::setDateDefaults( );
