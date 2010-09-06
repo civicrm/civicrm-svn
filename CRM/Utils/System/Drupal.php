@@ -321,7 +321,7 @@ class CRM_Utils_System_Drupal {
     /**
      * load drupal bootstrap
      */
-    static function loadBootStrap( $config ) 
+    static function loadBootStrap( ) 
     {
         //take the cms root path.
         $cmsPath = self::cmsRootPath( );
