@@ -59,7 +59,7 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
         
         // Make sure case types have been configured for the component
         require_once 'CRM/Core/OptionGroup.php';        
-        $caseType = CRM_Core_OptionGroup::values('case_type');
+        $caseType = CRM_Core_OptionGroup::values( 'case_type', false, false, false, null, 'label', false );
         if ( empty( $caseType ) ){
             $this->assign('notConfigured', 1);
             return;

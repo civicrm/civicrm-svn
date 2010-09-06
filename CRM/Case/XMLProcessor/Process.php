@@ -284,8 +284,8 @@ AND        a.is_deleted = 0
         $count       = CRM_Core_DAO::singleValueQuery( $query, $sqlParams );
         
         // check for max instance
-        $caseType    = CRM_Case_PseudoConstant::caseTypeName( $params['caseID'] );
-        $maxInstance = self::getMaxInstance( $caseType['name'], $params['activityTypeName'] );
+        $caseType    = CRM_Case_BAO_Case::getCaseType( $params['caseID'] );
+        $maxInstance = self::getMaxInstance( $caseType, $params['activityTypeName'] );
 
         return $maxInstance ? ($count < $maxInstance ? false : true) : false;  
     }
