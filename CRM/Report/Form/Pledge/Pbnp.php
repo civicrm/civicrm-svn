@@ -63,7 +63,7 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
                    array( 'dao'     => 'CRM_Pledge_DAO_Pledge',
                           'fields'  =>
                           array( 'pledge_create_date' => 
-                                 array( 'title'    => ts( 'Pledged Date' ),
+                                 array( 'title'    => ts( 'Pledge Made' ),
                                         'required' => true,
                                         ),
                                  'contribution_type_id' =>
@@ -81,7 +81,7 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
                                  ),
                           'filters'  => 
                           array( 'pledge_create_date' =>
-                                 array('title'    =>  'Pledged Date', 
+                                 array('title'    =>  'Pledge Made', 
                                        'operatorType' => CRM_Report_Form::OP_DATE ),
                                  'contribution_type_id' =>
                                  array( 'title'        =>  ts('Contribution Type'),
@@ -96,7 +96,7 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
                    array( 'dao'       => 'CRM_Pledge_DAO_Payment',
                           'fields'    =>
                           array( 'scheduled_date' =>
-                                 array( 'title'    => ts( 'Due Date' ),
+                                 array( 'title'    => ts( 'Next Payment Due' ),
                                         'type'     => CRM_Utils_Type::T_DATE,
                                         'required' => true,),
                                  ), 
