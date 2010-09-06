@@ -99,8 +99,20 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
     
     function buildTabs( ) 
     {   
+        //check for required permissions.
+        $superUser = false;
+        if ( CRM_Core_Permission::check( 'manage campaign' ) ||
+             CRM_Core_Permission::check( 'administer CiviCampaign' ) ) {
+            $superUser = true;
+        }
+        
         $allTabs = array( );
         foreach ( $this->_tabs as $name => $title ) {
+            if ( !$superUser && 
+                 !CRM_Core_Permission::check( "{$name} campaign contacts" ) ) {
+                continue;
+            }
+            
             $urlParams = "type={$name}&snippet=1";
             if ( $this->_surveyId      ) $urlParams .= "&sid={$this->_surveyId}";
             if ( $this->_interviewerId ) $urlParams .= "&cid={$this->_interviewerId}";
@@ -110,7 +122,7 @@ class CRM_Campaign_Page_Vote extends CRM_Core_Page
                                                                   $urlParams ) );
         }
         
-        $this->assign( 'allTabs', $allTabs );
+        $this->assign( 'allTabs', empty( $allTabs ) ? false : $allTabs );
     }
     
 }

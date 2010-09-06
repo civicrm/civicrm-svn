@@ -30,7 +30,7 @@
 {elseif $subPageType eq 'interview'}
    {* build the ajax search and voters reserve interface here *}
    {include file='CRM/Campaign/Form/Gotv.tpl'}
-{else}
+{elseif $allTabs}
  {* build normal page *}
  <div id='votingTabs' class="ui-tabs ui-widget ui-widget-content ui-corner-all">
      <ul class="crm-vote-tabs-list">
@@ -67,4 +67,9 @@ cj(document).ready( function( ) {
            
 </script>
 {/literal}
+{else}
+ <div class="messages status">
+     <div class="icon inform-icon"></div> 
+     {ts}You are not authorized to access this page.{/ts}
+ </div>
 {/if}

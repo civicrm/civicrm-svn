@@ -2,6 +2,13 @@
 
 <menu>
   <item>
+    <path>civicrm/campaign</path>
+    <title>Campaign Dashboard</title>
+    <page_callback>CRM_Campaign_Page_DashBoard</page_callback>
+    <access_arguments>administer CiviCampaign</access_arguments>
+    <component>CiviCampaign</component>
+  </item>
+  <item>
     <path>civicrm/campaign/add</path>
     <title>New Campaign</title>
     <page_callback>CRM_Campaign_Form_Campaign</page_callback>
@@ -16,16 +23,10 @@
     <component>CiviCampaign</component>
   </item>
   <item>
-    <path>civicrm/campaign</path>
-    <title>Campaign Dashboard</title>
-    <page_callback>CRM_Campaign_Page_DashBoard</page_callback>
-    <access_arguments>administer CiviCampaign</access_arguments>
-    <component>CiviCampaign</component>
-  </item>
-  <item>
     <path>civicrm/campaign/vote</path>
     <title>Conduct Survey</title>
     <page_callback>CRM_Campaign_Page_Vote</page_callback>
+    <access_arguments>administer CiviCampaign;manage campaign;reserve campaign contacts;interview campaign contacts</access_arguments>
     <component>CiviCampaign</component>
   </item>
   <item>
@@ -85,7 +86,7 @@
     <path>civicrm/campaign/gotv</path>
     <title>Voter List</title>
     <page_callback>CRM_Campaign_Form_Gotv</page_callback>
-    <access_arguments>administer CiviCampaign;manage campaign</access_arguments>
+    <access_arguments>administer CiviCampaign;manage campaign;release campaign contacts</access_arguments>
     <component>CiviCampaign</component>
   </item>
   <item>

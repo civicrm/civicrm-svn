@@ -51,6 +51,8 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
     
     protected $_votingTab = false;
     
+    protected $_searchVoterFor;
+    
     /** 
      * processing needed for buildForm and later 
      * 
@@ -65,21 +67,21 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
         $this->_interviewerId = CRM_Utils_Request::retrieve( 'cid',      'Positive',  $this );
         
         //does control come from voting tab interface.
-        $this->_votingTab    = $this->get( 'votingTab' );
-        $this->_subVotingTab = $this->get( 'subVotingTab' );
-        $searchVoterFor = 'release';
+        $this->_votingTab      = $this->get( 'votingTab' );
+        $this->_subVotingTab   = $this->get( 'subVotingTab' );
+        $this->_searchVoterFor = 'release';
         if ( $this->_votingTab ) {
             if ( $this->_subVotingTab == 'searchANDReserve' ) {
-                $searchVoterFor = 'reserve';
+                $this->_searchVoterFor = 'reserve';
             } else if ( $this->_subVotingTab == 'searchANDInterview' ) {
-                $searchVoterFor = 'interview';
+                $this->_searchVoterFor = 'interview';
             }
         }
         $this->assign( 'force',          $this->_force );
         $this->assign( 'votingTab',      $this->_votingTab );
         $this->assign( 'searchParams',   json_encode( $this->get( 'searchParams' ) ) );
         $this->assign( 'buildSelector',  $this->_search );
-        $this->assign( 'searchVoterFor', $searchVoterFor );
+        $this->assign( 'searchVoterFor', $this->_searchVoterFor );
         
         //set the form title.
         CRM_Utils_System::setTitle( ts( 'Voter List' ) );
@@ -142,6 +144,13 @@ class CRM_Campaign_Form_Gotv extends CRM_Core_Form
     function validateIds( ) 
     {
         $errorMessages = array( );
+        //check for required permissions.
+        if ( !CRM_Core_Permission::check( 'manage campaign' ) &&
+             !CRM_Core_Permission::check( 'administer CiviCampaign' ) &&
+             !CRM_Core_Permission::check( "{$this->_searchVoterFor} campaign contacts" ) ) {
+            $errorMessages[] = ts( 'You are not authorized to access this page.' );
+        }
+        
         require_once 'CRM/Campaign/BAO/Survey.php';
         $surveys = CRM_Campaign_BAO_Survey::getSurveyList( );
         if ( empty( $surveys ) ) {
