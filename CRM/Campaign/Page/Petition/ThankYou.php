@@ -41,7 +41,8 @@ class CRM_Campaign_Page_Petition_ThankYou extends CRM_Core_Page
 {
     function run( ) {
 		$id = CRM_Utils_Request::retrieve('id', 'Positive', $this );
-
+		$petition_id = CRM_Utils_Request::retrieve('pid', 'Positive', $this );
+		
 			// send thank you or email verification emails
 			/* 
 			 * sendEmailMode
@@ -64,7 +65,15 @@ class CRM_Campaign_Page_Petition_ThankYou extends CRM_Core_Page
 				$message = "Thank you for signing the petition.";
 				break;
 		}
+		
+		// assign url and Drupal node title for social networking / share links
 		$this->assign('message', $message );
+		
+	    require_once 'CRM/Campaign/BAO/Petition.php';		    
+	    $petition_node = CRM_Campaign_BAO_Petition::getPetitionDrupalNodeData($petition_id);
+		$this->assign('url', $petition_node['url']);
+		$this->assign('title', $petition_node['title']);
+		
 		parent::run();		
     }   
     

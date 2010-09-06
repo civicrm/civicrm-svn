@@ -26,4 +26,10 @@
 
 <p>{$message}</p>
 
+<!-- Social Networking -->
+<div class="socialnetwork">
+  <fb:like href="{$url}"></fb:like>
+<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
+<a href="http://twitter.com/share?text=Sign the petition: {$title}&url={$url}" class="twitter-share-button">Tweet</a>
+</div>
 

@@ -69,6 +69,20 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
         $this->assign( 'display_name', $displayName);
         $this->assign( 'email'       , $email );
 
+		// assign url and Drupal node title for social networking / share links
+	    require_once 'CRM/Campaign/BAO/Petition.php';		    
+	    $petition_node = CRM_Campaign_BAO_Petition::getPetitionDrupalNodeData($petition_id);
+		$this->assign('url', $petition_node['url']);
+		$this->assign('title', $petition_node['title']);
+		
+		// send thank you email
+		require_once 'CRM/Campaign/Form/Petition/Signature.php';
+		$params['contactId'] = $contact_id;
+		$params['email-Primary'] = $email;
+		$params['sid'] =  $petition_id;
+		$params['activityId'] = $activity_id;
+		CRM_Campaign_BAO_Petition::sendEmail( $params, CRM_Campaign_Form_Petition_Signature::EMAIL_THANK );
+
         parent::run();
     }
     

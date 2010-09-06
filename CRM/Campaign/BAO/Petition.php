@@ -261,8 +261,8 @@ WHERE
      /**
      * Function to check if contact has signed this petition
      * 
-     * @param boolean $all
-     * @param int $id
+     * @param int $surveyId
+     * @param int $contactId
      * @static
      */
     static function checkSignature( $surveyId, $contactId ) {
@@ -607,4 +607,42 @@ WHERE 	a.source_record_id = " . $surveyId . "
         return $str;
     }
 
+     /**
+     * Function to get Petition Drupal Node Path/Alias 
+     * 
+     * @param int $surveyId
+     * @static
+     */
+    static function getPetitionDrupalNodeData( $surveyId ) {
+
+        $config =& CRM_Core_Config::singleton( );
+	    if ( $config->userFramework == 'Drupal' ) {
+				
+			$surveyId = (int)$surveyId;// sql injection protection
+			
+			// if Drupal node uses cck integer field petitionid
+			// there will be a 'content_field_petitionid' table in the Drupal database
+			// that stores field_petitionid_value against nid (node id)
+			
+			$result = db_query("SELECT nid FROM content_field_petitionid WHERE field_petitionid_value = " . $surveyId);
+			
+			if (count($result) > 1) {
+				die("Error: more than one url alias for petition node");
+			} else {
+				global $base_url;
+				$petition = array();
+				$data = db_fetch_array ($result);
+				$petition_node['url'] = $base_url . "/" . drupal_get_path_alias("node/".$data['nid']);
+				$petition_node['title'] = node_page_title(node_load($data['nid']));
+				
+				return $petition_node;
+			}			
+		}
+		
+	}
+
+
+
 }
+
+

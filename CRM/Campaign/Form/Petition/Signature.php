@@ -522,7 +522,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			$transaction->commit( );
 		
 		if ( $result ) {
-			CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/petition/thankyou', 'id=' . $this->_sendEmailMode . '&reset=1'));
+			CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/petition/thankyou', 'pid='.$this->_surveyId.'&id='.$this->_sendEmailMode.'&reset=1'));
 		}        
     }   
     
@@ -602,12 +602,12 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			$signature_id = array_keys($signature);
 			switch ($signature[$signature_id[0]]['status_id']) {
 				case 1: //status is scheduled - email is unconfirmed
-					CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/petition/thankyou', 'id=4&reset=1'));
+					CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/petition/thankyou', 'pid='.$this->_surveyId.'&id=4&reset=1'));
 					break;
 				
 				case 2: //status is completed 
 					CRM_Campaign_BAO_Petition::sendEmail( $params, 1 );
-					CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/petition/thankyou', 'id=5&reset=1'));
+					CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/petition/thankyou', 'pid='.$this->_surveyId.'&id=5&reset=1'));
 					break;
 			}
 		}	
