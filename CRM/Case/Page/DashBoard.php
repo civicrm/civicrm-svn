@@ -64,6 +64,9 @@ class CRM_Case_Page_DashBoard extends CRM_Core_Page
             return;
         }
         
+        $activeCaseTypes = CRM_Core_OptionGroup::values( 'case_type' );
+        $this->assign( 'allowToAddNewCase', empty( $activeCaseTypes ) ? false : true );
+
         $session = & CRM_Core_Session::singleton();
         $allCases = CRM_Utils_Request::retrieve( 'all', 'Positive', $session );
         

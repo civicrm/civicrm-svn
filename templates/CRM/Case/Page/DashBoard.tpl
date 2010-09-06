@@ -33,7 +33,7 @@
 {capture assign=newCaseURL}{crmURL p="civicrm/contact/view/case" q="action=add&context=standalone&reset=1"}{/capture}
 
 <div class="crm-submit-buttons">
-    {if $newClient}	
+    {if $newClient and $allowToAddNewCase}	
 	    <a href="{$newCaseURL}" class="button"><span><div class="icon add-icon"></div> {ts}Add Case{/ts}</span></a>
     {/if}
     <div class="crm-case-dashboard-switch-view-buttons">

@@ -64,6 +64,10 @@ class CRM_Case_Page_Tab extends CRM_Core_Page
             $this->assign('notConfigured', 1);
             return;
         }
+
+        $activeCaseTypes = CRM_Core_OptionGroup::values( 'case_type' );
+        $this->assign( 'allowToAddNewCase', empty( $activeCaseTypes ) ? false : true );
+
         $this->_id        = CRM_Utils_Request::retrieve( 'id' , 'Positive', $this );
         $this->_contactId = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this );
         $this->_context   = CRM_Utils_Request::retrieve( 'context', 'String', $this );
