@@ -110,7 +110,7 @@ class CRM_Core_OptionValue
             $dao->orderBy($orderBy);
             $dao->find();
         }
-
+        
         if ( $groupName == 'case_type' ) {
             require_once 'CRM/Case/BAO/Case.php';
             $caseTypeIds = CRM_Case_BAO_Case::getUsedCaseType( );
@@ -128,12 +128,8 @@ class CRM_Core_OptionValue
             // update enable/disable links depending on if it is is_reserved or is_active
             if ( $dao->is_reserved ) {
                 $action = CRM_Core_Action::UPDATE;
-            } else if ( $groupName == 'case_type' ) {
-                if ( in_array( $dao->value, $caseTypeIds ) ) {
-                    $action -= CRM_Core_Action::ENABLE;
-                    $action -= CRM_Core_Action::DISABLE;
-                    $action -= CRM_Core_Action::DELETE;
-                }
+            } else if ( ( $groupName == 'case_type' ) && in_array( $dao->value, $caseTypeIds ) ) {
+                $action -= CRM_Core_Action::DELETE;
             } else {
                 if ( $dao->is_active ) {
                     $action -= CRM_Core_Action::ENABLE;

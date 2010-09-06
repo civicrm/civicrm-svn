@@ -219,17 +219,8 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         }
 
         $enabled = $this->add('checkbox', 'is_active', ts('Enabled?'));
-        $allow   = true;
-        
-        if ( $this->_gName == 'case_type' ) {
-            require_once 'CRM/Case/BAO/Case.php';
-            $caseTypeIds = CRM_Case_BAO_Case::getUsedCaseType( );
-            $caseType = CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionValue', $this->_id, 'value' );
-
-            if ( in_array( $caseType, $caseTypeIds ) ) $allow = false;
-        }
-        
-        if ( $isReserved || !$allow ) {
+       
+        if ( $isReserved ) {
             $enabled->freeze( );
         }
         
