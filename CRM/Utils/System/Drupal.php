@@ -321,23 +321,37 @@ class CRM_Utils_System_Drupal {
     /**
      * load drupal bootstrap
      */
-    static function loadBootStrap( $config ) {
+    static function loadBootStrap( $config ) 
+    {
         //take the cms root path.
         $cmsPath = self::cmsRootPath( );
-        if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) { 
-            return;
+        
+        if ( !file_exists( "$cmsPath/includes/bootstrap.inc" ) ) {
+            echo '<br />Sorry, could not able to locate bootstrap.inc.';
+            exit( );
         }
         
         chdir($cmsPath);
         require_once 'includes/bootstrap.inc';
         @drupal_bootstrap(DRUPAL_BOOTSTRAP_FULL);
         
+        if ( !function_exists('module_exists') || 
+             !module_exists( 'civicrm' ) ) {
+            echo '<br />Sorry, could not able to load drupal bootstrap.';
+            exit( );
+        }
+        
         //load user, we need to check drupal permissions.
         $name = trim( CRM_Utils_Array::value( 'name', $_REQUEST ) );
         $pass = trim( CRM_Utils_Array::value( 'pass', $_REQUEST ) );
         if ( $name ) {
-            user_authenticate(  array( 'name' => $name, 'pass' => $pass ) );
+            $user = user_authenticate(  array( 'name' => $name, 'pass' => $pass ) );
+            if ( empty( $user->uid ) ) {
+                echo '<br />Sorry, unrecognized username or password.';
+                exit( );
+            }
         }
+        
     }
     
     static function cmsRootPath( ) 
