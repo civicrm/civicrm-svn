@@ -176,6 +176,7 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
         $this->_from = null;
 
         $allStatus = CRM_Contribute_PseudoConstant::contributionStatus( null, 'name' );
+        $pendingStatus = array_search( 'Pending', $allStatus);
         foreach ( array( 'Pending', 'In Progress', 'Overdue' ) as $statusKey ) {
             if ( $key = CRM_Utils_Array::key( $statusKey, $allStatus ) ) {
                 $unpaidStatus[] = $key;
@@ -192,7 +193,7 @@ class CRM_Report_Form_Pledge_Pbnp extends CRM_Report_Form {
                             {$this->_aliases['civicrm_pledge']}.status_id IN ( {$statusIds} )
              LEFT  JOIN civicrm_pledge_payment {$this->_aliases['civicrm_pledge_payment']}
                         ON ({$this->_aliases['civicrm_pledge']}.id =
-                            {$this->_aliases['civicrm_pledge_payment']}.pledge_id) ";
+                            {$this->_aliases['civicrm_pledge_payment']}.pledge_id AND  {$this->_aliases['civicrm_pledge_payment']}.status_id = {$pendingStatus} ) ";
         
         // include address field if address column is to be included
         if ( $this->_addressField ) {  
