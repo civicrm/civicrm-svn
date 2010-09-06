@@ -128,8 +128,6 @@ class CRM_Core_OptionValue
             // update enable/disable links depending on if it is is_reserved or is_active
             if ( $dao->is_reserved ) {
                 $action = CRM_Core_Action::UPDATE;
-            } else if ( ( $groupName == 'case_type' ) && in_array( $dao->value, $caseTypeIds ) ) {
-                $action -= CRM_Core_Action::DELETE;
             } else {
                 if ( $dao->is_active ) {
                     $action -= CRM_Core_Action::ENABLE;
@@ -137,6 +135,11 @@ class CRM_Core_OptionValue
                     $action -= CRM_Core_Action::DISABLE;
                 }
             }
+
+            if ( ( $groupName == 'case_type' ) && in_array( $dao->value, $caseTypeIds ) ) {
+                $action -= CRM_Core_Action::DELETE;
+            }
+
             $optionValue[$dao->id]['label']  = htmlspecialchars( $optionValue[$dao->id]['label'] );
             $optionValue[$dao->id]['order']  = $optionValue[$dao->id]['weight'];
             $optionValue[$dao->id]['action'] = CRM_Core_Action::formLink($links, $action, 
