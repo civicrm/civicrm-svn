@@ -77,7 +77,6 @@
        <title>Original Installment Amount</title>
        <type>decimal</type>
        <required>true</required>
-       <import>true</import>
        <comment>Original amount for each of the installments.</comment>
        <add>3.2</add>
   </field>
