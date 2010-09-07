@@ -98,7 +98,7 @@
                     <div id="priceset" class="hiddenElement"></div>	    
         	    {/if}
         	    
-            	{if $ppID}{ts}<a href="#" onclick="adjustPayment();">adjust payment amount</a>{/ts}{help id="adjust-payment-amount"}{/if}
+            	{if $ppID}{ts}<a href='#' onclick='adjustPayment();'>adjust payment amount</a>{/ts}{help id="adjust-payment-amount"}{/if}
 	            <br /><span class="description">{ts}Actual amount given by contributor.{/ts}</span>
 	    </td>
         </tr>
