@@ -164,6 +164,11 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
         require_once 'CRM/Mailing/BAO/Job.php';
         $job = CRM_Mailing_BAO_Job::getTableName();
         if ( ! isset( $this->_columnHeaders ) ) {
+            $dateSort = 'time_stamp'; 
+            if ( $this->_event_type == 'queue' ) {
+                $dateSort = 'start_date';
+            }
+                 
             $this->_columnHeaders = array( 
                 array(
                     'name'      => ts('Contact'),
@@ -211,7 +216,7 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
                 array(
                     array(
                         'name'      => ts('Date'),
-                        'sort'      => 'start_date',
+                        'sort'      => $dateSort,
                         'direction' => CRM_Utils_Sort::DESCENDING,
                     ), 
                 ));
