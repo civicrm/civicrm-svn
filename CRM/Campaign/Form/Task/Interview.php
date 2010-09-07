@@ -71,6 +71,8 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
     private $_surveyValues;
     
     private $_resultOptions;
+    
+    private $_allowAjaxReleaseButton;
         
     /**
      * build all the data structures needed to build the form
@@ -139,12 +141,21 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
         //retrieve the contact details.
         $voterDetails = CRM_Campaign_BAO_Survey::voterDetails( $this->_contactIds, $returnProperties );
         
+        $this->_allowAjaxReleaseButton = false;
+        if ( $this->_votingTab &&
+             ( CRM_Core_Permission::check( 'manage campaign' ) ||
+               CRM_Core_Permission::check( 'administer CiviCampaign' ) ||
+               CRM_Core_Permission::check( 'release campaign contacts' ) ) ) {
+            $this->_allowAjaxReleaseButton = true;
+        }
+        
         $this->assign( 'votingTab',      $this->_votingTab );
         $this->assign( 'componentIds',   $this->_contactIds );
         $this->assign( 'voterDetails',   $voterDetails );
         $this->assign( 'readOnlyFields', $readOnlyFields );
         $this->assign( 'interviewerId',  $this->_interviewerId );
         $this->assign( 'surveyActivityIds', json_encode( $activityIds ) );
+        $this->assign( 'allowAjaxReleaseButton', $this->_allowAjaxReleaseButton );
         
         //get the survey values.
         $this->_surveyValues = $this->get( 'surveyValues' );
@@ -241,8 +252,14 @@ class CRM_Campaign_Form_Task_Interview extends CRM_Campaign_Form_Task {
             
             $this->add( 'text', "field[{$contactId}][note]", ts('Note') );
             
+            //need to keep control for release/reserve.
+            if ( $this->_allowAjaxReleaseButton ) {
+                $this->addElement( 'hidden', 
+                                   "field[{$contactId}][is_release_or_reserve]", 0,  
+                                   array('id'=>"field_{$contactId}_is_release_or_reserve") );
+            }
         }
-        $this->assign( 'surveyFields', $exposedSurveyFields );
+        $this->assign( 'surveyFields', empty( $exposedSurveyFields ) ? false : $exposedSurveyFields );
         
         //no need to get qf buttons.
         if ( $this->_votingTab ) return;  

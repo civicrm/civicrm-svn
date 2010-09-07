@@ -296,19 +296,33 @@ class CRM_Campaign_Page_AJAX
                 $status = 'success';
             }
         } else if ( $operation == 'reserve' ) {
+            $activityId     = null;
             $createActivity = true;
-            $ids = array( 'source_record_id', 
-                          'source_contact_id', 
-                          'target_contact_id', 
-                          'assignee_contact_id' );
-            $activityParams = array( );
-            foreach ( $ids as $id ) {
-                $val = CRM_Utils_Array::value( $id, $_POST );
-                if ( !$val ) {
+            if ( CRM_Utils_Array::value( 'activity_id', $_POST ) ) {
+                $activityId = CRM_Utils_Type::escape($_POST['activity_id'],  'Integer' );
+                if ( $activityId ) {
                     $createActivity = false;
-                    break;
+                    $activityUpdated = CRM_Core_DAO::setFieldValue( 'CRM_Activity_DAO_Activity', 
+                                                                    $activityId, 
+                                                                    'is_deleted', 
+                                                                    0 );
+                    if ( $activityUpdated ) $status = 'success';
                 }
-                $activityParams[$id] = CRM_Utils_Type::escape( $val, 'Integer' );
+            }
+            if ( $createActivity ) {
+                $ids = array( 'source_record_id', 
+                              'source_contact_id', 
+                              'target_contact_id', 
+                              'assignee_contact_id' );
+                $activityParams = array( );
+                foreach ( $ids as $id ) {
+                    $val = CRM_Utils_Array::value( $id, $_POST );
+                    if ( !$val ) {
+                        $createActivity = false;
+                        break;
+                    }
+                    $activityParams[$id] = CRM_Utils_Type::escape( $val, 'Integer' );
+                }
             }
             if ( $createActivity  ) {
                 $isReserved = CRM_Utils_String::strtoboolstr( CRM_Utils_Type::escape($_POST['isReserved'], 'String' ) );

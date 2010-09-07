@@ -54,13 +54,16 @@
 	        <th class="contact_details">{$fTitle}</th>
 	     {/foreach}
 	    
-	     {* display headers for survey fields *}
+	     {* display headers for profile survey fields *}
+	     {if $surveyFields}
 	     {foreach from=$surveyFields item=field key=fieldName}
                   <th>{if $field.data_type eq 'Date' } <img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$field.title}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValuesDate('{$field.name}')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" /> {else} <img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=$fieldName}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValues('{$fieldName}')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{/if}{$field.title}</th>
              {/foreach}
+	     {/if}
 
 	     <th><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=note}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValues('note')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{ts}Note{/ts}</th>
-	     <th><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=result}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValues('result')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{ts}Result{/ts}</th> 
+	     <th><img  src="{$config->resourceBase}i/copy.png" alt="{ts 1=result}Click to copy %1 from row one to all rows.{/ts}" onclick="copyValues('result')" class="action-icon" title="{ts}Click here to copy the value in row one to ALL rows.{/ts}" />{ts}Result{/ts}</th>
+	     <th></th> 
        </tr>
     </thead>
 
@@ -71,14 +74,9 @@
 	       <td class='name'>{$voterDetails.$voterId.$fName}</td>
 	    {/foreach}
 
-	    {* do check for profile fields *}
-	    {assign var=surveyFieldCount value=$surveyFields|@count}
-	    
-	    {* here build the survey fields *}
-	    {if $surveyFieldCount}
-	    {assign var=currentCount value='1'}
+	    {* here build the survey profile fields *}
+	    {if $surveyFields}
 	    {foreach from=$surveyFields item=field key=fieldName}
-                {assign var=n value=$field.name}
 		<td class="compressed">
                 {if ( $field.data_type eq 'Date') or 
 		    ( $n eq 'thankyou_date' ) or ( $n eq 'cancel_date' ) or ( $n eq 'receipt_date' ) or (  $n eq 'activity_date_time') }
@@ -87,14 +85,28 @@
                    {$form.field.$voterId.$n.html}
                 {/if}
 		</td> 
-		{assign var=currentCount value=$currentCount+1}     
             {/foreach}
 	    {/if}
 	    
 	    <td class='note'>{$form.field.$voterId.note.html}</td>
-	    <td class='result'>{$form.field.$voterId.result.html}
-		&nbsp;&nbsp;&nbsp;<a class="saveVoter button" style="float:right;" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">{ts}vote{/ts}</a>&nbsp;&nbsp;&nbsp;
-		<span id='restmsg_{$voterId}' class="ok" style="display:none; float:right;">{ts}Vote Saved.{/ts}</span> 
+	    <td class='result'>{$form.field.$voterId.result.html}</td>
+
+	    <td>
+		<a id = "interview_voter_button_{$voterId}" class='button' style="float:left;" href="#" title={ts}Vote{/ts} onClick="registerInterview( {$voterId} );return false;">
+		{ts}vote{/ts}
+		</a>
+		{if $allowAjaxReleaseButton}
+		   <a id="release_voter_button_{$voterId}" class='button'  href="#" title={ts}Release{/ts} onClick="releaseOrReserveVoter( {$voterId} );return false;">
+		   {ts}release{/ts}
+		   </a>
+		{/if}
+		<span id='restmsg_vote_{$voterId}' class="ok" style="display:none;float:right;">
+		     {ts}Vote Saved.{/ts}
+		</span>
+		
+		<span id='restmsg_release_or_reserve_{$voterId}' class="ok" style="display:none;float:right;">
+		  {ts}Released.{/ts}
+		</span>	
 	    </td>
 
 	</tr>
@@ -186,10 +198,60 @@
 	cj.post( dataUrl, data, function( interview ) {
 	       if ( interview.status == 'success' ) {
 	       	 cj("#row_"+voterId+' td.name').attr('class', 'name disabled' );
-		 cj("#restmsg_"+voterId).fadeIn("slow").fadeOut("slow");
-		 cj("#row_"+voterId+' a.saveVoter').html(updateVote);
+		 cj( '#restmsg_vote_' + voterId ).fadeIn("slow").fadeOut("slow");
+		 cj( '#interview_voter_button_' + voterId ).html(updateVote);
 	       }		 
-	}, "json" );
+	}, 'json' );
+    }
+    
+    function releaseOrReserveVoter( voterId ) 
+    {
+	if ( !voterId ) return; 
+
+	var surveyActivityIds = {/literal}{$surveyActivityIds}{literal};
+	activityId =  eval( "surveyActivityIds.activity_id_" + voterId );
+	if ( !activityId ) return;
+	
+	var operation  = 'release';	
+	var isReleaseOrReserve = cj( '#field_' + voterId + '_is_release_or_reserve' ).val( );
+	if ( isReleaseOrReserve == 1 ) {
+	     operation = 'reserve';
+	     isReleaseOrReserve = 0;
+	} else {
+	     isReleaseOrReserve = 1;
+	}
+
+	var data = new Object;
+	data['operation']   = operation;
+	data['isDelete']    = ( operation == 'release' ) ? 1 : 0;
+	data['activity_id'] = activityId; 
+
+	var actUrl = {/literal}
+	             "{crmURL p='civicrm/ajax/rest' h=0 q='className=CRM_Campaign_Page_AJAX&fnName=processVoterData'}"
+	             {literal};
+
+        //post data to release / reserve voter.
+        cj.post( actUrl, 
+  	         data, 
+	         function( response ) {
+	    	      if ( response.status == 'success' ) {
+			 if ( operation == 'release' ) {
+			      cj( '#interview_voter_button_' + voterId ).hide( );
+			      cj( '#restmsg_release_or_reserve' + voterId ).fadeIn( 'slow' ).fadeOut( 'slow' );
+			      cj( '#row_' + voterId + ' td.name' ).addClass( 'disabled' );
+			      cj( '#release_voter_button_'+ voterId ).html( "{/literal}{ts}reserve{/ts}{literal}"  );
+			      cj( '#release_voter_button_' + voterId ).attr('title',"{/literal}{ts}Reserve{/ts}{literal}");
+			  } else {
+			      cj( '#interview_voter_button_' + voterId ).show( );
+			      cj( '#restmsg_release_or_reserve' + voterId ).fadeIn( 'slow' ).fadeOut( 'slow' );
+			      cj( '#row_' + voterId + ' td.name' ).removeClass( 'disabled' ); 
+			      cj( '#release_voter_button_'+ voterId ).html( "{/literal}{ts}release{/ts}{literal}"  );
+			      cj( '#release_voter_button_' + voterId ).attr('title',"{/literal}{ts}Release{/ts}{literal}");
+			  }
+		      	  cj( '#field_' + voterId + '_is_release_or_reserve' ).val( isReleaseOrReserve );  
+		      }	     
+	         }, 
+		 'json' );		     
     }
     
 </script>
