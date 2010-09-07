@@ -1,5 +1,5 @@
 -- CRM-6696
-ALTER TABLE civicrm_option_value MODIFY COLUMN description text;
+ALTER TABLE civicrm_option_value {localize field='description'}MODIFY COLUMN description text{/localize};
 
 -- CRM-6157
 INSERT INTO civicrm_payment_processor_type
@@ -13,7 +13,7 @@ SELECT @max_value               := MAX(ROUND(value)) from civicrm_option_value w
 SELECT @max_weight              := MAX(ROUND(weight)) from civicrm_option_value where option_group_id = @option_group_id_website;;
 
 INSERT INTO civicrm_option_value
-        (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight, description, is_optgroup, is_reserved, is_active, component_id, visibility_id)
+        (option_group_id, {localize field='label'}label{/localize}, value, name, grouping, filter, is_default, weight, {localize field='description'}description{/localize}, is_optgroup, is_reserved, is_active, component_id, visibility_id)
 VALUES
-	(@option_group_id_website, {localize}'Main'{/localize}, @max_value+1, 'Main', NULL, 0, NULL, @max_weight+1, NULL, 0, 0, 1, NULL, NULL);
+	(@option_group_id_website, {localize}'Main'{/localize}, @max_value+1, 'Main', NULL, 0, NULL, @max_weight+1, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL);
 	
