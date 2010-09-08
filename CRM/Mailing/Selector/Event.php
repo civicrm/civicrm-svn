@@ -161,6 +161,12 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
         require_once 'CRM/Mailing/BAO/Mailing.php';
         $mailing = CRM_Mailing_BAO_Mailing::getTableName();
 
+        require_once 'CRM/Contact/BAO/Contact.php';
+        $contact    = CRM_Contact_BAO_Contact::getTableName();
+
+        require_once 'CRM/Core/BAO/Email.php';
+        $email      = CRM_Core_BAO_Email::getTableName();
+
         require_once 'CRM/Mailing/BAO/Job.php';
         $job = CRM_Mailing_BAO_Job::getTableName();
         if ( ! isset( $this->_columnHeaders ) ) {
@@ -168,12 +174,12 @@ class CRM_Mailing_Selector_Event    extends CRM_Core_Selector_Base
             $this->_columnHeaders = array( 
                 array(
                     'name'      => ts('Contact'),
-                    'sort'      => 'sort_name',
+                    'sort'      => $contact.'.sort_name',
                     'direction' => CRM_Utils_Sort::ASCENDING
                 ), 
                 array(
                     'name'      => ts('Email Address'),
-                    'sort'      => 'email',
+                    'sort'      => $email.'.email',
                     'direction' => CRM_Utils_Sort::DONTCARE,
 
                 ), 
