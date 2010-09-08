@@ -447,7 +447,7 @@ class CRM_Mailing_Event_BAO_Unsubscribe extends CRM_Mailing_Event_DAO_Unsubscrib
             $query .= " GROUP BY $queue.id ";
         }
 
-        $orderBy = "sort_name ASC, time_stamp DESC";
+        $orderBy = "sort_name ASC, {$unsub}.time_stamp DESC";
         if ($sort) {
             if ( is_string( $sort ) ) {
                 $orderBy = $sort;

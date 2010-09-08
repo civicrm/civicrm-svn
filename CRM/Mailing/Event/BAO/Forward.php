@@ -311,7 +311,7 @@ class CRM_Mailing_Event_BAO_Forward extends CRM_Mailing_Event_DAO_Forward {
             $query .= " GROUP BY $queue.id ";
         }
 
-        $orderBy = "sort_name ASC, time_stamp DESC";
+        $orderBy = "sort_name ASC, {$forward}.time_stamp DESC";
         if ($sort) {
             if ( is_string( $sort ) ) {
                 $orderBy = $sort;

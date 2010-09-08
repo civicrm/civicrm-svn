@@ -394,7 +394,7 @@ class CRM_Mailing_Event_BAO_Reply extends CRM_Mailing_Event_DAO_Reply {
             $query .= " GROUP BY $queue.id ";
         }
 
-        $orderBy = "sort_name ASC, time_stamp DESC";
+        $orderBy = "sort_name ASC, {$reply}.time_stamp DESC";
         if ($sort) {
             if ( is_string( $sort ) ) {
                 $orderBy = $sort;

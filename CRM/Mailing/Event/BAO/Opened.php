@@ -174,7 +174,7 @@ class CRM_Mailing_Event_BAO_Opened extends CRM_Mailing_Event_DAO_Opened {
             $query .= " GROUP BY $queue.id ";
         }
 
-        $orderBy = "sort_name ASC, time_stamp DESC";
+        $orderBy = "sort_name ASC, {$open}.time_stamp DESC";
         if ($sort) {
             if ( is_string( $sort ) ) {
                 $orderBy = $sort;
