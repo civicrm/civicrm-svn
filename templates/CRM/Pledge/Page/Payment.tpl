@@ -63,7 +63,7 @@
             {/if}
             <br/> 
             {capture assign=editURL}{crmURL p="civicrm/pledge/payment" q="reset=1&action=update&cid=`$contactId`&context=`$context`&ppId=`$row.id`"}{/capture}
-            {ts 1=$editURL}<a href='%1'>Edit Schedule</a>{/ts}
+            {ts 1=$editURL}<a href='%1'>Edit Scheduled Payment</a>{/ts}
         {/if}
         </td>
     {/if}

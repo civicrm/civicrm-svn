@@ -305,6 +305,7 @@ class CRM_Activity_BAO_Query
         switch ( $name ) {
             
         case 'civicrm_activity':
+            /*
         	if ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) {
 		        $from = " FROM civicrm_activity 
 		                  LEFT JOIN civicrm_activity_target  ON ( civicrm_activity_target.activity_id = civicrm_activity.id 
@@ -317,6 +318,11 @@ class CRM_Activity_BAO_Query
                                  AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
                 
             }
+            */
+            
+            $from .= " $side JOIN civicrm_activity_target ON civicrm_activity_target.target_contact_id = contact_a.id ";
+            $from .= " $side JOIN civicrm_activity ON ( civicrm_activity.id = civicrm_activity_target.activity_id 
+                             AND civicrm_activity.is_deleted = 0 AND civicrm_activity.is_current_revision = 1 )";
             
             break;
             

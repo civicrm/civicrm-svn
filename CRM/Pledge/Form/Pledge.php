@@ -221,7 +221,8 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             if (isset( $this->_values['amount'])) {
                 $defaults['amount'] = CRM_Utils_Money::format($this->_values['amount'], null, '%a');
             }
-            
+            $this->assign( 'amount',  $this->_values['amount'] );
+            $this->assign( 'installments', $defaults['installments'] );
         } else {
             //default values.
             list( $now ) = CRM_Utils_Date::setDateDefaults( );
@@ -233,8 +234,8 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             $defaults['initial_reminder_day']    = 5;
             $defaults['max_reminders']           = 1;
             $defaults['additional_reminder_day'] = 5;
-            $defaults['frequency_unit']          = array_search('monthly', $this->_freqUnits );
-            $defaults['contribution_type_id']    = array_search( 'Donation', CRM_Contribute_PseudoConstant::contributionType());
+            $defaults['frequency_unit']          = array_search( 'month', $this->_freqUnits );
+            $defaults['contribution_type_id']    = array_search( 'Donation', CRM_Contribute_PseudoConstant::contributionType() );
         }
         
         //assign status.
@@ -392,7 +393,7 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         
         if ( $this->_id &&
              !$this->_isPending ) {
-            $eachPaymentAmount = floor($this->_values['amount'] / $this->_values['installments']);
+            $eachPaymentAmount = $this->_values['original_installment_amount'];
             $this->assign("eachPaymentAmount" , $eachPaymentAmount );
             $this->assign("hideCalender" , true );
         }
@@ -554,7 +555,8 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
         }
         //format amount
         $params['amount'] = CRM_Utils_Rule::cleanMoney( CRM_Utils_Array::value( 'amount', $formValues ) );
-        
+        $params['original_installment_amount'] = ( $params['amount'] / $params['installments'] );
+
         $dates = array( 'create_date', 'start_date', 'acknowledge_date', 'cancel_date' );
         foreach ( $dates as $d ) {
             if ( $this->_id && !$this->_isPending ) {
@@ -641,6 +643,11 @@ class CRM_Pledge_Form_Pledge extends CRM_Core_Form
             require_once 'CRM/Pledge/BAO/Pledge.php';
             CRM_Pledge_BAO_Pledge::sendAcknowledgment( $this, $params );
 
+            if ( !isset( $this->userEmail ) ) {
+                list( $this->userDisplayName, 
+                      $this->userEmail ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $this->_contactID );
+            }
+            
             $statusMsg .= ' ' . ts( "An acknowledgment email has been sent to %1.<br />", array( 1 => $this->userEmail ) );
             
             //build the payment urls.

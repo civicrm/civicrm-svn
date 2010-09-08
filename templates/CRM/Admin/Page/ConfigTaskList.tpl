@@ -122,7 +122,7 @@
     </tr>
     <tr class="even">
         <td class="tasklist nowrap"><a href="{crmURL p="civicrm/group" q="reset=1&destination=`$destination`"}" title="{$linkTitle}">{ts}Manage Groups{/ts}</a></td>
-        <td>{ts}Use Groups to organize contacts (e.g. these contacts are members of our 'Steering Committee').{/ts}</li>
+        <td>{ts}Use Groups to organize contacts (e.g. these contacts are part of our 'Steering Committee').{/ts}</li>
     </tr>
 
     <tr class="columnheader">

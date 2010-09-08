@@ -632,9 +632,11 @@ class CRM_Contribute_Form_Contribution_Main extends CRM_Contribute_Form_Contribu
         
         $units    = array( );
         $unitVals = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $this->_values['recur_frequency_unit'] );
+        $frequencyUnits = CRM_Core_OptionGroup::values( 'recur_frequency_units' );
         foreach ( $unitVals as $key => $val ) {
-            // FIXME: this is not localisable
-            $units[$val] = $this->_values['is_recur_interval'] ? "{$val}(s)" : $val;
+            if ( array_key_exists( $val, $frequencyUnits ) ) {
+                $units[$val] = $this->_values['is_recur_interval'] ? "{$frequencyUnits[$val]}(s)" : $frequencyUnits[$val];
+            }
         }
 
         $frequencyUnit =& $this->add( 'select', 'frequency_unit', null, $units );

@@ -354,6 +354,9 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
                     if ( isset( $this->_params[0][ $timeField ] ) ) {
                         $defaults[ $timeField ] = $this->_params[0][ $timeField ];
                     }
+                    if ( isset( $this->_params[0]["{$name}_id"] ) ) {
+                        $defaults["{$name}_id"] = $this->_params[0]["{$name}_id"];
+                    }
                 } else if ( in_array($name, array('addressee', 'email_greeting', 'postal_greeting'))
                             && CRM_Utils_Array::value($name.'_custom', $this->_params[0]) ) { 
                     $defaults[$name.'_custom'] = $this->_params[0][$name.'_custom'];
@@ -979,8 +982,16 @@ class CRM_Event_Form_Registration_Confirm extends CRM_Event_Form_Registration
             }
         }
         
+        // since we are directly adding contact to group lets unset it from mailing
+        if ( !empty( $addToGroups ) ) {
+            foreach( $addToGroups as $groupId ) {
+                if ( isset( $subscribeGroupIds[$groupId] ) ) {
+                    unset( $subscribeGroupIds[$groupId] );
+                }
+            }
+        }        
+        
         require_once "CRM/Contact/BAO/Contact.php";
-
         if ($contactID) {
             $ctype = CRM_Core_DAO::getFieldValue( "CRM_Contact_DAO_Contact",
                                                   $contactID,

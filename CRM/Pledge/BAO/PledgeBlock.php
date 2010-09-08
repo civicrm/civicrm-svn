@@ -287,9 +287,12 @@ class CRM_Pledge_BAO_PledgeBlock extends CRM_Pledge_DAO_PledgeBlock
             //Frequency unit drop-down label suffixes switch from *ly to *(s)
             $freqUnitVals  = explode( CRM_Core_BAO_CustomOption::VALUE_SEPERATOR, $pledgeBlock['pledge_frequency_unit'] );
             $freqUnits = array( );
+            $frequencyUnits = CRM_Core_OptionGroup::values( 'recur_frequency_units' );
             foreach ( $freqUnitVals as $key => $val ) {
-                // FIXME: this is not localisable
-                $freqUnits[$val] = CRM_Utils_Array::value('is_pledge_interval', $pledgeBlock) ? "{$val}(s)" : $val;
+                if ( array_key_exists( $val, $frequencyUnits )  ) { 
+                    $freqUnits[$val] = CRM_Utils_Array::value('is_pledge_interval', $pledgeBlock) ? 
+                        "{$frequencyUnits[$val]}(s)" : $frequencyUnits[$val];
+                }
             }
             $form->addElement( 'select', 'pledge_frequency_unit', null, $freqUnits ); 
         }
