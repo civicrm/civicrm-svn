@@ -614,7 +614,7 @@ case_relation_type.id = case_relationship.relationship_type_id )";
         $config = CRM_Core_Config::singleton( );
 
         require_once "CRM/Case/PseudoConstant.php";
-        $caseTypes = CRM_Case_PseudoConstant::caseType( );
+        $caseTypes = CRM_Core_OptionGroup::values( 'case_type', false, false, false, null, 'label', false );
         if ( empty( $caseTypes ) ){
             $form->assign('notConfigured', 1);
         }

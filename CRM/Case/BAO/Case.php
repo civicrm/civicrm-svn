@@ -309,8 +309,9 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
     SELECT  ov.{$colName}
       FROM  civicrm_case ca  
 INNER JOIN  civicrm_option_group og ON og.name='case_type'
-INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_group_id=og.id)";
-        
+INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_group_id=og.id )
+     WHERE  ca.id = $caseId";
+                
         return CRM_Core_DAO::singleValueQuery( $sql );
     }
     
@@ -2622,6 +2623,26 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
         
         return $isCaseActivity;
     }
-    
+
+    /**
+     * Function to get all the case type ids currently in use 
+     *
+     * 
+     * @return array $caseTypeIds 
+     */
+    static function getUsedCaseType( ) 
+    {
+        $caseTypeIds = array( );
+        $dao = new CRM_Case_DAO_Case( );
+        $dao->is_deleted = 0;
+        $dao->find( );
+
+        while ( $dao->fetch( ) ) {
+            $typeId = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, $dao->case_type_id );
+            $caseTypeIds[$dao->id] = $typeId[1];
+        }
+        
+        return $caseTypeIds;
+    }
 }
 

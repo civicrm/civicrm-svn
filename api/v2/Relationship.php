@@ -405,7 +405,7 @@ function _civicrm_relationship_check_params( &$params ) {
     }
     
     if ( ! $valid ) {
-        return civicrm_create_error( "Required fields not found $error." );
+        return civicrm_create_error( "Required fields not found" . $error );
     }
     
     return array();

@@ -126,15 +126,15 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
                                            CRM_Utils_Array::value( 'case_type_id' , $values ) );
 
         $statuses      = CRM_Case_PseudoConstant::caseStatus( );
-        $caseTypeName  = CRM_Case_PseudoConstant::caseTypeName( $this->_caseID );
-        $caseType      = CRM_Core_OptionGroup::getLabel( 'case_type', $caseTypeName['id'] );
-
+        $caseTypeName  = CRM_Case_BAO_Case::getCaseType( $this->_caseID, 'name' );
+        $caseType      = CRM_Case_BAO_Case::getCaseType( $this->_caseID );
+        
         $this->_caseDetails = array( 'case_type'       => $caseType,
                                      'case_status'     => $statuses[$values['case_status_id']],
                                      'case_subject'    => CRM_Utils_Array::value( 'subject', $values ),
                                      'case_start_date' => $values['case_start_date']
                                    );
-        $this->_caseType = $caseTypeName['name'];
+        $this->_caseType = $caseTypeName;
         $this->assign ( 'caseDetails', $this->_caseDetails );
         
         $newActivityUrl = 
@@ -211,7 +211,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
     {
         //this call is for show related cases.
         if ( $this->_showRelatedCases ) return;
-        
+                
         $xmlProcessor = new CRM_Case_XMLProcessor_Process( );
         $caseRoles    = $xmlProcessor->get( $this->_caseType, 'CaseRoles' );
         $reports      = $xmlProcessor->get( $this->_caseType, 'ActivitySets' );

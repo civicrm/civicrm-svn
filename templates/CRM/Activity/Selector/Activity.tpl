@@ -108,9 +108,9 @@
   {/strip}
 
   {include file="CRM/common/pager.tpl" location="bottom"}
-  </form>
   
   {include file="CRM/Case/Form/ActivityToCase.tpl" contactID=$contactId}
+  </form>
 {else}
 
   <div class="messages status">

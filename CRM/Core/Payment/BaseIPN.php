@@ -691,6 +691,10 @@ class CRM_Core_Payment_BaseIPN {
             $template->assign( 'totalAmount' , $input['amount'] );
         }
 
+        if ( $contribution->contribution_type_id ) {
+            $values['contribution_type_id'] = $contribution->contribution_type_id;
+        } 
+
         $template->assign( 'trxn_id', $contribution->trxn_id );
         $template->assign( 'receive_date', 
                            CRM_Utils_Date::mysqlToIso( $contribution->receive_date ) );
