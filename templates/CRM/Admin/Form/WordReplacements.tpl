@@ -36,6 +36,9 @@
 {else}
 {* this template is used for adding/editing string overrides  *}
 <div class="crm-form crm-form-block crm-string_override-form-block">
+<div id="help">
+    {ts}Use <strong>Word Replacements</strong> to change all occurrences of a word or phrase in CiviCRM screens (e.g. replace all occurences of 'Contribution' with 'Donation').{/ts} {help id="id-word_replace"}
+</div>
 <table class="form-layout-compressed">
 	<tr>
 	    <td>

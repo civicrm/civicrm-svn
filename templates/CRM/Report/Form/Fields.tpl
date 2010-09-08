@@ -55,7 +55,13 @@
                 </div>
         </div>
  </div><!-- /.crm-accordion-body -->
-</div><!-- /.crm-accordion-wrapper -->    {/if} {* settings section ends *}
+</div><!-- /.crm-accordion-wrapper -->  
+{if $updateReportButton}
+<div id='update-button' class="crm-submit-buttons">
+   {$form.$save.html}
+</div>
+{/if}
+{/if} {* settings section ends *}
 
 {literal}
 <script type="text/javascript">

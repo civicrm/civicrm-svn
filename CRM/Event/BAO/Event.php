@@ -1013,7 +1013,7 @@ WHERE civicrm_event.is_active = 1
             }
         }
         
-        if ( $values['event']['is_email_confirm'] ) {
+        if ( $values['event']['is_email_confirm'] || $returnMessageText ) {
             require_once 'CRM/Contact/BAO/Contact/Location.php';
             //use primary email address, since we are not creating billing address for
             //1. participant is pay later.
@@ -1034,7 +1034,7 @@ WHERE civicrm_event.is_active = 1
             }
             
             //send email only when email is present
-            if ( isset( $email ) ) {
+            if ( isset( $email ) || $returnMessageText ) {
                 $preProfileID  = $values['custom_pre_id'];
                 $postProfileID = $values['custom_post_id'];
                 

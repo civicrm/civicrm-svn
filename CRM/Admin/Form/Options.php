@@ -219,8 +219,8 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         }
 
         $enabled = $this->add('checkbox', 'is_active', ts('Enabled?'));
-        
-        if ($isReserved) {
+       
+        if ( $isReserved ) {
             $enabled->freeze( );
         }
         

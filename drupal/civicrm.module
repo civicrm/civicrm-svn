@@ -864,3 +864,5 @@ function civicrm_theme_registry_alter(&$theme_registry) {
   		} 
   	}
 }
+
+

@@ -339,7 +339,7 @@ class CRM_Utils_System_Joomla {
     /* 
      * load joomla bootstrap
      */
-    static function loadBootStrap( $config ) {
+    static function loadBootStrap( ) {
         return true;
     }
     

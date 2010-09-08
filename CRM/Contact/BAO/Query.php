@@ -1918,8 +1918,7 @@ class CRM_Contact_BAO_Query
         }
 
         $tables = $newTables;
-        $unsetFrom = true;
-        
+                
         foreach ( $tables as $name => $value ) {
             if ( ! $value ) {
                 continue;
@@ -2007,10 +2006,6 @@ class CRM_Contact_BAO_Query
             case 'activity_status':
             case 'civicrm_activity_contact':
                 require_once 'CRM/Activity/BAO/Query.php';
-                if ( $unsetFrom && ( $mode & CRM_Contact_BAO_Query::MODE_ACTIVITY ) ) {
-                    $from = '';
-                    $unsetFrom = false;
-                }
                 $from .= CRM_Activity_BAO_Query::from( $name, $mode, $side );
                 continue; 
 
@@ -2822,12 +2817,12 @@ WHERE  id IN ( $groupIDs )
         if ( ($name == 'birth_date_low') ||($name == 'birth_date_high') ) {
           
             $this->dateQueryBuilder( $values,
-                                     'contact_a', 'birth_date', 'birth_date', ts('Birth Date'), false );
+                                     'contact_a', 'birth_date', 'birth_date', ts('Birth Date') );
     
         } else if( ($name == 'deceased_date_low') ||($name == 'deceased_date_high') ) {
           
             $this->dateQueryBuilder( $values,
-                                     'contact_a', 'deceased_date', 'deceased_date', ts('Deceased Date'), false );
+                                     'contact_a', 'deceased_date', 'deceased_date', ts('Deceased Date') );
         }
        
     }
