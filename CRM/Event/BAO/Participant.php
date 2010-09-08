@@ -590,16 +590,13 @@ GROUP BY  participant.event_id
             require_once 'CRM/Core/DAO/Note.php';
             $participantFields = CRM_Event_DAO_Participant::export( );
             $noteField         = array( 'participant_note' => array( 'title' => 'Participant Note',
-                                                                     'name'  => 'participant_note',
-                                                                     'data_type' => CRM_Utils_Type::T_TEXT ) );
+                                                                     'name'  => 'participant_note'));
 
             $participantStatus = array( 'participant_status' => array( 'title' => 'Participant Status',
-                                                                       'name'  => 'participant_status',
-                                                                       'data_type' => CRM_Utils_Type::T_STRING ) );
+                                                                       'name'  => 'participant_status' ) );
 
             $participantRole   = array( 'participant_role'   => array( 'title' => 'Participant Role',
-                                                                       'name'  => 'participant_role',
-                                                                       'data_type' => CRM_Utils_Type::T_STRING ) );
+                                                                       'name'  => 'participant_role' ) );
 
             require_once 'CRM/Core/DAO/Discount.php';
             $discountFields  = CRM_Core_DAO_Discount::export( );
