@@ -62,10 +62,12 @@ class CRM_Contribute_BAO_Query
             // add field to get recur_id
             $fields['contribution_recur_id'] = array('name'  => 'contribution_recur_id',
                                                      'title' => ts('Recurring Contributions ID'),
-                                                     'where' => 'civicrm_contribution.contribution_recur_id'
+                                                     'where' => 'civicrm_contribution.contribution_recur_id',
+                                                     'data_type' => CRM_Utils_Type::T_INT
                                                      );
             $fields['contribution_note']     = array('name'  => 'contribution_note',
-                                                     'title' => ts('Contribution Note')
+                                                     'title' => ts('Contribution Note'),
+                                                     'data_type' => CRM_Utils_Type::T_TEXT
                                                      );
 
             unset( $fields['contribution_contact_id'] );
@@ -185,10 +187,12 @@ class CRM_Contribute_BAO_Query
        
         case 'contribution_date':
         case 'contribution_date_low':
+        case 'contribution_date_low_time':
         case 'contribution_date_high':
+        case 'contribution_date_high_time':
             // process to / from date
             $query->dateQueryBuilder( $values,
-                                      'civicrm_contribution', 'contribution_date', 'receive_date', 'Contribution Date', false );
+                                      'civicrm_contribution', 'contribution_date', 'receive_date', 'Contribution Date' );
             return;
 
         case 'contribution_amount':

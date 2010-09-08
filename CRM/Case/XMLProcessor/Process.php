@@ -273,30 +273,19 @@ AND    a.is_current_revision = 1
         $query = "
 SELECT     count(a.id)
 FROM       civicrm_activity a
-INNER JOIN civicrm_activity_target t ON t.activity_id = a.id
 INNER JOIN civicrm_case_activity ca on ca.activity_id = a.id
-WHERE      t.target_contact_id = %1
-AND        a.activity_type_id  = %2
-AND       ca.case_id = %3
+WHERE      a.activity_type_id  = %1
+AND        ca.case_id = %2
 AND        a.is_deleted = 0
 ";
 
-        if( $this->_isMultiClient ) {
-            $client = $params['clientID'][0];
-        } else {
-            $client = $params['clientID'];
-        }
-
-
-
-        $sqlParams   = array( 1 => array( $client                  , 'Integer' ),
-                              2 => array( $params['activityTypeID'], 'Integer' ),
-                              3 => array( $params['caseID']        , 'Integer' ) );
+        $sqlParams   = array( 1 => array( $params['activityTypeID'], 'Integer' ),
+                              2 => array( $params['caseID']        , 'Integer' ) );
         $count       = CRM_Core_DAO::singleValueQuery( $query, $sqlParams );
         
         // check for max instance
-        $caseType    = CRM_Case_PseudoConstant::caseTypeName( $params['caseID'] );
-        $maxInstance = self::getMaxInstance( $caseType['name'], $params['activityTypeName'] );
+        $caseType    = CRM_Case_BAO_Case::getCaseType( $params['caseID'] );
+        $maxInstance = self::getMaxInstance( $caseType, $params['activityTypeName'] );
 
         return $maxInstance ? ($count < $maxInstance ? false : true) : false;  
     }

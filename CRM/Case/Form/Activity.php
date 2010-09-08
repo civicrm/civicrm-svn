@@ -138,8 +138,8 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             }
         }
         
-        $caseType  = CRM_Case_PseudoConstant::caseTypeName( $this->_caseId );
-        $this->_caseType  = $caseType['name'];
+        $caseType  = CRM_Case_BAO_Case::getCaseType( $this->_caseId, 'name' );
+        $this->_caseType = $caseType;
         $this->assign('caseType', $this->_caseType);
 
         require_once 'CRM/Case/XMLProcessor/Process.php';

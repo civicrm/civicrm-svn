@@ -38,7 +38,8 @@
 class CRM_Utils_PDF_Utils {
 
     static function domlib( $text,
-                            $fileName = 'civicrm.pdf' ) {
+                            $fileName = 'civicrm.pdf',
+                            $output = false ) {
         require_once 'packages/dompdf/dompdf_config.inc.php';
         $dompdf = new DOMPDF( );
         
@@ -103,7 +104,12 @@ class CRM_Utils_PDF_Utils {
                         
         $dompdf->load_html( $html );
         $dompdf->render( );
-        $dompdf->stream( $fileName );
+        
+        if ( $output ) {
+            return $dompdf->output( );
+        } else {
+            $dompdf->stream( $fileName );
+        }
     }
 
     static function html2pdf( $text,
@@ -226,7 +232,7 @@ class CRM_Utils_PDF_Utils {
                 header("Content-Disposition: inline; filename={$output}.pdf");
                 echo $buf;
                 CRM_Utils_System::civiExit( ); 
-           } else {
+            } else {
                 return $buf;
             }
         }

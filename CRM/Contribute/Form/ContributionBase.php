@@ -588,6 +588,12 @@ class CRM_Contribute_Form_ContributionBase extends CRM_Core_Form
 
         foreach ( $vars as $v ) {
             if ( CRM_Utils_Array::value( $v, $this->_params ) ) {
+                if ( $v == 'frequency_unit' || $v == 'pledge_frequency_unit' ) {
+                    $frequencyUnits =  CRM_Core_OptionGroup::values( 'recur_frequency_units' );
+                    if ( array_key_exists( $this->_params[$v], $frequencyUnits ) ) {
+                        $this->_params[$v] = $frequencyUnits[$this->_params[$v]];
+                    }
+                }
                 $this->assign( $v, $this->_params[$v] );
             }
         }
