@@ -309,8 +309,9 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
     SELECT  ov.{$colName}
       FROM  civicrm_case ca  
 INNER JOIN  civicrm_option_group og ON og.name='case_type'
-INNER JOIN  civicrm_option_value ov ON (ca.case_type_id=ov.value AND ov.option_group_id=og.id)";
-        
+INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_group_id=og.id )
+     WHERE  ca.id = $caseId";
+                
         return CRM_Core_DAO::singleValueQuery( $sql );
     }
     

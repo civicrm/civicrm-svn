@@ -134,14 +134,11 @@ class CRM_Case_XMLProcessor_Report extends CRM_Case_XMLProcessor {
             }
             $caseTypeIDs = explode( CRM_Core_DAO::VALUE_SEPARATOR,
                                     $dao->case_type_id );
-            $case['caseType'] = CRM_Core_OptionGroup::getLabel( 'case_type',
-                                                                $caseTypeID );
-
             require_once 'CRM/Case/BAO/Case.php';
-            $caseTypeName = CRM_Case_BAO_Case::getCaseType( $caseID, 'name' );
-            $case['caseTypeName'] = $caseTypeName;
-            $case['status'] = CRM_Core_OptionGroup::getLabel( 'case_status',
-                                                              $dao->status_id );
+            $case['caseType']     = CRM_Case_BAO_Case::getCaseType( $caseTypeID );
+            $case['caseTypeName'] = CRM_Case_BAO_Case::getCaseType( $caseID, 'name' );
+            $case['status']       = CRM_Core_OptionGroup::getLabel( 'case_status',
+                                                                    $dao->status_id );
         }
         return $case;
     }
