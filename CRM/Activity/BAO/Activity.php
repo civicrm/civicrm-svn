@@ -1544,6 +1544,14 @@ SELECT  display_name
             $activityParams['target_contact_id'] = $targetContactID;
         }
         
+        // create assignment activity if created by logged in user
+        $session = & CRM_Core_Session::singleton();
+        $id = $session->get('userID');
+        if ( $id ) { 
+            $activityParams['source_contact_id']   = $id;
+            $activityParams['assignee_contact_id'] = $activity->contact_id;
+        }
+
         require_once 'api/v2/Activity.php';
         if ( is_a( civicrm_activity_create( $activityParams ), 'CRM_Core_Error' ) ) {
             CRM_Core_Error::fatal("Failed creating Activity for $component of id {$activity->id}");
