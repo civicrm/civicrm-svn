@@ -154,19 +154,21 @@ class CRM_Case_XMLProcessor_Process extends CRM_Case_XMLProcessor {
         $relationshipTypes =& $this->allRelationshipTypes( );
 
         $result = array( );
-        foreach ( $caseRolesXML as $caseRoleXML ) {
-            foreach ( $caseRoleXML->RelationshipType as $relationshipTypeXML ) {
-                $relationshipTypeName = (string ) $relationshipTypeXML->name;
-                $relationshipTypeID   = array_search( $relationshipTypeName,
-                                                      $relationshipTypes );
-                if ( $relationshipTypeID === false ) {
-                    continue;
-                }
-              
-                if ( !$isCaseManager ) {    
-                    $result[$relationshipTypeID] = $relationshipTypeName;
-                } else if ( $relationshipTypeXML->manager ) {
-                    return $relationshipTypeID;
+        if ( is_array( $caseRolesXML ) ) {
+            foreach ( $caseRolesXML as $caseRoleXML ) {
+                foreach ( $caseRoleXML->RelationshipType as $relationshipTypeXML ) {
+                    $relationshipTypeName = (string ) $relationshipTypeXML->name;
+                    $relationshipTypeID   = array_search( $relationshipTypeName,
+                                                          $relationshipTypes );
+                    if ( $relationshipTypeID === false ) {
+                        continue;
+                    }
+                    
+                    if ( !$isCaseManager ) {    
+                        $result[$relationshipTypeID] = $relationshipTypeName;
+                    } else if ( $relationshipTypeXML->manager ) {
+                        return $relationshipTypeID;
+                    }
                 }
             }
         }
