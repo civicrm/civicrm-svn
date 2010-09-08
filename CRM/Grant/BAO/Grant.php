@@ -391,13 +391,20 @@ class CRM_Grant_BAO_Grant extends CRM_Grant_DAO_Grant
             }
             
             $grantFields = array( 'grant_status' => array( 'title' => 'Grant Status',
-                                                           'name'  => 'grant_status' ),
+                                                           'name'  => 'grant_status',
+                                                           'data_type' => CRM_Utils_Type::T_STRING ),
+
                                   'grant_type'   => array( 'title' => 'Grant Type',
-                                                           'name'  => 'grant_type' ) );
+                                                           'name'  => 'grant_type',
+                                                           'data_type' => CRM_Utils_Type::T_STRING ) ) ;
                                                            
             require_once 'CRM/Grant/DAO/Grant.php';
             $fields = CRM_Grant_DAO_Grant::export( );
-            $fields = array_merge( $fields, $grantFields, CRM_Core_BAO_CustomField::getFieldsForImport('Grant'));
+            $grantNote = array( 'grant_note' => array( 'title'     => ts('Grant Note'),
+                                                       'name'      => 'grant_note',
+                                                       'data_type' => CRM_Utils_Type::T_TEXT ) );
+            $fields = array_merge( $fields, $grantFields, $grantNote,
+                                   CRM_Core_BAO_CustomField::getFieldsForImport('Grant'));
             self::$_exportableFields = $fields;
         }
 
