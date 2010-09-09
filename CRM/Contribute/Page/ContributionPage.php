@@ -90,13 +90,6 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                           'qs'    => 'reset=1&action=preview&id=%%id%%',
                                                                           'title' => ts('Preview'),
                                                                           ),
-                                        CRM_Core_Action::FOLLOWUP    => array(
-                                                                          'name'  => ts('Live Page'),
-                                                                          'url'   => 'civicrm/contribute/transact',
-                                                                          'qs'    => 'reset=1&id=%%id%%',
-                                                                          'title' => ts('FollowUp'),
-                                                                          'fe'    =>'true',
-                                                                          ),
                                         CRM_Core_Action::DISABLE => array(
                                                                           'name'  => ts('Disable'),
                                                                           'title' => ts('Disable'),
@@ -304,8 +297,10 @@ ORDER BY title asc
                 $action -= CRM_Core_Action::DELETE; 
             }
             
-            $contribution[$dao->id]['action'] = CRM_Core_Action::formLink(self::actionLinks(), $action, 
-                                                                          array('id' => $dao->id));
+            $contribution[$dao->id]['action'] = CRM_Core_Action::formLink(self::actionLinks(), 
+                                                                          $action, 
+                                                                          array('id' => $dao->id),
+                                                                          true );
         }
         if (isset($contribution)) {
             $this->assign('rows', $contribution);

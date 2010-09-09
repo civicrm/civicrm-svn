@@ -63,7 +63,83 @@
                 </td>
                 <td>{$row.id}</td>
                 <td id="row_{$row.id}_status">{if $row.is_active eq 1} {ts}Yes{/ts} {else} {ts}No{/ts} {/if}</td>
-                <td>{$row.action|replace:'xx':$row.id}</td>
+
+		<td class="crm-contribution-page-actions right nowrap">
+		
+		  <div class="crm-contribution-page-configure-actions">
+		      <span id="contribution-page-configure-{$row.id}" class="btn-slide">{ts}Configure{/ts}
+		         <ul class="panel" id="panel_info_{$row.id}">
+		      	     <li>
+                                <a title="{ts}Title and Settings{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute' q="reset=1&action=update&id=`$row.id`&subPage=Settings"}">{ts}Title and Settings{/ts}
+                                </a>
+                             </li>
+		      	     <li>
+                                <a title="{ts}Contribution Amounts{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute' q="reset=1&action=update&id=`$row.id`&subPage=Amount"}">{ts}Contribution Amounts {/ts}
+                                </a>
+                             </li>
+		      	     <li>
+                                <a title="{ts}Membership Settings{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute' q="reset=1&action=update&id=`$row.id`&subPage=Membership"}">{ts}Membership Settings{/ts}
+                                </a>
+                             </li>
+		      	     <li>
+                                <a title="{ts}Include Profiles{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute' q="reset=1&action=update&id=`$row.id`&subPage=Custom"}">{ts}Include Profiles{/ts}
+                                </a>
+                             </li>
+		      	     <li>
+                                <a title="{ts}Thank-you and Receipting{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute' q="reset=1&action=update&id=`$row.id`&subPage=ThankYou"}">{ts}Thank-you and Receipting{/ts}
+                                </a>
+                             </li>
+		      	     <li>
+                                <a title="{ts}Tell a Friend{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute' q="reset=1&action=update&id=`$row.id`&subPage=Friend"}">{ts}Tell a Friend{/ts}
+                                </a>
+                             </li>
+		      	     <li>
+                                <a title="{ts}Personal Campaign Pages{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute' q="reset=1&action=update&id=`$row.id`&subPage=PCP"}">{ts}Personal Campaign Pages{/ts}
+                                </a>
+                             </li>
+		      	     <li>
+                                <a title="{ts}Contribution Widget{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute' q="reset=1&action=update&id=`$row.id`&subPage=Widget"}">{ts}Contribution Widget{/ts}
+                                </a>
+                             </li>
+		      	     <li>
+                                <a title="{ts}Premiums{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute' q="reset=1&action=update&id=`$row.id`&subPage=Premium"}">{ts}Premiums{/ts}
+                                </a>
+                             </li>
+		         </ul>
+		      </span>
+		  </div>
+
+		  <div class="crm-contribution-links-actions">
+		      <span id="contribution-page-links-{$row.id}" class="btn-slide">{ts}Links{/ts}
+		         <ul class="panel" id="panel_info_{$row.id}">
+		             <li>
+                                <a title="{ts}Live Page{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$row.id`"}">{ts}Live Page{/ts}
+                                </a>
+                             </li>
+		      	     <li>
+				<a title="{ts}Test-drive{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/contribute/transact' q="reset=1&action=preview&id=`$row.id`"}">{ts}Test-drive{/ts}
+				</a>
+			     </li>
+		         </ul>	    
+		      </span> 
+		  </div>
+
+		  
+		  <div class="crm-contribution-links-actions">
+		      <span id="contribution-page-links-{$row.id}" class="btn-slide">{ts}Contributions{/ts}
+		         <ul class="panel" id="panel_info_{$row.id}">
+		             <li>
+			     </li>
+			 </ul>
+		      </span>
+		  </div> 	 
+		  
+		  <div class="crm-contribution-page-more">
+                       {$row.action|replace:'xx':$row.id}
+                  </div>
+
+		</td>
+
             </tr>
         {/foreach}
         </table>
