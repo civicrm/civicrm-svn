@@ -590,7 +590,7 @@ WHERE sort_name LIKE '%$name%'";
 SELECT sort_name name, cc.id
 FROM civicrm_contact cc 
      {$aclFrom}
-WHERE {$queryString}
+WHERE cc.is_deceased = 0 AND {$queryString}
       {$aclWhere}
 ";
             
