@@ -17,3 +17,7 @@ INSERT INTO civicrm_option_value
 VALUES
 	(@option_group_id_website, {localize}'Main'{/localize}, @max_value+1, 'Main', NULL, 0, NULL, @max_weight+1, {localize}NULL{/localize}, 0, 0, 1, NULL, NULL);
 	
+-- CRM-6763
+UPDATE civicrm_option_group 
+   SET is_reserved = 0
+ WHERE civicrm_option_group.name = 'encounter_medium';
