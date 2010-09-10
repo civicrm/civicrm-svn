@@ -1486,6 +1486,13 @@ ORDER BY civicrm_email.is_primary DESC";
             //add contact id
             $data['contact_id'] = $contactID;
             $primaryLocationType = self::getPrimaryLocationType($contactID);
+            // preserve db name only if name field exist in params
+            $nameFields = array( 'first_name', 'middle_name', 'last_name' );
+            foreach ( $nameFields as $name ) {
+                if ( array_key_exists( "$name", $params ) ) {
+                    $params['preserveDBName'] = true;
+                }
+            }
         } else {
             require_once "CRM/Core/BAO/LocationType.php";
             $defaultLocation =& CRM_Core_BAO_LocationType::getDefault();
