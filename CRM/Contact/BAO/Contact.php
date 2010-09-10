@@ -753,12 +753,16 @@ WHERE id={$id}; ";
             $customFileUploadDirectory = strstr( $absolutePath, '/media' );
             $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;     
         } else if ( $config->userFramework == 'Drupal' ) {   
-            $absolutePathStr = strstr( $absolutePath, 'sites');
-            $relativePath =  $config->userFrameworkBaseURL . $absolutePathStr;
+            require_once 'CRM/Utils/System/Drupal.php';
+            $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
+            $relativePath = str_replace( $rootPath . DIRECTORY_SEPARATOR, 
+                                         $config->userFrameworkBaseURL, 
+                                         $absolutePath );
         } else if ( $config->userFramework == 'Standalone' ) {
             $absolutePathStr = strstr( $absolutePath, 'files');
             $relativePath = $config->userFrameworkBaseURL . $absolutePathStr;
         }
+        
         return $relativePath;
     }
  	
