@@ -78,18 +78,6 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
             $copyExtra = ts('Are you sure you want to make a copy of this Contribution page?');
             
             self::$_actionLinks = array(
-                                        CRM_Core_Action::UPDATE  => array(
-                                                                          'name'  => ts('Configure'),
-                                                                          'url'   => CRM_Utils_System::currentPath( ),
-                                                                          'qs'    => 'reset=1&action=update&id=%%id%%',
-                                                                          'title' => ts('Configure') 
-                                                                          ),
-                                        CRM_Core_Action::PREVIEW => array(
-                                                                          'name'  => ts('Test-drive'),
-                                                                          'url'   => 'civicrm/contribute/transact',
-                                                                          'qs'    => 'reset=1&action=preview&id=%%id%%',
-                                                                          'title' => ts('Preview'),
-                                                                          ),
                                         CRM_Core_Action::DISABLE => array(
                                                                           'name'  => ts('Disable'),
                                                                           'title' => ts('Disable'),
@@ -297,10 +285,11 @@ ORDER BY title asc
                 $action -= CRM_Core_Action::DELETE; 
             }
             
-            $contribution[$dao->id]['action'] = CRM_Core_Action::formLink(self::actionLinks(), 
-                                                                          $action, 
-                                                                          array('id' => $dao->id),
-                                                                          true );
+            $contribution[$dao->id]['action'] = CRM_Core_Action::formLink( self::actionLinks( ), 
+                                                                           $action, 
+                                                                           array('id' => $dao->id),
+                                                                           'more',
+                                                                           true );
         }
         if (isset($contribution)) {
             $this->assign('rows', $contribution);

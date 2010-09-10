@@ -187,7 +187,7 @@ class CRM_Core_Action {
         
         return CRM_Utils_Array::value( $mask, self::$_description, 'NO DESCRIPTION SET' );
     }
-
+    
     /**
      * given a set of links and a mask, return the html action string for
      * the links associated with the mask
@@ -195,19 +195,26 @@ class CRM_Core_Action {
      * @param array $links  the set of link items
      * @param int   $mask   the mask to be used. a null mask means all items
      * @param array $values the array of values for parameter substitution in the link items
-     *
+     * @param string  $extraULName            enclosed extra links in this UL.
+     * @param boolean $enclosedAllInSingleUL  force to enclosed all links in single UL.
+     * 
      * @return string       the html string
      * @access public
      * @static
      */
-    static function formLink( &$links, $mask, $values, $more = false ) {
-        $config = CRM_Core_Config::singleton();
+    static function formLink( &$links, 
+                              $mask, 
+                              $values, 
+                              $extraULName = 'more', 
+                              $enclosedAllInSingleUL = false ) 
+    {
+        $config = CRM_Core_Config::singleton( );
         if ( empty( $links ) ) {
             return null;
         }
         
         $url = array( );
-
+        
         $firstLink = true;
         foreach ( $links as $m => $link ) {
             if ( ! $mask || ( $mask & $m ) ) {
@@ -251,34 +258,34 @@ class CRM_Core_Action {
                                      $ref, $link['name'] );
                 }
             }
-            
         }
         
-        $result     = $resultDiv = '';
-        $actionLink = $url;
-        $actionDiv  = array_splice( $url, 2 );
-        $showDiv    = false;
-        if ( count( $actionDiv ) > 1 ) {
-            $actionLink = array_slice ( $url, 0, 2 );
-            $showDiv = true;
-        }
         require_once 'CRM/Utils/String.php';
-        CRM_Utils_String::append( $resultLink, '', $actionLink );
         
-        if ( $showDiv ) {
-            CRM_Utils_String::append( $resultDiv, '</li><li>', $actionDiv );
-            $resultDiv  = ts('more')."<ul id='panel_xx' class='panel'><li>{$resultDiv}</li></ul>";
-        }
-        
-        if ($resultDiv) {
-            if ($more == true) {
-                $result = "<span class='btn-slide' id=xx>{$resultDiv}</span>";
-            } else {
-                $result = "<span>{$resultLink}</span><span class='btn-slide' id=xx>{$resultDiv}</span>";
-            }
+        $result = '';
+        $mainLinks  = $url;
+        if ( $enclosedAllInSingleUL ) {
+            $allLinks = '';
+            CRM_Utils_String::append( $allLinks, '</li><li>', $mainLinks );
+            $allLinks = ts('%1', array( 1 => $extraULName ) )."<ul id='panel_xx' class='panel'><li>{$allLinks}</li></ul>"; 
+            $result = "<span class='btn-slide' id=xx>{$allLinks}</span>";
         } else {
-        	$result = "<span>{$resultLink}</span>";
+            $extra = '';
+            $extraLinks = array_splice( $url, 2 );
+            if ( count( $extraLinks ) > 1 ) {
+                $mainLinks = array_slice ( $url, 0, 2 );
+                CRM_Utils_String::append( $extra, '</li><li>', $extraLinks );
+                $extra = ts('%1', array( 1 => $extraULName ) )."<ul id='panel_xx' class='panel'><li>{$extra}</li></ul>"; 
+            }
+            $resultLinks = '';
+            CRM_Utils_String::append( $resultLinks, '', $mainLinks );
+            if ( $extra ) {
+                $result = "<span>{$resultLinks}</span><span class='btn-slide' id=xx>{$extra}</span>";
+            } else {
+                $result = "<span>{$resultLinks}</span>";
+            }
         }
+        
         return $result;
     }
     
