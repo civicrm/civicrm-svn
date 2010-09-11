@@ -33,9 +33,23 @@
 {/if}
 </div>
 
+{*
+This is an example of how to fetch content from a drupal node (that contains a cck petitionid)
+
+{php}
+Piyush, put you code here that fetches the data from drupal
+
+$this->assign('url', $node->url);
+$this->title ('url')...
+...
+
+{/php}
+
 <!-- Social Networking -->
 <div class="socialnetwork">
   <fb:like href="{$url}"></fb:like>
 <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
 <a href="http://twitter.com/share?text=Sign the petition: {$title}&url={$url}" class="twitter-share-button">Tweet</a>
 </div>
+
+*}
