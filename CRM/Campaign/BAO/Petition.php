@@ -38,8 +38,10 @@ require_once 'CRM/Campaign/BAO/Survey.php';
 
 Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 {
-    const
-        COOKIE_EXPIRE = 604800; // expire cookie in one week
+    function __construct() {
+       parent::__construct();
+       $this->cookieExpire = (1000 * 60 * 60 * 24); // expire cookie in one day
+    }
 		
     /**
      * takes an associative array and creates a petition signature activity
@@ -96,6 +98,37 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
         return $activity;
     }
 
+    function confirmSignature($activity_id,$contact_id,$petition_id) {
+      //change activity status to completed (status_id=2)	
+          $query = "UPDATE civicrm_activity SET status_id = 2 
+                WHERE 	id = $activity_id 
+                AND  	source_contact_id = $contact_id";
+          CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+
+      // remove 'Unconfirmed' tag for this contact
+      define('CIVICRM_TAG_UNCONFIRMED','Unconfirmed');
+      
+      if (defined('CIVICRM_TAG_UNCONFIRMED')) {
+        // Check if contact 'email confirmed' tag exists, else create one
+        // This should be in the petition module initialise code to create a default tag for this
+        require_once 'api/v2/Tag.php';	
+        $tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
+        $tag = civicrm_tag_get($tag_params); 
+        
+        require_once 'api/v2/EntityTag.php';				
+        unset($tag_params);
+        $tag_params['contact_id'] = $contact_id;
+        $tag_params['tag_id'] = $tag['id'];			
+        $tag_value = civicrm_entity_tag_remove($tag_params);	
+      }
+          
+      // set permanent cookie to indicate this users email address now confirmed
+      require_once 'CRM/Campaign/BAO/Petition.php';
+      setcookie('confirmed_'.$petition_id, $activity_id, time() + $this->cookieExpire, '/');						
+          return true;
+    }    
+
+
      /**
      * Function to get Petition Signature Total 
      * 
@@ -104,28 +137,31 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
      * @static
      */
     static function getPetitionSignatureTotalbyCountry ( $surveyId ) {
-    	$surveyInfo = CRM_Campaign_BAO_Petition::getSurveyInfo((int) $surveyId);
-    	//$activityTypeID = $surveyInfo['activity_type_id'];
-        $signature = array( );	
-        
+        $countries = array( );	
         $sql = "
-SELECT 
-		status_id,country, count(id) as total
- FROM  	civicrm_activity
+SELECT count(civicrm_address.country_id) as total,
+    IFNULL(country_id,'') as country_id,IFNULL(iso_code,'') as country_iso, IFNULL(civicrm_country.name,'') as country
+ FROM  	civicrm_activity a, civicrm_survey, civicrm_contact
+  LEFT JOIN civicrm_address ON civicrm_address.contact_id = civicrm_contact.id  
+  LEFT JOIN civicrm_country ON civicrm_address.country_id = civicrm_country.id
 WHERE 
-	source_record_id = " . (int) $surveyId  . 
-	" AND activity_type_id = " . (int)  $surveyInfo['activity_type_id'] . 
-" GROUP BY status_id";
-        require_once 'CRM/Contact/BAO/Contact.php'; 
-
-        $statusTotal = array();$total =0;
+  a.source_contact_id = civicrm_contact.id AND
+  a.activity_type_id = civicrm_survey.activity_type_id AND
+  civicrm_survey.id =  $surveyId AND  
+	a.source_record_id =  $surveyId  ";
+     if ($status_id)
+       $sql .= " AND status_id = ". (int) $status_id;
+  $sql .= " GROUP BY civicrm_address.country_id";
+     $fields = array ('total','country_id','country_iso','country');
         $dao =& CRM_Core_DAO::executeQuery( $sql );
         while ( $dao->fetch() ) {
-          $total += $dao->total;
-          $statusTotal['status'][$dao->status_id] = $dao->total;
+           $row = array();
+           foreach ($fields as $field) {
+             $row[$field] = $dao->$field;
+           }
+           $countries [] = $row;
         }
-        $statusTotal['count']=$total;
-        return $statusTotal;
+        return $countries;
     }    
 
      /**
@@ -310,7 +346,7 @@ WHERE 	a.source_record_id = " . $surveyId . "
      * @access public
      * @static
      */
-    static function sendEmail( $params, $sendEmailMode )
+    function sendEmail( $params, $sendEmailMode )
     {
     
     /* sendEmailMode
@@ -383,13 +419,11 @@ WHERE 	a.source_record_id = " . $surveyId . "
 					);
 				}			
 				
-				//TODO: check if Facebook login and add Fb specific text to email 
-				
 				// set permanent cookie to indicate this petition already signed on the computer
-				setcookie('signed_'.$params['sid'], $params['activityId'], time() + self::COOKIE_EXPIRE, '/');
+				setcookie('signed_'.$params['sid'], $params['activityId'], time() + $this->cookieExpire, '/');
 				
 				// set permanent cookie to indicate this users email address already confirmed
-				setcookie('confirmed_'.$params['sid'], $params['activityId'], time() + self::COOKIE_EXPIRE, '/');
+				setcookie('confirmed_'.$params['sid'], $params['activityId'], time() + $this->cookieExpire, '/');
 				
     			break;
     			
@@ -440,7 +474,7 @@ WHERE 	a.source_record_id = " . $surveyId . "
 				}		
 				
 				// set permanent cookie to indicate this petition already signed on the computer
-				setcookie('signed_'.$params['sid'], $params['activityId'], time() + self::COOKIE_EXPIRE, '/');
+				setcookie('signed_'.$params['sid'], $params['activityId'], time() + $this->cookieExpire, '/');
     			break;    			
     	}
 	}
@@ -606,40 +640,6 @@ WHERE 	a.source_record_id = " . $surveyId . "
         }
         return $str;
     }
-
-     /**
-     * Function to get Petition Drupal Node Path/Alias 
-     * 
-     * @param int $surveyId
-     * @static
-     */
-    static function getPetitionDrupalNodeData( $surveyId ) {
-
-        $config =& CRM_Core_Config::singleton( );
-	    if ( $config->userFramework == 'Drupal' ) {
-				
-			$surveyId = (int)$surveyId;// sql injection protection
-			
-			// if Drupal node uses cck integer field petitionid
-			// there will be a 'content_field_petitionid' table in the Drupal database
-			// that stores field_petitionid_value against nid (node id)
-			
-			$result = db_query("SELECT nid FROM content_field_petitionid WHERE field_petitionid_value = " . $surveyId);
-			
-			if (count($result) > 1) {
-				die("Error: more than one url alias for petition node");
-			} else {
-				global $base_url;
-				$petition = array();
-				$data = db_fetch_array ($result);
-				$petition_node['url'] = $base_url . "/" . drupal_get_path_alias("node/".$data['nid']);
-				$petition_node['title'] = node_page_title(node_load($data['nid']));
-				
-				return $petition_node;
-			}			
-		}
-		
-	}
 
 
 
