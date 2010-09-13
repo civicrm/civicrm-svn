@@ -259,6 +259,10 @@ WHERE cp.contribution_page_id = {$id}";
         require_once 'CRM/Core/Permission.php'; 
         $allowToDelete = CRM_Core_Permission::check( 'delete in CiviContribute' );
         
+        //get all section info.
+        require_once 'CRM/Contribute/BAO/ContributionPage.php';
+        $contriPageSectionInfo = CRM_Contribute_BAO_ContributionPage::getSectionInfo( );
+        
         $query = "
 SELECT *
 FROM civicrm_contribution_page

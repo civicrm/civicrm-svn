@@ -508,5 +508,72 @@ WHERE entity_table = 'civicrm_contribution_page'
         }
         return false;
     }
+    
+    
+    /**                                                           
+     * Function to get info for all sections enable/disable.
+     *
+     * @return array $info info regarding all sections.
+     * @access public 
+     */
+    function getSectionInfo( ) 
+    {
+        static $info; 
+        if ( is_array( $info ) ) {
+            return $info;
+        }
+        
+        $info = array( );
+        $sections = array( 'Settings',
+                           'Amount',
+                           'Membership',
+                           'Custom',
+                           'ThankYou',
+                           'Friend',
+                           'PCP',
+                           'Widget',
+                           'Premium', 
+                           );
+        $query =  "
+   SELECT  civicrm_contribution_page.id as id,
+           civicrm_contribution_page.contribution_type_id as Settings, 
+           amount_block_is_active as Amount, 
+           civicrm_membership_block.id as Membership,
+           civicrm_uf_join.id as Custom,
+           civicrm_contribution_page.thankyou_title as ThankYou,
+           civicrm_tell_friend.id as Friend,
+           civicrm_pcp_block.id as PCP,
+           civicrm_contribution_widget.id as Widget,
+           civicrm_premiums.id as Premium
+     FROM  civicrm_contribution_page
+LEFT JOIN  civicrm_membership_block    ON ( civicrm_membership_block.entity_id = civicrm_contribution_page.id
+                                            AND civicrm_membership_block.entity_table = 'civicrm_contribution_page'
+                                            AND civicrm_membership_block.is_active = 1 )
+LEFT JOIN  civicrm_uf_join             ON ( civicrm_uf_join.entity_id = civicrm_contribution_page.id 
+                                            AND civicrm_uf_join.entity_table = 'civicrm_contribution_page' 
+                                            AND civicrm_uf_join.is_active = 1 )
+LEFT JOIN  civicrm_tell_friend         ON ( civicrm_tell_friend.entity_id = civicrm_contribution_page.id 
+                                            AND civicrm_tell_friend.entity_table = 'civicrm_contribution_page'
+                                            AND civicrm_tell_friend.is_active = 1)
+LEFT JOIN  civicrm_pcp_block           ON ( civicrm_pcp_block.entity_id = civicrm_contribution_page.id 
+                                            AND civicrm_pcp_block.entity_table = 'civicrm_contribution_page' 
+                                            AND civicrm_pcp_block.is_active = 1 ) 
+LEFT JOIN  civicrm_contribution_widget ON ( civicrm_contribution_widget.contribution_page_id = civicrm_contribution_page.id 
+                                            AND civicrm_contribution_widget.is_active = 1 )
+LEFT JOIN  civicrm_premiums            ON ( civicrm_premiums.entity_id = civicrm_contribution_page.id 
+                                            AND civicrm_premiums.entity_table = 'civicrm_contribution_page' 
+                                            AND civicrm_premiums.premiums_active = 1 )
+           ";
+        
+        $contributionPage = CRM_Core_DAO::executeQuery( $query );
+        while ( $contributionPage->fetch( ) ) {
+            foreach ( $sections as $section ) {
+                $info[$contributionPage->id][$section] = ( $contributionPage->$section ) ? true : false;
+            }
+        }
+        
+        return $info;
+    }
+    
 }
 
