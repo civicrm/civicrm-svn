@@ -371,12 +371,6 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         if (is_array($hookCaseSummary)) {
             $this->assign('hookCaseSummary', $hookCaseSummary);
         }
-        
-        require_once('CRM/Utils/Hook.php');
-        $hookCaseSummary = CRM_Utils_Hook::caseSummary( $this->_caseID );
-        if (is_array($hookCaseSummary)) {
-            $this->assign('hookCaseSummary', $hookCaseSummary);
-        }
 		
         require_once 'CRM/Core/BAO/EntityTag.php';
         require_once 'CRM/Core/BAO/Tag.php';
