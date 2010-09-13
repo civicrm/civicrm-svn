@@ -57,7 +57,7 @@
 
       {foreach from=$usedBy.civicrm_contribution_page item=contributionPage key=id}
            <tr>
-               <td><a href="{crmURL p="civicrm/admin/contribute" q="action=update&reset=1&subPage=Amount&id=`$id`"}">{$contributionPage.title}</a></td>
+               <td><a href="{crmURL p="civicrm/admin/contribute/amount" q="action=update&reset=1&id=`$id`"}">{$contributionPage.title}</a></td>
                <td>{$contributionPage.type}</td>
                <td>{$contributionPage.startDate|crmDate}{if $contributionPage.endDate}&nbsp;to&nbsp;{$contributionPage.endDate|crmDate}{/if}</td>
            </tr>

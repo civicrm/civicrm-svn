@@ -41,7 +41,8 @@ require_once 'CRM/Contribute/PseudoConstant.php';
 /**
  * form to process actions on the group aspect of Custom Data
  */
-class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
+class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
+{
 
     /**
      * the page id saved to the session for an update
@@ -83,7 +84,6 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
      */  
     protected $_priceSetID = null;
     
-
     /**
      * Function to set variables up before form is built
      *
@@ -93,8 +93,13 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form {
     public function preProcess()
     {
         // current contribution page id
-        $this->_id     = $this->get( 'id' );
+        $this->_id = CRM_Utils_Request::retrieve('id', 'Positive',
+                                                 $this, false, 0);
         $this->_single = $this->get( 'single' );
+
+        // get the requested action
+        $this->_action = CRM_Utils_Request::retrieve('action', 'String',
+                                                     $this, false, 'browse'); // default to 'browse'
 
         if ( !$this->_single ) {
             $session = CRM_Core_Session::singleton();
