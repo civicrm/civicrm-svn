@@ -68,12 +68,9 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
         list( $displayName, $email ) = CRM_Contact_BAO_Contact_Location::getEmailDetails( $contact_id );
         $this->assign( 'display_name', $displayName);
         $this->assign( 'email'       , $email );
+        $this->assign( 'petition_id'       , $petition_id );
 
-		// assign url and Drupal node title for social networking / share links
-	    require_once 'CRM/Campaign/BAO/Petition.php';		    
-	    $petition_node = CRM_Campaign_BAO_Petition::getPetitionDrupalNodeData($petition_id);
-		$this->assign('url', $petition_node['url']);
-		$this->assign('title', $petition_node['title']);
+		$this->assign('survey_id', $petition_id);
 		
 		// send thank you email
 		require_once 'CRM/Campaign/Form/Petition/Signature.php';
@@ -118,36 +115,9 @@ class CRM_Campaign_Page_Petition_Confirm extends CRM_Core_Page
         CRM_Contact_BAO_GroupContact::updateGroupMembershipStatus( $contact_id, $se->group_id,
                                                                    'Email',$ce->id);
 
-		//change activity status to completed (status_id=2)	
-        $query = "UPDATE civicrm_activity SET status_id = 2 
-        			WHERE 	id = $activity_id 
-        			AND  	source_contact_id = $contact_id";
-        CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
-
-		// remove 'Unconfirmed' tag for this contact
-		define('CIVICRM_TAG_UNCONFIRMED','Unconfirmed');
-		
-		if (defined('CIVICRM_TAG_UNCONFIRMED')) {
-			// Check if contact 'email confirmed' tag exists, else create one
-			// This should be in the petition module initialise code to create a default tag for this
-			require_once 'api/v2/Tag.php';	
-			$tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
-			$tag = civicrm_tag_get($tag_params); 
-			
-			require_once 'api/v2/EntityTag.php';				
-			unset($tag_params);
-			$tag_params['contact_id'] = $contact_id;
-			$tag_params['tag_id'] = $tag['id'];			
-			$tag_value = civicrm_entity_tag_remove($tag_params);	
-		}
-        
-        $transaction->commit( );
-        
-		// set permanent cookie to indicate this users email address now confirmed
-		require_once 'CRM/Campaign/BAO/Petition.php';
-		setcookie('confirmed_'.$petition_id, $activity_id, time() + CRM_Campaign_BAO_Petition::COOKIE_EXPIRE, '/');						
-        return true;
-    }    
-    
+        require_once 'CRM/Campaign/BAO/Petition.php';
+        $bao = new CRM_Campaign_BAO_Petition ();
+        $bao->confirmSignature($activity_id,$contact_id,$petition_id);
+    }
 }
 

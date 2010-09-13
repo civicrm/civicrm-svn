@@ -42,6 +42,8 @@ class CRM_Campaign_Page_Petition_ThankYou extends CRM_Core_Page
     function run( ) {
 		$id = CRM_Utils_Request::retrieve('id', 'Positive', $this );
 		$petition_id = CRM_Utils_Request::retrieve('pid', 'Positive', $this );
+		$this->assign('survey_id', $petition_id );
+		$this->assign('status_id', $id );
 		
 			// send thank you or email verification emails
 			/* 
@@ -51,32 +53,7 @@ class CRM_Campaign_Page_Petition_ThankYou extends CRM_Core_Page
 			 * 	 	login using fb connect - thank you + click to add msg to fb wall
 			 * 2 = send a confirmation request email     
 			 */		
-		switch ($id) {			
-			case 2:
-				$message = "An email has been sent to you to confirm your email address";				
-				break;
-			case 4: //already signed but waiting for email confirmation
-				$message = "You have already signed this petition but we need to confirm your email address.";				
-				break;	
-			case 5: //already signed and email confirmed
-				$message = "You have already signed this petition. Thank you.";				
-				break;	
-			default:
-				$message = "Thank you for signing the petition.";
-				break;
-		}
-		
-		// assign url and Drupal node title for social networking / share links
-		$this->assign('message', $message );
-		
-	    require_once 'CRM/Campaign/BAO/Petition.php';		    
-	    $petition_node = CRM_Campaign_BAO_Petition::getPetitionDrupalNodeData($petition_id);
-		$this->assign('url', $petition_node['url']);
-		$this->assign('title', $petition_node['title']);
 		
 		parent::run();		
     }   
-    
-    
 }
-

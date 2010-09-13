@@ -24,12 +24,24 @@
  +--------------------------------------------------------------------+
 *}
 
-<p>{$message}</p>
+{*<h1>Thank you</h2>*}
+{if $status_id eq 2}
+<p>An email has been sent to you to confirm your email address.
+</p>
+<p>
+You <b>need to click on the link in this email</b> to have your signature counted.<br>
+If you don't receive an email within the next few minutes, check your spam folder, it might have been wrongly classified.
+</p>
 
-<!-- Social Networking -->
-<div class="socialnetwork">
-  <fb:like href="{$url}"></fb:like>
-<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
-<a href="http://twitter.com/share?text=Sign the petition: {$title}&url={$url}" class="twitter-share-button">Tweet</a>
-</div>
+{/if}
+{if $status_id eq 4}
+<p>You have already signed this petition but we <b>need to confirm your email address</b>.</p>
+If you haven't received an email from us, check your spam folder, it might have been wrongly classified.<br/>
+{/if}
+{if $status_id eq 5}
+<p>You have already signed this petition.</p>
+{/if}
 
+{if $status_id neq 2}{* if asked to confirm the email, focus on that and don't put additional messages *}
+{include file="CRM/Campaign/Page/Petition/SocialNetwork.tpl" petition_id=$survey_id}
+{/if}

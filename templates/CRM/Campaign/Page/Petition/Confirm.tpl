@@ -26,30 +26,11 @@
 <div class="messages status">
       <div class="icon inform-icon"></div>&nbsp;
 {if $success}
-      <p>{ts 1=$display_name 2=$email 3=$group}<strong>%1 - your email address '%2' has been successfully verified.</strong>{/ts}</p>
+      <p>{ts 1=$display_name 2=$email}<strong>%1 - your email address '%2' has been successfully verified.</strong>{/ts}</p>
 		<p>Thank you for signing {$title}.</p>
+    {include file="CRM/Campaign/Page/Petition/SocialNetwork.tpl"}
 {else}
       {ts}Oops. We encountered a problem in processing your email verification. Please contact the site administrator.{/ts}
 {/if}
 </div>
 
-{*
-This is an example of how to fetch content from a drupal node (that contains a cck petitionid)
-
-{php}
-Piyush, put you code here that fetches the data from drupal
-
-$this->assign('url', $node->url);
-$this->title ('url')...
-...
-
-{/php}
-
-<!-- Social Networking -->
-<div class="socialnetwork">
-  <fb:like href="{$url}"></fb:like>
-<script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
-<a href="http://twitter.com/share?text=Sign the petition: {$title}&url={$url}" class="twitter-share-button">Tweet</a>
-</div>
-
-*}
