@@ -361,8 +361,10 @@ class CRM_Utils_System_Drupal {
         foreach ( $pathVars as $var ) {
             if ( $var ) {
                 $cmsRoot .= DIRECTORY_SEPARATOR . $var;
+                $cmsIncludePath = $cmsRoot . DIRECTORY_SEPARATOR .'includes';
                 //stop as we found bootstrap.
-                if ( file_exists( "$cmsRoot/includes/bootstrap.inc" ) ) { 
+                if ( @opendir( $cmsIncludePath ) && 
+                     file_exists( $cmsIncludePath . DIRECTORY_SEPARATOR . 'bootstrap.inc' ) ) { 
                     $valid = true;
                     break;
                 }

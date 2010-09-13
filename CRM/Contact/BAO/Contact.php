@@ -753,12 +753,16 @@ WHERE id={$id}; ";
             $customFileUploadDirectory = strstr( $absolutePath, '/media' );
             $relativePath = $userFrameworkBaseURL . $customFileUploadDirectory;     
         } else if ( $config->userFramework == 'Drupal' ) {   
-            $absolutePathStr = strstr( $absolutePath, 'sites');
-            $relativePath =  $config->userFrameworkBaseURL . $absolutePathStr;
+            require_once 'CRM/Utils/System/Drupal.php';
+            $rootPath = CRM_Utils_System_Drupal::cmsRootPath( );
+            $relativePath = str_replace( $rootPath . DIRECTORY_SEPARATOR, 
+                                         $config->userFrameworkBaseURL, 
+                                         $absolutePath );
         } else if ( $config->userFramework == 'Standalone' ) {
             $absolutePathStr = strstr( $absolutePath, 'files');
             $relativePath = $config->userFrameworkBaseURL . $absolutePathStr;
         }
+        
         return $relativePath;
     }
  	
@@ -1482,6 +1486,13 @@ ORDER BY civicrm_email.is_primary DESC";
             //add contact id
             $data['contact_id'] = $contactID;
             $primaryLocationType = self::getPrimaryLocationType($contactID);
+            // preserve db name only if name field exist in params
+            $nameFields = array( 'first_name', 'middle_name', 'last_name' );
+            foreach ( $nameFields as $name ) {
+                if ( array_key_exists( "$name", $params ) ) {
+                    $params['preserveDBName'] = true;
+                }
+            }
         } else {
             require_once "CRM/Core/BAO/LocationType.php";
             $defaultLocation =& CRM_Core_BAO_LocationType::getDefault();
