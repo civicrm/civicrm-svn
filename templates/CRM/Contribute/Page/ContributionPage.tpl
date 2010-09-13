@@ -66,48 +66,11 @@
 
 		<td class="crm-contribution-page-actions right nowrap">
 		
+		  {if $row.configureActionLinks}	
 		  <div class="crm-contribution-page-configure-actions">
-		      <span id="contribution-page-configure-{$row.id}" class="btn-slide">{ts}Configure{/ts}
-		         <ul class="panel" id="panel_info_{$row.id}">
-		      	     <li>
-                                <a title="{ts}Title and Settings{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute/settings' q="reset=1&action=update&id=`$row.id`"}">{ts}Title and Settings{/ts}
-                                </a>
-                             </li>
-		      	     <li>
-                                <a title="{ts}Contribution Amounts{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute/amount' q="reset=1&action=update&id=`$row.id`"}">{ts}Contribution Amounts {/ts}
-                                </a>
-                             </li>
-		      	     <li>
-                                <a title="{ts}Membership Settings{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute/membership' q="reset=1&action=update&id=`$row.id`"}">{ts}Membership Settings{/ts}
-                                </a>
-                             </li>
-		      	     <li>
-                                <a title="{ts}Include Profiles{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute/custom' q="reset=1&action=update&id=`$row.id`"}">{ts}Include Profiles{/ts}
-                                </a>
-                             </li>
-		      	     <li>
-                                <a title="{ts}Thank-you and Receipting{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute/thankYou' q="reset=1&action=update&id=`$row.id`"}">{ts}Thank-you and Receipting{/ts}
-                                </a>
-                             </li>
-		      	     <li>
-                                <a title="{ts}Tell a Friend{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute/friend' q="reset=1&action=update&id=`$row.id`"}">{ts}Tell a Friend{/ts}
-                                </a>
-                             </li>
-		      	     <li>
-                                <a title="{ts}Personal Campaign Pages{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute/pcp' q="reset=1&action=update&id=`$row.id`"}">{ts}Personal Campaign Pages{/ts}
-                                </a>
-                             </li>
-		      	     <li>
-                                <a title="{ts}Contribution Widget{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute/widget' q="reset=1&action=update&id=`$row.id`"}">{ts}Contribution Widget{/ts}
-                                </a>
-                             </li>
-		      	     <li>
-                                <a title="{ts}Premiums{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/admin/contribute/premium' q="reset=1&action=update&id=`$row.id`"}">{ts}Premiums{/ts}
-                                </a>
-                             </li>
-		         </ul>
-		      </span>
+		       {$row.configureActionLinks|replace:'xx':$row.id}
 		  </div>
+                  {/if}
 
 		  <div class="crm-contribution-links-actions">
 		      <span id="contribution-page-links-{$row.id}" class="btn-slide">{ts}Links{/ts}

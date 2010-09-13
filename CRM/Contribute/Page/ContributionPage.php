@@ -56,7 +56,8 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
      * @var array
      */
     private static $_actionLinks;
-
+    private static $_configureActionLinks;
+    
     private static $_links = null;
 
     protected $_pager = null;
@@ -99,7 +100,8 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                           ),
                                         CRM_Core_Action::COPY     => array(
                                                                            'name'  => ts('Copy Contribution Page'),
-                                                                           'url'   => CRM_Utils_System::currentPath( ),                                                                                                'qs'    => 'action=copy&gid=%%id%%',
+                                                                           'url'   => CRM_Utils_System::currentPath( ),
+                                                                           'qs'    => 'action=copy&gid=%%id%%',
                                                                            'title' => ts('Make a Copy of CiviCRM Contribution Page'),
                                                                            'extra' => 'onclick = "return confirm(\'' . $copyExtra . '\');"',
                                                                            ),
@@ -107,7 +109,81 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
         }
         return self::$_actionLinks;
     }
-
+    
+    /**
+     * Get the configure action links for this page.
+     *
+     * @return array $_configureActionLinks
+     *
+     */
+    function &configureActionLinks( )
+    {
+        // check if variable _actionsLinks is populated
+        if ( !isset( self::$_configureActionLinks ) ) {
+            $urlString = 'civicrm/admin/contribute/';
+            $urlParams = 'reset=1&action=update&id=%%id%%';
+            
+            self::$_configureActionLinks = array(
+                                                 CRM_Core_Action::ADD      => array( 
+                                                                                    'name'  => ts('Title and Settings'),
+                                                                                    'title' => ts('Title and Settings'),
+                                                                                    'url'   => $urlString.'settings',
+                                                                                    'qs'    => $urlParams,
+                                                                                     ),
+                                                 CRM_Core_Action::UPDATE   => array( 
+                                                                                    'name'  => ts('Contribution Amounts'),
+                                                                                    'title' => ts('Contribution Amounts'),
+                                                                                    'url'   => $urlString.'amount',
+                                                                                    'qs'    => $urlParams,
+                                                                                     ),
+                                                 CRM_Core_Action::VIEW     => array( 
+                                                                                    'name'  => ts('Membership Settings'),
+                                                                                    'title' => ts('Membership Settings'),
+                                                                                    'url'   => $urlString.'membership',
+                                                                                    'qs'    => $urlParams,
+                                                                                     ),
+                                                 CRM_Core_Action::PROFILE  => array( 
+                                                                                    'name'  => ts('Include Profiles'),
+                                                                                    'title' => ts('Include Profiles'),
+                                                                                    'url'   => $urlString.'custom',
+                                                                                    'qs'    => $urlParams,
+                                                                                     ),
+                                                 CRM_Core_Action::EXPORT   => array( 
+                                                                                    'name'  => ts('Thank-you and Receipting'),
+                                                                                    'title' => ts('Thank-you and Receipting'),
+                                                                                    'url'   => $urlString.'thankYou',
+                                                                                    'qs'    => $urlParams,
+                                                                                     ),
+                                                 CRM_Core_Action::BASIC    => array( 
+                                                                                    'name'  => ts('Tell a Friend'),
+                                                                                    'title' => ts('Tell a Friend'),
+                                                                                    'url'   => $urlString.'friend',
+                                                                                    'qs'    => $urlParams,
+                                                                                     ),
+                                                 CRM_Core_Action::ADVANCED => array( 
+                                                                                    'name'  => ts('Personal Campaign Pages'),
+                                                                                    'title' => ts('Personal Campaign Pages'),
+                                                                                    'url'   => $urlString.'pcp',
+                                                                                    'qs'    => $urlParams,
+                                                                                     ),
+                                                 CRM_Core_Action::PREVIEW  => array( 
+                                                                                    'name'  => ts('Contribution Widget'),
+                                                                                    'title' => ts('Contribution Widget'),
+                                                                                    'url'   => $urlString.'widget',
+                                                                                    'qs'    => $urlParams,
+                                                                                     ),
+                                                 CRM_Core_Action::FOLLOWUP => array( 
+                                                                                    'name'  => ts('Premiums'),
+                                                                                    'title' => ts('Premiums'),
+                                                                                    'url'   => $urlString.'premium',
+                                                                                    'qs'    => $urlParams,
+                                                                                     ),
+                                                 );
+        }
+        
+        return self::$_configureActionLinks;
+    }
+    
     /**
      * Run the page.
      *
@@ -272,11 +348,18 @@ ORDER BY title asc
 
         $dao = CRM_Core_DAO::executeQuery( $query, $params, true, 'CRM_Contribute_DAO_ContributionPage' );
         
+        //get configure actions links.
+        $configureActionLinks = self::configureActionLinks( );
+        
         while ($dao->fetch()) {
             $contribution[$dao->id] = array();
             CRM_Core_DAO::storeValues($dao, $contribution[$dao->id]);
+            
             // form all action links
             $action = array_sum(array_keys($this->actionLinks()));
+            
+            //add configure actions links.
+            $action += array_sum( array_keys( $configureActionLinks ) );
             
             if ( $dao->is_active ) {
                 $action -= CRM_Core_Action::ENABLE;
@@ -294,7 +377,17 @@ ORDER BY title asc
                                                                            array('id' => $dao->id),
                                                                            'more',
                                                                            true );
+            
+            //build the configure links.
+            $sectionsInfo = CRM_Utils_Array::value( $dao->id, $contriPageSectionInfo, array( ) );
+            $contribution[$dao->id]['configureActionLinks'] = CRM_Core_Action::formLink( self::formatConfigureLinks( $sectionsInfo ), 
+                                                                                         $action, 
+                                                                                         array('id' => $dao->id ),
+                                                                                         ts( 'Configure' ),
+                                                                                         true );
+            
         }
+        
         if (isset($contribution)) {
             $this->assign('rows', $contribution);
         }        
@@ -402,6 +495,33 @@ SELECT count(id)
 
         $aToZBar = CRM_Utils_PagerAToZ::getAToZBar( $dao, $this->_sortByCharacter, true );
         $this->assign( 'aToZ', $aToZBar );
+    }
+    
+    function formatConfigureLinks( $sectionsInfo ) 
+    {
+        //build the formatted configure links.
+        $formattedConfLinks = self::configureActionLinks( );
+        if ( !is_array( $sectionsInfo ) || empty( $sectionsInfo ) ) {
+            return $formattedConfLinks;
+        }
+        
+        foreach ( $formattedConfLinks as $act => &$link ) {
+            $classes = array( );
+            if ( isset( $link['ref'] ) ) { 
+                $classes = $link['ref']; 
+            }
+            
+            $sectionName = array_pop( explode( '/', $link['url'] ) );
+            if ( !CRM_Utils_Array::value( $sectionName, $sectionsInfo ) ) {
+                $classes = array( );
+                if ( isset( $link['ref'] ) ) { 
+                    $classes = $link['ref']; 
+                }
+                $link['ref'] = array_merge( $classes, array( 'disabled' ) );
+            }
+        }
+        
+        return $formattedConfLinks;
     }
 }
 

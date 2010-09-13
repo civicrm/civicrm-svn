@@ -524,27 +524,27 @@ WHERE entity_table = 'civicrm_contribution_page'
         }
         
         $info = array( );
-        $sections = array( 'Settings',
-                           'Amount',
-                           'Membership',
-                           'Custom',
-                           'ThankYou',
-                           'Friend',
-                           'PCP',
-                           'Widget',
-                           'Premium', 
+        $sections = array( 'settings',
+                           'amount',
+                           'membership',
+                           'custom',
+                           'thankYou',
+                           'friend',
+                           'pcp',
+                           'widget',
+                           'premium', 
                            );
         $query =  "
    SELECT  civicrm_contribution_page.id as id,
-           civicrm_contribution_page.contribution_type_id as Settings, 
-           amount_block_is_active as Amount, 
-           civicrm_membership_block.id as Membership,
-           civicrm_uf_join.id as Custom,
-           civicrm_contribution_page.thankyou_title as ThankYou,
-           civicrm_tell_friend.id as Friend,
-           civicrm_pcp_block.id as PCP,
-           civicrm_contribution_widget.id as Widget,
-           civicrm_premiums.id as Premium
+           civicrm_contribution_page.contribution_type_id as settings, 
+           amount_block_is_active as amount, 
+           civicrm_membership_block.id as membership,
+           civicrm_uf_join.id as custom,
+           civicrm_contribution_page.thankyou_title as thankYou,
+           civicrm_tell_friend.id as friend,
+           civicrm_pcp_block.id as pcp,
+           civicrm_contribution_widget.id as widget,
+           civicrm_premiums.id as premium
      FROM  civicrm_contribution_page
 LEFT JOIN  civicrm_membership_block    ON ( civicrm_membership_block.entity_id = civicrm_contribution_page.id
                                             AND civicrm_membership_block.entity_table = 'civicrm_contribution_page'
