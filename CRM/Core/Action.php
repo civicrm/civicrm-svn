@@ -234,28 +234,34 @@ class CRM_Core_Action {
                     $urlPath = CRM_Utils_Array::value( 'url', $link );
                 }
                 
-                $ref = '';
-                if ( isset( $link['ref'] ) ) {
-                    $ref = "class = {$link['ref']}";
-                }
-                $linkClass = "action-item";
-                if ( $firstLink) {
-                    $linkClass .= " action-item-first";
+                $classes = 'action-item';
+                if ( $firstLink ) {
                     $firstLink = false;
+                    $classes .= " action-item-first";
                 }
+                
+                //get the user specified classes in.
+                if ( isset( $link['ref'] ) ) {
+                    $className = $link['ref'];
+                    if ( is_array( $className ) ) {
+                        $className = implode( ' ', $className );
+                    }
+                    $classes .= ' '. strtolower( $className );
+                }
+                $linkClasses = 'class = "' . $classes . '"';
+                
                 if ( $urlPath ) {
-                    if( $frontend ) $extra .= "target=_blank"; 
-                    $url[] = sprintf('<a href="%s" class="%s" title="%s" %s ' . $extra . '>%s</a>',
+                    if( $frontend ) $extra .= "target=_blank";
+                    $url[] = sprintf('<a href="%s" %s title="%s"' . $extra . '>%s</a>',
                                      $urlPath,
-                                     $linkClass,
-                                     CRM_Utils_Array::value( 'title', $link )
-                                     , $ref, $link['name'] );
-                } else {
-                    $linkClass .= ' '. strtolower( $link['ref'] );
-                    $url[] = sprintf('<a title="%s" class="%s" %s ' . $extra . '>%s</a>',
+                                     $linkClasses,
                                      CRM_Utils_Array::value( 'title', $link ),
-                                     $linkClass,
-                                     $ref, $link['name'] );
+                                     $link['name'] );
+                } else {
+                    $url[] = sprintf( '<a title="%s"  %s ' . $extra . '>%s</a>',
+                                      CRM_Utils_Array::value( 'title', $link ),
+                                      $linkClasses,
+                                      $link['name'] );
                 }
             }
         }
