@@ -46,7 +46,7 @@
         {* &nbsp;{$row.contact_type_icon}<br /> *}
         <span id="{$list}{$row.case_id}_show">
 	    <a href="#" onclick="show('{$list}CaseDetails{$row.case_id}', 'table-row');
-                             {$list}CaseDetails('{$row.case_id}','{$row.contact_id}'); 
+                             {$list}CaseDetails('{$row.case_id}','{$row.contact_id}', '{$list}'); 
                              hide('{$list}{$row.case_id}_show');
                              show('minus{$list}{$row.case_id}_hide');
                              show('{$list}{$row.case_id}_hide','table-row');
@@ -68,7 +68,7 @@
     {if $list eq 'upcoming'}
     	 <td class="crm-case-case_scheduled_activity">
 	   {if $row.case_upcoming_activity_viewable}
-	      <a href="javascript:viewActivity({$row.case_scheduled_activity_id}, {$row.contact_id});" title="{ts}View this activity.{/ts}">{$row.case_scheduled_activity_type}</a>
+	      <a href="javascript:{$list}viewActivity({$row.case_scheduled_activity_id}, {$row.contact_id}, '{$list}');" title="{ts}View this activity.{/ts}">{$row.case_scheduled_activity_type}</a>
 	   {else}
 	      {$row.case_scheduled_activity_type}	
 	   {/if}    
@@ -83,7 +83,7 @@
     {elseif $list eq 'recent'}
     	 <td class="crm-case-case_recent_activity">
 	 {if $row.case_recent_activity_viewable}	
-	     <a href="javascript:viewActivity({$row.case_recent_activity_id}, {$row.contact_id});" title="{ts}View this activity.{/ts}">{$row.case_recent_activity_type}</a>
+	     <a href="javascript:{$list}viewActivity({$row.case_recent_activity_id}, {$row.contact_id}, '{$list}');" title="{ts}View this activity.{/ts}">{$row.case_recent_activity_type}</a>
 	  {else}
 	     {$row.case_recent_activity_type}
 	  {/if}   
@@ -116,16 +116,22 @@
     {/if}
 
 </table>
+
+{*include activity view js file*}
+{include file="CRM/common/activityView.tpl" list=$list}
+<div id="view-activity-{$list}">
+    <div id="activity-content-{$list}"></div>
+</div>
 {/strip}
 
 {* Build case details*}
 {literal}
 <script type="text/javascript">
 
-function {/literal}{$list}{literal}CaseDetails( caseId, contactId )
+function {/literal}{$list}{literal}CaseDetails( caseId, contactId, type )
 {
 
-  var dataUrl = {/literal}"{crmURL p='civicrm/case/details' h=0 q='snippet=4&caseId='}{literal}" + caseId +'&cid=' + contactId;
+  var dataUrl = {/literal}"{crmURL p='civicrm/case/details' h=0 q='snippet=4&caseId='}{literal}" + caseId +'&cid=' + contactId + '&type=' + type;
   cj.ajax({
             url     : dataUrl,
             dataType: "html",

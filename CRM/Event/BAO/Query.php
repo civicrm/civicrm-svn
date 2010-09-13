@@ -517,6 +517,7 @@ class CRM_Event_BAO_Query
                                 'participant_id'            => 1,
                                 'participant_status'        => 1,
                                 'participant_role'          => 1,
+                                'participant_note'          => 1,
                                 'participant_register_date' => 1,
                                 'participant_source'        => 1,
                                 'participant_fee_level'     => 1,
