@@ -667,7 +667,7 @@ WHERE  $whereCond
             
             require_once 'CRM/Pledge/DAO/Pledge.php';
             $fields = CRM_Pledge_DAO_Pledge::export( );
-
+            
             require_once 'CRM/Pledge/DAO/Payment.php';
             $fields = array_merge( $fields, CRM_Pledge_DAO_Payment::export( ) );
             
@@ -680,9 +680,20 @@ WHERE  $whereCond
                                        'pledge_payment_paid_date'   => array( 'title' => ts('Paid Date') )
                                        );
 
-            $pledgeFields     = array( 'pledge_status'     => array( 'title' => 'Pledge Status',
-                                                                     'name'  => 'pledge_status' ) );
-
+            
+            $pledgeFields     = array( 'pledge_status'               => array( 'title'    => 'Pledge Status',
+                                                                               'name'     => 'pledge_status',
+                                                                               'data_type'=> CRM_Utils_Type::T_STRING ),
+                                       'pledge_frequency_unit'       => array( 'title'    => 'Pledge Frequency Unit',
+                                                                               'name'     => 'pledge_frequency_unit',
+                                                                               'data_type'=> CRM_Utils_Type::T_ENUM ),
+                                       'pledge_frequency_interval'   => array( 'title'    => 'Pledge Frequency Interval',
+                                                                               'name'     => 'pledge_frequency_interval',
+                                                                               'data_type'=> CRM_Utils_Type::T_INT ),
+                                       'pledge_contribution_page_id' => array( 'title'    => 'Pledge Contribution Page Id',
+                                                                               'name'     => 'pledge_contribution_page_id',
+                                                                               'data_type'=> CRM_Utils_Type::T_INT ) );
+            
             $fields = array_merge( $fields, $pledgeFields, $calculatedFields );
            
             // add custom data

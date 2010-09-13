@@ -146,11 +146,14 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
                    ts('Label'),
                    CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionValue', 'label' ),
                    true );
-        $this->addRule( 'label',
-                        ts('This Label already exists in the database for this option group. Please select a different Value.'),
-                        'optionExists',
-                        array( 'CRM_Core_DAO_OptionValue', $this->_id, $this->_gid, 'label' ) );
-
+        
+        if ( !in_array( $this->_gName, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) && ! $isReserved ) {
+            $this->addRule( 'label',
+                            ts('This Label already exists in the database for this option group. Please select a different Value.'),
+                            'optionExists',
+                            array( 'CRM_Core_DAO_OptionValue', $this->_id, $this->_gid, 'label' ) );
+        }
+        
         if ( $this->_gName == 'case_status' ) {
             $classes = array( 'Opened' => ts('Opened'),
                               'Closed' => ts('Closed') );
@@ -271,6 +274,23 @@ class CRM_Admin_Form_Options extends CRM_Admin_Form
         if ( $self->_gName == 'case_status' && !CRM_Utils_Array::value( 'grouping', $fields ) ) {
             $errors['grouping'] = ts('Status class is a required field');
         } 
+
+        if ( in_array( $self->_gName, array( 'email_greeting', 'postal_greeting', 'addressee' ) ) 
+             && !$self->_defaultValues['is_reserved'] ) {
+            $label     = $fields['label'];
+            $condition = " AND v.label = '{$label}' ";
+            $values    = CRM_Core_OptionGroup::values( $self->_gName, false, false, false, $condition, 'filter' );
+            $checkContactOptions = true;
+            
+            if ( $self->_id && ( $self->_defaultValues['contactOptions'] == $fields['contactOptions'] ) ) {
+                $checkContactOptions = false;
+            }
+            
+            if ( $checkContactOptions && in_array( $fields['contactOptions'], $values ) ) {
+                $errors['label'] = ts('This Label already exists in the database for the selected contact type.');
+            }
+        }
+
         if ( $self->_gName == 'from_email_address' ) {
             require_once 'CRM/Utils/Mail.php';
             $formEmail = CRM_Utils_Mail::pluckEmailFromHeader( $fields['label'] );

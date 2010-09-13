@@ -310,9 +310,11 @@ class CRM_Case_BAO_Case extends CRM_Case_DAO_Case
       FROM  civicrm_case ca  
 INNER JOIN  civicrm_option_group og ON og.name='case_type'
 INNER JOIN  civicrm_option_value ov ON ( ca.case_type_id=ov.value AND ov.option_group_id=og.id )
-     WHERE  ca.id = $caseId";
-                
-        return CRM_Core_DAO::singleValueQuery( $sql );
+     WHERE  ca.id = %1";
+
+        $params = array( 1 => array( $caseId, 'Integer' ) );
+        
+        return CRM_Core_DAO::singleValueQuery( $sql, $params );
     }
     
     /**                                                           
@@ -880,7 +882,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
      *
      * @static
      */
-    static function getCaseActivity( $caseID, &$params, $contactID, $context = null, $userID = null )
+    static function getCaseActivity( $caseID, &$params, $contactID, $context = null, $userID = null, $type = null )
     {
         $values = array( );
                         
@@ -1082,7 +1084,7 @@ WHERE civicrm_relationship.relationship_type_id = civicrm_relationship_type.id A
             //check for view activity.
             $subject = (empty($dao->subject)) ? '(' . ts('no subject') . ')'  : $dao->subject;
             if ( $allowView ) {
-                $subject = "<a href='javascript:viewActivity( {$dao->id}, {$contactID} );' title='{$viewTitle}'>{$subject}</a>"; 
+                $subject = "<a href='javascript:{$type}viewActivity( {$dao->id}, {$contactID}, \"{$type}\" );' title='{$viewTitle}'>{$subject}</a>"; 
             }
             $values[$dao->id]['subject'] = $subject;
            

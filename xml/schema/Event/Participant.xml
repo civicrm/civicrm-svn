@@ -159,6 +159,7 @@
       <uniqueName>participant_registered_by_id</uniqueName> 
       <type>int unsigned</type> 
       <title>Registered By ID</title>
+      <import>true</import>
       <default>NULL</default>
       <comment>FK to Participant ID</comment> 
       <add>2.1</add> 

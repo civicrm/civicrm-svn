@@ -255,9 +255,9 @@ class CRM_Case_BAO_Query
             return;
             
         case 'case_type_id':
-            require_once "CRM/Case/PseudoConstant.php";
-            $caseTypes = CRM_Case_PseudoConstant::caseType( );
-            
+            require_once "CRM/Core/OptionGroup.php";
+            $caseTypes = CRM_Core_OptionGroup::values( 'case_type', false, false, false, null, 'label', false );
+                        
             $names = array( );
             $val   = array( );
             if ( is_array( $value ) ) {

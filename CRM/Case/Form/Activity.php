@@ -166,7 +166,16 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
             $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
                                           "reset=1&action=view&cid={$this->_currentlyViewedContactId}&id={$this->_caseId}&show=1" );
         }
-        if ( !$this->_activityId ) { 
+        if ( !$this->_activityId ) {
+            $caseTypes = CRM_Core_OptionGroup::values( 'case_type' );
+            if ( empty( $caseTypes ) && ( $this->_activityTypeName == 'Change Case Type' ) ) {
+                $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
+                                              "reset=1&action=view&cid={$this->_currentlyViewedContactId}&id={$this->_caseId}&show=1" );
+                $session = CRM_Core_Session::singleton( );
+                $session->pushUserContext( $url );
+                CRM_Core_Error::statusBounce( ts("You do not have any active Case Types" ) );
+            }
+
             // check if activity count is within the limit
             $xmlProcessor  = new CRM_Case_XMLProcessor_Process( );
             $activityInst  = $xmlProcessor->getMaxInstance($this->_caseType);

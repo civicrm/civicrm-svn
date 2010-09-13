@@ -178,6 +178,9 @@
 
 function reloadWindow( tempId ) {
 
+   //ignore form navigation, CRM-6815
+   global_formNavigate = true;
+
    //freeze the event type element 
    //when template form is loading.
    cj( "#event_type_id" ).attr('disabled', true );

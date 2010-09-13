@@ -470,12 +470,23 @@ class CRM_Contribute_BAO_Contribution extends CRM_Contribute_DAO_Contribution
             $expFieldsContrib   = CRM_Contribute_DAO_ContributionProduct::export( );
             $typeField          = CRM_Contribute_DAO_ContributionType::export( );
             $optionField        = CRM_Core_OptionValue::getFields($mode ='contribute' );
-            $contributionStatus = array( 'contribution_status' => array( 'title' => 'Contribution Status',
-                                                                         'name'  => 'contribution_status' ) );
-                                       
+            $contributionStatus = array( 'contribution_status' => array( 'title'     => 'Contribution Status',
+                                                                         'name'      => 'contribution_status',
+                                                                         'data_type' => CRM_Utils_Type::T_STRING ) );
+            
+            $contributionNote   = array( 'contribution_note' => array( 'title'     => ts('Contribution Note'),
+                                                                       'name'      => 'contribution_note',
+                                                                       'data_type' => CRM_Utils_Type::T_TEXT ) );
+            
+            $contributionRecurId = array( 'contribution_recur_id' => array ( 'title' => ts('Recurring Contributions ID'),
+                                                                             'name'  => 'contribution_recur_id',
+                                                                             'where' => 'civicrm_contribution.contribution_recur_id',
+                                                                             'data_type' => CRM_Utils_Type::T_INT ) );
+            
             $fields = array_merge( $impFields, $typeField, $contributionStatus, $optionField, $expFieldProduct,
-                                   $expFieldsContrib, CRM_Core_BAO_CustomField::getFieldsForImport('Contribution') );
-                            
+                                   $expFieldsContrib, $contributionNote, $contributionRecurId, 
+                                   CRM_Core_BAO_CustomField::getFieldsForImport('Contribution') );
+            
             self::$_exportableFields = $fields;
         }
         return self::$_exportableFields;
