@@ -71,23 +71,23 @@ class CRM_Admin_Form_OptionGroup extends CRM_Admin_Form
                    ts('Description'),
                    CRM_Core_DAO::getAttribute( 'CRM_Core_DAO_OptionGroup', 'description' ) );
         
-        $element   = $this->add('checkbox', 'is_active', ts('Enabled?'));
-        $groupName =  CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $this->_id, 'name' );
-        if ( in_array( $groupName, array( 'encounter_medium', 'case_type', 'case_status' ) ) ) {
-            static $caseCount = null; 
-            require_once 'CRM/Case/BAO/Case.php';
-            if ( !isset( $caseCount ) ) {
-                $caseCount = CRM_Case_BAO_Case::caseCount( null, false );
+        $element = $this->add( 'checkbox', 'is_active', ts('Enabled?') );
+        if ( $this->_action & CRM_Core_Action::UPDATE ) {
+            if ( in_array( $this->_values['name'], array( 'encounter_medium', 'case_type', 'case_status' ) ) ) {
+                static $caseCount = null; 
+                require_once 'CRM/Case/BAO/Case.php';
+                if ( !isset( $caseCount ) ) {
+                    $caseCount = CRM_Case_BAO_Case::caseCount( null, false );
+                }
+                
+                if ( $caseCount > 0 ) {
+                    $element->freeze( );
+                }
+               
+            } 
+            if ( $this->_values['is_reserved'] ) { 
+                $this->freeze( array( 'name', 'description', 'is_active' ) );
             }
-            
-            if ( $caseCount > 0 ) {
-                $element->freeze( );
-            }
-        }
-        
-        if ($this->_action == CRM_Core_Action::UPDATE &&
-            CRM_Core_DAO::getFieldValue( 'CRM_Core_DAO_OptionGroup', $this->_id, 'is_reserved' )) { 
-            $this->freeze(array('name', 'description', 'is_active' ));
         }
 
         $this->assign('id', $this->_id);

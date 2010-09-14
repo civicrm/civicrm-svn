@@ -50,6 +50,13 @@ class CRM_Admin_Form extends CRM_Core_Form
     protected $_id;
 
     /**
+     * The default values for form fields
+     *
+     * @var int
+     */
+    protected $_values;
+
+    /**
      * The name of the BAO object for this form
      *
      * @var string
@@ -59,6 +66,13 @@ class CRM_Admin_Form extends CRM_Core_Form
     function preProcess( ) {
         $this->_id      = $this->get( 'id'      );
         $this->_BAOName = $this->get( 'BAOName' );
+        $this->_values  = array( );
+        
+        if ( isset( $this->_id ) ) {
+            $params = array( 'id' => $this->_id );
+            require_once( str_replace( '_', DIRECTORY_SEPARATOR, $this->_BAOName ) . ".php" );
+            eval( $this->_BAOName . '::retrieve( $params, $this->_values );' );
+        }
     }
 
     /**
@@ -69,15 +83,8 @@ class CRM_Admin_Form extends CRM_Core_Form
      * @return None
      */
     function setDefaultValues( ) {
-        $defaults = $params = array( );
-        $defaults['is_active'] = null;
-
-        if ( isset( $this->_id ) ) {
-            $params = array( 'id' => $this->_id );
-            require_once(str_replace('_', DIRECTORY_SEPARATOR, $this->_BAOName) . ".php");
-            eval( $this->_BAOName . '::retrieve( $params, $defaults );' );
-        }
-
+        $defaults = $this->_values;
+                
         if ( $this->_action == CRM_Core_Action::DELETE &&
              isset( $defaults['name'] ) ) {
             $this->assign( 'delName', $defaults['name'] );
