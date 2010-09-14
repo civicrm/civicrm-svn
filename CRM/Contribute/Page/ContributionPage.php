@@ -129,54 +129,63 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                                     'title' => ts('Title and Settings'),
                                                                                     'url'   => $urlString.'settings',
                                                                                     'qs'    => $urlParams,
+                                                                                    'uniqueName' => 'settings'
                                                                                      ),
                                                  CRM_Core_Action::UPDATE   => array( 
                                                                                     'name'  => ts('Contribution Amounts'),
                                                                                     'title' => ts('Contribution Amounts'),
                                                                                     'url'   => $urlString.'amount',
                                                                                     'qs'    => $urlParams,
+                                                                                    'uniqueName' => 'amount'
                                                                                      ),
                                                  CRM_Core_Action::VIEW     => array( 
                                                                                     'name'  => ts('Membership Settings'),
                                                                                     'title' => ts('Membership Settings'),
                                                                                     'url'   => $urlString.'membership',
                                                                                     'qs'    => $urlParams,
+                                                                                    'uniqueName' => 'membership'
                                                                                      ),
                                                  CRM_Core_Action::PROFILE  => array( 
                                                                                     'name'  => ts('Include Profiles'),
                                                                                     'title' => ts('Include Profiles'),
                                                                                     'url'   => $urlString.'custom',
                                                                                     'qs'    => $urlParams,
+                                                                                    'uniqueName' => 'custom'
                                                                                      ),
                                                  CRM_Core_Action::EXPORT   => array( 
                                                                                     'name'  => ts('Thank-you and Receipting'),
                                                                                     'title' => ts('Thank-you and Receipting'),
                                                                                     'url'   => $urlString.'thankYou',
                                                                                     'qs'    => $urlParams,
+                                                                                    'uniqueName' => 'thankYou'
                                                                                      ),
                                                  CRM_Core_Action::BASIC    => array( 
                                                                                     'name'  => ts('Tell a Friend'),
                                                                                     'title' => ts('Tell a Friend'),
                                                                                     'url'   => $urlString.'friend',
                                                                                     'qs'    => $urlParams,
+                                                                                    'uniqueName' => 'friend'
                                                                                      ),
                                                  CRM_Core_Action::ADVANCED => array( 
                                                                                     'name'  => ts('Personal Campaign Pages'),
                                                                                     'title' => ts('Personal Campaign Pages'),
                                                                                     'url'   => $urlString.'pcp',
                                                                                     'qs'    => $urlParams,
+                                                                                    'uniqueName' => 'pcp'
                                                                                      ),
                                                  CRM_Core_Action::PREVIEW  => array( 
                                                                                     'name'  => ts('Contribution Widget'),
                                                                                     'title' => ts('Contribution Widget'),
                                                                                     'url'   => $urlString.'widget',
                                                                                     'qs'    => $urlParams,
+                                                                                    'uniqueName' => 'widget'
                                                                                      ),
                                                  CRM_Core_Action::FOLLOWUP => array( 
                                                                                     'name'  => ts('Premiums'),
                                                                                     'title' => ts('Premiums'),
                                                                                     'url'   => $urlString.'premium',
                                                                                     'qs'    => $urlParams,
+                                                                                    'uniqueName' => 'premium'
                                                                                      ),
                                                  );
         }
@@ -506,18 +515,20 @@ SELECT count(id)
         }
         
         foreach ( $formattedConfLinks as $act => &$link ) {
+            $sectionName = CRM_Utils_Array::value( 'uniqueName', $link );
+            if ( !$sectionName ) continue; 
+            
             $classes = array( );
-            if ( isset( $link['ref'] ) ) { 
-                $classes = $link['ref']; 
+            if ( isset( $link['class'] ) ) { 
+                $classes = $link['class']; 
             }
             
-            $sectionName = array_pop( explode( '/', $link['url'] ) );
             if ( !CRM_Utils_Array::value( $sectionName, $sectionsInfo ) ) {
                 $classes = array( );
-                if ( isset( $link['ref'] ) ) { 
-                    $classes = $link['ref']; 
+                if ( isset( $link['class'] ) ) { 
+                    $classes = $link['class']; 
                 }
-                $link['ref'] = array_merge( $classes, array( 'disabled' ) );
+                $link['class'] = array_merge( $classes, array( 'disabled' ) );
             }
         }
         

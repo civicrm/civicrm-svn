@@ -239,15 +239,19 @@ class CRM_Core_Action {
                     $firstLink = false;
                     $classes .= " action-item-first";
                 }
+                if ( isset( $link['ref'] ) ) {
+                    $classes .= ' '. strtolower( $link['ref'] );
+                }
                 
                 //get the user specified classes in.
-                if ( isset( $link['ref'] ) ) {
-                    $className = $link['ref'];
+                if ( isset( $link['class'] ) ) {
+                    $className = $link['class'];
                     if ( is_array( $className ) ) {
                         $className = implode( ' ', $className );
                     }
                     $classes .= ' '. strtolower( $className );
                 }
+                
                 $linkClasses = 'class = "' . $classes . '"';
                 
                 if ( $urlPath ) {
