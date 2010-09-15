@@ -137,7 +137,10 @@ class CRM_Import_Parser_Contact extends CRM_Import_Parser
     function init( ) 
     {
         require_once 'CRM/Contact/BAO/Contact.php';
-        $fields =& CRM_Contact_BAO_Contact::importableFields( $this->_contactType );
+        require_once 'CRM/Core/BAO/Address.php';
+        $contactFields = CRM_Contact_BAO_Contact::importableFields( $this->_contactType );
+        // exclude the address options disabled in the Address Settings
+        $fields        = CRM_Core_BAO_Address::validateAddressOptions( $contactFields );
         
         //CRM-5125
         //supporting import for contact subtypes

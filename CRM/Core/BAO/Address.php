@@ -717,6 +717,33 @@ ORDER BY civicrm_address.is_primary DESC, civicrm_address.location_type_id DESC,
         return $parseFields;
     }
     
+    /**
+     * Validate the address fields based on the address options enabled 
+     * in the Address Settings
+     * 
+     * @param  array   $fields an array of importable/exportable contact fields
+     *
+     * @return array   $fields an array of contact fields and only the enabled address options
+     * @access public
+     * @static
+     */
+    function validateAddressOptions( $fields ) 
+    {
+        static $addressOptions = null;
+        if ( !$addressOptions ) {
+            require_once 'CRM/Core/BAO/Preferences.php';
+            $addressOptions = CRM_Core_BAO_Preferences::valueOptions( 'address_options', true, null, true );
+        }
+        
+        if ( is_array( $fields ) && !empty ( $fields ) ) {
+            foreach ( $addressOptions as $key => $value ) {
+                if ( !$value && isset( $fields[$key] ) ) {
+                    unset( $fields[$key] );
+                }
+            }
+        }
+        return $fields;
+    }
 }
 
 

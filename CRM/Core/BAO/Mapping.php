@@ -334,11 +334,13 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
             $required = false;
         }
 
+        require_once 'CRM/Core/BAO/Address.php';
         $contactType = array('Individual','Household','Organization');
         foreach ($contactType as $value) {
-
-            $relationfields[$value] = $fields[$value] = & CRM_Contact_BAO_Contact::exportableFields( $value, false, 
-                                                                                                     $required);
+            $contactFields  = CRM_Contact_BAO_Contact::exportableFields( $value, false, $required);
+            // exclude the address options disabled in the Address Settings
+            $fields[$value] = CRM_Core_BAO_Address::validateAddressOptions( $contactFields );
+            
             if ( $mappingType == 'Export' ) {
                 $relationships     = array( );
                 $relationshipTypes = CRM_Contact_BAO_Relationship::getContactRelationshipType( null, null, null, $value );
@@ -642,8 +644,6 @@ class CRM_Core_BAO_Mapping extends CRM_Core_DAO_Mapping
         $specialFields = array ( 'street_address','supplemental_address_1', 'supplemental_address_2', 
                                  'city', 'postal_code', 'postal_code_suffix', 'geo_code_1', 'geo_code_2', 
                                  'state_province', 'country', 'phone', 'email', 'im' );
-        
-        $relationFields = array() ;
         
         if ( isset($mappingId) ) {
             $colCnt = 0;
