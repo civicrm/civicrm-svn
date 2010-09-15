@@ -57,6 +57,7 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
      */
     private static $_actionLinks;
     private static $_configureActionLinks;
+    private static $_onlineContributionLinks;
     
     private static $_links = null;
 
@@ -173,7 +174,7 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                                     'qs'    => $urlParams,
                                                                                     'uniqueName' => 'pcp'
                                                                                      ),
-                                                 CRM_Core_Action::PREVIEW  => array( 
+                                                 CRM_Core_Action::MAP  => array( 
                                                                                     'name'  => ts('Contribution Widget'),
                                                                                     'title' => ts('Contribution Widget'),
                                                                                     'url'   => $urlString.'widget',
@@ -191,6 +192,38 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
         }
         
         return self::$_configureActionLinks;
+    }
+    
+    /**
+     * Get the online contribution links.
+     *
+     * @return array $_onlineContributionLinks.
+     *
+     */
+    function &onlineContributionLinks( )
+    {
+        if ( !isset( self::$_onlineContributionLinks ) ) {
+            $urlString = 'civicrm/contribute/transact';
+            $urlParams = 'reset=1&id=%%id%%';
+            self::$_onlineContributionLinks = array( 
+                                                    CRM_Core_Action::RENEW   => array( 
+                                                                                      'name'  => ts('Live Page'),
+                                                                                      'title' => ts('Live Page'),
+                                                                                      'url'   => $urlString,
+                                                                                      'qs'    => $urlParams,
+                                                                                      'uniqueName' => 'live_page'
+                                                                                       ),
+                                                    CRM_Core_Action::PREVIEW => array( 
+                                                                                      'name'  => ts('Test-drive'),
+                                                                                      'title' => ts('Test-drive'),
+                                                                                      'url'   => $urlString,
+                                                                                      'qs'    => $urlParams.'action=preview',
+                                                                                      'uniqueName' => 'test_drive'
+                                                                                       ),
+                                                     );
+        }
+        
+        return self::$_onlineContributionLinks;
     }
     
     /**
@@ -381,28 +414,38 @@ ORDER BY title asc
                 $action -= CRM_Core_Action::DELETE; 
             }
             
-            $contribution[$dao->id]['action'] = CRM_Core_Action::formLink( self::actionLinks( ), 
-                                                                           $action, 
-                                                                           array('id' => $dao->id),
-                                                                           'more',
-                                                                           true );
+            //build the normal action links.
+            $contribution[$dao->id]['action'] = 
+                CRM_Core_Action::formLink( self::actionLinks( ), 
+                                           $action, 
+                                           array('id' => $dao->id),
+                                           'more',
+                                           true );
             
             //build the configure links.
             $sectionsInfo = CRM_Utils_Array::value( $dao->id, $contriPageSectionInfo, array( ) );
-            $contribution[$dao->id]['configureActionLinks'] = CRM_Core_Action::formLink( self::formatConfigureLinks( $sectionsInfo ), 
-                                                                                         $action, 
-                                                                                         array('id' => $dao->id ),
-                                                                                         ts( 'Configure' ),
-                                                                                         true );
+            $contribution[$dao->id]['configureActionLinks'] = 
+                CRM_Core_Action::formLink( self::formatConfigureLinks( $sectionsInfo ), 
+                                           $action, 
+                                           array('id' => $dao->id ),
+                                           ts( 'Configure' ),
+                                           true );
             
+            //build the online contribution links.
+            $contribution[$dao->id]['onlineContributionLinks'] = 
+                CRM_Core_Action::formLink( self::onlineContributionLinks(),
+                                           $action, 
+                                           array('id' => $dao->id ),
+                                           ts( 'Links' ),
+                                           true );
         }
         
         if (isset($contribution)) {
             $this->assign('rows', $contribution);
-        }        
+        }     
     }
-
-     function search( ) {
+    
+    function search( ) {
         if ( isset($this->_action) &
              ( CRM_Core_Action::ADD    |
                CRM_Core_Action::UPDATE |

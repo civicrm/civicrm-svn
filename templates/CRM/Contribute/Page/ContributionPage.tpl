@@ -72,22 +72,12 @@
 		  </div>
                   {/if}
 
-		  <div class="crm-contribution-links-actions">
-		      <span id="contribution-page-links-{$row.id}" class="btn-slide">{ts}Links{/ts}
-		         <ul class="panel" id="panel_info_{$row.id}">
-		             <li>
-                                <a title="{ts}Live Page{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/contribute/transact' q="reset=1&id=`$row.id`"}">{ts}Live Page{/ts}
-                                </a>
-                             </li>
-		      	     <li>
-				<a title="{ts}Test-drive{/ts}" class="action-item-wrap" href="{crmURL p='civicrm/contribute/transact' q="reset=1&action=preview&id=`$row.id`"}">{ts}Test-drive{/ts}
-				</a>
-			     </li>
-		         </ul>	    
-		      </span> 
+		  {if $row.onlineContributionLinks}	
+		  <div class="crm-contribution-online-contribution-actions">
+		       {$row.onlineContributionLinks|replace:'xx':$row.id}
 		  </div>
+		  {/if}
 
-		  
 		  <div class="crm-contribution-links-actions">
 		      <span id="contribution-page-links-{$row.id}" class="btn-slide">{ts}Contributions{/ts}
 		         <ul class="panel" id="panel_info_{$row.id}">
