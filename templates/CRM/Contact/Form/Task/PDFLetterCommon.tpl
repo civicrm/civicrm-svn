@@ -237,9 +237,11 @@ function tokenReplHtml ( )
         oEditor = CKEDITOR.instances['html_message'];
 		oEditor.setData( {/literal}'{$message_html}'{literal});
 		loadEditor();	
-		oEditor.on( 'onFocus', verify );
     }
-
+    cj( function() {
+     	 oEditor = CKEDITOR.instances['html_message'];
+	 oEditor.on( 'focus', verify );
+     });
 {/literal}
 {/if}
 {if $editor eq "tinymce"}
