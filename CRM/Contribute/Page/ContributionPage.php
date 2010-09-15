@@ -81,6 +81,13 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
             $copyExtra = ts('Are you sure you want to make a copy of this Contribution page?');
             
             self::$_actionLinks = array(
+                                         CRM_Core_Action::COPY   => array(
+                                                                          'name'  => ts('Make a Copy'),
+                                                                          'url'   => CRM_Utils_System::currentPath( ),
+                                                                          'qs'    => 'action=copy&gid=%%id%%',
+                                                                          'title' => ts('Make a Copy of CiviCRM Contribution Page'),
+                                                                          'extra' => 'onclick = "return confirm(\'' . $copyExtra . '\');"',
+                                                                          ),
                                         CRM_Core_Action::DISABLE => array(
                                                                           'name'  => ts('Disable'),
                                                                           'title' => ts('Disable'),
@@ -100,13 +107,7 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                           'title' => ts('Delete Custom Field'),
                                                                           'extra' => 'onclick = "return confirm(\'' . $deleteExtra . '\');"',
                                                                           ),
-                                        CRM_Core_Action::COPY     => array(
-                                                                           'name'  => ts('Copy Contribution Page'),
-                                                                           'url'   => CRM_Utils_System::currentPath( ),
-                                                                           'qs'    => 'action=copy&gid=%%id%%',
-                                                                           'title' => ts('Make a Copy of CiviCRM Contribution Page'),
-                                                                           'extra' => 'onclick = "return confirm(\'' . $copyExtra . '\');"',
-                                                                           ),
+                                       
                                         );
         }
         return self::$_actionLinks;
@@ -218,7 +219,7 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                                       'name'  => ts('Test-drive'),
                                                                                       'title' => ts('Test-drive'),
                                                                                       'url'   => $urlString,
-                                                                                      'qs'    => $urlParams.'action=preview',
+                                                                                      'qs'    => $urlParams.'&action=preview',
                                                                                       'uniqueName' => 'test_drive'
                                                                                        ),
                                                      );
@@ -245,7 +246,12 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
             $yearNow = $yearDate + 10000;
             
             $urlString = 'civicrm/contribute/search';
-            $urlParams = 'reset=1&pid=%%id%%&force=1&status=1&test=0';
+            $urlParams = 'reset=1&pid=%%id%%&force=1&test=0';
+            
+            require_once 'CRM/Contribute/PseudoConstant.php';
+            if ( $status = array_search( 'Completed', CRM_Contribute_PseudoConstant::contributionStatus( ) ) ) {
+                $urlParams .= "&status={$status}";  
+            }
             
             self::$_contributionLinks = array( 
                                               CRM_Core_Action::DETACH    => array(
@@ -262,7 +268,7 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                                   'qs'    => "{$urlParams}&start={$yearDate}&end={$yearNow}",
                                                                                   'uniqueName' => 'fiscal_year_to_date'
                                                                                    ),
-                                              CRM_Core_Action::MAX_ACTION => array( 
+                                              CRM_Core_Action::BROWSE     => array( 
                                                                                    'name'  => ts('Cumulative'),
                                                                                    'title' => ts('Cumulative'),
                                                                                    'url'   => $urlString,

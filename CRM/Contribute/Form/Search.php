@@ -466,6 +466,11 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
             $this->_formValues['contribution_recur_id']  = $recur;
             $this->_formValues['contribution_recurring'] = 1;
         }
+        
+        //check for contribution page id.
+        $contribPageId = CRM_Utils_Request::retrieve( 'pid', 'Positive', $this );
+        if ( $contribPageId ) $this->_formValues['contribution_page_id'] = $contribPageId;
+    
     }
     
     /**
