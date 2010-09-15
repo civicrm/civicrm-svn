@@ -237,7 +237,6 @@ class CRM_Contribute_Form_ContributionPage_AddProduct extends CRM_Contribute_For
             $dao->save();
             CRM_Utils_System::redirect($url);
         }
-        
     }
     
     /** 
