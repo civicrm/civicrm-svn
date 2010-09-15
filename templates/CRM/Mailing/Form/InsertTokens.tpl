@@ -191,12 +191,24 @@ function selectValue( val ) {
     {else if $editor eq "tinymce"}
         {literal}
         cj( function( ) {
-            cj("#"+ html_message).keypress( function( ) {
-               if ( isMailing ) { 
-                    verify();
-               }
-               
-            });
+	if ( isMailing ) { 
+ 	  cj('div.html').hover( 
+	  function( ) {
+	     if ( cj('#'+ html_message).tinymce() ) {
+	     cj('#'+ html_message).tinymce().onKeyUp.add(function() {
+ 	        verify( );
+  	     });
+	     }
+          },
+	  function( ) {
+	     if ( cj('#'+ html_message).tinymce() ) {
+	       if ( tinyMCE.get(html_message).getContent() ) {
+                 verify( );
+               } 
+	     }
+          }
+	  );
+        }
         });
         {/literal}
     {/if}

@@ -246,15 +246,30 @@ function tokenReplHtml ( )
 {literal}
 	function customEvent() {
 		loadEditor();
-		tinyMCE.get('html_message').onKeyPress.add(function(ed, e) {
- 		verify();
-		});
 	}
 
 tinyMCE.init({
 	oninit : "customEvent"
 });
 
+cj( function() {
+  cj('div.html').hover( 
+  function( ) {
+    if ( cj('#html_message').tinymce() ) {
+      tinyMCE.get('html_message').onKeyPress.add(function(ed, e) {
+        verify( );
+      });
+    }
+  },
+  function( ) {
+   if ( cj('#html_message').tinymce() ) {
+     if ( tinyMCE.get('html_message').getContent() ) {
+       verify( );
+     } 
+   }
+  }	
+  );
+});
 {/literal}
 {/if}
 {include file="CRM/common/Filter.tpl"}
