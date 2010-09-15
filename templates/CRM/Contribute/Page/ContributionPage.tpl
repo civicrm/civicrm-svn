@@ -79,7 +79,7 @@
 		  {/if}
 
 		  {if $row.onlineContributionLinks}	
-		  <div class="crm-contribution-online-contribution-actions">
+		  <div class="crm-contribution-search-contribution-actions">
 		       {$row.onlineContributionLinks|replace:'xx':$row.id}
 		  </div>
 		  {/if}

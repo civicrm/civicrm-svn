@@ -516,14 +516,14 @@ WHERE entity_table = 'civicrm_contribution_page'
      * @return array $info info regarding all sections.
      * @access public 
      */
-    function getSectionInfo( ) 
+    function getSectionInfo( $contribPageIds = array( ) ) 
     {
-        static $info; 
-        if ( is_array( $info ) ) {
-            return $info;
+        $info = array( );
+        $whereClause = null;
+        if ( is_array( $contribPageIds ) && !empty( $contribPageIds ) ) {
+            $whereClause = 'WHERE civicrm_contribution_page.id IN ( '. implode( ', ', $contribPageIds ) . ' )';
         }
         
-        $info = array( );
         $sections = array( 'settings',
                            'amount',
                            'membership',
@@ -563,7 +563,7 @@ LEFT JOIN  civicrm_contribution_widget ON ( civicrm_contribution_widget.contribu
 LEFT JOIN  civicrm_premiums            ON ( civicrm_premiums.entity_id = civicrm_contribution_page.id 
                                             AND civicrm_premiums.entity_table = 'civicrm_contribution_page' 
                                             AND civicrm_premiums.premiums_active = 1 )
-           ";
+           $whereClause";
         
         $contributionPage = CRM_Core_DAO::executeQuery( $query );
         while ( $contributionPage->fetch( ) ) {

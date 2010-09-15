@@ -433,9 +433,19 @@ WHERE cp.contribution_page_id = {$id}";
         require_once 'CRM/Core/Permission.php'; 
         $allowToDelete = CRM_Core_Permission::check( 'delete in CiviContribute' );
         
+        $query = "
+  SELECT  id
+    FROM  civicrm_contribution_page
+   WHERE  $whereClause
+   LIMIT  $offset, $rowCount";
+        $contribPage = CRM_Core_DAO::executeQuery( $query, $params, true, 'CRM_Contribute_DAO_ContributionPage' );
+        $contribPageIds = array( );
+        while ( $contribPage->fetch( ) ) {
+            $contribPageIds[$contribPage->id] = $contribPage->id;
+        }
         //get all section info.
         require_once 'CRM/Contribute/BAO/ContributionPage.php';
-        $contriPageSectionInfo = CRM_Contribute_BAO_ContributionPage::getSectionInfo( );
+        $contriPageSectionInfo = CRM_Contribute_BAO_ContributionPage::getSectionInfo( $contribPageIds );
         
         $query = "
 SELECT *
@@ -623,10 +633,6 @@ SELECT count(id)
     {
         //build the formatted configure links.
         $formattedConfLinks = self::configureActionLinks( );
-        if ( !is_array( $sectionsInfo ) || empty( $sectionsInfo ) ) {
-            return $formattedConfLinks;
-        }
-        
         foreach ( $formattedConfLinks as $act => &$link ) {
             $sectionName = CRM_Utils_Array::value( 'uniqueName', $link );
             if ( !$sectionName ) continue; 
