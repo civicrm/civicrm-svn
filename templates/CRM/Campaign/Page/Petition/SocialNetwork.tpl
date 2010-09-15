@@ -49,7 +49,7 @@ and modify to fit your specific configuration.
 		// there will be a 'content_field_petitionid' table in the Drupal database
 		// that stores field_petitionid_value against nid (node id)
 		
-		$result = db_query("SELECT * FROM content_field_petitionid WHERE field_petitionid_value = " . $surveyId);
+		$result = db_query("SELECT * FROM content_type_petitionid WHERE field_petitionid_value = " . $surveyId);
 		
 		global $base_url;
 		$petition = array();
