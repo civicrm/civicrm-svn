@@ -72,21 +72,18 @@
 		  </div>
                   {/if}
 
+                  {if $row.contributionLinks}	
+		  <div class="crm-contribution-online-contribution-actions">
+		       {$row.contributionLinks|replace:'xx':$row.id}
+		  </div>
+		  {/if}
+
 		  {if $row.onlineContributionLinks}	
 		  <div class="crm-contribution-online-contribution-actions">
 		       {$row.onlineContributionLinks|replace:'xx':$row.id}
 		  </div>
 		  {/if}
 
-		  <div class="crm-contribution-links-actions">
-		      <span id="contribution-page-links-{$row.id}" class="btn-slide">{ts}Contributions{/ts}
-		         <ul class="panel" id="panel_info_{$row.id}">
-		             <li>
-			     </li>
-			 </ul>
-		      </span>
-		  </div> 	 
-		  
 		  <div class="crm-contribution-page-more">
                        {$row.action|replace:'xx':$row.id}
                   </div>

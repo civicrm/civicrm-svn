@@ -56,6 +56,7 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
      * @var array
      */
     private static $_actionLinks;
+    private static $_contributionLinks;
     private static $_configureActionLinks;
     private static $_onlineContributionLinks;
     
@@ -225,6 +226,55 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
         
         return self::$_onlineContributionLinks;
     }
+    
+    /**
+     * Get the contributions links.
+     *
+     * @return array $_contributionLinks
+     *
+     */
+    function &contributionLinks( )
+    {
+        if ( !isset( self::$_contributionLinks ) ) {
+            //get contribution dates.
+            require_once 'CRM/Contribute/BAO/Contribution.php';
+            $dates = CRM_Contribute_BAO_Contribution::getContributionDates( );
+            foreach ( array( 'now', 'yearDate', 'monthDate' ) as $date ) {
+                $$date = $dates[$date];
+            }
+            $yearNow = $yearDate + 10000;
+            
+            $urlString = 'civicrm/contribute/search';
+            $urlParams = 'reset=1&pid=%%id%%&force=1&status=1&test=0';
+            
+            self::$_contributionLinks = array( 
+                                              CRM_Core_Action::DETACH    => array(
+                                                                                  'name'  => ts( 'Current Month-To-Date' ),
+                                                                                  'title' => ts( 'Current Month-To-Date' ),
+                                                                                  'url'   => $urlString,
+                                                                                  'qs'    => "{$urlParams}&start={$monthDate}&end={$now}", 
+                                                                                  'uniqueName' => 'current_month_to_date'
+                                                                                  ),
+                                              CRM_Core_Action::REVERT    => array( 
+                                                                                  'name'  => ts('Fiscal Year-To-Date'),
+                                                                                  'title' => ts('Fiscal Year-To-Date'),
+                                                                                  'url'   => $urlString,
+                                                                                  'qs'    => "{$urlParams}&start={$yearDate}&end={$yearNow}",
+                                                                                  'uniqueName' => 'fiscal_year_to_date'
+                                                                                   ),
+                                              CRM_Core_Action::MAX_ACTION => array( 
+                                                                                   'name'  => ts('Cumulative'),
+                                                                                   'title' => ts('Cumulative'),
+                                                                                   'url'   => $urlString,
+                                                                                   'qs'    => "{$urlParams}&start=&end=$now",
+                                                                                   'uniqueName' => 'cumulative'
+                                                                                    ),
+                                               );
+        }
+        
+        return self::$_contributionLinks;
+    }
+    
     
     /**
      * Run the page.
@@ -401,26 +451,24 @@ ORDER BY title asc
             $action = array_sum(array_keys($this->actionLinks()));
             
             //add configure actions links.
-            $action += array_sum( array_keys( $configureActionLinks ) );
+            $action += array_sum( array_keys($configureActionLinks));
+            
+            //add online contribution links.
+            $action += array_sum( array_keys(self::onlineContributionLinks()));
+            
+            //add contribution search links.
+            $action += array_sum( array_keys(self::contributionLinks()));
             
             if ( $dao->is_active ) {
                 $action -= CRM_Core_Action::ENABLE;
             } else {
                 $action -= CRM_Core_Action::DISABLE;
-            }   
+            }
             
             //CRM-4418
             if ( !$allowToDelete ) {
                 $action -= CRM_Core_Action::DELETE; 
             }
-            
-            //build the normal action links.
-            $contribution[$dao->id]['action'] = 
-                CRM_Core_Action::formLink( self::actionLinks( ), 
-                                           $action, 
-                                           array('id' => $dao->id),
-                                           'more',
-                                           true );
             
             //build the configure links.
             $sectionsInfo = CRM_Utils_Array::value( $dao->id, $contriPageSectionInfo, array( ) );
@@ -431,12 +479,28 @@ ORDER BY title asc
                                            ts( 'Configure' ),
                                            true );
             
+            //build the contributions links.
+            $contribution[$dao->id]['contributionLinks'] = 
+                CRM_Core_Action::formLink( self::contributionLinks( ), 
+                                           $action,
+                                           array('id' => $dao->id ),
+                                           ts( 'Contributions' ),
+                                           true );
+            
             //build the online contribution links.
             $contribution[$dao->id]['onlineContributionLinks'] = 
                 CRM_Core_Action::formLink( self::onlineContributionLinks(),
                                            $action, 
                                            array('id' => $dao->id ),
                                            ts( 'Links' ),
+                                           true );
+            
+            //build the normal action links.
+            $contribution[$dao->id]['action'] = 
+                CRM_Core_Action::formLink( self::actionLinks( ), 
+                                           $action, 
+                                           array('id' => $dao->id),
+                                           'more',
                                            true );
         }
         

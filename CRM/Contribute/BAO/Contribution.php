@@ -1654,5 +1654,31 @@ SELECT source_contact_id
         
         return $ids;
     }
-    
+
+    function getContributionDates( ) 
+    {
+        $config = CRM_Core_Config::singleton( );
+        $currentMonth = date('m');
+        $currentDay   = date('d');
+        if ( (int ) $config->fiscalYearStart['M']  > $currentMonth ||
+             ( (int ) $config->fiscalYearStart['M'] == $currentMonth &&
+               (int ) $config->fiscalYearStart['d'] > $currentDay ) ) {
+            $year     = date( 'Y' ) - 1;
+        } else {
+            $year     = date( 'Y' );
+        }
+        $year  = array('Y' => $year );
+        $yearDate = $config->fiscalYearStart;
+        $yearDate = array_merge( $year, $yearDate);
+        $yearDate = CRM_Utils_Date::format( $yearDate );
+        
+        $monthDate = date('Ym') . '01';
+        
+        $now = date( 'Ymd' );
+        
+        return array( 'now'       => $now,
+                      'yearDate'  => $yearDate,
+                      'monthDate' => $monthDate );
+    }
+
 }
