@@ -23,7 +23,6 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
 *}
-
 {* WizardHeader.tpl provides visual display of steps thru the wizard as well as title for current step *}
 {include file="CRM/common/WizardHeader.tpl"}
 <div id="help">
@@ -85,7 +84,7 @@
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     
 </div>
-
+{include file="CRM/Contribute/Page/Premium.tpl"}
 
 <script type="text/javascript">
     var myElement1 = document.getElementById('id_form');

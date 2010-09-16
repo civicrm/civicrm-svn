@@ -99,6 +99,12 @@
      <weight>470</weight>
   </item>
   <item>
+     <path>civicrm/admin/contribute/addProductToPage</path>
+     <title>Add Products to This Page</title>
+     <page_callback>CRM_Contribute_Form_ContributionPage_AddProduct</page_callback>
+     <weight>480</weight>
+  </item>
+  <item>
      <path>civicrm/admin/contribute/add</path>
      <title>New Contribution Page</title>
      <page_callback>CRM_Contribute_Page_ContributionPage</page_callback>

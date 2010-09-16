@@ -35,7 +35,7 @@
  */
 
 require_once 'CRM/Core/Page.php';
-require_once 'CRM/Contribute/DAO/ContributionPage.php';
+require_once 'CRM/Contribute/BAO/ContributionPage.php';
 
 /**
  * Create a page for displaying Contribute Pages
@@ -75,13 +75,13 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
     function &actionLinks()
     {
         // check if variable _actionsLinks is populated
-        if (!isset(self::$_actionLinks)) {
+        if ( !isset( self::$_actionLinks ) ) {
             // helper variable for nicer formatting
             $deleteExtra = ts('Are you sure you want to delete this Contribution page?');
             $copyExtra = ts('Are you sure you want to make a copy of this Contribution page?');
             
             self::$_actionLinks = array(
-                                         CRM_Core_Action::COPY   => array(
+                                        CRM_Core_Action::COPY    => array(
                                                                           'name'  => ts('Make a Copy'),
                                                                           'url'   => CRM_Utils_System::currentPath( ),
                                                                           'qs'    => 'action=copy&gid=%%id%%',
@@ -107,7 +107,6 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                           'title' => ts('Delete Custom Field'),
                                                                           'extra' => 'onclick = "return confirm(\'' . $deleteExtra . '\');"',
                                                                           ),
-                                       
                                         );
         }
         return self::$_actionLinks;
@@ -176,7 +175,7 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                                                                                     'qs'    => $urlParams,
                                                                                     'uniqueName' => 'pcp'
                                                                                      ),
-                                                 CRM_Core_Action::MAP  => array( 
+                                                 CRM_Core_Action::MAP      => array( 
                                                                                     'name'  => ts('Contribution Widget'),
                                                                                     'title' => ts('Contribution Widget'),
                                                                                     'url'   => $urlString.'widget',
@@ -288,34 +287,34 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
      * @access public
      *
      */
-    function run()
+    function run( )
     {
-
         // get the requested action
-        $action = CRM_Utils_Request::retrieve('action', 'String',
-                                              $this, false, 'browse'); // default to 'browse'
+        $action = CRM_Utils_Request::retrieve( 'action', 'String',
+                                               $this, false, 'browse'); // default to 'browse'
 
         // assign vars to templates
-        $this->assign('action', $action);
-        $id = CRM_Utils_Request::retrieve('id', 'Positive',
-                                          $this, false, 0);
+        $this->assign( 'action', $action );
+        $id = CRM_Utils_Request::retrieve( 'id', 'Positive',
+                                           $this, false, 0 );
 
         // set breadcrumb to append to 2nd layer pages
-        $breadCrumb = array( array('title' => ts('Manage Contribution Pages'),
-                                   'url'   => CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 
-                                                                     'reset=1' )) );
+        $breadCrumb = array( array( 'title' => ts('Manage Contribution Pages'),
+                                    'url'   => CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 
+                                                                     'reset=1' ) ) );
        
         // what action to take ?
         if ( $action & CRM_Core_Action::ADD ) {
             $session = CRM_Core_Session::singleton( ); 
             $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ),
                                                              'action=browse&reset=1' ) );
+
             require_once 'CRM/Contribute/Controller/ContributionPage.php';
             $controller = new CRM_Contribute_Controller_ContributionPage( null, $action );
             CRM_Utils_System::setTitle( ts('Manage Contribution Page') );
             CRM_Utils_System::appendBreadCrumb( $breadCrumb );
             return $controller->run( );
-        } else if ($action & CRM_Core_Action::UPDATE ) {
+        } else if ( $action & CRM_Core_Action::UPDATE ) {
             CRM_Utils_System::appendBreadCrumb( $breadCrumb );
             $session = CRM_Core_Session::singleton( ); 
             $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ),
@@ -323,16 +322,16 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
             require_once 'CRM/Contribute/Page/ContributionPageEdit.php';
             $page = new CRM_Contribute_Page_ContributionPageEdit( );
             return $page->run( );
-        } else if ($action & CRM_Core_Action::PREVIEW) {
+        } else if ( $action & CRM_Core_Action::PREVIEW ) {
             CRM_Utils_System::appendBreadCrumb( $breadCrumb );
             require_once 'CRM/Contribute/Page/ContributionPageEdit.php';
             $page = new CRM_Contribute_Page_ContributionPageEdit( );
             return $page->run( );
-        } else if ($action & CRM_Core_Action::COPY) {
+        } else if ( $action & CRM_Core_Action::COPY ) {
             $session = CRM_Core_Session::singleton();
-            CRM_Core_Session::setStatus("A copy of the contribution page has been created" );
+            CRM_Core_Session::setStatus( ts('A copy of the contribution page has been created') );
             $this->copy( );
-        } else if ($action & CRM_Core_Action::DELETE) {
+        } else if ( $action & CRM_Core_Action::DELETE ) {
             CRM_Utils_System::appendBreadCrumb( $breadCrumb );
             $subPage = CRM_Utils_Request::retrieve( 'subPage', 'String',
                                                     $this );
@@ -342,7 +341,7 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
                 return $page->run( );
             } else {
                 CRM_Utils_System::appendBreadCrumb( $breadCrumb );
-                $session = CRM_Core_Session::singleton();
+                $session = CRM_Core_Session::singleton( );
                 $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=browse' ) );
                 $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_ContributionPage_Delete',
                                                                'Delete Contribution Page',
@@ -353,7 +352,8 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
 FROM civicrm_contribution_page ccp JOIN civicrm_pcp cp ON ccp.id = cp.contribution_page_id
 WHERE cp.contribution_page_id = {$id}";
                 if ( $pageTitle = CRM_Core_DAO::singleValueQuery( $query ) ) {
-                    CRM_Core_Session::setStatus(" The '{$pageTitle}' cannot be deleted! You must Delete all Personal Campaign Page(s) related with this contribution page prior to deleting the page." );
+                    CRM_Core_Session::setStatus( ts('The \'%1\'  cannot be deleted! You must Delete all Personal Campaign Page(s) related with this contribution page prior to deleting the page.', array( 1 => $pageTitle ) ) );
+                    
                     CRM_Utils_System::redirect( CRM_Utils_System::url('civicrm/admin/contribute','reset=1') );   
                 }
 
@@ -362,10 +362,9 @@ WHERE cp.contribution_page_id = {$id}";
                 return $controller->run( );
             }
         } else {
-            require_once 'CRM/Contribute/BAO/ContributionPage.php';
-            
             // finally browse the contribution pages
             $this->browse();
+            
             CRM_Utils_System::setTitle( ts('Manage Contribution Pages') );
         }
        
@@ -381,10 +380,9 @@ WHERE cp.contribution_page_id = {$id}";
      */
     function copy( ) 
     {
-        $gid = CRM_Utils_Request::retrieve('gid', 'Positive',
-                                           $this, true, 0, 'GET');
-
-        require_once 'CRM/Contribute/BAO/ContributionPage.php';
+        $gid = CRM_Utils_Request::retrieve( 'gid', 'Positive',
+                                            $this, true, 0, 'GET' );
+        
         CRM_Contribute_BAO_ContributionPage::copy( $gid );
 
         CRM_Utils_System::redirect( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1' ) );
@@ -397,7 +395,7 @@ WHERE cp.contribution_page_id = {$id}";
      * @access public
      * @static
      */
-    function browse($action=null)
+    function browse( $action = null )
     {
         $this->_sortByCharacter = CRM_Utils_Request::retrieve( 'sortByCharacter',
                                                                'String',
@@ -439,7 +437,6 @@ WHERE cp.contribution_page_id = {$id}";
             $contribPageIds[$contribPage->id] = $contribPage->id;
         }
         //get all section info.
-        require_once 'CRM/Contribute/BAO/ContributionPage.php';
         $contriPageSectionInfo = CRM_Contribute_BAO_ContributionPage::getSectionInfo( $contribPageIds );
         
         $query = "
@@ -520,7 +517,8 @@ ORDER BY title asc
         }     
     }
     
-    function search( ) {
+    function search( )
+    {
         if ( isset($this->_action) &
              ( CRM_Core_Action::ADD    |
                CRM_Core_Action::UPDATE |
@@ -528,17 +526,19 @@ ORDER BY title asc
             return;
         }
        
-        $form = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_SearchContribution', ts( 'Search Contribution' ), CRM_Core_Action::ADD );
+        $form = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_SearchContribution', 
+                                                ts( 'Search Contribution' ), 
+                                                CRM_Core_Action::ADD );
         $form->setEmbedded( true );
         $form->setParent( $this );
         $form->process( );
         $form->run( );
     }
     
-    function whereClause( &$params, $sortBy = true ) {
-        $values  =  array( );
-        $clauses = array( );
-        $title   = $this->get( 'title' );
+    function whereClause( &$params, $sortBy = true )
+    {
+        $values = $clauses = array( );
+        $title  = $this->get( 'title' );
         $createdId = $this->get( 'cid' );
         
         if( $createdId ) {
@@ -586,7 +586,8 @@ ORDER BY title asc
         return implode( ' AND ', $clauses );
     }
 
-     function pager( $whereClause, $whereParams ) {
+     function pager( $whereClause, $whereParams )
+     {
         require_once 'CRM/Utils/Pager.php';
 
         $params['status']       = ts('Contribution %%StatusMessage%%');
@@ -609,7 +610,8 @@ SELECT count(id)
         $this->assign_by_ref( 'pager', $this->_pager );
     }
 
-    function pagerAtoZ( $whereClause, $whereParams ) {
+    function pagerAtoZ( $whereClause, $whereParams )
+    {
         require_once 'CRM/Utils/PagerAToZ.php';
         
         $query = "
