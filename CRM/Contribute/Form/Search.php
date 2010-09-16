@@ -471,6 +471,8 @@ class CRM_Contribute_Form_Search extends CRM_Core_Form
         $contribPageId = CRM_Utils_Request::retrieve( 'pid', 'Positive', $this );
         if ( $contribPageId ) $this->_formValues['contribution_page_id'] = $contribPageId;
     
+        //give values to default.
+        $this->_defaults = $this->_formValues;
     }
     
     /**
