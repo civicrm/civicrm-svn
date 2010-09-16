@@ -87,6 +87,7 @@ class CRM_Contact_BAO_Individual extends CRM_Contact_DAO_Contact
 
         $params['is_deceased'] = CRM_Utils_Array::value( 'is_deceased', $params, false );
         
+        $individual = null;
         if ( $contact->id ) {
             $individual = new CRM_Contact_BAO_Contact();
             $individual->id = $contact->id;

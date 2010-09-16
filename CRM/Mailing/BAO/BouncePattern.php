@@ -63,9 +63,6 @@ class CRM_Mailing_BAO_BouncePattern extends CRM_Mailing_DAO_BouncePattern {
         $bp->find();
         
         while ($bp->fetch()) {
-            if (! is_array(self::$_patterns[$bp->bounce_type_id])) {
-                self::$_patterns[$bp->bounce_type_id] = array();
-            }
             self::$_patterns[$bp->bounce_type_id][] = $bp->pattern;
         }
 
@@ -96,17 +93,23 @@ class CRM_Mailing_BAO_BouncePattern extends CRM_Mailing_DAO_BouncePattern {
         }
         foreach (self::$_patterns as $type => $re) {
             if (preg_match($re, $message, $matches)) {
-                return  array(
-                            'bounce_type_id' => $type,
-                            'bounce_reason' => $matches[0]
-                        );
+                $bounce = array(
+                                'bounce_type_id' => $type,
+                                'bounce_reason' => $matches[0]
+                                );
+                
+                return $bounce;
             }
         }
         
-        return  array( 
-                    'bounce_type_id' => null, 
-                    'bounce_reason' => null 
-                );
+        
+
+        $bounce = array( 
+                        'bounce_type_id' => null, 
+                        'bounce_reason' => null 
+                         );
+        
+        return $bounce;
     }
 
 }
