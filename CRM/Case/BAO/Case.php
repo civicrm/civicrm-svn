@@ -2634,12 +2634,13 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
      */
     static function getUsedCaseType( ) 
     {
-        static $caseTypeIds = array( );
+        static $caseTypeIds;
         
-        if ( empty( $caseTypeIds ) ) {
+        if ( !is_array( $caseTypeIds ) ) {
             $query = "SELECT DISTINCT( civicrm_case.case_type_id ) FROM civicrm_case";
-                        
+            
             $dao = CRM_Core_DAO::executeQuery( $query );
+            $caseTypeIds = array( );
             while ( $dao->fetch( ) ) {
                 $typeId        = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, $dao->case_type_id );
                 $caseTypeIds[] = $typeId[1];
@@ -2657,12 +2658,13 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
      */
     static function getUsedCaseStatuses( ) 
     {
-        static $caseStatusIds = array( );
+        static $caseStatusIds;
 
-        if ( empty( $caseStatusIds ) ) {
+        if ( !is_array( $caseStatusIds ) ) {
             $query = "SELECT DISTINCT( civicrm_case.status_id ) FROM civicrm_case";
             
             $dao = CRM_Core_DAO::executeQuery( $query );
+            $caseStatusIds = array( );
             while ( $dao->fetch( ) ) {
                 $caseStatusIds[] = $dao->status_id;
             }
@@ -2679,12 +2681,13 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
      */
     static function getUsedEncounterMediums( ) 
     {
-        static $mediumIds = array( );
+        static $mediumIds;
         
-        if ( empty( $mediumIds ) ) {
+        if ( !is_array( $mediumIds ) ) {
             $query = "SELECT DISTINCT( civicrm_activity.medium_id )  FROM civicrm_activity";
             
             $dao = CRM_Core_DAO::executeQuery( $query );
+            $mediumIds = array( );
             while ( $dao->fetch( ) ) {
                 $mediumIds[] = $dao->medium_id;
             }
