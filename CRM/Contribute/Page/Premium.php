@@ -111,15 +111,16 @@ class CRM_Contribute_Page_Premium extends CRM_Core_Page_Basic
     function run()
     {
         // get the requested action
-        $action = CRM_Utils_Request::retrieve('action', 'String',
-                                              $this, false, 'browse'); // default to 'browse'
-
-        // assign vars to templates
-        $this->assign('action', $action);
-        $id = CRM_Utils_Request::retrieve('id', 'Positive',
-                                          $this, false, 0);
+        $action = CRM_Utils_Request::retrieve( 'action', 'String',
+                                               $this, false, 'browse' ); // default to 'browse'
         
-        $this->edit($action, $id, false, false) ;
+        // assign vars to templates
+        $this->assign( 'action', $action );
+        $id = CRM_Utils_Request::retrieve( 'id', 'Positive',
+                                           $this, false, 0 );
+        $this->assign( 'id', $id );
+
+        $this->edit( $action, $id, false, false );
 
         // this is special case where we need to call browse to list premium
         if ( $action == CRM_Core_Action::UPDATE ) {

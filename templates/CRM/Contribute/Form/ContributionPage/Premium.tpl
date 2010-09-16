@@ -84,7 +84,6 @@
     <div class="crm-submit-buttons">{include file="CRM/common/formButtons.tpl" location="bottom"}</div>
     
 </div>
-{include file="CRM/Contribute/Page/Premium.tpl"}
 
 <script type="text/javascript">
     var myElement1 = document.getElementById('id_form');

@@ -328,39 +328,37 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
             $page = new CRM_Contribute_Page_ContributionPageEdit( );
             return $page->run( );
         } else if ( $action & CRM_Core_Action::COPY ) {
-            $session = CRM_Core_Session::singleton();
+            $session = CRM_Core_Session::singleton( );
             CRM_Core_Session::setStatus( ts('A copy of the contribution page has been created') );
             $this->copy( );
         } else if ( $action & CRM_Core_Action::DELETE ) {
             CRM_Utils_System::appendBreadCrumb( $breadCrumb );
-            $subPage = CRM_Utils_Request::retrieve( 'subPage', 'String',
-                                                    $this );
-            if ( $subPage == 'AddProductToPage' ) {
-                require_once 'CRM/Contribute/Page/ContributionPageEdit.php';
-                $page = new CRM_Contribute_Page_ContributionPageEdit( );
-                return $page->run( );
-            } else {
-                CRM_Utils_System::appendBreadCrumb( $breadCrumb );
-                $session = CRM_Core_Session::singleton( );
-                $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 'reset=1&action=browse' ) );
-                $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_ContributionPage_Delete',
-                                                               'Delete Contribution Page',
-                                                               CRM_Core_Action::DELETE );
-                $id = CRM_Utils_Request::retrieve('id', 'Positive',
-                                                  $this, false, 0);
-                $query = "SELECT ccp.title
-FROM civicrm_contribution_page ccp JOIN civicrm_pcp cp ON ccp.id = cp.contribution_page_id
-WHERE cp.contribution_page_id = {$id}";
-                if ( $pageTitle = CRM_Core_DAO::singleValueQuery( $query ) ) {
-                    CRM_Core_Session::setStatus( ts('The \'%1\'  cannot be deleted! You must Delete all Personal Campaign Page(s) related with this contribution page prior to deleting the page.', array( 1 => $pageTitle ) ) );
-                    
-                    CRM_Utils_System::redirect( CRM_Utils_System::url('civicrm/admin/contribute','reset=1') );   
-                }
+            
+            $session = CRM_Core_Session::singleton( );
+            $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 
+                                                              'reset=1&action=browse' ) );
 
-                $controller->set('id', $id);
-                $controller->process( );
-                return $controller->run( );
+            $id = CRM_Utils_Request::retrieve( 'id', 'Positive',
+                                               $this, false, 0 );
+            $query = "
+SELECT      ccp.title
+FROM        civicrm_contribution_page ccp 
+JOIN        civicrm_pcp cp ON ccp.id = cp.contribution_page_id
+WHERE       cp.contribution_page_id = {$id}";
+            
+            if ( $pageTitle = CRM_Core_DAO::singleValueQuery( $query ) ) {
+                CRM_Core_Session::setStatus( ts('The \'%1\'  cannot be deleted! You must Delete all Personal Campaign Page(s) related with this contribution page prior to deleting the page.', array( 1 => $pageTitle ) ) );
+                
+                CRM_Utils_System::redirect( CRM_Utils_System::url('civicrm/admin/contribute','reset=1') );   
             }
+            
+            $controller = new CRM_Core_Controller_Simple( 'CRM_Contribute_Form_ContributionPage_Delete',
+                                                          'Delete Contribution Page',
+                                                          CRM_Core_Action::DELETE );
+            $controller->set( 'id', $id );
+            $controller->process( );
+            return $controller->run( );
+            
         } else {
             // finally browse the contribution pages
             $this->browse();
