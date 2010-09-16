@@ -314,11 +314,6 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
             CRM_Utils_System::setTitle( ts('Manage Contribution Page') );
             CRM_Utils_System::appendBreadCrumb( $breadCrumb );
             return $controller->run( );
-        } else if ( $action & CRM_Core_Action::PREVIEW ) {
-            CRM_Utils_System::appendBreadCrumb( $breadCrumb );
-            require_once 'CRM/Contribute/Page/ContributionPageEdit.php';
-            $page = new CRM_Contribute_Page_ContributionPageEdit( );
-            return $page->run( );
         } else if ( $action & CRM_Core_Action::COPY ) {
             $session = CRM_Core_Session::singleton( );
             CRM_Core_Session::setStatus( ts('A copy of the contribution page has been created') );
