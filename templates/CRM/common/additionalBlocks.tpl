@@ -122,6 +122,11 @@ function singleSelect( object ) {
 }
 
 function removeBlock( blockName, blockId ) {
+    var element = cj("#addressBlock > div").size();
+    if ( ( blockName == 'Address' ) && element == 1 ) {
+      return clearFirstBlock(blockName , blockId);
+    }
+    
     // check if is_primary is checked, if yes set is primary to first block
     if ( cj( "#"+ blockName + "_" + blockId + "_IsPrimary").attr('checked') ) {
         cj( "#"+ blockName + "_1_IsPrimary").attr('checked', true);
@@ -145,5 +150,14 @@ function removeBlock( blockName, blockId ) {
         }
     }
 }
+
+function clearFirstBlock( blockName , blockId ) {
+    var element =  blockName + '_Block_' + blockId;
+    cj("#" + element +" input, " + "#" + element + "select").each(function () {
+        cj(this).val(''); 
+    });
+    cj("#addressBlockId").addClass('crm-accordion-closed');
+}
+
 </script>
 {/literal}
