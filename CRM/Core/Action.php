@@ -274,23 +274,24 @@ class CRM_Core_Action {
         
         $result = '';
         $mainLinks  = $url;
+        $extraLinksName = strtolower( $extraULName );
         if ( $enclosedAllInSingleUL ) {
             $allLinks = '';
             CRM_Utils_String::append( $allLinks, '</li><li>', $mainLinks );
-            $allLinks = ts('%1', array( 1 => $extraULName ) )."<ul id='panel_xx' class='panel'><li>{$allLinks}</li></ul>"; 
-            $result = "<span class='btn-slide' id=xx>{$allLinks}</span>";
+            $allLinks = ts('%1', array( 1 => $extraULName ) )."<ul id='panel_{$extraLinksName}_xx' class='panel'><li>{$allLinks}</li></ul>"; 
+            $result = "<span class='btn-slide' id={$extraLinksName}_xx>{$allLinks}</span>";
         } else {
             $extra = '';
             $extraLinks = array_splice( $url, 2 );
             if ( count( $extraLinks ) > 1 ) {
                 $mainLinks = array_slice ( $url, 0, 2 );
                 CRM_Utils_String::append( $extra, '</li><li>', $extraLinks );
-                $extra = ts('%1', array( 1 => $extraULName ) )."<ul id='panel_xx' class='panel'><li>{$extra}</li></ul>"; 
+                $extra = ts('%1', array( 1 => $extraULName ) )."<ul id='panel_{$extraLinksName}_xx' class='panel'><li>{$extra}</li></ul>"; 
             }
             $resultLinks = '';
             CRM_Utils_String::append( $resultLinks, '', $mainLinks );
             if ( $extra ) {
-                $result = "<span>{$resultLinks}</span><span class='btn-slide' id=xx>{$extra}</span>";
+                $result = "<span>{$resultLinks}</span><span class='btn-slide' id={$extraLinksName}_xx>{$extra}</span>";
             } else {
                 $result = "<span>{$resultLinks}</span>";
             }
