@@ -136,11 +136,10 @@ class CRM_Core_OptionValue
                 } else {
                     $action -= CRM_Core_Action::DISABLE;
                 }
-            }
-
-            if ( ( ( $groupName == 'case_type' ) && in_array( $dao->value, $caseTypeIds ) ) || 
-                 ( ( $groupName == 'case_status' ) && in_array( $dao->value, $caseStatusIds ) ) ) {
-                $action -= CRM_Core_Action::DELETE;
+                if ( ( ( $groupName == 'case_type' ) && in_array( $dao->value, $caseTypeIds ) ) || 
+                     ( ( $groupName == 'case_status' ) && in_array( $dao->value, $caseStatusIds ) ) ) {
+                    $action -= CRM_Core_Action::DELETE;
+                }
             }
 
             $optionValue[$dao->id]['label']  = htmlspecialchars( $optionValue[$dao->id]['label'] );
