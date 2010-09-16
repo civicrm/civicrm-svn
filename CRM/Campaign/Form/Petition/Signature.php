@@ -150,7 +150,15 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
     protected $_image_URL;
     
     protected $_defaults = null;
-    
+
+	function __construct() {
+		parent::__construct();
+		// this property used by civicrm_fb module and if true, forces thank you email to be sent
+		// for users signing in via Facebook connect; also sets Fb email to check against
+		$this->forceEmailConfirmed['flag'] = false; 
+		$this->forceEmailConfirmed['email'] = ''; 
+	}
+	
     public function preProcess()
     {
       $this->bao = new CRM_Campaign_BAO_Petition();
@@ -445,11 +453,12 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 				}				
 				break;
 			}
-			
-			// if signed using Facebook connect to log in or logged in user, send thank you email
-			if (($fb = $GLOBALS['_fb']) && ($fbu = fb_facebook_user()) 
-					&& ($params['email-Primary'] == $fbdata['email'])) {
-				$this->_sendEmailMode = self::EMAIL_THANK;
+
+			// if signed using Facebook connect to log in and email on form matches Fb email,
+			// no need for email confirmation, send thank you email	
+			if ($this->forceEmailConfirmed['flag'] && 
+					($this->forceEmailConfirmed['email'] == $params['email-Primary'])) {
+						$this->_sendEmailMode = self::EMAIL_THANK;
 			}
 
 			require_once 'CRM/Core/Transaction.php';
@@ -501,7 +510,7 @@ class CRM_Campaign_Form_Petition_Signature extends CRM_Core_Form
 			$params['tagId'] = $this->_tagId;
 		
 			//send email and set cookie
-	    $this->bao->sendEmail( $params, $this->_sendEmailMode );
+			$this->bao->sendEmail( $params, $this->_sendEmailMode );
 
 			$transaction->commit( );
 	

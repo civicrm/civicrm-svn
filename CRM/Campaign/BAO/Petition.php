@@ -40,7 +40,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 {
     function __construct() {
        parent::__construct();
-       $this->cookieExpire = (1000 * 60 * 60 * 24); // expire cookie in one day
+       $this->cookieExpire = (1 * 60 * 60 * 24); // expire cookie in one day
     }
 		
     /**
@@ -569,9 +569,9 @@ WHERE 	a.source_record_id = " . $surveyId . "
             $html    = CRM_Utils_Token::replaceContactTokens($html,    $contact, false, $tokens['html'], false, true);
         }
         if ($params['petitionId']) {
-            $subject = self::replacePetitionTokens($subject, $params['petitionTitle'], $params['confirmUrl']);
-            $text    = self::replacePetitionTokens($text,    $params['petitionTitle'], $params['confirmUrl']);
-            $html    = self::replacePetitionTokens($html,    $params['petitionTitle'], $params['confirmUrl']);
+            $subject = self::replacePetitionTokens($subject, $params['petitionTitle'], $params['confirmUrl'], $params['petitionId']);
+            $text    = self::replacePetitionTokens($text,    $params['petitionTitle'], $params['confirmUrl'], $params['petitionId']);
+            $html    = self::replacePetitionTokens($html,    $params['petitionTitle'], $params['confirmUrl'], $params['petitionId']);
         }
         
         // strip whitespace from ends and turn into a single line
@@ -627,7 +627,7 @@ WHERE 	a.source_record_id = " . $surveyId . "
      * @access public
      * @static
      */
-    public static function &replacePetitionTokens($str, $title, $confirmUrl) 
+    public static function &replacePetitionTokens($str, $title, $confirmUrl, $petitionId) 
     {
     	require_once 'CRM/Utils/Token.php';
     	
@@ -637,6 +637,10 @@ WHERE 	a.source_record_id = " . $surveyId . "
         
         if (CRM_Utils_Token::token_match('petition', 'confirmUrl', $str)) {
             CRM_Utils_Token::token_replace('petition', 'confirmUrl', $confirmUrl, $str);
+        }
+
+        if (CRM_Utils_Token::token_match('petition', 'petitionId', $str)) {
+            CRM_Utils_Token::token_replace('petition', 'petitionId', $petitionId, $str);
         }
         return $str;
     }
