@@ -2634,17 +2634,63 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
      */
     static function getUsedCaseType( ) 
     {
-        $caseTypeIds = array( );
-        $dao = new CRM_Case_DAO_Case( );
-        $dao->is_deleted = 0;
-        $dao->find( );
+        static $caseTypeIds = array( );
+        
+        if ( empty( $caseTypeIds ) ) {
+            $query = "SELECT DISTINCT( civicrm_case.case_type_id ) FROM civicrm_case";
+                        
+            $dao = CRM_Core_DAO::executeQuery( $query );
+            while ( $dao->fetch( ) ) {
+                $typeId        = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, $dao->case_type_id );
+                $caseTypeIds[] = $typeId[1];
+            }  
+        }
 
-        while ( $dao->fetch( ) ) {
-            $typeId = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, $dao->case_type_id );
-            $caseTypeIds[$dao->id] = $typeId[1];
+        return $caseTypeIds;
+    }
+
+    /**
+     * Function to get all the case status ids currently in use 
+     *
+     * 
+     * @return array $caseStatusIds 
+     */
+    static function getUsedCaseStatuses( ) 
+    {
+        static $caseStatusIds = array( );
+
+        if ( empty( $caseStatusIds ) ) {
+            $query = "SELECT DISTINCT( civicrm_case.status_id ) FROM civicrm_case";
+            
+            $dao = CRM_Core_DAO::executeQuery( $query );
+            while ( $dao->fetch( ) ) {
+                $caseStatusIds[] = $dao->status_id;
+            }
         }
         
-        return $caseTypeIds;
+        return $caseStatusIds;
+    }
+
+    /**
+     * Function to get all the encounter medium ids currently in use 
+     *
+     * 
+     * @return array  
+     */
+    static function getUsedEncounterMediums( ) 
+    {
+        static $mediumIds = array( );
+        
+        if ( empty( $mediumIds ) ) {
+            $query = "SELECT DISTINCT( civicrm_activity.medium_id )  FROM civicrm_activity";
+            
+            $dao = CRM_Core_DAO::executeQuery( $query );
+            while ( $dao->fetch( ) ) {
+                $mediumIds[] = $dao->medium_id;
+            }
+        }
+        
+        return  $mediumIds;
     }
 }
 

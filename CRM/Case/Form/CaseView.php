@@ -125,7 +125,7 @@ class CRM_Case_Form_CaseView extends CRM_Core_Form
         $values['case_type_id'] = explode( CRM_Case_BAO_Case::VALUE_SEPERATOR, 
                                            CRM_Utils_Array::value( 'case_type_id' , $values ) );
 
-        $statuses      = CRM_Case_PseudoConstant::caseStatus( );
+        $statuses      = CRM_Core_OptionGroup::values( 'case_status', false, false, false, null, 'label', false );
         $caseTypeName  = CRM_Case_BAO_Case::getCaseType( $this->_caseID, 'name' );
         $caseType      = CRM_Case_BAO_Case::getCaseType( $this->_caseID );
         

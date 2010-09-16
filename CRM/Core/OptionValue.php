@@ -111,9 +111,11 @@ class CRM_Core_OptionValue
             $dao->find();
         }
         
+        require_once 'CRM/Case/BAO/Case.php';
         if ( $groupName == 'case_type' ) {
-            require_once 'CRM/Case/BAO/Case.php';
             $caseTypeIds = CRM_Case_BAO_Case::getUsedCaseType( );
+        } else if ( $groupName == 'case_status' ) {
+            $caseStatusIds = CRM_Case_BAO_Case::getUsedCaseStatuses( );
         }
 
         require_once 'CRM/Core/Component.php';
@@ -136,7 +138,8 @@ class CRM_Core_OptionValue
                 }
             }
 
-            if ( ( $groupName == 'case_type' ) && in_array( $dao->value, $caseTypeIds ) ) {
+            if ( ( ( $groupName == 'case_type' ) && in_array( $dao->value, $caseTypeIds ) ) || 
+                 ( ( $groupName == 'case_status' ) && in_array( $dao->value, $caseStatusIds ) ) ) {
                 $action -= CRM_Core_Action::DELETE;
             }
 
