@@ -115,18 +115,19 @@ class CRM_Case_Form_Activity_OpenCase
             require_once 'CRM/Contact/Form/NewContact.php';
             CRM_Contact_Form_NewContact::buildQuickForm( $form );
         }
-        require_once 'CRM/Core/OptionGroup.php';        
-        $caseType = CRM_Core_OptionGroup::values('case_type');
+        
+        require_once 'CRM/Case/PseudoConstant.php';
+        $caseType = CRM_Case_PseudoConstant::caseType( );
         $form->add('select', 'case_type_id',  ts( 'Case Type' ),  
                    $caseType , true);
         
-        $caseStatus  = CRM_Core_OptionGroup::values('case_status');
+        $caseStatus  = CRM_Case_PseudoConstant::caseStatus( );
         $form->add('select', 'status_id',  ts( 'Case Status' ),  
                    $caseStatus , true  );
-
+        
         $form->add( 'text', 'duration', ts('Duration'),array( 'size'=> 4,'maxlength' => 8 ) );
         $form->addRule('duration', ts('Please enter the duration as number of minutes (integers only).'), 'positiveInteger');  
-
+        
         require_once "CRM/Contact/BAO/Contact.php";
         if ( $form->_currentlyViewedContactId ) {
             list( $displayName ) = CRM_Contact_BAO_Contact::getDisplayAndImage( $form->_currentlyViewedContactId );
@@ -136,7 +137,7 @@ class CRM_Case_Form_Activity_OpenCase
         $form->addDate( 'start_date', ts('Case Start Date'), true, array( 'formatType' => 'activityDate') );
         
         $form->add('select', 'medium_id',  ts( 'Medium' ), 
-                   CRM_Core_OptionGroup::values('encounter_medium'), true);
+                   CRM_Case_PseudoConstant::encounterMedium( ), true );
 
         // calling this field activity_location to prevent conflict with contact location fields
         $form->add('text', 'activity_location', ts('Location'), CRM_Core_DAO::getAttribute( 'CRM_Activity_DAO_Activity', 'location' ) );
@@ -181,9 +182,9 @@ class CRM_Case_Form_Activity_OpenCase
         // for open case start date should be set to current date
         $params['start_date'] = CRM_Utils_Date::processDate( $params['start_date'], date('Hi') );
         require_once 'CRM/Case/PseudoConstant.php';
-        $caseStatus = CRM_Case_PseudoConstant::caseStatus( );
+        $caseStatus = CRM_Case_PseudoConstant::caseStatus( 'name' );
         // for resolved case the end date should set to now    
-        if ( $params['status_id'] == array_search( 'Resolved', $caseStatus ) ) {
+        if ( $params['status_id'] == array_search( 'Closed', $caseStatus ) ) {
             $params['end_date']   = $params['now'];
         }
         
