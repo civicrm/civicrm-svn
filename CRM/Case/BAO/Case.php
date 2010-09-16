@@ -2695,5 +2695,52 @@ WHERE id IN ('. implode( ',', $copiedActivityIds ) . ')';
         
         return  $mediumIds;
     }
+    
+    /**
+     * Function to check case configuration.
+     *
+     * @return an array $configured  
+     */
+    function isCaseConfigured( $contactId = null ) 
+    {
+        $configured = array_fill_keys( array( 'configured', 'allowToAddNewCase', 'redirectToCaseAdmin' ), false ); 
+        
+        //lets check for case configured.
+        require_once 'CRM/Case/BAO/Case.php';
+        $allCasesCount = CRM_Case_BAO_Case::caseCount( null, false );
+        $configured['configured'] = ( $allCasesCount ) ? true : false;
+        if ( !$configured['configured'] ) {
+            //do check for case type and case status.
+            require_once 'CRM/Case/PseudoConstant.php';
+            $caseTypes = CRM_Case_PseudoConstant::caseType( 'label', false );
+            if ( !empty( $caseTypes ) ) {
+                $configured['configured'] = true;
+                if ( !$configured['configured'] ) {
+                    $caseStatuses = CRM_Case_PseudoConstant::caseStatus( 'label', false );
+                    if ( !empty( $caseStatuses ) ) $configured['configured'] = true;
+                }
+            }
+        }
+        if ( $configured['configured'] ) {
+            //do check for active case type and case status.
+            require_once 'CRM/Case/PseudoConstant.php';
+            $caseTypes = CRM_Case_PseudoConstant::caseType( );
+            if ( !empty( $caseTypes ) ) {
+                $caseStatuses = CRM_Case_PseudoConstant::caseStatus( );
+                if ( !empty( $caseStatuses ) ) $configured['allowToAddNewCase'] = true;
+            }
+            
+            //do we need to redirect user to case admin.
+            if ( !$configured['allowToAddNewCase'] && $contactId ) {
+                //check for current contact case count.
+                $currentContatCasesCount = CRM_Case_BAO_Case::caseCount( $contactId );
+                //redirect user to case admin page.
+                if ( !$currentContatCasesCount ) $configured['redirectToCaseAdmin'] = true; 
+            }
+        }
+        
+        return $configured;
+    }
+    
 }
 
