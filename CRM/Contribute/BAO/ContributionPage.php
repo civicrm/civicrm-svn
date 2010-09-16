@@ -567,8 +567,13 @@ LEFT JOIN  civicrm_premiums            ON ( civicrm_premiums.entity_id = civicrm
         
         $contributionPage = CRM_Core_DAO::executeQuery( $query );
         while ( $contributionPage->fetch( ) ) {
+            if ( !is_array( $info[$contributionPage->id] ) ) {
+                $info[$contributionPage->id] = array_fill_keys( array_values( $sections ), false );
+            }
             foreach ( $sections as $section ) {
-                $info[$contributionPage->id][$section] = ( $contributionPage->$section ) ? true : false;
+                if ( $contributionPage->$section ) {
+                    $info[$contributionPage->id][$section] = true;
+                }
             }
         }
         
