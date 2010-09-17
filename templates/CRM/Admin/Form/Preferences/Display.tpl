@@ -47,6 +47,18 @@
                <td class="description">{ts}Select the sections that should be included when adding or editing a contact record. EXAMPLE: If your organization does not record Gender and Birth Date for individuals, then simplify the form by un-checking this option.{/ts}</td>
             </tr>
 	{/if}
+
+	{if $contactEditOptions}
+	 <tr class="crm-preferences-display-form-block-contact_edit_preferences">
+               <td class="label">{ts}Editing Contact Preference{/ts}</td>
+               <td>{include file="CRM/Admin/Form/Preferences/ContactEdit.tpl"}</td>
+         </tr>
+	 <tr class="crm-preferences-display-form-block-description">
+               <td>&nbsp;</td>
+               <td class="description">{ts}Reorder the sections that should be respect on contact edit form..{/ts}</td>
+            </tr>
+	{/if}
+
 	{if $form.advanced_search_options.html}
             <tr class="crm-preferences-display-form-block-advanced_search_options">
                <td class="label">{$form.advanced_search_options.label}</td>
