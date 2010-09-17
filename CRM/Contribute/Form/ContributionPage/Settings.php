@@ -179,6 +179,8 @@ class CRM_Contribute_Form_ContributionPage_Settings extends CRM_Contribute_Form_
         $dao =& CRM_Contribute_BAO_ContributionPage::create( $params );
 
         $this->set( 'id', $dao->id );
+        
+        parent::postProcess( );
     }
 
     /** 

@@ -103,13 +103,19 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
         // setting title and 3rd level breadcrumb for html page if contrib page exists
         if ( $this->_id ) {
             $title = CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $this->_id, 'title' );
+            
+            $url = CRM_Utils_System::url( 'civicrm/admin/contribute', 
+                                          "action=update&reset=1&id={$this->_id}" ); 
+            
             $breadCrumb = array( array('title' => ts('Configure Contribution Page'), 
-                                       'url'   => CRM_Utils_System::url( CRM_Utils_System::currentPath( ), 
-                                                                         "action=update&reset=1&id={$this->_id}" )) );
+                                       'url'   => $url ) );
             CRM_Utils_System::appendBreadCrumb( $breadCrumb );
             if ($this->_action == CRM_Core_Action::UPDATE) {
                 $this->_single = true;
             }
+            
+            $session = CRM_Core_Session::singleton( ); 
+            $session->pushUserContext( $url );
         }
         if ($this->_action == CRM_Core_Action::UPDATE) {
             CRM_Utils_System::setTitle(ts('Configure Page - %1', array(1 => $title)));
@@ -257,6 +263,13 @@ class CRM_Contribute_Form_ContributionPage extends CRM_Core_Form
      */
     public function postProcess()
     {
+        $pageId = $this->get( 'id' );
+        //page is newly created.
+        if ( $pageId && !$this->_id ) {
+            $session = CRM_Core_Session::singleton( );
+            $session->pushUserContext( CRM_Utils_System::url( 'civicrm/admin/contribute', 
+                                                              "action=update&reset=1&id={$pageId}" ) );
+        }
     }
 }
 
