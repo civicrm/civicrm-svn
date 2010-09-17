@@ -319,9 +319,17 @@ class CRM_Contribute_Page_ContributionPage extends CRM_Core_Page
             $session = CRM_Core_Session::singleton( ); 
             $session->pushUserContext( CRM_Utils_System::url( CRM_Utils_System::currentPath( ),
                                                               "action=update&reset=1&id={$id}") );
-            require_once 'CRM/Contribute/Page/ContributionPageEdit.php';
-            $page = new CRM_Contribute_Page_ContributionPageEdit( );
-            return $page->run( );
+            $config = CRM_Core_Config::singleton( );
+           
+            CRM_Utils_System::setTitle( ts('Configure Contribution Page') );
+        
+            // assign vars to templates
+            $this->assign( 'id', $id );
+            $this->assign( 'title', CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $id, 'title' ) );
+            $this->assign( 'is_active', CRM_Core_DAO::getFieldValue( 'CRM_Contribute_DAO_ContributionPage', $id, 'is_active' ) );
+            if ( in_array( 'CiviMember', $config->enableComponents ) ) {
+                $this->assign('CiviMember', true );
+            }
         } else if ( $action & CRM_Core_Action::COPY ) {
             $session = CRM_Core_Session::singleton( );
             CRM_Core_Session::setStatus( ts('A copy of the contribution page has been created') );
