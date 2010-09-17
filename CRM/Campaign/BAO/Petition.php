@@ -38,6 +38,7 @@ require_once 'CRM/Campaign/BAO/Survey.php';
 
 Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
 {
+    	
     function __construct() {
        parent::__construct();
        $this->cookieExpire = (1 * 60 * 60 * 24); // expire cookie in one day
@@ -52,7 +53,7 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
      * @access public
      * @static
      */
-    static function createSignature( &$params ) 
+    function createSignature( &$params ) 
     {
         if ( empty( $params ) ) {
             return;
@@ -91,7 +92,9 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
             	require_once 'CRM/Core/BAO/CustomValueTable.php';
             	CRM_Core_BAO_CustomValueTable::store( $params['custom'], 'civicrm_activity', $activity->id );
         	}
-        	
+
+ 			// set permanent cookie to indicate this petition already signed on the computer
+			setcookie('signed_'.$params['sid'], $activity->id, time() + $this->cookieExpire, '/');       	
 			
 		}
 		
@@ -99,33 +102,33 @@ Class CRM_Campaign_BAO_Petition extends CRM_Campaign_BAO_Survey
     }
 
     function confirmSignature($activity_id,$contact_id,$petition_id) {
-      //change activity status to completed (status_id=2)	
-          $query = "UPDATE civicrm_activity SET status_id = 2 
+    	//change activity status to completed (status_id=2)	
+        $query = "UPDATE civicrm_activity SET status_id = 2 
                 WHERE 	id = $activity_id 
                 AND  	source_contact_id = $contact_id";
-          CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
+        CRM_Core_DAO::executeQuery( $query, CRM_Core_DAO::$_nullArray );
 
-      // remove 'Unconfirmed' tag for this contact
-      define('CIVICRM_TAG_UNCONFIRMED','Unconfirmed');
-      
-      if (defined('CIVICRM_TAG_UNCONFIRMED')) {
-        // Check if contact 'email confirmed' tag exists, else create one
-        // This should be in the petition module initialise code to create a default tag for this
-        require_once 'api/v2/Tag.php';	
-        $tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
-        $tag = civicrm_tag_get($tag_params); 
-        
-        require_once 'api/v2/EntityTag.php';				
-        unset($tag_params);
-        $tag_params['contact_id'] = $contact_id;
-        $tag_params['tag_id'] = $tag['id'];			
-        $tag_value = civicrm_entity_tag_remove($tag_params);	
-      }
-          
-      // set permanent cookie to indicate this users email address now confirmed
-      require_once 'CRM/Campaign/BAO/Petition.php';
-      setcookie('confirmed_'.$petition_id, $activity_id, time() + $this->cookieExpire, '/');						
-          return true;
+		// remove 'Unconfirmed' tag for this contact
+		define('CIVICRM_TAG_UNCONFIRMED','Unconfirmed');
+		
+		if (defined('CIVICRM_TAG_UNCONFIRMED')) {
+			// Check if contact 'email confirmed' tag exists, else create one
+			// This should be in the petition module initialise code to create a default tag for this
+			require_once 'api/v2/Tag.php';	
+			$tag_params['name'] = CIVICRM_TAG_UNCONFIRMED;
+			$tag = civicrm_tag_get($tag_params); 
+			
+			require_once 'api/v2/EntityTag.php';				
+			unset($tag_params);
+			$tag_params['contact_id'] = $contact_id;
+			$tag_params['tag_id'] = $tag['id'];			
+			$tag_value = civicrm_entity_tag_remove($tag_params);	
+		}
+		
+		// set permanent cookie to indicate this users email address now confirmed
+		setcookie('confirmed_'.$petition_id, $activity_id, time() + $this->cookieExpire, '/');						
+
+		return true;
     }    
 
 
@@ -419,12 +422,6 @@ WHERE 	a.source_record_id = " . $surveyId . "
 					);
 				}			
 				
-				// set permanent cookie to indicate this petition already signed on the computer
-				setcookie('signed_'.$params['sid'], $params['activityId'], time() + $this->cookieExpire, '/');
-				
-				// set permanent cookie to indicate this users email address already confirmed
-				setcookie('confirmed_'.$params['sid'], $params['activityId'], time() + $this->cookieExpire, '/');
-				
     			break;
     			
     			
@@ -473,8 +470,6 @@ WHERE 	a.source_record_id = " . $surveyId . "
 					);
 				}		
 				
-				// set permanent cookie to indicate this petition already signed on the computer
-				setcookie('signed_'.$params['sid'], $params['activityId'], time() + $this->cookieExpire, '/');
     			break;    			
     	}
 	}
