@@ -73,8 +73,8 @@ class CRM_Case_Form_Activity_ChangeCaseType
 
     static function buildQuickForm( &$form ) 
     { 
-        require_once 'CRM/Core/OptionGroup.php';        
-        $form->_caseType = CRM_Core_OptionGroup::values('case_type');
+        require_once 'CRM/Case/PseudoConstant.php';
+        $form->_caseType = CRM_Case_PseudoConstant::caseType( );
         $form->add('select', 'case_type_id',  ts( 'New Case Type' ),  
                    $form->_caseType , true);
 

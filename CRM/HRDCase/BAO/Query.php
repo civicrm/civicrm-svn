@@ -101,9 +101,9 @@ class CRM_Case_BAO_Query
             return;
 
         case 'case_status_id':
-            require_once 'CRM/Core/OptionGroup.php' ;
-            $caseStatus = CRM_Core_OptionGroup::values('case_status');
-
+            require_once 'CRM/Case/PseudoConstant.php';
+            $caseStatus = CRM_Case_PseudoConstant::caseStatus( );
+            
             $query->_where[$grouping][] = "civicrm_case.status_id {$op} $value ";
 
             $value = $caseStatus[$value];

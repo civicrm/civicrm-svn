@@ -69,9 +69,8 @@ class CRM_Case_Form_Activity_ChangeCaseStatus
 
     static function buildQuickForm( &$form ) 
     { 
-        require_once 'CRM/Core/OptionGroup.php';        
-       
-        $form->_caseStatus  = CRM_Core_OptionGroup::values('case_status');
+        require_once 'CRM/Case/PseudoConstant.php';
+        $form->_caseStatus  = CRM_Case_PseudoConstant::caseStatus( );
         $form->add('select', 'case_status_id',  ts( 'Case Status' ),  
                     $form->_caseStatus , true  );
     }
