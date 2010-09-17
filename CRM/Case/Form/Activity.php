@@ -167,7 +167,9 @@ class CRM_Case_Form_Activity extends CRM_Activity_Form_Activity
                                           "reset=1&action=view&cid={$this->_currentlyViewedContactId}&id={$this->_caseId}&show=1" );
         }
         if ( !$this->_activityId ) {
-            $caseTypes = CRM_Core_OptionGroup::values( 'case_type' );
+            require_once 'CRM/Case/PseudoConstant.php';
+            $caseTypes = CRM_Case_PseudoConstant::caseType( );
+            
             if ( empty( $caseTypes ) && ( $this->_activityTypeName == 'Change Case Type' ) ) {
                 $url = CRM_Utils_System::url( 'civicrm/contact/view/case',
                                               "reset=1&action=view&cid={$this->_currentlyViewedContactId}&id={$this->_caseId}&show=1" );

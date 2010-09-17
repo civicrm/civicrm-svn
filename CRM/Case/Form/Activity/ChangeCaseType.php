@@ -130,9 +130,9 @@ class CRM_Case_Form_Activity_ChangeCaseType
             return;
         }
 
-        require_once 'CRM/Core/OptionGroup.php';
+        require_once 'CRM/Case/PseudoConstant.php';
         $caseTypes    = CRM_Case_PseudoConstant::caseType( 'name' );
-        $allCaseTypes = CRM_Core_OptionGroup::values( 'case_type', false, false, false, null, 'label', false );
+        $allCaseTypes = CRM_Case_PseudoConstant::caseType( 'label', false );
         
         if ( CRM_Utils_Array::value($params['case_type_id'], $caseTypes) ) {
             $caseType  = $caseTypes[$params['case_type_id']];

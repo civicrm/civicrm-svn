@@ -767,9 +767,9 @@ AND civicrm_case.status_id != $closedId";
             $allCases = false;
         }
         
-        require_once 'CRM/Core/OptionGroup.php';
-        $caseStatuses = CRM_Core_OptionGroup::values( 'case_status' );
-        $caseTypes    = CRM_Core_OptionGroup::values( 'case_type' );
+        require_once 'CRM/Case/PseudoConstant.php';
+        $caseTypes    = CRM_Case_PseudoConstant::caseType( );
+        $caseStatuses = CRM_Case_PseudoConstant::caseStatus( );
         $caseTypes    = array_flip( $caseTypes );  
         
         // get statuses as headers for the table

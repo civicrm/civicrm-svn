@@ -112,8 +112,8 @@ class CRM_Case_BAO_Query
             return;
             
         case 'case_type_id':
-            require_once 'CRM/Core/OptionGroup.php' ;
-            $caseType = CRM_Core_OptionGroup::values('case_type');
+            require_once 'CRM/Case/PseudoConstant.php';
+            $caseType = CRM_Case_PseudoConstant::caseType( );
             $names = array( );
             foreach ( $value as $id => $val ) {
                 $names[] = $caseType[$val];
@@ -229,12 +229,14 @@ class CRM_Case_BAO_Query
     static function buildSearchForm( &$form ) 
     {
         $config = CRM_Core_Config::singleton( );
-        require_once 'CRM/Core/OptionGroup.php';
-        $caseType = CRM_Core_OptionGroup::values('case_type');
+        
+        require_once 'CRM/Case/PseudoConstant.php';
+        $caseType = CRM_Case_PseudoConstant::caseType( );
+        
         $form->addElement('select', 'case_type_id',  ts( 'Case Type' ),  
                           $caseType, array("size"=>"5",  "multiple"));
         
-        $caseStatus = CRM_Core_OptionGroup::values('case_status'); 
+        $caseStatus = CRM_Case_PseudoConstant::caseStatus( );
         $form->add('select', 'case_status_id',  ts( 'Case Status' ),  
                    array( '' => ts( '- select -' ) ) + $caseStatus );
         

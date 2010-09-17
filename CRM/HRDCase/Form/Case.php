@@ -199,13 +199,14 @@ class CRM_Case_Form_Case extends CRM_Contact_Form_Task
         $this->add( 'text', 'subject', ts('Subject'), array_merge( $attributes['subject'], array('maxlength' => '128') ), true);
         $this->addRule( 'subject', ts('A case with this subject already exists.'),     
                         'objectExists', array('CRM_Case_DAO_Case', $this->_id, 'subject') );
-
-        require_once 'CRM/Core/OptionGroup.php';        
-        $caseStatus  = CRM_Core_OptionGroup::values('case_status');
+        
+        require_once 'CRM/Case/PseudoConstant.php';
+        $caseStatus  = CRM_Case_PseudoConstant::caseStatus( );
         $this->add('select', 'status_id',  ts( 'Case Status' ),  
-                    $caseStatus , true  );
-
-        $caseType = CRM_Core_OptionGroup::values('case_type');
+                   $caseStatus , true  );
+        
+        
+        $caseType = CRM_Case_PseudoConstant::caseType( );
         $this->add('select', 'case_type_id',  ts( 'Case Type' ),  
                    $caseType , true, array("size"=>"5",  "multiple"));
         $config = CRM_Core_Config::singleton( );

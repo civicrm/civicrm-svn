@@ -112,8 +112,8 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         }
         
         if ( !$this->_caseId ) {
-            require_once 'CRM/Core/OptionGroup.php';
-            $caseTypes = CRM_Core_OptionGroup::values( 'case_type' );
+            require_once 'CRM/Case/PseudoConstant.php';
+            $caseTypes = CRM_Case_PseudoConstant::caseType( );
             if ( empty( $caseTypes ) ) {
                 CRM_Core_Error::fatal( ts( 'You do not have any active case types' ) );
             }
@@ -323,7 +323,8 @@ class CRM_Case_Form_Case extends CRM_Core_Form
         // 2. create/edit case
         require_once 'CRM/Case/BAO/Case.php';
         if ( CRM_Utils_Array::value('case_type_id', $params ) ) {
-            $caseType = CRM_Core_OptionGroup::values('case_type', false, false, false, null, 'name');
+            require_once 'CRM/Case/PseudoConstant.php';
+            $caseType = CRM_Case_PseudoConstant::caseType( 'name' );
             $params['case_type']    = $caseType[$params['case_type_id']];
             $params['case_type_id'] = CRM_Case_BAO_Case::VALUE_SEPERATOR . 
                 $params['case_type_id'] . CRM_Case_BAO_Case::VALUE_SEPERATOR;
