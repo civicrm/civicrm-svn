@@ -78,6 +78,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
             $mailingACL  = CRM_Mailing_BAO_Mailing::mailingACL( 'm' );
 
 			// SELECT THE First Child Job that's scheduled
+			// CRM-6835
             $query = "
 			SELECT   j.*
 			  FROM   $jobTable     j,
@@ -88,7 +89,8 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 			   AND       j.scheduled_date <= $currentTime
 			   AND       j.status = 'Scheduled'
 			   AND       j.end_date IS null ) )
-			   AND (j.type = 'child')
+			   AND (j.job_type = 'child')
+			   AND   {$mailingACL}
 			ORDER BY j.mailing_id,
 					 j.id
 			LIMIT 0,1";
@@ -101,10 +103,9 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
         require_once 'CRM/Core/Lock.php';
 	$i = 0;
 
-	while($job->fetch()) {
-		if($i == 0) {
+	if ($job->fetch()) {
 			// still use job level lock for each child job
-			$lockName = "civimail.job.{$job->id}";
+        $lockName = "civimail.job.{$job->id}";
 
 			$lock = new CRM_Core_Lock( $lockName );
 			if ( ! $lock->isAcquired( ) ) {
@@ -135,7 +136,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 
 				// have to queue it up based on the offset and limits
 				// get the parent ID, and limit and offset
-				$job->_queue($testParams);
+				$job->queue($testParams);
 
 				// Mark up the starting time
 				$saveJob = new CRM_Mailing_DAO_Job( );
@@ -183,8 +184,6 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 		$i++;
 	}
 
-    }
-
 	// Chang is here, post process to determine if the parent job
 	// as well as the mailing is complete after the run
 	public static function runJobs_post() { 
@@ -209,7 +208,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 		   AND       j.scheduled_date <= $currentTime
 		   AND       j.status = 'Running'
 		   AND       j.end_date IS null
-		   AND       (j.type != 'child' OR j.type is NULL)
+		   AND       (j.job_type != 'child' OR j.job_type is NULL)
 		ORDER BY j.scheduled_date,
 				 j.start_date";
 
@@ -220,26 +219,20 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 			
 			$child_job = new CRM_Mailing_BAO_Job();
 			
-			$child_job_query = sprintf("SELECT j.* 
-			FROM %s j, %s m 
+			$child_job_sql = "
+            SELECT count(j.id) 
+			FROM civicrm_mailing_job j, civicrm_mailing m
 			WHERE m.id = j.mailing_id
-			AND j.type = 'child'
-			AND j.parentid = %d", $jobTable, $mailingTable, $job->id);
-			
-			$child_job->query($child_job_query);
-			
-			$child_complete = 0;
-			$child_jobs_count = 0;
-			while($child_job->fetch()) {
-				if($child_job->status == 'Complete') {
-					$child_complete++;
-				}
-				$child_jobs_count++;
-			}
-			
+			AND j.job_type = 'child'
+			AND j.parent_id = %1
+            AND j.status <> 'Complete'";
+            $params = array( 1 => array( $job->id, 'Integer' ) );
+            
+			$anyChildLefte = CRM_Core_DAO::singleValueQuery($child_job_sql, $params);
+
 			// all of the child jobs are complete, update
 			// the parent job as well as the mailing status
-			if($child_complete == $child_jobs_count) {
+			if( ! $anyChildLeft ) {
 
                 require_once 'CRM/Core/Transaction.php';
                 $transaction = new CRM_Core_Transaction( );
@@ -257,9 +250,6 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
                 $transaction->commit( );
 			
 			}
-			
-			// reset the counters
-			unset($child_complete, $child_jobs_count);
 		}
 		
 	}
@@ -289,7 +279,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 		   AND       j.scheduled_date <= $currentTime
 		   AND       j.status = 'Scheduled'
 		   AND       j.end_date IS null ) )
-		   AND ((j.type is NULL) OR (j.type <> 'child'))
+		   AND ((j.job_type is NULL) OR (j.job_type <> 'child'))
 		ORDER BY j.scheduled_date,
 				 j.start_date";
 				 
@@ -319,52 +309,42 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 	// The parameter cannot be null
 	public function split_job($offset = 50) {
 	
-		$receipent_count = $this->getMailingSize();
+		$recipient_count = $this->getMailingSize();
 		$jobTable = CRM_Mailing_DAO_Job::getTableName();
 		
 		require_once('CRM/Core/DAO.php');
 		
 		$dao = new CRM_Core_DAO();
-	
+
+        $sql = "
+INSERT INTO civicrm_mailing_job
+(`mailing_id`, `scheduled_date`, `status`, `job_type`, `parent_id`, `job_offset`, `job_limit`)
+VALUES (%1, %2, %3, %4, %5, %6, %7)
+";
+        $params = array( 1 => array( $this->mailing_id, 'Integer' ),
+                         2 => array( $this->scheduled_date, 'String' ),
+                         3 => array( 'Scheduled', 'String' ),
+                         4 => array( 'child', 'String' ),
+                         5 => array( $this->id, 'Integer' ),
+                         6 => array( 0, 'Integer' ),
+                         7 => array( $recipient_count, 'Integer' ) );
+
 		// create one child job if the mailing size is less than the offset
 		// probably use a CRM_Mailing_DAO_Job( );
 		if($receipent_count <= $offset) {
-			$query = sprintf("INSERT INTO %s 
-			(`mailing_id`, `scheduled_date`, `status`, `type`, `parentid`, `offset`, `limit`) 
-			VALUES (%d, '%s', '%s', '%s', %d, %d, %d)", 
-			$jobTable, 
-			$this->mailing_id, 
-			$this->scheduled_date, 
-			'Scheduled', 
-			'child', 
-			$this->id, 
-			0, 
-			$receipent_count);
-			
-			$dao->query($query);
+            CRM_Core_DAO::executeQuery( $sql, $params );
 		} else {
 			// Creating 'child jobs'
 			for($i = 0; $i< $receipent_count; $i=$i+$offset) {
-			
-				$query = sprintf("INSERT INTO %s 
-				(`mailing_id`, `scheduled_date`, `status`, `type`, `parentid`, `offset`, `limit`) 
-				VALUES (%d, '%s', '%s', '%s', %d, %d, %d)", 
-				$jobTable, 
-				$this->mailing_id, 
-				$this->scheduled_date, 
-				'Scheduled', 
-				'child', 
-				$this->id, 
-				$i, 
-				$offset);
-				
-				$dao->query($query);
-			}	
+                $params[6][0] = $i;
+                $params[7][0] = $offset;
+                CRM_Core_DAO::executeQuery( $sql, $params );
+            }
 		}
 	}
 
 	// Chang is here
-    public function _queue($testParams = null) {
+    public function queue($testParams = null) {
        
         require_once 'CRM/Mailing/BAO/Mailing.php';
         $mailing = new CRM_Mailing_BAO_Mailing();
@@ -375,50 +355,15 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
 			// Chang is here:
 			// We are still getting all the recipients from the parent job 
 			// (The original so we don't mess with the include/exclude) logic
-            $recipients = $mailing->getRecipientsObject($this->parentid);
+            $recipients = $mailing->getRecipientsObject($this->parent_id, false, $this->job_offset, $this->job_limit);
 
 			// Chang is here:
 			// Here we will use the parent jobid to fetch the receipents, except 
 			// We will introduce the limit and offset from the child job DAO object
 			// To only pick up segment of the receipents instead of the whole
-			$i = 0;
-            while ($recipients->fetch()) {
-				if(($i >= $this->offset) && ($i < $this->offset + $this->limit)) {
-					$params = array(
-									// job_id should be the child job id
-									'job_id'        => $this->id,
-									'email_id'      => $recipients->email_id,
-									'contact_id'    => $recipients->contact_id
-									);
-					CRM_Mailing_Event_BAO_Queue::create($params);
-				}
-				$i++;
-            }
-        }
-    }
-    
-    /**
-     * Queue recipients of a job.
-     *
-     * @return void
-     * @access public
-     */
-    public function queue($testParams = null) {
-       
-        require_once 'CRM/Mailing/BAO/Mailing.php';
-        $mailing = new CRM_Mailing_BAO_Mailing();
-        $mailing->id = $this->mailing_id;
-        if (!empty($testParams)) {
-            $mailing->getTestRecipients($testParams);
-        } else {
-            $recipients =& $mailing->getRecipientsObject($this->id);
-
-            // since this is such a simple db operation, we could potentially optimize it a lot
-            // by doing a batch of inserts at one time
-            // INSERT INTO civicrm_..._queue ( job_id, email_id, contact_id, hash ) VALUES ( ... ),( ... ),...
-            // this will cut down the number of trips to the db quite nicely rather than doing one insert at a time
             while ($recipients->fetch()) {
                 $params = array(
+                                // job_id should be the child job id
                                 'job_id'        => $this->id,
                                 'email_id'      => $recipients->email_id,
                                 'contact_id'    => $recipients->contact_id
@@ -427,6 +372,7 @@ class CRM_Mailing_BAO_Job extends CRM_Mailing_DAO_Job {
             }
         }
     }
+    
     /**
      * Number of mailings of a job.
      *

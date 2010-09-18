@@ -112,9 +112,9 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
      * @param bool $includeDelivered  Whether to include the recipients who already got the mailing
      * @return object                 A DAO loaded with results of the form (email_id, contact_id)
      */
-    function &getRecipientsObject($job_id, $includeDelivered = false) 
+    function &getRecipientsObject($job_id, $includeDelivered = false, $offset = NULL, $limit = NULL) 
     {
-        $eq = self::getRecipients($job_id, $includeDelivered, $this->id);
+        $eq = self::getRecipients($job_id, $includeDelivered, $this->id, $offset, $limit);
         return $eq;
     }
     
@@ -124,7 +124,8 @@ class CRM_Mailing_BAO_Mailing extends CRM_Mailing_DAO_Mailing
         return $eq->N;
     }
     
-    function &getRecipients($job_id, $includeDelivered = false, $mailing_id = null) 
+    function &getRecipients($job_id, $includeDelivered = false, $mailing_id = null,
+                            $offset = NULL, $limit = NULL) 
     {
         $mailingGroup = new CRM_Mailing_DAO_Group();
         
@@ -413,12 +414,18 @@ AND    $mg.mailing_id = {$mailing_id}
         require_once 'CRM/Contact/BAO/Contact/Permission.php';
         list( $aclFrom, $aclWhere ) = CRM_Contact_BAO_Contact_Permission::cacheClause( );
         $aclWhere = $aclWhere ? "WHERE {$aclWhere}" : '';
+        $limitString = null;
+        if ( $limit && $offset !== null) {
+            $limitString = "LIMIT $offset, $limit";
+        }
+
         $eq->query("SELECT i.contact_id, i.email_id 
                     FROM  civicrm_contact contact_a
                     INNER JOIN I_$job_id i ON contact_a.id = i.contact_id
                     {$aclFrom}
                     {$aclWhere}
-                    ORDER BY i.contact_id, i.email_id");
+                    ORDER BY i.contact_id, i.email_id
+                    $limitString");
 
         /* Delete the temp table */
         $mailingGroup->reset();

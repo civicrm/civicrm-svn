@@ -41,8 +41,6 @@ function processQueue($batch_size) {
 	CRM_Mailing_BAO_Job::runJobs_pre($batch_size);
 	CRM_Mailing_BAO_Job::runJobs();
 	CRM_Mailing_BAO_Job::runJobs_post();
-
-	echo 'goodbye';
 }
 
 function run( ) {
@@ -56,6 +54,7 @@ function run( ) {
     // this does not return on failure
     CRM_Utils_System::authenticateScript( true );
 
+
     //log the execution of script
     CRM_Core_Error::debug_log_message( 'civimail.cronjob.php');
     
@@ -65,10 +64,10 @@ function run( ) {
 
 	// Chang is here: use the batch query variable to set the limit for
 	// Mailing processing
-	$batch_size = (is_numeric($_GET['batch'])) ? $_GET['batch'] : 10000;
+	$batch_size = (is_numeric($_GET['batch'])) ? $_GET['batch'] : 1;
 	
     // we now use DB locks on a per job basis
-    processQueue(batch_size);
+    processQueue($batch_size);
 }
 
 // you can run this program either from an apache command, or from the cli
