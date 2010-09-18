@@ -894,6 +894,37 @@ WHERE  civicrm_participant.id = {$participantId}
         return $additionalParticipantIds;
     }
     
+    
+    /**
+     * Retrieve additional participants display-names and URL to view their participant records.
+     * (excludes cancelled participants automatically)
+     *
+     * @param int     $primaryParticipantID  id of primary participant record
+     *
+     * @return array $additionalParticipants $displayName => $viewUrl
+     * @static
+     */
+    static function getAdditionalParticipants( $primaryParticipantID ){
+        $additionalParticipantIDs = array();
+        $additionalParticipantIDs = self::getAdditionalParticipantIds( $primaryParticipantID );
+        if ( !empty ( $additionalParticipantIDs ) ) {
+            require_once 'CRM/Core/DAO.php';
+            require_once 'CRM/Contact/BAO/Contact.php';
+            require_once 'CRM/Utils/System.php';
+            foreach ( $additionalParticipantIDs as $additionalParticipantID ) {
+                $additionalContactID = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Participant", 
+                                                            $additionalParticipantID,
+                                                            'contact_id', 'id' );
+                $additionalContactName = CRM_Contact_BAO_Contact::displayName( $additionalContactID );
+                $pViewURL = CRM_Utils_System::url( 'civicrm/contact/view/participant', 
+                                              "action=view&reset=1&id={$additionalParticipantID}&cid={$additionalContactID}" );
+                
+                $additionalParticipants[$additionalContactName] = $pViewURL; 
+            }
+        }
+        return $additionalParticipants;
+    }
+    
     /**
      * Function for update primary and additional participant status 
      *      

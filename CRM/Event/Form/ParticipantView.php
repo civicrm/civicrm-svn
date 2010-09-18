@@ -51,6 +51,7 @@ class CRM_Event_Form_ParticipantView extends CRM_Core_Form
     public function preProcess( ) 
     {
         require_once 'CRM/Event/BAO/Participant.php';
+        require_once 'CRM/Core/DAO.php';
         $values = $ids = array( );
         $participantID = CRM_Utils_Request::retrieve( 'id', 'Positive', $this, true );
         $contactID     = CRM_Utils_Request::retrieve( 'cid', 'Positive', $this, true ); 
@@ -90,6 +91,21 @@ class CRM_Event_Form_ParticipantView extends CRM_Core_Form
         }
         
         $values[$participantID]['totalAmount'] = CRM_Utils_Array::value( 'fee_amount', $values[$participantID] );
+  
+        // Get registered_by contact ID and display_name if participant was registered by someone else (CRM-4859)
+        if ( CRM_Utils_Array::value( 'participant_registered_by_id', $values[$participantID] ) ) {
+            $values[$participantID]['registered_by_contact_id'] = CRM_Core_DAO::getFieldValue( "CRM_Event_DAO_Participant", 
+                                                        $values[$participantID]['participant_registered_by_id'],
+                                                        'contact_id', 'id' );
+            require_once 'CRM/Contact/BAO/Contact.php';
+            $values[$participantID]['registered_by_display_name'] = CRM_Contact_BAO_Contact::displayName($values[$participantID]['registered_by_contact_id']);
+            
+        }
+        
+        // Check if this is a primaryParticipant (registered for others) and retrieve additional participants if true  (CRM-4859)
+        if ( CRM_Event_BAO_Participant::isPrimaryParticipant( $participantID ) ){
+            $values[$participantID]['additionalParticipants'] = CRM_Event_BAO_Participant::getAdditionalParticipants( $participantID );
+        }
         
         // get the option value for custom data type 	
         $roleCustomDataTypeID      = CRM_Core_OptionGroup::getValue( 'custom_data_type', 'ParticipantRole', 'name' );

@@ -74,7 +74,27 @@
     			</tr>
     	    {else}
                 {include file="CRM/Contact/Form/NewContact.tpl"}
-            {/if}	
+            {/if}
+            {if $action EQ 2}
+            	{if $additionalParticipants} {* Display others registered by this participant *}
+                    <tr class="crm-participant-form-block-additionalParticipants">
+                        <td class="label"><label>{ts}Also Registered by this Participant{/ts}</label></td>
+                        <td>
+                            {foreach from=$additionalParticipants key=apName item=apURL}
+                                <a href="{$apURL}" title="{ts}view additional participant{/ts}">{$apName}</a><br />
+                            {/foreach}
+                        </td>
+                    </tr>
+            	{/if}
+            	{if $registered_by_contact_id}
+                    <tr class="crm-participant-form-block-registered-by">
+                        <td class="label"><label>{ts}Registered By{/ts}</label></td>
+                        <td class="view-value">
+            	            <a href="{crmURL p='civicrm/contact/view/participant' q="reset=1&id=$participant_registered_by_id&cid=$registered_by_contact_id&action=view"}" title="{ts}view primary participant{/ts}">{$registered_by_display_name}</a>
+                        </td>
+                    </tr>
+            	{/if}
+            {/if}
             {if $participantMode}
                 <tr class="crm-participant-form-block-payment_processor_id"><td class="label nowrap">{$form.payment_processor_id.label}</td><td>{$form.payment_processor_id.html}</td></tr>
             {/if}
